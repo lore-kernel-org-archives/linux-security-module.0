@@ -1,91 +1,70 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Wed, 8 Mar 2017 14:44:34 +0100
-Subject: [PATCH] LSM: Revive security_task_alloc() hook.
-In-Reply-To: <201703071935.BHI04160.VMJSOOLFFHOFQt@I-love.SAKURA.ne.jp>
-References: <c2f75c40-991a-3d8e-d4d4-131a6c2d2828@canonical.com>
-	<alpine.LRH.2.20.1702021501040.20047@namei.org>
-	<d8fb57e5-93c6-99d0-619f-0978e36a8ef5@canonical.com>
-	<201702082221.CAG52603.LOtVSOHFFQOJMF@I-love.SAKURA.ne.jp>
-	<20170214134230.72818742@d-jobol.iot.bzh>
-	<201703071935.BHI04160.VMJSOOLFFHOFQt@I-love.SAKURA.ne.jp>
-Message-ID: <CAEiveUftmj_RRQWQfiuG=TcqJ0cxZk+jyZ67wPCjXdvvW3V4gA@mail.gmail.com>
+From: ldv@altlinux.org (Dmitry V. Levin)
+Date: Thu, 9 Mar 2017 02:41:54 +0300
+Subject: Compat 32-bit syscall entry from 64-bit task!?
+In-Reply-To: <CAK1hOcNFmG+3NTfQ559T-LkbcmcVfk9eF=JesdOqqj97tJncaw@mail.gmail.com>
+References: <CAObL_7EA-Z8yBbr1+-VW0v8k1okdcMfjRe5LgWo8YL5uvOkXbQ@mail.gmail.com>
+	<201201260032.57937.vda.linux@googlemail.com>
+	<ca17a86f7c88f8884e4ffc9bafbf2dff.squirrel@webmail.greenhost.nl>
+	<201201260209.54513.vda.linux@googlemail.com>
+	<CA+55aFzDZhGoa1TH=RAtjK3Ti3=NPAYvreSxiTxTu3wnu8Z61g@mail.gmail.com>
+	<CAK1hOcNFmG+3NTfQ559T-LkbcmcVfk9eF=JesdOqqj97tJncaw@mail.gmail.com>
+Message-ID: <20170308234154.GA2352@altlinux.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 7, 2017 at 11:35 AM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> James, there seems to be no more comments.
-> Can we send this patch to linux-next.git via your tree?
+Hi,
 
-I've been testing this hook and updated the new minimal LSM to block
-module autoload to use it. Also I'm investigating if it's possible to
-use Yama ptrace restrictions in containers where we don't want to
-apply Yama ptrace_scope flag globally but opt-in, the flag should be
-applied/dup'ed on processes/container tree without affecting the rest
-of the system.
+On Thu, Jan 26, 2012 at 07:03:43PM +0100, Denys Vlasenko wrote:
+> Hi Linus,
+> 
+> On Thu, Jan 26, 2012 at 4:47 AM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >> Please look at strace source, get_scno() function, where
+> >> it reads syscall no and parameters. Let's see....
+> >> - POWERPC: has 32-bit and 64-bit mode
+> >> - X86_64: has 32-bit and 64-bit mode
+> >> - IA64: has i386-compat mode
+> >> - ARM: has more than one ABI
+> >> - SPARC: has 32-bit and 64-bit mode
+> >>
+> >> Do you want to re-invent a different arch-specific way to report
+> >> syscall type for each of these arches?
+> >
+> > I think an arch-specific one is better than trying to make some
+> > generic one that is messy.
+> >
+> > As you say, many architectures have multiple system call ABIs.
+> >
+> > But they tend to be very *different* issues. They can be about
+> > multiple ABI's, as you mention, and even when they *look* similar
+> > (32-bit vs 64-bit ABI's) they are actually totally different issues.
+> > [skip]
+> 
+> I don't have a particular attachment to my solution,
+> and I think we already talk about this problem for
+> far too long.
+> 
+> Looks like nobody is _strongly_ opposed to your patch
+> which uses a few bits in eflags to report bitness
+> of the x86 syscall.
+> 
+> Lets just do that already. If you commit it to kernel git,
+> I will immediately change strace accordingly.
 
-Thanks!
+Is there any progress with this (or any alternative) solution?
 
->
-> Jose Bollo wrote:
-> > On Wed, 8 Feb 2017 22:21:14 +0900
-> > Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> >
-> > > John Johansen wrote:
-> > > > On 02/01/2017 08:02 PM, James Morris wrote:
-> > > > > On Wed, 1 Feb 2017, John Johansen wrote:
-> > > > >
-> > > > >> Sorry this took so long, it looks good to me, and I have done
-> > > > >> some builds and tests with apparmor using it. The apparmor patch
-> > > > >> to make use of this follows as a reply.
-> > > > >>
-> > > > >> Acked-by: John Johansen <john.johansen@canonical.com>
-> > > > >
-> > > > > We're too late in the -rc cycle to take these for 4.11.  Please
-> > > > > keep testing them and some more review/acks would also be good.
-> > > > >
-> > > > Certainly, I didn't expect this to land in 4.11. I would really like
-> > > > get some feed back/review/ack from the owner of the task struct.
-> > >
-> > > What does "the owner of the task struct" mean? "struct task_struct" is
-> > > an object where fields are added/removed by individual subsystem. I
-> > > think there is no explicit owner to ask feed back/review/ack.
-> > >
-> > > We added CONFIG_SECURITY_PATH in 2.6.29 and its user in 2.6.30.
-> > > I think applying this patch without users in 4.11-rc1 for trial is
-> > > better.
-> >
-> > agreed
-> >
-> > > TOMOYO can test this patch in 4.11-rcX if this patch is applied now.
-> > > AppArmor can test this patch in AppArmor's tree.
-> > > SELinux can apply security_task_create() => security_task_alloc()
-> > > change in SELinux's tree.
-> > > Casey can update "LSM: Stacking for major security modules - resend"
-> > > with this change included.
-> > > ptags and Timgad can evaluate this patch in their trees.
-> > >
-> > > We can update this patch in 4.12-rc1 if it turned out that this patch
-> > > is insufficient for somebody.
-> >
-> > agreed
-> >
-> > I believe that there is a general agreement on the behaviour and the
-> > spirit of the patch. So why not to go ahead?
-> >
-> > a+j
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+I see the kernel side has changed a bit, and the strace part
+is in a better shape than 5 years ago (although I'm biased of course),
+but I don't see any kernel interface that would allow strace to reliably
+recognize this 0x80 case.
 
 
 -- 
-tixxdz
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ldv
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 801 bytes
+Desc: not available
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170309/e495efc4/attachment.sig>
