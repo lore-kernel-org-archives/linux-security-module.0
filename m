@@ -1,71 +1,42 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 09 Mar 2017 14:49:43 -0600
-Subject: isolate selinux_enforcing
-In-Reply-To: <347f63b5-c274-c7bc-55f7-f6304d31418a@schaufler-ca.com> (Casey
-	Schaufler's message of "Thu, 9 Mar 2017 08:39:10 -0800")
-References: <58732BCF.4090908@huawei.com> <58734284.1060504@huawei.com>
-	<b7f75f65-592a-5102-0ac5-4d3aa43f0b55@huawei.com>
-	<58736B2E.90201@huawei.com> <58C11A6C.7000408@huawei.com>
-	<347f63b5-c274-c7bc-55f7-f6304d31418a@schaufler-ca.com>
-Message-ID: <87innidvko.fsf@xmission.com>
+From: tycho@docker.com (Tycho Andersen)
+Date: Thu,  9 Mar 2017 13:19:49 -0800
+Subject: [PATCH v3] security/Kconfig: further restrict HARDENED_USERCOPY
+Message-ID: <1489094389-28007-1-git-send-email-tycho@docker.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> writes:
+It doesn't make sense to have HARDENED_USERCOPY when either /dev/kmem is
+enabled or /dev/mem can be used to read kernel memory (i.e.
+!STRICT_DEVMEM).
 
-> On 3/9/2017 1:03 AM, yangshukui wrote:
->> I want to use SELinux in system container and only concern the function in the container.
->> this system container run in vm and every vm has only one system container.
->>
->> How do I use now?
->> docker run ... system-contaier /sbin/init
->> after init is running ,the following service is also running:
->>
->> #this is the part of service file which will run in container after starting the container.
->> ..
->> semodule -R     #use the policy in container.
->> restorecon /     #if needed
->> ..
->>
->> this method seem to work if host os and the docker images use the same content for rootfs, but if host use
->> redhat7 and docker images use centos7, it will deny many normal operations , and this let some host service not work.
->>
->> If SELinux is permissive in host and enforcing in container ,it will resolve my problem. Unfortunately,
->> there is no namespace for SELinux.
+v2: add !MMU depend as well
+v3: drop !MMU, s/ARCH_HAS_DEVMEM_IS_ALLOWED/DEVMEM, which makes the above
+    commit message actually match the logic again
 
-This is mostly a SELinux problem.
+Signed-off-by: Tycho Andersen <tycho@docker.com>
+CC: Kees Cook <keescook@chromium.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: James Morris <james.l.morris@oracle.com>
+---
+ security/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> The LSM infrastructure is essentially a set of lists.
-> These lists are rooted globally, but there's no reason*
-> they couldn't be rooted in a namespace. That would give
-> each namespace the option of using whatever security
-> scheme was deemed appropriate. There are a number of
-> issues, such as namespacing policy, that would have to
-> be addressed, but the mechanism could work fine. I would
-> look at patches.
+diff --git a/security/Kconfig b/security/Kconfig
+index 3ff1bf9..4619cee 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -142,6 +142,8 @@ config HARDENED_USERCOPY
+ 	bool "Harden memory copies between kernel and userspace"
+ 	depends on HAVE_ARCH_HARDENED_USERCOPY
+ 	depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
++	depends on !DEVKMEM
++	depends on !DEVMEM || STRICT_DEVMEM
+ 	select BUG
+ 	help
+ 	  This option checks for obviously wrong memory regions when
+-- 
+2.7.4
 
->
-> ---
-> * Other than the sheer insanity of making security
->   claims about such a system. I would not expect that
->   minor issue to slow demand or deployment any more
->   than it has in the past.
-
-I would tend to insist that the container local policy stacks inside the
-global policy.  So that at the least the global security claims would
-not be reduced.
-
-My expectation is that a container would run as essentially all one
-label from a global perspective.
-
-To implement this would require a revision on the selinux labels xattrs
-so that they can be marked as being part of a container...  But having
-the labels look ordinary inside the container.
-
-We almost have a patch that implements something like that for the
-capability xattr.
-
-Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
