@@ -1,62 +1,38 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 9 Mar 2017 08:39:10 -0800
-Subject: isolate selinux_enforcing
-In-Reply-To: <58C11A6C.7000408@huawei.com>
-References: <58732BCF.4090908@huawei.com> <58734284.1060504@huawei.com>
-	<b7f75f65-592a-5102-0ac5-4d3aa43f0b55@huawei.com>
-	<58736B2E.90201@huawei.com> <58C11A6C.7000408@huawei.com>
-Message-ID: <347f63b5-c274-c7bc-55f7-f6304d31418a@schaufler-ca.com>
+From: tycho@docker.com (Tycho Andersen)
+Date: Thu,  9 Mar 2017 09:29:21 -0800
+Subject: [PATCH] security/Kconfig: further restrict HARDENED_USERCOPY
+Message-ID: <1489080561-30786-1-git-send-email-tycho@docker.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/9/2017 1:03 AM, yangshukui wrote:
-> I want to use SELinux in system container and only concern the function in the container.
-> this system container run in vm and every vm has only one system container.
->
-> How do I use now?
-> docker run ... system-contaier /sbin/init
-> after init is running ,the following service is also running:
->
-> #this is the part of service file which will run in container after starting the container.
-> ..
-> semodule -R     #use the policy in container.
-> restorecon /     #if needed
-> ..
->
-> this method seem to work if host os and the docker images use the same content for rootfs, but if host use
-> redhat7 and docker images use centos7, it will deny many normal operations , and this let some host service not work.
->
-> If SELinux is permissive in host and enforcing in container ,it will resolve my problem. Unfortunately,
-> there is no namespace for SELinux.
+It doesn't make sense to have HARDENED_USERCOPY when either /dev/kmem is
+enabled or /dev/mem can be used to read kernel memory.
 
-The LSM infrastructure is essentially a set of lists.
-These lists are rooted globally, but there's no reason*
-they couldn't be rooted in a namespace. That would give
-each namespace the option of using whatever security
-scheme was deemed appropriate. There are a number of
-issues, such as namespacing policy, that would have to
-be addressed, but the mechanism could work fine. I would
-look at patches.
+v2: add !MMU depend as well
 
+Signed-off-by: Tycho Andersen <tycho@docker.com>
+CC: Kees Cook <keescook@chromium.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: James Morris <james.l.morris@oracle.com>
 ---
-* Other than the sheer insanity of making security
-  claims about such a system. I would not expect that
-  minor issue to slow demand or deployment any more
-  than it has in the past.
+ security/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
->
-> Isolate SELinux is difficult and it has a lot of work to do, but is easier to isolate selinux_enforcing.
->
-> What do you think ?
->
-> Think you very much.
->
->
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/security/Kconfig b/security/Kconfig
+index 3ff1bf9..aeabd40 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -142,6 +142,8 @@ config HARDENED_USERCOPY
+ 	bool "Harden memory copies between kernel and userspace"
+ 	depends on HAVE_ARCH_HARDENED_USERCOPY
+ 	depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
++	depends on !DEVKMEM
++	depends on !ARCH_HAS_DEVMEM_IS_ALLOWED || STRICT_DEVMEM || !MMU
+ 	select BUG
+ 	help
+ 	  This option checks for obviously wrong memory regions when
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
