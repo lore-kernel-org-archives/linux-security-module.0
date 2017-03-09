@@ -1,97 +1,46 @@
-From: luto@mit.edu (Andrew Lutomirski)
-Date: Wed, 8 Mar 2017 20:39:55 -0800
-Subject: Compat 32-bit syscall entry from 64-bit task!?
-In-Reply-To: <20170308234154.GA2352@altlinux.org>
-References: <CAObL_7EA-Z8yBbr1+-VW0v8k1okdcMfjRe5LgWo8YL5uvOkXbQ@mail.gmail.com>
-	<201201260032.57937.vda.linux@googlemail.com>
-	<ca17a86f7c88f8884e4ffc9bafbf2dff.squirrel@webmail.greenhost.nl>
-	<201201260209.54513.vda.linux@googlemail.com>
-	<CA+55aFzDZhGoa1TH=RAtjK3Ti3=NPAYvreSxiTxTu3wnu8Z61g@mail.gmail.com>
-	<CAK1hOcNFmG+3NTfQ559T-LkbcmcVfk9eF=JesdOqqj97tJncaw@mail.gmail.com>
-	<20170308234154.GA2352@altlinux.org>
-Message-ID: <CAObL_7GM0n80N7J_DFw_eQyfLyzq+sf4y2AvsCCV88Tb3AwEHA@mail.gmail.com>
+From: yangshukui@huawei.com (yangshukui)
+Date: Thu, 9 Mar 2017 17:03:40 +0800
+Subject: isolate selinux_enforcing
+In-Reply-To: <58736B2E.90201@huawei.com>
+References: <58732BCF.4090908@huawei.com> <58734284.1060504@huawei.com>
+	<b7f75f65-592a-5102-0ac5-4d3aa43f0b55@huawei.com>
+	<58736B2E.90201@huawei.com>
+Message-ID: <58C11A6C.7000408@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Mar 8, 2017 at 3:41 PM, Dmitry V. Levin <ldv@altlinux.org> wrote:
-> Hi,
->
-> On Thu, Jan 26, 2012 at 07:03:43PM +0100, Denys Vlasenko wrote:
->> Hi Linus,
->>
->> On Thu, Jan 26, 2012 at 4:47 AM, Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->> >> Please look at strace source, get_scno() function, where
->> >> it reads syscall no and parameters. Let's see....
->> >> - POWERPC: has 32-bit and 64-bit mode
->> >> - X86_64: has 32-bit and 64-bit mode
->> >> - IA64: has i386-compat mode
->> >> - ARM: has more than one ABI
->> >> - SPARC: has 32-bit and 64-bit mode
->> >>
->> >> Do you want to re-invent a different arch-specific way to report
->> >> syscall type for each of these arches?
->> >
->> > I think an arch-specific one is better than trying to make some
->> > generic one that is messy.
->> >
->> > As you say, many architectures have multiple system call ABIs.
->> >
->> > But they tend to be very *different* issues. They can be about
->> > multiple ABI's, as you mention, and even when they *look* similar
->> > (32-bit vs 64-bit ABI's) they are actually totally different issues.
->> > [skip]
->>
->> I don't have a particular attachment to my solution,
->> and I think we already talk about this problem for
->> far too long.
->>
->> Looks like nobody is _strongly_ opposed to your patch
->> which uses a few bits in eflags to report bitness
->> of the x86 syscall.
->>
->> Lets just do that already. If you commit it to kernel git,
->> I will immediately change strace accordingly.
->
-> Is there any progress with this (or any alternative) solution?
->
-> I see the kernel side has changed a bit, and the strace part
-> is in a better shape than 5 years ago (although I'm biased of course),
-> but I don't see any kernel interface that would allow strace to reliably
-> recognize this 0x80 case.
+I want to use SELinux in system container and only concern the function 
+in the container.
+this system container run in vm and every vm has only one system container.
 
-I am strongly opposed to fudging registers to half-arsedly slightly
-improve the epicly crappy ptrace(2) interface for syscalls.
+How do I use now?
+docker run ... system-contaier /sbin/init
+after init is running ,the following service is also running:
 
-To fix this right, please just add PTRACE_GET_SYSCALL_INFO or similar
-to, in one shot, read out all the syscall details.  This means: arch,
-no, arg0..arg5, and *whether it's entry or exit*.  I propose returning
-this structure:
+#this is the part of service file which will run in container after 
+starting the container.
+...
+semodule -R     #use the policy in container.
+restorecon /     #if needed
+...
 
-struct ptrace_syscall_info {
-  u8 op;  /* 0 for entry, 1 for exit */
-  u8 pad0;
-  u16 pad1;
-  u32 pad2;
-  union {
-    struct seccomp_data syscall_entry;
-    s64 syscall_exit_retval;
-  };
-};
+this method seem to work if host os and the docker images use the same 
+content for rootfs, but if host use
+redhat7 and docker images use centos7, it will deny many normal 
+operations , and this let some host service not work.
 
-because struct seccomp_data already gets this right.  There's plenty
-of opportunity to fine-tune this.  Now it works on all architectures.
+If SELinux is permissive in host and enforcing in container ,it will 
+resolve my problem. Unfortunately,
+there is no namespace for SELinux.
 
-Since struct seccomp_data may be extended in the future, the operation
-should be:
+Isolate SELinux is difficult and it has a lot of work to do, but is 
+easier to isolate selinux_enforcing.
 
-ptrace(PTRACE_GET_SYSCALL_INFO, pid, (void *)sizeof(struct
-ptrace_syscall_info), &info);
+What do you think ?
 
-returns 0 on success and some error code if, for example, the current
-ptrace stop isn't a syscall entry or exit.
+Think you very much.
 
---Andy
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
