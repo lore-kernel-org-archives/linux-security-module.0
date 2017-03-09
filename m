@@ -1,84 +1,129 @@
 From: mathew.j.martineau@linux.intel.com (Mat Martineau)
-Date: Thu,  9 Mar 2017 12:23:05 -0800
-Subject: [PATCH v12 00/10] Make keyring link restrictions accessible from
-	userspace
-Message-ID: <20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
+Date: Thu,  9 Mar 2017 12:23:06 -0800
+Subject: [PATCH v12 01/10] KEYS: Use a typedef for restrict_link function
+	pointers
+In-Reply-To: <20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
+References: <20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
+Message-ID: <20170309202315.15361-2-mathew.j.martineau@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Keyrings recently acquired the ability to validate keys before they are
-linked using kernel internal APIs. This patch set enables configuration
-of restricted keyrings from userspace.
+This pointer type needs to be returned from a lookup function, and
+without a typedef the syntax gets cumbersome.
 
-These patches apply to linux-fs/keys-misc and are also available here:
+Signed-off-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
+---
+ Documentation/security/keys.txt |  5 +----
+ include/linux/key.h             | 16 +++++++---------
+ security/keys/key.c             |  8 ++------
+ security/keys/keyring.c         |  4 +---
+ 4 files changed, 11 insertions(+), 22 deletions(-)
 
-    https://git.kernel.org/cgit/linux/kernel/git/martineau/linux.git/log/?h=keyctl-restrict
-
-v12: Rework the KEYCTL_RESTRICT_KEYRING command to take an additional
-parameter, renamed some functions based on feedback, and dropped an
-unnecessary locking change (patch 1 in previous set).
-
-v11: Configure restrictions using KEYCTL_RESTRICT_KEYRING instead of
-using a keyring payload at creation time. Make the garbage collector
-aware of restrictions.
-
-v10: Fixups from maintainer feedback. Added some missing documentation.
-
-v9: Rebased on linux-fs/keys-misc (v4.9-rc5)
-
-v8: Add option to look for signing keys within the destination keyring.
-Fix a consistency issue with keyring locking and restriction checks.
-
-v7: Rework key restriction payload syntax. Move key-type-specific payload
-parsing to the key-type. Attach more restriction information to keyrings
-(restriction function, data, and data free) so future restrictions are not
-limited to storing a key ID to use for key validation. Validate key before
-using it to verify another key. Modify key type locking model to allow key
-type lookup during keyring creation.
-
-v6: Return error if only restrict_key is supplied, address misc. review
-comments.
-
-v5: Fixed signature bypass problem in patch 3/6
-
-v4: Added userspace restriction options based on builtin keyrings.
-restrict_link_by_signature implementation is no longer modified. Split
-up v3's patch 2/5 to isolate the change to key.h.
-
-v3: Updated commit message for patch 2/5 (restrict_link_by_signature_indirect)
-
-v2: Payload is now preparsed
-
-Mat Martineau (10):
-  KEYS: Use a typedef for restrict_link function pointers
-  KEYS: Split role of the keyring pointer for keyring restrict functions
-  KEYS: Add a key restriction struct
-  KEYS: Use structure to capture key restriction function and data
-  KEYS: Add an optional lookup_restriction hook to key_type
-  KEYS: Consistent ordering for __key_link_begin and restrict check
-  KEYS: Add KEYCTL_RESTRICT_KEYRING
-  KEYS: Add a lookup_restriction function for the asymmetric key type
-  KEYS: Restrict asymmetric key linkage using a specific keychain
-  KEYS: Keyring asymmetric key restrict method with chaining
-
- Documentation/crypto/asymmetric-keys.txt |  51 ++++++++++
- Documentation/security/keys.txt          |  59 ++++++++---
- certs/system_keyring.c                   |  39 ++++++--
- crypto/asymmetric_keys/asymmetric_type.c | 114 ++++++++++++++++++++--
- crypto/asymmetric_keys/restrict.c        | 161 ++++++++++++++++++++++++++++++-
- include/crypto/public_key.h              |  13 ++-
- include/keys/system_keyring.h            |   6 +-
- include/linux/key-type.h                 |   9 ++
- include/linux/key.h                      |  34 ++++---
- include/uapi/linux/keyctl.h              |   1 +
- security/keys/compat.c                   |   4 +
- security/keys/gc.c                       |  11 +++
- security/keys/internal.h                 |   5 +
- security/keys/key.c                      |  46 +++++----
- security/keys/keyctl.c                   |  58 +++++++++++
- security/keys/keyring.c                  | 155 +++++++++++++++++++++++++++--
- 16 files changed, 691 insertions(+), 75 deletions(-)
-
+diff --git a/Documentation/security/keys.txt b/Documentation/security/keys.txt
+index 3849814bfe6d..df695bddc140 100644
+--- a/Documentation/security/keys.txt
++++ b/Documentation/security/keys.txt
+@@ -1032,10 +1032,7 @@ payload contents" for more information.
+ 	struct key *keyring_alloc(const char *description, uid_t uid, gid_t gid,
+ 				  const struct cred *cred,
+ 				  key_perm_t perm,
+-				  int (*restrict_link)(struct key *,
+-						       const struct key_type *,
+-						       unsigned long,
+-						       const union key_payload *),
++				  key_restrict_link_func_t restrict_link,
+ 				  unsigned long flags,
+ 				  struct key *dest);
+ 
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 722914798f37..455171320ffc 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -126,6 +126,10 @@ static inline bool is_key_possessed(const key_ref_t key_ref)
+ 	return (unsigned long) key_ref & 1UL;
+ }
+ 
++typedef int (*key_restrict_link_func_t)(struct key *keyring,
++					const struct key_type *type,
++					const union key_payload *payload);
++
+ /*****************************************************************************/
+ /*
+  * authentication token / access credential / keyring
+@@ -214,9 +218,7 @@ struct key {
+ 	 * overrides this, allowing the kernel to add extra keys without
+ 	 * restriction.
+ 	 */
+-	int (*restrict_link)(struct key *keyring,
+-			     const struct key_type *type,
+-			     const union key_payload *payload);
++	key_restrict_link_func_t restrict_link;
+ };
+ 
+ extern struct key *key_alloc(struct key_type *type,
+@@ -225,9 +227,7 @@ extern struct key *key_alloc(struct key_type *type,
+ 			     const struct cred *cred,
+ 			     key_perm_t perm,
+ 			     unsigned long flags,
+-			     int (*restrict_link)(struct key *,
+-						  const struct key_type *,
+-						  const union key_payload *));
++			     key_restrict_link_func_t restrict_link);
+ 
+ 
+ #define KEY_ALLOC_IN_QUOTA		0x0000	/* add to quota, reject if would overrun */
+@@ -303,9 +303,7 @@ extern struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid
+ 				 const struct cred *cred,
+ 				 key_perm_t perm,
+ 				 unsigned long flags,
+-				 int (*restrict_link)(struct key *,
+-						      const struct key_type *,
+-						      const union key_payload *),
++				 key_restrict_link_func_t restrict_link,
+ 				 struct key *dest);
+ 
+ extern int restrict_link_reject(struct key *keyring,
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 346fbf201c22..4e9138cc89e0 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -225,9 +225,7 @@ static inline void key_alloc_serial(struct key *key)
+ struct key *key_alloc(struct key_type *type, const char *desc,
+ 		      kuid_t uid, kgid_t gid, const struct cred *cred,
+ 		      key_perm_t perm, unsigned long flags,
+-		      int (*restrict_link)(struct key *,
+-					   const struct key_type *,
+-					   const union key_payload *))
++		      key_restrict_link_func_t restrict_link)
+ {
+ 	struct key_user *user = NULL;
+ 	struct key *key;
+@@ -806,9 +804,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 	struct key *keyring, *key = NULL;
+ 	key_ref_t key_ref;
+ 	int ret;
+-	int (*restrict_link)(struct key *,
+-			     const struct key_type *,
+-			     const union key_payload *) = NULL;
++	key_restrict_link_func_t restrict_link = NULL;
+ 
+ 	/* look up the key type to see if it's one of the registered kernel
+ 	 * types */
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index c91e4e0cea08..a7f26fd08f6c 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -492,9 +492,7 @@ static long keyring_read(const struct key *keyring,
+ struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid,
+ 			  const struct cred *cred, key_perm_t perm,
+ 			  unsigned long flags,
+-			  int (*restrict_link)(struct key *,
+-					       const struct key_type *,
+-					       const union key_payload *),
++			  key_restrict_link_func_t restrict_link,
+ 			  struct key *dest)
+ {
+ 	struct key *keyring;
 -- 
 2.12.0
 
