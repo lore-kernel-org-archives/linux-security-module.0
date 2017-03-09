@@ -1,45 +1,26 @@
-From: yangshukui@huawei.com (yangshukui)
-Date: Thu, 9 Mar 2017 17:03:40 +0800
-Subject: isolate selinux_enforcing
-In-Reply-To: <58736B2E.90201@huawei.com>
-References: <58732BCF.4090908@huawei.com> <58734284.1060504@huawei.com>
-	<b7f75f65-592a-5102-0ac5-4d3aa43f0b55@huawei.com>
-	<58736B2E.90201@huawei.com>
-Message-ID: <58C11A6C.7000408@huawei.com>
+From: jmorris@namei.org (James Morris)
+Date: Thu, 9 Mar 2017 22:02:35 +1100 (AEDT)
+Subject: List archive
+Message-ID: <alpine.LRH.2.20.1703092158360.328@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-I want to use SELinux in system container and only concern the function 
-in the container.
-this system container run in vm and every vm has only one system container.
+We've had a long-running problem with the web archives for this list, with 
+gmane going offline and various issues with other archives.
 
-How do I use now?
-docker run ... system-contaier /sbin/init
-after init is running ,the following service is also running:
+So, I've set up a mailman mirror of the list here:
+http://kernsec.org/pipermail/linux-security-module-archive/
 
-#this is the part of service file which will run in container after 
-starting the container.
-...
-semodule -R     #use the policy in container.
-restorecon /     #if needed
-...
+It's not something you can subscribe to (although if you find a way, let 
+me know because that is a bug), it's just for archiving.
 
-this method seem to work if host os and the docker images use the same 
-content for rootfs, but if host use
-redhat7 and docker images use centos7, it will deny many normal 
-operations , and this let some host service not work.
+I'll see how it runs for a few days before publicizing it more widely.
 
-If SELinux is permissive in host and enforcing in container ,it will 
-resolve my problem. Unfortunately,
-there is no namespace for SELinux.
 
-Isolate SELinux is difficult and it has a lot of work to do, but is 
-easier to isolate selinux_enforcing.
-
-What do you think ?
-
-Think you very much.
-
+- James
+-- 
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
