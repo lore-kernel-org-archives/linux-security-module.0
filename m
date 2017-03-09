@@ -1,91 +1,69 @@
 From: mathew.j.martineau@linux.intel.com (Mat Martineau)
-Date: Thu,  9 Mar 2017 12:23:11 -0800
-Subject: [PATCH v12 06/10] KEYS: Consistent ordering for __key_link_begin and
-	restrict check
+Date: Thu,  9 Mar 2017 12:23:10 -0800
+Subject: [PATCH v12 05/10] KEYS: Add an optional lookup_restriction hook to
+	key_type
 In-Reply-To: <20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
 References: <20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
-Message-ID: <20170309202315.15361-7-mathew.j.martineau@linux.intel.com>
+Message-ID: <20170309202315.15361-6-mathew.j.martineau@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The keyring restrict callback was sometimes called before
-__key_link_begin and sometimes after, which meant that the keyring
-semaphores were not always held during the restrict callback.
-
-If the semaphores are consistently acquired before checking link
-restrictions, keyring contents cannot be changed after the restrict
-check is complete but before the evaluated key is linked to the keyring.
+The restrict_link functions used to validate keys as they are linked
+to a keyring can be associated with specific key types.  Each key type
+may be loaded (or not) at runtime, so lookup of restrict_link
+functions needs to be part of the key type implementation to ensure
+that the requested keys can be examined.
 
 Signed-off-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
 ---
- security/keys/key.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ Documentation/security/keys.txt | 9 +++++++++
+ include/linux/key-type.h        | 9 +++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 488adf2b6ad4..989ec35c1c48 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -500,21 +500,23 @@ int key_instantiate_and_link(struct key *key,
- 	}
+diff --git a/Documentation/security/keys.txt b/Documentation/security/keys.txt
+index a31b7af8f5cf..18d54fbc9129 100644
+--- a/Documentation/security/keys.txt
++++ b/Documentation/security/keys.txt
+@@ -1433,6 +1433,15 @@ The structure has a number of fields, some of which are mandatory:
+      	 The authorisation key.
  
- 	if (keyring) {
-+		ret = __key_link_begin(keyring, &key->index_key, &edit);
-+		if (ret < 0)
-+			goto error;
+ 
++ (*) struct key_restriction *(*lookup_restriction)(const char *params);
 +
- 		if (keyring->restrict_link && keyring->restrict_link->check) {
- 			struct key_restriction *keyres = keyring->restrict_link;
- 
- 			ret = keyres->check(keyring, key->type, &prep.payload,
- 					    keyres->data);
- 			if (ret < 0)
--				goto error;
-+				goto error_link_end;
- 		}
--		ret = __key_link_begin(keyring, &key->index_key, &edit);
--		if (ret < 0)
--			goto error;
- 	}
- 
- 	ret = __key_instantiate_and_link(key, &prep, keyring, authkey, &edit);
- 
-+error_link_end:
- 	if (keyring)
- 		__key_link_end(keyring, &key->index_key, edit);
- 
-@@ -855,21 +857,21 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 	}
- 	index_key.desc_len = strlen(index_key.description);
- 
-+	ret = __key_link_begin(keyring, &index_key, &edit);
-+	if (ret < 0) {
-+		key_ref = ERR_PTR(ret);
-+		goto error_free_prep;
-+	}
++     This optional method is used to enable userspace configuration of keyring
++     restrictions. The restriction parameter string (not including the key type
++     name) is passed in, and this method returns a pointer to a key_restriction
++     structure containing the relevant functions and data to evaluate each
++     attempted key link operation. If there is no match, -EINVAL is returned.
 +
- 	if (restrict_link && restrict_link->check) {
- 		ret = restrict_link->check(keyring, index_key.type,
- 					   &prep.payload, restrict_link->data);
- 		if (ret < 0) {
- 			key_ref = ERR_PTR(ret);
--			goto error_free_prep;
-+			goto error_link_end;
- 		}
- 	}
++
+ ============================
+ REQUEST-KEY CALLBACK SERVICE
+ ============================
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index eaee981c5558..0a0b4c61e829 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -147,6 +147,15 @@ struct key_type {
+ 	 */
+ 	request_key_actor_t request_key;
  
--	ret = __key_link_begin(keyring, &index_key, &edit);
--	if (ret < 0) {
--		key_ref = ERR_PTR(ret);
--		goto error_free_prep;
--	}
--
- 	/* if we're going to allocate a new key, we're going to have
- 	 * to modify the keyring */
- 	ret = key_permission(keyring_ref, KEY_NEED_WRITE);
++	/* Look up a keyring access restriction (optional)
++	 *
++	 * - The caller must hold a read lock on the key type's semaphore
++	 * - NULL is a valid return value (meaning the requested restriction
++	 *   is known but will never block addition of a key)
++	 * - should return -EINVAL if the restriction is unknown
++	 */
++	struct key_restriction *(*lookup_restriction)(const char *params);
++
+ 	/* internal fields */
+ 	struct list_head	link;		/* link in types list */
+ 	struct lock_class_key	lock_class;	/* key->sem lock class */
 -- 
 2.12.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
