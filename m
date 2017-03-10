@@ -1,56 +1,71 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 9 Mar 2017 13:31:08 -0800
-Subject: [PATCH v3] security/Kconfig: further restrict HARDENED_USERCOPY
-In-Reply-To: <1489094389-28007-1-git-send-email-tycho@docker.com>
-References: <1489094389-28007-1-git-send-email-tycho@docker.com>
-Message-ID: <CAGXu5j+7qu8R6+pMYHTG-MbtkN+xBSympnmFLQii-6M29BW52w@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 9 Mar 2017 19:05:04 -0500
+Subject: isolate selinux_enforcing
+In-Reply-To: <87innidvko.fsf@xmission.com>
+References: <58732BCF.4090908@huawei.com> <58734284.1060504@huawei.com>
+	<b7f75f65-592a-5102-0ac5-4d3aa43f0b55@huawei.com>
+	<58736B2E.90201@huawei.com> <58C11A6C.7000408@huawei.com>
+	<347f63b5-c274-c7bc-55f7-f6304d31418a@schaufler-ca.com>
+	<87innidvko.fsf@xmission.com>
+Message-ID: <CAHC9VhQOno3O32QRX9wYwAXzjaxMR7pBNK3bsdQ8Xqq_9SmBzA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 9, 2017 at 1:19 PM, Tycho Andersen <tycho@docker.com> wrote:
-> It doesn't make sense to have HARDENED_USERCOPY when either /dev/kmem is
-> enabled or /dev/mem can be used to read kernel memory (i.e.
-> !STRICT_DEVMEM).
+On Thu, Mar 9, 2017 at 3:49 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Casey Schaufler <casey@schaufler-ca.com> writes:
 >
-> v2: add !MMU depend as well
-> v3: drop !MMU, s/ARCH_HAS_DEVMEM_IS_ALLOWED/DEVMEM, which makes the above
->     commit message actually match the logic again
+>> On 3/9/2017 1:03 AM, yangshukui wrote:
+>>> I want to use SELinux in system container and only concern the function in the container.
+>>> this system container run in vm and every vm has only one system container.
+>>>
+>>> How do I use now?
+>>> docker run ... system-contaier /sbin/init
+>>> after init is running ,the following service is also running:
+>>>
+>>> #this is the part of service file which will run in container after starting the container.
+>>> ..
+>>> semodule -R     #use the policy in container.
+>>> restorecon /     #if needed
+>>> ..
+>>>
+>>> this method seem to work if host os and the docker images use the same content for rootfs, but if host use
+>>> redhat7 and docker images use centos7, it will deny many normal operations , and this let some host service not work.
+>>>
+>>> If SELinux is permissive in host and enforcing in container ,it will resolve my problem. Unfortunately,
+>>> there is no namespace for SELinux.
 >
-> Signed-off-by: Tycho Andersen <tycho@docker.com>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: James Morris <james.l.morris@oracle.com>
-
-Awesome, thanks! I'll add this to the usercopy tree.
-
--Kees
-
-> ---
->  security/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
+> This is mostly a SELinux problem.
 >
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 3ff1bf9..4619cee 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -142,6 +142,8 @@ config HARDENED_USERCOPY
->         bool "Harden memory copies between kernel and userspace"
->         depends on HAVE_ARCH_HARDENED_USERCOPY
->         depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
-> +       depends on !DEVKMEM
-> +       depends on !DEVMEM || STRICT_DEVMEM
->         select BUG
->         help
->           This option checks for obviously wrong memory regions when
-> --
-> 2.7.4
+>> The LSM infrastructure is essentially a set of lists.
+>> These lists are rooted globally, but there's no reason*
+>> they couldn't be rooted in a namespace. That would give
+>> each namespace the option of using whatever security
+>> scheme was deemed appropriate. There are a number of
+>> issues, such as namespacing policy, that would have to
+>> be addressed, but the mechanism could work fine. I would
+>> look at patches.
 >
+>>
+>> ---
+>> * Other than the sheer insanity of making security
+>>   claims about such a system. I would not expect that
+>>   minor issue to slow demand or deployment any more
+>>   than it has in the past.
+>
+> I would tend to insist that the container local policy stacks inside the
+> global policy.  So that at the least the global security claims would
+> not be reduced.
 
-
+My current thinking is that namespacing is best left to the individual
+LSMs, as it is unlikely we will all want to solve it the same way.
+With SELinux we already have some basic support for what Eric
+describes via bounded domains, but that alone isn't likely to solve
+SELinux inside containers in a sense that most would expect; for that
+you will need what Stephen already described.
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
