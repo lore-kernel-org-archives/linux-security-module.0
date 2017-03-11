@@ -1,26 +1,32 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Fri, 10 Mar 2017 17:27:09 -0700
-Subject: [PATCH] tpm_crb: request and relinquish locality 0
-In-Reply-To: <20170310235802.30765-1-jarkko.sakkinen@linux.intel.com>
-References: <20170310235802.30765-1-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20170311002709.GA14174@obsidianresearch.com>
+From: jmorris@namei.org (James Morris)
+Date: Sat, 11 Mar 2017 12:05:30 +1100 (AEDT)
+Subject: [PATCH] fs: switch order of CAP_DAC_OVERRIDE and
+	CAP_DAC_READ_SEARCH checks
+In-Reply-To: <1489166058-11789-1-git-send-email-sds@tycho.nsa.gov>
+References: <1489166058-11789-1-git-send-email-sds@tycho.nsa.gov>
+Message-ID: <alpine.LRH.2.20.1703111205200.20298@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Mar 11, 2017 at 01:58:00AM +0200, Jarkko Sakkinen wrote:
-> Added two new callbacks to struct tpm_class_ops:
+On Fri, 10 Mar 2017, Stephen Smalley wrote:
+
+> generic_permission() presently checks CAP_DAC_OVERRIDE prior to
+> CAP_DAC_READ_SEARCH.  This can cause misleading audit messages when
+> using a LSM such as SELinux or AppArmor, since CAP_DAC_OVERRIDE
+> may not be required for the operation.  Flip the order of the
+> tests so that CAP_DAC_OVERRIDE is only checked when required for
+> the operation.
 > 
-> - request_locality
-> - relinquish_locality
-> 
-> These are called before sending and receiving data from the TPM.
+> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-If we are going to add new ops, I think we should also adjust the
-existing drivers to use this mechanism as well?
 
-eg tis just calls its request_locality as the first thing in send..
+Acked-by: James Morris <james.l.morris@oracle.com>
 
-Jason
+
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
