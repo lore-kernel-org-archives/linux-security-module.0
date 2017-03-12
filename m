@@ -1,209 +1,211 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 11 Mar 2017 15:02:14 +0200
-Subject: [PATCH v2] tpm_crb: request and relinquish locality 0
-Message-ID: <20170311130216.21419-1-jarkko.sakkinen@linux.intel.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sun, 12 Mar 2017 13:35:09 +0900
+Subject: [PATCH] LSM: Revive security_task_alloc() hook and per "struct
+	task_struct" security blob.
+Message-ID: <1489293309-41929-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Added two new callbacks to struct tpm_class_ops:
+We switched from "struct task_struct"->security to "struct cred"->security
+in Linux 2.6.29. But not all LSM modules were happy with that change.
+TOMOYO LSM module is an example which want to use per "struct task_struct"
+security blob, for TOMOYO's security context is defined based on "struct
+task_struct" rather than "struct cred". AppArmor LSM module is another
+example which want to use it, for AppArmor is currently abusing the cred
+a little bit to store the change_hat and setexeccon info. Although
+security_task_free() hook was revived in Linux 3.4 because Yama LSM module
+wanted to release per "struct task_struct" security blob,
+security_task_alloc() hook and "struct task_struct"->security field were
+not revived. Nowadays, we are getting proposals of lightweight LSM modules
+which want to use per "struct task_struct" security blob. PTAGS LSM module
+and CaitSith LSM module which are currently under proposal for inclusion
+also want to use it. Therefore, it will be time to revive
+security_task_alloc() hook and "struct task_struct"->security field.
 
-- request_locality
-- relinquish_locality
+We are already allowing multiple concurrent LSM modules (up to one fully
+armored module which uses "struct cred"->security field or exclusive hooks
+like security_xfrm_state_pol_flow_match(), plus unlimited number of
+lightweight modules which do not use "struct cred"->security nor exclusive
+hooks) as long as they are built into the kernel. But this patch does not
+implement variable length "struct task_struct"->security field which will
+become needed when multiple LSM modules want to use "struct task_struct"->
+security field. Although it won't be difficult to implement variable length
+"struct task_struct"->security field, let's think about it after we merged
+this patch.
 
-These are called before sending and receiving data from the TPM.  We
-update also tpm_tis_core to use these callbacks. Small modification to
-request_locality() is done so that it returns -EBUSY instead of locality
-number when check_locality() fails.
-
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: John Johansen <john.johansen@canonical.com>
+Tested-by: Djalal Harouni <tixxdz@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Jos? Bollo <jobol@nonadev.net>
 ---
- drivers/char/tpm/tpm-interface.c |  9 +++++++++
- drivers/char/tpm/tpm_crb.c       | 41 +++++++++++++++++++++++++++++++++++++++-
- drivers/char/tpm/tpm_tis_core.c  | 12 ++++--------
- include/linux/tpm.h              |  3 ++-
- 4 files changed, 55 insertions(+), 10 deletions(-)
+ include/linux/init_task.h | 7 +++++++
+ include/linux/lsm_hooks.h | 9 ++++++++-
+ include/linux/sched.h     | 4 ++++
+ include/linux/security.h  | 7 +++++++
+ kernel/fork.c             | 7 ++++++-
+ security/security.c       | 6 ++++++
+ 6 files changed, 38 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index e38c792..9c56581 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -407,6 +407,12 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	if (chip->dev.parent)
- 		pm_runtime_get_sync(chip->dev.parent);
+diff --git a/include/linux/init_task.h b/include/linux/init_task.h
+index 91d9049..926f2f5 100644
+--- a/include/linux/init_task.h
++++ b/include/linux/init_task.h
+@@ -210,6 +210,12 @@
+ # define INIT_TASK_TI(tsk)
+ #endif
  
-+	if (chip->ops->request_locality)  {
-+		rc = chip->ops->request_locality(chip, 0);
-+		if (rc)
-+			goto out;
-+	}
++#ifdef CONFIG_SECURITY
++#define INIT_TASK_SECURITY .security = NULL,
++#else
++#define INIT_TASK_SECURITY
++#endif
 +
- 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
- 	if (rc)
- 		goto out;
-@@ -466,6 +472,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ /*
+  *  INIT_TASK is used to set up the first task table, touch at
+  * your own risk!. Base=0, limit=0x1fffff (=2MB)
+@@ -288,6 +294,7 @@
+ 	INIT_VTIME(tsk)							\
+ 	INIT_NUMA_BALANCING(tsk)					\
+ 	INIT_KASAN(tsk)							\
++	INIT_TASK_SECURITY						\
+ }
  
- out:
-+	if (chip->ops->relinquish_locality)
-+		chip->ops->relinquish_locality(chip, 0, false);
-+
- 	if (chip->dev.parent)
- 		pm_runtime_put_sync(chip->dev.parent);
  
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 3245618..15b22a0 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -34,6 +34,15 @@ enum crb_defaults {
- 	CRB_ACPI_START_INDEX = 1,
- };
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 1aa6333..a4193c3 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -533,8 +533,13 @@
+  *	manual page for definitions of the @clone_flags.
+  *	@clone_flags contains the flags indicating what should be shared.
+  *	Return 0 if permission is granted.
++ * @task_alloc:
++ *      @task task being allocated.
++ *      @clone_flags contains the flags indicating what should be shared.
++ *      Handle allocation of task-related resources.
++ *      Returns a zero on success, negative values on failure.
+  * @task_free:
+- *	@task task being freed
++ *	@task task about to be freed.
+  *	Handle release of task-related resources. (Note that this can be called
+  *	from interrupt context.)
+  * @cred_alloc_blank:
+@@ -1482,6 +1487,7 @@
+ 	int (*file_open)(struct file *file, const struct cred *cred);
  
-+enum crb_loc_ctrl {
-+	CRB_LOC_CTRL_REQUEST_ACCESS	= BIT(0),
-+	CRB_LOC_CTRL_RELINQUISH		= BIT(1),
-+};
-+
-+enum crb_loc_state {
-+	CRB_LOC_STATE_LOC_ASSIGNED	= BIT(1),
-+};
-+
- enum crb_ctrl_req {
- 	CRB_CTRL_REQ_CMD_READY	= BIT(0),
- 	CRB_CTRL_REQ_GO_IDLE	= BIT(1),
-@@ -172,6 +181,35 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
+ 	int (*task_create)(unsigned long clone_flags);
++	int (*task_alloc)(struct task_struct *task, unsigned long clone_flags);
+ 	void (*task_free)(struct task_struct *task);
+ 	int (*cred_alloc_blank)(struct cred *cred, gfp_t gfp);
+ 	void (*cred_free)(struct cred *cred);
+@@ -1748,6 +1754,7 @@ struct security_hook_heads {
+ 	struct list_head file_receive;
+ 	struct list_head file_open;
+ 	struct list_head task_create;
++	struct list_head task_alloc;
+ 	struct list_head task_free;
+ 	struct list_head cred_alloc_blank;
+ 	struct list_head cred_free;
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index d67eee8..71b8df3 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1038,6 +1038,10 @@ struct task_struct {
+ 	/* A live task holds one reference: */
+ 	atomic_t			stack_refcount;
+ #endif
++#ifdef CONFIG_SECURITY
++	/* Used by LSM modules for access restriction: */
++	void				*security;
++#endif
+ 	/* CPU-specific state of this task: */
+ 	struct thread_struct		thread;
+ 
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 97df7ba..af675b5 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -308,6 +308,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
+ int security_file_receive(struct file *file);
+ int security_file_open(struct file *file, const struct cred *cred);
+ int security_task_create(unsigned long clone_flags);
++int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
+ void security_task_free(struct task_struct *task);
+ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+ void security_cred_free(struct cred *cred);
+@@ -861,6 +862,12 @@ static inline int security_task_create(unsigned long clone_flags)
  	return 0;
  }
  
-+static int crb_request_locality(struct tpm_chip *chip, int loc)
++static inline int security_task_alloc(struct task_struct *task,
++				      unsigned long clone_flags)
 +{
-+	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-+
-+	if (!priv->regs_h)
-+		return 0;
-+
-+	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
-+	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state,
-+				 CRB_LOC_STATE_LOC_ASSIGNED, /* mask */
-+				 CRB_LOC_STATE_LOC_ASSIGNED, /* value */
-+				 TPM2_TIMEOUT_C)) {
-+		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
-+		return -ETIME;
-+	}
-+
 +	return 0;
 +}
 +
-+static void crb_relinquish_locality(struct tpm_chip *chip, int loc, bool force)
+ static inline void security_task_free(struct task_struct *task)
+ { }
+ 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 6c463c80..3d32513 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1679,9 +1679,12 @@ static __latent_entropy struct task_struct *copy_process(
+ 		goto bad_fork_cleanup_perf;
+ 	/* copy all the process information */
+ 	shm_init_task(p);
+-	retval = copy_semundo(clone_flags, p);
++	retval = security_task_alloc(p, clone_flags);
+ 	if (retval)
+ 		goto bad_fork_cleanup_audit;
++	retval = copy_semundo(clone_flags, p);
++	if (retval)
++		goto bad_fork_cleanup_security;
+ 	retval = copy_files(clone_flags, p);
+ 	if (retval)
+ 		goto bad_fork_cleanup_semundo;
+@@ -1903,6 +1906,8 @@ static __latent_entropy struct task_struct *copy_process(
+ 	exit_files(p); /* blocking */
+ bad_fork_cleanup_semundo:
+ 	exit_sem(p);
++bad_fork_cleanup_security:
++	security_task_free(p);
+ bad_fork_cleanup_audit:
+ 	audit_free(p);
+ bad_fork_cleanup_perf:
+diff --git a/security/security.c b/security/security.c
+index d6d18a3..5b6cdd0 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -930,6 +930,11 @@ int security_task_create(unsigned long clone_flags)
+ 	return call_int_hook(task_create, 0, clone_flags);
+ }
+ 
++int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
 +{
-+	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-+
-+	if (!priv->regs_h)
-+		return;
-+
-+	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
++	return call_int_hook(task_alloc, 0, task, clone_flags);
 +}
 +
- static u8 crb_status(struct tpm_chip *chip)
+ void security_task_free(struct task_struct *task)
  {
- 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-@@ -198,7 +236,6 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 
- 	memcpy_fromio(buf, priv->rsp, 6);
- 	expected = be32_to_cpup((__be32 *) &buf[2]);
--
- 	if (expected > count)
- 		return -EIO;
- 
-@@ -279,6 +316,8 @@ static const struct tpm_class_ops tpm_crb = {
- 	.send = crb_send,
- 	.cancel = crb_cancel,
- 	.req_canceled = crb_req_canceled,
-+	.request_locality = crb_request_locality,
-+	.relinquish_locality = crb_relinquish_locality,
- 	.req_complete_mask = CRB_DRV_STS_COMPLETE,
- 	.req_complete_val = CRB_DRV_STS_COMPLETE,
- };
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index fc0e9a2..c3cbe24 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -73,7 +73,7 @@ static int check_locality(struct tpm_chip *chip, int l)
- 	return -1;
- }
- 
--static void release_locality(struct tpm_chip *chip, int l, int force)
-+static void release_locality(struct tpm_chip *chip, int l, bool force)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc;
-@@ -97,7 +97,7 @@ static int request_locality(struct tpm_chip *chip, int l)
- 	long rc;
- 
- 	if (check_locality(chip, l) >= 0)
--		return l;
-+		return -EBUSY;
- 
- 	rc = tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_REQUEST_USE);
- 	if (rc < 0)
-@@ -252,7 +252,6 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 
- out:
- 	tpm_tis_ready(chip);
--	release_locality(chip, priv->locality, 0);
- 	return size;
- }
- 
-@@ -268,9 +267,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- 	size_t count = 0;
- 	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
- 
--	if (request_locality(chip, 0) < 0)
--		return -EBUSY;
--
- 	status = tpm_tis_status(chip);
- 	if ((status & TPM_STS_COMMAND_READY) == 0) {
- 		tpm_tis_ready(chip);
-@@ -329,7 +325,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- 
- out_err:
- 	tpm_tis_ready(chip);
--	release_locality(chip, priv->locality, 0);
- 	return rc;
- }
- 
-@@ -390,7 +385,6 @@ static int tpm_tis_send_main(struct tpm_chip *chip, u8 *buf, size_t len)
- 	return len;
- out_err:
- 	tpm_tis_ready(chip);
--	release_locality(chip, priv->locality, 0);
- 	return rc;
- }
- 
-@@ -681,6 +675,8 @@ static const struct tpm_class_ops tpm_tis = {
- 	.send = tpm_tis_send,
- 	.cancel = tpm_tis_ready,
- 	.update_timeouts = tpm_tis_update_timeouts,
-+	.request_locality = request_locality,
-+	.relinquish_locality = release_locality,
- 	.req_complete_mask = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_complete_val = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_canceled = tpm_tis_req_canceled,
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index da158f0..65e05f9 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -48,7 +48,8 @@ struct tpm_class_ops {
- 	u8 (*status) (struct tpm_chip *chip);
- 	bool (*update_timeouts)(struct tpm_chip *chip,
- 				unsigned long *timeout_cap);
--
-+	int (*request_locality)(struct tpm_chip *chip, int loc);
-+	void (*relinquish_locality)(struct tpm_chip *chip, int loc, bool force);
- };
- 
- #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+ 	call_void_hook(task_free, task);
+@@ -1770,6 +1775,7 @@ struct security_hook_heads security_hook_heads __lsm_ro_after_init = {
+ 	.file_receive =	LIST_HEAD_INIT(security_hook_heads.file_receive),
+ 	.file_open =	LIST_HEAD_INIT(security_hook_heads.file_open),
+ 	.task_create =	LIST_HEAD_INIT(security_hook_heads.task_create),
++	.task_alloc =	LIST_HEAD_INIT(security_hook_heads.task_alloc),
+ 	.task_free =	LIST_HEAD_INIT(security_hook_heads.task_free),
+ 	.cred_alloc_blank =
+ 		LIST_HEAD_INIT(security_hook_heads.cred_alloc_blank),
 -- 
-2.9.3
+1.8.3.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
