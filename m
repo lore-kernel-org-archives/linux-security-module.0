@@ -1,357 +1,219 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Sun, 12 Mar 2017 13:41:25 +0900
-Subject: [PATCH] TOMOYO: Switch from per "struct cred" blob to per "struct
-	task_struct" blob.
-Message-ID: <1489293685-53257-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+From: jsnitsel@redhat.com (Jerry Snitselaar)
+Date: Sun, 12 Mar 2017 12:47:58 -0700
+Subject: [PATCH v2] tpm_crb: request and relinquish locality 0
+In-Reply-To: <20170311130216.21419-1-jarkko.sakkinen@linux.intel.com>
+References: <20170311130216.21419-1-jarkko.sakkinen@linux.intel.com>
+Message-ID: <87tw6ys2dt.fsf@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Now that security_task_alloc() hook and "struct task_struct"->security
-field are revived, switch TOMOYO to use them because TOMOYO's security
-context is defined based on "struct task_struct" rather than "struct cred".
 
-By applying this patch, TOMOYO no longer uses "struct cred"->security
-which means that TOMOYO is ready for running with other fully armored LSM
-modules which use "struct cred"->security field.
+Jarkko Sakkinen @ 2017-03-11 13:02 GMT:
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/tomoyo/common.h        |  18 ++++++-
- security/tomoyo/domain.c        |   8 ++-
- security/tomoyo/gc.c            |   6 +--
- security/tomoyo/securityfs_if.c |  22 ++++----
- security/tomoyo/tomoyo.c        | 112 +++++++++++++++++++---------------------
- 5 files changed, 86 insertions(+), 80 deletions(-)
+> Added two new callbacks to struct tpm_class_ops:
+>
+> - request_locality
+> - relinquish_locality
+>
+> These are called before sending and receiving data from the TPM.  We
+> update also tpm_tis_core to use these callbacks. Small modification to
+> request_locality() is done so that it returns -EBUSY instead of locality
+> number when check_locality() fails.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c |  9 +++++++++
+>  drivers/char/tpm/tpm_crb.c       | 41 +++++++++++++++++++++++++++++++++++++++-
+>  drivers/char/tpm/tpm_tis_core.c  | 12 ++++--------
+>  include/linux/tpm.h              |  3 ++-
+>  4 files changed, 55 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index e38c792..9c56581 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -407,6 +407,12 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	if (chip->dev.parent)
+>  		pm_runtime_get_sync(chip->dev.parent);
+>  
+> +	if (chip->ops->request_locality)  {
+> +		rc = chip->ops->request_locality(chip, 0);
+> +		if (rc)
+> +			goto out;
+> +	}
+> +
+>  	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+>  	if (rc)
+>  		goto out;
+> @@ -466,6 +472,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+>  
+>  out:
+> +	if (chip->ops->relinquish_locality)
+> +		chip->ops->relinquish_locality(chip, 0, false);
+> +
+>  	if (chip->dev.parent)
+>  		pm_runtime_put_sync(chip->dev.parent);
+>  
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> index 3245618..15b22a0 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -34,6 +34,15 @@ enum crb_defaults {
+>  	CRB_ACPI_START_INDEX = 1,
+>  };
+>  
+> +enum crb_loc_ctrl {
+> +	CRB_LOC_CTRL_REQUEST_ACCESS	= BIT(0),
+> +	CRB_LOC_CTRL_RELINQUISH		= BIT(1),
+> +};
+> +
+> +enum crb_loc_state {
+> +	CRB_LOC_STATE_LOC_ASSIGNED	= BIT(1),
+> +};
+> +
+>  enum crb_ctrl_req {
+>  	CRB_CTRL_REQ_CMD_READY	= BIT(0),
+>  	CRB_CTRL_REQ_GO_IDLE	= BIT(1),
+> @@ -172,6 +181,35 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
+>  	return 0;
+>  }
+>  
+> +static int crb_request_locality(struct tpm_chip *chip, int loc)
+> +{
+> +	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+> +
+> +	if (!priv->regs_h)
+> +		return 0;
+> +
+> +	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
+> +	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state,
+> +				 CRB_LOC_STATE_LOC_ASSIGNED, /* mask */
+> +				 CRB_LOC_STATE_LOC_ASSIGNED, /* value */
 
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 361e7a2..db476e1 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -911,6 +911,11 @@ struct tomoyo_policy_namespace {
- 	const char *name;
- };
- 
-+struct tomoyo_security {
-+	struct tomoyo_domain_info *tomoyo_domain_info;
-+	struct tomoyo_domain_info *saved_domain_info; /* Maybe NULL. */
-+};
-+
- /********** Function prototypes. **********/
- 
- bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
-@@ -1202,7 +1207,16 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
-  */
- static inline struct tomoyo_domain_info *tomoyo_domain(void)
- {
--	return current_cred()->security;
-+	struct tomoyo_security *ts = current->security;
-+
-+	if (ts->saved_domain_info && !current->in_execve) {
-+		struct tomoyo_domain_info *domain = ts->tomoyo_domain_info;
-+
-+		ts->tomoyo_domain_info = ts->saved_domain_info;
-+		ts->saved_domain_info = NULL;
-+		atomic_dec(&domain->users);
-+	}
-+	return ts->tomoyo_domain_info;
- }
- 
- /**
-@@ -1215,7 +1229,7 @@ static inline struct tomoyo_domain_info *tomoyo_domain(void)
- static inline struct tomoyo_domain_info *tomoyo_real_domain(struct task_struct
- 							    *task)
- {
--	return task_cred_xxx(task, security);
-+	return ((struct tomoyo_security *) task->security)->tomoyo_domain_info;
- }
- 
- /**
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index 00d223e..9f981d8 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -677,6 +677,7 @@ static int tomoyo_environ(struct tomoyo_execve *ee)
-  */
- int tomoyo_find_next_domain(struct linux_binprm *bprm)
- {
-+	struct tomoyo_security *ts = current->security;
- 	struct tomoyo_domain_info *old_domain = tomoyo_domain();
- 	struct tomoyo_domain_info *domain = NULL;
- 	const char *original_name = bprm->filename;
-@@ -841,8 +842,11 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
- 	if (!domain)
- 		domain = old_domain;
- 	/* Update reference count on "struct tomoyo_domain_info". */
--	atomic_inc(&domain->users);
--	bprm->cred->security = domain;
-+	if (domain != ts->tomoyo_domain_info) {
-+		atomic_inc(&domain->users);
-+		ts->saved_domain_info =	ts->tomoyo_domain_info;
-+		ts->tomoyo_domain_info = domain;
-+	}
- 	kfree(exename.name);
- 	if (!retval) {
- 		ee->r.domain = domain;
-diff --git a/security/tomoyo/gc.c b/security/tomoyo/gc.c
-index 540bc29..75ae368 100644
---- a/security/tomoyo/gc.c
-+++ b/security/tomoyo/gc.c
-@@ -248,8 +248,8 @@ static inline void tomoyo_del_domain(struct list_head *element)
- 	struct tomoyo_acl_info *tmp;
- 	/*
- 	 * Since this domain is referenced from neither
--	 * "struct tomoyo_io_buffer" nor "struct cred"->security, we can delete
--	 * elements without checking for is_deleted flag.
-+	 * "struct tomoyo_io_buffer" nor "struct tomoyo_security",
-+	 * we can delete elements without checking for is_deleted flag.
- 	 */
- 	list_for_each_entry_safe(acl, tmp, &domain->acl_info_list, list) {
- 		tomoyo_del_acl(&acl->list);
-@@ -433,7 +433,7 @@ static void tomoyo_try_to_gc(const enum tomoyo_policy_id type,
- 		break;
- 	case TOMOYO_ID_DOMAIN:
- 		/*
--		 * Don't kfree() until all "struct cred"->security forget this
-+		 * Don't kfree() until all "struct tomoyo_security" forget this
- 		 * element.
- 		 */
- 		if (atomic_read(&container_of
-diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
-index 06ab41b1..988261a 100644
---- a/security/tomoyo/securityfs_if.c
-+++ b/security/tomoyo/securityfs_if.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/security.h>
-+#include <linux/lsm_hooks.h> /* security_module_enable() */
- #include "common.h"
- 
- /**
-@@ -66,18 +67,13 @@ static ssize_t tomoyo_write_self(struct file *file, const char __user *buf,
- 			if (!new_domain) {
- 				error = -ENOENT;
- 			} else {
--				struct cred *cred = prepare_creds();
--				if (!cred) {
--					error = -ENOMEM;
--				} else {
--					struct tomoyo_domain_info *old_domain =
--						cred->security;
--					cred->security = new_domain;
--					atomic_inc(&new_domain->users);
--					atomic_dec(&old_domain->users);
--					commit_creds(cred);
--					error = 0;
--				}
-+				struct tomoyo_domain_info *old_domain =
-+					tomoyo_domain();
-+				((struct tomoyo_security *) current->security)
-+					->tomoyo_domain_info = new_domain;
-+				atomic_inc(&new_domain->users);
-+				atomic_dec(&old_domain->users);
-+				error = 0;
- 			}
- 		}
- 		tomoyo_read_unlock(idx);
-@@ -236,7 +232,7 @@ static int __init tomoyo_initerface_init(void)
- 	struct dentry *tomoyo_dir;
- 
- 	/* Don't create securityfs entries unless registered. */
--	if (current_cred()->security != &tomoyo_kernel_domain)
-+	if (!security_module_enable("tomoyo"))
- 		return 0;
- 
- 	tomoyo_dir = securityfs_create_dir("tomoyo", NULL);
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index b5fb930..0de150d 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -8,59 +8,42 @@
- #include "common.h"
- 
- /**
-- * tomoyo_cred_alloc_blank - Target for security_cred_alloc_blank().
-+ * tomoyo_task_alloc - Target for security_task_alloc().
-  *
-- * @new: Pointer to "struct cred".
-- * @gfp: Memory allocation flags.
-+ * @task: Pointer to "struct task_struct".
-+ * @clone_flags: Not used.
-  *
-- * Returns 0.
-- */
--static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
--{
--	new->security = NULL;
--	return 0;
--}
--
--/**
-- * tomoyo_cred_prepare - Target for security_prepare_creds().
-- *
-- * @new: Pointer to "struct cred".
-- * @old: Pointer to "struct cred".
-- * @gfp: Memory allocation flags.
-- *
-- * Returns 0.
-+ * Returns 0 on success, negative value otherwise.
-  */
--static int tomoyo_cred_prepare(struct cred *new, const struct cred *old,
--			       gfp_t gfp)
-+static int tomoyo_task_alloc(struct task_struct *task,
-+			     unsigned long clone_flags)
- {
--	struct tomoyo_domain_info *domain = old->security;
--	new->security = domain;
--	if (domain)
--		atomic_inc(&domain->users);
-+	struct tomoyo_security *ts = kzalloc(sizeof(*ts), GFP_KERNEL);
-+	struct tomoyo_domain_info *domain = tomoyo_domain();
-+
-+	if (!ts)
-+		return -ENOMEM;
-+	ts->tomoyo_domain_info = domain;
-+	atomic_inc(&domain->users);
-+	task->security = ts;
- 	return 0;
- }
- 
- /**
-- * tomoyo_cred_transfer - Target for security_transfer_creds().
-+ * tomoyo_task_free - Target for security_task_free().
-  *
-- * @new: Pointer to "struct cred".
-- * @old: Pointer to "struct cred".
-+ * @task: Pointer to "struct task_struct".
-  */
--static void tomoyo_cred_transfer(struct cred *new, const struct cred *old)
-+static void tomoyo_task_free(struct task_struct *task)
- {
--	tomoyo_cred_prepare(new, old, 0);
--}
-+	struct tomoyo_security *ts = task->security;
-+	struct tomoyo_domain_info *domain = ts->tomoyo_domain_info;
- 
--/**
-- * tomoyo_cred_free - Target for security_cred_free().
-- *
-- * @cred: Pointer to "struct cred".
-- */
--static void tomoyo_cred_free(struct cred *cred)
--{
--	struct tomoyo_domain_info *domain = cred->security;
-+	atomic_dec(&domain->users);
-+	domain = ts->saved_domain_info;
- 	if (domain)
- 		atomic_dec(&domain->users);
-+	kfree(ts);
- }
- 
- /**
-@@ -68,7 +51,7 @@ static void tomoyo_cred_free(struct cred *cred)
-  *
-  * @bprm: Pointer to "struct linux_binprm".
-  *
-- * Returns 0 on success, negative value otherwise.
-+ * Returns 0.
-  */
- static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
- {
-@@ -86,19 +69,8 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
- 	if (!tomoyo_policy_loaded)
- 		tomoyo_load_policy(bprm->filename);
- #endif
--	/*
--	 * Release reference to "struct tomoyo_domain_info" stored inside
--	 * "bprm->cred->security". New reference to "struct tomoyo_domain_info"
--	 * stored inside "bprm->cred->security" will be acquired later inside
--	 * tomoyo_find_next_domain().
--	 */
--	atomic_dec(&((struct tomoyo_domain_info *)
--		     bprm->cred->security)->users);
--	/*
--	 * Tell tomoyo_bprm_check_security() is called for the first time of an
--	 * execve operation.
--	 */
--	bprm->cred->security = NULL;
-+	/* Restore and clear saved_domain_info if needed. */
-+	tomoyo_domain();
- 	return 0;
- }
- 
-@@ -111,7 +83,8 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
-  */
- static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
- {
--	struct tomoyo_domain_info *domain = bprm->cred->security;
-+	struct tomoyo_security *ts = current->security;
-+	struct tomoyo_domain_info *domain = ts->saved_domain_info;
- 
- 	/*
- 	 * Execute permission is checked against pathname passed to do_execve()
-@@ -131,6 +104,24 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
- }
- 
- /**
-+ * tomoyo_bprm_check_security - Target for security_bprm_check().
-+ *
-+ * @bprm: Pointer to "struct linux_binprm".
-+ */
-+static void tomoyo_bprm_committed_creds(struct linux_binprm *bprm)
-+{
-+	struct tomoyo_security *ts = current->security;
-+	struct tomoyo_domain_info *domain = ts->saved_domain_info;
-+
-+	/* Clear saved_domain_info if needed. */
-+	if (domain) {
-+		ts->saved_domain_info = NULL;
-+		atomic_dec(&domain->users);
-+	}
-+}
-+
-+
-+/**
-  * tomoyo_inode_getattr - Target for security_inode_getattr().
-  *
-  * @mnt:    Pointer to "struct vfsmount".
-@@ -497,12 +488,11 @@ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
-  * registering TOMOYO.
-  */
- static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
--	LSM_HOOK_INIT(cred_alloc_blank, tomoyo_cred_alloc_blank),
--	LSM_HOOK_INIT(cred_prepare, tomoyo_cred_prepare),
--	LSM_HOOK_INIT(cred_transfer, tomoyo_cred_transfer),
--	LSM_HOOK_INIT(cred_free, tomoyo_cred_free),
-+	LSM_HOOK_INIT(task_alloc, tomoyo_task_alloc),
-+	LSM_HOOK_INIT(task_free, tomoyo_task_free),
- 	LSM_HOOK_INIT(bprm_set_creds, tomoyo_bprm_set_creds),
- 	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
-+	LSM_HOOK_INIT(bprm_committed_creds, tomoyo_bprm_committed_creds),
- 	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
- 	LSM_HOOK_INIT(file_open, tomoyo_file_open),
- 	LSM_HOOK_INIT(path_truncate, tomoyo_path_truncate),
-@@ -537,14 +527,16 @@ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
-  */
- static int __init tomoyo_init(void)
- {
--	struct cred *cred = (struct cred *) current_cred();
-+	static struct tomoyo_security ts = {
-+		.tomoyo_domain_info = &tomoyo_kernel_domain
-+	};
- 
- 	if (!security_module_enable("tomoyo"))
- 		return 0;
- 	/* register ourselves with the security framework */
- 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
- 	printk(KERN_INFO "TOMOYO Linux initialized\n");
--	cred->security = &tomoyo_kernel_domain;
-+	current->security = &ts;
- 	tomoyo_mm_init();
- 	return 0;
- }
--- 
-1.8.3.1
+Should this mask and check bit 7 as well (tpmRegValidSts)? The
+table with the definition in the PTP spec says it indicates whether
+all other bits contain valid values, but the text above it doesn't
+discuss the locAssigned and activeLocality bits with respect to
+tpmRegValidSts, so not completely clear.
+
+> +				 TPM2_TIMEOUT_C)) {
+> +		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
+> +		return -ETIME;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void crb_relinquish_locality(struct tpm_chip *chip, int loc, bool force)
+> +{
+> +	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+> +
+> +	if (!priv->regs_h)
+> +		return;
+> +
+> +	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
+> +}
+> +
+>  static u8 crb_status(struct tpm_chip *chip)
+>  {
+>  	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+> @@ -198,7 +236,6 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>  
+>  	memcpy_fromio(buf, priv->rsp, 6);
+>  	expected = be32_to_cpup((__be32 *) &buf[2]);
+> -
+>  	if (expected > count)
+>  		return -EIO;
+>  
+> @@ -279,6 +316,8 @@ static const struct tpm_class_ops tpm_crb = {
+>  	.send = crb_send,
+>  	.cancel = crb_cancel,
+>  	.req_canceled = crb_req_canceled,
+> +	.request_locality = crb_request_locality,
+> +	.relinquish_locality = crb_relinquish_locality,
+>  	.req_complete_mask = CRB_DRV_STS_COMPLETE,
+>  	.req_complete_val = CRB_DRV_STS_COMPLETE,
+>  };
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index fc0e9a2..c3cbe24 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -73,7 +73,7 @@ static int check_locality(struct tpm_chip *chip, int l)
+>  	return -1;
+>  }
+>  
+> -static void release_locality(struct tpm_chip *chip, int l, int force)
+> +static void release_locality(struct tpm_chip *chip, int l, bool force)
+>  {
+>  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>  	int rc;
+> @@ -97,7 +97,7 @@ static int request_locality(struct tpm_chip *chip, int l)
+>  	long rc;
+>  
+>  	if (check_locality(chip, l) >= 0)
+> -		return l;
+> +		return -EBUSY;
+>  
+>  	rc = tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_REQUEST_USE);
+>  	if (rc < 0)
+> @@ -252,7 +252,6 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>  
+>  out:
+>  	tpm_tis_ready(chip);
+> -	release_locality(chip, priv->locality, 0);
+>  	return size;
+>  }
+>  
+> @@ -268,9 +267,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+>  	size_t count = 0;
+>  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+>  
+> -	if (request_locality(chip, 0) < 0)
+> -		return -EBUSY;
+> -
+>  	status = tpm_tis_status(chip);
+>  	if ((status & TPM_STS_COMMAND_READY) == 0) {
+>  		tpm_tis_ready(chip);
+> @@ -329,7 +325,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+>  
+>  out_err:
+>  	tpm_tis_ready(chip);
+> -	release_locality(chip, priv->locality, 0);
+>  	return rc;
+>  }
+>  
+> @@ -390,7 +385,6 @@ static int tpm_tis_send_main(struct tpm_chip *chip, u8 *buf, size_t len)
+>  	return len;
+>  out_err:
+>  	tpm_tis_ready(chip);
+> -	release_locality(chip, priv->locality, 0);
+>  	return rc;
+>  }
+>  
+> @@ -681,6 +675,8 @@ static const struct tpm_class_ops tpm_tis = {
+>  	.send = tpm_tis_send,
+>  	.cancel = tpm_tis_ready,
+>  	.update_timeouts = tpm_tis_update_timeouts,
+> +	.request_locality = request_locality,
+> +	.relinquish_locality = release_locality,
+>  	.req_complete_mask = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+>  	.req_complete_val = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+>  	.req_canceled = tpm_tis_req_canceled,
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index da158f0..65e05f9 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -48,7 +48,8 @@ struct tpm_class_ops {
+>  	u8 (*status) (struct tpm_chip *chip);
+>  	bool (*update_timeouts)(struct tpm_chip *chip,
+>  				unsigned long *timeout_cap);
+> -
+> +	int (*request_locality)(struct tpm_chip *chip, int loc);
+> +	void (*relinquish_locality)(struct tpm_chip *chip, int loc, bool force);
+>  };
+>  
+>  #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
