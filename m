@@ -1,64 +1,68 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Mon, 13 Mar 2017 10:50:57 -0700
-Subject: [PATCH] apparmor: move task specific domain change info out of
-	cred
-In-Reply-To: <1489425378.4780.2.camel@tycho.nsa.gov>
-References: <1489293309-41929-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<f502734d-a16c-5414-a6bd-ee9b8b40618f@canonical.com>
-	<20170313164710.GA30654@mail.hallyn.com>
-	<3b32053a-0dae-cc77-01bf-b70880c1cc85@canonical.com>
-	<1489425378.4780.2.camel@tycho.nsa.gov>
-Message-ID: <027fcbbe-708f-2bee-a117-05651cbd4125@canonical.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 13 Mar 2017 20:26:04 +0200
+Subject: [tpmdd-devel] [PATCH 2/2] tpm: add sleep only for retry in
+	i2c_nuvoton_write_status()
+In-Reply-To: <1489416862.28954.156.camel@linux.vnet.ibm.com>
+References: <1489171554-6844-1-git-send-email-nayna@linux.vnet.ibm.com>
+	<1489171554-6844-2-git-send-email-nayna@linux.vnet.ibm.com>
+	<1489416862.28954.156.camel@linux.vnet.ibm.com>
+Message-ID: <20170313182604.yhfhbqve2wufa2f4@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 03/13/2017 10:16 AM, Stephen Smalley wrote:
-> On Mon, 2017-03-13 at 10:05 -0700, John Johansen wrote:
->> On 03/13/2017 09:47 AM, Serge E. Hallyn wrote:
->>> Quoting John Johansen (john.johansen at canonical.com):
->>>> Now that security_task_alloc() hook and "struct task_struct"-
->>>>> security
->>>> field are revived, move task specific domain change information
->>>> for
->>>> change_onexec (equiv of setexeccon) and change_hat out of the
->>>> cred
->>>> into a context off of the task_struct.
->>>>
->>>> This cleans up apparmor's use of the cred structure so that it
->>>> only
->>>> carries the reference to current mediation.
->>>>
->>>> Signed-off-by: John Johansen <john.johansen@canonical.com>
->>>
->>> Thanks, John, that helps in compelling a review of the previous
->>> patch :)
->>>
->>> So the task_struct->security pointer is only to store requested
->>> transition profiles right?
->>>
->>
->> correct, well and support information for the transition like the
->> random
->> magic token for change_hat.
+On Mon, Mar 13, 2017 at 10:54:22AM -0400, Mimi Zohar wrote:
+> Hi Jarkko,
 > 
-> Is it really a net win for AA?  You save some space in the per-cred
-> structure (but that was already shared by most tasks, particularly any
-> that are not using change_onexec/change_hat), but won't you end up
-> using more space overall since you will now be allocating space for
-> (onexec, previous, token) for every task, even ones that don't use
-> those operations?
+> On Fri, 2017-03-10 at 13:45 -0500, Nayna Jain wrote:
+> > Currently, there is an unnecessary 1 msec delay added in
+> > i2c_nuvoton_write_status() for the successful case. This 
+> > function is called multiple times during send() and recv(),
+> > which implies adding multiple extra delays for every TPM
+> > operation.
+> > 
+> > This patch calls usleep_range() only if retry is to be done.
+> > 
+> > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> > Cc: stable at vger.kernel.org (linux-4.8)
+> > Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > 
-atm its more of a wash. Its a win for cred related operations but
-allocating per task, instead of per cred does increase memory usage.
-However this is just a first pass that is a fairly direct mapping of
-onto the current code paths. There is no reason the task->security
-struct couldn't be shared by tasks, or even more likely not allocated
-at all except by those tasks using change_onexec/change_hat.
+> Either Reviewed-by/Acked-by is fine. 
+> 
+> Can you pick up this patch and replace the original version of "tpm:
+> msleep() delays - replace with usleep_range()" with the one Nayna
+> posted?
+> 
+> Thanks!
+> 
+> Mimi
 
-I just haven't had a chance to work on the improvements, long term it
-will be a win for AA.
+Yes, sure. I'll try to get that done as soon as possible..
 
+/Jarkko
 
+> 
+> > ---
+> >  drivers/char/tpm/tpm_i2c_nuvoton.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
+> > index 0c98c42..c642877 100644
+> > --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
+> > +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+> > @@ -124,8 +124,9 @@ static s32 i2c_nuvoton_write_status(struct i2c_client *client, u8 data)
+> >  	/* this causes the current command to be aborted */
+> >  	for (i = 0, status = -1; i < TPM_I2C_RETRY_COUNT && status < 0; i++) {
+> >  		status = i2c_nuvoton_write_buf(client, TPM_STS, 1, &data);
+> > -		usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
+> > -			     + TPM_I2C_DELAY_RANGE);
+> > +		if (status < 0)
+> > +			usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
+> > +				     + TPM_I2C_DELAY_RANGE);
+> >  	}
+> >  	return status;
+> >  }
+> 
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
