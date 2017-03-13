@@ -1,34 +1,54 @@
-From: konstantin@linuxfoundation.org (Konstantin Ryabitsev)
-Date: Mon, 13 Mar 2017 12:05:22 -0400
-Subject: Kernel repository updated to v4.11-rc1  *** reverted ??? ***
-In-Reply-To: <1489419650.28954.173.camel@linux.vnet.ibm.com>
-References: <alpine.LRH.2.20.1703061115270.31922@namei.org>
-	<1489406649.28954.143.camel@linux.vnet.ibm.com>
-	<alpine.LRH.2.20.1703140123580.23070@namei.org>
-	<20170313145318.GA20608@gmail.com>
-	<1489417657.28954.163.camel@linux.vnet.ibm.com>
-	<20170313153332.GB20608@gmail.com>
-	<1489419650.28954.173.camel@linux.vnet.ibm.com>
-Message-ID: <20170313160522.GE20608@gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 13 Mar 2017 09:05:38 -0700
+Subject: isolate selinux_enforcing
+In-Reply-To: <alpine.LRH.2.20.1703131704400.3299@namei.org>
+References: <58732BCF.4090908@huawei.com> <58734284.1060504@huawei.com>
+	<b7f75f65-592a-5102-0ac5-4d3aa43f0b55@huawei.com>
+	<58736B2E.90201@huawei.com> <58C11A6C.7000408@huawei.com>
+	<347f63b5-c274-c7bc-55f7-f6304d31418a@schaufler-ca.com>
+	<87innidvko.fsf@xmission.com>
+	<alpine.LRH.2.20.1703131704400.3299@namei.org>
+Message-ID: <64e2a668-00ef-e095-e2f9-bf100ac6dd35@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 13, 2017 at 11:40:50AM -0400, Mimi Zohar wrote:
->$ host git.kernel.org
->git.kernel.org is an alias for pub.kernel.org.
->pub.kernel.org is an alias for pub.ewr.kernel.org.
->pub.ewr.kernel.org has address 147.75.196.57
->pub.ewr.kernel.org has IPv6 address 2604:1380:1:3600::3
+On 3/13/2017 12:06 AM, James Morris wrote:
+> On Thu, 9 Mar 2017, Eric W. Biederman wrote:
+>
+>> My expectation is that a container would run as essentially all one
+>> label from a global perspective.
+>>
+> Keep in mind that a different classes of objects may have distinct 
+> labeling in SELinux.  e.g. a process and a file typically have different 
+> labels (say, sshd_t vs. sshd_key_t).
+>
+> Also, I think you will want to have the global namespace always use the 
+> original security labels.  If accessing an object from outside the 
+> container, the original global policy should always apply.  Really, this 
+> needs to be an invariant property.
+>
+> I'd suggest implementing an orthogonal 2nd set of security labels which 
+> are only ever used within the container.
 
-The EWR frontend was the culprit. There were hardware problems with the 
-first EWR system we brought up, so I had to resync the replacement 
-system from it. The origin for some of the repositories was still 
-pointing at the dead box, so the updates did not properly propagate to 
-EWR.
+The work that's been done for Smack namespaces
 
-It should be in a happier place now.
+	https://lwn.net/Articles/652320
 
--Konstantin
+may come in handy during during your deliberations for
+SELinux. Conceptually you can create aliases for your
+base labels, and use those within the container. Very
+much like the UID mapping of user namespaces. Labels that
+don't have an alias can't be accessed within the namespace.
+
+>> To implement this would require a revision on the selinux labels xattrs
+>> so that they can be marked as being part of a container...  But having
+>> the labels look ordinary inside the container.
+>>
+>> We almost have a patch that implements something like that for the
+>> capability xattr.
+> It'll be interesting to see.
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
