@@ -1,60 +1,61 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 13 Mar 2017 10:54:22 -0400
-Subject: [tpmdd-devel] [PATCH 2/2] tpm: add sleep only for retry in
-	i2c_nuvoton_write_status()
-In-Reply-To: <1489171554-6844-2-git-send-email-nayna@linux.vnet.ibm.com>
-References: <1489171554-6844-1-git-send-email-nayna@linux.vnet.ibm.com>
-	<1489171554-6844-2-git-send-email-nayna@linux.vnet.ibm.com>
-Message-ID: <1489416862.28954.156.camel@linux.vnet.ibm.com>
+Date: Mon, 13 Mar 2017 11:07:37 -0400
+Subject: Kernel repository updated to v4.11-rc1  *** reverted ??? ***
+In-Reply-To: <20170313145318.GA20608@gmail.com>
+References: <alpine.LRH.2.20.1703061115270.31922@namei.org>
+	<1489406649.28954.143.camel@linux.vnet.ibm.com>
+	<alpine.LRH.2.20.1703140123580.23070@namei.org>
+	<20170313145318.GA20608@gmail.com>
+Message-ID: <1489417657.28954.163.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Jarkko,
+On Mon, 2017-03-13 at 10:53 -0400, Konstantin Ryabitsev wrote:
+> On Tue, Mar 14, 2017 at 01:40:14AM +1100, James Morris wrote:
+> >On Mon, 13 Mar 2017, Mimi Zohar wrote:
+> >
+> >> On Mon, 2017-03-06 at 11:18 +1100, James Morris wrote:
+> >> > FYI, I've merged security-next with v4.11-rc1 and then merged the
+> >> > following queued patches:
+> >> >
+> >> > ca97d939db114c8d1619e10a3b82af8615372dae security: mark LSM hooks as __ro_after_init
+> >> > dd0859dccbe291cf8179a96390f5c0e45cb9af1d security: introduce CONFIG_SECURITY_WRITABLE_HOOKS
+> >> > 84e6885e9e6a818d1ca1eabb9b720b357ab07a8b selinux: fix kernel BUG on prlimit(..., NULL, NULL)
+> >> > 791ec491c372f49cea3ea7a7143454a9023ac9d4 prlimit,security,selinux: add a security hook for prlimit
+> >> >
+> >> > Please test!
+> >>
+> >> The current tip of the linux-security #next branch has been reverted to
+> >> commit 61841be6358c "tpm: declare tpm2_get_pcr_allocation() as static".
+> >> Was this intentional?
+> >>
+> >
+> >That's very odd.  It looks correct via git web:
+> >https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/log/?h=next
+> >
+> >(ca97d939)
+> >
 
-On Fri, 2017-03-10 at 13:45 -0500, Nayna Jain wrote:
-> Currently, there is an unnecessary 1 msec delay added in
-> i2c_nuvoton_write_status() for the successful case. This 
-> function is called multiple times during send() and recv(),
-> which implies adding multiple extra delays for every TPM
-> operation.
+From
+"https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git", I'm seeing:
+
+next	tpm: declare tpm2_get_pcr_allocation() as static	Jarkko Sakkinen	3 weeks
+
+> >but when I clone a new tree, I see what you see (61841be6358c).
+> >
+> >Did you see a forced update message when you pulled?
+
+> >Perhaps there was a disk restore at kernel.org?
 > 
-> This patch calls usleep_range() only if retry is to be done.
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Cc: stable at vger.kernel.org (linux-4.8)
-> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Can you tell me precise origin paths for where things are correct and 
+> where things are wrong?
 
-Either Reviewed-by/Acked-by is fine. 
+For me, both the git repo and the URL are wrong:
 
-Can you pick up this patch and replace the original version of "tpm:
-msleep() delays - replace with usleep_range()" with the one Nayna
-posted?
-
-Thanks!
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security
+https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
 
 Mimi
-
-> ---
->  drivers/char/tpm/tpm_i2c_nuvoton.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> index 0c98c42..c642877 100644
-> --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-> +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> @@ -124,8 +124,9 @@ static s32 i2c_nuvoton_write_status(struct i2c_client *client, u8 data)
->  	/* this causes the current command to be aborted */
->  	for (i = 0, status = -1; i < TPM_I2C_RETRY_COUNT && status < 0; i++) {
->  		status = i2c_nuvoton_write_buf(client, TPM_STS, 1, &data);
-> -		usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
-> -			     + TPM_I2C_DELAY_RANGE);
-> +		if (status < 0)
-> +			usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
-> +				     + TPM_I2C_DELAY_RANGE);
->  	}
->  	return status;
->  }
-
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
