@@ -1,68 +1,81 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 13 Mar 2017 20:26:04 +0200
-Subject: [tpmdd-devel] [PATCH 2/2] tpm: add sleep only for retry in
-	i2c_nuvoton_write_status()
-In-Reply-To: <1489416862.28954.156.camel@linux.vnet.ibm.com>
-References: <1489171554-6844-1-git-send-email-nayna@linux.vnet.ibm.com>
-	<1489171554-6844-2-git-send-email-nayna@linux.vnet.ibm.com>
-	<1489416862.28954.156.camel@linux.vnet.ibm.com>
-Message-ID: <20170313182604.yhfhbqve2wufa2f4@intel.com>
+Date: Mon, 13 Mar 2017 22:12:35 +0200
+Subject: [PATCH v2] tpm_crb: request and relinquish locality 0
+In-Reply-To: <20170313163452.GD22997@obsidianresearch.com>
+References: <20170311130216.21419-1-jarkko.sakkinen@linux.intel.com>
+	<20170313163452.GD22997@obsidianresearch.com>
+Message-ID: <20170313201235.tvcyugdh7awqfrfq@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 13, 2017 at 10:54:22AM -0400, Mimi Zohar wrote:
-> Hi Jarkko,
-> 
-> On Fri, 2017-03-10 at 13:45 -0500, Nayna Jain wrote:
-> > Currently, there is an unnecessary 1 msec delay added in
-> > i2c_nuvoton_write_status() for the successful case. This 
-> > function is called multiple times during send() and recv(),
-> > which implies adding multiple extra delays for every TPM
-> > operation.
+On Mon, Mar 13, 2017 at 10:34:52AM -0600, Jason Gunthorpe wrote:
+> On Sat, Mar 11, 2017 at 03:02:14PM +0200, Jarkko Sakkinen wrote:
+> > Added two new callbacks to struct tpm_class_ops:
 > > 
-> > This patch calls usleep_range() only if retry is to be done.
+> > - request_locality
+> > - relinquish_locality
 > > 
-> > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> > Cc: stable at vger.kernel.org (linux-4.8)
-> > Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > These are called before sending and receiving data from the TPM.  We
+> > update also tpm_tis_core to use these callbacks. Small modification to
+> > request_locality() is done so that it returns -EBUSY instead of locality
+> > number when check_locality() fails.
 > 
-> Either Reviewed-by/Acked-by is fine. 
+> Make sense
 > 
-> Can you pick up this patch and replace the original version of "tpm:
-> msleep() delays - replace with usleep_range()" with the one Nayna
-> posted?
+> I think you may as well do the other two drivers, even though you
+> can't run them the transformation looks safe enough to me.
 > 
-> Thanks!
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> >  drivers/char/tpm/tpm-interface.c |  9 +++++++++
+> >  drivers/char/tpm/tpm_crb.c       | 41 +++++++++++++++++++++++++++++++++++++++-
+> >  drivers/char/tpm/tpm_tis_core.c  | 12 ++++--------
+> >  include/linux/tpm.h              |  3 ++-
+> >  4 files changed, 55 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > index e38c792..9c56581 100644
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -407,6 +407,12 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+> >  	if (chip->dev.parent)
+> >  		pm_runtime_get_sync(chip->dev.parent);
+> >  
+> > +	if (chip->ops->request_locality)  {
+> > +		rc = chip->ops->request_locality(chip, 0);
+> > +		if (rc)
+> > +			goto out;
 > 
-> Mimi
+> If request_locality fails we probably shouldn't call
+> relinquish_locality on the unwind path..
+> 
+> I think you should also put a relinquish_locality inside tpm_remove ?
 
-Yes, sure. I'll try to get that done as soon as possible..
+Right. I was wondering why release_locality is called inside
+tpm_tis_remove().
+
+So is the idea of checking pendingRequest such that the release
+part is "lazy" and not like what I'm doing in tpm_crb (always
+relinquish).
+
+Is that done for performance reasons? Should I do the same (pr
+similar in tpm_crb?
+
+> > +	int (*request_locality)(struct tpm_chip *chip, int loc);
+> > +	void (*relinquish_locality)(struct tpm_chip *chip, int loc,
+> > bool force);
+> 
+> Let us document what force is supposed to do...
+> 
+> I'm not sure why we have it?
+> 
+> Jason
+
+I guess since it is lazy in tpm_tis_core the force is done in
+tpm_tis_remove so that you always relinquish the locality even
+if someone is not requesting it, right?
+
+Where should this be documented, to the header?
 
 /Jarkko
-
-> 
-> > ---
-> >  drivers/char/tpm/tpm_i2c_nuvoton.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> > index 0c98c42..c642877 100644
-> > --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-> > +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> > @@ -124,8 +124,9 @@ static s32 i2c_nuvoton_write_status(struct i2c_client *client, u8 data)
-> >  	/* this causes the current command to be aborted */
-> >  	for (i = 0, status = -1; i < TPM_I2C_RETRY_COUNT && status < 0; i++) {
-> >  		status = i2c_nuvoton_write_buf(client, TPM_STS, 1, &data);
-> > -		usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
-> > -			     + TPM_I2C_DELAY_RANGE);
-> > +		if (status < 0)
-> > +			usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
-> > +				     + TPM_I2C_DELAY_RANGE);
-> >  	}
-> >  	return status;
-> >  }
-> 
-> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
