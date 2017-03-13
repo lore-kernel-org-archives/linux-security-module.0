@@ -1,81 +1,49 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 13 Mar 2017 22:12:35 +0200
+From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
+Date: Mon, 13 Mar 2017 14:43:14 -0600
 Subject: [PATCH v2] tpm_crb: request and relinquish locality 0
-In-Reply-To: <20170313163452.GD22997@obsidianresearch.com>
+In-Reply-To: <20170313201235.tvcyugdh7awqfrfq@intel.com>
 References: <20170311130216.21419-1-jarkko.sakkinen@linux.intel.com>
 	<20170313163452.GD22997@obsidianresearch.com>
-Message-ID: <20170313201235.tvcyugdh7awqfrfq@intel.com>
+	<20170313201235.tvcyugdh7awqfrfq@intel.com>
+Message-ID: <20170313204314.GB3390@obsidianresearch.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 13, 2017 at 10:34:52AM -0600, Jason Gunthorpe wrote:
-> On Sat, Mar 11, 2017 at 03:02:14PM +0200, Jarkko Sakkinen wrote:
-> > Added two new callbacks to struct tpm_class_ops:
-> > 
-> > - request_locality
-> > - relinquish_locality
-> > 
-> > These are called before sending and receiving data from the TPM.  We
-> > update also tpm_tis_core to use these callbacks. Small modification to
-> > request_locality() is done so that it returns -EBUSY instead of locality
-> > number when check_locality() fails.
+On Mon, Mar 13, 2017 at 10:12:35PM +0200, Jarkko Sakkinen wrote:
+> > I think you should also put a relinquish_locality inside tpm_remove ?
 > 
-> Make sense
-> 
-> I think you may as well do the other two drivers, even though you
-> can't run them the transformation looks safe enough to me.
-> 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >  drivers/char/tpm/tpm-interface.c |  9 +++++++++
-> >  drivers/char/tpm/tpm_crb.c       | 41 +++++++++++++++++++++++++++++++++++++++-
-> >  drivers/char/tpm/tpm_tis_core.c  | 12 ++++--------
-> >  include/linux/tpm.h              |  3 ++-
-> >  4 files changed, 55 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > index e38c792..9c56581 100644
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -407,6 +407,12 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
-> >  	if (chip->dev.parent)
-> >  		pm_runtime_get_sync(chip->dev.parent);
-> >  
-> > +	if (chip->ops->request_locality)  {
-> > +		rc = chip->ops->request_locality(chip, 0);
-> > +		if (rc)
-> > +			goto out;
-> 
-> If request_locality fails we probably shouldn't call
-> relinquish_locality on the unwind path..
-> 
-> I think you should also put a relinquish_locality inside tpm_remove ?
+> Right. I was wondering why release_locality is called inside
+> tpm_tis_remove().
 
-Right. I was wondering why release_locality is called inside
-tpm_tis_remove().
+I also wonder that.. It sort of makes send to idle the TPM, but it is
+kinda goofy to have paired function calls that are not ultimately
+paried.
 
-So is the idea of checking pendingRequest such that the release
-part is "lazy" and not like what I'm doing in tpm_crb (always
-relinquish).
+> So is the idea of checking pendingRequest such that the release
+> part is "lazy" and not like what I'm doing in tpm_crb (always
+> relinquish).
+>
+> Is that done for performance reasons? Should I do the same (pr
+> similar in tpm_crb?
 
-Is that done for performance reasons? Should I do the same (pr
-similar in tpm_crb?
+No idea, sorry. This stuff is so old and locality has never been an
+exposed API by the kernel, AFAIK. Wouldn't surprise me at all if it
+doesn't work right.
 
-> > +	int (*request_locality)(struct tpm_chip *chip, int loc);
-> > +	void (*relinquish_locality)(struct tpm_chip *chip, int loc,
-> > bool force);
-> 
-> Let us document what force is supposed to do...
-> 
-> I'm not sure why we have it?
-> 
-> Jason
+But.. If you don't need 'force' for CRB, I suggest that we drop the
+'force' from the public API. TIS can do its special !force behavior in
+its own remove as it does today.
 
-I guess since it is lazy in tpm_tis_core the force is done in
-tpm_tis_remove so that you always relinquish the locality even
-if someone is not requesting it, right?
+However.. if we want to do some kind of locality caching for
+performance then I think the core code should do it, not the
+individual drivers.
 
-Where should this be documented, to the header?
+Why do we need to reliquish the locality on every command anyhow? Does
+the firmware interact with this?
 
-/Jarkko
+Why are you adding locality to crb without a user anyhow?
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
