@@ -1,49 +1,54 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Mon, 13 Mar 2017 14:43:14 -0600
-Subject: [PATCH v2] tpm_crb: request and relinquish locality 0
-In-Reply-To: <20170313201235.tvcyugdh7awqfrfq@intel.com>
-References: <20170311130216.21419-1-jarkko.sakkinen@linux.intel.com>
-	<20170313163452.GD22997@obsidianresearch.com>
-	<20170313201235.tvcyugdh7awqfrfq@intel.com>
-Message-ID: <20170313204314.GB3390@obsidianresearch.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 14 Mar 2017 09:00:32 +1100 (AEDT)
+Subject: Kernel repository updated to v4.11-rc1  *** reverted ??? ***
+In-Reply-To: <20170313153332.GB20608@gmail.com>
+References: <alpine.LRH.2.20.1703061115270.31922@namei.org>
+	<1489406649.28954.143.camel@linux.vnet.ibm.com>
+	<alpine.LRH.2.20.1703140123580.23070@namei.org>
+	<20170313145318.GA20608@gmail.com>
+	<1489417657.28954.163.camel@linux.vnet.ibm.com>
+	<20170313153332.GB20608@gmail.com>
+Message-ID: <alpine.LRH.2.20.1703140858460.30945@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 13, 2017 at 10:12:35PM +0200, Jarkko Sakkinen wrote:
-> > I think you should also put a relinquish_locality inside tpm_remove ?
+On Mon, 13 Mar 2017, Konstantin Ryabitsev wrote:
+
+> On Mon, Mar 13, 2017 at 11:07:37AM -0400, Mimi Zohar wrote:
+> >For me, both the git repo and the URL are wrong:
+> >
+> >git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security
+> >https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
 > 
-> Right. I was wondering why release_locality is called inside
-> tpm_tis_remove().
+> Can you give me the output of 'host git.kernel.org'? It's geo-based now, so
+> can be pointing to one of 4 different frontends.
 
-I also wonder that.. It sort of makes send to idle the TPM, but it is
-kinda goofy to have paired function calls that are not ultimately
-paried.
+>From the system I did a fresh clone on:
 
-> So is the idea of checking pendingRequest such that the release
-> part is "lazy" and not like what I'm doing in tpm_crb (always
-> relinquish).
->
-> Is that done for performance reasons? Should I do the same (pr
-> similar in tpm_crb?
+$ host  git.kernel.org
+git.kernel.org is an alias for pub.kernel.org.
+pub.kernel.org is an alias for pub.ewr.kernel.org.
+pub.ewr.kernel.org has address 147.75.196.57
+pub.ewr.kernel.org has IPv6 address 2604:1380:1:3600::3
 
-No idea, sorry. This stuff is so old and locality has never been an
-exposed API by the kernel, AFAIK. Wouldn't surprise me at all if it
-doesn't work right.
 
-But.. If you don't need 'force' for CRB, I suggest that we drop the
-'force' from the public API. TIS can do its special !force behavior in
-its own remove as it does today.
+>From my local network:
 
-However.. if we want to do some kind of locality caching for
-performance then I think the core code should do it, not the
-individual drivers.
+$ host git.kernel.org
+git.kernel.org is an alias for pub.kernel.org.
+pub.kernel.org is an alias for pub.nrt.kernel.org.
+pub.nrt.kernel.org has address 147.75.110.187
+pub.nrt.kernel.org has IPv6 address 2604:1380:3000:3500::3
 
-Why do we need to reliquish the locality on every command anyhow? Does
-the firmware interact with this?
 
-Why are you adding locality to crb without a user anyhow?
+I'm still seeing the correct head at 
+https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/log/?h=next
 
-Jason
+
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
