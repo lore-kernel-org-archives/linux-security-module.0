@@ -1,22 +1,38 @@
 From: jmorris@namei.org (James Morris)
-Date: Tue, 14 Mar 2017 09:01:29 +1100 (AEDT)
+Date: Tue, 14 Mar 2017 09:03:46 +1100 (AEDT)
 Subject: Kernel repository updated to v4.11-rc1  *** reverted ??? ***
-In-Reply-To: <20170313145318.GA20608@gmail.com>
+In-Reply-To: <20170313160522.GE20608@gmail.com>
 References: <alpine.LRH.2.20.1703061115270.31922@namei.org>
 	<1489406649.28954.143.camel@linux.vnet.ibm.com>
 	<alpine.LRH.2.20.1703140123580.23070@namei.org>
 	<20170313145318.GA20608@gmail.com>
-Message-ID: <alpine.LRH.2.20.1703140900490.30945@namei.org>
+	<1489417657.28954.163.camel@linux.vnet.ibm.com>
+	<20170313153332.GB20608@gmail.com>
+	<1489419650.28954.173.camel@linux.vnet.ibm.com>
+	<20170313160522.GE20608@gmail.com>
+Message-ID: <alpine.LRH.2.20.1703140903310.30945@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Mon, 13 Mar 2017, Konstantin Ryabitsev wrote:
 
-> Can you tell me precise origin paths for where things are correct and where
-> things are wrong?
+> On Mon, Mar 13, 2017 at 11:40:50AM -0400, Mimi Zohar wrote:
+> >$ host git.kernel.org
+> >git.kernel.org is an alias for pub.kernel.org.
+> >pub.kernel.org is an alias for pub.ewr.kernel.org.
+> >pub.ewr.kernel.org has address 147.75.196.57
+> >pub.ewr.kernel.org has IPv6 address 2604:1380:1:3600::3
+> 
+> The EWR frontend was the culprit. There were hardware problems with the first
+> EWR system we brought up, so I had to resync the replacement system from it.
+> The origin for some of the repositories was still pointing at the dead box, so
+> the updates did not properly propagate to EWR.
+> 
+> It should be in a happier place now.
 
-Correct: ca97d939db114c8d1619e10a3b82af8615372dae
-Incorrect: 61841be6358c03e864ad4c386c9a102edbba9cb8
+Looks good for me too now, thanks!
+
+
 -- 
 James Morris
 <jmorris@namei.org>
