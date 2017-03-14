@@ -1,43 +1,64 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 14 Mar 2017 09:03:46 +1100 (AEDT)
-Subject: Kernel repository updated to v4.11-rc1  *** reverted ??? ***
-In-Reply-To: <20170313160522.GE20608@gmail.com>
-References: <alpine.LRH.2.20.1703061115270.31922@namei.org>
-	<1489406649.28954.143.camel@linux.vnet.ibm.com>
-	<alpine.LRH.2.20.1703140123580.23070@namei.org>
-	<20170313145318.GA20608@gmail.com>
-	<1489417657.28954.163.camel@linux.vnet.ibm.com>
-	<20170313153332.GB20608@gmail.com>
-	<1489419650.28954.173.camel@linux.vnet.ibm.com>
-	<20170313160522.GE20608@gmail.com>
-Message-ID: <alpine.LRH.2.20.1703140903310.30945@namei.org>
+From: ldv@altlinux.org (Dmitry V. Levin)
+Date: Tue, 14 Mar 2017 05:57:35 +0300
+Subject: Compat 32-bit syscall entry from 64-bit task!?
+In-Reply-To: <CAObL_7GM0n80N7J_DFw_eQyfLyzq+sf4y2AvsCCV88Tb3AwEHA@mail.gmail.com>
+References: <CAObL_7EA-Z8yBbr1+-VW0v8k1okdcMfjRe5LgWo8YL5uvOkXbQ@mail.gmail.com>
+	<201201260032.57937.vda.linux@googlemail.com>
+	<ca17a86f7c88f8884e4ffc9bafbf2dff.squirrel@webmail.greenhost.nl>
+	<201201260209.54513.vda.linux@googlemail.com>
+	<CA+55aFzDZhGoa1TH=RAtjK3Ti3=NPAYvreSxiTxTu3wnu8Z61g@mail.gmail.com>
+	<CAK1hOcNFmG+3NTfQ559T-LkbcmcVfk9eF=JesdOqqj97tJncaw@mail.gmail.com>
+	<20170308234154.GA2352@altlinux.org>
+	<CAObL_7GM0n80N7J_DFw_eQyfLyzq+sf4y2AvsCCV88Tb3AwEHA@mail.gmail.com>
+Message-ID: <20170314025735.GA18046@altlinux.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 13 Mar 2017, Konstantin Ryabitsev wrote:
-
-> On Mon, Mar 13, 2017 at 11:40:50AM -0400, Mimi Zohar wrote:
-> >$ host git.kernel.org
-> >git.kernel.org is an alias for pub.kernel.org.
-> >pub.kernel.org is an alias for pub.ewr.kernel.org.
-> >pub.ewr.kernel.org has address 147.75.196.57
-> >pub.ewr.kernel.org has IPv6 address 2604:1380:1:3600::3
+On Wed, Mar 08, 2017 at 08:39:55PM -0800, Andrew Lutomirski wrote:
+> On Wed, Mar 8, 2017 at 3:41 PM, Dmitry V. Levin wrote:
+[...]
+> > Is there any progress with this (or any alternative) solution?
+> >
+> > I see the kernel side has changed a bit, and the strace part
+> > is in a better shape than 5 years ago (although I'm biased of course),
+> > but I don't see any kernel interface that would allow strace to reliably
+> > recognize this 0x80 case.
 > 
-> The EWR frontend was the culprit. There were hardware problems with the first
-> EWR system we brought up, so I had to resync the replacement system from it.
-> The origin for some of the repositories was still pointing at the dead box, so
-> the updates did not properly propagate to EWR.
+> I am strongly opposed to fudging registers to half-arsedly slightly
+> improve the epicly crappy ptrace(2) interface for syscalls.
 > 
-> It should be in a happier place now.
+> To fix this right, please just add PTRACE_GET_SYSCALL_INFO or similar
+> to, in one shot, read out all the syscall details.  This means: arch,
+> no, arg0..arg5, and *whether it's entry or exit*.  I propose returning
+> this structure:
+> 
+> struct ptrace_syscall_info {
+>   u8 op;  /* 0 for entry, 1 for exit */
+>   u8 pad0;
+>   u16 pad1;
+>   u32 pad2;
+>   union {
+>     struct seccomp_data syscall_entry;
+>     s64 syscall_exit_retval;
+>   };
+> };
+> 
+> because struct seccomp_data already gets this right.  There's plenty
+> of opportunity to fine-tune this.  Now it works on all architectures.
 
-Looks good for me too now, thanks!
+Unfortunately, the API is missing.
+
+Unlike syscall_get_nr(), syscall_get_arch() works with the current task
+only so there is no API to get the arch identifier for the given task
+that would work on all architectures.
 
 
 -- 
-James Morris
-<jmorris@namei.org>
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ldv
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 801 bytes
+Desc: not available
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170314/b41c126c/attachment.sig>
