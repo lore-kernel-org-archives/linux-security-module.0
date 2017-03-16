@@ -1,38 +1,37 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 16 Mar 2017 10:17:25 +0000
-Subject: [PATCH v12 06/10] KEYS: Consistent ordering for __key_link_begin
-	and restrict check
-In-Reply-To: <20170309202315.15361-7-mathew.j.martineau@linux.intel.com>
-References: <20170309202315.15361-7-mathew.j.martineau@linux.intel.com>
-	<20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
-Message-ID: <23615.1489659445@warthog.procyon.org.uk>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Thu, 16 Mar 2017 20:09:49 +0900
+Subject: [PATCH] LSM: Revive security_task_alloc() hook and per "struct
+	task_struct" security blob.
+In-Reply-To: <20170313153716.GA29279@mail.hallyn.com>
+References: <1489293309-41929-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<20170313153716.GA29279@mail.hallyn.com>
+Message-ID: <201703162009.BDJ06594.FHOOLJOVtFMSQF@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Mat Martineau <mathew.j.martineau@linux.intel.com> wrote:
-
-> The keyring restrict callback was sometimes called before
-> __key_link_begin and sometimes after, which meant that the keyring
-> semaphores were not always held during the restrict callback.
+Serge E. Hallyn wrote:
+> > @@ -533,8 +533,13 @@
+> >   *	manual page for definitions of the @clone_flags.
+> >   *	@clone_flags contains the flags indicating what should be shared.
+> >   *	Return 0 if permission is granted.
+> > + * @task_alloc:
+> > + *      @task task being allocated.
 > 
-> If the semaphores are consistently acquired before checking link
-> restrictions, keyring contents cannot be changed after the restrict
-> check is complete but before the evaluated key is linked to the keyring.
+> Note that here you have spaces not tabs
+> 
 
-I'm still not entirely sure that this gains us anything.  At the point we did
-the restriction check, the key was validated.  Yes, the keyring can be
-modified between then and the actual link, thereby rendering the chain broken
-- but this is true after the link also.  The whole point is that it was valid
-at the time of asking.
+Oh, thanks.
 
-Mainly I have an aversion to doing things under a lock when I can do it
-outside of the lock.
+I think this patch got enough Acked-by:s.
 
-Btw, do you check for cycles anywhere?  For example, if I create two keyrings,
-A and B, and can I then set restrictions such that A is restricted by B and B
-is restricted by A?
+  Serge Hallyn <serge@hallyn.com>
+  Casey Schaufler <casey@schaufler-ca.com>
 
-David
+James, should I repost with spaces fixed?
+
+Also, I appreciate if you can update #next to 4.11-rc2 because
+4.11-rc1 is not suitable for testing due to memory corruption bug.
+http://lkml.kernel.org/r/201703090625.v296PNFI070895 at www262.sakura.ne.jp
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
