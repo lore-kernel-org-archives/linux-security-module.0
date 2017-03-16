@@ -1,27 +1,36 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 16 Mar 2017 10:09:19 +0000
-Subject: [PATCH v12 05/10] KEYS: Add an optional lookup_restriction hook
-	to key_type
-In-Reply-To: <20170309202315.15361-6-mathew.j.martineau@linux.intel.com>
-References: <20170309202315.15361-6-mathew.j.martineau@linux.intel.com>
+Date: Thu, 16 Mar 2017 10:17:25 +0000
+Subject: [PATCH v12 06/10] KEYS: Consistent ordering for __key_link_begin
+	and restrict check
+In-Reply-To: <20170309202315.15361-7-mathew.j.martineau@linux.intel.com>
+References: <20170309202315.15361-7-mathew.j.martineau@linux.intel.com>
 	<20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
-Message-ID: <23549.1489658959@warthog.procyon.org.uk>
+Message-ID: <23615.1489659445@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 Mat Martineau <mathew.j.martineau@linux.intel.com> wrote:
 
-> +	/* Look up a keyring access restriction (optional)
-> +	 *
-> +	 * - The caller must hold a read lock on the key type's semaphore
-> +	 * - NULL is a valid return value (meaning the requested restriction
-> +	 *   is known but will never block addition of a key)
-> +	 * - should return -EINVAL if the restriction is unknown
-> +	 */
-> +	struct key_restriction *(*lookup_restriction)(const char *params);
+> The keyring restrict callback was sometimes called before
+> __key_link_begin and sometimes after, which meant that the keyring
+> semaphores were not always held during the restrict callback.
+> 
+> If the semaphores are consistently acquired before checking link
+> restrictions, keyring contents cannot be changed after the restrict
+> check is complete but before the evaluated key is linked to the keyring.
 
-I wonder if this can be improved in future to using the rcu read lock instead
-of a semaphore.
+I'm still not entirely sure that this gains us anything.  At the point we did
+the restriction check, the key was validated.  Yes, the keyring can be
+modified between then and the actual link, thereby rendering the chain broken
+- but this is true after the link also.  The whole point is that it was valid
+at the time of asking.
+
+Mainly I have an aversion to doing things under a lock when I can do it
+outside of the lock.
+
+Btw, do you check for cycles anywhere?  For example, if I create two keyrings,
+A and B, and can I then set restrictions such that A is restricted by B and B
+is restricted by A?
 
 David
 --
