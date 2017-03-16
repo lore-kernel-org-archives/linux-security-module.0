@@ -1,25 +1,27 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 16 Mar 2017 10:00:26 +0000
-Subject: [PATCH v12 02/10] KEYS: Split role of the keyring pointer for
-	keyring restrict functions
-In-Reply-To: <20170309202315.15361-3-mathew.j.martineau@linux.intel.com>
-References: <20170309202315.15361-3-mathew.j.martineau@linux.intel.com>
+Date: Thu, 16 Mar 2017 10:09:19 +0000
+Subject: [PATCH v12 05/10] KEYS: Add an optional lookup_restriction hook
+	to key_type
+In-Reply-To: <20170309202315.15361-6-mathew.j.martineau@linux.intel.com>
+References: <20170309202315.15361-6-mathew.j.martineau@linux.intel.com>
 	<20170309202315.15361-1-mathew.j.martineau@linux.intel.com>
-Message-ID: <23396.1489658426@warthog.procyon.org.uk>
+Message-ID: <23549.1489658959@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 Mat Martineau <mathew.j.martineau@linux.intel.com> wrote:
 
-> +			       void *data)
->  {
->  	const struct public_key_signature *sig;
->  	struct key *key;
->  	int ret;
-> +	struct key *trust_keyring = (struct key *) data;
+> +	/* Look up a keyring access restriction (optional)
+> +	 *
+> +	 * - The caller must hold a read lock on the key type's semaphore
+> +	 * - NULL is a valid return value (meaning the requested restriction
+> +	 *   is known but will never block addition of a key)
+> +	 * - should return -EINVAL if the restriction is unknown
+> +	 */
+> +	struct key_restriction *(*lookup_restriction)(const char *params);
 
-The cast is unnecessary, but let that pass unless the patches get respun
-again.
+I wonder if this can be improved in future to using the rcu read lock instead
+of a semaphore.
 
 David
 --
