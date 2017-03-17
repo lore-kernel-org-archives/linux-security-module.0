@@ -1,42 +1,37 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 17 Mar 2017 22:37:18 +0200
-Subject: [PATCH v3] tpm_crb: request and relinquish locality 0
-In-Reply-To: <20170317171116.GA29996@obsidianresearch.com>
-References: <20170315055738.11088-1-jarkko.sakkinen@iki.fi>
-	<87h92uvtce.fsf@redhat.com> <87fuidx5mt.fsf@redhat.com>
-	<20170316115543.jw23imcvkcriaam5@intel.com>
-	<878to3x2h2.fsf@redhat.com>
-	<20170317171116.GA29996@obsidianresearch.com>
-Message-ID: <20170317203718.3z45mfvnrgjzwn7l@intel.com>
+Date: Fri, 17 Mar 2017 22:44:29 +0200
+Subject: [tpmdd-devel] [PATCH v3 4/7] tpm: infrastructure for TPM spaces
+In-Reply-To: <1aa1c9d32fd446f69551a36c37f0ed16@MUCSE603.infineon.com>
+References: <20170303151912.14752-1-jarkko.sakkinen@linux.intel.com>
+	<20170303151912.14752-5-jarkko.sakkinen@linux.intel.com>
+	<1aa1c9d32fd446f69551a36c37f0ed16@MUCSE603.infineon.com>
+Message-ID: <20170317204429.wsoe4r4jne437kyc@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Mar 17, 2017 at 11:11:16AM -0600, Jason Gunthorpe wrote:
-> On Fri, Mar 17, 2017 at 10:00:41AM -0700, Jerry Snitselaar wrote:
+On Fri, Mar 17, 2017 at 03:41:38PM +0000, Alexander.Steffen at infineon.com wrote:
+> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> > interface.c
+> > index 20b1fe3..db5ffe9 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -376,11 +376,12 @@ static bool tpm_validate_command(struct
+> > tpm_chip *chip, const u8 *cmd,
+> >   *     0 when the operation is successful.
+> >   *     A negative number for system errors (errno).
+> >   */
+> > -ssize_t tpm_transmit(struct tpm_chip *chip, const u8 *buf, size_t bufsiz,
+> > -		     unsigned int flags)
+> > +ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+> > +		     u8 *buf, size_t bufsiz, unsigned int flags)
 > 
-> > > Changing the return value to -EBUSY was a stupid mistake from my side.
-> > >
-> > > I'll try revise this a bit in a way that the API will allow positive
-> > > value for stating that the given locality has been already taking.
-> > 
-> > Is there a big performance hit with requesting and releasing locality?
-> > If instead it just released it when release_locality is called I think
-> > the changes are pretty minor.
-> 
-> If you can measure please let us know :)
-> 
-> This is all very old it may not actually make any sense..
-> 
-> .. and as I said earlier if we want to 'cache' the locality for
-> performance then the core code should do it.
-> 
-> I kinda thought the point of releasing the locality was to allow other
-> platform things to access the TPM, so I'm confused why TIS wouldn't
-> always release it as well..
-> 
-> Jason
+> When adding parameters, please also update the parameter documentation
+> at the top of the function. It is missing for the new parameter
+> "space" here.
 
-I would propose to make tpm_tis_core to work like that.
+I missed that. I'll update the commits with the proper documentation.
+
+> Alexander
 
 /Jarkko
 --
