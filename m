@@ -1,139 +1,308 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 17 Mar 2017 20:57:45 +0200
-Subject: [PATCH v1 1/2] tpm: msleep() delays - replace with
-	usleep_range() in i2c nuvoton driver
-In-Reply-To: <1489171554-6844-1-git-send-email-nayna@linux.vnet.ibm.com>
-References: <1489171554-6844-1-git-send-email-nayna@linux.vnet.ibm.com>
-Message-ID: <20170317185745.rixx4rcmgoqy7sqe@intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 17 Mar 2017 13:03:11 -0700
+Subject: [PATCH RFC 1/9] LSM: Add /sys/kernel/security/lsm
+In-Reply-To: <201703172152.GBD04133.QLOSVFJHOOMtFF@I-love.SAKURA.ne.jp>
+References: <bdd17661-5f1f-833f-1e68-887b288616bb@schaufler-ca.com>
+	<4856407a-3c94-362f-d548-5228c09c84be@schaufler-ca.com>
+	<201703172152.GBD04133.QLOSVFJHOOMtFF@I-love.SAKURA.ne.jp>
+Message-ID: <fd0fe8c8-9c0d-ce5e-fa9e-e521d8bb0f93@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-I replaced the patch.
+On 3/17/2017 5:52 AM, Tetsuo Handa wrote:
+> Casey Schaufler wrote:
+>> Subject: [PATCH RFC 1/9] LSM: Add /sys/kernel/security/lsm
+>>
+>> This has been accepted into security next - provided for completeness
+> Before going to "[PATCH RFC 5/9] LSM: General but not extreme module
+> stacking", what do you think about below change?
+>
+> ----------------------------------------
+>
+> >From 8fe80e4b6a479a81d720571ad3b5979f6fd1e6ae Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Fri, 17 Mar 2017 21:34:51 +0900
+> Subject: [PATCH] LSM: Pass module name via "union security_list_options".
+>
+> Commit d69dece5f5b6bc7a ("LSM: Add /sys/kernel/security/lsm") added
+> "char *lsm" field to "struct security_hook_list". But it is currently
+> never used after set at initialization time. While there is a plan that
+> this field will be used by "LSM: General but not extreme module stacking"
+> patch, there is no point with setting the same value to each element of
+> "struct security_hook_list" array. We can keep "struct security_hook_list"
+> 4 * sizeof(void *) bytes if we keep this field in "union
+> security_list_options".
+>
+> The "char *" argument in security_add_hooks() was removed because we can
+> fetch it from security_list_options"->module_name field. This implies
+> that setting security_list_options"->module_name field is mandatory.
 
-/Jarkko
+On further reflection, and spending a little time back
+in the code, it turns out that this won't work at all.
+The lsm field needs to be in the "struct security_hook_list"
+so that hook processing that uses the module name such
+as security_getprocattr has it. It wouldn't hurt to have
+the module name in "union security_list_options", but
+a list of module names doesn't help anything, either.
 
-On Fri, Mar 10, 2017 at 01:45:53PM -0500, Nayna Jain wrote:
-> Commit 500462a9de65 "timers: Switch to a non-cascading wheel" replaced
-> the 'classic' timer wheel, which aimed for near 'exact' expiry of the
-> timers.  Their analysis was that the vast majority of timeout timers
-> are used as safeguards, not as real timers, and are cancelled or
-> rearmed before expiration.  The only exception noted to this were
-> networking timers with a small expiry time.
-> 
-> Not included in the analysis was the TPM polling timer, which resulted
-> in a longer normal delay and, every so often, a very long delay.  The
-> non-cascading wheel delay is based on CONFIG_HZ.  For a description of
-> the different rings and their delays, refer to the comments in
-> kernel/time/timer.c.
-> 
-> Below are the delays given for rings 0 - 2, which explains the longer
-> "normal" delays and the very, long delays as seen on systems with
-> CONFIG_HZ 250.
-> 
-> * HZ 1000 steps
->  * Level Offset  Granularity            Range
->  *  0      0         1 ms                0 ms - 63 ms
->  *  1     64         8 ms               64 ms - 511 ms
->  *  2    128        64 ms              512 ms - 4095 ms (512ms - ~4s)
-> 
-> * HZ  250
->  * Level Offset  Granularity            Range
->  *  0      0         4 ms                0 ms - 255 ms
->  *  1     64        32 ms              256 ms - 2047 ms (256ms - ~2s)
->  *  2    128       256 ms             2048 ms - 16383 ms (~2s - ~16s)
-> 
-> Below is a comparison of extending the TPM with 1000 measurements,
-> using msleep() vs. usleep_delay() when configured for 1000 hz vs. 250
-> hz, before and after commit 500462a9de65.
-> 
-> linux-4.7 | msleep() usleep_range()
-> 1000 hz: 0m44.628s | 1m34.497s 29.243s
-> 250 hz: 1m28.510s | 4m49.269s 32.386s
-> 
-> linux-4.7  | min-max (msleep)  min-max (usleep_range)
-> 1000 hz: 0:017 - 2:760s | 0:015 - 3:967s    0:014 - 0:418s
-> 250 hz: 0:028 - 1:954s | 0:040 - 4:096s    0:016 - 0:816s
-> 
-> This patch replaces the msleep() with usleep_range() calls in the
-> i2c nuvoton driver with a consistent max range value.
-> 
-> Signed-of-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: stable at vger.kernel.org (linux-4.8)
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 > ---
-> Changelog v1:
-> 
-> - Included Jason's feedbacks related to #defines.
-> 
->  drivers/char/tpm/tpm_i2c_nuvoton.c | 23 +++++++++++++++--------
->  1 file changed, 15 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> index e3a9155..0c98c42 100644
-> --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-> +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> @@ -49,9 +49,10 @@
+>  include/linux/lsm_hooks.h  |  8 +++++---
+>  security/apparmor/lsm.c    |  4 ++--
+>  security/commoncap.c       |  4 ++--
+>  security/loadpin/loadpin.c |  3 ++-
+>  security/security.c        | 13 +++++++------
+>  security/selinux/hooks.c   |  3 ++-
+>  security/smack/smack_lsm.c |  3 ++-
+>  security/tomoyo/tomoyo.c   |  3 ++-
+>  security/yama/yama_lsm.c   |  3 ++-
+>  9 files changed, 26 insertions(+), 18 deletions(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index a4193c3..d10b4f7 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -29,6 +29,8 @@
+>  #include <linux/rculist.h>
+>  
+>  /**
+> + * @module_name: the name of the security module
+> + *
+>   * Security hooks for program execution operations.
+>   *
+>   * @bprm_set_creds:
+> @@ -1340,6 +1342,7 @@
 >   */
->  #define TPM_I2C_MAX_BUF_SIZE           32
->  #define TPM_I2C_RETRY_COUNT            32
-> -#define TPM_I2C_BUS_DELAY              1       /* msec */
-> -#define TPM_I2C_RETRY_DELAY_SHORT      2       /* msec */
-> -#define TPM_I2C_RETRY_DELAY_LONG       10      /* msec */
-> +#define TPM_I2C_BUS_DELAY              1000      	/* usec */
-> +#define TPM_I2C_RETRY_DELAY_SHORT      (2 * 1000)	/* usec */
-> +#define TPM_I2C_RETRY_DELAY_LONG       (10 * 1000) 	/* usec */
-> +#define TPM_I2C_DELAY_RANGE            300		/* usec */
 >  
->  #define OF_IS_TPM2 ((void *)1)
->  #define I2C_IS_TPM2 1
-> @@ -123,7 +124,8 @@ static s32 i2c_nuvoton_write_status(struct i2c_client *client, u8 data)
->  	/* this causes the current command to be aborted */
->  	for (i = 0, status = -1; i < TPM_I2C_RETRY_COUNT && status < 0; i++) {
->  		status = i2c_nuvoton_write_buf(client, TPM_STS, 1, &data);
-> -		msleep(TPM_I2C_BUS_DELAY);
-> +		usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
-> +			     + TPM_I2C_DELAY_RANGE);
->  	}
->  	return status;
+>  union security_list_options {
+> +	const char *module_name;
+>  	int (*binder_set_context_mgr)(struct task_struct *mgr);
+>  	int (*binder_transaction)(struct task_struct *from,
+>  					struct task_struct *to);
+> @@ -1664,6 +1667,7 @@
+>  };
+>  
+>  struct security_hook_heads {
+> +	struct list_head module_name;
+>  	struct list_head binder_set_context_mgr;
+>  	struct list_head binder_transaction;
+>  	struct list_head binder_transfer_binder;
+> @@ -1886,7 +1890,6 @@ struct security_hook_list {
+>  	struct list_head		list;
+>  	struct list_head		*head;
+>  	union security_list_options	hook;
+> -	char				*lsm;
+>  };
+>  
+>  /*
+> @@ -1901,8 +1904,7 @@ struct security_hook_list {
+>  extern struct security_hook_heads security_hook_heads;
+>  extern char *lsm_names;
+>  
+> -extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> -				char *lsm);
+> +extern void security_add_hooks(struct security_hook_list *hooks, int count);
+>  
+>  #ifdef CONFIG_SECURITY_SELINUX_DISABLE
+>  /*
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index e287b69..dc21835 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -588,6 +588,7 @@ static int apparmor_task_setrlimit(struct task_struct *task,
 >  }
-> @@ -160,7 +162,8 @@ static int i2c_nuvoton_get_burstcount(struct i2c_client *client,
->  			burst_count = min_t(u8, TPM_I2C_MAX_BUF_SIZE, data);
->  			break;
->  		}
-> -		msleep(TPM_I2C_BUS_DELAY);
-> +		usleep_range(TPM_I2C_BUS_DELAY, TPM_I2C_BUS_DELAY
-> +			     + TPM_I2C_DELAY_RANGE);
->  	} while (time_before(jiffies, stop));
 >  
->  	return burst_count;
-> @@ -203,13 +206,17 @@ static int i2c_nuvoton_wait_for_stat(struct tpm_chip *chip, u8 mask, u8 value,
->  			return 0;
+>  static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(module_name, "apparmor"),
+>  	LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
+>  	LSM_HOOK_INIT(ptrace_traceme, apparmor_ptrace_traceme),
+>  	LSM_HOOK_INIT(capget, apparmor_capget),
+> @@ -996,8 +997,7 @@ static int __init apparmor_init(void)
+>  		aa_free_root_ns();
+>  		goto buffers_out;
+>  	}
+> -	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
+> -				"apparmor");
+> +	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks));
 >  
->  		/* use polling to wait for the event */
-> -		ten_msec = jiffies + msecs_to_jiffies(TPM_I2C_RETRY_DELAY_LONG);
-> +		ten_msec = jiffies + usecs_to_jiffies(TPM_I2C_RETRY_DELAY_LONG);
->  		stop = jiffies + timeout;
->  		do {
->  			if (time_before(jiffies, ten_msec))
-> -				msleep(TPM_I2C_RETRY_DELAY_SHORT);
-> +				usleep_range(TPM_I2C_RETRY_DELAY_SHORT,
-> +					     TPM_I2C_RETRY_DELAY_SHORT
-> +					     + TPM_I2C_DELAY_RANGE);
->  			else
-> -				msleep(TPM_I2C_RETRY_DELAY_LONG);
-> +				usleep_range(TPM_I2C_RETRY_DELAY_LONG,
-> +					     TPM_I2C_RETRY_DELAY_LONG
-> +					     + TPM_I2C_DELAY_RANGE);
->  			status_valid = i2c_nuvoton_check_status(chip, mask,
->  								value);
->  			if (status_valid)
-> -- 
-> 2.9.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  	/* Report that AppArmor successfully initialized */
+>  	apparmor_initialized = 1;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 7abebd7..1ced4ee 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -1072,6 +1072,7 @@ int cap_mmap_file(struct file *file, unsigned long reqprot,
+>  #ifdef CONFIG_SECURITY
+>  
+>  struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(module_name, "capability"),
+>  	LSM_HOOK_INIT(capable, cap_capable),
+>  	LSM_HOOK_INIT(settime, cap_settime),
+>  	LSM_HOOK_INIT(ptrace_access_check, cap_ptrace_access_check),
+> @@ -1094,8 +1095,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+>  
+>  void __init capability_add_hooks(void)
+>  {
+> -	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+> -				"capability");
+> +	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks));
+>  }
+>  
+>  #endif /* CONFIG_SECURITY */
+> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+> index dbe6efd..c126c74 100644
+> --- a/security/loadpin/loadpin.c
+> +++ b/security/loadpin/loadpin.c
+> @@ -175,6 +175,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+>  }
+>  
+>  static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(module_name, "loadpin"),
+>  	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
+>  	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
+>  };
+> @@ -182,7 +183,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+>  void __init loadpin_add_hooks(void)
+>  {
+>  	pr_info("ready to pin (currently %sabled)", enabled ? "en" : "dis");
+> -	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
+> +	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks));
+>  }
+>  
+>  /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
+> diff --git a/security/security.c b/security/security.c
+> index 5b6cdd0..ae57a84 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -79,7 +79,7 @@ static int __init choose_lsm(char *str)
+>  }
+>  __setup("security=", choose_lsm);
+>  
+> -static int lsm_append(char *new, char **result)
+> +static int lsm_append(const char *new, char **result)
+>  {
+>  	char *cp;
+>  
+> @@ -118,20 +118,20 @@ int __init security_module_enable(const char *module)
+>   * security_add_hooks - Add a modules hooks to the hook lists.
+>   * @hooks: the hooks to add
+>   * @count: the number of hooks to add
+> - * @lsm: the name of the security module
+>   *
+>   * Each LSM has to register its hooks with the infrastructure.
+>   */
+> -void __init security_add_hooks(struct security_hook_list *hooks, int count,
+> -				char *lsm)
+> +void __init security_add_hooks(struct security_hook_list *hooks, int count)
+>  {
+>  	int i;
+> +	const char *lsm = NULL;
+>  
+>  	for (i = 0; i < count; i++) {
+> -		hooks[i].lsm = lsm;
+>  		list_add_tail_rcu(&hooks[i].list, hooks[i].head);
+> +		if (hooks[i].head == &security_hook_heads.module_name)
+> +			lsm = hooks[i].hook.module_name;
+>  	}
+> -	if (lsm_append(lsm, &lsm_names) < 0)
+> +	if (!lsm || lsm_append(lsm, &lsm_names) < 0)
+>  		panic("%s - Cannot get early memory.\n", __func__);
+>  }
+>  
+> @@ -1634,6 +1634,7 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule,
+>  #endif /* CONFIG_AUDIT */
+>  
+>  struct security_hook_heads security_hook_heads __lsm_ro_after_init = {
+> +	.module_name = LIST_HEAD_INIT(security_hook_heads.module_name),
+>  	.binder_set_context_mgr =
+>  		LIST_HEAD_INIT(security_hook_heads.binder_set_context_mgr),
+>  	.binder_transaction =
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index d37a723..cd7befe 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6124,6 +6124,7 @@ static int selinux_key_getsecurity(struct key *key, char **_buffer)
+>  #endif
+>  
+>  static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(module_name, "selinux"),
+>  	LSM_HOOK_INIT(binder_set_context_mgr, selinux_binder_set_context_mgr),
+>  	LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
+>  	LSM_HOOK_INIT(binder_transfer_binder, selinux_binder_transfer_binder),
+> @@ -6366,7 +6367,7 @@ static __init int selinux_init(void)
+>  					    0, SLAB_PANIC, NULL);
+>  	avc_init();
+>  
+> -	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
+> +	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks));
+>  
+>  	if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
+>  		panic("SELinux: Unable to register AVC netcache callback\n");
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 927e60e..f2457b8 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4634,6 +4634,7 @@ static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+>  }
+>  
+>  static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(module_name, "smack"),
+>  	LSM_HOOK_INIT(ptrace_access_check, smack_ptrace_access_check),
+>  	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+>  	LSM_HOOK_INIT(syslog, smack_syslog),
+> @@ -4850,7 +4851,7 @@ static __init int smack_init(void)
+>  	/*
+>  	 * Register with LSM
+>  	 */
+> -	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
+> +	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks));
+>  
+>  	return 0;
+>  }
+> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+> index 0de150d..6ba6139 100644
+> --- a/security/tomoyo/tomoyo.c
+> +++ b/security/tomoyo/tomoyo.c
+> @@ -488,6 +488,7 @@ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+>   * registering TOMOYO.
+>   */
+>  static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(module_name, "tomoyo"),
+>  	LSM_HOOK_INIT(task_alloc, tomoyo_task_alloc),
+>  	LSM_HOOK_INIT(task_free, tomoyo_task_free),
+>  	LSM_HOOK_INIT(bprm_set_creds, tomoyo_bprm_set_creds),
+> @@ -534,7 +535,7 @@ static int __init tomoyo_init(void)
+>  	if (!security_module_enable("tomoyo"))
+>  		return 0;
+>  	/* register ourselves with the security framework */
+> -	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
+> +	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks));
+>  	printk(KERN_INFO "TOMOYO Linux initialized\n");
+>  	current->security = &ts;
+>  	tomoyo_mm_init();
+> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+> index 8298e09..3290d33 100644
+> --- a/security/yama/yama_lsm.c
+> +++ b/security/yama/yama_lsm.c
+> @@ -429,6 +429,7 @@ int yama_ptrace_traceme(struct task_struct *parent)
+>  }
+>  
+>  static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(module_name, "yama"),
+>  	LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
+>  	LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
+>  	LSM_HOOK_INIT(task_prctl, yama_task_prctl),
+> @@ -485,6 +486,6 @@ static inline void yama_init_sysctl(void) { }
+>  void __init yama_add_hooks(void)
+>  {
+>  	pr_info("Yama: becoming mindful.\n");
+> -	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
+> +	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks));
+>  	yama_init_sysctl();
+>  }
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
