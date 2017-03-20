@@ -1,35 +1,50 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Mon, 20 Mar 2017 15:30:15 -0400
+From: peter.moody@gmail.com (Peter Moody)
+Date: Mon, 20 Mar 2017 12:45:34 -0700
 Subject: out of tree lsm's
-In-Reply-To: <CADc-OzFzS0=25zmRQuONzsALck+mV9Q61vSkUOmxWHKdiK_1vQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhSiEaXYoUhr_Bvs_fLYyA+ex=xQLY26jkPLqivkRpTkqw@mail.gmail.com>
 References: <CADc-OzFzS0=25zmRQuONzsALck+mV9Q61vSkUOmxWHKdiK_1vQ@mail.gmail.com>
-Message-ID: <CAHC9VhSiEaXYoUhr_Bvs_fLYyA+ex=xQLY26jkPLqivkRpTkqw@mail.gmail.com>
+	<CAHC9VhSiEaXYoUhr_Bvs_fLYyA+ex=xQLY26jkPLqivkRpTkqw@mail.gmail.com>
+Message-ID: <CADc-OzEFBMk1sdbqT54Fwzya2uAAcfFisJ6ZGgxBRJT8s+jzeg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 20, 2017 at 2:54 PM, Peter Moody <peter.moody@gmail.com> wrote:
-> with the success of stackable lsm's, it occurs to me that
-> site-specific, out-of-tree modules could be extremely worthwhile.
-
-Keep in mind we don't have a general purpose solution ... yet.  Casey
-continues to work on it, and I'm sure he'll have something at some
-point, but right now you are limited to a single "big" LSMs (e.g.
-SELinux) and some combination of "small" LSMs (e.g. Yama).
-
-> I realize that it doesn't make a lot of sense to have something that I
-> can insmod/rmmod well post-boot, but being able to at least stuff an
-> lsm in an initrd that's loaded during boot could be very helpful.
+On Mon, Mar 20, 2017 at 12:30 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Mar 20, 2017 at 2:54 PM, Peter Moody <peter.moody@gmail.com> wrote:
+>> with the success of stackable lsm's, it occurs to me that
+>> site-specific, out-of-tree modules could be extremely worthwhile.
 >
-> Without having any code to pick apart just now, is the idea of this
-> functionality amenable to folks?
+> Keep in mind we don't have a general purpose solution ... yet.  Casey
+> continues to work on it, and I'm sure he'll have something at some
+> point, but right now you are limited to a single "big" LSMs (e.g.
+> SELinux) and some combination of "small" LSMs (e.g. Yama).
 
-I think the usual comments about out-of-tree modules apply here;
-you're free to do what you like, but upstream is only going to offer
-limited help/support if/until the code starts its way upstream.
+right. sorry for the imprecise language; by site-specific I meant a "small" lsm.
 
--- 
-paul moore
-www.paul-moore.com
+I would love to have the ability write a small lsm that I can build as
+a module and load at boot eg. via initrd.
+
+AIUI, adding even a new "small" lsm requires kconfig patches, building
+a new kernel, etc. I know there are objections to dynamically loadable
+lsms and I was trying to find a compromise that made them easier to
+work with.
+
+Cheers,
+peter
+
+>> I realize that it doesn't make a lot of sense to have something that I
+>> can insmod/rmmod well post-boot, but being able to at least stuff an
+>> lsm in an initrd that's loaded during boot could be very helpful.
+>>
+>> Without having any code to pick apart just now, is the idea of this
+>> functionality amenable to folks?
+>
+> I think the usual comments about out-of-tree modules apply here;
+> you're free to do what you like, but upstream is only going to offer
+> limited help/support if/until the code starts its way upstream.
+>
+> --
+> paul moore
+> www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
