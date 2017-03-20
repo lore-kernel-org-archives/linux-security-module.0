@@ -1,38 +1,33 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Tue, 21 Mar 2017 07:18:43 +0900
-Subject: out of tree lsm's
-In-Reply-To: <c25cb4fd-9459-1899-8275-beb62d12c265@schaufler-ca.com>
-References: <CADc-OzFzS0=25zmRQuONzsALck+mV9Q61vSkUOmxWHKdiK_1vQ@mail.gmail.com>
-	<CAHC9VhSiEaXYoUhr_Bvs_fLYyA+ex=xQLY26jkPLqivkRpTkqw@mail.gmail.com>
-	<CADc-OzEFBMk1sdbqT54Fwzya2uAAcfFisJ6ZGgxBRJT8s+jzeg@mail.gmail.com>
-	<c25cb4fd-9459-1899-8275-beb62d12c265@schaufler-ca.com>
-Message-ID: <201703210718.CJE73456.MVHOFFQFLSJOOt@I-love.SAKURA.ne.jp>
+From: kgold@linux.vnet.ibm.com (Ken Goldman)
+Date: Mon, 20 Mar 2017 15:42:13 -0400
+Subject: [tpmdd-devel] [PATCH v3 2/7] tpm: validate TPM 2.0 commands
+In-Reply-To: <12e63cdba1e34cac9b82e4bff9621ae6@MUCSE603.infineon.com>
+References: <20170303151912.14752-1-jarkko.sakkinen@linux.intel.com>
+	<20170303151912.14752-3-jarkko.sakkinen@linux.intel.com>
+	<22e8fa0caf8b4386a12cd93ee7170ed5@MUCSE603.infineon.com>
+	<20170317161614.GA28082@obsidianresearch.com>
+	<bca2bee3c1b84100ac72238425ac4791@MUCSE612.infineon.com>
+	<12e63cdba1e34cac9b82e4bff9621ae6@MUCSE603.infineon.com>
+Message-ID: <a518f288-f084-2d11-161a-79ff884b936d@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler wrote:
-> > right. sorry for the imprecise language; by site-specific I meant a "small" lsm.
-> >
-> > I would love to have the ability write a small lsm that I can build as
-> > a module and load at boot eg. via initrd.
-> >
-> > AIUI, adding even a new "small" lsm requires kconfig patches, building
-> > a new kernel, etc. I know there are objections to dynamically loadable
-> > lsms and I was trying to find a compromise that made them easier to
-> > work with.
-> 
-> The stacking design criteria I'm working with
-> include not doing anything that would prevent
-> dynamic module loading. I do not plan to implement
-> dynamic loading. Tetsuo has been a strong
-> advocate of loadable modules. I would expect to
-> see a proposal from him shortly after the
-> general stacking lands, assuming it does.
+On 3/20/2017 5:54 AM, Alexander.Steffen at infineon.com wrote:
+>
+> There are a few special cases that need some thought though. For
+> example, it is possible to use an upgrade to switch the TPM family
+> from 1.2 to 2.0 (or vice versa). In this case it seems useful to let
+> the kernel reinitialize the TPM driver, so it uses the correct
+> timeouts for communication, activates the correct features (resource
+> manager or not?), etc., without needing to reboot the system.
 
-But currently __lsm_ro_after_init which is planned to go to 4.12 is preventing
-dynamic modules from loading. We need a legitimate interface for loadable modules like
-http://lkml.kernel.org/r/201702152342.GBH04183.FOFJFHQOLMOtVS at I-love.SAKURA.ne.jp .
-Requiring rodata=0 kernel command line option to allow dynamic modules is silly.
+In practice, would a TPM upgrade from TPM 1.2 to TPM 2.0 even occur 
+without a reboot?  Is it an important use case?
+
+1 - It would leave the SHA-256 PCRs in the reset state.
+
+2 - It's possible that this upgrade would also require a BIOS upgrade.
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
