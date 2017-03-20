@@ -1,23 +1,87 @@
-From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
-Date: Mon, 20 Mar 2017 09:56:17 +0000
-Subject: [tpmdd-devel] [PATCH v3 2/7] tpm: validate TPM 2.0 commands
-In-Reply-To: <20170317204243.5j376svqeky6bhqk@intel.com>
-References: <20170303151912.14752-1-jarkko.sakkinen@linux.intel.com>
-	<20170303151912.14752-3-jarkko.sakkinen@linux.intel.com>
-	<22e8fa0caf8b4386a12cd93ee7170ed5@MUCSE603.infineon.com>
-	<20170317204243.5j376svqeky6bhqk@intel.com>
-Message-ID: <93c74fb96fe04433ac9c910204539d84@MUCSE603.infineon.com>
+From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
+Date: Mon, 20 Mar 2017 14:23:36 -0300
+Subject: [RFC v2 PATCH 2/2] kernel: Add SELinux SCTP protocol support
+In-Reply-To: <1488487540.19896.108.camel@tycho.nsa.gov>
+References: <20170222170359.5433-1-richard_c_haines@btinternet.com>
+	<1488487540.19896.108.camel@tycho.nsa.gov>
+Message-ID: <20170320172336.GC23553@localhost.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> I think the most straight-forward way to sort this out would be to limit
-> validation to the resource manager.
+On Thu, Mar 02, 2017 at 03:45:40PM -0500, Stephen Smalley wrote:
+> On Wed, 2017-02-22 at 17:03 +0000, Richard Haines wrote:
+<snip>
 
-Sounds good to me.
+> > +	return err;
+> > +}
+> > +
+> > +static int selinux_sctp_accept_conn(struct sctp_endpoint *ep,
+> > +				????struct sk_buff *skb)
+> > +{
+> > +	struct sk_security_struct *sksec = ep->base.sk->sk_security;
+> > +	int err;
+> > +	u32 connsid;
+> > +	u32 peersid;
+> > +
+> > +	/* Have COOKIE ECHO so compute the MLS component for the
+> > connection
+> > +	?* and store the information in ep. This will only be used
+> > by
+> > +	?* TCP/peeloff connections as they cause a new socket to be
+> > generated.
+> 
+> Not sure why you say TCP above. ?And won't this be true of accept()'d
 
-> If I send a fix, would you care to test it?
+Probably just a typo, should be SCTP instead.
 
-Sure, will do.
+> sockets too in addition to peeloff ones?
 
-Alexander
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+Speaking of accept() path, I think we have an issue there with this
+patch, because it's doing:
+@@ -7683,8 +7717,6 @@ void sctp_copy_sock(struct sock *newsk, struct
+sock *sk,
+-       security_sk_clone(sk, newsk);
+@@ -7829,6 +7862,11 @@ static void sctp_sock_migrate(struct sock *oldsk,
+struct
++       security_sctp_sk_clone(oldep, oldsk, newsk);
+
+But sctp_copy_sock() is called from places other than
+sctp_sock_migrate, mainly:
+net/sctp/ipv6.c:        sctp_copy_sock(newsk, sk, asoc);
+net/sctp/protocol.c:    sctp_copy_sock(newsk, sk, asoc);
+Which are on the accept() path.
+
+Ideally it's better to keep the call to security_sctp_sk_clone in
+sctp_copy_sock() to get those covered too.
+
+  Marcelo
+
+> 
+> > +	?* selinux_sctp_sk_clone() will then plug this into the new
+> > socket
+> > +	?* as described in Documentation/security/LSM-sctp.txt
+> > +	?*/
+> > +	err = selinux_skb_peerlbl_sid(skb, ep->base.sk->sk_family,
+> > &peersid);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	err = selinux_conn_sid(sksec->sid, peersid, &connsid);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	ep->secid = connsid;
+> > +	ep->peer_secid = peersid;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
