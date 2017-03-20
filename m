@@ -1,86 +1,60 @@
-From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
-Date: Mon, 20 Mar 2017 14:23:36 -0300
-Subject: [RFC v2 PATCH 2/2] kernel: Add SELinux SCTP protocol support
-In-Reply-To: <1488487540.19896.108.camel@tycho.nsa.gov>
-References: <20170222170359.5433-1-richard_c_haines@btinternet.com>
-	<1488487540.19896.108.camel@tycho.nsa.gov>
-Message-ID: <20170320172336.GC23553@localhost.localdomain>
+From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
+Date: Mon, 20 Mar 2017 11:23:05 -0600
+Subject: [tpmdd-devel] [PATCH v3 2/7] tpm: validate TPM 2.0 commands
+In-Reply-To: <12e63cdba1e34cac9b82e4bff9621ae6@MUCSE603.infineon.com>
+References: <20170303151912.14752-1-jarkko.sakkinen@linux.intel.com>
+	<20170303151912.14752-3-jarkko.sakkinen@linux.intel.com>
+	<22e8fa0caf8b4386a12cd93ee7170ed5@MUCSE603.infineon.com>
+	<20170317161614.GA28082@obsidianresearch.com>
+	<bca2bee3c1b84100ac72238425ac4791@MUCSE612.infineon.com>
+	<12e63cdba1e34cac9b82e4bff9621ae6@MUCSE603.infineon.com>
+Message-ID: <20170320172305.GA4990@obsidianresearch.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 02, 2017 at 03:45:40PM -0500, Stephen Smalley wrote:
-> On Wed, 2017-02-22 at 17:03 +0000, Richard Haines wrote:
-<snip>
-
-> > +	return err;
-> > +}
-> > +
-> > +static int selinux_sctp_accept_conn(struct sctp_endpoint *ep,
-> > +				????struct sk_buff *skb)
-> > +{
-> > +	struct sk_security_struct *sksec = ep->base.sk->sk_security;
-> > +	int err;
-> > +	u32 connsid;
-> > +	u32 peersid;
-> > +
-> > +	/* Have COOKIE ECHO so compute the MLS component for the
-> > connection
-> > +	?* and store the information in ep. This will only be used
-> > by
-> > +	?* TCP/peeloff connections as they cause a new socket to be
-> > generated.
+On Mon, Mar 20, 2017 at 09:54:41AM +0000, Alexander.Steffen at infineon.com wrote:
+> >>> 2. When upgrading the firmware on my TPM, it switches to a
+> >>> non-standard communication mode for the upgrade process and does not
+> >>> communicate using TPM2.0 commands during this time. Rejecting
+> >>> non-TPM2.0 commands means upgrading won't be possible anymore.
+> >>
+> >> How non standard? Is the basic header even there? Are the lengths and
+> >> status code right?
+> >>
+> >> This might be an argument to add a 'raw' ioctl or something specifically
+> >> for this special case.
+> >
+> > It follows the regular TPM command syntax and looks something like 1.2
+> > commands.
 > 
-> Not sure why you say TCP above. ?And won't this be true of accept()'d
-
-Probably just a typo, should be SCTP instead.
-
-> sockets too in addition to peeloff ones?
-
-Speaking of accept() path, I think we have an issue there with this
-patch, because it's doing:
-@@ -7683,8 +7717,6 @@ void sctp_copy_sock(struct sock *newsk, struct
-sock *sk,
--       security_sk_clone(sk, newsk);
-@@ -7829,6 +7862,11 @@ static void sctp_sock_migrate(struct sock *oldsk,
-struct
-+       security_sctp_sk_clone(oldep, oldsk, newsk);
-
-But sctp_copy_sock() is called from places other than
-sctp_sock_migrate, mainly:
-net/sctp/ipv6.c:        sctp_copy_sock(newsk, sk, asoc);
-net/sctp/protocol.c:    sctp_copy_sock(newsk, sk, asoc);
-Which are on the accept() path.
-
-Ideally it's better to keep the call to security_sctp_sk_clone in
-sctp_copy_sock() to get those covered too.
-
-  Marcelo
-
+> Yep, so most of it already works with the current implementation.
 > 
-> > +	?* selinux_sctp_sk_clone() will then plug this into the new
-> > socket
-> > +	?* as described in Documentation/security/LSM-sctp.txt
-> > +	?*/
-> > +	err = selinux_skb_peerlbl_sid(skb, ep->base.sk->sk_family,
-> > &peersid);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	err = selinux_conn_sid(sksec->sid, peersid, &connsid);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	ep->secid = connsid;
-> > +	ep->peer_secid = peersid;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> There are a few special cases that need some thought though. For
+> example, it is possible to use an upgrade to switch the TPM family
+> from 1.2 to 2.0 (or vice versa). In this case it seems useful to let
+> the kernel reinitialize the TPM driver, so it uses the correct
+> timeouts for communication, activates the correct features (resource
+> manager or not?), etc., without needing to reboot the system.
+
+It would be nice to do this via plug/unplug with existing sysfs
+machinery.
+
+> Another problem arises when the upgrade process is interrupted,
+> e.g. because power is lost. Then the TPM is stuck in its
+> non-standard upgrade mode, so the kernel does not recognize it as a
+> valid TPM device and does not export /dev/tpm<n>. But without the
+> device node the upgrader is unable to restart the upgrade process,
+> leaving the TPM forever inaccessible.
+
+I guess you'd have to teach the TPM core about a new chip mode besides
+1.2, 2.0 - some kind of 'upgrade' mode.
+
+So the flow would be to send the upgrade command, unplug/replug the
+driver to switch to 'upgrade' mode (which could happen if there was a
+reboot?) do the upgrade, then unplug/replug to rediscover the 'new'
+TPM.
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
