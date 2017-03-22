@@ -1,40 +1,103 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Wed, 22 Mar 2017 11:12:59 -0700
-Subject: [PATCH 1/2] LSM: Initialize security_hook_heads upon registration.
-In-Reply-To: <1490179580-7065-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1490179580-7065-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <CAGXu5jJwnYxzd=mVQiSJz8VEfnef34SavxGPHaX0_dOU3fyUDA@mail.gmail.com>
+Date: Wed, 22 Mar 2017 11:16:49 -0700
+Subject: [PATCH 2/2] LSM: Make security_hook_heads a local variable.
+In-Reply-To: <1490179580-7065-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1490179580-7065-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <CAGXu5jJ7-ZkiiwXQLYPgCPnwaK74hOm=2Fh1G4ONkxzJXPPn0Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, Mar 22, 2017 at 3:46 AM, Tetsuo Handa
 <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> "struct security_hook_heads" is an array of "struct list_head"
-> where elements can be initialized just before registration.
->
 > We might introduce different "struct security_hook_heads" for built-in
 > LSM modules and dynamically loadable LSM modules when we start allowing
 > dynamically loadable LSM modules. But even if we decide to use different
-> lists, there is no need to waste 350+ lines for initialization. Let's
-> initialize "struct security_hook_heads" just before registration.
+> lists, there is no need to export "struct security_hook_heads" for
+> dynamically loadable LSM modules and define different LSM_HOOK_INIT() for
+> built-in LSM modules and dynamically loadable LSM modules only for
+> switching list_head's address. Let's use index number within
+> "struct security_hook_heads" so that we can switch list_head's address
+> inside the registration function.
 >
 > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: John Johansen <john.johansen@canonical.com>
 > Cc: Kees Cook <keescook@chromium.org>
 > Cc: Paul Moore <paul@paul-moore.com>
 > Cc: Stephen Smalley <sds@tycho.nsa.gov>
 > Cc: Casey Schaufler <casey@schaufler-ca.com>
 > Cc: James Morris <james.l.morris@oracle.com>
 
-This seems nice to me! struct security_hook_heads is really just a
-named array. :) If we wanted to do this without cast, we could convert
-the named list_heads to an enum, but that should likely be a separate
-change.
+While somewhat in line with my suggestion about enum, this loses us
+compile-time bounds checking on the offset (i.e. idx here could be
+outside the list_heads). I'd want this bounds checked first.
 
-Acked-by: Kees Cook <keescook@chromium.org>
-
+However, I'm not starting to remember that perhaps the reason an enum
+wasn't used was to gain type checking on the hook function
+assignments? My memory is fuzzy...
 
 -Kees
+
+> ---
+>  include/linux/lsm_hooks.h | 6 +++---
+>  security/security.c       | 5 +++--
+>  2 files changed, 6 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 1aa6333..54191cf 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1877,8 +1877,8 @@ struct security_hook_heads {
+>   */
+>  struct security_hook_list {
+>         struct list_head                list;
+> -       struct list_head                *head;
+>         union security_list_options     hook;
+> +       const unsigned int              idx;
+>         char                            *lsm;
+>  };
+>
+> @@ -1889,9 +1889,9 @@ struct security_hook_list {
+>   * text involved.
+>   */
+>  #define LSM_HOOK_INIT(HEAD, HOOK) \
+> -       { .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
+> +       { .idx = offsetof(struct security_hook_heads, HEAD) / \
+> +               sizeof(struct list_head), .hook = { .HEAD = HOOK } }
+>
+> -extern struct security_hook_heads security_hook_heads;
+>  extern char *lsm_names;
+>
+>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> diff --git a/security/security.c b/security/security.c
+> index 2f15488..a5868ed 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -32,7 +32,7 @@
+>  /* Maximum number of letters for an LSM name string */
+>  #define SECURITY_NAME_MAX      10
+>
+> -struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+> +static struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+>  char *lsm_names;
+>  /* Boot-time LSM user choice */
+>  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+> @@ -133,10 +133,11 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>                                 char *lsm)
+>  {
+>         int i;
+> +       struct list_head *list = (struct list_head *) &security_hook_heads;
+>
+>         for (i = 0; i < count; i++) {
+>                 hooks[i].lsm = lsm;
+> -               list_add_tail_rcu(&hooks[i].list, hooks[i].head);
+> +               list_add_tail_rcu(&hooks[i].list, &list[hooks[i].idx]);
+>         }
+>         if (lsm_append(lsm, &lsm_names) < 0)
+>                 panic("%s - Cannot get early memory.\n", __func__);
+> --
+> 1.8.3.1
+>
+
+
 
 -- 
 Kees Cook
