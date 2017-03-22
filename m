@@ -1,107 +1,42 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 22 Mar 2017 11:16:49 -0700
-Subject: [PATCH 2/2] LSM: Make security_hook_heads a local variable.
-In-Reply-To: <1490179580-7065-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1490179580-7065-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <CAGXu5jJ7-ZkiiwXQLYPgCPnwaK74hOm=2Fh1G4ONkxzJXPPn0Q@mail.gmail.com>
+From: kgoldman@us.ibm.com (Ken Goldman)
+Date: Wed, 22 Mar 2017 16:09:21 -0400
+Subject: [tpmdd-devel] [PATCH v2 4/7] tpm: infrastructure for TPM spaces
+In-Reply-To: <1487785159.2376.27.camel@HansenPartnership.com>
+References: <20170216192529.25467-1-jarkko.sakkinen@linux.intel.com>
+	<20170216192529.25467-5-jarkko.sakkinen@linux.intel.com>
+	<58AC85F2.5000406@linux.vnet.ibm.com>
+	<1487785159.2376.27.camel@HansenPartnership.com>
+Message-ID: <f8d414fa-03f9-2c22-8ddf-497c1d281536@us.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Mar 22, 2017 at 3:46 AM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> We might introduce different "struct security_hook_heads" for built-in
-> LSM modules and dynamically loadable LSM modules when we start allowing
-> dynamically loadable LSM modules. But even if we decide to use different
-> lists, there is no need to export "struct security_hook_heads" for
-> dynamically loadable LSM modules and define different LSM_HOOK_INIT() for
-> built-in LSM modules and dynamically loadable LSM modules only for
-> switching list_head's address. Let's use index number within
-> "struct security_hook_heads" so that we can switch list_head's address
-> inside the registration function.
+On 2/22/2017 12:39 PM, James Bottomley wrote:
 >
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <james.l.morris@oracle.com>
+> Right at the moment the kernel use of tpm2 looks like
+>
+> acquire chip->tpm_mutex
+> load key
+> process key
+> unload key
+> release chip->tpm_mutex
+>
+> While it does this, there's no need for it to have a RM interface
+> because what it does between the acquisition and drop of the mutex
+> can't be seen by or have any effect on userspace (whether it uses the
+> RM or not).  So currently, the question doesn't arise, which is the
+> situation you see.
 
-While somewhat in line with my suggestion about enum, this loses us
-compile-time bounds checking on the offset (i.e. idx here could be
-outside the list_heads). I'd want this bounds checked first.
+1 - This appears to depend on the RM not releasing the mutex until all 
+objects are swapped out.  Correct?  Same for sessions?
 
-However, I'm not starting to remember that perhaps the reason an enum
-wasn't used was to gain type checking on the hook function
-assignments? My memory is fuzzy...
+2 - A startauthsession can cause a regap error.  Does the above depend 
+on the RM doing early regapping so the RM won't see that error?
 
--Kees
-
-> ---
->  include/linux/lsm_hooks.h | 6 +++---
->  security/security.c       | 5 +++--
->  2 files changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 1aa6333..54191cf 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1877,8 +1877,8 @@ struct security_hook_heads {
->   */
->  struct security_hook_list {
->         struct list_head                list;
-> -       struct list_head                *head;
->         union security_list_options     hook;
-> +       const unsigned int              idx;
->         char                            *lsm;
->  };
->
-> @@ -1889,9 +1889,9 @@ struct security_hook_list {
->   * text involved.
->   */
->  #define LSM_HOOK_INIT(HEAD, HOOK) \
-> -       { .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
-> +       { .idx = offsetof(struct security_hook_heads, HEAD) / \
-> +               sizeof(struct list_head), .hook = { .HEAD = HOOK } }
->
-> -extern struct security_hook_heads security_hook_heads;
->  extern char *lsm_names;
->
->  extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> diff --git a/security/security.c b/security/security.c
-> index 2f15488..a5868ed 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -32,7 +32,7 @@
->  /* Maximum number of letters for an LSM name string */
->  #define SECURITY_NAME_MAX      10
->
-> -struct security_hook_heads security_hook_heads __lsm_ro_after_init;
-> +static struct security_hook_heads security_hook_heads __lsm_ro_after_init;
->  char *lsm_names;
->  /* Boot-time LSM user choice */
->  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
-> @@ -133,10 +133,11 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
->                                 char *lsm)
->  {
->         int i;
-> +       struct list_head *list = (struct list_head *) &security_hook_heads;
->
->         for (i = 0; i < count; i++) {
->                 hooks[i].lsm = lsm;
-> -               list_add_tail_rcu(&hooks[i].list, hooks[i].head);
-> +               list_add_tail_rcu(&hooks[i].list, &list[hooks[i].idx]);
->         }
->         if (lsm_append(lsm, &lsm_names) < 0)
->                 panic("%s - Cannot get early memory.\n", __func__);
-> --
-> 1.8.3.1
->
+3 - There's also the problem where the TPM saved session slots 
+(typically 64) are full.  My intuition is that the best solution is for 
+the RM to reserve 3 slots for the kernel.
 
 
-
--- 
-Kees Cook
-Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
