@@ -1,42 +1,56 @@
-From: kgoldman@us.ibm.com (Ken Goldman)
-Date: Wed, 22 Mar 2017 16:09:21 -0400
-Subject: [tpmdd-devel] [PATCH v2 4/7] tpm: infrastructure for TPM spaces
-In-Reply-To: <1487785159.2376.27.camel@HansenPartnership.com>
-References: <20170216192529.25467-1-jarkko.sakkinen@linux.intel.com>
-	<20170216192529.25467-5-jarkko.sakkinen@linux.intel.com>
-	<58AC85F2.5000406@linux.vnet.ibm.com>
-	<1487785159.2376.27.camel@HansenPartnership.com>
-Message-ID: <f8d414fa-03f9-2c22-8ddf-497c1d281536@us.ibm.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Thu, 23 Mar 2017 06:55:34 +0900
+Subject: [PATCH 2/2] LSM: Make security_hook_heads a local variable.
+In-Reply-To: <CAGXu5jJ7-ZkiiwXQLYPgCPnwaK74hOm=2Fh1G4ONkxzJXPPn0Q@mail.gmail.com>
+References: <1490179580-7065-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<CAGXu5jJ7-ZkiiwXQLYPgCPnwaK74hOm=2Fh1G4ONkxzJXPPn0Q@mail.gmail.com>
+Message-ID: <201703230655.JIB51508.FHOFtVOOLMSQFJ@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2/22/2017 12:39 PM, James Bottomley wrote:
->
-> Right at the moment the kernel use of tpm2 looks like
->
-> acquire chip->tpm_mutex
-> load key
-> process key
-> unload key
-> release chip->tpm_mutex
->
-> While it does this, there's no need for it to have a RM interface
-> because what it does between the acquisition and drop of the mutex
-> can't be seen by or have any effect on userspace (whether it uses the
-> RM or not).  So currently, the question doesn't arise, which is the
-> situation you see.
+Kees Cook wrote:
+> On Wed, Mar 22, 2017 at 3:46 AM, Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > We might introduce different "struct security_hook_heads" for built-in
+> > LSM modules and dynamically loadable LSM modules when we start allowing
+> > dynamically loadable LSM modules. But even if we decide to use different
+> > lists, there is no need to export "struct security_hook_heads" for
+> > dynamically loadable LSM modules and define different LSM_HOOK_INIT() for
+> > built-in LSM modules and dynamically loadable LSM modules only for
+> > switching list_head's address. Let's use index number within
+> > "struct security_hook_heads" so that we can switch list_head's address
+> > inside the registration function.
+> >
+> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: James Morris <james.l.morris@oracle.com>
+> 
+> While somewhat in line with my suggestion about enum, this loses us
+> compile-time bounds checking on the offset (i.e. idx here could be
+> outside the list_heads). I'd want this bounds checked first.
 
-1 - This appears to depend on the RM not releasing the mutex until all 
-objects are swapped out.  Correct?  Same for sessions?
+Isn't suspecting .idx equivalent to suspecting .head which is currently not suspected? ;-)
 
-2 - A startauthsession can cause a regap error.  Does the above depend 
-on the RM doing early regapping so the RM won't see that error?
+But no problem. It is not a costly thing.
 
-3 - There's also the problem where the TPM saved session slots 
-(typically 64) are full.  My intuition is that the best solution is for 
-the RM to reserve 3 slots for the kernel.
+-		list_add_tail_rcu(&hooks[i].list, &list[hooks[i].idx]);
++		unsigned int idx = hooks[i].idx;
++		if (idx < sizeof(struct security_hook_heads) / sizeof(struct list_head))
++			list_add_tail_rcu(&hooks[i].list, &list[idx]);
 
+> 
+> However, I'm not starting to remember that perhaps the reason an enum
+> wasn't used was to gain type checking on the hook function
+> assignments? My memory is fuzzy...
 
+Right.
+
+> 
+> -Kees
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
