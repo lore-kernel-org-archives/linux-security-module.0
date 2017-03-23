@@ -1,64 +1,50 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Thu, 23 Mar 2017 22:49:40 +0900
-Subject: security,
-	hugetlbfs: write to user memory in hugetlbfs_destroy_inode
-In-Reply-To: <CACT4Y+ZHqNYPE_uMrc1NwX3Rb1FXYoN47D4eJFn=T07bSQ7YEw@mail.gmail.com>
-References: <CACT4Y+Z1eodoxayi1qP-x05UoQ3nscXYUwA3UTN8ypOHfGJwjg@mail.gmail.com>
-	<CACT4Y+ZHqNYPE_uMrc1NwX3Rb1FXYoN47D4eJFn=T07bSQ7YEw@mail.gmail.com>
-Message-ID: <201703232249.CCF09362.LVtHFOFFOMOQJS@I-love.SAKURA.ne.jp>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 23 Mar 2017 17:56:46 +0200
+Subject: [tpmdd-devel] [PATCH v2 4/7] tpm: infrastructure for TPM spaces
+In-Reply-To: <f8d414fa-03f9-2c22-8ddf-497c1d281536@us.ibm.com>
+References: <20170216192529.25467-1-jarkko.sakkinen@linux.intel.com>
+	<20170216192529.25467-5-jarkko.sakkinen@linux.intel.com>
+	<58AC85F2.5000406@linux.vnet.ibm.com>
+	<1487785159.2376.27.camel@HansenPartnership.com>
+	<f8d414fa-03f9-2c22-8ddf-497c1d281536@us.ibm.com>
+Message-ID: <20170323155646.2xauos5pjjscg5pg@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Dmitry Vyukov wrote:
-> On Thu, Mar 23, 2017 at 2:06 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> > Hello,
-> >
-> > I've got the following report while running syzkaller fuzzer on
-> > 093b995e3b55a0ae0670226ddfcb05bfbf0099ae. Note the preceding injected
-> > kmalloc failure in inode_alloc_security, most likely it's the root
-> > cause.
+On Wed, Mar 22, 2017 at 04:09:21PM -0400, Ken Goldman wrote:
+> On 2/22/2017 12:39 PM, James Bottomley wrote:
+> > 
+> > Right at the moment the kernel use of tpm2 looks like
+> > 
+> > acquire chip->tpm_mutex
+> > load key
+> > process key
+> > unload key
+> > release chip->tpm_mutex
+> > 
+> > While it does this, there's no need for it to have a RM interface
+> > because what it does between the acquisition and drop of the mutex
+> > can't be seen by or have any effect on userspace (whether it uses the
+> > RM or not).  So currently, the question doesn't arise, which is the
+> > situation you see.
+> 
+> 1 - This appears to depend on the RM not releasing the mutex until all
+> objects are swapped out.  Correct?  Same for sessions?
 
-I don't think inode_alloc_security() failure is the root cause.
-I think this is a bug in hugetlbfs or mm part.
+Yes.
 
-If inode_alloc_security() fails, inode->i_security remains NULL
-which was initialized to NULL at security_inode_alloc(). Thus,
-security_inode_alloc() is irrelevant to this problem.
+> 2 - A startauthsession can cause a regap error.  Does the above depend on
+> the RM doing early regapping so the RM won't see that error?
 
-inode_init_always() returned -ENOMEM due to fault injection and
+We are not trying to resolve that for 4.12. It can happen.
 
-	if (unlikely(inode_init_always(sb, inode))) {
-		if (inode->i_sb->s_op->destroy_inode)
-			inode->i_sb->s_op->destroy_inode(inode);
-		else
-			kmem_cache_free(inode_cachep, inode);
-		return NULL;
-	}
+> 3 - There's also the problem where the TPM saved session slots (typically
+> 64) are full.  My intuition is that the best solution is for the RM to
+> reserve 3 slots for the kernel.
 
-hugetlbfs_destroy_inode() was called via inode->i_sb->s_op->destroy_inode()
-when inode initialization failed
+Maybe but at the moment kernel does not use sessions.
 
-static void hugetlbfs_destroy_inode(struct inode *inode)
-{
-	hugetlbfs_inc_free_inodes(HUGETLBFS_SB(inode->i_sb));
-	mpol_free_shared_policy(&HUGETLBFS_I(inode)->policy);
-	call_rcu(&inode->i_rcu, hugetlbfs_i_callback);
-}
-
-but mpol_shared_policy_init() is called only when new_inode() succeeds.
-
-	inode = new_inode(sb);
-	if (inode) {
-(...snipped...)
-		info = HUGETLBFS_I(inode);
-		/*
-		 * The policy is initialized here even if we are creating a
-		 * private inode because initialization simply creates an
-		 * an empty rb tree and calls rwlock_init(), later when we
-		 * call mpol_free_shared_policy() it will just return because
-		 * the rb tree will still be empty.
-		 */
-		mpol_shared_policy_init(&info->policy, NULL);
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
