@@ -1,56 +1,54 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Thu, 23 Mar 2017 06:55:34 +0900
-Subject: [PATCH 2/2] LSM: Make security_hook_heads a local variable.
-In-Reply-To: <CAGXu5jJ7-ZkiiwXQLYPgCPnwaK74hOm=2Fh1G4ONkxzJXPPn0Q@mail.gmail.com>
-References: <1490179580-7065-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<CAGXu5jJ7-ZkiiwXQLYPgCPnwaK74hOm=2Fh1G4ONkxzJXPPn0Q@mail.gmail.com>
-Message-ID: <201703230655.JIB51508.FHOFtVOOLMSQFJ@I-love.SAKURA.ne.jp>
+From: grundler@chromium.org (Grant Grundler)
+Date: Wed, 22 Mar 2017 17:30:15 -0700
+Subject: [PATCH] selinux: Remove unnecessary check of array base in
+	selinux_set_mapping()
+In-Reply-To: <20170316222652.125702-1-mka@chromium.org>
+References: <20170316222652.125702-1-mka@chromium.org>
+Message-ID: <CANEJEGuYDz2GVePRtP+uvs=Kce5--_1ZEGkVmSo0-tT7wpHy+A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Kees Cook wrote:
-> On Wed, Mar 22, 2017 at 3:46 AM, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > We might introduce different "struct security_hook_heads" for built-in
-> > LSM modules and dynamically loadable LSM modules when we start allowing
-> > dynamically loadable LSM modules. But even if we decide to use different
-> > lists, there is no need to export "struct security_hook_heads" for
-> > dynamically loadable LSM modules and define different LSM_HOOK_INIT() for
-> > built-in LSM modules and dynamically loadable LSM modules only for
-> > switching list_head's address. Let's use index number within
-> > "struct security_hook_heads" so that we can switch list_head's address
-> > inside the registration function.
-> >
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > Cc: James Morris <james.l.morris@oracle.com>
-> 
-> While somewhat in line with my suggestion about enum, this loses us
-> compile-time bounds checking on the offset (i.e. idx here could be
-> outside the list_heads). I'd want this bounds checked first.
+[resending as plain text only - sorry]
 
-Isn't suspecting .idx equivalent to suspecting .head which is currently not suspected? ;-)
+Ping? Any feedback on this patch?
 
-But no problem. It is not a costly thing.
+LGTM.
 
--		list_add_tail_rcu(&hooks[i].list, &list[hooks[i].idx]);
-+		unsigned int idx = hooks[i].idx;
-+		if (idx < sizeof(struct security_hook_heads) / sizeof(struct list_head))
-+			list_add_tail_rcu(&hooks[i].list, &list[idx]);
+cheers,
+grant
 
-> 
-> However, I'm not starting to remember that perhaps the reason an enum
-> wasn't used was to gain type checking on the hook function
-> assignments? My memory is fuzzy...
-
-Right.
-
-> 
-> -Kees
-> 
+On Thu, Mar 16, 2017 at 3:26 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> 'perms' will never be NULL since it isn't a plain pointer but an array
+> of u32 values.
+>
+> This fixes the following warning when building with clang:
+>
+> security/selinux/ss/services.c:158:16: error: address of array
+> 'p_in->perms' will always evaluate to 'true'
+> [-Werror,-Wpointer-bool-conversion]
+>                 while (p_in->perms && p_in->perms[k]) {
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  security/selinux/ss/services.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index 082b20c78363..2f20b5f974f4 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -155,7 +155,7 @@ static int selinux_set_mapping(struct policydb *pol,
+>                 }
+>
+>                 k = 0;
+> -               while (p_in->perms && p_in->perms[k]) {
+> +               while (p_in->perms[k]) {
+>                         /* An empty permission string skips ahead */
+>                         if (!*p_in->perms[k]) {
+>                                 k++;
+> --
+> 2.12.0.367.g23dc2f6d3c-goog
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
