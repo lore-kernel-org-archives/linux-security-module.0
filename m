@@ -1,35 +1,49 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 24 Mar 2017 14:54:49 +1100 (AEDT)
-Subject: [PATCH 1/2] LSM: Initialize security_hook_heads upon registration.
-In-Reply-To: <1490179580-7065-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1490179580-7065-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.LRH.2.20.1703241453530.26984@namei.org>
+From: elfring@users.sourceforge.net (SF Markus Elfring)
+Date: Fri, 24 Mar 2017 11:09:02 +0100
+Subject: selinux: Move some assignments for the variable "rc" in
+	policydb_read()
+In-Reply-To: <CAHC9VhSfvsoWCD1DHFPYhnmWx_cmmapo6vjboS8e=6OZ8ca9gA@mail.gmail.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<7fdcfc8f-affa-fcf8-adaf-dc8fd9e1b472@users.sourceforge.net>
+	<CAHC9VhSfvsoWCD1DHFPYhnmWx_cmmapo6vjboS8e=6OZ8ca9gA@mail.gmail.com>
+Message-ID: <eb71602a-3bb8-a643-5926-9d23aa2798ba@users.sourceforge.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 22 Mar 2017, Tetsuo Handa wrote:
-
-> "struct security_hook_heads" is an array of "struct list_head"
-> where elements can be initialized just before registration.
+>> One local variable was set to an error code in some cases before
+>> a concrete error situation was detected. Thus move the corresponding
+>> assignments into if branches to indicate a software failure there.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  security/selinux/ss/policydb.c | 59 +++++++++++++++++++++++++-----------------
+>>  1 file changed, 35 insertions(+), 24 deletions(-)
 > 
-> We might introduce different "struct security_hook_heads" for built-in
-> LSM modules and dynamically loadable LSM modules when we start allowing
-> dynamically loadable LSM modules. But even if we decide to use different
-> lists, there is no need to waste 350+ lines for initialization. Let's
-> initialize "struct security_hook_heads" just before registration.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> More code churn with no real advantage.
 
-Nice cleanup, applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-
-with edited changelog.
+There are different opinions about the mentioned implementation details.
 
 
--- 
-James Morris
-<jmorris@namei.org>
+> I agree with the style you are using,
 
+Thanks for such feedback.
+
+
+> and would support changing it if you are in the function fixing bugs
+> or doing other substantial changes in that code,
+
+Is this expectation a contradiction for a desired patch granularity?
+
+
+> but I can't justify it as a standalone change, sorry.
+
+This update suggestion seems to be not attractive enough for you at the moment
+as another change step of my patch series.
+Would you like to check if there are other effects worthwhile besides the proposed
+coding style adjustment here?
+
+Regards,
+Markus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
