@@ -1,103 +1,36 @@
 From: jmorris@namei.org (James Morris)
-Date: Fri, 24 Mar 2017 12:26:43 +1100 (AEDT)
-Subject: [ANNOUNCE] Linux Security Summit 2017 - CFP
-Message-ID: <alpine.LRH.2.20.1703241217250.10825@namei.org>
+Date: Fri, 24 Mar 2017 14:54:49 +1100 (AEDT)
+Subject: [PATCH 1/2] LSM: Initialize security_hook_heads upon registration.
+In-Reply-To: <1490179580-7065-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1490179580-7065-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.LRH.2.20.1703241453530.26984@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, 22 Mar 2017, Tetsuo Handa wrote:
 
-==============================================================================
-		   ANNOUNCEMENT AND CALL FOR PARTICIPATION
+> "struct security_hook_heads" is an array of "struct list_head"
+> where elements can be initialized just before registration.
+> 
+> We might introduce different "struct security_hook_heads" for built-in
+> LSM modules and dynamically loadable LSM modules when we start allowing
+> dynamically loadable LSM modules. But even if we decide to use different
+> lists, there is no need to waste 350+ lines for initialization. Let's
+> initialize "struct security_hook_heads" just before registration.
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-			  LINUX SECURITY SUMMIT 2017
-                         
-			       14-15 September
-			       LOS ANGELES, USA
-==============================================================================
+Nice cleanup, applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
 
-
-DESCRIPTION
-
-  The Linux Security Summit (LSS) is a technical forum for collaboration
-  between Linux developers, researchers, and end users. Its primary aim is to
-  foster community efforts in analyzing and solving Linux security challenges.
-
-  LSS this year will be co-located with the Open Source Summit and the Linux
-  Plumbers Conference.
-
-  The program committee currently seeks proposals for:
-
-    * Refereed Presentations:
-      45 minutes in length, including at least 10 minutes of discussion.
-
-    * Discussion Topics:
-      30 minutes in length.
-
-  Topic areas include, but are not limited to:
-
-    * Kernel self-protection
-    * Access control
-    * Cryptography and key management
-    * Integrity control
-    * Hardware Security
-    * Iot and embedded security
-    * Virtualization and containers
-    * System-specific system hardening
-    * Case studies
-    * Security tools
-    * Security UX
-    * Emerging technologies, threats & techniques 
-
-  Proposals should be submitted via:
-    http://events.linuxfoundation.org/events/linux-security-summit/program/cfp
+with edited changelog.
 
 
-DATES
+-- 
+James Morris
+<jmorris@namei.org>
 
-  * CFP Close: June 5, 2017
-  * CFP Notifications: June 12, 2017
-  * Schedule Announced: June 19, 2017
-  * Slide Submission: August 31, 2017
-
-
-WHO SHOULD ATTEND
-
-  We're seeking a diverse range of attendees, and welcome participation by
-  people involved in Linux security development, operations, and research.
-
-  The LSS is a unique global event which provides the opportunity to present
-  and discuss your work or research with key Linux security community members
-  and maintainers.  It?s also useful for those who wish to keep up with the
-  latest in Linux security development, and to provide input to the
-  development process.
-
-
-WEB SITE
-
-  http://events.linuxfoundation.org/events/linux-security-summit
-
-
-TWITTER
-
-  For event updates and announcements, follow:
-
-    https://twitter.com/LinuxSecSummit
-  
-
-PROGRAM COMMITTEE
-
-  The program committee for LSS 2017 is:
-
-    * James Morris, Oracle
-    * Serge Hallyn, Canonical
-    * Paul Moore, Red Hat
-    * Stephen Smalley, NSA
-    * Elena Reshetova, Intel
-    * John Johansen, Canonical
-    * Kees Cook, Google
-    * Casey Schaufler, Intel
-    * Mimi Zohar, IBM
-    * David A. Wheeler, Institute for Defense Analyses
-
-  The program committee may be contacted as a group via email:
-    lss-pc () lists.linuxfoundation.org
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
