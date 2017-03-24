@@ -1,98 +1,48 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 24 Mar 2017 08:46:28 -0700
-Subject: [PATCH v2] LSM: Make security_hook_heads a local variable.
-In-Reply-To: <1490354187-11843-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1490354187-11843-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <40ffa6c1-ce0d-9b66-62af-17177afc6c08@schaufler-ca.com>
+Date: Fri, 24 Mar 2017 08:48:28 -0700
+Subject: [PATCH] smack: fix double free in smack_parse_opts_str()
+In-Reply-To: <1490355725-13867-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1490355725-13867-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <a92eb2ac-50a1-e943-da9d-8ed8bd58ce32@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/24/2017 4:16 AM, Tetsuo Handa wrote:
-> Since commit 3dfc9b02864b19f4 ("LSM: Initialize security_hook_heads upon
-> registration.") changed to access security_hook_heads as an array of
-> "struct list_head", we no longer need to pass address of each member inside
-> "struct security_hook_heads". Therefore, we can make security_hook_heads
-> a local variable by passing index number inside "struct list_head" array.
+On 3/24/2017 4:42 AM, Tetsuo Handa wrote:
+> smack_parse_opts_str() calls kfree(opts->mnt_opts) when kcalloc() for
+> opts->mnt_opts_flags failed. But it should not have called it because
+> security_free_mnt_opts() will call kfree(opts->mnt_opts).
 >
 > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> fixes: 3bf2789cad9e6573 ("smack: allow mount opts setting over filesystems with binary mount data")
+> Cc: Vivek Trivedi <t.vivek@samsung.com>
+> Cc: Amit Sahrawat <a.sahrawat@samsung.com>
 > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <james.l.morris@oracle.com>
+
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+I will take this in the Smack tree.
+ 
+
 > ---
->  include/linux/lsm_hooks.h |  6 +++---
->  security/security.c       | 13 +++++++++++--
->  2 files changed, 14 insertions(+), 5 deletions(-)
+>  security/smack/smack_lsm.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 1aa6333..54191cf 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1877,8 +1877,8 @@ struct security_hook_heads {
->   */
->  struct security_hook_list {
->  	struct list_head		list;
-> -	struct list_head		*head;
->  	union security_list_options	hook;
-> +	const unsigned int		idx;
->  	char				*lsm;
->  };
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 927e60e..658f5d8 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -695,10 +695,8 @@ static int smack_parse_opts_str(char *options,
 >  
-> @@ -1889,9 +1889,9 @@ struct security_hook_list {
->   * text involved.
->   */
->  #define LSM_HOOK_INIT(HEAD, HOOK) \
-> -	{ .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
-> +	{ .idx = offsetof(struct security_hook_heads, HEAD) / \
-> +		sizeof(struct list_head), .hook = { .HEAD = HOOK } }
-
-You're gaining making security_hook_heads static,
-but you're loosing the type checking. I found (much
-to my surprise at times) that the type checking is
-very helpful even with existing modules. I expect
-some module developers to get bitten by this.
-
-
+>  	opts->mnt_opts_flags = kcalloc(NUM_SMK_MNT_OPTS, sizeof(int),
+>  			GFP_KERNEL);
+> -	if (!opts->mnt_opts_flags) {
+> -		kfree(opts->mnt_opts);
+> +	if (!opts->mnt_opts_flags)
+>  		goto out_err;
+> -	}
 >  
-> -extern struct security_hook_heads security_hook_heads;
->  extern char *lsm_names;
->  
->  extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> diff --git a/security/security.c b/security/security.c
-> index 2f15488..45af8fb 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -32,7 +32,7 @@
->  /* Maximum number of letters for an LSM name string */
->  #define SECURITY_NAME_MAX	10
->  
-> -struct security_hook_heads security_hook_heads __lsm_ro_after_init;
-> +static struct security_hook_heads security_hook_heads __lsm_ro_after_init;
->  char *lsm_names;
->  /* Boot-time LSM user choice */
->  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
-> @@ -133,10 +133,19 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
->  				char *lsm)
->  {
->  	int i;
-> +	unsigned int idx;
-> +	struct list_head *list = (struct list_head *) &security_hook_heads;
->  
->  	for (i = 0; i < count; i++) {
->  		hooks[i].lsm = lsm;
-> -		list_add_tail_rcu(&hooks[i].list, hooks[i].head);
-> +		/*
-> +		 * LSM_HOOK_INIT() must have set correct idx value.
-> +		 * But just in case something went wrong.
-> +		 */
-> +		idx = hooks[i].idx;
-> +		BUG_ON(idx >= sizeof(struct security_hook_heads) /
-> +		       sizeof(struct list_head));
-> +		list_add_tail_rcu(&hooks[i].list, &list[idx]);
->  	}
->  	if (lsm_append(lsm, &lsm_names) < 0)
->  		panic("%s - Cannot get early memory.\n", __func__);
+>  	if (fsdefault) {
+>  		opts->mnt_opts[num_mnt_opts] = fsdefault;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
