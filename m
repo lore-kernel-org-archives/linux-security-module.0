@@ -1,39 +1,98 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 24 Mar 2017 08:35:00 -0700
-Subject: [PATCH 1/2] LSM: Initialize security_hook_heads upon registration.
-In-Reply-To: <alpine.LRH.2.20.1703241453530.26984@namei.org>
-References: <1490179580-7065-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<alpine.LRH.2.20.1703241453530.26984@namei.org>
-Message-ID: <dbaf35cb-f6d9-2837-4e30-17e33d8449e8@schaufler-ca.com>
+Date: Fri, 24 Mar 2017 08:46:28 -0700
+Subject: [PATCH v2] LSM: Make security_hook_heads a local variable.
+In-Reply-To: <1490354187-11843-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1490354187-11843-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <40ffa6c1-ce0d-9b66-62af-17177afc6c08@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/23/2017 8:54 PM, James Morris wrote:
-> On Wed, 22 Mar 2017, Tetsuo Handa wrote:
+On 3/24/2017 4:16 AM, Tetsuo Handa wrote:
+> Since commit 3dfc9b02864b19f4 ("LSM: Initialize security_hook_heads upon
+> registration.") changed to access security_hook_heads as an array of
+> "struct list_head", we no longer need to pass address of each member inside
+> "struct security_hook_heads". Therefore, we can make security_hook_heads
+> a local variable by passing index number inside "struct list_head" array.
 >
->> "struct security_hook_heads" is an array of "struct list_head"
->> where elements can be initialized just before registration.
->>
->> We might introduce different "struct security_hook_heads" for built-in
->> LSM modules and dynamically loadable LSM modules when we start allowing
->> dynamically loadable LSM modules. But even if we decide to use different
->> lists, there is no need to waste 350+ lines for initialization. Let's
->> initialize "struct security_hook_heads" just before registration.
->>
->> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Nice cleanup, applied to
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: James Morris <james.l.morris@oracle.com>
+> ---
+>  include/linux/lsm_hooks.h |  6 +++---
+>  security/security.c       | 13 +++++++++++--
+>  2 files changed, 14 insertions(+), 5 deletions(-)
 >
-> with edited changelog.
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 1aa6333..54191cf 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1877,8 +1877,8 @@ struct security_hook_heads {
+>   */
+>  struct security_hook_list {
+>  	struct list_head		list;
+> -	struct list_head		*head;
+>  	union security_list_options	hook;
+> +	const unsigned int		idx;
+>  	char				*lsm;
+>  };
+>  
+> @@ -1889,9 +1889,9 @@ struct security_hook_list {
+>   * text involved.
+>   */
+>  #define LSM_HOOK_INIT(HEAD, HOOK) \
+> -	{ .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
+> +	{ .idx = offsetof(struct security_hook_heads, HEAD) / \
+> +		sizeof(struct list_head), .hook = { .HEAD = HOOK } }
 
-Sigh. All that beautiful keyboard work for naught. ;)
+You're gaining making security_hook_heads static,
+but you're loosing the type checking. I found (much
+to my surprise at times) that the type checking is
+very helpful even with existing modules. I expect
+some module developers to get bitten by this.
 
-I hope we don't start getting complaints from automatic
-code checkers and kernel newbees because of the assumption
-that a struct with a bunch of the same elements is the
-same as an array. Or worse, the compiler for some quirky
-architecture. I suppose if that happens we can always
-put it back.
+
+>  
+> -extern struct security_hook_heads security_hook_heads;
+>  extern char *lsm_names;
+>  
+>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> diff --git a/security/security.c b/security/security.c
+> index 2f15488..45af8fb 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -32,7 +32,7 @@
+>  /* Maximum number of letters for an LSM name string */
+>  #define SECURITY_NAME_MAX	10
+>  
+> -struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+> +static struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+>  char *lsm_names;
+>  /* Boot-time LSM user choice */
+>  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+> @@ -133,10 +133,19 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>  				char *lsm)
+>  {
+>  	int i;
+> +	unsigned int idx;
+> +	struct list_head *list = (struct list_head *) &security_hook_heads;
+>  
+>  	for (i = 0; i < count; i++) {
+>  		hooks[i].lsm = lsm;
+> -		list_add_tail_rcu(&hooks[i].list, hooks[i].head);
+> +		/*
+> +		 * LSM_HOOK_INIT() must have set correct idx value.
+> +		 * But just in case something went wrong.
+> +		 */
+> +		idx = hooks[i].idx;
+> +		BUG_ON(idx >= sizeof(struct security_hook_heads) /
+> +		       sizeof(struct list_head));
+> +		list_add_tail_rcu(&hooks[i].list, &list[idx]);
+>  	}
+>  	if (lsm_append(lsm, &lsm_names) < 0)
+>  		panic("%s - Cannot get early memory.\n", __func__);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
