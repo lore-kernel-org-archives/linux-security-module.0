@@ -1,55 +1,42 @@
-From: jarkko.sakkinen@iki.fi (Jarkko Sakkinen)
-Date: Mon, 27 Mar 2017 00:08:15 +0300
-Subject: [PATCH] tpm: do handle area size validation only when TPM space used
-Message-ID: <20170326210815.21252-1-jarkko.sakkinen@iki.fi>
+From: jmorris@namei.org (James Morris)
+Date: Mon, 27 Mar 2017 08:09:17 +1100 (AEDT)
+Subject: [PATCH] LSM: Revive security_task_alloc() hook and per "struct
+	task_struct" security blob.
+In-Reply-To: <201703261049.FAI51524.OVFQtFSLHOFMOJ@I-love.SAKURA.ne.jp>
+References: <1490355993-15773-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<201703261049.FAI51524.OVFQtFSLHOFMOJ@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.LRH.2.20.1703270809070.25743@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In order to not cause backwards compatibility issues with
-/dev/tpm0 disable handle area size validation if tpm_transmit
-is not called with a TPM space.
+On Sun, 26 Mar 2017, Tetsuo Handa wrote:
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
----
- drivers/char/tpm/tpm-interface.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> James, would you teach me why this patch still cannot go to linux-next?
+> If we don't merge this patch now, we will again fail to land in 4.12.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index bf0c3fa..158c1db 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -328,7 +328,9 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip,
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
--static bool tpm_validate_command(struct tpm_chip *chip, const u8 *cmd,
-+static bool tpm_validate_command(struct tpm_chip *chip,
-+				 struct tpm_space *space,
-+				 const u8 *cmd,
- 				 size_t len)
- {
- 	const struct tpm_input_header *header = (const void *)cmd;
-@@ -340,6 +342,9 @@ static bool tpm_validate_command(struct tpm_chip *chip, const u8 *cmd,
- 	if (len < TPM_HEADER_SIZE)
- 		return false;
- 
-+	if (!space)
-+		return true;
-+
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
- 		cc = be32_to_cpu(header->ordinal);
- 
-@@ -386,7 +391,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	unsigned long stop;
- 	bool need_locality;
- 
--	if (!tpm_validate_command(chip, buf, bufsiz))
-+	if (!tpm_validate_command(chip, space, buf, bufsiz))
- 		return -EINVAL;
- 
- 	if (bufsiz > TPM_BUFSIZE)
+I'm still reviewing it.
+
+
+> 
+> > On 02/01/2017 08:02 PM, James Morris wrote:
+> > > On Wed, 1 Feb 2017, John Johansen wrote:
+> > >
+> > >> Sorry this took so long, it looks good to me, and I have done
+> > >> some builds and tests with apparmor using it. The apparmor patch
+> > >> to make use of this follows as a reply.
+> > >>
+> > >> Acked-by: John Johansen <john.johansen@canonical.com>
+> > >
+> > > We're too late in the -rc cycle to take these for 4.11.  Please
+> > > keep testing them and some more review/acks would also be good.
+> > >
+> > Certainly, I didn't expect this to land in 4.11. I would really like
+> > get some feed back/review/ack from the owner of the task struct.
+> 
+
 -- 
-2.9.3
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
