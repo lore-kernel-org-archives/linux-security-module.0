@@ -1,50 +1,30 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 25 Mar 2017 21:52:11 +0200
-Subject: [PATCH v4] tpm_crb: request and relinquish locality 0
-In-Reply-To: <87lgru7cqy.fsf@redhat.com>
-References: <20170324101032.13496-1-jarkko.sakkinen@iki.fi>
-	<87lgru7cqy.fsf@redhat.com>
-Message-ID: <20170325195211.w2gfmodozgwrfxy6@intel.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sun, 26 Mar 2017 10:49:53 +0900
+Subject: [PATCH] LSM: Revive security_task_alloc() hook and per "struct
+	task_struct" security blob.
+In-Reply-To: <1490355993-15773-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1490355993-15773-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <201703261049.FAI51524.OVFQtFSLHOFMOJ@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Mar 24, 2017 at 11:25:57AM -0700, Jerry Snitselaar wrote:
-> 
-> Jarkko Sakkinen @ 2017-03-24 10:10 GMT:
-> 
-> > This commit adds support for requesting and relinquishing locality 0 in
-> > tpm_crb for the course of command transmission.
-> >
-> > In order to achieve this, two new callbacks are added to struct
-> > tpm_class_ops:
-> >
-> > - request_locality
-> > - relinquish_locality
-> >
-> > With CRB interface you first set either requestAccess or relinquish bit
-> > from TPM_LOC_CTRL_x register and then wait for locAssigned and
-> > tpmRegValidSts bits to be set in the TPM_LOC_STATE_x register.
-> >
-> > The reason why were are doing this is to make sure that the driver
-> > will work properly with Intel TXT that uses locality 2. There's no
-> > explicit guarantee that it would relinquish this locality. In more
-> > general sense this commit enables tpm_crb to be a well behaving
-> > citizen in a multi locality environment.
-> >
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> 
-> Tested on kabylake system that was hitting issues with earlier
-> iteration. Still don't have platform to test it dealing with
-> multi-locality enviroment.
+James, would you teach me why this patch still cannot go to linux-next?
+If we don't merge this patch now, we will again fail to land in 4.12.
 
-I believe Jimmy (Gang Wei) has done such testing. Jimmy can you confirm
-and possibly do re-test (there's a locality branch in my tree to ease
-the testing) so that we could land this one?
-
-/Jarkko
+> On 02/01/2017 08:02 PM, James Morris wrote:
+> > On Wed, 1 Feb 2017, John Johansen wrote:
+> >
+> >> Sorry this took so long, it looks good to me, and I have done
+> >> some builds and tests with apparmor using it. The apparmor patch
+> >> to make use of this follows as a reply.
+> >>
+> >> Acked-by: John Johansen <john.johansen@canonical.com>
+> >
+> > We're too late in the -rc cycle to take these for 4.11.  Please
+> > keep testing them and some more review/acks would also be good.
+> >
+> Certainly, I didn't expect this to land in 4.11. I would really like
+> get some feed back/review/ack from the owner of the task struct.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
