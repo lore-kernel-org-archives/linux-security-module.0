@@ -1,47 +1,44 @@
 From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Mon, 27 Mar 2017 19:26:12 +0900
-Subject: [RFC PATCH] smack: Use __GFP_NOFAIL than panic()
-Message-ID: <201703271926.JJI69202.MJVQFSFLOFtOOH@I-love.SAKURA.ne.jp>
+Date: Mon, 27 Mar 2017 23:29:44 +0900
+Subject: [PATCH] mm: Remove pointless might_sleep() in remove_vm_area().
+In-Reply-To: <f1c0b9ec-c0c8-502c-c7f0-fe692c73ab04@vmware.com>
+References: <201703242140.CHJ64587.LFSFQOJOOMtFHV@I-love.SAKURA.ne.jp>
+	<fe511b26-f2e5-0a0e-09cc-303d38d2ad05@virtuozzo.com>
+	<20170324161732.GA23110@bombadil.infradead.org>
+	<0eceef23-a20c-bca7-2153-b9b5baf1f1d8@virtuozzo.com>
+	<f1c0b9ec-c0c8-502c-c7f0-fe692c73ab04@vmware.com>
+Message-ID: <201703272329.AIE32232.LtVSOOOFFQJFHM@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
->From dbdac6060ac1a741cb95f370121339bcc4176aea Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Mon, 27 Mar 2017 14:06:52 +0900
-Subject: [RFC PATCH] smack: Use __GFP_NOFAIL than panic()
+Thomas Hellstrom wrote:
+> So to summarize. Yes, the drm callers can be fixed up, but IMO requiring
+> vfree() to be non-atomic is IMO not a good idea if avoidable.
 
-smk_cipso_doi() is called by two locations; upon boot up and upon writing
-to /smack/doi interface.
+I agree.
 
-It is theoretically possible that kmalloc(GFP_KERNEL) for the latter fails
-due to being killed by the OOM killer or memory allocation fault injection.
-Although use of __GFP_NOFAIL is not recommended, is it tolerable to use
-__GFP_NOFAIL when adding a recovery path for unlikely failure is not
-worthwhile but allocation is single-shot and amount of memory to allocate
-is known to be small enough?
+I don't know about drm code. But I can find AppArmor code doing
+kvfree() from dfa_free() from aa_dfa_free_kref() from kref_put() from
+aa_put_dfa() from aa_free_profile() which says
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/smack/smackfs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ * If the profile was referenced from a task context, free_profile() will
+ * be called from an rcu callback routine, so we must not sleep here.
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 366b835..4e45a77 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -721,9 +721,7 @@ static void smk_cipso_doi(void)
- 		printk(KERN_WARNING "%s:%d remove rc = %d\n",
- 		       __func__, __LINE__, rc);
- 
--	doip = kmalloc(sizeof(struct cipso_v4_doi), GFP_KERNEL);
--	if (doip == NULL)
--		panic("smack:  Failed to initialize cipso DOI.\n");
-+	doip = kmalloc(sizeof(struct cipso_v4_doi), GFP_KERNEL | __GFP_NOFAIL);
- 	doip->map.std = NULL;
- 	doip->doi = smk_cipso_doi_value;
- 	doip->type = CIPSO_V4_MAP_PASS;
--- 
-1.8.3.1
+which means that below changes broke things without properly auditing
+all vfree()/kvfree() users.
+
+  commit bf22e37a641327e3 ("mm: add vfree_atomic()")
+  commit 0f110a9b956c1678 ("kernel/fork: use vfree_atomic() to free thread stack")
+  commit 8d5341a6260a59cf ("x86/ldt: use vfree_atomic() to free ldt entries")
+  commit 5803ed292e63a1bf ("mm: mark all calls into the vmalloc subsystem as potentially sleeping")
+  commit f9e09977671b618a ("mm: turn vmap_purge_lock into a mutex")
+  commit 763b218ddfaf5676 ("mm: add preempt points into __purge_vmap_area_lazy()")
+
+Since above commits did not take appropriate proceedure for changing
+non-blocking API to blocking API, we must fix vfree() part for 4.10 and 4.11.
+
+Updated patch is at
+http://lkml.kernel.org/r/201703271916.FBI69340.SQFtOFVJHOLOMF at I-love.SAKURA.ne.jp .
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
