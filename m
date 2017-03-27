@@ -1,24 +1,26 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Mon, 27 Mar 2017 14:19:43 -0400
-Subject: SELinux: Fine-tuning for several function implementations
-In-Reply-To: <c8dd502c-bbde-3fe0-a2a0-b803beefc67e@users.sourceforge.net>
+Date: Mon, 27 Mar 2017 14:20:50 -0400
+Subject: selinux: Delete unnecessary variable assignments in
+	policydb_index()
+In-Reply-To: <1ae9af46-a3ca-33b8-d347-8983a22cb3cb@users.sourceforge.net>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<CAHC9VhRsgmit4BMjTu1ZrTYY-LoMOxOgjfy7U1TgzjqCSmfmOA@mail.gmail.com>
-	<c8dd502c-bbde-3fe0-a2a0-b803beefc67e@users.sourceforge.net>
-Message-ID: <CAHC9VhQRHECQS7+-6X4YQzFQNaLSMCqnwdr2i3TTLidPAvDO1g@mail.gmail.com>
+	<247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
+	<CAHC9VhRHEDCRNVfOqw4mwJQD9PmESEcgyZ7xCEwHZKpiDSjnYw@mail.gmail.com>
+	<1ae9af46-a3ca-33b8-d347-8983a22cb3cb@users.sourceforge.net>
+Message-ID: <CAHC9VhSPv11X=HYV3qoiMV4GDg4VDaxvNYru0xDjU4Y2t27CPg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 27, 2017 at 1:48 AM, SF Markus Elfring
+On Mon, Mar 27, 2017 at 2:24 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
->> I've made it through the first half (23/46) and of those
->> I've merged patches ?, 7, ?
+>> However, I agree with Casey that this patch is mostly just code churn
+>> so I'm going to drop this from your series.
 >
-> It seems that you dropped this one while integrating the eighth
-> update step.
+> How do you think about to return only constant error codes in this function?
+> Would it be acceptable to replace any statements ?goto out;? with
+> ?return -ENOMEM;? here instead?
 
-Yes, my mistake, as I said in my response to that patch, I do not plan
-on merging 07/46.
+Yes.
 
 -- 
 paul moore
