@@ -1,35 +1,38 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Wed, 29 Mar 2017 12:20:02 -0700
-Subject: security/keys: add CONFIG_KEYS_COMPAT to Kconfig
-In-Reply-To: <1486674698-67190-1-git-send-email-bilal.amarni@gmail.com>
-Message-ID: <20170329192002.GA29310@gmail.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 29 Mar 2017 13:45:28 -0700
+Subject: [PATCH] TOMOYO: use designated initializers
+In-Reply-To: <201612171155.EDG30258.QOtFMSOJFFLOVH@I-love.SAKURA.ne.jp>
+References: <20161217010522.GA140690@beast>
+	<201612171155.EDG30258.QOtFMSOJFFLOVH@I-love.SAKURA.ne.jp>
+Message-ID: <CAGXu5j+kUbEcAcCKZT09pHFxWTYkiNqnxGKCyrLhuYLeiSemZw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu,  9 Feb 2017 22:11:38 +0100, Bilal Amarni wrote:
-> CONFIG_KEYS_COMPAT is defined in arch-specific Kconfigs and is missing for
-> several 64-bit architectures : arm64, mips, parisc, tile.
-> 
-> At the moment and for those architectures, calling in 32-bit userspace the
-> keyctl syscall would return an ENOSYS error.
-> 
-> This patch moves the CONFIG_KEYS_COMPAT option to security/keys/Kconfig, to
-> make sure the compatibility wrapper is registered by default for any 64-bit
-> architecture as long as it is configured with CONFIG_COMPAT.
+On Fri, Dec 16, 2016 at 6:55 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Kees Cook wrote:
+>> Prepare to mark sensitive kernel structures for randomization by making
+>> sure they're using designated initializers. These were identified during
+>> allyesconfig builds of x86, arm, and arm64, with most initializer fixes
+>> extracted from grsecurity.
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  security/tomoyo/file.c   | 12 ++++++------
+>>  security/tomoyo/tomoyo.c | 20 ++++++++++----------
+>>  2 files changed, 16 insertions(+), 16 deletions(-)
+>
+> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>
+> James, please apply to linux-security.git .
 
-David, where can I find the git branch this patch was applied to?  I don't see
-it anywhere in security-keys or linux-security.
+Friendly ping. :) James, I don't think this ever got into -next?
 
-I recently added KEYS_COMPAT to arm64 (5c2a625937ba); that should be reverted
-after this patch.
+-Kees
 
-Also, I'd like to submit a follow-on patch that removes KEYS_COMPAT and simply
-uses COMPAT.
-
-And the parisc architecture doesn't use compat_sys_keyctl() in its compat
-syscall table, so that should be fixed too (though that's not a new bug).
-
-- Eric
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
