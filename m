@@ -1,184 +1,65 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Wed, 29 Mar 2017 12:35:19 +0200
-Subject: [kernel-hardening] [PATCH net-next v6 06/11] seccomp,landlock:
-	Handle Landlock events per process hierarchy
-In-Reply-To: <20170328234650.19695-7-mic@digikod.net>
-References: <20170328234650.19695-1-mic@digikod.net>
-	<20170328234650.19695-7-mic@digikod.net>
-Message-ID: <CAEiveUcp6xpUW764zupy8ekttnQGaonXFn-JEFg7nhXUKzenDg@mail.gmail.com>
+From: lkp@intel.com (kbuild test robot)
+Date: Wed, 29 Mar 2017 21:48:01 +0800
+Subject: [PATCH net-next v6 01/11] bpf: Add eBPF program subtype and
+	is_valid_subtype() verifier
+In-Reply-To: <20170328234650.19695-2-mic@digikod.net>
+Message-ID: <201703292120.wrm0eHSI%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Mar 29, 2017 at 1:46 AM, Micka?l Sala?n <mic@digikod.net> wrote:
-> The seccomp(2) syscall can be used by a task to apply a Landlock rule to
-> itself. As a seccomp filter, a Landlock rule is enforced for the current
-> task and all its future children. A rule is immutable and a task can
-> only add new restricting rules to itself, forming a chain of rules.
->
-> A Landlock rule is tied to a Landlock event. If the use of a kernel
-> object is allowed by the other Linux security mechanisms (e.g. DAC,
-> capabilities, other LSM), then a Landlock event related to this kind of
-> object is triggered. The chain of rules for this event is then
-> evaluated. Each rule return a 32-bit value which can deny the use of a
-> kernel object with a non-zero value. If every rules of the chain return
-> zero, then the use of the object is allowed.
->
-> Changes since v5:
-> * remove struct landlock_node and use a similar inheritance mechanisme
->   as seccomp-bpf (requested by Andy Lutomirski)
-> * rename SECCOMP_ADD_LANDLOCK_RULE to SECCOMP_APPEND_LANDLOCK_RULE
-> * rename file manager.c to providers.c
-> * add comments
-> * typo and cosmetic fixes
->
-> Changes since v4:
-> * merge manager and seccomp patches
-> * return -EFAULT in seccomp(2) when user_bpf_fd is null to easely check
->   if Landlock is supported
-> * only allow a process with the global CAP_SYS_ADMIN to use Landlock
->   (will be lifted in the future)
-> * add an early check to exit as soon as possible if the current process
->   does not have Landlock rules
->
-> Changes since v3:
-> * remove the hard link with seccomp (suggested by Andy Lutomirski and
->   Kees Cook):
->   * remove the cookie which could imply multiple evaluation of Landlock
->     rules
->   * remove the origin field in struct landlock_data
-> * remove documentation fix (merged upstream)
-> * rename the new seccomp command to SECCOMP_ADD_LANDLOCK_RULE
-> * internal renaming
-> * split commit
-> * new design to be able to inherit on the fly the parent rules
->
-> Changes since v2:
-> * Landlock programs can now be run without seccomp filter but for any
->   syscall (from the process) or interruption
-> * move Landlock related functions and structs into security/landlock/*
->   (to manage cgroups as well)
-> * fix seccomp filter handling: run Landlock programs for each of their
->   legitimate seccomp filter
-> * properly clean up all seccomp results
-> * cosmetic changes to ease the understanding
-> * fix some ifdef
->
-> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Will Drewry <wad@chromium.org>
-> Link: https://lkml.kernel.org/r/c10a503d-5e35-7785-2f3d-25ed8dd63fab at digikod.net
-> ---
->  include/linux/landlock.h      |  36 +++++++
->  include/linux/seccomp.h       |   8 ++
->  include/uapi/linux/seccomp.h  |   1 +
->  kernel/fork.c                 |  14 ++-
->  kernel/seccomp.c              |   8 ++
->  security/landlock/Makefile    |   2 +-
->  security/landlock/hooks.c     |  37 +++++++
->  security/landlock/hooks.h     |   5 +
->  security/landlock/init.c      |   3 +-
->  security/landlock/providers.c | 232 ++++++++++++++++++++++++++++++++++++++++++
->  10 files changed, 342 insertions(+), 4 deletions(-)
->  create mode 100644 security/landlock/providers.c
->
-> diff --git a/include/linux/landlock.h b/include/linux/landlock.h
-> index 53013dc374fe..c40ee78e86e0 100644
-> --- a/include/linux/landlock.h
-> +++ b/include/linux/landlock.h
-> @@ -12,6 +12,9 @@
->  #define _LINUX_LANDLOCK_H
->  #ifdef CONFIG_SECURITY_LANDLOCK
->
-> +#include <linux/bpf.h> /* _LANDLOCK_SUBTYPE_EVENT_LAST */
-> +#include <linux/types.h> /* atomic_t */
-> +
->  /*
->   * This is not intended for the UAPI headers. Each userland software should use
->   * a static minimal version for the required features as explained in the
-> @@ -19,5 +22,38 @@
->   */
->  #define LANDLOCK_VERSION 1
->
-> +struct landlock_rule {
-> +       atomic_t usage;
-> +       struct landlock_rule *prev;
-> +       struct bpf_prog *prog;
-> +};
-> +
-> +/**
-> + * struct landlock_events - Landlock event rules enforced on a thread
-> + *
-> + * This is used for low performance impact when forking a process. Instead of
-> + * copying the full array and incrementing the usage of each entries, only
-> + * create a pointer to &struct landlock_events and increments its usage. When
-> + * appending a new rule, if &struct landlock_events is shared with other tasks,
-> + * then duplicate it and append the rule to this new &struct landlock_events.
-> + *
-> + * @usage: reference count to manage the object lifetime. When a thread need to
-> + *         add Landlock rules and if @usage is greater than 1, then the thread
-> + *         must duplicate &struct landlock_events to not change the children's
-> + *         rules as well.
-> + * @rules: array of non-NULL &struct landlock_rule pointers
-> + */
-> +struct landlock_events {
-> +       atomic_t usage;
-> +       struct landlock_rule *rules[_LANDLOCK_SUBTYPE_EVENT_LAST];
-> +};
-> +
-> +void put_landlock_events(struct landlock_events *events);
-> +
-> +#ifdef CONFIG_SECCOMP_FILTER
-> +int landlock_seccomp_append_prog(unsigned int flags,
-> +               const char __user *user_bpf_fd);
-> +#endif /* CONFIG_SECCOMP_FILTER */
-> +
->  #endif /* CONFIG_SECURITY_LANDLOCK */
->  #endif /* _LINUX_LANDLOCK_H */
-> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-> index e25aee2cdfc0..9a38de3c0e72 100644
-> --- a/include/linux/seccomp.h
-> +++ b/include/linux/seccomp.h
-> @@ -10,6 +10,10 @@
->  #include <linux/thread_info.h>
->  #include <asm/seccomp.h>
->
-> +#if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_SECURITY_LANDLOCK)
-> +struct landlock_events;
-> +#endif /* CONFIG_SECCOMP_FILTER && CONFIG_SECURITY_LANDLOCK */
-> +
->  struct seccomp_filter;
->  /**
->   * struct seccomp - the state of a seccomp'ed process
-> @@ -18,6 +22,7 @@ struct seccomp_filter;
->   *         system calls available to a process.
->   * @filter: must always point to a valid seccomp-filter or NULL as it is
->   *          accessed without locking during system call entry.
-> + * @landlock_events: contains an array of Landlock rules.
->   *
->   *          @filter must only be accessed from the context of current as there
->   *          is no read locking.
-> @@ -25,6 +30,9 @@ struct seccomp_filter;
->  struct seccomp {
->         int mode;
->         struct seccomp_filter *filter;
-> +#if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_SECURITY_LANDLOCK)
-> +       struct landlock_events *landlock_events;
-> +#endif /* CONFIG_SECCOMP_FILTER && CONFIG_SECURITY_LANDLOCK */
->  };
+Hi Micka?l,
 
-Sorry if this was discussed before, but since this is mean to be a
-stackable LSM, I'm wondering if later you could move the events from
-seccomp, and go with a security_task_alloc() model [1] ?
+[auto build test WARNING on net-next/master]
 
-Thanks!
+url:    https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-LSM-Toward-unprivileged-sandboxing/20170329-211258
+config: i386-randconfig-x002-201713 (attached as .config)
+compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
 
-[1] http://kernsec.org/pipermail/linux-security-module-archive/2017-March/000184.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+All warnings (new ones prefixed by >>):
+
+   kernel/bpf/syscall.c: In function 'bpf_prog_load':
+>> kernel/bpf/syscall.c:886:25: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+      size = check_user_buf((void __user *)attr->prog_subtype,
+                            ^
+
+vim +886 kernel/bpf/syscall.c
+
+   870	
+   871		prog->orig_prog = NULL;
+   872		prog->jited = 0;
+   873	
+   874		atomic_set(&prog->aux->refcnt, 1);
+   875		prog->gpl_compatible = is_gpl ? 1 : 0;
+   876	
+   877		/* find program type: socket_filter vs tracing_filter */
+   878		err = find_prog_type(type, prog);
+   879		if (err < 0)
+   880			goto free_prog;
+   881	
+   882		/* copy eBPF program subtype from user space */
+   883		if (attr->prog_subtype) {
+   884			__u32 size;
+   885	
+ > 886			size = check_user_buf((void __user *)attr->prog_subtype,
+   887					      attr->prog_subtype_size,
+   888					      sizeof(prog->subtype));
+   889			if (size < 0) {
+   890				err = size;
+   891				goto free_prog;
+   892			}
+   893			/* prog->subtype is __GFP_ZERO */
+   894			if (copy_from_user(&prog->subtype,
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: .config.gz
+Type: application/gzip
+Size: 23016 bytes
+Desc: not available
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170329/49d3bfb9/attachment.bin>
