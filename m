@@ -1,96 +1,61 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 29 Mar 2017 17:36:16 -0400
-Subject: [PATCH] fs: switch order of CAP_DAC_OVERRIDE and
-	CAP_DAC_READ_SEARCH checks
-In-Reply-To: <CAHC9VhT42v2Z5hw8PSUqOtzhz1Ba3K4bL=DuSXTJwPberWtjLQ@mail.gmail.com>
-References: <1489166058-11789-1-git-send-email-sds@tycho.nsa.gov>
-	<CAHC9VhT42v2Z5hw8PSUqOtzhz1Ba3K4bL=DuSXTJwPberWtjLQ@mail.gmail.com>
-Message-ID: <CAHC9VhQ7TOXhcCKTg4QaH3EsdVHxzJr5gX1xvLD=RSQ-xmfVCg@mail.gmail.com>
+From: bfields@redhat.com (J. Bruce Fields)
+Date: Wed, 29 Mar 2017 17:34:40 -0400
+Subject: [PATCH] selinux: Fix SBLABEL_MNT for NFS mounts
+In-Reply-To: <20170329152724.19030-1-tomeu.vizoso@collabora.com>
+References: <20170329152724.19030-1-tomeu.vizoso@collabora.com>
+Message-ID: <20170329213439.GC19617@parsley.fieldses.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Mar 10, 2017 at 2:54 PM, Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Mar 10, 2017 at 12:14 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
->> generic_permission() presently checks CAP_DAC_OVERRIDE prior to
->> CAP_DAC_READ_SEARCH.  This can cause misleading audit messages when
->> using a LSM such as SELinux or AppArmor, since CAP_DAC_OVERRIDE
->> may not be required for the operation.  Flip the order of the
->> tests so that CAP_DAC_OVERRIDE is only checked when required for
->> the operation.
->>
->> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
->> ---
->>  fs/namei.c | 20 ++++++++++----------
->>  1 file changed, 10 insertions(+), 10 deletions(-)
->
-> This is the second posting of this patch and so far no comment ... if
-> I don't see any negative responses by next week I'll go ahead and
-> merge this into the selinux/next tree.
+On Wed, Mar 29, 2017 at 05:27:23PM +0200, Tomeu Vizoso wrote:
+> Labelling of files in a NFSv4.2 currently fails with ENOTSUPP because
+> the mount point doesn't have SBLABEL_MNT.
+> 
+> Add specific condition for NFS4 filesystems so it gets correctly
+> labeled.
 
-No objections, but plenty of ACKs and Reviewed-bys so I just merged
-this into the selinux/next tree.
+Huh.  Looking at the code, I think this is meant to be handled by the
+SECURITY_FS_USE_NATIVE case--there was a similar failure fixed some time
+ago by 9fc2b4b436cf.  What kernel are you seeing this on?  Is it a
+recent regression (in which case, what's the latest kernel that worked
+for you)?
 
-Thanks all.
+--b.
 
->> diff --git a/fs/namei.c b/fs/namei.c
->> index d41fab7..482414a 100644
->> --- a/fs/namei.c
->> +++ b/fs/namei.c
->> @@ -340,22 +340,14 @@ int generic_permission(struct inode *inode, int mask)
->>
->>         if (S_ISDIR(inode->i_mode)) {
->>                 /* DACs are overridable for directories */
->> -               if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
->> -                       return 0;
->>                 if (!(mask & MAY_WRITE))
->>                         if (capable_wrt_inode_uidgid(inode,
->>                                                      CAP_DAC_READ_SEARCH))
->>                                 return 0;
->> -               return -EACCES;
->> -       }
->> -       /*
->> -        * Read/write DACs are always overridable.
->> -        * Executable DACs are overridable when there is
->> -        * at least one exec bit set.
->> -        */
->> -       if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
->>                 if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
->>                         return 0;
->> +               return -EACCES;
->> +       }
->>
->>         /*
->>          * Searching includes executable on directories, else just read.
->> @@ -364,6 +356,14 @@ int generic_permission(struct inode *inode, int mask)
->>         if (mask == MAY_READ)
->>                 if (capable_wrt_inode_uidgid(inode, CAP_DAC_READ_SEARCH))
->>                         return 0;
->> +       /*
->> +        * Read/write DACs are always overridable.
->> +        * Executable DACs are overridable when there is
->> +        * at least one exec bit set.
->> +        */
->> +       if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
->> +               if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
->> +                       return 0;
->>
->>         return -EACCES;
->>  }
->> --
->> 2.7.4
->>
->
->
->
-> --
-> paul moore
-> www.paul-moore.com
-
-
-
--- 
-paul moore
-www.paul-moore.com
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Cc: J. Bruce Fields <bfields@redhat.com>
+> 
+> ---
+> 
+> Hi,
+> 
+> cannot remotely say that I currently understand how selinux is expected
+> to work within NFS mounts, but this change allowed me to fully boot AOSP
+> with its rootfs and ramdisk on a single NFS share.
+> 
+> Thanks,
+> 
+> Tomeu
+> ---
+>  security/selinux/hooks.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 0c2ac318aa7f..71cd1d8c67c2 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -485,6 +485,7 @@ static int selinux_is_sblabel_mnt(struct super_block *sb)
+>  		!strcmp(sb->s_type->name, "debugfs") ||
+>  		!strcmp(sb->s_type->name, "tracefs") ||
+>  		!strcmp(sb->s_type->name, "rootfs") ||
+> +		!strcmp(sb->s_type->name, "nfs4") ||
+>  		(selinux_policycap_cgroupseclabel &&
+>  		 (!strcmp(sb->s_type->name, "cgroup") ||
+>  		  !strcmp(sb->s_type->name, "cgroup2")));
+> -- 
+> 2.9.3
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
