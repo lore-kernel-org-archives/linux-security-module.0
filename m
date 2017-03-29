@@ -1,45 +1,46 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 29 Mar 2017 11:30:17 -0400
-Subject: [PATCH 34/46] selinux: Return directly after a failed kzalloc()
-	in common_read()
-In-Reply-To: <caec05bb-b2ae-eda6-f052-32ed1d7c8c47@users.sourceforge.net>
+Date: Wed, 29 Mar 2017 11:32:50 -0400
+Subject: [PATCH 37/46] selinux: Move an assignment for the variable "rc"
+	in policydb_load_isids()
+In-Reply-To: <9202247d-8f44-8839-cf78-453b6e3b7d1e@users.sourceforge.net>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<caec05bb-b2ae-eda6-f052-32ed1d7c8c47@users.sourceforge.net>
-Message-ID: <CAHC9VhS-Cr2-AUxw5MSA93yBe0Hxpus+NZoM-x_YizVnVLnK0Q@mail.gmail.com>
+	<9202247d-8f44-8839-cf78-453b6e3b7d1e@users.sourceforge.net>
+Message-ID: <CAHC9VhRPBRp08pzpokHnEfqmEzrNaW2zq+RZD=CRRUdZwJdN6A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:34 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:37 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 11:15:19 +0100
+> Date: Sun, 15 Jan 2017 11:24:51 +0100
 >
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
+> A local variable was set to an error code in one case before a concrete
+> error situation was detected. Thus move the corresponding assignment into
+> an if branch to indicate a software failure there.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  security/selinux/ss/policydb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Merged, thanks.
+Dropped as previously discussed.
 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 9035e5329ceb..551685283399 100644
+> index 7cf635c650dc..faa6ecc2450d 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -1150,10 +1150,9 @@ static int common_read(struct policydb *p, struct hashtab *h, void *fp)
->         u32 len, nel;
->         int i, rc;
+> @@ -897,10 +897,10 @@ int policydb_load_isids(struct policydb *p, struct sidtab *s)
 >
-> -       rc = -ENOMEM;
->         comdatum = kzalloc(sizeof(*comdatum), GFP_KERNEL);
->         if (!comdatum)
-> -               goto bad;
-> +               return -ENOMEM;
+>         head = p->ocontexts[OCON_ISID];
+>         for (c = head; c; c = c->next) {
+> -               rc = -EINVAL;
+>                 if (!c->context[0].user) {
+>                         printk(KERN_ERR "SELinux:  SID %s was never defined.\n",
+>                                 c->u.name);
+> +                       rc = -EINVAL;
+>                         goto out;
+>                 }
 >
->         rc = next_entry(buf, fp, sizeof buf);
->         if (rc)
 > --
 > 2.11.0
 >
