@@ -1,56 +1,72 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 29 Mar 2017 11:40:58 -0400
-Subject: [PATCH 41/46] selinux: Move two assignments for the variable "rc"
-	in roles_init()
-In-Reply-To: <aa7a9b62-1016-2e22-6104-d992d6b556bf@users.sourceforge.net>
+Date: Wed, 29 Mar 2017 11:43:23 -0400
+Subject: [PATCH 42/46] selinux: One function call less in roles_init()
+	after error detection
+In-Reply-To: <e26b4b88-b04f-0a82-0396-8b53a80d03a9@users.sourceforge.net>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<aa7a9b62-1016-2e22-6104-d992d6b556bf@users.sourceforge.net>
-Message-ID: <CAHC9VhQEWP=+wM1tXrXaWW0rfzB1Kh5JMJUGksM+ahZQNuevmg@mail.gmail.com>
+	<e26b4b88-b04f-0a82-0396-8b53a80d03a9@users.sourceforge.net>
+Message-ID: <CAHC9VhT_P_PpMvWQ3hUrSVJxkd5HyxyeSCU7GwnGo-U0msf8wQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:41 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:42 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 12:40:35 +0100
+> Date: Sun, 15 Jan 2017 12:56:54 +0100
 >
-> One local variable was set to an error code in two cases before
-> a concrete error situation was detected. Thus move the corresponding
-> assignments into if branches to indicate a software failure there.
+> The kfree() function was called in up to two cases by the
+> roles_init() function during error handling even if the passed variable
+> contained a null pointer.
+>
+> * Adjust a jump target according to the Linux coding style convention.
+>
+> * Delete an initialisation for the variable "key" at the beginning
+>   which became unnecessary with this refactoring.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  security/selinux/ss/policydb.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 
-Dropped for reasons previously discussed.
+Dropped due to unnecessary code churn with no significant advantage.
 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index ccc146bfd4c2..be445abf047b 100644
+> index be445abf047b..7dd5c6f7786f 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -182,15 +182,17 @@ static int roles_init(struct policydb *p)
->         if (!role)
->                 return -ENOMEM;
+> @@ -174,7 +174,7 @@ static struct policydb_compat_info *policydb_lookup_compat(int version)
+>   */
+>  static int roles_init(struct policydb *p)
+>  {
+> -       char *key = NULL;
+> +       char *key;
+>         int rc;
+>         struct role_datum *role;
 >
-> -       rc = -EINVAL;
+> @@ -185,13 +185,13 @@ static int roles_init(struct policydb *p)
 >         role->value = ++p->p_roles.nprim;
-> -       if (role->value != OBJECT_R_VAL)
-> +       if (role->value != OBJECT_R_VAL) {
-> +               rc = -EINVAL;
->                 goto out;
-> +       }
+>         if (role->value != OBJECT_R_VAL) {
+>                 rc = -EINVAL;
+> -               goto out;
+> +               goto free_role;
+>         }
 >
-> -       rc = -ENOMEM;
 >         key = kstrdup(OBJECT_R, GFP_KERNEL);
-> -       if (!key)
-> +       if (!key) {
-> +               rc = -ENOMEM;
->                 goto out;
-> +       }
+>         if (!key) {
+>                 rc = -ENOMEM;
+> -               goto out;
+> +               goto free_role;
+>         }
 >
 >         rc = hashtab_insert(p->p_roles.table, key, role);
->         if (rc)
+> @@ -201,6 +201,7 @@ static int roles_init(struct policydb *p)
+>         return 0;
+>  out:
+>         kfree(key);
+> +free_role:
+>         kfree(role);
+>         return rc;
+>  }
 > --
 > 2.11.0
 >
