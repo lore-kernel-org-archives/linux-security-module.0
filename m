@@ -1,37 +1,32 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Thu, 30 Mar 2017 09:32:35 +1100
-Subject: [PATCH] TOMOYO: use designated initializers
-In-Reply-To: <CAGXu5j+kUbEcAcCKZT09pHFxWTYkiNqnxGKCyrLhuYLeiSemZw@mail.gmail.com>
-References: <20161217010522.GA140690@beast>
-	<201612171155.EDG30258.QOtFMSOJFFLOVH@I-love.SAKURA.ne.jp>
-	<CAGXu5j+kUbEcAcCKZT09pHFxWTYkiNqnxGKCyrLhuYLeiSemZw@mail.gmail.com>
-Message-ID: <7b574e9d-e877-f73b-9cfc-6f6f0766a30d@oracle.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 29 Mar 2017 18:59:48 -0400
+Subject: [PATCH] selinux: Remove unnecessary check of array base in
+	selinux_set_mapping()
+In-Reply-To: <CANEJEGu5L61TgJ0RUhG+DvLExj7X1FsfKbGOXWCMRRWykkLm2A@mail.gmail.com>
+References: <20170316222652.125702-1-mka@chromium.org>
+	<CANEJEGtObzAs4ZT70A_y_bLNujaNLxzOSPjrWRoY3wAR9211jw@mail.gmail.com>
+	<CAHC9VhSVqYuuBvyjWmAqgfn9WvFW=VokcLLqsvmKedee3Gjgfw@mail.gmail.com>
+	<CANEJEGu5L61TgJ0RUhG+DvLExj7X1FsfKbGOXWCMRRWykkLm2A@mail.gmail.com>
+Message-ID: <CAHC9VhTWA=OVDFymUAhvpoEYHgfsxSKKSm316Q0Ox4-9t23NOQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 30/03/17 07:45, Kees Cook wrote:
-> On Fri, Dec 16, 2016 at 6:55 PM, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> Kees Cook wrote:
->>> Prepare to mark sensitive kernel structures for randomization by making
->>> sure they're using designated initializers. These were identified during
->>> allyesconfig builds of x86, arm, and arm64, with most initializer fixes
->>> extracted from grsecurity.
->>>
->>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>> ---
->>>  security/tomoyo/file.c   | 12 ++++++------
->>>  security/tomoyo/tomoyo.c | 20 ++++++++++----------
->>>  2 files changed, 16 insertions(+), 16 deletions(-)
+On Thu, Mar 23, 2017 at 1:34 PM, Grant Grundler <grundler@chromium.org> wrote:
+> On Thu, Mar 23, 2017 at 5:08 AM, Paul Moore <paul@paul-moore.com> wrote:
+>> On Wed, Mar 22, 2017 at 8:28 PM, Grant Grundler <grundler@chromium.org> wrote:
+>>> Ping? Any feedback on this patch?
 >>
->> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>
->> James, please apply to linux-security.git .
+>> It's on my list of patches to review, patience please.
 >
-> Friendly ping. :) James, I don't think this ever got into -next?
+> No problem! Thank you!
+>
+> just wanted confirmation it wasn't overlooked.
 
-Please resend it.
+Merged, thanks for your patience.
 
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
