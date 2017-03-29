@@ -1,38 +1,96 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 29 Mar 2017 13:45:28 -0700
-Subject: [PATCH] TOMOYO: use designated initializers
-In-Reply-To: <201612171155.EDG30258.QOtFMSOJFFLOVH@I-love.SAKURA.ne.jp>
-References: <20161217010522.GA140690@beast>
-	<201612171155.EDG30258.QOtFMSOJFFLOVH@I-love.SAKURA.ne.jp>
-Message-ID: <CAGXu5j+kUbEcAcCKZT09pHFxWTYkiNqnxGKCyrLhuYLeiSemZw@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 29 Mar 2017 17:36:16 -0400
+Subject: [PATCH] fs: switch order of CAP_DAC_OVERRIDE and
+	CAP_DAC_READ_SEARCH checks
+In-Reply-To: <CAHC9VhT42v2Z5hw8PSUqOtzhz1Ba3K4bL=DuSXTJwPberWtjLQ@mail.gmail.com>
+References: <1489166058-11789-1-git-send-email-sds@tycho.nsa.gov>
+	<CAHC9VhT42v2Z5hw8PSUqOtzhz1Ba3K4bL=DuSXTJwPberWtjLQ@mail.gmail.com>
+Message-ID: <CAHC9VhQ7TOXhcCKTg4QaH3EsdVHxzJr5gX1xvLD=RSQ-xmfVCg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Dec 16, 2016 at 6:55 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Kees Cook wrote:
->> Prepare to mark sensitive kernel structures for randomization by making
->> sure they're using designated initializers. These were identified during
->> allyesconfig builds of x86, arm, and arm64, with most initializer fixes
->> extracted from grsecurity.
+On Fri, Mar 10, 2017 at 2:54 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Fri, Mar 10, 2017 at 12:14 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>> generic_permission() presently checks CAP_DAC_OVERRIDE prior to
+>> CAP_DAC_READ_SEARCH.  This can cause misleading audit messages when
+>> using a LSM such as SELinux or AppArmor, since CAP_DAC_OVERRIDE
+>> may not be required for the operation.  Flip the order of the
+>> tests so that CAP_DAC_OVERRIDE is only checked when required for
+>> the operation.
 >>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 >> ---
->>  security/tomoyo/file.c   | 12 ++++++------
->>  security/tomoyo/tomoyo.c | 20 ++++++++++----------
->>  2 files changed, 16 insertions(+), 16 deletions(-)
+>>  fs/namei.c | 20 ++++++++++----------
+>>  1 file changed, 10 insertions(+), 10 deletions(-)
 >
-> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> This is the second posting of this patch and so far no comment ... if
+> I don't see any negative responses by next week I'll go ahead and
+> merge this into the selinux/next tree.
+
+No objections, but plenty of ACKs and Reviewed-bys so I just merged
+this into the selinux/next tree.
+
+Thanks all.
+
+>> diff --git a/fs/namei.c b/fs/namei.c
+>> index d41fab7..482414a 100644
+>> --- a/fs/namei.c
+>> +++ b/fs/namei.c
+>> @@ -340,22 +340,14 @@ int generic_permission(struct inode *inode, int mask)
+>>
+>>         if (S_ISDIR(inode->i_mode)) {
+>>                 /* DACs are overridable for directories */
+>> -               if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
+>> -                       return 0;
+>>                 if (!(mask & MAY_WRITE))
+>>                         if (capable_wrt_inode_uidgid(inode,
+>>                                                      CAP_DAC_READ_SEARCH))
+>>                                 return 0;
+>> -               return -EACCES;
+>> -       }
+>> -       /*
+>> -        * Read/write DACs are always overridable.
+>> -        * Executable DACs are overridable when there is
+>> -        * at least one exec bit set.
+>> -        */
+>> -       if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
+>>                 if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
+>>                         return 0;
+>> +               return -EACCES;
+>> +       }
+>>
+>>         /*
+>>          * Searching includes executable on directories, else just read.
+>> @@ -364,6 +356,14 @@ int generic_permission(struct inode *inode, int mask)
+>>         if (mask == MAY_READ)
+>>                 if (capable_wrt_inode_uidgid(inode, CAP_DAC_READ_SEARCH))
+>>                         return 0;
+>> +       /*
+>> +        * Read/write DACs are always overridable.
+>> +        * Executable DACs are overridable when there is
+>> +        * at least one exec bit set.
+>> +        */
+>> +       if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
+>> +               if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
+>> +                       return 0;
+>>
+>>         return -EACCES;
+>>  }
+>> --
+>> 2.7.4
+>>
 >
-> James, please apply to linux-security.git .
+>
+>
+> --
+> paul moore
+> www.paul-moore.com
 
-Friendly ping. :) James, I don't think this ever got into -next?
 
--Kees
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
