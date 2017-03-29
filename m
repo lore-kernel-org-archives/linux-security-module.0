@@ -1,18 +1,18 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 29 Mar 2017 09:55:52 -0400
-Subject: [PATCH 24/46] selinux: Return directly after a failed kzalloc()
-	in cat_read()
-In-Reply-To: <04142c87-5826-4796-c461-ec3e80f14928@users.sourceforge.net>
+Date: Wed, 29 Mar 2017 09:57:53 -0400
+Subject: [PATCH 25/46] selinux: Return directly after a failed kzalloc()
+	in sens_read()
+In-Reply-To: <8f253493-ae7f-ca02-a6f3-333e896eeb7d@users.sourceforge.net>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<04142c87-5826-4796-c461-ec3e80f14928@users.sourceforge.net>
-Message-ID: <CAHC9VhRg20-ZvJCcq6SA+1RGBqwA1+btLy9WKw=+=t+o35eEJw@mail.gmail.com>
+	<8f253493-ae7f-ca02-a6f3-333e896eeb7d@users.sourceforge.net>
+Message-ID: <CAHC9VhRf77mdk40jjQciLxbZ+x=R9ZhS9HANJigEG=ZKAyCV_A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:24 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:25 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 21:20:43 +0100
+> Date: Sat, 14 Jan 2017 21:42:02 +0100
 >
 > Return directly after a call of the function "kzalloc" failed
 > at the beginning.
@@ -25,16 +25,16 @@ On Sun, Jan 15, 2017 at 10:24 AM, SF Markus Elfring
 Merged, thanks.
 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 5101592ae172..eb898dcbe502 100644
+> index eb898dcbe502..5caa1fa5ea80 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -1635,10 +1635,9 @@ static int cat_read(struct policydb *p, struct hashtab *h, void *fp)
->         __le32 buf[3];
+> @@ -1593,10 +1593,9 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
+>         __le32 buf[2];
 >         u32 len;
 >
 > -       rc = -ENOMEM;
->         catdatum = kzalloc(sizeof(*catdatum), GFP_ATOMIC);
->         if (!catdatum)
+>         levdatum = kzalloc(sizeof(*levdatum), GFP_ATOMIC);
+>         if (!levdatum)
 > -               goto bad;
 > +               return -ENOMEM;
 >
