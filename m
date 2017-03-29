@@ -1,89 +1,45 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 29 Mar 2017 11:37:20 -0400
-Subject: [PATCH 38/46] selinux: One function call less in five functions
-	after null pointer detection
-In-Reply-To: <b71e766c-a9a2-cd9c-8f87-7aaeaaf896f0@users.sourceforge.net>
+Date: Wed, 29 Mar 2017 11:40:13 -0400
+Subject: [PATCH 40/46] selinux: Return directly after a failed kzalloc()
+	in roles_init()
+In-Reply-To: <2c370330-a80c-9879-2013-3a99a21dc06d@users.sourceforge.net>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<b71e766c-a9a2-cd9c-8f87-7aaeaaf896f0@users.sourceforge.net>
-Message-ID: <CAHC9VhQaCFirdVRBnd9UsbHZzdmfrEc5ZtzzSvru7uXqCeLL8Q@mail.gmail.com>
+	<2c370330-a80c-9879-2013-3a99a21dc06d@users.sourceforge.net>
+Message-ID: <CAHC9VhStS59YiUoBhKqWPgN17wQ_5iXGfDgY2QTQPdUkWip3EA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:38 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:40 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 11:28:02 +0100
+> Date: Sun, 15 Jan 2017 12:10:09 +0100
 >
-> Call the function "kfree" at the end only after it was determined
-> that the passed parameter contained a non-null pointer.
+> Return directly after a call of the function "kzalloc" failed
+> at the beginning.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
+>  security/selinux/ss/policydb.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+Merged, thanks.
+
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index faa6ecc2450d..88730b372277 100644
+> index 8b9ed3f1b132..ccc146bfd4c2 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -620,8 +620,8 @@ static int common_destroy(void *key, void *datum, void *p)
->                 comdatum = datum;
->                 hashtab_map(comdatum->permissions.table, perm_destroy, NULL);
->                 hashtab_destroy(comdatum->permissions.table);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
-
-I'm dropping this patch because it really doesn't do much other than
-add some code churn.  I suppose you can argue it removes one
-conditional if datum is NULL, but that is such a corner case I'm not
-worried about it.
-
-If I were to merge this, I would probably expect "kfree(datum)" to be
-converted to "kfree(comdatum)" (and similar in the cases below).
-
-> @@ -675,8 +675,8 @@ static int cls_destroy(void *key, void *datum, void *p)
->                         kfree(ctemp);
->                 }
->                 kfree(cladatum->comkey);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
+> @@ -178,10 +178,9 @@ static int roles_init(struct policydb *p)
+>         int rc;
+>         struct role_datum *role;
 >
-> @@ -689,8 +689,8 @@ static int role_destroy(void *key, void *datum, void *p)
->                 role = datum;
->                 ebitmap_destroy(&role->dominates);
->                 ebitmap_destroy(&role->types);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
+> -       rc = -ENOMEM;
+>         role = kzalloc(sizeof(*role), GFP_KERNEL);
+>         if (!role)
+> -               goto out;
+> +               return -ENOMEM;
 >
-> @@ -712,8 +712,8 @@ static int user_destroy(void *key, void *datum, void *p)
->                 ebitmap_destroy(&usrdatum->range.level[0].cat);
->                 ebitmap_destroy(&usrdatum->range.level[1].cat);
->                 ebitmap_destroy(&usrdatum->dfltlevel.cat);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
->
-> @@ -726,8 +726,8 @@ static int sens_destroy(void *key, void *datum, void *p)
->                 levdatum = datum;
->                 ebitmap_destroy(&levdatum->level->cat);
->                 kfree(levdatum->level);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
->
+>         rc = -EINVAL;
+>         role->value = ++p->p_roles.nprim;
 > --
 > 2.11.0
 >
