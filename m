@@ -1,67 +1,161 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Wed, 29 Mar 2017 23:18:49 +0800
-Subject: [PATCH net-next v6 04/11] landlock: Add LSM hooks related to
-	filesystem
-In-Reply-To: <20170328234650.19695-5-mic@digikod.net>
-Message-ID: <201703292304.6B7Ybpau%fengguang.wu@intel.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 29 Mar 2017 16:52:58 -0700
+Subject: [RESEND][PATCH] TOMOYO: Use designated initializers
+Message-ID: <20170329235258.GA43176@beast>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Micka?l,
+Prepare to mark sensitive kernel structures for randomization by making
+sure they're using designated initializers. These were identified during
+allyesconfig builds of x86, arm, and arm64, with most initializer fixes
+extracted from grsecurity.
 
-[auto build test ERROR on net-next/master]
-
-url:    https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-LSM-Toward-unprivileged-sandboxing/20170329-211258
-config: i386-allmodconfig (attached as .config)
-compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from security/landlock/hooks.c:12:0:
-   security/landlock/hooks.c: In function 'landlock_decide':
->> arch/x86/include/asm/processor.h:824:39: error: implicit declaration of function 'task_stack_page' [-Werror=implicit-function-declaration]
-     unsigned long __ptr = (unsigned long)task_stack_page(task); \
-                                          ^
->> security/landlock/hooks.c:107:41: note: in expansion of macro 'task_pt_regs'
-      .syscall_nr = syscall_get_nr(current, task_pt_regs(current)),
-                                            ^~~~~~~~~~~~
-   security/landlock/hooks.c:104:26: warning: unused variable 'ctx' [-Wunused-variable]
-     struct landlock_context ctx = {
-                             ^~~
-   security/landlock/hooks.c:102:6: warning: unused variable 'event_idx' [-Wunused-variable]
-     u32 event_idx = get_index(event);
-         ^~~~~~~~~
-   cc1: some warnings being treated as errors
-
-vim +/task_stack_page +824 arch/x86/include/asm/processor.h
-
-2f66dcc9 include/asm-x86/processor.h      Glauber de Oliveira Costa 2008-01-30  818   * Therefore beware: accessing the ss/esp fields of the
-2f66dcc9 include/asm-x86/processor.h      Glauber de Oliveira Costa 2008-01-30  819   * "struct pt_regs" is possible, but they may contain the
-2f66dcc9 include/asm-x86/processor.h      Glauber de Oliveira Costa 2008-01-30  820   * completely wrong values.
-2f66dcc9 include/asm-x86/processor.h      Glauber de Oliveira Costa 2008-01-30  821   */
-2f66dcc9 include/asm-x86/processor.h      Glauber de Oliveira Costa 2008-01-30  822  #define task_pt_regs(task) \
-2f66dcc9 include/asm-x86/processor.h      Glauber de Oliveira Costa 2008-01-30  823  ({									\
-5c39403e arch/x86/include/asm/processor.h Denys Vlasenko            2015-03-13 @824  	unsigned long __ptr = (unsigned long)task_stack_page(task);	\
-5c39403e arch/x86/include/asm/processor.h Denys Vlasenko            2015-03-13  825  	__ptr += THREAD_SIZE - TOP_OF_KERNEL_STACK_PADDING;		\
-5c39403e arch/x86/include/asm/processor.h Denys Vlasenko            2015-03-13  826  	((struct pt_regs *)__ptr) - 1;					\
-2f66dcc9 include/asm-x86/processor.h      Glauber de Oliveira Costa 2008-01-30  827  })
-
-:::::: The code at line 824 was first introduced by commit
-:::::: 5c39403e004bec75ce0c549541be5479595d6ad0 x86/asm/entry: Simplify task_pt_regs() macro definition
-
-:::::: TO: Denys Vlasenko <dvlasenk@redhat.com>
-:::::: CC: Ingo Molnar <mingo@kernel.org>
-
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: .config.gz
-Type: application/gzip
-Size: 59015 bytes
-Desc: not available
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170329/97b0f943/attachment.bin>
+ security/tomoyo/file.c   | 12 ++++++------
+ security/tomoyo/tomoyo.c | 20 ++++++++++----------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/security/tomoyo/file.c b/security/tomoyo/file.c
+index 7041a580019e..223f21ffa632 100644
+--- a/security/tomoyo/file.c
++++ b/security/tomoyo/file.c
+@@ -692,7 +692,7 @@ int tomoyo_path_number_perm(const u8 type, const struct path *path,
+ {
+ 	struct tomoyo_request_info r;
+ 	struct tomoyo_obj_info obj = {
+-		.path1 = *path,
++		.path1 = { .mnt = path->mnt, .dentry = path->dentry },
+ 	};
+ 	int error = -ENOMEM;
+ 	struct tomoyo_path_info buf;
+@@ -740,7 +740,7 @@ int tomoyo_check_open_permission(struct tomoyo_domain_info *domain,
+ 	struct tomoyo_path_info buf;
+ 	struct tomoyo_request_info r;
+ 	struct tomoyo_obj_info obj = {
+-		.path1 = *path,
++		.path1 = { .mnt = path->mnt, .dentry = path->dentry },
+ 	};
+ 	int idx;
+ 
+@@ -786,7 +786,7 @@ int tomoyo_path_perm(const u8 operation, const struct path *path, const char *ta
+ {
+ 	struct tomoyo_request_info r;
+ 	struct tomoyo_obj_info obj = {
+-		.path1 = *path,
++		.path1 = { .mnt = path->mnt, .dentry = path->dentry },
+ 	};
+ 	int error;
+ 	struct tomoyo_path_info buf;
+@@ -843,7 +843,7 @@ int tomoyo_mkdev_perm(const u8 operation, const struct path *path,
+ {
+ 	struct tomoyo_request_info r;
+ 	struct tomoyo_obj_info obj = {
+-		.path1 = *path,
++		.path1 = { .mnt = path->mnt, .dentry = path->dentry },
+ 	};
+ 	int error = -ENOMEM;
+ 	struct tomoyo_path_info buf;
+@@ -890,8 +890,8 @@ int tomoyo_path2_perm(const u8 operation, const struct path *path1,
+ 	struct tomoyo_path_info buf2;
+ 	struct tomoyo_request_info r;
+ 	struct tomoyo_obj_info obj = {
+-		.path1 = *path1,
+-		.path2 = *path2,
++		.path1 = { .mnt = path1->mnt, .dentry = path1->dentry },
++		.path2 = { .mnt = path2->mnt, .dentry = path2->dentry }
+ 	};
+ 	int idx;
+ 
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index b5fb930349a9..130b4fa4f65f 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -165,7 +165,7 @@ static int tomoyo_path_truncate(const struct path *path)
+  */
+ static int tomoyo_path_unlink(const struct path *parent, struct dentry *dentry)
+ {
+-	struct path path = { parent->mnt, dentry };
++	struct path path = { .mnt = parent->mnt, .dentry = dentry };
+ 	return tomoyo_path_perm(TOMOYO_TYPE_UNLINK, &path, NULL);
+ }
+ 
+@@ -181,7 +181,7 @@ static int tomoyo_path_unlink(const struct path *parent, struct dentry *dentry)
+ static int tomoyo_path_mkdir(const struct path *parent, struct dentry *dentry,
+ 			     umode_t mode)
+ {
+-	struct path path = { parent->mnt, dentry };
++	struct path path = { .mnt = parent->mnt, .dentry = dentry };
+ 	return tomoyo_path_number_perm(TOMOYO_TYPE_MKDIR, &path,
+ 				       mode & S_IALLUGO);
+ }
+@@ -196,7 +196,7 @@ static int tomoyo_path_mkdir(const struct path *parent, struct dentry *dentry,
+  */
+ static int tomoyo_path_rmdir(const struct path *parent, struct dentry *dentry)
+ {
+-	struct path path = { parent->mnt, dentry };
++	struct path path = { .mnt = parent->mnt, .dentry = dentry };
+ 	return tomoyo_path_perm(TOMOYO_TYPE_RMDIR, &path, NULL);
+ }
+ 
+@@ -212,7 +212,7 @@ static int tomoyo_path_rmdir(const struct path *parent, struct dentry *dentry)
+ static int tomoyo_path_symlink(const struct path *parent, struct dentry *dentry,
+ 			       const char *old_name)
+ {
+-	struct path path = { parent->mnt, dentry };
++	struct path path = { .mnt = parent->mnt, .dentry = dentry };
+ 	return tomoyo_path_perm(TOMOYO_TYPE_SYMLINK, &path, old_name);
+ }
+ 
+@@ -229,7 +229,7 @@ static int tomoyo_path_symlink(const struct path *parent, struct dentry *dentry,
+ static int tomoyo_path_mknod(const struct path *parent, struct dentry *dentry,
+ 			     umode_t mode, unsigned int dev)
+ {
+-	struct path path = { parent->mnt, dentry };
++	struct path path = { .mnt = parent->mnt, .dentry = dentry };
+ 	int type = TOMOYO_TYPE_CREATE;
+ 	const unsigned int perm = mode & S_IALLUGO;
+ 
+@@ -268,8 +268,8 @@ static int tomoyo_path_mknod(const struct path *parent, struct dentry *dentry,
+ static int tomoyo_path_link(struct dentry *old_dentry, const struct path *new_dir,
+ 			    struct dentry *new_dentry)
+ {
+-	struct path path1 = { new_dir->mnt, old_dentry };
+-	struct path path2 = { new_dir->mnt, new_dentry };
++	struct path path1 = { .mnt = new_dir->mnt, .dentry = old_dentry };
++	struct path path2 = { .mnt = new_dir->mnt, .dentry = new_dentry };
+ 	return tomoyo_path2_perm(TOMOYO_TYPE_LINK, &path1, &path2);
+ }
+ 
+@@ -288,8 +288,8 @@ static int tomoyo_path_rename(const struct path *old_parent,
+ 			      const struct path *new_parent,
+ 			      struct dentry *new_dentry)
+ {
+-	struct path path1 = { old_parent->mnt, old_dentry };
+-	struct path path2 = { new_parent->mnt, new_dentry };
++	struct path path1 = { .mnt = old_parent->mnt, .dentry = old_dentry };
++	struct path path2 = { .mnt = new_parent->mnt, .dentry = new_dentry };
+ 	return tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path1, &path2);
+ }
+ 
+@@ -417,7 +417,7 @@ static int tomoyo_sb_mount(const char *dev_name, const struct path *path,
+  */
+ static int tomoyo_sb_umount(struct vfsmount *mnt, int flags)
+ {
+-	struct path path = { mnt, mnt->mnt_root };
++	struct path path = { .mnt = mnt, .dentry = mnt->mnt_root };
+ 	return tomoyo_path_perm(TOMOYO_TYPE_UMOUNT, &path, NULL);
+ }
+ 
+-- 
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
