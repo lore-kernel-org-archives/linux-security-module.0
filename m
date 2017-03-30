@@ -1,101 +1,235 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Thu, 30 Mar 2017 13:52:14 -0400
-Subject: [PATCH] selinux: Fix SBLABEL_MNT for NFS mounts
-In-Reply-To: <20170330174147.GA11004@parsley.fieldses.org>
-References: <20170329152724.19030-1-tomeu.vizoso@collabora.com>
-	<20170329213439.GC19617@parsley.fieldses.org>
-	<CAAObsKDThPAQpgO7R+JT=foU1=BEor-Zy7DES2tnGe=rGe=REw@mail.gmail.com>
-	<1490894827.2099.2.camel@tycho.nsa.gov>
-	<20170330174147.GA11004@parsley.fieldses.org>
-Message-ID: <1490896334.2099.4.camel@tycho.nsa.gov>
+From: luto@amacapital.net (Andy Lutomirski)
+Date: Thu, 30 Mar 2017 12:10:11 -0700
+Subject: [PATCH RFC 3/4] proc: support mounting new procfs instances
+	inside same pid namespace
+In-Reply-To: <1490887379-25880-4-git-send-email-tixxdz@gmail.com>
+References: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
+	<1490887379-25880-4-git-send-email-tixxdz@gmail.com>
+Message-ID: <CALCETrUs12sywzFntjz69gkNLmCNwQyKGDHEFM9K5jh5GpT9eA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-03-30 at 13:41 -0400, J. Bruce Fields wrote:
-> On Thu, Mar 30, 2017 at 01:27:07PM -0400, Stephen Smalley wrote:
-> > On Thu, 2017-03-30 at 09:49 +0200, Tomeu Vizoso wrote:
-> > > On 29 March 2017 at 23:34, J. Bruce Fields <bfields@redhat.com>
-> > > wrote:
-> > > > On Wed, Mar 29, 2017 at 05:27:23PM +0200, Tomeu Vizoso wrote:
-> > > > > Labelling of files in a NFSv4.2 currently fails with ENOTSUPP
-> > > > > because
-> > > > > the mount point doesn't have SBLABEL_MNT.
-> > > > > 
-> > > > > Add specific condition for NFS4 filesystems so it gets
-> > > > > correctly
-> > > > > labeled.
-> > > > 
-> > > > Huh.??Looking at the code, I think this is meant to be handled
-> > > > by
-> > > > the
-> > > > SECURITY_FS_USE_NATIVE case--there was a similar failure fixed
-> > > > some
-> > > > time
-> > > > ago by 9fc2b4b436cf.??What kernel are you seeing this on???Is
-> > > > it a
-> > > > recent regression (in which case, what's the latest kernel that
-> > > > worked
-> > > > for you)?
-> > > 
-> > > I have seen this on 4.11-rc4, but I never tried to get this
-> > > working
-> > > before.
-> > > 
-> > > I will try to find time to see why SECURITY_FS_USE_NATIVE isn't
-> > > working here.
-> > 
-> > Does your exports file specify the "security_label" option, e.g.
-> > /path/to/dir example.com(rw,security_label)
-> 
-> Oops, right, that should have been the first thing I asked about....
-> 
-> > It appears that with recent kernels that is now required;
-> > otherwise,
-> > the mount defaults to not enabling native labeling and all of the
-> > files
-> > are treated as having a single, fixed label defined by the client
-> > policy (and hence setxattr is not supported).??This was kernel
-> > commit
-> > 32ddd944a056c786f6acdd95ed29e994adc613a2.??I don't recall seeing
-> > any
-> > discussion of this on selinux list.??I understand the rationale,
-> > but it
-> > seems like a user-visible regression
-> 
-> It is.??I also want to keep new protocol upgrades free of user
-> regressions, which the 4.1->4.2 upgrade is in most cases if we turn
-> on
-> security labeling by default.??So I was stuck choosing between two
-> regresisons, and figured 4.2 user depending on security labeling was
-> still the much rarer case.
-> 
-> So I'd like to keep security labeling off by default, but if there's
-> anything I can do to smooth the transition obviously that's good.
+On Thu, Mar 30, 2017 at 8:22 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+> This patch adds support for 'unshare' mount option to have multiple
+> separated procfs inside the same pid namespace. This allows to solve lot
+> of problem for containers and their specific use cases.
 
-Yes, I understand - wish though that it could have been communicated
-better, e.g. on selinux list (unless I just missed it somehow).
+It would be nice if we could make this work without 'unshare'.  How about:
 
-> 
-> > and at the very least, it seems odd that they didn't just use
-> > "seclabel" as the kernel does in /proc/mounts to signify a
-> > filesystem
-> > that supports security labeling by userspace.
-> 
-> I see logic in sb_finish_set_opts() that sets SBLABEL_MNT in the
-> selinux_is_sblabel_mnt() case.??Doesn't that mean "seclabel" shows up
-> in
-> /proc/mounts when we nfs sets SECURITY_LSM_NATIVE_LABELS?
-> 
-> I may not understand your comment, I'm pretty unfamiliar with this
-> area.
+hidepid still sets pid_ns->hidepid.  "this_mount_hidepid" (or whatever
+you want to call it), if set, overrides pid_ns->hidepid.
 
-Correct, I just meant it seems potentially confusing to users to use
-"security_label" in exports when we show it as "seclabel" in
-/proc/mounts.  I know, they are totally different namespaces (in the
-conventional sense), but consistency might have been more user-
-friendly.
+--Andy
+
+>
+> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+> ---
+>  fs/proc/generic.c       | 10 +++++++++
+>  fs/proc/inode.c         |  3 +++
+>  fs/proc/root.c          | 59 +++++++++++++++++++++++++++++++++++++++++++++++--
+>  include/linux/proc_fs.h | 12 ++++++++++
+>  4 files changed, 82 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+> index 7e5e419..7ae5377 100644
+> --- a/fs/proc/generic.c
+> +++ b/fs/proc/generic.c
+> @@ -52,6 +52,11 @@ void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid)
+>                 fs_info->pid_gid = gid;
+>  }
+>
+> +void proc_fs_set_unshare(struct proc_fs_info *fs_info, int version)
+> +{
+> +       fs_info->version = version;
+> +}
+> +
+>  int proc_fs_get_hide_pid(struct proc_fs_info *fs_info)
+>  {
+>         /* For backward compatibility */
+> @@ -70,6 +75,11 @@ kgid_t proc_fs_get_pid_gid(struct proc_fs_info *fs_info)
+>         return fs_info->pid_gid;
+>  }
+>
+> +int proc_fs_get_unshare(struct proc_fs_info *fs_info)
+> +{
+> +       return fs_info->version;
+> +}
+> +
+>  static int proc_match(unsigned int len, const char *name, struct proc_dir_entry *de)
+>  {
+>         if (len < de->namelen)
+> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+> index ca47a0a..5f7557d 100644
+> --- a/fs/proc/inode.c
+> +++ b/fs/proc/inode.c
+> @@ -111,6 +111,9 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+>         if (pid->hide_pid != HIDEPID_OFF)
+>                 seq_printf(seq, ",hidepid=%u", pid->hide_pid);
+>
+> +       if (proc_fs_get_unshare(fs_info) == PROC_FS_V2)
+> +               seq_printf(seq, ",unshare");
+> +
+>         return 0;
+>  }
+>
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index 6a96c02..7a8f425 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@ -27,15 +27,52 @@
+>  #include "internal.h"
+>
+>  enum {
+> -       Opt_gid, Opt_hidepid, Opt_err,
+> +       Opt_gid, Opt_hidepid, Opt_unshare, Opt_err,
+>  };
+>
+>  static const match_table_t tokens = {
+>         {Opt_hidepid, "hidepid=%u"},
+>         {Opt_gid, "gid=%u"},
+> +       {Opt_unshare, "unshare"},
+>         {Opt_err, NULL},
+>  };
+>
+> +/* We only parse 'unshare' option here */
+> +int proc_parse_early_options(char *options, struct proc_fs_info *fs_info)
+> +{
+> +       char *p, *opts, *orig;
+> +       substring_t args[MAX_OPT_ARGS];
+> +
+> +       if (!options)
+> +               return 0;
+> +
+> +       opts = kstrdup(options, GFP_KERNEL);
+> +       if (!opts)
+> +               return -ENOMEM;
+> +
+> +       orig = opts;
+> +
+> +       while ((p = strsep(&opts, ",")) != NULL) {
+> +               int token;
+> +
+> +               if (!*p)
+> +                       continue;
+> +
+> +               token = match_token(p, tokens, args);
+> +               switch (token) {
+> +               case Opt_unshare:
+> +                       pr_info("proc: mounting a new procfs instance ");
+> +                       proc_fs_set_unshare(fs_info, PROC_FS_V2);
+> +                       break;
+> +               default:
+> +                       break;
+> +               }
+> +       }
+> +
+> +       kfree(orig);
+> +       return 0;
+> +}
+> +
+>  int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+>  {
+>         char *p;
+> @@ -70,6 +107,8 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+>                         }
+>                         proc_fs_set_hide_pid(fs_info, option);
+>                         break;
+> +               case Opt_unshare:
+> +                       break;
+>                 default:
+>                         pr_err("proc: unrecognized mount option \"%s\" "
+>                                "or missing value\n", p);
+> @@ -82,9 +121,19 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+>
+>  int proc_remount(struct super_block *sb, int *flags, char *data)
+>  {
+> +       int error, version;
+>         struct proc_fs_info *fs_info = proc_sb(sb);
+>
+> +       version = proc_fs_get_unshare(fs_info);
+> +
+>         sync_filesystem(sb);
+> +
+> +       if (version == PROC_FS_V2) {
+> +               error = proc_parse_early_options(data, fs_info);
+> +               if (error < 0)
+> +                       return error;
+> +       }
+> +
+>         return !proc_parse_options(data, fs_info);
+>  }
+>
+> @@ -122,15 +171,21 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
+>         if (!fs_info)
+>                 return ERR_PTR(-ENOMEM);
+>
+> +       /* Set it as early as possible */
+> +       proc_fs_set_unshare(fs_info, PROC_FS_V1);
+> +
+>         if (flags & MS_KERNMOUNT) {
+>                 ns = data;
+>                 data = NULL;
+>         } else {
+> +               error = proc_parse_early_options(data, fs_info);
+> +               if (error < 0)
+> +                       goto error_fs_info;
+> +
+>                 ns = task_active_pid_ns(current);
+>         }
+>
+>         fs_info->pid_ns = ns;
+> -       fs_info->version = PROC_FS_V1;
+>         fs_info->hide_pid = HIDEPID_OFF;
+>         fs_info->pid_gid = GLOBAL_ROOT_GID;
+>         refcount_set(&fs_info->users, 1);
+> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> index c23299d..e3a78a5 100644
+> --- a/include/linux/proc_fs.h
+> +++ b/include/linux/proc_fs.h
+> @@ -31,8 +31,11 @@ extern void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid);
+>
+>  extern void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid);
+>
+> +extern void proc_fs_set_unshare(struct proc_fs_info *fs_info, int version);
+> +
+>  extern int proc_fs_get_hide_pid(struct proc_fs_info *fs_info);
+>  extern kgid_t proc_fs_get_pid_gid(struct proc_fs_info *fs_info);
+> +extern int proc_fs_get_unshare(struct proc_fs_info *fs_info);
+>
+>  extern void proc_root_init(void);
+>  extern void proc_flush_task(struct task_struct *);
+> @@ -84,6 +87,10 @@ static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_p
+>  {
+>  }
+>
+> +static inline void proc_fs_set_unshare(struct proc_fs_info *fs_info, int version)
+> +{
+> +}
+> +
+>  static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
+>  {
+>  }
+> @@ -98,6 +105,11 @@ extern kgid_t proc_fs_get_pid_gid(struct proc_fs_info *fs_info)
+>         return GLOBAL_ROOT_GID;
+>  }
+>
+> +static inline int proc_fs_get_unshare(struct proc_fs_info *fs_info)
+> +{
+> +       return PROC_FS_V1;
+> +}
+> +
+>  extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
+>  static inline struct proc_dir_entry *proc_symlink(const char *name,
+>                 struct proc_dir_entry *parent,const char *dest) { return NULL;}
+> --
+> 2.10.2
+>
 
 
+
+-- 
+Andy Lutomirski
+AMA Capital Management, LLC
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
