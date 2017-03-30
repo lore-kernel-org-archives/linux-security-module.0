@@ -1,80 +1,53 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Thu, 30 Mar 2017 17:22:55 +0200
-Subject: [PATCH RFC 0/4] proc: support multiple separate proc instances per
-	pidnamespace
-Message-ID: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Thu, 30 Mar 2017 13:27:07 -0400
+Subject: [PATCH] selinux: Fix SBLABEL_MNT for NFS mounts
+In-Reply-To: <CAAObsKDThPAQpgO7R+JT=foU1=BEor-Zy7DES2tnGe=rGe=REw@mail.gmail.com>
+References: <20170329152724.19030-1-tomeu.vizoso@collabora.com>
+	<20170329213439.GC19617@parsley.fieldses.org>
+	<CAAObsKDThPAQpgO7R+JT=foU1=BEor-Zy7DES2tnGe=rGe=REw@mail.gmail.com>
+Message-ID: <1490894827.2099.2.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+On Thu, 2017-03-30 at 09:49 +0200, Tomeu Vizoso wrote:
+> On 29 March 2017 at 23:34, J. Bruce Fields <bfields@redhat.com>
+> wrote:
+> > On Wed, Mar 29, 2017 at 05:27:23PM +0200, Tomeu Vizoso wrote:
+> > > Labelling of files in a NFSv4.2 currently fails with ENOTSUPP
+> > > because
+> > > the mount point doesn't have SBLABEL_MNT.
+> > > 
+> > > Add specific condition for NFS4 filesystems so it gets correctly
+> > > labeled.
+> > 
+> > Huh.??Looking at the code, I think this is meant to be handled by
+> > the
+> > SECURITY_FS_USE_NATIVE case--there was a similar failure fixed some
+> > time
+> > ago by 9fc2b4b436cf.??What kernel are you seeing this on???Is it a
+> > recent regression (in which case, what's the latest kernel that
+> > worked
+> > for you)?
+> 
+> I have seen this on 4.11-rc4, but I never tried to get this working
+> before.
+> 
+> I will try to find time to see why SECURITY_FS_USE_NATIVE isn't
+> working here.
 
-This RFC can be applied on top of Linus' tree 89970a04d7
+Does your exports file specify the "security_label" option, e.g.
+/path/to/dir example.com(rw,security_label)
 
-This RFC implements support for multiple separate proc instances inside
-the same pid namespace. This allows to solve lot of problems that
-today's use case face.
-
-Historically procfs was tied to pid namespaces, and mount options were
-propagated to all other procfs instances in the same pid namespace. This
-solved several use cases in that time. However today we face new
-problems, there are mutliple container implementations there, some of
-them want to hide pid entries, others want to hide non-pid entries,
-others want to have sysctlfs, others want to share pid namespace with
-private procfs mounts. All these with current implementation won't work
-since all options will be propagated to all procfs mounts.
-
-This series allow to have new instances of procfs per pid namespace where
-each instance can have its own mount option inside the same pid namespace.
-This was also suggested by Andy Lutomirski.
-
-
-Now:
-$ sudo mount -t proc -o unshare,hidepid=2 none /test
-
-The option 'unshare' will allow to mount a new instance of procfs inside
-the same pid namespace.
-
-Before:
-$ stat /proc/slabinfo
-
-  File: ?/proc/slabinfo?
-  Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
-Device: 4h/4d	Inode: 4026532046  Links: 1
-
-$ stat /test3/slabinfo
-
-  File: ?/test3/slabinfo?
-  Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
-Device: 4h/4d	Inode: 4026532046  Links: 1
-
-
-After:
-$ stat /proc/slabinfo
-
-  File: ?/proc/slabinfo?
-  Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
-Device: 4h/4d	Inode: 4026532046  Links: 1
-
-$ stat /test3/slabinfo
-
-  File: ?/test3/slabinfo?
-  Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
-Device: 31h/49d	Inode: 4026532046  Links: 1
-
-
-Any better name for the option 'unshare' ? suggestions ?
-
-I was going to use 'version=2' but then this may sound more like a
-proc2 fs which currently impossible to implement since it will share
-locks with the old proc.
-
-
-Al, Eric any comments please ?
-
-[Patch RFC 4/4] proc: support flushing dcache entries of a task on multiple procfs mounts
-Is maybe not needed, and I have to test it further.
-
-Thanks!
+It appears that with recent kernels that is now required; otherwise,
+the mount defaults to not enabling native labeling and all of the files
+are treated as having a single, fixed label defined by the client
+policy (and hence setxattr is not supported).  This was kernel commit
+32ddd944a056c786f6acdd95ed29e994adc613a2.  I don't recall seeing any
+discussion of this on selinux list.  I understand the rationale, but it
+seems like a user-visible regression and at the very least, it seems
+odd that they didn't just use "seclabel" as the kernel does in
+/proc/mounts to signify a filesystem that supports security labeling by
+userspace.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
