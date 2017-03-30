@@ -1,80 +1,48 @@
-From: mchehab@s-opensource.com (Mauro Carvalho Chehab)
-Date: Thu, 30 Mar 2017 17:11:27 -0300
-Subject: [PATCH 0/9] convert genericirq.tmpl and kernel-api.tmpl to DocBook
-Message-ID: <cover.1490904090.git.mchehab@s-opensource.com>
+From: helgaas@kernel.org (Bjorn Helgaas)
+Date: Thu, 30 Mar 2017 16:06:17 -0500
+Subject: [PATCH 9/9] kernel-api.rst: fix a series of errors when parsing
+	C files
+In-Reply-To: <5c39bc852b201759de4cf901f7e9ad04715285d9.1490904090.git.mchehab@s-opensource.com>
+References: <cover.1490904090.git.mchehab@s-opensource.com>
+	<5c39bc852b201759de4cf901f7e9ad04715285d9.1490904090.git.mchehab@s-opensource.com>
+Message-ID: <20170330210617.GA28207@bhelgaas-glaptop.roam.corp.google.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Jani proposed to batch-convert the remaining DocBooks for us
-to get rid of it.
+On Thu, Mar 30, 2017 at 05:11:36PM -0300, Mauro Carvalho Chehab wrote:
+> ./lib/string.c:134: WARNING: Inline emphasis start-string without end-string.
+> ./mm/filemap.c:522: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+> ./mm/filemap.c:1283: ERROR: Unexpected indentation.
+> ./mm/filemap.c:3003: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+> ./mm/vmalloc.c:1544: WARNING: Inline emphasis start-string without end-string.
+> ./mm/page_alloc.c:4245: ERROR: Unexpected indentation.
+> ./ipc/util.c:676: ERROR: Unexpected indentation.
+> ./drivers/pci/irq.c:35: WARNING: Block quote ends without a blank line; unexpected unindent.
+> ./security/security.c:109: ERROR: Unexpected indentation.
+> ./security/security.c:110: WARNING: Definition list ends without a blank line; unexpected unindent.
+> ./block/genhd.c:275: WARNING: Inline strong start-string without end-string.
+> ./block/genhd.c:283: WARNING: Inline strong start-string without end-string.
+> ./include/linux/clk.h:134: WARNING: Inline emphasis start-string without end-string.
+> ./include/linux/clk.h:134: WARNING: Inline emphasis start-string without end-string.
+> ./ipc/util.c:477: ERROR: Unknown target name: "s".
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-Well, I tried ;) 
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# for drivers/pci/irq.c
 
-The conversion itself can easily done, but the problem is that
-it hits several errors/warnings when parsing kernel-doc tags.
-
-It ends that it takes some time to fix those.
-
-Also, it seems that the "!I" and "!E" tags at the DocBook
-template are not quite right. So, despite being properly
-converted to the corresponding kernel-doc tags at ReST, they
-didn't produce all that it was needed. I manually fixed a
-few, but I guess there are more to be fixed there. Anyway,
-this is something that the subsystem maintainers can fix later,
-as they understand better what functions they want exported at
-the public API documentation, and what functions they want to
-hide.
-
-This series converts just two documents, adding them to the
-core-api.rst book. It addresses the errors/warnings that popup
-after the conversion.
-
-I had to add two fixes to scripts/kernel-doc, in order to solve
-some of the issues.
-
-If I have some time during this weekend, I may try to convert
-some additional documents to DocBook.
-
-
-Mauro Carvalho Chehab (9):
-  scripts/kernel-doc: fix parser for apostrophes
-  scripts/kernel-doc: fix handling of parameters with parenthesis
-  genericirq.tmpl: convert it to ReST
-  genericirq.rst: add cross-reference links and use monospaced fonts
-  kernel-api.tmpl: convert it to ReST
-  kernel-api.rst: fix output of the vsnprintf() documentation
-  kernel-api.rst: make it handle lib/crc32.c
-  kernel-api.rst: fix some complex tags at lib/bitmap.c
-  kernel-api.rst: fix a series of errors when parsing C files
-
- Documentation/DocBook/Makefile        |   4 +-
- Documentation/DocBook/genericirq.tmpl | 520 ----------------------------------
- Documentation/DocBook/kernel-api.tmpl | 331 ----------------------
- Documentation/core-api/genericirq.rst | 440 ++++++++++++++++++++++++++++
- Documentation/core-api/index.rst      |   2 +
- Documentation/core-api/kernel-api.rst | 418 +++++++++++++++++++++++++++
- block/genhd.c                         |   7 +-
- drivers/pci/irq.c                     |   2 +-
- include/linux/clk.h                   |   4 +-
- ipc/util.c                            |  12 +-
- lib/bitmap.c                          |  28 +-
- lib/string.c                          |   2 +-
- lib/vsprintf.c                        |   6 +-
- mm/filemap.c                          |  18 +-
- mm/page_alloc.c                       |   3 +-
- mm/vmalloc.c                          |   2 +-
- scripts/kernel-doc                    |  19 +-
- security/security.c                   |  12 +-
- 18 files changed, 932 insertions(+), 898 deletions(-)
- delete mode 100644 Documentation/DocBook/genericirq.tmpl
- delete mode 100644 Documentation/DocBook/kernel-api.tmpl
- create mode 100644 Documentation/core-api/genericirq.rst
- create mode 100644 Documentation/core-api/kernel-api.rst
-
--- 
-2.9.3
-
-
+> diff --git a/drivers/pci/irq.c b/drivers/pci/irq.c
+> index 6684f153ab57..f9f2a0324ecc 100644
+> --- a/drivers/pci/irq.c
+> +++ b/drivers/pci/irq.c
+> @@ -31,7 +31,7 @@ static void pci_note_irq_problem(struct pci_dev *pdev, const char *reason)
+>   * driver).
+>   *
+>   * Returns:
+> - *  a suggestion for fixing it (although the driver is not required to
+> + * a suggestion for fixing it (although the driver is not required to
+>   * act on this).
+>   */
+>  enum pci_lost_interrupt_reason pci_lost_interrupt(struct pci_dev *pdev)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
