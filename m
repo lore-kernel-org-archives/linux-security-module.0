@@ -1,48 +1,86 @@
-From: helgaas@kernel.org (Bjorn Helgaas)
-Date: Thu, 30 Mar 2017 16:06:17 -0500
-Subject: [PATCH 9/9] kernel-api.rst: fix a series of errors when parsing
-	C files
-In-Reply-To: <5c39bc852b201759de4cf901f7e9ad04715285d9.1490904090.git.mchehab@s-opensource.com>
-References: <cover.1490904090.git.mchehab@s-opensource.com>
-	<5c39bc852b201759de4cf901f7e9ad04715285d9.1490904090.git.mchehab@s-opensource.com>
-Message-ID: <20170330210617.GA28207@bhelgaas-glaptop.roam.corp.google.com>
+From: gladkov.alexey@gmail.com (Alexey Gladkov)
+Date: Fri, 31 Mar 2017 00:16:49 +0200
+Subject: [PATCH RFC 0/4] proc: support multiple separate proc instances
+	per pidnamespace
+In-Reply-To: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
+References: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
+Message-ID: <20170330221649.GB13761@comp-core-i7-2640m-0182e6>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 30, 2017 at 05:11:36PM -0300, Mauro Carvalho Chehab wrote:
-> ./lib/string.c:134: WARNING: Inline emphasis start-string without end-string.
-> ./mm/filemap.c:522: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-> ./mm/filemap.c:1283: ERROR: Unexpected indentation.
-> ./mm/filemap.c:3003: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-> ./mm/vmalloc.c:1544: WARNING: Inline emphasis start-string without end-string.
-> ./mm/page_alloc.c:4245: ERROR: Unexpected indentation.
-> ./ipc/util.c:676: ERROR: Unexpected indentation.
-> ./drivers/pci/irq.c:35: WARNING: Block quote ends without a blank line; unexpected unindent.
-> ./security/security.c:109: ERROR: Unexpected indentation.
-> ./security/security.c:110: WARNING: Definition list ends without a blank line; unexpected unindent.
-> ./block/genhd.c:275: WARNING: Inline strong start-string without end-string.
-> ./block/genhd.c:283: WARNING: Inline strong start-string without end-string.
-> ./include/linux/clk.h:134: WARNING: Inline emphasis start-string without end-string.
-> ./include/linux/clk.h:134: WARNING: Inline emphasis start-string without end-string.
-> ./ipc/util.c:477: ERROR: Unknown target name: "s".
+On Thu, Mar 30, 2017 at 05:22:55PM +0200, Djalal Harouni wrote:
+> Hi,
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> This RFC can be applied on top of Linus' tree 89970a04d7
+> 
+> This RFC implements support for multiple separate proc instances inside
+> the same pid namespace. This allows to solve lot of problems that
+> today's use case face.
+> 
+> Historically procfs was tied to pid namespaces, and mount options were
+> propagated to all other procfs instances in the same pid namespace. This
+> solved several use cases in that time. However today we face new
+> problems, there are mutliple container implementations there, some of
+> them want to hide pid entries, others want to hide non-pid entries,
+> others want to have sysctlfs, others want to share pid namespace with
+> private procfs mounts. All these with current implementation won't work
+> since all options will be propagated to all procfs mounts.
+> 
+> This series allow to have new instances of procfs per pid namespace where
+> each instance can have its own mount option inside the same pid namespace.
+> This was also suggested by Andy Lutomirski.
+> 
+> 
+> Now:
+> $ sudo mount -t proc -o unshare,hidepid=2 none /test
+> 
+> The option 'unshare' will allow to mount a new instance of procfs inside
+> the same pid namespace.
+> 
+> Before:
+> $ stat /proc/slabinfo
+> 
+>   File: ?/proc/slabinfo?
+>   Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
+> Device: 4h/4d	Inode: 4026532046  Links: 1
+> 
+> $ stat /test3/slabinfo
+> 
+>   File: ?/test3/slabinfo?
+>   Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
+> Device: 4h/4d	Inode: 4026532046  Links: 1
+> 
+> 
+> After:
+> $ stat /proc/slabinfo
+> 
+>   File: ?/proc/slabinfo?
+>   Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
+> Device: 4h/4d	Inode: 4026532046  Links: 1
+> 
+> $ stat /test3/slabinfo
+> 
+>   File: ?/test3/slabinfo?
+>   Size: 0         	Blocks: 0          IO Block: 1024   regular empty file
+> Device: 31h/49d	Inode: 4026532046  Links: 1
+> 
+> 
+> Any better name for the option 'unshare' ? suggestions ?
+> 
+> I was going to use 'version=2' but then this may sound more like a
+> proc2 fs which currently impossible to implement since it will share
+> locks with the old proc.
+> 
+> 
+> Al, Eric any comments please ?
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# for drivers/pci/irq.c
+Multiple mnt_root's lead us to significant memory costs for storing dentry
+of tasks. I mean what we will get as many copies of the tasks dentry as many
+times we have mounted the procfs with 'unshare' flag. No?
 
-> diff --git a/drivers/pci/irq.c b/drivers/pci/irq.c
-> index 6684f153ab57..f9f2a0324ecc 100644
-> --- a/drivers/pci/irq.c
-> +++ b/drivers/pci/irq.c
-> @@ -31,7 +31,7 @@ static void pci_note_irq_problem(struct pci_dev *pdev, const char *reason)
->   * driver).
->   *
->   * Returns:
-> - *  a suggestion for fixing it (although the driver is not required to
-> + * a suggestion for fixing it (although the driver is not required to
->   * act on this).
->   */
->  enum pci_lost_interrupt_reason pci_lost_interrupt(struct pci_dev *pdev)
+-- 
+Rgrds, legion
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
