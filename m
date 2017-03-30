@@ -1,62 +1,82 @@
 From: luto@amacapital.net (Andy Lutomirski)
-Date: Thu, 30 Mar 2017 12:10:44 -0700
-Subject: [PATCH RFC 1/4] proc: add proc_fs_info struct to store proc
-	options
-In-Reply-To: <1490887379-25880-2-git-send-email-tixxdz@gmail.com>
+Date: Thu, 30 Mar 2017 12:12:31 -0700
+Subject: [PATCH RFC 0/4] proc: support multiple separate proc instances
+	per pidnamespace
+In-Reply-To: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
 References: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
-	<1490887379-25880-2-git-send-email-tixxdz@gmail.com>
-Message-ID: <CALCETrUG2Smb-+SWKphnB_oMFakZn9AuJDa7WeahnN9hBoENTQ@mail.gmail.com>
+Message-ID: <CALCETrWooKTtViVh4ik9e-3nLs3NET9wptgxhjS9V499sfUJQA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Thu, Mar 30, 2017 at 8:22 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
-> This is a preparation patch that adds a proc_fs_info to be able to store
-> different procfs options. Right now some mount options are stored inside
-> the pid namespace which make multiple proc share the same mount options.
-> This patch will help also to fix this.
+> Hi,
 >
-> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
-
->  static struct dentry *proc_mount(struct file_system_type *fs_type,
->         int flags, const char *dev_name, void *data)
->  {
-> +       int error;
-> +       struct super_block *sb;
->         struct pid_namespace *ns;
-> +       struct proc_fs_info *fs_info;
-> +
-> +       if (!(flags & MS_KERNMOUNT) && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
-> +               return ERR_PTR(-EPERM);
-
-Why is this check needed?
-
-> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-> index 2d2bf59..e1cb9c3 100644
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> @@ -6,11 +6,27 @@
+> This RFC can be applied on top of Linus' tree 89970a04d7
 >
->  #include <linux/types.h>
->  #include <linux/fs.h>
-> +#include <linux/refcount.h>
-> +
-> +enum {
-> +       PROC_FS_V1      = 1,
-> +       PROC_FS_V2      = 2,
-> +};
-> +
-> +struct proc_fs_info {
-> +       refcount_t users;
-> +       struct pid_namespace *pid_ns;
-> +       kgid_t pid_gid;
-> +       int hide_pid;
-> +       int version;
-> +};
+> This RFC implements support for multiple separate proc instances inside
+> the same pid namespace. This allows to solve lot of problems that
+> today's use case face.
+>
+> Historically procfs was tied to pid namespaces, and mount options were
+> propagated to all other procfs instances in the same pid namespace. This
+> solved several use cases in that time. However today we face new
+> problems, there are mutliple container implementations there, some of
+> them want to hide pid entries, others want to hide non-pid entries,
+> others want to have sysctlfs, others want to share pid namespace with
+> private procfs mounts. All these with current implementation won't work
+> since all options will be propagated to all procfs mounts.
+>
+> This series allow to have new instances of procfs per pid namespace where
+> each instance can have its own mount option inside the same pid namespace.
+> This was also suggested by Andy Lutomirski.
+>
+>
+> Now:
+> $ sudo mount -t proc -o unshare,hidepid=2 none /test
+>
+> The option 'unshare' will allow to mount a new instance of procfs inside
+> the same pid namespace.
+>
+> Before:
+> $ stat /proc/slabinfo
+>
+>   File: ?/proc/slabinfo?
+>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+> Device: 4h/4d   Inode: 4026532046  Links: 1
+>
+> $ stat /test3/slabinfo
+>
+>   File: ?/test3/slabinfo?
+>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+> Device: 4h/4d   Inode: 4026532046  Links: 1
+>
+>
+> After:
+> $ stat /proc/slabinfo
+>
+>   File: ?/proc/slabinfo?
+>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+> Device: 4h/4d   Inode: 4026532046  Links: 1
+>
+> $ stat /test3/slabinfo
+>
+>   File: ?/test3/slabinfo?
+>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+> Device: 31h/49d Inode: 4026532046  Links: 1
+>
+>
+> Any better name for the option 'unshare' ? suggestions ?
+>
+> I was going to use 'version=2' but then this may sound more like a
+> proc2 fs which currently impossible to implement since it will share
+> locks with the old proc.
+>
+>
+> Al, Eric any comments please ?
 
-What is version?
-
-Should this patch have just users and pid_ns and move the other stuff
-to patch 2?
+I like the concept, except that I think it would be nice to avoid
+needing 'unshare', perhaps by making unsharing the default and making
+hidepid work backwards compatibly if needed.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
