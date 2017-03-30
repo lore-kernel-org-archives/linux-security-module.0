@@ -1,129 +1,253 @@
 From: mathew.j.martineau@linux.intel.com (Mat Martineau)
-Date: Thu, 30 Mar 2017 16:50:18 -0700
-Subject: [PATCH v13 01/10] KEYS: Use a typedef for restrict_link function
-	pointers
+Date: Thu, 30 Mar 2017 16:50:19 -0700
+Subject: [PATCH v13 02/10] KEYS: Split role of the keyring pointer for keyring
+	restrict functions
 In-Reply-To: <20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
 References: <20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
-Message-ID: <20170330235027.6879-2-mathew.j.martineau@linux.intel.com>
+Message-ID: <20170330235027.6879-3-mathew.j.martineau@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This pointer type needs to be returned from a lookup function, and
-without a typedef the syntax gets cumbersome.
+The first argument to the restrict_link_func_t functions was a keyring
+pointer. These functions are called by the key subsystem with this
+argument set to the destination keyring, but restrict_link_by_signature
+expects a pointer to the relevant trusted keyring.
+
+Restrict functions may need something other than a single struct key
+pointer to allow or reject key linkage, so the data used to make that
+decision (such as the trust keyring) is moved to a new, fourth
+argument. The first argument is now always the destination keyring.
 
 Signed-off-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
 ---
- Documentation/security/keys.txt |  5 +----
- include/linux/key.h             | 16 +++++++---------
- security/keys/key.c             |  8 ++------
- security/keys/keyring.c         |  4 +---
- 4 files changed, 11 insertions(+), 22 deletions(-)
+ Documentation/security/keys.txt   |  8 ++++----
+ certs/system_keyring.c            | 18 +++++++++++-------
+ crypto/asymmetric_keys/restrict.c |  8 +++++---
+ include/crypto/public_key.h       |  5 +++--
+ include/keys/system_keyring.h     |  6 ++++--
+ include/linux/key.h               |  8 +++++---
+ security/keys/key.c               |  5 +++--
+ security/keys/keyring.c           |  6 ++++--
+ 8 files changed, 39 insertions(+), 25 deletions(-)
 
 diff --git a/Documentation/security/keys.txt b/Documentation/security/keys.txt
-index 3849814bfe6d..df695bddc140 100644
+index df695bddc140..5e7f63bade96 100644
 --- a/Documentation/security/keys.txt
 +++ b/Documentation/security/keys.txt
-@@ -1032,10 +1032,7 @@ payload contents" for more information.
- 	struct key *keyring_alloc(const char *description, uid_t uid, gid_t gid,
- 				  const struct cred *cred,
- 				  key_perm_t perm,
--				  int (*restrict_link)(struct key *,
--						       const struct key_type *,
--						       unsigned long,
--						       const union key_payload *),
-+				  key_restrict_link_func_t restrict_link,
- 				  unsigned long flags,
- 				  struct key *dest);
+@@ -1054,10 +1054,10 @@ payload contents" for more information.
+     can be verified by a key the kernel already has.
  
+     When called, the restriction function will be passed the keyring being
+-    added to, the key flags value and the type and payload of the key being
+-    added.  Note that when a new key is being created, this is called between
+-    payload preparsing and actual key creation.  The function should return 0
+-    to allow the link or an error to reject it.
++    added to, the key type, the payload of the key being added, and data to be
++    used in the restriction check.  Note that when a new key is being created,
++    this is called between payload preparsing and actual key creation.  The
++    function should return 0 to allow the link or an error to reject it.
+ 
+     A convenience function, restrict_link_reject, exists to always return
+     -EPERM to in this case.
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 50979d6dcecd..e39cce68dcfa 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -32,11 +32,13 @@ extern __initconst const unsigned long system_certificate_list_size;
+  * Restrict the addition of keys into a keyring based on the key-to-be-added
+  * being vouched for by a key in the built in system keyring.
+  */
+-int restrict_link_by_builtin_trusted(struct key *keyring,
++int restrict_link_by_builtin_trusted(struct key *dest_keyring,
+ 				     const struct key_type *type,
+-				     const union key_payload *payload)
++				     const union key_payload *payload,
++				     struct key *restriction_key)
+ {
+-	return restrict_link_by_signature(builtin_trusted_keys, type, payload);
++	return restrict_link_by_signature(dest_keyring, type, payload,
++					  builtin_trusted_keys);
+ }
+ 
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+@@ -49,20 +51,22 @@ int restrict_link_by_builtin_trusted(struct key *keyring,
+  * keyrings.
+  */
+ int restrict_link_by_builtin_and_secondary_trusted(
+-	struct key *keyring,
++	struct key *dest_keyring,
+ 	const struct key_type *type,
+-	const union key_payload *payload)
++	const union key_payload *payload,
++	struct key *restrict_key)
+ {
+ 	/* If we have a secondary trusted keyring, then that contains a link
+ 	 * through to the builtin keyring and the search will follow that link.
+ 	 */
+ 	if (type == &key_type_keyring &&
+-	    keyring == secondary_trusted_keys &&
++	    dest_keyring == secondary_trusted_keys &&
+ 	    payload == &builtin_trusted_keys->payload)
+ 		/* Allow the builtin keyring to be added to the secondary */
+ 		return 0;
+ 
+-	return restrict_link_by_signature(secondary_trusted_keys, type, payload);
++	return restrict_link_by_signature(dest_keyring, type, payload,
++					  secondary_trusted_keys);
+ }
+ #endif
+ 
+diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
+index 19d1afb9890f..a3afbf783255 100644
+--- a/crypto/asymmetric_keys/restrict.c
++++ b/crypto/asymmetric_keys/restrict.c
+@@ -56,9 +56,10 @@ __setup("ca_keys=", ca_keys_setup);
+ 
+ /**
+  * restrict_link_by_signature - Restrict additions to a ring of public keys
+- * @trust_keyring: A ring of keys that can be used to vouch for the new cert.
++ * @dest_keyring: Keyring being linked to.
+  * @type: The type of key being added.
+  * @payload: The payload of the new key.
++ * @trust_keyring: A ring of keys that can be used to vouch for the new cert.
+  *
+  * Check the new certificate against the ones in the trust keyring.  If one of
+  * those is the signing key and validates the new certificate, then mark the
+@@ -69,9 +70,10 @@ __setup("ca_keys=", ca_keys_setup);
+  * signature check fails or the key is blacklisted and some other error if
+  * there is a matching certificate but the signature check cannot be performed.
+  */
+-int restrict_link_by_signature(struct key *trust_keyring,
++int restrict_link_by_signature(struct key *dest_keyring,
+ 			       const struct key_type *type,
+-			       const union key_payload *payload)
++			       const union key_payload *payload,
++			       struct key *trust_keyring)
+ {
+ 	const struct public_key_signature *sig;
+ 	struct key *key;
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index 882ca0e1e7a5..ec0262fa08f8 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -50,9 +50,10 @@ struct key;
+ struct key_type;
+ union key_payload;
+ 
+-extern int restrict_link_by_signature(struct key *trust_keyring,
++extern int restrict_link_by_signature(struct key *dest_keyring,
+ 				      const struct key_type *type,
+-				      const union key_payload *payload);
++				      const union key_payload *payload,
++				      struct key *trust_keyring);
+ 
+ extern int verify_signature(const struct key *key,
+ 			    const struct public_key_signature *sig);
+diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+index 0d8762622ab9..359c2f936004 100644
+--- a/include/keys/system_keyring.h
++++ b/include/keys/system_keyring.h
+@@ -18,7 +18,8 @@
+ 
+ extern int restrict_link_by_builtin_trusted(struct key *keyring,
+ 					    const struct key_type *type,
+-					    const union key_payload *payload);
++					    const union key_payload *payload,
++					    struct key *restriction_key);
+ 
+ #else
+ #define restrict_link_by_builtin_trusted restrict_link_reject
+@@ -28,7 +29,8 @@ extern int restrict_link_by_builtin_trusted(struct key *keyring,
+ extern int restrict_link_by_builtin_and_secondary_trusted(
+ 	struct key *keyring,
+ 	const struct key_type *type,
+-	const union key_payload *payload);
++	const union key_payload *payload,
++	struct key *restriction_key);
+ #else
+ #define restrict_link_by_builtin_and_secondary_trusted restrict_link_by_builtin_trusted
+ #endif
 diff --git a/include/linux/key.h b/include/linux/key.h
-index 722914798f37..455171320ffc 100644
+index 455171320ffc..59cad0268fa7 100644
 --- a/include/linux/key.h
 +++ b/include/linux/key.h
-@@ -126,6 +126,10 @@ static inline bool is_key_possessed(const key_ref_t key_ref)
+@@ -126,9 +126,10 @@ static inline bool is_key_possessed(const key_ref_t key_ref)
  	return (unsigned long) key_ref & 1UL;
  }
  
-+typedef int (*key_restrict_link_func_t)(struct key *keyring,
-+					const struct key_type *type,
-+					const union key_payload *payload);
-+
+-typedef int (*key_restrict_link_func_t)(struct key *keyring,
++typedef int (*key_restrict_link_func_t)(struct key *dest_keyring,
+ 					const struct key_type *type,
+-					const union key_payload *payload);
++					const union key_payload *payload,
++					struct key *restriction_key);
+ 
  /*****************************************************************************/
  /*
-  * authentication token / access credential / keyring
-@@ -214,9 +218,7 @@ struct key {
- 	 * overrides this, allowing the kernel to add extra keys without
- 	 * restriction.
- 	 */
--	int (*restrict_link)(struct key *keyring,
--			     const struct key_type *type,
--			     const union key_payload *payload);
-+	key_restrict_link_func_t restrict_link;
- };
- 
- extern struct key *key_alloc(struct key_type *type,
-@@ -225,9 +227,7 @@ extern struct key *key_alloc(struct key_type *type,
- 			     const struct cred *cred,
- 			     key_perm_t perm,
- 			     unsigned long flags,
--			     int (*restrict_link)(struct key *,
--						  const struct key_type *,
--						  const union key_payload *));
-+			     key_restrict_link_func_t restrict_link);
- 
- 
- #define KEY_ALLOC_IN_QUOTA		0x0000	/* add to quota, reject if would overrun */
-@@ -303,9 +303,7 @@ extern struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid
- 				 const struct cred *cred,
- 				 key_perm_t perm,
- 				 unsigned long flags,
--				 int (*restrict_link)(struct key *,
--						      const struct key_type *,
--						      const union key_payload *),
-+				 key_restrict_link_func_t restrict_link,
- 				 struct key *dest);
+@@ -308,7 +309,8 @@ extern struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid
  
  extern int restrict_link_reject(struct key *keyring,
+ 				const struct key_type *type,
+-				const union key_payload *payload);
++				const union key_payload *payload,
++				struct key *restriction_key);
+ 
+ extern int keyring_clear(struct key *keyring);
+ 
 diff --git a/security/keys/key.c b/security/keys/key.c
-index 346fbf201c22..4e9138cc89e0 100644
+index 4e9138cc89e0..128ea40b01bd 100644
 --- a/security/keys/key.c
 +++ b/security/keys/key.c
-@@ -225,9 +225,7 @@ static inline void key_alloc_serial(struct key *key)
- struct key *key_alloc(struct key_type *type, const char *desc,
- 		      kuid_t uid, kgid_t gid, const struct cred *cred,
- 		      key_perm_t perm, unsigned long flags,
--		      int (*restrict_link)(struct key *,
--					   const struct key_type *,
--					   const union key_payload *))
-+		      key_restrict_link_func_t restrict_link)
- {
- 	struct key_user *user = NULL;
- 	struct key *key;
-@@ -806,9 +804,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 	struct key *keyring, *key = NULL;
- 	key_ref_t key_ref;
- 	int ret;
--	int (*restrict_link)(struct key *,
--			     const struct key_type *,
--			     const union key_payload *) = NULL;
-+	key_restrict_link_func_t restrict_link = NULL;
+@@ -499,7 +499,7 @@ int key_instantiate_and_link(struct key *key,
+ 	if (keyring) {
+ 		if (keyring->restrict_link) {
+ 			ret = keyring->restrict_link(keyring, key->type,
+-						     &prep.payload);
++						     &prep.payload, NULL);
+ 			if (ret < 0)
+ 				goto error;
+ 		}
+@@ -851,7 +851,8 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 	index_key.desc_len = strlen(index_key.description);
  
- 	/* look up the key type to see if it's one of the registered kernel
- 	 * types */
+ 	if (restrict_link) {
+-		ret = restrict_link(keyring, index_key.type, &prep.payload);
++		ret = restrict_link(keyring, index_key.type, &prep.payload,
++				    NULL);
+ 		if (ret < 0) {
+ 			key_ref = ERR_PTR(ret);
+ 			goto error_free_prep;
 diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index c91e4e0cea08..a7f26fd08f6c 100644
+index a7f26fd08f6c..703e58fc1020 100644
 --- a/security/keys/keyring.c
 +++ b/security/keys/keyring.c
-@@ -492,9 +492,7 @@ static long keyring_read(const struct key *keyring,
- struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid,
- 			  const struct cred *cred, key_perm_t perm,
- 			  unsigned long flags,
--			  int (*restrict_link)(struct key *,
--					       const struct key_type *,
--					       const union key_payload *),
-+			  key_restrict_link_func_t restrict_link,
- 			  struct key *dest)
+@@ -517,6 +517,7 @@ EXPORT_SYMBOL(keyring_alloc);
+  * @keyring: The keyring being added to.
+  * @type: The type of key being added.
+  * @payload: The payload of the key intended to be added.
++ * @data: Additional data for evaluating restriction.
+  *
+  * Reject the addition of any links to a keyring.  It can be overridden by
+  * passing KEY_ALLOC_BYPASS_RESTRICTION to key_instantiate_and_link() when
+@@ -527,7 +528,8 @@ EXPORT_SYMBOL(keyring_alloc);
+  */
+ int restrict_link_reject(struct key *keyring,
+ 			 const struct key_type *type,
+-			 const union key_payload *payload)
++			 const union key_payload *payload,
++			 struct key *restriction_key)
  {
- 	struct key *keyring;
+ 	return -EPERM;
+ }
+@@ -1220,7 +1222,7 @@ static int __key_link_check_restriction(struct key *keyring, struct key *key)
+ {
+ 	if (!keyring->restrict_link)
+ 		return 0;
+-	return keyring->restrict_link(keyring, key->type, &key->payload);
++	return keyring->restrict_link(keyring, key->type, &key->payload, NULL);
+ }
+ 
+ /**
 -- 
 2.12.1
 
