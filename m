@@ -1,66 +1,82 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Fri, 31 Mar 2017 09:52:54 +0900
-Subject: [PATCH] TOMOYO: Switch from per "struct cred" blob to per "struct
-	task_struct" blob.
-In-Reply-To: <c0e1918a-a483-23b7-2bef-871082f80e10@schaufler-ca.com>
-References: <1490698960-29861-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<0dbdca69-ae69-a07e-957a-246d3e7532f2@schaufler-ca.com>
-	<201703302009.HFI48472.MOFJOQStHFVOLF@I-love.SAKURA.ne.jp>
-	<c0e1918a-a483-23b7-2bef-871082f80e10@schaufler-ca.com>
-Message-ID: <201703310952.GED78634.OFQMFVtHSOJOLF@I-love.SAKURA.ne.jp>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Fri, 31 Mar 2017 12:49:35 +0200
+Subject: [PATCH RFC 1/4] proc: add proc_fs_info struct to store proc
+	options
+In-Reply-To: <CALCETrUG2Smb-+SWKphnB_oMFakZn9AuJDa7WeahnN9hBoENTQ@mail.gmail.com>
+References: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
+	<1490887379-25880-2-git-send-email-tixxdz@gmail.com>
+	<CALCETrUG2Smb-+SWKphnB_oMFakZn9AuJDa7WeahnN9hBoENTQ@mail.gmail.com>
+Message-ID: <CAEiveUe-_jQFe0c=RuW3g0DB6h0MvZcZr=4iB=Cs+XEQUN-C5g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler wrote:
-> On 3/30/2017 4:09 AM, Tetsuo Handa wrote:
-> > Even though TOMOYO uses per "struct task_struct" blob, TOMOYO can
-> > start running with any other LSM modules by applying below change.
-> > What are you worrying about?
-> 
-> Until such time as a blob sharing scheme, either the one
-> I've been working on, yours below or something else, is
-> adopted, and until another module starts using the task
-> blob, you could use TOMOYO with any other module. The
-> existing model for choosing a "major" module does not
-> allow for TOMOYO+AppArmor. Ignoring the blob management
-> issue, how would you suggest enabling TOMOYO+AppArmor? 
+On Thu, Mar 30, 2017 at 9:10 PM, Andy Lutomirski <luto@amacapital.net> wrote:
+> On Thu, Mar 30, 2017 at 8:22 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+>> This is a preparation patch that adds a proc_fs_info to be able to store
+>> different procfs options. Right now some mount options are stored inside
+>> the pid namespace which make multiple proc share the same mount options.
+>> This patch will help also to fix this.
+>>
+>> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+>
+>>  static struct dentry *proc_mount(struct file_system_type *fs_type,
+>>         int flags, const char *dev_name, void *data)
+>>  {
+>> +       int error;
+>> +       struct super_block *sb;
+>>         struct pid_namespace *ns;
+>> +       struct proc_fs_info *fs_info;
+>> +
+>> +       if (!(flags & MS_KERNMOUNT) && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+>> +               return ERR_PTR(-EPERM);
+>
+> Why is this check needed?
 
-Changing
+This is the same check that we used to have, from mount_ns(). I think
+we have to keep the same semantics for now. Later we may adapt it
+according to that suggestion of procfs with 'scope=x' mount options
+feature where you want a specific feature of procfs that needs X
+capability ?
 
--#define SECURITY_NAME_MAX       10
-+#define SECURITY_NAME_MAX       64
+>
+>> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+>> index 2d2bf59..e1cb9c3 100644
+>> --- a/include/linux/proc_fs.h
+>> +++ b/include/linux/proc_fs.h
+>> @@ -6,11 +6,27 @@
+>>
+>>  #include <linux/types.h>
+>>  #include <linux/fs.h>
+>> +#include <linux/refcount.h>
+>> +
+>> +enum {
+>> +       PROC_FS_V1      = 1,
+>> +       PROC_FS_V2      = 2,
+>> +};
+>> +
+>> +struct proc_fs_info {
+>> +       refcount_t users;
+>> +       struct pid_namespace *pid_ns;
+>> +       kgid_t pid_gid;
+>> +       int hide_pid;
+>> +       int version;
+>> +};
+>
+> What is version?
 
- int __init security_module_enable(const char *module)
- {
--	return !strcmp(module, chosen_lsm);
-+	return strstr(chosen_lsm, module) != NULL;
- }
+This is just a name to mirror 'unshare' option, please ignore it, I
+will change the var name.
 
-and passing
+>
+> Should this patch have just users and pid_ns and move the other stuff
+> to patch 2?
 
-  security=tomoyo,apparmor
+Indeed, will fix it.
 
-to the kernel boot command line option, with checking for currently conflicting
-choices like an example below.
+Thanks!
 
-	pr_info("Security Framework initialized\n");
-+	if (IS_ENABLED(CONFIG_SECURITY_SELINUX) && IS_ENABLED(CONFIG_SECURITY_SMACK) && security_module_enable("selinux") && security_module_enable("smack"))
-+		panic("Selected combination is not supported\n");
-
-> 
-> > If we want per LSM module per "struct task_struct" blob before
-> > TOMOYO is converted to use per "struct task_struct" blob, I'm ready to
-> > propose that part (picked up from below change) first.
-> 
-> I suggest that the best thing to do regarding the task blob
-> is to adopt a general blob sharing scheme that is useful for
-> all of the blobs rather than inventing a special one for TOMOYO.
-> 
-
-Since we are already receiving proposals of new modules which want to
-use the task blob, I think priority of sharing (isolating ?) the task
-blob (in other words, allow multiple modules to call task_alloc/task_free
-hooks) is higher than enabling SELinux+Smack.
+-- 
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
