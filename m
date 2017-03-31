@@ -1,79 +1,109 @@
 From: tixxdz@gmail.com (Djalal Harouni)
-Date: Fri, 31 Mar 2017 12:49:35 +0200
-Subject: [PATCH RFC 1/4] proc: add proc_fs_info struct to store proc
-	options
-In-Reply-To: <CALCETrUG2Smb-+SWKphnB_oMFakZn9AuJDa7WeahnN9hBoENTQ@mail.gmail.com>
+Date: Fri, 31 Mar 2017 13:26:43 +0200
+Subject: [PATCH RFC 0/4] proc: support multiple separate proc instances
+	per pidnamespace
+In-Reply-To: <20170330221649.GB13761@comp-core-i7-2640m-0182e6>
 References: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
-	<1490887379-25880-2-git-send-email-tixxdz@gmail.com>
-	<CALCETrUG2Smb-+SWKphnB_oMFakZn9AuJDa7WeahnN9hBoENTQ@mail.gmail.com>
-Message-ID: <CAEiveUe-_jQFe0c=RuW3g0DB6h0MvZcZr=4iB=Cs+XEQUN-C5g@mail.gmail.com>
+	<20170330221649.GB13761@comp-core-i7-2640m-0182e6>
+Message-ID: <CAEiveUe4ztp+gjw8kgZ55vaLr0Zc0R5vG0XWYvZhugoH0jHS6A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 30, 2017 at 9:10 PM, Andy Lutomirski <luto@amacapital.net> wrote:
-> On Thu, Mar 30, 2017 at 8:22 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
->> This is a preparation patch that adds a proc_fs_info to be able to store
->> different procfs options. Right now some mount options are stored inside
->> the pid namespace which make multiple proc share the same mount options.
->> This patch will help also to fix this.
+On Fri, Mar 31, 2017 at 12:16 AM, Alexey Gladkov
+<gladkov.alexey@gmail.com> wrote:
+> On Thu, Mar 30, 2017 at 05:22:55PM +0200, Djalal Harouni wrote:
+>> Hi,
 >>
->> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
->
->>  static struct dentry *proc_mount(struct file_system_type *fs_type,
->>         int flags, const char *dev_name, void *data)
->>  {
->> +       int error;
->> +       struct super_block *sb;
->>         struct pid_namespace *ns;
->> +       struct proc_fs_info *fs_info;
->> +
->> +       if (!(flags & MS_KERNMOUNT) && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
->> +               return ERR_PTR(-EPERM);
->
-> Why is this check needed?
-
-This is the same check that we used to have, from mount_ns(). I think
-we have to keep the same semantics for now. Later we may adapt it
-according to that suggestion of procfs with 'scope=x' mount options
-feature where you want a specific feature of procfs that needs X
-capability ?
-
->
->> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
->> index 2d2bf59..e1cb9c3 100644
->> --- a/include/linux/proc_fs.h
->> +++ b/include/linux/proc_fs.h
->> @@ -6,11 +6,27 @@
+>> This RFC can be applied on top of Linus' tree 89970a04d7
 >>
->>  #include <linux/types.h>
->>  #include <linux/fs.h>
->> +#include <linux/refcount.h>
->> +
->> +enum {
->> +       PROC_FS_V1      = 1,
->> +       PROC_FS_V2      = 2,
->> +};
->> +
->> +struct proc_fs_info {
->> +       refcount_t users;
->> +       struct pid_namespace *pid_ns;
->> +       kgid_t pid_gid;
->> +       int hide_pid;
->> +       int version;
->> +};
+>> This RFC implements support for multiple separate proc instances inside
+>> the same pid namespace. This allows to solve lot of problems that
+>> today's use case face.
+>>
+>> Historically procfs was tied to pid namespaces, and mount options were
+>> propagated to all other procfs instances in the same pid namespace. This
+>> solved several use cases in that time. However today we face new
+>> problems, there are mutliple container implementations there, some of
+>> them want to hide pid entries, others want to hide non-pid entries,
+>> others want to have sysctlfs, others want to share pid namespace with
+>> private procfs mounts. All these with current implementation won't work
+>> since all options will be propagated to all procfs mounts.
+>>
+>> This series allow to have new instances of procfs per pid namespace where
+>> each instance can have its own mount option inside the same pid namespace.
+>> This was also suggested by Andy Lutomirski.
+>>
+>>
+>> Now:
+>> $ sudo mount -t proc -o unshare,hidepid=2 none /test
+>>
+>> The option 'unshare' will allow to mount a new instance of procfs inside
+>> the same pid namespace.
+>>
+>> Before:
+>> $ stat /proc/slabinfo
+>>
+>>   File: ?/proc/slabinfo?
+>>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 4h/4d Inode: 4026532046  Links: 1
+>>
+>> $ stat /test3/slabinfo
+>>
+>>   File: ?/test3/slabinfo?
+>>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 4h/4d Inode: 4026532046  Links: 1
+>>
+>>
+>> After:
+>> $ stat /proc/slabinfo
+>>
+>>   File: ?/proc/slabinfo?
+>>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 4h/4d Inode: 4026532046  Links: 1
+>>
+>> $ stat /test3/slabinfo
+>>
+>>   File: ?/test3/slabinfo?
+>>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 31h/49d       Inode: 4026532046  Links: 1
+>>
+>>
+>> Any better name for the option 'unshare' ? suggestions ?
+>>
+>> I was going to use 'version=2' but then this may sound more like a
+>> proc2 fs which currently impossible to implement since it will share
+>> locks with the old proc.
+>>
+>>
+>> Al, Eric any comments please ?
 >
-> What is version?
+> Multiple mnt_root's lead us to significant memory costs for storing dentry
+> of tasks. I mean what we will get as many copies of the tasks dentry as many
+> times we have mounted the procfs with 'unshare' flag. No?
 
-This is just a name to mirror 'unshare' option, please ignore it, I
-will change the var name.
+With current implementation, that's true. However I think that we
+should not sacrifice usage for optimization, currently it is
+practically impossible to improve procfs, support new options or make
+use of the current ones without affecting other procfs mounts. Andy
+also suggested to have a mini-proc without non-pid stuff inside, and
+without a new disconnected instance, new mounts or bind mounts may
+expose the non-pid stuff.
 
->
-> Should this patch have just users and pid_ns and move the other stuff
-> to patch 2?
+Also we can improve this, right now it is not implemented but we may
+can change how we do lookups, instead of doing a ptrace task after
+instantiating a pid dentry we may do a ptrace permission check on task
+there then create its related proc inode. With this all new procfs
+instances with hidepid option set, will only have dentries of tasks
+that the caller can ptrace. Also there is already the code to flush
+the related task when it dies, tough, it needs further testing.
 
-Indeed, will fix it.
+Also as with tmpfs where inodes are accounted by the memory
+controller, I'm not sure if it's possible to account the same in
+procfs during the first access ?
 
-Thanks!
+I don't see a better way to solve the current procfs problems that we
+face or how to modernize it and add new options... in the end users
+can always chose to use it or not.
 
 -- 
 tixxdz
