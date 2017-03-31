@@ -1,17 +1,16 @@
 From: tixxdz@gmail.com (Djalal Harouni)
-Date: Fri, 31 Mar 2017 13:26:43 +0200
+Date: Fri, 31 Mar 2017 13:45:54 +0200
 Subject: [PATCH RFC 0/4] proc: support multiple separate proc instances
 	per pidnamespace
-In-Reply-To: <20170330221649.GB13761@comp-core-i7-2640m-0182e6>
+In-Reply-To: <CALCETrWooKTtViVh4ik9e-3nLs3NET9wptgxhjS9V499sfUJQA@mail.gmail.com>
 References: <1490887379-25880-1-git-send-email-tixxdz@gmail.com>
-	<20170330221649.GB13761@comp-core-i7-2640m-0182e6>
-Message-ID: <CAEiveUe4ztp+gjw8kgZ55vaLr0Zc0R5vG0XWYvZhugoH0jHS6A@mail.gmail.com>
+	<CALCETrWooKTtViVh4ik9e-3nLs3NET9wptgxhjS9V499sfUJQA@mail.gmail.com>
+Message-ID: <CAEiveUdtJ5WojbqsXhfq2bS8ZN3zMzr2o8zXf1aO26ZaPBNuzw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Mar 31, 2017 at 12:16 AM, Alexey Gladkov
-<gladkov.alexey@gmail.com> wrote:
-> On Thu, Mar 30, 2017 at 05:22:55PM +0200, Djalal Harouni wrote:
+On Thu, Mar 30, 2017 at 9:12 PM, Andy Lutomirski <luto@amacapital.net> wrote:
+> On Thu, Mar 30, 2017 at 8:22 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
 >> Hi,
 >>
 >> This RFC can be applied on top of Linus' tree 89970a04d7
@@ -44,28 +43,28 @@ On Fri, Mar 31, 2017 at 12:16 AM, Alexey Gladkov
 >> $ stat /proc/slabinfo
 >>
 >>   File: ?/proc/slabinfo?
->>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
->> Device: 4h/4d Inode: 4026532046  Links: 1
+>>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 4h/4d   Inode: 4026532046  Links: 1
 >>
 >> $ stat /test3/slabinfo
 >>
 >>   File: ?/test3/slabinfo?
->>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
->> Device: 4h/4d Inode: 4026532046  Links: 1
+>>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 4h/4d   Inode: 4026532046  Links: 1
 >>
 >>
 >> After:
 >> $ stat /proc/slabinfo
 >>
 >>   File: ?/proc/slabinfo?
->>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
->> Device: 4h/4d Inode: 4026532046  Links: 1
+>>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 4h/4d   Inode: 4026532046  Links: 1
 >>
 >> $ stat /test3/slabinfo
 >>
 >>   File: ?/test3/slabinfo?
->>   Size: 0             Blocks: 0          IO Block: 1024   regular empty file
->> Device: 31h/49d       Inode: 4026532046  Links: 1
+>>   Size: 0               Blocks: 0          IO Block: 1024   regular empty file
+>> Device: 31h/49d Inode: 4026532046  Links: 1
 >>
 >>
 >> Any better name for the option 'unshare' ? suggestions ?
@@ -77,33 +76,29 @@ On Fri, Mar 31, 2017 at 12:16 AM, Alexey Gladkov
 >>
 >> Al, Eric any comments please ?
 >
-> Multiple mnt_root's lead us to significant memory costs for storing dentry
-> of tasks. I mean what we will get as many copies of the tasks dentry as many
-> times we have mounted the procfs with 'unshare' flag. No?
+> I like the concept, except that I think it would be nice to avoid
+> needing 'unshare', perhaps by making unsharing the default and making
+> hidepid work backwards compatibly if needed.
 
-With current implementation, that's true. However I think that we
-should not sacrifice usage for optimization, currently it is
-practically impossible to improve procfs, support new options or make
-use of the current ones without affecting other procfs mounts. Andy
-also suggested to have a mini-proc without non-pid stuff inside, and
-without a new disconnected instance, new mounts or bind mounts may
-expose the non-pid stuff.
+Of course I can update, but as said lot of stuff may already depend on
+the behaviour of procfs mount options, and the device ID inside same
+pid namespace where is it is always the same ID. With this change we
+will have different IDs inside same pid namespace, and I don't have
+the knowledge to predict if something will break. I remember you said
+that we may update stat() to show same ID but I really don't know if
+that's a good idea, what if userspace now tries to check if these are
+two separate proc mounts ? also maybe there is third party kernel code
+that does something with these device IDs ?
 
-Also we can improve this, right now it is not implemented but we may
-can change how we do lookups, instead of doing a ptrace task after
-instantiating a pid dentry we may do a ptrace permission check on task
-there then create its related proc inode. With this all new procfs
-instances with hidepid option set, will only have dentries of tasks
-that the caller can ptrace. Also there is already the code to flush
-the related task when it dies, tough, it needs further testing.
+For the namespace introspection, Eric suggested that we may stat /proc
+before stating /proc/pid/ns/x , however he also concluded that some
+security or other obscure stuff may break! I basically don't have the
+resources nor the knowledge to predict what errors may come due to
+changing the default behaviour of procfs. From my position it is
+better to introduce a new option for it so users are warned. Is this
+reasonable ? or do we have to make it default ?
 
-Also as with tmpfs where inodes are accounted by the memory
-controller, I'm not sure if it's possible to account the same in
-procfs during the first access ?
-
-I don't see a better way to solve the current procfs problems that we
-face or how to modernize it and add new options... in the end users
-can always chose to use it or not.
+Thanks!
 
 -- 
 tixxdz
