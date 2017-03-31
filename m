@@ -1,44 +1,78 @@
 From: mic@digikod.net (=?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=)
-Date: Fri, 31 Mar 2017 23:15:37 +0200
-Subject: [kernel-hardening] [PATCH net-next v6 06/11] seccomp,landlock:
-	Handle Landlock events per process hierarchy
-In-Reply-To: <CAEiveUcp6xpUW764zupy8ekttnQGaonXFn-JEFg7nhXUKzenDg@mail.gmail.com>
-References: <20170328234650.19695-1-mic@digikod.net>
-	<20170328234650.19695-7-mic@digikod.net>
-	<CAEiveUcp6xpUW764zupy8ekttnQGaonXFn-JEFg7nhXUKzenDg@mail.gmail.com>
-Message-ID: <b0662712-53f4-1293-aa61-f0455301d7cc@digikod.net>
+Date: Fri, 31 Mar 2017 23:19:35 +0200
+Subject: [PATCH net-next v6 01/11] bpf: Add eBPF program subtype and
+	is_valid_subtype() verifier (fwd)
+In-Reply-To: <alpine.DEB.2.20.1703291712590.2989@hadrien>
+References: <alpine.DEB.2.20.1703291712590.2989@hadrien>
+Message-ID: <b1d77fbd-6a1d-4016-a823-ec986995012b@digikod.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 29/03/2017 12:35, Djalal Harouni wrote:
-> On Wed, Mar 29, 2017 at 1:46 AM, Micka?l Sala?n <mic@digikod.net> wrote:
-
->> @@ -25,6 +30,9 @@ struct seccomp_filter;
->>  struct seccomp {
->>         int mode;
->>         struct seccomp_filter *filter;
->> +#if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_SECURITY_LANDLOCK)
->> +       struct landlock_events *landlock_events;
->> +#endif /* CONFIG_SECCOMP_FILTER && CONFIG_SECURITY_LANDLOCK */
->>  };
-> 
-> Sorry if this was discussed before, but since this is mean to be a
-> stackable LSM, I'm wondering if later you could move the events from
-> seccomp, and go with a security_task_alloc() model [1] ?
-> 
-> Thanks!
-> 
-> [1] http://kernsec.org/pipermail/linux-security-module-archive/2017-March/000184.html
-> 
-
-Landlock use the seccomp syscall to attach a rule to a process and using
-struct seccomp to store this rule make sense. There is currently no way
-to store multiple task->security, which is needed for a stackable LSM
-like Landlock, but we could move the events there if needed in the future.
+Good catch, thanks again Julia!
 
  Micka?l
+
+On 29/03/2017 17:14, Julia Lawall wrote:
+> Size is unsigned, so not negative.
+> 
+> julia
+> 
+> ---------- Forwarded message ----------
+> Date: Wed, 29 Mar 2017 23:06:01 +0800
+> From: kbuild test robot <fengguang.wu@intel.com>
+> To: kbuild at 01.org
+> Cc: Julia Lawall <julia.lawall@lip6.fr>
+> Subject: Re: [PATCH net-next v6 01/11] bpf: Add eBPF program subtype and
+>     is_valid_subtype() verifier
+> 
+> In-Reply-To: <20170328234650.19695-2-mic@digikod.net>
+> TO: "Micka?l Sala?n" <mic@digikod.net>
+> 
+> Hi Micka?l,
+> 
+> [auto build test WARNING on net-next/master]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-LSM-Toward-unprivileged-sandboxing/20170329-211258
+> :::::: branch date: 2 hours ago
+> :::::: commit date: 2 hours ago
+> 
+>>> kernel/bpf/syscall.c:1041:5-9: WARNING: Unsigned expression compared with zero: size < 0
+> 
+> git remote add linux-review https://github.com/0day-ci/linux
+> git remote update linux-review
+> git checkout 07d282aef4f60235407284c0be81d01e352e040b
+> vim +1041 kernel/bpf/syscall.c
+> 
+> f4324551 Daniel Mack        2016-11-23  1025  		return -EINVAL;
+> f4324551 Daniel Mack        2016-11-23  1026  	}
+> f4324551 Daniel Mack        2016-11-23  1027
+> 7f677633 Alexei Starovoitov 2017-02-10  1028  	return ret;
+> f4324551 Daniel Mack        2016-11-23  1029  }
+> f4324551 Daniel Mack        2016-11-23  1030  #endif /* CONFIG_CGROUP_BPF */
+> f4324551 Daniel Mack        2016-11-23  1031
+> 99c55f7d Alexei Starovoitov 2014-09-26  1032  SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, size)
+> 99c55f7d Alexei Starovoitov 2014-09-26  1033  {
+> 99c55f7d Alexei Starovoitov 2014-09-26  1034  	union bpf_attr attr = {};
+> 99c55f7d Alexei Starovoitov 2014-09-26  1035  	int err;
+> 99c55f7d Alexei Starovoitov 2014-09-26  1036
+> 1be7f75d Alexei Starovoitov 2015-10-07  1037  	if (!capable(CAP_SYS_ADMIN) && sysctl_unprivileged_bpf_disabled)
+> 99c55f7d Alexei Starovoitov 2014-09-26  1038  		return -EPERM;
+> 99c55f7d Alexei Starovoitov 2014-09-26  1039
+> 07d282ae Micka?l Sala?n     2017-03-29  1040  	size = check_user_buf((void __user *)uattr, size, sizeof(attr));
+> 07d282ae Micka?l Sala?n     2017-03-29 @1041  	if (size < 0)
+> 07d282ae Micka?l Sala?n     2017-03-29  1042  		return size;
+> 99c55f7d Alexei Starovoitov 2014-09-26  1043
+> 99c55f7d Alexei Starovoitov 2014-09-26  1044  	/* copy attributes from user space, may be less than sizeof(bpf_attr) */
+> 99c55f7d Alexei Starovoitov 2014-09-26  1045  	if (copy_from_user(&attr, uattr, size) != 0)
+> 99c55f7d Alexei Starovoitov 2014-09-26  1046  		return -EFAULT;
+> 99c55f7d Alexei Starovoitov 2014-09-26  1047
+> 99c55f7d Alexei Starovoitov 2014-09-26  1048  	switch (cmd) {
+> 99c55f7d Alexei Starovoitov 2014-09-26  1049  	case BPF_MAP_CREATE:
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
 
 -------------- next part --------------
 A non-text attachment was scrubbed...
@@ -46,4 +80,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 488 bytes
 Desc: OpenPGP digital signature
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170331/74585ab5/attachment.sig>
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170331/37794c32/attachment.sig>
