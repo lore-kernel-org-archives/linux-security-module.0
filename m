@@ -1,139 +1,66 @@
-From: mathew.j.martineau@linux.intel.com (Mat Martineau)
-Date: Thu, 30 Mar 2017 16:50:25 -0700
-Subject: [PATCH v13 08/10] KEYS: Add a lookup_restriction function for the
-	asymmetric key type
-In-Reply-To: <20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
-References: <20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
-Message-ID: <20170330235027.6879-9-mathew.j.martineau@linux.intel.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Fri, 31 Mar 2017 09:52:54 +0900
+Subject: [PATCH] TOMOYO: Switch from per "struct cred" blob to per "struct
+	task_struct" blob.
+In-Reply-To: <c0e1918a-a483-23b7-2bef-871082f80e10@schaufler-ca.com>
+References: <1490698960-29861-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<0dbdca69-ae69-a07e-957a-246d3e7532f2@schaufler-ca.com>
+	<201703302009.HFI48472.MOFJOQStHFVOLF@I-love.SAKURA.ne.jp>
+	<c0e1918a-a483-23b7-2bef-871082f80e10@schaufler-ca.com>
+Message-ID: <201703310952.GED78634.OFQMFVtHSOJOLF@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Look up asymmetric keyring restriction information using the key-type
-lookup_restrict hook.
+Casey Schaufler wrote:
+> On 3/30/2017 4:09 AM, Tetsuo Handa wrote:
+> > Even though TOMOYO uses per "struct task_struct" blob, TOMOYO can
+> > start running with any other LSM modules by applying below change.
+> > What are you worrying about?
+> 
+> Until such time as a blob sharing scheme, either the one
+> I've been working on, yours below or something else, is
+> adopted, and until another module starts using the task
+> blob, you could use TOMOYO with any other module. The
+> existing model for choosing a "major" module does not
+> allow for TOMOYO+AppArmor. Ignoring the blob management
+> issue, how would you suggest enabling TOMOYO+AppArmor? 
 
-Signed-off-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
----
- Documentation/crypto/asymmetric-keys.txt | 35 +++++++++++++++++++++
- crypto/asymmetric_keys/asymmetric_type.c | 52 +++++++++++++++++++++++++++-----
- 2 files changed, 79 insertions(+), 8 deletions(-)
+Changing
 
-diff --git a/Documentation/crypto/asymmetric-keys.txt b/Documentation/crypto/asymmetric-keys.txt
-index 2b7816dea370..4373e7d86c6a 100644
---- a/Documentation/crypto/asymmetric-keys.txt
-+++ b/Documentation/crypto/asymmetric-keys.txt
-@@ -311,3 +311,38 @@ Functions are provided to register and unregister parsers:
- 
- Parsers may not have the same name.  The names are otherwise only used for
- displaying in debugging messages.
-+
-+
-+=========================
-+KEYRING LINK RESTRICTIONS
-+=========================
-+
-+Keyrings created from userspace using add_key can be configured to check the
-+signature of the key being linked.
-+
-+Several restriction methods are available:
-+
-+ (1) Restrict using the kernel builtin trusted keyring
-+
-+     - Option string used with KEYCTL_RESTRICT_KEYRING:
-+       - "builtin_trusted"
-+
-+     The kernel builtin trusted keyring will be searched for the signing
-+     key. The ca_keys kernel parameter also affects which keys are used for
-+     signature verification.
-+
-+ (2) Restrict using the kernel builtin and secondary trusted keyrings
-+
-+     - Option string used with KEYCTL_RESTRICT_KEYRING:
-+       - "builtin_and_secondary_trusted"
-+
-+     The kernel builtin and secondary trusted keyrings will be searched for the
-+     signing key. The ca_keys kernel parameter also affects which keys are used
-+     for signature verification.
-+
-+In all of these cases, if the signing key is found the signature of the key to
-+be linked will be verified using the signing key.  The requested key is added
-+to the keyring only if the signature is successfully verified.  -ENOKEY is
-+returned if the parent certificate could not be found, or -EKEYREJECTED is
-+returned if the signature check fails or the key is blacklisted.  Other errors
-+may be returned if the signature check could not be performed.
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index 6600181d5d01..2e3380d09631 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/ctype.h>
-+#include <keys/system_keyring.h>
- #include "asymmetric_keys.h"
- 
- MODULE_LICENSE("GPL");
-@@ -451,15 +452,50 @@ static void asymmetric_key_destroy(struct key *key)
- 	asymmetric_key_free_kids(kids);
+-#define SECURITY_NAME_MAX       10
++#define SECURITY_NAME_MAX       64
+
+ int __init security_module_enable(const char *module)
+ {
+-	return !strcmp(module, chosen_lsm);
++	return strstr(chosen_lsm, module) != NULL;
  }
- 
-+static struct key_restriction *asymmetric_restriction_alloc(
-+	key_restrict_link_func_t check,
-+	struct key *key)
-+{
-+	struct key_restriction *keyres =
-+		kzalloc(sizeof(struct key_restriction), GFP_KERNEL);
-+
-+	if (!keyres)
-+		return ERR_PTR(-ENOMEM);
-+
-+	keyres->check = check;
-+	keyres->key = key;
-+	keyres->keytype = &key_type_asymmetric;
-+
-+	return keyres;
-+}
-+
-+/*
-+ * look up keyring restrict functions for asymmetric keys
-+ */
-+static struct key_restriction *asymmetric_lookup_restriction(
-+	const char *restriction)
-+{
-+	if (strcmp("builtin_trusted", restriction) == 0)
-+		return asymmetric_restriction_alloc(
-+			restrict_link_by_builtin_trusted, NULL);
-+
-+	if (strcmp("builtin_and_secondary_trusted", restriction) == 0)
-+		return asymmetric_restriction_alloc(
-+			restrict_link_by_builtin_and_secondary_trusted, NULL);
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
- struct key_type key_type_asymmetric = {
--	.name		= "asymmetric",
--	.preparse	= asymmetric_key_preparse,
--	.free_preparse	= asymmetric_key_free_preparse,
--	.instantiate	= generic_key_instantiate,
--	.match_preparse	= asymmetric_key_match_preparse,
--	.match_free	= asymmetric_key_match_free,
--	.destroy	= asymmetric_key_destroy,
--	.describe	= asymmetric_key_describe,
-+	.name			= "asymmetric",
-+	.preparse		= asymmetric_key_preparse,
-+	.free_preparse		= asymmetric_key_free_preparse,
-+	.instantiate		= generic_key_instantiate,
-+	.match_preparse		= asymmetric_key_match_preparse,
-+	.match_free		= asymmetric_key_match_free,
-+	.destroy		= asymmetric_key_destroy,
-+	.describe		= asymmetric_key_describe,
-+	.lookup_restriction	= asymmetric_lookup_restriction,
- };
- EXPORT_SYMBOL_GPL(key_type_asymmetric);
- 
--- 
-2.12.1
 
+and passing
+
+  security=tomoyo,apparmor
+
+to the kernel boot command line option, with checking for currently conflicting
+choices like an example below.
+
+	pr_info("Security Framework initialized\n");
++	if (IS_ENABLED(CONFIG_SECURITY_SELINUX) && IS_ENABLED(CONFIG_SECURITY_SMACK) && security_module_enable("selinux") && security_module_enable("smack"))
++		panic("Selected combination is not supported\n");
+
+> 
+> > If we want per LSM module per "struct task_struct" blob before
+> > TOMOYO is converted to use per "struct task_struct" blob, I'm ready to
+> > propose that part (picked up from below change) first.
+> 
+> I suggest that the best thing to do regarding the task blob
+> is to adopt a general blob sharing scheme that is useful for
+> all of the blobs rather than inventing a special one for TOMOYO.
+> 
+
+Since we are already receiving proposals of new modules which want to
+use the task blob, I think priority of sharing (isolating ?) the task
+blob (in other words, allow multiple modules to call task_alloc/task_free
+hooks) is higher than enabling SELinux+Smack.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
