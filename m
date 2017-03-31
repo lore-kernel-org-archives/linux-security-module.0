@@ -1,44 +1,49 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 31 Mar 2017 15:20:46 -0400
-Subject: [PATCH] selinux: Use task_alloc hook rather than task_create hook
-In-Reply-To: <201703302013.CFF26504.JFOQFSOHtFOMVL@I-love.SAKURA.ne.jp>
-References: <1490706772-8013-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<1490707796.6046.1.camel@tycho.nsa.gov>
-	<201703282308.BHJ95808.MFFHVQLOOtJFOS@I-love.SAKURA.ne.jp>
-	<CAHC9VhTxG95_iBy6WMtWj_xR1-=_=meykw1cTxN8-XepP8oo2w@mail.gmail.com>
-	<201703302013.CFF26504.JFOQFSOHtFOMVL@I-love.SAKURA.ne.jp>
-Message-ID: <CAHC9VhTMNXtjToD3XmgfkT_sPsRgfRpFzdrgpgM0xrtbqy22pg@mail.gmail.com>
+From: mic@digikod.net (=?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=)
+Date: Fri, 31 Mar 2017 23:15:37 +0200
+Subject: [kernel-hardening] [PATCH net-next v6 06/11] seccomp,landlock:
+	Handle Landlock events per process hierarchy
+In-Reply-To: <CAEiveUcp6xpUW764zupy8ekttnQGaonXFn-JEFg7nhXUKzenDg@mail.gmail.com>
+References: <20170328234650.19695-1-mic@digikod.net>
+	<20170328234650.19695-7-mic@digikod.net>
+	<CAEiveUcp6xpUW764zupy8ekttnQGaonXFn-JEFg7nhXUKzenDg@mail.gmail.com>
+Message-ID: <b0662712-53f4-1293-aa61-f0455301d7cc@digikod.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 30, 2017 at 7:13 AM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Paul Moore wrote:
->> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> > Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
->> > ---
->> >  security/selinux/hooks.c | 5 +++--
->> >  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> When are you planning to remove the task_create() hook?
->>
->> I have no objection to this patch, and I plan to merge it, but merging
->> it now would require rebasing the selinux/next and I try to keep from
->> rebasing during the development cycle unless absolutely necessary.  I
->> think this can wait until after the next merge window, what do you
->> think?
->
-> Nothing to hurry. SELinux is the only user. We can wait as much as you want.
 
-Okay, I'll leave this in the queue and I'll merge it after the next
-merge window.
 
-Thanks.
+On 29/03/2017 12:35, Djalal Harouni wrote:
+> On Wed, Mar 29, 2017 at 1:46 AM, Micka?l Sala?n <mic@digikod.net> wrote:
 
--- 
-paul moore
-www.paul-moore.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> @@ -25,6 +30,9 @@ struct seccomp_filter;
+>>  struct seccomp {
+>>         int mode;
+>>         struct seccomp_filter *filter;
+>> +#if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_SECURITY_LANDLOCK)
+>> +       struct landlock_events *landlock_events;
+>> +#endif /* CONFIG_SECCOMP_FILTER && CONFIG_SECURITY_LANDLOCK */
+>>  };
+> 
+> Sorry if this was discussed before, but since this is mean to be a
+> stackable LSM, I'm wondering if later you could move the events from
+> seccomp, and go with a security_task_alloc() model [1] ?
+> 
+> Thanks!
+> 
+> [1] http://kernsec.org/pipermail/linux-security-module-archive/2017-March/000184.html
+> 
+
+Landlock use the seccomp syscall to attach a rule to a process and using
+struct seccomp to store this rule make sense. There is currently no way
+to store multiple task->security, which is needed for a stackable LSM
+like Landlock, but we could move the events there if needed in the future.
+
+ Micka?l
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 488 bytes
+Desc: OpenPGP digital signature
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170331/74585ab5/attachment.sig>
