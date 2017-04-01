@@ -1,45 +1,53 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Sat, 1 Apr 2017 10:52:26 -0400
-Subject: selinux: Fix an uninitialized variable bug in range_read()
-In-Reply-To: <fb1cb81c-4b03-5b21-f933-ea3e58491a13@users.sourceforge.net>
-References: <20170331152118.GA8141@mwanda>
-	<1490975541.31110.12.camel@tycho.nsa.gov>
-	<CAHC9VhT7njoVyHgyiTQhCcvZEYrTE_XZRLxT4+JJPiH3W88AUw@mail.gmail.com>
-	<fb1cb81c-4b03-5b21-f933-ea3e58491a13@users.sourceforge.net>
-Message-ID: <CAHC9VhT8nXOPpOy5sRpRYjVnj2oOgFGAzibgkj_ZpK7xyg35qg@mail.gmail.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Sat,  1 Apr 2017 14:34:28 -0700
+Subject: [PATCH] KEYS: fix dereferencing NULL payload with nonzero length
+Message-ID: <20170401213428.17097-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Apr 1, 2017 at 2:40 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>>> We removed this initialization as a cleanup but it is probably
->>>> required.
->>>>
->>>> The concern is that "nel" can be zero.  I'm not an expert on SELinux
->>>> code but I think it looks possible to write an SELinux policy which
->>>> triggers this bug.  GCC doesn't catch this, but my static checker
->>>> does.
->>>>
->>>> Fixes: 9c312e79d6af ("selinux: Delete an unnecessary variable
->>>> initialisation in range_read()")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> Nice catch, thanks!
->>>
->>> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
->>
->> Yes, indeed.  Thanks Dan, I should have caught this when merging Markus' patch.
->
-> How do you think about the possibility to call the function ?range_read? only with
-> a system configuration where the interface ?le32_to_cpu? will be resolved to
-> a positive value so that statements in the corresponding for loop will be executed
-> at least once?
+From: Eric Biggers <ebiggers@google.com>
 
-I suggest we leave this as-is for the moment.
+sys_add_key() and the KEYCTL_UPDATE operation of sys_keyctl() allowed a
+NULL payload with nonzero length to be passed to the key type's
+->preparse(), ->instantiate(), and/or ->update() methods.  Various key
+types including asymmetric, cifs.idmap, cifs.spnego, and pkcs7_test did
+not handle this case, allowing an unprivileged user to trivially cause a
+NULL pointer dereference (kernel oops) if one of these key types was
+present.  Fix it by doing the copy_from_user() when 'plen' is nonzero
+rather than when '_payload' is non-NULL, causing the syscall to fail
+with EFAULT as expected when an invalid buffer is specified.
 
+Cc: stable at vger.kernel.org # 2.6.10+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/keyctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 52c34532c785..57447cd29154 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -99,7 +99,7 @@ SYSCALL_DEFINE5(add_key, const char __user *, _type,
+ 	/* pull the payload in if one was supplied */
+ 	payload = NULL;
+ 
+-	if (_payload) {
++	if (plen) {
+ 		ret = -ENOMEM;
+ 		payload = kmalloc(plen, GFP_KERNEL | __GFP_NOWARN);
+ 		if (!payload) {
+@@ -324,7 +324,7 @@ long keyctl_update_key(key_serial_t id,
+ 
+ 	/* pull the payload in if one was supplied */
+ 	payload = NULL;
+-	if (_payload) {
++	if (plen) {
+ 		ret = -ENOMEM;
+ 		payload = kmalloc(plen, GFP_KERNEL);
+ 		if (!payload)
 -- 
-paul moore
-www.paul-moore.com
+2.12.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
