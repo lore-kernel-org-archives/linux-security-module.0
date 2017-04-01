@@ -1,93 +1,85 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Sat,  1 Apr 2017 15:36:45 -0700
-Subject: [PATCH] KEYS: fix freeing uninitialized memory in key_update()
-Message-ID: <20170401223645.29528-1-ebiggers3@gmail.com>
+Date: Sat,  1 Apr 2017 16:39:08 -0700
+Subject: [PATCH] KEYS: fix keyctl_set_reqkey_keyring() to not leak thread
+	keyrings
+Message-ID: <20170401233908.20786-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-key_update() freed the key_preparsed_payload even if it was not
-initialized first.  This would cause a crash if userspace called
-keyctl_update() on a key with type like "asymmetric" that has a
-->preparse() method but not an ->update() method.  Possibly it could
-even be triggered for other key types by racing with keyctl_setperm() to
-make the KEY_NEED_WRITE check fail (the permission was already checked,
-so normally it wouldn't fail there).
+Running the following program as an unprivileged user exhausts kernel
+memory by leaking thread keyrings:
 
-Reproducer with key type "asymmetric", given a valid cert.der:
+	#include <keyutils.h>
 
-keyctl new_session
-keyid=$(keyctl padd asymmetric desc @s < cert.der)
-keyctl setperm $keyid 0x3f000000
-keyctl update $keyid data
+	int main()
+	{
+		for (;;)
+			keyctl_set_reqkey_keyring(KEY_REQKEY_DEFL_THREAD_KEYRING);
+	}
 
-[  150.686666] BUG: unable to handle kernel NULL pointer dereference@0000000000000001
-[  150.687601] IP: asymmetric_key_free_kids+0x12/0x30
-[  150.688139] PGD 38a3d067
-[  150.688141] PUD 3b3de067
-[  150.688447] PMD 0
-[  150.688745]
-[  150.689160] Oops: 0000 [#1] SMP
-[  150.689455] Modules linked in:
-[  150.689769] CPU: 1 PID: 2478 Comm: keyctl Not tainted 4.11.0-rc4-xfstests-00187-ga9f6b6b8cd2f #742
-[  150.690916] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-20170228_101828-anatol 04/01/2014
-[  150.692199] task: ffff88003b30c480 task.stack: ffffc90000350000
-[  150.692952] RIP: 0010:asymmetric_key_free_kids+0x12/0x30
-[  150.693556] RSP: 0018:ffffc90000353e58 EFLAGS: 00010202
-[  150.694142] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000004
-[  150.694845] RDX: ffffffff81ee3920 RSI: ffff88003d4b0700 RDI: 0000000000000001
-[  150.697569] RBP: ffffc90000353e60 R08: ffff88003d5d2140 R09: 0000000000000000
-[  150.702483] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-[  150.707393] R13: 0000000000000004 R14: ffff880038a4d2d8 R15: 000000000040411f
-[  150.709720] FS:  00007fcbcee35700(0000) GS:ffff88003fd00000(0000) knlGS:0000000000000000
-[  150.711504] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  150.712733] CR2: 0000000000000001 CR3: 0000000039eab000 CR4: 00000000003406e0
-[  150.714487] Call Trace:
-[  150.714975]  asymmetric_key_free_preparse+0x2f/0x40
-[  150.715907]  key_update+0xf7/0x140
-[  150.716560]  ? key_default_cmp+0x20/0x20
-[  150.717319]  keyctl_update_key+0xb0/0xe0
-[  150.718066]  SyS_keyctl+0x109/0x130
-[  150.718663]  entry_SYSCALL_64_fastpath+0x1f/0xc2
-[  150.719440] RIP: 0033:0x7fcbce75ff19
-[  150.719926] RSP: 002b:00007ffd5d167088 EFLAGS: 00000206 ORIG_RAX: 00000000000000fa
-[  150.720918] RAX: ffffffffffffffda RBX: 0000000000404d80 RCX: 00007fcbce75ff19
-[  150.721874] RDX: 00007ffd5d16785e RSI: 000000002866cd36 RDI: 0000000000000002
-[  150.722827] RBP: 0000000000000006 R08: 000000002866cd36 R09: 00007ffd5d16785e
-[  150.723781] R10: 0000000000000004 R11: 0000000000000206 R12: 0000000000404d80
-[  150.724650] R13: 00007ffd5d16784d R14: 00007ffd5d167238 R15: 000000000040411f
-[  150.725447] Code: 83 c4 08 31 c0 5b 41 5c 41 5d 41 5e 41 5f 5d c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 85 ff 74 23 55 48 89 e5 53 48 89 fb <48> 8b 3f e8 06 21 c5 ff 48 8b 7b 08 e8 fd 20 c5 ff 48 89 df e8
-[  150.727489] RIP: asymmetric_key_free_kids+0x12/0x30 RSP: ffffc90000353e58
-[  150.728117] CR2: 0000000000000001
-[  150.728430] ---[ end trace f7f8fe1da2d5ae8d ]---
+Fix it by only creating a new thread keyring if there wasn't one before,
+just as we do for process keyrings.
 
-Fixes: 4d8c0250b841 ("KEYS: Call ->free_preparse() even after ->preparse() returns an error")
-Cc: stable at vger.kernel.org # 3.17+
+Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
+Cc: stable at vger.kernel.org # 2.6.29+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- security/keys/key.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ security/keys/keyctl.c       | 13 +++++--------
+ security/keys/process_keys.c |  3 +++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 346fbf201c22..2f4ce35ae2aa 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -962,12 +962,11 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
- 	/* the key must be writable */
- 	ret = key_permission(key_ref, KEY_NEED_WRITE);
- 	if (ret < 0)
--		goto error;
-+		return ret;
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 52c34532c785..6f3440530835 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1253,8 +1253,8 @@ long keyctl_reject_key(key_serial_t id, unsigned timeout, unsigned error,
+  * Read or set the default keyring in which request_key() will cache keys and
+  * return the old setting.
+  *
+- * If a process keyring is specified then this will be created if it doesn't
+- * yet exist.  The old setting will be returned if successful.
++ * If a thread or process keyring is specified then it will be created if it
++ * doesn't yet exist.  The old setting will be returned if successful.
+  */
+ long keyctl_set_reqkey_keyring(int reqkey_defl)
+ {
+@@ -1273,17 +1273,14 @@ long keyctl_set_reqkey_keyring(int reqkey_defl)
+ 	switch (reqkey_defl) {
+ 	case KEY_REQKEY_DEFL_THREAD_KEYRING:
+ 		ret = install_thread_keyring_to_cred(new);
+-		if (ret < 0)
++		if (ret < 0 && ret != -EEXIST)
+ 			goto error;
+ 		goto set;
  
- 	/* attempt to update it if supported */
--	ret = -EOPNOTSUPP;
- 	if (!key->type->update)
--		goto error;
-+		return -EOPNOTSUPP;
+ 	case KEY_REQKEY_DEFL_PROCESS_KEYRING:
+ 		ret = install_process_keyring_to_cred(new);
+-		if (ret < 0) {
+-			if (ret != -EEXIST)
+-				goto error;
+-			ret = 0;
+-		}
++		if (ret < 0 && ret != -EEXIST)
++			goto error;
+ 		goto set;
  
- 	memset(&prep, 0, sizeof(prep));
- 	prep.data = payload;
+ 	case KEY_REQKEY_DEFL_DEFAULT:
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index b6fdd22205b1..9e5337876e52 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -135,6 +135,9 @@ int install_thread_keyring_to_cred(struct cred *new)
+ {
+ 	struct key *keyring;
+ 
++	if (new->thread_keyring)
++		return -EEXIST;
++
+ 	keyring = keyring_alloc("_tid", new->uid, new->gid, new,
+ 				KEY_POS_ALL | KEY_USR_VIEW,
+ 				KEY_ALLOC_QUOTA_OVERRUN,
 -- 
 2.12.1
 
