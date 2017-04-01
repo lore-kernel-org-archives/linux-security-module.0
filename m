@@ -1,83 +1,126 @@
-From: mic@digikod.net (=?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=)
-Date: Fri, 31 Mar 2017 23:19:35 +0200
-Subject: [PATCH net-next v6 01/11] bpf: Add eBPF program subtype and
-	is_valid_subtype() verifier (fwd)
-In-Reply-To: <alpine.DEB.2.20.1703291712590.2989@hadrien>
-References: <alpine.DEB.2.20.1703291712590.2989@hadrien>
-Message-ID: <b1d77fbd-6a1d-4016-a823-ec986995012b@digikod.net>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sat, 1 Apr 2017 12:32:05 +0900
+Subject: [PATCH] TOMOYO: Switch from per "struct cred" blob to per "struct
+	task_struct" blob.
+In-Reply-To: <2ad7f776-f593-8841-0009-c236980b4c8a@schaufler-ca.com>
+References: <0dbdca69-ae69-a07e-957a-246d3e7532f2@schaufler-ca.com>
+	<201703302009.HFI48472.MOFJOQStHFVOLF@I-love.SAKURA.ne.jp>
+	<c0e1918a-a483-23b7-2bef-871082f80e10@schaufler-ca.com>
+	<201703310952.GED78634.OFQMFVtHSOJOLF@I-love.SAKURA.ne.jp>
+	<2ad7f776-f593-8841-0009-c236980b4c8a@schaufler-ca.com>
+Message-ID: <201704011232.CBI73929.QHFJOMOLSFFVOt@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Good catch, thanks again Julia!
+Casey Schaufler wrote:
+> On 3/30/2017 5:52 PM, Tetsuo Handa wrote:
+> > Casey Schaufler wrote:
+> >> On 3/30/2017 4:09 AM, Tetsuo Handa wrote:
+> >>> Even though TOMOYO uses per "struct task_struct" blob, TOMOYO can
+> >>> start running with any other LSM modules by applying below change.
+> >>> What are you worrying about?
+> >> Until such time as a blob sharing scheme, either the one
+> >> I've been working on, yours below or something else, is
+> >> adopted, and until another module starts using the task
+> >> blob, you could use TOMOYO with any other module. The
+> >> existing model for choosing a "major" module does not
+> >> allow for TOMOYO+AppArmor. Ignoring the blob management
+> >> issue, how would you suggest enabling TOMOYO+AppArmor? 
+> > Changing
+> >
+> > -#define SECURITY_NAME_MAX       10
+> > +#define SECURITY_NAME_MAX       64
+> >
+> >  int __init security_module_enable(const char *module)
+> >  {
+> > -	return !strcmp(module, chosen_lsm);
+> > +	return strstr(chosen_lsm, module) != NULL;
+> >  }
+> 
+> This will fail if a module name is a substring of
+> another. "joselinux", "kissysmacker", "parm", "yam"
+> and "botomoyodoho" would all be names that would
+> result in confusion. You'd have to do more serious
+> parsing.
 
- Micka?l
+True for "joselinux", "kissysmacker" and "botomoyodoho" but
+false for "parm" and "yam". And true only when we merge new
+LSM modules with such confusing naming. And when if we merge,
+we can do stricter parsing. Thus, conceptually no problem.
 
-On 29/03/2017 17:14, Julia Lawall wrote:
-> Size is unsigned, so not negative.
+>  
 > 
-> julia
+> >
+> > and passing
+> >
+> >   security=tomoyo,apparmor
+> >
+> > to the kernel boot command line option, with checking for currently conflicting
+> > choices like an example below.
+> >
+> > 	pr_info("Security Framework initialized\n");
+> > +	if (IS_ENABLED(CONFIG_SECURITY_SELINUX) && IS_ENABLED(CONFIG_SECURITY_SMACK) && security_module_enable("selinux") && security_module_enable("smack"))
+> > +		panic("Selected combination is not supported\n");
 > 
-> ---------- Forwarded message ----------
-> Date: Wed, 29 Mar 2017 23:06:01 +0800
-> From: kbuild test robot <fengguang.wu@intel.com>
-> To: kbuild at 01.org
-> Cc: Julia Lawall <julia.lawall@lip6.fr>
-> Subject: Re: [PATCH net-next v6 01/11] bpf: Add eBPF program subtype and
->     is_valid_subtype() verifier
-> 
-> In-Reply-To: <20170328234650.19695-2-mic@digikod.net>
-> TO: "Micka?l Sala?n" <mic@digikod.net>
-> 
-> Hi Micka?l,
-> 
-> [auto build test WARNING on net-next/master]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-LSM-Toward-unprivileged-sandboxing/20170329-211258
-> :::::: branch date: 2 hours ago
-> :::::: commit date: 2 hours ago
-> 
->>> kernel/bpf/syscall.c:1041:5-9: WARNING: Unsigned expression compared with zero: size < 0
-> 
-> git remote add linux-review https://github.com/0day-ci/linux
-> git remote update linux-review
-> git checkout 07d282aef4f60235407284c0be81d01e352e040b
-> vim +1041 kernel/bpf/syscall.c
-> 
-> f4324551 Daniel Mack        2016-11-23  1025  		return -EINVAL;
-> f4324551 Daniel Mack        2016-11-23  1026  	}
-> f4324551 Daniel Mack        2016-11-23  1027
-> 7f677633 Alexei Starovoitov 2017-02-10  1028  	return ret;
-> f4324551 Daniel Mack        2016-11-23  1029  }
-> f4324551 Daniel Mack        2016-11-23  1030  #endif /* CONFIG_CGROUP_BPF */
-> f4324551 Daniel Mack        2016-11-23  1031
-> 99c55f7d Alexei Starovoitov 2014-09-26  1032  SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, size)
-> 99c55f7d Alexei Starovoitov 2014-09-26  1033  {
-> 99c55f7d Alexei Starovoitov 2014-09-26  1034  	union bpf_attr attr = {};
-> 99c55f7d Alexei Starovoitov 2014-09-26  1035  	int err;
-> 99c55f7d Alexei Starovoitov 2014-09-26  1036
-> 1be7f75d Alexei Starovoitov 2015-10-07  1037  	if (!capable(CAP_SYS_ADMIN) && sysctl_unprivileged_bpf_disabled)
-> 99c55f7d Alexei Starovoitov 2014-09-26  1038  		return -EPERM;
-> 99c55f7d Alexei Starovoitov 2014-09-26  1039
-> 07d282ae Micka?l Sala?n     2017-03-29  1040  	size = check_user_buf((void __user *)uattr, size, sizeof(attr));
-> 07d282ae Micka?l Sala?n     2017-03-29 @1041  	if (size < 0)
-> 07d282ae Micka?l Sala?n     2017-03-29  1042  		return size;
-> 99c55f7d Alexei Starovoitov 2014-09-26  1043
-> 99c55f7d Alexei Starovoitov 2014-09-26  1044  	/* copy attributes from user space, may be less than sizeof(bpf_attr) */
-> 99c55f7d Alexei Starovoitov 2014-09-26  1045  	if (copy_from_user(&attr, uattr, size) != 0)
-> 99c55f7d Alexei Starovoitov 2014-09-26  1046  		return -EFAULT;
-> 99c55f7d Alexei Starovoitov 2014-09-26  1047
-> 99c55f7d Alexei Starovoitov 2014-09-26  1048  	switch (cmd) {
-> 99c55f7d Alexei Starovoitov 2014-09-26  1049  	case BPF_MAP_CREATE:
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+> This is easy enough to handle in Kconfig.
 
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 488 bytes
-Desc: OpenPGP digital signature
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170331/37794c32/attachment.sig>
+Kconfig is build time check. security_module_enable() is boot time check.
+strstr() in security_module_enable() is for allow distro kernel users
+(who do not have control for handling Kconfig) to specify e.g.
+
+   security=selinux
+   security=tomoyo
+   security=selinux,tomoyo
+
+upon boot.
+
+> 
+> >
+> >>> If we want per LSM module per "struct task_struct" blob before
+> >>> TOMOYO is converted to use per "struct task_struct" blob, I'm ready to
+> >>> propose that part (picked up from below change) first.
+> >> I suggest that the best thing to do regarding the task blob
+> >> is to adopt a general blob sharing scheme that is useful for
+> >> all of the blobs rather than inventing a special one for TOMOYO.
+> >>
+> > Since we are already receiving proposals of new modules which want to
+> > use the task blob, I think priority of sharing (isolating ?) the task
+> > blob (in other words, allow multiple modules to call task_alloc/task_free
+> > hooks) is higher than enabling SELinux+Smack.
+> 
+> I agree. Mr. Moore wants to see the complete "solution" before
+> he's willing to endorse intermediate steps, and he has a point.
+> There is good reason to hold off on introducing a mechanism
+> that isn't known to hold up long term.
+
+Why my version does not hold up long term? Unlike /proc/.../attr issue,
+my version does not involve changes which are visible to userspace.
+If my version turns out not to hold up in the future, we can fix it.
+
+> 
+> We could introduce infrastructure blob management (as opposed
+> to the current every-module-for-itself scheme) independently
+> of dealing with the /proc/.../attr, secid and networking issues.
+
+Yes.
+
+> But if we're not sure the path gets us all the way it would be
+> foolish to start making changes of that magnitude.
+> 
+> I *think* I have acceptable answers to all those issues in
+> the works. Once there's conceptual sign-off on those I would
+> be very much in favor of a staged approach, with the blob
+> management being the first step.
+
+Like I commented at
+http://kernsec.org/pipermail/linux-security-module-archive/2017-March/000114.html ,
+I think we will need more rewrite and constraint than now if you really want to
+implement "atomic write". What is your answer to this question?
+Does your answer might prevent AppArmor from using per "struct task_struct" blob?
+
+Anyway, there is no reason TOMOYO cannot start using per "struct task_struct" blob
+regardless of your answer, isn't it? Then, I'd like to propose TOMOYO part.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
