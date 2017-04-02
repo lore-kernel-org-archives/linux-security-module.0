@@ -1,88 +1,39 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Sat,  1 Apr 2017 16:39:08 -0700
-Subject: [PATCH] KEYS: fix keyctl_set_reqkey_keyring() to not leak thread
-	keyrings
-Message-ID: <20170401233908.20786-1-ebiggers3@gmail.com>
+From: corbet@lwn.net (Jonathan Corbet)
+Date: Sun, 2 Apr 2017 14:34:18 -0600
+Subject: [PATCH 0/9] convert genericirq.tmpl and kernel-api.tmpl to DocBook
+In-Reply-To: <cover.1490904090.git.mchehab@s-opensource.com>
+References: <cover.1490904090.git.mchehab@s-opensource.com>
+Message-ID: <20170402143418.3de75239@lwn.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Thu, 30 Mar 2017 17:11:27 -0300
+Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote:
 
-Running the following program as an unprivileged user exhausts kernel
-memory by leaking thread keyrings:
+> This series converts just two documents, adding them to the
+> core-api.rst book. It addresses the errors/warnings that popup
+> after the conversion.
+> 
+> I had to add two fixes to scripts/kernel-doc, in order to solve
+> some of the issues.
 
-	#include <keyutils.h>
+I've applied the set, including the add-on to move some stuff to
+driver-api - thanks.
 
-	int main()
-	{
-		for (;;)
-			keyctl_set_reqkey_keyring(KEY_REQKEY_DEFL_THREAD_KEYRING);
-	}
+For whatever reason, I had a hard time applying a few of these; "git am"
+would tell me this:
 
-Fix it by only creating a new thread keyring if there wasn't one before,
-just as we do for process keyrings.
+> Applying: docs-rst: core_api: move driver-specific stuff to drivers_api
+> fatal: sha1 information is lacking or useless (Documentation/driver-api/index.rst).
+> Patch failed at 0001 docs-rst: core_api: move driver-specific stuff to drivers_api
+> The copy of the patch that failed is found in: .git/rebase-apply/patch
 
-Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
-Cc: stable at vger.kernel.org # 2.6.29+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/keys/keyctl.c       | 13 +++++--------
- security/keys/process_keys.c |  3 +++
- 2 files changed, 8 insertions(+), 8 deletions(-)
+I was able to get around this, but it took some hand work.  How are you
+generating these?
 
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 52c34532c785..6f3440530835 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1253,8 +1253,8 @@ long keyctl_reject_key(key_serial_t id, unsigned timeout, unsigned error,
-  * Read or set the default keyring in which request_key() will cache keys and
-  * return the old setting.
-  *
-- * If a process keyring is specified then this will be created if it doesn't
-- * yet exist.  The old setting will be returned if successful.
-+ * If a thread or process keyring is specified then it will be created if it
-+ * doesn't yet exist.  The old setting will be returned if successful.
-  */
- long keyctl_set_reqkey_keyring(int reqkey_defl)
- {
-@@ -1273,17 +1273,14 @@ long keyctl_set_reqkey_keyring(int reqkey_defl)
- 	switch (reqkey_defl) {
- 	case KEY_REQKEY_DEFL_THREAD_KEYRING:
- 		ret = install_thread_keyring_to_cred(new);
--		if (ret < 0)
-+		if (ret < 0 && ret != -EEXIST)
- 			goto error;
- 		goto set;
- 
- 	case KEY_REQKEY_DEFL_PROCESS_KEYRING:
- 		ret = install_process_keyring_to_cred(new);
--		if (ret < 0) {
--			if (ret != -EEXIST)
--				goto error;
--			ret = 0;
--		}
-+		if (ret < 0 && ret != -EEXIST)
-+			goto error;
- 		goto set;
- 
- 	case KEY_REQKEY_DEFL_DEFAULT:
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index b6fdd22205b1..9e5337876e52 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -135,6 +135,9 @@ int install_thread_keyring_to_cred(struct cred *new)
- {
- 	struct key *keyring;
- 
-+	if (new->thread_keyring)
-+		return -EEXIST;
-+
- 	keyring = keyring_alloc("_tid", new->uid, new->gid, new,
- 				KEY_POS_ALL | KEY_USR_VIEW,
- 				KEY_ALLOC_QUOTA_OVERRUN,
--- 
-2.12.1
+Thanks,
 
+jon
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
