@@ -1,38 +1,186 @@
-From: mathew.j.martineau@linux.intel.com (Mat Martineau)
-Date: Mon, 3 Apr 2017 13:25:18 -0700 (PDT)
-Subject: [PATCH v13 00/10] Make keyring link restrictions accessible from
-	userspace
-In-Reply-To: <3861.1491235163@warthog.procyon.org.uk>
-References: <25508.1491233084@warthog.procyon.org.uk>
-	<20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
-	<3861.1491235163@warthog.procyon.org.uk>
-Message-ID: <alpine.OSX.2.21.1704031317130.6711@mjmartin-mac01.local>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Mon,  3 Apr 2017 14:16:59 -0700
+Subject: [PATCH v2] KEYS: fix keyctl_set_reqkey_keyring() to not leak thread
+	keyrings
+Message-ID: <20170403211659.1637-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+From: Eric Biggers <ebiggers@google.com>
 
-On Mon, 3 Apr 2017, David Howells wrote:
+Running the following program as an unprivileged user exhausts kernel
+memory by leaking thread keyrings:
 
-> David Howells <dhowells@redhat.com> wrote:
->
->> I've just updated my keys-blacklist and keys-next branches to security/next.
->> Could you rebase on that so that I can pull it?  There shouldn't be any need
->> to repost your patches unless you need to make changes.
->
-> Rebasing on security/next would also do if your patches don't depend on my
-> blacklist patches.
+	#include <keyutils.h>
 
-Thanks, David. The rebase did not have any conflicts, so I have not made 
-changes to the posted patches.
+	int main()
+	{
+		for (;;)
+			keyctl_set_reqkey_keyring(KEY_REQKEY_DEFL_THREAD_KEYRING);
+	}
 
-You can pull from the keyctl-restrict branch of
-https://git.kernel.org/pub/scm/linux/kernel/git/martineau/linux.git
-(commit id c06c4d85cc986688c8f7e510412485ab4422a334)
+Fix it by only creating a new thread keyring if there wasn't one before.
+To make things more consistent, make install_thread_keyring_to_cred()
+and install_process_keyring_to_cred() both return 0 if the corresponding
+keyring is already present.
 
---
-Mat Martineau
-Intel OTC
+Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
+Cc: stable at vger.kernel.org # 2.6.29+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/keyctl.c       | 11 ++++-------
+ security/keys/process_keys.c | 44 +++++++++++++++++++++++++++-----------------
+ 2 files changed, 31 insertions(+), 24 deletions(-)
+
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 52c34532c785..44c1f0e70ac7 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1253,8 +1253,8 @@ long keyctl_reject_key(key_serial_t id, unsigned timeout, unsigned error,
+  * Read or set the default keyring in which request_key() will cache keys and
+  * return the old setting.
+  *
+- * If a process keyring is specified then this will be created if it doesn't
+- * yet exist.  The old setting will be returned if successful.
++ * If a thread or process keyring is specified then it will be created if it
++ * doesn't yet exist.  The old setting will be returned if successful.
+  */
+ long keyctl_set_reqkey_keyring(int reqkey_defl)
+ {
+@@ -1279,11 +1279,8 @@ long keyctl_set_reqkey_keyring(int reqkey_defl)
+ 
+ 	case KEY_REQKEY_DEFL_PROCESS_KEYRING:
+ 		ret = install_process_keyring_to_cred(new);
+-		if (ret < 0) {
+-			if (ret != -EEXIST)
+-				goto error;
+-			ret = 0;
+-		}
++		if (ret < 0)
++			goto error;
+ 		goto set;
+ 
+ 	case KEY_REQKEY_DEFL_DEFAULT:
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index b6fdd22205b1..9139b18fc863 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -128,13 +128,18 @@ int install_user_keyrings(void)
+ }
+ 
+ /*
+- * Install a fresh thread keyring directly to new credentials.  This keyring is
+- * allowed to overrun the quota.
++ * Install a thread keyring to the given credentials struct if it didn't have
++ * one already.  This is allowed to overrun the quota.
++ *
++ * Return: 0 if a thread keyring is now present; -errno on failure.
+  */
+ int install_thread_keyring_to_cred(struct cred *new)
+ {
+ 	struct key *keyring;
+ 
++	if (new->thread_keyring)
++		return 0;
++
+ 	keyring = keyring_alloc("_tid", new->uid, new->gid, new,
+ 				KEY_POS_ALL | KEY_USR_VIEW,
+ 				KEY_ALLOC_QUOTA_OVERRUN,
+@@ -147,7 +152,9 @@ int install_thread_keyring_to_cred(struct cred *new)
+ }
+ 
+ /*
+- * Install a fresh thread keyring, discarding the old one.
++ * Install a thread keyring to the current task if it didn't have one already.
++ *
++ * Return: 0 if a thread keyring is now present; -errno on failure.
+  */
+ static int install_thread_keyring(void)
+ {
+@@ -158,8 +165,6 @@ static int install_thread_keyring(void)
+ 	if (!new)
+ 		return -ENOMEM;
+ 
+-	BUG_ON(new->thread_keyring);
+-
+ 	ret = install_thread_keyring_to_cred(new);
+ 	if (ret < 0) {
+ 		abort_creds(new);
+@@ -170,17 +175,17 @@ static int install_thread_keyring(void)
+ }
+ 
+ /*
+- * Install a process keyring directly to a credentials struct.
++ * Install a process keyring to the given credentials struct if it didn't have
++ * one already.  This is allowed to overrun the quota.
+  *
+- * Returns -EEXIST if there was already a process keyring, 0 if one installed,
+- * and other value on any other error
++ * Return: 0 if a process keyring is now present; -errno on failure.
+  */
+ int install_process_keyring_to_cred(struct cred *new)
+ {
+ 	struct key *keyring;
+ 
+ 	if (new->process_keyring)
+-		return -EEXIST;
++		return 0;
+ 
+ 	keyring = keyring_alloc("_pid", new->uid, new->gid, new,
+ 				KEY_POS_ALL | KEY_USR_VIEW,
+@@ -194,11 +199,9 @@ int install_process_keyring_to_cred(struct cred *new)
+ }
+ 
+ /*
+- * Make sure a process keyring is installed for the current process.  The
+- * existing process keyring is not replaced.
++ * Install a process keyring to the current task if it didn't have one already.
+  *
+- * Returns 0 if there is a process keyring by the end of this function, some
+- * error otherwise.
++ * Return: 0 if a process keyring is now present; -errno on failure.
+  */
+ static int install_process_keyring(void)
+ {
+@@ -212,14 +215,18 @@ static int install_process_keyring(void)
+ 	ret = install_process_keyring_to_cred(new);
+ 	if (ret < 0) {
+ 		abort_creds(new);
+-		return ret != -EEXIST ? ret : 0;
++		return ret;
+ 	}
+ 
+ 	return commit_creds(new);
+ }
+ 
+ /*
+- * Install a session keyring directly to a credentials struct.
++ * Install the given keyring as the session keyring of the given credentials
++ * struct, replacing the existing one if any.  If the given keyring is NULL,
++ * then install a new anonymous session keyring.
++ *
++ * Return: 0 on success; -errno on failure.
+  */
+ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
+ {
+@@ -254,8 +261,11 @@ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
+ }
+ 
+ /*
+- * Install a session keyring, discarding the old one.  If a keyring is not
+- * supplied, an empty one is invented.
++ * Install the given keyring as the session keyring of the current task,
++ * replacing the existing one if any.  If the given keyring is NULL, then
++ * install a new anonymous session keyring.
++ *
++ * Return: 0 on success; -errno on failure.
+  */
+ static int install_session_keyring(struct key *keyring)
+ {
+-- 
+2.12.2.715.g7642488e1d-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
