@@ -1,13 +1,40 @@
-From: 76564@max.arc.nasa.gov (76564 at max.arc.nasa.gov)
-Date: Sun, 02 Apr 2017 20:58:44 -0000
-Subject: 49277 linux-security-module
-Message-ID: <149116672444.6121.3564081272659304141@hinet.net>
+From: jmorris@namei.org (James Morris)
+Date: Mon, 3 Apr 2017 10:50:24 +1000 (AEST)
+Subject: [PATCH 0/2] security, keys refcount conversions
+In-Reply-To: <1490962849-3634-1-git-send-email-elena.reshetova@intel.com>
+References: <1490962849-3634-1-git-send-email-elena.reshetova@intel.com>
+Message-ID: <alpine.LRH.2.20.1704031050010.27757@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-A non-text attachment was scrubbed...
-Name: 50569.zip
-Type: application/zip
-Size: 3203 bytes
-Desc: not available
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170402/a2f6a174/attachment.zip>
+On Fri, 31 Mar 2017, Elena Reshetova wrote:
+
+> I just realized that I forgot to send these with Acks from David.
+> Fixing it now. Please take it to the security tree.
+> 
+> Elena Reshetova (2):
+>   security, keys: convert key.usage from atomic_t to refcount_t
+>   security, keys: convert key_user.usage from atomic_t to refcount_t
+> 
+>  include/linux/key.h              |  5 +++--
+>  security/keys/gc.c               |  2 +-
+>  security/keys/internal.h         |  3 ++-
+>  security/keys/key.c              | 12 ++++++------
+>  security/keys/keyring.c          |  8 ++++----
+>  security/keys/proc.c             |  4 ++--
+>  security/keys/process_keys.c     |  2 +-
+>  security/keys/request_key_auth.c |  2 +-
+>  8 files changed, 20 insertions(+), 18 deletions(-)
+
+
+Thanks, both applied to:
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
