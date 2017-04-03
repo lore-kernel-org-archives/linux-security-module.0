@@ -1,186 +1,44 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon,  3 Apr 2017 14:16:59 -0700
-Subject: [PATCH v2] KEYS: fix keyctl_set_reqkey_keyring() to not leak thread
-	keyrings
-Message-ID: <20170403211659.1637-1-ebiggers3@gmail.com>
+Date: Mon, 3 Apr 2017 14:30:41 -0700
+Subject: [PATCH] KEYS: fix dereferencing NULL payload with nonzero length
+In-Reply-To: <6884.1491247244@warthog.procyon.org.uk>
+References: <20170403175929.GB72831@gmail.com>
+	<20170401213428.17097-1-ebiggers3@gmail.com>
+	<3451.1491234402@warthog.procyon.org.uk>
+	<6884.1491247244@warthog.procyon.org.uk>
+Message-ID: <20170403213041.GA140817@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, Apr 03, 2017 at 08:20:44PM +0100, David Howells wrote:
+> Eric Biggers <ebiggers3@gmail.com> wrote:
+> 
+> > > > -	if (_payload) {
+> > > > +	if (plen) {
+> > > 
+> > > "if (_payload && plen)" would be better.
+> > > 
+> > > David
+> > 
+> > No, that doesn't solve the problem.  The problem is that userspace can pass
+> > in a NULL payload with nonzero length, causing the kernel to dereference a
+> > NULL pointer for some key types.  For example:
+> 
+> Okay, in that case, I think there should be an else-statement that clears plen
+> if !_payload.
+> 
+> David
 
-Running the following program as an unprivileged user exhausts kernel
-memory by leaking thread keyrings:
+I think it's preferable to return EFAULT in the case in question.  Most syscalls
+work like that, i.e. if you say you have 100 bytes (or any number > 0) at
+address NULL you'll get EFAULT.
 
-	#include <keyutils.h>
+Also note that anyone doing this before would have been either crashing the
+kernel or getting EINVAL.  So starting to return EFAULT would be very unlikely
+to break anything.
 
-	int main()
-	{
-		for (;;)
-			keyctl_set_reqkey_keyring(KEY_REQKEY_DEFL_THREAD_KEYRING);
-	}
-
-Fix it by only creating a new thread keyring if there wasn't one before.
-To make things more consistent, make install_thread_keyring_to_cred()
-and install_process_keyring_to_cred() both return 0 if the corresponding
-keyring is already present.
-
-Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
-Cc: stable at vger.kernel.org # 2.6.29+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/keys/keyctl.c       | 11 ++++-------
- security/keys/process_keys.c | 44 +++++++++++++++++++++++++++-----------------
- 2 files changed, 31 insertions(+), 24 deletions(-)
-
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 52c34532c785..44c1f0e70ac7 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1253,8 +1253,8 @@ long keyctl_reject_key(key_serial_t id, unsigned timeout, unsigned error,
-  * Read or set the default keyring in which request_key() will cache keys and
-  * return the old setting.
-  *
-- * If a process keyring is specified then this will be created if it doesn't
-- * yet exist.  The old setting will be returned if successful.
-+ * If a thread or process keyring is specified then it will be created if it
-+ * doesn't yet exist.  The old setting will be returned if successful.
-  */
- long keyctl_set_reqkey_keyring(int reqkey_defl)
- {
-@@ -1279,11 +1279,8 @@ long keyctl_set_reqkey_keyring(int reqkey_defl)
- 
- 	case KEY_REQKEY_DEFL_PROCESS_KEYRING:
- 		ret = install_process_keyring_to_cred(new);
--		if (ret < 0) {
--			if (ret != -EEXIST)
--				goto error;
--			ret = 0;
--		}
-+		if (ret < 0)
-+			goto error;
- 		goto set;
- 
- 	case KEY_REQKEY_DEFL_DEFAULT:
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index b6fdd22205b1..9139b18fc863 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -128,13 +128,18 @@ int install_user_keyrings(void)
- }
- 
- /*
-- * Install a fresh thread keyring directly to new credentials.  This keyring is
-- * allowed to overrun the quota.
-+ * Install a thread keyring to the given credentials struct if it didn't have
-+ * one already.  This is allowed to overrun the quota.
-+ *
-+ * Return: 0 if a thread keyring is now present; -errno on failure.
-  */
- int install_thread_keyring_to_cred(struct cred *new)
- {
- 	struct key *keyring;
- 
-+	if (new->thread_keyring)
-+		return 0;
-+
- 	keyring = keyring_alloc("_tid", new->uid, new->gid, new,
- 				KEY_POS_ALL | KEY_USR_VIEW,
- 				KEY_ALLOC_QUOTA_OVERRUN,
-@@ -147,7 +152,9 @@ int install_thread_keyring_to_cred(struct cred *new)
- }
- 
- /*
-- * Install a fresh thread keyring, discarding the old one.
-+ * Install a thread keyring to the current task if it didn't have one already.
-+ *
-+ * Return: 0 if a thread keyring is now present; -errno on failure.
-  */
- static int install_thread_keyring(void)
- {
-@@ -158,8 +165,6 @@ static int install_thread_keyring(void)
- 	if (!new)
- 		return -ENOMEM;
- 
--	BUG_ON(new->thread_keyring);
--
- 	ret = install_thread_keyring_to_cred(new);
- 	if (ret < 0) {
- 		abort_creds(new);
-@@ -170,17 +175,17 @@ static int install_thread_keyring(void)
- }
- 
- /*
-- * Install a process keyring directly to a credentials struct.
-+ * Install a process keyring to the given credentials struct if it didn't have
-+ * one already.  This is allowed to overrun the quota.
-  *
-- * Returns -EEXIST if there was already a process keyring, 0 if one installed,
-- * and other value on any other error
-+ * Return: 0 if a process keyring is now present; -errno on failure.
-  */
- int install_process_keyring_to_cred(struct cred *new)
- {
- 	struct key *keyring;
- 
- 	if (new->process_keyring)
--		return -EEXIST;
-+		return 0;
- 
- 	keyring = keyring_alloc("_pid", new->uid, new->gid, new,
- 				KEY_POS_ALL | KEY_USR_VIEW,
-@@ -194,11 +199,9 @@ int install_process_keyring_to_cred(struct cred *new)
- }
- 
- /*
-- * Make sure a process keyring is installed for the current process.  The
-- * existing process keyring is not replaced.
-+ * Install a process keyring to the current task if it didn't have one already.
-  *
-- * Returns 0 if there is a process keyring by the end of this function, some
-- * error otherwise.
-+ * Return: 0 if a process keyring is now present; -errno on failure.
-  */
- static int install_process_keyring(void)
- {
-@@ -212,14 +215,18 @@ static int install_process_keyring(void)
- 	ret = install_process_keyring_to_cred(new);
- 	if (ret < 0) {
- 		abort_creds(new);
--		return ret != -EEXIST ? ret : 0;
-+		return ret;
- 	}
- 
- 	return commit_creds(new);
- }
- 
- /*
-- * Install a session keyring directly to a credentials struct.
-+ * Install the given keyring as the session keyring of the given credentials
-+ * struct, replacing the existing one if any.  If the given keyring is NULL,
-+ * then install a new anonymous session keyring.
-+ *
-+ * Return: 0 on success; -errno on failure.
-  */
- int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
- {
-@@ -254,8 +261,11 @@ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
- }
- 
- /*
-- * Install a session keyring, discarding the old one.  If a keyring is not
-- * supplied, an empty one is invented.
-+ * Install the given keyring as the session keyring of the current task,
-+ * replacing the existing one if any.  If the given keyring is NULL, then
-+ * install a new anonymous session keyring.
-+ *
-+ * Return: 0 on success; -errno on failure.
-  */
- static int install_session_keyring(struct key *keyring)
- {
--- 
-2.12.2.715.g7642488e1d-goog
-
+- Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
