@@ -1,29 +1,22 @@
 From: dhowells@redhat.com (David Howells)
-Date: Mon, 03 Apr 2017 16:52:02 +0100
-Subject: [PATCH] KEYS: fix keyctl_set_reqkey_keyring() to not leak thread
-	keyrings
-In-Reply-To: <20170401233908.20786-1-ebiggers3@gmail.com>
-References: <20170401233908.20786-1-ebiggers3@gmail.com>
-Message-ID: <3785.1491234722@warthog.procyon.org.uk>
+Date: Mon, 03 Apr 2017 16:59:23 +0100
+Subject: [PATCH v13 00/10] Make keyring link restrictions accessible from
+	userspace
+In-Reply-To: <25508.1491233084@warthog.procyon.org.uk>
+References: <25508.1491233084@warthog.procyon.org.uk>
+	<20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
+Message-ID: <3861.1491235163@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Eric Biggers <ebiggers3@gmail.com> wrote:
+David Howells <dhowells@redhat.com> wrote:
 
-> @@ -135,6 +135,9 @@ int install_thread_keyring_to_cred(struct cred *new)
->  {
->  	struct key *keyring;
->  
-> +	if (new->thread_keyring)
-> +		return -EEXIST;
-> +
->  	keyring = keyring_alloc("_tid", new->uid, new->gid, new,
->  				KEY_POS_ALL | KEY_USR_VIEW,
->  				KEY_ALLOC_QUOTA_OVERRUN,
+> I've just updated my keys-blacklist and keys-next branches to security/next.
+> Could you rebase on that so that I can pull it?  There shouldn't be any need
+> to repost your patches unless you need to make changes.
 
-It would probably be better just to return 0 and change the comment on the
-function to say that it sets a thread keyring if there isn't one already.
-Same for the process keyring.
+Rebasing on security/next would also do if your patches don't depend on my
+blacklist patches.
 
 David
 --
