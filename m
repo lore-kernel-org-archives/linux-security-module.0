@@ -1,85 +1,58 @@
-From: elfring@users.sourceforge.net (SF Markus Elfring)
-Date: Tue, 4 Apr 2017 13:12:46 +0200
-Subject: [PATCH 1/3] selinux: Return directly after a failed memory allocation
-	in policydb_index()
-In-Reply-To: <5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
-Message-ID: <8a517289-e5a7-8dde-0f5f-9e57f3e270c7@users.sourceforge.net>
+From: mchehab@s-opensource.com (Mauro Carvalho Chehab)
+Date: Tue, 4 Apr 2017 09:34:25 -0300
+Subject: [PATCH 0/9] convert genericirq.tmpl and kernel-api.tmpl to DocBook
+In-Reply-To: <20170402143418.3de75239@lwn.net>
+References: <cover.1490904090.git.mchehab@s-opensource.com>
+	<20170402143418.3de75239@lwn.net>
+Message-ID: <20170404093425.54da2050@vento.lan>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Apr 2017 10:20:46 +0200
+Em Sun, 2 Apr 2017 14:34:18 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Replace five goto statements (and previous variable assignments) by
-direct returns after a memory allocation failure in this function.
+> On Thu, 30 Mar 2017 17:11:27 -0300
+> Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote:
+> 
+> > This series converts just two documents, adding them to the
+> > core-api.rst book. It addresses the errors/warnings that popup
+> > after the conversion.
+> > 
+> > I had to add two fixes to scripts/kernel-doc, in order to solve
+> > some of the issues.  
+> 
+> I've applied the set, including the add-on to move some stuff to
+> driver-api - thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- security/selinux/ss/policydb.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+Thanks!
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 0080122760ad..87d645d3a39f 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -538,34 +538,30 @@ static int policydb_index(struct policydb *p)
- 	symtab_hash_eval(p->symtab);
- #endif
- 
--	rc = -ENOMEM;
- 	p->class_val_to_struct = kcalloc(p->p_classes.nprim,
- 					 sizeof(*p->class_val_to_struct),
- 					 GFP_KERNEL);
- 	if (!p->class_val_to_struct)
--		goto out;
-+		return -ENOMEM;
- 
--	rc = -ENOMEM;
- 	p->role_val_to_struct = kcalloc(p->p_roles.nprim,
- 					sizeof(*p->role_val_to_struct),
- 					GFP_KERNEL);
- 	if (!p->role_val_to_struct)
--		goto out;
-+		return -ENOMEM;
- 
--	rc = -ENOMEM;
- 	p->user_val_to_struct = kcalloc(p->p_users.nprim,
- 					sizeof(*p->user_val_to_struct),
- 					GFP_KERNEL);
- 	if (!p->user_val_to_struct)
--		goto out;
-+		return -ENOMEM;
- 
- 	/* Yes, I want the sizeof the pointer, not the structure */
--	rc = -ENOMEM;
- 	p->type_val_to_struct_array = flex_array_alloc(sizeof(struct type_datum *),
- 						       p->p_types.nprim,
- 						       GFP_KERNEL | __GFP_ZERO);
- 	if (!p->type_val_to_struct_array)
--		goto out;
-+		return -ENOMEM;
- 
- 	rc = flex_array_prealloc(p->type_val_to_struct_array, 0,
- 				 p->p_types.nprim, GFP_KERNEL | __GFP_ZERO);
-@@ -577,12 +573,11 @@ static int policydb_index(struct policydb *p)
- 		goto out;
- 
- 	for (i = 0; i < SYM_NUM; i++) {
--		rc = -ENOMEM;
- 		p->sym_val_to_name[i] = flex_array_alloc(sizeof(char *),
- 							 p->symtab[i].nprim,
- 							 GFP_KERNEL | __GFP_ZERO);
- 		if (!p->sym_val_to_name[i])
--			goto out;
-+			return -ENOMEM;
- 
- 		rc = flex_array_prealloc(p->sym_val_to_name[i],
- 					 0, p->symtab[i].nprim,
--- 
-2.12.2
+> For whatever reason, I had a hard time applying a few of these; "git am"
+> would tell me this:
+> 
+> > Applying: docs-rst: core_api: move driver-specific stuff to drivers_api
+> > fatal: sha1 information is lacking or useless (Documentation/driver-api/index.rst).
+> > Patch failed at 0001 docs-rst: core_api: move driver-specific stuff to drivers_api
+> > The copy of the patch that failed is found in: .git/rebase-apply/patch  
+> 
+> I was able to get around this, but it took some hand work.  How are you
+> generating these?
 
+That's weird. I'm using this to generate the patches:
+
+	git format-patch -o $tmp_dir --stat --summary --patience --signoff --thread=shallow
+
+plus some scripting that runs scripts/get_maintainers.
+
+After that, I run:
+
+	git send-email $tmp_dir
+
+Then, exim sends the patches to a smart SMTP server (currently,
+infradead.org, but I'm switching to s-opensource.org, as I'm getting
+some troubles because the IP doesn't match the From: line).
+
+Thanks,
+Mauro
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
