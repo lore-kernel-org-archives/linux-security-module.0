@@ -1,58 +1,128 @@
-From: mchehab@s-opensource.com (Mauro Carvalho Chehab)
-Date: Tue, 4 Apr 2017 09:34:25 -0300
-Subject: [PATCH 0/9] convert genericirq.tmpl and kernel-api.tmpl to DocBook
-In-Reply-To: <20170402143418.3de75239@lwn.net>
-References: <cover.1490904090.git.mchehab@s-opensource.com>
-	<20170402143418.3de75239@lwn.net>
-Message-ID: <20170404093425.54da2050@vento.lan>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 4 Apr 2017 18:38:26 +0300
+Subject: [GIT PULL] tpmdd updates for 4.12
+Message-ID: <20170404153826.hxzphlvzqcesg7rt@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Em Sun, 2 Apr 2017 14:34:18 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+Hi James,
 
-> On Thu, 30 Mar 2017 17:11:27 -0300
-> Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote:
-> 
-> > This series converts just two documents, adding them to the
-> > core-api.rst book. It addresses the errors/warnings that popup
-> > after the conversion.
-> > 
-> > I had to add two fixes to scripts/kernel-doc, in order to solve
-> > some of the issues.  
-> 
-> I've applied the set, including the add-on to move some stuff to
-> driver-api - thanks.
+Here is the pull request for 4.12.
 
-Thanks!
+Major new features have been landed:
 
-> For whatever reason, I had a hard time applying a few of these; "git am"
-> would tell me this:
-> 
-> > Applying: docs-rst: core_api: move driver-specific stuff to drivers_api
-> > fatal: sha1 information is lacking or useless (Documentation/driver-api/index.rst).
-> > Patch failed at 0001 docs-rst: core_api: move driver-specific stuff to drivers_api
-> > The copy of the patch that failed is found in: .git/rebase-apply/patch  
-> 
-> I was able to get around this, but it took some hand work.  How are you
-> generating these?
+1. TPM resource manager. There's a new device called /dev/tpmrm0. When this
+device is opened, a new session is created that is isolated from other users.
+Each user has its own set of volatile objects. There is also a new internal
+structure called struct tpm_space. This structure can be passed to tpm_transmit
+function and have own session to interact with the TPM. This could be
+potentially utilized by other kernel subsystems in the future.
+2. ARM64 for support for tpm_crb.
+3. Support for requesting and relinquishing locality 0 in tpm_crb. TXT uses
+locality 2 so we cannot assume that locality 0 is readily reserved when used
+in combination with TXT.
+4. Comprehensive overhaul to tpm_tis_spi by Peter Huewe.
 
-That's weird. I'm using this to generate the patches:
+/Jarkko
 
-	git format-patch -o $tmp_dir --stat --summary --patience --signoff --thread=shallow
+The following changes since commit ddb99e118e37f324a4be65a411bb60ae62795cf9:
 
-plus some scripting that runs scripts/get_maintainers.
+  security, keys: convert key_user.usage from atomic_t to refcount_t (2017-04-03 10:49:06 +1000)
 
-After that, I run:
+are available in the git repository at:
 
-	git send-email $tmp_dir
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20170404
 
-Then, exim sends the patches to a smart SMTP server (currently,
-infradead.org, but I'm switching to s-opensource.org, as I'm getting
-some troubles because the IP doesn't match the From: line).
+for you to fetch changes up to 08eff49d63ca2bf4cd98c4bdc07dc9d07d52f8f5:
 
-Thanks,
-Mauro
+  tpm/tpm_crb: Enable TPM CRB interface for ARM64 (2017-04-03 22:46:03 +0300)
+
+----------------------------------------------------------------
+tpmdd updates for Linux 4.12
+
+----------------------------------------------------------------
+Alexander Steffen (1):
+      tpm_tis_core: Choose appropriate timeout for reading burstcount
+
+Andy Shevchenko (1):
+      tpm/st33zp24: Add GPIO ACPI mapping table
+
+Arnd Bergmann (1):
+      tpm: select CONFIG_CRYPTO
+
+Hon Ching \(Vicky\) Lo (1):
+      vTPM: Fix missing NULL check
+
+James Bottomley (3):
+      tpm: split out tpm-dev.c into tpm-dev.c and tpm-common-dev.c
+      tpm: expose spaces via a device link /dev/tpmrm<n>
+      tpm2: add session handle context saving and restoring to the space code
+
+Jarkko Sakkinen (7):
+      tpm_crb: map locality registers
+      tpm_crb: encapsulate crb_wait_for_reg_32
+      tpm: move length validation to tpm_transmit()
+      tpm: export tpm2_flush_context_cmd
+      tpm: validate TPM 2.0 commands
+      tpm: infrastructure for TPM spaces
+      tpm_crb: request and relinquish locality 0
+
+Jason Gunthorpe (1):
+      tpm crb: Work around BIOS's that report the wrong ACPI region size
+
+Jerry Snitselaar (2):
+      tpm_crb: check for bad response size
+      tpm: make check_locality return bool
+
+Jiandi An (2):
+      ACPICA: Update TPM2 ACPI table
+      tpm/tpm_crb: Enable TPM CRB interface for ARM64
+
+J?r?my Lefaure (1):
+      tpm/tpm_crb: fix unused warnings on suspend/resume functions
+
+Nayna Jain (2):
+      tpm: msleep() delays - replace with usleep_range() in i2c nuvoton driver
+      tpm: add sleep only for retry in i2c_nuvoton_write_status()
+
+Peter Huewe (5):
+      tpm_tis_spi: Use single function to transfer data
+      tpm_tis_spi: Abort transfer when too many wait states are signaled
+      tpm_tis_spi: Check correct byte for wait state indicator
+      tpm_tis_spi: Remove limitation of transfers to MAX_SPI_FRAMESIZE bytes
+      tpm_tis_spi: Add small delay after last transfer
+
+Winkler, Tomas (1):
+      tpm/tpm_crb: enter the low power state upon device suspend
+
+ drivers/char/tpm/Kconfig             |   3 +-
+ drivers/char/tpm/Makefile            |   3 +-
+ drivers/char/tpm/st33zp24/i2c.c      |  23 +-
+ drivers/char/tpm/st33zp24/spi.c      |  23 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |  12 +-
+ drivers/char/tpm/tpm-chip.c          |  70 ++++-
+ drivers/char/tpm/tpm-dev-common.c    | 148 ++++++++++
+ drivers/char/tpm/tpm-dev.c           | 143 +---------
+ drivers/char/tpm/tpm-dev.h           |  27 ++
+ drivers/char/tpm/tpm-interface.c     | 152 +++++++---
+ drivers/char/tpm/tpm-sysfs.c         |   2 +-
+ drivers/char/tpm/tpm.h               |  52 +++-
+ drivers/char/tpm/tpm2-cmd.c          | 173 ++++++++----
+ drivers/char/tpm/tpm2-space.c        | 528 +++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm_crb.c           | 280 +++++++++++++++----
+ drivers/char/tpm/tpm_i2c_infineon.c  |  12 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  24 +-
+ drivers/char/tpm/tpm_ibmvtpm.c       |   8 +-
+ drivers/char/tpm/tpm_tis_core.c      |  26 +-
+ drivers/char/tpm/tpm_tis_spi.c       | 160 +++++------
+ drivers/char/tpm/tpmrm-dev.c         |  65 +++++
+ include/acpi/actbl2.h                |   3 +
+ include/linux/tpm.h                  |   3 +-
+ 23 files changed, 1536 insertions(+), 404 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm-dev-common.c
+ create mode 100644 drivers/char/tpm/tpm-dev.h
+ create mode 100644 drivers/char/tpm/tpm2-space.c
+ create mode 100644 drivers/char/tpm/tpmrm-dev.c
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
