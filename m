@@ -1,36 +1,39 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 4 Apr 2017 10:03:42 +1000 (AEST)
-Subject: [PATCH] selinux: Fix an uninitialized variable bug
-In-Reply-To: <CAHC9VhQHabPm08bjXgw+nx6X7c6bsBeOc1ZXLFM58nVrWzsh7g@mail.gmail.com>
-References: <20170331152118.GA8141@mwanda>
-	<1490975541.31110.12.camel@tycho.nsa.gov>
-	<CAHC9VhT7njoVyHgyiTQhCcvZEYrTE_XZRLxT4+JJPiH3W88AUw@mail.gmail.com>
-	<alpine.LRH.2.20.1704031054080.27757@namei.org>
-	<CAHC9VhQHabPm08bjXgw+nx6X7c6bsBeOc1ZXLFM58nVrWzsh7g@mail.gmail.com>
-Message-ID: <alpine.LRH.2.20.1704040949430.16760@namei.org>
+From: dhowells@redhat.com (David Howells)
+Date: Tue, 04 Apr 2017 08:28:21 +0100
+Subject: [PATCH v13 00/10] Make keyring link restrictions accessible from
+	userspace
+In-Reply-To: <20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
+References: <20170330235027.6879-1-mathew.j.martineau@linux.intel.com>
+Message-ID: <20172.1491290901@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 3 Apr 2017, Paul Moore wrote:
+Mat Martineau <mathew.j.martineau@linux.intel.com> wrote:
 
-> James, I know you don't track SELinux development very closely so I'm
-> going to give you the benefit of the doubt and assume you haven't
-> already seen my responses to Markus in his 46 patch thread.  If you
-> did follow the thread you would have noticed that I rejected several
-> of his patches as only adding noise/churn, and several more due to
-> personal preference; those that I did merge, I did review.  I review
-> every patch that I merge, even the patches from Stephen. 
+>  Documentation/crypto/asymmetric-keys.txt |  51 +++++++++
+>  Documentation/security/keys.txt          |  66 +++++++++---
+>  certs/system_keyring.c                   |  39 +++++--
+>  crypto/asymmetric_keys/asymmetric_type.c | 102 ++++++++++++++++--
+>  crypto/asymmetric_keys/restrict.c        | 161 ++++++++++++++++++++++++++-
+>  include/crypto/public_key.h              |  15 ++-
+>  include/keys/system_keyring.h            |   6 +-
+>  include/linux/key-type.h                 |   8 ++
+>  include/linux/key.h                      |  34 +++---
+>  include/uapi/linux/keyctl.h              |   1 +
+>  security/keys/compat.c                   |   4 +
+>  security/keys/gc.c                       |  11 ++
+>  security/keys/internal.h                 |   5 +
+>  security/keys/key.c                      |  46 ++++----
+>  security/keys/keyctl.c                   |  58 ++++++++++
+>  security/keys/keyring.c                  | 179 +++++++++++++++++++++++++++++--
 
-I did see the thread, and my email came across as critical of you, which 
-was not my intention.  I do certainly trust your skill and judgement.  
+This breaks the integrity code which also uses keyring restrictions:
 
+../security/integrity/digsig.c:46:30: error: passing argument 7 of 'keyring_alloc' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../security/integrity/digsig.c:46:30: note: in definition of macro 'restrict_link_to_ima'
+ #define restrict_link_to_ima restrict_link_by_builtin_and_secondary_trusted
 
-
-- James
--- 
-James Morris
-<jmorris@namei.org>
-
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
