@@ -1,52 +1,122 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:07:41 +0100
-Subject: [PATCH 05/24] Restrict /dev/mem and /dev/kmem when the kernel is
-	locked down
-In-Reply-To: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
-References: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
-Message-ID: <149141206156.30815.14041270799898366372.stgit@warthog.procyon.org.uk>
+Date: Wed, 05 Apr 2017 18:00:13 +0100
+Subject: [PATCH 22/38] Annotate hardware config module parameters in
+	drivers/net/wan/
+In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+Message-ID: <149141161382.29162.12502186702136370273.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Matthew Garrett <matthew.garrett@nebula.com>
+When the kernel is running in secure boot mode, we lock down the kernel to
+prevent userspace from modifying the running kernel image.  Whilst this
+includes prohibiting access to things like /dev/mem, it must also prevent
+access by means of configuring driver modules in such a way as to cause a
+device to access or modify the kernel image.
 
-Allowing users to write to address space makes it possible for the kernel to
-be subverted, avoiding module loading restrictions.  Prevent this when the
-kernel has been locked down.
+To this end, annotate module_param* statements that refer to hardware
+configuration and indicate for future reference what type of parameter they
+specify.  The parameter parser in the core sees this information and can
+skip such parameters with an error message if the kernel is locked down.
+The module initialisation then runs as normal, but just sees whatever the
+default values for those parameters is.
 
-Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
+Note that we do still need to do the module initialisation because some
+drivers have viable defaults set in case parameters aren't specified and
+some drivers support automatic configuration (e.g. PNP or PCI) in addition
+to manually coded parameters.
+
+This patch annotates drivers in drivers/net/wan/.
+
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: "Jan \"Yenya\" Kasprzak" <kas@fi.muni.cz>
+cc: netdev at vger.kernel.org
 ---
 
- drivers/char/mem.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/wan/cosa.c         |    6 +++---
+ drivers/net/wan/hostess_sv11.c |    6 +++---
+ drivers/net/wan/sbni.c         |    4 ++--
+ drivers/net/wan/sealevel.c     |    8 ++++----
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index 6d9cc2d39d22..f8144049bda3 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -163,6 +163,9 @@ static ssize_t write_mem(struct file *file, const char __user *buf,
- 	if (p != *ppos)
- 		return -EFBIG;
+diff --git a/drivers/net/wan/cosa.c b/drivers/net/wan/cosa.c
+index 4ca71bca39ac..6ea16260ec76 100644
+--- a/drivers/net/wan/cosa.c
++++ b/drivers/net/wan/cosa.c
+@@ -232,11 +232,11 @@ static int irq[MAX_CARDS+1] = { -1, -1, -1, -1, -1, -1, 0, };
+ static struct class *cosa_class;
  
-+	if (kernel_is_locked_down())
-+		return -EPERM;
-+
- 	if (!valid_phys_addr_range(p, count))
- 		return -EFAULT;
+ #ifdef MODULE
+-module_param_array(io, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(io, "The I/O bases of the COSA or SRP cards");
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "The IRQ lines of the COSA or SRP cards");
+-module_param_array(dma, int, NULL, 0);
++module_param_hw_array(dma, int, dma, NULL, 0);
+ MODULE_PARM_DESC(dma, "The DMA channels of the COSA or SRP cards");
  
-@@ -513,6 +516,9 @@ static ssize_t write_kmem(struct file *file, const char __user *buf,
- 	char *kbuf; /* k-addr because vwrite() takes vmlist_lock rwlock */
- 	int err = 0;
+ MODULE_AUTHOR("Jan \"Yenya\" Kasprzak, <kas@fi.muni.cz>");
+diff --git a/drivers/net/wan/hostess_sv11.c b/drivers/net/wan/hostess_sv11.c
+index dd6bb3364ad2..4de0737fbf8a 100644
+--- a/drivers/net/wan/hostess_sv11.c
++++ b/drivers/net/wan/hostess_sv11.c
+@@ -324,11 +324,11 @@ static void sv11_shutdown(struct z8530_dev *dev)
+ static int io = 0x200;
+ static int irq = 9;
  
-+	if (kernel_is_locked_down())
-+		return -EPERM;
-+
- 	if (p < (unsigned long) high_memory) {
- 		unsigned long to_write = min_t(unsigned long, count,
- 					       (unsigned long)high_memory - p);
+-module_param(io, int, 0);
++module_param_hw(io, int, ioport, 0);
+ MODULE_PARM_DESC(io, "The I/O base of the Comtrol Hostess SV11 card");
+-module_param(dma, int, 0);
++module_param_hw(dma, int, dma, 0);
+ MODULE_PARM_DESC(dma, "Set this to 1 to use DMA1/DMA3 for TX/RX");
+-module_param(irq, int, 0);
++module_param_hw(irq, int, irq, 0);
+ MODULE_PARM_DESC(irq, "The interrupt line setting for the Comtrol Hostess SV11 card");
+ 
+ MODULE_AUTHOR("Alan Cox");
+diff --git a/drivers/net/wan/sbni.c b/drivers/net/wan/sbni.c
+index 3ca3419c54a0..bde8c0339831 100644
+--- a/drivers/net/wan/sbni.c
++++ b/drivers/net/wan/sbni.c
+@@ -1463,8 +1463,8 @@ set_multicast_list( struct net_device  *dev )
+ 
+ 
+ #ifdef MODULE
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param_array(baud, int, NULL, 0);
+ module_param_array(rxl, int, NULL, 0);
+ module_param_array(mac, int, NULL, 0);
+diff --git a/drivers/net/wan/sealevel.c b/drivers/net/wan/sealevel.c
+index fbb5aa2c4d8f..c56f2c252113 100644
+--- a/drivers/net/wan/sealevel.c
++++ b/drivers/net/wan/sealevel.c
+@@ -363,13 +363,13 @@ static int rxdma=3;
+ static int irq=5;
+ static bool slow=false;
+ 
+-module_param(io, int, 0);
++module_param_hw(io, int, ioport, 0);
+ MODULE_PARM_DESC(io, "The I/O base of the Sealevel card");
+-module_param(txdma, int, 0);
++module_param_hw(txdma, int, dma, 0);
+ MODULE_PARM_DESC(txdma, "Transmit DMA channel");
+-module_param(rxdma, int, 0);
++module_param_hw(rxdma, int, dma, 0);
+ MODULE_PARM_DESC(rxdma, "Receive DMA channel");
+-module_param(irq, int, 0);
++module_param_hw(irq, int, irq, 0);
+ MODULE_PARM_DESC(irq, "The interrupt line setting for the SeaLevel card");
+ module_param(slow, bool, 0);
+ MODULE_PARM_DESC(slow, "Set this for an older Sealevel card such as the 4012");
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
