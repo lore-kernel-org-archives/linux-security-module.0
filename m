@@ -1,46 +1,74 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:10:59 +0100
-Subject: [PATCH 07/24] kexec: Disable at runtime if the kernel is locked down
+Date: Wed, 05 Apr 2017 18:10:22 +0100
+Subject: [PATCH 03/24] efi: Lock down the kernel if booted in secure boot mode
 In-Reply-To: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
 References: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
-Message-ID: <149141225975.31282.16979443562841170389.stgit@warthog.procyon.org.uk>
+Message-ID: <149141222203.31282.13064649683905796284.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Matthew Garrett <matthew.garrett@nebula.com>
+UEFI Secure Boot provides a mechanism for ensuring that the firmware will
+only load signed bootloaders and kernels.  Certain use cases may also
+require that all kernel modules also be signed.  Add a configuration option
+that to lock down the kernel - which includes requiring validly signed
+modules - if the kernel is secure-booted.
 
-kexec permits the loading and execution of arbitrary code in ring 0, which
-is something that lock-down is meant to prevent. It makes sense to disable
-kexec in this situation.
-
-This does not affect kexec_file_load() which can check for a signature on the
-image to be booted.
-
-Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- kernel/kexec.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/Kconfig        |   12 ++++++++++++
+ arch/x86/kernel/setup.c |    8 +++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index 980936a90ee6..46de8e6b42f4 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -194,6 +194,13 @@ SYSCALL_DEFINE4(kexec_load, unsigned long, entry, unsigned long, nr_segments,
- 		return -EPERM;
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index cc98d5a294ee..21f39855661d 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1817,6 +1817,18 @@ config EFI_MIXED
  
- 	/*
-+	 * kexec can be used to circumvent module loading restrictions, so
-+	 * prevent loading in that case
-+	 */
-+	if (kernel_is_locked_down())
-+		return -EPERM;
+ 	   If unsure, say N.
+ 
++config EFI_SECURE_BOOT_LOCK_DOWN
++	def_bool n
++	depends on EFI
++	prompt "Lock down the kernel when UEFI Secure Boot is enabled"
++	---help---
++	  UEFI Secure Boot provides a mechanism for ensuring that the firmware
++	  will only load signed bootloaders and kernels.  Certain use cases may
++	  also require that all kernel modules also be signed and that
++	  userspace is prevented from directly changing the running kernel
++	  image.  Say Y here to automatically lock down the kernel when a
++	  system boots with UEFI Secure Boot enabled.
 +
-+	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
- 	 */
+ config SECCOMP
+ 	def_bool y
+ 	prompt "Enable seccomp to safely compute untrusted bytecode"
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 396285bddb93..85dfa745c442 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -69,6 +69,7 @@
+ #include <linux/crash_dump.h>
+ #include <linux/tboot.h>
+ #include <linux/jiffies.h>
++#include <linux/security.h>
+ 
+ #include <video/edid.h>
+ 
+@@ -1185,7 +1186,12 @@ void __init setup_arch(char **cmdline_p)
+ 			break;
+ 		case efi_secureboot_mode_enabled:
+ 			set_bit(EFI_SECURE_BOOT, &efi.flags);
+-			pr_info("Secure boot enabled\n");
++			if (IS_ENABLED(CONFIG_EFI_SECURE_BOOT_LOCK_DOWN)) {
++				lock_kernel_down();
++				pr_info("Secure boot enabled and kernel locked down\n");
++			} else {
++				pr_info("Secure boot enabled\n");
++			}
+ 			break;
+ 		default:
+ 			pr_info("Secure boot could not be determined\n");
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
