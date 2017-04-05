@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:01:26 +0100
-Subject: [PATCH 31/38] Annotate hardware config module parameters in
-	drivers/tty/
+Date: Wed, 05 Apr 2017 18:01:44 +0100
+Subject: [PATCH 33/38] Annotate hardware config module parameters in
+	drivers/watchdog/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141168659.29162.541205367169653847.stgit@warthog.procyon.org.uk>
+Message-ID: <149141170399.29162.13331435039842686737.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,128 +26,94 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/tty/.
+This patch annotates drivers in drivers/watchdog/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: Jiri Slaby <jslaby@suse.com>
-cc: linux-serial at vger.kernel.org
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+cc: Wim Van Sebroeck <wim@iguana.be>
+cc: Zwane Mwaikambo <zwanem@gmail.com>
+cc: linux-watchdog at vger.kernel.org
 ---
 
- drivers/tty/cyclades.c              |    4 ++--
- drivers/tty/moxa.c                  |    2 +-
- drivers/tty/mxser.c                 |    2 +-
- drivers/tty/rocket.c                |   10 +++++-----
- drivers/tty/serial/8250/8250_core.c |    4 ++--
- drivers/tty/synclink.c              |    6 +++---
- 6 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/watchdog/cpu5wdt.c     |    2 +-
+ drivers/watchdog/eurotechwdt.c |    4 ++--
+ drivers/watchdog/pc87413_wdt.c |    2 +-
+ drivers/watchdog/sc1200wdt.c   |    2 +-
+ drivers/watchdog/wdt.c         |    4 ++--
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/tty/cyclades.c b/drivers/tty/cyclades.c
-index 5e4fa9206861..104f09c58163 100644
---- a/drivers/tty/cyclades.c
-+++ b/drivers/tty/cyclades.c
-@@ -156,8 +156,8 @@ static unsigned int cy_isa_addresses[] = {
- static long maddr[NR_CARDS];
- static int irq[NR_CARDS];
- 
--module_param_array(maddr, long, NULL, 0);
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(maddr, long, iomem, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- 
- #endif				/* CONFIG_ISA */
- 
-diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-index 4caf0c3b1f99..3b251f4e5df0 100644
---- a/drivers/tty/moxa.c
-+++ b/drivers/tty/moxa.c
-@@ -179,7 +179,7 @@ MODULE_FIRMWARE("c320tunx.cod");
- 
- module_param_array(type, uint, NULL, 0);
- MODULE_PARM_DESC(type, "card type: C218=2, C320=4");
--module_param_array(baseaddr, ulong, NULL, 0);
-+module_param_hw_array(baseaddr, ulong, ioport, NULL, 0);
- MODULE_PARM_DESC(baseaddr, "base address");
- module_param_array(numports, uint, NULL, 0);
- MODULE_PARM_DESC(numports, "numports (ignored for C218)");
-diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
-index 7b8f383fb090..8bd6fb6d9391 100644
---- a/drivers/tty/mxser.c
-+++ b/drivers/tty/mxser.c
-@@ -183,7 +183,7 @@ static int ttymajor = MXSERMAJOR;
- 
- MODULE_AUTHOR("Casper Yang");
- MODULE_DESCRIPTION("MOXA Smartio/Industio Family Multiport Board Device Driver");
--module_param_array(ioaddr, ulong, NULL, 0);
-+module_param_hw_array(ioaddr, ulong, ioport, NULL, 0);
- MODULE_PARM_DESC(ioaddr, "ISA io addresses to look for a moxa board");
- module_param(ttymajor, int, 0);
+diff --git a/drivers/watchdog/cpu5wdt.c b/drivers/watchdog/cpu5wdt.c
+index 6d03e8e30f8b..6c3f78e45c26 100644
+--- a/drivers/watchdog/cpu5wdt.c
++++ b/drivers/watchdog/cpu5wdt.c
+@@ -289,7 +289,7 @@ MODULE_DESCRIPTION("sma cpu5 watchdog driver");
+ MODULE_SUPPORTED_DEVICE("sma cpu5 watchdog");
  MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/rocket.c b/drivers/tty/rocket.c
-index d66c1edd9892..b51a877da986 100644
---- a/drivers/tty/rocket.c
-+++ b/drivers/tty/rocket.c
-@@ -250,15 +250,15 @@ static int sReadAiopNumChan(WordIO_t io);
  
- MODULE_AUTHOR("Theodore Ts'o");
- MODULE_DESCRIPTION("Comtrol RocketPort driver");
--module_param(board1, ulong, 0);
-+module_param_hw(board1, ulong, ioport, 0);
- MODULE_PARM_DESC(board1, "I/O port for (ISA) board #1");
--module_param(board2, ulong, 0);
-+module_param_hw(board2, ulong, ioport, 0);
- MODULE_PARM_DESC(board2, "I/O port for (ISA) board #2");
--module_param(board3, ulong, 0);
-+module_param_hw(board3, ulong, ioport, 0);
- MODULE_PARM_DESC(board3, "I/O port for (ISA) board #3");
--module_param(board4, ulong, 0);
-+module_param_hw(board4, ulong, ioport, 0);
- MODULE_PARM_DESC(board4, "I/O port for (ISA) board #4");
--module_param(controller, ulong, 0);
-+module_param_hw(controller, ulong, ioport, 0);
- MODULE_PARM_DESC(controller, "I/O port for (ISA) rocketport controller");
- module_param(support_low_speed, bool, 0);
- MODULE_PARM_DESC(support_low_speed, "1 means support 50 baud, 0 means support 460400 baud");
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index 76e03a7de9cc..89fde17d9617 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -1191,7 +1191,7 @@ module_exit(serial8250_exit);
+-module_param(port, int, 0);
++module_param_hw(port, int, ioport, 0);
+ MODULE_PARM_DESC(port, "base address of watchdog card, default is 0x91");
+ 
+ module_param(verbose, int, 0);
+diff --git a/drivers/watchdog/eurotechwdt.c b/drivers/watchdog/eurotechwdt.c
+index 23ee53240c4c..38e96712264f 100644
+--- a/drivers/watchdog/eurotechwdt.c
++++ b/drivers/watchdog/eurotechwdt.c
+@@ -97,9 +97,9 @@ MODULE_PARM_DESC(nowayout,
+ #define WDT_TIMER_CFG		0xf3
+ 
+ 
+-module_param(io, int, 0);
++module_param_hw(io, int, ioport, 0);
+ MODULE_PARM_DESC(io, "Eurotech WDT io port (default=0x3f0)");
+-module_param(irq, int, 0);
++module_param_hw(irq, int, irq, 0);
+ MODULE_PARM_DESC(irq, "Eurotech WDT irq (default=10)");
+ module_param(ev, charp, 0);
+ MODULE_PARM_DESC(ev, "Eurotech WDT event type (default is `int')");
+diff --git a/drivers/watchdog/pc87413_wdt.c b/drivers/watchdog/pc87413_wdt.c
+index 9f15dd9435d1..06a892e36a8d 100644
+--- a/drivers/watchdog/pc87413_wdt.c
++++ b/drivers/watchdog/pc87413_wdt.c
+@@ -579,7 +579,7 @@ MODULE_AUTHOR("Marcus Junker <junker@anduras.de>");
+ MODULE_DESCRIPTION("PC87413 WDT driver");
  MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Generic 8250/16x50 serial driver");
  
--module_param(share_irqs, uint, 0644);
-+module_param_hw(share_irqs, uint, other, 0644);
- MODULE_PARM_DESC(share_irqs, "Share IRQs with other non-8250/16x50 devices (unsafe)");
+-module_param(io, int, 0);
++module_param_hw(io, int, ioport, 0);
+ MODULE_PARM_DESC(io, MODNAME " I/O port (default: "
+ 					__MODULE_STRING(IO_DEFAULT) ").");
  
- module_param(nr_uarts, uint, 0644);
-@@ -1201,7 +1201,7 @@ module_param(skip_txen_test, uint, 0644);
- MODULE_PARM_DESC(skip_txen_test, "Skip checking for the TXEN bug at init time");
- 
- #ifdef CONFIG_SERIAL_8250_RSA
--module_param_array(probe_rsa, ulong, &probe_rsa_count, 0444);
-+module_param_hw_array(probe_rsa, ulong, ioport, &probe_rsa_count, 0444);
- MODULE_PARM_DESC(probe_rsa, "Probe I/O ports for RSA");
+diff --git a/drivers/watchdog/sc1200wdt.c b/drivers/watchdog/sc1200wdt.c
+index 131193a7acdf..b34d3d5ba632 100644
+--- a/drivers/watchdog/sc1200wdt.c
++++ b/drivers/watchdog/sc1200wdt.c
+@@ -88,7 +88,7 @@ MODULE_PARM_DESC(isapnp,
+ 	"When set to 0 driver ISA PnP support will be disabled");
  #endif
- MODULE_ALIAS_CHARDEV_MAJOR(TTY_MAJOR);
-diff --git a/drivers/tty/synclink.c b/drivers/tty/synclink.c
-index 657eed82eeb3..a2c308f7d637 100644
---- a/drivers/tty/synclink.c
-+++ b/drivers/tty/synclink.c
-@@ -869,9 +869,9 @@ static int txholdbufs[MAX_TOTAL_DEVICES];
- 	
- module_param(break_on_load, bool, 0);
- module_param(ttymajor, int, 0);
--module_param_array(io, int, NULL, 0);
--module_param_array(irq, int, NULL, 0);
--module_param_array(dma, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
-+module_param_hw_array(dma, int, dma, NULL, 0);
- module_param(debug_level, int, 0);
- module_param_array(maxframe, int, NULL, 0);
- module_param_array(txdmabufs, int, NULL, 0);
+ 
+-module_param(io, int, 0);
++module_param_hw(io, int, ioport, 0);
+ MODULE_PARM_DESC(io, "io port");
+ module_param(timeout, int, 0);
+ MODULE_PARM_DESC(timeout, "range is 0-255 minutes, default is 1");
+diff --git a/drivers/watchdog/wdt.c b/drivers/watchdog/wdt.c
+index e0206b5b7d89..e481fbbc4ae7 100644
+--- a/drivers/watchdog/wdt.c
++++ b/drivers/watchdog/wdt.c
+@@ -78,9 +78,9 @@ static int irq = 11;
+ 
+ static DEFINE_SPINLOCK(wdt_lock);
+ 
+-module_param(io, int, 0);
++module_param_hw(io, int, ioport, 0);
+ MODULE_PARM_DESC(io, "WDT io port (default=0x240)");
+-module_param(irq, int, 0);
++module_param_hw(irq, int, irq, 0);
+ MODULE_PARM_DESC(irq, "WDT irq (default=11)");
+ 
+ /* Support for the Fan Tachometer on the WDT501-P */
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
