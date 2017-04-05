@@ -1,9 +1,9 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:02:24 +0100
-Subject: [PATCH 38/38] Annotate hardware config module parameters in sound/pci/
+Date: Wed, 05 Apr 2017 18:02:07 +0100
+Subject: [PATCH 36/38] Annotate hardware config module parameters in sound/isa/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141174394.29162.705668068895463689.stgit@warthog.procyon.org.uk>
+Message-ID: <149141172761.29162.4345531942255913397.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -25,7 +25,7 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in sound/pci/.
+This patch annotates drivers in sound/isa/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
@@ -34,129 +34,706 @@ cc: Takashi Iwai <tiwai@suse.com>
 cc: alsa-devel at alsa-project.org
 ---
 
- sound/pci/als4000.c         |    2 +-
- sound/pci/cmipci.c          |    6 +++---
- sound/pci/ens1370.c         |    2 +-
- sound/pci/riptide/riptide.c |    6 +++---
- sound/pci/sonicvibes.c      |    2 +-
- sound/pci/via82xx.c         |    2 +-
- sound/pci/ymfpci/ymfpci.c   |    6 +++---
- 7 files changed, 13 insertions(+), 13 deletions(-)
+ sound/isa/ad1848/ad1848.c          |    6 +++---
+ sound/isa/adlib.c                  |    2 +-
+ sound/isa/cmi8328.c                |   12 ++++++------
+ sound/isa/cmi8330.c                |   20 ++++++++++----------
+ sound/isa/cs423x/cs4231.c          |   12 ++++++------
+ sound/isa/cs423x/cs4236.c          |   18 +++++++++---------
+ sound/isa/es1688/es1688.c          |   12 ++++++------
+ sound/isa/es18xx.c                 |   12 ++++++------
+ sound/isa/galaxy/galaxy.c          |   16 ++++++++--------
+ sound/isa/gus/gusclassic.c         |    8 ++++----
+ sound/isa/gus/gusextreme.c         |   16 ++++++++--------
+ sound/isa/gus/gusmax.c             |    8 ++++----
+ sound/isa/gus/interwave.c          |   10 +++++-----
+ sound/isa/msnd/msnd_pinnacle.c     |   20 ++++++++++----------
+ sound/isa/opl3sa2.c                |   16 ++++++++--------
+ sound/isa/opti9xx/miro.c           |   14 +++++++-------
+ sound/isa/opti9xx/opti92x-ad1848.c |   14 +++++++-------
+ sound/isa/sb/jazz16.c              |   12 ++++++------
+ sound/isa/sb/sb16.c                |   14 +++++++-------
+ sound/isa/sb/sb8.c                 |    6 +++---
+ sound/isa/sc6000.c                 |   12 ++++++------
+ sound/isa/sscape.c                 |   12 ++++++------
+ sound/isa/wavefront/wavefront.c    |   18 +++++++++---------
+ 23 files changed, 145 insertions(+), 145 deletions(-)
 
-diff --git a/sound/pci/als4000.c b/sound/pci/als4000.c
-index 92bc06d01288..7844a75d8ed9 100644
---- a/sound/pci/als4000.c
-+++ b/sound/pci/als4000.c
-@@ -102,7 +102,7 @@ MODULE_PARM_DESC(id, "ID string for ALS4000 soundcard.");
+diff --git a/sound/isa/ad1848/ad1848.c b/sound/isa/ad1848/ad1848.c
+index a302d1f8d14f..e739b1c85c25 100644
+--- a/sound/isa/ad1848/ad1848.c
++++ b/sound/isa/ad1848/ad1848.c
+@@ -55,11 +55,11 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for " CRD_NAME " soundcard.");
  module_param_array(enable, bool, NULL, 0444);
- MODULE_PARM_DESC(enable, "Enable ALS4000 soundcard.");
+ MODULE_PARM_DESC(enable, "Enable " CRD_NAME " soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " CRD_NAME " driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for " CRD_NAME " driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for " CRD_NAME " driver.");
+ module_param_array(thinkpad, bool, NULL, 0444);
+ MODULE_PARM_DESC(thinkpad, "Enable only for the onboard CS4248 of IBM Thinkpad 360/750/755 series.");
+diff --git a/sound/isa/adlib.c b/sound/isa/adlib.c
+index 8d3060fd7ad7..5fb619eca5c8 100644
+--- a/sound/isa/adlib.c
++++ b/sound/isa/adlib.c
+@@ -27,7 +27,7 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for " CRD_NAME " soundcard.");
+ module_param_array(enable, bool, NULL, 0444);
+ MODULE_PARM_DESC(enable, "Enable " CRD_NAME " soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " CRD_NAME " driver.");
+ 
+ static int snd_adlib_match(struct device *dev, unsigned int n)
+diff --git a/sound/isa/cmi8328.c b/sound/isa/cmi8328.c
+index 787475084f46..8e1756c3b9bb 100644
+--- a/sound/isa/cmi8328.c
++++ b/sound/isa/cmi8328.c
+@@ -51,18 +51,18 @@ MODULE_PARM_DESC(index, "Index value for CMI8328 soundcard.");
+ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for CMI8328 soundcard.");
+ 
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for CMI8328 driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for CMI8328 driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 for CMI8328 driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 for CMI8328 driver.");
+ 
+-module_param_array(mpuport, long, NULL, 0444);
++module_param_hw_array(mpuport, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpuport, "MPU-401 port # for CMI8328 driver.");
+-module_param_array(mpuirq, int, NULL, 0444);
++module_param_hw_array(mpuirq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpuirq, "IRQ # for CMI8328 MPU-401 port.");
  #ifdef SUPPORT_JOYSTICK
--module_param_array(joystick_port, int, NULL, 0444);
-+module_param_hw_array(joystick_port, int, ioport, NULL, 0444);
- MODULE_PARM_DESC(joystick_port, "Joystick port address for ALS4000 soundcard. (0 = disabled)");
+ module_param_array(gameport, bool, NULL, 0444);
+diff --git a/sound/isa/cmi8330.c b/sound/isa/cmi8330.c
+index dfedfd85f205..f64b29ab5cc7 100644
+--- a/sound/isa/cmi8330.c
++++ b/sound/isa/cmi8330.c
+@@ -95,27 +95,27 @@ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "PnP detection for specified soundcard.");
  #endif
  
-diff --git a/sound/pci/cmipci.c b/sound/pci/cmipci.c
-index aeedc270ed9b..430f064c64da 100644
---- a/sound/pci/cmipci.c
-+++ b/sound/pci/cmipci.c
-@@ -68,14 +68,14 @@ module_param_array(id, charp, NULL, 0444);
- MODULE_PARM_DESC(id, "ID string for C-Media PCI soundcard.");
+-module_param_array(sbport, long, NULL, 0444);
++module_param_hw_array(sbport, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(sbport, "Port # for CMI8330/CMI8329 SB driver.");
+-module_param_array(sbirq, int, NULL, 0444);
++module_param_hw_array(sbirq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(sbirq, "IRQ # for CMI8330/CMI8329 SB driver.");
+-module_param_array(sbdma8, int, NULL, 0444);
++module_param_hw_array(sbdma8, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(sbdma8, "DMA8 for CMI8330/CMI8329 SB driver.");
+-module_param_array(sbdma16, int, NULL, 0444);
++module_param_hw_array(sbdma16, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(sbdma16, "DMA16 for CMI8330/CMI8329 SB driver.");
+ 
+-module_param_array(wssport, long, NULL, 0444);
++module_param_hw_array(wssport, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(wssport, "Port # for CMI8330/CMI8329 WSS driver.");
+-module_param_array(wssirq, int, NULL, 0444);
++module_param_hw_array(wssirq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(wssirq, "IRQ # for CMI8330/CMI8329 WSS driver.");
+-module_param_array(wssdma, int, NULL, 0444);
++module_param_hw_array(wssdma, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(wssdma, "DMA for CMI8330/CMI8329 WSS driver.");
+ 
+-module_param_array(fmport, long, NULL, 0444);
++module_param_hw_array(fmport, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(fmport, "FM port # for CMI8330/CMI8329 driver.");
+-module_param_array(mpuport, long, NULL, 0444);
++module_param_hw_array(mpuport, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpuport, "MPU-401 port # for CMI8330/CMI8329 driver.");
+-module_param_array(mpuirq, int, NULL, 0444);
++module_param_hw_array(mpuirq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpuirq, "IRQ # for CMI8330/CMI8329 MPU-401 port.");
+ #ifdef CONFIG_PNP
+ static int isa_registered;
+diff --git a/sound/isa/cs423x/cs4231.c b/sound/isa/cs423x/cs4231.c
+index ef7448e9f813..e8edd9017a2f 100644
+--- a/sound/isa/cs423x/cs4231.c
++++ b/sound/isa/cs423x/cs4231.c
+@@ -55,17 +55,17 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for " CRD_NAME " soundcard.");
  module_param_array(enable, bool, NULL, 0444);
- MODULE_PARM_DESC(enable, "Enable C-Media PCI soundcard.");
+ MODULE_PARM_DESC(enable, "Enable " CRD_NAME " soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " CRD_NAME " driver.");
 -module_param_array(mpu_port, long, NULL, 0444);
 +module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
- MODULE_PARM_DESC(mpu_port, "MPU-401 port.");
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for " CRD_NAME " driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for " CRD_NAME " driver.");
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ # for " CRD_NAME " driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for " CRD_NAME " driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for " CRD_NAME " driver.");
+ 
+ static int snd_cs4231_match(struct device *dev, unsigned int n)
+diff --git a/sound/isa/cs423x/cs4236.c b/sound/isa/cs423x/cs4236.c
+index 9d7582c90a95..1f9a3b2be7a1 100644
+--- a/sound/isa/cs423x/cs4236.c
++++ b/sound/isa/cs423x/cs4236.c
+@@ -98,23 +98,23 @@ MODULE_PARM_DESC(enable, "Enable " IDENT " soundcard.");
+ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "ISA PnP detection for specified soundcard.");
+ #endif
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " IDENT " driver.");
+-module_param_array(cport, long, NULL, 0444);
++module_param_hw_array(cport, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(cport, "Control port # for " IDENT " driver.");
+-module_param_array(mpu_port, long, NULL, 0444);
++module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for " IDENT " driver.");
 -module_param_array(fm_port, long, NULL, 0444);
 +module_param_hw_array(fm_port, long, ioport, NULL, 0444);
- MODULE_PARM_DESC(fm_port, "FM port.");
- module_param_array(soft_ac3, bool, NULL, 0444);
- MODULE_PARM_DESC(soft_ac3, "Software-conversion of raw SPDIF packets (model 033 only).");
- #ifdef SUPPORT_JOYSTICK
--module_param_array(joystick_port, int, NULL, 0444);
-+module_param_hw_array(joystick_port, int, ioport, NULL, 0444);
- MODULE_PARM_DESC(joystick_port, "Joystick port address.");
- #endif
+ MODULE_PARM_DESC(fm_port, "FM port # for " IDENT " driver.");
+-module_param_array(sb_port, long, NULL, 0444);
++module_param_hw_array(sb_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(sb_port, "SB port # for " IDENT " driver (optional).");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for " IDENT " driver.");
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ # for " IDENT " driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for " IDENT " driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for " IDENT " driver.");
  
-diff --git a/sound/pci/ens1370.c b/sound/pci/ens1370.c
-index 164adad91650..90376739c5e1 100644
---- a/sound/pci/ens1370.c
-+++ b/sound/pci/ens1370.c
-@@ -106,7 +106,7 @@ module_param_array(enable, bool, NULL, 0444);
- MODULE_PARM_DESC(enable, "Enable Ensoniq AudioPCI soundcard.");
- #ifdef SUPPORT_JOYSTICK
- #ifdef CHIP1371
--module_param_array(joystick_port, int, NULL, 0444);
-+module_param_hw_array(joystick_port, int, ioport, NULL, 0444);
- MODULE_PARM_DESC(joystick_port, "Joystick port address.");
- #else
- module_param_array(joystick, bool, NULL, 0444);
-diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
-index 19c9df6b0f3d..f067c76d77f8 100644
---- a/sound/pci/riptide/riptide.c
-+++ b/sound/pci/riptide/riptide.c
-@@ -137,12 +137,12 @@ MODULE_PARM_DESC(id, "ID string for Riptide soundcard.");
+ #ifdef CONFIG_PNP
+diff --git a/sound/isa/es1688/es1688.c b/sound/isa/es1688/es1688.c
+index 1901c2bb6c3b..36320e7f2789 100644
+--- a/sound/isa/es1688/es1688.c
++++ b/sound/isa/es1688/es1688.c
+@@ -71,17 +71,17 @@ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "PnP detection for specified soundcard.");
+ #endif
+ MODULE_PARM_DESC(enable, "Enable " CRD_NAME " soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " CRD_NAME " driver.");
+-module_param_array(mpu_port, long, NULL, 0444);
++module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for " CRD_NAME " driver.");
+-module_param_array(irq, int, NULL, 0444);
+-module_param_array(fm_port, long, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
++module_param_hw_array(fm_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(fm_port, "FM port # for ES1688 driver.");
+ MODULE_PARM_DESC(irq, "IRQ # for " CRD_NAME " driver.");
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ # for " CRD_NAME " driver.");
+-module_param_array(dma8, int, NULL, 0444);
++module_param_hw_array(dma8, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma8, "8-bit DMA # for " CRD_NAME " driver.");
+ 
+ #ifdef CONFIG_PNP
+diff --git a/sound/isa/es18xx.c b/sound/isa/es18xx.c
+index 5094b62d8f77..0cabe2b8974f 100644
+--- a/sound/isa/es18xx.c
++++ b/sound/isa/es18xx.c
+@@ -1999,17 +1999,17 @@ MODULE_PARM_DESC(enable, "Enable ES18xx soundcard.");
+ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "PnP detection for specified soundcard.");
+ #endif
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for ES18xx driver.");
+-module_param_array(mpu_port, long, NULL, 0444);
++module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for ES18xx driver.");
+-module_param_array(fm_port, long, NULL, 0444);
++module_param_hw_array(fm_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(fm_port, "FM port # for ES18xx driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for ES18xx driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA 1 # for ES18xx driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA 2 # for ES18xx driver.");
+ 
+ #ifdef CONFIG_PNP
+diff --git a/sound/isa/galaxy/galaxy.c b/sound/isa/galaxy/galaxy.c
+index 379abe2cbeb2..b9994cc9f5fb 100644
+--- a/sound/isa/galaxy/galaxy.c
++++ b/sound/isa/galaxy/galaxy.c
+@@ -53,21 +53,21 @@ static int mpu_irq[SNDRV_CARDS] = SNDRV_DEFAULT_IRQ;
+ static int dma1[SNDRV_CARDS] = SNDRV_DEFAULT_DMA;
+ static int dma2[SNDRV_CARDS] = SNDRV_DEFAULT_DMA;
+ 
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " CRD_NAME " driver.");
+-module_param_array(wss_port, long, NULL, 0444);
++module_param_hw_array(wss_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(wss_port, "WSS port # for " CRD_NAME " driver.");
+-module_param_array(mpu_port, long, NULL, 0444);
++module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for " CRD_NAME " driver.");
+-module_param_array(fm_port, long, NULL, 0444);
++module_param_hw_array(fm_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(fm_port, "FM port # for " CRD_NAME " driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for " CRD_NAME " driver.");
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ # for " CRD_NAME " driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "Playback DMA # for " CRD_NAME " driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "Capture DMA # for " CRD_NAME " driver.");
+ 
+ /*
+diff --git a/sound/isa/gus/gusclassic.c b/sound/isa/gus/gusclassic.c
+index c169be49ed71..92a997ab1229 100644
+--- a/sound/isa/gus/gusclassic.c
++++ b/sound/isa/gus/gusclassic.c
+@@ -58,13 +58,13 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for " CRD_NAME " soundcard.");
  module_param_array(enable, bool, NULL, 0444);
- MODULE_PARM_DESC(enable, "Enable Riptide soundcard.");
- #ifdef SUPPORT_JOYSTICK
--module_param_array(joystick_port, int, NULL, 0444);
-+module_param_hw_array(joystick_port, int, ioport, NULL, 0444);
- MODULE_PARM_DESC(joystick_port, "Joystick port # for Riptide soundcard.");
+ MODULE_PARM_DESC(enable, "Enable " CRD_NAME " soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " CRD_NAME " driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for " CRD_NAME " driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for " CRD_NAME " driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for " CRD_NAME " driver.");
+ module_param_array(joystick_dac, int, NULL, 0444);
+ MODULE_PARM_DESC(joystick_dac, "Joystick DAC level 0.59V-4.52V or 0.389V-2.98V for " CRD_NAME " driver.");
+diff --git a/sound/isa/gus/gusextreme.c b/sound/isa/gus/gusextreme.c
+index 77ac2fd723b4..beb52c0f70ea 100644
+--- a/sound/isa/gus/gusextreme.c
++++ b/sound/isa/gus/gusextreme.c
+@@ -66,21 +66,21 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for " CRD_NAME " soundcard.");
+ module_param_array(enable, bool, NULL, 0444);
+ MODULE_PARM_DESC(enable, "Enable " CRD_NAME " soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for " CRD_NAME " driver.");
+-module_param_array(gf1_port, long, NULL, 0444);
++module_param_hw_array(gf1_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(gf1_port, "GF1 port # for " CRD_NAME " driver (optional).");
+-module_param_array(mpu_port, long, NULL, 0444);
++module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for " CRD_NAME " driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for " CRD_NAME " driver.");
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ # for " CRD_NAME " driver.");
+-module_param_array(gf1_irq, int, NULL, 0444);
++module_param_hw_array(gf1_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(gf1_irq, "GF1 IRQ # for " CRD_NAME " driver.");
+-module_param_array(dma8, int, NULL, 0444);
++module_param_hw_array(dma8, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma8, "8-bit DMA # for " CRD_NAME " driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "GF1 DMA # for " CRD_NAME " driver.");
+ module_param_array(joystick_dac, int, NULL, 0444);
+ MODULE_PARM_DESC(joystick_dac, "Joystick DAC level 0.59V-4.52V or 0.389V-2.98V for " CRD_NAME " driver.");
+diff --git a/sound/isa/gus/gusmax.c b/sound/isa/gus/gusmax.c
+index dd88c9d33492..63309a453140 100644
+--- a/sound/isa/gus/gusmax.c
++++ b/sound/isa/gus/gusmax.c
+@@ -56,13 +56,13 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for GUS MAX soundcard.");
+ module_param_array(enable, bool, NULL, 0444);
+ MODULE_PARM_DESC(enable, "Enable GUS MAX soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for GUS MAX driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for GUS MAX driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for GUS MAX driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for GUS MAX driver.");
+ module_param_array(joystick_dac, int, NULL, 0444);
+ MODULE_PARM_DESC(joystick_dac, "Joystick DAC level 0.59V-4.52V or 0.389V-2.98V for GUS MAX driver.");
+diff --git a/sound/isa/gus/interwave.c b/sound/isa/gus/interwave.c
+index 70d0040484c8..0687b7ef3e53 100644
+--- a/sound/isa/gus/interwave.c
++++ b/sound/isa/gus/interwave.c
+@@ -92,17 +92,17 @@ MODULE_PARM_DESC(enable, "Enable InterWave soundcard.");
+ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "ISA PnP detection for specified soundcard.");
  #endif
--module_param_array(mpu_port, int, NULL, 0444);
-+module_param_hw_array(mpu_port, int, ioport, NULL, 0444);
- MODULE_PARM_DESC(mpu_port, "MPU401 port # for Riptide driver.");
--module_param_array(opl3_port, int, NULL, 0444);
-+module_param_hw_array(opl3_port, int, ioport, NULL, 0444);
- MODULE_PARM_DESC(opl3_port, "OPL3 port # for Riptide driver.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for InterWave driver.");
+ #ifdef SNDRV_STB
+-module_param_array(port_tc, long, NULL, 0444);
++module_param_hw_array(port_tc, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port_tc, "Tone control (TEA6330T - i2c bus) port # for InterWave driver.");
+ #endif
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for InterWave driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for InterWave driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for InterWave driver.");
+ module_param_array(joystick_dac, int, NULL, 0444);
+ MODULE_PARM_DESC(joystick_dac, "Joystick DAC level 0.59V-4.52V or 0.389V-2.98V for InterWave driver.");
+diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
+index 4c072666115d..ad4897337df5 100644
+--- a/sound/isa/msnd/msnd_pinnacle.c
++++ b/sound/isa/msnd/msnd_pinnacle.c
+@@ -800,22 +800,22 @@ MODULE_LICENSE("GPL");
+ MODULE_FIRMWARE(INITCODEFILE);
+ MODULE_FIRMWARE(PERMCODEFILE);
  
- /*
-diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
-index a6aa48c5b969..8e3d4ec39c35 100644
---- a/sound/pci/sonicvibes.c
-+++ b/sound/pci/sonicvibes.c
-@@ -66,7 +66,7 @@ module_param_array(reverb, bool, NULL, 0444);
- MODULE_PARM_DESC(reverb, "Enable reverb (SRAM is present) for S3 SonicVibes soundcard.");
- module_param_array(mge, bool, NULL, 0444);
- MODULE_PARM_DESC(mge, "MIC Gain Enable for S3 SonicVibes soundcard.");
--module_param(dmaio, uint, 0444);
-+module_param_hw(dmaio, uint, ioport, 0444);
- MODULE_PARM_DESC(dmaio, "DDMA i/o base address for S3 SonicVibes soundcard.");
+-module_param_array(io, long, NULL, S_IRUGO);
++module_param_hw_array(io, long, ioport, NULL, S_IRUGO);
+ MODULE_PARM_DESC(io, "IO port #");
+-module_param_array(irq, int, NULL, S_IRUGO);
+-module_param_array(mem, long, NULL, S_IRUGO);
++module_param_hw_array(irq, int, irq, NULL, S_IRUGO);
++module_param_hw_array(mem, long, iomem, NULL, S_IRUGO);
+ module_param_array(write_ndelay, int, NULL, S_IRUGO);
+ module_param(calibrate_signal, int, S_IRUGO);
+ #ifndef MSND_CLASSIC
+ module_param_array(digital, int, NULL, S_IRUGO);
+-module_param_array(cfg, long, NULL, S_IRUGO);
++module_param_hw_array(cfg, long, ioport, NULL, S_IRUGO);
+ module_param_array(reset, int, 0, S_IRUGO);
+-module_param_array(mpu_io, long, NULL, S_IRUGO);
+-module_param_array(mpu_irq, int, NULL, S_IRUGO);
+-module_param_array(ide_io0, long, NULL, S_IRUGO);
+-module_param_array(ide_io1, long, NULL, S_IRUGO);
+-module_param_array(ide_irq, int, NULL, S_IRUGO);
+-module_param_array(joystick_io, long, NULL, S_IRUGO);
++module_param_hw_array(mpu_io, long, ioport, NULL, S_IRUGO);
++module_param_hw_array(mpu_irq, int, irq, NULL, S_IRUGO);
++module_param_hw_array(ide_io0, long, ioport, NULL, S_IRUGO);
++module_param_hw_array(ide_io1, long, ioport, NULL, S_IRUGO);
++module_param_hw_array(ide_irq, int, irq, NULL, S_IRUGO);
++module_param_hw_array(joystick_io, long, ioport, NULL, S_IRUGO);
+ #endif
  
- /*
-diff --git a/sound/pci/via82xx.c b/sound/pci/via82xx.c
-index 2d8c14e3f8d2..127834021175 100644
---- a/sound/pci/via82xx.c
-+++ b/sound/pci/via82xx.c
-@@ -92,7 +92,7 @@ module_param(index, int, 0444);
- MODULE_PARM_DESC(index, "Index value for VIA 82xx bridge.");
+ 
+diff --git a/sound/isa/opl3sa2.c b/sound/isa/opl3sa2.c
+index ae133633a420..4098e3e0353d 100644
+--- a/sound/isa/opl3sa2.c
++++ b/sound/isa/opl3sa2.c
+@@ -69,21 +69,21 @@ MODULE_PARM_DESC(enable, "Enable OPL3-SA soundcard.");
+ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "PnP detection for specified soundcard.");
+ #endif
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for OPL3-SA driver.");
+-module_param_array(sb_port, long, NULL, 0444);
++module_param_hw_array(sb_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(sb_port, "SB port # for OPL3-SA driver.");
+-module_param_array(wss_port, long, NULL, 0444);
++module_param_hw_array(wss_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(wss_port, "WSS port # for OPL3-SA driver.");
+-module_param_array(fm_port, long, NULL, 0444);
++module_param_hw_array(fm_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(fm_port, "FM port # for OPL3-SA driver.");
+-module_param_array(midi_port, long, NULL, 0444);
++module_param_hw_array(midi_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(midi_port, "MIDI port # for OPL3-SA driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for OPL3-SA driver.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for OPL3-SA driver.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for OPL3-SA driver.");
+ module_param_array(opl3sa3_ymode, int, NULL, 0444);
+ MODULE_PARM_DESC(opl3sa3_ymode, "Speaker size selection for 3D Enhancement mode: Desktop/Large Notebook/Small Notebook/HiFi.");
+diff --git a/sound/isa/opti9xx/miro.c b/sound/isa/opti9xx/miro.c
+index 3a9067db1a84..bcbff56f060d 100644
+--- a/sound/isa/opti9xx/miro.c
++++ b/sound/isa/opti9xx/miro.c
+@@ -69,19 +69,19 @@ module_param(index, int, 0444);
+ MODULE_PARM_DESC(index, "Index value for miro soundcard.");
  module_param(id, charp, 0444);
- MODULE_PARM_DESC(id, "ID string for VIA 82xx bridge.");
+ MODULE_PARM_DESC(id, "ID string for miro soundcard.");
+-module_param(port, long, 0444);
++module_param_hw(port, long, ioport, 0444);
+ MODULE_PARM_DESC(port, "WSS port # for miro driver.");
 -module_param(mpu_port, long, 0444);
 +module_param_hw(mpu_port, long, ioport, 0444);
- MODULE_PARM_DESC(mpu_port, "MPU-401 port. (VT82C686x only)");
- #ifdef SUPPORT_JOYSTICK
- module_param(joystick, bool, 0444);
-diff --git a/sound/pci/ymfpci/ymfpci.c b/sound/pci/ymfpci/ymfpci.c
-index 812e27a1bcbc..4faf3e1ed06a 100644
---- a/sound/pci/ymfpci/ymfpci.c
-+++ b/sound/pci/ymfpci/ymfpci.c
-@@ -55,12 +55,12 @@ module_param_array(id, charp, NULL, 0444);
- MODULE_PARM_DESC(id, "ID string for the Yamaha DS-1 PCI soundcard.");
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for miro driver.");
+-module_param(fm_port, long, 0444);
++module_param_hw(fm_port, long, ioport, 0444);
+ MODULE_PARM_DESC(fm_port, "FM Port # for miro driver.");
+-module_param(irq, int, 0444);
++module_param_hw(irq, int, irq, 0444);
+ MODULE_PARM_DESC(irq, "WSS irq # for miro driver.");
+-module_param(mpu_irq, int, 0444);
++module_param_hw(mpu_irq, int, irq, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 irq # for miro driver.");
+-module_param(dma1, int, 0444);
++module_param_hw(dma1, int, dma, 0444);
+ MODULE_PARM_DESC(dma1, "1st dma # for miro driver.");
+-module_param(dma2, int, 0444);
++module_param_hw(dma2, int, dma, 0444);
+ MODULE_PARM_DESC(dma2, "2nd dma # for miro driver.");
+ module_param(wss, int, 0444);
+ MODULE_PARM_DESC(wss, "wss mode");
+diff --git a/sound/isa/opti9xx/opti92x-ad1848.c b/sound/isa/opti9xx/opti92x-ad1848.c
+index 0a5266003786..ceddb392b1e3 100644
+--- a/sound/isa/opti9xx/opti92x-ad1848.c
++++ b/sound/isa/opti9xx/opti92x-ad1848.c
+@@ -88,20 +88,20 @@ MODULE_PARM_DESC(id, "ID string for opti9xx based soundcard.");
+ module_param(isapnp, bool, 0444);
+ MODULE_PARM_DESC(isapnp, "Enable ISA PnP detection for specified soundcard.");
+ #endif
+-module_param(port, long, 0444);
++module_param_hw(port, long, ioport, 0444);
+ MODULE_PARM_DESC(port, "WSS port # for opti9xx driver.");
+-module_param(mpu_port, long, 0444);
++module_param_hw(mpu_port, long, ioport, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for opti9xx driver.");
+-module_param(fm_port, long, 0444);
++module_param_hw(fm_port, long, ioport, 0444);
+ MODULE_PARM_DESC(fm_port, "FM port # for opti9xx driver.");
+-module_param(irq, int, 0444);
++module_param_hw(irq, int, irq, 0444);
+ MODULE_PARM_DESC(irq, "WSS irq # for opti9xx driver.");
+-module_param(mpu_irq, int, 0444);
++module_param_hw(mpu_irq, int, irq, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 irq # for opti9xx driver.");
+-module_param(dma1, int, 0444);
++module_param_hw(dma1, int, dma, 0444);
+ MODULE_PARM_DESC(dma1, "1st dma # for opti9xx driver.");
+ #if defined(CS4231) || defined(OPTi93X)
+-module_param(dma2, int, 0444);
++module_param_hw(dma2, int, dma, 0444);
+ MODULE_PARM_DESC(dma2, "2nd dma # for opti9xx driver.");
+ #endif	/* CS4231 || OPTi93X */
+ 
+diff --git a/sound/isa/sb/jazz16.c b/sound/isa/sb/jazz16.c
+index 4d909971eedb..bfa0055e1fd6 100644
+--- a/sound/isa/sb/jazz16.c
++++ b/sound/isa/sb/jazz16.c
+@@ -50,17 +50,17 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for Media Vision Jazz16 based soundcard.");
  module_param_array(enable, bool, NULL, 0444);
- MODULE_PARM_DESC(enable, "Enable Yamaha DS-1 soundcard.");
+ MODULE_PARM_DESC(enable, "Enable Media Vision Jazz16 based soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for jazz16 driver.");
 -module_param_array(mpu_port, long, NULL, 0444);
 +module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
- MODULE_PARM_DESC(mpu_port, "MPU-401 Port.");
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for jazz16 driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for jazz16 driver.");
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ # for jazz16 driver.");
+-module_param_array(dma8, int, NULL, 0444);
++module_param_hw_array(dma8, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma8, "DMA8 # for jazz16 driver.");
+-module_param_array(dma16, int, NULL, 0444);
++module_param_hw_array(dma16, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma16, "DMA16 # for jazz16 driver.");
+ 
+ #define SB_JAZZ16_WAKEUP	0xaf
+diff --git a/sound/isa/sb/sb16.c b/sound/isa/sb/sb16.c
+index 4a7d7c89808f..3b2e4f405ff2 100644
+--- a/sound/isa/sb/sb16.c
++++ b/sound/isa/sb/sb16.c
+@@ -99,21 +99,21 @@ MODULE_PARM_DESC(enable, "Enable SoundBlaster 16 soundcard.");
+ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "PnP detection for specified soundcard.");
+ #endif
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for SB16 driver.");
+-module_param_array(mpu_port, long, NULL, 0444);
++module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for SB16 driver.");
 -module_param_array(fm_port, long, NULL, 0444);
 +module_param_hw_array(fm_port, long, ioport, NULL, 0444);
- MODULE_PARM_DESC(fm_port, "FM OPL-3 Port.");
- #ifdef SUPPORT_JOYSTICK
--module_param_array(joystick_port, long, NULL, 0444);
-+module_param_hw_array(joystick_port, long, ioport, NULL, 0444);
- MODULE_PARM_DESC(joystick_port, "Joystick port address");
+ MODULE_PARM_DESC(fm_port, "FM port # for SB16 PnP driver.");
+ #ifdef SNDRV_SBAWE_EMU8000
+-module_param_array(awe_port, long, NULL, 0444);
++module_param_hw_array(awe_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(awe_port, "AWE port # for SB16 PnP driver.");
  #endif
- module_param_array(rear_switch, bool, NULL, 0444);
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for SB16 driver.");
+-module_param_array(dma8, int, NULL, 0444);
++module_param_hw_array(dma8, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma8, "8-bit DMA # for SB16 driver.");
+-module_param_array(dma16, int, NULL, 0444);
++module_param_hw_array(dma16, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma16, "16-bit DMA # for SB16 driver.");
+ module_param_array(mic_agc, int, NULL, 0444);
+ MODULE_PARM_DESC(mic_agc, "Mic Auto-Gain-Control switch.");
+diff --git a/sound/isa/sb/sb8.c b/sound/isa/sb/sb8.c
+index ad42d2364199..d77dcba276b5 100644
+--- a/sound/isa/sb/sb8.c
++++ b/sound/isa/sb/sb8.c
+@@ -47,11 +47,11 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for Sound Blaster soundcard.");
+ module_param_array(enable, bool, NULL, 0444);
+ MODULE_PARM_DESC(enable, "Enable Sound Blaster soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for SB8 driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for SB8 driver.");
+-module_param_array(dma8, int, NULL, 0444);
++module_param_hw_array(dma8, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma8, "8-bit DMA # for SB8 driver.");
+ 
+ struct snd_sb8 {
+diff --git a/sound/isa/sc6000.c b/sound/isa/sc6000.c
+index b61a6633d8f2..c09d9b914efe 100644
+--- a/sound/isa/sc6000.c
++++ b/sound/isa/sc6000.c
+@@ -64,17 +64,17 @@ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "ID string for sc-6000 based soundcard.");
+ module_param_array(enable, bool, NULL, 0444);
+ MODULE_PARM_DESC(enable, "Enable sc-6000 based soundcard.");
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for sc-6000 driver.");
+-module_param_array(mss_port, long, NULL, 0444);
++module_param_hw_array(mss_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mss_port, "MSS Port # for sc-6000 driver.");
+-module_param_array(mpu_port, long, NULL, 0444);
++module_param_hw_array(mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(mpu_port, "MPU-401 port # for sc-6000 driver.");
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for sc-6000 driver.");
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ # for sc-6000 driver.");
+-module_param_array(dma, int, NULL, 0444);
++module_param_hw_array(dma, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma, "DMA # for sc-6000 driver.");
+ module_param_array(joystick, bool, NULL, 0444);
+ MODULE_PARM_DESC(joystick, "Enable gameport.");
+diff --git a/sound/isa/sscape.c b/sound/isa/sscape.c
+index fdcfa29e2205..54f5758a1bb3 100644
+--- a/sound/isa/sscape.c
++++ b/sound/isa/sscape.c
+@@ -63,22 +63,22 @@ MODULE_PARM_DESC(index, "Index number for SoundScape soundcard");
+ module_param_array(id, charp, NULL, 0444);
+ MODULE_PARM_DESC(id, "Description for SoundScape card");
+ 
+-module_param_array(port, long, NULL, 0444);
++module_param_hw_array(port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(port, "Port # for SoundScape driver.");
+ 
+-module_param_array(wss_port, long, NULL, 0444);
++module_param_hw_array(wss_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(wss_port, "WSS Port # for SoundScape driver.");
+ 
+-module_param_array(irq, int, NULL, 0444);
++module_param_hw_array(irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(irq, "IRQ # for SoundScape driver.");
+ 
+-module_param_array(mpu_irq, int, NULL, 0444);
++module_param_hw_array(mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(mpu_irq, "MPU401 IRQ # for SoundScape driver.");
+ 
+-module_param_array(dma, int, NULL, 0444);
++module_param_hw_array(dma, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma, "DMA # for SoundScape driver.");
+ 
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for SoundScape driver.");
+ 
+ module_param_array(joystick, bool, NULL, 0444);
+diff --git a/sound/isa/wavefront/wavefront.c b/sound/isa/wavefront/wavefront.c
+index a0987a57c8a9..da4e9a85f0af 100644
+--- a/sound/isa/wavefront/wavefront.c
++++ b/sound/isa/wavefront/wavefront.c
+@@ -63,23 +63,23 @@ MODULE_PARM_DESC(enable, "Enable WaveFront soundcard.");
+ module_param_array(isapnp, bool, NULL, 0444);
+ MODULE_PARM_DESC(isapnp, "ISA PnP detection for WaveFront soundcards.");
+ #endif
+-module_param_array(cs4232_pcm_port, long, NULL, 0444);
++module_param_hw_array(cs4232_pcm_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(cs4232_pcm_port, "Port # for CS4232 PCM interface.");
+-module_param_array(cs4232_pcm_irq, int, NULL, 0444);
++module_param_hw_array(cs4232_pcm_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(cs4232_pcm_irq, "IRQ # for CS4232 PCM interface.");
+-module_param_array(dma1, int, NULL, 0444);
++module_param_hw_array(dma1, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma1, "DMA1 # for CS4232 PCM interface.");
+-module_param_array(dma2, int, NULL, 0444);
++module_param_hw_array(dma2, int, dma, NULL, 0444);
+ MODULE_PARM_DESC(dma2, "DMA2 # for CS4232 PCM interface.");
+-module_param_array(cs4232_mpu_port, long, NULL, 0444);
++module_param_hw_array(cs4232_mpu_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(cs4232_mpu_port, "port # for CS4232 MPU-401 interface.");
+-module_param_array(cs4232_mpu_irq, int, NULL, 0444);
++module_param_hw_array(cs4232_mpu_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(cs4232_mpu_irq, "IRQ # for CS4232 MPU-401 interface.");
+-module_param_array(ics2115_irq, int, NULL, 0444);
++module_param_hw_array(ics2115_irq, int, irq, NULL, 0444);
+ MODULE_PARM_DESC(ics2115_irq, "IRQ # for ICS2115.");
+-module_param_array(ics2115_port, long, NULL, 0444);
++module_param_hw_array(ics2115_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(ics2115_port, "Port # for ICS2115.");
+-module_param_array(fm_port, long, NULL, 0444);
++module_param_hw_array(fm_port, long, ioport, NULL, 0444);
+ MODULE_PARM_DESC(fm_port, "FM port #.");
+ module_param_array(use_cs4232_midi, bool, NULL, 0444);
+ MODULE_PARM_DESC(use_cs4232_midi, "Use CS4232 MPU-401 interface (inaccessibly located inside your computer)");
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
