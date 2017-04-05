@@ -1,9 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:02:15 +0100
-Subject: [PATCH 37/38] Annotate hardware config module parameters in sound/oss/
+Date: Wed, 05 Apr 2017 18:01:26 +0100
+Subject: [PATCH 31/38] Annotate hardware config module parameters in
+	drivers/tty/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141173560.29162.16285381529998415889.stgit@warthog.procyon.org.uk>
+Message-ID: <149141168659.29162.541205367169653847.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -25,304 +26,128 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in sound/oss/.
+This patch annotates drivers in drivers/tty/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jaroslav Kysela <perex@perex.cz>
-cc: Takashi Iwai <tiwai@suse.com>
-cc: Riccardo Facchetti <fizban@tin.it>
-cc: Andrew Veliath <andrewtv@usa.net>
-cc: alsa-devel at alsa-project.org
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: Jiri Slaby <jslaby@suse.com>
+cc: linux-serial at vger.kernel.org
 ---
 
- sound/oss/ad1848.c        |    8 ++++----
- sound/oss/aedsp16.c       |   12 ++++++------
- sound/oss/mpu401.c        |    4 ++--
- sound/oss/msnd_pinnacle.c |   20 ++++++++++----------
- sound/oss/opl3.c          |    2 +-
- sound/oss/pas2_card.c     |   18 +++++++++---------
- sound/oss/pss.c           |   14 +++++++-------
- sound/oss/sb_card.c       |   10 +++++-----
- sound/oss/trix.c          |   18 +++++++++---------
- sound/oss/uart401.c       |    4 ++--
- sound/oss/uart6850.c      |    4 ++--
- sound/oss/waveartist.c    |    8 ++++----
- 12 files changed, 61 insertions(+), 61 deletions(-)
+ drivers/tty/cyclades.c              |    4 ++--
+ drivers/tty/moxa.c                  |    2 +-
+ drivers/tty/mxser.c                 |    2 +-
+ drivers/tty/rocket.c                |   10 +++++-----
+ drivers/tty/serial/8250/8250_core.c |    4 ++--
+ drivers/tty/synclink.c              |    6 +++---
+ 6 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/sound/oss/ad1848.c b/sound/oss/ad1848.c
-index f6156d8169d0..2421f59cf279 100644
---- a/sound/oss/ad1848.c
-+++ b/sound/oss/ad1848.c
-@@ -2805,10 +2805,10 @@ static int __initdata dma = -1;
- static int __initdata dma2 = -1;
- static int __initdata type = 0;
+diff --git a/drivers/tty/cyclades.c b/drivers/tty/cyclades.c
+index 5e4fa9206861..104f09c58163 100644
+--- a/drivers/tty/cyclades.c
++++ b/drivers/tty/cyclades.c
+@@ -156,8 +156,8 @@ static unsigned int cy_isa_addresses[] = {
+ static long maddr[NR_CARDS];
+ static int irq[NR_CARDS];
  
--module_param(io, int, 0);		/* I/O for a raw AD1848 card */
--module_param(irq, int, 0);		/* IRQ to use */
--module_param(dma, int, 0);		/* First DMA channel */
--module_param(dma2, int, 0);		/* Second DMA channel */
-+module_param_hw(io, int, ioport, 0);	/* I/O for a raw AD1848 card */
-+module_param_hw(irq, int, irq, 0);	/* IRQ to use */
-+module_param_hw(dma, int, dma, 0);	/* First DMA channel */
-+module_param_hw(dma2, int, dma, 0);	/* Second DMA channel */
- module_param(type, int, 0);		/* Card type */
- module_param(deskpro_xl, bool, 0);	/* Special magic for Deskpro XL boxen */
- module_param(deskpro_m, bool, 0);	/* Special magic for Deskpro M box */
-diff --git a/sound/oss/aedsp16.c b/sound/oss/aedsp16.c
-index bb477d5c8528..f058ed6bdb69 100644
---- a/sound/oss/aedsp16.c
-+++ b/sound/oss/aedsp16.c
-@@ -1303,17 +1303,17 @@ static int __initdata mpu_irq = -1;
- static int __initdata mss_base = -1;
- static int __initdata mpu_base = -1;
+-module_param_array(maddr, long, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(maddr, long, iomem, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
  
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- MODULE_PARM_DESC(io, "I/O base address (0x220 0x240)");
--module_param(irq, int, 0);
-+module_param_hw(irq, int, irq, 0);
- MODULE_PARM_DESC(irq, "IRQ line (5 7 9 10 11)");
--module_param(dma, int, 0);
-+module_param_hw(dma, int, dma, 0);
- MODULE_PARM_DESC(dma, "dma line (0 1 3)");
--module_param(mpu_irq, int, 0);
-+module_param_hw(mpu_irq, int, irq, 0);
- MODULE_PARM_DESC(mpu_irq, "MPU-401 IRQ line (5 7 9 10 0)");
--module_param(mss_base, int, 0);
-+module_param_hw(mss_base, int, ioport, 0);
- MODULE_PARM_DESC(mss_base, "MSS emulation I/O base address (0x530 0xE80)");
--module_param(mpu_base, int, 0);
-+module_param_hw(mpu_base, int, ioport, 0);
- MODULE_PARM_DESC(mpu_base,"MPU-401 I/O base address (0x300 0x310 0x320 0x330)");
- MODULE_AUTHOR("Riccardo Facchetti <fizban@tin.it>");
- MODULE_DESCRIPTION("Audio Excel DSP 16 Driver Version " VERSION);
-diff --git a/sound/oss/mpu401.c b/sound/oss/mpu401.c
-index 862735005b43..20e8fa46f647 100644
---- a/sound/oss/mpu401.c
-+++ b/sound/oss/mpu401.c
-@@ -1748,8 +1748,8 @@ static struct address_info cfg;
- static int io = -1;
- static int irq = -1;
+ #endif				/* CONFIG_ISA */
  
--module_param(irq, int, 0);
--module_param(io, int, 0);
-+module_param_hw(irq, int, irq, 0);
-+module_param_hw(io, int, ioport, 0);
+diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
+index 4caf0c3b1f99..3b251f4e5df0 100644
+--- a/drivers/tty/moxa.c
++++ b/drivers/tty/moxa.c
+@@ -179,7 +179,7 @@ MODULE_FIRMWARE("c320tunx.cod");
  
- static int __init init_mpu401(void)
- {
-diff --git a/sound/oss/msnd_pinnacle.c b/sound/oss/msnd_pinnacle.c
-index f34ec01d2239..d2abc2cf3213 100644
---- a/sound/oss/msnd_pinnacle.c
-+++ b/sound/oss/msnd_pinnacle.c
-@@ -1727,22 +1727,22 @@ static int
- calibrate_signal __initdata =		CONFIG_MSND_CALSIGNAL;
- #endif /* MODULE */
+ module_param_array(type, uint, NULL, 0);
+ MODULE_PARM_DESC(type, "card type: C218=2, C320=4");
+-module_param_array(baseaddr, ulong, NULL, 0);
++module_param_hw_array(baseaddr, ulong, ioport, NULL, 0);
+ MODULE_PARM_DESC(baseaddr, "base address");
+ module_param_array(numports, uint, NULL, 0);
+ MODULE_PARM_DESC(numports, "numports (ignored for C218)");
+diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
+index 7b8f383fb090..8bd6fb6d9391 100644
+--- a/drivers/tty/mxser.c
++++ b/drivers/tty/mxser.c
+@@ -183,7 +183,7 @@ static int ttymajor = MXSERMAJOR;
  
--module_param				(io, int, 0);
--module_param				(irq, int, 0);
--module_param				(mem, int, 0);
-+module_param_hw				(io, int, ioport, 0);
-+module_param_hw				(irq, int, irq, 0);
-+module_param_hw				(mem, int, iomem, 0);
- module_param				(write_ndelay, int, 0);
- module_param				(fifosize, int, 0);
- module_param				(calibrate_signal, int, 0);
- #ifndef MSND_CLASSIC
- module_param				(digital, bool, 0);
--module_param				(cfg, int, 0);
-+module_param_hw				(cfg, int, ioport, 0);
- module_param				(reset, int, 0);
--module_param				(mpu_io, int, 0);
--module_param				(mpu_irq, int, 0);
--module_param				(ide_io0, int, 0);
--module_param				(ide_io1, int, 0);
--module_param				(ide_irq, int, 0);
--module_param				(joystick_io, int, 0);
-+module_param_hw				(mpu_io, int, ioport, 0);
-+module_param_hw				(mpu_irq, int, irq, 0);
-+module_param_hw				(ide_io0, int, ioport, 0);
-+module_param_hw				(ide_io1, int, ioport, 0);
-+module_param_hw				(ide_irq, int, irq, 0);
-+module_param_hw				(joystick_io, int, ioport, 0);
- #endif
- 
- static int __init msnd_init(void)
-diff --git a/sound/oss/opl3.c b/sound/oss/opl3.c
-index b6d19adf8f41..f0f5b5be6314 100644
---- a/sound/oss/opl3.c
-+++ b/sound/oss/opl3.c
-@@ -1200,7 +1200,7 @@ static int me;
- 
- static int io = -1;
- 
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- 
- static int __init init_opl3 (void)
- {
-diff --git a/sound/oss/pas2_card.c b/sound/oss/pas2_card.c
-index b07954a79536..769fca692d2a 100644
---- a/sound/oss/pas2_card.c
-+++ b/sound/oss/pas2_card.c
-@@ -383,15 +383,15 @@ static int __initdata sb_irq	= -1;
- static int __initdata sb_dma	= -1;
- static int __initdata sb_dma16	= -1;
- 
--module_param(io, int, 0);
--module_param(irq, int, 0);
--module_param(dma, int, 0);
--module_param(dma16, int, 0);
--
--module_param(sb_io, int, 0);
--module_param(sb_irq, int, 0);
--module_param(sb_dma, int, 0);
--module_param(sb_dma16, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
-+module_param_hw(dma, int, dma, 0);
-+module_param_hw(dma16, int, dma, 0);
-+
-+module_param_hw(sb_io, int, ioport, 0);
-+module_param_hw(sb_irq, int, irq, 0);
-+module_param_hw(sb_dma, int, dma, 0);
-+module_param_hw(sb_dma16, int, dma, 0);
- 
- module_param(joystick, bool, 0);
- module_param(symphony, bool, 0);
-diff --git a/sound/oss/pss.c b/sound/oss/pss.c
-index 81314f9e2ccb..33c3a442e162 100644
---- a/sound/oss/pss.c
-+++ b/sound/oss/pss.c
-@@ -1139,19 +1139,19 @@ static bool pss_no_sound = 0;	/* Just configure non-sound components */
- static bool pss_keep_settings  = 1;	/* Keep hardware settings at module exit */
- static char *pss_firmware = "/etc/sound/pss_synth";
- 
--module_param(pss_io, int, 0);
-+module_param_hw(pss_io, int, ioport, 0);
- MODULE_PARM_DESC(pss_io, "Set i/o base of PSS card (probably 0x220 or 0x240)");
--module_param(mss_io, int, 0);
-+module_param_hw(mss_io, int, ioport, 0);
- MODULE_PARM_DESC(mss_io, "Set WSS (audio) i/o base (0x530, 0x604, 0xE80, 0xF40, or other. Address must end in 0 or 4 and must be from 0x100 to 0xFF4)");
--module_param(mss_irq, int, 0);
-+module_param_hw(mss_irq, int, irq, 0);
- MODULE_PARM_DESC(mss_irq, "Set WSS (audio) IRQ (3, 5, 7, 9, 10, 11, 12)");
--module_param(mss_dma, int, 0);
-+module_param_hw(mss_dma, int, dma, 0);
- MODULE_PARM_DESC(mss_dma, "Set WSS (audio) DMA (0, 1, 3)");
--module_param(mpu_io, int, 0);
-+module_param_hw(mpu_io, int, ioport, 0);
- MODULE_PARM_DESC(mpu_io, "Set MIDI i/o base (0x330 or other. Address must be on 4 location boundaries and must be from 0x100 to 0xFFC)");
--module_param(mpu_irq, int, 0);
-+module_param_hw(mpu_irq, int, irq, 0);
- MODULE_PARM_DESC(mpu_irq, "Set MIDI IRQ (3, 5, 7, 9, 10, 11, 12)");
--module_param(pss_cdrom_port, int, 0);
-+module_param_hw(pss_cdrom_port, int, ioport, 0);
- MODULE_PARM_DESC(pss_cdrom_port, "Set the PSS CDROM port i/o base (0x340 or other)");
- module_param(pss_enable_joystick, bool, 0);
- MODULE_PARM_DESC(pss_enable_joystick, "Enables the PSS joystick port (1 to enable, 0 to disable)");
-diff --git a/sound/oss/sb_card.c b/sound/oss/sb_card.c
-index fb5d7250de38..2a92cfe6cfe9 100644
---- a/sound/oss/sb_card.c
-+++ b/sound/oss/sb_card.c
-@@ -61,15 +61,15 @@ static int __initdata uart401	= 0;
- static int __initdata pnp       = 0;
- #endif
- 
--module_param(io, int, 000);
-+module_param_hw(io, int, ioport, 000);
- MODULE_PARM_DESC(io,       "Soundblaster i/o base address (0x220,0x240,0x260,0x280)");
--module_param(irq, int, 000);
-+module_param_hw(irq, int, irq, 000);
- MODULE_PARM_DESC(irq,	   "IRQ (5,7,9,10)");
--module_param(dma, int, 000);
-+module_param_hw(dma, int, dma, 000);
- MODULE_PARM_DESC(dma,	   "8-bit DMA channel (0,1,3)");
--module_param(dma16, int, 000);
-+module_param_hw(dma16, int, dma, 000);
- MODULE_PARM_DESC(dma16,	   "16-bit DMA channel (5,6,7)");
--module_param(mpu_io, int, 000);
-+module_param_hw(mpu_io, int, ioport, 000);
- MODULE_PARM_DESC(mpu_io,   "MPU base address");
- module_param(type, int, 000);
- MODULE_PARM_DESC(type,	   "You can set this to specific card type (doesn't " \
-diff --git a/sound/oss/trix.c b/sound/oss/trix.c
-index 3c494dc93b93..a57bc635d758 100644
---- a/sound/oss/trix.c
-+++ b/sound/oss/trix.c
-@@ -413,15 +413,15 @@ static int __initdata sb_irq	= -1;
- static int __initdata mpu_io	= -1;
- static int __initdata mpu_irq	= -1;
- 
--module_param(io, int, 0);
--module_param(irq, int, 0);
--module_param(dma, int, 0);
--module_param(dma2, int, 0);
--module_param(sb_io, int, 0);
--module_param(sb_dma, int, 0);
--module_param(sb_irq, int, 0);
--module_param(mpu_io, int, 0);
--module_param(mpu_irq, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
-+module_param_hw(dma, int, dma, 0);
-+module_param_hw(dma2, int, dma, 0);
-+module_param_hw(sb_io, int, ioport, 0);
-+module_param_hw(sb_dma, int, dma, 0);
-+module_param_hw(sb_irq, int, irq, 0);
-+module_param_hw(mpu_io, int, ioport, 0);
-+module_param_hw(mpu_irq, int, irq, 0);
- module_param(joystick, bool, 0);
- 
- static int __init init_trix(void)
-diff --git a/sound/oss/uart401.c b/sound/oss/uart401.c
-index dae4d4344407..83dcc85b8688 100644
---- a/sound/oss/uart401.c
-+++ b/sound/oss/uart401.c
-@@ -429,8 +429,8 @@ static struct address_info cfg_mpu;
- static int io = -1;
- static int irq = -1;
- 
--module_param(io, int, 0444);
--module_param(irq, int, 0444);
-+module_param_hw(io, int, ioport, 0444);
-+module_param_hw(irq, int, irq, 0444);
- 
- 
- static int __init init_uart401(void)
-diff --git a/sound/oss/uart6850.c b/sound/oss/uart6850.c
-index 1079133dd6ab..eda32d7eddbd 100644
---- a/sound/oss/uart6850.c
-+++ b/sound/oss/uart6850.c
-@@ -315,8 +315,8 @@ static struct address_info cfg_mpu;
- static int __initdata io = -1;
- static int __initdata irq = -1;
- 
--module_param(io, int, 0);
--module_param(irq, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
- 
- static int __init init_uart6850(void)
- {
-diff --git a/sound/oss/waveartist.c b/sound/oss/waveartist.c
-index 0b8d0de87273..4f0c3a232e41 100644
---- a/sound/oss/waveartist.c
-+++ b/sound/oss/waveartist.c
-@@ -2036,8 +2036,8 @@ __setup("waveartist=", setup_waveartist);
- #endif
- 
- MODULE_DESCRIPTION("Rockwell WaveArtist RWA-010 sound driver");
--module_param(io, int, 0);		/* IO base */
--module_param(irq, int, 0);		/* IRQ */
--module_param(dma, int, 0);		/* DMA */
--module_param(dma2, int, 0);		/* DMA2 */
-+module_param_hw(io, int, ioport, 0);		/* IO base */
-+module_param_hw(irq, int, irq, 0);		/* IRQ */
-+module_param_hw(dma, int, dma, 0);		/* DMA */
-+module_param_hw(dma2, int, dma, 0);		/* DMA2 */
+ MODULE_AUTHOR("Casper Yang");
+ MODULE_DESCRIPTION("MOXA Smartio/Industio Family Multiport Board Device Driver");
+-module_param_array(ioaddr, ulong, NULL, 0);
++module_param_hw_array(ioaddr, ulong, ioport, NULL, 0);
+ MODULE_PARM_DESC(ioaddr, "ISA io addresses to look for a moxa board");
+ module_param(ttymajor, int, 0);
  MODULE_LICENSE("GPL");
+diff --git a/drivers/tty/rocket.c b/drivers/tty/rocket.c
+index d66c1edd9892..b51a877da986 100644
+--- a/drivers/tty/rocket.c
++++ b/drivers/tty/rocket.c
+@@ -250,15 +250,15 @@ static int sReadAiopNumChan(WordIO_t io);
+ 
+ MODULE_AUTHOR("Theodore Ts'o");
+ MODULE_DESCRIPTION("Comtrol RocketPort driver");
+-module_param(board1, ulong, 0);
++module_param_hw(board1, ulong, ioport, 0);
+ MODULE_PARM_DESC(board1, "I/O port for (ISA) board #1");
+-module_param(board2, ulong, 0);
++module_param_hw(board2, ulong, ioport, 0);
+ MODULE_PARM_DESC(board2, "I/O port for (ISA) board #2");
+-module_param(board3, ulong, 0);
++module_param_hw(board3, ulong, ioport, 0);
+ MODULE_PARM_DESC(board3, "I/O port for (ISA) board #3");
+-module_param(board4, ulong, 0);
++module_param_hw(board4, ulong, ioport, 0);
+ MODULE_PARM_DESC(board4, "I/O port for (ISA) board #4");
+-module_param(controller, ulong, 0);
++module_param_hw(controller, ulong, ioport, 0);
+ MODULE_PARM_DESC(controller, "I/O port for (ISA) rocketport controller");
+ module_param(support_low_speed, bool, 0);
+ MODULE_PARM_DESC(support_low_speed, "1 means support 50 baud, 0 means support 460400 baud");
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+index 76e03a7de9cc..89fde17d9617 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -1191,7 +1191,7 @@ module_exit(serial8250_exit);
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Generic 8250/16x50 serial driver");
+ 
+-module_param(share_irqs, uint, 0644);
++module_param_hw(share_irqs, uint, other, 0644);
+ MODULE_PARM_DESC(share_irqs, "Share IRQs with other non-8250/16x50 devices (unsafe)");
+ 
+ module_param(nr_uarts, uint, 0644);
+@@ -1201,7 +1201,7 @@ module_param(skip_txen_test, uint, 0644);
+ MODULE_PARM_DESC(skip_txen_test, "Skip checking for the TXEN bug at init time");
+ 
+ #ifdef CONFIG_SERIAL_8250_RSA
+-module_param_array(probe_rsa, ulong, &probe_rsa_count, 0444);
++module_param_hw_array(probe_rsa, ulong, ioport, &probe_rsa_count, 0444);
+ MODULE_PARM_DESC(probe_rsa, "Probe I/O ports for RSA");
+ #endif
+ MODULE_ALIAS_CHARDEV_MAJOR(TTY_MAJOR);
+diff --git a/drivers/tty/synclink.c b/drivers/tty/synclink.c
+index 657eed82eeb3..a2c308f7d637 100644
+--- a/drivers/tty/synclink.c
++++ b/drivers/tty/synclink.c
+@@ -869,9 +869,9 @@ static int txholdbufs[MAX_TOTAL_DEVICES];
+ 	
+ module_param(break_on_load, bool, 0);
+ module_param(ttymajor, int, 0);
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
+-module_param_array(dma, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
++module_param_hw_array(dma, int, dma, NULL, 0);
+ module_param(debug_level, int, 0);
+ module_param_array(maxframe, int, NULL, 0);
+ module_param_array(txdmabufs, int, NULL, 0);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
