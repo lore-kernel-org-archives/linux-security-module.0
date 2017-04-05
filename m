@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:00:01 +0100
-Subject: [PATCH 21/38] Annotate hardware config module parameters in
-	drivers/net/irda/
+Date: Wed, 05 Apr 2017 18:00:29 +0100
+Subject: [PATCH 24/38] Annotate hardware config module parameters in
+	drivers/parport/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141160137.29162.4435315129997771160.stgit@warthog.procyon.org.uk>
+Message-ID: <149141162966.29162.15946544618023359598.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,108 +26,38 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/net/irda/.
+This patch annotates drivers in drivers/parport/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Samuel Ortiz <samuel@sortiz.org>
-cc: netdev at vger.kernel.org
+cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 ---
 
- drivers/net/irda/ali-ircc.c    |    6 +++---
- drivers/net/irda/nsc-ircc.c    |    6 +++---
- drivers/net/irda/smsc-ircc2.c  |   10 +++++-----
- drivers/net/irda/w83977af_ir.c |    4 ++--
- 4 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/parport/parport_pc.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/irda/ali-ircc.c b/drivers/net/irda/ali-ircc.c
-index c285eafd3f1c..35f198d83701 100644
---- a/drivers/net/irda/ali-ircc.c
-+++ b/drivers/net/irda/ali-ircc.c
-@@ -2207,11 +2207,11 @@ MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:" ALI_IRCC_DRIVER_NAME);
+diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
+index 9d42dfe65d44..5548193a28a6 100644
+--- a/drivers/parport/parport_pc.c
++++ b/drivers/parport/parport_pc.c
+@@ -3150,13 +3150,13 @@ static char *irq[PARPORT_PC_MAX_PORTS];
+ static char *dma[PARPORT_PC_MAX_PORTS];
  
- 
+ MODULE_PARM_DESC(io, "Base I/O address (SPP regs)");
 -module_param_array(io, int, NULL, 0);
 +module_param_hw_array(io, int, ioport, NULL, 0);
- MODULE_PARM_DESC(io, "Base I/O addresses");
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "IRQ lines");
--module_param_array(dma, int, NULL, 0);
-+module_param_hw_array(dma, int, dma, NULL, 0);
- MODULE_PARM_DESC(dma, "DMA channels");
- 
- module_init(ali_ircc_init);
-diff --git a/drivers/net/irda/nsc-ircc.c b/drivers/net/irda/nsc-ircc.c
-index aaecc3baaf30..7beae147be11 100644
---- a/drivers/net/irda/nsc-ircc.c
-+++ b/drivers/net/irda/nsc-ircc.c
-@@ -2396,11 +2396,11 @@ MODULE_LICENSE("GPL");
- 
- module_param(qos_mtt_bits, int, 0);
- MODULE_PARM_DESC(qos_mtt_bits, "Minimum Turn Time");
--module_param_array(io, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
- MODULE_PARM_DESC(io, "Base I/O addresses");
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "IRQ lines");
--module_param_array(dma, int, NULL, 0);
-+module_param_hw_array(dma, int, dma, NULL, 0);
- MODULE_PARM_DESC(dma, "DMA channels");
- module_param(dongle_id, int, 0);
- MODULE_PARM_DESC(dongle_id, "Type-id of used dongle");
-diff --git a/drivers/net/irda/smsc-ircc2.c b/drivers/net/irda/smsc-ircc2.c
-index dcf92ba80872..23ed89ae5ddc 100644
---- a/drivers/net/irda/smsc-ircc2.c
-+++ b/drivers/net/irda/smsc-ircc2.c
-@@ -82,24 +82,24 @@ MODULE_PARM_DESC(nopnp, "Do not use PNP to detect controller settings, defaults
- 
- #define DMA_INVAL 255
- static int ircc_dma = DMA_INVAL;
--module_param(ircc_dma, int, 0);
-+module_param_hw(ircc_dma, int, dma, 0);
- MODULE_PARM_DESC(ircc_dma, "DMA channel");
- 
- #define IRQ_INVAL 255
- static int ircc_irq = IRQ_INVAL;
--module_param(ircc_irq, int, 0);
-+module_param_hw(ircc_irq, int, irq, 0);
- MODULE_PARM_DESC(ircc_irq, "IRQ line");
- 
- static int ircc_fir;
--module_param(ircc_fir, int, 0);
-+module_param_hw(ircc_fir, int, ioport, 0);
- MODULE_PARM_DESC(ircc_fir, "FIR Base Address");
- 
- static int ircc_sir;
--module_param(ircc_sir, int, 0);
-+module_param_hw(ircc_sir, int, ioport, 0);
- MODULE_PARM_DESC(ircc_sir, "SIR Base Address");
- 
- static int ircc_cfg;
--module_param(ircc_cfg, int, 0);
-+module_param_hw(ircc_cfg, int, ioport, 0);
- MODULE_PARM_DESC(ircc_cfg, "Configuration register base address");
- 
- static int ircc_transceiver;
-diff --git a/drivers/net/irda/w83977af_ir.c b/drivers/net/irda/w83977af_ir.c
-index 8d5b903d1d9d..282b6c9ae05b 100644
---- a/drivers/net/irda/w83977af_ir.c
-+++ b/drivers/net/irda/w83977af_ir.c
-@@ -1263,9 +1263,9 @@ MODULE_LICENSE("GPL");
- 
- module_param(qos_mtt_bits, int, 0);
- MODULE_PARM_DESC(qos_mtt_bits, "Mimimum Turn Time");
--module_param_array(io, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
- MODULE_PARM_DESC(io, "Base I/O addresses");
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "IRQ lines");
- 
- /*
+ MODULE_PARM_DESC(io_hi, "Base I/O address (ECR)");
+-module_param_array(io_hi, int, NULL, 0);
++module_param_hw_array(io_hi, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(irq, "IRQ line");
+-module_param_array(irq, charp, NULL, 0);
++module_param_hw_array(irq, charp, irq, NULL, 0);
+ MODULE_PARM_DESC(dma, "DMA channel");
+-module_param_array(dma, charp, NULL, 0);
++module_param_hw_array(dma, charp, dma, NULL, 0);
+ #if defined(CONFIG_PARPORT_PC_SUPERIO) || \
+        (defined(CONFIG_PARPORT_1284) && defined(CONFIG_PARPORT_PC_FIFO))
+ MODULE_PARM_DESC(verbose_probing, "Log chit-chat during initialisation");
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
