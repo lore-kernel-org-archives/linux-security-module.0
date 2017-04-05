@@ -1,58 +1,53 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:00:21 +0100
-Subject: [PATCH 23/38] Annotate hardware config module parameters in
-	drivers/net/wireless/
-In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141162181.29162.8391170742895605946.stgit@warthog.procyon.org.uk>
+Date: Wed, 05 Apr 2017 18:07:10 +0100
+Subject: [PATCH 01/24] efi: Add EFI_SECURE_BOOT bit
+In-Reply-To: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
+References: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
+Message-ID: <149141203027.30815.5857690501853492224.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When the kernel is running in secure boot mode, we lock down the kernel to
-prevent userspace from modifying the running kernel image.  Whilst this
-includes prohibiting access to things like /dev/mem, it must also prevent
-access by means of configuring driver modules in such a way as to cause a
-device to access or modify the kernel image.
+From: Josh Boyer <jwboyer@fedoraproject.org>
 
-To this end, annotate module_param* statements that refer to hardware
-configuration and indicate for future reference what type of parameter they
-specify.  The parameter parser in the core sees this information and can
-skip such parameters with an error message if the kernel is locked down.
-The module initialisation then runs as normal, but just sees whatever the
-default values for those parameters is.
+UEFI machines can be booted in Secure Boot mode.  Add a EFI_SECURE_BOOT bit
+that can be passed to efi_enabled() to find out whether secure boot is
+enabled.
 
-Note that we do still need to do the module initialisation because some
-drivers have viable defaults set in case parameters aren't specified and
-some drivers support automatic configuration (e.g. PNP or PCI) in addition
-to manually coded parameters.
+This will be used by the SysRq+x handler, registered by the x86 arch, to find
+out whether secure boot mode is enabled so that it can be disabled.
 
-This patch annotates drivers in drivers/net/wireless/.
-
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Kalle Valo <kvalo@codeaurora.org>
-cc: linux-wireless at vger.kernel.org
-cc: netdev at vger.kernel.org
 ---
 
- drivers/net/wireless/cisco/airo.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/setup.c |    1 +
+ include/linux/efi.h     |    1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
-index 4b040451a9b8..1b7e125a28e2 100644
---- a/drivers/net/wireless/cisco/airo.c
-+++ b/drivers/net/wireless/cisco/airo.c
-@@ -246,8 +246,8 @@ MODULE_DESCRIPTION("Support for Cisco/Aironet 802.11 wireless ethernet cards.  "
- 		   "Direct support for ISA/PCI/MPI cards and support for PCMCIA when used with airo_cs.");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_SUPPORTED_DEVICE("Aironet 4500, 4800 and Cisco 340/350");
--module_param_array(io, int, NULL, 0);
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- module_param_array(rates, int, NULL, 0);
- module_param_array(ssids, charp, NULL, 0);
- module_param(auto_wep, int, 0);
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 4bf0c8926a1c..396285bddb93 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1184,6 +1184,7 @@ void __init setup_arch(char **cmdline_p)
+ 			pr_info("Secure boot disabled\n");
+ 			break;
+ 		case efi_secureboot_mode_enabled:
++			set_bit(EFI_SECURE_BOOT, &efi.flags);
+ 			pr_info("Secure boot enabled\n");
+ 			break;
+ 		default:
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 94d34e0be24f..6049600e5475 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1069,6 +1069,7 @@ extern int __init efi_setup_pcdp_console(char *);
+ #define EFI_DBG			8	/* Print additional debug info at runtime */
+ #define EFI_NX_PE_DATA		9	/* Can runtime data regions be mapped non-executable? */
+ #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
++#define EFI_SECURE_BOOT		11	/* Are we in Secure Boot mode? */
+ 
+ #ifdef CONFIG_EFI
+ /*
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
