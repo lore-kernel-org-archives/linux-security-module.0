@@ -1,74 +1,44 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:07:25 +0100
-Subject: [PATCH 03/24] efi: Lock down the kernel if booted in secure boot mode
+Date: Wed, 05 Apr 2017 18:08:07 +0100
+Subject: [PATCH 08/24] Copy secure_boot flag in boot params across kexec reboot
 In-Reply-To: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
 References: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
-Message-ID: <149141204578.30815.1929675368430800975.stgit@warthog.procyon.org.uk>
+Message-ID: <149141208783.30815.12896516831173762041.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-UEFI Secure Boot provides a mechanism for ensuring that the firmware will
-only load signed bootloaders and kernels.  Certain use cases may also
-require that all kernel modules also be signed.  Add a configuration option
-that to lock down the kernel - which includes requiring validly signed
-modules - if the kernel is secure-booted.
+From: Dave Young <dyoung@redhat.com>
 
+Kexec reboot in case secure boot being enabled does not keep the secure
+boot mode in new kernel, so later one can load unsigned kernel via legacy
+kexec_load.  In this state, the system is missing the protections provided
+by secure boot.
+
+Adding a patch to fix this by retain the secure_boot flag in original
+kernel.
+
+secure_boot flag in boot_params is set in EFI stub, but kexec bypasses the
+stub.  Fixing this issue by copying secure_boot flag across kexec reboot.
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- arch/x86/Kconfig        |   12 ++++++++++++
- arch/x86/kernel/setup.c |    8 +++++++-
- 2 files changed, 19 insertions(+), 1 deletion(-)
+ arch/x86/kernel/kexec-bzimage64.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index cc98d5a294ee..21f39855661d 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1817,6 +1817,18 @@ config EFI_MIXED
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index d0a814a9d96a..3551bcaa1eaf 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -179,6 +179,7 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+ 	if (efi_enabled(EFI_OLD_MEMMAP))
+ 		return 0;
  
- 	   If unsure, say N.
- 
-+config EFI_SECURE_BOOT_LOCK_DOWN
-+	def_bool n
-+	depends on EFI
-+	prompt "Lock down the kernel when UEFI Secure Boot is enabled"
-+	---help---
-+	  UEFI Secure Boot provides a mechanism for ensuring that the firmware
-+	  will only load signed bootloaders and kernels.  Certain use cases may
-+	  also require that all kernel modules also be signed and that
-+	  userspace is prevented from directly changing the running kernel
-+	  image.  Say Y here to automatically lock down the kernel when a
-+	  system boots with UEFI Secure Boot enabled.
-+
- config SECCOMP
- 	def_bool y
- 	prompt "Enable seccomp to safely compute untrusted bytecode"
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 396285bddb93..85dfa745c442 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -69,6 +69,7 @@
- #include <linux/crash_dump.h>
- #include <linux/tboot.h>
- #include <linux/jiffies.h>
-+#include <linux/security.h>
- 
- #include <video/edid.h>
- 
-@@ -1185,7 +1186,12 @@ void __init setup_arch(char **cmdline_p)
- 			break;
- 		case efi_secureboot_mode_enabled:
- 			set_bit(EFI_SECURE_BOOT, &efi.flags);
--			pr_info("Secure boot enabled\n");
-+			if (IS_ENABLED(CONFIG_EFI_SECURE_BOOT_LOCK_DOWN)) {
-+				lock_kernel_down();
-+				pr_info("Secure boot enabled and kernel locked down\n");
-+			} else {
-+				pr_info("Secure boot enabled\n");
-+			}
- 			break;
- 		default:
- 			pr_info("Secure boot could not be determined\n");
++	params->secure_boot = boot_params.secure_boot;
+ 	ei->efi_loader_signature = current_ei->efi_loader_signature;
+ 	ei->efi_systab = current_ei->efi_systab;
+ 	ei->efi_systab_hi = current_ei->efi_systab_hi;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
