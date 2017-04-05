@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:00:52 +0100
-Subject: [PATCH 27/38] Annotate hardware config module parameters in
-	drivers/scsi/
+Date: Wed, 05 Apr 2017 18:01:01 +0100
+Subject: [PATCH 28/38] Annotate hardware config module parameters in
+	drivers/staging/media/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141165268.29162.6487884277851555904.stgit@warthog.procyon.org.uk>
+Message-ID: <149141166119.29162.8331512785853788823.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,115 +26,36 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/scsi/.
+This patch annotates drivers in drivers/staging/media/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: "Juergen E. Fischer" <fischer@norbit.de>
-cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-cc: Dario Ballabio <ballabio_dario@emc.com>
-cc: Finn Thain <fthain@telegraphics.com.au>
-cc: Michael Schmitz <schmitzmic@gmail.com>
-cc: Achim Leubner <achim_leubner@adaptec.com>
-cc: linux-scsi at vger.kernel.org
+cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: linux-media at vger.kernel.org
+cc: devel at driverdev.osuosl.org
 ---
 
- drivers/scsi/aha152x.c   |    4 ++--
- drivers/scsi/aha1542.c   |    2 +-
- drivers/scsi/g_NCR5380.c |    8 ++++----
- drivers/scsi/gdth.c      |    2 +-
- drivers/scsi/qlogicfas.c |    4 ++--
- 5 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/media/lirc/lirc_sir.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/aha152x.c b/drivers/scsi/aha152x.c
-index f44d0487236e..ce5dc73d85bb 100644
---- a/drivers/scsi/aha152x.c
-+++ b/drivers/scsi/aha152x.c
-@@ -331,11 +331,11 @@ MODULE_LICENSE("GPL");
- #if !defined(PCMCIA)
- #if defined(MODULE)
- static int io[] = {0, 0};
--module_param_array(io, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
- MODULE_PARM_DESC(io,"base io address of controller");
+diff --git a/drivers/staging/media/lirc/lirc_sir.c b/drivers/staging/media/lirc/lirc_sir.c
+index c6c3de94adaa..dde46dd8cabb 100644
+--- a/drivers/staging/media/lirc/lirc_sir.c
++++ b/drivers/staging/media/lirc/lirc_sir.c
+@@ -826,10 +826,10 @@ MODULE_AUTHOR("Milan Pikula");
+ #endif
+ MODULE_LICENSE("GPL");
  
- static int irq[] = {0, 0};
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq,"interrupt for controller");
+-module_param(io, int, S_IRUGO);
++module_param_hw(io, int, ioport, S_IRUGO);
+ MODULE_PARM_DESC(io, "I/O address base (0x3f8 or 0x2f8)");
  
- static int scsiid[] = {7, 7};
-diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
-index 7db448ec8beb..a23cc9ac5acd 100644
---- a/drivers/scsi/aha1542.c
-+++ b/drivers/scsi/aha1542.c
-@@ -31,7 +31,7 @@ module_param(isapnp, bool, 0);
- MODULE_PARM_DESC(isapnp, "enable PnP support (default=1)");
+-module_param(irq, int, S_IRUGO);
++module_param_hw(irq, int, irq, S_IRUGO);
+ MODULE_PARM_DESC(irq, "Interrupt (4 or 3)");
  
- static int io[MAXBOARDS] = { 0x330, 0x334, 0, 0 };
--module_param_array(io, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
- MODULE_PARM_DESC(io, "base IO address of controller (0x130,0x134,0x230,0x234,0x330,0x334, default=0x330,0x334)");
- 
- /* time AHA spends on the AT-bus during data transfer */
-diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
-index 67c8dac321ad..c34fc91ba486 100644
---- a/drivers/scsi/g_NCR5380.c
-+++ b/drivers/scsi/g_NCR5380.c
-@@ -85,8 +85,8 @@ static int ncr_53c400;
- static int ncr_53c400a;
- static int dtc_3181e;
- static int hp_c2502;
--module_param(ncr_irq, int, 0);
--module_param(ncr_addr, int, 0);
-+module_param_hw(ncr_irq, int, irq, 0);
-+module_param_hw(ncr_addr, int, ioport, 0);
- module_param(ncr_5380, int, 0);
- module_param(ncr_53c400, int, 0);
- module_param(ncr_53c400a, int, 0);
-@@ -94,11 +94,11 @@ module_param(dtc_3181e, int, 0);
- module_param(hp_c2502, int, 0);
- 
- static int irq[] = { -1, -1, -1, -1, -1, -1, -1, -1 };
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "IRQ number(s) (0=none, 254=auto [default])");
- 
- static int base[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
--module_param_array(base, int, NULL, 0);
-+module_param_hw_array(base, int, ioport, NULL, 0);
- MODULE_PARM_DESC(base, "base address(es)");
- 
- static int card[] = { -1, -1, -1, -1, -1, -1, -1, -1 };
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index d020a13646ae..facc7271f932 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -353,7 +353,7 @@ static int probe_eisa_isa = 0;
- static int force_dma32 = 0;
- 
- /* parameters for modprobe/insmod */
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- module_param(disable, int, 0);
- module_param(reserve_mode, int, 0);
- module_param_array(reserve_list, int, NULL, 0);
-diff --git a/drivers/scsi/qlogicfas.c b/drivers/scsi/qlogicfas.c
-index 61cac87fb86f..840823b99e51 100644
---- a/drivers/scsi/qlogicfas.c
-+++ b/drivers/scsi/qlogicfas.c
-@@ -137,8 +137,8 @@ static struct Scsi_Host *__qlogicfas_detect(struct scsi_host_template *host,
- static struct qlogicfas408_priv *cards;
- static int iobase[MAX_QLOGICFAS];
- static int irq[MAX_QLOGICFAS] = { [0 ... MAX_QLOGICFAS-1] = -1 };
--module_param_array(iobase, int, NULL, 0);
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(iobase, int, ioport, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(iobase, "I/O address");
- MODULE_PARM_DESC(irq, "IRQ");
- 
+ module_param(threshold, int, S_IRUGO);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
