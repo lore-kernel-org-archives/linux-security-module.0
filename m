@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:58:48 +0100
-Subject: [PATCH 14/38] Annotate hardware config module parameters in
-	drivers/misc/
+Date: Wed, 05 Apr 2017 17:58:41 +0100
+Subject: [PATCH 13/38] Annotate hardware config module parameters in
+	drivers/media/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141152873.29162.13855251241646767118.stgit@warthog.procyon.org.uk>
+Message-ID: <149141152121.29162.4230904949695480240.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,29 +26,67 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/misc/.
+This patch annotates drivers in drivers/media/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Arnd Bergmann <arnd@arndb.de>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+cc: mjpeg-users at lists.sourceforge.net
+cc: linux-media at vger.kernel.org
 ---
 
- drivers/misc/dummy-irq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/pci/zoran/zoran_card.c |    2 +-
+ drivers/media/rc/serial_ir.c         |   10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/misc/dummy-irq.c b/drivers/misc/dummy-irq.c
-index acbbe0390be4..76a1015d5783 100644
---- a/drivers/misc/dummy-irq.c
-+++ b/drivers/misc/dummy-irq.c
-@@ -59,6 +59,6 @@ module_exit(dummy_irq_exit);
+diff --git a/drivers/media/pci/zoran/zoran_card.c b/drivers/media/pci/zoran/zoran_card.c
+index 5266755add63..4680f001653a 100644
+--- a/drivers/media/pci/zoran/zoran_card.c
++++ b/drivers/media/pci/zoran/zoran_card.c
+@@ -69,7 +69,7 @@ MODULE_PARM_DESC(card, "Card type");
+  */
  
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Jiri Kosina");
--module_param(irq, uint, 0444);
-+module_param_hw(irq, uint, irq, 0444);
- MODULE_PARM_DESC(irq, "The IRQ to register for");
- MODULE_DESCRIPTION("Dummy IRQ handler driver");
+ static unsigned long vidmem;	/* default = 0 - Video memory base address */
+-module_param(vidmem, ulong, 0444);
++module_param_hw(vidmem, ulong, iomem, 0444);
+ MODULE_PARM_DESC(vidmem, "Default video memory base address");
+ 
+ /*
+diff --git a/drivers/media/rc/serial_ir.c b/drivers/media/rc/serial_ir.c
+index 41b54e40176c..40d305842a9b 100644
+--- a/drivers/media/rc/serial_ir.c
++++ b/drivers/media/rc/serial_ir.c
+@@ -833,11 +833,11 @@ MODULE_LICENSE("GPL");
+ module_param(type, int, 0444);
+ MODULE_PARM_DESC(type, "Hardware type (0 = home-brew, 1 = IRdeo, 2 = IRdeo Remote, 3 = AnimaX, 4 = IgorPlug");
+ 
+-module_param(io, int, 0444);
++module_param_hw(io, int, ioport, 0444);
+ MODULE_PARM_DESC(io, "I/O address base (0x3f8 or 0x2f8)");
+ 
+ /* some architectures (e.g. intel xscale) have memory mapped registers */
+-module_param(iommap, bool, 0444);
++module_param_hw(iommap, bool, other, 0444);
+ MODULE_PARM_DESC(iommap, "physical base for memory mapped I/O (0 = no memory mapped io)");
+ 
+ /*
+@@ -845,13 +845,13 @@ MODULE_PARM_DESC(iommap, "physical base for memory mapped I/O (0 = no memory map
+  * on 32bit word boundaries.
+  * See linux-kernel/drivers/tty/serial/8250/8250.c serial_in()/out()
+  */
+-module_param(ioshift, int, 0444);
++module_param_hw(ioshift, int, other, 0444);
+ MODULE_PARM_DESC(ioshift, "shift I/O register offset (0 = no shift)");
+ 
+-module_param(irq, int, 0444);
++module_param_hw(irq, int, irq, 0444);
+ MODULE_PARM_DESC(irq, "Interrupt (4 or 3)");
+ 
+-module_param(share_irq, bool, 0444);
++module_param_hw(share_irq, bool, other, 0444);
+ MODULE_PARM_DESC(share_irq, "Share interrupts (0 = off, 1 = on)");
+ 
+ module_param(sense, int, 0444);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
