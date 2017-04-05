@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:59:10 +0100
-Subject: [PATCH 16/38] Annotate hardware config module parameters in
-	drivers/net/appletalk/
+Date: Wed, 05 Apr 2017 17:59:31 +0100
+Subject: [PATCH 18/38] Annotate hardware config module parameters in
+	drivers/net/can/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141155002.29162.9347070846007030789.stgit@warthog.procyon.org.uk>
+Message-ID: <149141157162.29162.10145088436840145584.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,52 +26,70 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/net/appletalk/.
+This patch annotates drivers in drivers/net/can/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+cc: Wolfgang Grandegger <wg@grandegger.com>
+cc: linux-can at vger.kernel.org
 cc: netdev at vger.kernel.org
 ---
 
- drivers/net/appletalk/cops.c |    6 +++---
- drivers/net/appletalk/ltpc.c |    6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/can/cc770/cc770_isa.c     |    8 ++++----
+ drivers/net/can/sja1000/sja1000_isa.c |    8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/appletalk/cops.c b/drivers/net/appletalk/cops.c
-index 1b2e9217ec78..486e1e6997fc 100644
---- a/drivers/net/appletalk/cops.c
-+++ b/drivers/net/appletalk/cops.c
-@@ -986,9 +986,9 @@ static int cops_close(struct net_device *dev)
- static struct net_device *cops_dev;
+diff --git a/drivers/net/can/cc770/cc770_isa.c b/drivers/net/can/cc770/cc770_isa.c
+index e0d15711e9ac..3a30fd3b4498 100644
+--- a/drivers/net/can/cc770/cc770_isa.c
++++ b/drivers/net/can/cc770/cc770_isa.c
+@@ -82,16 +82,16 @@ static u8 cor[MAXDEV] = {[0 ... (MAXDEV - 1)] = 0xff};
+ static u8 bcr[MAXDEV] = {[0 ... (MAXDEV - 1)] = 0xff};
+ static int indirect[MAXDEV] = {[0 ... (MAXDEV - 1)] = -1};
  
- MODULE_LICENSE("GPL");
--module_param(io, int, 0);
--module_param(irq, int, 0);
--module_param(board_type, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
-+module_param_hw(board_type, int, other, 0);
+-module_param_array(port, ulong, NULL, S_IRUGO);
++module_param_hw_array(port, ulong, ioport, NULL, S_IRUGO);
+ MODULE_PARM_DESC(port, "I/O port number");
  
- static int __init cops_module_init(void)
- {
-diff --git a/drivers/net/appletalk/ltpc.c b/drivers/net/appletalk/ltpc.c
-index 01e2ac55c137..ac755d2950a6 100644
---- a/drivers/net/appletalk/ltpc.c
-+++ b/drivers/net/appletalk/ltpc.c
-@@ -1231,9 +1231,9 @@ static struct net_device *dev_ltpc;
+-module_param_array(mem, ulong, NULL, S_IRUGO);
++module_param_hw_array(mem, ulong, iomem, NULL, S_IRUGO);
+ MODULE_PARM_DESC(mem, "I/O memory address");
  
- MODULE_LICENSE("GPL");
- module_param(debug, int, 0);
--module_param(io, int, 0);
--module_param(irq, int, 0);
--module_param(dma, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
-+module_param_hw(dma, int, dma, 0);
+-module_param_array(indirect, int, NULL, S_IRUGO);
++module_param_hw_array(indirect, int, ioport, NULL, S_IRUGO);
+ MODULE_PARM_DESC(indirect, "Indirect access via address and data port");
  
+-module_param_array(irq, int, NULL, S_IRUGO);
++module_param_hw_array(irq, int, irq, NULL, S_IRUGO);
+ MODULE_PARM_DESC(irq, "IRQ number");
  
- static int __init ltpc_module_init(void)
+ module_param_array(clk, int, NULL, S_IRUGO);
+diff --git a/drivers/net/can/sja1000/sja1000_isa.c b/drivers/net/can/sja1000/sja1000_isa.c
+index e97e6d35b300..a89c1e92554d 100644
+--- a/drivers/net/can/sja1000/sja1000_isa.c
++++ b/drivers/net/can/sja1000/sja1000_isa.c
+@@ -48,16 +48,16 @@ static unsigned char ocr[MAXDEV] = {[0 ... (MAXDEV - 1)] = 0xff};
+ static int indirect[MAXDEV] = {[0 ... (MAXDEV - 1)] = -1};
+ static spinlock_t indirect_lock[MAXDEV];  /* lock for indirect access mode */
+ 
+-module_param_array(port, ulong, NULL, S_IRUGO);
++module_param_hw_array(port, ulong, ioport, NULL, S_IRUGO);
+ MODULE_PARM_DESC(port, "I/O port number");
+ 
+-module_param_array(mem, ulong, NULL, S_IRUGO);
++module_param_hw_array(mem, ulong, iomem, NULL, S_IRUGO);
+ MODULE_PARM_DESC(mem, "I/O memory address");
+ 
+-module_param_array(indirect, int, NULL, S_IRUGO);
++module_param_hw_array(indirect, int, ioport, NULL, S_IRUGO);
+ MODULE_PARM_DESC(indirect, "Indirect access via address and data port");
+ 
+-module_param_array(irq, int, NULL, S_IRUGO);
++module_param_hw_array(irq, int, irq, NULL, S_IRUGO);
+ MODULE_PARM_DESC(irq, "IRQ number");
+ 
+ module_param_array(clk, int, NULL, S_IRUGO);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
