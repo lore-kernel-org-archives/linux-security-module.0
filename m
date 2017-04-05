@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:58:23 +0100
-Subject: [PATCH 11/38] Annotate hardware config module parameters in
-	drivers/input/
+Date: Wed, 05 Apr 2017 17:59:10 +0100
+Subject: [PATCH 16/38] Annotate hardware config module parameters in
+	drivers/net/appletalk/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141150295.29162.10580790231116897238.stgit@warthog.procyon.org.uk>
+Message-ID: <149141155002.29162.9347070846007030789.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,63 +26,52 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/input/.
+This patch annotates drivers in drivers/net/appletalk/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc: linux-input at vger.kernel.org
+cc: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+cc: netdev at vger.kernel.org
 ---
 
- drivers/input/mouse/inport.c      |    2 +-
- drivers/input/mouse/logibm.c      |    2 +-
- drivers/input/touchscreen/mk712.c |    4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/appletalk/cops.c |    6 +++---
+ drivers/net/appletalk/ltpc.c |    6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/mouse/inport.c b/drivers/input/mouse/inport.c
-index 3827a22362de..9ce71dfa0de1 100644
---- a/drivers/input/mouse/inport.c
-+++ b/drivers/input/mouse/inport.c
-@@ -78,7 +78,7 @@ MODULE_LICENSE("GPL");
- #define INPORT_IRQ		5
+diff --git a/drivers/net/appletalk/cops.c b/drivers/net/appletalk/cops.c
+index 1b2e9217ec78..486e1e6997fc 100644
+--- a/drivers/net/appletalk/cops.c
++++ b/drivers/net/appletalk/cops.c
+@@ -986,9 +986,9 @@ static int cops_close(struct net_device *dev)
+ static struct net_device *cops_dev;
  
- static int inport_irq = INPORT_IRQ;
--module_param_named(irq, inport_irq, uint, 0);
-+module_param_hw_named(irq, inport_irq, uint, irq, 0);
- MODULE_PARM_DESC(irq, "IRQ number (5=default)");
- 
- static struct input_dev *inport_dev;
-diff --git a/drivers/input/mouse/logibm.c b/drivers/input/mouse/logibm.c
-index e2413113df22..6f165e053f4d 100644
---- a/drivers/input/mouse/logibm.c
-+++ b/drivers/input/mouse/logibm.c
-@@ -69,7 +69,7 @@ MODULE_LICENSE("GPL");
- #define LOGIBM_IRQ		5
- 
- static int logibm_irq = LOGIBM_IRQ;
--module_param_named(irq, logibm_irq, uint, 0);
-+module_param_hw_named(irq, logibm_irq, uint, irq, 0);
- MODULE_PARM_DESC(irq, "IRQ number (5=default)");
- 
- static struct input_dev *logibm_dev;
-diff --git a/drivers/input/touchscreen/mk712.c b/drivers/input/touchscreen/mk712.c
-index 36e57deacd03..bd5352824f77 100644
---- a/drivers/input/touchscreen/mk712.c
-+++ b/drivers/input/touchscreen/mk712.c
-@@ -50,11 +50,11 @@ MODULE_DESCRIPTION("ICS MicroClock MK712 TouchScreen driver");
  MODULE_LICENSE("GPL");
+-module_param(io, int, 0);
+-module_param(irq, int, 0);
+-module_param(board_type, int, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(irq, int, irq, 0);
++module_param_hw(board_type, int, other, 0);
  
- static unsigned int mk712_io = 0x260;	/* Also 0x200, 0x208, 0x300 */
--module_param_named(io, mk712_io, uint, 0);
-+module_param_hw_named(io, mk712_io, uint, ioport, 0);
- MODULE_PARM_DESC(io, "I/O base address of MK712 touchscreen controller");
+ static int __init cops_module_init(void)
+ {
+diff --git a/drivers/net/appletalk/ltpc.c b/drivers/net/appletalk/ltpc.c
+index 01e2ac55c137..ac755d2950a6 100644
+--- a/drivers/net/appletalk/ltpc.c
++++ b/drivers/net/appletalk/ltpc.c
+@@ -1231,9 +1231,9 @@ static struct net_device *dev_ltpc;
  
- static unsigned int mk712_irq = 10;	/* Also 12, 14, 15 */
--module_param_named(irq, mk712_irq, uint, 0);
-+module_param_hw_named(irq, mk712_irq, uint, irq, 0);
- MODULE_PARM_DESC(irq, "IRQ of MK712 touchscreen controller");
+ MODULE_LICENSE("GPL");
+ module_param(debug, int, 0);
+-module_param(io, int, 0);
+-module_param(irq, int, 0);
+-module_param(dma, int, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(irq, int, irq, 0);
++module_param_hw(dma, int, dma, 0);
  
- /* eight 8-bit registers */
+ 
+ static int __init ltpc_module_init(void)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
