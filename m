@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:59:49 +0100
-Subject: [PATCH 20/38] Annotate hardware config module parameters in
-	drivers/net/hamradio/
+Date: Wed, 05 Apr 2017 17:59:39 +0100
+Subject: [PATCH 19/38] Annotate hardware config module parameters in
+	drivers/net/ethernet/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141158945.29162.14007212429239876813.stgit@warthog.procyon.org.uk>
+Message-ID: <149141157961.29162.16197434822666566656.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,94 +26,217 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/net/hamradio/.
+This patch annotates drivers in drivers/net/ethernet/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Thomas Sailer <t.sailer@alumni.ethz.ch>
-cc: Joerg Reuter <jreuter@yaina.de>
-cc: linux-hams at vger.kernel.org
+cc: Steffen Klassert <klassert@mathematik.tu-chemnitz.de>
+cc: Jaroslav Kysela <perex@perex.cz>
 cc: netdev at vger.kernel.org
+cc: linux-parisc at vger.kernel.org
 ---
 
- drivers/net/hamradio/baycom_epp.c     |    2 +-
- drivers/net/hamradio/baycom_par.c     |    2 +-
- drivers/net/hamradio/baycom_ser_fdx.c |    4 ++--
- drivers/net/hamradio/baycom_ser_hdx.c |    4 ++--
- drivers/net/hamradio/dmascc.c         |    2 +-
- 5 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/3com/3c509.c      |    2 +-
+ drivers/net/ethernet/3com/3c59x.c      |    4 ++--
+ drivers/net/ethernet/8390/ne.c         |    4 ++--
+ drivers/net/ethernet/8390/smc-ultra.c  |    4 ++--
+ drivers/net/ethernet/8390/wd.c         |    8 ++++----
+ drivers/net/ethernet/amd/lance.c       |    6 +++---
+ drivers/net/ethernet/amd/ni65.c        |    6 +++---
+ drivers/net/ethernet/cirrus/cs89x0.c   |    6 +++---
+ drivers/net/ethernet/dec/tulip/de4x5.c |    2 +-
+ drivers/net/ethernet/hp/hp100.c        |    2 +-
+ drivers/net/ethernet/realtek/atp.c     |    4 ++--
+ drivers/net/ethernet/smsc/smc9194.c    |    4 ++--
+ 12 files changed, 26 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
-index 594fa1407e29..1503f10122f7 100644
---- a/drivers/net/hamradio/baycom_epp.c
-+++ b/drivers/net/hamradio/baycom_epp.c
-@@ -1176,7 +1176,7 @@ static int iobase[NR_PORTS] = { 0x378, };
+diff --git a/drivers/net/ethernet/3com/3c509.c b/drivers/net/ethernet/3com/3c509.c
+index c7f9f2c77da7..db8592d412ab 100644
+--- a/drivers/net/ethernet/3com/3c509.c
++++ b/drivers/net/ethernet/3com/3c509.c
+@@ -1371,7 +1371,7 @@ el3_resume(struct device *pdev)
+ #endif /* CONFIG_PM */
  
- module_param_array(mode, charp, NULL, 0);
- MODULE_PARM_DESC(mode, "baycom operating mode");
--module_param_array(iobase, int, NULL, 0);
-+module_param_hw_array(iobase, int, ioport, NULL, 0);
- MODULE_PARM_DESC(iobase, "baycom io base address");
- 
- MODULE_AUTHOR("Thomas M. Sailer, sailer at ife.ee.ethz.ch, hb9jnx at hb9w.che.eu");
-diff --git a/drivers/net/hamradio/baycom_par.c b/drivers/net/hamradio/baycom_par.c
-index 809dc25909d1..92b13b39f426 100644
---- a/drivers/net/hamradio/baycom_par.c
-+++ b/drivers/net/hamradio/baycom_par.c
-@@ -481,7 +481,7 @@ static int iobase[NR_PORTS] = { 0x378, };
- 
- module_param_array(mode, charp, NULL, 0);
- MODULE_PARM_DESC(mode, "baycom operating mode; eg. par96 or picpar");
--module_param_array(iobase, int, NULL, 0);
-+module_param_hw_array(iobase, int, ioport, NULL, 0);
- MODULE_PARM_DESC(iobase, "baycom io base address");
- 
- MODULE_AUTHOR("Thomas M. Sailer, sailer at ife.ee.ethz.ch, hb9jnx at hb9w.che.eu");
-diff --git a/drivers/net/hamradio/baycom_ser_fdx.c b/drivers/net/hamradio/baycom_ser_fdx.c
-index ebc06822fd4d..d9a646acca20 100644
---- a/drivers/net/hamradio/baycom_ser_fdx.c
-+++ b/drivers/net/hamradio/baycom_ser_fdx.c
-@@ -614,9 +614,9 @@ static int baud[NR_PORTS] = { [0 ... NR_PORTS-1] = 1200 };
- 
- module_param_array(mode, charp, NULL, 0);
- MODULE_PARM_DESC(mode, "baycom operating mode; * for software DCD");
--module_param_array(iobase, int, NULL, 0);
-+module_param_hw_array(iobase, int, ioport, NULL, 0);
- MODULE_PARM_DESC(iobase, "baycom io base address");
+ module_param(debug,int, 0);
 -module_param_array(irq, int, NULL, 0);
 +module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "baycom irq number");
- module_param_array(baud, int, NULL, 0);
- MODULE_PARM_DESC(baud, "baycom baud rate (300 to 4800)");
-diff --git a/drivers/net/hamradio/baycom_ser_hdx.c b/drivers/net/hamradio/baycom_ser_hdx.c
-index 60fcf512c208..f1c8a9ff3891 100644
---- a/drivers/net/hamradio/baycom_ser_hdx.c
-+++ b/drivers/net/hamradio/baycom_ser_hdx.c
-@@ -642,9 +642,9 @@ static int irq[NR_PORTS] = { 4, };
+ module_param(max_interrupt_work, int, 0);
+ MODULE_PARM_DESC(debug, "debug level (0-6)");
+ MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
+diff --git a/drivers/net/ethernet/3com/3c59x.c b/drivers/net/ethernet/3com/3c59x.c
+index 40196f41768a..e41245a54f8b 100644
+--- a/drivers/net/ethernet/3com/3c59x.c
++++ b/drivers/net/ethernet/3com/3c59x.c
+@@ -813,8 +813,8 @@ module_param(global_enable_wol, int, 0);
+ module_param_array(enable_wol, int, NULL, 0);
+ module_param(rx_copybreak, int, 0);
+ module_param(max_interrupt_work, int, 0);
+-module_param(compaq_ioaddr, int, 0);
+-module_param(compaq_irq, int, 0);
++module_param_hw(compaq_ioaddr, int, ioport, 0);
++module_param_hw(compaq_irq, int, irq, 0);
+ module_param(compaq_device_id, int, 0);
+ module_param(watchdog, int, 0);
+ module_param(global_use_mmio, int, 0);
+diff --git a/drivers/net/ethernet/8390/ne.c b/drivers/net/ethernet/8390/ne.c
+index c063b410a163..66f47987e2a2 100644
+--- a/drivers/net/ethernet/8390/ne.c
++++ b/drivers/net/ethernet/8390/ne.c
+@@ -74,8 +74,8 @@ static int bad[MAX_NE_CARDS];
+ static u32 ne_msg_enable;
  
- module_param_array(mode, charp, NULL, 0);
- MODULE_PARM_DESC(mode, "baycom operating mode; * for software DCD");
--module_param_array(iobase, int, NULL, 0);
-+module_param_hw_array(iobase, int, ioport, NULL, 0);
- MODULE_PARM_DESC(iobase, "baycom io base address");
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "baycom irq number");
- 
- MODULE_AUTHOR("Thomas M. Sailer, sailer at ife.ee.ethz.ch, hb9jnx at hb9w.che.eu");
-diff --git a/drivers/net/hamradio/dmascc.c b/drivers/net/hamradio/dmascc.c
-index 2479072981a1..dec6b76bc0fb 100644
---- a/drivers/net/hamradio/dmascc.c
-+++ b/drivers/net/hamradio/dmascc.c
-@@ -274,7 +274,7 @@ static unsigned long rand;
- 
- MODULE_AUTHOR("Klaus Kudielka");
- MODULE_DESCRIPTION("Driver for high-speed SCC boards");
+ #ifdef MODULE
 -module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
 +module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param_array(bad, int, NULL, 0);
+ module_param_named(msg_enable, ne_msg_enable, uint, (S_IRUSR|S_IRGRP|S_IROTH));
+ MODULE_PARM_DESC(io, "I/O base address(es),required");
+diff --git a/drivers/net/ethernet/8390/smc-ultra.c b/drivers/net/ethernet/8390/smc-ultra.c
+index 364b6514f65f..4e02f6a23575 100644
+--- a/drivers/net/ethernet/8390/smc-ultra.c
++++ b/drivers/net/ethernet/8390/smc-ultra.c
+@@ -561,8 +561,8 @@ static struct net_device *dev_ultra[MAX_ULTRA_CARDS];
+ static int io[MAX_ULTRA_CARDS];
+ static int irq[MAX_ULTRA_CARDS];
+ 
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param_named(msg_enable, ultra_msg_enable, uint, (S_IRUSR|S_IRGRP|S_IROTH));
+ MODULE_PARM_DESC(io, "I/O base address(es)");
+ MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
+diff --git a/drivers/net/ethernet/8390/wd.c b/drivers/net/ethernet/8390/wd.c
+index ad019cbc698f..6efa2722f850 100644
+--- a/drivers/net/ethernet/8390/wd.c
++++ b/drivers/net/ethernet/8390/wd.c
+@@ -503,10 +503,10 @@ static int irq[MAX_WD_CARDS];
+ static int mem[MAX_WD_CARDS];
+ static int mem_end[MAX_WD_CARDS];	/* for non std. mem size */
+ 
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
+-module_param_array(mem, int, NULL, 0);
+-module_param_array(mem_end, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
++module_param_hw_array(mem, int, iomem, NULL, 0);
++module_param_hw_array(mem_end, int, iomem, NULL, 0);
+ module_param_named(msg_enable, wd_msg_enable, uint, (S_IRUSR|S_IRGRP|S_IROTH));
+ MODULE_PARM_DESC(io, "I/O base address(es)");
+ MODULE_PARM_DESC(irq, "IRQ number(s) (ignored for PureData boards)");
+diff --git a/drivers/net/ethernet/amd/lance.c b/drivers/net/ethernet/amd/lance.c
+index 61a641f23149..12a6a93d221b 100644
+--- a/drivers/net/ethernet/amd/lance.c
++++ b/drivers/net/ethernet/amd/lance.c
+@@ -318,9 +318,9 @@ static int io[MAX_CARDS];
+ static int dma[MAX_CARDS];
+ static int irq[MAX_CARDS];
+ 
+-module_param_array(io, int, NULL, 0);
+-module_param_array(dma, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(dma, int, dma, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param(lance_debug, int, 0);
+ MODULE_PARM_DESC(io, "LANCE/PCnet I/O base address(es),required");
+ MODULE_PARM_DESC(dma, "LANCE/PCnet ISA DMA channel (ignored for some devices)");
+diff --git a/drivers/net/ethernet/amd/ni65.c b/drivers/net/ethernet/amd/ni65.c
+index 5985bf220a8d..e248d1ab3e47 100644
+--- a/drivers/net/ethernet/amd/ni65.c
++++ b/drivers/net/ethernet/amd/ni65.c
+@@ -1227,9 +1227,9 @@ static void set_multicast_list(struct net_device *dev)
+ #ifdef MODULE
+ static struct net_device *dev_ni65;
+ 
+-module_param(irq, int, 0);
+-module_param(io, int, 0);
+-module_param(dma, int, 0);
++module_param_hw(irq, int, irq, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(dma, int, dma, 0);
+ MODULE_PARM_DESC(irq, "ni6510 IRQ number (ignored for some cards)");
+ MODULE_PARM_DESC(io, "ni6510 I/O base address");
+ MODULE_PARM_DESC(dma, "ni6510 ISA DMA channel (ignored for some cards)");
+diff --git a/drivers/net/ethernet/cirrus/cs89x0.c b/drivers/net/ethernet/cirrus/cs89x0.c
+index 3647b28e8de0..8f660d9761cc 100644
+--- a/drivers/net/ethernet/cirrus/cs89x0.c
++++ b/drivers/net/ethernet/cirrus/cs89x0.c
+@@ -1704,12 +1704,12 @@ static int use_dma;			/* These generate unused var warnings if ALLOW_DMA = 0 */
+ static int dma;
+ static int dmasize = 16;		/* or 64 */
+ 
+-module_param(io, int, 0);
+-module_param(irq, int, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(irq, int, irq, 0);
+ module_param(debug, int, 0);
+ module_param_string(media, media, sizeof(media), 0);
+ module_param(duplex, int, 0);
+-module_param(dma , int, 0);
++module_param_hw(dma , int, dma, 0);
+ module_param(dmasize , int, 0);
+ module_param(use_dma , int, 0);
+ MODULE_PARM_DESC(io, "cs89x0 I/O base address");
+diff --git a/drivers/net/ethernet/dec/tulip/de4x5.c b/drivers/net/ethernet/dec/tulip/de4x5.c
+index df4a871df633..fd6bcf024729 100644
+--- a/drivers/net/ethernet/dec/tulip/de4x5.c
++++ b/drivers/net/ethernet/dec/tulip/de4x5.c
+@@ -1015,7 +1015,7 @@ static int     compact_infoblock(struct net_device *dev, u_char count, u_char *p
+ 
+ static int io=0x0;/* EDIT THIS LINE FOR YOUR CONFIGURATION IF NEEDED        */
+ 
+-module_param(io, int, 0);
++module_param_hw(io, int, ioport, 0);
+ module_param(de4x5_debug, int, 0);
+ module_param(dec_only, int, 0);
+ module_param(args, charp, 0);
+diff --git a/drivers/net/ethernet/hp/hp100.c b/drivers/net/ethernet/hp/hp100.c
+index 1a31bee6e728..5673b071e39d 100644
+--- a/drivers/net/ethernet/hp/hp100.c
++++ b/drivers/net/ethernet/hp/hp100.c
+@@ -2966,7 +2966,7 @@ MODULE_DESCRIPTION("HP CASCADE Architecture Driver for 100VG-AnyLan Network Adap
+ #define HP100_DEVICES 5
+ /* Parameters set by insmod */
+ static int hp100_port[HP100_DEVICES] = { 0, [1 ... (HP100_DEVICES-1)] = -1 };
+-module_param_array(hp100_port, int, NULL, 0);
++module_param_hw_array(hp100_port, int, ioport, NULL, 0);
+ 
+ /* List of devices */
+ static struct net_device *hp100_devlist[HP100_DEVICES];
+diff --git a/drivers/net/ethernet/realtek/atp.c b/drivers/net/ethernet/realtek/atp.c
+index 9bcd4aefc9c5..bed34684994f 100644
+--- a/drivers/net/ethernet/realtek/atp.c
++++ b/drivers/net/ethernet/realtek/atp.c
+@@ -151,8 +151,8 @@ MODULE_LICENSE("GPL");
+ 
+ module_param(max_interrupt_work, int, 0);
+ module_param(debug, int, 0);
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param_array(xcvr, int, NULL, 0);
+ MODULE_PARM_DESC(max_interrupt_work, "ATP maximum events handled per interrupt");
+ MODULE_PARM_DESC(debug, "ATP debug level (0-7)");
+diff --git a/drivers/net/ethernet/smsc/smc9194.c b/drivers/net/ethernet/smsc/smc9194.c
+index c8d84679ede7..d3bb2ba51f40 100644
+--- a/drivers/net/ethernet/smsc/smc9194.c
++++ b/drivers/net/ethernet/smsc/smc9194.c
+@@ -1501,8 +1501,8 @@ static void smc_set_multicast_list(struct net_device *dev)
+ static struct net_device *devSMC9194;
  MODULE_LICENSE("GPL");
  
- static void __exit dmascc_exit(void)
+-module_param(io, int, 0);
+-module_param(irq, int, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(irq, int, irq, 0);
+ module_param(ifport, int, 0);
+ MODULE_PARM_DESC(io, "SMC 99194 I/O base address");
+ MODULE_PARM_DESC(irq, "SMC 99194 IRQ number");
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
