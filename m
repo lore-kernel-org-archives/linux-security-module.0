@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:58:03 +0100
-Subject: [PATCH 09/38] Annotate hardware config module parameters in
-	drivers/i2c/
+Date: Wed, 05 Apr 2017 17:59:49 +0100
+Subject: [PATCH 20/38] Annotate hardware config module parameters in
+	drivers/net/hamradio/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141148368.29162.12692004178864468110.stgit@warthog.procyon.org.uk>
+Message-ID: <149141158945.29162.14007212429239876813.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,141 +26,94 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/i2c/.
+This patch annotates drivers in drivers/net/hamradio/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Wolfram Sang <wsa@the-dreams.de>
-cc: Jean Delvare <jdelvare@suse.com>
-cc: linux-i2c at vger.kernel.org
+cc: Thomas Sailer <t.sailer@alumni.ethz.ch>
+cc: Joerg Reuter <jreuter@yaina.de>
+cc: linux-hams at vger.kernel.org
+cc: netdev at vger.kernel.org
 ---
 
- drivers/i2c/busses/i2c-ali15x3.c       |    2 +-
- drivers/i2c/busses/i2c-elektor.c       |    6 +++---
- drivers/i2c/busses/i2c-parport-light.c |    4 ++--
- drivers/i2c/busses/i2c-pca-isa.c       |    4 ++--
- drivers/i2c/busses/i2c-piix4.c         |    2 +-
- drivers/i2c/busses/i2c-sis5595.c       |    2 +-
- drivers/i2c/busses/i2c-viapro.c        |    2 +-
- drivers/i2c/busses/scx200_acb.c        |    2 +-
- 8 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/net/hamradio/baycom_epp.c     |    2 +-
+ drivers/net/hamradio/baycom_par.c     |    2 +-
+ drivers/net/hamradio/baycom_ser_fdx.c |    4 ++--
+ drivers/net/hamradio/baycom_ser_hdx.c |    4 ++--
+ drivers/net/hamradio/dmascc.c         |    2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-ali15x3.c b/drivers/i2c/busses/i2c-ali15x3.c
-index 45c5c4883022..6e6bf46bcb52 100644
---- a/drivers/i2c/busses/i2c-ali15x3.c
-+++ b/drivers/i2c/busses/i2c-ali15x3.c
-@@ -119,7 +119,7 @@
- /* If force_addr is set to anything different from 0, we forcibly enable
-    the device at the given address. */
- static u16 force_addr;
--module_param(force_addr, ushort, 0);
-+module_param_hw(force_addr, ushort, ioport, 0);
- MODULE_PARM_DESC(force_addr,
- 		 "Initialize the base address of the i2c controller");
+diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
+index 594fa1407e29..1503f10122f7 100644
+--- a/drivers/net/hamradio/baycom_epp.c
++++ b/drivers/net/hamradio/baycom_epp.c
+@@ -1176,7 +1176,7 @@ static int iobase[NR_PORTS] = { 0x378, };
  
-diff --git a/drivers/i2c/busses/i2c-elektor.c b/drivers/i2c/busses/i2c-elektor.c
-index 8af62fb3fe41..5416003e0605 100644
---- a/drivers/i2c/busses/i2c-elektor.c
-+++ b/drivers/i2c/busses/i2c-elektor.c
-@@ -323,9 +323,9 @@ MODULE_AUTHOR("Hans Berglund <hb@spacetec.no>");
- MODULE_DESCRIPTION("I2C-Bus adapter routines for PCF8584 ISA bus adapter");
+ module_param_array(mode, charp, NULL, 0);
+ MODULE_PARM_DESC(mode, "baycom operating mode");
+-module_param_array(iobase, int, NULL, 0);
++module_param_hw_array(iobase, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(iobase, "baycom io base address");
+ 
+ MODULE_AUTHOR("Thomas M. Sailer, sailer at ife.ee.ethz.ch, hb9jnx at hb9w.che.eu");
+diff --git a/drivers/net/hamradio/baycom_par.c b/drivers/net/hamradio/baycom_par.c
+index 809dc25909d1..92b13b39f426 100644
+--- a/drivers/net/hamradio/baycom_par.c
++++ b/drivers/net/hamradio/baycom_par.c
+@@ -481,7 +481,7 @@ static int iobase[NR_PORTS] = { 0x378, };
+ 
+ module_param_array(mode, charp, NULL, 0);
+ MODULE_PARM_DESC(mode, "baycom operating mode; eg. par96 or picpar");
+-module_param_array(iobase, int, NULL, 0);
++module_param_hw_array(iobase, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(iobase, "baycom io base address");
+ 
+ MODULE_AUTHOR("Thomas M. Sailer, sailer at ife.ee.ethz.ch, hb9jnx at hb9w.che.eu");
+diff --git a/drivers/net/hamradio/baycom_ser_fdx.c b/drivers/net/hamradio/baycom_ser_fdx.c
+index ebc06822fd4d..d9a646acca20 100644
+--- a/drivers/net/hamradio/baycom_ser_fdx.c
++++ b/drivers/net/hamradio/baycom_ser_fdx.c
+@@ -614,9 +614,9 @@ static int baud[NR_PORTS] = { [0 ... NR_PORTS-1] = 1200 };
+ 
+ module_param_array(mode, charp, NULL, 0);
+ MODULE_PARM_DESC(mode, "baycom operating mode; * for software DCD");
+-module_param_array(iobase, int, NULL, 0);
++module_param_hw_array(iobase, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(iobase, "baycom io base address");
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "baycom irq number");
+ module_param_array(baud, int, NULL, 0);
+ MODULE_PARM_DESC(baud, "baycom baud rate (300 to 4800)");
+diff --git a/drivers/net/hamradio/baycom_ser_hdx.c b/drivers/net/hamradio/baycom_ser_hdx.c
+index 60fcf512c208..f1c8a9ff3891 100644
+--- a/drivers/net/hamradio/baycom_ser_hdx.c
++++ b/drivers/net/hamradio/baycom_ser_hdx.c
+@@ -642,9 +642,9 @@ static int irq[NR_PORTS] = { 4, };
+ 
+ module_param_array(mode, charp, NULL, 0);
+ MODULE_PARM_DESC(mode, "baycom operating mode; * for software DCD");
+-module_param_array(iobase, int, NULL, 0);
++module_param_hw_array(iobase, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(iobase, "baycom io base address");
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "baycom irq number");
+ 
+ MODULE_AUTHOR("Thomas M. Sailer, sailer at ife.ee.ethz.ch, hb9jnx at hb9w.che.eu");
+diff --git a/drivers/net/hamradio/dmascc.c b/drivers/net/hamradio/dmascc.c
+index 2479072981a1..dec6b76bc0fb 100644
+--- a/drivers/net/hamradio/dmascc.c
++++ b/drivers/net/hamradio/dmascc.c
+@@ -274,7 +274,7 @@ static unsigned long rand;
+ 
+ MODULE_AUTHOR("Klaus Kudielka");
+ MODULE_DESCRIPTION("Driver for high-speed SCC boards");
+-module_param_array(io, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
  MODULE_LICENSE("GPL");
  
--module_param(base, int, 0);
--module_param(irq, int, 0);
-+module_param_hw(base, int, ioport_or_iomem, 0);
-+module_param_hw(irq, int, irq, 0);
- module_param(clock, int, 0);
- module_param(own, int, 0);
--module_param(mmapped, int, 0);
-+module_param_hw(mmapped, int, other, 0);
- module_isa_driver(i2c_elektor_driver, 1);
-diff --git a/drivers/i2c/busses/i2c-parport-light.c b/drivers/i2c/busses/i2c-parport-light.c
-index 1bcdd10b68b9..faa8fb8f2b8f 100644
---- a/drivers/i2c/busses/i2c-parport-light.c
-+++ b/drivers/i2c/busses/i2c-parport-light.c
-@@ -38,11 +38,11 @@
- static struct platform_device *pdev;
- 
- static u16 base;
--module_param(base, ushort, 0);
-+module_param_hw(base, ushort, ioport, 0);
- MODULE_PARM_DESC(base, "Base I/O address");
- 
- static int irq;
--module_param(irq, int, 0);
-+module_param_hw(irq, int, irq, 0);
- MODULE_PARM_DESC(irq, "IRQ (optional)");
- 
- /* ----- Low-level parallel port access ----------------------------------- */
-diff --git a/drivers/i2c/busses/i2c-pca-isa.c b/drivers/i2c/busses/i2c-pca-isa.c
-index ba88f17f636c..946ac646de2a 100644
---- a/drivers/i2c/busses/i2c-pca-isa.c
-+++ b/drivers/i2c/busses/i2c-pca-isa.c
-@@ -197,9 +197,9 @@ MODULE_AUTHOR("Ian Campbell <icampbell@arcom.com>");
- MODULE_DESCRIPTION("ISA base PCA9564/PCA9665 driver");
- MODULE_LICENSE("GPL");
- 
--module_param(base, ulong, 0);
-+module_param_hw(base, ulong, ioport, 0);
- MODULE_PARM_DESC(base, "I/O base address");
--module_param(irq, int, 0);
-+module_param_hw(irq, int, irq, 0);
- MODULE_PARM_DESC(irq, "IRQ");
- module_param(clock, int, 0);
- MODULE_PARM_DESC(clock, "Clock rate in hertz.\n\t\t"
-diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-index c21ca7bf2efe..0ecdb47a23ab 100644
---- a/drivers/i2c/busses/i2c-piix4.c
-+++ b/drivers/i2c/busses/i2c-piix4.c
-@@ -106,7 +106,7 @@ MODULE_PARM_DESC(force, "Forcibly enable the PIIX4. DANGEROUS!");
- /* If force_addr is set to anything different from 0, we forcibly enable
-    the PIIX4 at the given address. VERY DANGEROUS! */
- static int force_addr;
--module_param (force_addr, int, 0);
-+module_param_hw(force_addr, int, ioport, 0);
- MODULE_PARM_DESC(force_addr,
- 		 "Forcibly enable the PIIX4 at the given address. "
- 		 "EXTREMELY DANGEROUS!");
-diff --git a/drivers/i2c/busses/i2c-sis5595.c b/drivers/i2c/busses/i2c-sis5595.c
-index 7d58a40faf2d..d543a9867ba4 100644
---- a/drivers/i2c/busses/i2c-sis5595.c
-+++ b/drivers/i2c/busses/i2c-sis5595.c
-@@ -119,7 +119,7 @@ static int blacklist[] = {
- /* If force_addr is set to anything different from 0, we forcibly enable
-    the device at the given address. */
- static u16 force_addr;
--module_param(force_addr, ushort, 0);
-+module_param_hw(force_addr, ushort, ioport, 0);
- MODULE_PARM_DESC(force_addr, "Initialize the base address of the i2c controller");
- 
- static struct pci_driver sis5595_driver;
-diff --git a/drivers/i2c/busses/i2c-viapro.c b/drivers/i2c/busses/i2c-viapro.c
-index 0ee2646f3b00..0dc45e12bb1d 100644
---- a/drivers/i2c/busses/i2c-viapro.c
-+++ b/drivers/i2c/busses/i2c-viapro.c
-@@ -94,7 +94,7 @@ MODULE_PARM_DESC(force, "Forcibly enable the SMBus. DANGEROUS!");
- /* If force_addr is set to anything different from 0, we forcibly enable
-    the VT596 at the given address. VERY DANGEROUS! */
- static u16 force_addr;
--module_param(force_addr, ushort, 0);
-+module_param_hw(force_addr, ushort, ioport, 0);
- MODULE_PARM_DESC(force_addr,
- 		 "Forcibly enable the SMBus at the given address. "
- 		 "EXTREMELY DANGEROUS!");
-diff --git a/drivers/i2c/busses/scx200_acb.c b/drivers/i2c/busses/scx200_acb.c
-index 0a7e410b6195..e0923bee8d1f 100644
---- a/drivers/i2c/busses/scx200_acb.c
-+++ b/drivers/i2c/busses/scx200_acb.c
-@@ -42,7 +42,7 @@ MODULE_LICENSE("GPL");
- 
- #define MAX_DEVICES 4
- static int base[MAX_DEVICES] = { 0x820, 0x840 };
--module_param_array(base, int, NULL, 0);
-+module_param_hw_array(base, int, ioport, NULL, 0);
- MODULE_PARM_DESC(base, "Base addresses for the ACCESS.bus controllers");
- 
- #define POLL_TIMEOUT	(HZ/5)
+ static void __exit dmascc_exit(void)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
