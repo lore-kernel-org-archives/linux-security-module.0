@@ -1,10 +1,9 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:01:18 +0100
-Subject: [PATCH 30/38] Annotate hardware config module parameters in
-	drivers/staging/vme/
+Date: Wed, 05 Apr 2017 18:01:51 +0100
+Subject: [PATCH 34/38] Annotate hardware config module parameters in fs/pstore/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141167881.29162.13141146387103697901.stgit@warthog.procyon.org.uk>
+Message-ID: <149141171185.29162.10595534113980773776.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,44 +25,32 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/staging/vme/.
+This patch annotates drivers in fs/pstore/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Martyn Welch <martyn@welchs.me.uk>
-cc: Manohar Vanga <manohar.vanga@gmail.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: devel at driverdev.osuosl.org
+cc: Anton Vorontsov <anton@enomsg.org>
+cc: Colin Cross <ccross@android.com>
+cc: Kees Cook <keescook@chromium.org>
+cc: Tony Luck <tony.luck@intel.com>
 ---
 
- drivers/staging/vme/devices/vme_pio2_core.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/pstore/ram.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/vme/devices/vme_pio2_core.c b/drivers/staging/vme/devices/vme_pio2_core.c
-index 20a2d835fdaa..367535b4b77f 100644
---- a/drivers/staging/vme/devices/vme_pio2_core.c
-+++ b/drivers/staging/vme/devices/vme_pio2_core.c
-@@ -466,16 +466,16 @@ static void __exit pio2_exit(void)
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 11f918d34b1e..cce1d38417ca 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -58,7 +58,7 @@ module_param_named(pmsg_size, ramoops_pmsg_size, ulong, 0400);
+ MODULE_PARM_DESC(pmsg_size, "size of user space message log");
  
- /* These are required for each board */
- MODULE_PARM_DESC(bus, "Enumeration of VMEbus to which the board is connected");
--module_param_array(bus, int, &bus_num, 0444);
-+module_param_hw_array(bus, int, other, &bus_num, 0444);
+ static unsigned long long mem_address;
+-module_param(mem_address, ullong, 0400);
++module_param_hw(mem_address, ullong, other, 0400);
+ MODULE_PARM_DESC(mem_address,
+ 		"start of reserved RAM used to store oops/panic logs");
  
- MODULE_PARM_DESC(base, "Base VME address for PIO2 Registers");
--module_param_array(base, long, &base_num, 0444);
-+module_param_hw_array(base, long, other, &base_num, 0444);
- 
- MODULE_PARM_DESC(vector, "VME IRQ Vector (Lower 4 bits masked)");
--module_param_array(vector, int, &vector_num, 0444);
-+module_param_hw_array(vector, int, other, &vector_num, 0444);
- 
- MODULE_PARM_DESC(level, "VME IRQ Level");
--module_param_array(level, int, &level_num, 0444);
-+module_param_hw_array(level, int, other, &level_num, 0444);
- 
- MODULE_PARM_DESC(variant, "Last 4 characters of PIO2 board variant");
- module_param_array(variant, charp, &variant_num, 0444);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
