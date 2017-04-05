@@ -1,120 +1,123 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:00:13 +0100
-Subject: [PATCH 22/38] Annotate hardware config module parameters in
-	drivers/net/wan/
-In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141161382.29162.12502186702136370273.stgit@warthog.procyon.org.uk>
+Date: Wed, 05 Apr 2017 18:07:00 +0100
+Subject: [PATCH 00/24] Kernel lockdown
+Message-ID: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When the kernel is running in secure boot mode, we lock down the kernel to
-prevent userspace from modifying the running kernel image.  Whilst this
-includes prohibiting access to things like /dev/mem, it must also prevent
-access by means of configuring driver modules in such a way as to cause a
-device to access or modify the kernel image.
 
-To this end, annotate module_param* statements that refer to hardware
-configuration and indicate for future reference what type of parameter they
-specify.  The parameter parser in the core sees this information and can
-skip such parameters with an error message if the kernel is locked down.
-The module initialisation then runs as normal, but just sees whatever the
-default values for those parameters is.
+These patches provide a facility by which a variety of avenues by which
+userspace can feasibly modify the running kernel image can be locked down.
+These include:
 
-Note that we do still need to do the module initialisation because some
-drivers have viable defaults set in case parameters aren't specified and
-some drivers support automatic configuration (e.g. PNP or PCI) in addition
-to manually coded parameters.
+ (*) No unsigned modules and no modules for which can't validate the
+     signature.
 
-This patch annotates drivers in drivers/net/wan/.
+ (*) No use of ioperm(), iopl() and no writing to /dev/port.
 
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: "Jan \"Yenya\" Kasprzak" <kas@fi.muni.cz>
-cc: netdev at vger.kernel.org
+ (*) No writing to /dev/mem or /dev/kmem.
+
+ (*) No hibernation.
+
+ (*) Restrict PCI BAR access.
+
+ (*) Restrict MSR access.
+
+ (*) No kexec_load().
+
+ (*) Certain ACPI restrictions.
+
+ (*) Restrict debugfs interface to ASUS WMI.
+
+The lock-down can be configured to be triggered by the EFI secure boot
+status, provided the shim isn't insecure.  The lock-down can be lifted by
+typing SysRq+x on a keyboard attached to the system.
+
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lockdown
+
+They are dependent on the hwparam branch, which I posted separately.
+
+David
 ---
+Dave Young (1):
+      Copy secure_boot flag in boot params across kexec reboot
 
- drivers/net/wan/cosa.c         |    6 +++---
- drivers/net/wan/hostess_sv11.c |    6 +++---
- drivers/net/wan/sbni.c         |    4 ++--
- drivers/net/wan/sealevel.c     |    8 ++++----
- 4 files changed, 12 insertions(+), 12 deletions(-)
+David Howells (7):
+      Add the ability to lock down access to the running kernel image
+      efi: Lock down the kernel if booted in secure boot mode
+      Enforce module signatures if the kernel is locked down
+      scsi: Lock down the eata driver
+      Prohibit PCMCIA CIS storage when the kernel is locked down
+      Lock down TIOCSSERIAL
+      Lock down module params that specify hardware parameters (eg. ioport)
 
-diff --git a/drivers/net/wan/cosa.c b/drivers/net/wan/cosa.c
-index 4ca71bca39ac..6ea16260ec76 100644
---- a/drivers/net/wan/cosa.c
-+++ b/drivers/net/wan/cosa.c
-@@ -232,11 +232,11 @@ static int irq[MAX_CARDS+1] = { -1, -1, -1, -1, -1, -1, 0, };
- static struct class *cosa_class;
- 
- #ifdef MODULE
--module_param_array(io, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
- MODULE_PARM_DESC(io, "The I/O bases of the COSA or SRP cards");
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "The IRQ lines of the COSA or SRP cards");
--module_param_array(dma, int, NULL, 0);
-+module_param_hw_array(dma, int, dma, NULL, 0);
- MODULE_PARM_DESC(dma, "The DMA channels of the COSA or SRP cards");
- 
- MODULE_AUTHOR("Jan \"Yenya\" Kasprzak, <kas@fi.muni.cz>");
-diff --git a/drivers/net/wan/hostess_sv11.c b/drivers/net/wan/hostess_sv11.c
-index dd6bb3364ad2..4de0737fbf8a 100644
---- a/drivers/net/wan/hostess_sv11.c
-+++ b/drivers/net/wan/hostess_sv11.c
-@@ -324,11 +324,11 @@ static void sv11_shutdown(struct z8530_dev *dev)
- static int io = 0x200;
- static int irq = 9;
- 
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- MODULE_PARM_DESC(io, "The I/O base of the Comtrol Hostess SV11 card");
--module_param(dma, int, 0);
-+module_param_hw(dma, int, dma, 0);
- MODULE_PARM_DESC(dma, "Set this to 1 to use DMA1/DMA3 for TX/RX");
--module_param(irq, int, 0);
-+module_param_hw(irq, int, irq, 0);
- MODULE_PARM_DESC(irq, "The interrupt line setting for the Comtrol Hostess SV11 card");
- 
- MODULE_AUTHOR("Alan Cox");
-diff --git a/drivers/net/wan/sbni.c b/drivers/net/wan/sbni.c
-index 3ca3419c54a0..bde8c0339831 100644
---- a/drivers/net/wan/sbni.c
-+++ b/drivers/net/wan/sbni.c
-@@ -1463,8 +1463,8 @@ set_multicast_list( struct net_device  *dev )
- 
- 
- #ifdef MODULE
--module_param_array(io, int, NULL, 0);
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- module_param_array(baud, int, NULL, 0);
- module_param_array(rxl, int, NULL, 0);
- module_param_array(mac, int, NULL, 0);
-diff --git a/drivers/net/wan/sealevel.c b/drivers/net/wan/sealevel.c
-index fbb5aa2c4d8f..c56f2c252113 100644
---- a/drivers/net/wan/sealevel.c
-+++ b/drivers/net/wan/sealevel.c
-@@ -363,13 +363,13 @@ static int rxdma=3;
- static int irq=5;
- static bool slow=false;
- 
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- MODULE_PARM_DESC(io, "The I/O base of the Sealevel card");
--module_param(txdma, int, 0);
-+module_param_hw(txdma, int, dma, 0);
- MODULE_PARM_DESC(txdma, "Transmit DMA channel");
--module_param(rxdma, int, 0);
-+module_param_hw(rxdma, int, dma, 0);
- MODULE_PARM_DESC(rxdma, "Receive DMA channel");
--module_param(irq, int, 0);
-+module_param_hw(irq, int, irq, 0);
- MODULE_PARM_DESC(irq, "The interrupt line setting for the SeaLevel card");
- module_param(slow, bool, 0);
- MODULE_PARM_DESC(slow, "Set this for an older Sealevel card such as the 4012");
+Josh Boyer (3):
+      efi: Add EFI_SECURE_BOOT bit
+      hibernate: Disable when the kernel is locked down
+      acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down
+
+Kyle McMartin (1):
+      Add a sysrq option to exit secure boot mode
+
+Lee, Chun-Yi (2):
+      kexec_file: Disable at runtime if securelevel has been set
+      bpf: Restrict kernel image access functions when the kernel is locked down
+
+Linn Crosetto (2):
+      acpi: Disable ACPI table override if the kernel is locked down
+      acpi: Disable APEI error injection if the kernel is locked down
+
+Matthew Garrett (8):
+      Restrict /dev/mem and /dev/kmem when the kernel is locked down
+      kexec: Disable at runtime if the kernel is locked down
+      uswsusp: Disable when the kernel is locked down
+      PCI: Lock down BAR access when the kernel is locked down
+      x86: Lock down IO port access when the kernel is locked down
+      x86: Restrict MSR access when the kernel is locked down
+      asus-wmi: Restrict debugfs interface when the kernel is locked down
+      ACPI: Limit access to custom_method when the kernel is locked down
+
+
+ arch/x86/Kconfig                  |   22 ++++++++++++++++++++
+ arch/x86/kernel/ioport.c          |    4 ++--
+ arch/x86/kernel/kexec-bzimage64.c |    1 +
+ arch/x86/kernel/msr.c             |    7 ++++++
+ arch/x86/kernel/setup.c           |   40 ++++++++++++++++++++++++++++++++++++-
+ drivers/acpi/apei/einj.c          |    3 +++
+ drivers/acpi/custom_method.c      |    3 +++
+ drivers/acpi/osl.c                |    2 +-
+ drivers/acpi/tables.c             |    5 +++++
+ drivers/char/mem.c                |    8 +++++++
+ drivers/input/misc/uinput.c       |    1 +
+ drivers/pci/pci-sysfs.c           |    9 ++++++++
+ drivers/pci/proc.c                |    8 ++++++-
+ drivers/pci/syscall.c             |    2 +-
+ drivers/pcmcia/cistpl.c           |    5 +++++
+ drivers/platform/x86/asus-wmi.c   |    9 ++++++++
+ drivers/scsi/eata.c               |    7 ++++++
+ drivers/tty/serial/serial_core.c  |    6 ++++++
+ drivers/tty/sysrq.c               |   19 ++++++++++++------
+ include/linux/efi.h               |    1 +
+ include/linux/input.h             |    5 +++++
+ include/linux/kernel.h            |    9 ++++++++
+ include/linux/security.h          |   11 ++++++++++
+ include/linux/sysrq.h             |    8 ++++++-
+ kernel/debug/kdb/kdb_main.c       |    2 +-
+ kernel/kexec.c                    |    7 ++++++
+ kernel/kexec_file.c               |    6 ++++++
+ kernel/module.c                   |    2 +-
+ kernel/params.c                   |   27 ++++++++++++++++++++-----
+ kernel/power/hibernate.c          |    2 +-
+ kernel/power/user.c               |    3 +++
+ kernel/trace/bpf_trace.c          |   11 ++++++++++
+ security/Kconfig                  |   15 ++++++++++++++
+ security/Makefile                 |    3 +++
+ security/lock_down.c              |   40 +++++++++++++++++++++++++++++++++++++
+ 35 files changed, 291 insertions(+), 22 deletions(-)
+ create mode 100644 security/lock_down.c
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
