@@ -1,125 +1,166 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:09:54 +0100
-Subject: [PATCH 00/24] Kernel lockdown
-Message-ID: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
+Date: Wed, 05 Apr 2017 17:58:03 +0100
+Subject: [PATCH 09/38] Annotate hardware config module parameters in
+	drivers/i2c/
+In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+Message-ID: <149141148368.29162.12692004178864468110.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+When the kernel is running in secure boot mode, we lock down the kernel to
+prevent userspace from modifying the running kernel image.  Whilst this
+includes prohibiting access to things like /dev/mem, it must also prevent
+access by means of configuring driver modules in such a way as to cause a
+device to access or modify the kernel image.
 
-These patches provide a facility by which a variety of avenues by which
-userspace can feasibly modify the running kernel image can be locked down.
-These include:
+To this end, annotate module_param* statements that refer to hardware
+configuration and indicate for future reference what type of parameter they
+specify.  The parameter parser in the core sees this information and can
+skip such parameters with an error message if the kernel is locked down.
+The module initialisation then runs as normal, but just sees whatever the
+default values for those parameters is.
 
- (*) No unsigned modules and no modules for which can't validate the
-     signature.
+Note that we do still need to do the module initialisation because some
+drivers have viable defaults set in case parameters aren't specified and
+some drivers support automatic configuration (e.g. PNP or PCI) in addition
+to manually coded parameters.
 
- (*) No use of ioperm(), iopl() and no writing to /dev/port.
+This patch annotates drivers in drivers/i2c/.
 
- (*) No writing to /dev/mem or /dev/kmem.
-
- (*) No hibernation.
-
- (*) Restrict PCI BAR access.
-
- (*) Restrict MSR access.
-
- (*) No kexec_load().
-
- (*) Certain ACPI restrictions.
-
- (*) Restrict debugfs interface to ASUS WMI.
-
-The lock-down can be configured to be triggered by the EFI secure boot
-status, provided the shim isn't insecure.  The lock-down can be lifted by
-typing SysRq+x on a keyboard attached to the system.
-
-
-The patches can be found here also:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lockdown
-
-They are dependent on the hwparam branch, which I posted separately.
-
-David
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Wolfram Sang <wsa@the-dreams.de>
+cc: Jean Delvare <jdelvare@suse.com>
+cc: linux-i2c at vger.kernel.org
 ---
-Chun-Yi Lee (1):
-      kexec_file: Disable at runtime if securelevel has been set
 
-Dave Young (1):
-      Copy secure_boot flag in boot params across kexec reboot
+ drivers/i2c/busses/i2c-ali15x3.c       |    2 +-
+ drivers/i2c/busses/i2c-elektor.c       |    6 +++---
+ drivers/i2c/busses/i2c-parport-light.c |    4 ++--
+ drivers/i2c/busses/i2c-pca-isa.c       |    4 ++--
+ drivers/i2c/busses/i2c-piix4.c         |    2 +-
+ drivers/i2c/busses/i2c-sis5595.c       |    2 +-
+ drivers/i2c/busses/i2c-viapro.c        |    2 +-
+ drivers/i2c/busses/scx200_acb.c        |    2 +-
+ 8 files changed, 12 insertions(+), 12 deletions(-)
 
-David Howells (7):
-      Add the ability to lock down access to the running kernel image
-      efi: Lock down the kernel if booted in secure boot mode
-      Enforce module signatures if the kernel is locked down
-      scsi: Lock down the eata driver
-      Prohibit PCMCIA CIS storage when the kernel is locked down
-      Lock down TIOCSSERIAL
-      Lock down module params that specify hardware parameters (eg. ioport)
-
-Josh Boyer (3):
-      efi: Add EFI_SECURE_BOOT bit
-      hibernate: Disable when the kernel is locked down
-      acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down
-
-Kyle McMartin (1):
-      Add a sysrq option to exit secure boot mode
-
-Lee, Chun-Yi (1):
-      bpf: Restrict kernel image access functions when the kernel is locked down
-
-Linn Crosetto (2):
-      acpi: Disable ACPI table override if the kernel is locked down
-      acpi: Disable APEI error injection if the kernel is locked down
-
-Matthew Garrett (8):
-      Restrict /dev/mem and /dev/kmem when the kernel is locked down
-      kexec: Disable at runtime if the kernel is locked down
-      uswsusp: Disable when the kernel is locked down
-      PCI: Lock down BAR access when the kernel is locked down
-      x86: Lock down IO port access when the kernel is locked down
-      x86: Restrict MSR access when the kernel is locked down
-      asus-wmi: Restrict debugfs interface when the kernel is locked down
-      ACPI: Limit access to custom_method when the kernel is locked down
-
-
- arch/x86/Kconfig                  |   22 ++++++++++++++++++++
- arch/x86/kernel/ioport.c          |    4 ++--
- arch/x86/kernel/kexec-bzimage64.c |    1 +
- arch/x86/kernel/msr.c             |    7 ++++++
- arch/x86/kernel/setup.c           |   40 ++++++++++++++++++++++++++++++++++++-
- drivers/acpi/apei/einj.c          |    3 +++
- drivers/acpi/custom_method.c      |    3 +++
- drivers/acpi/osl.c                |    2 +-
- drivers/acpi/tables.c             |    5 +++++
- drivers/char/mem.c                |    8 +++++++
- drivers/input/misc/uinput.c       |    1 +
- drivers/pci/pci-sysfs.c           |    9 ++++++++
- drivers/pci/proc.c                |    8 ++++++-
- drivers/pci/syscall.c             |    2 +-
- drivers/pcmcia/cistpl.c           |    5 +++++
- drivers/platform/x86/asus-wmi.c   |    9 ++++++++
- drivers/scsi/eata.c               |    7 ++++++
- drivers/tty/serial/serial_core.c  |    6 ++++++
- drivers/tty/sysrq.c               |   19 ++++++++++++------
- include/linux/efi.h               |    1 +
- include/linux/input.h             |    5 +++++
- include/linux/kernel.h            |    9 ++++++++
- include/linux/security.h          |   11 ++++++++++
- include/linux/sysrq.h             |    8 ++++++-
- kernel/debug/kdb/kdb_main.c       |    2 +-
- kernel/kexec.c                    |    7 ++++++
- kernel/kexec_file.c               |    6 ++++++
- kernel/module.c                   |    2 +-
- kernel/params.c                   |   27 ++++++++++++++++++++-----
- kernel/power/hibernate.c          |    2 +-
- kernel/power/user.c               |    3 +++
- kernel/trace/bpf_trace.c          |   11 ++++++++++
- security/Kconfig                  |   15 ++++++++++++++
- security/Makefile                 |    3 +++
- security/lock_down.c              |   40 +++++++++++++++++++++++++++++++++++++
- 35 files changed, 291 insertions(+), 22 deletions(-)
- create mode 100644 security/lock_down.c
+diff --git a/drivers/i2c/busses/i2c-ali15x3.c b/drivers/i2c/busses/i2c-ali15x3.c
+index 45c5c4883022..6e6bf46bcb52 100644
+--- a/drivers/i2c/busses/i2c-ali15x3.c
++++ b/drivers/i2c/busses/i2c-ali15x3.c
+@@ -119,7 +119,7 @@
+ /* If force_addr is set to anything different from 0, we forcibly enable
+    the device at the given address. */
+ static u16 force_addr;
+-module_param(force_addr, ushort, 0);
++module_param_hw(force_addr, ushort, ioport, 0);
+ MODULE_PARM_DESC(force_addr,
+ 		 "Initialize the base address of the i2c controller");
+ 
+diff --git a/drivers/i2c/busses/i2c-elektor.c b/drivers/i2c/busses/i2c-elektor.c
+index 8af62fb3fe41..5416003e0605 100644
+--- a/drivers/i2c/busses/i2c-elektor.c
++++ b/drivers/i2c/busses/i2c-elektor.c
+@@ -323,9 +323,9 @@ MODULE_AUTHOR("Hans Berglund <hb@spacetec.no>");
+ MODULE_DESCRIPTION("I2C-Bus adapter routines for PCF8584 ISA bus adapter");
+ MODULE_LICENSE("GPL");
+ 
+-module_param(base, int, 0);
+-module_param(irq, int, 0);
++module_param_hw(base, int, ioport_or_iomem, 0);
++module_param_hw(irq, int, irq, 0);
+ module_param(clock, int, 0);
+ module_param(own, int, 0);
+-module_param(mmapped, int, 0);
++module_param_hw(mmapped, int, other, 0);
+ module_isa_driver(i2c_elektor_driver, 1);
+diff --git a/drivers/i2c/busses/i2c-parport-light.c b/drivers/i2c/busses/i2c-parport-light.c
+index 1bcdd10b68b9..faa8fb8f2b8f 100644
+--- a/drivers/i2c/busses/i2c-parport-light.c
++++ b/drivers/i2c/busses/i2c-parport-light.c
+@@ -38,11 +38,11 @@
+ static struct platform_device *pdev;
+ 
+ static u16 base;
+-module_param(base, ushort, 0);
++module_param_hw(base, ushort, ioport, 0);
+ MODULE_PARM_DESC(base, "Base I/O address");
+ 
+ static int irq;
+-module_param(irq, int, 0);
++module_param_hw(irq, int, irq, 0);
+ MODULE_PARM_DESC(irq, "IRQ (optional)");
+ 
+ /* ----- Low-level parallel port access ----------------------------------- */
+diff --git a/drivers/i2c/busses/i2c-pca-isa.c b/drivers/i2c/busses/i2c-pca-isa.c
+index ba88f17f636c..946ac646de2a 100644
+--- a/drivers/i2c/busses/i2c-pca-isa.c
++++ b/drivers/i2c/busses/i2c-pca-isa.c
+@@ -197,9 +197,9 @@ MODULE_AUTHOR("Ian Campbell <icampbell@arcom.com>");
+ MODULE_DESCRIPTION("ISA base PCA9564/PCA9665 driver");
+ MODULE_LICENSE("GPL");
+ 
+-module_param(base, ulong, 0);
++module_param_hw(base, ulong, ioport, 0);
+ MODULE_PARM_DESC(base, "I/O base address");
+-module_param(irq, int, 0);
++module_param_hw(irq, int, irq, 0);
+ MODULE_PARM_DESC(irq, "IRQ");
+ module_param(clock, int, 0);
+ MODULE_PARM_DESC(clock, "Clock rate in hertz.\n\t\t"
+diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+index c21ca7bf2efe..0ecdb47a23ab 100644
+--- a/drivers/i2c/busses/i2c-piix4.c
++++ b/drivers/i2c/busses/i2c-piix4.c
+@@ -106,7 +106,7 @@ MODULE_PARM_DESC(force, "Forcibly enable the PIIX4. DANGEROUS!");
+ /* If force_addr is set to anything different from 0, we forcibly enable
+    the PIIX4 at the given address. VERY DANGEROUS! */
+ static int force_addr;
+-module_param (force_addr, int, 0);
++module_param_hw(force_addr, int, ioport, 0);
+ MODULE_PARM_DESC(force_addr,
+ 		 "Forcibly enable the PIIX4 at the given address. "
+ 		 "EXTREMELY DANGEROUS!");
+diff --git a/drivers/i2c/busses/i2c-sis5595.c b/drivers/i2c/busses/i2c-sis5595.c
+index 7d58a40faf2d..d543a9867ba4 100644
+--- a/drivers/i2c/busses/i2c-sis5595.c
++++ b/drivers/i2c/busses/i2c-sis5595.c
+@@ -119,7 +119,7 @@ static int blacklist[] = {
+ /* If force_addr is set to anything different from 0, we forcibly enable
+    the device at the given address. */
+ static u16 force_addr;
+-module_param(force_addr, ushort, 0);
++module_param_hw(force_addr, ushort, ioport, 0);
+ MODULE_PARM_DESC(force_addr, "Initialize the base address of the i2c controller");
+ 
+ static struct pci_driver sis5595_driver;
+diff --git a/drivers/i2c/busses/i2c-viapro.c b/drivers/i2c/busses/i2c-viapro.c
+index 0ee2646f3b00..0dc45e12bb1d 100644
+--- a/drivers/i2c/busses/i2c-viapro.c
++++ b/drivers/i2c/busses/i2c-viapro.c
+@@ -94,7 +94,7 @@ MODULE_PARM_DESC(force, "Forcibly enable the SMBus. DANGEROUS!");
+ /* If force_addr is set to anything different from 0, we forcibly enable
+    the VT596 at the given address. VERY DANGEROUS! */
+ static u16 force_addr;
+-module_param(force_addr, ushort, 0);
++module_param_hw(force_addr, ushort, ioport, 0);
+ MODULE_PARM_DESC(force_addr,
+ 		 "Forcibly enable the SMBus at the given address. "
+ 		 "EXTREMELY DANGEROUS!");
+diff --git a/drivers/i2c/busses/scx200_acb.c b/drivers/i2c/busses/scx200_acb.c
+index 0a7e410b6195..e0923bee8d1f 100644
+--- a/drivers/i2c/busses/scx200_acb.c
++++ b/drivers/i2c/busses/scx200_acb.c
+@@ -42,7 +42,7 @@ MODULE_LICENSE("GPL");
+ 
+ #define MAX_DEVICES 4
+ static int base[MAX_DEVICES] = { 0x820, 0x840 };
+-module_param_array(base, int, NULL, 0);
++module_param_hw_array(base, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(base, "Base addresses for the ACCESS.bus controllers");
+ 
+ #define POLL_TIMEOUT	(HZ/5)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
