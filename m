@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:00:37 +0100
-Subject: [PATCH 25/38] Annotate hardware config module parameters in
-	drivers/pci/hotplug/
+Date: Wed, 05 Apr 2017 18:00:21 +0100
+Subject: [PATCH 23/38] Annotate hardware config module parameters in
+	drivers/net/wireless/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141163757.29162.6091759789292252631.stgit@warthog.procyon.org.uk>
+Message-ID: <149141162181.29162.8391170742895605946.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,31 +26,33 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/pci/hotplug/.
+This patch annotates drivers in drivers/net/wireless/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-cc: Scott Murray <scott@spiteful.org>
-cc: linux-pci at vger.kernel.org
+cc: Kalle Valo <kvalo@codeaurora.org>
+cc: linux-wireless at vger.kernel.org
+cc: netdev at vger.kernel.org
 ---
 
- drivers/pci/hotplug/cpcihp_generic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/cisco/airo.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/hotplug/cpcihp_generic.c b/drivers/pci/hotplug/cpcihp_generic.c
-index 88a44a707b96..bbf9cf8aeaad 100644
---- a/drivers/pci/hotplug/cpcihp_generic.c
-+++ b/drivers/pci/hotplug/cpcihp_generic.c
-@@ -220,7 +220,7 @@ module_param(first_slot, byte, 0);
- MODULE_PARM_DESC(first_slot, "Hotswap bus first slot number");
- module_param(last_slot, byte, 0);
- MODULE_PARM_DESC(last_slot, "Hotswap bus last slot number");
--module_param(port, ushort, 0);
-+module_param_hw(port, ushort, ioport, 0);
- MODULE_PARM_DESC(port, "#ENUM signal I/O port");
- module_param(enum_bit, uint, 0);
- MODULE_PARM_DESC(enum_bit, "#ENUM signal bit (0-7)");
+diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
+index 4b040451a9b8..1b7e125a28e2 100644
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -246,8 +246,8 @@ MODULE_DESCRIPTION("Support for Cisco/Aironet 802.11 wireless ethernet cards.  "
+ 		   "Direct support for ISA/PCI/MPI cards and support for PCMCIA when used with airo_cs.");
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_SUPPORTED_DEVICE("Aironet 4500, 4800 and Cisco 340/350");
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param_array(rates, int, NULL, 0);
+ module_param_array(ssids, charp, NULL, 0);
+ module_param(auto_wep, int, 0);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
