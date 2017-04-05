@@ -1,44 +1,46 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:08:07 +0100
-Subject: [PATCH 08/24] Copy secure_boot flag in boot params across kexec reboot
+Date: Wed, 05 Apr 2017 18:08:00 +0100
+Subject: [PATCH 07/24] kexec: Disable at runtime if the kernel is locked down
 In-Reply-To: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
 References: <149141201983.30815.1240162780237131881.stgit@warthog.procyon.org.uk>
-Message-ID: <149141208783.30815.12896516831173762041.stgit@warthog.procyon.org.uk>
+Message-ID: <149141208064.30815.2368765272350918233.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Dave Young <dyoung@redhat.com>
+From: Matthew Garrett <matthew.garrett@nebula.com>
 
-Kexec reboot in case secure boot being enabled does not keep the secure
-boot mode in new kernel, so later one can load unsigned kernel via legacy
-kexec_load.  In this state, the system is missing the protections provided
-by secure boot.
+kexec permits the loading and execution of arbitrary code in ring 0, which
+is something that lock-down is meant to prevent. It makes sense to disable
+kexec in this situation.
 
-Adding a patch to fix this by retain the secure_boot flag in original
-kernel.
+This does not affect kexec_file_load() which can check for a signature on the
+image to be booted.
 
-secure_boot flag in boot_params is set in EFI stub, but kexec bypasses the
-stub.  Fixing this issue by copying secure_boot flag across kexec reboot.
-
-Signed-off-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- arch/x86/kernel/kexec-bzimage64.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/kexec.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index d0a814a9d96a..3551bcaa1eaf 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -179,6 +179,7 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
- 	if (efi_enabled(EFI_OLD_MEMMAP))
- 		return 0;
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index 980936a90ee6..46de8e6b42f4 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -194,6 +194,13 @@ SYSCALL_DEFINE4(kexec_load, unsigned long, entry, unsigned long, nr_segments,
+ 		return -EPERM;
  
-+	params->secure_boot = boot_params.secure_boot;
- 	ei->efi_loader_signature = current_ei->efi_loader_signature;
- 	ei->efi_systab = current_ei->efi_systab;
- 	ei->efi_systab_hi = current_ei->efi_systab_hi;
+ 	/*
++	 * kexec can be used to circumvent module loading restrictions, so
++	 * prevent loading in that case
++	 */
++	if (kernel_is_locked_down())
++		return -EPERM;
++
++	/*
+ 	 * Verify we have a legal set of flags
+ 	 * This leaves us room for future extensions.
+ 	 */
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
