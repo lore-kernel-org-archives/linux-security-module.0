@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:01:44 +0100
-Subject: [PATCH 33/38] Annotate hardware config module parameters in
-	drivers/watchdog/
+Date: Wed, 05 Apr 2017 18:01:18 +0100
+Subject: [PATCH 30/38] Annotate hardware config module parameters in
+	drivers/staging/vme/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141170399.29162.13331435039842686737.stgit@warthog.procyon.org.uk>
+Message-ID: <149141167881.29162.13141146387103697901.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,94 +26,44 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/watchdog/.
+This patch annotates drivers in drivers/staging/vme/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-cc: Wim Van Sebroeck <wim@iguana.be>
-cc: Zwane Mwaikambo <zwanem@gmail.com>
-cc: linux-watchdog at vger.kernel.org
+cc: Martyn Welch <martyn@welchs.me.uk>
+cc: Manohar Vanga <manohar.vanga@gmail.com>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: devel at driverdev.osuosl.org
 ---
 
- drivers/watchdog/cpu5wdt.c     |    2 +-
- drivers/watchdog/eurotechwdt.c |    4 ++--
- drivers/watchdog/pc87413_wdt.c |    2 +-
- drivers/watchdog/sc1200wdt.c   |    2 +-
- drivers/watchdog/wdt.c         |    4 ++--
- 5 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/vme/devices/vme_pio2_core.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/watchdog/cpu5wdt.c b/drivers/watchdog/cpu5wdt.c
-index 6d03e8e30f8b..6c3f78e45c26 100644
---- a/drivers/watchdog/cpu5wdt.c
-+++ b/drivers/watchdog/cpu5wdt.c
-@@ -289,7 +289,7 @@ MODULE_DESCRIPTION("sma cpu5 watchdog driver");
- MODULE_SUPPORTED_DEVICE("sma cpu5 watchdog");
- MODULE_LICENSE("GPL");
+diff --git a/drivers/staging/vme/devices/vme_pio2_core.c b/drivers/staging/vme/devices/vme_pio2_core.c
+index 20a2d835fdaa..367535b4b77f 100644
+--- a/drivers/staging/vme/devices/vme_pio2_core.c
++++ b/drivers/staging/vme/devices/vme_pio2_core.c
+@@ -466,16 +466,16 @@ static void __exit pio2_exit(void)
  
--module_param(port, int, 0);
-+module_param_hw(port, int, ioport, 0);
- MODULE_PARM_DESC(port, "base address of watchdog card, default is 0x91");
+ /* These are required for each board */
+ MODULE_PARM_DESC(bus, "Enumeration of VMEbus to which the board is connected");
+-module_param_array(bus, int, &bus_num, 0444);
++module_param_hw_array(bus, int, other, &bus_num, 0444);
  
- module_param(verbose, int, 0);
-diff --git a/drivers/watchdog/eurotechwdt.c b/drivers/watchdog/eurotechwdt.c
-index 23ee53240c4c..38e96712264f 100644
---- a/drivers/watchdog/eurotechwdt.c
-+++ b/drivers/watchdog/eurotechwdt.c
-@@ -97,9 +97,9 @@ MODULE_PARM_DESC(nowayout,
- #define WDT_TIMER_CFG		0xf3
+ MODULE_PARM_DESC(base, "Base VME address for PIO2 Registers");
+-module_param_array(base, long, &base_num, 0444);
++module_param_hw_array(base, long, other, &base_num, 0444);
  
+ MODULE_PARM_DESC(vector, "VME IRQ Vector (Lower 4 bits masked)");
+-module_param_array(vector, int, &vector_num, 0444);
++module_param_hw_array(vector, int, other, &vector_num, 0444);
  
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- MODULE_PARM_DESC(io, "Eurotech WDT io port (default=0x3f0)");
--module_param(irq, int, 0);
-+module_param_hw(irq, int, irq, 0);
- MODULE_PARM_DESC(irq, "Eurotech WDT irq (default=10)");
- module_param(ev, charp, 0);
- MODULE_PARM_DESC(ev, "Eurotech WDT event type (default is `int')");
-diff --git a/drivers/watchdog/pc87413_wdt.c b/drivers/watchdog/pc87413_wdt.c
-index 9f15dd9435d1..06a892e36a8d 100644
---- a/drivers/watchdog/pc87413_wdt.c
-+++ b/drivers/watchdog/pc87413_wdt.c
-@@ -579,7 +579,7 @@ MODULE_AUTHOR("Marcus Junker <junker@anduras.de>");
- MODULE_DESCRIPTION("PC87413 WDT driver");
- MODULE_LICENSE("GPL");
+ MODULE_PARM_DESC(level, "VME IRQ Level");
+-module_param_array(level, int, &level_num, 0444);
++module_param_hw_array(level, int, other, &level_num, 0444);
  
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- MODULE_PARM_DESC(io, MODNAME " I/O port (default: "
- 					__MODULE_STRING(IO_DEFAULT) ").");
- 
-diff --git a/drivers/watchdog/sc1200wdt.c b/drivers/watchdog/sc1200wdt.c
-index 131193a7acdf..b34d3d5ba632 100644
---- a/drivers/watchdog/sc1200wdt.c
-+++ b/drivers/watchdog/sc1200wdt.c
-@@ -88,7 +88,7 @@ MODULE_PARM_DESC(isapnp,
- 	"When set to 0 driver ISA PnP support will be disabled");
- #endif
- 
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- MODULE_PARM_DESC(io, "io port");
- module_param(timeout, int, 0);
- MODULE_PARM_DESC(timeout, "range is 0-255 minutes, default is 1");
-diff --git a/drivers/watchdog/wdt.c b/drivers/watchdog/wdt.c
-index e0206b5b7d89..e481fbbc4ae7 100644
---- a/drivers/watchdog/wdt.c
-+++ b/drivers/watchdog/wdt.c
-@@ -78,9 +78,9 @@ static int irq = 11;
- 
- static DEFINE_SPINLOCK(wdt_lock);
- 
--module_param(io, int, 0);
-+module_param_hw(io, int, ioport, 0);
- MODULE_PARM_DESC(io, "WDT io port (default=0x240)");
--module_param(irq, int, 0);
-+module_param_hw(irq, int, irq, 0);
- MODULE_PARM_DESC(irq, "WDT irq (default=11)");
- 
- /* Support for the Fan Tachometer on the WDT501-P */
+ MODULE_PARM_DESC(variant, "Last 4 characters of PIO2 board variant");
+ module_param_array(variant, charp, &variant_num, 0444);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
