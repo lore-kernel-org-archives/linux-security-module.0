@@ -1,101 +1,49 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 5 Apr 2017 14:54:30 -0700
-Subject: [PATCH RFC 11/11] LSM: manage task security blobs
-In-Reply-To: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
-References: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
-Message-ID: <94362ac4-9c2a-eeec-ee33-a209d0c37a38@schaufler-ca.com>
+Date: Wed, 5 Apr 2017 15:22:58 -0700
+Subject: FW: [PATCH] Smack: Use GFP_KERNEL for smk_netlbl_mls().
+In-Reply-To: <201703271933.FDC56292.FOOOVJMFtFQHSL@I-love.SAKURA.ne.jp>
+References: <1479121976-13429-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<201703271933.FDC56292.FOOOVJMFtFQHSL@I-love.SAKURA.ne.jp>
+Message-ID: <015cb956-494a-1ef3-bf9f-196e224ec375@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH RFC 11/11] LSM: manage task security blobs
+On 3/27/2017 3:33 AM, Tetsuo Handa wrote:
+> Casey, I think you haven't applied this one.
+>
+> ------- Forwarded Message
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> To: casey at schaufler-ca.com
+> Cc: linux-security-module at vger.kernel.org,Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Subject: [PATCH] Smack: Use GFP_KERNEL for smk_netlbl_mls().
+> Date: Mon, 14 Nov 2016 20:12:56 +0900
+>
+> Since all callers of smk_netlbl_mls() are GFP_KERNEL context
+> (smk_set_cipso() calls memdup_user_nul(), init_smk_fs() calls
+> __kernfs_new_node(), smk_import_entry() calls kzalloc(GFP_KERNEL)),
+> it is safe to use GFP_KERNEL from netlbl_catmap_setbit().
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-Move management of task security blobs into the security
-infrastructure. Modules are required to identify the space
-they require. At this time there are no modules that use
-task blobs.
+Applied-to: git://github.com/cschaufler/smack-next#smack-for-4.12
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-
----
- include/linux/lsm_hooks.h |  1 +
- security/security.c       | 28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index d848a0a..f36b73f 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1907,6 +1907,7 @@ struct lsm_blob_sizes {
- 	int	lbs_msg_msg;
- 	int	lbs_sock;
- 	int	lbs_superblock;
-+	int	lbs_task;
- };
- 
- /*
-diff --git a/security/security.c b/security/security.c
-index 5cf3214..f8943da 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -104,6 +104,7 @@ int __init security_init(void)
- 	pr_info("LSM: msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
- 	pr_info("LSM: sock blob size       = %d\n", blob_sizes.lbs_sock);
- 	pr_info("LSM: superblock blob size = %d\n", blob_sizes.lbs_superblock);
-+	pr_info("LSM: task blob size       = %d\n", blob_sizes.lbs_task);
- 	pr_info("LSM: secid size           = %zu\n", sizeof(struct secids));
- #endif /* CONFIG_SECURITY_LSM_DEBUG */
- 
-@@ -268,6 +269,7 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
- 	lsm_set_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
- 	lsm_set_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
- 	lsm_set_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
-+	lsm_set_size(&needed->lbs_task, &blob_sizes.lbs_task);
- 	/*
- 	 * The inode blob gets an rcu_head in addition to
- 	 * what the modules might need.
-@@ -460,6 +462,29 @@ int lsm_superblock_alloc(struct super_block *sb)
- 	return 0;
- }
- 
-+/**
-+ * lsm_task_alloc - allocate a composite task blob
-+ * @task: the task that needs a blob
-+ *
-+ * Allocate the task blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+int lsm_task_alloc(struct task_struct *task)
-+{
-+#ifdef CONFIG_SECURITY_LSM_DEBUG
-+	if (task->security)
-+		pr_info("%s: Inbound task blob is not NULL.\n", __func__);
-+#endif
-+	if (blob_sizes.lbs_task == 0)
-+		return 0;
-+
-+	task->security = kzalloc(blob_sizes.lbs_task, GFP_KERNEL);
-+	if (task->security == NULL)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
- /*
-  * A secids structure contains all of the modules specific
-  * secids and the secmark used to represent the combination
-@@ -1422,6 +1447,9 @@ int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
- void security_task_free(struct task_struct *task)
- {
- 	call_void_hook(task_free, task);
-+
-+	kfree(task->security);
-+	task->security = NULL;
- }
- 
- int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
--- 
-2.5.0
-
+> ---
+>  security/smack/smack_access.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+> index 23e5808..1f1ac3d 100644
+> --- a/security/smack/smack_access.c
+> +++ b/security/smack/smack_access.c
+> @@ -509,7 +509,7 @@ int smk_netlbl_mls(int level, char *catset, struct netlbl_lsm_secattr *sap,
+>  			if ((m & *cp) == 0)
+>  				continue;
+>  			rc = netlbl_catmap_setbit(&sap->attr.mls.cat,
+> -						  cat, GFP_ATOMIC);
+> +						  cat, GFP_KERNEL);
+>  			if (rc < 0) {
+>  				netlbl_catmap_free(sap->attr.mls.cat);
+>  				return rc;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
