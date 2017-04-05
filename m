@@ -1,39 +1,51 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:11:38 +0100
-Subject: [PATCH 11/24] uswsusp: Disable when the kernel is locked down
+Date: Wed, 05 Apr 2017 18:12:04 +0100
+Subject: [PATCH 14/24] x86: Restrict MSR access when the kernel is locked down
 In-Reply-To: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
 References: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
-Message-ID: <149141229803.31282.13067113052690581032.stgit@warthog.procyon.org.uk>
+Message-ID: <149141232449.31282.15045536717220570492.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Matthew Garrett <matthew.garrett@nebula.com>
 
-uswsusp allows a user process to dump and then restore kernel state, which
-makes it possible to modify the running kernel.  Disable this if the kernel
-is locked down.
+Writing to MSRs should not be allowed if the kernel is locked down, since
+it could lead to execution of arbitrary code in kernel mode.  Based on a
+patch by Kees Cook.
 
-Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- kernel/power/user.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/msr.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/kernel/power/user.c b/kernel/power/user.c
-index 22df9f7ff672..e4b926d329b7 100644
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -52,6 +52,9 @@ static int snapshot_open(struct inode *inode, struct file *filp)
- 	if (!hibernation_available())
- 		return -EPERM;
+diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
+index ef688804f80d..fbcce028e502 100644
+--- a/arch/x86/kernel/msr.c
++++ b/arch/x86/kernel/msr.c
+@@ -84,6 +84,9 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
+ 	int err = 0;
+ 	ssize_t bytes = 0;
  
 +	if (kernel_is_locked_down())
 +		return -EPERM;
 +
- 	lock_system_sleep();
+ 	if (count % 8)
+ 		return -EINVAL;	/* Invalid chunk size */
  
- 	if (!atomic_add_unless(&snapshot_device_available, -1, 0)) {
+@@ -131,6 +134,10 @@ static long msr_ioctl(struct file *file, unsigned int ioc, unsigned long arg)
+ 			err = -EBADF;
+ 			break;
+ 		}
++		if (kernel_is_locked_down()) {
++			err = -EPERM;
++			break;
++		}
+ 		if (copy_from_user(&regs, uregs, sizeof regs)) {
+ 			err = -EFAULT;
+ 			break;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
