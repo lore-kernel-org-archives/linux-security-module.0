@@ -1,127 +1,62 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:57:01 +0100
-Subject: [PATCH 01/38] Annotate module params that specify hardware
-	parameters (eg. ioport)
+Date: Wed, 05 Apr 2017 17:57:08 +0100
+Subject: [PATCH 02/38] Annotate hardware config module parameters in
+	arch/x86/mm/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141142118.29162.13247881653636416773.stgit@warthog.procyon.org.uk>
+Message-ID: <149141142839.29162.10470212173396183651.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Provided an annotation for module parameters that specify hardware
-parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
-dma buffers and other types).
+When the kernel is running in secure boot mode, we lock down the kernel to
+prevent userspace from modifying the running kernel image.  Whilst this
+includes prohibiting access to things like /dev/mem, it must also prevent
+access by means of configuring driver modules in such a way as to cause a
+device to access or modify the kernel image.
 
-This will enable such parameters to be locked down in the core parameter
-parser for secure boot support.
+To this end, annotate module_param* statements that refer to hardware
+configuration and indicate for future reference what type of parameter they
+specify.  The parameter parser in the core sees this information and can
+skip such parameters with an error message if the kernel is locked down.
+The module initialisation then runs as normal, but just sees whatever the
+default values for those parameters is.
 
-I've also included annotations as to what sort of hardware configuration
-each module is dealing with for future use.  Some of these are
-straightforward (ioport, iomem, irq, dma), but there are also:
+Note that we do still need to do the module initialisation because some
+drivers have viable defaults set in case parameters aren't specified and
+some drivers support automatic configuration (e.g. PNP or PCI) in addition
+to manually coded parameters.
 
- (1) drivers that switch the semantics of a parameter between ioport and
-     iomem depending on a second parameter,
+This patch annotates drivers in arch/x86/mm/.
 
- (2) drivers that appear to reserve a CPU memory buffer at a fixed address,
-
- (3) other parameters, such as bus types and irq selection bitmasks.
-
-For the moment, the hardware configuration type isn't actually stored,
-though its validity is checked.
-
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steven Rostedt <rostedt@goodmis.org>
+cc: Ingo Molnar <mingo@kernel.org>
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: "H. Peter Anvin" <hpa@zytor.com>
+cc: x86 at kernel.org
+cc: linux-kernel at vger.kernel.org
+cc: nouveau at lists.freedesktop.org
 ---
 
- include/linux/moduleparam.h |   65 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 1 deletion(-)
+ arch/x86/mm/testmmiotrace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-index 52666d90ca94..6be1949ebcdf 100644
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -60,9 +60,11 @@ struct kernel_param_ops {
-  * Flags available for kernel_param
-  *
-  * UNSAFE - the parameter is dangerous and setting it will taint the kernel
-+ * HWPARAM - Hardware param not permitted in lockdown mode
-  */
- enum {
--	KERNEL_PARAM_FL_UNSAFE = (1 << 0)
-+	KERNEL_PARAM_FL_UNSAFE	= (1 << 0),
-+	KERNEL_PARAM_FL_HWPARAM	= (1 << 1),
- };
+diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+index 38868adf07ea..f6ae6830b341 100644
+--- a/arch/x86/mm/testmmiotrace.c
++++ b/arch/x86/mm/testmmiotrace.c
+@@ -9,7 +9,7 @@
+ #include <linux/mmiotrace.h>
  
- struct kernel_param {
-@@ -451,6 +453,67 @@ extern int param_set_bint(const char *val, const struct kernel_param *kp);
- 			    perm, -1, 0);				\
- 	__MODULE_PARM_TYPE(name, "array of " #type)
+ static unsigned long mmio_address;
+-module_param(mmio_address, ulong, 0);
++module_param_hw(mmio_address, ulong, iomem, 0);
+ MODULE_PARM_DESC(mmio_address, " Start address of the mapping of 16 kB "
+ 				"(or 8 MB if read_far is non-zero).");
  
-+enum hwparam_type {
-+	hwparam_ioport,		/* Module parameter configures an I/O port */
-+	hwparam_iomem,		/* Module parameter configures an I/O mem address */
-+	hwparam_ioport_or_iomem, /* Module parameter could be either, depending on other option */
-+	hwparam_irq,		/* Module parameter configures an I/O port */
-+	hwparam_dma,		/* Module parameter configures a DMA channel */
-+	hwparam_dma_addr,	/* Module parameter configures a DMA buffer address */
-+	hwparam_other,		/* Module parameter configures some other value */
-+};
-+
-+/**
-+ * module_param_hw_named - A parameter representing a hw parameters
-+ * @name: a valid C identifier which is the parameter name.
-+ * @value: the actual lvalue to alter.
-+ * @type: the type of the parameter
-+ * @hwtype: what the value represents (enum hwparam_type)
-+ * @perm: visibility in sysfs.
-+ *
-+ * Usually it's a good idea to have variable names and user-exposed names the
-+ * same, but that's harder if the variable must be non-static or is inside a
-+ * structure.  This allows exposure under a different name.
-+ */
-+#define module_param_hw_named(name, value, type, hwtype, perm)		\
-+	param_check_##type(name, &(value));				\
-+	__module_param_call(MODULE_PARAM_PREFIX, name,			\
-+			    &param_ops_##type, &value,			\
-+			    perm, -1,					\
-+			    KERNEL_PARAM_FL_HWPARAM | (hwparam_##hwtype & 0));	\
-+	__MODULE_PARM_TYPE(name, #type)
-+
-+#define module_param_hw(name, type, hwtype, perm)		\
-+	module_param_hw_named(name, name, type, hwtype, perm)
-+
-+/**
-+ * module_param_hw_array - A parameter representing an array of hw parameters
-+ * @name: the name of the array variable
-+ * @type: the type, as per module_param()
-+ * @hwtype: what the value represents (enum hwparam_type)
-+ * @nump: optional pointer filled in with the number written
-+ * @perm: visibility in sysfs
-+ *
-+ * Input and output are as comma-separated values.  Commas inside values
-+ * don't work properly (eg. an array of charp).
-+ *
-+ * ARRAY_SIZE(@name) is used to determine the number of elements in the
-+ * array, so the definition must be visible.
-+ */
-+#define module_param_hw_array(name, type, hwtype, nump, perm)		\
-+	param_check_##type(name, &(name)[0]);				\
-+	static const struct kparam_array __param_arr_##name		\
-+	= { .max = ARRAY_SIZE(name), .num = nump,			\
-+	    .ops = &param_ops_##type,					\
-+	    .elemsize = sizeof(name[0]), .elem = name };		\
-+	__module_param_call(MODULE_PARAM_PREFIX, name,			\
-+			    &param_array_ops,				\
-+			    .arr = &__param_arr_##name,			\
-+			    perm, -1,					\
-+			    KERNEL_PARAM_FL_HWPARAM | (hwparam_##hwtype & 0));	\
-+	__MODULE_PARM_TYPE(name, "array of " #type)
-+
-+
- extern const struct kernel_param_ops param_array_ops;
- 
- extern const struct kernel_param_ops param_ops_string;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
