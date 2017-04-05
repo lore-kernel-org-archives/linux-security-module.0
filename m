@@ -1,62 +1,39 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:12:12 +0100
-Subject: [PATCH 15/24] asus-wmi: Restrict debugfs interface when the kernel
-	is locked down
+Date: Wed, 05 Apr 2017 18:12:27 +0100
+Subject: [PATCH 17/24] acpi: Ignore acpi_rsdp kernel param when the kernel
+	has been locked down
 In-Reply-To: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
 References: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
-Message-ID: <149141233199.31282.4267532443918292855.stgit@warthog.procyon.org.uk>
+Message-ID: <149141234757.31282.12945475344492398793.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Matthew Garrett <matthew.garrett@nebula.com>
+From: Josh Boyer <jwboyer@redhat.com>
 
-We have no way of validating what all of the Asus WMI methods do on a given
-machine - and there's a risk that some will allow hardware state to be
-manipulated in such a way that arbitrary code can be executed in the
-kernel, circumventing module loading restrictions.  Prevent that if the
-kernel is locked down.
+This option allows userspace to pass the RSDP address to the kernel, which
+makes it possible for a user to circumvent any restrictions imposed on
+loading modules.  Ignore the option when the kernel is locked down.
 
-Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
+Signed-off-by: Josh Boyer <jwboyer@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- drivers/platform/x86/asus-wmi.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/acpi/osl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 8fe5890bf539..feef25076813 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -1900,6 +1900,9 @@ static int show_dsts(struct seq_file *m, void *data)
- 	int err;
- 	u32 retval = -1;
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index db78d353bab1..d4d4ba348451 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -192,7 +192,7 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
+ 	acpi_physical_address pa = 0;
  
-+	if (kernel_is_locked_down())
-+		return -EPERM;
-+
- 	err = asus_wmi_get_devstate(asus, asus->debug.dev_id, &retval);
+ #ifdef CONFIG_KEXEC
+-	if (acpi_rsdp)
++	if (acpi_rsdp && !kernel_is_locked_down())
+ 		return acpi_rsdp;
+ #endif
  
- 	if (err < 0)
-@@ -1916,6 +1919,9 @@ static int show_devs(struct seq_file *m, void *data)
- 	int err;
- 	u32 retval = -1;
- 
-+	if (kernel_is_locked_down())
-+		return -EPERM;
-+
- 	err = asus_wmi_set_devstate(asus->debug.dev_id, asus->debug.ctrl_param,
- 				    &retval);
- 
-@@ -1940,6 +1946,9 @@ static int show_call(struct seq_file *m, void *data)
- 	union acpi_object *obj;
- 	acpi_status status;
- 
-+	if (kernel_is_locked_down())
-+		return -EPERM;
-+
- 	status = wmi_evaluate_method(ASUS_WMI_MGMT_GUID,
- 				     1, asus->debug.method_id,
- 				     &input, &output);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
