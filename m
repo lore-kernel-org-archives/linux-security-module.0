@@ -1,45 +1,34 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 21:15:45 +0100
-Subject: [PATCH 08/24] Copy secure_boot flag in boot params across kexec reboot
+Date: Wed, 05 Apr 2017 21:15:03 +0100
+Subject: [PATCH 04/24] Enforce module signatures if the kernel is locked down
 In-Reply-To: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
 References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-Message-ID: <149142334514.5101.6566777133197803015.stgit@warthog.procyon.org.uk>
+Message-ID: <149142330358.5101.11872619513155932508.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Dave Young <dyoung@redhat.com>
+If the kernel is locked down, require that all modules have valid
+signatures that we can verify.
 
-Kexec reboot in case secure boot being enabled does not keep the secure
-boot mode in new kernel, so later one can load unsigned kernel via legacy
-kexec_load.  In this state, the system is missing the protections provided
-by secure boot.
-
-Adding a patch to fix this by retain the secure_boot flag in original
-kernel.
-
-secure_boot flag in boot_params is set in EFI stub, but kexec bypasses the
-stub.  Fixing this issue by copying secure_boot flag across kexec reboot.
-
-Signed-off-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: kexec at lists.infradead.org
 ---
 
- arch/x86/kernel/kexec-bzimage64.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/module.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index d0a814a9d96a..3551bcaa1eaf 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -179,6 +179,7 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
- 	if (efi_enabled(EFI_OLD_MEMMAP))
- 		return 0;
+diff --git a/kernel/module.c b/kernel/module.c
+index 7eba6dea4f41..3331f2eb9b93 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2756,7 +2756,7 @@ static int module_sig_check(struct load_info *info, int flags)
+ 	}
  
-+	params->secure_boot = boot_params.secure_boot;
- 	ei->efi_loader_signature = current_ei->efi_loader_signature;
- 	ei->efi_systab = current_ei->efi_systab;
- 	ei->efi_systab_hi = current_ei->efi_systab_hi;
+ 	/* Not having a signature is only an error if we're strict. */
+-	if (err == -ENOKEY && !sig_enforce)
++	if (err == -ENOKEY && !sig_enforce && !kernel_is_locked_down())
+ 		err = 0;
+ 
+ 	return err;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
