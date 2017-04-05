@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:01:01 +0100
-Subject: [PATCH 28/38] Annotate hardware config module parameters in
-	drivers/staging/media/
+Date: Wed, 05 Apr 2017 18:00:45 +0100
+Subject: [PATCH 26/38] Annotate hardware config module parameters in
+	drivers/pcmcia/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141166119.29162.8331512785853788823.stgit@warthog.procyon.org.uk>
+Message-ID: <149141164504.29162.16240363352018356960.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,36 +26,59 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/staging/media/.
+This patch annotates drivers in drivers/pcmcia/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: linux-media at vger.kernel.org
-cc: devel at driverdev.osuosl.org
+cc: linux-pcmcia at lists.infradead.org
 ---
 
- drivers/staging/media/lirc/lirc_sir.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pcmcia/i82365.c |    8 ++++----
+ drivers/pcmcia/tcic.c   |    8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/media/lirc/lirc_sir.c b/drivers/staging/media/lirc/lirc_sir.c
-index c6c3de94adaa..dde46dd8cabb 100644
---- a/drivers/staging/media/lirc/lirc_sir.c
-+++ b/drivers/staging/media/lirc/lirc_sir.c
-@@ -826,10 +826,10 @@ MODULE_AUTHOR("Milan Pikula");
- #endif
- MODULE_LICENSE("GPL");
+diff --git a/drivers/pcmcia/i82365.c b/drivers/pcmcia/i82365.c
+index eb0d80a429e4..fb38cc01859f 100644
+--- a/drivers/pcmcia/i82365.c
++++ b/drivers/pcmcia/i82365.c
+@@ -108,12 +108,12 @@ static int async_clock = -1;
+ static int cable_mode = -1;
+ static int wakeup = 0;
  
--module_param(io, int, S_IRUGO);
-+module_param_hw(io, int, ioport, S_IRUGO);
- MODULE_PARM_DESC(io, "I/O address base (0x3f8 or 0x2f8)");
+-module_param(i365_base, ulong, 0444);
++module_param_hw(i365_base, ulong, ioport, 0444);
+ module_param(ignore, int, 0444);
+ module_param(extra_sockets, int, 0444);
+-module_param(irq_mask, int, 0444);
+-module_param_array(irq_list, int, &irq_list_count, 0444);
+-module_param(cs_irq, int, 0444);
++module_param_hw(irq_mask, int, other, 0444);
++module_param_hw_array(irq_list, int, irq, &irq_list_count, 0444);
++module_param_hw(cs_irq, int, irq, 0444);
+ module_param(async_clock, int, 0444);
+ module_param(cable_mode, int, 0444);
+ module_param(wakeup, int, 0444);
+diff --git a/drivers/pcmcia/tcic.c b/drivers/pcmcia/tcic.c
+index 1ee63e5f0550..a1ac72d51d70 100644
+--- a/drivers/pcmcia/tcic.c
++++ b/drivers/pcmcia/tcic.c
+@@ -85,12 +85,12 @@ static int poll_quick = HZ/20;
+ /* CCLK external clock time, in nanoseconds.  70 ns = 14.31818 MHz */
+ static int cycle_time = 70;
  
--module_param(irq, int, S_IRUGO);
-+module_param_hw(irq, int, irq, S_IRUGO);
- MODULE_PARM_DESC(irq, "Interrupt (4 or 3)");
- 
- module_param(threshold, int, S_IRUGO);
+-module_param(tcic_base, ulong, 0444);
++module_param_hw(tcic_base, ulong, ioport, 0444);
+ module_param(ignore, int, 0444);
+ module_param(do_scan, int, 0444);
+-module_param(irq_mask, int, 0444);
+-module_param_array(irq_list, int, &irq_list_count, 0444);
+-module_param(cs_irq, int, 0444);
++module_param_hw(irq_mask, int, other, 0444);
++module_param_hw_array(irq_list, int, irq, &irq_list_count, 0444);
++module_param_hw(cs_irq, int, irq, 0444);
+ module_param(poll_interval, int, 0444);
+ module_param(poll_quick, int, 0444);
+ module_param(cycle_time, int, 0444);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
