@@ -1,57 +1,66 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:57:47 +0100
-Subject: [PATCH 07/38] Annotate hardware config module parameters in
-	drivers/cpufreq/
-In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141146722.29162.13947802705058712127.stgit@warthog.procyon.org.uk>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 5 Apr 2017 10:34:20 -0700
+Subject: [PATCH 14/24] x86: Restrict MSR access when the kernel is locked
+	down
+In-Reply-To: <149141232449.31282.15045536717220570492.stgit@warthog.procyon.org.uk>
+References: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
+	<149141232449.31282.15045536717220570492.stgit@warthog.procyon.org.uk>
+Message-ID: <CAGXu5jJoyPWnh6cu5D1xNjt8o3QTsYPJ5Z02U2t1NkmZf+7Yow@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When the kernel is running in secure boot mode, we lock down the kernel to
-prevent userspace from modifying the running kernel image.  Whilst this
-includes prohibiting access to things like /dev/mem, it must also prevent
-access by means of configuring driver modules in such a way as to cause a
-device to access or modify the kernel image.
+On Wed, Apr 5, 2017 at 10:12 AM, David Howells <dhowells@redhat.com> wrote:
+> From: Matthew Garrett <matthew.garrett@nebula.com>
+>
+> Writing to MSRs should not be allowed if the kernel is locked down, since
+> it could lead to execution of arbitrary code in kernel mode.  Based on a
+> patch by Kees Cook.
+>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-To this end, annotate module_param* statements that refer to hardware
-configuration and indicate for future reference what type of parameter they
-specify.  The parameter parser in the core sees this information and can
-skip such parameters with an error message if the kernel is locked down.
-The module initialisation then runs as normal, but just sees whatever the
-default values for those parameters is.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-Note that we do still need to do the module initialisation because some
-drivers have viable defaults set in case parameters aren't specified and
-some drivers support automatic configuration (e.g. PNP or PCI) in addition
-to manually coded parameters.
+-Kees
 
-This patch annotates drivers in drivers/cpufreq/.
+> ---
+>
+>  arch/x86/kernel/msr.c |    7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
+> index ef688804f80d..fbcce028e502 100644
+> --- a/arch/x86/kernel/msr.c
+> +++ b/arch/x86/kernel/msr.c
+> @@ -84,6 +84,9 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
+>         int err = 0;
+>         ssize_t bytes = 0;
+>
+> +       if (kernel_is_locked_down())
+> +               return -EPERM;
+> +
+>         if (count % 8)
+>                 return -EINVAL; /* Invalid chunk size */
+>
+> @@ -131,6 +134,10 @@ static long msr_ioctl(struct file *file, unsigned int ioc, unsigned long arg)
+>                         err = -EBADF;
+>                         break;
+>                 }
+> +               if (kernel_is_locked_down()) {
+> +                       err = -EPERM;
+> +                       break;
+> +               }
+>                 if (copy_from_user(&regs, uregs, sizeof regs)) {
+>                         err = -EFAULT;
+>                         break;
+>
 
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-cc: Viresh Kumar <viresh.kumar@linaro.org>
-cc: linux-pm at vger.kernel.org
----
 
- drivers/cpufreq/speedstep-smi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/speedstep-smi.c b/drivers/cpufreq/speedstep-smi.c
-index 770a9ae1999a..37b30071c220 100644
---- a/drivers/cpufreq/speedstep-smi.c
-+++ b/drivers/cpufreq/speedstep-smi.c
-@@ -378,7 +378,7 @@ static void __exit speedstep_exit(void)
- 	cpufreq_unregister_driver(&speedstep_driver);
- }
- 
--module_param(smi_port, int, 0444);
-+module_param_hw(smi_port, int, ioport, 0444);
- module_param(smi_cmd,  int, 0444);
- module_param(smi_sig, uint, 0444);
- 
-
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
