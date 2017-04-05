@@ -1,40 +1,47 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 21:16:09 +0100
-Subject: [PATCH 11/24] uswsusp: Disable when the kernel is locked down
+Date: Wed, 05 Apr 2017 21:15:54 +0100
+Subject: [PATCH 09/24] kexec_file: Disable at runtime if securelevel has
+	been set
 In-Reply-To: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
 References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-Message-ID: <149142336965.5101.2946578135980499557.stgit@warthog.procyon.org.uk>
+Message-ID: <149142335441.5101.2294976563846442575.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Chun-Yi Lee <joeyli.kernel@gmail.com>
 
-uswsusp allows a user process to dump and then restore kernel state, which
-makes it possible to modify the running kernel.  Disable this if the kernel
-is locked down.
+When KEXEC_VERIFY_SIG is not enabled, kernel should not loads image
+through kexec_file systemcall if securelevel has been set.
 
-Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
+This code was showed in Matthew's patch but not in git:
+https://lkml.org/lkml/2015/3/13/778
+
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+Signed-off-by: Chun-Yi Lee <jlee@suse.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-pm at vger.kernel.org
+cc: kexec at lists.infradead.org
 ---
 
- kernel/power/user.c |    3 +++
- 1 file changed, 3 insertions(+)
+ kernel/kexec_file.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/kernel/power/user.c b/kernel/power/user.c
-index 22df9f7ff672..e4b926d329b7 100644
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -52,6 +52,9 @@ static int snapshot_open(struct inode *inode, struct file *filp)
- 	if (!hibernation_available())
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index b118735fea9d..f6937eecd1eb 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -268,6 +268,12 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+ 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
  		return -EPERM;
  
-+	if (kernel_is_locked_down())
++	/* Don't permit images to be loaded into trusted kernels if we're not
++	 * going to verify the signature on them
++	 */
++	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) && kernel_is_locked_down())
 +		return -EPERM;
 +
- 	lock_system_sleep();
- 
- 	if (!atomic_add_unless(&snapshot_device_available, -1, 0)) {
+ 	/* Make sure we have a legal set of flags */
+ 	if (flags != (flags & KEXEC_FILE_FLAGS))
+ 		return -EINVAL;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
