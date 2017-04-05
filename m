@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:59:20 +0100
-Subject: [PATCH 17/38] Annotate hardware config module parameters in
-	drivers/net/arcnet/
+Date: Wed, 05 Apr 2017 17:57:54 +0100
+Subject: [PATCH 08/38] Annotate hardware config module parameters in
+	drivers/gpio/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141156063.29162.4949170505066525435.stgit@warthog.procyon.org.uk>
+Message-ID: <149141147489.29162.566616944109123278.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,64 +26,108 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/net/arcnet/.
+This patch annotates drivers in drivers/gpio/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Michael Grzeschik <m.grzeschik@pengutronix.de>
-cc: netdev at vger.kernel.org
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+cc: Alexandre Courbot <gnurou@gmail.com>
+cc: linux-gpio at vger.kernel.org
 ---
 
- drivers/net/arcnet/com20020-isa.c |    4 ++--
- drivers/net/arcnet/com90io.c      |    4 ++--
- drivers/net/arcnet/com90xx.c      |    4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-104-dio-48e.c |    4 ++--
+ drivers/gpio/gpio-104-idi-48.c  |    4 ++--
+ drivers/gpio/gpio-104-idio-16.c |    4 ++--
+ drivers/gpio/gpio-gpio-mm.c     |    2 +-
+ drivers/gpio/gpio-ws16c48.c     |    4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/arcnet/com20020-isa.c b/drivers/net/arcnet/com20020-isa.c
-index b9e9931353b2..38fa60ddaf2e 100644
---- a/drivers/net/arcnet/com20020-isa.c
-+++ b/drivers/net/arcnet/com20020-isa.c
-@@ -129,8 +129,8 @@ static int clockp = 0;
- static int clockm = 0;
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index 17bd2ab4ebe2..dfa1a298e4f6 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -33,11 +33,11 @@
  
- module_param(node, int, 0);
--module_param(io, int, 0);
--module_param(irq, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
- module_param_string(device, device, sizeof(device), 0);
- module_param(timeout, int, 0);
- module_param(backplane, int, 0);
-diff --git a/drivers/net/arcnet/com90io.c b/drivers/net/arcnet/com90io.c
-index b57863df5bf5..4e56aaf2b984 100644
---- a/drivers/net/arcnet/com90io.c
-+++ b/drivers/net/arcnet/com90io.c
-@@ -347,8 +347,8 @@ static int io;			/* use the insmod io= irq= shmem= options */
- static int irq;
- static char device[9];		/* use eg. device=arc1 to change name */
+ static unsigned int base[MAX_NUM_DIO48E];
+ static unsigned int num_dio48e;
+-module_param_array(base, uint, &num_dio48e, 0);
++module_param_hw_array(base, uint, ioport, &num_dio48e, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-DIO-48E base addresses");
  
--module_param(io, int, 0);
--module_param(irq, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
- module_param_string(device, device, sizeof(device), 0);
- MODULE_LICENSE("GPL");
+ static unsigned int irq[MAX_NUM_DIO48E];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-DIO-48E interrupt line numbers");
  
-diff --git a/drivers/net/arcnet/com90xx.c b/drivers/net/arcnet/com90xx.c
-index 81f90c4703ae..ca4a57c30bf8 100644
---- a/drivers/net/arcnet/com90xx.c
-+++ b/drivers/net/arcnet/com90xx.c
-@@ -88,8 +88,8 @@ static int irq;
- static int shmem;
- static char device[9];		/* use eg. device=arc1 to change name */
+ /**
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index 568375a7ebc2..c369b2083876 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -33,11 +33,11 @@
  
--module_param(io, int, 0);
--module_param(irq, int, 0);
-+module_param_hw(io, int, ioport, 0);
-+module_param_hw(irq, int, irq, 0);
- module_param(shmem, int, 0);
- module_param_string(device, device, sizeof(device), 0);
+ static unsigned int base[MAX_NUM_IDI_48];
+ static unsigned int num_idi_48;
+-module_param_array(base, uint, &num_idi_48, 0);
++module_param_hw_array(base, uint, ioport, &num_idi_48, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-IDI-48 base addresses");
  
+ static unsigned int irq[MAX_NUM_IDI_48];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-IDI-48 interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 7053cf736648..5949123986f2 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -33,11 +33,11 @@
+ 
+ static unsigned int base[MAX_NUM_IDIO_16];
+ static unsigned int num_idio_16;
+-module_param_array(base, uint, &num_idio_16, 0);
++module_param_hw_array(base, uint, ioport, &num_idio_16, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-IDIO-16 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_IDIO_16];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+index fa4baa2543db..11ade5b288f8 100644
+--- a/drivers/gpio/gpio-gpio-mm.c
++++ b/drivers/gpio/gpio-gpio-mm.c
+@@ -31,7 +31,7 @@
+ 
+ static unsigned int base[MAX_NUM_GPIOMM];
+ static unsigned int num_gpiomm;
+-module_param_array(base, uint, &num_gpiomm, 0);
++module_param_hw_array(base, uint, ioport, &num_gpiomm, 0);
+ MODULE_PARM_DESC(base, "Diamond Systems GPIO-MM base addresses");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
+index 901b5ccb032d..f8a4f91f36c7 100644
+--- a/drivers/gpio/gpio-ws16c48.c
++++ b/drivers/gpio/gpio-ws16c48.c
+@@ -30,11 +30,11 @@
+ 
+ static unsigned int base[MAX_NUM_WS16C48];
+ static unsigned int num_ws16c48;
+-module_param_array(base, uint, &num_ws16c48, 0);
++module_param_hw_array(base, uint, ioport, &num_ws16c48, 0);
+ MODULE_PARM_DESC(base, "WinSystems WS16C48 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_WS16C48];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
+ 
+ /**
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
