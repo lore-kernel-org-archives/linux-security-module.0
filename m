@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:57:30 +0100
-Subject: [PATCH 05/38] Annotate hardware config module parameters in
-	drivers/char/
+Date: Wed, 05 Apr 2017 17:57:38 +0100
+Subject: [PATCH 06/38] Annotate hardware config module parameters in
+	drivers/clocksource/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141145086.29162.10390009355486163950.stgit@warthog.procyon.org.uk>
+Message-ID: <149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,33 +26,31 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/char/.
+This patch annotates drivers in drivers/clocksource/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Arnd Bergmann <arnd@arndb.de>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: linux-kernel at vger.kernel.org
 ---
 
- drivers/char/applicom.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clocksource/cs5535-clockevt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/applicom.c b/drivers/char/applicom.c
-index e770ad977472..b67263d6e34b 100644
---- a/drivers/char/applicom.c
-+++ b/drivers/char/applicom.c
-@@ -94,9 +94,9 @@ static struct applicom_board {
- static unsigned int irq = 0;	/* interrupt number IRQ       */
- static unsigned long mem = 0;	/* physical segment of board  */
+diff --git a/drivers/clocksource/cs5535-clockevt.c b/drivers/clocksource/cs5535-clockevt.c
+index 9a7e37cf56b0..a1df588343f2 100644
+--- a/drivers/clocksource/cs5535-clockevt.c
++++ b/drivers/clocksource/cs5535-clockevt.c
+@@ -22,7 +22,7 @@
+ #define DRV_NAME "cs5535-clockevt"
  
--module_param(irq, uint, 0);
-+module_param_hw(irq, uint, irq, 0);
- MODULE_PARM_DESC(irq, "IRQ of the Applicom board");
--module_param(mem, ulong, 0);
-+module_param_hw(mem, ulong, iomem, 0);
- MODULE_PARM_DESC(mem, "Shared Memory Address of Applicom board");
+ static int timer_irq;
+-module_param_named(irq, timer_irq, int, 0644);
++module_param_hw_named(irq, timer_irq, int, irq, 0644);
+ MODULE_PARM_DESC(irq, "Which IRQ to use for the clock source MFGPT ticks.");
  
- static unsigned int numboards;	/* number of installed boards */
+ /*
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
