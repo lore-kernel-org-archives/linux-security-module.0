@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:00:29 +0100
-Subject: [PATCH 24/38] Annotate hardware config module parameters in
-	drivers/parport/
+Date: Wed, 05 Apr 2017 18:01:34 +0100
+Subject: [PATCH 32/38] Annotate hardware config module parameters in
+	drivers/video/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141162966.29162.15946544618023359598.stgit@warthog.procyon.org.uk>
+Message-ID: <149141169417.29162.14993661679501972758.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,38 +26,64 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/parport/.
+This patch annotates drivers in drivers/video/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+cc: Jaya Kumar <jayalk@intworks.biz>
+cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+cc: linux-fbdev at vger.kernel.org
 ---
 
- drivers/parport/parport_pc.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/arcfb.c |    8 ++++----
+ drivers/video/fbdev/n411.c  |    6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
-index 9d42dfe65d44..5548193a28a6 100644
---- a/drivers/parport/parport_pc.c
-+++ b/drivers/parport/parport_pc.c
-@@ -3150,13 +3150,13 @@ static char *irq[PARPORT_PC_MAX_PORTS];
- static char *dma[PARPORT_PC_MAX_PORTS];
+diff --git a/drivers/video/fbdev/arcfb.c b/drivers/video/fbdev/arcfb.c
+index 1928cb2b5386..7e87d0d61658 100644
+--- a/drivers/video/fbdev/arcfb.c
++++ b/drivers/video/fbdev/arcfb.c
+@@ -645,17 +645,17 @@ module_param(nosplash, uint, 0);
+ MODULE_PARM_DESC(nosplash, "Disable doing the splash screen");
+ module_param(arcfb_enable, uint, 0);
+ MODULE_PARM_DESC(arcfb_enable, "Enable communication with Arc board");
+-module_param(dio_addr, ulong, 0);
++module_param_hw(dio_addr, ulong, ioport, 0);
+ MODULE_PARM_DESC(dio_addr, "IO address for data, eg: 0x480");
+-module_param(cio_addr, ulong, 0);
++module_param_hw(cio_addr, ulong, ioport, 0);
+ MODULE_PARM_DESC(cio_addr, "IO address for control, eg: 0x400");
+-module_param(c2io_addr, ulong, 0);
++module_param_hw(c2io_addr, ulong, ioport, 0);
+ MODULE_PARM_DESC(c2io_addr, "IO address for secondary control, eg: 0x408");
+ module_param(splashval, ulong, 0);
+ MODULE_PARM_DESC(splashval, "Splash pattern: 0xFF is black, 0x00 is green");
+ module_param(tuhold, ulong, 0);
+ MODULE_PARM_DESC(tuhold, "Time to hold between strobing data to Arc board");
+-module_param(irq, uint, 0);
++module_param_hw(irq, uint, irq, 0);
+ MODULE_PARM_DESC(irq, "IRQ for the Arc board");
  
- MODULE_PARM_DESC(io, "Base I/O address (SPP regs)");
--module_param_array(io, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
- MODULE_PARM_DESC(io_hi, "Base I/O address (ECR)");
--module_param_array(io_hi, int, NULL, 0);
-+module_param_hw_array(io_hi, int, ioport, NULL, 0);
- MODULE_PARM_DESC(irq, "IRQ line");
--module_param_array(irq, charp, NULL, 0);
-+module_param_hw_array(irq, charp, irq, NULL, 0);
- MODULE_PARM_DESC(dma, "DMA channel");
--module_param_array(dma, charp, NULL, 0);
-+module_param_hw_array(dma, charp, dma, NULL, 0);
- #if defined(CONFIG_PARPORT_PC_SUPERIO) || \
-        (defined(CONFIG_PARPORT_1284) && defined(CONFIG_PARPORT_PC_FIFO))
- MODULE_PARM_DESC(verbose_probing, "Log chit-chat during initialisation");
+ module_init(arcfb_init);
+diff --git a/drivers/video/fbdev/n411.c b/drivers/video/fbdev/n411.c
+index 053deacad7cc..a3677313396e 100644
+--- a/drivers/video/fbdev/n411.c
++++ b/drivers/video/fbdev/n411.c
+@@ -193,11 +193,11 @@ module_exit(n411_exit);
+ 
+ module_param(nosplash, uint, 0);
+ MODULE_PARM_DESC(nosplash, "Disable doing the splash screen");
+-module_param(dio_addr, ulong, 0);
++module_param_hw(dio_addr, ulong, ioport, 0);
+ MODULE_PARM_DESC(dio_addr, "IO address for data, eg: 0x480");
+-module_param(cio_addr, ulong, 0);
++module_param_hw(cio_addr, ulong, ioport, 0);
+ MODULE_PARM_DESC(cio_addr, "IO address for control, eg: 0x400");
+-module_param(c2io_addr, ulong, 0);
++module_param_hw(c2io_addr, ulong, ioport, 0);
+ MODULE_PARM_DESC(c2io_addr, "IO address for secondary control, eg: 0x408");
+ module_param(splashval, ulong, 0);
+ MODULE_PARM_DESC(splashval, "Splash pattern: 0x00 is black, 0x01 is white");
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
