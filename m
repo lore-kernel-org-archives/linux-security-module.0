@@ -1,26 +1,55 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 15:33:00 +0100
-Subject: [PATCH 27/39] Annotate hardware config module parameters in
-	drivers/scsi/
-In-Reply-To: <alpine.LNX.2.00.1612020903450.24840@nippy.intranet>
-References: <alpine.LNX.2.00.1612020903450.24840@nippy.intranet>
-	<148059537897.31612.9461043954611464597.stgit@warthog.procyon.org.uk>
-	<148059559339.31612.16180464424786438715.stgit@warthog.procyon.org.uk>
-Message-ID: <24495.1491402780@warthog.procyon.org.uk>
+Date: Wed, 05 Apr 2017 17:58:48 +0100
+Subject: [PATCH 14/38] Annotate hardware config module parameters in
+	drivers/misc/
+In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+Message-ID: <149141152873.29162.13855251241646767118.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Finn Thain <fthain@telegraphics.com.au> wrote:
+When the kernel is running in secure boot mode, we lock down the kernel to
+prevent userspace from modifying the running kernel image.  Whilst this
+includes prohibiting access to things like /dev/mem, it must also prevent
+access by means of configuring driver modules in such a way as to cause a
+device to access or modify the kernel image.
 
-> I can see how base addresses and IO ports are relevant, but the irq 
-> parameter changes below don't protect the kernel image AFAICT. What's the 
-> rationale for those changes? I think it should be stated here.
+To this end, annotate module_param* statements that refer to hardware
+configuration and indicate for future reference what type of parameter they
+specify.  The parameter parser in the core sees this information and can
+skip such parameters with an error message if the kernel is locked down.
+The module initialisation then runs as normal, but just sees whatever the
+default values for those parameters is.
 
-Easier grepping for one.  But I'm also currently preventing the changing of
-any hardware parameters.  If a driver refuses to share an irq, you could use
-it to deprive another driver of the ability to get an irq at all.
+Note that we do still need to do the module initialisation because some
+drivers have viable defaults set in case parameters aren't specified and
+some drivers support automatic configuration (e.g. PNP or PCI) in addition
+to manually coded parameters.
 
-David
+This patch annotates drivers in drivers/misc/.
+
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Arnd Bergmann <arnd@arndb.de>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+
+ drivers/misc/dummy-irq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/misc/dummy-irq.c b/drivers/misc/dummy-irq.c
+index acbbe0390be4..76a1015d5783 100644
+--- a/drivers/misc/dummy-irq.c
++++ b/drivers/misc/dummy-irq.c
+@@ -59,6 +59,6 @@ module_exit(dummy_irq_exit);
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Jiri Kosina");
+-module_param(irq, uint, 0444);
++module_param_hw(irq, uint, irq, 0444);
+ MODULE_PARM_DESC(irq, "The IRQ to register for");
+ MODULE_DESCRIPTION("Dummy IRQ handler driver");
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
