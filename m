@@ -1,508 +1,260 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 5 Apr 2017 14:53:46 -0700
-Subject: [PATCH RFC 07/11] LSM: Mount option data for extreme stacking
+Date: Wed, 5 Apr 2017 14:54:11 -0700
+Subject: [PATCH RFC 09/11] netlabel agreement checking
 In-Reply-To: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
 References: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
-Message-ID: <f88d1e58-0c40-f095-7ce4-1528c2192bf4@schaufler-ca.com>
+Message-ID: <21a11f67-bd72-d4eb-81bf-bd0e2b61b3d7@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH RFC 07/11] LSM: Mount option data for extreme stacking
+Subject: [PATCH RFC 09/11] netlabel agreement checking
 
-Each security module that supports mount options needs its
-own instance of the semi-processed data. The two security
-modules that support this, SELinux and Smack, are provided
-their own instance when necessary.
+If multiple security modules are using netlabel
+to pass security attributes they must agree on the
+labeling for each packet. Because a module may
+decide on the labeling based on a number of factors
+the check needs to be done at send time.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
 ---
- fs/btrfs/super.c           | 10 ++---
- include/linux/security.h   | 69 ++++++++++++++++++++++++++++------
- security/security.c        | 15 ++++++--
- security/selinux/hooks.c   | 93 +++++++++++++++++++++++-----------------------
- security/smack/smack_lsm.c | 51 ++++++++++++-------------
- 5 files changed, 147 insertions(+), 91 deletions(-)
+ include/linux/lsm_hooks.h    |  5 +++-
+ include/net/netlabel.h       |  8 +++++++
+ net/netlabel/netlabel_kapi.c | 54 ++++++++++++++++++++++++++++++++++++++++++++
+ security/security.c          | 23 ++++++++++++++++++-
+ security/selinux/hooks.c     |  7 +++++-
+ security/smack/smack_lsm.c   |  4 +++-
+ security/tomoyo/tomoyo.c     |  3 ++-
+ 7 files changed, 99 insertions(+), 5 deletions(-)
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index da687dc..541cf4e 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1501,15 +1501,15 @@ static int setup_security_options(struct btrfs_fs_info *fs_info,
- 		return ret;
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 6b0ede2..d848a0a 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -28,6 +28,8 @@
+ #include <linux/init.h>
+ #include <linux/rculist.h>
  
- #ifdef CONFIG_SECURITY
--	if (!fs_info->security_opts.num_mnt_opts) {
-+	if (fs_info->security_opts.selinux.num_mnt_opts != 0 ||
-+	    fs_info->security_opts.smack.num_mnt_opts != 0) {
- 		/* first time security setup, copy sec_opts to fs_info */
- 		memcpy(&fs_info->security_opts, sec_opts, sizeof(*sec_opts));
- 	} else {
- 		/*
--		 * Since SELinux (the only one supporting security_mnt_opts)
--		 * does NOT support changing context during remount/mount of
--		 * the same sb, this must be the same or part of the same
--		 * security options, just free it.
-+		 * Since no modules support changing context during
-+		 * remount/mount of the same sb, this must be the same
-+		 * or part of the same security options, just free it.
- 		 */
- 		security_free_mnt_opts(sec_opts);
- 	}
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 8ee9dbd..fdf35d2 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -68,6 +68,17 @@ struct audit_krule;
- struct user_namespace;
- struct timezone;
++struct netlbl_lsm_secattr;
++
+ /**
+  * Security hooks for program execution operations.
+  *
+@@ -789,6 +791,7 @@
+  *	@sock contains the socket structure.
+  *	@msg contains the message to be transmitted.
+  *	@size contains the size of message.
++ *	@attrs points to the network attributes on return.
+  *	Return 0 if permission is granted.
+  * @socket_recvmsg:
+  *	Check permission before receiving a message from a socket.
+@@ -1584,7 +1587,7 @@ union security_list_options {
+ 	int (*socket_listen)(struct socket *sock, int backlog);
+ 	int (*socket_accept)(struct socket *sock, struct socket *newsock);
+ 	int (*socket_sendmsg)(struct socket *sock, struct msghdr *msg,
+-				int size);
++				int size, struct netlbl_lsm_secattr **attrs);
+ 	int (*socket_recvmsg)(struct socket *sock, struct msghdr *msg,
+ 				int size, int flags);
+ 	int (*socket_getsockname)(struct socket *sock);
+diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+index 8cdd2d6..3cda2f3 100644
+--- a/include/net/netlabel.h
++++ b/include/net/netlabel.h
+@@ -472,6 +472,8 @@ int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
+ 			  u32 offset,
+ 			  unsigned long bitmap,
+ 			  gfp_t flags);
++bool netlbl_secattr_equal(const struct netlbl_lsm_secattr *secattr_a,
++			  const struct netlbl_lsm_secattr *secattr_b);
  
-+/*
-+ * Certain data elements need to be replicated when
-+ * multiple security modules use them.
-+ * This mechanism does not scale well beyond two modules.
+ /* Bitmap functions
+  */
+@@ -623,6 +625,12 @@ static inline int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
+ {
+ 	return 0;
+ }
++static inline bool netlbl_secattr_equal(
++				const struct netlbl_lsm_secattr *secattr_a,
++				const struct netlbl_lsm_secattr *secattr_b)
++{
++	return true;
++}
+ static inline int netlbl_enabled(void)
+ {
+ 	return 0;
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index cb8a2c7..5692d92 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -1461,6 +1461,60 @@ int netlbl_cache_add(const struct sk_buff *skb, u16 family,
+ 	return -ENOMSG;
+ }
+ 
++/**
++ * netlbl_secattr_equal - Compare two lsm secattrs
++ * @secattr_a: one security attribute
++ * @secattr_b: the other security attribute
++ *
++ * Description:
++ * Compare two lsm security attribute structures. Returns true
++ * if they are the same, false otherwise.
++ *
 + */
-+#if defined(CONFIG_SECURITY_STACKING) && \
-+	defined(CONFIG_SECURITY_SELINUX) && \
-+	defined(CONFIG_SECURITY_SMACK)
-+#define SECURITY_EXTREME_STACKING
-+#endif
++bool netlbl_secattr_equal(const struct netlbl_lsm_secattr *secattr_a,
++			  const struct netlbl_lsm_secattr *secattr_b)
++{
++	struct netlbl_lsm_catmap *iter_a;
++	struct netlbl_lsm_catmap *iter_b;
 +
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, int audit);
-@@ -157,30 +168,64 @@ typedef int (*initxattrs) (struct inode *inode,
- 
- #ifdef CONFIG_SECURITY
- 
--struct security_mnt_opts {
-+struct lsm_mnt_opts {
- 	char **mnt_opts;
- 	int *mnt_opts_flags;
- 	int num_mnt_opts;
- };
- 
-+#ifdef SECURITY_EXTREME_STACKING
++	if (secattr_a == secattr_b)
++		return true;
++	if (!secattr_a || !secattr_b)
++		return false;
 +
-+struct security_mnt_opts {
-+	struct lsm_mnt_opts	selinux;
-+	struct lsm_mnt_opts	smack;
-+};
++	if ((secattr_a->flags & NETLBL_SECATTR_SECID) &&
++	    (secattr_b->flags & NETLBL_SECATTR_SECID))
++		return secattr_a->attr.secid.common ==
++			secattr_b->attr.secid.common;
 +
-+#else
++	if ((secattr_a->flags & NETLBL_SECATTR_MLS_LVL) !=
++	    (secattr_b->flags & NETLBL_SECATTR_MLS_LVL))
++		return false;
 +
-+struct security_mnt_opts {
-+	union {
-+		struct lsm_mnt_opts	selinux;
-+		struct lsm_mnt_opts	smack;
-+	};
-+};
++	if ((secattr_a->flags & NETLBL_SECATTR_MLS_LVL) &&
++	    secattr_a->attr.mls.lvl != secattr_b->attr.mls.lvl)
++		return false;
 +
-+#endif
++	if ((secattr_a->flags & NETLBL_SECATTR_MLS_CAT) !=
++	    (secattr_b->flags & NETLBL_SECATTR_MLS_CAT))
++		return false;
 +
- static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
- {
--	opts->mnt_opts = NULL;
--	opts->mnt_opts_flags = NULL;
--	opts->num_mnt_opts = 0;
-+	opts->selinux.mnt_opts = NULL;
-+	opts->selinux.mnt_opts_flags = NULL;
-+	opts->selinux.num_mnt_opts = 0;
-+#ifdef SECURITY_EXTREME_STACKING
-+	opts->smack.mnt_opts = NULL;
-+	opts->smack.mnt_opts_flags = NULL;
-+	opts->smack.num_mnt_opts = 0;
-+#endif
- }
- 
- static inline void security_free_mnt_opts(struct security_mnt_opts *opts)
- {
- 	int i;
--	if (opts->mnt_opts)
--		for (i = 0; i < opts->num_mnt_opts; i++)
--			kfree(opts->mnt_opts[i]);
--	kfree(opts->mnt_opts);
--	opts->mnt_opts = NULL;
--	kfree(opts->mnt_opts_flags);
--	opts->mnt_opts_flags = NULL;
--	opts->num_mnt_opts = 0;
++	iter_a = secattr_a->attr.mls.cat;
++	iter_b = secattr_b->attr.mls.cat;
 +
-+	if (opts->selinux.mnt_opts)
-+		for (i = 0; i < opts->selinux.num_mnt_opts; i++)
-+			kfree(opts->selinux.mnt_opts[i]);
-+	kfree(opts->selinux.mnt_opts);
-+	opts->selinux.mnt_opts = NULL;
-+	kfree(opts->selinux.mnt_opts_flags);
-+	opts->selinux.mnt_opts_flags = NULL;
-+	opts->selinux.num_mnt_opts = 0;
-+#ifdef SECURITY_EXTREME_STACKING
-+	if (opts->smack.mnt_opts)
-+		for (i = 0; i < opts->smack.num_mnt_opts; i++)
-+			kfree(opts->smack.mnt_opts[i]);
-+	kfree(opts->smack.mnt_opts);
-+	opts->smack.mnt_opts = NULL;
-+	kfree(opts->smack.mnt_opts_flags);
-+	opts->smack.mnt_opts_flags = NULL;
-+	opts->smack.num_mnt_opts = 0;
-+#endif
- }
- 
- /* prototypes */
++	while (iter_a && iter_b) {
++		if (iter_a->startbit != iter_b->startbit)
++			return false;
++		if (memcmp(iter_a->bitmap, iter_b->bitmap,
++					sizeof(iter_a->bitmap)))
++			return false;
++		iter_a = iter_a->next;
++		iter_b = iter_b->next;
++	}
++
++	return !iter_a && !iter_b;
++}
++
+ /*
+  * Protocol Engine Functions
+  */
 diff --git a/security/security.c b/security/security.c
-index d4b3479..0e31e91 100644
+index 35ccc81..5cf3214 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -691,9 +691,18 @@ int security_sb_set_mnt_opts(struct super_block *sb,
- 				unsigned long kern_flags,
- 				unsigned long *set_kern_flags)
- {
--	return call_int_hook(sb_set_mnt_opts,
--				opts->num_mnt_opts ? -EOPNOTSUPP : 0, sb,
--				opts, kern_flags, set_kern_flags);
-+	int nobody = 0;
-+
-+#ifdef SECURITY_EXTREME_STACKING
-+	if (opts->selinux.num_mnt_opts != 0 || opts->smack.num_mnt_opts != 0)
-+		nobody = -EOPNOTSUPP;
-+#else
-+	if (opts->selinux.num_mnt_opts != 0)
-+		nobody = -EOPNOTSUPP;
-+#endif
-+
-+	return call_int_hook(sb_set_mnt_opts, nobody, sb, opts, kern_flags,
-+				set_kern_flags);
- }
- EXPORT_SYMBOL(security_sb_set_mnt_opts);
+@@ -28,6 +28,7 @@
+ #include <linux/msg.h>
+ #include <net/flow.h>
+ #include <net/sock.h>
++#include <net/netlabel.h>
  
+ #define MAX_LSM_EVM_XATTR	2
+ 
+@@ -2134,7 +2135,27 @@ int security_socket_accept(struct socket *sock, struct socket *newsock)
+ 
+ int security_socket_sendmsg(struct socket *sock, struct msghdr *msg, int size)
+ {
+-	return call_int_hook(socket_sendmsg, 0, sock, msg, size);
++	struct security_hook_list *hp;
++	int rc;
++	struct netlbl_lsm_secattr *pattrs = NULL;
++	struct netlbl_lsm_secattr *attrs = NULL;
++
++	list_for_each_entry(hp, &security_hook_heads.socket_sendmsg, list) {
++		rc = hp->hook.socket_sendmsg(sock, msg, size, &attrs);
++		if (rc)
++			return rc;
++		/*
++		 * Only do the check if the current module reports
++		 * an attribute, and there is something to compare it to.
++		 */
++		if (attrs) {
++			if (!pattrs)
++				pattrs = attrs;
++			else if (!netlbl_secattr_equal(pattrs, attrs))
++				return -EACCES;
++		}
++	}
++	return 0;
+ }
+ 
+ int security_socket_recvmsg(struct socket *sock, struct msghdr *msg,
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 60d9fe8..341b3da 100644
+index d5c8868..6c493b8 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -538,21 +538,23 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
- 	/* count the number of mount options for this sb */
- 	for (i = 0; i < NUM_SEL_MNT_OPTS; i++) {
- 		if (tmp & 0x01)
--			opts->num_mnt_opts++;
-+			opts->selinux.num_mnt_opts++;
- 		tmp >>= 1;
- 	}
- 	/* Check if the Label support flag is set */
- 	if (sbsec->flags & SBLABEL_MNT)
--		opts->num_mnt_opts++;
-+		opts->selinux.num_mnt_opts++;
+@@ -4437,8 +4437,13 @@ static int selinux_socket_accept(struct socket *sock, struct socket *newsock)
+ }
  
--	opts->mnt_opts = kcalloc(opts->num_mnt_opts, sizeof(char *), GFP_ATOMIC);
--	if (!opts->mnt_opts) {
-+	opts->selinux.mnt_opts = kcalloc(opts->selinux.num_mnt_opts,
-+						sizeof(char *), GFP_ATOMIC);
-+	if (!opts->selinux.mnt_opts) {
- 		rc = -ENOMEM;
- 		goto out_free;
- 	}
+ static int selinux_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+-				  int size)
++				  int size, struct netlbl_lsm_secattr **attrs)
+ {
++#ifdef CONFIG_NETLABEL
++	struct sk_security_struct *sksec = selinux_sock(sock->sk);
++
++	*attrs = sksec->nlbl_secattr;
++#endif
+ 	return sock_has_perm(sock->sk, SOCKET__WRITE);
+ }
  
--	opts->mnt_opts_flags = kcalloc(opts->num_mnt_opts, sizeof(int), GFP_ATOMIC);
--	if (!opts->mnt_opts_flags) {
-+	opts->selinux.mnt_opts_flags = kcalloc(opts->selinux.num_mnt_opts,
-+						sizeof(int), GFP_ATOMIC);
-+	if (!opts->selinux.mnt_opts_flags) {
- 		rc = -ENOMEM;
- 		goto out_free;
- 	}
-@@ -562,22 +564,22 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
- 		rc = security_sid_to_context(sbsec->sid, &context, &len);
- 		if (rc)
- 			goto out_free;
--		opts->mnt_opts[i] = context;
--		opts->mnt_opts_flags[i++] = FSCONTEXT_MNT;
-+		opts->selinux.mnt_opts[i] = context;
-+		opts->selinux.mnt_opts_flags[i++] = FSCONTEXT_MNT;
- 	}
- 	if (sbsec->flags & CONTEXT_MNT) {
- 		rc = security_sid_to_context(sbsec->mntpoint_sid, &context, &len);
- 		if (rc)
- 			goto out_free;
--		opts->mnt_opts[i] = context;
--		opts->mnt_opts_flags[i++] = CONTEXT_MNT;
-+		opts->selinux.mnt_opts[i] = context;
-+		opts->selinux.mnt_opts_flags[i++] = CONTEXT_MNT;
- 	}
- 	if (sbsec->flags & DEFCONTEXT_MNT) {
- 		rc = security_sid_to_context(sbsec->def_sid, &context, &len);
- 		if (rc)
- 			goto out_free;
--		opts->mnt_opts[i] = context;
--		opts->mnt_opts_flags[i++] = DEFCONTEXT_MNT;
-+		opts->selinux.mnt_opts[i] = context;
-+		opts->selinux.mnt_opts_flags[i++] = DEFCONTEXT_MNT;
- 	}
- 	if (sbsec->flags & ROOTCONTEXT_MNT) {
- 		struct dentry *root = sbsec->sb->s_root;
-@@ -587,15 +589,15 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
- 		rc = security_sid_to_context(isec->sid, &context, &len);
- 		if (rc)
- 			goto out_free;
--		opts->mnt_opts[i] = context;
--		opts->mnt_opts_flags[i++] = ROOTCONTEXT_MNT;
-+		opts->selinux.mnt_opts[i] = context;
-+		opts->selinux.mnt_opts_flags[i++] = ROOTCONTEXT_MNT;
- 	}
- 	if (sbsec->flags & SBLABEL_MNT) {
--		opts->mnt_opts[i] = NULL;
--		opts->mnt_opts_flags[i++] = SBLABEL_MNT;
-+		opts->selinux.mnt_opts[i] = NULL;
-+		opts->selinux.mnt_opts_flags[i++] = SBLABEL_MNT;
- 	}
- 
--	BUG_ON(i != opts->num_mnt_opts);
-+	BUG_ON(i != opts->selinux.num_mnt_opts);
- 
- 	return 0;
- 
-@@ -641,9 +643,9 @@ static int selinux_set_mnt_opts(struct super_block *sb,
- 	struct inode_security_struct *root_isec;
- 	u32 fscontext_sid = 0, context_sid = 0, rootcontext_sid = 0;
- 	u32 defcontext_sid = 0;
--	char **mount_options = opts->mnt_opts;
--	int *flags = opts->mnt_opts_flags;
--	int num_opts = opts->num_mnt_opts;
-+	char **mount_options = opts->selinux.mnt_opts;
-+	int *flags = opts->selinux.mnt_opts_flags;
-+	int num_opts = opts->selinux.num_mnt_opts;
- 
- 	mutex_lock(&sbsec->lock);
- 
-@@ -977,7 +979,7 @@ static int selinux_parse_opts_str(char *options,
- 	char *fscontext = NULL, *rootcontext = NULL;
- 	int rc, num_mnt_opts = 0;
- 
--	opts->num_mnt_opts = 0;
-+	opts->selinux.num_mnt_opts = 0;
- 
- 	/* Standard string-based options. */
- 	while ((p = strsep(&options, "|")) != NULL) {
-@@ -1044,43 +1046,42 @@ static int selinux_parse_opts_str(char *options,
- 		case Opt_labelsupport:
- 			break;
- 		default:
--			rc = -EINVAL;
- 			printk(KERN_WARNING "SELinux:  unknown mount option\n");
--			goto out_err;
--
-+			break;
- 		}
- 	}
- 
- 	rc = -ENOMEM;
--	opts->mnt_opts = kcalloc(NUM_SEL_MNT_OPTS, sizeof(char *), GFP_KERNEL);
--	if (!opts->mnt_opts)
-+	opts->selinux.mnt_opts = kcalloc(NUM_SEL_MNT_OPTS, sizeof(char *),
-+						GFP_KERNEL);
-+	if (!opts->selinux.mnt_opts)
- 		goto out_err;
- 
--	opts->mnt_opts_flags = kcalloc(NUM_SEL_MNT_OPTS, sizeof(int),
-+	opts->selinux.mnt_opts_flags = kcalloc(NUM_SEL_MNT_OPTS, sizeof(int),
- 				       GFP_KERNEL);
--	if (!opts->mnt_opts_flags) {
--		kfree(opts->mnt_opts);
-+	if (!opts->selinux.mnt_opts_flags) {
-+		kfree(opts->selinux.mnt_opts);
- 		goto out_err;
- 	}
- 
- 	if (fscontext) {
--		opts->mnt_opts[num_mnt_opts] = fscontext;
--		opts->mnt_opts_flags[num_mnt_opts++] = FSCONTEXT_MNT;
-+		opts->selinux.mnt_opts[num_mnt_opts] = fscontext;
-+		opts->selinux.mnt_opts_flags[num_mnt_opts++] = FSCONTEXT_MNT;
- 	}
- 	if (context) {
--		opts->mnt_opts[num_mnt_opts] = context;
--		opts->mnt_opts_flags[num_mnt_opts++] = CONTEXT_MNT;
-+		opts->selinux.mnt_opts[num_mnt_opts] = context;
-+		opts->selinux.mnt_opts_flags[num_mnt_opts++] = CONTEXT_MNT;
- 	}
- 	if (rootcontext) {
--		opts->mnt_opts[num_mnt_opts] = rootcontext;
--		opts->mnt_opts_flags[num_mnt_opts++] = ROOTCONTEXT_MNT;
-+		opts->selinux.mnt_opts[num_mnt_opts] = rootcontext;
-+		opts->selinux.mnt_opts_flags[num_mnt_opts++] = ROOTCONTEXT_MNT;
- 	}
- 	if (defcontext) {
--		opts->mnt_opts[num_mnt_opts] = defcontext;
--		opts->mnt_opts_flags[num_mnt_opts++] = DEFCONTEXT_MNT;
-+		opts->selinux.mnt_opts[num_mnt_opts] = defcontext;
-+		opts->selinux.mnt_opts_flags[num_mnt_opts++] = DEFCONTEXT_MNT;
- 	}
- 
--	opts->num_mnt_opts = num_mnt_opts;
-+	opts->selinux.num_mnt_opts = num_mnt_opts;
- 	return 0;
- 
- out_err:
-@@ -1124,15 +1125,15 @@ static void selinux_write_opts(struct seq_file *m,
- 	int i;
- 	char *prefix;
- 
--	for (i = 0; i < opts->num_mnt_opts; i++) {
-+	for (i = 0; i < opts->selinux.num_mnt_opts; i++) {
- 		char *has_comma;
- 
--		if (opts->mnt_opts[i])
--			has_comma = strchr(opts->mnt_opts[i], ',');
-+		if (opts->selinux.mnt_opts[i])
-+			has_comma = strchr(opts->selinux.mnt_opts[i], ',');
- 		else
- 			has_comma = NULL;
- 
--		switch (opts->mnt_opts_flags[i]) {
-+		switch (opts->selinux.mnt_opts_flags[i]) {
- 		case CONTEXT_MNT:
- 			prefix = CONTEXT_STR;
- 			break;
-@@ -1158,7 +1159,7 @@ static void selinux_write_opts(struct seq_file *m,
- 		seq_puts(m, prefix);
- 		if (has_comma)
- 			seq_putc(m, '\"');
--		seq_escape(m, opts->mnt_opts[i], "\"\n\\");
-+		seq_escape(m, opts->selinux.mnt_opts[i], "\"\n\\");
- 		if (has_comma)
- 			seq_putc(m, '\"');
- 	}
-@@ -2667,10 +2668,10 @@ static int selinux_sb_remount(struct super_block *sb, void *data)
- 	if (rc)
- 		goto out_free_secdata;
- 
--	mount_options = opts.mnt_opts;
--	flags = opts.mnt_opts_flags;
-+	mount_options = opts.selinux.mnt_opts;
-+	flags = opts.selinux.mnt_opts_flags;
- 
--	for (i = 0; i < opts.num_mnt_opts; i++) {
-+	for (i = 0; i < opts.selinux.num_mnt_opts; i++) {
- 		u32 sid;
- 
- 		if (flags[i] == SBLABEL_MNT)
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 9233b33..3d63c92 100644
+index 0034365..7c8ffe4 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -601,7 +601,7 @@ static int smack_parse_opts_str(char *options,
- 	int num_mnt_opts = 0;
- 	int token;
+@@ -3635,7 +3635,7 @@ static int smack_unix_may_send(struct socket *sock, struct socket *other)
+  * For IPv6 this is a check against the label of the port.
+  */
+ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+-				int size)
++				int size, struct netlbl_lsm_secattr **attrs)
+ {
+ 	struct sockaddr_in *sip = (struct sockaddr_in *) msg->msg_name;
+ #if IS_ENABLED(CONFIG_IPV6)
+@@ -3647,6 +3647,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+ #endif
+ 	int rc = 0;
  
--	opts->num_mnt_opts = 0;
-+	opts->smack.num_mnt_opts = 0;
- 
- 	if (!options)
- 		return 0;
-@@ -657,39 +657,40 @@ static int smack_parse_opts_str(char *options,
- 		}
- 	}
- 
--	opts->mnt_opts = kcalloc(NUM_SMK_MNT_OPTS, sizeof(char *), GFP_KERNEL);
--	if (!opts->mnt_opts)
-+	opts->smack.mnt_opts = kcalloc(NUM_SMK_MNT_OPTS, sizeof(char *),
-+					GFP_KERNEL);
-+	if (!opts->smack.mnt_opts)
- 		goto out_err;
- 
--	opts->mnt_opts_flags = kcalloc(NUM_SMK_MNT_OPTS, sizeof(int),
--			GFP_KERNEL);
--	if (!opts->mnt_opts_flags) {
--		kfree(opts->mnt_opts);
-+	opts->smack.mnt_opts_flags = kcalloc(NUM_SMK_MNT_OPTS, sizeof(int),
-+					GFP_KERNEL);
-+	if (!opts->smack.mnt_opts_flags) {
-+		kfree(opts->smack.mnt_opts);
- 		goto out_err;
- 	}
- 
- 	if (fsdefault) {
--		opts->mnt_opts[num_mnt_opts] = fsdefault;
--		opts->mnt_opts_flags[num_mnt_opts++] = FSDEFAULT_MNT;
-+		opts->smack.mnt_opts[num_mnt_opts] = fsdefault;
-+		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSDEFAULT_MNT;
- 	}
- 	if (fsfloor) {
--		opts->mnt_opts[num_mnt_opts] = fsfloor;
--		opts->mnt_opts_flags[num_mnt_opts++] = FSFLOOR_MNT;
-+		opts->smack.mnt_opts[num_mnt_opts] = fsfloor;
-+		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSFLOOR_MNT;
- 	}
- 	if (fshat) {
--		opts->mnt_opts[num_mnt_opts] = fshat;
--		opts->mnt_opts_flags[num_mnt_opts++] = FSHAT_MNT;
-+		opts->smack.mnt_opts[num_mnt_opts] = fshat;
-+		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSHAT_MNT;
- 	}
- 	if (fsroot) {
--		opts->mnt_opts[num_mnt_opts] = fsroot;
--		opts->mnt_opts_flags[num_mnt_opts++] = FSROOT_MNT;
-+		opts->smack.mnt_opts[num_mnt_opts] = fsroot;
-+		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSROOT_MNT;
- 	}
- 	if (fstransmute) {
--		opts->mnt_opts[num_mnt_opts] = fstransmute;
--		opts->mnt_opts_flags[num_mnt_opts++] = FSTRANS_MNT;
-+		opts->smack.mnt_opts[num_mnt_opts] = fstransmute;
-+		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSTRANS_MNT;
- 	}
- 
--	opts->num_mnt_opts = num_mnt_opts;
-+	opts->smack.num_mnt_opts = num_mnt_opts;
- 	return 0;
- 
- out_opt_err:
-@@ -728,7 +729,7 @@ static int smack_set_mnt_opts(struct super_block *sb,
- 	struct inode_smack *isp;
- 	struct smack_known *skp;
- 	int i;
--	int num_opts = opts->num_mnt_opts;
-+	int num_opts = opts->smack.num_mnt_opts;
- 	int transmute = 0;
- 
- 	if (sp->smk_flags & SMK_SB_INITIALIZED)
-@@ -762,33 +763,33 @@ static int smack_set_mnt_opts(struct super_block *sb,
- 	sp->smk_flags |= SMK_SB_INITIALIZED;
- 
- 	for (i = 0; i < num_opts; i++) {
--		switch (opts->mnt_opts_flags[i]) {
-+		switch (opts->smack.mnt_opts_flags[i]) {
- 		case FSDEFAULT_MNT:
--			skp = smk_import_entry(opts->mnt_opts[i], 0);
-+			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
- 			if (IS_ERR(skp))
- 				return PTR_ERR(skp);
- 			sp->smk_default = skp;
- 			break;
- 		case FSFLOOR_MNT:
--			skp = smk_import_entry(opts->mnt_opts[i], 0);
-+			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
- 			if (IS_ERR(skp))
- 				return PTR_ERR(skp);
- 			sp->smk_floor = skp;
- 			break;
- 		case FSHAT_MNT:
--			skp = smk_import_entry(opts->mnt_opts[i], 0);
-+			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
- 			if (IS_ERR(skp))
- 				return PTR_ERR(skp);
- 			sp->smk_hat = skp;
- 			break;
- 		case FSROOT_MNT:
--			skp = smk_import_entry(opts->mnt_opts[i], 0);
-+			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
- 			if (IS_ERR(skp))
- 				return PTR_ERR(skp);
- 			sp->smk_root = skp;
- 			break;
- 		case FSTRANS_MNT:
--			skp = smk_import_entry(opts->mnt_opts[i], 0);
-+			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
- 			if (IS_ERR(skp))
- 				return PTR_ERR(skp);
- 			sp->smk_root = skp;
++	*attrs = NULL;
+ 	/*
+ 	 * Perfectly reasonable for this to be NULL
+ 	 */
+@@ -3656,6 +3657,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	switch (sock->sk->sk_family) {
+ 	case AF_INET:
+ 		rc = smack_netlabel_send(sock->sk, sip);
++		*attrs = &ssp->smk_out->smk_netlabel;
+ 		break;
+ 	case AF_INET6:
+ #ifdef SMACK_IPV6_SECMARK_LABELING
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 27f1198..914eab3 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -499,11 +499,12 @@ static int tomoyo_socket_bind(struct socket *sock, struct sockaddr *addr,
+  * @sock: Pointer to "struct socket".
+  * @msg:  Pointer to "struct msghdr".
+  * @size: Size of message.
++ * @attrs: unused
+  *
+  * Returns 0 on success, negative value otherwise.
+  */
+ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+-				 int size)
++				 int size, struct netlbl_lsm_secattr **attrs)
+ {
+ 	return tomoyo_socket_sendmsg_permission(sock, msg, size);
+ }
 -- 
 2.5.0
 
