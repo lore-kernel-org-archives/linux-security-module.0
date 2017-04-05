@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:57:38 +0100
-Subject: [PATCH 06/38] Annotate hardware config module parameters in
-	drivers/clocksource/
+Date: Wed, 05 Apr 2017 17:57:47 +0100
+Subject: [PATCH 07/38] Annotate hardware config module parameters in
+	drivers/cpufreq/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
+Message-ID: <149141146722.29162.13947802705058712127.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,31 +26,31 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/clocksource/.
+This patch annotates drivers in drivers/cpufreq/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-cc: Thomas Gleixner <tglx@linutronix.de>
-cc: linux-kernel at vger.kernel.org
+Acked-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+cc: Viresh Kumar <viresh.kumar@linaro.org>
+cc: linux-pm at vger.kernel.org
 ---
 
- drivers/clocksource/cs5535-clockevt.c |    2 +-
+ drivers/cpufreq/speedstep-smi.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/cs5535-clockevt.c b/drivers/clocksource/cs5535-clockevt.c
-index 9a7e37cf56b0..a1df588343f2 100644
---- a/drivers/clocksource/cs5535-clockevt.c
-+++ b/drivers/clocksource/cs5535-clockevt.c
-@@ -22,7 +22,7 @@
- #define DRV_NAME "cs5535-clockevt"
+diff --git a/drivers/cpufreq/speedstep-smi.c b/drivers/cpufreq/speedstep-smi.c
+index 770a9ae1999a..37b30071c220 100644
+--- a/drivers/cpufreq/speedstep-smi.c
++++ b/drivers/cpufreq/speedstep-smi.c
+@@ -378,7 +378,7 @@ static void __exit speedstep_exit(void)
+ 	cpufreq_unregister_driver(&speedstep_driver);
+ }
  
- static int timer_irq;
--module_param_named(irq, timer_irq, int, 0644);
-+module_param_hw_named(irq, timer_irq, int, irq, 0644);
- MODULE_PARM_DESC(irq, "Which IRQ to use for the clock source MFGPT ticks.");
+-module_param(smi_port, int, 0444);
++module_param_hw(smi_port, int, ioport, 0444);
+ module_param(smi_cmd,  int, 0444);
+ module_param(smi_sig, uint, 0444);
  
- /*
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
