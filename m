@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:59:00 +0100
-Subject: [PATCH 15/38] Annotate hardware config module parameters in
-	drivers/mmc/host/
+Date: Wed, 05 Apr 2017 17:58:33 +0100
+Subject: [PATCH 12/38] Annotate hardware config module parameters in
+	drivers/isdn/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141154064.29162.11036479761792893840.stgit@warthog.procyon.org.uk>
+Message-ID: <149141151320.29162.4938996321799823419.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,38 +26,72 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/mmc/host/.
+This patch annotates drivers in drivers/isdn/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Pierre Ossman <pierre@ossman.eu>
-cc: Ulf Hansson <ulf.hansson@linaro.org>
-cc: linux-mmc at vger.kernel.org
+cc: Karsten Keil <isdn@linux-pingi.de>
+cc: netdev at vger.kernel.org
 ---
 
- drivers/mmc/host/wbsd.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/isdn/hardware/avm/b1isa.c |    4 ++--
+ drivers/isdn/hardware/avm/t1isa.c |    4 ++--
+ drivers/isdn/hisax/config.c       |   10 +++++-----
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
-index bd04e8bae010..e15a9733fcfd 100644
---- a/drivers/mmc/host/wbsd.c
-+++ b/drivers/mmc/host/wbsd.c
-@@ -2001,11 +2001,11 @@ static void __exit wbsd_drv_exit(void)
- module_init(wbsd_drv_init);
- module_exit(wbsd_drv_exit);
- #ifdef CONFIG_PNP
--module_param_named(nopnp, param_nopnp, uint, 0444);
-+module_param_hw_named(nopnp, param_nopnp, uint, other, 0444);
- #endif
--module_param_named(io, param_io, uint, 0444);
--module_param_named(irq, param_irq, uint, 0444);
--module_param_named(dma, param_dma, int, 0444);
-+module_param_hw_named(io, param_io, uint, ioport, 0444);
-+module_param_hw_named(irq, param_irq, uint, irq, 0444);
-+module_param_hw_named(dma, param_dma, int, dma, 0444);
+diff --git a/drivers/isdn/hardware/avm/b1isa.c b/drivers/isdn/hardware/avm/b1isa.c
+index 31ef8130a87f..54e871a47387 100644
+--- a/drivers/isdn/hardware/avm/b1isa.c
++++ b/drivers/isdn/hardware/avm/b1isa.c
+@@ -169,8 +169,8 @@ static struct pci_dev isa_dev[MAX_CARDS];
+ static int io[MAX_CARDS];
+ static int irq[MAX_CARDS];
  
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ MODULE_PARM_DESC(io, "I/O base address(es)");
+ MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
+ 
+diff --git a/drivers/isdn/hardware/avm/t1isa.c b/drivers/isdn/hardware/avm/t1isa.c
+index 72ef18853951..9516203c735f 100644
+--- a/drivers/isdn/hardware/avm/t1isa.c
++++ b/drivers/isdn/hardware/avm/t1isa.c
+@@ -516,8 +516,8 @@ static int io[MAX_CARDS];
+ static int irq[MAX_CARDS];
+ static int cardnr[MAX_CARDS];
+ 
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param_array(cardnr, int, NULL, 0);
+ MODULE_PARM_DESC(io, "I/O base address(es)");
+ MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
+diff --git a/drivers/isdn/hisax/config.c b/drivers/isdn/hisax/config.c
+index 2d12c6ceeb89..c7d68675b028 100644
+--- a/drivers/isdn/hisax/config.c
++++ b/drivers/isdn/hisax/config.c
+@@ -350,13 +350,13 @@ MODULE_AUTHOR("Karsten Keil");
  MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Pierre Ossman <pierre@ossman.eu>");
+ module_param_array(type, int, NULL, 0);
+ module_param_array(protocol, int, NULL, 0);
+-module_param_array(io, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
+-module_param_array(mem, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
++module_param_hw_array(mem, int, iomem, NULL, 0);
+ module_param(id, charp, 0);
+ #ifdef IO0_IO1
+-module_param_array(io0, int, NULL, 0);
+-module_param_array(io1, int, NULL, 0);
++module_param_hw_array(io0, int, ioport, NULL, 0);
++module_param_hw_array(io1, int, ioport, NULL, 0);
+ #endif
+ #endif /* MODULE */
+ 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
