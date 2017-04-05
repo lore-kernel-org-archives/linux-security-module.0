@@ -1,39 +1,51 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:12:27 +0100
-Subject: [PATCH 17/24] acpi: Ignore acpi_rsdp kernel param when the kernel
-	has been locked down
+Date: Wed, 05 Apr 2017 18:12:44 +0100
+Subject: [PATCH 19/24] acpi: Disable APEI error injection if the kernel is
+	locked down
 In-Reply-To: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
 References: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
-Message-ID: <149141234757.31282.12945475344492398793.stgit@warthog.procyon.org.uk>
+Message-ID: <149141236435.31282.18405211623757724751.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Josh Boyer <jwboyer@redhat.com>
+From: Linn Crosetto <linn@hpe.com>
 
-This option allows userspace to pass the RSDP address to the kernel, which
-makes it possible for a user to circumvent any restrictions imposed on
-loading modules.  Ignore the option when the kernel is locked down.
+ACPI provides an error injection mechanism, EINJ, for debugging and testing
+the ACPI Platform Error Interface (APEI) and other RAS features.  If
+supported by the firmware, ACPI specification 5.0 and later provide for a
+way to specify a physical memory address to which to inject the error.
 
-Signed-off-by: Josh Boyer <jwboyer@redhat.com>
+Injecting errors through EINJ can produce errors which to the platform are
+indistinguishable from real hardware errors.  This can have undesirable
+side-effects, such as causing the platform to mark hardware as needing
+replacement.
+
+While it does not provide a method to load unauthenticated privileged code,
+the effect of these errors may persist across reboots and affect trust in
+the underlying hardware, so disable error injection through EINJ if
+the kernel is locked down.
+
+Signed-off-by: Linn Crosetto <linn@hpe.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- drivers/acpi/osl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/apei/einj.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index db78d353bab1..d4d4ba348451 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -192,7 +192,7 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
- 	acpi_physical_address pa = 0;
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index ec50c32ea3da..e082718d01c2 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -518,6 +518,9 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+ 	int rc;
+ 	u64 base_addr, size;
  
- #ifdef CONFIG_KEXEC
--	if (acpi_rsdp)
-+	if (acpi_rsdp && !kernel_is_locked_down())
- 		return acpi_rsdp;
- #endif
- 
++	if (kernel_is_locked_down())
++		return -EPERM;
++
+ 	/* If user manually set "flags", make sure it is legal */
+ 	if (flags && (flags &
+ 		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
