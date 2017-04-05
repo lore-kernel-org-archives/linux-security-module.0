@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:57:16 +0100
-Subject: [PATCH 03/38] Annotate hardware config module parameters in
-	drivers/char/ipmi/
+Date: Wed, 05 Apr 2017 17:57:23 +0100
+Subject: [PATCH 04/38] Annotate hardware config module parameters in
+	drivers/char/mwave/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141143646.29162.8836165789816650470.stgit@warthog.procyon.org.uk>
+Message-ID: <149141144381.29162.10374110419601783522.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,68 +26,34 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/char/ipmi/.
+This patch annotates drivers in drivers/char/mwave/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Corey Minyard <cminyard@mvista.com>
-cc: openipmi-developer at lists.sourceforge.net
 ---
 
- drivers/char/ipmi/ipmi_si_intf.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/char/mwave/mwavedd.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index 2a7c425ddfa7..e2f34eb59998 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -1375,39 +1375,39 @@ MODULE_PARM_DESC(type, "Defines the type of each interface, each"
- 		 " interface separated by commas.  The types are 'kcs',"
- 		 " 'smic', and 'bt'.  For example si_type=kcs,bt will set"
- 		 " the first interface to kcs and the second to bt");
--module_param_array(addrs, ulong, &num_addrs, 0);
-+module_param_hw_array(addrs, ulong, iomem, &num_addrs, 0);
- MODULE_PARM_DESC(addrs, "Sets the memory address of each interface, the"
- 		 " addresses separated by commas.  Only use if an interface"
- 		 " is in memory.  Otherwise, set it to zero or leave"
- 		 " it blank.");
--module_param_array(ports, uint, &num_ports, 0);
-+module_param_hw_array(ports, uint, ioport, &num_ports, 0);
- MODULE_PARM_DESC(ports, "Sets the port address of each interface, the"
- 		 " addresses separated by commas.  Only use if an interface"
- 		 " is a port.  Otherwise, set it to zero or leave"
- 		 " it blank.");
--module_param_array(irqs, int, &num_irqs, 0);
-+module_param_hw_array(irqs, int, irq, &num_irqs, 0);
- MODULE_PARM_DESC(irqs, "Sets the interrupt of each interface, the"
- 		 " addresses separated by commas.  Only use if an interface"
- 		 " has an interrupt.  Otherwise, set it to zero or leave"
- 		 " it blank.");
--module_param_array(regspacings, int, &num_regspacings, 0);
-+module_param_hw_array(regspacings, int, other, &num_regspacings, 0);
- MODULE_PARM_DESC(regspacings, "The number of bytes between the start address"
- 		 " and each successive register used by the interface.  For"
- 		 " instance, if the start address is 0xca2 and the spacing"
- 		 " is 2, then the second address is at 0xca4.  Defaults"
- 		 " to 1.");
--module_param_array(regsizes, int, &num_regsizes, 0);
-+module_param_hw_array(regsizes, int, other, &num_regsizes, 0);
- MODULE_PARM_DESC(regsizes, "The size of the specific IPMI register in bytes."
- 		 " This should generally be 1, 2, 4, or 8 for an 8-bit,"
- 		 " 16-bit, 32-bit, or 64-bit register.  Use this if you"
- 		 " the 8-bit IPMI register has to be read from a larger"
- 		 " register.");
--module_param_array(regshifts, int, &num_regshifts, 0);
-+module_param_hw_array(regshifts, int, other, &num_regshifts, 0);
- MODULE_PARM_DESC(regshifts, "The amount to shift the data read from the."
- 		 " IPMI register, in bits.  For instance, if the data"
- 		 " is read from a 32-bit word and the IPMI data is in"
- 		 " bit 8-15, then the shift would be 8");
--module_param_array(slave_addrs, int, &num_slave_addrs, 0);
-+module_param_hw_array(slave_addrs, int, other, &num_slave_addrs, 0);
- MODULE_PARM_DESC(slave_addrs, "Set the default IPMB slave address for"
- 		 " the controller.  Normally this is 0x20, but can be"
- 		 " overridden by this parm.  This is an array indexed"
+diff --git a/drivers/char/mwave/mwavedd.c b/drivers/char/mwave/mwavedd.c
+index 3a3ff2eb6cba..b5e3103c1175 100644
+--- a/drivers/char/mwave/mwavedd.c
++++ b/drivers/char/mwave/mwavedd.c
+@@ -80,10 +80,10 @@ int mwave_3780i_io = 0;
+ int mwave_uart_irq = 0;
+ int mwave_uart_io = 0;
+ module_param(mwave_debug, int, 0);
+-module_param(mwave_3780i_irq, int, 0);
+-module_param(mwave_3780i_io, int, 0);
+-module_param(mwave_uart_irq, int, 0);
+-module_param(mwave_uart_io, int, 0);
++module_param_hw(mwave_3780i_irq, int, irq, 0);
++module_param_hw(mwave_3780i_io, int, ioport, 0);
++module_param_hw(mwave_uart_irq, int, irq, 0);
++module_param_hw(mwave_uart_io, int, ioport, 0);
+ 
+ static int mwave_open(struct inode *inode, struct file *file);
+ static int mwave_close(struct inode *inode, struct file *file);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
