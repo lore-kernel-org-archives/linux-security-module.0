@@ -1,37 +1,26 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed,  5 Apr 2017 14:10:47 +0300
-Subject: [PATCH] tpm_crb: remove a cruft constant
-Message-ID: <20170405111047.15630-1-jarkko.sakkinen@linux.intel.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 05 Apr 2017 15:33:00 +0100
+Subject: [PATCH 27/39] Annotate hardware config module parameters in
+	drivers/scsi/
+In-Reply-To: <alpine.LNX.2.00.1612020903450.24840@nippy.intranet>
+References: <alpine.LNX.2.00.1612020903450.24840@nippy.intranet>
+	<148059537897.31612.9461043954611464597.stgit@warthog.procyon.org.uk>
+	<148059559339.31612.16180464424786438715.stgit@warthog.procyon.org.uk>
+Message-ID: <24495.1491402780@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Remove a useless constant that slipped through me when I did the code
-review. This commit fixes the issue.
+Finn Thain <fthain@telegraphics.com.au> wrote:
 
-Cc: Jiandi An <anjiandi@codeaurora.org>
-Fixes: 69c558de63c7 ("tpm/tpm_crb: Enable TPM CRB interface for ARM64")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm_crb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> I can see how base addresses and IO ports are relevant, but the irq 
+> parameter changes below don't protect the kernel image AFAICT. What's the 
+> rationale for those changes? I think it should be stated here.
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 72b03c3..b917b9d 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -572,8 +572,7 @@ static int crb_acpi_add(struct acpi_device *device)
- 				ACPI_TPM2_COMMAND_BUFFER_WITH_SMC);
- 			return -EINVAL;
- 		}
--		crb_smc = ACPI_ADD_PTR(struct tpm2_crb_smc, buf,
--				       ACPI_TPM2_START_METHOD_PARAMETER_OFFSET);
-+		crb_smc = ACPI_ADD_PTR(struct tpm2_crb_smc, buf, sizeof(*buf));
- 		priv->smc_func_id = crb_smc->smc_func_id;
- 		priv->flags |= CRB_FL_CRB_SMC_START;
- 	}
--- 
-2.9.3
+Easier grepping for one.  But I'm also currently preventing the changing of
+any hardware parameters.  If a driver refuses to share an irq, you could use
+it to deprive another driver of the ability to get an irq at all.
 
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
