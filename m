@@ -1,132 +1,285 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 5 Apr 2017 14:39:03 -0700
-Subject: [PATCH RFC 00/11] LSM: Stacking for major security modules
-Message-ID: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
+Date: Wed, 5 Apr 2017 14:52:14 -0700
+Subject: [PATCH RFC 01/11] procfs: add smack subdir to attrs
+In-Reply-To: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
+References: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
+Message-ID: <a615b3ec-1cd9-3b9f-70aa-7bed590bbafe@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH RFC 00/11] LSM: Stacking for major security modules
+Subject: [PATCH RFC 01/11] procfs: add smack subdir to attrs
 
-I am again sending this as an RFC. If you stop at patch 04 you can
-use any combination of modules so long as you use only one of
-SELinux and Smack. Patches 05-10 take you most of the way to complete
-stacking, but cannot be said to completely address all the issues.
-Patch 11 provides for management of the yet unused task blob.
+Back in 2007 I made what turned out to be a rather serious
+mistake in the implementation of the Smack security module.
+The SELinux module used an interface in /proc to manipulate
+the security context on processes. Rather than use a similar
+interface, I used the same interface. The AppArmor team did
+likewise. Now /proc/.../attr/current will tell you the
+security "context" of the process, but it will be different
+depending on the security module you're using.
 
-This patch set implements stacking for "major" security modules
-that use cred and file blobs. Management of security blobs is
-moved from the security modules and into the LSM infrastructure.
-This has been proposed in the past by Serge Hallyn and David Howells.
-This implementation owes much to their work.
+This patch provides a subdirectory in /proc/.../attr for
+Smack. Smack user space can use the "current" file in
+this subdirectory and never have to worry about getting
+SELinux attributes by mistake. Programs that use the
+old interface will continue to work (or fail, as the case
+may be) as before.
 
-The bulk of the change is in abstracting use of blobs within the
-security modules. This allows the modules to share a single blob
-and hides the details from the code. There is 
+This patch does not include subdirectories for SELinux
+or AppArmor. I do have a patch that provides those, and
+will happily make it available should anyone see value
+in it.
 
-Modules are required to declare the amount of space they require
-for each blob they use. Because modules deal with blobs during their
-initialization the blob sizes must be declared prior to module
-initialization. The module initialization becomes a two step process.
-
-Security module stacking is optional. If stacking is not configured,
-the CONFIG_DEFAULT_SECURITY value is used, just as before. If stacking
-is configured using CONFIG_SECURITY_STACKING the modules desired for
-the stack are selected individually. AppArmor would be selected by
-specifying CONFIG_SECURITY_APPARMOR_STACKED. The CONFIG_DEFAULT_SECURITY
-is ignored. The security= boot option is still respected and has the
-same behavior as before, allowing a single module to be used instead of
-the specified stack.
-
-To accommodate multiple active modules a security "context" is
-defined to use a regular format:
-
-	lsmname='lsmvalue'[,lsmname='lsmvalue']...
-
-This is not supported by any existing user space run time code.
-
-I have tested these patches in various configurations of Ubuntu and
-Fedora. I have had much better success with SELinux in permissive mode
-than enforcing, but that appears to be a result of user space code
-issues. Smack and SELinux together have limited success, again because
-of the context format.
-
-Patch 01 Adds a smack subdirectory in /proc/.../attr (proposed separately)
-Patch 02 Move management of the cred blob to the LSM infrastructure.
-Patch 03 Move management of the file blob to the LSM infrastructure.
-Patch 04 Change how the security modules get selected.
-Patch 05 Infrastructure blob management for IPC, keys, sockets.
-Patch 06 Fixes Smack's sk_free hook.
-Patch 07 Support mount options for multiple security modules.
-Patch 08 Change secids from a u32 to a structure.
-Patch 09 Netlabel consistency enforcment in sendmsg.
-Patch 10 Fixes a compile issue in one Smack configuration.
-Patch 11 Infrastructure blob management for the new task blob.
-
-These patches can be found in git at:
-
-	https://github.com/cschaufler/smack-next.git#stacking-4.11-rc4
+The original implementation is by Kees Cook.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
 
- Documentation/security/LSM.txt          |   33 +-
- drivers/usb/core/devio.c                |   13 +-
- fs/btrfs/super.c                        |   10 +-
- fs/proc/base.c                          |   96 ++-
- fs/proc/internal.h                      |    1 +
- fs/xattr.c                              |    6 +-
- include/linux/audit.h                   |   10 +-
- include/linux/cred.h                    |    3 +-
- include/linux/lsm_hooks.h               |   76 ++-
- include/linux/sched/signal.h            |    2 +-
- include/linux/security.h                |  227 +++++--
- include/net/flow.h                      |    5 +-
- include/net/netlabel.h                  |   16 +-
- include/net/scm.h                       |    4 +-
- kernel/audit.c                          |   25 +-
- kernel/audit.h                          |    9 +-
- kernel/auditfilter.c                    |    4 +-
- kernel/auditsc.c                        |   42 +-
- kernel/cred.c                           |   19 +-
- kernel/signal.c                         |    6 +-
- net/ipv4/cipso_ipv4.c                   |    5 +-
- net/ipv4/ip_sockglue.c                  |    6 +-
- net/netfilter/nf_conntrack_netlink.c    |   12 +-
- net/netfilter/nf_conntrack_standalone.c |    6 +-
- net/netfilter/nfnetlink_queue.c         |    9 +-
- net/netfilter/xt_AUDIT.c                |    9 +-
- net/netfilter/xt_SECMARK.c              |    6 +-
- net/netlabel/netlabel_kapi.c            |   56 +-
- net/netlabel/netlabel_unlabeled.c       |   30 +-
- net/netlabel/netlabel_unlabeled.h       |    2 +-
- net/netlabel/netlabel_user.c            |    4 +-
- net/unix/af_unix.c                      |    6 +-
- net/xfrm/xfrm_policy.c                  |    6 +-
- net/xfrm/xfrm_state.c                   |    3 +-
- security/Kconfig                        |   86 +++
- security/apparmor/context.c             |    2 -
- security/apparmor/include/context.h     |   25 +-
- security/apparmor/lsm.c                 |  111 ++--
- security/integrity/ima/ima_policy.c     |    7 +-
- security/security.c                     | 1046 +++++++++++++++++++++++++++++--
- security/selinux/hooks.c                |  720 +++++++++------------
- security/selinux/include/audit.h        |    2 +-
- security/selinux/include/objsec.h       |   87 ++-
- security/selinux/include/xfrm.h         |    9 +-
- security/selinux/netlabel.c             |   17 +-
- security/selinux/selinuxfs.c            |    5 +-
- security/selinux/ss/services.c          |   13 +-
- security/selinux/xfrm.c                 |   29 +-
- security/smack/smack.h                  |   95 ++-
- security/smack/smack_access.c           |    2 +-
- security/smack/smack_lsm.c              |  751 +++++++++-------------
- security/smack/smack_netfilter.c        |   28 +-
- security/smack/smackfs.c                |   28 +-
- security/tomoyo/common.h                |   25 +-
- security/tomoyo/domain.c                |    4 +-
- security/tomoyo/securityfs_if.c         |   13 +-
- security/tomoyo/tomoyo.c                |   55 +-
- 57 files changed, 2647 insertions(+), 1280 deletions(-)
+---
+ Documentation/security/LSM.txt | 19 +++++++++----
+ fs/proc/base.c                 | 63 ++++++++++++++++++++++++++++++++++++------
+ fs/proc/internal.h             |  1 +
+ include/linux/security.h       | 15 ++++++----
+ security/security.c            | 30 +++++++++++++++++---
+ 5 files changed, 104 insertions(+), 24 deletions(-)
+
+diff --git a/Documentation/security/LSM.txt b/Documentation/security/LSM.txt
+index c2683f2..57eafbc 100644
+--- a/Documentation/security/LSM.txt
++++ b/Documentation/security/LSM.txt
+@@ -16,11 +16,10 @@ MAC extensions, other extensions can be built using the LSM to provide
+ specific changes to system operation when these tweaks are not available
+ in the core functionality of Linux itself.
+ 
+-Without a specific LSM built into the kernel, the default LSM will be the
+-Linux capabilities system. Most LSMs choose to extend the capabilities
+-system, building their checks on top of the defined capability hooks.
+-For more details on capabilities, see capabilities(7) in the Linux
+-man-pages project.
++The Linux capabilities modules will always be included. For more details
++on capabilities, see capabilities(7) in the Linux man-pages project.
++This may be followed by any number of "minor" modules and at most one
++"major" module.
+ 
+ A list of the active security modules can be found by reading
+ /sys/kernel/security/lsm. This is a comma separated list, and
+@@ -29,6 +28,14 @@ order in which checks are made. The capability module will always
+ be first, followed by any "minor" modules (e.g. Yama) and then
+ the one "major" module (e.g. SELinux) if there is one configured.
+ 
++Process attributes associated with "major" security modules should
++be accessed and maintained using the special files in /proc/.../attr.
++A security module may maintain a module specific subdirectory there,
++named after the module. /proc/.../attr/smack is provided by the Smack
++security module and contains all its special files. The files directly
++in /proc/.../attr remain as legacy interfaces for modules that provide
++subdirectories.
++
+ Based on https://lkml.org/lkml/2007/10/26/215,
+ a new LSM is accepted into the kernel when its intent (a description of
+ what it tries to protect against and in what cases one would expect to
+@@ -38,4 +45,4 @@ that end users and distros can make a more informed decision about which
+ LSMs suit their requirements.
+ 
+ For extensive documentation on the available LSM hook interfaces, please
+-see include/linux/security.h.
++see include/linux/lsm_hooks.h.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c87b6b9..2decd2f 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -139,9 +139,13 @@ struct pid_entry {
+ #define REG(NAME, MODE, fops)				\
+ 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
+ #define ONE(NAME, MODE, show)				\
+-	NOD(NAME, (S_IFREG|(MODE)), 			\
++	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_single_file_operations,	\
+ 		{ .proc_show = show } )
++#define ATTR(LSM, NAME, MODE)				\
++	NOD(NAME, (S_IFREG|(MODE)),			\
++		NULL, &proc_pid_attr_operations,	\
++		{ .lsm = LSM })
+ 
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+@@ -2455,7 +2459,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 	if (!task)
+ 		return -ESRCH;
+ 
+-	length = security_getprocattr(task,
++	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+ 				      (char*)file->f_path.dentry->d_name.name,
+ 				      &p);
+ 	put_task_struct(task);
+@@ -2501,7 +2505,8 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (length < 0)
+ 		goto out_free;
+ 
+-	length = security_setprocattr(file->f_path.dentry->d_name.name,
++	length = security_setprocattr(PROC_I(inode)->op.lsm,
++				      file->f_path.dentry->d_name.name,
+ 				      page, count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ out_free:
+@@ -2518,13 +2523,53 @@ static const struct file_operations proc_pid_attr_operations = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
++#define LSM_DIR_OPS(LSM) \
++static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
++			     struct dir_context *ctx) \
++{ \
++	return proc_pident_readdir(filp, ctx, \
++				   LSM##_attr_dir_stuff, \
++				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct file_operations proc_##LSM##_attr_dir_ops = { \
++	.read		= generic_read_dir, \
++	.iterate	= proc_##LSM##_attr_dir_iterate, \
++	.llseek		= default_llseek, \
++}; \
++\
++static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
++				struct dentry *dentry, unsigned int flags) \
++{ \
++	return proc_pident_lookup(dir, dentry, \
++				  LSM##_attr_dir_stuff, \
++				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
++	.lookup		= proc_##LSM##_attr_dir_lookup, \
++	.getattr	= pid_getattr, \
++	.setattr	= proc_setattr, \
++}
++
++#ifdef CONFIG_SECURITY_SMACK
++static const struct pid_entry smack_attr_dir_stuff[] = {
++	ATTR("smack", "current",	0666),
++};
++LSM_DIR_OPS(smack);
++#endif
++
+ static const struct pid_entry attr_dir_stuff[] = {
+-	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
+-	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
++	ATTR(NULL, "current",		0666),
++	ATTR(NULL, "prev",		0444),
++	ATTR(NULL, "exec",		0666),
++	ATTR(NULL, "fscreate",		0666),
++	ATTR(NULL, "keycreate",		0666),
++	ATTR(NULL, "sockcreate",	0666),
++#ifdef CONFIG_SECURITY_SMACK
++	DIR("smack",			0555,
++	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
++#endif
+ };
+ 
+ static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index c5ae09b..8b7d101 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -58,6 +58,7 @@ union proc_op {
+ 	int (*proc_show)(struct seq_file *m,
+ 		struct pid_namespace *ns, struct pid *pid,
+ 		struct task_struct *task);
++	const char *lsm;
+ };
+ 
+ struct proc_inode {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index af675b5..8ee9dbd 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -365,8 +365,10 @@ int security_sem_semctl(struct sem_array *sma, int cmd);
+ int security_sem_semop(struct sem_array *sma, struct sembuf *sops,
+ 			unsigned nsops, int alter);
+ void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+-int security_getprocattr(struct task_struct *p, char *name, char **value);
+-int security_setprocattr(const char *name, void *value, size_t size);
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++			 char **value);
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1111,15 +1113,18 @@ static inline int security_sem_semop(struct sem_array *sma,
+ 	return 0;
+ }
+ 
+-static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
++static inline void security_d_instantiate(struct dentry *dentry,
++					  struct inode *inode)
+ { }
+ 
+-static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
++static inline int security_getprocattr(struct task_struct *p, const char *lsm,
++				       char *name, char **value)
+ {
+ 	return -EINVAL;
+ }
+ 
+-static inline int security_setprocattr(char *name, void *value, size_t size)
++static inline int security_setprocattr(const char *lsm, char *name,
++				       void *value, size_t size)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/security/security.c b/security/security.c
+index 549bddc..e28bb98 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1216,14 +1216,36 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_d_instantiate);
+ 
+-int security_getprocattr(struct task_struct *p, char *name, char **value)
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++				char **value)
+ {
+-	return call_int_hook(getprocattr, -EINVAL, p, name, value);
++	struct security_hook_list *hp;
++	int rc;
++
++	list_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		rc = hp->hook.getprocattr(p, name, value);
++		if (rc != -ENOENT)
++			return rc;
++	}
++	return -EINVAL;
+ }
+ 
+-int security_setprocattr(const char *name, void *value, size_t size)
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size)
+ {
+-	return call_int_hook(setprocattr, -EINVAL, name, value, size);
++	struct security_hook_list *hp;
++	int rc;
++
++	list_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		rc = hp->hook.setprocattr(name, value, size);
++		if (rc != -ENOENT)
++			return rc;
++	}
++	return -EINVAL;
+ }
+ 
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+-- 
+2.5.0
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
