@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:59:31 +0100
-Subject: [PATCH 18/38] Annotate hardware config module parameters in
-	drivers/net/can/
+Date: Wed, 05 Apr 2017 17:59:20 +0100
+Subject: [PATCH 17/38] Annotate hardware config module parameters in
+	drivers/net/arcnet/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141157162.29162.10145088436840145584.stgit@warthog.procyon.org.uk>
+Message-ID: <149141156063.29162.4949170505066525435.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,70 +26,64 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/net/can/.
+This patch annotates drivers in drivers/net/arcnet/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
-cc: Wolfgang Grandegger <wg@grandegger.com>
-cc: linux-can at vger.kernel.org
+cc: Michael Grzeschik <m.grzeschik@pengutronix.de>
 cc: netdev at vger.kernel.org
 ---
 
- drivers/net/can/cc770/cc770_isa.c     |    8 ++++----
- drivers/net/can/sja1000/sja1000_isa.c |    8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/arcnet/com20020-isa.c |    4 ++--
+ drivers/net/arcnet/com90io.c      |    4 ++--
+ drivers/net/arcnet/com90xx.c      |    4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/can/cc770/cc770_isa.c b/drivers/net/can/cc770/cc770_isa.c
-index e0d15711e9ac..3a30fd3b4498 100644
---- a/drivers/net/can/cc770/cc770_isa.c
-+++ b/drivers/net/can/cc770/cc770_isa.c
-@@ -82,16 +82,16 @@ static u8 cor[MAXDEV] = {[0 ... (MAXDEV - 1)] = 0xff};
- static u8 bcr[MAXDEV] = {[0 ... (MAXDEV - 1)] = 0xff};
- static int indirect[MAXDEV] = {[0 ... (MAXDEV - 1)] = -1};
+diff --git a/drivers/net/arcnet/com20020-isa.c b/drivers/net/arcnet/com20020-isa.c
+index b9e9931353b2..38fa60ddaf2e 100644
+--- a/drivers/net/arcnet/com20020-isa.c
++++ b/drivers/net/arcnet/com20020-isa.c
+@@ -129,8 +129,8 @@ static int clockp = 0;
+ static int clockm = 0;
  
--module_param_array(port, ulong, NULL, S_IRUGO);
-+module_param_hw_array(port, ulong, ioport, NULL, S_IRUGO);
- MODULE_PARM_DESC(port, "I/O port number");
+ module_param(node, int, 0);
+-module_param(io, int, 0);
+-module_param(irq, int, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(irq, int, irq, 0);
+ module_param_string(device, device, sizeof(device), 0);
+ module_param(timeout, int, 0);
+ module_param(backplane, int, 0);
+diff --git a/drivers/net/arcnet/com90io.c b/drivers/net/arcnet/com90io.c
+index b57863df5bf5..4e56aaf2b984 100644
+--- a/drivers/net/arcnet/com90io.c
++++ b/drivers/net/arcnet/com90io.c
+@@ -347,8 +347,8 @@ static int io;			/* use the insmod io= irq= shmem= options */
+ static int irq;
+ static char device[9];		/* use eg. device=arc1 to change name */
  
--module_param_array(mem, ulong, NULL, S_IRUGO);
-+module_param_hw_array(mem, ulong, iomem, NULL, S_IRUGO);
- MODULE_PARM_DESC(mem, "I/O memory address");
+-module_param(io, int, 0);
+-module_param(irq, int, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(irq, int, irq, 0);
+ module_param_string(device, device, sizeof(device), 0);
+ MODULE_LICENSE("GPL");
  
--module_param_array(indirect, int, NULL, S_IRUGO);
-+module_param_hw_array(indirect, int, ioport, NULL, S_IRUGO);
- MODULE_PARM_DESC(indirect, "Indirect access via address and data port");
+diff --git a/drivers/net/arcnet/com90xx.c b/drivers/net/arcnet/com90xx.c
+index 81f90c4703ae..ca4a57c30bf8 100644
+--- a/drivers/net/arcnet/com90xx.c
++++ b/drivers/net/arcnet/com90xx.c
+@@ -88,8 +88,8 @@ static int irq;
+ static int shmem;
+ static char device[9];		/* use eg. device=arc1 to change name */
  
--module_param_array(irq, int, NULL, S_IRUGO);
-+module_param_hw_array(irq, int, irq, NULL, S_IRUGO);
- MODULE_PARM_DESC(irq, "IRQ number");
+-module_param(io, int, 0);
+-module_param(irq, int, 0);
++module_param_hw(io, int, ioport, 0);
++module_param_hw(irq, int, irq, 0);
+ module_param(shmem, int, 0);
+ module_param_string(device, device, sizeof(device), 0);
  
- module_param_array(clk, int, NULL, S_IRUGO);
-diff --git a/drivers/net/can/sja1000/sja1000_isa.c b/drivers/net/can/sja1000/sja1000_isa.c
-index e97e6d35b300..a89c1e92554d 100644
---- a/drivers/net/can/sja1000/sja1000_isa.c
-+++ b/drivers/net/can/sja1000/sja1000_isa.c
-@@ -48,16 +48,16 @@ static unsigned char ocr[MAXDEV] = {[0 ... (MAXDEV - 1)] = 0xff};
- static int indirect[MAXDEV] = {[0 ... (MAXDEV - 1)] = -1};
- static spinlock_t indirect_lock[MAXDEV];  /* lock for indirect access mode */
- 
--module_param_array(port, ulong, NULL, S_IRUGO);
-+module_param_hw_array(port, ulong, ioport, NULL, S_IRUGO);
- MODULE_PARM_DESC(port, "I/O port number");
- 
--module_param_array(mem, ulong, NULL, S_IRUGO);
-+module_param_hw_array(mem, ulong, iomem, NULL, S_IRUGO);
- MODULE_PARM_DESC(mem, "I/O memory address");
- 
--module_param_array(indirect, int, NULL, S_IRUGO);
-+module_param_hw_array(indirect, int, ioport, NULL, S_IRUGO);
- MODULE_PARM_DESC(indirect, "Indirect access via address and data port");
- 
--module_param_array(irq, int, NULL, S_IRUGO);
-+module_param_hw_array(irq, int, irq, NULL, S_IRUGO);
- MODULE_PARM_DESC(irq, "IRQ number");
- 
- module_param_array(clk, int, NULL, S_IRUGO);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
