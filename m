@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 18:01:10 +0100
-Subject: [PATCH 29/38] Annotate hardware config module parameters in
-	drivers/staging/speakup/
+Date: Wed, 05 Apr 2017 18:00:52 +0100
+Subject: [PATCH 27/38] Annotate hardware config module parameters in
+	drivers/scsi/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141167058.29162.7142804081158375419.stgit@warthog.procyon.org.uk>
+Message-ID: <149141165268.29162.6487884277851555904.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,59 +26,115 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/staging/speakup/.
+This patch annotates drivers in drivers/scsi/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: speakup at linux-speakup.org
-cc: devel at driverdev.osuosl.org
+cc: "Juergen E. Fischer" <fischer@norbit.de>
+cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+cc: Dario Ballabio <ballabio_dario@emc.com>
+cc: Finn Thain <fthain@telegraphics.com.au>
+cc: Michael Schmitz <schmitzmic@gmail.com>
+cc: Achim Leubner <achim_leubner@adaptec.com>
+cc: linux-scsi at vger.kernel.org
 ---
 
- drivers/staging/speakup/speakup_acntpc.c |    2 +-
- drivers/staging/speakup/speakup_dtlk.c   |    2 +-
- drivers/staging/speakup/speakup_keypc.c  |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/aha152x.c   |    4 ++--
+ drivers/scsi/aha1542.c   |    2 +-
+ drivers/scsi/g_NCR5380.c |    8 ++++----
+ drivers/scsi/gdth.c      |    2 +-
+ drivers/scsi/qlogicfas.c |    4 ++--
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/speakup/speakup_acntpc.c b/drivers/staging/speakup/speakup_acntpc.c
-index c7fab261d860..b6fbf9de1f85 100644
---- a/drivers/staging/speakup/speakup_acntpc.c
-+++ b/drivers/staging/speakup/speakup_acntpc.c
-@@ -307,7 +307,7 @@ static void accent_release(void)
- 	speakup_info.port_tts = 0;
- }
+diff --git a/drivers/scsi/aha152x.c b/drivers/scsi/aha152x.c
+index f44d0487236e..ce5dc73d85bb 100644
+--- a/drivers/scsi/aha152x.c
++++ b/drivers/scsi/aha152x.c
+@@ -331,11 +331,11 @@ MODULE_LICENSE("GPL");
+ #if !defined(PCMCIA)
+ #if defined(MODULE)
+ static int io[] = {0, 0};
+-module_param_array(io, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(io,"base io address of controller");
  
--module_param_named(port, port_forced, int, 0444);
-+module_param_hw_named(port, port_forced, int, ioport, 0444);
- module_param_named(start, synth_acntpc.startup, short, 0444);
+ static int irq[] = {0, 0};
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ MODULE_PARM_DESC(irq,"interrupt for controller");
  
- MODULE_PARM_DESC(port, "Set the port for the synthesizer (override probing).");
-diff --git a/drivers/staging/speakup/speakup_dtlk.c b/drivers/staging/speakup/speakup_dtlk.c
-index e2bf20806d8d..9c097fda07b0 100644
---- a/drivers/staging/speakup/speakup_dtlk.c
-+++ b/drivers/staging/speakup/speakup_dtlk.c
-@@ -378,7 +378,7 @@ static void dtlk_release(void)
- 	speakup_info.port_tts = 0;
- }
+ static int scsiid[] = {7, 7};
+diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
+index 7db448ec8beb..a23cc9ac5acd 100644
+--- a/drivers/scsi/aha1542.c
++++ b/drivers/scsi/aha1542.c
+@@ -31,7 +31,7 @@ module_param(isapnp, bool, 0);
+ MODULE_PARM_DESC(isapnp, "enable PnP support (default=1)");
  
--module_param_named(port, port_forced, int, 0444);
-+module_param_hw_named(port, port_forced, int, ioport, 0444);
- module_param_named(start, synth_dtlk.startup, short, 0444);
+ static int io[MAXBOARDS] = { 0x330, 0x334, 0, 0 };
+-module_param_array(io, int, NULL, 0);
++module_param_hw_array(io, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(io, "base IO address of controller (0x130,0x134,0x230,0x234,0x330,0x334, default=0x330,0x334)");
  
- MODULE_PARM_DESC(port, "Set the port for the synthesizer (override probing).");
-diff --git a/drivers/staging/speakup/speakup_keypc.c b/drivers/staging/speakup/speakup_keypc.c
-index 10f4964782e2..e653b52175b8 100644
---- a/drivers/staging/speakup/speakup_keypc.c
-+++ b/drivers/staging/speakup/speakup_keypc.c
-@@ -309,7 +309,7 @@ static void keynote_release(void)
- 	synth_port = 0;
- }
+ /* time AHA spends on the AT-bus during data transfer */
+diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
+index 67c8dac321ad..c34fc91ba486 100644
+--- a/drivers/scsi/g_NCR5380.c
++++ b/drivers/scsi/g_NCR5380.c
+@@ -85,8 +85,8 @@ static int ncr_53c400;
+ static int ncr_53c400a;
+ static int dtc_3181e;
+ static int hp_c2502;
+-module_param(ncr_irq, int, 0);
+-module_param(ncr_addr, int, 0);
++module_param_hw(ncr_irq, int, irq, 0);
++module_param_hw(ncr_addr, int, ioport, 0);
+ module_param(ncr_5380, int, 0);
+ module_param(ncr_53c400, int, 0);
+ module_param(ncr_53c400a, int, 0);
+@@ -94,11 +94,11 @@ module_param(dtc_3181e, int, 0);
+ module_param(hp_c2502, int, 0);
  
--module_param_named(port, port_forced, int, 0444);
-+module_param_hw_named(port, port_forced, int, ioport, 0444);
- module_param_named(start, synth_keypc.startup, short, 0444);
+ static int irq[] = { -1, -1, -1, -1, -1, -1, -1, -1 };
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "IRQ number(s) (0=none, 254=auto [default])");
  
- MODULE_PARM_DESC(port, "Set the port for the synthesizer (override probing).");
+ static int base[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+-module_param_array(base, int, NULL, 0);
++module_param_hw_array(base, int, ioport, NULL, 0);
+ MODULE_PARM_DESC(base, "base address(es)");
+ 
+ static int card[] = { -1, -1, -1, -1, -1, -1, -1, -1 };
+diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
+index d020a13646ae..facc7271f932 100644
+--- a/drivers/scsi/gdth.c
++++ b/drivers/scsi/gdth.c
+@@ -353,7 +353,7 @@ static int probe_eisa_isa = 0;
+ static int force_dma32 = 0;
+ 
+ /* parameters for modprobe/insmod */
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ module_param(disable, int, 0);
+ module_param(reserve_mode, int, 0);
+ module_param_array(reserve_list, int, NULL, 0);
+diff --git a/drivers/scsi/qlogicfas.c b/drivers/scsi/qlogicfas.c
+index 61cac87fb86f..840823b99e51 100644
+--- a/drivers/scsi/qlogicfas.c
++++ b/drivers/scsi/qlogicfas.c
+@@ -137,8 +137,8 @@ static struct Scsi_Host *__qlogicfas_detect(struct scsi_host_template *host,
+ static struct qlogicfas408_priv *cards;
+ static int iobase[MAX_QLOGICFAS];
+ static int irq[MAX_QLOGICFAS] = { [0 ... MAX_QLOGICFAS-1] = -1 };
+-module_param_array(iobase, int, NULL, 0);
+-module_param_array(irq, int, NULL, 0);
++module_param_hw_array(iobase, int, ioport, NULL, 0);
++module_param_hw_array(irq, int, irq, NULL, 0);
+ MODULE_PARM_DESC(iobase, "I/O address");
+ MODULE_PARM_DESC(irq, "IRQ");
+ 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
