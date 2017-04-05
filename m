@@ -1,10 +1,10 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Apr 2017 17:58:33 +0100
-Subject: [PATCH 12/38] Annotate hardware config module parameters in
-	drivers/isdn/
+Date: Wed, 05 Apr 2017 17:58:13 +0100
+Subject: [PATCH 10/38] Annotate hardware config module parameters in
+	drivers/iio/
 In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Message-ID: <149141151320.29162.4938996321799823419.stgit@warthog.procyon.org.uk>
+Message-ID: <149141149301.29162.14497715164314234078.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -26,72 +26,45 @@ drivers have viable defaults set in case parameters aren't specified and
 some drivers support automatic configuration (e.g. PNP or PCI) in addition
 to manually coded parameters.
 
-This patch annotates drivers in drivers/isdn/.
+This patch annotates drivers in drivers/iio/.
 
 Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Karsten Keil <isdn@linux-pingi.de>
-cc: netdev at vger.kernel.org
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Acked-by: Jonathan Cameron <jic23@kernel.org>
+cc: linux-iio at vger.kernel.org
 ---
 
- drivers/isdn/hardware/avm/b1isa.c |    4 ++--
- drivers/isdn/hardware/avm/t1isa.c |    4 ++--
- drivers/isdn/hisax/config.c       |   10 +++++-----
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/iio/adc/stx104.c  |    2 +-
+ drivers/iio/dac/cio-dac.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/hardware/avm/b1isa.c b/drivers/isdn/hardware/avm/b1isa.c
-index 31ef8130a87f..54e871a47387 100644
---- a/drivers/isdn/hardware/avm/b1isa.c
-+++ b/drivers/isdn/hardware/avm/b1isa.c
-@@ -169,8 +169,8 @@ static struct pci_dev isa_dev[MAX_CARDS];
- static int io[MAX_CARDS];
- static int irq[MAX_CARDS];
+diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
+index be2de48844bc..7dd396f88f6b 100644
+--- a/drivers/iio/adc/stx104.c
++++ b/drivers/iio/adc/stx104.c
+@@ -49,7 +49,7 @@
  
--module_param_array(io, int, NULL, 0);
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- MODULE_PARM_DESC(io, "I/O base address(es)");
- MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
+ static unsigned int base[max_num_isa_dev(STX104_EXTENT)];
+ static unsigned int num_stx104;
+-module_param_array(base, uint, &num_stx104, 0);
++module_param_hw_array(base, uint, ioport, &num_stx104, 0);
+ MODULE_PARM_DESC(base, "Apex Embedded Systems STX104 base addresses");
  
-diff --git a/drivers/isdn/hardware/avm/t1isa.c b/drivers/isdn/hardware/avm/t1isa.c
-index 72ef18853951..9516203c735f 100644
---- a/drivers/isdn/hardware/avm/t1isa.c
-+++ b/drivers/isdn/hardware/avm/t1isa.c
-@@ -516,8 +516,8 @@ static int io[MAX_CARDS];
- static int irq[MAX_CARDS];
- static int cardnr[MAX_CARDS];
+ /**
+diff --git a/drivers/iio/dac/cio-dac.c b/drivers/iio/dac/cio-dac.c
+index 5a743e2a779d..dac086129edf 100644
+--- a/drivers/iio/dac/cio-dac.c
++++ b/drivers/iio/dac/cio-dac.c
+@@ -39,7 +39,7 @@
  
--module_param_array(io, int, NULL, 0);
--module_param_array(irq, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
- module_param_array(cardnr, int, NULL, 0);
- MODULE_PARM_DESC(io, "I/O base address(es)");
- MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
-diff --git a/drivers/isdn/hisax/config.c b/drivers/isdn/hisax/config.c
-index 2d12c6ceeb89..c7d68675b028 100644
---- a/drivers/isdn/hisax/config.c
-+++ b/drivers/isdn/hisax/config.c
-@@ -350,13 +350,13 @@ MODULE_AUTHOR("Karsten Keil");
- MODULE_LICENSE("GPL");
- module_param_array(type, int, NULL, 0);
- module_param_array(protocol, int, NULL, 0);
--module_param_array(io, int, NULL, 0);
--module_param_array(irq, int, NULL, 0);
--module_param_array(mem, int, NULL, 0);
-+module_param_hw_array(io, int, ioport, NULL, 0);
-+module_param_hw_array(irq, int, irq, NULL, 0);
-+module_param_hw_array(mem, int, iomem, NULL, 0);
- module_param(id, charp, 0);
- #ifdef IO0_IO1
--module_param_array(io0, int, NULL, 0);
--module_param_array(io1, int, NULL, 0);
-+module_param_hw_array(io0, int, ioport, NULL, 0);
-+module_param_hw_array(io1, int, ioport, NULL, 0);
- #endif
- #endif /* MODULE */
+ static unsigned int base[max_num_isa_dev(CIO_DAC_EXTENT)];
+ static unsigned int num_cio_dac;
+-module_param_array(base, uint, &num_cio_dac, 0);
++module_param_hw_array(base, uint, ioport, &num_cio_dac, 0);
+ MODULE_PARM_DESC(base, "Measurement Computing CIO-DAC base addresses");
  
+ /**
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
