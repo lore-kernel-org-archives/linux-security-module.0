@@ -1,18 +1,57 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 06 Apr 2017 13:54:23 +0100
-Subject: [PATCH 1/5] efi: Move the x86 secure boot switch to generic code
-In-Reply-To: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
-References: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
-Message-ID: <3598.1491483263@warthog.procyon.org.uk>
+From: john.johansen@canonical.com (John Johansen)
+Date: Thu,  6 Apr 2017 06:55:18 -0700
+Subject: [GIT PULL] AppArmor fixes for 4.12
+Message-ID: <20170406135524.25481-1-john.johansen@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Sorry, I forgot to include a cover note.
+Hi James,
 
-These five patches would replace 1-3 & 6 from my Kernel Lockdown series.  The
-additional patch moves the secure boot switch from x86 to generic code.
+Here is the pull request for 4.12
 
-David
+There are no new features here, just a small set of bug fixes since
+the 4.11 pull request.
+
+Thanks,
+-John
+
+---
+
+The following changes since commit ef933e87785f42868980f0e3af91fec313612868:
+
+  selinux: fix kernel BUG on prlimit(..., NULL, NULL) (2017-03-01 13:11:17 +1100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor for-security
+
+for you to fetch changes up to 6ebcd4c271332ca4f4dd958219f2ff1b7db1ed59:
+
+  apparmor: Make path_max parameter readonly (2017-04-06 05:14:20 -0700)
+
+----------------------------------------------------------------
+John Johansen (3):
+      apparmor: fix invalid reference to index variable of iterator line 836
+      apparmor: fix parameters so that the permission test is bypassed at boot
+      apparmor: Make path_max parameter readonly
+
+Nicolas Iooss (1):
+      apparmor: use SHASH_DESC_ON_STACK
+
+Valentin Rothberg (1):
+      security/apparmor/lsm.c: set debug messages
+
+kbuild test robot (1):
+      apparmor: fix boolreturn.cocci warnings
+
+ security/apparmor/crypto.c      | 32 +++++++++++---------------
+ security/apparmor/include/lib.h |  2 +-
+ security/apparmor/lib.c         |  4 ++--
+ security/apparmor/lsm.c         | 51 +++++++++++++++++++----------------------
+ security/apparmor/policy.c      |  6 +++--
+5 files changed, 44 insertions(+), 51 deletions(-)
+      
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
