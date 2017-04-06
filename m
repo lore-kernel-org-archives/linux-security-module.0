@@ -1,58 +1,110 @@
 From: john.johansen@canonical.com (John Johansen)
-Date: Thu,  6 Apr 2017 06:55:22 -0700
-Subject: [PATCH 4/6] apparmor: fix invalid reference to index variable of
-	iterator line 836
+Date: Thu,  6 Apr 2017 06:55:21 -0700
+Subject: [PATCH 3/6] apparmor: use SHASH_DESC_ON_STACK
 In-Reply-To: <20170406135524.25481-1-john.johansen@canonical.com>
 References: <20170406135524.25481-1-john.johansen@canonical.com>
-Message-ID: <20170406135524.25481-5-john.johansen@canonical.com>
+Message-ID: <20170406135524.25481-4-john.johansen@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Once the loop on lines 836-853 is complete and exits normally, ent is a
-pointer to the dummy list head value.  The derefernces accessible from eg
-the goto fail on line 860 or the various goto fail_lock's afterwards thus
-seem incorrect.
+From: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
 
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+When building the kernel with clang, the compiler fails to build
+security/apparmor/crypto.c with the following error:
+
+    security/apparmor/crypto.c:36:8: error: fields must have a constant
+    size: 'variable length array in structure' extension will never be
+    supported
+                    char ctx[crypto_shash_descsize(apparmor_tfm)];
+                         ^
+
+Since commit a0a77af14117 ("crypto: LLVMLinux: Add macro to remove use
+of VLAIS in crypto code"), include/crypto/hash.h defines
+SHASH_DESC_ON_STACK to work around this issue. Use it in aa_calc_hash()
+and aa_calc_profile_hash().
+
+Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
 Signed-off-by: John Johansen <john.johansen@canonical.com>
 ---
- security/apparmor/policy.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ security/apparmor/crypto.c | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index f44312a..c0a4066 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -874,9 +874,11 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 	if (ns_name) {
- 		ns = aa_prepare_ns(view, ns_name);
- 		if (IS_ERR(ns)) {
-+			op = OP_PROF_LOAD;
- 			info = "failed to prepare namespace";
- 			error = PTR_ERR(ns);
- 			ns = NULL;
-+			ent = NULL;
- 			goto fail;
- 		}
- 	} else
-@@ -1011,7 +1013,7 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 	/* audit cause of failure */
- 	op = (!ent->old) ? OP_PROF_LOAD : OP_PROF_REPL;
- fail:
--	audit_policy(profile, op, ns_name, ent->new->base.hname,
-+	audit_policy(profile, op, ns_name, ent ? ent->new->base.hname : NULL,
- 		     info, error);
- 	/* audit status that rest of profiles in the atomic set failed too */
- 	info = "valid profile in failed atomic policy load";
-@@ -1021,7 +1023,7 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 			/* skip entry that caused failure */
- 			continue;
- 		}
--		op = (!ent->old) ? OP_PROF_LOAD : OP_PROF_REPL;
-+		op = (!tmp->old) ? OP_PROF_LOAD : OP_PROF_REPL;
- 		audit_policy(profile, op, ns_name,
- 			     tmp->new->base.hname, info, error);
- 	}
+diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
+index de8dc78..136f2a0 100644
+--- a/security/apparmor/crypto.c
++++ b/security/apparmor/crypto.c
+@@ -31,10 +31,7 @@ unsigned int aa_hash_size(void)
+ 
+ char *aa_calc_hash(void *data, size_t len)
+ {
+-	struct {
+-		struct shash_desc shash;
+-		char ctx[crypto_shash_descsize(apparmor_tfm)];
+-	} desc;
++	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+ 	char *hash = NULL;
+ 	int error = -ENOMEM;
+ 
+@@ -45,16 +42,16 @@ char *aa_calc_hash(void *data, size_t len)
+ 	if (!hash)
+ 		goto fail;
+ 
+-	desc.shash.tfm = apparmor_tfm;
+-	desc.shash.flags = 0;
++	desc->tfm = apparmor_tfm;
++	desc->flags = 0;
+ 
+-	error = crypto_shash_init(&desc.shash);
++	error = crypto_shash_init(desc);
+ 	if (error)
+ 		goto fail;
+-	error = crypto_shash_update(&desc.shash, (u8 *) data, len);
++	error = crypto_shash_update(desc, (u8 *) data, len);
+ 	if (error)
+ 		goto fail;
+-	error = crypto_shash_final(&desc.shash, hash);
++	error = crypto_shash_final(desc, hash);
+ 	if (error)
+ 		goto fail;
+ 
+@@ -69,10 +66,7 @@ char *aa_calc_hash(void *data, size_t len)
+ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+ 			 size_t len)
+ {
+-	struct {
+-		struct shash_desc shash;
+-		char ctx[crypto_shash_descsize(apparmor_tfm)];
+-	} desc;
++	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+ 	int error = -ENOMEM;
+ 	__le32 le32_version = cpu_to_le32(version);
+ 
+@@ -86,19 +80,19 @@ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+ 	if (!profile->hash)
+ 		goto fail;
+ 
+-	desc.shash.tfm = apparmor_tfm;
+-	desc.shash.flags = 0;
++	desc->tfm = apparmor_tfm;
++	desc->flags = 0;
+ 
+-	error = crypto_shash_init(&desc.shash);
++	error = crypto_shash_init(desc);
+ 	if (error)
+ 		goto fail;
+-	error = crypto_shash_update(&desc.shash, (u8 *) &le32_version, 4);
++	error = crypto_shash_update(desc, (u8 *) &le32_version, 4);
+ 	if (error)
+ 		goto fail;
+-	error = crypto_shash_update(&desc.shash, (u8 *) start, len);
++	error = crypto_shash_update(desc, (u8 *) start, len);
+ 	if (error)
+ 		goto fail;
+-	error = crypto_shash_final(&desc.shash, profile->hash);
++	error = crypto_shash_final(desc, profile->hash);
+ 	if (error)
+ 		goto fail;
+ 
 -- 
 2.9.3
 
