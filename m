@@ -1,21 +1,26 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 06 Apr 2017 07:55:13 +0100
-Subject: [PATCH 11/24] uswsusp: Disable when the kernel is locked down
-In-Reply-To: <CAJZ5v0hp=GJtQ+YnNdaMw6rtbBzNyueY+iqjPkHLKp57t822ZQ@mail.gmail.com>
-References: <CAJZ5v0hp=GJtQ+YnNdaMw6rtbBzNyueY+iqjPkHLKp57t822ZQ@mail.gmail.com>
-	<149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142336965.5101.2946578135980499557.stgit@warthog.procyon.org.uk>
-Message-ID: <10055.1491461713@warthog.procyon.org.uk>
+From: jmorris@namei.org (James Morris)
+Date: Thu, 6 Apr 2017 18:25:20 +1000 (AEST)
+Subject: [PATCH 00/24] Kernel lockdown
+In-Reply-To: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
+References: <149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.20.1704061823520.12226@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Wed, 5 Apr 2017, David Howells wrote:
 
-> You probably want to disable hibernation altogether in this case.
+> The patches can be found here also:
+> 
+> 	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lockdown
+> 
 
-See patch 10.  Does that mean patch 11 is superfluous?
+Do you mean the branch 'efi-lock-down' ?
 
-David
+
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
