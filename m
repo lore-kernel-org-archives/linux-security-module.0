@@ -1,28 +1,50 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 06 Apr 2017 11:43:20 +0100
-Subject: [PATCH 02/24] Add the ability to lock down access to the running
-	kernel image
-In-Reply-To: <alpine.LRH.2.20.1704061840090.12226@namei.org>
-References: <alpine.LRH.2.20.1704061840090.12226@namei.org>
-	<149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
-	<149141221365.31282.16276273075946694481.stgit@warthog.procyon.org.uk>
-Message-ID: <32240.1491475400@warthog.procyon.org.uk>
+From: alexei.starovoitov@gmail.com (Alexei Starovoitov)
+Date: Thu, 6 Apr 2017 08:29:09 -0400
+Subject: [PATCH 20/24] bpf: Restrict kernel image access functions when
+	the kernel is locked down
+In-Reply-To: <149142344547.5101.4518618716303032193.stgit@warthog.procyon.org.uk>
+References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
+	<149142344547.5101.4518618716303032193.stgit@warthog.procyon.org.uk>
+Message-ID: <20170406122907.GA53880@ast-mbp.thefacebook.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-James Morris <jmorris@namei.org> wrote:
-
-> > +static __read_mostly bool kernel_locked_down;
+On Wed, Apr 05, 2017 at 09:17:25PM +0100, David Howells wrote:
+> From: Chun-Yi Lee <jlee@suse.com>
 > 
-> How about marking this __ro_after_init if ALLOW_LOCKDOWN_LIFT is not 
-> configured?
+> There are some bpf functions can be used to read kernel memory:
+> bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
+> private keys in kernel memory (e.g. the hibernation image signing key) to
+> be read by an eBPF program.  Prohibit those functions when the kernel is
+> locked down.
+> 
+> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: netdev at vger.kernel.org
+> ---
+> 
+>  kernel/trace/bpf_trace.c |   11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index cee9802cf3e0..7fde851f207b 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -65,6 +65,11 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
+>  {
+>  	int ret;
+>  
+> +	if (kernel_is_locked_down()) {
+> +		memset(dst, 0, size);
+> +		return -EPERM;
+> +	}
 
-I guess lock_kernel_down() would need to be __init also in that case.
+this will obviously break the program. How about disabling loading tracing
+programs during the lockdown completely?
 
-Also, the implementation of lift_kernel_lockdown() should be conditional on
-CONFIG_ALLOW_LOCKDOWN_LIFT.
+Also is there a description of what this lockdown trying to accomplish?
+The cover letter is scarce in details.
 
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
