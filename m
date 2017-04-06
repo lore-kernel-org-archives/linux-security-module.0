@@ -1,35 +1,27 @@
 From: jmorris@namei.org (James Morris)
-Date: Fri, 7 Apr 2017 07:55:54 +1000 (AEST)
-Subject: [PATCH 02/24] Add the ability to lock down access to the running
-	kernel image
-In-Reply-To: <32240.1491475400@warthog.procyon.org.uk>
-References: <alpine.LRH.2.20.1704061840090.12226@namei.org>
-	<149141219387.31282.6648284836568938717.stgit@warthog.procyon.org.uk>
-	<149141221365.31282.16276273075946694481.stgit@warthog.procyon.org.uk>
-	<32240.1491475400@warthog.procyon.org.uk>
-Message-ID: <alpine.LRH.2.20.1704070755010.27111@namei.org>
+Date: Fri, 7 Apr 2017 08:24:47 +1000 (AEST)
+Subject: [PATCH RFC 00/11] LSM: Stacking for major security modules
+In-Reply-To: <1491511104.4532.17.camel@tycho.nsa.gov>
+References: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
+	<1491503171.4532.10.camel@tycho.nsa.gov>
+	<c6d9da56-fd4d-e8e5-caa5-718de74db261@schaufler-ca.com>
+	<1491511104.4532.17.camel@tycho.nsa.gov>
+Message-ID: <alpine.LRH.2.20.1704070758310.27111@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 6 Apr 2017, David Howells wrote:
+On Thu, 6 Apr 2017, Stephen Smalley wrote:
 
-> James Morris <jmorris@namei.org> wrote:
-> 
-> > > +static __read_mostly bool kernel_locked_down;
-> > 
-> > How about marking this __ro_after_init if ALLOW_LOCKDOWN_LIFT is not 
-> > configured?
-> 
-> I guess lock_kernel_down() would need to be __init also in that case.
+> Yes, but in the meantime, if you want to be able to test
+> CONFIG_SECURITY_STACKING=y with modules in enforcing mode on
+> distributions that enable a major security module, it seems like you
+> need to provide some way of handling this compatibly.
 
-Ideally, yes.
+Regardless of the config option, we can't break existing userspace. This 
+is a long-standing Linux kernel development rule.
 
-> 
-> Also, the implementation of lift_kernel_lockdown() should be conditional on
-> CONFIG_ALLOW_LOCKDOWN_LIFT.
-> 
-> David
-> 
+You'll need to implement new interfaces for any changes.
+
 
 -- 
 James Morris
