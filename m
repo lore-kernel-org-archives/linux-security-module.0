@@ -1,24 +1,25 @@
 From: rafael@kernel.org (Rafael J. Wysocki)
-Date: Thu, 6 Apr 2017 21:43:54 +0200
-Subject: [PATCH 17/24] acpi: Ignore acpi_rsdp kernel param when the kernel
-	has been locked down
-In-Reply-To: <149142341772.5101.12366553346604485034.stgit@warthog.procyon.org.uk>
+Date: Thu, 6 Apr 2017 22:07:50 +0200
+Subject: [PATCH 11/24] uswsusp: Disable when the kernel is locked down
+In-Reply-To: <10055.1491461713@warthog.procyon.org.uk>
 References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142341772.5101.12366553346604485034.stgit@warthog.procyon.org.uk>
-Message-ID: <CAJZ5v0j580XfGHd+GVQe+7vuSGyxFzfrDOjYfOcGTnKZSvjCoA@mail.gmail.com>
+	<149142336965.5101.2946578135980499557.stgit@warthog.procyon.org.uk>
+	<CAJZ5v0hp=GJtQ+YnNdaMw6rtbBzNyueY+iqjPkHLKp57t822ZQ@mail.gmail.com>
+	<10055.1491461713@warthog.procyon.org.uk>
+Message-ID: <CAJZ5v0iZ7Wf5pWL9HSzH_0djQfDmCLT14sp0HYbs9h8UuGHPkQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 5, 2017 at 10:16 PM, David Howells <dhowells@redhat.com> wrote:
-> From: Josh Boyer <jwboyer@redhat.com>
+On Thu, Apr 6, 2017 at 8:55 AM, David Howells <dhowells@redhat.com> wrote:
+> Rafael J. Wysocki <rafael@kernel.org> wrote:
 >
-> This option allows userspace to pass the RSDP address to the kernel, which
-> makes it possible for a user to circumvent any restrictions imposed on
-> loading modules.  Ignore the option when the kernel is locked down.
+>> You probably want to disable hibernation altogether in this case.
+>
+> See patch 10.  Does that mean patch 11 is superfluous?
 
-I'm not really sure here.
+Yes, it does.
 
-What exactly is the mechanism?
+You can't open /dev/snapshot if hibernation_available() returns false.
 
 Thanks,
 Rafael
