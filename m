@@ -1,62 +1,161 @@
-From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
-Date: Thu, 6 Apr 2017 13:40:20 +0100
-Subject: [PATCH 20/24] bpf: Restrict kernel image access functions when
-	the kernel is locked down
-In-Reply-To: <20170406122907.GA53880@ast-mbp.thefacebook.com>
-References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142344547.5101.4518618716303032193.stgit@warthog.procyon.org.uk>
-	<20170406122907.GA53880@ast-mbp.thefacebook.com>
-Message-ID: <CAKv+Gu_mWJ2LwPqokWmCG4nmKJHrdQ1qHdM8xTvUziJh3GP+JA@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 06 Apr 2017 13:50:12 +0100
+Subject: [PATCH 3/5] Add the ability to lock down access to the running
+	kernel image
+In-Reply-To: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
+References: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
+Message-ID: <149148301242.3427.10901430670266893587.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 6 April 2017 at 13:29, Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-> On Wed, Apr 05, 2017 at 09:17:25PM +0100, David Howells wrote:
->> From: Chun-Yi Lee <jlee@suse.com>
->>
->> There are some bpf functions can be used to read kernel memory:
->> bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
->> private keys in kernel memory (e.g. the hibernation image signing key) to
->> be read by an eBPF program.  Prohibit those functions when the kernel is
->> locked down.
->>
->> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> cc: netdev at vger.kernel.org
->> ---
->>
->>  kernel/trace/bpf_trace.c |   11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
->> index cee9802cf3e0..7fde851f207b 100644
->> --- a/kernel/trace/bpf_trace.c
->> +++ b/kernel/trace/bpf_trace.c
->> @@ -65,6 +65,11 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
->>  {
->>       int ret;
->>
->> +     if (kernel_is_locked_down()) {
->> +             memset(dst, 0, size);
->> +             return -EPERM;
->> +     }
->
-> this will obviously break the program. How about disabling loading tracing
-> programs during the lockdown completely?
->
-> Also is there a description of what this lockdown trying to accomplish?
-> The cover letter is scarce in details.
->
+Provide a single call to allow kernel code to determine whether the system
+should be locked down, thereby disallowing various accesses that might
+allow the running kernel image to be changed including the loading of
+modules that aren't validly signed with a key we recognise, fiddling with
+MSR registers and disallowing hibernation,
 
-This is a very good point, and this is actually feedback that was
-given (by Alan Cox, iirc) the last time this series was circulated.
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-This series is a mixed bag of patches that all look like they improve
-'security' in one way or the other. But what is lacking is a coherent
-view on the threat model, and to what extent all these patches reduce
-the vulnerability to such threats. Without that, these patches do very
-little beyond giving a false sense of security, imo.
+ include/linux/kernel.h   |    9 +++++++++
+ include/linux/security.h |   11 +++++++++++
+ security/Kconfig         |   15 +++++++++++++++
+ security/Makefile        |    3 +++
+ security/lock_down.c     |   46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 84 insertions(+)
+ create mode 100644 security/lock_down.c
+
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 4c26dc3a8295..b820a80dc949 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -275,6 +275,15 @@ extern int oops_may_print(void);
+ void do_exit(long error_code) __noreturn;
+ void complete_and_exit(struct completion *, long) __noreturn;
+ 
++#ifdef CONFIG_LOCK_DOWN_KERNEL
++extern bool kernel_is_locked_down(void);
++#else
++static inline bool kernel_is_locked_down(void)
++{
++	return false;
++}
++#endif
++
+ /* Internal, do not use. */
+ int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
+ int __must_check _kstrtol(const char *s, unsigned int base, long *res);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index af675b576645..8db2d886aa90 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1698,5 +1698,16 @@ static inline void free_secdata(void *secdata)
+ { }
+ #endif /* CONFIG_SECURITY */
+ 
++#ifdef CONFIG_LOCK_DOWN_KERNEL
++extern void __init lock_kernel_down(void);
++#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT
++extern void lift_kernel_lockdown(void);
++#endif
++#else
++static inline void lock_kernel_down(void)
++{
++}
++#endif
++
+ #endif /* ! __LINUX_SECURITY_H */
+ 
+diff --git a/security/Kconfig b/security/Kconfig
+index 3ff1bf91080e..e3830171bdcb 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -198,6 +198,21 @@ config STATIC_USERMODEHELPER_PATH
+ 	  If you wish for all usermode helper programs to be disabled,
+ 	  specify an empty string here (i.e. "").
+ 
++config LOCK_DOWN_KERNEL
++	bool "Allow the kernel to be 'locked down'"
++	help
++	  Allow the kernel to be locked down under certain circumstances, for
++	  instance if UEFI secure boot is enabled.  Locking down the kernel
++	  turns off various features that might otherwise allow access to the
++	  kernel image (eg. setting MSR registers).
++
++config ALLOW_LOCKDOWN_LIFT
++	bool
++	help
++	  Allow the lockdown on a kernel to be lifted, thereby restoring the
++	  ability of userspace to access the kernel image (eg. by SysRq+x under
++	  x86).
++
+ source security/selinux/Kconfig
+ source security/smack/Kconfig
+ source security/tomoyo/Kconfig
+diff --git a/security/Makefile b/security/Makefile
+index f2d71cdb8e19..8c4a43e3d4e0 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -29,3 +29,6 @@ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+ # Object integrity file lists
+ subdir-$(CONFIG_INTEGRITY)		+= integrity
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
++
++# Allow the kernel to be locked down
++obj-$(CONFIG_LOCK_DOWN_KERNEL)		+= lock_down.o
+diff --git a/security/lock_down.c b/security/lock_down.c
+new file mode 100644
+index 000000000000..dd98422fbda7
+--- /dev/null
++++ b/security/lock_down.c
+@@ -0,0 +1,46 @@
++/* Lock down the kernel
++ *
++ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells at redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/security.h>
++#include <linux/export.h>
++
++#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT
++static __read_mostly bool kernel_locked_down;
++#else
++static __ro_after_init bool kernel_locked_down;
++#endif
++
++/*
++ * Put the kernel into lock-down mode.
++ */
++void __init lock_kernel_down(void)
++{
++	kernel_locked_down = true;
++}
++
++/*
++ * Take the kernel out of lockdown mode.
++ */
++#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT
++void lift_kernel_lockdown(void)
++{
++	kernel_locked_down = false;
++}
++#endif
++
++/**
++ * kernel_is_locked_down - Find out if the kernel is locked down
++ */
++bool kernel_is_locked_down(void)
++{
++	return kernel_locked_down;
++}
++EXPORT_SYMBOL(kernel_is_locked_down);
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
