@@ -1,155 +1,54 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 06 Apr 2017 13:49:57 +0100
-Subject: [PATCH 1/5] efi: Move the x86 secure boot switch to generic code
-Message-ID: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
+Date: Thu, 06 Apr 2017 13:50:05 +0100
+Subject: [PATCH 2/5] efi: Add EFI_SECURE_BOOT bit
+In-Reply-To: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
+References: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
+Message-ID: <149148300512.3427.7213689013157799404.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Move the switch-statement in x86's setup_arch() that inteprets the
-secure_boot boot parameter to generic code.
+From: Josh Boyer <jwboyer@fedoraproject.org>
 
-Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+UEFI machines can be booted in Secure Boot mode.  Add a EFI_SECURE_BOOT bit
+that can be passed to efi_enabled() to find out whether secure boot is
+enabled.
+
+This will be used by the SysRq+x handler, registered by the x86 arch, to
+find out whether secure boot mode is enabled so that it can be disabled.
+
+Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-efi at vger.kernel.org
 ---
 
- arch/x86/kernel/setup.c            |   14 +-------------
- drivers/firmware/efi/Kconfig       |   23 +++++++++++++++++++++++
- drivers/firmware/efi/Makefile      |    3 ++-
- drivers/firmware/efi/secure_boot.c |   34 ++++++++++++++++++++++++++++++++++
- include/linux/efi.h                |    6 ++++++
- 5 files changed, 66 insertions(+), 14 deletions(-)
- create mode 100644 drivers/firmware/efi/secure_boot.c
+ drivers/firmware/efi/secure_boot.c |    1 +
+ include/linux/efi.h                |    1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 4bf0c8926a1c..b89979ffa6e5 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1178,19 +1178,7 @@ void __init setup_arch(char **cmdline_p)
- 	/* Allocate bigger log buffer */
- 	setup_log_buf(1);
- 
--	if (efi_enabled(EFI_BOOT)) {
--		switch (boot_params.secure_boot) {
--		case efi_secureboot_mode_disabled:
--			pr_info("Secure boot disabled\n");
--			break;
--		case efi_secureboot_mode_enabled:
--			pr_info("Secure boot enabled\n");
--			break;
--		default:
--			pr_info("Secure boot could not be determined\n");
--			break;
--		}
--	}
-+	efi_set_secure_boot(boot_params.secure_boot);
- 
- 	reserve_initrd();
- 
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index 2e78b0b96d74..4b902ffbfcf4 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -84,6 +84,29 @@ config EFI_PARAMS_FROM_FDT
- config EFI_RUNTIME_WRAPPERS
- 	bool
- 
-+config EFI_SECURE_BOOT
-+	bool "Support UEFI Secure Boot and lock down the kernel in secure boot mode"
-+	default n
-+	help
-+	  UEFI Secure Boot provides a mechanism for ensuring that the firmware
-+	  will only load signed bootloaders and kernels.  Secure boot mode may
-+	  be determined from EFI variables provided by the BIOS if not
-+	  indicated by the boot parameters.
-+
-+	  Enabling this option turns on support for UEFI secure boot in the
-+	  kernel.  This will result in various kernel facilities being locked
-+	  away from userspace if the kernel detects that it has been booted in
-+	  secure boot mode.  If it hasn't been booted in secure boot mode, or
-+	  this cannot be determined, the lock down doesn't occur.
-+
-+	  The kernel facilities that get locked down include:
-+	  - Viewing or changing the kernel's memory
-+	  - Directly accessing ioports
-+	  - Directly specifying ioports and other hardware parameters to drivers
-+	  - Storing the kernel image unencrypted for hibernation
-+	  - Loading unsigned modules
-+	  - Kexec'ing unsigned images
-+
- config EFI_ARMSTUB
- 	bool
- 
-diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index ad67342313ed..65969f840685 100644
---- a/drivers/firmware/efi/Makefile
-+++ b/drivers/firmware/efi/Makefile
-@@ -22,7 +22,8 @@ obj-$(CONFIG_EFI_FAKE_MEMMAP)		+= fake_mem.o
- obj-$(CONFIG_EFI_BOOTLOADER_CONTROL)	+= efibc.o
- obj-$(CONFIG_EFI_TEST)			+= test/
- obj-$(CONFIG_EFI_DEV_PATH_PARSER)	+= dev-path-parser.o
--obj-$(CONFIG_APPLE_PROPERTIES)		+= apple-properties.o
-+obj-$(CONFIG_EFI_SECURE_BOOT)		+= secure_boot.o
-+obj-$(CONFIG_APPLE_PROPERTIES)		+= apple-properties.oo
- 
- arm-obj-$(CONFIG_EFI)			:= arm-init.o arm-runtime.o
- obj-$(CONFIG_ARM)			+= $(arm-obj-y)
 diff --git a/drivers/firmware/efi/secure_boot.c b/drivers/firmware/efi/secure_boot.c
-new file mode 100644
-index 000000000000..cf5bccae15e8
---- /dev/null
+index cf5bccae15e8..730518061a14 100644
+--- a/drivers/firmware/efi/secure_boot.c
 +++ b/drivers/firmware/efi/secure_boot.c
-@@ -0,0 +1,34 @@
-+/* Core kernel secure boot support.
-+ *
-+ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#include <linux/efi.h>
-+#include <linux/kernel.h>
-+#include <linux/printk.h>
-+
-+/*
-+ * Decide what to do when UEFI secure boot mode is enabled.
-+ */
-+void __init efi_set_secure_boot(enum efi_secureboot_mode mode)
-+{
-+	if (efi_enabled(EFI_BOOT)) {
-+		switch (mode) {
-+		case efi_secureboot_mode_disabled:
-+			pr_info("Secure boot disabled\n");
-+			break;
-+		case efi_secureboot_mode_enabled:
-+			pr_info("Secure boot enabled\n");
-+			break;
-+		default:
-+			pr_info("Secure boot could not be determined\n");
-+			break;
-+		}
-+	}
-+}
+@@ -24,6 +24,7 @@ void __init efi_set_secure_boot(enum efi_secureboot_mode mode)
+ 			pr_info("Secure boot disabled\n");
+ 			break;
+ 		case efi_secureboot_mode_enabled:
++			set_bit(EFI_SECURE_BOOT, &efi.flags);
+ 			pr_info("Secure boot enabled\n");
+ 			break;
+ 		default:
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 94d34e0be24f..d8938a780290 100644
+index d8938a780290..536a10111bde 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
-@@ -1488,6 +1488,12 @@ enum efi_secureboot_mode {
- };
- enum efi_secureboot_mode efi_get_secureboot(efi_system_table_t *sys_table);
+@@ -1069,6 +1069,7 @@ extern int __init efi_setup_pcdp_console(char *);
+ #define EFI_DBG			8	/* Print additional debug info at runtime */
+ #define EFI_NX_PE_DATA		9	/* Can runtime data regions be mapped non-executable? */
+ #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
++#define EFI_SECURE_BOOT		11	/* Are we in Secure Boot mode? */
  
-+#ifdef CONFIG_EFI_SECURE_BOOT
-+void __init efi_set_secure_boot(enum efi_secureboot_mode mode);
-+#else
-+static inline void efi_set_secure_boot(enum efi_secureboot_mode mode) {}
-+#endif
-+
+ #ifdef CONFIG_EFI
  /*
-  * Arch code can implement the following three template macros, avoiding
-  * reptition for the void/non-void return cases of {__,}efi_call_virt():
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
