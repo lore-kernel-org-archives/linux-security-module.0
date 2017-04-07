@@ -1,61 +1,50 @@
-From: andy.shevchenko@gmail.com (Andy Shevchenko)
-Date: Fri, 7 Apr 2017 13:25:43 +0300
-Subject: [PATCH 15/24] asus-wmi: Restrict debugfs interface when the
-	kernel is locked down
-In-Reply-To: <149142340198.5101.8171352010918423590.stgit@warthog.procyon.org.uk>
-References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142340198.5101.8171352010918423590.stgit@warthog.procyon.org.uk>
-Message-ID: <CAHp75VfpsnCHVqnFnwwh3JHB0ccY66Gj88sMGhrA9W7rDxiY_Q@mail.gmail.com>
+From: linus.walleij@linaro.org (Linus Walleij)
+Date: Fri, 7 Apr 2017 12:42:32 +0200
+Subject: [PATCH 08/38] Annotate hardware config module parameters in
+	drivers/gpio/
+In-Reply-To: <149141147489.29162.566616944109123278.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141147489.29162.566616944109123278.stgit@warthog.procyon.org.uk>
+Message-ID: <CACRpkdaLW6egEB-w1iEfy1b0RM=yB8QoYFkatiUvEE8fvWJSiw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 5, 2017 at 11:16 PM, David Howells <dhowells@redhat.com> wrote:
-> From: Matthew Garrett <matthew.garrett@nebula.com>
->
-> We have no way of validating what all of the Asus WMI methods do on a given
-> machine - and there's a risk that some will allow hardware state to be
-> manipulated in such a way that arbitrary code can be executed in the
-> kernel, circumventing module loading restrictions.  Prevent that if the
-> kernel is locked down.
+On Wed, Apr 5, 2017 at 6:57 PM, David Howells <dhowells@redhat.com> wrote:
 
-> +       if (kernel_is_locked_down())
-> +               return -EPERM;
-
-It looks a bit fragile when responsility of whatever reasons kernel
-can't serve become a driver burden.
-Can we fix this in debugfs framework instead?
-
-> +
->         err = asus_wmi_get_devstate(asus, asus->debug.dev_id, &retval);
+> When the kernel is running in secure boot mode, we lock down the kernel to
+> prevent userspace from modifying the running kernel image.  Whilst this
+> includes prohibiting access to things like /dev/mem, it must also prevent
+> access by means of configuring driver modules in such a way as to cause a
+> device to access or modify the kernel image.
 >
->         if (err < 0)
-> @@ -1916,6 +1919,9 @@ static int show_devs(struct seq_file *m, void *data)
->         int err;
->         u32 retval = -1;
+> To this end, annotate module_param* statements that refer to hardware
+> configuration and indicate for future reference what type of parameter they
+> specify.  The parameter parser in the core sees this information and can
+> skip such parameters with an error message if the kernel is locked down.
+> The module initialisation then runs as normal, but just sees whatever the
+> default values for those parameters is.
 >
-> +       if (kernel_is_locked_down())
-> +               return -EPERM;
-> +
->         err = asus_wmi_set_devstate(asus->debug.dev_id, asus->debug.ctrl_param,
->                                     &retval);
+> Note that we do still need to do the module initialisation because some
+> drivers have viable defaults set in case parameters aren't specified and
+> some drivers support automatic configuration (e.g. PNP or PCI) in addition
+> to manually coded parameters.
 >
-> @@ -1940,6 +1946,9 @@ static int show_call(struct seq_file *m, void *data)
->         union acpi_object *obj;
->         acpi_status status;
+> This patch annotates drivers in drivers/gpio/.
 >
-> +       if (kernel_is_locked_down())
-> +               return -EPERM;
-> +
->         status = wmi_evaluate_method(ASUS_WMI_MGMT_GUID,
->                                      1, asus->debug.method_id,
->                                      &input, &output);
->
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> cc: Alexandre Courbot <gnurou@gmail.com>
+> cc: linux-gpio at vger.kernel.org
 
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+I see that I don't have this symbol in my tree so I guess the patch
+series adds it and this patch needs to follow it.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
