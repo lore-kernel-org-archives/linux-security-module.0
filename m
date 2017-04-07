@@ -1,86 +1,42 @@
 From: dyoung@redhat.com (Dave Young)
-Date: Fri, 7 Apr 2017 14:19:35 +0800
-Subject: [PATCH 09/24] kexec_file: Disable at runtime if securelevel has
-	been set
-In-Reply-To: <1491536950.4184.10.camel@linux.vnet.ibm.com>
+Date: Fri, 7 Apr 2017 14:31:07 +0800
+Subject: [PATCH 17/24] acpi: Ignore acpi_rsdp kernel param when the
+	kernel has been locked down
+In-Reply-To: <CAJZ5v0j580XfGHd+GVQe+7vuSGyxFzfrDOjYfOcGTnKZSvjCoA@mail.gmail.com>
 References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142335441.5101.2294976563846442575.stgit@warthog.procyon.org.uk>
-	<20170407030545.GA4296@dhcp-128-65.nay.redhat.com>
-	<1491536950.4184.10.camel@linux.vnet.ibm.com>
-Message-ID: <20170407061935.GB10100@dhcp-128-65.nay.redhat.com>
+	<149142341772.5101.12366553346604485034.stgit@warthog.procyon.org.uk>
+	<CAJZ5v0j580XfGHd+GVQe+7vuSGyxFzfrDOjYfOcGTnKZSvjCoA@mail.gmail.com>
+Message-ID: <20170407063107.GA10451@dhcp-128-65.nay.redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/06/17 at 11:49pm, Mimi Zohar wrote:
-> On Fri, 2017-04-07 at 11:05 +0800, Dave Young wrote:
-> > On 04/05/17 at 09:15pm, David Howells wrote:
-> > > From: Chun-Yi Lee <joeyli.kernel@gmail.com>
-> > > 
-> > > When KEXEC_VERIFY_SIG is not enabled, kernel should not loads image
-> > > through kexec_file systemcall if securelevel has been set.
-> > > 
-> > > This code was showed in Matthew's patch but not in git:
-> > > https://lkml.org/lkml/2015/3/13/778
-> > > 
-> > > Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-> > > Signed-off-by: Chun-Yi Lee <jlee@suse.com>
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > cc: kexec at lists.infradead.org
-> > > ---
-> > > 
-> > >  kernel/kexec_file.c |    6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > > 
-> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > index b118735fea9d..f6937eecd1eb 100644
-> > > --- a/kernel/kexec_file.c
-> > > +++ b/kernel/kexec_file.c
-> > > @@ -268,6 +268,12 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
-> > >  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
-> > >  		return -EPERM;
-> > >  
-> > > +	/* Don't permit images to be loaded into trusted kernels if we're not
-> > > +	 * going to verify the signature on them
-> > > +	 */
-> > > +	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) && kernel_is_locked_down())
-> > > +		return -EPERM;
-> > > +
-> > >  
+On 04/06/17 at 09:43pm, Rafael J. Wysocki wrote:
+> On Wed, Apr 5, 2017 at 10:16 PM, David Howells <dhowells@redhat.com> wrote:
+> > From: Josh Boyer <jwboyer@redhat.com>
+> >
+> > This option allows userspace to pass the RSDP address to the kernel, which
+> > makes it possible for a user to circumvent any restrictions imposed on
+> > loading modules.  Ignore the option when the kernel is locked down.
 > 
-> IMA can be used to verify file signatures too, based on the LSM hooks
-> in ?kernel_read_file_from_fd(). ?CONFIG_KEXEC_VERIFY_SIG should not be
-> required.
+> I'm not really sure here.
+> 
+> What exactly is the mechanism?
 
-Mimi, I remember we talked somthing before about the two signature 
-verification. One can change IMA policy in initramfs userspace,
-also there are kernel cmdline param to disable IMA, so it can break the
-lockdown? Suppose kexec boot with ima disabled cmdline param and then
-kexec reboot again..
+Actually this acpi_rsdp param is created for EFI kexec reboot in old
+days when we had not supported persistent efi vm space across kexec
+reboot. At that time kexec reboot runs as noefi mode, it can not find
+the acpi root table thus kernel will hang early.
+
+Now kexec can support EFI boot so this param is not necessary for most
+user unless they still use efi=old_map.
 
 > 
-> Mimi
-> 
-> 
-> > 	/* Make sure we have a legal set of flags */
-> > >  	if (flags != (flags & KEXEC_FILE_FLAGS))
-> > >  		return -EINVAL;
-> > > 
-> > > 
-> > > _______________________________________________
-> > > kexec mailing list
-> > > kexec at lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/kexec
-> > 
-> > Acked-by: Dave Young <dyoung@redhat.com>
-> > 
-> > Thanks
-> > Dave
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> > the body of a message to majordomo at vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
+> Thanks,
+> Rafael
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
