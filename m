@@ -1,43 +1,44 @@
 From: dyoung@redhat.com (Dave Young)
-Date: Fri, 7 Apr 2017 15:39:56 +0800
-Subject: [PATCH 17/24] acpi: Ignore acpi_rsdp kernel param when the
-	kernel has been locked down
-In-Reply-To: <21360.1491548727@warthog.procyon.org.uk>
-References: <20170407063107.GA10451@dhcp-128-65.nay.redhat.com>
+Date: Fri, 7 Apr 2017 15:41:59 +0800
+Subject: [PATCH 09/24] kexec_file: Disable at runtime if securelevel has
+	been set
+In-Reply-To: <21418.1491548875@warthog.procyon.org.uk>
+References: <20170407061935.GB10100@dhcp-128-65.nay.redhat.com>
 	<149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142341772.5101.12366553346604485034.stgit@warthog.procyon.org.uk>
-	<CAJZ5v0j580XfGHd+GVQe+7vuSGyxFzfrDOjYfOcGTnKZSvjCoA@mail.gmail.com>
-	<21360.1491548727@warthog.procyon.org.uk>
-Message-ID: <20170407073956.GA10737@dhcp-128-65.nay.redhat.com>
+	<149142335441.5101.2294976563846442575.stgit@warthog.procyon.org.uk>
+	<20170407030545.GA4296@dhcp-128-65.nay.redhat.com>
+	<1491536950.4184.10.camel@linux.vnet.ibm.com>
+	<21418.1491548875@warthog.procyon.org.uk>
+Message-ID: <20170407074159.GB10737@dhcp-128-65.nay.redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/07/17 at 08:05am, David Howells wrote:
+On 04/07/17 at 08:07am, David Howells wrote:
 > Dave Young <dyoung@redhat.com> wrote:
 > 
-> > > > This option allows userspace to pass the RSDP address to the kernel, which
-> > > > makes it possible for a user to circumvent any restrictions imposed on
-> > > > loading modules.  Ignore the option when the kernel is locked down.
+> > > > > +	/* Don't permit images to be loaded into trusted kernels if we're not
+> > > > > +	 * going to verify the signature on them
+> > > > > +	 */
+> > > > > +	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) && kernel_is_locked_down())
+> > > > > +		return -EPERM;
+> > > > > +
+> > > > >  
 > > > 
-> > > I'm not really sure here.
-> > > 
-> > > What exactly is the mechanism?
+> > > IMA can be used to verify file signatures too, based on the LSM hooks
+> > > in ?kernel_read_file_from_fd(). ?CONFIG_KEXEC_VERIFY_SIG should not be
+> > > required.
 > > 
-> > Actually this acpi_rsdp param is created for EFI kexec reboot in old
-> > days when we had not supported persistent efi vm space across kexec
-> > reboot. At that time kexec reboot runs as noefi mode, it can not find
-> > the acpi root table thus kernel will hang early.
-> > 
-> > Now kexec can support EFI boot so this param is not necessary for most
-> > user unless they still use efi=old_map.
+> > Mimi, I remember we talked somthing before about the two signature 
+> > verification. One can change IMA policy in initramfs userspace,
+> > also there are kernel cmdline param to disable IMA, so it can break the
+> > lockdown? Suppose kexec boot with ima disabled cmdline param and then
+> > kexec reboot again..
 > 
-> Is this patch now unnecessary?
+> I guess I should lock down the parameter to disable IMA too.
 
-I think it is still necessary because the acpi_rsdp kernel param is still
-a valid paramater and one can still pass a pointer to be recognized as acpi
-root pointer.
-
-Maybe "imposed on loading modules" is not clear which can be dropped.
+That is one thing, user can change IMA policy in initramfs userspace,
+I'm not sure if IMA enforce the signed policy now, if no it will be also
+a problem.
 
 Thanks
 Dave
