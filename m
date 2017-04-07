@@ -1,61 +1,77 @@
-From: dyoung@redhat.com (Dave Young)
-Date: Fri, 7 Apr 2017 11:07:05 +0800
-Subject: [PATCH 07/24] kexec: Disable at runtime if the kernel is locked
-	down
-In-Reply-To: <149142333752.5101.12956279967668146884.stgit@warthog.procyon.org.uk>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 06 Apr 2017 23:49:10 -0400
+Subject: [PATCH 09/24] kexec_file: Disable at runtime if securelevel has
+	been set
+In-Reply-To: <20170407030545.GA4296@dhcp-128-65.nay.redhat.com>
 References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142333752.5101.12956279967668146884.stgit@warthog.procyon.org.uk>
-Message-ID: <20170407030705.GB4296@dhcp-128-65.nay.redhat.com>
+	<149142335441.5101.2294976563846442575.stgit@warthog.procyon.org.uk>
+	<20170407030545.GA4296@dhcp-128-65.nay.redhat.com>
+Message-ID: <1491536950.4184.10.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/05/17 at 09:15pm, David Howells wrote:
-> From: Matthew Garrett <matthew.garrett@nebula.com>
-> 
-> kexec permits the loading and execution of arbitrary code in ring 0, which
-> is something that lock-down is meant to prevent. It makes sense to disable
-> kexec in this situation.
-> 
-> This does not affect kexec_file_load() which can check for a signature on the
-> image to be booted.
-> 
-> Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: kexec at lists.infradead.org
-> ---
-> 
->  kernel/kexec.c |    7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/kernel/kexec.c b/kernel/kexec.c
-> index 980936a90ee6..46de8e6b42f4 100644
-> --- a/kernel/kexec.c
-> +++ b/kernel/kexec.c
-> @@ -194,6 +194,13 @@ SYSCALL_DEFINE4(kexec_load, unsigned long, entry, unsigned long, nr_segments,
->  		return -EPERM;
->  
->  	/*
-> +	 * kexec can be used to circumvent module loading restrictions, so
-> +	 * prevent loading in that case
-> +	 */
-> +	if (kernel_is_locked_down())
-> +		return -EPERM;
-> +
-> +	/*
->  	 * Verify we have a legal set of flags
->  	 * This leaves us room for future extensions.
->  	 */
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+On Fri, 2017-04-07 at 11:05 +0800, Dave Young wrote:
+> On 04/05/17 at 09:15pm, David Howells wrote:
+> > From: Chun-Yi Lee <joeyli.kernel@gmail.com>
+> > 
+> > When KEXEC_VERIFY_SIG is not enabled, kernel should not loads image
+> > through kexec_file systemcall if securelevel has been set.
+> > 
+> > This code was showed in Matthew's patch but not in git:
+> > https://lkml.org/lkml/2015/3/13/778
+> > 
+> > Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+> > Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: kexec at lists.infradead.org
+> > ---
+> > 
+> >  kernel/kexec_file.c |    6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > index b118735fea9d..f6937eecd1eb 100644
+> > --- a/kernel/kexec_file.c
+> > +++ b/kernel/kexec_file.c
+> > @@ -268,6 +268,12 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+> >  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+> >  		return -EPERM;
+> >  
+> > +	/* Don't permit images to be loaded into trusted kernels if we're not
+> > +	 * going to verify the signature on them
+> > +	 */
+> > +	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) && kernel_is_locked_down())
+> > +		return -EPERM;
+> > +
+> >  
 
-Acked-by: Dave Young <dyoung@redhat.com>
+IMA can be used to verify file signatures too, based on the LSM hooks
+in ?kernel_read_file_from_fd(). ?CONFIG_KEXEC_VERIFY_SIG should not be
+required.
 
-Thanks
-Dave
+Mimi
+
+
+> 	/* Make sure we have a legal set of flags */
+> >  	if (flags != (flags & KEXEC_FILE_FLAGS))
+> >  		return -EINVAL;
+> > 
+> > 
+> > _______________________________________________
+> > kexec mailing list
+> > kexec at lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/kexec
+> 
+> Acked-by: Dave Young <dyoung@redhat.com>
+> 
+> Thanks
+> Dave
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
