@@ -1,61 +1,51 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 07 Apr 2017 04:28:08 -0400
-Subject: [PATCH 09/24] kexec_file: Disable at runtime if securelevel has
-	been set
-In-Reply-To: <20170407074159.GB10737@dhcp-128-65.nay.redhat.com>
-References: <20170407061935.GB10100@dhcp-128-65.nay.redhat.com>
-	<149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142335441.5101.2294976563846442575.stgit@warthog.procyon.org.uk>
-	<20170407030545.GA4296@dhcp-128-65.nay.redhat.com>
-	<1491536950.4184.10.camel@linux.vnet.ibm.com>
-	<21418.1491548875@warthog.procyon.org.uk>
-	<20170407074159.GB10737@dhcp-128-65.nay.redhat.com>
-Message-ID: <1491553688.4184.73.camel@linux.vnet.ibm.com>
+From: tiwai@suse.de (Takashi Iwai)
+Date: Fri, 07 Apr 2017 10:42:37 +0200
+Subject: [PATCH 35/38] Annotate hardware config module parameters in
+	sound/drivers/
+In-Reply-To: <149141171975.29162.18186172352089656358.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141171975.29162.18186172352089656358.stgit@warthog.procyon.org.uk>
+Message-ID: <s5hzifs8v7m.wl-tiwai@suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-04-07 at 15:41 +0800, Dave Young wrote:
-> On 04/07/17 at 08:07am, David Howells wrote:
-> > Dave Young <dyoung@redhat.com> wrote:
-> > 
-> > > > > > +	/* Don't permit images to be loaded into trusted kernels if we're not
-> > > > > > +	 * going to verify the signature on them
-> > > > > > +	 */
-> > > > > > +	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) && kernel_is_locked_down())
-> > > > > > +		return -EPERM;
-> > > > > > +
-> > > > > >  
-> > > > 
-> > > > IMA can be used to verify file signatures too, based on the LSM hooks
-> > > > in ?kernel_read_file_from_fd(). ?CONFIG_KEXEC_VERIFY_SIG should not be
-> > > > required.
-> > > 
-> > > Mimi, I remember we talked somthing before about the two signature 
-> > > verification. One can change IMA policy in initramfs userspace,
-> > > also there are kernel cmdline param to disable IMA, so it can break the
-> > > lockdown? Suppose kexec boot with ima disabled cmdline param and then
-> > > kexec reboot again..
-> > 
-> > I guess I should lock down the parameter to disable IMA too.
+On Wed, 05 Apr 2017 19:01:59 +0200,
+David Howells wrote:
 > 
-> That is one thing, user can change IMA policy in initramfs userspace,
-> I'm not sure if IMA enforce the signed policy now, if no it will be also
-> a problem.
+> When the kernel is running in secure boot mode, we lock down the kernel to
+> prevent userspace from modifying the running kernel image.  Whilst this
+> includes prohibiting access to things like /dev/mem, it must also prevent
+> access by means of configuring driver modules in such a way as to cause a
+> device to access or modify the kernel image.
+> 
+> To this end, annotate module_param* statements that refer to hardware
+> configuration and indicate for future reference what type of parameter they
+> specify.  The parameter parser in the core sees this information and can
+> skip such parameters with an error message if the kernel is locked down.
+> The module initialisation then runs as normal, but just sees whatever the
+> default values for those parameters is.
+> 
+> Note that we do still need to do the module initialisation because some
+> drivers have viable defaults set in case parameters aren't specified and
+> some drivers support automatic configuration (e.g. PNP or PCI) in addition
+> to manually coded parameters.
+> 
+> This patch annotates drivers in sound/drivers/.
+> 
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jaroslav Kysela <perex@perex.cz>
+> cc: Takashi Iwai <tiwai@suse.com>
+> cc: alsa-devel at alsa-project.org
 
-I'm not sure how this relates to the question of whether IMA verifies
-the kexec kernel image signature, as the test would not be based on a
-Kconfig option, but on a runtime variable.
+The changes look fairly straightforward, so feel free to take my ack
+for sound/* stuff:
+  Acked-by: Takashi Iwai <tiwai@suse.de>
 
-To answer your question, the rule for requiring the policy to be
-signed is: ?appraise func=POLICY_CHECK appraise_type=imasig
 
-When the ability to append rules is Kconfig enabled, the builtin
-policy requires the new policy or additional rules to be signed.
-?Unfortunately, always requiring the policy to be signed, would have
-broken userspace.
+thanks,
 
-Mimi
-
+Takashi
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
