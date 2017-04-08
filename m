@@ -1,15 +1,15 @@
 From: gregkh@linuxfoundation.org (Greg KH)
-Date: Sat, 8 Apr 2017 17:23:23 +0200
-Subject: [PATCH 05/38] Annotate hardware config module parameters in
-	drivers/char/
-In-Reply-To: <149141145086.29162.10390009355486163950.stgit@warthog.procyon.org.uk>
+Date: Sat, 8 Apr 2017 17:23:39 +0200
+Subject: [PATCH 14/38] Annotate hardware config module parameters in
+	drivers/misc/
+In-Reply-To: <149141152873.29162.13855251241646767118.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-	<149141145086.29162.10390009355486163950.stgit@warthog.procyon.org.uk>
-Message-ID: <20170408152323.GB7879@kroah.com>
+	<149141152873.29162.13855251241646767118.stgit@warthog.procyon.org.uk>
+Message-ID: <20170408152339.GC7879@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 05, 2017 at 05:57:30PM +0100, David Howells wrote:
+On Wed, Apr 05, 2017 at 05:58:48PM +0100, David Howells wrote:
 > When the kernel is running in secure boot mode, we lock down the kernel to
 > prevent userspace from modifying the running kernel image.  Whilst this
 > includes prohibiting access to things like /dev/mem, it must also prevent
@@ -28,7 +28,7 @@ On Wed, Apr 05, 2017 at 05:57:30PM +0100, David Howells wrote:
 > some drivers support automatic configuration (e.g. PNP or PCI) in addition
 > to manually coded parameters.
 > 
-> This patch annotates drivers in drivers/char/.
+> This patch annotates drivers in drivers/misc/.
 > 
 > Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 > Signed-off-by: David Howells <dhowells@redhat.com>
