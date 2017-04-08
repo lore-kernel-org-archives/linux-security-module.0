@@ -1,15 +1,15 @@
 From: gregkh@linuxfoundation.org (Greg KH)
-Date: Sat, 8 Apr 2017 17:23:53 +0200
-Subject: [PATCH 28/38] Annotate hardware config module parameters in
-	drivers/staging/media/
-In-Reply-To: <149141166119.29162.8331512785853788823.stgit@warthog.procyon.org.uk>
+Date: Sat, 8 Apr 2017 17:23:59 +0200
+Subject: [PATCH 29/38] Annotate hardware config module parameters in
+	drivers/staging/speakup/
+In-Reply-To: <149141167058.29162.7142804081158375419.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-	<149141166119.29162.8331512785853788823.stgit@warthog.procyon.org.uk>
-Message-ID: <20170408152353.GD7879@kroah.com>
+	<149141167058.29162.7142804081158375419.stgit@warthog.procyon.org.uk>
+Message-ID: <20170408152359.GE7879@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 05, 2017 at 06:01:01PM +0100, David Howells wrote:
+On Wed, Apr 05, 2017 at 06:01:10PM +0100, David Howells wrote:
 > When the kernel is running in secure boot mode, we lock down the kernel to
 > prevent userspace from modifying the running kernel image.  Whilst this
 > includes prohibiting access to things like /dev/mem, it must also prevent
@@ -28,13 +28,12 @@ On Wed, Apr 05, 2017 at 06:01:01PM +0100, David Howells wrote:
 > some drivers support automatic configuration (e.g. PNP or PCI) in addition
 > to manually coded parameters.
 > 
-> This patch annotates drivers in drivers/staging/media/.
+> This patch annotates drivers in drivers/staging/speakup/.
 > 
 > Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 > cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> cc: linux-media at vger.kernel.org
+> cc: speakup at linux-speakup.org
 > cc: devel at driverdev.osuosl.org
 
 Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
