@@ -1,50 +1,43 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Sat, 8 Apr 2017 09:14:53 -0400
-Subject: [PATCH RFC 00/11] LSM: Stacking for major security modules
-In-Reply-To: <d812c25c-bb74-9e0c-a607-6a5e7efb73cc@schaufler-ca.com>
-References: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
-	<1491503171.4532.10.camel@tycho.nsa.gov>
-	<c6d9da56-fd4d-e8e5-caa5-718de74db261@schaufler-ca.com>
-	<1491511104.4532.17.camel@tycho.nsa.gov>
-	<alpine.LRH.2.20.1704070758310.27111@namei.org>
-	<d812c25c-bb74-9e0c-a607-6a5e7efb73cc@schaufler-ca.com>
-Message-ID: <CAHC9VhQ5dG_wNUmmreaEKhXoNSj=gPEnug5Ft5wszVdYYJ13pg@mail.gmail.com>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Sat, 8 Apr 2017 17:19:16 +0200
+Subject: [PATCH 31/38] Annotate hardware config module parameters in
+	drivers/tty/
+In-Reply-To: <149141168659.29162.541205367169653847.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141168659.29162.541205367169653847.stgit@warthog.procyon.org.uk>
+Message-ID: <20170408151916.GA7879@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Apr 6, 2017 at 6:50 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 4/6/2017 3:24 PM, James Morris wrote:
->> On Thu, 6 Apr 2017, Stephen Smalley wrote:
->>
->>> Yes, but in the meantime, if you want to be able to test
->>> CONFIG_SECURITY_STACKING=y with modules in enforcing mode on
->>> distributions that enable a major security module, it seems like you
->>> need to provide some way of handling this compatibly.
->> Regardless of the config option, we can't break existing userspace. This
->> is a long-standing Linux kernel development rule.
->>
->> You'll need to implement new interfaces for any changes.
->
-> The big question is SO_PEERSEC. SO_PEERSEC provides
-> undefined "security credentials". You don't need to
-> define a new interface here because the interface allows
-> different configurations (e.g. Smack active, SELinux
-> active, both active) to provide different information.
+On Wed, Apr 05, 2017 at 06:01:26PM +0100, David Howells wrote:
+> When the kernel is running in secure boot mode, we lock down the kernel to
+> prevent userspace from modifying the running kernel image.  Whilst this
+> includes prohibiting access to things like /dev/mem, it must also prevent
+> access by means of configuring driver modules in such a way as to cause a
+> device to access or modify the kernel image.
+> 
+> To this end, annotate module_param* statements that refer to hardware
+> configuration and indicate for future reference what type of parameter they
+> specify.  The parameter parser in the core sees this information and can
+> skip such parameters with an error message if the kernel is locked down.
+> The module initialisation then runs as normal, but just sees whatever the
+> default values for those parameters is.
+> 
+> Note that we do still need to do the module initialisation because some
+> drivers have viable defaults set in case parameters aren't specified and
+> some drivers support automatic configuration (e.g. PNP or PCI) in addition
+> to manually coded parameters.
+> 
+> This patch annotates drivers in drivers/tty/.
+> 
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> cc: Jiri Slaby <jslaby@suse.com>
+> cc: linux-serial at vger.kernel.org
 
-Just a gentle reminder that ignoring existing conventions because the
-formal (?) specification declares the interface as "undefined" is a
-really good way to break userspace :)
 
-In all seriousness, a new interface with a well defined specification
-that could support multiple labels/LSM might not be a bad idea if for
-no other reason that what we currently have is a bit broken, but works
-due to dumb luck (see the discussion in the GH issue below).
-
-https://github.com/SELinuxProject/selinux-kernel/issues/24
-
--- 
-paul moore
-www.paul-moore.com
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
