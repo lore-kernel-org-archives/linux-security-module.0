@@ -1,127 +1,132 @@
 From: deepa.kernel@gmail.com (Deepa Dinamani)
-Date: Fri,  7 Apr 2017 17:57:02 -0700
-Subject: [PATCH 04/12] fs: ceph: CURRENT_TIME with ktime_get_real_ts()
+Date: Fri,  7 Apr 2017 17:57:04 -0700
+Subject: [PATCH 06/12] audit: Use timespec64 to represent audit timestamps
 In-Reply-To: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
 References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
-Message-ID: <1491613030-11599-5-git-send-email-deepa.kernel@gmail.com>
+Message-ID: <1491613030-11599-7-git-send-email-deepa.kernel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-CURRENT_TIME is not y2038 safe.
-The macro will be deleted and all the references to it
-will be replaced by ktime_get_* apis.
-
-struct timespec is also not y2038 safe.
-Retain timespec for timestamp representation here as ceph
-uses it internally everywhere.
-These references will be changed to use struct timespec64
-in a separate patch.
-
-The current_fs_time() api is being changed to use vfs
-struct inode* as an argument instead of struct super_block*.
-
-Set the new mds client request r_stamp field using
-ktime_get_real_ts() instead of using current_fs_time().
-
-Also, since r_stamp is used as mtime on the server, use
-timespec_trunc() to truncate the timestamp, using the right
-granularity from the superblock.
-
-This api will be transitioned to be y2038 safe along
-with vfs.
+struct timespec is not y2038 safe.
+Audit timestamps are recorded in string format into
+an audit buffer for a given context.
+These mark the entry timestamps for the syscalls.
+Use y2038 safe struct timespec64 to represent the times.
+The log strings can handle this transition as strings can
+hold upto 1024 characters.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Acked-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- drivers/block/rbd.c   | 2 +-
- fs/ceph/mds_client.c  | 4 +++-
- net/ceph/messenger.c  | 6 ++++--
- net/ceph/osd_client.c | 4 ++--
- 4 files changed, 10 insertions(+), 6 deletions(-)
+ include/linux/audit.h |  4 ++--
+ kernel/audit.c        | 10 +++++-----
+ kernel/audit.h        |  2 +-
+ kernel/auditsc.c      |  6 +++---
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 517838b..77204da 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -1922,7 +1922,7 @@ static void rbd_osd_req_format_write(struct rbd_obj_request *obj_request)
- {
- 	struct ceph_osd_request *osd_req = obj_request->osd_req;
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 6fdfefc..f830508 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -332,7 +332,7 @@ static inline void audit_ptrace(struct task_struct *t)
+ 				/* Private API (for audit.c only) */
+ extern unsigned int audit_serial(void);
+ extern int auditsc_get_stamp(struct audit_context *ctx,
+-			      struct timespec *t, unsigned int *serial);
++			      struct timespec64 *t, unsigned int *serial);
+ extern int audit_set_loginuid(kuid_t loginuid);
  
--	osd_req->r_mtime = CURRENT_TIME;
-+	ktime_get_real_ts(&osd_req->r_mtime);
- 	osd_req->r_data_offset = obj_request->offset;
+ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+@@ -511,7 +511,7 @@ static inline void __audit_seccomp(unsigned long syscall, long signr, int code)
+ static inline void audit_seccomp(unsigned long syscall, long signr, int code)
+ { }
+ static inline int auditsc_get_stamp(struct audit_context *ctx,
+-			      struct timespec *t, unsigned int *serial)
++			      struct timespec64 *t, unsigned int *serial)
+ {
+ 	return 0;
+ }
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 2f4964c..fcbf377 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1625,10 +1625,10 @@ unsigned int audit_serial(void)
  }
  
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index c681762..1d3fa90 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1666,6 +1666,7 @@ struct ceph_mds_request *
- ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+ static inline void audit_get_stamp(struct audit_context *ctx,
+-				   struct timespec *t, unsigned int *serial)
++				   struct timespec64 *t, unsigned int *serial)
  {
- 	struct ceph_mds_request *req = kzalloc(sizeof(*req), GFP_NOFS);
-+	struct timespec ts;
- 
- 	if (!req)
- 		return ERR_PTR(-ENOMEM);
-@@ -1684,7 +1685,8 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
- 	init_completion(&req->r_safe_completion);
- 	INIT_LIST_HEAD(&req->r_unsafe_item);
- 
--	req->r_stamp = current_fs_time(mdsc->fsc->sb);
-+	ktime_get_real_ts(&ts);
-+	req->r_stamp = timespec_trunc(ts, mdsc->fsc->sb->s_time_gran);
- 
- 	req->r_op = op;
- 	req->r_direct_mode = mode;
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index f76bb33..5766a6c 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -1386,8 +1386,9 @@ static void prepare_write_keepalive(struct ceph_connection *con)
- 	dout("prepare_write_keepalive %p\n", con);
- 	con_out_kvec_reset(con);
- 	if (con->peer_features & CEPH_FEATURE_MSGR_KEEPALIVE2) {
--		struct timespec now = CURRENT_TIME;
-+		struct timespec now;
- 
-+		ktime_get_real_ts(&now);
- 		con_out_kvec_add(con, sizeof(tag_keepalive2), &tag_keepalive2);
- 		ceph_encode_timespec(&con->out_temp_keepalive2, &now);
- 		con_out_kvec_add(con, sizeof(con->out_temp_keepalive2),
-@@ -3176,8 +3177,9 @@ bool ceph_con_keepalive_expired(struct ceph_connection *con,
+ 	if (!ctx || !auditsc_get_stamp(ctx, t, serial)) {
+-		*t = CURRENT_TIME;
++		ktime_get_real_ts64(t);
+ 		*serial = audit_serial();
+ 	}
+ }
+@@ -1652,7 +1652,7 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+ 				     int type)
  {
- 	if (interval > 0 &&
- 	    (con->peer_features & CEPH_FEATURE_MSGR_KEEPALIVE2)) {
--		struct timespec now = CURRENT_TIME;
-+		struct timespec now;
- 		struct timespec ts;
-+		ktime_get_real_ts(&now);
- 		jiffies_to_timespec(interval, &ts);
- 		ts = timespec_add(con->last_keepalive_ack, ts);
- 		return timespec_compare(&now, &ts) >= 0;
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index e15ea9e..242d7c0 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -3574,7 +3574,7 @@ ceph_osdc_watch(struct ceph_osd_client *osdc,
- 	ceph_oid_copy(&lreq->t.base_oid, oid);
- 	ceph_oloc_copy(&lreq->t.base_oloc, oloc);
- 	lreq->t.flags = CEPH_OSD_FLAG_WRITE;
--	lreq->mtime = CURRENT_TIME;
-+	ktime_get_real_ts(&lreq->mtime);
+ 	struct audit_buffer *ab;
+-	struct timespec t;
++	struct timespec64 t;
+ 	unsigned int uninitialized_var(serial);
  
- 	lreq->reg_req = alloc_linger_request(lreq);
- 	if (!lreq->reg_req) {
-@@ -3632,7 +3632,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
- 	ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
- 	ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
- 	req->r_flags = CEPH_OSD_FLAG_WRITE;
--	req->r_mtime = CURRENT_TIME;
-+	ktime_get_real_ts(&req->r_mtime);
- 	osd_req_op_watch_init(req, 0, lreq->linger_id,
- 			      CEPH_OSD_WATCH_OP_UNWATCH);
+ 	if (audit_initialized != AUDIT_INITIALIZED)
+@@ -1705,8 +1705,8 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+ 	}
  
+ 	audit_get_stamp(ab->ctx, &t, &serial);
+-	audit_log_format(ab, "audit(%lu.%03lu:%u): ",
+-			 t.tv_sec, t.tv_nsec/1000000, serial);
++	audit_log_format(ab, "audit(%llu.%03lu:%u): ",
++			 (unsigned long long)t.tv_sec, t.tv_nsec/1000000, serial);
+ 
+ 	return ab;
+ }
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 0f1cf6d..cdf96f4 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -112,7 +112,7 @@ struct audit_context {
+ 	enum audit_state    state, current_state;
+ 	unsigned int	    serial;     /* serial number for record */
+ 	int		    major;      /* syscall number */
+-	struct timespec	    ctime;      /* time of syscall entry */
++	struct timespec64   ctime;      /* time of syscall entry */
+ 	unsigned long	    argv[4];    /* syscall arguments */
+ 	long		    return_code;/* syscall return code */
+ 	u64		    prio;
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index e59ffc7..a2d9217 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1532,7 +1532,7 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
+ 		return;
+ 
+ 	context->serial     = 0;
+-	context->ctime      = CURRENT_TIME;
++	ktime_get_real_ts64(&context->ctime);
+ 	context->in_syscall = 1;
+ 	context->current_state  = state;
+ 	context->ppid       = 0;
+@@ -1941,13 +1941,13 @@ EXPORT_SYMBOL_GPL(__audit_inode_child);
+ /**
+  * auditsc_get_stamp - get local copies of audit_context values
+  * @ctx: audit_context for the task
+- * @t: timespec to store time recorded in the audit_context
++ * @t: timespec64 to store time recorded in the audit_context
+  * @serial: serial value that is recorded in the audit_context
+  *
+  * Also sets the context as auditable.
+  */
+ int auditsc_get_stamp(struct audit_context *ctx,
+-		       struct timespec *t, unsigned int *serial)
++		       struct timespec64 *t, unsigned int *serial)
+ {
+ 	if (!ctx->in_syscall)
+ 		return 0;
 -- 
 2.7.4
 
