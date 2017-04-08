@@ -1,45 +1,51 @@
-From: deepa.kernel@gmail.com (Deepa Dinamani)
-Date: Fri, 7 Apr 2017 19:16:54 -0700
-Subject: [PATCH 02/12] trace: Make trace_hwlat timestamp y2038 safe
-In-Reply-To: <20170407213011.36e29f42@gandalf.local.home>
-References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
-	<1491613030-11599-3-git-send-email-deepa.kernel@gmail.com>
-	<20170407213011.36e29f42@gandalf.local.home>
-Message-ID: <CABeXuvoQJSg+eVH4LX5s87DtE4N3goKDnjZgJ9fLk8txgwN+QA@mail.gmail.com>
+From: pomidorabelisima@gmail.com (poma)
+Date: Sat, 8 Apr 2017 05:28:15 +0200
+Subject: [PATCH 11/24] uswsusp: Disable when the kernel is locked down
+In-Reply-To: <alpine.LSU.2.20.1704062224220.28004@cbobk.fhfr.pm>
+References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
+	<149142336965.5101.2946578135980499557.stgit@warthog.procyon.org.uk>
+	<CAJZ5v0hp=GJtQ+YnNdaMw6rtbBzNyueY+iqjPkHLKp57t822ZQ@mail.gmail.com>
+	<1491460792.1645.1.camel@suse.com>
+	<14980.1491468060@warthog.procyon.org.uk>
+	<CAJZ5v0gFeF3hdr0QzUeaT2dS+HhG7KUdVPPWHKeqHVkX78s+Tw@mail.gmail.com>
+	<CAJZ5v0jwQPd3HfwE1Yi6bmyULFVegkU4fNvt0uXGvzAdecLEZA@mail.gmail.com>
+	<alpine.LSU.2.20.1704062224220.28004@cbobk.fhfr.pm>
+Message-ID: <83e2dff5-c46b-25b4-253e-cd2650b7db7d@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
->> -     trace_seq_printf(s, "#%-5u inner/outer(us): %4llu/%-5llu ts:%ld.%09ld",
->> +     trace_seq_printf(s, "#%-5u inner/outer(us): %4llu/%-5llu ts:%lld.%09ld",
->>                        field->seqnum,
->>                        field->duration,
->>                        field->outer_duration,
->> -                      field->timestamp.tv_sec,
->> +                      (long long)field->timestamp.tv_sec,
->
-> Refresh my memory. We need the cast because on 64 bit boxes
-> timestamp.tv_sec is just a long?
+On 06.04.2017 22:25, Jiri Kosina wrote:
+> On Thu, 6 Apr 2017, Rafael J. Wysocki wrote:
+> 
+>>>>> Your swap partition may be located on an NVDIMM or be encrypted.
+>>>>
+>>>> An NVDIMM should be considered the same as any other persistent storage.
+>>>>
+>>>> It may be encrypted, but where's the key stored, how easy is it to retrieve
+>>>> and does the swapout code know this?
+>>>>
+>>>>> Isn't this a bit overly drastic?
+>>>>
+>>>> Perhaps, but if it's on disk and it's not encrypted, then maybe not.
+>>>
+>>> Right.
+>>>
+>>> Swap encryption is not mandatory and I'm not sure how the hibernate
+>>> code can verify whether or not it is in use.
+>>
+>> BTW, SUSE has patches adding secure boot support to the hibernate code
+>> and Jiri promised me to post them last year even. :-)
+> 
+> Oh, thanks for a friendly ping :) Adding Joey Lee to CC.
+> 
 
-This is only required until we change the definition of timespec64.
-Right now it is defined as
+Rafael J., are you talking about HIBERNATE_VERIFICATION ?
 
-#if __BITS_PER_LONG == 64
-# define timespec64 timespec
-#else
-struct timespec64 {
-    time64_t tv_sec;
-    long tv_nsec;
-};
-#endif
+Ref.
+https://github.com/joeyli/linux-s4sign/commits/s4sign-hmac-v2-v4.2-rc8
+https://lkml.org/lkml/2015/8/11/47
+https://bugzilla.redhat.com/show_bug.cgi?id=1330335
 
-And timespec.tv_sec is just long int on 64 bit machines.
-This is why we need the cast now.
-
-We will probably change this and only define __kernel_timespec instead
-of timespec, leaving only one definition of timespec64.
-At that time, we will not need this.
-
--Deepa
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
