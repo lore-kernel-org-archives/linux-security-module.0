@@ -1,49 +1,39 @@
 From: deepa.kernel@gmail.com (Deepa Dinamani)
-Date: Fri,  7 Apr 2017 17:57:05 -0700
-Subject: [PATCH 07/12] fs: btrfs: Use ktime_get_real_ts for root ctime
+Date: Fri,  7 Apr 2017 17:57:09 -0700
+Subject: [PATCH 11/12] time: Delete CURRENT_TIME_SEC and CURRENT_TIME
 In-Reply-To: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
 References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
-Message-ID: <1491613030-11599-8-git-send-email-deepa.kernel@gmail.com>
+Message-ID: <1491613030-11599-12-git-send-email-deepa.kernel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-btrfs_root_item maintains the ctime for root updates.
-This is not part of vfs_inode.
-
-Since current_time() uses struct inode* as an argument
-as Linus suggested, this cannot be used to update root
-times unless, we modify the signature to use inode.
-
-Since btrfs uses nanosecond time granularity, it can also
-use ktime_get_real_ts directly to obtain timestamp for
-the root. It is necessary to use the timespec time api
-here because the same btrfs_set_stack_timespec_*() apis
-are used for vfs inode times as well. These can be
-transitioned to using timespec64 when btrfs internally
-changes to use timespec64 as well.
+All uses of CURRENT_TIME_SEC and CURRENT_TIME macros have
+been replaced by other time functions. These macros are
+also not y2038 safe.
+And, all their use cases can be fulfilled by y2038 safe
+ktime_get_* variants.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Acked-by: David Sterba <dsterba@suse.com>
+Acked-by: John Stultz <john.stultz@linaro.org>
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/btrfs/root-tree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/time.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
-index a08224e..7d6bc30 100644
---- a/fs/btrfs/root-tree.c
-+++ b/fs/btrfs/root-tree.c
-@@ -501,8 +501,9 @@ void btrfs_update_root_times(struct btrfs_trans_handle *trans,
- 			     struct btrfs_root *root)
- {
- 	struct btrfs_root_item *item = &root->root_item;
--	struct timespec ct = current_fs_time(root->fs_info->sb);
-+	struct timespec ct;
+diff --git a/include/linux/time.h b/include/linux/time.h
+index 23f0f5c..c0543f5 100644
+--- a/include/linux/time.h
++++ b/include/linux/time.h
+@@ -151,9 +151,6 @@ static inline bool timespec_inject_offset_valid(const struct timespec *ts)
+ 	return true;
+ }
  
-+	ktime_get_real_ts(&ct);
- 	spin_lock(&root->root_item_lock);
- 	btrfs_set_root_ctransid(item, trans->transid);
- 	btrfs_set_stack_timespec_sec(&item->ctime, ct.tv_sec);
+-#define CURRENT_TIME		(current_kernel_time())
+-#define CURRENT_TIME_SEC	((struct timespec) { get_seconds(), 0 })
+-
+ /* Some architectures do not supply their own clocksource.
+  * This is mainly the case in architectures that get their
+  * inter-tick times by reading the counter on their interval
 -- 
 2.7.4
 
