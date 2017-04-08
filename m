@@ -1,111 +1,79 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Fri, 7 Apr 2017 14:32:39 -0500
-Subject: [RFC][PATCH] audit: add ambient capabilities to CAPSET and
-	BPRM_FCAPS records
-In-Reply-To: <fb96ad9e604033a5d51607bdbb0b46f50442f5b6.1491471625.git.rgb@redhat.com>
-References: <fb96ad9e604033a5d51607bdbb0b46f50442f5b6.1491471625.git.rgb@redhat.com>
-Message-ID: <20170407193238.GB557@mail.hallyn.com>
+From: deepa.kernel@gmail.com (Deepa Dinamani)
+Date: Fri,  7 Apr 2017 17:56:58 -0700
+Subject: [PATCH 00/12] Delete CURRENT_TIME,
+	CURRENT_TIME_SEC and current_fs_time
+Message-ID: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Richard Guy Briggs (rgb at redhat.com):
-> Capabilities were augmented to include ambient capabilities in v4.3
-> commit 58319057b784 ("capabilities: ambient capabilities").
-> 
-> Add ambient capabilities to the audit BPRM_FCAPS and CAPSET records.
-> 
-> The record contains fields "old_pp", "old_pi", "old_pe", "new_pp",
-> "new_pi", "new_pe" so in keeping with the previous record
-> normalizations, change the "new_*" variants to simply drop the "new_"
-> prefix.
-> 
-> A sample of the replaced BPRM_FCAPS record:
-> RAW: type=BPRM_FCAPS msg=audit(1491468034.252:237): fver=2 fp=0000000000200000 fi=0000000000000000 fe=1 old_pp=0000000000000000 old_pi=0000000000000000 old_pe=0000000000000000 old_pa=0000000000000000 pp=0000000000200000 pi=0000000000000000 pe=0000000000200000 pa=0000000000000000
-> 
-> INTERPRET: type=BPRM_FCAPS msg=audit(04/06/2017 04:40:34.252:237) : fver=2 fp=sys_admin fi=none fe=chown old_pp=none old_pi=none old_pe=none old_pa=none pp=sys_admin pi=none pe=sys_admin pa=none
-> 
-> A sample of the replaced CAPSET record:
-> RAW: type=CAPSET msg=audit(1491469502.371:242): pid=833 cap_pi=0000003fffffffff cap_pp=0000003fffffffff cap_pe=0000003fffffffff cap_pa=0000000000000000
-> 
-> INTERPRET: type=CAPSET msg=audit(04/06/2017 05:05:02.371:242) : pid=833
-> cap_pi=chown,dac_override,dac_read_search,fowner,fsetid,kill,setgid,setuid,setpcap,linux_immutable,net_bind_service,net_broadcast,net_admin,net_raw,ipc_lock,ipc_owner,sys_module,sys_rawio,sys_chroot,sys_ptrace,sys_pacct,sys_admin,sys_boot,sys_nice,sys_resource,sys_time,sys_tty_config,mknod,lease,audit_write,audit_control,setfcap,mac_override,mac_admin,syslog,wake_alarm,block_suspend,audit_read
-> cap_pp=chown,dac_override,dac_read_search,fowner,fsetid,kill,setgid,setuid,setpcap,linux_immutable,net_bind_service,net_broadcast,net_admin,net_raw,ipc_lock,ipc_owner,sys_module,sys_rawio,sys_chroot,sys_ptrace,sys_pacct,sys_admin,sys_boot,sys_nice,sys_resource,sys_time,sys_tty_config,mknod,lease,audit_write,audit_control,setfcap,mac_override,mac_admin,syslog,wake_alarm,block_suspend,audit_read
-> cap_pe=chown,dac_override,dac_read_search,fowner,fsetid,kill,setgid,setuid,setpcap,linux_immutable,net_bind_service,net_broadcast,net_admin,net_raw,ipc_lock,ipc_owner,sys_module,sys_rawio,sys_chroot,sys_ptrace,sys_pacct,sys_admin,sys_boot,sys_nice,sys_resource,sys_time,sys_tty_config,mknod,lease,audit_write,audit_control,setfcap,mac_override,mac_admin,syslog,wake_alarm,block_suspend,audit_read
-> cap_pa=none
-> 
-> See: https://github.com/linux-audit/audit-kernel/issues/40
-> 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+The series contains the last unmerged uses of CURRENT_TIME,
+CURRENT_TIME_SEC, and current_fs_time().
+The series also deletes these apis.
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+All the patches except [PATCH 9/12] and [PATCH 10/12] are resend patches.
+These patches fix new instances of CURRENT_TIME.
+cifs and ceph patches have been squashed so that we have one patch per
+filesystem.
 
-> ---
->  kernel/audit.h   |    1 +
->  kernel/auditsc.c |   12 +++++++++---
->  2 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 144b7eb..364b155 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -68,6 +68,7 @@ struct audit_cap_data {
->  		unsigned int	fE;		/* effective bit of file cap */
->  		kernel_cap_t	effective;	/* effective set of process */
->  	};
-> +	kernel_cap_t		ambient;
->  };
->  
->  /* When fs/namei.c:getname() is called, we store the pointer in name and bump
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 4db32e8..ebfa93d 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1260,6 +1260,7 @@ static void show_special(struct audit_context *context, int *call_panic)
->  		audit_log_cap(ab, "cap_pi", &context->capset.cap.inheritable);
->  		audit_log_cap(ab, "cap_pp", &context->capset.cap.permitted);
->  		audit_log_cap(ab, "cap_pe", &context->capset.cap.effective);
-> +		audit_log_cap(ab, "cap_pa", &context->capset.cap.ambient);
->  		break;
->  	case AUDIT_MMAP:
->  		audit_log_format(ab, "fd=%d flags=0x%x", context->mmap.fd,
-> @@ -1381,9 +1382,11 @@ static void audit_log_exit(struct audit_context *context, struct task_struct *ts
->  			audit_log_cap(ab, "old_pp", &axs->old_pcap.permitted);
->  			audit_log_cap(ab, "old_pi", &axs->old_pcap.inheritable);
->  			audit_log_cap(ab, "old_pe", &axs->old_pcap.effective);
-> -			audit_log_cap(ab, "new_pp", &axs->new_pcap.permitted);
-> -			audit_log_cap(ab, "new_pi", &axs->new_pcap.inheritable);
-> -			audit_log_cap(ab, "new_pe", &axs->new_pcap.effective);
-> +			audit_log_cap(ab, "old_pa", &axs->old_pcap.ambient);
-> +			audit_log_cap(ab, "pp", &axs->new_pcap.permitted);
-> +			audit_log_cap(ab, "pi", &axs->new_pcap.inheritable);
-> +			audit_log_cap(ab, "pe", &axs->new_pcap.effective);
-> +			audit_log_cap(ab, "pa", &axs->new_pcap.ambient);
->  			break; }
->  
->  		}
-> @@ -2340,10 +2343,12 @@ int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
->  	ax->old_pcap.permitted   = old->cap_permitted;
->  	ax->old_pcap.inheritable = old->cap_inheritable;
->  	ax->old_pcap.effective   = old->cap_effective;
-> +	ax->old_pcap.ambient     = old->cap_ambient;
->  
->  	ax->new_pcap.permitted   = new->cap_permitted;
->  	ax->new_pcap.inheritable = new->cap_inheritable;
->  	ax->new_pcap.effective   = new->cap_effective;
-> +	ax->new_pcap.ambient     = new->cap_ambient;
->  	return 0;
->  }
->  
-> @@ -2362,6 +2367,7 @@ void __audit_log_capset(const struct cred *new, const struct cred *old)
->  	context->capset.cap.effective   = new->cap_effective;
->  	context->capset.cap.inheritable = new->cap_effective;
->  	context->capset.cap.permitted   = new->cap_permitted;
-> +	context->capset.cap.ambient     = new->cap_ambient;
->  	context->type = AUDIT_CAPSET;
->  }
->  
-> -- 
-> 1.7.1
+We want to get these merged onto 4.12 release so that I can post the series
+that changes vfs timestamps to use 64 bits for 4.13 release.
+
+I'm proposing these to be merged through Andrew's tree.
+
+Filesystem maintainers, please let Andrew know if you will be picking up
+the patch in your trees.
+
+Let me know if anybody has other preferences for merging.
+
+Deepa Dinamani (12):
+  fs: f2fs: Use ktime_get_real_seconds for sit_info times
+  trace: Make trace_hwlat timestamp y2038 safe
+  fs: cifs: Replace CURRENT_TIME by other appropriate apis
+  fs: ceph: CURRENT_TIME with ktime_get_real_ts()
+  fs: ufs: Use ktime_get_real_ts64() for birthtime
+  audit: Use timespec64 to represent audit timestamps
+  fs: btrfs: Use ktime_get_real_ts for root ctime
+  fs: ubifs: Replace CURRENT_TIME_SEC with current_time
+  lustre: Replace CURRENT_TIME macro
+  apparmorfs: Replace CURRENT_TIME with current_time()
+  time: Delete CURRENT_TIME_SEC and CURRENT_TIME
+  time: Delete current_fs_time() function
+
+ drivers/block/rbd.c                             |  2 +-
+ drivers/staging/lustre/lustre/llite/llite_lib.c |  6 +++---
+ drivers/staging/lustre/lustre/osc/osc_io.c      |  4 ++--
+ fs/btrfs/root-tree.c                            |  3 ++-
+ fs/ceph/mds_client.c                            |  4 +++-
+ fs/cifs/cifsencrypt.c                           |  4 +++-
+ fs/cifs/cifssmb.c                               | 10 ++++-----
+ fs/cifs/inode.c                                 | 28 +++++++++++++------------
+ fs/f2fs/segment.c                               |  2 +-
+ fs/f2fs/segment.h                               |  5 +++--
+ fs/ubifs/dir.c                                  | 12 +++++------
+ fs/ubifs/file.c                                 | 12 +++++------
+ fs/ubifs/ioctl.c                                |  2 +-
+ fs/ubifs/misc.h                                 | 10 ---------
+ fs/ubifs/sb.c                                   | 14 +++++++++----
+ fs/ubifs/xattr.c                                |  6 +++---
+ fs/ufs/ialloc.c                                 |  6 ++++--
+ include/linux/audit.h                           |  4 ++--
+ include/linux/fs.h                              |  1 -
+ include/linux/time.h                            |  3 ---
+ kernel/audit.c                                  | 10 ++++-----
+ kernel/audit.h                                  |  2 +-
+ kernel/auditsc.c                                |  6 +++---
+ kernel/time/time.c                              | 14 -------------
+ kernel/trace/trace_entries.h                    |  6 +++---
+ kernel/trace/trace_hwlat.c                      | 14 ++++++-------
+ kernel/trace/trace_output.c                     |  9 ++++----
+ net/ceph/messenger.c                            |  6 ++++--
+ net/ceph/osd_client.c                           |  4 ++--
+ security/apparmor/apparmorfs.c                  |  2 +-
+ 30 files changed, 100 insertions(+), 111 deletions(-)
+
+-- 
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
