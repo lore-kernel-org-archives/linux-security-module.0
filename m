@@ -1,115 +1,108 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Mon, 10 Apr 2017 22:00:00 +0200
-Subject: [PATCH RFC v2 1/3] LSM: Allow per LSM module per "struct
-	task_struct" blob.
-In-Reply-To: <2698e97b-397e-0fc0-84a1-dc9a4226117a@schaufler-ca.com>
-References: <1491734530-25002-1-git-send-email-tixxdz@gmail.com>
-	<1491734530-25002-2-git-send-email-tixxdz@gmail.com>
-	<f25edeb6-35e1-2f8c-8fd6-fd051c4e79ce@schaufler-ca.com>
-	<CAEiveUeHedQAsjbS5Jj9imq28af0OuKAjMTudMJm7GqObRNMfQ@mail.gmail.com>
-	<2698e97b-397e-0fc0-84a1-dc9a4226117a@schaufler-ca.com>
-Message-ID: <CAEiveUd4Obc+YsCiO7dp3-jypbJ4vMmsBOU=Ax8yF7+6dLes0w@mail.gmail.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Tue, 11 Apr 2017 07:07:22 +0900
+Subject: [PATCH RFC 04/11] LSM: general but not extreme module stacking
+In-Reply-To: <05b1edee-9850-5d68-35be-cdd595e47f5c@schaufler-ca.com>
+References: <509e0281-9f8a-83c2-f9d6-5532903cda46@schaufler-ca.com>
+	<05b1edee-9850-5d68-35be-cdd595e47f5c@schaufler-ca.com>
+Message-ID: <201704110707.HCD34852.MQOSLFHtFFOVOJ@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 10, 2017 at 9:26 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 4/10/2017 11:30 AM, Djalal Harouni wrote:
->> On Mon, Apr 10, 2017 at 5:50 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 4/9/2017 3:42 AM, Djalal Harouni wrote:
->>>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-[...]
+Casey Schaufler wrote:
+> @@ -1365,6 +1432,77 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
+>  {
+>  	struct security_hook_list *hp;
+>  	int rc;
+> +	char *local;
+> +	char *cp;
+> +	int slen;
+> +	int failed = 0;
+> +
+> +	/*
+> +	 * If lsm is NULL look at all the modules to find one
+> +	 * that processes name. If lsm is not NULL only look at
+> +	 * that module.
+> +	 *
+> +	 * "context" is handled directly here.
+> +	 */
+> +	if (strcmp(name, "context") == 0) {
+> +		/*
+> +		 * First verify that the input is acceptable.
+> +		 * lsm1='v1'lsm2='v2'lsm3='v3'
+> +		 *
+> +		 * A note on the use of strncmp() below.
+> +		 * The check is for the substring at the beginning of cp.
+> +		 * The kzalloc of size + 1 ensures a terminated string.
+> +		 */
+> +		rc = -EINVAL;
+> +		local = kzalloc(size + 1, GFP_KERNEL);
+> +		memcpy(local, value, size);
+> +		cp = local;
+> +		list_for_each_entry(hp, &security_hook_heads.setprocattr,
+> +					list) {
+> +			if (lsm != NULL && strcmp(lsm, hp->lsm))
+> +				continue;
+> +			if (cp[0] == ',') {
+> +				if (cp == local)
+> +					goto free_out;
+> +				cp++;
+> +			}
+> +			slen = strlen(hp->lsm);
+> +			if (strncmp(cp, hp->lsm, slen))
+> +				goto free_out;
+> +			cp += slen;
+> +			if (cp[0] != '=' || cp[1] != '\'' || cp[2] == '\'')
+> +				goto free_out;
+> +			for (cp += 2; cp[0] != '\''; cp++)
+> +				if (cp[0] == '\0')
+> +					goto free_out;
+> +			cp++;
+> +		}
+> +
+> +		cp = local;
+> +		list_for_each_entry(hp, &security_hook_heads.setprocattr,
+> +					list) {
+> +			if (lsm != NULL && strcmp(lsm, hp->lsm))
+> +				continue;
+> +			if (cp[0] == ',')
+> +				cp++;
+> +			cp += strlen(hp->lsm) + 2;
+> +			for (slen = 0; cp[slen] != '\''; slen++)
+> +				;
+> +			cp[slen] = '\0';
+> +
+> +			rc = hp->hook.setprocattr("context", cp, slen);
+> +			if (rc < 0)
+> +				failed = rc;
 
->>> While I appreciate your enthusiasm, I would really like
->>> to see a mechanism for managing all of the blobs as being
->>> potentially shared rather than just the task blob. With
->>> infrastructure blob management being the general case we
->>> could stack any set of existing modules that does not
->>> include both SELinux and Smack. (AppArmor is threatening
->>> to join that set, but we're still waiting on that) I
->> Yes! most of the other kernel maintainers I discussed the feature with
->> did not even believe or knew that LSM stacking is possible! Some other
->> kernel frameworks are being replaced with new ones (I'm not sure if
->> the old ones were perfect!)... but what I'm trying to say is that we
->> should make it easy for dynamic LSM plugins model so they can explore
->> the interface, and maybe after some time the whole framework will even
->> be replaced with a better one...
->
-> I'm not committing to dynamic modules, but I am working
-> to make sure I don't do anything to prevent someone else
-> from doing it in the future. There are a good number of
-> people who find the notion of dynamic security policy
-> disturbing.
+I did not find your answer to my question.
+When
 
-I understand, though that with today's container recycling use cases
-some of it may make sense. Anyway you are doing the real work, you
-know better.
+  valid_lsmname1='valid_value_for_lsmname1'valid_lsmname2='valid_value_for_lsmname2'valid_lsmname3='invalid_value_for_lsmname3'
 
+is given, there is no way to undo already committed
 
->> Thanks to your effort and others we may achieve it, but I don't think
->> that delaying features for a perfect implementation is the best way.
->> During linuxcon 2016 Europe you said that there should be a new kind
->> of LSMs, that's why I think we should make it easy for that to happen.
->
-> I agree that it's better to use a work-around today then to
-> let the shortcomings of the existing infrastructure stop you
-> from getting your job done.
+  valid_lsmname1='valid_value_for_lsmname1'valid_lsmname2='valid_value_for_lsmname2'
 
-Indeed!
+changes while return value tells failure at
 
+  valid_lsmname3='invalid_value_for_lsmname3'
 
->>
->>> think it's a bad idea to go ahead with one implementation
->>> for task blobs without taking care of the others.
->> Ok. Sorry if I missed this, but could you please point me why this
->> could be a bad idea ?
->
-> It's a whole lot easier to maintain one sort of blob
-> management then a different kind for each blob. It would
-> be lots cleaner to have a single call that tells the
-> infrastructure how much space you need for all your blobs
-> than a separate interface for each.
+. If you want to allow updating multiple values, you need to make them a transaction.
 
-I perfectly agree here. With Tetsuo patch it was easy to add a
-stackable LSM, with a consistent approach that would be even better.
-But as you note that should not be a blocker to upstream new stackable
-LSMs.
-
-
->> As I understand it, these are internal details that could be replaced.
->> My first implementation used resizable concurrent hashtables that are
->> heavily used in the networking code and it worked, and I easily
->> converted the module to use Tetsuo's approach since I didn't see any
->> objection for it, and it continued to work. Maybe the point should be
->> *which* LSM should use the task->security and how ? The
->> ModAutoRestrict module is a simple LSM which could easily work with
->> any provided solution.
->
-> So I see.
->
->> That being said, I could convert the module back and stick with
->> rhashtables for now since it does not conflict with any module and it
->> works well. I would like to avoid same history where Apparmor, Smack
->> and TOMOYO all suffered to get mainlined, even Yama due to some
->> requests...  Then I can convert the module back to use the same LSM
->> infrastructure if you maintainers think that how it should go, that's
->> totally fine by me. Yama internally could use the same task blob but
->> it is avoiding conflicts by using lists to manage its internal data,
->> that's the same design with ModAutoRestrict and rhashtables.
->
-> I think that would be the prudent approach. There is still
-> the possibility that blob sharing (or full stacking, if you
-> prefer) won't be accepted any time soon.
-
-Ok Casey! I will wait for more feedback, and if other maintainers do
-not object, I will convert it back to rhashtables in next iterations
-making sure that it should be simple to convert later to a blob
-sharing mechanism.
-
-Thanks again for the comments!
-
-
--- 
-tixxdz
+> +			cp += slen + 1;
+> +		}
+> +		if (failed != 0)
+> +			rc = failed;
+> +		else
+> +			rc = size;
+> +free_out:
+> +		kfree(local);
+> +		return rc;
+> +	}
+>  
+>  	list_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
+>  		if (lsm != NULL && strcmp(lsm, hp->lsm))
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
