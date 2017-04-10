@@ -1,91 +1,63 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Mon, 10 Apr 2017 08:48:36 +0200
-Subject: [kernel-hardening] [PATCH net-next v6 07/11] landlock: Add ptrace
-	restrictions
-In-Reply-To: <20170328234650.19695-8-mic@digikod.net>
-References: <20170328234650.19695-1-mic@digikod.net>
-	<20170328234650.19695-8-mic@digikod.net>
-Message-ID: <CAEiveUdXGEOywJoYTsBcxCp02_2gtj7Zw0zT_YdGWM3fJLYY7g@mail.gmail.com>
+From: viresh.kumar@linaro.org (Viresh Kumar)
+Date: Mon, 10 Apr 2017 16:03:16 +0530
+Subject: [PATCH 07/38] Annotate hardware config module parameters in
+	drivers/cpufreq/
+In-Reply-To: <149141146722.29162.13947802705058712127.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141146722.29162.13947802705058712127.stgit@warthog.procyon.org.uk>
+Message-ID: <20170410103316.GL24555@vireshk-i7>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Mar 29, 2017 at 1:46 AM, Micka?l Sala?n <mic@digikod.net> wrote:
-> A landlocked process has less privileges than a non-landlocked process
-> and must then be subject to additional restrictions when manipulating
-> processes. To be allowed to use ptrace(2) and related syscalls on a
-> target process, a landlocked process must have a subset of the target
-> process' rules.
->
-> New in v6
->
-> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
+On 05-04-17, 17:57, David Howells wrote:
+> When the kernel is running in secure boot mode, we lock down the kernel to
+> prevent userspace from modifying the running kernel image.  Whilst this
+> includes prohibiting access to things like /dev/mem, it must also prevent
+> access by means of configuring driver modules in such a way as to cause a
+> device to access or modify the kernel image.
+> 
+> To this end, annotate module_param* statements that refer to hardware
+> configuration and indicate for future reference what type of parameter they
+> specify.  The parameter parser in the core sees this information and can
+> skip such parameters with an error message if the kernel is locked down.
+> The module initialisation then runs as normal, but just sees whatever the
+> default values for those parameters is.
+> 
+> Note that we do still need to do the module initialisation because some
+> drivers have viable defaults set in case parameters aren't specified and
+> some drivers support automatic configuration (e.g. PNP or PCI) in addition
+> to manually coded parameters.
+> 
+> This patch annotates drivers in drivers/cpufreq/.
+> 
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Acked-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> cc: Viresh Kumar <viresh.kumar@linaro.org>
+> cc: linux-pm at vger.kernel.org
 > ---
->  security/landlock/Makefile       |   2 +-
->  security/landlock/hooks_ptrace.c | 126 +++++++++++++++++++++++++++++++++++++++
->  security/landlock/hooks_ptrace.h |  11 ++++
->  security/landlock/init.c         |   2 +
->  4 files changed, 140 insertions(+), 1 deletion(-)
->  create mode 100644 security/landlock/hooks_ptrace.c
->  create mode 100644 security/landlock/hooks_ptrace.h
->
-[...]
+> 
+>  drivers/cpufreq/speedstep-smi.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/speedstep-smi.c b/drivers/cpufreq/speedstep-smi.c
+> index 770a9ae1999a..37b30071c220 100644
+> --- a/drivers/cpufreq/speedstep-smi.c
+> +++ b/drivers/cpufreq/speedstep-smi.c
+> @@ -378,7 +378,7 @@ static void __exit speedstep_exit(void)
+>  	cpufreq_unregister_driver(&speedstep_driver);
+>  }
+>  
+> -module_param(smi_port, int, 0444);
+> +module_param_hw(smi_port, int, ioport, 0444);
+>  module_param(smi_cmd,  int, 0444);
+>  module_param(smi_sig, uint, 0444);
+>  
 
-> +/**
-> + * landlock_ptrace_access_check - determine whether the current process may
-> + *                               access another
-> + *
-> + * @child: the process to be accessed
-> + * @mode: the mode of attachment
-> + *
-> + * If the current task has Landlock rules, then the child must have at least
-> + * the same rules.  Else denied.
-> + *
-> + * Determine whether a process may access another, returning 0 if permission
-> + * granted, -errno if denied.
-> + */
-> +static int landlock_ptrace_access_check(struct task_struct *child,
-> +               unsigned int mode)
-> +{
-> +       if (!landlocked(current))
-> +               return 0;
-> +
-> +       if (!landlocked(child))
-> +               return -EPERM;
-> +
-> +       if (landlock_task_has_subset_events(current, child))
-> +               return 0;
-> +
-> +       return -EPERM;
-> +}
-> +
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Maybe you want to check the mode argument here if it is a
-PTRACE_ATTACH which may translate to read/writes ? PTRACE_READ are
-normally for reads only. Or also which creds were used if this was a
-direct syscall or a filesystem call through procfs.
-
-I'm bringing this, since you may want to make some room for landlock
-ptrace events and what others may want to do with it. Also I'm
-planning to send another v2 RFC for procfs separate instances [1], the
-aim is to give LSMs a security_ptrace_access_check hook path when
-dealing with /proc/<pids>/ [2]  . Right now LSMs don't really have a
-security path there, and the implementation does not guarantee that.
-With this Yama ptrace scope or other LSMs may take advantage of it and
-check the 'PTRACE_MODE_READ_FSCRED' mode for filesystem accesses.
-That's why I think it would be better if the default landlock ptrace
-semantics are not that wide.
-
-Thanks!
-
-[1] https://lkml.org/lkml/2017/3/30/670
-[2] http://lxr.free-electrons.com/source/fs/proc/base.c#L719
+-- 
+viresh
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
