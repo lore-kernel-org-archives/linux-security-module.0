@@ -1,48 +1,33 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 11 Apr 2017 12:57:58 -0700
-Subject: [kernel-hardening] Re: [PATCH RFC v2 1/3] LSM: Allow per LSM
-	module per "struct task_struct" blob.
-In-Reply-To: <8551d1ff-2c6e-bf9b-5615-fbff089ef252@schaufler-ca.com>
-References: <1491734530-25002-1-git-send-email-tixxdz@gmail.com>
-	<1491734530-25002-2-git-send-email-tixxdz@gmail.com>
-	<f25edeb6-35e1-2f8c-8fd6-fd051c4e79ce@schaufler-ca.com>
-	<CAEiveUeHedQAsjbS5Jj9imq28af0OuKAjMTudMJm7GqObRNMfQ@mail.gmail.com>
-	<2698e97b-397e-0fc0-84a1-dc9a4226117a@schaufler-ca.com>
-	<CAEiveUd4Obc+YsCiO7dp3-jypbJ4vMmsBOU=Ax8yF7+6dLes0w@mail.gmail.com>
-	<CAGXu5jL7jLid57UoXCxSqo5JZRLMgZ7X6BSYgWLckp5YpoiAmA@mail.gmail.com>
-	<8551d1ff-2c6e-bf9b-5615-fbff089ef252@schaufler-ca.com>
-Message-ID: <CAGXu5jJAxdtdPuOZVquuajAeR4sbSiFoD4-QUMmcC_RLZy5tfw@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 11 Apr 2017 16:12:02 -0400
+Subject: [PATCH 06/12] audit: Use timespec64 to represent audit timestamps
+In-Reply-To: <CABeXuvoKmvbo_n3XQ0Y+iWGz88Jr3TwbPA7GiR3pia9407ANLw@mail.gmail.com>
+References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
+	<1491613030-11599-7-git-send-email-deepa.kernel@gmail.com>
+	<CAHC9VhTYWeKL+BAb6F3tfwzs7OKUEA8ANM=V05sfoiahNNX=9w@mail.gmail.com>
+	<CABeXuvoKmvbo_n3XQ0Y+iWGz88Jr3TwbPA7GiR3pia9407ANLw@mail.gmail.com>
+Message-ID: <CAHC9VhTMU7cEJD2rffxOshEnL18i597GBsvHZm-Y8hCE9SJCAA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 11, 2017 at 12:54 PM, Casey Schaufler
-<casey@schaufler-ca.com> wrote:
-> On 4/10/2017 9:43 PM, Kees Cook wrote:
->> On Mon, Apr 10, 2017 at 1:00 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
->>> On Mon, Apr 10, 2017 at 9:26 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> I think that would be the prudent approach. There is still
->>>> the possibility that blob sharing (or full stacking, if you
->>>> prefer) won't be accepted any time soon.
->>> Ok Casey! I will wait for more feedback, and if other maintainers do
->>> not object, I will convert it back to rhashtables in next iterations
->>> making sure that it should be simple to convert later to a blob
->>> sharing mechanism.
->> Would it be possible just to add a single field to task_struct if this
->> LSM is built in? I feel like rhashtables is a huge overhead when a
->> single field is all that's needed.
+On Sat, Apr 8, 2017 at 1:58 PM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>> I have no problem merging this patch into audit/next for v4.12, would
+>> you prefer me to do that so at least this patch is merged?
 >
-> Special casing the task_struct based on which modules
-> are compiled in would work, but I'm under the impression
-> that there's a strong desire to keep to one pointer for
-> security module information in the major structures.
+> This would be fine.
+> But, I think whoever takes the last 2 deletion patches should also take them.
+> I'm not sure how that part works out.
 
-Right, I meant as far as keeping this patch set unblocked by the other one...
+FWIW, I just merged this into the audit/next branch so at least this
+will go into v4.12.
 
--Kees
+>> It would probably make life a small bit easier for us in the audit
+>> world too as it would reduce the potential merge conflict.  However,
+>> that's a relatively small thing to worry about.
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
