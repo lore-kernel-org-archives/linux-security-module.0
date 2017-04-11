@@ -1,109 +1,191 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 11 Apr 2017 00:15:31 +0100
-Subject: Why kernel lockdown?
-In-Reply-To: <25acabf2-ac99-3c2b-ee9a-53d71b5c77f2@gmail.com>
-References: <25acabf2-ac99-3c2b-ee9a-53d71b5c77f2@gmail.com>
-	<149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-Message-ID: <8559.1491866131@warthog.procyon.org.uk>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 10 Apr 2017 21:23:39 -0700
+Subject: [PATCH RFC v2 0/3] security: Add ModAutoRestrict LSM
+In-Reply-To: <1491734530-25002-1-git-send-email-tixxdz@gmail.com>
+References: <1491734530-25002-1-git-send-email-tixxdz@gmail.com>
+Message-ID: <CAGXu5jLjd8ttpa_S16dadr=k6-mZGkSa3G6RBu9NUe6g5M399w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+On Sun, Apr 9, 2017 at 3:42 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+> Hi List,
+>
+> This is RFC v2 of the Module auto-loading restriction feature. The
+> module has been renamed ModAutoRestrict LSM.
+>
+> This RFC is a work in progress update.
+>
+> There are still minor things to fix which are listed in the TODO
+> section. Also I used Tetsuo approach of stacking task->security, since
+> now that the task_security_alloc() hook is in linux-security/next I took
+> advantage of it and switched to use that hook and applied Tetsuo
+> task->security per LSM blob on top of it. I can also switch to Casey
+> approach. However, since these are internal implementation details which
+> are not exposed, I do not think that this is a big issue. Thanks for the
+> work now it is clear that we are able to easily stack new LSMs.
+>
+> Patches are against linux-security/next HEAD 622f6e3265707eb
+>
+> ==============
+>
+> ModAutoRestrict is a Linux Security Module that applies restrictions on
+> automatic module loading operations. This is selectable at build-time
+> with CONFIG_SECURITY_MODAUTORESTRICT, and can be controlled at run-time
+> through sysctls in /proc/sys/kernel/modautorestrict/autoload or as a
+> per-process setting via a prctl() interface.
+>
+> A userspace request to use a kernel feature that is implemented by modules
+> that are not loaded may trigger the module auto-load feature to load
+> these modules in order to satisfy userspace. However as today's Linux use
+> cases cover embedded systems to containers where applications are running
+> in their own separate environments, reducing or preventing operations
+> that may affect external environments is an important constraint.
+> Therefore, we need a way to control if automatic module loading is
+> allowed or which applications are allowed to trigger the module
+> auto-load feature.
 
-> Also is there a description of what this lockdown trying to accomplish?
+It might be worth looking through the last several years of kernel
+CVEs to find all the ones that would have been stopped with a feature
+like this. There are many examples lately: both DCCP (CVE-2017-6074)
+and n_hldc (CVE-2017-2636) come to mind this year alone.
 
-Austin S. Hemmelgarn <ahferroin7@gmail.com> wrote:
+> The ModAutoRestrict LSM allows system administrators or sandbox
+> mechanisms to control the module auto-load feature and prevent loading
+> unneeded modules or abuse the interface.
+>
+> The settings can be applied globally using a sysctl interface which
+> completes the core kernel interface "modules_disable".
 
-> ... but for any kind of proper security analysis, you need to better clarify
-> your threat model.  'Prevent modification to the running kernel image' is a
-> decent start on this, but at least some of the patches don't explain very
-> well _how_ what you're disabling could be used to modify the running kernel
-> image.  Clarifying how something is a threat will help with verifying that
-> you're correctly blocking the threat.
+Typo: complements
 
-The idea is to properly implement UEFI Secure Boot mode such that we can kexec
-another operating system (Linux, Windows, etc.) and pass on the Secure Boot
-flag with a guarantee that we haven't been compromised.
+Perhaps mention why this is a complement (i.e. modules_disable is ALL
+modules, and modautorestrict is just auto-loaded, not explicitly
+loaded).
 
-This assumes the following:
+>
+> The feature is also available as a prctl() interface. This allows to
+> apply restrictions when sandboxing processes. On embedded Linux systems,
+> or containers where only some containers/processes should have the
+> right privileges to load modules, this allows to restrict those
+> processes from inserting modules. Only privileged processes can be
+> allowed to perform so. A more restrictive access can be applied where
+> the module autoload feature is completely disabled.
+> In this schema the access rules are per-process and inherited by
+> children created by fork(2) and clone(2), and preserved across execve(2).
+>
+> Interface:
+>
+> *) The per-process prctl() settings are:
+>
+>  prctl(PR_MOD_AUTO_RESTRICT_OPTS, PR_SET_MOD_AUTO_RESTRICT, value, 0, 0)
+>
+>  Where value means:
+>
+>  0 - Classic module auto-load permissions, nothing changes.
+>
+>  1 - The current process must have CAP_SYS_MODULE to be able to
+>      auto-load modules. CAP_NET_ADMIN should allow to auto-load
+>      modules with a 'netdev-%s' alias.
+>
+>  2 - Current process can not auto-load modules. Once set, this prctl
+>      value can not be changed.
+>
+>  The per-process value may only be increased, never decreased, thus ensuring
+>  that once applied, processes can never relaxe their setting.
 
- (1) Someone wanting to compromise your machine can't get physical access to
-     the running hardware.  I think pretty much all bets are off if someone
-     gets their hands on your computer.
+Typo: relax
 
- (2) Whatever boots our kernel is not itself compromised.  If it is, there's
-     pretty much nothing we can do about it.
+> *) The global sysctl setting can be set by writting an integer value to
+>    '/proc/sys/kernel/modautorestrict/autoload'
 
- (3) Whatever boots our kernel can prove that our kernel is what it says it
-     is.
+I wonder if this should just be named
+/proc/sys/kernel/modules_autoload (to look more like
+modules_disabled)?
 
+>  The valid values are:
+>
+>  0 - Classic module auto-load permissions, nothing changes.
+>
+>  1 - Processes must have CAP_SYS_MODULE to be able to auto-load modules.
+>      CAP_NET_ADMIN should allow to auto-load modules with a 'netdev-%s'
+>      alias.
+>
+>  2 - Processes can not auto-load modules. Once set, this sysctl value
+>      can not be changed.
+>
+> *) Access rules:
+>    First the prctl() settings are checked, if the access is not denied
+>    then the global sysctl settings are checked.
+>
+> The original idea and inspiration is from grsecurity 'GRKERNSEC_MODHARDEN'.
+>
+>
+> The sample code here can be used to test the feature:
+> https://gist.githubusercontent.com/tixxdz/39a583358f04d40b4d3e5571f95c075b/raw/7fb416285412891e2637fba149da930fe0898356/modautorestrict_test.c
+>
+> # TODO list:
+> *) Confirm the struct task_struct->security stacking mechanism.
 
-Now, (2) has to start with security right from the system booting, and likely
-involves the firmware being checked by the hardware.  The firmware then has to
-validate anything it runs, and the things it runs have to validate anything
-they run, etc. up to our kernel being booted.
+If we can't settle on a way to do this, perhaps this LSM should just
+live in the core kernel, similar to modules_disabled? We do already
+have the hooks to implement it with an LSM, but I'd hate to block this
+feature just because we can't solve task_struct sharing.
 
-With regard to (3), take the example of booting Fedora Linux on a UEFI PC in
-secure boot mode: the UEFI BIOS boots the Fedora SHIM, which boots Grub, which
-boots the kernel.  The SHIM is signed by the UEFI signing authority and is
-checked against the UEFI key database; Grub and the kernel are signed by a key
-built into the SHIM.
+Maybe add a new bit like no_new_privs? (Though I guess you'd need 2
+bits, so maybe a full field like no_new_privs used to be.)
 
-[Note that in secure boot mode, Grub loads the kernel image asks the SHIM to
- verify it; further, the SHIM will catch anyone trying to boot without
- verification and halt the machine.]
+> *) Add a logging mechanism.
+> *) Remove the use of security_kernel_read_file hook. Use only
+>    security_kernel_module_request and make sure that we cover all cases.
+> *) Convert documentation to .rst
 
-[Note that we do verification with cryptographic signatures, but compiled-in
- hash whitelists would also work.]
+Another TODO item could be to add output to /proc/$pid/status as done
+for seccomp and no_new_privs? Though perhaps only if this is a core
+kernel change...
 
-In order to maintain the security guarantee, the kernel then needs to prevent
-unauthorised modification of code and data in the running kernel (module
-loading is permissible) and also it needs to protect any private keys or other
-security data it may hold within the image.  We try to do this by the
-following means:
+> # Changes since v1:
+> *) Renamed module to ModAutoRestrict
+> *) Improved documentation to explicity refer to module autoloading.
+> *) Switched to use the new task_security_alloc() hook.
+> *) Switched from rhash tables to use task->security since it is in
+>    linux-security/next branch now.
+> *) Check all parameters passed to prctl() syscall.
+> *) Many other bug fixes and documentation improvements.
+>
+> All Kees Cook comments handled, except for the removing of
+> security_kernel_read_file which I will do in next iteration when
+> I make sure that I did not miss something. Thank you!
+>
+>
+> Tetsuo Handa (1):
+>         LSM: Allow per LSM module per "struct task_struct" blob
+>
+> Djalal Harouni (2):
+>         security: add the ModAutoRestrict Linux Security Module
+>         Documentation: add ModAutoRestrict LSM documentation
+>
+>
+>  Documentation/security/00-INDEX            |   2 +
+>  Documentation/security/ModAutoRestrict.txt |  77 ++++++
+>  MAINTAINERS                                |   7 +
+>  include/linux/lsm_hooks.h                  |  41 +++-
+>  include/uapi/linux/prctl.h                 |   5 +
+>  security/Kconfig                           |   1 +
+>  security/Makefile                          |  16 +-
+>  security/modautorestrict/Kconfig           |  15 ++
+>  security/modautorestrict/Makefile          |   3 +
+>  security/modautorestrict/modauto_lsm.c     | 372 +++++++++++++++++++++++++++++
+>  security/security.c                        |  38 ++-
+>  11 files changed, 568 insertions(+), 9 deletions(-)
 
- (1) Refuse to use any key or hash that UEFI has in its blacklist.
+I'd love to see this restriction added; I'm sick of adding stuff to
+modprobe.d blacklist files after-the-fact...
 
- (2) Refuse to load any module that isn't signed/hashed.
+-Kees
 
- (3) Refuse to load any firmware that isn't signed/hashed.
-
- (4) Refuse to kexec any image that isn't signed/hashed.
-
- (5) Refuse to dump a kernel image for software suspend/hibernation if it's
-     not encrypted.  Further, if it is encrypted, the key must be protected.
-
- (6) Refuse to load a dumped kernel image that isn't encrypted with a
-     protected key.
-
- (7) Refuse to allow userspace direct access to kernel memory (no /dev/mem,
-     /dev/kmem, /proc/kcore).
-
- (8) Refuse to allow userspace direct, unsupervised access to hardware (no
-     iopl, /dev/ioports, MSRs, etc.).  It might be feasible to open PCI BARs
-     through dedicated device files for certain functions though (eg. X
-     servers), but unconstrained DMA must be disallowed.
-
- (9) Refuse to let userspace configure a driver to use a piece of hardware to
-     muck around with system RAM, possibly by mismatching driver and device.
-
-> 'Prevent modification to the running kernel image' is a decent start on
-> this, but at least some of the patches don't explain very well _how_ what
-> you're disabling could be used to modify the running kernel image.
-
-To be honest, I don't know in all cases since I'm taking a collection of
-patches not all of which are written by me.  I can see how most of them work,
-but some of the more esoteric things, like ACPI...
-
-> Furthermore, why is the only way to enable this to boot in UEFI Secure Boot
-> mode?
-
-There's no reason that this need be the case, but it's the one I'm interested
-in.  But do note assumption (2) above.  I can provide kernel lockdown in other
-situations, but can't forward the guarantee if I wasn't given one to begin
-with.
-
-David
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
