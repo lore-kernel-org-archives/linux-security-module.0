@@ -1,87 +1,103 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Wed, 12 Apr 2017 02:43:21 -0400
-Subject: [PATCH] capabilities: do not audit log BPRM_FCAPS on set*id
-In-Reply-To: <CAHC9VhQxbdT18tWNon30Hm3+8sMOV=2QTHO8yR1mpRbeuMqr2A@mail.gmail.com>
-References: <515427654218b7ce22441f635115e93cf74d6302.1488491988.git.rgb@redhat.com>
-	<20170307181049.GA31834@mail.hallyn.com>
-	<20170307211048.GE10258@madcap2.tricolour.ca>
-	<3292783.lRT1C7ihKT@x2>
-	<20170329102911.GO9021@madcap2.tricolour.ca>
-	<CAHC9VhQxbdT18tWNon30Hm3+8sMOV=2QTHO8yR1mpRbeuMqr2A@mail.gmail.com>
-Message-ID: <20170412064321.GN18559@madcap2.tricolour.ca>
+From: sbuisson.ddn@gmail.com (Sebastien Buisson)
+Date: Wed, 12 Apr 2017 18:06:58 +0900
+Subject: [PATCH] selinux: add selinux_is_enforced() function
+Message-ID: <1491988018-4120-1-git-send-email-sbuisson@ddn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-04-11 15:36, Paul Moore wrote:
-> On Wed, Mar 29, 2017 at 6:29 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2017-03-09 09:34, Steve Grubb wrote:
-> >> On Tuesday, March 7, 2017 4:10:49 PM EST Richard Guy Briggs wrote:
-> >> > > > > > one possibly audit-worth case which (if I read correctly) this will
-> >> > > > > > skip is where a setuid-root binary has filecaps which *limit* its
-> >> > > > > > privs.
-> >> > > > > > Does that matter?
-> >> > > > >
-> >> > > > > I hadn't thought of that case, but I did consider in the setuid case
-> >> > > > > comparing before and after without setuid forcing the drop of all
-> >> > > > > capabilities via "ambient".  Mind you, this bug has been around before
-> >> > > > > Luto's patch that adds the ambient capabilities set.
-> >> > > >
-> >> > > > Can you suggest a scenario where that might happen?
-> >> > >
-> >> > > Sorry, do you mean the case I brought up, or the one you mentioned?  I
-> >> > > don't quite understnad the one you brought up.  For mine it's pretty
-> >> > > simple to reproduce, just
-> >> >
-> >> > I was talking about the case you brought up, but they could be the same
-> >> > case.
-> >> >
-> >> > I was thinking of a case where the caps actually change, but are
-> >> > overridden by the blanket full permissions of setuid.
-> >>
-> >> If there actually is a change in capability bits besides the implied change of
-> >> capabilities based on the change of the uid alone, then it should be logged.
-> >
-> > Are you speaking of a change in pP' only from pI, or also pI', pE' and pA'?
-> >
-> > Something like ( pP' xor pI ) not empty?
-> >
-> > The previous patch I'd sent was reasonably easy to understand, but I'm
-> > having trouble adding this new twist to the logic expression in question
-> > due to the inverted combination of pre-existing items.  I'm having
-> > trouble visualizing a 5 or more-dimensional Karnaugh map...
-> >
-> > While I am at it, I notice pA is missing from the audit record.  The
-> > record contains fields "old_pp", "old_pi", "old_pe", "new_pp", "new_pi",
-> > "new_pe" so in keeping with the previous record normalizations, I'd like
-> > to change the "new_*" variants to simply drop the "new_" prefix.
-> >
-> >         https://github.com/linux-audit/audit-kernel/issues/40
-> 
-> Yes, there is the separate ambient capabilities record patch, but
-> where do we stand with this patch?  From what I gather there is still
-> some uncertainty here?
+Add selinux_is_enforced() function to give access to SELinux
+enforcement to the rest of the kernel.
 
-Yes, I put this on my back burner thinking about how best to re-approach
-this, hoping others would offer some insight or advice how to attack
-this, otherwise I'm going to end up with a horrendous conditional
-expression, I fear.
+Signed-off-by: Sebastien Buisson <sbuisson@ddn.com>
+---
+ include/linux/selinux.h             | 5 +++++
+ security/selinux/exports.c          | 6 ++++++
+ security/selinux/hooks.c            | 2 ++
+ security/selinux/include/avc.h      | 6 ------
+ security/selinux/include/security.h | 1 +
+ 5 files changed, 14 insertions(+), 6 deletions(-)
 
-Steve, I was hoping to get a clarification from you about which
-capability bits had changed.
+diff --git a/include/linux/selinux.h b/include/linux/selinux.h
+index 44f4596..1007321 100644
+--- a/include/linux/selinux.h
++++ b/include/linux/selinux.h
+@@ -24,12 +24,17 @@
+  * selinux_is_enabled - is SELinux enabled?
+  */
+ bool selinux_is_enabled(void);
++bool selinux_is_enforced(void);
+ #else
+ 
+ static inline bool selinux_is_enabled(void)
+ {
+ 	return false;
+ }
++static inline bool selinux_is_enforced(void)
++{
++	return false;
++}
+ #endif	/* CONFIG_SECURITY_SELINUX */
+ 
+ #endif /* _LINUX_SELINUX_H */
+diff --git a/security/selinux/exports.c b/security/selinux/exports.c
+index e75dd94..016f1e2 100644
+--- a/security/selinux/exports.c
++++ b/security/selinux/exports.c
+@@ -21,3 +21,9 @@ bool selinux_is_enabled(void)
+ 	return selinux_enabled;
+ }
+ EXPORT_SYMBOL_GPL(selinux_is_enabled);
++
++bool selinux_is_enforced(void)
++{
++	return selinux_enforcing;
++}
++EXPORT_SYMBOL_GPL(selinux_is_enforced);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e67a526..da2baeb 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -109,6 +109,8 @@ static int __init enforcing_setup(char *str)
+ 	return 1;
+ }
+ __setup("enforcing=", enforcing_setup);
++#else
++int selinux_enforcing;
+ #endif
+ 
+ #ifdef CONFIG_SECURITY_SELINUX_BOOTPARAM
+diff --git a/security/selinux/include/avc.h b/security/selinux/include/avc.h
+index 0999df0..ff98351 100644
+--- a/security/selinux/include/avc.h
++++ b/security/selinux/include/avc.h
+@@ -19,12 +19,6 @@
+ #include "av_permissions.h"
+ #include "security.h"
+ 
+-#ifdef CONFIG_SECURITY_SELINUX_DEVELOP
+-extern int selinux_enforcing;
+-#else
+-#define selinux_enforcing 1
+-#endif
+-
+ /*
+  * An entry in the AVC.
+  */
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index f979c35..1e67e268 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -64,6 +64,7 @@
+ struct netlbl_lsm_secattr;
+ 
+ extern int selinux_enabled;
++extern int selinux_enforcing;
+ 
+ /* Policy capabilities */
+ enum {
+-- 
+1.8.3.1
 
-Serge, do you have any suggestions on how to approach the conditional
-logic?
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
