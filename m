@@ -1,75 +1,85 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Wed, 12 Apr 2017 13:24:55 -0400
-Subject: [PATCH] selinux: add selinux_is_enforced() function
-In-Reply-To: <CAPkE-bWrxxtcb5bUpSV07CUBGGxMt7y+OrAd9Qvk0o4-Lo26VA@mail.gmail.com>
-References: <1491988018-4120-1-git-send-email-sbuisson@ddn.com>
-	<CAGH-KgsymFfRqDnmn1kLpWiPtHFkLU3UMKVu=8=NOUwk+qWjmg@mail.gmail.com>
-	<CAPkE-bX5-Mo9AMPwf6dwBNT9FeWgAShWwKbkiJg3ZZVpt9itLA@mail.gmail.com>
-	<1492007701.3881.10.camel@tycho.nsa.gov>
-	<CAPkE-bWQLfSq0+J0uoMRKAPbSdO0giuGZzfRXA7VXL+xo3fNgg@mail.gmail.com>
-	<1492014294.3881.14.camel@tycho.nsa.gov>
-	<CAPkE-bWrxxtcb5bUpSV07CUBGGxMt7y+OrAd9Qvk0o4-Lo26VA@mail.gmail.com>
-Message-ID: <1492017895.3881.18.camel@tycho.nsa.gov>
+From: sgrubb@redhat.com (Steve Grubb)
+Date: Wed, 12 Apr 2017 14:49:02 -0400
+Subject: [PATCH] capabilities: do not audit log BPRM_FCAPS on set*id
+In-Reply-To: <20170412064321.GN18559@madcap2.tricolour.ca>
+References: <515427654218b7ce22441f635115e93cf74d6302.1488491988.git.rgb@redhat.com>
+	<CAHC9VhQxbdT18tWNon30Hm3+8sMOV=2QTHO8yR1mpRbeuMqr2A@mail.gmail.com>
+	<20170412064321.GN18559@madcap2.tricolour.ca>
+Message-ID: <1833607.dNomLM3Ooh@x2>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-04-12 at 19:07 +0200, Sebastien Buisson wrote:
-> 2017-04-12 18:24 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
-> > Maybe you want to register a notifier callback on policy reload?
-> > See
-> > the archives for the SELinux support for Infiniband RDMA patches
-> > (which
-> > seem to have stalled), which included LSM hooks and SELinux
-> > implementation to support notifications on policy reloads.
-> 
-> I need to have a look indeed. So it is a callback in kernelspace?
-
-Yes, see:
-https://patchwork.kernel.org/patch/9443417/
-
-> 
-> > > As I understand it, a userspace program can directly read the
-> > > policy
-> > > info exposed by the kernel by reading this file. But how about
-> > > reading it from kernelspace?
+On Wednesday, April 12, 2017 2:43:21 AM EDT Richard Guy Briggs wrote:
+> On 2017-04-11 15:36, Paul Moore wrote:
+> > On Wed, Mar 29, 2017 at 6:29 AM, Richard Guy Briggs <rgb@redhat.com> 
+wrote:
+> > > On 2017-03-09 09:34, Steve Grubb wrote:
+> > >> On Tuesday, March 7, 2017 4:10:49 PM EST Richard Guy Briggs wrote:
+> > >> > > > > > one possibly audit-worth case which (if I read correctly)
+> > >> > > > > > this will
+> > >> > > > > > skip is where a setuid-root binary has filecaps which *limit*
+> > >> > > > > > its
+> > >> > > > > > privs.
+> > >> > > > > > Does that matter?
+> > >> > > > > 
+> > >> > > > > I hadn't thought of that case, but I did consider in the setuid
+> > >> > > > > case
+> > >> > > > > comparing before and after without setuid forcing the drop of
+> > >> > > > > all
+> > >> > > > > capabilities via "ambient".  Mind you, this bug has been around
+> > >> > > > > before
+> > >> > > > > Luto's patch that adds the ambient capabilities set.
+> > >> > > > 
+> > >> > > > Can you suggest a scenario where that might happen?
+> > >> > > 
+> > >> > > Sorry, do you mean the case I brought up, or the one you mentioned?
+> > >> > >  I
+> > >> > > don't quite understnad the one you brought up.  For mine it's
+> > >> > > pretty
+> > >> > > simple to reproduce, just
+> > >> > 
+> > >> > I was talking about the case you brought up, but they could be the
+> > >> > same
+> > >> > case.
+> > >> > 
+> > >> > I was thinking of a case where the caps actually change, but are
+> > >> > overridden by the blanket full permissions of setuid.
+> > >> 
+> > >> If there actually is a change in capability bits besides the implied
+> > >> change of capabilities based on the change of the uid alone, then it
+> > >> should be logged.> > 
+> > > Are you speaking of a change in pP' only from pI, or also pI', pE' and
+> > > pA'?
+> > > 
+> > > Something like ( pP' xor pI ) not empty?
+> > > 
+> > > The previous patch I'd sent was reasonably easy to understand, but I'm
+> > > having trouble adding this new twist to the logic expression in question
+> > > due to the inverted combination of pre-existing items.  I'm having
+> > > trouble visualizing a 5 or more-dimensional Karnaugh map...
+> > > 
+> > > While I am at it, I notice pA is missing from the audit record.  The
+> > > record contains fields "old_pp", "old_pi", "old_pe", "new_pp", "new_pi",
+> > > "new_pe" so in keeping with the previous record normalizations, I'd like
+> > > to change the "new_*" variants to simply drop the "new_" prefix.
+> > > 
+> > >         https://github.com/linux-audit/audit-kernel/issues/40
 > > 
-> > This seems very inefficient though for your purposes.??Wouldn't it
-> > be
-> > better to just extend SELinux to compute the checksum from the
-> > original
-> > image when the policy is loaded, save that checksum in the
-> > policydb,
-> > and provide you with a way to fetch the already computed
-> > checksum???The
-> > computation would be done in security_load_policy() and saved in
-> > the
-> > policydb.??Then you could introduce a function and a LSM hook to
-> > export
-> > it to your code. We would probably want to also expose it via a
-> > selinuxfs node to userspace.
+> > Yes, there is the separate ambient capabilities record patch, but
+> > where do we stand with this patch?  From what I gather there is still
+> > some uncertainty here?
 > 
-> This is an excellent suggestion. It makes much more sense to have the
-> checksum computed on SELinux side when a policy is loaded. And then
-> just read this checksum when needed, both from kernel and userspace.
->
-> > This however only works for checking that you have a completely
-> > identical policy built in exactly the same way.??You could have
-> > semantically identical policies that still differ in the binary
-> > policy
-> > file, or policies with minor local customizations that aren't
-> > significant.??But perhaps that isn't an issue for Lustre
-> > environments.
+> Yes, I put this on my back burner thinking about how best to re-approach
+> this, hoping others would offer some insight or advice how to attack
+> this, otherwise I'm going to end up with a horrendous conditional
+> expression, I fear.
 > 
-> If we can protect against local customizations this is great. What
-> could be the other scenario leading to different binary policies
-> while
-> being semantically identical?
+> Steve, I was hoping to get a clarification from you about which
+> capability bits had changed.
 
-There can be ordering or optimization differences, depending on the
-policy compiler toolchain and build process. Probably not a concern if
-they are all running the same distro with the same policy package,
-built in the same build environment.
+I am not sure what you are asking of me.
 
+-Steve
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
