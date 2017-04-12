@@ -1,27 +1,34 @@
-From: sbuisson.ddn@gmail.com (Sebastien Buisson)
-Date: Wed, 12 Apr 2017 15:30:58 +0200
-Subject: [PATCH] selinux: add selinux_is_enforced() function
-In-Reply-To: <CAGH-KgsymFfRqDnmn1kLpWiPtHFkLU3UMKVu=8=NOUwk+qWjmg@mail.gmail.com>
-References: <1491988018-4120-1-git-send-email-sbuisson@ddn.com>
-	<CAGH-KgsymFfRqDnmn1kLpWiPtHFkLU3UMKVu=8=NOUwk+qWjmg@mail.gmail.com>
-Message-ID: <CAPkE-bX5-Mo9AMPwf6dwBNT9FeWgAShWwKbkiJg3ZZVpt9itLA@mail.gmail.com>
+From: dsterba@suse.cz (David Sterba)
+Date: Wed, 12 Apr 2017 15:42:45 +0200
+Subject: [PATCH 07/12] fs: btrfs: Use ktime_get_real_ts for root ctime
+In-Reply-To: <1491613030-11599-8-git-send-email-deepa.kernel@gmail.com>
+References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
+	<1491613030-11599-8-git-send-email-deepa.kernel@gmail.com>
+Message-ID: <20170412134245.GK4781@twin.jikos.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-04-12 13:55 GMT+02:00 Paul Moore <pmoore@redhat.com>:
-> As currently written this code isn't something we would want to merge
-> upstream for two important reasons:
->
-> * No clear user of this functionality.  There needs to be a well
-> defined user of this functionality in the kernel.
+On Fri, Apr 07, 2017 at 05:57:05PM -0700, Deepa Dinamani wrote:
+> btrfs_root_item maintains the ctime for root updates.
+> This is not part of vfs_inode.
+> 
+> Since current_time() uses struct inode* as an argument
+> as Linus suggested, this cannot be used to update root
+> times unless, we modify the signature to use inode.
+> 
+> Since btrfs uses nanosecond time granularity, it can also
+> use ktime_get_real_ts directly to obtain timestamp for
+> the root. It is necessary to use the timespec time api
+> here because the same btrfs_set_stack_timespec_*() apis
+> are used for vfs inode times as well. These can be
+> transitioned to using timespec64 when btrfs internally
+> changes to use timespec64 as well.
+> 
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Acked-by: David Sterba <dsterba@suse.com>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-The use case for this new functionality (and the other one) is getting
-SELinux information from the Lustre client code in kernel space.
-Latest patch can be accessed at:
-https://review.whamcloud.com/24421
-Actual user is sptlrpc_get_sepol() function in lustre/lustre/ptlrpc/sec.c file.
-This code will be pushed to the upstream kernel as soon as it is
-landed into Lustre master branch.
+I'm going to add the patch to my 4.12 queue and will let Andrew know.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
