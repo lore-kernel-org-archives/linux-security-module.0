@@ -1,34 +1,64 @@
-From: dsterba@suse.cz (David Sterba)
-Date: Wed, 12 Apr 2017 15:42:45 +0200
-Subject: [PATCH 07/12] fs: btrfs: Use ktime_get_real_ts for root ctime
-In-Reply-To: <1491613030-11599-8-git-send-email-deepa.kernel@gmail.com>
-References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
-	<1491613030-11599-8-git-send-email-deepa.kernel@gmail.com>
-Message-ID: <20170412134245.GK4781@twin.jikos.cz>
+From: jlee@suse.com (joeyli)
+Date: Wed, 12 Apr 2017 21:44:57 +0800
+Subject: [PATCH 11/24] uswsusp: Disable when the kernel is locked down
+In-Reply-To: <83e2dff5-c46b-25b4-253e-cd2650b7db7d@gmail.com>
+References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
+	<149142336965.5101.2946578135980499557.stgit@warthog.procyon.org.uk>
+	<CAJZ5v0hp=GJtQ+YnNdaMw6rtbBzNyueY+iqjPkHLKp57t822ZQ@mail.gmail.com>
+	<1491460792.1645.1.camel@suse.com>
+	<14980.1491468060@warthog.procyon.org.uk>
+	<CAJZ5v0gFeF3hdr0QzUeaT2dS+HhG7KUdVPPWHKeqHVkX78s+Tw@mail.gmail.com>
+	<CAJZ5v0jwQPd3HfwE1Yi6bmyULFVegkU4fNvt0uXGvzAdecLEZA@mail.gmail.com>
+	<alpine.LSU.2.20.1704062224220.28004@cbobk.fhfr.pm>
+	<83e2dff5-c46b-25b4-253e-cd2650b7db7d@gmail.com>
+Message-ID: <20170412134457.GE18270@linux-l9pv.suse>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Apr 07, 2017 at 05:57:05PM -0700, Deepa Dinamani wrote:
-> btrfs_root_item maintains the ctime for root updates.
-> This is not part of vfs_inode.
+On Sat, Apr 08, 2017 at 05:28:15AM +0200, poma wrote:
+> On 06.04.2017 22:25, Jiri Kosina wrote:
+> > On Thu, 6 Apr 2017, Rafael J. Wysocki wrote:
+> > 
+> >>>>> Your swap partition may be located on an NVDIMM or be encrypted.
+> >>>>
+> >>>> An NVDIMM should be considered the same as any other persistent storage.
+> >>>>
+> >>>> It may be encrypted, but where's the key stored, how easy is it to retrieve
+> >>>> and does the swapout code know this?
+> >>>>
+> >>>>> Isn't this a bit overly drastic?
+> >>>>
+> >>>> Perhaps, but if it's on disk and it's not encrypted, then maybe not.
+> >>>
+> >>> Right.
+> >>>
+> >>> Swap encryption is not mandatory and I'm not sure how the hibernate
+> >>> code can verify whether or not it is in use.
+> >>
+> >> BTW, SUSE has patches adding secure boot support to the hibernate code
+> >> and Jiri promised me to post them last year even. :-)
+> > 
+> > Oh, thanks for a friendly ping :) Adding Joey Lee to CC.
+> > 
 > 
-> Since current_time() uses struct inode* as an argument
-> as Linus suggested, this cannot be used to update root
-> times unless, we modify the signature to use inode.
+> Rafael J., are you talking about HIBERNATE_VERIFICATION ?
 > 
-> Since btrfs uses nanosecond time granularity, it can also
-> use ktime_get_real_ts directly to obtain timestamp for
-> the root. It is necessary to use the timespec time api
-> here because the same btrfs_set_stack_timespec_*() apis
-> are used for vfs inode times as well. These can be
-> transitioned to using timespec64 when btrfs internally
-> changes to use timespec64 as well.
-> 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Acked-by: David Sterba <dsterba@suse.com>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Ref.
+> https://github.com/joeyli/linux-s4sign/commits/s4sign-hmac-v2-v4.2-rc8
+> https://lkml.org/lkml/2015/8/11/47
+> https://bugzilla.redhat.com/show_bug.cgi?id=1330335
+>
 
-I'm going to add the patch to my 4.12 queue and will let Andrew know.
+I am working on switch to HMAC-SHA512. 
+
+On the other hand, some mechanisms keep signing/encryption key in memory.
+e.g. dm-crypt or hibernation verification. Kees Cook suggested that we
+should add kernel memory reads as a thread model of securelevel to
+prevent leaking those keys by /dev/kmem, bpf, kdump or hibernation...
+We still need time to implement it.
+
+Thanks a lot!
+Joey Lee 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
