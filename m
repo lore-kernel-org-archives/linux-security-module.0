@@ -1,49 +1,35 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Wed, 12 Apr 2017 18:22:01 +0200
-Subject: [kernel-hardening] Re: [PATCH RFC v2 1/3] LSM: Allow per LSM
-	module per "struct task_struct" blob.
-In-Reply-To: <CAGXu5jL7jLid57UoXCxSqo5JZRLMgZ7X6BSYgWLckp5YpoiAmA@mail.gmail.com>
-References: <1491734530-25002-1-git-send-email-tixxdz@gmail.com>
-	<1491734530-25002-2-git-send-email-tixxdz@gmail.com>
-	<f25edeb6-35e1-2f8c-8fd6-fd051c4e79ce@schaufler-ca.com>
-	<CAEiveUeHedQAsjbS5Jj9imq28af0OuKAjMTudMJm7GqObRNMfQ@mail.gmail.com>
-	<2698e97b-397e-0fc0-84a1-dc9a4226117a@schaufler-ca.com>
-	<CAEiveUd4Obc+YsCiO7dp3-jypbJ4vMmsBOU=Ax8yF7+6dLes0w@mail.gmail.com>
-	<CAGXu5jL7jLid57UoXCxSqo5JZRLMgZ7X6BSYgWLckp5YpoiAmA@mail.gmail.com>
-Message-ID: <CAEiveUe=QWr3-K4gPH602MNz4XNr2FL3mRqzYfKo5C-g=-ZSBw@mail.gmail.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Wed, 12 Apr 2017 12:33:18 -0400
+Subject: [PATCH] selinux: add selinux_is_enforced() function
+In-Reply-To: <CAPkE-bUCK2kFpi6Ls2VYPRDH624xgiu3GGnw5LyeFAfswiaeSA@mail.gmail.com>
+References: <1491988018-4120-1-git-send-email-sbuisson@ddn.com>
+	<CAGH-KgsymFfRqDnmn1kLpWiPtHFkLU3UMKVu=8=NOUwk+qWjmg@mail.gmail.com>
+	<CAPkE-bUsY8qD5xHU4VD-dxtAGxCGUhuQQmcS4kN0FyAozPRzhw@mail.gmail.com>
+	<1492005519.3881.8.camel@tycho.nsa.gov>
+	<CAPkE-bUCK2kFpi6Ls2VYPRDH624xgiu3GGnw5LyeFAfswiaeSA@mail.gmail.com>
+Message-ID: <1492014798.3881.16.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 11, 2017 at 6:43 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Mon, Apr 10, 2017 at 1:00 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
->> On Mon, Apr 10, 2017 at 9:26 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> I think that would be the prudent approach. There is still
->>> the possibility that blob sharing (or full stacking, if you
->>> prefer) won't be accepted any time soon.
->>
->> Ok Casey! I will wait for more feedback, and if other maintainers do
->> not object, I will convert it back to rhashtables in next iterations
->> making sure that it should be simple to convert later to a blob
->> sharing mechanism.
->
-> Would it be possible just to add a single field to task_struct if this
-> LSM is built in? I feel like rhashtables is a huge overhead when a
-> single field is all that's needed.
+On Wed, 2017-04-12 at 17:19 +0200, Sebastien Buisson wrote:
+> 2017-04-12 15:58 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
+> > Even your usage of selinux_is_enabled() looks suspect; that should
+> > probably go away.??Only other user of it seems to be some cred
+> > validity
+> > checking that could be dropped as well.
+> 
+> Well the main reason for calling selinux_is_enabled() is performance
+> optimization.
+> Should I propose a patch to add a new security_is_enabled() function
+> at the LSM abstraction layer? Or do you consider we should not test
+> security enabled at all?
 
-Well, yes rhashtables can have an overhead especially when reclaiming
-memory back, I could not identify a way how to separate tables unless
-we use cgroups as an ID. Anyway this of course could be added in
-task_struct and updated to work like the capability security hooks
-rather than a proper LSM with its own name. But as noted in the other
-response, we may need task->security field for Yama anyway. I'm open
-to suggestion ? I may try to converge the task->security blob with
-what Casey is proposing and see! otherwise fallback to task_struct as
-a last resort!
+It isn't clear what "is enabled" means in general, particularly with
+stacking. I would either drop it or replace it with a LSM hook that is
+more precise.  For example, NFSv4 introduced a security_ismaclabel()
+hook so that it could test whether a given security.* xattr is a MAC
+label.
 
-Thanks!
-
--- 
-tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
