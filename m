@@ -1,64 +1,40 @@
-From: jlee@suse.com (joeyli)
-Date: Wed, 12 Apr 2017 21:44:57 +0800
-Subject: [PATCH 11/24] uswsusp: Disable when the kernel is locked down
-In-Reply-To: <83e2dff5-c46b-25b4-253e-cd2650b7db7d@gmail.com>
-References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142336965.5101.2946578135980499557.stgit@warthog.procyon.org.uk>
-	<CAJZ5v0hp=GJtQ+YnNdaMw6rtbBzNyueY+iqjPkHLKp57t822ZQ@mail.gmail.com>
-	<1491460792.1645.1.camel@suse.com>
-	<14980.1491468060@warthog.procyon.org.uk>
-	<CAJZ5v0gFeF3hdr0QzUeaT2dS+HhG7KUdVPPWHKeqHVkX78s+Tw@mail.gmail.com>
-	<CAJZ5v0jwQPd3HfwE1Yi6bmyULFVegkU4fNvt0uXGvzAdecLEZA@mail.gmail.com>
-	<alpine.LSU.2.20.1704062224220.28004@cbobk.fhfr.pm>
-	<83e2dff5-c46b-25b4-253e-cd2650b7db7d@gmail.com>
-Message-ID: <20170412134457.GE18270@linux-l9pv.suse>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Wed, 12 Apr 2017 09:58:39 -0400
+Subject: [PATCH] selinux: add selinux_is_enforced() function
+In-Reply-To: <CAPkE-bUsY8qD5xHU4VD-dxtAGxCGUhuQQmcS4kN0FyAozPRzhw@mail.gmail.com>
+References: <1491988018-4120-1-git-send-email-sbuisson@ddn.com>
+	<CAGH-KgsymFfRqDnmn1kLpWiPtHFkLU3UMKVu=8=NOUwk+qWjmg@mail.gmail.com>
+	<CAPkE-bUsY8qD5xHU4VD-dxtAGxCGUhuQQmcS4kN0FyAozPRzhw@mail.gmail.com>
+Message-ID: <1492005519.3881.8.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Apr 08, 2017 at 05:28:15AM +0200, poma wrote:
-> On 06.04.2017 22:25, Jiri Kosina wrote:
-> > On Thu, 6 Apr 2017, Rafael J. Wysocki wrote:
+On Wed, 2017-04-12 at 15:30 +0200, Sebastien Buisson wrote:
+> 2017-04-12 13:55 GMT+02:00 Paul Moore <pmoore@redhat.com>:
+> > As currently written this code isn't something we would want to
+> > merge
+> > upstream for two important reasons:
 > > 
-> >>>>> Your swap partition may be located on an NVDIMM or be encrypted.
-> >>>>
-> >>>> An NVDIMM should be considered the same as any other persistent storage.
-> >>>>
-> >>>> It may be encrypted, but where's the key stored, how easy is it to retrieve
-> >>>> and does the swapout code know this?
-> >>>>
-> >>>>> Isn't this a bit overly drastic?
-> >>>>
-> >>>> Perhaps, but if it's on disk and it's not encrypted, then maybe not.
-> >>>
-> >>> Right.
-> >>>
-> >>> Swap encryption is not mandatory and I'm not sure how the hibernate
-> >>> code can verify whether or not it is in use.
-> >>
-> >> BTW, SUSE has patches adding secure boot support to the hibernate code
-> >> and Jiri promised me to post them last year even. :-)
-> > 
-> > Oh, thanks for a friendly ping :) Adding Joey Lee to CC.
-> > 
+> > * No abstraction layer at the LSM interface.??The core kernel code
+> > should not call directly into any specific LSM, all interaction
+> > should
+> > go through the LSM hooks.
 > 
-> Rafael J., are you talking about HIBERNATE_VERIFICATION ?
-> 
-> Ref.
-> https://github.com/joeyli/linux-s4sign/commits/s4sign-hmac-v2-v4.2-rc8
-> https://lkml.org/lkml/2015/8/11/47
-> https://bugzilla.redhat.com/show_bug.cgi?id=1330335
->
+> The idea behind this patch and the other one was to replicate what is
+> done with selinux_is_enabled(). As I understand it now,
+> selinux_is_enabled() should remain the only exception to the LSM
+> hooks.
+> So do you agree if I propose a new security_is_enforced() function at
+> the LSM abstraction layer, which will be hooked to a
+> selinux_is_enforced() function defined inside the SELinux LSM?
 
-I am working on switch to HMAC-SHA512. 
+Even your usage of selinux_is_enabled() looks suspect; that should
+probably go away.  Only other user of it seems to be some cred validity
+checking that could be dropped as well.  The include/linux/selinux.h
+interfaces were originally for use by audit and secmark when there were
+no other LSMs and have gradually been removed.
 
-On the other hand, some mechanisms keep signing/encryption key in memory.
-e.g. dm-crypt or hibernation verification. Kees Cook suggested that we
-should add kernel memory reads as a thread model of securelevel to
-prevent leaking those keys by /dev/kmem, bpf, kdump or hibernation...
-We still need time to implement it.
 
-Thanks a lot!
-Joey Lee 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
