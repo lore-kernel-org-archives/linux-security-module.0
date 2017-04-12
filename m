@@ -1,42 +1,39 @@
-From: jlee@suse.com (joeyli)
-Date: Wed, 12 Apr 2017 22:57:36 +0800
-Subject: [PATCH 20/24] bpf: Restrict kernel image access functions when
-	the kernel is locked down
-In-Reply-To: <149142344547.5101.4518618716303032193.stgit@warthog.procyon.org.uk>
-References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142344547.5101.4518618716303032193.stgit@warthog.procyon.org.uk>
-Message-ID: <20170412145736.GF18270@linux-l9pv.suse>
+From: sbuisson.ddn@gmail.com (Sebastien Buisson)
+Date: Wed, 12 Apr 2017 17:11:43 +0200
+Subject: [PATCH] selinux: add selinux_is_enforced() function
+In-Reply-To: <1492007701.3881.10.camel@tycho.nsa.gov>
+References: <1491988018-4120-1-git-send-email-sbuisson@ddn.com>
+	<CAGH-KgsymFfRqDnmn1kLpWiPtHFkLU3UMKVu=8=NOUwk+qWjmg@mail.gmail.com>
+	<CAPkE-bX5-Mo9AMPwf6dwBNT9FeWgAShWwKbkiJg3ZZVpt9itLA@mail.gmail.com>
+	<1492007701.3881.10.camel@tycho.nsa.gov>
+Message-ID: <CAPkE-bWQLfSq0+J0uoMRKAPbSdO0giuGZzfRXA7VXL+xo3fNgg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi David,
+2017-04-12 16:35 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
+> How are you using this SELinux information in the kernel and/or in
+> userspace?  What's the purpose of it?  What are you comparing it
+> against?  Why do you care if it changes?
 
-First, thanks for your help to send out this series.
+Enforcement status and policy version are compared to their previously
+stored value. If they differ, then it means we need to call a userland
+helper from Lustre client kernelspace to read the currently loaded
+policy (reading it will let us know if the Lustre client node is
+conforming to the Lustre-wide security policy).
+As calling the userland helper is costly, we do it only when it is
+necessary by retrieving some SELinux key information directly from
+kernelspace.
 
-On Wed, Apr 05, 2017 at 09:17:25PM +0100, David Howells wrote:
-> From: Chun-Yi Lee <jlee@suse.com>
-> 
-> There are some bpf functions can be used to read kernel memory:
-> bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
-> private keys in kernel memory (e.g. the hibernation image signing key) to
-> be read by an eBPF program.  Prohibit those functions when the kernel is
-> locked down.
-> 
-> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: netdev at vger.kernel.org
+> Note btw that the notion of a policy name/type and the policy file path
+> is purely a userspace construct and shouldn't be embedded in your
+> kernel code.  Android for example doesn't follow that convention at
+> all; their SELinux policy file is simply /sepolicy.  On modern kernels,
+> you can always read the currently loaded policy from the kernel itself
+> via /sys/fs/selinux/policy (formerly just /selinux/policy).
 
-This patch is used with hibernation signature verification. I suggest
-that we can remove this patch from your series because we just lock
-down the hibernation function until hibernation verification get
-accepted.
-
-On the other hand, we are trying to enhance the bpf verifier to
-prevent bpf print reads specific memory addresses that have sensitive
-data.
-
-Thanks a lot!
-Joey Lee
+As I understand it, a userspace program can directly read the policy
+info exposed by the kernel by reading this file. But how about reading
+it from kernelspace?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
