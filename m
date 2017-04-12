@@ -1,39 +1,25 @@
 From: sbuisson.ddn@gmail.com (Sebastien Buisson)
-Date: Wed, 12 Apr 2017 17:11:43 +0200
+Date: Wed, 12 Apr 2017 17:19:14 +0200
 Subject: [PATCH] selinux: add selinux_is_enforced() function
-In-Reply-To: <1492007701.3881.10.camel@tycho.nsa.gov>
+In-Reply-To: <1492005519.3881.8.camel@tycho.nsa.gov>
 References: <1491988018-4120-1-git-send-email-sbuisson@ddn.com>
 	<CAGH-KgsymFfRqDnmn1kLpWiPtHFkLU3UMKVu=8=NOUwk+qWjmg@mail.gmail.com>
-	<CAPkE-bX5-Mo9AMPwf6dwBNT9FeWgAShWwKbkiJg3ZZVpt9itLA@mail.gmail.com>
-	<1492007701.3881.10.camel@tycho.nsa.gov>
-Message-ID: <CAPkE-bWQLfSq0+J0uoMRKAPbSdO0giuGZzfRXA7VXL+xo3fNgg@mail.gmail.com>
+	<CAPkE-bUsY8qD5xHU4VD-dxtAGxCGUhuQQmcS4kN0FyAozPRzhw@mail.gmail.com>
+	<1492005519.3881.8.camel@tycho.nsa.gov>
+Message-ID: <CAPkE-bUCK2kFpi6Ls2VYPRDH624xgiu3GGnw5LyeFAfswiaeSA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-04-12 16:35 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
-> How are you using this SELinux information in the kernel and/or in
-> userspace?  What's the purpose of it?  What are you comparing it
-> against?  Why do you care if it changes?
+2017-04-12 15:58 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
+> Even your usage of selinux_is_enabled() looks suspect; that should
+> probably go away.  Only other user of it seems to be some cred validity
+> checking that could be dropped as well.
 
-Enforcement status and policy version are compared to their previously
-stored value. If they differ, then it means we need to call a userland
-helper from Lustre client kernelspace to read the currently loaded
-policy (reading it will let us know if the Lustre client node is
-conforming to the Lustre-wide security policy).
-As calling the userland helper is costly, we do it only when it is
-necessary by retrieving some SELinux key information directly from
-kernelspace.
-
-> Note btw that the notion of a policy name/type and the policy file path
-> is purely a userspace construct and shouldn't be embedded in your
-> kernel code.  Android for example doesn't follow that convention at
-> all; their SELinux policy file is simply /sepolicy.  On modern kernels,
-> you can always read the currently loaded policy from the kernel itself
-> via /sys/fs/selinux/policy (formerly just /selinux/policy).
-
-As I understand it, a userspace program can directly read the policy
-info exposed by the kernel by reading this file. But how about reading
-it from kernelspace?
+Well the main reason for calling selinux_is_enabled() is performance
+optimization.
+Should I propose a patch to add a new security_is_enabled() function
+at the LSM abstraction layer? Or do you consider we should not test
+security enabled at all?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
