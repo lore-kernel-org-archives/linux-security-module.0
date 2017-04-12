@@ -1,108 +1,102 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 12 Apr 2017 15:44:34 +0100
-Subject: [GIT PULL] KEYS: Blacklisting, restrictions and DH
-Message-ID: <18309.1492008274@warthog.procyon.org.uk>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 12 Apr 2017 09:51:28 -0500
+Subject: [PATCH] capabilities: do not audit log BPRM_FCAPS on set*id
+In-Reply-To: <20170412064321.GN18559@madcap2.tricolour.ca>
+References: <515427654218b7ce22441f635115e93cf74d6302.1488491988.git.rgb@redhat.com>
+	<20170307181049.GA31834@mail.hallyn.com>
+	<20170307211048.GE10258@madcap2.tricolour.ca>
+	<3292783.lRT1C7ihKT@x2>
+	<20170329102911.GO9021@madcap2.tricolour.ca>
+	<CAHC9VhQxbdT18tWNon30Hm3+8sMOV=2QTHO8yR1mpRbeuMqr2A@mail.gmail.com>
+	<20170412064321.GN18559@madcap2.tricolour.ca>
+Message-ID: <20170412145128.GA3557@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Quoting Richard Guy Briggs (rgb at redhat.com):
+> On 2017-04-11 15:36, Paul Moore wrote:
+> > On Wed, Mar 29, 2017 at 6:29 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2017-03-09 09:34, Steve Grubb wrote:
+> > >> On Tuesday, March 7, 2017 4:10:49 PM EST Richard Guy Briggs wrote:
+> > >> > > > > > one possibly audit-worth case which (if I read correctly) this will
+> > >> > > > > > skip is where a setuid-root binary has filecaps which *limit* its
+> > >> > > > > > privs.
+> > >> > > > > > Does that matter?
+> > >> > > > >
+> > >> > > > > I hadn't thought of that case, but I did consider in the setuid case
+> > >> > > > > comparing before and after without setuid forcing the drop of all
+> > >> > > > > capabilities via "ambient".  Mind you, this bug has been around before
+> > >> > > > > Luto's patch that adds the ambient capabilities set.
+> > >> > > >
+> > >> > > > Can you suggest a scenario where that might happen?
+> > >> > >
+> > >> > > Sorry, do you mean the case I brought up, or the one you mentioned?  I
+> > >> > > don't quite understnad the one you brought up.  For mine it's pretty
+> > >> > > simple to reproduce, just
+> > >> >
+> > >> > I was talking about the case you brought up, but they could be the same
+> > >> > case.
+> > >> >
+> > >> > I was thinking of a case where the caps actually change, but are
+> > >> > overridden by the blanket full permissions of setuid.
+> > >>
+> > >> If there actually is a change in capability bits besides the implied change of
+> > >> capabilities based on the change of the uid alone, then it should be logged.
+> > >
+> > > Are you speaking of a change in pP' only from pI, or also pI', pE' and pA'?
+> > >
+> > > Something like ( pP' xor pI ) not empty?
+> > >
+> > > The previous patch I'd sent was reasonably easy to understand, but I'm
+> > > having trouble adding this new twist to the logic expression in question
+> > > due to the inverted combination of pre-existing items.  I'm having
+> > > trouble visualizing a 5 or more-dimensional Karnaugh map...
+> > >
+> > > While I am at it, I notice pA is missing from the audit record.  The
+> > > record contains fields "old_pp", "old_pi", "old_pe", "new_pp", "new_pi",
+> > > "new_pe" so in keeping with the previous record normalizations, I'd like
+> > > to change the "new_*" variants to simply drop the "new_" prefix.
+> > >
+> > >         https://github.com/linux-audit/audit-kernel/issues/40
+> > 
+> > Yes, there is the separate ambient capabilities record patch, but
+> > where do we stand with this patch?  From what I gather there is still
+> > some uncertainty here?
+> 
+> Yes, I put this on my back burner thinking about how best to re-approach
+> this, hoping others would offer some insight or advice how to attack
+> this, otherwise I'm going to end up with a horrendous conditional
+> expression, I fear.
+> 
+> Steve, I was hoping to get a clarification from you about which
+> capability bits had changed.
+> 
+> Serge, do you have any suggestions on how to approach the conditional
+> logic?
 
-Hi James,
+I've been looking through the thread and the github issue, but haven't
+seen an example.  Can you post a patch the way you'd do it off the top
+of your head, as a strawman?  In general I'm a fan of putting complicated
+conditionals behind clearly named static inline helper functions, i.e.
 
-Could you pull these changes into security/next please:
+if (should_audit_caps(current))
+	// do the auditing
 
- (1) Provide a blacklist keyring and a blacklist key type such that X.509
-     keys and PKCS#7 certs can be blacklisted.  It is possible to load the
-     blacklist from a file at compile time.  A future patch will
-     additionally load the blacklist from the UEFI blacklist if available.
+then when reading should_audit_caps() your mind can process more complicated
+logic because it's not distracted by other things the calling function is
+doing...  That's probably nothing you wouldn't do anyway so I don't think I'm
+being helpful.
 
- (2) Make it possible to create a userspace keyring and to apply a
-     restriction to it such that no new keys can be added unless they meet
-     the criteria.
-
- (3) Add SP800-56A KDF support for the DH operation.
-
-David
----
-The following changes since commit ddb99e118e37f324a4be65a411bb60ae62795cf9:
-
-  security, keys: convert key_user.usage from atomic_t to refcount_t (2017-04-03 10:49:06 +1000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-next-20170412
-
-for you to fetch changes up to 4cd4ca7cc848bedc70b5d0acac9d1ae33d73513a:
-
-  keys: select CONFIG_CRYPTO when selecting DH / KDF (2017-04-11 23:18:09 +0100)
-
-----------------------------------------------------------------
-Keyrings changes for next
-
-----------------------------------------------------------------
-David Howells (5):
-      KEYS: Add a system blacklist keyring
-      X.509: Allow X.509 certs to be blacklisted
-      PKCS#7: Handle blacklisted certificates
-      Merge branch 'keys-blacklist' into keys-next
-      Merge branch 'keyctl-restrict' of git://git.kernel.org/.../martineau/linux into keys-next
-
-Mat Martineau (10):
-      KEYS: Use a typedef for restrict_link function pointers
-      KEYS: Split role of the keyring pointer for keyring restrict functions
-      KEYS: Add a key restriction struct
-      KEYS: Use structure to capture key restriction function and data
-      KEYS: Add an optional lookup_restriction hook to key_type
-      KEYS: Consistent ordering for __key_link_begin and restrict check
-      KEYS: Add KEYCTL_RESTRICT_KEYRING
-      KEYS: Add a lookup_restriction function for the asymmetric key type
-      KEYS: Restrict asymmetric key linkage using a specific keychain
-      KEYS: Keyring asymmetric key restrict method with chaining
-
-Stephan Mueller (1):
-      KEYS: add SP800-56A KDF support for DH
-
-Stephan M?ller (1):
-      keys: select CONFIG_CRYPTO when selecting DH / KDF
-
- Documentation/crypto/asymmetric-keys.txt |  51 +++++++
- Documentation/security/keys.txt          | 100 ++++++++++----
- certs/Kconfig                            |  18 +++
- certs/Makefile                           |   6 +
- certs/blacklist.c                        | 174 ++++++++++++++++++++++++
- certs/blacklist.h                        |   3 +
- certs/blacklist_hashes.c                 |   6 +
- certs/blacklist_nohashes.c               |   5 +
- certs/system_keyring.c                   |  39 ++++--
- crypto/asymmetric_keys/asymmetric_type.c | 102 ++++++++++++--
- crypto/asymmetric_keys/pkcs7_parser.h    |   1 +
- crypto/asymmetric_keys/pkcs7_verify.c    |  32 +++--
- crypto/asymmetric_keys/restrict.c        | 161 +++++++++++++++++++++-
- crypto/asymmetric_keys/x509_parser.h     |   1 +
- crypto/asymmetric_keys/x509_public_key.c |  15 +++
- include/crypto/public_key.h              |  15 ++-
- include/keys/system_keyring.h            |  18 ++-
- include/linux/compat.h                   |   7 +
- include/linux/key-type.h                 |   8 ++
- include/linux/key.h                      |  34 +++--
- include/uapi/linux/keyctl.h              |   8 ++
- security/integrity/digsig.c              |   9 +-
- security/integrity/ima/ima_mok.c         |  11 +-
- security/keys/Kconfig                    |   2 +
- security/keys/Makefile                   |   3 +-
- security/keys/compat.c                   |   9 +-
- security/keys/compat_dh.c                |  38 ++++++
- security/keys/dh.c                       | 220 +++++++++++++++++++++++++++++--
- security/keys/gc.c                       |  11 ++
- security/keys/internal.h                 |  29 +++-
- security/keys/key.c                      |  46 ++++---
- security/keys/keyctl.c                   |  60 ++++++++-
- security/keys/keyring.c                  | 179 +++++++++++++++++++++++--
- 33 files changed, 1305 insertions(+), 116 deletions(-)
- create mode 100644 certs/blacklist.c
- create mode 100644 certs/blacklist.h
- create mode 100644 certs/blacklist_hashes.c
- create mode 100644 certs/blacklist_nohashes.c
- create mode 100644 security/keys/compat_dh.c
+> > paul moore
+> 
+> - RGB
+> 
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
