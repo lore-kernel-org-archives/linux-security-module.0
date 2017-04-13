@@ -1,104 +1,77 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Thu, 13 Apr 2017 04:50:56 -0400
+From: sgrubb@redhat.com (Steve Grubb)
+Date: Thu, 13 Apr 2017 15:36:12 -0400
 Subject: [PATCH] capabilities: do not audit log BPRM_FCAPS on set*id
-In-Reply-To: <1833607.dNomLM3Ooh@x2>
+In-Reply-To: <20170413085056.GP1572@madcap2.tricolour.ca>
 References: <515427654218b7ce22441f635115e93cf74d6302.1488491988.git.rgb@redhat.com>
-	<CAHC9VhQxbdT18tWNon30Hm3+8sMOV=2QTHO8yR1mpRbeuMqr2A@mail.gmail.com>
-	<20170412064321.GN18559@madcap2.tricolour.ca>
 	<1833607.dNomLM3Ooh@x2>
-Message-ID: <20170413085056.GP1572@madcap2.tricolour.ca>
+	<20170413085056.GP1572@madcap2.tricolour.ca>
+Message-ID: <2229474.OLsFFx6DaB@x2>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-04-12 14:49, Steve Grubb wrote:
-> On Wednesday, April 12, 2017 2:43:21 AM EDT Richard Guy Briggs wrote:
-> > On 2017-04-11 15:36, Paul Moore wrote:
-> > > On Wed, Mar 29, 2017 at 6:29 AM, Richard Guy Briggs <rgb@redhat.com> 
-> wrote:
-> > > > On 2017-03-09 09:34, Steve Grubb wrote:
-> > > >> On Tuesday, March 7, 2017 4:10:49 PM EST Richard Guy Briggs wrote:
-> > > >> > > > > > one possibly audit-worth case which (if I read correctly)
-> > > >> > > > > > this will
-> > > >> > > > > > skip is where a setuid-root binary has filecaps which *limit*
-> > > >> > > > > > its
-> > > >> > > > > > privs.
-> > > >> > > > > > Does that matter?
-> > > >> > > > > 
-> > > >> > > > > I hadn't thought of that case, but I did consider in the setuid
-> > > >> > > > > case
-> > > >> > > > > comparing before and after without setuid forcing the drop of
-> > > >> > > > > all
-> > > >> > > > > capabilities via "ambient".  Mind you, this bug has been around
-> > > >> > > > > before
-> > > >> > > > > Luto's patch that adds the ambient capabilities set.
-> > > >> > > > 
-> > > >> > > > Can you suggest a scenario where that might happen?
-> > > >> > > 
-> > > >> > > Sorry, do you mean the case I brought up, or the one you mentioned?
-> > > >> > >  I
-> > > >> > > don't quite understnad the one you brought up.  For mine it's
-> > > >> > > pretty
-> > > >> > > simple to reproduce, just
-> > > >> > 
-> > > >> > I was talking about the case you brought up, but they could be the
-> > > >> > same
-> > > >> > case.
-> > > >> > 
-> > > >> > I was thinking of a case where the caps actually change, but are
-> > > >> > overridden by the blanket full permissions of setuid.
-
-
-> > > >> If there actually is a change in capability bits besides the implied
-> > > >> change of capabilities based on the change of the uid alone, then it
-> > > >> should be logged.> > 
-> > > > Are you speaking of a change in pP' only from pI, or also pI', pE' and
-> > > > pA'?
-> > > > 
-> > > > Something like ( pP' xor pI ) not empty?
-
-This is what I'm trying to clarify.
-
-> > > > The previous patch I'd sent was reasonably easy to understand, but I'm
-> > > > having trouble adding this new twist to the logic expression in question
-> > > > due to the inverted combination of pre-existing items.  I'm having
-> > > > trouble visualizing a 5 or more-dimensional Karnaugh map...
-> > > > 
-> > > > While I am at it, I notice pA is missing from the audit record.  The
-> > > > record contains fields "old_pp", "old_pi", "old_pe", "new_pp", "new_pi",
-> > > > "new_pe" so in keeping with the previous record normalizations, I'd like
-> > > > to change the "new_*" variants to simply drop the "new_" prefix.
-> > > > 
-> > > >         https://github.com/linux-audit/audit-kernel/issues/40
-> > > 
-> > > Yes, there is the separate ambient capabilities record patch, but
-> > > where do we stand with this patch?  From what I gather there is still
-> > > some uncertainty here?
-> > 
-> > Yes, I put this on my back burner thinking about how best to re-approach
-> > this, hoping others would offer some insight or advice how to attack
-> > this, otherwise I'm going to end up with a horrendous conditional
-> > expression, I fear.
-> > 
-> > Steve, I was hoping to get a clarification from you about which
-> > capability bits had changed.
+On Thursday, April 13, 2017 4:50:56 AM EDT Richard Guy Briggs wrote:
+> > > > >> > I was thinking of a case where the caps actually change, but are
+> > > > >> > overridden by the blanket full permissions of setuid.
+> > > > >> 
+> > > > >> If there actually is a change in capability bits besides the
+> > > > >> implied change of capabilities based on the change of the uid
+> > > > >> alone, then it should be logged.
+> > > > > 
+> > > > > Are you speaking of a change in pP' only from pI, or also pI', pE'
+> > > > > and pA'?
+> > > > > 
+> > > > > Something like ( pP' xor pI ) not empty?
 > 
-> I am not sure what you are asking of me.
+> This is what I'm trying to clarify.
 
-I'm trying to understand exactly which capability sets should be
-compared to determine if there was a material change, but perhaps that
-question is better asked of Serge.  What does the certification care
-about in terms that helps me code this?
+Any change other than what is expected. When you execute a setuid root 
+application, its no surprise and expected that it got all capabilities. So, we 
+do not want capabilities recorded. If, however, something prevented it and it 
+wound up with one capability only, then it is a surprise and should be logged 
+assuming the file is being watched for execution. Similarly if we have a watch 
+on a non-setuid program and it does pick up capabilities due to file system 
+based capabilities, then we want to know what capabilities were picked up.
 
-> -Steve
 
-- RGB
+> > > > > The previous patch I'd sent was reasonably easy to understand, but
+> > > > > I'm having trouble adding this new twist to the logic expression in
+> > > > > question due to the inverted combination of pre-existing items.  I'm
+> > > > > having trouble visualizing a 5 or more-dimensional Karnaugh map...
+> > > > > 
+> > > > > While I am at it, I notice pA is missing from the audit record.  The
+> > > > > record contains fields "old_pp", "old_pi", "old_pe", "new_pp",
+> > > > > "new_pi", "new_pe" so in keeping with the previous record
+> > > > > normalizations, I'd like to change the "new_*" variants to simply
+> > > > > drop the "new_" prefix.
+> > > > > 
+> > > > > https://github.com/linux-audit/audit-kernel/issues/40
+> > > > 
+> > > > Yes, there is the separate ambient capabilities record patch, but
+> > > > where do we stand with this patch?  From what I gather there is still
+> > > > some uncertainty here?
+> > > 
+> > > Yes, I put this on my back burner thinking about how best to re-approach
+> > > this, hoping others would offer some insight or advice how to attack
+> > > this, otherwise I'm going to end up with a horrendous conditional
+> > > expression, I fear.
+> > > 
+> > > Steve, I was hoping to get a clarification from you about which
+> > > capability bits had changed.
+> > 
+> > I am not sure what you are asking of me.
+> 
+> I'm trying to understand exactly which capability sets should be
+> compared to determine if there was a material change, but perhaps that
+> question is better asked of Serge.  What does the certification care
+> about in terms that helps me code this?
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+When its a file system based capabilities and the file has a watch for 
+execute, we want the capabilities. If there is a watch for execute on non-
+setuid file and it gets ambient capabilities, we want the capabilities. When 
+there's a watch on a setuid root for execute, we only want capabilities when 
+the process does not get full capabilities..
+
+-Steve
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
