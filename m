@@ -1,21 +1,17 @@
 From: tglx@linutronix.de (Thomas Gleixner)
-Date: Fri, 14 Apr 2017 20:15:49 +0200 (CEST)
-Subject: [PATCH 02/38] Annotate hardware config module parameters in
-	arch/x86/mm/
-In-Reply-To: <149141142839.29162.10470212173396183651.stgit@warthog.procyon.org.uk>
+Date: Fri, 14 Apr 2017 20:25:12 +0200 (CEST)
+Subject: [PATCH 06/38] Annotate hardware config module parameters in
+	drivers/clocksource/
+In-Reply-To: <149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-	<149141142839.29162.10470212173396183651.stgit@warthog.procyon.org.uk>
-Message-ID: <alpine.DEB.2.20.1704142007590.2327@nanos>
+	<149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.DEB.2.20.1704142021320.2327@nanos>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, 5 Apr 2017, David Howells wrote:
 
-The subject line hardly qualifies as a valid one.
-
-    arch/subsys: Short description
-
-Do I really have to explain that to you?
+$subject == crap
 
 > When the kernel is running in secure boot mode, we lock down the kernel to
 > prevent userspace from modifying the running kernel image.  Whilst this
@@ -35,45 +31,40 @@ Do I really have to explain that to you?
 > some drivers support automatic configuration (e.g. PNP or PCI) in addition
 > to manually coded parameters.
 > 
-> This patch annotates drivers in arch/x86/mm/.
+> This patch annotates drivers in drivers/clocksource/.
 
-We already know that this is a patch. There is a chapter in
-Documentation/process/SubmittingPatches which explains that. That file is
-not only for newbies.
+Sigh.
 
-> diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-> index 38868adf07ea..f6ae6830b341 100644
-> --- a/arch/x86/mm/testmmiotrace.c
-> +++ b/arch/x86/mm/testmmiotrace.c
-> @@ -9,7 +9,7 @@
->  #include <linux/mmiotrace.h>
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> cc: Thomas Gleixner <tglx@linutronix.de>
+> cc: linux-kernel at vger.kernel.org
+> ---
+> 
+>  drivers/clocksource/cs5535-clockevt.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/cs5535-clockevt.c b/drivers/clocksource/cs5535-clockevt.c
+> index 9a7e37cf56b0..a1df588343f2 100644
+> --- a/drivers/clocksource/cs5535-clockevt.c
+> +++ b/drivers/clocksource/cs5535-clockevt.c
+> @@ -22,7 +22,7 @@
+>  #define DRV_NAME "cs5535-clockevt"
 >  
->  static unsigned long mmio_address;
-> -module_param(mmio_address, ulong, 0);
-> +module_param_hw(mmio_address, ulong, iomem, 0);
->  MODULE_PARM_DESC(mmio_address, " Start address of the mapping of 16 kB "
->  				"(or 8 MB if read_far is non-zero).");
+>  static int timer_irq;
+> -module_param_named(irq, timer_irq, int, 0644);
+> +module_param_hw_named(irq, timer_irq, int, irq, 0644);
+>  MODULE_PARM_DESC(irq, "Which IRQ to use for the clock source MFGPT ticks.");
 
-The copied boilerplate above is really nonsensical here. The default
-address is 0, so the init function will emit:
+I'm not sure about this. AFAIR the parameter is required to work on
+anything else than some arbitrary hardware which has it mapped to 0.
 
-     pr_err("you have to use the module argument mmio_address.\n");
-     pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
-
-Pretty useless when you can't supply a valid address.
-
-       if (kernel_locked_down()) {
-       		pr_info("This is not allowed because ...");
-		return -EPERM;
-       }
-
-would make too much sense for the user, right?
+Cc'ed people who might know.
 
 Thanks,
 
 	tglx
-
-
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
