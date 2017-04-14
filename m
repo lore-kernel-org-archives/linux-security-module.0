@@ -1,30 +1,31 @@
-From: tglx@linutronix.de (Thomas Gleixner)
-Date: Fri, 14 Apr 2017 20:30:33 +0200 (CEST)
-Subject: [PATCH 14/24] x86: Restrict MSR access when the kernel is locked
-	down
-In-Reply-To: <149142339340.5101.1283602261267937893.stgit@warthog.procyon.org.uk>
-References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142339340.5101.1283602261267937893.stgit@warthog.procyon.org.uk>
-Message-ID: <alpine.DEB.2.20.1704142028440.2327@nanos>
+From: dhowells@redhat.com (David Howells)
+Date: Fri, 14 Apr 2017 23:59:25 +0100
+Subject: [PATCH 06/38] Annotate hardware config module parameters in
+	drivers/clocksource/
+In-Reply-To: <alpine.DEB.2.20.1704142021320.2327@nanos>
+References: <alpine.DEB.2.20.1704142021320.2327@nanos>
+	<149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
+Message-ID: <12228.1492210765@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 5 Apr 2017, David Howells wrote:
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Can you please change the subsys in $subject to 'x86/msr:' ?
-
-> From: Matthew Garrett <matthew.garrett@nebula.com>
+> > -module_param_named(irq, timer_irq, int, 0644);
+> > +module_param_hw_named(irq, timer_irq, int, irq, 0644);
+> >  MODULE_PARM_DESC(irq, "Which IRQ to use for the clock source MFGPT ticks.");
 > 
-> Writing to MSRs should not be allowed if the kernel is locked down, since
-> it could lead to execution of arbitrary code in kernel mode.  Based on a
-> patch by Kees Cook.
-> 
-> Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> cc: x86 at kernel.org
+> I'm not sure about this. AFAIR the parameter is required to work on
+> anything else than some arbitrary hardware which has it mapped to 0.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Should it then be set through in-kernel platform initialisation since the
+AMD Geode is an embedded chip?
+
+Btw, is it possible to use IRQ grants to prevent a device that has limited IRQ
+options from being drivable?
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
