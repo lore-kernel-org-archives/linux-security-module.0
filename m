@@ -1,16 +1,15 @@
-From: b.zolnierkie@samsung.com (Bartlomiej Zolnierkiewicz)
-Date: Fri, 14 Apr 2017 13:27:11 +0200
-Subject: [PATCH 32/38] Annotate hardware config module parameters in
-	drivers/video/
-In-Reply-To: <149141169417.29162.14993661679501972758.stgit@warthog.procyon.org.uk>
+From: mkl@pengutronix.de (Marc Kleine-Budde)
+Date: Fri, 14 Apr 2017 15:08:13 +0200
+Subject: [PATCH 18/38] Annotate hardware config module parameters in
+	drivers/net/can/
+In-Reply-To: <149141157162.29162.10145088436840145584.stgit@warthog.procyon.org.uk>
 References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-	<149141169417.29162.14993661679501972758.stgit@warthog.procyon.org.uk>
-	<CGME20170414112713epcas5p218f3663e4f0ea4ca1bfaf4155d4724c8@epcas5p2.samsung.com>
-Message-ID: <1776542.mxlLkUsWmV@amdc3058>
+	<149141157162.29162.10145088436840145584.stgit@warthog.procyon.org.uk>
+Message-ID: <8f7e225b-15fb-58c8-9e3f-34cfafb330d6@pengutronix.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wednesday, April 05, 2017 06:01:34 PM David Howells wrote:
+On 04/05/2017 06:59 PM, David Howells wrote:
 > When the kernel is running in secure boot mode, we lock down the kernel to
 > prevent userspace from modifying the running kernel image.  Whilst this
 > includes prohibiting access to things like /dev/mem, it must also prevent
@@ -29,23 +28,30 @@ On Wednesday, April 05, 2017 06:01:34 PM David Howells wrote:
 > some drivers support automatic configuration (e.g. PNP or PCI) in addition
 > to manually coded parameters.
 > 
-> This patch annotates drivers in drivers/video/.
+> This patch annotates drivers in drivers/net/can/.
 > 
 > Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jaya Kumar <jayalk@intworks.biz>
-> cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> cc: linux-fbdev at vger.kernel.org
+> Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> cc: Wolfgang Grandegger <wg@grandegger.com>
+> cc: linux-can at vger.kernel.org
+> cc: netdev at vger.kernel.org
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Who whill take this patch? Or will it be allied as part of the series by
+some of my upstreams?
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Marc
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 488 bytes
+Desc: OpenPGP digital signature
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170414/f12cd92f/attachment.sig>
