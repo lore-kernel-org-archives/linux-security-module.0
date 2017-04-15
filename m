@@ -1,44 +1,39 @@
-From: dhowells@redhat.com (David Howells)
-Date: Sat, 15 Apr 2017 00:16:24 +0100
-Subject: [PATCH 06/24] Add a sysrq option to exit secure boot mode
-In-Reply-To: <CAKv+Gu-FDzdqACyr_z6Zsgb51mg8Lc0YgfLs4oGURWnX4WewSw@mail.gmail.com>
-References: <CAKv+Gu-FDzdqACyr_z6Zsgb51mg8Lc0YgfLs4oGURWnX4WewSw@mail.gmail.com>
-	<149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142332458.5101.14654616837280513947.stgit@warthog.procyon.org.uk>
-	<alpine.DEB.2.20.1704142003570.2327@nanos>
-Message-ID: <12411.1492211784@warthog.procyon.org.uk>
+From: tglx@linutronix.de (Thomas Gleixner)
+Date: Sat, 15 Apr 2017 07:49:33 +0200 (CEST)
+Subject: [PATCH 06/38] Annotate hardware config module parameters in
+	drivers/clocksource/
+In-Reply-To: <12228.1492210765@warthog.procyon.org.uk>
+References: <alpine.DEB.2.20.1704142021320.2327@nanos>
+	<149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
+	<12228.1492210765@warthog.procyon.org.uk>
+Message-ID: <alpine.DEB.2.20.1704150746530.2327@nanos>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+On Fri, 14 Apr 2017, David Howells wrote:
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> > > -module_param_named(irq, timer_irq, int, 0644);
+> > > +module_param_hw_named(irq, timer_irq, int, irq, 0644);
+> > >  MODULE_PARM_DESC(irq, "Which IRQ to use for the clock source MFGPT ticks.");
+> > 
+> > I'm not sure about this. AFAIR the parameter is required to work on
+> > anything else than some arbitrary hardware which has it mapped to 0.
+> 
+> Should it then be set through in-kernel platform initialisation since the
+> AMD Geode is an embedded chip?
 
-> That does bring me to another EFI related point: many of these patches
-> are x86 specific for no good reason.
+I think so. 
 
-Note that the sysrq one is awkward since the key chosen *is* arch-specific.
-SysRq+x can't be arbitrarily assigned to this since some other arches have
-their own use for it.
+> Btw, is it possible to use IRQ grants to prevent a device that has limited IRQ
+> options from being drivable?
 
-Anyway, the ones that are x86-specific are:
+What do you mean with 'IRQ grants' ?
 
-	efi: Add EFI_SECURE_BOOT bit
-	efi: Lock down the kernel if booted in secure boot mode
-	Add a sysrq option to exit secure boot mode
-	Copy secure_boot flag in boot params across kexec reboot
-	x86: Lock down IO port access when the kernel is locked down
-	x86: Restrict MSR access when the kernel is locked down
-	asus-wmi: Restrict debugfs interface when the kernel is locked down
+Thanks
 
-The first three are dealt with in the five patches I posted later, including
-making the choice of sysrq key an arch override.  The bits that can be moved
-out to the efi firmware driver have been.
-
-The 4th looks to be x86 bootloader protocol specific.
-
-The remainder look very x86 specific, apart from one piece in the 5th patch
-where /dev/port is locked down.
-
-David
+	tglx
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
