@@ -1,53 +1,31 @@
-From: pmenzel@molgen.mpg.de (Paul Menzel)
-Date: Sun, 16 Apr 2017 21:14:29 +0200
-Subject: [tpmdd-devel] [backport v4.9] tpm_tis: use default timeout value
-	if chip reports it as zero
-In-Reply-To: <20170415205032.GA17774@kroah.com>
-References: <20170415152622.14451-1-user@jsakkine-mobl1>
-	<20170415205032.GA17774@kroah.com>
-Message-ID: <79399e000218504619c21ce6729c8334@molgen.mpg.de>
+From: matt@codeblueprint.co.uk (Matt Fleming)
+Date: Sun, 16 Apr 2017 21:46:21 +0100
+Subject: [PATCH 06/24] Add a sysrq option to exit secure boot mode
+In-Reply-To: <alpine.DEB.2.20.1704142003570.2327@nanos>
+References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
+	<149142332458.5101.14654616837280513947.stgit@warthog.procyon.org.uk>
+	<alpine.DEB.2.20.1704142003570.2327@nanos>
+Message-ID: <20170416204621.GA24360@codeblueprint.co.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Dear Greg,
-
-
-On 2017-04-15 22:50, Greg KH wrote:
-> On Sat, Apr 15, 2017 at 06:26:22PM +0300, Jarkko Sakkinen wrote:
->> From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
->> 
->> Since commit 1107d065fdf1 ("tpm_tis: Introduce intermediate layer for
->> TPM access") Atmel 3203 TPM on ThinkPad X61S (TPM firmware version 
->> 13.9)
->> no longer works.  The initialization proceeds fine until we get and
->> start using chip-reported timeouts - and the chip reports C and D
->> timeouts of zero.
->> 
->> It turns out that until commit 8e54caf407b98e ("tpm: Provide a generic
->> means to override the chip returned timeouts") we had actually let
->> default timeout values remain in this case, so let's bring back this
->> behavior to make chips like Atmel 3203 work again.
->> 
->> Use a common code that was introduced by that commit so a warning is
->> printed in this case and /sys/class/tpm/tpm*/timeouts correctly says 
->> the
->> timeouts aren't chip-original.
->> 
->> Fixes: 1107d065fdf1 ("tpm_tis: Introduce intermediate layer for TPM 
->> access")
->> Cc: stable at vger.kernel.org
->> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
->> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Fri, 14 Apr, at 08:05:07PM, Thomas Gleixner wrote:
+> On Wed, 5 Apr 2017, David Howells wrote:
 > 
-> What is the git commit id for this patch in Linus's tree?
+> > From: Kyle McMartin <kyle@redhat.com>
+> > 
+> > Make sysrq+x exit secure boot mode on x86_64, thereby allowing the running
+> > kernel image to be modified.  This lifts the lockdown.
+> > 
+> > Signed-off-by: Kyle McMartin <kyle@redhat.com>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: x86 at kernel.org
+> 
+> Matt, Ard?
+> 
+> Any opinions on this?
 
-The git commit hash is 1d70fe9d9c3a4c627f9757cbba5d628687b121c1.
-
-
-Kind regards,
-
-Paul
+Looks OK to me.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
