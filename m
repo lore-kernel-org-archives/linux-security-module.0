@@ -1,182 +1,159 @@
-From: mic@digikod.net (=?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=)
-Date: Sun, 16 Apr 2017 23:57:11 +0200
-Subject: [PATCH net-next v6 02/11] bpf,landlock: Define an eBPF program
-	type for Landlock
-In-Reply-To: <20170328234650.19695-3-mic@digikod.net>
-References: <20170328234650.19695-1-mic@digikod.net>
-	<20170328234650.19695-3-mic@digikod.net>
-Message-ID: <2fbc99a6-f190-f335-bd14-04bdeed35571@digikod.net>
+From: mchehab@s-opensource.com (Mauro Carvalho Chehab)
+Date: Sun, 16 Apr 2017 21:51:07 -0300
+Subject: [PATCH v4 2/6] usb: fix some references for /proc/bus/usb
+In-Reply-To: <cover.1492389736.git.mchehab@s-opensource.com>
+References: <cover.1492389736.git.mchehab@s-opensource.com>
+Message-ID: <ba6adfe228123da84ffa3028b71efadd78d483b7.1492389736.git.mchehab@s-opensource.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Since when we got rid of usbfs, the /proc/bus/usb is now
+elsewhere. Fix references for it.
 
-On 29/03/2017 01:46, Micka?l Sala?n wrote:
-> Add a new type of eBPF program used by Landlock rules.
-> 
-> This new BPF program type will be registered with the Landlock LSM
-> initialization.
-> 
-> Add an initial Landlock Kconfig.
-> 
-> Changes since v5:
-> * rename file hooks.c to init.c
-> * fix spelling
-> 
-> Changes since v4:
-> * merge a minimal (not enabled) LSM code and Kconfig in this commit
-> 
-> Changes since v3:
-> * split commit
-> * revamp the landlock_context:
->   * add arch, syscall_nr and syscall_cmd (ioctl, fcntl?) to be able to
->     cross-check action with the event type
->   * replace args array with dedicated fields to ease the addition of new
->     fields
-> 
-> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> ---
->  include/linux/landlock.h       |  23 ++++++++
->  include/uapi/linux/bpf.h       | 105 +++++++++++++++++++++++++++++++++++
->  security/Kconfig               |   1 +
->  security/Makefile              |   2 +
->  security/landlock/Kconfig      |  18 ++++++
->  security/landlock/Makefile     |   3 +
->  security/landlock/common.h     |  25 +++++++++
->  security/landlock/init.c       | 123 +++++++++++++++++++++++++++++++++++++++++
->  tools/include/uapi/linux/bpf.h | 105 +++++++++++++++++++++++++++++++++++
->  9 files changed, 405 insertions(+)
->  create mode 100644 include/linux/landlock.h
->  create mode 100644 security/landlock/Kconfig
->  create mode 100644 security/landlock/Makefile
->  create mode 100644 security/landlock/common.h
->  create mode 100644 security/landlock/init.c
->
-[...]
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index 0eb71ab9b4fd..619b1f8707cc 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -114,6 +114,7 @@ enum bpf_prog_type {
->  	BPF_PROG_TYPE_LWT_IN,
->  	BPF_PROG_TYPE_LWT_OUT,
->  	BPF_PROG_TYPE_LWT_XMIT,
-> +	BPF_PROG_TYPE_LANDLOCK,
->  };
->  
->  enum bpf_attach_type {
-> @@ -661,4 +662,108 @@ struct xdp_md {
->  	__u32 data_end;
->  };
->  
-> +/**
-> + * enum landlock_subtype_event - event occurring when an action is performed on
-> + * a particular kernel object
-> + *
-> + * An event is a policy decision point which exposes the same context type
-> + * (especially the same arg[0-9] field types) for each rule execution.
-> + *
-> + * @LANDLOCK_SUBTYPE_EVENT_UNSPEC: invalid value
-> + * @LANDLOCK_SUBTYPE_EVENT_FS: generic filesystem event
-> + */
-> +enum landlock_subtype_event {
-> +	LANDLOCK_SUBTYPE_EVENT_UNSPEC,
-> +	LANDLOCK_SUBTYPE_EVENT_FS,
-> +};
-> +#define _LANDLOCK_SUBTYPE_EVENT_LAST LANDLOCK_SUBTYPE_EVENT_FS
-[...]
-> +/**
-> + * DOC: landlock_action_fs
-> + *
-> + * - %LANDLOCK_ACTION_FS_EXEC: execute a file or walk through a directory
-> + * - %LANDLOCK_ACTION_FS_WRITE: modify a file or a directory view (which
-> + *   include mount actions)
-> + * - %LANDLOCK_ACTION_FS_READ: read a file or a directory
-> + * - %LANDLOCK_ACTION_FS_NEW: create a file or a directory
-> + * - %LANDLOCK_ACTION_FS_GET: open or receive a file
-> + * - %LANDLOCK_ACTION_FS_REMOVE: unlink a file or remove a directory
-> + *
-> + * Each of the following actions are specific to syscall multiplexers. They
-> + * fill the syscall_cmd field from &struct landlock_context with their custom
-> + * command.
-> + *
-> + * - %LANDLOCK_ACTION_FS_IOCTL: ioctl command
-> + * - %LANDLOCK_ACTION_FS_LOCK: flock or fcntl lock command
-> + * - %LANDLOCK_ACTION_FS_FCNTL: fcntl command
-> + */
-> +#define LANDLOCK_ACTION_FS_EXEC			(1ULL << 0)
-> +#define LANDLOCK_ACTION_FS_WRITE		(1ULL << 1)
-> +#define LANDLOCK_ACTION_FS_READ			(1ULL << 2)
-> +#define LANDLOCK_ACTION_FS_NEW			(1ULL << 3)
-> +#define LANDLOCK_ACTION_FS_GET			(1ULL << 4)
-> +#define LANDLOCK_ACTION_FS_REMOVE		(1ULL << 5)
-> +#define LANDLOCK_ACTION_FS_IOCTL		(1ULL << 6)
-> +#define LANDLOCK_ACTION_FS_LOCK			(1ULL << 7)
-> +#define LANDLOCK_ACTION_FS_FCNTL		(1ULL << 8)
-> +#define _LANDLOCK_ACTION_FS_NB			9
-> +#define _LANDLOCK_ACTION_FS_MASK		((1ULL << _LANDLOCK_ACTION_FS_NB) - 1)
-> +
-> +
-> +/**
-> + * struct landlock_context - context accessible to a Landlock rule
-> + *
-> + * @status: bitfield for future use (LANDLOCK_SUBTYPE_STATUS_*)
-> + * @arch: indicates system call convention as an AUDIT_ARCH_* value
-> + *        as defined in <linux/audit.h>
-> + * @syscall_nr: the system call number called by the current process (may be
-> + *              useful to debug: find out from which syscall this request came
-> + *              from)
-> + * @syscall_cmd: contains the command used by a multiplexer syscall (e.g.
-> + *               ioctl, fcntl, flock)
-> + * @event: event type (&enum landlock_subtype_event)
-> + * @arg1: event's first optional argument
-> + * @arg2: event's second optional argument
-> + */
-> +struct landlock_context {
-> +	__u64 status;
-> +	__u32 arch;
-> +	__u32 syscall_nr;
-> +	__u32 syscall_cmd;
-> +	__u32 event;
-> +	__u64 arg1;
-> +	__u64 arg2;
-> +};
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+---
+ drivers/media/usb/pwc/philips.txt  | 2 +-
+ drivers/usb/class/Kconfig          | 2 +-
+ drivers/usb/class/usblp.c          | 2 +-
+ drivers/usb/core/devices.c         | 4 ++--
+ drivers/usb/storage/unusual_devs.h | 2 +-
+ include/linux/usb.h                | 2 +-
+ include/uapi/linux/capability.h    | 2 +-
+ include/uapi/linux/usb/ch9.h       | 3 ++-
+ tools/usb/usbip/README             | 2 +-
+ 9 files changed, 11 insertions(+), 10 deletions(-)
 
-I plan to simplify and make the FS event more generic for the IOCTL,
-LOCK or FCNTL actions. The action flags for the
-LANDLOCK_SUBTYPE_EVENT_FS event will remain the same but the syscall_cmd
-field will be removed from struct landlock_context. Instead, one of
-three dedicated events will be triggered in addition to one of this
-three multiplexed actions.
+diff --git a/drivers/media/usb/pwc/philips.txt b/drivers/media/usb/pwc/philips.txt
+index d38dd791511e..be8c80eff374 100644
+--- a/drivers/media/usb/pwc/philips.txt
++++ b/drivers/media/usb/pwc/philips.txt
+@@ -140,7 +140,7 @@ dev_hint
+ 
+    A camera is specified by its type (the number from the camera model,
+    like PCA645, PCVC750VC, etc) and optionally the serial number (visible
+-   in /proc/bus/usb/devices). A hint consists of a string with the following
++   in /sys/kernel/debug/usb/devices). A hint consists of a string with the following
+    format:
+ 
+       [type[.serialnumber]:]node
+diff --git a/drivers/usb/class/Kconfig b/drivers/usb/class/Kconfig
+index bb8b73682a70..971385fe9abc 100644
+--- a/drivers/usb/class/Kconfig
++++ b/drivers/usb/class/Kconfig
+@@ -12,7 +12,7 @@ config USB_ACM
+ 	  Please read <file:Documentation/usb/acm.txt> for details.
+ 
+ 	  If your modem only reports "Cls=ff(vend.)" in the descriptors in
+-	  /proc/bus/usb/devices, then your modem will not work with this
++	  /sys/kernel/debug/usb/devices, then your modem will not work with this
+ 	  driver.
+ 
+ 	  To compile this driver as a module, choose M here: the
+diff --git a/drivers/usb/class/usblp.c b/drivers/usb/class/usblp.c
+index cc61055fb9be..16e889a545e1 100644
+--- a/drivers/usb/class/usblp.c
++++ b/drivers/usb/class/usblp.c
+@@ -294,7 +294,7 @@ static int usblp_ctrl_msg(struct usblp *usblp, int request, int type, int dir, i
+ 
+ /*
+  * See the description for usblp_select_alts() below for the usage
+- * explanation.  Look into your /proc/bus/usb/devices and dmesg in
++ * explanation.  Look into your /sys/kernel/debug/usb/devices and dmesg in
+  * case of any trouble.
+  */
+ static int proto_bias = -1;
+diff --git a/drivers/usb/core/devices.c b/drivers/usb/core/devices.c
+index f2987ddb1cde..55dea2e7828f 100644
+--- a/drivers/usb/core/devices.c
++++ b/drivers/usb/core/devices.c
+@@ -24,7 +24,7 @@
+  * <mountpoint>/devices contains USB topology, device, config, class,
+  * interface, & endpoint data.
+  *
+- * I considered using /proc/bus/usb/devices/device# for each device
++ * I considered using /dev/bus/usb/device# for each device
+  * as it is attached or detached, but I didn't like this for some
+  * reason -- maybe it's just too deep of a directory structure.
+  * I also don't like looking in multiple places to gather and view
+@@ -40,7 +40,7 @@
+  *   Converted the whole proc stuff to real
+  *   read methods. Now not the whole device list needs to fit
+  *   into one page, only the device list for one bus.
+- *   Added a poll method to /proc/bus/usb/devices, to wake
++ *   Added a poll method to /sys/kernel/debug/usb/devices, to wake
+  *   up an eventual usbd
+  * 2000-01-04: Thomas Sailer <sailer@ife.ee.ethz.ch>
+  *   Turned into its own filesystem
+diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
+index 16cc18369111..a5f3e7d687f7 100644
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -42,7 +42,7 @@
+  *	- a patch that adds the entry for your device, including your
+  *	  email address right above the entry (plus maybe a brief
+  *	  explanation of the reason for the entry),
+- *	- a copy of /proc/bus/usb/devices with your device plugged in
++ *	- a copy of /sys/kernel/debug/usb/devices with your device plugged in
+  *	  running with this patch.
+  * Send your submission to either Phil Dibowitz <phil@ipom.com> or
+  * Alan Stern <stern@rowland.harvard.edu>, and don't forget to CC: the
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index 7e68259360de..84bc5741d626 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -248,7 +248,7 @@ void usb_put_intf(struct usb_interface *intf);
+  * struct usb_interface (which persists only as long as its configuration
+  * is installed).  The altsetting arrays can be accessed through these
+  * structures at any time, permitting comparison of configurations and
+- * providing support for the /proc/bus/usb/devices pseudo-file.
++ * providing support for the /sys/kernel/debug/usb/devices pseudo-file.
+  */
+ struct usb_interface_cache {
+ 	unsigned num_altsetting;	/* number of alternate settings */
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+index 49bc06295398..6fe14d001f68 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -205,7 +205,7 @@ struct vfs_cap_data {
+ #define CAP_SYS_MODULE       16
+ 
+ /* Allow ioperm/iopl access */
+-/* Allow sending USB messages to any device via /proc/bus/usb */
++/* Allow sending USB messages to any device via /dev/bus/usb */
+ 
+ #define CAP_SYS_RAWIO        17
+ 
+diff --git a/include/uapi/linux/usb/ch9.h b/include/uapi/linux/usb/ch9.h
+index 2c5d7c4a69e3..ce1169af39d7 100644
+--- a/include/uapi/linux/usb/ch9.h
++++ b/include/uapi/linux/usb/ch9.h
+@@ -224,7 +224,8 @@ struct usb_ctrlrequest {
+  * through the Linux-USB APIs, they are not converted to cpu byte
+  * order; it is the responsibility of the client code to do this.
+  * The single exception is when device and configuration descriptors (but
+- * not other descriptors) are read from usbfs (i.e. /proc/bus/usb/BBB/DDD);
++ * not other descriptors) are read from character devices
++ * (i.e. /dev/bus/usb/BBB/DDD);
+  * in this case the fields are converted to host endianness by the kernel.
+  */
+ 
+diff --git a/tools/usb/usbip/README b/tools/usb/usbip/README
+index 5eb2b6c7722b..7844490fc603 100644
+--- a/tools/usb/usbip/README
++++ b/tools/usb/usbip/README
+@@ -244,7 +244,7 @@ Detach the imported device:
+     - See 'Debug Tips' on the project wiki.
+ 	- http://usbip.wiki.sourceforge.net/how-to-debug-usbip
+     - usbip-host.ko must be bound to the target device.
+-	- See /proc/bus/usb/devices and find "Driver=..." lines of the device.
++	- See /sys/kernel/debug/usb/devices and find "Driver=..." lines of the device.
+     - Target USB gadget must be bound to vudc
+       (using USB gadget susbsys, not usbip bind command)
+     - Shutdown firewall.
+-- 
+2.9.3
 
-The aim is to trigger the LANDLOCK_SUBTYPE_EVENT_FS for all file system
-events (still including IOCTL/LOCK/FCNTL actions). This should avoid a
-developer/user to forget such actions. However, when this kind of action
-is triggered, a LANDLOCK_SUBTYPE_EVENT_FS_{IOCTL,LOCK,FCNTL} event will
-follow. This enable to simplify the struct landlock_context while still
-having it as generic as possible. The difference will be that the arg2
-field for one of the LANDLOCK_SUBTYPE_EVENT_FS_{IOCTL,LOCK,FCNTL} events
-will contain a custom IOCTL, LOCK or FCNTL command (currently in the
-syscall_cmd field) instead of a LANDLOCK_ACTION_FS_* value. The same
-logic could be used to tighten other actions in the future.
-
-The HOOK_NEW_FS_CMD(...) from [04/11]:security/landlock/hooks_fs.c will
-be replaced with dedicated calls.
-
-
-I also plan to remove the arch and syscall_nr fields. This will make
-struct landlock_context even more simple and arch-independent.
-
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 488 bytes
-Desc: OpenPGP digital signature
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170416/afc956bc/attachment.sig>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
