@@ -1,37 +1,40 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 18 Apr 2017 07:38:45 +1000 (AEST)
-Subject: [GIT PULL] KEYS: Blacklisting, restrictions and DH
-In-Reply-To: <18309.1492008274@warthog.procyon.org.uk>
-References: <18309.1492008274@warthog.procyon.org.uk>
-Message-ID: <alpine.LRH.2.20.1704180738310.11039@namei.org>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Mon, 17 Apr 2017 21:58:26 -0400
+Subject: [PATCH] tpm: Fix reference count to main device
+Message-ID: <1492480706-6928-1-git-send-email-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 12 Apr 2017, David Howells wrote:
+The main device is currently not properly released due to one additional
+reference to the 'devs' device which is only released in case of a TPM 2.
+So, also get the additional reference only in case of a TPM2.
 
-> 
-> Hi James,
-> 
-> Could you pull these changes into security/next please:
-> 
->  (1) Provide a blacklist keyring and a blacklist key type such that X.509
->      keys and PKCS#7 certs can be blacklisted.  It is possible to load the
->      blacklist from a file at compile time.  A future patch will
->      additionally load the blacklist from the UEFI blacklist if available.
-> 
->  (2) Make it possible to create a userspace keyring and to apply a
->      restriction to it such that no new keys can be added unless they meet
->      the criteria.
-> 
->  (3) Add SP800-56A KDF support for the DH operation.
-> 
+Fixes: fdc915f7f719 ("tpm: expose spaces via a device link /dev/tpmrm<n>")
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-Pulled, thanks.
+---
+ drivers/char/tpm/tpm-chip.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index a321bd5..9dec9f5 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -191,9 +191,10 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
+ 	/* get extra reference on main device to hold on
+ 	 * behalf of devs.  This holds the chip structure
+ 	 * while cdevs is in use.  The corresponding put
+-	 * is in the tpm_devs_release
++	 * is in the tpm_devs_release (TPM2 only)
+ 	 */
+-	get_device(&chip->dev);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		get_device(&chip->dev);
+ 
+ 	if (chip->dev_num == 0)
+ 		chip->dev.devt = MKDEV(MISC_MAJOR, TPM_MINOR);
 -- 
-James Morris
-<jmorris@namei.org>
+2.4.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
