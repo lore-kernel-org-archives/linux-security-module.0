@@ -1,8 +1,8 @@
-From: ben@decadent.org.uk (Ben Hutchings)
-Date: Tue, 18 Apr 2017 16:19:59 +0100
+From: dhowells@redhat.com (David Howells)
+Date: Tue, 18 Apr 2017 16:30:34 +0100
 Subject: [PATCH 15/24] asus-wmi: Restrict debugfs interface when the
 	kernel is locked down
-In-Reply-To: <14918.1492527352@warthog.procyon.org.uk>
+In-Reply-To: <1492526075.2409.140.camel@decadent.org.uk>
 References: <1492526075.2409.140.camel@decadent.org.uk>
 	<149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
 	<149142340198.5101.8171352010918423590.stgit@warthog.procyon.org.uk>
@@ -11,30 +11,23 @@ References: <1492526075.2409.140.camel@decadent.org.uk>
 	<CAHp75VfvWmv7SxgwCgR-ZBYPbeQW=+qesDoBNC5JFPtvzsN5gg@mail.gmail.com>
 	<13615.1491830208@warthog.procyon.org.uk>
 	<CAHp75Vd+-_CmW2MPpK3b6bER8bFmECusnx0BZMwYAizWZys4YA@mail.gmail.com>
-	<14918.1492527352@warthog.procyon.org.uk>
-Message-ID: <1492528799.2409.145.camel@decadent.org.uk>
+Message-ID: <16503.1492529434@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-04-18 at 15:55 +0100, David Howells wrote:
-> Ben Hutchings <ben@decadent.org.uk> wrote:
-> 
-> > - tracing (now tracefs, but it's expected to appear under debugfs)
-> 
-> Shouldn't this now appear under /sys/kernel/tracing/ ?
+Ben Hutchings <ben@decadent.org.uk> wrote:
 
-True, but old tracing scripts didn't go away.
+> So it's generally not going to be OK to turn off debugfs.  There will
+> probably need to be a distinction between believed-safe and unsafe
+> directories/files.
 
-Ben.
+Any suggestion on how to mark this distinction?  I'd prefer not to modify
+every read/write op associated with a debugfs file.  Modify
+DEFINE_DEBUGFS_ATTRIBUTE() maybe?  And provide lockable variants of
+debugfs_create_u8() and co.?
 
--- 
-Ben Hutchings
-The world is coming to an end.	Please log off.
-
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 833 bytes
-Desc: This is a digitally signed message part
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170418/4663f7b4/attachment.sig>
+David
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
