@@ -1,56 +1,47 @@
-From: andy.shevchenko@gmail.com (Andy Shevchenko)
-Date: Tue, 18 Apr 2017 09:06:40 +0300
-Subject: [PATCH 15/24] asus-wmi: Restrict debugfs interface when the
-	kernel is locked down
-In-Reply-To: <13615.1491830208@warthog.procyon.org.uk>
-References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142340198.5101.8171352010918423590.stgit@warthog.procyon.org.uk>
-	<CAHp75VfpsnCHVqnFnwwh3JHB0ccY66Gj88sMGhrA9W7rDxiY_Q@mail.gmail.com>
-	<31421.1491569449@warthog.procyon.org.uk>
-	<CAHp75VfvWmv7SxgwCgR-ZBYPbeQW=+qesDoBNC5JFPtvzsN5gg@mail.gmail.com>
-	<13615.1491830208@warthog.procyon.org.uk>
-Message-ID: <CAHp75Vd+-_CmW2MPpK3b6bER8bFmECusnx0BZMwYAizWZys4YA@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Tue, 18 Apr 2017 13:38:26 +0100
+Subject: [PATCH 02/38] Annotate hardware config module parameters in
+	arch/x86/mm/
+In-Reply-To: <alpine.DEB.2.20.1704142007590.2327@nanos>
+References: <alpine.DEB.2.20.1704142007590.2327@nanos>
+	<149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141142839.29162.10470212173396183651.stgit@warthog.procyon.org.uk>
+Message-ID: <10432.1492519106@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 10, 2017 at 4:16 PM, David Howells <dhowells@redhat.com> wrote:
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->
->> >> It looks a bit fragile when responsility of whatever reasons kernel
->> >> can't serve become a driver burden.
->> >> Can we fix this in debugfs framework instead?
->> >
->> > Fix it with debugfs how?  We can't offload the decision to userspace.
->>
->> I mean to do at least similar like you have done for module
->> parameters. So, instead of putting above code to each attribute in
->> question make a special (marked) attribute instead and debugfs
->> framework will know how to deal with that.
->
-> Hmmm...  It's tricky in that debugfs doesn't have any of its own structures,
-> but is entirely built on standard VFS ones, so finding somewhere to store the
-> information is going to be awkward.
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-I see.
+> > -module_param(mmio_address, ulong, 0);
+> > +module_param_hw(mmio_address, ulong, iomem, 0);
+> >  MODULE_PARM_DESC(mmio_address, " Start address of the mapping of 16 kB "
+> >  				"(or 8 MB if read_far is non-zero).");
+> 
+> The copied boilerplate above is really nonsensical here. The default
+> address is 0, so the init function will emit:
+> 
+>      pr_err("you have to use the module argument mmio_address.\n");
+>      pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
+> 
+> Pretty useless when you can't supply a valid address.
+> 
+>        if (kernel_locked_down()) {
+>        		pr_info("This is not allowed because ...");
+> 		return -EPERM;
+>        }
+> 
+> would make too much sense for the user, right?
 
->  One obvious solution is to entirely lock
-> down debugfs in secure boot more, but that might be a bit drastic.
+In some drivers, this would be wrong - ipmi, for example - and we've already
+been through this.  The hwparam series of patches annotates *all*
+ioport/iomem/irq/dma specifiers unconditionally.  The hwparam series is the
+way it is is because this has no overhead if it's not used - and also has the
+potentially useful side effect of making such parameters greppable.
 
-But this sounds sane! debugFS for debugging, not for production. If
-someone is using secure kernel it means pure production use (otherwise
-one may do temporary hacks in kernel).
-If one still needs debugfs in secure mode, it sounds to me as
-architectural bug in code in question.
+It may well make sense to add your above suggestion also - but in the other
+patch series.
 
->
-> Note that it's still going to be a driver burden to some extent anyway.  The
-> driver has to tell the core what needs to be restricted.
->
-> Further, I guess configfs needs attention also.
-
--- 
-With Best Regards,
-Andy Shevchenko
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
