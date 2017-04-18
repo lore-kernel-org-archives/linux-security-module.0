@@ -1,106 +1,62 @@
 From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Tue, 18 Apr 2017 17:17:43 -0300
-Subject: [PATCH 3/6] ima: Simplify policy_func_show.
+Date: Tue, 18 Apr 2017 17:17:42 -0300
+Subject: [PATCH 2/6] ima: Tidy up constant strings
 In-Reply-To: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
 References: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
-Message-ID: <1492546666-16615-4-git-send-email-bauerman@linux.vnet.ibm.com>
+Message-ID: <1492546666-16615-3-git-send-email-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-If the func_tokens array uses the same indices as enum ima_hooks,
-policy_func_show can be a lot simpler, and the func_* enum becomes
-unnecessary.
+Strictly speaking, boot_aggregate_name is a constant string, not a
+modifiable pointer to a constant string.
+
+Also, constify mask_tokens and func_tokens arrays.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima_policy.c | 47 ++++++-------------------------------
- 1 file changed, 7 insertions(+), 40 deletions(-)
+ security/integrity/ima/ima_init.c   | 2 +-
+ security/integrity/ima/ima_policy.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 2967d497a665..24c703366ba8 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -25,7 +25,7 @@
+ #include "ima.h"
+ 
+ /* name for boot aggregate entry */
+-static const char *boot_aggregate_name = "boot_aggregate";
++static const char boot_aggregate_name[] = "boot_aggregate";
+ int ima_used_chip;
+ 
+ /* Add the boot aggregate to the IMA measurement list and extend
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index cfda5d7b17ec..158eafef64e8 100644
+index aed47b777a57..cfda5d7b17ec 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -896,20 +896,14 @@ static const char *const mask_tokens[] = {
- 	"MAY_APPEND"
+@@ -889,7 +889,7 @@ enum {
+ 	mask_exec = 0, mask_write, mask_read, mask_append
  };
  
--enum {
--	func_file = 0, func_mmap, func_bprm,
--	func_module, func_firmware, func_post,
--	func_kexec_kernel, func_kexec_initramfs,
--	func_policy
--};
--
- static const char *const func_tokens[] = {
-+	NULL,
+-static char *mask_tokens[] = {
++static const char *const mask_tokens[] = {
+ 	"MAY_EXEC",
+ 	"MAY_WRITE",
+ 	"MAY_READ",
+@@ -903,7 +903,7 @@ enum {
+ 	func_policy
+ };
+ 
+-static char *func_tokens[] = {
++static const char *const func_tokens[] = {
  	"FILE_CHECK",
  	"MMAP_CHECK",
  	"BPRM_CHECK",
-+	"POST_SETATTR",
- 	"MODULE_CHECK",
- 	"FIRMWARE_CHECK",
--	"POST_SETATTR",
- 	"KEXEC_KERNEL_CHECK",
- 	"KEXEC_INITRAMFS_CHECK",
- 	"POLICY_CHECK"
-@@ -949,48 +943,21 @@ void ima_policy_stop(struct seq_file *m, void *v)
- 
- #define pt(token)	policy_tokens[token + Opt_err].pattern
- #define mt(token)	mask_tokens[token]
--#define ft(token)	func_tokens[token]
- 
- /*
-  * policy_func_show - display the ima_hooks policy rule
-  */
- static void policy_func_show(struct seq_file *m, enum ima_hooks func)
- {
--	char tbuf[64] = {0,};
-+	if (func > 0 && func < MAX_CHECK)
-+		seq_printf(m, pt(Opt_func), func_tokens[func]);
-+	else {
-+		char tbuf[64] = {0,};
- 
--	switch (func) {
--	case FILE_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_file));
--		break;
--	case MMAP_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_mmap));
--		break;
--	case BPRM_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_bprm));
--		break;
--	case MODULE_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_module));
--		break;
--	case FIRMWARE_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_firmware));
--		break;
--	case POST_SETATTR:
--		seq_printf(m, pt(Opt_func), ft(func_post));
--		break;
--	case KEXEC_KERNEL_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_kexec_kernel));
--		break;
--	case KEXEC_INITRAMFS_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_kexec_initramfs));
--		break;
--	case POLICY_CHECK:
--		seq_printf(m, pt(Opt_func), ft(func_policy));
--		break;
--	default:
- 		snprintf(tbuf, sizeof(tbuf), "%d", func);
- 		seq_printf(m, pt(Opt_func), tbuf);
--		break;
- 	}
-+
- 	seq_puts(m, " ");
- }
- 
 -- 
 2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
