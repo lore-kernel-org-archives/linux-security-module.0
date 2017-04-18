@@ -1,31 +1,35 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 19 Apr 2017 08:34:06 +1000 (AEST)
-Subject: [PULL] Smack changes for 4.12
-In-Reply-To: <83a253e0-0fd0-36fe-9487-e0d7292ab832@schaufler-ca.com>
-References: <83a253e0-0fd0-36fe-9487-e0d7292ab832@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.20.1704190833500.22202@namei.org>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 18 Apr 2017 15:37:42 -0700
+Subject: SELinux "filtering" capabilities?
+Message-ID: <82d9ff60-6850-0873-1e68-20bd0e27e9ee@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 18 Apr 2017, Casey Schaufler wrote:
+I don't expect anyone else to have run into this
+as I am working with SELinux and Smack on the same
+machine at the same time. While there are a number
+of interactions that I can explain, I have one that
+is perplexing me. I assume something rational is
+going on, but I am having trouble tracking it down.
 
-> Two very small changes for Smack for 4.12.
-> 
-> 
-> The following changes since commit e4e55b47ed9ae2c05ff062601ff6dacbe9dc4775:
-> 
->   LSM: Revive security_task_alloc() hook and per "struct task_struct" security blob. (2017-03-28 11:05:14 +1100)
-> 
-> are available in the git repository at:
-> 
->   git://github.com/cschaufler/smack-next smack-for-4.12
+A process with CAP_MAC_ADMIN can change its Smack label
+by writing the new label to /proc/self/attr/smack/current.*
+If I have both SELinux and Smack enabled the write fails
+with -EPERM, indicating that the process lacks CAP_MAC_ADMIN.
+Instrumenting the Smack code verifies that, even though the
+process reports having CAP_MAC_ADMIN, the capability is gone
+in smack_setprocattr().
 
-Pulled, thanks!
+It seem that this could be happening in the write() path,
+or perhaps an artifact of SELinux not knowing something
+special about smackfs. I don't see anything obvious.
+Unfortunately, it is going to be somewhat difficult for
+me to claim that I have SELinux and Smack working, if not
+together, at least begrudgingly on the same system.
 
-
--- 
-James Morris
-<jmorris@namei.org>
+----
+* The smack subdir of attr isn't upstream yet, but I hope
+  to get it there real soon.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
