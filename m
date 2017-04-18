@@ -1,33 +1,59 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 18 Apr 2017 13:16:37 -0700
-Subject: [PULL] Smack changes for 4.12
-Message-ID: <83a253e0-0fd0-36fe-9487-e0d7292ab832@schaufler-ca.com>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Tue, 18 Apr 2017 17:17:40 -0300
+Subject: [PATCH 0/6] Appended signatures support for IMA appraisal
+Message-ID: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Two very small changes for Smack for 4.12.
+On the OpenPOWER platform, secure boot and trusted boot are being
+implemented using IMA for taking measurements and verifying signatures.
+Since the kernel image on Power servers is an ELF binary, kernels are
+signed using the scripts/sign-file tool and thus use the same signature
+format as signed kernel modules.
 
+This patch series adds support in IMA for verifying those signatures.
+It adds flexibility to OpenPOWER secure boot, because it can boot kernels
+with the signature appended to them as well as kernels where the signature
+is stored in the IMA extended attribute.
 
-The following changes since commit e4e55b47ed9ae2c05ff062601ff6dacbe9dc4775:
+The first four patches are cleanups and improvements that can be taken
+independently from the others (and from each other as well). The last two
+are the ones actually focused on this feature.
 
-  LSM: Revive security_task_alloc() hook and per "struct task_struct" security blob. (2017-03-28 11:05:14 +1100)
+These patches apply on top of today's linux-security/next.
 
-are available in the git repository at:
+Thiago Jung Bauermann (6):
+  integrity: Small code improvements
+  ima: Tidy up constant strings
+  ima: Simplify policy_func_show.
+  ima: Log the same audit cause whenever a file has no signature
+  MODSIGN: Export module signature definitions.
+  ima: Support appended signatures for appraisal
 
-  git://github.com/cschaufler/smack-next smack-for-4.12
+ crypto/asymmetric_keys/asymmetric_type.c |  1 +
+ crypto/asymmetric_keys/pkcs7_parser.c    | 12 +++++
+ crypto/asymmetric_keys/pkcs7_verify.c    | 13 +++++
+ include/crypto/pkcs7.h                   |  3 ++
+ include/linux/module_signature.h         | 45 ++++++++++++++++
+ include/linux/verification.h             |  1 +
+ init/Kconfig                             |  6 ++-
+ kernel/Makefile                          |  2 +-
+ kernel/module_signing.c                  | 74 +++++++++++----------------
+ security/integrity/Kconfig               |  2 +-
+ security/integrity/digsig_asymmetric.c   |  4 +-
+ security/integrity/iint.c                |  2 +-
+ security/integrity/ima/Kconfig           | 13 +++++
+ security/integrity/ima/ima.h             |  8 +++
+ security/integrity/ima/ima_appraise.c    | 86 ++++++++++++++++++++++++++++++-
+ security/integrity/ima/ima_init.c        |  2 +-
+ security/integrity/ima/ima_main.c        | 30 +++++++++--
+ security/integrity/ima/ima_policy.c      | 88 ++++++++++++--------------------
+ security/integrity/integrity.h           | 27 ++++++----
+ 19 files changed, 302 insertions(+), 117 deletions(-)
+ create mode 100644 include/linux/module_signature.h
 
-for you to fetch changes up to af96f0d6394a0af59c4dd71d6bcd3b1ddfba5196:
-
-  Smack: Use GFP_KERNEL for smk_netlbl_mls(). (2017-04-04 15:41:15 -0700)
-
-----------------------------------------------------------------
-Tetsuo Handa (2):
-      smack: fix double free in smack_parse_opts_str()
-      Smack: Use GFP_KERNEL for smk_netlbl_mls().
-
- security/smack/smack_access.c | 2 +-
- security/smack/smack_lsm.c    | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
