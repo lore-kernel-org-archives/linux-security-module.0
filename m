@@ -1,31 +1,41 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 18 Apr 2017 16:34:53 +0100
-Subject: [PATCH 15/24] asus-wmi: Restrict debugfs interface when the
-	kernel is locked down
-In-Reply-To: <1492528799.2409.145.camel@decadent.org.uk>
-References: <1492528799.2409.145.camel@decadent.org.uk>
-	<1492526075.2409.140.camel@decadent.org.uk>
-	<149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142340198.5101.8171352010918423590.stgit@warthog.procyon.org.uk>
-	<CAHp75VfpsnCHVqnFnwwh3JHB0ccY66Gj88sMGhrA9W7rDxiY_Q@mail.gmail.com>
-	<31421.1491569449@warthog.procyon.org.uk>
-	<CAHp75VfvWmv7SxgwCgR-ZBYPbeQW=+qesDoBNC5JFPtvzsN5gg@mail.gmail.com>
-	<13615.1491830208@warthog.procyon.org.uk>
-	<CAHp75Vd+-_CmW2MPpK3b6bER8bFmECusnx0BZMwYAizWZys4YA@mail.gmail.com>
-	<14918.1492527352@warthog.procyon.org.uk>
-Message-ID: <16665.1492529693@warthog.procyon.org.uk>
+From: keescook@chromium.org (Kees Cook)
+Date: Tue, 18 Apr 2017 08:49:10 -0700
+Subject: [kernel-hardening] Re: [PATCH 1/4] added SECURITY_TIOCSTI_RESTRICT
+	kernel config
+In-Reply-To: <20170418144057.1e9c2103@lxorguk.ukuu.org.uk>
+References: <20170417060706.28674-1-matt@nmatt.com>
+	<20170417060706.28674-2-matt@nmatt.com>
+	<20170417065055.GA21022@kroah.com>
+	<20170418144057.1e9c2103@lxorguk.ukuu.org.uk>
+Message-ID: <CAGXu5j+mP784rGqx1CWOOXM=AhAN7EegRZxO_=OG0y6k0hQs+g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Ben Hutchings <ben@decadent.org.uk> wrote:
+On Tue, Apr 18, 2017 at 6:40 AM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>> Since tty sessions are usually separated by different users, how would
+>> they have the same one and yet need something like this?
+>>
+>> Also, why not put this in the tty config section?
+>
+> The normal attack use case people argue about is a rogue process on the
+> users machine sitting there waiting until the user has logged in to a
+> remote machine and is idle and then doing stuff.
 
-> > Shouldn't this now appear under /sys/kernel/tracing/ ?
-> 
-> True, but old tracing scripts didn't go away.
+It's still a threat, though, and adding this with default n to allow
+the more paranoid builders a chance to mitigate it seems reasonable to
+me.
 
-Conversion to a symlink would fix that.
+> Attackers of course don't bother doing that because it's easier to get
+> the user to run a different ssh client instead.
 
-David
+Attackers will always take the easiest route, so we have to keep
+killing the low hanging fruit.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
