@@ -1,117 +1,99 @@
-From: helgaas@kernel.org (Bjorn Helgaas)
-Date: Tue, 18 Apr 2017 12:50:54 -0500
-Subject: [PATCH 12/24] PCI: Lock down BAR access when the kernel is
-	locked down
-In-Reply-To: <149142337836.5101.13971561682218232219.stgit@warthog.procyon.org.uk>
-References: <149142326734.5101.4596394505987813763.stgit@warthog.procyon.org.uk>
-	<149142337836.5101.13971561682218232219.stgit@warthog.procyon.org.uk>
-Message-ID: <20170418175054.GA25295@bhelgaas-glaptop.roam.corp.google.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 18 Apr 2017 15:20:29 -0400
+Subject: [GIT PULL] SELinux patches for 4.12
+Message-ID: <CAHC9VhSX2R6+eof6JPVyjzCmL0gFMMO=Liw15vVyED502eJ2gQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 05, 2017 at 09:16:18PM +0100, David Howells wrote:
-> From: Matthew Garrett <matthew.garrett@nebula.com>
-> 
-> Any hardware that can potentially generate DMA has to be locked down in
-> order to avoid it being possible for an attacker to modify kernel code,
-> allowing them to circumvent disabled module loading or module signing.
-> Default to paranoid - in future we can potentially relax this for
-> sufficiently IOMMU-isolated devices.
-> 
-> Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-pci at vger.kernel.org
+Hi James,
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+A whopping 31 SELinux patches for v4.12, although 25 of these are the
+small little patches from Markus.  Beyond those 25 patches, the
+remaining six are equally trivial with the only real standout being
+Stephen's patch to reorder the DAC_OVERRIDE and DAC_READ_SEARCH
+checks.  Everything passes selinux-testsuite and merges cleanly with
+the linux-security/next branch; please apply.
 
-> ---
-> 
->  drivers/pci/pci-sysfs.c |    9 +++++++++
->  drivers/pci/proc.c      |    8 +++++++-
->  drivers/pci/syscall.c   |    2 +-
->  3 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 25d010d449a3..f70b3668036f 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -727,6 +727,9 @@ static ssize_t pci_write_config(struct file *filp, struct kobject *kobj,
->  	loff_t init_off = off;
->  	u8 *data = (u8 *) buf;
->  
-> +	if (kernel_is_locked_down())
-> +		return -EPERM;
-> +
->  	if (off > dev->cfg_size)
->  		return 0;
->  	if (off + count > dev->cfg_size) {
-> @@ -1018,6 +1021,9 @@ static int pci_mmap_resource(struct kobject *kobj, struct bin_attribute *attr,
->  	resource_size_t start, end;
->  	int i;
->  
-> +	if (kernel_is_locked_down())
-> +		return -EPERM;
-> +
->  	for (i = 0; i < PCI_ROM_RESOURCE; i++)
->  		if (res == &pdev->resource[i])
->  			break;
-> @@ -1117,6 +1123,9 @@ static ssize_t pci_write_resource_io(struct file *filp, struct kobject *kobj,
->  				     struct bin_attribute *attr, char *buf,
->  				     loff_t off, size_t count)
->  {
-> +	if (kernel_is_locked_down())
-> +		return -EPERM;
-> +
->  	return pci_resource_io(filp, kobj, attr, buf, off, count, true);
->  }
->  
-> diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-> index f82710a8694d..139d6f09ae7b 100644
-> --- a/drivers/pci/proc.c
-> +++ b/drivers/pci/proc.c
-> @@ -116,6 +116,9 @@ static ssize_t proc_bus_pci_write(struct file *file, const char __user *buf,
->  	int size = dev->cfg_size;
->  	int cnt;
->  
-> +	if (kernel_is_locked_down())
-> +		return -EPERM;
-> +
->  	if (pos >= size)
->  		return 0;
->  	if (nbytes >= size)
-> @@ -195,6 +198,9 @@ static long proc_bus_pci_ioctl(struct file *file, unsigned int cmd,
->  #endif /* HAVE_PCI_MMAP */
->  	int ret = 0;
->  
-> +	if (kernel_is_locked_down())
-> +		return -EPERM;
-> +
->  	switch (cmd) {
->  	case PCIIOC_CONTROLLER:
->  		ret = pci_domain_nr(dev->bus);
-> @@ -233,7 +239,7 @@ static int proc_bus_pci_mmap(struct file *file, struct vm_area_struct *vma)
->  	struct pci_filp_private *fpriv = file->private_data;
->  	int i, ret, write_combine;
->  
-> -	if (!capable(CAP_SYS_RAWIO))
-> +	if (!capable(CAP_SYS_RAWIO) || kernel_is_locked_down())
->  		return -EPERM;
->  
->  	/* Make sure the caller is mapping a real resource for this device */
-> diff --git a/drivers/pci/syscall.c b/drivers/pci/syscall.c
-> index 9bf993e1f71e..c09524738ceb 100644
-> --- a/drivers/pci/syscall.c
-> +++ b/drivers/pci/syscall.c
-> @@ -92,7 +92,7 @@ SYSCALL_DEFINE5(pciconfig_write, unsigned long, bus, unsigned long, dfn,
->  	u32 dword;
->  	int err = 0;
->  
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!capable(CAP_SYS_ADMIN) || kernel_is_locked_down())
->  		return -EPERM;
->  
->  	dev = pci_get_bus_and_slot(bus, dfn);
-> 
+Thanks,
+-Paul
+
+---
+The following changes since commit ca97d939db114c8d1619e10a3b82af8615372dae:
+
+ security: mark LSM hooks as __ro_after_init (2017-03-06 11:00:15 +1100)
+
+are available in the git repository at:
+
+ git://git.infradead.org/users/pcmoore/selinux stable-4.12
+
+for you to fetch changes up to cae303df3f379f04ce7efadb2e30de460918b302:
+
+ selinux: Fix an uninitialized variable bug (2017-03-31 15:16:18 -0400)
+
+----------------------------------------------------------------
+Alexander Potapenko (1):
+     selinux: check for address length in selinux_socket_bind()
+
+Dan Carpenter (1):
+     selinux: Fix an uninitialized variable bug
+
+James Morris (1):
+     selinux: constify nlmsg permission tables
+
+Markus Elfring (25):
+     selinux: Use kmalloc_array() in cond_init_bool_indexes()
+     selinux: Delete an unnecessary return statement in cond_compute_av()
+     selinux: Improve size determinations in four functions
+     selinux: Use kmalloc_array() in hashtab_create()
+     selinux: Adjust four checks for null pointers
+     selinux: Use kcalloc() in policydb_index()
+     selinux: Delete an unnecessary return statement in policydb_destroy()
+     selinux: Return directly after a failed next_entry() in genfs_read()
+     selinux: One function call less in genfs_read() after null pointer
+              detection
+     selinux: Delete an unnecessary variable assignment in
+              filename_trans_read()
+     selinux: Return directly after a failed next_entry() in range_read()
+     selinux: Delete an unnecessary variable initialisation in range_read()
+     selinux: Return directly after a failed kzalloc() in cat_read()
+     selinux: Return directly after a failed kzalloc() in sens_read()
+     selinux: Improve another size determination in sens_read()
+     selinux: Return directly after a failed kzalloc() in user_read()
+     selinux: Return directly after a failed kzalloc() in type_read()
+     selinux: Return directly after a failed kzalloc() in role_read()
+     selinux: Return directly after a failed kzalloc() in class_read()
+     selinux: Return directly after a failed kzalloc() in common_read()
+     selinux: Return directly after a failed kzalloc() in perm_read()
+     selinux: Return directly after a failed kzalloc() in roles_init()
+     selinux: Use kmalloc_array() in sidtab_init()
+     selinux: Adjust two checks for null pointers
+     selinuxfs: Use seq_puts() in sel_avc_stats_seq_show()
+
+Matthias Kaehlcke (1):
+     selinux: Remove unnecessary check of array base in selinux_set_mapping()
+
+Nicolas Iooss (1):
+     selinux: include sys/socket.h in host programs to have PF_MAX
+
+Stephen Smalley (1):
+     fs: switch order of CAP_DAC_OVERRIDE and CAP_DAC_READ_SEARCH checks
+
+fs/namei.c                              | 20 +++++------
+scripts/selinux/genheaders/genheaders.c |  1 +
+scripts/selinux/mdp/mdp.c               |  1 +
+security/selinux/hooks.c                |  8 +++++
+security/selinux/nlmsgtab.c             | 10 +++---
+security/selinux/selinuxfs.c            |  8 ++---
+security/selinux/ss/conditional.c       | 14 ++++----
+security/selinux/ss/hashtab.c           | 10 +++---
+security/selinux/ss/policydb.c          | 59 ++++++++++++-----------------
+security/selinux/ss/services.c          |  2 +-
+security/selinux/ss/sidtab.c            |  6 ++--
+11 files changed, 69 insertions(+), 70 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
