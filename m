@@ -1,73 +1,72 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Apr 2017 16:59:03 -0700
-Subject: [PATCH net-next v6 10/11] bpf,landlock: Add tests for Landlock
-In-Reply-To: <f5291c43-100f-a06c-6c64-c718a02822df@digikod.net>
+Date: Tue, 18 Apr 2017 17:02:57 -0700
+Subject: [PATCH net-next v6 09/11] seccomp: Enhance test_harness with an
+	assert step mechanism
+In-Reply-To: <20170328234650.19695-10-mic@digikod.net>
 References: <20170328234650.19695-1-mic@digikod.net>
-	<20170328234650.19695-11-mic@digikod.net>
-	<CAGXu5j+-sFD5z2daPjvM0Q8vM=g9ZtwJ7-ZakqoUcjsiAD=+1A@mail.gmail.com>
-	<f5291c43-100f-a06c-6c64-c718a02822df@digikod.net>
-Message-ID: <CAGXu5jJp2Nt47EDL=wvqUuk4kTcExBqm1KbQtFOL_BTE+rybjQ@mail.gmail.com>
+	<20170328234650.19695-10-mic@digikod.net>
+Message-ID: <CAGXu5j+D-FP8Kt9unNOqKrQJP4DYTpmgkJxWykZyrYiVPz3Y3Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 18, 2017 at 4:53 PM, Micka?l Sala?n <mic@digikod.net> wrote:
-> On 19/04/2017 01:16, Kees Cook wrote:
->> On Tue, Mar 28, 2017 at 4:46 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->>> --- /dev/null
->>> +++ b/tools/testing/selftests/landlock/Makefile
->>> @@ -0,0 +1,47 @@
->>> +LIBDIR := ../../../lib
->>> +BPFOBJ := $(LIBDIR)/bpf/bpf.o
->>> +LOADOBJ := ../../../../samples/bpf/bpf_load.o
->>
->> Is the selftest tarball creation tool okay with this? IIRC, it should
->> be fine since it'll be a built object already, but it's a random
->> thought I had while looking at this.
+On Tue, Mar 28, 2017 at 4:46 PM, Micka?l Sala?n <mic@digikod.net> wrote:
+> This is useful to return an information about the error without being
+> able to write to TH_LOG_STREAM.
 >
-> Hum, I'll check since it's the same for BPF tests.
-
-Okay, cool.
-
->>> +# asm/sysreg.h - inline assembly used by it is incompatible with llvm.
->>> +# But, there is no easy way to fix it, so just exclude it since it is
->>> +# useless for BPF samples.
->>> +$(obj)/%.o: $(src)/%.c
->>> +       $(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(EXTRA_CFLAGS) \
->>> +               -D__KERNEL__ -D__ASM_SYSREG_H -Wno-unused-value -Wno-pointer-sign \
->>> +               -Wno-compare-distinct-pointer-types \
->>> +               -Wno-gnu-variable-sized-type-not-at-end \
->>> +               -Wno-tautological-compare \
->>> +               -O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf -filetype=obj -o $@
->>
->> Is clang required for the samples and the selftests? That needs to be
->> avoided... there needs to be a way to show people how to build a
->> landlock rule without requiring clang.
+> Helpers from test_harness.h may be useful outside of the seccomp
+> directory.
 >
-> I can rewrite this tests without requiring clang but it is already
-> required for BPF tests?
-
-So, I guess it's not a big deal for selftests (but it'd be nice, even
-for BPF), but I think at least the samples/ should have examples on
-how to do it "by hand", etc. Not everyone will build stuff with clang,
-and it'd be good to make landlock as available as possible.
-
->>> +#define ASSERT_STEP(cond) \
->>> +       { \
->>> +               step--; \
->>> +               if (!(cond)) \
->>> +                       _exit(step); \
->>> +       }
->>
->> Can you explain this in more detail? I'm assuming there is a problem
->> with writing to the TH_LOG_STREAM fd or something?
+> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Will Drewry <wad@chromium.org>
+> ---
+>  tools/testing/selftests/seccomp/test_harness.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 >
-> It's a trick to use the test framework without requiring to be allowed
-> to write to an FD (i.e. log stream), but only to exit a code. I use this
-> to test a Landlock rule which forbid access to any FS objects (including
-> open FD). This could be used for seccomp too.
+> diff --git a/tools/testing/selftests/seccomp/test_harness.h b/tools/testing/selftests/seccomp/test_harness.h
+> index a786c69c7584..77e407663e06 100644
+> --- a/tools/testing/selftests/seccomp/test_harness.h
+> +++ b/tools/testing/selftests/seccomp/test_harness.h
+> @@ -397,7 +397,7 @@ struct __test_metadata {
+>         const char *name;
+>         void (*fn)(struct __test_metadata *);
+>         int termsig;
+> -       int passed;
+> +       __s8 passed;
 
-Okay. For seccomp, we just allow the fd. :P I'm not opposed to it; it
-just makes some debugging harder without text details, etc.
+Why the reduction here? int is signed too?
+
+>         int trigger; /* extra handler after the evaluation */
+>         struct __test_metadata *prev, *next;
+>  };
+> @@ -476,6 +476,12 @@ void __run_test(struct __test_metadata *t)
+>                                         "instead of by signal (code: %d)\n",
+>                                         t->name,
+>                                         WEXITSTATUS(status));
+> +                       } else if (t->passed < 0) {
+> +                               fprintf(TH_LOG_STREAM,
+> +                                       "%s: Failed at step #%d\n",
+> +                                       t->name,
+> +                                       t->passed * -1);
+> +                               t->passed = 0;
+>                         }
+
+Instead of creating an overloaded mechanism here, perhaps have an
+option reporting mechanism that can be enabled. Like adding to
+__test_metadata "bool no_stream; int test_number;" and adding
+test_number++ to each ASSERT/EXCEPT call, and doing something like:
+
+if (t->no_stream) {
+                              fprintf(TH_LOG_STREAM,
+                                      "%s: Failed at step #%d\n",
+                                      t->name,
+                                       t->test_number);
+}
+
+It'd be a cleaner approach, maybe?
 
 -Kees
 
