@@ -1,54 +1,47 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 19 Apr 2017 10:55:16 -0700
-Subject: SELinux "filtering" capabilities?
-In-Reply-To: <1492603104.31458.1.camel@tycho.nsa.gov>
-References: <82d9ff60-6850-0873-1e68-20bd0e27e9ee@schaufler-ca.com>
-	<1492603104.31458.1.camel@tycho.nsa.gov>
-Message-ID: <62698386-abd9-ad8d-f5ba-6c592ad26230@schaufler-ca.com>
+From: wsa@the-dreams.de (Wolfram Sang)
+Date: Wed, 19 Apr 2017 21:25:04 +0200
+Subject: [PATCH 09/38] Annotate hardware config module parameters in
+	drivers/i2c/
+In-Reply-To: <149141148368.29162.12692004178864468110.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141148368.29162.12692004178864468110.stgit@warthog.procyon.org.uk>
+Message-ID: <20170419192504.s5bo6tmqns3vx45f@ninjato>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 4/19/2017 4:58 AM, Stephen Smalley wrote:
-> On Tue, 2017-04-18 at 15:37 -0700, Casey Schaufler wrote:
->> I don't expect anyone else to have run into this
->> as I am working with SELinux and Smack on the same
->> machine at the same time. While there are a number
->> of interactions that I can explain, I have one that
->> is perplexing me. I assume something rational is
->> going on, but I am having trouble tracking it down.
->>
->> A process with CAP_MAC_ADMIN can change its Smack label
->> by writing the new label to /proc/self/attr/smack/current.*
->> If I have both SELinux and Smack enabled the write fails
->> with -EPERM, indicating that the process lacks CAP_MAC_ADMIN.
->> Instrumenting the Smack code verifies that, even though the
->> process reports having CAP_MAC_ADMIN, the capability is gone
->> in smack_setprocattr().
->>
->> It seem that this could be happening in the write() path,
->> or perhaps an artifact of SELinux not knowing something
->> special about smackfs. I don't see anything obvious.
->> Unfortunately, it is going to be somewhat difficult for
->> me to claim that I have SELinux and Smack working, if not
->> together, at least begrudgingly on the same system.
->>
->> ----
->> * The smack subdir of attr isn't upstream yet, but I hope
->>   to get it there real soon.
-> Since smack_privileged() calls capable() rather than cap_capable(), the
-> CAP_MAC_ADMIN check will trigger a check by all enabled security
-> modules, including SELinux.  SELinux will then apply a check against
-> policy as to whether the current process is allowed mac_admin
-> permission.  This is only allowed to a handful of domains (not even
-> unconfined_t) because to SELinux, CAP_MAC_ADMIN means the ability to
-> set or get a raw, uninterpreted security context that may be unknown to
-> the currently loaded security policy.
->
-> I suspect that smack_privileged() should call cap_capable() instead.
->
-Brilliant. Did the trick. Thank you.
+On Wed, Apr 05, 2017 at 05:58:03PM +0100, David Howells wrote:
+> When the kernel is running in secure boot mode, we lock down the kernel to
+> prevent userspace from modifying the running kernel image.  Whilst this
+> includes prohibiting access to things like /dev/mem, it must also prevent
+> access by means of configuring driver modules in such a way as to cause a
+> device to access or modify the kernel image.
+> 
+> To this end, annotate module_param* statements that refer to hardware
+> configuration and indicate for future reference what type of parameter they
+> specify.  The parameter parser in the core sees this information and can
+> skip such parameters with an error message if the kernel is locked down.
+> The module initialisation then runs as normal, but just sees whatever the
+> default values for those parameters is.
+> 
+> Note that we do still need to do the module initialisation because some
+> drivers have viable defaults set in case parameters aren't specified and
+> some drivers support automatic configuration (e.g. PNP or PCI) in addition
+> to manually coded parameters.
+> 
+> This patch annotates drivers in drivers/i2c/.
+> 
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Wolfram Sang <wsa@the-dreams.de>
+> cc: Jean Delvare <jdelvare@suse.com>
+> cc: linux-i2c at vger.kernel.org
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170419/29f80d18/attachment.sig>
