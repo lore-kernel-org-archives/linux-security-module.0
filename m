@@ -1,59 +1,31 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 19 Apr 2017 18:29:08 +0300
-Subject: [tpmdd-devel] [backport v4.9] tpm_tis: use default timeout value
-	if chip reports it as zero
-In-Reply-To: <79399e000218504619c21ce6729c8334@molgen.mpg.de>
-References: <20170415152622.14451-1-user@jsakkine-mobl1>
-	<20170415205032.GA17774@kroah.com>
-	<79399e000218504619c21ce6729c8334@molgen.mpg.de>
-Message-ID: <20170419152908.vq55so4mtqyp6sc7@intel.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 19 Apr 2017 16:29:48 +0100
+Subject: [PATCH 06/38] Annotate hardware config module parameters in
+	drivers/clocksource/
+In-Reply-To: <9f97544c-cb49-c2a3-ecec-7840386d9281@ADLINKtech.com>
+References: <9f97544c-cb49-c2a3-ecec-7840386d9281@ADLINKtech.com>
+	<149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
+	<alpine.DEB.2.20.1704142021320.2327@nanos>
+Message-ID: <25530.1492615788@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Apr 16, 2017 at 09:14:29PM +0200, Paul Menzel wrote:
-> Dear Greg,
-> 
-> 
-> On 2017-04-15 22:50, Greg KH wrote:
-> > On Sat, Apr 15, 2017 at 06:26:22PM +0300, Jarkko Sakkinen wrote:
-> > > From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-> > > 
-> > > Since commit 1107d065fdf1 ("tpm_tis: Introduce intermediate layer for
-> > > TPM access") Atmel 3203 TPM on ThinkPad X61S (TPM firmware version
-> > > 13.9)
-> > > no longer works.  The initialization proceeds fine until we get and
-> > > start using chip-reported timeouts - and the chip reports C and D
-> > > timeouts of zero.
-> > > 
-> > > It turns out that until commit 8e54caf407b98e ("tpm: Provide a generic
-> > > means to override the chip returned timeouts") we had actually let
-> > > default timeout values remain in this case, so let's bring back this
-> > > behavior to make chips like Atmel 3203 work again.
-> > > 
-> > > Use a common code that was introduced by that commit so a warning is
-> > > printed in this case and /sys/class/tpm/tpm*/timeouts correctly says
-> > > the
-> > > timeouts aren't chip-original.
-> > > 
-> > > Fixes: 1107d065fdf1 ("tpm_tis: Introduce intermediate layer for TPM
-> > > access")
-> > > Cc: stable at vger.kernel.org
-> > > Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > What is the git commit id for this patch in Linus's tree?
-> 
-> The git commit hash is 1d70fe9d9c3a4c627f9757cbba5d628687b121c1.
-> 
-> 
-> Kind regards,
-> 
-> Paul
+Jens Rottmann <Jens.Rottmann@ADLINKtech.com> wrote:
 
-Do you want me to revise the backport? Thanks.
+> > When the kernel is running in secure boot mode [...] prevent
+> > access by means of configuring driver modules
+> 
+> I may easily be wrong, but doesn't secure boot require EFI?
 
-/Jarkko
+For the patches I have, yes.  It could feasibly be done by some other
+mechanism, though I don't know that such an alternative exists.
+
+> Do secure boot capable systems with old CS5535/36 even exist?
+
+No idea.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
