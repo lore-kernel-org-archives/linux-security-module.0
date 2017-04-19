@@ -1,104 +1,74 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 19 Apr 2017 15:02:34 -0700
-Subject: [PATCH net-next v6 09/11] seccomp: Enhance test_harness with an
-	assert step mechanism
-In-Reply-To: <94ac6ddc-eaac-8548-f83f-826ddf05ac69@digikod.net>
+From: mic@digikod.net (=?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=)
+Date: Thu, 20 Apr 2017 00:03:16 +0200
+Subject: [PATCH net-next v6 04/11] landlock: Add LSM hooks related to
+	filesystem
+In-Reply-To: <CAGXu5jKCr1qPqJ8YWAjK1Lj-fThAhMnrxFW8twFcj6C9ODBpsA@mail.gmail.com>
 References: <20170328234650.19695-1-mic@digikod.net>
-	<20170328234650.19695-10-mic@digikod.net>
-	<CAGXu5j+D-FP8Kt9unNOqKrQJP4DYTpmgkJxWykZyrYiVPz3Y3Q@mail.gmail.com>
-	<94ac6ddc-eaac-8548-f83f-826ddf05ac69@digikod.net>
-Message-ID: <CAGXu5jJfnA=XeUNc4eAsUvXCja725riA7Vaod=BmM2ZbXdfQ4A@mail.gmail.com>
+	<20170328234650.19695-5-mic@digikod.net>
+	<CAGXu5jJKNp8R5kZ1U=K7KwgnV=NvH5aoAbftA-05a_Sa4pOg1Q@mail.gmail.com>
+	<9a69055a-b4cf-00b0-da5e-2e45ff88059c@digikod.net>
+	<c122415d-c2be-d013-efb4-833ba87d144d@schaufler-ca.com>
+	<CAGXu5jKCr1qPqJ8YWAjK1Lj-fThAhMnrxFW8twFcj6C9ODBpsA@mail.gmail.com>
+Message-ID: <35272f2b-ec5f-d032-ae2e-9fc0b4c0e2e3@digikod.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 19, 2017 at 2:51 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->
-> On 19/04/2017 02:02, Kees Cook wrote:
->> On Tue, Mar 28, 2017 at 4:46 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->>> This is useful to return an information about the error without being
->>> able to write to TH_LOG_STREAM.
+
+On 19/04/2017 01:40, Kees Cook wrote:
+> On Tue, Apr 18, 2017 at 4:16 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 4/18/2017 3:44 PM, Micka?l Sala?n wrote:
+>>> On 19/04/2017 00:17, Kees Cook wrote:
+>>>> On Tue, Mar 28, 2017 at 4:46 PM, Micka?l Sala?n <mic@digikod.net> wrote:
+>>>>> +void __init landlock_add_hooks(void)
+>>>>> +{
+>>>>> +       pr_info("landlock: Version %u", LANDLOCK_VERSION);
+>>>>> +       landlock_add_hooks_fs();
+>>>>> +       security_add_hooks(NULL, 0, "landlock");
+>>>>> +       bpf_register_prog_type(&bpf_landlock_type);
+>>>> I'm confused by the separation of hook registration here. The call to
+>>>> security_add_hooks is with count=0 is especially weird. Why isn't this
+>>>> just a single call with security_add_hooks(landlock_hooks,
+>>>> ARRAY_SIZE(landlock_hooks), "landlock")?
+>>> Yes, this is ugly with the new security_add_hooks() with three arguments
+>>> but I wanted to split the hooks definition in multiple files.
+>>
+>> Why? I'll buy a good argument, but there are dangers in
+>> allowing multiple calls to security_add_hooks().
+
+I prefer to have one file per hook "family" (e.g. filesystem, network,
+ptrace?). This reduce the mess with all the included files (needed for
+LSM hook argument types) and make the files easier to read, understand
+and maintain.
+
+>>
 >>>
->>> Helpers from test_harness.h may be useful outside of the seccomp
->>> directory.
->>>
->>> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
->>> Cc: Andy Lutomirski <luto@amacapital.net>
->>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->>> Cc: Kees Cook <keescook@chromium.org>
->>> Cc: Shuah Khan <shuah@kernel.org>
->>> Cc: Will Drewry <wad@chromium.org>
->>> ---
->>>  tools/testing/selftests/seccomp/test_harness.h | 8 +++++++-
->>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/seccomp/test_harness.h b/tools/testing/selftests/seccomp/test_harness.h
->>> index a786c69c7584..77e407663e06 100644
->>> --- a/tools/testing/selftests/seccomp/test_harness.h
->>> +++ b/tools/testing/selftests/seccomp/test_harness.h
->>> @@ -397,7 +397,7 @@ struct __test_metadata {
->>>         const char *name;
->>>         void (*fn)(struct __test_metadata *);
->>>         int termsig;
->>> -       int passed;
->>> +       __s8 passed;
+>>> The current security_add_hooks() use lsm_append(lsm, &lsm_names) which
+>>> is not exported. Unfortunately, calling multiple security_add_hooks()
+>>> with the same LSM name would register multiple names for the same LSM?
+>>> Is it OK if I modify this function to not add duplicated entries?
 >>
->> Why the reduction here? int is signed too?
->
-> Because the return code of a process is capped to 8 bits and I use a
-> negative value to not mess with the current interpretation of 0 (error)
-> and 1 (OK) for the "passed" variable.
->
->>
->>>         int trigger; /* extra handler after the evaluation */
->>>         struct __test_metadata *prev, *next;
->>>  };
->>> @@ -476,6 +476,12 @@ void __run_test(struct __test_metadata *t)
->>>                                         "instead of by signal (code: %d)\n",
->>>                                         t->name,
->>>                                         WEXITSTATUS(status));
->>> +                       } else if (t->passed < 0) {
->>> +                               fprintf(TH_LOG_STREAM,
->>> +                                       "%s: Failed at step #%d\n",
->>> +                                       t->name,
->>> +                                       t->passed * -1);
->>> +                               t->passed = 0;
->>>                         }
->>
->> Instead of creating an overloaded mechanism here, perhaps have an
->> option reporting mechanism that can be enabled. Like adding to
->> __test_metadata "bool no_stream; int test_number;" and adding
->> test_number++ to each ASSERT/EXCEPT call, and doing something like:
->>
->> if (t->no_stream) {
->>                               fprintf(TH_LOG_STREAM,
->>                                       "%s: Failed at step #%d\n",
->>                                       t->name,
->>                                        t->test_number);
->> }
->>
->> It'd be a cleaner approach, maybe?
->
-> Good idea, we will then be able to use 255 steps!
->
-> Do you want me to send this as a separate patch?
->
-> Can we move test_harness.h outside of the seccomp directory to be
-> available to other subsystems as well?
+>> It may seem absurd, but it's conceivable that a module might
+>> have two hooks it wants called. My example is a module that
+>> counts the number of times SELinux denies a process access to
+>> things (which needs to be called before and after SELinux in
+>> order to detect denials) and takes "appropriate action" if
+>> too many denials occur. It would be weird, wonky and hackish,
+>> but that never stopped anybody before.
 
-Yeah, I would do two patches, and send them out separately (to shuah
-with lkml and me in cc at least), one to move test_hardness.h into
-some include/ directory, and then to add the new logic for streamless
-reporting.
+Right, but now, with the new lsm_append(), module names are concatenated
+("%s,%s") in the lsm_names variable. It would be nice to not pollute
+this string with multiple time the same module name.
 
-Thanks!
+> 
+> If ends up being sane and clear, I'm fine with allowing multiple calls.
+> 
+> -Kees
+> 
 
--Kees
-
-
--- 
-Kees Cook
-Pixel Security
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 488 bytes
+Desc: OpenPGP digital signature
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170420/48883516/attachment.sig>
