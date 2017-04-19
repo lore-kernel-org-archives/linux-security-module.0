@@ -1,52 +1,49 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 19 Apr 2017 18:30:36 +0300
-Subject: [PATCH] tpm: Fix reference count to main device
-In-Reply-To: <1492480706-6928-1-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1492480706-6928-1-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <20170419153036.7bcax775wskrskdo@intel.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 19 Apr 2017 16:33:05 +0100
+Subject: [PATCH 06/38] Annotate hardware config module parameters in
+	drivers/clocksource/
+In-Reply-To: <alpine.DEB.2.20.1704142021320.2327@nanos>
+References: <alpine.DEB.2.20.1704142021320.2327@nanos>
+	<149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+	<149141145858.29162.13072730133817038218.stgit@warthog.procyon.org.uk>
+Message-ID: <25653.1492615985@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 17, 2017 at 09:58:26PM -0400, Stefan Berger wrote:
-> The main device is currently not properly released due to one additional
-> reference to the 'devs' device which is only released in case of a TPM 2.
-> So, also get the additional reference only in case of a TPM2.
-> 
-> Fixes: fdc915f7f719 ("tpm: expose spaces via a device link /dev/tpmrm<n>")
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Hi Thomas,
 
-Excellent, thank you. I'll send this with some other small fixes for
-4.12 to James rather sooner than later.
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > --- a/drivers/clocksource/cs5535-clockevt.c
+> > +++ b/drivers/clocksource/cs5535-clockevt.c
+> > @@ -22,7 +22,7 @@
+> >  #define DRV_NAME "cs5535-clockevt"
+> >  
+> >  static int timer_irq;
+> > -module_param_named(irq, timer_irq, int, 0644);
+> > +module_param_hw_named(irq, timer_irq, int, irq, 0644);
+> >  MODULE_PARM_DESC(irq, "Which IRQ to use for the clock source MFGPT ticks.");
+> 
+> I'm not sure about this. AFAIR the parameter is required to work on
+> anything else than some arbitrary hardware which has it mapped to 0.
+> 
+> Cc'ed people who might know.
 
-/Jarkko
+Given what Jens said:
 
-> 
-> ---
->  drivers/char/tpm/tpm-chip.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index a321bd5..9dec9f5 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -191,9 +191,10 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
->  	/* get extra reference on main device to hold on
->  	 * behalf of devs.  This holds the chip structure
->  	 * while cdevs is in use.  The corresponding put
-> -	 * is in the tpm_devs_release
-> +	 * is in the tpm_devs_release (TPM2 only)
->  	 */
-> -	get_device(&chip->dev);
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> +		get_device(&chip->dev);
->  
->  	if (chip->dev_num == 0)
->  		chip->dev.devt = MKDEV(MISC_MAJOR, TPM_MINOR);
-> -- 
-> 2.4.3
-> 
+	Parameter defaults to 0, which means:
+	1. autodetect (=keep IRQ BIOS has set up)
+	2. if that fails use CONFIG_CS5535_MFGPT_DEFAULT_IRQ
+	(see drivers/misc/cs5535-mfgpt.c: cs5535_mfgpt_set_irq())
+
+	Autodetect works fine for our (ex-LiPPERT, now ADLINK) COTS boards:
+	Linux auto-uses IRQ chosen in BIOS Setup. Wouldn't know about other
+	companies, of course, but (2.) means parameter can be avoided via make
+	menuconfig.
+
+are you willing to okay this?
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
