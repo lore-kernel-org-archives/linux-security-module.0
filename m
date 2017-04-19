@@ -1,79 +1,81 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Apr 2017 17:02:57 -0700
-Subject: [PATCH net-next v6 09/11] seccomp: Enhance test_harness with an
-	assert step mechanism
-In-Reply-To: <20170328234650.19695-10-mic@digikod.net>
+From: mic@digikod.net (=?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=)
+Date: Wed, 19 Apr 2017 02:12:16 +0200
+Subject: [PATCH net-next v6 00/11] Landlock LSM: Toward unprivileged
+	sandboxing
+In-Reply-To: <CAGXu5jLpM13xmFf2_bcWH=db7LEavfpZswvPbAM3+66dBPtMTg@mail.gmail.com>
 References: <20170328234650.19695-1-mic@digikod.net>
-	<20170328234650.19695-10-mic@digikod.net>
-Message-ID: <CAGXu5j+D-FP8Kt9unNOqKrQJP4DYTpmgkJxWykZyrYiVPz3Y3Q@mail.gmail.com>
+	<CAGXu5jLpM13xmFf2_bcWH=db7LEavfpZswvPbAM3+66dBPtMTg@mail.gmail.com>
+Message-ID: <a5597574-6a8c-b2ee-336c-48734071e6ff@digikod.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 28, 2017 at 4:46 PM, Micka?l Sala?n <mic@digikod.net> wrote:
-> This is useful to return an information about the error without being
-> able to write to TH_LOG_STREAM.
->
-> Helpers from test_harness.h may be useful outside of the seccomp
-> directory.
->
-> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Will Drewry <wad@chromium.org>
-> ---
->  tools/testing/selftests/seccomp/test_harness.h | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/seccomp/test_harness.h b/tools/testing/selftests/seccomp/test_harness.h
-> index a786c69c7584..77e407663e06 100644
-> --- a/tools/testing/selftests/seccomp/test_harness.h
-> +++ b/tools/testing/selftests/seccomp/test_harness.h
-> @@ -397,7 +397,7 @@ struct __test_metadata {
->         const char *name;
->         void (*fn)(struct __test_metadata *);
->         int termsig;
-> -       int passed;
-> +       __s8 passed;
 
-Why the reduction here? int is signed too?
+On 19/04/2017 01:26, Kees Cook wrote:
+> On Tue, Mar 28, 2017 at 4:46 PM, Micka?l Sala?n <mic@digikod.net> wrote:
+>> This sixth series add some changes to the previous one [1], including a simpler
+>> rule inheritance hierarchy (similar to seccomp-bpf), a ptrace scope protection,
+>> some file renaming (better feature identification per file), a future-proof
+>> eBPF subtype and miscellaneous cosmetic fixes.
+> 
+> Sorry for the delay in review! I finally had a chunk of time I could
+> devote to this. I really like how it's heading. I still wonder about
+> its overlap with seccomp (it's really only using the syscall now...),
+> but that's just a detail. Getting the abstraction away from direct LSM
+> hooks looks good.
+> 
+>> There is as yet no way to allow a process to access only a subset of the
+>> filesystem where the subset is specified via a path or a file descriptor.  This
+>> feature is intentionally left out so as to minimize the amount of code of this
+>> patch series but will come in a following series.  However, it is possible to
+>> check the file type, as done in the following example.
+> 
+> I understand why you've taken a progressive approach here, but I think
+> there are two fundamental areas where people will use Landlock: path
+> evaluation and network address evaluation. I think it's worth
+> expanding this series to include those two confinement examples, since
+> that can help people understand what the "general" case will look
+> like.
 
->         int trigger; /* extra handler after the evaluation */
->         struct __test_metadata *prev, *next;
->  };
-> @@ -476,6 +476,12 @@ void __run_test(struct __test_metadata *t)
->                                         "instead of by signal (code: %d)\n",
->                                         t->name,
->                                         WEXITSTATUS(status));
-> +                       } else if (t->passed < 0) {
-> +                               fprintf(TH_LOG_STREAM,
-> +                                       "%s: Failed at step #%d\n",
-> +                                       t->name,
-> +                                       t->passed * -1);
-> +                               t->passed = 0;
->                         }
+I agree that it would be more useful to add a path/FS evaluation,
+however we agreed at LPC that it would be another patch series:
+https://lkml.kernel.org/r/5828776A.1010104 at digikod.net
+It brings more complexity and a new kind of BPF map, which should be
+reviewed in a separate series.
 
-Instead of creating an overloaded mechanism here, perhaps have an
-option reporting mechanism that can be enabled. Like adding to
-__test_metadata "bool no_stream; int test_number;" and adding
-test_number++ to each ASSERT/EXCEPT call, and doing something like:
+> 
+> As I mentioned in one of the patch review emails, I think there needs
+> to be a clearer explanation of how usage counting works vs the
+> "events" (which I think of as "rule tables" not events -- maybe it
+> needs a new name?) and "rule" lists. I think I understand it, but I
+> spent a lot of time trying to get there. More comments would help.
 
-if (t->no_stream) {
-                              fprintf(TH_LOG_STREAM,
-                                      "%s: Failed at step #%d\n",
-                                      t->name,
-                                       t->test_number);
-}
+I though about different names and the previous one was PDP (for Policy
+Decision Point) which is used in the literature, but "event" seems
+easier to understand and close enough with "hook". Rule tables doesn't
+seems to express what is the meaning to register an event/hook.
 
-It'd be a cleaner approach, maybe?
+I'll add more comments to explain how it works.
 
--Kees
+> 
+> Finally, another thing I'm curious about is how to deal with the
+> thread-sync issue. Seccomp uses its TSYNC thing, and I'd expect we'd
+> want something similar for landlock... but that looks really hairy as
+> far as locking goes. Perhaps it's already solved by using the same
+> locking seccomp uses, in which case I'm less inclined to kick landlock
+> out of seccomp.c. :)
 
--- 
-Kees Cook
-Pixel Security
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I didn't work on it but it should be really similar to seccomp-bpf.
+
+> 
+> Looks like it's coming along nicely! Thanks for continuing to work on this!
+> 
+> -Kees
+> 
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 488 bytes
+Desc: OpenPGP digital signature
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170419/57ca3a38/attachment.sig>
