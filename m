@@ -1,239 +1,92 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 20 Apr 2017 08:35:12 -0400
-Subject: [PATCH 5/6] MODSIGN: Export module signature definitions.
-In-Reply-To: <1492546666-16615-6-git-send-email-bauerman@linux.vnet.ibm.com>
-References: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1492546666-16615-6-git-send-email-bauerman@linux.vnet.ibm.com>
-Message-ID: <1492691712.3081.85.camel@linux.vnet.ibm.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Thu, 20 Apr 2017 14:44:53 +0200
+Subject: [kernel-hardening] Re: [PATCH v3 1/2] modules:capabilities:
+	automatic module loading restriction
+In-Reply-To: <1492654942.31767.21.camel@decadent.org.uk>
+References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
+	<1492640420-27345-2-git-send-email-tixxdz@gmail.com>
+	<1492654942.31767.21.camel@decadent.org.uk>
+Message-ID: <CAEiveUdS=GbyxDVeNFrjTmhvQB-a6UgrJXcGY=BYJLu+3z0x_Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-04-18 at 17:17 -0300, Thiago Jung Bauermann wrote:
-> IMA will use the module_signature format for append signatures, so export
-> the relevant definitions and factor out the code which verifies that the
-> appended signature trailer is valid.
-> 
-> Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
-> and be able to use validate_module_signature without having to depend on
-> CONFIG_MODULE_SIG.
+On Thu, Apr 20, 2017 at 4:22 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
+> On Thu, 2017-04-20 at 00:20 +0200, Djalal Harouni wrote:
+> [...]
+>> +modules_autoload:
+>> +
+>> +A sysctl to control if modules auto-load feature is allowed or not.
+>> +This sysctl complements "modules_disabled" which is for all module
+>> +operations where this flag applies only to automatic module loading.
+>> +Automatic module loading happens when programs request a kernel feature
+>> +that is implemented by an unloaded module, the kernel automatically
+>> +runs the program pointed by "modprobe" sysctl in order to load the
+>> +corresponding module.
+>> +
+>> +When modules_autoload is set to (0), the default, there are no
+>> +restrictions.
+>> +
+>> +When modules_autoload is set to (1), processes must have CAP_SYS_MODULE
+>> +to be able to trigger a module auto-load operation, or CAP_NET_ADMIN
+>> +for modules with a 'netdev-%s' alias.
+>> +
+>> +When modules_autoload is set to (2), automatic module loading is
+>> +disabled for all. Once set, this value can not be changed.
+>
+> I would expect a parameter 'modules_autoload' to be a boolean, so this
+> behaviour would be surprising.
+>
+> What is the point of mode 2?  Why would someone want to set
+> modules_disabled=0 and modules_autoload=2?
 
-Basically we want to generalize the concept of an appended signature.
-?Referring to it as a "module signature format" seems a bit confusing.
+modules_disabled is too restrictive and once set it can't be changed,
+maybe that's why not all users use it.
 
-David, would you have a problem with changing the appended string from
-"~Module signature appended~\n" to something more generic? ?The
-appended signature format could be used by anything calling
-kernel_read_file() (eg. kexec kernel image/initramfs).
+With modules_disabled=0 and modules_autoload=2
 
-Mimi
+* The functionality of the system can still be made available.
+* You only disable automatic module loading
+* Explicit module load/unload can still happen. Administrators or
+privileged programs can still explicitly load modules provide a
+feature without rebooting.
+* You are able to restrict some applications from inserting new
+modules at all by also applying a seccomp filter and removing their
+CAP_SYS_MODULE, where explicit load/unload is still available to
+others.
+* You are able to unload an old bad version of the module without
+rebooting, and maybe load the new version.
 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> ---
->  include/linux/module_signature.h | 45 ++++++++++++++++++++++++
->  init/Kconfig                     |  6 +++-
->  kernel/Makefile                  |  2 +-
->  kernel/module_signing.c          | 74 +++++++++++++++++-----------------------
->  4 files changed, 82 insertions(+), 45 deletions(-)
-> 
-> diff --git a/include/linux/module_signature.h b/include/linux/module_signature.h
-> new file mode 100644
-> index 000000000000..b04f16559b47
-> --- /dev/null
-> +++ b/include/linux/module_signature.h
-> @@ -0,0 +1,45 @@
-> +/* Module signature handling.
-> + *
-> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells at redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#ifndef _LINUX_MODULE_SIGNATURE_H
-> +#define _LINUX_MODULE_SIGNATURE_H
-> +
-> +enum pkey_id_type {
-> +	PKEY_ID_PGP,		/* OpenPGP generated key ID */
-> +	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
-> +	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
-> +};
-> +
-> +/*
-> + * Module signature information block.
-> + *
-> + * The constituents of the signature section are, in order:
-> + *
-> + *	- Signer's name
-> + *	- Key identifier
-> + *	- Signature data
-> + *	- Information block
-> + */
-> +struct module_signature {
-> +	u8	algo;		/* Public-key crypto algorithm [0] */
-> +	u8	hash;		/* Digest algorithm [0] */
-> +	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-> +	u8	signer_len;	/* Length of signer's name [0] */
-> +	u8	key_id_len;	/* Length of key identifier [0] */
-> +	u8	__pad[3];
-> +	__be32	sig_len;	/* Length of signature data */
-> +};
-> +
-> +int validate_module_signature(const struct module_signature *ms,
-> +			      size_t file_len);
-> +int mod_verify_sig(const void *mod, unsigned long *_modlen);
-> +
-> +#endif /* _LINUX_MODULE_SIGNATURE_H */
-> diff --git a/init/Kconfig b/init/Kconfig
-> index a92f27da4a27..891325e5aeff 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -2024,7 +2024,7 @@ config MODULE_SRCVERSION_ALL
->  config MODULE_SIG
->  	bool "Module signature verification"
->  	depends on MODULES
-> -	select SYSTEM_DATA_VERIFICATION
-> +	select MODULE_SIG_FORMAT
->  	help
->  	  Check modules for valid signatures upon load: the signature
->  	  is simply appended to the module. For more information see
-> @@ -2039,6 +2039,10 @@ config MODULE_SIG
->  	  debuginfo strip done by some packagers (such as rpmbuild) and
->  	  inclusion into an initramfs that wants the module size reduced.
-> 
-> +config MODULE_SIG_FORMAT
-> +	def_bool n
-> +	select SYSTEM_DATA_VERIFICATION
-> +
->  config MODULE_SIG_FORCE
->  	bool "Require modules to be validly signed"
->  	depends on MODULE_SIG
-> diff --git a/kernel/Makefile b/kernel/Makefile
-> index b302b4731d16..4451bbc70a08 100644
-> --- a/kernel/Makefile
-> +++ b/kernel/Makefile
-> @@ -56,7 +56,7 @@ obj-y += up.o
->  endif
->  obj-$(CONFIG_UID16) += uid16.o
->  obj-$(CONFIG_MODULES) += module.o
-> -obj-$(CONFIG_MODULE_SIG) += module_signing.o
-> +obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signing.o
->  obj-$(CONFIG_KALLSYMS) += kallsyms.o
->  obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
->  obj-$(CONFIG_KEXEC_CORE) += kexec_core.o
-> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-> index 937c844bee4a..421e3e668714 100644
-> --- a/kernel/module_signing.c
-> +++ b/kernel/module_signing.c
-> @@ -11,36 +11,38 @@
-> 
->  #include <linux/kernel.h>
->  #include <linux/errno.h>
-> +#include <linux/module_signature.h>
->  #include <linux/string.h>
->  #include <linux/verification.h>
->  #include <crypto/public_key.h>
->  #include "module-internal.h"
-> 
-> -enum pkey_id_type {
-> -	PKEY_ID_PGP,		/* OpenPGP generated key ID */
-> -	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
-> -	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
-> -};
-> -
-> -/*
-> - * Module signature information block.
-> - *
-> - * The constituents of the signature section are, in order:
-> +/**
-> + * validate_module_signature - validate that the given signature is sane
->   *
-> - *	- Signer's name
-> - *	- Key identifier
-> - *	- Signature data
-> - *	- Information block
-> + * @ms:		Signature to validate.
-> + * @file_len:	Size of the file to which @ms is appended.
->   */
-> -struct module_signature {
-> -	u8	algo;		/* Public-key crypto algorithm [0] */
-> -	u8	hash;		/* Digest algorithm [0] */
-> -	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-> -	u8	signer_len;	/* Length of signer's name [0] */
-> -	u8	key_id_len;	/* Length of key identifier [0] */
-> -	u8	__pad[3];
-> -	__be32	sig_len;	/* Length of signature data */
-> -};
-> +int validate_module_signature(const struct module_signature *ms, size_t file_len)
-> +{
-> +	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
-> +		return -EBADMSG;
-> +	else if (ms->id_type != PKEY_ID_PKCS7) {
-> +		pr_err("Module is not signed with expected PKCS#7 message\n");
-> +		return -ENOPKG;
-> +	} else if (ms->algo != 0 ||
-> +		   ms->hash != 0 ||
-> +		   ms->signer_len != 0 ||
-> +		   ms->key_id_len != 0 ||
-> +		   ms->__pad[0] != 0 ||
-> +		   ms->__pad[1] != 0 ||
-> +		   ms->__pad[2] != 0) {
-> +		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
-> +		return -EBADMSG;
-> +	}
-> +
-> +	return 0;
-> +}
-> 
->  /*
->   * Verify the signature on a module.
-> @@ -49,6 +51,7 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
->  {
->  	struct module_signature ms;
->  	size_t modlen = *_modlen, sig_len;
-> +	int ret;
-> 
->  	pr_devel("==>%s(,%zu)\n", __func__, modlen);
-> 
-> @@ -56,30 +59,15 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
->  		return -EBADMSG;
-> 
->  	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
-> -	modlen -= sizeof(ms);
-> +
-> +	ret = validate_module_signature(&ms, modlen);
-> +	if (ret)
-> +		return ret;
-> 
->  	sig_len = be32_to_cpu(ms.sig_len);
-> -	if (sig_len >= modlen)
-> -		return -EBADMSG;
-> -	modlen -= sig_len;
-> +	modlen -= sig_len + sizeof(ms);
->  	*_modlen = modlen;
-> 
-> -	if (ms.id_type != PKEY_ID_PKCS7) {
-> -		pr_err("Module is not signed with expected PKCS#7 message\n");
-> -		return -ENOPKG;
-> -	}
-> -
-> -	if (ms.algo != 0 ||
-> -	    ms.hash != 0 ||
-> -	    ms.signer_len != 0 ||
-> -	    ms.key_id_len != 0 ||
-> -	    ms.__pad[0] != 0 ||
-> -	    ms.__pad[1] != 0 ||
-> -	    ms.__pad[2] != 0) {
-> -		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
-> -		return -EBADMSG;
-> -	}
-> -
->  	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
->  				      NULL, VERIFYING_MODULE_SIGNATURE,
->  				      NULL, NULL);
 
+> [...]
+>> --- a/kernel/module.c
+>> +++ b/kernel/module.c
+> [...]
+>> +static int modules_autoload_privileged_access(const char *name)
+>> +{
+>> +     if (capable(CAP_SYS_MODULE))
+>> +             return 0;
+>> +     else if (name && strstr(name, "netdev-") && capable(CAP_NET_ADMIN))
+> [...]
+>
+> We want a prefix match, so use strncmp() not strstr().
+
+Indeed, will fix it.
+
+Thanks!
+
+
+> Ben.
+>
+> --
+> Ben Hutchings
+> It is easier to change the specification to fit the program than vice
+> versa.
+>
+
+
+
+-- 
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
