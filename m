@@ -1,37 +1,95 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Wed, 19 Apr 2017 20:08:02 -0400
-Subject: [PATCH] make TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <alpine.LRH.2.20.1704192114270.12914@namei.org>
-References: <20170419034526.18565-1-matt@nmatt.com>
-	<alpine.LRH.2.20.1704192114270.12914@namei.org>
-Message-ID: <4a7ab5c3-590e-891f-61ce-534483dc2ec6@nmatt.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 19 Apr 2017 18:48:47 -0700
+Subject: [PATCH net-next v6 04/11] landlock: Add LSM hooks related to
+	filesystem
+In-Reply-To: <35272f2b-ec5f-d032-ae2e-9fc0b4c0e2e3@digikod.net>
+References: <20170328234650.19695-1-mic@digikod.net>
+	<20170328234650.19695-5-mic@digikod.net>
+	<CAGXu5jJKNp8R5kZ1U=K7KwgnV=NvH5aoAbftA-05a_Sa4pOg1Q@mail.gmail.com>
+	<9a69055a-b4cf-00b0-da5e-2e45ff88059c@digikod.net>
+	<c122415d-c2be-d013-efb4-833ba87d144d@schaufler-ca.com>
+	<CAGXu5jKCr1qPqJ8YWAjK1Lj-fThAhMnrxFW8twFcj6C9ODBpsA@mail.gmail.com>
+	<35272f2b-ec5f-d032-ae2e-9fc0b4c0e2e3@digikod.net>
+Message-ID: <CAGXu5jJCvJ6-uZ=Kfhh3xD7UvaY+G99e9NXFMzvi=9OQzA6Ecg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/19/2017 07:18 AM, James Morris wrote:
-> On Tue, 18 Apr 2017, Matt Brown wrote:
+On Wed, Apr 19, 2017 at 3:03 PM, Micka?l Sala?n <mic@digikod.net> wrote:
 >
->> This patch reproduces GRKERNSEC_HARDEN_TTY functionality from the grsecurity
->> project in-kernel.
+> On 19/04/2017 01:40, Kees Cook wrote:
+>> On Tue, Apr 18, 2017 at 4:16 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 4/18/2017 3:44 PM, Micka?l Sala?n wrote:
+>>>> On 19/04/2017 00:17, Kees Cook wrote:
+>>>>> On Tue, Mar 28, 2017 at 4:46 PM, Micka?l Sala?n <mic@digikod.net> wrote:
+>>>>>> +void __init landlock_add_hooks(void)
+>>>>>> +{
+>>>>>> +       pr_info("landlock: Version %u", LANDLOCK_VERSION);
+>>>>>> +       landlock_add_hooks_fs();
+>>>>>> +       security_add_hooks(NULL, 0, "landlock");
+>>>>>> +       bpf_register_prog_type(&bpf_landlock_type);
+>>>>> I'm confused by the separation of hook registration here. The call to
+>>>>> security_add_hooks is with count=0 is especially weird. Why isn't this
+>>>>> just a single call with security_add_hooks(landlock_hooks,
+>>>>> ARRAY_SIZE(landlock_hooks), "landlock")?
+>>>> Yes, this is ugly with the new security_add_hooks() with three arguments
+>>>> but I wanted to split the hooks definition in multiple files.
+>>>
+>>> Why? I'll buy a good argument, but there are dangers in
+>>> allowing multiple calls to security_add_hooks().
 >
-> It seems like an ugly hack to an ugly feature (CAP_SYS_ADMIN barely makes
-> sense here), and rather than sprinkling these types of things throughout
-> the kernel, I wonder if it might be better to implement it via LSM, in the
-> YAMA module.
+> I prefer to have one file per hook "family" (e.g. filesystem, network,
+> ptrace?). This reduce the mess with all the included files (needed for
+> LSM hook argument types) and make the files easier to read, understand
+> and maintain.
 >
+>>>
+>>>>
+>>>> The current security_add_hooks() use lsm_append(lsm, &lsm_names) which
+>>>> is not exported. Unfortunately, calling multiple security_add_hooks()
+>>>> with the same LSM name would register multiple names for the same LSM?
+>>>> Is it OK if I modify this function to not add duplicated entries?
+>>>
+>>> It may seem absurd, but it's conceivable that a module might
+>>> have two hooks it wants called. My example is a module that
+>>> counts the number of times SELinux denies a process access to
+>>> things (which needs to be called before and after SELinux in
+>>> order to detect denials) and takes "appropriate action" if
+>>> too many denials occur. It would be weird, wonky and hackish,
+>>> but that never stopped anybody before.
+>
+> Right, but now, with the new lsm_append(), module names are concatenated
+> ("%s,%s") in the lsm_names variable. It would be nice to not pollute
+> this string with multiple time the same module name.
+
+Perhaps security_add_hooks could be modified to accept a NULL lsm to
+skip the lsm_append() call, so it could do:
+
+security_add_hooks(hooks1, count1, NULL);
+security_add_hooks(hooks2, count2, NULL);
+security_add_hooks(NULL, 0, "landlock");
+
+Or, as Casey suggests, disregard adding the name when it already exists:
+
+security_add_hooks(hooks1, count1, "landlock");
+security_add_hooks(hooks2, count2, "landlock");
+
+Yeah, I think I prefer this...
+
+-Kees
+
+>
+>>
+>> If ends up being sane and clear, I'm fine with allowing multiple calls.
+>>
+>> -Kees
+>>
 >
 
-CAP_SYS_ADMIN is already used in the TIOCSTI TTY code to allow
-character insertion into TTYs other than the caller's controlling
-terminal. This is done because different TTYs indicate a security
-boundary that should only be able to be crossed by a privileged
-process. This patch would merely extend this security boundary
-protection to include unprivileged processes from utilizing a common
-TTY to step across a security boundary.
 
->
-> - James
->
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
