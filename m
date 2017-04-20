@@ -1,47 +1,33 @@
 From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
-Date: Thu, 20 Apr 2017 18:28:36 -0400
-Subject: [PATCH v4 0/4] Certificate insertion support for x86 bzImages
-Message-ID: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
+Date: Thu, 20 Apr 2017 18:28:40 -0400
+Subject: [PATCH v4 4/4] KEYS: Print insert-sys-cert information to stdout
+	instead of stderr
+In-Reply-To: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
+References: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
+Message-ID: <1492727320-26194-5-git-send-email-mkayaalp@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-These patches add support for modifying the reserved space for extra
-certificates in a compressed bzImage in x86. This allows separating the
-system keyring certificate from the kernel build process. After the kernel
-image is distributed, the insert-sys-cert script can be used to insert the
-certificate for x86.
+Detailed INFO output should go to stdout instead of stderr.
 
-Changes:
+Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+---
+ scripts/insert-sys-cert.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v4:
-* Applied checkpatch.pl suggestions (2/4, 3/4)
-* Cleaned up the commit messages (1/4, 2/4)
-* Added the build file to .gitignore (1/4)
-
-v3:
-* Rewrote 1/4 to insert incompressible bytes are at build time. Previous
-solution required changes to <arch>/boot/Makefile's for modifying the
-vmlinux file after linking, and did not work well with cross compilation.
-* Added 2/4 for ELF class-independent processing of vmlinux file, in case
-the script was compiled for 64-bit and the kernel was compiled for 32-bit.
-* Reordered 3/4, added x86 bzImage boot version (>=2.08) verification.
-
-v2:
-* Rebased arch/boot/x86/Makefile patch (removed in v3)
-
-Mehmet Kayaalp (4):
-  KEYS: Insert incompressible bytes to reserve space in bzImage
-  KEYS: Add ELF class-independent certificate insertion support
-  KEYS: Support for inserting a certificate into x86 bzImage
-  KEYS: Print insert-sys-cert information to stdout instead of stderr
-
- certs/.gitignore            |   1 +
- certs/Makefile              |  21 +-
- certs/system_certificates.S |   2 +-
- scripts/Makefile            |   1 +
- scripts/insert-sys-cert.c   | 453 +++++++++++++++++++++++++++++++++-----------
- 5 files changed, 361 insertions(+), 117 deletions(-)
-
+diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
+index f558616..56c5482 100644
+--- a/scripts/insert-sys-cert.c
++++ b/scripts/insert-sys-cert.c
+@@ -32,7 +32,7 @@
+ #define USED_SYM  "system_extra_cert_used"
+ #define LSIZE_SYM "system_certificate_list_size"
+ 
+-#define info(format, args...) fprintf(stderr, "INFO:    " format, ## args)
++#define info(format, args...) fprintf(stdout, "INFO:    " format, ## args)
+ #define warn(format, args...) fprintf(stdout, "WARNING: " format, ## args)
+ #define  err(format, args...) fprintf(stderr, "ERROR:   " format, ## args)
+ 
 -- 
 2.7.4
 
