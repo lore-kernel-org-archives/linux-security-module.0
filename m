@@ -1,45 +1,101 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Apr 2017 14:28:59 -0700
-Subject: [kernel-hardening] Re: [PATCH v3 1/2] modules:capabilities:
-	automatic module loading restriction
-In-Reply-To: <CAEiveUdFL53XyQpacmN6f8F28M0bLQDcetpRXJjrJ10vDmQi8Q@mail.gmail.com>
-References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
-	<1492640420-27345-2-git-send-email-tixxdz@gmail.com>
-	<1492654942.31767.21.camel@decadent.org.uk>
-	<CAEiveUdS=GbyxDVeNFrjTmhvQB-a6UgrJXcGY=BYJLu+3z0x_Q@mail.gmail.com>
-	<1492700543.31767.23.camel@decadent.org.uk>
-	<CAEiveUdFL53XyQpacmN6f8F28M0bLQDcetpRXJjrJ10vDmQi8Q@mail.gmail.com>
-Message-ID: <CAGXu5j+L9=tGH2xCKJ53NDYRM8PVVYyC2R8w7uahBO88cftZNg@mail.gmail.com>
+From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
+Date: Thu, 20 Apr 2017 18:28:37 -0400
+Subject: [PATCH v4 1/4] KEYS: Insert incompressible bytes to reserve space in
+	bzImage
+In-Reply-To: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
+References: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
+Message-ID: <1492727320-26194-2-git-send-email-mkayaalp@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Apr 20, 2017 at 1:39 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
-> On Thu, Apr 20, 2017 at 5:02 PM, Ben Hutchings <ben@decadent.org.uk> wrote:
->> On Thu, 2017-04-20 at 14:44 +0200, Djalal Harouni wrote:
->>> > On Thu, Apr 20, 2017 at 4:22 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
->>> > On Thu, 2017-04-20 at 00:20 +0200, Djalal Harouni wrote:
->>> > [...]
-> [...]
->>> modules_disabled is too restrictive and once set it can't be changed,
->>> maybe that's why not all users use it.
->>>
->>> With modules_disabled=0 and modules_autoload=2
->> [...]
->>
->> Hmm, OK.  How about naming this modules_autoload_mode, then, so that
->> it's obviously not a boolean?
->
-> Yes that's fine by me, kees already suggested to rename it to
-> "modules_autoload" I can change it to that if it's the best
-> suggestion!
+Include a random filled binary in vmlinux at the space reserved with
+CONFIG_SYSTEM_EXTRA_CERTIFICATE. This results in an uncompressed reserved
+area inside the bzImage as well, so that it can be replaced with an actual
+certificate later (after the bzImage is distributed).
 
-That's fine by me.
+The bzImage contains a stripped ELF file with one section containing the
+compressed vmlinux. If the reserved space is initially filled with zeros,
+certificate insertion will cause a size increase in the compressed vmlinux.
+In that case, reconstructing the bzImage would require relocation. To avoid
+this situation, the reserved space is initially filled with random bytes.
+Since a certificate contains some compressible bytes, after insertion the
+vmlinux will hopefully be compressed to a smaller size.
 
--Kees
+Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+---
+ certs/.gitignore            |  1 +
+ certs/Makefile              | 21 ++++++++++++++++++---
+ certs/system_certificates.S |  2 +-
+ 3 files changed, 20 insertions(+), 4 deletions(-)
 
+diff --git a/certs/.gitignore b/certs/.gitignore
+index f51aea4..4ecc8dd 100644
+--- a/certs/.gitignore
++++ b/certs/.gitignore
+@@ -2,3 +2,4 @@
+ # Generated files
+ #
+ x509_certificate_list
++extra_cert_placeholder
+diff --git a/certs/Makefile b/certs/Makefile
+index 4119bb3..ad04feb 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -15,7 +15,12 @@ ifeq ($(CONFIG_SYSTEM_TRUSTED_KEYRING),y)
+ $(eval $(call config_filename,SYSTEM_TRUSTED_KEYS))
+ 
+ # GCC doesn't include .incbin files in -MD generated dependencies (PR#66871)
+-$(obj)/system_certificates.o: $(obj)/x509_certificate_list
++ifeq ($(CONFIG_SYSTEM_EXTRA_CERTIFICATE),y)
++system_certs_incbin = $(obj)/x509_certificate_list $(obj)/extra_cert_placeholder
++else
++system_certs_incbin = $(obj)/x509_certificate_list
++endif
++$(obj)/system_certificates.o: $(system_certs_incbin)
+ 
+ # Cope with signing_key.x509 existing in $(srctree) not $(objtree)
+ AFLAGS_system_certificates.o := -I$(srctree)
+@@ -23,12 +28,22 @@ AFLAGS_system_certificates.o := -I$(srctree)
+ quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
+       cmd_extract_certs  = scripts/extract-cert $(2) $@ || ( rm $@; exit 1)
+ 
+-targets += x509_certificate_list
++targets += $(system_certs_incbin)
+ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(SYSTEM_TRUSTED_KEYS_FILENAME) FORCE
+ 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
++
++ifeq ($(CONFIG_SYSTEM_EXTRA_CERTIFICATE),y)
++# Generate incompressible bytes. Use seed to make it reproducible
++quiet_cmd_placeholder = EXTRA_CERT_PLACEHOLDER
++      cmd_placeholder = perl -e 'srand(0); printf("%c", int(rand(256))) for (1..$(2))' > $@
++
++$(obj)/extra_cert_placeholder: FORCE
++	$(call if_changed,placeholder,$(CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE))
++endif
++
+ endif
+ 
+-clean-files := x509_certificate_list .x509.list
++clean-files := $(system_certs_incbin) .x509.list
+ 
+ ifeq ($(CONFIG_MODULE_SIG),y)
+ ###############################################################################
+diff --git a/certs/system_certificates.S b/certs/system_certificates.S
+index c9ceb71..02b9222 100644
+--- a/certs/system_certificates.S
++++ b/certs/system_certificates.S
+@@ -17,7 +17,7 @@ __cert_list_end:
+ 	.globl VMLINUX_SYMBOL(system_extra_cert)
+ 	.size system_extra_cert, CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE
+ VMLINUX_SYMBOL(system_extra_cert):
+-	.fill CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE, 1, 0
++	.incbin "certs/extra_cert_placeholder"
+ 
+ 	.align 4
+ 	.globl VMLINUX_SYMBOL(system_extra_cert_used)
 -- 
-Kees Cook
-Pixel Security
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
