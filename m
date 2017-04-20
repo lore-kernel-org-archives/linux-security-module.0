@@ -1,346 +1,47 @@
 From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
-Date: Thu, 20 Apr 2017 18:28:39 -0400
-Subject: [PATCH v4 3/4] KEYS: Support for inserting a certificate into x86
-	bzImage
-In-Reply-To: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
-References: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
-Message-ID: <1492727320-26194-4-git-send-email-mkayaalp@linux.vnet.ibm.com>
+Date: Thu, 20 Apr 2017 18:28:36 -0400
+Subject: [PATCH v4 0/4] Certificate insertion support for x86 bzImages
+Message-ID: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The config option SYSTEM_EXTRA_CERTIFICATE (introduced in c4c361059585)
-reserves space in vmlinux file, which is compressed to create the
-self-extracting bzImage. This patch adds the capability of extracting the
-vmlinux, inserting the certificate, and repackaging the result into a
-bzImage.
+These patches add support for modifying the reserved space for extra
+certificates in a compressed bzImage in x86. This allows separating the
+system keyring certificate from the kernel build process. After the kernel
+image is distributed, the insert-sys-cert script can be used to insert the
+certificate for x86.
 
-It only works if the resulting compressed vmlinux is smaller than the
-original. Otherwise re-linking would be required. To make the reserved
-space allocate actual space in bzImage, incompressible bytes are
-inserted into the vmlinux as a placeholder for the extra certificate.
-After receiving a bzImage that is created this way, the actual
-certificate can be inserted into the bzImage:
+Changes:
 
-	scripts/insert-sys-cert -s <System.map> -z <bzImage> -c <certfile>
+v4:
+* Applied checkpatch.pl suggestions (2/4, 3/4)
+* Cleaned up the commit messages (1/4, 2/4)
+* Added the build file to .gitignore (1/4)
 
-Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
----
- scripts/insert-sys-cert.c | 236 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 231 insertions(+), 5 deletions(-)
+v3:
+* Rewrote 1/4 to insert incompressible bytes are at build time. Previous
+solution required changes to <arch>/boot/Makefile's for modifying the
+vmlinux file after linking, and did not work well with cross compilation.
+* Added 2/4 for ELF class-independent processing of vmlinux file, in case
+the script was compiled for 64-bit and the kernel was compiled for 32-bit.
+* Reordered 3/4, added x86 bzImage boot version (>=2.08) verification.
 
-diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
-index 86a3d41..f558616 100644
---- a/scripts/insert-sys-cert.c
-+++ b/scripts/insert-sys-cert.c
-@@ -7,7 +7,8 @@
-  * This software may be used and distributed according to the terms
-  * of the GNU General Public License, incorporated herein by reference.
-  *
-- * Usage: insert-sys-cert [-s <System.map> -b <vmlinux> -c <certfile>
-+ * Usage: insert-sys-cert [-s <System.map>] -b <vmlinux> -c <certfile>
-+ *                        [-s <System.map>] -z <bzImage> -c <certfile>
-  */
- 
- #define _GNU_SOURCE
-@@ -230,6 +231,208 @@ static char *read_file(char *file_name, int *size)
- 	return buf;
- }
- 
-+#define BOOT_FLAG		0xAA55
-+#define MAGIC			0x53726448
-+
-+#define BOOT_FLAG_O		0x1FE
-+#define MAGIC_O			0x202
-+#define VERSION_O		0x206
-+#define SETUP_SECTS_O		0x1F1
-+#define PAYLOAD_OFFSET_O	0x248
-+#define PAYLOAD_LENGTH_O	0x24C
-+
-+static int image_supported(char *bzimage, int bzimage_size)
-+{
-+	u16 boot_flag;
-+	u32 magic;
-+	u16 version;
-+
-+	if (bzimage_size < 1024) {
-+		err("Invalid bzImage: File is too small\n");
-+		return 0;
-+	}
-+
-+	boot_flag = *((u16 *)&bzimage[BOOT_FLAG_O]);
-+	magic = *((u32 *)&bzimage[MAGIC_O]);
-+	version = *((u16 *)&bzimage[VERSION_O]);
-+
-+	if (boot_flag != BOOT_FLAG || magic != MAGIC) {
-+		err("Invalid bzImage: Magic mismatch\n");
-+		return 0;
-+	}
-+
-+	if (version < 0x208) {
-+		err("Invalid bzImage: Boot version <2.08 not supported\n");
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
-+static void get_payload_info(char *bzimage, int *offset, int *size)
-+{
-+	unsigned int system_offset;
-+	unsigned char setup_sectors;
-+
-+	setup_sectors = bzimage[SETUP_SECTS_O] + 1;
-+	system_offset = setup_sectors * 512;
-+	*offset = system_offset + *((int *)&bzimage[PAYLOAD_OFFSET_O]);
-+	*size = *((int *)&bzimage[PAYLOAD_LENGTH_O]);
-+}
-+
-+static void update_payload_info(char *bzimage, int new_size)
-+{
-+	int offset, size;
-+
-+	get_payload_info(bzimage, &offset, &size);
-+	*((int *)&bzimage[PAYLOAD_LENGTH_O]) = new_size;
-+	if (new_size < size)
-+		memset(bzimage + offset + new_size, 0, size - new_size);
-+}
-+
-+struct zipper {
-+	unsigned char pattern[10];
-+	int length;
-+	char *command;
-+	char *compress;
-+};
-+
-+struct zipper zippers[] = {
-+	{{0x7F, 'E', 'L', 'F'},
-+	 4, "cat", "cat"},
-+	{{0x1F, 0x8B},
-+	 2, "gunzip", "gzip -n -f -9"},
-+	{{0xFD, '7', 'z', 'X', 'Z', 0},
-+	 6, "unxz", "xz"},
-+	{{'B', 'Z', 'h'},
-+	 3, "bunzip2", "bzip2 -9"},
-+	{{0xFF, 'L', 'Z', 'M', 'A', 0},
-+	 6, "unlzma", "lzma -9"},
-+	{{0xD3, 'L', 'Z', 'O', 0, '\r', '\n', 0x20, '\n'},
-+	 9, "lzop -d", "lzop -9"}
-+};
-+
-+static struct zipper *get_zipper(char *p)
-+{
-+	int i;
-+
-+	for (i = 0; i < sizeof(zippers) / sizeof(struct zipper); i++) {
-+		if (memcmp(p, zippers[i].pattern, zippers[i].length) == 0)
-+			return &zippers[i];
-+	}
-+	return NULL;
-+}
-+
-+/*
-+ * This only works for x86 bzImage
-+ */
-+static void extract_vmlinux(char *bzimage, int bzimage_size,
-+			    char **file, struct zipper **zipper)
-+{
-+	int r;
-+	char src[15] = "vmlinux-XXXXXX";
-+	char dest[15] = "vmlinux-XXXXXX";
-+	char cmd[100];
-+	int src_fd, dest_fd;
-+	int offset, size;
-+	struct zipper *z;
-+
-+	if (!image_supported(bzimage, bzimage_size))
-+		return;
-+
-+	get_payload_info(bzimage, &offset, &size);
-+	z = get_zipper(bzimage + offset);
-+	if (!z) {
-+		err("Unable to determine the compression of vmlinux\n");
-+		return;
-+	}
-+
-+	src_fd = mkstemp(src);
-+	if (src_fd == -1) {
-+		perror("Could not create temp file");
-+		return;
-+	}
-+
-+	r = write(src_fd, bzimage + offset, size);
-+	if (r != size) {
-+		perror("Could not write vmlinux");
-+		return;
-+	}
-+	dest_fd = mkstemp(dest);
-+	if (dest_fd == -1) {
-+		perror("Could not create temp file");
-+		return;
-+	}
-+
-+	snprintf(cmd, sizeof(cmd), "%s <%s >%s", z->command, src, dest);
-+	info("Executing: %s\n", cmd);
-+	r = system(cmd);
-+	if (r != 0)
-+		warn("Possible errors when extracting\n");
-+
-+	r = remove(src);
-+	if (r != 0)
-+		perror(src);
-+
-+	*file = strdup(dest);
-+	*zipper = z;
-+}
-+
-+static void repack_image(char *bzimage, int bzimage_size,
-+			 char *vmlinux_file, struct zipper *z)
-+{
-+	char tmp[15] = "vmlinux-XXXXXX";
-+	char cmd[100];
-+	int fd;
-+	struct stat st;
-+	int new_size;
-+	int r;
-+	int offset, size;
-+
-+	get_payload_info(bzimage, &offset, &size);
-+
-+	fd = mkstemp(tmp);
-+	if (fd == -1) {
-+		perror("Could not create temp file");
-+		return;
-+	}
-+	snprintf(cmd, sizeof(cmd), "%s <%s >%s",
-+		 z->compress, vmlinux_file, tmp);
-+
-+	info("Executing: %s\n", cmd);
-+	r = system(cmd);
-+	if (r != 0)
-+		warn("Possible errors when compressing\n");
-+
-+	r = remove(vmlinux_file);
-+	if (r != 0)
-+		perror(vmlinux_file);
-+
-+	if (fstat(fd, &st)) {
-+		perror("Could not determine file size");
-+		close(fd);
-+	}
-+	new_size = st.st_size;
-+	if (new_size > size) {
-+		err("Increase in compressed size is not supported.\n");
-+		err("Old size was %d, new size is %d\n", size, new_size);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	r = read(fd, bzimage + offset, new_size);
-+	if (r != new_size)
-+		perror(tmp);
-+
-+	r = remove(tmp);
-+	if (r != 0)
-+		perror(tmp);
-+
-+	/* x86 specific patching of bzimage */
-+	update_payload_info(bzimage, new_size);
-+
-+	/* TODO: update CRC */
-+}
-+
- static void print_sym(struct sym *s)
- {
- 	info("sym:    %s\n", s->name);
-@@ -240,18 +443,23 @@ static void print_sym(struct sym *s)
- 
- static void print_usage(char *e)
- {
--	printf("Usage %s [-s <System.map>] -b <vmlinux> -c <certfile>\n", e);
-+	printf("Usage: %s [-s <System.map>] -b <vmlinux> -c <certfile>\n", e);
-+	printf("       %s [-s <System.map>] -z <bzImage> -c <certfile>\n", e);
- }
- 
- int main(int argc, char **argv)
- {
- 	char *system_map_file = NULL;
- 	char *vmlinux_file = NULL;
-+	char *bzimage_file = NULL;
- 	char *cert_file = NULL;
- 	int vmlinux_size;
-+	int bzimage_size;
- 	int cert_size;
- 	char *vmlinux;
- 	char *cert;
-+	char *bzimage = NULL;
-+	struct zipper *z = NULL;
- 	FILE *system_map;
- 	int *used;
- 	int opt;
-@@ -260,7 +468,7 @@ int main(int argc, char **argv)
- 	GElf_Ehdr hdr_s, *hdr;
- 	Elf_Scn *symtab = NULL;
- 
--	while ((opt = getopt(argc, argv, "b:c:s:")) != -1) {
-+	while ((opt = getopt(argc, argv, "b:z:c:s:")) != -1) {
- 		switch (opt) {
- 		case 's':
- 			system_map_file = optarg;
-@@ -268,6 +476,9 @@ int main(int argc, char **argv)
- 		case 'b':
- 			vmlinux_file = optarg;
- 			break;
-+		case 'z':
-+			bzimage_file = optarg;
-+			break;
- 		case 'c':
- 			cert_file = optarg;
- 			break;
-@@ -276,7 +487,9 @@ int main(int argc, char **argv)
- 		}
- 	}
- 
--	if (!vmlinux_file || !cert_file) {
-+	if (!cert_file ||
-+	    (!vmlinux_file && !bzimage_file) ||
-+	    (vmlinux_file && bzimage_file)) {
- 		print_usage(argv[0]);
- 		exit(EXIT_FAILURE);
- 	}
-@@ -285,6 +498,16 @@ int main(int argc, char **argv)
- 	if (!cert)
- 		exit(EXIT_FAILURE);
- 
-+	if (bzimage_file) {
-+		bzimage = map_file(bzimage_file, &bzimage_size);
-+		if (!bzimage)
-+			exit(EXIT_FAILURE);
-+
-+		extract_vmlinux(bzimage, bzimage_size, &vmlinux_file, &z);
-+		if (!vmlinux_file)
-+			exit(EXIT_FAILURE);
-+	}
-+
- 	vmlinux = map_file(vmlinux_file, &vmlinux_size);
- 	if (!vmlinux)
- 		exit(EXIT_FAILURE);
-@@ -372,7 +595,7 @@ int main(int argc, char **argv)
- 	}
- 
- 	/* If the existing cert is the same, don't overwrite */
--	if (cert_size == *used &&
-+	if (cert_size > 0 && cert_size == *used &&
- 	    strncmp(cert_sym.content, cert, cert_size) == 0) {
- 		warn("Certificate was already inserted.\n");
- 		exit(EXIT_SUCCESS);
-@@ -407,5 +630,8 @@ int main(int argc, char **argv)
- 		exit(EXIT_FAILURE);
- 	}
- 
-+	if (bzimage)
-+		repack_image(bzimage, bzimage_size, vmlinux_file, z);
-+
- 	exit(EXIT_SUCCESS);
- }
+v2:
+* Rebased arch/boot/x86/Makefile patch (removed in v3)
+
+Mehmet Kayaalp (4):
+  KEYS: Insert incompressible bytes to reserve space in bzImage
+  KEYS: Add ELF class-independent certificate insertion support
+  KEYS: Support for inserting a certificate into x86 bzImage
+  KEYS: Print insert-sys-cert information to stdout instead of stderr
+
+ certs/.gitignore            |   1 +
+ certs/Makefile              |  21 +-
+ certs/system_certificates.S |   2 +-
+ scripts/Makefile            |   1 +
+ scripts/insert-sys-cert.c   | 453 +++++++++++++++++++++++++++++++++-----------
+ 5 files changed, 361 insertions(+), 117 deletions(-)
+
 -- 
 2.7.4
 
