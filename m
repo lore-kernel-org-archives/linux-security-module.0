@@ -1,57 +1,39 @@
-From: chrubis@suse.cz (Cyril Hrubis)
-Date: Thu, 20 Apr 2017 14:57:50 +0200
-Subject: [LTP] [lkp-robot] [KEYS]  bdf7c0f8bf: ltp.add_key02.fail
-In-Reply-To: <20170417172955.GA31469@gmail.com>
-References: <20170401213428.17097-1-ebiggers3@gmail.com>
-	<20170417062641.GN31394@yexl-desktop>
-	<20170417172955.GA31469@gmail.com>
-Message-ID: <20170420125750.GD10246@rei.lan>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 20 Apr 2017 15:37:37 +0100
+Subject: [PATCH 5/6] MODSIGN: Export module signature definitions.
+In-Reply-To: <1492691712.3081.85.camel@linux.vnet.ibm.com>
+References: <1492691712.3081.85.camel@linux.vnet.ibm.com>
+	<1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
+	<1492546666-16615-6-git-send-email-bauerman@linux.vnet.ibm.com>
+Message-ID: <21102.1492699057@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi!
-> > commit: bdf7c0f8bf282ba44827ce3c7fd7936c8e90a18a ("KEYS: fix dereferencing NULL payload with nonzero length")
-> > url: https://github.com/0day-ci/linux/commits/Eric-Biggers/KEYS-fix-dereferencing-NULL-payload-with-nonzero-length/20170403-102013
-> > base: https://git.kernel.org/cgit/linux/kernel/git/jmorris/linux-security.git next
+Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+
+> On Tue, 2017-04-18 at 17:17 -0300, Thiago Jung Bauermann wrote:
+> > IMA will use the module_signature format for append signatures, so export
+> > the relevant definitions and factor out the code which verifies that the
+> > appended signature trailer is valid.
 > > 
-> ...
-> > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> > 
-> > 
-> > user  :notice: [   45.447047] <<<test_start>>>
-> > 
-> > user  :notice: [   45.447365] tag=add_key02 stime=1492169102
-> > 
-> > user  :notice: [   45.447567] cmdline="add_key02"
-> > 
-> > user  :notice: [   45.447685] contacts=""
-> > 
-> > user  :notice: [   45.447826] analysis=exit
-> > 
-> > user  :notice: [   45.448011] <<<test_output>>>
-> > 
-> > user  :notice: [   45.448568] tst_test.c:760: INFO: Timeout per run is 0h 05m 00s
-> > 
-> > user  :notice: [   45.449439] add_key02.c:65: FAIL: add_key() failed unexpectedly, expected EINVAL: EFAULT
+> > Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
+> > and be able to use validate_module_signature without having to depend on
+> > CONFIG_MODULE_SIG.
 > 
-> In my opinion this is a valid behavior, and the test is just weird; it's passing
-> in *both* an unaddressable payload and an invalid description, so it's not clear
-> which case it's meant to be testing.  (Generally, if a syscall will fail for
-> more than one reason, it's not guaranteed which error code you'll get.)
+> Basically we want to generalize the concept of an appended signature.
+> ?Referring to it as a "module signature format" seems a bit confusing.
+> 
+> David, would you have a problem with changing the appended string from
+> "~Module signature appended~\n" to something more generic?
 
-That is quite common problem with LTP testcases. Do you care to send a
-patch or should I fix that?
+Conceptually, no.  Is it possible that doing so could break someone's module
+that they load on multiple versions of the kernel?  Say a module that only
+exports things and doesn't use anything from the core or any other module.
 
-> In any case, once we have a fix merged, it would be nice for there to be an ltp
-> test added for the "NULL payload with nonzero length" case with one of the key
-> types that crashed the kernel.
+Also, it needs to reasonably long and distinct enough to prevent a false
+positive match.
 
-Here as well, feel free to send a patch or at least point us to a
-reproducer that could be turned into a testcase.
-
--- 
-Cyril Hrubis
-chrubis at suse.cz
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
