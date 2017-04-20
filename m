@@ -1,60 +1,204 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Thu, 20 Apr 2017 11:04:40 +0800
-Subject: [PATCH 6/6] ima: Support appended signatures for appraisal
-In-Reply-To: <1492546666-16615-7-git-send-email-bauerman@linux.vnet.ibm.com>
-Message-ID: <201704201148.IPsFhl4B%fengguang.wu@intel.com>
+From: matt@nmatt.com (Matt Brown)
+Date: Thu, 20 Apr 2017 00:44:41 -0400
+Subject: [PATCH] make TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170419235342.GA2305@mail.hallyn.com>
+References: <20170419034526.18565-1-matt@nmatt.com>
+	<20170419045813.GA17990@mail.hallyn.com>
+	<a6b8f9ab-d5f8-51fb-0481-89907c43289f@nmatt.com>
+	<20170419235342.GA2305@mail.hallyn.com>
+Message-ID: <59d67e42-3532-6001-91cb-067bff1eec64@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Thiago,
+On 04/19/2017 07:53 PM, Serge E. Hallyn wrote:
+> Quoting Matt Brown (matt at nmatt.com):
+>> On 04/19/2017 12:58 AM, Serge E. Hallyn wrote:
+>>> On Tue, Apr 18, 2017 at 11:45:26PM -0400, Matt Brown wrote:
+>>>> This patch reproduces GRKERNSEC_HARDEN_TTY functionality from the grsecurity
+>>>> project in-kernel.
+>>>>
+>>>> This will create the Kconfig SECURITY_TIOCSTI_RESTRICT and the corresponding
+>>>> sysctl kernel.tiocsti_restrict that, when activated, restrict all TIOCSTI
+>>>> ioctl calls from non CAP_SYS_ADMIN users.
+>>>>
+>>>> Possible effects on userland:
+>>>>
+>>>> There could be a few user programs that would be effected by this
+>>>> change.
+>>>> See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+>>>> notable programs are: agetty, csh, xemacs and tcsh
+>>>>
+>>>> However, I still believe that this change is worth it given that the
+>>>> Kconfig defaults to n. This will be a feature that is turned on for the
+>>>
+>>> It's not worthless, but note that for instance before this was fixed
+>>> in lxc, this patch would not have helped with escapes from privileged
+>>> containers.
+>>>
+>>
+>> I assume you are talking about this CVE:
+>> https://bugzilla.redhat.com/show_bug.cgi?id=1411256
+>>
+>> In retrospect, is there any way that an escape from a privileged
+>> container with the this bug could have been prevented?
+>
+> I don't know, that's what I was probing for.  Detecting that the pgrp
+> or session - heck, the pid namespace - has changed would seem like a
+> good indicator that it shouldn't be able to push.
+>
 
-[auto build test ERROR on security/next]
-[also build test ERROR on v4.11-rc7 next-20170419]
-[cannot apply to integrity/next]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+pgrp and session won't do because in the case we are discussing
+current->signal->tty is the same as tty.
 
-url:    https://github.com/0day-ci/linux/commits/Thiago-Jung-Bauermann/Appended-signatures-support-for-IMA-appraisal/20170419-053422
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-config: i386-randconfig-h0-04201028 (attached as .config)
-compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+This is the current check that is already in place:
+  | if ((current->signal->tty != tty) && !capable(CAP_SYS_ADMIN))
+  | 	return -EPERM;
 
-All errors (new ones prefixed by >>):
+The only thing I could find to detect the tty message coming from a
+container is as follows:
+  | task_active_pid_ns(current)->level
 
-   In file included from security/integrity/ima/ima_appraise.c:19:0:
-   include/keys/asymmetric-type.h: In function 'asymmetric_key_ids':
->> include/keys/asymmetric-type.h:76:12: error: dereferencing pointer to incomplete type 'const struct key'
-     return key->payload.data[asym_key_ids];
-               ^~
+This will be zero when run on the host, but 1 when run inside a
+container. However this is very much a hack and could probably break
+some userland stuff where there are multiple levels of namespaces.
 
-vim +76 include/keys/asymmetric-type.h
+The real problem is that there are no TTY namespaces. I don't think we
+can solve this problem for CAP_SYS_ADMIN containers unless we want to
+introduce a config that allows one to override normal CAP_SYS_ADMIN
+functionality by denying TIOCSTI ioctls for processes whom
+task_active_pid_ns(current)->level is equal to 0.
 
-7901c1a8 David Howells 2014-09-16  70  							    size_t len_1,
-7901c1a8 David Howells 2014-09-16  71  							    const void *val_2,
-7901c1a8 David Howells 2014-09-16  72  							    size_t len_2);
-146aa8b1 David Howells 2015-10-21  73  static inline
-146aa8b1 David Howells 2015-10-21  74  const struct asymmetric_key_ids *asymmetric_key_ids(const struct key *key)
-146aa8b1 David Howells 2015-10-21  75  {
-146aa8b1 David Howells 2015-10-21 @76  	return key->payload.data[asym_key_ids];
-146aa8b1 David Howells 2015-10-21  77  }
-7901c1a8 David Howells 2014-09-16  78  
-9eb02989 David Howells 2016-04-06  79  extern struct key *find_asymmetric_key(struct key *keyring,
+In the mean time, I think we can go ahead with this feature to give
+people the ability to lock down non CAP_SYS_ADMIN containers/processes.
 
-:::::: The code at line 76 was first introduced by commit
-:::::: 146aa8b1453bd8f1ff2304ffb71b4ee0eb9acdcc KEYS: Merge the type-specific data with the payload data
-
-:::::: TO: David Howells <dhowells@redhat.com>
-:::::: CC: David Howells <dhowells@redhat.com>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: .config.gz
-Type: application/gzip
-Size: 25689 bytes
-Desc: not available
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170420/76e9340a/attachment.bin>
+>>>> same reason that people activate it when using grsecurity. Users of this
+>>>> opt-in feature will realize that they are choosing security over some OS
+>>>> features like unprivileged TIOCSTI ioctls, as should be clear in the
+>>>> Kconfig help message.
+>>>>
+>>>> Threat Model/Patch Rational:
+>>>>
+>>>> >From grsecurity's config for GRKERNSEC_HARDEN_TTY.
+>>>>
+>>>> | There are very few legitimate uses for this functionality and it
+>>>> | has made vulnerabilities in several 'su'-like programs possible in
+>>>> | the past.  Even without these vulnerabilities, it provides an
+>>>> | attacker with an easy mechanism to move laterally among other
+>>>> | processes within the same user's compromised session.
+>>>>
+>>>> So if one process within a tty session becomes compromised it can follow
+>>>> that additional processes, that are thought to be in different security
+>>>> boundaries, can be compromised as a result. When using a program like su
+>>>> or sudo, these additional processes could be in a tty session where TTY file
+>>>> descriptors are indeed shared over privilege boundaries.
+>>>>
+>>>> This is also an excellent writeup about the issue:
+>>>> <http://www.halfdog.net/Security/2012/TtyPushbackPrivilegeEscalation/>
+>>>>
+>>>> Signed-off-by: Matt Brown <matt@nmatt.com>
+>>>> ---
+>>>> drivers/tty/tty_io.c |  4 ++++
+>>>> include/linux/tty.h  |  2 ++
+>>>> kernel/sysctl.c      | 12 ++++++++++++
+>>>> security/Kconfig     | 13 +++++++++++++
+>>>> 4 files changed, 31 insertions(+)
+>>>>
+>>>> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+>>>> index e6d1a65..31894e8 100644
+>>>> --- a/drivers/tty/tty_io.c
+>>>> +++ b/drivers/tty/tty_io.c
+>>>> @@ -2296,11 +2296,15 @@ static int tty_fasync(int fd, struct file *filp, int on)
+>>>>  *	FIXME: may race normal receive processing
+>>>>  */
+>>>>
+>>>> +int tiocsti_restrict = IS_ENABLED(CONFIG_SECURITY_TIOCSTI_RESTRICT);
+>>>> +
+>>>> static int tiocsti(struct tty_struct *tty, char __user *p)
+>>>> {
+>>>> 	char ch, mbz = 0;
+>>>> 	struct tty_ldisc *ld;
+>>>>
+>>>> +	if (tiocsti_restrict && !capable(CAP_SYS_ADMIN))
+>>>> +		return -EPERM;
+>>>> 	if ((current->signal->tty != tty) && !capable(CAP_SYS_ADMIN))
+>>>> 		return -EPERM;
+>>>> 	if (get_user(ch, p))
+>>>> diff --git a/include/linux/tty.h b/include/linux/tty.h
+>>>> index 1017e904..7011102 100644
+>>>> --- a/include/linux/tty.h
+>>>> +++ b/include/linux/tty.h
+>>>> @@ -342,6 +342,8 @@ struct tty_file_private {
+>>>> 	struct list_head list;
+>>>> };
+>>>>
+>>>> +extern int tiocsti_restrict;
+>>>> +
+>>>> /* tty magic number */
+>>>> #define TTY_MAGIC		0x5401
+>>>>
+>>>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>>>> index acf0a5a..68d1363 100644
+>>>> --- a/kernel/sysctl.c
+>>>> +++ b/kernel/sysctl.c
+>>>> @@ -67,6 +67,7 @@
+>>>> #include <linux/kexec.h>
+>>>> #include <linux/bpf.h>
+>>>> #include <linux/mount.h>
+>>>> +#include <linux/tty.h>
+>>>>
+>>>> #include <linux/uaccess.h>
+>>>> #include <asm/processor.h>
+>>>> @@ -833,6 +834,17 @@ static struct ctl_table kern_table[] = {
+>>>> 		.extra2		= &two,
+>>>> 	},
+>>>> #endif
+>>>> +#if defined CONFIG_TTY
+>>>> +	{
+>>>> +		.procname	= "tiocsti_restrict",
+>>>> +		.data		= &tiocsti_restrict,
+>>>> +		.maxlen		= sizeof(int),
+>>>> +		.mode		= 0644,
+>>>> +		.proc_handler	= proc_dointvec_minmax_sysadmin,
+>>>> +		.extra1		= &zero,
+>>>> +		.extra2		= &one,
+>>>> +	},
+>>>> +#endif
+>>>> 	{
+>>>> 		.procname	= "ngroups_max",
+>>>> 		.data		= &ngroups_max,
+>>>> diff --git a/security/Kconfig b/security/Kconfig
+>>>> index 3ff1bf9..7d13331 100644
+>>>> --- a/security/Kconfig
+>>>> +++ b/security/Kconfig
+>>>> @@ -18,6 +18,19 @@ config SECURITY_DMESG_RESTRICT
+>>>>
+>>>> 	  If you are unsure how to answer this question, answer N.
+>>>>
+>>>> +config SECURITY_TIOCSTI_RESTRICT
+>>>
+>>> This is an odd way to name this.  Shouldn't the name reflect that it
+>>> is setting the default, rather than enabling the feature?
+>>>
+>>> Besides that, I'm ok with the patch.
+>>>
+>>>> +	bool "Restrict unprivileged use of tiocsti command injection"
+>>>> +	default n
+>>>> +	help
+>>>> +	  This enforces restrictions on unprivileged users injecting commands
+>>>> +	  into other processes which share a tty session using the TIOCSTI
+>>>> +	  ioctl. This option makes TIOCSTI use require CAP_SYS_ADMIN.
+>>>> +
+>>>> +	  If this option is not selected, no restrictions will be enforced
+>>>> +	  unless the tiocsti_restrict sysctl is explicitly set to (1).
+>>>> +
+>>>> +	  If you are unsure how to answer this question, answer N.
+>>>> +
+>>>> config SECURITY
+>>>> 	bool "Enable different security models"
+>>>> 	depends on SYSFS
+>>>> --
+>>>> 2.10.2
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
