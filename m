@@ -1,66 +1,57 @@
-From: ben@decadent.org.uk (Ben Hutchings)
-Date: Thu, 20 Apr 2017 03:22:22 +0100
-Subject: [PATCH v3 1/2] modules:capabilities: automatic module loading
-	restriction
-In-Reply-To: <1492640420-27345-2-git-send-email-tixxdz@gmail.com>
+From: luto@kernel.org (Andy Lutomirski)
+Date: Wed, 19 Apr 2017 19:41:44 -0700
+Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
+	autoload restriction
+In-Reply-To: <CAGXu5jJ5dm8yJJ34tEyOP78OxUr2awXmNhm6RaVP8jE4q+L5Ng@mail.gmail.com>
 References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
-	<1492640420-27345-2-git-send-email-tixxdz@gmail.com>
-Message-ID: <1492654942.31767.21.camel@decadent.org.uk>
+	<1492640420-27345-3-git-send-email-tixxdz@gmail.com>
+	<CALCETrXFp-apnfRPg9qx6E7g3KDU8DanBW1pMUnA1zShrB5xKg@mail.gmail.com>
+	<CAGXu5jJ5dm8yJJ34tEyOP78OxUr2awXmNhm6RaVP8jE4q+L5Ng@mail.gmail.com>
+Message-ID: <CALCETrUueOx1tqj+Ru93KGpy2HHR-A_GQ6DrAppiomkPTtX7Lw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-04-20 at 00:20 +0200, Djalal Harouni wrote:
-[...]?
-> +modules_autoload:
-> +
-> +A sysctl to control if modules auto-load feature is allowed or not.
-> +This sysctl complements "modules_disabled" which is for all module
-> +operations where this flag applies only to automatic module loading.
-> +Automatic module loading happens when programs request a kernel feature
-> +that is implemented by an unloaded module, the kernel automatically
-> +runs the program pointed by "modprobe" sysctl in order to load the
-> +corresponding module.
-> +
-> +When modules_autoload is set to (0), the default, there are no
-> +restrictions.
-> +
-> +When modules_autoload is set to (1), processes must have CAP_SYS_MODULE
-> +to be able to trigger a module auto-load operation, or CAP_NET_ADMIN
-> +for modules with a 'netdev-%s' alias.
-> +
-> +When modules_autoload is set to (2), automatic module loading is
-> +disabled for all. Once set, this value can not be changed.
+On Wed, Apr 19, 2017 at 4:43 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Apr 19, 2017 at 4:15 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>> On Wed, Apr 19, 2017 at 3:20 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
+>>> +/* Sets task's modules_autoload */
+>>> +static inline int task_set_modules_autoload(struct task_struct *task,
+>>> +                                           unsigned long value)
+>>> +{
+>>> +       if (value > MODULES_AUTOLOAD_DISABLED)
+>>> +               return -EINVAL;
+>>> +       else if (task->modules_autoload > value)
+>>> +               return -EPERM;
+>>> +       else if (task->modules_autoload < value)
+>>> +               task->modules_autoload = value;
+>>> +
+>>> +       return 0;
+>>> +}
+>>
+>> This needs to be more locked down.  Otherwise someone could set this
+>> and then run a setuid program.  Admittedly, it would be quite odd if
+>> this particular thing causes a problem, but the issue exists
+>> nonetheless.
+>
+> Eeeh, I don't agree this needs to be changed. APIs provided by modules
+> are different than the existing privilege-manipulation syscalls this
+> concern stems from. Applications are already forced to deal with
+> things being missing like this in the face of it simply not being
+> built into the kernel.
+>
+> Having to hide this behind nnp seems like it'd reduce its utility...
+>
 
-I would expect a parameter 'modules_autoload' to be a boolean, so this
-behaviour would be surprising.
+I think that adding an inherited boolean to task_struct that can be
+set by unprivileged tasks and passed to privileged tasks is a terrible
+precedent.  Ideally someone would try to find all the existing things
+like this and kill them off.
 
-What is the point of mode 2?  Why would someone want to set
-modules_disabled=0 and modules_autoload=2?
-
-[...]
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-[...]
-> +static int modules_autoload_privileged_access(const char *name)
-> +{
-> +	if (capable(CAP_SYS_MODULE))
-> +		return 0;
-> +	else if (name && strstr(name, "netdev-") && capable(CAP_NET_ADMIN))
-[...]
-
-We want a prefix match, so use strncmp() not strstr().
-
-Ben.
-
--- 
-Ben Hutchings
-It is easier to change the specification to fit the program than vice
-versa.
-
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 833 bytes
-Desc: This is a digitally signed message part
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170420/f08fdf80/attachment.sig>
+I agree that I don't see how one would exploit this particular
+feature, but I still think I dislike the approach.  This is a slippery
+slope to adding a boolean for perf_event_open(), unshare(), etc, and
+we should solve these for real rather than half-arsing them IMO.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
