@@ -1,48 +1,45 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Thu, 20 Apr 2017 18:07:15 -0300
-Subject: [PATCH 5/6] MODSIGN: Export module signature definitions.
-In-Reply-To: <21102.1492699057@warthog.procyon.org.uk>
-References: <1492691712.3081.85.camel@linux.vnet.ibm.com>
-	<1492546666-16615-6-git-send-email-bauerman@linux.vnet.ibm.com>
-	<21102.1492699057@warthog.procyon.org.uk>
-Message-ID: <1544111.Uq9hhXcF4r@morokweng>
+From: keescook@chromium.org (Kees Cook)
+Date: Thu, 20 Apr 2017 14:28:59 -0700
+Subject: [kernel-hardening] Re: [PATCH v3 1/2] modules:capabilities:
+	automatic module loading restriction
+In-Reply-To: <CAEiveUdFL53XyQpacmN6f8F28M0bLQDcetpRXJjrJ10vDmQi8Q@mail.gmail.com>
+References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
+	<1492640420-27345-2-git-send-email-tixxdz@gmail.com>
+	<1492654942.31767.21.camel@decadent.org.uk>
+	<CAEiveUdS=GbyxDVeNFrjTmhvQB-a6UgrJXcGY=BYJLu+3z0x_Q@mail.gmail.com>
+	<1492700543.31767.23.camel@decadent.org.uk>
+	<CAEiveUdFL53XyQpacmN6f8F28M0bLQDcetpRXJjrJ10vDmQi8Q@mail.gmail.com>
+Message-ID: <CAGXu5j+L9=tGH2xCKJ53NDYRM8PVVYyC2R8w7uahBO88cftZNg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Am Donnerstag, 20. April 2017, 15:37:37 BRT schrieb David Howells:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > On Tue, 2017-04-18 at 17:17 -0300, Thiago Jung Bauermann wrote:
-> > > IMA will use the module_signature format for append signatures, so
-> > > export
-> > > the relevant definitions and factor out the code which verifies that the
-> > > appended signature trailer is valid.
-> > > 
-> > > Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
-> > > and be able to use validate_module_signature without having to depend on
-> > > CONFIG_MODULE_SIG.
-> > 
-> > Basically we want to generalize the concept of an appended signature.
-> >  Referring to it as a "module signature format" seems a bit confusing.
-> > 
-> > David, would you have a problem with changing the appended string from
-> > "~Module signature appended~\n" to something more generic?
-> 
-> Conceptually, no.  Is it possible that doing so could break someone's module
-> that they load on multiple versions of the kernel?  Say a module that only
-> exports things and doesn't use anything from the core or any other module.
+On Thu, Apr 20, 2017 at 1:39 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
+> On Thu, Apr 20, 2017 at 5:02 PM, Ben Hutchings <ben@decadent.org.uk> wrote:
+>> On Thu, 2017-04-20 at 14:44 +0200, Djalal Harouni wrote:
+>>> > On Thu, Apr 20, 2017 at 4:22 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
+>>> > On Thu, 2017-04-20 at 00:20 +0200, Djalal Harouni wrote:
+>>> > [...]
+> [...]
+>>> modules_disabled is too restrictive and once set it can't be changed,
+>>> maybe that's why not all users use it.
+>>>
+>>> With modules_disabled=0 and modules_autoload=2
+>> [...]
+>>
+>> Hmm, OK.  How about naming this modules_autoload_mode, then, so that
+>> it's obviously not a boolean?
+>
+> Yes that's fine by me, kees already suggested to rename it to
+> "modules_autoload" I can change it to that if it's the best
+> suggestion!
 
-I think that changing the appended string has limited value because very few 
-people actually see them. It's just a marker. We could s/module_signature/
-appended_signature/ in the code but keep the actual string unchanged. What do 
-you think?
+That's fine by me.
 
-Alternatively, we could change the string but accept both the old and the new 
-string for backwards compatibility.
+-Kees
 
 -- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
