@@ -1,40 +1,66 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 20 Apr 2017 15:37:37 +0100
-Subject: [PATCH 5/6] MODSIGN: Export module signature definitions.
-In-Reply-To: <1492691712.3081.85.camel@linux.vnet.ibm.com>
-References: <1492691712.3081.85.camel@linux.vnet.ibm.com>
-	<1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1492546666-16615-6-git-send-email-bauerman@linux.vnet.ibm.com>
-Message-ID: <21102.1492699057@warthog.procyon.org.uk>
+From: ben@decadent.org.uk (Ben Hutchings)
+Date: Thu, 20 Apr 2017 16:02:23 +0100
+Subject: [kernel-hardening] Re: [PATCH v3 1/2] modules:capabilities:
+	automatic module loading restriction
+In-Reply-To: <CAEiveUdS=GbyxDVeNFrjTmhvQB-a6UgrJXcGY=BYJLu+3z0x_Q@mail.gmail.com>
+References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
+	<1492640420-27345-2-git-send-email-tixxdz@gmail.com>
+	<1492654942.31767.21.camel@decadent.org.uk>
+	<CAEiveUdS=GbyxDVeNFrjTmhvQB-a6UgrJXcGY=BYJLu+3z0x_Q@mail.gmail.com>
+Message-ID: <1492700543.31767.23.camel@decadent.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-
-> On Tue, 2017-04-18 at 17:17 -0300, Thiago Jung Bauermann wrote:
-> > IMA will use the module_signature format for append signatures, so export
-> > the relevant definitions and factor out the code which verifies that the
-> > appended signature trailer is valid.
+On Thu, 2017-04-20 at 14:44 +0200, Djalal Harouni wrote:
+> > On Thu, Apr 20, 2017 at 4:22 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
+> > On Thu, 2017-04-20 at 00:20 +0200, Djalal Harouni wrote:
+> > [...]
+> > > +modules_autoload:
+> > > +
+> > > +A sysctl to control if modules auto-load feature is allowed or not.
+> > > +This sysctl complements "modules_disabled" which is for all module
+> > > +operations where this flag applies only to automatic module loading.
+> > > +Automatic module loading happens when programs request a kernel feature
+> > > +that is implemented by an unloaded module, the kernel automatically
+> > > +runs the program pointed by "modprobe" sysctl in order to load the
+> > > +corresponding module.
+> > > +
+> > > +When modules_autoload is set to (0), the default, there are no
+> > > +restrictions.
+> > > +
+> > > +When modules_autoload is set to (1), processes must have CAP_SYS_MODULE
+> > > +to be able to trigger a module auto-load operation, or CAP_NET_ADMIN
+> > > +for modules with a 'netdev-%s' alias.
+> > > +
+> > > +When modules_autoload is set to (2), automatic module loading is
+> > > +disabled for all. Once set, this value can not be changed.
 > > 
-> > Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
-> > and be able to use validate_module_signature without having to depend on
-> > CONFIG_MODULE_SIG.
+> > I would expect a parameter 'modules_autoload' to be a boolean, so this
+> > behaviour would be surprising.
+> > 
+> > What is the point of mode 2???Why would someone want to set
+> > modules_disabled=0 and modules_autoload=2?
 > 
-> Basically we want to generalize the concept of an appended signature.
-> ?Referring to it as a "module signature format" seems a bit confusing.
+> modules_disabled is too restrictive and once set it can't be changed,
+> maybe that's why not all users use it.
 > 
-> David, would you have a problem with changing the appended string from
-> "~Module signature appended~\n" to something more generic?
+> With modules_disabled=0 and modules_autoload=2
+[...]
 
-Conceptually, no.  Is it possible that doing so could break someone's module
-that they load on multiple versions of the kernel?  Say a module that only
-exports things and doesn't use anything from the core or any other module.
+Hmm, OK.  How about naming this modules_autoload_mode, then, so that
+it's obviously not a boolean?
 
-Also, it needs to reasonably long and distinct enough to prevent a false
-positive match.
+Ben.
 
-David
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Ben Hutchings
+It is easier to change the specification to fit the program than vice
+versa.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: This is a digitally signed message part
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170420/9bb425aa/attachment.sig>
