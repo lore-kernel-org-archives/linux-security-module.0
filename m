@@ -1,62 +1,66 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Thu, 20 Apr 2017 09:57:52 +0800
-Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
-	autoload restriction
-In-Reply-To: <1492640420-27345-3-git-send-email-tixxdz@gmail.com>
-Message-ID: <201704200933.WfNVZLFx%fengguang.wu@intel.com>
+From: ben@decadent.org.uk (Ben Hutchings)
+Date: Thu, 20 Apr 2017 03:22:22 +0100
+Subject: [PATCH v3 1/2] modules:capabilities: automatic module loading
+	restriction
+In-Reply-To: <1492640420-27345-2-git-send-email-tixxdz@gmail.com>
+References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
+	<1492640420-27345-2-git-send-email-tixxdz@gmail.com>
+Message-ID: <1492654942.31767.21.camel@decadent.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Djalal,
+On Thu, 2017-04-20 at 00:20 +0200, Djalal Harouni wrote:
+[...]?
+> +modules_autoload:
+> +
+> +A sysctl to control if modules auto-load feature is allowed or not.
+> +This sysctl complements "modules_disabled" which is for all module
+> +operations where this flag applies only to automatic module loading.
+> +Automatic module loading happens when programs request a kernel feature
+> +that is implemented by an unloaded module, the kernel automatically
+> +runs the program pointed by "modprobe" sysctl in order to load the
+> +corresponding module.
+> +
+> +When modules_autoload is set to (0), the default, there are no
+> +restrictions.
+> +
+> +When modules_autoload is set to (1), processes must have CAP_SYS_MODULE
+> +to be able to trigger a module auto-load operation, or CAP_NET_ADMIN
+> +for modules with a 'netdev-%s' alias.
+> +
+> +When modules_autoload is set to (2), automatic module loading is
+> +disabled for all. Once set, this value can not be changed.
 
-[auto build test ERROR on security/next]
-[also build test ERROR on next-20170419]
-[cannot apply to linus/master v4.11-rc7]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+I would expect a parameter 'modules_autoload' to be a boolean, so this
+behaviour would be surprising.
 
-url:    https://github.com/0day-ci/linux/commits/Djalal-Harouni/modules-capabilities-automatic-module-loading-restrictions/20170420-093603
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-config: x86_64-randconfig-x017-201716 (attached as .config)
-compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+What is the point of mode 2?  Why would someone want to set
+modules_disabled=0 and modules_autoload=2?
 
-All errors (new ones prefixed by >>):
+[...]
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+[...]
+> +static int modules_autoload_privileged_access(const char *name)
+> +{
+> +	if (capable(CAP_SYS_MODULE))
+> +		return 0;
+> +	else if (name && strstr(name, "netdev-") && capable(CAP_NET_ADMIN))
+[...]
 
-   In file included from include/net/scm.h:7:0,
-                    from include/linux/netlink.h:8,
-                    from include/uapi/linux/neighbour.h:5,
-                    from include/linux/netdevice.h:51,
-                    from include/net/sock.h:51,
-                    from fs//ocfs2/cluster/tcp.h:32,
-                    from fs//ocfs2/cluster/heartbeat.c:41:
-   include/linux/security.h: In function 'security_task_alloc':
->> include/linux/security.h:869:9: error: implicit declaration of function 'cap_task_alloc' [-Werror=implicit-function-declaration]
-     return cap_task_alloc(task, clone_flags);
-            ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+We want a prefix match, so use strncmp() not strstr().
 
-vim +/cap_task_alloc +869 include/linux/security.h
+Ben.
 
-   863		return 0;
-   864	}
-   865	
-   866	static inline int security_task_alloc(struct task_struct *task,
-   867					      unsigned long clone_flags)
-   868	{
- > 869		return cap_task_alloc(task, clone_flags);
-   870	}
-   871	
-   872	static inline void security_task_free(struct task_struct *task)
+-- 
+Ben Hutchings
+It is easier to change the specification to fit the program than vice
+versa.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 -------------- next part --------------
 A non-text attachment was scrubbed...
-Name: .config.gz
-Type: application/gzip
-Size: 27284 bytes
-Desc: not available
-URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170420/394b73b7/attachment.bin>
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: This is a digitally signed message part
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170420/f08fdf80/attachment.sig>
