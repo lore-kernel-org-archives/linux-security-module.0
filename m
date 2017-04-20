@@ -1,92 +1,57 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Thu, 20 Apr 2017 14:44:53 +0200
-Subject: [kernel-hardening] Re: [PATCH v3 1/2] modules:capabilities:
-	automatic module loading restriction
-In-Reply-To: <1492654942.31767.21.camel@decadent.org.uk>
-References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
-	<1492640420-27345-2-git-send-email-tixxdz@gmail.com>
-	<1492654942.31767.21.camel@decadent.org.uk>
-Message-ID: <CAEiveUdS=GbyxDVeNFrjTmhvQB-a6UgrJXcGY=BYJLu+3z0x_Q@mail.gmail.com>
+From: chrubis@suse.cz (Cyril Hrubis)
+Date: Thu, 20 Apr 2017 14:57:50 +0200
+Subject: [LTP] [lkp-robot] [KEYS]  bdf7c0f8bf: ltp.add_key02.fail
+In-Reply-To: <20170417172955.GA31469@gmail.com>
+References: <20170401213428.17097-1-ebiggers3@gmail.com>
+	<20170417062641.GN31394@yexl-desktop>
+	<20170417172955.GA31469@gmail.com>
+Message-ID: <20170420125750.GD10246@rei.lan>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Apr 20, 2017 at 4:22 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
-> On Thu, 2017-04-20 at 00:20 +0200, Djalal Harouni wrote:
-> [...]
->> +modules_autoload:
->> +
->> +A sysctl to control if modules auto-load feature is allowed or not.
->> +This sysctl complements "modules_disabled" which is for all module
->> +operations where this flag applies only to automatic module loading.
->> +Automatic module loading happens when programs request a kernel feature
->> +that is implemented by an unloaded module, the kernel automatically
->> +runs the program pointed by "modprobe" sysctl in order to load the
->> +corresponding module.
->> +
->> +When modules_autoload is set to (0), the default, there are no
->> +restrictions.
->> +
->> +When modules_autoload is set to (1), processes must have CAP_SYS_MODULE
->> +to be able to trigger a module auto-load operation, or CAP_NET_ADMIN
->> +for modules with a 'netdev-%s' alias.
->> +
->> +When modules_autoload is set to (2), automatic module loading is
->> +disabled for all. Once set, this value can not be changed.
->
-> I would expect a parameter 'modules_autoload' to be a boolean, so this
-> behaviour would be surprising.
->
-> What is the point of mode 2?  Why would someone want to set
-> modules_disabled=0 and modules_autoload=2?
+Hi!
+> > commit: bdf7c0f8bf282ba44827ce3c7fd7936c8e90a18a ("KEYS: fix dereferencing NULL payload with nonzero length")
+> > url: https://github.com/0day-ci/linux/commits/Eric-Biggers/KEYS-fix-dereferencing-NULL-payload-with-nonzero-length/20170403-102013
+> > base: https://git.kernel.org/cgit/linux/kernel/git/jmorris/linux-security.git next
+> > 
+> ...
+> > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> > 
+> > 
+> > user  :notice: [   45.447047] <<<test_start>>>
+> > 
+> > user  :notice: [   45.447365] tag=add_key02 stime=1492169102
+> > 
+> > user  :notice: [   45.447567] cmdline="add_key02"
+> > 
+> > user  :notice: [   45.447685] contacts=""
+> > 
+> > user  :notice: [   45.447826] analysis=exit
+> > 
+> > user  :notice: [   45.448011] <<<test_output>>>
+> > 
+> > user  :notice: [   45.448568] tst_test.c:760: INFO: Timeout per run is 0h 05m 00s
+> > 
+> > user  :notice: [   45.449439] add_key02.c:65: FAIL: add_key() failed unexpectedly, expected EINVAL: EFAULT
+> 
+> In my opinion this is a valid behavior, and the test is just weird; it's passing
+> in *both* an unaddressable payload and an invalid description, so it's not clear
+> which case it's meant to be testing.  (Generally, if a syscall will fail for
+> more than one reason, it's not guaranteed which error code you'll get.)
 
-modules_disabled is too restrictive and once set it can't be changed,
-maybe that's why not all users use it.
+That is quite common problem with LTP testcases. Do you care to send a
+patch or should I fix that?
 
-With modules_disabled=0 and modules_autoload=2
+> In any case, once we have a fix merged, it would be nice for there to be an ltp
+> test added for the "NULL payload with nonzero length" case with one of the key
+> types that crashed the kernel.
 
-* The functionality of the system can still be made available.
-* You only disable automatic module loading
-* Explicit module load/unload can still happen. Administrators or
-privileged programs can still explicitly load modules provide a
-feature without rebooting.
-* You are able to restrict some applications from inserting new
-modules at all by also applying a seccomp filter and removing their
-CAP_SYS_MODULE, where explicit load/unload is still available to
-others.
-* You are able to unload an old bad version of the module without
-rebooting, and maybe load the new version.
-
-
-> [...]
->> --- a/kernel/module.c
->> +++ b/kernel/module.c
-> [...]
->> +static int modules_autoload_privileged_access(const char *name)
->> +{
->> +     if (capable(CAP_SYS_MODULE))
->> +             return 0;
->> +     else if (name && strstr(name, "netdev-") && capable(CAP_NET_ADMIN))
-> [...]
->
-> We want a prefix match, so use strncmp() not strstr().
-
-Indeed, will fix it.
-
-Thanks!
-
-
-> Ben.
->
-> --
-> Ben Hutchings
-> It is easier to change the specification to fit the program than vice
-> versa.
->
-
-
+Here as well, feel free to send a patch or at least point us to a
+reproducer that could be turned into a testcase.
 
 -- 
-tixxdz
+Cyril Hrubis
+chrubis at suse.cz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
