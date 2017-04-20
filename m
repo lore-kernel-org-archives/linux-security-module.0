@@ -1,57 +1,60 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Wed, 19 Apr 2017 19:41:44 -0700
-Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
-	autoload restriction
-In-Reply-To: <CAGXu5jJ5dm8yJJ34tEyOP78OxUr2awXmNhm6RaVP8jE4q+L5Ng@mail.gmail.com>
-References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
-	<1492640420-27345-3-git-send-email-tixxdz@gmail.com>
-	<CALCETrXFp-apnfRPg9qx6E7g3KDU8DanBW1pMUnA1zShrB5xKg@mail.gmail.com>
-	<CAGXu5jJ5dm8yJJ34tEyOP78OxUr2awXmNhm6RaVP8jE4q+L5Ng@mail.gmail.com>
-Message-ID: <CALCETrUueOx1tqj+Ru93KGpy2HHR-A_GQ6DrAppiomkPTtX7Lw@mail.gmail.com>
+From: lkp@intel.com (kbuild test robot)
+Date: Thu, 20 Apr 2017 11:04:40 +0800
+Subject: [PATCH 6/6] ima: Support appended signatures for appraisal
+In-Reply-To: <1492546666-16615-7-git-send-email-bauerman@linux.vnet.ibm.com>
+Message-ID: <201704201148.IPsFhl4B%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 19, 2017 at 4:43 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Apr 19, 2017 at 4:15 PM, Andy Lutomirski <luto@kernel.org> wrote:
->> On Wed, Apr 19, 2017 at 3:20 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
->>> +/* Sets task's modules_autoload */
->>> +static inline int task_set_modules_autoload(struct task_struct *task,
->>> +                                           unsigned long value)
->>> +{
->>> +       if (value > MODULES_AUTOLOAD_DISABLED)
->>> +               return -EINVAL;
->>> +       else if (task->modules_autoload > value)
->>> +               return -EPERM;
->>> +       else if (task->modules_autoload < value)
->>> +               task->modules_autoload = value;
->>> +
->>> +       return 0;
->>> +}
->>
->> This needs to be more locked down.  Otherwise someone could set this
->> and then run a setuid program.  Admittedly, it would be quite odd if
->> this particular thing causes a problem, but the issue exists
->> nonetheless.
->
-> Eeeh, I don't agree this needs to be changed. APIs provided by modules
-> are different than the existing privilege-manipulation syscalls this
-> concern stems from. Applications are already forced to deal with
-> things being missing like this in the face of it simply not being
-> built into the kernel.
->
-> Having to hide this behind nnp seems like it'd reduce its utility...
->
+Hi Thiago,
 
-I think that adding an inherited boolean to task_struct that can be
-set by unprivileged tasks and passed to privileged tasks is a terrible
-precedent.  Ideally someone would try to find all the existing things
-like this and kill them off.
+[auto build test ERROR on security/next]
+[also build test ERROR on v4.11-rc7 next-20170419]
+[cannot apply to integrity/next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-I agree that I don't see how one would exploit this particular
-feature, but I still think I dislike the approach.  This is a slippery
-slope to adding a boolean for perf_event_open(), unshare(), etc, and
-we should solve these for real rather than half-arsing them IMO.
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+url:    https://github.com/0day-ci/linux/commits/Thiago-Jung-Bauermann/Appended-signatures-support-for-IMA-appraisal/20170419-053422
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+config: i386-randconfig-h0-04201028 (attached as .config)
+compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+All errors (new ones prefixed by >>):
+
+   In file included from security/integrity/ima/ima_appraise.c:19:0:
+   include/keys/asymmetric-type.h: In function 'asymmetric_key_ids':
+>> include/keys/asymmetric-type.h:76:12: error: dereferencing pointer to incomplete type 'const struct key'
+     return key->payload.data[asym_key_ids];
+               ^~
+
+vim +76 include/keys/asymmetric-type.h
+
+7901c1a8 David Howells 2014-09-16  70  							    size_t len_1,
+7901c1a8 David Howells 2014-09-16  71  							    const void *val_2,
+7901c1a8 David Howells 2014-09-16  72  							    size_t len_2);
+146aa8b1 David Howells 2015-10-21  73  static inline
+146aa8b1 David Howells 2015-10-21  74  const struct asymmetric_key_ids *asymmetric_key_ids(const struct key *key)
+146aa8b1 David Howells 2015-10-21  75  {
+146aa8b1 David Howells 2015-10-21 @76  	return key->payload.data[asym_key_ids];
+146aa8b1 David Howells 2015-10-21  77  }
+7901c1a8 David Howells 2014-09-16  78  
+9eb02989 David Howells 2016-04-06  79  extern struct key *find_asymmetric_key(struct key *keyring,
+
+:::::: The code at line 76 was first introduced by commit
+:::::: 146aa8b1453bd8f1ff2304ffb71b4ee0eb9acdcc KEYS: Merge the type-specific data with the payload data
+
+:::::: TO: David Howells <dhowells@redhat.com>
+:::::: CC: David Howells <dhowells@redhat.com>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: .config.gz
+Type: application/gzip
+Size: 25689 bytes
+Desc: not available
+URL: <http://kernsec.org/pipermail/linux-security-module-archive/attachments/20170420/76e9340a/attachment.bin>
