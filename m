@@ -1,91 +1,115 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Thu, 20 Apr 2017 07:58:58 -0400
-Subject: [PATCH 3/3] tpm: vtpm_proxy: Add ioctl to request locality
-	prepended to command
-In-Reply-To: <1492442371-30252-4-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1492442371-30252-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1492442371-30252-4-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <10c67f88-35cc-be0e-9acf-e85c9e94d790@linux.vnet.ibm.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 20 Apr 2017 08:13:23 -0400
+Subject: [PATCH 3/6] ima: Simplify policy_func_show.
+In-Reply-To: <1492546666-16615-4-git-send-email-bauerman@linux.vnet.ibm.com>
+References: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
+	<1492546666-16615-4-git-send-email-bauerman@linux.vnet.ibm.com>
+Message-ID: <1492690403.3081.72.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/17/2017 11:19 AM, Stefan Berger wrote:
-> Add an ioctl to request that the locality be prepended to every TPM
-> command.
->
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+On Tue, 2017-04-18 at 17:17 -0300, Thiago Jung Bauermann wrote:
+> If the func_tokens array uses the same indices as enum ima_hooks,
+> policy_func_show can be a lot simpler, and the func_* enum becomes
+> unnecessary.
+
+My main concern with separating the enumeration from the string
+definition is that they might become out of sync. ?Perhaps using
+macros, similar to those used for kernel_read_file_id_str(), would be
+better?
+
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 > ---
->   drivers/char/tpm/tpm_vtpm_proxy.c | 16 ++++++++++++----
->   include/uapi/linux/vtpm_proxy.h   |  4 +++-
->   2 files changed, 15 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> index bf59426..5f34973 100644
-> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> @@ -52,7 +52,8 @@ struct proxy_dev {
->   };
->
->   /* all supported flags */
-> -#define VTPM_PROXY_FLAGS_ALL  (VTPM_PROXY_FLAG_TPM2)
-> +#define VTPM_PROXY_FLAGS_ALL  (VTPM_PROXY_FLAG_TPM2 | \
-> +			       VTPM_PROXY_FLAG_PREPEND_LOCALITY)
->
->   static struct workqueue_struct *workqueue;
->
-> @@ -77,8 +78,9 @@ static ssize_t vtpm_proxy_fops_read(struct file *filp, char __user *buf,
->   				    size_t count, loff_t *off)
->   {
->   	struct proxy_dev *proxy_dev = filp->private_data;
-> -	size_t len;
-> -	int sig, rc;
-> +	size_t len, offset = 0;
-> +	int sig, rc = 0;
-> +	uint8_t locality;
->
->   	sig = wait_event_interruptible(proxy_dev->wq,
->   		proxy_dev->req_len != 0 ||
-> @@ -102,7 +104,13 @@ static ssize_t vtpm_proxy_fops_read(struct file *filp, char __user *buf,
->   		return -EIO;
->   	}
->
-> -	rc = copy_to_user(buf, proxy_dev->buffer, len);
-> +	if (proxy_dev->flags & VTPM_PROXY_FLAG_PREPEND_LOCALITY) {
-> +		locality = proxy_dev->chip->locality;
-> +		offset = sizeof(locality);
-> +		rc = copy_to_user(buf, &locality, offset);
-> +	}
-> +	if (!rc)
-> +		rc = copy_to_user(&buf[offset], proxy_dev->buffer, len);
->   	memset(proxy_dev->buffer, 0, len);
->   	proxy_dev->req_len = 0;
+>  security/integrity/ima/ima_policy.c | 47 ++++++-------------------------------
+>  1 file changed, 7 insertions(+), 40 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index cfda5d7b17ec..158eafef64e8 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -896,20 +896,14 @@ static const char *const mask_tokens[] = {
+>  	"MAY_APPEND"
+>  };
+> 
+> -enum {
+> -	func_file = 0, func_mmap, func_bprm,
+> -	func_module, func_firmware, func_post,
+> -	func_kexec_kernel, func_kexec_initramfs,
+> -	func_policy
+> -};
+> -
 
-There 'return' statement of this function needs to say 'return len + 
-offset'. So I'll resubmit a V2 for that.
+At least, add a comment here and near the ima_hooks enumeration to
+prevent them from becoming out of sync.
 
-Apart from that, any comments?
+Mimi
 
-    Stefan
-
->
-> diff --git a/include/uapi/linux/vtpm_proxy.h b/include/uapi/linux/vtpm_proxy.h
-> index 83e64e7..512a29e 100644
-> --- a/include/uapi/linux/vtpm_proxy.h
-> +++ b/include/uapi/linux/vtpm_proxy.h
-> @@ -22,9 +22,11 @@
->   /**
->    * enum vtpm_proxy_flags - flags for the proxy TPM
->    * @VTPM_PROXY_FLAG_TPM2:	the proxy TPM uses TPM 2.0 protocol
-> + * @VTPM_PROXY_PREPEND_LOCALITY:locality byte prepended on each command
->    */
->   enum vtpm_proxy_flags {
-> -	VTPM_PROXY_FLAG_TPM2	= 1,
-> +	VTPM_PROXY_FLAG_TPM2			= 1,
-> +	VTPM_PROXY_FLAG_PREPEND_LOCALITY	= 2,
->   };
->
->   /**
-
+>  static const char *const func_tokens[] = {
+> +	NULL,
+>  	"FILE_CHECK",
+>  	"MMAP_CHECK",
+>  	"BPRM_CHECK",
+> +	"POST_SETATTR",
+>  	"MODULE_CHECK",
+>  	"FIRMWARE_CHECK",
+> -	"POST_SETATTR",
+>  	"KEXEC_KERNEL_CHECK",
+>  	"KEXEC_INITRAMFS_CHECK",
+>  	"POLICY_CHECK"
+> @@ -949,48 +943,21 @@ void ima_policy_stop(struct seq_file *m, void *v)
+> 
+>  #define pt(token)	policy_tokens[token + Opt_err].pattern
+>  #define mt(token)	mask_tokens[token]
+> -#define ft(token)	func_tokens[token]
+> 
+>  /*
+>   * policy_func_show - display the ima_hooks policy rule
+>   */
+>  static void policy_func_show(struct seq_file *m, enum ima_hooks func)
+>  {
+> -	char tbuf[64] = {0,};
+> +	if (func > 0 && func < MAX_CHECK)
+> +		seq_printf(m, pt(Opt_func), func_tokens[func]);
+> +	else {
+> +		char tbuf[64] = {0,};
+> 
+> -	switch (func) {
+> -	case FILE_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_file));
+> -		break;
+> -	case MMAP_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_mmap));
+> -		break;
+> -	case BPRM_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_bprm));
+> -		break;
+> -	case MODULE_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_module));
+> -		break;
+> -	case FIRMWARE_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_firmware));
+> -		break;
+> -	case POST_SETATTR:
+> -		seq_printf(m, pt(Opt_func), ft(func_post));
+> -		break;
+> -	case KEXEC_KERNEL_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_kexec_kernel));
+> -		break;
+> -	case KEXEC_INITRAMFS_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_kexec_initramfs));
+> -		break;
+> -	case POLICY_CHECK:
+> -		seq_printf(m, pt(Opt_func), ft(func_policy));
+> -		break;
+> -	default:
+>  		snprintf(tbuf, sizeof(tbuf), "%d", func);
+>  		seq_printf(m, pt(Opt_func), tbuf);
+> -		break;
+>  	}
+> +
+>  	seq_puts(m, " ");
+>  }
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
