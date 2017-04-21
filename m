@@ -1,45 +1,80 @@
-From: hmh@hmh.eng.br (Henrique de Moraes Holschuh)
-Date: Fri, 21 Apr 2017 16:47:32 -0300
-Subject: [PATCH v4 1/4] KEYS: Insert incompressible bytes to reserve
-	space in bzImage
-In-Reply-To: <34372BAD-2FE2-458D-9331-AA277B1764C7@linux.vnet.ibm.com>
-References: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
-	<1492727320-26194-2-git-send-email-mkayaalp@linux.vnet.ibm.com>
-	<20170420231332.GA10262@khazad-dum.debian.net>
-	<34372BAD-2FE2-458D-9331-AA277B1764C7@linux.vnet.ibm.com>
-Message-ID: <20170421194732.GB23671@khazad-dum.debian.net>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 21 Apr 2017 10:57:45 -0700
+Subject: [PATCH security-next 1/2] smack: use pernet operations for hook
+	registration
+In-Reply-To: <20170421094909.28961-2-fw@strlen.de>
+References: <20170421094909.28961-1-fw@strlen.de>
+	<20170421094909.28961-2-fw@strlen.de>
+Message-ID: <b41fc9ae-f099-5ed6-9ece-09994e3a723f@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 20 Apr 2017, Mehmet Kayaalp wrote:
-> > On Apr 20, 2017, at 7:13 PM, Henrique de Moraes Holschuh <hmh@hmh.eng.br> wrote:
-> > On Thu, 20 Apr 2017, Mehmet Kayaalp wrote:
-> >> Include a random filled binary in vmlinux at the space reserved with
-> >> CONFIG_SYSTEM_EXTRA_CERTIFICATE. This results in an uncompressed reserved
+On 4/21/2017 2:49 AM, Florian Westphal wrote:
+> It will allow us to remove the old netfilter hook api in the near future.
+>
+> Signed-off-by: Florian Westphal <fw@strlen.de>
 
-...
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-> > Alternatively, you could ship a static file with random data that has
-> > been tested to be uncompressible "enough" for every currently supported
-> > compression engine, maybe with a bit of a safety margin just in case a
-> > future compression engine does somewhat better...
-> 
-> The seed makes it static for a given size, and I tested it to be
-> incompressible. But I don't know about the safety margin. Even without the
+I will take this patch into the Smack tree from 4.13.
 
-If you tested the result to be incompressible enough, it is fine with me.
+Thank you.
 
-> compression, the reserved size is not accurate. If you reserve 4096 bytes,
-> the DER encoded certificate inserted is not going to be exactly 4096 either
-> (for reference, the built-in certificate is 1346 bytes). Compression makes it 
-> a little more inaccurate, but is over-provisioning several hundreds of bytes 
-> a concern when the bzImage is several megabytes?
+> ---
+>  security/smack/smack_netfilter.c | 26 ++++++++++++++++++--------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
+>
+> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+> index 205b785fb400..cdeb0f3243dd 100644
+> --- a/security/smack/smack_netfilter.c
+> +++ b/security/smack/smack_netfilter.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/netfilter_ipv6.h>
+>  #include <linux/netdevice.h>
+>  #include <net/inet_sock.h>
+> +#include <net/net_namespace.h>
+>  #include "smack.h"
+>  
+>  #if IS_ENABLED(CONFIG_IPV6)
+> @@ -74,20 +75,29 @@ static struct nf_hook_ops smack_nf_ops[] = {
+>  #endif	/* IPV6 */
+>  };
+>  
+> -static int __init smack_nf_ip_init(void)
+> +static int __net_init smack_nf_register(struct net *net)
+> +{
+> +	return nf_register_net_hooks(net, smack_nf_ops,
+> +				     ARRAY_SIZE(smack_nf_ops));
+> +}
+> +
+> +static void __net_exit smack_nf_unregister(struct net *net)
+>  {
+> -	int err;
+> +	nf_unregister_net_hooks(net, smack_nf_ops, ARRAY_SIZE(smack_nf_ops));
+> +}
+>  
+> +static struct pernet_operations smack_net_ops = {
+> +	.init = smack_nf_register,
+> +	.exit = smack_nf_unregister,
+> +};
+> +
+> +static int __init smack_nf_ip_init(void)
+> +{
+>  	if (smack_enabled == 0)
+>  		return 0;
+>  
+>  	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
+> -
+> -	err = nf_register_hooks(smack_nf_ops, ARRAY_SIZE(smack_nf_ops));
+> -	if (err)
+> -		pr_info("Smack: nf_register_hooks: error %d\n", err);
+> -
+> -	return 0;
+> +	return register_pernet_subsys(&smack_net_ops);
+>  }
+>  
+>  __initcall(smack_nf_ip_init);
 
-Maybe for embedded, but in that case any overprovisioning would already
-be too much, and one has to fix the issue in some other way.
-
--- 
-  Henrique Holschuh
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
