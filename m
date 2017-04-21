@@ -1,10 +1,10 @@
 From: fw@strlen.de (Florian Westphal)
-Date: Fri, 21 Apr 2017 11:49:09 +0200
-Subject: [PATCH security-next 2/2] selinux: use pernet operations for hook
+Date: Fri, 21 Apr 2017 11:49:08 +0200
+Subject: [PATCH security-next 1/2] smack: use pernet operations for hook
 	registration
 In-Reply-To: <20170421094909.28961-1-fw@strlen.de>
 References: <20170421094909.28961-1-fw@strlen.de>
-Message-ID: <20170421094909.28961-3-fw@strlen.de>
+Message-ID: <20170421094909.28961-2-fw@strlen.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -12,62 +12,59 @@ It will allow us to remove the old netfilter hook api in the near future.
 
 Signed-off-by: Florian Westphal <fw@strlen.de>
 ---
- security/selinux/hooks.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ security/smack/smack_netfilter.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index e67a526d1f30..3aa4268525e2 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6448,6 +6448,23 @@ static struct nf_hook_ops selinux_nf_ops[] = {
+diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+index 205b785fb400..cdeb0f3243dd 100644
+--- a/security/smack/smack_netfilter.c
++++ b/security/smack/smack_netfilter.c
+@@ -18,6 +18,7 @@
+ #include <linux/netfilter_ipv6.h>
+ #include <linux/netdevice.h>
+ #include <net/inet_sock.h>
++#include <net/net_namespace.h>
+ #include "smack.h"
+ 
+ #if IS_ENABLED(CONFIG_IPV6)
+@@ -74,20 +75,29 @@ static struct nf_hook_ops smack_nf_ops[] = {
  #endif	/* IPV6 */
  };
  
-+static int __net_init selinux_nf_register(struct net *net)
+-static int __init smack_nf_ip_init(void)
++static int __net_init smack_nf_register(struct net *net)
 +{
-+	return nf_register_net_hooks(net, selinux_nf_ops,
-+				     ARRAY_SIZE(selinux_nf_ops));
++	return nf_register_net_hooks(net, smack_nf_ops,
++				     ARRAY_SIZE(smack_nf_ops));
 +}
 +
-+static void __net_exit selinux_nf_unregister(struct net *net)
-+{
-+	nf_unregister_net_hooks(net, selinux_nf_ops,
-+				ARRAY_SIZE(selinux_nf_ops));
++static void __net_exit smack_nf_unregister(struct net *net)
+ {
+-	int err;
++	nf_unregister_net_hooks(net, smack_nf_ops, ARRAY_SIZE(smack_nf_ops));
 +}
-+
-+static struct pernet_operations selinux_net_ops = {
-+	.init = selinux_nf_register,
-+	.exit = selinux_nf_unregister,
+ 
++static struct pernet_operations smack_net_ops = {
++	.init = smack_nf_register,
++	.exit = smack_nf_unregister,
 +};
 +
- static int __init selinux_nf_ip_init(void)
- {
- 	int err;
-@@ -6457,13 +6474,12 @@ static int __init selinux_nf_ip_init(void)
++static int __init smack_nf_ip_init(void)
++{
+ 	if (smack_enabled == 0)
+ 		return 0;
  
- 	printk(KERN_DEBUG "SELinux:  Registering netfilter hooks\n");
- 
--	err = nf_register_hooks(selinux_nf_ops, ARRAY_SIZE(selinux_nf_ops));
-+	err = register_pernet_subsys(&selinux_net_ops);
- 	if (err)
--		panic("SELinux: nf_register_hooks: error %d\n", err);
-+		panic("SELinux: register_pernet_subsys: error %d\n", err);
- 
- 	return 0;
- }
+ 	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
 -
- __initcall(selinux_nf_ip_init);
- 
- #ifdef CONFIG_SECURITY_SELINUX_DISABLE
-@@ -6471,7 +6487,7 @@ static void selinux_nf_ip_exit(void)
- {
- 	printk(KERN_DEBUG "SELinux:  Unregistering netfilter hooks\n");
- 
--	nf_unregister_hooks(selinux_nf_ops, ARRAY_SIZE(selinux_nf_ops));
-+	unregister_pernet_subsys(&selinux_net_ops);
+-	err = nf_register_hooks(smack_nf_ops, ARRAY_SIZE(smack_nf_ops));
+-	if (err)
+-		pr_info("Smack: nf_register_hooks: error %d\n", err);
+-
+-	return 0;
++	return register_pernet_subsys(&smack_net_ops);
  }
- #endif
  
+ __initcall(smack_nf_ip_init);
 -- 
 2.10.2
 
