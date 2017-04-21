@@ -1,40 +1,32 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Fri, 21 Apr 2017 01:30:32 -0700
-Subject: [PATCH 0/5] KEYS: sanitize key payloads
-Message-ID: <20170421083037.12746-1-ebiggers3@gmail.com>
+From: fw@strlen.de (Florian Westphal)
+Date: Fri, 21 Apr 2017 11:49:07 +0200
+Subject: [PATCH security-next 0/2]: switch selinux and smack to pernet ops
+Message-ID: <20170421094909.28961-1-fw@strlen.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Back in the day we only had global netfilter hooks.
 
-This patch series introduces more thorough sanitization of keys managed
-by the kernel key retention service.  This helps keep sensitive key
-material from sticking around in the slab caches after keys are released.
+Nowadays netfilter hooks are per net namespace, but we still provide the old
+'nf_register_hook' api, which will place the hooks in all current and future
+net namespaces.
 
-This series covers the syscall interface and several of the common key
-types.  It doesn't cover some of the less commonly used key types.  Also,
-these changes are of course limited to the keyrings mechanism itself and
-don't remove the responsibility for keyrings users to securely handle any
-other sensitive data they may copy or generate.  Regardless, there's no
-reason not to make the keyrings API follow best practices.
+smack and selinux are among the last users of the old api, this
+switches both over to pernet_ops.
 
-Eric Biggers (5):
-  KEYS: sanitize add_key() and keyctl() key payloads
-  KEYS: user_defined: sanitize key payloads
-  KEYS: encrypted: sanitize all key material
-  KEYS: trusted: sanitize all key material
-  KEYS: sanitize key structs before freeing
+This would also allow to only enable hooks in a netns when
+they are needed in that namespace, but this isn't done here.
 
- include/linux/key.h                      |  1 -
- security/keys/encrypted-keys/encrypted.c | 31 +++++++++-----------
- security/keys/gc.c                       |  4 +--
- security/keys/keyctl.c                   |  4 ++-
- security/keys/trusted.c                  | 50 ++++++++++++++------------------
- security/keys/user_defined.c             | 16 +++++++---
- 6 files changed, 51 insertions(+), 55 deletions(-)
+The old api makes it necessary to keep rather ugly code in
+the netfilter core (e.g. iterating net namespaces under rtnl mutex...)
+and it has a race w. rmmod. We'd like to remove it.
 
--- 
-2.12.2
+If you prefer this gets merged via nf-next tree please ack and I'll
+resubmit (with acks) to netfilter-devel@ list.
+
+ selinux/hooks.c         |   24 ++++++++++++++++++++----
+ smack/smack_netfilter.c |   26 ++++++++++++++++++--------
+ 2 files changed, 38 insertions(+), 12 deletions(-)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
