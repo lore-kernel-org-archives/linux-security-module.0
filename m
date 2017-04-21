@@ -1,56 +1,60 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Fri, 21 Apr 2017 01:30:33 -0700
-Subject: [PATCH 1/5] KEYS: sanitize add_key() and keyctl() key payloads
+Date: Fri, 21 Apr 2017 01:30:37 -0700
+Subject: [PATCH 5/5] KEYS: sanitize key structs before freeing
 In-Reply-To: <20170421083037.12746-1-ebiggers3@gmail.com>
 References: <20170421083037.12746-1-ebiggers3@gmail.com>
-Message-ID: <20170421083037.12746-2-ebiggers3@gmail.com>
+Message-ID: <20170421083037.12746-6-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Before returning from add_key() or one of the keyctl() commands that
-takes in a key payload, zero the temporary buffer that was allocated to
-hold the key payload copied from userspace.  This may contain sensitive
-key material that should not be kept around in the slab caches.
+While a 'struct key' itself normally does not contain sensitive
+information, Documentation/security/keys.txt actually encourages this:
 
-This must not be applied before the patch "KEYS: fix dereferencing NULL
-payload with nonzero length".
+     "Having a payload is not required; and the payload can, in fact,
+     just be a value stored in the struct key itself."
+
+In case someone has taken this advice, or will take this advice in the
+future, zero the key structure before freeing it.  We might as well, and
+as a bonus this could make it a bit more difficult for an adversary to
+determine which keys have recently been in use.
+
+This is safe because the key_jar cache does not use a constructor.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- security/keys/keyctl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/key.h | 1 -
+ security/keys/gc.c  | 4 +---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 10fcea154c0f..d2852621e358 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -137,6 +137,7 @@ SYSCALL_DEFINE5(add_key, const char __user *, _type,
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 0c9b93b0d1f7..78e25aabedaf 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -173,7 +173,6 @@ struct key {
+ #ifdef KEY_DEBUGGING
+ 	unsigned		magic;
+ #define KEY_DEBUG_MAGIC		0x18273645u
+-#define KEY_DEBUG_MAGIC_X	0xf8e9dacbu
+ #endif
  
- 	key_ref_put(keyring_ref);
-  error3:
-+	memzero_explicit(payload, plen);
- 	kvfree(payload);
-  error2:
- 	kfree(description);
-@@ -347,7 +348,7 @@ long keyctl_update_key(key_serial_t id,
+ 	unsigned long		flags;		/* status flags (change with bitops) */
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 15b9ddf510e4..5233c073d982 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -158,9 +158,7 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
  
- 	key_ref_put(key_ref);
- error2:
--	kfree(payload);
-+	kzfree(payload);
- error:
- 	return ret;
+ 		kfree(key->description);
+ 
+-#ifdef KEY_DEBUGGING
+-		key->magic = KEY_DEBUG_MAGIC_X;
+-#endif
++		memzero_explicit(key, sizeof(*key));
+ 		kmem_cache_free(key_jar, key);
+ 	}
  }
-@@ -1098,6 +1099,7 @@ long keyctl_instantiate_key_common(key_serial_t id,
- 		keyctl_change_reqkey_auth(NULL);
- 
- error2:
-+	memzero_explicit(payload, plen);
- 	kvfree(payload);
- error:
- 	return ret;
 -- 
 2.12.2
 
