@@ -1,36 +1,46 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Fri, 21 Apr 2017 11:34:45 -0700
-Subject: [PATCH 2/5] KEYS: user_defined: sanitize key payloads
-In-Reply-To: <20091.1492783037@warthog.procyon.org.uk>
-References: <20170421083037.12746-3-ebiggers3@gmail.com>
-	<20170421083037.12746-1-ebiggers3@gmail.com>
-	<20091.1492783037@warthog.procyon.org.uk>
-Message-ID: <20170421183445.GB12755@gmail.com>
+From: hmh@hmh.eng.br (Henrique de Moraes Holschuh)
+Date: Fri, 21 Apr 2017 16:47:32 -0300
+Subject: [PATCH v4 1/4] KEYS: Insert incompressible bytes to reserve
+	space in bzImage
+In-Reply-To: <34372BAD-2FE2-458D-9331-AA277B1764C7@linux.vnet.ibm.com>
+References: <1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
+	<1492727320-26194-2-git-send-email-mkayaalp@linux.vnet.ibm.com>
+	<20170420231332.GA10262@khazad-dum.debian.net>
+	<34372BAD-2FE2-458D-9331-AA277B1764C7@linux.vnet.ibm.com>
+Message-ID: <20170421194732.GB23671@khazad-dum.debian.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Apr 21, 2017 at 02:57:17PM +0100, David Howells wrote:
-> Eric Biggers <ebiggers3@gmail.com> wrote:
-> 
-> > -		kfree_rcu(zap, rcu);
-> > +		call_rcu(&zap->rcu, user_free_payload_rcu);
-> 
-> Add kzfree_rcu()?
-> 
-> David
+On Thu, 20 Apr 2017, Mehmet Kayaalp wrote:
+> > On Apr 20, 2017, at 7:13 PM, Henrique de Moraes Holschuh <hmh@hmh.eng.br> wrote:
+> > On Thu, 20 Apr 2017, Mehmet Kayaalp wrote:
+> >> Include a random filled binary in vmlinux at the space reserved with
+> >> CONFIG_SYSTEM_EXTRA_CERTIFICATE. This results in an uncompressed reserved
 
-We could, but it's not trivial because the way kfree_rcu() works is to store the
-offset of the rcu_head as the callback function, then have a special case in RCU
-reclaim that recognizes "function pointers" with value < 4096 and call kfree()
-rather than the function.  To support kzfree_rcu() we'd need to reserve another
-4096 bytes of the address space (maybe at the end?), then check for the special
-kzfree value on every RCU reclaim.  Or equivalently it could be a flag.  It's
-possible, but it may be best to just use a custom callback for now.  Then if it
-can be shown later that there are a lot of users who would like a
-"kzfree_rcu()", it can be added.
+...
 
-- Eric
+> > Alternatively, you could ship a static file with random data that has
+> > been tested to be uncompressible "enough" for every currently supported
+> > compression engine, maybe with a bit of a safety margin just in case a
+> > future compression engine does somewhat better...
+> 
+> The seed makes it static for a given size, and I tested it to be
+> incompressible. But I don't know about the safety margin. Even without the
+
+If you tested the result to be incompressible enough, it is fine with me.
+
+> compression, the reserved size is not accurate. If you reserve 4096 bytes,
+> the DER encoded certificate inserted is not going to be exactly 4096 either
+> (for reference, the built-in certificate is 1346 bytes). Compression makes it 
+> a little more inaccurate, but is over-provisioning several hundreds of bytes 
+> a concern when the bzImage is several megabytes?
+
+Maybe for embedded, but in that case any overprovisioning would already
+be too much, and one has to fix the issue in some other way.
+
+-- 
+  Henrique Holschuh
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
