@@ -1,32 +1,75 @@
 From: fw@strlen.de (Florian Westphal)
-Date: Fri, 21 Apr 2017 11:49:07 +0200
-Subject: [PATCH security-next 0/2]: switch selinux and smack to pernet ops
-Message-ID: <20170421094909.28961-1-fw@strlen.de>
+Date: Fri, 21 Apr 2017 11:49:09 +0200
+Subject: [PATCH security-next 2/2] selinux: use pernet operations for hook
+	registration
+In-Reply-To: <20170421094909.28961-1-fw@strlen.de>
+References: <20170421094909.28961-1-fw@strlen.de>
+Message-ID: <20170421094909.28961-3-fw@strlen.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Back in the day we only had global netfilter hooks.
+It will allow us to remove the old netfilter hook api in the near future.
 
-Nowadays netfilter hooks are per net namespace, but we still provide the old
-'nf_register_hook' api, which will place the hooks in all current and future
-net namespaces.
+Signed-off-by: Florian Westphal <fw@strlen.de>
+---
+ security/selinux/hooks.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-smack and selinux are among the last users of the old api, this
-switches both over to pernet_ops.
-
-This would also allow to only enable hooks in a netns when
-they are needed in that namespace, but this isn't done here.
-
-The old api makes it necessary to keep rather ugly code in
-the netfilter core (e.g. iterating net namespaces under rtnl mutex...)
-and it has a race w. rmmod. We'd like to remove it.
-
-If you prefer this gets merged via nf-next tree please ack and I'll
-resubmit (with acks) to netfilter-devel@ list.
-
- selinux/hooks.c         |   24 ++++++++++++++++++++----
- smack/smack_netfilter.c |   26 ++++++++++++++++++--------
- 2 files changed, 38 insertions(+), 12 deletions(-)
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e67a526d1f30..3aa4268525e2 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6448,6 +6448,23 @@ static struct nf_hook_ops selinux_nf_ops[] = {
+ #endif	/* IPV6 */
+ };
+ 
++static int __net_init selinux_nf_register(struct net *net)
++{
++	return nf_register_net_hooks(net, selinux_nf_ops,
++				     ARRAY_SIZE(selinux_nf_ops));
++}
++
++static void __net_exit selinux_nf_unregister(struct net *net)
++{
++	nf_unregister_net_hooks(net, selinux_nf_ops,
++				ARRAY_SIZE(selinux_nf_ops));
++}
++
++static struct pernet_operations selinux_net_ops = {
++	.init = selinux_nf_register,
++	.exit = selinux_nf_unregister,
++};
++
+ static int __init selinux_nf_ip_init(void)
+ {
+ 	int err;
+@@ -6457,13 +6474,12 @@ static int __init selinux_nf_ip_init(void)
+ 
+ 	printk(KERN_DEBUG "SELinux:  Registering netfilter hooks\n");
+ 
+-	err = nf_register_hooks(selinux_nf_ops, ARRAY_SIZE(selinux_nf_ops));
++	err = register_pernet_subsys(&selinux_net_ops);
+ 	if (err)
+-		panic("SELinux: nf_register_hooks: error %d\n", err);
++		panic("SELinux: register_pernet_subsys: error %d\n", err);
+ 
+ 	return 0;
+ }
+-
+ __initcall(selinux_nf_ip_init);
+ 
+ #ifdef CONFIG_SECURITY_SELINUX_DISABLE
+@@ -6471,7 +6487,7 @@ static void selinux_nf_ip_exit(void)
+ {
+ 	printk(KERN_DEBUG "SELinux:  Unregistering netfilter hooks\n");
+ 
+-	nf_unregister_hooks(selinux_nf_ops, ARRAY_SIZE(selinux_nf_ops));
++	unregister_pernet_subsys(&selinux_net_ops);
+ }
+ #endif
+ 
+-- 
+2.10.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
