@@ -1,224 +1,125 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Sat, 22 Apr 2017 10:14:12 -0500
-Subject: [PATCH] Introduce v3 namespaced file capabilities
-In-Reply-To: <87wpadpb3m.fsf@xmission.com>
-References: <20170419164824.GA27843@mail.hallyn.com>
-	<87wpadpb3m.fsf@xmission.com>
-Message-ID: <20170422151412.GA14861@mail.hallyn.com>
+From: matt@nmatt.com (Matt Brown)
+Date: Sat, 22 Apr 2017 13:09:42 -0400
+Subject: [PATCH] make TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170421052428.GA24939@mail.hallyn.com>
+References: <20170419034526.18565-1-matt@nmatt.com>
+	<20170419045813.GA17990@mail.hallyn.com>
+	<a6b8f9ab-d5f8-51fb-0481-89907c43289f@nmatt.com>
+	<20170419235342.GA2305@mail.hallyn.com>
+	<59d67e42-3532-6001-91cb-067bff1eec64@nmatt.com>
+	<20170420151928.GA14559@mail.hallyn.com>
+	<0b6cec15f206329fc523983534baaf0d@nmatt.com>
+	<20170420174100.GA16822@mail.hallyn.com>
+	<8e755f85-6947-cb52-003d-11f1d9a886da@nmatt.com>
+	<20170421052428.GA24939@mail.hallyn.com>
+Message-ID: <c1977923-f68d-6ea9-2fd1-d2939848eec6@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Eric W. Biederman (ebiederm at xmission.com):
-> 
-> "Serge E. Hallyn" <serge@hallyn.com> writes:
-> 
-> Overall this looks quite reasonable.
-> 
-> My only big concern was the lack of verifying of magic_etc.  As without
+On 04/21/2017 01:24 AM, Serge E. Hallyn wrote:
+> On Fri, Apr 21, 2017 at 01:09:59AM -0400, Matt Brown wrote:
+>> On 04/20/2017 01:41 PM, Serge E. Hallyn wrote:
+>>> Quoting matt at nmatt.com (matt at nmatt.com):
+>>>> On 2017-04-20 11:19, Serge E. Hallyn wrote:
+>>>>> Quoting Matt Brown (matt at nmatt.com):
+>>>>>> On 04/19/2017 07:53 PM, Serge E. Hallyn wrote:
+>>>>>>> Quoting Matt Brown (matt at nmatt.com):
+>>>>>>>> On 04/19/2017 12:58 AM, Serge E. Hallyn wrote:
+>>>>>>>>> On Tue, Apr 18, 2017 at 11:45:26PM -0400, Matt Brown wrote:
+>>>>>>>>>> This patch reproduces GRKERNSEC_HARDEN_TTY functionality from the grsecurity
+>>>>>>>>>> project in-kernel.
+>>>>>>>>>>
+>>>>>>>>>> This will create the Kconfig SECURITY_TIOCSTI_RESTRICT and the corresponding
+>>>>>>>>>> sysctl kernel.tiocsti_restrict that, when activated, restrict all TIOCSTI
+>>>>>>>>>> ioctl calls from non CAP_SYS_ADMIN users.
+>>>>>>>>>>
+>>>>>>>>>> Possible effects on userland:
+>>>>>>>>>>
+>>>>>>>>>> There could be a few user programs that would be effected by this
+>>>>>>>>>> change.
+>>>>>>>>>> See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+>>>>>>>>>> notable programs are: agetty, csh, xemacs and tcsh
+>>>>>>>>>>
+>>>>>>>>>> However, I still believe that this change is worth it given that the
+>>>>>>>>>> Kconfig defaults to n. This will be a feature that is turned on for the
+>>>>>>>>>
+>>>>>>>>> It's not worthless, but note that for instance before this was fixed
+>>>>>>>>> in lxc, this patch would not have helped with escapes from privileged
+>>>>>>>>> containers.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> I assume you are talking about this CVE:
+>>>>>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1411256
+>>>>>>>>
+>>>>>>>> In retrospect, is there any way that an escape from a privileged
+>>>>>>>> container with the this bug could have been prevented?
+>>>>>>>
+>>>>>>> I don't know, that's what I was probing for.  Detecting that the pgrp
+>>>>>>> or session - heck, the pid namespace - has changed would seem like a
+>>>>>>> good indicator that it shouldn't be able to push.
+>>>>>>>
+>>>>>>
+>>>>>> pgrp and session won't do because in the case we are discussing
+>>>>>> current->signal->tty is the same as tty.
+>>>>>>
+>>>>>> This is the current check that is already in place:
+>>>>>> | if ((current->signal->tty != tty) && !capable(CAP_SYS_ADMIN))
+>>>>>> | 	return -EPERM;
+>>>>>
+>>>>> Yeah...
+>>>>>
+>>>>>> The only thing I could find to detect the tty message coming from a
+>>>>>> container is as follows:
+>>>>>> | task_active_pid_ns(current)->level
+>>>>>>
+>>>>>> This will be zero when run on the host, but 1 when run inside a
+>>>>>> container. However this is very much a hack and could probably break
+>>>>>> some userland stuff where there are multiple levels of namespaces.
+>>>>>
+>>>>> Yes.  This is also however why I don't like the current patch, because
+>>>>> capable() will never be true in a container, so nested containers
+>>>>> break.
+>>>>>
+>>>>
+>>>> What do you mean by "capable() will never be true in a container"?
+>>>> My understanding
+>>>> is that if a container is given CAP_SYS_ADMIN then
+>>>> capable(CAP_SYS_ADMIN) will return
+>>>> true?
+>>>
+>>> No, capable(X) checks for X with respect to the initial user namespace.
+>>> So for root-owned containers it will be true, but containers running in
+>>> non-initial user namespaces cannot pass that check.
+>>>
+>>> To check for privilege with respect to another user namespace, you need
+>>> to use ns_capable.  But for that you need a user_ns to target.
+>>>
+>>
+>> How about: ns_capable(current_user_ns(),CAP_SYS_ADMIN) ?
+>>
+>> current_user_ns() was found in include/linux/cred.h
+>
+> Any user can create a new user namespace and pass the above check.  What we
+> want is to find the user namespace which opened the tty.
+>
 
-Yes, I was relying too much on the size check.
+I believe I have a working solution that I can show in the next version
+of the patch later today, but I just want to run the logic by you first.
 
-> that the code might not be future compatible with new versions of the
-> capability xattrs.  It it tends to be nice to be able to boot old
-> kernels when regression testing etc.  Even if they can't make use of
-> all of the features of a new filesystem.
+I added: "struct user_namespace *owner_user_ns;" as a field in
+tty_struct (include/linux/tty.h) Note: I am totally open to suggestions
+for a better name.
 
-That certainly was my intent.
+Then I added "tty->owner_user_ns = current_user_ns();" to the
+alloc_tty_struct function. (drivers/tty/tty_io.c)
 
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 7e3317c..75cc65a 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -170,12 +170,29 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
-> >  		const void *value, size_t size, int flags)
-> >  {
-> >  	struct inode *inode = dentry->d_inode;
-> > -	int error = -EAGAIN;
-> > +	int error;
-> > +	void *wvalue = NULL;
-> > +	size_t wsize = 0;
-> >  	int issec = !strncmp(name, XATTR_SECURITY_PREFIX,
-> >  				   XATTR_SECURITY_PREFIX_LEN);
-> >  
-> > -	if (issec)
-> > +	if (issec) {
-> >  		inode->i_flags &= ~S_NOSEC;
-> > +
-> > +		if (!strcmp(name, "security.capability")) {
-> > +			error = cap_setxattr_convert_nscap(dentry, value, size,
-> > +					&wvalue, &wsize);
-> > +			if (error < 0)
-> > +				return error;
-> > +			if (wvalue) {
-> > +				value = wvalue;
-> > +				size = wsize;
-> > +			}
-> > +		}
-> > +	}
-> > +
-> > +	error = -EAGAIN;
-> > +
-> 
-> Why is the conversion in __vfs_setxattr_noperm and not in setattr as
-> was done for posix_acl_fix_xattr_from_user?
+When testing with a docker container, running in a different user
+namespace, I printed out current_user_ns()->level, which returned 1,
+and tty->owner_user_ns->level, which returned 0. This seems to prove
+that I am correctly storing the user namespace which opened the tty.
 
-I think I was thinking I wanted to catch all the vfs_setxattr operations,
-but I don't think that's right.  Moving to setxattr seems right.  I'll
-look around a bit more.
-
-> >  	if (inode->i_opflags & IOP_XATTR) {
-> >  		error = __vfs_setxattr(dentry, inode, name, value, size, flags);
-> >  		if (!error) {
-> > @@ -184,8 +201,10 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
-> >  						     size, flags);
-> >  		}
-> >  	} else {
-> > -		if (unlikely(is_bad_inode(inode)))
-> > -			return -EIO;
-> > +		if (unlikely(is_bad_inode(inode))) {
-> > +			error = -EIO;
-> > +			goto out;
-> > +		}
-> >  	}
-> >  	if (error == -EAGAIN) {
-> >  		error = -EOPNOTSUPP;
-> > @@ -200,10 +219,11 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
-> >  		}
-> >  	}
-> >  
-> > +out:
-> > +	kfree(wvalue);
-> >  	return error;
-> >  }
-> >  
-> > -
-> >  int
-> >  vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
-> >  		size_t size, int flags)
-> 
-> The rest of my comments I am going to express as an incremental diff.
-> Using "security.capability" directly looks like a typo waiting to
-> happen.
-> 
-> You have an unnecessary include of linux/uidgid.h
-> 
-> Missing version checks on the magic_etc field.
-> And the wrong error code when the code deliberately refuses to return a
-> capability.
-
-Thanks, all looks good.  Did you want to just squash these yourself and
-move on, keep them as separate patches, or have me incorporate into mine
-and resend?
-
-> Eric
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 75cc65ac7ea9..f6d5ce3e1030 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -179,7 +179,7 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
->  	if (issec) {
->  		inode->i_flags &= ~S_NOSEC;
->  
-> -		if (!strcmp(name, "security.capability")) {
-> +		if (!strcmp(name, XATTR_NAME_CAPS)) {
->  			error = cap_setxattr_convert_nscap(dentry, value, size,
->  					&wvalue, &wsize);
->  			if (error < 0)
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index b97343353a11..c47febf8448b 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -13,7 +13,6 @@
->  #define _LINUX_CAPABILITY_H
->  
->  #include <uapi/linux/capability.h>
-> -#include <linux/uidgid.h>
->  
->  #define _KERNEL_CAPABILITY_VERSION _LINUX_CAPABILITY_VERSION_3
->  #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 8abb9bf4ec17..32e32f437ef5 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -367,6 +367,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
->  	kuid_t kroot;
->  	uid_t root, mappedroot;
->  	char *tmpbuf = NULL;
-> +	struct vfs_cap_data *cap;
->  	struct vfs_ns_cap_data *nscap;
->  	struct dentry *dentry;
->  	struct user_namespace *fs_ns;
-> @@ -379,14 +380,16 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
->  		return -EINVAL;
->  
->  	size = sizeof(struct vfs_ns_cap_data);
-> -	ret = vfs_getxattr_alloc(dentry, "security.capability",
-> +	ret = vfs_getxattr_alloc(dentry, XATTR_NAME_CAPS,
->  				 &tmpbuf, size, GFP_NOFS);
->  
->  	if (ret < 0)
->  		return ret;
->  
->  	fs_ns = inode->i_sb->s_user_ns;
-> -	if (ret == sizeof(struct vfs_cap_data)) {
-> +	cap = (struct vfs_cap_data *) tmpbuf;
-> +	if ((ret == sizeof(struct vfs_cap_data)) &&
-> +	    (cap->magic_etc == cpu_to_le32(VFS_CAP_REVISION_2))) {
->  		/* If this is sizeof(vfs_cap_data) then we're ok with the
->  		 * on-disk value, so return that.  */
->  		if (alloc)
-> @@ -394,7 +397,8 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
->  		else
->  			kfree(tmpbuf);
->  		return ret;
-> -	} else if (ret != sizeof(struct vfs_ns_cap_data)) {
-> +	} else if ((ret != sizeof(struct vfs_ns_cap_data)) ||
-> +		    (cap->magic_etc != cpu_to_le32(VFS_CAP_REVISION_3))) {
->  		kfree(tmpbuf);
->  		return -EINVAL;
->  	}
-> @@ -417,7 +421,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
->  
->  	if (!rootid_owns_currentns(kroot)) {
->  		kfree(tmpbuf);
-> -		return -EOPNOTSUPP;
-> +		return -ENODATA;
->  	}
->  
->  	/* This comes from a parent namespace.  Return as a v2 capability */
-> @@ -474,11 +478,17 @@ int cap_setxattr_convert_nscap(struct dentry *dentry, const void *value, size_t
->  		return -EINVAL;
->  	if (size != XATTR_CAPS_SZ_2 && size != XATTR_CAPS_SZ_3)
->  		return -EINVAL;
-> +	if ((size == XATTR_CAPS_SZ_2) &&
-> +	    (cap->magic_etc != cpu_to_le32(VFS_CAP_REVISION_2)))
-> +		return -EINVAL;
-> +	if ((size == XATTR_CAPS_SZ_3) &&
-> +	    (cap->magic_etc != cpu_to_le32(VFS_CAP_REVISION_3)))
-> +		return -EINVAL;
->  	if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
->  		return -EPERM;
->  	if (size == XATTR_CAPS_SZ_2)
->  		if (ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP))
-> -			// user is privileged, just write the v2
-> +			/* user is privileged, just write the v2 */
->  			return 0;
->  
->  	rootid = rootid_from_xattr(value, size, task_ns);
-> @@ -855,7 +865,10 @@ int cap_inode_setxattr(struct dentry *dentry, const char *name,
->  			sizeof(XATTR_SECURITY_PREFIX) - 1) != 0)
->  		return 0;
->  
-> -	// For XATTR_NAME_CAPS the check will be done in __vfs_setxattr_noperm()
-> +	/*
-> +	 * For XATTR_NAME_CAPS the check will be done in
-> +	 * __vfs_setxattr_noperm()
-> +	 */
->  	if (strcmp(name, XATTR_NAME_CAPS) == 0)
->  		return 0;
->  
-> 
+Please let me know if there are any edge cases that I am missing with
+this approach.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
