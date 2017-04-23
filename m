@@ -1,202 +1,72 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Sun, 23 Apr 2017 03:24:57 -0400
-Subject: [PATCH v2 2/2] tiocsti-restrict : make TIOCSTI ioctl require
-	CAP_SYS_ADMIN
-In-Reply-To: <20170423072457.27120-1-matt@nmatt.com>
-References: <20170423072457.27120-1-matt@nmatt.com>
-Message-ID: <20170423072457.27120-2-matt@nmatt.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sun, 23 Apr 2017 15:14:00 +0300
+Subject: [tpmdd-devel] [backport v4.9] tpm_tis: use default timeout value
+	if chip reports it as zero
+In-Reply-To: <20170419153807.GB10969@kroah.com>
+References: <20170415152622.14451-1-user@jsakkine-mobl1>
+	<20170415205032.GA17774@kroah.com>
+	<79399e000218504619c21ce6729c8334@molgen.mpg.de>
+	<20170419152908.vq55so4mtqyp6sc7@intel.com>
+	<20170419153807.GB10969@kroah.com>
+Message-ID: <20170423121400.ki7vuvn3xwtiaocr@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This introduces the tiocsti_restrict sysctl, whose default is controlled via
-CONFIG_SECURITY_TIOCSTI_RESTRICT. When activated, this control restricts
-all TIOCSTI ioctl calls from non CAP_SYS_ADMIN users.
+On Wed, Apr 19, 2017 at 05:38:07PM +0200, Greg KH wrote:
+> On Wed, Apr 19, 2017 at 06:29:08PM +0300, Jarkko Sakkinen wrote:
+> > On Sun, Apr 16, 2017 at 09:14:29PM +0200, Paul Menzel wrote:
+> > > Dear Greg,
+> > > 
+> > > 
+> > > On 2017-04-15 22:50, Greg KH wrote:
+> > > > On Sat, Apr 15, 2017 at 06:26:22PM +0300, Jarkko Sakkinen wrote:
+> > > > > From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+> > > > > 
+> > > > > Since commit 1107d065fdf1 ("tpm_tis: Introduce intermediate layer for
+> > > > > TPM access") Atmel 3203 TPM on ThinkPad X61S (TPM firmware version
+> > > > > 13.9)
+> > > > > no longer works.  The initialization proceeds fine until we get and
+> > > > > start using chip-reported timeouts - and the chip reports C and D
+> > > > > timeouts of zero.
+> > > > > 
+> > > > > It turns out that until commit 8e54caf407b98e ("tpm: Provide a generic
+> > > > > means to override the chip returned timeouts") we had actually let
+> > > > > default timeout values remain in this case, so let's bring back this
+> > > > > behavior to make chips like Atmel 3203 work again.
+> > > > > 
+> > > > > Use a common code that was introduced by that commit so a warning is
+> > > > > printed in this case and /sys/class/tpm/tpm*/timeouts correctly says
+> > > > > the
+> > > > > timeouts aren't chip-original.
+> > > > > 
+> > > > > Fixes: 1107d065fdf1 ("tpm_tis: Introduce intermediate layer for TPM
+> > > > > access")
+> > > > > Cc: stable at vger.kernel.org
+> > > > > Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > 
+> > > > What is the git commit id for this patch in Linus's tree?
+> > > 
+> > > The git commit hash is 1d70fe9d9c3a4c627f9757cbba5d628687b121c1.
+> > > 
+> > > 
+> > > Kind regards,
+> > > 
+> > > Paul
+> > 
+> > Do you want me to revise the backport? Thanks.
+> 
+> I can't take it as-is, so yes, if you want it applied, it needs to be
+> fixed :)
+> 
+> thanks,
+> 
+> greg k-h
 
-This patch was inspired from GRKERNSEC_HARDEN_TTY.
+I will send it asap. Thanks.
 
-This patch would have prevented
-https://bugzilla.redhat.com/show_bug.cgi?id=1411256 under the following
-conditions:
-* non-privileged container
-* container run inside new user namespace
-
-Possible effects on userland:
-
-There could be a few user programs that would be effected by this
-change.
-See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
-notable programs are: agetty, csh, xemacs and tcsh
-
-However, I still believe that this change is worth it given that the
-Kconfig defaults to n. This will be a feature that is turned on for the
-same reason that people activate it when using grsecurity. Users of this
-opt-in feature will realize that they are choosing security over some OS
-features like unprivileged TIOCSTI ioctls, as should be clear in the
-Kconfig help message.
-
-Threat Model/Patch Rational:
-
->From grsecurity's config for GRKERNSEC_HARDEN_TTY.
-
- | There are very few legitimate uses for this functionality and it
- | has made vulnerabilities in several 'su'-like programs possible in
- | the past.  Even without these vulnerabilities, it provides an
- | attacker with an easy mechanism to move laterally among other
- | processes within the same user's compromised session.
-
-So if one process within a tty session becomes compromised it can follow
-that additional processes, that are thought to be in different security
-boundaries, can be compromised as a result. When using a program like su
-or sudo, these additional processes could be in a tty session where TTY file
-descriptors are indeed shared over privilege boundaries.
-
-This is also an excellent writeup about the issue:
-<http://www.halfdog.net/Security/2012/TtyPushbackPrivilegeEscalation/>
-
-When user namespaces are in use, the check for the capability
-CAP_SYS_ADMIN is done against the user namespace that originally opened
-the tty.
-
-Signed-off-by: Matt Brown <matt@nmatt.com>
----
- Documentation/sysctl/kernel.txt | 21 +++++++++++++++++++++
- drivers/tty/tty_io.c            |  6 ++++++
- include/linux/tty.h             |  2 ++
- kernel/sysctl.c                 | 12 ++++++++++++
- security/Kconfig                | 13 +++++++++++++
- 5 files changed, 54 insertions(+)
-
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index bac23c1..c15c660 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -89,6 +89,7 @@ show up in /proc/sys/kernel:
- - sysctl_writes_strict
- - tainted
- - threads-max
-+- tiocsti_restrict
- - unknown_nmi_panic
- - watchdog
- - watchdog_thresh
-@@ -987,6 +988,26 @@ available RAM pages threads-max is reduced accordingly.
- 
- ==============================================================
- 
-+tiocsti_restrict:
-+
-+This toggle indicates whether unprivileged users are prevented
-+from using the TIOCSTI ioctl to inject commands into otherprocesses
-+which share a tty session.
-+
-+When tiocsti_restrict is set to (0) there are no restrictions(accept
-+the default restriction of only being able to injection commands into
-+one's own tty). When tiocsti_restrict is set to (1), users must
-+have CAP_SYS_ADMIN to use the TIOCSTI ioctl.
-+
-+When user namespaces are in use, the check for the capability
-+CAP_SYS_ADMIN is done against the user namespace that originally
-+opened the tty.
-+
-+The kernel config option CONFIG_SECURITY_TIOCSTI_RESTRICT sets the
-+default value of tiocsti_restrict.
-+
-+==============================================================
-+
- unknown_nmi_panic:
- 
- The value in this file affects behavior of handling NMI. When the
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index e774385..2e15dca 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2296,11 +2296,17 @@ static int tty_fasync(int fd, struct file *filp, int on)
-  *	FIXME: may race normal receive processing
-  */
- 
-+int tiocsti_restrict = IS_ENABLED(CONFIG_SECURITY_TIOCSTI_RESTRICT);
-+
- static int tiocsti(struct tty_struct *tty, char __user *p)
- {
- 	char ch, mbz = 0;
- 	struct tty_ldisc *ld;
- 
-+	if (tiocsti_restrict && !ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)) {
-+		pr_warn_ratelimited("TIOCSTI ioctl call blocked for non-privileged process\n");
-+		return -EPERM;
-+	}
- 	if ((current->signal->tty != tty) && !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 	if (get_user(ch, p))
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index d902d42..2fd7f49 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -344,6 +344,8 @@ struct tty_file_private {
- 	struct list_head list;
- };
- 
-+extern int tiocsti_restrict;
-+
- /* tty magic number */
- #define TTY_MAGIC		0x5401
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index acf0a5a..68d1363 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -67,6 +67,7 @@
- #include <linux/kexec.h>
- #include <linux/bpf.h>
- #include <linux/mount.h>
-+#include <linux/tty.h>
- 
- #include <linux/uaccess.h>
- #include <asm/processor.h>
-@@ -833,6 +834,17 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= &two,
- 	},
- #endif
-+#if defined CONFIG_TTY
-+	{
-+		.procname	= "tiocsti_restrict",
-+		.data		= &tiocsti_restrict,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax_sysadmin,
-+		.extra1		= &zero,
-+		.extra2		= &one,
-+	},
-+#endif
- 	{
- 		.procname	= "ngroups_max",
- 		.data		= &ngroups_max,
-diff --git a/security/Kconfig b/security/Kconfig
-index 3ff1bf9..7d13331 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -18,6 +18,19 @@ config SECURITY_DMESG_RESTRICT
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+config SECURITY_TIOCSTI_RESTRICT
-+	bool "Restrict unprivileged use of tiocsti command injection"
-+	default n
-+	help
-+	  This enforces restrictions on unprivileged users injecting commands
-+	  into other processes which share a tty session using the TIOCSTI
-+	  ioctl. This option makes TIOCSTI use require CAP_SYS_ADMIN.
-+
-+	  If this option is not selected, no restrictions will be enforced
-+	  unless the tiocsti_restrict sysctl is explicitly set to (1).
-+
-+	  If you are unsure how to answer this question, answer N.
-+
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
--- 
-2.10.2
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
