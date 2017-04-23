@@ -1,40 +1,66 @@
-From: selven@hackers.mu (Pirabarlen Cheenaramen)
-Date: Sun, 23 Apr 2017 08:48:32 +0200
-Subject: [PATCH] selinux: hooks: security content must be properly cleared
-In-Reply-To: <20170423000551.GA25768@hackers.mu>
-References: <20170423000551.GA25768@hackers.mu>
-Message-ID: <20170423064832.GA4042@hackers.mu>
+From: matt@nmatt.com (Matt Brown)
+Date: Sun, 23 Apr 2017 03:24:56 -0400
+Subject: [PATCH v2 1/2] tiocsti-restrict : Add owner user namespace to
+	tty_struct
+Message-ID: <20170423072457.27120-1-matt@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Please disregard this patch.
+This patch adds struct user_namespace *owner_user_ns to the tty_struct.
+Then it is set to current_user_ns() in the alloc_tty_struct function.
 
-On Sun, Apr 23, 2017 at 02:05:51AM +0200, Pirabarlen-Cheenaramen wrote:
-> Signed-off-by: Pirabarlen-Cheenaramen <selven@hackers.mu>
-> ---
->  security/selinux/hooks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index e67a526..ef3fa80 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4969,7 +4969,7 @@ static int selinux_tun_dev_alloc_security(void **security)
->  
->  static void selinux_tun_dev_free_security(void *security)
->  {
-> -	kfree(security);
-> +	kzfree(security);
->  }
->  
->  static int selinux_tun_dev_create(void)
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is done to facilitate capability checks against the original user
+namespace that allocated the tty.
+
+E.g. ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)
+
+This combined with the use of user namespace's will allow hardening
+protections to be built to mitigate container escapes that utilize TTY
+ioctls such as TIOCSTI.
+
+See: https://bugzilla.redhat.com/show_bug.cgi?id=1411256
+
+Signed-off-by: Matt Brown <matt@nmatt.com>
+---
+ drivers/tty/tty_io.c | 1 +
+ include/linux/tty.h  | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index e6d1a65..e774385 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -3191,6 +3191,7 @@ struct tty_struct *alloc_tty_struct(struct tty_driver *driver, int idx)
+ 	tty->index = idx;
+ 	tty_line_name(driver, idx, tty->name);
+ 	tty->dev = tty_get_device(tty);
++	tty->owner_user_ns = current_user_ns();
+ 
+ 	return tty;
+ }
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index 1017e904..d902d42 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -12,6 +12,7 @@
+ #include <uapi/linux/tty.h>
+ #include <linux/rwsem.h>
+ #include <linux/llist.h>
++#include <linux/user_namespace.h>
+ 
+ 
+ /*
+@@ -333,6 +334,7 @@ struct tty_struct {
+ 	/* If the tty has a pending do_SAK, queue it here - akpm */
+ 	struct work_struct SAK_work;
+ 	struct tty_port *port;
++	struct user_namespace *owner_user_ns;
+ };
+ 
+ /* Each of a tty's open files has private_data pointing to tty_file_private */
+-- 
+2.10.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
