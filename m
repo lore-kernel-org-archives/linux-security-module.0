@@ -1,77 +1,45 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sun, 23 Apr 2017 15:18:06 +0300
-Subject: [tpmdd-devel] [PATCH 3/3] tpm: vtpm_proxy: Add ioctl to request
-	locality prepended to command
-In-Reply-To: <10c67f88-35cc-be0e-9acf-e85c9e94d790@linux.vnet.ibm.com>
-References: <1492442371-30252-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1492442371-30252-4-git-send-email-stefanb@linux.vnet.ibm.com>
-	<10c67f88-35cc-be0e-9acf-e85c9e94d790@linux.vnet.ibm.com>
-Message-ID: <20170423121806.olcfmnhrettyjqus@intel.com>
+From: jannh@google.com (Jann Horn)
+Date: Sun, 23 Apr 2017 19:02:24 +0200
+Subject: [PATCH v2 1/2] tiocsti-restrict : Add owner user namespace to
+	tty_struct
+In-Reply-To: <20170423072457.27120-1-matt@nmatt.com>
+References: <20170423072457.27120-1-matt@nmatt.com>
+Message-ID: <CAG48ez2jc8NT1mtQrGjJkY-LMyYPzUf50zEh3UNDzs+NtCe2fA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Apr 20, 2017 at 07:58:58AM -0400, Stefan Berger wrote:
-> On 04/17/2017 11:19 AM, Stefan Berger wrote:
-> > Add an ioctl to request that the locality be prepended to every TPM
-> > command.
-> >
-> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > ---
-> >   drivers/char/tpm/tpm_vtpm_proxy.c | 16 ++++++++++++----
-> >   include/uapi/linux/vtpm_proxy.h   |  4 +++-
-> >   2 files changed, 15 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > index bf59426..5f34973 100644
-> > --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> > +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > @@ -52,7 +52,8 @@ struct proxy_dev {
-> >   };
-> >
-> >   /* all supported flags */
-> > -#define VTPM_PROXY_FLAGS_ALL  (VTPM_PROXY_FLAG_TPM2)
-> > +#define VTPM_PROXY_FLAGS_ALL  (VTPM_PROXY_FLAG_TPM2 | \
-> > +			       VTPM_PROXY_FLAG_PREPEND_LOCALITY)
-> >
-> >   static struct workqueue_struct *workqueue;
-> >
-> > @@ -77,8 +78,9 @@ static ssize_t vtpm_proxy_fops_read(struct file *filp, char __user *buf,
-> >   				    size_t count, loff_t *off)
-> >   {
-> >   	struct proxy_dev *proxy_dev = filp->private_data;
-> > -	size_t len;
-> > -	int sig, rc;
-> > +	size_t len, offset = 0;
-> > +	int sig, rc = 0;
-> > +	uint8_t locality;
-> >
-> >   	sig = wait_event_interruptible(proxy_dev->wq,
-> >   		proxy_dev->req_len != 0 ||
-> > @@ -102,7 +104,13 @@ static ssize_t vtpm_proxy_fops_read(struct file *filp, char __user *buf,
-> >   		return -EIO;
-> >   	}
-> >
-> > -	rc = copy_to_user(buf, proxy_dev->buffer, len);
-> > +	if (proxy_dev->flags & VTPM_PROXY_FLAG_PREPEND_LOCALITY) {
-> > +		locality = proxy_dev->chip->locality;
-> > +		offset = sizeof(locality);
-> > +		rc = copy_to_user(buf, &locality, offset);
-> > +	}
-> > +	if (!rc)
-> > +		rc = copy_to_user(&buf[offset], proxy_dev->buffer, len);
-> >   	memset(proxy_dev->buffer, 0, len);
-> >   	proxy_dev->req_len = 0;
-> 
-> There 'return' statement of this function needs to say 'return len + 
-> offset'. So I'll resubmit a V2 for that.
-> 
-> Apart from that, any comments?
-> 
->     Stefan
+On Sun, Apr 23, 2017 at 9:24 AM, Matt Brown <matt@nmatt.com> wrote:
+> This patch adds struct user_namespace *owner_user_ns to the tty_struct.
+> Then it is set to current_user_ns() in the alloc_tty_struct function.
+>
+> This is done to facilitate capability checks against the original user
+> namespace that allocated the tty.
+>
+> E.g. ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)
+>
+> This combined with the use of user namespace's will allow hardening
+> protections to be built to mitigate container escapes that utilize TTY
+> ioctls such as TIOCSTI.
+>
+> See: https://bugzilla.redhat.com/show_bug.cgi?id=1411256
+>
+> Signed-off-by: Matt Brown <matt@nmatt.com>
+> ---
+>  drivers/tty/tty_io.c | 1 +
+>  include/linux/tty.h  | 2 ++
+>  2 files changed, 3 insertions(+)
+>
+> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+> index e6d1a65..e774385 100644
+> --- a/drivers/tty/tty_io.c
+> +++ b/drivers/tty/tty_io.c
+> @@ -3191,6 +3191,7 @@ struct tty_struct *alloc_tty_struct(struct tty_driver *driver, int idx)
+>         tty->index = idx;
+>         tty_line_name(driver, idx, tty->name);
+>         tty->dev = tty_get_device(tty);
+> +       tty->owner_user_ns = current_user_ns();
 
-Will give a proper look next week.
-
-/Jarkko
+Why are you not taking a reference to the userns?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
