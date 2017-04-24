@@ -1,26 +1,74 @@
-From: rusty@rustcorp.com.au (Rusty Russell)
-Date: Mon, 24 Apr 2017 13:59:48 +0930
-Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
-	autoload restriction
-In-Reply-To: <1492640420-27345-3-git-send-email-tixxdz@gmail.com>
-References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
-	<1492640420-27345-3-git-send-email-tixxdz@gmail.com>
-Message-ID: <87r30ifmwz.fsf@rustcorp.com.au>
+From: matt@nmatt.com (Matt Brown)
+Date: Mon, 24 Apr 2017 01:15:10 -0400
+Subject: [PATCH v4 0/2] tiocsti-restrict : make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+Message-ID: <20170424051512.20420-1-matt@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Djalal Harouni <tixxdz@gmail.com> writes:
-> When value is (1), task must have CAP_SYS_MODULE to be able to trigger a
-> module auto-load operation, or CAP_NET_ADMIN for modules with a
-> 'netdev-%s' alias.
+This patchset introduces the tiocsti_restrict sysctl, whose default is
+controlled via CONFIG_SECURITY_TIOCSTI_RESTRICT. When activated, this
+control restricts all TIOCSTI ioctl calls from non CAP_SYS_ADMIN users.
 
-Sorry, the magic 'netdev-' prefix is a crawling horror.  To do this
-properly, you need to hand the capability (if any) from the
-request_module() call.  Probably by adding a new request_module_cap and
-making request_module() call that, then fixing up the callers.
+This patch was inspired from GRKERNSEC_HARDEN_TTY.
 
-Cheers,
-Rusty.
+This patch would have prevented
+https://bugzilla.redhat.com/show_bug.cgi?id=1411256 under the following
+conditions:
+* non-privileged container
+* container run inside new user namespace
+
+Possible effects on userland:
+
+There could be a few user programs that would be effected by this
+change.
+See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+notable programs are: agetty, csh, xemacs and tcsh
+
+However, I still believe that this change is worth it given that the
+Kconfig defaults to n. This will be a feature that is turned on for the
+same reason that people activate it when using grsecurity. Users of this
+opt-in feature will realize that they are choosing security over some OS
+features like unprivileged TIOCSTI ioctls, as should be clear in the
+Kconfig help message.
+
+Threat Model/Patch Rational:
+
+>From grsecurity's config for GRKERNSEC_HARDEN_TTY.
+
+ | There are very few legitimate uses for this functionality and it
+ | has made vulnerabilities in several 'su'-like programs possible in
+ | the past.  Even without these vulnerabilities, it provides an
+ | attacker with an easy mechanism to move laterally among other
+ | processes within the same user's compromised session.
+
+So if one process within a tty session becomes compromised it can follow
+that additional processes, that are thought to be in different security
+boundaries, can be compromised as a result. When using a program like su
+or sudo, these additional processes could be in a tty session where TTY file
+descriptors are indeed shared over privilege boundaries.
+
+This is also an excellent writeup about the issue:
+<http://www.halfdog.net/Security/2012/TtyPushbackPrivilegeEscalation/>
+
+When user namespaces are in use, the check for the capability
+CAP_SYS_ADMIN is done against the user namespace that originally opened
+the tty.
+
+# Changes since v3:
+* use get_user_ns and put_user_ns to take and drop references to the owner
+  user namespace because CONFIG_USER_NS is an option
+
+# Changes since v2:
+* take/drop reference to user namespace on tty struct alloc/free to prevent
+  use-after-free.
+
+# Changes since v1:
+* added owner_user_ns to tty_struct to enable capability checks against
+  the namespace that created the tty.
+* rewording in different places to make patchset purpose clear
+* Added Documentation
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
