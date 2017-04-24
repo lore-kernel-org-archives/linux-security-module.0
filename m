@@ -1,67 +1,89 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Mon, 24 Apr 2017 16:25:40 +0200
-Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
-	autoload restriction
-In-Reply-To: <CAGXu5jLV+WZyj+xnxVFkFEgEthNt6eXdcSgHT-=85mJ1ECZ1Rw@mail.gmail.com>
-References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
-	<1492640420-27345-3-git-send-email-tixxdz@gmail.com>
-	<CALCETrXFp-apnfRPg9qx6E7g3KDU8DanBW1pMUnA1zShrB5xKg@mail.gmail.com>
-	<CAGXu5jJ5dm8yJJ34tEyOP78OxUr2awXmNhm6RaVP8jE4q+L5Ng@mail.gmail.com>
-	<CALCETrUueOx1tqj+Ru93KGpy2HHR-A_GQ6DrAppiomkPTtX7Lw@mail.gmail.com>
-	<CAGXu5jJBp6VHvDP9182hJgvzS2sBUbUFpmZZ+196K2FcEHUxzw@mail.gmail.com>
-	<CALCETrVZ2KH4s2uGW2J3zUQ8RNsrq=N7pJP=YDqd=+cp6fJW=g@mail.gmail.com>
-	<CAGXu5jJTdL7To2JsQUXyg6B7Xbb0kow6sXH-L+teVi88=gm7MQ@mail.gmail.com>
-	<CALCETrXzZwz4a9uhQfdHb4L2afApTvVLPwVx640vvV-fzbCR0w@mail.gmail.com>
-	<CAEiveUcx8fwQgXdLPeMNsTjX2KPhQKH__a-XzcHko_1aCmh4sg@mail.gmail.com>
-	<CALCETrUT73CcPQx2T=1zWbOUhw9r-c_YqXw5-KTwxgWPgXuTwA@mail.gmail.com>
-	<CAGXu5jLV+WZyj+xnxVFkFEgEthNt6eXdcSgHT-=85mJ1ECZ1Rw@mail.gmail.com>
-Message-ID: <CAEiveUdQYbx8d9B68n2M12fhu3s8web3zCvkc-C9FWtNnbELuA@mail.gmail.com>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Mon, 24 Apr 2017 14:14:05 -0300
+Subject: [PATCH 3/6] ima: Simplify policy_func_show.
+In-Reply-To: <1492783076.3081.202.camel@linux.vnet.ibm.com>
+References: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
+	<2085797.x18HOhjl0i@morokweng>
+	<1492783076.3081.202.camel@linux.vnet.ibm.com>
+Message-ID: <9111285.IvmltpgZRA@morokweng>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Apr 22, 2017 at 9:29 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Fri, Apr 21, 2017 at 11:51 PM, Andy Lutomirski <luto@kernel.org> wrote:
->> On Fri, Apr 21, 2017 at 5:12 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
->>> On Sat, Apr 22, 2017 at 1:51 AM, Andy Lutomirski <luto@kernel.org> wrote:
->>>
-[...]
->>> * DCCP use after free CVE-2017-6074
->>> * n_hldc CVE-2017-2636
->>> * XFRM framework CVE-2017-7184
->>> * L2TPv3 CVE-2016-10200
->>>
->>> Most of these need CAP_NET_ADMIN to be autoloaded, however we also
->>> need CAP_NET_ADMIN for other things... therefore it is better to have
->>> an extra facility that could coexist with CAP_NET_ADMIN and other
->>> sandbox features.
->>>
->>
->> I agree that the feature is important, but I think your implementation
->> is needlessly dangerous.  I imagine that the main uses that you care
->> about involve containers.  How about doing it in a safer way that
->> works for containers?  I can think of a few.  For example:
->>
->> 1. A sysctl that, if set, prevents autoloading outside the root
->> userns.  This isn't very flexible at all, but it might work.
->>
->> 2. Your patch, but require privilege within the calling namespace to
->> set the prctl.
->
-> How about CAP_SYS_ADMIN || no_new_privs?
->
-> -Kees
->
+Am Freitag, 21. April 2017, 09:57:56 BRT schrieb Mimi Zohar:
+> On Thu, 2017-04-20 at 17:40 -0300, Thiago Jung Bauermann wrote:
+> > @@ -949,49 +936,16 @@ void ima_policy_stop(struct seq_file *m, void *v)
+> > 
+> >  #define pt(token)	policy_tokens[token + Opt_err].pattern
+> >  #define mt(token)	mask_tokens[token]
+> > 
+> > -#define ft(token)	func_tokens[token]
+> > 
+> >  /*
+> >  
+> >   * policy_func_show - display the ima_hooks policy rule
+> >   */
+> >  
+> >  static void policy_func_show(struct seq_file *m, enum ima_hooks func)
+> >  {
+> > 
+> > -	char tbuf[64] = {0,};
+> > -
+> > -	switch (func) {
+> > -	case FILE_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_file));
+> > -		break;
+> > -	case MMAP_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_mmap));
+> > -		break;
+> > -	case BPRM_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_bprm));
+> > -		break;
+> > -	case MODULE_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_module));
+> > -		break;
+> > -	case FIRMWARE_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_firmware));
+> > -		break;
+> > -	case POST_SETATTR:
+> > -		seq_printf(m, pt(Opt_func), ft(func_post));
+> > -		break;
+> > -	case KEXEC_KERNEL_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_kexec_kernel));
+> > -		break;
+> > -	case KEXEC_INITRAMFS_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_kexec_initramfs));
+> > -		break;
+> > -	case POLICY_CHECK:
+> > -		seq_printf(m, pt(Opt_func), ft(func_policy));
+> > -		break;
+> > -	default:
+> > -		snprintf(tbuf, sizeof(tbuf), "%d", func);
+> > -		seq_printf(m, pt(Opt_func), tbuf);
+> > -		break;
+> > -	}
+> > -	seq_puts(m, " ");
+> > +	if (func > 0 && func < MAX_CHECK)
+> > +		seq_printf(m, "func=%s ", func_tokens[func]);
+> > +	else
+> > +		seq_printf(m, "func=%d ", func);
+> 
+> The only time this can happen is when __kernel_read_file_id() is
+> updated without updating the read_idmap[].  Perhaps we can display the
+> number and the appropriate __kernel_read_file_id string.
 
-Yes I can update as per Andy suggestion to require privileges inside
-the calling namespace to set prctl. Other options that are not prctl
-based have more variants, that make them hard to use.
+>From what I understood of the code func comes from ima_parse_rule, so that 
+condition would only happen if ima_parse_rule got out of sync with 
+func_tokens. Since that code only initializes func with constants from enum 
+ima_hooks and this patch makes ima_hooks automatically sync with func_tokens, 
+the else branch is more like a "can't happen" safety net.
 
-So I would got with CAP_SYS_ADMIN in the calling userns ||
-no_new_privs , I would have said CAP_SYS_MODULE in the userns but it
-seems better to standardize on CAP_SYS_ADMIN to set the prctl.
+read_idmap is only used in ima_post_read_file, and I couldn't see a relation 
+between that code path and the one for ima_policy_show.
 
 -- 
-tixxdz
+Thiago Jung Bauermann
+IBM Linux Technology Center
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
