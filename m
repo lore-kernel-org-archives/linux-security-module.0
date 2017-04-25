@@ -1,28 +1,75 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 25 Apr 2017 10:04:20 +1000 (AEST)
-Subject: [GIT PULL] tpmdd fixes for 4.12
-In-Reply-To: <20170424213710.qrc5za4tigjdqspi@intel.com>
-References: <20170424213710.qrc5za4tigjdqspi@intel.com>
-Message-ID: <alpine.LRH.2.20.1704251004100.8213@namei.org>
+From: matt@nmatt.com (Matt Brown)
+Date: Tue, 25 Apr 2017 00:15:10 -0400
+Subject: [PATCH v5 0/2] security: tty: make TIOCSTI ioctl require CAP_SYS_ADMIN
+Message-ID: <20170425041512.13189-1-matt@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 25 Apr 2017, Jarkko Sakkinen wrote:
+This patchset introduces the tiocsti_restrict sysctl, whose default is
+controlled via CONFIG_SECURITY_TIOCSTI_RESTRICT. When activated, this
+control restricts all TIOCSTI ioctl calls from non CAP_SYS_ADMIN users.
 
-> Hi
-> 
-> Here are fixes for the 4.12 release. In addition there is an update to
-> the tpm_tis driver to use common callbacks for requesting and
-> relinquishing locality as they were with locality support for tpm_crb.
-> Now the logic flow for both driver is driven in tpm_transmit().
-> 
+This patch was inspired from GRKERNSEC_HARDEN_TTY.
 
-pulled, thanks!
+This patch would have prevented
+https://bugzilla.redhat.com/show_bug.cgi?id=1411256 under the following
+conditions:
+* non-privileged container
+* container run inside new user namespace
 
--- 
-James Morris
-<jmorris@namei.org>
+Possible effects on userland:
 
+There could be a few user programs that would be effected by this
+change.
+See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+notable programs are: agetty, csh, xemacs and tcsh
+
+However, I still believe that this change is worth it given that the
+Kconfig defaults to n. This will be a feature that is turned on for the
+same reason that people activate it when using grsecurity. Users of this
+opt-in feature will realize that they are choosing security over some OS
+features like unprivileged TIOCSTI ioctls, as should be clear in the
+Kconfig help message.
+
+Threat Model/Patch Rational:
+
+>From grsecurity's config for GRKERNSEC_HARDEN_TTY.
+
+ | There are very few legitimate uses for this functionality and it
+ | has made vulnerabilities in several 'su'-like programs possible in
+ | the past.  Even without these vulnerabilities, it provides an
+ | attacker with an easy mechanism to move laterally among other
+ | processes within the same user's compromised session.
+
+So if one process within a tty session becomes compromised it can follow
+that additional processes, that are thought to be in different security
+boundaries, can be compromised as a result. When using a program like su
+or sudo, these additional processes could be in a tty session where TTY file
+descriptors are indeed shared over privilege boundaries.
+
+This is also an excellent writeup about the issue:
+<http://www.halfdog.net/Security/2012/TtyPushbackPrivilegeEscalation/>
+
+When user namespaces are in use, the check for the capability
+CAP_SYS_ADMIN is done against the user namespace that originally opened
+the tty.
+
+# Changes since v4:
+* fixed typo
+
+# Changes since v3:
+* use get_user_ns and put_user_ns to take and drop references to the owner
+  user namespace because CONFIG_USER_NS is an option
+
+# Changes since v2:
+* take/drop reference to user namespace on tty struct alloc/free to prevent
+  use-after-free.
+
+# Changes since v1:
+* added owner_user_ns to tty_struct to enable capability checks against
+  the namespace that created the tty.
+* rewording in different places to make patchset purpose clear
+* Added Documentation
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
