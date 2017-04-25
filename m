@@ -1,134 +1,251 @@
 From: tixxdz@gmail.com (Djalal Harouni)
-Date: Tue, 25 Apr 2017 14:23:52 +0200
-Subject: [PATCH RFC v2 0/6] proc: support private proc instances per
-	pidnamespace
-Message-ID: <1493123038-30590-1-git-send-email-tixxdz@gmail.com>
+Date: Tue, 25 Apr 2017 14:23:55 +0200
+Subject: [PATCH RFC v2 3/6] proc: add helpers to set and get proc hidepid and
+	gid mount options
+In-Reply-To: <1493123038-30590-1-git-send-email-tixxdz@gmail.com>
+References: <1493123038-30590-1-git-send-email-tixxdz@gmail.com>
+Message-ID: <1493123038-30590-4-git-send-email-tixxdz@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+This is a cleaning patch to add helpers to set and get proc mount
+options instead of directly using them. This make it easy to track
+what's happening and easy to update in future.
 
-This is RFC v2 to modernize procfs and make it able to support multiple
-private instances per the same pid namespace. RFC v1 is here [1]
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+---
+ fs/proc/base.c          | 16 +++++++++-------
+ fs/proc/inode.c         |  5 +++--
+ fs/proc/internal.h      |  2 +-
+ fs/proc/root.c          | 15 ++++++++++-----
+ include/linux/proc_fs.h | 44 ++++++++++++++++++++++++++++++++++++++++++--
+ 5 files changed, 65 insertions(+), 17 deletions(-)
 
-This RFC v2 can be applied on top of next-20170424
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c96a9c6..3351275 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -681,13 +681,16 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
+  * May current process learn task's sched/cmdline info (for hide_pid_min=1)
+  * or euid/egid (for hide_pid_min=2)?
+  */
+-static bool has_pid_permissions(struct pid_namespace *pid,
++static bool has_pid_permissions(struct proc_fs_info *fs_info,
+ 				 struct task_struct *task,
+ 				 int hide_pid_min)
+ {
+-	if (pid->hide_pid < hide_pid_min)
++	int hide_pid = proc_fs_hide_pid(fs_info);
++	kgid_t gid = proc_fs_pid_gid(fs_info);
++
++	if (hide_pid < hide_pid_min)
+ 		return true;
+-	if (in_group_p(pid->pid_gid))
++	if (in_group_p(gid))
+ 		return true;
+ 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
+ }
+@@ -703,7 +706,7 @@ static int proc_pid_permission(struct inode *inode, int mask)
+ 	task = get_proc_task(inode);
+ 	if (!task)
+ 		return -ESRCH;
+-	has_perms = has_pid_permissions(pid, task, HIDEPID_NO_ACCESS);
++	has_perms = has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS);
+ 	put_task_struct(task);
+ 
+ 	if (!has_perms) {
+@@ -1778,7 +1781,6 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 	struct task_struct *task;
+ 	struct inode *inode = d_inode(path->dentry);
+ 	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
+-	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+ 	generic_fillattr(inode, stat);
+ 
+@@ -1787,7 +1789,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 	stat->gid = GLOBAL_ROOT_GID;
+ 	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 	if (task) {
+-		if (!has_pid_permissions(pid, task, HIDEPID_INVISIBLE)) {
++		if (!has_pid_permissions(fs_info, task, HIDEPID_INVISIBLE)) {
+ 			rcu_read_unlock();
+ 			/*
+ 			 * This doesn't prevent learning whether PID exists,
+@@ -3234,7 +3236,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ 		int len;
+ 
+ 		cond_resched();
+-		if (!has_pid_permissions(ns, iter.task, HIDEPID_INVISIBLE))
++		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
+ 			continue;
+ 
+ 		len = snprintf(name, sizeof(name), "%d", iter.tgid);
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 64cd0e2..7c0e122 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -475,11 +475,12 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
+ int proc_fill_super(struct super_block *s, void *data, int silent)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb(s);
+-	struct pid_namespace *ns = get_pid_ns(fs_info->pid_ns);
+ 	struct inode *root_inode;
+ 	int ret;
+ 
+-	if (!proc_parse_options(data, ns))
++	get_pid_ns(fs_info->pid_ns);
++
++	if (!proc_parse_options(data, fs_info))
+ 		return -EINVAL;
+ 
+ 	/* User space would break if executables or devices appear on proc */
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index c5ae09b..126fa31 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -261,7 +261,7 @@ static inline void proc_tty_init(void) {}
+  * root.c
+  */
+ extern struct proc_dir_entry proc_root;
+-extern int proc_parse_options(char *options, struct pid_namespace *pid);
++extern int proc_parse_options(char *options, struct proc_fs_info *fs_info);
+ 
+ extern void proc_self_init(void);
+ extern int proc_remount(struct super_block *, int *, char *);
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index f44b864..a76ceb0 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -36,11 +36,12 @@ static const match_table_t tokens = {
+ 	{Opt_err, NULL},
+ };
+ 
+-int proc_parse_options(char *options, struct pid_namespace *pid)
++int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ {
+ 	char *p;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	int option;
++	kgid_t gid;
+ 
+ 	if (!options)
+ 		return 1;
+@@ -56,7 +57,12 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ 		case Opt_gid:
+ 			if (match_int(&args[0], &option))
+ 				return 0;
+-			pid->pid_gid = make_kgid(current_user_ns(), option);
++			gid = make_kgid(current_user_ns(), option);
++			if (!gid_valid(gid)) {
++				pr_err("proc: invalid gid mount option.\n");
++				return 0;
++			}
++			proc_fs_set_pid_gid(fs_info, gid);
+ 			break;
+ 		case Opt_hidepid:
+ 			if (match_int(&args[0], &option))
+@@ -66,7 +72,7 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ 				pr_err("proc: hidepid value must be between 0 and 2.\n");
+ 				return 0;
+ 			}
+-			pid->hide_pid = option;
++			proc_fs_set_hide_pid(fs_info, option);
+ 			break;
+ 		default:
+ 			pr_err("proc: unrecognized mount option \"%s\" "
+@@ -81,10 +87,9 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ int proc_remount(struct super_block *sb, int *flags, char *data)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb(sb);
+-	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+ 	sync_filesystem(sb);
+-	return !proc_parse_options(data, pid);
++	return !proc_parse_options(data, fs_info);
+ }
+ 
+ static int proc_test_super(struct super_block *s, void *data)
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 7ba8540..7a8d641 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -7,6 +7,10 @@
+ #include <linux/types.h>
+ #include <linux/fs.h>
+ #include <linux/refcount.h>
++#include <linux/pid_namespace.h>
++
++struct proc_dir_entry;
++struct pid_namespace;
+ 
+ struct proc_fs_info {
+ 	struct pid_namespace *pid_ns;
+@@ -14,8 +18,6 @@ struct proc_fs_info {
+ 	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
+ };
+ 
+-struct proc_dir_entry;
+-
+ #ifdef CONFIG_PROC_FS
+ 
+ static inline struct proc_fs_info *proc_sb(struct super_block *sb)
+@@ -23,6 +25,26 @@ static inline struct proc_fs_info *proc_sb(struct super_block *sb)
+ 	return sb->s_fs_info;
+ }
+ 
++static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
++{
++	fs_info->pid_ns->hide_pid = hide_pid;
++}
++
++static inline void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid)
++{
++	fs_info->pid_ns->pid_gid = gid;
++}
++
++static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
++{
++	return fs_info->pid_ns->hide_pid;
++}
++
++static inline kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
++{
++	return fs_info->pid_ns->pid_gid;
++}
++
+ extern void proc_root_init(void);
+ extern void proc_flush_task(struct task_struct *);
+ 
+@@ -65,6 +87,24 @@ static inline void proc_flush_task(struct task_struct *task)
+ {
+ }
+ 
++static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
++{
++}
++
++static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
++{
++}
++
++static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
++{
++	return 0;
++}
++
++extern kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
++{
++	return GLOBAL_ROOT_GID;
++}
++
+ extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
+ static inline struct proc_dir_entry *proc_symlink(const char *name,
+ 		struct proc_dir_entry *parent,const char *dest) { return NULL;}
+-- 
+2.10.2
 
-Historically procfs was tied to pid namespaces, and mount options were
-propagated to all other procfs instances in the same pid namespace. This
-solved several use cases in that time. However today we face new
-requirements, and making procfs able to support new private instances
-inside same pid namespace seems a major point. This was discussed
-previously with Andy Lutomirski and the conclusion was to go into this
-direction.
-
-
-1) The main aim of this work is to have on embedded systems one
-supervisor for apps. Right now we have some lightweight sandbox support,
-however if we create pid namespacess we have to manages all the
-processes inside too, where our goal is to be able to run a bunch of
-apps each one inside its own mount namespace without being able to
-notice each other. We only want to use mount namespaces, and we want
-procfs to behave more like a real mount point.
-
-
-2) Linux Security Modules have multiple ptrace paths inside some
-subsystems, however inside procfs, the implementation does not guarantee
-that the ptrace() check which triggers the security_ptrace_check() hook
-will always run. We have the 'hidepid' mount option that can be used to
-force the ptrace_may_access() check inside has_pid_permissions() to run.
-The problem is that 'hidepid' is per pid namespace and not attached to
-the mount point, any remount or modification of 'hidepid' will propagate
-to all other procfs mounts.
-
-This also does not allow to support Yama LSM easily in desktop and user
-sessions. Yama ptrace scope which restricts ptrace and some other
-syscalls to be allowed only on inferiors, can be updated to have a
-per-task context, where the context will be inherited during fork(),
-clone() and preserved across execve(). If we support multiple private
-procfs instances, then we may force the ptrace_may_access() on
-/proc/<pids>/ to always run inside that new procfs instances. This will
-allow to specifiy on user sessions if we should populate procfs with
-pids that the user can ptrace or not.
-
-By using Yama ptrace scope, some restricted users will only be able to see
-inferiors inside /proc, they won't even be able to see their other
-processes. Some software like Chromium, Firefox's crash handler, Wine
-and others are already using Yama to restrict which processes can be
-ptracable. With this change this will give the possibility to restrict
-/proc/<pids>/ but more importantly this will give desktop users a
-generic and usuable way to specifiy which users should see all processes
-and which users can not.
-
-Side notes:
-* This covers the lack of seccomp where it is not able to parse
-arguments, it is easy to install a seccomp filter on direct syscalls
-that operate on pids, however /proc/<pid>/ is a Linux ABI using
-filesystem syscalls. With this change LSMs should be able to analyze
-open/read/write/close...
-
-
-3) This will modernize procfs and align it with all other filesystems
-and subsystems that have been updated recently to be able to work in a
-flexible way. This is the same as devpts where each mount now is a distinct
-filesystem such that ptys and their indicies allocated in one mount are
-independent from ptys and their indicies in all other mounts.
-
-We have to align procfs and modernize it to have a per mount context
-where at least the mount option do not propagate to all other mounts,
-then maybe we can continue to implement new features. One example is to
-require CAP_SYS_ADMIN in the init user namespace on some /proc/* which are
-not pids and which are are not virtualized by design, or CAP_NET_ADMIN
-inside userns on the net bits that are virtualized, etc.
-These mount options won't propagate to previous mounts, and the system
-will continue to be usable.
-
-
-This adds a new mount option 'limit_pids' that can be renamed to
-whatever is best, when it is passed it will automatically instruct
-procfs internally to create a new instance.
-
-How to test:
-$ sudo mount -t proc -o limit_pids=1 none /test
-
-
-Note for userspace that should be documented:
-If you are over mounting /proc, then make sure you are in a new mount
-namespace where propagation to master is disconnected. This will avoid
-to pin that new /proc mount.
-
-
-# Changes since v1:
-*) Removed 'unshared' mount option and replaced it with 'limit_pids'
-   which is attached to the current procfs mount.
-   Suggested-by Andy Lutomirski <luto@kernel.org>
-*) Do not fill dcache with pid entries that we can not ptrace.
-*) Many bug fixes.
-
-
-Djalal Harouni (6):
-[PATCH 1/6] proc: add proc_fs_info struct to store proc information
-[PATCH 2/6] proc: move /proc/{self|thread-self} dentries to proc_fs_info
-[PATCH 3/6] proc: add helpers to set and get proc hidepid and gid
-[PATCH 4/6] proc: support mounting private procfs instances inside
-[PATCH 5/6] proc: instantiate only pids that we can ptrace on 'limit_pids=1' mount option
-[PATCH 6/6] proc: flush task dcache entries from all procfs instances
-
- fs/locks.c                    |   6 +-
- fs/proc/base.c                |  98 ++++++++++++++++-------
- fs/proc/inode.c               |  22 +++++-
- fs/proc/internal.h            |   2 +-
- fs/proc/root.c                | 176 ++++++++++++++++++++++++++++++++++++++----
- fs/proc/self.c                |   9 ++-
- fs/proc/thread_self.c         |   9 ++-
- fs/proc_namespace.c           |  14 ++--
- include/linux/pid_namespace.h |  46 ++++++++++-
- include/linux/proc_fs.h       | 106 +++++++++++++++++++++++++
- 10 files changed, 422 insertions(+), 66 deletions(-)
-
-
-[1] https://lkml.org/lkml/2017/3/30/670
-
-Thanks!
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
