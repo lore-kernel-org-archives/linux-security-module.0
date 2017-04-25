@@ -1,30 +1,69 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Tue, 25 Apr 2017 15:55:21 +0100
-Subject: [PATCH v4 1/2] tiocsti-restrict : Add owner user namespace to
-	tty_struct
-In-Reply-To: <20170424051512.20420-2-matt@nmatt.com>
-References: <20170424051512.20420-1-matt@nmatt.com>
-	<20170424051512.20420-2-matt@nmatt.com>
-Message-ID: <20170425155521.03b393de@lxorguk.ukuu.org.uk>
+From: gnomes@lxorguk.ukuu.org.uk (One Thousand Gnomes)
+Date: Tue, 25 Apr 2017 20:30:15 +0100
+Subject: [PATCH v5 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <CAG48ez0uYkAg65iBZ8cKLxzFyEK=Axt=NP7jnmQkFp4rN=0GzA@mail.gmail.com>
+References: <20170425041512.13189-1-matt@nmatt.com>
+	<20170425144746.0d8721a3@lxorguk.ukuu.org.uk>
+	<CAG48ez0uYkAg65iBZ8cKLxzFyEK=Axt=NP7jnmQkFp4rN=0GzA@mail.gmail.com>
+Message-ID: <20170425203015.1ae62057@lxorguk.ukuu.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 24 Apr 2017 01:15:11 -0400
-Matt Brown <matt@nmatt.com> wrote:
+On Tue, 25 Apr 2017 15:56:32 +0200
+Jann Horn <jannh@google.com> wrote:
 
-> This patch adds struct user_namespace *owner_user_ns to the tty_struct.
-> Then it is set to current_user_ns() in the alloc_tty_struct function.
+> On Tue, Apr 25, 2017 at 3:47 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+> >> There could be a few user programs that would be effected by this
+> >> change.
+> >> See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+> >> notable programs are: agetty, csh, xemacs and tcsh
+> >>
+> >> However, I still believe that this change is worth it given that the
+> >> Kconfig defaults to n. This will be a feature that is turned on for the
+> >> same reason that people activate it when using grsecurity. Users of this
+> >> opt-in feature will realize that they are choosing security over some OS
+> >> features  
+> >
+> > Only in this case they are not.
+> >
+> > If I am at the point I have the ability to send you TIOCSTI you already
+> > lost because I can just open /dev/tty to get access to my controlling tty
+> > and use write().  
 > 
-> This is done to facilitate capability checks against the original user
-> namespace that allocated the tty.
-> 
-> E.g. ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)
-> 
-> This combined with the use of user namespace's will allow hardening
-> protections to be built to mitigate container escapes that utilize TTY
-> ioctls such as TIOCSTI.
+> In terms of PTYs, this patch does not try to prevent writes to a slave
+> device (which afaik is what /dev/tty will give you). It tries to prevent the
+> equivalent of writes to the master device. As far as I know, there is no
+> way to go from a slave to the corresponding master without having
+> access to the master in some other way already.
 
-Regardles of the TIOCSTI usefulness this makes complete sense.
+Ok so the point I was trying to make about write and read is I can
+already trash your channel when you su. Probably less irritatingly.
+
+In the pty case yes I can go from the tty to pty trivially and then open
+it, however the owner of the pty side would normally have exclusivity so
+while it's a potential hole it isn't a trivial one.
+
+If I want to do the equvalent of the TIOCSTI attack then I fork a process
+and exit the parent. The child can now use ptrace to reprogram your shell
+to do whatever interesting things it likes (eg running child processes
+called "su" via a second pty/tty pair). Not exactly rocket science.
+
+The tty layer does not try to manage this because it can't and two
+processes with the same uid are not protected from one another in the
+traditional Unix model. As with anything else when you try and glue
+namespaces on top of a model not designed for it you get a pile of holes.
+
+There is no safe way to fix it if you can't trust the environment you are
+communicating through. Secure practice is either to make another
+connection or if local to switch console and use SAK then login.
+
+In the namespaces case it certainly makes sense to forbid a process in
+one namespace from typing characters into another namespace but to me
+that implies that tty sessions/job control are namespaced, and that makes
+transitioning namespace or even just typing stuff into a docker container
+shell rather more tricky to get right if you have to be in the right tty
+session _and_ namespace to use the tty.
 
 Alan
 --
