@@ -1,148 +1,79 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 26 Apr 2017 07:21:19 -0400
-Subject: [PATCH 6/6] ima: Support appended signatures for appraisal
-In-Reply-To: <1492546666-16615-7-git-send-email-bauerman@linux.vnet.ibm.com>
-References: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1492546666-16615-7-git-send-email-bauerman@linux.vnet.ibm.com>
-Message-ID: <1493205679.3908.76.camel@linux.vnet.ibm.com>
+From: gnomes@lxorguk.ukuu.org.uk (One Thousand Gnomes)
+Date: Wed, 26 Apr 2017 13:47:32 +0100
+Subject: [PATCH v5 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <CAG48ez31W30Qqmf5ZZ1_eVQC0uobBrva3_zgRdzejztFLzKoPg@mail.gmail.com>
+References: <20170425041512.13189-1-matt@nmatt.com>
+	<20170425144746.0d8721a3@lxorguk.ukuu.org.uk>
+	<CAG48ez0uYkAg65iBZ8cKLxzFyEK=Axt=NP7jnmQkFp4rN=0GzA@mail.gmail.com>
+	<20170425203015.1ae62057@lxorguk.ukuu.org.uk>
+	<CAG48ez2u8Op1ej9Z3z+PNaeEqh2f3LKnUqQku+g6asGc3K6q9g@mail.gmail.com>
+	<20170425222135.2859b1a8@lxorguk.ukuu.org.uk>
+	<CAG48ez31W30Qqmf5ZZ1_eVQC0uobBrva3_zgRdzejztFLzKoPg@mail.gmail.com>
+Message-ID: <20170426134732.7579ebdd@lxorguk.ukuu.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Thiago,
+> open() what? As far as I know, for System-V PTYs, there is no path you can
+> open() that will give you the PTY master. Am I missing something?
 
-On Tue, 2017-04-18 at 17:17 -0300, Thiago Jung Bauermann wrote:
-> This patch introduces the appended_imasig keyword to the IMA policy syntax
-> to specify that a given hook should expect the file to have the IMA
-> signature appended to it.  Here is how it can be used in a rule:
+Sorry brain fade - no.
 > 
-> appraise func=KEXEC_KERNEL_CHECK appraise_type=appended_imasig
-> appraise func=KEXEC_KERNEL_CHECK appraise_type=appended_imasig|imasig
-
-> In the second form, IMA will accept either an appended signature or a
-> signature stored in the extended attribute. In that case, it will first
-> check whether there is an appended signature, and if not it will read it
-> from the extended attribute.
-
-An appended signature should be another place to look for a signature,
-when a signature is required, but it shouldn't make a difference where
-the signature is located. ?"imasig" could have implied to look for the
-signature in both places - xattr or appended. ?So the new option is
-just a hint - a performance improvement.
-
-This might seem picayune, but the difference between "expect" vs.
-"hint" impacts the code. (Further explanation inline.)
-
-> The format of the appended signature is the same used for signed kernel
-> modules. This means that the file can be signed with the scripts/sign-file
-> tool, with a command line such as this:
+> >> > If I want to do the equvalent of the TIOCSTI attack then I fork a process
+> >> > and exit the parent. The child can now use ptrace to reprogram your shell
+> >> > to do whatever interesting things it likes (eg running child processes
+> >> > called "su" via a second pty/tty pair). Not exactly rocket science.  
+> >>
+> >> Why would the child be able to ptrace the shell? AFAICS, in the most
+> >> relevant scenarios, the child can't ptrace the shell because the
+> >> shell has a different UID (in the case of e.g. su or sudo). In other  
+> >
+> > If I am the attacker wanting to type something into your su when you go
+> > and su from my account, or where the user account is trojanned I do the
+> > following
+> >
+> > fork
+> > exit parent
+> > child ptraces the shell (same uid as it's not setuid)
+> >
+> > You type "su" return
+> > The modified shell opens a new pty/tty pair and runs su over it
+> > My ptrace hooks watch the pty/tty traffic until you go to the loo
+> > My ptrace hooks switch the console
+> > My ptrace hooks type lots of stuff and hack your machine while eating the
+> > output
+> >
+> > and you come back, do stuff and then exit
+> >
+> > And if you are in X it's even easier and I don't even need to care about
+> > sessions or anything. X has no mechanism to sanely fix the problem, but
+> > Wayland does.  
 > 
-> $ sign-file sha256 privkey_ima.pem x509_ima.der vmlinux
-> 
-> This code only works for files that are hashed from a memory buffer, not
-> for files that are read from disk at the time of hash calculation. In other
-> words, only hooks that use kernel_read_file can support appended
-> signatures.
-> 
-> The change in CONFIG_INTEGRITY_SIGNATURE to select CONFIG_KEYS instead of
-> depending on it is to avoid a dependency recursion in
-> CONFIG_IMA_APPRAISE_APPENDED_SIG, because CONFIG_MODULE_SIG_FORMAT selects
-> CONFIG_KEYS and Kconfig complains that CONFIG_INTEGRITY_SIGNATURE depends
-> on it.
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> ---
+> I think the "When using a program like su or sudo" in the patch description
+> refers to the usecase where you go from a more privileged context (e.g. a
+> root shell) to a less privileged one (e.g. a shell as a service-specific
+> account used to run a daemon), not the other way around.
 
-snip
+Which is the sudo case and why sudo uses a separate pty/tty pair as it's
+not just TIOCSTI that's an issue but there are a load of ioctls that do
+things like cause signals to the process or are just annoying -
+vhangup(), changing the speed etc
 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 2aebb7984437..994ee420b2ec 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -16,6 +16,9 @@
->   *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
->   *	and ima_file_check.
->   */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
->  #include <linux/module.h>
->  #include <linux/file.h>
->  #include <linux/binfmts.h>
-> @@ -228,9 +231,30 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
-> 
->  	template_desc = ima_template_desc_current();
->  	if ((action & IMA_APPRAISE_SUBMASK) ||
-> -		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
-> -		/* read 'security.ima' */
-> -		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
-> +		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0) {
-> +#ifdef CONFIG_IMA_APPRAISE_APPENDED_SIG
+(And for console changing the keymap - which is a nasty one)
 
-Using "ifdef" in C code is really discouraged. Normally, it is an
-indication that the code needs to be re-factored. ?Assuming we really
-need a new CONFIG option, which I'm not sure that we do, I would move
-the appended signature code to its own file, define stub functions in
-ima.h, and update the Makefile.
+> [However, I do think that it's a nice side effect of this patch that it will
+> prevent a malicious program from directly injecting something like an
+> SSH command into my shell in a sufficiently hardened environment
+> (with LSM restrictions that prevent the malicious program from opening
+> SSH keyfiles or executing another program that can do that). Although
+> you could argue that in such a case, the LSM should be taking care of
+> blocking TIOCSTI.]
 
-> +		unsigned long digsig_req;
-> +
-> +		if (iint->flags & IMA_APPENDED_DIGSIG_REQUIRED) {
-> +			if (!buf || !size)
-> +				pr_err("%s doesn't support appended_imasig\n",
-> +				       func_tokens[func]);
+I would submit that creating a new pty/tty pair is the proper answer for
+that case however. Making the tty calls respect namespaces is however
+still a no-brainer IMHO.
 
-The policy parsing should prevent defining appended_imasig on
-inappropriate hooks. ?Since the iint->flags might be shared between
-hooks, we might still need to test buf, but it could be simplified to:
-
-if (!buf && iint->flags & IMA_APPENDED_DIGSIG_REQUIRED) {
-
-> +			else
-> +				ima_read_appended_sig(buf, &size, &xattr_value,
-> +						      &xattr_len);
-> +		}
-> +
-> +		/*
-> +		 * Don't try to read the xattr if we require an appended
-> +		 * signature but failed to get one.
-> +		 */
-
-If the appended_sig is just a hint as to where the signature is
-located, then we should read the xattr, even if IMA_DIGSIG_REQUIRED is
-not specified. ?ima_appraise_measurement() should be updated to
-require a signature if either IMA_DIGSIG_REQUIRED or
-IMA_APPENDED_SIGNATURE_REQUIRED are specified. ?
-
-Part of the confusion might be due to the naming
--"IMA_APPENEDED_SIGNATURE_REQUIRED".
-
-
-> +		digsig_req = iint->flags & IMA_DIGSIG_REQUIRED_MASK;
-> +		if (!xattr_len && digsig_req != IMA_APPENDED_DIGSIG_REQUIRED)
-> +#endif /* CONFIG_IMA_APPRAISE_APPENDED_SIG */
-
-Is limiting the "if" to the ifdef really necessary??
-
-> +			/* read 'security.ima' */
-> +			xattr_len = ima_read_xattr(file_dentry(file),
-> +						   &xattr_value);
-> +	}
-> 
-
-Suppose an appended signature and an xattr both exist (eg. kernel
-modules), but for some reason the appended signature validation fails.
-?The code should somehow retry the signature validation with the
-xattr.
-
->  	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
-> 
-
-Unfortunately, if the hash algorithm in the appended signature and the
-xattr are not the same, then we would need to re-calculate the file
-hash.
-
-Mimi
-
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
