@@ -1,80 +1,148 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Wed, 26 Apr 2017 11:06:12 +0200
-Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
-	autoload restriction
-In-Reply-To: <87r30ifmwz.fsf@rustcorp.com.au>
-References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
-	<1492640420-27345-3-git-send-email-tixxdz@gmail.com>
-	<87r30ifmwz.fsf@rustcorp.com.au>
-Message-ID: <CAEiveUfVyLVrCgjniA+7eutv=OGQ2LwBCx0V7JLiySeJz3c5ZQ@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 26 Apr 2017 07:21:19 -0400
+Subject: [PATCH 6/6] ima: Support appended signatures for appraisal
+In-Reply-To: <1492546666-16615-7-git-send-email-bauerman@linux.vnet.ibm.com>
+References: <1492546666-16615-1-git-send-email-bauerman@linux.vnet.ibm.com>
+	<1492546666-16615-7-git-send-email-bauerman@linux.vnet.ibm.com>
+Message-ID: <1493205679.3908.76.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Rusty,
+Hi Thiago,
 
-On Mon, Apr 24, 2017 at 6:29 AM, Rusty Russell <rusty@rustcorp.com.au> wrote:
-> Djalal Harouni <tixxdz@gmail.com> writes:
->> When value is (1), task must have CAP_SYS_MODULE to be able to trigger a
->> module auto-load operation, or CAP_NET_ADMIN for modules with a
->> 'netdev-%s' alias.
->
-> Sorry, the magic 'netdev-' prefix is a crawling horror.  To do this
+On Tue, 2017-04-18 at 17:17 -0300, Thiago Jung Bauermann wrote:
+> This patch introduces the appended_imasig keyword to the IMA policy syntax
+> to specify that a given hook should expect the file to have the IMA
+> signature appended to it.  Here is how it can be used in a rule:
+> 
+> appraise func=KEXEC_KERNEL_CHECK appraise_type=appended_imasig
+> appraise func=KEXEC_KERNEL_CHECK appraise_type=appended_imasig|imasig
 
-Yes I agree, that's the not the best part. I added it for backward
-compatibility since I did notice that some network daemon retain
-CAP_NET_ADMIN for this case. The aim of the patches is to get modules
-autoload covered with CAP_SYS_MODULE and make it more like explicit
-modules loading.
+> In the second form, IMA will accept either an appended signature or a
+> signature stored in the extended attribute. In that case, it will first
+> check whether there is an appended signature, and if not it will read it
+> from the extended attribute.
 
-> properly, you need to hand the capability (if any) from the
-> request_module() call.  Probably by adding a new request_module_cap and
-> making request_module() call that, then fixing up the callers.
+An appended signature should be another place to look for a signature,
+when a signature is required, but it shouldn't make a difference where
+the signature is located. ?"imasig" could have implied to look for the
+signature in both places - xattr or appended. ?So the new option is
+just a hint - a performance improvement.
 
-Hmm, sorry Rusty I'm a bit confused, when you refer to "callers", you
-mean request_module() callers ?
+This might seem picayune, but the difference between "expect" vs.
+"hint" impacts the code. (Further explanation inline.)
 
-If so, I'm not sure that the best thing here since it may defeat the
-purpose of this feature if we allow to pass capabilities.
+> The format of the appended signature is the same used for signed kernel
+> modules. This means that the file can be signed with the scripts/sign-file
+> tool, with a command line such as this:
+> 
+> $ sign-file sha256 privkey_ima.pem x509_ima.der vmlinux
+> 
+> This code only works for files that are hashed from a memory buffer, not
+> for files that are read from disk at the time of hash calculation. In other
+> words, only hooks that use kernel_read_file can support appended
+> signatures.
+> 
+> The change in CONFIG_INTEGRITY_SIGNATURE to select CONFIG_KEYS instead of
+> depending on it is to avoid a dependency recursion in
+> CONFIG_IMA_APPRAISE_APPENDED_SIG, because CONFIG_MODULE_SIG_FORMAT selects
+> CONFIG_KEYS and Kconfig complains that CONFIG_INTEGRITY_SIGNATURE depends
+> on it.
+> 
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+> ---
 
-Right now we have modules autoload that can be triggered without
-privileges, or with CAP_SYS_ADMIN, CAP_NET_ADMIN, CAP_SYS_MODULE...
-and some caps may allow to load other modules to resolve symbols etc.
+snip
 
-The public exploits did target CAP_NET_ADMIN, if we offer a way to
-pass in capabilities it will be used it as it is the case now without
-it, not to mention that some capabilities are overloaded, exploits
-will continue for these ones.
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 2aebb7984437..994ee420b2ec 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -16,6 +16,9 @@
+>   *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
+>   *	and ima_file_check.
+>   */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+>  #include <linux/module.h>
+>  #include <linux/file.h>
+>  #include <linux/binfmts.h>
+> @@ -228,9 +231,30 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> 
+>  	template_desc = ima_template_desc_current();
+>  	if ((action & IMA_APPRAISE_SUBMASK) ||
+> -		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
+> -		/* read 'security.ima' */
+> -		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
+> +		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0) {
+> +#ifdef CONFIG_IMA_APPRAISE_APPENDED_SIG
 
-The goal is to narrow modules autoload only to CAP_SYS_MODULE or
-disable it completely for process trees. Later you can give
-CAP_SYS_MODULE and you are sure that only /lib/modules/ will be
-autoloaded, no arbitrary loads by using seccomp filter on module
-syscalls, or separate the process in two one with CAP_SYS_MODULE and
-the other with its own capabilities and feature use.
+Using "ifdef" in C code is really discouraged. Normally, it is an
+indication that the code needs to be re-factored. ?Assuming we really
+need a new CONFIG option, which I'm not sure that we do, I would move
+the appended signature code to its own file, define stub functions in
+ima.h, and update the Makefile.
 
-I also don't like that 'netdev-%s' but it is for compatibility for
-specific cases, maybe there are others that we may have to add. But I
-would prefer if we narrow it down to only CAP_SYS_MODULE.
+> +		unsigned long digsig_req;
+> +
+> +		if (iint->flags & IMA_APPENDED_DIGSIG_REQUIRED) {
+> +			if (!buf || !size)
+> +				pr_err("%s doesn't support appended_imasig\n",
+> +				       func_tokens[func]);
 
-How about I move all permission checks to security/commoncap.c
-helpers, the module logic part will only contain set and read sysctl
-"modules_autoload" and "task->modules_autoload" ?
+The policy parsing should prevent defining appended_imasig on
+inappropriate hooks. ?Since the iint->flags might be shared between
+hooks, we might still need to test buf, but it could be simplified to:
 
-I already added cap_kernel_module_request() which is called by
-request_module(), so instead of counting on module to do the
-permission check I will open code it inside
-security/commoncap.c:cap_kernel_module_request() like other capability
-helpers and note that CAP_NET_ADMIN 'netdev-%s' alias is only for
-compatibility. This way we prevent that other capabilities get exposed
-or targeted for exploitation. Do you think that this will work ?
+if (!buf && iint->flags & IMA_APPENDED_DIGSIG_REQUIRED) {
 
-Thanks!
+> +			else
+> +				ima_read_appended_sig(buf, &size, &xattr_value,
+> +						      &xattr_len);
+> +		}
+> +
+> +		/*
+> +		 * Don't try to read the xattr if we require an appended
+> +		 * signature but failed to get one.
+> +		 */
 
-> Cheers,
-> Rusty.
+If the appended_sig is just a hint as to where the signature is
+located, then we should read the xattr, even if IMA_DIGSIG_REQUIRED is
+not specified. ?ima_appraise_measurement() should be updated to
+require a signature if either IMA_DIGSIG_REQUIRED or
+IMA_APPENDED_SIGNATURE_REQUIRED are specified. ?
 
--- 
-tixxdz
+Part of the confusion might be due to the naming
+-"IMA_APPENEDED_SIGNATURE_REQUIRED".
+
+
+> +		digsig_req = iint->flags & IMA_DIGSIG_REQUIRED_MASK;
+> +		if (!xattr_len && digsig_req != IMA_APPENDED_DIGSIG_REQUIRED)
+> +#endif /* CONFIG_IMA_APPRAISE_APPENDED_SIG */
+
+Is limiting the "if" to the ifdef really necessary??
+
+> +			/* read 'security.ima' */
+> +			xattr_len = ima_read_xattr(file_dentry(file),
+> +						   &xattr_value);
+> +	}
+> 
+
+Suppose an appended signature and an xattr both exist (eg. kernel
+modules), but for some reason the appended signature validation fails.
+?The code should somehow retry the signature validation with the
+xattr.
+
+>  	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+> 
+
+Unfortunately, if the hash algorithm in the appended signature and the
+xattr are not the same, then we would need to re-calculate the file
+hash.
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
