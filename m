@@ -1,188 +1,207 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 26 Apr 2017 10:47:46 -0700
-Subject: [PATCH 1/3] selinux: Implement LSM notification system
-In-Reply-To: <1493228201.32540.8.camel@tycho.nsa.gov>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Wed, 26 Apr 2017 14:30:26 -0400
+Subject: [PATCH 2/3] selinux: add checksum to policydb
+In-Reply-To: <1493218936-18522-2-git-send-email-sbuisson@ddn.com>
 References: <1493218936-18522-1-git-send-email-sbuisson@ddn.com>
-	<8d4c5ab6-8c15-312a-398b-c3ee9d7e8cb6@schaufler-ca.com>
-	<1493228201.32540.8.camel@tycho.nsa.gov>
-Message-ID: <fcdc41a2-68ab-b4df-a344-7763bda7cc8a@schaufler-ca.com>
+	<1493218936-18522-2-git-send-email-sbuisson@ddn.com>
+Message-ID: <1493231426.32540.11.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 4/26/2017 10:36 AM, Stephen Smalley wrote:
-> On Wed, 2017-04-26 at 08:38 -0700, Casey Schaufler wrote:
->> On 4/26/2017 8:02 AM, Sebastien Buisson wrote:
->>> From: Daniel Jurgens <danielj@mellanox.com>
->>>
->>> Add a generic notification mechanism in the LSM. Interested
->>> consumers
->>> can register a callback with the LSM and security modules can
->>> produce
->>> events.
->> Why is this a generic mechanism? Do you ever see anyone
->> other than SELinux using it?
-> I do - any security module that wants to support access control over
-> Lustre filesystems or Infiniband. Seems ironic for you to be arguing
-> for a SELinux-specific interface rather than a LSM interface.
+On Thu, 2017-04-27 at 00:02 +0900, Sebastien Buisson wrote:
+> Add policycksum field to struct policydb. It holds the sha256
+> checksum computed on the binary policy every time the notifier is
+> called after a policy change.
+> Add security_policy_cksum hook to give access to policy checksum to
+> the rest of the kernel. Lustre client makes use of this information.
+> 
+> Signed-off-by: Sebastien Buisson <sbuisson@ddn.com>
+> ---
+> ?include/linux/lsm_hooks.h???????????|??2 +
+> ?include/linux/security.h????????????|??7 +++
+> ?security/security.c?????????????????|??6 +++
+> ?security/selinux/hooks.c????????????| 12 ++++-
+> ?security/selinux/include/security.h |??2 +
+> ?security/selinux/ss/policydb.h??????|??4 ++
+> ?security/selinux/ss/services.c??????| 91
+> +++++++++++++++++++++++++++++++++++++
+> ?7 files changed, 123 insertions(+), 1 deletion(-)
+> 
 
-I lost the connection between this mechanism and
-Lustre and Infiniband, neither of which are mentioned
-in the patchset. And I *did* pose it as a question.
-I am all in favor of general mechanisms where they
-are generally useful. I am also adverse to special
-purpose clutter.
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index a4d36f8..3759198 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -173,8 +173,11 @@ static int selinux_netcache_avc_callback(u32
+> event)
+> ?
+> ?static int selinux_lsm_notifier_avc_callback(u32 event)
+> ?{
+> -	if (event == AVC_CALLBACK_RESET)
+> +	if (event == AVC_CALLBACK_RESET) {
+> +		if (security_policydb_compute_cksum() != 0)
+> +			printk(KERN_ERR "Failed to compute policydb
+> cksum\n");
 
->
->>> Add a call to the notification mechanism from SELinux when the AVC
->>> cache changes.
->> This seems like a whole lot of mechanism for
->> something you could accomplish with a log message.
->> What am I missing?
-> It's a notification to a kernel subsystem that policy has changed so
-> that the subsystem can update any cached state.
->
->>> Signed-off-by: Daniel Jurgens <danielj@mellanox.com>
->>> Signed-off-by: Sebastien Buisson <sbuisson@ddn.com>
->>> ---
->>>  include/linux/security.h | 23 +++++++++++++++++++++++
->>>  security/security.c      | 20 ++++++++++++++++++++
->>>  security/selinux/hooks.c | 12 ++++++++++++
->>>  3 files changed, 55 insertions(+)
->>>
->>> diff --git a/include/linux/security.h b/include/linux/security.h
->>> index af675b5..73a9c93 100644
->>> --- a/include/linux/security.h
->>> +++ b/include/linux/security.h
->>> @@ -68,6 +68,10 @@
->>>  struct user_namespace;
->>>  struct timezone;
->>>  
->>> +enum lsm_event {
->>> +	LSM_POLICY_CHANGE,
->>> +};
->>> +
->>>  /* These functions are in security/commoncap.c */
->>>  extern int cap_capable(const struct cred *cred, struct
->>> user_namespace *ns,
->>>  		       int cap, int audit);
->>> @@ -163,6 +167,10 @@ struct security_mnt_opts {
->>>  	int num_mnt_opts;
->>>  };
->>>  
->>> +int call_lsm_notifier(enum lsm_event event, void *data);
->>> +int register_lsm_notifier(struct notifier_block *nb);
->>> +int unregister_lsm_notifier(struct notifier_block *nb);
->>> +
->>>  static inline void security_init_mnt_opts(struct security_mnt_opts
->>> *opts)
->>>  {
->>>  	opts->mnt_opts = NULL;
->>> @@ -381,6 +389,21 @@ int security_sem_semop(struct sem_array *sma,
->>> struct sembuf *sops,
->>>  struct security_mnt_opts {
->>>  };
->>>  
->>> +static inline int call_lsm_notifier(enum lsm_event event, void
->>> *data)
->>> +{
->>> +	return 0;
->>> +}
->>> +
->>> +static inline int register_lsm_notifier(struct notifier_block *nb)
->>> +{
->>> +	return 0;
->>> +}
->>> +
->>> +static inline  int unregister_lsm_notifier(struct notifier_block
->>> *nb)
->>> +{
->>> +	return 0;
->>> +}
->>> +
->>>  static inline void security_init_mnt_opts(struct security_mnt_opts
->>> *opts)
->>>  {
->>>  }
->>> diff --git a/security/security.c b/security/security.c
->>> index b9fea39..ef9d9e1 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -32,6 +32,8 @@
->>>  /* Maximum number of letters for an LSM name string */
->>>  #define SECURITY_NAME_MAX	10
->>>  
->>> +static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
->>> +
->>>  struct security_hook_heads security_hook_heads
->>> __lsm_ro_after_init;
->>>  char *lsm_names;
->>>  /* Boot-time LSM user choice */
->>> @@ -146,6 +148,24 @@ void __init security_add_hooks(struct
->>> security_hook_list *hooks, int count,
->>>  		panic("%s - Cannot get early memory.\n",
->>> __func__);
->>>  }
->>>  
->>> +int call_lsm_notifier(enum lsm_event event, void *data)
->>> +{
->>> +	return atomic_notifier_call_chain(&lsm_notifier_chain,
->>> event, data);
->>> +}
->>> +EXPORT_SYMBOL(call_lsm_notifier);
->>> +
->>> +int register_lsm_notifier(struct notifier_block *nb)
->>> +{
->>> +	return atomic_notifier_chain_register(&lsm_notifier_chain,
->>> nb);
->>> +}
->>> +EXPORT_SYMBOL(register_lsm_notifier);
->>> +
->>> +int unregister_lsm_notifier(struct notifier_block *nb)
->>> +{
->>> +	return
->>> atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
->>> +}
->>> +EXPORT_SYMBOL(unregister_lsm_notifier);
->>> +
->>>  /*
->>>   * Hook list operation macros.
->>>   *
->>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>> index e67a526..a4d36f8 100644
->>> --- a/security/selinux/hooks.c
->>> +++ b/security/selinux/hooks.c
->>> @@ -171,6 +171,14 @@ static int selinux_netcache_avc_callback(u32
->>> event)
->>>  	return 0;
->>>  }
->>>  
->>> +static int selinux_lsm_notifier_avc_callback(u32 event)
->>> +{
->>> +	if (event == AVC_CALLBACK_RESET)
->>> +		call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>  /*
->>>   * initialise the security for the init task
->>>   */
->>> @@ -6379,6 +6387,10 @@ static __init int selinux_init(void)
->>>  	if (avc_add_callback(selinux_netcache_avc_callback,
->>> AVC_CALLBACK_RESET))
->>>  		panic("SELinux: Unable to register AVC netcache
->>> callback\n");
->>>  
->>> +	if (avc_add_callback(selinux_lsm_notifier_avc_callback,
->>> +			     AVC_CALLBACK_RESET))
->>> +		panic("SELinux: Unable to register AVC LSM
->>> notifier callback\n");
->>> +
->>>  	if (selinux_enforcing)
->>>  		printk(KERN_DEBUG "SELinux:  Starting in enforcing
->>> mode\n");
->>>  	else
+This seems like an odd place to trigger the computation. Why aren't you
+just computing it when the policy is loaded directly in
+security_load_policy()?  You already have the (data, len) on entry to
+that function.  Just compute it at load time, save it, and be done.  No
+need for a notifier then for your use case unless I am missing
+something.
 
+I suppose the question is which checksum do you want - the hash of the
+policy file that was written to /sys/fs/selinux/load by userspace, or
+the hash of the policy file that the kernel generates on demand if you
+open /sys/fs/selinux/policy.  Those can differ in non-semantic ways due
+to ordering differences, for example.  I think the former is more
+likely to be of interest to userspace (e.g. to compare the hash value
+against the hash of the policy file), and is cheaper since you already
+have a (data, len) pair on entry to security_load_policy() that you can
+hash immediately rather than requiring the kernel to regenerate the
+image from the policydb.
+
+> ?		call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
+> +	}
+> ?
+> ?	return 0;
+> ?}
+> 
+
+> diff --git a/security/selinux/ss/services.c
+> b/security/selinux/ss/services.c
+> index 60d9b02..a35d294 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -53,6 +53,8 @@
+> ?#include <linux/flex_array.h>
+> ?#include <linux/vmalloc.h>
+> ?#include <net/netlabel.h>
+> +#include <crypto/hash.h>
+> +#include <crypto/sha.h>
+> ?
+> ?#include "flask.h"
+> ?#include "avc.h"
+> @@ -2170,6 +2172,95 @@ size_t security_policydb_len(void)
+> ?}
+> ?
+> ?/**
+> + * security_policydb_cksum - Get policydb checksum.
+> + * @cksum: string to store checksum to
+> + * @len: length of checksum
+> + */
+> +ssize_t security_policydb_cksum(char *cksum, size_t len)
+> +{
+> +	int rc;
+> +
+> +	read_lock(&policy_rwlock);
+> +	if (strlcpy(cksum, policydb.policycksum, len) >= len)
+> +		rc = -ENAMETOOLONG;
+> +	rc = policydb.policycksum_len;
+
+Obviously you'll clobber -ENAMETOOLONG here.
+
+> +	read_unlock(&policy_rwlock);
+> +
+> +	return rc;
+> +}
+
+You are requiring all callers to know that they are dealing with a
+sha256 hash string in order to provide an adequately sized buffer.
+So we either ought to make that evident in the interface, or make the
+interface more flexible/general.  The latter is imho preferable.  We
+could simply allocate a buffer of the right length and return it, like
+selinux_inode_getsecurity() does.
+
+> +
+> +/**
+> + * security_policydb_compute_cksum - Compute checksum of a policy
+> database.
+> + */
+> +int security_policydb_compute_cksum(void)
+> +{
+> +	struct crypto_ahash *tfm;
+> +	struct ahash_request *req;
+> +	struct scatterlist sl;
+> +	char hashval[SHA256_DIGEST_SIZE];
+> +	int idx;
+> +	unsigned char *p;
+> +	size_t len;
+> +	void *data;
+> +	int rc;
+> +
+> +	rc = security_read_policy(&data, &len);
+> +	if (rc) {
+> +		printk(KERN_ERR "Failed to read security policy\n");
+> +		return rc;
+> +	}
+
+This requires regenerating the policy image from the policydb; simpler
+if we can just hash what we were given in security_load_policy() and
+save it at that time.
+
+> +
+> +	tfm = crypto_alloc_ahash("sha256", 0, CRYPTO_ALG_ASYNC);
+
+Why are you using the async interface?
+
+> +	if (IS_ERR(tfm)) {
+> +		printk(KERN_ERR "Failed to alloc crypto hash
+> sha256\n");
+> +		vfree(data);
+> +		rc = PTR_ERR(tfm);
+> +		return rc;
+> +	}
+> +
+> +	req = ahash_request_alloc(tfm, GFP_KERNEL);
+> +	if (!req) {
+> +		printk(KERN_ERR "Failed to alloc ahash_request for
+> sha256\n");
+> +		crypto_free_ahash(tfm);
+> +		vfree(data);
+> +		rc = -ENOMEM;
+> +		return rc;
+> +	}
+> +
+> +	ahash_request_set_callback(req, 0, NULL, NULL);
+> +
+> +	rc = crypto_ahash_init(req);
+> +	if (rc) {
+> +		printk(KERN_ERR "Failed to init ahash\n");
+> +		ahash_request_free(req);
+> +		crypto_free_ahash(tfm);
+> +		vfree(data);
+> +		return rc;
+> +	}
+> +
+> +	sg_init_one(&sl, (void *)data, len);
+> +	ahash_request_set_crypt(req, &sl, hashval, sl.length);
+> +	rc = crypto_ahash_digest(req);
+> +
+> +	crypto_free_ahash(tfm);
+> +	ahash_request_free(req);
+> +	vfree(data);
+> +	if (rc) {
+> +		printk(KERN_ERR "Failed to compute digest\n");
+> +		return rc;
+> +	}
+> +
+> +	p = policydb.policycksum;
+> +	for (idx = 0; idx < SHA256_DIGEST_SIZE; idx++) {
+> +		snprintf(p, 3, "%02x", (unsigned
+> char)(hashval[idx]));
+> +		p += 2;
+> +	}
+> +	policydb.policycksum_len = (size_t)(p -
+> policydb.policycksum);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> ? * security_port_sid - Obtain the SID for a port.
+> ? * @protocol: protocol number
+> ? * @port: port number
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
