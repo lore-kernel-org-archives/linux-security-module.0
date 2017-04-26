@@ -1,86 +1,146 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Wed, 26 Apr 2017 10:21:36 -0400
-Subject: [PATCH v5 0/2] security: tty: make TIOCSTI ioctl require
-	CAP_SYS_ADMIN
-In-Reply-To: <20170426134732.7579ebdd@lxorguk.ukuu.org.uk>
-References: <20170425041512.13189-1-matt@nmatt.com>
-	<20170425144746.0d8721a3@lxorguk.ukuu.org.uk>
-	<CAG48ez0uYkAg65iBZ8cKLxzFyEK=Axt=NP7jnmQkFp4rN=0GzA@mail.gmail.com>
-	<20170425203015.1ae62057@lxorguk.ukuu.org.uk>
-	<CAG48ez2u8Op1ej9Z3z+PNaeEqh2f3LKnUqQku+g6asGc3K6q9g@mail.gmail.com>
-	<20170425222135.2859b1a8@lxorguk.ukuu.org.uk>
-	<CAG48ez31W30Qqmf5ZZ1_eVQC0uobBrva3_zgRdzejztFLzKoPg@mail.gmail.com>
-	<20170426134732.7579ebdd@lxorguk.ukuu.org.uk>
-Message-ID: <07bec2b1-c945-fc6e-0238-28acb21b5cfb@nmatt.com>
+From: sbuisson.ddn@gmail.com (Sebastien Buisson)
+Date: Thu, 27 Apr 2017 00:02:14 +0900
+Subject: [PATCH 1/3] selinux: Implement LSM notification system
+Message-ID: <1493218936-18522-1-git-send-email-sbuisson@ddn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/26/2017 08:47 AM, One Thousand Gnomes wrote:
->> open() what? As far as I know, for System-V PTYs, there is no path you can
->> open() that will give you the PTY master. Am I missing something?
->
-> Sorry brain fade - no.
->>
->>>>> If I want to do the equvalent of the TIOCSTI attack then I fork a process
->>>>> and exit the parent. The child can now use ptrace to reprogram your shell
->>>>> to do whatever interesting things it likes (eg running child processes
->>>>> called "su" via a second pty/tty pair). Not exactly rocket science.
->>>>
->>>> Why would the child be able to ptrace the shell? AFAICS, in the most
->>>> relevant scenarios, the child can't ptrace the shell because the
->>>> shell has a different UID (in the case of e.g. su or sudo). In other
->>>
->>> If I am the attacker wanting to type something into your su when you go
->>> and su from my account, or where the user account is trojanned I do the
->>> following
->>>
->>> fork
->>> exit parent
->>> child ptraces the shell (same uid as it's not setuid)
->>>
->>> You type "su" return
->>> The modified shell opens a new pty/tty pair and runs su over it
->>> My ptrace hooks watch the pty/tty traffic until you go to the loo
->>> My ptrace hooks switch the console
->>> My ptrace hooks type lots of stuff and hack your machine while eating the
->>> output
->>>
->>> and you come back, do stuff and then exit
->>>
->>> And if you are in X it's even easier and I don't even need to care about
->>> sessions or anything. X has no mechanism to sanely fix the problem, but
->>> Wayland does.
->>
->> I think the "When using a program like su or sudo" in the patch description
->> refers to the usecase where you go from a more privileged context (e.g. a
->> root shell) to a less privileged one (e.g. a shell as a service-specific
->> account used to run a daemon), not the other way around.
->
-> Which is the sudo case and why sudo uses a separate pty/tty pair as it's
-> not just TIOCSTI that's an issue but there are a load of ioctls that do
-> things like cause signals to the process or are just annoying -
-> vhangup(), changing the speed etc
->
-> (And for console changing the keymap - which is a nasty one)
->
+From: Daniel Jurgens <danielj@mellanox.com>
 
-Are any of these annoyances potential security issues? I would be happy
-to add patches or modify this one to include extra hardening measures.
+Add a generic notification mechanism in the LSM. Interested consumers
+can register a callback with the LSM and security modules can produce
+events.
 
->> [However, I do think that it's a nice side effect of this patch that it will
->> prevent a malicious program from directly injecting something like an
->> SSH command into my shell in a sufficiently hardened environment
->> (with LSM restrictions that prevent the malicious program from opening
->> SSH keyfiles or executing another program that can do that). Although
->> you could argue that in such a case, the LSM should be taking care of
->> blocking TIOCSTI.]
->
-> I would submit that creating a new pty/tty pair is the proper answer for
-> that case however. Making the tty calls respect namespaces is however
-> still a no-brainer IMHO.
->
-> Alan
->
+Add a call to the notification mechanism from SELinux when the AVC
+cache changes.
+
+Signed-off-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Sebastien Buisson <sbuisson@ddn.com>
+---
+ include/linux/security.h | 23 +++++++++++++++++++++++
+ security/security.c      | 20 ++++++++++++++++++++
+ security/selinux/hooks.c | 12 ++++++++++++
+ 3 files changed, 55 insertions(+)
+
+diff --git a/include/linux/security.h b/include/linux/security.h
+index af675b5..73a9c93 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -68,6 +68,10 @@
+ struct user_namespace;
+ struct timezone;
+ 
++enum lsm_event {
++	LSM_POLICY_CHANGE,
++};
++
+ /* These functions are in security/commoncap.c */
+ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+ 		       int cap, int audit);
+@@ -163,6 +167,10 @@ struct security_mnt_opts {
+ 	int num_mnt_opts;
+ };
+ 
++int call_lsm_notifier(enum lsm_event event, void *data);
++int register_lsm_notifier(struct notifier_block *nb);
++int unregister_lsm_notifier(struct notifier_block *nb);
++
+ static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
+ {
+ 	opts->mnt_opts = NULL;
+@@ -381,6 +389,21 @@ int security_sem_semop(struct sem_array *sma, struct sembuf *sops,
+ struct security_mnt_opts {
+ };
+ 
++static inline int call_lsm_notifier(enum lsm_event event, void *data)
++{
++	return 0;
++}
++
++static inline int register_lsm_notifier(struct notifier_block *nb)
++{
++	return 0;
++}
++
++static inline  int unregister_lsm_notifier(struct notifier_block *nb)
++{
++	return 0;
++}
++
+ static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
+ {
+ }
+diff --git a/security/security.c b/security/security.c
+index b9fea39..ef9d9e1 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -32,6 +32,8 @@
+ /* Maximum number of letters for an LSM name string */
+ #define SECURITY_NAME_MAX	10
+ 
++static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
++
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ char *lsm_names;
+ /* Boot-time LSM user choice */
+@@ -146,6 +148,24 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 		panic("%s - Cannot get early memory.\n", __func__);
+ }
+ 
++int call_lsm_notifier(enum lsm_event event, void *data)
++{
++	return atomic_notifier_call_chain(&lsm_notifier_chain, event, data);
++}
++EXPORT_SYMBOL(call_lsm_notifier);
++
++int register_lsm_notifier(struct notifier_block *nb)
++{
++	return atomic_notifier_chain_register(&lsm_notifier_chain, nb);
++}
++EXPORT_SYMBOL(register_lsm_notifier);
++
++int unregister_lsm_notifier(struct notifier_block *nb)
++{
++	return atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
++}
++EXPORT_SYMBOL(unregister_lsm_notifier);
++
+ /*
+  * Hook list operation macros.
+  *
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e67a526..a4d36f8 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -171,6 +171,14 @@ static int selinux_netcache_avc_callback(u32 event)
+ 	return 0;
+ }
+ 
++static int selinux_lsm_notifier_avc_callback(u32 event)
++{
++	if (event == AVC_CALLBACK_RESET)
++		call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
++
++	return 0;
++}
++
+ /*
+  * initialise the security for the init task
+  */
+@@ -6379,6 +6387,10 @@ static __init int selinux_init(void)
+ 	if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
+ 		panic("SELinux: Unable to register AVC netcache callback\n");
+ 
++	if (avc_add_callback(selinux_lsm_notifier_avc_callback,
++			     AVC_CALLBACK_RESET))
++		panic("SELinux: Unable to register AVC LSM notifier callback\n");
++
+ 	if (selinux_enforcing)
+ 		printk(KERN_DEBUG "SELinux:  Starting in enforcing mode\n");
+ 	else
+-- 
+1.8.3.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
