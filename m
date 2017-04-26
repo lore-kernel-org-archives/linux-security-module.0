@@ -1,93 +1,51 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 26 Apr 2017 16:47:30 -0400
-Subject: [PATCH security-next 2/2] selinux: use pernet operations for hook
-	registration
-In-Reply-To: <CAHC9VhTkAp+e2PQV58ARtYk8XZJSadaSZWoQudDX9DfQjnfATQ@mail.gmail.com>
-References: <20170421094909.28961-1-fw@strlen.de>
-	<20170421094909.28961-3-fw@strlen.de>
-	<CAHC9VhTkAp+e2PQV58ARtYk8XZJSadaSZWoQudDX9DfQjnfATQ@mail.gmail.com>
-Message-ID: <CAHC9VhTHhiuaL5Lih1ykXX+wib9xyvriMvnoX+tAkpgEOxwCng@mail.gmail.com>
+Date: Wed, 26 Apr 2017 17:24:33 -0400
+Subject: [PATCH] selinux: fix double free in selinux_parse_opts_str()
+In-Reply-To: <201703251155.FBH12969.LFOFMHSFJQtOOV@I-love.SAKURA.ne.jp>
+References: <1490355659-13787-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<CAHC9VhQc-55wALE-Qo=b1sY5Ts=Oo1Ra_xp+Euu_WSnuDowa0A@mail.gmail.com>
+	<201703251155.FBH12969.LFOFMHSFJQtOOV@I-love.SAKURA.ne.jp>
+Message-ID: <CAHC9VhRrmSbvR=_KUqrvYnMqM+mUYYcu9v6DbeB2dpPdGT7PjA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 26, 2017 at 4:46 PM, Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Apr 21, 2017 at 5:49 AM, Florian Westphal <fw@strlen.de> wrote:
->> It will allow us to remove the old netfilter hook api in the near future.
+On Fri, Mar 24, 2017 at 10:55 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Paul Moore wrote:
+>> Hi,
 >>
->> Signed-off-by: Florian Westphal <fw@strlen.de>
->> ---
->>  security/selinux/hooks.c | 24 ++++++++++++++++++++----
->>  1 file changed, 20 insertions(+), 4 deletions(-)
+>> Thank you very much for this patch, but I think we need to look a bit
+>> harder at this problem as it appears that many callers assume that
+>> selinux_parse_opts_str() cleans up after itself.  Looking quickly I
+>> found what appear to be two problems, there are likely more ...
+>>
+>> * selinux_sb_remount()
+>> If selinux_parse_opts_str() fails here it doesn't appear we cleanup
+>> opts properly, although changing the jump target from
+>> "out_free_secdata" to "out_free_opts" would appear to correct this.
+>>
+>> * btrfs_mount()
+>> This function calls parse_security_options() which in turn calls
+>> security_sb_parse_opts_str(), but if parse_security_options() fails in
+>> this case the security_mnt_opts are not free'd.
+>>
+>> At this point I wonder if the quick fix is to set opts->mnt_opts to
+>> NULL after kfree()'ing it, or simply drop the kfree() call and call
+>> security_free_mnt_opts() in the out_err error handling code; the
+>> latter is a bit more work than needed, but I believe it should be safe
+>> in all conditions.
 >
-> Looks fine to me, I'm going to queue this up for after the v4.12 merge window.
+> I think the latter is better.
+> We might allow multiple LSM modules to parse mount options in future
+> (not limited to SELinux + Smack combination, small LSMs might want to
+> parse mount options). Then, calling a common function for releasing
+> memory allocated by individual module will become needed.
 
-... and I just realized that the SELinux list wasn't CC'd on this
-patch, fixing that now.
+Hello,
 
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index e67a526d1f30..3aa4268525e2 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -6448,6 +6448,23 @@ static struct nf_hook_ops selinux_nf_ops[] = {
->>  #endif /* IPV6 */
->>  };
->>
->> +static int __net_init selinux_nf_register(struct net *net)
->> +{
->> +       return nf_register_net_hooks(net, selinux_nf_ops,
->> +                                    ARRAY_SIZE(selinux_nf_ops));
->> +}
->> +
->> +static void __net_exit selinux_nf_unregister(struct net *net)
->> +{
->> +       nf_unregister_net_hooks(net, selinux_nf_ops,
->> +                               ARRAY_SIZE(selinux_nf_ops));
->> +}
->> +
->> +static struct pernet_operations selinux_net_ops = {
->> +       .init = selinux_nf_register,
->> +       .exit = selinux_nf_unregister,
->> +};
->> +
->>  static int __init selinux_nf_ip_init(void)
->>  {
->>         int err;
->> @@ -6457,13 +6474,12 @@ static int __init selinux_nf_ip_init(void)
->>
->>         printk(KERN_DEBUG "SELinux:  Registering netfilter hooks\n");
->>
->> -       err = nf_register_hooks(selinux_nf_ops, ARRAY_SIZE(selinux_nf_ops));
->> +       err = register_pernet_subsys(&selinux_net_ops);
->>         if (err)
->> -               panic("SELinux: nf_register_hooks: error %d\n", err);
->> +               panic("SELinux: register_pernet_subsys: error %d\n", err);
->>
->>         return 0;
->>  }
->> -
->>  __initcall(selinux_nf_ip_init);
->>
->>  #ifdef CONFIG_SECURITY_SELINUX_DISABLE
->> @@ -6471,7 +6487,7 @@ static void selinux_nf_ip_exit(void)
->>  {
->>         printk(KERN_DEBUG "SELinux:  Unregistering netfilter hooks\n");
->>
->> -       nf_unregister_hooks(selinux_nf_ops, ARRAY_SIZE(selinux_nf_ops));
->> +       unregister_pernet_subsys(&selinux_net_ops);
->>  }
->>  #endif
->>
->> --
->> 2.10.2
->>
->
->
->
-> --
-> paul moore
-> www.paul-moore.com
-
-
+I just wanted to check to see if you were going to do a follow up
+patch for this?  If not I'll put something together, but I didn't want
+to conflict with anything you were working on.
 
 -- 
 paul moore
