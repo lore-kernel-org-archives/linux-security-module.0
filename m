@@ -1,55 +1,43 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Thu, 27 Apr 2017 06:37:19 +0900
-Subject: [PATCH] selinux: fix double free in selinux_parse_opts_str()
-In-Reply-To: <CAHC9VhRrmSbvR=_KUqrvYnMqM+mUYYcu9v6DbeB2dpPdGT7PjA@mail.gmail.com>
-References: <1490355659-13787-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<CAHC9VhQc-55wALE-Qo=b1sY5Ts=Oo1Ra_xp+Euu_WSnuDowa0A@mail.gmail.com>
-	<201703251155.FBH12969.LFOFMHSFJQtOOV@I-love.SAKURA.ne.jp>
-	<CAHC9VhRrmSbvR=_KUqrvYnMqM+mUYYcu9v6DbeB2dpPdGT7PjA@mail.gmail.com>
-Message-ID: <201704270637.AGF95836.tOOFQJLSVHOFFM@I-love.SAKURA.ne.jp>
+From: luto@kernel.org (Andy Lutomirski)
+Date: Wed, 26 Apr 2017 15:09:09 -0700
+Subject: [PATCH RFC v2 5/6] proc: instantiate only pids that we can ptrace
+	on 'limit_pids=1' mount option
+In-Reply-To: <1493123038-30590-6-git-send-email-tixxdz@gmail.com>
+References: <1493123038-30590-1-git-send-email-tixxdz@gmail.com>
+	<1493123038-30590-6-git-send-email-tixxdz@gmail.com>
+Message-ID: <CALCETrXM7-NBnBcXbuuhDJZyUFLT7iRfcGGvaqUhDJBGkYJgcQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Paul Moore wrote:
-> On Fri, Mar 24, 2017 at 10:55 PM, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > Paul Moore wrote:
-> >> Hi,
-> >>
-> >> Thank you very much for this patch, but I think we need to look a bit
-> >> harder at this problem as it appears that many callers assume that
-> >> selinux_parse_opts_str() cleans up after itself.  Looking quickly I
-> >> found what appear to be two problems, there are likely more ...
-> >>
-> >> * selinux_sb_remount()
-> >> If selinux_parse_opts_str() fails here it doesn't appear we cleanup
-> >> opts properly, although changing the jump target from
-> >> "out_free_secdata" to "out_free_opts" would appear to correct this.
-> >>
-> >> * btrfs_mount()
-> >> This function calls parse_security_options() which in turn calls
-> >> security_sb_parse_opts_str(), but if parse_security_options() fails in
-> >> this case the security_mnt_opts are not free'd.
-> >>
-> >> At this point I wonder if the quick fix is to set opts->mnt_opts to
-> >> NULL after kfree()'ing it, or simply drop the kfree() call and call
-> >> security_free_mnt_opts() in the out_err error handling code; the
-> >> latter is a bit more work than needed, but I believe it should be safe
-> >> in all conditions.
-> >
-> > I think the latter is better.
-> > We might allow multiple LSM modules to parse mount options in future
-> > (not limited to SELinux + Smack combination, small LSMs might want to
-> > parse mount options). Then, calling a common function for releasing
-> > memory allocated by individual module will become needed.
-> 
-> Hello,
-> 
-> I just wanted to check to see if you were going to do a follow up
-> patch for this?  If not I'll put something together, but I didn't want
-> to conflict with anything you were working on.
+On Tue, Apr 25, 2017 at 5:23 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+> If "limit_pids=1" mount option is set then do not instantiate pids that
+> we can not ptrace. "limit_pids=1" means that procfs should only contain
+> pids that the caller can ptrace.
+>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+> ---
+>  fs/proc/base.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 2e0f661..a663284 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -3149,6 +3149,7 @@ struct dentry *proc_pid_lookup(struct inode *dir, struct dentry * dentry, unsign
+>         unsigned tgid;
+>         struct proc_fs_info *fs_info = proc_sb(dir->i_sb);
+>         struct pid_namespace *ns = fs_info->pid_ns;
+> +       int limit_pids = proc_fs_limit_pids(fs_info);
 
-I have no plan on this. You can propose whatever you like.
+Shouldn't the addition of proc_fs_limit_pids() be in this patch?
+
+Also, can we name it something self-documented?
+"ptraceable_pids_only=1", perhaps?  Or even pids=ptraceable (as
+opposed to pids=all or maybe other choices in the future)?
+
+--Andy
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
