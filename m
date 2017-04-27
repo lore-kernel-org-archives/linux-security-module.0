@@ -1,92 +1,106 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Thu, 27 Apr 2017 11:18:03 -0400
-Subject: [PATCH 2/3] selinux: add checksum to policydb
-In-Reply-To: <CAPkE-bVPHAGDX2uSt41UanVwiaJ3trCTgkUJiPNKNGKYVPMikw@mail.gmail.com>
-References: <1493218936-18522-1-git-send-email-sbuisson@ddn.com>
-	<1493218936-18522-2-git-send-email-sbuisson@ddn.com>
-	<1493231426.32540.11.camel@tycho.nsa.gov>
-	<CAPkE-bVPHAGDX2uSt41UanVwiaJ3trCTgkUJiPNKNGKYVPMikw@mail.gmail.com>
-Message-ID: <1493306283.2524.17.camel@tycho.nsa.gov>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Thu, 27 Apr 2017 11:20:44 -0500
+Subject: [PATCH] Introduce v3 namespaced file capabilities
+In-Reply-To: <87vapwncws.fsf@xmission.com> (Eric W. Biederman's message of
+	"Sat, 22 Apr 2017 20:14:11 -0500")
+References: <20170419164824.GA27843@mail.hallyn.com>
+	<87wpadpb3m.fsf@xmission.com> <20170422151412.GA14861@mail.hallyn.com>
+	<87vapwncws.fsf@xmission.com>
+Message-ID: <87r30d255v.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-04-27 at 10:41 +0200, Sebastien Buisson wrote:
-> 2017-04-26 20:30 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
-> > This seems like an odd place to trigger the computation.
-> 
-> I noticed that the policy as exposed via /sys/fs/selinux/policy can
-> also be modified in security_set_bools().
+ebiederm at xmission.com (Eric W. Biederman) writes:
 
-That's true, but does that matter for your use case?  Do you care about
-non-persistent boolean changes? What is the property you want to
-ensure?
+> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>
+>> Quoting Eric W. Biederman (ebiederm at xmission.com):
+>>> 
+>>> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>>> 
+>>> > diff --git a/fs/xattr.c b/fs/xattr.c
+>>> > index 7e3317c..75cc65a 100644
+>>> > --- a/fs/xattr.c
+>>> > +++ b/fs/xattr.c
+>>> > @@ -170,12 +170,29 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
+>>> >  		const void *value, size_t size, int flags)
+>>> >  {
+>>> >  	struct inode *inode = dentry->d_inode;
+>>> > -	int error = -EAGAIN;
+>>> > +	int error;
+>>> > +	void *wvalue = NULL;
+>>> > +	size_t wsize = 0;
+>>> >  	int issec = !strncmp(name, XATTR_SECURITY_PREFIX,
+>>> >  				   XATTR_SECURITY_PREFIX_LEN);
+>>> >  
+>>> > -	if (issec)
+>>> > +	if (issec) {
+>>> >  		inode->i_flags &= ~S_NOSEC;
+>>> > +
+>>> > +		if (!strcmp(name, "security.capability")) {
+>>> > +			error = cap_setxattr_convert_nscap(dentry, value, size,
+>>> > +					&wvalue, &wsize);
+>>> > +			if (error < 0)
+>>> > +				return error;
+>>> > +			if (wvalue) {
+>>> > +				value = wvalue;
+>>> > +				size = wsize;
+>>> > +			}
+>>> > +		}
+>>> > +	}
+>>> > +
+>>> > +	error = -EAGAIN;
+>>> > +
+>>> 
+>>> Why is the conversion in __vfs_setxattr_noperm and not in setattr as
+>>> was done for posix_acl_fix_xattr_from_user?
+>>
+>> I think I was thinking I wanted to catch all the vfs_setxattr operations,
+>> but I don't think that's right.  Moving to setxattr seems right.  I'll
+>> look around a bit more.
+>
+> Thanks.  This is one of these little details that we want a good answer
+> to why there.  If you can document that in your patch description when
+> you resend I would appreciate it.
 
->  So in order to limit the
-> places from where to compute the policy checksum, I moved the call to
-> checksum computation to selinux_lsm_notifier_avc_callback().
-> That being said, maybe the hash of /sys/fs/selinux/policy is not the
-> checksum we want. See your comments and my answers below.
-> 
-> > Why aren't you
-> > just computing it when the policy is loaded directly in
-> > security_load_policy()???You already have the (data, len) on entry
-> > to
-> > that function.??Just compute it at load time, save it, and be
-> > done.??No
-> > need for a notifier then for your use case unless I am missing
-> > something.
-> 
-> You are right. Getting from the Lustre client code the SELinux
-> internally computed checksum is cheap, so no need to be notified
-> every
-> time the policy changes, and no need to store the checksum in Lustre
-> at that time.
-> I will drop the "Implement LSM notification system" patch from this
-> series, as I cannot justify its usefulness from a Lustre client
-> standpoint anymore.
-> 
-> > I suppose the question is which checksum do you want - the hash of
-> > the
-> > policy file that was written to /sys/fs/selinux/load by userspace,
-> > or
-> > the hash of the policy file that the kernel generates on demand if
-> > you
-> > open /sys/fs/selinux/policy.??Those can differ in non-semantic ways
-> > due
-> > to ordering differences, for example.??I think the former is more
-> > likely to be of interest to userspace (e.g. to compare the hash
-> > value
-> > against the hash of the policy file), and is cheaper since you
-> > already
-> > have a (data, len) pair on entry to security_load_policy() that you
-> > can
-> > hash immediately rather than requiring the kernel to regenerate the
-> > image from the policydb.
-> 
-> OK, I understand now why I was seeing differences between the
-> checksum
-> computed on a (data, len) pair on entry to security_load_policy(),
-> and
-> the checksum computed on a (data, len) pair got from
-> security_read_policy().
-> I thought it was a problem to have a difference between the
-> internally
-> computed checksum and the one a user can get by calling sha256sum on
-> /sys/fs/selinux/policy. But now I see it makes sense to reflect what
-> was loaded by userspace. So I will simplify this patch accordingly.
+Ok. Grrr.
 
-Ok, that should work as long as you just want to validate that all the
-clients loaded the same policy file, and aren't concerned about non-
-persistent policy boolean changes.
+Looking at this a little more getting it correct where we call the
+conversion operation is critical. 
 
-You needed to get (global) enforcing mode too, didn't you?  That's
-separate from the policy.
+I believe the current placement of cap_setxattr_convert_nscap is
+actively wrong.  In particular unless I am misleading something this
+will trigger multiple conversions when setting one of these attributes
+on overlayfs.
 
-Make sure you make the hash algorithm explicit in both what is returned
-by the hook to lustre and by what is exported via selinuxfs.  Can
-likely just encode the hash algorithm name in the string when you
-generate it.
+The stragey I adopted for for posix acls is:
 
+   On a write from userspace convert from current_user_ns() to &init_user_ns.
+   On a write to the filesystem convert from &init_user_ns to fs_user_ns.
+   
+   On a read from the filesystem convert from fs_user_ns to &init_user_ns
+   On a read from the kernel to userspace convert from &init_user_ns
+      to current_user_ns().
+
+Overall a good strategy but no one we can trivially adopt for the
+capability xattr as the second write to filesystem method does not
+appear to actually exist for anything except for posix acls.
+
+I need to think a little more about how we want to accomplish this for
+the capability xattr.  My apoligies for leading you down a path that has
+all of these bumps and then being sufficiently distracted not to help
+you through this maze.
+
+The only easy solution I can see is to just always keep things in
+&init_user_ns inside the kernel.   That works until we bring fuse or
+other unprivileged mounts onboard that have storage outside of the
+kernel.
+
+Seth and I will have to rework that for fuse support but that sounds
+better than not letting such an issue prevent us from merging the code.
+
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
