@@ -1,31 +1,50 @@
-From: jmorris@namei.org (James Morris)
-Date: Thu, 27 Apr 2017 11:08:32 +1000 (AEST)
-Subject: [PATCH 3/3] selinux: expose policy SHA256 checksum via selinuxfs
-In-Reply-To: <1493231502.32540.12.camel@tycho.nsa.gov>
-References: <1493218936-18522-1-git-send-email-sbuisson@ddn.com>
-	<1493218936-18522-3-git-send-email-sbuisson@ddn.com>
-	<1493231502.32540.12.camel@tycho.nsa.gov>
-Message-ID: <alpine.LRH.2.20.1704271107450.28011@namei.org>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Wed, 26 Apr 2017 22:41:56 -0400
+Subject: [RFC][PATCH] audit: add ambient capabilities to CAPSET and
+	BPRM_FCAPS records
+In-Reply-To: <CAHC9VhSUc944RmVHi93m7Ht2D=gjdWcK6Lsc6Om5M9qvj7DB9g@mail.gmail.com>
+References: <fb96ad9e604033a5d51607bdbb0b46f50442f5b6.1491471625.git.rgb@redhat.com>
+	<CAHC9VhSUc944RmVHi93m7Ht2D=gjdWcK6Lsc6Om5M9qvj7DB9g@mail.gmail.com>
+Message-ID: <20170427024156.GH25861@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 26 Apr 2017, Stephen Smalley wrote:
-
-> > +	return simple_read_from_buffer(buf, count, ppos, tmpbuf,
-> > length);
-> > +}
+On 2017-04-26 16:04, Paul Moore wrote:
+> On Fri, Apr 7, 2017 at 10:17 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Capabilities were augmented to include ambient capabilities in v4.3
+> > commit 58319057b784 ("capabilities: ambient capabilities").
+> >
+> > Add ambient capabilities to the audit BPRM_FCAPS and CAPSET records.
+> >
+> > The record contains fields "old_pp", "old_pi", "old_pe", "new_pp",
+> > "new_pi", "new_pe" so in keeping with the previous record
+> > normalizations, change the "new_*" variants to simply drop the "new_"
+> > prefix.
 > 
-> Should we also include information about the hash used, in case it
-> changes in the future?
-> 
+> Help me out and remind me of those previous field rename
+> patches/commits where "new_X" became "X"?
 
-Good idea, yes.
+aa589a13b5d00d3c643ee4114d8cbc3addb4e99f ("audit: remove superfluous
+new- prefix in AUDIT_LOGIN messages")
 
+I had thought there were more.
 
--- 
-James Morris
-<jmorris@namei.org>
+And I'm now noticing that audit_log_feature_change() could use the same
+treatment and so could audit_receive_msg()'s AUDIT_TTY_SET.
 
+(And much earlier: ac03221a4fdda9bfdabf99bcd129847f20fc1d80 ("[PATCH]
+update of IPC audit record cleanup")
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
