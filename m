@@ -1,45 +1,21 @@
-From: sbuisson.ddn@gmail.com (Sebastien Buisson)
-Date: Thu, 27 Apr 2017 19:12:17 +0200
-Subject: [PATCH 2/3] selinux: add checksum to policydb
-In-Reply-To: <1493306283.2524.17.camel@tycho.nsa.gov>
-References: <1493218936-18522-1-git-send-email-sbuisson@ddn.com>
-	<1493218936-18522-2-git-send-email-sbuisson@ddn.com>
-	<1493231426.32540.11.camel@tycho.nsa.gov>
-	<CAPkE-bVPHAGDX2uSt41UanVwiaJ3trCTgkUJiPNKNGKYVPMikw@mail.gmail.com>
-	<1493306283.2524.17.camel@tycho.nsa.gov>
-Message-ID: <CAPkE-bVo7BO4WypVoeTiNBkbva1touoG2f7KjC3-RgvFXe3FXg@mail.gmail.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Thu, 27 Apr 2017 10:43:11 -0700
+Subject: [PATCH 0/5] KEYS: sanitize key payloads
+In-Reply-To: <28854.1493305782@warthog.procyon.org.uk>
+References: <20170421083037.12746-1-ebiggers3@gmail.com>
+	<28854.1493305782@warthog.procyon.org.uk>
+Message-ID: <20170427174311.GA8130@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-04-27 17:18 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
-> Ok, that should work as long as you just want to validate that all the
-> clients loaded the same policy file, and aren't concerned about non-
-> persistent policy boolean changes.
+On Thu, Apr 27, 2017 at 04:09:42PM +0100, David Howells wrote:
+> Do you have a git branch I can pull from?
+> 
+> David
 
-As far as I understand, non-persistent policy boolean changes can
-affect the way the policy is enforced. So that is a problem if the
-checksum does not reflect it. We want to protect against someone
-tampering the policy locally on a Lustre client, even if it does not
-survive a reboot.
-I just checked, with the method of computing the checksum on a (data,
-len) pair on entry to security_load_policy() the checksum does not
-change after using setsebool. So it seems I would need to call
-security_read_policy() to retrieve the binary representation of the
-policy as currently enforced by the kernel. Unless you can see another
-way?
+No I don't, sorry.
 
-> You needed to get (global) enforcing mode too, didn't you?  That's
-> separate from the policy.
-
-Exactly, I also need to rework the patch I proposed about this, in
-light of the comments I received.
-
-> Make sure you make the hash algorithm explicit in both what is returned
-> by the hook to lustre and by what is exported via selinuxfs.  Can
-> likely just encode the hash algorithm name in the string when you
-> generate it.
-
-Sure, I will add "sha256:" at the beginning of the string.
+- Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
