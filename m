@@ -1,19 +1,23 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 27 Apr 2017 14:54:51 +0100
-Subject: [PATCH v4 3/4] KEYS: Support for inserting a certificate into x86
-	bzImage
-In-Reply-To: <1492727320-26194-4-git-send-email-mkayaalp@linux.vnet.ibm.com>
-References: <1492727320-26194-4-git-send-email-mkayaalp@linux.vnet.ibm.com>
+Date: Thu, 27 Apr 2017 14:57:13 +0100
+Subject: [PATCH v4 4/4] KEYS: Print insert-sys-cert information to stdout
+	instead of stderr
+In-Reply-To: <1492727320-26194-5-git-send-email-mkayaalp@linux.vnet.ibm.com>
+References: <1492727320-26194-5-git-send-email-mkayaalp@linux.vnet.ibm.com>
 	<1492727320-26194-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
-Message-ID: <13470.1493301291@warthog.procyon.org.uk>
+Message-ID: <13506.1493301433@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com> wrote:
 
-> +	/* TODO: update CRC */
+> +#define info(format, args...) fprintf(stdout, "INFO:    " format, ## args)
 
-Is this bit missing?
+Btw, you really ought to be using standard varargs macros:
+
+	#define info(format, ...) fprintf(stdout, "INFO:    " format, ##__VA_LIST__)
+
+But don't worry about that for now.
 
 David
 --
