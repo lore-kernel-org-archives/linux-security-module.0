@@ -1,60 +1,35 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Fri, 28 Apr 2017 12:38:07 -0400
-Subject: [PATCH 2/3] selinux: add checksum to policydb
-In-Reply-To: <CAPkE-bWd0ArebM+8Vm5ZCQd90avZQ5sPSAR_2P5Y1brK5wKwJQ@mail.gmail.com>
-References: <1493218936-18522-1-git-send-email-sbuisson@ddn.com>
-	<1493218936-18522-2-git-send-email-sbuisson@ddn.com>
-	<1493231426.32540.11.camel@tycho.nsa.gov>
-	<CAPkE-bVPHAGDX2uSt41UanVwiaJ3trCTgkUJiPNKNGKYVPMikw@mail.gmail.com>
-	<1493306283.2524.17.camel@tycho.nsa.gov>
-	<CAPkE-bVo7BO4WypVoeTiNBkbva1touoG2f7KjC3-RgvFXe3FXg@mail.gmail.com>
-	<1493318826.2524.21.camel@tycho.nsa.gov>
-	<CAPkE-bUyWt8ovJ9pV+EFx9yUq9fVUy_G5yjEw7ZzLY3f3Ey1Aw@mail.gmail.com>
-	<1493394641.6177.8.camel@tycho.nsa.gov>
-	<CAPkE-bWd0ArebM+8Vm5ZCQd90avZQ5sPSAR_2P5Y1brK5wKwJQ@mail.gmail.com>
-Message-ID: <1493397487.6177.10.camel@tycho.nsa.gov>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Fri, 28 Apr 2017 10:57:12 -0700
+Subject: [PATCH 1/5] KEYS: sanitize add_key() and keyctl() key payloads
+In-Reply-To: <20170421083037.12746-2-ebiggers3@gmail.com>
+References: <20170421083037.12746-1-ebiggers3@gmail.com>
+	<20170421083037.12746-2-ebiggers3@gmail.com>
+Message-ID: <20170428175712.GA14932@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-04-28 at 18:08 +0200, Sebastien Buisson wrote:
-> 2017-04-28 17:50 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
-> > You seem to be conflating kernel policy with userspace policy.
-> > security_load_policy() is provided with the kernel policy image,
-> > which
-> > is the result of linking the kernel-relevant portions of all policy
-> > modules together. A hash of that image will change if you insert a
-> > policy module that affects the kernel policy in any way.??But a
-> > change
-> > that only affects userspace policy isn't ever going to be reflected
-> > in
-> > the kernel.??It doesn't matter where or when you compute your
-> > checksum
-> > within the kernel; it isn't ever going to reflect those userspace
-> > policy changes.
-> 
-> Here is the content of the module is used for my tests:
-> 
-> #============= user_t ==============
-> allow user_t mnt_t:dir { write add_name };
-> allow user_t mnt_t:file { write create };
-> 
-> After loading the .pp corresponding to it, I can see that with the
-> method of computing the checksum on the (data, len) pair on entry to
-> security_load_policy(), the checksum does not change. However, when
-> using the (data, len) pair got from
-> security_read_policy(), the checksum changes. And when I remove the
-> module, the checksum is back to its previous value.
-> So this is what makes me think there is a difference. Am I missing
-> something?
+Hey David,
 
-Policy is loaded via security_load_policy(), so the policy image has to
-go through it in the first place to be loaded (ignoring kernel exploits
-or direct /dev/mem access).  You couldn't have loaded the modified
-policy with your new rules without the modified policy getting
-processed by security_load_policy().  So I'm assuming there is a bug in
-your code or your testing.
+On Fri, Apr 21, 2017 at 01:30:33AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Before returning from add_key() or one of the keyctl() commands that
+> takes in a key payload, zero the temporary buffer that was allocated to
+> hold the key payload copied from userspace.  This may contain sensitive
+> key material that should not be kept around in the slab caches.
+> 
+> This must not be applied before the patch "KEYS: fix dereferencing NULL
+> payload with nonzero length".
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
+Can you make sure that my other patch "KEYS: fix dereferencing NULL payload with
+nonzero length" gets applied along with this one?  Otherwise triggering the NULL
+pointer dereference (which really needs to be fixed anyway) becomes even more
+trivial.  The only reason I didn't check for NULL before doing the memsets is
+that the bug was going to have to be fixed anyway, and the fix backported.
 
+- Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
