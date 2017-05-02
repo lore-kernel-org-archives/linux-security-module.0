@@ -1,18 +1,45 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 02 May 2017 10:28:37 +0100
-Subject: [PATCH 1/5] efi: Move the x86 secure boot switch to generic code
-In-Reply-To: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
-References: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
-Message-ID: <32589.1493717317@warthog.procyon.org.uk>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Tue, 2 May 2017 14:31:48 +0200
+Subject: [PATCH 0/3] tpm_pcr_extend() code split
+Message-ID: <20170502123151.24354-1-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Ard,
+This patch set moves TPM 1.2 specific code to a new function called
+tpm1_pcr_extend(). The purpose of splitting is to isolate TPM 2.0 code,
+so that it can be more easily modified to handle multiple digests.
 
-Any thoughts on these patches?
+With TPM 2.0, a Platform Configuration Register (PCR) could have multiple
+values, stored in locations called banks. Each bank stores the values
+of PCRs extended with the same hash algorithm.
 
-Thanks,
-David
+Currently, the TPM kernel driver does not take advantage of stronger
+algorithms because PCRs are always extended with a SHA1 digest, padded
+with zeros to match the length of the input for the hash algorithm
+being used. Shortly after these patches, a new patch set will be provided
+to allow callers of tpm_pcr_extend() to pass a digest for each algorithm
+supported by the TPM.
+
+In this patch set, TPM 1.2 specific code will prepare the command buffer
+with tpm_buf_init() which, in respect to the previous method, offers
+protection against buffer overflow. Moreover, CPU native to big-endian
+conversion has been removed from tags and ordinals definition, as it is
+already done by tpm_buf_init().
+
+Roberto Sassu (3):
+  tpm: use CPU native value for TPM_TAG_RQU_COMMAND
+  tpm: move ordinals definition to include/linux/tpm_command.h
+  tpm: move TPM 1.2 code of tpm_pcr_extend() to tpm1_pcr_extend()
+
+ drivers/char/tpm/tpm-interface.c | 76 +++++++++++++++++++---------------------
+ drivers/char/tpm/tpm-sysfs.c     |  6 ++--
+ drivers/char/tpm/tpm.h           |  2 --
+ include/linux/tpm_command.h      |  7 ++++
+ 4 files changed, 46 insertions(+), 45 deletions(-)
+
+-- 
+2.9.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
