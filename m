@@ -1,41 +1,84 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue,  2 May 2017 14:47:08 -0400
-Subject: [PATCH 0/4] ima: builtin policy requiring file signatures
-Message-ID: <1493750832-11981-1-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Tue,  2 May 2017 14:47:09 -0400
+Subject: [PATCH 1/4] ima: extend the "ima_policy" boot command line to support
+	multiple policies
+In-Reply-To: <1493750832-11981-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1493750832-11981-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1493750832-11981-2-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The builtin "ima_appraise_tcb" policy should require file signatures
-for at least a few of the hooks (eg. kernel modules, firmware, kexec
-kernel image, and the IMA policy), but changing it would break the
-existing userspace/kernel ABI.
+Add support for providing multiple builtin policies on the "ima_policy="
+boot command line.  Use "|" as the delimitor separating the policy names.
 
-This patch set extends the "ima_policy=" boot command line option to
-support specifying multiple builtin policies, introduces a new builtin
-policy named "secure_boot" to require file signatures, defines a new
-Kconfig option to permit specifying "log" and "fix" modes as options on
-the "ima_appraise=" boot command line, and defines is_ima_appraise_enabled().
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 17 +++++++++++------
+ security/integrity/ima/ima_policy.c             | 15 ++++++++++-----
+ 2 files changed, 21 insertions(+), 11 deletions(-)
 
-These changes provide some of the missing functionality needed for the
-"locked-down" patch set to detect whether file signatures are being
-validated.
-
-Mimi
-
-Mimi Zohar (4):
-  ima: extend the "ima_policy" boot command line to support multiple
-    policies
-  ima: define a set of appraisal rules requiring file signatures
-  ima: define Kconfig IMA_APPRAISE_BOOTPARAM option
-  ima: define is_ima_appraise_enabled()
-
- Documentation/admin-guide/kernel-parameters.txt | 21 +++++++++----
- include/linux/ima.h                             |  6 ++++
- security/integrity/ima/Kconfig                  |  8 +++++
- security/integrity/ima/ima_appraise.c           | 12 ++++++++
- security/integrity/ima/ima_policy.c             | 41 +++++++++++++++++++++----
- 5 files changed, 76 insertions(+), 12 deletions(-)
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 2ba45caabada..06b95e28e5e2 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1477,12 +1477,17 @@
+ 			in crypto/hash_info.h.
+ 
+ 	ima_policy=	[IMA]
+-			The builtin measurement policy to load during IMA
+-			setup.  Specyfing "tcb" as the value, measures all
+-			programs exec'd, files mmap'd for exec, and all files
+-			opened with the read mode bit set by either the
+-			effective uid (euid=0) or uid=0.
+-			Format: "tcb"
++			The builtin policies to load during IMA setup.
++			Format: "tcb | appraise_tcb"
++
++			The "tcb" policy measures all programs exec'd, files
++			mmap'd for exec, and all files opened with the read
++			mode bit set by either the effective uid (euid=0) or
++			uid=0.
++
++			The "appraise_tcb" policy appraises the integrity of
++			all files owned by root. (This is the equivalent
++			of ima_appraise_tcb.)
+ 
+ 	ima_tcb		[IMA] Deprecated.  Use ima_policy= instead.
+ 			Load a policy which meets the needs of the Trusted
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 3ab1067db624..0ddc41389a9c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -170,19 +170,24 @@ static int __init default_measure_policy_setup(char *str)
+ }
+ __setup("ima_tcb", default_measure_policy_setup);
+ 
++static bool ima_use_appraise_tcb __initdata;
+ static int __init policy_setup(char *str)
+ {
+-	if (ima_policy)
+-		return 1;
++	char *p;
+ 
+-	if (strcmp(str, "tcb") == 0)
+-		ima_policy = DEFAULT_TCB;
++	while ((p = strsep(&str, " |\n")) != NULL) {
++		if (*p == ' ')
++			continue;
++		if ((strcmp(p, "tcb") == 0) && !ima_policy)
++			ima_policy = DEFAULT_TCB;
++		else if (strcmp(p, "appraise_tcb") == 0)
++			ima_use_appraise_tcb = 1;
++	}
+ 
+ 	return 1;
+ }
+ __setup("ima_policy=", policy_setup);
+ 
+-static bool ima_use_appraise_tcb __initdata;
+ static int __init default_appraise_policy_setup(char *str)
+ {
+ 	ima_use_appraise_tcb = 1;
 -- 
 2.7.4
 
