@@ -1,108 +1,66 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 2 May 2017 14:31:51 +0200
-Subject: [PATCH 3/3] tpm: move TPM 1.2 code of tpm_pcr_extend() to
-	tpm1_pcr_extend()
-In-Reply-To: <20170502123151.24354-1-roberto.sassu@huawei.com>
-References: <20170502123151.24354-1-roberto.sassu@huawei.com>
-Message-ID: <20170502123151.24354-4-roberto.sassu@huawei.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Tue, 2 May 2017 16:00:41 +0200
+Subject: [PATCH RFC v2 5/6] proc: instantiate only pids that we can ptrace
+	on 'limit_pids=1' mount option
+In-Reply-To: <CALCETrXM7-NBnBcXbuuhDJZyUFLT7iRfcGGvaqUhDJBGkYJgcQ@mail.gmail.com>
+References: <1493123038-30590-1-git-send-email-tixxdz@gmail.com>
+	<1493123038-30590-6-git-send-email-tixxdz@gmail.com>
+	<CALCETrXM7-NBnBcXbuuhDJZyUFLT7iRfcGGvaqUhDJBGkYJgcQ@mail.gmail.com>
+Message-ID: <CAEiveUcX8Wg2jw+jt9hqGMpEXEM5RLj3chKvHyOzd9vkW=ePNg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation of the modifications to tpm_pcr_extend(), which will
-allow callers to supply a digest for each PCR bank of a TPM 2.0,
-the TPM 1.2 specific code has been moved to tpm1_pcr_extend().
+Hello Andy,
 
-tpm1_pcr_extend() uses tpm_buf_init() to prepare the command buffer,
-which offers protection against buffer overflow. It is called by
-tpm_pcr_extend() and tpm_pm_suspend().
+(Sorry for my late response)
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- drivers/char/tpm/tpm-interface.c | 46 +++++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 22 deletions(-)
+On Thu, Apr 27, 2017 at 12:09 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Tue, Apr 25, 2017 at 5:23 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+>> If "limit_pids=1" mount option is set then do not instantiate pids that
+>> we can not ptrace. "limit_pids=1" means that procfs should only contain
+>> pids that the caller can ptrace.
+>>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+>> ---
+>>  fs/proc/base.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+>> index 2e0f661..a663284 100644
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -3149,6 +3149,7 @@ struct dentry *proc_pid_lookup(struct inode *dir, struct dentry * dentry, unsign
+>>         unsigned tgid;
+>>         struct proc_fs_info *fs_info = proc_sb(dir->i_sb);
+>>         struct pid_namespace *ns = fs_info->pid_ns;
+>> +       int limit_pids = proc_fs_limit_pids(fs_info);
+>
+> Shouldn't the addition of proc_fs_limit_pids() be in this patch?
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 5c2c032..9059f67 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -763,11 +763,25 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
- 
- #define EXTEND_PCR_RESULT_SIZE 34
- #define EXTEND_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrextend_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(34),
--	.ordinal = cpu_to_be32(TPM_ORD_PCREXTEND)
--};
-+
-+static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+			   char *log_msg)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCREXTEND);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, pcr_idx);
-+	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-+
-+	rc = tpm_transmit_cmd(chip, buf.data, EXTEND_PCR_RESULT_SIZE,
-+			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
- 
- /**
-  * tpm_pcr_extend - extend pcr value with hash
-@@ -781,7 +795,6 @@ static const struct tpm_input_header pcrextend_header = {
-  */
- int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
- {
--	struct tpm_cmd_t cmd;
- 	int rc;
- 	struct tpm_chip *chip;
- 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-@@ -807,13 +820,8 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
- 		return rc;
- 	}
- 
--	cmd.header.in = pcrextend_header;
--	cmd.params.pcrextend_in.pcr_idx = cpu_to_be32(pcr_idx);
--	memcpy(cmd.params.pcrextend_in.hash, hash, TPM_DIGEST_SIZE);
--	rc = tpm_transmit_cmd(chip, &cmd, EXTEND_PCR_RESULT_SIZE,
--			      EXTEND_PCR_RESULT_BODY_SIZE, 0,
--			      "attempting extend a PCR value");
--
-+	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
-+			     "attempting extend a PCR value");
- 	tpm_put_ops(chip);
- 	return rc;
- }
-@@ -1011,15 +1019,9 @@ int tpm_pm_suspend(struct device *dev)
- 	}
- 
- 	/* for buggy tpm, flush pcrs with extend to selected dummy */
--	if (tpm_suspend_pcr) {
--		cmd.header.in = pcrextend_header;
--		cmd.params.pcrextend_in.pcr_idx = cpu_to_be32(tpm_suspend_pcr);
--		memcpy(cmd.params.pcrextend_in.hash, dummy_hash,
--		       TPM_DIGEST_SIZE);
--		rc = tpm_transmit_cmd(chip, &cmd, EXTEND_PCR_RESULT_SIZE,
--				     EXTEND_PCR_RESULT_BODY_SIZE, 0,
--				      "extending dummy pcr before suspend");
--	}
-+	if (tpm_suspend_pcr)
-+		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
-+				     "extending dummy pcr before suspend");
- 
- 	/* now do the actual savestate */
- 	for (try = 0; try < TPM_RETRY; try++) {
+Actually I think this patch should be part of proc_fs_limit_pids()
+since it will cover paths that are not handled by inode ->permission()
+checks. But I will review this patch ad discussion "devpts: Make each
+mount of devpts an independent filesystem" [1] and try to get the
+rational about it, if doing permission like checks in lookups is
+related, or if it should be done in the first place...
+
+The other thing that I didn't have time to check is standardizing on
+returned error codes: I prefer to always return -ENOENT, instead of
+-EPERM or sometimes -ENOENT.
+
+> Also, can we name it something self-documented?
+> "ptraceable_pids_only=1", perhaps?  Or even pids=ptraceable (as
+> opposed to pids=all or maybe other choices in the future)?
+
+Yes, I will update.
+
+[1] https://patchwork.kernel.org/patch/9150781/
+
 -- 
-2.9.3
-
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
