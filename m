@@ -1,70 +1,132 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue,  2 May 2017 14:47:12 -0400
-Subject: [PATCH 4/4] ima: define is_ima_appraise_enabled()
+Date: Tue,  2 May 2017 14:47:10 -0400
+Subject: [PATCH 2/4] ima: define a set of appraisal rules requiring file
+	signatures
 In-Reply-To: <1493750832-11981-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1493750832-11981-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1493750832-11981-5-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1493750832-11981-3-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Only return enabled if in enforcing mode, not fix or log modes.
+The builtin "ima_appraise_tcb" policy should require file signatures for
+at least a few of the hooks (eg. kernel modules, firmware, and the kexec
+kernel image), but changing it would break the existing userspace/kernel
+ABI.
+
+This patch defines a new builtin policy named "secure_boot", which
+can be specified on the "ima_policy=" boot command line, independently
+or in conjunction with the "ima_appraise_tcb" policy, by specifing
+ima_policy="appraise_tcb | secure_boot".  The new appraisal rules
+requiring file signatures will be added prior to the "ima_appraise_tcb"
+rules.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Changes:
-- Define is_ima_appraise_enabled() as a bool (Thiago Bauermann)
+Changelog:
+- Reference secure boot in the new builtin policy name. (Thiago Bauermann)
 ---
- include/linux/ima.h                   |  6 ++++++
- security/integrity/ima/ima_appraise.c | 10 ++++++++++
- 2 files changed, 16 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  6 +++++-
+ security/integrity/ima/ima_policy.c             | 26 ++++++++++++++++++++++++-
+ 2 files changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 7f6952f8d6aa..0e4647e0eb60 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -75,11 +75,17 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 06b95e28e5e2..4e15b6a67d2c 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1478,7 +1478,7 @@
+ 
+ 	ima_policy=	[IMA]
+ 			The builtin policies to load during IMA setup.
+-			Format: "tcb | appraise_tcb"
++			Format: "tcb | appraise_tcb | secure_boot"
+ 
+ 			The "tcb" policy measures all programs exec'd, files
+ 			mmap'd for exec, and all files opened with the read
+@@ -1489,6 +1489,10 @@
+ 			all files owned by root. (This is the equivalent
+ 			of ima_appraise_tcb.)
+ 
++			The "secure_boot" policy appraises the integrity
++			of files (eg. kexec kernel image, kernel modules,
++			firmware, policy, etc) based on file signatures.
++
+ 	ima_tcb		[IMA] Deprecated.  Use ima_policy= instead.
+ 			Load a policy which meets the needs of the Trusted
+ 			Computing Base.  This means IMA will measure all
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 0ddc41389a9c..3653c86c70df 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -153,6 +153,17 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
  #endif
+ };
  
- #ifdef CONFIG_IMA_APPRAISE
-+extern bool is_ima_appraise_enabled(void);
- extern void ima_inode_post_setattr(struct dentry *dentry);
- extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		       const void *xattr_value, size_t xattr_value_len);
- extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
- #else
-+static inline bool is_ima_appraise_enabled(void)
-+{
-+	return 0;
-+}
++static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
++	{.action = APPRAISE, .func = MODULE_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++	{.action = APPRAISE, .func = FIRMWARE_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++	{.action = APPRAISE, .func = POLICY_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++};
 +
- static inline void ima_inode_post_setattr(struct dentry *dentry)
+ static LIST_HEAD(ima_default_rules);
+ static LIST_HEAD(ima_policy_rules);
+ static LIST_HEAD(ima_temp_rules);
+@@ -171,6 +182,7 @@ static int __init default_measure_policy_setup(char *str)
+ __setup("ima_tcb", default_measure_policy_setup);
+ 
+ static bool ima_use_appraise_tcb __initdata;
++static bool ima_use_secure_boot __initdata;
+ static int __init policy_setup(char *str)
  {
- 	return;
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index ac546df73afc..7fe0566142d8 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -34,6 +34,16 @@ static int __init default_appraise_setup(char *str)
- __setup("ima_appraise=", default_appraise_setup);
+ 	char *p;
+@@ -182,6 +194,8 @@ static int __init policy_setup(char *str)
+ 			ima_policy = DEFAULT_TCB;
+ 		else if (strcmp(p, "appraise_tcb") == 0)
+ 			ima_use_appraise_tcb = 1;
++		else if (strcmp(p, "secure_boot") == 0)
++			ima_use_secure_boot = 1;
+ 	}
  
- /*
-+ * is_ima_appraise_enabled - return appraise status
-+ *
-+ * Only return enabled, if not in ima_appraise="fix" or "log" modes.
-+ */
-+bool is_ima_appraise_enabled(void)
-+{
-+	return (ima_appraise & IMA_APPRAISE_ENFORCE) ? 1 : 0;
-+}
+ 	return 1;
+@@ -410,12 +424,14 @@ void ima_update_policy_flag(void)
+  */
+ void __init ima_init_policy(void)
+ {
+-	int i, measure_entries, appraise_entries;
++	int i, measure_entries, appraise_entries, secure_boot_entries;
+ 
+ 	/* if !ima_policy set entries = 0 so we load NO default rules */
+ 	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
+ 	appraise_entries = ima_use_appraise_tcb ?
+ 			 ARRAY_SIZE(default_appraise_rules) : 0;
++	secure_boot_entries = ima_use_secure_boot ?
++			ARRAY_SIZE(secure_boot_rules) : 0;
+ 
+ 	for (i = 0; i < measure_entries; i++)
+ 		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
+@@ -434,6 +450,14 @@ void __init ima_init_policy(void)
+ 		break;
+ 	}
+ 
++	/*
++	 * Insert the appraise rules requiring file signatures, prior to
++	 * any other appraise rules.
++	 */
++	for (i = 0; i < secure_boot_entries; i++)
++		list_add_tail(&secure_boot_rules[i].list,
++			      &ima_default_rules);
 +
-+/*
-  * ima_must_appraise - set appraise flag
-  *
-  * Return 1 to appraise
+ 	for (i = 0; i < appraise_entries; i++) {
+ 		list_add_tail(&default_appraise_rules[i].list,
+ 			      &ima_default_rules);
 -- 
 2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
