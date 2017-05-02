@@ -1,28 +1,41 @@
-From: geert@linux-m68k.org (Geert Uytterhoeven)
-Date: Tue,  2 May 2017 20:27:41 +0200
-Subject: [PATCH trivial] security: Grammar s/allocates/allocated/
-Message-ID: <1493749661-22686-1-git-send-email-geert@linux-m68k.org>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue,  2 May 2017 14:47:08 -0400
+Subject: [PATCH 0/4] ima: builtin policy requiring file signatures
+Message-ID: <1493750832-11981-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- security/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The builtin "ima_appraise_tcb" policy should require file signatures
+for at least a few of the hooks (eg. kernel modules, firmware, kexec
+kernel image, and the IMA policy), but changing it would break the
+existing userspace/kernel ABI.
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 213df4d4f2c1527a..1bb0c5bc9caadf8c 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -134,7 +134,7 @@ config HARDENED_USERCOPY
- 	  copying memory to/from the kernel (via copy_to_user() and
- 	  copy_from_user() functions) by rejecting memory ranges that
- 	  are larger than the specified heap object, span multiple
--	  separately allocates pages, are not on the process stack,
-+	  separately allocated pages, are not on the process stack,
- 	  or are part of the kernel text. This kills entire classes
- 	  of heap overflow exploits and similar kernel memory exposures.
- 
+This patch set extends the "ima_policy=" boot command line option to
+support specifying multiple builtin policies, introduces a new builtin
+policy named "secure_boot" to require file signatures, defines a new
+Kconfig option to permit specifying "log" and "fix" modes as options on
+the "ima_appraise=" boot command line, and defines is_ima_appraise_enabled().
+
+These changes provide some of the missing functionality needed for the
+"locked-down" patch set to detect whether file signatures are being
+validated.
+
+Mimi
+
+Mimi Zohar (4):
+  ima: extend the "ima_policy" boot command line to support multiple
+    policies
+  ima: define a set of appraisal rules requiring file signatures
+  ima: define Kconfig IMA_APPRAISE_BOOTPARAM option
+  ima: define is_ima_appraise_enabled()
+
+ Documentation/admin-guide/kernel-parameters.txt | 21 +++++++++----
+ include/linux/ima.h                             |  6 ++++
+ security/integrity/ima/Kconfig                  |  8 +++++
+ security/integrity/ima/ima_appraise.c           | 12 ++++++++
+ security/integrity/ima/ima_policy.c             | 41 +++++++++++++++++++++----
+ 5 files changed, 76 insertions(+), 12 deletions(-)
+
 -- 
 2.7.4
 
