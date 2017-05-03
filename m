@@ -1,105 +1,56 @@
-From: danielj@mellanox.com (Daniel Jurgens)
-Date: Wed, 3 May 2017 19:45:33 +0000
-Subject: [PATCH v6 0/9] SELinux support for Infiniband RDMA
-References: <1479910651-43246-1-git-send-email-danielj@mellanox.com>
-	<CAHC9VhSB6AORJf_8cBGt-AynMsEh3snKU5SpsmNXoy9hDSrGaA@mail.gmail.com>
-Message-ID: <VI1PR05MB167880A4D79F8FC3F8C740A9C4160@VI1PR05MB1678.eurprd05.prod.outlook.com>
+From: matt@nmatt.com (Matt Brown)
+Date: Wed, 3 May 2017 16:02:55 -0400
+Subject: [PATCH v4 1/2] tiocsti-restrict : Add owner user namespace to
+	tty_struct
+In-Reply-To: <20170503194528.GA28882@kroah.com>
+References: <20170424051512.20420-1-matt@nmatt.com>
+	<20170424051512.20420-2-matt@nmatt.com>
+	<20170424135751.GA9030@mail.hallyn.com>
+	<CAGXu5jLFkDB31W7uje3LaEujDrnvndQX9JK_hs47nc2dpbyNtQ@mail.gmail.com>
+	<20170503194528.GA28882@kroah.com>
+Message-ID: <12d91b0b-0aa9-a0d5-7cb4-83371e0e8749@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/3/2017 9:41 AM, Paul Moore wrote:
-> On Wed, Nov 23, 2016 at 9:17 AM, Dan Jurgens <danielj@mellanox.com> wrote:
->> From: Daniel Jurgens <danielj@mellanox.com>
+On 05/03/2017 03:45 PM, Greg KH wrote:
+> On Wed, May 03, 2017 at 12:32:07PM -0700, Kees Cook wrote:
+>> On Mon, Apr 24, 2017 at 6:57 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
+>>> Quoting Matt Brown (matt at nmatt.com):
+>>>> This patch adds struct user_namespace *owner_user_ns to the tty_struct.
+>>>> Then it is set to current_user_ns() in the alloc_tty_struct function.
+>>>>
+>>>> This is done to facilitate capability checks against the original user
+>>>> namespace that allocated the tty.
+>>>>
+>>>> E.g. ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)
+>>>>
+>>>> This combined with the use of user namespace's will allow hardening
+>>>> protections to be built to mitigate container escapes that utilize TTY
+>>>> ioctls such as TIOCSTI.
+>>>>
+>>>> See: https://bugzilla.redhat.com/show_bug.cgi?id=1411256
+>>>>
+>>>> Signed-off-by: Matt Brown <matt@nmatt.com>
+>>>
+>>> Acked-by: Serge Hallyn <serge@hallyn.com>
 >>
->> Infiniband applications access HW from user-space -- traffic is generated
->> directly by HW, bypassing the kernel. Consequently, Infiniband Partitions,
->> which are associated directly with HW transport endpoints, are a natural
->> choice for enforcing granular mandatory access control for Infiniband. QPs may
->> only send or receives packets tagged with the corresponding partition key
->> (PKey). The PKey is not a cryptographic key; it's a 16 bit number identifying
->> the partition.
+>> This Ack didn't end up in the v5, but I think it stands, yes?
 >>
->> Every Infiniband fabric is controlled by a central Subnet Manager (SM). The SM
->> provisions the partitions by assigning each port with the partitions it can
->> access. In addition, the SM tags each port with a subnet prefix, which
->> identifies the subnet. Determining which users are allowed to access which
->> partition keys on a given subnet forms an effective policy for isolating users
->> on the fabric. Any application that attempts to send traffic on a given subnet
->> is automatically subject to the policy, regardless of which device and port it
->> uses. SM software configures the subnet through a privileged Subnet Management
->> Interface (SMI), which is presented by each Infiniband port. Thus, the SMI must
->> also be controlled to prevent unauthorized changes to fabric configuration and
->> partitioning.
->>
->> To support access control for IB partitions and subnet management, security
->> contexts must be provided for two new types of objects - PKeys and IB ports.
->>
->> A PKey label consists of a subnet prefix and a range of PKey values and is
->> similar to the labeling mechanism for netports. Each Infiniband port can reside
->> on a different subnet. So labeling the PKey values for specific subnet prefixes
->> provides the user maximum flexibility, as PKey values may be determined
->> independently for different subnets. There is a single access vector for PKeys
->> called "access".
->>
->> An Infiniband port is labeled by device name and port number. There is a single
->> access vector for IB ports called "manage_subnet".
->>
->> Because RDMA allows kernel bypass, enforcement must be done during connection
->> setup. Communication over RDMA requires a send and receive queue, collectively
->> known as a Queue Pair (QP). A QP must be initialized by privileged system calls
->> before it can be used to send or receive data. During initialization the user
->> must provide the PKey and port the QP will use; at this time access control can
->> be enforced.
->>
->> Because there is a possibility that the enforcement settings or security
->> policy can change, a means of notifying the ib_core module of such changes
->> is required. To facilitate this a generic notification callback mechanism
->> is added to the LSM. One callback is registered for checking the QP PKey
->> associations when the policy changes. Mad agents also register a callback,
->> they cache the permission to send and receive SMPs to avoid another per
->> packet call to the LSM.
->>
->> Because frequent accesses to the same PKey's SID is expected a cache is
->> implemented which is very similar to the netport cache.
->>
->> In order to properly enforce security when changes to the PKey table or
->> security policy or enforcement occur ib_core must track which QPs are
->> using which port, pkey index, and alternate path for every IB device.
->> This makes operations that used to be atomic transactional.
->>
->> When modifying a QP, ib_core must associate it with the PKey index, port,
->> and alternate path specified. If the QP was already associated with
->> different settings, the QP is added to the new list prior to the
->> modification. If the modify succeeds then the old listing is removed. If
->> the modify fails the new listing is removed and the old listing remains
->> unchanged.
->>
->> When destroying a QP the ib_qp structure is freed by the decive specific
->> driver (i.e. mlx4_ib) if the 'destroy' is successful. This requires storing
->> security related information in a separate structure. When a 'destroy'
->> request is in process the ib_qp structure is in an undefined state so if
->> there are changes to the security policy or PKey table, the security checks
->> cannot reset the QP if it doesn't have permission for the new setting. If
->> the 'destroy' fails, security for that QP must be enforced again and its
->> status in the list is restored. If the 'destroy' succeeds the security info
->> can be cleaned up and freed.
->>
->> There are a number of locks required to protect the QP security structure
->> and the QP to device/port/pkey index lists. If multiple locks are required,
->> the safe locking order is: QP security structure mutex first, followed by
->> any list locks needed, which are sorted first by port followed by pkey
->> index.
-> Hi Dan,
+>> Greg, is the v5 okay to pull for you or would a v6 with Acks/Reviews
+>> included be preferred?
 >
-> I haven't heard anything from you in a while, where do things stand
-> with this effort?  Unless I missed them, I believe we are still
-> waiting on the userspace, SELinux reference policy, and
-> selinux-testsuite patches.
+> v6 would be great, and we are dropping patch 2 from the series, right?
+> I was expecting this to be resent.  I'll start looking at new patches
+> like this after 4.12-rc1 is out.
 >
-Hi Paul,
 
-    I got distracted for a while.  I've just rebased the kernel and userspace.  I'll do some testing and submit the userspace code in the next couple days.  I still have to write the selinux-testsuite tests, I'll work on those concurrently with the userspace review cycle.
+I will create a v6 with the Acks/Reviews. I'd like to keep patch 2 in
+since that got acked by at least Serge. (Kees also? or just patch 1?)
 
+> thanks,
+>
+> greg k-h
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
