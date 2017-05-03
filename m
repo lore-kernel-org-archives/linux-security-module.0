@@ -1,184 +1,104 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 3 May 2017 16:27:20 +0200
-Subject: [tpmdd-devel] [PATCH 2/3] tpm: move ordinals definition to
-	include/linux/tpm_command.h
-In-Reply-To: <20170503124817.nqckvzuajsf2q5zd@intel.com>
-References: <20170502123151.24354-1-roberto.sassu@huawei.com>
-	<20170502123151.24354-3-roberto.sassu@huawei.com>
-	<20170503124817.nqckvzuajsf2q5zd@intel.com>
-Message-ID: <273058a8-1be6-3eaf-1260-b34ac2613306@huawei.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 3 May 2017 10:41:51 -0400
+Subject: [PATCH v6 0/9] SELinux support for Infiniband RDMA
+In-Reply-To: <1479910651-43246-1-git-send-email-danielj@mellanox.com>
+References: <1479910651-43246-1-git-send-email-danielj@mellanox.com>
+Message-ID: <CAHC9VhSB6AORJf_8cBGt-AynMsEh3snKU5SpsmNXoy9hDSrGaA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/3/2017 2:48 PM, Jarkko Sakkinen wrote:
-> ORD ought not be used outside of drivers/char/tpm. TPM 1.2 trusted
-> keys does use this header but it should be eventually moved to
-> drivers/char/tpm (not done because of other stuff at this point).
-
-Ok. Then, I just move the ordinal conversion to the tpm_input_header
-declaration.
-
-Probably, the Reviewed-by in your previous email was for patch 1/3.
-
-Thanks
-
-Roberto
-
-
+On Wed, Nov 23, 2016 at 9:17 AM, Dan Jurgens <danielj@mellanox.com> wrote:
+> From: Daniel Jurgens <danielj@mellanox.com>
 >
-> /Jarkko
+> Infiniband applications access HW from user-space -- traffic is generated
+> directly by HW, bypassing the kernel. Consequently, Infiniband Partitions,
+> which are associated directly with HW transport endpoints, are a natural
+> choice for enforcing granular mandatory access control for Infiniband. QPs may
+> only send or receives packets tagged with the corresponding partition key
+> (PKey). The PKey is not a cryptographic key; it's a 16 bit number identifying
+> the partition.
 >
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>  drivers/char/tpm/tpm-interface.c | 19 ++++++-------------
->>  drivers/char/tpm/tpm-sysfs.c     |  3 +--
->>  include/linux/tpm_command.h      |  7 +++++++
->>  3 files changed, 14 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->> index 48f5dff..5c2c032 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -469,13 +469,11 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, const void *buf,
->>  #define TPM_DIGEST_SIZE 20
->>  #define TPM_RET_CODE_IDX 6
->>  #define TPM_INTERNAL_RESULT_SIZE 200
->> -#define TPM_ORD_GET_CAP cpu_to_be32(101)
->> -#define TPM_ORD_GET_RANDOM cpu_to_be32(70)
->>
->>  static const struct tpm_input_header tpm_getcap_header = {
->>  	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
->>  	.length = cpu_to_be32(22),
->> -	.ordinal = TPM_ORD_GET_CAP
->> +	.ordinal = cpu_to_be32(TPM_ORD_GET_CAP)
->>  };
->>
->>  ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
->> @@ -510,14 +508,13 @@ ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
->>  }
->>  EXPORT_SYMBOL_GPL(tpm_getcap);
->>
->> -#define TPM_ORD_STARTUP cpu_to_be32(153)
->>  #define TPM_ST_CLEAR cpu_to_be16(1)
->>  #define TPM_ST_STATE cpu_to_be16(2)
->>  #define TPM_ST_DEACTIVATED cpu_to_be16(3)
->>  static const struct tpm_input_header tpm_startup_header = {
->>  	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
->>  	.length = cpu_to_be32(12),
->> -	.ordinal = TPM_ORD_STARTUP
->> +	.ordinal = cpu_to_be32(TPM_ORD_STARTUP)
->>  };
->>
->>  static int tpm_startup(struct tpm_chip *chip, __be16 startup_type)
->> @@ -661,7 +658,6 @@ int tpm_get_timeouts(struct tpm_chip *chip)
->>  }
->>  EXPORT_SYMBOL_GPL(tpm_get_timeouts);
->>
->> -#define TPM_ORD_CONTINUE_SELFTEST 83
->>  #define CONTINUE_SELFTEST_RESULT_SIZE 10
->>
->>  static const struct tpm_input_header continue_selftest_header = {
->> @@ -688,13 +684,12 @@ static int tpm_continue_selftest(struct tpm_chip *chip)
->>  	return rc;
->>  }
->>
->> -#define TPM_ORDINAL_PCRREAD cpu_to_be32(21)
->>  #define READ_PCR_RESULT_SIZE 30
->>  #define READ_PCR_RESULT_BODY_SIZE 20
->>  static const struct tpm_input_header pcrread_header = {
->>  	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
->>  	.length = cpu_to_be32(14),
->> -	.ordinal = TPM_ORDINAL_PCRREAD
->> +	.ordinal = cpu_to_be32(TPM_ORD_PCRREAD)
->>  };
->>
->>  int tpm_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
->> @@ -766,13 +761,12 @@ int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf)
->>  }
->>  EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>
->> -#define TPM_ORD_PCR_EXTEND cpu_to_be32(20)
->>  #define EXTEND_PCR_RESULT_SIZE 34
->>  #define EXTEND_PCR_RESULT_BODY_SIZE 20
->>  static const struct tpm_input_header pcrextend_header = {
->>  	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
->>  	.length = cpu_to_be32(34),
->> -	.ordinal = TPM_ORD_PCR_EXTEND
->> +	.ordinal = cpu_to_be32(TPM_ORD_PCREXTEND)
->>  };
->>
->>  /**
->> @@ -988,13 +982,12 @@ int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
->>  }
->>  EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
->>
->> -#define TPM_ORD_SAVESTATE cpu_to_be32(152)
->>  #define SAVESTATE_RESULT_SIZE 10
->>
->>  static const struct tpm_input_header savestate_header = {
->>  	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
->>  	.length = cpu_to_be32(10),
->> -	.ordinal = TPM_ORD_SAVESTATE
->> +	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
->>  };
->>
->>  /*
->> @@ -1079,7 +1072,7 @@ EXPORT_SYMBOL_GPL(tpm_pm_resume);
->>  static const struct tpm_input_header tpm_getrandom_header = {
->>  	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
->>  	.length = cpu_to_be32(14),
->> -	.ordinal = TPM_ORD_GET_RANDOM
->> +	.ordinal = cpu_to_be32(TPM_ORD_GETRANDOM)
->>  };
->>
->>  /**
->> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
->> index 69a0741..413ac2c 100644
->> --- a/drivers/char/tpm/tpm-sysfs.c
->> +++ b/drivers/char/tpm/tpm-sysfs.c
->> @@ -23,11 +23,10 @@
->>
->>  #define READ_PUBEK_RESULT_SIZE 314
->>  #define READ_PUBEK_RESULT_MIN_BODY_SIZE (28 + 256)
->> -#define TPM_ORD_READPUBEK cpu_to_be32(124)
->>  static const struct tpm_input_header tpm_readpubek_header = {
->>  	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
->>  	.length = cpu_to_be32(30),
->> -	.ordinal = TPM_ORD_READPUBEK
->> +	.ordinal = cpu_to_be32(TPM_ORD_READPUBEK)
->>  };
->>  static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
->>  			  char *buf)
->> diff --git a/include/linux/tpm_command.h b/include/linux/tpm_command.h
->> index 727512e..0fe58d8 100644
->> --- a/include/linux/tpm_command.h
->> +++ b/include/linux/tpm_command.h
->> @@ -20,6 +20,13 @@
->>  #define TPM_ORD_OIAP                    10
->>  #define TPM_ORD_SEAL                    23
->>  #define TPM_ORD_UNSEAL                  24
->> +#define TPM_ORD_GET_CAP                101
->> +#define TPM_ORD_STARTUP                153
->> +#define TPM_ORD_CONTINUE_SELFTEST       83
->> +#define TPM_ORD_PCRREAD                 21
->> +#define TPM_ORD_PCREXTEND               20
->> +#define TPM_ORD_SAVESTATE              152
->> +#define TPM_ORD_READPUBEK              124
->>
->>  /* Other constants */
->>  #define SRKHANDLE                       0x40000000
->> --
->> 2.9.3
->>
->>
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> tpmdd-devel mailing list
->> tpmdd-devel at lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/tpmdd-devel
+> Every Infiniband fabric is controlled by a central Subnet Manager (SM). The SM
+> provisions the partitions by assigning each port with the partitions it can
+> access. In addition, the SM tags each port with a subnet prefix, which
+> identifies the subnet. Determining which users are allowed to access which
+> partition keys on a given subnet forms an effective policy for isolating users
+> on the fabric. Any application that attempts to send traffic on a given subnet
+> is automatically subject to the policy, regardless of which device and port it
+> uses. SM software configures the subnet through a privileged Subnet Management
+> Interface (SMI), which is presented by each Infiniband port. Thus, the SMI must
+> also be controlled to prevent unauthorized changes to fabric configuration and
+> partitioning.
+>
+> To support access control for IB partitions and subnet management, security
+> contexts must be provided for two new types of objects - PKeys and IB ports.
+>
+> A PKey label consists of a subnet prefix and a range of PKey values and is
+> similar to the labeling mechanism for netports. Each Infiniband port can reside
+> on a different subnet. So labeling the PKey values for specific subnet prefixes
+> provides the user maximum flexibility, as PKey values may be determined
+> independently for different subnets. There is a single access vector for PKeys
+> called "access".
+>
+> An Infiniband port is labeled by device name and port number. There is a single
+> access vector for IB ports called "manage_subnet".
+>
+> Because RDMA allows kernel bypass, enforcement must be done during connection
+> setup. Communication over RDMA requires a send and receive queue, collectively
+> known as a Queue Pair (QP). A QP must be initialized by privileged system calls
+> before it can be used to send or receive data. During initialization the user
+> must provide the PKey and port the QP will use; at this time access control can
+> be enforced.
+>
+> Because there is a possibility that the enforcement settings or security
+> policy can change, a means of notifying the ib_core module of such changes
+> is required. To facilitate this a generic notification callback mechanism
+> is added to the LSM. One callback is registered for checking the QP PKey
+> associations when the policy changes. Mad agents also register a callback,
+> they cache the permission to send and receive SMPs to avoid another per
+> packet call to the LSM.
+>
+> Because frequent accesses to the same PKey's SID is expected a cache is
+> implemented which is very similar to the netport cache.
+>
+> In order to properly enforce security when changes to the PKey table or
+> security policy or enforcement occur ib_core must track which QPs are
+> using which port, pkey index, and alternate path for every IB device.
+> This makes operations that used to be atomic transactional.
+>
+> When modifying a QP, ib_core must associate it with the PKey index, port,
+> and alternate path specified. If the QP was already associated with
+> different settings, the QP is added to the new list prior to the
+> modification. If the modify succeeds then the old listing is removed. If
+> the modify fails the new listing is removed and the old listing remains
+> unchanged.
+>
+> When destroying a QP the ib_qp structure is freed by the decive specific
+> driver (i.e. mlx4_ib) if the 'destroy' is successful. This requires storing
+> security related information in a separate structure. When a 'destroy'
+> request is in process the ib_qp structure is in an undefined state so if
+> there are changes to the security policy or PKey table, the security checks
+> cannot reset the QP if it doesn't have permission for the new setting. If
+> the 'destroy' fails, security for that QP must be enforced again and its
+> status in the list is restored. If the 'destroy' succeeds the security info
+> can be cleaned up and freed.
+>
+> There are a number of locks required to protect the QP security structure
+> and the QP to device/port/pkey index lists. If multiple locks are required,
+> the safe locking order is: QP security structure mutex first, followed by
+> any list locks needed, which are sorted first by port followed by pkey
+> index.
+
+Hi Dan,
+
+I haven't heard anything from you in a while, where do things stand
+with this effort?  Unless I missed them, I believe we are still
+waiting on the userspace, SELinux reference policy, and
+selinux-testsuite patches.
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
