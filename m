@@ -1,72 +1,114 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 3 May 2017 13:19:41 -0700
-Subject: [PATCH v4 1/2] tiocsti-restrict : Add owner user namespace to
-	tty_struct
-In-Reply-To: <12d91b0b-0aa9-a0d5-7cb4-83371e0e8749@nmatt.com>
-References: <20170424051512.20420-1-matt@nmatt.com>
-	<20170424051512.20420-2-matt@nmatt.com>
-	<20170424135751.GA9030@mail.hallyn.com>
-	<CAGXu5jLFkDB31W7uje3LaEujDrnvndQX9JK_hs47nc2dpbyNtQ@mail.gmail.com>
-	<20170503194528.GA28882@kroah.com>
-	<12d91b0b-0aa9-a0d5-7cb4-83371e0e8749@nmatt.com>
-Message-ID: <CAGXu5jK=_jS4hmCt90nLUbic6v+gEqm7kF+KLzOLVfSTBJrEuw@mail.gmail.com>
+From: corbet@lwn.net (Jonathan Corbet)
+Date: Wed, 3 May 2017 15:42:47 -0600
+Subject: converting Documentation/security/* to .rst
+In-Reply-To: <CAGXu5jKdE_WgdUQyJGBGfvGhxUES=FcuG_AsbqyKzuWTiq963g@mail.gmail.com>
+References: <CAGXu5j+YuXd70ZCNBJRfQNXwMqSPgVaqEyaq_yXkbgje3-gdVg@mail.gmail.com>
+	<20170501091159.63218239@lwn.net>
+	<CAGXu5jKdE_WgdUQyJGBGfvGhxUES=FcuG_AsbqyKzuWTiq963g@mail.gmail.com>
+Message-ID: <20170503154247.3a8a9c4b@lwn.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 3, 2017 at 1:02 PM, Matt Brown <matt@nmatt.com> wrote:
-> On 05/03/2017 03:45 PM, Greg KH wrote:
->>
->> On Wed, May 03, 2017 at 12:32:07PM -0700, Kees Cook wrote:
->>>
->>> On Mon, Apr 24, 2017 at 6:57 AM, Serge E. Hallyn <serge@hallyn.com>
->>> wrote:
->>>>
->>>> Quoting Matt Brown (matt at nmatt.com):
->>>>>
->>>>> This patch adds struct user_namespace *owner_user_ns to the tty_struct.
->>>>> Then it is set to current_user_ns() in the alloc_tty_struct function.
->>>>>
->>>>> This is done to facilitate capability checks against the original user
->>>>> namespace that allocated the tty.
->>>>>
->>>>> E.g. ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)
->>>>>
->>>>> This combined with the use of user namespace's will allow hardening
->>>>> protections to be built to mitigate container escapes that utilize TTY
->>>>> ioctls such as TIOCSTI.
->>>>>
->>>>> See: https://bugzilla.redhat.com/show_bug.cgi?id=1411256
->>>>>
->>>>> Signed-off-by: Matt Brown <matt@nmatt.com>
->>>>
->>>>
->>>> Acked-by: Serge Hallyn <serge@hallyn.com>
->>>
->>>
->>> This Ack didn't end up in the v5, but I think it stands, yes?
->>>
->>> Greg, is the v5 okay to pull for you or would a v6 with Acks/Reviews
->>> included be preferred?
->>
->>
->> v6 would be great, and we are dropping patch 2 from the series, right?
->> I was expecting this to be resent.  I'll start looking at new patches
->> like this after 4.12-rc1 is out.
->>
->
-> I will create a v6 with the Acks/Reviews. I'd like to keep patch 2 in
-> since that got acked by at least Serge. (Kees also? or just patch 1?)
+On Mon, 1 May 2017 09:31:55 -0700
+Kees Cook <keescook@google.com> wrote:
 
-Sorry, I meant that patch 2's ack from serge got dropped accidentally.
-i.e. he Acked v4, but it wasn't in v5.
+> > The real question would be one of organization.  Most of the security
+> > stuff looks like it properly belongs in the admin guide, but that's not
+> > universally the case.  
+> 
+> Are the index area "purposes" documented anywhere? The admin guide
+> seems to cover things outside of "administration" (like reporting
+> security bugs, which is a developer/researcher activity usually),
+> There's already a top-level "security documentation" with some TPM
+> stuff in it.
 
-Serge, just to double-check, does your Ack stand?
+They aren't really documented beyond what they, themselves, contain.  What
+you're seeing is the beginning of an effort to bring some order to the
+Documentation/ mess.  One of the biggest problems, IMO, is the lack of any
+sort of audience targeting.  We have lots of different kinds of people
+reading (we hope!) the docs, and they have to wade through a lot of
+irrelevant stuff.
 
--Kees
+So we've set up guides for administrators, for kernel developers, and for
+user-space developers (the last just landing in 4.12).  There will never be
+a perfect spot for every document, but I hope we can create something
+that's more useful in the end.
+ 
+> Both things in prctl/ are "here's what this feature is and how to use
+> it", both exposed to userspace.
 
--- 
-Kees Cook
-Pixel Security
+That really seems like user-space API stuff.  prctl() goes beyond security,
+after all.
+
+> In security/ there is a mix of LSM
+> highlevel descriptions and basic usage, key API documentation, and the
+> one sort of design goal document ("self-protection.txt").
+> 
+> I think it'd make sense to keep Security Documentation as a top-level
+> index for now, and create LSM and keys subsections for those items,
+> and then move prctl/* under security:
+
+Sigh.  Everybody wants to keep their stuff at the top level, which is how
+we have a Documentation/ directory with 300 items in it.
+
+I would rather not see it done that way; I would rather organize our docs
+for the readers than for the convenience of the maintainers.  That said, if
+you're working to improve the docs, I think it would be pretty dumb to turn
+the results away because I don't like the organization.  So I'll not do
+that.  But I do reserve the right to propose reorganizing things in the
+future :)
+
+>          deleted:    Documentation/security/00-INDEX
+>          deleted:    Documentation/security/conf.py
+>        renamed:    Documentation/security/IMA-templates.txt ->
+> Documentation/security/IMA-templates.rst
+>         renamed:    Documentation/security/credentials.txt ->
+> Documentation/security/credentials.rst
+>         renamed:    Documentation/security/keys-ecryptfs.txt ->
+> Documentation/security/keys/ecryptfs.rst
+>         renamed:    Documentation/security/keys.txt ->
+> Documentation/security/keys/index.rst
+>         renamed:    Documentation/security/keys-request-key.txt ->
+> Documentation/security/keys/request-key.rst
+>         renamed:    Documentation/security/keys-trusted-encrypted.txt
+> -> Documentation/security/keys/trusted-encrypted.rst  
+>         renamed:    Documentation/security/LoadPin.txt ->
+> Documentation/security/lsm/LoadPin.rst
+>         renamed:    Documentation/security/SELinux.txt ->
+> Documentation/security/lsm/SELinux.rst
+>         renamed:    Documentation/security/Smack.txt ->
+> Documentation/security/lsm/Smack.rst
+>         renamed:    Documentation/security/Yama.txt ->
+> Documentation/security/lsm/Yama.rst
+>         renamed:    Documentation/security/apparmor.txt ->
+> Documentation/security/lsm/apparmor.rst
+>         renamed:    Documentation/security/LSM.txt ->
+> Documentation/security/lsm/index.rst
+>         renamed:    Documentation/security/tomoyo.txt ->
+> Documentation/security/lsm/tomoyo.rst
+>         renamed:    Documentation/prctl/no_new_privs.txt ->
+> Documentation/security/no_new_privs.rst
+>         renamed:    Documentation/prctl/seccomp_filter.txt ->
+> Documentation/security/seccomp_filter.rst
+>         renamed:    Documentation/security/self-protection.txt ->
+> Documentation/security/self-protection.rst
+>         modified:   Documentation/security/index.rst
+> 
+> This is just renames and an update to security/index.rst to include
+> the two new subdirs. This doesn't have any formatting updates. (What
+> is preferred, organizational changes first or .rst formatting first?)
+
+Ordering doesn't matter much, though hooking things into the documentation
+tree is usually easier if it's done after things are in the intended
+location.
+
+> Does this looks sensible?
+
+Module what I said above, yes.
+
+Thanks,
+
+jon
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
