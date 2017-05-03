@@ -1,104 +1,105 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 3 May 2017 10:41:51 -0400
-Subject: [PATCH v6 0/9] SELinux support for Infiniband RDMA
-In-Reply-To: <1479910651-43246-1-git-send-email-danielj@mellanox.com>
-References: <1479910651-43246-1-git-send-email-danielj@mellanox.com>
-Message-ID: <CAHC9VhSB6AORJf_8cBGt-AynMsEh3snKU5SpsmNXoy9hDSrGaA@mail.gmail.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Wed, 3 May 2017 17:18:42 +0200
+Subject: [PATCH RFC v2 4/6] proc: support mounting private procfs
+	instances inside same pid namespace
+In-Reply-To: <CALCETrV4SjQE_NM4=j0JgRGBjOVY4o=iu0=ruuvzSuGRUPgNbg@mail.gmail.com>
+References: <1493123038-30590-1-git-send-email-tixxdz@gmail.com>
+	<1493123038-30590-5-git-send-email-tixxdz@gmail.com>
+	<CALCETrWOjLnfCgpAJs6tTjLXeNHjqPQa5qSZpztcnbR2kN5A2w@mail.gmail.com>
+	<CAEiveUf22RQ6awvCKJ4p5OxZCPAyhOfpLBQXFLJ=tev3zDfL+g@mail.gmail.com>
+	<CALCETrV4SjQE_NM4=j0JgRGBjOVY4o=iu0=ruuvzSuGRUPgNbg@mail.gmail.com>
+Message-ID: <CAEiveUfs4n1xU+5c_c-cz9FY1_JDi1_0jQAcYycnwqm6TM5ddA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 23, 2016 at 9:17 AM, Dan Jurgens <danielj@mellanox.com> wrote:
-> From: Daniel Jurgens <danielj@mellanox.com>
+On Tue, May 2, 2017 at 6:33 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Tue, May 2, 2017 at 7:29 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+>> On Thu, Apr 27, 2017 at 12:13 AM, Andy Lutomirski <luto@kernel.org> wrote:
+>>> On Tue, Apr 25, 2017 at 5:23 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+>> [...]
+>>>> We have to align procfs and modernize it to have a per mount context
+>>>> where at least the mount option do not propagate to all other mounts,
+>>>> then maybe we can continue to implement new features. One example is to
+>>>> require CAP_SYS_ADMIN in the init user namespace on some /proc/* which are
+>>>> not pids and which are are not virtualized by design, or CAP_NET_ADMIN
+>>>> inside userns on the net bits that are virtualized, etc.
+>>>> These mount options won't propagate to previous mounts, and the system
+>>>> will continue to be usable.
+>>>>
+>>>> Ths patch introduces the new 'limit_pids' mount option as it was also
+>>>> suggesed by Andy Lutomirski [1]. When this option is passed we
+>>>> automatically create a private procfs instance. This is not the default
+>>>> behaviour since we do not want to break userspace and we do not want to
+>>>> provide different devices IDs by default, please see [1] for why.
+>>>
+>>> I think that calling the option to make a separate instance
+>>> "limit_pids" is extremely counterintuitive.
+>>
+>> Ok.
+>>
+>>> My strong preference would be to make proc *always* make a separate
+>>> instance (unless it's a bind mount) and to make it work.  If that
+>>> means fudging stat() output, so be it.
+>>
+>> I also agree, but as said if we change stat(), userspace won't be able
+>> to notice if these two proc instances are really separated, the device
+>> ID is the only indication here.
 >
-> Infiniband applications access HW from user-space -- traffic is generated
-> directly by HW, bypassing the kernel. Consequently, Infiniband Partitions,
-> which are associated directly with HW transport endpoints, are a natural
-> choice for enforcing granular mandatory access control for Infiniband. QPs may
-> only send or receives packets tagged with the corresponding partition key
-> (PKey). The PKey is not a cryptographic key; it's a 16 bit number identifying
-> the partition.
->
-> Every Infiniband fabric is controlled by a central Subnet Manager (SM). The SM
-> provisions the partitions by assigning each port with the partitions it can
-> access. In addition, the SM tags each port with a subnet prefix, which
-> identifies the subnet. Determining which users are allowed to access which
-> partition keys on a given subnet forms an effective policy for isolating users
-> on the fabric. Any application that attempts to send traffic on a given subnet
-> is automatically subject to the policy, regardless of which device and port it
-> uses. SM software configures the subnet through a privileged Subnet Management
-> Interface (SMI), which is presented by each Infiniband port. Thus, the SMI must
-> also be controlled to prevent unauthorized changes to fabric configuration and
-> partitioning.
->
-> To support access control for IB partitions and subnet management, security
-> contexts must be provided for two new types of objects - PKeys and IB ports.
->
-> A PKey label consists of a subnet prefix and a range of PKey values and is
-> similar to the labeling mechanism for netports. Each Infiniband port can reside
-> on a different subnet. So labeling the PKey values for specific subnet prefixes
-> provides the user maximum flexibility, as PKey values may be determined
-> independently for different subnets. There is a single access vector for PKeys
-> called "access".
->
-> An Infiniband port is labeled by device name and port number. There is a single
-> access vector for IB ports called "manage_subnet".
->
-> Because RDMA allows kernel bypass, enforcement must be done during connection
-> setup. Communication over RDMA requires a send and receive queue, collectively
-> known as a Queue Pair (QP). A QP must be initialized by privileged system calls
-> before it can be used to send or receive data. During initialization the user
-> must provide the PKey and port the QP will use; at this time access control can
-> be enforced.
->
-> Because there is a possibility that the enforcement settings or security
-> policy can change, a means of notifying the ib_core module of such changes
-> is required. To facilitate this a generic notification callback mechanism
-> is added to the LSM. One callback is registered for checking the QP PKey
-> associations when the policy changes. Mad agents also register a callback,
-> they cache the permission to send and receive SMPs to avoid another per
-> packet call to the LSM.
->
-> Because frequent accesses to the same PKey's SID is expected a cache is
-> implemented which is very similar to the netport cache.
->
-> In order to properly enforce security when changes to the PKey table or
-> security policy or enforcement occur ib_core must track which QPs are
-> using which port, pkey index, and alternate path for every IB device.
-> This makes operations that used to be atomic transactional.
->
-> When modifying a QP, ib_core must associate it with the PKey index, port,
-> and alternate path specified. If the QP was already associated with
-> different settings, the QP is added to the new list prior to the
-> modification. If the modify succeeds then the old listing is removed. If
-> the modify fails the new listing is removed and the old listing remains
-> unchanged.
->
-> When destroying a QP the ib_qp structure is freed by the decive specific
-> driver (i.e. mlx4_ib) if the 'destroy' is successful. This requires storing
-> security related information in a separate structure. When a 'destroy'
-> request is in process the ib_qp structure is in an undefined state so if
-> there are changes to the security policy or PKey table, the security checks
-> cannot reset the QP if it doesn't have permission for the new setting. If
-> the 'destroy' fails, security for that QP must be enforced again and its
-> status in the list is restored. If the 'destroy' succeeds the security info
-> can be cleaned up and freed.
->
-> There are a number of locks required to protect the QP security structure
-> and the QP to device/port/pkey index lists. If multiple locks are required,
-> the safe locking order is: QP security structure mutex first, followed by
-> any list locks needed, which are sorted first by port followed by pkey
-> index.
+> I re-read all the threads and I'm still not convinced I see why we
+> need new_instance to be non-default.  It's true that the device
+> numbers of /proc/ns/* matter, but if you look (with stat -L, for
+> example), they're *already* not tied to the procfs instance.
 
-Hi Dan,
+Hmm, indeed, so the namespace FDs point internally to the internal
+proc mount that is created during pidns initialization, this means
+NS_GET_PARENT ioctl won't change which is good, only things that
+relate on stat()ing other inodes may notice.
 
-I haven't heard anything from you in a while, where do things stand
-with this effort?  Unless I missed them, I believe we are still
-waiting on the userspace, SELinux reference policy, and
-selinux-testsuite patches.
+
+>
+> I'm okay with adding new_instance to be on the safe side, but I'd like
+> it to be done in a way that we could make it become the default some
+> day without breaking anything.  This means that we need to be rather
+> careful about how new_instance and hidepid interact.
+
+Sounds good, from the devpts history it seems that "newinstance" was
+used to absorb new changes/updates easily, and it was made a no-op
+only recently with commit eedf265aa003b4 "devpts: Make each mount of
+devpts an independent filesystem."  last year, where the initial
+introduction was via commit 2a1b2dc0c83bbfc24 "Enable multiple
+instances of devpts"  in 2009
+
+Starting from this: 1) "hidepid" works withe the "gid" membership
+option which is sticky, I would like to avoid this combination, plus
+2) "hidepid" now changes the pid namespace option.
+
+With "newinstance" set:
+
+* "hidepid" instead of changing the pid namespace options, it will
+only affect the new procfs instance.
+
+* Changing "hidepid" value during a remount of a *private* procfs
+instance will only affect that procfs instance and not the pid
+namespace or the other shared procfs mounts.
+
+* "pids=ptraceable" makes /proc/ show only pids that the caller can
+ptrace. Together with NO_NEW_PRIVS set, it makes a good privacy
+measure.
+"pids=ptraceable" is also for *LSM* so we guarantee that there is a
+ptrace security hook there for LSMs and that there are no relations or
+exceptions between "pids=ptraceable" and "hidepid" / "gid" mount
+options. This will benefit Yama LSM later.
+
+* "pids=ptraceable" will take precedence over "hidepid"
+
+
+I assume defaulting later to new instances should continue to work, comments ?
+
+
+Thanks!
 
 -- 
-paul moore
-www.paul-moore.com
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
