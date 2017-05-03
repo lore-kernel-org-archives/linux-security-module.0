@@ -1,103 +1,100 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 3 May 2017 18:19:11 +0200
-Subject: [PATCH v2 3/3] tpm: move TPM 1.2 code of tpm_pcr_extend() to
-	tpm1_pcr_extend()
-In-Reply-To: <20170503161911.17606-1-roberto.sassu@huawei.com>
-References: <20170503161911.17606-1-roberto.sassu@huawei.com>
-Message-ID: <20170503161911.17606-4-roberto.sassu@huawei.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 3 May 2017 12:30:11 -0700
+Subject: [PATCH v5 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <20170425041512.13189-1-matt@nmatt.com>
+References: <20170425041512.13189-1-matt@nmatt.com>
+Message-ID: <CAGXu5jLzrCXSsc3rOteRO6bxRg7oon3qtzR+q--oj_iXb736yA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation of the modifications to tpm_pcr_extend(), which will
-allow callers to supply a digest for each PCR bank of a TPM 2.0,
-the TPM 1.2 specific code has been moved to tpm1_pcr_extend().
+On Mon, Apr 24, 2017 at 9:15 PM, Matt Brown <matt@nmatt.com> wrote:
+> This patchset introduces the tiocsti_restrict sysctl, whose default is
+> controlled via CONFIG_SECURITY_TIOCSTI_RESTRICT. When activated, this
+> control restricts all TIOCSTI ioctl calls from non CAP_SYS_ADMIN users.
+>
+> This patch was inspired from GRKERNSEC_HARDEN_TTY.
+>
+> This patch would have prevented
+> https://bugzilla.redhat.com/show_bug.cgi?id=1411256 under the following
+> conditions:
+> * non-privileged container
+> * container run inside new user namespace
+>
+> Possible effects on userland:
+>
+> There could be a few user programs that would be effected by this
+> change.
+> See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+> notable programs are: agetty, csh, xemacs and tcsh
+>
+> However, I still believe that this change is worth it given that the
+> Kconfig defaults to n. This will be a feature that is turned on for the
+> same reason that people activate it when using grsecurity. Users of this
+> opt-in feature will realize that they are choosing security over some OS
+> features like unprivileged TIOCSTI ioctls, as should be clear in the
+> Kconfig help message.
+>
+> Threat Model/Patch Rational:
+>
+> From grsecurity's config for GRKERNSEC_HARDEN_TTY.
+>
+>  | There are very few legitimate uses for this functionality and it
+>  | has made vulnerabilities in several 'su'-like programs possible in
+>  | the past.  Even without these vulnerabilities, it provides an
+>  | attacker with an easy mechanism to move laterally among other
+>  | processes within the same user's compromised session.
+>
+> So if one process within a tty session becomes compromised it can follow
+> that additional processes, that are thought to be in different security
+> boundaries, can be compromised as a result. When using a program like su
+> or sudo, these additional processes could be in a tty session where TTY file
+> descriptors are indeed shared over privilege boundaries.
+>
+> This is also an excellent writeup about the issue:
+> <http://www.halfdog.net/Security/2012/TtyPushbackPrivilegeEscalation/>
+>
+> When user namespaces are in use, the check for the capability
+> CAP_SYS_ADMIN is done against the user namespace that originally opened
+> the tty.
 
-tpm1_pcr_extend() uses tpm_buf_init() to prepare the command buffer,
-which offers protection against buffer overflow. It is called by
-tpm_pcr_extend() and tpm_pm_suspend().
+This looks like it's ready to go. Greg, can you include this in your
+tree? That seems like the best place, even though it touches a few
+areas.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- drivers/char/tpm/tpm-interface.c | 41 +++++++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+Please consider it:
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index a8351dd..0277b99 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -774,6 +774,25 @@ static const struct tpm_input_header pcrextend_header = {
- 	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
- };
- 
-+static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+			   char *log_msg)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, pcr_idx);
-+	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-+
-+	rc = tpm_transmit_cmd(chip, buf.data, EXTEND_PCR_RESULT_SIZE,
-+			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
- /**
-  * tpm_pcr_extend - extend pcr value with hash
-  * @chip_num:	tpm idx # or AN&
-@@ -786,7 +805,6 @@ static const struct tpm_input_header pcrextend_header = {
-  */
- int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
- {
--	struct tpm_cmd_t cmd;
- 	int rc;
- 	struct tpm_chip *chip;
- 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-@@ -812,13 +830,8 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
- 		return rc;
- 	}
- 
--	cmd.header.in = pcrextend_header;
--	cmd.params.pcrextend_in.pcr_idx = cpu_to_be32(pcr_idx);
--	memcpy(cmd.params.pcrextend_in.hash, hash, TPM_DIGEST_SIZE);
--	rc = tpm_transmit_cmd(chip, &cmd, EXTEND_PCR_RESULT_SIZE,
--			      EXTEND_PCR_RESULT_BODY_SIZE, 0,
--			      "attempting extend a PCR value");
--
-+	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
-+			     "attempting extend a PCR value");
- 	tpm_put_ops(chip);
- 	return rc;
- }
-@@ -1017,15 +1030,9 @@ int tpm_pm_suspend(struct device *dev)
- 	}
- 
- 	/* for buggy tpm, flush pcrs with extend to selected dummy */
--	if (tpm_suspend_pcr) {
--		cmd.header.in = pcrextend_header;
--		cmd.params.pcrextend_in.pcr_idx = cpu_to_be32(tpm_suspend_pcr);
--		memcpy(cmd.params.pcrextend_in.hash, dummy_hash,
--		       TPM_DIGEST_SIZE);
--		rc = tpm_transmit_cmd(chip, &cmd, EXTEND_PCR_RESULT_SIZE,
--				     EXTEND_PCR_RESULT_BODY_SIZE, 0,
--				      "extending dummy pcr before suspend");
--	}
-+	if (tpm_suspend_pcr)
-+		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
-+				     "extending dummy pcr before suspend");
- 
- 	/* now do the actual savestate */
- 	for (try = 0; try < TPM_RETRY; try++) {
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+Thanks!
+
+-Kees
+
+
+>
+> # Changes since v4:
+> * fixed typo
+>
+> # Changes since v3:
+> * use get_user_ns and put_user_ns to take and drop references to the owner
+>   user namespace because CONFIG_USER_NS is an option
+>
+> # Changes since v2:
+> * take/drop reference to user namespace on tty struct alloc/free to prevent
+>   use-after-free.
+>
+> # Changes since v1:
+> * added owner_user_ns to tty_struct to enable capability checks against
+>   the namespace that created the tty.
+> * rewording in different places to make patchset purpose clear
+> * Added Documentation
+
+
+
 -- 
-2.9.3
-
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
