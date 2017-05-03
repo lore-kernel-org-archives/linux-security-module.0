@@ -1,11 +1,11 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 3 May 2017 15:45:32 +0300
+Date: Wed, 3 May 2017 15:48:17 +0300
 Subject: [tpmdd-devel] [PATCH 2/3] tpm: move ordinals definition to
 	include/linux/tpm_command.h
 In-Reply-To: <20170502123151.24354-3-roberto.sassu@huawei.com>
 References: <20170502123151.24354-1-roberto.sassu@huawei.com>
 	<20170502123151.24354-3-roberto.sassu@huawei.com>
-Message-ID: <20170503124532.72pnwjz3dmheuqua@intel.com>
+Message-ID: <20170503124817.nqckvzuajsf2q5zd@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -17,13 +17,15 @@ On Tue, May 02, 2017 at 02:31:50PM +0200, Roberto Sassu wrote:
 > With the previous and this patch it will now be possible to convert TPM 1.2
 > functions to use tpm_buf_init(), which expect CPU native value for the
 > tag and ordinal arguments.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+ORD ought not be used outside of drivers/char/tpm. TPM 1.2 trusted
+keys does use this header but it should be eventually moved to
+drivers/char/tpm (not done because of other stuff at this point).
 
 /Jarkko
 
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
 >  drivers/char/tpm/tpm-interface.c | 19 ++++++-------------
 >  drivers/char/tpm/tpm-sysfs.c     |  3 +--
