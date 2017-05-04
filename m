@@ -1,62 +1,55 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Thu, 4 May 2017 14:37:07 +0200
-Subject: [PATCH v2 0/3] tpm_pcr_extend() code split
-In-Reply-To: <20170504092447.mhlmwwvvecb4kdq6@intel.com>
-References: <20170503161911.17606-1-roberto.sassu@huawei.com>
-	<20170504092447.mhlmwwvvecb4kdq6@intel.com>
-Message-ID: <5c546e1c-9e3b-3f7f-00bc-c8a71b42b0d8@huawei.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Thu, 4 May 2017 15:07:49 +0200
+Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
+	autoload restriction
+In-Reply-To: <CAEiveUdbQcfn1xC5xWMv91vL_uR1MGTvARqw-E4GDTMUZ6t=bA@mail.gmail.com>
+References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
+	<1492640420-27345-3-git-send-email-tixxdz@gmail.com>
+	<CALCETrXFp-apnfRPg9qx6E7g3KDU8DanBW1pMUnA1zShrB5xKg@mail.gmail.com>
+	<CAGXu5jJ5dm8yJJ34tEyOP78OxUr2awXmNhm6RaVP8jE4q+L5Ng@mail.gmail.com>
+	<CALCETrUueOx1tqj+Ru93KGpy2HHR-A_GQ6DrAppiomkPTtX7Lw@mail.gmail.com>
+	<CAGXu5jJBp6VHvDP9182hJgvzS2sBUbUFpmZZ+196K2FcEHUxzw@mail.gmail.com>
+	<CALCETrVZ2KH4s2uGW2J3zUQ8RNsrq=N7pJP=YDqd=+cp6fJW=g@mail.gmail.com>
+	<CAEiveUdbQcfn1xC5xWMv91vL_uR1MGTvARqw-E4GDTMUZ6t=bA@mail.gmail.com>
+Message-ID: <CAEiveUf4p1A1fggwibN+kJW7ruasQCmzr6=GSpTZXoyjJuz00Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/4/2017 11:24 AM, Jarkko Sakkinen wrote:
-> On Wed, May 03, 2017 at 06:19:08PM +0200, Roberto Sassu wrote:
->> This patch set moves TPM 1.2 specific code to a new function called
->> tpm1_pcr_extend(). The purpose of splitting is to isolate TPM 2.0 code,
->> so that it can be more easily modified to handle multiple digests.
+On Sat, Apr 22, 2017 at 2:17 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
+> On Sat, Apr 22, 2017 at 1:28 AM, Andy Lutomirski <luto@amacapital.net> wrote:
+[...]
 >>
->> With TPM 2.0, a Platform Configuration Register (PCR) could have multiple
->> values, stored in locations called banks. Each bank stores the values
->> of PCRs extended with the same hash algorithm.
->>
->> Currently, the TPM kernel driver does not take advantage of stronger
->> algorithms because PCRs are always extended with a SHA1 digest, padded
->> with zeros to match the length of the input for the hash algorithm
->> being used. Shortly after these patches, a new patch set will be provided
->> to allow callers of tpm_pcr_extend() to pass a digest for each algorithm
->> supported by the TPM.
->>
->> In this patch set, TPM 1.2 specific code will prepare the command buffer
->> with tpm_buf_init() which, in respect to the previous method, offers
->> protection against buffer overflow. Moreover, CPU native to big-endian
->> conversion has been removed from tags and ordinals definitions, as it is
->> already done by tpm_buf_init().
->>
->> Changelog:
->>
->> v2
->> - restored TPM_TAG_RQU_COMMAND definition in drivers/char/tpm/tpm.h
->> - removed endianness conversion in TPM_TAG_RQU_COMMAND definition
->> - removed '#include <linux/tpm_command.h>' in tpm-interface.c
->>   and tpm-sysfs.c
->> - restored TPM_ORD_ definitions in tpm-interface.c and tpm-sysfs.c
->>
->> Roberto Sassu (3):
->>   tpm: move endianness conversion of TPM_TAG_RQU_COMMAND to
->>     tpm_input_header
->>   tpm: move endianness conversion of ordinals to tpm_input_header
->>   tpm: move TPM 1.2 code of tpm_pcr_extend() to tpm1_pcr_extend()
->>
->>  drivers/char/tpm/tpm-interface.c | 79 ++++++++++++++++++++++------------------
->>  drivers/char/tpm/tpm-sysfs.c     |  6 +--
->>  drivers/char/tpm/tpm.h           |  2 +-
->>  3 files changed, 47 insertions(+), 40 deletions(-)
+>> My point is that all of these need some way to handle configuration
+>> and inheritance, and I don't think that a bunch of per-task prctls is
+>> the right way.  As just an example, saying that interactive users can
+>> autoload modules but other users can't, or that certain systemd
+>> services can, etc, might be nice.  Linus already complained that he
+>> (i.e. user "torvalds" or whatever) should be able to profile the
+>> kernel but that other uids should not be able to.
 >
-> Thanks for good quality patches! I'll test these but with quick skim
-> no complains whatsoever :-)
+> Neat, maybe this could already be achieved with this interface and
+> systemd-logind,  "ModulesAutoloadUsers=andy" in logind.conf where
+> "andy" is the only logged-in user able to trigger and autoload kernel
+> modules. However maybe we should not restrict too much other bits or
+> functionality of the other users, please let me will follow up later
+> on it.
+>
+>> I personally like my implicit_rights idea, and it might be interesting
+>> to prototype it.
+>
 
-Very good! We will see if it will be the same for the next patch set!
+Andy following on the idea of per user settings, I'm curious did you
+manage to make some advance on how to store the user settings ? the
+user database format is old and not extensible, there was cgmanager or
+other libcgroup but for resources, and no simple thing for such
+restrictions example: "RestrictLinuxModules=user" that will prevent
+such users from making/loading extra Linux features/modules that are
+not already available...
 
-Roberto
+Thanks!
+
+-- 
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
