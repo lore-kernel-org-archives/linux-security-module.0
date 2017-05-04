@@ -1,60 +1,109 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 4 May 2017 12:24:47 +0300
-Subject: [PATCH v2 0/3] tpm_pcr_extend() code split
-In-Reply-To: <20170503161911.17606-1-roberto.sassu@huawei.com>
+Date: Thu, 4 May 2017 13:07:52 +0300
+Subject: [PATCH v2 3/3] tpm: move TPM 1.2 code of tpm_pcr_extend() to
+	tpm1_pcr_extend()
+In-Reply-To: <20170503161911.17606-4-roberto.sassu@huawei.com>
 References: <20170503161911.17606-1-roberto.sassu@huawei.com>
-Message-ID: <20170504092447.mhlmwwvvecb4kdq6@intel.com>
+	<20170503161911.17606-4-roberto.sassu@huawei.com>
+Message-ID: <20170504100752.2gzzwgzxvy6lsgk5@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 03, 2017 at 06:19:08PM +0200, Roberto Sassu wrote:
-> This patch set moves TPM 1.2 specific code to a new function called
-> tpm1_pcr_extend(). The purpose of splitting is to isolate TPM 2.0 code,
-> so that it can be more easily modified to handle multiple digests.
+On Wed, May 03, 2017 at 06:19:11PM +0200, Roberto Sassu wrote:
+> In preparation of the modifications to tpm_pcr_extend(), which will
+> allow callers to supply a digest for each PCR bank of a TPM 2.0,
+> the TPM 1.2 specific code has been moved to tpm1_pcr_extend().
 > 
-> With TPM 2.0, a Platform Configuration Register (PCR) could have multiple
-> values, stored in locations called banks. Each bank stores the values
-> of PCRs extended with the same hash algorithm.
+> tpm1_pcr_extend() uses tpm_buf_init() to prepare the command buffer,
+> which offers protection against buffer overflow. It is called by
+> tpm_pcr_extend() and tpm_pm_suspend().
 > 
-> Currently, the TPM kernel driver does not take advantage of stronger
-> algorithms because PCRs are always extended with a SHA1 digest, padded
-> with zeros to match the length of the input for the hash algorithm
-> being used. Shortly after these patches, a new patch set will be provided
-> to allow callers of tpm_pcr_extend() to pass a digest for each algorithm
-> supported by the TPM.
-> 
-> In this patch set, TPM 1.2 specific code will prepare the command buffer
-> with tpm_buf_init() which, in respect to the previous method, offers
-> protection against buffer overflow. Moreover, CPU native to big-endian
-> conversion has been removed from tags and ordinals definitions, as it is
-> already done by tpm_buf_init().
-> 
-> Changelog:
-> 
-> v2
-> - restored TPM_TAG_RQU_COMMAND definition in drivers/char/tpm/tpm.h
-> - removed endianness conversion in TPM_TAG_RQU_COMMAND definition
-> - removed '#include <linux/tpm_command.h>' in tpm-interface.c
->   and tpm-sysfs.c
-> - restored TPM_ORD_ definitions in tpm-interface.c and tpm-sysfs.c
-> 
-> Roberto Sassu (3):
->   tpm: move endianness conversion of TPM_TAG_RQU_COMMAND to
->     tpm_input_header
->   tpm: move endianness conversion of ordinals to tpm_input_header
->   tpm: move TPM 1.2 code of tpm_pcr_extend() to tpm1_pcr_extend()
-> 
->  drivers/char/tpm/tpm-interface.c | 79 ++++++++++++++++++++++------------------
->  drivers/char/tpm/tpm-sysfs.c     |  6 +--
->  drivers/char/tpm/tpm.h           |  2 +-
->  3 files changed, 47 insertions(+), 40 deletions(-)
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Thanks for good quality patches! I'll test these but with quick skim
-no complains whatsoever :-)
+Please rebase this to the latest tree. It does not apply cleanly.
+No need to send two other patches.
 
-/Jarkko 
+Use --subject-prefix="PATCH v2, RESEND" as tag.
 
+/Jarkko
+
+> ---
+>  drivers/char/tpm/tpm-interface.c | 41 +++++++++++++++++++++++-----------------
+>  1 file changed, 24 insertions(+), 17 deletions(-)
 > 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index a8351dd..0277b99 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -774,6 +774,25 @@ static const struct tpm_input_header pcrextend_header = {
+>  	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
+>  };
+>  
+> +static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> +			   char *log_msg)
+> +{
+> +	struct tpm_buf buf;
+> +	int rc;
+> +
+> +	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+> +	if (rc)
+> +		return rc;
+> +
+> +	tpm_buf_append_u32(&buf, pcr_idx);
+> +	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
+> +
+> +	rc = tpm_transmit_cmd(chip, buf.data, EXTEND_PCR_RESULT_SIZE,
+> +			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
+> +	tpm_buf_destroy(&buf);
+> +	return rc;
+> +}
+> +
+>  /**
+>   * tpm_pcr_extend - extend pcr value with hash
+>   * @chip_num:	tpm idx # or AN&
+> @@ -786,7 +805,6 @@ static const struct tpm_input_header pcrextend_header = {
+>   */
+>  int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
+>  {
+> -	struct tpm_cmd_t cmd;
+>  	int rc;
+>  	struct tpm_chip *chip;
+>  	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+> @@ -812,13 +830,8 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
+>  		return rc;
+>  	}
+>  
+> -	cmd.header.in = pcrextend_header;
+> -	cmd.params.pcrextend_in.pcr_idx = cpu_to_be32(pcr_idx);
+> -	memcpy(cmd.params.pcrextend_in.hash, hash, TPM_DIGEST_SIZE);
+> -	rc = tpm_transmit_cmd(chip, &cmd, EXTEND_PCR_RESULT_SIZE,
+> -			      EXTEND_PCR_RESULT_BODY_SIZE, 0,
+> -			      "attempting extend a PCR value");
+> -
+> +	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
+> +			     "attempting extend a PCR value");
+>  	tpm_put_ops(chip);
+>  	return rc;
+>  }
+> @@ -1017,15 +1030,9 @@ int tpm_pm_suspend(struct device *dev)
+>  	}
+>  
+>  	/* for buggy tpm, flush pcrs with extend to selected dummy */
+> -	if (tpm_suspend_pcr) {
+> -		cmd.header.in = pcrextend_header;
+> -		cmd.params.pcrextend_in.pcr_idx = cpu_to_be32(tpm_suspend_pcr);
+> -		memcpy(cmd.params.pcrextend_in.hash, dummy_hash,
+> -		       TPM_DIGEST_SIZE);
+> -		rc = tpm_transmit_cmd(chip, &cmd, EXTEND_PCR_RESULT_SIZE,
+> -				     EXTEND_PCR_RESULT_BODY_SIZE, 0,
+> -				      "extending dummy pcr before suspend");
+> -	}
+> +	if (tpm_suspend_pcr)
+> +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+> +				     "extending dummy pcr before suspend");
+>  
+>  	/* now do the actual savestate */
+>  	for (try = 0; try < TPM_RETRY; try++) {
 > -- 
 > 2.9.3
 > 
