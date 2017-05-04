@@ -1,96 +1,61 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Thu,  4 May 2017 10:56:25 -0400
-Subject: [PATCH v3 1/3] tpm: vtpm_proxy: Implement new ioctl to get supported
-	flags
-In-Reply-To: <1493909787-1848-1-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1493909787-1848-1-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <1493909787-1848-2-git-send-email-stefanb@linux.vnet.ibm.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 4 May 2017 09:58:33 -0500
+Subject: [PATCH v3 2/2] modules:capabilities: add a per-task modules
+	autoload restriction
+In-Reply-To: <CAEiveUf4p1A1fggwibN+kJW7ruasQCmzr6=GSpTZXoyjJuz00Q@mail.gmail.com>
+References: <1492640420-27345-1-git-send-email-tixxdz@gmail.com>
+	<1492640420-27345-3-git-send-email-tixxdz@gmail.com>
+	<CALCETrXFp-apnfRPg9qx6E7g3KDU8DanBW1pMUnA1zShrB5xKg@mail.gmail.com>
+	<CAGXu5jJ5dm8yJJ34tEyOP78OxUr2awXmNhm6RaVP8jE4q+L5Ng@mail.gmail.com>
+	<CALCETrUueOx1tqj+Ru93KGpy2HHR-A_GQ6DrAppiomkPTtX7Lw@mail.gmail.com>
+	<CAGXu5jJBp6VHvDP9182hJgvzS2sBUbUFpmZZ+196K2FcEHUxzw@mail.gmail.com>
+	<CALCETrVZ2KH4s2uGW2J3zUQ8RNsrq=N7pJP=YDqd=+cp6fJW=g@mail.gmail.com>
+	<CAEiveUdbQcfn1xC5xWMv91vL_uR1MGTvARqw-E4GDTMUZ6t=bA@mail.gmail.com>
+	<CAEiveUf4p1A1fggwibN+kJW7ruasQCmzr6=GSpTZXoyjJuz00Q@mail.gmail.com>
+Message-ID: <20170504145832.GA28002@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Implement VTPM_PROXY_IOC_GET_SUPT_FLAGS ioctl to get the bitmask
-of flags that the vtpm_proxy driver supports in the
-VTPM_PROXY_IOC_NEW_DEV ioctl. This helps user space in deciding
-which flags to set in that ioctl.
+On Thu, May 04, 2017 at 03:07:49PM +0200, Djalal Harouni wrote:
+> On Sat, Apr 22, 2017 at 2:17 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
+> > On Sat, Apr 22, 2017 at 1:28 AM, Andy Lutomirski <luto@amacapital.net> wrote:
+> [...]
+> >>
+> >> My point is that all of these need some way to handle configuration
+> >> and inheritance, and I don't think that a bunch of per-task prctls is
+> >> the right way.  As just an example, saying that interactive users can
+> >> autoload modules but other users can't, or that certain systemd
+> >> services can, etc, might be nice.  Linus already complained that he
+> >> (i.e. user "torvalds" or whatever) should be able to profile the
+> >> kernel but that other uids should not be able to.
+> >
+> > Neat, maybe this could already be achieved with this interface and
+> > systemd-logind,  "ModulesAutoloadUsers=andy" in logind.conf where
+> > "andy" is the only logged-in user able to trigger and autoload kernel
+> > modules. However maybe we should not restrict too much other bits or
+> > functionality of the other users, please let me will follow up later
+> > on it.
+> >
+> >> I personally like my implicit_rights idea, and it might be interesting
+> >> to prototype it.
+> >
+> 
+> Andy following on the idea of per user settings, I'm curious did you
+> manage to make some advance on how to store the user settings ? the
+> user database format is old and not extensible, there was cgmanager or
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm_vtpm_proxy.c | 29 +++++++++++++++++++++++++++++
- include/uapi/linux/vtpm_proxy.h   | 11 +++++++++++
- 2 files changed, 40 insertions(+)
+(v2 is under very very early consideration, would love to stay in the loop
+as this is considered)
 
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index 751059d..fb4d207 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -592,6 +592,33 @@ static long vtpmx_ioc_new_dev(struct file *file, unsigned int ioctl,
- 	return 0;
- }
- 
-+/**
-+ * vtpmx_ioc_get_supt_flags - handler for the %VTPM_PROXY_IOC_GET_SUPT_FLAGS
-+ *                            ioctl
-+ * @file:	/dev/vtpmx
-+ * @ioctl:	the ioctl number
-+ * @arg:	pointer to the struct vtpmx_proxy_get_supt_flags
-+ *
-+ * Return the bitfield of supported flags
-+ */
-+static long vtpmx_ioc_get_supt_flags(struct file *file, unsigned int ioctl,
-+				     unsigned long arg)
-+{
-+	void __user *argp = (void __user *)arg;
-+	struct vtpm_proxy_supt_flags __user *vtpm_supt_flags_p = argp;
-+	struct vtpm_proxy_supt_flags flags = {
-+		.flags = VTPM_PROXY_FLAGS_ALL,
-+	};
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (copy_to_user(vtpm_supt_flags_p, &flags, sizeof(flags)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- /*
-  * vtpmx_fops_ioctl: ioctl on /dev/vtpmx
-  *
-@@ -604,6 +631,8 @@ static long vtpmx_fops_ioctl(struct file *f, unsigned int ioctl,
- 	switch (ioctl) {
- 	case VTPM_PROXY_IOC_NEW_DEV:
- 		return vtpmx_ioc_new_dev(f, ioctl, arg);
-+	case VTPM_PROXY_IOC_GET_SUPT_FLAGS:
-+		return vtpmx_ioc_get_supt_flags(f, ioctl, arg);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
-diff --git a/include/uapi/linux/vtpm_proxy.h b/include/uapi/linux/vtpm_proxy.h
-index a69e991..83e64e7 100644
---- a/include/uapi/linux/vtpm_proxy.h
-+++ b/include/uapi/linux/vtpm_proxy.h
-@@ -44,6 +44,17 @@ struct vtpm_proxy_new_dev {
- 	__u32 minor;         /* output */
- };
- 
-+/**
-+ * struct vtpm_proxy_supt_flags - parameter structure for the
-+ *                                %VTPM_PROXY_IOC_GET_SUPT_FLAGS ioctl
-+ * @flags: flags supported by the vtpm proxy driver
-+ */
-+struct vtpm_proxy_supt_flags {
-+	__u32 flags;         /* output */
-+};
-+
- #define VTPM_PROXY_IOC_NEW_DEV	_IOWR(0xa1, 0x00, struct vtpm_proxy_new_dev)
-+#define VTPM_PROXY_IOC_GET_SUPT_FLAGS \
-+				_IOR(0xa1, 0x01, struct vtpm_proxy_supt_flags)
- 
- #endif /* _UAPI_LINUX_VTPM_PROXY_H */
--- 
-2.4.3
-
+> other libcgroup but for resources, and no simple thing for such
+> restrictions example: "RestrictLinuxModules=user" that will prevent
+> such users from making/loading extra Linux features/modules that are
+> not already available...
+> 
+> Thanks!
+> 
+> -- 
+> tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
