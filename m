@@ -1,43 +1,51 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 4 May 2017 11:51:37 -0400
-Subject: [PATCH v6 0/9] SELinux support for Infiniband RDMA
-In-Reply-To: <VI1PR05MB167880A4D79F8FC3F8C740A9C4160@VI1PR05MB1678.eurprd05.prod.outlook.com>
-References: <1479910651-43246-1-git-send-email-danielj@mellanox.com>
-	<CAHC9VhSB6AORJf_8cBGt-AynMsEh3snKU5SpsmNXoy9hDSrGaA@mail.gmail.com>
-	<VI1PR05MB167880A4D79F8FC3F8C740A9C4160@VI1PR05MB1678.eurprd05.prod.outlook.com>
-Message-ID: <CAHC9VhRE+bkPAnFgqOOQQQZwA8U0tSWHdeM5+LiadXfN63kS=g@mail.gmail.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Thu, 4 May 2017 13:13:18 -0400
+Subject: [PATCH v3 1/3] tpm: vtpm_proxy: Implement new ioctl to get
+	supported flags
+In-Reply-To: <20170504153416.GA15930@obsidianresearch.com>
+References: <1493909787-1848-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1493909787-1848-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<20170504153416.GA15930@obsidianresearch.com>
+Message-ID: <56703d75-b238-0bad-386a-5b6963e250a1@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 3, 2017 at 3:45 PM, Daniel Jurgens <danielj@mellanox.com> wrote:
-> On 5/3/2017 9:41 AM, Paul Moore wrote:
->> On Wed, Nov 23, 2016 at 9:17 AM, Dan Jurgens <danielj@mellanox.com> wrote:
->>> From: Daniel Jurgens <danielj@mellanox.com>
->>>
->>> Infiniband applications access HW from user-space -- traffic is generated
->>> directly by HW, bypassing the kernel. Consequently, Infiniband Partitions,
->>> which are associated directly with HW transport endpoints, are a natural
->>> choice for enforcing granular mandatory access control for Infiniband. QPs may
->>> only send or receives packets tagged with the corresponding partition key
->>> (PKey). The PKey is not a cryptographic key; it's a 16 bit number identifying
->>> the partition ...
->>>
->> Hi Dan,
->>
->> I haven't heard anything from you in a while, where do things stand
->> with this effort?  Unless I missed them, I believe we are still
->> waiting on the userspace, SELinux reference policy, and
->> selinux-testsuite patches.
->>
-> Hi Paul,
+On 05/04/2017 11:34 AM, Jason Gunthorpe wrote:
+> On Thu, May 04, 2017 at 10:56:25AM -0400, Stefan Berger wrote:
+>> Implement VTPM_PROXY_IOC_GET_SUPT_FLAGS ioctl to get the bitmask
+>> of flags that the vtpm_proxy driver supports in the
+>> VTPM_PROXY_IOC_NEW_DEV ioctl. This helps user space in deciding
+>> which flags to set in that ioctl.
+> you might be better off just having a VTPM_PROXY_IO_ENABLE_FEATURE
+> .feature = LOCALITY
+
+Do you have an example driver that shows how to do this ? Can user space 
+query that feature?
+
 >
->     I got distracted for a while.  I've just rebased the kernel and userspace.  I'll do some testing and submit the userspace code in the next couple days.  I still have to write the selinux-testsuite tests, I'll work on those concurrently with the userspace review cycle.
+> If that fails then the feature is not supported, no real need for the
+> query in that case.
+>
+> Not sure about Jarkko's point on request/release locality.. Is there a
+> scenario where the emulator should fail the request locality?
 
-Great, thanks for the update.  We'll look forward to the patches.
+We could filter localities 5 and higher on the level of the driver 
+(patch 2/3) since basically there are only 5 localities (0-4) in any TPM 
+interface today. The typical hardware locality 4 would be filtered by 
+the emulator per policy passed via command line, but I would allow it on 
+the level of this driver. An error message would be returned for any 
+command executed in that locality, unless the 'policy' allows it. 
+Localities 0-3 should just be selectable. The TPM TIS (in the hardware) 
+implements some complicated scheme when it comes to allowing the 
+selection of a locality and I would say we need none of that but just 
+tell the vTPM proxy driver the locality (patch 2/3) in which the next 
+command will be executed.
 
--- 
-paul moore
-www.paul-moore.com
+
+>
+> Jason
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
