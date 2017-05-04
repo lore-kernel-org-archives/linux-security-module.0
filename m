@@ -1,51 +1,73 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Wed, 3 May 2017 19:42:06 -0400
-Subject: [PATCH v2 0/3] Extend the vTPM proxy driver to pass locality to
-	emulator
-In-Reply-To: <20170503223849.qcoc6xqncbyi6jwj@intel.com>
-References: <1493384538-27883-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<20170503223849.qcoc6xqncbyi6jwj@intel.com>
-Message-ID: <72bacff5-5213-b114-ebf4-6e3fe7284bdc@linux.vnet.ibm.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 3 May 2017 23:42:06 -0500
+Subject: [kernel-hardening] Re: [PATCH v4 1/2] tiocsti-restrict : Add
+	owner user namespace to tty_struct
+In-Reply-To: <CAGXu5jK=_jS4hmCt90nLUbic6v+gEqm7kF+KLzOLVfSTBJrEuw@mail.gmail.com>
+References: <20170424051512.20420-1-matt@nmatt.com>
+	<20170424051512.20420-2-matt@nmatt.com>
+	<20170424135751.GA9030@mail.hallyn.com>
+	<CAGXu5jLFkDB31W7uje3LaEujDrnvndQX9JK_hs47nc2dpbyNtQ@mail.gmail.com>
+	<20170503194528.GA28882@kroah.com>
+	<12d91b0b-0aa9-a0d5-7cb4-83371e0e8749@nmatt.com>
+	<CAGXu5jK=_jS4hmCt90nLUbic6v+gEqm7kF+KLzOLVfSTBJrEuw@mail.gmail.com>
+Message-ID: <20170504044206.GA18463@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/03/2017 06:38 PM, Jarkko Sakkinen wrote:
-> On Fri, Apr 28, 2017 at 09:02:15AM -0400, Stefan Berger wrote:
->> The purpose of this series of patches is to enable the passing of the locality
->> a command is executing in to a TPM emulator. To enable this we introduce a new
->> flag for the device creation ioctl that requests that the locality be prepended
->> to every command. For applications to check which flags the driver supports, we
->> add a new ioctl that returns a bitmask of supported flags.
-> This is a weird change proposal as you could use tpm_vtpm_proxy for
-> other than some TPM emulator.
+On Wed, May 03, 2017 at 01:19:41PM -0700, Kees Cook wrote:
+> On Wed, May 3, 2017 at 1:02 PM, Matt Brown <matt@nmatt.com> wrote:
+> > On 05/03/2017 03:45 PM, Greg KH wrote:
+> >>
+> >> On Wed, May 03, 2017 at 12:32:07PM -0700, Kees Cook wrote:
+> >>>
+> >>> On Mon, Apr 24, 2017 at 6:57 AM, Serge E. Hallyn <serge@hallyn.com>
+> >>> wrote:
+> >>>>
+> >>>> Quoting Matt Brown (matt at nmatt.com):
+> >>>>>
+> >>>>> This patch adds struct user_namespace *owner_user_ns to the tty_struct.
+> >>>>> Then it is set to current_user_ns() in the alloc_tty_struct function.
+> >>>>>
+> >>>>> This is done to facilitate capability checks against the original user
+> >>>>> namespace that allocated the tty.
+> >>>>>
+> >>>>> E.g. ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)
+> >>>>>
+> >>>>> This combined with the use of user namespace's will allow hardening
+> >>>>> protections to be built to mitigate container escapes that utilize TTY
+> >>>>> ioctls such as TIOCSTI.
+> >>>>>
+> >>>>> See: https://bugzilla.redhat.com/show_bug.cgi?id=1411256
+> >>>>>
+> >>>>> Signed-off-by: Matt Brown <matt@nmatt.com>
+> >>>>
+> >>>>
+> >>>> Acked-by: Serge Hallyn <serge@hallyn.com>
+> >>>
+> >>>
+> >>> This Ack didn't end up in the v5, but I think it stands, yes?
+> >>>
+> >>> Greg, is the v5 okay to pull for you or would a v6 with Acks/Reviews
+> >>> included be preferred?
+> >>
+> >>
+> >> v6 would be great, and we are dropping patch 2 from the series, right?
+> >> I was expecting this to be resent.  I'll start looking at new patches
+> >> like this after 4.12-rc1 is out.
+> >>
+> >
+> > I will create a v6 with the Acks/Reviews. I'd like to keep patch 2 in
+> > since that got acked by at least Serge. (Kees also? or just patch 1?)
+> 
+> Sorry, I meant that patch 2's ack from serge got dropped accidentally.
+> i.e. he Acked v4, but it wasn't in v5.
+> 
+> Serge, just to double-check, does your Ack stand?
 
-I think in most cases the recipient of the TPM commands from the 
-vtpm_proxy driver will be a TPM emulator. What do you have in mind?
+Yes.
 
->
->> v1->v2:
->>    - fixed return value from function in patch 3/3
->>
->>
->> Stefan Berger (3):
->>    tpm: vtpm_proxy: Add ioctl to get supported flags
->>    tpm: vtpm_proxy: Implement request_locality
->>    tpm: vtpm_proxy: Add ioctl to request locality prepended to command
->>
->>   drivers/char/tpm/tpm_vtpm_proxy.c | 53 +++++++++++++++++++++++++++++++++++----
->>   include/uapi/linux/vtpm_proxy.h   | 15 ++++++++++-
->>   2 files changed, 62 insertions(+), 6 deletions(-)
->>
->> -- 
->> 2.4.3
->>
-> /Jarkko
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
+thanks,
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
