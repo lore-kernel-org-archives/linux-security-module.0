@@ -1,34 +1,67 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 4 May 2017 12:17:38 +0300
-Subject: [PATCH v2 3/3] tpm: vtpm_proxy: Add ioctl to request locality
-	prepended to command
-In-Reply-To: <40cd7d48-f6d1-39f4-99a3-916c7cdbb636@linux.vnet.ibm.com>
-References: <1493384538-27883-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1493384538-27883-4-git-send-email-stefanb@linux.vnet.ibm.com>
-	<20170503223747.zefh76m4youqlgje@intel.com>
-	<40cd7d48-f6d1-39f4-99a3-916c7cdbb636@linux.vnet.ibm.com>
-Message-ID: <20170504091738.rxl77hjzf6vnpuda@intel.com>
+Date: Thu, 4 May 2017 12:24:47 +0300
+Subject: [PATCH v2 0/3] tpm_pcr_extend() code split
+In-Reply-To: <20170503161911.17606-1-roberto.sassu@huawei.com>
+References: <20170503161911.17606-1-roberto.sassu@huawei.com>
+Message-ID: <20170504092447.mhlmwwvvecb4kdq6@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 03, 2017 at 07:40:48PM -0400, Stefan Berger wrote:
-> On 05/03/2017 06:37 PM, Jarkko Sakkinen wrote:
-> > On Fri, Apr 28, 2017 at 09:02:18AM -0400, Stefan Berger wrote:
-> > > Add an ioctl to request that the locality be prepended to every TPM
-> > > command.
-> > Don't really understand this change. Why locality is prenpended?
+On Wed, May 03, 2017 at 06:19:08PM +0200, Roberto Sassu wrote:
+> This patch set moves TPM 1.2 specific code to a new function called
+> tpm1_pcr_extend(). The purpose of splitting is to isolate TPM 2.0 code,
+> so that it can be more easily modified to handle multiple digests.
 > 
-> Commands can be executed under locality 0-3 and for some commands it is
-> important to know which locality a user may have chosen. How else should we
-> convey that locality to the TPM emulator ?
+> With TPM 2.0, a Platform Configuration Register (PCR) could have multiple
+> values, stored in locations called banks. Each bank stores the values
+> of PCRs extended with the same hash algorithm.
+> 
+> Currently, the TPM kernel driver does not take advantage of stronger
+> algorithms because PCRs are always extended with a SHA1 digest, padded
+> with zeros to match the length of the input for the hash algorithm
+> being used. Shortly after these patches, a new patch set will be provided
+> to allow callers of tpm_pcr_extend() to pass a digest for each algorithm
+> supported by the TPM.
+> 
+> In this patch set, TPM 1.2 specific code will prepare the command buffer
+> with tpm_buf_init() which, in respect to the previous method, offers
+> protection against buffer overflow. Moreover, CPU native to big-endian
+> conversion has been removed from tags and ordinals definitions, as it is
+> already done by tpm_buf_init().
+> 
+> Changelog:
+> 
+> v2
+> - restored TPM_TAG_RQU_COMMAND definition in drivers/char/tpm/tpm.h
+> - removed endianness conversion in TPM_TAG_RQU_COMMAND definition
+> - removed '#include <linux/tpm_command.h>' in tpm-interface.c
+>   and tpm-sysfs.c
+> - restored TPM_ORD_ definitions in tpm-interface.c and tpm-sysfs.c
+> 
+> Roberto Sassu (3):
+>   tpm: move endianness conversion of TPM_TAG_RQU_COMMAND to
+>     tpm_input_header
+>   tpm: move endianness conversion of ordinals to tpm_input_header
+>   tpm: move TPM 1.2 code of tpm_pcr_extend() to tpm1_pcr_extend()
+> 
+>  drivers/char/tpm/tpm-interface.c | 79 ++++++++++++++++++++++------------------
+>  drivers/char/tpm/tpm-sysfs.c     |  6 +--
+>  drivers/char/tpm/tpm.h           |  2 +-
+>  3 files changed, 47 insertions(+), 40 deletions(-)
 
-Why this is not in the commit message?
+Thanks for good quality patches! I'll test these but with quick skim
+no complains whatsoever :-)
 
-More scalable way to do this would be to have a set of vtpm proxy
-commands. There could be a command for requesting and releasing
-locality. That would be more clean.
+/Jarkko 
 
-/Jarkko
+> 
+> -- 
+> 2.9.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
