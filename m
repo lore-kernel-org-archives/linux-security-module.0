@@ -1,73 +1,29 @@
-From: sbuisson.ddn@gmail.com (Sebastien Buisson)
-Date: Fri,  5 May 2017 19:10:53 +0900
-Subject: [PATCH v2 2/2] selinux: expose policy brief via selinuxfs
-In-Reply-To: <1493979053-16691-1-git-send-email-sbuisson@ddn.com>
-References: <1493979053-16691-1-git-send-email-sbuisson@ddn.com>
-Message-ID: <1493979053-16691-2-git-send-email-sbuisson@ddn.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 5 May 2017 13:55:44 +0300
+Subject: [PATCH v2, RESEND 3/3] tpm: move TPM 1.2 code of
+	tpm_pcr_extend() to tpm1_pcr_extend()
+In-Reply-To: <20170504111647.9384-1-roberto.sassu@huawei.com>
+References: <20170503161911.17606-1-roberto.sassu@huawei.com>
+	<20170504111647.9384-1-roberto.sassu@huawei.com>
+Message-ID: <20170505105544.c33f2vbaybe4th5s@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Expose policy brief via selinuxfs.
+On Thu, May 04, 2017 at 01:16:47PM +0200, Roberto Sassu wrote:
+> In preparation of the modifications to tpm_pcr_extend(), which will
+> allow callers to supply a digest for each PCR bank of a TPM 2.0,
+> the TPM 1.2 specific code has been moved to tpm1_pcr_extend().
+> 
+> tpm1_pcr_extend() uses tpm_buf_init() to prepare the command buffer,
+> which offers protection against buffer overflow. It is called by
+> tpm_pcr_extend() and tpm_pm_suspend().
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Signed-off-by: Sebastien Buisson <sbuisson@ddn.com>
----
- security/selinux/selinuxfs.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index b959ee7..8782b79 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -101,6 +101,7 @@ enum sel_inos {
- 	SEL_STATUS,	/* export current status using mmap() */
- 	SEL_POLICY,	/* allow userspace to read the in kernel policy */
- 	SEL_VALIDATE_TRANS, /* compute validatetrans decision */
-+	SEL_POLICYBRIEF,/* return policy summary */
- 	SEL_INO_NEXT,	/* The next inode number to use */
- };
- 
-@@ -316,6 +317,29 @@ static ssize_t sel_read_policyvers(struct file *filp, char __user *buf,
- 	.llseek		= generic_file_llseek,
- };
- 
-+static ssize_t sel_read_policybrief(struct file *filp, char __user *buf,
-+				    size_t count, loff_t *ppos)
-+{
-+	char *tmpbuf;
-+	size_t len;
-+	ssize_t rc;
-+
-+	rc = security_policydb_brief(&tmpbuf, &len, true);
-+	if (rc)
-+		return rc;
-+
-+	rc = simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
-+
-+	kfree(tmpbuf);
-+
-+	return rc;
-+}
-+
-+static const struct file_operations sel_policybrief_ops = {
-+	.read		= sel_read_policybrief,
-+	.llseek		= generic_file_llseek,
-+};
-+
- /* declaration for sel_write_load */
- static int sel_make_bools(void);
- static int sel_make_classes(void);
-@@ -1829,6 +1853,8 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
- 		[SEL_POLICY] = {"policy", &sel_policy_ops, S_IRUGO},
- 		[SEL_VALIDATE_TRANS] = {"validatetrans", &sel_transition_ops,
- 					S_IWUGO},
-+		[SEL_POLICYBRIEF] = {"policybrief", &sel_policybrief_ops,
-+				     S_IRUGO},
- 		/* last one */ {""}
- 	};
- 	ret = simple_fill_super(sb, SELINUX_MAGIC, selinux_files);
--- 
-1.8.3.1
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
