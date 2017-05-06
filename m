@@ -1,76 +1,71 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Fri,  5 May 2017 19:20:17 -0400
-Subject: [PATCH v6 1/2] security: tty: Add owner user namespace to tty_struct
-In-Reply-To: <20170505232018.28846-1-matt@nmatt.com>
-References: <20170505232018.28846-1-matt@nmatt.com>
-Message-ID: <20170505232018.28846-2-matt@nmatt.com>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Sat,  6 May 2017 15:59:49 +0300
+Subject: [RFC 00/10] introduce crypto wait for async op function
+Message-ID: <1494075602-5061-1-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch adds struct user_namespace *owner_user_ns to the tty_struct.
-Then it is set to current_user_ns() in the alloc_tty_struct function.
+Many users of kernel async. crypto services have a pattern of
+starting an async. crypto op and than using a completion
+to wait for it to end, resulting of the same code repeating
+itself in multiple places, sometime with errors.
 
-This is done to facilitate capability checks against the original user
-namespace that allocated the tty.
+This patch aims to introduce a generic "wait for async. 
+crypto op to complete" functions and move all the users
+I could find to use it.  This gets rid of almost 300 
+lines of code and fixes at least one bug (hopefully
+without adding new ones).
 
-E.g. ns_capable(tty->owner_user_ns,CAP_SYS_ADMIN)
+In some cases (indicated in the specific patch description)
+the move to the generic function changes the semantics
+slightly (such as dropping interruptible when waiting).
+I am especially interested in feedback whether people
+think this is OK or I should an interruptible variant.
 
-This combined with the use of user namespace's will allow hardening
-protections to be built to mitigate container escapes that utilize TTY
-ioctls such as TIOCSTI.
+The patch set was boot tested on x86_64 and arm64 which
+at the very least tests the crypto users via testmgr
+but I am less confident regarding some of the other
+users and would love feedback.
 
-See: https://bugzilla.redhat.com/show_bug.cgi?id=1411256
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Matt Brown <matt@nmatt.com>
----
- drivers/tty/tty_io.c | 2 ++
- include/linux/tty.h  | 2 ++
- 2 files changed, 4 insertions(+)
+Gilad Ben-Yossef (10):
+  crypto: factor async completion for general use
+  crypto: move pub key to generic async completion
+  crypto: move drbg to generic async completion
+  crypto: move gcm to generic async completion
+  crypto: move testmgr to generic async completion
+  dm: move dm-verity to generic async completion
+  fscrypt: move to generic async completion
+  cifs: move to generic async completion
+  ima: move to generic async completion
+  crypto: adapt api sample to use async. op wait
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index e6d1a65..c276814 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -171,6 +171,7 @@ static void free_tty_struct(struct tty_struct *tty)
- 	put_device(tty->dev);
- 	kfree(tty->write_buf);
- 	tty->magic = 0xDEADDEAD;
-+	put_user_ns(tty->owner_user_ns);
- 	kfree(tty);
- }
- 
-@@ -3191,6 +3192,7 @@ struct tty_struct *alloc_tty_struct(struct tty_driver *driver, int idx)
- 	tty->index = idx;
- 	tty_line_name(driver, idx, tty->name);
- 	tty->dev = tty_get_device(tty);
-+	tty->owner_user_ns = get_user_ns(current_user_ns());
- 
- 	return tty;
- }
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index 1017e904..d902d42 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -12,6 +12,7 @@
- #include <uapi/linux/tty.h>
- #include <linux/rwsem.h>
- #include <linux/llist.h>
-+#include <linux/user_namespace.h>
- 
- 
- /*
-@@ -333,6 +334,7 @@ struct tty_struct {
- 	/* If the tty has a pending do_SAK, queue it here - akpm */
- 	struct work_struct SAK_work;
- 	struct tty_port *port;
-+	struct user_namespace *owner_user_ns;
- };
- 
- /* Each of a tty's open files has private_data pointing to tty_file_private */
+ Documentation/crypto/api-samples.rst |  52 ++--------
+ crypto/af_alg.c                      |  27 -----
+ crypto/algif_aead.c                  |  14 +--
+ crypto/algif_hash.c                  |  30 +++---
+ crypto/algif_skcipher.c              |  10 +-
+ crypto/api.c                         |  28 ++++++
+ crypto/asymmetric_keys/public_key.c  |  28 +-----
+ crypto/drbg.c                        |  35 ++-----
+ crypto/gcm.c                         |  34 ++-----
+ crypto/testmgr.c                     | 184 +++++++++++------------------------
+ drivers/md/dm-verity-target.c        |  81 ++++-----------
+ drivers/md/dm-verity.h               |   5 -
+ fs/cifs/smb2ops.c                    |  30 +-----
+ fs/crypto/crypto.c                   |  28 +-----
+ fs/crypto/fname.c                    |  36 ++-----
+ fs/crypto/fscrypt_private.h          |  10 --
+ fs/crypto/keyinfo.c                  |  21 +---
+ include/crypto/drbg.h                |   3 +-
+ include/crypto/if_alg.h              |  14 ---
+ include/linux/crypto.h               |  28 ++++++
+ security/integrity/ima/ima_crypto.c  |  56 ++++-------
+ 21 files changed, 222 insertions(+), 532 deletions(-)
+
 -- 
-2.10.2
+2.1.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
