@@ -1,48 +1,50 @@
-From: elfring@users.sourceforge.net (SF Markus Elfring)
-Date: Sun, 7 May 2017 15:41:14 +0200
-Subject: [PATCH 1/3] ima: Use seq_putc() in ima_ascii_measurements_show()
-In-Reply-To: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
-References: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
-Message-ID: <6d0e528b-dc78-7927-1820-a6eaf5c7cb02@users.sourceforge.net>
+From: john.johansen@canonical.com (John Johansen)
+Date: Sun, 7 May 2017 05:31:00 -0700
+Subject: [PATCH 1/2] apparmorfs: Combine two function calls into one in
+	aa_fs_seq_raw_abi_show()
+In-Reply-To: <b0ee52a7-06d7-2bbb-75dc-b4a17e3dccd3@users.sourceforge.net>
+References: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
+	<b0ee52a7-06d7-2bbb-75dc-b4a17e3dccd3@users.sourceforge.net>
+Message-ID: <af3aac53-972d-ec04-4bfb-297718300ef2@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 14:45:01 +0200
+On 05/07/2017 05:02 AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 7 May 2017 13:43:50 +0200
+> 
+> A bit of data was put into a sequence by two separate function calls.
+> Print the same data by a single function call instead.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Two single characters should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-This issue was detected by using the Coccinelle software.
+I'll pull it into my tree for my next push
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- security/integrity/ima/ima_fs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ca303e5d2b94..732b5cd27042 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -242,14 +242,14 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
- 
- 	/* 4th:  template specific data */
- 	for (i = 0; i < e->template_desc->num_fields; i++) {
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 		if (e->template_data[i].len == 0)
- 			continue;
- 
- 		e->template_desc->fields[i]->field_show(m, IMA_SHOW_ASCII,
- 							&e->template_data[i]);
- 	}
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
--- 
-2.12.2
+> ---
+>  security/apparmor/apparmorfs.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 4f6ac9dbc65d..b4d83e0bc651 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -572,10 +572,9 @@ static int aa_fs_seq_raw_abi_show(struct seq_file *seq, void *v)
+>  	struct aa_proxy *proxy = seq->private;
+>  	struct aa_profile *profile = aa_get_profile_rcu(&proxy->profile);
+>  
+> -	if (profile->rawdata->abi) {
+> -		seq_printf(seq, "v%d", profile->rawdata->abi);
+> -		seq_puts(seq, "\n");
+> -	}
+> +	if (profile->rawdata->abi)
+> +		seq_printf(seq, "v%d\n", profile->rawdata->abi);
+> +
+>  	aa_put_profile(profile);
+>  
+>  	return 0;
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
