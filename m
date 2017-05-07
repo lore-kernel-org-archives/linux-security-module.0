@@ -1,20 +1,21 @@
 From: john.johansen@canonical.com (John Johansen)
-Date: Sun, 7 May 2017 05:31:00 -0700
-Subject: [PATCH 1/2] apparmorfs: Combine two function calls into one in
-	aa_fs_seq_raw_abi_show()
-In-Reply-To: <b0ee52a7-06d7-2bbb-75dc-b4a17e3dccd3@users.sourceforge.net>
+Date: Sun, 7 May 2017 05:31:17 -0700
+Subject: [PATCH 2/2] apparmorfs: Use seq_putc() in two functions
+In-Reply-To: <22def82a-4cd8-a673-f35f-012cc36fe797@users.sourceforge.net>
 References: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
-	<b0ee52a7-06d7-2bbb-75dc-b4a17e3dccd3@users.sourceforge.net>
-Message-ID: <af3aac53-972d-ec04-4bfb-297718300ef2@canonical.com>
+	<22def82a-4cd8-a673-f35f-012cc36fe797@users.sourceforge.net>
+Message-ID: <d48192cc-5b4d-8b09-1955-9f100fcf1e23@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/07/2017 05:02 AM, SF Markus Elfring wrote:
+On 05/07/2017 05:03 AM, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 May 2017 13:43:50 +0200
+> Date: Sun, 7 May 2017 13:50:28 +0200
 > 
-> A bit of data was put into a sequence by two separate function calls.
-> Print the same data by a single function call instead.
+> Two single characters (line breaks) should be put into a sequence.
+> Thus use the corresponding function "seq_putc".
+> 
+> This issue was detected by using the Coccinelle software.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
@@ -22,28 +23,33 @@ Acked-by: John Johansen <john.johansen@canonical.com>
 
 I'll pull it into my tree for my next push
 
+
 > ---
->  security/apparmor/apparmorfs.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  security/apparmor/apparmorfs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 4f6ac9dbc65d..b4d83e0bc651 100644
+> index b4d83e0bc651..41e427a4f051 100644
 > --- a/security/apparmor/apparmorfs.c
 > +++ b/security/apparmor/apparmorfs.c
-> @@ -572,10 +572,9 @@ static int aa_fs_seq_raw_abi_show(struct seq_file *seq, void *v)
->  	struct aa_proxy *proxy = seq->private;
->  	struct aa_profile *profile = aa_get_profile_rcu(&proxy->profile);
->  
-> -	if (profile->rawdata->abi) {
-> -		seq_printf(seq, "v%d", profile->rawdata->abi);
+> @@ -494,7 +494,7 @@ static int aa_fs_seq_hash_show(struct seq_file *seq, void *v)
+>  	if (profile->hash) {
+>  		for (i = 0; i < size; i++)
+>  			seq_printf(seq, "%.2x", profile->hash[i]);
 > -		seq_puts(seq, "\n");
-> -	}
-> +	if (profile->rawdata->abi)
-> +		seq_printf(seq, "v%d\n", profile->rawdata->abi);
-> +
+> +		seq_putc(seq, '\n');
+>  	}
 >  	aa_put_profile(profile);
 >  
->  	return 0;
+> @@ -602,7 +602,7 @@ static int aa_fs_seq_raw_hash_show(struct seq_file *seq, void *v)
+>  	if (profile->rawdata->hash) {
+>  		for (i = 0; i < size; i++)
+>  			seq_printf(seq, "%.2x", profile->rawdata->hash[i]);
+> -		seq_puts(seq, "\n");
+> +		seq_putc(seq, '\n');
+>  	}
+>  	aa_put_profile(profile);
+>  
 > 
 
 --
