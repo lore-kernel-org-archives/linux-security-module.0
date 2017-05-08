@@ -1,37 +1,45 @@
-From: dhowells@redhat.com (David Howells)
-Date: Mon, 08 May 2017 23:00:56 +0100
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Mon, 8 May 2017 15:19:43 -0700
 Subject: [PATCH] key: Convert big_key payload.data to struct
-In-Reply-To: <20170508214324.GA124468@beast>
+In-Reply-To: <10235.1494280856@warthog.procyon.org.uk>
 References: <20170508214324.GA124468@beast>
-Message-ID: <10235.1494280856@warthog.procyon.org.uk>
+	<10235.1494280856@warthog.procyon.org.uk>
+Message-ID: <20170508221943.GA46762@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Kees Cook <keescook@chromium.org> wrote:
+On Mon, May 08, 2017 at 11:00:56PM +0100, David Howells wrote:
+> Kees Cook <keescook@chromium.org> wrote:
+> 
+> > There is a lot of needless casting happening in the big_key data payload.
+> > This is harder to trivially verify by static analysis and specifically
+> > the randstruct GCC plugin (which was unhappy about casting a struct
+> > path across two entries of a void * array). This converts the payload to
+> > the actually used structures (one pointer, one embedded struct, and one
+> > size_t).
+> 
+> I'd really rather not do this as this moves the definition of an individual
+> key type into the general structure (I know I've done this for the keyring
+> type, but that's a special part of the keyring code).  That's the start of the
+> slippery slope into moving all of them in there.
+> 
+> I'd rather you defined, say:
+> 
+> 	struct big_key_payload {
+> 		u8		*key_data;
+> 		struct path	key_path;
+> 		size_t		key_len;
+> 	};
+> 
+> in big_key.c and cast &key->payload to it.
+> 
 
-> There is a lot of needless casting happening in the big_key data payload.
-> This is harder to trivially verify by static analysis and specifically
-> the randstruct GCC plugin (which was unhappy about casting a struct
-> path across two entries of a void * array). This converts the payload to
-> the actually used structures (one pointer, one embedded struct, and one
-> size_t).
+That still seems like a hack.  It probably would be easier to kmalloc() this
+struct and store a pointer to it in key->payload.data[0], like some of the other
+key types do, e.g. "encrypted" and "trusted".  The key data could even be inline
+at the end, for non-file backed big_keys.
 
-I'd really rather not do this as this moves the definition of an individual
-key type into the general structure (I know I've done this for the keyring
-type, but that's a special part of the keyring code).  That's the start of the
-slippery slope into moving all of them in there.
-
-I'd rather you defined, say:
-
-	struct big_key_payload {
-		u8		*key_data;
-		struct path	key_path;
-		size_t		key_len;
-	};
-
-in big_key.c and cast &key->payload to it.
-
-David
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
