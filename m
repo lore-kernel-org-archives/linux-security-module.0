@@ -1,68 +1,44 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue, 9 May 2017 11:49:05 -0400
-Subject: [PATCH v2 3/3] tpm: vtpm_proxy: Add ioctl to request locality
-	prepended to command
-In-Reply-To: <20170508234328.iydmoverh5z4nwco@intel.com>
-References: <1493384538-27883-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1493384538-27883-4-git-send-email-stefanb@linux.vnet.ibm.com>
-	<20170503223747.zefh76m4youqlgje@intel.com>
-	<40cd7d48-f6d1-39f4-99a3-916c7cdbb636@linux.vnet.ibm.com>
-	<20170504091738.rxl77hjzf6vnpuda@intel.com>
-	<e8408f9b-d53d-5af0-3678-e851d78ba99e@linux.vnet.ibm.com>
-	<20170504184007.46efvqyqwxjkzwuq@intel.com>
-	<daa25807-53cd-1abd-d2fa-57e01e37da9f@linux.vnet.ibm.com>
-	<20170508234328.iydmoverh5z4nwco@intel.com>
-Message-ID: <c4bf7270-1243-bf14-7da8-95d2691ce445@linux.vnet.ibm.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Tue, 9 May 2017 09:12:51 -0700
+Subject: [PATCH] key: Convert big_key payload.data to struct
+In-Reply-To: <14829.1494317484@warthog.procyon.org.uk>
+References: <20170508214324.GA124468@beast>
+	<10235.1494280856@warthog.procyon.org.uk>
+	<CAGXu5jLYLeYWm9GKMm2_5iT4PjaXCi5qsGnZQ2JqFT0DVvmYog@mail.gmail.com>
+	<14829.1494317484@warthog.procyon.org.uk>
+Message-ID: <CAGXu5jJZtQ4AB+zwDq6sDCn95HrLTCE2maz5FNs0qZk50m51Lw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/08/2017 07:43 PM, Jarkko Sakkinen wrote:
-> On Thu, May 04, 2017 at 04:03:18PM -0400, Stefan Berger wrote:
->> On 05/04/2017 02:40 PM, Jarkko Sakkinen wrote:
->>> On Thu, May 04, 2017 at 07:14:27AM -0400, Stefan Berger wrote:
->>>> On 05/04/2017 05:17 AM, Jarkko Sakkinen wrote:
->>>>> On Wed, May 03, 2017 at 07:40:48PM -0400, Stefan Berger wrote:
->>>>>> On 05/03/2017 06:37 PM, Jarkko Sakkinen wrote:
->>>>>>> On Fri, Apr 28, 2017 at 09:02:18AM -0400, Stefan Berger wrote:
->>>>>>>> Add an ioctl to request that the locality be prepended to every TPM
->>>>>>>> command.
->>>>>>> Don't really understand this change. Why locality is prenpended?
->>>>>> Commands can be executed under locality 0-3 and for some commands it is
->>>>>> important to know which locality a user may have chosen. How else should we
->>>>>> convey that locality to the TPM emulator ?
->>>>> Why this is not in the commit message?
->>>>>
->>>>> More scalable way to do this would be to have a set of vtpm proxy
->>>>> commands. There could be a command for requesting and releasing
->>>>> locality. That would be more clean.
->>>> I would think that if someone wanted to use locality it's the client using
->>>> /dev/tpm(rm)0 calling an ioctl or so and the vtpm proxy then merely passing
->>>> that locality to the backend (TPM emulator). I suppose the intention is to
->>>> support something like that following the addition of the new functions
->>>> request_locality and release_locality?
->>> What if we later on want to pass something else than locality to the
->>> backend? How that will work out?
->> 'push' more data in front. 'pop' off by recipient. We could wrap the command
->> in some form.
->>
->>      Stefan
-> I would find having a set of special commands cleaner. Prepending sounds
-> like a quick hack to me, not really something that should exist in the
-> mainline.
+On Tue, May 9, 2017 at 1:11 AM, David Howells <dhowells@redhat.com> wrote:
+> Kees Cook <keescook@chromium.org> wrote:
+>
+>> This doesn't protect you against changes in struct path size,
+>> though... the existing code (and this proposal) will break if that
+>> ever happens...
+>
+> True - in which case you should kmalloc() it as Eric suggests.
+>
+>> What's the problem with defining the types at the top level? That
+>> seems like a nice place to see them all at once.
+>
+> It means adding a bunch of dependencies to linux/key.h and union key_payload.
+>
+> Have you considered why we don't just put all the definitions for all the
+> filesystems in linux/fs.h?  By this logic it would seem like a nice place to
+> see them all at once.
 
-Along the lines of this here?
+I've seen other things that want to share a structure use embedded
+structures, etc. I'll see if there is something else to be done, but
+just cleaning up the casts alone makes the big_key code so much more
+readable. :P
 
-uint32_2 command
-uint32_2 totlength
-uint8_t locality
-uint8_t buffer[]  <- the actual TPM command
+-Kees
 
-
-With a command code like VTPM_PROXY_CMD_TPM_CMD = 1.
-
-    Stefan
-
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
