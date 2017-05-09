@@ -1,43 +1,42 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 9 May 2017 09:12:51 -0700
-Subject: [PATCH] key: Convert big_key payload.data to struct
-In-Reply-To: <14829.1494317484@warthog.procyon.org.uk>
-References: <20170508214324.GA124468@beast>
-	<10235.1494280856@warthog.procyon.org.uk>
-	<CAGXu5jLYLeYWm9GKMm2_5iT4PjaXCi5qsGnZQ2JqFT0DVvmYog@mail.gmail.com>
-	<14829.1494317484@warthog.procyon.org.uk>
-Message-ID: <CAGXu5jJZtQ4AB+zwDq6sDCn95HrLTCE2maz5FNs0qZk50m51Lw@mail.gmail.com>
+From: labbott@redhat.com (Laura Abbott)
+Date: Tue,  9 May 2017 11:25:27 -0700
+Subject: [PATCH] ima: Add cgroups2 to the defaults list
+Message-ID: <20170509182527.20492-1-labbott@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 9, 2017 at 1:11 AM, David Howells <dhowells@redhat.com> wrote:
-> Kees Cook <keescook@chromium.org> wrote:
->
->> This doesn't protect you against changes in struct path size,
->> though... the existing code (and this proposal) will break if that
->> ever happens...
->
-> True - in which case you should kmalloc() it as Eric suggests.
->
->> What's the problem with defining the types at the top level? That
->> seems like a nice place to see them all at once.
->
-> It means adding a bunch of dependencies to linux/key.h and union key_payload.
->
-> Have you considered why we don't just put all the definitions for all the
-> filesystems in linux/fs.h?  By this logic it would seem like a nice place to
-> see them all at once.
+cgroups2 is beginning to show up in wider usage. Add it to the default
+nomeasure/noappraise list like other filesystems.
 
-I've seen other things that want to share a structure use embedded
-structures, etc. I'll see if there is something else to be done, but
-just cleaning up the casts alone makes the big_key code so much more
-readable. :P
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ security/integrity/ima/ima_policy.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
--Kees
-
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 3ab1067db624..d60889352dda 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -96,6 +96,8 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
+ 	{.action = DONT_MEASURE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = CGROUP_SUPER_MAGIC,
+ 	 .flags = IMA_FSMAGIC},
++	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
++	 .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC}
+ };
+ 
+@@ -139,6 +141,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ 	{.action = DONT_APPRAISE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
++	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+ #ifdef CONFIG_IMA_WRITE_POLICY
+ 	{.action = APPRAISE, .func = POLICY_CHECK,
+ 	.flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
 -- 
-Kees Cook
-Pixel Security
+2.12.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
