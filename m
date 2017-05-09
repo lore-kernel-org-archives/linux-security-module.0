@@ -1,48 +1,35 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 09 May 2017 15:42:07 -0400
-Subject: [PATCH] ima: Add cgroups2 to the defaults list
-In-Reply-To: <20170509182527.20492-1-labbott@redhat.com>
-References: <20170509182527.20492-1-labbott@redhat.com>
-Message-ID: <1494358927.3190.11.camel@linux.vnet.ibm.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Tue, 9 May 2017 14:45:26 -0700
+Subject: [PATCH] key: Convert big_key payload.data to struct
+In-Reply-To: <13867.1494314658@warthog.procyon.org.uk>
+References: <20170508221943.GA46762@gmail.com> <20170508214324.GA124468@beast>
+	<10235.1494280856@warthog.procyon.org.uk>
+	<13867.1494314658@warthog.procyon.org.uk>
+Message-ID: <20170509214526.GB87747@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-05-09 at 11:25 -0700, Laura Abbott wrote:
-> cgroups2 is beginning to show up in wider usage. Add it to the default
-> nomeasure/noappraise list like other filesystems.
+On Tue, May 09, 2017 at 08:24:18AM +0100, David Howells wrote:
+> Eric Biggers <ebiggers3@gmail.com> wrote:
 > 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-
-Thanks, queued for next.
-
-Mimi
-
-> ---
->  security/integrity/ima/ima_policy.c | 3 +++
->  1 file changed, 3 insertions(+)
+> > It probably would be easier to kmalloc() this struct and store a pointer to
+> > it in key->payload.data[0]
 > 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 3ab1067db624..d60889352dda 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -96,6 +96,8 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
->  	{.action = DONT_MEASURE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_MEASURE, .fsmagic = CGROUP_SUPER_MAGIC,
->  	 .flags = IMA_FSMAGIC},
-> +	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
-> +	 .flags = IMA_FSMAGIC},
->  	{.action = DONT_MEASURE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC}
->  };
+> Yeah, but it's a waste of resources if you don't have to do it.
 > 
-> @@ -139,6 +141,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
->  	{.action = DONT_APPRAISE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_APPRAISE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
-> +	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
->  #ifdef CONFIG_IMA_WRITE_POLICY
->  	{.action = APPRAISE, .func = POLICY_CHECK,
->  	.flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> David
 
+Yes, but it seems very much like a micro-optimization, which isn't helpful when
+the code contains undefined behavior and is creating problems.  This is the
+*big* key type, after all; shouldn't the amount of data in the key normally be
+large enough to make a kmalloc() of 24 bytes insignificant?
+
+And besides, I expect that most users don't even use the big_keys feature.  If
+we actually want to avoid wasting resources that aren't used, we shouldn't
+allocate the crypto_rng and crypto_skcipher until someone tries to create a
+big_key.  (Currently they're allocated unconditionally in big_key_init().)
+
+- Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
