@@ -1,19 +1,30 @@
 From: dhowells@redhat.com (David Howells)
-Date: Tue, 09 May 2017 08:24:18 +0100
+Date: Tue, 09 May 2017 09:11:24 +0100
 Subject: [PATCH] key: Convert big_key payload.data to struct
-In-Reply-To: <20170508221943.GA46762@gmail.com>
-References: <20170508221943.GA46762@gmail.com> <20170508214324.GA124468@beast>
+In-Reply-To: <CAGXu5jLYLeYWm9GKMm2_5iT4PjaXCi5qsGnZQ2JqFT0DVvmYog@mail.gmail.com>
+References: <CAGXu5jLYLeYWm9GKMm2_5iT4PjaXCi5qsGnZQ2JqFT0DVvmYog@mail.gmail.com>
+	<20170508214324.GA124468@beast>
 	<10235.1494280856@warthog.procyon.org.uk>
-Message-ID: <13867.1494314658@warthog.procyon.org.uk>
+Message-ID: <14829.1494317484@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Eric Biggers <ebiggers3@gmail.com> wrote:
+Kees Cook <keescook@chromium.org> wrote:
 
-> It probably would be easier to kmalloc() this struct and store a pointer to
-> it in key->payload.data[0]
+> This doesn't protect you against changes in struct path size,
+> though... the existing code (and this proposal) will break if that
+> ever happens...
 
-Yeah, but it's a waste of resources if you don't have to do it.
+True - in which case you should kmalloc() it as Eric suggests.
+
+> What's the problem with defining the types at the top level? That
+> seems like a nice place to see them all at once.
+
+It means adding a bunch of dependencies to linux/key.h and union key_payload.
+
+Have you considered why we don't just put all the definitions for all the
+filesystems in linux/fs.h?  By this logic it would seem like a nice place to
+see them all at once.
 
 David
 --
