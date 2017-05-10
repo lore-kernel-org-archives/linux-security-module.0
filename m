@@ -1,189 +1,33 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Wed, 10 May 2017 19:54:21 -0400
-Subject: [PATCH v4 1/2] tpm: Refactor tpm_transmit pulling out tpm_transfer
-	function
-In-Reply-To: <1494460462-29022-1-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1494460462-29022-1-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <1494460462-29022-2-git-send-email-stefanb@linux.vnet.ibm.com>
+From: jmorris@namei.org (James Morris)
+Date: Thu, 11 May 2017 09:59:51 +1000 (AEST)
+Subject: [PATCH] security/ima: use fs method to read integrity data
+In-Reply-To: <20170510064507.1764-2-hch@lst.de>
+References: <20170510064507.1764-1-hch@lst.de>
+	<20170510064507.1764-2-hch@lst.de>
+Message-ID: <alpine.LRH.2.20.1705110959020.15627@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Refactor tpm_transmit and pull out code sending the command
-and receiving the response and put this into tpm_transfer.
+On Wed, 10 May 2017, Christoph Hellwig wrote:
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm-interface.c | 121 +++++++++++++++++++++++----------------
- 1 file changed, 73 insertions(+), 48 deletions(-)
+> Add a new ->integrity_read file operation to read data for
+> integrity hash collection.  This is defined to be equivalent
+> to ->read_iter, except that it will be called with the i_rwsem
+> held exclusively.  Also the presence of ->integrity_read indicates
+> that the file system can support IMA.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 158c1db..263b6d1 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -370,67 +370,29 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- }
- 
- /**
-- * tmp_transmit - Internal kernel interface to transmit TPM commands.
-+ * tmp_transfer - Send a TPM command to the TPM and receive response
-  *
-  * @chip: TPM chip to use
-  * @buf: TPM command buffer
-+ * @count: size of the TPM command
-  * @bufsiz: length of the TPM command buffer
-- * @flags: tpm transmit flags - bitmap
-  *
-  * Return:
-- *     0 when the operation is successful.
-+ *     >0 when the operation is successful; returns response length
-  *     A negative number for system errors (errno).
-  */
--ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
--		     u8 *buf, size_t bufsiz, unsigned int flags)
-+ssize_t tpm_transfer(struct tpm_chip *chip, u8 *buf, u32 count, size_t bufsiz)
- {
--	struct tpm_output_header *header = (void *)buf;
- 	int rc;
-+	struct tpm_output_header *header = (void *)buf;
-+	u32 ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
- 	ssize_t len = 0;
--	u32 count, ordinal;
- 	unsigned long stop;
--	bool need_locality;
--
--	if (!tpm_validate_command(chip, space, buf, bufsiz))
--		return -EINVAL;
--
--	if (bufsiz > TPM_BUFSIZE)
--		bufsiz = TPM_BUFSIZE;
--
--	count = be32_to_cpu(*((__be32 *) (buf + 2)));
--	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
--	if (count == 0)
--		return -ENODATA;
--	if (count > bufsiz) {
--		dev_err(&chip->dev,
--			"invalid count value %x %zx\n", count, bufsiz);
--		return -E2BIG;
--	}
--
--	if (!(flags & TPM_TRANSMIT_UNLOCKED))
--		mutex_lock(&chip->tpm_mutex);
--
--	if (chip->dev.parent)
--		pm_runtime_get_sync(chip->dev.parent);
--
--	/* Store the decision as chip->locality will be changed. */
--	need_locality = chip->locality == -1;
--
--	if (need_locality && chip->ops->request_locality)  {
--		rc = chip->ops->request_locality(chip, 0);
--		if (rc < 0)
--			goto out_no_locality;
--		chip->locality = rc;
--	}
--
--	rc = tpm2_prepare_space(chip, space, ordinal, buf);
--	if (rc)
--		goto out;
- 
- 	rc = chip->ops->send(chip, (u8 *) buf, count);
- 	if (rc < 0) {
- 		dev_err(&chip->dev,
--			"tpm_transmit: tpm_send: error %d\n", rc);
-+			"tpm_transfer: tpm_send: error %d\n", rc);
- 		goto out;
- 	}
- 
-@@ -467,18 +429,81 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	if (len < 0) {
- 		rc = len;
- 		dev_err(&chip->dev,
--			"tpm_transmit: tpm_recv: error %d\n", rc);
-+			"tpm_transfer: tpm_recv: error %d\n", rc);
- 		goto out;
- 	} else if (len < TPM_HEADER_SIZE) {
- 		rc = -EFAULT;
- 		goto out;
- 	}
- 
--	if (len != be32_to_cpu(header->length)) {
-+	if (len != be32_to_cpu(header->length))
- 		rc = -EFAULT;
--		goto out;
-+
-+out:
-+	return rc ? rc : len;
-+}
-+EXPORT_SYMBOL_GPL(tpm_transfer);
-+
-+/**
-+ * tmp_transmit - Internal kernel interface to transmit TPM commands.
-+ *
-+ * @chip: TPM chip to use
-+ * @buf: TPM command buffer
-+ * @bufsiz: length of the TPM command buffer
-+ * @flags: tpm transmit flags - bitmap
-+ *
-+ * Return:
-+ *     0 when the operation is successful.
-+ *     A negative number for system errors (errno).
-+ */
-+ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
-+		     u8 *buf, size_t bufsiz, unsigned int flags)
-+{
-+	int rc;
-+	ssize_t len = 0;
-+	u32 count, ordinal;
-+	bool need_locality;
-+
-+	if (!tpm_validate_command(chip, space, buf, bufsiz))
-+		return -EINVAL;
-+
-+	if (bufsiz > TPM_BUFSIZE)
-+		bufsiz = TPM_BUFSIZE;
-+
-+	count = be32_to_cpu(*((__be32 *) (buf + 2)));
-+	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
-+	if (count == 0)
-+		return -ENODATA;
-+	if (count > bufsiz) {
-+		dev_err(&chip->dev,
-+			"invalid count value %x %zx\n", count, bufsiz);
-+		return -E2BIG;
-+	}
-+
-+	if (!(flags & TPM_TRANSMIT_UNLOCKED))
-+		mutex_lock(&chip->tpm_mutex);
-+
-+	if (chip->dev.parent)
-+		pm_runtime_get_sync(chip->dev.parent);
-+
-+	/* Store the decision as chip->locality will be changed. */
-+	need_locality = chip->locality == -1;
-+
-+	if (need_locality && chip->ops->request_locality)  {
-+		rc = chip->ops->request_locality(chip, 0);
-+		if (rc < 0)
-+			goto out_no_locality;
-+		chip->locality = rc;
- 	}
- 
-+	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-+	if (rc)
-+		goto out;
-+
-+	len = tpm_transfer(chip, buf, count, bufsiz);
-+	if (len < 0)
-+		goto out;
-+
- 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
- 
- out:
+Fixes an IMA+XFS deadlock I've been seeing.
+
+Tested-by: James Morris <james.l.morris@oracle.com>
+
+
 -- 
-2.4.3
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
