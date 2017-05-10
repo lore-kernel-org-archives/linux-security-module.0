@@ -1,43 +1,31 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 10 May 2017 17:00:47 -0400
-Subject: [PATCH] security/ima: use fs method to read integrity data
-In-Reply-To: <20170510132359.GA22549@lst.de>
-References: <20170510064507.1764-1-hch@lst.de>
-	<20170510064507.1764-2-hch@lst.de>
-	<a552827e-922d-0b28-2919-90c780a8a414@plexistor.com>
-	<20170510132359.GA22549@lst.de>
-Message-ID: <1494450047.3006.28.camel@linux.vnet.ibm.com>
+From: danielmicay@gmail.com (Daniel Micay)
+Date: Wed, 10 May 2017 17:02:14 -0400
+Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170510212920.7f6bc5e6@alans-desktop>
+References: <20170505232018.28846-1-matt@nmatt.com>
+	<20170510212920.7f6bc5e6@alans-desktop>
+Message-ID: <1494450134.28559.2.camel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-05-10 at 15:24 +0200, Christoph Hellwig wrote:
-> On Wed, May 10, 2017 at 03:20:41PM +0300, Boaz Harrosh wrote:
-> > Would you not want to call ->read_iter() in the NULL case
-> > and have all FSs supported as today?
+On Wed, 2017-05-10 at 21:29 +0100, Alan Cox wrote:
 > 
-> As IMA has particular requirements on the fs (e.g. that it can
-> read with i_rwsem held as seen in this patch, or useful i_version
-> which only the file systems converted in this patch do), having
-> an explicit opt-in seems much safer.  This optional method is
-> a very easy way to provide this opt-in behavior.
+> In addition your change to allow it to be used by root in the guest
+> completely invalidates any protection you have because I can push
+> 
+> "rm -rf /\n"
+> 
+> as root in my namespace and exit
+> 
+> The tty buffers are not flushed across the context change so the shell
+> you return to gets the input and oh dear....
+> 
+> Alan
 
-Without i_version support the file is measured/appraised once. ?With
-i_version support it will be re-measured/appraised. As a file system
-is mounted/remounted, some sort of message should be emitted
-indicating whether i_version is supported. ?That does not imply that
-there is no value in measuring/appraising the file only once.
-
-With this patch, the "opt-in" behavior, is only for measurement, not
-appraisal. ?For appraisal, it still enforces file hash/signature
-verification, as it should, based on policy.
-
-Christoph, could we call ->read_iter() in the NULL case as Boaz
-suggested?
-
-thanks!
-
-Mimi
-
+I might be missing something, but it looks like the patch tracks where
+the tty was created and only allows this with CAP_SYS_ADMIN in the ns
+where the tty came from.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
