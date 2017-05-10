@@ -1,55 +1,52 @@
-From: boaz@plexistor.com (Boaz Harrosh)
-Date: Wed, 10 May 2017 18:55:51 +0300
-Subject: [PATCH] security/ima: use fs method to read integrity data
-In-Reply-To: <20170510132359.GA22549@lst.de>
-References: <20170510064507.1764-1-hch@lst.de>
-	<20170510064507.1764-2-hch@lst.de>
-	<a552827e-922d-0b28-2919-90c780a8a414@plexistor.com>
-	<20170510132359.GA22549@lst.de>
-Message-ID: <84bba69e-64a6-432d-bf27-54eb7669cea8@plexistor.com>
+From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
+Date: Wed, 10 May 2017 14:20:52 -0400
+Subject: [PATCH v5 0/4] Certificate insertion support for x86 bzImages
+Message-ID: <1494440456-28671-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/10/2017 04:24 PM, Christoph Hellwig wrote:
-> On Wed, May 10, 2017 at 03:20:41PM +0300, Boaz Harrosh wrote:
->> Would you not want to call ->read_iter() in the NULL case
->> and have all FSs supported as today?
-> 
-> As IMA has particular requirements on the fs (e.g. that it can
-> read with i_rwsem held as seen in this patch, or useful i_version
-> which only the file systems converted in this patch do), having
-> an explicit opt-in seems much safer.  This optional method is
-> a very easy way to provide this opt-in behavior.
-> 
+These patches add support for modifying the reserved space for extra
+certificates in a compressed bzImage in x86. This allows separating the
+system keyring certificate from the kernel build process. After the kernel
+image is distributed, the insert-sys-cert script can be used to insert the
+certificate for x86.
 
->> +	if (!file->f_op->integrity_read)
->> +		return -EBADF;
-> 
-> Would you not want to call ->read_iter() in the NULL case
-> and have all FSs supported as today?
-> 
-> Thanks
-> Boaz
-> 
->>  
->> -	old_fs = get_fs();
->> -	set_fs(get_ds());
->> -	ret = __vfs_read(file, buf, count, &offset);
->> -	set_fs(old_fs);
+Changes:
 
-If you look here above, it used to call __vfs_read regardless
-of i_version and "opt-in" so it looks like a regression for
-all those FSs that used to work.
+v5:
+* Added CRC fixing (3/4)
 
-So I did not understand, but I guess you are right opt-in seems much
-safer.
+v4:
+* Applied checkpatch.pl suggestions (2/4, 3/4)
+* Cleaned up the commit messages (1/4, 2/4)
+* Added the build file to .gitignore (1/4)
 
-Thanks
-Boaz
+v3:
+* Rewrote 1/4 to insert incompressible bytes are at build time. Previous
+solution required changes to <arch>/boot/Makefile's for modifying the
+vmlinux file after linking, and did not work well with cross compilation.
+* Added 2/4 for ELF class-independent processing of vmlinux file, in case
+the script was compiled for 64-bit and the kernel was compiled for 32-bit.
+* Reordered 3/4, added x86 bzImage boot version (>=2.08) verification.
 
->> +	init_sync_kiocb(&kiocb, file);
->> +	kiocb.ki_pos = offset;
->> +	iov_iter_init(&iter, READ | ITER_KVEC, &iov, 1, count);
+v2:
+* Rebased arch/boot/x86/Makefile patch (removed in v3)
+
+Mehmet Kayaalp (4):
+  KEYS: Insert incompressible bytes to reserve space in bzImage
+  KEYS: Add ELF class-independent certificate insertion support
+  KEYS: Support for inserting a certificate into x86 bzImage
+  KEYS: Print insert-sys-cert information to stdout instead of stderr
+
+ certs/.gitignore            |   1 +
+ certs/Makefile              |  21 +-
+ certs/system_certificates.S |   2 +-
+ scripts/Makefile            |   1 +
+ scripts/insert-sys-cert.c   | 473 +++++++++++++++++++++++++++++++++-----------
+ 5 files changed, 381 insertions(+), 117 deletions(-)
+
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
