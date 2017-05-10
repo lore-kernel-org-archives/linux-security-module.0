@@ -1,157 +1,44 @@
-From: boaz@plexistor.com (Boaz Harrosh)
-Date: Wed, 10 May 2017 15:20:41 +0300
-Subject: [PATCH] security/ima: use fs method to read integrity data
-In-Reply-To: <20170510064507.1764-2-hch@lst.de>
-References: <20170510064507.1764-1-hch@lst.de>
-	<20170510064507.1764-2-hch@lst.de>
-Message-ID: <a552827e-922d-0b28-2919-90c780a8a414@plexistor.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 10 May 2017 15:34:58 +0300
+Subject: [PATCH] tpm: fix byte order related arithmetic inconsistency in
+	tpm_getcap()
+In-Reply-To: <20170509151308.GA13586@obsidianresearch.com>
+References: <20170507175002.9558-1-jarkko.sakkinen@linux.intel.com>
+	<20170509141353.klo7lilef4qiqfoc@intel.com>
+	<20170509151308.GA13586@obsidianresearch.com>
+Message-ID: <20170510123458.fh3ef3c55y2wiu35@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/10/2017 09:45 AM, Christoph Hellwig wrote:
-> Add a new ->integrity_read file operation to read data for
-> integrity hash collection.  This is defined to be equivalent
-> to ->read_iter, except that it will be called with the i_rwsem
-> held exclusively.  Also the presence of ->integrity_read indicates
-> that the file system can support IMA.
+On Tue, May 09, 2017 at 09:13:08AM -0600, Jason Gunthorpe wrote:
+> On Tue, May 09, 2017 at 05:13:53PM +0300, Jarkko Sakkinen wrote:
+> > On Sun, May 07, 2017 at 08:50:02PM +0300, Jarkko Sakkinen wrote:
+> > > You should not do arithmetic with __be32 or __le32 types because
+> > > sometimes it results incorrect results. Calculations must be done only
+> > > with integers that are in in the CPU byte order. This commit migrates
+> > > tpm_getcap() to struct tpm_buf in order to sort out these issues.
+> > > 
+> > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Now this should work as Robertos patches move byte order conversion
+> > > where it should be. Sadly I'm out of reach to my Dell E6400 laptop
+> > > that I use for TPM 1.2 testing.
+> > >  drivers/char/tpm/tpm-interface.c | 30 ++++++++++++++++--------------
+> > >  drivers/char/tpm/tpm.h           | 13 -------------
+> > >  2 files changed, 16 insertions(+), 27 deletions(-)
+> > 
+> > I've now tested this with TPM 1.2. Any complains?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/btrfs/file.c           |  1 +
->  fs/ext4/file.c            |  1 +
->  fs/xfs/xfs_file.c         | 21 +++++++++++++++++++++
->  include/linux/fs.h        |  1 +
->  security/integrity/iint.c | 20 ++++++++++++++------
->  5 files changed, 38 insertions(+), 6 deletions(-)
+> Seems reasonable, but which linke had the problematic arithmetic?
 > 
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 520cb7230b2d..c5afb2264737 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -3041,6 +3041,7 @@ const struct file_operations btrfs_file_operations = {
->  #endif
->  	.clone_file_range = btrfs_clone_file_range,
->  	.dedupe_file_range = btrfs_dedupe_file_range,
-> +	.integrity_read = generic_file_read_iter,
->  };
->  
->  void btrfs_auto_defrag_exit(void)
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 8210c1f43556..b2a5025c7e0d 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -740,6 +740,7 @@ const struct file_operations ext4_file_operations = {
->  	.splice_read	= generic_file_splice_read,
->  	.splice_write	= iter_file_splice_write,
->  	.fallocate	= ext4_fallocate,
-> +	.integrity_read	= ext4_file_read_iter,
->  };
->  
->  const struct inode_operations ext4_file_inode_operations = {
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 35703a801372..3d6ace2a79bc 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -288,6 +288,26 @@ xfs_file_read_iter(
->  	return ret;
->  }
->  
-> +static ssize_t
-> +xfs_integrity_read(
-> +	struct kiocb		*iocb,
-> +	struct iov_iter		*to)
-> +{
-> +	struct inode		*inode = file_inode(iocb->ki_filp);
-> +	struct xfs_mount	*mp = XFS_I(inode)->i_mount;
-> +
-> +	lockdep_assert_held(&inode->i_rwsem);
-> +
-> +	XFS_STATS_INC(mp, xs_read_calls);
-> +
-> +	if (XFS_FORCED_SHUTDOWN(mp))
-> +		return -EIO;
-> +
-> +	if (IS_DAX(inode))
-> +		return dax_iomap_rw(iocb, to, &xfs_iomap_ops);
-> +	return generic_file_read_iter(iocb, to);
-> +}
-> +
->  /*
->   * Zero any on disk space between the current EOF and the new, larger EOF.
->   *
-> @@ -1534,6 +1554,7 @@ const struct file_operations xfs_file_operations = {
->  	.fallocate	= xfs_file_fallocate,
->  	.clone_file_range = xfs_file_clone_range,
->  	.dedupe_file_range = xfs_file_dedupe_range,
-> +	.integrity_read	= xfs_integrity_read,
->  };
->  
->  const struct file_operations xfs_dir_file_operations = {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7251f7bb45e8..0c86816ca25f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1689,6 +1689,7 @@ struct file_operations {
->  			u64);
->  	ssize_t (*dedupe_file_range)(struct file *, u64, u64, struct file *,
->  			u64);
-> +	ssize_t (*integrity_read)(struct kiocb *, struct iov_iter *);
->  };
->  
->  struct inode_operations {
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index c710d22042f9..c5489672b5aa 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -21,6 +21,7 @@
->  #include <linux/rbtree.h>
->  #include <linux/file.h>
->  #include <linux/uaccess.h>
-> +#include <linux/uio.h>
->  #include "integrity.h"
->  
->  static struct rb_root integrity_iint_tree = RB_ROOT;
-> @@ -184,18 +185,25 @@ security_initcall(integrity_iintcache_init);
->  int integrity_kernel_read(struct file *file, loff_t offset,
->  			  char *addr, unsigned long count)
->  {
-> -	mm_segment_t old_fs;
-> -	char __user *buf = (char __user *)addr;
-> +	struct inode *inode = file_inode(file);
-> +	struct iovec iov = { .iov_base = addr, .iov_len = count };
-> +	struct kiocb kiocb;
-> +	struct iov_iter iter;
->  	ssize_t ret;
->  
-> +	lockdep_assert_held(&inode->i_rwsem);
-> +
->  	if (!(file->f_mode & FMODE_READ))
->  		return -EBADF;
-> +	if (!file->f_op->integrity_read)
-> +		return -EBADF;
+> Jason
 
-Would you not want to call ->read_iter() in the NULL case
-and have all FSs supported as today?
+Arithmetic should work but it's not a good practice to do additions,
+substractions or multiplications in any other byte order than the CPU
+byte order.
 
-Thanks
-Boaz
+sparse also complains about this.
 
->  
-> -	old_fs = get_fs();
-> -	set_fs(get_ds());
-> -	ret = __vfs_read(file, buf, count, &offset);
-> -	set_fs(old_fs);
-> +	init_sync_kiocb(&kiocb, file);
-> +	kiocb.ki_pos = offset;
-> +	iov_iter_init(&iter, READ | ITER_KVEC, &iov, 1, count);
->  
-> +	ret = file->f_op->integrity_read(&kiocb, &iter);
-> +	BUG_ON(ret == -EIOCBQUEUED);
->  	return ret;
->  }
->  
-> 
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
