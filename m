@@ -1,81 +1,57 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 10 May 2017 21:33:31 +0300
-Subject: [PATCH v2 3/3] tpm: vtpm_proxy: Add ioctl to request locality
-	prepended to command
-In-Reply-To: <2c20fc62-938a-a6da-dbb2-70711b84996d@linux.vnet.ibm.com>
-References: <20170503223747.zefh76m4youqlgje@intel.com>
-	<40cd7d48-f6d1-39f4-99a3-916c7cdbb636@linux.vnet.ibm.com>
-	<20170504091738.rxl77hjzf6vnpuda@intel.com>
-	<e8408f9b-d53d-5af0-3678-e851d78ba99e@linux.vnet.ibm.com>
-	<20170504184007.46efvqyqwxjkzwuq@intel.com>
-	<daa25807-53cd-1abd-d2fa-57e01e37da9f@linux.vnet.ibm.com>
-	<20170508234328.iydmoverh5z4nwco@intel.com>
-	<c4bf7270-1243-bf14-7da8-95d2691ce445@linux.vnet.ibm.com>
-	<20170510124745.lmqvonrkjmjes7ep@intel.com>
-	<2c20fc62-938a-a6da-dbb2-70711b84996d@linux.vnet.ibm.com>
-Message-ID: <20170510183331.abpeaa4bliohehsv@intel.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Wed, 10 May 2017 21:29:20 +0100
+Subject: [PATCH v6 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <20170505232018.28846-1-matt@nmatt.com>
+References: <20170505232018.28846-1-matt@nmatt.com>
+Message-ID: <20170510212920.7f6bc5e6@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 10, 2017 at 09:20:14AM -0400, Stefan Berger wrote:
-> On 05/10/2017 08:47 AM, Jarkko Sakkinen wrote:
-> > On Tue, May 09, 2017 at 11:49:05AM -0400, Stefan Berger wrote:
-> > > On 05/08/2017 07:43 PM, Jarkko Sakkinen wrote:
-> > > > On Thu, May 04, 2017 at 04:03:18PM -0400, Stefan Berger wrote:
-> > > > > On 05/04/2017 02:40 PM, Jarkko Sakkinen wrote:
-> > > > > > On Thu, May 04, 2017 at 07:14:27AM -0400, Stefan Berger wrote:
-> > > > > > > On 05/04/2017 05:17 AM, Jarkko Sakkinen wrote:
-> > > > > > > > On Wed, May 03, 2017 at 07:40:48PM -0400, Stefan Berger wrote:
-> > > > > > > > > On 05/03/2017 06:37 PM, Jarkko Sakkinen wrote:
-> > > > > > > > > > On Fri, Apr 28, 2017 at 09:02:18AM -0400, Stefan Berger wrote:
-> > > > > > > > > > > Add an ioctl to request that the locality be prepended to every TPM
-> > > > > > > > > > > command.
-> > > > > > > > > > Don't really understand this change. Why locality is prenpended?
-> > > > > > > > > Commands can be executed under locality 0-3 and for some commands it is
-> > > > > > > > > important to know which locality a user may have chosen. How else should we
-> > > > > > > > > convey that locality to the TPM emulator ?
-> > > > > > > > Why this is not in the commit message?
-> > > > > > > > 
-> > > > > > > > More scalable way to do this would be to have a set of vtpm proxy
-> > > > > > > > commands. There could be a command for requesting and releasing
-> > > > > > > > locality. That would be more clean.
-> > > > > > > I would think that if someone wanted to use locality it's the client using
-> > > > > > > /dev/tpm(rm)0 calling an ioctl or so and the vtpm proxy then merely passing
-> > > > > > > that locality to the backend (TPM emulator). I suppose the intention is to
-> > > > > > > support something like that following the addition of the new functions
-> > > > > > > request_locality and release_locality?
-> > > > > > What if we later on want to pass something else than locality to the
-> > > > > > backend? How that will work out?
-> > > > > 'push' more data in front. 'pop' off by recipient. We could wrap the command
-> > > > > in some form.
-> > > > > 
-> > > > >       Stefan
-> > > > I would find having a set of special commands cleaner. Prepending sounds
-> > > > like a quick hack to me, not really something that should exist in the
-> > > > mainline.
-> > > Along the lines of this here?
-> > > 
-> > > uint32_2 command
-> > > uint32_2 totlength
-> > > uint8_t locality
-> > > uint8_t buffer[]  <- the actual TPM command
-> > > 
-> > > 
-> > > With a command code like VTPM_PROXY_CMD_TPM_CMD = 1.
-> > > 
-> > >     Stefan
-> > That would break binary compability.
+On Fri,  5 May 2017 19:20:16 -0400
+Matt Brown <matt@nmatt.com> wrote:
+
+> This patchset introduces the tiocsti_restrict sysctl, whose default is
+> controlled via CONFIG_SECURITY_TIOCSTI_RESTRICT. When activated, this
+> control restricts all TIOCSTI ioctl calls from non CAP_SYS_ADMIN users.
 > 
-> That's why I am adding that additional flag that allows a client to choose
-> whether it wants the TPM command wrapped (or locality prepended) so that it
-> knows what to expect from the driver. I don't think that breaks
-> compatibility.
+> This patch was inspired from GRKERNSEC_HARDEN_TTY.
+> 
+> This patch would have prevented
+> https://bugzilla.redhat.com/show_bug.cgi?id=1411256 under the following
+> conditions:
+> * non-privileged container
+> * container run inside new user namespace
+> 
+> Possible effects on userland:
+> 
+> There could be a few user programs that would be effected by this
+> change.
+> See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+> notable programs are: agetty, csh, xemacs and tcsh
+> 
+> However, I still believe that this change is worth it given that the
+> Kconfig defaults to n. 
 
-I think having TPM command codes for control messages would be a
-better idea and it is trivial to filter them so that client cannot
-use those commands.
+And it still doesn't deal with the fact that there are hundreds of other
+ways to annoy the owner of a tty if it's passed to a lower privilege
+child from framebuffer reprogramming through keyboard remaps.
 
-/Jarkko
+The proper way to handle those cases is to create a pty/tty pair and use
+that. Your patch is pure snake oil and if anything implies safety that
+doesn't exist.
+
+In addition your change to allow it to be used by root in the guest
+completely invalidates any protection you have because I can push
+
+"rm -rf /\n"
+
+as root in my namespace and exit
+
+The tty buffers are not flushed across the context change so the shell
+you return to gets the input and oh dear....
+
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
