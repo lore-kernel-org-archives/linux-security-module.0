@@ -1,48 +1,214 @@
 From: guilherme.magalhaes@hpe.com (Guilherme Magalhaes)
-Date: Thu, 11 May 2017 10:59:53 -0300
-Subject: [RFC 01/11] ima: qualify pathname in audit info record
+Date: Thu, 11 May 2017 10:59:55 -0300
+Subject: [RFC 03/11] ima: qualify pathname in measurement file
 In-Reply-To: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
 References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-Message-ID: <1494511203-8397-2-git-send-email-guilherme.magalhaes@hpe.com>
+Message-ID: <1494511203-8397-4-git-send-email-guilherme.magalhaes@hpe.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Adding new field (mount namespace id, along with already existent file
-inode and device name) to uniquely identify a pathname considering
-different mount namespaces. The file inode on a given device is unique
+Adding new fields (mount namespace id, file inode and device name) to
+uniquely identify a pathname in the measurement file considering
+multiple mount namespaces. The file inode on a given device is unique
 and these fields are required to identify a namespace id since this
 id can be released and later reused by a different namespace.
+These new fields are added to all measurement templates if
+CONFIG_IMA_PER_NAMESPACE is defined.
+There will still be one single measurement file even with multiple
+namespaces, since for the remote attestion a single and complete list
+is required.
 
 Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
 ---
- security/integrity/integrity_audit.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ security/integrity/ima/Kconfig            |  8 ++++
+ security/integrity/ima/ima.h              | 12 ++++++
+ security/integrity/ima/ima_template.c     | 10 ++++-
+ security/integrity/ima/ima_template_lib.c | 70 +++++++++++++++++++++++++++++++
+ security/integrity/ima/ima_template_lib.h | 13 ++++++
+ 5 files changed, 111 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-index 90987d1..e675e42 100644
---- a/security/integrity/integrity_audit.c
-+++ b/security/integrity/integrity_audit.c
-@@ -13,6 +13,7 @@
- #include <linux/fs.h>
- #include <linux/gfp.h>
- #include <linux/audit.h>
-+#include <linux/proc_ns.h>
- #include "integrity.h"
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 370eb2f..7331ff6 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -219,3 +219,11 @@ config IMA_APPRAISE_SIGNED_INIT
+ 	default n
+ 	help
+ 	   This option requires user-space init to be signed.
++
++config IMA_PER_NAMESPACE
++	bool "Enable per mount-namespace handling of IMA policy."
++	depends on IMA
++	default n
++	help
++	    This option enables another API in securityfs allowing IMA policies to
++	    be defined per mount namespace.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index b563fbd..42fb91ba 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -47,7 +47,19 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+ #define IMA_TEMPLATE_NUM_FIELDS_MAX	15
  
- static int integrity_audit_info;
-@@ -52,8 +53,12 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 	audit_log_format(ab, " comm=");
- 	audit_log_untrustedstring(ab, get_task_comm(name, current));
- 	if (fname) {
-+		struct ns_common *ns;
- 		audit_log_format(ab, " name=");
- 		audit_log_untrustedstring(ab, fname);
-+		ns = mntns_operations.get(current);
-+		audit_log_format(ab, " mnt_ns=%u", ns->inum);
-+		mntns_operations.put(ns);
- 	}
- 	if (inode) {
- 		audit_log_format(ab, " dev=");
+ #define IMA_TEMPLATE_IMA_NAME "ima"
++#define IMA_TEMPLATE_IMA_NG_NAME "ima-ng"
++#define IMA_TEMPLATE_IMA_SIG_NAME "ima-sig"
++
++#ifndef CONFIG_IMA_PER_NAMESPACE
+ #define IMA_TEMPLATE_IMA_FMT "d|n"
++#define IMA_TEMPLATE_IMA_NG_FMT "d-ng|n-ng"
++#define IMA_TEMPLATE_IMA_SIG_FMT "d-ng|n-ng|sig"
++#else
++#define IMA_TEMPLATE_IMA_FMT "nid|fi|dev|d|n"
++#define IMA_TEMPLATE_IMA_NG_FMT "nid|fi|dev|d-ng|n-ng"
++#define IMA_TEMPLATE_IMA_SIG_FMT "nid|fi|dev|d-ng|n-ng|sig"
++#endif
++
+ 
+ /* current content of the policy */
+ extern int ima_policy_flag;
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index cebb37c..db65c09 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -21,8 +21,8 @@
+ 
+ static struct ima_template_desc builtin_templates[] = {
+ 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
+-	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
+-	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
++	{.name = IMA_TEMPLATE_IMA_NG_NAME, .fmt = IMA_TEMPLATE_IMA_NG_FMT},
++	{.name = IMA_TEMPLATE_IMA_SIG_NAME, .fmt = IMA_TEMPLATE_IMA_SIG_FMT},
+ 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
+ };
+ 
+@@ -40,6 +40,12 @@ static struct ima_template_field supported_fields[] = {
+ 	 .field_show = ima_show_template_string},
+ 	{.field_id = "sig", .field_init = ima_eventsig_init,
+ 	 .field_show = ima_show_template_sig},
++	{.field_id = "nid", .field_init = ima_namespaceid_init,
++	 .field_show = ima_show_namespaceid},
++	{.field_id = "fi", .field_init = ima_filei_init,
++	 .field_show = ima_show_filei},
++	{.field_id = "dev", .field_init = ima_dev_init,
++	 .field_show = ima_show_dev},
+ };
+ #define MAX_TEMPLATE_NAME_LEN 15
+ 
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index f9ba37b..50cde10 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -14,6 +14,8 @@
+  */
+ 
+ #include "ima_template_lib.h"
++#include <linux/proc_ns.h>
++#include <linux/types.h>
+ 
+ static bool ima_template_hash_algo_allowed(u8 algo)
+ {
+@@ -330,3 +332,71 @@ int ima_eventsig_init(struct ima_event_data *event_data,
+ out:
+ 	return rc;
+ }
++
++int ima_namespaceid_init(struct ima_event_data *event_data,
++			 struct ima_field_data *field_data)
++{
++	u8 tmpbuf[64];
++	struct ns_common *ns;
++
++	ns = mntns_operations.get(current);
++	snprintf(tmpbuf, sizeof(tmpbuf), "mnt-ns=%u", ns->inum);
++	mntns_operations.put(ns);
++
++	return ima_write_template_field_data(tmpbuf, strlen(tmpbuf), DATA_FMT_STRING, field_data);
++}
++
++void ima_show_namespaceid(struct seq_file *m, enum ima_show_type show,
++							struct ima_field_data *field_data)
++{
++	ima_show_template_field_data(m, show, DATA_FMT_STRING, field_data);
++}
++
++int ima_filei_init(struct ima_event_data *event_data,
++			 struct ima_field_data *field_data)
++{
++	u8 tmpbuf[64];
++	struct inode *inode;
++	int rc = 0;
++
++	if (event_data->file) {
++		inode = file_inode(event_data->file);
++		snprintf(tmpbuf, sizeof(tmpbuf), "inode=%lu", inode->i_ino);
++		rc = ima_write_template_field_data(tmpbuf, strlen(tmpbuf), DATA_FMT_STRING, field_data);
++	} else {
++		pr_info("IMA: event file is NULL\n");
++	}
++
++	return rc;
++}
++
++void ima_show_filei(struct seq_file *m, enum ima_show_type show,
++						struct ima_field_data *field_data)
++{
++	ima_show_template_field_data(m, show, DATA_FMT_STRING, field_data);
++}
++
++int ima_dev_init(struct ima_event_data *event_data,
++			 struct ima_field_data *field_data)
++{
++	u8 tmpbuf[64];
++	struct inode *inode;
++	int rc = 0;
++
++	if (event_data->file) {
++		inode = file_inode(event_data->file);
++		snprintf(tmpbuf, sizeof(tmpbuf), "dev=%s", inode->i_sb->s_id); //TODO: check untrusted string? see audit_log_n_untrustedstring()
++		tmpbuf[sizeof(tmpbuf) - 1] = 0;
++		rc = ima_write_template_field_data(tmpbuf, strlen(tmpbuf), DATA_FMT_STRING, field_data);
++	} else {
++		pr_info("IMA: event file is NULL\n");
++	}
++
++	return rc;
++}
++
++void ima_show_dev(struct seq_file *m, enum ima_show_type show,
++					struct ima_field_data *field_data)
++{
++	ima_show_template_field_data(m, show, DATA_FMT_STRING, field_data);
++}
+diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+index c344530..cf6a6c7 100644
+--- a/security/integrity/ima/ima_template_lib.h
++++ b/security/integrity/ima/ima_template_lib.h
+@@ -26,6 +26,12 @@ void ima_show_template_string(struct seq_file *m, enum ima_show_type show,
+ 			      struct ima_field_data *field_data);
+ void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
+ 			   struct ima_field_data *field_data);
++void ima_show_namespaceid(struct seq_file *m, enum ima_show_type show,
++		       struct ima_field_data *field_data);
++void ima_show_filei(struct seq_file *m, enum ima_show_type show,
++		       struct ima_field_data *field_data);
++void ima_show_dev(struct seq_file *m, enum ima_show_type show,
++		       struct ima_field_data *field_data);
+ int ima_eventdigest_init(struct ima_event_data *event_data,
+ 			 struct ima_field_data *field_data);
+ int ima_eventname_init(struct ima_event_data *event_data,
+@@ -36,4 +42,11 @@ int ima_eventname_ng_init(struct ima_event_data *event_data,
+ 			  struct ima_field_data *field_data);
+ int ima_eventsig_init(struct ima_event_data *event_data,
+ 		      struct ima_field_data *field_data);
++int ima_namespaceid_init(struct ima_event_data *event_data,
++		      struct ima_field_data *field_data);
++int ima_filei_init(struct ima_event_data *event_data,
++		      struct ima_field_data *field_data);
++int ima_dev_init(struct ima_event_data *event_data,
++		      struct ima_field_data *field_data);
++
+ #endif /* __LINUX_IMA_TEMPLATE_LIB_H */
 -- 
 2.7.4
 
