@@ -1,266 +1,304 @@
 From: guilherme.magalhaes@hpe.com (Guilherme Magalhaes)
-Date: Thu, 11 May 2017 10:59:56 -0300
-Subject: [RFC 04/11] ima: add support to namespace securityfs file
+Date: Thu, 11 May 2017 10:59:57 -0300
+Subject: [RFC 05/11] ima: store new namespace policy structure in a radix tree
 In-Reply-To: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
 References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-Message-ID: <1494511203-8397-5-git-send-email-guilherme.magalhaes@hpe.com>
+Message-ID: <1494511203-8397-6-git-send-email-guilherme.magalhaes@hpe.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Creating the namespace securityfs file under ima folder. When a mount
-namespace id is written to the namespace file, a new folder is created and
-with a policy file for that specified namespace. Then, user defined policy
-for namespaces may be set by writing rules to this namespace policy file.
-With this interface, there is no need to give visibility for the securityfs
-inside mount namespaces or containers in userspace.
+New ima_ns_policy structure to describe IMA policy data per namespace.
+Using a radix tree to map namespace ids to a respective ima_ns_policy
+structure.
+When it is needed to retrieve IMA policy rules/flags, the target
+ima_ns_policy structure is retrieved from the radix tree by getting the
+namespace id from the current context.
 
 Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
 ---
- security/integrity/ima/ima.h    |   4 +
- security/integrity/ima/ima_fs.c | 183 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 187 insertions(+)
+ security/integrity/ima/ima.h        | 37 +++++++++++++++++
+ security/integrity/ima/ima_fs.c     | 79 ++++++++++++++++++++++++++++++++++---
+ security/integrity/ima/ima_init.c   |  2 +
+ security/integrity/ima/ima_policy.c | 29 +++++++++-----
+ 4 files changed, 133 insertions(+), 14 deletions(-)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 42fb91ba..6e8ca8e 100644
+index 6e8ca8e..1c5c875 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -326,4 +326,8 @@ static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
- #define	POLICY_FILE_FLAGS	S_IWUSR
- #endif /* CONFIG_IMA_WRITE_POLICY */
+@@ -140,6 +140,21 @@ static inline void ima_load_kexec_buffer(void) {}
+  */
+ extern bool ima_canonical_fmt;
  
++/* Namespace policy globals */
++struct ima_ns_policy {
++	struct dentry *policy_dentry;
++	struct dentry *ns_dentry;
++	struct list_head *ima_rules;
++	struct list_head ima_policy_rules;
++	int ima_policy_flag;
++	int ima_appraise;
++};
++
 +#ifdef CONFIG_IMA_PER_NAMESPACE
-+#define NAMESPACES_FILE_FLAGS  S_IWUSR
++extern spinlock_t ima_ns_policy_lock;
++extern struct radix_tree_root ima_ns_policy_mapping;
 +#endif
 +
- #endif /* __LINUX_IMA_H */
+ /* Internal IMA function definitions */
+ int ima_init(void);
+ int ima_fs_init(void);
+@@ -166,6 +181,27 @@ int ima_measurements_show(struct seq_file *m, void *v);
+ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
++#ifdef CONFIG_IMA_PER_NAMESPACE
++static inline void ima_namespace_lock_init(void) {
++	spin_lock_init(&ima_ns_policy_lock);
++}
++static inline void ima_namespace_lock(void) {
++	spin_lock(&ima_ns_policy_lock);
++}
++static inline void ima_namespace_unlock(void) {
++	spin_unlock(&ima_ns_policy_lock);
++}
++#else
++static inline void ima_namespace_lock_init(void) {
++	return;
++}
++static inline void ima_namespace_lock(void) {
++	return;
++}
++static inline void ima_namespace_unlock(void) {
++	return;
++}
++#endif
+ 
+ /*
+  * used to protect h_table and sha_table
+@@ -226,6 +262,7 @@ void ima_update_policy(void);
+ void ima_update_policy_flag(void);
+ ssize_t ima_parse_add_rule(char *);
+ void ima_delete_rules(void);
++void ima_free_policy_rules(struct list_head *policy_rules);
+ int ima_check_policy(void);
+ void *ima_policy_start(struct seq_file *m, loff_t *pos);
+ void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos);
 diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ca303e5..6456407 100644
+index 6456407..ce6dcdf 100644
 --- a/security/integrity/ima/ima_fs.c
 +++ b/security/integrity/ima/ima_fs.c
-@@ -23,6 +23,8 @@
- #include <linux/rcupdate.h>
- #include <linux/parser.h>
- #include <linux/vmalloc.h>
-+#include <linux/proc_ns.h>
-+#include <linux/radix-tree.h>
- 
- #include "ima.h"
- 
-@@ -272,6 +274,40 @@ static const struct file_operations ima_ascii_measurements_ops = {
- 	.release = seq_release,
+@@ -275,6 +275,48 @@ static const struct file_operations ima_ascii_measurements_ops = {
  };
  
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+/*
-+ * check_mntns: check a mount namespace is valid
-+ *
-+ * @ns_id: namespace id to be checked
-+ * Returns 0 if the namespace is valid.
-+ *
-+ * Note: a better way to implement this check is needed. There are
-+ * cases where the namespace id is valid but not in use by any process
-+ * and then this implementation misses this case. Could we use an
-+ * interface similar to what setns implements?
-+ */
-+static int check_mntns(unsigned int ns_id)
-+{
-+	struct task_struct *p;
-+	int result = 1;
-+	struct ns_common *ns;
+ #ifdef CONFIG_IMA_PER_NAMESPACE
++/* used for namespace policy rules initialization */
++static LIST_HEAD(empty_policy);
 +
-+	rcu_read_lock();
-+	for_each_process(p) {
-+		ns = mntns_operations.get(p);
-+		if (ns->inum == ns_id) {
-+			result = 0;
-+			mntns_operations.put(ns);
-+			break;
-+		}
-+		mntns_operations.put(ns);
-+	}
-+	rcu_read_unlock();
-+
-+	return result;
-+}
-+#endif
-+
- static ssize_t ima_read_policy(char *path)
- {
- 	void *data;
-@@ -366,6 +402,9 @@ static struct dentry *ascii_runtime_measurements;
- static struct dentry *runtime_measurements_count;
- static struct dentry *violations;
- static struct dentry *ima_policy;
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+static struct dentry *ima_namespaces;
-+#endif
- 
- enum ima_fs_flags {
- 	IMA_FS_BUSY,
-@@ -451,6 +490,139 @@ static const struct file_operations ima_measure_policy_ops = {
- 	.llseek = generic_file_llseek,
- };
- 
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+/*
-+ * Assumes namespace id is in use by some process and this mapping
-+ * does not exist in the map table.
-+ */
-+static int create_mnt_ns_directory(unsigned int ns_id)
++static int allocate_namespace_policy(struct ima_ns_policy **ins,
++		struct dentry *policy_dentry, struct dentry *ns_dentry)
 +{
 +	int result;
-+	struct dentry *ns_dir, *ns_policy;
-+	char dir_name[64];
++	struct ima_ns_policy *p;
 +
-+	snprintf(dir_name, sizeof(dir_name), "%u", ns_id);
-+
-+	ns_dir = securityfs_create_dir(dir_name, ima_dir);
-+	if (IS_ERR(ns_dir)) {
-+		result = PTR_ERR(ns_dir);
++	p = kmalloc(sizeof(struct ima_ns_policy), GFP_KERNEL);
++	if (!p) {
++		result = -ENOMEM;
 +		goto out;
 +	}
 +
-+	ns_policy = securityfs_create_file("policy", POLICY_FILE_FLAGS,
-+		                                ns_dir, NULL,
-+		                                &ima_measure_policy_ops);
-+	if (IS_ERR(ns_policy)) {
-+		result = PTR_ERR(ns_policy);
-+		securityfs_remove(ns_dir);
-+		goto out;
-+	}
++	p->policy_dentry = policy_dentry;
++	p->ns_dentry = ns_dentry;
++	p->ima_appraise = 0;
++	p->ima_policy_flag = 0;
++	INIT_LIST_HEAD(&p->ima_policy_rules);
++	/* namespace starts with empty rules and not pointing to
++	 * ima_policy_rules */
++	p->ima_rules = &empty_policy;
 +
 +	result = 0;
++	*ins = p;
 +
 +out:
 +	return result;
 +}
 +
-+static ssize_t handle_new_namespace_policy(const char *data, size_t datalen)
++static void free_namespace_policy(struct ima_ns_policy *ins)
 +{
-+	unsigned int ns_id;
-+	ssize_t result;
++	if (ins->policy_dentry)
++		securityfs_remove(ins->policy_dentry);
++	securityfs_remove(ins->ns_dentry);
 +
-+	result = -EINVAL;
++	ima_free_policy_rules(&ins->ima_policy_rules);
 +
-+	if (sscanf(data, "%u", &ns_id) != 1) {
-+		pr_err("IMA: invalid namespace id: %s\n", data);
-+		goto out;
-+	}
-+
-+	if (check_mntns(ns_id)) {
-+		result = -ENOENT;
-+		pr_err("IMA: unused namespace id %u\n", ns_id);
-+		goto out;
-+	}
-+
-+	result = create_mnt_ns_directory(ns_id);
-+	if (result != 0) {
-+		pr_err("IMA: namespace id %u directory creation failed\n", ns_id);
-+		goto out;
-+	}
-+
-+	result = datalen;
-+	pr_info("IMA: directory created for namespace id %u\n", ns_id);
-+
-+out:
-+	return result;
++	kfree(ins);
 +}
 +
-+static ssize_t ima_write_namespaces(struct file *file, const char __user *buf,
-+		                            size_t datalen, loff_t *ppos)
-+{
-+	char *data;
-+	ssize_t result;
+ /*
+  * check_mntns: check a mount namespace is valid
+  *
+@@ -476,9 +518,11 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+ #ifndef	CONFIG_IMA_WRITE_POLICY
+ 	securityfs_remove(ima_policy);
+ 	ima_policy = NULL;
+-#else
+-	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
+ #endif
 +
-+	if (datalen >= PAGE_SIZE)
-+		datalen = PAGE_SIZE - 1;
-+
-+	/* No partial writes. */
-+	result = -EINVAL;
-+	if (*ppos != 0)
-+		goto out;
-+
-+	result = -ENOMEM;
-+	data = kmalloc(datalen + 1, GFP_KERNEL);
-+	if (!data)
-+		goto out;
-+
-+	*(data + datalen) = '\0';
-+
-+	result = -EFAULT;
-+	if (copy_from_user(data, buf, datalen))
-+		goto out_free;
-+
-+	result = mutex_lock_interruptible(&ima_write_mutex);
-+	if (result < 0)
-+		goto out_free;
-+
-+	result = handle_new_namespace_policy(data, datalen);
-+
-+	mutex_unlock(&ima_write_mutex);
-+
-+out_free:
-+	kfree(data);
-+out:
-+	return result;
-+}
-+
-+static int ima_open_namespaces(struct inode *inode, struct file *filp)
-+{
-+	if (!(filp->f_flags & O_WRONLY))
-+		return -EACCES;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (test_and_set_bit(IMA_FS_BUSY, &ima_fs_flags))
-+		return -EBUSY;
-+	return 0;
-+}
-+
-+static int ima_release_namespaces(struct inode *inode, struct file *file)
-+{
++	/* always clear the busy flag so other namespaces can use it */
 +	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
 +
-+	return 0;
-+}
-+
-+static const struct file_operations ima_namespaces_ops = {
-+		.open = ima_open_namespaces,
-+		.write = ima_write_namespaces,
-+		.read = seq_read,
-+		.release = ima_release_namespaces,
-+		.llseek = generic_file_llseek,
-+};
-+#endif
-+
- int __init ima_fs_init(void)
- {
- 	ima_dir = securityfs_create_dir("ima", NULL);
-@@ -490,6 +662,14 @@ int __init ima_fs_init(void)
- 	if (IS_ERR(ima_policy))
+ 	return 0;
+ }
+ 
+@@ -500,11 +544,14 @@ static int create_mnt_ns_directory(unsigned int ns_id)
+ 	int result;
+ 	struct dentry *ns_dir, *ns_policy;
+ 	char dir_name[64];
++	struct ima_ns_policy *ins;
+ 
+ 	snprintf(dir_name, sizeof(dir_name), "%u", ns_id);
+ 
+ 	ns_dir = securityfs_create_dir(dir_name, ima_dir);
+ 	if (IS_ERR(ns_dir)) {
++		/* TODO: handle EEXIST error, remove the folder and
++		continue the procedure */
+ 		result = PTR_ERR(ns_dir);
  		goto out;
+ 	}
+@@ -518,7 +565,15 @@ static int create_mnt_ns_directory(unsigned int ns_id)
+ 		goto out;
+ 	}
+ 
+-	result = 0;
++	result = allocate_namespace_policy(&ins, ns_policy, ns_dir);
++	if (!result) {
++		result = radix_tree_insert(&ima_ns_policy_mapping, ns_id, ins);
++		if (result)
++			free_namespace_policy(ins);
++	} else {
++		securityfs_remove(ns_policy);
++		securityfs_remove(ns_dir);
++	}
+ 
+ out:
+ 	return result;
+@@ -528,6 +583,7 @@ static ssize_t handle_new_namespace_policy(const char *data, size_t datalen)
+ {
+ 	unsigned int ns_id;
+ 	ssize_t result;
++	struct ima_ns_policy *ins;
+ 
+ 	result = -EINVAL;
+ 
+@@ -536,21 +592,34 @@ static ssize_t handle_new_namespace_policy(const char *data, size_t datalen)
+ 		goto out;
+ 	}
+ 
++	rcu_read_lock();
++	ins = radix_tree_lookup(&ima_ns_policy_mapping, ns_id);
++	rcu_read_unlock();
++	if (ins) {
++		pr_info("IMA: directory for namespace id %u already created\n", ns_id);
++		result = datalen;
++		goto out;
++	}
++
++	ima_namespace_lock();
+ 	if (check_mntns(ns_id)) {
+ 		result = -ENOENT;
+ 		pr_err("IMA: unused namespace id %u\n", ns_id);
+-		goto out;
++		goto out_unlock;
+ 	}
+ 
+ 	result = create_mnt_ns_directory(ns_id);
+ 	if (result != 0) {
+ 		pr_err("IMA: namespace id %u directory creation failed\n", ns_id);
+-		goto out;
++		goto out_unlock;
+ 	}
+ 
+ 	result = datalen;
+ 	pr_info("IMA: directory created for namespace id %u\n", ns_id);
+ 
++out_unlock:
++	ima_namespace_unlock();
++
+ out:
+ 	return result;
+ }
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 2967d49..b557ee3 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -135,6 +135,8 @@ int __init ima_init(void)
+ 	if (rc != 0)
+ 		return rc;
+ 
++	ima_namespace_lock_init();
++
+ 	ima_init_policy();
+ 
+ 	return ima_fs_init();
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index aed47b7..2e8c3b7 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -47,6 +47,12 @@
+ int ima_policy_flag;
+ static int temp_ima_appraise;
  
 +#ifdef CONFIG_IMA_PER_NAMESPACE
-+	ima_namespaces = securityfs_create_file("namespaces", NAMESPACES_FILE_FLAGS,
-+						ima_dir, NULL,
-+						&ima_namespaces_ops);
-+	if (IS_ERR(ima_namespaces))
-+		goto out;
++/* policy namespace map entries except the initial namespace policy */
++RADIX_TREE(ima_ns_policy_mapping, GFP_ATOMIC);
++spinlock_t ima_ns_policy_lock;
 +#endif
 +
- 	return 0;
- out:
- 	securityfs_remove(violations);
-@@ -498,5 +678,8 @@ int __init ima_fs_init(void)
- 	securityfs_remove(binary_runtime_measurements);
- 	securityfs_remove(ima_dir);
- 	securityfs_remove(ima_policy);
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+	securityfs_remove(ima_namespaces);
-+#endif
- 	return -1;
+ #define MAX_LSM_RULES 6
+ enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
+ 	LSM_SUBJ_USER, LSM_SUBJ_ROLE, LSM_SUBJ_TYPE
+@@ -863,19 +869,12 @@ ssize_t ima_parse_add_rule(char *rule)
+ 	return len;
  }
+ 
+-/**
+- * ima_delete_rules() called to cleanup invalid in-flight policy.
+- * We don't need locking as we operate on the temp list, which is
+- * different from the active one.  There is also only one user of
+- * ima_delete_rules() at a time.
+- */
+-void ima_delete_rules(void)
++void ima_free_policy_rules(struct list_head *policy_rules)
+ {
+ 	struct ima_rule_entry *entry, *tmp;
+ 	int i;
+ 
+-	temp_ima_appraise = 0;
+-	list_for_each_entry_safe(entry, tmp, &ima_temp_rules, list) {
++	list_for_each_entry_safe(entry, tmp, policy_rules, list) {
+ 		for (i = 0; i < MAX_LSM_RULES; i++)
+ 			kfree(entry->lsm[i].args_p);
+ 
+@@ -884,6 +883,18 @@ void ima_delete_rules(void)
+ 	}
+ }
+ 
++/**
++ * ima_delete_rules() called to cleanup invalid in-flight policy.
++ * We don't need locking as we operate on the temp list, which is
++ * different from the active one.  There is also only one user of
++ * ima_delete_rules() at a time.
++ */
++void ima_delete_rules(void)
++{
++	temp_ima_appraise = 0;
++	ima_free_policy_rules(&ima_temp_rules);
++}
++
+ #ifdef	CONFIG_IMA_READ_POLICY
+ enum {
+ 	mask_exec = 0, mask_write, mask_read, mask_append
 -- 
 2.7.4
 
