@@ -1,145 +1,415 @@
-From: guilherme.magalhaes@hpe.com (Guilherme Magalhaes)
-Date: Thu, 11 May 2017 11:15:46 -0300
-Subject: [RFC 11/11] ima: appraise mode per namespace with new enforce_ns
-	appraise mode
-Message-ID: <1494512146-8562-1-git-send-email-guilherme.magalhaes@hpe.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 11 May 2017 08:56:14 -0700
+Subject: [PATCH v3 1/2] selinux: add brief info to policydb
+In-Reply-To: <1494507551-4643-1-git-send-email-sbuisson@ddn.com>
+References: <1494507551-4643-1-git-send-email-sbuisson@ddn.com>
+Message-ID: <2161c45f-dd29-8269-2bb1-5d5afa78104b@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Global ima_appraise renamed to ima_appraise_mode and it saves the initial
-appraise mode. It is used to initialize the ima_appraise ima_ns_policy field
-when the policy is defined by user the first time for a namespace.
-New 'enforce_ns' appraise mode created. On this new appraise mode, the initial
-appraise mode works in 'enforce' mode, but for new namespaces the appraise
-mode is set to 'fix' until a policy is defined for the new namespace and then
-the appraise mode is automatically set to 'enforce'.
-This new mode is useful to keep the initial namespace appraise mode clearly in
-'enforce' mode while namespaces can set their appraise modes separatedly.
+On 5/11/2017 5:59 AM, Sebastien Buisson wrote:
+> Add policybrief field to struct policydb. It holds a brief info
+> of the policydb, in the following form:
+> <0 or 1 for enforce>:<0 or 1 for checkreqprot>:<hashalg>=<checksum>
+> Policy brief is computed every time the policy is loaded, and when
+> enforce or checkreqprot are changed.
+>
+> Add security_policy_brief hook to give access to policy brief to
+> the rest of the kernel. Lustre client makes use of this information
+> to detect changes to the policy, and forward it to Lustre servers.
+> Depending on how the policy is enforced on Lustre client side,
+> Lustre servers can refuse connection.
+>
+> Signed-off-by: Sebastien Buisson <sbuisson@ddn.com>
+> ---
+>  include/linux/lsm_hooks.h           | 16 ++++++++
+>  include/linux/security.h            |  7 ++++
+>  security/security.c                 |  6 +++
+>  security/selinux/hooks.c            |  7 ++++
+>  security/selinux/include/security.h |  2 +
+>  security/selinux/selinuxfs.c        |  2 +
+>  security/selinux/ss/policydb.c      | 76 +++++++++++++++++++++++++++++++++++++
+>  security/selinux/ss/policydb.h      |  2 +
+>  security/selinux/ss/services.c      | 62 ++++++++++++++++++++++++++++++
+>  9 files changed, 180 insertions(+)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 080f34e..9cac282 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1336,6 +1336,20 @@
+>   *	@inode we wish to get the security context of.
+>   *	@ctx is a pointer in which to place the allocated security context.
+>   *	@ctxlen points to the place to put the length of @ctx.
+> + *
+> + * Security hooks for policy brief
+> + *
+> + * @policy_brief:
+> + *
+> + *	Returns a string containing a brief info of the policydb, in the
+> + *	following form:
+> + *	<0 or 1 for enforce>:<0 or 1 for checkreqprot>:<hashalg>=<checksum>
 
-Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
----
- security/integrity/ima/ima.h          |  6 +++++-
- security/integrity/ima/ima_appraise.c | 11 +++++++----
- security/integrity/ima/ima_fs.c       |  7 ++++++-
- security/integrity/ima/ima_main.c     |  4 ++--
- security/integrity/ima/ima_policy.c   | 13 +++++++++++--
- 5 files changed, 31 insertions(+), 10 deletions(-)
+This sure looks like SELinux specific information. If the Spiffy
+security module has multiple values for enforcement (e.g. off,
+soft and hard) this interface definition does not work. What is a
+"checkreqprot", and what is it for?
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index fd5cfe9..9d451fd 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -65,7 +65,7 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
- extern int ima_initialized;
- extern int ima_used_chip;
- extern int ima_hash_algo;
--extern int ima_appraise;
-+extern int ima_appraise_mode;
- 
- /* IMA event related data */
- struct ima_event_data {
-@@ -278,6 +278,10 @@ int ima_policy_show(struct seq_file *m, void *v);
- #define IMA_APPRAISE_MODULES	0x08
- #define IMA_APPRAISE_FIRMWARE	0x10
- #define IMA_APPRAISE_POLICY	0x20
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+#define IMA_APPRAISE_NAMESPACE 0x40
-+#define IMA_APPRAISE_ENFORCE_NS (IMA_APPRAISE_ENFORCE | IMA_APPRAISE_NAMESPACE)
-+#endif
- 
- 
- #ifdef CONFIG_IMA_APPRAISE
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 510bb2f..4b94c2a 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -21,12 +21,15 @@
- static int __init default_appraise_setup(char *str)
- {
- 	if (strncmp(str, "off", 3) == 0)
--		ima_appraise = 0;
-+		ima_appraise_mode = 0;
- 	else if (strncmp(str, "log", 3) == 0)
--		ima_appraise = IMA_APPRAISE_LOG;
-+		ima_appraise_mode = IMA_APPRAISE_LOG;
- 	else if (strncmp(str, "fix", 3) == 0)
--		ima_appraise = IMA_APPRAISE_FIX;
--
-+		ima_appraise_mode = IMA_APPRAISE_FIX;
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+	else if (strncmp(str, "enforce_ns", 10) == 0)
-+		ima_appraise_mode = IMA_APPRAISE_ENFORCE_NS;
-+#endif
- 	return 1;
- }
- 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index bc18722..91cafb5 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -308,7 +308,12 @@ static int allocate_namespace_policy(struct ima_ns_policy **ins,
- 
- 	p->policy_dentry = policy_dentry;
- 	p->ns_dentry = ns_dentry;
--	p->ima_appraise = ima_appraise;
-+	if (ima_appraise_mode == IMA_APPRAISE_ENFORCE_NS)
-+		/* For now, on the enforce_ns mode, a new namespace starts in
-+		 * fix mode */
-+		p->ima_appraise = IMA_APPRAISE_FIX;
-+	else
-+		p->ima_appraise = ima_appraise_mode;
- 	p->ima_policy_flag = 0;
- 	INIT_LIST_HEAD(&p->ima_policy_rules);
- 	/* namespace starts with empty rules and not pointing to
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 1b995bb..1938c74 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -31,9 +31,9 @@ int ima_initialized;
- 
- #ifdef CONFIG_IMA_APPRAISE
- /* Used during IMA initialization only */
--int ima_appraise = IMA_APPRAISE_ENFORCE;
-+int ima_appraise_mode = IMA_APPRAISE_ENFORCE;
- #else
--int ima_appraise;
-+int ima_appraise_mode;
- #endif
- 
- int ima_hash_algo = HASH_ALGO_SHA1;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 4ffb4ad..bd67a08 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -517,7 +517,7 @@ void __init ima_init_policy(void)
- 	ins = &ima_initial_namespace_policy;
- 
- 	ins->ima_rules = &ima_default_rules;
--	ins->ima_appraise = ima_appraise;
-+	ins->ima_appraise = ima_appraise_mode;
- 
- 	ima_update_policy_flag(ins);
- 	temp_ima_appraise = 0;
-@@ -564,7 +564,16 @@ void ima_update_policy(struct ima_ns_policy *ins)
- 	if (ins->ima_rules != policy) {
- 		ins->ima_policy_flag = 0;
- 		ins->ima_rules = policy;
--		ins->ima_appraise = ima_appraise;
-+		ins->ima_appraise = ima_appraise_mode;
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+		if (ins != &ima_initial_namespace_policy &&
-+				ima_appraise_mode == IMA_APPRAISE_ENFORCE_NS) {
-+			/* For now, on the enforce_ns mode, switch to enforce mode
-+			 * when new policy is set for a namespace and for the first
-+			 * time */
-+			ins->ima_appraise = IMA_APPRAISE_ENFORCE;
-+		}
-+#endif
- 	}
- 
- 	ima_update_policy_flag(ins);
--- 
-2.7.4
+I expect that you have no interest (or incentive) in supporting
+security modules other than SELinux, and that's OK. What's I'm
+after is an interface that another security module could use if
+someone where interested (or inspired) to do so.
+
+Rather than a string with predefined positional values (something
+I was taught not to do when 1 MIPS and 1 MEG was a big computer)
+you might use "enforce=<value>:checkreqprot=<value>:hashalg=<checksum>"
+for SELinux and define @policy_brief as
+
+	A string containing colon separated name and value pairs
+	that will be parsed and interpreted by the security module
+	or modules.
+
+You already have it right for the "hashalg" field. If you want to
+be really forward looking you could use names field names that
+identify the security module that uses them, such as
+
+	"selinux/enforce=1:selinux/checkreqprot=0:selinux/MD5=8675309"
+
+Note that I put "selinux/" onto the MD5 as well. You may have
+multiple modules that use this interface on a system at the same
+time in the not to distant future:
+
+	selinux/enforce=1:selinux/checkreqprot=0:
+	selinux/MD5=8675309:spiffy/enforce=soft:
+	spiffy/updatefreq=32544:spiffy/SHA256=84521
+
+If you deal with this now it won't be a major headache to deal with
+later.
+
+> + *
+> + *	@brief: pointer to buffer holding brief
+> + *	@len: in: brief buffer length if no alloc, out: brief string len
+> + *	@alloc: whether to allocate buffer for brief or not
+> + *	On success 0 is returned , or negative value on error.
+> + *
+>   * This is the main security structure.
+>   */
+>  
+> @@ -1568,6 +1582,7 @@
+>  	int (*inode_setsecctx)(struct dentry *dentry, void *ctx, u32 ctxlen);
+>  	int (*inode_getsecctx)(struct inode *inode, void **ctx, u32 *ctxlen);
+>  
+> +	int (*policy_brief)(char **brief, size_t *len, bool alloc);
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  	int (*unix_stream_connect)(struct sock *sock, struct sock *other,
+>  					struct sock *newsk);
+> @@ -1813,6 +1828,7 @@ struct security_hook_heads {
+>  	struct list_head inode_notifysecctx;
+>  	struct list_head inode_setsecctx;
+>  	struct list_head inode_getsecctx;
+> +	struct list_head policy_brief;
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  	struct list_head unix_stream_connect;
+>  	struct list_head unix_may_send;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index af675b5..3b72053 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -377,6 +377,8 @@ int security_sem_semop(struct sem_array *sma, struct sembuf *sops,
+>  int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+>  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+>  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+> +
+> +int security_policy_brief(char **brief, size_t *len, bool alloc);
+>  #else /* CONFIG_SECURITY */
+>  struct security_mnt_opts {
+>  };
+> @@ -1166,6 +1168,11 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> +
+> +static inline int security_policy_brief(char **brief, size_t *len, bool alloc)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+>  #endif	/* CONFIG_SECURITY */
+>  
+>  #ifdef CONFIG_SECURITY_NETWORK
+> diff --git a/security/security.c b/security/security.c
+> index b9fea39..954b391 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1285,6 +1285,12 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+>  }
+>  EXPORT_SYMBOL(security_inode_getsecctx);
+>  
+> +int security_policy_brief(char **brief, size_t *len, bool alloc)
+> +{
+> +	return call_int_hook(policy_brief, -EOPNOTSUPP, brief, len, alloc);
+> +}
+> +EXPORT_SYMBOL(security_policy_brief);
+> +
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  
+>  int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index e67a526..da245e8 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6063,6 +6063,11 @@ static int selinux_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+>  	*ctxlen = len;
+>  	return 0;
+>  }
+> +
+> +static int selinux_policy_brief(char **brief, size_t *len, bool alloc)
+> +{
+> +	return security_policydb_brief(brief, len, alloc);
+> +}
+>  #ifdef CONFIG_KEYS
+>  
+>  static int selinux_key_alloc(struct key *k, const struct cred *cred,
+> @@ -6277,6 +6282,8 @@ static int selinux_key_getsecurity(struct key *key, char **_buffer)
+>  	LSM_HOOK_INIT(inode_setsecctx, selinux_inode_setsecctx),
+>  	LSM_HOOK_INIT(inode_getsecctx, selinux_inode_getsecctx),
+>  
+> +	LSM_HOOK_INIT(policy_brief, selinux_policy_brief),
+> +
+>  	LSM_HOOK_INIT(unix_stream_connect, selinux_socket_unix_stream_connect),
+>  	LSM_HOOK_INIT(unix_may_send, selinux_socket_unix_may_send),
+>  
+> diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+> index f979c35..a0d4d7d 100644
+> --- a/security/selinux/include/security.h
+> +++ b/security/selinux/include/security.h
+> @@ -97,6 +97,8 @@ enum {
+>  int security_load_policy(void *data, size_t len);
+>  int security_read_policy(void **data, size_t *len);
+>  size_t security_policydb_len(void);
+> +int security_policydb_brief(char **brief, size_t *len, bool alloc);
+> +void security_policydb_update_info(u32 requested);
+>  
+>  int security_policycap_supported(unsigned int req_cap);
+>  
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 50062e7..8c9f5b7 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -159,6 +159,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+>  			from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>  			audit_get_sessionid(current));
+>  		selinux_enforcing = new_value;
+> +		security_policydb_update_info(SECURITY__SETENFORCE);
+>  		if (selinux_enforcing)
+>  			avc_ss_reset(0);
+>  		selnl_notify_setenforce(selinux_enforcing);
+> @@ -621,6 +622,7 @@ static ssize_t sel_write_checkreqprot(struct file *file, const char __user *buf,
+>  		goto out;
+>  
+>  	selinux_checkreqprot = new_value ? 1 : 0;
+> +	security_policydb_update_info(SECURITY__SETCHECKREQPROT);
+>  	length = count;
+>  out:
+>  	kfree(page);
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 0080122..58e73f5 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -32,11 +32,13 @@
+>  #include <linux/errno.h>
+>  #include <linux/audit.h>
+>  #include <linux/flex_array.h>
+> +#include <crypto/hash.h>
+>  #include "security.h"
+>  
+>  #include "policydb.h"
+>  #include "conditional.h"
+>  #include "mls.h"
+> +#include "objsec.h"
+>  #include "services.h"
+>  
+>  #define _DEBUG_HASHES
+> @@ -879,6 +881,8 @@ void policydb_destroy(struct policydb *p)
+>  	ebitmap_destroy(&p->filename_trans_ttypes);
+>  	ebitmap_destroy(&p->policycaps);
+>  	ebitmap_destroy(&p->permissive_map);
+> +
+> +	kfree(p->policybrief);
+>  }
+>  
+>  /*
+> @@ -2220,6 +2224,73 @@ static int ocontext_read(struct policydb *p, struct policydb_compat_info *info,
+>  }
+>  
+>  /*
+> + * Compute summary of a policy database binary representation file,
+> + * and store it into a policy database structure.
+> + */
+> +static int policydb_brief(struct policydb *policydb, void *ptr)
+> +{
+> +	struct policy_file *fp = ptr;
+> +	struct crypto_shash *tfm;
+> +	char hashalg[] = "sha256";
+> +	size_t hashsize;
+> +	u8 *hashval;
+> +	int idx;
+> +	unsigned char *p;
+> +
+> +	if (policydb->policybrief)
+> +		return -EINVAL;
+> +
+> +	tfm = crypto_alloc_shash(hashalg, 0, 0);
+> +	if (IS_ERR(tfm)) {
+> +		printk(KERN_ERR "Failed to alloc crypto hash %s\n", hashalg);
+> +		return PTR_ERR(tfm);
+> +	}
+> +
+> +	hashsize = crypto_shash_digestsize(tfm);
+> +	hashval = kmalloc(hashsize, GFP_KERNEL);
+> +	if (hashval == NULL) {
+> +		crypto_free_shash(tfm);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	{
+> +		int rc;
+> +
+> +		SHASH_DESC_ON_STACK(desc, tfm);
+> +		desc->tfm = tfm;
+> +		desc->flags = 0;
+> +		rc = crypto_shash_digest(desc, fp->data, fp->len, hashval);
+> +		crypto_free_shash(tfm);
+> +		if (rc) {
+> +			printk(KERN_ERR "Failed crypto_shash_digest: %d\n", rc);
+> +			kfree(hashval);
+> +			return rc;
+> +		}
+> +	}
+> +
+> +	/* policy brief is in the form:
+> +	 * <0 or 1 for enforce>:<0 or 1 for checkreqprot>:<hashalg>=<checksum>
+> +	 */
+> +	policydb->policybrief = kzalloc(5 + strlen(hashalg) + 2*hashsize + 1,
+> +					GFP_KERNEL);
+> +	if (policydb->policybrief == NULL) {
+> +		kfree(hashval);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	sprintf(policydb->policybrief, "%d:%d:%s=",
+> +		selinux_enforcing, selinux_checkreqprot, hashalg);
+> +	p = policydb->policybrief + strlen(policydb->policybrief);
+> +	for (idx = 0; idx < hashsize; idx++) {
+> +		snprintf(p, 3, "%02x", hashval[idx]);
+> +		p += 2;
+> +	}
+> +	kfree(hashval);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+>   * Read the configuration data from a policy database binary
+>   * representation file into a policy database structure.
+>   */
+> @@ -2238,6 +2309,11 @@ int policydb_read(struct policydb *p, void *fp)
+>  	if (rc)
+>  		return rc;
+>  
+> +	/* Compute summary of policy, and store it in policydb */
+> +	rc = policydb_brief(p, fp);
+> +	if (rc)
+> +		goto bad;
+> +
+>  	/* Read the magic number and string length. */
+>  	rc = next_entry(buf, fp, sizeof(u32) * 2);
+>  	if (rc)
+> diff --git a/security/selinux/ss/policydb.h b/security/selinux/ss/policydb.h
+> index 725d594..31689d2f 100644
+> --- a/security/selinux/ss/policydb.h
+> +++ b/security/selinux/ss/policydb.h
+> @@ -293,6 +293,8 @@ struct policydb {
+>  	size_t len;
+>  
+>  	unsigned int policyvers;
+> +	/* summary computed on the policy */
+> +	unsigned char *policybrief;
+>  
+>  	unsigned int reject_unknown : 1;
+>  	unsigned int allow_unknown : 1;
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index 60d9b02..3bbe649 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -2170,6 +2170,68 @@ size_t security_policydb_len(void)
+>  }
+>  
+>  /**
+> + * security_policydb_brief - Get policydb brief
+> + * @brief: pointer to buffer holding brief
+> + * @len: in: brief buffer length if no alloc, out: brief string len
+> + * @alloc: whether to allocate buffer for brief or not
+> + *
+> + * On success 0 is returned , or negative value on error.
+> + **/
+> +int security_policydb_brief(char **brief, size_t *len, bool alloc)
+> +{
+> +	size_t policybrief_len;
+> +
+> +	if (!ss_initialized || brief == NULL)
+> +		return -EINVAL;
+> +
+> +	read_lock(&policy_rwlock);
+> +	policybrief_len = strlen(policydb.policybrief);
+> +	read_unlock(&policy_rwlock);
+> +
+> +	if (alloc)
+> +		/* *brief must be kfreed by caller in this case */
+> +		*brief = kzalloc(policybrief_len + 1, GFP_KERNEL);
+> +	else
+> +		/*
+> +		 * if !alloc, caller must pass a buffer that
+> +		 * can hold policybrief_len+1 chars
+> +		 */
+> +		if (*len < policybrief_len + 1) {
+> +			/* put in *len the string size we need to write */
+> +			*len = policybrief_len;
+> +			return -ENAMETOOLONG;
+> +		}
+> +
+> +	if (*brief == NULL)
+> +		return -ENOMEM;
+> +
+> +	read_lock(&policy_rwlock);
+> +	*len = strlen(policydb.policybrief);
+> +	strncpy(*brief, policydb.policybrief, *len);
+> +	read_unlock(&policy_rwlock);
+> +
+> +	return 0;
+> +}
+> +
+> +void security_policydb_update_info(u32 requested)
+> +{
+> +	/* policy brief is in the form:
+> +	 * <0 or 1 for enforce>:<0 or 1 for checkreqprot>:<hashalg>=<checksum>
+> +	 */
+> +
+> +	if (!ss_initialized)
+> +		return;
+> +
+> +	/* update global policydb, needs write lock */
+> +	write_lock_irq(&policy_rwlock);
+> +	if (requested == SECURITY__SETENFORCE)
+> +		policydb.policybrief[0] = '0' + selinux_enforcing;
+> +	else if (requested == SECURITY__SETCHECKREQPROT)
+> +		policydb.policybrief[2] = '0' + selinux_checkreqprot;
+> +	write_unlock_irq(&policy_rwlock);
+> +}
+> +
+> +/**
+>   * security_port_sid - Obtain the SID for a port.
+>   * @protocol: protocol number
+>   * @port: port number
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
