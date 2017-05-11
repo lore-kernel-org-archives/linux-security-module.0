@@ -1,74 +1,68 @@
 From: guilherme.magalhaes@hpe.com (Guilherme Magalhaes)
-Date: Thu, 11 May 2017 11:00:01 -0300
-Subject: [RFC 09/11] ima: delete namespace policy securityfs file in
-	write-once mode
-In-Reply-To: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-Message-ID: <1494511203-8397-10-git-send-email-guilherme.magalhaes@hpe.com>
+Date: Thu, 11 May 2017 10:59:52 -0300
+Subject: [RFC 00/11] ima: namespace support for IMA policy
+Message-ID: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When policy file is written and write-once is enabled, the policy file
-must be deleted. Select the namespace policy structure to get the correct
-policy file descriptor.
+The IMA policy rules and policy/appraise flags are now encapsulated on a new
+structure which completely describes the policy for a given namespace. The 
+correct namespace structure is retrieved from a radix tree based on the 
+namespace id in use by the process in the context whenever the IMA policy 
+rules or flags are needed. The existent securityfs interface is reused to 
+define policy per namespace. A new namespace file is used to create a 
+folder for a given namespace id with a policy file which can then be used 
+to define rules for that namespace.
 
-Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
----
- security/integrity/ima/ima_fs.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+Patches 1, 2 and 4 qualify the file pathname considering multiple namespaces.
+Patch 3 adds a new kernel config which enables all the policy per namespace 
+functionality.
+Patch 5 adds the namespace securityfs file which is the interface to define
+IMA policy per namespace. New policy file is creanted for each namespace and
+the policy securityfs mechanism is completely reused.
+Patche 7 adds a hook to fs/namespace.c to automatically delete all namespace
+IMA policy resources such as radix tree entry and securityfs files.
+Patches 8, 10, 11 and 14 are small implementation details
+Patches 6, 9, 12 are key changes to encapsulate all policy rules and flags in
+a structure per namespace. The correct structure is retrieved for the target
+namespace and the namespace rules are used on that context.
+Patch 13 adds the enforce_ns appraise mode which enables different appraise 
+modes per namespace.
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 65c43e7..94e89fe 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -575,6 +575,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
- static int ima_release_policy(struct inode *inode, struct file *file)
- {
- 	const char *cause = valid_policy ? "completed" : "failed";
-+	struct ima_ns_policy *ins;
- 
- 	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
- 		return seq_release(inode, file);
-@@ -595,15 +596,37 @@ static int ima_release_policy(struct inode *inode, struct file *file)
- 		return 0;
- 	}
- 
-+	/* get the namespace id from file->inode (policy file inode).
-+	 * We also need to synchronize this operation with concurrent namespace
-+	 * releasing. */
-+	ima_namespace_lock();
-+	ins = ima_get_namespace_policy_from_inode(inode);
-+	if (!ins) {
-+		/* the namespace is not valid anymore, discard new policy
-+		 * rules and exit */
-+		ima_delete_rules();
-+		valid_policy = 1;
-+		clear_bit(IMA_FS_BUSY, &ima_fs_flags);
-+		ima_namespace_unlock();
-+		return 0;
-+	}
-+
- 	ima_update_policy();
- #ifndef	CONFIG_IMA_WRITE_POLICY
--	securityfs_remove(ima_policy_initial_ns);
--	ima_policy = NULL;
-+	if (ins == &ima_initial_namespace_policy) {
-+		securityfs_remove(ima_policy_initial_ns);
-+		ima_policy_initial_ns = NULL;
-+	} else {
-+		securityfs_remove(ins->policy_dentry);
-+		ins->policy_dentry = NULL;
-+	}
- #endif
- 
- 	/* always clear the busy flag so other namespaces can use it */
- 	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
- 
-+	ima_namespace_unlock();
-+
- 	return 0;
- }
- 
+Other areas might still need work to completely namespace IMA. For instance, 
+EVM and templates per namespace are not yet covered.
+
+Guilherme Magalhaes (11):
+  ima: qualify pathname in audit info record
+  ima: qualify pathname in audit measurement record
+  ima: qualify pathname in measurement file
+  ima: add support to namespace securityfs file
+  ima: store new namespace policy structure in a radix tree
+  ima, fs: release namespace policy resources
+  ima: new namespace policy structure to track initial namespace policy
+    data
+  ima: block initial namespace id on the namespace policy interface
+  ima: delete namespace policy securityfs file in write-once mode
+  ima: handling all policy flags per namespace using ima_ns_policy
+    structure
+  ima: appraise mode per namespace with new enforce_ns appraise mode
+
+ fs/namespace.c                            |   4 +
+ include/linux/integrity.h                 |   9 +
+ security/integrity/ima/Kconfig            |   8 +
+ security/integrity/ima/ima.h              |  78 ++++-
+ security/integrity/ima/ima_api.c          |  14 +-
+ security/integrity/ima/ima_appraise.c     |  30 +-
+ security/integrity/ima/ima_fs.c           | 454 ++++++++++++++++++++++++++++--
+ security/integrity/ima/ima_init.c         |  13 +-
+ security/integrity/ima/ima_main.c         |  40 ++-
+ security/integrity/ima/ima_policy.c       | 210 +++++++++++---
+ security/integrity/ima/ima_template.c     |  10 +-
+ security/integrity/ima/ima_template_lib.c |  70 +++++
+ security/integrity/ima/ima_template_lib.h |  13 +
+ security/integrity/integrity_audit.c      |   5 +
+ 14 files changed, 860 insertions(+), 98 deletions(-)
+
 -- 
 2.7.4
 
