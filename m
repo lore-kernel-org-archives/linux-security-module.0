@@ -1,317 +1,108 @@
 From: guilherme.magalhaes@hpe.com (Guilherme Magalhaes)
-Date: Thu, 11 May 2017 10:59:59 -0300
-Subject: [RFC 07/11] ima: new namespace policy structure to track initial
-	namespace policy data
+Date: Thu, 11 May 2017 10:59:58 -0300
+Subject: [RFC 06/11] ima, fs: release namespace policy resources
 In-Reply-To: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
 References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-Message-ID: <1494511203-8397-8-git-send-email-guilherme.magalhaes@hpe.com>
+Message-ID: <1494511203-8397-7-git-send-email-guilherme.magalhaes@hpe.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Adding the global ima_initial_namespace_policy which will be used when the
-initial namespace IMA policy data must be referred or when
-CONFIG_IMA_PER_NAMESPACE is not defined.
-New functions which will be used to retrieve the correct namespace IMA
-policy data from the radix tree map or from the ima_initial_namespace_policy.
-If the given namespace has not yet defined a private IMA policy, the IMA
-policy for that namespace falls back to the initial IMA policy by using
-ima_initial_namespace_policy.
+Release all namespace IMA policy resources when the mount namespace is
+released.
+This is the suggested mechanism to release namespace policy resources,
+but we still can discuss other methods to avoid cross-component changes.
 
 Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
 ---
- security/integrity/ima/ima.h        |   6 ++
- security/integrity/ima/ima_fs.c     | 112 +++++++++++++++++++++++++++++-------
- security/integrity/ima/ima_policy.c |  72 +++++++++++++++++++++++
- 3 files changed, 170 insertions(+), 20 deletions(-)
+ fs/namespace.c                  |  4 ++++
+ include/linux/integrity.h       |  9 +++++++++
+ security/integrity/ima/ima_fs.c | 26 ++++++++++++++++++++++++++
+ 3 files changed, 39 insertions(+)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 1c5c875..20b927e 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -150,6 +150,7 @@ struct ima_ns_policy {
- 	int ima_appraise;
- };
- 
-+extern struct ima_ns_policy ima_initial_namespace_policy;
- #ifdef CONFIG_IMA_PER_NAMESPACE
- extern spinlock_t ima_ns_policy_lock;
- extern struct radix_tree_root ima_ns_policy_mapping;
-@@ -203,6 +204,11 @@ static inline void ima_namespace_unlock(void) {
- }
- #endif
- 
-+/* IMA namespace function definitions */
-+struct ima_ns_policy *ima_get_current_namespace_policy(void);
-+struct ima_ns_policy *ima_get_namespace_policy_from_inode(struct inode *inode);
-+struct ima_ns_policy *ima_get_policy_from_namespace(unsigned int ns_id);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index cc1375ef..80940998 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -15,6 +15,7 @@
+ #include <linux/user_namespace.h>
+ #include <linux/namei.h>
+ #include <linux/security.h>
++#include <linux/integrity.h>
+ #include <linux/cred.h>
+ #include <linux/idr.h>
+ #include <linux/init.h>		/* init_rootfs */
+@@ -3283,6 +3284,9 @@ void put_mnt_ns(struct mnt_namespace *ns)
+ {
+ 	if (!atomic_dec_and_test(&ns->count))
+ 		return;
 +
- /*
-  * used to protect h_table and sha_table
-  */
++	ima_mnt_namespace_dying(ns->ns.inum);
++
+ 	drop_collected_mounts(&ns->root->mnt);
+ 	free_mnt_ns(ns);
+ }
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index c2d6082..034d082 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -43,4 +43,13 @@ static inline void integrity_load_keys(void)
+ }
+ #endif /* CONFIG_INTEGRITY */
+ 
++#ifdef CONFIG_IMA_PER_NAMESPACE
++extern void ima_mnt_namespace_dying(unsigned int ns_id);
++#else
++static inline void ima_mnt_namespace_dying(unsigned int ns_id)
++{
++	return;
++}
++#endif /* CONFIG_IMA_PER_NAMESPACE */
++
+ #endif /* _LINUX_INTEGRITY_H */
 diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 56ba0ff..61f8da1 100644
+index ce6dcdf..56ba0ff 100644
 --- a/security/integrity/ima/ima_fs.c
 +++ b/security/integrity/ima/ima_fs.c
-@@ -274,6 +274,22 @@ static const struct file_operations ima_ascii_measurements_ops = {
- 	.release = seq_release,
- };
- 
-+static struct dentry *ima_dir;
-+static struct dentry *binary_runtime_measurements;
-+static struct dentry *ascii_runtime_measurements;
-+static struct dentry *runtime_measurements_count;
-+static struct dentry *violations;
-+static struct dentry *ima_policy_initial_ns;
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+static struct dentry *ima_namespaces;
-+#endif
+@@ -423,6 +423,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+ 				    "policy_update", "signed policy required",
+ 				    1, 0);
 +
-+enum ima_fs_flags {
-+	IMA_FS_BUSY,
-+};
-+
-+static unsigned long ima_fs_flags;
-+
- #ifdef CONFIG_IMA_PER_NAMESPACE
- /* used for namespace policy rules initialization */
- static LIST_HEAD(empty_policy);
-@@ -348,6 +364,76 @@ static int check_mntns(unsigned int ns_id)
- 
- 	return result;
- }
-+
-+/*
-+ * ima_find_namespace_id_from_inode
-+ * @policy_inode: the inode of the securityfs policy file for a given
-+ * namespace
-+ *
-+ * Return 0 if the namespace id is not found in ima_ns_policy_mapping
-+ */
-+static unsigned int find_namespace_id_from_inode(struct inode *policy_inode)
-+{
-+	unsigned int ns_id = 0;
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+	struct ima_ns_policy *ins;
-+	void **slot;
-+	struct radix_tree_iter iter;
-+
-+	rcu_read_lock();
-+	radix_tree_for_each_slot(slot, &ima_ns_policy_mapping, &iter, 0) {
-+		ins = radix_tree_deref_slot(slot);
-+		if (unlikely(!ins))
-+			continue;
-+		if (radix_tree_deref_retry(ins)) {
-+			slot = radix_tree_iter_retry(&iter);
-+			continue;
-+		}
-+
-+		if (ins->policy_dentry && ins->policy_dentry->d_inode == policy_inode) {
-+			ns_id = iter.index;
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+#endif
-+
-+	return ns_id;
-+}
-+
-+/*
-+ * get_namespace_policy_from_inode - Finds namespace mapping from
-+ * securityfs policy file
-+ * It is called to get the namespace policy reference when a seurityfs
-+ * file such as the namespace or policy files are read or written.
-+ * @inode: inode of the securityfs policy file under a namespace
-+ * folder
-+ * Expects the ima_ns_policy_lock already held
-+ *
-+ * Returns NULL if the namespace policy reference is not reliable once it
-+ * probably was already released after a concurrent namespace release.
-+ * Otherwise, the namespace policy reference is returned.
-+ */
-+struct ima_ns_policy *ima_get_namespace_policy_from_inode(struct inode *inode)
-+{
-+	unsigned int ns_id;
-+	struct ima_ns_policy *ins;
-+
-+	ns_id = find_namespace_id_from_inode(inode);
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+	if (ns_id == 0 &&
-+		(!ima_policy_initial_ns || inode != ima_policy_initial_ns->d_inode)) {
-+		/* ns_id == 0 refers to initial namespace, but inode refers to a
-+		 * namespaced policy file. It might be a race condition with
-+		 * namespace release, return invalid reference. */
-+		return NULL;
-+	}
-+#endif
-+
-+	ins = ima_get_policy_from_namespace(ns_id);
-+
-+	return ins;
-+}
- #endif
- 
- static ssize_t ima_read_policy(char *path)
-@@ -439,22 +525,6 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 		if (ima_appraise & IMA_APPRAISE_ENFORCE)
+ 			result = -EACCES;
+ 	} else {
+@@ -579,6 +580,31 @@ static int create_mnt_ns_directory(unsigned int ns_id)
  	return result;
  }
  
--static struct dentry *ima_dir;
--static struct dentry *binary_runtime_measurements;
--static struct dentry *ascii_runtime_measurements;
--static struct dentry *runtime_measurements_count;
--static struct dentry *violations;
--static struct dentry *ima_policy;
--#ifdef CONFIG_IMA_PER_NAMESPACE
--static struct dentry *ima_namespaces;
--#endif
--
--enum ima_fs_flags {
--	IMA_FS_BUSY,
--};
--
--static unsigned long ima_fs_flags;
--
- #ifdef	CONFIG_IMA_READ_POLICY
- static const struct seq_operations ima_policy_seqops = {
- 		.start = ima_policy_start,
-@@ -517,7 +587,7 @@ static int ima_release_policy(struct inode *inode, struct file *file)
- 
- 	ima_update_policy();
- #ifndef	CONFIG_IMA_WRITE_POLICY
--	securityfs_remove(ima_policy);
-+	securityfs_remove(ima_policy_initial_ns);
- 	ima_policy = NULL;
- #endif
- 
-@@ -539,6 +609,8 @@ static const struct file_operations ima_measure_policy_ops = {
- /*
-  * Assumes namespace id is in use by some process and this mapping
-  * does not exist in the map table.
-+ * @ns_id namespace id
-+ * Expects ima_ns_policy_lock already held
-  */
- static int create_mnt_ns_directory(unsigned int ns_id)
++/*
++ * ima_mnt_namespace_dying - releases all namespace policy resources
++ * It is called automatically when the namespace is released.
++ * @ns_id namespace id to be released
++ *
++ * Note: This function is called by put_mnt_ns() in the context
++ * of a namespace release. We need to make sure that a lock on
++ * this path is allowed.
++ */
++void ima_mnt_namespace_dying(unsigned int ns_id)
++{
++	struct ima_ns_policy *p;
++
++	spin_lock(&ima_ns_policy_lock);
++	p = radix_tree_delete(&ima_ns_policy_mapping, ns_id);
++
++	if (!p) {
++		spin_unlock(&ima_ns_policy_lock);
++		return;
++	}
++
++	free_namespace_policy(p);
++	spin_unlock(&ima_ns_policy_lock);
++}
++
+ static ssize_t handle_new_namespace_policy(const char *data, size_t datalen)
  {
-@@ -751,10 +823,10 @@ int __init ima_fs_init(void)
- 	if (IS_ERR(violations))
- 		goto out;
- 
--	ima_policy = securityfs_create_file("policy", POLICY_FILE_FLAGS,
-+	ima_policy_initial_ns = securityfs_create_file("policy", POLICY_FILE_FLAGS,
- 					    ima_dir, NULL,
- 					    &ima_measure_policy_ops);
--	if (IS_ERR(ima_policy))
-+	if (IS_ERR(ima_policy_initial_ns))
- 		goto out;
- 
- #ifdef CONFIG_IMA_PER_NAMESPACE
-@@ -772,7 +844,7 @@ int __init ima_fs_init(void)
- 	securityfs_remove(ascii_runtime_measurements);
- 	securityfs_remove(binary_runtime_measurements);
- 	securityfs_remove(ima_dir);
--	securityfs_remove(ima_policy);
-+	securityfs_remove(ima_policy_initial_ns);
- #ifdef CONFIG_IMA_PER_NAMESPACE
- 	securityfs_remove(ima_namespaces);
- #endif
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 2e8c3b7..8c0d4c9 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -20,6 +20,8 @@
- #include <linux/rculist.h>
- #include <linux/genhd.h>
- #include <linux/seq_file.h>
-+#include <linux/radix-tree.h>
-+#include <linux/proc_ns.h>
- 
- #include "ima.h"
- 
-@@ -53,6 +55,17 @@ RADIX_TREE(ima_ns_policy_mapping, GFP_ATOMIC);
- spinlock_t ima_ns_policy_lock;
- #endif
- 
-+/* initial namespace map entry, not added to the ima_ns_policy_mapping
-+ * Used as policy fallback for namespaces without policy settings */
-+struct ima_ns_policy ima_initial_namespace_policy = {
-+			   .policy_dentry = NULL,
-+			   .ns_dentry = NULL,
-+			   .ima_rules = NULL,
-+			   .ima_policy_rules = LIST_HEAD_INIT(ima_initial_namespace_policy.ima_policy_rules),
-+			   .ima_policy_flag = 0,
-+			   .ima_appraise = 0
-+	   };
-+
- #define MAX_LSM_RULES 6
- enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
- 	LSM_SUBJ_USER, LSM_SUBJ_ROLE, LSM_SUBJ_TYPE
-@@ -191,6 +204,65 @@ static int __init default_appraise_policy_setup(char *str)
- __setup("ima_appraise_tcb", default_appraise_policy_setup);
- 
- /*
-+ * ima_get_policy_from_namespace - Finds the ns_id mapping to namespace
-+ * policy structure
-+ * @ns_id: mount namespace id to look for in the policy mapping tree
-+ *
-+ * Returns either the given namespace policy data if mapped or the initial
-+ * namespace data instead.
-+ *
-+ * Note that if a namespace has not a specific policy defined, it will
-+ * fall back to the initial namespace policy.
-+ */
-+struct ima_ns_policy *ima_get_policy_from_namespace(unsigned int ns_id)
-+{
-+	struct ima_ns_policy *ins;
-+
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+	rcu_read_lock();
-+	ins = radix_tree_lookup(&ima_ns_policy_mapping, ns_id);
-+	rcu_read_unlock();
-+
-+	if (!ins) {
-+		ins = &ima_initial_namespace_policy;
-+	}
-+#else
-+	ins = &ima_initial_namespace_policy;
-+#endif
-+
-+	return ins;
-+}
-+
-+/*
-+ * ima_get_current_namespace_policy - Finds the namespace policy mapping
-+ * for the current task
-+ * This function is called on the context of a syscall and then the namespace
-+ * in use will not be released during this context.
-+ */
-+struct ima_ns_policy *ima_get_current_namespace_policy(void)
-+{
-+	struct ima_ns_policy *ins = NULL;
-+#ifdef CONFIG_IMA_PER_NAMESPACE
-+	struct ns_common *ns;
-+
-+	ns = mntns_operations.get(current);
-+	if (ns) {
-+		ins = ima_get_policy_from_namespace(ns->inum);
-+		mntns_operations.put(ns);
-+	}
-+	if (!ins || (ins->ima_rules != &ins->ima_policy_rules)) {
-+		/* if current namespace has no IMA policy, get the
-+		 * initial namespace policy */
-+		ins = &ima_initial_namespace_policy;
-+	}
-+#else
-+	ins = &ima_initial_namespace_policy;
-+#endif
-+
-+	return ins;
-+}
-+
-+/*
-  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
-  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
-  * the reloaded LSM policy.  We assume the rules still exist; and BUG_ON() if
+ 	unsigned int ns_id;
 -- 
 2.7.4
 
