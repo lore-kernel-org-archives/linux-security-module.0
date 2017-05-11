@@ -1,51 +1,39 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 11 May 2017 01:09:21 -0700
-Subject: [RFC 01/10] crypto: factor async completion for general use
-In-Reply-To: <CAOtvUMezWBrHtGxJCBJHVks-XJdSCOMrRj3evsNdY=cB==wc-g@mail.gmail.com>
-References: <1494075602-5061-1-git-send-email-gilad@benyossef.com>
-	<1494075602-5061-2-git-send-email-gilad@benyossef.com>
-	<20170511035527.GA2936@zzz>
-	<CAOtvUMezWBrHtGxJCBJHVks-XJdSCOMrRj3evsNdY=cB==wc-g@mail.gmail.com>
-Message-ID: <20170511080921.GB7533@zzz>
+From: hch@lst.de (Christoph Hellwig)
+Date: Thu, 11 May 2017 10:16:59 +0200
+Subject: [PATCH] security/ima: use fs method to read integrity data
+In-Reply-To: <1494450047.3006.28.camel@linux.vnet.ibm.com>
+References: <20170510064507.1764-1-hch@lst.de>
+	<20170510064507.1764-2-hch@lst.de>
+	<a552827e-922d-0b28-2919-90c780a8a414@plexistor.com>
+	<20170510132359.GA22549@lst.de>
+	<1494450047.3006.28.camel@linux.vnet.ibm.com>
+Message-ID: <20170511081659.GA20214@lst.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 11, 2017 at 10:29:47AM +0300, Gilad Ben-Yossef wrote:
-> > With regards to the wait being uninterruptible, I agree that this should be the
-> > default behavior, because I think users waiting for specific crypto requests are
-> > generally not prepared to handle the wait actually being interrupted.  After
-> > interruption the crypto operation will still proceed in the background, and it
-> > will use buffers which the caller has in many cases already freed.  However, I'd
-> > suggest taking a close look at anything that was actually doing an interruptible
-> > wait before, to see whether it was a bug or intentional (or "doesn't matter").
-> >
-> > And yes there could always be a crypto_wait_req_interruptible() introduced if
-> > some users need it.
-> 
-> So this one was a bit of a shocker.  I though the  _interruptible use
-> sites seemed
-> wrong in the sense of being needless. However, after reading your feedback and
-> reviewing the code I'm pretty sure every single one of them (including
-> the one I've
-> added in dm-verity-target.c this merge window)  are down right dangerous and
-> can cause random data corruption... so thanks for pointing this out!
-> 
-> I though of this patch set as a "make the code pretty" for 4.13 kind
-> of patch set.
-> Looks like it's a bug fix now, maybe even stable material.
-> 
-> Anyway, I'll roll a v2 and we'll see.
-> 
+On Wed, May 10, 2017 at 05:00:47PM -0400, Mimi Zohar wrote:
+> Without i_version support the file is measured/appraised once. ?With
+> i_version support it will be re-measured/appraised. As a file system
+> is mounted/remounted, some sort of message should be emitted
+> indicating whether i_version is supported.
 
-Any that are called only by kernel threads would theoretically be safe since
-kernel threads don't ordinarily receive signals.  But I think that at least the
-drbg and gcm waits can be reached by user threads, since they can be called via
-algif_rng and algif_aead respectively.
+You can check for (sb->s_flags & MS_I_VERSION) to see if it's supported.
 
-I recommend putting any important fixes first, so they can be backported without
-depending on crypto_wait_req().
+> ?That does not imply that
+> there is no value in measuring/appraising the file only once.
+> 
+> With this patch, the "opt-in" behavior, is only for measurement, not
+> appraisal. ?For appraisal, it still enforces file hash/signature
+> verification, as it should, based on policy.
+> 
+> Christoph, could we call ->read_iter() in the NULL case as Boaz
+> suggested?
 
-Eric
+No - that way you get deadlocks for every fs that uses i_rwsem in
+->read_iter, which is perfectly valid behavior.
+
+We can set ->integrity_read for every file system that's been tested
+with IMA, though.  Do you have a list of known-good file systems?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
