@@ -1,81 +1,144 @@
-From: guilherme.magalhaes@hpe.com (Magalhaes, Guilherme (Brazil R&D-CL))
-Date: Thu, 11 May 2017 14:53:32 +0000
-Subject: [RFC 00/11] ima: namespace support for IMA policy
-In-Reply-To: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-Message-ID: <TU4PR84MB030289839F86F98E87BE8F8AFFED0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
+From: guilherme.magalhaes@hpe.com (Guilherme Magalhaes)
+Date: Thu, 11 May 2017 11:15:46 -0300
+Subject: [RFC 11/11] ima: appraise mode per namespace with new enforce_ns
+	appraise mode
+Message-ID: <1494512146-8562-1-git-send-email-guilherme.magalhaes@hpe.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-I would like to replace part of the email below which briefly presents each one of the patches in this series. This is the right summary:
+Global ima_appraise renamed to ima_appraise_mode and it saves the initial
+appraise mode. It is used to initialize the ima_appraise ima_ns_policy field
+when the policy is defined by user the first time for a namespace.
+New 'enforce_ns' appraise mode created. On this new appraise mode, the initial
+appraise mode works in 'enforce' mode, but for new namespaces the appraise
+mode is set to 'fix' until a policy is defined for the new namespace and then
+the appraise mode is automatically set to 'enforce'.
+This new mode is useful to keep the initial namespace appraise mode clearly in
+'enforce' mode while namespaces can set their appraise modes separatedly.
 
---
-Patches 1, 2 and 3 qualify the file pathname considering multiple namespaces.
-Patch 4 adds the namespace securityfs file which is the interface to define
-IMA policy per namespace. New policy file is created for each namespace and
-the policy securityfs mechanism is completely reused.
-Patch 6 adds a hook to fs/namespace.c to automatically delete all namespace
-IMA policy resources such as radix tree entry and securityfs files.
-Patches 8 and 9 are small implementation details
-Patches 5, 7, 10 are the key changes to encapsulate all policy rules and
-flags in a structure per namespace. The correct structure is retrieved for
-the target namespace and the namespace rules are used on that context.
-Patch 11 adds the enforce_ns appraise mode which enables different appraise
-modes per namespace.
---
+Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
+---
+ security/integrity/ima/ima.h          |  6 +++++-
+ security/integrity/ima/ima_appraise.c | 11 +++++++----
+ security/integrity/ima/ima_fs.c       |  7 ++++++-
+ security/integrity/ima/ima_main.c     |  4 ++--
+ security/integrity/ima/ima_policy.c   | 13 +++++++++++--
+ 5 files changed, 31 insertions(+), 10 deletions(-)
 
-----
-Guilherme
-
------Original Message-----
-From: Magalhaes, Guilherme (Brazil R&D-CL) 
-Sent: quinta-feira, 11 de maio de 2017 11:00
-To: dmitry.kasatkin at gmail.com; zohar at linux.vnet.ibm.com
-Cc: viro at zeniv.linux.org.uk; james.l.morris at oracle.com; serge at hallyn.com; linux-fsdevel at vger.kernel.org; linux-kernel at vger.kernel.org; linux-ima-devel at lists.sourceforge.net; linux-ima-user at lists.sourceforge.net; linux-security-module at vger.kernel.org; tycho at docker.com; Souza, Joaquim (Brazil R&D-ECL) <joaquims@hpe.com>; Edwards, Nigel <nigel.edwards@hpe.com>; Magalhaes, Guilherme (Brazil R&D-CL) <guilherme.magalhaes@hpe.com>
-Subject: [RFC 00/11] ima: namespace support for IMA policy
-
-The IMA policy rules and policy/appraise flags are now encapsulated on a new structure which completely describes the policy for a given namespace. The correct namespace structure is retrieved from a radix tree based on the namespace id in use by the process in the context whenever the IMA policy rules or flags are needed. The existent securityfs interface is reused to define policy per namespace. A new namespace file is used to create a folder for a given namespace id with a policy file which can then be used to define rules for that namespace.
-
-Patches 1, 2 and 4 qualify the file pathname considering multiple namespaces.
-Patch 3 adds a new kernel config which enables all the policy per namespace functionality.
-Patch 5 adds the namespace securityfs file which is the interface to define IMA policy per namespace. New policy file is creanted for each namespace and the policy securityfs mechanism is completely reused.
-Patche 7 adds a hook to fs/namespace.c to automatically delete all namespace IMA policy resources such as radix tree entry and securityfs files.
-Patches 8, 10, 11 and 14 are small implementation details Patches 6, 9, 12 are key changes to encapsulate all policy rules and flags in a structure per namespace. The correct structure is retrieved for the target namespace and the namespace rules are used on that context.
-Patch 13 adds the enforce_ns appraise mode which enables different appraise modes per namespace.
-
-Other areas might still need work to completely namespace IMA. For instance, EVM and templates per namespace are not yet covered.
-
-Guilherme Magalhaes (11):
-  ima: qualify pathname in audit info record
-  ima: qualify pathname in audit measurement record
-  ima: qualify pathname in measurement file
-  ima: add support to namespace securityfs file
-  ima: store new namespace policy structure in a radix tree
-  ima, fs: release namespace policy resources
-  ima: new namespace policy structure to track initial namespace policy
-    data
-  ima: block initial namespace id on the namespace policy interface
-  ima: delete namespace policy securityfs file in write-once mode
-  ima: handling all policy flags per namespace using ima_ns_policy
-    structure
-  ima: appraise mode per namespace with new enforce_ns appraise mode
-
- fs/namespace.c                            |   4 +
- include/linux/integrity.h                 |   9 +
- security/integrity/ima/Kconfig            |   8 +
- security/integrity/ima/ima.h              |  78 ++++-
- security/integrity/ima/ima_api.c          |  14 +-
- security/integrity/ima/ima_appraise.c     |  30 +-
- security/integrity/ima/ima_fs.c           | 454 ++++++++++++++++++++++++++++--
- security/integrity/ima/ima_init.c         |  13 +-
- security/integrity/ima/ima_main.c         |  40 ++-
- security/integrity/ima/ima_policy.c       | 210 +++++++++++---
- security/integrity/ima/ima_template.c     |  10 +-
- security/integrity/ima/ima_template_lib.c |  70 +++++  security/integrity/ima/ima_template_lib.h |  13 +
- security/integrity/integrity_audit.c      |   5 +
- 14 files changed, 860 insertions(+), 98 deletions(-)
-
---
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index fd5cfe9..9d451fd 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -65,7 +65,7 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+ extern int ima_initialized;
+ extern int ima_used_chip;
+ extern int ima_hash_algo;
+-extern int ima_appraise;
++extern int ima_appraise_mode;
+ 
+ /* IMA event related data */
+ struct ima_event_data {
+@@ -278,6 +278,10 @@ int ima_policy_show(struct seq_file *m, void *v);
+ #define IMA_APPRAISE_MODULES	0x08
+ #define IMA_APPRAISE_FIRMWARE	0x10
+ #define IMA_APPRAISE_POLICY	0x20
++#ifdef CONFIG_IMA_PER_NAMESPACE
++#define IMA_APPRAISE_NAMESPACE 0x40
++#define IMA_APPRAISE_ENFORCE_NS (IMA_APPRAISE_ENFORCE | IMA_APPRAISE_NAMESPACE)
++#endif
+ 
+ 
+ #ifdef CONFIG_IMA_APPRAISE
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 510bb2f..4b94c2a 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -21,12 +21,15 @@
+ static int __init default_appraise_setup(char *str)
+ {
+ 	if (strncmp(str, "off", 3) == 0)
+-		ima_appraise = 0;
++		ima_appraise_mode = 0;
+ 	else if (strncmp(str, "log", 3) == 0)
+-		ima_appraise = IMA_APPRAISE_LOG;
++		ima_appraise_mode = IMA_APPRAISE_LOG;
+ 	else if (strncmp(str, "fix", 3) == 0)
+-		ima_appraise = IMA_APPRAISE_FIX;
+-
++		ima_appraise_mode = IMA_APPRAISE_FIX;
++#ifdef CONFIG_IMA_PER_NAMESPACE
++	else if (strncmp(str, "enforce_ns", 10) == 0)
++		ima_appraise_mode = IMA_APPRAISE_ENFORCE_NS;
++#endif
+ 	return 1;
+ }
+ 
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index bc18722..91cafb5 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -308,7 +308,12 @@ static int allocate_namespace_policy(struct ima_ns_policy **ins,
+ 
+ 	p->policy_dentry = policy_dentry;
+ 	p->ns_dentry = ns_dentry;
+-	p->ima_appraise = ima_appraise;
++	if (ima_appraise_mode == IMA_APPRAISE_ENFORCE_NS)
++		/* For now, on the enforce_ns mode, a new namespace starts in
++		 * fix mode */
++		p->ima_appraise = IMA_APPRAISE_FIX;
++	else
++		p->ima_appraise = ima_appraise_mode;
+ 	p->ima_policy_flag = 0;
+ 	INIT_LIST_HEAD(&p->ima_policy_rules);
+ 	/* namespace starts with empty rules and not pointing to
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 1b995bb..1938c74 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -31,9 +31,9 @@ int ima_initialized;
+ 
+ #ifdef CONFIG_IMA_APPRAISE
+ /* Used during IMA initialization only */
+-int ima_appraise = IMA_APPRAISE_ENFORCE;
++int ima_appraise_mode = IMA_APPRAISE_ENFORCE;
+ #else
+-int ima_appraise;
++int ima_appraise_mode;
+ #endif
+ 
+ int ima_hash_algo = HASH_ALGO_SHA1;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 4ffb4ad..bd67a08 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -517,7 +517,7 @@ void __init ima_init_policy(void)
+ 	ins = &ima_initial_namespace_policy;
+ 
+ 	ins->ima_rules = &ima_default_rules;
+-	ins->ima_appraise = ima_appraise;
++	ins->ima_appraise = ima_appraise_mode;
+ 
+ 	ima_update_policy_flag(ins);
+ 	temp_ima_appraise = 0;
+@@ -564,7 +564,16 @@ void ima_update_policy(struct ima_ns_policy *ins)
+ 	if (ins->ima_rules != policy) {
+ 		ins->ima_policy_flag = 0;
+ 		ins->ima_rules = policy;
+-		ins->ima_appraise = ima_appraise;
++		ins->ima_appraise = ima_appraise_mode;
++#ifdef CONFIG_IMA_PER_NAMESPACE
++		if (ins != &ima_initial_namespace_policy &&
++				ima_appraise_mode == IMA_APPRAISE_ENFORCE_NS) {
++			/* For now, on the enforce_ns mode, switch to enforce mode
++			 * when new policy is set for a namespace and for the first
++			 * time */
++			ins->ima_appraise = IMA_APPRAISE_ENFORCE;
++		}
++#endif
+ 	}
+ 
+ 	ima_update_policy_flag(ins);
+-- 
 2.7.4
 
 --
