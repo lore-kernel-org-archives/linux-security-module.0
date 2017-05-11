@@ -1,745 +1,160 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Wed, 10 May 2017 19:46:24 -0700
-Subject: [PATCH 2/3] apparmor: move to per loaddata files,
-	instead of replicating in profiles
-In-Reply-To: <20170511024625.13887-1-john.johansen@canonical.com>
-References: <20170511024625.13887-1-john.johansen@canonical.com>
-Message-ID: <20170511024625.13887-3-john.johansen@canonical.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Wed, 10 May 2017 20:55:27 -0700
+Subject: [RFC 01/10] crypto: factor async completion for general use
+In-Reply-To: <1494075602-5061-2-git-send-email-gilad@benyossef.com>
+References: <1494075602-5061-1-git-send-email-gilad@benyossef.com>
+	<1494075602-5061-2-git-send-email-gilad@benyossef.com>
+Message-ID: <20170511035527.GA2936@zzz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The loaddata sets cover more than just a single profile and should
-be tracked at the ns level. Move the load data files under the namespace
-and reference the files from the profiles via a symlink.
+Hi Gilad,
 
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
----
- security/apparmor/apparmorfs.c            | 288 ++++++++++++++++++++++++------
- security/apparmor/include/apparmorfs.h    |   5 +
- security/apparmor/include/policy_ns.h     |   4 +
- security/apparmor/include/policy_unpack.h |  67 ++++++-
- security/apparmor/policy.c                |  42 ++++-
- security/apparmor/policy_ns.c             |   2 +
- security/apparmor/policy_unpack.c         |  49 ++++-
- 7 files changed, 393 insertions(+), 64 deletions(-)
+On Sat, May 06, 2017 at 03:59:50PM +0300, Gilad Ben-Yossef wrote:
+> Invoking a possibly async. crypto op and waiting for completion
+> while correctly handling backlog processing is a common task
+> in the crypto API implementation and outside users of it.
+> 
+> This patch re-factors one of the in crypto API implementation in
+> preparation for using it across the board instead of hand
+> rolled versions.
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 6d1a4a67abce..5a6010007046 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -101,10 +101,10 @@ static struct aa_loaddata *aa_simple_write_to_buffer(const char __user *userbuf,
- 	data = kvmalloc(sizeof(*data) + alloc_size);
- 	if (data == NULL)
- 		return ERR_PTR(-ENOMEM);
-+	memset(data, 0, sizeof(*data));
- 	kref_init(&data->count);
-+	INIT_LIST_HEAD(&data->list);
- 	data->size = copy_size;
--	data->hash = NULL;
--	data->abi = 0;
- 
- 	if (copy_from_user(data->data, userbuf, copy_size)) {
- 		kvfree(data);
-@@ -559,68 +559,92 @@ static const struct file_operations aa_fs_ns_name = {
- 	.release	= single_release,
- };
- 
--static int rawdata_release(struct inode *inode, struct file *file)
-+
-+/* policy/raw_data/ * file ops */
-+
-+#define SEQ_RAWDATA_FOPS(NAME)						      \
-+static int seq_rawdata_ ##NAME ##_open(struct inode *inode, struct file *file)\
-+{									      \
-+	return seq_rawdata_open(inode, file, seq_rawdata_ ##NAME ##_show);    \
-+}									      \
-+									      \
-+static const struct file_operations seq_rawdata_ ##NAME ##_fops = {	      \
-+	.owner		= THIS_MODULE,					      \
-+	.open		= seq_rawdata_ ##NAME ##_open,			      \
-+	.read		= seq_read,					      \
-+	.llseek		= seq_lseek,					      \
-+	.release	= seq_rawdata_release,				      \
-+}									      \
-+
-+static int seq_rawdata_open(struct inode *inode, struct file *file,
-+			    int (*show)(struct seq_file *, void *))
- {
--	/* TODO: switch to loaddata when profile switched to symlink */
--	aa_put_loaddata(file->private_data);
-+	struct aa_loaddata *data = __aa_get_loaddata(inode->i_private);
-+	int error;
- 
--	return 0;
-+	if (!data)
-+		/* lost race this ent is being reaped */
-+		return -ENOENT;
-+
-+	error = single_open(file, show, data);
-+	if (error) {
-+		file->private_data = NULL;
-+		aa_put_loaddata(data);
-+	}
-+
-+	return error;
- }
- 
--static int aa_fs_seq_raw_abi_show(struct seq_file *seq, void *v)
-+static int seq_rawdata_release(struct inode *inode, struct file *file)
- {
--	struct aa_proxy *proxy = seq->private;
--	struct aa_profile *profile = aa_get_profile_rcu(&proxy->profile);
-+	struct seq_file *seq = (struct seq_file *) file->private_data;
- 
--	if (profile->rawdata->abi)
--		seq_printf(seq, "v%d\n", profile->rawdata->abi);
-+	if (seq)
-+		aa_put_loaddata(seq->private);
-+	return single_release(inode, file);
-+}
- 
--	aa_put_profile(profile);
-+static int seq_rawdata_abi_show(struct seq_file *seq, void *v)
-+{
-+	struct aa_loaddata *data = seq->private;
-+
-+	if (data->abi) {
-+		seq_printf(seq, "v%d", data->abi);
-+		seq_puts(seq, "\n");
-+	}
- 
- 	return 0;
- }
- 
--static int aa_fs_seq_raw_abi_open(struct inode *inode, struct file *file)
-+static int seq_rawdata_revision_show(struct seq_file *seq, void *v)
- {
--	return aa_fs_seq_profile_open(inode, file, aa_fs_seq_raw_abi_show);
--}
-+	struct aa_loaddata *data = seq->private;
- 
--static const struct file_operations aa_fs_seq_raw_abi_fops = {
--	.owner		= THIS_MODULE,
--	.open		= aa_fs_seq_raw_abi_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= aa_fs_seq_profile_release,
--};
-+	if (data->revision) {
-+		seq_printf(seq, "%ld", data->revision);
-+		seq_puts(seq, "\n");
-+	}
-+
-+	return 0;
-+}
- 
--static int aa_fs_seq_raw_hash_show(struct seq_file *seq, void *v)
-+static int seq_rawdata_hash_show(struct seq_file *seq, void *v)
- {
--	struct aa_proxy *proxy = seq->private;
--	struct aa_profile *profile = aa_get_profile_rcu(&proxy->profile);
-+	struct aa_loaddata *data = seq->private;
- 	unsigned int i, size = aa_hash_size();
- 
--	if (profile->rawdata->hash) {
-+	if (data->hash) {
- 		for (i = 0; i < size; i++)
--			seq_printf(seq, "%.2x", profile->rawdata->hash[i]);
--		seq_putc(seq, '\n');
-+			seq_printf(seq, "%.2x", data->hash[i]);
-+		seq_puts(seq, "\n");
- 	}
--	aa_put_profile(profile);
- 
- 	return 0;
- }
- 
--static int aa_fs_seq_raw_hash_open(struct inode *inode, struct file *file)
--{
--	return aa_fs_seq_profile_open(inode, file, aa_fs_seq_raw_hash_show);
--}
--
--static const struct file_operations aa_fs_seq_raw_hash_fops = {
--	.owner		= THIS_MODULE,
--	.open		= aa_fs_seq_raw_hash_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= aa_fs_seq_profile_release,
--};
-+SEQ_RAWDATA_FOPS(abi);
-+SEQ_RAWDATA_FOPS(revision);
-+SEQ_RAWDATA_FOPS(hash);
- 
- static ssize_t rawdata_read(struct file *file, char __user *buf, size_t size,
- 			    loff_t *ppos)
-@@ -631,27 +655,123 @@ static ssize_t rawdata_read(struct file *file, char __user *buf, size_t size,
- 				       rawdata->size);
- }
- 
-+static int rawdata_release(struct inode *inode, struct file *file)
-+{
-+	aa_put_loaddata(file->private_data);
-+
-+	return 0;
-+}
-+
- static int rawdata_open(struct inode *inode, struct file *file)
- {
--	struct aa_proxy *proxy = inode->i_private;
--	struct aa_profile *profile;
-+	struct aa_loaddata *rawdata;
- 
- 	if (!policy_view_capable(NULL))
- 		return -EACCES;
--	profile = aa_get_profile_rcu(&proxy->profile);
--	file->private_data = aa_get_loaddata(profile->rawdata);
--	aa_put_profile(profile);
-+	rawdata = __aa_get_loaddata(inode->i_private);
-+	if (!rawdata)
-+		/* lost race: this entry is being reaped */
-+		return -ENOENT;
-+	file->private_data = rawdata;
- 
- 	return 0;
- }
- 
--static const struct file_operations aa_fs_rawdata_fops = {
-+static const struct file_operations rawdata_fops = {
- 	.open = rawdata_open,
- 	.read = rawdata_read,
- 	.llseek = generic_file_llseek,
- 	.release = rawdata_release,
- };
- 
-+static void remove_rawdata_dents(struct aa_loaddata *rawdata)
-+{
-+	int i;
-+
-+	for (i = 0; i < AAFS_LOADDATA_NDENTS; i++) {
-+		if (!IS_ERR_OR_NULL(rawdata->dents[i])) {
-+			/* no refcounts on i_private */
-+			securityfs_remove(rawdata->dents[i]);
-+			rawdata->dents[i] = NULL;
-+		}
-+	}
-+}
-+
-+void __aa_fs_remove_rawdata(struct aa_loaddata *rawdata)
-+{
-+	AA_BUG(rawdata->ns && !mutex_is_locked(&rawdata->ns->lock));
-+
-+	if (rawdata->ns) {
-+		remove_rawdata_dents(rawdata);
-+		list_del_init(&rawdata->list);
-+		aa_put_ns(rawdata->ns);
-+		rawdata->ns = NULL;
-+	}
-+}
-+
-+int __aa_fs_create_rawdata(struct aa_ns *ns, struct aa_loaddata *rawdata)
-+{
-+	struct dentry *dent, *dir;
-+
-+	AA_BUG(!ns);
-+	AA_BUG(!rawdata);
-+	AA_BUG(!mutex_is_locked(&ns->lock));
-+	AA_BUG(!ns_subdata_dir(ns));
-+
-+	/*
-+	 * just use ns revision dir was originally created at. This is
-+	 * under ns->lock and if load is successful revision will be
-+	 * bumped and is guaranteed to be unique
-+	 */
-+	rawdata->name = kasprintf(GFP_KERNEL, "%ld", ns->revision);
-+	if (!rawdata->name)
-+		/* ->name freed when rawdata freed */
-+		return -ENOMEM;
-+
-+	dir = securityfs_create_dir(rawdata->name, ns_subdata_dir(ns));
-+	if (IS_ERR(dir))
-+		return PTR_ERR(dir);
-+	rawdata->dents[AAFS_LOADDATA_DIR] = dir;
-+
-+	dent = securityfs_create_file("abi", S_IFREG | 0444, dir, rawdata,
-+				      &seq_rawdata_abi_fops);
-+	if (IS_ERR(dent))
-+		goto fail;
-+	rawdata->dents[AAFS_LOADDATA_ABI] = dent;
-+
-+	dent = securityfs_create_file("revision", S_IFREG | 0444, dir, rawdata,
-+				      &seq_rawdata_revision_fops);
-+	if (IS_ERR(dent))
-+		goto fail;
-+	rawdata->dents[AAFS_LOADDATA_REVISION] = dent;
-+
-+	if (aa_g_hash_policy) {
-+		dent = securityfs_create_file("sha1", S_IFREG | 0444, dir,
-+					      rawdata, &seq_rawdata_hash_fops);
-+		if (IS_ERR(dent))
-+			goto fail;
-+		rawdata->dents[AAFS_LOADDATA_HASH] = dent;
-+	}
-+
-+	dent = securityfs_create_file("raw_data", S_IFREG | 0444,
-+				      dir, rawdata, &rawdata_fops);
-+	if (IS_ERR(dent))
-+		goto fail;
-+	rawdata->dents[AAFS_LOADDATA_DATA] = dent;
-+	d_inode(dent)->i_size = rawdata->size;
-+
-+	rawdata->ns = aa_get_ns(ns);
-+	list_add(&rawdata->list, &ns->rawdata_list);
-+	/* no refcount on inode rawdata */
-+
-+	return 0;
-+
-+fail:
-+	remove_rawdata_dents(rawdata);
-+
-+	return PTR_ERR(dent);
-+}
-+
- /** fns to setup dynamic per profile/namespace files **/
- void __aa_fs_profile_rmdir(struct aa_profile *profile)
- {
-@@ -703,7 +823,41 @@ static struct dentry *create_profile_file(struct dentry *dir, const char *name,
- 	return dent;
- }
- 
--/* requires lock be held */
-+static int profile_depth(struct aa_profile *profile)
-+{
-+	int depth = 0;
-+
-+	rcu_read_lock();
-+	for (depth = 0; profile; profile = rcu_access_pointer(profile->parent))
-+		depth++;
-+	rcu_read_unlock();
-+
-+	return depth;
-+}
-+
-+static int gen_symlink_name(char *buffer, size_t bsize, int depth,
-+			    const char *dirname, const char *fname)
-+{
-+	int error;
-+
-+	for (; depth > 0; depth--) {
-+		if (bsize < 7)
-+			return -ENAMETOOLONG;
-+		strcpy(buffer, "../../");
-+		buffer += 6;
-+		bsize -= 6;
-+	}
-+
-+	error = snprintf(buffer, bsize, "raw_data/%s/%s", dirname, fname);
-+	if (error >= bsize || error < 0)
-+		return -ENAMETOOLONG;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Requires: @profile->ns->lock held
-+ */
- int __aa_fs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
- {
- 	struct aa_profile *child;
-@@ -764,26 +918,34 @@ int __aa_fs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
- 	}
- 
- 	if (profile->rawdata) {
--		dent = create_profile_file(dir, "raw_sha1", profile,
--					   &aa_fs_seq_raw_hash_fops);
-+		char target[64];
-+		int depth = profile_depth(profile);
-+		error = gen_symlink_name(target, sizeof(target), depth,
-+					 profile->rawdata->name, "sha1");
-+		if (error < 0)
-+			goto fail2;
-+		dent = securityfs_create_symlink("raw_sha1", dir, target, NULL);
- 		if (IS_ERR(dent))
- 			goto fail;
- 		profile->dents[AAFS_PROF_RAW_HASH] = dent;
- 
--		dent = create_profile_file(dir, "raw_abi", profile,
--					   &aa_fs_seq_raw_abi_fops);
-+		error = gen_symlink_name(target, sizeof(target), depth,
-+					 profile->rawdata->name, "abi");
-+		if (error < 0)
-+			goto fail2;
-+		dent = securityfs_create_symlink("raw_abi", dir, target, NULL);
- 		if (IS_ERR(dent))
- 			goto fail;
- 		profile->dents[AAFS_PROF_RAW_ABI] = dent;
- 
--		dent = securityfs_create_file("raw_data", S_IFREG | 0444, dir,
--					      profile->proxy,
--					      &aa_fs_rawdata_fops);
-+		error = gen_symlink_name(target, sizeof(target), depth,
-+					 profile->rawdata->name, "raw_data");
-+		if (error < 0)
-+			goto fail2;
-+		dent = securityfs_create_symlink("raw_data", dir, target, NULL);
- 		if (IS_ERR(dent))
- 			goto fail;
- 		profile->dents[AAFS_PROF_RAW_DATA] = dent;
--		d_inode(dent)->i_size = profile->rawdata->size;
--		aa_get_proxy(profile->proxy);
- 	}
- 
- 	list_for_each_entry(child, &profile->base.profiles, base.list) {
-@@ -803,6 +965,16 @@ int __aa_fs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
- 	return error;
- }
- 
-+static void __aa_fs_list_remove_rawdata(struct aa_ns *ns)
-+{
-+	struct aa_loaddata *ent, *tmp;
-+
-+	AA_BUG(!mutex_is_locked(&ns->lock));
-+
-+	list_for_each_entry_safe(ent, tmp, &ns->rawdata_list, list)
-+		__aa_fs_remove_rawdata(ent);
-+}
-+
- void __aa_fs_ns_rmdir(struct aa_ns *ns)
- {
- 	struct aa_ns *sub;
-@@ -821,6 +993,8 @@ void __aa_fs_ns_rmdir(struct aa_ns *ns)
- 		mutex_unlock(&sub->lock);
- 	}
- 
-+	__aa_fs_list_remove_rawdata(ns);
-+
- 	if (ns_subns_dir(ns)) {
- 		sub = d_inode(ns_subns_dir(ns))->i_private;
- 		aa_put_ns(sub);
-diff --git a/security/apparmor/include/apparmorfs.h b/security/apparmor/include/apparmorfs.h
-index 120a798b5bb0..0b6d32b3f05e 100644
---- a/security/apparmor/include/apparmorfs.h
-+++ b/security/apparmor/include/apparmorfs.h
-@@ -106,6 +106,7 @@ enum aafs_prof_type {
- #define prof_dir(X) ((X)->dents[AAFS_PROF_DIR])
- #define prof_child_dir(X) ((X)->dents[AAFS_PROF_PROFS])
- 
-+void __aa_bump_ns_revision(struct aa_ns *ns);
- void __aa_fs_profile_rmdir(struct aa_profile *profile);
- void __aa_fs_profile_migrate_dents(struct aa_profile *old,
- 				   struct aa_profile *new);
-@@ -114,4 +115,8 @@ void __aa_fs_ns_rmdir(struct aa_ns *ns);
- int __aa_fs_ns_mkdir(struct aa_ns *ns, struct dentry *parent,
- 		     const char *name);
- 
-+struct aa_loaddata;
-+void __aa_fs_remove_rawdata(struct aa_loaddata *rawdata);
-+int __aa_fs_create_rawdata(struct aa_ns *ns, struct aa_loaddata *rawdata);
-+
- #endif /* __AA_APPARMORFS_H */
-diff --git a/security/apparmor/include/policy_ns.h b/security/apparmor/include/policy_ns.h
-index 89cffddd7e75..23e7cb770226 100644
---- a/security/apparmor/include/policy_ns.h
-+++ b/security/apparmor/include/policy_ns.h
-@@ -68,6 +68,10 @@ struct aa_ns {
- 	atomic_t uniq_null;
- 	long uniq_id;
- 	int level;
-+	long revision;
-+	wait_queue_head_t wait;
-+
-+	struct list_head rawdata_list;
- 
- 	struct dentry *dents[AAFS_NS_SIZEOF];
- };
-diff --git a/security/apparmor/include/policy_unpack.h b/security/apparmor/include/policy_unpack.h
-index 4c1319eebc42..6c349cf69590 100644
---- a/security/apparmor/include/policy_unpack.h
-+++ b/security/apparmor/include/policy_unpack.h
-@@ -17,6 +17,8 @@
- 
- #include <linux/list.h>
- #include <linux/kref.h>
-+#include <linux/dcache.h>
-+#include <linux/workqueue.h>
- 
- struct aa_load_ent {
- 	struct list_head list;
-@@ -36,25 +38,82 @@ struct aa_load_ent *aa_load_ent_alloc(void);
- #define PACKED_MODE_KILL	2
- #define PACKED_MODE_UNCONFINED	3
- 
--/* struct aa_loaddata - buffer of policy load data set */
-+struct aa_ns;
-+
-+enum {
-+	AAFS_LOADDATA_ABI = 0,
-+	AAFS_LOADDATA_REVISION,
-+	AAFS_LOADDATA_HASH,
-+	AAFS_LOADDATA_DATA,
-+	AAFS_LOADDATA_DIR,		/* must be last actual entry */
-+	AAFS_LOADDATA_NDENTS		/* count of entries */
-+};
-+
-+/*
-+ * struct aa_loaddata - buffer of policy raw_data set
-+ *
-+ * there is no loaddata ref for being on ns list, nor a ref from
-+ * d_inode(@dentry) when grab a ref from these, @ns->lock must be held
-+ * && __aa_get_loaddata() needs to be used, and the return value
-+ * checked, if NULL the loaddata is already being reaped and should be
-+ * considered dead.
-+*/
- struct aa_loaddata {
- 	struct kref count;
-+	struct list_head list;
-+	struct work_struct work;
-+	struct dentry *dents[AAFS_LOADDATA_NDENTS];
-+	struct aa_ns *ns;
-+	char *name;
- 	size_t size;
-+	long revision;			/* the ns policy revision this caused */
- 	int abi;
- 	unsigned char *hash;
-+
- 	char data[];
- };
- 
- int aa_unpack(struct aa_loaddata *udata, struct list_head *lh, const char **ns);
- 
- static inline struct aa_loaddata *
-+/**
-+ * __aa_get_loaddata - get a reference count to uncounted data reference
-+ * @data: reference to get a count on
-+ *
-+ * Returns: pointer to reference OR NULL if race is lost and reference is
-+ *          being repeated.
-+ * Requires: @data->ns->lock held, and the return code MUST be checked
-+ *
-+ * Use only from inode->i_private and @data->list found references
-+ */
-+__aa_get_loaddata(struct aa_loaddata *data)
-+{
-+	if (data && kref_get_not0(&(data->count)))
-+		return data;
-+
-+	return NULL;
-+}
-+
-+/**
-+ * aa_get_loaddata - get a reference count from a counted data reference
-+ * @data: reference to get a count on
-+ *
-+ * Returns: point to reference
-+ * Requires: @data to have a valid reference count on it. It is a bug
-+ *           if the race to reap can be encountered when it is used.
-+ */
-+static inline struct aa_loaddata *
- aa_get_loaddata(struct aa_loaddata *data)
- {
--	if (data)
--		kref_get(&(data->count));
--	return data;
-+	struct aa_loaddata *tmp = __aa_get_loaddata(data);
-+
-+	AA_BUG(data && !tmp);
-+
-+	return tmp;
- }
- 
-+void __aa_loaddata_update(struct aa_loaddata *data, long revision);
-+bool aa_rawdata_eq(struct aa_loaddata *l, struct aa_loaddata *r);
- void aa_loaddata_kref(struct kref *kref);
- static inline void aa_put_loaddata(struct aa_loaddata *data)
- {
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index c0a4066ddfb2..27e39dd278f6 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -838,6 +838,7 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 	const char *ns_name, *info = NULL;
- 	struct aa_ns *ns = NULL;
- 	struct aa_load_ent *ent, *tmp;
-+	struct aa_loaddata *rawdata_ent;
- 	const char *op = OP_PROF_REPL;
- 	ssize_t count, error;
- 	LIST_HEAD(lh);
-@@ -885,6 +886,20 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 		ns = aa_get_ns(view);
- 
- 	mutex_lock(&ns->lock);
-+	/* check for duplicate rawdata blobs: space and file dedup */
-+	list_for_each_entry(rawdata_ent, &ns->rawdata_list, list) {
-+		if (aa_rawdata_eq(rawdata_ent, udata)) {
-+			struct aa_loaddata *tmp;
-+
-+			tmp = __aa_get_loaddata(rawdata_ent);
-+			/* check we didn't fail the race */
-+			if (tmp) {
-+				aa_put_loaddata(udata);
-+				udata = tmp;
-+				break;
-+			}
-+		}
-+	}
- 	/* setup parent and ns info */
- 	list_for_each_entry(ent, &lh, list) {
- 		struct aa_policy *policy;
-@@ -927,6 +942,14 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 	}
- 
- 	/* create new fs entries for introspection if needed */
-+	if (!udata->dents[AAFS_LOADDATA_DIR]) {
-+		error = __aa_fs_create_rawdata(ns, udata);
-+		if (error) {
-+			info = "failed to create raw_data dir and files";
-+			ent = NULL;
-+			goto fail_lock;
-+		}
-+	}
- 	list_for_each_entry(ent, &lh, list) {
- 		if (ent->old) {
- 			/* inherit old interface files */
-@@ -953,10 +976,24 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 	}
- 
- 	/* Done with checks that may fail - do actual replacement */
-+	__aa_bump_ns_revision(ns);
-+	__aa_loaddata_update(udata, ns->revision);
- 	list_for_each_entry_safe(ent, tmp, &lh, list) {
- 		list_del_init(&ent->list);
- 		op = (!ent->old && !ent->rename) ? OP_PROF_LOAD : OP_PROF_REPL;
- 
-+		if (ent->old && ent->old->rawdata == ent->new->rawdata) {
-+			/* dedup actual profile replacement */
-+			audit_policy(profile, op, ns_name, ent->new->base.hname,
-+				     "same as current profile, skipping",
-+				     error);
-+			goto skip;
-+		}
-+
-+		/*
-+		 * TODO: finer dedup based on profile range in data. Load set
-+		 * can differ but profile may remain unchanged
-+		 */
- 		audit_policy(profile, op, NULL, ent->new->base.hname,
- 			     NULL, error);
- 
-@@ -996,6 +1033,7 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 					   aa_get_profile(ent->new));
- 			__list_add_profile(&ns->base.profiles, ent->new);
- 		}
-+	skip:
- 		aa_load_ent_free(ent);
- 	}
- 	mutex_unlock(&ns->lock);
-@@ -1011,7 +1049,7 @@ ssize_t aa_replace_profiles(struct aa_ns *view, struct aa_profile *profile,
- 	mutex_unlock(&ns->lock);
- 
- 	/* audit cause of failure */
--	op = (!ent->old) ? OP_PROF_LOAD : OP_PROF_REPL;
-+	op = (ent && !ent->old) ? OP_PROF_LOAD : OP_PROF_REPL;
- fail:
- 	audit_policy(profile, op, ns_name, ent ? ent->new->base.hname : NULL,
- 		     info, error);
-@@ -1083,6 +1121,7 @@ ssize_t aa_remove_profiles(struct aa_ns *view, struct aa_profile *subj,
- 		/* remove namespace - can only happen if fqname[0] == ':' */
- 		mutex_lock(&ns->parent->lock);
- 		__aa_remove_ns(ns);
-+		__aa_bump_ns_revision(ns);
- 		mutex_unlock(&ns->parent->lock);
- 	} else {
- 		/* remove profile */
-@@ -1095,6 +1134,7 @@ ssize_t aa_remove_profiles(struct aa_ns *view, struct aa_profile *subj,
- 		}
- 		name = profile->base.hname;
- 		__remove_profile(profile);
-+		__aa_bump_ns_revision(ns);
- 		mutex_unlock(&ns->lock);
- 	}
- 
-diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
-index 93d1826c4b09..e08ad92471a6 100644
---- a/security/apparmor/policy_ns.c
-+++ b/security/apparmor/policy_ns.c
-@@ -99,7 +99,9 @@ static struct aa_ns *alloc_ns(const char *prefix, const char *name)
- 		goto fail_ns;
- 
- 	INIT_LIST_HEAD(&ns->sub_ns);
-+	INIT_LIST_HEAD(&ns->rawdata_list);
- 	mutex_init(&ns->lock);
-+	init_waitqueue_head(&ns->wait);
- 
- 	/* released by aa_free_ns() */
- 	ns->unconfined = aa_alloc_profile("unconfined", GFP_KERNEL);
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 2e37c9c26bbd..54a0d2c44de4 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -122,13 +122,58 @@ static int audit_iface(struct aa_profile *new, const char *ns_name,
- 	return aa_audit(AUDIT_APPARMOR_STATUS, profile, &sa, audit_cb);
- }
- 
-+void __aa_loaddata_update(struct aa_loaddata *data, long revision)
-+{
-+	AA_BUG(!data);
-+	AA_BUG(!data->ns);
-+	AA_BUG(!data->dents[AAFS_LOADDATA_REVISION]);
-+	AA_BUG(!mutex_is_locked(&data->ns->lock));
-+	AA_BUG(data->revision > revision);
-+
-+	data->revision = revision;
-+	d_inode(data->dents[AAFS_LOADDATA_DIR])->i_mtime =
-+		current_time(d_inode(data->dents[AAFS_LOADDATA_DIR]));
-+	d_inode(data->dents[AAFS_LOADDATA_REVISION])->i_mtime =
-+		current_time(d_inode(data->dents[AAFS_LOADDATA_REVISION]));
-+}
-+
-+bool aa_rawdata_eq(struct aa_loaddata *l, struct aa_loaddata *r)
-+{
-+	if (l->size != r->size)
-+		return false;
-+	if (aa_g_hash_policy && memcmp(l->hash, r->hash, aa_hash_size()) != 0)
-+		return false;
-+	return memcmp(l->data, r->data, r->size) == 0;
-+}
-+
-+/*
-+ * need to take the ns mutex lock which is NOT safe most places that
-+ * put_loaddata is called, so we have to delay freeing it
-+ */
-+static void do_loaddata_free(struct work_struct *work)
-+{
-+	struct aa_loaddata *d = container_of(work, struct aa_loaddata, work);
-+	struct aa_ns *ns = aa_get_ns(d->ns);
-+
-+	if (ns) {
-+		mutex_lock(&ns->lock);
-+		__aa_fs_remove_rawdata(d);
-+		mutex_unlock(&ns->lock);
-+		aa_put_ns(ns);
-+	}
-+
-+	kzfree(d->hash);
-+	kfree(d->name);
-+	kvfree(d);
-+}
-+
- void aa_loaddata_kref(struct kref *kref)
- {
- 	struct aa_loaddata *d = container_of(kref, struct aa_loaddata, count);
- 
- 	if (d) {
--		kzfree(d->hash);
--		kvfree(d);
-+		INIT_WORK(&d->work, do_loaddata_free);
-+		schedule_work(&d->work);
- 	}
- }
- 
--- 
-2.11.0
+Thanks for doing this!  It annoyed me too that there wasn't a helper function
+for this.  Just a few comments below:
 
+> diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+> index 3556d8e..bf4acaf 100644
+> --- a/crypto/af_alg.c
+> +++ b/crypto/af_alg.c
+> @@ -480,33 +480,6 @@ int af_alg_cmsg_send(struct msghdr *msg, struct af_alg_control *con)
+>  }
+>  EXPORT_SYMBOL_GPL(af_alg_cmsg_send);
+>  
+> -int af_alg_wait_for_completion(int err, struct af_alg_completion *completion)
+> -{
+> -	switch (err) {
+> -	case -EINPROGRESS:
+> -	case -EBUSY:
+> -		wait_for_completion(&completion->completion);
+> -		reinit_completion(&completion->completion);
+> -		err = completion->err;
+> -		break;
+> -	};
+> -
+> -	return err;
+> -}
+> -EXPORT_SYMBOL_GPL(af_alg_wait_for_completion);
+> -
+> -void af_alg_complete(struct crypto_async_request *req, int err)
+> -{
+> -	struct af_alg_completion *completion = req->data;
+> -
+> -	if (err == -EINPROGRESS)
+> -		return;
+> -
+> -	completion->err = err;
+> -	complete(&completion->completion);
+> -}
+> -EXPORT_SYMBOL_GPL(af_alg_complete);
+> -
+
+I think it would be cleaner to switch af_alg and algif_* over to the new
+interface in its own patch, rather than in the same patch that introduces the
+new interface.
+
+> @@ -88,8 +88,8 @@ static int hash_sendmsg(struct socket *sock, struct msghdr *msg,
+>  		if ((msg->msg_flags & MSG_MORE))
+>  			hash_free_result(sk, ctx);
+>  
+> -		err = af_alg_wait_for_completion(crypto_ahash_init(&ctx->req),
+> -						&ctx->completion);
+> +		err = crypto_wait_req(crypto_ahash_init(&ctx->req),
+> +						&ctx->wait);
+>  		if (err)
+>  			goto unlock;
+>  	}
+
+In general can you try to keep the argument lists indented sanely?  (This
+applies throughout the patch series.)  e.g. here I'd have expected:
+
+		err = crypto_wait_req(crypto_ahash_init(&ctx->req),
+				      &ctx->wait);
+
+>  
+> diff --git a/crypto/api.c b/crypto/api.c
+> index 941cd4c..1c6e9cd 100644
+> --- a/crypto/api.c
+> +++ b/crypto/api.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/sched/signal.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+> +#include <linux/completion.h>
+>  #include "internal.h"
+>  
+>  LIST_HEAD(crypto_alg_list);
+> @@ -595,5 +596,32 @@ int crypto_has_alg(const char *name, u32 type, u32 mask)
+>  }
+>  EXPORT_SYMBOL_GPL(crypto_has_alg);
+>  
+> +int crypto_wait_req(int err, struct crypto_wait *wait)
+> +{
+> +	switch (err) {
+> +	case -EINPROGRESS:
+> +	case -EBUSY:
+> +		wait_for_completion(&wait->completion);
+> +		reinit_completion(&wait->completion);
+> +		err = wait->err;
+> +		break;
+> +	};
+> +
+> +	return err;
+> +}
+> +EXPORT_SYMBOL_GPL(crypto_wait_req);
+
+crypto_wait_req() maybe should be inlined, since it doesn't do much (note that
+reinit_completion is actually just a variable assignment), and the common case
+is that 'err' will be 0, so there will be nothing to wait for.
+
+Also drop the unnecessary semicolon at the end of the switch block.
+
+With regards to the wait being uninterruptible, I agree that this should be the
+default behavior, because I think users waiting for specific crypto requests are
+generally not prepared to handle the wait actually being interrupted.  After
+interruption the crypto operation will still proceed in the background, and it
+will use buffers which the caller has in many cases already freed.  However, I'd
+suggest taking a close look at anything that was actually doing an interruptible
+wait before, to see whether it was a bug or intentional (or "doesn't matter").
+
+And yes there could always be a crypto_wait_req_interruptible() introduced if
+some users need it.
+
+>  
+>  #define CRYPTO_MINALIGN_ATTR __attribute__ ((__aligned__(CRYPTO_MINALIGN)))
+>  
+> +/*
+> + * Macro for declaring a crypto op async wait object on stack
+> + */
+> +#define DECLARE_CRYPTO_WAIT(_wait) \
+> +	struct crypto_wait _wait = { \
+> +		COMPLETION_INITIALIZER_ONSTACK((_wait).completion), 0 }
+> +
+
+Move this definition down below, so it's next to crypto_wait?
+
+>  
+>  /*
+>   * Algorithm registration interface.
+>   */
+> @@ -1604,5 +1631,6 @@ static inline int crypto_comp_decompress(struct crypto_comp *tfm,
+>  						    src, slen, dst, dlen);
+>  }
+>  
+> +
+
+Don't add unrelated blank lines.
+
+- Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
