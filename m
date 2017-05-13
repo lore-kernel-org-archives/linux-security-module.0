@@ -1,164 +1,73 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Sat, 13 May 2017 12:47:22 -0700
-Subject: [PATCH 09/17] doc: ReSTify apparmor.txt
-In-Reply-To: <1494676313-144890-10-git-send-email-keescook@chromium.org>
-References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
-	<1494676313-144890-10-git-send-email-keescook@chromium.org>
-Message-ID: <db5e66c1-fcc0-e982-d32e-0a8c7681bdc1@canonical.com>
+From: matt@nmatt.com (Matt Brown)
+Date: Sat, 13 May 2017 15:52:58 -0400
+Subject: [PATCH v6 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <20170510212920.7f6bc5e6@alans-desktop>
+References: <20170505232018.28846-1-matt@nmatt.com>
+	<20170510212920.7f6bc5e6@alans-desktop>
+Message-ID: <e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/13/2017 04:51 AM, Kees Cook wrote:
-> Adjusts for ReST markup and moves under LSM admin guide.
-> 
-> Cc: John Johansen <john.johansen@canonical.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: John Johansen <john.johansen@canonical.com>
+On 05/10/2017 04:29 PM, Alan Cox wrote:
+> On Fri,  5 May 2017 19:20:16 -0400
+> Matt Brown <matt@nmatt.com> wrote:
+>
+>> This patchset introduces the tiocsti_restrict sysctl, whose default is
+>> controlled via CONFIG_SECURITY_TIOCSTI_RESTRICT. When activated, this
+>> control restricts all TIOCSTI ioctl calls from non CAP_SYS_ADMIN users.
+>>
+>> This patch was inspired from GRKERNSEC_HARDEN_TTY.
+>>
+>> This patch would have prevented
+>> https://bugzilla.redhat.com/show_bug.cgi?id=1411256 under the following
+>> conditions:
+>> * non-privileged container
+>> * container run inside new user namespace
+>>
+>> Possible effects on userland:
+>>
+>> There could be a few user programs that would be effected by this
+>> change.
+>> See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+>> notable programs are: agetty, csh, xemacs and tcsh
+>>
+>> However, I still believe that this change is worth it given that the
+>> Kconfig defaults to n.
+>
+> And it still doesn't deal with the fact that there are hundreds of other
+> ways to annoy the owner of a tty if it's passed to a lower privilege
+> child from framebuffer reprogramming through keyboard remaps.
+>
+> The proper way to handle those cases is to create a pty/tty pair and use
+> that. Your patch is pure snake oil and if anything implies safety that
+> doesn't exist.
+>
 
-> ---
->  .../apparmor.txt => admin-guide/LSM/apparmor.rst}  | 36 ++++++++++++++--------
->  Documentation/admin-guide/LSM/index.rst            |  1 +
->  Documentation/security/00-INDEX                    |  2 --
->  MAINTAINERS                                        |  1 +
->  security/apparmor/match.c                          |  2 +-
->  security/apparmor/policy_unpack.c                  |  2 +-
->  6 files changed, 28 insertions(+), 16 deletions(-)
->  rename Documentation/{security/apparmor.txt => admin-guide/LSM/apparmor.rst} (65%)
-> 
-> diff --git a/Documentation/security/apparmor.txt b/Documentation/admin-guide/LSM/apparmor.rst
-> similarity index 65%
-> rename from Documentation/security/apparmor.txt
-> rename to Documentation/admin-guide/LSM/apparmor.rst
-> index 93c1fd7d0635..3e9734bd0e05 100644
-> --- a/Documentation/security/apparmor.txt
-> +++ b/Documentation/admin-guide/LSM/apparmor.rst
-> @@ -1,4 +1,9 @@
-> ---- What is AppArmor? ---
-> +========
-> +AppArmor
-> +========
-> +
-> +What is AppArmor?
-> +=================
->  
->  AppArmor is MAC style security extension for the Linux kernel.  It implements
->  a task centered policy, with task "profiles" being created and loaded
-> @@ -6,34 +11,41 @@ from user space.  Tasks on the system that do not have a profile defined for
->  them run in an unconfined state which is equivalent to standard Linux DAC
->  permissions.
->  
-> ---- How to enable/disable ---
-> +How to enable/disable
-> +=====================
-> +
-> +set ``CONFIG_SECURITY_APPARMOR=y``
->  
-> -set CONFIG_SECURITY_APPARMOR=y
-> +If AppArmor should be selected as the default security module then set::
->  
-> -If AppArmor should be selected as the default security module then
-> -   set CONFIG_DEFAULT_SECURITY="apparmor"
-> -   and CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
-> +   CONFIG_DEFAULT_SECURITY="apparmor"
-> +   CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
->  
->  Build the kernel
->  
->  If AppArmor is not the default security module it can be enabled by passing
-> -security=apparmor on the kernel's command line.
-> +``security=apparmor`` on the kernel's command line.
->  
->  If AppArmor is the default security module it can be disabled by passing
-> -apparmor=0, security=XXXX (where XXX is valid security module), on the
-> -kernel's command line
-> +``apparmor=0, security=XXXX`` (where ``XXXX`` is valid security module), on the
-> +kernel's command line.
->  
->  For AppArmor to enforce any restrictions beyond standard Linux DAC permissions
->  policy must be loaded into the kernel from user space (see the Documentation
->  and tools links).
->  
-> ---- Documentation ---
-> +Documentation
-> +=============
->  
-> -Documentation can be found on the wiki.
-> +Documentation can be found on the wiki, linked below.
->  
-> ---- Links ---
-> +Links
-> +=====
->  
->  Mailing List - apparmor at lists.ubuntu.com
-> +
->  Wiki - http://apparmor.wiki.kernel.org/
-> +
->  User space tools - https://launchpad.net/apparmor
-> +
->  Kernel module - git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
-> diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-> index cc0e04d63bf9..a4db29410ea0 100644
-> --- a/Documentation/admin-guide/LSM/index.rst
-> +++ b/Documentation/admin-guide/LSM/index.rst
-> @@ -33,4 +33,5 @@ the one "major" module (e.g. SELinux) if there is one configured.
->  .. toctree::
->     :maxdepth: 1
->  
-> +   apparmor
->     SELinux
-> diff --git a/Documentation/security/00-INDEX b/Documentation/security/00-INDEX
-> index aaa0195418b3..22ebdc02f0dc 100644
-> --- a/Documentation/security/00-INDEX
-> +++ b/Documentation/security/00-INDEX
-> @@ -4,8 +4,6 @@ Smack.txt
->  	- documentation on the Smack Linux Security Module.
->  Yama.txt
->  	- documentation on the Yama Linux Security Module.
-> -apparmor.txt
-> -	- documentation on the AppArmor security extension.
->  keys-ecryptfs.txt
->  	- description of the encryption keys for the ecryptfs filesystem.
->  keys-request-key.txt
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c85108b4f6c7..184cdd32a67e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11560,6 +11560,7 @@ W:	apparmor.wiki.kernel.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
->  S:	Supported
->  F:	security/apparmor/
-> +F:	Documentation/admin-guide/LSM/apparmor.rst
->  
->  LOADPIN SECURITY MODULE
->  M:	Kees Cook <keescook@chromium.org>
-> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> index 960c913381e2..72c604350e80 100644
-> --- a/security/apparmor/match.c
-> +++ b/security/apparmor/match.c
-> @@ -226,7 +226,7 @@ void aa_dfa_free_kref(struct kref *kref)
->   * @flags: flags controlling what type of accept tables are acceptable
->   *
->   * Unpack a dfa that has been serialized.  To find information on the dfa
-> - * format look in Documentation/security/apparmor.txt
-> + * format look in Documentation/admin-guide/LSM/apparmor.rst
->   * Assumes the dfa @blob stream has been aligned on a 8 byte boundary
->   *
->   * Returns: an unpacked dfa ready for matching or ERR_PTR on failure
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index f3422a91353c..981d570eebba 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -13,7 +13,7 @@
->   * License.
->   *
->   * AppArmor uses a serialized binary format for loading policy. To find
-> - * policy format documentation look in Documentation/security/apparmor.txt
-> + * policy format documentation see Documentation/admin-guide/LSM/apparmor.rst
->   * All policy is validated before it is used.
->   */
->  
-> 
+I'm not implying that my patch is supposed to provide safety for
+"hundreds of other" issues. I'm looking to provide a way to lock down a
+single TTY ioctl that has caused real security issues to arise. For
+this reason, it's completely incorrect to say that this feature is
+snake oil. My patch does exactly what it claims to do. No more no less.
 
+> In addition your change to allow it to be used by root in the guest
+> completely invalidates any protection you have because I can push
+>
+> "rm -rf /\n"
+>
+> as root in my namespace and exit
+>
+> The tty buffers are not flushed across the context change so the shell
+> you return to gets the input and oh dear....
+
+This is precisely what my patch prevents! With my protection enabled, a
+container will only be able to use the TIOCSTI ioctl on a tty if that
+container has CAP_SYS_ADMIN in the user namespace in which the tty was
+created.
+
+>
+> Alan
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
