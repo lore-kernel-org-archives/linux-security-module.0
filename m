@@ -1,124 +1,117 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Sat, 13 May 2017 04:51:38 -0700
-Subject: [PATCH 02/17] doc: ReSTify no_new_privs.txt
+Date: Sat, 13 May 2017 04:51:42 -0700
+Subject: [PATCH 06/17] doc: security: minor cleanups to build kernel-doc
 In-Reply-To: <1494676313-144890-1-git-send-email-keescook@chromium.org>
 References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
-Message-ID: <1494676313-144890-3-git-send-email-keescook@chromium.org>
+Message-ID: <1494676313-144890-7-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This updates no_new_privs documentation to ReST markup and adds it to
-the user-space API documentation.
+These fixes were needed to parse lsm_hooks.h kernel-doc. More work is
+needed, but this is the first step.
 
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- Documentation/userspace-api/index.rst              |  1 +
- .../no_new_privs.rst}                              | 44 ++++++++++++----------
- 2 files changed, 26 insertions(+), 19 deletions(-)
- rename Documentation/{prctl/no_new_privs.txt => userspace-api/no_new_privs.rst} (54%)
+ include/linux/lsm_hooks.h | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-index 15ff12342db8..7b2eb1b7d4ca 100644
---- a/Documentation/userspace-api/index.rst
-+++ b/Documentation/userspace-api/index.rst
-@@ -16,6 +16,7 @@ place where this information is gathered.
- .. toctree::
-    :maxdepth: 2
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 080f34e66017..a1eeaf603d2f 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -29,6 +29,8 @@
+ #include <linux/rculist.h>
  
-+   no_new_privs
-    seccomp_filter
-    unshare
- 
-diff --git a/Documentation/prctl/no_new_privs.txt b/Documentation/userspace-api/no_new_privs.rst
-similarity index 54%
-rename from Documentation/prctl/no_new_privs.txt
-rename to Documentation/userspace-api/no_new_privs.rst
-index f7be84fba910..d060ea217ea1 100644
---- a/Documentation/prctl/no_new_privs.txt
-+++ b/Documentation/userspace-api/no_new_privs.rst
-@@ -1,3 +1,7 @@
-+======================
-+No New Privileges Flag
-+======================
-+
- The execve system call can grant a newly-started program privileges that
- its parent did not have.  The most obvious examples are setuid/setgid
- programs and file capabilities.  To prevent the parent program from
-@@ -5,53 +9,55 @@ gaining these privileges as well, the kernel and user code must be
- careful to prevent the parent from doing anything that could subvert the
- child.  For example:
- 
-- - The dynamic loader handles LD_* environment variables differently if
-+ - The dynamic loader handles ``LD_*`` environment variables differently if
-    a program is setuid.
- 
-  - chroot is disallowed to unprivileged processes, since it would allow
--   /etc/passwd to be replaced from the point of view of a process that
-+   ``/etc/passwd`` to be replaced from the point of view of a process that
-    inherited chroot.
- 
-  - The exec code has special handling for ptrace.
- 
--These are all ad-hoc fixes.  The no_new_privs bit (since Linux 3.5) is a
-+These are all ad-hoc fixes.  The ``no_new_privs`` bit (since Linux 3.5) is a
- new, generic mechanism to make it safe for a process to modify its
- execution environment in a manner that persists across execve.  Any task
--can set no_new_privs.  Once the bit is set, it is inherited across fork,
--clone, and execve and cannot be unset.  With no_new_privs set, execve
-+can set ``no_new_privs``.  Once the bit is set, it is inherited across fork,
-+clone, and execve and cannot be unset.  With ``no_new_privs`` set, ``execve()``
- promises not to grant the privilege to do anything that could not have
- been done without the execve call.  For example, the setuid and setgid
- bits will no longer change the uid or gid; file capabilities will not
- add to the permitted set, and LSMs will not relax constraints after
- execve.
- 
--To set no_new_privs, use prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0).
-+To set ``no_new_privs``, use::
-+
-+    prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
- 
- Be careful, though: LSMs might also not tighten constraints on exec
--in no_new_privs mode.  (This means that setting up a general-purpose
--service launcher to set no_new_privs before execing daemons may
-+in ``no_new_privs`` mode.  (This means that setting up a general-purpose
-+service launcher to set ``no_new_privs`` before execing daemons may
- interfere with LSM-based sandboxing.)
- 
--Note that no_new_privs does not prevent privilege changes that do not
--involve execve.  An appropriately privileged task can still call
--setuid(2) and receive SCM_RIGHTS datagrams.
-+Note that ``no_new_privs`` does not prevent privilege changes that do not
-+involve ``execve()``.  An appropriately privileged task can still call
-+``setuid(2)`` and receive SCM_RIGHTS datagrams.
- 
--There are two main use cases for no_new_privs so far:
-+There are two main use cases for ``no_new_privs`` so far:
- 
-  - Filters installed for the seccomp mode 2 sandbox persist across
-    execve and can change the behavior of newly-executed programs.
-    Unprivileged users are therefore only allowed to install such filters
--   if no_new_privs is set.
-+   if ``no_new_privs`` is set.
- 
-- - By itself, no_new_privs can be used to reduce the attack surface
-+ - By itself, ``no_new_privs`` can be used to reduce the attack surface
-    available to an unprivileged user.  If everything running with a
--   given uid has no_new_privs set, then that uid will be unable to
-+   given uid has ``no_new_privs`` set, then that uid will be unable to
-    escalate its privileges by directly attacking setuid, setgid, and
-    fcap-using binaries; it will need to compromise something without the
--   no_new_privs bit set first.
-+   ``no_new_privs`` bit set first.
- 
- In the future, other potentially dangerous kernel features could become
--available to unprivileged tasks if no_new_privs is set.  In principle,
--several options to unshare(2) and clone(2) would be safe when
--no_new_privs is set, and no_new_privs + chroot is considerable less
-+available to unprivileged tasks if ``no_new_privs`` is set.  In principle,
-+several options to ``unshare(2)`` and ``clone(2)`` would be safe when
-+``no_new_privs`` is set, and ``no_new_privs`` + ``chroot`` is considerable less
- dangerous than chroot by itself.
+ /**
++ * union security_list_options - Linux Security Module hook function list
++ *
+  * Security hooks for program execution operations.
+  *
+  * @bprm_set_creds:
+@@ -193,8 +195,8 @@
+  *	@value will be set to the allocated attribute value.
+  *	@len will be set to the length of the value.
+  *	Returns 0 if @name and @value have been successfully set,
+- *		-EOPNOTSUPP if no security attribute is needed, or
+- *		-ENOMEM on memory allocation failure.
++ *	-EOPNOTSUPP if no security attribute is needed, or
++ *	-ENOMEM on memory allocation failure.
+  * @inode_create:
+  *	Check permission to create a regular file.
+  *	@dir contains inode structure of the parent of the new file.
+@@ -510,8 +512,7 @@
+  *	process @tsk.  Note that this hook is sometimes called from interrupt.
+  *	Note that the fown_struct, @fown, is never outside the context of a
+  *	struct file, so the file structure (and associated security information)
+- *	can always be obtained:
+- *		container_of(fown, struct file, f_owner)
++ *	can always be obtained: container_of(fown, struct file, f_owner)
+  *	@tsk contains the structure of task receiving signal.
+  *	@fown contains the file owner information.
+  *	@sig is the signal that will be sent.  When 0, kernel sends SIGIO.
+@@ -521,7 +522,7 @@
+  *	to receive an open file descriptor via socket IPC.
+  *	@file contains the file structure being received.
+  *	Return 0 if permission is granted.
+- * @file_open
++ * @file_open:
+  *	Save open-time permission checking state for later use upon
+  *	file_permission, and recheck access if anything has changed
+  *	since inode_permission.
+@@ -1143,7 +1144,7 @@
+  *	@sma contains the semaphore structure.  May be NULL.
+  *	@cmd contains the operation to be performed.
+  *	Return 0 if permission is granted.
+- * @sem_semop
++ * @sem_semop:
+  *	Check permissions before performing operations on members of the
+  *	semaphore set @sma.  If the @alter flag is nonzero, the semaphore set
+  *	may be modified.
+@@ -1153,20 +1154,20 @@
+  *	@alter contains the flag indicating whether changes are to be made.
+  *	Return 0 if permission is granted.
+  *
+- * @binder_set_context_mgr
++ * @binder_set_context_mgr:
+  *	Check whether @mgr is allowed to be the binder context manager.
+  *	@mgr contains the task_struct for the task being registered.
+  *	Return 0 if permission is granted.
+- * @binder_transaction
++ * @binder_transaction:
+  *	Check whether @from is allowed to invoke a binder transaction call
+  *	to @to.
+  *	@from contains the task_struct for the sending task.
+  *	@to contains the task_struct for the receiving task.
+- * @binder_transfer_binder
++ * @binder_transfer_binder:
+  *	Check whether @from is allowed to transfer a binder reference to @to.
+  *	@from contains the task_struct for the sending task.
+  *	@to contains the task_struct for the receiving task.
+- * @binder_transfer_file
++ * @binder_transfer_file:
+  *	Check whether @from is allowed to transfer @file to @to.
+  *	@from contains the task_struct for the sending task.
+  *	@file contains the struct file being transferred.
+@@ -1214,7 +1215,7 @@
+  *	@cred contains the credentials to use.
+  *	@ns contains the user namespace we want the capability in
+  *	@cap contains the capability <include/linux/capability.h>.
+- *	@audit: Whether to write an audit message or not
++ *	@audit contains whether to write an audit message or not
+  *	Return 0 if the capability is granted for @tsk.
+  * @syslog:
+  *	Check permission before accessing the kernel message ring or changing
+@@ -1336,9 +1337,7 @@
+  *	@inode we wish to get the security context of.
+  *	@ctx is a pointer in which to place the allocated security context.
+  *	@ctxlen points to the place to put the length of @ctx.
+- * This is the main security structure.
+  */
+-
+ union security_list_options {
+ 	int (*binder_set_context_mgr)(struct task_struct *mgr);
+ 	int (*binder_transaction)(struct task_struct *from,
 -- 
 2.7.4
 
