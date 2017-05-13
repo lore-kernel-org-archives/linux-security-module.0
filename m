@@ -1,156 +1,163 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Sat, 13 May 2017 04:51:39 -0700
-Subject: [PATCH 03/17] doc: ReSTify IMA-templates.txt
-In-Reply-To: <1494676313-144890-1-git-send-email-keescook@chromium.org>
+From: john.johansen@canonical.com (John Johansen)
+Date: Sat, 13 May 2017 12:47:22 -0700
+Subject: [PATCH 09/17] doc: ReSTify apparmor.txt
+In-Reply-To: <1494676313-144890-10-git-send-email-keescook@chromium.org>
 References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
-Message-ID: <1494676313-144890-4-git-send-email-keescook@chromium.org>
+	<1494676313-144890-10-git-send-email-keescook@chromium.org>
+Message-ID: <db5e66c1-fcc0-e982-d32e-0a8c7681bdc1@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Adjust IMA-templates.txt for ReST markup and add to the index for
-security/, under the Kernel API Documentation.
+On 05/13/2017 04:51 AM, Kees Cook wrote:
+> Adjusts for ReST markup and moves under LSM admin guide.
+> 
+> Cc: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- Documentation/security/00-INDEX                    |  2 -
- .../{IMA-templates.txt => IMA-templates.rst}       | 46 ++++++++++++----------
- Documentation/security/index.rst                   |  4 +-
- 3 files changed, 29 insertions(+), 23 deletions(-)
- rename Documentation/security/{IMA-templates.txt => IMA-templates.rst} (72%)
-
-diff --git a/Documentation/security/00-INDEX b/Documentation/security/00-INDEX
-index 45c82fd3e9d3..414235c1fcfc 100644
---- a/Documentation/security/00-INDEX
-+++ b/Documentation/security/00-INDEX
-@@ -22,5 +22,3 @@ keys.txt
- 	- description of the kernel key retention service.
- tomoyo.txt
- 	- documentation on the TOMOYO Linux Security Module.
--IMA-templates.txt
--	- documentation on the template management mechanism for IMA.
-diff --git a/Documentation/security/IMA-templates.txt b/Documentation/security/IMA-templates.rst
-similarity index 72%
-rename from Documentation/security/IMA-templates.txt
-rename to Documentation/security/IMA-templates.rst
-index 839b5dad9226..2cd0e273cc9a 100644
---- a/Documentation/security/IMA-templates.txt
-+++ b/Documentation/security/IMA-templates.rst
-@@ -1,9 +1,12 @@
--                       IMA Template Management Mechanism
-+=================================
-+IMA Template Management Mechanism
-+=================================
- 
- 
--==== INTRODUCTION ====
-+Introduction
-+============
- 
--The original 'ima' template is fixed length, containing the filedata hash
-+The original ``ima`` template is fixed length, containing the filedata hash
- and pathname. The filedata hash is limited to 20 bytes (md5/sha1).
- The pathname is a null terminated string, limited to 255 characters.
- To overcome these limitations and to add additional file metadata, it is
-@@ -28,61 +31,64 @@ a new data type, developers define the field identifier and implement
- two functions, init() and show(), respectively to generate and display
- measurement entries. Defining a new template descriptor requires
- specifying the template format (a string of field identifiers separated
--by the '|' character) through the 'ima_template_fmt' kernel command line
-+by the ``|`` character) through the ``ima_template_fmt`` kernel command line
- parameter. At boot time, IMA initializes the chosen template descriptor
- by translating the format into an array of template fields structures taken
- from the set of the supported ones.
- 
--After the initialization step, IMA will call ima_alloc_init_template()
-+After the initialization step, IMA will call ``ima_alloc_init_template()``
- (new function defined within the patches for the new template management
- mechanism) to generate a new measurement entry by using the template
- descriptor chosen through the kernel configuration or through the newly
--introduced 'ima_template' and 'ima_template_fmt' kernel command line parameters.
-+introduced ``ima_template`` and ``ima_template_fmt`` kernel command line parameters.
- It is during this phase that the advantages of the new architecture are
- clearly shown: the latter function will not contain specific code to handle
--a given template but, instead, it simply calls the init() method of the template
-+a given template but, instead, it simply calls the ``init()`` method of the template
- fields associated to the chosen template descriptor and store the result
- (pointer to allocated data and data length) in the measurement entry structure.
- 
- The same mechanism is employed to display measurements entries.
--The functions ima[_ascii]_measurements_show() retrieve, for each entry,
-+The functions ``ima[_ascii]_measurements_show()`` retrieve, for each entry,
- the template descriptor used to produce that entry and call the show()
- method for each item of the array of template fields structures.
- 
- 
- 
--==== SUPPORTED TEMPLATE FIELDS AND DESCRIPTORS ====
-+Supported Template Fields and Descriptors
-+=========================================
- 
- In the following, there is the list of supported template fields
--('<identifier>': description), that can be used to define new template
-+``('<identifier>': description)``, that can be used to define new template
- descriptors by adding their identifier to the format string
- (support for more data types will be added later):
- 
-  - 'd': the digest of the event (i.e. the digest of a measured file),
--        calculated with the SHA1 or MD5 hash algorithm;
-+   calculated with the SHA1 or MD5 hash algorithm;
-  - 'n': the name of the event (i.e. the file name), with size up to 255 bytes;
-  - 'd-ng': the digest of the event, calculated with an arbitrary hash
--           algorithm (field format: [<hash algo>:]digest, where the digest
--           prefix is shown only if the hash algorithm is not SHA1 or MD5);
-+   algorithm (field format: [<hash algo>:]digest, where the digest
-+   prefix is shown only if the hash algorithm is not SHA1 or MD5);
-  - 'n-ng': the name of the event, without size limitations;
-  - 'sig': the file signature.
- 
- 
- Below, there is the list of defined template descriptors:
-- - "ima": its format is 'd|n';
-- - "ima-ng" (default): its format is 'd-ng|n-ng';
-- - "ima-sig": its format is 'd-ng|n-ng|sig'.
- 
-+ - "ima": its format is ``d|n``;
-+ - "ima-ng" (default): its format is ``d-ng|n-ng``;
-+ - "ima-sig": its format is ``d-ng|n-ng|sig``.
- 
- 
--==== USE ====
-+
-+Use
-+===
- 
- To specify the template descriptor to be used to generate measurement entries,
- currently the following methods are supported:
- 
-  - select a template descriptor among those supported in the kernel
--   configuration ('ima-ng' is the default choice);
-+   configuration (``ima-ng`` is the default choice);
-  - specify a template descriptor name from the kernel command line through
--   the 'ima_template=' parameter;
-+   the ``ima_template=`` parameter;
-  - register a new template descriptor with custom format through the kernel
--   command line parameter 'ima_template_fmt='.
-+   command line parameter ``ima_template_fmt=``.
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index 9bae6bb20e7f..07335659ce8d 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -1,7 +1,9 @@
- ======================
--Security documentation
-+Security Documentation
- ======================
- 
- .. toctree::
-+   :maxdepth: 1
- 
-+   IMA-templates
-    tpm/index
--- 
-2.7.4
+> ---
+>  .../apparmor.txt => admin-guide/LSM/apparmor.rst}  | 36 ++++++++++++++--------
+>  Documentation/admin-guide/LSM/index.rst            |  1 +
+>  Documentation/security/00-INDEX                    |  2 --
+>  MAINTAINERS                                        |  1 +
+>  security/apparmor/match.c                          |  2 +-
+>  security/apparmor/policy_unpack.c                  |  2 +-
+>  6 files changed, 28 insertions(+), 16 deletions(-)
+>  rename Documentation/{security/apparmor.txt => admin-guide/LSM/apparmor.rst} (65%)
+> 
+> diff --git a/Documentation/security/apparmor.txt b/Documentation/admin-guide/LSM/apparmor.rst
+> similarity index 65%
+> rename from Documentation/security/apparmor.txt
+> rename to Documentation/admin-guide/LSM/apparmor.rst
+> index 93c1fd7d0635..3e9734bd0e05 100644
+> --- a/Documentation/security/apparmor.txt
+> +++ b/Documentation/admin-guide/LSM/apparmor.rst
+> @@ -1,4 +1,9 @@
+> ---- What is AppArmor? ---
+> +========
+> +AppArmor
+> +========
+> +
+> +What is AppArmor?
+> +=================
+>  
+>  AppArmor is MAC style security extension for the Linux kernel.  It implements
+>  a task centered policy, with task "profiles" being created and loaded
+> @@ -6,34 +11,41 @@ from user space.  Tasks on the system that do not have a profile defined for
+>  them run in an unconfined state which is equivalent to standard Linux DAC
+>  permissions.
+>  
+> ---- How to enable/disable ---
+> +How to enable/disable
+> +=====================
+> +
+> +set ``CONFIG_SECURITY_APPARMOR=y``
+>  
+> -set CONFIG_SECURITY_APPARMOR=y
+> +If AppArmor should be selected as the default security module then set::
+>  
+> -If AppArmor should be selected as the default security module then
+> -   set CONFIG_DEFAULT_SECURITY="apparmor"
+> -   and CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
+> +   CONFIG_DEFAULT_SECURITY="apparmor"
+> +   CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
+>  
+>  Build the kernel
+>  
+>  If AppArmor is not the default security module it can be enabled by passing
+> -security=apparmor on the kernel's command line.
+> +``security=apparmor`` on the kernel's command line.
+>  
+>  If AppArmor is the default security module it can be disabled by passing
+> -apparmor=0, security=XXXX (where XXX is valid security module), on the
+> -kernel's command line
+> +``apparmor=0, security=XXXX`` (where ``XXXX`` is valid security module), on the
+> +kernel's command line.
+>  
+>  For AppArmor to enforce any restrictions beyond standard Linux DAC permissions
+>  policy must be loaded into the kernel from user space (see the Documentation
+>  and tools links).
+>  
+> ---- Documentation ---
+> +Documentation
+> +=============
+>  
+> -Documentation can be found on the wiki.
+> +Documentation can be found on the wiki, linked below.
+>  
+> ---- Links ---
+> +Links
+> +=====
+>  
+>  Mailing List - apparmor at lists.ubuntu.com
+> +
+>  Wiki - http://apparmor.wiki.kernel.org/
+> +
+>  User space tools - https://launchpad.net/apparmor
+> +
+>  Kernel module - git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
+> diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+> index cc0e04d63bf9..a4db29410ea0 100644
+> --- a/Documentation/admin-guide/LSM/index.rst
+> +++ b/Documentation/admin-guide/LSM/index.rst
+> @@ -33,4 +33,5 @@ the one "major" module (e.g. SELinux) if there is one configured.
+>  .. toctree::
+>     :maxdepth: 1
+>  
+> +   apparmor
+>     SELinux
+> diff --git a/Documentation/security/00-INDEX b/Documentation/security/00-INDEX
+> index aaa0195418b3..22ebdc02f0dc 100644
+> --- a/Documentation/security/00-INDEX
+> +++ b/Documentation/security/00-INDEX
+> @@ -4,8 +4,6 @@ Smack.txt
+>  	- documentation on the Smack Linux Security Module.
+>  Yama.txt
+>  	- documentation on the Yama Linux Security Module.
+> -apparmor.txt
+> -	- documentation on the AppArmor security extension.
+>  keys-ecryptfs.txt
+>  	- description of the encryption keys for the ecryptfs filesystem.
+>  keys-request-key.txt
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c85108b4f6c7..184cdd32a67e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11560,6 +11560,7 @@ W:	apparmor.wiki.kernel.org
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
+>  S:	Supported
+>  F:	security/apparmor/
+> +F:	Documentation/admin-guide/LSM/apparmor.rst
+>  
+>  LOADPIN SECURITY MODULE
+>  M:	Kees Cook <keescook@chromium.org>
+> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+> index 960c913381e2..72c604350e80 100644
+> --- a/security/apparmor/match.c
+> +++ b/security/apparmor/match.c
+> @@ -226,7 +226,7 @@ void aa_dfa_free_kref(struct kref *kref)
+>   * @flags: flags controlling what type of accept tables are acceptable
+>   *
+>   * Unpack a dfa that has been serialized.  To find information on the dfa
+> - * format look in Documentation/security/apparmor.txt
+> + * format look in Documentation/admin-guide/LSM/apparmor.rst
+>   * Assumes the dfa @blob stream has been aligned on a 8 byte boundary
+>   *
+>   * Returns: an unpacked dfa ready for matching or ERR_PTR on failure
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index f3422a91353c..981d570eebba 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -13,7 +13,7 @@
+>   * License.
+>   *
+>   * AppArmor uses a serialized binary format for loading policy. To find
+> - * policy format documentation look in Documentation/security/apparmor.txt
+> + * policy format documentation see Documentation/admin-guide/LSM/apparmor.rst
+>   * All policy is validated before it is used.
+>   */
+>  
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
