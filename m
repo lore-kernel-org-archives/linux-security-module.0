@@ -1,158 +1,124 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Sat, 13 May 2017 04:51:45 -0700
-Subject: [PATCH 09/17] doc: ReSTify apparmor.txt
+Date: Sat, 13 May 2017 04:51:38 -0700
+Subject: [PATCH 02/17] doc: ReSTify no_new_privs.txt
 In-Reply-To: <1494676313-144890-1-git-send-email-keescook@chromium.org>
 References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
-Message-ID: <1494676313-144890-10-git-send-email-keescook@chromium.org>
+Message-ID: <1494676313-144890-3-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Adjusts for ReST markup and moves under LSM admin guide.
+This updates no_new_privs documentation to ReST markup and adds it to
+the user-space API documentation.
 
-Cc: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- .../apparmor.txt => admin-guide/LSM/apparmor.rst}  | 36 ++++++++++++++--------
- Documentation/admin-guide/LSM/index.rst            |  1 +
- Documentation/security/00-INDEX                    |  2 --
- MAINTAINERS                                        |  1 +
- security/apparmor/match.c                          |  2 +-
- security/apparmor/policy_unpack.c                  |  2 +-
- 6 files changed, 28 insertions(+), 16 deletions(-)
- rename Documentation/{security/apparmor.txt => admin-guide/LSM/apparmor.rst} (65%)
+ Documentation/userspace-api/index.rst              |  1 +
+ .../no_new_privs.rst}                              | 44 ++++++++++++----------
+ 2 files changed, 26 insertions(+), 19 deletions(-)
+ rename Documentation/{prctl/no_new_privs.txt => userspace-api/no_new_privs.rst} (54%)
 
-diff --git a/Documentation/security/apparmor.txt b/Documentation/admin-guide/LSM/apparmor.rst
-similarity index 65%
-rename from Documentation/security/apparmor.txt
-rename to Documentation/admin-guide/LSM/apparmor.rst
-index 93c1fd7d0635..3e9734bd0e05 100644
---- a/Documentation/security/apparmor.txt
-+++ b/Documentation/admin-guide/LSM/apparmor.rst
-@@ -1,4 +1,9 @@
----- What is AppArmor? ---
-+========
-+AppArmor
-+========
-+
-+What is AppArmor?
-+=================
- 
- AppArmor is MAC style security extension for the Linux kernel.  It implements
- a task centered policy, with task "profiles" being created and loaded
-@@ -6,34 +11,41 @@ from user space.  Tasks on the system that do not have a profile defined for
- them run in an unconfined state which is equivalent to standard Linux DAC
- permissions.
- 
----- How to enable/disable ---
-+How to enable/disable
-+=====================
-+
-+set ``CONFIG_SECURITY_APPARMOR=y``
- 
--set CONFIG_SECURITY_APPARMOR=y
-+If AppArmor should be selected as the default security module then set::
- 
--If AppArmor should be selected as the default security module then
--   set CONFIG_DEFAULT_SECURITY="apparmor"
--   and CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
-+   CONFIG_DEFAULT_SECURITY="apparmor"
-+   CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
- 
- Build the kernel
- 
- If AppArmor is not the default security module it can be enabled by passing
--security=apparmor on the kernel's command line.
-+``security=apparmor`` on the kernel's command line.
- 
- If AppArmor is the default security module it can be disabled by passing
--apparmor=0, security=XXXX (where XXX is valid security module), on the
--kernel's command line
-+``apparmor=0, security=XXXX`` (where ``XXXX`` is valid security module), on the
-+kernel's command line.
- 
- For AppArmor to enforce any restrictions beyond standard Linux DAC permissions
- policy must be loaded into the kernel from user space (see the Documentation
- and tools links).
- 
----- Documentation ---
-+Documentation
-+=============
- 
--Documentation can be found on the wiki.
-+Documentation can be found on the wiki, linked below.
- 
----- Links ---
-+Links
-+=====
- 
- Mailing List - apparmor at lists.ubuntu.com
-+
- Wiki - http://apparmor.wiki.kernel.org/
-+
- User space tools - https://launchpad.net/apparmor
-+
- Kernel module - git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index cc0e04d63bf9..a4db29410ea0 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -33,4 +33,5 @@ the one "major" module (e.g. SELinux) if there is one configured.
+diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
+index 15ff12342db8..7b2eb1b7d4ca 100644
+--- a/Documentation/userspace-api/index.rst
++++ b/Documentation/userspace-api/index.rst
+@@ -16,6 +16,7 @@ place where this information is gathered.
  .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
  
-+   apparmor
-    SELinux
-diff --git a/Documentation/security/00-INDEX b/Documentation/security/00-INDEX
-index aaa0195418b3..22ebdc02f0dc 100644
---- a/Documentation/security/00-INDEX
-+++ b/Documentation/security/00-INDEX
-@@ -4,8 +4,6 @@ Smack.txt
- 	- documentation on the Smack Linux Security Module.
- Yama.txt
- 	- documentation on the Yama Linux Security Module.
--apparmor.txt
--	- documentation on the AppArmor security extension.
- keys-ecryptfs.txt
- 	- description of the encryption keys for the ecryptfs filesystem.
- keys-request-key.txt
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c85108b4f6c7..184cdd32a67e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11560,6 +11560,7 @@ W:	apparmor.wiki.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
- S:	Supported
- F:	security/apparmor/
-+F:	Documentation/admin-guide/LSM/apparmor.rst
++   no_new_privs
+    seccomp_filter
+    unshare
  
- LOADPIN SECURITY MODULE
- M:	Kees Cook <keescook@chromium.org>
-diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-index 960c913381e2..72c604350e80 100644
---- a/security/apparmor/match.c
-+++ b/security/apparmor/match.c
-@@ -226,7 +226,7 @@ void aa_dfa_free_kref(struct kref *kref)
-  * @flags: flags controlling what type of accept tables are acceptable
-  *
-  * Unpack a dfa that has been serialized.  To find information on the dfa
-- * format look in Documentation/security/apparmor.txt
-+ * format look in Documentation/admin-guide/LSM/apparmor.rst
-  * Assumes the dfa @blob stream has been aligned on a 8 byte boundary
-  *
-  * Returns: an unpacked dfa ready for matching or ERR_PTR on failure
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index f3422a91353c..981d570eebba 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -13,7 +13,7 @@
-  * License.
-  *
-  * AppArmor uses a serialized binary format for loading policy. To find
-- * policy format documentation look in Documentation/security/apparmor.txt
-+ * policy format documentation see Documentation/admin-guide/LSM/apparmor.rst
-  * All policy is validated before it is used.
-  */
+diff --git a/Documentation/prctl/no_new_privs.txt b/Documentation/userspace-api/no_new_privs.rst
+similarity index 54%
+rename from Documentation/prctl/no_new_privs.txt
+rename to Documentation/userspace-api/no_new_privs.rst
+index f7be84fba910..d060ea217ea1 100644
+--- a/Documentation/prctl/no_new_privs.txt
++++ b/Documentation/userspace-api/no_new_privs.rst
+@@ -1,3 +1,7 @@
++======================
++No New Privileges Flag
++======================
++
+ The execve system call can grant a newly-started program privileges that
+ its parent did not have.  The most obvious examples are setuid/setgid
+ programs and file capabilities.  To prevent the parent program from
+@@ -5,53 +9,55 @@ gaining these privileges as well, the kernel and user code must be
+ careful to prevent the parent from doing anything that could subvert the
+ child.  For example:
  
+- - The dynamic loader handles LD_* environment variables differently if
++ - The dynamic loader handles ``LD_*`` environment variables differently if
+    a program is setuid.
+ 
+  - chroot is disallowed to unprivileged processes, since it would allow
+-   /etc/passwd to be replaced from the point of view of a process that
++   ``/etc/passwd`` to be replaced from the point of view of a process that
+    inherited chroot.
+ 
+  - The exec code has special handling for ptrace.
+ 
+-These are all ad-hoc fixes.  The no_new_privs bit (since Linux 3.5) is a
++These are all ad-hoc fixes.  The ``no_new_privs`` bit (since Linux 3.5) is a
+ new, generic mechanism to make it safe for a process to modify its
+ execution environment in a manner that persists across execve.  Any task
+-can set no_new_privs.  Once the bit is set, it is inherited across fork,
+-clone, and execve and cannot be unset.  With no_new_privs set, execve
++can set ``no_new_privs``.  Once the bit is set, it is inherited across fork,
++clone, and execve and cannot be unset.  With ``no_new_privs`` set, ``execve()``
+ promises not to grant the privilege to do anything that could not have
+ been done without the execve call.  For example, the setuid and setgid
+ bits will no longer change the uid or gid; file capabilities will not
+ add to the permitted set, and LSMs will not relax constraints after
+ execve.
+ 
+-To set no_new_privs, use prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0).
++To set ``no_new_privs``, use::
++
++    prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+ 
+ Be careful, though: LSMs might also not tighten constraints on exec
+-in no_new_privs mode.  (This means that setting up a general-purpose
+-service launcher to set no_new_privs before execing daemons may
++in ``no_new_privs`` mode.  (This means that setting up a general-purpose
++service launcher to set ``no_new_privs`` before execing daemons may
+ interfere with LSM-based sandboxing.)
+ 
+-Note that no_new_privs does not prevent privilege changes that do not
+-involve execve.  An appropriately privileged task can still call
+-setuid(2) and receive SCM_RIGHTS datagrams.
++Note that ``no_new_privs`` does not prevent privilege changes that do not
++involve ``execve()``.  An appropriately privileged task can still call
++``setuid(2)`` and receive SCM_RIGHTS datagrams.
+ 
+-There are two main use cases for no_new_privs so far:
++There are two main use cases for ``no_new_privs`` so far:
+ 
+  - Filters installed for the seccomp mode 2 sandbox persist across
+    execve and can change the behavior of newly-executed programs.
+    Unprivileged users are therefore only allowed to install such filters
+-   if no_new_privs is set.
++   if ``no_new_privs`` is set.
+ 
+- - By itself, no_new_privs can be used to reduce the attack surface
++ - By itself, ``no_new_privs`` can be used to reduce the attack surface
+    available to an unprivileged user.  If everything running with a
+-   given uid has no_new_privs set, then that uid will be unable to
++   given uid has ``no_new_privs`` set, then that uid will be unable to
+    escalate its privileges by directly attacking setuid, setgid, and
+    fcap-using binaries; it will need to compromise something without the
+-   no_new_privs bit set first.
++   ``no_new_privs`` bit set first.
+ 
+ In the future, other potentially dangerous kernel features could become
+-available to unprivileged tasks if no_new_privs is set.  In principle,
+-several options to unshare(2) and clone(2) would be safe when
+-no_new_privs is set, and no_new_privs + chroot is considerable less
++available to unprivileged tasks if ``no_new_privs`` is set.  In principle,
++several options to ``unshare(2)`` and ``clone(2)`` would be safe when
++``no_new_privs`` is set, and ``no_new_privs`` + ``chroot`` is considerable less
+ dangerous than chroot by itself.
 -- 
 2.7.4
 
