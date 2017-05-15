@@ -1,50 +1,46 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 15 May 2017 14:16:29 +0300
-Subject: [PATCH v2 2/5] tpm: introduce tpm_pcr_algo_to_crypto() and
-	tpm_pcr_algo_from_crypto()
-In-Reply-To: <20170505142152.29795-3-roberto.sassu@huawei.com>
-References: <20170505142152.29795-1-roberto.sassu@huawei.com>
-	<20170505142152.29795-3-roberto.sassu@huawei.com>
-Message-ID: <20170515111629.urjvbhqzohv4vakc@intel.com>
+Date: Mon, 15 May 2017 14:36:02 +0300
+Subject: [tpmdd-devel] [PATCH] tpm: fix byte order related arithmetic
+	inconsistency in tpm_getcap()
+In-Reply-To: <20170510123458.fh3ef3c55y2wiu35@intel.com>
+References: <20170507175002.9558-1-jarkko.sakkinen@linux.intel.com>
+	<20170509141353.klo7lilef4qiqfoc@intel.com>
+	<20170509151308.GA13586@obsidianresearch.com>
+	<20170510123458.fh3ef3c55y2wiu35@intel.com>
+Message-ID: <20170515113602.2jypna4keatq73qy@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 05, 2017 at 04:21:49PM +0200, Roberto Sassu wrote:
-> tpm_pcr_algorithms() returns to its callers the IDs of the hash algorithms
-> supported by the TPM. This patch introduces tpm_pcr_algo_to_crypto(),
-> so that the callers can use the crypto subsystem to calculate the digest
-> to be passed to tpm_pcr_extend().
+On Wed, May 10, 2017 at 03:34:58PM +0300, Jarkko Sakkinen wrote:
+> On Tue, May 09, 2017 at 09:13:08AM -0600, Jason Gunthorpe wrote:
+> > On Tue, May 09, 2017 at 05:13:53PM +0300, Jarkko Sakkinen wrote:
+> > > On Sun, May 07, 2017 at 08:50:02PM +0300, Jarkko Sakkinen wrote:
+> > > > You should not do arithmetic with __be32 or __le32 types because
+> > > > sometimes it results incorrect results. Calculations must be done only
+> > > > with integers that are in in the CPU byte order. This commit migrates
+> > > > tpm_getcap() to struct tpm_buf in order to sort out these issues.
+> > > > 
+> > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > Now this should work as Robertos patches move byte order conversion
+> > > > where it should be. Sadly I'm out of reach to my Dell E6400 laptop
+> > > > that I use for TPM 1.2 testing.
+> > > >  drivers/char/tpm/tpm-interface.c | 30 ++++++++++++++++--------------
+> > > >  drivers/char/tpm/tpm.h           | 13 -------------
+> > > >  2 files changed, 16 insertions(+), 27 deletions(-)
+> > > 
+> > > I've now tested this with TPM 1.2. Any complains?
+> > 
+> > Seems reasonable, but which linke had the problematic arithmetic?
+> > 
+> > Jason
 > 
-> tpm_pcr_algo_from_crypto(), implemented for completeness, is instead used
-
-What do you mean by completeness? Please, never add unused stuff.
-
-> by tpm2_seal_trusted() to perform the opposite conversion.
+> Arithmetic should work but it's not a good practice to do additions,
+> substractions or multiplications in any other byte order than the CPU
+> byte order.
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
-> v2
-> 
-> - fixed return values of tpm2_pcr_algo_to_crypto() and
->   tpm2_pcr_algo_from_crypto() if TPM support is disabled in the kernel
+> sparse also complains about this.
 
-Change Log only to the cover letter.
-
->  drivers/char/tpm/tpm-interface.c | 51 ++++++++++++++++++++++++++++++++++++++++
->  drivers/char/tpm/tpm2-cmd.c      | 42 +++++++++------------------------
->  include/linux/tpm.h              | 13 ++++++++++
->  3 files changed, 75 insertions(+), 31 deletions(-)
-
-This commit is just deadly wrong in so many ways.
-
-I would suggest to make extend always just take crypto ID in so you
-don't have to add these bizarre conversion functions.
-
-This probably covers all the patches but just "unsigned int" as type
-for parameters and local variables.
-
-I think I'll pass rest of the patches for now because just reviewing the
-two first took too much time and wait for an updated version.
+Can I get your Reviewed-by for this one?
 
 /Jarkko
 --
