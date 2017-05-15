@@ -1,125 +1,101 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Sun, 14 May 2017 17:00:34 -0700
-Subject: [PATCH 06/17] doc: security: minor cleanups to build kernel-doc
-In-Reply-To: <1494676313-144890-7-git-send-email-keescook@chromium.org>
-References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
-	<1494676313-144890-7-git-send-email-keescook@chromium.org>
-Message-ID: <426a04b7-183c-e445-4de8-fa9766b24ad4@schaufler-ca.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 15 May 2017 13:36:23 +0300
+Subject: [PATCH v2 1/5] tpm: introduce tpm_pcr_algorithms()
+In-Reply-To: <20170505142152.29795-2-roberto.sassu@huawei.com>
+References: <20170505142152.29795-1-roberto.sassu@huawei.com>
+	<20170505142152.29795-2-roberto.sassu@huawei.com>
+Message-ID: <20170515103623.sumyo2vyldezual2@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/13/2017 4:51 AM, Kees Cook wrote:
-> These fixes were needed to parse lsm_hooks.h kernel-doc. More work is
-> needed, but this is the first step.
->
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-
-Acked_by: Casey Schaufler <casey@schaufler-ca.com>
-
-Tell me more about the additional work that's needed. 
-
+On Fri, May 05, 2017 at 04:21:48PM +0200, Roberto Sassu wrote:
+> This function allows TPM users to know which algorithms the TPM supports.
+> It stores the algorithms in a static array of 'enum tpm2_algorithms',
+> allocated by the caller. If the array is not large enough, the function
+> returns an error. Otherwise, it returns the number of algorithms written
+> to the array. If the TPM version is 1.2, the function writes TPM2_ALG_SHA1
+> to first element of the array.
+> 
+> Writing the algorithm also for TPM 1.2 has the advantage that callers
+> can use the API, tpm_pcr_algorithms() and tpm_pcr_extend(), regardless
+> of the TPM version.
+> 
+> A minor change added to this patch was to make available the size of
+> the active_banks array, member of the tpm_chip structure, outside
+> the TPM driver. The array size (TPM_ACTIVE_BANKS_MAX) has been exported
+> to include/linux/tpm.h.
+> 
+> With this information, callers of tpm_pcr_algorithms() can provide
+> a static array with enough room for all the algorithms, instead
+> of receiving the pointer of a dynamic array that they have to free later.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->  include/linux/lsm_hooks.h | 25 ++++++++++++-------------
->  1 file changed, 12 insertions(+), 13 deletions(-)
->
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 080f34e66017..a1eeaf603d2f 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -29,6 +29,8 @@
->  #include <linux/rculist.h>
+> v2
+> 
+> - tpm_pcr_algorithms() returns supported algorithms also for TPM 1.2
+> 
+>  drivers/char/tpm/tpm-interface.c | 46 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/char/tpm/tpm.h           | 13 +-----------
+>  include/linux/tpm.h              | 19 +++++++++++++++++
+>  3 files changed, 66 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 4ed08ab..b90de3d 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -911,6 +911,52 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
+>  EXPORT_SYMBOL_GPL(tpm_pcr_extend);
 >  
 >  /**
-> + * union security_list_options - Linux Security Module hook function list
-> + *
->   * Security hooks for program execution operations.
->   *
->   * @bprm_set_creds:
-> @@ -193,8 +195,8 @@
->   *	@value will be set to the allocated attribute value.
->   *	@len will be set to the length of the value.
->   *	Returns 0 if @name and @value have been successfully set,
-> - *		-EOPNOTSUPP if no security attribute is needed, or
-> - *		-ENOMEM on memory allocation failure.
-> + *	-EOPNOTSUPP if no security attribute is needed, or
-> + *	-ENOMEM on memory allocation failure.
->   * @inode_create:
->   *	Check permission to create a regular file.
->   *	@dir contains inode structure of the parent of the new file.
-> @@ -510,8 +512,7 @@
->   *	process @tsk.  Note that this hook is sometimes called from interrupt.
->   *	Note that the fown_struct, @fown, is never outside the context of a
->   *	struct file, so the file structure (and associated security information)
-> - *	can always be obtained:
-> - *		container_of(fown, struct file, f_owner)
-> + *	can always be obtained: container_of(fown, struct file, f_owner)
->   *	@tsk contains the structure of task receiving signal.
->   *	@fown contains the file owner information.
->   *	@sig is the signal that will be sent.  When 0, kernel sends SIGIO.
-> @@ -521,7 +522,7 @@
->   *	to receive an open file descriptor via socket IPC.
->   *	@file contains the file structure being received.
->   *	Return 0 if permission is granted.
-> - * @file_open
-> + * @file_open:
->   *	Save open-time permission checking state for later use upon
->   *	file_permission, and recheck access if anything has changed
->   *	since inode_permission.
-> @@ -1143,7 +1144,7 @@
->   *	@sma contains the semaphore structure.  May be NULL.
->   *	@cmd contains the operation to be performed.
->   *	Return 0 if permission is granted.
-> - * @sem_semop
-> + * @sem_semop:
->   *	Check permissions before performing operations on members of the
->   *	semaphore set @sma.  If the @alter flag is nonzero, the semaphore set
->   *	may be modified.
-> @@ -1153,20 +1154,20 @@
->   *	@alter contains the flag indicating whether changes are to be made.
->   *	Return 0 if permission is granted.
->   *
-> - * @binder_set_context_mgr
-> + * @binder_set_context_mgr:
->   *	Check whether @mgr is allowed to be the binder context manager.
->   *	@mgr contains the task_struct for the task being registered.
->   *	Return 0 if permission is granted.
-> - * @binder_transaction
-> + * @binder_transaction:
->   *	Check whether @from is allowed to invoke a binder transaction call
->   *	to @to.
->   *	@from contains the task_struct for the sending task.
->   *	@to contains the task_struct for the receiving task.
-> - * @binder_transfer_binder
-> + * @binder_transfer_binder:
->   *	Check whether @from is allowed to transfer a binder reference to @to.
->   *	@from contains the task_struct for the sending task.
->   *	@to contains the task_struct for the receiving task.
-> - * @binder_transfer_file
-> + * @binder_transfer_file:
->   *	Check whether @from is allowed to transfer @file to @to.
->   *	@from contains the task_struct for the sending task.
->   *	@file contains the struct file being transferred.
-> @@ -1214,7 +1215,7 @@
->   *	@cred contains the credentials to use.
->   *	@ns contains the user namespace we want the capability in
->   *	@cap contains the capability <include/linux/capability.h>.
-> - *	@audit: Whether to write an audit message or not
-> + *	@audit contains whether to write an audit message or not
->   *	Return 0 if the capability is granted for @tsk.
->   * @syslog:
->   *	Check permission before accessing the kernel message ring or changing
-> @@ -1336,9 +1337,7 @@
->   *	@inode we wish to get the security context of.
->   *	@ctx is a pointer in which to place the allocated security context.
->   *	@ctxlen points to the place to put the length of @ctx.
-> - * This is the main security structure.
->   */
-> -
->  union security_list_options {
->  	int (*binder_set_context_mgr)(struct task_struct *mgr);
->  	int (*binder_transaction)(struct task_struct *from,
+> + * tpm_pcr_algorithms - get TPM IDs of active PCR banks algorithms
 
+The grammar is incorrect here I believe. Should rather be
+
+  "algorithms of the active PCR banks"
+
+And there is no such thing as "TPM ID".
+
+> + * @chip_num:	tpm idx # or ANY
+> + * @count:	# of items in algorithms
+> + * @algorithms:	array of TPM IDs
+> + *
+> + * Returns < 0 on error, and the number of active PCR banks on success.
+> + *
+> + * TPM 1.2 has always one SHA1 bank.
+> + */
+> +int tpm_pcr_algorithms(u32 chip_num, int count,
+> +		       enum tpm2_algorithms *algorithms)
+                       unsigned int
+
+In addition the function name is not too greatg,
+
+Your syntax for return value is not correct. In addition after
+describing the return value there should not be anything. You should
+study
+
+https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+
+Better name for the function would be tpm_get_pcr_algorithms().
+
+> +{
+> +	struct tpm_chip *chip;
+> +	int i;
+> +
+> +	if (count <= 0 || algorithms == NULL)
+> +		return -EINVAL;
+
+Is there a legal case where caller would pass these values? Now it
+looks like that there is.
+
+'count' should unsigned int and zero should be a legal value for
+count.
+
+That said I think the whole design is wrong as you could calculate
+array for algs only one time and pass a const reference to it on
+request.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
