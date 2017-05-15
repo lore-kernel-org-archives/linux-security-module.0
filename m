@@ -1,51 +1,29 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Mon, 15 May 2017 12:51:44 -0400
-Subject: [PATCH v5 1/2] tpm: Introduce flag TPM_TRANSMIT_RAW
-In-Reply-To: <1494867105-30722-1-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1494867105-30722-1-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <1494867105-30722-2-git-send-email-stefanb@linux.vnet.ibm.com>
+From: corbet@lwn.net (Jonathan Corbet)
+Date: Mon, 15 May 2017 11:15:19 -0600
+Subject: [PATCH 0/5] Convert more books to ReST
+In-Reply-To: <20170515140912.100c9cac@bbrezillon>
+References: <cover.1494672881.git.mchehab@s-opensource.com>
+	<20170515140912.100c9cac@bbrezillon>
+Message-ID: <20170515111519.7bbb449b@lwn.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Introduce the flag TPM_TRASNMIT_RAW that allows us to transmit
-a command without recursing into the requesting of locality.
+On Mon, 15 May 2017 14:09:12 +0200
+Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm-interface.c | 3 ++-
- drivers/char/tpm/tpm.h           | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+> >   mtd: adjust kernel-docs to avoid Sphinx/kerneldoc warnings  
+> 
+> Not sure how you plan to merge these changes, but if it goes through
+> a single tree I'll probably need an immutable topic branch, because I
+> plan to change a few things in nand_base.c nand.h for the next release.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 4ed08ab..2eacda2 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -416,7 +416,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	/* Store the decision as chip->locality will be changed. */
- 	need_locality = chip->locality == -1;
- 
--	if (need_locality && chip->ops->request_locality)  {
-+	if (!(flags & TPM_TRANSMIT_RAW) &&
-+	    need_locality && chip->ops->request_locality)  {
- 		rc = chip->ops->request_locality(chip, 0);
- 		if (rc < 0)
- 			goto out_no_locality;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index e81d8c7..25d9858 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -525,6 +525,7 @@ extern struct idr dev_nums_idr;
- 
- enum tpm_transmit_flags {
- 	TPM_TRANSMIT_UNLOCKED	= BIT(0),
-+	TPM_TRANSMIT_RAW	= BIT(1),
- };
- 
- ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
--- 
-2.4.3
+docs-next doesn't rebase, so there shouldn't be trouble there.  But we
+could also just separate this patch into two pieces.  I suspect we could
+live with a couple of warnings for a period during the 4.13 merge window
+without too much pain...
 
+jon
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
