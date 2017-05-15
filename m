@@ -1,95 +1,58 @@
-From: boris.brezillon@free-electrons.com (Boris Brezillon)
-Date: Mon, 15 May 2017 14:09:12 +0200
-Subject: [PATCH 0/5] Convert more books to ReST
-In-Reply-To: <cover.1494672881.git.mchehab@s-opensource.com>
-References: <cover.1494672881.git.mchehab@s-opensource.com>
-Message-ID: <20170515140912.100c9cac@bbrezillon>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 15 May 2017 15:40:05 +0300
+Subject: [PATCH v4 1/2] tpm: Refactor tpm_transmit pulling out
+	tpm_transfer function
+In-Reply-To: <1494460462-29022-2-git-send-email-stefanb@linux.vnet.ibm.com>
+References: <1494460462-29022-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1494460462-29022-2-git-send-email-stefanb@linux.vnet.ibm.com>
+Message-ID: <20170515124005.thnfzt4zz4yrba34@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 13 May 2017 08:10:53 -0300
-Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote:
+On Wed, May 10, 2017 at 07:54:21PM -0400, Stefan Berger wrote:
+> Refactor tpm_transmit and pull out code sending the command
+> and receiving the response and put this into tpm_transfer.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 121 +++++++++++++++++++++++----------------
+>  1 file changed, 73 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 158c1db..263b6d1 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -370,67 +370,29 @@ static bool tpm_validate_command(struct tpm_chip *chip,
+>  }
+>  
+>  /**
+> - * tmp_transmit - Internal kernel interface to transmit TPM commands.
+> + * tmp_transfer - Send a TPM command to the TPM and receive response
+>   *
+>   * @chip: TPM chip to use
+>   * @buf: TPM command buffer
+> + * @count: size of the TPM command
+>   * @bufsiz: length of the TPM command buffer
+> - * @flags: tpm transmit flags - bitmap
+>   *
+>   * Return:
+> - *     0 when the operation is successful.
+> + *     >0 when the operation is successful; returns response length
+>   *     A negative number for system errors (errno).
+>   */
+> -ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+> -		     u8 *buf, size_t bufsiz, unsigned int flags)
+> +ssize_t tpm_transfer(struct tpm_chip *chip, u8 *buf, u32 count, size_t bufsiz)
 
-> This patch series convert the following books to ReST:
-> 	- librs
-> 	- mtdnand
-> 	- sh
-> 
-> And it is based on my previous series of conversion patches.
-> 
-> After this series, there will be just one DocBook pending conversion:
-> 	- lsm (Linux Security Modules)
-> 
-> This book is very outdated: no changes since the Kernel moved 
-> to git, in 2005 (except for a minor editorial fix in 2008).
-> 
-> I took a look on the described API: it doesn't seem to be describing
-> the current security implementation.
-> 
-> The best here is if someone that works with LSM to convert it to
-> ReST with:
-> 	$ Documentation/sphinx/tmplcvt Documentation/DocBook/lsm.tmpl lsm.rst
-> 
-> And fix the document to produce something that reflects the current
-> implementation. If nobody is interested, then maybe we could just
-> drop it.
-> 
-> -
-> 
-> This patch series is based on my past 00/36 patch series, applied on
-> the top of docs tree (next branch).
-> 
-> The full patch series is on this tree is at:
-> 
->    https://git.linuxtv.org//mchehab/experimental.git/log/?h=docbook
-> 
-> And the HTML output at:
-> 
->   http://www.infradead.org/~mchehab/kernel_docs/
->   https://mchehab.fedorapeople.org/kernel_docs/ 
-> 
-> Mauro Carvalho Chehab (5):
->   docs-rst: convert librs book to ReST
->   docs-rst: convert mtdnand book to ReST
->   mtdnand.rst: Fix some typos and group the "::" with previous line
+Add instead a flag TPM_TRANSMIT_RAW (this name is just a suggestion)
+that skips "prepare" and "commit" parts. That would save us from a
+new export.
 
-MTD maintainers did not receive the above patch. Can you Cc us the
-whole series next time.
+Better way to make it less messy would be to add static functions
+tpm_prepare_command and tpm_commit_command that would be always
+called and would return immediately if flags contain TPM_TRANSMIT_RAW.
 
-BTW, I had a look at your branch and it seems the typo you're fixing is
-actually not a type. Flags are *OR-ed* (with the | operator) to form a
-valid combination of flags.
-
->   mtd: adjust kernel-docs to avoid Sphinx/kerneldoc warnings
-
-Not sure how you plan to merge these changes, but if it goes through
-a single tree I'll probably need an immutable topic branch, because I
-plan to change a few things in nand_base.c nand.h for the next release.
-
->   docs-rst: convert sh book to ReST
-> 
->  Documentation/DocBook/Makefile       |    5 +-
->  Documentation/DocBook/librs.tmpl     |  289 --------
->  Documentation/DocBook/mtdnand.tmpl   | 1291 ----------------------------------
->  Documentation/DocBook/sh.tmpl        |  105 ---
->  Documentation/conf.py                |    2 +
->  Documentation/core-api/index.rst     |    1 +
->  Documentation/core-api/librs.rst     |  212 ++++++
->  Documentation/driver-api/index.rst   |    1 +
->  Documentation/driver-api/mtdnand.rst | 1007 ++++++++++++++++++++++++++
->  Documentation/index.rst              |   11 +
->  Documentation/sh/index.rst           |   59 ++
->  drivers/mtd/nand/nand_base.c         |    7 +-
->  include/linux/mtd/nand.h             |    2 +-
->  13 files changed, 1300 insertions(+), 1692 deletions(-)
->  delete mode 100644 Documentation/DocBook/librs.tmpl
->  delete mode 100644 Documentation/DocBook/mtdnand.tmpl
->  delete mode 100644 Documentation/DocBook/sh.tmpl
->  create mode 100644 Documentation/core-api/librs.rst
->  create mode 100644 Documentation/driver-api/mtdnand.rst
->  create mode 100644 Documentation/sh/index.rst
-> 
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
