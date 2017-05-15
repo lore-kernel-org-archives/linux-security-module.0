@@ -1,35 +1,29 @@
 From: corbet@lwn.net (Jonathan Corbet)
-Date: Mon, 15 May 2017 11:21:49 -0600
-Subject: [PATCH 06/17] doc: security: minor cleanups to build kernel-doc
-In-Reply-To: <alpine.LRH.2.20.1705150915360.29831@namei.org>
+Date: Mon, 15 May 2017 11:26:21 -0600
+Subject: [PATCH 00/17] convert/reorganize Documentation/security/
+In-Reply-To: <1494676313-144890-1-git-send-email-keescook@chromium.org>
 References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
-	<1494676313-144890-7-git-send-email-keescook@chromium.org>
-	<alpine.LRH.2.20.1705150915360.29831@namei.org>
-Message-ID: <20170515112149.2ef38651@lwn.net>
+Message-ID: <20170515112621.38aef111@lwn.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 15 May 2017 09:17:25 +1000 (AEST)
-James Morris <jmorris@namei.org> wrote:
+On Sat, 13 May 2017 04:51:36 -0700
+Kees Cook <keescook@chromium.org> wrote:
 
-> On Sat, 13 May 2017, Kees Cook wrote:
+> This ReSTifies everything under Documentation/security/, and reorganizes
+> some of it (mainly the LSMs) under /admin-guide/ per Jon's request. Since
+> /security/ is already being indexed under the kernel development portion
+> of the sphinx index, I didn't move it, keeping only things that were
+> directly related to internal kernel development (keys, creds, etc).
 > 
-> > These fixes were needed to parse lsm_hooks.h kernel-doc. More work is
-> > needed, but this is the first step.
-> > 
-> > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > Signed-off-by: Kees Cook <keescook@chromium.org>  
-> 
-> Should these changes go in via the docs tree or mine?
-> 
-> In any case:
-> Acked-by: James Morris <james.l.morris@oracle.com>
+> I also updated some path references, and MAINTAINERS lines. Some of the
+> conversion could probably do with some tweaks, but I think this is a
+> good first step in the right direction.
 
-These changes are entirely independent from the documentation stuff, so it
-could really go either way.  I'm happy to carry them with the set, if that
-works for you.
-
-Thanks,
+This all looks pretty good to me, though I'll confess I haven't actually
+built the resulting docs yet.  Assuming no issues turn up there, I'd be
+happy to just apply these and let any follow-on tweaks go from there.
+Thanks for doing this, and for humoring me on the organizational issues :)
 
 jon
 --
