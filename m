@@ -1,67 +1,154 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Mon, 15 May 2017 16:22:22 +0200
-Subject: [PATCH v2 2/5] tpm: introduce tpm_pcr_algo_to_crypto() and
-	tpm_pcr_algo_from_crypto()
-In-Reply-To: <20170515111629.urjvbhqzohv4vakc@intel.com>
-References: <20170505142152.29795-1-roberto.sassu@huawei.com>
-	<20170505142152.29795-3-roberto.sassu@huawei.com>
-	<20170515111629.urjvbhqzohv4vakc@intel.com>
-Message-ID: <0deed9be-d0c3-3a69-d510-1c8aa3513ba8@huawei.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 15 May 2017 07:42:00 -0700
+Subject: [PATCH 06/17] doc: security: minor cleanups to build kernel-doc
+In-Reply-To: <426a04b7-183c-e445-4de8-fa9766b24ad4@schaufler-ca.com>
+References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
+	<1494676313-144890-7-git-send-email-keescook@chromium.org>
+	<426a04b7-183c-e445-4de8-fa9766b24ad4@schaufler-ca.com>
+Message-ID: <CAGXu5jJY2pATLcW6Mc9iigSgnayR-j0vH0Hs=uLsHKS+V6=7Kw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/15/2017 1:16 PM, Jarkko Sakkinen wrote:
-> On Fri, May 05, 2017 at 04:21:49PM +0200, Roberto Sassu wrote:
->> tpm_pcr_algorithms() returns to its callers the IDs of the hash algorithms
->> supported by the TPM. This patch introduces tpm_pcr_algo_to_crypto(),
->> so that the callers can use the crypto subsystem to calculate the digest
->> to be passed to tpm_pcr_extend().
+On Sun, May 14, 2017 at 5:00 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 5/13/2017 4:51 AM, Kees Cook wrote:
+>> These fixes were needed to parse lsm_hooks.h kernel-doc. More work is
+>> needed, but this is the first step.
 >>
->> tpm_pcr_algo_from_crypto(), implemented for completeness, is instead used
+>> Cc: Casey Schaufler <casey@schaufler-ca.com>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
 >
-> What do you mean by completeness? Please, never add unused stuff.
+> Acked_by: Casey Schaufler <casey@schaufler-ca.com>
 >
->> by tpm2_seal_trusted() to perform the opposite conversion.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Tell me more about the additional work that's needed.
+
+What I wanted to do was insert the kernel-doc from lsm_hooks.h into
+the LSM kernel API documentation .rst file (via the special ReST
+markup that includes structure documentation). There is, however,
+free-form text in the existing union security_list_options kernel-doc
+to announce related function groups which ReST just kind of skips over
+and the collects all at the end in the HTML output. It also orders the
+HTML doc output by the struct ordering, which makes things even
+stranger to parse. And additionally, kernel-doc for fields that are
+function pointers is especially hard to read.
+
+So, while this patch fixes the kernel-doc to at least be parsed
+without errors, it doesn't really fix the overall appearance, which
+I'm not sure how to fix yet. It might be possible to do per-struct
+"/** DOC:" markup, but I decided to leave that for another pass in the
+future.
+
+If there is a v2 of this series, I'll update the changelog to include
+these details. :)
+
+-Kees
+
 >> ---
->> v2
+>>  include/linux/lsm_hooks.h | 25 ++++++++++++-------------
+>>  1 file changed, 12 insertions(+), 13 deletions(-)
 >>
->> - fixed return values of tpm2_pcr_algo_to_crypto() and
->>   tpm2_pcr_algo_from_crypto() if TPM support is disabled in the kernel
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index 080f34e66017..a1eeaf603d2f 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -29,6 +29,8 @@
+>>  #include <linux/rculist.h>
+>>
+>>  /**
+>> + * union security_list_options - Linux Security Module hook function list
+>> + *
+>>   * Security hooks for program execution operations.
+>>   *
+>>   * @bprm_set_creds:
+>> @@ -193,8 +195,8 @@
+>>   *   @value will be set to the allocated attribute value.
+>>   *   @len will be set to the length of the value.
+>>   *   Returns 0 if @name and @value have been successfully set,
+>> - *           -EOPNOTSUPP if no security attribute is needed, or
+>> - *           -ENOMEM on memory allocation failure.
+>> + *   -EOPNOTSUPP if no security attribute is needed, or
+>> + *   -ENOMEM on memory allocation failure.
+>>   * @inode_create:
+>>   *   Check permission to create a regular file.
+>>   *   @dir contains inode structure of the parent of the new file.
+>> @@ -510,8 +512,7 @@
+>>   *   process @tsk.  Note that this hook is sometimes called from interrupt.
+>>   *   Note that the fown_struct, @fown, is never outside the context of a
+>>   *   struct file, so the file structure (and associated security information)
+>> - *   can always be obtained:
+>> - *           container_of(fown, struct file, f_owner)
+>> + *   can always be obtained: container_of(fown, struct file, f_owner)
+>>   *   @tsk contains the structure of task receiving signal.
+>>   *   @fown contains the file owner information.
+>>   *   @sig is the signal that will be sent.  When 0, kernel sends SIGIO.
+>> @@ -521,7 +522,7 @@
+>>   *   to receive an open file descriptor via socket IPC.
+>>   *   @file contains the file structure being received.
+>>   *   Return 0 if permission is granted.
+>> - * @file_open
+>> + * @file_open:
+>>   *   Save open-time permission checking state for later use upon
+>>   *   file_permission, and recheck access if anything has changed
+>>   *   since inode_permission.
+>> @@ -1143,7 +1144,7 @@
+>>   *   @sma contains the semaphore structure.  May be NULL.
+>>   *   @cmd contains the operation to be performed.
+>>   *   Return 0 if permission is granted.
+>> - * @sem_semop
+>> + * @sem_semop:
+>>   *   Check permissions before performing operations on members of the
+>>   *   semaphore set @sma.  If the @alter flag is nonzero, the semaphore set
+>>   *   may be modified.
+>> @@ -1153,20 +1154,20 @@
+>>   *   @alter contains the flag indicating whether changes are to be made.
+>>   *   Return 0 if permission is granted.
+>>   *
+>> - * @binder_set_context_mgr
+>> + * @binder_set_context_mgr:
+>>   *   Check whether @mgr is allowed to be the binder context manager.
+>>   *   @mgr contains the task_struct for the task being registered.
+>>   *   Return 0 if permission is granted.
+>> - * @binder_transaction
+>> + * @binder_transaction:
+>>   *   Check whether @from is allowed to invoke a binder transaction call
+>>   *   to @to.
+>>   *   @from contains the task_struct for the sending task.
+>>   *   @to contains the task_struct for the receiving task.
+>> - * @binder_transfer_binder
+>> + * @binder_transfer_binder:
+>>   *   Check whether @from is allowed to transfer a binder reference to @to.
+>>   *   @from contains the task_struct for the sending task.
+>>   *   @to contains the task_struct for the receiving task.
+>> - * @binder_transfer_file
+>> + * @binder_transfer_file:
+>>   *   Check whether @from is allowed to transfer @file to @to.
+>>   *   @from contains the task_struct for the sending task.
+>>   *   @file contains the struct file being transferred.
+>> @@ -1214,7 +1215,7 @@
+>>   *   @cred contains the credentials to use.
+>>   *   @ns contains the user namespace we want the capability in
+>>   *   @cap contains the capability <include/linux/capability.h>.
+>> - *   @audit: Whether to write an audit message or not
+>> + *   @audit contains whether to write an audit message or not
+>>   *   Return 0 if the capability is granted for @tsk.
+>>   * @syslog:
+>>   *   Check permission before accessing the kernel message ring or changing
+>> @@ -1336,9 +1337,7 @@
+>>   *   @inode we wish to get the security context of.
+>>   *   @ctx is a pointer in which to place the allocated security context.
+>>   *   @ctxlen points to the place to put the length of @ctx.
+>> - * This is the main security structure.
+>>   */
+>> -
+>>  union security_list_options {
+>>       int (*binder_set_context_mgr)(struct task_struct *mgr);
+>>       int (*binder_transaction)(struct task_struct *from,
 >
-> Change Log only to the cover letter.
->
->>  drivers/char/tpm/tpm-interface.c | 51 ++++++++++++++++++++++++++++++++++++++++
->>  drivers/char/tpm/tpm2-cmd.c      | 42 +++++++++------------------------
->>  include/linux/tpm.h              | 13 ++++++++++
->>  3 files changed, 75 insertions(+), 31 deletions(-)
->
-> This commit is just deadly wrong in so many ways.
->
-> I would suggest to make extend always just take crypto ID in so you
-> don't have to add these bizarre conversion functions.
 
-The reason of this choice (as I explained in the cover letter)
-is that TPM users might want to produce an event log with
-the TCG format (which includes the TPM algorithm ID). Also,
-TPM IDs should be preferred because, with them, TPM users
-can calculate a digest directly with the TPM.
 
-Taking crypto IDs means relying on the fact that there
-is always a mapping between TPM IDs and crypto IDs.
-Otherwise, tpm_pcr_algorithms() cannot return the algorithms
-to its callers and PCRs cannot be extended. If TPM IDs are used,
-TPM users have two alternatives: calculate the digest with
-the TPM, or pass a SHA1 digest to tpm_pcr_extend(), so that
-it can be padded to extend remanining PCR banks.
 
-However, this second option will work only when the TPM driver
-determines the size of an algorithm without relying on the crypto
-subsystem. At the moment, if a TPM ID is not mapped to a crypto ID,
-tpm2_pcr_extend() ignores the digest.
-
-Roberto
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
