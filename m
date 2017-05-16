@@ -1,231 +1,148 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 16 May 2017 14:53:45 +0200
-Subject: [PATCH 5/7] ima: add securityfs interface to save a measurements list
-	with kexec header
+Date: Tue, 16 May 2017 14:53:46 +0200
+Subject: [PATCH 6/7] ima: add securityfs interface to restore a measurements
+	list
 In-Reply-To: <20170516125347.10574-1-roberto.sassu@huawei.com>
 References: <20170516125347.10574-1-roberto.sassu@huawei.com>
-Message-ID: <20170516125347.10574-6-roberto.sassu@huawei.com>
+Message-ID: <20170516125347.10574-7-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Through the new interface binary_kexec_runtime_measurements, it will be
-possible to read the same content returned by binary_runtime_measurements,
-with the kexec header prepended.
+Through the new interface restore_kexec_list, it will be possible
+to restore a measurements list, previously read from
+binary_kexec_runtime_measurements.
 
-The new interface has been added for testing ima_restore_measurement_list()
-which, at the moment, works only on PPC systems. The interface for reading
-the binary list with the kexec header will be provided in a separate patch.
-
-The patch reuses ima_measurements_start() and ima_measurements_next()
-to send the measurements list to userspace. Their behavior changes
-depending on the current dentry.
-
-To provide the correct information in the kexec header,
-ima_measurements_start() has to iterate over the whole list and calculate
-the number of entries and the total size. It is not possible to read
-the value of the global variable binary_runtime_size and ima_htable.len
-without taking ima_extend_list_mutex, because there might have been a list
-add between the two read operations.
+The patch reuses the policy functions to create a buffer, read
+the measurements and call ima_restore_measurement_list().
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/Kconfig            |  8 ++++++
- security/integrity/ima/ima.h              |  2 ++
- security/integrity/ima/ima_fs.c           | 42 ++++++++++++++++++++++++++++---
- security/integrity/ima/ima_kexec.c        |  2 +-
- security/integrity/ima/ima_template.c     |  2 +-
- security/integrity/ima/ima_template_lib.c | 19 ++++++++++++++
- security/integrity/ima/ima_template_lib.h |  2 ++
- 7 files changed, 71 insertions(+), 6 deletions(-)
+ security/integrity/ima/ima_fs.c | 38 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 370eb2f..0f60c04 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -39,6 +39,14 @@ config IMA_KEXEC
- 	   Depending on the IMA policy, the measurement list can grow to
- 	   be very large.
- 
-+config IMA_KEXEC_TESTING
-+	bool "Enable securityfs interfaces to save/restore measurement list"
-+	depends on IMA
-+	default n
-+	help
-+	   Use binary_kexec_runtime_measurements to save the binary list
-+	   with the kexec header; use restore_kexec_list to restore a list.
-+
- config IMA_MEASURE_PCR_IDX
- 	int
- 	depends on IMA
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 10ef9c8..416497b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -49,6 +49,8 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
- #define IMA_TEMPLATE_IMA_NAME "ima"
- #define IMA_TEMPLATE_IMA_FMT "d|n"
- 
-+#define IMA_KEXEC_HDR_VERSION 1
-+
- /* current content of the policy */
- extern int ima_policy_flag;
- 
 diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ca303e5..a93f941 100644
+index a93f941..6e3f93f 100644
 --- a/security/integrity/ima/ima_fs.c
 +++ b/security/integrity/ima/ima_fs.c
-@@ -25,6 +25,7 @@
- #include <linux/vmalloc.h>
- 
- #include "ima.h"
-+#include "ima_template_lib.h"
- 
- static DEFINE_MUTEX(ima_write_mutex);
- 
-@@ -75,28 +76,52 @@ static const struct file_operations ima_measurements_count_ops = {
- 	.llseek = generic_file_llseek,
+@@ -77,6 +77,7 @@ static const struct file_operations ima_measurements_count_ops = {
  };
  
-+static struct dentry *binary_kexec_runtime_measurements;
-+
+ static struct dentry *binary_kexec_runtime_measurements;
++static struct dentry *restore_kexec_list;
+ 
  /* returns pointer to hlist_node */
  static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
- {
- 	loff_t l = *pos;
- 	struct ima_queue_entry *qe;
-+	struct ima_queue_entry *qe_found = NULL;
-+	unsigned long size = 0, count = 0;
-+	bool khdr = m->file->f_path.dentry == binary_kexec_runtime_measurements;
+@@ -297,7 +298,7 @@ static const struct file_operations ima_ascii_measurements_ops = {
+ 	.release = seq_release,
+ };
  
- 	/* we need a lock since pos could point beyond last element */
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(qe, &ima_measurements, later) {
--		if (!l--) {
--			rcu_read_unlock();
--			return qe;
-+		if (!l) {
-+			qe_found = qe_found ? qe_found : qe;
-+
-+			if (!khdr)
-+				break;
-+
-+			if (*pos)
-+				break;
-+
-+			size += ima_get_template_entry_size(qe->entry);
-+			count++;
-+			m->private = qe;
-+			continue;
- 		}
-+		l--;
+-static ssize_t ima_read_policy(char *path)
++static ssize_t ima_read_policy(char *path, bool khdr)
+ {
+ 	void *data;
+ 	char *datap;
+@@ -317,6 +318,13 @@ static ssize_t ima_read_policy(char *path)
  	}
- 	rcu_read_unlock();
--	return NULL;
-+
-+	if (khdr && size)
-+		ima_show_kexec_hdr(m, count, size);
-+
-+	return qe_found;
- }
  
- static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
- {
-+	bool khdr = m->file->f_path.dentry == binary_kexec_runtime_measurements;
- 	struct ima_queue_entry *qe = v;
- 
-+	if (khdr && qe == m->private)
-+		return NULL;
+ 	datap = data;
 +
- 	/* lock protects when reading beyond last element
- 	 * against concurrent list-extension
- 	 */
-@@ -490,8 +515,17 @@ int __init ima_fs_init(void)
- 	if (IS_ERR(ima_policy))
- 		goto out;
- 
-+#ifdef CONFIG_IMA_KEXEC_TESTING
-+	binary_kexec_runtime_measurements =
-+	    securityfs_create_file("binary_kexec_runtime_measurements",
-+				   S_IRUSR | S_IRGRP, ima_dir, NULL,
-+				   &ima_measurements_ops);
-+	if (IS_ERR(binary_kexec_runtime_measurements))
++	if (khdr) {
++		rc = ima_restore_measurement_list(size, data);
++		size = 0;
 +		goto out;
-+#endif
- 	return 0;
- out:
-+	securityfs_remove(binary_kexec_runtime_measurements);
- 	securityfs_remove(violations);
- 	securityfs_remove(runtime_measurements_count);
- 	securityfs_remove(ascii_runtime_measurements);
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index e473eee..b0b8ed2 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -36,7 +36,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 	file.count = sizeof(khdr);	/* reserved space */
- 
- 	memset(&khdr, 0, sizeof(khdr));
--	khdr.version = 1;
-+	khdr.version = IMA_KEXEC_HDR_VERSION;
- 	list_for_each_entry_rcu(qe, &ima_measurements, later) {
- 		if (file.count < file.size) {
- 			khdr.count++;
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 7412d02..f86456c 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -347,7 +347,7 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 		khdr->buffer_size = le64_to_cpu(khdr->buffer_size);
- 	}
- 
--	if (khdr->version != 1) {
-+	if (khdr->version != IMA_KEXEC_HDR_VERSION) {
- 		pr_err("attempting to restore a incompatible measurement list");
- 		return -EINVAL;
- 	}
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 28af43f..de2b064 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -159,6 +159,25 @@ void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
- 	ima_show_template_field_data(m, show, DATA_FMT_HEX, field_data);
- }
- 
-+void ima_show_kexec_hdr(struct seq_file *m, unsigned long count,
-+			unsigned long size)
-+{
-+	struct ima_kexec_hdr khdr;
-+
-+	memset(&khdr, 0, sizeof(khdr));
-+	khdr.version = IMA_KEXEC_HDR_VERSION;
-+	khdr.count = count;
-+	khdr.buffer_size = sizeof(khdr) + size;
-+
-+	if (ima_canonical_fmt) {
-+		khdr.version = cpu_to_le16(khdr.version);
-+		khdr.count = cpu_to_le64(khdr.count);
-+		khdr.buffer_size = cpu_to_le64(khdr.buffer_size);
 +	}
 +
-+	ima_putc(m, &khdr, sizeof(khdr));
-+}
+ 	while (size > 0 && (p = strsep(&datap, "\n"))) {
+ 		pr_debug("rule: %s\n", p);
+ 		rc = ima_parse_add_rule(p);
+@@ -325,6 +333,7 @@ static ssize_t ima_read_policy(char *path)
+ 		size -= rc;
+ 	}
+ 
++out:
+ 	vfree(data);
+ 	if (rc < 0)
+ 		return rc;
+@@ -337,6 +346,7 @@ static ssize_t ima_read_policy(char *path)
+ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 				size_t datalen, loff_t *ppos)
+ {
++	bool khdr = file->f_path.dentry == restore_kexec_list;
+ 	char *data;
+ 	ssize_t result;
+ 
+@@ -363,8 +373,13 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 	if (result < 0)
+ 		goto out_free;
+ 
++	if (khdr && data[0] != '/') {
++		mutex_unlock(&ima_write_mutex);
++		goto out_free;
++	}
 +
- /**
-  * ima_parse_buf() - Parses lengths and data from an input buffer
-  * @bufstartp:       Buffer start address.
-diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
-index 6a3d8b8..069e4ba 100644
---- a/security/integrity/ima/ima_template_lib.h
-+++ b/security/integrity/ima/ima_template_lib.h
-@@ -29,6 +29,8 @@ void ima_show_template_string(struct seq_file *m, enum ima_show_type show,
- 			      struct ima_field_data *field_data);
- void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
- 			   struct ima_field_data *field_data);
-+void ima_show_kexec_hdr(struct seq_file *m, unsigned long count,
-+			unsigned long size);
- int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
- 		  int maxfields, struct ima_field_data *fields, int *curfields,
- 		  unsigned long *len_mask, int enforce_mask, char *bufname);
+ 	if (data[0] == '/') {
+-		result = ima_read_policy(data);
++		result = ima_read_policy(data, khdr);
+ 	} else if (ima_appraise & IMA_APPRAISE_POLICY) {
+ 		pr_err("IMA: signed policy file (specified as an absolute pathname) required\n");
+ 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+@@ -393,7 +408,7 @@ static struct dentry *violations;
+ static struct dentry *ima_policy;
+ 
+ enum ima_fs_flags {
+-	IMA_FS_BUSY,
++	IMA_FS_BUSY, IMA_RESTORE_LIST_BUSY,
+ };
+ 
+ static unsigned long ima_fs_flags;
+@@ -412,6 +427,9 @@ static const struct seq_operations ima_policy_seqops = {
+  */
+ static int ima_open_policy(struct inode *inode, struct file *filp)
+ {
++	bool khdr = filp->f_path.dentry == restore_kexec_list;
++	unsigned long bit = khdr ? IMA_RESTORE_LIST_BUSY : IMA_FS_BUSY;
++
+ 	if (!(filp->f_flags & O_WRONLY)) {
+ #ifndef	CONFIG_IMA_READ_POLICY
+ 		return -EACCES;
+@@ -423,7 +441,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
+ 		return seq_open(filp, &ima_policy_seqops);
+ #endif
+ 	}
+-	if (test_and_set_bit(IMA_FS_BUSY, &ima_fs_flags))
++	if (test_and_set_bit(bit, &ima_fs_flags))
+ 		return -EBUSY;
+ 	return 0;
+ }
+@@ -439,6 +457,11 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+ {
+ 	const char *cause = valid_policy ? "completed" : "failed";
+ 
++	if (file->f_path.dentry == restore_kexec_list) {
++		clear_bit(IMA_RESTORE_LIST_BUSY, &ima_fs_flags);
++		return 0;
++	}
++
+ 	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
+ 		return seq_release(inode, file);
+ 
+@@ -522,9 +545,16 @@ int __init ima_fs_init(void)
+ 				   &ima_measurements_ops);
+ 	if (IS_ERR(binary_kexec_runtime_measurements))
+ 		goto out;
++
++	restore_kexec_list = securityfs_create_file("restore_kexec_list",
++						    S_IWUSR, ima_dir, NULL,
++						    &ima_measure_policy_ops);
++	if (IS_ERR(restore_kexec_list))
++		goto out;
+ #endif
+ 	return 0;
+ out:
++	securityfs_remove(restore_kexec_list);
+ 	securityfs_remove(binary_kexec_runtime_measurements);
+ 	securityfs_remove(violations);
+ 	securityfs_remove(runtime_measurements_count);
 -- 
 2.9.3
 
