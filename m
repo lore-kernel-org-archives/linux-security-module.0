@@ -1,172 +1,121 @@
-From: mchehab@s-opensource.com (Mauro Carvalho Chehab)
-Date: Tue, 16 May 2017 07:38:49 -0300
-Subject: [PATCH 0/5] Convert more books to ReST
-In-Reply-To: <20170515140912.100c9cac@bbrezillon>
-References: <cover.1494672881.git.mchehab@s-opensource.com>
-	<20170515140912.100c9cac@bbrezillon>
-Message-ID: <20170516073849.787750d4@vento.lan>
+From: matt@nmatt.com (Matt Brown)
+Date: Tue, 16 May 2017 08:22:25 -0400
+Subject: [PATCH v6 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
+References: <20170505232018.28846-1-matt@nmatt.com>
+	<20170510212920.7f6bc5e6@alans-desktop>
+	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
+	<20170515215752.4e9f3826@alans-desktop>
+	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
+	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
+	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
+Message-ID: <1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Em Mon, 15 May 2017 14:09:12 +0200
-Boris Brezillon <boris.brezillon@free-electrons.com> escreveu:
+On 05/16/2017 05:01 AM, Peter Dolding wrote:
+>>
+>> I could see a case being make for CAP_SYS_TTY_CONFIG. However I still
+>> choose to do with CAP_SYS_ADMIN because it is already in use in the
+>> TIOCSTI ioctl.
+>>
+> Matt Brown don't give me existing behaviour.    CAP_SYS_ADMIN is
+> overload.   The documentation tells you that you are not to expand it
+> and you openly admit you have.
+>
 
-> On Sat, 13 May 2017 08:10:53 -0300
-> Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote:
-> 
-> > This patch series convert the following books to ReST:
-> > 	- librs
-> > 	- mtdnand
-> > 	- sh
-> > 
-> > And it is based on my previous series of conversion patches.
-> > 
-> > After this series, there will be just one DocBook pending conversion:
-> > 	- lsm (Linux Security Modules)
-> > 
-> > This book is very outdated: no changes since the Kernel moved 
-> > to git, in 2005 (except for a minor editorial fix in 2008).
-> > 
-> > I took a look on the described API: it doesn't seem to be describing
-> > the current security implementation.
-> > 
-> > The best here is if someone that works with LSM to convert it to
-> > ReST with:
-> > 	$ Documentation/sphinx/tmplcvt Documentation/DocBook/lsm.tmpl lsm.rst
-> > 
-> > And fix the document to produce something that reflects the current
-> > implementation. If nobody is interested, then maybe we could just
-> > drop it.
-> > 
-> > -
-> > 
-> > This patch series is based on my past 00/36 patch series, applied on
-> > the top of docs tree (next branch).
-> > 
-> > The full patch series is on this tree is at:
-> > 
-> >    https://git.linuxtv.org//mchehab/experimental.git/log/?h=docbook
-> > 
-> > And the HTML output at:
-> > 
-> >   http://www.infradead.org/~mchehab/kernel_docs/
-> >   https://mchehab.fedorapeople.org/kernel_docs/ 
-> > 
-> > Mauro Carvalho Chehab (5):
-> >   docs-rst: convert librs book to ReST
-> >   docs-rst: convert mtdnand book to ReST
-> >   mtdnand.rst: Fix some typos and group the "::" with previous line  
-> 
-> MTD maintainers did not receive the above patch. Can you Cc us the
-> whole series next time.
+This is not true that I'm openly going against what the documentation
+instructs. The part of the email chain where I show this got removed
+somehow. Again I will refer to the capabilities man page that you
+quoted.
 
-Sorry. I'll add you on the whole series. It will be a big one, though,
-as it will contain the other docbook conversions on it (~50+ patches).
+ From http://man7.org/linux/man-pages/man7/capabilities.7.html
 
-> BTW, I had a look at your branch and it seems the typo you're fixing is
-> actually not a type. Flags are *OR-ed* (with the | operator) to form a
-> valid combination of flags.
+"Don't choose CAP_SYS_ADMIN if you can possibly avoid it!
+...
+The only new features that should be associated with CAP_SYS_ADMIN are
+ones that closely match existing uses in that silo."
 
-Ah! Ok, I updated the patch (see enclosed). Would that be OK for you?
+My feature affects the TIOCSTI ioctl. The TIOCSTI ioctl already falls
+under CAP_SYS_ADMIN, therefore I actually *am* following the
+documentation.
 
-> >   mtd: adjust kernel-docs to avoid Sphinx/kerneldoc warnings  
-> 
-> Not sure how you plan to merge these changes, but if it goes through
-> a single tree I'll probably need an immutable topic branch, because I
-> plan to change a few things in nand_base.c nand.h for the next release.
-
-At least the patches that touch at Documentation/* should go, IMHO,
-via a single tree:
-	git://git.lwn.net/linux.git docs-next
-
-As Jon mentioned, he doesn't rebase it, so you should be able to get an
-immutable branch from it.
-
-
-Thanks,
-Mauro
-
----
-
-[PATCH] mtdnand.rst: group the "::" with previous line
-
-Group the :: with the previous paragraph, in order to make it
-visually better when reading as a text file.
-
-While here, replace:
-	ored (with means "Covered or adorned with ore or metal")
-by:
-	OR-ed
-
-To reflect its true meaning.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-
-diff --git a/Documentation/driver-api/mtdnand.rst b/Documentation/driver-api/mtdnand.rst
-index 8723175f955e..7c19795ebb4a 100644
---- a/Documentation/driver-api/mtdnand.rst
-+++ b/Documentation/driver-api/mtdnand.rst
-@@ -843,10 +843,8 @@ Chip option constants
- Constants for chip id table
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--These constants are defined in nand.h. They are ored together to
--describe the chip functionality.
--
--::
-+These constants are defined in nand.h. They are OR-ed together to
-+describe the chip functionality::
- 
-     /* Buswitdh is 16 bit */
-     #define NAND_BUSWIDTH_16    0x00000002
-@@ -867,10 +865,8 @@ describe the chip functionality.
- Constants for runtime options
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--These constants are defined in nand.h. They are ored together to
--describe the functionality.
--
--::
-+These constants are defined in nand.h. They are OR-ed together to
-+describe the functionality::
- 
-     /* The hw ecc generator provides a syndrome instead a ecc value on read
-      * This can only work if we have the ecc bytes directly behind the
-@@ -881,9 +877,7 @@ describe the functionality.
- ECC selection constants
- -----------------------
- 
--Use these constants to select the ECC algorithm.
--
--::
-+Use these constants to select the ECC algorithm::
- 
-     /* No ECC. Usage is not recommended ! */
-     #define NAND_ECC_NONE       0
-@@ -903,9 +897,7 @@ Hardware control related constants
- ----------------------------------
- 
- These constants describe the requested hardware access function when the
--boardspecific hardware control function is called
--
--::
-+boardspecific hardware control function is called::
- 
-     /* Select the chip by setting nCE to low */
-     #define NAND_CTL_SETNCE     1
-@@ -929,9 +921,7 @@ Bad block table related constants
- ---------------------------------
- 
- These constants describe the options used for bad block table
--descriptors.
--
--::
-+descriptors::
- 
-     /* Options for the bad block table descriptors */
- 
-
-
+> Does anything of TIOSCTI functionally say that it really should be in
+> CAP_SYS_ADMIN.
+>
+> If functionality is going to cause security for containers maybe it
+> should be not in CAP_SYS_ADMIN but in its own capability that can
+> enabled on file by file base.
+>
+>>
+>> You might be right that CAP_SYS_ADMIN is overloaded, but my patch
+>> barely adds anything to it since TIOCSTI already falls under its
+>> control. It seems extreme to say this patch ought to be rejected just
+>> because it contains CAP_SYS_ADMIN. If we want to fix the state of Linux
+>> capabilities, then I suggest that should be a separate patchset to
+>> reorganize them into a more modular set of controls.
+>>
+> We have end up with CAP_SYS_ADMIN a mess by the of a death by a
+> thousand cuts.   Each person to extend CAP_SYS_ADMIN to it current
+> mess said the same thing.   My patch barely added anything times that
+> by a few thousand and you end up with what we have today.   At some
+> point no more has to be said.
+>
+> There is no point attempting to tidy it up of the rules are not put in
+> place so it does not turn into a mess again.
+>
+> This is not something that is suitable to be done as one large
+> patchset.   This is better done in the same kind of method that made
+> it.  So every time people want to alter something associated with
+> CAP_SYS_ADMIN it has to get assessed and the patch has to be one that
+> partly corrects the existing mess.    Do this enough times and we will
+> no longer have a mess on CAP_SYS_ADMIN.
+>
+> https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+> Please note the CapabilityBoundingSet=
+>
+> Your current patch adds no extra controls for me running a service
+> under systemd or anything else like it to say I don't want the
+> processes having the means to-do this even that they are running with
+> CAP_SYS_ADMIN to perform other tasks..
+>
+> --employ the TIOCSTI ioctl(2) to insert characters into the input
+> queue of a terminal other than the caller's controlling terminal;--
+> This currently under CAP_SYS_ADMIN is vastly more powerful than the
+> one you are attempt to take away with your patch.  This one can send
+> messages into other terminals.   This is a vastly more powerful
+> version of TIOSCTI.
+>
+> I fact this usage of TIOCSTI I personally think should require two
+> capabilities flags set.   CAP_SYS_ADMIN section left as it is at this
+> stage.   With TIOSCTI stuck behind another capability.
+>
+> If you had added a new capability flag you could set file capabilities
+> on any of the old applications depending on the now secured behaviour.
+>
+> https://github.com/lxc/lxc/commit/e986ea3dfa4a2957f71ae9bfaed406dd6e1ffff6
+>
+> Also the general user TIOCSTI issue can be handled a different way as
+> LXC fix shows.  Where they uses a pty to isolate so meaning in their
+> fixed setup user TIOSCTI was not harmful but CAP_SYS_ADMIN TIOSCTI
+> still could be.  You patch as not address this problem because you
+> shoved everything under CAP_SYS_ADMIN.   But if you add different
+> capability to use TIOSCIT that is not CAP_SYS_ADMIN  to allow
+> CAP_SYS_ADMiN TIOSCTI functionality to be disabled.
+>
+> This is what you see more often than not when you dig into this
+> patches adding more CAP_SYS_ADMIN.  Adding CAP_SYS_ADMIN is not fixing
+> a problem in most cases.   Breaking CAP_SYS_ADMIN functionality up
+> should be the goal not expand it.
+>
+> Basically you have done something documentation has a note to
+> developer not to-do.   If you start looking at the problem what you
+> doing is not helping.   If people end up using CAP_SYS_ADMIN to access
+> TIOSCTI its giving the program a more powerful version of TIOSCTI to
+> do more harm with so reduced containment.  Totally anti to what you
+> are meant to be doing with capabilities..
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
