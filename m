@@ -1,80 +1,47 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Tue, 16 May 2017 10:48:18 -0500
-Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make
-	TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
-References: <20170505232018.28846-1-matt@nmatt.com>
-	<20170510212920.7f6bc5e6@alans-desktop>
-	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
-	<20170515215752.4e9f3826@alans-desktop>
-	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
-	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
-	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
-	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
-	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
-Message-ID: <20170516154818.GA762@mail.hallyn.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 16 May 2017 14:21:44 -0400
+Subject: [PATCH] selinux: Use task_alloc hook rather than task_create hook
+In-Reply-To: <CAHC9VhTMNXtjToD3XmgfkT_sPsRgfRpFzdrgpgM0xrtbqy22pg@mail.gmail.com>
+References: <1490706772-8013-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<1490707796.6046.1.camel@tycho.nsa.gov>
+	<201703282308.BHJ95808.MFFHVQLOOtJFOS@I-love.SAKURA.ne.jp>
+	<CAHC9VhTxG95_iBy6WMtWj_xR1-=_=meykw1cTxN8-XepP8oo2w@mail.gmail.com>
+	<201703302013.CFF26504.JFOQFSOHtFOMVL@I-love.SAKURA.ne.jp>
+	<CAHC9VhTMNXtjToD3XmgfkT_sPsRgfRpFzdrgpgM0xrtbqy22pg@mail.gmail.com>
+Message-ID: <CAHC9VhQ+uBpVxk_prc0tNcJU+QU317a2cYCY4kXfN7nm=zSKKw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Kees Cook (keescook at chromium.org):
-> On Tue, May 16, 2017 at 5:22 AM, Matt Brown <matt@nmatt.com> wrote:
-> > On 05/16/2017 05:01 AM, Peter Dolding wrote:
-> >>>
-> >>>
-> >>> I could see a case being make for CAP_SYS_TTY_CONFIG. However I still
-> >>> choose to do with CAP_SYS_ADMIN because it is already in use in the
-> >>> TIOCSTI ioctl.
-> >>>
-> >> Matt Brown don't give me existing behaviour.    CAP_SYS_ADMIN is
-> >> overload.   The documentation tells you that you are not to expand it
-> >> and you openly admit you have.
-> >>
-> >
-> > This is not true that I'm openly going against what the documentation
-> > instructs. The part of the email chain where I show this got removed
-> > somehow. Again I will refer to the capabilities man page that you
-> > quoted.
-> >
-> > From http://man7.org/linux/man-pages/man7/capabilities.7.html
-> >
-> > "Don't choose CAP_SYS_ADMIN if you can possibly avoid it!
-> > ...
-> > The only new features that should be associated with CAP_SYS_ADMIN are
-> > ones that closely match existing uses in that silo."
-> >
-> > My feature affects the TIOCSTI ioctl. The TIOCSTI ioctl already falls
-> > under CAP_SYS_ADMIN, therefore I actually *am* following the
-> > documentation.
-> 
-> CAP_SYS_ADMIN is the right choice here, I agree with Matt: it is
-> already in use for TIOCSTI. We can't trivially add new capabilities
-> flags (see the various giant threads debating this, the most recently
-> that I remember from the kernel lock-down series related to Secure
-> Boot).
+On Fri, Mar 31, 2017 at 3:20 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Thu, Mar 30, 2017 at 7:13 AM, Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> Paul Moore wrote:
+>>> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>> > Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+>>> > ---
+>>> >  security/selinux/hooks.c | 5 +++--
+>>> >  1 file changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> When are you planning to remove the task_create() hook?
+>>>
+>>> I have no objection to this patch, and I plan to merge it, but merging
+>>> it now would require rebasing the selinux/next and I try to keep from
+>>> rebasing during the development cycle unless absolutely necessary.  I
+>>> think this can wait until after the next merge window, what do you
+>>> think?
+>>
+>> Nothing to hurry. SELinux is the only user. We can wait as much as you want.
+>
+> Okay, I'll leave this in the queue and I'll merge it after the next
+> merge window.
+>
+> Thanks.
 
-Consideer that if we use CAP_SYS_TTY_CONFIG now, then any applications
-which are currently being given CAP_SYS_ADMIN would need to be updated
-with a second capability.  Not acceptable.  Even when we split up
-CAP_SYSLOG, we took care to avoid that (by having the original capability
-also suffice, so either capability worked).
+Merged, thanks again.
 
-> >> I fact this usage of TIOCSTI I personally think should require two
-> >> capabilities flags set.   CAP_SYS_ADMIN section left as it is at this
-> >> stage.   With TIOSCTI stuck behind another capability.
-> >>
-> >> If you had added a new capability flag you could set file capabilities
-> >> on any of the old applications depending on the now secured behaviour.
-> 
-> If we're adjusting applications, they should be made to avoid TIOSCTI
-> completely. This looks to me a lot like the symlink restrictions: yes,
-> userspace should be fixed to the do the right thing, but why not
-> provide support to userspace to avoid the problem entirely?
-> 
-> -Kees
-> 
-> -- 
-> Kees Cook
-> Pixel Security
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
