@@ -1,39 +1,101 @@
-From: boris.brezillon@free-electrons.com (Boris Brezillon)
-Date: Tue, 16 May 2017 09:01:56 +0200
-Subject: [PATCH 0/5] Convert more books to ReST
-In-Reply-To: <20170515111519.7bbb449b@lwn.net>
-References: <cover.1494672881.git.mchehab@s-opensource.com>
-	<20170515140912.100c9cac@bbrezillon>
-	<20170515111519.7bbb449b@lwn.net>
-Message-ID: <20170516090156.47d55338@bbrezillon>
+From: oiaohm@gmail.com (Peter Dolding)
+Date: Tue, 16 May 2017 19:01:08 +1000
+Subject: [PATCH v6 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
+References: <20170505232018.28846-1-matt@nmatt.com>
+	<20170510212920.7f6bc5e6@alans-desktop>
+	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
+	<20170515215752.4e9f3826@alans-desktop>
+	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
+	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
+Message-ID: <CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Jonathan,
+>
+> I could see a case being make for CAP_SYS_TTY_CONFIG. However I still
+> choose to do with CAP_SYS_ADMIN because it is already in use in the
+> TIOCSTI ioctl.
+>
+Matt Brown don't give me existing behaviour.    CAP_SYS_ADMIN is
+overload.   The documentation tells you that you are not to expand it
+and you openly admit you have.
 
-On Mon, 15 May 2017 11:15:19 -0600
-Jonathan Corbet <corbet@lwn.net> wrote:
+Does anything of TIOSCTI functionally say that it really should be in
+CAP_SYS_ADMIN.
 
-> On Mon, 15 May 2017 14:09:12 +0200
-> Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
-> 
-> > >   mtd: adjust kernel-docs to avoid Sphinx/kerneldoc warnings    
-> > 
-> > Not sure how you plan to merge these changes, but if it goes through
-> > a single tree I'll probably need an immutable topic branch, because I
-> > plan to change a few things in nand_base.c nand.h for the next release.  
-> 
-> docs-next doesn't rebase, so there shouldn't be trouble there.  But we
-> could also just separate this patch into two pieces.  I suspect we could
-> live with a couple of warnings for a period during the 4.13 merge window
-> without too much pain...
+If functionality is going to cause security for containers maybe it
+should be not in CAP_SYS_ADMIN but in its own capability that can
+enabled on file by file base.
 
-I like this idea. This way I can take the nand_base.c/nand.h changes
-through my tree and let you pick the Doc migration bits.
+>
+> You might be right that CAP_SYS_ADMIN is overloaded, but my patch
+> barely adds anything to it since TIOCSTI already falls under its
+> control. It seems extreme to say this patch ought to be rejected just
+> because it contains CAP_SYS_ADMIN. If we want to fix the state of Linux
+> capabilities, then I suggest that should be a separate patchset to
+> reorganize them into a more modular set of controls.
+>
+We have end up with CAP_SYS_ADMIN a mess by the of a death by a
+thousand cuts.   Each person to extend CAP_SYS_ADMIN to it current
+mess said the same thing.   My patch barely added anything times that
+by a few thousand and you end up with what we have today.   At some
+point no more has to be said.
 
-Thanks,
+There is no point attempting to tidy it up of the rules are not put in
+place so it does not turn into a mess again.
 
-Boris
+This is not something that is suitable to be done as one large
+patchset.   This is better done in the same kind of method that made
+it.  So every time people want to alter something associated with
+CAP_SYS_ADMIN it has to get assessed and the patch has to be one that
+partly corrects the existing mess.    Do this enough times and we will
+no longer have a mess on CAP_SYS_ADMIN.
+
+https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+Please note the CapabilityBoundingSet=
+
+Your current patch adds no extra controls for me running a service
+under systemd or anything else like it to say I don't want the
+processes having the means to-do this even that they are running with
+CAP_SYS_ADMIN to perform other tasks..
+
+--employ the TIOCSTI ioctl(2) to insert characters into the input
+queue of a terminal other than the caller's controlling terminal;--
+This currently under CAP_SYS_ADMIN is vastly more powerful than the
+one you are attempt to take away with your patch.  This one can send
+messages into other terminals.   This is a vastly more powerful
+version of TIOSCTI.
+
+I fact this usage of TIOCSTI I personally think should require two
+capabilities flags set.   CAP_SYS_ADMIN section left as it is at this
+stage.   With TIOSCTI stuck behind another capability.
+
+If you had added a new capability flag you could set file capabilities
+on any of the old applications depending on the now secured behaviour.
+
+https://github.com/lxc/lxc/commit/e986ea3dfa4a2957f71ae9bfaed406dd6e1ffff6
+
+Also the general user TIOCSTI issue can be handled a different way as
+LXC fix shows.  Where they uses a pty to isolate so meaning in their
+fixed setup user TIOSCTI was not harmful but CAP_SYS_ADMIN TIOSCTI
+still could be.  You patch as not address this problem because you
+shoved everything under CAP_SYS_ADMIN.   But if you add different
+capability to use TIOSCIT that is not CAP_SYS_ADMIN  to allow
+CAP_SYS_ADMiN TIOSCTI functionality to be disabled.
+
+This is what you see more often than not when you dig into this
+patches adding more CAP_SYS_ADMIN.  Adding CAP_SYS_ADMIN is not fixing
+a problem in most cases.   Breaking CAP_SYS_ADMIN functionality up
+should be the goal not expand it.
+
+Basically you have done something documentation has a note to
+developer not to-do.   If you start looking at the problem what you
+doing is not helping.   If people end up using CAP_SYS_ADMIN to access
+TIOSCTI its giving the program a more powerful version of TIOSCTI to
+do more harm with so reduced containment.  Totally anti to what you
+are meant to be doing with capabilities..
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
