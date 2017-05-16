@@ -1,27 +1,42 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue, 16 May 2017 15:32:33 -0400
-Subject: [tpmdd-devel] [PATCH v4 2/2] tpm: vtpm_proxy: Implement
-	request_locality function.
-In-Reply-To: <484d5d9f-c769-3e38-4fe5-6dede79de717@linux.vnet.ibm.com>
-References: <1494460462-29022-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1494460462-29022-3-git-send-email-stefanb@linux.vnet.ibm.com>
-	<484d5d9f-c769-3e38-4fe5-6dede79de717@linux.vnet.ibm.com>
-Message-ID: <aa84ca0a-f976-bf22-9cfd-40405c8f3ef8@linux.vnet.ibm.com>
+From: elfring@users.sourceforge.net (SF Markus Elfring)
+Date: Tue, 16 May 2017 21:57:36 +0200
+Subject: selinux: Use an other error code for an input validation failure
+	in sidtab_insert()
+In-Reply-To: <CAHC9VhQY7-Ls5bX_wbna1S6PjV2Ck_1+AR5R8Pngn1tivXxCdg@mail.gmail.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
+	<38273216-97ad-7955-941a-68485534d39f@users.sourceforge.net>
+	<CAHC9VhQY7-Ls5bX_wbna1S6PjV2Ck_1+AR5R8Pngn1tivXxCdg@mail.gmail.com>
+Message-ID: <bd7cc69d-0b1b-010a-0a07-c287d25b8d6c@users.sourceforge.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/16/2017 03:03 PM, Ken Goldman wrote:
-> On 5/10/2017 7:54 PM, Stefan Berger wrote:
->> Implement the request_locality function. To set the locality on the
->> backend we define vendor-specific TPM 1.2 and TPM 2 ordinals and send
->> a command to the backend to set the locality for the next commands.
->
-> When this says "for the next commands", does that mean that the locality
-> is fixed for all commands until a new request_locality is sent to 
-> change it?
+> Have you tested this to determine any impact it may have on the
+> SELinux userspace?
 
-Yes.
+Not yet.
 
+
+> I would agree that EINVAL is probably more appropriate in this case,
+
+Thanks that a part of your view seems to fit also to mine.
+
+
+> but changing this return code has very little value
+
+I would appreciate if this aspect can clarified a bit more.
+
+
+> and may disrupt userspace if it assumes EINVAL means something else
+> when the policy load fails.
+
+Would you find an other error code better there?
+
+Do you care to distinguish an input validation failure in a specific
+function implementation from other error situations?
+
+Regards,
+Markus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
