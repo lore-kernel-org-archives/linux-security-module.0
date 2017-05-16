@@ -1,172 +1,73 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 16 May 2017 14:53:42 +0200
-Subject: [PATCH 2/7] ima: use ima_parse_buf() to parse measurements headers
-In-Reply-To: <20170516125347.10574-1-roberto.sassu@huawei.com>
-References: <20170516125347.10574-1-roberto.sassu@huawei.com>
-Message-ID: <20170516125347.10574-3-roberto.sassu@huawei.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Tue, 16 May 2017 07:28:52 -0700
+Subject: [PATCH v6 0/2] security: tty: make TIOCSTI ioctl require
+	CAP_SYS_ADMIN
+In-Reply-To: <1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
+References: <20170505232018.28846-1-matt@nmatt.com>
+	<20170510212920.7f6bc5e6@alans-desktop>
+	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
+	<20170515215752.4e9f3826@alans-desktop>
+	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
+	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
+	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
+	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
+Message-ID: <CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The binary_hdr_v1 and binary_data_v1 structures defined in
-ima_restore_measurement_list() have been replaced with an array of four
-ima_field_data structures where pcr, digest, template name and
-template data lengths and pointers are stored.
+On Tue, May 16, 2017 at 5:22 AM, Matt Brown <matt@nmatt.com> wrote:
+> On 05/16/2017 05:01 AM, Peter Dolding wrote:
+>>>
+>>>
+>>> I could see a case being make for CAP_SYS_TTY_CONFIG. However I still
+>>> choose to do with CAP_SYS_ADMIN because it is already in use in the
+>>> TIOCSTI ioctl.
+>>>
+>> Matt Brown don't give me existing behaviour.    CAP_SYS_ADMIN is
+>> overload.   The documentation tells you that you are not to expand it
+>> and you openly admit you have.
+>>
+>
+> This is not true that I'm openly going against what the documentation
+> instructs. The part of the email chain where I show this got removed
+> somehow. Again I will refer to the capabilities man page that you
+> quoted.
+>
+> From http://man7.org/linux/man-pages/man7/capabilities.7.html
+>
+> "Don't choose CAP_SYS_ADMIN if you can possibly avoid it!
+> ...
+> The only new features that should be associated with CAP_SYS_ADMIN are
+> ones that closely match existing uses in that silo."
+>
+> My feature affects the TIOCSTI ioctl. The TIOCSTI ioctl already falls
+> under CAP_SYS_ADMIN, therefore I actually *am* following the
+> documentation.
 
-The length of pcr and digest in the ima_field_data array and the bits
-in the bitmap are set before ima_parse_buf() is called. The ENFORCE_FIELDS
-bit is set for all entries except the last one (there is still data to
-parse), and ENFORCE_BUFEND is set only for the last entry.
+CAP_SYS_ADMIN is the right choice here, I agree with Matt: it is
+already in use for TIOCSTI. We can't trivially add new capabilities
+flags (see the various giant threads debating this, the most recently
+that I remember from the kernel lock-down series related to Secure
+Boot).
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_template.c | 80 ++++++++++++-----------------------
- 1 file changed, 28 insertions(+), 52 deletions(-)
+>> I fact this usage of TIOCSTI I personally think should require two
+>> capabilities flags set.   CAP_SYS_ADMIN section left as it is at this
+>> stage.   With TIOSCTI stuck behind another capability.
+>>
+>> If you had added a new capability flag you could set file capabilities
+>> on any of the old applications depending on the now secured behaviour.
 
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index cebb37c..624e2a1 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -19,6 +19,9 @@
- #include "ima.h"
- #include "ima_template_lib.h"
- 
-+enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
-+		     HDR_TEMPLATE_DATA, HDR__LAST };
-+
- static struct ima_template_desc builtin_templates[] = {
- 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
- 	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
-@@ -337,27 +340,19 @@ static int ima_restore_template_data(struct ima_template_desc *template_desc,
- /* Restore the serialized binary measurement list without extending PCRs. */
- int ima_restore_measurement_list(loff_t size, void *buf)
- {
--	struct binary_hdr_v1 {
--		u32 pcr;
--		u8 digest[TPM_DIGEST_SIZE];
--		u32 template_name_len;
--		char template_name[0];
--	} __packed;
- 	char template_name[MAX_TEMPLATE_NAME_LEN];
- 
--	struct binary_data_v1 {
--		u32 template_data_size;
--		char template_data[0];
--	} __packed;
--
- 	struct ima_kexec_hdr *khdr = buf;
--	struct binary_hdr_v1 *hdr_v1;
--	struct binary_data_v1 *data_v1;
-+	struct ima_field_data hdr[HDR__LAST] = {
-+		[HDR_PCR] = {.len = sizeof(u32)},
-+		[HDR_DIGEST] = {.len = TPM_DIGEST_SIZE},
-+	};
- 
- 	void *bufp = buf + sizeof(*khdr);
- 	void *bufendp;
- 	struct ima_template_entry *entry;
- 	struct ima_template_desc *template_desc;
-+	DECLARE_BITMAP(hdr_mask, HDR__LAST);
- 	unsigned long count = 0;
- 	int ret = 0;
- 
-@@ -380,6 +375,10 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 		return -EINVAL;
- 	}
- 
-+	bitmap_zero(hdr_mask, HDR__LAST);
-+	bitmap_set(hdr_mask, HDR_PCR, 1);
-+	bitmap_set(hdr_mask, HDR_DIGEST, 1);
-+
- 	/*
- 	 * ima kexec buffer prefix: version, buffer size, count
- 	 * v1 format: pcr, digest, template-name-len, template-name,
-@@ -387,31 +386,25 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 	 */
- 	bufendp = buf + khdr->buffer_size;
- 	while ((bufp < bufendp) && (count++ < khdr->count)) {
--		hdr_v1 = bufp;
--		if (bufp > (bufendp - sizeof(*hdr_v1))) {
--			pr_err("attempting to restore partial measurement\n");
--			ret = -EINVAL;
--			break;
--		}
--		bufp += sizeof(*hdr_v1);
-+		int enforce_mask = ENFORCE_FIELDS;
- 
--		if (ima_canonical_fmt)
--			hdr_v1->template_name_len =
--			    le32_to_cpu(hdr_v1->template_name_len);
-+		enforce_mask |= (count == khdr->count) ? ENFORCE_BUFEND : 0;
-+		ret = ima_parse_buf(bufp, bufendp, &bufp, HDR__LAST, hdr, NULL,
-+				    hdr_mask, enforce_mask, "entry header");
-+		if (ret < 0)
-+			break;
- 
--		if ((hdr_v1->template_name_len >= MAX_TEMPLATE_NAME_LEN) ||
--		    (bufp > (bufendp - hdr_v1->template_name_len))) {
-+		if (hdr[HDR_TEMPLATE_NAME].len >= MAX_TEMPLATE_NAME_LEN) {
- 			pr_err("attempting to restore a template name \
- 				that is too long\n");
- 			ret = -EINVAL;
- 			break;
- 		}
--		data_v1 = bufp += (u_int8_t)hdr_v1->template_name_len;
- 
- 		/* template name is not null terminated */
--		memcpy(template_name, hdr_v1->template_name,
--		       hdr_v1->template_name_len);
--		template_name[hdr_v1->template_name_len] = 0;
-+		memcpy(template_name, hdr[HDR_TEMPLATE_NAME].data,
-+		       hdr[HDR_TEMPLATE_NAME].len);
-+		template_name[hdr[HDR_TEMPLATE_NAME].len] = 0;
- 
- 		if (strcmp(template_name, "ima") == 0) {
- 			pr_err("attempting to restore an unsupported \
-@@ -441,34 +434,17 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 			break;
- 		}
- 
--		if (bufp > (bufendp - sizeof(data_v1->template_data_size))) {
--			pr_err("restoring the template data size failed\n");
--			ret = -EINVAL;
--			break;
--		}
--		bufp += (u_int8_t) sizeof(data_v1->template_data_size);
--
--		if (ima_canonical_fmt)
--			data_v1->template_data_size =
--			    le32_to_cpu(data_v1->template_data_size);
--
--		if (bufp > (bufendp - data_v1->template_data_size)) {
--			pr_err("restoring the template data failed\n");
--			ret = -EINVAL;
--			break;
--		}
--		bufp += data_v1->template_data_size;
--
- 		ret = ima_restore_template_data(template_desc,
--						data_v1->template_data,
--						data_v1->template_data_size,
-+						hdr[HDR_TEMPLATE_DATA].data,
-+						hdr[HDR_TEMPLATE_DATA].len,
- 						&entry);
- 		if (ret < 0)
- 			break;
- 
--		memcpy(entry->digest, hdr_v1->digest, TPM_DIGEST_SIZE);
--		entry->pcr =
--		    !ima_canonical_fmt ? hdr_v1->pcr : le32_to_cpu(hdr_v1->pcr);
-+		memcpy(entry->digest, hdr[HDR_DIGEST].data,
-+		       hdr[HDR_DIGEST].len);
-+		entry->pcr = !ima_canonical_fmt ? *(hdr[HDR_PCR].data) :
-+			     le32_to_cpu(*(hdr[HDR_PCR].data));
- 		ret = ima_restore_measurement_entry(entry);
- 		if (ret < 0)
- 			break;
+If we're adjusting applications, they should be made to avoid TIOSCTI
+completely. This looks to me a lot like the symlink restrictions: yes,
+userspace should be fixed to the do the right thing, but why not
+provide support to userspace to avoid the problem entirely?
+
+-Kees
+
 -- 
-2.9.3
-
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
