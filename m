@@ -1,93 +1,65 @@
-From: oiaohm@gmail.com (Peter Dolding)
-Date: Wed, 17 May 2017 08:05:17 +1000
-Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make TIOCSTI
-	ioctl require CAP_SYS_ADMIN
-In-Reply-To: <20170516154818.GA762@mail.hallyn.com>
-References: <20170505232018.28846-1-matt@nmatt.com>
-	<20170510212920.7f6bc5e6@alans-desktop>
-	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
-	<20170515215752.4e9f3826@alans-desktop>
-	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
-	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
-	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
-	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
-	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
-	<20170516154818.GA762@mail.hallyn.com>
-Message-ID: <CANA3KFWAbvCwM+EWLpUxDjS+OamW5hWJ136APfzcKYouhUSsFQ@mail.gmail.com>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Wed, 17 May 2017 09:25:05 +0200
+Subject: [Linux-ima-devel] [PATCH 0/7] IMA: new parser for
+	ima_restore_measurement_list()
+In-Reply-To: <4f5bc289-92cb-1ce2-4496-387efbb11769@linux.vnet.ibm.com>
+References: <20170516125347.10574-1-roberto.sassu@huawei.com>
+	<4f5bc289-92cb-1ce2-4496-387efbb11769@linux.vnet.ibm.com>
+Message-ID: <42b629dd-0d1f-b066-03e4-c013d0891ba7@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 17, 2017 at 1:48 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> Quoting Kees Cook (keescook at chromium.org):
->> On Tue, May 16, 2017 at 5:22 AM, Matt Brown <matt@nmatt.com> wrote:
->> > On 05/16/2017 05:01 AM, Peter Dolding wrote:
->> >>>
->> >>>
->> >>> I could see a case being make for CAP_SYS_TTY_CONFIG. However I still
->> >>> choose to do with CAP_SYS_ADMIN because it is already in use in the
->> >>> TIOCSTI ioctl.
->> >>>
->> >> Matt Brown don't give me existing behaviour.    CAP_SYS_ADMIN is
->> >> overload.   The documentation tells you that you are not to expand it
->> >> and you openly admit you have.
->> >>
->> >
->> > This is not true that I'm openly going against what the documentation
->> > instructs. The part of the email chain where I show this got removed
->> > somehow. Again I will refer to the capabilities man page that you
->> > quoted.
->> >
->> > From http://man7.org/linux/man-pages/man7/capabilities.7.html
->> >
->> > "Don't choose CAP_SYS_ADMIN if you can possibly avoid it!
->> > ...
->> > The only new features that should be associated with CAP_SYS_ADMIN are
->> > ones that closely match existing uses in that silo."
->> >
->> > My feature affects the TIOCSTI ioctl. The TIOCSTI ioctl already falls
->> > under CAP_SYS_ADMIN, therefore I actually *am* following the
->> > documentation.
+On 5/16/2017 9:00 PM, Ken Goldman wrote:
+> On 5/16/2017 8:53 AM, Roberto Sassu wrote:
+>> A new IMA measurement list format, called Crypto Agile, will be introduced
+>> shortly to take full advantage of the algorithm flexibility of TPM 2.0.
+>> With the new format, it will be possible to provide for each list entry
+>> multiple digests, each calculated with an algorithm supported by the TPM.
+>> Those digests will be used by remote entities to verify the integrity of
+>> the measurements list.
 >>
->> CAP_SYS_ADMIN is the right choice here, I agree with Matt: it is
->> already in use for TIOCSTI. We can't trivially add new capabilities
->> flags (see the various giant threads debating this, the most recently
->> that I remember from the kernel lock-down series related to Secure
->> Boot).
+>> The current (SHA1) and the new (Crypto Agile) format definitions are:
+>>
+>> SHA1: pcr[4] digest[20]
+>>        template_name_len[4] template_name[template_name_len]
+>>        template_data_len[4] template_data[template_data_len]
+>>
+>> Crypto Agile: pcr[4] total_digest_len[4]
+>>                digest1_len[4] digest1[digest1_len] ...
+>>                digestN_len[4] digestN[digestN_len]
+>>                template_name_len[4] template_name[template_name_len]
+>>                template_data_len[4] template_data[template_data_len]
 >
-> Consideer that if we use CAP_SYS_TTY_CONFIG now, then any applications
-> which are currently being given CAP_SYS_ADMIN would need to be updated
-> with a second capability.  Not acceptable.  Even when we split up
-> CAP_SYSLOG, we took care to avoid that (by having the original capability
-> also suffice, so either capability worked).
+> 1 - In this proposed format, how does the parser or consumer of the log
+> know what algorithm is used for digestN.
+
+The format of digestN is: <algo name>:\0<digest value>, the same used
+for the file digest.
+
+
+> For example, the TCG standard format uses TPML_DIGEST_VALUES
+> 	uint32_t count - the number of digests TPMT_HA
+> 	TPMT_HA digests[]
 >
-There is another option create a security bit.
+> where a TPMT_HA is
+> 	algorithm identifier
+> 	digest byte array
+>
+> 2 - Not a criticism, just a question for understanding ...  Would it be
+> true that the total_digest_length == the sum of all the digestN_len
+> values plus 4 bytes for each length.
 
-That could be called SECBIT_CONTAINER.   This turns off functionally
-like TIOCSTI that can be used to it break out with.
+Yes.
 
-This case the mainlined code the TIOCSTI currently in CAP_SYS_ADMIN is
-a container breaker its designed to allow reaching cross users and
-TTYs.   SECBIT is a inverted capability so when it enabled it disables
-something and once enabled it cannot be disabled.   So the lxc
-addressed to the user TIOCSTI causing a breakout does not work against
-the CAP_SYS_ADMIN one.   If there was a security bit that disabled
-TIOCSTI completely that prevents all the escape paths by TIOCSTI.
 
-There would also be room for a SECBIT_NO_OBSOLETE what is quite simple
-make using obsolete functions application fatal.   Now with CAP_SYSLOG
-if SECBIT_NO_OBSOLETE programs using the old capability could find the
-feature removed.   So over time we can systematically remove the multi
-entry path we have now as userspace updates and stops requiring the
-second path.
+> Does it determine how many digests there are by when the total length is
+> consumed?
 
-There is more than 1 way to skin this cat.   There is no need to add
-more to CAP_SYS_ADMIN and it particular bad when you consider having
-to obey the Linux Rule of user-space compatibly would result in having
-apply CAP_SYS_ADMIN to existing applications with Matts patch.
+Yes. Since the number of digests is unknown until the buffer is parsed,
+the parser consumes the data until the buffer end is reached. Then,
+it returns the number of digests to the caller.
 
-Peter
-
-.
+Roberto
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
