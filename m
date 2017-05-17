@@ -1,44 +1,32 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Wed, 17 May 2017 17:41:13 +0100
-Subject: [PATCH v6 0/2] security: tty: make TIOCSTI ioctl require
-	CAP_SYS_ADMIN
-In-Reply-To: <CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
-References: <20170505232018.28846-1-matt@nmatt.com>
-	<20170510212920.7f6bc5e6@alans-desktop>
-	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
-	<20170515215752.4e9f3826@alans-desktop>
-	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
-	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
-	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
-	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
-	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
-Message-ID: <20170517174113.69d1cbaa@alans-desktop>
+From: sbuisson.ddn@gmail.com (Sebastien Buisson)
+Date: Wed, 17 May 2017 19:00:25 +0200
+Subject: [PATCH v5 1/2] selinux: add brief info to policydb
+In-Reply-To: <CAFftDdpHH5J18h7zUnYEv0Q++cLOdUqbUGptZHvwXpKh5WjEFw@mail.gmail.com>
+References: <1494928281-11128-1-git-send-email-sbuisson@ddn.com>
+	<1494967240.21557.18.camel@tycho.nsa.gov>
+	<CAPkE-bWykonYBssXGphktM7jANY_nbtQi7EVc4uLwjm-fdM8Kg@mail.gmail.com>
+	<CAFftDdo=xDMNpC1F6M+w8Cr4=Ws8f-WyKm27EU_kv2ZE7ATHsQ@mail.gmail.com>
+	<CAPkE-bV3DymWqYfkahxYLwSPy_G=YMzJMvc5jj3qJu1ywteJng@mail.gmail.com>
+	<CAFftDdqtXKMkPOmrHx_RcwQuhi7e+Utqnh=4nn0O+4+wgAS=6Q@mail.gmail.com>
+	<CAPkE-bU-XSQHobkAQzed+fM14sKku56oPq=P=KoCOwuUqcFosw@mail.gmail.com>
+	<CAFftDdpHH5J18h7zUnYEv0Q++cLOdUqbUGptZHvwXpKh5WjEFw@mail.gmail.com>
+Message-ID: <CAPkE-bW45A-MKBZ53zyE--zuzsemyUaFy4_=vLFFF+H2Ujg=xQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> If we're adjusting applications, they should be made to avoid TIOSCTI
-> completely. This looks to me a lot like the symlink restrictions: yes,
-> userspace should be fixed to the do the right thing, but why not
-> provide support to userspace to avoid the problem entirely?
+2017-05-17 18:04 GMT+02:00 William Roberts <bill.c.roberts@gmail.com>:
+> I'm assuming in the Lustre code you're going to call security_policy_brief(),
+> how would the caller know how big that buffer is going to be?
 
-We do it's called pty/tty. There isn't any other way to do this correctly
-because TIOCSTI is just one hundreds of things the attacker can do to
-make your life miserable in the case you create a child process of lower
-security privilege and give it your tty file handle or worse (like some
-container crapware) your X11 socket fd.
+We can determine it at configure time for instance, given that len as
+an output parameter would give the size necessary to store the policy
+brief info.
 
-Does it really matter any more or less if I reprogram your enter key, use
-TIOCSTI, set the baud rate, change all your fonts ?
+> I'm looking at both v5 patches, I don't see where it's being called with alloc
+> set to false.
 
-The mainstream tools like sudo get this right (*). Blocking TIOCSTI fixes
-nothing and breaks apps. If it magically fixed the problem it might make
-sense but it doesn't. You actually have to get an adult to write the
-relevant code.
-
-Alan
-(*) Almost. There's an old world trick of sending "+++" "ATE1" "rm -rf
-*\r\n" to try and attack improperly configured remote modem sessions but
-the stuff that matters is handled.
+It would be called with alloc set to false from network and
+distributed file systems like Lustre.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
