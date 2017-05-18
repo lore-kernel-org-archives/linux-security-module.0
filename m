@@ -1,112 +1,38 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 17 May 2017 20:18:12 -0700
-Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make TIOCSTI
-	ioctl require CAP_SYS_ADMIN
-In-Reply-To: <1495045540.1619.1.camel@gmail.com>
-References: <20170505232018.28846-1-matt@nmatt.com>
-	<20170510212920.7f6bc5e6@alans-desktop>
-	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
-	<20170515215752.4e9f3826@alans-desktop>
-	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
-	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
-	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
-	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
-	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
-	<20170517174113.69d1cbaa@alans-desktop>
-	<1495045540.1619.1.camel@gmail.com>
-Message-ID: <CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Thu, 18 May 2017 11:38:24 +0200
+Subject: [Linux-ima-devel] [PATCH 0/7] IMA: new parser for
+	ima_restore_measurement_list()
+In-Reply-To: <4b536b04-0e61-aea4-fc27-8dd12f2e3a1b@linux.vnet.ibm.com>
+References: <20170516125347.10574-1-roberto.sassu@huawei.com>
+	<4f5bc289-92cb-1ce2-4496-387efbb11769@linux.vnet.ibm.com>
+	<42b629dd-0d1f-b066-03e4-c013d0891ba7@huawei.com>
+	<4b536b04-0e61-aea4-fc27-8dd12f2e3a1b@linux.vnet.ibm.com>
+Message-ID: <3b204e09-c1c0-b3bc-90fe-a8dfb86baadc@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 17, 2017 at 11:25 AM, Daniel Micay <danielmicay@gmail.com> wrote:
-> On Wed, 2017-05-17 at 17:41 +0100, Alan Cox wrote:
->> > If we're adjusting applications, they should be made to avoid
->> > TIOSCTI
->> > completely. This looks to me a lot like the symlink restrictions:
->> > yes,
->> > userspace should be fixed to the do the right thing, but why not
->> > provide support to userspace to avoid the problem entirely?
+On 5/17/2017 6:28 PM, Ken Goldman wrote:
+> On 5/17/2017 3:25 AM, Roberto Sassu wrote:
 >>
->> We do it's called pty/tty. There isn't any other way to do this
->> correctly
->> because TIOCSTI is just one hundreds of things the attacker can do to
->> make your life miserable in the case you create a child process of
->> lower
->> security privilege and give it your tty file handle or worse (like
->> some
->> container crapware) your X11 socket fd.
->>
->> Does it really matter any more or less if I reprogram your enter key,
->> use
->> TIOCSTI, set the baud rate, change all your fonts ?
->>
->> The mainstream tools like sudo get this right (*). Blocking TIOCSTI
->> fixes
->> nothing and breaks apps. If it magically fixed the problem it might
->> make
->> sense but it doesn't. You actually have to get an adult to write the
->> relevant code.
+>> The format of digestN is: <algo name>:\0<digest value>, the same used
+>> for the file digest.
 >
-> It gets it right because it was reported as a vulnerability and fixed,
-> which is the cycle many of these tools have gone through. It looks like
-> sudo and coreutils / shadow su were fixed in 2005, but there are more of
-> these tools.
+> Since the format is changing from the SHA-1 log format anyway ...
 >
-> CVE-2005-4890 (coreutils su, shadow su, sudo), CVE-2016-7545 (SELinux
-> sandbox utility), CVE-2016-2781 (chroot --userspec), CVE-2016-2779
-> (util-linux runuser), CVE-2016-2568 (pkexec)
+> How do people feel about the colon and null terminated string format for
+> algorithm identifiers?
 >
-> I am not sure if the pkexec vulnerability is even fixed:
+> The TCG standard enumerations are uint16_t, and there is a registry of
+> hash algorithms.
 >
-> https://bugzilla.redhat.com/show_bug.cgi?id=1300746
->
-> CVE-2017-5226 is for bubblewrap/flatpak this year, and I'm sure there
-> were a lot more as I didn't bother to dig very deep.
->
-> I completely agree that it should be solved by doing things properly in
-> each application. However, it isn't solved properly everywhere and each
-> new application is making the same mistake. Providing this feature does
-> not break anything that people use in practice and it doesn't need to
-> solve every issue to be quite useful, it only needs to prevent local
-> privilege escalation in the form of code execution in many cases. Is
-> there another way to get code execution via that bubblewrap/flatpak bug
-> with this feature implemented? As far as I can tell, there isn't. It's a
-> problem even with this feature but a significantly less serious one.
+> As a consuming parser, it feels nice to know it's always 2 bytes and not
+> have to worry about a missing colon or a missing nul terminator risking
+> a buffer overflow.
 
-This patch solves a real problem when userspace does things wrong. For
-those that do not want it, a sysctl exists (and is even default off).
-Arguments about how userspace needs to be fixed is a total red
-herring. Like symlink protections before, this should be available for
-those that want it because it solves an interface problem that gets
-regularly misused and causes real damage. The kernel has a
-responsibility to protect userspace.
+There cannot be buffer overflow, because the length of each digest
+field is known.
 
-As Daniel mentions, there is a history of mistakes that appear to be
-becoming even more common:
-http://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=TIOCSTI
-
-There are people who want this feature that do not care about xemacs
-breaking. The default cannot be enabled because of the golden rule of
-never breaking userspace, but entirely refusing to fix a regularly
-misused feature is wrong-headed. We must accept that not only are bug
-lifetimes long, but that bugs will keep getting reintroduced. When
-there is a chance to kill a class of bugs or exploit techniques, it's
-the kernel responsibility to do so. This is a clear case of that, and
-the solution is concise.
-
-If there is some better solution that the kernel can provide to
-mitigate processes misusing ttys, then by all means, we can add that
-too, but has nothing to do with refusing this change. This solves a
-specific problem that in many cases is the only path to privilege
-escalation (as Daniel mentioned). Refusing this change is nonsense.
-"Your car shouldn't have seat belts because maybe something will stab
-you through the windshield" isn't a reasonable argument to make.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Roberto
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
