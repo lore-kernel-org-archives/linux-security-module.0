@@ -1,39 +1,38 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 18 May 2017 10:01:46 -0700
-Subject: [PATCH 00/17] convert/reorganize Documentation/security/
-In-Reply-To: <20170518104924.49824167@lwn.net>
-References: <1494676313-144890-1-git-send-email-keescook@chromium.org>
-	<20170518104924.49824167@lwn.net>
-Message-ID: <CAGXu5jKU8fgviKUTd8B_svviuFAk7wdB=aoaFOQNe9FT_XZVEw@mail.gmail.com>
+From: mka@chromium.org (Matthias Kaehlcke)
+Date: Thu, 18 May 2017 12:07:59 -0700
+Subject: [PATCH] selinux: Mark array 'labeling_behaviors' as __maybe_unused
+Message-ID: <20170518190759.28560-1-mka@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 18, 2017 at 9:49 AM, Jonathan Corbet <corbet@lwn.net> wrote:
-> On Sat, 13 May 2017 04:51:36 -0700
-> Kees Cook <keescook@chromium.org> wrote:
->
->> This ReSTifies everything under Documentation/security/, and reorganizes
->> some of it (mainly the LSMs) under /admin-guide/ per Jon's request. Since
->> /security/ is already being indexed under the kernel development portion
->> of the sphinx index, I didn't move it, keeping only things that were
->> directly related to internal kernel development (keys, creds, etc).
->>
->> I also updated some path references, and MAINTAINERS lines. Some of the
->> conversion could probably do with some tweaks, but I think this is a
->> good first step in the right direction.
->
-> I agree with the need for tweaks :)  I fixed up key-request.rst a bit
-> since I just couldn't stand it.
->
-> Anyway, the set is applied, many thanks for doing this!
+The array is only referenced in an ARRAY_SIZE() statement. Adding the
+attribute fixes the following warning when building with clang:
 
-Awesome, thanks for the fixes!
+security/selinux/hooks.c:338:20: error: variable 'labeling_behaviors'
+    is not needed and will not be emitted
+    [-Werror,-Wunneeded-internal-declaration]
 
--Kees
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ security/selinux/hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e67a526d1f30..450ff9f3161c 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -400,7 +400,7 @@ static void superblock_free_security(struct super_block *sb)
+ 
+ /* The file system's label must be initialized prior to use. */
+ 
+-static const char *labeling_behaviors[7] = {
++static const char * __maybe_unused labeling_behaviors[7] = {
+ 	"uses xattr",
+ 	"uses transition SIDs",
+ 	"uses task SIDs",
 -- 
-Kees Cook
-Pixel Security
+2.13.0.303.g4ebf302169-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
