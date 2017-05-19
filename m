@@ -1,277 +1,171 @@
-From: danielj@mellanox.com (Dan Jurgens)
-Date: Fri, 19 May 2017 15:48:53 +0300
-Subject: [PATCH v7 3/9] selinux lsm IB/core: Implement LSM notification system
-In-Reply-To: <1495198139-69993-1-git-send-email-danielj@mellanox.com>
-References: <1495198139-69993-1-git-send-email-danielj@mellanox.com>
-Message-ID: <1495198139-69993-4-git-send-email-danielj@mellanox.com>
+From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
+Date: Fri, 19 May 2017 15:00:32 +0100
+Subject: [PATCH 1/5] efi: Move the x86 secure boot switch to generic code
+In-Reply-To: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
+References: <149148299794.3427.549144000807596903.stgit@warthog.procyon.org.uk>
+Message-ID: <CAKv+Gu9e-r+m6TEBPOg+o01m5JmF9CYLfH4dc60a_K41zJoCKg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Daniel Jurgens <danielj@mellanox.com>
+First of all, apologies for taking so long to respond.
 
-Add a generic notificaiton mechanism in the LSM. Interested consumers
-can register a callback with the LSM and security modules can produce
-events.
+On 6 April 2017 at 13:49, David Howells <dhowells@redhat.com> wrote:
+> Move the switch-statement in x86's setup_arch() that inteprets the
+> secure_boot boot parameter to generic code.
+>
+> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+>
+>  arch/x86/kernel/setup.c            |   14 +-------------
+>  drivers/firmware/efi/Kconfig       |   23 +++++++++++++++++++++++
+>  drivers/firmware/efi/Makefile      |    3 ++-
+>  drivers/firmware/efi/secure_boot.c |   34 ++++++++++++++++++++++++++++++++++
+>  include/linux/efi.h                |    6 ++++++
+>  5 files changed, 66 insertions(+), 14 deletions(-)
+>  create mode 100644 drivers/firmware/efi/secure_boot.c
+>
+> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> index 4bf0c8926a1c..b89979ffa6e5 100644
+> --- a/arch/x86/kernel/setup.c
+> +++ b/arch/x86/kernel/setup.c
+> @@ -1178,19 +1178,7 @@ void __init setup_arch(char **cmdline_p)
+>         /* Allocate bigger log buffer */
+>         setup_log_buf(1);
+>
+> -       if (efi_enabled(EFI_BOOT)) {
+> -               switch (boot_params.secure_boot) {
+> -               case efi_secureboot_mode_disabled:
+> -                       pr_info("Secure boot disabled\n");
+> -                       break;
+> -               case efi_secureboot_mode_enabled:
+> -                       pr_info("Secure boot enabled\n");
+> -                       break;
+> -               default:
+> -                       pr_info("Secure boot could not be determined\n");
+> -                       break;
+> -               }
+> -       }
+> +       efi_set_secure_boot(boot_params.secure_boot);
+>
+>         reserve_initrd();
+>
+> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+> index 2e78b0b96d74..4b902ffbfcf4 100644
+> --- a/drivers/firmware/efi/Kconfig
+> +++ b/drivers/firmware/efi/Kconfig
+> @@ -84,6 +84,29 @@ config EFI_PARAMS_FROM_FDT
+>  config EFI_RUNTIME_WRAPPERS
+>         bool
+>
+> +config EFI_SECURE_BOOT
+> +       bool "Support UEFI Secure Boot and lock down the kernel in secure boot mode"
+> +       default n
+> +       help
+> +         UEFI Secure Boot provides a mechanism for ensuring that the firmware
+> +         will only load signed bootloaders and kernels.  Secure boot mode may
+> +         be determined from EFI variables provided by the BIOS if not
 
-Because access to Infiniband QPs are enforced in the setup phase of a
-connection security should be enforced again if the policy changes.
-Register infiniband devices for policy change notification and check all
-QPs on that device when the notification is received.
+Please replace 'the BIOS' with something more generic.
 
-Add a call to the notification mechanism from SELinux when the AVC
-cache changes or setenforce is cleared.
+> +         indicated by the boot parameters.
+> +
+> +         Enabling this option turns on support for UEFI secure boot in the
+> +         kernel.  This will result in various kernel facilities being locked
+> +         away from userspace if the kernel detects that it has been booted in
+> +         secure boot mode.  If it hasn't been booted in secure boot mode, or
+> +         this cannot be determined, the lock down doesn't occur.
+> +
+> +         The kernel facilities that get locked down include:
+> +         - Viewing or changing the kernel's memory
+> +         - Directly accessing ioports
+> +         - Directly specifying ioports and other hardware parameters to drivers
+> +         - Storing the kernel image unencrypted for hibernation
+> +         - Loading unsigned modules
+> +         - Kexec'ing unsigned images
+> +
+>  config EFI_ARMSTUB
+>         bool
+>
+> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+> index ad67342313ed..65969f840685 100644
+> --- a/drivers/firmware/efi/Makefile
+> +++ b/drivers/firmware/efi/Makefile
+> @@ -22,7 +22,8 @@ obj-$(CONFIG_EFI_FAKE_MEMMAP)         += fake_mem.o
+>  obj-$(CONFIG_EFI_BOOTLOADER_CONTROL)   += efibc.o
+>  obj-$(CONFIG_EFI_TEST)                 += test/
+>  obj-$(CONFIG_EFI_DEV_PATH_PARSER)      += dev-path-parser.o
+> -obj-$(CONFIG_APPLE_PROPERTIES)         += apple-properties.o
+> +obj-$(CONFIG_EFI_SECURE_BOOT)          += secure_boot.o
+> +obj-$(CONFIG_APPLE_PROPERTIES)         += apple-properties.oo
 
-Signed-off-by: Daniel Jurgens <danielj@mellanox.com>
+Spurious change here
 
----
-v2:
-- new patch that has the generic notification, replaces selinux and
-  IB/core patches related to the ib_flush callback. Yuval Shaia and Paul
-  Moore
+>
+>  arm-obj-$(CONFIG_EFI)                  := arm-init.o arm-runtime.o
+>  obj-$(CONFIG_ARM)                      += $(arm-obj-y)
+> diff --git a/drivers/firmware/efi/secure_boot.c b/drivers/firmware/efi/secure_boot.c
+> new file mode 100644
+> index 000000000000..cf5bccae15e8
+> --- /dev/null
+> +++ b/drivers/firmware/efi/secure_boot.c
 
-v3:
-- use notifier chains. Paul Moore
+We have a file called secureboot.c in libstub/, so for consistency,
+could you please drop the underscore?
 
-v4:
-- Seperate avc callback for LSM notifier. Paul Moore
-
-v5:
-- Fix link error when CONFIG_SECURITY is not set. Build Robot
-
- drivers/infiniband/core/device.c | 53 ++++++++++++++++++++++++++++++++++++++++
- include/linux/security.h         | 23 +++++++++++++++++
- security/security.c              | 20 +++++++++++++++
- security/selinux/hooks.c         | 11 +++++++++
- security/selinux/selinuxfs.c     |  2 ++
- 5 files changed, 109 insertions(+)
-
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index 92e0b89..63ebaab 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -39,6 +39,8 @@
- #include <linux/init.h>
- #include <linux/mutex.h>
- #include <linux/netdevice.h>
-+#include <linux/security.h>
-+#include <linux/notifier.h>
- #include <rdma/rdma_netlink.h>
- #include <rdma/ib_addr.h>
- #include <rdma/ib_cache.h>
-@@ -82,6 +84,14 @@ static LIST_HEAD(client_list);
- static DEFINE_MUTEX(device_mutex);
- static DECLARE_RWSEM(lists_rwsem);
- 
-+static int ib_security_change(struct notifier_block *nb, unsigned long event,
-+			      void *lsm_data);
-+static void ib_policy_change_task(struct work_struct *work);
-+static DECLARE_WORK(ib_policy_change_work, ib_policy_change_task);
-+
-+static struct notifier_block ibdev_lsm_nb = {
-+	.notifier_call = ib_security_change,
-+};
- 
- static int ib_device_check_mandatory(struct ib_device *device)
- {
-@@ -341,6 +351,40 @@ static int setup_port_pkey_list(struct ib_device *device)
- 	return 0;
- }
- 
-+static void ib_policy_change_task(struct work_struct *work)
-+{
-+	struct ib_device *dev;
-+
-+	down_read(&lists_rwsem);
-+	list_for_each_entry(dev, &device_list, core_list) {
-+		int i;
-+
-+		for (i = rdma_start_port(dev); i <= rdma_end_port(dev); i++) {
-+			u64 sp;
-+			int ret = ib_get_cached_subnet_prefix(dev,
-+							      i,
-+							      &sp);
-+
-+			WARN_ONCE(ret,
-+				  "ib_get_cached_subnet_prefix err: %d, this should never happen here\n",
-+				  ret);
-+			ib_security_cache_change(dev, i, sp);
-+		}
-+	}
-+	up_read(&lists_rwsem);
-+}
-+
-+static int ib_security_change(struct notifier_block *nb, unsigned long event,
-+			      void *lsm_data)
-+{
-+	if (event != LSM_POLICY_CHANGE)
-+		return NOTIFY_DONE;
-+
-+	schedule_work(&ib_policy_change_work);
-+
-+	return NOTIFY_OK;
-+}
-+
- /**
-  * ib_register_device - Register an IB device with IB core
-  * @device:Device to register
-@@ -1104,10 +1148,18 @@ static int __init ib_core_init(void)
- 		goto err_sa;
- 	}
- 
-+	ret = register_lsm_notifier(&ibdev_lsm_nb);
-+	if (ret) {
-+		pr_warn("Couldn't register LSM notifier. ret %d\n", ret);
-+		goto err_ibnl_clients;
-+	}
-+
- 	ib_cache_setup();
- 
- 	return 0;
- 
-+err_ibnl_clients:
-+	ib_remove_ibnl_clients();
- err_sa:
- 	ib_sa_cleanup();
- err_mad:
-@@ -1127,6 +1179,7 @@ static int __init ib_core_init(void)
- 
- static void __exit ib_core_cleanup(void)
- {
-+	unregister_lsm_notifier(&ibdev_lsm_nb);
- 	ib_cache_cleanup();
- 	ib_remove_ibnl_clients();
- 	ib_sa_cleanup();
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 8c73ee0..f96e333 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -69,6 +69,10 @@ struct audit_krule;
- struct user_namespace;
- struct timezone;
- 
-+enum lsm_event {
-+	LSM_POLICY_CHANGE,
-+};
-+
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, int audit);
-@@ -164,6 +168,10 @@ struct security_mnt_opts {
- 	int num_mnt_opts;
- };
- 
-+int call_lsm_notifier(enum lsm_event event, void *data);
-+int register_lsm_notifier(struct notifier_block *nb);
-+int unregister_lsm_notifier(struct notifier_block *nb);
-+
- static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
- {
- 	opts->mnt_opts = NULL;
-@@ -382,6 +390,21 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- struct security_mnt_opts {
- };
- 
-+static inline int call_lsm_notifier(enum lsm_event event, void *data)
-+{
-+	return 0;
-+}
-+
-+static inline int register_lsm_notifier(struct notifier_block *nb)
-+{
-+	return 0;
-+}
-+
-+static inline  int unregister_lsm_notifier(struct notifier_block *nb)
-+{
-+	return 0;
-+}
-+
- static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
- {
- }
-diff --git a/security/security.c b/security/security.c
-index a142a0b..6eef315 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -35,6 +35,8 @@
- #define SECURITY_NAME_MAX	10
- 
- struct security_hook_heads security_hook_heads __lsm_ro_after_init;
-+static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
-+
- char *lsm_names;
- /* Boot-time LSM user choice */
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
-@@ -162,6 +164,24 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 		panic("%s - Cannot get early memory.\n", __func__);
- }
- 
-+int call_lsm_notifier(enum lsm_event event, void *data)
-+{
-+	return atomic_notifier_call_chain(&lsm_notifier_chain, event, data);
-+}
-+EXPORT_SYMBOL(call_lsm_notifier);
-+
-+int register_lsm_notifier(struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_register(&lsm_notifier_chain, nb);
-+}
-+EXPORT_SYMBOL(register_lsm_notifier);
-+
-+int unregister_lsm_notifier(struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
-+}
-+EXPORT_SYMBOL(unregister_lsm_notifier);
-+
- /*
-  * Hook list operation macros.
-  *
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index e298000..bc77c56 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -171,6 +171,14 @@ static int selinux_netcache_avc_callback(u32 event)
- 	return 0;
- }
- 
-+static int selinux_lsm_notifier_avc_callback(u32 event)
-+{
-+	if (event == AVC_CALLBACK_RESET)
-+		call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
-+
-+	return 0;
-+}
-+
- /*
-  * initialise the security for the init task
-  */
-@@ -6399,6 +6407,9 @@ static __init int selinux_init(void)
- 	if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
- 		panic("SELinux: Unable to register AVC netcache callback\n");
- 
-+	if (avc_add_callback(selinux_lsm_notifier_avc_callback, AVC_CALLBACK_RESET))
-+		panic("SELinux: Unable to register AVC LSM notifier callback\n");
-+
- 	if (selinux_enforcing)
- 		printk(KERN_DEBUG "SELinux:  Starting in enforcing mode\n");
- 	else
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index ce71718..c8467dd 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -163,6 +163,8 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
- 			avc_ss_reset(0);
- 		selnl_notify_setenforce(selinux_enforcing);
- 		selinux_status_update_setenforce(selinux_enforcing);
-+		if (!selinux_enforcing)
-+			call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
- 	}
- 	length = count;
- out:
--- 
-2.7.4
-
+> @@ -0,0 +1,34 @@
+> +/* Core kernel secure boot support.
+> + *
+> + * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells at redhat.com)
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public Licence
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the Licence, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/efi.h>
+> +#include <linux/kernel.h>
+> +#include <linux/printk.h>
+> +
+> +/*
+> + * Decide what to do when UEFI secure boot mode is enabled.
+> + */
+> +void __init efi_set_secure_boot(enum efi_secureboot_mode mode)
+> +{
+> +       if (efi_enabled(EFI_BOOT)) {
+> +               switch (mode) {
+> +               case efi_secureboot_mode_disabled:
+> +                       pr_info("Secure boot disabled\n");
+> +                       break;
+> +               case efi_secureboot_mode_enabled:
+> +                       pr_info("Secure boot enabled\n");
+> +                       break;
+> +               default:
+> +                       pr_info("Secure boot could not be determined\n");
+> +                       break;
+> +               }
+> +       }
+> +}
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 94d34e0be24f..d8938a780290 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -1488,6 +1488,12 @@ enum efi_secureboot_mode {
+>  };
+>  enum efi_secureboot_mode efi_get_secureboot(efi_system_table_t *sys_table);
+>
+> +#ifdef CONFIG_EFI_SECURE_BOOT
+> +void __init efi_set_secure_boot(enum efi_secureboot_mode mode);
+> +#else
+> +static inline void efi_set_secure_boot(enum efi_secureboot_mode mode) {}
+> +#endif
+> +
+>  /*
+>   * Arch code can implement the following three template macros, avoiding
+>   * reptition for the void/non-void return cases of {__,}efi_call_virt():
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
