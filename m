@@ -1,31 +1,51 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Fri, 19 May 2017 09:33:44 -0500
-Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make
-	TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <CANA3KFWF-=6AWZKAc1ijyoL5vRAwPnwngZZEP9=5+AFgnMv1rg@mail.gmail.com>
-References: <20170515215752.4e9f3826@alans-desktop>
-	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
-	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
-	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
-	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
-	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
-	<20170517174113.69d1cbaa@alans-desktop>
-	<1495045540.1619.1.camel@gmail.com>
-	<CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
-	<CANA3KFWF-=6AWZKAc1ijyoL5vRAwPnwngZZEP9=5+AFgnMv1rg@mail.gmail.com>
-Message-ID: <20170519143344.GA15983@mail.hallyn.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 19 May 2017 11:09:18 -0400
+Subject: [PATCH] selinux: Mark array 'labeling_behaviors' as __maybe_unused
+In-Reply-To: <20170518190759.28560-1-mka@chromium.org>
+References: <20170518190759.28560-1-mka@chromium.org>
+Message-ID: <CAHC9VhSFrXLE349atrmFDYjCWuda_O4TtJgEUwnK-DDZUx00bw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 19, 2017 at 12:48:17PM +1000, Peter Dolding wrote:
-> Using cap_sys_admin as fix is like removing car windsheld because
-> vision is being blocked by a rock hitting it.
+On Thu, May 18, 2017 at 3:07 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> The array is only referenced in an ARRAY_SIZE() statement. Adding the
+> attribute fixes the following warning when building with clang:
+>
+> security/selinux/hooks.c:338:20: error: variable 'labeling_behaviors'
+>     is not needed and will not be emitted
+>     [-Werror,-Wunneeded-internal-declaration]
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  security/selinux/hooks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Nonsense.  If the application has cap_sys_admin then it is less contained and
-more trusted anyway.  If I went to the trouble to run an application in a
-private user namespace (where it can have cap_sys_admin, but not targeted
-at my tty) then it should be more contained.  That's the point of targeted
-capabilities.
+The fact that we only reference labeling_behaviors in one spot, and
+even then we only use it as a parameter to ARRAY_SIZE(), makes me
+believe we may be able to get rid of labeling_behaviors and use
+SECURITY_FS_USE_MAX in its place.
+
+Anyone working on any patches which make use of labeling_behaviors?
+
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index e67a526d1f30..450ff9f3161c 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -400,7 +400,7 @@ static void superblock_free_security(struct super_block *sb)
+>
+>  /* The file system's label must be initialized prior to use. */
+>
+> -static const char *labeling_behaviors[7] = {
+> +static const char * __maybe_unused labeling_behaviors[7] = {
+>         "uses xattr",
+>         "uses transition SIDs",
+>         "uses task SIDs",
+> --
+> 2.13.0.303.g4ebf302169-goog
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
