@@ -1,287 +1,166 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 18 May 2017 17:49:16 -0400
-Subject: [PATCH v6 1/2] selinux: add brief info to policydb
-In-Reply-To: <1495120065.5475.10.camel@tycho.nsa.gov>
-References: <1495040944-11552-1-git-send-email-sbuisson@ddn.com>
-	<CAHC9VhSa_0FnaHpFR9jB4tkV-7p_JxFqRaQGC7+LTkfcmdV7mA@mail.gmail.com>
-	<1495116094.5475.4.camel@tycho.nsa.gov>
-	<1495120065.5475.10.camel@tycho.nsa.gov>
-Message-ID: <CAHC9VhTkBJ4f6Zkeu=Ufae1XHyxVCgfARyj8Hc6yiEgh55Xz-Q@mail.gmail.com>
+From: oiaohm@gmail.com (Peter Dolding)
+Date: Fri, 19 May 2017 12:48:17 +1000
+Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make TIOCSTI
+	ioctl require CAP_SYS_ADMIN
+In-Reply-To: <CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
+References: <20170505232018.28846-1-matt@nmatt.com>
+	<20170510212920.7f6bc5e6@alans-desktop>
+	<e73698a7-7b6a-a916-3270-82dcfe0a558b@nmatt.com>
+	<20170515215752.4e9f3826@alans-desktop>
+	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
+	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
+	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
+	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
+	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
+	<20170517174113.69d1cbaa@alans-desktop>
+	<1495045540.1619.1.camel@gmail.com>
+	<CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
+Message-ID: <CANA3KFWF-=6AWZKAc1ijyoL5vRAwPnwngZZEP9=5+AFgnMv1rg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 18, 2017 at 11:07 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On Thu, 2017-05-18 at 10:01 -0400, Stephen Smalley wrote:
->> On Wed, 2017-05-17 at 18:19 -0400, Paul Moore wrote:
->> > On Wed, May 17, 2017 at 1:09 PM, Sebastien Buisson wrote:
-
-...
-
->> > > diff --git a/security/selinux/ss/policydb.c
->> > > b/security/selinux/ss/policydb.c
->> > > index 87d645d..b37b8e5 100644
->> > > --- a/security/selinux/ss/policydb.c
->> > > +++ b/security/selinux/ss/policydb.c
->> > > @@ -32,13 +32,20 @@
->> > >  #include <linux/errno.h>
->> > >  #include <linux/audit.h>
->> > >  #include <linux/flex_array.h>
->> > > +#include <crypto/hash.h>
->> > >  #include "security.h"
->> > >
->> > >  #include "policydb.h"
->> > >  #include "conditional.h"
->> > >  #include "mls.h"
->> > > +#include "objsec.h"
->> > >  #include "services.h"
->> > >
->> > > +static unsigned int policybrief_hash_size;
->> > > +static struct crypto_shash *policybrief_tfm;
->> > > +static const char policybrief_hash_alg[] = "sha256";
->> > > +unsigned int policybrief_len;
->> >
->> > I'm not a fan of all these global variables, consider it a pet
->> > peeve of mine.
->> >
->> > I'm hopeful that we can drop policybrief_hash_size and
->> > policybrief_len, see my comments below.
+On Thu, May 18, 2017 at 1:18 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, May 17, 2017 at 11:25 AM, Daniel Micay <danielmicay@gmail.com> wrote:
+>> On Wed, 2017-05-17 at 17:41 +0100, Alan Cox wrote:
+>>> > If we're adjusting applications, they should be made to avoid
+>>> > TIOSCTI
+>>> > completely. This looks to me a lot like the symlink restrictions:
+>>> > yes,
+>>> > userspace should be fixed to the do the right thing, but why not
+>>> > provide support to userspace to avoid the problem entirely?
+>>>
+>>> We do it's called pty/tty. There isn't any other way to do this
+>>> correctly
+>>> because TIOCSTI is just one hundreds of things the attacker can do to
+>>> make your life miserable in the case you create a child process of
+>>> lower
+>>> security privilege and give it your tty file handle or worse (like
+>>> some
+>>> container crapware) your X11 socket fd.
+>>>
+>>> Does it really matter any more or less if I reprogram your enter key,
+>>> use
+>>> TIOCSTI, set the baud rate, change all your fonts ?
+>>>
+>>> The mainstream tools like sudo get this right (*). Blocking TIOCSTI
+>>> fixes
+>>> nothing and breaks apps. If it magically fixed the problem it might
+>>> make
+>>> sense but it doesn't. You actually have to get an adult to write the
+>>> relevant code.
 >>
->> Hmm...well, they were introduced based on my comments on earlier
->> versions of the patch (v2 and v3).  They can be computed once during
->> init and never change subsequently; they could even be
->> __ro_after_init.
-
-My apologies to you and Sebastien for not reviewing these patches sooner.
-
->> > >  #define _DEBUG_HASHES
->> > >
->> > >  #ifdef DEBUG_HASHES
->> > > @@ -874,6 +881,8 @@ void policydb_destroy(struct policydb *p)
->> > >         ebitmap_destroy(&p->filename_trans_ttypes);
->> > >         ebitmap_destroy(&p->policycaps);
->> > >         ebitmap_destroy(&p->permissive_map);
->> > > +
->> > > +       kfree(p->policybrief);
->> > >  }
->> > >
->> > >  /*
->> > > @@ -2215,6 +2224,52 @@ static int ocontext_read(struct policydb
->> > > *p,
->> > > struct policydb_compat_info *info,
->> > >  }
->> > >
->> > >  /*
->> > > + * Compute summary of a policy database binary representation
->> > > file,
->> > > + * and store it into a policy database structure.
->> > > + */
->> > > +static int policydb_brief(struct policydb *policydb, void *ptr)
->> > > +{
->> > > +       SHASH_DESC_ON_STACK(desc, policybrief_tfm);
->> > > +       struct policy_file *fp = ptr;
->> > > +       u8 *hashval;
->> > > +       int rc;
->> > > +
->> > > +       BUG_ON(policydb->policybrief);
->> >
->> > I prefer normal error checking (e.g. if statements) over BUG
->> > assertions whenever possible.
+>> It gets it right because it was reported as a vulnerability and fixed,
+>> which is the cycle many of these tools have gone through. It looks like
+>> sudo and coreutils / shadow su were fixed in 2005, but there are more of
+>> these tools.
 >>
->> Technically, this truly would be a kernel-internal bug (not something
->> a user could trigger apart from a kernel bug), since policydb_brief()
->> is only supposed to be called once per policydb from policydb_read().
->> However, I could see just dropping this check altogether; we don't
->> generally assert function preconditions like this.
-
-My first take on this was the same, we really shouldn't need this
-check and I have a preference for removing it.  However,
-policydb_brief() should be called infrequently enough that I'm not
-going to worry about an extra if conditional if Sebastien feels it is
-important.
-
->> >
->> > > +       hashval = kmalloc(policybrief_hash_size, GFP_KERNEL);
->> > > +       if (hashval == NULL)
->> > > +               return -ENOMEM;
->> > > +
->> > > +       desc->tfm = policybrief_tfm;
->> > > +       desc->flags = 0;
->> > > +       rc = crypto_shash_digest(desc, fp->data, fp->len,
->> > > hashval);
->> > > +       if (rc) {
->> > > +               printk(KERN_ERR "Failed crypto_shash_digest:
->> > > %d\n",
->> > > rc);
->> > > +               goto out_free;
->> > > +       }
->> > > +
->> > > +       /* policy brief is in the form:
->> > > +        * selinux(enforce=<0 or 1>:checkreqprot=<0 or
->> > > 1>:<hashalg>=<checksum>)
->> > > +        */
->> >
->> > See my comments a little later down about the brief format
->> > comments.
->> >
->> > > +       policydb->policybrief = kmalloc(policybrief_len,
->> > > GFP_KERNEL);
->> > > +       if (policydb->policybrief == NULL) {
->> > > +               rc = -ENOMEM;
->> > > +               goto out_free;
->> > > +       }
->> > > +       rc = snprintf(policydb->policybrief, policybrief_len,
->> > > +                     "selinux(enforce=%d:checkreqprot=%d:%s=%*ph
->> > > N)
->> > > ",
->> > > +                     selinux_enforcing, selinux_checkreqprot,
->> > > +                     policybrief_hash_alg,
->> > > policybrief_hash_size,
->> > > hashval);
->> > > +       BUG_ON(rc >= policybrief_len);
->> >
->> > This length check should definitely be a normal check and not a
->> > BUG_ON() assertion.
+>> CVE-2005-4890 (coreutils su, shadow su, sudo), CVE-2016-7545 (SELinux
+>> sandbox utility), CVE-2016-2781 (chroot --userspec), CVE-2016-2779
+>> (util-linux runuser), CVE-2016-2568 (pkexec)
 >>
->> This one also would be a kernel-internal bug and would help catch
->> inconsistencies between the policybrief_len computation and the
->> actual string length (e.g. if someone changed the format string above
->> without adjusting the length computation to match).  It could be even
->> stricter, e.g. BUG_ON(rc != (policybrief_len - 1)).
+>> I am not sure if the pkexec vulnerability is even fixed:
 >>
->> I know that BUG_ON is generally frowned upon, but this case seems
->> more justified, as it is a kernel-internal bug (not user triggerable apart
->> from a kernel bug) and would catch an internal inconsistency.
->> Returning a runtime error instead here would cause policy load to fail, but it
->> wouldn't be the policy that was invalid but instead the kernel
->> itself.
->> That said, this may be obsoleted based on your other comments.
-
-Keep in mind that just because we do normal (not BUG) runtime checking
-it doesn't mean we need to return an error and fail the policy load
-simply writing a message to the ring buffer would be okay.
-
->> > > +static int __init init_policybrief_hash(void)
->> > > +{
->> > > +       struct crypto_shash *tfm;
->> > > +
->> > > +       if (!selinux_enabled)
->> > > +               return 0;
->> > > +
->> > > +       tfm = crypto_alloc_shash(policybrief_hash_alg, 0, 0);
->> > > +       if (IS_ERR(tfm)) {
->> > > +               printk(KERN_ERR "Failed to alloc crypto hash
->> > > %s\n",
->> > > +                      policybrief_hash_alg);
->> > > +               return PTR_ERR(tfm);
->> > > +       }
->> > > +
->> > > +       policybrief_tfm = tfm;
->> > > +       policybrief_hash_size =
->> > > crypto_shash_digestsize(policybrief_tfm);
->> > > +
->> > > +       /* policy brief is in the form:
->> > > +        * selinux(enforce=<0 or 1>:checkreqprot=<0 or
->> > > 1>:<hashalg>=<checksum>)
->> > > +        */
->> >
->> > Let's drop the exact brief format here and just point people at
->> > policydb_brief() where we describe the format in the functions
->> > comment block at the top.  I like the thought behind this, but with
->> > multiple copies of the same information it is likely that they will fall out
->> > of sync at some point in the future.
->> >
->> > > +       policybrief_len = 35 + strlen(policybrief_hash_alg) +
->> > > +               2*policybrief_hash_size + 1;
->> >
->> > This is another long term maintenance headache.  I realize the
->> > comment above is supposed to make this easier, but I'm still going to have
->> > to count characters by hand whenever we play with this and that is
->> > problematic because I only have 10 fingers ;)
->> >
->> > How often is the Lustre kernel module going to be requesting the
->> > policy brief?  If it is going to be often enough that a strlen()
->> > call is too costly, I think you may be better served by leveraging some
->> > of the LSM notification bits that were talked about earlier (e.g. the
->> > stuff from the IB patches) to reduce your need to update Lustre's
->> > copy of the brief.  This was we can handle the brief length calculation
->> > locally in policydb_brief() and simply use a strlen() call in
->> > security_policydb_brief().
+>> https://bugzilla.redhat.com/show_bug.cgi?id=1300746
 >>
->> v2 and v3 of the patch did essentially what you describe above (v2
->> had policydb_brief() store the length in the policydb for use by
->> security_policydb_brief(), v3 just called strlen() in
->> security_policydb_brief()).  Both looked racy; they each took the
->> policy read lock, extracted or computed the length, dropped the read
->> lock, allocated the buffer, re-took the read lock, and copied out the
->> brief.  Since the length was stored in the policydb or computed each
->> time, it looked like the length could change across a policy reload,
->> in which case the code was unsafe.  I noted that the length was in fact
->> fixed (at least after init) and could be computed once during init.
->> Then we don't need to store it in the policydb or recompute it each
->> time, and we don't need to take the read lock twice or complicate the
->> code to try to prevent something that cannot actually occur (a change
->> in length at runtime).
+>> CVE-2017-5226 is for bubblewrap/flatpak this year, and I'm sure there
+>> were a lot more as I didn't bother to dig very deep.
+>>
+>> I completely agree that it should be solved by doing things properly in
+>> each application. However, it isn't solved properly everywhere and each
+>> new application is making the same mistake. Providing this feature does
+>> not break anything that people use in practice and it doesn't need to
+>> solve every issue to be quite useful, it only needs to prevent local
+>> privilege escalation in the form of code execution in many cases. Is
+>> there another way to get code execution via that bubblewrap/flatpak bug
+>> with this feature implemented? As far as I can tell, there isn't. It's a
+>> problem even with this feature but a significantly less serious one.
+>
+> This patch solves a real problem when userspace does things wrong. For
+> those that do not want it, a sysctl exists (and is even default off).
+> Arguments about how userspace needs to be fixed is a total red
+> herring. Like symlink protections before, this should be available for
+> those that want it because it solves an interface problem that gets
+> regularly misused and causes real damage. The kernel has a
+> responsibility to protect userspace.
+>
+> As Daniel mentions, there is a history of mistakes that appear to be
+> becoming even more common:
+> http://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=TIOCSTI
+>
+> There are people who want this feature that do not care about xemacs
+> breaking. The default cannot be enabled because of the golden rule of
+> never breaking userspace, but entirely refusing to fix a regularly
+> misused feature is wrong-headed. We must accept that not only are bug
+> lifetimes long, but that bugs will keep getting reintroduced. When
+> there is a chance to kill a class of bugs or exploit techniques, it's
+> the kernel responsibility to do so. This is a clear case of that, and
+> the solution is concise.
 
-I'm still interested in hearing exactly how this will be used by
-Lustre.  Based on the way some of these hooks are designed I'm a
-little afraid that the Lustre kernel module is planning on hitting
-this quite frequently, which I don't think is a good thing, I'd much
-rather a notification system be used for something like that and only
-(re)fetching the policy brief when something has changed.
+True but what is usage of TIOCSTI that is wrong in these CVE.   Is it
+not when the returned input values values to tty crosses process
+boundaries.  Like if when process terminated everything the process
+had pushed back to TTY and Input it has received was lost those CVE
+would not be possible.
 
-In some ways it almost might be nice to have security_policydb_brief()
-always allocate the buffer to discourage frequent use.  It would
-simplify the code quite a bit as well ... although it would require
-the notification system, but I think we are going to need that for IB
-anyway.
+Could those exist CVE when exploit happens have CAP_SYS_ADMIN as the
+process being used to break out the answer is yes.   So restricting
+TIOCSTI to CAP_SYS_ADMIN could be pointless.   Remember you have suid
+bit applications one of those might have  bug that someone is able to
+exploit to use the TIOCSTI.   So pushing to CAP_SYS_ADMIN make exploit
+rarer does not remove it.
 
-> So, if you truly want to go with the v2/v3 approach instead of this
-> one, then I'd suggest:
-> 1) Also using kasprintf() as in v4/v5.  Then we don't need a separate
-> length computation at all for the policydb_brief() allocation and there
-> is no potential for inconsistency.  I only recommended against using
-> kasp; Irintf() in v5 because we already had the length precomputed at init
-> and therefore it wasn't buying us anything.
+Please note you see TIOCSTI using in libc when they implement
+ungetc().   So this is something that is quite well used.   I see
+ungetc as kind of a bad idea to be implemented kernel level going to
+tty shareable between processes.
 
-Agreed.  It makes sense.
+> If there is some better solution that the kernel can provide to
+> mitigate processes misusing ttys, then by all means, we can add that
+> too, but has nothing to do with refusing this change. This solves a
+> specific problem that in many cases is the only path to privilege
+> escalation (as Daniel mentioned). Refusing this change is nonsense.
+> "Your car shouldn't have seat belts because maybe something will stab
+> you through the windshield" isn't a reasonable argument to make.
 
-> 2) Compute the strlen() once in policydb_brief() and save it in
-> policydb as in v2, to avoid having to recompute it each time in
-> security_policydb_brief().  I only argued against that in v2 because I
-> thought it should be done once during init, not that we should compute
-> it each time in security_policydb_brief().
+Using cap_sys_admin as fix is like removing car windsheld because
+vision is being blocked by a rock hitting it.
 
-This is one area where understanding the callers would be helpful.
+Kees the problem with accepting a security fix that is wrong the
+proper change never gets worked on.
 
-> 3) In security_policydb_brief(), explicitly test that the length hasn't
-> changed after taking the read lock again before copying and treat it at
-> least as a runtime error if not a BUG if it has changed (it would again
-> be a kernel-internal bug).
+I am not saying there is not a real problem here.   The fix is not
+push it to CAP_SYS_ADMIN.   Due to TIOCSTI that cross process and tty
+boundaries been used in security breaks and limit applications that
+uses use as either Administrator or as normal User means this ability
+does not own in CAP_SYS_ADMIN either.
 
-We shouldn't use BUG in security_policydb_brief() as we can safely
-return an error here.
+The same is true of obsolete function calls that have been shoved into
+CAP_SYS_ADMIN already there comes point where no valid userspace
+application is using that function.   At that point the only thing
+using that function is exploits so then really CAP_SYS_ADMIN should
+not have access to those obsolete functions.   There is a real need
+for CAP_SYS_OBSOLETE.   If a program has to ahve CAP_SYS_OBSOLETE set
+on it this means it using functionally that is known busted in some
+way..
 
-Once again my comments are dependent on the caller, but I share your
-concerns about race conditions and think we can workaround those
-problems in security_policydb_brief() through the use of
-kstrdup(GFP_ATOMIC) (the buffer should be small enough, and used
-infrequently enough that this should be okay) and if the buffer is
-provided, strscpy().
+This is the biggest problem here.   There is no real agreement how we
+exterminate/restrict flawed functions to progressive reduce the number
+of applications and users who can access the flawed functions to allow
+them to be fully disabled for 99.99 percent of people using systems.
 
-> I can somewhat see the argument for handling policybrief_len in this
-> manner, since keeping the length computation in sync with the format
-> string could be a headache.  But I do think that policybrief_tfm and
-> policybrief_hash_size should just be obtained once during init and made
-> __ro_after_init.  I don't see any downside to that from a maintenance
-> perspective and it certainly simplifies the code and is more efficient.
+That is what people are not getting CAP_SYS_ADMIN has too many users
+to be counted and mitigation as well.
 
-I understand the need to fetch/allocate the policybrief_tfm value
-during init, no arguments there, but everything else is less clear to
-me at the moment (see comments above).
+Yes we must not break userspace but we also must mitigate against
+userspace issues.   We do need a clear rules on how to fix these
+security problem user-space is allowed to be broken and of course made
+part of the Linux kernel documentation.   Altering the binary is for
+sure out because the person operating the system may not have that
+right.   Placing a flag on a binary so it works I would see as
+acceptable as long as that flag was not grant a stack of other
+privileges that application would have never had before..
 
--- 
-paul moore
-www.paul-moore.com
+Peter Dolding
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
