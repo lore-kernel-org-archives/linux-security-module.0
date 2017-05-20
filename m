@@ -1,37 +1,125 @@
-From: danielj@mellanox.com (Daniel Jurgens)
-Date: Sat, 20 May 2017 00:10:10 +0000
-Subject: [PATCH v7 0/9] SELinux support for Infiniband RDMA
-References: <1495198139-69993-1-git-send-email-danielj@mellanox.com>
-	<VI1PR05MB1678F822760B7C5F8E263573C4E50@VI1PR05MB1678.eurprd05.prod.outlook.com>
-	<CAHC9VhQtw4fFrCdKcznHrLDkAJVDhi=y9dYMxtOP23XVKq+rCw@mail.gmail.com>
-Message-ID: <DB5PR05MB16719C4FAB679BAF0BD001C7C4FA0@DB5PR05MB1671.eurprd05.prod.outlook.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 20 May 2017 15:40:18 +0300
+Subject: [PATCH v5 2/2] tpm: vtpm_proxy: Implement request_locality
+	function.
+In-Reply-To: <1494867105-30722-3-git-send-email-stefanb@linux.vnet.ibm.com>
+References: <1494867105-30722-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1494867105-30722-3-git-send-email-stefanb@linux.vnet.ibm.com>
+Message-ID: <20170520124018.d2wmhnb6mwmlkgtz@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/19/2017 2:35 PM, Paul Moore wrote:
-> On Fri, May 19, 2017 at 12:47 PM, Daniel Jurgens <danielj@mellanox.com> wrote:
->> On 5/19/2017 7:49 AM, Dan Jurgens wrote:
->>> From: Daniel Jurgens <danielj@mellanox.com>
->>>
->>> Note on v7, it applies cleanly on Paul Moores' tree.  'git am' fails to
->>> apply patch 0002* to Dougs' tree, but 'patch' applies it without rejects.
->>> There's a new file that needs to be added before resolving the git am,
->>> drivers/infiniband/core/security.c
->> There's actually a trivial merge conflict in drivers/infiniband/core/uverbs.c that doesn't cause patch to create a reject file, in the function create_qp a my patch adds a "goto err_destroy;".  In Dougs' tree it needs to be changed to "goto err_cb".
-> Thanks for the rebase Daniel.  Aside from the small problems with LSM
-> hook init code that I already mentioned it looks good to me.
->
-> Considering that we got an ACK from the IB folks on v6 of your
-> patchset I went ahead and merged it into the selinux/next tree.  I do
-> reserve the right to yank it out before the next merge window if we
-> discover any problems with the userspace, policy, or tests, but I
-> think those are moving along nicely at the moment.
->
-> Doug, and other IB folks, can I get an explicit ACK on this rebased
-> patchset from Daniel?  I don't like sending cross-subsystem changes
-> this large upstream without the associated ACKs.
+On Mon, May 15, 2017 at 12:51:45PM -0400, Stefan Berger wrote:
+> Implement the request_locality function. To set the locality on the
+> backend we define vendor-specific TPM 1.2 and TPM 2 ordinals and send
+> a command to the backend to set the locality for the next commands.
+> 
+> To avoid recursing into requesting the locality, we set the
+> TPM_TRASNMIT_RAW flag when calling tpm_trasnmit_cmd. To avoid recursing
+> into TPM 2 space related commands, we set the space parameter to NULL.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c  |  1 +
+>  drivers/char/tpm/tpm_vtpm_proxy.c | 36 ++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/vtpm_proxy.h   |  4 ++++
+>  3 files changed, 41 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 2eacda2..876d45f 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -537,6 +537,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
+>  
+>  #define TPM_DIGEST_SIZE 20
+>  #define TPM_RET_CODE_IDX 6
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index 751059d..66024bf 100644
+> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -371,6 +371,41 @@ static bool vtpm_proxy_tpm_req_canceled(struct tpm_chip  *chip, u8 status)
+>  	return ret;
+>  }
+>  
+> +static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+> +{
+> +	struct tpm_buf buf;
+> +	int rc;
+> +	const struct tpm_output_header *header;
+> +
+> +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> +		rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS,
+> +				  TPM2_CC_SET_LOCALITY);
+> +	else
+> +		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND,
+> +				  TPM_ORD_SET_LOCALITY);
+> +	if (rc)
+> +		return rc;
+> +	tpm_buf_append_u8(&buf, locality);
+> +
+> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, tpm_buf_length(&buf), 0,
+> +			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW,
+> +			      "attempting to set locality");
+> +	if (rc < 0) {
+> +		locality = rc;
+> +		goto out;
+> +	}
+> +
+> +	header = (const struct tpm_output_header *)buf.data;
+> +	rc = be32_to_cpu(header->return_code);
+> +	if (rc)
+> +		locality = -1;
+> +
+> +out:
+> +	tpm_buf_destroy(&buf);
+> +
+> +	return locality;
+> +}
+> +
 
-Thank you, Paul. Understood on the userspace, policy, and tests.  I think the userspace is nearly ready.  I have one pending comment from Stephen that I'll address early next week.  I had a question for Chris PeBenito on some of his comments on the refpolicy patches, so I'm waiting to hear back from him. I've not received any comments on the tests yet.
+This looks good.
+
+>  static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
+>  	.flags = TPM_OPS_AUTO_STARTUP,
+>  	.recv = vtpm_proxy_tpm_op_recv,
+> @@ -380,6 +415,7 @@ static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
+>  	.req_complete_mask = VTPM_PROXY_REQ_COMPLETE_FLAG,
+>  	.req_complete_val = VTPM_PROXY_REQ_COMPLETE_FLAG,
+>  	.req_canceled = vtpm_proxy_tpm_req_canceled,
+> +	.request_locality = vtpm_proxy_request_locality,
+>  };
+>  
+>  /*
+> diff --git a/include/uapi/linux/vtpm_proxy.h b/include/uapi/linux/vtpm_proxy.h
+> index a69e991..58ac73c 100644
+> --- a/include/uapi/linux/vtpm_proxy.h
+> +++ b/include/uapi/linux/vtpm_proxy.h
+> @@ -46,4 +46,8 @@ struct vtpm_proxy_new_dev {
+>  
+>  #define VTPM_PROXY_IOC_NEW_DEV	_IOWR(0xa1, 0x00, struct vtpm_proxy_new_dev)
+>  
+> +/* vendor specific commands to set locality */
+> +#define TPM2_CC_SET_LOCALITY	0x20001000
+> +#define TPM_ORD_SET_LOCALITY	0x20001000
+> +
+
+Maybe we should just have VTPM_CC_SET_LOCALITY? No reason to have TPM
+version specific constant names. I wonder what would be the best range
+for these CCs.  Maybe 0xF0xxxxxxxx would be better?
+
+These are not changes that require a new patch set version but we they
+need to be discussed before merging these changes.
+
+>  #endif /* _UAPI_LINUX_VTPM_PROXY_H */
+> -- 
+> 2.4.3
+> 
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
