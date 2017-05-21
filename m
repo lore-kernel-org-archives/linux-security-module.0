@@ -1,48 +1,44 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Sun, 21 May 2017 14:59:25 +0900
-Subject: [PATCH 0/8] CaitSith LSM module
-In-Reply-To: <8c6da617-3325-d60d-805f-5e5c1fa322c6@canonical.com>
-References: <201610252026.HCH52140.FOtVFOJLQMSOHF@I-love.SAKURA.ne.jp>
-	<201611231531.DGH52135.QtFVOFJLOHFOSM@I-love.SAKURA.ne.jp>
-	<2908442d-90f1-7fa2-24ff-0833f6bd2d95@canonical.com>
-	<201705211359.BBE26079.LSJFOMHFOVQFOt@I-love.SAKURA.ne.jp>
-	<8c6da617-3325-d60d-805f-5e5c1fa322c6@canonical.com>
-Message-ID: <201705211459.EGB48959.OFVFOSHtFJMLQO@I-love.SAKURA.ne.jp>
+From: elfring@users.sourceforge.net (SF Markus Elfring)
+Date: Sun, 21 May 2017 13:05:36 +0200
+Subject: [PATCH] KEYS: Delete an error message for a failed memory allocation
+	in get_derived_key()
+Message-ID: <12d1c638-5cf6-71be-b1b7-486b8663e022@users.sourceforge.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-John Johansen wrote:
-> On 05/20/2017 09:59 PM, Tetsuo Handa wrote:
-> > John Johansen wrote:
-> >> On 11/22/2016 10:31 PM, Tetsuo Handa wrote:
-> >>> Tetsuo Handa wrote:
-> >>>> John Johansen wrote:
-> >>>>>> In order to minimize the burden of reviewing, this patchset implements
-> >>>>>> only functionality of checking program execution requests (i.e. execve()
-> >>>>>> system call) using pathnames. I'm planning to add other functionalities
-> >>>>>> after this version got included into mainline. You can find how future
-> >>>>>> versions of CaitSith will look like at http://caitsith.osdn.jp/ .
-> >>>>>>
-> >>>>> Thanks I've started working my way through this, but it is going to take
-> >>>>> me a while.
-> >>>>>
-> >>>>
-> >>>> Thank you for your time.
-> >>>
-> >>> May I hear the status? Is there something I can do other than waiting?
-> >>>
-> >> progressing very slowly, I have some time over the next few days as its a
-> >> long weekend here in the US some hopefully I can finish this up
-> >>
-> > 
-> > May I hear the status again?
-> > 
-> Yes, sorry. I just haven't had time too look at it recently. I am sorry that
-> it has been so long. I am just going to have to book a day off and do it. I'll
-> see if I can't get a day next week (getting late but I can try or the following)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 11:23:55 +0200
 
-No problem. ;-) I assume reviewing a new module takes at least one year.
-Thank you for remembering.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/keys/encrypted-keys/encrypted.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 1ca895e7e56a..ad57914452c1 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -385,10 +385,9 @@ static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
+ 		derived_buf_len = HASH_SIZE;
+ 
+ 	derived_buf = kzalloc(derived_buf_len, GFP_KERNEL);
+-	if (!derived_buf) {
+-		pr_err("encrypted_key: out of memory\n");
++	if (!derived_buf)
+ 		return -ENOMEM;
+-	}
++
+ 	if (key_type)
+ 		strcpy(derived_buf, "AUTH_KEY");
+ 	else
+-- 
+2.13.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
