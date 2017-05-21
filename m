@@ -1,45 +1,111 @@
-From: elfring@users.sourceforge.net (SF Markus Elfring)
-Date: Sun, 21 May 2017 13:05:36 +0200
-Subject: [PATCH] KEYS: Delete an error message for a failed memory allocation
-	in get_derived_key()
-Message-ID: <12d1c638-5cf6-71be-b1b7-486b8663e022@users.sourceforge.net>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sun, 21 May 2017 20:14:05 +0900
+Subject: [PATCH] LSM: Make security_hook_heads a local variable.
+In-Reply-To: <20170520085147.GA4619@kroah.com>
+References: <20170520085147.GA4619@kroah.com>
+Message-ID: <1495365245-3185-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 11:23:55 +0200
+A sealable memory allocator patch was proposed at
+http://lkml.kernel.org/r/20170519103811.2183-1-igor.stoppa at huawei.com ,
+and is waiting for a follow-on patch showing how any of the kernel
+can be changed to use this new subsystem. So, here it is for LSM hooks.
 
-Omit an extra message for a memory allocation failure in this function.
+The LSM hooks ("struct security_hook_heads security_hook_heads" and
+"struct security_hook_list ...[]") will benefit from this allocator via
+protection using set_memory_ro()/set_memory_rw(), and it will remove
+CONFIG_SECURITY_WRITABLE_HOOKS config option.
 
-This issue was detected by using the Coccinelle software.
+This means that these structures will be allocated at run time using
+smalloc(), and therefore the address of these structures will be
+determined at run time rather than compile time.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+But currently, LSM_HOOK_INIT() macro depends on the address of
+security_hook_heads being known at compile time. But we already
+initialize security_hook_heads as an array of "struct list_head".
+
+Therefore, let's use index number (or relative offset from the head
+of security_hook_heads) instead of absolute address of
+security_hook_heads so that LSM_HOOK_INIT() macro does not need to
+know absolute address of security_hook_heads. Then, security_add_hooks()
+will be able to allocate and copy "struct security_hook_list ...[]" using
+smalloc().
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
 ---
- security/keys/encrypted-keys/encrypted.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ include/linux/lsm_hooks.h |  6 +++---
+ security/security.c       | 10 ++++++++--
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 1ca895e7e56a..ad57914452c1 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -385,10 +385,9 @@ static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
- 		derived_buf_len = HASH_SIZE;
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 080f34e..865c11d 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1884,8 +1884,8 @@ struct security_hook_heads {
+  */
+ struct security_hook_list {
+ 	struct list_head		list;
+-	struct list_head		*head;
+ 	union security_list_options	hook;
++	const unsigned int		idx;
+ 	char				*lsm;
+ };
  
- 	derived_buf = kzalloc(derived_buf_len, GFP_KERNEL);
--	if (!derived_buf) {
--		pr_err("encrypted_key: out of memory\n");
-+	if (!derived_buf)
- 		return -ENOMEM;
--	}
+@@ -1896,9 +1896,9 @@ struct security_hook_list {
+  * text involved.
+  */
+ #define LSM_HOOK_INIT(HEAD, HOOK) \
+-	{ .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
++	{ .idx = offsetof(struct security_hook_heads, HEAD) / \
++		sizeof(struct list_head), .hook = { .HEAD = HOOK } }
+ 
+-extern struct security_hook_heads security_hook_heads;
+ extern char *lsm_names;
+ 
+ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+diff --git a/security/security.c b/security/security.c
+index 54b1e39..d6883ce 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -33,7 +33,7 @@
+ /* Maximum number of letters for an LSM name string */
+ #define SECURITY_NAME_MAX	10
+ 
+-struct security_hook_heads security_hook_heads __lsm_ro_after_init;
++static struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ char *lsm_names;
+ /* Boot-time LSM user choice */
+ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+@@ -152,10 +152,16 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm)
+ {
+ 	int i;
++	struct list_head *list = (struct list_head *) &security_hook_heads;
+ 
+ 	for (i = 0; i < count; i++) {
++		const unsigned int idx = hooks[i].idx;
 +
- 	if (key_type)
- 		strcpy(derived_buf, "AUTH_KEY");
- 	else
++		if (WARN_ON(idx >= sizeof(security_hook_heads) /
++			    sizeof(struct list_head)))
++			continue;
+ 		hooks[i].lsm = lsm;
+-		list_add_tail_rcu(&hooks[i].list, hooks[i].head);
++		list_add_tail_rcu(&hooks[i].list, &list[idx]);
+ 	}
+ 	if (lsm_append(lsm, &lsm_names) < 0)
+ 		panic("%s - Cannot get early memory.\n", __func__);
 -- 
-2.13.0
+1.8.3.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
