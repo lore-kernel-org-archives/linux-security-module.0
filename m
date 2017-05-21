@@ -1,78 +1,56 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 20 May 2017 16:22:17 +0300
-Subject: [PATCH v2 2/5] tpm: introduce tpm_pcr_algo_to_crypto() and
-	tpm_pcr_algo_from_crypto()
-In-Reply-To: <0deed9be-d0c3-3a69-d510-1c8aa3513ba8@huawei.com>
-References: <20170505142152.29795-1-roberto.sassu@huawei.com>
-	<20170505142152.29795-3-roberto.sassu@huawei.com>
-	<20170515111629.urjvbhqzohv4vakc@intel.com>
-	<0deed9be-d0c3-3a69-d510-1c8aa3513ba8@huawei.com>
-Message-ID: <20170520132217.t7n7l2pjn7i63hbm@intel.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sun, 21 May 2017 13:59:26 +0900
+Subject: [PATCH 0/8] CaitSith LSM module
+In-Reply-To: <2908442d-90f1-7fa2-24ff-0833f6bd2d95@canonical.com>
+References: <1477054150-4772-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<3232ef1d-b378-a8a2-f113-03b2db4cc332@canonical.com>
+	<201610252026.HCH52140.FOtVFOJLQMSOHF@I-love.SAKURA.ne.jp>
+	<201611231531.DGH52135.QtFVOFJLOHFOSM@I-love.SAKURA.ne.jp>
+	<2908442d-90f1-7fa2-24ff-0833f6bd2d95@canonical.com>
+Message-ID: <201705211359.BBE26079.LSJFOMHFOVQFOt@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, May 15, 2017 at 04:22:22PM +0200, Roberto Sassu wrote:
-> On 5/15/2017 1:16 PM, Jarkko Sakkinen wrote:
-> > On Fri, May 05, 2017 at 04:21:49PM +0200, Roberto Sassu wrote:
-> > > tpm_pcr_algorithms() returns to its callers the IDs of the hash algorithms
-> > > supported by the TPM. This patch introduces tpm_pcr_algo_to_crypto(),
-> > > so that the callers can use the crypto subsystem to calculate the digest
-> > > to be passed to tpm_pcr_extend().
-> > > 
-> > > tpm_pcr_algo_from_crypto(), implemented for completeness, is instead used
+John Johansen wrote:
+> On 11/22/2016 10:31 PM, Tetsuo Handa wrote:
+> > Tetsuo Handa wrote:
+> >> John Johansen wrote:
+> >>>> In order to minimize the burden of reviewing, this patchset implements
+> >>>> only functionality of checking program execution requests (i.e. execve()
+> >>>> system call) using pathnames. I'm planning to add other functionalities
+> >>>> after this version got included into mainline. You can find how future
+> >>>> versions of CaitSith will look like at http://caitsith.osdn.jp/ .
+> >>>>
+> >>> Thanks I've started working my way through this, but it is going to take
+> >>> me a while.
+> >>>
+> >>
+> >> Thank you for your time.
 > > 
-> > What do you mean by completeness? Please, never add unused stuff.
+> > May I hear the status? Is there something I can do other than waiting?
 > > 
-> > > by tpm2_seal_trusted() to perform the opposite conversion.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > > v2
-> > > 
-> > > - fixed return values of tpm2_pcr_algo_to_crypto() and
-> > >   tpm2_pcr_algo_from_crypto() if TPM support is disabled in the kernel
-> > 
-> > Change Log only to the cover letter.
-> > 
-> > >  drivers/char/tpm/tpm-interface.c | 51 ++++++++++++++++++++++++++++++++++++++++
-> > >  drivers/char/tpm/tpm2-cmd.c      | 42 +++++++++------------------------
-> > >  include/linux/tpm.h              | 13 ++++++++++
-> > >  3 files changed, 75 insertions(+), 31 deletions(-)
-> > 
-> > This commit is just deadly wrong in so many ways.
-> > 
-> > I would suggest to make extend always just take crypto ID in so you
-> > don't have to add these bizarre conversion functions.
+> progressing very slowly, I have some time over the next few days as its a
+> long weekend here in the US some hopefully I can finish this up
 > 
-> The reason of this choice (as I explained in the cover letter)
-> is that TPM users might want to produce an event log with
-> the TCG format (which includes the TPM algorithm ID). Also,
-> TPM IDs should be preferred because, with them, TPM users
-> can calculate a digest directly with the TPM.
-> 
-> Taking crypto IDs means relying on the fact that there
-> is always a mapping between TPM IDs and crypto IDs.
-> Otherwise, tpm_pcr_algorithms() cannot return the algorithms
-> to its callers and PCRs cannot be extended. If TPM IDs are used,
-> TPM users have two alternatives: calculate the digest with
-> the TPM, or pass a SHA1 digest to tpm_pcr_extend(), so that
-> it can be padded to extend remanining PCR banks.
-> 
-> However, this second option will work only when the TPM driver
-> determines the size of an algorithm without relying on the crypto
-> subsystem. At the moment, if a TPM ID is not mapped to a crypto ID,
-> tpm2_pcr_extend() ignores the digest.
-> 
-> Roberto
 
-What if tpm_pcr_algorithms would convert TPM IDs to crypto IDs?
+May I hear the status again?
 
-Externally other subsystems would have to then deal with only crypto
-IDs.
 
-That would favor "memcpy" (or it would become a for loop) for 1/5.
 
-/Jarkko
+On 5th March 2017, a CTF game was held in an event titled
+"CyberColosseo x SecCon" ( http://2016.seccon.jp/news/#137 ). I gave a
+simple troubleshooting-like system-analyzing quiz using SSH shell session
+where operations are restricted by CaitSith.
+
+Since the VM will be useful as an example of how to configure
+CaitSith's policy configuration, I made a downloadable version.
+
+  http://osdn.jp/frs/redir.php?m=jaist&f=/caitsith/67303/SecCon20170305-CaitSith.zip
+  MD5: 99bad6936d8cdeb37d0d6af99265a2ac
+
+This VM is configured for VMware Player 12 / 4 CPUs / 2048MB RAM.
+An IPv4 address will be assigned upon boot using DHCP service on the host network.
+SSH username and password are both "caitsith".
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
