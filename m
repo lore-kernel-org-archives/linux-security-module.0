@@ -1,81 +1,39 @@
-From: solar@openwall.com (Solar Designer)
-Date: Mon, 22 May 2017 18:43:23 +0200
-Subject: [kernel-hardening] [PATCH v4 next 0/3] modules: automatic module
-	loading restrictions
-In-Reply-To: <CAEiveUdqfMk4+vLg6TaEJNSGwoQHxYq0P4aqZoL4i9GgR3Vdtw@mail.gmail.com>
-References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
-	<20170522120848.GA3003@openwall.com>
-	<CAEiveUdqfMk4+vLg6TaEJNSGwoQHxYq0P4aqZoL4i9GgR3Vdtw@mail.gmail.com>
-Message-ID: <20170522164323.GA2048@openwall.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 22 May 2017 15:14:02 -0400
+Subject: [PATCH v7 0/9] SELinux support for Infiniband RDMA
+In-Reply-To: <alpine.LRH.2.20.1705221033550.3502@namei.org>
+References: <1495198139-69993-1-git-send-email-danielj@mellanox.com>
+	<alpine.LRH.2.20.1705221033550.3502@namei.org>
+Message-ID: <CAHC9VhQbLmdzQDyeY=j4M=hw-arSmft68ri08Pu1cxpCaFPGpA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, May 22, 2017 at 03:49:15PM +0200, Djalal Harouni wrote:
-> On Mon, May 22, 2017 at 2:08 PM, Solar Designer <solar@openwall.com> wrote:
-> > On Mon, May 22, 2017 at 01:57:03PM +0200, Djalal Harouni wrote:
-> >> *) When modules_autoload_mode is set to (2), automatic module loading is
-> >> disabled for all. Once set, this value can not be changed.
-> >
-> > What purpose does this securelevel-like property ("Once set, this value
-> > can not be changed.") serve here?  I think this mode 2 is needed, but
-> > without this extra property, which is bypassable by e.g. explicitly
-> > loaded kernel modules anyway (and that's OK).
-> 
-> My reasoning about "Once set, this value can not be changed" is mainly for:
-> 
-> If you have some systems where modules are not updated for any given
-> reason, then the only one who will be able to load a module is an
-> administrator, basically this is a shortcut for:
-> 
-> * Apps/services can run with CAP_NET_ADMIN but they are not allowed to
-> auto-load 'netdev' modules.
-> 
-> * Explicitly loading modules can be guarded by seccomp filters *per*
-> app, so even if these apps have
->   CAP_SYS_MODULE they won't be able to explicitly load modules, one
-> has to remount some sysctl /proc/ entries read-only here and remove
-> CAP_SYS_ADMIN for all apps anyway.
-> 
-> This mainly serves the purpose of these systems that do not receive
-> updates, if I don't want to expose those kernel interfaces what should
-> I do ? then if I want to unload old versions and replace them with new
-> ones what operation should be allowed ? and only real root of the
-> system can do it. Hence, the "Once set, this value can not be changed"
-> is more of a shortcut, also the idea was put in my mind based on how
-> "modules_disabled" is disabled forever, and some other interfaces. I
-> would say: it is easy to handle a transition from 1) "hey this system
-> is still up to date, some features should be exposed" to 2) "this
-> system is not up to date anymore, only root should expose some
-> features..."
-> 
-> Hmm, I am not sure if this answers your question ? :-)
+On Sun, May 21, 2017 at 8:35 PM, James Morris <jmorris@namei.org> wrote:
+> On Fri, 19 May 2017, Dan Jurgens wrote:
+>
+>> From: Daniel Jurgens <danielj@mellanox.com>
+>
+> What kind of testing has this code had?  It's relatively complex and as a
+> security feature, it especially needs to be well-tested.
 
-This answers my question, but in a way that I summarize as "there's no
-good reason to include this securelevel-like property".
+Check the relevant threads on the SELinux list as well as Daniel's
+response.  Aside from the usual developer unit testing, we've gone
+through multiple rounds of reviews and have gotten ACKs from the IB
+folks.  Daniel is currently working on adding tests to the
+selinux-testsuite (see the SELinux list for the patches) and I merged
+this to the selinux/next branch last week so we could get as much
+exposure as possible before the next merge window (linux-next has
+already caught two things).  I did let Daniel know that inclusion in
+the next pull request is contingent on the tests being in place (as
+well as the userspace, policy, etc.).
 
-> I definitively don't want to fall into "modules_disabled" trap where
-> is it too strict! "Once set, this value can not be changed" means for
-> some users do not set it otherwise the system is unusable...
-> 
-> Maybe an extra "4" mode for that ? better get it right.
+I think we are in a good spot right now with this patchset, especially
+considering we are only at -rc2 and still have several weeks before
+the next merge window opens.
 
-I think you should simply exclude this property from mode 2.
-
-The module autoloading restrictions aren't meant to reduce root's
-powers; they're only meant to protect processes from shooting themselves
-and the system in the foot inadvertently (confused deputy).
-
-modules_disabled may be different in that respect, although with the
-rest of the kernel lacking securelevel-like support the point is moot.
-
-We had working securelevel in 2.0.34 through 2.0.40 inclusive, but
-we've lost it in 2.1+ with cap-bound apparently never becoming as
-complete a replacement for it and having been lost/broken further in
-2.6.25+.  I regret this, but that's a different story.  Like I say,
-module autoloading doesn't even fit in with those restrictions - it's
-about a totally different threat model.
-
-Alexander
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
