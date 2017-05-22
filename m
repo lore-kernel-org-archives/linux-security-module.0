@@ -1,39 +1,53 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Tue, 23 May 2017 05:43:16 +0900
-Subject: [PATCH] LSM: Make security_hook_heads a local variable.
-In-Reply-To: <af26581e-6f5a-3fc2-dc58-8376328a0ad9@schaufler-ca.com>
-References: <1495365245-3185-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<20170522140306.GA3907@infradead.org>
-	<d98f4cd5-3f21-3f7b-2842-12b9a009e453@schaufler-ca.com>
-	<d25e2fd3-da11-4ec0-8edc-f1327c04fa6e@huawei.com>
-	<af26581e-6f5a-3fc2-dc58-8376328a0ad9@schaufler-ca.com>
-Message-ID: <201705230543.FDH39582.LFQHJOtFOOFSMV@I-love.SAKURA.ne.jp>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 22 May 2017 16:59:15 -0400
+Subject: [PATCH v7 2/9] IB/core: Enforce PKey security on QPs
+In-Reply-To: <VI1PR05MB167814F66EEF8A1BD77C793AC4F80@VI1PR05MB1678.eurprd05.prod.outlook.com>
+References: <1495198139-69993-1-git-send-email-danielj@mellanox.com>
+	<1495198139-69993-3-git-send-email-danielj@mellanox.com>
+	<alpine.LRH.2.20.1705220959450.3502@namei.org>
+	<VI1PR05MB167814F66EEF8A1BD77C793AC4F80@VI1PR05MB1678.eurprd05.prod.outlook.com>
+Message-ID: <CAHC9VhS-W6NaraJB9uCzpAQvUq1+XL+f6YUnqOzAPa6Q56b0FQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler wrote:
-> On 5/22/2017 12:50 PM, Igor Stoppa wrote:
-> > On 22/05/17 18:09, Casey Schaufler wrote:
-> >> On 5/22/2017 7:03 AM, Christoph Hellwig wrote:
-> > [...]
-> >
-> >>> But even with those we can still chain
-> >>> them together with a list with external linkage.
-> >> I gave up that approach in 2012. Too many unnecessary calls to
-> >> null functions, and massive function vectors with a tiny number
-> >> of non-null entries. From a data structure standpoint, it was
-> >> just wrong. The list scheme is exactly right for the task at
-> >> hand.
-> > I understand this as a green light, for me to continue with the plan of
-> > using LSM Hooks as example for making dynamically allocated data become
-> > read-only, using also Tetsuo's patch (thanks, btw).
-> 
-> I still don't like the assumption that a structure of
-> N elements can be assumed to be the same as an array
-> of N elements.
+On Mon, May 22, 2017 at 6:42 AM, Daniel Jurgens <danielj@mellanox.com> wrote:
+> On 5/21/2017 7:13 PM, James Morris wrote:
+>> On Fri, 19 May 2017, Dan Jurgens wrote:
+>>
+>>> security/security.c                  | 385 ++++++++++++++++++++++
+>> This looks wrong -- merge problem?
+>
+> Yes, it was a merge problem.  I added back the per field initialization of the security head hooks.  Paul stripped this (and the same problem in patch 0004) himself before merging.
+>
+>>
+>>
+>>> +    if (pps->alt.state != IB_PORT_PKEY_NOT_VALID) {
+>>> +            get_pkey_and_subnet_prefix(&pps->alt,
+>>> +                                       &pkey,
+>>> +                                       &subnet_prefix);
+>>> +
+>>> +            ret = enforce_qp_pkey_security(pkey,
+>>> +                                           subnet_prefix,
+>>> +                                           sec);
+>>> +    }
+>>> +
+>>> +    if (ret)
+>>> +            goto out;
+>> The above if/goto is unnecessary.
+>
+> Right.
+>
+> Paul, do you want me to fix this with a new patch?
 
-I think we can use "enum" and call via index numbers while preserving
-current "union" for type checking purpose.
+Since this isn't a build or runtime failure, just a style correction,
+I'll leave it up to you: either post a 10/9 patch which converts all
+the jumps-to-return to just return, or respin/resubmit the patches.
+If you do the latter, just resubmit the affected patches and not the
+whole patchset.
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
