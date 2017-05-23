@@ -1,49 +1,46 @@
-From: keescook@google.com (Kees Cook)
-Date: Tue, 23 May 2017 11:36:36 -0700
-Subject: [kernel-hardening] [PATCH v4 next 0/3] modules: automatic module
-	loading restrictions
-In-Reply-To: <20170523074808.GA4562@openwall.com>
-References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
-	<20170522120848.GA3003@openwall.com>
-	<CAEiveUdqfMk4+vLg6TaEJNSGwoQHxYq0P4aqZoL4i9GgR3Vdtw@mail.gmail.com>
-	<20170522164323.GA2048@openwall.com>
-	<CAEiveUdb=yc5Gt_+pU_hfNdoNBP0JsUL1QUydNZgc2tD7n1h1w@mail.gmail.com>
-	<CAGXu5jKGnG74KE-k9JPaH1bNqT5nbVioaeu_5sAKQ+4kgp-0Ng@mail.gmail.com>
-	<20170523074808.GA4562@openwall.com>
-Message-ID: <CAGXu5jJ-zpqU9v44=bc0GnQP5zcKtceR_7DBQVBZ=vy3OvNx9w@mail.gmail.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Tue, 23 May 2017 11:38:57 -0700
+Subject: [PATCH] apparmor: Fix error cod in __aa_fs_profile_mkdir()
+In-Reply-To: <20170523143346.GB28152@elgon.mountain>
+References: <20170523143346.GB28152@elgon.mountain>
+Message-ID: <276ad893-7c4b-5980-fd4a-8bfaab8af0bb@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 23, 2017 at 12:48 AM, Solar Designer <solar@openwall.com> wrote:
-> For modules_autoload_mode=2, we already seem to have the equivalent of
-> modprobe=/bin/true (or does it differ subtly, maybe in return values?),
-> which I already use at startup on a GPU box like this (preloading
-> modules so that the OpenCL backends wouldn't need the autoloading):
->
-> nvidia-smi
-> nvidia-modprobe -u -c=0
-> #modprobe nvidia_uvm
-> #modprobe fglrx
->
-> sysctl -w kernel.modprobe=/bin/true
-> sysctl -w kernel.hotplug=/bin/true
->
-> but it's good to also have this supported more explicitly and more
-> consistently through modules_autoload_mode=2 while we're at it.  So I
-> support having this mode as well.  I just question the need to have it
-> non-resettable.
+On 05/23/2017 07:33 AM, Dan Carpenter wrote:
+> We can either return PTR_ERR(NULL) or a PTR_ERR(a valid pointer) here.
+> Returning NULL is probably not good, but since this happens at boot
+> then we are probably already toasted if we were to hit this bug in real
+> life.  In other words, it seems like a very low severity bug to me.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I agree it's useful to have the explicit =2 state just to avoid
-confusion when more systems start implementing
-CONFIG_STATIC_USERMODEHELPER and kernel.modprobe becomes read-only
-(though the userspace implementation may allow for some way to disable
-it, etc). I just like avoiding the upcall to modprobe at all.
+yep,
 
--Kees
+Acked-by: John Johansen <john.johansen@canonical.com>
 
--- 
-Kees Cook
-Pixel Security
+and puled into my tree
+
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 4f6ac9dbc65d..18f0d105084d 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -728,8 +728,10 @@ int __aa_fs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
+>  		id_len = snprintf(NULL, 0, ".%ld", profile->ns->uniq_id);
+>  
+>  		profile->dirname = kmalloc(len + id_len + 1, GFP_KERNEL);
+> -		if (!profile->dirname)
+> -			goto fail;
+> +		if (!profile->dirname) {
+> +			error = -ENOMEM;
+> +			goto fail2;
+> +		}
+>  
+>  		mangle_name(profile->base.name, profile->dirname);
+>  		sprintf(profile->dirname + len, ".%ld", profile->ns->uniq_id++);
+> 
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
