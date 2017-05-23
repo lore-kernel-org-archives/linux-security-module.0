@@ -1,114 +1,63 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Tue, 23 May 2017 15:02:38 +0200
-Subject: [kernel-hardening] [PATCH v4 next 0/3] modules: automatic module
-	loading restrictions
-In-Reply-To: <CALCETrXyf3vM+NdFNcjwaOZs1KFJomuTL0DobXoH9Z68k8dknQ@mail.gmail.com>
-References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
-	<20170522120848.GA3003@openwall.com>
-	<CAEiveUdqfMk4+vLg6TaEJNSGwoQHxYq0P4aqZoL4i9GgR3Vdtw@mail.gmail.com>
-	<20170522164323.GA2048@openwall.com>
-	<CAEiveUdb=yc5Gt_+pU_hfNdoNBP0JsUL1QUydNZgc2tD7n1h1w@mail.gmail.com>
-	<CAGXu5jKGnG74KE-k9JPaH1bNqT5nbVioaeu_5sAKQ+4kgp-0Ng@mail.gmail.com>
-	<CALCETrXyf3vM+NdFNcjwaOZs1KFJomuTL0DobXoH9Z68k8dknQ@mail.gmail.com>
-Message-ID: <CAEiveUdW_pRgPcQ0Rotwt+gaNEfoE6FyBp52Rb4TnhccBd1m6Q@mail.gmail.com>
+From: lkp@intel.com (kbuild test robot)
+Date: Tue, 23 May 2017 22:18:58 +0800
+Subject: [PATCH v4 next 3/3] modules:capabilities: add a per-task modules
+	auto-load mode
+In-Reply-To: <1495454226-10027-4-git-send-email-tixxdz@gmail.com>
+Message-ID: <201705232255.t9X5Tbez%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 23, 2017 at 1:38 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Mon, May 22, 2017 at 4:07 PM, Kees Cook <keescook@chromium.org> wrote:
->> On Mon, May 22, 2017 at 12:55 PM, Djalal Harouni <tixxdz@gmail.com> wrote:
->>> On Mon, May 22, 2017 at 6:43 PM, Solar Designer <solar@openwall.com> wrote:
->>>> On Mon, May 22, 2017 at 03:49:15PM +0200, Djalal Harouni wrote:
->>>>> On Mon, May 22, 2017 at 2:08 PM, Solar Designer <solar@openwall.com> wrote:
->>>>> > On Mon, May 22, 2017 at 01:57:03PM +0200, Djalal Harouni wrote:
->>>>> >> *) When modules_autoload_mode is set to (2), automatic module loading is
->>>>> >> disabled for all. Once set, this value can not be changed.
->>>>> >
->>>>> > What purpose does this securelevel-like property ("Once set, this value
->>>>> > can not be changed.") serve here?  I think this mode 2 is needed, but
->>>>> > without this extra property, which is bypassable by e.g. explicitly
->>>>> > loaded kernel modules anyway (and that's OK).
->>>>>
->>>>> My reasoning about "Once set, this value can not be changed" is mainly for:
->>>>>
->>>>> If you have some systems where modules are not updated for any given
->>>>> reason, then the only one who will be able to load a module is an
->>>>> administrator, basically this is a shortcut for:
->>>>>
->>>>> * Apps/services can run with CAP_NET_ADMIN but they are not allowed to
->>>>> auto-load 'netdev' modules.
->>>>>
->>>>> * Explicitly loading modules can be guarded by seccomp filters *per*
->>>>> app, so even if these apps have
->>>>>   CAP_SYS_MODULE they won't be able to explicitly load modules, one
->>>>> has to remount some sysctl /proc/ entries read-only here and remove
->>>>> CAP_SYS_ADMIN for all apps anyway.
->>>>>
->>>>> This mainly serves the purpose of these systems that do not receive
->>>>> updates, if I don't want to expose those kernel interfaces what should
->>>>> I do ? then if I want to unload old versions and replace them with new
->>>>> ones what operation should be allowed ? and only real root of the
->>>>> system can do it. Hence, the "Once set, this value can not be changed"
->>>>> is more of a shortcut, also the idea was put in my mind based on how
->>>>> "modules_disabled" is disabled forever, and some other interfaces. I
->>>>> would say: it is easy to handle a transition from 1) "hey this system
->>>>> is still up to date, some features should be exposed" to 2) "this
->>>>> system is not up to date anymore, only root should expose some
->>>>> features..."
->>>>>
->>>>> Hmm, I am not sure if this answers your question ? :-)
->>>>
->>>> This answers my question, but in a way that I summarize as "there's no
->>>> good reason to include this securelevel-like property".
->>>>
->>>
->>> Hmm, sorry I did forget to add in my previous comment that with such
->>> systems, CAP_SYS_MODULE can be used to reset the
->>> "modules_autoload_mode" sysctl back from mode 2 to mode 1, even if we
->>> disable it privileged tasks can be triggered to overwrite the sysctl
->>> flag and get it back unless /proc is read-only... that's one of the
->>> points, it should not be so easy to relax it.
->>
->> I'm on the fence. For modules_disabled and Yama, it was tied to
->> CAP_SYS_ADMIN, basically designed to be a at-boot setting that could
->> not later be undone by an attacker gaining that privilege, keeping
->> them out of either kernel memory or existing user process memory.
->> Here, it's CAP_SYS_MODULE... it's hard to imagine the situation where
->> a CAP_SYS_MODULE-capable process could write to this sysctl but NOT
->> issue direct modprobe requests, but it's _possible_ via crazy symlink
->> games to trick capable processes into writing to sysctls. We've seen
->> this multiple times before, and it's a way for attackers to turn a
->> single privileged write into a privileged exec.
->>
->> I might turn the question around, though: why would we want to have it
->> changeable at this setting?
->>
->> I'm fine leaving that piece off, either way.
->
-> I think that having the un-resettable mode is unnecessary.  We should
-> have option that disables loading modules entirely and cannot be
-> unset.  (That means no explicit loads and not implicit loads.)  Maybe
-> we already have this.  Otherwise, tightening caps needed for implicit
-> loads should just be a normal yes/no setting IMO.
+Hi Djalal,
 
-Ok, so as requested by you and Alexander in the other email, I will
-remove the un-resettable property, if there is no general agreement,
-better leave it for future.
+[auto build test ERROR on next-20170522]
 
-I would have preferred if it is "yes/no" (in systemd the module
-protection and other directives are also only 'yes/no').  But 1)
-backward compatibility for unprivileged loading, 2) capabilities:
-CAP_SYS_MODULE, CAP_NET_ADMIN use cases and exploits against
-CAP_NET_ADMIN modules, and finally 3) separate and disable implicit
-operation from the explicit one for various reasons that are noted in
-the commit log like explicitly load the good module version, concluded
-that we need three modes!
+url:    https://github.com/0day-ci/linux/commits/Djalal-Harouni/modules-automatic-module-loading-restrictions/20170523-193128
+config: sparc64-allnoconfig (attached as .config)
+compiler: sparc64-linux-gnu-gcc (Debian 6.1.1-9) 6.1.1 20160705
+reproduce:
+        wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=sparc64 
 
-Thanks!
+All errors (new ones prefixed by >>):
 
--- 
-tixxdz
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+   In file included from arch/sparc/kernel/setup_64.c:32:0:
+   include/linux/module.h:683:30: error: storage class specified for parameter '__module_address'
+    static inline struct module *__module_address(unsigned long addr)
+                                 ^~~~~~~~~~~~~~~~
+   include/linux/module.h:683:30: error: parameter '__module_address' declared 'inline' [-Werror]
+>> include/linux/module.h:684:1: error: 'always_inline' attribute ignored [-Werror=attributes]
+    {
+    ^
+   include/linux/module.h:683:30: error: 'no_instrument_function' attribute applies only to functions
+    static inline struct module *__module_address(unsigned long addr)
+                                 ^~~~~~~~~~~~~~~~
+   include/linux/module.h:684:1: error: expected ';', ',' or ')' before '{' token
+    {
+    ^
+   cc1: all warnings being treated as errors
+
+vim +/always_inline +684 include/linux/module.h
+
+98702500 Djalal Harouni 2017-05-22  677  static inline int task_modules_autoload_mode(struct task_struct *task)
+98702500 Djalal Harouni 2017-05-22  678  {
+98702500 Djalal Harouni 2017-05-22  679  	return -ENOSYS;
+98702500 Djalal Harouni 2017-05-22  680  }
+98702500 Djalal Harouni 2017-05-22  681  
+98702500 Djalal Harouni 2017-05-22  682  static inline bool within_module_core(unsigned long addr,
+e610499e Rusty Russell  2009-03-31 @683  static inline struct module *__module_address(unsigned long addr)
+e610499e Rusty Russell  2009-03-31 @684  {
+e610499e Rusty Russell  2009-03-31  685  	return NULL;
+e610499e Rusty Russell  2009-03-31  686  }
+e610499e Rusty Russell  2009-03-31  687  
+
+:::::: The code at line 684 was first introduced by commit
+:::::: e610499e2656e61975affd0af56b26eb73964c84 module: __module_address
+
+:::::: TO: Rusty Russell <rusty@rustcorp.com.au>
+:::::: CC: Rusty Russell <rusty@rustcorp.com.au>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
