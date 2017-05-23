@@ -1,5 +1,5 @@
 From: kgold@linux.vnet.ibm.com (Ken Goldman)
-Date: Tue, 23 May 2017 16:48:44 -0400
+Date: Tue, 23 May 2017 17:00:27 -0400
 Subject: [Linux-ima-devel] [PATCH 0/7] IMA: new parser for
 	ima_restore_measurement_list()
 In-Reply-To: <3b204e09-c1c0-b3bc-90fe-a8dfb86baadc@huawei.com>
@@ -8,47 +8,26 @@ References: <20170516125347.10574-1-roberto.sassu@huawei.com>
 	<42b629dd-0d1f-b066-03e4-c013d0891ba7@huawei.com>
 	<4b536b04-0e61-aea4-fc27-8dd12f2e3a1b@linux.vnet.ibm.com>
 	<3b204e09-c1c0-b3bc-90fe-a8dfb86baadc@huawei.com>
-Message-ID: <08bd9fcb-d3ba-e76e-928e-f569e8a4be74@linux.vnet.ibm.com>
+Message-ID: <96385c1f-26f9-989b-3b68-0ad261e927b5@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On 5/18/2017 5:38 AM, Roberto Sassu wrote:
-> On 5/17/2017 6:28 PM, Ken Goldman wrote:
->> On 5/17/2017 3:25 AM, Roberto Sassu wrote:
->>>
->>> The format of digestN is: <algo name>:\0<digest value>, the same used
->>> for the file digest.
->>
->> Since the format is changing from the SHA-1 log format anyway ...
->>
->> How do people feel about the colon and null terminated string format for
->> algorithm identifiers?
->>
->> The TCG standard enumerations are uint16_t, and there is a registry of
->> hash algorithms.
->>
->> As a consuming parser, it feels nice to know it's always 2 bytes and not
->> have to worry about a missing colon or a missing nul terminator risking
->> a buffer overflow.
 > 
 > There cannot be buffer overflow, because the length of each digest
 > field is known.
-> 
-> Roberto
-> 
 
-I was not referring to the digest, but the digest algorithm.
+Crypto Agile: pcr[4] total_digest_len[4]
+                digest1_len[4] digest1[digest1_len] ...
 
-I wanted opinions on the colon and null terminated string format for 
-algorithm identifiers.
+The way I read this, the digest length is supplied by the caller, which 
+is slightly different from "known".  For example, if I supply a digest 
+length of 0xffffffff, a too trusting (buggy) parser could overflow the 
+buffer.
 
-The TCG standard log uses the TCG standard enumerations.  They're always 
-exactly 2 bytes.  Parsing is trivial.
+total_digest_len is similarly untrusted.  The attacker can send invalid 
+values.
 
-If IMA uses strings, the attacker can send, e.g., sha1: and not null 
-terminate it.  A careful parser can go a byte at a time until it reaches 
-a maximum length - if you specify a maximum length.  But it is an attack 
-surface.  Is there a corresponding advantage?
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
