@@ -1,50 +1,55 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Tue, 23 May 2017 12:50:25 -0700
-Subject: [kernel-hardening] [PATCH v4 next 0/3] modules: automatic module
-	loading restrictions
-In-Reply-To: <CAGXu5jJ-zpqU9v44=bc0GnQP5zcKtceR_7DBQVBZ=vy3OvNx9w@mail.gmail.com>
-References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
-	<20170522120848.GA3003@openwall.com>
-	<CAEiveUdqfMk4+vLg6TaEJNSGwoQHxYq0P4aqZoL4i9GgR3Vdtw@mail.gmail.com>
-	<20170522164323.GA2048@openwall.com>
-	<CAEiveUdb=yc5Gt_+pU_hfNdoNBP0JsUL1QUydNZgc2tD7n1h1w@mail.gmail.com>
-	<CAGXu5jKGnG74KE-k9JPaH1bNqT5nbVioaeu_5sAKQ+4kgp-0Ng@mail.gmail.com>
-	<20170523074808.GA4562@openwall.com>
-	<CAGXu5jJ-zpqU9v44=bc0GnQP5zcKtceR_7DBQVBZ=vy3OvNx9w@mail.gmail.com>
-Message-ID: <CALCETrXiaBweijZ22Lwb_pQY934ejcXtEG2EW3nRxe7cEx7PDw@mail.gmail.com>
+From: kgold@linux.vnet.ibm.com (Ken Goldman)
+Date: Tue, 23 May 2017 16:48:44 -0400
+Subject: [Linux-ima-devel] [PATCH 0/7] IMA: new parser for
+	ima_restore_measurement_list()
+In-Reply-To: <3b204e09-c1c0-b3bc-90fe-a8dfb86baadc@huawei.com>
+References: <20170516125347.10574-1-roberto.sassu@huawei.com>
+	<4f5bc289-92cb-1ce2-4496-387efbb11769@linux.vnet.ibm.com>
+	<42b629dd-0d1f-b066-03e4-c013d0891ba7@huawei.com>
+	<4b536b04-0e61-aea4-fc27-8dd12f2e3a1b@linux.vnet.ibm.com>
+	<3b204e09-c1c0-b3bc-90fe-a8dfb86baadc@huawei.com>
+Message-ID: <08bd9fcb-d3ba-e76e-928e-f569e8a4be74@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 23, 2017 at 11:36 AM, Kees Cook <keescook@google.com> wrote:
-> On Tue, May 23, 2017 at 12:48 AM, Solar Designer <solar@openwall.com> wrote:
->> For modules_autoload_mode=2, we already seem to have the equivalent of
->> modprobe=/bin/true (or does it differ subtly, maybe in return values?),
->> which I already use at startup on a GPU box like this (preloading
->> modules so that the OpenCL backends wouldn't need the autoloading):
+On 5/18/2017 5:38 AM, Roberto Sassu wrote:
+> On 5/17/2017 6:28 PM, Ken Goldman wrote:
+>> On 5/17/2017 3:25 AM, Roberto Sassu wrote:
+>>>
+>>> The format of digestN is: <algo name>:\0<digest value>, the same used
+>>> for the file digest.
 >>
->> nvidia-smi
->> nvidia-modprobe -u -c=0
->> #modprobe nvidia_uvm
->> #modprobe fglrx
+>> Since the format is changing from the SHA-1 log format anyway ...
 >>
->> sysctl -w kernel.modprobe=/bin/true
->> sysctl -w kernel.hotplug=/bin/true
+>> How do people feel about the colon and null terminated string format for
+>> algorithm identifiers?
 >>
->> but it's good to also have this supported more explicitly and more
->> consistently through modules_autoload_mode=2 while we're at it.  So I
->> support having this mode as well.  I just question the need to have it
->> non-resettable.
->
-> I agree it's useful to have the explicit =2 state just to avoid
-> confusion when more systems start implementing
-> CONFIG_STATIC_USERMODEHELPER and kernel.modprobe becomes read-only
-> (though the userspace implementation may allow for some way to disable
-> it, etc). I just like avoiding the upcall to modprobe at all.
+>> The TCG standard enumerations are uint16_t, and there is a registry of
+>> hash algorithms.
+>>
+>> As a consuming parser, it feels nice to know it's always 2 bytes and not
+>> have to worry about a missing colon or a missing nul terminator risking
+>> a buffer overflow.
+> 
+> There cannot be buffer overflow, because the length of each digest
+> field is known.
+> 
+> Roberto
+> 
 
-I fully support =2 to mean "no automatic loading at all".  I dislike
-making it non-resettable.  If you can write to sysctls, then, most
-likely you can either call init_module() directly or the system has
-module loading disabled entirely.
+I was not referring to the digest, but the digest algorithm.
+
+I wanted opinions on the colon and null terminated string format for 
+algorithm identifiers.
+
+The TCG standard log uses the TCG standard enumerations.  They're always 
+exactly 2 bytes.  Parsing is trivial.
+
+If IMA uses strings, the attacker can send, e.g., sha1: and not null 
+terminate it.  A careful parser can go a byte at a time until it reaches 
+a maximum length - if you specify a maximum length.  But it is an attack 
+surface.  Is there a corresponding advantage?
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
