@@ -1,83 +1,50 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Tue, 23 May 2017 15:53:20 -0400
-Subject: [PATCH v6 1/2] selinux: add brief info to policydb
-In-Reply-To: <CAPkE-bW_dLo2hoE+rA_sOgZnqcZD_9L1RiDvyDBAtxJm3AM5Wg@mail.gmail.com>
-References: <1495040944-11552-1-git-send-email-sbuisson@ddn.com>
-	<CAHC9VhSa_0FnaHpFR9jB4tkV-7p_JxFqRaQGC7+LTkfcmdV7mA@mail.gmail.com>
-	<1495116094.5475.4.camel@tycho.nsa.gov>
-	<1495120065.5475.10.camel@tycho.nsa.gov>
-	<CAHC9VhTkBJ4f6Zkeu=Ufae1XHyxVCgfARyj8Hc6yiEgh55Xz-Q@mail.gmail.com>
-	<CAPkE-bW_dLo2hoE+rA_sOgZnqcZD_9L1RiDvyDBAtxJm3AM5Wg@mail.gmail.com>
-Message-ID: <1495569200.8461.10.camel@tycho.nsa.gov>
+From: luto@kernel.org (Andy Lutomirski)
+Date: Tue, 23 May 2017 12:50:25 -0700
+Subject: [kernel-hardening] [PATCH v4 next 0/3] modules: automatic module
+	loading restrictions
+In-Reply-To: <CAGXu5jJ-zpqU9v44=bc0GnQP5zcKtceR_7DBQVBZ=vy3OvNx9w@mail.gmail.com>
+References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
+	<20170522120848.GA3003@openwall.com>
+	<CAEiveUdqfMk4+vLg6TaEJNSGwoQHxYq0P4aqZoL4i9GgR3Vdtw@mail.gmail.com>
+	<20170522164323.GA2048@openwall.com>
+	<CAEiveUdb=yc5Gt_+pU_hfNdoNBP0JsUL1QUydNZgc2tD7n1h1w@mail.gmail.com>
+	<CAGXu5jKGnG74KE-k9JPaH1bNqT5nbVioaeu_5sAKQ+4kgp-0Ng@mail.gmail.com>
+	<20170523074808.GA4562@openwall.com>
+	<CAGXu5jJ-zpqU9v44=bc0GnQP5zcKtceR_7DBQVBZ=vy3OvNx9w@mail.gmail.com>
+Message-ID: <CALCETrXiaBweijZ22Lwb_pQY934ejcXtEG2EW3nRxe7cEx7PDw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-05-23 at 18:29 +0200, Sebastien Buisson wrote:
-> Hi,
-> 
-> 2017-05-18 23:49 GMT+02:00 Paul Moore <paul@paul-moore.com>:
-> > My apologies to you and Sebastien for not reviewing these patches
-> > sooner.
-> 
-> It is ok, no problem.
-> Thanks for all the advice from you and Stephen. I will try to take
-> all
-> this into account.
-> 
-> As I understand it, I should not give the choice to allocate or not
-> the string returned by security_policydb_brief(). The initial reason
-> for this was that Lustre client code is expected to retrieve policy
-> brief info hundreds or thousands of times per second, so saving on
-> memory allocation would make sense. So if security_policydb_brief()
-> necessarily allocates memory for the string returned, and I
-> appreciate
-> it helps maintenance and avoids complexity, it should not be called
-> so
-> often.
-> One way to tackle this is to rely on the notification system: Lustre
-> client code would call security_policydb_brief() only when it gets a
-> change notification, and stores the current policy brief info
-> internally.
-> Another way could be to add another hook to check policy brief info
-> validity. It would take a string as an input parameter, and return 0
-> if it matches the current policy. So Lustre client code would
-> systematically call this hook, and only call
-> security_policydb_brief()
-> when the policy has changed, to store the current value internally.
-> 
-> I have recently identified a new need from Lustre client code. We
-> need
-> to protect against the case where the policy is changed or set in
-> permissive mode, and then set back to its previous state, to
-> workaround policy check as carried out on server side based on policy
-> brief info sent by client. In this scenario, the policy would only be
-> the expected one by the time the client sends a request to the server
-> (for instance a file open request), but not after that when SELinux
-> actually checks the permissions on the client (via
-> security_file_open() in this example).
-> A solution to address this could be to add a new parameter to
-> security_policydb_brief() hook, in the form of a pointer to an
-> integer
-> giving the current sequence number of the policy. That would
-> complement the policy brief info, with the notion of change to the
-> policy. I do not think it is desirable to include the sequence number
-> in the policy brief info, as it is not the essence of the policy.
-> Now with this sequence info in mind, the new hook to check policy
-> brief info validity would only need to check the sequence, instead of
-> the policy brief string. The current value of the sequence info
-> should
-> be stored by Lustre internally, and checked after SELinux permission
-> checks. If a change is detected, Lustre client must stop normal
-> processing and return an error for the current request.
+On Tue, May 23, 2017 at 11:36 AM, Kees Cook <keescook@google.com> wrote:
+> On Tue, May 23, 2017 at 12:48 AM, Solar Designer <solar@openwall.com> wrote:
+>> For modules_autoload_mode=2, we already seem to have the equivalent of
+>> modprobe=/bin/true (or does it differ subtly, maybe in return values?),
+>> which I already use at startup on a GPU box like this (preloading
+>> modules so that the OpenCL backends wouldn't need the autoloading):
+>>
+>> nvidia-smi
+>> nvidia-modprobe -u -c=0
+>> #modprobe nvidia_uvm
+>> #modprobe fglrx
+>>
+>> sysctl -w kernel.modprobe=/bin/true
+>> sysctl -w kernel.hotplug=/bin/true
+>>
+>> but it's good to also have this supported more explicitly and more
+>> consistently through modules_autoload_mode=2 while we're at it.  So I
+>> support having this mode as well.  I just question the need to have it
+>> non-resettable.
+>
+> I agree it's useful to have the explicit =2 state just to avoid
+> confusion when more systems start implementing
+> CONFIG_STATIC_USERMODEHELPER and kernel.modprobe becomes read-only
+> (though the userspace implementation may allow for some way to disable
+> it, etc). I just like avoiding the upcall to modprobe at all.
 
-Not sure about your threat model but I think you are fighting a losing
-battle there.  A malicious admin has too many ways to defeat your
-checking.
-
-Relying on the seqno also seems brittle; you could easily end up
-causing a client to fail just because a policy update happened to be
-installed at the same time, even though there was nothing wrong or
-malicious about the policy update itself.
+I fully support =2 to mean "no automatic loading at all".  I dislike
+making it non-resettable.  If you can write to sysctls, then, most
+likely you can either call init_module() directly or the system has
+module loading disabled entirely.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
