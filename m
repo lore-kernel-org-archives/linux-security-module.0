@@ -1,101 +1,60 @@
-From: sbuisson.ddn@gmail.com (Sebastien Buisson)
-Date: Wed, 24 May 2017 17:52:01 +0200
-Subject: [PATCH v6 1/2] selinux: add brief info to policydb
-In-Reply-To: <1495569200.8461.10.camel@tycho.nsa.gov>
-References: <1495040944-11552-1-git-send-email-sbuisson@ddn.com>
-	<CAHC9VhSa_0FnaHpFR9jB4tkV-7p_JxFqRaQGC7+LTkfcmdV7mA@mail.gmail.com>
-	<1495116094.5475.4.camel@tycho.nsa.gov>
-	<1495120065.5475.10.camel@tycho.nsa.gov>
-	<CAHC9VhTkBJ4f6Zkeu=Ufae1XHyxVCgfARyj8Hc6yiEgh55Xz-Q@mail.gmail.com>
-	<CAPkE-bW_dLo2hoE+rA_sOgZnqcZD_9L1RiDvyDBAtxJm3AM5Wg@mail.gmail.com>
-	<1495569200.8461.10.camel@tycho.nsa.gov>
-Message-ID: <CAPkE-bVMrTp4ECnWcdWyLSOpmSjt2XeuxGgMYnEg9S=nuYL7TA@mail.gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 24 May 2017 09:59:50 -0700
+Subject: [tpmdd-devel] [PATCH] tpm: fix byte order related arithmetic
+	inconsistency in tpm_getcap()
+In-Reply-To: <20170515153934.GB3433@obsidianresearch.com>
+References: <20170507175002.9558-1-jarkko.sakkinen@linux.intel.com>
+	<20170509141353.klo7lilef4qiqfoc@intel.com>
+	<20170509151308.GA13586@obsidianresearch.com>
+	<20170510123458.fh3ef3c55y2wiu35@intel.com>
+	<20170515113602.2jypna4keatq73qy@intel.com>
+	<20170515153934.GB3433@obsidianresearch.com>
+Message-ID: <20170524165950.mdaqortjrdhtabke@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-05-23 21:53 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
-> On Tue, 2017-05-23 at 18:29 +0200, Sebastien Buisson wrote:
->> Hi,
->>
->> 2017-05-18 23:49 GMT+02:00 Paul Moore <paul@paul-moore.com>:
->> > My apologies to you and Sebastien for not reviewing these patches
->> > sooner.
->>
->> It is ok, no problem.
->> Thanks for all the advice from you and Stephen. I will try to take
->> all
->> this into account.
->>
->> As I understand it, I should not give the choice to allocate or not
->> the string returned by security_policydb_brief(). The initial reason
->> for this was that Lustre client code is expected to retrieve policy
->> brief info hundreds or thousands of times per second, so saving on
->> memory allocation would make sense. So if security_policydb_brief()
->> necessarily allocates memory for the string returned, and I
->> appreciate
->> it helps maintenance and avoids complexity, it should not be called
->> so
->> often.
->> One way to tackle this is to rely on the notification system: Lustre
->> client code would call security_policydb_brief() only when it gets a
->> change notification, and stores the current policy brief info
->> internally.
->> Another way could be to add another hook to check policy brief info
->> validity. It would take a string as an input parameter, and return 0
->> if it matches the current policy. So Lustre client code would
->> systematically call this hook, and only call
->> security_policydb_brief()
->> when the policy has changed, to store the current value internally.
->>
->> I have recently identified a new need from Lustre client code. We
->> need
->> to protect against the case where the policy is changed or set in
->> permissive mode, and then set back to its previous state, to
->> workaround policy check as carried out on server side based on policy
->> brief info sent by client. In this scenario, the policy would only be
->> the expected one by the time the client sends a request to the server
->> (for instance a file open request), but not after that when SELinux
->> actually checks the permissions on the client (via
->> security_file_open() in this example).
->> A solution to address this could be to add a new parameter to
->> security_policydb_brief() hook, in the form of a pointer to an
->> integer
->> giving the current sequence number of the policy. That would
->> complement the policy brief info, with the notion of change to the
->> policy. I do not think it is desirable to include the sequence number
->> in the policy brief info, as it is not the essence of the policy.
->> Now with this sequence info in mind, the new hook to check policy
->> brief info validity would only need to check the sequence, instead of
->> the policy brief string. The current value of the sequence info
->> should
->> be stored by Lustre internally, and checked after SELinux permission
->> checks. If a change is detected, Lustre client must stop normal
->> processing and return an error for the current request.
->
-> Not sure about your threat model but I think you are fighting a losing
-> battle there.  A malicious admin has too many ways to defeat your
-> checking.
+On Mon, May 15, 2017 at 09:39:34AM -0600, Jason Gunthorpe wrote:
+> On Mon, May 15, 2017 at 02:36:02PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, May 10, 2017 at 03:34:58PM +0300, Jarkko Sakkinen wrote:
+> > > On Tue, May 09, 2017 at 09:13:08AM -0600, Jason Gunthorpe wrote:
+> > > > On Tue, May 09, 2017 at 05:13:53PM +0300, Jarkko Sakkinen wrote:
+> > > > > On Sun, May 07, 2017 at 08:50:02PM +0300, Jarkko Sakkinen wrote:
+> > > > > > You should not do arithmetic with __be32 or __le32 types because
+> > > > > > sometimes it results incorrect results. Calculations must be done only
+> > > > > > with integers that are in in the CPU byte order. This commit migrates
+> > > > > > tpm_getcap() to struct tpm_buf in order to sort out these issues.
+> > > > > > 
+> > > > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > > Now this should work as Robertos patches move byte order conversion
+> > > > > > where it should be. Sadly I'm out of reach to my Dell E6400 laptop
+> > > > > > that I use for TPM 1.2 testing.
+> > > > > >  drivers/char/tpm/tpm-interface.c | 30 ++++++++++++++++--------------
+> > > > > >  drivers/char/tpm/tpm.h           | 13 -------------
+> > > > > >  2 files changed, 16 insertions(+), 27 deletions(-)
+> > > > > 
+> > > > > I've now tested this with TPM 1.2. Any complains?
+> > > > 
+> > > > Seems reasonable, but which linke had the problematic arithmetic?
+> > > > 
+> > > > Jason
+> > > 
+> > > Arithmetic should work but it's not a good practice to do additions,
+> > > substractions or multiplications in any other byte order than the CPU
+> > > byte order.
+> > > 
+> > > sparse also complains about this.
+> > 
+> > Can I get your Reviewed-by for this one?
+> 
+> Sure, but I'm still wondering what the sparse warning was?
+> 
+> Jason
 
-I do not have much experience in the domain, so every advice or idea
-is appreciated.
-If what I want to accomplish is implemented using the notification
-system, what would be the possibility for a malicious admin to change
-the policy or the way it is enforced without triggering a
-notification? Of course, the places in the SELinux kernel code from
-where to trigger the notification have to be thought thoroughly.
+This type of errors
 
-> Relying on the seqno also seems brittle; you could easily end up
-> causing a client to fail just because a policy update happened to be
-> installed at the same time, even though there was nothing wrong or
-> malicious about the policy update itself.
+drivers/char/tpm//tpm-interface.c:492:42: warning: bad assignment (-=) to restricted __be32
 
-I consider it is not a problem if one request must be resent, even if
-the policy update was legitimate. It would not disturb Lustre
-behavior, and it might be preferable to proceed to a resend instead of
-missing a potential fraud.
-
-Thanks,
-Sebastien.
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
