@@ -1,52 +1,28 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 24 May 2017 15:28:22 -0700
-Subject: [PATCH] tpm: remove struct tpm_pcrextend_in
-In-Reply-To: <20170524222731.19741-1-jarkko.sakkinen@linux.intel.com>
-References: <20170524222731.19741-1-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20170524222822.bk2popwamuo7ee3o@intel.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Wed, 24 May 2017 18:59:41 -0400
+Subject: [PATCH v6 1/3] tpm: Introduce flag TPM_TRANSMIT_RAW
+In-Reply-To: <20170524221840.lv37joufkdepa5ci@intel.com>
+References: <1495661981-27249-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1495661981-27249-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<20170524221840.lv37joufkdepa5ci@intel.com>
+Message-ID: <c505607a-9ce2-779c-a0d8-acfb2f598673@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 24, 2017 at 03:27:31PM -0700, Jarkko Sakkinen wrote:
-> Removed struct tpm_pcrextend_in as it is not used for anything anymore.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On 05/24/2017 06:18 PM, Jarkko Sakkinen wrote:
+> On Wed, May 24, 2017 at 05:39:39PM -0400, Stefan Berger wrote:
+>> Introduce the flag TPM_TRANSMIT_RAW that allows us to transmit
+>> a command without recursing into the requesting of locality.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> I'll rename the constant as TPM_TRANSMIT_NO_LOCALITY if you don't mind.
 
-Another bit of code that I just push.
+Fine by me.
 
-/Jarkko
 
-> ---
->  drivers/char/tpm/tpm.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index dd1173427fb2..af05c1403c6e 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -363,11 +363,6 @@ struct tpm_pcrread_in {
->  	__be32	pcr_idx;
->  } __packed;
->  
-> -struct tpm_pcrextend_in {
-> -	__be32	pcr_idx;
-> -	u8	hash[TPM_DIGEST_SIZE];
-> -} __packed;
-> -
->  /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
->   * bytes, but 128 is still a relatively large number of random bytes and
->   * anything much bigger causes users of struct tpm_cmd_t to start getting
-> @@ -392,7 +387,6 @@ typedef union {
->  	u8	readpubek_out_buffer[sizeof(struct tpm_readpubek_params_out)];
->  	struct	tpm_pcrread_in	pcrread_in;
->  	struct	tpm_pcrread_out	pcrread_out;
-> -	struct	tpm_pcrextend_in pcrextend_in;
->  	struct	tpm_getrandom_in getrandom_in;
->  	struct	tpm_getrandom_out getrandom_out;
->  	struct tpm_startup_in startup_in;
-> -- 
-> 2.11.0
-> 
+     Stefan
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
