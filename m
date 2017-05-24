@@ -1,238 +1,276 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 24 May 2017 12:27:26 -0700
-Subject: [PATCH v5 2/2] tpm: vtpm_proxy: Implement request_locality
-	function.
-In-Reply-To: <3b83ee0e-a20f-3a96-6f25-9c7a2aa68fbd@linux.vnet.ibm.com>
-References: <1494867105-30722-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1494867105-30722-3-git-send-email-stefanb@linux.vnet.ibm.com>
-	<20170520124018.d2wmhnb6mwmlkgtz@intel.com>
-	<3b83ee0e-a20f-3a96-6f25-9c7a2aa68fbd@linux.vnet.ibm.com>
-Message-ID: <20170524192726.qsxrfjamy2khef37@intel.com>
+From: keescook@google.com (Kees Cook)
+Date: Wed, 24 May 2017 12:27:49 -0700
+Subject: [PATCH 1/3] securityfs: add the ability to support symlinks
+In-Reply-To: <20170511024625.13887-2-john.johansen@canonical.com>
+References: <20170511024625.13887-1-john.johansen@canonical.com>
+	<20170511024625.13887-2-john.johansen@canonical.com>
+Message-ID: <CAGXu5jKzruTtA8-cQALViKfL=txR=zKTO7jFhf9CTxWxHLjckQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, May 22, 2017 at 10:29:24AM -0400, Stefan Berger wrote:
-> On 05/20/2017 08:40 AM, Jarkko Sakkinen wrote:
-> > On Mon, May 15, 2017 at 12:51:45PM -0400, Stefan Berger wrote:
-> > > Implement the request_locality function. To set the locality on the
-> > > backend we define vendor-specific TPM 1.2 and TPM 2 ordinals and send
-> > > a command to the backend to set the locality for the next commands.
-> > > 
-> > > To avoid recursing into requesting the locality, we set the
-> > > TPM_TRASNMIT_RAW flag when calling tpm_trasnmit_cmd. To avoid recursing
-> > > into TPM 2 space related commands, we set the space parameter to NULL.
-> > > 
-> > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > > ---
-> > >   drivers/char/tpm/tpm-interface.c  |  1 +
-> > >   drivers/char/tpm/tpm_vtpm_proxy.c | 36 ++++++++++++++++++++++++++++++++++++
-> > >   include/uapi/linux/vtpm_proxy.h   |  4 ++++
-> > >   3 files changed, 41 insertions(+)
-> > > 
-> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > index 2eacda2..876d45f 100644
-> > > --- a/drivers/char/tpm/tpm-interface.c
-> > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > @@ -537,6 +537,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
-> > >   	return 0;
-> > >   }
-> > > +EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
-> > >   #define TPM_DIGEST_SIZE 20
-> > >   #define TPM_RET_CODE_IDX 6
-> > > diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > > index 751059d..66024bf 100644
-> > > --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> > > +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > > @@ -371,6 +371,41 @@ static bool vtpm_proxy_tpm_req_canceled(struct tpm_chip  *chip, u8 status)
-> > >   	return ret;
-> > >   }
-> > > +static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
-> > > +{
-> > > +	struct tpm_buf buf;
-> > > +	int rc;
-> > > +	const struct tpm_output_header *header;
-> > > +
-> > > +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> > > +		rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS,
-> > > +				  TPM2_CC_SET_LOCALITY);
-> > > +	else
-> > > +		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND,
-> > > +				  TPM_ORD_SET_LOCALITY);
-> > > +	if (rc)
-> > > +		return rc;
-> > > +	tpm_buf_append_u8(&buf, locality);
-> > > +
-> > > +	rc = tpm_transmit_cmd(chip, NULL, buf.data, tpm_buf_length(&buf), 0,
-> > > +			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW,
-> > > +			      "attempting to set locality");
-> > > +	if (rc < 0) {
-> > > +		locality = rc;
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	header = (const struct tpm_output_header *)buf.data;
-> > > +	rc = be32_to_cpu(header->return_code);
-> > > +	if (rc)
-> > > +		locality = -1;
-> > > +
-> > > +out:
-> > > +	tpm_buf_destroy(&buf);
-> > > +
-> > > +	return locality;
-> > > +}
-> > > +
-> > This looks good.
-> > 
-> > >   static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
-> > >   	.flags = TPM_OPS_AUTO_STARTUP,
-> > >   	.recv = vtpm_proxy_tpm_op_recv,
-> > > @@ -380,6 +415,7 @@ static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
-> > >   	.req_complete_mask = VTPM_PROXY_REQ_COMPLETE_FLAG,
-> > >   	.req_complete_val = VTPM_PROXY_REQ_COMPLETE_FLAG,
-> > >   	.req_canceled = vtpm_proxy_tpm_req_canceled,
-> > > +	.request_locality = vtpm_proxy_request_locality,
-> > >   };
-> > >   /*
-> > > diff --git a/include/uapi/linux/vtpm_proxy.h b/include/uapi/linux/vtpm_proxy.h
-> > > index a69e991..58ac73c 100644
-> > > --- a/include/uapi/linux/vtpm_proxy.h
-> > > +++ b/include/uapi/linux/vtpm_proxy.h
-> > > @@ -46,4 +46,8 @@ struct vtpm_proxy_new_dev {
-> > >   #define VTPM_PROXY_IOC_NEW_DEV	_IOWR(0xa1, 0x00, struct vtpm_proxy_new_dev)
-> > > +/* vendor specific commands to set locality */
-> > > +#define TPM2_CC_SET_LOCALITY	0x20001000
-> > > +#define TPM_ORD_SET_LOCALITY	0x20001000
-> > > +
-> > Maybe we should just have VTPM_CC_SET_LOCALITY? No reason to have TPM
-> > version specific constant names. I wonder what would be the best range
-> > for these CCs.  Maybe 0xF0xxxxxxxx would be better?
-> 
-> I am not sure about that.
-> 
-> > 
-> > These are not changes that require a new patch set version but we they
-> > need to be discussed before merging these changes.
-> 
-> Unfortunately there is one more patch needed. We now need to restrict that
-> this particular driver command can only be sent from inside the driver and
-> never via any of the TPM devices (/dev/vtpm%d or /dev/tpmrm%d). That patch
-> could then either return an error code if tried or return an error message.
-> In the case of the TPM 2 spaces commands an error code is returned if a
-> command isn't known. We could just do that instead of returning a full TPM
-> error message. Here's the patch that would do that.
-> 
-> 
-> To prevent userspace from sending the TPM driver command to set
-> the locality, we need to check every command that is sent from
-> user space. To distinguish user space commands from internally
-> sent commands we introduce an additional state flag
-> STATE_DRIVER_COMMAND that is set while the driver sends this
-> command. Similar to the TPM 2 space commands we return an error
-> code when this command is detected.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+On Wed, May 10, 2017 at 7:46 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+> Signed-off-by: John Johansen <john.johansen@canonical.com>
+> Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
+
+This looks correct to me; it matches what other pseudo-filesystems do,
+and provides the expected interfaces.
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
 > ---
->  drivers/char/tpm/tpm_vtpm_proxy.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c
-> b/drivers/char/tpm/tpm_vtpm_proxy.c
-> index 66024bf..d25c361 100644
-> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> @@ -43,6 +43,7 @@ struct proxy_dev {
->  #define STATE_OPENED_FLAG        BIT(0)
->  #define STATE_WAIT_RESPONSE_FLAG BIT(1)  /* waiting for emulator response
-> */
->  #define STATE_REGISTERED_FLAG     BIT(2)
-> +#define STATE_DRIVER_COMMAND     BIT(3)  /* sending a driver specific
-> command */
-> 
->      size_t req_len;              /* length of queued TPM request */
->      size_t resp_len;             /* length of queued TPM response */
-> @@ -299,6 +300,28 @@ static int vtpm_proxy_tpm_op_recv(struct tpm_chip
-> *chip, u8 *buf, size_t count)
->      return len;
+>  include/linux/security.h |  12 ++++
+>  security/inode.c         | 140 +++++++++++++++++++++++++++++++++++++++++------
+>  2 files changed, 134 insertions(+), 18 deletions(-)
+>
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 78d8e03be5d3..28e2be5dd6df 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1645,6 +1645,10 @@ extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
+>                                              struct dentry *parent, void *data,
+>                                              const struct file_operations *fops);
+>  extern struct dentry *securityfs_create_dir(const char *name, struct dentry *parent);
+> +struct dentry *securityfs_create_symlink(const char *name,
+> +                                        struct dentry *parent,
+> +                                        const char *target,
+> +                                        const struct inode_operations *iops);
+>  extern void securityfs_remove(struct dentry *dentry);
+>
+>  #else /* CONFIG_SECURITYFS */
+> @@ -1664,6 +1668,14 @@ static inline struct dentry *securityfs_create_file(const char *name,
+>         return ERR_PTR(-ENODEV);
 >  }
-> 
-> +static int vtpm_proxy_is_driver_command(struct tpm_chip *chip,
-> +                    u8 *buf, size_t count)
+>
+> +struct dentry *securityfs_create_symlink(const char *name,
+> +                                        struct dentry *parent,
+> +                                        const char *target,
+> +                                        const struct inode_operations *iops)
 > +{
-> +    struct tpm_input_header *hdr = (struct tpm_input_header*)buf;
-> +
-> +    if (count < sizeof(struct tpm_input_header))
-> +        return 0;
-> +
-> +    if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> +        switch (be32_to_cpu(hdr->ordinal)) {
-> +        case TPM2_CC_SET_LOCALITY:
-> +            return 1;
-> +        }
-> +    } else {
-> +        switch (be32_to_cpu(hdr->ordinal)) {
-> +        case TPM_ORD_SET_LOCALITY:
-> +            return 1;
-> +        }
-> +    }
-> +    return 0;
+> +       return ERR_PTR(-ENODEV);
 > +}
 > +
->  /*
->   * Called when core TPM driver forwards TPM requests to 'server side'.
+>  static inline void securityfs_remove(struct dentry *dentry)
+>  {}
+>
+> diff --git a/security/inode.c b/security/inode.c
+> index 2cb14162ff8d..10c4955d0bed 100644
+> --- a/security/inode.c
+> +++ b/security/inode.c
+> @@ -26,11 +26,31 @@
+>  static struct vfsmount *mount;
+>  static int mount_count;
+>
+> +static void securityfs_evict_inode(struct inode *inode)
+> +{
+> +       truncate_inode_pages_final(&inode->i_data);
+> +       clear_inode(inode);
+> +       if (S_ISLNK(inode->i_mode))
+> +               kfree(inode->i_link);
+> +}
+> +
+> +static const struct super_operations securityfs_super_operations = {
+> +       .statfs         = simple_statfs,
+> +       .evict_inode    = securityfs_evict_inode,
+> +};
+> +
+>  static int fill_super(struct super_block *sb, void *data, int silent)
+>  {
+>         static struct tree_descr files[] = {{""}};
+> +       int error;
+> +
+> +       error = simple_fill_super(sb, SECURITYFS_MAGIC, files);
+> +       if (error)
+> +               return error;
+> +
+> +       sb->s_op = &securityfs_super_operations;
+>
+> -       return simple_fill_super(sb, SECURITYFS_MAGIC, files);
+> +       return 0;
+>  }
+>
+>  static struct dentry *get_sb(struct file_system_type *fs_type,
+> @@ -48,7 +68,7 @@ static struct file_system_type fs_type = {
+>  };
+>
+>  /**
+> - * securityfs_create_file - create a file in the securityfs filesystem
+> + * securityfs_create_dentry - create a dentry in the securityfs filesystem
 >   *
-> @@ -321,6 +344,10 @@ static int vtpm_proxy_tpm_op_send(struct tpm_chip
-> *chip, u8 *buf, size_t count)
->          return -EIO;
->      }
-> 
-> +    if (!(proxy_dev->state & STATE_DRIVER_COMMAND) &&
-> +        vtpm_proxy_is_driver_command(chip, buf, count))
-> +        return -EFAULT;
+>   * @name: a pointer to a string containing the name of the file to create.
+>   * @mode: the permission that the file should have
+> @@ -60,34 +80,35 @@ static struct file_system_type fs_type = {
+>   *        the open() call.
+>   * @fops: a pointer to a struct file_operations that should be used for
+>   *        this file.
+> + * @iops: a point to a struct of inode_operations that should be used for
+> + *        this file/dir
+>   *
+> - * This is the basic "create a file" function for securityfs.  It allows for a
+> - * wide range of flexibility in creating a file, or a directory (if you
+> - * want to create a directory, the securityfs_create_dir() function is
+> - * recommended to be used instead).
+> + * This is the basic "create a file/dir/symlink" function for
+> + * securityfs.  It allows for a wide range of flexibility in creating
+> + * a file, or a directory (if you want to create a directory, the
+> + * securityfs_create_dir() function is recommended to be used
+> + * instead).
+>   *
+>   * This function returns a pointer to a dentry if it succeeds.  This
+> - * pointer must be passed to the securityfs_remove() function when the file is
+> - * to be removed (no automatic cleanup happens if your module is unloaded,
+> - * you are responsible here).  If an error occurs, the function will return
+> - * the error value (via ERR_PTR).
+> + * pointer must be passed to the securityfs_remove() function when the
+> + * file is to be removed (no automatic cleanup happens if your module
+> + * is unloaded, you are responsible here).  If an error occurs, the
+> + * function will return the error value (via ERR_PTR).
+>   *
+>   * If securityfs is not enabled in the kernel, the value %-ENODEV is
+>   * returned.
+>   */
+> -struct dentry *securityfs_create_file(const char *name, umode_t mode,
+> -                                  struct dentry *parent, void *data,
+> -                                  const struct file_operations *fops)
+> +static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+> +                                       struct dentry *parent, void *data,
+> +                                       const struct file_operations *fops,
+> +                                       const struct inode_operations *iops)
+>  {
+>         struct dentry *dentry;
+> -       int is_dir = S_ISDIR(mode);
+>         struct inode *dir, *inode;
+>         int error;
+>
+> -       if (!is_dir) {
+> -               BUG_ON(!fops);
+> +       if (!(mode & S_IFMT))
+>                 mode = (mode & S_IALLUGO) | S_IFREG;
+> -       }
+>
+>         pr_debug("securityfs: creating file '%s'\n",name);
+>
+> @@ -120,11 +141,14 @@ struct dentry *securityfs_create_file(const char *name, umode_t mode,
+>         inode->i_mode = mode;
+>         inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+>         inode->i_private = data;
+> -       if (is_dir) {
+> +       if (S_ISDIR(mode)) {
+>                 inode->i_op = &simple_dir_inode_operations;
+>                 inode->i_fop = &simple_dir_operations;
+>                 inc_nlink(inode);
+>                 inc_nlink(dir);
+> +       } else if (S_ISLNK(mode)) {
+> +               inode->i_op = iops ? iops : &simple_symlink_inode_operations;
+> +               inode->i_link = data;
+>         } else {
+>                 inode->i_fop = fops;
+>         }
+> @@ -141,6 +165,38 @@ struct dentry *securityfs_create_file(const char *name, umode_t mode,
+>         simple_release_fs(&mount, &mount_count);
+>         return dentry;
+>  }
 > +
->      mutex_lock(&proxy_dev->buf_lock);
-> 
->      if (!(proxy_dev->state & STATE_OPENED_FLAG)) {
-> @@ -376,6 +403,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip
-> *chip, int locality)
->      struct tpm_buf buf;
->      int rc;
->      const struct tpm_output_header *header;
-> +    struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
-> 
->      if (chip->flags & TPM_CHIP_FLAG_TPM2)
->          rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS,
-> @@ -387,9 +415,14 @@ static int vtpm_proxy_request_locality(struct tpm_chip
-> *chip, int locality)
->          return rc;
->      tpm_buf_append_u8(&buf, locality);
-> 
-> +    proxy_dev->state |= STATE_DRIVER_COMMAND;
+> +/**
+> + * securityfs_create_file - create a file in the securityfs filesystem
+> + *
+> + * @name: a pointer to a string containing the name of the file to create.
+> + * @mode: the permission that the file should have
+> + * @parent: a pointer to the parent dentry for this file.  This should be a
+> + *          directory dentry if set.  If this parameter is %NULL, then the
+> + *          file will be created in the root of the securityfs filesystem.
+> + * @data: a pointer to something that the caller will want to get to later
+> + *        on.  The inode.i_private pointer will point to this value on
+> + *        the open() call.
+> + * @fops: a pointer to a struct file_operations that should be used for
+> + *        this file.
+> + *
+> + * This function creates a file in securityfs with the given @name.
+> + *
+> + * This function returns a pointer to a dentry if it succeeds.  This
+> + * pointer must be passed to the securityfs_remove() function when the file is
+> + * to be removed (no automatic cleanup happens if your module is unloaded,
+> + * you are responsible here).  If an error occurs, the function will return
+> + * the error value (via ERR_PTR).
+> + *
+> + * If securityfs is not enabled in the kernel, the value %-ENODEV is
+> + * returned.
+> + */
+> +struct dentry *securityfs_create_file(const char *name, umode_t mode,
+> +                                     struct dentry *parent, void *data,
+> +                                     const struct file_operations *fops)
+> +{
+> +       return securityfs_create_dentry(name, mode, parent, data, fops, NULL);
+> +}
+>  EXPORT_SYMBOL_GPL(securityfs_create_file);
+>
+>  /**
+> @@ -172,6 +228,54 @@ struct dentry *securityfs_create_dir(const char *name, struct dentry *parent)
+>  EXPORT_SYMBOL_GPL(securityfs_create_dir);
+>
+>  /**
+> + * securityfs_create_symlink - create a symlink in the securityfs filesystem
+> + *
+> + * @name: a pointer to a string containing the name of the symlink to
+> + *        create.
+> + * @parent: a pointer to the parent dentry for the symlink.  This should be a
+> + *          directory dentry if set.  If this parameter is %NULL, then the
+> + *          directory will be created in the root of the securityfs filesystem.
+> + * @target: a pointer to a string containing the name of the symlink's target.
+> + *          If this parameter is %NULL, then the @iops parameter needs to be
+> + *          setup to handle .readlink and .get_link inode_operations.
+> + * @iops: a pointer to the struct inode_operations to use for the symlink. If
+> + *        this parameter is %NULL, then the default simple_symlink_inode
+> + *        operations will be used.
+> + *
+> + * This function creates a symlink in securityfs with the given @name.
+> + *
+> + * This function returns a pointer to a dentry if it succeeds.  This
+> + * pointer must be passed to the securityfs_remove() function when the file is
+> + * to be removed (no automatic cleanup happens if your module is unloaded,
+> + * you are responsible here).  If an error occurs, the function will return
+> + * the error value (via ERR_PTR).
+> + *
+> + * If securityfs is not enabled in the kernel, the value %-ENODEV is
+> + * returned.
+> + */
+> +struct dentry *securityfs_create_symlink(const char *name,
+> +                                        struct dentry *parent,
+> +                                        const char *target,
+> +                                        const struct inode_operations *iops)
+> +{
+> +       struct dentry *dent;
+> +       char *link = NULL;
 > +
->      rc = tpm_transmit_cmd(chip, NULL, buf.data, tpm_buf_length(&buf), 0,
->                    TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW,
->                    "attempting to set locality");
+> +       if (target) {
+> +               link = kstrdup(target, GFP_KERNEL);
+> +               if (!link)
+> +                       return ERR_PTR(-ENOMEM);
+> +       }
+> +       dent = securityfs_create_dentry(name, S_IFLNK | S_IRUGO, parent,
+> +                                       link, NULL, iops);
+> +       if (IS_ERR(dent))
+> +               kfree(link);
 > +
-> +    proxy_dev->state &= ~STATE_DRIVER_COMMAND;
+> +       return dent;
+> +}
+> +EXPORT_SYMBOL_GPL(securityfs_create_symlink);
 > +
->      if (rc < 0) {
->          locality = rc;
->          goto out;
-> -- 
-> 2.4.3
-> 
-> 
-> > 
-> > >   #endif /* _UAPI_LINUX_VTPM_PROXY_H */
-> > > -- 
-> > > 2.4.3
-> > > 
-> > /Jarkko
-> > 
-> 
+> +/**
+>   * securityfs_remove - removes a file or directory from the securityfs filesystem
+>   *
+>   * @dentry: a pointer to a the dentry of the file or directory to be removed.
+> --
+> 2.11.0
+>
 
-Please bump one more patch set version. Thanks.
 
-/Jarkko
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
