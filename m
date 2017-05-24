@@ -1,178 +1,101 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 24 May 2017 08:36:49 -0700
-Subject: [PATCH 3/5] Add the ability to lock down access to the running
-	kernel image
-In-Reply-To: <149563714531.9419.16811189348445249219.stgit@warthog.procyon.org.uk>
-References: <149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
-	<149563714531.9419.16811189348445249219.stgit@warthog.procyon.org.uk>
-Message-ID: <80bdc6c9-004b-800f-ffd0-4b5ebf8cdeba@schaufler-ca.com>
+From: sbuisson.ddn@gmail.com (Sebastien Buisson)
+Date: Wed, 24 May 2017 17:52:01 +0200
+Subject: [PATCH v6 1/2] selinux: add brief info to policydb
+In-Reply-To: <1495569200.8461.10.camel@tycho.nsa.gov>
+References: <1495040944-11552-1-git-send-email-sbuisson@ddn.com>
+	<CAHC9VhSa_0FnaHpFR9jB4tkV-7p_JxFqRaQGC7+LTkfcmdV7mA@mail.gmail.com>
+	<1495116094.5475.4.camel@tycho.nsa.gov>
+	<1495120065.5475.10.camel@tycho.nsa.gov>
+	<CAHC9VhTkBJ4f6Zkeu=Ufae1XHyxVCgfARyj8Hc6yiEgh55Xz-Q@mail.gmail.com>
+	<CAPkE-bW_dLo2hoE+rA_sOgZnqcZD_9L1RiDvyDBAtxJm3AM5Wg@mail.gmail.com>
+	<1495569200.8461.10.camel@tycho.nsa.gov>
+Message-ID: <CAPkE-bVMrTp4ECnWcdWyLSOpmSjt2XeuxGgMYnEg9S=nuYL7TA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/24/2017 7:45 AM, David Howells wrote:
-> Provide a single call to allow kernel code to determine whether the system
-> should be locked down, thereby disallowing various accesses that might
-> allow the running kernel image to be changed including the loading of
-> modules that aren't validly signed with a key we recognise, fiddling with
-> MSR registers and disallowing hibernation,
+2017-05-23 21:53 GMT+02:00 Stephen Smalley <sds@tycho.nsa.gov>:
+> On Tue, 2017-05-23 at 18:29 +0200, Sebastien Buisson wrote:
+>> Hi,
+>>
+>> 2017-05-18 23:49 GMT+02:00 Paul Moore <paul@paul-moore.com>:
+>> > My apologies to you and Sebastien for not reviewing these patches
+>> > sooner.
+>>
+>> It is ok, no problem.
+>> Thanks for all the advice from you and Stephen. I will try to take
+>> all
+>> this into account.
+>>
+>> As I understand it, I should not give the choice to allocate or not
+>> the string returned by security_policydb_brief(). The initial reason
+>> for this was that Lustre client code is expected to retrieve policy
+>> brief info hundreds or thousands of times per second, so saving on
+>> memory allocation would make sense. So if security_policydb_brief()
+>> necessarily allocates memory for the string returned, and I
+>> appreciate
+>> it helps maintenance and avoids complexity, it should not be called
+>> so
+>> often.
+>> One way to tackle this is to rely on the notification system: Lustre
+>> client code would call security_policydb_brief() only when it gets a
+>> change notification, and stores the current policy brief info
+>> internally.
+>> Another way could be to add another hook to check policy brief info
+>> validity. It would take a string as an input parameter, and return 0
+>> if it matches the current policy. So Lustre client code would
+>> systematically call this hook, and only call
+>> security_policydb_brief()
+>> when the policy has changed, to store the current value internally.
+>>
+>> I have recently identified a new need from Lustre client code. We
+>> need
+>> to protect against the case where the policy is changed or set in
+>> permissive mode, and then set back to its previous state, to
+>> workaround policy check as carried out on server side based on policy
+>> brief info sent by client. In this scenario, the policy would only be
+>> the expected one by the time the client sends a request to the server
+>> (for instance a file open request), but not after that when SELinux
+>> actually checks the permissions on the client (via
+>> security_file_open() in this example).
+>> A solution to address this could be to add a new parameter to
+>> security_policydb_brief() hook, in the form of a pointer to an
+>> integer
+>> giving the current sequence number of the policy. That would
+>> complement the policy brief info, with the notion of change to the
+>> policy. I do not think it is desirable to include the sequence number
+>> in the policy brief info, as it is not the essence of the policy.
+>> Now with this sequence info in mind, the new hook to check policy
+>> brief info validity would only need to check the sequence, instead of
+>> the policy brief string. The current value of the sequence info
+>> should
+>> be stored by Lustre internally, and checked after SELinux permission
+>> checks. If a change is detected, Lustre client must stop normal
+>> processing and return an error for the current request.
 >
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Acked-by: James Morris <james.l.morris@oracle.com>
-> ---
->
->  include/linux/kernel.h   |    9 +++++++++
->  include/linux/security.h |   11 +++++++++++
->  security/Kconfig         |   15 +++++++++++++++
->  security/Makefile        |    3 +++
->  security/lock_down.c     |   46 ++++++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 84 insertions(+)
->  create mode 100644 security/lock_down.c
->
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index 13bc08aba704..282a1684d6e8 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -276,6 +276,15 @@ extern int oops_may_print(void);
->  void do_exit(long error_code) __noreturn;
->  void complete_and_exit(struct completion *, long) __noreturn;
->  
-> +#ifdef CONFIG_LOCK_DOWN_KERNEL
-> +extern bool kernel_is_locked_down(void);
-> +#else
-> +static inline bool kernel_is_locked_down(void)
+> Not sure about your threat model but I think you are fighting a losing
+> battle there.  A malicious admin has too many ways to defeat your
+> checking.
 
-Should this be a bool or an int? I can imagine that
-someone is going to want various different degrees
-of lock down for kernels. As an int you could return
-a bitmap indicating which features were locked. This
-would allow additional things to be locked down
-without changing the interface.
+I do not have much experience in the domain, so every advice or idea
+is appreciated.
+If what I want to accomplish is implemented using the notification
+system, what would be the possibility for a malicious admin to change
+the policy or the way it is enforced without triggering a
+notification? Of course, the places in the SELinux kernel code from
+where to trigger the notification have to be thought thoroughly.
 
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  /* Internal, do not use. */
->  int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
->  int __must_check _kstrtol(const char *s, unsigned int base, long *res);
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index af675b576645..8db2d886aa90 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1698,5 +1698,16 @@ static inline void free_secdata(void *secdata)
->  { }
->  #endif /* CONFIG_SECURITY */
->  
-> +#ifdef CONFIG_LOCK_DOWN_KERNEL
-> +extern void __init lock_kernel_down(void);
-> +#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT
-> +extern void lift_kernel_lockdown(void);
-> +#endif
-> +#else
-> +static inline void lock_kernel_down(void)
-> +{
-> +}
-> +#endif
-> +
->  #endif /* ! __LINUX_SECURITY_H */
->  
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 93027fdf47d1..4baac4aab277 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -189,6 +189,21 @@ config STATIC_USERMODEHELPER_PATH
->  	  If you wish for all usermode helper programs to be disabled,
->  	  specify an empty string here (i.e. "").
->  
-> +config LOCK_DOWN_KERNEL
-> +	bool "Allow the kernel to be 'locked down'"
-> +	help
-> +	  Allow the kernel to be locked down under certain circumstances, for
-> +	  instance if UEFI secure boot is enabled.  Locking down the kernel
-> +	  turns off various features that might otherwise allow access to the
-> +	  kernel image (eg. setting MSR registers).
-> +
-> +config ALLOW_LOCKDOWN_LIFT
-> +	bool
-> +	help
-> +	  Allow the lockdown on a kernel to be lifted, thereby restoring the
-> +	  ability of userspace to access the kernel image (eg. by SysRq+x under
-> +	  x86).
-> +
->  source security/selinux/Kconfig
->  source security/smack/Kconfig
->  source security/tomoyo/Kconfig
-> diff --git a/security/Makefile b/security/Makefile
-> index f2d71cdb8e19..8c4a43e3d4e0 100644
-> --- a/security/Makefile
-> +++ b/security/Makefile
-> @@ -29,3 +29,6 @@ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
->  # Object integrity file lists
->  subdir-$(CONFIG_INTEGRITY)		+= integrity
->  obj-$(CONFIG_INTEGRITY)			+= integrity/
-> +
-> +# Allow the kernel to be locked down
-> +obj-$(CONFIG_LOCK_DOWN_KERNEL)		+= lock_down.o
-> diff --git a/security/lock_down.c b/security/lock_down.c
-> new file mode 100644
-> index 000000000000..dd98422fbda7
-> --- /dev/null
-> +++ b/security/lock_down.c
-> @@ -0,0 +1,46 @@
-> +/* Lock down the kernel
-> + *
-> + * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells at redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#include <linux/security.h>
-> +#include <linux/export.h>
-> +
-> +#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT
-> +static __read_mostly bool kernel_locked_down;
-> +#else
-> +static __ro_after_init bool kernel_locked_down;
-> +#endif
-> +
-> +/*
-> + * Put the kernel into lock-down mode.
-> + */
-> +void __init lock_kernel_down(void)
-> +{
-> +	kernel_locked_down = true;
-> +}
-> +
-> +/*
-> + * Take the kernel out of lockdown mode.
-> + */
-> +#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT
-> +void lift_kernel_lockdown(void)
-> +{
-> +	kernel_locked_down = false;
-> +}
-> +#endif
-> +
-> +/**
-> + * kernel_is_locked_down - Find out if the kernel is locked down
-> + */
-> +bool kernel_is_locked_down(void)
-> +{
-> +	return kernel_locked_down;
-> +}
-> +EXPORT_SYMBOL(kernel_is_locked_down);
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> Relying on the seqno also seems brittle; you could easily end up
+> causing a client to fail just because a policy update happened to be
+> installed at the same time, even though there was nothing wrong or
+> malicious about the policy update itself.
 
+I consider it is not a problem if one request must be resent, even if
+the policy update was legitimate. It would not disturb Lustre
+behavior, and it might be preferable to proceed to a resend instead of
+missing a potential fraud.
+
+Thanks,
+Sebastien.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
