@@ -1,166 +1,114 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 24 May 2017 10:35:21 -0700
-Subject: [PATCH v2 1/5] tpm: introduce tpm_pcr_algorithms()
-In-Reply-To: <cc7efaa2-4d5b-2142-3b23-06864589c212@huawei.com>
-References: <20170505142152.29795-1-roberto.sassu@huawei.com>
-	<20170505142152.29795-2-roberto.sassu@huawei.com>
-	<20170515103623.sumyo2vyldezual2@intel.com>
-	<d2974dd2-e30d-e8f0-a60a-2147f3290670@huawei.com>
-	<8aacf9c7-ac99-578e-ca60-6bb45bf3ab2b@huawei.com>
-	<20170520131846.e3niqiknlrttbdf4@intel.com>
-	<cc7efaa2-4d5b-2142-3b23-06864589c212@huawei.com>
-Message-ID: <20170524173521.yiiohct7brkcozyk@intel.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Wed, 24 May 2017 20:06:43 +0200
+Subject: [kernel-hardening] [PATCH v4 next 0/3] modules: automatic module
+	loading restrictions
+In-Reply-To: <20170523074808.GA4562@openwall.com>
+References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
+	<20170522120848.GA3003@openwall.com>
+	<CAEiveUdqfMk4+vLg6TaEJNSGwoQHxYq0P4aqZoL4i9GgR3Vdtw@mail.gmail.com>
+	<20170522164323.GA2048@openwall.com>
+	<CAEiveUdb=yc5Gt_+pU_hfNdoNBP0JsUL1QUydNZgc2tD7n1h1w@mail.gmail.com>
+	<CAGXu5jKGnG74KE-k9JPaH1bNqT5nbVioaeu_5sAKQ+4kgp-0Ng@mail.gmail.com>
+	<20170523074808.GA4562@openwall.com>
+Message-ID: <CAEiveUfpoFhhADtLWFoZR53PBABCqhMrKoDZPNF_h5sQ3OL8KQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, May 22, 2017 at 11:07:54AM +0200, Roberto Sassu wrote:
-> On 5/20/2017 3:18 PM, Jarkko Sakkinen wrote:
-> > On Wed, May 17, 2017 at 10:42:35AM +0200, Roberto Sassu wrote:
-> > > On 5/15/2017 3:18 PM, Roberto Sassu wrote:
-> > > > 
-> > > > 
-> > > > On 5/15/2017 12:36 PM, Jarkko Sakkinen wrote:
-> > > > > On Fri, May 05, 2017 at 04:21:48PM +0200, Roberto Sassu wrote:
-> > > > > > This function allows TPM users to know which algorithms the TPM
-> > > > > > supports.
-> > > > > > It stores the algorithms in a static array of 'enum tpm2_algorithms',
-> > > > > > allocated by the caller. If the array is not large enough, the function
-> > > > > > returns an error. Otherwise, it returns the number of algorithms written
-> > > > > > to the array. If the TPM version is 1.2, the function writes
-> > > > > > TPM2_ALG_SHA1
-> > > > > > to first element of the array.
-> > > > > > 
-> > > > > > Writing the algorithm also for TPM 1.2 has the advantage that callers
-> > > > > > can use the API, tpm_pcr_algorithms() and tpm_pcr_extend(), regardless
-> > > > > > of the TPM version.
-> > > > > > 
-> > > > > > A minor change added to this patch was to make available the size of
-> > > > > > the active_banks array, member of the tpm_chip structure, outside
-> > > > > > the TPM driver. The array size (TPM_ACTIVE_BANKS_MAX) has been exported
-> > > > > > to include/linux/tpm.h.
-> > > > > > 
-> > > > > > With this information, callers of tpm_pcr_algorithms() can provide
-> > > > > > a static array with enough room for all the algorithms, instead
-> > > > > > of receiving the pointer of a dynamic array that they have to free
-> > > > > > later.
-> > > > > > 
-> > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > ---
-> > > > > > v2
-> > > > > > 
-> > > > > > - tpm_pcr_algorithms() returns supported algorithms also for TPM 1.2
-> > > > > > 
-> > > > > >  drivers/char/tpm/tpm-interface.c | 46
-> > > > > > ++++++++++++++++++++++++++++++++++++++++
-> > > > > >  drivers/char/tpm/tpm.h           | 13 +-----------
-> > > > > >  include/linux/tpm.h              | 19 +++++++++++++++++
-> > > > > >  3 files changed, 66 insertions(+), 12 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/char/tpm/tpm-interface.c
-> > > > > > b/drivers/char/tpm/tpm-interface.c
-> > > > > > index 4ed08ab..b90de3d 100644
-> > > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > > @@ -911,6 +911,52 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx,
-> > > > > > const u8 *hash)
-> > > > > >  EXPORT_SYMBOL_GPL(tpm_pcr_extend);
-> > > > > > 
-> > > > > >  /**
-> > > > > > + * tpm_pcr_algorithms - get TPM IDs of active PCR banks algorithms
-> > > > > 
-> > > > > The grammar is incorrect here I believe. Should rather be
-> > > > > 
-> > > > >   "algorithms of the active PCR banks"
-> > > > > 
-> > > > > And there is no such thing as "TPM ID".
-> > > > > 
-> > > > > > + * @chip_num:    tpm idx # or ANY
-> > > > > > + * @count:    # of items in algorithms
-> > > > > > + * @algorithms:    array of TPM IDs
-> > > > > > + *
-> > > > > > + * Returns < 0 on error, and the number of active PCR banks on success.
-> > > > > > + *
-> > > > > > + * TPM 1.2 has always one SHA1 bank.
-> > > > > > + */
-> > > > > > +int tpm_pcr_algorithms(u32 chip_num, int count,
-> > > > > > +               enum tpm2_algorithms *algorithms)
-> > > > >                        unsigned int
-> > > > > 
-> > > > > In addition the function name is not too greatg,
-> > > > > 
-> > > > > Your syntax for return value is not correct. In addition after
-> > > > > describing the return value there should not be anything. You should
-> > > > > study
-> > > > > 
-> > > > > https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
-> > > > > 
-> > > > > Better name for the function would be tpm_get_pcr_algorithms().
-> > > > > 
-> > > > > > +{
-> > > > > > +    struct tpm_chip *chip;
-> > > > > > +    int i;
-> > > > > > +
-> > > > > > +    if (count <= 0 || algorithms == NULL)
-> > > > > > +        return -EINVAL;
-> > > > > 
-> > > > > Is there a legal case where caller would pass these values? Now it
-> > > > > looks like that there is.
-> > > > > 
-> > > > > 'count' should unsigned int and zero should be a legal value for
-> > > > > count.
-> > > > 
-> > > > I wanted to avoid that a negative value returned by tpm_pcr_algorithms()
-> > > > is passed to tpm_pcr_extend() as unsigned int.
-> > > > 
-> > > > 
-> > > > > That said I think the whole design is wrong as you could calculate
-> > > > > array for algs only one time and pass a const reference to it on
-> > > > > request.
-> > > > 
-> > > > Ok. If I understood it correctly, you are saying to pass a const
-> > > > reference of chip->active_banks. Then, I should also:
-> > > 
-> > > This is not a viable option. chip could be freed and the reference
-> > > becomes invalid, without increasing the reference count.
-> > > 
-> > > Did you think about something different?
-> > > 
-> > > Thanks
-> > > 
-> > > Roberto
-> > 
-> > Two alternatives come in mind.
-> > 
-> > 1. add tpm_put to linclude/linux/tpm.h
-> > 2. take put_ops away from the implementation
-> > 3. add documentation that tpm_put needs to be called
-> > 
-> > or acceptable alternative would memcpy in the implementation
-> > 
-> > In any case, you should probably drop completely 'count' and have
-> > function for getting the number of active banks.
-> 
-> Having a variable number, makes things more complicated.
-> In the IMA patch set for multiple template digests,
-> the array of algorithms is stored inside a structure
-> called digest descriptor. The array size must be fixed,
-> to avoid VLAIS (which is not supported by clang).
+On Tue, May 23, 2017 at 9:48 AM, Solar Designer <solar@openwall.com> wrote:
+>> >>> On Mon, May 22, 2017 at 2:08 PM, Solar Designer <solar@openwall.com> wrote:
+>> >>> > On Mon, May 22, 2017 at 01:57:03PM +0200, Djalal Harouni wrote:
+>> >>> >> *) When modules_autoload_mode is set to (2), automatic module loading is
+>> >>> >> disabled for all. Once set, this value can not be changed.
+>> >>> >
+>> >>> > What purpose does this securelevel-like property ("Once set, this value
+>> >>> > can not be changed.") serve here?  I think this mode 2 is needed, but
+>> >>> > without this extra property, which is bypassable by e.g. explicitly
+>> >>> > loaded kernel modules anyway (and that's OK).
+>
+> On Mon, May 22, 2017 at 04:07:56PM -0700, Kees Cook wrote:
+>> I'm on the fence. For modules_disabled and Yama, it was tied to
+>> CAP_SYS_ADMIN, basically designed to be a at-boot setting that could
+>> not later be undone by an attacker gaining that privilege, keeping
+>> them out of either kernel memory or existing user process memory.
+>> Here, it's CAP_SYS_MODULE... it's hard to imagine the situation where
+>> a CAP_SYS_MODULE-capable process could write to this sysctl but NOT
+>> issue direct modprobe requests, but it's _possible_ via crazy symlink
+>> games to trick capable processes into writing to sysctls. We've seen
+>> this multiple times before, and it's a way for attackers to turn a
+>> single privileged write into a privileged exec.
+>
+> OK, tricking a process via crazy symlink games is finally a potentially
+> valid reason.  The question then becomes: are there perhaps so many
+> other important sysctl's, disk files, etc. (which the vulnerable capable
+> process could similarly be tricked into writing) so that specifically
+> resetting modules_autoload_mode isn't particularly lucrative?  I think
+> that the answer to that is usually yes.  Another related question: do we
+> really want to inconsistently single out a handful of sysctl's for this
+> kind of extra protection?  I think not.
+>
+> I agree there are some other settings where being unable to reset them
+> makes sense, but I think this isn't one of those.
+>
 
-What is VLAI?
-
-You can always allocate it from heap.
-
-> Since the size of tpm_chip->active_banks is a small number,
-> we can drop count, and assume that the size of the array
-> passed to tpm_pcr_algorithms() always matches the size
-> of the active_banks array.
-> 
-> Roberto
-
-I don't understand what you mean.
+Alright, I already replied to Andy, since it was requested I will drop
+it. I definitely prefer that we have something merged and usable ;-)
 
 
-/Jarkko
+>> I might turn the question around, though: why would we want to have it
+>> changeable at this setting?
+>
+> Convenience for the sysadmin - being able to correct one's error (e.g.,
+> wrong order of shell commands), respond to new findings (thought module
+> autoloading was unneeded after some point, then found out some software
+> relies on it), change one's mind, reuse a system differently than
+> originally intended without a forced reboot.
+>
+>> I'm fine leaving that piece off, either way.
+>
+> I'm also fine with either decision.  I just thought I'd point out what
+> looked weird to me.
+>
+> I think this is an important patch that should get in, but primarily
+> for modules_autoload_mode=1, which many distros could make the default
+> (and maybe the kernel eventually should?)
+
+I do not think that desktop, or interactive systems will set it.
+Ubuntu has snaps for their app store, and they can use the per-task
+flag and other vendors too Flatpak, etc.
+
+
+> For modules_autoload_mode=2, we already seem to have the equivalent of
+> modprobe=/bin/true (or does it differ subtly, maybe in return values?),
+> which I already use at startup on a GPU box like this (preloading
+> modules so that the OpenCL backends wouldn't need the autoloading):
+>
+> nvidia-smi
+> nvidia-modprobe -u -c=0
+> #modprobe nvidia_uvm
+> #modprobe fglrx
+>
+> sysctl -w kernel.modprobe=/bin/true
+> sysctl -w kernel.hotplug=/bin/true
+>
+> but it's good to also have this supported more explicitly and more
+> consistently through modules_autoload_mode=2 while we're at it.  So I
+> support having this mode as well.  I just question the need to have it
+> non-resettable.
+>
+
+Ok, yes with mode=2 it is clear interface, it logs what was denied, it
+is consistent with the per-task flag that we want for sandboxes and
+desktop, it will work with CONFIG_STATIC_USERMODEHELPER, more
+importantly it will avoid doing the usermod upcall, even if one day
+the kernel support upcall into namespaces, I'm pretty sure that no one
+will like the idea of namespaced modprobe paths, modules are global
+anyway, this allows to say we are safe by default from any future
+change that may make an upcall into the wrong context, we just avoid
+that.
+
+
+-- 
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
