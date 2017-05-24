@@ -1,247 +1,156 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Wed, 24 May 2017 16:16:32 +0200
-Subject: [PATCH v4 next 1/3] modules:capabilities: allow
-	__request_module() to take a capability argument
-In-Reply-To: <CAGXu5j+L1aEWqi7DC4StwAorfG4da0XqrouMvbz07cJ7gYi0AQ@mail.gmail.com>
-References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
-	<1495454226-10027-2-git-send-email-tixxdz@gmail.com>
-	<CAGXu5jL9jRDkHj20kf4O6VrjiEpvXGzN3nn5Lw4fT2sx_Xg=+A@mail.gmail.com>
-	<CAEiveUe5cTCet6=Uzn64YANRZ2Qyqk5OSXqU3MybevbkbeNR3Q@mail.gmail.com>
-	<CAGXu5j+L1aEWqi7DC4StwAorfG4da0XqrouMvbz07cJ7gYi0AQ@mail.gmail.com>
-Message-ID: <CAEiveUeZhHtPyLv8=3BsPh5Anr2ynnzD0bprUkeKUGygtRQKsw@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 24 May 2017 15:45:25 +0100
+Subject: [PATCH 1/5] efi: Move the x86 secure boot switch to generic code
+In-Reply-To: <149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+References: <149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+Message-ID: <149563712496.9419.17514071929560674877.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 23, 2017 at 9:19 PM, Kees Cook <keescook@google.com> wrote:
-> On Tue, May 23, 2017 at 3:29 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
-[...]
+Move the switch-statement in x86's setup_arch() that inteprets the
+secure_boot boot parameter to generic code.
 
->> I think if there is an interface request_module_capable() , then code
->> will use it. The DCCP code path did not check capabilities at all and
->> called request_module(), other code does the same.
->>
->> A new interface can be abused, the result of this: we may break
->> "modules_autoload_mode" in mode 0 and 1. In the long term code will
->> want to change may_autoload_module() to also allow mode 1 to load a
->> module with CAP_NET_ADMIN or other caps in its own userns, resulting
->> in "modules_autoload_mode == 0 == 1". Without userns in the game we
->> may just see request_module_capable(CAP_SYS_ADMIN, ...)  . There is
->> already some code maybe phonet sockets ? that require CAP_SYS_ADMIN to
->> get the appropriate protocol.... and no one will be able to review all
->> this code or track new patches with request_module_capable() callers.
->
-> I'm having some trouble following what you're saying here, but if I
-> understand, you're worried about getting the kernel into a state where
-> autoload state 0 == 1. Autoload 0 is "business as usual", and autoload
-> 1 is "CAP_SYS_MODULE required to be able to trigger a module auto-load
-> operation, or CAP_NET_ADMIN for modules with a 'netdev-%s' alias."
+Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Indeed.
+ arch/x86/kernel/setup.c           |   14 +-------------
+ drivers/firmware/efi/Kconfig      |   23 +++++++++++++++++++++++
+ drivers/firmware/efi/Makefile     |    1 +
+ drivers/firmware/efi/secureboot.c |   34 ++++++++++++++++++++++++++++++++++
+ include/linux/efi.h               |    6 ++++++
+ 5 files changed, 65 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/firmware/efi/secureboot.c
 
-
-> In the v4 patch, under autoload==1, CAP_NET_ADMIN is needed to load
-> netdev- modules:
->
->         if (no_module && capable(CAP_NET_ADMIN))
->                no_module = __request_module(true, CAP_NET_ADMIN,
->                                             "netdev-%s", name);
->
-> and in the LSM hook, CAP_NET_ADMIN is passed as an allowable "alias"
-> for the CAP_SYS_MODULE requirement:
->
->        else if (modules_autoload_mode == MODULES_AUTOLOAD_PRIVILEGED) {
->                /* Check CAP_SYS_MODULE then allow_cap if valid */
->                if (capable(CAP_SYS_MODULE) ||
->                    (allow_cap > 0 && capable(allow_cap)))
->                       return 0;
->        }
->
-> What I see is some needless double-checking. Since you're making
-> changes to the request_module() API, it would be possible to have
-
-That check is *not* a double check and it is *really* needed in v4
-since how may_autoload_module() was implemented. It first checks if
-'autoload' == 0 == ALLOWED, if so then it allows the operation
-regardless of the capability. That's why I didn't want to touch
-current network logic and assumed that net code knows what it should
-do.
-
-
-> request_module_cap(), which could be checked instead of open-coding
-> it:
->
->      if (no_module)
->         no_module = request_module_cap(CAP_NET_ADMIN, "netdev-%s", name);
->
-> If I'm understanding your objection correctly, it's that you want to
-> ONLY ever provide this one-time alias for CAP_SYS_MODULE with the
-> netdev-%s things, and you don't want to risk having other module
-> loading start using request_module_cap() which would lead to
-> CAP_SYS_MODULE aliases in other places?
-
-Yes. We can't really track capabilities usage or new code.
-
-
-> If the goal is to make sure that only privileged processes are
-> autoloading, I don't think adding a well defined interface for
-> cap-checks (request_module_cap()) would lead to a slippery slope. The
-> worst case scenario (which would never happen) would be all
-> request_module() users would convert to request_module_cap(). This
-
-I am also concerned a bit with new code. In the documentation we
-explicitly say CAP_SYS_MODULE, and new code should not break that
-assumption.
-
-
-> would mean that all module loading would require specific privileges.
-> That seems in line with autoload==1. They would not be tied to
-> CAP_SYS_MODULE, though, which is, I suspect, what you're concerned
-> about.
-
-Indeed, it is just easy to say hey it needs CAP_SYS_MODULE. The
-capability usage in the module subsystem more precisely with explicit
-loading is clean. CAP_SYS_MODULE is not overloaded, it has clear
-focus. As you say it, we should be concerned if we blindly trust
-callers and end up *aliasing* CAP_SYS_MODULE with some other cap...
-
-
-> Even in the existing code, there is a sense about CAP_NET_ADMIN and
-> CAP_SYS_MODULE having different privilege levels, in that
-> CAP_NET_ADMIN can only load netdev-%s modules, but CAP_SYS_MODULE can
-> load any module. What about refining request_module_cap() to _require_
-> an explicit string prefix instead of an arbitrary format string? e.g.
-> request_module_cap(CAP_NET_ADMIN, "netdev", "%s", name) which would
-> make requests for ("netdev-%s", name)
->
-> I see a few options:
->
-> 1) keep what you have for v4, and hope other places don't use
-> __request_module. (I'm not a fan of this.)
-
-Yes even if it is documented I wouldn't bet on it, though. :-)
-
-
-> 2) switch the logic on autoload==1 from OR to AND: both the specified
-> caps _and_ CAP_SYS_MODULE are required. (This seems like it might make
-> autoload==1 less useful.)
-
-That will restrict some userspace that works only with CAP_NET_ADMIN.
-
-
-> 3) use the request_module_cap() outlined above, which requires that
-> modules being loaded under a CAP_SYS_MODULE-aliased capability are at
-> least restricted to a subset of kernel module names.
-
-This one tends to allow usability.
-
-
-> 4) same as 3 but also insert autoload==2 level that switches from OR
-> to AND (bumping existing ==2 to ==3).
-
-I wouldn't expose autoload to callers, I think it is better if it
-stays a property of the module subsystem. But lets use the bump idea,
-please see below.
-
-
-> What do you think?
-
-Ok so given that we already have modules_autoload_mode=2 disabled,
-maybe we go with 3)  like this ?
-
-int __request_module(bool wait, int required_cap, const char *prefix,
-const char *name, ...);
-#define request_module(mod...) \
-        __request_module(true, -1, NULL, mod)
-#define request_module_cap(required_cap, prefix, mod...) \
-        __request_module(true, required_cap, prefix, mod)
-
-and we require allow_cap and prefix to be set.
-
-request_module_cap(CAP_NET_ADMIN, "netdev-", "%s", name) for
-net/core/dev_ioctl.c:dev_load()
-
-request_module_cap(CAP_NET_ADMIN, "tcp_", "%s", name) for
-net/ipv4/tcp_cong.c  functions.
-
-
-Then
-__request_module()
-  -> security_kernel_module_request(module_name, required_cap, prefix)
-     -> may_autoload_module(current, module_name, required_cap, prefix)
-
-
-And update may_autoload_module() as below ? we hard code CAP_NET_ADMIN
-and CAP_SYS_MODULE inside and make them the only capabilities needed
-for a privileged auto-load operation.
-
-request_module_cap(CAP_SYS_MODULE, ...) or
-request_module_cap(CAP_NET_ADMIN, ...) if the autoload should be a
-privileged operation.
-
-Kees will this work ?
-
-Jessica,  Rusty,  Serge. What do you think ? I definitively think that
-module_autoload should be contained only inside the module subsystem..
-
-
-+int may_autoload_module(struct task_struct *task, char *kmod_name,
-+                       int require_cap, char *prefix)
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 0b4d3c686b1e..8bffbd8d2c1c 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1177,19 +1177,7 @@ void __init setup_arch(char **cmdline_p)
+ 	/* Allocate bigger log buffer */
+ 	setup_log_buf(1);
+ 
+-	if (efi_enabled(EFI_BOOT)) {
+-		switch (boot_params.secure_boot) {
+-		case efi_secureboot_mode_disabled:
+-			pr_info("Secure boot disabled\n");
+-			break;
+-		case efi_secureboot_mode_enabled:
+-			pr_info("Secure boot enabled\n");
+-			break;
+-		default:
+-			pr_info("Secure boot could not be determined\n");
+-			break;
+-		}
+-	}
++	efi_set_secure_boot(boot_params.secure_boot);
+ 
+ 	reserve_initrd();
+ 
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index 394db40ed374..c40fdeaf9a45 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -84,6 +84,29 @@ config EFI_PARAMS_FROM_FDT
+ config EFI_RUNTIME_WRAPPERS
+ 	bool
+ 
++config EFI_SECURE_BOOT
++	bool "Support UEFI Secure Boot and lock down the kernel in secure boot mode"
++	default n
++	help
++	  UEFI Secure Boot provides a mechanism for ensuring that the firmware
++	  will only load signed bootloaders and kernels.  Secure boot mode may
++	  be determined from EFI variables provided by the system firmware if
++	  not indicated by the boot parameters.
++
++	  Enabling this option turns on support for UEFI secure boot in the
++	  kernel.  This will result in various kernel facilities being locked
++	  away from userspace if the kernel detects that it has been booted in
++	  secure boot mode.  If it hasn't been booted in secure boot mode, or
++	  this cannot be determined, the lock down doesn't occur.
++
++	  The kernel facilities that get locked down include:
++	  - Viewing or changing the kernel's memory
++	  - Directly accessing ioports
++	  - Directly specifying ioports and other hardware parameters to drivers
++	  - Storing the kernel image unencrypted for hibernation
++	  - Loading unsigned modules
++	  - Kexec'ing unsigned images
++
+ config EFI_ARMSTUB
+ 	bool
+ 
+diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+index 0329d319d89a..9dfd8530063f 100644
+--- a/drivers/firmware/efi/Makefile
++++ b/drivers/firmware/efi/Makefile
+@@ -23,6 +23,7 @@ obj-$(CONFIG_EFI_FAKE_MEMMAP)		+= fake_mem.o
+ obj-$(CONFIG_EFI_BOOTLOADER_CONTROL)	+= efibc.o
+ obj-$(CONFIG_EFI_TEST)			+= test/
+ obj-$(CONFIG_EFI_DEV_PATH_PARSER)	+= dev-path-parser.o
++obj-$(CONFIG_EFI_SECURE_BOOT)		+= secureboot.o
+ obj-$(CONFIG_APPLE_PROPERTIES)		+= apple-properties.o
+ 
+ arm-obj-$(CONFIG_EFI)			:= arm-init.o arm-runtime.o
+diff --git a/drivers/firmware/efi/secureboot.c b/drivers/firmware/efi/secureboot.c
+new file mode 100644
+index 000000000000..cf5bccae15e8
+--- /dev/null
++++ b/drivers/firmware/efi/secureboot.c
+@@ -0,0 +1,34 @@
++/* Core kernel secure boot support.
++ *
++ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells at redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/efi.h>
++#include <linux/kernel.h>
++#include <linux/printk.h>
++
++/*
++ * Decide what to do when UEFI secure boot mode is enabled.
++ */
++void __init efi_set_secure_boot(enum efi_secureboot_mode mode)
 +{
-+       unsigned int autoload;
-+       int module_require_cap = 0;
-+
-+       if (require_cap > 0) {
-+               if (prefix == NULL || *prefix == '\0')
-+                       return -EPERM;
-+
-+               /*
-+                * We only allow CAP_SYS_MODULE or CAP_NET_ADMIN for
-+                * 'netdev-%s' modules for backward compatibility.
-+                * Please do not overload capabilities.
-+                */
-+               if (require_cap == CAP_SYS_MODULE ||
-+                   require_cap == CAP_NET_ADMIN)
-+                       module_require_cap = require_cap;
-+               else
-+                       return -EPERM;
-+       }
-+
-+       /* Get max value of sysctl and task "modules_autoload_mode" */
-+       autoload = max_t(unsigned int, modules_autoload_mode,
-+                        task->modules_autoload_mode);
-+
-+       /*
-+        * If autoload is disabled then fail here and not bother at all
-+        */
-+       if (autoload == MODULES_AUTOLOAD_DISABLED)
-+               return -EPERM;
-+
-+       /*
-+        * If caller require capabilities then we may not allow
-+        * automatic module loading. We should not bypass callers.
-+        * This allows to support networking code that uses CAP_NET_ADMIN
-+        * for some aliased 'netdev-%s' modules.
-+        *
-+        * Explicitly bump autoload here if necessary
-+        */
-+       if (module_require_cap && autoload == MODULES_AUTOLOAD_ALLOWED)
-+               autoload = MODULES_AUTOLOAD_PRIVILEGED;
-+
-+       if (autoload == MODULES_AUTOLOAD_ALLOWED)
-+               return 0;
-+       else if(autoload == MODULES_AUTOLOAD_PRIVILEGED) {
-+               /*
-+                * If module auto-load is a privileged operation then check
-+                * if capabilities are set.
-+                */
-+               if (capable(CAP_SYS_MODULE) ||
-+                   (module_require_cap && capable(module_require_cap)))
-+                       return 0;
-+       }
-+
-+       return -EPERM;
++	if (efi_enabled(EFI_BOOT)) {
++		switch (mode) {
++		case efi_secureboot_mode_disabled:
++			pr_info("Secure boot disabled\n");
++			break;
++		case efi_secureboot_mode_enabled:
++			pr_info("Secure boot enabled\n");
++			break;
++		default:
++			pr_info("Secure boot could not be determined\n");
++			break;
++		}
++	}
 +}
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 8269bcb8ccf7..e2f53edccf15 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1497,6 +1497,12 @@ enum efi_secureboot_mode {
+ };
+ enum efi_secureboot_mode efi_get_secureboot(efi_system_table_t *sys_table);
+ 
++#ifdef CONFIG_EFI_SECURE_BOOT
++void __init efi_set_secure_boot(enum efi_secureboot_mode mode);
++#else
++static inline void efi_set_secure_boot(enum efi_secureboot_mode mode) {}
++#endif
 +
+ /*
+  * Arch code can implement the following three template macros, avoiding
+  * reptition for the void/non-void return cases of {__,}efi_call_virt():
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
