@@ -1,43 +1,286 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Wed, 24 May 2017 13:14:19 -0700
-Subject: [PATCH 3/3] apparmor: virtualize the policy/ directory
-In-Reply-To: <CAGXu5j+zjx5WKC62eEj1zDpQ4Lpq4g8GnqAA5MNP+B6DZL0UHg@mail.gmail.com>
-References: <20170511024625.13887-1-john.johansen@canonical.com>
-	<20170511024625.13887-4-john.johansen@canonical.com>
-	<CAGXu5j+zjx5WKC62eEj1zDpQ4Lpq4g8GnqAA5MNP+B6DZL0UHg@mail.gmail.com>
-Message-ID: <a44a00cd-4a29-7766-9b86-187dd28ecc24@canonical.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 24 May 2017 16:12:54 -0400
+Subject: [RFC 04/11] ima: add support to namespace securityfs file
+In-Reply-To: <1494511203-8397-5-git-send-email-guilherme.magalhaes@hpe.com>
+References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
+	<1494511203-8397-5-git-send-email-guilherme.magalhaes@hpe.com>
+Message-ID: <1495656774.3841.72.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/24/2017 12:38 PM, Kees Cook wrote:
-> On Wed, May 10, 2017 at 7:46 PM, John Johansen
-> <john.johansen@canonical.com> wrote:
->> virtualize the apparmor policy/ directory so that the current namespace
->> affects what part of policy is seen. This is done by
->>
->>  * creating a new apparmorfs filesystem
->>  * creating a magic symlink from securityfs to the correct apparmorfs
->>    file in the tree (similar to nsfs use).
->>
->> apparmor fs data and fns also get renamed some to help indicate where
->> they are used
->>
->>   aafs - special magic apparmorfs
->>   aa_sfs - for fns/data that go into securityfs
->>   aa_fs - for fns/data that may be used in the either of aafs or securityfs
->>
->> Signed-off-by: John Johansen <john.johansen@canonical.com>
->> Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
+On Thu, 2017-05-11 at 10:59 -0300, Guilherme Magalhaes wrote:
+> Creating the namespace securityfs file under ima folder. When a mount
+> namespace id is written to the namespace file, a new folder is created and
+> with a policy file for that specified namespace. Then, user defined policy
+> for namespaces may be set by writing rules to this namespace policy file.
+> With this interface, there is no need to give visibility for the securityfs
+> inside mount namespaces or containers in userspace.
 > 
-> This all looks fine to me. If you do a v2 of these patches, it might
-> make sense to split up some of the logical changes here. For example,
-> have one patch that does the renamings but no code changes. Then add
-> the new fs, and finally integrate the new fs. That might make it
-> easier to review. Regardless:
+> Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
+
+The design needs to be flexible enough for different types of
+containers, not just for when the orchestration layer provides the
+policy. ?With this design, the container owner has no control over the
+policy.
+
+One option is that we bind mount the securityfs/policy, so that root
+in the container will be allowed to read/write the policy. ?At some
+point, we might connect a vTPM to the container so that the container
+owner would be able to get a quote. ?For now even without a vTPM, the
+same mechanism would allow root within the container to read the
+measurement list.
+
+Mimi
+
+
+> ---
+>  security/integrity/ima/ima.h    |   4 +
+>  security/integrity/ima/ima_fs.c | 183 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 187 insertions(+)
 > 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 42fb91ba..6e8ca8e 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -326,4 +326,8 @@ static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
+>  #define	POLICY_FILE_FLAGS	S_IWUSR
+>  #endif /* CONFIG_IMA_WRITE_POLICY */
 > 
-Okay, thanks will do.
+> +#ifdef CONFIG_IMA_PER_NAMESPACE
+> +#define NAMESPACES_FILE_FLAGS  S_IWUSR
+> +#endif
+> +
+>  #endif /* __LINUX_IMA_H */
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+> index ca303e5..6456407 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -23,6 +23,8 @@
+>  #include <linux/rcupdate.h>
+>  #include <linux/parser.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/proc_ns.h>
+> +#include <linux/radix-tree.h>
+> 
+>  #include "ima.h"
+> 
+> @@ -272,6 +274,40 @@ static const struct file_operations ima_ascii_measurements_ops = {
+>  	.release = seq_release,
+>  };
+> 
+> +#ifdef CONFIG_IMA_PER_NAMESPACE
+> +/*
+> + * check_mntns: check a mount namespace is valid
+> + *
+> + * @ns_id: namespace id to be checked
+> + * Returns 0 if the namespace is valid.
+> + *
+> + * Note: a better way to implement this check is needed. There are
+> + * cases where the namespace id is valid but not in use by any process
+> + * and then this implementation misses this case. Could we use an
+> + * interface similar to what setns implements?
+> + */
+> +static int check_mntns(unsigned int ns_id)
+> +{
+> +	struct task_struct *p;
+> +	int result = 1;
+> +	struct ns_common *ns;
+> +
+> +	rcu_read_lock();
+> +	for_each_process(p) {
+> +		ns = mntns_operations.get(p);
+> +		if (ns->inum == ns_id) {
+> +			result = 0;
+> +			mntns_operations.put(ns);
+> +			break;
+> +		}
+> +		mntns_operations.put(ns);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	return result;
+> +}
+> +#endif
+> +
+>  static ssize_t ima_read_policy(char *path)
+>  {
+>  	void *data;
+> @@ -366,6 +402,9 @@ static struct dentry *ascii_runtime_measurements;
+>  static struct dentry *runtime_measurements_count;
+>  static struct dentry *violations;
+>  static struct dentry *ima_policy;
+> +#ifdef CONFIG_IMA_PER_NAMESPACE
+> +static struct dentry *ima_namespaces;
+> +#endif
+> 
+>  enum ima_fs_flags {
+>  	IMA_FS_BUSY,
+> @@ -451,6 +490,139 @@ static const struct file_operations ima_measure_policy_ops = {
+>  	.llseek = generic_file_llseek,
+>  };
+> 
+> +#ifdef CONFIG_IMA_PER_NAMESPACE
+> +/*
+> + * Assumes namespace id is in use by some process and this mapping
+> + * does not exist in the map table.
+> + */
+> +static int create_mnt_ns_directory(unsigned int ns_id)
+> +{
+> +	int result;
+> +	struct dentry *ns_dir, *ns_policy;
+> +	char dir_name[64];
+> +
+> +	snprintf(dir_name, sizeof(dir_name), "%u", ns_id);
+> +
+> +	ns_dir = securityfs_create_dir(dir_name, ima_dir);
+> +	if (IS_ERR(ns_dir)) {
+> +		result = PTR_ERR(ns_dir);
+> +		goto out;
+> +	}
+> +
+> +	ns_policy = securityfs_create_file("policy", POLICY_FILE_FLAGS,
+> +		                                ns_dir, NULL,
+> +		                                &ima_measure_policy_ops);
+> +	if (IS_ERR(ns_policy)) {
+> +		result = PTR_ERR(ns_policy);
+> +		securityfs_remove(ns_dir);
+> +		goto out;
+> +	}
+> +
+> +	result = 0;
+> +
+> +out:
+> +	return result;
+> +}
+> +
+> +static ssize_t handle_new_namespace_policy(const char *data, size_t datalen)
+> +{
+> +	unsigned int ns_id;
+> +	ssize_t result;
+> +
+> +	result = -EINVAL;
+> +
+> +	if (sscanf(data, "%u", &ns_id) != 1) {
+> +		pr_err("IMA: invalid namespace id: %s\n", data);
+> +		goto out;
+> +	}
+> +
+> +	if (check_mntns(ns_id)) {
+> +		result = -ENOENT;
+> +		pr_err("IMA: unused namespace id %u\n", ns_id);
+> +		goto out;
+> +	}
+> +
+> +	result = create_mnt_ns_directory(ns_id);
+> +	if (result != 0) {
+> +		pr_err("IMA: namespace id %u directory creation failed\n", ns_id);
+> +		goto out;
+> +	}
+> +
+> +	result = datalen;
+> +	pr_info("IMA: directory created for namespace id %u\n", ns_id);
+> +
+> +out:
+> +	return result;
+> +}
+> +
+> +static ssize_t ima_write_namespaces(struct file *file, const char __user *buf,
+> +		                            size_t datalen, loff_t *ppos)
+> +{
+> +	char *data;
+> +	ssize_t result;
+> +
+> +	if (datalen >= PAGE_SIZE)
+> +		datalen = PAGE_SIZE - 1;
+> +
+> +	/* No partial writes. */
+> +	result = -EINVAL;
+> +	if (*ppos != 0)
+> +		goto out;
+> +
+> +	result = -ENOMEM;
+> +	data = kmalloc(datalen + 1, GFP_KERNEL);
+> +	if (!data)
+> +		goto out;
+> +
+> +	*(data + datalen) = '\0';
+> +
+> +	result = -EFAULT;
+> +	if (copy_from_user(data, buf, datalen))
+> +		goto out_free;
+> +
+> +	result = mutex_lock_interruptible(&ima_write_mutex);
+> +	if (result < 0)
+> +		goto out_free;
+> +
+> +	result = handle_new_namespace_policy(data, datalen);
+> +
+> +	mutex_unlock(&ima_write_mutex);
+> +
+> +out_free:
+> +	kfree(data);
+> +out:
+> +	return result;
+> +}
+> +
+> +static int ima_open_namespaces(struct inode *inode, struct file *filp)
+> +{
+> +	if (!(filp->f_flags & O_WRONLY))
+> +		return -EACCES;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	if (test_and_set_bit(IMA_FS_BUSY, &ima_fs_flags))
+> +		return -EBUSY;
+> +	return 0;
+> +}
+> +
+> +static int ima_release_namespaces(struct inode *inode, struct file *file)
+> +{
+> +	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct file_operations ima_namespaces_ops = {
+> +		.open = ima_open_namespaces,
+> +		.write = ima_write_namespaces,
+> +		.read = seq_read,
+> +		.release = ima_release_namespaces,
+> +		.llseek = generic_file_llseek,
+> +};
+> +#endif
+> +
+>  int __init ima_fs_init(void)
+>  {
+>  	ima_dir = securityfs_create_dir("ima", NULL);
+> @@ -490,6 +662,14 @@ int __init ima_fs_init(void)
+>  	if (IS_ERR(ima_policy))
+>  		goto out;
+> 
+> +#ifdef CONFIG_IMA_PER_NAMESPACE
+> +	ima_namespaces = securityfs_create_file("namespaces", NAMESPACES_FILE_FLAGS,
+> +						ima_dir, NULL,
+> +						&ima_namespaces_ops);
+> +	if (IS_ERR(ima_namespaces))
+> +		goto out;
+> +#endif
+> +
+>  	return 0;
+>  out:
+>  	securityfs_remove(violations);
+> @@ -498,5 +678,8 @@ int __init ima_fs_init(void)
+>  	securityfs_remove(binary_runtime_measurements);
+>  	securityfs_remove(ima_dir);
+>  	securityfs_remove(ima_policy);
+> +#ifdef CONFIG_IMA_PER_NAMESPACE
+> +	securityfs_remove(ima_namespaces);
+> +#endif
+>  	return -1;
+>  }
+
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
