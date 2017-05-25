@@ -1,50 +1,36 @@
-From: PeterHuewe@gmx.de (Peter Huewe)
-Date: Thu, 25 May 2017 07:32:28 +0200
-Subject: Aw: Re: [PATCH] tpm: remove struct tpm_pcrextend_in
-In-Reply-To: <20170524222822.bk2popwamuo7ee3o@intel.com>
-References: <20170524222731.19741-1-jarkko.sakkinen@linux.intel.com>
-	<20170524222822.bk2popwamuo7ee3o@intel.com>
-Message-ID: <trinity-4c867f71-295b-4ef6-b141-ca66fa805d6c-1495690348388@3capp-gmx-bs66>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 25 May 2017 07:53:22 +0100
+Subject: [PATCH 3/5] Add the ability to lock down access to the running
+	kernel image
+In-Reply-To: <80bdc6c9-004b-800f-ffd0-4b5ebf8cdeba@schaufler-ca.com>
+References: <80bdc6c9-004b-800f-ffd0-4b5ebf8cdeba@schaufler-ca.com>
+	<149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+	<149563714531.9419.16811189348445249219.stgit@warthog.procyon.org.uk>
+Message-ID: <19783.1495695202@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> Removed struct tpm_pcrextend_in as it is not used for anything anymore.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-LGTM.
-Reviewed-by: Peter Huewe <peterhuewe@gmx.de>
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-> ---
-> drivers/char/tpm/tpm.h | 6 ------
-> 1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index dd1173427fb2..af05c1403c6e 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -363,11 +363,6 @@ struct tpm_pcrread_in {
-> __be32 pcr_idx;
-> } __packed;
->
-> -struct tpm_pcrextend_in {
-> - __be32 pcr_idx;
-> - u8 hash[TPM_DIGEST_SIZE];
-> -} __packed;
-> -
-> /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
-> * bytes, but 128 is still a relatively large number of random bytes and
-> * anything much bigger causes users of struct tpm_cmd_t to start getting
-> @@ -392,7 +387,6 @@ typedef union {
-> u8 readpubek_out_buffer[sizeof(struct tpm_readpubek_params_out)];
-> struct tpm_pcrread_in pcrread_in;
-> struct tpm_pcrread_out pcrread_out;
-> - struct tpm_pcrextend_in pcrextend_in;
-> struct tpm_getrandom_in getrandom_in;
-> struct tpm_getrandom_out getrandom_out;
-> struct tpm_startup_in startup_in;
-> --
-> 2.11.0
->
+> > +#ifdef CONFIG_LOCK_DOWN_KERNEL
+> > +extern bool kernel_is_locked_down(void);
+> > +#else
+> > +static inline bool kernel_is_locked_down(void)
+> 
+> Should this be a bool or an int? I can imagine that someone is going to want
+> various different degrees of lock down for kernels. As an int you could
+> return a bitmap indicating which features were locked. This would allow
+> additional things to be locked down without changing the interface.
+
+At the moment it makes no difference, since the return value is only ever
+passed directly to an if-statement.
+
+Also, do you have an idea as to how is should be divided up?
+
+There aren't so many cases, at least not yet, that they can't be fixed up,
+perhaps with a coccinelle script.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
