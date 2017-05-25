@@ -1,60 +1,70 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 25 May 2017 07:46:02 -0400
-Subject: [RFC 04/11] ima: add support to namespace securityfs file
-In-Reply-To: <d8d55872-db78-3535-a540-85c0dbb2d6fd@canonical.com>
-References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-	<1494511203-8397-5-git-send-email-guilherme.magalhaes@hpe.com>
-	<1495656774.3841.72.camel@linux.vnet.ibm.com>
-	<d8d55872-db78-3535-a540-85c0dbb2d6fd@canonical.com>
-Message-ID: <1495712762.3841.89.camel@linux.vnet.ibm.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Thu, 25 May 2017 09:12:36 -0400
+Subject: [PATCH] tpm: vtpm_proxy: Do not run tpm2_shutdown
+Message-ID: <1495717956-14252-1-git-send-email-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi John,
+The tpm2_shutdown does not work with the VTPM proxy driver since the
+function only gets called when the backend file descriptor is already
+closed and at this point no data can be sent anymore. A proper shutdown
+would have to be initated by a user space application, such as a container
+management stack, that sends the command via the character device before
+terminating the TPM emulator.
 
-On Thu, 2017-05-25 at 00:36 -0700, John Johansen wrote:
-> On 05/24/2017 01:12 PM, Mimi Zohar wrote:
-> > On Thu, 2017-05-11 at 10:59 -0300, Guilherme Magalhaes wrote:
-> >> Creating the namespace securityfs file under ima folder. When a mount
-> >> namespace id is written to the namespace file, a new folder is created and
-> >> with a policy file for that specified namespace. Then, user defined policy
-> >> for namespaces may be set by writing rules to this namespace policy file.
-> >> With this interface, there is no need to give visibility for the securityfs
-> >> inside mount namespaces or containers in userspace.
-> >>
-> >> Signed-off-by: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
-> > 
-> > The design needs to be flexible enough for different types of
-> > containers, not just for when the orchestration layer provides the
-> > policy.  With this design, the container owner has no control over the
-> > policy.
-> > 
-> > One option is that we bind mount the securityfs/policy, so that root
-> > in the container will be allowed to read/write the policy.  At some
-> > point, we might connect a vTPM to the container so that the container
-> > owner would be able to get a quote.  For now even without a vTPM, the
-> > same mechanism would allow root within the container to read the
-> > measurement list.
-> > 
-> I haven't looked at this enough yet on IMAs end, but another possible solution
-> is using a symlink and a magic jump_link similar to what nsfs is doing.
-> 
-> The patch series I posted out a couple of weeks ago
->   [RFC][Patch 0/3] securityfs: add the ability to support symlinks
-> 
-> adds symlink support to securityfs, and then patch 3/3 cribs from nsfs
-> updating apparmorfs to use jump_link to "virtualize" the apparmor policy
-> directory. This avoids needing to have the bind mount.
-> 
-> I'll break the patch out more and repost so its easier to see if this
-> approach might work for IMA.
+To avoid the tpm2_shutdown we introduce a TPM_CHIP_FLAG_NO_SHUTDOWN flag
+that only the VTPM proxy driver sets. This also avoids misleading kernel
+log messages.
 
-Sorry, I've been meaning to take a look at your patches, but just
-haven't gotten to it yet. ?This approach sounds really promising.
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+---
+ drivers/char/tpm/tpm.h            | 1 +
+ drivers/char/tpm/tpm2-cmd.c       | 3 +++
+ drivers/char/tpm/tpm_vtpm_proxy.c | 3 ++-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-thanks,
-
-Mimi
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 25d9858..23b656f 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -170,6 +170,7 @@ enum tpm_chip_flags {
+ 	TPM_CHIP_FLAG_IRQ		= BIT(2),
+ 	TPM_CHIP_FLAG_VIRTUAL		= BIT(3),
+ 	TPM_CHIP_FLAG_HAVE_TIMEOUTS	= BIT(4),
++	TPM_CHIP_FLAG_NO_SHUTDOWN	= BIT(5),
+ };
+ 
+ struct tpm_bios_log {
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 3ee6883..495d316 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -831,6 +831,9 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+ 	struct tpm2_cmd cmd;
+ 	int rc;
+ 
++	if (chip->flags & TPM_CHIP_FLAG_NO_SHUTDOWN)
++		return;
++
+ 	cmd.header.in = tpm2_shutdown_header;
+ 	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
+ 
+diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+index 1d877cc..d439ce7 100644
+--- a/drivers/char/tpm/tpm_vtpm_proxy.c
++++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+@@ -573,7 +573,8 @@ static struct file *vtpm_proxy_create_device(
+ 	vtpm_proxy_fops_open(file);
+ 
+ 	if (proxy_dev->flags & VTPM_PROXY_FLAG_TPM2)
+-		proxy_dev->chip->flags |= TPM_CHIP_FLAG_TPM2;
++		proxy_dev->chip->flags |= TPM_CHIP_FLAG_TPM2 |
++					  TPM_CHIP_FLAG_NO_SHUTDOWN;
+ 
+ 	vtpm_proxy_work_start(proxy_dev);
+ 
+-- 
+2.4.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
