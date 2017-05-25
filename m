@@ -1,28 +1,51 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 25 May 2017 09:44:16 -0700
-Subject: [PATCH] tpm, tpm_infineon: remove useless snprintf() calls
-In-Reply-To: <trinity-b171219a-5a85-4fd0-9bc7-f5ecde2598f4-1495690145148@3capp-gmx-bs66>
-References: <20170524212916.9106-1-jarkko.sakkinen@linux.intel.com>
-	<20170524215259.xkaqrnhcb44jpyd5@intel.com>
-	<trinity-b171219a-5a85-4fd0-9bc7-f5ecde2598f4-1495690145148@3capp-gmx-bs66>
-Message-ID: <20170525164416.5dn7l3eu4tkudypn@intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 25 May 2017 11:18:22 -0700
+Subject: [PATCH 3/5] Add the ability to lock down access to the running
+	kernel image
+In-Reply-To: <19783.1495695202@warthog.procyon.org.uk>
+References: <80bdc6c9-004b-800f-ffd0-4b5ebf8cdeba@schaufler-ca.com>
+	<149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+	<149563714531.9419.16811189348445249219.stgit@warthog.procyon.org.uk>
+	<19783.1495695202@warthog.procyon.org.uk>
+Message-ID: <fa6647c3-baff-d9e9-8ffe-89042b2a553d@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 25, 2017 at 07:29:05AM +0200, Peter Huewe wrote:
-> > The memory copy from rodata to stack is useless.
-> >
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> After review, yes that should work.
-> Reviewed-by: Peter Huewe <peterhuewe@gmx.de>
+On 5/24/2017 11:53 PM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>>> +#ifdef CONFIG_LOCK_DOWN_KERNEL
+>>> +extern bool kernel_is_locked_down(void);
+>>> +#else
+>>> +static inline bool kernel_is_locked_down(void)
+>> Should this be a bool or an int? I can imagine that someone is going to want
+>> various different degrees of lock down for kernels. As an int you could
+>> return a bitmap indicating which features were locked. This would allow
+>> additional things to be locked down without changing the interface.
+> At the moment it makes no difference, since the return value is only ever
+> passed directly to an if-statement.
+>
+> Also, do you have an idea as to how is should be divided up?
 
-Yes, the string gets stored to rodata section where it is copied to
-stack :-)
+You called out five distinct features in 0/5, so how about
+a bit for each of those?
 
-Thanx!
+Actually, I don't care which way you go. The current code works
+for me. I am just concerned that the granularity fiends might come
+around later.
 
-/Jarkko
+
+>
+> There aren't so many cases, at least not yet, that they can't be fixed up,
+> perhaps with a coccinelle script.
+>
+> David
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
