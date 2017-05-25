@@ -1,81 +1,46 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 25 May 2017 15:33:48 -0700
-Subject: [PATCH] tpm: vtpm_proxy: Do not run tpm2_shutdown
-In-Reply-To: <9ff88c24-ca7a-1867-7284-17689fdac655@linux.vnet.ibm.com>
-References: <1495717956-14252-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<20170525155059.GA5151@obsidianresearch.com>
-	<f6c024ae-fe93-251a-a176-1f27f25b1e21@linux.vnet.ibm.com>
-	<20170525200931.GA12733@obsidianresearch.com>
-	<9ff88c24-ca7a-1867-7284-17689fdac655@linux.vnet.ibm.com>
-Message-ID: <20170525223348.uh66n37dnvz3eptl@intel.com>
+From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
+Date: Thu, 25 May 2017 16:40:50 -0600
+Subject: [PATCH RFC] tpm: migrate pubek_show to struct tpm_buf
+In-Reply-To: <20170525222801.mayost6gxcggurjo@intel.com>
+References: <20170525211105.843-1-jarkko.sakkinen@linux.intel.com>
+	<20170525211613.GA14802@obsidianresearch.com>
+	<20170525222801.mayost6gxcggurjo@intel.com>
+Message-ID: <20170525224050.GA15715@obsidianresearch.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 25, 2017 at 04:32:50PM -0400, Stefan Berger wrote:
-> On 05/25/2017 04:09 PM, Jason Gunthorpe wrote:
-> > On Thu, May 25, 2017 at 04:04:24PM -0400, Stefan Berger wrote:
-> > > On 05/25/2017 11:50 AM, Jason Gunthorpe wrote:
-> > > > On Thu, May 25, 2017 at 09:12:36AM -0400, Stefan Berger wrote:
-> > > > > The tpm2_shutdown does not work with the VTPM proxy driver since the
-> > > > > function only gets called when the backend file descriptor is already
-> > > > > closed and at this point no data can be sent anymore. A proper shutdown
-> > > > > would have to be initated by a user space application, such as a container
-> > > > > management stack, that sends the command via the character device before
-> > > > > terminating the TPM emulator.
-> > > > > 
-> > > > > To avoid the tpm2_shutdown we introduce a TPM_CHIP_FLAG_NO_SHUTDOWN flag
-> > > > > that only the VTPM proxy driver sets. This also avoids misleading kernel
-> > > > > log messages.
-> > > > This seems strange to me..
-> > > > 
-> > > > Why isn't ops null if the fd has gone away?
-> > > > 
-> > > > What is the call flow that hits this?
-> > > In this function here.
-> > > 
-> > > static void tpm_del_char_device(struct tpm_chip *chip)
-> > > {
-> > >      cdev_device_del(&chip->cdev, &chip->dev);
-> > > 
-> > >      /* Make the chip unavailable. */
-> > >      mutex_lock(&idr_lock);
-> > >      idr_replace(&dev_nums_idr, NULL, chip->dev_num);
-> > >      mutex_unlock(&idr_lock);
-> > > 
-> > >      /* Make the driver uncallable. */
-> > >      down_write(&chip->ops_sem);
-> > >      if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> > >          tpm2_shutdown(chip, TPM2_SU_CLEAR);
-> > >      chip->ops = NULL;
-> > >      up_write(&chip->ops_sem);
-> > > }
-> > > 
-> > > The request cannot be deliver because the anonymous fd has been closed
-> > > already.
-> > The driver must always be able to process requests until
-> > tpm_del_char_device completes, so this is triggering an existing bug
-> > in vtpm. This change in core behvior is not going to fix the bug.
+On Thu, May 25, 2017 at 03:28:01PM -0700, Jarkko Sakkinen wrote:
+> On Thu, May 25, 2017 at 03:16:13PM -0600, Jason Gunthorpe wrote:
+> > On Thu, May 25, 2017 at 02:11:04PM -0700, Jarkko Sakkinen wrote:
+> > >  	struct tpm_chip *chip = to_tpm_chip(dev);
+> > > +	char anti_replay[20];
+> > >  
+> > > -	tpm_cmd.header.in = tpm_readpubek_header;
+> > > -	err = tpm_transmit_cmd(chip, NULL, &tpm_cmd, READ_PUBEK_RESULT_SIZE,
+> > > +	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
+> > > +	if (rc)
+> > > +		return rc;
+> > > +
+> > > +	/* The checksum is ignored so it doesn't matter what the contents are.
+> > > +	 */
+> > > +	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
 > > 
-> > eg a request from sysfs/etc could come in between vtpm fd closure and
-> > tpm_del_char_device, and it still must be handled properly.
-> > 
-> > I guess you need to have transmit command fail fast once the fd is
-> > closed.
+> > It does matter, we do not want to leak random kernel memory incase it
+> > has something sensitive. Zero anti_replay.
 > 
-> It doesn't hang. Everything is torn down immediately. What is primarily
-> annoying are these two log messages:
-> tpm tpm0: tpm_transmit: tpm_send: error -32
-> tpm tpm0: transmit returned -32 while stopping the TPM
-> 
-> 
->     Stefan
+> If there was a leak it has existed before this change as tpm_cmd was
+> also allocated from stack. And there is not leak because the checksum is
+> not printed.
 
-It's been a while since I've looked into vtpm code. Why was fd closed
-before the above? I can go this through myself once I'm back in Finland
-next week. Just have forgotten this detail and do not have time to study
-this right now.
+It leaks stack memory to the TPM which is not OK.
 
-/Jarkko
+> I think better idea would be to move struct tpm_readpubek_params_out
+> declaration here and use it to refer different fields. Previously
+> this
+
+That would be better..
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
