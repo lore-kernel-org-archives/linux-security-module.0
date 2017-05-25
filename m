@@ -1,31 +1,28 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Thu, 25 May 2017 09:50:59 -0600
-Subject: [PATCH] tpm: vtpm_proxy: Do not run tpm2_shutdown
-In-Reply-To: <1495717956-14252-1-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1495717956-14252-1-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <20170525155059.GA5151@obsidianresearch.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 25 May 2017 09:44:16 -0700
+Subject: [PATCH] tpm, tpm_infineon: remove useless snprintf() calls
+In-Reply-To: <trinity-b171219a-5a85-4fd0-9bc7-f5ecde2598f4-1495690145148@3capp-gmx-bs66>
+References: <20170524212916.9106-1-jarkko.sakkinen@linux.intel.com>
+	<20170524215259.xkaqrnhcb44jpyd5@intel.com>
+	<trinity-b171219a-5a85-4fd0-9bc7-f5ecde2598f4-1495690145148@3capp-gmx-bs66>
+Message-ID: <20170525164416.5dn7l3eu4tkudypn@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 25, 2017 at 09:12:36AM -0400, Stefan Berger wrote:
-> The tpm2_shutdown does not work with the VTPM proxy driver since the
-> function only gets called when the backend file descriptor is already
-> closed and at this point no data can be sent anymore. A proper shutdown
-> would have to be initated by a user space application, such as a container
-> management stack, that sends the command via the character device before
-> terminating the TPM emulator.
+On Thu, May 25, 2017 at 07:29:05AM +0200, Peter Huewe wrote:
+> > The memory copy from rodata to stack is useless.
+> >
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > 
-> To avoid the tpm2_shutdown we introduce a TPM_CHIP_FLAG_NO_SHUTDOWN flag
-> that only the VTPM proxy driver sets. This also avoids misleading kernel
-> log messages.
+> After review, yes that should work.
+> Reviewed-by: Peter Huewe <peterhuewe@gmx.de>
 
-This seems strange to me..
+Yes, the string gets stored to rodata section where it is copied to
+stack :-)
 
-Why isn't ops null if the fd has gone away?
+Thanx!
 
-What is the call flow that hits this?
-
-Jason
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
