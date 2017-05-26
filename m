@@ -1,34 +1,75 @@
-From: jlee@suse.com (joeyli)
-Date: Sat, 27 May 2017 01:08:18 +0800
-Subject: [PATCH 3/5] Add the ability to lock down access to the running
-	kernel image
-In-Reply-To: <22659.1495802592@warthog.procyon.org.uk>
-References: <fa6647c3-baff-d9e9-8ffe-89042b2a553d@schaufler-ca.com>
-	<80bdc6c9-004b-800f-ffd0-4b5ebf8cdeba@schaufler-ca.com>
-	<149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
-	<149563714531.9419.16811189348445249219.stgit@warthog.procyon.org.uk>
-	<19783.1495695202@warthog.procyon.org.uk>
-	<22659.1495802592@warthog.procyon.org.uk>
-Message-ID: <20170526170818.GF15587@linux-l9pv.suse>
+From: mark.rutland@arm.com (Mark Rutland)
+Date: Fri, 26 May 2017 18:37:34 +0100
+Subject: [PATCH] KEYS: fix refcount_inc() on zero
+Message-ID: <1495820254-6651-1-git-send-email-mark.rutland@arm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 26, 2017 at 01:43:12PM +0100, David Howells wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
-> 
-> > You called out five distinct features in 0/5, so how about
-> > a bit for each of those?
-> 
-> Actually, there are more than five in that list - there are three in the first
-> item - and I'm not sure the remaining categories are quite as well defined as
-> I made it seem.
->
+If a key's refcount is dropped to zero between key_lookup() peeking at
+the refcount and subsequently attempting to increment it, refcount_inc()
+will see a zero refcount. Here, refcount_inc() will WARN_ONCE(), and
+will *not* increment the refcount, which will remain zero.
 
-Do we have a public place (e.g. wiki page) to put the list of lock-down
-functions?
+Once key_lookup() drops key_serial_lock, it is possible for the key to
+be freed behind our back.
 
-Thanks a lot!
-Joey Lee 
+This patch uses refcount_inc_not_zero() to perform the peek and
+increment atomically. A helper with lockdep annotation is added to
+document why this is safe.
+
+Fixes: fff292914d3a2f1e ("security, keys: convert key.usage from atomic_t to refcount_t")
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David Windsor <dwindsor@gmail.com>
+Cc: Elena Reshetova <elena.reshetova@intel.com>
+Cc: Hans Liljestrand <ishkamiel@gmail.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+---
+ security/keys/key.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 455c04d..150f51d 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -632,6 +632,12 @@ void key_put(struct key *key)
+ }
+ EXPORT_SYMBOL(key_put);
+ 
++static bool key_get_not_free(struct key *key)
++{
++	lockdep_assert_held(&key_serial_lock);
++	return refcount_inc_not_zero(&key->usage);
++}
++
+ /*
+  * Find a key by its serial number.
+  */
+@@ -660,14 +666,12 @@ struct key *key_lookup(key_serial_t id)
+ 	goto error;
+ 
+ found:
+-	/* pretend it doesn't exist if it is awaiting deletion */
+-	if (refcount_read(&key->usage) == 0)
+-		goto not_found;
+-
+-	/* this races with key_put(), but that doesn't matter since key_put()
+-	 * doesn't actually change the key
++	/*
++	 * Pretend it doesn't exist if it is awaiting deletion. This races with
++	 * key_put(), but we can peek at the key until we drop key_serial_lock.
+ 	 */
+-	__key_get(key);
++	if (!key_get_not_free(key))
++		goto not_found;
+ 
+ error:
+ 	spin_unlock(&key_serial_lock);
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
