@@ -1,91 +1,96 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Fri, 26 May 2017 12:05:48 -0700
-Subject: [PATCH] KEYS: fix refcount_inc() on zero
-In-Reply-To: <1495820254-6651-1-git-send-email-mark.rutland@arm.com>
-References: <1495820254-6651-1-git-send-email-mark.rutland@arm.com>
-Message-ID: <CAGXu5jLCpxQeuRKONnosuN_LbXmeyu_q4CeEER4fEPYe9a0tLg@mail.gmail.com>
+From: jlee@suse.com (joeyli)
+Date: Sat, 27 May 2017 12:06:54 +0800
+Subject: [PATCH 5/5] Add a sysrq option to exit secure boot mode
+In-Reply-To: <149563716341.9419.12043461651917925181.stgit@warthog.procyon.org.uk>
+References: <149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+	<149563716341.9419.12043461651917925181.stgit@warthog.procyon.org.uk>
+Message-ID: <20170527040654.GG15587@linux-l9pv.suse>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 26, 2017 at 10:37 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> If a key's refcount is dropped to zero between key_lookup() peeking at
-> the refcount and subsequently attempting to increment it, refcount_inc()
-> will see a zero refcount. Here, refcount_inc() will WARN_ONCE(), and
-> will *not* increment the refcount, which will remain zero.
->
-> Once key_lookup() drops key_serial_lock, it is possible for the key to
-> be freed behind our back.
->
-> This patch uses refcount_inc_not_zero() to perform the peek and
-> increment atomically. A helper with lockdep annotation is added to
-> document why this is safe.
->
-> Fixes: fff292914d3a2f1e ("security, keys: convert key.usage from atomic_t to refcount_t")
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: David Windsor <dwindsor@gmail.com>
-> Cc: Elena Reshetova <elena.reshetova@intel.com>
-> Cc: Hans Liljestrand <ishkamiel@gmail.com>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
+Hi,
 
-Thanks for catching this!
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
+On Wed, May 24, 2017 at 03:46:03PM +0100, David Howells wrote:
+> From: Kyle McMartin <kyle@redhat.com>
+> 
+> Make sysrq+x exit secure boot mode on x86_64, thereby allowing the running
+> kernel image to be modified.  This lifts the lockdown.
+> 
+> Signed-off-by: Kyle McMartin <kyle@redhat.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: x86 at kernel.org
 > ---
->  security/keys/key.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
->
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 455c04d..150f51d 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -632,6 +632,12 @@ void key_put(struct key *key)
+> 
+>  arch/x86/include/asm/efi.h        |    2 ++
+>  drivers/firmware/efi/Kconfig      |   10 ++++++++++
+>  drivers/firmware/efi/secureboot.c |   37 +++++++++++++++++++++++++++++++++++++
+>  drivers/input/misc/uinput.c       |    1 +
+>  drivers/tty/sysrq.c               |   19 +++++++++++++------
+>  include/linux/input.h             |    5 +++++
+>  include/linux/sysrq.h             |    8 +++++++-
+>  kernel/debug/kdb/kdb_main.c       |    2 +-
+>  8 files changed, 76 insertions(+), 8 deletions(-)
+> 
+[...snip]  
+> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+> index 3ffc1ce29023..8b766dbad6dd 100644
+> --- a/drivers/tty/sysrq.c
+> +++ b/drivers/tty/sysrq.c
+> @@ -481,6 +481,7 @@ static struct sysrq_key_op *sysrq_key_table[36] = {
+>  	/* x: May be registered on mips for TLB dump */
+>  	/* x: May be registered on ppc/powerpc for xmon */
+>  	/* x: May be registered on sparc64 for global PMU dump */
+> +	/* x: May be registered on x86_64 for disabling secure boot */
+>  	NULL,				/* x */
+
+I suggest that add this key to the "What are the 'command' keys?"
+session in Documentation/admin-guide/sysrq.rst.
+
+>  	/* y: May be registered on sparc64 for global register dump */
+>  	NULL,				/* y */
+> @@ -524,7 +525,7 @@ static void __sysrq_put_key_op(int key, struct sysrq_key_op *op_p)
+>                  sysrq_key_table[i] = op_p;
 >  }
->  EXPORT_SYMBOL(key_put);
->
-> +static bool key_get_not_free(struct key *key)
-> +{
-> +       lockdep_assert_held(&key_serial_lock);
-> +       return refcount_inc_not_zero(&key->usage);
-> +}
-> +
->  /*
->   * Find a key by its serial number.
->   */
-> @@ -660,14 +666,12 @@ struct key *key_lookup(key_serial_t id)
->         goto error;
->
->  found:
-> -       /* pretend it doesn't exist if it is awaiting deletion */
-> -       if (refcount_read(&key->usage) == 0)
-> -               goto not_found;
-> -
-> -       /* this races with key_put(), but that doesn't matter since key_put()
-> -        * doesn't actually change the key
-> +       /*
-> +        * Pretend it doesn't exist if it is awaiting deletion. This races with
-> +        * key_put(), but we can peek at the key until we drop key_serial_lock.
->          */
-> -       __key_get(key);
-> +       if (!key_get_not_free(key))
-> +               goto not_found;
->
->  error:
->         spin_unlock(&key_serial_lock);
-> --
-> 1.9.1
->
+>  
+> -void __handle_sysrq(int key, bool check_mask)
+> +void __handle_sysrq(int key, unsigned int from)
+>  {
+>  	struct sysrq_key_op *op_p;
+>  	int orig_log_level;
+> @@ -544,11 +545,15 @@ void __handle_sysrq(int key, bool check_mask)
+>  
+>          op_p = __sysrq_get_key_op(key);
+>          if (op_p) {
+> +		/* Ban synthetic events from some sysrq functionality */
+> +		if ((from == SYSRQ_FROM_PROC || from == SYSRQ_FROM_SYNTHETIC) &&
+> +		    op_p->enable_mask & SYSRQ_DISABLE_USERSPACE)
+> +			printk("This sysrq operation is disabled from userspace.\n");
+>  		/*
+>  		 * Should we check for enabled operations (/proc/sysrq-trigger
+>  		 * should not) and is the invoked operation enabled?
+>  		 */
+> -		if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
+> +		if (from == SYSRQ_FROM_KERNEL || sysrq_on_mask(op_p->enable_mask)) {
+>  			pr_cont("%s\n", op_p->action_msg);
+>  			console_loglevel = orig_log_level;
+>  			op_p->handler(key);
 
+Looking at sysrq_on_mask():
 
+static bool sysrq_on_mask(int mask)
+{
+	return sysrq_always_enabled ||
+	       sysrq_enabled == 1 ||
+	       (sysrq_enabled & mask); 
+}
 
--- 
-Kees Cook
-Pixel Security
+The SYSRQ_DISABLE_USERSPACE can be ignored by sysrq_always_enabled or
+sysrq_enabled (the default value is CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x1).
+Kernel should checks the locked down flag here when secure boot ON. Will we
+have another lock down patch against this? Or I missed something?
+
+Thanks a lot!
+Joey Lee
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
