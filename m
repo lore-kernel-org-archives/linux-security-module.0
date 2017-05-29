@@ -1,76 +1,74 @@
-From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Mon, 29 May 2017 11:22:47 +0300
-Subject: [PATCH v2 00/11] introduce crypto wait for async op
-Message-ID: <1496046180-21962-1-git-send-email-gilad@benyossef.com>
+From: oiaohm@gmail.com (Peter Dolding)
+Date: Mon, 29 May 2017 20:42:19 +1000
+Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make TIOCSTI
+	ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170519143344.GA15983@mail.hallyn.com>
+References: <20170515215752.4e9f3826@alans-desktop>
+	<CANA3KFU6Aor=NjdC49XpX=h29vSpeiDNn78en7sbZFosAcntGw@mail.gmail.com>
+	<5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
+	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
+	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
+	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
+	<20170517174113.69d1cbaa@alans-desktop>
+	<1495045540.1619.1.camel@gmail.com>
+	<CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
+	<CANA3KFWF-=6AWZKAc1ijyoL5vRAwPnwngZZEP9=5+AFgnMv1rg@mail.gmail.com>
+	<20170519143344.GA15983@mail.hallyn.com>
+Message-ID: <CANA3KFXVzSXuA4Cocm7fUYE9EOvJX7pW0bsj=cgyUYvScUsXGQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Many users of kernel async. crypto services have a pattern of
-starting an async. crypto op and than using a completion
-to wait for it to end, resulting of the same code repeating
-itself in multiple places, sometime with coding errors.
+On Sat, May 20, 2017 at 12:33 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Fri, May 19, 2017 at 12:48:17PM +1000, Peter Dolding wrote:
+>> Using cap_sys_admin as fix is like removing car windsheld because
+>> vision is being blocked by a rock hitting it.
+>
+> Nonsense.  If the application has cap_sys_admin then it is less contained and
+> more trusted anyway.  If I went to the trouble to run an application in a
+> private user namespace (where it can have cap_sys_admin, but not targeted
+> at my tty) then it should be more contained.  That's the point of targeted
+> capabilities.
 
-This patch aims to introduce a generic "wait for async.
-crypto op to complete" functions and move all the users
-I could find to use it.  This gets rid of almost 300
-lines of code and uncovered a few bugs in existing code
-(separate bug fix patch set sent previously).
+The thing that is missed every time is how much is cap_sys_admin.
 
-The patch set was boot tested on x86_64 and arm64 which
-at the very least tests the crypto users via testmgr
-but I am less confident regarding some of the other
-users and would love more testers.
- 
-Changes from v1:
-- Address review comments from Eric Biggers.
-- Separated out bug fixes of existing code and rebase
-  on top of that patch set.
-- Rename 'ecr' to 'wait' in fscrypto code.
-- Split patch introducing the new API from the change
-  moving over the algif code which it originated from
-  to the new API.
-- Inline crypto_wait_req().
-- Some code indentation fixes.
+So you are saying a user namespace has to be set up to contain the defect.
 
-Gilad Ben-Yossef (11):
-  crypto: introduce crypto wait for async op
-  crypto: move algif to generic async completion
-  crypto: move pub key to generic async completion
-  crypto: move drbg to generic async completion
-  crypto: move gcm to generic async completion
-  crypto: move testmgr to generic async completion
-  dm: move dm-verity to generic async completion
-  fscrypt: move to generic async completion
-  cifs: move to generic async completion
-  ima: move to generic async completion
-  crypto: adapt api sample to use async. op wait
+Really no application should have cap_sys_admin.
 
- Documentation/crypto/api-samples.rst |  52 ++--------
- crypto/af_alg.c                      |  27 -----
- crypto/algif_aead.c                  |  14 +--
- crypto/algif_hash.c                  |  29 +++---
- crypto/algif_skcipher.c              |  15 ++-
- crypto/api.c                         |  13 +++
- crypto/asymmetric_keys/public_key.c  |  28 +-----
- crypto/drbg.c                        |  34 ++-----
- crypto/gcm.c                         |  32 ++----
- crypto/testmgr.c                     | 184 +++++++++++------------------------
- drivers/md/dm-verity-target.c        |  81 ++++-----------
- drivers/md/dm-verity.h               |   5 -
- fs/cifs/smb2ops.c                    |  30 +-----
- fs/crypto/crypto.c                   |  28 +-----
- fs/crypto/fname.c                    |  36 ++-----
- fs/crypto/fscrypt_private.h          |  10 --
- fs/crypto/keyinfo.c                  |  21 +---
- include/crypto/drbg.h                |   3 +-
- include/crypto/if_alg.h              |  14 ---
- include/linux/crypto.h               |  41 ++++++++
- security/integrity/ima/ima_crypto.c  |  56 ++++-------
- 21 files changed, 220 insertions(+), 533 deletions(-)
+The theory of capabilities is that security should be broken down into
+logical blocks.
 
--- 
-2.1.4
+So tty stuff should under a tty capabilities.
 
+This one here should not be shoved into cap_sys_admin because can you
+show a single case of a general used application performing this
+action in the exploit way that is normal behaviour.
+
+The exploits are doing behaviours that have no general place.
+
+Its really simple to shove everything to cap_sys_admin instead of hey
+lets look at the exploits how they work and if this should be fairly
+blanked banned.  The behaviour that is question is being able push
+chars into input stream and have them processed after application has
+terminated or after application has switched to background.   That is
+not pushing data into another tty.   Pushing data into a different tty
+is already restricted to cap_sys_admin.
+
+Personally from my point of view when application terminates or
+switches to background  what ever it pushed back into the input buffer
+should be junked and maybe a special cap to deal with rare case of
+applications that expect this behavour.
+
+Also please remember one of the application using this behaviour of
+pushing stuff back to input buffer is csh.  In other words a general
+user shell.   This will not be the only application that is general
+usage after the change of pushing to cap_sys_admin that would also
+have to be pushed to cap_sys_admin because they use TIOCSTI in a way
+that the patch will block when the program does not have
+cap_sys_admin.   So now you have more applications running as
+cap_sys_admin so more security problems.
+
+Peter Dolding.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
