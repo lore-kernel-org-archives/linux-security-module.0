@@ -1,75 +1,126 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Sun, 28 May 2017 14:19:22 -0700
-Subject: [PATCH v2] LSM: Convert security_hook_heads into explicit array
-	of struct list_head
-In-Reply-To: <1496003387-3184-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1495883858-3336-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-	<1496003387-3184-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <CAGXu5jK2azpWLOg=EGEOhPySN52_JpMcXoWaSkNSZhxF1_dNFA@mail.gmail.com>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Mon, 29 May 2017 11:22:48 +0300
+Subject: [PATCH v2 01/11] crypto: introduce crypto wait for async op
+In-Reply-To: <1496046180-21962-1-git-send-email-gilad@benyossef.com>
+References: <1496046180-21962-1-git-send-email-gilad@benyossef.com>
+Message-ID: <1496046180-21962-2-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, May 28, 2017 at 1:29 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Commit 3dfc9b02864b19f4 ("LSM: Initialize security_hook_heads upon
-> registration.") treats "struct security_hook_heads" as an implicit array
-> of "struct list_head" so that we can eliminate code for static
-> initialization. Although we haven't encountered compilers which do not
-> treat sizeof(security_hook_heads) != sizeof(struct list_head) *
-> (sizeof(security_hook_heads) / sizeof(struct list_head)), Casey does not
-> like the assumption that a structure of N elements can be assumed to be
-> the same as an array of N elements.
->
-> Now that Kees found that randstruct complains about such casting
->
->   security/security.c: In function 'security_init':
->   security/security.c:59:20: note: found mismatched op0 struct pointer types: 'struct list_head' and 'struct security_hook_heads'
->
->     struct list_head *list = (struct list_head *) &security_hook_heads;
->
-> and Christoph thinks that we should fix it rather than make randstruct
-> whitelist it, this patch fixes it.
->
-> It would be possible to revert commit 3dfc9b02864b19f4, but this patch
-> converts security_hook_heads into an explicit array of struct list_head
-> by introducing an enum, due to reasons explained below.
->
-> Igor proposed a sealable memory allocator, and the LSM hooks
-> ("struct security_hook_heads security_hook_heads" and
-> "struct security_hook_list ...[]") will benefit from that allocator via
-> protection using set_memory_ro()/set_memory_rw(), and that allocator
-> will remove CONFIG_SECURITY_WRITABLE_HOOKS config option. Thus, we will
-> likely be moving to that direction.
->
-> This means that these structures will be allocated at run time using
-> that allocator, and therefore the address of these structures will be
-> determined at run time rather than compile time.
->
-> But currently, LSM_HOOK_INIT() macro depends on the address of
-> security_hook_heads being known at compile time. If we use an enum
-> so that LSM_HOOK_INIT() macro does not need to know absolute address of
-> security_hook_heads, it will help us to use that allocator for LSM hooks.
->
-> As a result of introducing an enum, security_hook_heads becomes a local
-> variable. In order to pass 80 columns check by scripts/checkpatch.pl ,
-> rename security_hook_heads to hook_heads.
->
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: Igor Stoppa <igor.stoppa@huawei.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
+Invoking a possibly async. crypto op and waiting for completion
+while correctly handling backlog processing is a common task
+in the crypto API implementation and outside users of it.
 
-Looks good to me; thanks for persisting! :)
+This patch adds a generic implementation for doing so in
+preparation for using it across the board instead of hand
+rolled versions.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+CC: Eric Biggers <ebiggers3@gmail.com>
+CC: Ofir Drang <ofir.drang@arm.com>
+---
+ crypto/api.c           | 13 +++++++++++++
+ include/linux/crypto.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
+diff --git a/crypto/api.c b/crypto/api.c
+index 941cd4c..2a2479d 100644
+--- a/crypto/api.c
++++ b/crypto/api.c
+@@ -24,6 +24,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
++#include <linux/completion.h>
+ #include "internal.h"
+ 
+ LIST_HEAD(crypto_alg_list);
+@@ -595,5 +596,17 @@ int crypto_has_alg(const char *name, u32 type, u32 mask)
+ }
+ EXPORT_SYMBOL_GPL(crypto_has_alg);
+ 
++void crypto_req_done(struct crypto_async_request *req, int err)
++{
++	struct crypto_wait *wait = req->data;
++
++	if (err == -EINPROGRESS)
++		return;
++
++	wait->err = err;
++	complete(&wait->completion);
++}
++EXPORT_SYMBOL_GPL(crypto_req_done);
++
+ MODULE_DESCRIPTION("Cryptographic core API");
+ MODULE_LICENSE("GPL");
+diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+index 84da997..bb00186 100644
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
++#include <linux/completion.h>
+ 
+ /*
+  * Autoloaded crypto modules should only use a prefixed name to avoid allowing
+@@ -468,6 +469,45 @@ struct crypto_alg {
+ } CRYPTO_MINALIGN_ATTR;
+ 
+ /*
++ * A helper struct for waiting for completion of async crypto ops
++ */
++struct crypto_wait {
++	struct completion completion;
++	int err;
++};
++
++/*
++ * Macro for declaring a crypto op async wait object on stack
++ */
++#define DECLARE_CRYPTO_WAIT(_wait) \
++	struct crypto_wait _wait = { \
++		COMPLETION_INITIALIZER_ONSTACK((_wait).completion), 0 }
++
++/*
++ * Async ops completion helper functioons
++ */
++void crypto_req_done(struct crypto_async_request *req, int err);
++
++static inline int crypto_wait_req(int err, struct crypto_wait *wait)
++{
++	switch (err) {
++	case -EINPROGRESS:
++	case -EBUSY:
++		wait_for_completion(&wait->completion);
++		reinit_completion(&wait->completion);
++		err = wait->err;
++		break;
++	};
++
++	return err;
++}
++
++static inline void crypto_init_wait(struct crypto_wait *wait)
++{
++	init_completion(&wait->completion);
++}
++
++/*
+  * Algorithm registration interface.
+  */
+ int crypto_register_alg(struct crypto_alg *alg);
+@@ -1604,5 +1644,6 @@ static inline int crypto_comp_decompress(struct crypto_comp *tfm,
+ 						    src, slen, dst, dlen);
+ }
+ 
++
+ #endif	/* _LINUX_CRYPTO_H */
+ 
 -- 
-Kees Cook
-Pixel Security
+2.1.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
