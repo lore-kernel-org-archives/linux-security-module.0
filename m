@@ -1,118 +1,93 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 29 May 2017 13:32:38 -0400
-Subject: [RFC 04/11] ima: add support to namespace securityfs file
-In-Reply-To: <CS1PR84MB0294089AC618EE12DB042263FFFF0@CS1PR84MB0294.NAMPRD84.PROD.OUTLOOK.COM>
-References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-	<1494511203-8397-5-git-send-email-guilherme.magalhaes@hpe.com>
-	<1495656774.3841.72.camel@linux.vnet.ibm.com>
-	<d8d55872-db78-3535-a540-85c0dbb2d6fd@canonical.com>
-	<1495712762.3841.89.camel@linux.vnet.ibm.com>
-	<CS1PR84MB0294089AC618EE12DB042263FFFF0@CS1PR84MB0294.NAMPRD84.PROD.OUTLOOK.COM>
-Message-ID: <1496079158.3841.350.camel@linux.vnet.ibm.com>
+From: matt@nmatt.com (Matt Brown)
+Date: Mon, 29 May 2017 17:37:58 -0400
+Subject: [PATCH v7 0/2] security: tty: make TIOCSTI ioctl require CAP_SYS_ADMIN
+Message-ID: <20170529213800.29438-1-matt@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Guilherme,
 
-(Wow, you should did Cc a lot of people.)
+This patchset introduces the tiocsti_restrict sysctl, whose default is
+controlled via CONFIG_SECURITY_TIOCSTI_RESTRICT. When activated, this
+control restricts all TIOCSTI ioctl calls from non CAP_SYS_ADMIN users.
 
-On Thu, 2017-05-25 at 19:04 +0000, Magalhaes, Guilherme (Brazil R&D-
-CL) wrote:
-> Mimi,
-> With the securityfs symlink we would address the case of setting
-> policy inside containers, but we still would need a way to set the
-> IMA policy per namespace outside containers. So, the current
-> proposed interface would address the latter case.
-> As an alternative to symlinks, taking this patch set as base, and
-> still considering setting policy inside containers (or inside
-> namespaces in general), it is possible to bind mount the securityfs
-> files into the containers, but it would be needed to prevent
-> read/write access to the namespaced IMA policy files for processes
-> not running on the same namespace.
-> 
-> These mechanisms would not require a change in the proposed design.
-> Do you think these mechanisms are enough for the flexibility you
-> asked?
+This patch was inspired from GRKERNSEC_HARDEN_TTY.
 
-I'm really sorry Guileherme, but as I previously explained, IMA has
-many aspects to it - the original file measurements (IMA-measurement), 
-file hash/signature appraisal (IMA-appraisal), and file audit messages
-(IMA-audit) used for security analytics/forensics, not the file system
-auditing.??To namespace IMA properly requires addressing some
-underlying problems - securityfs, root privilege required for writing
-security xattrs, per namespace IMA keyring - to name a few.
+This patch would have prevented
+https://bugzilla.redhat.com/show_bug.cgi?id=1411256 under the following
+conditions:
+* non-privileged container
+* container run inside new user namespace
 
-I understand wanting to namespace the appraisal aspect first, but when
-you asked me if anyone else is working on namespacing IMA at the
-moment, I suggested starting with the IMA-audit aspect for a
-reason.??By beginning with the IMA-audit aspect, we could ignore, at
-least for the time being, some of these underlying problems, but
-define the basic namespacing architecture.??By jumping to namespacing
-the appraisal aspect, you've simply avoided addressing the IMA
-namespacing architecture issues, which need to be addressed.
+Possible effects on userland:
 
-Here are some, not by any means all, of the issues with namespacing
-IMA.
+There could be a few user programs that would be effected by this
+change.
+See: <https://codesearch.debian.net/search?q=ioctl%5C%28.*TIOCSTI>
+notable programs are: agetty, csh, xemacs and tcsh
+
+However, I still believe that this change is worth it given that the
+Kconfig defaults to n. This will be a feature that is turned on for the
+same reason that people activate it when using grsecurity. Users of this
+opt-in feature will realize that they are choosing security over some OS
+features like unprivileged TIOCSTI ioctls, as should be clear in the
+Kconfig help message.
+
+Threat Model/Patch Rational:
+
+    From grsecurity's config for GRKERNSEC_HARDEN_TTY.
 
 
-- IMA-measurements:
+ | There are very few legitimate uses for this functionality and it
+ | has made vulnerabilities in several 'su'-like programs possible in
+ | the past.  Even without these vulnerabilities, it provides an
+ | attacker with an easy mechanism to move laterally among other
+ | processes within the same user's compromised session.
 
-The namespacing design will need to support different types of
-environments. For example, depending on the environment, namespaces
-can come and go frequently. In such an environment do we really want
-all the namespace measurements to be included in the system
-measurement list, or should each namespace have its own measurement
-list???Should the namespace measurement policy be the same as the
-system measurement policy???Should the namespace (container) owner be
-allowed to modify their own policy???If a file matches a rule in both
-the namespace and system policies, should the file measurement be in
-both the namespace and the system measurement lists?
+So if one process within a tty session becomes compromised it can follow
+that additional processes, that are thought to be in different security
+boundaries, can be compromised as a result. When using a program like su
+or sudo, these additional processes could be in a tty session where TTY file
+descriptors are indeed shared over privilege boundaries.
 
+This is also an excellent writeup about the issue:
+<http://www.halfdog.net/Security/2012/TtyPushbackPrivilegeEscalation/>
 
-- IMA-appraisal
+When user namespaces are in use, the check for the capability
+CAP_SYS_ADMIN is done against the user namespace that originally opened
+the tty.
 
-Assuming the IMA appraisal policy requires file signatures, signatures
-are verified based on the keys on the IMA keyring.??When discussing
-namespacing IMA-appraisal, we might want different sets of keys in
-different namespaces. This requires separate keyrings for each
-namespace. ?In some use cases, we might want to include the keys on
-the system IMA keyring, while in other use cases we might not.
+# Integration with CRIU:
+* The CRIU dev team was contacted about any possible issues that 
+  restrict_tiocsti might cause for the CRIU program. Their response was that
+  CRIU currently does not utilize the tiocsti ioctl, so it doesn't affect
+  them at the moment. They do wish in the future to do checks against
+  owner_user_ns, so we will work together on a way to make this information
+  available to userspace. In the mean time, The CRIU team is OK with this
+  patch moving forward as is.
 
-Even if real root initially installs the files with their file
-signatures, stored as extended attributes, how will software be
-updated, as writing file signatures requires root
-privilege?Capabilities has recently added support to permit root in
-the namespace to write security.capability.??Similarly when
-namespacing IMA, root in the namespace needs the ability to write
-security.ima.
+# Changes since v6:
+* fixed style issues
+* changed error message to use dev_warn_ratelimited
 
+# Changes since v5:
+* added acks/reviews
 
-- IMA-audit:
+# Changes since v4:
+* fixed typo
 
-The IMA-audit messages can augment other file system security
-information used in security analytics/forensics.??This information
-should be on a per namespace basis, meaning that each time a new file
-is accessed/executed, there needs to be a separate audit message, even
-if a message already exists in another namespace.??Maintaining and
-cleaning up this per namespace cache information, allows development
-of the IMA namespace architecture independently of other issues.
+# Changes since v3:
+* use get_user_ns and put_user_ns to take and drop references to the owner
+  user namespace because CONFIG_USER_NS is an option
 
-My original suggestion stands. ?Start with namespacing IMA-
-audit.??Afterwards resolve the securityfs issues needed for
-namespacing IMA-measurement, and subsequently resolve the keyring and
-xattr issues for namespacing IMA-appraisal. Although other subsystems
-have already addressed some of the issues listed here, the advice to
-start with IMA-audit is still valid.
+# Changes since v2:
+* take/drop reference to user namespace on tty struct alloc/free to prevent
+  use-after-free.
 
-Small incremental change does not imply without an overall design, but
-an overall design which is broken up in such a way (to ease review)
-that builds upon the previous change.
-
-As both Apparmor and IMA use securityfs for policy, it would be nice
-if their method for loading namespace policies would be similar too.
-
-Mimi
-
+# Changes since v1:
+* added owner_user_ns to tty_struct to enable capability checks against
+  the namespace that created the tty.
+* rewording in different places to make patchset purpose clear
+* Added Documentation
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
