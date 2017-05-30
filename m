@@ -1,48 +1,88 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Tue, 30 May 2017 13:24:27 +0100
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
-	TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <e1c9e4e8-5427-b4b6-aad2-72c88552a6af@nmatt.com>
-References: <20170529213800.29438-1-matt@nmatt.com>
-	<20170529213800.29438-3-matt@nmatt.com>
-	<20170529232640.16211960@alans-desktop>
-	<CAFUG7CdDd0Yfegb1S6_wNQzje4EuLE0jPdvOE=uSQL152meyjQ@mail.gmail.com>
-	<3738951f-7a4a-b37f-c695-21a2fcd45f76@schaufler-ca.com>
-	<0e078ce7-5b62-f27c-3920-efc2ffdf342b@nmatt.com>
-	<b0a29f23-4154-8f2f-98e7-0942612f0cdc@schaufler-ca.com>
-	<e1c9e4e8-5427-b4b6-aad2-72c88552a6af@nmatt.com>
-Message-ID: <20170530132427.016053da@alans-desktop>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Tue, 30 May 2017 15:25:20 +0200
+Subject: [Linux-ima-devel] [PATCH v2 3/5] tpm: pass multiple digests to
+	tpm_pcr_extend()
+In-Reply-To: <1496143547.3841.517.camel@linux.vnet.ibm.com>
+References: <20170505142152.29795-1-roberto.sassu@huawei.com>
+	<20170505142152.29795-4-roberto.sassu@huawei.com>
+	<1496114943.3841.480.camel@linux.vnet.ibm.com>
+	<97c6930e-8b4d-9578-e210-68987e4d7503@huawei.com>
+	<1496143547.3841.517.camel@linux.vnet.ibm.com>
+Message-ID: <5e62a3ba-8d0d-d531-152b-73ce94955124@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Look there are two problems here
+On 5/30/2017 1:25 PM, Mimi Zohar wrote:
+> On Tue, 2017-05-30 at 09:28 +0200, Roberto Sassu wrote:
+>> On 5/30/2017 5:29 AM, Mimi Zohar wrote:
+>>> On Fri, 2017-05-05 at 16:21 +0200, Roberto Sassu wrote:
+>
+>
+>>>> @@ -876,29 +925,46 @@ static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+>>>>   * isn't, protect against the chip disappearing, by incrementing
+>>>>   * the module usage count.
+>>>>   */
+>>>> -int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
+>>>> +int tpm_pcr_extend(u32 chip_num, int pcr_idx, int count,
+>>>> +		   struct tpm2_digest *digests)
+>>>>  {
+>>>>  	int rc;
+>>>>  	struct tpm_chip *chip;
+>>>>  	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+>>>> -	u32 count = 0;
+>>>> +	struct tpm2_digest *digests_ptr = digests;
+>>>> +	u32 filled_count = 0;
+>>>> +	u8 *hash;
+>>>>  	int i;
+>>>>
+>>>>  	chip = tpm_chip_find_get(chip_num);
+>>>>  	if (chip == NULL)
+>>>>  		return -ENODEV;
+>>>>
+>>>> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>>>> +	rc = tpm_pcr_check_input(chip, count, digests);
+>>>> +	if (rc < 0) {
+>>>> +		dev_dbg(&chip->dev, "%s: invalid arguments\n", __func__);
+>>>> +		tpm_put_ops(chip);
+>>>
+>>> This rejects the TPM extend, if ANY of the algorithms are unknown.
+>>> Suppose that the standards were updated, TPM vendors add support for
+>>> the new algorithm, but the kernel has not been updated to reflect the
+>>> new algorithms supported.  As the measurement hash already been added
+>>> to the IMA measurement list, verifying the measurement list against a
+>>> TPM quote will fail, not just for the unknown algorithm, but for all
+>>> algorithms.  Something is very broken with this approach.
+>>
+>> The alternative is to extend remaining banks with a digest,
+>> for example the first passed by the caller. I will modify
+>> the patch, if everyone agrees on that.
+>
+> The solution you're proposing is similar to the original solution of
+> extending the TPM with a padded/truncated SHA1 hash, but this time it
+> might not be a padded/truncated SHA1 hash, but a different algorithm.
+> So the attestation server will then need to know which hash algorithm
+> was used to extend each of the TPM banks - a padded/truncated digest
+> value or the real digest value.
 
-1. TIOCSTI has users
+The convention would be that the first digest in the event log
+is truncated/padded, to extend banks for which no digest is
+provided. This convention would apply to all callers of
+tpm_pcr_extend().
 
-2. You don't actually fix anything
+Roberto
 
-The underlying problem is that if you give your tty handle to another
-process which you don't trust you are screwed. It's fundamental to the
-design of the Unix tty model and it's made worse in Linux by the fact
-that we use the tty descriptor to access all sorts of other console state
-(which makes a ton of sense).
 
-Many years ago a few people got this wrong. All those apps got fixes back
-then. They allocate a tty/pty pair and create a new session over that.
-The potentially hostile other app only gets to screw itself.
+> The only issue, from the kernel's perspective, will be determining the
+> algorithm's digest size as the kernel has no knowledge of it.  On TPM
+> registration/initialization, if you're not already querying the TPM
+> for the algorithm digest sizes, you will need to do so.
+>
+> Mimi
+>
 
-If it was only about TIOCSTI then your patch would still not make sense
-because you could use on of the existing LSMs to actually write yourself
-some rules about who can and can't use TIOCSTI. For that matter you can
-even use the seccomp feature today to do this without touching your
-kernel because the ioctl number is a value so you can just block ioctl
-with argument 2 of TIOCSTI.
-
-So please explain why we need an obscure kernel config option that normal
-users will not understand which protects against nothing and can be
-done already ?
-
-Alan
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
