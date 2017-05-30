@@ -1,8 +1,8 @@
-From: nnk@google.com (Nick Kralevich)
-Date: Tue, 30 May 2017 11:44:18 -0700
+From: matt@nmatt.com (Matt Brown)
+Date: Tue, 30 May 2017 14:57:17 -0400
 Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
 	ioctl require CAP_SYS_ADMIN
-In-Reply-To: <1496169122.2164.21.camel@tycho.nsa.gov>
+In-Reply-To: <CAFJ0LnHKKccbr-LqHHaFX5UNB20DzqfWDhvR-NTpgPedtkg0RA@mail.gmail.com>
 References: <20170529213800.29438-1-matt@nmatt.com>
 	<20170529213800.29438-3-matt@nmatt.com>
 	<20170529232640.16211960@alans-desktop>
@@ -14,34 +14,43 @@ References: <20170529213800.29438-1-matt@nmatt.com>
 	<20170530132427.016053da@alans-desktop>
 	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
 	<1496169122.2164.21.camel@tycho.nsa.gov>
-Message-ID: <CAFJ0LnHKKccbr-LqHHaFX5UNB20DzqfWDhvR-NTpgPedtkg0RA@mail.gmail.com>
+	<CAFJ0LnHKKccbr-LqHHaFX5UNB20DzqfWDhvR-NTpgPedtkg0RA@mail.gmail.com>
+Message-ID: <100b7d8c-7468-3122-4f59-3b0dcdf5dfc3@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 30, 2017 at 11:32 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
->> Seccomp requires the program in question to "opt-in" so to speak and
->> set
->> certain restrictions on itself. However as you state above, any
->> TIOCSTI
->> protection doesn't matter if the program correctly allocates a
->> tty/pty pair.
->> This protections seeks to protect users from programs that don't do
->> things
->> correctly. Rather than killing bugs, this feature attempts to kill an
->> entire
->> bug class that shows little sign of slowing down in the world of
->> containers and
->> sandboxes.
->
-> Just FYI, you can also restrict TIOCSTI (or any other ioctl command)
-> via SELinux ioctl whitelisting, and Android is using that feature to
-> restrict TIOCSTI usage in Android O (at least based on the developer
-> previews to date, also in AOSP master).
+On 5/30/17 2:44 PM, Nick Kralevich wrote:
+> On Tue, May 30, 2017 at 11:32 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>>> Seccomp requires the program in question to "opt-in" so to speak and
+>>> set
+>>> certain restrictions on itself. However as you state above, any
+>>> TIOCSTI
+>>> protection doesn't matter if the program correctly allocates a
+>>> tty/pty pair.
+>>> This protections seeks to protect users from programs that don't do
+>>> things
+>>> correctly. Rather than killing bugs, this feature attempts to kill an
+>>> entire
+>>> bug class that shows little sign of slowing down in the world of
+>>> containers and
+>>> sandboxes.
+>>
+>> Just FYI, you can also restrict TIOCSTI (or any other ioctl command)
+>> via SELinux ioctl whitelisting, and Android is using that feature to
+>> restrict TIOCSTI usage in Android O (at least based on the developer
+>> previews to date, also in AOSP master).
+> 
+> For reference, this is https://android-review.googlesource.com/306278
+> , where we moved to a whitelist for handling ioctls for ptys.
+> 
+> -- Nick
+> 
 
-For reference, this is https://android-review.googlesource.com/306278
-, where we moved to a whitelist for handling ioctls for ptys.
+Thanks, I didn't know that android was doing this. I still think this feature
+is worthwhile for people to be able to harden their systems against this attack
+vector without having to implement a MAC.
 
--- Nick
+Matt
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
