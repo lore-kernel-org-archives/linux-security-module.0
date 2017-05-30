@@ -1,48 +1,45 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 30 May 2017 17:43:20 -0400
-Subject: [RFC][PATCH] audit: add ambient capabilities to CAPSET and
-	BPRM_FCAPS records
-In-Reply-To: <20170427024156.GH25861@madcap2.tricolour.ca>
-References: <fb96ad9e604033a5d51607bdbb0b46f50442f5b6.1491471625.git.rgb@redhat.com>
-	<CAHC9VhSUc944RmVHi93m7Ht2D=gjdWcK6Lsc6Om5M9qvj7DB9g@mail.gmail.com>
-	<20170427024156.GH25861@madcap2.tricolour.ca>
-Message-ID: <CAHC9VhQ=7_Bi9MhM=XFq3esz_BgztCFyLPDEfDMP_DeNc6uDwA@mail.gmail.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Tue, 30 May 2017 22:52:45 +0100
+Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170530155235.GA11861@mail.hallyn.com>
+References: <5c5c9b06-d2ec-c2e5-3ea2-463f315428f6@nmatt.com>
+	<CANA3KFUh6Q+Pq6Srh-dQv0gaRy4zUJAJcyGLYoDFH+MfTycp+A@mail.gmail.com>
+	<1a1730f3-5378-1ce5-77a9-b9bc8cd5c90b@nmatt.com>
+	<CAGXu5jJrEw1WOGniTV4Jhv_mO2zHxmXJqpzUs7BOUJNpCU1MNg@mail.gmail.com>
+	<20170517174113.69d1cbaa@alans-desktop>
+	<1495045540.1619.1.camel@gmail.com>
+	<CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
+	<CANA3KFWF-=6AWZKAc1ijyoL5vRAwPnwngZZEP9=5+AFgnMv1rg@mail.gmail.com>
+	<20170519143344.GA15983@mail.hallyn.com>
+	<CANA3KFXVzSXuA4Cocm7fUYE9EOvJX7pW0bsj=cgyUYvScUsXGQ@mail.gmail.com>
+	<20170530155235.GA11861@mail.hallyn.com>
+Message-ID: <20170530225245.092497be@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 26, 2017 at 10:41 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2017-04-26 16:04, Paul Moore wrote:
->> On Fri, Apr 7, 2017 at 10:17 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> > Capabilities were augmented to include ambient capabilities in v4.3
->> > commit 58319057b784 ("capabilities: ambient capabilities").
->> >
->> > Add ambient capabilities to the audit BPRM_FCAPS and CAPSET records.
->> >
->> > The record contains fields "old_pp", "old_pi", "old_pe", "new_pp",
->> > "new_pi", "new_pe" so in keeping with the previous record
->> > normalizations, change the "new_*" variants to simply drop the "new_"
->> > prefix.
->>
->> Help me out and remind me of those previous field rename
->> patches/commits where "new_X" became "X"?
->
-> aa589a13b5d00d3c643ee4114d8cbc3addb4e99f ("audit: remove superfluous
-> new- prefix in AUDIT_LOGIN messages")
->
-> I had thought there were more.
->
-> And I'm now noticing that audit_log_feature_change() could use the same
-> treatment and so could audit_receive_msg()'s AUDIT_TTY_SET.
->
-> (And much earlier: ac03221a4fdda9bfdabf99bcd129847f20fc1d80 ("[PATCH]
-> update of IPC audit record cleanup")
+> > So tty stuff should under a tty capabilities.  
+> 
+> (last reply on this)
+> 
+> Currently capabilities.7 says
+> 
+>               * employ  the  TIOCSTI ioctl(2) to insert characters into the input queue of a
+>                 terminal other than the caller's controlling terminal;
+> 
+> for CAP_SYS_ADMIN.
+> 
+> So you can create a new CAP_SYS_TIOCSSTI if you like, and offer a patch where
+> *both* CAP_SYS_ADMIN and CAP_SYS_ADMIN suffice.  Again, see CAP_SYSLOG for a
+> prior example.
 
-Ah ha, both before my time, that explains it.  Okay, I'll go ahead and
-merge this.
+Even then it wouldn't be useful because the attacker can use every other
+interface in the tty layer, many of which you can't magic away behind a
+capability bit. And the applications would need changing to use the
+feature - at which point any theoretical broken apps can instead be fixed
+to use a pty/tty pair and actually fix the real problem.
 
--- 
-paul moore
-www.paul-moore.com
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
