@@ -1,43 +1,27 @@
 From: jmorris@namei.org (James Morris)
-Date: Tue, 30 May 2017 20:34:30 +1000 (AEST)
-Subject: [PATCH v2 05/20] randstruct: Whitelist struct security_hook_heads
-	cast
-In-Reply-To: <CAGXu5j+SA8N6s7StQX1OQsNf6YeQBkS7vSFVN7MR=BzJMwJH9Q@mail.gmail.com>
-References: <1495829844-69341-1-git-send-email-keescook@chromium.org>
-	<1495829844-69341-6-git-send-email-keescook@chromium.org>
-	<20170527084135.GA26844@infradead.org>
-	<CAGXu5j+SA8N6s7StQX1OQsNf6YeQBkS7vSFVN7MR=BzJMwJH9Q@mail.gmail.com>
-Message-ID: <alpine.LRH.2.20.1705302032510.31018@namei.org>
+Date: Tue, 30 May 2017 20:49:03 +1000 (AEST)
+Subject: [PATCH 5/5] Add a sysrq option to exit secure boot mode
+In-Reply-To: <149563716341.9419.12043461651917925181.stgit@warthog.procyon.org.uk>
+References: <149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+	<149563716341.9419.12043461651917925181.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.20.1705302048370.31018@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 27 May 2017, Kees Cook wrote:
+On Wed, 24 May 2017, David Howells wrote:
 
-> On Sat, May 27, 2017 at 1:41 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> > On Fri, May 26, 2017 at 01:17:09PM -0700, Kees Cook wrote:
-> >> The LSM initialization routines walk security_hook_heads as an array
-> >> of struct list_head instead of via names to avoid a ton of needless
-> >> source. Whitelist this to avoid the false positive warning from the
-> >> plugin:
-> >
-> > I think this crap just needs to be fixed properly.  If not it almost
-> > defeats the protections as the "security" ops are just about everywhere.
+> From: Kyle McMartin <kyle@redhat.com>
 > 
-> There's nothing unsafe about 3dfc9b02864b19f4dab376f14479ee4ad1de6c9e,
-> it just avoids tons of needless code. 
+> Make sysrq+x exit secure boot mode on x86_64, thereby allowing the running
+> kernel image to be modified.  This lifts the lockdown.
+> 
+> Signed-off-by: Kyle McMartin <kyle@redhat.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: x86 at kernel.org
 
-Removing needless code is a security feature, ideally.
 
-> Tetsuo has some other ideas for
-> cleaning it up further, but I don't like it because it removes
-> compile-time verification of function types. There have been a lot of
-> trade-offs in getting this working correctly, so I don't have any
-> problem with how it looks currently. It's just a collision of
-> assumptions between randstruct (omg, you're accessing a randomized
-> struct with a different struct!) and the security head list (all
-> entries are lists, and we're just initializing them).
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 
-Fix randstruct perhaps, rather than modifying kernel code to shut it up.
 
 -- 
 James Morris
