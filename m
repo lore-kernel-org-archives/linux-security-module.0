@@ -1,8 +1,8 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Tue, 30 May 2017 23:51:06 +0100
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
-	TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
+From: matt@nmatt.com (Matt Brown)
+Date: Tue, 30 May 2017 19:00:09 -0400
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
+	ioctl require CAP_SYS_ADMIN
+In-Reply-To: <1496175757.9871.6.camel@gmail.com>
 References: <20170529213800.29438-1-matt@nmatt.com>
 	<20170529213800.29438-3-matt@nmatt.com>
 	<20170529232640.16211960@alans-desktop>
@@ -13,73 +13,40 @@ References: <20170529213800.29438-1-matt@nmatt.com>
 	<e1c9e4e8-5427-b4b6-aad2-72c88552a6af@nmatt.com>
 	<20170530132427.016053da@alans-desktop>
 	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
-Message-ID: <20170530235106.11aab25c@alans-desktop>
+	<1496169122.2164.21.camel@tycho.nsa.gov>
+	<CAFJ0LnHKKccbr-LqHHaFX5UNB20DzqfWDhvR-NTpgPedtkg0RA@mail.gmail.com>
+	<100b7d8c-7468-3122-4f59-3b0dcdf5dfc3@nmatt.com>
+	<1496175757.9871.6.camel@gmail.com>
+Message-ID: <99069e11-dc84-8198-5d1c-f39b18ac9971@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 30 May 2017 12:28:59 -0400
-Matt Brown <matt@nmatt.com> wrote:
-
-> On 5/30/17 8:24 AM, Alan Cox wrote:
-> > Look there are two problems here
-> > 
-> > 1. TIOCSTI has users  
+On 5/30/17 4:22 PM, Daniel Micay wrote:
+>> Thanks, I didn't know that android was doing this. I still think this
+>> feature
+>> is worthwhile for people to be able to harden their systems against
+>> this attack
+>> vector without having to implement a MAC.
 > 
-> I don't see how this is a problem.
-
-Which is unfortunate. To start with if it didn't have users we could just
-delete it.
-
-> > 
-> > 2. You don't actually fix anything
-> > 
-> > The underlying problem is that if you give your tty handle to another
-> > process which you don't trust you are screwed. It's fundamental to the
-> > design of the Unix tty model and it's made worse in Linux by the fact
-> > that we use the tty descriptor to access all sorts of other console state
-> > (which makes a ton of sense).
-> > 
-> > Many years ago a few people got this wrong. All those apps got fixes back
-> > then. They allocate a tty/pty pair and create a new session over that.
-> > The potentially hostile other app only gets to screw itself.
-> >   
+> Since there's a capable LSM hook for ioctl already, it means it could go
+> in Yama with ptrace_scope but core kernel code would still need to be
+> changed to track the owning tty. I think Yama vs. core kernel shouldn't
+> matter much anymore due to stackable LSMs.
 > 
-> Many years ago? We already got one in 2017, as well as a bunch last year.
-> See: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=tiocsti
 
-All the apps got fixed at the time. The fact the next generation of
-forgot to learn from it is unfortunate but hardly new. Also every single
-one of those that exposes a tty in that way allows other annoying
-behaviours via other ioctl interfaces so none of them would have been
-properly mitigated.
+What does everyone think about a v8 that moves this feature under Yama and uses
+the file_ioctl LSM hook?
 
-If you really want to do that particular bit of snake oiling then you can
-use the existing SELinux, seccomp and related interfaces. They can even
-do the job properly by whitelisting or blocking long lists of ioctls.
-
-> This protections seeks to protect users from programs that don't do things
-> correctly. Rather than killing bugs, this feature attempts to kill an entire
-> bug class that shows little sign of slowing down in the world of containers and
-> sandboxes.
-
-Well maybe the people writing them need to learn what they are doing and
-stop passing random file descriptors into their container (I've even seen
-people handing X file handles into their 'container').
-
-The kernel can do some things to help programmers but it can't stop
-people writing crap. Anyone writing code that crosses security boundaries
-should have at least a vague idea of what they are doing.
-
-The only way you'd actually really prevent this would be to magically
-open a new pty/tty pair and substitute the file handlers plus a data
-copying thread when someone created a namespace.
-
-Now you can actually do that with the ptrace functionality in seccomp but
-it would still be fairly insane to expect the kernel to handle.
-
-Alan
-[Actually even more sensible would be to revert the entire sorry
-container mess and use VMs but it's a bit late for that ;-)]
+> Not the case for perf_event_paranoid=3 where a) there's already a sysctl
+> exposed which would be unfortunate to duplicate, b) there isn't an LSM
+> hook yet (AFAIK).
+> 
+> The toggles for ptrace and perf events are more useful though since
+> they're very commonly used debugging features vs. this obscure, rarely
+> used ioctl that in practice no one will notice is missing. It's still
+> friendlier to have a toggle than a seccomp policy requiring a reboot to
+> get rid of it, or worse compiling it out of the kernel.
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
