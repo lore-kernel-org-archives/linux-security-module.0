@@ -1,46 +1,217 @@
-From: danielmicay@gmail.com (Daniel Micay)
-Date: Tue, 30 May 2017 12:44:56 -0400
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
-	ioctl require CAP_SYS_ADMIN
-In-Reply-To: <2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
-References: <20170529213800.29438-1-matt@nmatt.com>
-	<20170529213800.29438-3-matt@nmatt.com>
-	<20170529232640.16211960@alans-desktop>
-	<CAFUG7CdDd0Yfegb1S6_wNQzje4EuLE0jPdvOE=uSQL152meyjQ@mail.gmail.com>
-	<3738951f-7a4a-b37f-c695-21a2fcd45f76@schaufler-ca.com>
-	<0e078ce7-5b62-f27c-3920-efc2ffdf342b@nmatt.com>
-	<b0a29f23-4154-8f2f-98e7-0942612f0cdc@schaufler-ca.com>
-	<e1c9e4e8-5427-b4b6-aad2-72c88552a6af@nmatt.com>
-	<20170530132427.016053da@alans-desktop>
-	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
-Message-ID: <CA+DvKQ+9xddJc6+29NXzb81gmt4mYRmUTsi=-42aVy3=xgt3bw@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 30 May 2017 10:18:20 -0700
+Subject: [RFC 0/3] WhiteEgret LSM module
+In-Reply-To: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
+References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
+Message-ID: <b2eb6ba0-9a66-0a02-073f-bf9b2ccf9952@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> Seccomp requires the program in question to "opt-in" so to speak and set
-> certain restrictions on itself. However as you state above, any TIOCSTI
-> protection doesn't matter if the program correctly allocates a tty/pty pair.
-> This protections seeks to protect users from programs that don't do things
-> correctly. Rather than killing bugs, this feature attempts to kill an entire
-> bug class that shows little sign of slowing down in the world of containers and
-> sandboxes.
+On 5/30/2017 4:11 AM, Masanobu Koike wrote:
+> WhiteEgret is an LSM to simply provide a whitelisting-type
+> execution control.
+>
+> An execution-whitelist, simply called whitelist, is a list
+> of executable components (e.g., applications, libraries)
+> that are approved to run on a host. The whitelist is used
+> to decide whether executable components are permitted to
+> execute or not. This mechanism can stop an execution of
+> unknown software, so it helps to stop the execution of
+> malicious code and other unauthorized software.
+> The whitelisting-type execution control works best in the
+> execution environments that are not changed for a long time,
+> for example, servers and control devices in industrial
+> control systems. This RFC provides a whitelisting-type
+> execution control implementation WhiteEgret.
 
-It's possible to do it in PID1 as root without NO_NEW_PRIVS set, but
-there isn't an existing implementation of that. It's not included in
-init systems like systemd. There's no way to toggle that off at
-runtime one that's done like this sysctl though. If a system
-administrator wants to enable it, they'll need to modify a
-configuration file and reboot if it was even supported by the init
-system. It's the same argument that was used against
-perf_event_paranoid=3. Meanwhile, perf_event_paranoid=3 is a mandatory
-requirement for every Android device and toggling it at runtime is
-*necessary* since that's exposed as a system property writable by the
-Android Debug Bridge shell user (i.e. physical access via USB + ADB
-enabled within the OS + ADB key of the ADB client accepted). There's
-less use case for TIOCSTI so toggling it on at runtime isn't as
-important, but a toggle like this is a LOT friendlier than a seccomp
-blacklist even if that was supported by common init systems, and it's
-not.
+Why is this better than setting the ownership and mode bits
+appropriately on your programs and libraries?
+
+Beyond that, I'm pretty sure you could do this with AppArmor.
+If you're only doing the set-up once I think you can do this
+with SELinux (the proponents of SELinux can tell you how).
+I know you can do it with Smack. Why is this scheme better?
+
+>
+> Features of WhiteEgret
+>
+> - Easier initial setup
+> All you have to do is to make a whitelist.
+
+In practice whitelists are built by starting with everything
+and deleting items until things stop working, then putting
+them back. Whitelists are theoretically great, but very difficult
+to build and maintain in the real world.
+
+>  The whitelist
+> shall contain all components that should be permitted
+> execution in the host. When we assume that the host does
+> not have malicious code in initial state, we just register
+> all executable components in the host to the whitelist.
+> The whitelist of WhiteEgret is assumed to contain at least
+> an absolute path and a hash value of the permitted
+> executable components.
+> WhiteEgret does not require policy generation which,
+> in general, is difficult and takes time for users.
+
+Creating a proper whitelist is every bit as difficult as
+some aspects of policy generation. Granted, it's easier
+than generating SELinux policy or a proper Smack configuration,
+but the protection is a subset of what those systems provide. 
+
+> - Shorten downtime in system updating
+> According to system update, we should update the whitelist.
+> It will take a short time. Consequently, system downtime
+> due to security configuration update can be reduced.
+>
+> - Less restriction on operational environment
+> WhiteEgret does not depend on a file system, or on TPM.
+> Thus WhiteEgret has less restriction on operating environment.
+>
+> Mechanism of WhiteEgret
+>
+> WhiteEgret requires a user application called WhiteEgret User
+> Application (WEUA, for short). WhiteEgret utilizes the
+> bprm_check_security hook and the mmap_file hook.
+> WhiteEgret asks WEUA whether an executable component hooked
+> by the above hooks is permitted to execute or not.
+
+Really, really bad idea. One visit from the OOM killer and
+your system is dead. One user space exploit and your system
+is compromised. Performance will be dreadful. Deadlocks, races
+and stalls, oh my!
+
+> If the response from the WEUA is "permit", then WhiteEgret
+> continues to process the executable component. If the response
+> is "not permit", then WhiteEgret returns an error and blocks
+> the execution of the executable component.
+> The bprm_check_security hook is triggered by execve system
+> call, so execution by almost all executable components are
+> hooked by the hook. However, because shared objects do not
+> invoke execve system call, WhiteEgret utilizes the mmap_file
+> hook to hook the memory mapping by a shared object.
+> Thus WhiteEgret ignores the mmap_file hook caused by
+> non-executable and by executable which calls execve system call.
+>
+> To ask the permission to a WEUA, WhiteEgret sends an
+> absolute path of the executable component to the WEUA.
+> Then the WEUA is expected to work as follows.
+> The WEUA sees if the absolute path is contained in the whitelist.
+> If it exists, the WEUA compares a hash value of the executable
+> component indicated by the absolute path with that in the
+> whitelist to see whether the executable component is changed
+> or not after the whitelist is made. The WEUA returns "permit"
+> if both tests are passed, otherwise returns "not permit".
+
+How do you address symlinks, mount points, containers and chroot?
+
+> WhiteEgret has two interface to communicate between kernel
+> space and user space: netlink and device driver. Although we
+> plan on using netlink, kernel Oops rarely happens when we use
+> netlink. Because we have not determined the cause yet,
+> we provide another communication method using device driver.
+> (See ToDo #1)
+>
+> The process of a WEUA is registered to WhiteEgret when it starts.
+> The CAP_NET_ADMIN capability is required for a process to
+> register to WhiteEgret. Once some process is registered,
+> after that, WhiteEgret rejects registration from the other
+> process by PID.
+> At the moment, authentication of WEUA by WhiteEgret at
+> registration has not implemented yet. Current authentication
+> function returns always "authenticated". (See ToDo #2)
+>
+> To use WhiteEgret
+>
+> Users have to prepare a whitelist and a WEUA to use WhiteEgret.
+> A sample WEUA is involved in samples/whiteegret/.
+>
+> To enable WhiteEgret, you are required to build the kernel using
+> normal procedures with CONFIG_SECURITY_WHITEEGRET=y and
+> CONFIG_DEFAULT_SECURITY_WHITEEGRET=y (or pass
+> "security=whiteegret" on kernel's command line).
+>
+> If you want to use device driver for communication between
+> kernel space and user space, then you are also required to
+> enable option CONFIG_SECURITY_WHITEEGRET_DRIVER.
+>
+> ToDo
+>  1. Bug fix of communication when using netlink.
+>  2. Authentication of WEUA by WhiteEgret when the WEUA
+>     is registered to WhiteEgret.
+>
+> Masanobu Koike (3):
+>   WhiteEgret: Add WhiteEgret core functions.
+>   WhiteEgret: Add device driver.
+>   WhiteEgret: Add an example of user application.
+>
+>  drivers/Kconfig                         |   2 +
+>  drivers/Makefile                        |   1 +
+>  drivers/security/Kconfig                |   1 +
+>  drivers/security/Makefile               |   1 +
+>  drivers/security/whiteegret/Kconfig     |  10 +
+>  drivers/security/whiteegret/Makefile    |   3 +
+>  drivers/security/whiteegret/we_driver.c | 295 ++++++++++++++++++++++++
+>  drivers/security/whiteegret/we_driver.h |  32 +++
+>  samples/Kconfig                         |   6 +
+>  samples/Makefile                        |   2 +-
+>  samples/whiteegret/Makefile             |  25 +++
+>  samples/whiteegret/checkwl.c            |  80 +++++++
+>  samples/whiteegret/checkwl.h            |  29 +++
+>  samples/whiteegret/gennl.c              | 232 +++++++++++++++++++
+>  samples/whiteegret/gennl_user.h         |  32 +++
+>  samples/whiteegret/main.c               | 234 +++++++++++++++++++
+>  security/Kconfig                        |   7 +-
+>  security/Makefile                       |   2 +
+>  security/whiteegret/Kconfig             |  21 ++
+>  security/whiteegret/Makefile            |   7 +
+>  security/whiteegret/auth.c              |  19 ++
+>  security/whiteegret/auth.h              |  12 +
+>  security/whiteegret/dd_com.c            |  79 +++++++
+>  security/whiteegret/dd_com.h            |  19 ++
+>  security/whiteegret/gennl.c             | 382 ++++++++++++++++++++++++++++++++
+>  security/whiteegret/gennl.h             |  32 +++
+>  security/whiteegret/gennl_common.h      |  43 ++++
+>  security/whiteegret/init.c              |  69 ++++++
+>  security/whiteegret/main.c              | 340 ++++++++++++++++++++++++++++
+>  security/whiteegret/print_msg.h         |  19 ++
+>  security/whiteegret/request.c           | 248 +++++++++++++++++++++
+>  security/whiteegret/request.h           |  79 +++++++
+>  security/whiteegret/returntoexec.h      |  14 ++
+>  security/whiteegret/we.h                |  72 ++++++
+>  security/whiteegret/we_common.h         |  19 ++
+>  35 files changed, 2466 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/security/Kconfig
+>  create mode 100644 drivers/security/Makefile
+>  create mode 100644 drivers/security/whiteegret/Kconfig
+>  create mode 100644 drivers/security/whiteegret/Makefile
+>  create mode 100644 drivers/security/whiteegret/we_driver.c
+>  create mode 100644 drivers/security/whiteegret/we_driver.h
+>  create mode 100644 samples/whiteegret/Makefile
+>  create mode 100644 samples/whiteegret/checkwl.c
+>  create mode 100644 samples/whiteegret/checkwl.h
+>  create mode 100644 samples/whiteegret/gennl.c
+>  create mode 100644 samples/whiteegret/gennl_user.h
+>  create mode 100644 samples/whiteegret/main.c
+>  create mode 100644 security/whiteegret/Kconfig
+>  create mode 100644 security/whiteegret/Makefile
+>  create mode 100644 security/whiteegret/auth.c
+>  create mode 100644 security/whiteegret/auth.h
+>  create mode 100644 security/whiteegret/dd_com.c
+>  create mode 100644 security/whiteegret/dd_com.h
+>  create mode 100644 security/whiteegret/gennl.c
+>  create mode 100644 security/whiteegret/gennl.h
+>  create mode 100644 security/whiteegret/gennl_common.h
+>  create mode 100644 security/whiteegret/init.c
+>  create mode 100644 security/whiteegret/main.c
+>  create mode 100644 security/whiteegret/print_msg.h
+>  create mode 100644 security/whiteegret/request.c
+>  create mode 100644 security/whiteegret/request.h
+>  create mode 100644 security/whiteegret/returntoexec.h
+>  create mode 100644 security/whiteegret/we.h
+>  create mode 100644 security/whiteegret/we_common.h
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
