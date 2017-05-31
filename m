@@ -1,48 +1,36 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 31 May 2017 10:35:49 -0500
-Subject: [RFC 0/3] WhiteEgret LSM module
-In-Reply-To: <0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
-References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
-	<20170530205002.GA9841@srcf.ucam.org>
-	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
-	<0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
-Message-ID: <20170531153549.GB31189@mail.hallyn.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 31 May 2017 08:53:42 -0700
+Subject: [PATCH] Smack: Safer check for a socket in file_receive
+Message-ID: <36cefa8b-3441-91b4-1f8c-51c4d7004141@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Casey Schaufler (casey at schaufler-ca.com):
-> 
-> 
-> On 5/31/2017 3:59 AM, Peter Dolding wrote:
-> > ...
-> >
-> > Like you see here in Australian government policy there is another
-> > thing called whitelisted.
-> > https://www.asd.gov.au/publications/protect/top_4_mitigations_linux.htm
-> > Matthew Garrett you might want to call IMA whitelisting Australian
-> > government for one does not agree.  IMA is signed.   The difference
-> > between signed and white-listed is you might have signed a lot more
-> > than what a particular system is white-listed to allowed used.
-> >
-> To be clear, I'm all for a security module to support this policy.
-> As the explicit requirement is for a whitelist, as opposed to allowing
-> for a properly configured system*, you can't use any of the existing
-> technologies to meet it. This kind of thing** is why we have a LSM
-> infrastructure.
-> 
-> Unfortunately, the implementation proposed has very serious issues.
-> You can't do access control from userspace. You can't count on
-> identifying programs strictly by pathname. It's much more complicated
-> than it needs to be for the task.
-> 
-> Suggestion:
-> 
-> Create an security module that looks for the attribute
-> 
-> 	security.WHITELISTED
+Subject: [PATCH] Smack: Safer check for a socket in file_receive
 
-Bonus, you can have EVM verify the validity of these xattrs, and
-IMA verify the interity of the file itself.
+The check of S_ISSOCK() in smack_file_receive() is not
+appropriate if the passed descriptor is a socket.
+
+Reported-by: Stephen Smalley <sds@tyco.nsa.gov>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+
+---
+ security/smack/smack_lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 658f5d8..463af86 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1915,7 +1915,7 @@ static int smack_file_receive(struct file *file)
+ 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
+ 	smk_ad_setfield_u_fs_path(&ad, file->f_path);
+ 
+-	if (S_ISSOCK(inode->i_mode)) {
++	if (inode->i_sb->s_magic == SOCKFS_MAGIC) {
+ 		sock = SOCKET_I(inode);
+ 		ssp = sock->sk->sk_security;
+ 		tsp = current_security();
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
