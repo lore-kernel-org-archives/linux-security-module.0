@@ -1,33 +1,25 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Wed, 31 May 2017 15:43:17 +0100
-Subject: [PATCH] LSM: Convert security_hook_heads into explicit array of
-	struct list_head
-In-Reply-To: <201705311941.CGD64590.MOFSOLFJtQFOVH@I-love.SAKURA.ne.jp>
-References: <201705281026.EHD04622.HJFOLQFMSOtFOV@I-love.SAKURA.ne.jp>
-	<alpine.LRH.2.20.1705302021090.31018@namei.org>
-	<201705302329.IEB05735.FLJOFHSQVtOOFM@I-love.SAKURA.ne.jp>
-	<20170530162550.19ba1811@alans-desktop>
-	<alpine.LRH.2.20.1705310858430.6920@namei.org>
-	<201705311941.CGD64590.MOFSOLFJtQFOVH@I-love.SAKURA.ne.jp>
-Message-ID: <20170531154317.4f487300@alans-desktop>
+From: me@jessfraz.com (Jessica Frazelle)
+Date: Wed, 31 May 2017 16:05:48 +0100
+Subject: namespaces todo list?
+In-Reply-To: <82271f8b-c366-28b1-90ac-3b0780490fa5@poczta.onet.pl>
+References: <82271f8b-c366-28b1-90ac-3b0780490fa5@poczta.onet.pl>
+Message-ID: <CAEk6tEwqd5dxMgXSms5g7+hd+8Pufe1+1BKeUQ2Ew9sLBUtbfA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> I saw several companies who ship their embedded devices with
-> single-function LSM modules (e.g. restrict only mount operation and
-> ptrace operation). What is unfortunate is that their LSM modules had
-> never been proposed for upstream, and thus bugs remained unnoticed.
+> 3 - keys, keyrings? are they namespace aware or not? I am quite lost in
+> that regard, because I happen to hear conflicting statements.
 
-So which of them cannot be done with seccomp ? We have a small tight
-interface for simple things like restricting a few calls.
- 
-> via lack of ability to use LKM-based LSM modules). My customers cannot afford
-> enabling SELinux, but my customers cannot rebuild their kernels because
-> rebuilding makes it even more difficult to get help from support centers.
+If you are using user namespaces, the keyring is namespaced.
 
-And "I've loaded this third party module" doesn't ?
 
-Alan
+
+-- 
+
+
+Jessie Frazelle
+4096R / D4C4 DD60 0D66 F65A 8EFC  511E 18F3 685C 0022 BFF3
+pgp.mit.edu
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
