@@ -1,135 +1,183 @@
-From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
-Date: Wed, 31 May 2017 11:39:14 +0000
-Subject: [PATCH 0/5] security, efi: Set lockdown if in secure boot mode
-In-Reply-To: <21606.1496222635@warthog.procyon.org.uk>
-References: <149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
-	<CAKv+Gu_5gUWwx7Sxgm8d03L4t4nF8dDe+AXqOqto4B7AVSZ9CA@mail.gmail.com>
-	<21606.1496222635@warthog.procyon.org.uk>
-Message-ID: <CAKv+Gu_vXASr=yDJ3MwT960eApqeWKEd-hqGoEyGsJKip7N+KQ@mail.gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 31 May 2017 14:39:30 +0300
+Subject: [PATCH v2 1/5] tpm: introduce tpm_pcr_algorithms()
+In-Reply-To: <1cf4fbb1-5683-ceb4-2d5b-8ade25a91e83@huawei.com>
+References: <20170505142152.29795-1-roberto.sassu@huawei.com>
+	<20170505142152.29795-2-roberto.sassu@huawei.com>
+	<20170515103623.sumyo2vyldezual2@intel.com>
+	<d2974dd2-e30d-e8f0-a60a-2147f3290670@huawei.com>
+	<8aacf9c7-ac99-578e-ca60-6bb45bf3ab2b@huawei.com>
+	<20170520131846.e3niqiknlrttbdf4@intel.com>
+	<cc7efaa2-4d5b-2142-3b23-06864589c212@huawei.com>
+	<20170524173521.yiiohct7brkcozyk@intel.com>
+	<1cf4fbb1-5683-ceb4-2d5b-8ade25a91e83@huawei.com>
+Message-ID: <20170531113930.verzor6jyg7toayw@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 31 May 2017 at 09:23, David Howells <dhowells@redhat.com> wrote:
-> Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
->> - The series conflates 'UEFI secure boot support' with 'kernel lock
->> down support'. I think this has been brought up before, but I really
->> think we should have a cleaner separation between the feature (locking
->> down various bits of the kernel if lockdown is in effect) from the
->> policy 'enable lockdown if UEFI secure boot is enabled'.
->
-> I'm not sure what you're actually asking for.  Are you wanting me to push the
-> lockdown patches upstream separately from the UEFI patches that trigger the
-> lockdown?  Or do you mean something else?
->
+On Tue, May 30, 2017 at 10:44:50AM +0200, Roberto Sassu wrote:
+> On 5/24/2017 7:35 PM, Jarkko Sakkinen wrote:
+> > On Mon, May 22, 2017 at 11:07:54AM +0200, Roberto Sassu wrote:
+> > > On 5/20/2017 3:18 PM, Jarkko Sakkinen wrote:
+> > > > On Wed, May 17, 2017 at 10:42:35AM +0200, Roberto Sassu wrote:
+> > > > > On 5/15/2017 3:18 PM, Roberto Sassu wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > On 5/15/2017 12:36 PM, Jarkko Sakkinen wrote:
+> > > > > > > On Fri, May 05, 2017 at 04:21:48PM +0200, Roberto Sassu wrote:
+> > > > > > > > This function allows TPM users to know which algorithms the TPM
+> > > > > > > > supports.
+> > > > > > > > It stores the algorithms in a static array of 'enum tpm2_algorithms',
+> > > > > > > > allocated by the caller. If the array is not large enough, the function
+> > > > > > > > returns an error. Otherwise, it returns the number of algorithms written
+> > > > > > > > to the array. If the TPM version is 1.2, the function writes
+> > > > > > > > TPM2_ALG_SHA1
+> > > > > > > > to first element of the array.
+> > > > > > > > 
+> > > > > > > > Writing the algorithm also for TPM 1.2 has the advantage that callers
+> > > > > > > > can use the API, tpm_pcr_algorithms() and tpm_pcr_extend(), regardless
+> > > > > > > > of the TPM version.
+> > > > > > > > 
+> > > > > > > > A minor change added to this patch was to make available the size of
+> > > > > > > > the active_banks array, member of the tpm_chip structure, outside
+> > > > > > > > the TPM driver. The array size (TPM_ACTIVE_BANKS_MAX) has been exported
+> > > > > > > > to include/linux/tpm.h.
+> > > > > > > > 
+> > > > > > > > With this information, callers of tpm_pcr_algorithms() can provide
+> > > > > > > > a static array with enough room for all the algorithms, instead
+> > > > > > > > of receiving the pointer of a dynamic array that they have to free
+> > > > > > > > later.
+> > > > > > > > 
+> > > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > > > > ---
+> > > > > > > > v2
+> > > > > > > > 
+> > > > > > > > - tpm_pcr_algorithms() returns supported algorithms also for TPM 1.2
+> > > > > > > > 
+> > > > > > > >  drivers/char/tpm/tpm-interface.c | 46
+> > > > > > > > ++++++++++++++++++++++++++++++++++++++++
+> > > > > > > >  drivers/char/tpm/tpm.h           | 13 +-----------
+> > > > > > > >  include/linux/tpm.h              | 19 +++++++++++++++++
+> > > > > > > >  3 files changed, 66 insertions(+), 12 deletions(-)
+> > > > > > > > 
+> > > > > > > > diff --git a/drivers/char/tpm/tpm-interface.c
+> > > > > > > > b/drivers/char/tpm/tpm-interface.c
+> > > > > > > > index 4ed08ab..b90de3d 100644
+> > > > > > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > > > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > > > > > @@ -911,6 +911,52 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx,
+> > > > > > > > const u8 *hash)
+> > > > > > > >  EXPORT_SYMBOL_GPL(tpm_pcr_extend);
+> > > > > > > > 
+> > > > > > > >  /**
+> > > > > > > > + * tpm_pcr_algorithms - get TPM IDs of active PCR banks algorithms
+> > > > > > > 
+> > > > > > > The grammar is incorrect here I believe. Should rather be
+> > > > > > > 
+> > > > > > >   "algorithms of the active PCR banks"
+> > > > > > > 
+> > > > > > > And there is no such thing as "TPM ID".
+> > > > > > > 
+> > > > > > > > + * @chip_num:    tpm idx # or ANY
+> > > > > > > > + * @count:    # of items in algorithms
+> > > > > > > > + * @algorithms:    array of TPM IDs
+> > > > > > > > + *
+> > > > > > > > + * Returns < 0 on error, and the number of active PCR banks on success.
+> > > > > > > > + *
+> > > > > > > > + * TPM 1.2 has always one SHA1 bank.
+> > > > > > > > + */
+> > > > > > > > +int tpm_pcr_algorithms(u32 chip_num, int count,
+> > > > > > > > +               enum tpm2_algorithms *algorithms)
+> > > > > > >                        unsigned int
+> > > > > > > 
+> > > > > > > In addition the function name is not too greatg,
+> > > > > > > 
+> > > > > > > Your syntax for return value is not correct. In addition after
+> > > > > > > describing the return value there should not be anything. You should
+> > > > > > > study
+> > > > > > > 
+> > > > > > > https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+> > > > > > > 
+> > > > > > > Better name for the function would be tpm_get_pcr_algorithms().
+> > > > > > > 
+> > > > > > > > +{
+> > > > > > > > +    struct tpm_chip *chip;
+> > > > > > > > +    int i;
+> > > > > > > > +
+> > > > > > > > +    if (count <= 0 || algorithms == NULL)
+> > > > > > > > +        return -EINVAL;
+> > > > > > > 
+> > > > > > > Is there a legal case where caller would pass these values? Now it
+> > > > > > > looks like that there is.
+> > > > > > > 
+> > > > > > > 'count' should unsigned int and zero should be a legal value for
+> > > > > > > count.
+> > > > > > 
+> > > > > > I wanted to avoid that a negative value returned by tpm_pcr_algorithms()
+> > > > > > is passed to tpm_pcr_extend() as unsigned int.
+> > > > > > 
+> > > > > > 
+> > > > > > > That said I think the whole design is wrong as you could calculate
+> > > > > > > array for algs only one time and pass a const reference to it on
+> > > > > > > request.
+> > > > > > 
+> > > > > > Ok. If I understood it correctly, you are saying to pass a const
+> > > > > > reference of chip->active_banks. Then, I should also:
+> > > > > 
+> > > > > This is not a viable option. chip could be freed and the reference
+> > > > > becomes invalid, without increasing the reference count.
+> > > > > 
+> > > > > Did you think about something different?
+> > > > > 
+> > > > > Thanks
+> > > > > 
+> > > > > Roberto
+> > > > 
+> > > > Two alternatives come in mind.
+> > > > 
+> > > > 1. add tpm_put to linclude/linux/tpm.h
+> > > > 2. take put_ops away from the implementation
+> > > > 3. add documentation that tpm_put needs to be called
+> > > > 
+> > > > or acceptable alternative would memcpy in the implementation
+> > > > 
+> > > > In any case, you should probably drop completely 'count' and have
+> > > > function for getting the number of active banks.
+> > > 
+> > > Having a variable number, makes things more complicated.
+> > > In the IMA patch set for multiple template digests,
+> > > the array of algorithms is stored inside a structure
+> > > called digest descriptor. The array size must be fixed,
+> > > to avoid VLAIS (which is not supported by clang).
+> > 
+> > What is VLAI?
+> 
+> Variable-length arrays in structures.
+> 
+> 
+> > You can always allocate it from heap.
+> 
+> The algorithms to be used by IMA are set in a __setup function.
+> 
+> 
+> > > Since the size of tpm_chip->active_banks is a small number,
+> > > we can drop count, and assume that the size of the array
+> > > passed to tpm_pcr_algorithms() always matches the size
+> > > of the active_banks array.
+> > > 
+> > > Roberto
+> > 
+> > I don't understand what you mean.
+> 
+> I meant that callers of tpm_pcr_algorithms() can always pass
+> an array whose size is the same of that of tpm_chip->active_banks.
+> Since the array size is known, passing count is not necessary.
+> 
+> Roberto
 
-No, I am fine with keeping this as a single series. I don't want
-anything under drivers/efi to imply policy regarding lockdown. Kernel
-lockdown should be a feature that lives somewhere else, and which
-contains a CONFIG_ option that implies 'lockdown is enabled by default
-when UEFI secure boot is detected.' The code that gets added to
-drivers/efi should only concern itself with establishing whether
-secure boot is in effect or not (and can hence be enabled
-unconditionally)
+OK, got it.
 
->> The only tunable we need is in the lockdown context, whether lockdown needs
->> to take effect automatically when UEFI secure boot is detected
->
-> So you don't want this change:
->
->         config EFI_SECURE_BOOT
->                 bool "Support UEFI Secure Boot and lock down the kernel in secure boot mode"
->                 default n
->         +       select LOCK_DOWN_KERNEL
->
-> but would rather have a separate option asking whether lockdown should be
-> triggered if detect UEFI secure boot mode?
->
-
-Yes. As I said, supporting UEFI secure boot (whatever that could mean)
-and implementing a lockdown policy when it is enabled are two entirely
-different things.
-
->> (but there could be other ways to enable lockdown, including a kernel
->> cmdline param or a sysfs node).
->
-> A sysfs node is pretty pointless.  A number of things that are locked down
-> need to be locked down during boot.
-
-OK.
-
-> I could, however, provide a command-line
-> option to engage it or a kernel config option to unconditionally enable it.
->
-
-I *think* that could be useful, although it was meant as an
-illustration rather than actual suggestion.
-
->> - The current series enables lockdown, but does not lock anything
->> down.
->
-> Yes.  As I pointed out, and as I'm sure you know, I have a slew of other
-> patches that actually *do* lock things down.  I extracted these patches to try
-> and get some feedback on this bit without spamming various mailing lists with
-> all the other patches each time.
->
->> Even if the code is in good shape otherwise, I am reluctant to
->> ack and/or merge anything right now, given that it provides a false
->> sense of security.
->
-> You're a member of the "make it provably 100% secure or nothing" camp?
->
-
-No, not at all. But patch 4/5 contains this line
-
-pr_info("Secure boot enabled and kernel locked down\n");
-
-which I don't like at all, given that nothing is actually locked down.
-I have been working in this area long enough to know that people will
-interpret 'lockdown' or 'secure' to mean anything they like if it is
-left unqualified.
-
-So what I would prefer is to separate this from the EFI code, and
-perhaps print something like
-
-lockdown: Kernel lockdown policy in effect due to xxx
-
-and print a subsequent line for every lockdown feature that is enabled, e.g.,
-
-lockdown: disabling MSRs
-lockdown: disabling hibernate support
-
-etc etc
-
-These are just examples, of course, but it manages the expectations,
-and as a bonus, it makes differences between architectures much more
-visible.
-
->> This also ties in to my more general concerns with this code (and I am aware
->> I never replied to your email explaining it, my apologies [again]): without
->> any sense of how large the attack surface is now,
->
-> I suspect no one knows.  I've been trying to lock down possibilities people
-> have pointed me at, even if some of them are very theoretical, and a lot of
-> the patches I've gathered together come from other people, but I don't know
-> the hardware that a lot of this is dealing with, so I can't answer this
-> question.
->
-
-OK, and that is fine. I would just like this modest stance to be
-reflected in the code and especially the log messages.
-
->> and how much we reduced it by implementing the items on your list above, we
->> should really not be making claims of security, given that we really have no
->> idea how much more secure we are. That said, I do subscribe to the effort,
->> in the sense that moving towards the goal is strictly better than moving
->> away from it, or not at all.
->
-> Can we at least decide whether or not we want to put a locked-down mode into
-> the upstream kernel?  If not, I can drop this effort.
-
-No, I think this is a very important feature. But it needs to be more
-transparent to avoid a false sense of security.
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
