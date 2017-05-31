@@ -1,218 +1,94 @@
-From: greg@enjellic.com (Dr. Greg Wettstein)
-Date: Wed, 31 May 2017 04:49:58 -0500
-Subject: [RFC 04/11] ima: add support to namespace securityfs file
-In-Reply-To: <1496079158.3841.350.camel@linux.vnet.ibm.com>
-References: <1494511203-8397-1-git-send-email-guilherme.magalhaes@hpe.com>
-	<1494511203-8397-5-git-send-email-guilherme.magalhaes@hpe.com>
-	<1495656774.3841.72.camel@linux.vnet.ibm.com>
-	<d8d55872-db78-3535-a540-85c0dbb2d6fd@canonical.com>
-	<1495712762.3841.89.camel@linux.vnet.ibm.com>
-	<CS1PR84MB0294089AC618EE12DB042263FFFF0@CS1PR84MB0294.NAMPRD84.PROD.OUTLOOK.COM>
-	<1496079158.3841.350.camel@linux.vnet.ibm.com>
-Message-ID: <20170531094958.GA3799@wind.enjellic.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Wed, 31 May 2017 19:41:46 +0900
+Subject: [PATCH] LSM: Convert security_hook_heads into explicit array of
+	struct list_head
+In-Reply-To: <alpine.LRH.2.20.1705310858430.6920@namei.org>
+References: <201705281026.EHD04622.HJFOLQFMSOtFOV@I-love.SAKURA.ne.jp>
+	<alpine.LRH.2.20.1705302021090.31018@namei.org>
+	<201705302329.IEB05735.FLJOFHSQVtOOFM@I-love.SAKURA.ne.jp>
+	<20170530162550.19ba1811@alans-desktop>
+	<alpine.LRH.2.20.1705310858430.6920@namei.org>
+Message-ID: <201705311941.CGD64590.MOFSOLFJtQFOVH@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, May 29, 2017 at 01:32:38PM -0400, Mimi Zohar wrote:
-
-> Hi Guilherme,
+James Morris wrote:
+> On Tue, 30 May 2017, Alan Cox wrote:
 > 
-> (Wow, you should did Cc a lot of people.)
-
-Indeed.
-
-We have namespaced a significant amount of the IMA code so we will
-continue the broadcast, under the assumption that this is of general
-interest to the community.
-
-Comments below.
-
-> On Thu, 2017-05-25 at 19:04 +0000, Magalhaes, Guilherme (Brazil R&D-
-> CL) wrote:
-> > Mimi,
-> > With the securityfs symlink we would address the case of setting
-> > policy inside containers, but we still would need a way to set the
-> > IMA policy per namespace outside containers. So, the current
-> > proposed interface would address the latter case.
-> > As an alternative to symlinks, taking this patch set as base, and
-> > still considering setting policy inside containers (or inside
-> > namespaces in general), it is possible to bind mount the securityfs
-> > files into the containers, but it would be needed to prevent
-> > read/write access to the namespaced IMA policy files for processes
-> > not running on the same namespace.
+> > On Tue, 30 May 2017 23:29:10 +0900
+> > Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 > > 
-> > These mechanisms would not require a change in the proposed design.
-> > Do you think these mechanisms are enough for the flexibility you
-> > asked?
+> > > James Morris wrote:
+> > > > On Sun, 28 May 2017, Tetsuo Handa wrote:
+> > > >   
+> > > > > can afford enabling". And we know that we cannot merge all security modules
+> > > > > into mainline. Thus, allowing LKM-based LSM modules is inevitable.  
+> > > > 
+> > > > Nope, it's not inevitable.  The LSM API only caters to in-tree users.
+> > > > 
+> > > > I'm not sure why you persist against this.  
+> > > 
+> > > Then, we are willing to accept LSM modules with users less than 10, aren't we?
+> > 
+> > Why not if they are properly written and maintained. Historically we've
+> > supported an entire architecture that had one machine ever built. We
+> > supported a strange subclass of x86 machines for many years because James
+> > Bottomley cared enough to do the work. We still support M68K, PA-RISC and
+> > other stuff as well as plenty of hardware which probably has few users -
+> > providing it doesn't cause maintenance problems.
 > 
-> I'm really sorry Guileherme, but as I previously explained, IMA has
-> many aspects to it - the original file measurements (IMA-measurement), 
-> file hash/signature appraisal (IMA-appraisal), and file audit messages
-> (IMA-audit) used for security analytics/forensics, not the file system
-> auditing.????To namespace IMA properly requires addressing some
-> underlying problems - securityfs, root privilege required for writing
-> security xattrs, per namespace IMA keyring - to name a few.
+> This is what we as a community came up with in 2008:
 > 
-> I understand wanting to namespace the appraisal aspect first, but when
-> you asked me if anyone else is working on namespacing IMA at the
-> moment, I suggested starting with the IMA-audit aspect for a
-> reason.????By beginning with the IMA-audit aspect, we could ignore, at
-> least for the time being, some of these underlying problems, but
-> define the basic namespacing architecture.????By jumping to namespacing
-> the appraisal aspect, you've simply avoided addressing the IMA
-> namespacing architecture issues, which need to be addressed.
+>   "Essentially, any new security project - not limited to LSMs - should be 
+>    accompanied by a clear and concise document outlining its requirements 
+>    and expected uses. This is to allow both security and regular folk to 
+>    perform review of the code in terms of how it meets the specified 
+>    requirements, and to avoid getting bogged down in unresolvable 
+>    discussions about the project?s security model."
 > 
-> Here are some, not by any means all, of the issues with namespacing
-> IMA.
->
+> From https://blog.namei.org/2008/12/11/the-arjan-protocol/
 > 
-> - IMA-measurements:
+> (Not sure if the original document at Kernel Trap still exists, alas).
 > 
-> The namespacing design will need to support different types of
-> environments. For example, depending on the environment, namespaces
-> can come and go frequently. In such an environment do we really want
-> all the namespace measurements to be included in the system
-> measurement list, or should each namespace have its own measurement
-> list?????Should the namespace measurement policy be the same as the
-> system measurement policy?????Should the namespace (container) owner be
-> allowed to modify their own policy?????If a file matches a rule in both
-> the namespace and system policies, should the file measurement be in
-> both the namespace and the system measurement lists?
-> 
-> 
-> - IMA-appraisal
-> 
-> Assuming the IMA appraisal policy requires file signatures, signatures
-> are verified based on the keys on the IMA keyring.????When discussing
-> namespacing IMA-appraisal, we might want different sets of keys in
-> different namespaces. This requires separate keyrings for each
-> namespace. ??In some use cases, we might want to include the keys on
-> the system IMA keyring, while in other use cases we might not.
-> 
-> Even if real root initially installs the files with their file
-> signatures, stored as extended attributes, how will software be
-> updated, as writing file signatures requires root
-> privilege?Capabilities has recently added support to permit root in
-> the namespace to write security.capability.????Similarly when
-> namespacing IMA, root in the namespace needs the ability to write
-> security.ima.
-> 
-> 
-> - IMA-audit:
-> 
-> The IMA-audit messages can augment other file system security
-> information used in security analytics/forensics.????This information
-> should be on a per namespace basis, meaning that each time a new file
-> is accessed/executed, there needs to be a separate audit message, even
-> if a message already exists in another namespace.????Maintaining and
-> cleaning up this per namespace cache information, allows development
-> of the IMA namespace architecture independently of other issues.
-> 
-> My original suggestion stands. ??Start with namespacing IMA-
-> audit.????Afterwards resolve the securityfs issues needed for
-> namespacing IMA-measurement, and subsequently resolve the keyring and
-> xattr issues for namespacing IMA-appraisal. Although other subsystems
-> have already addressed some of the issues listed here, the advice to
-> start with IMA-audit is still valid.
-> 
-> Small incremental change does not imply without an overall design, but
-> an overall design which is broken up in such a way (to ease review)
-> that builds upon the previous change.
-> 
-> As both Apparmor and IMA use securityfs for policy, it would be nice
-> if their method for loading namespace policies would be similar too.
+> So what we need is clear design documentation that the code can be 
+> reviewed against.  There is nothing about the number of users.  If the 
+> code is simply using the existing API and meets its design goals, it's 
+> pretty straightforward.  If changes to the API or core kernel are also 
+> required, then more discussion and review will be needed.
 
-Our deterministic platform modeling code is built on top of the IMA
-infrastructure.  Our modeling implementation has namespace support so
-we ended up OS virtualizing a significant amount of the IMA
-infrastructure to implement container specific behavior modeling.  So
-the following is under the moniker of been there, done that to some
-extent.
+I saw several companies who ship their embedded devices with
+single-function LSM modules (e.g. restrict only mount operation and
+ptrace operation). What is unfortunate is that their LSM modules had
+never been proposed for upstream, and thus bugs remained unnoticed.
 
-As an aside, we refer to containers running in a modeled environment
-as 'canisters' since they are containers with a label.
+They cannot afford enabling SELinux or SMACK or TOMOYO or AppArmor
+in their products, whereas LSM community tends to think as whether
+SELinux or SMACK or TOMOYO or AppArmor can do what they want.
 
-Based on our experiences, the community will want each namespace
-implementation to be as independent as possible.  A primary benefit of
-namespaced implementations of integrity/behavior modeling is to enable
-more tractable deployments since the system can be run from a very
-small TCB whose behavior is rooted to a hardware integrity guarantee.
-System upgrades are way more tractable in this type of architecture.
+It will become possible to get single-function LSM modules merged if we
+stop saying "you can do it with SELinux or SMACK or TOMOYO or AppArmor".
+But there is the other barrier if we think about distributions.
 
-Each canister in our model has its own behavioral trajectory path
-which is the equivalent of a superset of the IMA measurement list.
-After the canister behavior is sealed, each canister reports forensics
-violations as new entries on the trajectory path.  So forensic
-evaluations are enabled at the canister level, which is extremely
-valuable.
+If distributors enable all LSM modules which are wanted by their users
+(e.g. Ubuntu, or LSM modules dedicated for their embedded devices), there
+is no need to support LKM-based LSM modules.
 
-Implementing all of this was fairly straight forward on top of the
-current IMA infrastructure.  Mimi's recommendation to start with the
-audit layer is well taken, that is a solid pathway for determining how
-to generically address the relevant infrastructure issues.
+But otherwise (e.g. https://bugzilla.redhat.com/show_bug.cgi?id=542986 ),
+we are forcing users to rebuild distribution kernels even if the LSM code is
+available in vanilla kernels. It is a sort of enforcing CONFIG_MODULES=n.
+Offering users the ability to use LSM modules as LKM and allowing users to
+use LSM modules which are not enabled by distributors as LKM at user's own
+risk is a realistic choice, and therefore I developed AKARI.
 
->From an implementation perspective we don't use bind mounts or the
-like.  The securityfs pseudo-files all sense which namespace they are
-operating in which resulted in a much cleaner implementation, at least
-in our experience.
-
-We implemented a model where the behavioral eigenvectors (events) are
-surfaced through a new pseudo-file created for each canister.  This
-pseudo-file is rooted in the /sys/fs/iso-identity pseudo-directory and
-named by the namespace inode number which was allocated for the
-canister namespace when the behavioral domain (namespace) is created.
-
-This could have been done as well in the securityfs filesystem but we
-were too {cramped for time,lazy} to implement polling and sysfs files
-gives you that for free.
-
-This seems to be a pretty flexible model for orchestration.  We
-propagate the behavioral eigenvectors into individual SGX enclaves
-which monitor the behavior of each canister.  The model would support
-propagating events into a vTPM as well.
-
->From an orchestration perspective we plumbed all of this, including
-SGX support, into the most recent release of runc and it has all
-worked surprisingly well with respect to running existing containers.
-All you need to do is specify in the container config.json that the
-container is to run in an independent behavioral namespace.  We do
-lament that runc was written in GO rather then C... :-)
-
-There are some rough edges which need polishing though.  A more
-expressive and namespace specific policy engine needs to be addressed.
-In addition to the namespace implementation we implemented superblock
-independent content digests which closes what we believe is a rather
-significant measurement gap.  Addressing network inode measurement is
-an entirely new and different can of worms as well.
-
-We have also spent a fair amount of time reflecting on Viro's rants
-with respect to IMA and all of its inherent ugliness... :-)
-
-Our major concern is what does the community want to do with respect
-to defining the CLONE_* flag which is used to signal that the
-integrity/behavior namespace should be unshared.  We currently build
-on top of 4.4 LTS and we stole the last bit which was available.  What
-are the thoughts with respect to expanding this resource as it won't
-be the last OS virtualization which is undertaken?
-
-> Mimi
-
-Hopefully the above reflections and experiences are useful datapoints.
-
-Have a good week.
-
-Greg
-
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg at enjellic.com
-------------------------------------------------------------------------------
-"We can't solve today's problems by using the same thinking we used in
- creating them."
-                                -- Einstein
+The location we are directing to via read-only LSM hooks seems to be: let's
+accept source code of LSM modules which they want (so that LKM-based LSM
+modules won't be needed), but let's prevent users from running binary code
+of LSM modules which they want (by forcing users to rebuild their kernels
+via lack of ability to use LKM-based LSM modules). My customers cannot afford
+enabling SELinux, but my customers cannot rebuild their kernels because
+rebuilding makes it even more difficult to get help from support centers.
+Therefore, my customers remain unable to use LSM modules which they want.
+This is really unfortunate for me.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
