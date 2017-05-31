@@ -1,36 +1,63 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 31 May 2017 08:53:42 -0700
-Subject: [PATCH] Smack: Safer check for a socket in file_receive
-Message-ID: <36cefa8b-3441-91b4-1f8c-51c4d7004141@schaufler-ca.com>
+From: me@jessfraz.com (Jessica Frazelle)
+Date: Wed, 31 May 2017 18:14:25 +0100
+Subject: namespaces todo list?
+In-Reply-To: <c1386ea9-bd54-9f73-2bbf-9f331cfb4aa2@poczta.onet.pl>
+References: <82271f8b-c366-28b1-90ac-3b0780490fa5@poczta.onet.pl>
+	<CAEk6tEwqd5dxMgXSms5g7+hd+8Pufe1+1BKeUQ2Ew9sLBUtbfA@mail.gmail.com>
+	<1139e982-0096-1d5c-3ea1-b7607907b9c2@poczta.onet.pl>
+	<CAEk6tEyfELOy4w2AB2EAsLDQXo+atJnhatVNs9DcReqvbzLX6w@mail.gmail.com>
+	<c1386ea9-bd54-9f73-2bbf-9f331cfb4aa2@poczta.onet.pl>
+Message-ID: <CAEk6tEwFhm34yZH-GRP_2J9YankZuVarsM0WrrpBR-QcGoGM3A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH] Smack: Safer check for a socket in file_receive
+On Wed, May 31, 2017 at 5:58 PM, Micha? Zegan
+<webczat_200@poczta.onet.pl> wrote:
+>
+>
+> W dniu 31.05.2017 o 17:23, Jessica Frazelle pisze:
+>> You can catch up here[1] wrt the keyring and userns, David Howells is
+>> working on more with the keyring currently[2] seems like from the set
+>> of patches.
+>>
+>> [1] https://patchwork.kernel.org/patch/9394983/
+> this patch is still in new state so not merged, hmm
 
-The check of S_ISSOCK() in smack_file_receive() is not
-appropriate if the passed descriptor is a socket.
+The state today is as described in that patch, which also goes over
+the problems and designs. as well as the other link given which has
+the more recent work.
 
-Reported-by: Stephen Smalley <sds@tyco.nsa.gov>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> [2] https://marc.info/?l=linux-cgroups&w=2&r=1&s=David+Howells&q=b
+>>
+>> On Wed, May 31, 2017 at 4:17 PM, Micha? Zegan
+>> <webczat_200@poczta.onet.pl> wrote:
+>>>
+>>>
+>>> W dniu 31.05.2017 o 17:05, Jessica Frazelle pisze:
+>>>>> 3 - keys, keyrings? are they namespace aware or not? I am quite lost in
+>>>>> that regard, because I happen to hear conflicting statements.
+>>>>
+>>>> If you are using user namespaces, the keyring is namespaced.
+>>>>
+>>>>
+>>>>
+>>> so, from which kernel version is it namespaced? and, if it really is
+>>> namespaced, then does it mean the only thing not currently resolved is
+>>> request_key?
+>>>
+>>
+>>
+>>
+>
 
----
- security/smack/smack_lsm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 658f5d8..463af86 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1915,7 +1915,7 @@ static int smack_file_receive(struct file *file)
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
- 	smk_ad_setfield_u_fs_path(&ad, file->f_path);
- 
--	if (S_ISSOCK(inode->i_mode)) {
-+	if (inode->i_sb->s_magic == SOCKFS_MAGIC) {
- 		sock = SOCKET_I(inode);
- 		ssp = sock->sk->sk_security;
- 		tsp = current_security();
 
+-- 
+
+
+Jessie Frazelle
+4096R / D4C4 DD60 0D66 F65A 8EFC  511E 18F3 685C 0022 BFF3
+pgp.mit.edu
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
