@@ -1,49 +1,79 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Wed, 31 May 2017 00:10:17 -0400
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
-	ioctl require CAP_SYS_ADMIN
-In-Reply-To: <alpine.LRH.2.20.1705311239420.6920@namei.org>
-References: <20170529213800.29438-1-matt@nmatt.com>
-	<20170529213800.29438-3-matt@nmatt.com>
-	<20170529232640.16211960@alans-desktop>
-	<CAFUG7CdDd0Yfegb1S6_wNQzje4EuLE0jPdvOE=uSQL152meyjQ@mail.gmail.com>
-	<alpine.LRH.2.20.1705311239420.6920@namei.org>
-Message-ID: <cb0daac8-bd8d-0780-cf04-46033f8fea10@nmatt.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 31 May 2017 10:23:55 +0100
+Subject: [PATCH 0/5] security, efi: Set lockdown if in secure boot mode
+In-Reply-To: <CAKv+Gu_5gUWwx7Sxgm8d03L4t4nF8dDe+AXqOqto4B7AVSZ9CA@mail.gmail.com>
+References: <CAKv+Gu_5gUWwx7Sxgm8d03L4t4nF8dDe+AXqOqto4B7AVSZ9CA@mail.gmail.com>
+	<149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+Message-ID: <21606.1496222635@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/30/2017 10:48 PM, James Morris wrote:
-> On Mon, 29 May 2017, Boris Lukashev wrote:
->
->> With all due respect sir, i believe your review falls short of the
->> purpose of this effort - to harden the kernel against flaws in
->> userspace.
->
-> Which effort?  Kernel self protection is about protecting against flaws in
-> the kernel.
->
-> See:
-> https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project
->
->   "This project starts with the premise that kernel bugs have a very long
->    lifetime, and that the kernel must be designed in ways to protect against
->    these flaws."
->
-> We need to avoid conflating:
->
-> - hardening the kernel against attack; and
-> - modifying the kernel to try and harden userspace.
->
-> These patches are the latter, and the case for them is not as
-> straightforward.
->
->
-> - James
->
+Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 
-I agree that these patches aren't kernel self protection and I don't
-believe I have claimed they are such a thing. These patches I'm
-presenting are more akin to ptrace protections that are found in Yama.
+> - The series conflates 'UEFI secure boot support' with 'kernel lock
+> down support'. I think this has been brought up before, but I really
+> think we should have a cleaner separation between the feature (locking
+> down various bits of the kernel if lockdown is in effect) from the
+> policy 'enable lockdown if UEFI secure boot is enabled'.
+
+I'm not sure what you're actually asking for.  Are you wanting me to push the
+lockdown patches upstream separately from the UEFI patches that trigger the
+lockdown?  Or do you mean something else?
+
+> The only tunable we need is in the lockdown context, whether lockdown needs
+> to take effect automatically when UEFI secure boot is detected
+
+So you don't want this change:
+
+	config EFI_SECURE_BOOT
+		bool "Support UEFI Secure Boot and lock down the kernel in secure boot mode"
+		default n
+	+	select LOCK_DOWN_KERNEL
+
+but would rather have a separate option asking whether lockdown should be
+triggered if detect UEFI secure boot mode?
+
+> (but there could be other ways to enable lockdown, including a kernel
+> cmdline param or a sysfs node).
+
+A sysfs node is pretty pointless.  A number of things that are locked down
+need to be locked down during boot.  I could, however, provide a command-line
+option to engage it or a kernel config option to unconditionally enable it.
+
+> - The current series enables lockdown, but does not lock anything
+> down.
+
+Yes.  As I pointed out, and as I'm sure you know, I have a slew of other
+patches that actually *do* lock things down.  I extracted these patches to try
+and get some feedback on this bit without spamming various mailing lists with
+all the other patches each time.
+
+> Even if the code is in good shape otherwise, I am reluctant to
+> ack and/or merge anything right now, given that it provides a false
+> sense of security.
+
+You're a member of the "make it provably 100% secure or nothing" camp?
+
+> This also ties in to my more general concerns with this code (and I am aware
+> I never replied to your email explaining it, my apologies [again]): without
+> any sense of how large the attack surface is now,
+
+I suspect no one knows.  I've been trying to lock down possibilities people
+have pointed me at, even if some of them are very theoretical, and a lot of
+the patches I've gathered together come from other people, but I don't know
+the hardware that a lot of this is dealing with, so I can't answer this
+question.
+
+> and how much we reduced it by implementing the items on your list above, we
+> should really not be making claims of security, given that we really have no
+> idea how much more secure we are. That said, I do subscribe to the effort,
+> in the sense that moving towards the goal is strictly better than moving
+> away from it, or not at all.
+
+Can we at least decide whether or not we want to put a locked-down mode into
+the upstream kernel?  If not, I can drop this effort.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
