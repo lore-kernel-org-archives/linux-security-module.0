@@ -1,53 +1,88 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Wed, 31 May 2017 12:11:07 -0700
-Subject: [PATCH] KEYS: fix dereferencing NULL payload with nonzero length
-In-Reply-To: <20170403213041.GA140817@gmail.com>
-References: <20170403175929.GB72831@gmail.com>
-	<20170401213428.17097-1-ebiggers3@gmail.com>
-	<3451.1491234402@warthog.procyon.org.uk>
-	<6884.1491247244@warthog.procyon.org.uk>
-	<20170403213041.GA140817@gmail.com>
-Message-ID: <20170531191107.GB72735@gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 31 May 2017 13:23:41 -0700
+Subject: [PATCH] Smack: Use cap_capable in privilege check
+Message-ID: <21876921-ee24-450a-9d8f-fd7ef99b389b@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 03, 2017 at 02:30:41PM -0700, Eric Biggers wrote:
-> On Mon, Apr 03, 2017 at 08:20:44PM +0100, David Howells wrote:
-> > Eric Biggers <ebiggers3@gmail.com> wrote:
-> > 
-> > > > > -	if (_payload) {
-> > > > > +	if (plen) {
-> > > > 
-> > > > "if (_payload && plen)" would be better.
-> > > > 
-> > > > David
-> > > 
-> > > No, that doesn't solve the problem.  The problem is that userspace can pass
-> > > in a NULL payload with nonzero length, causing the kernel to dereference a
-> > > NULL pointer for some key types.  For example:
-> > 
-> > Okay, in that case, I think there should be an else-statement that clears plen
-> > if !_payload.
-> > 
-> > David
-> 
-> I think it's preferable to return EFAULT in the case in question.  Most syscalls
-> work like that, i.e. if you say you have 100 bytes (or any number > 0) at
-> address NULL you'll get EFAULT.
-> 
-> Also note that anyone doing this before would have been either crashing the
-> kernel or getting EINVAL.  So starting to return EFAULT would be very unlikely
-> to break anything.
-> 
-> - Eric
+Subject: [PATCH] Smack: Use cap_capable in privilege check
 
-David, can you please apply this?  Or if you haven't applied it because you
-prefer the other solution then please explain your reasoning.
+Use cap_capable() rather than capable() in the Smack privilege
+check as the former does not invoke other security module
+privilege check, while the later does. This becomes important
+when stacking. It may be a problem even with minor modules.
 
-It's really not acceptable for unprivileged users to be able to trivially oops
-the kernel.
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/smack/smack.h        |  2 +-
+ security/smack/smack_access.c | 19 +++++++++++--------
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
-Eric
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 612b810..6a71fc7 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -320,7 +320,7 @@ int smk_netlbl_mls(int, char *, struct netlbl_lsm_secattr *, int);
+ struct smack_known *smk_import_entry(const char *, int);
+ void smk_insert_entry(struct smack_known *skp);
+ struct smack_known *smk_find_entry(const char *);
+-int smack_privileged(int cap);
++bool smack_privileged(int cap);
+ void smk_destroy_label_list(struct list_head *list);
+ 
+ /*
+diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+index a4b2e6b..1a30041 100644
+--- a/security/smack/smack_access.c
++++ b/security/smack/smack_access.c
+@@ -627,35 +627,38 @@ DEFINE_MUTEX(smack_onlycap_lock);
+  * Is the task privileged and allowed to be privileged
+  * by the onlycap rule.
+  *
+- * Returns 1 if the task is allowed to be privileged, 0 if it's not.
++ * Returns true if the task is allowed to be privileged, false if it's not.
+  */
+-int smack_privileged(int cap)
++bool smack_privileged(int cap)
+ {
+ 	struct smack_known *skp = smk_of_current();
+ 	struct smack_known_list_elem *sklep;
++	int rc;
+ 
+ 	/*
+ 	 * All kernel tasks are privileged
+ 	 */
+ 	if (unlikely(current->flags & PF_KTHREAD))
+-		return 1;
++		return true;
+ 
+-	if (!capable(cap))
+-		return 0;
++	rc = cap_capable(current_cred(), &init_user_ns, cap,
++				SECURITY_CAP_AUDIT);
++	if (rc)
++		return false;
+ 
+ 	rcu_read_lock();
+ 	if (list_empty(&smack_onlycap_list)) {
+ 		rcu_read_unlock();
+-		return 1;
++		return true;
+ 	}
+ 
+ 	list_for_each_entry_rcu(sklep, &smack_onlycap_list, list) {
+ 		if (sklep->smk_label == skp) {
+ 			rcu_read_unlock();
+-			return 1;
++			return true;
+ 		}
+ 	}
+ 	rcu_read_unlock();
+ 
+-	return 0;
++	return false;
+ }
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
