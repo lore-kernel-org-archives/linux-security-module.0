@@ -1,88 +1,38 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 31 May 2017 13:23:41 -0700
-Subject: [PATCH] Smack: Use cap_capable in privilege check
-Message-ID: <21876921-ee24-450a-9d8f-fd7ef99b389b@schaufler-ca.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 31 May 2017 23:49:34 +0300
+Subject: [PATCH v2] LSM: Convert security_hook_heads into explicit array
+	of struct list_head
+In-Reply-To: <alpine.LRH.2.20.1705302025110.31018@namei.org>
+References: <1495883858-3336-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<1496003387-3184-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+	<alpine.LRH.2.20.1705302025110.31018@namei.org>
+Message-ID: <27e537cc-1d1c-1a48-d3fd-a04921f7b620@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH] Smack: Use cap_capable in privilege check
+On 30/05/17 13:32, James Morris wrote:
 
-Use cap_capable() rather than capable() in the Smack privilege
-check as the former does not invoke other security module
-privilege check, while the later does. This becomes important
-when stacking. It may be a problem even with minor modules.
+> This seems like pointless churn in security-critical code in anticipation 
+> of features which are still in development and may not be adopted.
+> 
+> Is there a compelling reason to merge this now? (And I don't mean worrying 
+> about non-existent compliers).
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+I propose to take this patch as part of those I will be submitting.
+It took me some unplanned time to add support for hardened user copy,
+but now it's done - at least to a point that I can test it without failures.
+
+So I'm back on track to provide an example of the smalloc api and I can
+also use Tetsuo's work (thanks again, btw).
+This patch would be sandwiched between the smalloc ones and the LSM rework.
+
+It can get merged when the rest (hopefully) is merged.
+
+But I have a more prosaic question: since smalloc is affecting the
+memory subsystem, can it still be merged through the security tree?
+
 ---
- security/smack/smack.h        |  2 +-
- security/smack/smack_access.c | 19 +++++++++++--------
- 2 files changed, 12 insertions(+), 9 deletions(-)
-
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 612b810..6a71fc7 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -320,7 +320,7 @@ int smk_netlbl_mls(int, char *, struct netlbl_lsm_secattr *, int);
- struct smack_known *smk_import_entry(const char *, int);
- void smk_insert_entry(struct smack_known *skp);
- struct smack_known *smk_find_entry(const char *);
--int smack_privileged(int cap);
-+bool smack_privileged(int cap);
- void smk_destroy_label_list(struct list_head *list);
- 
- /*
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index a4b2e6b..1a30041 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -627,35 +627,38 @@ DEFINE_MUTEX(smack_onlycap_lock);
-  * Is the task privileged and allowed to be privileged
-  * by the onlycap rule.
-  *
-- * Returns 1 if the task is allowed to be privileged, 0 if it's not.
-+ * Returns true if the task is allowed to be privileged, false if it's not.
-  */
--int smack_privileged(int cap)
-+bool smack_privileged(int cap)
- {
- 	struct smack_known *skp = smk_of_current();
- 	struct smack_known_list_elem *sklep;
-+	int rc;
- 
- 	/*
- 	 * All kernel tasks are privileged
- 	 */
- 	if (unlikely(current->flags & PF_KTHREAD))
--		return 1;
-+		return true;
- 
--	if (!capable(cap))
--		return 0;
-+	rc = cap_capable(current_cred(), &init_user_ns, cap,
-+				SECURITY_CAP_AUDIT);
-+	if (rc)
-+		return false;
- 
- 	rcu_read_lock();
- 	if (list_empty(&smack_onlycap_list)) {
- 		rcu_read_unlock();
--		return 1;
-+		return true;
- 	}
- 
- 	list_for_each_entry_rcu(sklep, &smack_onlycap_list, list) {
- 		if (sklep->smk_label == skp) {
- 			rcu_read_unlock();
--			return 1;
-+			return true;
- 		}
- 	}
- 	rcu_read_unlock();
- 
--	return 0;
-+	return false;
- }
-
+thanks, igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
