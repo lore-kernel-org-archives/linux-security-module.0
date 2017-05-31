@@ -1,74 +1,63 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 31 May 2017 10:32:43 -0500
-Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make
-	TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <20170531153615.37fea64a@alans-desktop>
-References: <20170517174113.69d1cbaa@alans-desktop>
-	<1495045540.1619.1.camel@gmail.com>
-	<CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
-	<CANA3KFWF-=6AWZKAc1ijyoL5vRAwPnwngZZEP9=5+AFgnMv1rg@mail.gmail.com>
-	<20170519143344.GA15983@mail.hallyn.com>
-	<CANA3KFXVzSXuA4Cocm7fUYE9EOvJX7pW0bsj=cgyUYvScUsXGQ@mail.gmail.com>
-	<20170530155235.GA11861@mail.hallyn.com>
-	<20170530225245.092497be@alans-desktop>
-	<CANA3KFWE2kUwdzGAGwRn8x4ceFzx5Z-quC2WBwqvks8LkTCh+A@mail.gmail.com>
-	<20170531153615.37fea64a@alans-desktop>
-Message-ID: <20170531153243.GA31189@mail.hallyn.com>
+From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
+Date: Wed, 31 May 2017 11:36:16 -0400
+Subject: [RFC 0/3] WhiteEgret LSM module
+In-Reply-To: <CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
+References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
+	<20170530205002.GA9841@srcf.ucam.org>
+	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
+Message-ID: <88D2080F-FEFA-4535-ACF1-01A584F469D9@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Alan Cox (gnomes at lxorguk.ukuu.org.uk):
-> > Alan is right.   CAP_SYS_ADMIN allows crossing the tty barrier.
-> 
-> I don't need CAP_ anything to mmap your frame buffer, or use selection to
-> cut and paste text into the terminal.
-> 
-> > Broken applications that you can wrap in a pty/tty pair as the lxc
-> > application does would be defeated if those applications move up to
-> > CAP_SYS_ADMIN.  Because you have granted the high right of cross
-> > pty/tty containment.
-> 
-> Yes
 
-Right.
+> On May 31, 2017, at 6:59 AM, Peter Dolding <oiaohm@gmail.com> wrote:
+> 
+> Number 1 we need to split the idea of signed and whitelisted.   IMA is
+> signed should not be confused with white-listed.    You will find
+> policies stating whitelist and signed as two different things.
 
-> > I don't know of a genuine program using push back in exploiting way
-> > where the pushed back input is expected to be processed after the
-> > program has terminated.
-> 
-> So there are two real problems here
-> 
-> 1. We don't know what namespace each character belongs to, so there's no
-> way we can construct a model where pushed symbols only appear in the
-> namespace they are pushed from. That would be a nice situation but it's
-> not at all obvious there is a sane way to implement it.
-> 
-> 2. Focussing on TIOCSTI is just ignoring the bigger picture. TIOCSTI is
-> actually a lot less nasty in many situations than a framebuffer mmap and
-> spying attack where a container run from the console could sit and watch
-> you. TIOCSTI is in some ways the easiest to fix because setsid() will let
-> you mitigate it in certain cases whereas I'm fairly sure the selection
-> based console attack doesn't need controlling terminal rights.
-> 
-> In the case you have a less privileged subshell you need a whole new tty
-> context, and there's no obvious way for the kernel to magic one into
-> existance so that for example the container can change it's own baud rate
-> but not the baud rate of any app outside the container.
-> 
-> ioctl whitelisting will break stuff, but an SELinux/AppArmour/seccomp
-> whitelisting based solution is probably the only practical one you can
-> implement usefully, and for a lot of container users would be ok.
+IMA-appraisal can do both. If the securtiy.ima extended attribute
+of the file is a hash and not a signature, then it is whitelisting.
 
-Seccomp policy could refuse TIOCSTI to any fd, but that's not ideal.  It could
-be customized per-application-start to only refuse TIOCSTI to the passed-in tty
-fd, but you'd have to prevent dup then right?  Selinux can label the fd so it's
-in fact ideal here.  But - is there something clever a seccomp policy could do
-to work only on specified fds and any that were dup'ed?
+> Like you see here in Australian government policy there is another
+> thing called whitelisted.
+> https://www.asd.gov.au/publications/protect/top_4_mitigations_linux.htm
+> Matthew Garrett you might want to call IMA whitelisting Australian
+> government for one does not agree.  IMA is signed.   The difference
+> between signed and white-listed is you might have signed a lot more
+> than what a particular system is white-listed to allowed used.
 
-Mind you, I of course agree that creating a new pty and passing only that in
-is the sane fix.  Maybe in the end this thread will serve best as a loud
-reminder / teaching moment about this issue for those about to write such an
-application.
+I doubt the Australian government is an authority on Linux features.
+IMA-appraisal can be set to "fix" mode with a boot parameter. If the 
+policy covers what you want to whitelist (e.g. files opened by user x), 
+and then when those files are accessed, the kernel writes out the hash. 
+Then, you can switch to "enforce" mode to allow only files with hashes.
+
+Also, you can achieve the same thing by signing all whitelisted 
+files and add the certificate to .ima keyring and throwing away the
+signing key.
+
+> The feature need to include in it name whitelisting or just like the
+> Australian Department of Defence other parties will mark Linux has not
+> having this feature.
+
+I guess we need to advertise IMA-appraisal better.
+
+> Whitelist is program name/path and checksum/s.   If the file any more
+> than that is now not a Whitelist but a Security Policy Enforcement or
+> signing.   Whitelist and blacklists are meant to be simple things.
+> This is also why IMA fails and is signed to too complete to be a basic
+> Whitelist.
+
+When you work out all the little details, you arrive at IMA-appraisal.
+You have to consider how the scheme is bootstrapped and how it
+is protected against the root. IMA-appraisal either relies on a boot
+parameter and write-once policy, or the trusted keyrings.
+
+> Peter Dolding.
+
+Mehmet
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
