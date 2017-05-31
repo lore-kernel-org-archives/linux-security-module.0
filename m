@@ -1,62 +1,46 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 31 May 2017 08:22:34 -0700
-Subject: [RFC 0/3] WhiteEgret LSM module
-In-Reply-To: <CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
-References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
-	<20170530205002.GA9841@srcf.ucam.org>
-	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
-Message-ID: <0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
+From: me@jessfraz.com (Jessica Frazelle)
+Date: Wed, 31 May 2017 16:23:01 +0100
+Subject: namespaces todo list?
+In-Reply-To: <1139e982-0096-1d5c-3ea1-b7607907b9c2@poczta.onet.pl>
+References: <82271f8b-c366-28b1-90ac-3b0780490fa5@poczta.onet.pl>
+	<CAEk6tEwqd5dxMgXSms5g7+hd+8Pufe1+1BKeUQ2Ew9sLBUtbfA@mail.gmail.com>
+	<1139e982-0096-1d5c-3ea1-b7607907b9c2@poczta.onet.pl>
+Message-ID: <CAEk6tEyfELOy4w2AB2EAsLDQXo+atJnhatVNs9DcReqvbzLX6w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+You can catch up here[1] wrt the keyring and userns, David Howells is
+working on more with the keyring currently[2] seems like from the set
+of patches.
 
+[1] https://patchwork.kernel.org/patch/9394983/
+[2] https://marc.info/?l=linux-cgroups&w=2&r=1&s=David+Howells&q=b
 
-On 5/31/2017 3:59 AM, Peter Dolding wrote:
-> ...
+On Wed, May 31, 2017 at 4:17 PM, Micha? Zegan
+<webczat_200@poczta.onet.pl> wrote:
 >
-> Like you see here in Australian government policy there is another
-> thing called whitelisted.
-> https://www.asd.gov.au/publications/protect/top_4_mitigations_linux.htm
-> Matthew Garrett you might want to call IMA whitelisting Australian
-> government for one does not agree.  IMA is signed.   The difference
-> between signed and white-listed is you might have signed a lot more
-> than what a particular system is white-listed to allowed used.
 >
-To be clear, I'm all for a security module to support this policy.
-As the explicit requirement is for a whitelist, as opposed to allowing
-for a properly configured system*, you can't use any of the existing
-technologies to meet it. This kind of thing** is why we have a LSM
-infrastructure.
-
-Unfortunately, the implementation proposed has very serious issues.
-You can't do access control from userspace. You can't count on
-identifying programs strictly by pathname. It's much more complicated
-than it needs to be for the task.
-
-Suggestion:
-
-Create an security module that looks for the attribute
-
-	security.WHITELISTED
-
-on things being executed/mmapped and denys it if the attribute isn't
-present. Create a program (whitelistd) that reads /etc/whitelist.conf
-and scans the system to ensure that only things on the list have the
-attribute. Or, download the list into the kernel and only allow the
-attribute to be set on files on the list. That's harder, what with
-rename, links, symlinks, mounts, chroot and containers. I wrote a
-security module (Datastate) back in 2010 that did much the same thing
-for a different purpose.
-
-Please, don't give up because of negative initial feedback. Believe
-it or not, the community (well, most of us, anyway) is willing to
-help to the extent possible.
+> W dniu 31.05.2017 o 17:05, Jessica Frazelle pisze:
+>>> 3 - keys, keyrings? are they namespace aware or not? I am quite lost in
+>>> that regard, because I happen to hear conflicting statements.
+>>
+>> If you are using user namespaces, the keyring is namespaced.
+>>
+>>
+>>
+> so, from which kernel version is it namespaced? and, if it really is
+> namespaced, then does it mean the only thing not currently resolved is
+> request_key?
+>
 
 
----
-*  A script that checks for the 'x' mode bit on files should suffice.
-** A return to the heady days of the Orange Book?
 
+-- 
+
+
+Jessie Frazelle
+4096R / D4C4 DD60 0D66 F65A 8EFC  511E 18F3 685C 0022 BFF3
+pgp.mit.edu
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
