@@ -1,46 +1,74 @@
-From: me@jessfraz.com (Jessica Frazelle)
-Date: Wed, 31 May 2017 16:23:01 +0100
-Subject: namespaces todo list?
-In-Reply-To: <1139e982-0096-1d5c-3ea1-b7607907b9c2@poczta.onet.pl>
-References: <82271f8b-c366-28b1-90ac-3b0780490fa5@poczta.onet.pl>
-	<CAEk6tEwqd5dxMgXSms5g7+hd+8Pufe1+1BKeUQ2Ew9sLBUtbfA@mail.gmail.com>
-	<1139e982-0096-1d5c-3ea1-b7607907b9c2@poczta.onet.pl>
-Message-ID: <CAEk6tEyfELOy4w2AB2EAsLDQXo+atJnhatVNs9DcReqvbzLX6w@mail.gmail.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 31 May 2017 10:32:43 -0500
+Subject: [kernel-hardening] Re: [PATCH v6 0/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170531153615.37fea64a@alans-desktop>
+References: <20170517174113.69d1cbaa@alans-desktop>
+	<1495045540.1619.1.camel@gmail.com>
+	<CAGXu5jL9GUyVYf3d+13UE7UHd+CvUzVwasyCfUmF+ykaY5rpOQ@mail.gmail.com>
+	<CANA3KFWF-=6AWZKAc1ijyoL5vRAwPnwngZZEP9=5+AFgnMv1rg@mail.gmail.com>
+	<20170519143344.GA15983@mail.hallyn.com>
+	<CANA3KFXVzSXuA4Cocm7fUYE9EOvJX7pW0bsj=cgyUYvScUsXGQ@mail.gmail.com>
+	<20170530155235.GA11861@mail.hallyn.com>
+	<20170530225245.092497be@alans-desktop>
+	<CANA3KFWE2kUwdzGAGwRn8x4ceFzx5Z-quC2WBwqvks8LkTCh+A@mail.gmail.com>
+	<20170531153615.37fea64a@alans-desktop>
+Message-ID: <20170531153243.GA31189@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-You can catch up here[1] wrt the keyring and userns, David Howells is
-working on more with the keyring currently[2] seems like from the set
-of patches.
+Quoting Alan Cox (gnomes at lxorguk.ukuu.org.uk):
+> > Alan is right.   CAP_SYS_ADMIN allows crossing the tty barrier.
+> 
+> I don't need CAP_ anything to mmap your frame buffer, or use selection to
+> cut and paste text into the terminal.
+> 
+> > Broken applications that you can wrap in a pty/tty pair as the lxc
+> > application does would be defeated if those applications move up to
+> > CAP_SYS_ADMIN.  Because you have granted the high right of cross
+> > pty/tty containment.
+> 
+> Yes
 
-[1] https://patchwork.kernel.org/patch/9394983/
-[2] https://marc.info/?l=linux-cgroups&w=2&r=1&s=David+Howells&q=b
+Right.
 
-On Wed, May 31, 2017 at 4:17 PM, Micha? Zegan
-<webczat_200@poczta.onet.pl> wrote:
->
->
-> W dniu 31.05.2017 o 17:05, Jessica Frazelle pisze:
->>> 3 - keys, keyrings? are they namespace aware or not? I am quite lost in
->>> that regard, because I happen to hear conflicting statements.
->>
->> If you are using user namespaces, the keyring is namespaced.
->>
->>
->>
-> so, from which kernel version is it namespaced? and, if it really is
-> namespaced, then does it mean the only thing not currently resolved is
-> request_key?
->
+> > I don't know of a genuine program using push back in exploiting way
+> > where the pushed back input is expected to be processed after the
+> > program has terminated.
+> 
+> So there are two real problems here
+> 
+> 1. We don't know what namespace each character belongs to, so there's no
+> way we can construct a model where pushed symbols only appear in the
+> namespace they are pushed from. That would be a nice situation but it's
+> not at all obvious there is a sane way to implement it.
+> 
+> 2. Focussing on TIOCSTI is just ignoring the bigger picture. TIOCSTI is
+> actually a lot less nasty in many situations than a framebuffer mmap and
+> spying attack where a container run from the console could sit and watch
+> you. TIOCSTI is in some ways the easiest to fix because setsid() will let
+> you mitigate it in certain cases whereas I'm fairly sure the selection
+> based console attack doesn't need controlling terminal rights.
+> 
+> In the case you have a less privileged subshell you need a whole new tty
+> context, and there's no obvious way for the kernel to magic one into
+> existance so that for example the container can change it's own baud rate
+> but not the baud rate of any app outside the container.
+> 
+> ioctl whitelisting will break stuff, but an SELinux/AppArmour/seccomp
+> whitelisting based solution is probably the only practical one you can
+> implement usefully, and for a lot of container users would be ok.
 
+Seccomp policy could refuse TIOCSTI to any fd, but that's not ideal.  It could
+be customized per-application-start to only refuse TIOCSTI to the passed-in tty
+fd, but you'd have to prevent dup then right?  Selinux can label the fd so it's
+in fact ideal here.  But - is there something clever a seccomp policy could do
+to work only on specified fds and any that were dup'ed?
 
-
--- 
-
-
-Jessie Frazelle
-4096R / D4C4 DD60 0D66 F65A 8EFC  511E 18F3 685C 0022 BFF3
-pgp.mit.edu
+Mind you, I of course agree that creating a new pty and passing only that in
+is the sane fix.  Maybe in the end this thread will serve best as a loud
+reminder / teaching moment about this issue for those about to write such an
+application.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
