@@ -1,118 +1,87 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 31 May 2017 14:40:41 +0300
-Subject: [PATCH v2 2/5] tpm: introduce tpm_pcr_algo_to_crypto() and
-	tpm_pcr_algo_from_crypto()
-In-Reply-To: <c484dc54-7d19-9d60-bd17-4ac47f1bc218@huawei.com>
-References: <20170505142152.29795-1-roberto.sassu@huawei.com>
-	<20170505142152.29795-3-roberto.sassu@huawei.com>
-	<20170515111629.urjvbhqzohv4vakc@intel.com>
-	<0deed9be-d0c3-3a69-d510-1c8aa3513ba8@huawei.com>
-	<20170520132217.t7n7l2pjn7i63hbm@intel.com>
-	<0b04a33c-248b-6597-473f-c5bc4ccaba62@huawei.com>
-	<20170524173354.puyulkjmio3jgs2l@intel.com>
-	<20170524202523.grpg7ocrwwuzxsbg@intel.com>
-	<c484dc54-7d19-9d60-bd17-4ac47f1bc218@huawei.com>
-Message-ID: <20170531114040.p3wwkc3soomweyd5@intel.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 31 May 2017 13:20:44 +0100
+Subject: [PATCH] KEYS: fix refcount_inc() on zero
+In-Reply-To: <1495820254-6651-1-git-send-email-mark.rutland@arm.com>
+References: <1495820254-6651-1-git-send-email-mark.rutland@arm.com>
+Message-ID: <26155.1496233244@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 30, 2017 at 12:24:21PM +0200, Roberto Sassu wrote:
-> On 5/24/2017 10:25 PM, Jarkko Sakkinen wrote:
-> > On Wed, May 24, 2017 at 10:33:54AM -0700, Jarkko Sakkinen wrote:
-> > > On Mon, May 22, 2017 at 09:21:28AM +0200, Roberto Sassu wrote:
-> > > > On 5/20/2017 3:22 PM, Jarkko Sakkinen wrote:
-> > > > > On Mon, May 15, 2017 at 04:22:22PM +0200, Roberto Sassu wrote:
-> > > > > > On 5/15/2017 1:16 PM, Jarkko Sakkinen wrote:
-> > > > > > > On Fri, May 05, 2017 at 04:21:49PM +0200, Roberto Sassu wrote:
-> > > > > > > > tpm_pcr_algorithms() returns to its callers the IDs of the hash algorithms
-> > > > > > > > supported by the TPM. This patch introduces tpm_pcr_algo_to_crypto(),
-> > > > > > > > so that the callers can use the crypto subsystem to calculate the digest
-> > > > > > > > to be passed to tpm_pcr_extend().
-> > > > > > > > 
-> > > > > > > > tpm_pcr_algo_from_crypto(), implemented for completeness, is instead used
-> > > > > > > 
-> > > > > > > What do you mean by completeness? Please, never add unused stuff.
-> > > > > > > 
-> > > > > > > > by tpm2_seal_trusted() to perform the opposite conversion.
-> > > > > > > > 
-> > > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > > ---
-> > > > > > > > v2
-> > > > > > > > 
-> > > > > > > > - fixed return values of tpm2_pcr_algo_to_crypto() and
-> > > > > > > >   tpm2_pcr_algo_from_crypto() if TPM support is disabled in the kernel
-> > > > > > > 
-> > > > > > > Change Log only to the cover letter.
-> > > > > > > 
-> > > > > > > >  drivers/char/tpm/tpm-interface.c | 51 ++++++++++++++++++++++++++++++++++++++++
-> > > > > > > >  drivers/char/tpm/tpm2-cmd.c      | 42 +++++++++------------------------
-> > > > > > > >  include/linux/tpm.h              | 13 ++++++++++
-> > > > > > > >  3 files changed, 75 insertions(+), 31 deletions(-)
-> > > > > > > 
-> > > > > > > This commit is just deadly wrong in so many ways.
-> > > > > > > 
-> > > > > > > I would suggest to make extend always just take crypto ID in so you
-> > > > > > > don't have to add these bizarre conversion functions.
-> > > > > > 
-> > > > > > The reason of this choice (as I explained in the cover letter)
-> > > > > > is that TPM users might want to produce an event log with
-> > > > > > the TCG format (which includes the TPM algorithm ID). Also,
-> > > > > > TPM IDs should be preferred because, with them, TPM users
-> > > > > > can calculate a digest directly with the TPM.
-> > > > > > 
-> > > > > > Taking crypto IDs means relying on the fact that there
-> > > > > > is always a mapping between TPM IDs and crypto IDs.
-> > > > > > Otherwise, tpm_pcr_algorithms() cannot return the algorithms
-> > > > > > to its callers and PCRs cannot be extended. If TPM IDs are used,
-> > > > > > TPM users have two alternatives: calculate the digest with
-> > > > > > the TPM, or pass a SHA1 digest to tpm_pcr_extend(), so that
-> > > > > > it can be padded to extend remanining PCR banks.
-> > > > > > 
-> > > > > > However, this second option will work only when the TPM driver
-> > > > > > determines the size of an algorithm without relying on the crypto
-> > > > > > subsystem. At the moment, if a TPM ID is not mapped to a crypto ID,
-> > > > > > tpm2_pcr_extend() ignores the digest.
-> > > > > > 
-> > > > > > Roberto
-> > > > > 
-> > > > > What if tpm_pcr_algorithms would convert TPM IDs to crypto IDs?
-> > > > > 
-> > > > > Externally other subsystems would have to then deal with only crypto
-> > > > > IDs.
-> > > > 
-> > > > Then, other subsystems cannot:
-> > > > 
-> > > > - use the TPM to calculate a digest
-> > > > - create an event log with the TCG format
-> > > > 
-> > > > Roberto
-> > > 
-> > > Can you open this up a bit? What is the use case that you canno
-> > > implement?
-> > > 
-> > > /Jarkko
-> > 
-> > The most important question is: are this used *right now*. If not, it is
-> > a definitive NAK. We don't want any future-proof code to the kernel.
-> > Always do the lowest common denominator in terms of generality and we
-> > will refactor from there when need arises.
-> 
-> This is still being discussed.
-> 
-> If we use crypto IDs, as you suggested, what it should be passed
-> to tpm_pcr_extend()? Or, probably to a new function (Mimi said that
-> changing the parameters of an existing function is not bisect-safe).
-> 
-> Roberto
-> 
-> -- 
-> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-> Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+Mark Rutland <mark.rutland@arm.com> wrote:
 
-Parameters should be changed when it makes sense to do so. It makes
-sense in this case.
+> This patch uses refcount_inc_not_zero() to perform the peek and
+> increment atomically.
 
-/Jarkko
+I think the helper is unnecessary.  Better to adjust the comment if you really
+want to explain it.  Anyone editing the code should be that this is inside a
+critical section.
+
+> A helper with lockdep annotation is added to document why this is safe.
+
+This doesn't explain why this is safe.
+
+> +	/*
+> +	 * Pretend it doesn't exist if it is awaiting deletion. This races with
+> +	 * key_put(), but we can peek at the key until we drop key_serial_lock.
+>  	 */
+
+With your change, there is no race with key_put() - so the second sentence is
+unnecessary.
+
+I've adjusted your patch - see attached.
+
+David
+---
+commit f66bf831c45306ebbc28aecd407e238983457251
+Author: Mark Rutland <mark.rutland@arm.com>
+Date:   Fri May 26 18:37:34 2017 +0100
+
+    KEYS: fix refcount_inc() on zero
+    
+    If a key's refcount is dropped to zero between key_lookup() peeking at
+    the refcount and subsequently attempting to increment it, refcount_inc()
+    will see a zero refcount.  Here, refcount_inc() will WARN_ONCE(), and
+    will *not* increment the refcount, which will remain zero.
+    
+    Once key_lookup() drops key_serial_lock, it is possible for the key to
+    be freed behind our back.
+    
+    This patch uses refcount_inc_not_zero() to perform the peek and increment
+    atomically.
+    
+    Fixes: fff292914d3a2f1e ("security, keys: convert key.usage from atomic_t to refcount_t")
+    Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    Cc: David Windsor <dwindsor@gmail.com>
+    Cc: Elena Reshetova <elena.reshetova@intel.com>
+    Cc: Hans Liljestrand <ishkamiel@gmail.com>
+    Cc: James Morris <james.l.morris@oracle.com>
+    Cc: Kees Cook <keescook@chromium.org>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 455c04d80bbb..d84ee2a87da6 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -660,14 +660,11 @@ struct key *key_lookup(key_serial_t id)
+ 	goto error;
+ 
+ found:
+-	/* pretend it doesn't exist if it is awaiting deletion */
+-	if (refcount_read(&key->usage) == 0)
+-		goto not_found;
+-
+-	/* this races with key_put(), but that doesn't matter since key_put()
+-	 * doesn't actually change the key
++	/* A key is allowed to be looked up only if someone still owns a
++	 * reference to it - otherwise it's awaiting the gc.
+ 	 */
+-	__key_get(key);
++	if (!refcount_inc_not_zero(&key->usage))
++		goto not_found;
+ 
+ error:
+ 	spin_unlock(&key_serial_lock);
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
