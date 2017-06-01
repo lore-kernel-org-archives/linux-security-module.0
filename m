@@ -1,63 +1,65 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 1 Jun 2017 20:14:20 +0300
-Subject: [PATCH v3] tpm: vtpm_proxy: Suppress error logging when in
-	closed state
-In-Reply-To: <1495751353-28500-1-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1495751353-28500-1-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <20170601171420.djihd2nst7j74rdh@intel.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 1 Jun 2017 12:18:58 -0500
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170601140812.583cf0a5@alans-desktop>
+References: <0e078ce7-5b62-f27c-3920-efc2ffdf342b@nmatt.com>
+	<b0a29f23-4154-8f2f-98e7-0942612f0cdc@schaufler-ca.com>
+	<e1c9e4e8-5427-b4b6-aad2-72c88552a6af@nmatt.com>
+	<20170530132427.016053da@alans-desktop>
+	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
+	<20170530235106.11aab25c@alans-desktop>
+	<3bd4ff7b-6f7d-52b0-03f6-026bac79f11f@nmatt.com>
+	<20170531005633.484a2e14@alans-desktop>
+	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
+	<20170601140812.583cf0a5@alans-desktop>
+Message-ID: <20170601171858.GA19604@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 25, 2017 at 06:29:13PM -0400, Stefan Berger wrote:
-> Suppress the error logging when the core TPM driver sends commands
-> to the VTPM proxy driver and -EPIPE is returned in case the VTPM
-> proxy driver is 'closed' (closed anonymous file descriptor).  This
-> error code is only returned by the send function and by tpm_transmit
-> when the VTPM proxy driver is being used.
+Quoting Alan Cox (gnomes at lxorguk.ukuu.org.uk):
+> > I still cannot wrap my head around why providing users with a
+> > protection is a bad thing. Yes, the other tty games are bad, but this
+> > fixes a specific and especially bad case that is easy to kill. It's
+> > got a Kconfig and a sysctl. It's not on by default. This protects the
+> > common case of privileged ttys that aren't attached to consoles, etc,
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 5 +++--
->  drivers/char/tpm/tpm2-cmd.c      | 2 +-
->  2 files changed, 4 insertions(+), 3 deletions(-)
+> Which just leads to stuff not getting fixed. Like all the code out there
+> today which is still vulnerable to selection based attacks because people
+> didn't do the job right when "fixing" stuff because they are not
+> thinking about security at a systems level but just tickboxing CVEs.
 > 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index d711186..d2b4df6 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -430,8 +430,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  
->  	rc = chip->ops->send(chip, (u8 *) buf, count);
->  	if (rc < 0) {
-> -		dev_err(&chip->dev,
-> -			"tpm_transmit: tpm_send: error %d\n", rc);
-> +		if (rc != -EPIPE)
-> +			dev_err(&chip->dev,
-> +				"%s: tpm_send: error %d\n", __func__, rc);
->  		goto out;
->  	}
->  
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 3ee6883..3a99643 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -840,7 +840,7 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
->  	/* In places where shutdown command is sent there's no much we can do
->  	 * except print the error code on a system failure.
->  	 */
-> -	if (rc < 0)
-> +	if (rc < 0 && rc != -EPIPE)
->  		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
->  			 rc);
->  }
-> -- 
-> 2.4.3
-> 
+> I'm not against doing something to protect the container folks, but that
+> something as with Android is a whitelist of ioctls. And if we need to do
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+Whitelist of ioctls (at least using seccomp) is not sufficient because
+then we have to turn the ioctl always-off.  But like you say we may want
+to enable it for ptys which are created inside the container's user ns.
 
-/Jarkko
+> this with a kernel hook lets do it properly.
+> 
+> Remember the namespace of the tty on creation
+
+Matt's patch does this,
+
+> If the magic security flag is set then
+> 	Apply a whitelist to *any* tty ioctl call where the ns doesn't
+> 		match
+
+Seems sensible.
+
+> and we might as well just take the Android whitelist since they've kindly
+> built it for us all!
+> 
+> In the tty layer it ends up being something around 10 lines of code and
+> some other file somewhere in security/ that's just a switch or similar
+> with the whitelisted ioctl codes in it.
+> 
+> That (or a similar SELinux ruleset) would actually fix the problem.
+> SELinux would be better because it can also apply the rules when doing
+> things like su/sudo/...
+> 
+> Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
