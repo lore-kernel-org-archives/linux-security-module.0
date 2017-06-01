@@ -1,283 +1,130 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 1 Jun 2017 12:49:01 -0700
-Subject: [PATCH] procfs: add smack subdir to attrs
-Message-ID: <d2876592-e13a-b407-15b0-bdf9b0d49f75@schaufler-ca.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Thu, 1 Jun 2017 22:24:32 +0100
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
+References: <20170529213800.29438-1-matt@nmatt.com>
+	<20170529213800.29438-3-matt@nmatt.com>
+	<20170529232640.16211960@alans-desktop>
+	<CAFUG7CdDd0Yfegb1S6_wNQzje4EuLE0jPdvOE=uSQL152meyjQ@mail.gmail.com>
+	<3738951f-7a4a-b37f-c695-21a2fcd45f76@schaufler-ca.com>
+	<0e078ce7-5b62-f27c-3920-efc2ffdf342b@nmatt.com>
+	<b0a29f23-4154-8f2f-98e7-0942612f0cdc@schaufler-ca.com>
+	<e1c9e4e8-5427-b4b6-aad2-72c88552a6af@nmatt.com>
+	<20170530132427.016053da@alans-desktop>
+	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
+	<20170530235106.11aab25c@alans-desktop>
+	<3bd4ff7b-6f7d-52b0-03f6-026bac79f11f@nmatt.com>
+	<20170531005633.484a2e14@alans-desktop>
+	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
+	<20170601140812.583cf0a5@alans-desktop>
+	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
+Message-ID: <20170601222432.6f593538@lxorguk.ukuu.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH] procfs: add smack subdir to attrs
+> There's a difference between "bugs" and "security bugs". Letting
 
-Back in 2007 I made what turned out to be a rather serious
-mistake in the implementation of the Smack security module.
-The SELinux module used an interface in /proc to manipulate
-the security context on processes. Rather than use a similar
-interface, I used the same interface. The AppArmor team did
-likewise. Now /proc/.../attr/current will tell you the
-security "context" of the process, but it will be different
-depending on the security module you're using.
+Not really, it's merely a matter of severity of result. A non security
+bug that hoses your hard disk is to anyone but security nutcases at
+least as bad as a security hole.
 
-This patch provides a subdirectory in /proc/.../attr for
-Smack. Smack user space can use the "current" file in
-this subdirectory and never have to worry about getting
-SELinux attributes by mistake. Programs that use the
-old interface will continue to work (or fail, as the case
-may be) as before.
+> security bugs continue to get exploited because we want to flush out
+> bugs seems insensitive to the people getting attacked. I'd rather
+> protect against a class of bug than have to endless fix each bug.
 
-This patch does not include subdirectories for SELinux
-or AppArmor. I do have a patch that provides those, and
-will happily make it available should anyone see value
-in it.
+The others are security bugs too to varying degree
 
-The original implementation is by Kees Cook.
+> > I'm not against doing something to protect the container folks, but that
+> > something as with Android is a whitelist of ioctls. And if we need to do
+> > this with a kernel hook lets do it properly.
+> >
+> > Remember the namespace of the tty on creation
+> > If the magic security flag is set then
+> >         Apply a whitelist to *any* tty ioctl call where the ns doesn't
+> >                 match
+> >
+> > and we might as well just take the Android whitelist since they've kindly
+> > built it for us all!
+> >
+> > In the tty layer it ends up being something around 10 lines of code and
+> > some other file somewhere in security/ that's just a switch or similar
+> > with the whitelisted ioctl codes in it.
+> >
+> > That (or a similar SELinux ruleset) would actually fix the problem.
+> > SELinux would be better because it can also apply the rules when doing
+> > things like su/sudo/...  
+> 
+> Just to play devil's advocate, wouldn't such a system continue to not
+> address your physical-console concerns? I wouldn't want to limit the
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- Documentation/security/LSM.txt | 19 +++++++++----
- fs/proc/base.c                 | 63 ++++++++++++++++++++++++++++++++++++------
- fs/proc/internal.h             |  1 +
- include/linux/security.h       | 15 ++++++----
- security/security.c            | 30 +++++++++++++++++---
- 5 files changed, 104 insertions(+), 24 deletions(-)
+It would for the cases that a whitelist and container check covers -
+because the whitelist wouldn't allow you to do anything but boring stuff
+on the tty. TIOCSTI is just one of a whole range of differently stupid
+and annoying opportunities. Containers do not and should not be able to
+set the keymap, change the video mode, use console selection, make funny
+beepy noises, access video I/O registers and all the other stuff like
+that. Nothing is going to break if we have a fairly conservative
+whitelist.
 
-diff --git a/Documentation/security/LSM.txt b/Documentation/security/LSM.txt
-index c2683f28ed36..57eafbc1d144 100644
---- a/Documentation/security/LSM.txt
-+++ b/Documentation/security/LSM.txt
-@@ -16,11 +16,10 @@ MAC extensions, other extensions can be built using the LSM to provide
- specific changes to system operation when these tweaks are not available
- in the core functionality of Linux itself.
- 
--Without a specific LSM built into the kernel, the default LSM will be the
--Linux capabilities system. Most LSMs choose to extend the capabilities
--system, building their checks on top of the defined capability hooks.
--For more details on capabilities, see capabilities(7) in the Linux
--man-pages project.
-+The Linux capabilities modules will always be included. For more details
-+on capabilities, see capabilities(7) in the Linux man-pages project.
-+This may be followed by any number of "minor" modules and at most one
-+"major" module.
- 
- A list of the active security modules can be found by reading
- /sys/kernel/security/lsm. This is a comma separated list, and
-@@ -29,6 +28,14 @@ order in which checks are made. The capability module will always
- be first, followed by any "minor" modules (e.g. Yama) and then
- the one "major" module (e.g. SELinux) if there is one configured.
- 
-+Process attributes associated with "major" security modules should
-+be accessed and maintained using the special files in /proc/.../attr.
-+A security module may maintain a module specific subdirectory there,
-+named after the module. /proc/.../attr/smack is provided by the Smack
-+security module and contains all its special files. The files directly
-+in /proc/.../attr remain as legacy interfaces for modules that provide
-+subdirectories.
-+
- Based on https://lkml.org/lkml/2007/10/26/215,
- a new LSM is accepted into the kernel when its intent (a description of
- what it tries to protect against and in what cases one would expect to
-@@ -38,4 +45,4 @@ that end users and distros can make a more informed decision about which
- LSMs suit their requirements.
- 
- For extensive documentation on the available LSM hook interfaces, please
--see include/linux/security.h.
-+see include/linux/lsm_hooks.h.
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index c87b6b9a8a76..2decd2fb5ef8 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -139,9 +139,13 @@ struct pid_entry {
- #define REG(NAME, MODE, fops)				\
- 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
- #define ONE(NAME, MODE, show)				\
--	NOD(NAME, (S_IFREG|(MODE)), 			\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
- 		NULL, &proc_single_file_operations,	\
- 		{ .proc_show = show } )
-+#define ATTR(LSM, NAME, MODE)				\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
-+		NULL, &proc_pid_attr_operations,	\
-+		{ .lsm = LSM })
- 
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-@@ -2455,7 +2459,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
- 	if (!task)
- 		return -ESRCH;
- 
--	length = security_getprocattr(task,
-+	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
- 				      (char*)file->f_path.dentry->d_name.name,
- 				      &p);
- 	put_task_struct(task);
-@@ -2501,7 +2505,8 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	if (length < 0)
- 		goto out_free;
- 
--	length = security_setprocattr(file->f_path.dentry->d_name.name,
-+	length = security_setprocattr(PROC_I(inode)->op.lsm,
-+				      file->f_path.dentry->d_name.name,
- 				      page, count);
- 	mutex_unlock(&current->signal->cred_guard_mutex);
- out_free:
-@@ -2518,13 +2523,53 @@ static const struct file_operations proc_pid_attr_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+#define LSM_DIR_OPS(LSM) \
-+static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
-+			     struct dir_context *ctx) \
-+{ \
-+	return proc_pident_readdir(filp, ctx, \
-+				   LSM##_attr_dir_stuff, \
-+				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct file_operations proc_##LSM##_attr_dir_ops = { \
-+	.read		= generic_read_dir, \
-+	.iterate	= proc_##LSM##_attr_dir_iterate, \
-+	.llseek		= default_llseek, \
-+}; \
-+\
-+static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
-+				struct dentry *dentry, unsigned int flags) \
-+{ \
-+	return proc_pident_lookup(dir, dentry, \
-+				  LSM##_attr_dir_stuff, \
-+				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
-+	.lookup		= proc_##LSM##_attr_dir_lookup, \
-+	.getattr	= pid_getattr, \
-+	.setattr	= proc_setattr, \
-+}
-+
-+#ifdef CONFIG_SECURITY_SMACK
-+static const struct pid_entry smack_attr_dir_stuff[] = {
-+	ATTR("smack", "current",	0666),
-+};
-+LSM_DIR_OPS(smack);
-+#endif
-+
- static const struct pid_entry attr_dir_stuff[] = {
--	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
--	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
-+	ATTR(NULL, "current",		0666),
-+	ATTR(NULL, "prev",		0444),
-+	ATTR(NULL, "exec",		0666),
-+	ATTR(NULL, "fscreate",		0666),
-+	ATTR(NULL, "keycreate",		0666),
-+	ATTR(NULL, "sockcreate",	0666),
-+#ifdef CONFIG_SECURITY_SMACK
-+	DIR("smack",			0555,
-+	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
-+#endif
- };
- 
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index c5ae09b6c726..8b7d101c91ec 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -58,6 +58,7 @@ union proc_op {
- 	int (*proc_show)(struct seq_file *m,
- 		struct pid_namespace *ns, struct pid *pid,
- 		struct task_struct *task);
-+	const char *lsm;
- };
- 
- struct proc_inode {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index af675b576645..8ee9dbdfa1cb 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -365,8 +365,10 @@ int security_sem_semctl(struct sem_array *sma, int cmd);
- int security_sem_semop(struct sem_array *sma, struct sembuf *sops,
- 			unsigned nsops, int alter);
- void security_d_instantiate(struct dentry *dentry, struct inode *inode);
--int security_getprocattr(struct task_struct *p, char *name, char **value);
--int security_setprocattr(const char *name, void *value, size_t size);
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+			 char **value);
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size);
- int security_netlink_send(struct sock *sk, struct sk_buff *skb);
- int security_ismaclabel(const char *name);
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
-@@ -1111,15 +1113,18 @@ static inline int security_sem_semop(struct sem_array *sma,
- 	return 0;
- }
- 
--static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
-+static inline void security_d_instantiate(struct dentry *dentry,
-+					  struct inode *inode)
- { }
- 
--static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
-+static inline int security_getprocattr(struct task_struct *p, const char *lsm,
-+				       char *name, char **value)
- {
- 	return -EINVAL;
- }
- 
--static inline int security_setprocattr(char *name, void *value, size_t size)
-+static inline int security_setprocattr(const char *lsm, char *name,
-+				       void *value, size_t size)
- {
- 	return -EINVAL;
- }
-diff --git a/security/security.c b/security/security.c
-index 549bddcc2116..e28bb987e26d 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1216,14 +1216,36 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(security_d_instantiate);
- 
--int security_getprocattr(struct task_struct *p, char *name, char **value)
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+				char **value)
- {
--	return call_int_hook(getprocattr, -EINVAL, p, name, value);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	list_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		rc = hp->hook.getprocattr(p, name, value);
-+		if (rc != -ENOENT)
-+			return rc;
-+	}
-+	return -EINVAL;
- }
- 
--int security_setprocattr(const char *name, void *value, size_t size)
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size)
- {
--	return call_int_hook(setprocattr, -EINVAL, name, value, size);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	list_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		rc = hp->hook.setprocattr(name, value, size);
-+		if (rc != -ENOENT)
-+			return rc;
-+	}
-+	return -EINVAL;
- }
- 
- int security_netlink_send(struct sock *sk, struct sk_buff *skb)
--- 
-2.11.0
+> protection to only containers (but it's a good start), since it
+> wouldn't protect people not using containers that still have a
+> privileged TTY attached badly somewhere.
 
+How are you going to magically fix the problem. I'm not opposed to fixing
+the real problem but right now it appears to be a product of wishful
+thinking not programming. What's the piece of security code that
+magically discerns the fact you are running something untrusted at the
+other end of your tty. SELinux can do it via labelling but I don't see
+any generic automatic way for the kernel to magically work out when to
+whitelist and when not to. If there is a better magic rule than
+differing-namespace then provide the code.
 
+You can't just disable TIOCSTI, it has users deal with it. You can
+get away with disabling it for namespace crossing I think but if you do
+that you need to disable a pile of others.
+
+(If it breaks containers blocking TIOCSTI then we need to have a good
+look at algorithms for deciding when to flush the input queue on exiting
+a container or somesuch)
+
+> If you're talking about wholistic SELinux policy, sure, I could
+> imagine a wholistic fix. But for the tons of people without a
+> comprehensive SELinux policy, the proposed protection continues to
+> make sense.
+
+No it doesn't. It's completely useless unless you actually bother to
+address the other exploit opportunities.
+
+Right now the proposal is a hack to do 
+
+	if (TIOCSTI && different_namespace && magic_flag)
+
+the proper solution is
+
+	if (!whitelisted(ioctl) && different_namespace && magic_flag)
+
+The former is snake oil, the latter actually deals with the problem space
+for namespaced stuff comprehensively and is only a tiny amount more code.
+
+For non namespaced stuff it makes it no worse, if you don't allocate a
+pty/tty pair properly then the gods are not going to magically save you
+from on high sorry. And if you want to completely kill TIOCSTI even
+though it's kind of pointless you can use seccomp.
+
+We can make things a bit better for the non-namespaced cases by providing
+a new ioctl that turns on/off whitelisting for that tty so that the
+process can do
+
+	ioctl(tty_fd, TIOCTRUST, &zero);
+	execl("/home/foo/stupid-idea", "ooops", NULL);
+
+that's a simple per tty flag and a trivial one condition extra check to
+the test above. We do need some way to change it back however and that's
+a bit trickier given we don't want the stupid-idea tool to be able to but
+we do want the invoking shell to - maybe you have to be session leader ?
+
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
