@@ -1,77 +1,63 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 1 Jun 2017 09:44:05 -0700
-Subject: [PATCH security-next 1/2] smack: use pernet operations for hook
-	registration
-In-Reply-To: <20170421094909.28961-2-fw@strlen.de>
-References: <20170421094909.28961-1-fw@strlen.de>
-	<20170421094909.28961-2-fw@strlen.de>
-Message-ID: <0868b816-939b-12d2-c8aa-a5c8677e1cce@schaufler-ca.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 1 Jun 2017 20:14:20 +0300
+Subject: [PATCH v3] tpm: vtpm_proxy: Suppress error logging when in
+	closed state
+In-Reply-To: <1495751353-28500-1-git-send-email-stefanb@linux.vnet.ibm.com>
+References: <1495751353-28500-1-git-send-email-stefanb@linux.vnet.ibm.com>
+Message-ID: <20170601171420.djihd2nst7j74rdh@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 4/21/2017 2:49 AM, Florian Westphal wrote:
-> It will allow us to remove the old netfilter hook api in the near future.
->
-> Signed-off-by: Florian Westphal <fw@strlen.de>
-
-I have applied this to git://github.com/cschaufler/smack-next#smack-for-4.13
-
-
+On Thu, May 25, 2017 at 06:29:13PM -0400, Stefan Berger wrote:
+> Suppress the error logging when the core TPM driver sends commands
+> to the VTPM proxy driver and -EPIPE is returned in case the VTPM
+> proxy driver is 'closed' (closed anonymous file descriptor).  This
+> error code is only returned by the send function and by tpm_transmit
+> when the VTPM proxy driver is being used.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 > ---
->  security/smack/smack_netfilter.c | 26 ++++++++++++++++++--------
->  1 file changed, 18 insertions(+), 8 deletions(-)
->
-> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
-> index 205b785fb400..cdeb0f3243dd 100644
-> --- a/security/smack/smack_netfilter.c
-> +++ b/security/smack/smack_netfilter.c
-> @@ -18,6 +18,7 @@
->  #include <linux/netfilter_ipv6.h>
->  #include <linux/netdevice.h>
->  #include <net/inet_sock.h>
-> +#include <net/net_namespace.h>
->  #include "smack.h"
+>  drivers/char/tpm/tpm-interface.c | 5 +++--
+>  drivers/char/tpm/tpm2-cmd.c      | 2 +-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index d711186..d2b4df6 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -430,8 +430,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
 >  
->  #if IS_ENABLED(CONFIG_IPV6)
-> @@ -74,20 +75,29 @@ static struct nf_hook_ops smack_nf_ops[] = {
->  #endif	/* IPV6 */
->  };
+>  	rc = chip->ops->send(chip, (u8 *) buf, count);
+>  	if (rc < 0) {
+> -		dev_err(&chip->dev,
+> -			"tpm_transmit: tpm_send: error %d\n", rc);
+> +		if (rc != -EPIPE)
+> +			dev_err(&chip->dev,
+> +				"%s: tpm_send: error %d\n", __func__, rc);
+>  		goto out;
+>  	}
 >  
-> -static int __init smack_nf_ip_init(void)
-> +static int __net_init smack_nf_register(struct net *net)
-> +{
-> +	return nf_register_net_hooks(net, smack_nf_ops,
-> +				     ARRAY_SIZE(smack_nf_ops));
-> +}
-> +
-> +static void __net_exit smack_nf_unregister(struct net *net)
->  {
-> -	int err;
-> +	nf_unregister_net_hooks(net, smack_nf_ops, ARRAY_SIZE(smack_nf_ops));
-> +}
->  
-> +static struct pernet_operations smack_net_ops = {
-> +	.init = smack_nf_register,
-> +	.exit = smack_nf_unregister,
-> +};
-> +
-> +static int __init smack_nf_ip_init(void)
-> +{
->  	if (smack_enabled == 0)
->  		return 0;
->  
->  	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
-> -
-> -	err = nf_register_hooks(smack_nf_ops, ARRAY_SIZE(smack_nf_ops));
-> -	if (err)
-> -		pr_info("Smack: nf_register_hooks: error %d\n", err);
-> -
-> -	return 0;
-> +	return register_pernet_subsys(&smack_net_ops);
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 3ee6883..3a99643 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -840,7 +840,7 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+>  	/* In places where shutdown command is sent there's no much we can do
+>  	 * except print the error code on a system failure.
+>  	 */
+> -	if (rc < 0)
+> +	if (rc < 0 && rc != -EPIPE)
+>  		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
+>  			 rc);
 >  }
->  
->  __initcall(smack_nf_ip_init);
+> -- 
+> 2.4.3
+> 
 
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
