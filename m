@@ -1,79 +1,197 @@
-From: keescook@google.com (Kees Cook)
-Date: Thu, 1 Jun 2017 12:10:07 -0700
-Subject: [PATCH v4 next 1/3] modules:capabilities: allow
-	__request_module() to take a capability argument
-In-Reply-To: <CAEiveUeKU-zxXUeeuTZ2Sf1NrbH+t9JjwaWOK_2varRDsfbEWg@mail.gmail.com>
-References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
-	<1495454226-10027-2-git-send-email-tixxdz@gmail.com>
-	<CAGXu5jL9jRDkHj20kf4O6VrjiEpvXGzN3nn5Lw4fT2sx_Xg=+A@mail.gmail.com>
-	<CAEiveUe5cTCet6=Uzn64YANRZ2Qyqk5OSXqU3MybevbkbeNR3Q@mail.gmail.com>
-	<CAGXu5j+L1aEWqi7DC4StwAorfG4da0XqrouMvbz07cJ7gYi0AQ@mail.gmail.com>
-	<CAEiveUeZhHtPyLv8=3BsPh5Anr2ynnzD0bprUkeKUGygtRQKsw@mail.gmail.com>
-	<CAGXu5jK5exWBV+ub8ys86Ubu1vKwN=miOZxwp3zdWaWEfuJddQ@mail.gmail.com>
-	<CAEiveUeKU-zxXUeeuTZ2Sf1NrbH+t9JjwaWOK_2varRDsfbEWg@mail.gmail.com>
-Message-ID: <CAGXu5jJPk5a_66FpMd6D-XdWyzD7sxCPQirz1C6_hEFu4qsP5g@mail.gmail.com>
+From: azhar.shaikh@intel.com (Azhar Shaikh)
+Date: Thu,  1 Jun 2017 12:13:52 -0700
+Subject: [PATCH] tpm: Enable CLKRUN protocol for Braswell systems
+Message-ID: <1496344432-76640-1-git-send-email-azhar.shaikh@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jun 1, 2017 at 7:56 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
->         module_require_cap = 0;
->
->         if (autoload == MODULES_AUTOLOAD_DISABLED)
->                 return -EPERM;
->
->         if (autoload == MODULES_AUTOLOAD_PRIVILEGED || require_cap > 0) {
->                 if (prefix != NULL && *prefix != '\0')
->                         /*
->                          * Allow non-CAP_SYS_MODULE caps when
->                          * using a distinct prefix.
->                          */
->                         module_require_cap = require_cap;
->                 else
->                         /*
->                          * Otherwise always require CAP_SYS_MODULE if no
->                          * valid prefix. Callers that do not provide a valid prefix
->                          * should not provide a require_cap > 0
->                          */
->                         module_require_cap = CAP_SYS_MODULE;
->         }
->
->         /* If autoload allowed and 'module_require_cap' was *never* set, allow */
->         if (module_require_cap == 0 && autoload == MODULES_AUTOLOAD_ALLOWED)
->                 return 0;
->
->         return capable(module_require_cap) ? 0 : -EPERM;
->
-> Maybe you will agree :-) ?
+To overcome a hardware limitation on Intel Braswell systems,
+disable CLKRUN protocol during TPM transactions and re-enable
+once the transaction is completed.
 
-Yes! Looks good. I was accidentally still thinking about the caps
-checks being in the net code, but obviously, that wouldn't be the case
-anymore. Thanks for the catch. :)
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+---
+ drivers/char/tpm/tpm.h     | 20 +++++++++++
+ drivers/char/tpm/tpm_tis.c | 85 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 105 insertions(+)
 
-> BTW Kees, also in next version I won't remove the
-> capable(CAP_NET_ADMIN) check from [1]
-> even if there is the new request_module_cap(), I would like it to be
-> in a different patches, this way we go incremental
-> and maybe it is better to merge what we have now ?  and follow up
-> later, and of course if other maintainers agree too!
-
-Yes, incremental. I would suggest first creating the API changes to
-move a basic require_cap test into the LSM (which would drop the
-open-coded capable() checks in the net code), and then add the
-autoload logic in the following patches. That way the "infrastructure"
-changes happen separately and do not change any behaviors, but moves
-the caps test down where its wanted in the LSM, before then augmenting
-the logic.
-
-> I just need a bit of free time to check again everything and will send
-> a v5 with all requested changes.
-
-Great, thank you!
-
--Kees
-
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 4b4c8dee3096..98032a22317e 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -36,6 +36,10 @@
+ #include <linux/highmem.h>
+ #include <crypto/hash_info.h>
+ 
++#ifdef CONFIG_X86
++#include <asm/intel-family.h>
++#endif
++
+ enum tpm_const {
+ 	TPM_MINOR = 224,	/* officially assigned */
+ 	TPM_BUFSIZE = 4096,
+@@ -436,6 +440,22 @@ struct tpm_buf {
+ 	u8 *data;
+ };
+ 
++#define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
++#define LPC_CNTRL_REG_OFFSET		0x84
++#define LPC_CLKRUN_EN			(1 << 2)
++
++#ifdef CONFIG_X86
++static inline bool is_bsw(void)
++{
++	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
++}
++#else
++static inline bool is_bsw(void)
++{
++	return false;
++}
++#endif
++
+ static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
+ {
+ 	struct tpm_input_header *head;
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index c7e1384f1b08..25ead56382c0 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -89,13 +89,70 @@ static inline int is_itpm(struct acpi_device *dev)
+ }
+ #endif
+ 
++/**
++ * disable_lpc_clk_run() - clear LPC CLKRUN_EN i.e. clocks will be free running
++ */
++static void disable_lpc_clk_run(void)
++{
++	u32 clkrun_val;
++	void __iomem *ilb_base_addr = NULL;
++
++	ilb_base_addr = (void __iomem *)
++		kmap_atomic_pfn(INTEL_LEGACY_BLK_BASE_ADDR >> PAGE_SHIFT);
++
++	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++
++	/* Disable LPC CLKRUN# */
++	clkrun_val &= ~LPC_CLKRUN_EN;
++	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++
++	kunmap_atomic(ilb_base_addr);
++	/*
++	 * Write any random value on port 0x80 which is on LPC, to make
++	 * sure LPC clock is running before sending any TPM command.
++	 */
++	outb(0x80, 0xCC);
++}
++
++/**
++ * enable_lpc_clk_run() - set LPC CLKRUN_EN i.e. clocks can be turned off
++ */
++static void enable_lpc_clk_run(void)
++{
++	u32 clkrun_val;
++	void __iomem *ilb_base_addr = NULL;
++
++	ilb_base_addr = (void __iomem *)
++		kmap_atomic_pfn(INTEL_LEGACY_BLK_BASE_ADDR >> PAGE_SHIFT);
++
++	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++
++	/* Enable LPC CLKRUN# */
++	clkrun_val |= LPC_CLKRUN_EN;
++	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++
++	kunmap_atomic(ilb_base_addr);
++	/*
++	 * Write any random value on port 0x80 which is on LPC, to make
++	 * sure LPC clock is running before sending any TPM command.
++	 */
++	outb(0x80, 0xCC);
++}
++
+ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ 			      u8 *result)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
++	if (is_bsw())
++		disable_lpc_clk_run();
++
+ 	while (len--)
+ 		*result++ = ioread8(phy->iobase + addr);
++
++	if (is_bsw())
++		enable_lpc_clk_run();
++
+ 	return 0;
+ }
+ 
+@@ -104,8 +161,15 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
++	if (is_bsw())
++		disable_lpc_clk_run();
++
+ 	while (len--)
+ 		iowrite8(*value++, phy->iobase + addr);
++
++	if (is_bsw())
++		enable_lpc_clk_run();
++
+ 	return 0;
+ }
+ 
+@@ -113,7 +177,14 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
++	if (is_bsw())
++		disable_lpc_clk_run();
++
+ 	*result = ioread16(phy->iobase + addr);
++
++	if (is_bsw())
++		enable_lpc_clk_run();
++
+ 	return 0;
+ }
+ 
+@@ -121,7 +192,14 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
++	if (is_bsw())
++		disable_lpc_clk_run();
++
+ 	*result = ioread32(phy->iobase + addr);
++
++	if (is_bsw())
++		enable_lpc_clk_run();
++
+ 	return 0;
+ }
+ 
+@@ -129,7 +207,14 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
++	if (is_bsw())
++		disable_lpc_clk_run();
++
+ 	iowrite32(value, phy->iobase + addr);
++
++	if (is_bsw())
++		enable_lpc_clk_run();
++
+ 	return 0;
+ }
+ 
 -- 
-Kees Cook
-Pixel Security
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
