@@ -1,69 +1,91 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Thu, 1 Jun 2017 12:22:47 +0200
-Subject: [PATCH 04/12] fs: ceph: CURRENT_TIME with ktime_get_real_ts()
-In-Reply-To: <CAAM7YAmp=cZKqGHa8UqDnrQLCe+6TKx+7w9SDZv4cW5fr4dfvA@mail.gmail.com>
-References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
-	<1491613030-11599-5-git-send-email-deepa.kernel@gmail.com>
-	<CAAM7YAmp=cZKqGHa8UqDnrQLCe+6TKx+7w9SDZv4cW5fr4dfvA@mail.gmail.com>
-Message-ID: <CAK8P3a1pCw1Oo-Wg70kH5L12pbtEzGDfaPZ8g6ErERJjvY8znQ@mail.gmail.com>
+From: masanobu2.koike@toshiba.co.jp (masanobu2.koike at toshiba.co.jp)
+Date: Thu, 1 Jun 2017 12:31:41 +0000
+Subject: [RFC 0/3] WhiteEgret LSM module
+In-Reply-To: <20170530205002.GA9841@srcf.ucam.org>
+References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
+	<20170530205002.GA9841@srcf.ucam.org>
+Message-ID: <35b22a328e064096a8fd855bce0f9c3d@TGXML276.toshiba.local>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jun 1, 2017 at 11:56 AM, Yan, Zheng <ukernel@gmail.com> wrote:
-> On Sat, Apr 8, 2017 at 8:57 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> -----Original Message-----
+> 
+> On Tue, May 30, 2017 at 08:11:57PM +0900, Masanobu Koike wrote:
+> > An execution-whitelist, simply called whitelist, is a list
+> > of executable components (e.g., applications, libraries)
+> > that are approved to run on a host. The whitelist is used
+> > to decide whether executable components are permitted to
+> > execute or not. This mechanism can stop an execution of
+> > unknown software, so it helps to stop the execution of
+> > malicious code and other unauthorized software.
+> > The whitelisting-type execution control works best in the
+> > execution environments that are not changed for a long time,
+> > for example, servers and control devices in industrial
+> > control systems. This RFC provides a whitelisting-type
+> > execution control implementation WhiteEgret.
+> 
+> There's a few assumptions made here:
+> 
+> 1) The system isn't subject to any form of offline attack. If it is, the
+> attacker can simply replace either the whitelist agent or any of the
+> executables.
+> 2) The system contains no whitelisted executables that will execute
+> arbitrary code. This means not shipping perl or python.
+> 3) None of the whitelisted applications on the system will misbehave if
+> fed invalid input.
+> 4) It's impossible for a user to ptrace() any other process after it's
+> been executed, and simply inject new code.
+> 
+> (3) is especially awkward. If you're implementing this as an LSM then
+> you're giving up on being able to use any of the other LSMs to protect
+> you against this - a vulnerability in a single application bypasses your
+> entire security model.
+> 
+> The kernel already has support for application whitelisting in the form
+> of IMA appraisal. All you need to do is sign the apps that you want
+> whitelisted and then load a policy at runtime that enforces appraisal.
+> Anything that's unsigned will then fail to execute. This deals with (1)
+> (assuming that you load the policy from something that's validated
+> earlier in the boot process), is no worse with respect to (2), and still
+> allows you to use SELinux or Apparmor to mitigate (3) and (4). You also
+> gain additional reliability by not having the system fail in the event
+> of a bug in the whitelisting agent causing it to crash.
+> 
+> I think it would be helpful to have more details of exactly what
+> circumstances this is intended to be used in and then figure out whether
+> there's any way to use existing kernel functionality to provide the same
+> benefits.
 
->> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
->> index 517838b..77204da 100644
->> --- a/drivers/block/rbd.c
->> +++ b/drivers/block/rbd.c
->> @@ -1922,7 +1922,7 @@ static void rbd_osd_req_format_write(struct rbd_obj_request *obj_request)
->>  {
->>         struct ceph_osd_request *osd_req = obj_request->osd_req;
->>
->> -       osd_req->r_mtime = CURRENT_TIME;
->> +       ktime_get_real_ts(&osd_req->r_mtime);
->>         osd_req->r_data_offset = obj_request->offset;
->>  }
->>
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index c681762..1d3fa90 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -1666,6 +1666,7 @@ struct ceph_mds_request *
->>  ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
->>  {
->>         struct ceph_mds_request *req = kzalloc(sizeof(*req), GFP_NOFS);
->> +       struct timespec ts;
->>
->>         if (!req)
->>                 return ERR_PTR(-ENOMEM);
->> @@ -1684,7 +1685,8 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
->>         init_completion(&req->r_safe_completion);
->>         INIT_LIST_HEAD(&req->r_unsafe_item);
->>
->> -       req->r_stamp = current_fs_time(mdsc->fsc->sb);
->> +       ktime_get_real_ts(&ts);
->> +       req->r_stamp = timespec_trunc(ts, mdsc->fsc->sb->s_time_gran);
->
-> This change causes our kernel_untar_tar test case to fail (inode's
-> ctime goes back). The reason is that there is time drift between the
-> time stamps got by  ktime_get_real_ts() and current_time(). We need to
-> revert this change until current_time() uses ktime_get_real_ts()
-> internally.
+Thank you for a lot of comments and suggestions.
 
-Hmm, the change was not supposed to have a user-visible effect, so
-something has gone wrong, but I don't immediately see how it
-relates to what you observe.
+We assume a system whose execution environment cannot be
+changed for a long time. It includes industrial control
+systems, and control devices are main target.
+Owners of these systems do not want to change their execution
+environments, including kernel update, for fear that the
+systems might not run correctly.
+As time goes on, new security vulnerabilities might be found
+and new malwares might be allowed to access such devices.
+We want to prohibit unknown executable objects from executing
+on the devices.
 
-ktime_get_real_ts() and current_time() use the same time base, there
-is no drift, but there is a difference in resolution, as the latter uses
-the time stamp of the last jiffies update, which may be up to one jiffy
-(10ms) behind the exact time we put in the request stamps here.
+Moreover, such devices, in general, continue to do the same
+tasks for many years. Namely, executable objects for the tasks
+are not changed for a long time.
+So permitting only pre-determined executable objects to execute,
+whitelisting execution control, is suitable for such devices.
 
-Do you still see problems if you use current_kernel_time() instead of
-ktime_get_real_ts()?
+I will reply later on technical aspects.
 
-        Arnd
+Thanks,
+
+Masanobu Koike
+
+> --
+> Matthew Garrett | mjg59 at srcf.ucam.org
+
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
