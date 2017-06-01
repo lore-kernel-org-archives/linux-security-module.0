@@ -1,196 +1,282 @@
-From: azhar.shaikh@intel.com (Azhar Shaikh)
-Date: Thu,  1 Jun 2017 12:13:52 -0700
-Subject: [PATCH] tpm: Enable CLKRUN protocol for Braswell systems
-Message-ID: <1496344432-76640-1-git-send-email-azhar.shaikh@intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 1 Jun 2017 12:49:01 -0700
+Subject: [PATCH] procfs: add smack subdir to attrs
+Message-ID: <d2876592-e13a-b407-15b0-bdf9b0d49f75@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-To overcome a hardware limitation on Intel Braswell systems,
-disable CLKRUN protocol during TPM transactions and re-enable
-once the transaction is completed.
+Subject: [PATCH] procfs: add smack subdir to attrs
 
-Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+Back in 2007 I made what turned out to be a rather serious
+mistake in the implementation of the Smack security module.
+The SELinux module used an interface in /proc to manipulate
+the security context on processes. Rather than use a similar
+interface, I used the same interface. The AppArmor team did
+likewise. Now /proc/.../attr/current will tell you the
+security "context" of the process, but it will be different
+depending on the security module you're using.
+
+This patch provides a subdirectory in /proc/.../attr for
+Smack. Smack user space can use the "current" file in
+this subdirectory and never have to worry about getting
+SELinux attributes by mistake. Programs that use the
+old interface will continue to work (or fail, as the case
+may be) as before.
+
+This patch does not include subdirectories for SELinux
+or AppArmor. I do have a patch that provides those, and
+will happily make it available should anyone see value
+in it.
+
+The original implementation is by Kees Cook.
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- drivers/char/tpm/tpm.h     | 20 +++++++++++
- drivers/char/tpm/tpm_tis.c | 85 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 105 insertions(+)
+ Documentation/security/LSM.txt | 19 +++++++++----
+ fs/proc/base.c                 | 63 ++++++++++++++++++++++++++++++++++++------
+ fs/proc/internal.h             |  1 +
+ include/linux/security.h       | 15 ++++++----
+ security/security.c            | 30 +++++++++++++++++---
+ 5 files changed, 104 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4b4c8dee3096..98032a22317e 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -36,6 +36,10 @@
- #include <linux/highmem.h>
- #include <crypto/hash_info.h>
+diff --git a/Documentation/security/LSM.txt b/Documentation/security/LSM.txt
+index c2683f28ed36..57eafbc1d144 100644
+--- a/Documentation/security/LSM.txt
++++ b/Documentation/security/LSM.txt
+@@ -16,11 +16,10 @@ MAC extensions, other extensions can be built using the LSM to provide
+ specific changes to system operation when these tweaks are not available
+ in the core functionality of Linux itself.
  
-+#ifdef CONFIG_X86
-+#include <asm/intel-family.h>
-+#endif
+-Without a specific LSM built into the kernel, the default LSM will be the
+-Linux capabilities system. Most LSMs choose to extend the capabilities
+-system, building their checks on top of the defined capability hooks.
+-For more details on capabilities, see capabilities(7) in the Linux
+-man-pages project.
++The Linux capabilities modules will always be included. For more details
++on capabilities, see capabilities(7) in the Linux man-pages project.
++This may be followed by any number of "minor" modules and at most one
++"major" module.
+ 
+ A list of the active security modules can be found by reading
+ /sys/kernel/security/lsm. This is a comma separated list, and
+@@ -29,6 +28,14 @@ order in which checks are made. The capability module will always
+ be first, followed by any "minor" modules (e.g. Yama) and then
+ the one "major" module (e.g. SELinux) if there is one configured.
+ 
++Process attributes associated with "major" security modules should
++be accessed and maintained using the special files in /proc/.../attr.
++A security module may maintain a module specific subdirectory there,
++named after the module. /proc/.../attr/smack is provided by the Smack
++security module and contains all its special files. The files directly
++in /proc/.../attr remain as legacy interfaces for modules that provide
++subdirectories.
 +
- enum tpm_const {
- 	TPM_MINOR = 224,	/* officially assigned */
- 	TPM_BUFSIZE = 4096,
-@@ -436,6 +440,22 @@ struct tpm_buf {
- 	u8 *data;
+ Based on https://lkml.org/lkml/2007/10/26/215,
+ a new LSM is accepted into the kernel when its intent (a description of
+ what it tries to protect against and in what cases one would expect to
+@@ -38,4 +45,4 @@ that end users and distros can make a more informed decision about which
+ LSMs suit their requirements.
+ 
+ For extensive documentation on the available LSM hook interfaces, please
+-see include/linux/security.h.
++see include/linux/lsm_hooks.h.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c87b6b9a8a76..2decd2fb5ef8 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -139,9 +139,13 @@ struct pid_entry {
+ #define REG(NAME, MODE, fops)				\
+ 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
+ #define ONE(NAME, MODE, show)				\
+-	NOD(NAME, (S_IFREG|(MODE)), 			\
++	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_single_file_operations,	\
+ 		{ .proc_show = show } )
++#define ATTR(LSM, NAME, MODE)				\
++	NOD(NAME, (S_IFREG|(MODE)),			\
++		NULL, &proc_pid_attr_operations,	\
++		{ .lsm = LSM })
+ 
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+@@ -2455,7 +2459,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 	if (!task)
+ 		return -ESRCH;
+ 
+-	length = security_getprocattr(task,
++	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+ 				      (char*)file->f_path.dentry->d_name.name,
+ 				      &p);
+ 	put_task_struct(task);
+@@ -2501,7 +2505,8 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (length < 0)
+ 		goto out_free;
+ 
+-	length = security_setprocattr(file->f_path.dentry->d_name.name,
++	length = security_setprocattr(PROC_I(inode)->op.lsm,
++				      file->f_path.dentry->d_name.name,
+ 				      page, count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ out_free:
+@@ -2518,13 +2523,53 @@ static const struct file_operations proc_pid_attr_operations = {
+ 	.llseek		= generic_file_llseek,
  };
  
-+#define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
-+#define LPC_CNTRL_REG_OFFSET		0x84
-+#define LPC_CLKRUN_EN			(1 << 2)
++#define LSM_DIR_OPS(LSM) \
++static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
++			     struct dir_context *ctx) \
++{ \
++	return proc_pident_readdir(filp, ctx, \
++				   LSM##_attr_dir_stuff, \
++				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct file_operations proc_##LSM##_attr_dir_ops = { \
++	.read		= generic_read_dir, \
++	.iterate	= proc_##LSM##_attr_dir_iterate, \
++	.llseek		= default_llseek, \
++}; \
++\
++static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
++				struct dentry *dentry, unsigned int flags) \
++{ \
++	return proc_pident_lookup(dir, dentry, \
++				  LSM##_attr_dir_stuff, \
++				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
++	.lookup		= proc_##LSM##_attr_dir_lookup, \
++	.getattr	= pid_getattr, \
++	.setattr	= proc_setattr, \
++}
 +
-+#ifdef CONFIG_X86
-+static inline bool is_bsw(void)
-+{
-+	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
-+}
-+#else
-+static inline bool is_bsw(void)
-+{
-+	return false;
-+}
++#ifdef CONFIG_SECURITY_SMACK
++static const struct pid_entry smack_attr_dir_stuff[] = {
++	ATTR("smack", "current",	0666),
++};
++LSM_DIR_OPS(smack);
 +#endif
 +
- static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
- {
- 	struct tpm_input_header *head;
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index c7e1384f1b08..25ead56382c0 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -89,13 +89,70 @@ static inline int is_itpm(struct acpi_device *dev)
- }
- #endif
+ static const struct pid_entry attr_dir_stuff[] = {
+-	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
+-	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
++	ATTR(NULL, "current",		0666),
++	ATTR(NULL, "prev",		0444),
++	ATTR(NULL, "exec",		0666),
++	ATTR(NULL, "fscreate",		0666),
++	ATTR(NULL, "keycreate",		0666),
++	ATTR(NULL, "sockcreate",	0666),
++#ifdef CONFIG_SECURITY_SMACK
++	DIR("smack",			0555,
++	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
++#endif
+ };
  
-+/**
-+ * disable_lpc_clk_run() - clear LPC CLKRUN_EN i.e. clocks will be free running
-+ */
-+static void disable_lpc_clk_run(void)
-+{
-+	u32 clkrun_val;
-+	void __iomem *ilb_base_addr = NULL;
-+
-+	ilb_base_addr = (void __iomem *)
-+		kmap_atomic_pfn(INTEL_LEGACY_BLK_BASE_ADDR >> PAGE_SHIFT);
-+
-+	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	/* Disable LPC CLKRUN# */
-+	clkrun_val &= ~LPC_CLKRUN_EN;
-+	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	kunmap_atomic(ilb_base_addr);
-+	/*
-+	 * Write any random value on port 0x80 which is on LPC, to make
-+	 * sure LPC clock is running before sending any TPM command.
-+	 */
-+	outb(0x80, 0xCC);
-+}
-+
-+/**
-+ * enable_lpc_clk_run() - set LPC CLKRUN_EN i.e. clocks can be turned off
-+ */
-+static void enable_lpc_clk_run(void)
-+{
-+	u32 clkrun_val;
-+	void __iomem *ilb_base_addr = NULL;
-+
-+	ilb_base_addr = (void __iomem *)
-+		kmap_atomic_pfn(INTEL_LEGACY_BLK_BASE_ADDR >> PAGE_SHIFT);
-+
-+	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	/* Enable LPC CLKRUN# */
-+	clkrun_val |= LPC_CLKRUN_EN;
-+	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	kunmap_atomic(ilb_base_addr);
-+	/*
-+	 * Write any random value on port 0x80 which is on LPC, to make
-+	 * sure LPC clock is running before sending any TPM command.
-+	 */
-+	outb(0x80, 0xCC);
-+}
-+
- static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- 			      u8 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index c5ae09b6c726..8b7d101c91ec 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -58,6 +58,7 @@ union proc_op {
+ 	int (*proc_show)(struct seq_file *m,
+ 		struct pid_namespace *ns, struct pid *pid,
+ 		struct task_struct *task);
++	const char *lsm;
+ };
  
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	while (len--)
- 		*result++ = ioread8(phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
+ struct proc_inode {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index af675b576645..8ee9dbdfa1cb 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -365,8 +365,10 @@ int security_sem_semctl(struct sem_array *sma, int cmd);
+ int security_sem_semop(struct sem_array *sma, struct sembuf *sops,
+ 			unsigned nsops, int alter);
+ void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+-int security_getprocattr(struct task_struct *p, char *name, char **value);
+-int security_setprocattr(const char *name, void *value, size_t size);
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++			 char **value);
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1111,15 +1113,18 @@ static inline int security_sem_semop(struct sem_array *sma,
  	return 0;
  }
  
-@@ -104,8 +161,15 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+-static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
++static inline void security_d_instantiate(struct dentry *dentry,
++					  struct inode *inode)
+ { }
  
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	while (len--)
- 		iowrite8(*value++, phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
+-static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
++static inline int security_getprocattr(struct task_struct *p, const char *lsm,
++				       char *name, char **value)
+ {
+ 	return -EINVAL;
  }
  
-@@ -113,7 +177,14 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
+-static inline int security_setprocattr(char *name, void *value, size_t size)
++static inline int security_setprocattr(const char *lsm, char *name,
++				       void *value, size_t size)
  {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 	return -EINVAL;
+ }
+diff --git a/security/security.c b/security/security.c
+index 549bddcc2116..e28bb987e26d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1216,14 +1216,36 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_d_instantiate);
  
-+	if (is_bsw())
-+		disable_lpc_clk_run();
+-int security_getprocattr(struct task_struct *p, char *name, char **value)
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++				char **value)
+ {
+-	return call_int_hook(getprocattr, -EINVAL, p, name, value);
++	struct security_hook_list *hp;
++	int rc;
 +
- 	*result = ioread16(phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
++	list_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		rc = hp->hook.getprocattr(p, name, value);
++		if (rc != -ENOENT)
++			return rc;
++	}
++	return -EINVAL;
  }
  
-@@ -121,7 +192,14 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
+-int security_setprocattr(const char *name, void *value, size_t size)
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size)
  {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
-+	if (is_bsw())
-+		disable_lpc_clk_run();
+-	return call_int_hook(setprocattr, -EINVAL, name, value, size);
++	struct security_hook_list *hp;
++	int rc;
 +
- 	*result = ioread32(phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
++	list_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		rc = hp->hook.setprocattr(name, value, size);
++		if (rc != -ENOENT)
++			return rc;
++	}
++	return -EINVAL;
  }
  
-@@ -129,7 +207,14 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	iowrite32(value, phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
- }
- 
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
 -- 
-1.9.1
+2.11.0
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
