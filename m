@@ -1,83 +1,77 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 2 Jun 2017 15:30:01 -0400
-Subject: [RFC PATCH V2 0/4] capabilities: do not audit log BPRM_FCAPS on
-	set*id
-In-Reply-To: <20170602180356.GC6203@madcap2.tricolour.ca>
-References: <cover.1494527628.git.rgb@redhat.com>
-	<CAHC9VhRcxvxQjo3ZRcNaGjoKaqBe-CfbypY9aYzetZYXWTAyLA@mail.gmail.com>
-	<20170602180356.GC6203@madcap2.tricolour.ca>
-Message-ID: <CAHC9VhQ_G82fE++RySOK3OgW9y59=HsisRWB=zk2ZP7J_D-NEw@mail.gmail.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Fri, 2 Jun 2017 21:05:44 +0100
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
+References: <20170530132427.016053da@alans-desktop>
+	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
+	<20170530235106.11aab25c@alans-desktop>
+	<3bd4ff7b-6f7d-52b0-03f6-026bac79f11f@nmatt.com>
+	<20170531005633.484a2e14@alans-desktop>
+	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
+	<20170601140812.583cf0a5@alans-desktop>
+	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
+	<20170601222432.6f593538@lxorguk.ukuu.org.uk>
+	<2d0ad49c-886e-1caf-771a-d251957f614c@nmatt.com>
+	<20170602153647.GA2688@mail.hallyn.com>
+	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
+Message-ID: <20170602210544.73680be8@lxorguk.ukuu.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jun 2, 2017 at 2:03 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2017-06-02 11:19, Paul Moore wrote:
->> On Thu, May 11, 2017 at 4:42 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> > The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
->> > application execution (SYSCALL execve). This is not expected as it was
->> > supposed to be limited to when the file system actually had capabilities
->> > in an extended attribute.  It lists all capabilities making the event
->> > really ugly to parse what is happening.  The PATH record correctly
->> > records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
->> > set*id.
->> >
->> > See: https://github.com/linux-audit/audit-kernel/issues/16
->> >
->> > The patch that resolves this issue is the third.  The first and second just
->> > massage the logic to make it easier to understand.
->> >
->> > It would be possible to address the original issue with a change of
->> >         "!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
->> > to
->> >         "!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
->> > but it took me long enough to understand this logic that I don't think I'd be
->> > doing any favours by leaving it this difficult to understand.
->> >
->> > The final patch attempts to address all the conditions that need logging based
->> > on mailing list conversations, recoginizing there is probably some duplication
->> > in the logic, which is why I'm posting this as an RFC for some feedback.
->> >
->> > Richard Guy Briggs (4):
->> >   capabilities: use macros to make the logic easier to follow and
->> >     verify
->> >   capabilities: invert logic for clarity
->> >   capabilities: fix logic for effective root or real root
->> >   capabilities: auit log other surprising conditions
->> >
->> >  security/commoncap.c |   55 ++++++++++++++++++++++++++++++++-----------------
->> >  1 files changed, 36 insertions(+), 19 deletions(-)
->>
->> Following up on this set of patches ... I see there was some
->> discussion between you and Serge for one of the patches, but it isn't
->> clear to me that there was any resolution reached; where do things
->> stand at the moment?
->
-> Well, I was still waiting to hear from you before submitting another
-> round of patches.
+> Can't we also have a sysctl that toggles if CAP_SYS_ADMIN is involved in
+> this whitelist check? Otherwise someone might leave things out of the
+> whitelist just because they want to use those ioctls as a privileged
+> process. Also restricting a privileged user from ioctls with this
+> whitelist approach is going to be pointless because, if the whitelist is
+> configurable from userspace, they will just be able to modify the
+> whitelist.
 
-All of the changes in this patchset relate to the capabilities code
-and not the audit code so I don't really have a strong opinion.  Serge
-knows way more about the subtleties of Linux capabilities than I do; I
-trust his judgement there.
+Something like CAP_SYS_ADMIN is fine if you must have it configurable on
+the grounds that CAP_SYS_ADMIN will let you override the list anyway.
 
-The only area I might want to weigh in on would be if/when we generate
-records, but considering the rather vague answer from Steve when he
-was asked about certification requirements, I'm not going to worry
-about it too much right now.  Your logic outlined in the description
-seems reasonable.
+> I'm fine with moving this to an LSM that whitelists ioctls. I also want
+> to understand what a whitelist would like look and how you would
+> configure it? Does a sysctl that is a list of allowed ioctls work? I
+> don't want to just have a static whitelist that you can't change without
+> recompiling your kernel.
 
-> I'd like to replace the macros with local variables (rather than
-> funcitons), expecting that the compiler would be smarter than me and
-> figure out the best way to do things.
+That's odd because your previous argument was for a fixed one entry
+whitelist containing TIOCSTI 8)
 
-Since that lives in the capabilities code and not the audit code that
-is between you and Serge as far as I'm concerned.  I can send this up
-via the audit tree if Serge would prefer, but I would want to see his
-ACK.
+The list can probably be fixed. IMHO those wanting to do cleverer stuff
+sre inevitably going to end up using a "grown up" LSM for the job because
 
--- 
-paul moore
-www.paul-moore.com
+a) they'll want to shape things like su not just containers
+b) they will have cases where you want to lock down cleverly - eg you can
+disable TIOCSTI use except by certain apps, and make those apps non
+ptraceable so only existing real users of it can continue to use it.
+
+For the whitelist you want most of the standard tty ioctls, but none of
+the device specific ones, none of the hardware configuration ones, no
+TIOCSTI, no selection, no line discipline change (or you can set a
+network ldisc or various other evil and fascinating things).
+
+I really think that for container type uses the whitelist can be fairly
+clearly defined because we know a container isn't supposed to be screwing
+with the hardware of the parent, configuring network interfaces or
+pushing data to trip people up.
+
+If we are prepared to accept nuisance attacks (messing up baud rate,
+hangup, etc) then it's fairly easy to fix.
+
+So I'd say it's all the generic tty ioctls except TIOCSTI and TIOCSETD
+but it would be good to see what Android is going with and why.
+
+You can still do some typeback stuff even then because the consoles and
+terminals have ranges of query and requests you can trigger. As you can
+use termios to absorb some symbols in the reply and map which one to use
+for newline you can even type stuff. However it's very limited - hex
+digits, [, c and some other oddments. People have looked hard at that and
+I've yet to see a successful attack. Yes I can make you run test (aka
+'[') but I've yet to see a way to use it for anything.
+
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
