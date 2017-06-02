@@ -1,212 +1,109 @@
-From: azhar.shaikh@intel.com (Azhar Shaikh)
-Date: Thu,  1 Jun 2017 19:04:04 -0700
-Subject: [PATCH v2] tpm: Enable CLKRUN protocol for Braswell systems
-In-Reply-To: <1496344432-76640-1-git-send-email-azhar.shaikh@intel.com>
-References: <1496344432-76640-1-git-send-email-azhar.shaikh@intel.com>
-Message-ID: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
+From: ukernel@gmail.com (Yan, Zheng)
+Date: Fri, 2 Jun 2017 10:09:59 +0800
+Subject: [PATCH 04/12] fs: ceph: CURRENT_TIME with ktime_get_real_ts()
+In-Reply-To: <CABeXuvqvLr6sSGF+rZEXXxpCBDKTOeLX1ObSjbPPY4aFBuwvMg@mail.gmail.com>
+References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
+	<1491613030-11599-5-git-send-email-deepa.kernel@gmail.com>
+	<CAAM7YAmp=cZKqGHa8UqDnrQLCe+6TKx+7w9SDZv4cW5fr4dfvA@mail.gmail.com>
+	<CAK8P3a1pCw1Oo-Wg70kH5L12pbtEzGDfaPZ8g6ErERJjvY8znQ@mail.gmail.com>
+	<CAAM7YAnWLUXMOCVbgfdKGfvK04EtAQcz-ETm7xFO=8Y=_fCvOQ@mail.gmail.com>
+	<CALAqxLV-yVKWM5es7fAFiDzhSQmtZFiZDPQwBRUYbWUtqhoWVg@mail.gmail.com>
+	<CABeXuvqvLr6sSGF+rZEXXxpCBDKTOeLX1ObSjbPPY4aFBuwvMg@mail.gmail.com>
+Message-ID: <CAAM7YAkXNo_69tOrw6a5kpyref9nEpEp-2vxBbFVSHGmAVbt+A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-To overcome a hardware limitation on Intel Braswell systems,
-disable CLKRUN protocol during TPM transactions and re-enable
-once the transaction is completed.
+On Fri, Jun 2, 2017 at 8:57 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> On Thu, Jun 1, 2017 at 5:36 PM, John Stultz <john.stultz@linaro.org> wrote:
+>> On Thu, Jun 1, 2017 at 5:26 PM, Yan, Zheng <ukernel@gmail.com> wrote:
+>>> On Thu, Jun 1, 2017 at 6:22 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>>> On Thu, Jun 1, 2017 at 11:56 AM, Yan, Zheng <ukernel@gmail.com> wrote:
+>>>>> On Sat, Apr 8, 2017 at 8:57 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>>>>
+>>>>>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+>>>>>> index 517838b..77204da 100644
+>>>>>> --- a/drivers/block/rbd.c
+>>>>>> +++ b/drivers/block/rbd.c
+>>>>>> @@ -1922,7 +1922,7 @@ static void rbd_osd_req_format_write(struct rbd_obj_request *obj_request)
+>>>>>>  {
+>>>>>>         struct ceph_osd_request *osd_req = obj_request->osd_req;
+>>>>>>
+>>>>>> -       osd_req->r_mtime = CURRENT_TIME;
+>>>>>> +       ktime_get_real_ts(&osd_req->r_mtime);
+>>>>>>         osd_req->r_data_offset = obj_request->offset;
+>>>>>>  }
+>>>>>>
+>>>>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>>>>>> index c681762..1d3fa90 100644
+>>>>>> --- a/fs/ceph/mds_client.c
+>>>>>> +++ b/fs/ceph/mds_client.c
+>>>>>> @@ -1666,6 +1666,7 @@ struct ceph_mds_request *
+>>>>>>  ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+>>>>>>  {
+>>>>>>         struct ceph_mds_request *req = kzalloc(sizeof(*req), GFP_NOFS);
+>>>>>> +       struct timespec ts;
+>>>>>>
+>>>>>>         if (!req)
+>>>>>>                 return ERR_PTR(-ENOMEM);
+>>>>>> @@ -1684,7 +1685,8 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+>>>>>>         init_completion(&req->r_safe_completion);
+>>>>>>         INIT_LIST_HEAD(&req->r_unsafe_item);
+>>>>>>
+>>>>>> -       req->r_stamp = current_fs_time(mdsc->fsc->sb);
+>>>>>> +       ktime_get_real_ts(&ts);
+>>>>>> +       req->r_stamp = timespec_trunc(ts, mdsc->fsc->sb->s_time_gran);
+>>>>>
+>>>>> This change causes our kernel_untar_tar test case to fail (inode's
+>>>>> ctime goes back). The reason is that there is time drift between the
+>>>>> time stamps got by  ktime_get_real_ts() and current_time(). We need to
+>>>>> revert this change until current_time() uses ktime_get_real_ts()
+>>>>> internally.
+>>>>
+>>>> Hmm, the change was not supposed to have a user-visible effect, so
+>>>> something has gone wrong, but I don't immediately see how it
+>>>> relates to what you observe.
+>>>>
+>>>> ktime_get_real_ts() and current_time() use the same time base, there
+>>>> is no drift, but there is a difference in resolution, as the latter uses
+>>>> the time stamp of the last jiffies update, which may be up to one jiffy
+>>>> (10ms) behind the exact time we put in the request stamps here.
+>>>>
+>>>> Do you still see problems if you use current_kernel_time() instead of
+>>>> ktime_get_real_ts()?
+>>>
+>>> The problem disappears after using current_kernel_time().
+>>>
+>>> https://github.com/ceph/ceph-client/commit/2e0f648da23167034a3cf1500bc90ec60aef2417
+>>
+>> From the commit above:
+>> "It seems there is time drift between ktime_get_real_ts() and
+>> current_kernel_time()"
+>>
+>> Its more of a granularity difference. current_kernel_time() returns
+>> the cached time at the last tick, where as ktime_get_real_ts() reads
+>> the clocksource hardware and returns the immediate time.
+>>
+>> Filesystems usually use the cached time (similar to
+>> CLOCK_REALTIME_COARSE), for performance reasons, as touching the
+>> clocksource takes time.
+>
+> Alternatively, it would be best for this code also to use current_time().
+> I had suggested this in one of the previous versions of the patch.
+> The implementation of current_time() will change when we switch vfs to
+> use 64 bit time. This will prevent such errors from happening again.
+> But, this also means there is more code reordering for these modules
+> to get a reference to inode.
+>
 
-Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
----
-Changes from v1:
-- Add CONFIG_X86 around disable_lpc_clk_run () and enable_lpc_clk_run() to avoid
-- build breakage on architectures which do not implement kmap_atomic_pfn()
+I took a look. it's quite inconvenience to use current_time(). I
+prefer to temporarily use current_kernel_time().
 
- drivers/char/tpm/tpm.h     | 20 ++++++++++
- drivers/char/tpm/tpm_tis.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 114 insertions(+)
+Regards
+Yan, Zheng
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4b4c8dee3096..98032a22317e 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -36,6 +36,10 @@
- #include <linux/highmem.h>
- #include <crypto/hash_info.h>
- 
-+#ifdef CONFIG_X86
-+#include <asm/intel-family.h>
-+#endif
-+
- enum tpm_const {
- 	TPM_MINOR = 224,	/* officially assigned */
- 	TPM_BUFSIZE = 4096,
-@@ -436,6 +440,22 @@ struct tpm_buf {
- 	u8 *data;
- };
- 
-+#define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
-+#define LPC_CNTRL_REG_OFFSET		0x84
-+#define LPC_CLKRUN_EN			(1 << 2)
-+
-+#ifdef CONFIG_X86
-+static inline bool is_bsw(void)
-+{
-+	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
-+}
-+#else
-+static inline bool is_bsw(void)
-+{
-+	return false;
-+}
-+#endif
-+
- static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
- {
- 	struct tpm_input_header *head;
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index c7e1384f1b08..0c1496340a18 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -89,13 +89,79 @@ static inline int is_itpm(struct acpi_device *dev)
- }
- #endif
- 
-+#ifdef CONFIG_X86
-+/**
-+ * disable_lpc_clk_run() - clear LPC CLKRUN_EN i.e. clocks will be free running
-+ */
-+static void disable_lpc_clk_run(void)
-+{
-+	u32 clkrun_val;
-+	void __iomem *ilb_base_addr = NULL;
-+
-+	ilb_base_addr = (void __iomem *)
-+		kmap_atomic_pfn(INTEL_LEGACY_BLK_BASE_ADDR >> PAGE_SHIFT);
-+
-+	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	/* Disable LPC CLKRUN# */
-+	clkrun_val &= ~LPC_CLKRUN_EN;
-+	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	kunmap_atomic(ilb_base_addr);
-+	/*
-+	 * Write any random value on port 0x80 which is on LPC, to make
-+	 * sure LPC clock is running before sending any TPM command.
-+	 */
-+	outb(0x80, 0xCC);
-+}
-+
-+/**
-+ * enable_lpc_clk_run() - set LPC CLKRUN_EN i.e. clocks can be turned off
-+ */
-+static void enable_lpc_clk_run(void)
-+{
-+	u32 clkrun_val;
-+	void __iomem *ilb_base_addr = NULL;
-+
-+	ilb_base_addr = (void __iomem *)
-+		kmap_atomic_pfn(INTEL_LEGACY_BLK_BASE_ADDR >> PAGE_SHIFT);
-+
-+	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	/* Enable LPC CLKRUN# */
-+	clkrun_val |= LPC_CLKRUN_EN;
-+	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+
-+	kunmap_atomic(ilb_base_addr);
-+	/*
-+	 * Write any random value on port 0x80 which is on LPC, to make
-+	 * sure LPC clock is running before sending any TPM command.
-+	 */
-+	outb(0x80, 0xCC);
-+}
-+#else
-+static void disable_lpc_clk_run(void)
-+{
-+}
-+static void enable_lpc_clk_run(void)
-+{
-+}
-+#endif
-+
- static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- 			      u8 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	while (len--)
- 		*result++ = ioread8(phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
- }
- 
-@@ -104,8 +170,15 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	while (len--)
- 		iowrite8(*value++, phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
- }
- 
-@@ -113,7 +186,14 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	*result = ioread16(phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
- }
- 
-@@ -121,7 +201,14 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	*result = ioread32(phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
- }
- 
-@@ -129,7 +216,14 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
-+	if (is_bsw())
-+		disable_lpc_clk_run();
-+
- 	iowrite32(value, phy->iobase + addr);
-+
-+	if (is_bsw())
-+		enable_lpc_clk_run();
-+
- 	return 0;
- }
- 
--- 
-1.9.1
 
+
+> -Deepa
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
