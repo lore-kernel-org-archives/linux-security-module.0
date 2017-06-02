@@ -1,31 +1,62 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Fri, 2 Jun 2017 10:24:17 -0700
-Subject: [PATCH 1/5] KEYS: sanitize add_key() and keyctl() key payloads
-In-Reply-To: <5744.1496417684@warthog.procyon.org.uk>
-References: <20170421083037.12746-2-ebiggers3@gmail.com>
-	<20170421083037.12746-1-ebiggers3@gmail.com>
-	<5744.1496417684@warthog.procyon.org.uk>
-Message-ID: <20170602172417.GA2938@zzz>
+Date: Fri,  2 Jun 2017 10:25:01 -0700
+Subject: [PATCH v2] KEYS: sanitize add_key() and keyctl() key payloads
+Message-ID: <20170602172501.4853-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jun 02, 2017 at 04:34:44PM +0100, David Howells wrote:
-> Eric Biggers <ebiggers3@gmail.com> wrote:
-> 
-> >  error2:
-> > +	memzero_explicit(payload, plen);
-> 
-> Isn't that wrong?  payload can be NULL.
-> 
-> David
+From: Eric Biggers <ebiggers@google.com>
 
-If you're talking about memset(NULL, ..., 0) being undefined behavior, it's
-completely insane but sure, I guess we should add the NULL check to be safe.  It
-would also mean there would be no requirement that "KEYS: fix dereferencing NULL
-payload with nonzero length" be applied first so the second paragraph of the
-commit message would be removed.  I'll send a v2 of just this patch.
+Before returning from add_key() or one of the keyctl() commands that
+takes in a key payload, zero the temporary buffer that was allocated to
+hold the key payload copied from userspace.  This may contain sensitive
+key material that should not be kept around in the slab caches.
 
-Eric
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/keyctl.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 94c2790f8283..ab0b337c84b4 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -132,7 +132,10 @@ SYSCALL_DEFINE5(add_key, const char __user *, _type,
+ 
+ 	key_ref_put(keyring_ref);
+  error3:
+-	kvfree(payload);
++	if (payload) {
++		memzero_explicit(payload, plen);
++		kvfree(payload);
++	}
+  error2:
+ 	kfree(description);
+  error:
+@@ -347,7 +350,7 @@ long keyctl_update_key(key_serial_t id,
+ 
+ 	key_ref_put(key_ref);
+ error2:
+-	kfree(payload);
++	kzfree(payload);
+ error:
+ 	return ret;
+ }
+@@ -1093,7 +1096,10 @@ long keyctl_instantiate_key_common(key_serial_t id,
+ 		keyctl_change_reqkey_auth(NULL);
+ 
+ error2:
+-	kvfree(payload);
++	if (payload) {
++		memzero_explicit(payload, plen);
++		kvfree(payload);
++	}
+ error:
+ 	return ret;
+ }
+-- 
+2.13.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
