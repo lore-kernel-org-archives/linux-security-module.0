@@ -1,61 +1,49 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Fri, 2 Jun 2017 13:18:22 -0500
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
-	TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <3027e4fa-5dc2-a52f-8699-9974cb4d4b6b@nmatt.com>
-References: <20170531005633.484a2e14@alans-desktop>
-	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
-	<20170601140812.583cf0a5@alans-desktop>
-	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
-	<20170601222432.6f593538@lxorguk.ukuu.org.uk>
-	<2d0ad49c-886e-1caf-771a-d251957f614c@nmatt.com>
-	<20170602153647.GA2688@mail.hallyn.com>
-	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
-	<20170602165732.GA3614@mail.hallyn.com>
-	<3027e4fa-5dc2-a52f-8699-9974cb4d4b6b@nmatt.com>
-Message-ID: <20170602181822.GA5125@mail.hallyn.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 2 Jun 2017 12:00:22 -0700
+Subject: [RFC 0/3] WhiteEgret LSM module
+In-Reply-To: <CABxV-EX8C175BRvYdKO8BObCQ5V30=ge8rE7SeSOzTrADgxxDg@mail.gmail.com>
+References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
+	<20170530205002.GA9841@srcf.ucam.org>
+	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
+	<0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
+	<CABxV-EX8C175BRvYdKO8BObCQ5V30=ge8rE7SeSOzTrADgxxDg@mail.gmail.com>
+Message-ID: <e26e9aa2-12b2-4aac-092b-747e8be160a3@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Matt Brown (matt at nmatt.com):
-> On 6/2/17 12:57 PM, Serge E. Hallyn wrote:
-> > I'm not quite sure what you're asking for here.  Let me offer a precise
-> > strawman design.  I'm sure there are problems with it, it's just a starting
-> > point.
-> > 
-> > system-wide whitelist (for now 'may_push_chars') is full by default.
-> > 
-> 
-> So is may_push_chars just an alias for TIOCSTI? Or are there some
-> potential whitelist members that would map to multiple ioctls?
+On 6/2/2017 10:39 AM, Steve Kemp wrote:
+>> Create an security module that looks for the attribute
+> For what it is worth I thought this seemed like an interesting project
+> for a beginner, so I did just that.  I wrote up the experience here:
+>
+> https://blog.steve.fi/so_i_accidentally_wrote_a_linux_security_module.html
+>
+> In short it was a very simple and clean approach, which I think is
+> hard to get wrong.  The only part I need to work on some more is the
+> difference between `user` and `security` attributes.
 
-<shrug>  I'm seeing it as only TIOCSTI right now.
+A 'user' attribute can be set by the file owner. A 'security'
+attribute requires privilege. SELinux and Smack use 'security'
+attributes to prevent users from mucking with them. You need
+to create module hooks for manipulating them, including
 
-> > By default, nothing changes - you can use those on your own tty, need
-> > CAP_SYS_ADMIN against init_user_ns otherwise.
-> > 
-> > Introduce a new CAP_TTY_PRIVILEGED.
-> > 
-> 
-> I'm fine with this.
-> 
-> > When may_push_chars is removed from the whitelist, you lose the ability
-> > to use TIOCSTI on a tty - even your own - if you do not have CAP_TTY_PRIVILEGED
-> > against the tty's user_ns.
-> > 
-> 
-> How do you propose storing/updating the whitelist? sysctl?
-> 
-> If it is a sysctl, would each whitelist member have a sysctl?
-> e.g.: kernel.ioctlwhitelist.may_push_chars = 1
-> 
-> Overall, I'm fine with this idea.
+	inode_init_security
+	inode_setxattr
+	inode_post_setxattr
+	inode_removexattr
+	inode_getsecurity
+	inode_listsecurity
+	inode_setsecurity
+	d_instantiate
 
-That sounds reasonable.  Or a securityfs file - I guess not everyone
-has securityfs, but if it were to become part of YAMA then that would
-work.
 
--serge
+
+>
+> Steve
+> --
+> https://steve.fi/
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
