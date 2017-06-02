@@ -1,29 +1,72 @@
-From: steve.backup.kemp@googlemail.com (Steve Kemp)
-Date: Fri, 2 Jun 2017 20:39:21 +0300
-Subject: [RFC 0/3] WhiteEgret LSM module
-In-Reply-To: <0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
-References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
-	<20170530205002.GA9841@srcf.ucam.org>
-	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
-	<0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
-Message-ID: <CABxV-EX8C175BRvYdKO8BObCQ5V30=ge8rE7SeSOzTrADgxxDg@mail.gmail.com>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Fri, 2 Jun 2017 14:03:56 -0400
+Subject: [RFC PATCH V2 0/4] capabilities: do not audit log BPRM_FCAPS on
+	set*id
+In-Reply-To: <CAHC9VhRcxvxQjo3ZRcNaGjoKaqBe-CfbypY9aYzetZYXWTAyLA@mail.gmail.com>
+References: <cover.1494527628.git.rgb@redhat.com>
+	<CAHC9VhRcxvxQjo3ZRcNaGjoKaqBe-CfbypY9aYzetZYXWTAyLA@mail.gmail.com>
+Message-ID: <20170602180356.GC6203@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> Create an security module that looks for the attribute
+On 2017-06-02 11:19, Paul Moore wrote:
+> On Thu, May 11, 2017 at 4:42 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
+> > application execution (SYSCALL execve). This is not expected as it was
+> > supposed to be limited to when the file system actually had capabilities
+> > in an extended attribute.  It lists all capabilities making the event
+> > really ugly to parse what is happening.  The PATH record correctly
+> > records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
+> > set*id.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/16
+> >
+> > The patch that resolves this issue is the third.  The first and second just
+> > massage the logic to make it easier to understand.
+> >
+> > It would be possible to address the original issue with a change of
+> >         "!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
+> > to
+> >         "!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
+> > but it took me long enough to understand this logic that I don't think I'd be
+> > doing any favours by leaving it this difficult to understand.
+> >
+> > The final patch attempts to address all the conditions that need logging based
+> > on mailing list conversations, recoginizing there is probably some duplication
+> > in the logic, which is why I'm posting this as an RFC for some feedback.
+> >
+> > Richard Guy Briggs (4):
+> >   capabilities: use macros to make the logic easier to follow and
+> >     verify
+> >   capabilities: invert logic for clarity
+> >   capabilities: fix logic for effective root or real root
+> >   capabilities: auit log other surprising conditions
+> >
+> >  security/commoncap.c |   55 ++++++++++++++++++++++++++++++++-----------------
+> >  1 files changed, 36 insertions(+), 19 deletions(-)
+> 
+> Following up on this set of patches ... I see there was some
+> discussion between you and Serge for one of the patches, but it isn't
+> clear to me that there was any resolution reached; where do things
+> stand at the moment?
 
-For what it is worth I thought this seemed like an interesting project
-for a beginner, so I did just that.  I wrote up the experience here:
+Well, I was still waiting to hear from you before submitting another
+round of patches.
 
-https://blog.steve.fi/so_i_accidentally_wrote_a_linux_security_module.html
+I'd like to replace the macros with local variables (rather than
+funcitons), expecting that the compiler would be smarter than me and
+figure out the best way to do things.
 
-In short it was a very simple and clean approach, which I think is
-hard to get wrong.  The only part I need to work on some more is the
-difference between `user` and `security` attributes.
+> paul moore
 
-Steve
+- RGB
+
 --
-https://steve.fi/
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
