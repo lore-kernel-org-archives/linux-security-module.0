@@ -1,54 +1,28 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Fri, 2 Jun 2017 00:29:48 -0700
-Subject: [PATCH 10/12] apparmorfs: Replace CURRENT_TIME with current_time()
-In-Reply-To: <1491613030-11599-11-git-send-email-deepa.kernel@gmail.com>
-References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
-	<1491613030-11599-11-git-send-email-deepa.kernel@gmail.com>
-Message-ID: <b5d3d600-d3fe-669f-f6bc-01dcedbb7fe3@canonical.com>
+From: pablo@netfilter.org (Pablo Neira Ayuso)
+Date: Fri, 2 Jun 2017 10:33:22 +0200
+Subject: [PATCH security-next 1/2] smack: use pernet operations for hook
+	registration
+In-Reply-To: <0868b816-939b-12d2-c8aa-a5c8677e1cce@schaufler-ca.com>
+References: <20170421094909.28961-1-fw@strlen.de>
+	<20170421094909.28961-2-fw@strlen.de>
+	<0868b816-939b-12d2-c8aa-a5c8677e1cce@schaufler-ca.com>
+Message-ID: <20170602083322.GA2117@salvia>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/07/2017 05:57 PM, Deepa Dinamani wrote:
-> CURRENT_TIME macro is not y2038 safe on 32 bit systems.
+On Thu, Jun 01, 2017 at 09:44:05AM -0700, Casey Schaufler wrote:
+> On 4/21/2017 2:49 AM, Florian Westphal wrote:
+> > It will allow us to remove the old netfilter hook api in the near future.
+> >
+> > Signed-off-by: Florian Westphal <fw@strlen.de>
 > 
-> The patch replaces all the uses of CURRENT_TIME by
-> current_time().
-> 
-> This is also in preparation for the patch that transitions
-> vfs timestamps to use 64 bit time and hence make them
-> y2038 safe. current_time() is also planned to be transitioned
-> to y2038 safe behavior along with this change.
-> 
-> CURRENT_TIME macro will be deleted before merging the
-> aforementioned change.
-> 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> I have applied this to git://github.com/cschaufler/smack-next#smack-for-4.13
 
-This is all good, and I have no objections to it being merged for 4.12.
-If it isn't this change is already queued up for the apparmor 4.13
-merge
+Thanks Casey.
 
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-> ---
->  security/apparmor/apparmorfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index be0b498..4f6ac9d 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -1357,7 +1357,7 @@ static int aa_mk_null_file(struct dentry *parent)
->  
->  	inode->i_ino = get_next_ino();
->  	inode->i_mode = S_IFCHR | S_IRUGO | S_IWUGO;
-> -	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
-> +	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
->  	init_special_inode(inode, S_IFCHR | S_IRUGO | S_IWUGO,
->  			   MKDEV(MEM_MAJOR, 3));
->  	d_instantiate(dentry, inode);
-> 
-
+We're very much looking forward to getting rid of all these
+nf_register_hooks() calls all over the tree. This patch helps us going
+in that direction.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
