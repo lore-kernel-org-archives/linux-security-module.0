@@ -1,72 +1,61 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Fri, 2 Jun 2017 14:03:56 -0400
-Subject: [RFC PATCH V2 0/4] capabilities: do not audit log BPRM_FCAPS on
-	set*id
-In-Reply-To: <CAHC9VhRcxvxQjo3ZRcNaGjoKaqBe-CfbypY9aYzetZYXWTAyLA@mail.gmail.com>
-References: <cover.1494527628.git.rgb@redhat.com>
-	<CAHC9VhRcxvxQjo3ZRcNaGjoKaqBe-CfbypY9aYzetZYXWTAyLA@mail.gmail.com>
-Message-ID: <20170602180356.GC6203@madcap2.tricolour.ca>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Fri, 2 Jun 2017 13:18:22 -0500
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <3027e4fa-5dc2-a52f-8699-9974cb4d4b6b@nmatt.com>
+References: <20170531005633.484a2e14@alans-desktop>
+	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
+	<20170601140812.583cf0a5@alans-desktop>
+	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
+	<20170601222432.6f593538@lxorguk.ukuu.org.uk>
+	<2d0ad49c-886e-1caf-771a-d251957f614c@nmatt.com>
+	<20170602153647.GA2688@mail.hallyn.com>
+	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
+	<20170602165732.GA3614@mail.hallyn.com>
+	<3027e4fa-5dc2-a52f-8699-9974cb4d4b6b@nmatt.com>
+Message-ID: <20170602181822.GA5125@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-06-02 11:19, Paul Moore wrote:
-> On Thu, May 11, 2017 at 4:42 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
-> > application execution (SYSCALL execve). This is not expected as it was
-> > supposed to be limited to when the file system actually had capabilities
-> > in an extended attribute.  It lists all capabilities making the event
-> > really ugly to parse what is happening.  The PATH record correctly
-> > records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
-> > set*id.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/16
-> >
-> > The patch that resolves this issue is the third.  The first and second just
-> > massage the logic to make it easier to understand.
-> >
-> > It would be possible to address the original issue with a change of
-> >         "!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
-> > to
-> >         "!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
-> > but it took me long enough to understand this logic that I don't think I'd be
-> > doing any favours by leaving it this difficult to understand.
-> >
-> > The final patch attempts to address all the conditions that need logging based
-> > on mailing list conversations, recoginizing there is probably some duplication
-> > in the logic, which is why I'm posting this as an RFC for some feedback.
-> >
-> > Richard Guy Briggs (4):
-> >   capabilities: use macros to make the logic easier to follow and
-> >     verify
-> >   capabilities: invert logic for clarity
-> >   capabilities: fix logic for effective root or real root
-> >   capabilities: auit log other surprising conditions
-> >
-> >  security/commoncap.c |   55 ++++++++++++++++++++++++++++++++-----------------
-> >  1 files changed, 36 insertions(+), 19 deletions(-)
+Quoting Matt Brown (matt at nmatt.com):
+> On 6/2/17 12:57 PM, Serge E. Hallyn wrote:
+> > I'm not quite sure what you're asking for here.  Let me offer a precise
+> > strawman design.  I'm sure there are problems with it, it's just a starting
+> > point.
+> > 
+> > system-wide whitelist (for now 'may_push_chars') is full by default.
+> > 
 > 
-> Following up on this set of patches ... I see there was some
-> discussion between you and Serge for one of the patches, but it isn't
-> clear to me that there was any resolution reached; where do things
-> stand at the moment?
+> So is may_push_chars just an alias for TIOCSTI? Or are there some
+> potential whitelist members that would map to multiple ioctls?
 
-Well, I was still waiting to hear from you before submitting another
-round of patches.
+<shrug>  I'm seeing it as only TIOCSTI right now.
 
-I'd like to replace the macros with local variables (rather than
-funcitons), expecting that the compiler would be smarter than me and
-figure out the best way to do things.
+> > By default, nothing changes - you can use those on your own tty, need
+> > CAP_SYS_ADMIN against init_user_ns otherwise.
+> > 
+> > Introduce a new CAP_TTY_PRIVILEGED.
+> > 
+> 
+> I'm fine with this.
+> 
+> > When may_push_chars is removed from the whitelist, you lose the ability
+> > to use TIOCSTI on a tty - even your own - if you do not have CAP_TTY_PRIVILEGED
+> > against the tty's user_ns.
+> > 
+> 
+> How do you propose storing/updating the whitelist? sysctl?
+> 
+> If it is a sysctl, would each whitelist member have a sysctl?
+> e.g.: kernel.ioctlwhitelist.may_push_chars = 1
+> 
+> Overall, I'm fine with this idea.
 
-> paul moore
+That sounds reasonable.  Or a securityfs file - I guess not everyone
+has securityfs, but if it were to become part of YAMA then that would
+work.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
