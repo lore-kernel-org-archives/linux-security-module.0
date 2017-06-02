@@ -1,48 +1,38 @@
-From: nnk@google.com (Nick Kralevich)
-Date: Fri, 2 Jun 2017 13:11:56 -0700
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
-	ioctl require CAP_SYS_ADMIN
-In-Reply-To: <20170602210544.73680be8@lxorguk.ukuu.org.uk>
-References: <20170530132427.016053da@alans-desktop>
-	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
-	<20170530235106.11aab25c@alans-desktop>
-	<3bd4ff7b-6f7d-52b0-03f6-026bac79f11f@nmatt.com>
-	<20170531005633.484a2e14@alans-desktop>
-	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
-	<20170601140812.583cf0a5@alans-desktop>
-	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
-	<20170601222432.6f593538@lxorguk.ukuu.org.uk>
-	<2d0ad49c-886e-1caf-771a-d251957f614c@nmatt.com>
-	<20170602153647.GA2688@mail.hallyn.com>
-	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
-	<20170602210544.73680be8@lxorguk.ukuu.org.uk>
-Message-ID: <CAFJ0LnFGRuEEn1tCLhoki8ZyWrKfktbF+rwwN7WzyC_kBFoQVA@mail.gmail.com>
+From: steve.backup.kemp@googlemail.com (Steve Kemp)
+Date: Fri, 2 Jun 2017 23:28:02 +0300
+Subject: [RFC 0/3] WhiteEgret LSM module
+In-Reply-To: <e26e9aa2-12b2-4aac-092b-747e8be160a3@schaufler-ca.com>
+References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
+	<20170530205002.GA9841@srcf.ucam.org>
+	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
+	<0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
+	<CABxV-EX8C175BRvYdKO8BObCQ5V30=ge8rE7SeSOzTrADgxxDg@mail.gmail.com>
+	<e26e9aa2-12b2-4aac-092b-747e8be160a3@schaufler-ca.com>
+Message-ID: <CABxV-EVd+i7U2ohb4yJGwk6BQ9XOFTO--yS2S_VCGp-oK3GZuQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jun 2, 2017 at 1:05 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
-> So I'd say it's all the generic tty ioctls except TIOCSTI and TIOCSETD
-> but it would be good to see what Android is going with and why.
+On Fri, Jun 2, 2017 at 10:00 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Android limits tty ioctls to the following whitelist:
-  TIOCOUTQ
-  FIOCLEX
-  TCGETS
-  TCSETS
-  TIOCGWINSZ
-  TIOCSWINSZ
-  TIOCSCTTY
-  TCSETSW
-  TCFLSH
-  TIOCSPGRP
-  TIOCGPGRP
+> A 'user' attribute can be set by the file owner. A 'security'
+> attribute requires privilege. SELinux and Smack use 'security'
+> attributes to prevent users from mucking with them. You need
+> to create module hooks for manipulating them,
 
-See unpriv_tty_ioctls at
-https://android.googlesource.com/platform/system/sepolicy/+/34b4b73729b288b4109b2225c1445eb58393b8cb/public/ioctl_macros#51
+That's nice and clear, I appreciate you explaining it to me.
 
+I'll have a go at updating my toy LSM to do that shortly.  For
+reference I placed the patch here, but don't expect to submit it
+formally to lkmk as it was more an interesting learning experience:
 
+https://github.com/skx/linux/pull/1
+
+(I did take the time to rename it from steve_lsm.c to whitelist_lsm.c
+though, lest I look too vain!)
+
+Steve
 -- 
-Nick Kralevich | Android Security | nnk at google.com | 650.214.4037
+https://steve.fi/
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
