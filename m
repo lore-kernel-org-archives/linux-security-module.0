@@ -1,8 +1,8 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Sat, 3 Jun 2017 23:00:48 +0100
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
-	TIOCSTI ioctl require CAP_SYS_ADMIN
-In-Reply-To: <48a28010-9f35-63e4-b815-71bb6139d50b@nmatt.com>
+From: matt@nmatt.com (Matt Brown)
+Date: Sat, 3 Jun 2017 18:22:56 -0400
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
+	ioctl require CAP_SYS_ADMIN
+In-Reply-To: <20170603230048.52b7f111@lxorguk.ukuu.org.uk>
 References: <20170530132427.016053da@alans-desktop>
 	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
 	<20170530235106.11aab25c@alans-desktop>
@@ -17,26 +17,50 @@ References: <20170530132427.016053da@alans-desktop>
 	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
 	<20170602210544.73680be8@lxorguk.ukuu.org.uk>
 	<48a28010-9f35-63e4-b815-71bb6139d50b@nmatt.com>
-Message-ID: <20170603230048.52b7f111@lxorguk.ukuu.org.uk>
+	<20170603230048.52b7f111@lxorguk.ukuu.org.uk>
+Message-ID: <4a8e9445-4c3f-e44e-9d84-fef2ca956517@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> TIOCSLCKTRMIOS
+On 06/03/2017 06:00 PM, Alan Cox wrote:
+>> TIOCSLCKTRMIOS
+>
+> That one I'm more dubious about
+>
+>> TIOCSLTC
+>> TIOCSSOFTCAR
+>
+> tty_io.c also has a few and n_tty has a couple we'd want.
+>
+>>
+>> would it be overkill to have a sysctl kernel.ttyioctlwhitelist.X where X
+>> is one of the ioctls above?
+>
+> Why would anyone want to change the entries on that list
+>
 
-That one I'm more dubious about
+Did you see Serge's proposed solution? I want us to not be talking past
+each other. Serge proposed the following:
 
-> TIOCSLTC
-> TIOCSSOFTCAR
+| By default, nothing changes - you can use those on your own tty, need
+| CAP_SYS_ADMIN against init_user_ns otherwise.
+|
+| Introduce a new CAP_TTY_PRIVILEGED.
+|
+| When may_push_chars is removed from the whitelist, you lose the
+| ability to use TIOCSTI on a tty - even your own - if you do not have
+| CAP_TTY_PRIVILEGED against the tty's user_ns.
 
-tty_io.c also has a few and n_tty has a couple we'd want.
+The question is how do you add/remove something from this whitelist? I
+assume by add/remove we don't mean that you have to recompile your
+kernel to change the whitelist!
 
-> 
-> would it be overkill to have a sysctl kernel.ttyioctlwhitelist.X where X
-> is one of the ioctls above?
+you earlier said you wanted the check to look like this:
 
-Why would anyone want to change the entries on that list
+| if (!whitelisted(ioctl) && different_namespace && magic_flag)
 
-Alan
+I want to know which namespace you are talking about here. Did you mean
+user_namespace? (the namespace I added tracking for in the tty_struct)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
