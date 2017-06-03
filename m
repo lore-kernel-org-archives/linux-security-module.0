@@ -1,125 +1,43 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Fri, 2 Jun 2017 16:46:24 -0400
-Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
-	ioctl require CAP_SYS_ADMIN
-In-Reply-To: <20170602210544.73680be8@lxorguk.ukuu.org.uk>
-References: <20170530132427.016053da@alans-desktop>
-	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
-	<20170530235106.11aab25c@alans-desktop>
-	<3bd4ff7b-6f7d-52b0-03f6-026bac79f11f@nmatt.com>
-	<20170531005633.484a2e14@alans-desktop>
-	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
-	<20170601140812.583cf0a5@alans-desktop>
-	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
-	<20170601222432.6f593538@lxorguk.ukuu.org.uk>
-	<2d0ad49c-886e-1caf-771a-d251957f614c@nmatt.com>
-	<20170602153647.GA2688@mail.hallyn.com>
-	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
-	<20170602210544.73680be8@lxorguk.ukuu.org.uk>
-Message-ID: <48a28010-9f35-63e4-b815-71bb6139d50b@nmatt.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Fri, 2 Jun 2017 19:43:58 -0700
+Subject: security/keys: add CONFIG_KEYS_COMPAT to Kconfig
+In-Reply-To: <20170329192002.GA29310@gmail.com>
+References: <1486674698-67190-1-git-send-email-bilal.amarni@gmail.com>
+	<20170329192002.GA29310@gmail.com>
+Message-ID: <20170603024358.GA565@zzz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 6/2/17 4:05 PM, Alan Cox wrote:
->> Can't we also have a sysctl that toggles if CAP_SYS_ADMIN is involved in
->> this whitelist check? Otherwise someone might leave things out of the
->> whitelist just because they want to use those ioctls as a privileged
->> process. Also restricting a privileged user from ioctls with this
->> whitelist approach is going to be pointless because, if the whitelist is
->> configurable from userspace, they will just be able to modify the
->> whitelist.
+On Wed, Mar 29, 2017 at 12:20:02PM -0700, Eric Biggers wrote:
+> On Thu,  9 Feb 2017 22:11:38 +0100, Bilal Amarni wrote:
+> > CONFIG_KEYS_COMPAT is defined in arch-specific Kconfigs and is missing for
+> > several 64-bit architectures : arm64, mips, parisc, tile.
+> > 
+> > At the moment and for those architectures, calling in 32-bit userspace the
+> > keyctl syscall would return an ENOSYS error.
+> > 
+> > This patch moves the CONFIG_KEYS_COMPAT option to security/keys/Kconfig, to
+> > make sure the compatibility wrapper is registered by default for any 64-bit
+> > architecture as long as it is configured with CONFIG_COMPAT.
 > 
-> Something like CAP_SYS_ADMIN is fine if you must have it configurable on
-> the grounds that CAP_SYS_ADMIN will let you override the list anyway.
+> David, where can I find the git branch this patch was applied to?  I don't see
+> it anywhere in security-keys or linux-security.
 > 
->> I'm fine with moving this to an LSM that whitelists ioctls. I also want
->> to understand what a whitelist would like look and how you would
->> configure it? Does a sysctl that is a list of allowed ioctls work? I
->> don't want to just have a static whitelist that you can't change without
->> recompiling your kernel.
+> I recently added KEYS_COMPAT to arm64 (5c2a625937ba); that should be reverted
+> after this patch.
 > 
-> That's odd because your previous argument was for a fixed one entry
-> whitelist containing TIOCSTI 8)
+> Also, I'd like to submit a follow-on patch that removes KEYS_COMPAT and simply
+> uses COMPAT.
 > 
+> And the parisc architecture doesn't use compat_sys_keyctl() in its compat
+> syscall table, so that should be fixed too (though that's not a new bug).
+> 
+> - Eric
 
-I just take some convincing that's all ;)
+This patch is in the "keys-fixes" branch now, but it doesn't remove KEYS_COMPAT
+from arch/arm64/Kconfig.  David, can you fix it?  Thanks!
 
-> The list can probably be fixed. IMHO those wanting to do cleverer stuff
-> sre inevitably going to end up using a "grown up" LSM for the job because
-> 
-
-I really want it to be more flexible if we are making this into a full
-blown LSM. From drivers/tty/tty_ioctl.c I gather the following tty
-ioctls:
-
-TCGETA
-TCGETS
-TCGETS2
-TCGETX
-TCSETA
-TCSETAF
-TCSETAW
-TCSETS
-TCSETS2
-TCSETSF
-TCSETSF2
-TCSETSW
-TCSETSW2
-TCSETX
-TCSETXF
-TCSETXW
-TIOCGETC
-TIOCGETP
-TIOCGLCKTRMIOS
-TIOCGLTC
-TIOCGSOFTCAR
-TIOCSETC
-TIOCSETN
-TIOCSETP
-TIOCSLCKTRMIOS
-TIOCSLTC
-TIOCSSOFTCAR
-
-would it be overkill to have a sysctl kernel.ttyioctlwhitelist.X where X
-is one of the ioctls above?
-
-(definitely will work on a better name than ttyioctlwhitelist)
-
-
-> a) they'll want to shape things like su not just containers
-> b) they will have cases where you want to lock down cleverly - eg you can
-> disable TIOCSTI use except by certain apps, and make those apps non
-> ptraceable so only existing real users of it can continue to use it.
-
-I agree. When you have those kinds of requirements, a MAC is required.
-
-> 
-> For the whitelist you want most of the standard tty ioctls, but none of
-> the device specific ones, none of the hardware configuration ones, no
-> TIOCSTI, no selection, no line discipline change (or you can set a
-> network ldisc or various other evil and fascinating things).
-> 
-> I really think that for container type uses the whitelist can be fairly
-> clearly defined because we know a container isn't supposed to be screwing
-> with the hardware of the parent, configuring network interfaces or
-> pushing data to trip people up.
-> 
-> If we are prepared to accept nuisance attacks (messing up baud rate,
-> hangup, etc) then it's fairly easy to fix.
-> 
-> So I'd say it's all the generic tty ioctls except TIOCSTI and TIOCSETD
-> but it would be good to see what Android is going with and why.
-> 
-> You can still do some typeback stuff even then because the consoles and
-> terminals have ranges of query and requests you can trigger. As you can
-> use termios to absorb some symbols in the reply and map which one to use
-> for newline you can even type stuff. However it's very limited - hex
-> digits, [, c and some other oddments. People have looked hard at that and
-> I've yet to see a successful attack. Yes I can make you run test (aka
-> '[') but I've yet to see a way to use it for anything.
-> 
-> Alan
-> 
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
