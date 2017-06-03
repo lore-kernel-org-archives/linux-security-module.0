@@ -1,34 +1,42 @@
-From: jannh@google.com (Jann Horn)
-Date: Sat, 3 Jun 2017 12:39:03 +0200
-Subject: [kernel-hardening] [PATCH v1 1/1] Add Trusted Path Execution as a
-	stackable LSM
-In-Reply-To: <20170603055351.16080-1-matt@nmatt.com>
-References: <20170603055351.16080-1-matt@nmatt.com>
-Message-ID: <CAG48ez1W6Pwxuhc92OGvtmLQLE8XhXCJvZDoqDCMSODvtGUT_A@mail.gmail.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Sat, 3 Jun 2017 23:00:48 +0100
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make
+	TIOCSTI ioctl require CAP_SYS_ADMIN
+In-Reply-To: <48a28010-9f35-63e4-b815-71bb6139d50b@nmatt.com>
+References: <20170530132427.016053da@alans-desktop>
+	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
+	<20170530235106.11aab25c@alans-desktop>
+	<3bd4ff7b-6f7d-52b0-03f6-026bac79f11f@nmatt.com>
+	<20170531005633.484a2e14@alans-desktop>
+	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
+	<20170601140812.583cf0a5@alans-desktop>
+	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
+	<20170601222432.6f593538@lxorguk.ukuu.org.uk>
+	<2d0ad49c-886e-1caf-771a-d251957f614c@nmatt.com>
+	<20170602153647.GA2688@mail.hallyn.com>
+	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
+	<20170602210544.73680be8@lxorguk.ukuu.org.uk>
+	<48a28010-9f35-63e4-b815-71bb6139d50b@nmatt.com>
+Message-ID: <20170603230048.52b7f111@lxorguk.ukuu.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Jun 3, 2017 at 7:53 AM, Matt Brown <matt@nmatt.com> wrote:
-> This patch was modified from Brad Spengler's Trusted Path Execution (TPE)
-> feature in Grsecurity and also incorporates logging ideas from
-> cormander's tpe-lkm.
->
-> Modifications from the Grsecurity implementation of TPE were made to
-> turn it into a stackable LSM using the existing LSM hook bprm_set_creds.
-> Also, denial messages were improved by including the full path of the
-> disallowed program. (This idea was taken from cormander's tpe-lkm)
-[...]
-> Threat Models:
-[...]
-> 2. Attacker on system replaces binary used by a privileged user with a
->    malicious one
->
-> *  This situation arises when administrator of a system leaves a binary
->    as world writable.
->
-> *  TPE is very effective against this threat model
+> TIOCSLCKTRMIOS
 
-How do you end up with world-writable binaries in $PATH?
+That one I'm more dubious about
+
+> TIOCSLTC
+> TIOCSSOFTCAR
+
+tty_io.c also has a few and n_tty has a couple we'd want.
+
+> 
+> would it be overkill to have a sysctl kernel.ttyioctlwhitelist.X where X
+> is one of the ioctls above?
+
+Why would anyone want to change the entries on that list
+
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
