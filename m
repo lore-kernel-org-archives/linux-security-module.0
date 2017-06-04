@@ -1,58 +1,29 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Sun, 4 Jun 2017 08:43:22 -0400
-Subject: [kernel-hardening] Re: [PATCH v1 1/1] Add Trusted Path Execution
-	as a stackable LSM
-In-Reply-To: <20170604054746.GC12095@zzz>
-References: <20170603055351.16080-1-matt@nmatt.com>
-	<20170603063354.GJ6365@ZenIV.linux.org.uk>
-	<a507374a-e1b9-de56-5d50-825c283111ca@nmatt.com>
-	<20170604054746.GC12095@zzz>
-Message-ID: <6ffe74f5-f431-68a4-b34c-f6e623722f9d@nmatt.com>
+From: smueller@chronox.de (Stephan =?ISO-8859-1?Q?M=FCller?=)
+Date: Sun, 04 Jun 2017 17:38:28 +0200
+Subject: [PATCH v2] KEYS: Convert KEYCTL_DH_COMPUTE to use the crypto KPP
+	API
+In-Reply-To: <1638.1496419102@warthog.procyon.org.uk>
+References: <20170511003557.3467-1-mathew.j.martineau@linux.intel.com>
+	<1638.1496419102@warthog.procyon.org.uk>
+Message-ID: <2210575.YAdSgJatlP@tauon.chronox.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/04/2017 01:47 AM, Eric Biggers wrote:
-> On Sun, Jun 04, 2017 at 01:24:13AM -0400, Matt Brown wrote:
->> On 06/03/2017 02:33 AM, Al Viro wrote:
->>> On Sat, Jun 03, 2017 at 01:53:51AM -0400, Matt Brown wrote:
->>>
->>>> +static int tpe_bprm_set_creds(struct linux_binprm *bprm)
->>>> +{
->>>> +	struct file *file = bprm->file;
->>>> +	struct inode *inode = d_backing_inode(file->f_path.dentry->d_parent);
->>>> +	struct inode *file_inode = d_backing_inode(file->f_path.dentry);
->>>
->>> Bloody wonderful.  Do tell, what *does* prevent a race with rename(2) here,
->>> somehow making sure that your 'inode' won't get freed right under you?
->>>
->>
->> Good catch. How does this look:
->>
->> spin_lock(&inode->i_lock);
->> spin_lock(&file_inode->i_lock);
->> if (global_nonroot(inode->i_uid) && !uid_eq(inode->i_uid, cred->uid))
->> 	reason1 = "directory not owned by user";
->> else if (inode->i_mode & 0002)
->> 	reason1 = "file in world-writable directory";
->> else if ((inode->i_mode & 0020) && global_nonroot_gid(inode->i_gid))
->> 	reason1 = "file in group-writable directory";
->> else if (file_inode->i_mode & 0002)
->> 	reason1 = "file is world-writable";
->> spin_unlock(&inode->i_lock);
->> spin_unlock(&file_inode->i_lock);
->>
->> and likewise for other places in the code?
->
-> No, it needs to take a reference on the parent dentry before using it, using
-> dget_parent(), I think, and then dropping it later with dput().  Taking i_lock
-> isn't needed.
->
-> Eric
->
+Am Freitag, 2. Juni 2017, 17:58:22 CEST schrieb David Howells:
 
-Got it. Thank you!
+Hi David,
 
-Matt Brown
+> Note that I haven't included Eric's DH patch that was obsoleted by Stephan's
+> patch that was obsoleted by this one.
+
+Eric's patches 1, 2, 4, and 5 should be pulled as they are unrelated to any 
+other patch. Eric's patch 3 should be disregarded, my patch in response to 
+Eric's patch 3 should be disregarded, and this patch from Mat should be used.
+
+Thanks a lot.
+
+Ciao
+Stephan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
