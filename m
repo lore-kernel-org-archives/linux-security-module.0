@@ -1,154 +1,182 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sun, 4 Jun 2017 19:27:05 +0300
-Subject: [PATCH v6 2/3] tpm: vtpm_proxy: Implement request_locality
-	function.
-In-Reply-To: <20170604154332.blhrcj43xgcswxvu@intel.com>
-References: <1495661981-27249-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1495661981-27249-3-git-send-email-stefanb@linux.vnet.ibm.com>
-	<20170524222130.cqnt433dbrr3t43i@intel.com>
-	<a8636210-c4eb-38b2-feca-8a09cee48bbb@linux.vnet.ibm.com>
-	<20170525000936.djj37wyqieorjfva@intel.com>
-	<22d2ce2e-6636-82ad-3099-5f947bc70e05@linux.vnet.ibm.com>
-	<20170604154332.blhrcj43xgcswxvu@intel.com>
-Message-ID: <20170604162705.6pv6wbgfyogzsmg5@intel.com>
+From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
+Date: Sun, 4 Jun 2017 14:51:54 -0400
+Subject: [RFC 0/3] WhiteEgret LSM module
+In-Reply-To: <CANA3KFX1Q4gfV+uAW=e8dZ_3YUm9g=Ewu=Jys=nimpFTgd_4Sw@mail.gmail.com>
+References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
+	<20170530205002.GA9841@srcf.ucam.org>
+	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
+	<88D2080F-FEFA-4535-ACF1-01A584F469D9@linux.vnet.ibm.com>
+	<CANA3KFX1Q4gfV+uAW=e8dZ_3YUm9g=Ewu=Jys=nimpFTgd_4Sw@mail.gmail.com>
+Message-ID: <8A71A84B-8629-4155-BFD1-55E254EF414C@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jun 04, 2017 at 06:43:32PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Jun 01, 2017 at 08:34:31PM -0400, Stefan Berger wrote:
-> > On 05/24/2017 08:09 PM, Jarkko Sakkinen wrote:
-> > > On Wed, May 24, 2017 at 07:03:27PM -0400, Stefan Berger wrote:
-> > > > On 05/24/2017 06:21 PM, Jarkko Sakkinen wrote:
-> > > > > On Wed, May 24, 2017 at 05:39:40PM -0400, Stefan Berger wrote:
-> > > > > > Implement the request_locality function. To set the locality on the
-> > > > > > backend we define vendor-specific TPM 1.2 and TPM 2 ordinals and send
-> > > > > > a command to the backend to set the locality for the next commands.
-> > > > > > 
-> > > > > > To avoid recursing into requesting the locality, we set the
-> > > > > > TPM_TRANSMIT_RAW flag when calling tpm_transmit_cmd. To avoid recursing
-> > > > > > into TPM 2 space related commands, we set the space parameter to NULL.
-> > > > > > 
-> > > > > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > > > > > ---
-> > > > > >    drivers/char/tpm/tpm-interface.c  |  1 +
-> > > > > >    drivers/char/tpm/tpm_vtpm_proxy.c | 36 ++++++++++++++++++++++++++++++++++++
-> > > > > >    include/uapi/linux/vtpm_proxy.h   |  4 ++++
-> > > > > >    3 files changed, 41 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > > > > index 2eacda2..876d45f 100644
-> > > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > > @@ -537,6 +537,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
-> > > > > >    	return 0;
-> > > > > >    }
-> > > > > > +EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
-> > > > > >    #define TPM_DIGEST_SIZE 20
-> > > > > >    #define TPM_RET_CODE_IDX 6
-> > > > > > diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > > > > > index 751059d..66024bf 100644
-> > > > > > --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> > > > > > +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > > > > > @@ -371,6 +371,41 @@ static bool vtpm_proxy_tpm_req_canceled(struct tpm_chip  *chip, u8 status)
-> > > > > >    	return ret;
-> > > > > >    }
-> > > > > > +static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
-> > > > > > +{
-> > > > > > +	struct tpm_buf buf;
-> > > > > > +	int rc;
-> > > > > > +	const struct tpm_output_header *header;
-> > > > > > +
-> > > > > > +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> > > > > > +		rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS,
-> > > > > > +				  TPM2_CC_SET_LOCALITY);
-> > > > > I would always go with this branch.
-> > > > > 
-> > > > > > +	else
-> > > > > > +		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND,
-> > > > > > +				  TPM_ORD_SET_LOCALITY);
-> > > > > > +	if (rc)
-> > > > > > +		return rc;
-> > > > > > +	tpm_buf_append_u8(&buf, locality);
-> > > > > > +
-> > > > > > +	rc = tpm_transmit_cmd(chip, NULL, buf.data, tpm_buf_length(&buf), 0,
-> > > > > > +			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW,
-> > > > > > +			      "attempting to set locality");
-> > > > > > +	if (rc < 0) {
-> > > > > > +		locality = rc;
-> > > > > > +		goto out;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	header = (const struct tpm_output_header *)buf.data;
-> > > > > > +	rc = be32_to_cpu(header->return_code);
-> > > > > > +	if (rc)
-> > > > > > +		locality = -1;
-> > > > > > +
-> > > > > > +out:
-> > > > > > +	tpm_buf_destroy(&buf);
-> > > > > > +
-> > > > > > +	return locality;
-> > > > > > +}
-> > > > > > +
-> > > > > >    static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
-> > > > > >    	.flags = TPM_OPS_AUTO_STARTUP,
-> > > > > >    	.recv = vtpm_proxy_tpm_op_recv,
-> > > > > > @@ -380,6 +415,7 @@ static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
-> > > > > >    	.req_complete_mask = VTPM_PROXY_REQ_COMPLETE_FLAG,
-> > > > > >    	.req_complete_val = VTPM_PROXY_REQ_COMPLETE_FLAG,
-> > > > > >    	.req_canceled = vtpm_proxy_tpm_req_canceled,
-> > > > > > +	.request_locality = vtpm_proxy_request_locality,
-> > > > > >    };
-> > > > > >    /*
-> > > > > > diff --git a/include/uapi/linux/vtpm_proxy.h b/include/uapi/linux/vtpm_proxy.h
-> > > > > > index a69e991..58ac73c 100644
-> > > > > > --- a/include/uapi/linux/vtpm_proxy.h
-> > > > > > +++ b/include/uapi/linux/vtpm_proxy.h
-> > > > > > @@ -46,4 +46,8 @@ struct vtpm_proxy_new_dev {
-> > > > > >    #define VTPM_PROXY_IOC_NEW_DEV	_IOWR(0xa1, 0x00, struct vtpm_proxy_new_dev)
-> > > > > > +/* vendor specific commands to set locality */
-> > > > > > +#define TPM2_CC_SET_LOCALITY	0x20001000
-> > > > > > +#define TPM_ORD_SET_LOCALITY	0x20001000
-> > > > > > +
-> > > > > >    #endif /* _UAPI_LINUX_VTPM_PROXY_H */
-> > > > > > -- 
-> > > > > > 2.4.3
-> > > > > What practical benefit you get from these two constants? I understand
-> > > > > the value range but not so much the redundant code.
-> > > > If you want to change this, please go ahead and give it a sinle name.
-> > > > For the code branches above I think that we should at least send a TPM 1.2
-> > > > formatted command in case of TPM 1.2 and a TPM 2 formatted one in case of
-> > > > TPM 2. It seems just 'proper.'
-> > > > 
-> > > >     Stefan
-> > > Agreed. I will make these changes no need to send new series.
-> > 
-> > I pushed an update to the test suite, which may help the cause to accept
-> > this series.
-> > 
-> > https://github.com/stefanberger/linux-vtpm-tests
-> > 
-> > Patch 3/3 should probably not return -EFAULT in case of the user trying to
-> > send the SetLocality command via /dev/tpm%d but rather -EPIPE to get the
-> > logging of the error suppressed, even though that doesn't seem to be the
-> > right error code.
-> > 
-> > 
-> >   Stefan
-> > 
-> > > 
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > 
-> > > /Jarkko
-> > > 
-> 
-> On hold as there are more high priority bug fixes in the queue.
-> 
-> /Jarkko
 
-Patches are now applied to master (bleeding edge) brach. After they are
-tested they can be put also to the next branch.
+> On Jun 3, 2017, at 10:21 PM, Peter Dolding <oiaohm@gmail.com> wrote:
+> 
+> On Thu, Jun 1, 2017 at 1:36 AM, Mehmet Kayaalp
+> <mkayaalp@linux.vnet.ibm.com> wrote:
+>> 
+>>> On May 31, 2017, at 6:59 AM, Peter Dolding <oiaohm@gmail.com> wrote:
+>>> 
+>>> Number 1 we need to split the idea of signed and whitelisted.   IMA is
+>>> signed should not be confused with white-listed.    You will find
+>>> policies stating whitelist and signed as two different things.
+>> 
+>> IMA-appraisal can do both. If the securtiy.ima extended attribute
+>> of the file is a hash and not a signature, then it is whitelisting.
+> 
+> This this point you straight up fail.   This is no long classes a
+> whitelist.  Its now an extended attribute checksum.
 
-/Jarkko
+I think you have a limited view of what constitutes a whitelist. The xattr
+approach has the (subjective) benefit of not having a centralized list.
+You are describing NetBSD veriexec [1].  
+
+> IMA with proper whitelist support were whitelist is a file allows IMA
+> to have hashs and so on stored in that file so removing the need for
+> the filesystem where IMA being used to have extended attributes.
+
+I agree with this point. Perhaps IMA could benefit from a fallback
+mechanism for filesystems without xattr support. But since other LSMs
+make heavy use of xattr as well, we should also pursue adding xattr
+support.
+
+> Second for this is being able to open up 1 file and see what is approved.
+
+This is also a nice feature of a central list. But what people don't like about
+this might be the mount point, symlink, chroot etc.
+
+>>> Like you see here in Australian government policy there is another
+>>> thing called whitelisted.
+>>> https://www.asd.gov.au/publications/protect/top_4_mitigations_linux.htm
+>>> Matthew Garrett you might want to call IMA whitelisting Australian
+>>> government for one does not agree.  IMA is signed.   The difference
+>>> between signed and white-listed is you might have signed a lot more
+>>> than what a particular system is white-listed to allowed used.
+>> 
+>> I doubt the Australian government is an authority on Linux features.
+>> IMA-appraisal can be set to "fix" mode with a boot parameter. If the
+>> policy covers what you want to whitelist (e.g. files opened by user x),
+>> and then when those files are accessed, the kernel writes out the hash.
+>> Then, you can switch to "enforce" mode to allow only files with hashes.
+> 
+> Question does this feature support booting the system in different
+> modes giving different accessible files.
+
+Different policies and keys are possible, but probably not as easy to manage
+as having several whitelist files. 
+
+> The feature says whitelist but is fact to tick the box is lists.   So
+> booted into standard mode has one lot of applications and booted into
+> repair mode has another lot of applications and so on with this being
+> achieved by choosing different whitelist files at boot.
+
+Our goal is not exactly ticking boxes for compliance etc. This, again,
+could be achieved by perhaps having different keys. 
+
+>> Also, you can achieve the same thing by signing all whitelisted
+>> files and add the certificate to .ima keyring and throwing away the
+>> signing key.
+> 
+> This here is signed nothing to-do with whitelist.    This is using
+> signing to hack round not having a proper whitelist feature so this
+> can never ticks the box.
+
+I wouldn't call it a hack. If you are using a key for the sole purpose of
+signing everything in a whitelist, then the verification of a signature
+becomes: "is this in my whitelist?". It is an indirection. One can treat
+each key as a different whitelist. Again, not ticking boxes. Considering
+attacks and how to protect the integrity of the system.
+
+>>> The feature need to include in it name whitelisting or just like the
+>>> Australian Department of Defence other parties will mark Linux has not
+>>> having this feature.
+>> 
+>> I guess we need to advertise IMA-appraisal better.
+> 
+> They have looked that and it fails.   Because IMA currently is lacking
+> the feature.
+> 
+> I do see that whitelist and blacklist file support added to IMA so IMA
+> does not need extended attribute file systems and for those who want
+> all the setting in one file would be a good thing.
+> 
+> UUID of the file system could be included in path to file in whitelist.
+
+I'm not sure who looked at what and what was the lacking feature. But
+what is the threat model, why wouldn't IMA-appraisal work in terms of 
+security? If there is a compelling reason for having a whitelist file, 
+maybe we should think of an IMA policy mechanism for this. IMA policy 
+can specify files by owner/user, filesystem type/UUID, LSM labels etc. 
+If we could also say "files listed in this file", I guess it would provide the
+usability "benefit" of a single file.  
+
+>>> Whitelist is program name/path and checksum/s.   If the file any more
+>>> than that is now not a Whitelist but a Security Policy Enforcement or
+>>> signing.   Whitelist and blacklists are meant to be simple things.
+>>> This is also why IMA fails and is signed to too complete to be a basic
+>>> Whitelist.
+>> 
+>> When you work out all the little details, you arrive at IMA-appraisal.
+>> You have to consider how the scheme is bootstrapped and how it
+>> is protected against the root. IMA-appraisal either relies on a boot
+>> parameter and write-once policy, or the trusted keyrings.
+>> 
+> Here you have gone wrong.
+> 
+> You are presume whitelist has to be protected against root.   A signed
+> whitelist does have to be protected against root.   Unsigned whitelist
+> in fact being alterable by those with privilege is expected..
+> 
+> You don't have firewall rules always protected against root right.
+> Unsigned whitelists are in the same camp.
+
+Yes, I assumed the protection should not be easy to turn off. But that
+is a valid assumption for many situations.
+
+> Also other mistakes is when they are looking for whitelist feature
+> they are also looking for blacklist feature.
+
+If there is a single whitelist and the enforcement prevents access to
+any other file, do you still need a blacklist? You could just remove it
+from the whitelist maybe? 
+
+> IMA features need to apply just as much to containers as they do to
+> the complete system.   This is where things get tricky.   Putting
+> entries in filesystem xattr for every service you have risks running
+> you out of file system xattr space.
+
+I agree with the first two sentences, but you lost me at the third. 
+What do you mean by every service? Are they different containers,
+using the same file? Because, if they are different files, then it is not
+a problem of xattr space.
+
+> From my point view the missing system wide whitelist and blacklist
+> file support is a defect of IMA that is not design at this stage to be
+> able to function without filesystem xattr as soon as remove the means
+> to use xattr design IMA you are forced to implement whitelist file at
+> least..
+
+Yes, xattr is a design choice of IMA. It has the "benefit" of having a
+distributed whitelist. 
+
+> Also I see it as a weakness in IMA that it cannot be done on a per
+> container base and this is also mostly likely due to over file system
+> dependence.
+
+Containers make everything more difficult. The absolute path approach 
+has the mount point dependence.  
+
+> I am not saying that IMA xattr usage has to be removed but it should
+> not be the only option IMA has.
+
+Agreed.
+
+[1] https://wiki.netbsd.org/guide/veriexec/
+
+Mehmet
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
