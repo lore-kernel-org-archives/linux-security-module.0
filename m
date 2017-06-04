@@ -1,48 +1,82 @@
-From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Sun, 4 Jun 2017 07:51:30 +0100
-Subject: [PATCH v1 1/1] Add Trusted Path Execution as a stackable LSM
-In-Reply-To: <a507374a-e1b9-de56-5d50-825c283111ca@nmatt.com>
-References: <20170603055351.16080-1-matt@nmatt.com>
-	<20170603063354.GJ6365@ZenIV.linux.org.uk>
-	<a507374a-e1b9-de56-5d50-825c283111ca@nmatt.com>
-Message-ID: <20170604065118.GL6365@ZenIV.linux.org.uk>
+From: ukernel@gmail.com (Yan, Zheng)
+Date: Sun, 4 Jun 2017 15:54:27 +0800
+Subject: [PATCH 04/12] fs: ceph: CURRENT_TIME with ktime_get_real_ts()
+In-Reply-To: <CAK8P3a1etuRz6zwytXTHqK-T0g2YnbR4zcCwo98ehjjD1Dj+Ow@mail.gmail.com>
+References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
+	<1491613030-11599-5-git-send-email-deepa.kernel@gmail.com>
+	<CAAM7YAmp=cZKqGHa8UqDnrQLCe+6TKx+7w9SDZv4cW5fr4dfvA@mail.gmail.com>
+	<CAK8P3a1pCw1Oo-Wg70kH5L12pbtEzGDfaPZ8g6ErERJjvY8znQ@mail.gmail.com>
+	<CAAM7YAnWLUXMOCVbgfdKGfvK04EtAQcz-ETm7xFO=8Y=_fCvOQ@mail.gmail.com>
+	<CALAqxLV-yVKWM5es7fAFiDzhSQmtZFiZDPQwBRUYbWUtqhoWVg@mail.gmail.com>
+	<CABeXuvqvLr6sSGF+rZEXXxpCBDKTOeLX1ObSjbPPY4aFBuwvMg@mail.gmail.com>
+	<CAAM7YAkXNo_69tOrw6a5kpyref9nEpEp-2vxBbFVSHGmAVbt+A@mail.gmail.com>
+	<CAK8P3a1TwkVRCwDWqgYE8Z3wZT2+v6xayq=dVeW8KaHmO0W4cg@mail.gmail.com>
+	<CAAM7YA=BJHFLz_Ud==7L=yCzxj+1sjctc68tvpNogPhiSxxELQ@mail.gmail.com>
+	<CAK8P3a0D3EXuwBj+sSVL9cmpysdvQWXnkE0zEctBJS8XOqhX7A@mail.gmail.com>
+	<CAAM7YAk8JNU=XV=sOCczagWjBimO4JSPU08th7E4u6FTJN--9A@mail.gmail.com>
+	<CAK8P3a3m3nt6rfvAvDG6HFuUvy+qWbmk5K0UtLGqYhYHOfdF8w@mail.gmail.com>
+	<CAAM7YA=f74Wye8hgqR52CNG-c4Sh3sm74AzZYhSnhjN1B=G-Ow@mail.gmail.com>
+	<CAK8P3a1etuRz6zwytXTHqK-T0g2YnbR4zcCwo98ehjjD1Dj+Ow@mail.gmail.com>
+Message-ID: <CAAM7YAky==hNmd18-C5jXfUpnygQH+HcmXeEMNARDSVkqVrtKw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jun 04, 2017 at 01:24:13AM -0400, Matt Brown wrote:
-> On 06/03/2017 02:33 AM, Al Viro wrote:
-> > On Sat, Jun 03, 2017 at 01:53:51AM -0400, Matt Brown wrote:
-> > 
-> > > +static int tpe_bprm_set_creds(struct linux_binprm *bprm)
-> > > +{
-> > > +	struct file *file = bprm->file;
-> > > +	struct inode *inode = d_backing_inode(file->f_path.dentry->d_parent);
-> > > +	struct inode *file_inode = d_backing_inode(file->f_path.dentry);
-> > 
-> > Bloody wonderful.  Do tell, what *does* prevent a race with rename(2) here,
-> > somehow making sure that your 'inode' won't get freed right under you?
-> > 
-> 
-> Good catch. How does this look:
-> 
-> spin_lock(&inode->i_lock);
-> spin_lock(&file_inode->i_lock);
-> if (global_nonroot(inode->i_uid) && !uid_eq(inode->i_uid, cred->uid))
-> 	reason1 = "directory not owned by user";
-> else if (inode->i_mode & 0002)
-> 	reason1 = "file in world-writable directory";
-> else if ((inode->i_mode & 0020) && global_nonroot_gid(inode->i_gid))
-> 	reason1 = "file in group-writable directory";
-> else if (file_inode->i_mode & 0002)
-> 	reason1 = "file is world-writable";
-> spin_unlock(&inode->i_lock);
-> spin_unlock(&file_inode->i_lock);
-> 
-> and likewise for other places in the code?
+On Fri, Jun 2, 2017 at 10:18 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Jun 2, 2017 at 2:18 PM, Yan, Zheng <ukernel@gmail.com> wrote:
+>> On Fri, Jun 2, 2017 at 7:33 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>> On Fri, Jun 2, 2017 at 1:18 PM, Yan, Zheng <ukernel@gmail.com> wrote:
+>>> What I meant is another related problem in ceph_mkdir() where the
+>>> i_ctime field of the parent inode is different between the persistent
+>>> representation in the mds and the in-memory representation.
+>>>
+>>
+>> I don't see any problem in mkdir case. Parent inode's i_ctime in mds is set to
+>> r_stamp. When client receives request reply, it set its in-memory inode's ctime
+>> to the same time stamp.
+>
+> Ok, I see it now, thanks for the clarification. Most other file systems do this
+> the other way round and update all fields in the in-memory inode structure
+> first and then write that to persistent storage, so I was getting confused about
+> the order of events here.
+>
+> If I understand it all right, we have three different behaviors in ceph now,
+> though the differences are very minor and probably don't ever matter:
+>
+> - in setattr(), we update ctime in the in-memory inode first and then send
+>   the same time to the mds, and expect to set it again when the reply comes.
+>
+> - in ceph_write_iter write() and mmap/page_mkwrite(), we call
+>   file_update_time() to set i_mtime and i_ctime to the same
+>   timestamp first once a write is observed by the fs and then take
+>   two other timestamps that we send to the mds, and update the
+>   in-memory inode a second time when the reply comes. ctime
+>   is never older than mtime here, as far as I can tell, but it may
+>   be newer when the timer interrupt happens between taking the
+>   two stamps.
 
-Er...  You have a pointer to object that might get freed by a thread
-running on another CPU.  So you attempt to take a spinlock sitting
-inside that object.  How exactly is that supposed to help anything?
+We don't use request to send i_mtime/i_ctime to mds in this case.
+Instead, we use cap flush message. i_mtime/i_ctime are directly
+encoded in cap flush message. When mds receives the cap flush message,
+it writes i_mtime/i_ctime to persistent storage and sends a cap flush
+ack message to client. (when client receives the cap flush ack
+message, it does not update i_mtime/i_ctime). There is no issue as you
+described.
+
+>
+> - in all other calls, we only update the inode (and/or parent inode)
+>   after the reply arrives.
+
+There are two cases. 1. Client updates in-memory inode's ctime, it
+sends the new ctime to mds through cap flush message. 2. client set
+mds request's r_stamp and send the request to mds. MDS updates
+relavent inodes' ctime and sends reply to client. Client updates
+in-memory inodes' ctime according to the reply.
+
+Regards
+Yan, Zheng
+
+>
+>        Arnd
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
