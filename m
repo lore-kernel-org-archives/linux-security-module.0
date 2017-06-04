@@ -1,94 +1,125 @@
 From: oiaohm@gmail.com (Peter Dolding)
-Date: Sun, 4 Jun 2017 12:43:10 +1000
-Subject: [RFC 0/3] WhiteEgret LSM module
-In-Reply-To: <20170531153549.GB31189@mail.hallyn.com>
-References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
-	<20170530205002.GA9841@srcf.ucam.org>
-	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
-	<0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
-	<20170531153549.GB31189@mail.hallyn.com>
-Message-ID: <CANA3KFV=K1=KUxBNv+Au2QZKaycT3yd2wFPSsW7L9LCChVavkg@mail.gmail.com>
+Date: Sun, 4 Jun 2017 13:37:39 +1000
+Subject: [kernel-hardening] Re: [PATCH v7 2/2] security: tty: make TIOCSTI
+	ioctl require CAP_SYS_ADMIN
+In-Reply-To: <4a8e9445-4c3f-e44e-9d84-fef2ca956517@nmatt.com>
+References: <20170530132427.016053da@alans-desktop>
+	<2ab8580e-bf8e-21bd-6bfa-33e5fa82400b@nmatt.com>
+	<20170530235106.11aab25c@alans-desktop>
+	<3bd4ff7b-6f7d-52b0-03f6-026bac79f11f@nmatt.com>
+	<20170531005633.484a2e14@alans-desktop>
+	<CAGXu5j+pqD1082fYDS_dvDB2QNvt9wSz+C7vAhGpMXcJWxoDkw@mail.gmail.com>
+	<20170601140812.583cf0a5@alans-desktop>
+	<CAGXu5jLefv=T3mCYryqh2pYjYonFsTQZSLsHqLK75CKvSmgb-w@mail.gmail.com>
+	<20170601222432.6f593538@lxorguk.ukuu.org.uk>
+	<2d0ad49c-886e-1caf-771a-d251957f614c@nmatt.com>
+	<20170602153647.GA2688@mail.hallyn.com>
+	<a3c1b792-a426-90e1-e37b-9f9a8d4d192a@nmatt.com>
+	<20170602210544.73680be8@lxorguk.ukuu.org.uk>
+	<48a28010-9f35-63e4-b815-71bb6139d50b@nmatt.com>
+	<20170603230048.52b7f111@lxorguk.ukuu.org.uk>
+	<4a8e9445-4c3f-e44e-9d84-fef2ca956517@nmatt.com>
+Message-ID: <CANA3KFVXyJhUyxEiEBchbQwrMeO5_ZYY=J5mpaENyxhPXzWLpQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jun 1, 2017 at 1:35 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> Quoting Casey Schaufler (casey at schaufler-ca.com):
+On Sun, Jun 4, 2017 at 8:22 AM, Matt Brown <matt@nmatt.com> wrote:
+> On 06/03/2017 06:00 PM, Alan Cox wrote:
+>>>
+>>> TIOCSLCKTRMIOS
 >>
 >>
->> On 5/31/2017 3:59 AM, Peter Dolding wrote:
->> > ...
->> >
->> > Like you see here in Australian government policy there is another
->> > thing called whitelisted.
->> > https://www.asd.gov.au/publications/protect/top_4_mitigations_linux.htm
->> > Matthew Garrett you might want to call IMA whitelisting Australian
->> > government for one does not agree.  IMA is signed.   The difference
->> > between signed and white-listed is you might have signed a lot more
->> > than what a particular system is white-listed to allowed used.
->> >
->> To be clear, I'm all for a security module to support this policy.
->> As the explicit requirement is for a whitelist, as opposed to allowing
->> for a properly configured system*, you can't use any of the existing
->> technologies to meet it. This kind of thing** is why we have a LSM
->> infrastructure.
+>> That one I'm more dubious about
 >>
->> Unfortunately, the implementation proposed has very serious issues.
->> You can't do access control from userspace. You can't count on
->> identifying programs strictly by pathname. It's much more complicated
->> than it needs to be for the task.
+>>> TIOCSLTC
+>>> TIOCSSOFTCAR
 >>
->> Suggestion:
 >>
->> Create an security module that looks for the attribute
+>> tty_io.c also has a few and n_tty has a couple we'd want.
 >>
->>       security.WHITELISTED
+>>>
+>>> would it be overkill to have a sysctl kernel.ttyioctlwhitelist.X where X
+>>> is one of the ioctls above?
+>>
+>>
+>> Why would anyone want to change the entries on that list
+>>
 >
-> Bonus, you can have EVM verify the validity of these xattrs, and
-> IMA verify the interity of the file itself.
+> Did you see Serge's proposed solution? I want us to not be talking past
+> each other. Serge proposed the following:
+>
+> | By default, nothing changes - you can use those on your own tty, need
+> | CAP_SYS_ADMIN against init_user_ns otherwise.
+> |
+> | Introduce a new CAP_TTY_PRIVILEGED.
+> |
+> | When may_push_chars is removed from the whitelist, you lose the
+> | ability to use TIOCSTI on a tty - even your own - if you do not have
+> | CAP_TTY_PRIVILEGED against the tty's user_ns.
+>
+> The question is how do you add/remove something from this whitelist? I
+> assume by add/remove we don't mean that you have to recompile your
+> kernel to change the whitelist!
+>
+> you earlier said you wanted the check to look like this:
+>
+> | if (!whitelisted(ioctl) && different_namespace && magic_flag)
+>
+> I want to know which namespace you are talking about here. Did you mean
+> user_namespace? (the namespace I added tracking for in the tty_struct)
 
-Complete fail.   You have to think of a whitelist as a list you give
-to a security at a gate.
+There are many ways to attempt to cure this problem.     They some
+that are just wrong.
 
-Shot-gunned all over the file system that you have to search down what
-is approved is not acceptable.
+Pushing stuff up to CAP_SYS_ADMIN is fairly much always wrong.
 
-I should be more clear you need a whitelist file to tick the box.
-Where you can open up 1 file and see everything that is on the
-approved list.   Same with blacklist.   Think of it like a list of
-invited guests given to a security guard at a door.   You can check
-who is invited by look at that list.     Attribute is like saying if
-the person has X id let them in and going to the guard at the door to
-see who is let in is not going to help you.
+Using a whitelisted solution does have a downside but to use some
+application that use TIOCSTI safely I have not had to push application
+to CAP_SYS_ADMIN.
 
-Of course just because the guard at door is letting people on the list
-in does not mean they are not checking ids as well.   This is not an
-either or issue this is an add a feature.
+Another question due to the way the exploit work a broken TIOCSTI
+where push back could be something someone as CAP_SYS_ADMIN run.
 
-So whitelist file and Attribute in production usage function way
-differently.   You don't want to have to scan a complete filesystem
-all the time looking for stray set attributes.
+What I don't know if yet set when ever an application used TIOCSTI to
+push back chars back into input that this would set input to be
+flushed on tty disconnect or application termination would this break
+any applications.
 
-Whitelist and Blacklisting fits into IMA not LSM really.    Because
-you need to be able to use other LSM at the same time as
-white/blacklists.
+So it may be possible to allow applications to freely use TIOCSTI just
+make sure that anything an application has pushed back into input
+buffer cannot get to anything else.
 
-EVM and attributes  they are so easy to use that implement
-whitelist/blacklist files has not be done.  Including means to sign
-whitelist files to prevent modification when required.
+The thing to remember is most times when applications are controlling
+other applications they are not pushing data backwards on input..
 
-So what both of you are suggest is not the right item to tick the box
-to claim Linux has whitelist support.
+Question I have is what is valid usage cases of TIOCSTI.   Thinking
+grscecurity got away with pushing this up to CAP_SYS_ADMIN there may
+not be many.
 
-Linux has hacks to implement whitelist support not properly whitelist
-support that is functional in the right way.
+If there is no valid usage of TIOCSTI across applications there is no
+reason why TIOCSTI cannot be setup to automatically trigger input
+flushs to prevent TIOCSTI inserted data getting anywhere.
+.
+This could be like X11 and it huge number of features where large
+number were found that no one ever used just was created that way
+because it was though like it would be useful.
 
-Whitelist functional in the right way look in 1 location know what is set.
+My problem here is TIOCSTI might not need a flag at all.   TIOCSTI
+functionality maybe in need of limitations particularly if TIOCSTI
+push back into input cross from one application to the next has no
+genuine application usage.
 
-Also IMA support for containers is kind required supporting
-whitelist/blacklist files because setting everything into attribute
-can become very impractical.
+So far no one has started that exploited TIOCSTI functionality exists
+in any genuine application as expected functionality.   I cannot find
+example of where pushing back into input then going to background or
+dieing/exiting and having that pushed back input processed is done by
+any genuine application as expected functionality.   That is something
+that could be limited if there is no genuine users and close the door
+without having to modify existing applications that don't expect to-do
+that.
 
-So this is something that is missing.
+Its really simple to get focused in on quick fix to problems without
+asking is the behaviour even required.
 
 Peter Dolding
 --
