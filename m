@@ -1,51 +1,29 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Sat, 3 Jun 2017 22:47:46 -0700
-Subject: [kernel-hardening] Re: [PATCH v1 1/1] Add Trusted Path Execution
-	as a stackable LSM
-In-Reply-To: <a507374a-e1b9-de56-5d50-825c283111ca@nmatt.com>
-References: <20170603055351.16080-1-matt@nmatt.com>
-	<20170603063354.GJ6365@ZenIV.linux.org.uk>
-	<a507374a-e1b9-de56-5d50-825c283111ca@nmatt.com>
-Message-ID: <20170604054746.GC12095@zzz>
+From: hch@lst.de (Christoph Hellwig)
+Date: Sun, 4 Jun 2017 07:47:47 +0200
+Subject: [PATCH] security/ima: use fs method to read integrity data
+In-Reply-To: <alpine.LRH.2.20.1705110959020.15627@namei.org>
+References: <20170510064507.1764-1-hch@lst.de>
+	<20170510064507.1764-2-hch@lst.de>
+	<alpine.LRH.2.20.1705110959020.15627@namei.org>
+Message-ID: <20170604054747.GA31064@lst.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jun 04, 2017 at 01:24:13AM -0400, Matt Brown wrote:
-> On 06/03/2017 02:33 AM, Al Viro wrote:
-> > On Sat, Jun 03, 2017 at 01:53:51AM -0400, Matt Brown wrote:
-> > 
-> > > +static int tpe_bprm_set_creds(struct linux_binprm *bprm)
-> > > +{
-> > > +	struct file *file = bprm->file;
-> > > +	struct inode *inode = d_backing_inode(file->f_path.dentry->d_parent);
-> > > +	struct inode *file_inode = d_backing_inode(file->f_path.dentry);
-> > 
-> > Bloody wonderful.  Do tell, what *does* prevent a race with rename(2) here,
-> > somehow making sure that your 'inode' won't get freed right under you?
-> > 
+On Thu, May 11, 2017 at 09:59:51AM +1000, James Morris wrote:
+> On Wed, 10 May 2017, Christoph Hellwig wrote:
 > 
-> Good catch. How does this look:
+> > Add a new ->integrity_read file operation to read data for
+> > integrity hash collection.  This is defined to be equivalent
+> > to ->read_iter, except that it will be called with the i_rwsem
+> > held exclusively.  Also the presence of ->integrity_read indicates
+> > that the file system can support IMA.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> spin_lock(&inode->i_lock);
-> spin_lock(&file_inode->i_lock);
-> if (global_nonroot(inode->i_uid) && !uid_eq(inode->i_uid, cred->uid))
-> 	reason1 = "directory not owned by user";
-> else if (inode->i_mode & 0002)
-> 	reason1 = "file in world-writable directory";
-> else if ((inode->i_mode & 0020) && global_nonroot_gid(inode->i_gid))
-> 	reason1 = "file in group-writable directory";
-> else if (file_inode->i_mode & 0002)
-> 	reason1 = "file is world-writable";
-> spin_unlock(&inode->i_lock);
-> spin_unlock(&file_inode->i_lock);
-> 
-> and likewise for other places in the code?
+> Fixes an IMA+XFS deadlock I've been seeing.
 
-No, it needs to take a reference on the parent dentry before using it, using
-dget_parent(), I think, and then dropping it later with dput().  Taking i_lock
-isn't needed.
-
-Eric
+Are you going to pick this up?  Any feedback from the folks on the
+LSM list on what additional file systems need to be wired up?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
