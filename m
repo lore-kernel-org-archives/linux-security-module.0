@@ -1,78 +1,154 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Sun, 4 Jun 2017 11:25:25 -0500
-Subject: [RFC 0/3] WhiteEgret LSM module
-In-Reply-To: <CANA3KFV=K1=KUxBNv+Au2QZKaycT3yd2wFPSsW7L9LCChVavkg@mail.gmail.com>
-References: <20170530111157.5196-1-masanobu2.koike@toshiba.co.jp>
-	<20170530205002.GA9841@srcf.ucam.org>
-	<CANA3KFXUTSe8XyU1S+WgjgCtgKSiENp9EJZEaAc7PkVO_tgKqQ@mail.gmail.com>
-	<0e0aa575-263a-893a-7ade-f2dc7ce679c2@schaufler-ca.com>
-	<20170531153549.GB31189@mail.hallyn.com>
-	<CANA3KFV=K1=KUxBNv+Au2QZKaycT3yd2wFPSsW7L9LCChVavkg@mail.gmail.com>
-Message-ID: <20170604162525.GA643@mail.hallyn.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sun, 4 Jun 2017 19:27:05 +0300
+Subject: [PATCH v6 2/3] tpm: vtpm_proxy: Implement request_locality
+	function.
+In-Reply-To: <20170604154332.blhrcj43xgcswxvu@intel.com>
+References: <1495661981-27249-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1495661981-27249-3-git-send-email-stefanb@linux.vnet.ibm.com>
+	<20170524222130.cqnt433dbrr3t43i@intel.com>
+	<a8636210-c4eb-38b2-feca-8a09cee48bbb@linux.vnet.ibm.com>
+	<20170525000936.djj37wyqieorjfva@intel.com>
+	<22d2ce2e-6636-82ad-3099-5f947bc70e05@linux.vnet.ibm.com>
+	<20170604154332.blhrcj43xgcswxvu@intel.com>
+Message-ID: <20170604162705.6pv6wbgfyogzsmg5@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Peter Dolding (oiaohm at gmail.com):
-> On Thu, Jun 1, 2017 at 1:35 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> > Quoting Casey Schaufler (casey at schaufler-ca.com):
-> >>
-> >>
-> >> On 5/31/2017 3:59 AM, Peter Dolding wrote:
-> >> > ...
-> >> >
-> >> > Like you see here in Australian government policy there is another
-> >> > thing called whitelisted.
-> >> > https://www.asd.gov.au/publications/protect/top_4_mitigations_linux.htm
-> >> > Matthew Garrett you might want to call IMA whitelisting Australian
-> >> > government for one does not agree.  IMA is signed.   The difference
-> >> > between signed and white-listed is you might have signed a lot more
-> >> > than what a particular system is white-listed to allowed used.
-> >> >
-> >> To be clear, I'm all for a security module to support this policy.
-> >> As the explicit requirement is for a whitelist, as opposed to allowing
-> >> for a properly configured system*, you can't use any of the existing
-> >> technologies to meet it. This kind of thing** is why we have a LSM
-> >> infrastructure.
-> >>
-> >> Unfortunately, the implementation proposed has very serious issues.
-> >> You can't do access control from userspace. You can't count on
-> >> identifying programs strictly by pathname. It's much more complicated
-> >> than it needs to be for the task.
-> >>
-> >> Suggestion:
-> >>
-> >> Create an security module that looks for the attribute
-> >>
-> >>       security.WHITELISTED
-> >
-> > Bonus, you can have EVM verify the validity of these xattrs, and
-> > IMA verify the interity of the file itself.
+On Sun, Jun 04, 2017 at 06:43:32PM +0300, Jarkko Sakkinen wrote:
+> On Thu, Jun 01, 2017 at 08:34:31PM -0400, Stefan Berger wrote:
+> > On 05/24/2017 08:09 PM, Jarkko Sakkinen wrote:
+> > > On Wed, May 24, 2017 at 07:03:27PM -0400, Stefan Berger wrote:
+> > > > On 05/24/2017 06:21 PM, Jarkko Sakkinen wrote:
+> > > > > On Wed, May 24, 2017 at 05:39:40PM -0400, Stefan Berger wrote:
+> > > > > > Implement the request_locality function. To set the locality on the
+> > > > > > backend we define vendor-specific TPM 1.2 and TPM 2 ordinals and send
+> > > > > > a command to the backend to set the locality for the next commands.
+> > > > > > 
+> > > > > > To avoid recursing into requesting the locality, we set the
+> > > > > > TPM_TRANSMIT_RAW flag when calling tpm_transmit_cmd. To avoid recursing
+> > > > > > into TPM 2 space related commands, we set the space parameter to NULL.
+> > > > > > 
+> > > > > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> > > > > > ---
+> > > > > >    drivers/char/tpm/tpm-interface.c  |  1 +
+> > > > > >    drivers/char/tpm/tpm_vtpm_proxy.c | 36 ++++++++++++++++++++++++++++++++++++
+> > > > > >    include/uapi/linux/vtpm_proxy.h   |  4 ++++
+> > > > > >    3 files changed, 41 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > > > > > index 2eacda2..876d45f 100644
+> > > > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > > > @@ -537,6 +537,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> > > > > >    	return 0;
+> > > > > >    }
+> > > > > > +EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
+> > > > > >    #define TPM_DIGEST_SIZE 20
+> > > > > >    #define TPM_RET_CODE_IDX 6
+> > > > > > diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> > > > > > index 751059d..66024bf 100644
+> > > > > > --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> > > > > > +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> > > > > > @@ -371,6 +371,41 @@ static bool vtpm_proxy_tpm_req_canceled(struct tpm_chip  *chip, u8 status)
+> > > > > >    	return ret;
+> > > > > >    }
+> > > > > > +static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+> > > > > > +{
+> > > > > > +	struct tpm_buf buf;
+> > > > > > +	int rc;
+> > > > > > +	const struct tpm_output_header *header;
+> > > > > > +
+> > > > > > +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> > > > > > +		rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS,
+> > > > > > +				  TPM2_CC_SET_LOCALITY);
+> > > > > I would always go with this branch.
+> > > > > 
+> > > > > > +	else
+> > > > > > +		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND,
+> > > > > > +				  TPM_ORD_SET_LOCALITY);
+> > > > > > +	if (rc)
+> > > > > > +		return rc;
+> > > > > > +	tpm_buf_append_u8(&buf, locality);
+> > > > > > +
+> > > > > > +	rc = tpm_transmit_cmd(chip, NULL, buf.data, tpm_buf_length(&buf), 0,
+> > > > > > +			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW,
+> > > > > > +			      "attempting to set locality");
+> > > > > > +	if (rc < 0) {
+> > > > > > +		locality = rc;
+> > > > > > +		goto out;
+> > > > > > +	}
+> > > > > > +
+> > > > > > +	header = (const struct tpm_output_header *)buf.data;
+> > > > > > +	rc = be32_to_cpu(header->return_code);
+> > > > > > +	if (rc)
+> > > > > > +		locality = -1;
+> > > > > > +
+> > > > > > +out:
+> > > > > > +	tpm_buf_destroy(&buf);
+> > > > > > +
+> > > > > > +	return locality;
+> > > > > > +}
+> > > > > > +
+> > > > > >    static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
+> > > > > >    	.flags = TPM_OPS_AUTO_STARTUP,
+> > > > > >    	.recv = vtpm_proxy_tpm_op_recv,
+> > > > > > @@ -380,6 +415,7 @@ static const struct tpm_class_ops vtpm_proxy_tpm_ops = {
+> > > > > >    	.req_complete_mask = VTPM_PROXY_REQ_COMPLETE_FLAG,
+> > > > > >    	.req_complete_val = VTPM_PROXY_REQ_COMPLETE_FLAG,
+> > > > > >    	.req_canceled = vtpm_proxy_tpm_req_canceled,
+> > > > > > +	.request_locality = vtpm_proxy_request_locality,
+> > > > > >    };
+> > > > > >    /*
+> > > > > > diff --git a/include/uapi/linux/vtpm_proxy.h b/include/uapi/linux/vtpm_proxy.h
+> > > > > > index a69e991..58ac73c 100644
+> > > > > > --- a/include/uapi/linux/vtpm_proxy.h
+> > > > > > +++ b/include/uapi/linux/vtpm_proxy.h
+> > > > > > @@ -46,4 +46,8 @@ struct vtpm_proxy_new_dev {
+> > > > > >    #define VTPM_PROXY_IOC_NEW_DEV	_IOWR(0xa1, 0x00, struct vtpm_proxy_new_dev)
+> > > > > > +/* vendor specific commands to set locality */
+> > > > > > +#define TPM2_CC_SET_LOCALITY	0x20001000
+> > > > > > +#define TPM_ORD_SET_LOCALITY	0x20001000
+> > > > > > +
+> > > > > >    #endif /* _UAPI_LINUX_VTPM_PROXY_H */
+> > > > > > -- 
+> > > > > > 2.4.3
+> > > > > What practical benefit you get from these two constants? I understand
+> > > > > the value range but not so much the redundant code.
+> > > > If you want to change this, please go ahead and give it a sinle name.
+> > > > For the code branches above I think that we should at least send a TPM 1.2
+> > > > formatted command in case of TPM 1.2 and a TPM 2 formatted one in case of
+> > > > TPM 2. It seems just 'proper.'
+> > > > 
+> > > >     Stefan
+> > > Agreed. I will make these changes no need to send new series.
+> > 
+> > I pushed an update to the test suite, which may help the cause to accept
+> > this series.
+> > 
+> > https://github.com/stefanberger/linux-vtpm-tests
+> > 
+> > Patch 3/3 should probably not return -EFAULT in case of the user trying to
+> > send the SetLocality command via /dev/tpm%d but rather -EPIPE to get the
+> > logging of the error suppressed, even though that doesn't seem to be the
+> > right error code.
+> > 
+> > 
+> >   Stefan
+> > 
+> > > 
+> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > 
+> > > /Jarkko
+> > > 
 > 
-> Complete fail.   You have to think of a whitelist as a list you give
-> to a security at a gate.
+> On hold as there are more high priority bug fixes in the queue.
 > 
-> Shot-gunned all over the file system that you have to search down what
-> is approved is not acceptable.
->
-> I should be more clear you need a whitelist file to tick the box.
+> /Jarkko
 
-So you do what SELinux does.  You offer a list of 'at-boot' files which a
-relabeling program goes over and measures.  But when it is time to check if
-someone is allowed ot run a program, you check what is stored with the file
-being run.  The security.WHITELISTED xattr :)  Not the list.  It was good
-enough for CAPP and LSPP, should be good enough for your org.
+Patches are now applied to master (bleeding edge) brach. After they are
+tested they can be put also to the next branch.
 
-If that doesn't suffice, then you will not be able to tick the box, and you
-should go back to the people who drew the box and have them update their
-requirements.  They're usually pretty interested.
-
-> Where you can open up 1 file and see everything that is on the
-> approved list.   Same with blacklist.   Think of it like a list of
-
-That '1 file' is just a user interface/toolset issue.  It doesn't restrict
-how the kernel implements it.
-
--serge
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
