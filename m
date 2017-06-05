@@ -1,95 +1,66 @@
-From: azhar.shaikh@intel.com (Shaikh, Azhar)
-Date: Wed, 14 Jun 2017 00:51:25 +0000
-Subject: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
-In-Reply-To: <20170612075001.56tayed7dmmk55hn@intel.com>
-References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
-	<1496965593-187931-1-git-send-email-azhar.shaikh@intel.com>
-	<20170610111339.ggphrkwqiez35wer@intel.com>
-	<5FFFAD06ADE1CA4381B3F0F7C6AF58289117D8@ORSMSX109.amr.corp.intel.com>
-	<20170612075001.56tayed7dmmk55hn@intel.com>
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF5828912194@ORSMSX109.amr.corp.intel.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Mon, 5 Jun 2017 16:30:00 +0100
+Subject: [PATCH v1 1/1] Add Trusted Path Execution as a stackable LSM
+In-Reply-To: <20170603055351.16080-1-matt@nmatt.com>
+References: <20170603055351.16080-1-matt@nmatt.com>
+Message-ID: <20170605163000.2b7f16d1@lxorguk.ukuu.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+> | A trusted path is one that is inside is a root owned directory that
+> | is not group or world writable.  /bin, /usr/bin, /usr/local/bin, are
+> | (under normal circumstances) considered trusted.  Any non-root
+> | users home directory is not trusted, nor is /tmp.
 
+You need the entire path to be root owned and root write only from /, and
+to assume that the attacker can't get CAP_SYS_DAC. Compare that with
+labelling and labelling looks rather better.
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
-> Sent: Monday, June 12, 2017 12:50 AM
-> To: Shaikh, Azhar <azhar.shaikh@intel.com>
-> Cc: jgunthorpe at obsidianresearch.com; tpmdd-devel at lists.sourceforge.net;
-> linux-kernel at vger.kernel.org; linux-security-module at vger.kernel.org
-> Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
+It's the same story as ever - paths are not very meaningful for security,
+content is. You label content not paths. The existing LSMs can provide
+both content label based execution protection and even path based.
+SELinux can do it right already, AppArmor appears to be able to do it
+compatibly wrong with your proposal already.
+
+> NOTE: root is never restricted by TPE
+
+Why are we talking about "root" not capabilities ? We stopped tying stuff
+to "root" 20 years ago.
+
+>    *  Can be bypassed by interpreted languages such as python. You can run
+>       malicious code by doing: python -c 'evil code'
+
+Or using ld.so since ELF binaries are dynamically loaded and will even
+helpfully trying and dynamically load libraries not on your trust path
+completely configurably via environment variables.
+
+So all your funky protection goes to poop the moment you hit the most
+wannabe n00b attacker who knows how to set LD_PRELOAD.
+
+The unix x bit was never designed as a security feature. It got slightly
+tweaked for one for directory path walking but the purpose of the 'x' bit
+on a file is solely to stop the user accidentally executing garbage.
+
+> 2. Attacker on system replaces binary used by a privileged user with a
+>    malicious one
 > 
-> On Sat, Jun 10, 2017 at 04:35:50PM +0000, Shaikh, Azhar wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
-> > > Sent: Saturday, June 10, 2017 4:14 AM
-> > > To: Shaikh, Azhar <azhar.shaikh@intel.com>
-> > > Cc: jgunthorpe at obsidianresearch.com;
-> > > tpmdd-devel at lists.sourceforge.net;
-> > > linux-kernel at vger.kernel.org; linux-security-module at vger.kernel.org
-> > > Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell
-> > > systems
-> > >
-> > > On Thu, Jun 08, 2017 at 04:46:33PM -0700, Azhar Shaikh wrote:
-> > > > To overcome a hardware limitation on Intel Braswell systems,
-> > > > disable CLKRUN protocol during TPM transactions and re-enable once
-> > > > the transaction is completed.
-> > > >
-> > > > Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-> > > > ---
-> > > > Changes from v1:
-> > > > - Add CONFIG_X86 around disable_lpc_clk_run () and
-> > > > enable_lpc_clk_run() to avoid
-> > > > - build breakage on architectures which do not implement
-> > > > kmap_atomic_pfn()
-> > > >
-> > > > Changes from v2:
-> > > > - Use ioremap()/iounmap() instead of
-> > > kmap_atomic_pfn()/kunmap_atomic()
-> > > > - Move is_bsw() and all macros from tpm.h to tpm_tis.c file.
-> > > > - Add the is_bsw() check in disable_lpc_clk_run() and
-> > > > enable_lpc_clk_run()
-> > > > - instead of adding it in each read/write API.
-> > > >
-> > > > Changes from v3:
-> > > > - Move the code under #ifdef CONFIG_X86 and create stub functions
-> > > > for everything else
-> > > > - Rename the functions disable_lpc_clk_run() ->
-> > > > tpm_platform_begin_xfer() and
-> > > > - enable_lpc_clk_run() -> tpm_platform_end_xfer()
-> > > > - Remove wmb()
-> > >
-> > > The wrong parameter order in outb() is not worth of mentioning in
-> > > your opinion?
-> > >
-> >
-> > Oh yes! It is definitely worth mentioning. I forgot to mention that.
-> > Will definitely mention it in the changelog for the next version if any or will
-> re send v4 with updated changelog for v3.
-> >
-> > > Related.
-> > >
-> > > I looked again the kmap version of the patch and still cannot figure
-> > > out what could be wrong. Obviously the wrong outb() cause unexpected
-> behavior.
-> > >
-> > > Do you have chances to grab klog from kmap version with correct outb?
-> > >
-> >
-> > I have not tried the kmap version with corrected outb(). Will give that a try.
-> >
-> > > /Jarkko
+> *  This situation arises when administrator of a system leaves a binary
+>    as world writable.
 > 
-> Thank you!
-> 
+> *  TPE is very effective against this threat model
 
-Even with the corrected outb(), kmap version fails to boot. Could not get boot logs :-(
+Keeping the executables root is allowed to use in a root owned, only root
+reachable space with no setuid bits works even better. Especially as you
+can mount it r/o almost all of the time.
 
-> /Jarkko
+Pleae explain how your filesystem mode checks interact with existing file
+systems that implement other security semantics eg OpenAFS, or for that
+matter DOS ?
+
+[Not an idle question as most distributions keep their EFI system
+partition mounted even though it seems a rather silly thing to do]
+
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
