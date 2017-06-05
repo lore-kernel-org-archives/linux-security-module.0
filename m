@@ -1,15 +1,15 @@
 From: masanobu2.koike@toshiba.co.jp (masanobu2.koike at toshiba.co.jp)
-Date: Mon, 5 Jun 2017 08:36:30 +0000
+Date: Mon, 5 Jun 2017 08:39:35 +0000
 Subject: [RFC 1/3] WhiteEgret: Add WhiteEgret core functions.
-In-Reply-To: <20170530153429.GB11677@mail.hallyn.com>
+In-Reply-To: <8de78503-c4ec-9b87-cef9-ac6f6c5d8e94@schaufler-ca.com>
 References: <20170530111354.5255-1-masanobu2.koike@toshiba.co.jp>
-	<20170530153429.GB11677@mail.hallyn.com>
-Message-ID: <e36634dc47df478cb174bc8d918b901a@TGXML276.toshiba.local>
+	<8de78503-c4ec-9b87-cef9-ac6f6c5d8e94@schaufler-ca.com>
+Message-ID: <5ae30605933148f499831fbbf2cde991@TGXML276.toshiba.local>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Serge E. Hallyn wrote:
-> Quoting Masanobu Koike (masanobu2.koike at toshiba.co.jp):
+Casey Schaufler wrote:
+> On 5/30/2017 4:13 AM, Masanobu Koike wrote:
 > > This RFC provides implementation of WhiteEgret.
 > >
 > > Signed-off-by: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
@@ -231,15 +231,6 @@ Serge E. Hallyn wrote:
 > > +		return NULL;
 > > +	}
 > > +
-> 
-> Uh.  This is racy.
-
-I'll apply a read lock.
-Thank you.
-
-Masanobu Koike
-
-> 
 > > +	write_lock(&(we_q_head.lock));
 > > +	from_task = current;
 > > +	write_unlock(&(we_q_head.lock));
@@ -530,6 +521,14 @@ Masanobu Koike
 > > +	}
 > > +
 > > +	if ((security_capable(usrcred,  genl_info_net(info)->user_ns,
+> 
+> Do not use the LSM interfaces (security_xxx) inside security modules.
+> In this case you're probably looking for cap_capable() instead.
+
+Thank you for all your advice.
+I'll use cap_capable() instead.
+
+> 
 > > +					CAP_NET_ADMIN)) != 0) {
 > > +		rc = -EACCES;
 > > +		PRINT_ERROR(rc);
@@ -833,6 +832,21 @@ Masanobu Koike
 > > +static int we_security_bprm_check(struct linux_binprm *bprm)
 > > +{
 > > +	if (we_security_bprm_check_main(bprm) == -EPERM)
+> 
+> EPERM means that you tried to do a privileged operation,
+> but didn't have the required capabilities. This is more like
+> EACCES, where you are asking to perform a mundane operation
+> but don't have access to the object.
+> 
+> This applies to most of the cases where you return EPERM.
+
+I'll replace EPERM with EACCES.
+Thank you.
+
+Masanobu Koike
+
+
+> 
 > > +		return -EPERM;
 > > +
 > > +	return 0;
@@ -1730,17 +1744,6 @@ Masanobu Koike
 > > +#define SHORTNAMELENGTH	256
 > > +
 > > +#endif  /* _WE_COMMON_H */
-> > --
-> > 2.9.3
-> >
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
