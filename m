@@ -1,145 +1,27 @@
-From: junil0814.lee@lge.com (Junil Lee)
-Date: Mon,  5 Jun 2017 18:10:14 +0900
-Subject: [PATCH] security: selinux: use kmem_cache for ebitmap
-Message-ID: <1496653814-3653-1-git-send-email-junil0814.lee@lge.com>
+From: dhowells@redhat.com (David Howells)
+Date: Mon, 05 Jun 2017 11:03:32 +0100
+Subject: [PATCH v2] KEYS: Convert KEYCTL_DH_COMPUTE to use the crypto KPP
+	API
+In-Reply-To: <2210575.YAdSgJatlP@tauon.chronox.de>
+References: <2210575.YAdSgJatlP@tauon.chronox.de>
+	<20170511003557.3467-1-mathew.j.martineau@linux.intel.com>
+	<1638.1496419102@warthog.procyon.org.uk>
+Message-ID: <30301.1496657012@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The allocated size for each ebitmap_node is 192byte by kzalloc().
-Then, ebitmap_node size is fixed, so it's possible to use only 144byte
-for each object by kmem_cache_zalloc().
-It can reduce some dynamic allocation size.
+Stephan M?ller <smueller@chronox.de> wrote:
 
-Signed-off-by: Junil Lee <junil0814.lee@lge.com>
----
- security/selinux/ss/ebitmap.c  | 24 +++++++++++++++++++-----
- security/selinux/ss/ebitmap.h  |  3 +++
- security/selinux/ss/services.c |  4 ++++
- 3 files changed, 26 insertions(+), 5 deletions(-)
+> > Note that I haven't included Eric's DH patch that was obsoleted by Stephan's
+> > patch that was obsoleted by this one.
+> 
+> Eric's patches 1, 2, 4, and 5 should be pulled as they are unrelated to any 
+> other patch. Eric's patch 3 should be disregarded, my patch in response to 
+> Eric's patch 3 should be disregarded, and this patch from Mat should be used.
 
-diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-index 9db4709a..076c96f 100644
---- a/security/selinux/ss/ebitmap.c
-+++ b/security/selinux/ss/ebitmap.c
-@@ -24,6 +24,8 @@
- 
- #define BITS_PER_U64	(sizeof(u64) * 8)
- 
-+static struct kmem_cache *ebitmap_node_cachep;
-+
- int ebitmap_cmp(struct ebitmap *e1, struct ebitmap *e2)
- {
- 	struct ebitmap_node *n1, *n2;
-@@ -54,7 +56,7 @@ int ebitmap_cpy(struct ebitmap *dst, struct ebitmap *src)
- 	n = src->node;
- 	prev = NULL;
- 	while (n) {
--		new = kzalloc(sizeof(*new), GFP_ATOMIC);
-+		new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
- 		if (!new) {
- 			ebitmap_destroy(dst);
- 			return -ENOMEM;
-@@ -162,7 +164,7 @@ int ebitmap_netlbl_import(struct ebitmap *ebmap,
- 		if (e_iter == NULL ||
- 		    offset >= e_iter->startbit + EBITMAP_SIZE) {
- 			e_prev = e_iter;
--			e_iter = kzalloc(sizeof(*e_iter), GFP_ATOMIC);
-+			e_iter = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
- 			if (e_iter == NULL)
- 				goto netlbl_import_failure;
- 			e_iter->startbit = offset - (offset % EBITMAP_SIZE);
-@@ -299,7 +301,7 @@ int ebitmap_set_bit(struct ebitmap *e, unsigned long bit, int value)
- 	if (!value)
- 		return 0;
- 
--	new = kzalloc(sizeof(*new), GFP_ATOMIC);
-+	new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
- 	if (!new)
- 		return -ENOMEM;
- 
-@@ -332,7 +334,7 @@ void ebitmap_destroy(struct ebitmap *e)
- 	while (n) {
- 		temp = n;
- 		n = n->next;
--		kfree(temp);
-+		kmem_cache_free(ebitmap_node_cachep, temp);
- 	}
- 
- 	e->highbit = 0;
-@@ -400,7 +402,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
- 
- 		if (!n || startbit >= n->startbit + EBITMAP_SIZE) {
- 			struct ebitmap_node *tmp;
--			tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
-+			tmp = kmem_cache_zalloc(ebitmap_node_cachep, GFP_KERNEL);
- 			if (!tmp) {
- 				printk(KERN_ERR
- 				       "SELinux: ebitmap: out of memory\n");
-@@ -519,3 +521,15 @@ int ebitmap_write(struct ebitmap *e, void *fp)
- 	}
- 	return 0;
- }
-+
-+void ebitmap_cache_init(void)
-+{
-+	ebitmap_node_cachep = kmem_cache_create("ebitmap_node",
-+							sizeof(struct ebitmap_node),
-+							0, SLAB_PANIC, NULL);
-+}
-+
-+void ebitmap_cache_destroy(void)
-+{
-+	kmem_cache_destroy(ebitmap_node_cachep);
-+}
-diff --git a/security/selinux/ss/ebitmap.h b/security/selinux/ss/ebitmap.h
-index 9637b8c..6d5a9ac 100644
---- a/security/selinux/ss/ebitmap.h
-+++ b/security/selinux/ss/ebitmap.h
-@@ -130,6 +130,9 @@ void ebitmap_destroy(struct ebitmap *e);
- int ebitmap_read(struct ebitmap *e, void *fp);
- int ebitmap_write(struct ebitmap *e, void *fp);
- 
-+void ebitmap_cache_init(void);
-+void ebitmap_cache_destroy(void);
-+
- #ifdef CONFIG_NETLABEL
- int ebitmap_netlbl_export(struct ebitmap *ebmap,
- 			  struct netlbl_lsm_catmap **catmap);
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 2021666..2f02fa6 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -2054,9 +2054,11 @@ int security_load_policy(void *data, size_t len)
- 
- 	if (!ss_initialized) {
- 		avtab_cache_init();
-+		ebitmap_cache_init();
- 		rc = policydb_read(&policydb, fp);
- 		if (rc) {
- 			avtab_cache_destroy();
-+			ebitmap_cache_destroy();
- 			goto out;
- 		}
- 
-@@ -2067,6 +2069,7 @@ int security_load_policy(void *data, size_t len)
- 		if (rc) {
- 			policydb_destroy(&policydb);
- 			avtab_cache_destroy();
-+			ebitmap_cache_destroy();
- 			goto out;
- 		}
- 
-@@ -2074,6 +2077,7 @@ int security_load_policy(void *data, size_t len)
- 		if (rc) {
- 			policydb_destroy(&policydb);
- 			avtab_cache_destroy();
-+			ebitmap_cache_destroy();
- 			goto out;
- 		}
- 
--- 
-2.6.2
+Indeed.  But Mat's patch doesn't apply.
 
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
