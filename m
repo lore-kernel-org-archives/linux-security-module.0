@@ -1,161 +1,166 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 05 Jun 2017 01:54:26 -0400
-Subject: [Linux-ima-devel] [PATCH 1/7] ima: introduce ima_parse_buf()
-In-Reply-To: <20170516125347.10574-2-roberto.sassu@huawei.com>
+Date: Mon, 05 Jun 2017 01:56:52 -0400
+Subject: [Linux-ima-devel] [PATCH 6/7] ima: add securityfs interface to
+	restore a measurements list
+In-Reply-To: <20170516125347.10574-7-roberto.sassu@huawei.com>
 References: <20170516125347.10574-1-roberto.sassu@huawei.com>
-	<20170516125347.10574-2-roberto.sassu@huawei.com>
-Message-ID: <1496642066.2998.96.camel@linux.vnet.ibm.com>
+	<20170516125347.10574-7-roberto.sassu@huawei.com>
+Message-ID: <1496642212.2998.98.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Roberto,
-
 On Tue, 2017-05-16 at 14:53 +0200, Roberto Sassu wrote:
-> ima_parse_buf() takes as input the buffer start and end pointers, and
-> stores the result in a static array of ima_field_data structures,
-> where the len field contains the length parsed from the buffer, and
-> the data field contains the address of the buffer just after the length.
-> Optionally, the function returns the current value of the buffer pointer
-> and the number of array elements written.
-> 
-> A bitmap has been added as parameter of ima_parse_buf() to handle
-> the cases where the length is not prepended to data. Each bit corresponds
-> to an element of the ima_field_data array. If a bit is set, the length
-> is not parsed from the buffer, but is read from the corresponding element
-> of the array (the length must be set before calling the function).
-> 
-> ima_parse_buf() can perform three checks upon request by callers,
-> depending on the enforce mask passed to it:
-> 
-> - ENFORCE_FIELDS: matching of number of fields (length-data combination)
->   - there must be enough data in the buffer to parse the number of fields
->     requested (output: current value of buffer pointer)
-> - ENFORCE_BUFEND: matching of buffer end
->   - the ima_field_data array must be large enough to contain lengths and
->     data pointers for the amount of data requested (output: number
->     of fields written)
-> - ENFORCE_FIELDS | ENFORCE_BUFEND: matching of both
-> 
-> Use cases
-> 
-> - measurement entry header: ENFORCE_FIELDS | ENFORCE_BUFEND
->   - four fields must be parsed: pcr, digest, template name, template data
->   - ENFORCE_BUFEND is enforced only for the last measurement entry
-> - template digest (Crypto Agile): ENFORCE_BUFEND
->   - since only the total template digest length is known, the function
->     parses length-data combinations until the buffer end is reached
-> - template data: ENFORCE_FIELDS | ENFORCE_BUFEND
->   - since the number of fields and the total template data length
->     are known, the function can perform both checks
-> 
+> Through the new interface restore_kexec_list, it will be possible
+> to restore a measurements list, previously read from
+> binary_kexec_runtime_measurements.
 
-Thanks, Roberto. ?Patches 1 - 3, and 7 look good. ?I wish we didn't
-need the len_mask or the enforce_mask fields.
+For development, this was fine. ?You were able to save and restore the
+measurement list with the kexec hdr, but do we really need two
+securityfs files, one for saving the measurement list and another for
+restoring it? ?Just like we can read and write the IMA policy, we
+should be able to save and restore the kexec list using a single
+securityfs file.
+
+> The patch reuses the policy functions to create a buffer, read
+> the measurements and call ima_restore_measurement_list().
+
+Calling a function named ima_read_policy() for restoring the
+measurement list is unusual. ?Again, this was fine for development,
+but to upstream this functionality it should be cleaned up. ?Normally,
+there would be a call to a common generic function from multiple
+places.
 
 Mimi
 
+
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->  security/integrity/ima/ima_template_lib.c | 61 +++++++++++++++++++++++++++++++
->  security/integrity/ima/ima_template_lib.h |  6 +++
->  2 files changed, 67 insertions(+)
+>  security/integrity/ima/ima_fs.c | 38 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 34 insertions(+), 4 deletions(-)
 > 
-> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-> index f9ba37b..28af43f 100644
-> --- a/security/integrity/ima/ima_template_lib.c
-> +++ b/security/integrity/ima/ima_template_lib.c
-> @@ -159,6 +159,67 @@ void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
->  	ima_show_template_field_data(m, show, DATA_FMT_HEX, field_data);
->  }
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+> index a93f941..6e3f93f 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -77,6 +77,7 @@ static const struct file_operations ima_measurements_count_ops = {
+>  };
 > 
-> +/**
-> + * ima_parse_buf() - Parses lengths and data from an input buffer
-> + * @bufstartp:       Buffer start address.
-> + * @bufendp:         Buffer end address.
-> + * @bufcurp:         Pointer to remaining (non-parsed) data.
-> + * @maxfields:       Length of fields array.
-> + * @fields:          Array containing lengths and pointers of parsed data.
-> + * @curfields:       Number of array items containing parsed data.
-> + * @len_mask:        Bitmap (if bit is set, data length should not be parsed).
-> + * @enforce_mask:    Check if curfields == maxfields and/or bufcurp == bufendp.
-> + * @bufname:         String identifier of the input buffer.
-> + *
-> + * Return: 0 on success, -EINVAL on error.
-> + */
-> +int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
-> +		  int maxfields, struct ima_field_data *fields, int *curfields,
-> +		  unsigned long *len_mask, int enforce_mask, char *bufname)
-> +{
-> +	void *bufp = bufstartp;
-> +	int i;
-> +
-> +	for (i = 0; i < maxfields; i++) {
-> +		if (len_mask == NULL || !test_bit(i, len_mask)) {
-> +			if (bufp > (bufendp - sizeof(u32)))
-> +				break;
-> +
-> +			fields[i].len = *(u32 *)bufp;
-> +			if (ima_canonical_fmt)
-> +				fields[i].len = le32_to_cpu(fields[i].len);
-> +
-> +			bufp += sizeof(u32);
-> +		}
-> +
-> +		if (bufp > (bufendp - fields[i].len))
-> +			break;
-> +
-> +		fields[i].data = bufp;
-> +		bufp += fields[i].len;
-> +	}
-> +
-> +	if ((enforce_mask & ENFORCE_FIELDS) && i != maxfields) {
-> +		pr_err("%s: nr of fields mismatch: expected: %d, current: %d\n",
-> +		       bufname, maxfields, i);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if ((enforce_mask & ENFORCE_BUFEND) && bufp != bufendp) {
-> +		pr_err("%s: buf end mismatch: expected: %p, current: %p\n",
-> +		       bufname, bufendp, bufp);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (curfields)
-> +		*curfields = i;
-> +
-> +	if (bufcurp)
-> +		*bufcurp = bufp;
-> +
-> +	return 0;
-> +}
-> +
->  static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
->  				       struct ima_field_data *field_data)
+>  static struct dentry *binary_kexec_runtime_measurements;
+> +static struct dentry *restore_kexec_list;
+> 
+>  /* returns pointer to hlist_node */
+>  static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+> @@ -297,7 +298,7 @@ static const struct file_operations ima_ascii_measurements_ops = {
+>  	.release = seq_release,
+>  };
+> 
+> -static ssize_t ima_read_policy(char *path)
+> +static ssize_t ima_read_policy(char *path, bool khdr)
 >  {
-> diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
-> index c344530..6a3d8b8 100644
-> --- a/security/integrity/ima/ima_template_lib.h
-> +++ b/security/integrity/ima/ima_template_lib.h
-> @@ -18,6 +18,9 @@
->  #include <linux/seq_file.h>
->  #include "ima.h"
+>  	void *data;
+>  	char *datap;
+> @@ -317,6 +318,13 @@ static ssize_t ima_read_policy(char *path)
+>  	}
 > 
-> +#define ENFORCE_FIELDS 0x00000001
-> +#define ENFORCE_BUFEND 0x00000002
+>  	datap = data;
 > +
->  void ima_show_template_digest(struct seq_file *m, enum ima_show_type show,
->  			      struct ima_field_data *field_data);
->  void ima_show_template_digest_ng(struct seq_file *m, enum ima_show_type show,
-> @@ -26,6 +29,9 @@ void ima_show_template_string(struct seq_file *m, enum ima_show_type show,
->  			      struct ima_field_data *field_data);
->  void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
->  			   struct ima_field_data *field_data);
-> +int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
-> +		  int maxfields, struct ima_field_data *fields, int *curfields,
-> +		  unsigned long *len_mask, int enforce_mask, char *bufname);
->  int ima_eventdigest_init(struct ima_event_data *event_data,
->  			 struct ima_field_data *field_data);
->  int ima_eventname_init(struct ima_event_data *event_data,
+> +	if (khdr) {
+> +		rc = ima_restore_measurement_list(size, data);
+> +		size = 0;
+> +		goto out;
+> +	}
+> +
+>  	while (size > 0 && (p = strsep(&datap, "\n"))) {
+>  		pr_debug("rule: %s\n", p);
+>  		rc = ima_parse_add_rule(p);
+> @@ -325,6 +333,7 @@ static ssize_t ima_read_policy(char *path)
+>  		size -= rc;
+>  	}
+> 
+> +out:
+>  	vfree(data);
+>  	if (rc < 0)
+>  		return rc;
+> @@ -337,6 +346,7 @@ static ssize_t ima_read_policy(char *path)
+>  static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+>  				size_t datalen, loff_t *ppos)
+>  {
+> +	bool khdr = file->f_path.dentry == restore_kexec_list;
+>  	char *data;
+>  	ssize_t result;
+> 
+> @@ -363,8 +373,13 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+>  	if (result < 0)
+>  		goto out_free;
+> 
+> +	if (khdr && data[0] != '/') {
+> +		mutex_unlock(&ima_write_mutex);
+> +		goto out_free;
+> +	}
+> +
+>  	if (data[0] == '/') {
+> -		result = ima_read_policy(data);
+> +		result = ima_read_policy(data, khdr);
+>  	} else if (ima_appraise & IMA_APPRAISE_POLICY) {
+>  		pr_err("IMA: signed policy file (specified as an absolute pathname) required\n");
+>  		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+> @@ -393,7 +408,7 @@ static struct dentry *violations;
+>  static struct dentry *ima_policy;
+> 
+>  enum ima_fs_flags {
+> -	IMA_FS_BUSY,
+> +	IMA_FS_BUSY, IMA_RESTORE_LIST_BUSY,
+>  };
+> 
+>  static unsigned long ima_fs_flags;
+> @@ -412,6 +427,9 @@ static const struct seq_operations ima_policy_seqops = {
+>   */
+>  static int ima_open_policy(struct inode *inode, struct file *filp)
+>  {
+> +	bool khdr = filp->f_path.dentry == restore_kexec_list;
+> +	unsigned long bit = khdr ? IMA_RESTORE_LIST_BUSY : IMA_FS_BUSY;
+> +
+>  	if (!(filp->f_flags & O_WRONLY)) {
+>  #ifndef	CONFIG_IMA_READ_POLICY
+>  		return -EACCES;
+> @@ -423,7 +441,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
+>  		return seq_open(filp, &ima_policy_seqops);
+>  #endif
+>  	}
+> -	if (test_and_set_bit(IMA_FS_BUSY, &ima_fs_flags))
+> +	if (test_and_set_bit(bit, &ima_fs_flags))
+>  		return -EBUSY;
+>  	return 0;
+>  }
+> @@ -439,6 +457,11 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+>  {
+>  	const char *cause = valid_policy ? "completed" : "failed";
+> 
+> +	if (file->f_path.dentry == restore_kexec_list) {
+> +		clear_bit(IMA_RESTORE_LIST_BUSY, &ima_fs_flags);
+> +		return 0;
+> +	}
+> +
+>  	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
+>  		return seq_release(inode, file);
+> 
+> @@ -522,9 +545,16 @@ int __init ima_fs_init(void)
+>  				   &ima_measurements_ops);
+>  	if (IS_ERR(binary_kexec_runtime_measurements))
+>  		goto out;
+> +
+> +	restore_kexec_list = securityfs_create_file("restore_kexec_list",
+> +						    S_IWUSR, ima_dir, NULL,
+> +						    &ima_measure_policy_ops);
+> +	if (IS_ERR(restore_kexec_list))
+> +		goto out;
+>  #endif
+>  	return 0;
+>  out:
+> +	securityfs_remove(restore_kexec_list);
+>  	securityfs_remove(binary_kexec_runtime_measurements);
+>  	securityfs_remove(violations);
+>  	securityfs_remove(runtime_measurements_count);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
