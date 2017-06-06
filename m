@@ -1,12 +1,12 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 6 Jun 2017 10:49:37 +0200
+Date: Tue, 6 Jun 2017 11:13:14 +0200
 Subject: [Linux-ima-devel] [PATCH 5/7] ima: add securityfs interface to
 	save a measurements list with kexec header
 In-Reply-To: <1496642698.2998.104.camel@linux.vnet.ibm.com>
 References: <20170516125347.10574-1-roberto.sassu@huawei.com>
 	<20170516125347.10574-6-roberto.sassu@huawei.com>
 	<1496642698.2998.104.camel@linux.vnet.ibm.com>
-Message-ID: <c4aa904b-052e-778d-caf9-47fbe8d961cb@huawei.com>
+Message-ID: <25671f22-7145-6ff3-40c0-a27665443a2c@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -43,18 +43,6 @@ On 6/5/2017 8:04 AM, Mimi Zohar wrote:
 > As long as you query the number of measurements before getting the
 > memory needed, unless you're trying to verify a TPM quote, having
 > fewer measurements shouldn't be a problem for testing.
-
-The problem is that the total number of entries and the required
-memory size might be inconsistent without taking ima_extend_list_mutex.
-ima_measurements_start() could read the entries counter before
-it is incremented by ima_add_digest_entry() and the required memory
-size after it is updated. If this happens, the parser returns an error
-because ENFORCE_BUFEND is set for the last entry and there would be
-still data to read (the new entry added to the list).
-
-Roberto
-
-
 >
 >>
 >> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
@@ -137,12 +125,25 @@ Roberto
 >> +			qe_found = qe_found ? qe_found : qe;
 >
 > What is this?
+
+ima_measurements_start() should return the list entry at position *pos.
+The line above prevents qe_found from being updated when the loop
+continues until the last list entry.
+
+
 >
 >> +
 >> +			if (!khdr)
 >> +				break;
 >
 > Does this test need to be in the loop?
+
+Yes. Otherwise, ima_measurements_start() would iterate over the whole
+list when it is not necessary.
+
+Roberto
+
+
 >
 > Mimi
 >
