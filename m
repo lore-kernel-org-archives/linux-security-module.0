@@ -1,71 +1,65 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Mon, 5 Jun 2017 17:39:46 -0400
-Subject: [PATCH] security: selinux: use kmem_cache for ebitmap
-In-Reply-To: <1496653814-3653-1-git-send-email-junil0814.lee@lge.com>
-References: <1496653814-3653-1-git-send-email-junil0814.lee@lge.com>
-Message-ID: <CAHC9VhSDux6oAcD1ZULOTcCp69JFY1c4Jati3odg4ROoRROp-w@mail.gmail.com>
+From: mathew.j.martineau@linux.intel.com (Mat Martineau)
+Date: Mon, 5 Jun 2017 17:33:04 -0700 (PDT)
+Subject: [PATCH v2] KEYS: Convert KEYCTL_DH_COMPUTE to use the crypto
+	KPP API
+In-Reply-To: <1638.1496419102@warthog.procyon.org.uk>
+References: <20170511003557.3467-1-mathew.j.martineau@linux.intel.com>
+	<1638.1496419102@warthog.procyon.org.uk>
+Message-ID: <alpine.OSX.2.21.1706051725150.7532@mjmartin-mac01.sea.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Jun 5, 2017 at 5:10 AM, Junil Lee <junil0814.lee@lge.com> wrote:
-> The allocated size for each ebitmap_node is 192byte by kzalloc().
-> Then, ebitmap_node size is fixed, so it's possible to use only 144byte
-> for each object by kmem_cache_zalloc().
-> It can reduce some dynamic allocation size.
->
-> Signed-off-by: Junil Lee <junil0814.lee@lge.com>
-> ---
->  security/selinux/ss/ebitmap.c  | 24 +++++++++++++++++++-----
->  security/selinux/ss/ebitmap.h  |  3 +++
->  security/selinux/ss/services.c |  4 ++++
->  3 files changed, 26 insertions(+), 5 deletions(-)
->
-> diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-> index 9db4709a..076c96f 100644
-> --- a/security/selinux/ss/ebitmap.c
-> +++ b/security/selinux/ss/ebitmap.c
-> @@ -24,6 +24,8 @@
->
->  #define BITS_PER_U64   (sizeof(u64) * 8)
->
-> +static struct kmem_cache *ebitmap_node_cachep;
-> +
->  int ebitmap_cmp(struct ebitmap *e1, struct ebitmap *e2)
->  {
->         struct ebitmap_node *n1, *n2;
-> @@ -54,7 +56,7 @@ int ebitmap_cpy(struct ebitmap *dst, struct ebitmap *src)
->         n = src->node;
->         prev = NULL;
->         while (n) {
-> -               new = kzalloc(sizeof(*new), GFP_ATOMIC);
-> +               new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
->                 if (!new) {
->                         ebitmap_destroy(dst);
->                         return -ENOMEM;
-> @@ -162,7 +164,7 @@ int ebitmap_netlbl_import(struct ebitmap *ebmap,
->                 if (e_iter == NULL ||
->                     offset >= e_iter->startbit + EBITMAP_SIZE) {
->                         e_prev = e_iter;
-> -                       e_iter = kzalloc(sizeof(*e_iter), GFP_ATOMIC);
-> +                       e_iter = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
->                         if (e_iter == NULL)
->                                 goto netlbl_import_failure;
->                         e_iter->startbit = offset - (offset % EBITMAP_SIZE);
-> @@ -299,7 +301,7 @@ int ebitmap_set_bit(struct ebitmap *e, unsigned long bit, int value)
->         if (!value)
->                 return 0;
->
-> -       new = kzalloc(sizeof(*new), GFP_ATOMIC);
-> +       new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
->         if (!new)
->                 return -ENOMEM;
 
-I believe there is a kfree() in ebitmap_set_bit() that also needs to
-be converted.
+Hi David -
 
--- 
-paul moore
-www.paul-moore.com
+On Fri, 2 Jun 2017, David Howells wrote:
+
+> Mat Martineau <mathew.j.martineau@linux.intel.com> wrote:
+>
+>> The initial Diffie-Hellman computation made direct use of the MPI
+>> library because the crypto module did not support DH at the time. Now
+>> that KPP is implemented, KEYCTL_DH_COMPUTE should use it to get rid of
+>> duplicate code and leverage possible hardware acceleration.
+>
+> This doesn't apply to linus/master.
+
+It was on top of keys-next, for what it's worth.
+
+> I've pushed the keyrings fix patches I
+> have, including a bunch from Eric Biggers that fix DH stuff, to:
+>
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+>
+> branch:
+>
+> 	keys-fixes
+
+I'll post a v3 that applies to keys-fixes right after I send this email.
+
+>
+> though I think there may be a couple of bugs in on of Eric's patches where
+> he's assumed that he can do:
+>
+> 	memzero_explicit(NULL, 0);
+>
+> I'm not sure whether it's permissible to assume that memset(NULL, 0, 0) is
+> guaranteed to work correctly.
+
+I'm still working on unit test coverage to confirm correct behavior of KDF 
+when the DH shared secret has leading zeros. Stephan, have you found any 
+such tests (last time I asked you were still looking)? If I see 
+inconsistent results when I make up a vector (choosing inputs that result 
+in a 0x01 shared secret), I'm not sure if the old or new answer is 
+correct.
+
+> Note that I haven't included Eric's DH patch that was obsoleted by Stephan's
+> patch that was obsoleted by this one.
+
+Thanks,
+
+--
+Mat Martineau
+Intel OTC
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
