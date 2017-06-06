@@ -1,60 +1,47 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 06 Jun 2017 07:33:39 -0400
-Subject: [Linux-ima-devel] [PATCH 5/7] ima: add securityfs interface to
-	save a measurements list with kexec header
-In-Reply-To: <25671f22-7145-6ff3-40c0-a27665443a2c@huawei.com>
-References: <20170516125347.10574-1-roberto.sassu@huawei.com>
-	<20170516125347.10574-6-roberto.sassu@huawei.com>
-	<1496642698.2998.104.camel@linux.vnet.ibm.com>
-	<25671f22-7145-6ff3-40c0-a27665443a2c@huawei.com>
-Message-ID: <1496748819.5546.42.camel@linux.vnet.ibm.com>
+From: jobol@nonadev.net (=?UTF-8?B?Sm9zw6k=?= Bollo)
+Date: Tue, 6 Jun 2017 13:58:15 +0200
+Subject: [PATCH] procfs: add smack subdir to attrs
+In-Reply-To: <76f4dd96-76ca-a7ec-313a-b8ab72b0181f@schaufler-ca.com>
+References: <d2876592-e13a-b407-15b0-bdf9b0d49f75@schaufler-ca.com>
+	<alpine.LRH.2.20.1706020937290.16910@namei.org>
+	<76f4dd96-76ca-a7ec-313a-b8ab72b0181f@schaufler-ca.com>
+Message-ID: <20170606135815.0b6372de@d-jobol.iot.bzh>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-06-06 at 11:13 +0200, Roberto Sassu wrote:
-> >>? /* returns pointer to hlist_node */
-> >>? static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
-> >>? {
-> >>??????loff_t l = *pos;
-> >>??????struct ima_queue_entry *qe;
-> >> +????struct ima_queue_entry *qe_found = NULL;
-> >> +????unsigned long size = 0, count = 0;
-> >> +????bool khdr = m->file->f_path.dentry == binary_kexec_runtime_measurements;
-> >>
-> >>??????/* we need a lock since pos could point beyond last element */
-> >>??????rcu_read_lock();
-> >>??????list_for_each_entry_rcu(qe, &ima_measurements, later) {
-> >> -????????????if (!l--) {
-> >> -????????????????????rcu_read_unlock();
-> >> -????????????????????return qe;
-> >> +????????????if (!l) {
-> >> +????????????????????qe_found = qe_found ? qe_found : qe;
-> >
-> > What is this?
+On Thu, 1 Jun 2017 16:59:24 -0700
+Casey Schaufler <casey@schaufler-ca.com> wrote:
+
+> On 6/1/2017 4:38 PM, James Morris wrote:
+> > On Thu, 1 Jun 2017, Casey Schaufler wrote:
+> >  
+> >> Subject: [PATCH] procfs: add smack subdir to attrs  
+> > Is there value in this without major stacking support?  
 > 
-> ima_measurements_start() should return the list entry at position *pos.
-> The line above prevents qe_found from being updated when the loop
-> continues until the last list entry.
+> Yes. If a Smack aware application reads /proc/self/attr/current
+> it has no way to know if what it sees is a Smack label or an
+> SELinux context. True, the application can look elsewhere
+> (i.e. /sys/kernel/security/lsm) to find out which is enabled.
+> But the real fix is for Smack to use a different interface
+> than SELinux. Which is what this does. True, it will be even
+> more important when/if major stacking comes in, but it is still
+> significant now, and I would like to have it regardless of
+> the future acceptance of major stacking.
 
-Wouldn't a simple if/then be more appropriate here?
+I agree that it is a nice forward movement to leave the mud.
+
+I have a subsidiary question to ask. Should we keep the name 'attr' for
+the subdirectory? It seems at least convenient but if a better name is
+valuable (security, lsm, ...) why not to switch now?
+
+BR jos?
 
 > 
-> >
-> >> +
-> >> +????????????????????if (!khdr)
-> >> +????????????????????????????break;
-> >
-> > Does this test need to be in the loop?
-> 
-> Yes. Otherwise, ima_measurements_start() would iterate over the whole
-> list when it is not necessary.
-
-Oh, for displaying the measurement list you need to set qe_found
-before returning.
-
-thanks,
-
-Mimi
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-security-module" in the body of a message to
+> majordomo at vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
