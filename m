@@ -1,23 +1,76 @@
-From: davem@davemloft.net (David Miller)
-Date: Tue, 06 Jun 2017 15:19:19 -0400 (EDT)
-Subject: [PATCH] net/ipv6: Fix CALIPSO causing GPF with datagram support
-In-Reply-To: <20170605154440.2434-1-richard_c_haines@btinternet.com>
-References: <20170605154440.2434-1-richard_c_haines@btinternet.com>
-Message-ID: <20170606.151919.50793178996552480.davem@davemloft.net>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 7 Jun 2017 15:35:01 +0300
+Subject: [PATCH v6 0/4] ro protection for dynamic data
+Message-ID: <20170607123505.16629-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Richard Haines <richard_c_haines@btinternet.com>
-Date: Mon,  5 Jun 2017 16:44:40 +0100
+Hi,
+please consider for inclusion.
 
-> When using CALIPSO with IPPROTO_UDP it is possible to trigger a GPF as the
-> IP header may have moved.
-> 
-> Also update the payload length after adding the CALIPSO option.
-> 
-> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+This patchset introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-Applied and queued up for -stable, thank you Richard.
+The memory is managed in pools: when a pool is made R/O, all the memory
+that is part of it, will become R/O.
+
+A R/O pool can be destroyed to recover its memory, but it cannot be
+turned back into R/W mode.
+
+This is intentional. This feature is meant for data that doesn't need
+further modifications, after initialization.
+
+An example is provided, showing how to turn into a boot-time option the
+writable state of the security hooks.
+Prior to this patch, it was a compile-time option.
+
+This is made possible, thanks to Tetsuo Handa's rework of the hooks
+structure (included in the patchset).
+
+Changes since the v5 version:
+- use unsigned long for  __PMALLOC_ALIGNED alignment
+- fixed a regression where size in bytes was used instead of size in words
+- tightened the update of the pools list during removal, by doing
+  earlier the decrement of the atomic counter
+
+The only question still open is if there should be a possibility for
+unprotecting a memory pool in other cases than destruction.
+
+The only cases found for this topic are:
+- protecting the LSM header structure between creation and insertion of a
+  security module that was not built as part of the kernel
+  (but the module can protect the headers after it has loaded)
+
+- unloading SELinux from RedHat, if the system has booted, but no policy
+  has been loaded yet - this feature is going away, according to Casey.
+
+
+Igor Stoppa (3):
+  Protectable Memory Allocator
+  Protectable Memory Allocator - Debug interface
+  Make LSM Writable Hooks a command line option
+
+Tetsuo Handa (1):
+  LSM: Convert security_hook_heads into explicit array of struct
+    list_head
+
+ include/linux/lsm_hooks.h      | 412 ++++++++++++++++++++---------------------
+ include/linux/page-flags.h     |   2 +
+ include/linux/pmalloc.h        |  20 ++
+ include/trace/events/mmflags.h |   1 +
+ init/main.c                    |   2 +
+ mm/Kconfig                     |  11 ++
+ mm/Makefile                    |   1 +
+ mm/pmalloc.c                   | 339 +++++++++++++++++++++++++++++++++
+ mm/usercopy.c                  |  24 ++-
+ security/security.c            |  49 +++--
+ 10 files changed, 631 insertions(+), 230 deletions(-)
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 mm/pmalloc.c
+
+-- 
+2.9.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
