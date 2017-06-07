@@ -1,91 +1,89 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Wed, 7 Jun 2017 15:35:05 +0300
-Subject: [PATCH 4/4] Make LSM Writable Hooks a command line option
-In-Reply-To: <20170607123505.16629-1-igor.stoppa@huawei.com>
-References: <20170607123505.16629-1-igor.stoppa@huawei.com>
-Message-ID: <20170607123505.16629-5-igor.stoppa@huawei.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 7 Jun 2017 09:50:24 -0400
+Subject: [PATCH] security: selinux: use kmem_cache for ebitmap
+In-Reply-To: <872857aa-7587-79a9-cf31-4508eacdb3f7@lge.com>
+References: <1496653814-3653-1-git-send-email-junil0814.lee@lge.com>
+	<CAHC9VhSDux6oAcD1ZULOTcCp69JFY1c4Jati3odg4ROoRROp-w@mail.gmail.com>
+	<872857aa-7587-79a9-cf31-4508eacdb3f7@lge.com>
+Message-ID: <CAHC9VhTU9fgZxfeyo_ViPcdEONxYaBxnMGCgM8yb35-52CBNtw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch shows how it is possible to take advantage of pmalloc:
-instead of using the build-time option __lsm_ro_after_init, to decide if
-it is possible to keep the hooks modifiable, now this becomes a
-boot-time decision, based on the kernel command line.
+On Tue, Jun 6, 2017 at 7:38 PM, ???/???/MC??? BSP?
+BSP6?(junil0814.lee at lge.com) <junil0814.lee@lge.com> wrote:
+> Paul Moore wrote on 2017-06-06 ?? 6:39:
+>> On Mon, Jun 5, 2017 at 5:10 AM, Junil Lee <junil0814.lee@lge.com> wrote:
+>>> The allocated size for each ebitmap_node is 192byte by kzalloc().
+>>> Then, ebitmap_node size is fixed, so it's possible to use only 144byte
+>>> for each object by kmem_cache_zalloc().
+>>> It can reduce some dynamic allocation size.
+>>>
+>>> Signed-off-by: Junil Lee <junil0814.lee@lge.com>
+>>> ---
+>>> security/selinux/ss/ebitmap.c | 24 +++++++++++++++++++-----
+>>> security/selinux/ss/ebitmap.h | 3 +++
+>>> security/selinux/ss/services.c | 4 ++++
+>>> 3 files changed, 26 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/security/selinux/ss/ebitmap.c
+>> b/security/selinux/ss/ebitmap.c
+>>> index 9db4709a..076c96f 100644
+>>> --- a/security/selinux/ss/ebitmap.c
+>>> +++ b/security/selinux/ss/ebitmap.c
+>>> @@ -24,6 +24,8 @@
+>>>
+>>> #define BITS_PER_U64 (sizeof(u64) * 8)
+>>>
+>>> +static struct kmem_cache *ebitmap_node_cachep;
+>>> +
+>>> int ebitmap_cmp(struct ebitmap *e1, struct ebitmap *e2)
+>>> {
+>>> struct ebitmap_node *n1, *n2;
+>>> @@ -54,7 +56,7 @@ int ebitmap_cpy(struct ebitmap *dst, struct ebitmap
+>> *src)
+>>> n = src->node;
+>>> prev = NULL;
+>>> while (n) {
+>>> - new = kzalloc(sizeof(*new), GFP_ATOMIC);
+>>> + new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
+>>> if (!new) {
+>>> ebitmap_destroy(dst);
+>>> return -ENOMEM;
+>>> @@ -162,7 +164,7 @@ int ebitmap_netlbl_import(struct ebitmap *ebmap,
+>>> if (e_iter == NULL ||
+>>> offset >= e_iter->startbit + EBITMAP_SIZE) {
+>>> e_prev = e_iter;
+>>> - e_iter = kzalloc(sizeof(*e_iter), GFP_ATOMIC);
+>>> + e_iter = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
+>>> if (e_iter == NULL)
+>>> goto netlbl_import_failure;
+>>> e_iter->startbit = offset - (offset % EBITMAP_SIZE);
+>>> @@ -299,7 +301,7 @@ int ebitmap_set_bit(struct ebitmap *e, unsigned
+>> long bit, int value)
+>>> if (!value)
+>>> return 0;
+>>>
+>>> - new = kzalloc(sizeof(*new), GFP_ATOMIC);
+>>> + new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
+>>> if (!new)
+>>> return -ENOMEM;
+>>
+>> I believe there is a kfree() in ebitmap_set_bit() that also needs to
+>> be converted.
+>>
+>
+> Thanks for your advice Paul.
+> reattach patch v2.
 
-This patch relies on:
+Please submit patches inline, just as you did for your original
+posting.  It make it easier to review and apply.
 
-"Convert security_hook_heads into explicit array of struct list_head"
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Thanks.
 
-to break free from the static constraint imposed by the previous
-hardening model, based on __ro_after_init.
-
-The default value is disabled, unless SE Linux debugging is turned on.
-
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-CC: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/security.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
-
-diff --git a/security/security.c b/security/security.c
-index c492f68..9b8b478 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -26,6 +26,7 @@
- #include <linux/personality.h>
- #include <linux/backing-dev.h>
- #include <linux/string.h>
-+#include <linux/pmalloc.h>
- #include <net/flow.h>
- 
- #define MAX_LSM_EVM_XATTR	2
-@@ -33,8 +34,17 @@
- /* Maximum number of letters for an LSM name string */
- #define SECURITY_NAME_MAX	10
- 
--static struct list_head hook_heads[LSM_MAX_HOOK_INDEX]
--	__lsm_ro_after_init;
-+static int dynamic_lsm = IS_ENABLED(CONFIG_SECURITY_SELINUX_DISABLE);
-+
-+static __init int set_dynamic_lsm(char *str)
-+{
-+	get_option(&str, &dynamic_lsm);
-+	return 0;
-+}
-+early_param("dynamic_lsm", set_dynamic_lsm);
-+
-+static struct list_head *hook_heads;
-+static struct pmalloc_pool *sec_pool;
- char *lsm_names;
- /* Boot-time LSM user choice */
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
-@@ -59,6 +69,11 @@ int __init security_init(void)
- {
- 	enum security_hook_index i;
- 
-+	sec_pool = pmalloc_create_pool("security");
-+	BUG_ON(!sec_pool);
-+	hook_heads = pmalloc(sizeof(struct list_head) * LSM_MAX_HOOK_INDEX,
-+			     sec_pool);
-+	BUG_ON(!hook_heads);
- 	for (i = 0; i < LSM_MAX_HOOK_INDEX; i++)
- 		INIT_LIST_HEAD(&hook_heads[i]);
- 	pr_info("Security Framework initialized\n");
-@@ -74,7 +89,8 @@ int __init security_init(void)
- 	 * Load all the remaining security modules.
- 	 */
- 	do_security_initcalls();
--
-+	if (!dynamic_lsm)
-+		pmalloc_protect_pool(sec_pool);
- 	return 0;
- }
- 
 -- 
-2.9.3
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
