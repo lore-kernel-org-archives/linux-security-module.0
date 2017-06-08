@@ -1,76 +1,63 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:49:04 +0100
-Subject: [PATCH 14/23] KEYS: user_defined: sanitize key payloads
+Date: Thu, 08 Jun 2017 14:48:57 +0100
+Subject: [PATCH 13/23] KEYS: sanitize add_key() and keyctl() key payloads
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692974429.11452.9095858900312530276.stgit@warthog.procyon.org.uk>
+Message-ID: <149692973725.11452.14760840345072862642.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Zero the payloads of user and logon keys before freeing them.  This
-prevents sensitive key material from being kept around in the slab
-caches after a key is released.
+Before returning from add_key() or one of the keyctl() commands that
+takes in a key payload, zero the temporary buffer that was allocated to
+hold the key payload copied from userspace.  This may contain sensitive
+key material that should not be kept around in the slab caches.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/user_defined.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ security/keys/keyctl.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
-index 26605134f17a..3d8c68eba516 100644
---- a/security/keys/user_defined.c
-+++ b/security/keys/user_defined.c
-@@ -86,10 +86,18 @@ EXPORT_SYMBOL_GPL(user_preparse);
-  */
- void user_free_preparse(struct key_preparsed_payload *prep)
- {
--	kfree(prep->payload.data[0]);
-+	kzfree(prep->payload.data[0]);
- }
- EXPORT_SYMBOL_GPL(user_free_preparse);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 94c2790f8283..ab0b337c84b4 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -132,7 +132,10 @@ SYSCALL_DEFINE5(add_key, const char __user *, _type,
  
-+static void user_free_payload_rcu(struct rcu_head *head)
-+{
-+	struct user_key_payload *payload;
-+
-+	payload = container_of(head, struct user_key_payload, rcu);
+ 	key_ref_put(keyring_ref);
+  error3:
+-	kvfree(payload);
++	if (payload) {
++		memzero_explicit(payload, plen);
++		kvfree(payload);
++	}
+  error2:
+ 	kfree(description);
+  error:
+@@ -347,7 +350,7 @@ long keyctl_update_key(key_serial_t id,
+ 
+ 	key_ref_put(key_ref);
+ error2:
+-	kfree(payload);
 +	kzfree(payload);
-+}
-+
- /*
-  * update a user defined key
-  * - the key's semaphore is write-locked
-@@ -112,7 +120,7 @@ int user_update(struct key *key, struct key_preparsed_payload *prep)
- 	prep->payload.data[0] = NULL;
- 
- 	if (zap)
--		kfree_rcu(zap, rcu);
-+		call_rcu(&zap->rcu, user_free_payload_rcu);
+ error:
  	return ret;
  }
- EXPORT_SYMBOL_GPL(user_update);
-@@ -130,7 +138,7 @@ void user_revoke(struct key *key)
+@@ -1093,7 +1096,10 @@ long keyctl_instantiate_key_common(key_serial_t id,
+ 		keyctl_change_reqkey_auth(NULL);
  
- 	if (upayload) {
- 		rcu_assign_keypointer(key, NULL);
--		kfree_rcu(upayload, rcu);
-+		call_rcu(&upayload->rcu, user_free_payload_rcu);
- 	}
+ error2:
+-	kvfree(payload);
++	if (payload) {
++		memzero_explicit(payload, plen);
++		kvfree(payload);
++	}
+ error:
+ 	return ret;
  }
- 
-@@ -143,7 +151,7 @@ void user_destroy(struct key *key)
- {
- 	struct user_key_payload *upayload = key->payload.data[0];
- 
--	kfree(upayload);
-+	kzfree(upayload);
- }
- 
- EXPORT_SYMBOL_GPL(user_destroy);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
