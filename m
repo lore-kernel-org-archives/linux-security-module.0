@@ -1,130 +1,90 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:47:26 +0100
-Subject: [PATCH 01/23] security/keys: add CONFIG_KEYS_COMPAT to Kconfig
+Date: Thu, 08 Jun 2017 14:47:34 +0100
+Subject: [PATCH 02/23] security: use READ_ONCE instead of deprecated
+	ACCESS_ONCE
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692964657.11452.547823032024351272.stgit@warthog.procyon.org.uk>
+Message-ID: <149692965438.11452.17954613433247309012.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Bilal Amarni <bilal.amarni@gmail.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-CONFIG_KEYS_COMPAT is defined in arch-specific Kconfigs and is missing for
-several 64-bit architectures : mips, parisc, tile.
+With the new standardized functions, we can replace all ACCESS_ONCE()
+calls across relevant security/keyrings/.
 
-At the moment and for those architectures, calling in 32-bit userspace the
-keyctl syscall would return an ENOSYS error.
+ACCESS_ONCE() does not work reliably on non-scalar types. For example
+gcc 4.6 and 4.7 might remove the volatile tag for such accesses during
+the SRA (scalar replacement of aggregates) step:
 
-This patch moves the CONFIG_KEYS_COMPAT option to security/keys/Kconfig, to
-make sure the compatibility wrapper is registered by default for any 64-bit
-architecture as long as it is configured with CONFIG_COMPAT.
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145
 
-[DH: Modified to remove arm64 compat enablement also as requested by Eric
- Biggers]
+Update the new calls regardless of if it is a scalar type, this is
+cleaner than having three alternatives.
 
-Signed-off-by: Bilal Amarni <bilal.amarni@gmail.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-cc: Eric Biggers <ebiggers3@gmail.com>
 ---
 
- arch/arm64/Kconfig    |    4 ----
- arch/powerpc/Kconfig  |    5 -----
- arch/s390/Kconfig     |    3 ---
- arch/sparc/Kconfig    |    3 ---
- arch/x86/Kconfig      |    4 ----
- security/keys/Kconfig |    4 ++++
- 6 files changed, 4 insertions(+), 19 deletions(-)
+ security/keys/keyring.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 3dcd7ec69bca..b2024db225a9 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1084,10 +1084,6 @@ config SYSVIPC_COMPAT
- 	def_bool y
- 	depends on COMPAT && SYSVIPC
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 4d1678e4586f..de81793f9920 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -706,7 +706,7 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	 * Non-keyrings avoid the leftmost branch of the root entirely (root
+ 	 * slots 1-15).
+ 	 */
+-	ptr = ACCESS_ONCE(keyring->keys.root);
++	ptr = READ_ONCE(keyring->keys.root);
+ 	if (!ptr)
+ 		goto not_this_keyring;
  
--config KEYS_COMPAT
--	def_bool y
--	depends on COMPAT && KEYS
--
- endmenu
+@@ -720,7 +720,7 @@ static bool search_nested_keyrings(struct key *keyring,
+ 		if ((shortcut->index_key[0] & ASSOC_ARRAY_FAN_MASK) != 0)
+ 			goto not_this_keyring;
  
- menu "Power management options"
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index f7c8f9972f61..83d2e0f43c26 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -1215,11 +1215,6 @@ source "arch/powerpc/Kconfig.debug"
+-		ptr = ACCESS_ONCE(shortcut->next_node);
++		ptr = READ_ONCE(shortcut->next_node);
+ 		node = assoc_array_ptr_to_node(ptr);
+ 		goto begin_node;
+ 	}
+@@ -740,7 +740,7 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	if (assoc_array_ptr_is_shortcut(ptr)) {
+ 		shortcut = assoc_array_ptr_to_shortcut(ptr);
+ 		smp_read_barrier_depends();
+-		ptr = ACCESS_ONCE(shortcut->next_node);
++		ptr = READ_ONCE(shortcut->next_node);
+ 		BUG_ON(!assoc_array_ptr_is_node(ptr));
+ 	}
+ 	node = assoc_array_ptr_to_node(ptr);
+@@ -752,7 +752,7 @@ static bool search_nested_keyrings(struct key *keyring,
+ ascend_to_node:
+ 	/* Go through the slots in a node */
+ 	for (; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
+-		ptr = ACCESS_ONCE(node->slots[slot]);
++		ptr = READ_ONCE(node->slots[slot]);
  
- source "security/Kconfig"
+ 		if (assoc_array_ptr_is_meta(ptr) && node->back_pointer)
+ 			goto descend_to_node;
+@@ -790,13 +790,13 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	/* We've dealt with all the slots in the current node, so now we need
+ 	 * to ascend to the parent and continue processing there.
+ 	 */
+-	ptr = ACCESS_ONCE(node->back_pointer);
++	ptr = READ_ONCE(node->back_pointer);
+ 	slot = node->parent_slot;
  
--config KEYS_COMPAT
--	bool
--	depends on COMPAT && KEYS
--	default y
--
- source "crypto/Kconfig"
- 
- config PPC_LIB_RHEAP
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index e161fafb495b..6967addc6a89 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -363,9 +363,6 @@ config COMPAT
- config SYSVIPC_COMPAT
- 	def_bool y if COMPAT && SYSVIPC
- 
--config KEYS_COMPAT
--	def_bool y if COMPAT && KEYS
--
- config SMP
- 	def_bool y
- 	prompt "Symmetric multi-processing support"
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index b558c9e29de3..5639c9fe5b55 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -577,9 +577,6 @@ config SYSVIPC_COMPAT
- 	depends on COMPAT && SYSVIPC
- 	default y
- 
--config KEYS_COMPAT
--	def_bool y if COMPAT && KEYS
--
- endmenu
- 
- source "net/Kconfig"
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 4ccfacc7232a..0efb4c9497bc 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2776,10 +2776,6 @@ config COMPAT_FOR_U64_ALIGNMENT
- config SYSVIPC_COMPAT
- 	def_bool y
- 	depends on SYSVIPC
--
--config KEYS_COMPAT
--	def_bool y
--	depends on KEYS
- endif
- 
- endmenu
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 6fd95f76bfae..00b7431a8aeb 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -20,6 +20,10 @@ config KEYS
- 
- 	  If you are unsure as to whether this is required, answer N.
- 
-+config KEYS_COMPAT
-+	def_bool y
-+	depends on COMPAT && KEYS
-+
- config PERSISTENT_KEYRINGS
- 	bool "Enable register of persistent per-UID keyrings"
- 	depends on KEYS
+ 	if (ptr && assoc_array_ptr_is_shortcut(ptr)) {
+ 		shortcut = assoc_array_ptr_to_shortcut(ptr);
+ 		smp_read_barrier_depends();
+-		ptr = ACCESS_ONCE(shortcut->back_pointer);
++		ptr = READ_ONCE(shortcut->back_pointer);
+ 		slot = shortcut->parent_slot;
+ 	}
+ 	if (!ptr)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
