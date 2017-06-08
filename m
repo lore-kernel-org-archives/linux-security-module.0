@@ -1,38 +1,24 @@
 From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Thu, 8 Jun 2017 19:22:59 +0100
-Subject: [PATCH v3] tpm: Enable CLKRUN protocol for Braswell systems
-In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF5828910C7B@ORSMSX109.amr.corp.intel.com>
-References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
-	<1496870610-29462-1-git-send-email-azhar.shaikh@intel.com>
-	<20170607224444.5043f545@lxorguk.ukuu.org.uk>
-	<5FFFAD06ADE1CA4381B3F0F7C6AF5828910C7B@ORSMSX109.amr.corp.intel.com>
-Message-ID: <20170608192259.43150ffa@lxorguk.ukuu.org.uk>
+Date: Thu, 8 Jun 2017 19:37:19 +0100
+Subject: [PATCH v2 0/1]  Add Trusted Path Execution as a stackable LSM
+In-Reply-To: <20170608034349.31876-1-matt@nmatt.com>
+References: <20170608034349.31876-1-matt@nmatt.com>
+Message-ID: <20170608193719.2d9e8d17@lxorguk.ukuu.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> > > +	outb(0x80, 0xCC);
-> > > +
-> > > +	/* Make sure the above write is completed */
-> > > +	wmb();  
-> > 
-> > Why the wmb(). It doesn't do what the comment says! Also this code is x86
-> > specific
-> > 
-> >   
+> http://phrack.org/issues/52/6.html#article
 > 
-> Memory barrier to enforce the order so that the outb() is completed, which ensures that the LPC clocks are running before sending any TPM command.
+> | A trusted path is one that is inside a root owned directory that
+> | is not group or world writable.  /bin, /usr/bin, /usr/local/bin, are
+> | (under normal circumstances) considered trusted.  Any non-root
+> | users home directory is not trusted, nor is /tmp.
 
-wmb() doesn't do that. It merely ensures that the write has been posted
-to the fabric. If as I suspect your LPC bus implements outb() as a
-non-posted write you don't need the wmb(). If it doesn't then you need to
-issue whatever access is needed to the fabric to ensure the post
-completed (eg for PCI if you do an MMIO write you must do an MMIO read
-from the same devfn).
+Note that in the real world the trusted path would and should also
+require that any elements of the path above that point are also locked
+down if you are using path based models. Ie you need to ensure nobody has
+the ability to rename /usr or /usr/local before you trust /usr/local/bin.
 
-Secondly outb(0x80, 0xCC) doesn't write 0xCC to port 0x80. It writes 0x80
-to port 0xCC !
-
-Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
