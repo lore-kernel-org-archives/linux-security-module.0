@@ -1,154 +1,148 @@
-From: junil0814.lee@lge.com (Junil Lee)
-Date: Thu,  8 Jun 2017 13:18:09 +0900
-Subject: [PATCH] security: selinux: use kmem_cache for ebitmap
-Message-ID: <1496895489-180660-1-git-send-email-junil0814.lee@lge.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 8 Jun 2017 15:38:32 +0300
+Subject: [PATCH v3] tpm: Enable CLKRUN protocol for Braswell systems
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF5828910C7B@ORSMSX109.amr.corp.intel.com>
+References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
+	<1496870610-29462-1-git-send-email-azhar.shaikh@intel.com>
+	<20170607224444.5043f545@lxorguk.ukuu.org.uk>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF5828910C7B@ORSMSX109.amr.corp.intel.com>
+Message-ID: <20170608123832.okodsewpocqj6uve@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The allocated size for each ebitmap_node is 192byte by kzalloc().
-Then, ebitmap_node size is fixed, so it's possible to use only 144byte
-for each object by kmem_cache_zalloc().
-It can reduce some dynamic allocation size.
+On Thu, Jun 08, 2017 at 01:11:43AM +0000, Shaikh, Azhar wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Alan Cox [mailto:gnomes at lxorguk.ukuu.org.uk]
+> > Sent: Wednesday, June 7, 2017 2:45 PM
+> > To: Shaikh, Azhar <azhar.shaikh@intel.com>
+> > Cc: jarkko.sakkinen at linux.intel.com; jgunthorpe at obsidianresearch.com;
+> > tpmdd-devel at lists.sourceforge.net; linux-kernel at vger.kernel.org; linux-
+> > security-module at vger.kernel.org
+> > Subject: Re: [PATCH v3] tpm: Enable CLKRUN protocol for Braswell systems
+> > 
+> > > +++ b/drivers/char/tpm/tpm_tis.c
+> > > @@ -89,13 +89,89 @@ static inline int is_itpm(struct acpi_device *dev)
+> > > }  #endif
+> > >
+> > > +#ifdef CONFIG_X86
+> > > +static inline bool is_bsw(void)
+> > > +{
+> > > +	return ((boot_cpu_data.x86_model ==
+> > INTEL_FAM6_ATOM_AIRMONT) ? 1 :
+> > > +0); } #else static inline bool is_bsw(void) {
+> > > +	return false;
+> > > +}
+> > > +#endif
+> > 
+> > This isn't the only bit that is x86 specific
+> > 
+> > > +
+> > > +#define INTEL_LEGACY_BLK_BASE_ADDR      0xFED08000
+> > > +#define ILB_REMAP_SIZE			0x100
+> > > +#define LPC_CNTRL_REG_OFFSET            0x84
+> > > +#define LPC_CLKRUN_EN                   (1 << 2)
+> > > +
+> > > +void __iomem *ilb_base_addr;
+> > > +
+> > > +/**
+> > > + * disable_lpc_clk_run() - clear LPC CLKRUN_EN i.e. clocks will be
+> > > +free running  */ static void disable_lpc_clk_run(void) {
+> > > +	u32 clkrun_val;
+> > > +
+> > > +	if (!is_bsw())
+> > > +		return;
+> > > +
+> > > +	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+> > > +
+> > > +	/* Disable LPC CLKRUN# */
+> > > +	clkrun_val &= ~LPC_CLKRUN_EN;
+> > > +	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+> > > +
+> > > +	/*
+> > > +	 * Write any random value on port 0x80 which is on LPC, to make
+> > > +	 * sure LPC clock is running before sending any TPM command.
+> > > +	 */
+> > > +	outb(0x80, 0xCC);
+> > > +
+> > > +	/* Make sure the above write is completed */
+> > > +	wmb();
+> > 
+> > Why the wmb(). It doesn't do what the comment says! Also this code is x86
+> > specific
+> > 
+> > 
+> 
+> Memory barrier to enforce the order so that the outb() is completed, which ensures that the LPC clocks are running before sending any TPM command.
+> 
+> > > +}
+> > > +
+> > > +/**
+> > > + * enable_lpc_clk_run() - set LPC CLKRUN_EN i.e. clocks can be turned
+> > > +off  */ static void enable_lpc_clk_run(void) {
+> > > +	u32 clkrun_val;
+> > > +
+> > > +	if (!is_bsw())
+> > > +		return;
+> > > +
+> > > +	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+> > > +
+> > > +	/* Enable LPC CLKRUN# */
+> > > +	clkrun_val |= LPC_CLKRUN_EN;
+> > > +	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+> > > +
+> > > +	/*
+> > > +	 * Write any random value on port 0x80 which is on LPC, to make
+> > > +	 * sure LPC clock is running before sending any TPM command.
+> > > +	 */
+> > > +	outb(0x80, 0xCC);
+> > > +
+> > > +	/* Make sure the above write is completed */
+> > > +	wmb();
+> > > +}
+> > 
+> > Same
+> > 
+> > > +
+> > >  static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16
+> > len,
+> > >  			      u8 *result)
+> > >  {
+> > >  	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+> > >
+> > > +	disable_lpc_clk_run();
+> > > +
+> > >  	while (len--)
+> > >  		*result++ = ioread8(phy->iobase + addr);
+> > > +
+> > > +	enable_lpc_clk_run();
+> > > +
+> > >  	return 0;
+> > >  }
+> > 
+> > So what you actually want to do is fold all the errata crap into an x86 specific
+> > chunk and just define disable/enable_lpc_clk_run() as null functions on
+> > everything else.
+> > 
+> 
+> Ok, will do.
+> 
+> > I'd pick better names too - if other platforms need a hook here it won't I
+> > imagine be about LPC. Possibly you want names like
+> > 
+> > 	platform_begin_tpm_xfer(data);
+> > 	platform_end_tpm_xfer(data);
+> > 
+> 
+> How about these? Since most of the functions in this driver begin with 'tpm_'
+> disable_lpc_clk_run()	- >	tpm_start_xfer()
+> enable_lpc_clk_run()	->	tpm_end_xfer()
 
-Signed-off-by: Junil Lee <junil0814.lee@lge.com>
----
- security/selinux/ss/ebitmap.c  | 26 ++++++++++++++++++++------
- security/selinux/ss/ebitmap.h  |  3 +++
- security/selinux/ss/services.c |  4 ++++
- 3 files changed, 27 insertions(+), 6 deletions(-)
+tpm_platform_begin_xfer() would be the best alternative as it highlights
+platform quirk better.
 
-diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-index 9db4709a..ad38299 100644
---- a/security/selinux/ss/ebitmap.c
-+++ b/security/selinux/ss/ebitmap.c
-@@ -24,6 +24,8 @@
- 
- #define BITS_PER_U64	(sizeof(u64) * 8)
- 
-+static struct kmem_cache *ebitmap_node_cachep;
-+
- int ebitmap_cmp(struct ebitmap *e1, struct ebitmap *e2)
- {
- 	struct ebitmap_node *n1, *n2;
-@@ -54,7 +56,7 @@ int ebitmap_cpy(struct ebitmap *dst, struct ebitmap *src)
- 	n = src->node;
- 	prev = NULL;
- 	while (n) {
--		new = kzalloc(sizeof(*new), GFP_ATOMIC);
-+		new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
- 		if (!new) {
- 			ebitmap_destroy(dst);
- 			return -ENOMEM;
-@@ -162,7 +164,7 @@ int ebitmap_netlbl_import(struct ebitmap *ebmap,
- 		if (e_iter == NULL ||
- 		    offset >= e_iter->startbit + EBITMAP_SIZE) {
- 			e_prev = e_iter;
--			e_iter = kzalloc(sizeof(*e_iter), GFP_ATOMIC);
-+			e_iter = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
- 			if (e_iter == NULL)
- 				goto netlbl_import_failure;
- 			e_iter->startbit = offset - (offset % EBITMAP_SIZE);
-@@ -288,7 +290,7 @@ int ebitmap_set_bit(struct ebitmap *e, unsigned long bit, int value)
- 					prev->next = n->next;
- 				else
- 					e->node = n->next;
--				kfree(n);
-+				kmem_cache_free(ebitmap_node_cachep, n);
- 			}
- 			return 0;
- 		}
-@@ -299,7 +301,7 @@ int ebitmap_set_bit(struct ebitmap *e, unsigned long bit, int value)
- 	if (!value)
- 		return 0;
- 
--	new = kzalloc(sizeof(*new), GFP_ATOMIC);
-+	new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
- 	if (!new)
- 		return -ENOMEM;
- 
-@@ -332,7 +334,7 @@ void ebitmap_destroy(struct ebitmap *e)
- 	while (n) {
- 		temp = n;
- 		n = n->next;
--		kfree(temp);
-+		kmem_cache_free(ebitmap_node_cachep, temp);
- 	}
- 
- 	e->highbit = 0;
-@@ -400,7 +402,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
- 
- 		if (!n || startbit >= n->startbit + EBITMAP_SIZE) {
- 			struct ebitmap_node *tmp;
--			tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
-+			tmp = kmem_cache_zalloc(ebitmap_node_cachep, GFP_KERNEL);
- 			if (!tmp) {
- 				printk(KERN_ERR
- 				       "SELinux: ebitmap: out of memory\n");
-@@ -519,3 +521,15 @@ int ebitmap_write(struct ebitmap *e, void *fp)
- 	}
- 	return 0;
- }
-+
-+void ebitmap_cache_init(void)
-+{
-+	ebitmap_node_cachep = kmem_cache_create("ebitmap_node",
-+							sizeof(struct ebitmap_node),
-+							0, SLAB_PANIC, NULL);
-+}
-+
-+void ebitmap_cache_destroy(void)
-+{
-+	kmem_cache_destroy(ebitmap_node_cachep);
-+}
-diff --git a/security/selinux/ss/ebitmap.h b/security/selinux/ss/ebitmap.h
-index 9637b8c..6d5a9ac 100644
---- a/security/selinux/ss/ebitmap.h
-+++ b/security/selinux/ss/ebitmap.h
-@@ -130,6 +130,9 @@ void ebitmap_destroy(struct ebitmap *e);
- int ebitmap_read(struct ebitmap *e, void *fp);
- int ebitmap_write(struct ebitmap *e, void *fp);
- 
-+void ebitmap_cache_init(void);
-+void ebitmap_cache_destroy(void);
-+
- #ifdef CONFIG_NETLABEL
- int ebitmap_netlbl_export(struct ebitmap *ebmap,
- 			  struct netlbl_lsm_catmap **catmap);
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 2021666..2f02fa6 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -2054,9 +2054,11 @@ int security_load_policy(void *data, size_t len)
- 
- 	if (!ss_initialized) {
- 		avtab_cache_init();
-+		ebitmap_cache_init();
- 		rc = policydb_read(&policydb, fp);
- 		if (rc) {
- 			avtab_cache_destroy();
-+			ebitmap_cache_destroy();
- 			goto out;
- 		}
- 
-@@ -2067,6 +2069,7 @@ int security_load_policy(void *data, size_t len)
- 		if (rc) {
- 			policydb_destroy(&policydb);
- 			avtab_cache_destroy();
-+			ebitmap_cache_destroy();
- 			goto out;
- 		}
- 
-@@ -2074,6 +2077,7 @@ int security_load_policy(void *data, size_t len)
- 		if (rc) {
- 			policydb_destroy(&policydb);
- 			avtab_cache_destroy();
-+			ebitmap_cache_destroy();
- 			goto out;
- 		}
- 
--- 
-2.6.2
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
