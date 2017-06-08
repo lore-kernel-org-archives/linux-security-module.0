@@ -1,97 +1,54 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:48:47 +0100
-Subject: [PATCH 12/23] KEYS: fix freeing uninitialized memory in key_update()
+Date: Thu, 08 Jun 2017 14:48:40 +0100
+Subject: [PATCH 11/23] KEYS: fix dereferencing NULL payload with nonzero length
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692972770.11452.13033016119636168290.stgit@warthog.procyon.org.uk>
+Message-ID: <149692972058.11452.16006332360734138615.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-key_update() freed the key_preparsed_payload even if it was not
-initialized first.  This would cause a crash if userspace called
-keyctl_update() on a key with type like "asymmetric" that has a
-->preparse() method but not an ->update() method.  Possibly it could
-even be triggered for other key types by racing with keyctl_setperm() to
-make the KEY_NEED_WRITE check fail (the permission was already checked,
-so normally it wouldn't fail there).
+sys_add_key() and the KEYCTL_UPDATE operation of sys_keyctl() allowed a
+NULL payload with nonzero length to be passed to the key type's
+->preparse(), ->instantiate(), and/or ->update() methods.  Various key
+types including asymmetric, cifs.idmap, cifs.spnego, and pkcs7_test did
+not handle this case, allowing an unprivileged user to trivially cause a
+NULL pointer dereference (kernel oops) if one of these key types was
+present.  Fix it by doing the copy_from_user() when 'plen' is nonzero
+rather than when '_payload' is non-NULL, causing the syscall to fail
+with EFAULT as expected when an invalid buffer is specified.
 
-Reproducer with key type "asymmetric", given a valid cert.der:
-
-keyctl new_session
-keyid=$(keyctl padd asymmetric desc @s < cert.der)
-keyctl setperm $keyid 0x3f000000
-keyctl update $keyid data
-
-[  150.686666] BUG: unable to handle kernel NULL pointer dereference@0000000000000001
-[  150.687601] IP: asymmetric_key_free_kids+0x12/0x30
-[  150.688139] PGD 38a3d067
-[  150.688141] PUD 3b3de067
-[  150.688447] PMD 0
-[  150.688745]
-[  150.689160] Oops: 0000 [#1] SMP
-[  150.689455] Modules linked in:
-[  150.689769] CPU: 1 PID: 2478 Comm: keyctl Not tainted 4.11.0-rc4-xfstests-00187-ga9f6b6b8cd2f #742
-[  150.690916] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-20170228_101828-anatol 04/01/2014
-[  150.692199] task: ffff88003b30c480 task.stack: ffffc90000350000
-[  150.692952] RIP: 0010:asymmetric_key_free_kids+0x12/0x30
-[  150.693556] RSP: 0018:ffffc90000353e58 EFLAGS: 00010202
-[  150.694142] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000004
-[  150.694845] RDX: ffffffff81ee3920 RSI: ffff88003d4b0700 RDI: 0000000000000001
-[  150.697569] RBP: ffffc90000353e60 R08: ffff88003d5d2140 R09: 0000000000000000
-[  150.702483] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-[  150.707393] R13: 0000000000000004 R14: ffff880038a4d2d8 R15: 000000000040411f
-[  150.709720] FS:  00007fcbcee35700(0000) GS:ffff88003fd00000(0000) knlGS:0000000000000000
-[  150.711504] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  150.712733] CR2: 0000000000000001 CR3: 0000000039eab000 CR4: 00000000003406e0
-[  150.714487] Call Trace:
-[  150.714975]  asymmetric_key_free_preparse+0x2f/0x40
-[  150.715907]  key_update+0xf7/0x140
-[  150.716560]  ? key_default_cmp+0x20/0x20
-[  150.717319]  keyctl_update_key+0xb0/0xe0
-[  150.718066]  SyS_keyctl+0x109/0x130
-[  150.718663]  entry_SYSCALL_64_fastpath+0x1f/0xc2
-[  150.719440] RIP: 0033:0x7fcbce75ff19
-[  150.719926] RSP: 002b:00007ffd5d167088 EFLAGS: 00000206 ORIG_RAX: 00000000000000fa
-[  150.720918] RAX: ffffffffffffffda RBX: 0000000000404d80 RCX: 00007fcbce75ff19
-[  150.721874] RDX: 00007ffd5d16785e RSI: 000000002866cd36 RDI: 0000000000000002
-[  150.722827] RBP: 0000000000000006 R08: 000000002866cd36 R09: 00007ffd5d16785e
-[  150.723781] R10: 0000000000000004 R11: 0000000000000206 R12: 0000000000404d80
-[  150.724650] R13: 00007ffd5d16784d R14: 00007ffd5d167238 R15: 000000000040411f
-[  150.725447] Code: 83 c4 08 31 c0 5b 41 5c 41 5d 41 5e 41 5f 5d c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 85 ff 74 23 55 48 89 e5 53 48 89 fb <48> 8b 3f e8 06 21 c5 ff 48 8b 7b 08 e8 fd 20 c5 ff 48 89 df e8
-[  150.727489] RIP: asymmetric_key_free_kids+0x12/0x30 RSP: ffffc90000353e58
-[  150.728117] CR2: 0000000000000001
-[  150.728430] ---[ end trace f7f8fe1da2d5ae8d ]---
-
-Fixes: 4d8c0250b841 ("KEYS: Call ->free_preparse() even after ->preparse() returns an error")
-Cc: stable at vger.kernel.org # 3.17+
+Cc: stable at vger.kernel.org # 2.6.10+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/key.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ security/keys/keyctl.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index d84ee2a87da6..83da68d98b40 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -963,12 +963,11 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
- 	/* the key must be writable */
- 	ret = key_permission(key_ref, KEY_NEED_WRITE);
- 	if (ret < 0)
--		goto error;
-+		return ret;
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 447a7d5cee0f..94c2790f8283 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -99,7 +99,7 @@ SYSCALL_DEFINE5(add_key, const char __user *, _type,
+ 	/* pull the payload in if one was supplied */
+ 	payload = NULL;
  
- 	/* attempt to update it if supported */
--	ret = -EOPNOTSUPP;
- 	if (!key->type->update)
--		goto error;
-+		return -EOPNOTSUPP;
+-	if (_payload) {
++	if (plen) {
+ 		ret = -ENOMEM;
+ 		payload = kvmalloc(plen, GFP_KERNEL);
+ 		if (!payload)
+@@ -324,7 +324,7 @@ long keyctl_update_key(key_serial_t id,
  
- 	memset(&prep, 0, sizeof(prep));
- 	prep.data = payload;
+ 	/* pull the payload in if one was supplied */
+ 	payload = NULL;
+-	if (_payload) {
++	if (plen) {
+ 		ret = -ENOMEM;
+ 		payload = kmalloc(plen, GFP_KERNEL);
+ 		if (!payload)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
