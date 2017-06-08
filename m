@@ -1,19 +1,23 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:49:18 +0100
-Subject: [PATCH 16/23] KEYS: trusted: sanitize all key material
+Date: Thu, 08 Jun 2017 14:49:11 +0100
+Subject: [PATCH 15/23] KEYS: encrypted: sanitize all key material
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692975873.11452.4299102306056105423.stgit@warthog.procyon.org.uk>
+Message-ID: <149692975135.11452.9791971822965563991.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-As the previous patch did for encrypted-keys, zero sensitive any
-potentially sensitive data related to the "trusted" key type before it
-is freed.  Notably, we were not zeroing the tpm_buf structures in which
-the actual key is stored for TPM seal and unseal, nor were we zeroing
-the trusted_key_payload in certain error paths.
+For keys of type "encrypted", consistently zero sensitive key material
+before freeing it.  This was already being done for the decrypted
+payloads of encrypted keys, but not for the master key and the keys
+derived from the master key.
+
+Out of an abundance of caution and because it is trivial to do so, also
+zero buffers containing the key payload in encrypted form, although
+depending on how the encrypted-keys feature is used such information
+does not necessarily need to be kept secret.
 
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: David Safford <safford@us.ibm.com>
@@ -21,183 +25,120 @@ Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/trusted.c |   50 +++++++++++++++++++++--------------------------
- 1 file changed, 22 insertions(+), 28 deletions(-)
+ security/keys/encrypted-keys/encrypted.c |   31 +++++++++++++-----------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
 
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index 2ae31c5a87de..435e86e13879 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -70,7 +70,7 @@ static int TSS_sha1(const unsigned char *data, unsigned int datalen,
- 	}
- 
- 	ret = crypto_shash_digest(&sdesc->shash, data, datalen, digest);
--	kfree(sdesc);
-+	kzfree(sdesc);
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 5c98c2fe03f0..bb6324d1ccec 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -375,7 +375,7 @@ static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
+ 	memcpy(derived_buf + strlen(derived_buf) + 1, master_key,
+ 	       master_keylen);
+ 	ret = calc_hash(hash_tfm, derived_key, derived_buf, derived_buf_len);
+-	kfree(derived_buf);
++	kzfree(derived_buf);
  	return ret;
  }
  
-@@ -114,7 +114,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+@@ -507,6 +507,7 @@ static int datablob_hmac_append(struct encrypted_key_payload *epayload,
  	if (!ret)
- 		ret = crypto_shash_final(&sdesc->shash, digest);
+ 		dump_hmac(NULL, digest, HASH_SIZE);
  out:
--	kfree(sdesc);
-+	kzfree(sdesc);
++	memzero_explicit(derived_key, sizeof(derived_key));
  	return ret;
  }
  
-@@ -165,7 +165,7 @@ static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
- 				  paramdigest, TPM_NONCE_SIZE, h1,
- 				  TPM_NONCE_SIZE, h2, 1, &c, 0, 0);
- out:
--	kfree(sdesc);
-+	kzfree(sdesc);
- 	return ret;
- }
- 
-@@ -246,7 +246,7 @@ static int TSS_checkhmac1(unsigned char *buffer,
- 	if (memcmp(testhmac, authdata, SHA1_DIGEST_SIZE))
- 		ret = -EINVAL;
- out:
--	kfree(sdesc);
-+	kzfree(sdesc);
- 	return ret;
- }
- 
-@@ -347,7 +347,7 @@ static int TSS_checkhmac2(unsigned char *buffer,
- 	if (memcmp(testhmac2, authdata2, SHA1_DIGEST_SIZE))
- 		ret = -EINVAL;
- out:
--	kfree(sdesc);
-+	kzfree(sdesc);
- 	return ret;
- }
- 
-@@ -564,7 +564,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
- 		*bloblen = storedsize;
+@@ -545,6 +546,7 @@ static int datablob_hmac_verify(struct encrypted_key_payload *epayload,
+ 		dump_hmac("calc", digest, HASH_SIZE);
  	}
  out:
--	kfree(td);
-+	kzfree(td);
++	memzero_explicit(derived_key, sizeof(derived_key));
  	return ret;
  }
  
-@@ -678,7 +678,7 @@ static int key_seal(struct trusted_key_payload *p,
- 	if (ret < 0)
- 		pr_info("trusted_key: srkseal failed (%d)\n", ret);
- 
--	kfree(tb);
-+	kzfree(tb);
+@@ -701,6 +703,7 @@ static int encrypted_key_decrypt(struct encrypted_key_payload *epayload,
+ out:
+ 	up_read(&mkey->sem);
+ 	key_put(mkey);
++	memzero_explicit(derived_key, sizeof(derived_key));
  	return ret;
  }
  
-@@ -703,7 +703,7 @@ static int key_unseal(struct trusted_key_payload *p,
- 		/* pull migratable flag out of sealed key */
- 		p->migratable = p->key[--p->key_len];
+@@ -807,13 +810,13 @@ static int encrypted_instantiate(struct key *key,
+ 	ret = encrypted_init(epayload, key->description, format, master_desc,
+ 			     decrypted_datalen, hex_encoded_iv);
+ 	if (ret < 0) {
+-		kfree(epayload);
++		kzfree(epayload);
+ 		goto out;
+ 	}
  
--	kfree(tb);
-+	kzfree(tb);
- 	return ret;
- }
- 
-@@ -1037,12 +1037,12 @@ static int trusted_instantiate(struct key *key,
- 	if (!ret && options->pcrlock)
- 		ret = pcrlock(options->pcrlock);
+ 	rcu_assign_keypointer(key, epayload);
  out:
 -	kfree(datablob);
--	kfree(options);
 +	kzfree(datablob);
-+	kzfree(options);
- 	if (!ret)
- 		rcu_assign_keypointer(key, payload);
- 	else
--		kfree(payload);
-+		kzfree(payload);
  	return ret;
  }
  
-@@ -1051,8 +1051,7 @@ static void trusted_rcu_free(struct rcu_head *rcu)
- 	struct trusted_key_payload *p;
+@@ -822,8 +825,7 @@ static void encrypted_rcu_free(struct rcu_head *rcu)
+ 	struct encrypted_key_payload *epayload;
  
- 	p = container_of(rcu, struct trusted_key_payload, rcu);
--	memset(p->key, 0, p->key_len);
--	kfree(p);
-+	kzfree(p);
+ 	epayload = container_of(rcu, struct encrypted_key_payload, rcu);
+-	memset(epayload->decrypted_data, 0, epayload->decrypted_datalen);
+-	kfree(epayload);
++	kzfree(epayload);
  }
  
  /*
-@@ -1094,13 +1093,13 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
- 	ret = datablob_parse(datablob, new_p, new_o);
- 	if (ret != Opt_update) {
- 		ret = -EINVAL;
--		kfree(new_p);
-+		kzfree(new_p);
- 		goto out;
- 	}
- 
- 	if (!new_o->keyhandle) {
- 		ret = -EINVAL;
--		kfree(new_p);
-+		kzfree(new_p);
- 		goto out;
- 	}
- 
-@@ -1114,22 +1113,22 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
- 	ret = key_seal(new_p, new_o);
- 	if (ret < 0) {
- 		pr_info("trusted_key: key_seal failed (%d)\n", ret);
--		kfree(new_p);
-+		kzfree(new_p);
- 		goto out;
- 	}
- 	if (new_o->pcrlock) {
- 		ret = pcrlock(new_o->pcrlock);
- 		if (ret < 0) {
- 			pr_info("trusted_key: pcrlock failed (%d)\n", ret);
--			kfree(new_p);
-+			kzfree(new_p);
- 			goto out;
- 		}
- 	}
- 	rcu_assign_keypointer(key, new_p);
- 	call_rcu(&p->rcu, trusted_rcu_free);
+@@ -881,7 +883,7 @@ static int encrypted_update(struct key *key, struct key_preparsed_payload *prep)
+ 	rcu_assign_keypointer(key, new_epayload);
+ 	call_rcu(&epayload->rcu, encrypted_rcu_free);
  out:
--	kfree(datablob);
--	kfree(new_o);
-+	kzfree(datablob);
-+	kzfree(new_o);
+-	kfree(buf);
++	kzfree(buf);
  	return ret;
  }
  
-@@ -1158,24 +1157,19 @@ static long trusted_read(const struct key *key, char __user *buffer,
- 	for (i = 0; i < p->blob_len; i++)
- 		bufp = hex_byte_pack(bufp, p->blob[i]);
- 	if ((copy_to_user(buffer, ascii_buf, 2 * p->blob_len)) != 0) {
--		kfree(ascii_buf);
-+		kzfree(ascii_buf);
- 		return -EFAULT;
- 	}
+@@ -939,33 +941,26 @@ static long encrypted_read(const struct key *key, char __user *buffer,
+ 
+ 	up_read(&mkey->sem);
+ 	key_put(mkey);
++	memzero_explicit(derived_key, sizeof(derived_key));
+ 
+ 	if (copy_to_user(buffer, ascii_buf, asciiblob_len) != 0)
+ 		ret = -EFAULT;
 -	kfree(ascii_buf);
 +	kzfree(ascii_buf);
- 	return 2 * p->blob_len;
+ 
+ 	return asciiblob_len;
+ out:
+ 	up_read(&mkey->sem);
+ 	key_put(mkey);
++	memzero_explicit(derived_key, sizeof(derived_key));
+ 	return ret;
  }
  
  /*
-- * trusted_destroy - before freeing the key, clear the decrypted data
-+ * trusted_destroy - clear and free the key's payload
+- * encrypted_destroy - before freeing the key, clear the decrypted data
+- *
+- * Before freeing the key, clear the memory containing the decrypted
+- * key data.
++ * encrypted_destroy - clear and free the key's payload
   */
- static void trusted_destroy(struct key *key)
+ static void encrypted_destroy(struct key *key)
  {
--	struct trusted_key_payload *p = key->payload.data[0];
+-	struct encrypted_key_payload *epayload = key->payload.data[0];
 -
--	if (!p)
+-	if (!epayload)
 -		return;
--	memset(p->key, 0, p->key_len);
+-
+-	memzero_explicit(epayload->decrypted_data, epayload->decrypted_datalen);
 -	kfree(key->payload.data[0]);
 +	kzfree(key->payload.data[0]);
  }
  
- struct key_type key_type_trusted = {
+ struct key_type key_type_encrypted = {
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
