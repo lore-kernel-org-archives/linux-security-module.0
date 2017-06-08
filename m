@@ -1,73 +1,111 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:48:18 +0100
-Subject: [PATCH 08/23] KEYS: encrypted: fix buffer overread in
-	valid_master_desc()
+Date: Thu, 08 Jun 2017 14:48:10 +0100
+Subject: [PATCH 07/23] KEYS: encrypted: avoid encrypting/decrypting stack
+	buffers
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692969796.11452.2915277493345705577.stgit@warthog.procyon.org.uk>
+Message-ID: <149692969030.11452.7689983076506041179.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-With the 'encrypted' key type it was possible for userspace to provide a
-data blob ending with a master key description shorter than expected,
-e.g. 'keyctl add encrypted desc "new x" @s'.  When validating such a
-master key description, validate_master_desc() could read beyond the end
-of the buffer.  Fix this by using strncmp() instead of memcmp().  [Also
-clean up the code to deduplicate some logic.]
+Since v4.9, the crypto API cannot (normally) be used to encrypt/decrypt
+stack buffers because the stack may be virtually mapped.  Fix this for
+the padding buffers in encrypted-keys by using ZERO_PAGE for the
+encryption padding and by allocating a temporary heap buffer for the
+decryption padding.
 
+Tested with CONFIG_DEBUG_SG=y:
+	keyctl new_session
+	keyctl add user master "abcdefghijklmnop" @s
+	keyid=$(keyctl add encrypted desc "new user:master 25" @s)
+	datablob="$(keyctl pipe $keyid)"
+	keyctl unlink $keyid
+	keyid=$(keyctl add encrypted desc "load $datablob" @s)
+	datablob2="$(keyctl pipe $keyid)"
+	[ "$datablob" = "$datablob2" ] && echo "Success!"
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: stable at vger.kernel.org # 4.9+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/encrypted-keys/encrypted.c |   31 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ security/keys/encrypted-keys/encrypted.c |   17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index d14f1a47a130..0f7b95de3b5f 100644
+index 2ab48eab29a1..d14f1a47a130 100644
 --- a/security/keys/encrypted-keys/encrypted.c
 +++ b/security/keys/encrypted-keys/encrypted.c
-@@ -141,23 +141,22 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
-  */
- static int valid_master_desc(const char *new_desc, const char *orig_desc)
- {
--	if (!memcmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN)) {
--		if (strlen(new_desc) == KEY_TRUSTED_PREFIX_LEN)
--			goto out;
--		if (orig_desc)
--			if (memcmp(new_desc, orig_desc, KEY_TRUSTED_PREFIX_LEN))
--				goto out;
--	} else if (!memcmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN)) {
--		if (strlen(new_desc) == KEY_USER_PREFIX_LEN)
--			goto out;
--		if (orig_desc)
--			if (memcmp(new_desc, orig_desc, KEY_USER_PREFIX_LEN))
--				goto out;
--	} else
--		goto out;
-+	int prefix_len;
+@@ -479,12 +479,9 @@ static int derived_key_encrypt(struct encrypted_key_payload *epayload,
+ 	struct skcipher_request *req;
+ 	unsigned int encrypted_datalen;
+ 	u8 iv[AES_BLOCK_SIZE];
+-	unsigned int padlen;
+-	char pad[16];
+ 	int ret;
+ 
+ 	encrypted_datalen = roundup(epayload->decrypted_datalen, blksize);
+-	padlen = encrypted_datalen - epayload->decrypted_datalen;
+ 
+ 	req = init_skcipher_req(derived_key, derived_keylen);
+ 	ret = PTR_ERR(req);
+@@ -492,11 +489,10 @@ static int derived_key_encrypt(struct encrypted_key_payload *epayload,
+ 		goto out;
+ 	dump_decrypted_data(epayload);
+ 
+-	memset(pad, 0, sizeof pad);
+ 	sg_init_table(sg_in, 2);
+ 	sg_set_buf(&sg_in[0], epayload->decrypted_data,
+ 		   epayload->decrypted_datalen);
+-	sg_set_buf(&sg_in[1], pad, padlen);
++	sg_set_page(&sg_in[1], ZERO_PAGE(0), AES_BLOCK_SIZE, 0);
+ 
+ 	sg_init_table(sg_out, 1);
+ 	sg_set_buf(sg_out, epayload->encrypted_data, encrypted_datalen);
+@@ -583,9 +579,14 @@ static int derived_key_decrypt(struct encrypted_key_payload *epayload,
+ 	struct skcipher_request *req;
+ 	unsigned int encrypted_datalen;
+ 	u8 iv[AES_BLOCK_SIZE];
+-	char pad[16];
++	u8 *pad;
+ 	int ret;
+ 
++	/* Throwaway buffer to hold the unused zero padding at the end */
++	pad = kmalloc(AES_BLOCK_SIZE, GFP_KERNEL);
++	if (!pad)
++		return -ENOMEM;
 +
-+	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
-+		prefix_len = KEY_TRUSTED_PREFIX_LEN;
-+	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
-+		prefix_len = KEY_USER_PREFIX_LEN;
-+	else
-+		return -EINVAL;
-+
-+	if (!new_desc[prefix_len])
-+		return -EINVAL;
-+
-+	if (orig_desc && strncmp(new_desc, orig_desc, prefix_len))
-+		return -EINVAL;
-+
- 	return 0;
--out:
--	return -EINVAL;
+ 	encrypted_datalen = roundup(epayload->decrypted_datalen, blksize);
+ 	req = init_skcipher_req(derived_key, derived_keylen);
+ 	ret = PTR_ERR(req);
+@@ -593,13 +594,12 @@ static int derived_key_decrypt(struct encrypted_key_payload *epayload,
+ 		goto out;
+ 	dump_encrypted_data(epayload, encrypted_datalen);
+ 
+-	memset(pad, 0, sizeof pad);
+ 	sg_init_table(sg_in, 1);
+ 	sg_init_table(sg_out, 2);
+ 	sg_set_buf(sg_in, epayload->encrypted_data, encrypted_datalen);
+ 	sg_set_buf(&sg_out[0], epayload->decrypted_data,
+ 		   epayload->decrypted_datalen);
+-	sg_set_buf(&sg_out[1], pad, sizeof pad);
++	sg_set_buf(&sg_out[1], pad, AES_BLOCK_SIZE);
+ 
+ 	memcpy(iv, epayload->iv, sizeof(iv));
+ 	skcipher_request_set_crypt(req, sg_in, sg_out, encrypted_datalen, iv);
+@@ -611,6 +611,7 @@ static int derived_key_decrypt(struct encrypted_key_payload *epayload,
+ 		goto out;
+ 	dump_decrypted_data(epayload);
+ out:
++	kfree(pad);
+ 	return ret;
  }
  
- /*
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
