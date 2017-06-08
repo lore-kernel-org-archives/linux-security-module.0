@@ -1,62 +1,39 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:48:03 +0100
-Subject: [PATCH 06/23] KEYS: put keyring if
-	install_session_keyring_to_cred() fails
+Date: Thu, 08 Jun 2017 14:47:49 +0100
+Subject: [PATCH 04/23] X.509: Fix error code in x509_cert_parse()
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692968329.11452.1023488254368799056.stgit@warthog.procyon.org.uk>
+Message-ID: <149692966935.11452.18193643051594786260.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-In join_session_keyring(), if install_session_keyring_to_cred() were to
-fail, we would leak the keyring reference, just like in the bug fixed by
-commit 23567fd052a9 ("KEYS: Fix keyring ref leak in
-join_session_keyring()").  Fortunately this cannot happen currently, but
-we really should be more careful.  Do this by adding and using a new
-error label at which the keyring reference is dropped.
+We forgot to set the error code on this path so it could result in
+returning NULL which leads to a NULL dereference.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fixes: db6c43bd2132 ("crypto: KEYS: convert public key and digsig asym to the akcipher api")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/process_keys.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ crypto/asymmetric_keys/x509_cert_parser.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 2217dfec7996..86bced9fdbdf 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -809,15 +809,14 @@ long join_session_keyring(const char *name)
- 		ret = PTR_ERR(keyring);
- 		goto error2;
- 	} else if (keyring == new->session_keyring) {
--		key_put(keyring);
- 		ret = 0;
--		goto error2;
-+		goto error3;
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index c80765b211cf..dd03fead1ca3 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -102,6 +102,7 @@ struct x509_certificate *x509_cert_parse(const void *data, size_t datalen)
+ 		}
  	}
  
- 	/* we've got a keyring - now to install it */
- 	ret = install_session_keyring_to_cred(new, keyring);
- 	if (ret < 0)
--		goto error2;
-+		goto error3;
- 
- 	commit_creds(new);
- 	mutex_unlock(&key_session_mutex);
-@@ -827,6 +826,8 @@ long join_session_keyring(const char *name)
- okay:
- 	return ret;
- 
-+error3:
-+	key_put(keyring);
- error2:
- 	mutex_unlock(&key_session_mutex);
- error:
++	ret = -ENOMEM;
+ 	cert->pub->key = kmemdup(ctx->key, ctx->key_size, GFP_KERNEL);
+ 	if (!cert->pub->key)
+ 		goto error_decode;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
