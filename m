@@ -1,44 +1,41 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:50:04 +0100
-Subject: [PATCH 22/23] crypto : asymmetric_keys : verify_pefile:zero memory
-	content before freeing
+Date: Thu, 08 Jun 2017 14:49:42 +0100
+Subject: [PATCH 19/23] KEYS: DH: don't feed uninitialized "otherinfo" into KDF
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692980440.11452.10627624845628502682.stgit@warthog.procyon.org.uk>
+Message-ID: <149692978205.11452.9161641214967386572.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Loganaden Velvindron <logan@hackers.mu>
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Loganaden Velvindron <logan@hackers.mu>
-Signed-off-by: Yasir Auleear <yasirmx@hackers.mu>
+If userspace called KEYCTL_DH_COMPUTE with kdf_params containing NULL
+otherinfo but nonzero otherinfolen, the kernel would allocate a buffer
+for the otherinfo, then feed it into the KDF without initializing it.
+Fix this by always doing the copy from userspace (which will fail with
+EFAULT in this scenario).
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Stephan Mueller <smueller@chronox.de>
 ---
 
- crypto/asymmetric_keys/verify_pefile.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/keys/dh.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
-index 672a94c2c3ff..d178650fd524 100644
---- a/crypto/asymmetric_keys/verify_pefile.c
-+++ b/crypto/asymmetric_keys/verify_pefile.c
-@@ -381,7 +381,7 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
- 	}
- 
- error:
--	kfree(desc);
-+	kzfree(desc);
- error_no_desc:
- 	crypto_free_shash(tfm);
- 	kleave(" = %d", ret);
-@@ -450,6 +450,6 @@ int verify_pefile_signature(const void *pebuf, unsigned pelen,
- 	ret = pefile_digest_pe(pebuf, pelen, &ctx);
- 
- error:
--	kfree(ctx.digest);
-+	kzfree(ctx.digest);
- 	return ret;
- }
+diff --git a/security/keys/dh.c b/security/keys/dh.c
+index 8abc70ebe22d..1c1cac677041 100644
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -317,7 +317,7 @@ long __keyctl_dh_compute(struct keyctl_dh_params __user *params,
+ 	 * Concatenate SP800-56A otherinfo past DH shared secret -- the
+ 	 * input to the KDF is (DH shared secret || otherinfo)
+ 	 */
+-	if (kdfcopy && kdfcopy->otherinfo &&
++	if (kdfcopy &&
+ 	    copy_from_user(kbuf + resultlen, kdfcopy->otherinfo,
+ 			   kdfcopy->otherinfolen) != 0) {
+ 		ret = -EFAULT;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
