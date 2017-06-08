@@ -1,56 +1,231 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:48:40 +0100
-Subject: [PATCH 11/23] KEYS: fix dereferencing NULL payload with nonzero length
+Date: Thu, 08 Jun 2017 14:48:25 +0100
+Subject: [PATCH 09/23] KEYS: encrypted: fix race causing incorrect HMAC
+	calculations
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692972058.11452.16006332360734138615.stgit@warthog.procyon.org.uk>
+Message-ID: <149692970541.11452.13378862411770263162.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-sys_add_key() and the KEYCTL_UPDATE operation of sys_keyctl() allowed a
-NULL payload with nonzero length to be passed to the key type's
-->preparse(), ->instantiate(), and/or ->update() methods.  Various key
-types including asymmetric, cifs.idmap, cifs.spnego, and pkcs7_test did
-not handle this case, allowing an unprivileged user to trivially cause a
-NULL pointer dereference (kernel oops) if one of these key types was
-present.  Fix it by doing the copy_from_user() when 'plen' is nonzero
-rather than when '_payload' is non-NULL, causing the syscall to fail
-with EFAULT as expected when an invalid buffer is specified.
+The encrypted-keys module was using a single global HMAC transform,
+which could be rekeyed by multiple threads concurrently operating on
+different keys, causing incorrect HMAC values to be calculated.  Fix
+this by allocating a new HMAC transform whenever we need to calculate a
+HMAC.  Also simplify things a bit by allocating the shash_desc's using
+SHASH_DESC_ON_STACK() for both the HMAC and unkeyed hashes.
 
-Cc: stable at vger.kernel.org # 2.6.10+
+The following script reproduces the bug:
+
+    keyctl new_session
+    keyctl add user master "abcdefghijklmnop" @s
+    for i in $(seq 2); do
+        (
+            set -e
+            for j in $(seq 1000); do
+                keyid=$(keyctl add encrypted desc$i "new user:master 25" @s)
+                datablob="$(keyctl pipe $keyid)"
+                keyctl unlink $keyid > /dev/null
+                keyid=$(keyctl add encrypted desc$i "load $datablob" @s)
+                keyctl unlink $keyid > /dev/null
+            done
+        ) &
+    done
+
+Output with bug:
+
+    [  439.691094] encrypted_key: bad hmac (-22)
+    add_key: Invalid argument
+    add_key: Invalid argument
+
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/keyctl.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/keys/encrypted-keys/encrypted.c |  115 ++++++++----------------------
+ 1 file changed, 32 insertions(+), 83 deletions(-)
 
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 447a7d5cee0f..94c2790f8283 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -99,7 +99,7 @@ SYSCALL_DEFINE5(add_key, const char __user *, _type,
- 	/* pull the payload in if one was supplied */
- 	payload = NULL;
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 0f7b95de3b5f..702c80662069 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -54,13 +54,7 @@ static int blksize;
+ #define MAX_DATA_SIZE 4096
+ #define MIN_DATA_SIZE  20
  
--	if (_payload) {
-+	if (plen) {
- 		ret = -ENOMEM;
- 		payload = kvmalloc(plen, GFP_KERNEL);
- 		if (!payload)
-@@ -324,7 +324,7 @@ long keyctl_update_key(key_serial_t id,
+-struct sdesc {
+-	struct shash_desc shash;
+-	char ctx[];
+-};
+-
+-static struct crypto_shash *hashalg;
+-static struct crypto_shash *hmacalg;
++static struct crypto_shash *hash_tfm;
  
- 	/* pull the payload in if one was supplied */
- 	payload = NULL;
--	if (_payload) {
-+	if (plen) {
- 		ret = -ENOMEM;
- 		payload = kmalloc(plen, GFP_KERNEL);
- 		if (!payload)
+ enum {
+ 	Opt_err = -1, Opt_new, Opt_load, Opt_update
+@@ -320,53 +314,38 @@ static struct key *request_user_key(const char *master_desc, const u8 **master_k
+ 	return ukey;
+ }
+ 
+-static struct sdesc *alloc_sdesc(struct crypto_shash *alg)
+-{
+-	struct sdesc *sdesc;
+-	int size;
+-
+-	size = sizeof(struct shash_desc) + crypto_shash_descsize(alg);
+-	sdesc = kmalloc(size, GFP_KERNEL);
+-	if (!sdesc)
+-		return ERR_PTR(-ENOMEM);
+-	sdesc->shash.tfm = alg;
+-	sdesc->shash.flags = 0x0;
+-	return sdesc;
+-}
+-
+-static int calc_hmac(u8 *digest, const u8 *key, unsigned int keylen,
++static int calc_hash(struct crypto_shash *tfm, u8 *digest,
+ 		     const u8 *buf, unsigned int buflen)
+ {
+-	struct sdesc *sdesc;
+-	int ret;
++	SHASH_DESC_ON_STACK(desc, tfm);
++	int err;
+ 
+-	sdesc = alloc_sdesc(hmacalg);
+-	if (IS_ERR(sdesc)) {
+-		pr_info("encrypted_key: can't alloc %s\n", hmac_alg);
+-		return PTR_ERR(sdesc);
+-	}
++	desc->tfm = tfm;
++	desc->flags = 0;
+ 
+-	ret = crypto_shash_setkey(hmacalg, key, keylen);
+-	if (!ret)
+-		ret = crypto_shash_digest(&sdesc->shash, buf, buflen, digest);
+-	kfree(sdesc);
+-	return ret;
++	err = crypto_shash_digest(desc, buf, buflen, digest);
++	shash_desc_zero(desc);
++	return err;
+ }
+ 
+-static int calc_hash(u8 *digest, const u8 *buf, unsigned int buflen)
++static int calc_hmac(u8 *digest, const u8 *key, unsigned int keylen,
++		     const u8 *buf, unsigned int buflen)
+ {
+-	struct sdesc *sdesc;
+-	int ret;
++	struct crypto_shash *tfm;
++	int err;
+ 
+-	sdesc = alloc_sdesc(hashalg);
+-	if (IS_ERR(sdesc)) {
+-		pr_info("encrypted_key: can't alloc %s\n", hash_alg);
+-		return PTR_ERR(sdesc);
++	tfm = crypto_alloc_shash(hmac_alg, 0, CRYPTO_ALG_ASYNC);
++	if (IS_ERR(tfm)) {
++		pr_err("encrypted_key: can't alloc %s transform: %ld\n",
++		       hmac_alg, PTR_ERR(tfm));
++		return PTR_ERR(tfm);
+ 	}
+ 
+-	ret = crypto_shash_digest(&sdesc->shash, buf, buflen, digest);
+-	kfree(sdesc);
+-	return ret;
++	err = crypto_shash_setkey(tfm, key, keylen);
++	if (!err)
++		err = calc_hash(tfm, digest, buf, buflen);
++	crypto_free_shash(tfm);
++	return err;
+ }
+ 
+ enum derived_key_type { ENC_KEY, AUTH_KEY };
+@@ -394,7 +373,7 @@ static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
+ 
+ 	memcpy(derived_buf + strlen(derived_buf) + 1, master_key,
+ 	       master_keylen);
+-	ret = calc_hash(derived_key, derived_buf, derived_buf_len);
++	ret = calc_hash(hash_tfm, derived_key, derived_buf, derived_buf_len);
+ 	kfree(derived_buf);
+ 	return ret;
+ }
+@@ -998,47 +977,17 @@ struct key_type key_type_encrypted = {
+ };
+ EXPORT_SYMBOL_GPL(key_type_encrypted);
+ 
+-static void encrypted_shash_release(void)
+-{
+-	if (hashalg)
+-		crypto_free_shash(hashalg);
+-	if (hmacalg)
+-		crypto_free_shash(hmacalg);
+-}
+-
+-static int __init encrypted_shash_alloc(void)
++static int __init init_encrypted(void)
+ {
+ 	int ret;
+ 
+-	hmacalg = crypto_alloc_shash(hmac_alg, 0, CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(hmacalg)) {
+-		pr_info("encrypted_key: could not allocate crypto %s\n",
+-			hmac_alg);
+-		return PTR_ERR(hmacalg);
++	hash_tfm = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
++	if (IS_ERR(hash_tfm)) {
++		pr_err("encrypted_key: can't allocate %s transform: %ld\n",
++		       hash_alg, PTR_ERR(hash_tfm));
++		return PTR_ERR(hash_tfm);
+ 	}
+ 
+-	hashalg = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(hashalg)) {
+-		pr_info("encrypted_key: could not allocate crypto %s\n",
+-			hash_alg);
+-		ret = PTR_ERR(hashalg);
+-		goto hashalg_fail;
+-	}
+-
+-	return 0;
+-
+-hashalg_fail:
+-	crypto_free_shash(hmacalg);
+-	return ret;
+-}
+-
+-static int __init init_encrypted(void)
+-{
+-	int ret;
+-
+-	ret = encrypted_shash_alloc();
+-	if (ret < 0)
+-		return ret;
+ 	ret = aes_get_sizes();
+ 	if (ret < 0)
+ 		goto out;
+@@ -1047,14 +996,14 @@ static int __init init_encrypted(void)
+ 		goto out;
+ 	return 0;
+ out:
+-	encrypted_shash_release();
++	crypto_free_shash(hash_tfm);
+ 	return ret;
+ 
+ }
+ 
+ static void __exit cleanup_encrypted(void)
+ {
+-	encrypted_shash_release();
++	crypto_free_shash(hash_tfm);
+ 	unregister_key_type(&key_type_encrypted);
+ }
+ 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
