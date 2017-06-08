@@ -1,24 +1,45 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Thu, 8 Jun 2017 19:37:19 +0100
-Subject: [PATCH v2 0/1]  Add Trusted Path Execution as a stackable LSM
-In-Reply-To: <20170608034349.31876-1-matt@nmatt.com>
-References: <20170608034349.31876-1-matt@nmatt.com>
-Message-ID: <20170608193719.2d9e8d17@lxorguk.ukuu.org.uk>
+From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
+Date: Thu, 8 Jun 2017 12:39:20 -0600
+Subject: [PATCH v3] tpm: Enable CLKRUN protocol for Braswell systems
+In-Reply-To: <20170608192259.43150ffa@lxorguk.ukuu.org.uk>
+References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
+	<1496870610-29462-1-git-send-email-azhar.shaikh@intel.com>
+	<20170607224444.5043f545@lxorguk.ukuu.org.uk>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF5828910C7B@ORSMSX109.amr.corp.intel.com>
+	<20170608192259.43150ffa@lxorguk.ukuu.org.uk>
+Message-ID: <20170608183920.GA7984@obsidianresearch.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> http://phrack.org/issues/52/6.html#article
-> 
-> | A trusted path is one that is inside a root owned directory that
-> | is not group or world writable.  /bin, /usr/bin, /usr/local/bin, are
-> | (under normal circumstances) considered trusted.  Any non-root
-> | users home directory is not trusted, nor is /tmp.
+On Thu, Jun 08, 2017 at 07:22:59PM +0100, Alan Cox wrote:
+> > > > +	outb(0x80, 0xCC);
+> > > > +
+> > > > +	/* Make sure the above write is completed */
+> > > > +	wmb();  
+> > > 
+> > > Why the wmb(). It doesn't do what the comment says! Also this code is x86
+> > > specific
+> > > 
+> > >   
+> > 
+> > Memory barrier to enforce the order so that the outb() is
+> > completed, which ensures that the LPC clocks are running before
+> > sending any TPM command.
+>
+> wmb() doesn't do that. It merely ensures that the write has been posted
+> to the fabric. If as I suspect your LPC bus implements outb() as a
+> non-posted write you don't need the wmb().
 
-Note that in the real world the trusted path would and should also
-require that any elements of the path above that point are also locked
-down if you are using path based models. Ie you need to ensure nobody has
-the ability to rename /usr or /usr/local before you trust /usr/local/bin.
+I think the point here is to bootstrap the sleeping LPC bus clock
+before a TPM command is issued, presumably because the auto-wakeup circuit
+is busted or something.
 
+For that purpose all that should be required is strong ordering of the
+outb relative to the other TPM commands at the LPC interface FIFO. I
+also think the wmb is not needed because outb is already defined to be
+strongly in order with respect to writel/readl ?
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
