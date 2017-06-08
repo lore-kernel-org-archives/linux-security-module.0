@@ -1,62 +1,130 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:47:41 +0100
-Subject: [PATCH 03/23] KEYS: fix refcount_inc() on zero
+Date: Thu, 08 Jun 2017 14:47:26 +0100
+Subject: [PATCH 01/23] security/keys: add CONFIG_KEYS_COMPAT to Kconfig
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692966132.11452.11344589657708880218.stgit@warthog.procyon.org.uk>
+Message-ID: <149692964657.11452.547823032024351272.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Bilal Amarni <bilal.amarni@gmail.com>
 
-If a key's refcount is dropped to zero between key_lookup() peeking at
-the refcount and subsequently attempting to increment it, refcount_inc()
-will see a zero refcount.  Here, refcount_inc() will WARN_ONCE(), and
-will *not* increment the refcount, which will remain zero.
+CONFIG_KEYS_COMPAT is defined in arch-specific Kconfigs and is missing for
+several 64-bit architectures : mips, parisc, tile.
 
-Once key_lookup() drops key_serial_lock, it is possible for the key to
-be freed behind our back.
+At the moment and for those architectures, calling in 32-bit userspace the
+keyctl syscall would return an ENOSYS error.
 
-This patch uses refcount_inc_not_zero() to perform the peek and increment
-atomically.
+This patch moves the CONFIG_KEYS_COMPAT option to security/keys/Kconfig, to
+make sure the compatibility wrapper is registered by default for any 64-bit
+architecture as long as it is configured with CONFIG_COMPAT.
 
-Fixes: fff292914d3a2f1e ("security, keys: convert key.usage from atomic_t to refcount_t")
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+[DH: Modified to remove arm64 compat enablement also as requested by Eric
+ Biggers]
+
+Signed-off-by: Bilal Amarni <bilal.amarni@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: David Windsor <dwindsor@gmail.com>
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Hans Liljestrand <ishkamiel@gmail.com>
-Cc: James Morris <james.l.morris@oracle.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+cc: Eric Biggers <ebiggers3@gmail.com>
 ---
 
- security/keys/key.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ arch/arm64/Kconfig    |    4 ----
+ arch/powerpc/Kconfig  |    5 -----
+ arch/s390/Kconfig     |    3 ---
+ arch/sparc/Kconfig    |    3 ---
+ arch/x86/Kconfig      |    4 ----
+ security/keys/Kconfig |    4 ++++
+ 6 files changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 455c04d80bbb..d84ee2a87da6 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -660,14 +660,11 @@ struct key *key_lookup(key_serial_t id)
- 	goto error;
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 3dcd7ec69bca..b2024db225a9 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1084,10 +1084,6 @@ config SYSVIPC_COMPAT
+ 	def_bool y
+ 	depends on COMPAT && SYSVIPC
  
- found:
--	/* pretend it doesn't exist if it is awaiting deletion */
--	if (refcount_read(&key->usage) == 0)
--		goto not_found;
+-config KEYS_COMPAT
+-	def_bool y
+-	depends on COMPAT && KEYS
 -
--	/* this races with key_put(), but that doesn't matter since key_put()
--	 * doesn't actually change the key
-+	/* A key is allowed to be looked up only if someone still owns a
-+	 * reference to it - otherwise it's awaiting the gc.
- 	 */
--	__key_get(key);
-+	if (!refcount_inc_not_zero(&key->usage))
-+		goto not_found;
+ endmenu
  
- error:
- 	spin_unlock(&key_serial_lock);
+ menu "Power management options"
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index f7c8f9972f61..83d2e0f43c26 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -1215,11 +1215,6 @@ source "arch/powerpc/Kconfig.debug"
+ 
+ source "security/Kconfig"
+ 
+-config KEYS_COMPAT
+-	bool
+-	depends on COMPAT && KEYS
+-	default y
+-
+ source "crypto/Kconfig"
+ 
+ config PPC_LIB_RHEAP
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index e161fafb495b..6967addc6a89 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -363,9 +363,6 @@ config COMPAT
+ config SYSVIPC_COMPAT
+ 	def_bool y if COMPAT && SYSVIPC
+ 
+-config KEYS_COMPAT
+-	def_bool y if COMPAT && KEYS
+-
+ config SMP
+ 	def_bool y
+ 	prompt "Symmetric multi-processing support"
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index b558c9e29de3..5639c9fe5b55 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -577,9 +577,6 @@ config SYSVIPC_COMPAT
+ 	depends on COMPAT && SYSVIPC
+ 	default y
+ 
+-config KEYS_COMPAT
+-	def_bool y if COMPAT && KEYS
+-
+ endmenu
+ 
+ source "net/Kconfig"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 4ccfacc7232a..0efb4c9497bc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2776,10 +2776,6 @@ config COMPAT_FOR_U64_ALIGNMENT
+ config SYSVIPC_COMPAT
+ 	def_bool y
+ 	depends on SYSVIPC
+-
+-config KEYS_COMPAT
+-	def_bool y
+-	depends on KEYS
+ endif
+ 
+ endmenu
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index 6fd95f76bfae..00b7431a8aeb 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -20,6 +20,10 @@ config KEYS
+ 
+ 	  If you are unsure as to whether this is required, answer N.
+ 
++config KEYS_COMPAT
++	def_bool y
++	depends on COMPAT && KEYS
++
+ config PERSISTENT_KEYRINGS
+ 	bool "Enable register of persistent per-UID keyrings"
+ 	depends on KEYS
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
