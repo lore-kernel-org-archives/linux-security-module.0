@@ -1,144 +1,76 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:49:11 +0100
-Subject: [PATCH 15/23] KEYS: encrypted: sanitize all key material
+Date: Thu, 08 Jun 2017 14:49:04 +0100
+Subject: [PATCH 14/23] KEYS: user_defined: sanitize key payloads
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692975135.11452.9791971822965563991.stgit@warthog.procyon.org.uk>
+Message-ID: <149692974429.11452.9095858900312530276.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-For keys of type "encrypted", consistently zero sensitive key material
-before freeing it.  This was already being done for the decrypted
-payloads of encrypted keys, but not for the master key and the keys
-derived from the master key.
+Zero the payloads of user and logon keys before freeing them.  This
+prevents sensitive key material from being kept around in the slab
+caches after a key is released.
 
-Out of an abundance of caution and because it is trivial to do so, also
-zero buffers containing the key payload in encrypted form, although
-depending on how the encrypted-keys feature is used such information
-does not necessarily need to be kept secret.
-
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Safford <safford@us.ibm.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/encrypted-keys/encrypted.c |   31 +++++++++++++-----------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+ security/keys/user_defined.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 5c98c2fe03f0..bb6324d1ccec 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -375,7 +375,7 @@ static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
- 	memcpy(derived_buf + strlen(derived_buf) + 1, master_key,
- 	       master_keylen);
- 	ret = calc_hash(hash_tfm, derived_key, derived_buf, derived_buf_len);
--	kfree(derived_buf);
-+	kzfree(derived_buf);
- 	return ret;
- }
- 
-@@ -507,6 +507,7 @@ static int datablob_hmac_append(struct encrypted_key_payload *epayload,
- 	if (!ret)
- 		dump_hmac(NULL, digest, HASH_SIZE);
- out:
-+	memzero_explicit(derived_key, sizeof(derived_key));
- 	return ret;
- }
- 
-@@ -545,6 +546,7 @@ static int datablob_hmac_verify(struct encrypted_key_payload *epayload,
- 		dump_hmac("calc", digest, HASH_SIZE);
- 	}
- out:
-+	memzero_explicit(derived_key, sizeof(derived_key));
- 	return ret;
- }
- 
-@@ -701,6 +703,7 @@ static int encrypted_key_decrypt(struct encrypted_key_payload *epayload,
- out:
- 	up_read(&mkey->sem);
- 	key_put(mkey);
-+	memzero_explicit(derived_key, sizeof(derived_key));
- 	return ret;
- }
- 
-@@ -807,13 +810,13 @@ static int encrypted_instantiate(struct key *key,
- 	ret = encrypted_init(epayload, key->description, format, master_desc,
- 			     decrypted_datalen, hex_encoded_iv);
- 	if (ret < 0) {
--		kfree(epayload);
-+		kzfree(epayload);
- 		goto out;
- 	}
- 
- 	rcu_assign_keypointer(key, epayload);
- out:
--	kfree(datablob);
-+	kzfree(datablob);
- 	return ret;
- }
- 
-@@ -822,8 +825,7 @@ static void encrypted_rcu_free(struct rcu_head *rcu)
- 	struct encrypted_key_payload *epayload;
- 
- 	epayload = container_of(rcu, struct encrypted_key_payload, rcu);
--	memset(epayload->decrypted_data, 0, epayload->decrypted_datalen);
--	kfree(epayload);
-+	kzfree(epayload);
- }
- 
- /*
-@@ -881,7 +883,7 @@ static int encrypted_update(struct key *key, struct key_preparsed_payload *prep)
- 	rcu_assign_keypointer(key, new_epayload);
- 	call_rcu(&epayload->rcu, encrypted_rcu_free);
- out:
--	kfree(buf);
-+	kzfree(buf);
- 	return ret;
- }
- 
-@@ -939,33 +941,26 @@ static long encrypted_read(const struct key *key, char __user *buffer,
- 
- 	up_read(&mkey->sem);
- 	key_put(mkey);
-+	memzero_explicit(derived_key, sizeof(derived_key));
- 
- 	if (copy_to_user(buffer, ascii_buf, asciiblob_len) != 0)
- 		ret = -EFAULT;
--	kfree(ascii_buf);
-+	kzfree(ascii_buf);
- 
- 	return asciiblob_len;
- out:
- 	up_read(&mkey->sem);
- 	key_put(mkey);
-+	memzero_explicit(derived_key, sizeof(derived_key));
- 	return ret;
- }
- 
- /*
-- * encrypted_destroy - before freeing the key, clear the decrypted data
-- *
-- * Before freeing the key, clear the memory containing the decrypted
-- * key data.
-+ * encrypted_destroy - clear and free the key's payload
+diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
+index 26605134f17a..3d8c68eba516 100644
+--- a/security/keys/user_defined.c
++++ b/security/keys/user_defined.c
+@@ -86,10 +86,18 @@ EXPORT_SYMBOL_GPL(user_preparse);
   */
- static void encrypted_destroy(struct key *key)
+ void user_free_preparse(struct key_preparsed_payload *prep)
  {
--	struct encrypted_key_payload *epayload = key->payload.data[0];
--
--	if (!epayload)
--		return;
--
--	memzero_explicit(epayload->decrypted_data, epayload->decrypted_datalen);
--	kfree(key->payload.data[0]);
-+	kzfree(key->payload.data[0]);
+-	kfree(prep->payload.data[0]);
++	kzfree(prep->payload.data[0]);
+ }
+ EXPORT_SYMBOL_GPL(user_free_preparse);
+ 
++static void user_free_payload_rcu(struct rcu_head *head)
++{
++	struct user_key_payload *payload;
++
++	payload = container_of(head, struct user_key_payload, rcu);
++	kzfree(payload);
++}
++
+ /*
+  * update a user defined key
+  * - the key's semaphore is write-locked
+@@ -112,7 +120,7 @@ int user_update(struct key *key, struct key_preparsed_payload *prep)
+ 	prep->payload.data[0] = NULL;
+ 
+ 	if (zap)
+-		kfree_rcu(zap, rcu);
++		call_rcu(&zap->rcu, user_free_payload_rcu);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(user_update);
+@@ -130,7 +138,7 @@ void user_revoke(struct key *key)
+ 
+ 	if (upayload) {
+ 		rcu_assign_keypointer(key, NULL);
+-		kfree_rcu(upayload, rcu);
++		call_rcu(&upayload->rcu, user_free_payload_rcu);
+ 	}
  }
  
- struct key_type key_type_encrypted = {
+@@ -143,7 +151,7 @@ void user_destroy(struct key *key)
+ {
+ 	struct user_key_payload *upayload = key->payload.data[0];
+ 
+-	kfree(upayload);
++	kzfree(upayload);
+ }
+ 
+ EXPORT_SYMBOL_GPL(user_destroy);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
