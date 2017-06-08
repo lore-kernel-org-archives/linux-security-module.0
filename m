@@ -1,224 +1,120 @@
-From: azhar.shaikh@intel.com (Shaikh, Azhar)
-Date: Thu, 8 Jun 2017 01:11:43 +0000
-Subject: [PATCH v3] tpm: Enable CLKRUN protocol for Braswell systems
-In-Reply-To: <20170607224444.5043f545@lxorguk.ukuu.org.uk>
-References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
-	<1496870610-29462-1-git-send-email-azhar.shaikh@intel.com>
-	<20170607224444.5043f545@lxorguk.ukuu.org.uk>
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF5828910C7B@ORSMSX109.amr.corp.intel.com>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Wed,  7 Jun 2017 22:49:09 -0300
+Subject: [PATCH v2 0/6] Appended signatures support for IMA appraisal
+Message-ID: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On the OpenPOWER platform, secure boot and trusted boot are being
+implemented using IMA for taking measurements and verifying signatures.
+Since the kernel image on Power servers is an ELF binary, kernels are
+signed using the scripts/sign-file tool and thus use the same signature
+format as signed kernel modules.
 
+This patch series adds support in IMA for verifying those signatures.
+It adds flexibility to OpenPOWER secure boot, because it allows it to boot
+kernels with the signature appended to them as well as kernels where the
+signature is stored in the IMA extended attribute.
 
-> -----Original Message-----
-> From: Alan Cox [mailto:gnomes at lxorguk.ukuu.org.uk]
-> Sent: Wednesday, June 7, 2017 2:45 PM
-> To: Shaikh, Azhar <azhar.shaikh@intel.com>
-> Cc: jarkko.sakkinen at linux.intel.com; jgunthorpe at obsidianresearch.com;
-> tpmdd-devel at lists.sourceforge.net; linux-kernel at vger.kernel.org; linux-
-> security-module at vger.kernel.org
-> Subject: Re: [PATCH v3] tpm: Enable CLKRUN protocol for Braswell systems
-> 
-> > +++ b/drivers/char/tpm/tpm_tis.c
-> > @@ -89,13 +89,89 @@ static inline int is_itpm(struct acpi_device *dev)
-> > }  #endif
-> >
-> > +#ifdef CONFIG_X86
-> > +static inline bool is_bsw(void)
-> > +{
-> > +	return ((boot_cpu_data.x86_model ==
-> INTEL_FAM6_ATOM_AIRMONT) ? 1 :
-> > +0); } #else static inline bool is_bsw(void) {
-> > +	return false;
-> > +}
-> > +#endif
-> 
-> This isn't the only bit that is x86 specific
-> 
-> > +
-> > +#define INTEL_LEGACY_BLK_BASE_ADDR      0xFED08000
-> > +#define ILB_REMAP_SIZE			0x100
-> > +#define LPC_CNTRL_REG_OFFSET            0x84
-> > +#define LPC_CLKRUN_EN                   (1 << 2)
-> > +
-> > +void __iomem *ilb_base_addr;
-> > +
-> > +/**
-> > + * disable_lpc_clk_run() - clear LPC CLKRUN_EN i.e. clocks will be
-> > +free running  */ static void disable_lpc_clk_run(void) {
-> > +	u32 clkrun_val;
-> > +
-> > +	if (!is_bsw())
-> > +		return;
-> > +
-> > +	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-> > +
-> > +	/* Disable LPC CLKRUN# */
-> > +	clkrun_val &= ~LPC_CLKRUN_EN;
-> > +	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-> > +
-> > +	/*
-> > +	 * Write any random value on port 0x80 which is on LPC, to make
-> > +	 * sure LPC clock is running before sending any TPM command.
-> > +	 */
-> > +	outb(0x80, 0xCC);
-> > +
-> > +	/* Make sure the above write is completed */
-> > +	wmb();
-> 
-> Why the wmb(). It doesn't do what the comment says! Also this code is x86
-> specific
-> 
-> 
+The first four patches are cleanups and improvements that can be taken
+independently from the others (and from each other as well). The last two
+are the ones actually focused on this feature.
 
-Memory barrier to enforce the order so that the outb() is completed, which ensures that the LPC clocks are running before sending any TPM command.
+Since modsig is only supported on some specific hooks which don't get
+called often (cf. ima_hook_supports_modsig), it's possible to always check
+for the presence of an appended modsig before looking for the xattr sig. In
+that case, the policy doesn't need to be changed to support the modsig
+keyword. Is that preferable than requiring the policy to explicitly allow a
+modsig like this code does?
 
-> > +}
-> > +
-> > +/**
-> > + * enable_lpc_clk_run() - set LPC CLKRUN_EN i.e. clocks can be turned
-> > +off  */ static void enable_lpc_clk_run(void) {
-> > +	u32 clkrun_val;
-> > +
-> > +	if (!is_bsw())
-> > +		return;
-> > +
-> > +	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-> > +
-> > +	/* Enable LPC CLKRUN# */
-> > +	clkrun_val |= LPC_CLKRUN_EN;
-> > +	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-> > +
-> > +	/*
-> > +	 * Write any random value on port 0x80 which is on LPC, to make
-> > +	 * sure LPC clock is running before sending any TPM command.
-> > +	 */
-> > +	outb(0x80, 0xCC);
-> > +
-> > +	/* Make sure the above write is completed */
-> > +	wmb();
-> > +}
-> 
-> Same
-> 
-> > +
-> >  static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16
-> len,
-> >  			      u8 *result)
-> >  {
-> >  	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-> >
-> > +	disable_lpc_clk_run();
-> > +
-> >  	while (len--)
-> >  		*result++ = ioread8(phy->iobase + addr);
-> > +
-> > +	enable_lpc_clk_run();
-> > +
-> >  	return 0;
-> >  }
-> 
-> So what you actually want to do is fold all the errata crap into an x86 specific
-> chunk and just define disable/enable_lpc_clk_run() as null functions on
-> everything else.
-> 
+I tested these patches with EVM and I believe they don't break it and
+things work as expected, but I'm not really familiar with EVM and its use
+cases so this should be taken with a grain of salt.
 
-Ok, will do.
+I also verified that the code correctly recalculates the file hash if the
+modsig verification fails and the file also has an xattr signature which
+uses a different hash algorithm.
 
-> I'd pick better names too - if other platforms need a hook here it won't I
-> imagine be about LPC. Possibly you want names like
-> 
-> 	platform_begin_tpm_xfer(data);
-> 	platform_end_tpm_xfer(data);
-> 
+These patches apply on top of today's linux-integrity/next.
 
-How about these? Since most of the functions in this driver begin with 'tpm_'
-disable_lpc_clk_run()	- >	tpm_start_xfer()
-enable_lpc_clk_run()	->	tpm_end_xfer()
+Changes since v1:
+- Patch "integrity: Small code improvements"
+  - Add missing #endif comment in ima.h.
 
-> >
-> > @@ -104,8 +180,13 @@ static int tpm_tcg_write_bytes(struct
-> > tpm_tis_data *data, u32 addr, u16 len,  {
-> >  	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-> >
-> > +	disable_lpc_clk_run();
-> > +
-> >  	while (len--)
-> >  		iowrite8(*value++, phy->iobase + addr);
-> > +
-> > +	enable_lpc_clk_run();
-> > +
-> >  	return 0;
-> >  }
-> >
-> > @@ -113,7 +194,12 @@ static int tpm_tcg_read16(struct tpm_tis_data
-> > *data, u32 addr, u16 *result)  {
-> >  	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-> >
-> > +	disable_lpc_clk_run();
-> > +
-> >  	*result = ioread16(phy->iobase + addr);
-> > +
-> > +	enable_lpc_clk_run();
-> > +
-> >  	return 0;
-> >  }
-> >
-> > @@ -121,7 +207,12 @@ static int tpm_tcg_read32(struct tpm_tis_data
-> > *data, u32 addr, u32 *result)  {
-> >  	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-> >
-> > +	disable_lpc_clk_run();
-> > +
-> >  	*result = ioread32(phy->iobase + addr);
-> > +
-> > +	enable_lpc_clk_run();
-> > +
-> >  	return 0;
-> >  }
-> >
-> > @@ -129,7 +220,12 @@ static int tpm_tcg_write32(struct tpm_tis_data
-> > *data, u32 addr, u32 value)  {
-> >  	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-> >
-> > +	disable_lpc_clk_run();
-> > +
-> >  	iowrite32(value, phy->iobase + addr);
-> > +
-> > +	enable_lpc_clk_run();
-> > +
-> >  	return 0;
-> >  }
-> >
-> > @@ -191,6 +287,10 @@ static int tpm_tis_pnp_init(struct pnp_dev
-> *pnp_dev,
-> >  		acpi_dev_handle = ACPI_HANDLE(&pnp_dev->dev);
-> >  	}
-> >
-> > +	if (is_bsw())
-> > +		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
-> > +					ILB_REMAP_SIZE);
-> > +
-> 
-> This suggests to me that the bsw stuff wants to wrap the standard methods
-> because it's weird and ugly having random magic hardware globals in what
-> should be standard code.
-> 
-> >  	return tpm_tis_init(&pnp_dev->dev, &tpm_info, acpi_dev_handle);
-> }
-> >
-> > @@ -214,6 +314,9 @@ static void tpm_tis_pnp_remove(struct pnp_dev
-> > *dev)
-> >
-> >  	tpm_chip_unregister(chip);
-> >  	tpm_tis_remove(chip);
-> > +
-> > +	if (is_bsw())
-> > +		iounmap(ilb_base_addr);
-> >  }
-> >
-> >  static struct pnp_driver tis_pnp_driver = {
+- Patch "ima: Tidy up constant strings"
+  - Squashed into previous patch.
+
+- Patch "ima: Simplify policy_func_show."
+  - Generate ima_hooks enum and func_tokens array from a single macro.
+    (suggested by Mimi)
+  - Further simplify policy_func_show by not using the printf format string
+    from the policy_tokens table.
+
+- Patch "integrity: Introduce struct evm_hmac_xattr"
+  - New patch.
+
+- Patch "MODSIGN: Export module signature definitions."
+  - Add function verify_pkcs7_message_signature which takes a
+    struct pkcs7_message.
+  - Move MODULE_SIG_STRING definition from <linux/module.h> to
+    <linux/module_signature.h>.
+
+- Patch "ima: Support appended signatures for appraisal"
+  - Changed name from appended_sig to modsig. (suggested by Mehmet Kayaalp)
+  - Don't add key_being_used_for value VERIFYING_KEXEC_CMS_SIGNATURE. Use
+    existing VERIFYING_MODULE_SIGNATURE. (suggested by Mimi)
+  - Moved modsig code to its own file. (suggested by Mimi)
+  - Added new xattr "subtype" IMA_MODSIG. (suggested by Mimi)
+  - Check whether a hook supports modsig when the policy is being parsed.
+    (suggested by Mimi)
+  - If the modsig verification fails, look for an xattr signature.
+    (suggested by Mimi)
+  - Add integrity_keyring_from_id function.
+  - Put modsig to measurement list if the template requires the signature
+    contents. (suggested by Mimi).
+
+Thiago Jung Bauermann (6):
+  integrity: Small code improvements
+  ima: Simplify policy_func_show.
+  ima: Log the same audit cause whenever a file has no signature
+  integrity: Introduce struct evm_hmac_xattr
+  MODSIGN: Export module signature definitions.
+  ima: Support module-style appended signatures for appraisal
+
+ certs/system_keyring.c                    |  62 ++++++++---
+ crypto/asymmetric_keys/pkcs7_parser.c     |  12 +++
+ include/crypto/pkcs7.h                    |   3 +
+ include/linux/module.h                    |   3 -
+ include/linux/module_signature.h          |  48 +++++++++
+ include/linux/verification.h              |  10 ++
+ init/Kconfig                              |   6 +-
+ kernel/Makefile                           |   2 +-
+ kernel/module.c                           |   1 +
+ kernel/module_signing.c                   |  74 ++++++-------
+ security/integrity/Kconfig                |   2 +-
+ security/integrity/digsig.c               |  28 +++--
+ security/integrity/digsig_asymmetric.c    |   4 +-
+ security/integrity/evm/evm.h              |   5 +
+ security/integrity/evm/evm_crypto.c       |   2 +-
+ security/integrity/evm/evm_main.c         |   8 +-
+ security/integrity/iint.c                 |   2 +-
+ security/integrity/ima/Kconfig            |  13 +++
+ security/integrity/ima/Makefile           |   1 +
+ security/integrity/ima/ima.h              |  78 ++++++++++++--
+ security/integrity/ima/ima_api.c          |   2 +-
+ security/integrity/ima/ima_appraise.c     |  52 +++++++---
+ security/integrity/ima/ima_main.c         |  91 ++++++++++++----
+ security/integrity/ima/ima_modsig.c       | 167 ++++++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  82 ++++-----------
+ security/integrity/ima/ima_template_lib.c |  14 ++-
+ security/integrity/integrity.h            |  14 ++-
+ 27 files changed, 591 insertions(+), 195 deletions(-)
+ create mode 100644 include/linux/module_signature.h
+ create mode 100644 security/integrity/ima/ima_modsig.c
+
+-- 
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
