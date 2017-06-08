@@ -1,51 +1,62 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:48:32 +0100
-Subject: [PATCH 10/23] KEYS: encrypted: use constant-time HMAC comparison
+Date: Thu, 08 Jun 2017 14:48:03 +0100
+Subject: [PATCH 06/23] KEYS: put keyring if
+	install_session_keyring_to_cred() fails
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692971287.11452.3700184292634708953.stgit@warthog.procyon.org.uk>
+Message-ID: <149692968329.11452.1023488254368799056.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-MACs should, in general, be compared using crypto_memneq() to prevent
-timing attacks.
+In join_session_keyring(), if install_session_keyring_to_cred() were to
+fail, we would leak the keyring reference, just like in the bug fixed by
+commit 23567fd052a9 ("KEYS: Fix keyring ref leak in
+join_session_keyring()").  Fortunately this cannot happen currently, but
+we really should be more careful.  Do this by adding and using a new
+error label at which the keyring reference is dropped.
 
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/encrypted-keys/encrypted.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ security/keys/process_keys.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 702c80662069..5c98c2fe03f0 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -30,6 +30,7 @@
- #include <linux/scatterlist.h>
- #include <linux/ctype.h>
- #include <crypto/aes.h>
-+#include <crypto/algapi.h>
- #include <crypto/hash.h>
- #include <crypto/sha.h>
- #include <crypto/skcipher.h>
-@@ -534,8 +535,8 @@ static int datablob_hmac_verify(struct encrypted_key_payload *epayload,
- 	ret = calc_hmac(digest, derived_key, sizeof derived_key, p, len);
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 2217dfec7996..86bced9fdbdf 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -809,15 +809,14 @@ long join_session_keyring(const char *name)
+ 		ret = PTR_ERR(keyring);
+ 		goto error2;
+ 	} else if (keyring == new->session_keyring) {
+-		key_put(keyring);
+ 		ret = 0;
+-		goto error2;
++		goto error3;
+ 	}
+ 
+ 	/* we've got a keyring - now to install it */
+ 	ret = install_session_keyring_to_cred(new, keyring);
  	if (ret < 0)
- 		goto out;
--	ret = memcmp(digest, epayload->format + epayload->datablob_len,
--		     sizeof digest);
-+	ret = crypto_memneq(digest, epayload->format + epayload->datablob_len,
-+			    sizeof(digest));
- 	if (ret) {
- 		ret = -EINVAL;
- 		dump_hmac("datablob",
+-		goto error2;
++		goto error3;
+ 
+ 	commit_creds(new);
+ 	mutex_unlock(&key_session_mutex);
+@@ -827,6 +826,8 @@ long join_session_keyring(const char *name)
+ okay:
+ 	return ret;
+ 
++error3:
++	key_put(keyring);
+ error2:
+ 	mutex_unlock(&key_session_mutex);
+ error:
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
