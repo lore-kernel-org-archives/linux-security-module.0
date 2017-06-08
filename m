@@ -1,65 +1,62 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 08 Jun 2017 14:49:34 +0100
-Subject: [PATCH 18/23] KEYS: DH: forbid using digest_null as the KDF hash
+Date: Thu, 08 Jun 2017 14:49:26 +0100
+Subject: [PATCH 17/23] KEYS: sanitize key structs before freeing
 In-Reply-To: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
 References: <149692963884.11452.7673998701432248814.stgit@warthog.procyon.org.uk>
-Message-ID: <149692977475.11452.14202503501716155138.stgit@warthog.procyon.org.uk>
+Message-ID: <149692976695.11452.17536115814842144338.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Requesting "digest_null" in the keyctl_kdf_params caused an infinite
-loop in kdf_ctr() because the "null" hash has a digest size of 0.  Fix
-it by rejecting hash algorithms with a digest size of 0.
+While a 'struct key' itself normally does not contain sensitive
+information, Documentation/security/keys.txt actually encourages this:
+
+     "Having a payload is not required; and the payload can, in fact,
+     just be a value stored in the struct key itself."
+
+In case someone has taken this advice, or will take this advice in the
+future, zero the key structure before freeing it.  We might as well, and
+as a bonus this could make it a bit more difficult for an adversary to
+determine which keys have recently been in use.
+
+This is safe because the key_jar cache does not use a constructor.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Stephan Mueller <smueller@chronox.de>
 ---
 
- security/keys/dh.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ include/linux/key.h |    1 -
+ security/keys/gc.c  |    4 +---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index e603bd912e4c..8abc70ebe22d 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -89,6 +89,7 @@ static int kdf_alloc(struct kdf_sdesc **sdesc_ret, char *hashname)
- 	struct crypto_shash *tfm;
- 	struct kdf_sdesc *sdesc;
- 	int size;
-+	int err;
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 0c9b93b0d1f7..78e25aabedaf 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -173,7 +173,6 @@ struct key {
+ #ifdef KEY_DEBUGGING
+ 	unsigned		magic;
+ #define KEY_DEBUG_MAGIC		0x18273645u
+-#define KEY_DEBUG_MAGIC_X	0xf8e9dacbu
+ #endif
  
- 	/* allocate synchronous hash */
- 	tfm = crypto_alloc_shash(hashname, 0, 0);
-@@ -97,16 +98,25 @@ static int kdf_alloc(struct kdf_sdesc **sdesc_ret, char *hashname)
- 		return PTR_ERR(tfm);
+ 	unsigned long		flags;		/* status flags (change with bitops) */
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 595becc6d0d2..87cb260e4890 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -158,9 +158,7 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
+ 
+ 		kfree(key->description);
+ 
+-#ifdef KEY_DEBUGGING
+-		key->magic = KEY_DEBUG_MAGIC_X;
+-#endif
++		memzero_explicit(key, sizeof(*key));
+ 		kmem_cache_free(key_jar, key);
  	}
- 
-+	err = -EINVAL;
-+	if (crypto_shash_digestsize(tfm) == 0)
-+		goto out_free_tfm;
-+
-+	err = -ENOMEM;
- 	size = sizeof(struct shash_desc) + crypto_shash_descsize(tfm);
- 	sdesc = kmalloc(size, GFP_KERNEL);
- 	if (!sdesc)
--		return -ENOMEM;
-+		goto out_free_tfm;
- 	sdesc->shash.tfm = tfm;
- 	sdesc->shash.flags = 0x0;
- 
- 	*sdesc_ret = sdesc;
- 
- 	return 0;
-+
-+out_free_tfm:
-+	crypto_free_shash(tfm);
-+	return err;
  }
- 
- static void kdf_dealloc(struct kdf_sdesc *sdesc)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
