@@ -1,160 +1,165 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 09 Jun 2017 15:55:43 -0400
-Subject: [PATCH] sample xfstests IMA-appraisal test module (resending)
-In-Reply-To: <1497031364-19949-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1497031364-19949-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1497038143.21594.251.camel@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 9 Jun 2017 16:16:38 -0400
+Subject: [PATCH] security: selinux: use kmem_cache for ebitmap
+In-Reply-To: <1496895489-180660-1-git-send-email-junil0814.lee@lge.com>
+References: <1496895489-180660-1-git-send-email-junil0814.lee@lge.com>
+Message-ID: <CAHC9VhQ54WqLpBqHQm3F2=wEQq6p7xWCEyEubyrTr6kLDE7wgw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On systems where IMA-appraisal is configured, the file system properly
-labeled and the system booted with the "ima_tcb ima_appraise_tcb" boot
-command line options, new files created by root will have a file hash
-written out as security.ima.
+On Thu, Jun 8, 2017 at 12:18 AM, Junil Lee <junil0814.lee@lge.com> wrote:
+> The allocated size for each ebitmap_node is 192byte by kzalloc().
+> Then, ebitmap_node size is fixed, so it's possible to use only 144byte
+> for each object by kmem_cache_zalloc().
+> It can reduce some dynamic allocation size.
+>
+> Signed-off-by: Junil Lee <junil0814.lee@lge.com>
+> ---
+>  security/selinux/ss/ebitmap.c  | 26 ++++++++++++++++++++------
+>  security/selinux/ss/ebitmap.h  |  3 +++
+>  security/selinux/ss/services.c |  4 ++++
+>  3 files changed, 27 insertions(+), 6 deletions(-)
 
-This xfstests creates a file and compares the security.ima before and
-after modifying the file.  The results are compared with the "good"
-file.
+I just applied this to selinux/next, thank you.
 
-(For filesystems that are configured with IMA-appraisal, but aren't
-labeled properly, boot the system with the "ima_appraise=tcb" boot
-command line option as well.)
+> diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
+> index 9db4709a..ad38299 100644
+> --- a/security/selinux/ss/ebitmap.c
+> +++ b/security/selinux/ss/ebitmap.c
+> @@ -24,6 +24,8 @@
+>
+>  #define BITS_PER_U64   (sizeof(u64) * 8)
+>
+> +static struct kmem_cache *ebitmap_node_cachep;
+> +
+>  int ebitmap_cmp(struct ebitmap *e1, struct ebitmap *e2)
+>  {
+>         struct ebitmap_node *n1, *n2;
+> @@ -54,7 +56,7 @@ int ebitmap_cpy(struct ebitmap *dst, struct ebitmap *src)
+>         n = src->node;
+>         prev = NULL;
+>         while (n) {
+> -               new = kzalloc(sizeof(*new), GFP_ATOMIC);
+> +               new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
+>                 if (!new) {
+>                         ebitmap_destroy(dst);
+>                         return -ENOMEM;
+> @@ -162,7 +164,7 @@ int ebitmap_netlbl_import(struct ebitmap *ebmap,
+>                 if (e_iter == NULL ||
+>                     offset >= e_iter->startbit + EBITMAP_SIZE) {
+>                         e_prev = e_iter;
+> -                       e_iter = kzalloc(sizeof(*e_iter), GFP_ATOMIC);
+> +                       e_iter = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
+>                         if (e_iter == NULL)
+>                                 goto netlbl_import_failure;
+>                         e_iter->startbit = offset - (offset % EBITMAP_SIZE);
+> @@ -288,7 +290,7 @@ int ebitmap_set_bit(struct ebitmap *e, unsigned long bit, int value)
+>                                         prev->next = n->next;
+>                                 else
+>                                         e->node = n->next;
+> -                               kfree(n);
+> +                               kmem_cache_free(ebitmap_node_cachep, n);
+>                         }
+>                         return 0;
+>                 }
+> @@ -299,7 +301,7 @@ int ebitmap_set_bit(struct ebitmap *e, unsigned long bit, int value)
+>         if (!value)
+>                 return 0;
+>
+> -       new = kzalloc(sizeof(*new), GFP_ATOMIC);
+> +       new = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
+>         if (!new)
+>                 return -ENOMEM;
+>
+> @@ -332,7 +334,7 @@ void ebitmap_destroy(struct ebitmap *e)
+>         while (n) {
+>                 temp = n;
+>                 n = n->next;
+> -               kfree(temp);
+> +               kmem_cache_free(ebitmap_node_cachep, temp);
+>         }
+>
+>         e->highbit = 0;
+> @@ -400,7 +402,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+>
+>                 if (!n || startbit >= n->startbit + EBITMAP_SIZE) {
+>                         struct ebitmap_node *tmp;
+> -                       tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+> +                       tmp = kmem_cache_zalloc(ebitmap_node_cachep, GFP_KERNEL);
+>                         if (!tmp) {
+>                                 printk(KERN_ERR
+>                                        "SELinux: ebitmap: out of memory\n");
+> @@ -519,3 +521,15 @@ int ebitmap_write(struct ebitmap *e, void *fp)
+>         }
+>         return 0;
+>  }
+> +
+> +void ebitmap_cache_init(void)
+> +{
+> +       ebitmap_node_cachep = kmem_cache_create("ebitmap_node",
+> +                                                       sizeof(struct ebitmap_node),
+> +                                                       0, SLAB_PANIC, NULL);
+> +}
+> +
+> +void ebitmap_cache_destroy(void)
+> +{
+> +       kmem_cache_destroy(ebitmap_node_cachep);
+> +}
+> diff --git a/security/selinux/ss/ebitmap.h b/security/selinux/ss/ebitmap.h
+> index 9637b8c..6d5a9ac 100644
+> --- a/security/selinux/ss/ebitmap.h
+> +++ b/security/selinux/ss/ebitmap.h
+> @@ -130,6 +130,9 @@ void ebitmap_destroy(struct ebitmap *e);
+>  int ebitmap_read(struct ebitmap *e, void *fp);
+>  int ebitmap_write(struct ebitmap *e, void *fp);
+>
+> +void ebitmap_cache_init(void);
+> +void ebitmap_cache_destroy(void);
+> +
+>  #ifdef CONFIG_NETLABEL
+>  int ebitmap_netlbl_export(struct ebitmap *ebmap,
+>                           struct netlbl_lsm_catmap **catmap);
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index 2021666..2f02fa6 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -2054,9 +2054,11 @@ int security_load_policy(void *data, size_t len)
+>
+>         if (!ss_initialized) {
+>                 avtab_cache_init();
+> +               ebitmap_cache_init();
+>                 rc = policydb_read(&policydb, fp);
+>                 if (rc) {
+>                         avtab_cache_destroy();
+> +                       ebitmap_cache_destroy();
+>                         goto out;
+>                 }
+>
+> @@ -2067,6 +2069,7 @@ int security_load_policy(void *data, size_t len)
+>                 if (rc) {
+>                         policydb_destroy(&policydb);
+>                         avtab_cache_destroy();
+> +                       ebitmap_cache_destroy();
+>                         goto out;
+>                 }
+>
+> @@ -2074,6 +2077,7 @@ int security_load_policy(void *data, size_t len)
+>                 if (rc) {
+>                         policydb_destroy(&policydb);
+>                         avtab_cache_destroy();
+> +                       ebitmap_cache_destroy();
+>                         goto out;
+>                 }
+>
+> --
+> 2.6.2
+>
 
-Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- tests/generic/440     | 89 +++++++++++++++++++++++++++++++++++++++++++++++++++
- tests/generic/440.out | 13 ++++++++
- tests/generic/group   |  1 +
- 3 files changed, 103 insertions(+)
- create mode 100755 tests/generic/440
- create mode 100644 tests/generic/440.out
 
-diff --git a/tests/generic/440 b/tests/generic/440
-new file mode 100755
-index 0000000..8616a48
---- /dev/null
-+++ b/tests/generic/440
-@@ -0,0 +1,89 @@
-+#! /bin/bash
-+# FS QA Test No. 440
-+#
-+# Tests IMA-appraisal
-+# Derived from 062 tests
-+#
-+
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/attr
-+
-+if [ "$FSTYP" = "btrfs" ]; then
-+. ./common/btrfs
-+elif [ "$FSTYP" = "xfs" ]; then
-+. ./common/xfs
-+fi
-+
-+_cleanup()
-+{
-+        cd /
-+	echo; echo "*** unmount"
-+	_scratch_unmount 2>/dev/null
-+	rm -f $tmp.*
-+}
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+getfattr()
-+{
-+    $GETFATTR_PROG --absolute-names -dh $@ 2>&1 | _filter_scratch
-+}
-+
-+setfattr()
-+{
-+    $SETFATTR_PROG $@ 2>&1 | _filter_scratch
-+}
-+
-+_create_test_bed()
-+{
-+	echo "*** create temporary file"
-+	echo "Hello" >  $SCRATCH_MNT/hello.txt
-+}
-+
-+# real QA test starts here
-+_supported_fs generic
-+_supported_os Linux
-+
-+_require_scratch
-+_require_attrs
-+_require_command "$(which timeout)" "timeout"
-+
-+# real QA test starts here
-+_scratch_mkfs > /dev/null 2>&1 || _fail "mkfs failed"
-+_scratch_mount || _fail "mount failed"
-+_create_test_bed
-+
-+xattr="security.ima"
-+testfile="hello.txt"
-+
-+if [ ! -f $SCRATCH_MNT/$testfile ]; then
-+	echo "File $testfile does not exist"
-+	msleep 1
-+fi
-+
-+echo "*** Reading $SCRATCH_MNT"
-+timeout -s KILL 2 cat $SCRATCH_MNT/$testfile > /dev/null
-+if [ $? -ne 0 ]; then
-+	echo "Failed to read $SCRATCH_MNT/$testfile"
-+fi
-+
-+echo "*** initial security.ima hash"
-+getfattr -e hex -n $xattr $SCRATCH_MNT/$testfile
-+
-+echo " World!" >> $SCRATCH_MNT/$testfile
-+
-+echo "*** updated security.ima hash"
-+getfattr -e hex -n $xattr $SCRATCH_MNT/$testfile
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/440.out b/tests/generic/440.out
-new file mode 100644
-index 0000000..a827377
---- /dev/null
-+++ b/tests/generic/440.out
-@@ -0,0 +1,13 @@
-+QA output created by 440
-+*** create temporary file
-+*** Reading /mnt/scratch
-+*** initial security.ima hash
-+# file: SCRATCH_MNT/hello.txt
-+security.ima=0x040466a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18
-+
-+*** updated security.ima hash
-+# file: SCRATCH_MNT/hello.txt
-+security.ima=0x0404cddd9990ad741e165a6a50990afe969c2233fc8794d027cdbf382f698a62a22f
-+
-+
-+*** unmount
-diff --git a/tests/generic/group b/tests/generic/group
-index 5d3e4dc..c1ecc23 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -442,3 +442,4 @@
- 437 auto quick
- 438 auto
- 439 auto quick punch
-+440 attr
+
 -- 
-2.9.3
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
