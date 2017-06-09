@@ -1,36 +1,31 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Fri, 09 Jun 2017 18:19:19 -0300
-Subject: [PATCH v2 0/6] Appended signatures support for IMA appraisal
-In-Reply-To: <87d1adihhk.fsf@concordia.ellerman.id.au>
-References: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
-	<87d1adihhk.fsf@concordia.ellerman.id.au>
-Message-ID: <87efusyi3s.fsf@linux.vnet.ibm.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sat, 10 Jun 2017 08:04:32 +0900
+Subject: [PATCH v1] shebang: restrict python interactive prompt/interpreter
+In-Reply-To: <d84aaf19-307b-4b60-df74-4fb43a218c9c@nmatt.com>
+References: <bf9f44f5-7b9c-dff1-10e0-84c866c3a372@nmatt.com>
+	<201706100041.GFH78616.OFtOHFJSLQOMVF@I-love.SAKURA.ne.jp>
+	<754b78d1-f7f9-58bd-bf74-fea9e105649a@nmatt.com>
+	<20170609164315.GA1141@meriadoc.perfinion.com>
+	<d84aaf19-307b-4b60-df74-4fb43a218c9c@nmatt.com>
+Message-ID: <201706100804.FDC30763.tFVOMOLFOFSQHJ@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Matt Brown wrote:
+> what does everyone thing about a envp_blacklist option that is a list of
+> environmental variables that will be stripped from exec calls. This can
+> be done in the LSM hook bprm_check_security.
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
+Stripping argv[0] can be done by remove_arg_zero(). But stripping specific
+environmental variables is a bit complicated than what you would think. You
+can see tomoyo_environ() for how to whitelist environmental variable names.
 
-> Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> writes:
->
->> On the OpenPOWER platform, secure boot and trusted boot are being
->> implemented using IMA for taking measurements and verifying signatures.
->
-> I still want you to implement arch_kexec_kernel_verify_sig() as well :)
+> 
+> Is there any reason on a hardened system why you would need the
+> PYTHONINSPECT environmental variable?
 
-Yes, I will implement it! We are still working on loading the public
-keys for kernel signing from the firmware into a kernel keyring, so
-there's not much point in implementing arch_kexec_kernel_verify_sig
-without having that first.
-
-The same problem also affects IMA: even with these patches, new code
-still neededs to be added to make IMA use the platform keys for kernel
-signature verification.
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+TOMOYO and CaitSith try to check such factors (e.g. argv/envp as well as
+pathname manipulations).
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
