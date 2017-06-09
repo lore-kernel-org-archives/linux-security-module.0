@@ -1,291 +1,93 @@
-From: labbott@redhat.com (Laura Abbott)
-Date: Fri, 9 Jun 2017 11:56:14 -0700
-Subject: [PATCH 2/4] Protectable Memory Allocator
-In-Reply-To: <20170607123505.16629-3-igor.stoppa@huawei.com>
-References: <20170607123505.16629-1-igor.stoppa@huawei.com>
-	<20170607123505.16629-3-igor.stoppa@huawei.com>
-Message-ID: <ace6f45a-2d21-9a00-fa74-518ac727074f@redhat.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Fri, 9 Jun 2017 12:22:13 -0700
+Subject: [PATCH 0/5] security, efi: Set lockdown if in secure boot mode
+In-Reply-To: <CAKv+Gu96h=isM7_-niVmw0pojonD5Sr9Z_onqmkb22GVdH4NVA@mail.gmail.com>
+References: <149563711758.9419.11406612723056598045.stgit@warthog.procyon.org.uk>
+	<CAKv+Gu_5gUWwx7Sxgm8d03L4t4nF8dDe+AXqOqto4B7AVSZ9CA@mail.gmail.com>
+	<21606.1496222635@warthog.procyon.org.uk>
+	<CAKv+Gu_vXASr=yDJ3MwT960eApqeWKEd-hqGoEyGsJKip7N+KQ@mail.gmail.com>
+	<25009.1496741691@warthog.procyon.org.uk>
+	<CAKv+Gu96h=isM7_-niVmw0pojonD5Sr9Z_onqmkb22GVdH4NVA@mail.gmail.com>
+Message-ID: <CAGXu5jJ41ea9G8_2Uj04CN-1F==+wohdXkJTr4REVUOXuUbGUw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/07/2017 05:35 AM, Igor Stoppa wrote:
-> The MMU available in many systems running Linux can often provide R/O
-> protection to the memory pages it handles.
-> 
-> However, the MMU-based protection works efficiently only when said pages
-> contain only data that will not need further modifications.
-> 
-> Statically allocated variables can be segregated into a dedicated
-> section, however this is not fit too well the case of dynamically
-> allocated ones.
-> 
-> Dynamic allocation does not provide, currently, means for grouping
-> variables in memory pages that would contain exclusively data that can
-> be made read only.
-> 
-> The allocator here provided (pmalloc - protectable memory allocator)
-> introduces the concept of pools of protectable memory.
-> 
-> A module can request a pool and then refer any allocation request to the
-> pool handler it has received.
-> 
-> Once all the memory requested (over various iterations) is initialized,
-> the pool can be protected.
-> 
-> After this point, the pool can only be destroyed (it is up to the module
-> to avoid any further references to the memory from the pool, after
-> the destruction is invoked).
-> 
-> The latter case is mainly meant for releasing memory, when a module is
-> unloaded.
-> 
-> A module can have as many pools as needed, for example to support the
-> protection of data that is initialized in sufficiently distinct phases.
-> 
-> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-> ---
->  include/linux/page-flags.h     |   2 +
->  include/linux/pmalloc.h        |  20 ++++
->  include/trace/events/mmflags.h |   1 +
->  init/main.c                    |   2 +
->  mm/Makefile                    |   1 +
->  mm/pmalloc.c                   | 226 +++++++++++++++++++++++++++++++++++++++++
->  mm/usercopy.c                  |  24 +++--
->  7 files changed, 267 insertions(+), 9 deletions(-)
->  create mode 100644 include/linux/pmalloc.h
->  create mode 100644 mm/pmalloc.c
-> 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 6b5818d..acc0723 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -81,6 +81,7 @@ enum pageflags {
->  	PG_active,
->  	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
->  	PG_slab,
-> +	PG_pmalloc,
->  	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
->  	PG_arch_1,
->  	PG_reserved,
-> @@ -274,6 +275,7 @@ PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
->  	TESTCLEARFLAG(Active, active, PF_HEAD)
->  __PAGEFLAG(Slab, slab, PF_NO_TAIL)
->  __PAGEFLAG(SlobFree, slob_free, PF_NO_TAIL)
-> +__PAGEFLAG(Pmalloc, pmalloc, PF_NO_TAIL)
->  PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
->  
->  /* Xen */
-> diff --git a/include/linux/pmalloc.h b/include/linux/pmalloc.h
-> new file mode 100644
-> index 0000000..83d3557
-> --- /dev/null
-> +++ b/include/linux/pmalloc.h
-> @@ -0,0 +1,20 @@
-> +/*
-> + * pmalloc.h: Header for Protectable Memory Allocator
-> + *
-> + * (C) Copyright 2017 Huawei Technologies Co. Ltd.
-> + * Author: Igor Stoppa <igor.stoppa@huawei.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; version 2
-> + * of the License.
-> + */
-> +
-> +#ifndef _PMALLOC_H
-> +#define _PMALLOC_H
-> +
-> +struct pmalloc_pool *pmalloc_create_pool(const char *name);
-> +void *pmalloc(unsigned long size, struct pmalloc_pool *pool);
-> +int pmalloc_protect_pool(struct pmalloc_pool *pool);
-> +int pmalloc_destroy_pool(struct pmalloc_pool *pool);
-> +#endif
-> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-> index 304ff94..41d1587 100644
-> --- a/include/trace/events/mmflags.h
-> +++ b/include/trace/events/mmflags.h
-> @@ -91,6 +91,7 @@
->  	{1UL << PG_lru,			"lru"		},		\
->  	{1UL << PG_active,		"active"	},		\
->  	{1UL << PG_slab,		"slab"		},		\
-> +	{1UL << PG_pmalloc,		"pmalloc"	},		\
->  	{1UL << PG_owner_priv_1,	"owner_priv_1"	},		\
->  	{1UL << PG_arch_1,		"arch_1"	},		\
->  	{1UL << PG_reserved,		"reserved"	},		\
-> diff --git a/init/main.c b/init/main.c
-> index f866510..7850887 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -485,6 +485,7 @@ static void __init mm_init(void)
->  	ioremap_huge_init();
->  }
->  
-> +extern int __init pmalloc_init(void);
->  asmlinkage __visible void __init start_kernel(void)
->  {
->  	char *command_line;
-> @@ -653,6 +654,7 @@ asmlinkage __visible void __init start_kernel(void)
->  	proc_caches_init();
->  	buffer_init();
->  	key_init();
-> +	pmalloc_init();
->  	security_init();
->  	dbg_late_init();
->  	vfs_caches_init();
-> diff --git a/mm/Makefile b/mm/Makefile
-> index 026f6a8..b47dcf8 100644
-> --- a/mm/Makefile
-> +++ b/mm/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_SPARSEMEM)	+= sparse.o
->  obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
->  obj-$(CONFIG_SLOB) += slob.o
->  obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
-> +obj-$(CONFIG_ARCH_HAS_SET_MEMORY) += pmalloc.o
->  obj-$(CONFIG_KSM) += ksm.o
->  obj-$(CONFIG_PAGE_POISONING) += page_poison.o
->  obj-$(CONFIG_SLAB) += slab.o
-> diff --git a/mm/pmalloc.c b/mm/pmalloc.c
-> new file mode 100644
-> index 0000000..8050dea
-> --- /dev/null
-> +++ b/mm/pmalloc.c
-> @@ -0,0 +1,226 @@
-> +/*
-> + * pmalloc.c: Protectable Memory Allocator
-> + *
-> + * (C) Copyright 2017 Huawei Technologies Co. Ltd.
-> + * Author: Igor Stoppa <igor.stoppa@huawei.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; version 2
-> + * of the License.
-> + */
-> +
-> +#include <linux/printk.h>
-> +#include <linux/init.h>
-> +#include <linux/mm.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/list.h>
-> +#include <linux/rculist.h>
-> +#include <linux/mutex.h>
-> +#include <linux/atomic.h>
-> +#include <asm/set_memory.h>
-> +#include <asm/page.h>
-> +
-> +typedef unsigned long align_t;
-> +#define WORD_SIZE sizeof(unsigned long)
-> +
-> +#define __PMALLOC_ALIGNED __aligned(WORD_SIZE)
-> +
-> +#define MAX_POOL_NAME_LEN 20
-> +
-> +struct pmalloc_data {
-> +	struct hlist_head pools_list_head;
-> +	struct mutex pools_list_mutex;
-> +	atomic_t pools_count;
-> +};
-> +
-> +struct pmalloc_pool {
-> +	struct hlist_node pools_list;
-> +	struct hlist_head nodes_list_head;
-> +	struct mutex nodes_list_mutex;
-> +	atomic_t nodes_count;
-> +	atomic_t protected;
-> +	char name[MAX_POOL_NAME_LEN];
-> +};
-> +
-> +struct pmalloc_node {
-> +	struct hlist_node nodes_list;
-> +	atomic_t used_words;
-> +	unsigned int total_words;
-> +	__PMALLOC_ALIGNED align_t data[];
-> +};
-> +
-> +#define HEADER_SIZE sizeof(struct pmalloc_node)
-> +
-> +static struct pmalloc_data *pmalloc_data;
-> +
-> +static struct pmalloc_node *__pmalloc_create_node(int words)
-> +{
-> +	struct pmalloc_node *node;
-> +	unsigned long size, i, pages;
-> +	struct page *p;
-> +
-> +	size = roundup(HEADER_SIZE + WORD_SIZE * words, PAGE_SIZE);
-> +	node = vmalloc(size);
-> +	if (!node)
-> +		return NULL;
-> +	atomic_set(&node->used_words, 0);
-> +	node->total_words = (size - HEADER_SIZE) / WORD_SIZE;
-> +	pages = size / PAGE_SIZE;
-> +	for (i = 0; i < pages; i++) {
-> +		p = vmalloc_to_page((void *)(i * PAGE_SIZE +
-> +					     (unsigned long)node));
-> +		__SetPagePmalloc(p);
-> +	}
-> +	return node;
-> +}
-> +
-> +void *pmalloc(unsigned long size, struct pmalloc_pool *pool)
-> +{
-> +	struct pmalloc_node *node;
-> +	int req_words;
-> +	int starting_word;
-> +
-> +	if (size > INT_MAX || size == 0 ||
-> +	    !pool || atomic_read(&pool->protected))
-> +		return NULL;
-> +	req_words = roundup(size, WORD_SIZE) / WORD_SIZE;
-> +	rcu_read_lock();
-> +	hlist_for_each_entry_rcu(node, &pool->nodes_list_head, nodes_list) {
-> +		starting_word = atomic_fetch_add(req_words, &node->used_words);
-> +		if (starting_word + req_words > node->total_words) {
-> +			atomic_sub(req_words, &node->used_words);
-> +		} else {
-> +			rcu_read_unlock();
-> +			return node->data + starting_word;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +	node = __pmalloc_create_node(req_words);
-> +	if (!node)
-> +		return NULL;
-> +	starting_word = atomic_fetch_add(req_words, &node->used_words);
-> +	mutex_lock(&pool->nodes_list_mutex);
-> +	hlist_add_head_rcu(&node->nodes_list, &pool->nodes_list_head);
-> +	mutex_unlock(&pool->nodes_list_mutex);
-> +	synchronize_rcu();
-> +	atomic_inc(&pool->nodes_count);
-> +	return node->data + starting_word;
-> +}
+On Fri, Jun 9, 2017 at 10:33 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> (+ Kees)
+>
+> On 6 June 2017 at 09:34, David Howells <dhowells@redhat.com> wrote:
+>> Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>>
+>>> and print a subsequent line for every lockdown feature that is enabled, e.g.,
+>>>
+>>> lockdown: disabling MSRs
+>>> lockdown: disabling hibernate support
 
-The pool logic looks remarkably similar to genalloc (lib/genalloc.c).
-It's not a perfect 1-to-1 mapping but it's close enough to be worth
-a look.
+If lockdown introspection is desired, perhaps just add a /proc file
+that lists them all? And if memory usage is a concern, it could be
+behind another config, like CONFIG_LOCK_DOWN_KERNEL_PROC ?
 
-> +
-> +const char msg[] = "Not a valid Pmalloc object.";
-> +const char *__pmalloc_check_object(const void *ptr, unsigned long n)
-> +{
-> +	unsigned long p;
-> +
-> +	p = (unsigned long)ptr;
-> +	n = p + n - 1;
-> +	for (; (PAGE_MASK & p) <= (PAGE_MASK & n); p += PAGE_SIZE) {
-> +		if (is_vmalloc_addr((void *)p)) {
-> +			struct page *page;
-> +
-> +			page = vmalloc_to_page((void *)p);
-> +			if (!(page && PagePmalloc(page)))
-> +				return msg;
-> +		}
+>> There's another problem with this idea: the lockdown facility is passive - it
+>> doesn't go looking for things to lock down; rather, things that can be locked
+>> down inquire as to whether lockdown is in effect at the point someone tries to
+>> use them.
+>>
+>> Now, I could reserve a variable for each thing we lock down to make sure that
+>> we don't emit the message more than once, but I'm loathe to waste memory this
+>> way.
+>>
+>> I can't so easily switch the facility to being active either, since a lot of
+>> the lockdownables are in modules.
 
-Should this be an error if is_vmalloc_addr returns false?
+I personally don't think the introspection is needed, but I see Ard's point.
 
-Thanks,
-Laura
+> Let me reiterate my concern for Kees's sake: without a threat model
+> nor any notion of how much kernel lockdown reduces the attack surface,
+> we end up with a 'doing something is better than nothing' approach.
+> Fine. But now you are telling me that there is no way we can provide
+> information to the user what that 'something' amounts to for a
+> particular kernel build for a particular architecture. Do you intend
+> to add lockdown features going forward after enabling the initial set?
+> Would any of these lockdown features ever be Kconfigurable? Do you
+> expect all lockdown features to be applicable to all architectures? So
+> how do I know what lockdown actually means for my system?
+
+I'd like the kernel to grow a bright line between userspace and
+physical memory, so I'm a fan of this series. It does look rather
+ad-hoc currently, but I think that's the reality the kernel faces.
+Right now, we're in a position where the kernel APIs don't provide a
+mechanism to distinguish between userspace users and kernel users (in
+that anything can just expose a kernel API to userspace: e.g. all the
+drivers over the years that trip over STRICT_DEVMEM and then create
+their own /dev/mem without restrictions).
+
+So, as we stand, we need to start by adding lockdown checks everywhere
+we find exposures, and I'd expect this list to grow over time (which
+would support the desirability of introspection, but I kind of see
+introspection as overkill). It'd be nice if we could identify classes
+of things that have to keep getting lockdown logic added to so that we
+could collect them into a single place (e.g. module parameters that
+define a phyiscal memory area could use a helper to do it instead of
+being yet another unsigned long, and the helper would do the lockdown
+check, etc). But that work will take time.
+
+> Anyway, I think I have made my concerns clear, and the EFI bits look
+> fine to me as long as the policy lives elsewhere.
+
+Yeah, splitting policy makes sense to me: Chrome OS would use lockdown
+as well, but it doesn't use EFI at all.
+
+> Apologies for letting this drag on a bit. I do agree in principle, but
+> I'd like to get the details right as well.
+
+(And please CC me on future versions.)
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
