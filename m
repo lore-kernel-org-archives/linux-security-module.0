@@ -1,29 +1,35 @@
 From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Sat, 10 Jun 2017 00:23:37 +0900
+Date: Sat, 10 Jun 2017 00:41:37 +0900
 Subject: [PATCH v1] shebang: restrict python interactive prompt/interpreter
-In-Reply-To: <1497020766.21594.239.camel@linux.vnet.ibm.com>
+In-Reply-To: <bf9f44f5-7b9c-dff1-10e0-84c866c3a372@nmatt.com>
 References: <1497014528.21594.190.camel@linux.vnet.ibm.com>
 	<201706092302.HCE57804.OSFJFVtMLOQHFO@I-love.SAKURA.ne.jp>
-	<1497020766.21594.239.camel@linux.vnet.ibm.com>
-Message-ID: <201706100023.JCC87518.OOVtQFLHFOFSJM@I-love.SAKURA.ne.jp>
+	<bf9f44f5-7b9c-dff1-10e0-84c866c3a372@nmatt.com>
+Message-ID: <201706100041.GFH78616.OFtOHFJSLQOMVF@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Mimi Zohar wrote:
-> > > +		ret = kern_path(p, LOOKUP_FOLLOW, &path);
-> > > +		if (!ret) {
-> > > +			struct inode *inode = d_backing_inode(path.dentry);
-> > > +
-> > > +			inode_list[total] = inode->i_ino;
-> > > +			pr_info("pathname:%s i_ino: %lu\n",
-> > > +				p, inode_list[total]);
+Matt Brown wrote:
+> > What about execution via ld-linux ?
 > > 
-> > Leaking reference to "struct path".
+> >    $ /lib64/ld-linux-x86-64.so.2 /usr/bin/python2
+> > 
 > 
-> kern_path() is calling "getname_kernel(name)", but that is later
-> freed. I'm not seeing it. What are you referring to?
+> Just tested this and you are correct, this allows you to bypass the
+> protection.
+> 
+> I was able to fix this bypass by including /lib64/ld-linux-x86-64.so.2
+> in the list of interpreters.
 
-See tomoyo_realpath_nofollow() for example. Where is path_put()?
+And there is also PYTHONINSPECT environment variable. ;-)
+
+# echo '#!/usr/bin/python2' > run-python
+# chmod 755 run-python
+# ./run-python
+# PYTHONINSPECT=yes ./run-python
+>>> print "hello"
+hello
+>>>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
