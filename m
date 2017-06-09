@@ -1,20 +1,49 @@
-From: mpe@ellerman.id.au (Michael Ellerman)
-Date: Fri, 09 Jun 2017 20:27:03 +1000
-Subject: [PATCH v2 0/6] Appended signatures support for IMA appraisal
-In-Reply-To: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
-References: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
-Message-ID: <87d1adihhk.fsf@concordia.ellerman.id.au>
+From: keescook@chromium.org (Kees Cook)
+Date: Fri, 9 Jun 2017 05:55:50 -0700
+Subject: [PATCH v2 1/1] Add Trusted Path Execution as a stackable LSM
+In-Reply-To: <1497003507.21594.177.camel@linux.vnet.ibm.com>
+References: <20170608034349.31876-1-matt@nmatt.com>
+	<20170608034349.31876-2-matt@nmatt.com>
+	<CAGXu5jLsrTZV_xDR_MPZdkT44P1MpbDiF3Kk2HNWBXKsdY+fzg@mail.gmail.com>
+	<94ba5ebb-952b-2037-799e-07306629a6f9@nmatt.com>
+	<1497003507.21594.177.camel@linux.vnet.ibm.com>
+Message-ID: <CAGXu5jKWJV34g5TMDtJLTxF1irijay7KMK3s5oxz8ZYTJZkV5Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> writes:
+On Fri, Jun 9, 2017 at 3:18 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Thu, 2017-06-08 at 23:50 -0400, Matt Brown wrote:
+>> >>
+>> >> *  Issues:
+>> >>    *  Can be bypassed by interpreted languages such as python. You can run
+>> >>       malicious code by doing: python -c 'evil code'
+>> >
+>> > What's the recommendation for people interested in using TPE but
+>> > having interpreters installed?
+>> >
+>>
+>> If you don't need a given interpreter installed, uninstall it. While
+>> this is common sense system hardening it especially would make a
+>> difference under the TPE threat model.
+>>
+>> I don't have a knock down answer for this. Interpreters are a hard
+>> problem for TPE.
+>
+> You might be interested in the minor LSM named "shebang", that I
+> posted as a proof of concept back in January, which restricts the
+> python interactive prompt/interpreter, but allows the scripts
+> themselves to be executed.
 
-> On the OpenPOWER platform, secure boot and trusted boot are being
-> implemented using IMA for taking measurements and verifying signatures.
+https://patchwork.kernel.org/patch/9547405/
 
-I still want you to implement arch_kexec_kernel_verify_sig() as well :)
+Maybe these could be merged and the interpreter string could be made
+into a configurable list?
 
-cheers
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
