@@ -1,36 +1,51 @@
-From: herbert@gondor.apana.org.au (Herbert Xu)
-Date: Sat, 10 Jun 2017 17:01:31 +0800
-Subject: [PATCH v2 01/11] crypto: introduce crypto wait for async op
-In-Reply-To: <CAOtvUMeRtcVcp8HE9oJAkJO35yF9XBsry3tdNQYj-e31DnDFQQ@mail.gmail.com>
-References: <1496046180-21962-1-git-send-email-gilad@benyossef.com>
-	<1496046180-21962-2-git-send-email-gilad@benyossef.com>
-	<20170610034336.GB14206@gondor.apana.org.au>
-	<CAOtvUMeRtcVcp8HE9oJAkJO35yF9XBsry3tdNQYj-e31DnDFQQ@mail.gmail.com>
-Message-ID: <20170610090131.GA15594@gondor.apana.org.au>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 10 Jun 2017 14:06:56 +0300
+Subject: [PATCH v3] tpm: Enable CLKRUN protocol for Braswell systems
+In-Reply-To: <20170608183920.GA7984@obsidianresearch.com>
+References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
+	<1496870610-29462-1-git-send-email-azhar.shaikh@intel.com>
+	<20170607224444.5043f545@lxorguk.ukuu.org.uk>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF5828910C7B@ORSMSX109.amr.corp.intel.com>
+	<20170608192259.43150ffa@lxorguk.ukuu.org.uk>
+	<20170608183920.GA7984@obsidianresearch.com>
+Message-ID: <20170610110656.hucthdwxfv3s6zz2@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Jun 10, 2017 at 11:05:39AM +0300, Gilad Ben-Yossef wrote:
->
-> I guess there is a question if it really is important to know that
-> your request ended up
-> on the backlog, rather than being handled.I can imagine it can be used
-> as back pressure
-> indication but I wonder if someone is using that.
+On Thu, Jun 08, 2017 at 12:39:20PM -0600, Jason Gunthorpe wrote:
+> On Thu, Jun 08, 2017 at 07:22:59PM +0100, Alan Cox wrote:
+> > > > > +	outb(0x80, 0xCC);
+> > > > > +
+> > > > > +	/* Make sure the above write is completed */
+> > > > > +	wmb();  
+> > > > 
+> > > > Why the wmb(). It doesn't do what the comment says! Also this code is x86
+> > > > specific
+> > > > 
+> > > >   
+> > > 
+> > > Memory barrier to enforce the order so that the outb() is
+> > > completed, which ensures that the LPC clocks are running before
+> > > sending any TPM command.
+> >
+> > wmb() doesn't do that. It merely ensures that the write has been posted
+> > to the fabric. If as I suspect your LPC bus implements outb() as a
+> > non-posted write you don't need the wmb().
+> 
+> I think the point here is to bootstrap the sleeping LPC bus clock
+> before a TPM command is issued, presumably because the auto-wakeup circuit
+> is busted or something.
+> 
+> For that purpose all that should be required is strong ordering of the
+> outb relative to the other TPM commands at the LPC interface FIFO. I
+> also think the wmb is not needed because outb is already defined to be
+> strongly in order with respect to writel/readl ?
+> 
+> Jason
 
-Oh yes we do want it to return EBUSY if we put it on the backlog
-because in that case we want the user to stop sending us new
-requests.
+writel AFAIK guarantees by itself strong RW ordering.
 
-It's the other case where we dropped the request and returned
-EBUSY where I think we could return something other than EBUSY
-and get rid of the ambiguity.
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
