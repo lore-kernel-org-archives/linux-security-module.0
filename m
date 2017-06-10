@@ -1,42 +1,78 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Sat, 10 Jun 2017 14:27:02 +0900
-Subject: [PATCH v1] shebang: restrict python interactive prompt/interpreter
-In-Reply-To: <CAGXu5jJt5MRU3ZdKABEbLt4qe-cCLxEm5tMH9SdUh=rtdLUV1w@mail.gmail.com>
-References: <201706100041.GFH78616.OFtOHFJSLQOMVF@I-love.SAKURA.ne.jp>
-	<754b78d1-f7f9-58bd-bf74-fea9e105649a@nmatt.com>
-	<20170609164315.GA1141@meriadoc.perfinion.com>
-	<d84aaf19-307b-4b60-df74-4fb43a218c9c@nmatt.com>
-	<CAGXu5jJt5MRU3ZdKABEbLt4qe-cCLxEm5tMH9SdUh=rtdLUV1w@mail.gmail.com>
-Message-ID: <201706101427.EEG90168.OtFFHSFMOVOJQL@I-love.SAKURA.ne.jp>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Sat, 10 Jun 2017 11:05:39 +0300
+Subject: [PATCH v2 01/11] crypto: introduce crypto wait for async op
+In-Reply-To: <20170610034336.GB14206@gondor.apana.org.au>
+References: <1496046180-21962-1-git-send-email-gilad@benyossef.com>
+	<1496046180-21962-2-git-send-email-gilad@benyossef.com>
+	<20170610034336.GB14206@gondor.apana.org.au>
+Message-ID: <CAOtvUMeRtcVcp8HE9oJAkJO35yF9XBsry3tdNQYj-e31DnDFQQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Kees Cook wrote:
-> On Fri, Jun 9, 2017 at 10:23 AM, Matt Brown <matt@nmatt.com> wrote:
-> > what does everyone thing about a envp_blacklist option that is a list of
-> > environmental variables that will be stripped from exec calls. This can
-> > be done in the LSM hook bprm_check_security.
-> >
-> > Is there any reason on a hardened system why you would need the
-> > PYTHONINSPECT environmental variable?
-> 
-> As part of shebang, it likely makes sense to whitelist (rather than
-> blacklist) the env of the restricted interpreters. Though this is
-> starting to get complex. :P
+On Sat, Jun 10, 2017 at 6:43 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Mon, May 29, 2017 at 11:22:48AM +0300, Gilad Ben-Yossef wrote:
+>>
+>> +static inline int crypto_wait_req(int err, struct crypto_wait *wait)
+>> +{
+>> +     switch (err) {
+>> +     case -EINPROGRESS:
+>> +     case -EBUSY:
+>> +             wait_for_completion(&wait->completion);
+>> +             reinit_completion(&wait->completion);
+>> +             err = wait->err;
+>> +             break;
+>> +     };
+>> +
+>> +     return err;
+>> +}
+>
+> This assumes that the request is used with backlog.  For non-backlog
+> requests this would result in a memory leak as EBUSY in that case is
+> a fatal error.
+>
+> So this API can't be used without backlog.
 
-Blacklisting environment variables is dangerous. I think that
-administrators can afford whitelisting environment variable names.
-I think that implementing whitelist of environment variable names
-as an independent LSM module would be fine.
+You are right, of course. I did not take that into account.
 
-While it is true that things starts getting complex if we check environment
-variables, shebang will already become complex if it starts worrying about
-updating inode number list in order to close the race window between doing
-creat()+write()+close()+chmod()+rename() by the package manager and teaching
-the kernel the new inode number determined by creat(). We will need an
-interface for allowing the package manager to teach the kernel the new inode
-number and modification of the package manager, for the kernel side is doing
-inode number based blacklisting while user side can execute it before rename().
+>
+> We could introduce a flag to indicate whether we want backlog or not,
+> or maybe we should change our API so that in the non-backlog case we
+> return something other than EBUSY.
+>
+> Opinions?
+
+I guess there is a question if it really is important to know that
+your request ended up
+on the backlog, rather than being handled.I can imagine it can be used
+as back pressure
+indication but I wonder if someone is using that.
+
+If not, maybe we can simplify things and use EINPROGRESS asindication
+of a request
+being accepted by the next layer (either being processed or queued in
+the back log), whereas
+EBUSY would indicate failure.
+
+It does have a potential to make things simpler, I think.
+
+Gilad
+
+>
+> Thanks,
+> --
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+
+
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
