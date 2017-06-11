@@ -1,71 +1,158 @@
-From: azhar.shaikh@intel.com (Shaikh, Azhar)
-Date: Sat, 10 Jun 2017 16:35:50 +0000
-Subject: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
-In-Reply-To: <20170610111339.ggphrkwqiez35wer@intel.com>
-References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
-	<1496965593-187931-1-git-send-email-azhar.shaikh@intel.com>
-	<20170610111339.ggphrkwqiez35wer@intel.com>
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF58289117D8@ORSMSX109.amr.corp.intel.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Sat, 10 Jun 2017 18:26:11 -0700
+Subject: [GIT PULL] AppArmor for 4.13
+Message-ID: <e90cdd91-1979-bdde-358a-430a89be0d08@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Hi James,
+
+Here is the apparmor pull request for 4.13
+
+It contains
+* several bug fixes and cleanups
+* the patch to add symlink support to securityfs that was floated on
+  the list earlier and the apparmorfs changes that make use of
+  securityfs symlinks
+* it introduces the domain labeling base code that Ubuntu has been
+  carrying for several years, with several cleanups applied. And it
+  converts the current mediation over to using the domain labeling
+  base, which brings domain stacking support with it. This finally
+  will bring the base upstream code in line with Ubuntu and provide a
+  base to upstream the new feature work that Ubuntu carries.
+
+This request does not contain any of the newer apparmor mediation
+features/controls (mount, signals, network, keys, ...) that Ubuntu is
+currently carrying, all of which will be RFC'd on top of this.
 
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
-> Sent: Saturday, June 10, 2017 4:14 AM
-> To: Shaikh, Azhar <azhar.shaikh@intel.com>
-> Cc: jgunthorpe at obsidianresearch.com; tpmdd-devel at lists.sourceforge.net;
-> linux-kernel at vger.kernel.org; linux-security-module at vger.kernel.org
-> Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
-> 
-> On Thu, Jun 08, 2017 at 04:46:33PM -0700, Azhar Shaikh wrote:
-> > To overcome a hardware limitation on Intel Braswell systems, disable
-> > CLKRUN protocol during TPM transactions and re-enable once the
-> > transaction is completed.
-> >
-> > Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-> > ---
-> > Changes from v1:
-> > - Add CONFIG_X86 around disable_lpc_clk_run () and
-> > enable_lpc_clk_run() to avoid
-> > - build breakage on architectures which do not implement
-> > kmap_atomic_pfn()
-> >
-> > Changes from v2:
-> > - Use ioremap()/iounmap() instead of
-> kmap_atomic_pfn()/kunmap_atomic()
-> > - Move is_bsw() and all macros from tpm.h to tpm_tis.c file.
-> > - Add the is_bsw() check in disable_lpc_clk_run() and
-> > enable_lpc_clk_run()
-> > - instead of adding it in each read/write API.
-> >
-> > Changes from v3:
-> > - Move the code under #ifdef CONFIG_X86 and create stub functions for
-> > everything else
-> > - Rename the functions disable_lpc_clk_run() ->
-> > tpm_platform_begin_xfer() and
-> > - enable_lpc_clk_run() -> tpm_platform_end_xfer()
-> > - Remove wmb()
-> 
-> The wrong parameter order in outb() is not worth of mentioning in your
-> opinion?
-> 
+The following changes since commit d68c51e0b377838dd31b37707813bb62089f399c:
 
-Oh yes! It is definitely worth mentioning. I forgot to mention that.
-Will definitely mention it in the changelog for the next version if any or will re send v4 with updated changelog for v3.
+  Sync to mainline for security submaintainers to work against (2017-05-22 16:32:40 +1000)
 
-> Related.
-> 
-> I looked again the kmap version of the patch and still cannot figure out what
-> could be wrong. Obviously the wrong outb() cause unexpected behavior.
-> 
-> Do you have chances to grab klog from kmap version with correct outb?
-> 
+are available in the git repository at:
 
-I have not tried the kmap version with corrected outb(). Will give that a try.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor for-security
 
-> /Jarkko
+for you to fetch changes up to 33f2eadabba59cf1c763c46c4470279ec2054099:
+
+  apparmor: export that basic profile namespaces are supported (2017-06-10 17:11:48 -0700)
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      apparmor: Fix error cod in __aa_fs_profile_mkdir()
+
+John Johansen (59):
+      apparmor: move file context into file.h
+      apparmor: make internal lib fn skipn_spaces available to the rest of apparmor
+      apparmor: allow profiles to provide info to disconnected paths
+      apparmor: Move path lookup to using preallocated buffers
+      securityfs: add the ability to support symlinks
+      apparmor: move to per loaddata files, instead of replicating in profiles
+      apparmor: use macro template to simplify profile seq_files
+      apparmor: use macro template to simplify namespace seq_files
+      apparmor: add custom apparmorfs that will be used by policy namespace files
+      apparmor: rename apparmor file fns and data to indicate use
+      apparmor: allow specifying an already created dir to create ns entries in
+      apparmor: convert from securityfs to apparmorfs for policy ns files
+      apparmor: move permissions into their own file to be more easily shared
+      apparmor: rework perm mapping to a slightly broader set
+      apparmor: provide finer control over policy management
+      apparmor: add policy revision file interface
+      apparmor: add mkdir/rmdir interface to manage policy namespaces
+      apparmor: add label data availability to the feature set
+      apparmor: speed up transactional queries
+      apparmor: add fn to test if profile supports a given mediation class
+      apparmor: add gerneric permissions struct and support fns
+      apparmor: switch from file_perms to aa_perms
+      apparmor: add profile permission query ability
+      apparmor: provide information about path buffer size at boot
+      apparmor: cleanup __find_child()
+      apparmor: add namespace lookup fns()
+      apparmor: fix policy load/remove semantics
+      apparmor: fix apparmor_query data
+      apparmor: fix display of ns name
+      apparmor: move bprm_committing_creds/committed_creds to lsm.c
+      apparmor: convert to profile block critical sections
+      apparmor: share profile name on replacement
+      apparmor: refactor updating profiles to the newest parent
+      apparmor: cleanup remove unused and not fully implemented profile rename
+      apparmor: convert aa_change_XXX bool parameters to flags
+      apparmor: cleanup rename XXX_file_context() to XXX_file_ctx()
+      apparmor: revalidate files during exec
+      apparmor: add the base fns() for domain labels
+      apparmor: switch from profiles to using labels on contexts
+      apparmor: switch getprocattr to using label_print fns()
+      apparmor: update query interface to support label queries
+      apparmor: move capability checks to using labels
+      apparmor: move resource checks to using labels
+      apparmor: add cross check permission helper macros
+      apparmor: move ptrace checks to using labels
+      apparmor: allow ptrace checks to be finer grained than just capability
+      apparmor: move aa_file_perm() to use labels
+      apparmor: update aa_audit_file() to use labels
+      apparmor: refactor path name lookup and permission checks around labels
+      apparmor: move path_link mediation to using labels
+      apparmor: rework file permission to cache file access in file->ctx
+      apparmor: mediate files when they are received
+      apparmor: support v7 transition format compatible with label_parse
+      apparmor: move exec domain mediation to using labels
+      apparmor: move change_hat mediation to using labels
+      apparmor: move change_profile mediation to using labels
+      apparmor: add domain label stacking info to apparmorfs
+      apparmor: add stacked domain labels interface
+      apparmor: export that basic profile namespaces are supported
+
+Markus Elfring (2):
+      apparmorfs: Combine two function calls into one in aa_fs_seq_raw_abi_show()
+      apparmorfs: Use seq_putc() in two functions
+
+Thomas Schneider (1):
+      security/apparmor: Use POSIX-compatible "printf '%s'"
+
+ include/linux/security.h                  |   12 +
+ include/uapi/linux/magic.h                |    2 +
+ security/apparmor/Makefile                |    8 +-
+ security/apparmor/apparmorfs.c            | 1676 ++++++++++++++++++-----
+ security/apparmor/audit.c                 |   27 +-
+ security/apparmor/capability.c            |   61 +-
+ security/apparmor/context.c               |   87 +-
+ security/apparmor/domain.c                | 1393 ++++++++++++-------
+ security/apparmor/file.c                  |  517 +++++--
+ security/apparmor/include/apparmor.h      |    6 +-
+ security/apparmor/include/apparmorfs.h    |   67 +-
+ security/apparmor/include/audit.h         |   17 +-
+ security/apparmor/include/capability.h    |    8 +-
+ security/apparmor/include/context.h       |  201 +--
+ security/apparmor/include/domain.h        |   13 +-
+ security/apparmor/include/file.h          |  114 +-
+ security/apparmor/include/ipc.h           |   16 +-
+ security/apparmor/include/label.h         |  441 ++++++
+ security/apparmor/include/lib.h           |  120 +-
+ security/apparmor/include/path.h          |    7 +-
+ security/apparmor/include/perms.h         |  155 +++
+ security/apparmor/include/policy.h        |  131 +-
+ security/apparmor/include/policy_ns.h     |   21 +
+ security/apparmor/include/policy_unpack.h |   68 +-
+ security/apparmor/include/procattr.h      |    8 +-
+ security/apparmor/include/resource.h      |    6 +-
+ security/apparmor/ipc.c                   |  140 +-
+ security/apparmor/label.c                 | 2120 +++++++++++++++++++++++++++++
+ security/apparmor/lib.c                   |  368 ++++-
+ security/apparmor/lsm.c                   |  245 ++--
+ security/apparmor/path.c                  |  130 +-
+ security/apparmor/policy.c                |  392 +++---
+ security/apparmor/policy_ns.c             |   80 +-
+ security/apparmor/policy_unpack.c         |   96 +-
+ security/apparmor/procattr.c              |   71 +-
+ security/apparmor/resource.c              |  116 +-
+ security/inode.c                          |  144 +-
+ 37 files changed, 7275 insertions(+), 1809 deletions(-)
+ create mode 100644 security/apparmor/include/label.h
+ create mode 100644 security/apparmor/include/perms.h
+ create mode 100644 security/apparmor/label.c
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
