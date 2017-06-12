@@ -1,114 +1,136 @@
 From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Mon, 12 Jun 2017 18:56:59 +0200
-Subject: [PATCH 10/11] Allowing for stacking procattr support in S.A.R.A.
+Date: Mon, 12 Jun 2017 18:56:57 +0200
+Subject: [PATCH 08/11] Creation of "pagefault_handler_x86" LSM hook
 In-Reply-To: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
 References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <1497286620-15027-11-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <1497286620-15027-9-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This allow S.A.R.A. to use the procattr interface without interfering
-with other LSMs.
-This part should be reimplemented as soon as upstream procattr stacking
-support is available.
+Creation of a new hook to let LSM modules handle user-space pagefaults on
+x86.
+It can be used to avoid segfaulting the originating process.
+If it's the case it can modify process registers before returning.
 
 Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc: x86 at kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>
 ---
- fs/proc/base.c      | 38 ++++++++++++++++++++++++++++++++++++++
- security/security.c | 20 ++++++++++++++++++--
- 2 files changed, 56 insertions(+), 2 deletions(-)
+ arch/x86/mm/fault.c       |  6 ++++++
+ include/linux/lsm_hooks.h |  9 +++++++++
+ include/linux/security.h  | 11 +++++++++++
+ security/security.c       | 11 +++++++++++
+ 4 files changed, 37 insertions(+)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index f1e1927..6d0fd1c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2515,6 +2515,40 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	.llseek		= generic_file_llseek,
- };
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 8ad91a0..b75b81a 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -15,6 +15,7 @@
+ #include <linux/prefetch.h>		/* prefetchw			*/
+ #include <linux/context_tracking.h>	/* exception_enter(), ...	*/
+ #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
++#include <linux/security.h>		/* security_pagefault_handler	*/
  
-+#ifdef CONFIG_SECURITY_SARA
-+static const struct pid_entry sara_attr_dir_stuff[] = {
-+	REG("wxprot", 0666, proc_pid_attr_operations),
-+};
+ #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
+ #include <asm/traps.h>			/* dotraplinkage, ...		*/
+@@ -1358,6 +1359,11 @@ static inline bool smap_violation(int error_code, struct pt_regs *regs)
+ 			local_irq_enable();
+ 	}
+ 
++	if (unlikely(security_pagefault_handler_x86(regs,
++						    error_code,
++						    address)))
++		return;
 +
-+static int proc_sara_attr_dir_readdir(struct file *file,
-+				      struct dir_context *ctx)
+ 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+ 
+ 	if (error_code & PF_WRITE)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 6934cc5..a42c2f8 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -487,6 +487,11 @@
+  *	Check if the requested @vmflags are allowed.
+  *	@vmflags contains requested the vmflags.
+  *	Return 0 if the operation is allowed to continue.
++ * @pagefault_handler_x86:
++ *	Handle pagefaults on x86.
++ *	@regs contains process' registers.
++ *	@error_code contains error code for the pagefault.
++ *	@address contains the address that caused the pagefault.
+  * @file_lock:
+  *	Check permission before performing file locking operations.
+  *	Note: this hook mediates both flock and fcntl style locks.
+@@ -1487,6 +1492,9 @@
+ 	int (*file_mprotect)(struct vm_area_struct *vma, unsigned long reqprot,
+ 				unsigned long prot);
+ 	int (*check_vmflags)(vm_flags_t vmflags);
++	int (*pagefault_handler_x86)(struct pt_regs *regs,
++				     unsigned long error_code,
++				     unsigned long address);
+ 	int (*file_lock)(struct file *file, unsigned int cmd);
+ 	int (*file_fcntl)(struct file *file, unsigned int cmd,
+ 				unsigned long arg);
+@@ -1759,6 +1767,7 @@ struct security_hook_heads {
+ 	struct list_head mmap_file;
+ 	struct list_head file_mprotect;
+ 	struct list_head check_vmflags;
++	struct list_head pagefault_handler_x86;
+ 	struct list_head file_lock;
+ 	struct list_head file_fcntl;
+ 	struct list_head file_set_fowner;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 67e33b6..bc38c83 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -303,6 +303,9 @@ int security_mmap_file(struct file *file, unsigned long prot,
+ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ 			   unsigned long prot);
+ int security_check_vmflags(vm_flags_t vmflags);
++int __maybe_unused security_pagefault_handler_x86(struct pt_regs *regs,
++						  unsigned long error_code,
++						  unsigned long address);
+ int security_file_lock(struct file *file, unsigned int cmd);
+ int security_file_fcntl(struct file *file, unsigned int cmd, unsigned long arg);
+ void security_file_set_fowner(struct file *file);
+@@ -836,6 +839,14 @@ static inline int security_check_vmflags(vm_flags_t vmflags)
+ 	return 0;
+ }
+ 
++static inline int __maybe_unused security_pagefault_handler_x86(
++						struct pt_regs *regs,
++						unsigned long error_code,
++						unsigned long address)
 +{
-+	return proc_pident_readdir(file, ctx,
-+				   sara_attr_dir_stuff,
-+				   ARRAY_SIZE(sara_attr_dir_stuff));
++	return 0;
 +}
 +
-+static const struct file_operations proc_sara_attr_dir_ops = {
-+	.read		= generic_read_dir,
-+	.iterate_shared	= proc_sara_attr_dir_readdir,
-+	.llseek		= generic_file_llseek,
-+};
-+
-+static struct dentry *proc_sara_attr_dir_lookup(struct inode *dir,
-+				struct dentry *dentry, unsigned int flags)
-+{
-+	return proc_pident_lookup(dir, dentry,
-+				  sara_attr_dir_stuff,
-+				  ARRAY_SIZE(sara_attr_dir_stuff));
-+};
-+
-+static const struct inode_operations proc_sara_attr_dir_inode_ops = {
-+	.lookup		= proc_sara_attr_dir_lookup,
-+	.getattr	= pid_getattr,
-+	.setattr	= proc_setattr,
-+};
-+#endif /* CONFIG_SECURITY_SARA */
-+
- static const struct pid_entry attr_dir_stuff[] = {
- 	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
- 	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
-@@ -2522,6 +2556,10 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
- 	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
- 	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
-+#ifdef CONFIG_SECURITY_SARA
-+	DIR("sara", 0555, proc_sara_attr_dir_inode_ops,
-+				proc_sara_attr_dir_ops),
-+#endif
- };
- 
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+ static inline int security_file_lock(struct file *file, unsigned int cmd)
+ {
+ 	return 0;
 diff --git a/security/security.c b/security/security.c
-index cf15686..6ca93c6 100644
+index 25d58f0..cf15686 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1244,12 +1244,28 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- 
- int security_getprocattr(struct task_struct *p, char *name, char **value)
- {
--	return call_int_hook(getprocattr, -EINVAL, p, name, value);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	list_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+		rc = hp->hook.getprocattr(p, name, value);
-+		if (rc != -EINVAL)
-+			return rc;
-+	}
-+	return -EINVAL;
+@@ -910,6 +910,17 @@ int security_check_vmflags(vm_flags_t vmflags)
+ 	return call_int_hook(check_vmflags, 0, vmflags);
  }
  
- int security_setprocattr(const char *name, void *value, size_t size)
- {
--	return call_int_hook(setprocattr, -EINVAL, name, value, size);
-+	struct security_hook_list *hp;
-+	int rc;
++int __maybe_unused security_pagefault_handler_x86(struct pt_regs *regs,
++						  unsigned long error_code,
++						  unsigned long address)
++{
++	return call_int_hook(pagefault_handler_x86,
++			     0,
++			     regs,
++			     error_code,
++			     address);
++}
 +
-+	list_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+		rc = hp->hook.setprocattr(name, value, size);
-+		if (rc != -EINVAL)
-+			return rc;
-+	}
-+	return -EINVAL;
- }
- 
- int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+ int security_file_lock(struct file *file, unsigned int cmd)
+ {
+ 	return call_int_hook(file_lock, 0, file, cmd);
 -- 
 1.9.1
 
