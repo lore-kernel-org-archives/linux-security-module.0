@@ -1,101 +1,67 @@
 From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Mon, 12 Jun 2017 18:56:53 +0200
-Subject: [PATCH 04/11] S.A.R.A. USB Filtering
+Date: Mon, 12 Jun 2017 18:56:58 +0200
+Subject: [PATCH 09/11] Trampoline emulation
 In-Reply-To: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
 References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <1497286620-15027-5-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <1497286620-15027-10-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Introduction of S.A.R.A. USB Filtering.
-It uses the "usb_device_auth" LSM hook to provide a mechanism to decide
-which USB devices should be authorized to connect to the system and
-which shouldn't.
-The main goal is to narrow the attack surface for custom USB devices
-designed to exploit vulnerabilities found in some USB device drivers.
-Via configuration it's possible to allow or to deny authorization, based
-on one or more of: Vendor ID, Product ID, bus name and port number. There
-is also support for "trailing wildcards".
-Depending on the configuration, it can work both as a white list or as a
-black list.
-The original idea is inspired by the Grsecurity "Deny USB" feature.
+Some programs need to generate part of their code at runtime. Luckily
+enough, in some cases they only generate well-known code sequences (the
+"trampolines") that can be easily recognized and emulated by the kernel.
+This way WX Protection can still be active, so a potential attacker won't
+be able to generate arbitrary sequences of code, but just those that are
+explicitly allowed. This is not ideal, but it's still better than having WX
+Protection completely disabled.
+In particular S.A.R.A. is able to recognize trampolines used by GCC for
+nested C functions and libffi's trampolines.
+This feature is implemented only on x86_32 and x86_64.
+The assembly sequences used here were originally obtained from PaX source
+code.
 
 Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- security/sara/Kconfig                 |  41 ++++
- security/sara/Makefile                |   1 +
- security/sara/include/usb_filtering.h |  27 +++
- security/sara/main.c                  |   6 +
- security/sara/usb_filtering.c         | 410 ++++++++++++++++++++++++++++++++++
- 5 files changed, 485 insertions(+)
- create mode 100644 security/sara/include/usb_filtering.h
- create mode 100644 security/sara/usb_filtering.c
+ security/sara/Kconfig               |  17 ++++
+ security/sara/include/trampolines.h | 171 ++++++++++++++++++++++++++++++++++++
+ security/sara/wxprot.c              | 137 +++++++++++++++++++++++++++++
+ 3 files changed, 325 insertions(+)
+ create mode 100644 security/sara/include/trampolines.h
 
 diff --git a/security/sara/Kconfig b/security/sara/Kconfig
-index 5b61020..01ff246 100644
+index cb49f20..e91c147 100644
 --- a/security/sara/Kconfig
 +++ b/security/sara/Kconfig
-@@ -39,4 +39,45 @@ config SECURITY_SARA_NO_RUNTIME_ENABLE
+@@ -137,6 +137,23 @@ choice
+ 		  Documentation/security/SARA.rst.
+ endchoice
  
- 	  If unsure, answer Y.
- 
-+config SECURITY_SARA_USB_FILTERING
-+	bool "USB Filtering"
-+	depends on SECURITY_SARA && USB_SUPPORT
++config SECURITY_SARA_WXPROT_EMUTRAMP
++	bool "Enable emulation for some types of trampolines"
++	depends on SECURITY_SARA_WXPROT
++	depends on X86
 +	default y
 +	help
-+	  Enable S.A.R.A. USB filtering capability. To prevent the connection
-+	  of unwanted USB devices, e.g. custom USB devices designed to
-+	  exploit vulnerabilities found in device drivers.
-+	  User-space utilities can be used to manage the configuration file.
-+	  Further information can be found in Documentation/security/SARA.rst.
++	  Some programs and libraries need to execute special small code
++	  snippets from non-executable memory pages.
++	  Most notable examples are the GCC and libffi trampolines.
++	  This features make it possible to execute those trampolines even
++	  if they reside in non-executable memory pages.
++	  This features need to be enabled on a per-executable basis
++	  via user-space utilities.
++	  See Documentation/security/SARA.rst. for further information.
 +
-+	  If unsure, answer Y.
++	  If unsure, answer y.
 +
-+config SECURITY_SARA_USB_FILTERING_DENY
-+	bool "Default action for new USB devices is DENY"
-+	depends on SECURITY_SARA_USB_FILTERING
-+	default n
-+	help
-+	  If you say Y here any device that is not explicitly allowed via the
-+	  configuration will be blocked. If you don't enable this option
-+	  any USB device connected at boot will be allowed, regardless of
-+	  your settings. However, if you enable this and you don't
-+	  set your user-space utilities adequately your machine could become
-+	  unusable (e.g. your USB keyboard will be disabled).
-+	  This option can be overridden at boot time via
-+	  "sara_usb_filtering_default=[d|a]" kernel parameter.
-+
-+	  If unsure, answer N.
-+
-+config SECURITY_SARA_USB_FILTERING_DISABLED
-+	bool "USB filtering will be disabled at boot."
-+	depends on SECURITY_SARA_USB_FILTERING
-+	default n
-+	help
-+	  If you say Y here USB filtering won't be enabled at startup. You can
-+	  override this option via user-space utilities or at boot time via
-+	  "sara_usb_filtering=[0|1]" kernel parameter.
-+	  This option is useful for distro kernels.
-+
-+	  If unsure, answer N.
-+
- endmenu
-diff --git a/security/sara/Makefile b/security/sara/Makefile
-index 8acd291..8acf8a9 100644
---- a/security/sara/Makefile
-+++ b/security/sara/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_SECURITY_SARA) := sara.o
- 
- sara-y := main.o securityfs.o utils.o
-+sara-$(CONFIG_SECURITY_SARA_USB_FILTERING) += usb_filtering.o
-diff --git a/security/sara/include/usb_filtering.h b/security/sara/include/usb_filtering.h
+ config SECURITY_SARA_WXPROT_DISABLED
+ 	bool "WX protection will be disabled at boot."
+ 	depends on SECURITY_SARA_WXPROT
+diff --git a/security/sara/include/trampolines.h b/security/sara/include/trampolines.h
 new file mode 100644
-index 0000000..5645e0f
+index 0000000..eab0a85
 --- /dev/null
-+++ b/security/sara/include/usb_filtering.h
-@@ -0,0 +1,27 @@
++++ b/security/sara/include/trampolines.h
+@@ -0,0 +1,171 @@
 +/*
 + * S.A.R.A. Linux Security Module
 + *
@@ -105,464 +71,357 @@ index 0000000..5645e0f
 + * it under the terms of the GNU General Public License version 2, as
 + * published by the Free Software Foundation.
 + *
-+ */
-+
-+#ifndef __SARA_USB_FILTERING_H
-+#define __SARA_USB_FILTERING_H
-+
-+#ifdef CONFIG_SECURITY_SARA_USB_FILTERING
-+
-+#include <linux/init.h>
-+int sara_usb_filtering_init(void) __init;
-+
-+#else /* CONFIG_SECURITY_SARA_USB_FILTERING */
-+inline int sara_usb_filtering_init(void)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_SECURITY_SARA_USB_FILTERING */
-+
-+#endif /* __SARA_USB_FILTERING_H */
-diff --git a/security/sara/main.c b/security/sara/main.c
-index 2007735..8783c3c 100644
---- a/security/sara/main.c
-+++ b/security/sara/main.c
-@@ -15,6 +15,7 @@
- 
- #include "include/sara.h"
- #include "include/securityfs.h"
-+#include "include/usb_filtering.h"
- 
- static const int sara_version = SARA_VERSION;
- 
-@@ -80,6 +81,11 @@ void __init sara_init(void)
- 		goto error;
- 	}
- 
-+	if (sara_usb_filtering_init()) {
-+		pr_crit("impossible to initialize usb filtering.\n");
-+		goto error;
-+	}
-+
- 	pr_debug("initialized.\n");
- 
- 	if (sara_enabled)
-diff --git a/security/sara/usb_filtering.c b/security/sara/usb_filtering.c
-new file mode 100644
-index 0000000..270f110
---- /dev/null
-+++ b/security/sara/usb_filtering.c
-@@ -0,0 +1,410 @@
-+/*
-+ * S.A.R.A. Linux Security Module
-+ *
-+ * Copyright (C) 2017 Salvatore Mesoraca <s.mesoraca16@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation.
++ * Assembly sequences used here were copied from
++ * PaX patch by PaX Team <pageexec@freemail.hu>
 + *
 + */
 +
-+#ifdef CONFIG_SECURITY_SARA_USB_FILTERING
++#ifndef __SARA_TRAMPOLINES_H
++#define __SARA_TRAMPOLINES_H
++#ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
 +
-+#include <linux/kref.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/mm.h>
-+#include <linux/spinlock.h>
 +
-+#include "include/sara.h"
-+#include "include/utils.h"
-+#include "include/securityfs.h"
-+#include "include/usb_filtering.h"
++/* x86_32 */
 +
-+#define SARA_USB_FILTERING_CONFIG_VERSION 0
 +
-+#define SARA_USB_FILTERING_ALLOW 0
-+#define SARA_USB_FILTERING_DENY 1
++struct libffi_trampoline_x86_32 {
++	unsigned char mov;
++	unsigned int addr1;
++	unsigned char jmp;
++	unsigned int addr2;
++} __packed;
 +
-+struct usb_filtering_rule {
-+	u16 product_id;
-+	u16 vendor_id;
-+	u8 product_id_shift;
-+	u8 vendor_id_shift;
-+	char *bus_name;
-+	bool exact_bus_name;
-+	u8 port;
-+	u8 action;
++struct gcc_trampoline_x86_32_type1 {
++	unsigned char mov1;
++	unsigned int addr1;
++	unsigned char mov2;
++	unsigned int addr2;
++	unsigned short jmp;
++} __packed;
++
++struct gcc_trampoline_x86_32_type2 {
++	unsigned char mov;
++	unsigned int addr1;
++	unsigned char jmp;
++	unsigned int addr2;
++} __packed;
++
++union trampolines_x86_32 {
++	struct libffi_trampoline_x86_32 lf;
++	struct gcc_trampoline_x86_32_type1 g1;
++	struct gcc_trampoline_x86_32_type2 g2;
 +};
 +
-+struct usb_config_container {
-+	u32 rules_size;
-+	struct usb_filtering_rule *rules;
-+	size_t buf_len;
-+	struct kref refcount;
-+	char hash[SARA_CONFIG_HASH_LEN];
++#define is_valid_libffi_trampoline_x86_32(UNION)	\
++	(UNION.lf.mov == 0xB8 &&			\
++	UNION.lf.jmp == 0xE9)
++
++#define emulate_libffi_trampoline_x86_32(UNION, REGS) do {	\
++	(REGS)->ax = UNION.lf.addr1;				\
++	(REGS)->ip = (unsigned int) ((REGS)->ip +		\
++				     UNION.lf.addr2 +		\
++				     sizeof(UNION.lf));		\
++} while (0)
++
++#define is_valid_gcc_trampoline_x86_32_type1(UNION, REGS)	\
++	(UNION.g1.mov1 == 0xB9 &&				\
++	UNION.g1.mov2 == 0xB8 &&				\
++	UNION.g1.jmp == 0xE0FF &&				\
++	REGS->ip > REGS->sp)
++
++#define emulate_gcc_trampoline_x86_32_type1(UNION, REGS) do {	\
++	(REGS)->cx = UNION.g1.addr1;				\
++	(REGS)->ax = UNION.g1.addr2;				\
++	(REGS)->ip = UNION.g1.addr2;				\
++} while (0)
++
++#define is_valid_gcc_trampoline_x86_32_type2(UNION, REGS)	\
++	(UNION.g2.mov == 0xB9 &&				\
++	UNION.g2.jmp == 0xE9 &&					\
++	REGS->ip > REGS->sp)
++
++#define emulate_gcc_trampoline_x86_32_type2(UNION, REGS) do {	\
++	(REGS)->cx = UNION.g2.addr1;				\
++	(REGS)->ip = (unsigned int) ((REGS)->ip +		\
++				     UNION.g2.addr2 +		\
++				     sizeof(UNION.g2));		\
++} while (0)
++
++
++
++#ifdef CONFIG_X86_64
++
++struct libffi_trampoline_x86_64 {
++	unsigned short mov1;
++	unsigned long addr1;
++	unsigned short mov2;
++	unsigned long addr2;
++	unsigned char stcclc;
++	unsigned short jmp1;
++	unsigned char jmp2;
++} __packed;
++
++struct gcc_trampoline_x86_64_type1 {
++	unsigned short mov1;
++	unsigned long addr1;
++	unsigned short mov2;
++	unsigned long addr2;
++	unsigned short jmp1;
++	unsigned char jmp2;
++} __packed;
++
++struct gcc_trampoline_x86_64_type2 {
++	unsigned short mov1;
++	unsigned int addr1;
++	unsigned short mov2;
++	unsigned long addr2;
++	unsigned short jmp1;
++	unsigned char jmp2;
++} __packed;
++
++union trampolines_x86_64 {
++	struct libffi_trampoline_x86_64 lf;
++	struct gcc_trampoline_x86_64_type1 g1;
++	struct gcc_trampoline_x86_64_type2 g2;
 +};
 +
-+static struct usb_config_container __rcu *usb_filtering_config;
++#define is_valid_libffi_trampoline_x86_64(UNION)	\
++	(UNION.lf.mov1 == 0xBB49 &&			\
++	UNION.lf.mov2 == 0xBA49 &&			\
++	(UNION.lf.stcclc == 0xF8 ||			\
++	 UNION.lf.stcclc == 0xF9) &&			\
++	UNION.lf.jmp1 == 0xFF49 &&			\
++	UNION.lf.jmp2 == 0xE3)
 +
-+static const int usb_filtering_version =
-+				SARA_USB_FILTERING_CONFIG_VERSION;
-+static bool usb_filtering_enabled __read_mostly = true;
-+static DEFINE_SPINLOCK(usb_config_lock);
++#define emulate_libffi_trampoline_x86_64(UNION, REGS) do {	\
++	(REGS)->r11 = UNION.lf.addr1;				\
++	(REGS)->r10 = UNION.lf.addr2;				\
++	(REGS)->ip = UNION.lf.addr1;				\
++	if (UNION.lf.stcclc == 0xF8)				\
++		(REGS)->flags &= ~X86_EFLAGS_CF;		\
++	else							\
++		(REGS)->flags |= X86_EFLAGS_CF;			\
++} while (0)
 +
-+#ifdef CONFIG_SECURITY_SARA_USB_FILTERING_DENY
-+static int default_action __ro_after_init = SARA_USB_FILTERING_DENY;
-+#else
-+static int default_action __ro_after_init = SARA_USB_FILTERING_ALLOW;
++#define is_valid_gcc_trampoline_x86_64_type1(UNION, REGS)	\
++	(UNION.g1.mov1 == 0xBB49 &&				\
++	UNION.g1.mov2 == 0xBA49 &&				\
++	UNION.g1.jmp1 == 0xFF49 &&				\
++	UNION.g1.jmp2 == 0xE3 &&				\
++	REGS->ip > REGS->sp)
++
++#define emulate_gcc_trampoline_x86_64_type1(UNION, REGS) do {	\
++	(REGS)->r11 = UNION.g1.addr1;				\
++	(REGS)->r10 = UNION.g1.addr2;				\
++	(REGS)->ip = UNION.g1.addr1;				\
++} while (0)
++
++#define is_valid_gcc_trampoline_x86_64_type2(UNION, REGS)	\
++	(UNION.g2.mov1 == 0xBB41 &&				\
++	UNION.g2.mov2 == 0xBA49 &&				\
++	UNION.g2.jmp1 == 0xFF49 &&				\
++	UNION.g2.jmp2 == 0xE3 &&				\
++	REGS->ip > REGS->sp)
++
++#define emulate_gcc_trampoline_x86_64_type2(UNION, REGS) do {	\
++	(REGS)->r11 = UNION.g2.addr1;				\
++	(REGS)->r10 = UNION.g2.addr2;				\
++	(REGS)->ip = UNION.g2.addr1;				\
++} while (0)
++
++#endif /* CONFIG_X86_64 */
++
++#endif /* CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP */
++#endif /* __SARA_TRAMPOLINES_H */
+diff --git a/security/sara/wxprot.c b/security/sara/wxprot.c
+index cbeedd3..44e42be 100644
+--- a/security/sara/wxprot.c
++++ b/security/sara/wxprot.c
+@@ -20,6 +20,11 @@
+ #include <linux/elf.h>
+ #include <linux/spinlock.h>
+ 
++#ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
++#include <linux/uaccess.h>
++#include "include/trampolines.h"
 +#endif
 +
-+static int __init sara_usb_filtering_enabled_setup(char *str)
+ #include "include/sara.h"
+ #include "include/sara_data.h"
+ #include "include/utils.h"
+@@ -35,6 +40,7 @@
+ #define SARA_WXP_COMPLAIN	0x0010
+ #define SARA_WXP_VERBOSE	0x0020
+ #define SARA_WXP_MMAP		0x0040
++#define SARA_WXP_EMUTRAMP	0x0100
+ #define SARA_WXP_TRANSFER	0x0200
+ #define SARA_WXP_NONE		0x0000
+ #define SARA_WXP_MPROTECT	(SARA_WXP_HEAP	| \
+@@ -45,7 +51,12 @@
+ 				SARA_WXP_WXORX		| \
+ 				SARA_WXP_COMPLAIN	| \
+ 				SARA_WXP_VERBOSE)
++#ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
++#define SARA_WXP_ALL		(__SARA_WXP_ALL		| \
++				SARA_WXP_EMUTRAMP)
++#else /* CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP */
+ #define SARA_WXP_ALL		__SARA_WXP_ALL
++#endif /* CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP */
+ 
+ struct wxprot_rule {
+ 	char *path;
+@@ -70,7 +81,11 @@ struct wxprot_config_container {
+ static u16 default_flags __ro_after_init =
+ 				CONFIG_SECURITY_SARA_WXPROT_DEFAULT_FLAGS;
+ 
++#ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
++static const bool wxprot_emutramp = true;
++#else
+ static const bool wxprot_emutramp;
++#endif
+ 
+ #define pr_wxp(MESSAGE) do {					\
+ 	char *BUF, *PATH;					\
+@@ -93,6 +108,9 @@ static bool are_flags_valid(u16 flags)
+ 				SARA_WXP_WXORX |
+ 				SARA_WXP_MMAP))))
+ 		return false;
++	if (unlikely(flags & SARA_WXP_EMUTRAMP &&
++		     ((flags & SARA_WXP_MPROTECT) != SARA_WXP_MPROTECT)))
++		return false;
+ 	return true;
+ }
+ 
+@@ -362,10 +380,129 @@ static int sara_file_mprotect(struct vm_area_struct *vma,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
++#define PF_PROT		(1 << 0)
++#define PF_USER		(1 << 2)
++#define PF_INSTR	(1 << 4)
++static int sara_pagefault_handler_x86_32(struct pt_regs *regs);
++static int sara_pagefault_handler_x86_64(struct pt_regs *regs);
++static int sara_pagefault_handler_x86(struct pt_regs *regs,
++					unsigned long error_code,
++					unsigned long address)
 +{
-+	if (str[0] == '1' && str[1] == '\0')
-+		usb_filtering_enabled = true;
-+	else
-+		usb_filtering_enabled = false;
-+	return 1;
-+}
-+__setup("sara_usb_filtering=", sara_usb_filtering_enabled_setup);
++	int ret = 0;
 +
-+static int __init sara_usb_filtering_default_setup(char *str)
-+{
-+	if (str[0] == 'd' && str[1] == '\0')
-+		default_action = SARA_USB_FILTERING_DENY;
-+	else
-+		default_action = SARA_USB_FILTERING_ALLOW;
-+	return 1;
-+}
-+__setup("sara_usb_filtering_default=", sara_usb_filtering_default_setup);
++	if (!sara_enabled || !wxprot_enabled ||
++	    !(error_code & PF_USER) ||
++	    !(error_code & PF_INSTR) ||
++	    !(error_code & PF_PROT) ||
++	    !(get_current_sara_wxp_flags() & SARA_WXP_EMUTRAMP))
++		return 0;
 +
-+static int sara_usb_device_auth(const struct usb_device *udev)
-+{
-+	int i;
-+	int ret;
-+	u16 vid = le16_to_cpu(udev->descriptor.idVendor);
-+	u16 pid = le16_to_cpu(udev->descriptor.idProduct);
-+	const char *bus_name = udev->bus->bus_name;
-+	struct usb_config_container *c;
++	local_irq_enable();
++	might_sleep();
++	might_fault();
 +
-+	if (!sara_enabled || !usb_filtering_enabled)
-+		return SARA_USB_FILTERING_ALLOW;
++	if (IS_ENABLED(CONFIG_X86_32) ||
++	    regs->cs == __USER32_CS ||
++	    (regs->cs & (1<<2))) {
++		if (!(address >> 32))	/* K8 erratum #100 */
++			ret = sara_pagefault_handler_x86_32(regs);
++	} else
++		ret = sara_pagefault_handler_x86_64(regs);
 +
-+	pr_debug("USB filtering: new usb device found \"%04x:%04x\" on \"%s\" port \"%d\".\n",
-+		 vid, pid, bus_name, udev->portnum);
-+
-+	SARA_CONFIG_GET_RCU(c, usb_filtering_config);
-+	for (i = 0; i < c->rules_size; ++i) {
-+		if ((vid >> c->rules[i].vendor_id_shift) ==
-+		    c->rules[i].vendor_id &&
-+		    (pid >> c->rules[i].product_id_shift) ==
-+		    c->rules[i].product_id) {
-+			if (!c->rules[i].port ||
-+			    c->rules[i].port == udev->portnum) {
-+				if (c->rules[i].exact_bus_name) {
-+					if (strcmp(bus_name,
-+						   c->rules[i].bus_name) == 0)
-+						goto match;
-+				} else if (strncmp(bus_name,
-+						c->rules[i].bus_name,
-+						strlen(c->rules[i].bus_name))
-+						== 0)
-+					goto match;
-+			}
-+		}
-+	}
-+	SARA_CONFIG_PUT_RCU(c);
-+
-+	ret = default_action;
-+	if (ret == SARA_USB_FILTERING_ALLOW)
-+		pr_info("USB filtering: no match found for \"%04x:%04x\" on \"%s\" port \"%d\". Default action is ALLOW.\n",
-+			vid, pid, bus_name, udev->portnum);
-+	else
-+		pr_info("USB filtering: no match found for \"%04x:%04x\" on \"%s\" port \"%d\". Default action is DENY.\n",
-+			vid, pid, bus_name, udev->portnum);
-+	goto out;
-+
-+match:
-+	ret = c->rules[i].action;
-+	SARA_CONFIG_PUT_RCU(c);
-+	if (ret == SARA_USB_FILTERING_ALLOW)
-+		pr_info("USB filtering: match found for \"%04x:%04x\" on \"%s\" port \"%d\". Action is ALLOW.\n",
-+			vid, pid, bus_name, udev->portnum);
-+	else
-+		pr_notice("USB filtering: match found for \"%04x:%04x\" on \"%s\" port \"%d\". Action is DENY.\n",
-+			  vid, pid, bus_name, udev->portnum);
-+out:
 +	return ret;
 +}
 +
-+static struct security_hook_list usb_hooks[] __ro_after_init  = {
-+	LSM_HOOK_INIT(usb_device_auth, sara_usb_device_auth),
-+};
-+
-+struct binary_config_header {
-+	char magic[8];
-+	__le32 version;
-+	__le32 rules_size;
-+	char hash[SARA_CONFIG_HASH_LEN];
-+} __packed;
-+
-+struct binary_config_rule {
-+	__le16 product_id;
-+	__le16 vendor_id;
-+	u8 product_id_shift;
-+	u8 vendor_id_shift;
-+	u8 exact_bus_name;
-+	u8 action;
-+	u8 port;
-+	u8 bus_name_len;
-+} __packed;
-+
-+static void config_free(struct usb_config_container *data)
-+{
-+	int i;
-+
-+	for (i = 0; i < data->rules_size; ++i)
-+		kfree(data->rules[i].bus_name);
-+	kvfree(data->rules);
-+	kfree(data);
-+}
-+
-+static int config_load(const char *buf, size_t buf_len)
++static int sara_pagefault_handler_x86_32(struct pt_regs *regs)
 +{
 +	int ret;
-+	int i;
-+	size_t inc;
-+	const char *pos;
-+	struct usb_config_container *new;
-+	struct binary_config_header *h;
-+	struct binary_config_rule *r;
++	void __user *ip = (void __user *) regs->ip;
++	union trampolines_x86_32 t;
 +
-+	ret = -EINVAL;
-+	if (unlikely(buf_len < sizeof(*h)))
-+		goto out;
++	BUILD_BUG_ON(sizeof(t.lf) > sizeof(t.g1));
++	BUILD_BUG_ON(sizeof(t.g2) > sizeof(t.lf));
 +
-+	h = (struct binary_config_header *) buf;
-+	pos = buf + sizeof(*h);
++	ret = copy_from_user(&t, ip, sizeof(t.g1));
++	if (ret)
++		ret = copy_from_user(&t, ip, sizeof(t.lf));
++	if (ret)
++		ret = copy_from_user(&t, ip, sizeof(t.g2));
++	if (ret)
++		return 0;
 +
-+	ret = -EINVAL;
-+	if (unlikely(memcmp(h->magic, "SARAUSBF", 8) != 0))
-+		goto out;
-+	if (unlikely(le32_to_cpu(h->version) != usb_filtering_version))
-+		goto out;
-+
-+	ret = -ENOMEM;
-+	new = kmalloc(sizeof(*new), GFP_KERNEL);
-+	if (unlikely(new == NULL))
-+		goto out;
-+	kref_init(&new->refcount);
-+	new->rules_size = le32_to_cpu(h->rules_size);
-+	BUILD_BUG_ON(sizeof(new->hash) != sizeof(h->hash));
-+	memcpy(new->hash, h->hash, sizeof(new->hash));
-+	if (unlikely(new->rules_size == 0)) {
-+		new->rules = NULL;
-+		goto replace;
++	if (is_valid_gcc_trampoline_x86_32_type1(t, regs)) {
++		pr_debug("Trampoline: gcc1 x86_32.\n");
++		emulate_gcc_trampoline_x86_32_type1(t, regs);
++		return 1;
++	} else if (is_valid_libffi_trampoline_x86_32(t)) {
++		pr_debug("Trampoline: libffi x86_32.\n");
++		emulate_libffi_trampoline_x86_32(t, regs);
++		return 1;
++	} else if (is_valid_gcc_trampoline_x86_32_type2(t, regs)) {
++		pr_debug("Trampoline: gcc2 x86_32.\n");
++		emulate_gcc_trampoline_x86_32_type2(t, regs);
++		return 1;
 +	}
 +
-+	ret = -ENOMEM;
-+	new->rules = sara_kvcalloc(new->rules_size,
-+				   sizeof(*new->rules));
-+	if (unlikely(new->rules == NULL))
-+		goto out_new;
-+	for (i = 0; i < new->rules_size; ++i) {
-+		r = (struct binary_config_rule *) pos;
-+		pos += sizeof(*r);
-+		inc = pos-buf;
++	pr_debug("Not a trampoline (x86_32).\n");
 +
-+		ret = -EINVAL;
-+		if (unlikely(inc + r->bus_name_len > buf_len))
-+			goto out_rules;
++	return 0;
++}
 +
-+		new->rules[i].product_id = le16_to_cpu(r->product_id);
-+		new->rules[i].vendor_id = le16_to_cpu(r->vendor_id);
-+		new->rules[i].product_id_shift = r->product_id_shift;
-+		new->rules[i].vendor_id_shift = r->vendor_id_shift;
-+		new->rules[i].exact_bus_name = r->exact_bus_name;
-+		new->rules[i].action = r->action;
-+		new->rules[i].port = r->port;
++#ifdef CONFIG_X86_64
++static int sara_pagefault_handler_x86_64(struct pt_regs *regs)
++{
++	int ret;
++	void __user *ip = (void __user *) regs->ip;
++	union trampolines_x86_64 t;
 +
-+		if (unlikely(new->rules[i].product_id_shift > 16))
-+			goto out_rules;
-+		if (unlikely(new->rules[i].vendor_id_shift > 16))
-+			goto out_rules;
-+		if (unlikely((int) new->rules[i].exact_bus_name != 0 &&
-+			     (int) new->rules[i].exact_bus_name != 1))
-+			goto out_rules;
-+		if (unlikely(new->rules[i].action != 0 &&
-+			     new->rules[i].action != 1))
-+			goto out_rules;
++	BUILD_BUG_ON(sizeof(t.g1) > sizeof(t.lf));
++	BUILD_BUG_ON(sizeof(t.g2) > sizeof(t.g1));
 +
-+		ret = -ENOMEM;
-+		new->rules[i].bus_name = kmalloc(r->bus_name_len+1, GFP_KERNEL);
-+		if (unlikely(new->rules[i].bus_name == NULL))
-+			goto out_rules;
++	ret = copy_from_user(&t, ip, sizeof(t.lf));
++	if (ret)
++		ret = copy_from_user(&t, ip, sizeof(t.g1));
++	if (ret)
++		ret = copy_from_user(&t, ip, sizeof(t.g2));
++	if (ret)
++		return 0;
 +
-+		memcpy(new->rules[i].bus_name, pos, r->bus_name_len);
-+		new->rules[i].bus_name[r->bus_name_len] = '\0';
-+		pos += r->bus_name_len;
++	if (is_valid_libffi_trampoline_x86_64(t)) {
++		pr_debug("Trampoline: libffi x86_64.\n");
++		emulate_libffi_trampoline_x86_64(t, regs);
++		return 1;
++	} else if (is_valid_gcc_trampoline_x86_64_type1(t, regs)) {
++		pr_debug("Trampoline: gcc1 x86_64.\n");
++		emulate_gcc_trampoline_x86_64_type1(t, regs);
++		return 1;
++	} else if (is_valid_gcc_trampoline_x86_64_type2(t, regs)) {
++		pr_debug("Trampoline: gcc2 x86_64.\n");
++		emulate_gcc_trampoline_x86_64_type2(t, regs);
++		return 1;
 +	}
-+	new->buf_len = (size_t) (pos-buf);
 +
-+replace:
-+	SARA_CONFIG_REPLACE(usb_filtering_config,
-+			    new,
-+			    config_free,
-+			    &usb_config_lock);
-+	pr_notice("USB filtering: new rules loaded.\n");
++	pr_debug("Not a trampoline (x86_64).\n");
++
 +	return 0;
 +
-+out_rules:
-+	for (i = 0; i < new->rules_size; ++i)
-+		kfree(new->rules[i].bus_name);
-+	kvfree(new->rules);
-+out_new:
-+	kfree(new);
-+out:
-+	pr_warn("USB filtering: failed to load rules.\n");
-+	return ret;
 +}
-+
-+static ssize_t config_dump(char **buf)
++#else /* CONFIG_X86_64 */
++static inline int sara_pagefault_handler_x86_64(struct pt_regs *regs)
 +{
-+	int i;
-+	ssize_t ret;
-+	size_t buf_len;
-+	char *pos;
-+	char *mybuf;
-+	int rulen;
-+	struct usb_config_container *c;
-+	struct usb_filtering_rule *rc;
-+	struct binary_config_header *h;
-+	struct binary_config_rule *r;
-+
-+	ret = -ENOMEM;
-+	SARA_CONFIG_GET(c, usb_filtering_config);
-+	buf_len = c->buf_len;
-+	mybuf = sara_kvmalloc(buf_len);
-+	if (unlikely(mybuf == NULL))
-+		goto out;
-+	rulen = c->rules_size;
-+	h = (struct binary_config_header *) mybuf;
-+	memcpy(h->magic, "SARAUSBF", 8);
-+	h->version = cpu_to_le32(SARA_USB_FILTERING_CONFIG_VERSION);
-+	h->rules_size = cpu_to_le32(rulen);
-+	BUILD_BUG_ON(sizeof(c->hash) != sizeof(h->hash));
-+	memcpy(h->hash, c->hash, sizeof(h->hash));
-+	pos = mybuf + sizeof(*h);
-+	for (i = 0; i < rulen; ++i) {
-+		r = (struct binary_config_rule *) pos;
-+		pos += sizeof(*r);
-+		if (buf_len < (pos - mybuf))
-+			goto out;
-+		rc = &c->rules[i];
-+		r->product_id = cpu_to_le16(rc->product_id);
-+		r->vendor_id = cpu_to_le16(rc->vendor_id);
-+		r->product_id_shift = rc->product_id_shift;
-+		r->vendor_id_shift = rc->vendor_id_shift;
-+		r->exact_bus_name = (u8) rc->exact_bus_name;
-+		r->action = rc->action;
-+		r->port = rc->port;
-+		r->bus_name_len = strlen(rc->bus_name);
-+		if (buf_len < ((pos - mybuf) + r->bus_name_len))
-+			goto out;
-+		memcpy(pos, rc->bus_name, r->bus_name_len);
-+		pos += r->bus_name_len;
-+	}
-+	ret = (ssize_t) (pos - mybuf);
-+	*buf = mybuf;
-+out:
-+	SARA_CONFIG_PUT(c, config_free);
-+	return ret;
-+}
-+
-+static int config_hash(char **buf)
-+{
-+	int ret;
-+	struct usb_config_container *config;
-+
-+	ret = -ENOMEM;
-+	*buf = kzalloc(sizeof(config->hash), GFP_KERNEL);
-+	if (unlikely(*buf == NULL))
-+		goto out;
-+
-+	SARA_CONFIG_GET_RCU(config, usb_filtering_config);
-+	memcpy(*buf, config->hash, sizeof(config->hash));
-+	SARA_CONFIG_PUT_RCU(config);
-+
-+	ret = 0;
-+out:
-+	return ret;
-+}
-+
-+static DEFINE_SARA_SECFS_BOOL_FLAG(usb_filtering_enabled_data,
-+				   usb_filtering_enabled);
-+
-+static struct sara_secfs_fptrs fptrs __ro_after_init = {
-+	.load = config_load,
-+	.dump = config_dump,
-+	.hash = config_hash,
-+};
-+
-+static const struct sara_secfs_node usb_filtering_fs[] __initconst = {
-+	{
-+		.name = "enabled",
-+		.type = SARA_SECFS_BOOL,
-+		.data = (void *) &usb_filtering_enabled_data,
-+	},
-+	{
-+		.name = "version",
-+		.type = SARA_SECFS_READONLY_INT,
-+		.data = (int *) &usb_filtering_version,
-+	},
-+	{
-+		.name = "default_action",
-+		.type = SARA_SECFS_READONLY_INT,
-+		.data = &default_action,
-+	},
-+	{
-+		.name = ".load",
-+		.type = SARA_SECFS_CONFIG_LOAD,
-+		.data = &fptrs,
-+	},
-+	{
-+		.name = ".dump",
-+		.type = SARA_SECFS_CONFIG_DUMP,
-+		.data = &fptrs,
-+	},
-+	{
-+		.name = "hash",
-+		.type = SARA_SECFS_CONFIG_HASH,
-+		.data = &fptrs,
-+	},
-+};
-+
-+int __init sara_usb_filtering_init(void)
-+{
-+	int ret;
-+	struct usb_config_container *tmpc;
-+
-+	ret = -ENOMEM;
-+	tmpc = kzalloc(sizeof(*tmpc), GFP_KERNEL);
-+	if (unlikely(tmpc == NULL))
-+		goto out_fail;
-+	tmpc->buf_len = sizeof(struct binary_config_header);
-+	kref_init(&tmpc->refcount);
-+	usb_filtering_config = (struct usb_config_container __rcu *) tmpc;
-+	ret = sara_secfs_subtree_register("usb_filtering",
-+					  usb_filtering_fs,
-+					  ARRAY_SIZE(usb_filtering_fs));
-+	if (unlikely(ret))
-+		goto out_fail;
-+	security_add_hooks(usb_hooks, ARRAY_SIZE(usb_hooks), "sara");
 +	return 0;
-+
-+out_fail:
-+	kfree(tmpc);
-+	return ret;
 +}
++#endif /* CONFIG_X86_64 */
 +
-+#endif /* CONFIG_SECURITY_SARA_USB_FILTERING */
++#endif /* CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP */
++
+ static struct security_hook_list wxprot_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_set_creds, sara_bprm_set_creds),
+ 	LSM_HOOK_INIT(check_vmflags, sara_check_vmflags),
+ 	LSM_HOOK_INIT(file_mprotect, sara_file_mprotect),
++#ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
++	LSM_HOOK_INIT(pagefault_handler_x86, sara_pagefault_handler_x86),
++#endif
+ };
+ 
+ struct binary_config_header {
 -- 
 1.9.1
 
