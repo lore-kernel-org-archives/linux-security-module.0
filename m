@@ -1,41 +1,47 @@
-From: k.opasiak@samsung.com (Krzysztof Opasiak)
-Date: Mon, 12 Jun 2017 19:35:06 +0200
-Subject: [PATCH 03/11] Creation of "usb_device_auth" LSM hook
-In-Reply-To: <1497286620-15027-4-git-send-email-s.mesoraca16@gmail.com>
+From: jannh@google.com (Jann Horn)
+Date: Mon, 12 Jun 2017 19:49:13 +0200
+Subject: [kernel-hardening] [PATCH 01/11] S.A.R.A. Documentation
+In-Reply-To: <1497286620-15027-2-git-send-email-s.mesoraca16@gmail.com>
 References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<CGME20170612170045epcas2p2889350eed8fb2caaa592ef8e6e2c12bf@epcas2p2.samsung.com>
-	<1497286620-15027-4-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <75f33a0f-4643-fe17-fc35-b60b48efd499@samsung.com>
+	<1497286620-15027-2-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <CAG48ez1DBG9cwGtcwKmrL9tSfi4vvNk-X07jnUmzv81RM4Po_Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
-
-On 06/12/2017 06:56 PM, Salvatore Mesoraca wrote:
-> Creation of a new LSM hook that can be used to authorize or deauthorize
-> new USB devices via the usb authorization interface.
-> The same hook can also prevent the authorization of a USB device via
-> "/sys/bus/usb/devices/DEVICE/authorized".
-> Using this hook an LSM could provide an higher level of granularity
-> than the current authorization interface.
+On Mon, Jun 12, 2017 at 6:56 PM, Salvatore Mesoraca
+<s.mesoraca16@gmail.com> wrote:
+> Adding documentation for S.A.R.A. LSM.
 >
+> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+[...]
+> +/proc/PID/attr/sara/wxprot interface
+> +------------------------------------
+> +The `procattr` interface can be used by a program to discover which
+> +WX Protection features are enabled and/or to tighten them: protection
+> +can't be softened via procattr.
+> +The interface is simple: it's a text file with an hexadecimal
+> +number in it representing enabled features (more information can be
+> +found in the `Flags values`_ section). Via this interface it is also
+> +possible to perform a complete memory scan to remove the write permission
+> +from pages that are both writable and executable.
+> +
+> +Protections that prevent the runtime creation of executable code
+> +can be troublesome for all those programs that actually need to do it
+> +e.g. programs shipping with a JIT compiler built-in.
+> +Given that it's possible to segregate the part that runs untrusted
+> +code from the rest through a fork, this feature can be use to run the JIT
+> +compiler with few restrictions while enforcing full WX Protection in the
+> +rest of the program.
 
-Could you please explain me why we need LSM for this?
+As far as I can tell, the wxprot interface in procfs, when used as
+/proc/PID/attr/sara/wxprot, actually only sets restrictions on one of the
+threads.
+The documentation doesn't seem to mention this.
 
-There are tools like usbguard[1] and as far as I can tell it looks like 
-they can do everything for you...
-Without kernel modification...
-without matching and storing rules inside kernel..
-just pure userspace which uses device/interface authorization
 
-Footnote:
-1 - https://dkopecek.github.io/usbguard/
+> +.. [3] `saralib                <https://github.com/smeso/saralib>`_
 
-Best regards,
--- 
-Krzysztof Opasiak
-Samsung R&D Institute Poland
-Samsung Electronics
+This link is broken.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
