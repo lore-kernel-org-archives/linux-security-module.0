@@ -1,51 +1,55 @@
 From: matt@nmatt.com (Matt Brown)
-Date: Sun, 11 Jun 2017 20:04:59 -0400
-Subject: [PATCH v2 0/1] Add Trusted Path Execution as a stackable LSM
-In-Reply-To: <9d175249-c9f3-daba-bae4-f60dc97795e6@digikod.net>
-References: <20170608034349.31876-1-matt@nmatt.com>
-	<20170608193719.2d9e8d17@lxorguk.ukuu.org.uk>
-	<3f9e53a8-87d2-9773-d30b-64b89da8f3ff@nmatt.com>
-	<9d175249-c9f3-daba-bae4-f60dc97795e6@digikod.net>
-Message-ID: <d3b11dde-be5c-0bb8-6573-b331c593c9f7@nmatt.com>
+Date: Sun, 11 Jun 2017 20:34:54 -0400
+Subject: [PATCH v1] shebang: restrict python interactive prompt/interpreter
+In-Reply-To: <201706101427.EEG90168.OtFFHSFMOVOJQL@I-love.SAKURA.ne.jp>
+References: <201706100041.GFH78616.OFtOHFJSLQOMVF@I-love.SAKURA.ne.jp>
+	<754b78d1-f7f9-58bd-bf74-fea9e105649a@nmatt.com>
+	<20170609164315.GA1141@meriadoc.perfinion.com>
+	<d84aaf19-307b-4b60-df74-4fb43a218c9c@nmatt.com>
+	<CAGXu5jJt5MRU3ZdKABEbLt4qe-cCLxEm5tMH9SdUh=rtdLUV1w@mail.gmail.com>
+	<201706101427.EEG90168.OtFFHSFMOVOJQL@I-love.SAKURA.ne.jp>
+Message-ID: <4f8bca84-1798-c92e-f990-77361ac0f605@nmatt.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/11/2017 07:30 AM, Micka?l Sala?n wrote:
->
-> On 08/06/2017 21:01, Matt Brown wrote:
->> On 6/8/17 2:37 PM, Alan Cox wrote:
->>>> http://phrack.org/issues/52/6.html#article
->>>>
->>>> | A trusted path is one that is inside a root owned directory that
->>>> | is not group or world writable.  /bin, /usr/bin, /usr/local/bin, are
->>>> | (under normal circumstances) considered trusted.  Any non-root
->>>> | users home directory is not trusted, nor is /tmp.
+On 06/10/2017 01:27 AM, Tetsuo Handa wrote:
+> Kees Cook wrote:
+>> On Fri, Jun 9, 2017 at 10:23 AM, Matt Brown <matt@nmatt.com> wrote:
+>>> what does everyone thing about a envp_blacklist option that is a list of
+>>> environmental variables that will be stripped from exec calls. This can
+>>> be done in the LSM hook bprm_check_security.
 >>>
->>> Note that in the real world the trusted path would and should also
->>> require that any elements of the path above that point are also locked
->>> down if you are using path based models. Ie you need to ensure nobody has
->>> the ability to rename /usr or /usr/local before you trust /usr/local/bin.
->>>
+>>> Is there any reason on a hardened system why you would need the
+>>> PYTHONINSPECT environmental variable?
 >>
->> So actually in this LSM it's not so much full paths that are trusted,
->> rather it checks that the directory containing the program is only
->> writable by root and that the program itself is only writable by root.
->>
->> For example, consider the following:
->>
->> /user/ with permissions drwxr-xr-x user user
->> /user/user-owned/ with permissions drwxr-xr-x user user
->> /user/user-owned/root-owned/ with permissions drwxr-xr-x root root
->> /user/user-owned/root-owned/exe with permissions -rwxr-xr-x root root
+>> As part of shebang, it likely makes sense to whitelist (rather than
+>> blacklist) the env of the restricted interpreters. Though this is
+>> starting to get complex. :P
 >
-> Some tests would make this scenario clear. ;)
+> Blacklisting environment variables is dangerous. I think that
+> administrators can afford whitelisting environment variable names.
+> I think that implementing whitelist of environment variable names
+> as an independent LSM module would be fine.
+
+How is blacklisting environmental variables more dangerous than
+whitelisting? I'm just suggesting the blacklist be used for the
+environmental vars used to bypass the interpreter protections. I don't
+think we need a full blown LSM for that.
+
 >
-> You can take a look at how seccomp-bpf does with the test_harness.h
-> helper. A new kselftest_harness.h will be available soon to not include
-> a file from the seccomp-bpf directory (cf. linux-next).
+> While it is true that things starts getting complex if we check environment
+> variables, shebang will already become complex if it starts worrying about
+> updating inode number list in order to close the race window between doing
+> creat()+write()+close()+chmod()+rename() by the package manager and teaching
+> the kernel the new inode number determined by creat(). We will need an
+> interface for allowing the package manager to teach the kernel the new inode
+> number and modification of the package manager, for the kernel side is doing
+> inode number based blacklisting while user side can execute it before rename().
 >
 
-I'll take a look at those. Thanks!
+Isn't there a way to take a reference to the inode to prevent the race
+condition? I was thinking that a sysfs file could be written to to
+update the list of interpreter paths.
 
 Matt
 --
