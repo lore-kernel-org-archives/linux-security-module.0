@@ -1,22 +1,19 @@
 From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 13 Jun 2017 09:51:24 +0200
-Subject: [PATCH 03/11] Creation of "usb_device_auth" LSM hook
-In-Reply-To: <8219df49-321d-d032-48b5-cf1cd5a46664@schaufler-ca.com>
+Date: Tue, 13 Jun 2017 09:52:59 +0200
+Subject: [PATCH 05/11] Creation of "check_vmflags" LSM hook
+In-Reply-To: <20170613063446.GA12537@infradead.org>
 References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<1497286620-15027-4-git-send-email-s.mesoraca16@gmail.com>
-	<8219df49-321d-d032-48b5-cf1cd5a46664@schaufler-ca.com>
-Message-ID: <CAJHCu1+5x47b8Dz6F7DdoX7dDGKOT8g-LGYmGb3GV_4CTqBjLA@mail.gmail.com>
+	<1497286620-15027-6-git-send-email-s.mesoraca16@gmail.com>
+	<20170613063446.GA12537@infradead.org>
+Message-ID: <CAJHCu1+R5bBzNGQ0Kjrk1S3y543wK_xVr2wzp7+DhazS=c12kQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-06-12 23:31 GMT+02:00 Casey Schaufler <casey@schaufler-ca.com>:
-> Return the error reported by the hook rather than -EPERM.
+2017-06-13 8:34 GMT+02:00 Christoph Hellwig <hch@infradead.org>:
+> Please always post the whole series including the users, thanks.
 
-Agreed, anyway this part will be, probably, dropped in
-the next version (read Greg and Krzysztof answers).
-I'm sorry :(
-
-Thank you very much for the time you spent on this.
+I'm sorry for the inconvenience, it won't happen again.
+Thank you for your comment.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
