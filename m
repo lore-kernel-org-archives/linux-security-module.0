@@ -1,19 +1,23 @@
-From: hch@infradead.org (Christoph Hellwig)
-Date: Mon, 12 Jun 2017 23:34:46 -0700
-Subject: [PATCH 05/11] Creation of "check_vmflags" LSM hook
-In-Reply-To: <1497286620-15027-6-git-send-email-s.mesoraca16@gmail.com>
-References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<1497286620-15027-6-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <20170613063446.GA12537@infradead.org>
+From: hch@lst.de (Christoph Hellwig)
+Date: Tue, 13 Jun 2017 08:46:58 +0200
+Subject: [PATCH 3/4] ima: use existing read file operation method to
+	calculate file hash
+In-Reply-To: <1497031364-19949-4-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1497031364-19949-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1497031364-19949-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20170613064658.GB31372@lst.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Jun 12, 2017 at 06:56:54PM +0200, Salvatore Mesoraca wrote:
-> Creation of a new LSM hook to check if a given configuration of vmflags,
-> for a new memory allocation request, should be allowed or not.
-> It's placed in "do_mmap", "do_brk_flags" and "__install_special_mapping".
+A strong and a weak NAK on this.  For one thing you should not
+call ->read for fs code at all - use read_iter where it fits
+(it does here) or the kernel_read() helper otherwise.
 
-Please always post the whole series including the users, thanks.
+But once again I don't think this is correct - it's a potentially
+unsafe default, so please wire up the file systems actually tested
+and known to work manually.
+
+E.g. this does the wrong thing for at least NFS and OCFS2.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
