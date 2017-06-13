@@ -1,25 +1,30 @@
 From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 13 Jun 2017 09:47:33 +0200
+Date: Tue, 13 Jun 2017 09:50:06 +0200
 Subject: [PATCH 03/11] Creation of "usb_device_auth" LSM hook
-In-Reply-To: <75f33a0f-4643-fe17-fc35-b60b48efd499@samsung.com>
+In-Reply-To: <20170612193826.GA4235@kroah.com>
 References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<CGME20170612170045epcas2p2889350eed8fb2caaa592ef8e6e2c12bf@epcas2p2.samsung.com>
 	<1497286620-15027-4-git-send-email-s.mesoraca16@gmail.com>
-	<75f33a0f-4643-fe17-fc35-b60b48efd499@samsung.com>
-Message-ID: <CAJHCu1KORP9vKTSRCVNUBP3dfgiL6yg3DDEpuBjPc4r-iA3DEg@mail.gmail.com>
+	<20170612193826.GA4235@kroah.com>
+Message-ID: <CAJHCu1+P798ip7qMTdu6SrKnSg4+0kFzyQb1gqGT31ih5atGKA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-06-12 19:35 GMT+02:00 Krzysztof Opasiak <k.opasiak@samsung.com>:
-> Could you please explain me why we need LSM for this?
->
-> There are tools like usbguard[1] and as far as I can tell it looks like they
-> can do everything for you...
+2017-06-12 21:38 GMT+02:00 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+> No, like Krzysztof said, you can already do this today, just fine, from
+> userspace.  I think that support has been there for over a decade now,
+> why are you not taking advantage of this already?
+> No need to add extra stuff to the kernel at all to do this
 
-I have to admit that this is the first time I read about usbguard and it made
-me realize that this feature can be implemented in userspace, so no need
-to modify the kernel. :)
-You are right.
+Honesty, now that you mention it, I agree with you.
+This feature can be implemented in userspace and I'm the first one to
+think that what can be implemented in userspace should stay in
+userspace.
+
+> sorry you
+> implemented all of this for no reason :(
+
+Don't worry, usb filtering is just a small part of this patchset.
+Let's hope the rest will end up being more useful. :)
 
 Thank you very much for taking the time to answer me.
 --
