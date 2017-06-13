@@ -1,164 +1,114 @@
-From: hch@lst.de (Christoph Hellwig)
-Date: Tue, 13 Jun 2017 08:47:28 +0200
-Subject: [PATCH] sample xfstests IMA-appraisal test module (resending)
-In-Reply-To: <1497038143.21594.251.camel@linux.vnet.ibm.com>
-References: <1497031364-19949-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1497038143.21594.251.camel@linux.vnet.ibm.com>
-Message-ID: <20170613064728.GC31372@lst.de>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Tue, 13 Jun 2017 09:27:16 +0200
+Subject: [PATCH 5/7] ima: add securityfs interface to save a measurements
+	list with kexec header
+In-Reply-To: <1496755412.5546.71.camel@linux.vnet.ibm.com>
+References: <20170516125347.10574-1-roberto.sassu@huawei.com>
+	<20170516125347.10574-6-roberto.sassu@huawei.com>
+	<1496642698.2998.104.camel@linux.vnet.ibm.com>
+	<c4aa904b-052e-778d-caf9-47fbe8d961cb@huawei.com>
+	<1496746591.5546.28.camel@linux.vnet.ibm.com>
+	<9b9e4d64-f08b-6c78-2e7d-9df9ac5d6969@huawei.com>
+	<1496755412.5546.71.camel@linux.vnet.ibm.com>
+Message-ID: <45ba6f40-ccee-8a0f-ea5b-aff0a49d8665@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Adding the fstests list..
+On 6/6/2017 3:23 PM, Mimi Zohar wrote:
+> On Tue, 2017-06-06 at 14:45 +0200, Roberto Sassu wrote:
+>> On 6/6/2017 12:56 PM, Mimi Zohar wrote:
+>>> On Tue, 2017-06-06 at 10:49 +0200, Roberto Sassu wrote:
+>>>> On 6/5/2017 8:04 AM, Mimi Zohar wrote:
+>>>>> On Tue, 2017-05-16 at 14:53 +0200, Roberto Sassu wrote:
+>>>>>> Through the new interface binary_kexec_runtime_measurements, it will be
+>>>>>> possible to read the same content returned by binary_runtime_measurements,
+>>>>>> with the kexec header prepended.
+>>>>>>
+>>>>>> The new interface has been added for testing ima_restore_measurement_list()
+>>>>>> which, at the moment, works only on PPC systems. The interface for reading
+>>>>>> the binary list with the kexec header will be provided in a separate patch.
+>>>>>>
+>>>>>> The patch reuses ima_measurements_start() and ima_measurements_next()
+>>>>>> to send the measurements list to userspace. Their behavior changes
+>>>>>> depending on the current dentry.
+>>>>>>
+>>>>>> To provide the correct information in the kexec header,
+>>>>>> ima_measurements_start() has to iterate over the whole list and calculate
+>>>>>> the number of entries and the total size. It is not possible to read
+>>>>>> the value of the global variable binary_runtime_size and ima_htable.len
+>>>>>> without taking ima_extend_list_mutex, because there might have been a list
+>>>>>> add between the two read operations.
+>>>>>
+>>>>> Please correct me if I'm wrong.  Your code walks the measurement list
+>>>>> calculating the total number of measurements and the memory size
+>>>>> needed to store in the kexec header.  Can't there be additional
+>>>>> measurements between the time these values - total number of
+>>>>> measurements and memory needed - were calculated and actually saving
+>>>>> the measurements?  How would that be any different than the problem
+>>>>> you're trying to solve?  In both cases, the number of measurements
+>>>>> might be less than the actual number of measurements.
+>>>>>
+>>>>> As long as you query the number of measurements before getting the
+>>>>> memory needed, unless you're trying to verify a TPM quote, having
+>>>>> fewer measurements shouldn't be a problem for testing.
+>>>>
+>>>> The problem is that the total number of entries and the required
+>>>> memory size might be inconsistent without taking ima_extend_list_mutex.
+>>>> ima_measurements_start() could read the entries counter before
+>>>> it is incremented by ima_add_digest_entry() and the required memory
+>>>> size after it is updated. If this happens, the parser returns an error
+>>>> because ENFORCE_BUFEND is set for the last entry and there would be
+>>>> still data to read (the new entry added to the list).
+>>>
+>>> I don't see this as being any different than what happens when the
+>>> kernel saves the measurement list. Originally, the memory size was
+>>> defined at kexec load, but only populated at kexec execute.  There was
+>>> plenty of time between the kexec load and execute for additional
+>>> measurement records to be added.
+>>>
+>>> The upstreamed version defines the buffer size and populates it at
+>>> kexec load.  However kexec load itself generates additional
+>>> measurements, so it has to reserve more memory than what is returned
+>>> by ima_get_binary_runtime_size(). (Refer to ima_add_kexec_buffer.)
+>>
+>> ima_dump_measurement_list() determines the total number of entries and
+>> the required memory size (which are written to the kexec header) after
+>> iterating over the whole list. Are new entries added to the kexec buffer
+>> after ima_dump_measurement_list() is called?
+>
+> The upstreamed version allocates the segment in kexec load and then
+> fills the buffer.  However, in between getting the current memory size
+> needed and filling the buffer, additional measurements can be added.
+> Thus the segment size needs to be larger than the current memory
+> size.
+>
+> The header reflects the number of measurements and the actual buffer
+> size, not the segment size.  When restoring the measurement list,
+> however, we rely on the number of measurements and use the buffer size
+> as a reference to prevent accessing memory beyond the buffer.  The
+> buffer size does not need to be exact.
 
-On Fri, Jun 09, 2017 at 03:55:43PM -0400, Mimi Zohar wrote:
-> On systems where IMA-appraisal is configured, the file system properly
-> labeled and the system booted with the "ima_tcb ima_appraise_tcb" boot
-> command line options, new files created by root will have a file hash
-> written out as security.ima.
-> 
-> This xfstests creates a file and compares the security.ima before and
-> after modifying the file.  The results are compared with the "good"
-> file.
-> 
-> (For filesystems that are configured with IMA-appraisal, but aren't
-> labeled properly, boot the system with the "ima_appraise=tcb" boot
-> command line option as well.)
-> 
-> Mimi Zohar <zohar@linux.vnet.ibm.com>
-> ---
->  tests/generic/440     | 89 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/440.out | 13 ++++++++
->  tests/generic/group   |  1 +
->  3 files changed, 103 insertions(+)
->  create mode 100755 tests/generic/440
->  create mode 100644 tests/generic/440.out
-> 
-> diff --git a/tests/generic/440 b/tests/generic/440
-> new file mode 100755
-> index 0000000..8616a48
-> --- /dev/null
-> +++ b/tests/generic/440
-> @@ -0,0 +1,89 @@
-> +#! /bin/bash
-> +# FS QA Test No. 440
-> +#
-> +# Tests IMA-appraisal
-> +# Derived from 062 tests
-> +#
-> +
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +. ./common/attr
-> +
-> +if [ "$FSTYP" = "btrfs" ]; then
-> +. ./common/btrfs
-> +elif [ "$FSTYP" = "xfs" ]; then
-> +. ./common/xfs
-> +fi
-> +
-> +_cleanup()
-> +{
-> +        cd /
-> +	echo; echo "*** unmount"
-> +	_scratch_unmount 2>/dev/null
-> +	rm -f $tmp.*
-> +}
-> +trap "_cleanup; exit \$status" 0 1 2 3 15
-> +
-> +getfattr()
-> +{
-> +    $GETFATTR_PROG --absolute-names -dh $@ 2>&1 | _filter_scratch
-> +}
-> +
-> +setfattr()
-> +{
-> +    $SETFATTR_PROG $@ 2>&1 | _filter_scratch
-> +}
-> +
-> +_create_test_bed()
-> +{
-> +	echo "*** create temporary file"
-> +	echo "Hello" >  $SCRATCH_MNT/hello.txt
-> +}
-> +
-> +# real QA test starts here
-> +_supported_fs generic
-> +_supported_os Linux
-> +
-> +_require_scratch
-> +_require_attrs
-> +_require_command "$(which timeout)" "timeout"
-> +
-> +# real QA test starts here
-> +_scratch_mkfs > /dev/null 2>&1 || _fail "mkfs failed"
-> +_scratch_mount || _fail "mount failed"
-> +_create_test_bed
-> +
-> +xattr="security.ima"
-> +testfile="hello.txt"
-> +
-> +if [ ! -f $SCRATCH_MNT/$testfile ]; then
-> +	echo "File $testfile does not exist"
-> +	msleep 1
-> +fi
-> +
-> +echo "*** Reading $SCRATCH_MNT"
-> +timeout -s KILL 2 cat $SCRATCH_MNT/$testfile > /dev/null
-> +if [ $? -ne 0 ]; then
-> +	echo "Failed to read $SCRATCH_MNT/$testfile"
-> +fi
-> +
-> +echo "*** initial security.ima hash"
-> +getfattr -e hex -n $xattr $SCRATCH_MNT/$testfile
-> +
-> +echo " World!" >> $SCRATCH_MNT/$testfile
-> +
-> +echo "*** updated security.ima hash"
-> +getfattr -e hex -n $xattr $SCRATCH_MNT/$testfile
-> +
-> +# success, all done
-> +status=0
-> +exit
-> diff --git a/tests/generic/440.out b/tests/generic/440.out
-> new file mode 100644
-> index 0000000..a827377
-> --- /dev/null
-> +++ b/tests/generic/440.out
-> @@ -0,0 +1,13 @@
-> +QA output created by 440
-> +*** create temporary file
-> +*** Reading /mnt/scratch
-> +*** initial security.ima hash
-> +# file: SCRATCH_MNT/hello.txt
-> +security.ima=0x040466a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18
-> +
-> +*** updated security.ima hash
-> +# file: SCRATCH_MNT/hello.txt
-> +security.ima=0x0404cddd9990ad741e165a6a50990afe969c2233fc8794d027cdbf382f698a62a22f
-> +
-> +
-> +*** unmount
-> diff --git a/tests/generic/group b/tests/generic/group
-> index 5d3e4dc..c1ecc23 100644
-> --- a/tests/generic/group
-> +++ b/tests/generic/group
-> @@ -442,3 +442,4 @@
->  437 auto quick
->  438 auto
->  439 auto quick punch
-> +440 attr
-> -- 
-> 2.9.3
----end quoted text---
+In this case, I have to modify patch 2/7 and remove ENFORCE_BUFEND
+from the enforcing mask. Otherwise, ima_restore_measurement_list()
+would return an error when parsing the last entry and buffer size
+in the kexec header is greater than the exact size required to
+store the measurements list.
+
+Should I just send the modified patch with the [RESEND] tag
+or should I send the whole patch set with an incremented version
+number?
+
+Also, since patches 4-6 are for testing, I would prefer to skip
+them for now and push a new version of the patch set for the
+Crypto Agile format first.
+
+Thanks
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
