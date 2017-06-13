@@ -1,91 +1,89 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 13 Jun 2017 11:37:15 -0400
-Subject: [PATCH RFC] Smack: More sanity in the use of Netlabel
-In-Reply-To: <3e8e03a4-ec19-71c5-2eae-46201507b962@schaufler-ca.com>
-References: <3e8e03a4-ec19-71c5-2eae-46201507b962@schaufler-ca.com>
-Message-ID: <CAHC9VhS=XF-_stYvFTw37DrJQaHh9G=vmZAbeDObP9DXH7Bi6g@mail.gmail.com>
+From: smcv@collabora.com (Simon McVittie)
+Date: Tue, 13 Jun 2017 18:45:19 +0100
+Subject: Is there a generic LSM/kernel ABI analogous to getcon_raw() and
+	aa_getcon()?
+Message-ID: <20170613174519.nmrdglusytvjtdem@archetype.pseudorandom.co.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jun 8, 2017 at 10:41 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> Subject: [PATCH RFC] Smack: More sanity in the use of Netlabel
->
-> I want to make some changes to Smack's way of looking at
-> networks and network labeling. The existing default is that
-> Smack thinks everyone is a CIPSO host and that any packet
-> without a label should get the ambient label. This was the
-> right choice in 1997 when MLS hosts only talked to each other,
-> and might have made some sense in 2007 when Smack got started,
-> but is clearly not going to work well in 2017. I also have
-> found that the way Smack uses Netlabel is painfully at odds
-> with the way SELinux does, and that could prevent my long
-> term goal of complete module stacking from coming about.
->
-> The proposed New World Order shouldn't break anybody who
-> isn't using a network that is dedicated to nothing but
-> CIPSO hosts, and that's easy to configure, too. It should
-> make working side-by-side with SELinux reasonably simple.
->
-> Today, the ambient label (floor by default) is defined as
-> an unlabeled Netlabel domain, and the default domain is a
-> cipsov4, doi:3. When a network address is configured to be
-> single-label the Netlabel configuration does not look right
-> to me, I'm not sure it did anything useful.
->
-> The change simplifies (put the 'S' in "Smack") the Netlabel
-> configuration and makes everything clearer. To maintain
-> compatibility, 0.0.0.0/0 is given cipsov4,doi:3 and looks
-> on the net as it does today. The loopback address 127.0.0.1/32
-> gets cipsov4,doi:2 and doi:2 is defined to use tag:6, which
-> is the local-only but always correct tag.
->
-> Because the new configuration uses addresses, it's easy
-> to map it to something reasonable for SELinux. Change
-> 0.0.0.0/0 to an unlabeled domain are you should be happy.
->
-> # echo 0.0.0.0/0 System > /sys/fs/smackfs/netlabel
->
-> I'm not 100% done with this patch, but I have to leave it
-> alone for a few days, so it seemed like a good point to
-> get other eyes on it.
+As I mentioned in a thread a while ago, I'm trying to reduce the amount
+of LSM-specific code (that does very similar things for different LSMs)
+in dbus-daemon, in favour of LSM-agnostic APIs. So we now have an IPC
+call (method call) GetConnectionCredentials(), which one D-Bus client can
+use to ask dbus-daemon for the LSM label (and other credential-like
+attributes) of any other D-Bus client, and it's defined in terms of the
+result of the SO_PEERSEC getsockopt. A D-Bus service (a client of the
+dbus-daemon) would typically make that call as a response to getting a
+request, so that it can use the uid, pid and/or LSM label to decide
+whether to obey or reject the request.
 
-I'll refrain from commenting on any details in the Smack code, but I
-thought it might be worth mentioning/asking two things:
+Services can't just use SO_PEERSEC directly, because D-Bus is a star
+topology: everything communicates only with the dbus-daemon, which
+acts as a hub/broker and passes on messages. That's why we have to
+offer an IPC call by which the dbus-daemon will do the SO_PEERSEC
+query on the caller's behalf.
 
-* I know I've brought this up before and you punted, but since you are
-reworking the code I figured it is worth mentioning again: I would
-really recommend leveraging the NetLabel caching mechanism.  All of my
-measurements are old, but the performance improvement for SELinux was
-significant; not only do you get to bypass the CIPSO/CALIPSO option
-parsing, but you get to bypass any of the secattr-to-LSM conversions
-necessary.
+In particular, systemd is one such D-Bus service, and when it gets a
+request while SELinux is enabled, it fetches some information about
+the initiator.
 
-* It sounds like the main motivation for this change is to help enable
-LSM stacking for the per-packet access controls.  With that in mind
-would you care to share your current thinking/plans for that?  The
-proper context (SELinux joke, hardy har har) should help us comment on
-the ideas/designs in this patch.
+This works fine for most clients of systemd. However, there is one
+situation in which the dbus-daemon itself sends method call messages,
+so we need to be prepared to respond to GetConnectionCredentials()
+for the special sender name used on messages from the dbus-daemon itself,
+org.freedesktop.DBus.
 
-> Oh, and I cleaned up those IPv6 ifdefs that made everyone
-> cringe so.
+For specific LSMs, we can do this: libselinux and libapparmor
+both have function calls that wrap a read from /proc/self/current/attr[1].
+However, I'm really keen to keep GetConnectionCredentials() LSM-agnostic:
+using libselinux and libapparmor wouldn't cover Smack or new LSMs,
+and anyway libapparmor doesn't offer an API to get the raw label,
+only a parsed form (with no documented way to compose the parts into
+something equivalent to the result of SO_PEERSEC).
 
-Regardless of everything else, this makes me happy.  I have to think
-this should make your life a bit easier too. :)
+My next attempt was to read /proc/self/current/attr, but that doesn't
+seem to be guaranteed to be consistent with SO_PEERSEC: in AppArmor,
+the result of SO_PEERSEC is a bare string but /proc/self/current/attr
+has a newline.
 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  security/smack/Kconfig           |  10 +-
->  security/smack/Makefile          |   3 +-
->  security/smack/smack.h           |  24 ++--
->  security/smack/smack_access.c    |   6 +-
->  security/smack/smack_lsm.c       | 265 ++++++++++++++++++++++-----------------
->  security/smack/smack_netfilter.c |   4 +-
->  security/smack/smackfs.c         | 208 +++++++++++++++++++-----------
->  7 files changed, 308 insertions(+), 212 deletions(-)
+I also tried making a temporary socketpair() and doing SO_PEERSEC on that,
+but at least SELinux (possibly other LSMs) doesn't really support
+SO_PEERSEC on a socketpair().
 
--- 
-paul moore
-www.paul-moore.com
+Is there an LSM-agnostic API for this? My goal here is that
+if we have a chain of communication
+(kernel -> AF_UNIX service -> ... -> ultimate requester) and the
+ultimate requester wants to see the LSM label, the only LSM-specifics
+needed are in the kernel and the ultimate requester, and the rest can
+pass through LSM-agnostic bytestrings without special knowledge.
+
+Can I safely assume that, as a matter of LSM-agnostic kernel ABI, the
+contents of /proc/self/current/attr are in some sense compatible with the
+contents of SO_PEERSEC? (As a minimum, that they come from the same
+"namespace" - for instance, for my purposes it would be bad if one had
+some sort of quoting or prefix and the other didn't)
+
+Can I safely assume that, as a matter of LSM-agnostic kernel ABI,
+any trailing newlines on /proc/self/current/attr are merely a presentation
+hint and can safely be stripped? What about other trailing whitespace?
+
+Are there any other useful guarantees or equivalences that I can rely on
+for arbitrary LSMs?
+
+I was amused to see that on my AppArmor test system, ps -Z puts AppArmor
+labels in the SELinux label column; it calls into libselinux, but
+the way in which it uses libselinux doesn't seem to check whether SELinux
+is actually active or not, and just blindly reads /proc/self/current/attr.
+But ps strips all non-printable characters, which is fine for display
+but not something I would be prepared to do in an API, unless this list's
+consensus is that LSM labels are guaranteed to be isprint()-compliant.
+
+Thanks,
+    S
+
+[1] actually there are some subtleties involving the current task/thread,
+    but dbus-daemon is essentially single-threaded, so we can make the
+    simplifying assumption that the main thread is the right one
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
