@@ -1,34 +1,97 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Tue, 13 Jun 2017 11:11:16 +0800
-Subject: [PATCH 03/11] Creation of "usb_device_auth" LSM hook
-In-Reply-To: <1497286620-15027-4-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <201706131101.GMlYp44a%fengguang.wu@intel.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Mon, 12 Jun 2017 23:09:25 -0700
+Subject: [PATCH] KEYS: remove CONFIG_KEYS_COMPAT
+Message-ID: <20170613060925.17121-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Salvatore,
+From: Eric Biggers <ebiggers@google.com>
 
-[auto build test ERROR on security/next]
-[also build test ERROR on v4.12-rc5]
-[cannot apply to next-20170609]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+KEYS_COMPAT now always takes the value of COMPAT && KEYS.  But the
+security/keys/ directory is only compiled if KEYS is enabled, so in
+practice KEYS_COMPAT is the same as COMPAT.  Therefore, remove the
+unnecessary KEYS_COMPAT and just use COMPAT directly.
 
-url:    https://github.com/0day-ci/linux/commits/Salvatore-Mesoraca/S-A-R-A-Documentation/20170613-050631
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-config: ia64-allmodconfig (attached as .config)
-compiler: ia64-linux-gcc (GCC) 6.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=ia64 
+(Also remove an outdated comment from compat.c.)
 
-All errors (new ones prefixed by >>):
-
->> ERROR: "security_usb_device_auth" [drivers/usb/core/usbcore.ko] undefined!
-   ERROR: "ia64_delay_loop" [drivers/spi/spi-thunderx.ko] undefined!
-   ERROR: "ia64_delay_loop" [drivers/net/phy/mdio-cavium.ko] undefined!
-
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ security/keys/Kconfig    | 4 ----
+ security/keys/Makefile   | 2 +-
+ security/keys/compat.c   | 5 -----
+ security/keys/internal.h | 4 ++--
+ 4 files changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index a7a23b5541f8..f5d96996baa6 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -20,10 +20,6 @@ config KEYS
+ 
+ 	  If you are unsure as to whether this is required, answer N.
+ 
+-config KEYS_COMPAT
+-	def_bool y
+-	depends on COMPAT && KEYS
+-
+ config PERSISTENT_KEYRINGS
+ 	bool "Enable register of persistent per-UID keyrings"
+ 	depends on KEYS
+diff --git a/security/keys/Makefile b/security/keys/Makefile
+index 57dff0c15809..6d31eca7c602 100644
+--- a/security/keys/Makefile
++++ b/security/keys/Makefile
+@@ -16,7 +16,7 @@ obj-y := \
+ 	request_key_auth.o \
+ 	user_defined.o
+ compat-obj-$(CONFIG_KEY_DH_OPERATIONS) += compat_dh.o
+-obj-$(CONFIG_KEYS_COMPAT) += compat.o $(compat-obj-y)
++obj-$(CONFIG_COMPAT) += compat.o $(compat-obj-y)
+ obj-$(CONFIG_PROC_FS) += proc.o
+ obj-$(CONFIG_SYSCTL) += sysctl.o
+ obj-$(CONFIG_PERSISTENT_KEYRINGS) += persistent.o
+diff --git a/security/keys/compat.c b/security/keys/compat.c
+index e87c89c0177c..d7445946b701 100644
+--- a/security/keys/compat.c
++++ b/security/keys/compat.c
+@@ -50,11 +50,6 @@ static long compat_keyctl_instantiate_key_iov(
+ 
+ /*
+  * The key control system call, 32-bit compatibility version for 64-bit archs
+- *
+- * This should only be called if the 64-bit arch uses weird pointers in 32-bit
+- * mode or doesn't guarantee that the top 32-bits of the argument registers on
+- * taking a 32-bit syscall are zero.  If you can, you should call sys_keyctl()
+- * directly.
+  */
+ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
+ 		       u32, arg2, u32, arg3, u32, arg4, u32, arg5)
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index c0f8682eba69..0cc7333408d0 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -271,7 +271,7 @@ extern long keyctl_dh_compute(struct keyctl_dh_params __user *, char __user *,
+ 			      size_t, struct keyctl_kdf_params __user *);
+ extern long __keyctl_dh_compute(struct keyctl_dh_params __user *, char __user *,
+ 				size_t, struct keyctl_kdf_params *);
+-#ifdef CONFIG_KEYS_COMPAT
++#ifdef CONFIG_COMPAT
+ extern long compat_keyctl_dh_compute(struct keyctl_dh_params __user *params,
+ 				char __user *buffer, size_t buflen,
+ 				struct compat_keyctl_kdf_params __user *kdf);
+@@ -286,7 +286,7 @@ static inline long keyctl_dh_compute(struct keyctl_dh_params __user *params,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-#ifdef CONFIG_KEYS_COMPAT
++#ifdef CONFIG_COMPAT
+ static inline long compat_keyctl_dh_compute(
+ 				struct keyctl_dh_params __user *params,
+ 				char __user *buffer, size_t buflen,
+-- 
+2.13.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
