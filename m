@@ -1,38 +1,46 @@
-From: r.krypa@samsung.com (=?UTF-8?Q?Rafa=c5=82_Krypa?=)
-Date: Wed, 14 Jun 2017 15:10:09 +0200
-Subject: [PATCH RFC] Smack: More sanity in the use of Netlabel
-In-Reply-To: <3e8e03a4-ec19-71c5-2eae-46201507b962@schaufler-ca.com>
-References: <CGME20170609024301epcas3p42a76d6e0e1c8ef38636c08bd478a9d59@epcas3p4.samsung.com>
-	<3e8e03a4-ec19-71c5-2eae-46201507b962@schaufler-ca.com>
-Message-ID: <c11f0d61-02c9-f71c-c983-1d34845cedbe@samsung.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Wed, 14 Jun 2017 15:10:08 +0100
+Subject: [PATCH v1] shebang: restrict python interactive prompt/interpreter
+In-Reply-To: <1497277644.21594.319.camel@linux.vnet.ibm.com>
+References: <201706100041.GFH78616.OFtOHFJSLQOMVF@I-love.SAKURA.ne.jp>
+	<754b78d1-f7f9-58bd-bf74-fea9e105649a@nmatt.com>
+	<20170609164315.GA1141@meriadoc.perfinion.com>
+	<d84aaf19-307b-4b60-df74-4fb43a218c9c@nmatt.com>
+	<CAGXu5jJt5MRU3ZdKABEbLt4qe-cCLxEm5tMH9SdUh=rtdLUV1w@mail.gmail.com>
+	<201706101427.EEG90168.OtFFHSFMOVOJQL@I-love.SAKURA.ne.jp>
+	<d9aca46b-97c6-4faf-b559-484feb4aa640@digikod.net>
+	<1497234757.21594.280.camel@linux.vnet.ibm.com>
+	<1497277644.21594.319.camel@linux.vnet.ibm.com>
+Message-ID: <20170614151008.42bc57a2@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-06-09 04:41, Casey Schaufler wrote:
-> Subject: [PATCH RFC] Smack: More sanity in the use of Netlabel
+On Mon, 12 Jun 2017 10:27:24 -0400
+Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-Hi Casey,
-Thank you for sharing your code. I have one remark, on top of what Piotr Sawicki already wrote.
+> On Sun, 2017-06-11 at 22:32 -0400, Mimi Zohar wrote:
+> > On Sun, 2017-06-11 at 13:44 +0200, Micka?l Sala?n wrote:  
+>  
+> > > Using filesystem xattr seems like a good idea for this kind of
+> > > exceptions and instead of a hardcoded interpreter path. Something like
+> > > "security.tpe.interpreter=1|2" (bitmask for interpreter-only and/or CLI)
+> > > and "security.tpe.environment=HOME,LOGNAME" would be quite flexible to
+> > > configure a security policy for some binaries. This could also be
+> > > protected by IMA/EVM, if needed.  
+> > 
+> > Checking for the existence of an xattr without caching is relatively
+> > slow. ?I'm not sure that we would want to go this route.  
+> ?
+> For identifying interpreters, xattrs would be too slow (without
+> caching results), but once identified, using xattrs as you suggested,
+> for specifying how interpreters can be invoked and limiting
+> environment variables, is a good idea. ?Perhaps the two xattrs could
+> be combined?
 
-Back in 2014, commit 69f287ae6fc83 ("Smack: secmark support for netfilter") made some important change in Smack behavior regarding access control on loopback. The case I have in mind can be described as follows:
-- Default Smack settings for netlabel (Documentation/security/Smack.txt recommends "127.0.0.1 -CIPSO\n0.0.0.0/0 @")
-- Loopback network interface with IPv4 address 127.0.0.1
-- An external network address, for example eth0 with IPv4 address 192.168.0.10
-- A server program listening on some port on all interfaces (0.0.0.0)
+It's not just #! you need to cover. If I can run ld.so for my arch format
+then ld.so will helpfully let me load any ELF binary I like and run it.
 
-Now if another application wants to connect to the server on loopback, but Smack doesn't allow that, it will be prohibited if connection targets 127.0.0.1. But if the client uses 192.168.0.10 as destination address, it will work without CIPSO and be allowed.
-The client application could also play tricks and use IPv4-mapped IPv6 addresses like ::ffff:127.0.0.1 or ::ffff:192.168.0.10. To prevent that, Smack would have to be configured to use CIPSO for all IP addresses assigned to local network interfaces, not only 127.0.0.1. This means active updating of 
-netlabel configuration if interfaces are hot-plugged or have dynamically assigned IP address.
-
-When your patch with secmark support appeared in v4.0, all that was needed to prevent local communication on loopback device on addresses other than 127.0.0.1 was enabling CONFIG_SECURITY_SMACK_NETFILTER. With that option enabled, secmark was set on all locally generated packets. Smack preferred 
-secmark to netlabel policy when checking access for packet delivery. Local applications needed to have mutual write access to communicate over loopback, regardless of netlabel configuration.
-
-Now this proposed patch seems to revert that change back to pre-v4.0 behavior. Is that intended? Let's say that a system administrator wants to prevent local programs from talking to each other while enabling both of them to make external connections. Is the recommended way of achieving it to 
-manually enable CIPSO for all local IP addresses in netlabel and keep it updated when network configuration changes?
-
-
-Best regards,
-Rafal Krypa
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
