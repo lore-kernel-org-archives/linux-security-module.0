@@ -1,165 +1,157 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 14 Jun 2017 23:31:36 +0100
-Subject: [PATCH 27/27] ... and the intel_rdt driver
-In-Reply-To: <149745355907.10897.10073768158664960494.stgit@warthog.procyon.org.uk>
-References: <149745355907.10897.10073768158664960494.stgit@warthog.procyon.org.uk>
-	<149745330648.10897.9605870130502083184.stgit@warthog.procyon.org.uk>
-Message-ID: <10464.1497479496@warthog.procyon.org.uk>
+From: john.johansen@canonical.com (John Johansen)
+Date: Wed, 14 Jun 2017 15:44:41 -0700
+Subject: Is there a generic LSM/kernel ABI analogous to getcon_raw() and
+	aa_getcon()?
+In-Reply-To: <d95670e5-837e-2cd3-7bf1-424a3cd89eec@schaufler-ca.com>
+References: <20170613174519.nmrdglusytvjtdem@archetype.pseudorandom.co.uk>
+	<cc28a551-08b5-aeb4-382a-9ad86f51ddac@schaufler-ca.com>
+	<20170614114430.ooti2gqxllkqz2fe@archetype.pseudorandom.co.uk>
+	<d95670e5-837e-2cd3-7bf1-424a3cd89eec@schaufler-ca.com>
+Message-ID: <a934d38f-5794-1ec7-3abd-40051593ae3c@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This also needs the attached addition to fix the intel_rdt driver.
+On 06/14/2017 09:06 AM, Casey Schaufler wrote:
+> On 6/14/2017 4:44 AM, Simon McVittie wrote:
+>> On Tue, 13 Jun 2017 at 11:56:00 -0700, Casey Schaufler wrote:
+>>> On 6/13/2017 10:45 AM, Simon McVittie wrote:
+>>>> For specific LSMs, we can do this: libselinux and libapparmor
+>>>> both have function calls that wrap a read from /proc/self/current/attr[1].
+>>> I assume you mean /proc/self/attr/current
+>> You assume correctly.
+>>
+>>>> However, I'm really keen to keep GetConnectionCredentials() LSM-agnostic:
+>>>> using libselinux and libapparmor wouldn't cover Smack or new LSMs,
+>>> Nor should they. 
+>>>
+>>> There is a smack_new_label_from_self() in libsmack, which is maintained at:
+>>>
+>>> 	https://github.com/smack-team/smack
+>> That works up to a point, but I hope you can see why this doesn't
+>> really scale very well! For LSMs that are less widespread than SELinux
+>> and AppArmor, we get an unappealing choice between writing and supporting
+>> new LSM-specific code for each LSM, or ignoring those LSMs.
+> 
+> Thank you for taking on the mantle of the bold pioneer who is
+> (finally) working on the LSM API. You are very brave.
+> 
+> One of your greatest challenges will be fending off the people
+> who believe that you're done once you support their favorite
+> security module. If it's going to be a proper LSM API it's got
+> to support all the existing modules and provide design guidance
+> to someone creating a new module. I assume that you knew the job
+> was dangerous when you took it.
+> 
+> Consider the option of eschewing the existing module specific APIs
+> and going directly to /proc/self/attr/current and SO_PEERSEC.
+> 
+>> We already don't really have enough SELinux expertise among the active
+>> dbus maintainers for that part to be a first-class citizen, and we only
+>> have AppArmor knowledge because I happen to be using it in another
+>> project, so I'd be very reluctant to add new LSM-specifics without
+>> someone from the relevant LSM committing to being available to
+>> support it.
+> 
+> Thank you for asking. How do I get on your list?
+> 
+>> That's why LinuxSecurityLabel in the result of GetConnectionCredentials()
+>> is defined in terms of SO_PEERSEC, so we can delegate the exact behaviour
+>> to the Linux kernel and LSM maintainers - whatever happens to that socket
+>> option in future LSM development, that's what we make available to clients.
+> 
+> The issue is that /proc/.../current doesn't give you the same thing as
+> SO_PEERSEC? Or that the format of what comes out of one isn't the same
+> as what comes out of the other? I'm a little confused about what problem
+> you are solving by using GetConnectionCredentials() instead of reading
+> /proc/.../current
+> 
+dbus is a userspace acts as a userspace proxy
 
-David
----
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index f5af0cc7eb0d..d026701894fd 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -35,6 +35,11 @@
- #include <asm/intel_rdt.h>
- #include <asm/intel_rdt_common.h>
- 
-+struct rdt_fs_context {
-+	struct kernfs_fs_context kfc;
-+	bool	enable_cdp;
-+};
-+
- DEFINE_STATIC_KEY_FALSE(rdt_enable_key);
- struct kernfs_root *rdt_root;
- struct rdtgroup rdtgroup_default;
-@@ -743,22 +748,6 @@ static void cdp_disable(void)
- 	}
- }
- 
--static int parse_rdtgroupfs_options(char *data)
--{
--	char *token, *o = data;
--	int ret = 0;
--
--	while ((token = strsep(&o, ",")) != NULL) {
--		if (!*token)
--			return -EINVAL;
--
--		if (!strcmp(token, "cdp"))
--			ret = cdp_enable();
--	}
--
--	return ret;
--}
--
- /*
-  * We don't allow rdtgroup directories to be created anywhere
-  * except the root directory. Thus when looking for the rdtgroup
-@@ -823,11 +812,9 @@ void rdtgroup_kn_unlock(struct kernfs_node *kn)
- 	}
- }
- 
--static struct dentry *rdt_mount(struct file_system_type *fs_type,
--				int flags, const char *unused_dev_name,
--				void *data)
-+static int rdt_get_tree(struct fs_context *fc)
- {
--	struct dentry *dentry;
-+	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
- 	int ret;
- 
- 	mutex_lock(&rdtgroup_mutex);
-@@ -835,27 +822,25 @@ static struct dentry *rdt_mount(struct file_system_type *fs_type,
- 	 * resctrl file system can only be mounted once.
- 	 */
- 	if (static_branch_unlikely(&rdt_enable_key)) {
--		dentry = ERR_PTR(-EBUSY);
-+		errorf("intel_rdt: Can only mount once");
-+		ret = -EBUSY;
- 		goto out;
- 	}
- 
--	ret = parse_rdtgroupfs_options(data);
--	if (ret) {
--		dentry = ERR_PTR(ret);
--		goto out_cdp;
-+	if (ctx->enable_cdp) {
-+		ret = cdp_enable();
-+		if (ret < 0)
-+			goto out_cdp;
- 	}
- 
- 	closid_init();
- 
- 	ret = rdtgroup_create_info_dir(rdtgroup_default.kn);
--	if (ret) {
--		dentry = ERR_PTR(ret);
-+	if (ret < 0)
- 		goto out_cdp;
--	}
- 
--	dentry = kernfs_mount(fs_type, flags, rdt_root,
--			      RDTGROUP_SUPER_MAGIC, NULL);
--	if (IS_ERR(dentry))
-+	ret = kernfs_get_tree(&ctx->kfc);
-+	if (ret < 0)
- 		goto out_cdp;
- 
- 	static_branch_enable(&rdt_enable_key);
-@@ -865,8 +850,42 @@ static struct dentry *rdt_mount(struct file_system_type *fs_type,
- 	cdp_disable();
- out:
- 	mutex_unlock(&rdtgroup_mutex);
-+	return ret;
-+}
-+
-+static int rdt_parse_option(struct fs_context *fc, char *p)
-+{
-+	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
- 
--	return dentry;
-+	if (strcmp(p, "cdp") == 0) {
-+		ctx->enable_cdp = true;
-+		return 0;
-+	}
-+
-+	return invalf("intel_rdt: Unknown option");
-+}
-+
-+static void rdt_fs_context_free(struct fs_context *fc)
-+{
-+	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
-+
-+	kernfs_free_fs_context(&ctx->kfc);
-+}
-+
-+static const struct fs_context_operations rdt_fs_context_ops = {
-+	.free		= rdt_fs_context_free,
-+	.parse_option	= rdt_parse_option,
-+	.get_tree	= rdt_get_tree,
-+};
-+
-+static int rdt_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
-+{
-+	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
-+
-+	ctx->kfc.root = rdt_root;
-+	ctx->kfc.magic = RDTGROUP_SUPER_MAGIC;
-+	ctx->kfc.fc.ops = &rdt_fs_context_ops;
-+	return 0;
- }
- 
- static int reset_all_ctrls(struct rdt_resource *r)
-@@ -994,9 +1013,10 @@ static void rdt_kill_sb(struct super_block *sb)
- }
- 
- static struct file_system_type rdt_fs_type = {
--	.name    = "resctrl",
--	.mount   = rdt_mount,
--	.kill_sb = rdt_kill_sb,
-+	.name			= "resctrl",
-+	.fs_context_size	= sizeof(struct rdt_fs_context),
-+	.init_fs_context	= rdt_init_fs_context,
-+	.kill_sb		= rdt_kill_sb,
- };
- 
- static int rdtgroup_mkdir(struct kernfs_node *parent_kn, const char *name,
+A <===> dbus <====> B
+
+A wants to know the credentials of B. GetConnectionCredentials() is
+essentially the dbus equiv of using SO_PEERSEC in the situation of
+
+A <===> B
+
+
+>> The SELinux support in dbus-daemon (from Fedora/Red Hat) came first,
+>> and I think it may have been the only widespread LSM at the time; but for
+>> the AppArmor support (from Ubuntu) I insisted on generalizing the parts
+>> that could be generalized.
+> 
+> General being something other than a text string?
+> 
+>> If the kernel/LSMs don't offer a reliable way to find out our own
+>> security label in a form compatible with SO_PEERSEC, then we might have
+>> to just not offer that to clients either.
+> 
+>  
+> Upstream only SELinux and Smack provide both /proc/.../current
+> and SO_PEERSEC. They provide label strings that can be compared.
+> AppArmor does not support SO_PEERSEC as of 4.12. So as of today,
+> there isn't a problem. Or am I missing something?
+> 
+Simon has been using kernels with Ubuntu patchset for apparmor which
+does support SO_PEERSEC.
+
+The 3.13 pull request updates the upstream code to a common base, so
+you should be seeing RFCs for this stuff soon.
+
+> 
+> 
+>>> You also need to be aware that there is work ongoing to allow
+>>> multiple modules that currently provide these facilities to work
+>>> at the same time. That work could make your efforts both easier
+>>> and harder.
+>> How does this work in SO_PEERSEC? If the result is a "bytestring"
+>> (like a path or environment variable - 0 or more bytes other than '\0',
+>> followed by a '\0' terminator, with length considered to be either
+>> strlen(x) or strlen(x)+1) then dbus-daemon will continue to pass it
+>> through faithfully, without needing to parse or understand it.
+> 
+> What I've proposed in the past in a string like:
+> 
+> 	selinux="mumble_t",smack="Mumble",apparmor="aa_mumble"
+> 
+> This has a problem with AppArmor's use of newlines, but we had
+> discussions that led me to believe this is surmountable.
+> 
+I am trying to get rid of those, and force tightening of the spec.
+We are also moving the write end of our set_execon equiv away
+from the proc interface so that won't be the issue it was in the
+past
+
+> An option which I have been investigating is to add a
+> sockopt to specify which security module's data you want
+> getsockopt(..., SO_PEERSEC, ...) to provide. If you haven't
+> specified, you get the first available (per the wishes of the
+> SELinux crowd). If you specify an LSM name you get the value
+> for that. If you specify "context" you get the wacky string
+> with all the available modules. I'm leaning in this direction
+> because it should be easier on the existing userspace. Only
+> those that are aware of the possibility of multiple security
+> modules need to be modified.
+> 
+>> Obviously, the eventual consumer of this information (the D-Bus service,
+>> in this case systemd) will need LSM-specific code to parse the forwarded
+>> SO_PEERSEC result and use it in their security rules, and that code
+>> would need to use a suitably updated libselinux or similar that can
+>> parse out just the SELinux label from a stack of labels; but they'd
+>> need those LSM-specifics to make an informed policy decision anyway.
+>> So the LSM-specifics are confined to just the producer (the kernel)
+>> and the eventual consumer (systemd or whatever other service).
+>>
+>> Thanks,
+>>     S
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
