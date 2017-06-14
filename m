@@ -1,126 +1,58 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 14 Jun 2017 09:06:38 -0700
-Subject: Is there a generic LSM/kernel ABI analogous to getcon_raw() and
-	aa_getcon()?
-In-Reply-To: <20170614114430.ooti2gqxllkqz2fe@archetype.pseudorandom.co.uk>
-References: <20170613174519.nmrdglusytvjtdem@archetype.pseudorandom.co.uk>
-	<cc28a551-08b5-aeb4-382a-9ad86f51ddac@schaufler-ca.com>
-	<20170614114430.ooti2gqxllkqz2fe@archetype.pseudorandom.co.uk>
-Message-ID: <d95670e5-837e-2cd3-7bf1-424a3cd89eec@schaufler-ca.com>
+Date: Wed, 14 Jun 2017 09:32:01 -0700
+Subject: [PATCH RFC] Smack: More sanity in the use of Netlabel
+In-Reply-To: <c11f0d61-02c9-f71c-c983-1d34845cedbe@samsung.com>
+References: <CGME20170609024301epcas3p42a76d6e0e1c8ef38636c08bd478a9d59@epcas3p4.samsung.com>
+	<3e8e03a4-ec19-71c5-2eae-46201507b962@schaufler-ca.com>
+	<c11f0d61-02c9-f71c-c983-1d34845cedbe@samsung.com>
+Message-ID: <22c51600-22c6-3217-4b9c-fd1cfebce962@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 6/14/2017 4:44 AM, Simon McVittie wrote:
-> On Tue, 13 Jun 2017 at 11:56:00 -0700, Casey Schaufler wrote:
->> On 6/13/2017 10:45 AM, Simon McVittie wrote:
->>> For specific LSMs, we can do this: libselinux and libapparmor
->>> both have function calls that wrap a read from /proc/self/current/attr[1].
->> I assume you mean /proc/self/attr/current
-> You assume correctly.
+On 6/14/2017 6:10 AM, Rafa? Krypa wrote:
+> On 2017-06-09 04:41, Casey Schaufler wrote:
+>> Subject: [PATCH RFC] Smack: More sanity in the use of Netlabel
 >
->>> However, I'm really keen to keep GetConnectionCredentials() LSM-agnostic:
->>> using libselinux and libapparmor wouldn't cover Smack or new LSMs,
->> Nor should they. 
->>
->> There is a smack_new_label_from_self() in libsmack, which is maintained at:
->>
->> 	https://github.com/smack-team/smack
-> That works up to a point, but I hope you can see why this doesn't
-> really scale very well! For LSMs that are less widespread than SELinux
-> and AppArmor, we get an unappealing choice between writing and supporting
-> new LSM-specific code for each LSM, or ignoring those LSMs.
-
-Thank you for taking on the mantle of the bold pioneer who is
-(finally) working on the LSM API. You are very brave.
-
-One of your greatest challenges will be fending off the people
-who believe that you're done once you support their favorite
-security module. If it's going to be a proper LSM API it's got
-to support all the existing modules and provide design guidance
-to someone creating a new module. I assume that you knew the job
-was dangerous when you took it.
-
-Consider the option of eschewing the existing module specific APIs
-and going directly to /proc/self/attr/current and SO_PEERSEC.
-
-> We already don't really have enough SELinux expertise among the active
-> dbus maintainers for that part to be a first-class citizen, and we only
-> have AppArmor knowledge because I happen to be using it in another
-> project, so I'd be very reluctant to add new LSM-specifics without
-> someone from the relevant LSM committing to being available to
-> support it.
-
-Thank you for asking. How do I get on your list?
-
-> That's why LinuxSecurityLabel in the result of GetConnectionCredentials()
-> is defined in terms of SO_PEERSEC, so we can delegate the exact behaviour
-> to the Linux kernel and LSM maintainers - whatever happens to that socket
-> option in future LSM development, that's what we make available to clients.
-
-The issue is that /proc/.../current doesn't give you the same thing as
-SO_PEERSEC? Or that the format of what comes out of one isn't the same
-as what comes out of the other? I'm a little confused about what problem
-you are solving by using GetConnectionCredentials() instead of reading
-/proc/.../current
-
-> The SELinux support in dbus-daemon (from Fedora/Red Hat) came first,
-> and I think it may have been the only widespread LSM at the time; but for
-> the AppArmor support (from Ubuntu) I insisted on generalizing the parts
-> that could be generalized.
-
-General being something other than a text string?
-
-> If the kernel/LSMs don't offer a reliable way to find out our own
-> security label in a form compatible with SO_PEERSEC, then we might have
-> to just not offer that to clients either.
-
- 
-Upstream only SELinux and Smack provide both /proc/.../current
-and SO_PEERSEC. They provide label strings that can be compared.
-AppArmor does not support SO_PEERSEC as of 4.12. So as of today,
-there isn't a problem. Or am I missing something?
-
-
-
->> You also need to be aware that there is work ongoing to allow
->> multiple modules that currently provide these facilities to work
->> at the same time. That work could make your efforts both easier
->> and harder.
-> How does this work in SO_PEERSEC? If the result is a "bytestring"
-> (like a path or environment variable - 0 or more bytes other than '\0',
-> followed by a '\0' terminator, with length considered to be either
-> strlen(x) or strlen(x)+1) then dbus-daemon will continue to pass it
-> through faithfully, without needing to parse or understand it.
-
-What I've proposed in the past in a string like:
-
-	selinux="mumble_t",smack="Mumble",apparmor="aa_mumble"
-
-This has a problem with AppArmor's use of newlines, but we had
-discussions that led me to believe this is surmountable.
-
-An option which I have been investigating is to add a
-sockopt to specify which security module's data you want
-getsockopt(..., SO_PEERSEC, ...) to provide. If you haven't
-specified, you get the first available (per the wishes of the
-SELinux crowd). If you specify an LSM name you get the value
-for that. If you specify "context" you get the wacky string
-with all the available modules. I'm leaning in this direction
-because it should be easier on the existing userspace. Only
-those that are aware of the possibility of multiple security
-modules need to be modified.
-
-> Obviously, the eventual consumer of this information (the D-Bus service,
-> in this case systemd) will need LSM-specific code to parse the forwarded
-> SO_PEERSEC result and use it in their security rules, and that code
-> would need to use a suitably updated libselinux or similar that can
-> parse out just the SELinux label from a stack of labels; but they'd
-> need those LSM-specifics to make an informed policy decision anyway.
-> So the LSM-specifics are confined to just the producer (the kernel)
-> and the eventual consumer (systemd or whatever other service).
+> Hi Casey,
+> Thank you for sharing your code. I have one remark, on top of what Piotr Sawicki already wrote.
 >
-> Thanks,
->     S
+> Back in 2014, commit 69f287ae6fc83 ("Smack: secmark support for netfilter") made some important change in Smack behavior regarding access control on loopback. The case I have in mind can be described as follows:
+> - Default Smack settings for netlabel (Documentation/security/Smack.txt recommends "127.0.0.1 -CIPSO\n0.0.0.0/0 @")
+> - Loopback network interface with IPv4 address 127.0.0.1
+> - An external network address, for example eth0 with IPv4 address 192.168.0.10
+> - A server program listening on some port on all interfaces (0.0.0.0)
+>
+> Now if another application wants to connect to the server on loopback, but Smack doesn't allow that, it will be prohibited if connection targets 127.0.0.1. But if the client uses 192.168.0.10 as destination address, it will work without CIPSO and be allowed.
+
+The default I'm proposing will have "0.0.0.0/32 -CIPSO",
+which matches the traditional behavior with the exception
+of processes running with the ambient label. You would only
+use "0.0.0.0/32 @" if you wanted to allow all processes
+to communicate on the internet. If you chose
+"0.0.0.0/32 Internet" processes with Smack rules allowing
+mutual write with "Internet" would be able to talk off-box.
+
+
+> The client application could also play tricks and use IPv4-mapped IPv6 addresses like ::ffff:127.0.0.1 or ::ffff:192.168.0.10. To prevent that, Smack would have to be configured to use CIPSO for all IP addresses assigned to local network interfaces, not only 127.0.0.1. This means active updating of netlabel configuration if interfaces are hot-plugged or have dynamically assigned IP address.
+>
+> When your patch with secmark support appeared in v4.0, all that was needed to prevent local communication on loopback device on addresses other than 127.0.0.1 was enabling CONFIG_SECURITY_SMACK_NETFILTER. With that option enabled, secmark was set on all locally generated packets. Smack preferred secmark to netlabel policy when checking access for packet delivery. Local applications needed to have mutual write access to communicate over loopback, regardless of netlabel configuration.
+>
+> Now this proposed patch seems to revert that change back to pre-v4.0 behavior.
+
+The secmark is still checked first in smack_socket_sock_rcv_skb().
+There's an inconsistency in smack_inet_conn_request(), where the
+host label is checked first. I'll change that so the secmark check
+comes first. I think that will address this concern.
+
+> Is that intended? Let's say that a system administrator wants to prevent local programs from talking to each other while enabling both of them to make external connections. Is the recommended way of achieving it to manually enable CIPSO for all local IP addresses in netlabel and keep it updated when network configuration changes?
+>
+>
+> Best regards,
+> Rafal Krypa
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
 
 --
