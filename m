@@ -1,45 +1,101 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Wed, 14 Jun 2017 07:44:52 -0700
-Subject: [PATCH] apparmor: fix error code in aafs_create()
-In-Reply-To: <20170614104002.GL29394@elgon.mountain>
-References: <20170614104002.GL29394@elgon.mountain>
-Message-ID: <a58aedd0-3a53-d1de-6303-4d287ce6c6c6@canonical.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 14 Jun 2017 16:46:23 +0200
+Subject: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF5828912194@ORSMSX109.amr.corp.intel.com>
+References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
+	<1496965593-187931-1-git-send-email-azhar.shaikh@intel.com>
+	<20170610111339.ggphrkwqiez35wer@intel.com>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF58289117D8@ORSMSX109.amr.corp.intel.com>
+	<20170612075001.56tayed7dmmk55hn@intel.com>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF5828912194@ORSMSX109.amr.corp.intel.com>
+Message-ID: <20170614144623.2flddavcbbcedtsv@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/14/2017 03:40 AM, Dan Carpenter wrote:
-> We accidentally return ERR_PTR(0) if lookup_one_len() fails.  The caller
-> is expecting error pointers so it likely causes problems later on.  For
-> example, on one path I saw it triggered an AA_BUG().
+On Wed, Jun 14, 2017 at 12:51:25AM +0000, Shaikh, Azhar wrote:
 > 
-> Fixes: a481f4d91783 ("apparmor: add custom apparmorfs that will be used by policy namespace files")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I'll pull this in and forward it up to James along with a couple of other
-bug fixes
-
-thanks
-
 > 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 853c2ec8e0c9..2caeb748070c 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -248,8 +248,10 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
->  
->  	inode_lock(dir);
->  	dentry = lookup_one_len(name, parent, strlen(name));
-> -	if (IS_ERR(dentry))
-> +	if (IS_ERR(dentry)) {
-> +		error = PTR_ERR(dentry);
->  		goto fail_lock;
-> +	}
->  
->  	if (d_really_is_positive(dentry)) {
->  		error = -EEXIST;
+> > -----Original Message-----
+> > From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
+> > Sent: Monday, June 12, 2017 12:50 AM
+> > To: Shaikh, Azhar <azhar.shaikh@intel.com>
+> > Cc: jgunthorpe at obsidianresearch.com; tpmdd-devel at lists.sourceforge.net;
+> > linux-kernel at vger.kernel.org; linux-security-module at vger.kernel.org
+> > Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
+> > 
+> > On Sat, Jun 10, 2017 at 04:35:50PM +0000, Shaikh, Azhar wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
+> > > > Sent: Saturday, June 10, 2017 4:14 AM
+> > > > To: Shaikh, Azhar <azhar.shaikh@intel.com>
+> > > > Cc: jgunthorpe at obsidianresearch.com;
+> > > > tpmdd-devel at lists.sourceforge.net;
+> > > > linux-kernel at vger.kernel.org; linux-security-module at vger.kernel.org
+> > > > Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell
+> > > > systems
+> > > >
+> > > > On Thu, Jun 08, 2017 at 04:46:33PM -0700, Azhar Shaikh wrote:
+> > > > > To overcome a hardware limitation on Intel Braswell systems,
+> > > > > disable CLKRUN protocol during TPM transactions and re-enable once
+> > > > > the transaction is completed.
+> > > > >
+> > > > > Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+> > > > > ---
+> > > > > Changes from v1:
+> > > > > - Add CONFIG_X86 around disable_lpc_clk_run () and
+> > > > > enable_lpc_clk_run() to avoid
+> > > > > - build breakage on architectures which do not implement
+> > > > > kmap_atomic_pfn()
+> > > > >
+> > > > > Changes from v2:
+> > > > > - Use ioremap()/iounmap() instead of
+> > > > kmap_atomic_pfn()/kunmap_atomic()
+> > > > > - Move is_bsw() and all macros from tpm.h to tpm_tis.c file.
+> > > > > - Add the is_bsw() check in disable_lpc_clk_run() and
+> > > > > enable_lpc_clk_run()
+> > > > > - instead of adding it in each read/write API.
+> > > > >
+> > > > > Changes from v3:
+> > > > > - Move the code under #ifdef CONFIG_X86 and create stub functions
+> > > > > for everything else
+> > > > > - Rename the functions disable_lpc_clk_run() ->
+> > > > > tpm_platform_begin_xfer() and
+> > > > > - enable_lpc_clk_run() -> tpm_platform_end_xfer()
+> > > > > - Remove wmb()
+> > > >
+> > > > The wrong parameter order in outb() is not worth of mentioning in
+> > > > your opinion?
+> > > >
+> > >
+> > > Oh yes! It is definitely worth mentioning. I forgot to mention that.
+> > > Will definitely mention it in the changelog for the next version if any or will
+> > re send v4 with updated changelog for v3.
+> > >
+> > > > Related.
+> > > >
+> > > > I looked again the kmap version of the patch and still cannot figure
+> > > > out what could be wrong. Obviously the wrong outb() cause unexpected
+> > behavior.
+> > > >
+> > > > Do you have chances to grab klog from kmap version with correct outb?
+> > > >
+> > >
+> > > I have not tried the kmap version with corrected outb(). Will give that a try.
+> > >
+> > > > /Jarkko
+> > 
+> > Thank you!
+> > 
 > 
+> Even with the corrected outb(), kmap version fails to boot. Could not get boot logs :-(
+> 
+> > /Jarkko
 
+Lets go with the ioremap() version for now.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
