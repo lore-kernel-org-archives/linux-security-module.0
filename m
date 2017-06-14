@@ -1,123 +1,45 @@
-From: azhar.shaikh@intel.com (Shaikh, Azhar)
-Date: Wed, 14 Jun 2017 17:17:38 +0000
-Subject: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
-In-Reply-To: <20170614144623.2flddavcbbcedtsv@intel.com>
-References: <1496369044-38234-1-git-send-email-azhar.shaikh@intel.com>
-	<1496965593-187931-1-git-send-email-azhar.shaikh@intel.com>
-	<20170610111339.ggphrkwqiez35wer@intel.com>
-	<5FFFAD06ADE1CA4381B3F0F7C6AF58289117D8@ORSMSX109.amr.corp.intel.com>
-	<20170612075001.56tayed7dmmk55hn@intel.com>
-	<5FFFAD06ADE1CA4381B3F0F7C6AF5828912194@ORSMSX109.amr.corp.intel.com>
-	<20170614144623.2flddavcbbcedtsv@intel.com>
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF58289123AA@ORSMSX109.amr.corp.intel.com>
+From: tj@kernel.org (Tejun Heo)
+Date: Wed, 14 Jun 2017 13:54:26 -0400
+Subject: [PATCH 27/27] kernfs, sysfs, cgroup: Support fs_context [ver #5]
+In-Reply-To: <149745355907.10897.10073768158664960494.stgit@warthog.procyon.org.uk>
+References: <149745330648.10897.9605870130502083184.stgit@warthog.procyon.org.uk>
+	<149745355907.10897.10073768158664960494.stgit@warthog.procyon.org.uk>
+Message-ID: <20170614175426.GA26229@htj.duckdns.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Hello, David.
 
-
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
-> Sent: Wednesday, June 14, 2017 7:46 AM
-> To: Shaikh, Azhar <azhar.shaikh@intel.com>
-> Cc: jgunthorpe at obsidianresearch.com; tpmdd-devel at lists.sourceforge.net;
-> linux-kernel at vger.kernel.org; linux-security-module at vger.kernel.org
-> Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell systems
+On Wed, Jun 14, 2017 at 04:19:19PM +0100, David Howells wrote:
+> Make kernfs support superblock creation/mount/remount with fs_context.
 > 
-> On Wed, Jun 14, 2017 at 12:51:25AM +0000, Shaikh, Azhar wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
-> > > Sent: Monday, June 12, 2017 12:50 AM
-> > > To: Shaikh, Azhar <azhar.shaikh@intel.com>
-> > > Cc: jgunthorpe at obsidianresearch.com;
-> > > tpmdd-devel at lists.sourceforge.net;
-> > > linux-kernel at vger.kernel.org; linux-security-module at vger.kernel.org
-> > > Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell
-> > > systems
-> > >
-> > > On Sat, Jun 10, 2017 at 04:35:50PM +0000, Shaikh, Azhar wrote:
-> > > >
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
-> > > > > Sent: Saturday, June 10, 2017 4:14 AM
-> > > > > To: Shaikh, Azhar <azhar.shaikh@intel.com>
-> > > > > Cc: jgunthorpe at obsidianresearch.com;
-> > > > > tpmdd-devel at lists.sourceforge.net;
-> > > > > linux-kernel at vger.kernel.org;
-> > > > > linux-security-module at vger.kernel.org
-> > > > > Subject: Re: [PATCH v4] tpm: Enable CLKRUN protocol for Braswell
-> > > > > systems
-> > > > >
-> > > > > On Thu, Jun 08, 2017 at 04:46:33PM -0700, Azhar Shaikh wrote:
-> > > > > > To overcome a hardware limitation on Intel Braswell systems,
-> > > > > > disable CLKRUN protocol during TPM transactions and re-enable
-> > > > > > once the transaction is completed.
-> > > > > >
-> > > > > > Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-> > > > > > ---
-> > > > > > Changes from v1:
-> > > > > > - Add CONFIG_X86 around disable_lpc_clk_run () and
-> > > > > > enable_lpc_clk_run() to avoid
-> > > > > > - build breakage on architectures which do not implement
-> > > > > > kmap_atomic_pfn()
-> > > > > >
-> > > > > > Changes from v2:
-> > > > > > - Use ioremap()/iounmap() instead of
-> > > > > kmap_atomic_pfn()/kunmap_atomic()
-> > > > > > - Move is_bsw() and all macros from tpm.h to tpm_tis.c file.
-> > > > > > - Add the is_bsw() check in disable_lpc_clk_run() and
-> > > > > > enable_lpc_clk_run()
-> > > > > > - instead of adding it in each read/write API.
-> > > > > >
-> > > > > > Changes from v3:
-> > > > > > - Move the code under #ifdef CONFIG_X86 and create stub
-> > > > > > functions for everything else
-> > > > > > - Rename the functions disable_lpc_clk_run() ->
-> > > > > > tpm_platform_begin_xfer() and
-> > > > > > - enable_lpc_clk_run() -> tpm_platform_end_xfer()
-> > > > > > - Remove wmb()
-> > > > >
-> > > > > The wrong parameter order in outb() is not worth of mentioning
-> > > > > in your opinion?
-> > > > >
-> > > >
-> > > > Oh yes! It is definitely worth mentioning. I forgot to mention that.
-> > > > Will definitely mention it in the changelog for the next version
-> > > > if any or will
-> > > re send v4 with updated changelog for v3.
-> > > >
-> > > > > Related.
-> > > > >
-> > > > > I looked again the kmap version of the patch and still cannot
-> > > > > figure out what could be wrong. Obviously the wrong outb() cause
-> > > > > unexpected
-> > > behavior.
-> > > > >
-> > > > > Do you have chances to grab klog from kmap version with correct
-> outb?
-> > > > >
-> > > >
-> > > > I have not tried the kmap version with corrected outb(). Will give that a
-> try.
-> > > >
-> > > > > /Jarkko
-> > >
-> > > Thank you!
-> > >
-> >
-> > Even with the corrected outb(), kmap version fails to boot. Could not
-> > get boot logs :-(
-> >
-> > > /Jarkko
-> 
-> Lets go with the ioremap() version for now.
-> 
+> This requires that sysfs and cgroup, which are built on kernfs, be made to
+> support fs_context also.
 
-Okay. I will re-send the same [PATCH v4] after updating the change log for v3.
+Can you please include a brief rationale for doing this and include a
+pointer to the fuller description on what's going on?
 
-> /Jarkko
+> Weirdies:
+> 
+>  (*) cgroup_do_get_tree() calls cset_cgroup_from_root() with locks held,
+>      but then uses the resulting pointer after dropping the locks.  I'm
+>      told this is okay and needs commenting.
+
+Yeah, will add the comment.
+
+>  (*) The cgroup refcount web.  This really needs documenting.
+
+If you're talking about the mount refcnt part, yeah, it's confusing to
+me too and we definitely need to document it better.
+
+>  (*) cgroup2 only has one root?
+
+Yeap.
+
+Thanks.
+
+-- 
+tejun
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
