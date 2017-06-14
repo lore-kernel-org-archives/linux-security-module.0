@@ -1,174 +1,165 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 14 Jun 2017 18:31:28 -0400
-Subject: [PATCH RFC] Smack: More sanity in the use of Netlabel
-In-Reply-To: <2b852eda-e5cc-76f3-3d40-89072e3a56ef@schaufler-ca.com>
-References: <3e8e03a4-ec19-71c5-2eae-46201507b962@schaufler-ca.com>
-	<CAHC9VhS=XF-_stYvFTw37DrJQaHh9G=vmZAbeDObP9DXH7Bi6g@mail.gmail.com>
-	<2b852eda-e5cc-76f3-3d40-89072e3a56ef@schaufler-ca.com>
-Message-ID: <CAHC9VhSvHfPo6s4L1nG1RxKOwCvZB=UHt_WCPQ7GK5v7ePUAJA@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 14 Jun 2017 23:31:36 +0100
+Subject: [PATCH 27/27] ... and the intel_rdt driver
+In-Reply-To: <149745355907.10897.10073768158664960494.stgit@warthog.procyon.org.uk>
+References: <149745355907.10897.10073768158664960494.stgit@warthog.procyon.org.uk>
+	<149745330648.10897.9605870130502083184.stgit@warthog.procyon.org.uk>
+Message-ID: <10464.1497479496@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jun 13, 2017 at 5:24 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 6/13/2017 8:37 AM, Paul Moore wrote:
->>
->> I'll refrain from commenting on any details in the Smack code, but I
->> thought it might be worth mentioning/asking two things:
->>
->> * I know I've brought this up before and you punted, but since you are
->> reworking the code I figured it is worth mentioning again: I would
->> really recommend leveraging the NetLabel caching mechanism.  All of my
->> measurements are old, but the performance improvement for SELinux was
->> significant; not only do you get to bypass the CIPSO/CALIPSO option
->> parsing, but you get to bypass any of the secattr-to-LSM conversions
->> necessary.
->
-> I haven't forgotten about the caching, I'm just having
-> trouble working out how to use it. In particular, I think
-> (but I'm not completely sure) that having two labels, one
-> for incoming and one for outgoing, on each socket makes
-> using the caching mechanism difficult.
+This also needs the attached addition to fix the intel_rdt driver.
 
-The NetLabel cache is just a LSM specified blob that gets associated
-with the protocol specific packet label.  In SELinux it lets us jump
-straight from the CIPSO/CALIPSO option to the secid which is a big
-win.  I would imagine you could do something similar with a pointer to
-a smack_known struct.
-
-> Smack does not compose or parse packet options
-> except when labels are introduced ("imported" in Smack
-> terms) to the system. The label/secid/CIPSO triple is
-> computed the first time the label is seen and maintained
-> as long as the system runs. When a packet comes in the
-> CIPSO is looked up in the list. When a packet is to be
-> sent the CIPSO is taken from the list entry pointed to
-> by the socket (smk_out) label.
-
-Well, call it what you want but I see a linear cost
-list_for_each_entry() in smack_from_secattr() that could probably be
-bypassed by utilizing the cache.  Not to mention the cost involved in
-parsing the category bitmap.
-
-This is what I was talking about when I talked about secattr-to-LSM conversions.
-
-> Does caching work with address selectors? It doesn't look
-> like it does, but I can only wrap my brain around so much.
-
-Yep.  We're talking high level so I won't bother with the details, but
-the cache works anytime you ask NetLabel to go from the wire-label to
-the secattr-label.
-
->> * It sounds like the main motivation for this change is to help enable
->> LSM stacking for the per-packet access controls.
->
-> It's a major motivator, but while I was looking at the existing
-> code I became quite dissatisfied with what's there.
->
->> With that in mind
->> would you care to share your current thinking/plans for that?  The
->> proper context (SELinux joke, hardy har har) should help us comment on
->> the ideas/designs in this patch.
->
-> In conversations in Toronto last year we agreed that the only thing
-> that makes sense is that all security modules need to agree on the
-> packet labeling for a packet to be sent.
-
-To be clear, "agree on the packet labeling" means two basic things.
-
-* The global configuration: outbound traffic maps, protocol
-definitions (e.g. CIPSO DOIs)
-
-* The per-packet label as seen by the NetLabel kAPI (e.g. struct
-netlbl_lsm_secattr)
-
-> There are exactly three ways that this can happen:
->
->         1. Everyone agrees the packet should be unlabeled.
-
-Yep.  Although very uninteresting.
-
->         2. Everyone agrees to a common labeling
-
-Yep.  See above for what I think that needs to mean.
-
->         3. Everyone has their own idea on the labeling,
->            and they just happen to match.
-
-...
-
-> I am of the opinion that case #3 is so far fetched that it
-> might be ignored. If you agree on the labeling that much I'm
-> willing to bet that one of the security modules is redundant.
-> Getting the label granularity to match that closely between
-> modules would be a major configuration accomplishment. If it
-> happens occasionally, great, but SELinux's use of just the
-> MLS component and Smack's spelling out the label in category
-> bits aren't coming together coincidentally very often. You
-> can increase the cases where the two agree with Smack's
-> ability to explicitly assign a CIPSO value for a Smack label,
-> but I don't see a complete system working that way.
-
-Let's agree to just throw out option #3.  Admins might get lucky and
-have it work once in a great while, but it is far from a general
-solution and not something I could ever recommend.
-
-> On a local interface you can use Tag 6 to send a secid. If
-> you can create a secid that represents a SELinux context
-> and Smack label pair (or whatever combination of modules
-> you like) you can achieve case #2 locally. This is very good
-> news for Smack, because local enforcement is critical.
-> And, we need to have a mapped secid solution for SO_PEERSEC
-> anyway.
-
-I think eventually we are going to need either a mapping layer for
-secids (ungh) or a LSM framework mechanism that allows LSMs to
-allocate new secids and have each stacked LSM setup the right state
-internally.  I haven't thought enough about the second option to
-figure out if it is even feasible, but it saves us the extra layer of
-abstraction.
-
-> Which brings us to case #1, unlabeled packets. If the
-> system can detect that no one wants a label on a packet
-> it can happily be sent. If a packet arrives unlabeled,
-> and everyone knows what they want to do in that case,
-> there's nothing to worry about. SELinux typically allows
-> unlabeled packets to be delivered and sends packets
-> unlabeled. Smack sends packets with CIPSO unless the
-> sender has the "ambient" label. Smack will also send
-> unlabeled packets to "single label" hosts.
-
-If you solve the two "agree on packet labeling" concerns I mentioned
-above this just works.
-
-While unlabeled traffic obviously needs to work, it isn't really a
-specific use case we need to worry about at the moment.  Solve the
-general problem and this should "just work".
-
-> So, if Smack defines 0.0.0.0/32 as single label floor ("_")
-> (unlabeled) and 127.0.0.1 as CIPSO,tag6 with appropriate
-> Netlabel address selectors you should have a situation
-> where you agree on local labeling by case #2 and everyone
-> else by case #3 for typical configurations. If you define
-> 0.0.0.0/32 with the web ("@") label you get uncontrolled
-> network behavior for Smack, as well as SELinux. If you
-> want to send CIPSO to the world "0.0.0.0/32 -CIPSO" will
-> do that for Smack, and good luck with matching up your
-> labeling a'la #1.
->
-> If there is a mechanism for mapping the sending labels into
-> a single u32 secid we can label locally. If we can agree to
-> send packets unlabeled we also have no issue, but there needs
-> to be a way to detect that before a packet can be sent. Finally,
-> if we're going to insist on sending a labeled packet off box
-> there has to be a way to detect the unlikely possibility of
-> agreement. All of which seems doable.
-
-Without nitpicking the ideas above, I do agree it all seems doable at
-the moment.
-
--- 
-paul moore
-www.paul-moore.com
+David
+---
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index f5af0cc7eb0d..d026701894fd 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -35,6 +35,11 @@
+ #include <asm/intel_rdt.h>
+ #include <asm/intel_rdt_common.h>
+ 
++struct rdt_fs_context {
++	struct kernfs_fs_context kfc;
++	bool	enable_cdp;
++};
++
+ DEFINE_STATIC_KEY_FALSE(rdt_enable_key);
+ struct kernfs_root *rdt_root;
+ struct rdtgroup rdtgroup_default;
+@@ -743,22 +748,6 @@ static void cdp_disable(void)
+ 	}
+ }
+ 
+-static int parse_rdtgroupfs_options(char *data)
+-{
+-	char *token, *o = data;
+-	int ret = 0;
+-
+-	while ((token = strsep(&o, ",")) != NULL) {
+-		if (!*token)
+-			return -EINVAL;
+-
+-		if (!strcmp(token, "cdp"))
+-			ret = cdp_enable();
+-	}
+-
+-	return ret;
+-}
+-
+ /*
+  * We don't allow rdtgroup directories to be created anywhere
+  * except the root directory. Thus when looking for the rdtgroup
+@@ -823,11 +812,9 @@ void rdtgroup_kn_unlock(struct kernfs_node *kn)
+ 	}
+ }
+ 
+-static struct dentry *rdt_mount(struct file_system_type *fs_type,
+-				int flags, const char *unused_dev_name,
+-				void *data)
++static int rdt_get_tree(struct fs_context *fc)
+ {
+-	struct dentry *dentry;
++	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
+ 	int ret;
+ 
+ 	mutex_lock(&rdtgroup_mutex);
+@@ -835,27 +822,25 @@ static struct dentry *rdt_mount(struct file_system_type *fs_type,
+ 	 * resctrl file system can only be mounted once.
+ 	 */
+ 	if (static_branch_unlikely(&rdt_enable_key)) {
+-		dentry = ERR_PTR(-EBUSY);
++		errorf("intel_rdt: Can only mount once");
++		ret = -EBUSY;
+ 		goto out;
+ 	}
+ 
+-	ret = parse_rdtgroupfs_options(data);
+-	if (ret) {
+-		dentry = ERR_PTR(ret);
+-		goto out_cdp;
++	if (ctx->enable_cdp) {
++		ret = cdp_enable();
++		if (ret < 0)
++			goto out_cdp;
+ 	}
+ 
+ 	closid_init();
+ 
+ 	ret = rdtgroup_create_info_dir(rdtgroup_default.kn);
+-	if (ret) {
+-		dentry = ERR_PTR(ret);
++	if (ret < 0)
+ 		goto out_cdp;
+-	}
+ 
+-	dentry = kernfs_mount(fs_type, flags, rdt_root,
+-			      RDTGROUP_SUPER_MAGIC, NULL);
+-	if (IS_ERR(dentry))
++	ret = kernfs_get_tree(&ctx->kfc);
++	if (ret < 0)
+ 		goto out_cdp;
+ 
+ 	static_branch_enable(&rdt_enable_key);
+@@ -865,8 +850,42 @@ static struct dentry *rdt_mount(struct file_system_type *fs_type,
+ 	cdp_disable();
+ out:
+ 	mutex_unlock(&rdtgroup_mutex);
++	return ret;
++}
++
++static int rdt_parse_option(struct fs_context *fc, char *p)
++{
++	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
+ 
+-	return dentry;
++	if (strcmp(p, "cdp") == 0) {
++		ctx->enable_cdp = true;
++		return 0;
++	}
++
++	return invalf("intel_rdt: Unknown option");
++}
++
++static void rdt_fs_context_free(struct fs_context *fc)
++{
++	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
++
++	kernfs_free_fs_context(&ctx->kfc);
++}
++
++static const struct fs_context_operations rdt_fs_context_ops = {
++	.free		= rdt_fs_context_free,
++	.parse_option	= rdt_parse_option,
++	.get_tree	= rdt_get_tree,
++};
++
++static int rdt_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
++{
++	struct rdt_fs_context *ctx = container_of(fc, struct rdt_fs_context, kfc.fc);
++
++	ctx->kfc.root = rdt_root;
++	ctx->kfc.magic = RDTGROUP_SUPER_MAGIC;
++	ctx->kfc.fc.ops = &rdt_fs_context_ops;
++	return 0;
+ }
+ 
+ static int reset_all_ctrls(struct rdt_resource *r)
+@@ -994,9 +1013,10 @@ static void rdt_kill_sb(struct super_block *sb)
+ }
+ 
+ static struct file_system_type rdt_fs_type = {
+-	.name    = "resctrl",
+-	.mount   = rdt_mount,
+-	.kill_sb = rdt_kill_sb,
++	.name			= "resctrl",
++	.fs_context_size	= sizeof(struct rdt_fs_context),
++	.init_fs_context	= rdt_init_fs_context,
++	.kill_sb		= rdt_kill_sb,
+ };
+ 
+ static int rdtgroup_mkdir(struct kernfs_node *parent_kn, const char *name,
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
