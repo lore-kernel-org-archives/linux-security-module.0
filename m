@@ -1,46 +1,45 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Wed, 14 Jun 2017 15:10:08 +0100
-Subject: [PATCH v1] shebang: restrict python interactive prompt/interpreter
-In-Reply-To: <1497277644.21594.319.camel@linux.vnet.ibm.com>
-References: <201706100041.GFH78616.OFtOHFJSLQOMVF@I-love.SAKURA.ne.jp>
-	<754b78d1-f7f9-58bd-bf74-fea9e105649a@nmatt.com>
-	<20170609164315.GA1141@meriadoc.perfinion.com>
-	<d84aaf19-307b-4b60-df74-4fb43a218c9c@nmatt.com>
-	<CAGXu5jJt5MRU3ZdKABEbLt4qe-cCLxEm5tMH9SdUh=rtdLUV1w@mail.gmail.com>
-	<201706101427.EEG90168.OtFFHSFMOVOJQL@I-love.SAKURA.ne.jp>
-	<d9aca46b-97c6-4faf-b559-484feb4aa640@digikod.net>
-	<1497234757.21594.280.camel@linux.vnet.ibm.com>
-	<1497277644.21594.319.camel@linux.vnet.ibm.com>
-Message-ID: <20170614151008.42bc57a2@alans-desktop>
+From: john.johansen@canonical.com (John Johansen)
+Date: Wed, 14 Jun 2017 07:44:52 -0700
+Subject: [PATCH] apparmor: fix error code in aafs_create()
+In-Reply-To: <20170614104002.GL29394@elgon.mountain>
+References: <20170614104002.GL29394@elgon.mountain>
+Message-ID: <a58aedd0-3a53-d1de-6303-4d287ce6c6c6@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 12 Jun 2017 10:27:24 -0400
-Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+On 06/14/2017 03:40 AM, Dan Carpenter wrote:
+> We accidentally return ERR_PTR(0) if lookup_one_len() fails.  The caller
+> is expecting error pointers so it likely causes problems later on.  For
+> example, on one path I saw it triggered an AA_BUG().
+> 
+> Fixes: a481f4d91783 ("apparmor: add custom apparmorfs that will be used by policy namespace files")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-> On Sun, 2017-06-11 at 22:32 -0400, Mimi Zohar wrote:
-> > On Sun, 2017-06-11 at 13:44 +0200, Micka?l Sala?n wrote:  
+I'll pull this in and forward it up to James along with a couple of other
+bug fixes
+
+thanks
+
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 853c2ec8e0c9..2caeb748070c 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -248,8 +248,10 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
 >  
-> > > Using filesystem xattr seems like a good idea for this kind of
-> > > exceptions and instead of a hardcoded interpreter path. Something like
-> > > "security.tpe.interpreter=1|2" (bitmask for interpreter-only and/or CLI)
-> > > and "security.tpe.environment=HOME,LOGNAME" would be quite flexible to
-> > > configure a security policy for some binaries. This could also be
-> > > protected by IMA/EVM, if needed.  
-> > 
-> > Checking for the existence of an xattr without caching is relatively
-> > slow. ?I'm not sure that we would want to go this route.  
-> ?
-> For identifying interpreters, xattrs would be too slow (without
-> caching results), but once identified, using xattrs as you suggested,
-> for specifying how interpreters can be invoked and limiting
-> environment variables, is a good idea. ?Perhaps the two xattrs could
-> be combined?
+>  	inode_lock(dir);
+>  	dentry = lookup_one_len(name, parent, strlen(name));
+> -	if (IS_ERR(dentry))
+> +	if (IS_ERR(dentry)) {
+> +		error = PTR_ERR(dentry);
+>  		goto fail_lock;
+> +	}
+>  
+>  	if (d_really_is_positive(dentry)) {
+>  		error = -EEXIST;
+> 
 
-It's not just #! you need to cover. If I can run ld.so for my arch format
-then ld.so will helpfully let me load any ELF binary I like and run it.
-
-Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
