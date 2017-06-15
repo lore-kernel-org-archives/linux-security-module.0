@@ -1,157 +1,141 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 15 Jun 2017 12:00:50 -0400
-Subject: [PATCH v2 2/6] ima: Simplify policy_func_show.
-In-Reply-To: <1496886555-10082-3-git-send-email-bauerman@linux.vnet.ibm.com>
-References: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1496886555-10082-3-git-send-email-bauerman@linux.vnet.ibm.com>
-Message-ID: <1497542450.4287.56.camel@linux.vnet.ibm.com>
+From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
+Date: Thu, 15 Jun 2017 18:42:47 +0200
+Subject: [RFC v2 0/9] S.A.R.A. a new stacked LSM
+Message-ID: <1497544976-7856-1-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-06-07 at 22:49 -0300, Thiago Jung Bauermann wrote:
-> If the func_tokens array uses the same indices as enum ima_hooks,
-> policy_func_show can be a lot simpler, and the func_* enum becomes
-> unnecessary.
-> 
-> Also, if we use the same macro trick used by kernel_read_file_id_str we can
-> use one hooks list for both the enum and the string array, making sure they
-> are always in sync (suggested by Mimi Zohar).
-> 
-> Finally, by using the printf pattern for the function token directly
-> instead of using the pt macro we can simplify policy_func_show even further
-> and avoid needing a temporary buffer.
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux
+Security Module that aims to collect heterogeneous security measures,
+providing a common interface to manage them.
+It can be useful to allow minor security features to use advanced
+management options, like user-space configuration files and tools, without
+too much overhead.
+Some submodules that use this framework are also introduced.
+The code is quite long, I apologize for this. Thank you in advance to
+anyone who will take the time to review this patchset.
 
-Thank you.??Queued to be upstreamed.
+S.A.R.A. is meant to be stacked but it needs cred blobs and the procattr
+interface, so I temporarily implemented those parts in a way that won't
+be acceptable for upstream, but it works for now. I know that there
+is some ongoing work to make cred blobs and procattr stackable, as soon
+as the new interfaces will be available I'll reimplement the involved
+parts.
+At the moment I've been able to test it only on x86.
 
-Mimi
-> ---
->  security/integrity/ima/ima.h        | 25 +++++++++-------
->  security/integrity/ima/ima_policy.c | 58 ++++---------------------------------
->  2 files changed, 21 insertions(+), 62 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 215a93c41b51..d52b487ad259 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -172,17 +172,22 @@ static inline unsigned long ima_hash_key(u8 *digest)
->  	return hash_long(*digest, IMA_HASH_BITS);
->  }
-> 
-> +#define __ima_hooks(hook)		\
-> +	hook(NONE)			\
-> +	hook(FILE_CHECK)		\
-> +	hook(MMAP_CHECK)		\
-> +	hook(BPRM_CHECK)		\
-> +	hook(POST_SETATTR)		\
-> +	hook(MODULE_CHECK)		\
-> +	hook(FIRMWARE_CHECK)		\
-> +	hook(KEXEC_KERNEL_CHECK)	\
-> +	hook(KEXEC_INITRAMFS_CHECK)	\
-> +	hook(POLICY_CHECK)		\
-> +	hook(MAX_CHECK)
-> +#define __ima_hook_enumify(ENUM)	ENUM,
-> +
->  enum ima_hooks {
-> -	FILE_CHECK = 1,
-> -	MMAP_CHECK,
-> -	BPRM_CHECK,
-> -	POST_SETATTR,
-> -	MODULE_CHECK,
-> -	FIRMWARE_CHECK,
-> -	KEXEC_KERNEL_CHECK,
-> -	KEXEC_INITRAMFS_CHECK,
-> -	POLICY_CHECK,
-> -	MAX_CHECK
-> +	__ima_hooks(__ima_hook_enumify)
->  };
-> 
->  /* LIM API function definitions */
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 949ad3858327..f4436626ccb7 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -972,23 +972,10 @@ static const char *const mask_tokens[] = {
->  	"MAY_APPEND"
->  };
-> 
-> -enum {
-> -	func_file = 0, func_mmap, func_bprm,
-> -	func_module, func_firmware, func_post,
-> -	func_kexec_kernel, func_kexec_initramfs,
-> -	func_policy
-> -};
-> +#define __ima_hook_stringify(str)	(#str),
-> 
->  static const char *const func_tokens[] = {
-> -	"FILE_CHECK",
-> -	"MMAP_CHECK",
-> -	"BPRM_CHECK",
-> -	"MODULE_CHECK",
-> -	"FIRMWARE_CHECK",
-> -	"POST_SETATTR",
-> -	"KEXEC_KERNEL_CHECK",
-> -	"KEXEC_INITRAMFS_CHECK",
-> -	"POLICY_CHECK"
-> +	__ima_hooks(__ima_hook_stringify)
->  };
-> 
->  void *ima_policy_start(struct seq_file *m, loff_t *pos)
-> @@ -1025,49 +1012,16 @@ void ima_policy_stop(struct seq_file *m, void *v)
-> 
->  #define pt(token)	policy_tokens[token + Opt_err].pattern
->  #define mt(token)	mask_tokens[token]
-> -#define ft(token)	func_tokens[token]
-> 
->  /*
->   * policy_func_show - display the ima_hooks policy rule
->   */
->  static void policy_func_show(struct seq_file *m, enum ima_hooks func)
->  {
-> -	char tbuf[64] = {0,};
-> -
-> -	switch (func) {
-> -	case FILE_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_file));
-> -		break;
-> -	case MMAP_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_mmap));
-> -		break;
-> -	case BPRM_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_bprm));
-> -		break;
-> -	case MODULE_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_module));
-> -		break;
-> -	case FIRMWARE_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_firmware));
-> -		break;
-> -	case POST_SETATTR:
-> -		seq_printf(m, pt(Opt_func), ft(func_post));
-> -		break;
-> -	case KEXEC_KERNEL_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_kexec_kernel));
-> -		break;
-> -	case KEXEC_INITRAMFS_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_kexec_initramfs));
-> -		break;
-> -	case POLICY_CHECK:
-> -		seq_printf(m, pt(Opt_func), ft(func_policy));
-> -		break;
-> -	default:
-> -		snprintf(tbuf, sizeof(tbuf), "%d", func);
-> -		seq_printf(m, pt(Opt_func), tbuf);
-> -		break;
-> -	}
-> -	seq_puts(m, " ");
-> +	if (func > 0 && func < MAX_CHECK)
-> +		seq_printf(m, "func=%s ", func_tokens[func]);
-> +	else
-> +		seq_printf(m, "func=%d ", func);
->  }
-> 
->  int ima_policy_show(struct seq_file *m, void *v)
+The only submodule introduced in this patchset is WX Protection.
+
+The kernel-space part is complemented by its user-space counterpart:
+saractl [1].
+A test suite for WX Protection, called sara-test [2], is also available.
+
+WX Protection aims to improve user-space programs security by applying:
+- W^X enforcement: program can't have a page of memory that is marked, at
+		   the same time, writable and executable.
+- W!->X restriction: any page that could have been marked as writable in
+		     the past won't ever be allowed to be marked as
+		     executable.
+- Executable MMAP prevention: prevents the creation of new executable mmaps
+			      after the dynamic libraries have been loaded.
+All of the above features can be enabled or disabled both system wide
+or on a per executable basis through the use of configuration files managed
+by "saractl".
+It is important to note that some programs may have issues working with
+WX Protection. In particular:
+- W^X enforcement will cause problems to any programs that needs
+  memory pages mapped both as writable and executable at the same time e.g.
+  programs with executable stack markings in the PT_GNU_STACK segment.
+- W!->X restriction will cause problems to any program that
+  needs to generate executable code at run time or to modify executable
+  pages e.g. programs with a JIT compiler built-in or linked against a
+  non-PIC library.
+- Executable MMAP prevention can work only with programs that have at least
+  partial RELRO support. It's disabled automatically for programs that
+  lack this feature. It will cause problems to any program that uses dlopen
+  or tries to do an executable mmap. Unfortunately this feature is the one
+  that could create most problems and should be enabled only after careful
+  evaluation.
+To extend the scope of the above features, despite the issues that they may
+cause, they are complemented by:
+- procattr interface: can be used by a program to discover which WX
+		      Protection features are enabled and/or to tighten
+		      them.
+- Trampoline emulation: emulates the execution of well-known "trampolines"
+			even when they are placed in non-executable memory.
+Parts of WX Protection are inspired by some of the features available in
+PaX.
+
+More information can be found in the documentation introduced in the first
+patch and in the "commit message" of the following emails.
+
+Changes in v2:
+	- Removed USB filtering submodule and relative hook
+	- s/saralib/libsara/ typo
+	- STR macro renamed to avoid conflicts
+	- check_vmflags hook now returns an error code instead of just 1
+	  or 0. (suggested by Casey Schaufler)
+	- pr_wxp macro rewritten as function for readability
+	- Fixed i386 compilation warnings
+	- Documentation now states clearly that changes done via procattr
+	  interface only apply to current thread. (suggested by Jann Horn)
+
+[1] https://github.com/smeso/saractl
+[2] https://github.com/smeso/sara-test
+
+Salvatore Mesoraca (9):
+  S.A.R.A. Documentation
+  S.A.R.A. framework creation
+  Creation of "check_vmflags" LSM hook
+  S.A.R.A. cred blob management
+  S.A.R.A. WX Protection
+  Creation of "pagefault_handler_x86" LSM hook
+  Trampoline emulation
+  Allowing for stacking procattr support in S.A.R.A.
+  S.A.R.A. WX Protection procattr interface
+
+ Documentation/admin-guide/kernel-parameters.txt |  23 +
+ Documentation/security/00-INDEX                 |   2 +
+ Documentation/security/SARA.rst                 | 170 +++++
+ arch/x86/mm/fault.c                             |   6 +
+ fs/proc/base.c                                  |  38 +
+ include/linux/cred.h                            |   3 +
+ include/linux/lsm_hooks.h                       |  21 +
+ include/linux/security.h                        |  17 +
+ mm/mmap.c                                       |  13 +
+ security/Kconfig                                |   1 +
+ security/Makefile                               |   2 +
+ security/sara/Kconfig                           | 134 ++++
+ security/sara/Makefile                          |   4 +
+ security/sara/include/sara.h                    |  29 +
+ security/sara/include/sara_data.h               |  47 ++
+ security/sara/include/securityfs.h              |  59 ++
+ security/sara/include/trampolines.h             | 171 +++++
+ security/sara/include/utils.h                   |  69 ++
+ security/sara/include/wxprot.h                  |  27 +
+ security/sara/main.c                            | 107 +++
+ security/sara/sara_data.c                       |  79 ++
+ security/sara/securityfs.c                      | 560 +++++++++++++++
+ security/sara/utils.c                           | 151 ++++
+ security/sara/wxprot.c                          | 910 ++++++++++++++++++++++++
+ security/security.c                             |  37 +-
+ 25 files changed, 2678 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/security/SARA.rst
+ create mode 100644 security/sara/Kconfig
+ create mode 100644 security/sara/Makefile
+ create mode 100644 security/sara/include/sara.h
+ create mode 100644 security/sara/include/sara_data.h
+ create mode 100644 security/sara/include/securityfs.h
+ create mode 100644 security/sara/include/trampolines.h
+ create mode 100644 security/sara/include/utils.h
+ create mode 100644 security/sara/include/wxprot.h
+ create mode 100644 security/sara/main.c
+ create mode 100644 security/sara/sara_data.c
+ create mode 100644 security/sara/securityfs.c
+ create mode 100644 security/sara/utils.c
+ create mode 100644 security/sara/wxprot.c
+
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
