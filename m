@@ -1,114 +1,141 @@
 From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Thu, 15 Jun 2017 18:42:55 +0200
-Subject: [RFC v2 8/9] Allowing for stacking procattr support in S.A.R.A.
+Date: Thu, 15 Jun 2017 18:42:50 +0200
+Subject: [RFC v2 3/9] Creation of "check_vmflags" LSM hook
 In-Reply-To: <1497544976-7856-1-git-send-email-s.mesoraca16@gmail.com>
 References: <1497544976-7856-1-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <1497544976-7856-9-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <1497544976-7856-4-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This allow S.A.R.A. to use the procattr interface without interfering
-with other LSMs.
-This part should be reimplemented as soon as upstream procattr stacking
-support is available.
+Creation of a new LSM hook to check if a given configuration of vmflags,
+for a new memory allocation request, should be allowed or not.
+It's placed in "do_mmap", "do_brk_flags" and "__install_special_mapping".
 
 Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- fs/proc/base.c      | 38 ++++++++++++++++++++++++++++++++++++++
- security/security.c | 20 ++++++++++++++++++--
- 2 files changed, 56 insertions(+), 2 deletions(-)
+ include/linux/lsm_hooks.h |  7 +++++++
+ include/linux/security.h  |  6 ++++++
+ mm/mmap.c                 | 13 +++++++++++++
+ security/security.c       |  5 +++++
+ 4 files changed, 31 insertions(+)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index f1e1927..6d0fd1c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2515,6 +2515,40 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	.llseek		= generic_file_llseek,
- };
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index bd274db..33dab16 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -483,6 +483,11 @@
+  *	@reqprot contains the protection requested by the application.
+  *	@prot contains the protection that will be applied by the kernel.
+  *	Return 0 if permission is granted.
++ * @check_vmflags:
++ *	Check if the requested @vmflags are allowed.
++ *	@vmflags contains requested the vmflags.
++ *	Return 0 if the operation is allowed to continue otherwise return
++ *	the appropriate error code.
+  * @file_lock:
+  *	Check permission before performing file locking operations.
+  *	Note: this hook mediates both flock and fcntl style locks.
+@@ -1477,6 +1482,7 @@
+ 				unsigned long prot, unsigned long flags);
+ 	int (*file_mprotect)(struct vm_area_struct *vma, unsigned long reqprot,
+ 				unsigned long prot);
++	int (*check_vmflags)(vm_flags_t vmflags);
+ 	int (*file_lock)(struct file *file, unsigned int cmd);
+ 	int (*file_fcntl)(struct file *file, unsigned int cmd,
+ 				unsigned long arg);
+@@ -1747,6 +1753,7 @@ struct security_hook_heads {
+ 	struct list_head mmap_addr;
+ 	struct list_head mmap_file;
+ 	struct list_head file_mprotect;
++	struct list_head check_vmflags;
+ 	struct list_head file_lock;
+ 	struct list_head file_fcntl;
+ 	struct list_head file_set_fowner;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index af675b5..8701872 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -300,6 +300,7 @@ int security_mmap_file(struct file *file, unsigned long prot,
+ int security_mmap_addr(unsigned long addr);
+ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ 			   unsigned long prot);
++int security_check_vmflags(vm_flags_t vmflags);
+ int security_file_lock(struct file *file, unsigned int cmd);
+ int security_file_fcntl(struct file *file, unsigned int cmd, unsigned long arg);
+ void security_file_set_fowner(struct file *file);
+@@ -823,6 +824,11 @@ static inline int security_file_mprotect(struct vm_area_struct *vma,
+ 	return 0;
+ }
  
-+#ifdef CONFIG_SECURITY_SARA
-+static const struct pid_entry sara_attr_dir_stuff[] = {
-+	REG("wxprot", 0666, proc_pid_attr_operations),
-+};
-+
-+static int proc_sara_attr_dir_readdir(struct file *file,
-+				      struct dir_context *ctx)
++static inline int security_check_vmflags(vm_flags_t vmflags)
 +{
-+	return proc_pident_readdir(file, ctx,
-+				   sara_attr_dir_stuff,
-+				   ARRAY_SIZE(sara_attr_dir_stuff));
++	return 0;
 +}
 +
-+static const struct file_operations proc_sara_attr_dir_ops = {
-+	.read		= generic_read_dir,
-+	.iterate_shared	= proc_sara_attr_dir_readdir,
-+	.llseek		= generic_file_llseek,
-+};
-+
-+static struct dentry *proc_sara_attr_dir_lookup(struct inode *dir,
-+				struct dentry *dentry, unsigned int flags)
-+{
-+	return proc_pident_lookup(dir, dentry,
-+				  sara_attr_dir_stuff,
-+				  ARRAY_SIZE(sara_attr_dir_stuff));
-+};
-+
-+static const struct inode_operations proc_sara_attr_dir_inode_ops = {
-+	.lookup		= proc_sara_attr_dir_lookup,
-+	.getattr	= pid_getattr,
-+	.setattr	= proc_setattr,
-+};
-+#endif /* CONFIG_SECURITY_SARA */
-+
- static const struct pid_entry attr_dir_stuff[] = {
- 	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
- 	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
-@@ -2522,6 +2556,10 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
- 	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
- 	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
-+#ifdef CONFIG_SECURITY_SARA
-+	DIR("sara", 0555, proc_sara_attr_dir_inode_ops,
-+				proc_sara_attr_dir_ops),
-+#endif
- };
+ static inline int security_file_lock(struct file *file, unsigned int cmd)
+ {
+ 	return 0;
+diff --git a/mm/mmap.c b/mm/mmap.c
+index f82741e..132061b 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1311,6 +1311,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	int pkey = 0;
++	int error;
  
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+ 	*populate = 0;
+ 
+@@ -1363,6 +1364,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 	vm_flags |= calc_vm_prot_bits(prot, pkey) | calc_vm_flag_bits(flags) |
+ 			mm->def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
+ 
++	error = security_check_vmflags(vm_flags);
++	if (error)
++		return error;
++
+ 	if (flags & MAP_LOCKED)
+ 		if (!can_do_mlock())
+ 			return -EPERM;
+@@ -2833,6 +2838,10 @@ static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long
+ 		return -EINVAL;
+ 	flags |= VM_DATA_DEFAULT_FLAGS | VM_ACCOUNT | mm->def_flags;
+ 
++	error = security_check_vmflags(flags);
++	if (error)
++		return error;
++
+ 	error = get_unmapped_area(NULL, addr, len, 0, MAP_FIXED);
+ 	if (offset_in_page(error))
+ 		return error;
+@@ -3208,6 +3217,10 @@ static struct vm_area_struct *__install_special_mapping(
+ 	int ret;
+ 	struct vm_area_struct *vma;
+ 
++	ret = security_check_vmflags(vm_flags);
++	if (ret)
++		return ERR_PTR(ret);
++
+ 	vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
+ 	if (unlikely(vma == NULL))
+ 		return ERR_PTR(-ENOMEM);
 diff --git a/security/security.c b/security/security.c
-index f7df697..c6c78dd 100644
+index 42c8028..7e45846 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1239,12 +1239,28 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- 
- int security_getprocattr(struct task_struct *p, char *name, char **value)
- {
--	return call_int_hook(getprocattr, -EINVAL, p, name, value);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	list_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+		rc = hp->hook.getprocattr(p, name, value);
-+		if (rc != -EINVAL)
-+			return rc;
-+	}
-+	return -EINVAL;
+@@ -900,6 +900,11 @@ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ 	return call_int_hook(file_mprotect, 0, vma, reqprot, prot);
  }
  
- int security_setprocattr(const char *name, void *value, size_t size)
- {
--	return call_int_hook(setprocattr, -EINVAL, name, value, size);
-+	struct security_hook_list *hp;
-+	int rc;
++int security_check_vmflags(vm_flags_t vmflags)
++{
++	return call_int_hook(check_vmflags, 0, vmflags);
++}
 +
-+	list_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+		rc = hp->hook.setprocattr(name, value, size);
-+		if (rc != -EINVAL)
-+			return rc;
-+	}
-+	return -EINVAL;
- }
- 
- int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+ int security_file_lock(struct file *file, unsigned int cmd)
+ {
+ 	return call_int_hook(file_lock, 0, file, cmd);
 -- 
 1.9.1
 
