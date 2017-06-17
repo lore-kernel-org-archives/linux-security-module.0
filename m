@@ -1,67 +1,35 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Fri, 16 Jun 2017 12:28:03 -0700
-Subject: Is there a generic LSM/kernel ABI analogous to getcon_raw() and
-	aa_getcon()?
-In-Reply-To: <20170616161357.4nyqrye7ja5nsl7h@archetype.pseudorandom.co.uk>
-References: <20170613174519.nmrdglusytvjtdem@archetype.pseudorandom.co.uk>
-	<cc28a551-08b5-aeb4-382a-9ad86f51ddac@schaufler-ca.com>
-	<20170614114430.ooti2gqxllkqz2fe@archetype.pseudorandom.co.uk>
-	<d95670e5-837e-2cd3-7bf1-424a3cd89eec@schaufler-ca.com>
-	<20170616161357.4nyqrye7ja5nsl7h@archetype.pseudorandom.co.uk>
-Message-ID: <90e35675-1494-6b5d-362c-8600c32415e1@canonical.com>
+From: tytso@mit.edu (Theodore Ts'o)
+Date: Sat, 17 Jun 2017 05:57:55 -0400
+Subject: [PATCH 08/27] VFS: Introduce the structs and doc for a
+	filesystem context [ver #5]
+In-Reply-To: <77078d8b-e8dc-5cd2-2f09-1e796d8e0e2c@schaufler-ca.com>
+References: <22bc3062-e860-5266-7a2d-9f5eff8b8559@schaufler-ca.com>
+	<149745330648.10897.9605870130502083184.stgit@warthog.procyon.org.uk>
+	<149745339478.10897.13154531822843514976.stgit@warthog.procyon.org.uk>
+	<1402.1497472929@warthog.procyon.org.uk>
+	<77078d8b-e8dc-5cd2-2f09-1e796d8e0e2c@schaufler-ca.com>
+Message-ID: <20170617095755.z623wmwgwcw76wce@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/16/2017 09:13 AM, Simon McVittie wrote:
-> On Wed, 14 Jun 2017 at 09:06:38 -0700, Casey Schaufler wrote:
-
+On Wed, Jun 14, 2017 at 01:53:09PM -0700, Casey Schaufler wrote:
+> On 6/14/2017 1:42 PM, David Howells wrote:
+> > Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> >> Could you namespace the fields of this structure?
+> >> e.g. fs_cred, fs_security
+> > Linus objects to that practice.
 > 
->> Upstream only SELinux and Smack provide both /proc/.../current
->> and SO_PEERSEC. They provide label strings that can be compared.
->> AppArmor does not support SO_PEERSEC as of 4.12. So as of today,
->> there isn't a problem. Or am I missing something?
-> 
-> What I would need, in order to do what I had hoped, would be a general
-> statement from the LSM (infrastructure) maintainers something along the
-> lines of: "If an LSM has labels in both /proc/.../current and SO_PEERSEC
-> and they differ, then that LSM is wrong and can safely be ignored". Or,
-> perhaps: "If an LSM has labels in /proc/.../current that end with a
-> newline, normalizing by stripping that newline does not change the
-> meaning; and if the label in /proc/.../current (after stripping a possible
-> newline) differs from the label in SO_PEERSEC, then that LSM is wrong
-> and can safely be ignored".
-> 
-> (Similar to the way my last thread on this list ended with consensus
-> that whether an LSM label in SO_PEERSEC includes a "\0" in its length
-> or not is not significant, and normalizing by adding or removing a
-> single trailing "\0" does not change the meaning.)
-> 
-This is possibly a constraint that could be agreed on and added. Currently
-only 3 lsms (selinux, smack, apparmor) use the getprocattr interface.
-And 2 lsms upstream (selinux, smack) use SO_PEERSEC. With apparmor adding
-support for it upstream soon.
+> Sigh. Never mind. Thank you.
 
->From experience, apparmor will not be adding \n to the end of the value
-from SO_PEERSEC, as it broke some services. But I have been digging and
-testing and it looks like we are good dropping the trailing \n from
-the proc interface.
+I don't know that this is a hard and fast rule.  Struct bio uses a
+"bi_" prefix (e.g., bi_error, bi_opf, bi_iter, etc.).
 
-And I can state that the current output of the proc interface and
-SO_PEERSEC should be the same except for the trailing \n, which
-can (and is in libapparmor) thrown away.
+I find it's really helpful when I'm doing a "git grep" over the whole
+tree; "git grep bi_flags" returns a much more specific and focused
+results than "git grep flags".   :-)
 
-So today we have all 3 users of the interfaces with output that meets your
-requirement modulo the trailing garbage, and apparmor is going to bring
-its use of proc intro compliance so that all 3 LSMs meet the requested
-requirement of the output from the proc interface and SO_PEERSEC being
-the same.
-
-So while the interfaces do not currently guarantee the output of the
-two interfaces is the same, since no LSMs use the interfaces
-differently than requested I don't think its unreasonable to ask the
-community to add the additional requirement that procgetattr and
-SO_PEERSEC output match.
-
+						- Ted
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
