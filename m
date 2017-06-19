@@ -1,51 +1,29 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Mon, 19 Jun 2017 10:12:22 +0300
-Subject: [PATCH 2/4] Protectable Memory Allocator
-In-Reply-To: <ace6f45a-2d21-9a00-fa74-518ac727074f@redhat.com>
-References: <20170607123505.16629-1-igor.stoppa@huawei.com>
-	<20170607123505.16629-3-igor.stoppa@huawei.com>
-	<ace6f45a-2d21-9a00-fa74-518ac727074f@redhat.com>
-Message-ID: <5dfc037e-4812-898b-b173-cd0d1a61a701@huawei.com>
+From: dhowells@redhat.com (David Howells)
+Date: Mon, 19 Jun 2017 08:47:04 +0100
+Subject: [PATCH 08/27] VFS: Introduce the structs and doc for a filesystem
+	context [ver #5]
+In-Reply-To: <1497711392.4684.11.camel@redhat.com>
+References: <1497711392.4684.11.camel@redhat.com>
+	<20170617095755.z623wmwgwcw76wce@thunk.org>
+	<22bc3062-e860-5266-7a2d-9f5eff8b8559@schaufler-ca.com>
+	<149745330648.10897.9605870130502083184.stgit@warthog.procyon.org.uk>
+	<149745339478.10897.13154531822843514976.stgit@warthog.procyon.org.uk>
+	<1402.1497472929@warthog.procyon.org.uk>
+	<77078d8b-e8dc-5cd2-2f09-1e796d8e0e2c@schaufler-ca.com>
+	<9029.1497709089@warthog.procyon.org.uk>
+Message-ID: <25345.1497858424@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 09/06/17 21:56, Laura Abbott wrote:
-> On 06/07/2017 05:35 AM, Igor Stoppa wrote:
+Jeff Layton <jlayton@redhat.com> wrote:
 
-[...]
+> Do you have a reference to the discussion so I can understand the
+> rationale there?
 
-> The pool logic looks remarkably similar to genalloc (lib/genalloc.c).
-> It's not a perfect 1-to-1 mapping but it's close enough to be worth
-> a look.
+I'm afraid not - it was around 15-20 years ago, I think.  I seem to remember
+the rationale being something like "because it's a stupid idea".
 
-Indeed. I have prepared a new incarnation of pmalloc, based on genalloc.
-There are a couple of things that I would like to adjust in genalloc,
-but I'll discuss this in the new submission.
-
->> +
->> +const char msg[] = "Not a valid Pmalloc object.";
->> +const char *__pmalloc_check_object(const void *ptr, unsigned long n)
->> +{
->> +	unsigned long p;
->> +
->> +	p = (unsigned long)ptr;
->> +	n = p + n - 1;
->> +	for (; (PAGE_MASK & p) <= (PAGE_MASK & n); p += PAGE_SIZE) {
->> +		if (is_vmalloc_addr((void *)p)) {
->> +			struct page *page;
->> +
->> +			page = vmalloc_to_page((void *)p);
->> +			if (!(page && PagePmalloc(page)))
->> +				return msg;
->> +		}
-> 
-> Should this be an error if is_vmalloc_addr returns false?
-
-Yes, if this function is called, at least the beginning of the range
-*is* a vmalloc address and therefore the rest should be a vmalloc
-address as well.
-
-thanks, igor
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
