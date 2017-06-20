@@ -1,35 +1,24 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 20 Jun 2017 09:53:37 +0200
-Subject: [PATCH 04/11] S.A.R.A. USB Filtering
-In-Reply-To: <20170620070721.GA30728@amd>
-References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<1497286620-15027-5-git-send-email-s.mesoraca16@gmail.com>
-	<20170620070721.GA30728@amd>
-Message-ID: <CAJHCu1KujgnTsyRBRCk2LXFFdRZKWVRHmdV3nPPiUanXsLq=sg@mail.gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 20 Jun 2017 11:38:01 +0200
+Subject: [PATCH 0/2] Clean up TPM 1.2 EK sysfs code
+Message-ID: <20170620093804.23803-1-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-06-20 9:07 GMT+02:00 Pavel Machek <pavel@ucw.cz>:
-> Hmm. Given that USB device provides vendor id/product id, this does
-> not really stop anyone, right?
->
-> AFAICT you can still get USB stick with vid/pid of logitech keyboard,
-> and kernel will recognize it as a usb stick.
+This patch set cleans up clutter and cruft from EK sysfs code and fixes
+a kernel memory leak.
 
-There are a number of ways by which a device can be assigned to a driver.
-vid/pid is the most common for the most esoteric devices: i.e. less used/most
-dangerous.
-However you are right, a final version of this feature should have included
-"interface matching" too and even something much more specific like serial
-matching.
-Anyway, because of lack of interest in having this feature included in kernel
-space (something similar can already be done in user-space) it has been
-abandoned.
-You are answering to an old version of S.A.R.A. that can now be considered
-obsolete.
-Thank you anyway for your comment.
+Jarkko Sakkinen (2):
+  tpm: fix a kernel memory leak in tpm-sysfs.c
+  tpm: migrate pubek_show to struct tpm_buf
 
-Salvatore
+ drivers/char/tpm/tpm-sysfs.c | 86 ++++++++++++++++++++++++--------------------
+ drivers/char/tpm/tpm.h       | 13 -------
+ 2 files changed, 48 insertions(+), 51 deletions(-)
+
+-- 
+2.11.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
