@@ -1,30 +1,30 @@
-From: mguerrero@huv.gov.co (INFO)
-Date: Mon, 19 Jun 2017 14:39:18 -0500
-Subject: Reply Urgent
-Message-ID: <20170619143918.2132176qvnaamicm@correo.huv.gov.co>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 20 Jun 2017 11:22:00 +1000 (AEST)
+Subject: [GIT PULL] tpmdd fixes for 4.13
+In-Reply-To: <1497833925.14670.3.camel@linux.intel.com>
+References: <1497833925.14670.3.camel@linux.intel.com>
+Message-ID: <alpine.LRH.2.20.1706201121401.10628@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hello,
+On Mon, 19 Jun 2017, Jarkko Sakkinen wrote:
 
-How are you doing? I have been sent to inform you that, We have an  
-inheritance of a deceased client with your surname. Contact Mr Andrew  
-Bailey Reply Email To: myinfand at gmail.com with your "Full Names" for  
-more info.  Thanks for your understanding.
+> Hi
+> 
+> Here are thpdates for 4.13.
+> 
+> Major changes:
+> 
+> - Releasing and relinquishing of locality in tpm_vtpm_proxy for each
+> ? command/response sequence.
+> - Consolidating platform and ACPI driver in tpm_tis.
+> - Sanitize endian conversions for TPM 1.2 commands i.e. call
+> ? cpu_to_be32() in place when required. Do not have it in the constant
+> ? definition.
 
-Reply ASAP thank you.
-
-Melissa.
-----------------------------------
-Correo Corporativo Hospital Universitario del Valle E.S.E
-*******************************************************************************
-
-"Estamos re-dimensionandonos para crecer!"
-
-******************************************************************************
+Pulled to -next, thanks.
 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+James Morris
+<jmorris@namei.org>
