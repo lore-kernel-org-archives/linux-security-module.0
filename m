@@ -1,7 +1,7 @@
 From: arnd@arndb.de (Arnd Bergmann)
-Date: Tue, 20 Jun 2017 22:33:04 +0200
-Subject: [PATCH] apparmor: add braces around optional statement
-Message-ID: <20170620203331.609995-1-arnd@arndb.de>
+Date: Tue, 20 Jun 2017 22:46:19 +0200
+Subject: [PATCH v2] apparmor: add braces around optional statement
+Message-ID: <20170620204722.910610-1-arnd@arndb.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -22,10 +22,26 @@ Both seem like good ideas, so this does both at once.
 
 Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--
+v2: actually include the second part of the patch
 ---
- security/apparmor/label.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ security/apparmor/include/lib.h | 2 +-
+ security/apparmor/label.c       | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
+index 436b3a722357..cbfb71c1ec88 100644
+--- a/security/apparmor/include/lib.h
++++ b/security/apparmor/include/lib.h
+@@ -50,7 +50,7 @@
+ #define AA_BUG_FMT(X, fmt, args...)					\
+ 	WARN((X), "AppArmor WARN %s: (" #X "): " fmt, __func__, ##args)
+ #else
+-#define AA_BUG_FMT(X, fmt, args...)
++#define AA_BUG_FMT(X, fmt, args...) no_printk("%s" fmt, __func__, ##args)
+ #endif
+ 
+ #define AA_ERROR(fmt, args...)						\
 diff --git a/security/apparmor/label.c b/security/apparmor/label.c
 index e052eaba1cf6..f8e08d94a8a6 100644
 --- a/security/apparmor/label.c
