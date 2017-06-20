@@ -1,70 +1,51 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Tue, 20 Jun 2017 15:49:53 -0500
-Subject: [PATCH v2] apparmor: add braces around optional statement
-In-Reply-To: <20170620204722.910610-1-arnd@arndb.de>
-References: <20170620204722.910610-1-arnd@arndb.de>
-Message-ID: <20170620204953.GA25573@mail.hallyn.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 20 Jun 2017 22:55:29 +0200
+Subject: [PATCH] tpm: consolidate the TPM startup code
+In-Reply-To: <20170620193152.GA3368@obsidianresearch.com>
+References: <20170620181334.28363-1-jarkko.sakkinen@linux.intel.com>
+	<20170620193152.GA3368@obsidianresearch.com>
+Message-ID: <20170620205529.ku3nueglj3mqkd3s@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Arnd Bergmann (arnd at arndb.de):
-> We get a warning when AA_BUG() compiles to an nothing:
+On Tue, Jun 20, 2017 at 01:31:52PM -0600, Jason Gunthorpe wrote:
+> On Tue, Jun 20, 2017 at 08:13:34PM +0200, Jarkko Sakkinen wrote:
+> > Consolidated all the "manual" TPM startup code to a single function
+> > in order to make code flows a bit cleaner and migrate to tpm_buf.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> >  drivers/char/tpm/tpm-interface.c | 67 +++++++++++++++++++++++++---------------
+> >  drivers/char/tpm/tpm.h           |  6 +---
+> >  drivers/char/tpm/tpm2-cmd.c      | 32 +------------------
+> >  3 files changed, 44 insertions(+), 61 deletions(-)
 > 
-> security/apparmor/label.c: In function '__label_update':
-> security/apparmor/label.c:2055:3: error: suggest braces around empty body in an 'else' statement [-Werror=empty-body]
+> Makes sense to me
 > 
-> There are two things we can do about this:
+> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > index d2b4df6d9894..fbef47d8bd06 100644
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -540,6 +540,47 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> >  }
+> >  EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
+> >  
+> > +#define TPM_ORD_STARTUP 153
+> > +#define TPM_ST_CLEAR 1
 > 
-> - add the missing braces in the call site, which also
->   brings the code in line with the regular Linux coding style
+> We should really have a tpm1.h and tpm2.h that has all these various
+> constants and things instead of open coding them randomly all over..
 > 
-> - redefine the macro so it is not empty but instead uses
->   no_printk() in AA_BUG_FMT() to perform format checking.
-> 
-> Both seem like good ideas, so this does both at once.
-> 
-> Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Jason
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+I agree.
 
-> --
-> v2: actually include the second part of the patch
-> ---
->  security/apparmor/include/lib.h | 2 +-
->  security/apparmor/label.c       | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
-> index 436b3a722357..cbfb71c1ec88 100644
-> --- a/security/apparmor/include/lib.h
-> +++ b/security/apparmor/include/lib.h
-> @@ -50,7 +50,7 @@
->  #define AA_BUG_FMT(X, fmt, args...)					\
->  	WARN((X), "AppArmor WARN %s: (" #X "): " fmt, __func__, ##args)
->  #else
-> -#define AA_BUG_FMT(X, fmt, args...)
-> +#define AA_BUG_FMT(X, fmt, args...) no_printk("%s" fmt, __func__, ##args)
->  #endif
->  
->  #define AA_ERROR(fmt, args...)						\
-> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-> index e052eaba1cf6..f8e08d94a8a6 100644
-> --- a/security/apparmor/label.c
-> +++ b/security/apparmor/label.c
-> @@ -2051,8 +2051,9 @@ static struct aa_label *__label_update(struct aa_label *label)
->  			write_lock_irqsave(&ls->lock, flags);
->  			goto remove;
->  		}
-> -	} else
-> +	} else {
->  		AA_BUG(labels_ns(label) != labels_ns(new));
-> +	}
->  
->  	tmp = __label_insert(labels_set(label), new, true);
->  remove:
-> -- 
-> 2.9.0
+Is this patch acceptable to be applied?
+
+Stefan, can you peer test this with a TPM emulator? For convenient testing
+I created 'readpubek' branch that includes also my readpubek bug fixes.
+Seeing that the module loads and you can output pubek sysfs attribute is
+sufficient for seeing that all the three patches work.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
