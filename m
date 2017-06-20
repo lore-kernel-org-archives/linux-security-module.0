@@ -1,30 +1,36 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 20 Jun 2017 11:22:00 +1000 (AEST)
-Subject: [GIT PULL] tpmdd fixes for 4.13
-In-Reply-To: <1497833925.14670.3.camel@linux.intel.com>
-References: <1497833925.14670.3.camel@linux.intel.com>
-Message-ID: <alpine.LRH.2.20.1706201121401.10628@namei.org>
+From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
+Date: Tue, 20 Jun 2017 09:53:37 +0200
+Subject: [PATCH 04/11] S.A.R.A. USB Filtering
+In-Reply-To: <20170620070721.GA30728@amd>
+References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
+	<1497286620-15027-5-git-send-email-s.mesoraca16@gmail.com>
+	<20170620070721.GA30728@amd>
+Message-ID: <CAJHCu1KujgnTsyRBRCk2LXFFdRZKWVRHmdV3nPPiUanXsLq=sg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 19 Jun 2017, Jarkko Sakkinen wrote:
+2017-06-20 9:07 GMT+02:00 Pavel Machek <pavel@ucw.cz>:
+> Hmm. Given that USB device provides vendor id/product id, this does
+> not really stop anyone, right?
+>
+> AFAICT you can still get USB stick with vid/pid of logitech keyboard,
+> and kernel will recognize it as a usb stick.
 
-> Hi
-> 
-> Here are thpdates for 4.13.
-> 
-> Major changes:
-> 
-> - Releasing and relinquishing of locality in tpm_vtpm_proxy for each
-> ? command/response sequence.
-> - Consolidating platform and ACPI driver in tpm_tis.
-> - Sanitize endian conversions for TPM 1.2 commands i.e. call
-> ? cpu_to_be32() in place when required. Do not have it in the constant
-> ? definition.
+There are a number of ways by which a device can be assigned to a driver.
+vid/pid is the most common for the most esoteric devices: i.e. less used/most
+dangerous.
+However you are right, a final version of this feature should have included
+"interface matching" too and even something much more specific like serial
+matching.
+Anyway, because of lack of interest in having this feature included in kernel
+space (something similar can already be done in user-space) it has been
+abandoned.
+You are answering to an old version of S.A.R.A. that can now be considered
+obsolete.
+Thank you anyway for your comment.
 
-Pulled to -next, thanks.
-
-
--- 
-James Morris
-<jmorris@namei.org>
+Salvatore
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
