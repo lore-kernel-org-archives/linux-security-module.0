@@ -1,64 +1,53 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 20 Jun 2017 23:38:04 +0200
-Subject: [PATCH] tpm: consolidate the TPM startup code
-In-Reply-To: <20170620213241.x3rclqsb4a2gbthz@linux.intel.com>
-References: <20170620181334.28363-1-jarkko.sakkinen@linux.intel.com>
-	<20170620193152.GA3368@obsidianresearch.com>
-	<20170620205529.ku3nueglj3mqkd3s@linux.intel.com>
-	<bcae756a-ab3a-f8ba-554c-61952e992844@linux.vnet.ibm.com>
-	<20170620213241.x3rclqsb4a2gbthz@linux.intel.com>
-Message-ID: <20170620213804.t2ddp5pniuu4ssal@linux.intel.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 20 Jun 2017 17:43:38 -0400
+Subject: [PATCH] selinux: Assign proper class to PF_UNIX/SOCK_RAW sockets
+In-Reply-To: <1497989063.12069.18.camel@tycho.nsa.gov>
+References: <20170619213348.2970-1-aranea@aixah.de>
+	<CAHC9VhQsVa+0LgqFyguqq0bhXOz7mrbJfXy-+rJjY53xnCkixg@mail.gmail.com>
+	<1497989063.12069.18.camel@tycho.nsa.gov>
+Message-ID: <CAHC9VhTz2uFMAcYBCph1=XVtib1owCuSi+c1stQsxkymDt_BJQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jun 20, 2017 at 11:32:41PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Jun 20, 2017 at 05:25:57PM -0400, Stefan Berger wrote:
-> > On 06/20/2017 04:55 PM, Jarkko Sakkinen wrote:
-> > > On Tue, Jun 20, 2017 at 01:31:52PM -0600, Jason Gunthorpe wrote:
-> > > > On Tue, Jun 20, 2017 at 08:13:34PM +0200, Jarkko Sakkinen wrote:
-> > > > > Consolidated all the "manual" TPM startup code to a single function
-> > > > > in order to make code flows a bit cleaner and migrate to tpm_buf.
-> > > > > 
-> > > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > >   drivers/char/tpm/tpm-interface.c | 67 +++++++++++++++++++++++++---------------
-> > > > >   drivers/char/tpm/tpm.h           |  6 +---
-> > > > >   drivers/char/tpm/tpm2-cmd.c      | 32 +------------------
-> > > > >   3 files changed, 44 insertions(+), 61 deletions(-)
-> > > > Makes sense to me
-> > > > 
-> > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > > > index d2b4df6d9894..fbef47d8bd06 100644
-> > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > @@ -540,6 +540,47 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
-> > > > >   }
-> > > > >   EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
-> > > > > +#define TPM_ORD_STARTUP 153
-> > > > > +#define TPM_ST_CLEAR 1
-> > > > We should really have a tpm1.h and tpm2.h that has all these various
-> > > > constants and things instead of open coding them randomly all over..
-> > > > 
-> > > > Jason
-> > > I agree.
-> > > 
-> > > Is this patch acceptable to be applied?
-> > > 
-> > > Stefan, can you peer test this with a TPM emulator? For convenient testing
-> > > I created 'readpubek' branch that includes also my readpubek bug fixes.
-> > > Seeing that the module loads and you can output pubek sysfs attribute is
-> > > sufficient for seeing that all the three patches work.
-> > 
-> > Doesn't work. The startup_type is be16, but you are appending a u32 now for
-> > both TPM1.2 and TPM2.
-> > 
-> > +               tpm_buf_append_u32(&buf, TPM_ST_CLEAR);
-> 
-> Ah. Thanks. I'll fix that.
+On Tue, Jun 20, 2017 at 4:04 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On Tue, 2017-06-20 at 15:49 -0400, Paul Moore wrote:
+>> On Mon, Jun 19, 2017 at 5:33 PM, Luis Ressel <aranea@aixah.de> wrote:
+>> > For PF_UNIX, SOCK_RAW is synonymous with SOCK_DGRAM (cf.
+>> > net/unix/af_unix.c). This is a tad obscure, but libpcap uses it.
+>> >
+>> > Signed-off-by: Luis Ressel <aranea@aixah.de>
+>> > Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+>> > ---
+>> >  security/selinux/hooks.c | 1 +
+>> >  1 file changed, 1 insertion(+)
+>>
+>> My only concern is what effect this will have on existing policy.
+>> Prior to this patch PF_UNIX/SOCK_RAW will result in the generic
+>> "socket" class where after this patch it will result in the
+>> "unix_dgram_socket".  I believe this is the right change, but it
+>> seems
+>> like this should be wrapped by a policy capability, yes?
+>
+> I doubt it is worth a policy capability.
 
-It's fixed in the 'readpubek' branch. If that is the only concern, can
-you test that branch and see if it is OK so that we don't need a new
-cycle for the patch set?
+Agreed that a policy capability is pretty heavy for something to have
+little impact, I'm just trying to be a bit more consistent about these
+things (reference the thread we had a few weeks ago).
 
-/Jarkko
+> Permission to create/use
+> socket tends to be far rarer than permission to create/use
+> unix_dgram_socket; looks like we never allow the former without the
+> latter in Fedora, for example.
+
+Considering where we are at with respect to the merge window, let's
+shelve this for now and I'll merge it after the next merge window
+closes.  In all likelihood I'll be sending selinux/next up to James
+later this week and I'd like this to sit in linux-next for longer than
+a few days.
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
