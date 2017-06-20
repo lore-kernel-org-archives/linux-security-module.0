@@ -1,54 +1,49 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Tue, 20 Jun 2017 16:04:23 -0400
-Subject: [PATCH] selinux: Assign proper class to PF_UNIX/SOCK_RAW sockets
-In-Reply-To: <CAHC9VhQsVa+0LgqFyguqq0bhXOz7mrbJfXy-+rJjY53xnCkixg@mail.gmail.com>
-References: <20170619213348.2970-1-aranea@aixah.de>
-	<CAHC9VhQsVa+0LgqFyguqq0bhXOz7mrbJfXy-+rJjY53xnCkixg@mail.gmail.com>
-Message-ID: <1497989063.12069.18.camel@tycho.nsa.gov>
+From: arnd@arndb.de (Arnd Bergmann)
+Date: Tue, 20 Jun 2017 22:33:04 +0200
+Subject: [PATCH] apparmor: add braces around optional statement
+Message-ID: <20170620203331.609995-1-arnd@arndb.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-06-20 at 15:49 -0400, Paul Moore wrote:
-> On Mon, Jun 19, 2017 at 5:33 PM, Luis Ressel <aranea@aixah.de> wrote:
-> > For PF_UNIX, SOCK_RAW is synonymous with SOCK_DGRAM (cf.
-> > net/unix/af_unix.c). This is a tad obscure, but libpcap uses it.
-> > 
-> > Signed-off-by: Luis Ressel <aranea@aixah.de>
-> > Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-> > ---
-> > ?security/selinux/hooks.c | 1 +
-> > ?1 file changed, 1 insertion(+)
-> 
-> My only concern is what effect this will have on existing policy.
-> Prior to this patch PF_UNIX/SOCK_RAW will result in the generic
-> "socket" class where after this patch it will result in the
-> "unix_dgram_socket".??I believe this is the right change, but it
-> seems
-> like this should be wrapped by a policy capability, yes?
+We get a warning when AA_BUG() compiles to an nothing:
 
-I doubt it is worth a policy capability.  Permission to create/use
-socket tends to be far rarer than permission to create/use
-unix_dgram_socket; looks like we never allow the former without the
-latter in Fedora, for example.
+security/apparmor/label.c: In function '__label_update':
+security/apparmor/label.c:2055:3: error: suggest braces around empty body in an 'else' statement [-Werror=empty-body]
 
-> 
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 819fd6858b49..1a331fba4a3c 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -1275,6 +1275,7 @@ static inline u16
-> > socket_type_to_security_class(int family, int type, int protoc
-> > ????????????????case SOCK_SEQPACKET:
-> > ????????????????????????return SECCLASS_UNIX_STREAM_SOCKET;
-> > ????????????????case SOCK_DGRAM:
-> > +???????????????case SOCK_RAW:
-> > ????????????????????????return SECCLASS_UNIX_DGRAM_SOCKET;
-> > ????????????????}
-> > ????????????????break;
-> > --
-> > 2.13.1
-> 
-> 
+There are two things we can do about this:
+
+- add the missing braces in the call site, which also
+  brings the code in line with the regular Linux coding style
+
+- redefine the macro so it is not empty but instead uses
+  no_printk() in AA_BUG_FMT() to perform format checking.
+
+Both seem like good ideas, so this does both at once.
+
+Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ security/apparmor/label.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index e052eaba1cf6..f8e08d94a8a6 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -2051,8 +2051,9 @@ static struct aa_label *__label_update(struct aa_label *label)
+ 			write_lock_irqsave(&ls->lock, flags);
+ 			goto remove;
+ 		}
+-	} else
++	} else {
+ 		AA_BUG(labels_ns(label) != labels_ns(new));
++	}
+ 
+ 	tmp = __label_insert(labels_set(label), new, true);
+ remove:
+-- 
+2.9.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
