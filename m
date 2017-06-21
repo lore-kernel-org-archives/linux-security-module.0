@@ -1,76 +1,55 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 21 Jun 2017 14:18:21 -0400
-Subject: [PATCH v2 01/10] ima: always measure and audit files in policy
-In-Reply-To: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1498069110-10009-2-git-send-email-zohar@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 21 Jun 2017 15:04:01 -0400
+Subject: [PATCH] selinux: Assign proper class to PF_UNIX/SOCK_RAW sockets
+In-Reply-To: <20170621114812.6aa3f62e@vega.skynet.aixah.de>
+References: <20170619213348.2970-1-aranea@aixah.de>
+	<CAHC9VhQsVa+0LgqFyguqq0bhXOz7mrbJfXy-+rJjY53xnCkixg@mail.gmail.com>
+	<1497989063.12069.18.camel@tycho.nsa.gov>
+	<CAHC9VhTz2uFMAcYBCph1=XVtib1owCuSi+c1stQsxkymDt_BJQ@mail.gmail.com>
+	<20170621114812.6aa3f62e@vega.skynet.aixah.de>
+Message-ID: <CAHC9VhQMFw9BAimnnwM9Zv1Vp28Edm7FSdFCiOEpXUX4go8gWQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-All files matching a "measure" rule must be included in the IMA
-measurement list, even when the file hash cannot be calculated.
-Similarly, all files matching an "audit" rule must be audited, even when
-the file hash cannot be calculated.
+On Wed, Jun 21, 2017 at 5:48 AM, Luis Ressel <aranea@aixah.de> wrote:
+> On Tue, 20 Jun 2017 17:43:38 -0400
+> Paul Moore <paul@paul-moore.com> wrote:
+>
+>> Considering where we are at with respect to the merge window, let's
+>> shelve this for now and I'll merge it after the next merge window
+>> closes.  In all likelihood I'll be sending selinux/next up to James
+>> later this week and I'd like this to sit in linux-next for longer than
+>> a few days.
+>
+> That means the change will land in 4.14 at the earliest, right? (Just
+> out of curiosity.)
 
-The file data hash field contained in the IMA measurement list template
-data will contain 0's instead of the actual file hash digest.
+That's correct.  We are currently working towards a v4.12 release in
+Linus' tree, the upcoming merge window will be for v4.13, and things
+merged into selinux/next after that merge window will be for v4.14.
 
-Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- security/integrity/ima/ima_api.c  | 7 +++++--
- security/integrity/ima/ima_main.c | 4 ++--
- 2 files changed, 7 insertions(+), 4 deletions(-)
+> By the way, refpolicy only grants "socket" permissions to a handful of
+> domains, all of which also have the corresponding "unix_dgram_socket"
+> permissions. The fedora policy does the same (according to Stephen);
+> this only leaves custom policies to be potentially affected by this
+> change.
 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c2edba8de35e..174cf2e8dd45 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -217,15 +217,18 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
- 
- 		result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
- 			ima_calc_buffer_hash(buf, size, &hash.hdr);
--		if (!result) {
-+		if (!result || (result == -EBADF)) {
- 			int length = sizeof(hash.hdr) + hash.hdr.length;
- 			void *tmpbuf = krealloc(iint->ima_hash, length,
- 						GFP_NOFS);
- 			if (tmpbuf) {
- 				iint->ima_hash = tmpbuf;
-+				if (result == -EBADF)
-+					memset(&hash.digest, 0, hash.hdr.length);
- 				memcpy(iint->ima_hash, &hash, length);
- 				iint->version = i_version;
--				iint->flags |= IMA_COLLECTED;
-+				if (result != -EBADF)
-+					iint->flags |= IMA_COLLECTED;
- 			} else
- 				result = -ENOMEM;
- 		}
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2aebb7984437..63777d1210b1 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -235,7 +235,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
- 
- 	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
--	if (rc != 0) {
-+	if (rc != 0 && rc != -EBADF) {
- 		if (file->f_flags & O_DIRECT)
- 			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
- 		goto out_digsig;
-@@ -247,7 +247,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	if (action & IMA_MEASURE)
- 		ima_store_measurement(iint, file, pathname,
- 				      xattr_value, xattr_len, pcr);
--	if (action & IMA_APPRAISE_SUBMASK)
-+	if ((rc != -EBADF) && (action & IMA_APPRAISE_SUBMASK))
- 		rc = ima_appraise_measurement(func, iint, file, pathname,
- 					      xattr_value, xattr_len, opened);
- 	if (action & IMA_AUDIT)
+While custom policies are definitely in the minority, we still need to
+do out best not to break them without warning.
+
+> Given that the SOCK_RAW->SOCK_DGRAM translation is obscure enough not to
+> be documented anywhere outside the kernel sources, I doubt there are
+> many users of it, anyway.
+
+You very well may be right, I just felt that such a change requires
+more than a week in the selinux/next tree.
+
+Thank you for your patch, it's in the queue and I'll be merging it
+into the selinux/next branch in a few weeks.
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
