@@ -1,133 +1,102 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 21 Jun 2017 14:18:23 -0400
-Subject: [PATCH v2 03/10] ima: define "dont_failsafe" policy action rule
+Date: Wed, 21 Jun 2017 14:18:26 -0400
+Subject: [PATCH v2 06/10] fs: define integrity_read method for ext2, gfs2, f2fs,
+	jfs, ramfs
 In-Reply-To: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1498069110-10009-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1498069110-10009-7-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Permit normally denied access/execute permission for files in policy
-on IMA unsupported filesystems.  This patch defines the "dont_failsafe"
-policy action rule.
+Define ->integrity_read file operation methods to read data for
+integrity hash collection.
 
-Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- Documentation/ABI/testing/ima_policy |  3 ++-
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_main.c    | 11 ++++++++++-
- security/integrity/ima/ima_policy.c  | 14 +++++++++++++-
- 4 files changed, 26 insertions(+), 3 deletions(-)
+ fs/ext2/file.c        | 1 +
+ fs/f2fs/file.c        | 1 +
+ fs/gfs2/file.c        | 2 ++
+ fs/jfs/file.c         | 1 +
+ fs/ramfs/file-mmu.c   | 1 +
+ fs/ramfs/file-nommu.c | 1 +
+ 6 files changed, 7 insertions(+)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index e76432b9954d..f271207743e5 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -17,7 +17,8 @@ Description:
- 
- 		rule format: action [condition ...]
- 
--		action: measure | dont_measure | appraise | dont_appraise | audit
-+		action: measure | dont_meaure | appraise | dont_appraise |
-+			audit | dont_failsafe
- 		condition:= base | lsm  [option]
- 			base:	[[func=] [mask=] [fsmagic=] [fsuuid=] [uid=]
- 				[euid=] [fowner=]]
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d52b487ad259..c5f34f7c5b0f 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -224,6 +224,7 @@ void *ima_policy_start(struct seq_file *m, loff_t *pos);
- void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos);
- void ima_policy_stop(struct seq_file *m, void *v);
- int ima_policy_show(struct seq_file *m, void *v);
-+void set_failsafe(bool flag);
- 
- /* Appraise integrity measurements */
- #define IMA_APPRAISE_ENFORCE	0x01
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 63777d1210b1..59e271a20600 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -38,6 +38,11 @@ int ima_appraise;
- int ima_hash_algo = HASH_ALGO_SHA1;
- static int hash_setup_done;
- 
-+static bool ima_failsafe = 1;
-+void set_failsafe(bool flag) {
-+	ima_failsafe = flag;
-+}
-+
- static int __init hash_setup(char *str)
- {
- 	struct ima_template_desc *template_desc = ima_template_desc_current();
-@@ -263,8 +268,12 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 		__putname(pathbuf);
- out:
- 	inode_unlock(inode);
--	if ((rc && must_appraise) && (ima_appraise & IMA_APPRAISE_ENFORCE))
-+	if ((rc && must_appraise) && (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-+		if (!ima_failsafe && rc == -EBADF)
-+			return 0;
-+
- 		return -EACCES;
-+	}
- 	return 0;
- }
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index f4436626ccb7..cb92c9c04e80 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -46,6 +46,7 @@
- 
- int ima_policy_flag;
- static int temp_ima_appraise;
-+static bool temp_failsafe = 1;
- 
- #define MAX_LSM_RULES 6
- enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
-@@ -513,6 +514,12 @@ void ima_update_policy(void)
- 	if (ima_rules != policy) {
- 		ima_policy_flag = 0;
- 		ima_rules = policy;
-+
-+		/*
-+		 * Only permit initial policy replacement, not append, to
-+		 * set dont_failsafe.
-+		 */
-+		set_failsafe(temp_failsafe);
- 	}
- 	ima_update_policy_flag();
- }
-@@ -529,7 +536,7 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_permit_directio,
--	Opt_pcr
-+	Opt_pcr, Opt_dont_failsafe
+diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+index b21891a6bfca..d57c4259945d 100644
+--- a/fs/ext2/file.c
++++ b/fs/ext2/file.c
+@@ -219,6 +219,7 @@ const struct file_operations ext2_file_operations = {
+ 	.get_unmapped_area = thp_get_unmapped_area,
+ 	.splice_read	= generic_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
++	.integrity_read	= generic_file_read_iter,
  };
  
- static match_table_t policy_tokens = {
-@@ -560,6 +567,7 @@ static match_table_t policy_tokens = {
- 	{Opt_appraise_type, "appraise_type=%s"},
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
-+	{Opt_dont_failsafe, "dont_failsafe"},
- 	{Opt_err, NULL}
+ const struct inode_operations ext2_file_inode_operations = {
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 61af721329fa..e93fdeb3eba4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2406,4 +2406,5 @@ const struct file_operations f2fs_file_operations = {
+ #endif
+ 	.splice_read	= generic_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
++	.integrity_read	= generic_file_read_iter,
+ };
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index c2062a108d19..9b49d09ba180 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -1124,6 +1124,7 @@ const struct file_operations gfs2_file_fops = {
+ 	.splice_write	= gfs2_file_splice_write,
+ 	.setlease	= simple_nosetlease,
+ 	.fallocate	= gfs2_fallocate,
++	.integrity_read	= generic_file_read_iter,
  };
  
-@@ -671,6 +679,10 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ const struct file_operations gfs2_dir_fops = {
+@@ -1152,6 +1153,7 @@ const struct file_operations gfs2_file_fops_nolock = {
+ 	.splice_write	= gfs2_file_splice_write,
+ 	.setlease	= generic_setlease,
+ 	.fallocate	= gfs2_fallocate,
++	.integrity_read	= generic_file_read_iter,
+ };
  
- 			entry->action = AUDIT;
- 			break;
-+		case Opt_dont_failsafe:
-+			ima_log_string(ab, "action", "dont_failsafe");
-+			temp_failsafe = 0;
-+			break;
- 		case Opt_func:
- 			ima_log_string(ab, "func", args[0].from);
+ const struct file_operations gfs2_dir_fops_nolock = {
+diff --git a/fs/jfs/file.c b/fs/jfs/file.c
+index 739492c7a3fd..423512a810e4 100644
+--- a/fs/jfs/file.c
++++ b/fs/jfs/file.c
+@@ -162,4 +162,5 @@ const struct file_operations jfs_file_operations = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl	= jfs_compat_ioctl,
+ #endif
++	.integrity_read	= generic_file_read_iter,
+ };
+diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
+index 12af0490322f..4f24d1b589b1 100644
+--- a/fs/ramfs/file-mmu.c
++++ b/fs/ramfs/file-mmu.c
+@@ -47,6 +47,7 @@ const struct file_operations ramfs_file_operations = {
+ 	.splice_write	= iter_file_splice_write,
+ 	.llseek		= generic_file_llseek,
+ 	.get_unmapped_area	= ramfs_mmu_get_unmapped_area,
++	.integrity_read	= generic_file_read_iter,
+ };
  
+ const struct inode_operations ramfs_file_inode_operations = {
+diff --git a/fs/ramfs/file-nommu.c b/fs/ramfs/file-nommu.c
+index 2ef7ce75c062..5ee704fa84e0 100644
+--- a/fs/ramfs/file-nommu.c
++++ b/fs/ramfs/file-nommu.c
+@@ -50,6 +50,7 @@ const struct file_operations ramfs_file_operations = {
+ 	.splice_read		= generic_file_splice_read,
+ 	.splice_write		= iter_file_splice_write,
+ 	.llseek			= generic_file_llseek,
++	.integrity_read		= generic_file_read_iter,
+ };
+ 
+ const struct inode_operations ramfs_file_inode_operations = {
 -- 
 2.7.4
 
