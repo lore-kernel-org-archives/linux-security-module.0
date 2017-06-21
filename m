@@ -1,55 +1,84 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 21 Jun 2017 15:04:01 -0400
-Subject: [PATCH] selinux: Assign proper class to PF_UNIX/SOCK_RAW sockets
-In-Reply-To: <20170621114812.6aa3f62e@vega.skynet.aixah.de>
-References: <20170619213348.2970-1-aranea@aixah.de>
-	<CAHC9VhQsVa+0LgqFyguqq0bhXOz7mrbJfXy-+rJjY53xnCkixg@mail.gmail.com>
-	<1497989063.12069.18.camel@tycho.nsa.gov>
-	<CAHC9VhTz2uFMAcYBCph1=XVtib1owCuSi+c1stQsxkymDt_BJQ@mail.gmail.com>
-	<20170621114812.6aa3f62e@vega.skynet.aixah.de>
-Message-ID: <CAHC9VhQMFw9BAimnnwM9Zv1Vp28Edm7FSdFCiOEpXUX4go8gWQ@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 21 Jun 2017 16:02:13 -0400
+Subject: [GIT PULL] IMA patches for 4.13
+Message-ID: <1498075333.3200.11.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jun 21, 2017 at 5:48 AM, Luis Ressel <aranea@aixah.de> wrote:
-> On Tue, 20 Jun 2017 17:43:38 -0400
-> Paul Moore <paul@paul-moore.com> wrote:
->
->> Considering where we are at with respect to the merge window, let's
->> shelve this for now and I'll merge it after the next merge window
->> closes.  In all likelihood I'll be sending selinux/next up to James
->> later this week and I'd like this to sit in linux-next for longer than
->> a few days.
->
-> That means the change will land in 4.14 at the earliest, right? (Just
-> out of curiosity.)
+Hi James,
 
-That's correct.  We are currently working towards a v4.12 release in
-Linus' tree, the upcoming merge window will be for v4.13, and things
-merged into selinux/next after that merge window will be for v4.14.
+This pull request contains a number of simple and not so simple clean
+up patches, which are precursors to new features (eg. appended
+signature support, TPM crypto agile templates), and other minor bug
+fixes.
 
-> By the way, refpolicy only grants "socket" permissions to a handful of
-> domains, all of which also have the corresponding "unix_dgram_socket"
-> permissions. The fedora policy does the same (according to Stephen);
-> this only leaves custom policies to be potentially affected by this
-> change.
+thanks,
 
-While custom policies are definitely in the minority, we still need to
-do out best not to break them without warning.
+Mimi
 
-> Given that the SOCK_RAW->SOCK_DGRAM translation is obscure enough not to
-> be documented anywhere outside the kernel sources, I doubt there are
-> many users of it, anyway.
+----
+The following changes since commit cdac74ddf28e2f07319cc89446f9dea35d22d999:
 
-You very well may be right, I just felt that such a change requires
-more than a week in the selinux/next tree.
+  Merge branch 'smack-for-4.13' of git://github.com/cschaufler/smack-next into next (2017-06-21 11:30:20 +1000)
 
-Thank you for your patch, it's in the queue and I'll be merging it
-into the selinux/next branch in a few weeks.
+are available in the git repository at:
 
--- 
-paul moore
-www.paul-moore.com
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next
+
+for you to fetch changes up to fc26bd50539b6f52aa75ffbaec7b083825ec5451:
+
+  IMA: update IMA policy documentation to include pcr= option (2017-06-21 14:37:12 -0400)
+
+----------------------------------------------------------------
+Ben Hutchings (1):
+      IMA: Correct Kconfig dependencies for hash selection
+
+Eric Richter (1):
+      IMA: update IMA policy documentation to include pcr= option
+
+Geliang Tang (1):
+      ima: use memdup_user_nul
+
+Laura Abbott (1):
+      ima: Add cgroups2 to the defaults list
+
+Mimi Zohar (4):
+      ima: extend the "ima_policy" boot command line to support multiple policies
+      ima: define a set of appraisal rules requiring file signatures
+      ima: define Kconfig IMA_APPRAISE_BOOTPARAM option
+      ima: define is_ima_appraise_enabled()
+
+Roberto Sassu (4):
+      ima: introduce ima_parse_buf()
+      ima: use ima_parse_buf() to parse measurements headers
+      ima: use ima_parse_buf() to parse template data
+      ima: fix get_binary_runtime_size()
+
+Thiago Jung Bauermann (3):
+      integrity: Small code improvements
+      ima: Simplify policy_func_show.
+      ima: Log the same audit cause whenever a file has no signature
+
+Tycho Andersen (1):
+      ima: fix up #endif comments
+
+ Documentation/ABI/testing/ima_policy            |   8 +-
+ Documentation/admin-guide/kernel-parameters.txt |  21 ++--
+ include/linux/ima.h                             |   6 ++
+ security/integrity/digsig_asymmetric.c          |   4 +-
+ security/integrity/iint.c                       |   2 +-
+ security/integrity/ima/Kconfig                  |  16 ++-
+ security/integrity/ima/ima.h                    |  31 +++---
+ security/integrity/ima/ima_appraise.c           |  16 ++-
+ security/integrity/ima/ima_fs.c                 |  13 +--
+ security/integrity/ima/ima_policy.c             | 106 +++++++++-----------
+ security/integrity/ima/ima_queue.c              |   2 +-
+ security/integrity/ima/ima_template.c           | 124 ++++++++----------------
+ security/integrity/ima/ima_template_lib.c       |  61 ++++++++++++
+ security/integrity/ima/ima_template_lib.h       |   6 ++
+ security/integrity/integrity.h                  |   7 +-
+ 15 files changed, 239 insertions(+), 184 deletions(-)
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
