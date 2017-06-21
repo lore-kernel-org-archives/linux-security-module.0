@@ -1,112 +1,146 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 21 Jun 2017 16:29:39 +0200
-Subject: [PATCH v3 4/6] tpm: replace TPM algorithms IDs with tpm_pcr_bank_info
-	structs in tpm_chip
+Date: Wed, 21 Jun 2017 16:29:38 +0200
+Subject: [PATCH v3 3/6] tpm: introduce tpm_pcr_bank_info structure with
+	digest_size from TPM
 In-Reply-To: <20170621142941.32674-1-roberto.sassu@huawei.com>
 References: <20170621142941.32674-1-roberto.sassu@huawei.com>
-Message-ID: <20170621142941.32674-5-roberto.sassu@huawei.com>
+Message-ID: <20170621142941.32674-4-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch replaces the array of TPM algorithms ID, stored in the tpm_chip
-structure, with an array of the new structure tpm_pcr_bank_info.
+This patch introduces the new structure tpm_pcr_bank_info to store
+information regarding PCR banks. The next patch will replace the array of
+TPM algorithms IDs with an array of the new structure.
 
-The array is initialized during the execution of tpm2_get_pcr_allocation(),
-by tpm2_init_pcr_bank_info().
+tpm_pcr_bank_info contains the TPM algorithm ID, the digest size and,
+optionally, the corresponding crypto ID, if a mapping exists. These
+information will be used by IMA to calculate the digest of an event
+and to provide measurements logs to userspace applications. The new
+structure has been defined in include/linux/tpm.h, as it will be passed
+to functions outside the TPM driver.
 
-tpm2_pcr_extend() and tpm_pcr_extend() have been modified to use the
-digest size retrieved from the TPM instead of that from the crypto
-subsystem.
+The purpose of this patch is to fix a serious issue in tpm2_pcr_extend():
+if the mapping between a TPM algorithm and a crypto algorithm is not
+defined, the PCR bank with the unknown algorithm is not extended.
+This gives the opportunity to an attacker to reply to remote attestation
+requests with a list of fake measurements. Instead, the digest size
+is retrieved from the output buffer of a PCR read, without relying
+on the crypto subsystem.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- drivers/char/tpm/tpm-interface.c |  4 ++--
- drivers/char/tpm/tpm.h           |  2 +-
- drivers/char/tpm/tpm2-cmd.c      | 22 +++++++++++-----------
- 3 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/char/tpm/tpm.h      | 11 -----------
+ drivers/char/tpm/tpm2-cmd.c | 30 ++++++++++++++++++++++++++++++
+ include/linux/tpm.h         | 19 +++++++++++++++++++
+ 3 files changed, 49 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index d2b4df6..a11598a 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -897,8 +897,8 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
- 		memset(digest_list, 0, sizeof(digest_list));
- 
- 		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
--			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
--			digest_list[i].alg_id = chip->active_banks[i];
-+		     chip->active_banks[i].alg_id != TPM2_ALG_ERROR; i++) {
-+			digest_list[i].alg_id = chip->active_banks[i].alg_id;
- 			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
- 			count++;
- 		}
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 62c600d..d285bc6 100644
+index 1df0521..62c600d 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -208,7 +208,7 @@ struct tpm_chip {
- 	const struct attribute_group *groups[3];
- 	unsigned int groups_cnt;
+@@ -98,17 +98,6 @@ enum tpm2_return_codes {
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
+ };
  
--	u16 active_banks[7];
-+	struct tpm_pcr_bank_info active_banks[7];
- #ifdef CONFIG_ACPI
- 	acpi_handle acpi_dev_handle;
- 	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+-enum tpm2_algorithms {
+-	TPM2_ALG_ERROR		= 0x0000,
+-	TPM2_ALG_SHA1		= 0x0004,
+-	TPM2_ALG_KEYEDHASH	= 0x0008,
+-	TPM2_ALG_SHA256		= 0x000B,
+-	TPM2_ALG_SHA384		= 0x000C,
+-	TPM2_ALG_SHA512		= 0x000D,
+-	TPM2_ALG_NULL		= 0x0010,
+-	TPM2_ALG_SM3_256	= 0x0012,
+-};
+-
+ enum tpm2_command_codes {
+ 	TPM2_CC_FIRST		= 0x011F,
+ 	TPM2_CC_SELF_TEST	= 0x0143,
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 74a68ea..7bd2cf7 100644
+index 6a9fe0d..74a68ea 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -301,7 +301,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
- 	struct tpm2_null_auth_area auth_area;
- 	int rc;
- 	int i;
--	int j;
+@@ -992,6 +992,36 @@ int tpm2_probe(struct tpm_chip *chip)
+ }
+ EXPORT_SYMBOL_GPL(tpm2_probe);
  
- 	if (count > ARRAY_SIZE(chip->active_banks))
- 		return -EINVAL;
-@@ -323,14 +322,10 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
- 	tpm_buf_append_u32(&buf, count);
- 
- 	for (i = 0; i < count; i++) {
--		for (j = 0; j < ARRAY_SIZE(tpm2_hash_map); j++) {
--			if (digests[i].alg_id != tpm2_hash_map[j].tpm_id)
--				continue;
--			tpm_buf_append_u16(&buf, digests[i].alg_id);
--			tpm_buf_append(&buf, (const unsigned char
--					      *)&digests[i].digest,
--			       hash_digest_size[tpm2_hash_map[j].crypto_id]);
--		}
-+		/* digests[i].alg_id == chip->active_banks[i].alg_id */
-+		tpm_buf_append_u16(&buf, digests[i].alg_id);
-+		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
-+			       chip->active_banks[i].digest_size);
- 	}
- 
- 	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-@@ -1076,7 +1071,12 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 		}
- 
- 		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
--		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
-+		rc =  tpm2_init_pcr_bank_info(chip,
-+					be16_to_cpu(pcr_selection.hash_alg),
-+					&chip->active_banks[i]);
-+		if (rc)
-+			break;
++static int tpm2_init_pcr_bank_info(struct tpm_chip *chip, u16 alg_id,
++				   struct tpm_pcr_bank_info *active_bank)
++{
++	struct tpm_buf buf;
++	struct tpm2_pcr_read_out *pcrread_out;
++	int rc = 0;
++	int i;
 +
- 		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
- 			sizeof(pcr_selection.size_of_select) +
- 			pcr_selection.size_of_select;
-@@ -1085,7 +1085,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
++	active_bank->alg_id = alg_id;
++
++	rc = tpm2_pcr_read_tpm_buf(chip, 0, alg_id, &buf, NULL);
++	if (rc)
++		goto out;
++
++	pcrread_out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
++
++	active_bank->digest_size = be16_to_cpu(pcrread_out->digest_size);
++	active_bank->crypto_id = HASH_ALGO__LAST;
++
++	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
++		if (active_bank->alg_id != tpm2_hash_map[i].tpm_id)
++			continue;
++
++		active_bank->crypto_id = tpm2_hash_map[i].crypto_id;
++	}
++out:
++	tpm_buf_destroy(&buf);
++	return rc;
++}
++
+ struct tpm2_pcr_selection {
+ 	__be16  hash_alg;
+ 	u8  size_of_select;
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 5a090f5..ff06738 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -22,6 +22,8 @@
+ #ifndef __LINUX_TPM_H__
+ #define __LINUX_TPM_H__
  
- out:
- 	if (i < ARRAY_SIZE(chip->active_banks))
--		chip->active_banks[i] = TPM2_ALG_ERROR;
-+		chip->active_banks[i].alg_id = TPM2_ALG_ERROR;
++#include <crypto/hash_info.h>
++
+ #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
  
- 	tpm_buf_destroy(&buf);
+ /*
+@@ -37,6 +39,17 @@ enum TPM_OPS_FLAGS {
+ 	TPM_OPS_AUTO_STARTUP = BIT(0),
+ };
  
++enum tpm2_algorithms {
++	TPM2_ALG_ERROR		= 0x0000,
++	TPM2_ALG_SHA1		= 0x0004,
++	TPM2_ALG_KEYEDHASH	= 0x0008,
++	TPM2_ALG_SHA256		= 0x000B,
++	TPM2_ALG_SHA384		= 0x000C,
++	TPM2_ALG_SHA512		= 0x000D,
++	TPM2_ALG_NULL		= 0x0010,
++	TPM2_ALG_SM3_256	= 0x0012,
++};
++
+ struct tpm_class_ops {
+ 	unsigned int flags;
+ 	const u8 req_complete_mask;
+@@ -52,6 +65,12 @@ struct tpm_class_ops {
+ 	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ };
+ 
++struct tpm_pcr_bank_info {
++	enum tpm2_algorithms alg_id;
++	enum hash_algo crypto_id;
++	u32 digest_size;
++};
++
+ #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+ 
+ extern int tpm_is_tpm2(u32 chip_num);
 -- 
 2.9.3
 
