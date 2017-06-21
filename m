@@ -1,235 +1,77 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 21 Jun 2017 16:29:41 +0200
-Subject: [PATCH v3 6/6] tpm: pass multiple digests to tpm_pcr_extend()
-In-Reply-To: <20170621142941.32674-1-roberto.sassu@huawei.com>
-References: <20170621142941.32674-1-roberto.sassu@huawei.com>
-Message-ID: <20170621142941.32674-7-roberto.sassu@huawei.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 21 Jun 2017 08:23:20 -0700
+Subject: The secmark "one user" policy
+In-Reply-To: <alpine.LRH.2.20.1706211713010.1310@namei.org>
+References: <d256e588-fd3c-b981-6d55-6723b5615cc9@schaufler-ca.com>
+	<alpine.LRH.2.20.1706211713010.1310@namei.org>
+Message-ID: <2fbe01aa-8f9b-37f0-f79a-e34dcd1d0705@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch modifies the parameters of tpm_pcr_extend() by replacing the
-SHA1 digest with an array of digests and the number of array elements.
+On 6/21/2017 12:13 AM, James Morris wrote:
+> On Tue, 20 Jun 2017, Casey Schaufler wrote:
+>
+>> I'm looking at the secmark code and am looking in
+>> particular at the places where it explicitly says
+>> that it is intended for one security module at a
+>> time. For extreme stacking I can either enforce this
+>> restriction by configuration or remove it by clever
+>> uses of secid mappings. Either can be made "transparent"
+>> to existing user-space. Paul has expressed distaste for
+>> using configuration as a shortcut for dealing with this
+>> kind of problem, and I generally agree with him. On the
+>> other hand, the code is quite clear that it is designed
+>> for one and only one kind of secid at a time. I don't
+>> want to put a lot of effort into patches that are
+>> unacceptable to the author.
+> How would you see this working, ideally?
 
-This completes the changes necessary to correctly extend PCRs of a TPM 2.0.
-Each PCR bank will be extended with a digest calculated with the PCR bank
-algorithm. If the digest for a PCR bank has not been provided, the TPM
-driver pads/truncates the first digest, to extend that bank. TPM users
-should indicate in the event log in which sequence digests were passed
-to the TPM driver (if they didn't provide all the digests), or should
-pass to the driver a digest for each PCR bank.
+Ideally there would be a separate secmark for each security
+module that wants to use the mechanism. Mechanism would be
+provided* so that user-space can identify which security
+module it is referring to when interacting with the kernel.
+My understanding is that we're unlikely to get an expanded
+secmark, so I have concentrated elsewhere.
 
-Callers of tpm_pcr_extend(), pcrlock() and ima_pcr_extend(), have been
-modified to pass the new arguments. They pass to tpm_pcr_extend() an array
-with one element, containing the same SHA1 digest they were passing before
-this patch.
+A "clever" secid mapping takes the secids from all the
+security modules and gently manipulates them until they
+fit into a single u32. This might be an index into a list
+of secid sets, but if you have two modules using secids
+you can give each half of the secmark and accommodate
+many configurations, including Fedora. Again, you need
+mechanism* for user-space. This option would require changes
+to the xt_SECMARK implementation, which goes out of it's
+way to ensure all secmarks come from the same security
+module. One option is to add a SECMARK_MODE_COMPOUND, but
+that isn't any more helpful then removing the restriction.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+As for configuration options, SELinux only uses secmarks
+when user-space introduces them. If netfilter doesn't have
+any security rules that add secmarks, none are used. Smack
+can be configured to set secmarks on all packets, with the
+potential for change by user-space, but can also be set up
+without any use of secmarks. There doesn't need to be any
+significant change to xt_SECMARK if it is important to
+maintain the "one user" model. Requiring that the user-space
+use of netfilter be sane for the multiple security module
+case (e.g. don't use SELinux firewall if Smack has the
+secmark) seems somewhat reasonable.
+
+I can work with any of these three solutions. Multiple
+secmarks would be ideal, but I understand is a lost cause.
+Clever secids add overhead and complexity. Restricting
+configuration options is unsavory, but I don't think
+unreasonably so.
+
 ---
- drivers/char/tpm/tpm-interface.c   | 51 ++++++++++++++++++++++++++++++++------
- drivers/char/tpm/tpm.h             |  6 -----
- include/linux/tpm.h                | 12 +++++++--
- security/integrity/ima/ima_queue.c |  4 ++-
- security/keys/trusted.c            |  6 ++---
- 5 files changed, 59 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index cf0cdb2..3b0d7a2 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -871,44 +871,79 @@ static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
- 	return rc;
- }
- 
-+static u32 tpm_get_digest_size(struct tpm_chip *chip, enum tpm2_algorithms algo)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-+	     chip->active_banks[i].alg_id != TPM2_ALG_ERROR; i++)
-+		if (chip->active_banks[i].alg_id == algo)
-+			return chip->active_banks[i].digest_size;
-+
-+	/* Callers should have checked which algorithms the TPM supports,
-+	 * or should have provided a SHA1 digest, which is always supported.
-+	 * If the passed algorithm is unknown, return the size of SHA1.
-+	 */
-+	return hash_digest_size[HASH_ALGO_SHA1];
-+}
-+
- /**
-  * tpm_pcr_extend - extend pcr value with hash
-  * @chip_num:	tpm idx # or AN&
-  * @pcr_idx:	pcr idx to extend
-- * @hash:	hash value used to extend pcr value
-+ * @count:	number of digests
-+ * @digests:	array of digests
-  *
-  * The TPM driver should be built-in, but for whatever reason it
-  * isn't, protect against the chip disappearing, by incrementing
-  * the module usage count.
-  */
--int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
-+int tpm_pcr_extend(u32 chip_num, int pcr_idx, u32 count,
-+		   struct tpm2_digest *digests)
- {
- 	int rc;
- 	struct tpm_chip *chip;
- 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
--	u32 count = 0;
--	int i;
-+	u32 first_digest_size;
-+	int i, j;
-+
-+	if (count == 0)
-+		return -EINVAL;
- 
- 	chip = tpm_chip_find_get(chip_num);
- 	if (chip == NULL)
- 		return -ENODEV;
- 
-+	first_digest_size = tpm_get_digest_size(chip, digests[0].alg_id);
-+
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- 		memset(digest_list, 0, sizeof(digest_list));
- 
- 		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
- 		     chip->active_banks[i].alg_id != TPM2_ALG_ERROR; i++) {
-+			struct tpm_pcr_bank_info *bank = &chip->active_banks[i];
-+			u8 *cur_digest = digests[0].digest;
-+			u32 cur_digest_size = first_digest_size;
-+
-+			for (j = 0; j < count; j++) {
-+				if (digests[j].alg_id == bank->alg_id) {
-+					cur_digest = digests[j].digest;
-+					cur_digest_size = bank->digest_size;
-+					break;
-+				}
-+			}
-+
- 			digest_list[i].alg_id = chip->active_banks[i].alg_id;
--			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
--			count++;
-+			memcpy(digest_list[i].digest, cur_digest,
-+			       cur_digest_size);
- 		}
- 
--		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
-+		rc = tpm2_pcr_extend(chip, pcr_idx, i, digest_list);
- 		tpm_put_ops(chip);
- 		return rc;
- 	}
- 
--	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
-+	rc = tpm1_pcr_extend(chip, pcr_idx, digests[0].digest,
- 			     "attempting extend a PCR value");
- 	tpm_put_ops(chip);
- 	return rc;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 75ec0d1..7c2f30b 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -34,7 +34,6 @@
- #include <linux/acpi.h>
- #include <linux/cdev.h>
- #include <linux/highmem.h>
--#include <crypto/hash_info.h>
- 
- enum tpm_const {
- 	TPM_MINOR = 224,	/* officially assigned */
-@@ -386,11 +385,6 @@ struct tpm_cmd_t {
- 	tpm_cmd_params	params;
- } __packed;
- 
--struct tpm2_digest {
--	u16 alg_id;
--	u8 digest[SHA512_DIGEST_SIZE];
--} __packed;
--
- /* A string buffer type for constructing TPM commands. This is based on the
-  * ideas of string buffer code in security/keys/trusted.h but is heap based
-  * in order to keep the stack usage minimal.
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 49ec8fc..254d632 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -36,6 +36,11 @@ struct tpm_chip;
- struct trusted_key_payload;
- struct trusted_key_options;
- 
-+struct tpm2_digest {
-+	u16 alg_id;
-+	u8 digest[SHA512_DIGEST_SIZE];
-+} __packed;
-+
- enum TPM_OPS_FLAGS {
- 	TPM_OPS_AUTO_STARTUP = BIT(0),
- };
-@@ -76,7 +81,8 @@ struct tpm_pcr_bank_info {
- 
- extern int tpm_is_tpm2(u32 chip_num);
- extern int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf);
--extern int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash);
-+extern int tpm_pcr_extend(u32 chip_num, int pcr_idx, u32 count,
-+			  struct tpm2_digest *digests);
- extern int tpm_get_pcr_banks_info(u32 chip_num,
- 				  struct tpm_pcr_bank_info *active_banks);
- extern int tpm_send(u32 chip_num, void *cmd, size_t buflen);
-@@ -95,7 +101,9 @@ static inline int tpm_is_tpm2(u32 chip_num)
- static inline int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf) {
- 	return -ENODEV;
- }
--static inline int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash) {
-+static inline int tpm_pcr_extend(u32 chip_num, int pcr_idx, u32 count,
-+				 struct tpm2_digest *digests)
-+{
- 	return -ENODEV;
- }
- static inline int tpm_get_pcr_banks_info(u32 chip_num,
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index d9aa5ab..f628968 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -140,12 +140,14 @@ unsigned long ima_get_binary_runtime_size(void)
- 
- static int ima_pcr_extend(const u8 *hash, int pcr)
- {
-+	struct tpm2_digest digestarg = {.alg_id = TPM2_ALG_SHA1};
- 	int result = 0;
- 
- 	if (!ima_used_chip)
- 		return result;
- 
--	result = tpm_pcr_extend(TPM_ANY_NUM, pcr, hash);
-+	memcpy(digestarg.digest, hash, IMA_DIGEST_SIZE);
-+	result = tpm_pcr_extend(TPM_ANY_NUM, pcr, 1, &digestarg);
- 	if (result != 0)
- 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
- 	return result;
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index 435e86e..d6c0db8 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -377,15 +377,15 @@ static int trusted_tpm_send(const u32 chip_num, unsigned char *cmd,
-  */
- static int pcrlock(const int pcrnum)
- {
--	unsigned char hash[SHA1_DIGEST_SIZE];
-+	struct tpm2_digest digestarg = {.alg_id = TPM2_ALG_SHA1};
- 	int ret;
- 
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
--	ret = tpm_get_random(TPM_ANY_NUM, hash, SHA1_DIGEST_SIZE);
-+	ret = tpm_get_random(TPM_ANY_NUM, digestarg.digest, SHA1_DIGEST_SIZE);
- 	if (ret != SHA1_DIGEST_SIZE)
- 		return ret;
--	return tpm_pcr_extend(TPM_ANY_NUM, pcrnum, hash) ? -EINVAL : 0;
-+	return tpm_pcr_extend(TPM_ANY_NUM, pcrnum, 1, &digestarg) ? -EINVAL : 0;
- }
- 
- /*
--- 
-2.9.3
+* There's already need to identity which security module
+you're dealing with at a given time for SO_PEERSEC and
+/proc/.../attr/current. In the past I've suggested decorating
+attribute values with the name of the module (smack='System')
+but I'm currently leaning more toward a prctl() to set the
+value if you don't want to get whatever comes first. That
+should maximize the effectiveness of existing user-space
+tools.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
