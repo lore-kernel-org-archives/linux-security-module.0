@@ -1,146 +1,119 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 21 Jun 2017 16:29:38 +0200
-Subject: [PATCH v3 3/6] tpm: introduce tpm_pcr_bank_info structure with
-	digest_size from TPM
+Date: Wed, 21 Jun 2017 16:29:40 +0200
+Subject: [PATCH v3 5/6] tpm: introduce tpm_get_pcr_banks_info()
 In-Reply-To: <20170621142941.32674-1-roberto.sassu@huawei.com>
 References: <20170621142941.32674-1-roberto.sassu@huawei.com>
-Message-ID: <20170621142941.32674-4-roberto.sassu@huawei.com>
+Message-ID: <20170621142941.32674-6-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch introduces the new structure tpm_pcr_bank_info to store
-information regarding PCR banks. The next patch will replace the array of
-TPM algorithms IDs with an array of the new structure.
+This function copies the array of tpm_pcr_bank_info structures to the
+memory address specified by the caller. It assumes that the caller
+allocated an array with the same number of elements of the active_banks
+array (member of the tpm_chip structure). This number is defined in
+include/linux/tpm.h (TPM_ACTIVE_BANKS_MAX definition).
 
-tpm_pcr_bank_info contains the TPM algorithm ID, the digest size and,
-optionally, the corresponding crypto ID, if a mapping exists. These
-information will be used by IMA to calculate the digest of an event
-and to provide measurements logs to userspace applications. The new
-structure has been defined in include/linux/tpm.h, as it will be passed
-to functions outside the TPM driver.
-
-The purpose of this patch is to fix a serious issue in tpm2_pcr_extend():
-if the mapping between a TPM algorithm and a crypto algorithm is not
-defined, the PCR bank with the unknown algorithm is not extended.
-This gives the opportunity to an attacker to reply to remote attestation
-requests with a list of fake measurements. Instead, the digest size
-is retrieved from the output buffer of a PCR read, without relying
-on the crypto subsystem.
+A tpm_pcr_bank_info structure is also returned if the TPM version is 1.2.
+The advantage of this choice is that the code for extending a PCR with
+multiple digests will work regardless of the TPM version.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- drivers/char/tpm/tpm.h      | 11 -----------
- drivers/char/tpm/tpm2-cmd.c | 30 ++++++++++++++++++++++++++++++
- include/linux/tpm.h         | 19 +++++++++++++++++++
- 3 files changed, 49 insertions(+), 11 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 33 +++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm.h           |  2 +-
+ include/linux/tpm.h              |  8 ++++++++
+ 3 files changed, 42 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index a11598a..cf0cdb2 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -916,6 +916,39 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
+ EXPORT_SYMBOL_GPL(tpm_pcr_extend);
+ 
+ /**
++ * tpm_get_pcr_banks_info() - get PCR banks information
++ * @chip_num:		tpm idx # or ANY
++ * @active_banks:	array of tpm_pcr_bank_info structures
++ *
++ * Return: < 0 on error, and the number of active PCR banks on success.
++ */
++int tpm_get_pcr_banks_info(u32 chip_num, struct tpm_pcr_bank_info *active_banks)
++{
++	struct tpm_chip *chip;
++	int count = 1;
++
++	chip = tpm_chip_find_get(chip_num);
++	if (chip == NULL)
++		return -ENODEV;
++
++	if (!(chip->flags & TPM_CHIP_FLAG_TPM2)) {
++		active_banks[0].alg_id = TPM2_ALG_SHA1;
++		active_banks[0].crypto_id = HASH_ALGO_SHA1;
++		active_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
++		goto out;
++	}
++
++	for (count = 0; count < ARRAY_SIZE(chip->active_banks) &&
++	     chip->active_banks[count].alg_id != TPM2_ALG_ERROR; count++)
++		memcpy(&active_banks[count], &chip->active_banks[count],
++		       sizeof(*active_banks));
++out:
++	tpm_put_ops(chip);
++	return count;
++}
++EXPORT_SYMBOL_GPL(tpm_get_pcr_banks_info);
++
++/**
+  * tpm_do_selftest - have the TPM continue its selftest and wait until it
+  *                   can receive further commands
+  * @chip: TPM chip to use
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 1df0521..62c600d 100644
+index d285bc6..75ec0d1 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -98,17 +98,6 @@ enum tpm2_return_codes {
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
- };
+@@ -208,7 +208,7 @@ struct tpm_chip {
+ 	const struct attribute_group *groups[3];
+ 	unsigned int groups_cnt;
  
--enum tpm2_algorithms {
--	TPM2_ALG_ERROR		= 0x0000,
--	TPM2_ALG_SHA1		= 0x0004,
--	TPM2_ALG_KEYEDHASH	= 0x0008,
--	TPM2_ALG_SHA256		= 0x000B,
--	TPM2_ALG_SHA384		= 0x000C,
--	TPM2_ALG_SHA512		= 0x000D,
--	TPM2_ALG_NULL		= 0x0010,
--	TPM2_ALG_SM3_256	= 0x0012,
--};
--
- enum tpm2_command_codes {
- 	TPM2_CC_FIRST		= 0x011F,
- 	TPM2_CC_SELF_TEST	= 0x0143,
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 6a9fe0d..74a68ea 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -992,6 +992,36 @@ int tpm2_probe(struct tpm_chip *chip)
- }
- EXPORT_SYMBOL_GPL(tpm2_probe);
- 
-+static int tpm2_init_pcr_bank_info(struct tpm_chip *chip, u16 alg_id,
-+				   struct tpm_pcr_bank_info *active_bank)
-+{
-+	struct tpm_buf buf;
-+	struct tpm2_pcr_read_out *pcrread_out;
-+	int rc = 0;
-+	int i;
-+
-+	active_bank->alg_id = alg_id;
-+
-+	rc = tpm2_pcr_read_tpm_buf(chip, 0, alg_id, &buf, NULL);
-+	if (rc)
-+		goto out;
-+
-+	pcrread_out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
-+
-+	active_bank->digest_size = be16_to_cpu(pcrread_out->digest_size);
-+	active_bank->crypto_id = HASH_ALGO__LAST;
-+
-+	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
-+		if (active_bank->alg_id != tpm2_hash_map[i].tpm_id)
-+			continue;
-+
-+		active_bank->crypto_id = tpm2_hash_map[i].crypto_id;
-+	}
-+out:
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
- struct tpm2_pcr_selection {
- 	__be16  hash_alg;
- 	u8  size_of_select;
+-	struct tpm_pcr_bank_info active_banks[7];
++	struct tpm_pcr_bank_info active_banks[TPM_ACTIVE_BANKS_MAX];
+ #ifdef CONFIG_ACPI
+ 	acpi_handle acpi_dev_handle;
+ 	char ppi_version[TPM_PPI_VERSION_LEN + 1];
 diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 5a090f5..ff06738 100644
+index ff06738..49ec8fc 100644
 --- a/include/linux/tpm.h
 +++ b/include/linux/tpm.h
-@@ -22,6 +22,8 @@
- #ifndef __LINUX_TPM_H__
- #define __LINUX_TPM_H__
+@@ -25,6 +25,7 @@
+ #include <crypto/hash_info.h>
  
-+#include <crypto/hash_info.h>
-+
  #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
++#define TPM_ACTIVE_BANKS_MAX 7	/* Max num of active banks for TPM 2.0 */
  
  /*
-@@ -37,6 +39,17 @@ enum TPM_OPS_FLAGS {
- 	TPM_OPS_AUTO_STARTUP = BIT(0),
- };
- 
-+enum tpm2_algorithms {
-+	TPM2_ALG_ERROR		= 0x0000,
-+	TPM2_ALG_SHA1		= 0x0004,
-+	TPM2_ALG_KEYEDHASH	= 0x0008,
-+	TPM2_ALG_SHA256		= 0x000B,
-+	TPM2_ALG_SHA384		= 0x000C,
-+	TPM2_ALG_SHA512		= 0x000D,
-+	TPM2_ALG_NULL		= 0x0010,
-+	TPM2_ALG_SM3_256	= 0x0012,
-+};
-+
- struct tpm_class_ops {
- 	unsigned int flags;
- 	const u8 req_complete_mask;
-@@ -52,6 +65,12 @@ struct tpm_class_ops {
- 	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
- };
- 
-+struct tpm_pcr_bank_info {
-+	enum tpm2_algorithms alg_id;
-+	enum hash_algo crypto_id;
-+	u32 digest_size;
-+};
-+
- #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
- 
+  * Chip num is this value or a valid tpm idx
+@@ -76,6 +77,8 @@ struct tpm_pcr_bank_info {
  extern int tpm_is_tpm2(u32 chip_num);
+ extern int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf);
+ extern int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash);
++extern int tpm_get_pcr_banks_info(u32 chip_num,
++				  struct tpm_pcr_bank_info *active_banks);
+ extern int tpm_send(u32 chip_num, void *cmd, size_t buflen);
+ extern int tpm_get_random(u32 chip_num, u8 *data, size_t max);
+ extern int tpm_seal_trusted(u32 chip_num,
+@@ -95,6 +98,11 @@ static inline int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf) {
+ static inline int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash) {
+ 	return -ENODEV;
+ }
++static inline int tpm_get_pcr_banks_info(u32 chip_num,
++					 struct tpm_pcr_bank_info *active_banks)
++{
++	return -ENODEV;
++}
+ static inline int tpm_send(u32 chip_num, void *cmd, size_t buflen) {
+ 	return -ENODEV;
+ }
 -- 
 2.9.3
 
