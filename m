@@ -1,123 +1,86 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 21 Jun 2017 16:29:40 +0200
-Subject: [PATCH v3 5/6] tpm: introduce tpm_get_pcr_banks_info()
+Date: Wed, 21 Jun 2017 16:29:37 +0200
+Subject: [PATCH v3 2/6] tpm: use tpm2_pcr_read_tpm_buf() in tpm2_do_selftest()
 In-Reply-To: <20170621142941.32674-1-roberto.sassu@huawei.com>
 References: <20170621142941.32674-1-roberto.sassu@huawei.com>
-Message-ID: <20170621142941.32674-6-roberto.sassu@huawei.com>
+Message-ID: <20170621142941.32674-3-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This function copies the array of tpm_pcr_bank_info structures to the
-memory address specified by the caller. It assumes that the caller
-allocated an array with the same number of elements of the active_banks
-array (member of the tpm_chip structure). This number is defined in
-include/linux/tpm.h (TPM_ACTIVE_BANKS_MAX definition).
-
-A tpm_pcr_bank_info structure is also returned if the TPM version is 1.2.
-The advantage of this choice is that the code for extending a PCR with
-multiple digests will work regardless of the TPM version.
+tpm2_do_selftest() performs a PCR read during the TPM initialization phase.
+This patch replaces the PCR read code with a call to
+tpm2_pcr_read_tpm_buf(). tpm2_do_selftest() parses the result of the
+TPM command, in order to retrieve the return code.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- drivers/char/tpm/tpm-interface.c | 33 +++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm.h           |  2 +-
- include/linux/tpm.h              |  8 ++++++++
- 3 files changed, 42 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm2-cmd.c | 32 ++++++++++----------------------
+ 1 file changed, 10 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index a11598a..cf0cdb2 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -916,6 +916,39 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
- EXPORT_SYMBOL_GPL(tpm_pcr_extend);
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index afd1b63..6a9fe0d 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -227,16 +227,6 @@ static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+ 	TPM_UNDEFINED		/* 18f */
+ };
  
- /**
-+ * tpm_get_pcr_banks_info() - get PCR banks information
-+ * @chip_num:		tpm idx # or ANY
-+ * @active_banks:	array of tpm_pcr_bank_info structures
-+ *
-+ * Return: < 0 on error, and the number of active PCR banks on success.
-+ */
-+int tpm_get_pcr_banks_info(u32 chip_num, struct tpm_pcr_bank_info *active_banks)
-+{
-+	struct tpm_chip *chip;
-+	int count = 1;
-+
-+	chip = tpm_chip_find_get(chip_num);
-+	if (chip == NULL)
-+		return -ENODEV;
-+
-+	if (!(chip->flags & TPM_CHIP_FLAG_TPM2)) {
-+		active_banks[0].alg_id = TPM2_ALG_SHA1;
-+		active_banks[0].crypto_id = HASH_ALGO_SHA1;
-+		active_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
-+		goto out;
-+	}
-+
-+	for (count = 0; count < ARRAY_SIZE(chip->active_banks) &&
-+	     chip->active_banks[count].alg_id != TPM2_ALG_ERROR; count++)
-+		memcpy(&active_banks[count], &chip->active_banks[count],
-+		       sizeof(*active_banks));
-+out:
-+	tpm_put_ops(chip);
-+	return count;
-+}
-+EXPORT_SYMBOL_GPL(tpm_get_pcr_banks_info);
-+
-+/**
-  * tpm_do_selftest - have the TPM continue its selftest and wait until it
-  *                   can receive further commands
-  * @chip: TPM chip to use
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index d285bc6..75ec0d1 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -208,7 +208,7 @@ struct tpm_chip {
- 	const struct attribute_group *groups[3];
- 	unsigned int groups_cnt;
+-#define TPM2_PCR_READ_IN_SIZE \
+-	(sizeof(struct tpm_input_header) + \
+-	 sizeof(struct tpm2_pcr_read_in))
+-
+-static const struct tpm_input_header tpm2_pcrread_header = {
+-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+-	.length = cpu_to_be32(TPM2_PCR_READ_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_PCR_READ)
+-};
+-
+ static int tpm2_pcr_read_tpm_buf(struct tpm_chip *chip, int pcr_idx,
+ 				 enum tpm2_algorithms algo, struct tpm_buf *buf,
+ 				 char *msg)
+@@ -938,7 +928,8 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+ 	unsigned int loops;
+ 	unsigned int delay_msec = 100;
+ 	unsigned long duration;
+-	struct tpm2_cmd cmd;
++	struct tpm_buf buf;
++	tpm_cmd_header *header;
+ 	int i;
  
--	struct tpm_pcr_bank_info active_banks[7];
-+	struct tpm_pcr_bank_info active_banks[TPM_ACTIVE_BANKS_MAX];
- #ifdef CONFIG_ACPI
- 	acpi_handle acpi_dev_handle;
- 	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index ff06738..49ec8fc 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -25,6 +25,7 @@
- #include <crypto/hash_info.h>
+ 	duration = tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST);
+@@ -951,20 +942,17 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
  
- #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
-+#define TPM_ACTIVE_BANKS_MAX 7	/* Max num of active banks for TPM 2.0 */
+ 	for (i = 0; i < loops; i++) {
+ 		/* Attempt to read a PCR value */
+-		cmd.header.in = tpm2_pcrread_header;
+-		cmd.params.pcrread_in.pcr_selects_cnt = cpu_to_be32(1);
+-		cmd.params.pcrread_in.hash_alg = cpu_to_be16(TPM2_ALG_SHA1);
+-		cmd.params.pcrread_in.pcr_select_size = TPM2_PCR_SELECT_MIN;
+-		cmd.params.pcrread_in.pcr_select[0] = 0x01;
+-		cmd.params.pcrread_in.pcr_select[1] = 0x00;
+-		cmd.params.pcrread_in.pcr_select[2] = 0x00;
+-
+-		rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
+-				      NULL);
++		rc = tpm2_pcr_read_tpm_buf(chip, 0, TPM2_ALG_SHA1, &buf, NULL);
++		if (rc >= 0) {
++			header = (tpm_cmd_header *)buf.data;
++			rc = be32_to_cpu(header->out.return_code);
++		}
++
++		tpm_buf_destroy(&buf);
++
+ 		if (rc < 0)
+ 			break;
  
- /*
-  * Chip num is this value or a valid tpm idx
-@@ -76,6 +77,8 @@ struct tpm_pcr_bank_info {
- extern int tpm_is_tpm2(u32 chip_num);
- extern int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf);
- extern int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash);
-+extern int tpm_get_pcr_banks_info(u32 chip_num,
-+				  struct tpm_pcr_bank_info *active_banks);
- extern int tpm_send(u32 chip_num, void *cmd, size_t buflen);
- extern int tpm_get_random(u32 chip_num, u8 *data, size_t max);
- extern int tpm_seal_trusted(u32 chip_num,
-@@ -95,6 +98,11 @@ static inline int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf) {
- static inline int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash) {
- 	return -ENODEV;
- }
-+static inline int tpm_get_pcr_banks_info(u32 chip_num,
-+					 struct tpm_pcr_bank_info *active_banks)
-+{
-+	return -ENODEV;
-+}
- static inline int tpm_send(u32 chip_num, void *cmd, size_t buflen) {
- 	return -ENODEV;
- }
+-		rc = be32_to_cpu(cmd.header.out.return_code);
+ 		if (rc != TPM2_RC_TESTING)
+ 			break;
+ 
 -- 
 2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
