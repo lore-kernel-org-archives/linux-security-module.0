@@ -1,9 +1,9 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 21 Jun 2017 14:18:29 -0400
-Subject: [PATCH v2 09/10] ubifs: define integrity_read method
+Date: Wed, 21 Jun 2017 14:18:28 -0400
+Subject: [PATCH v2 08/10] jffs2: define integrity_read method
 In-Reply-To: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1498069110-10009-10-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1498069110-10009-9-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -12,19 +12,21 @@ integrity hash collection.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- fs/ubifs/file.c | 1 +
+ fs/jffs2/file.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 2cda3d67e2d0..eeb4e872e47a 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1754,4 +1754,5 @@ const struct file_operations ubifs_file_operations = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl   = ubifs_compat_ioctl,
- #endif
+diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+index c12476e309c6..5a63034cccf5 100644
+--- a/fs/jffs2/file.c
++++ b/fs/jffs2/file.c
+@@ -57,6 +57,7 @@ const struct file_operations jffs2_file_operations =
+ 	.mmap =		generic_file_readonly_mmap,
+ 	.fsync =	jffs2_fsync,
+ 	.splice_read =	generic_file_splice_read,
 +	.integrity_read = generic_file_read_iter,
  };
+ 
+ /* jffs2_file_inode_operations */
 -- 
 2.7.4
 
