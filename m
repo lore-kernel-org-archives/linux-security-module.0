@@ -1,32 +1,70 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 21 Jun 2017 14:18:27 -0400
-Subject: [PATCH v2 07/10] ocfs2: define integrity_read method
+Date: Wed, 21 Jun 2017 14:18:30 -0400
+Subject: [PATCH v2 10/10] ima: use existing read file operation method to
+	calculate file hash
 In-Reply-To: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1498069110-10009-8-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1498069110-10009-11-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Define an ->integrity_read file operation method to read data for
-integrity hash collection.
+The builtin "ima_tcb" policy measures all files read by root.  This
+policy includes, for example, files on efivars.  Since some files on
+these filesystems were previously measured (eg. OsIndicationsSupported),
+not measuring them would change the PCR hash value(s), potentially
+breaking userspace.
+
+The few filesystems that currently define the ->read file operation
+method, either call seq_read() or have a filesystem specific ->read
+method.  None of them, at least in the fs directory, take the i_rwsem.
+
+For filesystems that do not define the ->integrity_read file operation
+method and have a ->read method, this patch calls the ->read method
+to calculate the file hash.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- fs/ocfs2/file.c | 1 +
- 1 file changed, 1 insertion(+)
+ security/integrity/iint.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index bfeb647459d9..2832a7c92acd 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -2536,6 +2536,7 @@ const struct file_operations ocfs2_fops = {
- 	.fallocate	= ocfs2_fallocate,
- 	.clone_file_range = ocfs2_file_clone_range,
- 	.dedupe_file_range = ocfs2_file_dedupe_range,
-+	.integrity_read	= ocfs2_file_read_iter,
- };
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index df04f35a1d40..75c3cef5fd01 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -189,20 +189,29 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+ 	struct kvec iov = { .iov_base = addr, .iov_len = count };
+ 	struct kiocb kiocb;
+ 	struct iov_iter iter;
+-	ssize_t ret;
++	ssize_t ret = -EBADF;
  
- const struct file_operations ocfs2_dops = {
+ 	lockdep_assert_held(&inode->i_rwsem);
+ 
+ 	if (!(file->f_mode & FMODE_READ))
+ 		return -EBADF;
+-	if (!file->f_op->integrity_read)
+-		return -EBADF;
+ 
+ 	init_sync_kiocb(&kiocb, file);
+ 	kiocb.ki_pos = offset;
+ 	iov_iter_kvec(&iter, READ | ITER_KVEC, &iov, 1, count);
+ 
+-	ret = file->f_op->integrity_read(&kiocb, &iter);
++	if (file->f_op->integrity_read) {
++		ret = file->f_op->integrity_read(&kiocb, &iter);
++	} else if (file->f_op->read) {
++		mm_segment_t old_fs;
++		char __user *buf = (char __user *)addr;
++
++		old_fs = get_fs();
++		set_fs(get_ds());
++		ret = file->f_op->read(file, buf, count, &offset);
++		set_fs(old_fs);
++	}
++
+ 	BUG_ON(ret == -EIOCBQUEUED);
+ 	return ret;
+ }
 -- 
 2.7.4
 
