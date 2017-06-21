@@ -1,298 +1,95 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Wed, 21 Jun 2017 14:45:02 -0300
-Subject: [PATCH v2 6/6] ima: Support module-style appended signatures for
-	appraisal
-In-Reply-To: <1497443972.4287.38.camel@linux.vnet.ibm.com>
-References: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1496886555-10082-7-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1497443972.4287.38.camel@linux.vnet.ibm.com>
-Message-ID: <8760fpck0x.fsf@linux.vnet.ibm.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 21 Jun 2017 14:18:20 -0400
+Subject: [PATCH v2 00/10] define new fs integrity_read method
+Message-ID: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+With the introduction of IMA-appraisal and the need to write file
+hashes as security xattrs, IMA needed to take the global i_mutex
+lock.  process_measurement() took the iint->mutex first and then
+the i_mutex, while setxattr, chmod and chown took the locks in
+reverse order.  To resolve this potential deadlock, the iint->mutex
+was removed.
 
-Hello Mimi,
+Some filesystems have recently replaced their filesystem dependent
+lock with the global i_rwsem (formerly the i_mutex) to read a file.
+As a result, when IMA attempts to calculate the file hash, reading
+the file attempts to take the i_rwsem again.
 
-Thanks for your review, and for queuing the other patches in this series.
+To resolve this locking problem, this patch set introduces a new
+->integrity_read file operation method.  Until all filesystems
+define the new ->integrity_read method, files that were previously
+measured might not be currently measured and files that were
+previously appraised might fail to be appraised properly.
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> On Wed, 2017-06-07 at 22:49 -0300, Thiago Jung Bauermann wrote:
->> This patch introduces the modsig keyword to the IMA policy syntax to
->> specify that a given hook should expect the file to have the IMA signature
->> appended to it.
->
-> Thank you, Thiago. Appended signatures seem to be working proper now
-> with multiple keys on the IMA keyring.
+Version 2 of this patch set, introduces measurement entries and
+IMA-audit messages containing file hash values containing 0's,
+instead of the actual file hash, for files which the file hash
+could not be calculated.  Like for any other file signature
+verification error, file access/execute permission will be denied,
+for files in policy that the file hash could not be calculated.
 
-Great news!
+To override the IMA policy, allowing unverified code to be
+accessed/executed on filesystems not supported by IMA, version 2 of
+this patch set defines a new pseudo policy "action" named
+"dont_failsafe" and a new builtin policy named "fs_unsafe", which
+can be specified on the boot command line.
 
-> The length of this patch description is a good indication that this
-> patch needs to be broken up for easier review. A few
-> comments/suggestions inline below.
+Mimi
 
-Ok, I will try to break it up, and also patch 5 as you suggested.
+Changelog v1:
+- Don't silently drop file measurements on failure to "collect" the
+file hash, add an entry in the measurement list and IMA-audit log
+the file.
+- Define a pseudo policy action named "dont_failsafe".
+- Define a new builtin IMA policy named "fs_unsafe".
+- Instead of calling the existing read_iter method, when defined
+as generic_file_read_iter(), define an ->integrity_read method
+for each file system.
+- Expanded/clarified motivation in the patch description for using
+the ->read method.
+- Use kvec, not iovec. (Reported by zero day testing)
 
->> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
->> index 06554c448dce..9190c9058f4f 100644
->> --- a/security/integrity/digsig.c
->> +++ b/security/integrity/digsig.c
->> @@ -48,11 +48,10 @@ static bool init_keyring __initdata;
->>  #define restrict_link_to_ima restrict_link_by_builtin_trusted
->>  #endif
->> 
->> -int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
->> -			    const char *digest, int digestlen)
->> +struct key *integrity_keyring_from_id(const unsigned int id)
->>  {
->> -	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
->> -		return -EINVAL;
->> +	if (id >= INTEGRITY_KEYRING_MAX)
->> +		return ERR_PTR(-EINVAL);
->> 
->
-> When splitting up this patch, the addition of this new function could
-> be a separate patch. The patch description would explain the need for
-> a new function.
+Christoph Hellwig (1):
+  ima: use fs method to read integrity data
 
-Ok, will do for v3.
+Mimi Zohar (9):
+  ima: always measure and audit files in policy
+  ima: define "dont_failsafe" policy action rule
+  ima: define "fs_unsafe" builtin policy
+  tmpfs: define integrity_read method
+  fs: define integrity_read method for ext2, gfs2, f2fs, jfs, ramfs
+  ocfs2: define integrity_read method
+  jffs2: define integrity_read method
+  ubifs: define integrity_read method
+  ima: use existing read file operation method to calculate file hash
 
->> @@ -229,10 +234,14 @@ int ima_appraise_measurement(enum ima_hooks func,
->>  		goto out;
->>  	}
->> 
->> -	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
->> -	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
->> -		if ((status == INTEGRITY_NOLABEL)
->> -		    || (status == INTEGRITY_NOXATTRS))
->> +	/* Appended signatures aren't protected by EVM. */
->> +	status = evm_verifyxattr(dentry, XATTR_NAME_IMA,
->> +				 xattr_value->type == IMA_MODSIG ?
->> +				 NULL : xattr_value, rc, iint);
->> +	if (status != INTEGRITY_PASS && status != INTEGRITY_UNKNOWN &&
->> +	    !(xattr_value->type == IMA_MODSIG &&
->> +	      (status == INTEGRITY_NOLABEL || status == INTEGRITY_NOXATTRS))) {
->
-> This was messy to begin with, and now it is even more messy. For
-> appended signatures, we're only interested in INTEGRITY_FAIL. Maybe
-> leave the existing "if" clause alone and define a new "if" clause.
-
-Ok, is this what you had in mind?
-
-@@ -229,8 +237,14 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		goto out;
- 	}
- 
--	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
--	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
-+	/* Appended signatures aren't protected by EVM. */
-+	status = evm_verifyxattr(dentry, XATTR_NAME_IMA,
-+				 xattr_value->type == IMA_MODSIG ?
-+				 NULL : xattr_value, rc, iint);
-+	if (xattr_value->type == IMA_MODSIG && status == INTEGRITY_FAIL) {
-+		cause = "invalid-HMAC";
-+		goto out;
-+	} else if (status != INTEGRITY_PASS && status != INTEGRITY_UNKNOWN) {
- 		if ((status == INTEGRITY_NOLABEL)
- 		    || (status == INTEGRITY_NOXATTRS))
- 			cause = "missing-HMAC";
-
->> @@ -267,11 +276,18 @@ int ima_appraise_measurement(enum ima_hooks func,
->>  		status = INTEGRITY_PASS;
->>  		break;
->>  	case EVM_IMA_XATTR_DIGSIG:
->> +	case IMA_MODSIG:
->>  		iint->flags |= IMA_DIGSIG;
->> -		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
->> -					     (const char *)xattr_value, rc,
->> -					     iint->ima_hash->digest,
->> -					     iint->ima_hash->length);
->> +
->> +		if (xattr_value->type == EVM_IMA_XATTR_DIGSIG)
->> +			rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
->> +						     (const char *)xattr_value,
->> +						     rc, iint->ima_hash->digest,
->> +						     iint->ima_hash->length);
->> +		else
->> +			rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA,
->> +					       xattr_value);
->> +
->
-> Perhaps allowing IMA_MODSIG to flow into EVM_IMA_XATTR_DIGSIG on
-> failure, would help restore process_measurements() to the way it was.
-> Further explanation below.
-
-It's not possible to simply flow into EVM_IMA_XATTR_DIGSIG on failure
-because after calling ima_read_xattr we need to run again all the logic
-before the switch statement. Instead, I'm currently testing the
-following change for v3, what do you think?
-
-More about this code further below.
-
-@@ -266,6 +280,44 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		}
- 		status = INTEGRITY_PASS;
- 		break;
-+	case IMA_MODSIG:
-+		rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA, xattr_value);
-+		if (!rc) {
-+			iint->flags |= IMA_DIGSIG;
-+			status = INTEGRITY_PASS;
-+			break;
-+		}
-+
-+		/*
-+		 * The appended signature failed verification. Let's try
-+		 * reading a signature from the extended attribute instead.
-+		 */
-+
-+		ima_free_xattr_data(xattr_value);
-+		xattr_value = NULL;
-+
-+		/* read 'security.ima' */
-+		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
-+		algo = iint->ima_hash->algo;
-+
-+		if (!xattr_value || xattr_value->type == IMA_MODSIG ||
-+		    ima_get_hash_algo(xattr_value, xattr_len) != algo) {
-+			iint->flags |= IMA_DIGSIG;
-+
-+			if (rc == -EOPNOTSUPP)
-+				status = INTEGRITY_UNKNOWN;
-+			else {
-+				cause = "invalid-signature";
-+				status = INTEGRITY_FAIL;
-+			}
-+
-+			break;
-+		}
-+
-+		pr_debug("Trying the xattr signature\n");
-+
-+		return ima_appraise_measurement(func, iint, file, filename,
-+						xattr_value, xattr_len, opened);
- 	case EVM_IMA_XATTR_DIGSIG:
- 		iint->flags |= IMA_DIGSIG;
- 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
-
->> @@ -406,7 +424,8 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
->>  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
->>  			return -EINVAL;
->>  		ima_reset_appraise_flags(d_backing_inode(dentry),
->> -			 (xvalue->type == EVM_IMA_XATTR_DIGSIG) ? 1 : 0);
->> +					 xvalue->type == EVM_IMA_XATTR_DIGSIG ||
->> +					 xvalue->type == IMA_MODSIG);
->
-> Probably easier to read if we set a variable, before calling
-> ima_reset_appraise_flags.
-
-Ok, will do in v3.
-
->> @@ -226,30 +282,23 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->>  		goto out_digsig;
->>  	}
->> 
->> -	template_desc = ima_template_desc_current();
->> -	if ((action & IMA_APPRAISE_SUBMASK) ||
->> -		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
->> -		/* read 'security.ima' */
->> -		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
->> -
->> -	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
->> -
->> -	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
->> -	if (rc != 0) {
->> -		if (file->f_flags & O_DIRECT)
->> -			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
->> -		goto out_digsig;
->> -	}
->> -
->
-> There are four stages: collect measurement, store measurement,
-> appraise measurement and audit measurement. "Collect" needs to be
-> done if any one of the other stages is needed.
->
->>  	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
->>  		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
->> 
->> +	if (iint->flags & IMA_MODSIG_ALLOWED)
->> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
->> +					  iint, &xattr_value, &xattr_len,
->> +					  pathname, true);
->> +	if (!xattr_len)
->> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
->> +					  iint, &xattr_value, &xattr_len,
->> +					  pathname, false);
->
-> I would rather see "collect" extended to support an appended signature
-> rather than trying to combine "collect" and "appraise" together.
-
-I'm not sure I understand what you mean by "extend collect to support an
-appended signature", but the fundamental problem is that we don't know
-whether we need to fallback to the xattr sig until the appraise step
-because that's when we verify the signature, and by then the collect and
-store steps were already completed and would need to be done again if
-the hash algorithm in the xattr sig is different.
-
-If we don't want to change the order of these steps what I suggest (and
-what the code I pasted above for ima_appraise_measurement does) is to
-only allow falling back to the xattr sig if the appended sig and the
-xattr sig use the same hash algorithm.
-
-In that case, collect and store don't need to be redone nor the store
-step need to be moved after appraise. This is the only change that would
-be needed in process_measurement:
-
-@@ -227,10 +230,16 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	}
- 
- 	template_desc = ima_template_desc_current();
--	if ((action & IMA_APPRAISE_SUBMASK) ||
--		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
--		/* read 'security.ima' */
--		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
-+	if (action & IMA_APPRAISE_SUBMASK ||
-+	    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0) {
-+		if (iint->flags & IMA_MODSIG_ALLOWED)
-+			ima_read_modsig(buf, &size, &xattr_value, &xattr_len);
-+
-+		if (!xattr_len)
-+			/* read 'security.ima' */
-+			xattr_len = ima_read_xattr(file_dentry(file),
-+						   &xattr_value);
-+	}
- 
- 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
- 
-@@ -257,7 +266,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
- 	     !(iint->flags & IMA_NEW_FILE))
- 		rc = -EACCES;
--	kfree(xattr_value);
-+	ima_free_xattr_data(xattr_value);
- out_free:
- 	if (pathbuf)
- 		__putname(pathbuf);
-
->
->> +	if (rc)
->> +		goto out_digsig;
->> +
->>  	if (action & IMA_MEASURE)
->>  		ima_store_measurement(iint, file, pathname,
->>  				      xattr_value, xattr_len, pcr);
->> -	if (action & IMA_APPRAISE_SUBMASK)
->> -		rc = ima_appraise_measurement(func, iint, file, pathname,
->> -					      xattr_value, xattr_len, opened);
->
-> Moving appraisal before storing the measurement, should be a separate
-> patch with a clear explanation as to why it is needed.
-
-Ok, will do in v3 if you don't like the restriction of both the modsig
-and xattr sig having to use the same hash algorithm.
+ Documentation/ABI/testing/ima_policy            |  3 ++-
+ Documentation/admin-guide/kernel-parameters.txt |  8 ++++++-
+ fs/btrfs/file.c                                 |  1 +
+ fs/ext2/file.c                                  |  1 +
+ fs/ext4/file.c                                  |  1 +
+ fs/f2fs/file.c                                  |  1 +
+ fs/gfs2/file.c                                  |  2 ++
+ fs/jffs2/file.c                                 |  1 +
+ fs/jfs/file.c                                   |  1 +
+ fs/ocfs2/file.c                                 |  1 +
+ fs/ramfs/file-mmu.c                             |  1 +
+ fs/ramfs/file-nommu.c                           |  1 +
+ fs/ubifs/file.c                                 |  1 +
+ fs/xfs/xfs_file.c                               | 21 +++++++++++++++++
+ include/linux/fs.h                              |  1 +
+ mm/shmem.c                                      |  1 +
+ security/integrity/iint.c                       | 31 +++++++++++++++++++------
+ security/integrity/ima/ima.h                    |  1 +
+ security/integrity/ima/ima_api.c                |  7 ++++--
+ security/integrity/ima/ima_main.c               | 15 +++++++++---
+ security/integrity/ima/ima_policy.c             | 16 ++++++++++++-
+ 21 files changed, 101 insertions(+), 15 deletions(-)
 
 -- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
