@@ -1,79 +1,55 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Thu, 22 Jun 2017 11:49:15 -0700
-Subject: The secmark "one user" policy
-In-Reply-To: <alpine.LRH.2.20.1706221937410.20196@namei.org>
-References: <d256e588-fd3c-b981-6d55-6723b5615cc9@schaufler-ca.com>
-	<alpine.LRH.2.20.1706211713010.1310@namei.org>
-	<2fbe01aa-8f9b-37f0-f79a-e34dcd1d0705@schaufler-ca.com>
-	<alpine.LRH.2.20.1706221937410.20196@namei.org>
-Message-ID: <3baf4aae-6268-356b-8545-30655f561192@canonical.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Thu, 22 Jun 2017 14:59:46 -0400
+Subject: [PATCH 0/3] Enable namespaced file capabilities
+Message-ID: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/22/2017 02:54 AM, James Morris wrote:
-> On Wed, 21 Jun 2017, Casey Schaufler wrote:
-> 
->> Ideally there would be a separate secmark for each security
->> module that wants to use the mechanism. Mechanism would be
->> provided* so that user-space can identify which security
->> module it is referring to when interacting with the kernel.
->> My understanding is that we're unlikely to get an expanded
->> secmark, so I have concentrated elsewhere.
-> 
-> I don't see us getting an expanded secmark, either.
-> 
->>
->> A "clever" secid mapping takes the secids from all the
->> security modules and gently manipulates them until they
->> fit into a single u32. This might be an index into a list
->> of secid sets, but if you have two modules using secids
->> you can give each half of the secmark and accommodate
->> many configurations, including Fedora. Again, you need
->> mechanism* for user-space. This option would require changes
->> to the xt_SECMARK implementation, which goes out of it's
->> way to ensure all secmarks come from the same security
->> module. One option is to add a SECMARK_MODE_COMPOUND, but
->> that isn't any more helpful then removing the restriction.
-> 
-> This sounds very ugly, and each user may assume it has 32 bits of secmark.
-> 
->> As for configuration options, SELinux only uses secmarks
->> when user-space introduces them. If netfilter doesn't have
->> any security rules that add secmarks, none are used. Smack
->> can be configured to set secmarks on all packets, with the
->> potential for change by user-space, but can also be set up
->> without any use of secmarks. There doesn't need to be any
->> significant change to xt_SECMARK if it is important to
->> maintain the "one user" model. Requiring that the user-space
->> use of netfilter be sane for the multiple security module
->> case (e.g. don't use SELinux firewall if Smack has the
->> secmark) seems somewhat reasonable.
-> 
-> Reasonable?  I don't think so.  
-> 
-> Trying to stack major LSMs arbitrarily and exposing that to userland is an 
-> architectural mess, which is what these kinds of problems are really 
-> telling us.
-> 
+This series of patches primary goal is to enable file capabilities
+in user namespaces without affecting the file capabilities that are
+effective on the host. This is to prevent that any unprivileged user
+on the host maps his own uid to root in a private namespace, writes
+the xattr, and executes the file with privilege on the host.
 
-The use case I keep seeing is not exposing multiple LSMs to the user
-space. Its the container where the container wants a different LSM
-than the system is running.
+We achieve this goal by writing extended attributes with a different
+name when a user namespace is used. If for example the root user
+in a user namespace writes the security.capability xattr, the name
+of the xattr that is actually written is encoded as
+security.capability at uid=1000 for root mapped to uid 1000 on the host.
+When listing the xattrs on the host, the existing security.capability
+as well as the security.capability at uid=1000 will be shown. Inside the
+namespace only 'security.capability', with the value of
+security.capability at uid=1000, is visible.
 
-Stacking 2 LSMs in that case and only exposing one to user space isn't
-so unreasonable.
+To maintain compatibility with existing behavior, the value of
+security.capability of the host is shown inside the user namespace
+once the security.capability of the user namespace has been removed
+(which really removes security.capability at uid=1000). Writing to
+an extended attribute inside a user namespace effectively hides the
+extended attribute of the host.
 
-> How can a user be expected to reason about a system which is running 
-> multiple independent MAC security models simultaneously?  It's a terrible 
-> idea.
-> 
+The general framework that is established with these patches can
+be applied to other extended attributes as well, such as security.ima
+or the 'trusted.' prefix . Another extended attribute that needed to
+be enabled here is 'security.selinux,' since otherwise this extended
+attribute would not be shown anymore inside a user namespace.
 
-At a generic system MAC level I agree, but not all LSMs that need
-state are MACs and in the more limited container case it isn't so
-unreasonable.  Arguably virtualization is a better solution for the
-container that wants a different MAC but then that forces you to
-choose virtualization from the start and not just use the existing pre
-built container that you want to pull in and use.
+Regards,
+   Stefan & Serge
+
+
+Stefan Berger (3):
+  xattr: Enable security.capability in user namespaces
+  Enable capabilities of files from shared filesystem
+  Enable security.selinux in user namespaces
+
+ fs/xattr.c               | 472 ++++++++++++++++++++++++++++++++++++++++++++++-
+ security/commoncap.c     |  36 +++-
+ security/selinux/hooks.c |   9 +-
+ 3 files changed, 501 insertions(+), 16 deletions(-)
+
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
