@@ -1,82 +1,79 @@
-From: azhar.shaikh@intel.com (Azhar Shaikh)
-Date: Thu, 22 Jun 2017 11:29:57 -0700
-Subject: [PATCH] tpm: Fix the ioremap() call for Braswell systems
-Message-ID: <1498156197-180919-1-git-send-email-azhar.shaikh@intel.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Thu, 22 Jun 2017 11:49:15 -0700
+Subject: The secmark "one user" policy
+In-Reply-To: <alpine.LRH.2.20.1706221937410.20196@namei.org>
+References: <d256e588-fd3c-b981-6d55-6723b5615cc9@schaufler-ca.com>
+	<alpine.LRH.2.20.1706211713010.1310@namei.org>
+	<2fbe01aa-8f9b-37f0-f79a-e34dcd1d0705@schaufler-ca.com>
+	<alpine.LRH.2.20.1706221937410.20196@namei.org>
+Message-ID: <3baf4aae-6268-356b-8545-30655f561192@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-ioremap() for Intel Braswell processors was done in
-tpm_tis_pnp_init(). But before this function gets called,
-platform driver 'tis_drv' gets registered and its probe function
-tpm_tis_plat_probe() is invoked, which does a TPM
-access. Now for Braswell processors tpm_platform_begin_xfer()
-will do an ioread32() without having a mapped address, which
-will lead to a bad I/O access warning.
-Hence move the ioremap() call from tpm_tis_pnp_init() to init_tis()
-before registering the 'tis_drv' or basically before any TPM access.
-Accordingly also move the iounmap() call from tpm_tis_pnp_remove()
-to cleanup_tis().
+On 06/22/2017 02:54 AM, James Morris wrote:
+> On Wed, 21 Jun 2017, Casey Schaufler wrote:
+> 
+>> Ideally there would be a separate secmark for each security
+>> module that wants to use the mechanism. Mechanism would be
+>> provided* so that user-space can identify which security
+>> module it is referring to when interacting with the kernel.
+>> My understanding is that we're unlikely to get an expanded
+>> secmark, so I have concentrated elsewhere.
+> 
+> I don't see us getting an expanded secmark, either.
+> 
+>>
+>> A "clever" secid mapping takes the secids from all the
+>> security modules and gently manipulates them until they
+>> fit into a single u32. This might be an index into a list
+>> of secid sets, but if you have two modules using secids
+>> you can give each half of the secmark and accommodate
+>> many configurations, including Fedora. Again, you need
+>> mechanism* for user-space. This option would require changes
+>> to the xt_SECMARK implementation, which goes out of it's
+>> way to ensure all secmarks come from the same security
+>> module. One option is to add a SECMARK_MODE_COMPOUND, but
+>> that isn't any more helpful then removing the restriction.
+> 
+> This sounds very ugly, and each user may assume it has 32 bits of secmark.
+> 
+>> As for configuration options, SELinux only uses secmarks
+>> when user-space introduces them. If netfilter doesn't have
+>> any security rules that add secmarks, none are used. Smack
+>> can be configured to set secmarks on all packets, with the
+>> potential for change by user-space, but can also be set up
+>> without any use of secmarks. There doesn't need to be any
+>> significant change to xt_SECMARK if it is important to
+>> maintain the "one user" model. Requiring that the user-space
+>> use of netfilter be sane for the multiple security module
+>> case (e.g. don't use SELinux firewall if Smack has the
+>> secmark) seems somewhat reasonable.
+> 
+> Reasonable?  I don't think so.  
+> 
+> Trying to stack major LSMs arbitrarily and exposing that to userland is an 
+> architectural mess, which is what these kinds of problems are really 
+> telling us.
+> 
 
-Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
----
- drivers/char/tpm/tpm_tis.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+The use case I keep seeing is not exposing multiple LSMs to the user
+space. Its the container where the container wants a different LSM
+than the system is running.
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index 506e62ca3576..3224db80816a 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -330,12 +330,6 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
- 	else
- 		tpm_info.irq = -1;
- 
--#ifdef CONFIG_X86
--	if (is_bsw())
--		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
--					ILB_REMAP_SIZE);
--#endif
--
- 	return tpm_tis_init(&pnp_dev->dev, &tpm_info);
- }
- 
-@@ -359,12 +353,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
--
--#ifdef CONFIG_X86
--	if (is_bsw())
--		iounmap(ilb_base_addr);
--#endif
--
- }
- 
- static struct pnp_driver tis_pnp_driver = {
-@@ -472,6 +460,11 @@ static int __init init_tis(void)
- 	if (rc)
- 		goto err_force;
- 
-+#ifdef CONFIG_X86
-+	if (is_bsw())
-+		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
-+					ILB_REMAP_SIZE);
-+#endif
- 	rc = platform_driver_register(&tis_drv);
- 	if (rc)
- 		goto err_platform;
-@@ -499,6 +492,10 @@ static void __exit cleanup_tis(void)
- 	pnp_unregister_driver(&tis_pnp_driver);
- 	platform_driver_unregister(&tis_drv);
- 
-+#ifdef CONFIG_X86
-+	if (is_bsw())
-+		iounmap(ilb_base_addr);
-+#endif
- 	if (force_pdev)
- 		platform_device_unregister(force_pdev);
- }
--- 
-1.9.1
+Stacking 2 LSMs in that case and only exposing one to user space isn't
+so unreasonable.
+
+> How can a user be expected to reason about a system which is running 
+> multiple independent MAC security models simultaneously?  It's a terrible 
+> idea.
+> 
+
+At a generic system MAC level I agree, but not all LSMs that need
+state are MACs and in the more limited container case it isn't so
+unreasonable.  Arguably virtualization is a better solution for the
+container that wants a different MAC but then that forces you to
+choose virtualization from the start and not just use the existing pre
+built container that you want to pull in and use.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
