@@ -1,10 +1,10 @@
 From: serge@hallyn.com (Serge E. Hallyn)
-Date: Thu, 22 Jun 2017 18:32:45 -0500
+Date: Thu, 22 Jun 2017 18:36:19 -0500
 Subject: [PATCH 0/3] Enable namespaced file capabilities
 In-Reply-To: <1498174161.7636.4.camel@HansenPartnership.com>
 References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
 	<1498174161.7636.4.camel@HansenPartnership.com>
-Message-ID: <20170622233245.GB2894@mail.hallyn.com>
+Message-ID: <20170622233619.GC2894@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -32,12 +32,6 @@ Quoting James Bottomley (James.Bottomley at HansenPartnership.com):
 > to map based on what's currently available on the orchestration
 > system).  If we stick with the @uid=X suffix, then dynamic mapping
 > won't work because X is potentially different each time and there'll be
-
-Note that if you just set a 'security.capability' xattr, it will apply
-to all namespaces.
-
-Does that address your concern?
-
 > a name mismatch in my xattrs.  Why not just make the suffix @uid, which
 > means if root is mapped to any unprivileged uid then we pick this up
 > otherwise we go with the unsuffixed property?
@@ -45,9 +39,18 @@ Does that address your concern?
 > As far as I can see there's no real advantage to discriminating userns
 > specific xattrs based on where root is mapped to, unless there's a use
 > case I'm missing?
-> 
-> James
-> 
+
+Yes, the use case is: to allow root in the container to set the
+privilege itself, without endangering any resources not owned by
+that root.  If you're going to have a root owned host-wide
+orchestration system setting up the rootfs, then you don't
+necessary need this at all.
+
+As you say a @uid to say "any unprivileged userns" might be useful.
+The implication is that root on the host doesn't trust the image
+enough to write a real global file capability, but trusts it enough
+to 'endanger' all containers on the host.  If that's the case, I have
+no objection to adding this as a feature.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
