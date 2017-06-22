@@ -1,38 +1,83 @@
-From: steve@steve.fi (Steve Kemp)
-Date: Thu, 22 Jun 2017 17:21:24 +0000
-Subject: [PATCH v2] Moved module init-functions into the module.
-In-Reply-To: <CAGXu5jJb8vc3Og7Mk2LUYvnJT2tZ4_W3MRPetJWtUEpAGZupXg@mail.gmail.com>
-References: <20170622084507.GA4025@steve.org.uk>
-	<589cbc78-2256-2334-e907-2e440f99b612@schaufler-ca.com>
-	<CAGXu5jJb8vc3Og7Mk2LUYvnJT2tZ4_W3MRPetJWtUEpAGZupXg@mail.gmail.com>
-Message-ID: <1498152084.15628.1@ssh.steve.org.uk>
+From: azhar.shaikh@intel.com (Azhar Shaikh)
+Date: Thu, 22 Jun 2017 11:29:57 -0700
+Subject: [PATCH] tpm: Fix the ioremap() call for Braswell systems
+Message-ID: <1498156197-180919-1-git-send-email-azhar.shaikh@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> > The module initialization code belongs in the module.
-> > The LSM infrastructure should have an absolute minimum
-> > of module specific information. I would rather see the
-> > "minor" modules (yama, loadpin) changed to use the module
-> > registration scheme used by the "major" modules, but that
-> > will require a mechanism to ensure module ordering, and
-> > we don't have that yet. No, don't do this.
-> 
-> Yeah, I agree: initialization order is important here and I don't want
-> to depend on the Makefile for this.
+ioremap() for Intel Braswell processors was done in
+tpm_tis_pnp_init(). But before this function gets called,
+platform driver 'tis_drv' gets registered and its probe function
+tpm_tis_plat_probe() is invoked, which does a TPM
+access. Now for Braswell processors tpm_platform_begin_xfer()
+will do an ioread32() without having a mapped address, which
+will lead to a bad I/O access warning.
+Hence move the ioremap() call from tpm_tis_pnp_init() to init_tis()
+before registering the 'tis_drv' or basically before any TPM access.
+Accordingly also move the iounmap() call from tpm_tis_pnp_remove()
+to cleanup_tis().
 
-  I can appreciate that argument.  I did consider it myself,
- but decided that because the minor modules had such differing
- goals, and no real functional overlap, in practice that would
- mean that explicit ordering wasn't a strong requirement.
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+---
+ drivers/char/tpm/tpm_tis.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-  If/when a better registration scheme becomes available then
- we'll all switch to using it, and that would be great.
-
-  Thanks for the feedback.  I'll not tweak any further.
-
-Steve
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 506e62ca3576..3224db80816a 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -330,12 +330,6 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
+ 	else
+ 		tpm_info.irq = -1;
+ 
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+-					ILB_REMAP_SIZE);
+-#endif
+-
+ 	return tpm_tis_init(&pnp_dev->dev, &tpm_info);
+ }
+ 
+@@ -359,12 +353,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+-
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		iounmap(ilb_base_addr);
+-#endif
+-
+ }
+ 
+ static struct pnp_driver tis_pnp_driver = {
+@@ -472,6 +460,11 @@ static int __init init_tis(void)
+ 	if (rc)
+ 		goto err_force;
+ 
++#ifdef CONFIG_X86
++	if (is_bsw())
++		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
++					ILB_REMAP_SIZE);
++#endif
+ 	rc = platform_driver_register(&tis_drv);
+ 	if (rc)
+ 		goto err_platform;
+@@ -499,6 +492,10 @@ static void __exit cleanup_tis(void)
+ 	pnp_unregister_driver(&tis_pnp_driver);
+ 	platform_driver_unregister(&tis_drv);
+ 
++#ifdef CONFIG_X86
++	if (is_bsw())
++		iounmap(ilb_base_addr);
++#endif
+ 	if (force_pdev)
+ 		platform_device_unregister(force_pdev);
+ }
 -- 
-https://steve.fi/
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
