@@ -1,56 +1,100 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Thu, 22 Jun 2017 16:09:25 -0500
-Subject: [PATCH 0/3] Enable namespaced file capabilities
-In-Reply-To: <2bf08b3e-27f4-3592-d5e2-a823401ac644@schaufler-ca.com>
-References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<70a09f1b-e82c-a25c-9325-d5d757b1b695@schaufler-ca.com>
-	<10fb9c1b-e9af-336c-9a1b-cf95259cfaf3@linux.vnet.ibm.com>
-	<2bf08b3e-27f4-3592-d5e2-a823401ac644@schaufler-ca.com>
-Message-ID: <20170622210925.GA32691@mail.hallyn.com>
+From: azhar.shaikh@intel.com (Azhar Shaikh)
+Date: Thu, 22 Jun 2017 14:32:01 -0700
+Subject: [PATCH v2] tpm: Fix the ioremap() call for Braswell systems
+In-Reply-To: <1498156197-180919-1-git-send-email-azhar.shaikh@intel.com>
+References: <1498156197-180919-1-git-send-email-azhar.shaikh@intel.com>
+Message-ID: <1498167121-77638-1-git-send-email-azhar.shaikh@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Casey Schaufler (casey at schaufler-ca.com):
-> On 6/22/2017 1:12 PM, Stefan Berger wrote:
-> > On 06/22/2017 03:59 PM, Casey Schaufler wrote:
-> >> On 6/22/2017 11:59 AM, Stefan Berger wrote:
-> >>> This series of patches primary goal is to enable file capabilities
-> >>> in user namespaces without affecting the file capabilities that are
-> >>> effective on the host. This is to prevent that any unprivileged user
-> >>> on the host maps his own uid to root in a private namespace, writes
-> >>> the xattr, and executes the file with privilege on the host.
-> >>>
-> >>> We achieve this goal by writing extended attributes with a different
-> >>> name when a user namespace is used. If for example the root user
-> >>> in a user namespace writes the security.capability xattr, the name
-> >>> of the xattr that is actually written is encoded as
-> >>> security.capability at uid=1000 for root mapped to uid 1000 on the host.
-> >> You need to identify the instance of the user namespace for
-> >> this to work right on a system with multiple user namespaces.
-> >> If I have a shared filesystem mounted in two different user
-> >> namespaces a change by one will affect the other.
-> >
-> > Two different user namespaces with different uid mappings will not affect each other.
-> 
-> But two namespaces with the same uid mapping will, and I
-> don't think this meets the principle of least astonishment.
+ioremap() for Intel Braswell processors was done in
+tpm_tis_pnp_init(). But before this function gets called,
+platform driver 'tis_drv' gets registered and its probe function
+tpm_tis_plat_probe() is invoked, which does a TPM
+access. Now for Braswell processors tpm_platform_begin_xfer()
+will do an ioread32() without having a mapped address, which
+will lead to a bad I/O access warning.
+Hence move the ioremap() call from tpm_tis_pnp_init() to init_tis()
+before registering the 'tis_drv' or basically before any TPM access.
+Accordingly also move the iounmap() call from tpm_tis_pnp_remove()
+to cleanup_tis() after all TPM access are completed.
 
-It does.  If you have one filesystem shared among multiple
-containers, then it needs to be either read-only, or you
-need to know what you're doing.
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+---
+Changes from v1:
+- Do error handling in init_ts().
+- Update the commit message.
 
-> I also object to associating capabilities with UIDs. The
-> whole point of capabilities is to disassociate UID 0 from
-> privilege. What you've done is explicitly associate a UID
-> with the ability to have privilege. That's an architectural
-> regression.
+ drivers/char/tpm/tpm_tis.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-IMO this is looking at it the wrong way.  From inside the container's
-viewpoint, the capabilities are not associated with a uid.  Any
-task, regardles off uid, in the container, which executes the file,
-gets the privilege.  IMO that satisfies the intent of file capabilities.
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 506e62ca3576..d97ce22267fb 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -330,12 +330,6 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
+ 	else
+ 		tpm_info.irq = -1;
+ 
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+-					ILB_REMAP_SIZE);
+-#endif
+-
+ 	return tpm_tis_init(&pnp_dev->dev, &tpm_info);
+ }
+ 
+@@ -359,12 +353,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+-
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		iounmap(ilb_base_addr);
+-#endif
+-
+ }
+ 
+ static struct pnp_driver tis_pnp_driver = {
+@@ -472,6 +460,11 @@ static int __init init_tis(void)
+ 	if (rc)
+ 		goto err_force;
+ 
++#ifdef CONFIG_X86
++	if (is_bsw())
++		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
++					ILB_REMAP_SIZE);
++#endif
+ 	rc = platform_driver_register(&tis_drv);
+ 	if (rc)
+ 		goto err_platform;
+@@ -490,6 +483,10 @@ static int __init init_tis(void)
+ err_platform:
+ 	if (force_pdev)
+ 		platform_device_unregister(force_pdev);
++#ifdef CONFIG_X86
++	if (is_bsw())
++		iounmap(ilb_base_addr);
++#endif
+ err_force:
+ 	return rc;
+ }
+@@ -499,6 +496,10 @@ static void __exit cleanup_tis(void)
+ 	pnp_unregister_driver(&tis_pnp_driver);
+ 	platform_driver_unregister(&tis_drv);
+ 
++#ifdef CONFIG_X86
++	if (is_bsw())
++		iounmap(ilb_base_addr);
++#endif
+ 	if (force_pdev)
+ 		platform_device_unregister(force_pdev);
+ }
+-- 
+1.9.1
 
--serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
