@@ -1,111 +1,331 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Wed, 21 Jun 2017 17:48:13 -0700
-Subject: The secmark "one user" policy
-In-Reply-To: <5ead7b1d-f4e6-c550-6b5b-1c5494e66147@schaufler-ca.com>
-References: <d256e588-fd3c-b981-6d55-6723b5615cc9@schaufler-ca.com>
-	<alpine.LRH.2.20.1706211713010.1310@namei.org>
-	<2fbe01aa-8f9b-37f0-f79a-e34dcd1d0705@schaufler-ca.com>
-	<935eeedd-95d0-168b-c2ac-331c49b14f2b@canonical.com>
-	<5ead7b1d-f4e6-c550-6b5b-1c5494e66147@schaufler-ca.com>
-Message-ID: <b77f1b56-0a90-b4c4-4605-f27fb5ad4259@canonical.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 21 Jun 2017 21:33:57 -0400
+Subject: [PATCH v2 6/6] ima: Support module-style appended signatures
+	for appraisal
+In-Reply-To: <8760fpck0x.fsf@linux.vnet.ibm.com>
+References: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
+	<1496886555-10082-7-git-send-email-bauerman@linux.vnet.ibm.com>
+	<1497443972.4287.38.camel@linux.vnet.ibm.com>
+	<8760fpck0x.fsf@linux.vnet.ibm.com>
+Message-ID: <1498095237.5328.44.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/21/2017 04:45 PM, Casey Schaufler wrote:
-> On 6/21/2017 4:07 PM, John Johansen wrote:
->> On 06/21/2017 08:23 AM, Casey Schaufler wrote:
->>> On 6/21/2017 12:13 AM, James Morris wrote:
->>>> On Tue, 20 Jun 2017, Casey Schaufler wrote:
->>>>
->>>>> I'm looking at the secmark code and am looking in
->>>>> particular at the places where it explicitly says
->>>>> that it is intended for one security module at a
->>>>> time. For extreme stacking I can either enforce this
->>>>> restriction by configuration or remove it by clever
->>>>> uses of secid mappings. Either can be made "transparent"
->>>>> to existing user-space. Paul has expressed distaste for
->>>>> using configuration as a shortcut for dealing with this
->>>>> kind of problem, and I generally agree with him. On the
->>>>> other hand, the code is quite clear that it is designed
->>>>> for one and only one kind of secid at a time. I don't
->>>>> want to put a lot of effort into patches that are
->>>>> unacceptable to the author.
->>>> How would you see this working, ideally?
->>> Ideally there would be a separate secmark for each security
->>> module that wants to use the mechanism. Mechanism would be
->>> provided* so that user-space can identify which security
->>> module it is referring to when interacting with the kernel.
->>> My understanding is that we're unlikely to get an expanded
->>> secmark, so I have concentrated elsewhere.
->>>
->>> A "clever" secid mapping takes the secids from all the
->>> security modules and gently manipulates them until they
->>> fit into a single u32. This might be an index into a list
->>> of secid sets, but if you have two modules using secids
->>> you can give each half of the secmark and accommodate
->>> many configurations, including Fedora. Again, you need
->>> mechanism* for user-space. This option would require changes
->>> to the xt_SECMARK implementation, which goes out of it's
->>> way to ensure all secmarks come from the same security
->>> module. One option is to add a SECMARK_MODE_COMPOUND, but
->>> that isn't any more helpful then removing the restriction.
->>>
->>> As for configuration options, SELinux only uses secmarks
->>> when user-space introduces them. If netfilter doesn't have
->>> any security rules that add secmarks, none are used. Smack
->>> can be configured to set secmarks on all packets, with the
->>> potential for change by user-space, but can also be set up
->>> without any use of secmarks. There doesn't need to be any
->>> significant change to xt_SECMARK if it is important to
->>> maintain the "one user" model. Requiring that the user-space
->>> use of netfilter be sane for the multiple security module
->>> case (e.g. don't use SELinux firewall if Smack has the
->>> secmark) seems somewhat reasonable.
->>>
->>> I can work with any of these three solutions. Multiple
->>> secmarks would be ideal, but I understand is a lost cause.
->>> Clever secids add overhead and complexity. Restricting
->>> configuration options is unsavory, but I don't think
->>> unreasonably so.
->>>
->> I too would prefer multiple secmarks, but doing some sort of mapping
->> seems like what we will be stuck with. For a first pass I think the
->> restricted configurations options is reasonable, but I think it will
->> become a problem as people start trying to actually use LSM stacking.
->>
->> I think for now sticking with restricted configurations and dealing
->> with mappings when it becomes an actual issue and we have better use
->> cases is not an unreasonable approach.
+On Wed, 2017-06-21 at 14:45 -0300, Thiago Jung Bauermann wrote:
+> Hello Mimi,
 > 
-> It boils down to how many security modules are going to
-> implement network controls that require passing information
-> with the packet. I can easily see a bunch of use cases
-> beyond what SELinux and Smack do, but I can't say that I'd
-> see those used in conjunction with the "old school" security
-> modules. We can have a lousy mapping scheme if we don't
-> expect it to be used except in unnatural cases.
+> Thanks for your review, and for queuing the other patches in this series.
 > 
-> Is AppArmor going to be using secmarks? I haven't looked at
-> what's going into 4.13 yet. If you are, are they required or
-> optional, or used when netfilter assigns them?
->
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> > On Wed, 2017-06-07 at 22:49 -0300, Thiago Jung Bauermann wrote:
+> >> This patch introduces the modsig keyword to the IMA policy syntax to
+> >> specify that a given hook should expect the file to have the IMA signature
+> >> appended to it.
+> >
+> > Thank you, Thiago. Appended signatures seem to be working proper now
+> > with multiple keys on the IMA keyring.
+> 
+> Great news!
+> 
+> > The length of this patch description is a good indication that this
+> > patch needs to be broken up for easier review. A few
+> > comments/suggestions inline below.
+> 
+> Ok, I will try to break it up, and also patch 5 as you suggested.
+> 
+> >> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> >> index 06554c448dce..9190c9058f4f 100644
+> >> --- a/security/integrity/digsig.c
+> >> +++ b/security/integrity/digsig.c
+> >> @@ -48,11 +48,10 @@ static bool init_keyring __initdata;
+> >>  #define restrict_link_to_ima restrict_link_by_builtin_trusted
+> >>  #endif
+> >> 
+> >> -int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+> >> -			    const char *digest, int digestlen)
+> >> +struct key *integrity_keyring_from_id(const unsigned int id)
+> >>  {
+> >> -	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
+> >> -		return -EINVAL;
+> >> +	if (id >= INTEGRITY_KEYRING_MAX)
+> >> +		return ERR_PTR(-EINVAL);
+> >> 
+> >
+> > When splitting up this patch, the addition of this new function could
+> > be a separate patch. The patch description would explain the need for
+> > a new function.
+> 
+> Ok, will do for v3.
+> 
+> >> @@ -229,10 +234,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >>  		goto out;
+> >>  	}
+> >> 
+> >> -	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+> >> -	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
+> >> -		if ((status == INTEGRITY_NOLABEL)
+> >> -		    || (status == INTEGRITY_NOXATTRS))
+> >> +	/* Appended signatures aren't protected by EVM. */
+> >> +	status = evm_verifyxattr(dentry, XATTR_NAME_IMA,
+> >> +				 xattr_value->type == IMA_MODSIG ?
+> >> +				 NULL : xattr_value, rc, iint);
+> >> +	if (status != INTEGRITY_PASS && status != INTEGRITY_UNKNOWN &&
+> >> +	    !(xattr_value->type == IMA_MODSIG &&
+> >> +	      (status == INTEGRITY_NOLABEL || status == INTEGRITY_NOXATTRS))) {
+> >
+> > This was messy to begin with, and now it is even more messy. For
+> > appended signatures, we're only interested in INTEGRITY_FAIL. Maybe
+> > leave the existing "if" clause alone and define a new "if" clause.
+> 
+> Ok, is this what you had in mind?
+> 
+> @@ -229,8 +237,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  		goto out;
+>  	}
+> 
+> -	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+> -	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
+> +	/* Appended signatures aren't protected by EVM. */
+> +	status = evm_verifyxattr(dentry, XATTR_NAME_IMA,
+> +				 xattr_value->type == IMA_MODSIG ?
+> +				 NULL : xattr_value, rc, iint);
 
-4.13 doesn't have any of the networking stuff, it is just an
-update of the mediation that is already there in 4.12, and the
-rework of the apparmorfs code to use the securityfs symlink
-support.
+Yes, maybe add a comment here indicating only verifying other security
+xattrs, if they exist.
 
-As for secmarks, yes we will be using them, I am still messing
-with it, so there is room for change. AppArmor can certainly
-offer a level of network support if they are optional, so
-its likely we will do that.
+> +	if (xattr_value->type == IMA_MODSIG && status == INTEGRITY_FAIL) {
+> +		cause = "invalid-HMAC";
+> +		goto out;
+> +	} else if (status != INTEGRITY_PASS && status != INTEGRITY_UNKNOWN) {
+>  		if ((status == INTEGRITY_NOLABEL)
+>  		    || (status == INTEGRITY_NOXATTRS))
+>  			cause = "missing-HMAC";
 
-They will certainly supported when netfilter assigns them, but
-like we would like to also be able to assign them on packets,
-again this could be a configuration option.
+> 
+> >> @@ -267,11 +276,18 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >>  		status = INTEGRITY_PASS;
+> >>  		break;
+> >>  	case EVM_IMA_XATTR_DIGSIG:
+> >> +	case IMA_MODSIG:
+> >>  		iint->flags |= IMA_DIGSIG;
+> >> -		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+> >> -					     (const char *)xattr_value, rc,
+> >> -					     iint->ima_hash->digest,
+> >> -					     iint->ima_hash->length);
+> >> +
+> >> +		if (xattr_value->type == EVM_IMA_XATTR_DIGSIG)
+> >> +			rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+> >> +						     (const char *)xattr_value,
+> >> +						     rc, iint->ima_hash->digest,
+> >> +						     iint->ima_hash->length);
+> >> +		else
+> >> +			rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA,
+> >> +					       xattr_value);
+> >> +
+> >
+> > Perhaps allowing IMA_MODSIG to flow into EVM_IMA_XATTR_DIGSIG on
+> > failure, would help restore process_measurements() to the way it was.
+> > Further explanation below.
+> 
+> It's not possible to simply flow into EVM_IMA_XATTR_DIGSIG on failure
+> because after calling ima_read_xattr we need to run again all the logic
+> before the switch statement. Instead, I'm currently testing the
+> following change for v3, what do you think?
 
-Hopefully I can get an RFC up soon, but I need to kick out the
-namespacing RFC first.
+I don't think we can assume that the same algorithm will be used for
+signing the kernel image. Different entities would be signing the
+kernel image with different requirements.
+
+Suppose for example a stock distro image comes signed using one
+algorithm (appended signature), but the same kernel image is locally
+signed using a different algorithm (xattr). ?Signature verification is
+dependent on either the distro or local public key being loaded onto
+the IMA keyring.
+
+> More about this code further below.
+> 
+> @@ -266,6 +280,44 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  		}
+>  		status = INTEGRITY_PASS;
+>  		break;
+> +	case IMA_MODSIG:
+> +		rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA, xattr_value);
+> +		if (!rc) {
+> +			iint->flags |= IMA_DIGSIG;
+> +			status = INTEGRITY_PASS;
+> +			break;
+> +		}
+> +
+> +		/*
+> +		 * The appended signature failed verification. Let's try
+> +		 * reading a signature from the extended attribute instead.
+> +		 */
+> +
+> +		ima_free_xattr_data(xattr_value);
+> +		xattr_value = NULL;
+> +
+> +		/* read 'security.ima' */
+> +		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
+> +		algo = iint->ima_hash->algo;
+> +
+> +		if (!xattr_value || xattr_value->type == IMA_MODSIG ||
+> +		    ima_get_hash_algo(xattr_value, xattr_len) != algo) {
+> +			iint->flags |= IMA_DIGSIG;
+> +
+> +			if (rc == -EOPNOTSUPP)
+> +				status = INTEGRITY_UNKNOWN;
+> +			else {
+> +				cause = "invalid-signature";
+> +				status = INTEGRITY_FAIL;
+> +			}
+> +
+> +			break;
+> +		}
+> +
+> +		pr_debug("Trying the xattr signature\n");
+> +
+> +		return ima_appraise_measurement(func, iint, file, filename,
+> +						xattr_value, xattr_len, opened);
+>  	case EVM_IMA_XATTR_DIGSIG:
+>  		iint->flags |= IMA_DIGSIG;
+>  		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+> 
+> >> @@ -406,7 +424,8 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+> >>  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+> >>  			return -EINVAL;
+> >>  		ima_reset_appraise_flags(d_backing_inode(dentry),
+> >> -			 (xvalue->type == EVM_IMA_XATTR_DIGSIG) ? 1 : 0);
+> >> +					 xvalue->type == EVM_IMA_XATTR_DIGSIG ||
+> >> +					 xvalue->type == IMA_MODSIG);
+> >
+> > Probably easier to read if we set a variable, before calling
+> > ima_reset_appraise_flags.
+> 
+> Ok, will do in v3.
+> 
+> >> @@ -226,30 +282,23 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >>  		goto out_digsig;
+> >>  	}
+> >> 
+> >> -	template_desc = ima_template_desc_current();
+> >> -	if ((action & IMA_APPRAISE_SUBMASK) ||
+> >> -		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
+> >> -		/* read 'security.ima' */
+> >> -		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
+> >> -
+> >> -	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+> >> -
+> >> -	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+> >> -	if (rc != 0) {
+> >> -		if (file->f_flags & O_DIRECT)
+> >> -			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
+> >> -		goto out_digsig;
+> >> -	}
+> >> -
+> >
+> > There are four stages: collect measurement, store measurement,
+> > appraise measurement and audit measurement. "Collect" needs to be
+> > done if any one of the other stages is needed.
+> >
+> >>  	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+> >>  		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+> >> 
+> >> +	if (iint->flags & IMA_MODSIG_ALLOWED)
+> >> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
+> >> +					  iint, &xattr_value, &xattr_len,
+> >> +					  pathname, true);
+> >> +	if (!xattr_len)
+> >> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
+> >> +					  iint, &xattr_value, &xattr_len,
+> >> +					  pathname, false);
+> >
+> > I would rather see "collect" extended to support an appended signature
+> > rather than trying to combine "collect" and "appraise" together.
+> 
+> I'm not sure I understand what you mean by "extend collect to support an
+> appended signature", but the fundamental problem is that we don't know
+> whether we need to fallback to the xattr sig until the appraise step
+> because that's when we verify the signature, and by then the collect and
+> store steps were already completed and would need to be done again if
+> the hash algorithm in the xattr sig is different.
+
+The "appraise" stage could be moved before the "store" stage, like you
+have. ?(This should be a separate patch explaining the need for moving
+it.) ?Based on an argument to ima_collect_measurement() have it
+"collect" either the appended signature or the xattr. ?Maybe something
+like this:
+
+loop [ appended signature, xattr ] { ?<== list based on policy flags
+? ? ?collect_measurement()
+? ? ?if failure
+? ? ? ? continue
+? ? ?appraise_measurement()
+? ? ?if success
+? ? ? ? break
+}
+
+store_measurement()
+
+Mimi
+
+
+> If we don't want to change the order of these steps what I suggest (and
+> what the code I pasted above for ima_appraise_measurement does) is to
+> only allow falling back to the xattr sig if the appended sig and the
+> xattr sig use the same hash algorithm.
+> 
+> In that case, collect and store don't need to be redone nor the store
+> step need to be moved after appraise. This is the only change that would
+> be needed in process_measurement:
+
+> @@ -227,10 +230,16 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>  	}
+> 
+>  	template_desc = ima_template_desc_current();
+> -	if ((action & IMA_APPRAISE_SUBMASK) ||
+> -		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
+> -		/* read 'security.ima' */
+> -		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
+> +	if (action & IMA_APPRAISE_SUBMASK ||
+> +	    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0) {
+> +		if (iint->flags & IMA_MODSIG_ALLOWED)
+> +			ima_read_modsig(buf, &size, &xattr_value, &xattr_len);
+> +
+> +		if (!xattr_len)
+> +			/* read 'security.ima' */
+> +			xattr_len = ima_read_xattr(file_dentry(file),
+> +						   &xattr_value);
+> +	}
+> 
+>  	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+> 
+> @@ -257,7 +266,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>  	if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
+>  	     !(iint->flags & IMA_NEW_FILE))
+>  		rc = -EACCES;
+> -	kfree(xattr_value);
+> +	ima_free_xattr_data(xattr_value);
+>  out_free:
+>  	if (pathbuf)
+>  		__putname(pathbuf);
+> 
+> >
+> >> +	if (rc)
+> >> +		goto out_digsig;
+> >> +
+> >>  	if (action & IMA_MEASURE)
+> >>  		ima_store_measurement(iint, file, pathname,
+> >>  				      xattr_value, xattr_len, pcr);
+> >> -	if (action & IMA_APPRAISE_SUBMASK)
+> >> -		rc = ima_appraise_measurement(func, iint, file, pathname,
+> >> -					      xattr_value, xattr_len, opened);
+> >
+> > Moving appraisal before storing the measurement, should be a separate
+> > patch with a clear explanation as to why it is needed.
+> 
+> Ok, will do in v3 if you don't like the restriction of both the modsig
+> and xattr sig having to use the same hash algorithm.
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
