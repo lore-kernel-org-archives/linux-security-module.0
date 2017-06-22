@@ -1,76 +1,88 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Thu, 22 Jun 2017 14:20:23 -0600
-Subject: [tpmdd-devel] [PATCH] tpm: Fix the ioremap() call for Braswell
-	systems
-In-Reply-To: <1498156197-180919-1-git-send-email-azhar.shaikh@intel.com>
-References: <1498156197-180919-1-git-send-email-azhar.shaikh@intel.com>
-Message-ID: <20170622202023.GA3579@obsidianresearch.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 22 Jun 2017 13:33:20 -0700
+Subject: [PATCH 0/3] Enable namespaced file capabilities
+In-Reply-To: <10fb9c1b-e9af-336c-9a1b-cf95259cfaf3@linux.vnet.ibm.com>
+References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<70a09f1b-e82c-a25c-9325-d5d757b1b695@schaufler-ca.com>
+	<10fb9c1b-e9af-336c-9a1b-cf95259cfaf3@linux.vnet.ibm.com>
+Message-ID: <2bf08b3e-27f4-3592-d5e2-a823401ac644@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jun 22, 2017 at 11:29:57AM -0700, Azhar Shaikh wrote:
-> ioremap() for Intel Braswell processors was done in
-> tpm_tis_pnp_init(). But before this function gets called,
-> platform driver 'tis_drv' gets registered and its probe function
-> tpm_tis_plat_probe() is invoked, which does a TPM
-> access. Now for Braswell processors tpm_platform_begin_xfer()
-> will do an ioread32() without having a mapped address, which
-> will lead to a bad I/O access warning.
-> Hence move the ioremap() call from tpm_tis_pnp_init() to init_tis()
-> before registering the 'tis_drv' or basically before any TPM access.
-> Accordingly also move the iounmap() call from tpm_tis_pnp_remove()
-> to cleanup_tis().
-> 
-> Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
->  drivers/char/tpm/tpm_tis.c | 21 +++++++++------------
->  1 file changed, 9 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index 506e62ca3576..3224db80816a 100644
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -330,12 +330,6 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
->  	else
->  		tpm_info.irq = -1;
->  
-> -#ifdef CONFIG_X86
-> -	if (is_bsw())
-> -		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
-> -					ILB_REMAP_SIZE);
-> -#endif
-> -
->  	return tpm_tis_init(&pnp_dev->dev, &tpm_info);
->  }
->  
-> @@ -359,12 +353,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
->  
->  	tpm_chip_unregister(chip);
->  	tpm_tis_remove(chip);
-> -
-> -#ifdef CONFIG_X86
-> -	if (is_bsw())
-> -		iounmap(ilb_base_addr);
-> -#endif
-> -
->  }
->  
->  static struct pnp_driver tis_pnp_driver = {
-> @@ -472,6 +460,11 @@ static int __init init_tis(void)
->  	if (rc)
->  		goto err_force;
->  
-> +#ifdef CONFIG_X86
-> +	if (is_bsw())
-> +		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
-> +					ILB_REMAP_SIZE);
-> +#endif
+On 6/22/2017 1:12 PM, Stefan Berger wrote:
+> On 06/22/2017 03:59 PM, Casey Schaufler wrote:
+>> On 6/22/2017 11:59 AM, Stefan Berger wrote:
+>>> This series of patches primary goal is to enable file capabilities
+>>> in user namespaces without affecting the file capabilities that are
+>>> effective on the host. This is to prevent that any unprivileged user
+>>> on the host maps his own uid to root in a private namespace, writes
+>>> the xattr, and executes the file with privilege on the host.
+>>>
+>>> We achieve this goal by writing extended attributes with a different
+>>> name when a user namespace is used. If for example the root user
+>>> in a user namespace writes the security.capability xattr, the name
+>>> of the xattr that is actually written is encoded as
+>>> security.capability at uid=1000 for root mapped to uid 1000 on the host.
+>> You need to identify the instance of the user namespace for
+>> this to work right on a system with multiple user namespaces.
+>> If I have a shared filesystem mounted in two different user
+>> namespaces a change by one will affect the other.
+>
+> Two different user namespaces with different uid mappings will not affect each other.
 
-The iounmap needs to be in the goto unwind for init_tis as well, surely?
+But two namespaces with the same uid mapping will, and I
+don't think this meets the principle of least astonishment.
+I also object to associating capabilities with UIDs. The
+whole point of capabilities is to disassociate UID 0 from
+privilege. What you've done is explicitly associate a UID
+with the ability to have privilege. That's an architectural
+regression.
 
->  	rc = platform_driver_register(&tis_drv);
->  	if (rc)
->  		goto err_platform;
+>
+> If root in userns1 mapped to uid 1000 (size 1000) writes security.capability, it will write security.capability at uid=1000 into the fs.
+> If root in userns2 mapped to uid 2000 (size 1000) writes security.capability, it will write security.capability at uid=2000 into the fs.
+>
+> Neither of the two will see each other's security.capability, but each will see their own 'security.capability'.
+>
+> Assume now userns1 has a size of 2000, so overlapping with userns2, it will now see userns2's security.capability at uid=1000 as well as its own 'security.capability'. security.capability at uid=1000 (of userns2) in userns1 will not have an effect on effective file capabilities.
+>
+>> ... unless I'm missing something obvious about namespace behavior.
+>>
+>>> When listing the xattrs on the host, the existing security.capability
+>>> as well as the security.capability at uid=1000 will be shown. Inside the
+>>> namespace only 'security.capability', with the value of
+>>> security.capability at uid=1000, is visible.
+>>>
+>>> To maintain compatibility with existing behavior, the value of
+>>> security.capability of the host is shown inside the user namespace
+>>> once the security.capability of the user namespace has been removed
+>>> (which really removes security.capability at uid=1000). Writing to
+>>> an extended attribute inside a user namespace effectively hides the
+>>> extended attribute of the host.
+>>>
+>>> The general framework that is established with these patches can
+>>> be applied to other extended attributes as well, such as security.ima
+>>> or the 'trusted.' prefix . Another extended attribute that needed to
+>>> be enabled here is 'security.selinux,' since otherwise this extended
+>>> attribute would not be shown anymore inside a user namespace.
+>>>
+>>> Regards,
+>>>     Stefan & Serge
+>>>
+>>>
+>>> Stefan Berger (3):
+>>>    xattr: Enable security.capability in user namespaces
+>>>    Enable capabilities of files from shared filesystem
+>>>    Enable security.selinux in user namespaces
+>>>
+>>>   fs/xattr.c               | 472 ++++++++++++++++++++++++++++++++++++++++++++++-
+>>>   security/commoncap.c     |  36 +++-
+>>>   security/selinux/hooks.c |   9 +-
+>>>   3 files changed, 501 insertions(+), 16 deletions(-)
+>>>
+>
+>
 
-Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
