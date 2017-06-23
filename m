@@ -1,61 +1,92 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Fri, 23 Jun 2017 13:38:45 -0400
-Subject: [PATCH 0/3] Enable namespaced file capabilities
-In-Reply-To: <1498237641.3641.15.camel@HansenPartnership.com>
-References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<CAOQ4uxj=_Riih1K+QOYasZU8vZKCSrsg393f=17mJ2O-909e=Q@mail.gmail.com>
-	<20170623160026.GA18257@mail.hallyn.com>
-	<aa62373e-7cd6-39dd-2e38-2b6d6dbe18a8@schaufler-ca.com>
-	<20170623163030.GA18820@mail.hallyn.com>
-	<1498237641.3641.15.camel@HansenPartnership.com>
-Message-ID: <d288ea69-adec-f257-30cb-b1d9c57c996b@linux.vnet.ibm.com>
+From: smcv@collabora.com (Simon McVittie)
+Date: Fri, 23 Jun 2017 18:42:39 +0100
+Subject: Is there a generic LSM/kernel ABI analogous to getcon_raw() and
+	aa_getcon()?
+In-Reply-To: <20170623163925.550a1faf@d-jobol.iot.bzh>
+References: <20170613174519.nmrdglusytvjtdem@archetype.pseudorandom.co.uk>
+	<cc28a551-08b5-aeb4-382a-9ad86f51ddac@schaufler-ca.com>
+	<20170614114430.ooti2gqxllkqz2fe@archetype.pseudorandom.co.uk>
+	<d95670e5-837e-2cd3-7bf1-424a3cd89eec@schaufler-ca.com>
+	<20170616161357.4nyqrye7ja5nsl7h@archetype.pseudorandom.co.uk>
+	<20170623163925.550a1faf@d-jobol.iot.bzh>
+Message-ID: <20170623174239.yn6woylszpggi6dv@archetype.pseudorandom.co.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/23/2017 01:07 PM, James Bottomley wrote:
-> On Fri, 2017-06-23 at 11:30 -0500, Serge E. Hallyn wrote:
->> Quoting Casey Schaufler (casey at schaufler-ca.com):
->>> Or maybe just security.ns.capability, taking James' comment into
->>> account.
->> That last one may be suitable as an option, useful for his particular
->> (somewhat barbaric :) use case, but it's not ok for the general
->> solution.
->>
->> If uid 1000 was delegated the subuids 100000-199999, it should be
->> able to write a file capability for use by his subuids, but that file
->> capability must not apply to other subuids.
-> I don't think it's barbaric, I think it's the common use case.  Let me
-> give a more comprehensible answer in terms of docker and IMA.  Lets
-> suppose I'm running docker locally and in a test cloud both with userns
-> enabled.
->
-> I build an image locally, mapping my uid (1000) to root.  If I begin
-> with a standard base, each of the files has a security.ima signature.
->   Now I add my layer, which involves updating a file, so I need to write
-> a new signature to security.ima.  Because I'm running user namespaced,
-> the update gets written at security.ima at uid=1000 when I do a docker
-> save.
->
-> Now supposing I deploy that image to a cloud.  As a tenant, the cloud
-> gives me real uid 4531 and maps that to root.  Execution of the binary
-> fails because it tries to use the underlying signature (in
-> security.ima) as there is no xattr named security.ima at uid=4531
+On Fri, 23 Jun 2017 at 16:39:25 +0200, Jos? Bollo wrote:
+> I'm working for AGL (automotivelinux.org)
+> that use that discontinued job of SAMSUNG/TIZEN. But I had in mind that
+> you were not warm to intgrate the job done. The developper, Patrick
+> Ohly made an interesting job to allow asynchronous request to the
+> policy server within the dbus-daemon.
 
-Yes. An answer would be to have Docker rewrite these on the fly. It 
-knows what uid the container was running as and specifically looks for 
-security.ima at uid=1000 or security.ima, takes the former if it finds, 
-otherwise the latter or nothing.
+I'd consider whatever patches were submitted upstream (so far, none were,
+if I remember correctly) but my instinct is to say that checking policy
+asynchronously might well add too much complexity to be maintainable.
+The dbus-daemon is already quite complicated enough with strict in-order
+processing, we should try not to make it worse :-)
 
-    Stefan
+> The case of Tizen/AGL use a policy
+> manager comparable to polkit. Are you developing currently a
+> generalisation of this?
 
->
-> So my essential point is that building the real kuid into the permanent
-> record of the xattr damages image portability, which is touted as one
-> of the real advantages of container images.
->
-> James
->
+I assume you are referring to Cynara?
 
+The freedesktop.org approach to sysadmin-configurable policy is polkit,
+which is used by having services (not the dbus-daemon) call out to it,
+preferably asynchronously. That has a latency and throughput overhead,
+but it has the major advantage (over anything the dbus-daemon could do)
+that the operations being queried are something high-level that makes
+sense to the service author (such as "mount a removable disk on a
+different seat" for udisks2, which is my usual example of a polkit user).
+Everything dbus-daemon knows is at the level of D-Bus message-passing
+and header fields, which isn't necessarily very useful when making a
+policy decision. See <http://smcv.pseudorandom.co.uk/2015/why_polkit/>
+for more background on that.
+
+dbus-daemon's only involvement in services' use of polkit is:
+* reliably identifying clients of the service (uid, pid, LSM label) when
+  the service asks about them, which is related to this thread
+* delivering opaque messages (not understood by dbus-daemon) between all
+  the components involved
+
+I am not active in polkit development.
+
+> > The same goes for other LSMs: as far as I'm aware, we cannot support
+> > this generically, and mediation always requires LSM-specific code for
+> > each LSM. In general we can't fix bugs (or test fixes) in that
+> > LSM-specific code, so to add new code for mediation we would need
+> > someone we can assign those bugs to.
+> 
+> But is there really a need except for dbus-daemon itself?
+
+I'm not sure I understand your question here?
+
+If people who use a particular LSM want dbus-daemon to mediate messages
+according to that LSM's rules, then there needs to be code in dbus-daemon
+that is both specific to dbus-daemon (not shared with whatever other
+component might mediate IPC, although there is probably nothing else that
+would want to), and specific to that LSM (not shared with other LSMs).
+
+> > So we have three options for dealing with your new multiplexed
+> > strings
+>
+> More complexity, always...
+> 
+> Why not just using the result of SO_PEERSEC?
+
+That's what we do right now. However, if I'm understanding what Casey
+said correctly, one of the API options under consideration is to
+have a socket option that alters what SO_PEERSEC returns, which makes
+"the result of SO_PEERSEC" no longer a well-defined concept - it would
+be more accurate to say "*a* result of SO_PEERSEC", and we have to decide
+which of the several possible results is the right one to appear on D-Bus.
+
+(One of the options I listed was effectively "the result of SO_PEERSEC,
+assuming dbus-daemon has not done anything special to select a non-default
+result". That's what current dbus-daemon, 1.10.x, will return forever.)
+
+    S
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
