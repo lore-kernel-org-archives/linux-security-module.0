@@ -1,70 +1,63 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Fri, 23 Jun 2017 15:17:23 -0500
-Subject: [PATCH 0/3] Enable namespaced file capabilities
-In-Reply-To: <20170623200956.GB24779@redhat.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Fri, 23 Jun 2017 16:30:00 -0400
+Subject: [PATCH 3/3] Enable security.selinux in user namespaces
+In-Reply-To: <1498157989-11814-4-git-send-email-stefanb@linux.vnet.ibm.com>
 References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<20170623200956.GB24779@redhat.com>
-Message-ID: <20170623201723.GA22857@mail.hallyn.com>
+	<1498157989-11814-4-git-send-email-stefanb@linux.vnet.ibm.com>
+Message-ID: <1498249800.2063.9.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Vivek Goyal (vgoyal at redhat.com):
-> On Thu, Jun 22, 2017 at 02:59:46PM -0400, Stefan Berger wrote:
-> > This series of patches primary goal is to enable file capabilities
-> > in user namespaces without affecting the file capabilities that are
-> > effective on the host. This is to prevent that any unprivileged user
-> > on the host maps his own uid to root in a private namespace, writes
-> > the xattr, and executes the file with privilege on the host.
-> > 
-> > We achieve this goal by writing extended attributes with a different
-> > name when a user namespace is used. If for example the root user
-> > in a user namespace writes the security.capability xattr, the name
-> > of the xattr that is actually written is encoded as
-> > security.capability at uid=1000 for root mapped to uid 1000 on the host.
-> > When listing the xattrs on the host, the existing security.capability
-> > as well as the security.capability at uid=1000 will be shown. Inside the
-> > namespace only 'security.capability', with the value of
-> > security.capability at uid=1000, is visible.
+On Thu, 2017-06-22 at 14:59 -0400, Stefan Berger wrote:
+> Before the current modifications, SELinux extended attributes were
+> visible inside the user namespace but changes in patch 1 hid them.
+> This patch enables security.selinux in user namespaces and allows
+> them to be written to in the same way as security.capability.
 > 
-> Hi Stefan,
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+> ?fs/xattr.c | 1 +
+> ?1 file changed, 1 insertion(+)
 > 
-> Got a question. If child usernamespace sets a
-> security.capability at uid=1000, can any of the parent namespace remove it?
-> 
-> IOW, I set capability from usernamespace and tried to remove it from
-> host and that failed. Is that expected.
-> 
-> # Inside usernamespce
-> $setcap cat_net_raw+ep foo.txt
-> 
-> # outside user namespace
-> $listxattr foo.txt
->  xattr: security.capability at uid=1000
->  xattr: security.selinux
-> 
-> # outside user namespace
-> setfattr -x security.capability at uid foo.txt
-> setfattr: foo.txt: Invalid argument
-> 
-> Doing a strace shows removexattr() failed. May this will need fixing?
-> 
-> removexattr("testfile.txt", "security.capability at uid") = -1 EINVAL
-> (Invalid argument)
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 045be85..37686ee 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -138,6 +138,7 @@ xattr_permission(struct inode *inode, const char
+> *name, int mask)
+> ? */
+> ?static const char *const userns_xattrs[] = {
+> ?	XATTR_NAME_CAPS,
+> +	XATTR_NAME_SELINUX,
+> ?	NULL
+> ?};
+> ?
 
-That's not the right xattr, though, does
+(cc SELinux maintainers, curiously omitted from these patches)
 
-	setfattr -x security.capability at uid=1000 foo.txt
+I don't think this works for SELinux. You don't deal with actually
+supporting multiple security.selinux attributes within SELinux itself
+(and I'm not asking you to do so), and without such support, this can't
+operate as intended. With these patches applied, IIUC, a setxattr() of
+security.selinux within a userns will end up setting only security.seli
+nux at uid=1000 on disk, but will then tell SELinux to update its in-core
+security label to the new value (via security_inode_post_setxattr).
+Meanwhile, on a subsequent getxattr(), you'll call
+security_inode_getsecurity() with the security.selinux at uid=1000 name,
+which will always fail because SELinux doesn't know anything about your
+new scheme, and then you'll call the filesystem handler and returns its
+value, which is no longer connected in any way to the actual label
+being used by SELinux.  Also, SELinux itself makes calls to
+__vfs_getxattr() and __vfs_setxattr_noperm(), and I don't think your
+name remapping is correct in those cases.
 
-work?
+You also can't hide security.selinux within user namespaces.  Today
+userspace can get and set security.selinux attributes within user
+namespaces (if allowed by policy), and further can specify the label to
+use for new files via /proc/self/attr/fscreate, which unsurprisingly
+isn't addressed by your changes.  Changing that would be a userspace
+break.
 
-If you are in fact uid=1000 then that should work.  If you are uid 1001,
-and 1000 was delegated to you, then you'll need to create a transient
-userns with uid 1000 mapped into it in order to delete it (so that you
-have privilege over the uid).
-
-If that doesn't work, then it's a bug.
-
--serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
