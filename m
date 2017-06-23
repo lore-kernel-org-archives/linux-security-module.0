@@ -1,67 +1,70 @@
 From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Fri, 23 Jun 2017 19:09:23 -0400
-Subject: [PATCH 0/3] Enable namespaced file capabilities
-In-Reply-To: <20170623183520.GC21137@mail.hallyn.com>
+Date: Fri, 23 Jun 2017 19:41:52 -0400
+Subject: [PATCH 3/3] Enable security.selinux in user namespaces
+In-Reply-To: <1498249800.2063.9.camel@tycho.nsa.gov>
 References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<CAOQ4uxj=_Riih1K+QOYasZU8vZKCSrsg393f=17mJ2O-909e=Q@mail.gmail.com>
-	<20170623160026.GA18257@mail.hallyn.com>
-	<aa62373e-7cd6-39dd-2e38-2b6d6dbe18a8@schaufler-ca.com>
-	<3404c486-c848-3283-50f7-2283cb631e8e@linux.vnet.ibm.com>
-	<20170623183520.GC21137@mail.hallyn.com>
-Message-ID: <da083027-fcd4-bc08-2d88-93034ba1cacc@linux.vnet.ibm.com>
+	<1498157989-11814-4-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1498249800.2063.9.camel@tycho.nsa.gov>
+Message-ID: <f477e588-a557-65ae-13db-8e8a87955b7f@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/23/2017 02:35 PM, Serge E. Hallyn wrote:
-> Quoting Stefan Berger (stefanb at linux.vnet.ibm.com):
->> On 06/23/2017 12:16 PM, Casey Schaufler wrote:
->>> On 6/23/2017 9:00 AM, Serge E. Hallyn wrote:
->>>> Quoting Amir Goldstein (amir73il at gmail.com):
->>>>> On Thu, Jun 22, 2017 at 9:59 PM, Stefan Berger
->>>>> <stefanb@linux.vnet.ibm.com> wrote:
->>>>>> This series of patches primary goal is to enable file capabilities
->>>>>> in user namespaces without affecting the file capabilities that are
->>>>>> effective on the host. This is to prevent that any unprivileged user
->>>>>> on the host maps his own uid to root in a private namespace, writes
->>>>>> the xattr, and executes the file with privilege on the host.
->>>>>>
->>>>>> We achieve this goal by writing extended attributes with a different
->>>>>> name when a user namespace is used. If for example the root user
->>>>>> in a user namespace writes the security.capability xattr, the name
->>>>>> of the xattr that is actually written is encoded as
->>>>>> security.capability at uid=1000 for root mapped to uid 1000 on the host.
->>>>>> When listing the xattrs on the host, the existing security.capability
->>>>>> as well as the security.capability at uid=1000 will be shown. Inside the
->>>>>> namespace only 'security.capability', with the value of
->>>>>> security.capability at uid=1000, is visible.
->>>>>>
->>>>> Am I the only one who thinks that suffix is perhaps not the best grammar
->>>>> to use for this namespace?
->>>> You're the only one to have mentioned it so far.
->>>>
->>>>> xattrs are clearly namespaced by prefix, so it seems right to me to keep
->>>>> it that way - define a new special xattr namespace "ns" and only if that
->>>>> prefix exists, the @uid suffix will be parsed.
->>>>> This could be either  ns.security.capability at uid=1000 or
->>>>> ns at uid=1000.security.capability. The latter seems more correct to me,
->>>>> because then we will be able to namespace any xattr without having to
->>>>> protect from "unprivileged xattr injection", i.e.:
->>>>> setfattr -n "user.whatever.foo at uid=0"
->>>> I like it for simplifying the parser code.  One concern I have is that,
->>>> since ns.* is currently not gated, one could write ns.* on an older
->>>> kernel and then exploit it on a newer one.
->>> security.ns.capability at uid=1000, then?
->> Imo, '.ns' is redundant and 'encoded' in the '@'.
-> So how about
-> 	security. at uid=1000@@capability ?
-Ouch.
-> Maybe it's not worth it.
-
-So the .ns is there to be able to possibly extend it in another 
-dimension in the future, like have '.foo' there at some point?
-
-
+On 06/23/2017 04:30 PM, Stephen Smalley wrote:
+> On Thu, 2017-06-22 at 14:59 -0400, Stefan Berger wrote:
+>> Before the current modifications, SELinux extended attributes were
+>> visible inside the user namespace but changes in patch 1 hid them.
+>> This patch enables security.selinux in user namespaces and allows
+>> them to be written to in the same way as security.capability.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> ---
+>>   fs/xattr.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/xattr.c b/fs/xattr.c
+>> index 045be85..37686ee 100644
+>> --- a/fs/xattr.c
+>> +++ b/fs/xattr.c
+>> @@ -138,6 +138,7 @@ xattr_permission(struct inode *inode, const char
+>> *name, int mask)
+>>    */
+>>   static const char *const userns_xattrs[] = {
+>>   	XATTR_NAME_CAPS,
+>> +	XATTR_NAME_SELINUX,
+>>   	NULL
+>>   };
+>>   
+> (cc SELinux maintainers, curiously omitted from these patches)
 >
+> I don't think this works for SELinux. You don't deal with actually
+> supporting multiple security.selinux attributes within SELinux itself
+> (and I'm not asking you to do so), and without such support, this can't
+> operate as intended. With these patches applied, IIUC, a setxattr() of
+> security.selinux within a userns will end up setting only security.seli
+> nux at uid=1000 on disk, but will then tell SELinux to update its in-core
+> security label to the new value (via security_inode_post_setxattr).
+> Meanwhile, on a subsequent getxattr(), you'll call
+> security_inode_getsecurity() with the security.selinux at uid=1000 name,
+> which will always fail because SELinux doesn't know anything about your
+> new scheme, and then you'll call the filesystem handler and returns its
+> value, which is no longer connected in any way to the actual label
+> being used by SELinux.  Also, SELinux itself makes calls to
+> __vfs_getxattr() and __vfs_setxattr_noperm(), and I don't think your
+> name remapping is correct in those cases.
+>
+> You also can't hide security.selinux within user namespaces.  Today
+> userspace can get and set security.selinux attributes within user
+> namespaces (if allowed by policy), and further can specify the label to
+> use for new files via /proc/self/attr/fscreate, which unsurprisingly
+> isn't addressed by your changes.  Changing that would be a userspace
+> break.
+
+I modified the 1st patch now in such a way that only security.capability 
+is rewritten, security.selinux and all other ones remain untouched.
+
+https://github.com/stefanberger/linux/commits/xattr_for_userns.v2
+
+    Stefan
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
