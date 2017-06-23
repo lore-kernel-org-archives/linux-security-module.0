@@ -1,92 +1,118 @@
-From: smcv@collabora.com (Simon McVittie)
-Date: Fri, 23 Jun 2017 18:42:39 +0100
-Subject: Is there a generic LSM/kernel ABI analogous to getcon_raw() and
-	aa_getcon()?
-In-Reply-To: <20170623163925.550a1faf@d-jobol.iot.bzh>
-References: <20170613174519.nmrdglusytvjtdem@archetype.pseudorandom.co.uk>
-	<cc28a551-08b5-aeb4-382a-9ad86f51ddac@schaufler-ca.com>
-	<20170614114430.ooti2gqxllkqz2fe@archetype.pseudorandom.co.uk>
-	<d95670e5-837e-2cd3-7bf1-424a3cd89eec@schaufler-ca.com>
-	<20170616161357.4nyqrye7ja5nsl7h@archetype.pseudorandom.co.uk>
-	<20170623163925.550a1faf@d-jobol.iot.bzh>
-Message-ID: <20170623174239.yn6woylszpggi6dv@archetype.pseudorandom.co.uk>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Fri, 23 Jun 2017 12:37:43 -0500
+Subject: [PATCH 0/3] Enable namespaced file capabilities
+In-Reply-To: <1498176787.7636.11.camel@HansenPartnership.com> (James
+	Bottomley's message of "Thu, 22 Jun 2017 17:13:07 -0700")
+References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1498174161.7636.4.camel@HansenPartnership.com>
+	<20170622233619.GC2894@mail.hallyn.com>
+	<1498176787.7636.11.camel@HansenPartnership.com>
+Message-ID: <87efuaip08.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 23 Jun 2017 at 16:39:25 +0200, Jos? Bollo wrote:
-> I'm working for AGL (automotivelinux.org)
-> that use that discontinued job of SAMSUNG/TIZEN. But I had in mind that
-> you were not warm to intgrate the job done. The developper, Patrick
-> Ohly made an interesting job to allow asynchronous request to the
-> policy server within the dbus-daemon.
+James Bottomley <James.Bottomley@HansenPartnership.com> writes:
 
-I'd consider whatever patches were submitted upstream (so far, none were,
-if I remember correctly) but my instinct is to say that checking policy
-asynchronously might well add too much complexity to be maintainable.
-The dbus-daemon is already quite complicated enough with strict in-order
-processing, we should try not to make it worse :-)
-
-> The case of Tizen/AGL use a policy
-> manager comparable to polkit. Are you developing currently a
-> generalisation of this?
-
-I assume you are referring to Cynara?
-
-The freedesktop.org approach to sysadmin-configurable policy is polkit,
-which is used by having services (not the dbus-daemon) call out to it,
-preferably asynchronously. That has a latency and throughput overhead,
-but it has the major advantage (over anything the dbus-daemon could do)
-that the operations being queried are something high-level that makes
-sense to the service author (such as "mount a removable disk on a
-different seat" for udisks2, which is my usual example of a polkit user).
-Everything dbus-daemon knows is at the level of D-Bus message-passing
-and header fields, which isn't necessarily very useful when making a
-policy decision. See <http://smcv.pseudorandom.co.uk/2015/why_polkit/>
-for more background on that.
-
-dbus-daemon's only involvement in services' use of polkit is:
-* reliably identifying clients of the service (uid, pid, LSM label) when
-  the service asks about them, which is related to this thread
-* delivering opaque messages (not understood by dbus-daemon) between all
-  the components involved
-
-I am not active in polkit development.
-
-> > The same goes for other LSMs: as far as I'm aware, we cannot support
-> > this generically, and mediation always requires LSM-specific code for
-> > each LSM. In general we can't fix bugs (or test fixes) in that
-> > LSM-specific code, so to add new code for mediation we would need
-> > someone we can assign those bugs to.
-> 
-> But is there really a need except for dbus-daemon itself?
-
-I'm not sure I understand your question here?
-
-If people who use a particular LSM want dbus-daemon to mediate messages
-according to that LSM's rules, then there needs to be code in dbus-daemon
-that is both specific to dbus-daemon (not shared with whatever other
-component might mediate IPC, although there is probably nothing else that
-would want to), and specific to that LSM (not shared with other LSMs).
-
-> > So we have three options for dealing with your new multiplexed
-> > strings
+> On Thu, 2017-06-22 at 18:36 -0500, Serge E. Hallyn wrote:
+>> Quoting James Bottomley (James.Bottomley at HansenPartnership.com):
+>> > On Thu, 2017-06-22 at 14:59 -0400, Stefan Berger wrote:
+>> > > This series of patches primary goal is to enable file 
+>> > > capabilities in user namespaces without affecting the file 
+>> > > capabilities that are effective on the host. This is to prevent 
+>> > > that any unprivileged user on the host maps his own uid to root 
+>> > > in a private namespace, writes the xattr, and executes the file
+>> > > with privilege on the host.
+>> > > 
+>> > > We achieve this goal by writing extended attributes with a 
+>> > > different name when a user namespace is used. If for example the 
+>> > > root user in a user namespace writes the security.capability 
+>> > > xattr, the name of the xattr that is actually written is encoded 
+>> > > as security.capability at uid=1000 for root mapped to uid 1000 on 
+>> > > the host. When listing the xattrs on the host, the existing
+>> > > security.capability as well as the security.capability at uid=1000 
+>> > > will be shown. Inside the namespace only 'security.capability', 
+>> > > with the value of security.capability at uid=1000, is visible.
+>> > 
+>> > I'm a bit bothered by the @uid=1000 suffix.  What if I want to use 
+>> > this capability but am dynamically mapping the namespaces (i.e. I 
+>> > know I want unprivileged root, but I'm going to dynamically select 
+>> > the range to map based on what's currently available on the 
+>> > orchestration system).  If we stick with the @uid=X suffix, then 
+>> > dynamic mapping won't work because X is potentially different each 
+>> > time and there'll be a name mismatch in my xattrs.  Why not just 
+>> > make the suffix @uid, which means if root is mapped to any 
+>> > unprivileged uid then we pick this up otherwise we go with the
+>> > unsuffixed property?
+>> > 
+>> > As far as I can see there's no real advantage to discriminating 
+>> > userns specific xattrs based on where root is mapped to, unless 
+>> > there's a use case I'm missing?
+>> 
+>> Yes, the use case is: to allow root in the container to set the
+>> privilege itself, without endangering any resources not owned by
+>> that root.
 >
-> More complexity, always...
-> 
-> Why not just using the result of SO_PEERSEC?
+> OK, so you envisage the same filesystem being mounted in different user
+> namespaces and being able to see their own value for the xattr.  It
+> still seems a bit weird that they'd be able to change file contents and
+> have that seen by the other userns but not xattrs.
 
-That's what we do right now. However, if I'm understanding what Casey
-said correctly, one of the API options under consideration is to
-have a socket option that alters what SO_PEERSEC returns, which makes
-"the result of SO_PEERSEC" no longer a well-defined concept - it would
-be more accurate to say "*a* result of SO_PEERSEC", and we have to decide
-which of the several possible results is the right one to appear on D-Bus.
+When you dynamically talk about selecting a range based what is
+currently available in an orchestration system I don't know exactly what
+you mean.  If it is something like what adduser does, assigning a
+container a persistent association with uids and gids, that makes sense
+to me.  If it is picking an association just for the lifetime of the
+conainer processes it makes me nervous.
 
-(One of the options I listed was effectively "the result of SO_PEERSEC,
-assuming dbus-daemon has not done anything special to select a non-default
-result". That's what current dbus-daemon, 1.10.x, will return forever.)
+Fundamentally storage is persistent and writing data into it is
+persistent.
 
-    S
+Which means that when dealing with storage we need to make things safe
+by default and not depend upon an assumption that the container tools
+carefully keeps files separate from each other.
+
+>From previous conversations I am happy with and generally expect only a
+capability xattr per file.
+
+Even with one xattr of any type there is something appealing about
+putting the logic that limits that xattr to a namespace in the name.  As
+that is trivially backwards compatible.  As that does not require reving
+the on disk file format based upon containers.
+
+>> As you say a @uid to say "any unprivileged userns" might be useful.
+>> The implication is that root on the host doesn't trust the image
+>> enough to write a real global file capability, but trusts it enough
+>> to 'endanger' all containers on the host.  If that's the case, I have
+>> no objection to adding this as a feature.
+>
+> Yes, precisely.  The filesystem is certified as permitted to override
+> the xattr whatever unprivileged mapping for root is in place.
+>
+> How would we effect the switch?  I suppose some global flag because I
+> can't see we'd be mixing use cases in a physical system.
+
+Mixing use cases in a filesystem almost always happens.  At least if we
+are talking an ordinary multi-user system.  Multi-user systems are rarer
+than they once were because machines are cheap, and security is hard,
+but that should be what we are designing for.  Anything else is just
+asking for trouble.
+
+James when you talk about a global flag and mixing use cases in a
+physical system it sounds a lot like you are talking about a base
+filesystem for shiftfs.
+
+My gut feel is that if this gets down to something like the shiftfs use
+case.  I would assume either everything is shifted slightly so that all
+uids are say shifted by 100,000 even the capability names of the
+capability xattrs.  So that shiftfs or some part of the vfs would need
+to shift the names of the xattrs as well.
+
+Certainly I expect filesystems that are mounted with s_user_ns !=
+&init_user_ns to be shifting the names of the security xattrs when
+queried from &init_user_ns if we go with general design.
+
+Eric
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
