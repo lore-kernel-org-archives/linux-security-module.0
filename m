@@ -1,97 +1,113 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Fri, 23 Jun 2017 15:41:57 +0200
-Subject: [PATCH 2/2] tpm: use tpm2_pcr_read() in tpm2_do_selftest()
-In-Reply-To: <20170623134157.30399-1-roberto.sassu@huawei.com>
-References: <20170623134157.30399-1-roberto.sassu@huawei.com>
-Message-ID: <20170623134157.30399-3-roberto.sassu@huawei.com>
+From: jobol@nonadev.net (=?UTF-8?B?Sm9zw6k=?= Bollo)
+Date: Fri, 23 Jun 2017 16:39:25 +0200
+Subject: Is there a generic LSM/kernel ABI analogous to getcon_raw() and
+	aa_getcon()?
+In-Reply-To: <20170616161357.4nyqrye7ja5nsl7h@archetype.pseudorandom.co.uk>
+References: <20170613174519.nmrdglusytvjtdem@archetype.pseudorandom.co.uk>
+	<cc28a551-08b5-aeb4-382a-9ad86f51ddac@schaufler-ca.com>
+	<20170614114430.ooti2gqxllkqz2fe@archetype.pseudorandom.co.uk>
+	<d95670e5-837e-2cd3-7bf1-424a3cd89eec@schaufler-ca.com>
+	<20170616161357.4nyqrye7ja5nsl7h@archetype.pseudorandom.co.uk>
+Message-ID: <20170623163925.550a1faf@d-jobol.iot.bzh>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-tpm2_do_selftest() performs a PCR read during the TPM initialization phase.
-This patch replaces the PCR read code with a call to tpm2_pcr_read().
+On Fri, 16 Jun 2017 17:13:57 +0100
+Simon McVittie <smcv@collabora.com> wrote:
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- drivers/char/tpm/tpm2-cmd.c | 31 +------------------------------
- 1 file changed, 1 insertion(+), 30 deletions(-)
+(snip)
+ 
+> Self-identification
+> -------------------
+> 
+> The problem that I'm trying to solve right now is a special case
+> of identification. On the D-Bus message bus, we have a naming scheme
+> for talking about connections, so that the service can identify which
+> client it is asking about. This naming scheme has a special reserved
+> name for the dbus-daemon itself, so it is syntactically possible to
+> ask that question, and it is unexpected if that question doesn't get
+> a sensible answer. At the moment, asking for the credentials
+> of the dbus-daemon just doesn't return a LSM label (indicating
+> "unknown" or "not applicable"), but that's an unexpected special case.
+> What we would identically like is for the dbus-daemon to return the
+> same thing that the client would have got by getting the SO_PEERSEC
+> socket option from its connection to the dbus-daemon.
+> 
+> Because the dbus-daemon does not have an AF_UNIX socket connected to
+> itself, we can't use SO_PEERSEC directly, hence me looking into using
+> /proc/self/attr/current. We can't safely use /proc/$pid/attr/current
+> for an arbitrary other process, because the other process might be
+> maliciously causing race conditions that would trick us (below) - but
+> we can use it for /proc/self, because we trust ourselves not to do
+> such things.
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index fdce77d..2d6ee0c 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -35,13 +35,6 @@ struct tpm2_self_test_in {
- 	u8	full_test;
- } __packed;
- 
--struct tpm2_pcr_read_in {
--	__be32	pcr_selects_cnt;
--	__be16	hash_alg;
--	u8	pcr_select_size;
--	u8	pcr_select[TPM2_PCR_SELECT_MIN];
--} __packed;
--
- struct tpm2_get_tpm_pt_in {
- 	__be32	cap_id;
- 	__be32	property_id;
-@@ -68,7 +61,6 @@ struct tpm2_get_random_out {
- union tpm2_cmd_params {
- 	struct	tpm2_startup_in		startup_in;
- 	struct	tpm2_self_test_in	selftest_in;
--	struct	tpm2_pcr_read_in	pcrread_in;
- 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
- 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
- 	struct	tpm2_get_random_in	getrandom_in;
-@@ -215,16 +207,6 @@ static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
- 	TPM_UNDEFINED		/* 18f */
- };
- 
--#define TPM2_PCR_READ_IN_SIZE \
--	(sizeof(struct tpm_input_header) + \
--	 sizeof(struct tpm2_pcr_read_in))
--
--static const struct tpm_input_header tpm2_pcrread_header = {
--	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
--	.length = cpu_to_be32(TPM2_PCR_READ_IN_SIZE),
--	.ordinal = cpu_to_be32(TPM2_CC_PCR_READ)
--};
--
- struct tpm2_pcr_read_out {
- 	__be32	update_cnt;
- 	__be32	pcr_selects_cnt;
-@@ -928,7 +910,6 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 	unsigned int loops;
- 	unsigned int delay_msec = 100;
- 	unsigned long duration;
--	struct tpm2_cmd cmd;
- 	int i;
- 
- 	duration = tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST);
-@@ -941,20 +922,10 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 
- 	for (i = 0; i < loops; i++) {
- 		/* Attempt to read a PCR value */
--		cmd.header.in = tpm2_pcrread_header;
--		cmd.params.pcrread_in.pcr_selects_cnt = cpu_to_be32(1);
--		cmd.params.pcrread_in.hash_alg = cpu_to_be16(TPM2_ALG_SHA1);
--		cmd.params.pcrread_in.pcr_select_size = TPM2_PCR_SELECT_MIN;
--		cmd.params.pcrread_in.pcr_select[0] = 0x01;
--		cmd.params.pcrread_in.pcr_select[1] = 0x00;
--		cmd.params.pcrread_in.pcr_select[2] = 0x00;
--
--		rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
--				      NULL);
-+		rc = tpm2_pcr_read(chip, 0, NULL);
- 		if (rc < 0)
- 			break;
- 
--		rc = be32_to_cpu(cmd.header.out.return_code);
- 		if (rc != TPM2_RC_TESTING)
- 			break;
- 
--- 
-2.9.3
+Hi 
 
+If there were a SO_MYSEC doing the job you had used it. But there is no
+SO_MYSEC nor SO_MYCRED.
+
+> Mediation
+> =========
+> 
+> Some LSM users/developers want the dbus-daemon to filter messages
+> as they go through it, preventing clients with label A from
+> communicating with services with label B. We have this code for
+> SELinux (contributed by Red Hat/Fedora, long before my involvement)
+> and for AppArmor (originating from Ubuntu/Canonical, with some
+> modifications from me). At some point in the past there was a feature
+> request to add similar mediation for Smack, contributed by
+> Tizen/Intel/Samsung people
+> <https://bugs.freedesktop.org/show_bug.cgi?id=47581> but the proposed
+> patches were later withdrawn since their authors didn't need that
+> part any more, only identification.
+
+That is really interesting! I'm working for AGL (automotivelinux.org)
+that use that discontinued job of SAMSUNG/TIZEN. But I had in mind that
+you were not warm to intgrate the job done. The developper, Patrick
+Ohly made an interesting job to allow asynchronous request to the
+policy server within the dbus-daemon.
+
+> If you or your Smack-using colleagues want to resurrect that feature
+> request so that the dbus-daemon can accept or reject messages based on
+> Smack labels, the dbus at lists.freedesktop.org mailing list is suitable
+> for general discussion, and freedesktop.org Bugzilla is where we do
+> detailed patch review. The reviews on #47581 are probably relevant, so
+> I would advise skim-reading those first.
+
+Good. Seems to be 2 years old. The case of Tizen/AGL use a policy
+manager comparable to polkit. Are you developing currently a
+generalisation of this?
+
+> The same goes for other LSMs: as far as I'm aware, we cannot support
+> this generically, and mediation always requires LSM-specific code for
+> each LSM. In general we can't fix bugs (or test fixes) in that
+> LSM-specific code, so to add new code for mediation we would need
+> someone we can assign those bugs to.
+
+But is there really a need except for dbus-daemon itself?
+
+(snip)
+
+> So we have three options for dealing with your new multiplexed
+> strings:
+> 
+> * LinuxSecurityLabel is the first available and is deprecated, and a
+>   new LinuxSecurityLabels is the multiplexed string
+> * LinuxSecurityLabel is the first available and is deprecated, and
+>   the string is parsed (in an LSM-agnostic way) to produce
+>   "LinuxSecurityLabel.selinux" => "whatever_t\0",
+>   "LinuxSecurityLabel.apparmor" => "/usr/bin/whatever\0" and so on
+>   (or a nested mapping { "selinux" => "whatever_t\0", ... } maybe)
+> * LinuxSecurityLabel is the multiplexed string, and recipients are
+>   expected to evolve to deal with it
+
+More complexity, always...
+
+Why not just using the result of SO_PEERSEC?
+
+Best regards
+Jos? Bollo
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
