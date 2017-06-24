@@ -1,85 +1,201 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 23 Jun 2017 16:51:35 -0700
-Subject: [PATCH 0/3] Enable namespaced file capabilities
-In-Reply-To: <da083027-fcd4-bc08-2d88-93034ba1cacc@linux.vnet.ibm.com>
-References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<CAOQ4uxj=_Riih1K+QOYasZU8vZKCSrsg393f=17mJ2O-909e=Q@mail.gmail.com>
-	<20170623160026.GA18257@mail.hallyn.com>
-	<aa62373e-7cd6-39dd-2e38-2b6d6dbe18a8@schaufler-ca.com>
-	<3404c486-c848-3283-50f7-2283cb631e8e@linux.vnet.ibm.com>
-	<20170623183520.GC21137@mail.hallyn.com>
-	<da083027-fcd4-bc08-2d88-93034ba1cacc@linux.vnet.ibm.com>
-Message-ID: <59197179-8ef9-6be6-315f-41c10a8d7d06@schaufler-ca.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 24 Jun 2017 11:03:25 +0200
+Subject: [PATCH v3 0/6] Updated API for TPM 2.0 PCR extend
+In-Reply-To: <20170621142941.32674-1-roberto.sassu@huawei.com>
+References: <20170621142941.32674-1-roberto.sassu@huawei.com>
+Message-ID: <20170624090325.kbqhwkrx5qvtxveg@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 6/23/2017 4:09 PM, Stefan Berger wrote:
-> On 06/23/2017 02:35 PM, Serge E. Hallyn wrote:
->> Quoting Stefan Berger (stefanb at linux.vnet.ibm.com):
->>> On 06/23/2017 12:16 PM, Casey Schaufler wrote:
->>>> On 6/23/2017 9:00 AM, Serge E. Hallyn wrote:
->>>>> Quoting Amir Goldstein (amir73il at gmail.com):
->>>>>> On Thu, Jun 22, 2017 at 9:59 PM, Stefan Berger
->>>>>> <stefanb@linux.vnet.ibm.com> wrote:
->>>>>>> This series of patches primary goal is to enable file capabilities
->>>>>>> in user namespaces without affecting the file capabilities that are
->>>>>>> effective on the host. This is to prevent that any unprivileged user
->>>>>>> on the host maps his own uid to root in a private namespace, writes
->>>>>>> the xattr, and executes the file with privilege on the host.
->>>>>>>
->>>>>>> We achieve this goal by writing extended attributes with a different
->>>>>>> name when a user namespace is used. If for example the root user
->>>>>>> in a user namespace writes the security.capability xattr, the name
->>>>>>> of the xattr that is actually written is encoded as
->>>>>>> security.capability at uid=1000 for root mapped to uid 1000 on the host.
->>>>>>> When listing the xattrs on the host, the existing security.capability
->>>>>>> as well as the security.capability at uid=1000 will be shown. Inside the
->>>>>>> namespace only 'security.capability', with the value of
->>>>>>> security.capability at uid=1000, is visible.
->>>>>>>
->>>>>> Am I the only one who thinks that suffix is perhaps not the best grammar
->>>>>> to use for this namespace?
->>>>> You're the only one to have mentioned it so far.
->>>>>
->>>>>> xattrs are clearly namespaced by prefix, so it seems right to me to keep
->>>>>> it that way - define a new special xattr namespace "ns" and only if that
->>>>>> prefix exists, the @uid suffix will be parsed.
->>>>>> This could be either  ns.security.capability at uid=1000 or
->>>>>> ns at uid=1000.security.capability. The latter seems more correct to me,
->>>>>> because then we will be able to namespace any xattr without having to
->>>>>> protect from "unprivileged xattr injection", i.e.:
->>>>>> setfattr -n "user.whatever.foo at uid=0"
->>>>> I like it for simplifying the parser code.  One concern I have is that,
->>>>> since ns.* is currently not gated, one could write ns.* on an older
->>>>> kernel and then exploit it on a newer one.
->>>> security.ns.capability at uid=1000, then?
->>> Imo, '.ns' is redundant and 'encoded' in the '@'.
->> So how about
->>     security. at uid=1000@@capability ?
-> Ouch.
->> Maybe it's not worth it.
->
-> So the .ns is there to be able to possibly extend it in another dimension in the future, like have '.foo' there at some point?
+On Wed, Jun 21, 2017 at 04:29:35PM +0200, Roberto Sassu wrote:
+> The first version of the patch set can be retrieved at the URL:
+> 
+> https://sourceforge.net/p/tpmdd/mailman/message/35756302/
+> 
+> The patches should be applied on top of the next branch of
+> linux-security.git (commit cdac74d).
+> 
+> This patch set updates the TPM driver API for extending Platform
+> Configuration Registers (PCRs). These are special TPM registers which
+> cannot be written directly, but can only be updated through the extend
+> operation, by passing a digest as input:
+> 
+> PCR_value_new = hash_func(PCR_value_old | digest)
+> 
+> While TPM 1.2 can only use SHA1 as hash function, TPM 2.0 can support
+> multiple algorithms. On a TPM 2.0, PCR values extended with the same
+> algorithm are stored in a location called bank.
+> 
+> Currently, PCRs can only be extended from the kernel with a SHA1 digest,
+> through tpm_pcr_extend(). Remaining banks of a TPM 2.0 are extended with
+> the SHA1 digest padded with zeros. In order to take advantage of stronger
+> algorithms, the TPM driver should allow TPM users to extend a PCR with
+> digests calculated with the same algorithm of the PCR bank.
+> 
+> This patch set first introduces a new structure, called tpm_pcr_bank_info,
+> for storing detailed information about each PCR bank:
+> 
+> - TPM algorithm ID: algorithm identifier, defined by TCG; will be included
+>   by TPM users (e.g. IMA) in a measurement event log
+> - digest size: digest size for a TPM algorithm; since this is retrieved
+>   from the TPM, PCR banks can be extended even if an algorithm is unknown
+>   for the crypto subsystem (which currently the TPM driver relies on)
+> - crypto ID: will be used by TPM users to calculate a digest, to extend
+>   a PCR
+> 
+> Then, the patch set introduces the new function tpm_get_pcr_banks_info(),
+> to pass the information about PCR banks to TPM users, and finally, modifies
+> the parameters of tpm_pcr_extend(), so that TPM users can pass multiple
+> digests.
+> 
+> Given this definition of the tpm2_digest structure:
+> 
+> struct tpm2_digest {
+>     u16 alg_id;
+>     u8 digest[SHA512_DIGEST_SIZE];
+> } __packed;
+> 
+> there will be two methods to extend PCRs:
+> 
+> 1) by passing only one tpm2_digest structure containing a SHA1 digest
+>    (as it is done in the patch 6/6); in this case, the SHA1 digest
+>    is padded with zeros
+> 
+> 2) by calling tpm_get_pcr_banks_info() to obtain PCR banks information,
+>    and by calling tpm_pcr_extend() with as many tpm2_digest structures as
+>    the number of tpm_pcr_bank_info structures retrieved in the first step
+>    (if a digest for a TPM algorithm is missing, the TPM driver
+>    pads/truncates the first digest provided by the TPM user)
+> 
+> 
+> API Usage Examples
+> 
+> In the following examples, an application extends PCR 16 with the digest
+> of an event (e.g. record of a software measurement), with the methods
+> described above.
+> 
+> 
+> void app_calc_event_digest(struct crypto_shash *tfm, char *event,
+>                            u8 *digest)
+> {
+>     SHASH_DESC_ON_STACK(shash, tfm);
+> 
+>     shash->tfm = tfm;
+>     shash->flags = 0;
+> 
+>     crypto_shash_init(shash);
+>     crypto_shash_update(shash, event, strlen(event));
+>     crypto_shash_final(shash, digest);
+> }
+> 
+> void app_pcr_extend_method_1(void)
+> {
+>     char *event = "application event";
+>     struct tpm2_digest digestarg = {.alg_id = TPM2_ALG_SHA1};
+> 
+>     /* calculate event digest with current hash algorithm */
+>     struct crypto_shash *tfm = crypto_alloc_shash("sha1", 0, 0);
+> 
+>     app_calc_event_digest(tfm, event, digestarg.digest);
+> 
+>     /* extend all PCR banks with SHA1 digest*/
+>     tpm_pcr_extend(TPM_ANY_NUM, 16, 1, &digestarg);
+> }
+> 
+> void app_pcr_extend_method_2(void)
+> {
+>     /* declare static arrays, limit is known */
+>     struct tpm_pcr_bank_info active_banks[TPM_ACTIVE_BANKS_MAX];
+>     struct tpm2_digest digest_array[TPM_ACTIVE_BANKS_MAX];
+>     int i, num_algo;
+> 
+>     /* obtain algorithms supported by the TPM */
+>     num_algo = tpm_get_pcr_banks_info(TPM_ANY_NUM, active_banks);
+> 
+>     for (i = 0; i < num_algo; i++) {
+>         char *event = "application event";
+> 
+>         /* calculate event digest with current hash algorithm */
+>         const char *algo_name = hash_algo_name[active_banks[i].crypto_id];
+>         struct crypto_shash *tfm = crypto_alloc_shash(algo_name, 0, 0);
+> 
+>         app_calc_event_digest(tfm, event, digest_array[i].digest);
+>         digest_array[i].alg_id = active_banks[i].alg_id;
+>     }
+> 
+>     /* extend all PCR banks with calculated digests */
+>     tpm_pcr_extend(TPM_ANY_NUM, 16, num_algo, digest_array);
+> }
+> 
+> 
+> Changelog
+> 
+> v3
+> 
+> - introduced new structure tpm_pcr_bank_info
+> - read a PCR to obtain the digest size for each TPM algorithm
+> - tpm_pcr_algorithms() replaced by tpm_get_pcr_banks_info()
+> - removed tpm_pcr_algo_to_crypto() and tpm_pcr_algo_from_crypto()
+> - modification of tpm_pcr_extend() parameters and of callers of the
+>   function done in the same patch
+> - removed tpm_pcr_check_input()
+> 
+> v2
+> 
+> - tpm_pcr_algorithms() returns supported algorithms also for TPM 1.2
+> - fixed return values of tpm2_pcr_algo_to_crypto() and
+>   tpm2_pcr_algo_from_crypto() if TPM support is disabled in the kernel
+> - tpm_pcr_extend() arguments checked by tpm_pcr_check_input()
+> - modified parameters of tpm_pcr_extend()
+> 
+> Roberto Sassu (6):
+>   tpm: use tpm_buf functions to perform a PCR read
+>   tpm: use tpm2_pcr_read_tpm_buf() in tpm2_do_selftest()
+>   tpm: introduce tpm_pcr_bank_info structure with digest_size from TPM
+>   tpm: replace TPM algorithms IDs with tpm_pcr_bank_info structs in
+>     tpm_chip
+>   tpm: introduce tpm_get_pcr_banks_info()
+>   tpm: pass multiple digests to tpm_pcr_extend()
+> 
+>  drivers/char/tpm/tpm-interface.c   |  88 ++++++++++++++++++++++---
+>  drivers/char/tpm/tpm.h             |  19 +-----
+>  drivers/char/tpm/tpm2-cmd.c        | 132 ++++++++++++++++++++++---------------
+>  include/linux/tpm.h                |  39 ++++++++++-
+>  security/integrity/ima/ima_queue.c |   4 +-
+>  security/keys/trusted.c            |   6 +-
+>  6 files changed, 202 insertions(+), 86 deletions(-)
+> 
+> -- 
+> 2.9.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe keyrings" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Traditionally we have <kind-of-attribute>.<name-of-attribute>
-If you want to preserve the kind and name you have to introduce
-a third component if you want to have it treated differently
-under curtain (e.g. namespaced) conditions. You want to maintain
-the kind, because that's already treated specially. You want to
-maintain the name because that's what the feature code keys on.
-The kind is expected to be first, and the name last, so your new
-data needs to be in the middle. You need to identify what you
-expect the new bit to be used for because if you're clever enough
-to create a reason to add to the attribute name, someone else is,
-too. Thus
 
-	security.ns at uid=1000@@.capability
-	security.endian at end=big@@.capability
+To move this forward and be more constructive here's how I see it
+should be done (along the lines, draft):
 
-It's better to add fields than to change how a field is
-formatted and interpreted.
+int tpm_pcr_extend(u32 chip_num, int pcr_idx, unsigned int alg,
+		   const u8 *hash);
 
+The paramater 'alg' is crypto ID as specified by crypto subsystem.
 
+TPM driver must have a precompiled table of mappings for crypto IDs
+and TPM algorithm IDs.
+
+In addition it must have dynamically acquired list of TPM alg IDs.
+For those algs that static mapping does not exist it must extend
+them like we do now everything else except SHA-1 (Naynas changes).
+
+There's absolutely no need to pass digest size like you do BTW as it is
+defined by the standard.
+
+I also except that where ever this interleaves with trusted keys there
+won't be duplicate structures and code.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
