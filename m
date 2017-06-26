@@ -1,94 +1,81 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Mon, 26 Jun 2017 16:56:02 +0200
-Subject: [Linux-ima-devel] [PATCH v3 0/6] Updated API for TPM 2.0 PCR
-	extend
-In-Reply-To: <1498480439.3387.45.camel@linux.vnet.ibm.com>
-References: <20170621142941.32674-1-roberto.sassu@huawei.com>
-	<20170624090325.kbqhwkrx5qvtxveg@linux.intel.com>
-	<1498480439.3387.45.camel@linux.vnet.ibm.com>
-Message-ID: <03e70c05-5127-5c95-de8b-fedf90a23d7e@huawei.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 26 Jun 2017 08:10:44 -0700
+Subject: The secmark "one user" policy
+In-Reply-To: <20170626095428.4c27fc71@d-jobol.iot.bzh>
+References: <d256e588-fd3c-b981-6d55-6723b5615cc9@schaufler-ca.com>
+	<alpine.LRH.2.20.1706211713010.1310@namei.org>
+	<2fbe01aa-8f9b-37f0-f79a-e34dcd1d0705@schaufler-ca.com>
+	<alpine.LRH.2.20.1706221937410.20196@namei.org>
+	<118c3a45-8587-5cb9-fcd8-5cd8ca63a779@schaufler-ca.com>
+	<alpine.LRH.2.20.1706231309350.17128@namei.org>
+	<734c4437-866b-ef10-0e1c-14b8d55dd528@schaufler-ca.com>
+	<alpine.LRH.2.20.1706251939510.13345@namei.org>
+	<bececb1e-5913-7fec-bbdd-ca8d2033d77f@schaufler-ca.com>
+	<20170626095428.4c27fc71@d-jobol.iot.bzh>
+Message-ID: <c99dfbd5-97e2-8122-52b5-21a972768182@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 6/26/2017 2:33 PM, Mimi Zohar wrote:
-> On Sat, 2017-06-24 at 11:03 +0200, Jarkko Sakkinen wrote:
->> On Wed, Jun 21, 2017 at 04:29:35PM +0200, Roberto Sassu wrote:
+On 6/26/2017 12:54 AM, Jos? Bollo wrote:
+> On Sun, 25 Jun 2017 11:05:24 -0700
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
+>> On 6/25/2017 2:41 AM, James Morris wrote:
+>>> On Fri, 23 Jun 2017, Casey Schaufler wrote:
+>>>  
+>>>> On 6/22/2017 8:12 PM, James Morris wrote:  
+>>>>> On Thu, 22 Jun 2017, Casey Schaufler wrote:
+>>>>>  
+>>>>>> The combination of SELinux, Smack, AppArmor and/or TOMOYO is not
+>>>>>> the goal so much as the test case. MAC was the coolest possible
+>>>>>> technology in 1990. We've implemented it. I don't see anyone
+>>>>>> doing a new MAC implementation. I *do* see security modules that
+>>>>>> implement other security models in the pipeline. Some of these
+>>>>>> need to maintain state, which means using security blobs in the
+>>>>>> LSM architecture. Some of these models will want to use secmarks
+>>>>>> to implement socket based controls.  
+>>>>> Where are these LSMs and where are the discussions about their
+>>>>> LSM API needs?   
+>>>> LandLock, CaitSith, LoadPin (now in), Checmate, HardChroot,
+>>>> PTAGS, SimpleFlow, SafeName, WhiteEgret, shebang, and S.A.R.A.
+>>>> have all been discussed on the LSM list in the past two years.  
+>>> Which of these need to use secmarks to implement socket controls?  
+>> PTAGS doesn't, but will need to do so to be complete.
+> Hello Casey,
 >
->> To move this forward and be more constructive here's how I see it
->> should be done (along the lines, draft):
->>
->> int tpm_pcr_extend(u32 chip_num, int pcr_idx, unsigned int alg,
->> 		   const u8 *hash);
->>
->> The paramater 'alg' is crypto ID as specified by crypto subsystem.
+> The very sleepy PTAGS is suddently awaken (at least one ear :^).
 >
-> Based on Kenneth Goldman's input, the new IMA TPM-2.0 crypto hash
-> agile measurement list will contain the TPM crypto hash algorithm ids
-> (TPM crypto-ID).
+> In my mind, PTAGS is dealing with processes. When packets are filtered,
+> the only revelent info is the emitter process. At the moment, I don't
+> see valuable situation where mediation isn't explicit thus faking origin
+> isn't needed.
 >
->> TPM driver must have a precompiled table of mappings for crypto IDs
->> and TPM algorithm IDs.
->
-> We could map the TPM crypto-IDs to the crypto subsystem IDs and then
-> map them back, but is that necessary?
->
->>
->> In addition it must have dynamically acquired list of TPM alg IDs.
->> For those algs that static mapping does not exist it must extend
->> them like we do now everything else except SHA-1 (Naynas changes).
->
-> Padding/truncating an unknown bank using SHA1 is fine, but at some
-> point, as Roberto pointed out to me, TPM 2.0's might not support SHA-
-> 1.  So for the record, we're hard coding the use of SHA1 for the
-> unknown algorithms whether or not the TPM supports SHA1.
+> So I would really like to understand your vision here. What do I miss?
 
-This solution requires that SHA1 digests are always calculated
-and included in the event log, even if SHA1 has not been selected
-by the user. I think this is not acceptable in the scenarios where
-saving power and memory is important.
+My thought is that getting the tags of the process on the other
+end of a network connection seems like a valuable facility.
 
-I would instead use the first digest passed to tpm_pcr_extend()
-(it must be the first also in the event log) to extend banks
-for which the digest is missing.
-
-If TPM users want to pad/truncate a different digest, they can
-pass to tpm_pcr_extend() a digest for each TPM algorithm.
-This is possible with the patches I sent because TPM users
-receive the TPM algorithm IDs and the digest size for each
-algorithm.
-
-Regarding the possibility that SHA1 could not be supported,
-for now this shouldn't happen because, according to TCG,
-SHA1 support is mandatory for TPM 2.0:
-
-https://trustedcomputinggroup.org/wp-content/uploads/TCG_Algorithm_Registry_Rev_1.24.pdf
-
-I don't know if SHA1 can be marked as Legacy in a next
-revision of the document.
-
-Roberto
-
-
->> There's absolutely no need to pass digest size like you do BTW as it is
->> defined by the standard.
 >
-> For algorithms known to the crypto subsystem, that is fine, but for
-> the unknown TPM crypto algorithms, we would need to somehow query the
-> TPM for the digest sizes to create the mapping.
+> Best regards
+> Jos?
 >
-> Mimi
+> PS. I reworked the TUI (Task Unic Id) and have something valuable now.
+> I haven't submitted it because I wanted to include a kind of FS library
+> to provide /proc like features. But it is a nightmare to find a minute
+> to work on this challenging part. I should really abandon that and work
+> on TUI + PTAGS y basta.
 >
->> I also except that where ever this interleaves with trusted keys there
->> won't be duplicate structures and code.
->>
->> /Jarkko
->>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe
+>> linux-security-module" in the body of a message to
+>> majordomo at vger.kernel.org More majordomo info at
+>> http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
