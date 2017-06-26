@@ -1,95 +1,95 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Mon, 26 Jun 2017 17:41:16 +0300
-Subject: [PATCH 3/3] Make LSM Writable Hooks a command line option
-In-Reply-To: <20170626144116.27599-1-igor.stoppa@huawei.com>
-References: <20170626144116.27599-1-igor.stoppa@huawei.com>
-Message-ID: <20170626144116.27599-4-igor.stoppa@huawei.com>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Mon, 26 Jun 2017 16:56:02 +0200
+Subject: [Linux-ima-devel] [PATCH v3 0/6] Updated API for TPM 2.0 PCR
+	extend
+In-Reply-To: <1498480439.3387.45.camel@linux.vnet.ibm.com>
+References: <20170621142941.32674-1-roberto.sassu@huawei.com>
+	<20170624090325.kbqhwkrx5qvtxveg@linux.intel.com>
+	<1498480439.3387.45.camel@linux.vnet.ibm.com>
+Message-ID: <03e70c05-5127-5c95-de8b-fedf90a23d7e@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Igor Stoppa <igor.stoppa@gmail.com>
+On 6/26/2017 2:33 PM, Mimi Zohar wrote:
+> On Sat, 2017-06-24 at 11:03 +0200, Jarkko Sakkinen wrote:
+>> On Wed, Jun 21, 2017 at 04:29:35PM +0200, Roberto Sassu wrote:
+>
+>
+>> To move this forward and be more constructive here's how I see it
+>> should be done (along the lines, draft):
+>>
+>> int tpm_pcr_extend(u32 chip_num, int pcr_idx, unsigned int alg,
+>> 		   const u8 *hash);
+>>
+>> The paramater 'alg' is crypto ID as specified by crypto subsystem.
+>
+> Based on Kenneth Goldman's input, the new IMA TPM-2.0 crypto hash
+> agile measurement list will contain the TPM crypto hash algorithm ids
+> (TPM crypto-ID).
+>
+>> TPM driver must have a precompiled table of mappings for crypto IDs
+>> and TPM algorithm IDs.
+>
+> We could map the TPM crypto-IDs to the crypto subsystem IDs and then
+> map them back, but is that necessary?
+>
+>>
+>> In addition it must have dynamically acquired list of TPM alg IDs.
+>> For those algs that static mapping does not exist it must extend
+>> them like we do now everything else except SHA-1 (Naynas changes).
+>
+> Padding/truncating an unknown bank using SHA1 is fine, but at some
+> point, as Roberto pointed out to me, TPM 2.0's might not support SHA-
+> 1.  So for the record, we're hard coding the use of SHA1 for the
+> unknown algorithms whether or not the TPM supports SHA1.
 
-This patch shows how it is possible to take advantage of pmalloc:
-instead of using the build-time option __lsm_ro_after_init, to decide if
-it is possible to keep the hooks modifiable, now this becomes a
-boot-time decision, based on the kernel command line.
+This solution requires that SHA1 digests are always calculated
+and included in the event log, even if SHA1 has not been selected
+by the user. I think this is not acceptable in the scenarios where
+saving power and memory is important.
 
-This patch relies on:
+I would instead use the first digest passed to tpm_pcr_extend()
+(it must be the first also in the event log) to extend banks
+for which the digest is missing.
 
-"Convert security_hook_heads into explicit array of struct list_head"
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+If TPM users want to pad/truncate a different digest, they can
+pass to tpm_pcr_extend() a digest for each TPM algorithm.
+This is possible with the patches I sent because TPM users
+receive the TPM algorithm IDs and the digest size for each
+algorithm.
 
-to break free from the static constraint imposed by the previous
-hardening model, based on __ro_after_init.
+Regarding the possibility that SHA1 could not be supported,
+for now this shouldn't happen because, according to TCG,
+SHA1 support is mandatory for TPM 2.0:
 
-The default value is disabled, unless SE Linux debugging is turned on.
+https://trustedcomputinggroup.org/wp-content/uploads/TCG_Algorithm_Registry_Rev_1.24.pdf
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-CC: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/security.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+I don't know if SHA1 can be marked as Legacy in a next
+revision of the document.
 
-diff --git a/security/security.c b/security/security.c
-index 44c47b6..c7b4670 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -27,6 +27,7 @@
- #include <linux/personality.h>
- #include <linux/backing-dev.h>
- #include <linux/string.h>
-+#include <linux/pmalloc.h>
- #include <net/flow.h>
- 
- #define MAX_LSM_EVM_XATTR	2
-@@ -34,10 +35,19 @@
- /* Maximum number of letters for an LSM name string */
- #define SECURITY_NAME_MAX	10
- 
--static struct list_head hook_heads[LSM_MAX_HOOK_INDEX]
--	__lsm_ro_after_init;
- static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
- 
-+static int dynamic_lsm = IS_ENABLED(CONFIG_SECURITY_SELINUX_DISABLE);
-+
-+static __init int set_dynamic_lsm(char *str)
-+{
-+	get_option(&str, &dynamic_lsm);
-+	return 0;
-+}
-+early_param("dynamic_lsm", set_dynamic_lsm);
-+
-+static struct list_head *hook_heads;
-+static struct gen_pool *sec_pool;
- char *lsm_names;
- /* Boot-time LSM user choice */
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
-@@ -62,6 +72,11 @@ int __init security_init(void)
- {
- 	enum security_hook_index i;
- 
-+	sec_pool = pmalloc_create_pool("security", PMALLOC_DEFAULT_ALLOC_ORDER);
-+	BUG_ON(!sec_pool);
-+	hook_heads = pmalloc(sec_pool,
-+			     sizeof(struct list_head) * LSM_MAX_HOOK_INDEX);
-+	BUG_ON(!hook_heads);
- 	for (i = 0; i < LSM_MAX_HOOK_INDEX; i++)
- 		INIT_LIST_HEAD(&hook_heads[i]);
- 	pr_info("Security Framework initialized\n");
-@@ -77,7 +92,8 @@ int __init security_init(void)
- 	 * Load all the remaining security modules.
- 	 */
- 	do_security_initcalls();
--
-+	if (!dynamic_lsm)
-+		pmalloc_protect_pool(sec_pool);
- 	return 0;
- }
- 
+Roberto
+
+
+>> There's absolutely no need to pass digest size like you do BTW as it is
+>> defined by the standard.
+>
+> For algorithms known to the crypto subsystem, that is fine, but for
+> the unknown TPM crypto algorithms, we would need to somehow query the
+> TPM for the digest sizes to create the mapping.
+>
+> Mimi
+>
+>> I also except that where ever this interleaves with trusted keys there
+>> won't be duplicate structures and code.
+>>
+>> /Jarkko
+>>
+>
+
 -- 
-2.9.3
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
