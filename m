@@ -1,60 +1,74 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 26 Jun 2017 08:33:59 -0400
-Subject: [Linux-ima-devel] [PATCH v3 0/6] Updated API for TPM 2.0 PCR
-	extend
-In-Reply-To: <20170624090325.kbqhwkrx5qvtxveg@linux.intel.com>
-References: <20170621142941.32674-1-roberto.sassu@huawei.com>
-	<20170624090325.kbqhwkrx5qvtxveg@linux.intel.com>
-Message-ID: <1498480439.3387.45.camel@linux.vnet.ibm.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Mon, 26 Jun 2017 17:41:13 +0300
+Subject: [PATCH v7 0/3] ro protection for dynamic data
+Message-ID: <20170626144116.27599-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2017-06-24 at 11:03 +0200, Jarkko Sakkinen wrote:
-> On Wed, Jun 21, 2017 at 04:29:35PM +0200, Roberto Sassu wrote:
+Hi,
+please consider for inclusion.
+
+This patch introduces the possibility of protecting memory that has
+been allocated dynamically.
+
+The memory is managed in pools: when a pool is made R/O, all the memory
+that is part of it, will become R/O.
+
+A R/O pool can be destroyed to recover its memory, but it cannot be
+turned back into R/W mode.
+
+This is intentional. This feature is meant for data that doesn't need
+further modifications, after initialization.
+
+An example is provided, showing how to turn into a boot-time option the
+writable state of the security hooks.
+Prior to this patch, it was a compile-time option.
+
+This is made possible, thanks to Tetsuo Handa's rework of the hooks
+structure (included in the patchset).
+
+Changes since the v6 version:
+- complete rewrite, to use the genalloc library
+- added sysfs interface for tracking of active pools
+
+The only question still open is if there should be a possibility for
+unprotecting a memory pool in other cases than destruction.
+
+The only cases found for this topic are:
+- protecting the LSM header structure between creation and insertion of a
+  security module that was not built as part of the kernel
+  (but the module can protect the headers after it has loaded)
+
+- unloading SELinux from RedHat, if the system has booted, but no policy
+  has been loaded yet - this feature is going away, according to Casey.
 
 
-> To move this forward and be more constructive here's how I see it
-> should be done (along the lines, draft):
-> 
-> int tpm_pcr_extend(u32 chip_num, int pcr_idx, unsigned int alg,
-> 		   const u8 *hash);
-> 
-> The paramater 'alg' is crypto ID as specified by crypto subsystem.
+Igor Stoppa (2):
+  Protectable memory support
+  Make LSM Writable Hooks a command line option
 
-Based on Kenneth Goldman's input, the new IMA TPM-2.0 crypto hash
-agile measurement list will contain the TPM crypto hash algorithm ids
-(TPM crypto-ID).?
+Tetsuo Handa (1):
+  LSM: Convert security_hook_heads into explicit array of struct
+    list_head
 
-> TPM driver must have a precompiled table of mappings for crypto IDs
-> and TPM algorithm IDs.
+ arch/Kconfig                   |   1 +
+ include/linux/lsm_hooks.h      | 420 ++++++++++++++++++++---------------------
+ include/linux/page-flags.h     |   2 +
+ include/linux/pmalloc.h        | 111 +++++++++++
+ include/trace/events/mmflags.h |   1 +
+ init/main.c                    |   2 +
+ lib/Kconfig                    |   1 +
+ lib/genalloc.c                 |   4 +-
+ mm/Makefile                    |   1 +
+ mm/pmalloc.c                   | 346 +++++++++++++++++++++++++++++++++
+ mm/usercopy.c                  |  24 ++-
+ security/security.c            |  49 +++--
+ 12 files changed, 726 insertions(+), 236 deletions(-)
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 mm/pmalloc.c
 
-We could map the TPM crypto-IDs to the crypto subsystem IDs and then
-map them back, but is that necessary?
-
-> 
-> In addition it must have dynamically acquired list of TPM alg IDs.
-> For those algs that static mapping does not exist it must extend
-> them like we do now everything else except SHA-1 (Naynas changes).
-
-Padding/truncating an unknown bank using SHA1 is fine, but at some
-point, as Roberto pointed out to me, TPM 2.0's might not support SHA-
-1. ?So for the record, we're hard coding the use of SHA1 for the
-unknown algorithms whether or not the TPM supports SHA1.
-
-> There's absolutely no need to pass digest size like you do BTW as it is
-> defined by the standard.
-
-For algorithms known to the crypto subsystem, that is fine, but for
-the unknown TPM crypto algorithms, we would need to somehow query the
-TPM for the digest sizes to create the mapping.
-
-Mimi
-
-> I also except that where ever this interleaves with trusted keys there
-> won't be duplicate structures and code.
-> 
-> /Jarkko
-> 
+-- 
+2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
