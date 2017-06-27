@@ -1,88 +1,162 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 27 Jun 2017 07:58:52 -0400
-Subject: The secmark "one user" policy
-In-Reply-To: <20170627125138.6601452b@d-jobol.iot.bzh>
-References: <d256e588-fd3c-b981-6d55-6723b5615cc9@schaufler-ca.com>
-	<alpine.LRH.2.20.1706211713010.1310@namei.org>
-	<2fbe01aa-8f9b-37f0-f79a-e34dcd1d0705@schaufler-ca.com>
-	<alpine.LRH.2.20.1706221937410.20196@namei.org>
-	<118c3a45-8587-5cb9-fcd8-5cd8ca63a779@schaufler-ca.com>
-	<alpine.LRH.2.20.1706231309350.17128@namei.org>
-	<734c4437-866b-ef10-0e1c-14b8d55dd528@schaufler-ca.com>
-	<alpine.LRH.2.20.1706251939510.13345@namei.org>
-	<bececb1e-5913-7fec-bbdd-ca8d2033d77f@schaufler-ca.com>
-	<20170626095428.4c27fc71@d-jobol.iot.bzh>
-	<c99dfbd5-97e2-8122-52b5-21a972768182@schaufler-ca.com>
-	<20170627125138.6601452b@d-jobol.iot.bzh>
-Message-ID: <CAHC9VhRs06pWwHJAOPPU4YaaXrx=4L7N7VUrS9TWBRAtUDXPDQ@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 27 Jun 2017 11:24:18 -0400
+Subject: [tpmdd-devel] [PATCH v3 3/6] tpm: introduce tpm_pcr_bank_info
+	structure with digest_size from TPM
+In-Reply-To: <20170621142941.32674-4-roberto.sassu@huawei.com>
+References: <20170621142941.32674-1-roberto.sassu@huawei.com>
+	<20170621142941.32674-4-roberto.sassu@huawei.com>
+Message-ID: <1498577058.3387.103.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jun 27, 2017 at 6:51 AM, Jos? Bollo <jobol@nonadev.net> wrote:
-> On Mon, 26 Jun 2017 08:10:44 -0700
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->> On 6/26/2017 12:54 AM, Jos? Bollo wrote:
->> > On Sun, 25 Jun 2017 11:05:24 -0700
->> > Casey Schaufler <casey@schaufler-ca.com> wrote:
->> >
->> >> On 6/25/2017 2:41 AM, James Morris wrote:
->> >>> On Fri, 23 Jun 2017, Casey Schaufler wrote:
->> >>>
->> >>>> On 6/22/2017 8:12 PM, James Morris wrote:
->> >>>>> On Thu, 22 Jun 2017, Casey Schaufler wrote:
->> >>>>>
->> >>>>>> The combination of SELinux, Smack, AppArmor and/or TOMOYO is
->> >>>>>> not the goal so much as the test case. MAC was the coolest
->> >>>>>> possible technology in 1990. We've implemented it. I don't see
->> >>>>>> anyone doing a new MAC implementation. I *do* see security
->> >>>>>> modules that implement other security models in the pipeline.
->> >>>>>> Some of these need to maintain state, which means using
->> >>>>>> security blobs in the LSM architecture. Some of these models
->> >>>>>> will want to use secmarks to implement socket based
->> >>>>>> controls.
->> >>>>> Where are these LSMs and where are the discussions about their
->> >>>>> LSM API needs?
->> >>>> LandLock, CaitSith, LoadPin (now in), Checmate, HardChroot,
->> >>>> PTAGS, SimpleFlow, SafeName, WhiteEgret, shebang, and S.A.R.A.
->> >>>> have all been discussed on the LSM list in the past two
->> >>>> years.
->> >>> Which of these need to use secmarks to implement socket
->> >>> controls?
->> >> PTAGS doesn't, but will need to do so to be complete.
->> > Hello Casey,
->> >
->> > The very sleepy PTAGS is suddently awaken (at least one ear :^).
->> >
->> > In my mind, PTAGS is dealing with processes. When packets are
->> > filtered, the only revelent info is the emitter process. At the
->> > moment, I don't see valuable situation where mediation isn't
->> > explicit thus faking origin isn't needed.
->> >
->> > So I would really like to understand your vision here. What do I
->> > miss?
->>
->> My thought is that getting the tags of the process on the other
->> end of a network connection seems like a valuable facility.
->
-> I can see 3 objections: (1) secmark isn't really interesting for
-> transmitting hierachical strings; (2) maintaining 2 or more remotes in
-> a coherent state implies more than implicit assumptions; (3) never
-> trust the network.
+On Wed, 2017-06-21 at 16:29 +0200, Roberto Sassu wrote:
+> This patch introduces the new structure tpm_pcr_bank_info to store
+> information regarding PCR banks. The next patch will replace the array of
+> TPM algorithms IDs with an array of the new structure.
+> 
+> tpm_pcr_bank_info contains the TPM algorithm ID, the digest size and,
+> optionally, the corresponding crypto ID, if a mapping exists. These
+> information will be used by IMA to calculate the digest of an event
+> and to provide measurements logs to userspace applications. The new
+> structure has been defined in include/linux/tpm.h, as it will be passed
+> to functions outside the TPM driver.
+> 
+> The purpose of this patch is to fix a serious issue in tpm2_pcr_extend():
+> if the mapping between a TPM algorithm and a crypto algorithm is not
+> defined, the PCR bank with the unknown algorithm is not extended.
+> This gives the opportunity to an attacker to reply to remote attestation
+> requests with a list of fake measurements. Instead, the digest size
+> is retrieved from the output buffer of a PCR read, without relying
+> on the crypto subsystem.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-A point of clarification: the secmark labels are not communicated
-across the network, they are assigned to packets based on the local
-netfilter configuration.
+To address some of Jarkko's comments, I would replace active_banks
+with a structure, named for example active_bank_info, containing the
+existing active_bank alg_id and just the digest size. ?A subsequent
+patch would include the crypto_id, assuming it is needed.
 
-A simple example with SELinux/secmark:
+When a patch defines a new field/function, at least one usage of that
+field/function should be included in the patch. ?In this case, you
+might want to verify the digest size returned by the TPM is as
+expected, comparing it with the crypto digest size.
 
- # iptables -t mangle -A INPUT --src 192.168.0.16 \
-   -p tcp --dport 22 -j SECMARK \
-   --selctx system_u:object_r:foo_ssh_packet_t:s0
+Mimi
 
--- 
-paul moore
-www.paul-moore.com
+> ---
+>  drivers/char/tpm/tpm.h      | 11 -----------
+>  drivers/char/tpm/tpm2-cmd.c | 30 ++++++++++++++++++++++++++++++
+>  include/linux/tpm.h         | 19 +++++++++++++++++++
+>  3 files changed, 49 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 1df0521..62c600d 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -98,17 +98,6 @@ enum tpm2_return_codes {
+>  	TPM2_RC_REFERENCE_H0	= 0x0910,
+>  };
+> 
+> -enum tpm2_algorithms {
+> -	TPM2_ALG_ERROR		= 0x0000,
+> -	TPM2_ALG_SHA1		= 0x0004,
+> -	TPM2_ALG_KEYEDHASH	= 0x0008,
+> -	TPM2_ALG_SHA256		= 0x000B,
+> -	TPM2_ALG_SHA384		= 0x000C,
+> -	TPM2_ALG_SHA512		= 0x000D,
+> -	TPM2_ALG_NULL		= 0x0010,
+> -	TPM2_ALG_SM3_256	= 0x0012,
+> -};
+> -
+>  enum tpm2_command_codes {
+>  	TPM2_CC_FIRST		= 0x011F,
+>  	TPM2_CC_SELF_TEST	= 0x0143,
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 6a9fe0d..74a68ea 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -992,6 +992,36 @@ int tpm2_probe(struct tpm_chip *chip)
+>  }
+>  EXPORT_SYMBOL_GPL(tpm2_probe);
+> 
+> +static int tpm2_init_pcr_bank_info(struct tpm_chip *chip, u16 alg_id,
+> +				   struct tpm_pcr_bank_info *active_bank)
+> +{
+> +	struct tpm_buf buf;
+> +	struct tpm2_pcr_read_out *pcrread_out;
+> +	int rc = 0;
+> +	int i;
+> +
+> +	active_bank->alg_id = alg_id;
+> +
+> +	rc = tpm2_pcr_read_tpm_buf(chip, 0, alg_id, &buf, NULL);
+> +	if (rc)
+> +		goto out;
+> +
+> +	pcrread_out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
+> +
+> +	active_bank->digest_size = be16_to_cpu(pcrread_out->digest_size);
+> +	active_bank->crypto_id = HASH_ALGO__LAST;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+> +		if (active_bank->alg_id != tpm2_hash_map[i].tpm_id)
+> +			continue;
+> +
+> +		active_bank->crypto_id = tpm2_hash_map[i].crypto_id;
+> +	}
+> +out:
+> +	tpm_buf_destroy(&buf);
+> +	return rc;
+> +}
+> +
+>  struct tpm2_pcr_selection {
+>  	__be16  hash_alg;
+>  	u8  size_of_select;
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 5a090f5..ff06738 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -22,6 +22,8 @@
+>  #ifndef __LINUX_TPM_H__
+>  #define __LINUX_TPM_H__
+> 
+> +#include <crypto/hash_info.h>
+> +
+>  #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
+> 
+>  /*
+> @@ -37,6 +39,17 @@ enum TPM_OPS_FLAGS {
+>  	TPM_OPS_AUTO_STARTUP = BIT(0),
+>  };
+> 
+> +enum tpm2_algorithms {
+> +	TPM2_ALG_ERROR		= 0x0000,
+> +	TPM2_ALG_SHA1		= 0x0004,
+> +	TPM2_ALG_KEYEDHASH	= 0x0008,
+> +	TPM2_ALG_SHA256		= 0x000B,
+> +	TPM2_ALG_SHA384		= 0x000C,
+> +	TPM2_ALG_SHA512		= 0x000D,
+> +	TPM2_ALG_NULL		= 0x0010,
+> +	TPM2_ALG_SM3_256	= 0x0012,
+> +};
+> +
+>  struct tpm_class_ops {
+>  	unsigned int flags;
+>  	const u8 req_complete_mask;
+> @@ -52,6 +65,12 @@ struct tpm_class_ops {
+>  	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
+>  };
+> 
+> +struct tpm_pcr_bank_info {
+> +	enum tpm2_algorithms alg_id;
+> +	enum hash_algo crypto_id;
+> +	u32 digest_size;
+> +};
+> +
+>  #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+> 
+>  extern int tpm_is_tpm2(u32 chip_num);
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
