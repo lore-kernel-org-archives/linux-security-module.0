@@ -1,121 +1,110 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Wed, 28 Jun 2017 10:04:11 -0400
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 28 Jun 2017 09:28:50 -0500
 Subject: [PATCH 0/3] Enable namespaced file capabilities
 In-Reply-To: <CAOQ4uxhiSHEXzWN7=g-nmu=ebpv7hkXszW03JZ4UJkcjTeH+oQ@mail.gmail.com>
 References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
 	<CAOQ4uxj=_Riih1K+QOYasZU8vZKCSrsg393f=17mJ2O-909e=Q@mail.gmail.com>
 	<20170628054138.GA15939@mail.hallyn.com>
 	<CAOQ4uxhiSHEXzWN7=g-nmu=ebpv7hkXszW03JZ4UJkcjTeH+oQ@mail.gmail.com>
-Message-ID: <d70719a9-5ad1-2754-ada2-b470d693ce58@linux.vnet.ibm.com>
+Message-ID: <20170628142850.GA24489@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/28/2017 03:18 AM, Amir Goldstein wrote:
+Quoting Amir Goldstein (amir73il at gmail.com):
 > On Wed, Jun 28, 2017 at 8:41 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
->> On Fri, Jun 23, 2017 at 10:01:46AM +0300, Amir Goldstein wrote:
->>> On Thu, Jun 22, 2017 at 9:59 PM, Stefan Berger
->>> <stefanb@linux.vnet.ibm.com> wrote:
->>>> This series of patches primary goal is to enable file capabilities
->>>> in user namespaces without affecting the file capabilities that are
->>>> effective on the host. This is to prevent that any unprivileged user
->>>> on the host maps his own uid to root in a private namespace, writes
->>>> the xattr, and executes the file with privilege on the host.
->>>>
->>>> We achieve this goal by writing extended attributes with a different
->>>> name when a user namespace is used. If for example the root user
->>>> in a user namespace writes the security.capability xattr, the name
->>>> of the xattr that is actually written is encoded as
->>>> security.capability at uid=1000 for root mapped to uid 1000 on the host.
->>>> When listing the xattrs on the host, the existing security.capability
->>>> as well as the security.capability at uid=1000 will be shown. Inside the
->>>> namespace only 'security.capability', with the value of
->>>> security.capability at uid=1000, is visible.
->>>>
->>> Am I the only one who thinks that suffix is perhaps not the best grammar
->>> to use for this namespace?
->>> xattrs are clearly namespaced by prefix, so it seems right to me to keep
->>> it that way - define a new special xattr namespace "ns" and only if that
->>> prefix exists, the @uid suffix will be parsed.
->>> This could be either  ns.security.capability at uid=1000 or
->>> ns at uid=1000.security.capability. The latter seems more correct to me,
->>> because then we will be able to namespace any xattr without having to
->>> protect from "unprivileged xattr injection", i.e.:
->>> setfattr -n "user.whatever.foo at uid=0"
->>>
->>> Amir.
->> Hi Amir,
->>
->> I was liking the prefix at first, but I'm actually not sure it's worth
->> it.  THe main advantage would be so that checking for namespace or other
->> tags could be done always at the same offset simplifying the parser.
->> But since we will want to only handle namespacing for some tags, and
->> potentially differently for each task, it won't actually be simpler, I
->> don't think.
->>
->> On the other hand we do want to make sure that the syntax we use is
->> generally usable, so I think simply specifying that >1 tags can each
->> be separate by '@' should suffice.  So for now we'd only have
+> > Hi Amir,
+> >
+> > I was liking the prefix at first, but I'm actually not sure it's worth
+> > it.  THe main advantage would be so that checking for namespace or other
+> > tags could be done always at the same offset simplifying the parser.
+> > But since we will want to only handle namespacing for some tags, and
+> > potentially differently for each task, it won't actually be simpler, I
+> > don't think.
+> >
+> > On the other hand we do want to make sure that the syntax we use is
+> > generally usable, so I think simply specifying that >1 tags can each
+> > be separate by '@' should suffice.  So for now we'd only have
+> 
 > Serge,
->
+> 
 > I am not sure I am parsing what you are saying correctly (pun intended).
 > Can you give some examples of xattr names with several @.
->
->>          security.capability at uid=100000
->>
->> soon we'd hopefully have
->>
->>          security.ima at uid=100000
->>
+> 
+> >
+> >         security.capability at uid=100000
+> >
+> > soon we'd hopefully have
+> >
+> >         security.ima at uid=100000
+> >
+> 
 > IIUC, the xattr names above should be parsed as:
->
->          security.(([ima|capability])@(uid=100000)
->
->> and eventually trusted.blarb at foo=bar
->>
+> 
+>         security.(([ima|capability])@(uid=100000)
+
+not sure what you mean by the parentheses.  Point in these two
+examples being that only uid= would be accepted as 'tags', and
+only ima and capability would support the tag.  As we'd discussed
+we might support uid= (with no number) as indicating any namespace
+not mapping kuid 0 would work.
+
+> > and eventually trusted.blarb at foo=bar
+> >
+> 
 > But the trusted xattr name should be parsed as:
->
->          (trusted.blarb)@(uid=100000)
->
+> 
+>         (trusted.blarb)@(uid=100000)
+
+Sorry, my point there wasn't trusted, I had meant to put in more
+tags, which was the point:
+
+	security.capability at uid=100000 at smack=container_x
+
+We don't yet know what smack= would mean, but we do know that at
+some point there may be > 1 tags.
+
+Importantly, in order to not limit our future behavior, for now
+we would refuse writing >1 tags.  (That way we don't risk the problem,
+in the future, that someone can boot an older kernel andw rite a xattr
+without all the privileges which the new kernel requires.)
+
 > Otherwise it won't be able to pass the xattr_is_trusted() test
 > which looks only at the trusted prefix.
-
-To be precise, it looks at 'trusted.', including the dot.
-
->
+> 
 > So we can write it like this, if it makes sense for the parser:
->          trusted at uid=100000.blarb
+>         trusted at uid=100000.blarb
 
-For the parser I think it would be easier to parse what Serge is 
-proposing, and it would pass the existing xattr_is_trusted() call.
+That's actually specifically what I'm arguing against.  I'm arguing
+that the full xattr should come first, as we should not bother
+checking for tags until we've verified that the xattr supports them.
 
-
-
->
 > But I don't think that trusted.foo should have a different
 > userns behavior than trusted.bar down the road.
->
+
+Perhaps not for trusted, but perhaps it will.  And for security.*
+it definately does.  Selinux does not support namespace tags.
+Smack one day may, but perhaps with different behavior than ima.
+
 > Admittedly, I am not so much of a security developer myself,
 > so I prefer to let Casey be the spokesman for the '.ns' prefix.
 > Casey's proposal seems right to me:
->
->          security.ns at uid=1000@@.capability
->
+> 
+>         security.ns at uid=1000@@.capability
+
+Right I was going to reply to his email, but yours seemed to come
+earlier so I picked it :)  I wasn't trying to pick on you :)
+
 > We can also stick to a more conventional syntax of a perfect
 > new namespace 'security.ns', which encapsulates the unprivileged
-> xattr name completely. This should suffice perfectly for the current
-> capability V3 needs and is flexible enough to be extended later:
->
->          security.ns.user.1000.security.capability
-> OR:
->          security.ns at uid=1000@@.security.capability
->
-> And going forward, just as easy:
->
->          security.ns.user.1000.[trusted|system|user].foo
->
-> Amir.
->
 
+If we were going this route I definately would have preferred
+security.ns at uid=1000@@.capability.
+
+I've cc:d linux-api at this point as it seems the right thing to
+do :)
+
+thanks,
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
