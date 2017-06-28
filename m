@@ -1,10 +1,10 @@
 From: hch@lst.de (Christoph Hellwig)
-Date: Wed, 28 Jun 2017 16:39:23 +0200
-Subject: [PATCH v2 07/10] ocfs2: define integrity_read method
-In-Reply-To: <1498069110-10009-8-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Wed, 28 Jun 2017 16:39:32 +0200
+Subject: [PATCH v2 08/10] jffs2: define integrity_read method
+In-Reply-To: <1498069110-10009-9-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1498069110-10009-8-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20170628143923.GF2359@lst.de>
+	<1498069110-10009-9-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20170628143932.GG2359@lst.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
