@@ -1,172 +1,68 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 27 Jun 2017 16:13:08 -0700
-Subject: [RFC v2 7/9] Trampoline emulation
-In-Reply-To: <1497544976-7856-8-git-send-email-s.mesoraca16@gmail.com>
-References: <1497544976-7856-1-git-send-email-s.mesoraca16@gmail.com>
-	<1497544976-7856-8-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <CAGXu5jJ+GHJSgoHk3Vmf=JueVgwkP6ZSVm5kkMbCGBySp2VqmA@mail.gmail.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 28 Jun 2017 00:41:38 -0500
+Subject: [PATCH 0/3] Enable namespaced file capabilities
+In-Reply-To: <CAOQ4uxj=_Riih1K+QOYasZU8vZKCSrsg393f=17mJ2O-909e=Q@mail.gmail.com>
+References: <1498157989-11814-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<CAOQ4uxj=_Riih1K+QOYasZU8vZKCSrsg393f=17mJ2O-909e=Q@mail.gmail.com>
+Message-ID: <20170628054138.GA15939@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jun 15, 2017 at 9:42 AM, Salvatore Mesoraca
-<s.mesoraca16@gmail.com> wrote:
-> Some programs need to generate part of their code at runtime. Luckily
-> enough, in some cases they only generate well-known code sequences (the
-> "trampolines") that can be easily recognized and emulated by the kernel.
-> This way WX Protection can still be active, so a potential attacker won't
-> be able to generate arbitrary sequences of code, but just those that are
-> explicitly allowed. This is not ideal, but it's still better than having WX
-> Protection completely disabled.
-> In particular S.A.R.A. is able to recognize trampolines used by GCC for
-> nested C functions and libffi's trampolines.
-> This feature is implemented only on x86_32 and x86_64.
-> The assembly sequences used here were originally obtained from PaX source
-> code.
+On Fri, Jun 23, 2017 at 10:01:46AM +0300, Amir Goldstein wrote:
+> On Thu, Jun 22, 2017 at 9:59 PM, Stefan Berger
+> <stefanb@linux.vnet.ibm.com> wrote:
+> > This series of patches primary goal is to enable file capabilities
+> > in user namespaces without affecting the file capabilities that are
+> > effective on the host. This is to prevent that any unprivileged user
+> > on the host maps his own uid to root in a private namespace, writes
+> > the xattr, and executes the file with privilege on the host.
+> >
+> > We achieve this goal by writing extended attributes with a different
+> > name when a user namespace is used. If for example the root user
+> > in a user namespace writes the security.capability xattr, the name
+> > of the xattr that is actually written is encoded as
+> > security.capability at uid=1000 for root mapped to uid 1000 on the host.
+> > When listing the xattrs on the host, the existing security.capability
+> > as well as the security.capability at uid=1000 will be shown. Inside the
+> > namespace only 'security.capability', with the value of
+> > security.capability at uid=1000, is visible.
+> >
+> 
+> Am I the only one who thinks that suffix is perhaps not the best grammar
+> to use for this namespace?
+> xattrs are clearly namespaced by prefix, so it seems right to me to keep
+> it that way - define a new special xattr namespace "ns" and only if that
+> prefix exists, the @uid suffix will be parsed.
+> This could be either  ns.security.capability at uid=1000 or
+> ns at uid=1000.security.capability. The latter seems more correct to me,
+> because then we will be able to namespace any xattr without having to
+> protect from "unprivileged xattr injection", i.e.:
+> setfattr -n "user.whatever.foo at uid=0"
+> 
+> Amir.
 
-See below about the language grsecurity has asked people to use in commit logs.
+Hi Amir,
 
->
-> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> ---
->  security/sara/Kconfig               |  17 ++++
->  security/sara/include/trampolines.h | 171 ++++++++++++++++++++++++++++++++++++
->  security/sara/wxprot.c              | 140 +++++++++++++++++++++++++++++
->  3 files changed, 328 insertions(+)
->  create mode 100644 security/sara/include/trampolines.h
->
-> diff --git a/security/sara/Kconfig b/security/sara/Kconfig
-> index 6c74069..f406805 100644
-> --- a/security/sara/Kconfig
-> +++ b/security/sara/Kconfig
-> @@ -96,6 +96,23 @@ choice
->                   Documentation/security/SARA.rst.
->  endchoice
->
-> +config SECURITY_SARA_WXPROT_EMUTRAMP
-> +       bool "Enable emulation for some types of trampolines"
-> +       depends on SECURITY_SARA_WXPROT
-> +       depends on X86
-> +       default y
-> +       help
-> +         Some programs and libraries need to execute special small code
-> +         snippets from non-executable memory pages.
-> +         Most notable examples are the GCC and libffi trampolines.
-> +         This features make it possible to execute those trampolines even
-> +         if they reside in non-executable memory pages.
-> +         This features need to be enabled on a per-executable basis
-> +         via user-space utilities.
-> +         See Documentation/security/SARA.rst. for further information.
-> +
-> +         If unsure, answer y.
-> +
->  config SECURITY_SARA_WXPROT_DISABLED
->         bool "WX protection will be disabled at boot."
->         depends on SECURITY_SARA_WXPROT
-> diff --git a/security/sara/include/trampolines.h b/security/sara/include/trampolines.h
-> new file mode 100644
-> index 0000000..eab0a85
-> --- /dev/null
-> +++ b/security/sara/include/trampolines.h
-> @@ -0,0 +1,171 @@
-> +/*
-> + * S.A.R.A. Linux Security Module
-> + *
-> + * Copyright (C) 2017 Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2, as
-> + * published by the Free Software Foundation.
-> + *
-> + * Assembly sequences used here were copied from
-> + * PaX patch by PaX Team <pageexec@freemail.hu>
+I was liking the prefix at first, but I'm actually not sure it's worth
+it.  THe main advantage would be so that checking for namespace or other
+tags could be done always at the same offset simplifying the parser.
+But since we will want to only handle namespacing for some tags, and
+potentially differently for each task, it won't actually be simpler, I
+don't think.
 
-Given this copying, please include the grsecurity/PaX copyright notice
-too. Please see the recommendations here:
-http://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project/Get_Involved
+On the other hand we do want to make sure that the syntax we use is
+generally usable, so I think simply specifying that >1 tags can each
+be separate by '@' should suffice.  So for now we'd only have
 
-> + *
-> + */
-> +
-> +#ifndef __SARA_TRAMPOLINES_H
-> +#define __SARA_TRAMPOLINES_H
-> +#ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
-> +
-> +
-> +/* x86_32 */
-> +
-> +
-> +struct libffi_trampoline_x86_32 {
-> +       unsigned char mov;
-> +       unsigned int addr1;
-> +       unsigned char jmp;
-> +       unsigned int addr2;
-> +} __packed;
-> +
-> +struct gcc_trampoline_x86_32_type1 {
-> +       unsigned char mov1;
-> +       unsigned int addr1;
-> +       unsigned char mov2;
-> +       unsigned int addr2;
-> +       unsigned short jmp;
-> +} __packed;
-> +
-> +struct gcc_trampoline_x86_32_type2 {
-> +       unsigned char mov;
-> +       unsigned int addr1;
-> +       unsigned char jmp;
-> +       unsigned int addr2;
-> +} __packed;
-> +
-> +union trampolines_x86_32 {
-> +       struct libffi_trampoline_x86_32 lf;
-> +       struct gcc_trampoline_x86_32_type1 g1;
-> +       struct gcc_trampoline_x86_32_type2 g2;
-> +};
-> +
-> +#define is_valid_libffi_trampoline_x86_32(UNION)       \
-> +       (UNION.lf.mov == 0xB8 &&                        \
-> +       UNION.lf.jmp == 0xE9)
-> +
-> +#define emulate_libffi_trampoline_x86_32(UNION, REGS) do {     \
-> +       (REGS)->ax = UNION.lf.addr1;                            \
-> +       (REGS)->ip = (unsigned int) ((REGS)->ip +               \
-> +                                    UNION.lf.addr2 +           \
-> +                                    sizeof(UNION.lf));         \
-> +} while (0)
-> +
-> +#define is_valid_gcc_trampoline_x86_32_type1(UNION, REGS)      \
-> +       (UNION.g1.mov1 == 0xB9 &&                               \
-> +       UNION.g1.mov2 == 0xB8 &&                                \
-> +       UNION.g1.jmp == 0xE0FF &&                               \
-> +       REGS->ip > REGS->sp)
-> +
-> +#define emulate_gcc_trampoline_x86_32_type1(UNION, REGS) do {  \
-> +       (REGS)->cx = UNION.g1.addr1;                            \
-> +       (REGS)->ax = UNION.g1.addr2;                            \
-> +       (REGS)->ip = UNION.g1.addr2;                            \
-> +} while (0)
-> +
-> +#define is_valid_gcc_trampoline_x86_32_type2(UNION, REGS)      \
-> +       (UNION.g2.mov == 0xB9 &&                                \
-> +       UNION.g2.jmp == 0xE9 &&                                 \
-> +       REGS->ip > REGS->sp)
-> +
-> +#define emulate_gcc_trampoline_x86_32_type2(UNION, REGS) do {  \
-> +       (REGS)->cx = UNION.g2.addr1;                            \
-> +       (REGS)->ip = (unsigned int) ((REGS)->ip +               \
-> +                                    UNION.g2.addr2 +           \
-> +                                    sizeof(UNION.g2));         \
-> +} while (0)
+	security.capability at uid=100000
 
-These all seem like they need to live in arch/x86/... somewhere rather
-than in the LSM, but maybe this isn't needed on other architectures?
-This seems to be very arch and compiler specific...
+soon we'd hopefully have
 
--Kees
+	security.ima at uid=100000
 
--- 
-Kees Cook
-Pixel Security
+and eventually trusted.blarb at foo=bar
+
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
