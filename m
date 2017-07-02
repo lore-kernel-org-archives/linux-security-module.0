@@ -1,10 +1,9 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Sun,  2 Jul 2017 17:41:47 +0300
-Subject: [PATCH v3 05/28] crypto: mediatek: use -EIOCBQUEUED for backlog
-	indication
+Date: Sun,  2 Jul 2017 17:41:49 +0300
+Subject: [PATCH v3 07/28] crypto: qce: use -EIOCBQUEUED for backlog indication
 In-Reply-To: <1499006535-19760-1-git-send-email-gilad@benyossef.com>
 References: <1499006535-19760-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1499006535-19760-6-git-send-email-gilad@benyossef.com>
+Message-ID: <1499006535-19760-8-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -17,36 +16,22 @@ Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 This patch should be squashed with the first patch in the series
 when applied.
 
- drivers/crypto/mediatek/mtk-aes.c | 2 +-
- drivers/crypto/mediatek/mtk-sha.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/qce/sha.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/mediatek/mtk-aes.c b/drivers/crypto/mediatek/mtk-aes.c
-index 9e845e8..5254e13 100644
---- a/drivers/crypto/mediatek/mtk-aes.c
-+++ b/drivers/crypto/mediatek/mtk-aes.c
-@@ -1012,7 +1012,7 @@ static int mtk_aes_gcm_setkey(struct crypto_aead *aead, const u8 *key,
- 				   AES_BLOCK_SIZE, data->iv);
+diff --git a/drivers/crypto/qce/sha.c b/drivers/crypto/qce/sha.c
+index 47e114a..a21d2a1c 100644
+--- a/drivers/crypto/qce/sha.c
++++ b/drivers/crypto/qce/sha.c
+@@ -421,7 +421,7 @@ static int qce_ahash_hmac_setkey(struct crypto_ahash *tfm, const u8 *key,
+ 	ahash_request_set_crypt(req, &sg, ctx->authkey, keylen);
  
- 	err = crypto_skcipher_encrypt(&data->req);
--	if (err == -EINPROGRESS || err == -EBUSY) {
-+	if (err == -EINPROGRESS || err == -EIOCBQUEUED) {
- 		err = wait_for_completion_interruptible(
- 			&data->result.completion);
- 		if (!err)
-diff --git a/drivers/crypto/mediatek/mtk-sha.c b/drivers/crypto/mediatek/mtk-sha.c
-index 5f4f845..5c75b50 100644
---- a/drivers/crypto/mediatek/mtk-sha.c
-+++ b/drivers/crypto/mediatek/mtk-sha.c
-@@ -782,7 +782,7 @@ static int mtk_sha_finup(struct ahash_request *req)
- 	ctx->flags |= SHA_FLAGS_FINUP;
- 
- 	err1 = mtk_sha_update(req);
--	if (err1 == -EINPROGRESS || err1 == -EBUSY)
-+	if (err1 == -EINPROGRESS || err1 == -EIOCBQUEUED)
- 		return err1;
- 	/*
- 	 * final() has to be always called to cleanup resources
+ 	ret = crypto_ahash_digest(req);
+-	if (ret == -EINPROGRESS || ret == -EBUSY) {
++	if (ret == -EINPROGRESS || ret == -EIOCBQUEUED) {
+ 		ret = wait_for_completion_interruptible(&result.completion);
+ 		if (!ret)
+ 			ret = result.error;
 -- 
 2.1.4
 
