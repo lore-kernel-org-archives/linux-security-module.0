@@ -1,90 +1,170 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Sun,  2 Jul 2017 17:42:09 +0300
-Subject: [PATCH v3 27/28] crypto: mediatek: move to generic async completion
+Date: Sun,  2 Jul 2017 17:42:05 +0300
+Subject: [PATCH v3 23/28] ima: move to generic async completion
 In-Reply-To: <1499006535-19760-1-git-send-email-gilad@benyossef.com>
 References: <1499006535-19760-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1499006535-19760-28-git-send-email-gilad@benyossef.com>
+Message-ID: <1499006535-19760-24-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The mediatek driver starts several async crypto ops and waits for their
-completions. Move it over to generic code doing the same.
+ima starts several async crypto ops and  waits for their completions.
+Move it over to generic code doing the same.
 
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- drivers/crypto/mediatek/mtk-aes.c | 31 +++++--------------------------
- 1 file changed, 5 insertions(+), 26 deletions(-)
+ security/integrity/ima/ima_crypto.c | 56 +++++++++++--------------------------
+ 1 file changed, 17 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/crypto/mediatek/mtk-aes.c b/drivers/crypto/mediatek/mtk-aes.c
-index 5254e13..e2c7c95 100644
---- a/drivers/crypto/mediatek/mtk-aes.c
-+++ b/drivers/crypto/mediatek/mtk-aes.c
-@@ -137,11 +137,6 @@ struct mtk_aes_gcm_ctx {
- 	struct crypto_skcipher *ctr;
- };
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 226dd88..0e4db1fe 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -27,11 +27,6 @@
  
--struct mtk_aes_gcm_setkey_result {
--	int err;
+ #include "ima.h"
+ 
+-struct ahash_completion {
 -	struct completion completion;
+-	int err;
 -};
 -
- struct mtk_aes_drv {
- 	struct list_head dev_list;
- 	/* Device list lock */
-@@ -936,17 +931,6 @@ static int mtk_aes_gcm_crypt(struct aead_request *req, u64 mode)
- 				    &req->base);
+ /* minimum file size for ahash use */
+ static unsigned long ima_ahash_minsize;
+ module_param_named(ahash_minsize, ima_ahash_minsize, ulong, 0644);
+@@ -196,30 +191,13 @@ static void ima_free_atfm(struct crypto_ahash *tfm)
+ 		crypto_free_ahash(tfm);
  }
  
--static void mtk_gcm_setkey_done(struct crypto_async_request *req, int err)
--{
--	struct mtk_aes_gcm_setkey_result *result = req->data;
--
+-static void ahash_complete(struct crypto_async_request *req, int err)
++static inline int ahash_wait(int err, struct crypto_wait *wait)
+ {
+-	struct ahash_completion *res = req->data;
+ 
 -	if (err == -EINPROGRESS)
 -		return;
--
--	result->err = err;
--	complete(&result->completion);
+-	res->err = err;
+-	complete(&res->completion);
 -}
--
- /*
-  * Because of the hardware limitation, we need to pre-calculate key(H)
-  * for the GHASH operation. The result of the encryption operation
-@@ -962,7 +946,7 @@ static int mtk_aes_gcm_setkey(struct crypto_aead *aead, const u8 *key,
- 		u32 hash[4];
- 		u8 iv[8];
++	err = crypto_wait_req(err, wait);
  
--		struct mtk_aes_gcm_setkey_result result;
-+		struct crypto_wait wait;
+-static int ahash_wait(int err, struct ahash_completion *res)
+-{
+-	switch (err) {
+-	case 0:
+-		break;
+-	case -EINPROGRESS:
+-	case -EIOCBQUEUED:
+-		wait_for_completion(&res->completion);
+-		reinit_completion(&res->completion);
+-		err = res->err;
+-		/* fall through */
+-	default:
++	if (err)
+ 		pr_crit_ratelimited("ahash calculation failed: err: %d\n", err);
+-	}
  
- 		struct scatterlist sg[1];
- 		struct skcipher_request req;
-@@ -1002,22 +986,17 @@ static int mtk_aes_gcm_setkey(struct crypto_aead *aead, const u8 *key,
- 	if (!data)
+ 	return err;
+ }
+@@ -233,7 +211,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
+ 	struct ahash_request *req;
+ 	struct scatterlist sg[1];
+-	struct ahash_completion res;
++	struct crypto_wait wait;
+ 	size_t rbuf_size[2];
+ 
+ 	hash->length = crypto_ahash_digestsize(tfm);
+@@ -242,12 +220,12 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 	if (!req)
  		return -ENOMEM;
  
--	init_completion(&data->result.completion);
-+	crypto_init_wait(&data->wait);
- 	sg_init_one(data->sg, &data->hash, AES_BLOCK_SIZE);
- 	skcipher_request_set_tfm(&data->req, ctr);
- 	skcipher_request_set_callback(&data->req, CRYPTO_TFM_REQ_MAY_SLEEP |
- 				      CRYPTO_TFM_REQ_MAY_BACKLOG,
--				      mtk_gcm_setkey_done, &data->result);
-+				      crypto_req_done, &data->wait);
- 	skcipher_request_set_crypt(&data->req, data->sg, data->sg,
- 				   AES_BLOCK_SIZE, data->iv);
+-	init_completion(&res.completion);
++	crypto_init_wait(&wait);
+ 	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
+ 				   CRYPTO_TFM_REQ_MAY_SLEEP,
+-				   ahash_complete, &res);
++				   crypto_req_done, &wait);
  
--	err = crypto_skcipher_encrypt(&data->req);
--	if (err == -EINPROGRESS || err == -EIOCBQUEUED) {
--		err = wait_for_completion_interruptible(
--			&data->result.completion);
--		if (!err)
--			err = data->result.err;
--	}
-+	err = crypto_wait_req(crypto_skcipher_encrypt(&data->req),
-+			      &data->wait);
- 	if (err)
+-	rc = ahash_wait(crypto_ahash_init(req), &res);
++	rc = ahash_wait(crypto_ahash_init(req), &wait);
+ 	if (rc)
+ 		goto out1;
+ 
+@@ -288,7 +266,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 			 * read/request, wait for the completion of the
+ 			 * previous ahash_update() request.
+ 			 */
+-			rc = ahash_wait(ahash_rc, &res);
++			rc = ahash_wait(ahash_rc, &wait);
+ 			if (rc)
+ 				goto out3;
+ 		}
+@@ -304,7 +282,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 			 * read/request, wait for the completion of the
+ 			 * previous ahash_update() request.
+ 			 */
+-			rc = ahash_wait(ahash_rc, &res);
++			rc = ahash_wait(ahash_rc, &wait);
+ 			if (rc)
+ 				goto out3;
+ 		}
+@@ -318,7 +296,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 			active = !active; /* swap buffers, if we use two */
+ 	}
+ 	/* wait for the last update request to complete */
+-	rc = ahash_wait(ahash_rc, &res);
++	rc = ahash_wait(ahash_rc, &wait);
+ out3:
+ 	if (read)
+ 		file->f_mode &= ~FMODE_READ;
+@@ -327,7 +305,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ out2:
+ 	if (!rc) {
+ 		ahash_request_set_crypt(req, NULL, hash->digest, 0);
+-		rc = ahash_wait(crypto_ahash_final(req), &res);
++		rc = ahash_wait(crypto_ahash_final(req), &wait);
+ 	}
+ out1:
+ 	ahash_request_free(req);
+@@ -527,7 +505,7 @@ static int calc_buffer_ahash_atfm(const void *buf, loff_t len,
+ {
+ 	struct ahash_request *req;
+ 	struct scatterlist sg;
+-	struct ahash_completion res;
++	struct crypto_wait wait;
+ 	int rc, ahash_rc = 0;
+ 
+ 	hash->length = crypto_ahash_digestsize(tfm);
+@@ -536,12 +514,12 @@ static int calc_buffer_ahash_atfm(const void *buf, loff_t len,
+ 	if (!req)
+ 		return -ENOMEM;
+ 
+-	init_completion(&res.completion);
++	crypto_init_wait(&wait);
+ 	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
+ 				   CRYPTO_TFM_REQ_MAY_SLEEP,
+-				   ahash_complete, &res);
++				   crypto_req_done, &wait);
+ 
+-	rc = ahash_wait(crypto_ahash_init(req), &res);
++	rc = ahash_wait(crypto_ahash_init(req), &wait);
+ 	if (rc)
  		goto out;
  
+@@ -551,10 +529,10 @@ static int calc_buffer_ahash_atfm(const void *buf, loff_t len,
+ 	ahash_rc = crypto_ahash_update(req);
+ 
+ 	/* wait for the update request to complete */
+-	rc = ahash_wait(ahash_rc, &res);
++	rc = ahash_wait(ahash_rc, &wait);
+ 	if (!rc) {
+ 		ahash_request_set_crypt(req, NULL, hash->digest, 0);
+-		rc = ahash_wait(crypto_ahash_final(req), &res);
++		rc = ahash_wait(crypto_ahash_final(req), &wait);
+ 	}
+ out:
+ 	ahash_request_free(req);
 -- 
 2.1.4
 
