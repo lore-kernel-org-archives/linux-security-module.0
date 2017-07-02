@@ -1,9 +1,9 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Sun,  2 Jul 2017 17:41:48 +0300
-Subject: [PATCH v3 06/28] crypto: omap: use -EIOCBQUEUED for backlog indication
+Date: Sun,  2 Jul 2017 17:41:51 +0300
+Subject: [PATCH v3 09/28] dm: verity: use -EIOCBQUEUED for backlog indication
 In-Reply-To: <1499006535-19760-1-git-send-email-gilad@benyossef.com>
 References: <1499006535-19760-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1499006535-19760-7-git-send-email-gilad@benyossef.com>
+Message-ID: <1499006535-19760-10-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -16,22 +16,22 @@ Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 This patch should be squashed with the first patch in the series
 when applied.
 
- drivers/crypto/omap-sham.c | 2 +-
+ drivers/md/dm-verity-target.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-index 9ad9d39..dfac821 100644
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -1279,7 +1279,7 @@ static int omap_sham_finup(struct ahash_request *req)
- 	ctx->flags |= BIT(FLAGS_FINUP);
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index b46705e..4fe7d18 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -116,7 +116,7 @@ static inline int verity_complete_op(struct verity_result *res, int ret)
+ 		break;
  
- 	err1 = omap_sham_update(req);
--	if (err1 == -EINPROGRESS || err1 == -EBUSY)
-+	if (err1 == -EINPROGRESS || err1 == -EIOCBQUEUED)
- 		return err1;
- 	/*
- 	 * final() has to be always called to cleanup resources
+ 	case -EINPROGRESS:
+-	case -EBUSY:
++	case -EIOCBQUEUED:
+ 		ret = wait_for_completion_interruptible(&res->completion);
+ 		if (!ret)
+ 			ret = res->err;
 -- 
 2.1.4
 
