@@ -1,68 +1,77 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 3 Jul 2017 16:18:40 +0300
-Subject: [GIT PULL] tpmdd fixes for 4.13
-Message-ID: <20170703131840.ynsio3amf6fcg2ti@linux.intel.com>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Mon, 3 Jul 2017 16:23:18 +0300
+Subject: [PATCH v3 01/28] crypto: change backlog return code to
+	-EIOCBQUEUED
+In-Reply-To: <20170703123515.GC30067@gondor.apana.org.au>
+References: <1499006535-19760-1-git-send-email-gilad@benyossef.com>
+	<1499006535-19760-2-git-send-email-gilad@benyossef.com>
+	<20170703123515.GC30067@gondor.apana.org.au>
+Message-ID: <CAOtvUMdoMfrpZPuRfD_cQo4=FDp5Vn4uv51Vzc-0Gitmvr2V6g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi James,
+On Mon, Jul 3, 2017 at 3:35 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Sun, Jul 02, 2017 at 05:41:43PM +0300, Gilad Ben-Yossef wrote:
+>> The crypto API was using the -EBUSY return value to indicate
+>> both a hard failure to submit a crypto operation into a
+>> transformation provider when the latter was busy and the backlog
+>> mechanism was not enabled as well as a notification that the operation
+>> was queued into the backlog when the backlog mechanism was enabled.
+>>
+>> Having the same return code indicate two very different conditions
+>> depending on a flag is both error prone and requires extra runtime
+>> check like the following to discern between the cases:
+>>
+>>       if (err == -EINPROGRESS ||
+>>           (err == -EBUSY && (ahash_request_flags(req) &
+>>                              CRYPTO_TFM_REQ_MAY_BACKLOG)))
+>>
+>> This patch changes the return code used to indicate a crypto op
+>> was queued in the backlog to -EIOCBQUEUED, thus resolving both
+>> issues.
+>>
+>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+> So you're changing the success case from EBUSY to EIOCBQUEUED.
+> This results in a lot of churn as you have to change every single
+> driver and caller.
+>
+> How about changing the error case to use something other than
+> EBUSY instead?
 
-these are remaining fixes for 4.13 release. Will be the last PR for the
-release unless major regressions show up.
+That was indeed my first thought - I wanted to change EBUSY to EAGAIN.
+It might even be a more descriptive error message since the failure is
+transient.
 
-/Jarkko
+What stopped me was that I saw the algif interface passes this EBUSY value
+to user space. I don't know of any software that depends on this value but
+I'm really averse to changing user space API.
 
-The following changes since commit c4758fa59285fe4dbfeab4364a6957936d040fbf:
+Of course, we can just plant a (ret != AGAIN : ? EBUSY) in the algif interface
+return to user space code path but that felt like a kludge to me.
 
-  apparmor: put back designators in struct initialisers (2017-06-28 15:50:43 +1000)
+And it doesn't really save any churn, I think - I'd still have to
+visit all the places that
+use the flags value to distinguish between the two EBUSY use cases and  I need
+to visit most places that check for EBUSY as backlog indication because I'm
+replacing the check with the generic replacement, so it doesn't look
+like in the end
+it will be a smaller change.
 
-are available in the git repository at:
+Having said that, if you prefer me to replace the error case I'd
+happily do that.
 
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20170703
+Thanks,
+Gilad
 
-for you to fetch changes up to 65bbcc19ab70d534dc40d0d3626cd986993203a5:
 
-  tpm: do not suspend/resume if power stays on (2017-07-03 16:10:15 +0300)
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
-----------------------------------------------------------------
-tpmdd fixes for Linux 4.13
-
-----------------------------------------------------------------
-Azhar Shaikh (1):
-      tpm: Enable CLKRUN protocol for Braswell systems
-
-Colin Ian King (1):
-      tpm_tis: make ilb_base_addr static
-
-Enric Balletbo i Serra (1):
-      tpm: do not suspend/resume if power stays on
-
-Jarkko Sakkinen (2):
-      tpm: fix a kernel memory leak in tpm-sysfs.c
-      tpm: consolidate the TPM startup code
-
-Josh Zimmerman (2):
-      Add "shutdown" to "struct class".
-      tpm: Issue a TPM2_Shutdown for TPM2 devices.
-
-Manuel Lauss (1):
-      tpm/tpm_crb: fix priv->cmd_size initialisation
-
-Roberto Sassu (2):
-      tpm: use tpm_buf functions in tpm2_pcr_read()
-      tpm: use tpm2_pcr_read() in tpm2_do_selftest()
-
- drivers/base/core.c              |   6 +-
- drivers/char/tpm/tpm-chip.c      |  34 +++++++++++
- drivers/char/tpm/tpm-interface.c |  70 ++++++++++++++--------
- drivers/char/tpm/tpm-sysfs.c     |   6 +-
- drivers/char/tpm/tpm.h           |  11 ++--
- drivers/char/tpm/tpm2-cmd.c      | 121 ++++++++++-----------------------------
- drivers/char/tpm/tpm_crb.c       |   5 +-
- drivers/char/tpm/tpm_of.c        |   3 +
- drivers/char/tpm/tpm_tis.c       | 113 ++++++++++++++++++++++++++++++++++++
- include/linux/device.h           |   2 +
- 10 files changed, 247 insertions(+), 124 deletions(-)
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
