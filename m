@@ -1,88 +1,151 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 4 Jul 2017 12:12:34 +0200
-Subject: [PATCH 01/11] S.A.R.A. Documentation
-In-Reply-To: <CAGXu5jLHps6z7nnwHwDv7kW9b21b4hPD_XmgKY1OjfNa0H-dKg@mail.gmail.com>
-References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<1497286620-15027-2-git-send-email-s.mesoraca16@gmail.com>
-	<CAGXu5jLHps6z7nnwHwDv7kW9b21b4hPD_XmgKY1OjfNa0H-dKg@mail.gmail.com>
-Message-ID: <CAJHCu1K4g2==1oVosOHQeL251ct42tdo3MBUO84riYBBtQ8=oA@mail.gmail.com>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Tue, 04 Jul 2017 23:22:55 -0300
+Subject: [PATCH v2 6/6] ima: Support module-style appended signatures for
+	appraisal
+In-Reply-To: <1498095237.5328.44.camel@linux.vnet.ibm.com>
+References: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
+	<1496886555-10082-7-git-send-email-bauerman@linux.vnet.ibm.com>
+	<1497443972.4287.38.camel@linux.vnet.ibm.com>
+	<8760fpck0x.fsf@linux.vnet.ibm.com>
+	<1498095237.5328.44.camel@linux.vnet.ibm.com>
+Message-ID: <87fuebei68.fsf@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-06-28 0:51 GMT+02:00 Kees Cook <keescook@chromium.org>:
-> On Mon, Jun 12, 2017 at 9:56 AM, Salvatore Mesoraca
-> <s.mesoraca16@gmail.com> wrote:
->> Adding documentation for S.A.R.A. LSM.
->>
->> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
->> ---
->>  Documentation/admin-guide/kernel-parameters.txt |  40 +++++
->>  Documentation/security/00-INDEX                 |   2 +
->>  Documentation/security/SARA.rst                 | 192 ++++++++++++++++++++++++
->>  3 files changed, 234 insertions(+)
->>  create mode 100644 Documentation/security/SARA.rst
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 0f5c3b4..f3ee12d 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -3702,6 +3702,46 @@
->>                         1 -- enable.
->>                         Default value is set via kernel config option.
->>
->> +       sara=           [SARA] Disable or enable S.A.R.A. at boot time.
->> +                       If disabled this way S.A.R.A. can't be enabled
->> +                       again.
->> +                       Format: { "0" | "1" }
->> +                       See security/sara/Kconfig help text
->> +                       0 -- disable.
->> +                       1 -- enable.
->> +                       Default value is set via kernel config option.
->> +
->> +       sara_usb_filtering= [SARA]
->> +                       Disable or enable S.A.R.A. USB Filtering at boot
->> +                       time.
->> +                       Format: { "0" | "1" }
->> +                       See security/sara/Kconfig help text
->> +                       0 -- disable.
->> +                       1 -- enable.
->> +                       Default value is 1.
->> +
->> +       sara_usb_filtering_default= [SARA]
->> +                       Set S.A.R.A. USB Filtering default action.
->> +                       Format: { "a" | "d" }
->> +                       See security/sara/Kconfig help text
->> +                       a -- allow.
->> +                       d -- deny.
->> +                       Default value is set via kernel config option.
->> +
->> +       sara_wxprot=    [SARA] Disable or enable S.A.R.A. WX Protection
->> +                       at boot time.
->> +                       Format: { "0" | "1" }
->> +                       See security/sara/Kconfig help text
->> +                       0 -- disable.
->> +                       1 -- enable.
->> +                       Default value is 1.
->> +
->> +       sara_wxprot_default_flags= [SARA]
->> +                       Set S.A.R.A. WX Protection default flags.
->> +                       Format: <integer>
->> +                       See S.A.R.A. documentation.
->> +                       Default value is set via kernel config option.
->> +
->
-> As an organizational note, I would suggest making these all regular
-> "module parameters", which would let them be automatically namespaced
-> under "sara". For example "sara.enabled", "sara.wxprot", etc. For
-> example, this is how LoadPin does it for "loadpin.enabled":
->
-> /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
-> module_param(enabled, int, 0);
-> MODULE_PARM_DESC(enabled, "Pin module/firmware loading (default: true)");
 
-I apologize to be so late to answer you.
-I completely missed this email.
-I'll follow your suggestion in v3, thank you.
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+
+> On Wed, 2017-06-21 at 14:45 -0300, Thiago Jung Bauermann wrote:
+>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> > On Wed, 2017-06-07 at 22:49 -0300, Thiago Jung Bauermann wrote:
+>> >> @@ -267,11 +276,18 @@ int ima_appraise_measurement(enum ima_hooks func,
+>> >>  		status = INTEGRITY_PASS;
+>> >>  		break;
+>> >>  	case EVM_IMA_XATTR_DIGSIG:
+>> >> +	case IMA_MODSIG:
+>> >>  		iint->flags |= IMA_DIGSIG;
+>> >> -		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+>> >> -					     (const char *)xattr_value, rc,
+>> >> -					     iint->ima_hash->digest,
+>> >> -					     iint->ima_hash->length);
+>> >> +
+>> >> +		if (xattr_value->type == EVM_IMA_XATTR_DIGSIG)
+>> >> +			rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+>> >> +						     (const char *)xattr_value,
+>> >> +						     rc, iint->ima_hash->digest,
+>> >> +						     iint->ima_hash->length);
+>> >> +		else
+>> >> +			rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA,
+>> >> +					       xattr_value);
+>> >> +
+>> >
+>> > Perhaps allowing IMA_MODSIG to flow into EVM_IMA_XATTR_DIGSIG on
+>> > failure, would help restore process_measurements() to the way it was.
+>> > Further explanation below.
+>> 
+>> It's not possible to simply flow into EVM_IMA_XATTR_DIGSIG on failure
+>> because after calling ima_read_xattr we need to run again all the logic
+>> before the switch statement. Instead, I'm currently testing the
+>> following change for v3, what do you think?
+>
+> I don't think we can assume that the same algorithm will be used for
+> signing the kernel image. Different entities would be signing the
+> kernel image with different requirements.
+>
+> Suppose for example a stock distro image comes signed using one
+> algorithm (appended signature), but the same kernel image is locally
+> signed using a different algorithm (xattr). Signature verification is
+> dependent on either the distro or local public key being loaded onto
+> the IMA keyring.
+
+This example is good, but it raises one question: should the xattr
+signature cover the entire contents of the stock distro image (i.e.,
+also cover the appended signature), or should it ignore the appended
+signature and thus cover the same contents that the appended signature
+covers?
+
+If the former, then we can't reuse the iint->ima_hash that was collected
+when trying to verify the appended signature because it doesn't cover
+the appended signature itself and won't match the hash expected by the
+xattr signature.
+
+If the latter, then evmctl ima_sign needs to be modified to check
+whether there's an appended signature in the given file and ignore it
+when calculating the xattr signature.
+
+Which is better?
+
+>> >> @@ -226,30 +282,23 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>> >>  		goto out_digsig;
+>> >>  	}
+>> >> 
+>> >> -	template_desc = ima_template_desc_current();
+>> >> -	if ((action & IMA_APPRAISE_SUBMASK) ||
+>> >> -		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
+>> >> -		/* read 'security.ima' */
+>> >> -		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
+>> >> -
+>> >> -	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+>> >> -
+>> >> -	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+>> >> -	if (rc != 0) {
+>> >> -		if (file->f_flags & O_DIRECT)
+>> >> -			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
+>> >> -		goto out_digsig;
+>> >> -	}
+>> >> -
+>> >
+>> > There are four stages: collect measurement, store measurement,
+>> > appraise measurement and audit measurement. "Collect" needs to be
+>> > done if any one of the other stages is needed.
+>> >
+>> >>  	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+>> >>  		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+>> >> 
+>> >> +	if (iint->flags & IMA_MODSIG_ALLOWED)
+>> >> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
+>> >> +					  iint, &xattr_value, &xattr_len,
+>> >> +					  pathname, true);
+>> >> +	if (!xattr_len)
+>> >> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
+>> >> +					  iint, &xattr_value, &xattr_len,
+>> >> +					  pathname, false);
+>> >
+>> > I would rather see "collect" extended to support an appended signature
+>> > rather than trying to combine "collect" and "appraise" together.
+>> 
+>> I'm not sure I understand what you mean by "extend collect to support an
+>> appended signature", but the fundamental problem is that we don't know
+>> whether we need to fallback to the xattr sig until the appraise step
+>> because that's when we verify the signature, and by then the collect and
+>> store steps were already completed and would need to be done again if
+>> the hash algorithm in the xattr sig is different.
+>
+> The "appraise" stage could be moved before the "store" stage, like you
+> have. (This should be a separate patch explaining the need for moving
+> it.) Based on an argument to ima_collect_measurement() have it
+> "collect" either the appended signature or the xattr. Maybe something
+> like this:
+>
+> loop [ appended signature, xattr ] { <== list based on policy flags
+>   collect_measurement()
+>   if failure
+>     continue
+>   appraise_measurement()
+>   if success
+>     break
+> }
+>
+> store_measurement()
+
+Ok, the above is what v2 already does, so the only change I made was to
+rename the function from measure_and_appraise to collect_and_appraise to
+match the IMA jargon.
+
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
