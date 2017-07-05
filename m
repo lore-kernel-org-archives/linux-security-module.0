@@ -1,158 +1,90 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 05 Jul 2017 08:13:01 -0400
-Subject: [PATCH v2 6/6] ima: Support module-style appended signatures
-	for appraisal
-In-Reply-To: <87fuebei68.fsf@linux.vnet.ibm.com>
-References: <1496886555-10082-1-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1496886555-10082-7-git-send-email-bauerman@linux.vnet.ibm.com>
-	<1497443972.4287.38.camel@linux.vnet.ibm.com>
-	<8760fpck0x.fsf@linux.vnet.ibm.com>
-	<1498095237.5328.44.camel@linux.vnet.ibm.com>
-	<87fuebei68.fsf@linux.vnet.ibm.com>
-Message-ID: <1499256781.3059.41.camel@linux.vnet.ibm.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 5 Jul 2017 16:46:25 +0300
+Subject: [PATCH v9 0/3]  mm: security: ro protection for dynamic data
+Message-ID: <20170705134628.3803-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-07-04 at 23:22 -0300, Thiago Jung Bauermann wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
-> > On Wed, 2017-06-21 at 14:45 -0300, Thiago Jung Bauermann wrote:
-> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> >> > On Wed, 2017-06-07 at 22:49 -0300, Thiago Jung Bauermann wrote:
-> >> >> @@ -267,11 +276,18 @@ int ima_appraise_measurement(enum ima_hooks func,
-> >> >>  		status = INTEGRITY_PASS;
-> >> >>  		break;
-> >> >>  	case EVM_IMA_XATTR_DIGSIG:
-> >> >> +	case IMA_MODSIG:
-> >> >>  		iint->flags |= IMA_DIGSIG;
-> >> >> -		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
-> >> >> -					     (const char *)xattr_value, rc,
-> >> >> -					     iint->ima_hash->digest,
-> >> >> -					     iint->ima_hash->length);
-> >> >> +
-> >> >> +		if (xattr_value->type == EVM_IMA_XATTR_DIGSIG)
-> >> >> +			rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
-> >> >> +						     (const char *)xattr_value,
-> >> >> +						     rc, iint->ima_hash->digest,
-> >> >> +						     iint->ima_hash->length);
-> >> >> +		else
-> >> >> +			rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA,
-> >> >> +					       xattr_value);
-> >> >> +
-> >> >
-> >> > Perhaps allowing IMA_MODSIG to flow into EVM_IMA_XATTR_DIGSIG on
-> >> > failure, would help restore process_measurements() to the way it was.
-> >> > Further explanation below.
-> >> 
-> >> It's not possible to simply flow into EVM_IMA_XATTR_DIGSIG on failure
-> >> because after calling ima_read_xattr we need to run again all the logic
-> >> before the switch statement. Instead, I'm currently testing the
-> >> following change for v3, what do you think?
-> >
-> > I don't think we can assume that the same algorithm will be used for
-> > signing the kernel image. Different entities would be signing the
-> > kernel image with different requirements.
-> >
-> > Suppose for example a stock distro image comes signed using one
-> > algorithm (appended signature), but the same kernel image is locally
-> > signed using a different algorithm (xattr). Signature verification is
-> > dependent on either the distro or local public key being loaded onto
-> > the IMA keyring.
-> 
-> This example is good, but it raises one question: should the xattr
-> signature cover the entire contents of the stock distro image (i.e.,
-> also cover the appended signature), or should it ignore the appended
-> signature and thus cover the same contents that the appended signature
-> covers?
-> 
-> If the former, then we can't reuse the iint->ima_hash that was collected
-> when trying to verify the appended signature because it doesn't cover
-> the appended signature itself and won't match the hash expected by the
-> xattr signature.
-> 
-> If the latter, then evmctl ima_sign needs to be modified to check
-> whether there's an appended signature in the given file and ignore it
-> when calculating the xattr signature.
-> 
-> Which is better?
+Hi,
+please consider this patch-set for inclusion.
 
-I realize that having the same file hash for both the appended
-signature and extended attribute would make things a lot easier, but
-security.ima is a signature of the file as written to disk, meaning it
-would include any appended signature
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-> 
-> >> >> @@ -226,30 +282,23 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
-> >> >>  		goto out_digsig;
-> >> >>  	}
-> >> >> 
-> >> >> -	template_desc = ima_template_desc_current();
-> >> >> -	if ((action & IMA_APPRAISE_SUBMASK) ||
-> >> >> -		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0)
-> >> >> -		/* read 'security.ima' */
-> >> >> -		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
-> >> >> -
-> >> >> -	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
-> >> >> -
-> >> >> -	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
-> >> >> -	if (rc != 0) {
-> >> >> -		if (file->f_flags & O_DIRECT)
-> >> >> -			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
-> >> >> -		goto out_digsig;
-> >> >> -	}
-> >> >> -
-> >> >
-> >> > There are four stages: collect measurement, store measurement,
-> >> > appraise measurement and audit measurement. "Collect" needs to be
-> >> > done if any one of the other stages is needed.
-> >> >
-> >> >>  	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
-> >> >>  		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
-> >> >> 
-> >> >> +	if (iint->flags & IMA_MODSIG_ALLOWED)
-> >> >> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
-> >> >> +					  iint, &xattr_value, &xattr_len,
-> >> >> +					  pathname, true);
-> >> >> +	if (!xattr_len)
-> >> >> +		rc = measure_and_appraise(file, buf, size, func, opened, action,
-> >> >> +					  iint, &xattr_value, &xattr_len,
-> >> >> +					  pathname, false);
-> >> >
-> >> > I would rather see "collect" extended to support an appended signature
-> >> > rather than trying to combine "collect" and "appraise" together.
-> >> 
-> >> I'm not sure I understand what you mean by "extend collect to support an
-> >> appended signature", but the fundamental problem is that we don't know
-> >> whether we need to fallback to the xattr sig until the appraise step
-> >> because that's when we verify the signature, and by then the collect and
-> >> store steps were already completed and would need to be done again if
-> >> the hash algorithm in the xattr sig is different.
-> >
-> > The "appraise" stage could be moved before the "store" stage, like you
-> > have. (This should be a separate patch explaining the need for moving
-> > it.) Based on an argument to ima_collect_measurement() have it
-> > "collect" either the appended signature or the xattr. Maybe something
-> > like this:
-> >
-> > loop [ appended signature, xattr ] { <== list based on policy flags
-> >   collect_measurement()
-> >   if failure
-> >     continue
-> >   appraise_measurement()
-> >   if success
-> >     break
-> > }
-> >
-> > store_measurement()
-> 
-> Ok, the above is what v2 already does, so the only change I made was to
-> rename the function from measure_and_appraise to collect_and_appraise to
-> match the IMA jargon.
+The memory is managed in pools: when a memory pool is turned into R/O,
+all the memory that is part of it, will become R/O.
 
-I would prefer if you did not combine the "collect" and "appraise"
-functions, but left them independent of each other.?
+A R/O pool can be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
-Mimi
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
+
+However the data might need to be released, as part of module unloading.
+To do this, the memory must first be freed, then the pool can be destroyed.
+
+An example is provided, showing how to turn into a boot-time option the
+writable state of the security hooks.
+Prior to this patch, it was a compile-time option.
+
+This is made possible, thanks to Tetsuo Handa's rework of the hooks
+structure (included in the patchset).
+
+Changes since the v8 version:
+- do not abuse devres, but manage the pools in a normal list
+- added one sysfs attribute, showing the number of chnks in each pool
+
+Question still open:
+- should it be possibile to unprotect a pool for rewrite?
+
+The only cases found for this topic are:
+- protecting the LSM header structure between creation and insertion of a
+  security module that was not built as part of the kernel
+  (but the module can protect the headers after it has loaded)
+
+- unloading SELinux from RedHat, if the system has booted, but no policy
+  has been loaded yet - this feature is going away, according to Casey.
+
+Regarding the last point, there was a comment from Christoph Hellwig,
+for which I asked for clarifications, but it's still pending:
+
+https://marc.info/?l=linux-mm&m=149863848120692&w=2
+
+
+Notes:
+
+- The patch is larg-ish, but I was not sure what criteria to use for
+  splitting it. If it helps the reviewing, please do let me know how I
+  should split it and I will comply.
+- I had to rebase Tetsuo Handa's patch because it didn't apply cleanly
+  anymore, I would appreciate an ACK to that or a revised patch, whatever 
+  comes easier.
+
+
+Igor Stoppa (2):
+  Protectable memory support
+  Make LSM Writable Hooks a command line option
+
+Tetsuo Handa (1):
+  LSM: Convert security_hook_heads into explicit array of struct
+    list_head
+
+ arch/Kconfig                   |   1 +
+ include/linux/lsm_hooks.h      | 420 ++++++++++++++++++++---------------------
+ include/linux/page-flags.h     |   2 +
+ include/linux/pmalloc.h        | 127 +++++++++++++
+ include/trace/events/mmflags.h |   1 +
+ lib/Kconfig                    |   1 +
+ mm/Makefile                    |   1 +
+ mm/pmalloc.c                   | 356 ++++++++++++++++++++++++++++++++++
+ mm/usercopy.c                  |  24 ++-
+ security/security.c            |  49 +++--
+ 10 files changed, 748 insertions(+), 234 deletions(-)
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 mm/pmalloc.c
+
+-- 
+2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
