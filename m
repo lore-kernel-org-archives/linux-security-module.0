@@ -1,37 +1,49 @@
-From: mjg59@srcf.ucam.org (Matthew Garrett)
-Date: Wed, 5 Jul 2017 18:02:15 +0100
-Subject: [PATCH v2 10/10] ima: use existing read file operation method to
-	calculate file hash
-In-Reply-To: <1499266209.3059.91.camel@linux.vnet.ibm.com>
-References: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1498069110-10009-11-git-send-email-zohar@linux.vnet.ibm.com>
-	<20170628144111.GI2359@lst.de>
-	<1499266209.3059.91.camel@linux.vnet.ibm.com>
-Message-ID: <20170705170215.GA14148@srcf.ucam.org>
+From: geert@linux-m68k.org (Geert Uytterhoeven)
+Date: Thu,  6 Jul 2017 10:56:21 +0200
+Subject: [PATCH] apparmor: Fix shadowed local variable in unpack_trans_table()
+Message-ID: <1499331381-32753-1-git-send-email-geert@linux-m68k.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jul 05, 2017 at 10:50:09AM -0400, Mimi Zohar wrote:
-> [Cc'ing linux-ima-users]
-> 
-> On Wed, 2017-06-28 at 16:41 +0200, Christoph Hellwig wrote:
-> > NAK - we'll need an explicit method for the integrity code.
-> > 
-> > And just curious - what filesystem that you care about actually
-> > implements ->read instead of ->read_iter?  We shouldn't be doing that
-> > for real file systems anymore.
-> 
-> Right, pseudo filesystems are using ->read. The existing builtin
-> measurement policies exclude a number of pseudo filesystems, but not
-> efivarfs. ?Unfortunately, we do not know what type of custom policies
-> are currently being used.
+with W=2:
 
-efi variables contain information that may influence userspace behaviour 
-and can also be modified out of band, so I think there's a reasonable 
-argument that they should be measured.
+    security/apparmor/policy_unpack.c: In function ?unpack_trans_table?:
+    security/apparmor/policy_unpack.c:469: warning: declaration of ?pos? shadows a previous local
+    security/apparmor/policy_unpack.c:451: warning: shadowed declaration is here
 
+Rename the old "pos" to "saved_pos" to fix this.
+
+Fixes: 5379a3312024a8be ("apparmor: support v7 transition format compatible with label_parse")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ security/apparmor/policy_unpack.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index c600f4dd1783252a..2d5a1a007b062a73 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -448,7 +448,7 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
+  */
+ static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
+ {
+-	void *pos = e->pos;
++	void *saved_pos = e->pos;
+ 
+ 	/* exec table is optional */
+ 	if (unpack_nameX(e, AA_STRUCT, "xtable")) {
+@@ -511,7 +511,7 @@ static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
+ 
+ fail:
+ 	aa_free_domain_entries(&profile->file.trans);
+-	e->pos = pos;
++	e->pos = saved_pos;
+ 	return 0;
+ }
+ 
 -- 
-Matthew Garrett | mjg59 at srcf.ucam.org
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
