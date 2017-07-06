@@ -1,132 +1,45 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 06 Jul 2017 14:10:33 -0400
-Subject: [RFC PATCH v1] efivarfs: define integrity_read method
-Message-ID: <1499364633.3130.11.camel@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 6 Jul 2017 14:57:25 -0400
+Subject: [GIT PULL] SELinux fixes for v4.13 (#1)
+Message-ID: <CAHC9VhS6WHrQLw6iOm-FOZ5SGTKLY8WSz_U0WDFuKOO+u-H4vg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch defines simple_read_iter_from_buffer(), replaces the
-existing efivarfs ->read method with ->read_iter method, and defines
-an ->integrity_read file operation method to read data for integrity
-hash collection.
+Hi James,
 
-(Posting separately for review, before being squashed with the others.)
+Two small patches from Daniel Jurgens to fix problems found with the
+new SELinux/IB code, please apply and send up to Linus during the
+v4.13-rcX series.
 
-Changelog v1:
-- totally re-written based on Al's comments, containing source code.
+Thanks,
+-Paul
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- fs/efivarfs/file.c | 12 +++++++-----
- fs/libfs.c         | 32 ++++++++++++++++++++++++++++++++
- include/linux/fs.h |  2 ++
- 3 files changed, 41 insertions(+), 5 deletions(-)
+The following changes since commit 6a3911837da0a90ed599fd0a9836472f5e7ddf1b:
 
-diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
-index 5f22e74bbade..17955a92a5b3 100644
---- a/fs/efivarfs/file.c
-+++ b/fs/efivarfs/file.c
-@@ -64,9 +64,10 @@ static ssize_t efivarfs_file_write(struct file *file,
- 	return bytes;
- }
- 
--static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
--		size_t count, loff_t *ppos)
-+static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
-+				       struct iov_iter *iter)
- {
-+	struct file *file = iocb->ki_filp;
- 	struct efivar_entry *var = file->private_data;
- 	unsigned long datasize = 0;
- 	u32 attributes;
-@@ -96,8 +97,8 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
- 		goto out_free;
- 
- 	memcpy(data, &attributes, sizeof(attributes));
--	size = simple_read_from_buffer(userbuf, count, ppos,
--				       data, datasize + sizeof(attributes));
-+	size = simple_read_iter_from_buffer(iocb, iter, data,
-+					    datasize + sizeof(attributes));
- out_free:
- 	kfree(data);
- 
-@@ -174,8 +175,9 @@ efivarfs_file_ioctl(struct file *file, unsigned int cmd, unsigned long p)
- 
- const struct file_operations efivarfs_file_operations = {
- 	.open	= simple_open,
--	.read	= efivarfs_file_read,
-+	.read_iter = efivarfs_file_read_iter,
- 	.write	= efivarfs_file_write,
- 	.llseek	= no_llseek,
- 	.unlocked_ioctl = efivarfs_file_ioctl,
-+	.integrity_read	= efivarfs_file_read_iter,
- };
-diff --git a/fs/libfs.c b/fs/libfs.c
-index a04395334bb1..e1b4f8695013 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -16,6 +16,7 @@
- #include <linux/exportfs.h>
- #include <linux/writeback.h>
- #include <linux/buffer_head.h> /* sync_mapping_buffers */
-+#include <linux/uio.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -676,6 +677,37 @@ ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- EXPORT_SYMBOL(simple_write_to_buffer);
- 
- /**
-+ * simple_read_iter_from_buffer - copy data from the buffer to user space
-+ * @iocb: struct containing the file, the current position and other info
-+ * @to: the user space buffer to read to
-+ * @from: the buffer to read from
-+ * @available: the size of the buffer
-+ *
-+ * The simple_read_iter_from_buffer() function reads up to @available bytes
-+ * from the current buffer into the user space buffer.
-+ *
-+ * On success, the current buffer offset is advanced by the number of bytes
-+ * read, or a negative value is returned on error.
-+ **/
-+ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
-+                                const void *from, size_t available)
-+{
-+	loff_t pos = iocb->ki_pos;
-+	size_t ret;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available)
-+		return 0;
-+	ret = copy_to_iter(from + pos, available - pos, to);
-+	if (!ret && iov_iter_count(to))
-+		return -EFAULT;
-+	iocb->ki_pos = pos + ret;
-+	return ret;
-+}
-+EXPORT_SYMBOL(simple_read_iter_from_buffer);
-+
-+/**
-  * memory_read_from_buffer - copy data from the buffer
-  * @to: the kernel space buffer to read to
-  * @count: the maximum number of bytes to read
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 36edfe84c4bf..d85d2c43afd9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3012,6 +3012,8 @@ extern void simple_release_fs(struct vfsmount **mount, int *count);
- 
- extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- 			loff_t *ppos, const void *from, size_t available);
-+extern ssize_t simple_read_iter_from_buffer(struct kiocb *iocb,
-+		struct iov_iter *to, const void *from, size_t available);
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
- 
+ selinux: enable genfscon labeling for tracefs (2017-06-20 15:53:34 -0400)
+
+are available in the git repository at:
+
+ git://git.infradead.org/users/pcmoore/selinux stable-4.13
+
+for you to fetch changes up to 074a492d7bc53902f0ed5a41c74ae008caf1822b:
+
+ IB/core: Fix static analysis warning in ib_policy_change_task
+          (2017-07-05 10:05:24 -0400)
+
+----------------------------------------------------------------
+Daniel Jurgens (2):
+     IB/core: Fix uninitialized variable use in check_qp_port_pkey_settings
+     IB/core: Fix static analysis warning in ib_policy_change_task
+
+drivers/infiniband/core/device.c   |  3 ++-
+drivers/infiniband/core/security.c | 20 ++++++++++++--------
+2 files changed, 14 insertions(+), 9 deletions(-)
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
