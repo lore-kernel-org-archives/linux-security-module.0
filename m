@@ -1,53 +1,146 @@
 From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Thu,  6 Jul 2017 19:17:52 -0300
-Subject: [PATCH v3 6/7] ima: Store measurement after appraisal
+Date: Thu,  6 Jul 2017 19:17:49 -0300
+Subject: [PATCH v3 3/7] PKCS#7: Introduce verify_pkcs7_message_sig
 In-Reply-To: <20170706221753.17380-1-bauerman@linux.vnet.ibm.com>
 References: <20170706221753.17380-1-bauerman@linux.vnet.ibm.com>
-Message-ID: <20170706221753.17380-7-bauerman@linux.vnet.ibm.com>
+Message-ID: <20170706221753.17380-4-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When module-style signatures appended at the end of files are supported for
-IMA appraisal, the code will fallback to the xattr signature if the
-appended one fails to verify.
+Add function verify_pkcs7_message_signature which takes a struct
+pkcs7_message for verification isntead of the raw bytes that
+verify_pkcs7_signature takes.
 
-The problem is that we don't know whether we need to fallback to the xattr
-signature until the appraise step, and by then the measure step was already
-completed and would need to be done again in case the template includes the
-signature.
-
-To avoid this problem, do the appraisal first so that the correct signature
-is stored by the template in the measure step.
+This will be used by IMA to verify files with module-style appended
+signatures.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ certs/system_keyring.c       | 60 ++++++++++++++++++++++++++++++++------------
+ include/linux/verification.h | 10 ++++++++
+ 2 files changed, 54 insertions(+), 16 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2aebb7984437..0b4845e7248d 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -244,12 +244,12 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
- 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b27f0c..6a8684959780 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -190,33 +190,26 @@ late_initcall(load_system_certificate_list);
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
  
--	if (action & IMA_MEASURE)
--		ima_store_measurement(iint, file, pathname,
--				      xattr_value, xattr_len, pcr);
- 	if (action & IMA_APPRAISE_SUBMASK)
- 		rc = ima_appraise_measurement(func, iint, file, pathname,
- 					      xattr_value, xattr_len, opened);
-+	if (action & IMA_MEASURE)
-+		ima_store_measurement(iint, file, pathname,
-+				      xattr_value, xattr_len, pcr);
- 	if (action & IMA_AUDIT)
- 		ima_audit_measurement(iint, pathname);
+ /**
+- * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
++ * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
+  * @data: The data to be verified (NULL if expecting internal data).
+  * @len: Size of @data.
+- * @raw_pkcs7: The PKCS#7 message that is the signature.
+- * @pkcs7_len: The size of @raw_pkcs7.
++ * @pkcs7: The PKCS#7 message that is the signature.
+  * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+  *					(void *)1UL for all trusted keys).
+  * @usage: The use to which the key is being put.
+  * @view_content: Callback to gain access to content.
+  * @ctx: Context for callback.
+  */
+-int verify_pkcs7_signature(const void *data, size_t len,
+-			   const void *raw_pkcs7, size_t pkcs7_len,
+-			   struct key *trusted_keys,
+-			   enum key_being_used_for usage,
+-			   int (*view_content)(void *ctx,
+-					       const void *data, size_t len,
+-					       size_t asn1hdrlen),
+-			   void *ctx)
++int verify_pkcs7_message_sig(const void *data, size_t len,
++			     struct pkcs7_message *pkcs7,
++			     struct key *trusted_keys,
++			     enum key_being_used_for usage,
++			     int (*view_content)(void *ctx, const void *data,
++						 size_t len, size_t asn1hdrlen),
++			     void *ctx)
+ {
+-	struct pkcs7_message *pkcs7;
+ 	int ret;
  
+-	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+-	if (IS_ERR(pkcs7))
+-		return PTR_ERR(pkcs7);
+-
+ 	/* The data should be detached - so we need to supply it. */
+ 	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
+ 		pr_err("PKCS#7 signature with non-detached data\n");
+@@ -258,6 +251,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
+ 	}
+ 
+ error:
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
++}
++
++/**
++ * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
++ * @data: The data to be verified (NULL if expecting internal data).
++ * @len: Size of @data.
++ * @raw_pkcs7: The PKCS#7 message that is the signature.
++ * @pkcs7_len: The size of @raw_pkcs7.
++ * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
++ *					(void *)1UL for all trusted keys).
++ * @usage: The use to which the key is being put.
++ * @view_content: Callback to gain access to content.
++ * @ctx: Context for callback.
++ */
++int verify_pkcs7_signature(const void *data, size_t len,
++			   const void *raw_pkcs7, size_t pkcs7_len,
++			   struct key *trusted_keys,
++			   enum key_being_used_for usage,
++			   int (*view_content)(void *ctx,
++					       const void *data, size_t len,
++					       size_t asn1hdrlen),
++			   void *ctx)
++{
++	struct pkcs7_message *pkcs7;
++	int ret;
++
++	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
++	if (IS_ERR(pkcs7))
++		return PTR_ERR(pkcs7);
++
++	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
++				       view_content, ctx);
++
+ 	pkcs7_free_message(pkcs7);
+ 	pr_devel("<==%s() = %d\n", __func__, ret);
+ 	return ret;
+diff --git a/include/linux/verification.h b/include/linux/verification.h
+index a10549a6c7cd..f04dac2728ec 100644
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+ 
+ struct key;
++struct pkcs7_message;
+ 
+ extern int verify_pkcs7_signature(const void *data, size_t len,
+ 				  const void *raw_pkcs7, size_t pkcs7_len,
+@@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
+ 						      const void *data, size_t len,
+ 						      size_t asn1hdrlen),
+ 				  void *ctx);
++extern int verify_pkcs7_message_sig(const void *data, size_t len,
++				    struct pkcs7_message *pkcs7,
++				    struct key *trusted_keys,
++				    enum key_being_used_for usage,
++				    int (*view_content)(void *ctx,
++							const void *data,
++							size_t len,
++							size_t asn1hdrlen),
++				    void *ctx);
+ 
+ #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+ extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
 -- 
 2.13.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
