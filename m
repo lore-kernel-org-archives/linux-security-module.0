@@ -1,65 +1,55 @@
-From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Thu, 6 Jul 2017 13:45:59 +0100
-Subject: [RFC PATCH] efivarfs: define integrity_read method
-In-Reply-To: <1499343241.5500.15.camel@linux.vnet.ibm.com>
-References: <1499343241.5500.15.camel@linux.vnet.ibm.com>
-Message-ID: <20170706124559.GO10672@ZenIV.linux.org.uk>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 6 Jul 2017 08:44:28 -0500
+Subject: [PATCH] apparmor: Fix shadowed local variable in
+	unpack_trans_table()
+In-Reply-To: <1499331381-32753-1-git-send-email-geert@linux-m68k.org>
+References: <1499331381-32753-1-git-send-email-geert@linux-m68k.org>
+Message-ID: <20170706134428.GA19254@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jul 06, 2017 at 08:14:01AM -0400, Mimi Zohar wrote:
-> This patch defines an ->integrity_read file operation method to read data for
-> integrity hash collection.
+Quoting Geert Uytterhoeven (geert at linux-m68k.org):
+> with W=2:
+> 
+>     security/apparmor/policy_unpack.c: In function ?unpack_trans_table?:
+>     security/apparmor/policy_unpack.c:469: warning: declaration of ?pos? shadows a previous local
+>     security/apparmor/policy_unpack.c:451: warning: shadowed declaration is here
+> 
+> Rename the old "pos" to "saved_pos" to fix this.
+> 
+> Fixes: 5379a3312024a8be ("apparmor: support v7 transition format compatible with label_parse")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> -static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
-> -		size_t count, loff_t *ppos)
-> +static ssize_t __efivarfs_file_read(struct file *file, char __user *userbuf,
-> +				    size_t count, loff_t *ppos,
-> +				    struct iov_iter *iter)
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+
+> ---
+>  security/apparmor/policy_unpack.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index c600f4dd1783252a..2d5a1a007b062a73 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -448,7 +448,7 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
+>   */
+>  static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
 >  {
->  	struct efivar_entry *var = file->private_data;
->  	unsigned long datasize = 0;
-> @@ -96,14 +98,32 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
->  		goto out_free;
+> -	void *pos = e->pos;
+> +	void *saved_pos = e->pos;
 >  
->  	memcpy(data, &attributes, sizeof(attributes));
-> -	size = simple_read_from_buffer(userbuf, count, ppos,
-> -				       data, datasize + sizeof(attributes));
-> +
-> +	if (!iter)
-> +		size = simple_read_from_buffer(userbuf, count, ppos, data,
-> +					       datasize + sizeof(attributes));
-> +	else
-> +		size = copy_to_iter(data, datasize + sizeof(attributes), iter);
-
-Egads...  This kind of kludges is too ugly to exist.  What the hell for?  If you
-want to define something that looks like ->read_iter(), bloody make it proper
-read_iter.  Really working one, that is - without this "our oh-so-special needs
-do not include file position" crap.
-
-Seriously, this kind of calling conventions alone is enough for a NAK with
-extreme prejudice.  Something like
-ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
-                                const void *from, size_t available)
-{
-        loff_t pos = iocb->ki_pos;
-        size_t ret;
-
-        if (pos < 0)
-                return -EINVAL;
-        if (pos >= available)
-                return 0;
-        ret = copy_to_iter(to, from + pos, available - pos);
-        if (!ret && iov_iter_count(to))
-                return -EFAULT;
-        iocb->ki_pos = pos + ret;
-        return ret;
-}
-EXPORT_SYMBOL(simple_read_iter_from_buffer);
-
-in fs/libfs.c and turn the efivarfs_file_read() into a real ->read_iter() by
-replacing simple_read_from_buffer to simple_read_iter_from_buffer (and adjusting
-the arguments, of course).  All there is to it.  Sheesh...
+>  	/* exec table is optional */
+>  	if (unpack_nameX(e, AA_STRUCT, "xtable")) {
+> @@ -511,7 +511,7 @@ static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
+>  
+>  fail:
+>  	aa_free_domain_entries(&profile->file.trans);
+> -	e->pos = pos;
+> +	e->pos = saved_pos;
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.7.4
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
