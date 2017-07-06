@@ -1,55 +1,44 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Thu, 6 Jul 2017 08:44:28 -0500
-Subject: [PATCH] apparmor: Fix shadowed local variable in
-	unpack_trans_table()
-In-Reply-To: <1499331381-32753-1-git-send-email-geert@linux-m68k.org>
-References: <1499331381-32753-1-git-send-email-geert@linux-m68k.org>
-Message-ID: <20170706134428.GA19254@mail.hallyn.com>
+From: jlayton@kernel.org (Jeff Layton)
+Date: Thu,  6 Jul 2017 10:54:21 -0400
+Subject: [PATCH] integrity: get rid of unneeded initializations in
+	integrity_iint_cache entries
+Message-ID: <20170706145421.13223-1-jlayton@kernel.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Geert Uytterhoeven (geert at linux-m68k.org):
-> with W=2:
-> 
->     security/apparmor/policy_unpack.c: In function ?unpack_trans_table?:
->     security/apparmor/policy_unpack.c:469: warning: declaration of ?pos? shadows a previous local
->     security/apparmor/policy_unpack.c:451: warning: shadowed declaration is here
-> 
-> Rename the old "pos" to "saved_pos" to fix this.
-> 
-> Fixes: 5379a3312024a8be ("apparmor: support v7 transition format compatible with label_parse")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Jeff Layton <jlayton@redhat.com>
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+The init_once routine memsets the whole object to 0, and then
+explicitly sets some of the fields to 0 again. Just remove the explicit
+initializations.
 
-> ---
->  security/apparmor/policy_unpack.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index c600f4dd1783252a..2d5a1a007b062a73 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -448,7 +448,7 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
->   */
->  static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
->  {
-> -	void *pos = e->pos;
-> +	void *saved_pos = e->pos;
->  
->  	/* exec table is optional */
->  	if (unpack_nameX(e, AA_STRUCT, "xtable")) {
-> @@ -511,7 +511,7 @@ static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
->  
->  fail:
->  	aa_free_domain_entries(&profile->file.trans);
-> -	e->pos = pos;
-> +	e->pos = saved_pos;
->  	return 0;
->  }
->  
-> -- 
-> 2.7.4
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ security/integrity/iint.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 6fc888ca468e..187b7cb378be 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -153,14 +153,11 @@ static void init_once(void *foo)
+ 	struct integrity_iint_cache *iint = foo;
+ 
+ 	memset(iint, 0, sizeof(*iint));
+-	iint->version = 0;
+-	iint->flags = 0UL;
+ 	iint->ima_file_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_read_status = INTEGRITY_UNKNOWN;
+ 	iint->evm_status = INTEGRITY_UNKNOWN;
+-	iint->measured_pcrs = 0;
+ }
+ 
+ static int __init integrity_iintcache_init(void)
+-- 
+2.13.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
