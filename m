@@ -1,45 +1,62 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 6 Jul 2017 14:57:25 -0400
-Subject: [GIT PULL] SELinux fixes for v4.13 (#1)
-Message-ID: <CAHC9VhS6WHrQLw6iOm-FOZ5SGTKLY8WSz_U0WDFuKOO+u-H4vg@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 06 Jul 2017 15:43:46 -0400
+Subject: [PATCH] integrity: get rid of unneeded initializations in
+	integrity_iint_cache entries
+In-Reply-To: <20170706150424.GA21489@mail.hallyn.com>
+References: <20170706145421.13223-1-jlayton@kernel.org>
+	<20170706150424.GA21489@mail.hallyn.com>
+Message-ID: <1499370226.3130.36.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi James,
+On Thu, 2017-07-06 at 10:04 -0500, Serge E. Hallyn wrote:
+> Quoting Jeff Layton (jlayton at kernel.org):
+> > From: Jeff Layton <jlayton@redhat.com>
+> > 
+> > The init_once routine memsets the whole object to 0, and then
+> > explicitly sets some of the fields to 0 again. Just remove the explicit
+> > initializations.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> 
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-Two small patches from Daniel Jurgens to fix problems found with the
-new SELinux/IB code, please apply and send up to Linus during the
-v4.13-rcX series.
+Thanks, queued.
 
-Thanks,
--Paul
+Mimi
 
----
-The following changes since commit 6a3911837da0a90ed599fd0a9836472f5e7ddf1b:
+> 
+> > ---
+> >  security/integrity/iint.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> > index 6fc888ca468e..187b7cb378be 100644
+> > --- a/security/integrity/iint.c
+> > +++ b/security/integrity/iint.c
+> > @@ -153,14 +153,11 @@ static void init_once(void *foo)
+> >  	struct integrity_iint_cache *iint = foo;
+> >  
+> >  	memset(iint, 0, sizeof(*iint));
+> > -	iint->version = 0;
+> > -	iint->flags = 0UL;
+> >  	iint->ima_file_status = INTEGRITY_UNKNOWN;
+> >  	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+> >  	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+> >  	iint->ima_read_status = INTEGRITY_UNKNOWN;
+> >  	iint->evm_status = INTEGRITY_UNKNOWN;
+> > -	iint->measured_pcrs = 0;
+> >  }
+> >  
+> >  static int __init integrity_iintcache_init(void)
+> > -- 
+> > 2.13.0
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
- selinux: enable genfscon labeling for tracefs (2017-06-20 15:53:34 -0400)
-
-are available in the git repository at:
-
- git://git.infradead.org/users/pcmoore/selinux stable-4.13
-
-for you to fetch changes up to 074a492d7bc53902f0ed5a41c74ae008caf1822b:
-
- IB/core: Fix static analysis warning in ib_policy_change_task
-          (2017-07-05 10:05:24 -0400)
-
-----------------------------------------------------------------
-Daniel Jurgens (2):
-     IB/core: Fix uninitialized variable use in check_qp_port_pkey_settings
-     IB/core: Fix static analysis warning in ib_policy_change_task
-
-drivers/infiniband/core/device.c   |  3 ++-
-drivers/infiniband/core/security.c | 20 ++++++++++++--------
-2 files changed, 14 insertions(+), 9 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
