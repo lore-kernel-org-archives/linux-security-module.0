@@ -1,48 +1,26 @@
-From: geert@linux-m68k.org (Geert Uytterhoeven)
-Date: Thu,  6 Jul 2017 10:56:21 +0200
-Subject: [PATCH] apparmor: Fix shadowed local variable in unpack_trans_table()
-Message-ID: <1499331381-32753-1-git-send-email-geert@linux-m68k.org>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 06 Jul 2017 07:55:20 -0400
+Subject: [PATCH v2 05/10] tmpfs: define integrity_read method
+In-Reply-To: <20170628143858.GD2359@lst.de>
+References: <1498069110-10009-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1498069110-10009-6-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170628143858.GD2359@lst.de>
+Message-ID: <1499342120.5500.3.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-with W=2:
+On Wed, 2017-06-28 at 16:38 +0200, Christoph Hellwig wrote:
+> On Wed, Jun 21, 2017 at 02:18:25PM -0400, Mimi Zohar wrote:
+> > Define an ->integrity_read file operation method to read data for
+> > integrity hash collection.
+> 
+> should be folded into patch 2.
 
-    security/apparmor/policy_unpack.c: In function ?unpack_trans_table?:
-    security/apparmor/policy_unpack.c:469: warning: declaration of ?pos? shadows a previous local
-    security/apparmor/policy_unpack.c:451: warning: shadowed declaration is here
+I was hoping to get some Acks/sign-off's from the individual
+filesystem maintainers before squashing them. ?The next version will
+be squashed.
 
-Rename the old "pos" to "saved_pos" to fix this.
-
-Fixes: 5379a3312024a8be ("apparmor: support v7 transition format compatible with label_parse")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- security/apparmor/policy_unpack.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index c600f4dd1783252a..2d5a1a007b062a73 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -448,7 +448,7 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
-  */
- static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
- {
--	void *pos = e->pos;
-+	void *saved_pos = e->pos;
- 
- 	/* exec table is optional */
- 	if (unpack_nameX(e, AA_STRUCT, "xtable")) {
-@@ -511,7 +511,7 @@ static bool unpack_trans_table(struct aa_ext *e, struct aa_profile *profile)
- 
- fail:
- 	aa_free_domain_entries(&profile->file.trans);
--	e->pos = pos;
-+	e->pos = saved_pos;
- 	return 0;
- }
- 
--- 
-2.7.4
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
