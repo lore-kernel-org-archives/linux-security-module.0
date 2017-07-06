@@ -1,125 +1,131 @@
-From: jglisse@redhat.com (Jerome Glisse)
-Date: Thu, 6 Jul 2017 12:27:43 -0400
-Subject: [PATCH 1/3] Protectable memory support
-In-Reply-To: <20170705134628.3803-2-igor.stoppa@huawei.com>
-References: <20170705134628.3803-1-igor.stoppa@huawei.com>
-	<20170705134628.3803-2-igor.stoppa@huawei.com>
-Message-ID: <20170706162742.GA2919@redhat.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 06 Jul 2017 14:10:33 -0400
+Subject: [RFC PATCH v1] efivarfs: define integrity_read method
+Message-ID: <1499364633.3130.11.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jul 05, 2017 at 04:46:26PM +0300, Igor Stoppa wrote:
-> The MMU available in many systems running Linux can often provide R/O
-> protection to the memory pages it handles.
-> 
-> However, the MMU-based protection works efficiently only when said pages
-> contain exclusively data that will not need further modifications.
-> 
-> Statically allocated variables can be segregated into a dedicated
-> section, but this does not sit very well with dynamically allocated ones.
-> 
-> Dynamic allocation does not provide, currently, any means for grouping
-> variables in memory pages that would contain exclusively data suitable
-> for conversion to read only access mode.
-> 
-> The allocator here provided (pmalloc - protectable memory allocator)
-> introduces the concept of pools of protectable memory.
-> 
-> A module can request a pool and then refer any allocation request to the
-> pool handler it has received.
-> 
-> Once all the chunks of memory associated to a specific pool are
-> initialized, the pool can be protected.
-> 
-> After this point, the pool can only be destroyed (it is up to the module
-> to avoid any further references to the memory from the pool, after
-> the destruction is invoked).
-> 
-> The latter case is mainly meant for releasing memory, when a module is
-> unloaded.
-> 
-> A module can have as many pools as needed, for example to support the
-> protection of data that is initialized in sufficiently distinct phases.
-> 
-> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-> ---
->  arch/Kconfig                   |   1 +
->  include/linux/page-flags.h     |   2 +
->  include/linux/pmalloc.h        | 127 +++++++++++++++
->  include/trace/events/mmflags.h |   1 +
->  lib/Kconfig                    |   1 +
->  mm/Makefile                    |   1 +
->  mm/pmalloc.c                   | 356 +++++++++++++++++++++++++++++++++++++++++
->  mm/usercopy.c                  |  24 +--
->  8 files changed, 504 insertions(+), 9 deletions(-)
->  create mode 100644 include/linux/pmalloc.h
->  create mode 100644 mm/pmalloc.c
-> 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 6c00e5b..9d16b51 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -228,6 +228,7 @@ config GENERIC_IDLE_POLL_SETUP
->  
->  # Select if arch has all set_memory_ro/rw/x/nx() functions in asm/cacheflush.h
->  config ARCH_HAS_SET_MEMORY
-> +	select GENERIC_ALLOCATOR
->  	bool
->  
->  # Select if arch init_task initializer is different to init/init_task.c
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 6b5818d..acc0723 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -81,6 +81,7 @@ enum pageflags {
->  	PG_active,
->  	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
->  	PG_slab,
-> +	PG_pmalloc,
->  	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
->  	PG_arch_1,
->  	PG_reserved,
-> @@ -274,6 +275,7 @@ PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
->  	TESTCLEARFLAG(Active, active, PF_HEAD)
->  __PAGEFLAG(Slab, slab, PF_NO_TAIL)
->  __PAGEFLAG(SlobFree, slob_free, PF_NO_TAIL)
-> +__PAGEFLAG(Pmalloc, pmalloc, PF_NO_TAIL)
->  PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
->  
->  /* Xen */
+This patch defines simple_read_iter_from_buffer(), replaces the
+existing efivarfs ->read method with ->read_iter method, and defines
+an ->integrity_read file operation method to read data for integrity
+hash collection.
 
+(Posting separately for review, before being squashed with the others.)
 
-So i don't think we want to waste a page flag on this. The struct 
-page flags field is already full AFAIK (see page-flags-layout.h)
+Changelog v1:
+- totally re-written based on Al's comments, containing source code.
 
-Moreover there is easier way to tag such page. So my understanding
-is that pmalloc() is always suppose to be in vmalloc area. From
-the look of it all you do is check that there is a valid page behind
-the vmalloc vaddr and you check for the PG_malloc flag of that page.
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ fs/efivarfs/file.c | 12 +++++++-----
+ fs/libfs.c         | 32 ++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  2 ++
+ 3 files changed, 41 insertions(+), 5 deletions(-)
 
-Why do you need to check the PG_malloc flag for the page ? Isn't the
-fact that there is a page behind the vmalloc vaddr enough ? If not
-enough wouldn't checking the pte flags of the page enough ? ie if
-the page is read only inside vmalloc than it would be for sure some
-pmalloc area.
-
-Other way to distinguish between regular vmalloc and pmalloc can be
-to carveout a region of vmalloc for pmalloc purpose. Issue is that
-it might be hard to find right size for such carveout.
-
-Yet another way is to use some of the free struct page fields ie
-when a page is allocated for vmalloc i think most of struct page
-fields are unuse (mapping, index, lru, ...). It would be better
-to use those rather than adding a page flag.
-
-
-Everything else looks good to me, thought i am unsure on how much
-useful such feature is but i am not familiar too much with security
-side of thing.
-
-
-Cheers,
-J?r?me
+diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
+index 5f22e74bbade..17955a92a5b3 100644
+--- a/fs/efivarfs/file.c
++++ b/fs/efivarfs/file.c
+@@ -64,9 +64,10 @@ static ssize_t efivarfs_file_write(struct file *file,
+ 	return bytes;
+ }
+ 
+-static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+-		size_t count, loff_t *ppos)
++static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
++				       struct iov_iter *iter)
+ {
++	struct file *file = iocb->ki_filp;
+ 	struct efivar_entry *var = file->private_data;
+ 	unsigned long datasize = 0;
+ 	u32 attributes;
+@@ -96,8 +97,8 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+ 		goto out_free;
+ 
+ 	memcpy(data, &attributes, sizeof(attributes));
+-	size = simple_read_from_buffer(userbuf, count, ppos,
+-				       data, datasize + sizeof(attributes));
++	size = simple_read_iter_from_buffer(iocb, iter, data,
++					    datasize + sizeof(attributes));
+ out_free:
+ 	kfree(data);
+ 
+@@ -174,8 +175,9 @@ efivarfs_file_ioctl(struct file *file, unsigned int cmd, unsigned long p)
+ 
+ const struct file_operations efivarfs_file_operations = {
+ 	.open	= simple_open,
+-	.read	= efivarfs_file_read,
++	.read_iter = efivarfs_file_read_iter,
+ 	.write	= efivarfs_file_write,
+ 	.llseek	= no_llseek,
+ 	.unlocked_ioctl = efivarfs_file_ioctl,
++	.integrity_read	= efivarfs_file_read_iter,
+ };
+diff --git a/fs/libfs.c b/fs/libfs.c
+index a04395334bb1..e1b4f8695013 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -16,6 +16,7 @@
+ #include <linux/exportfs.h>
+ #include <linux/writeback.h>
+ #include <linux/buffer_head.h> /* sync_mapping_buffers */
++#include <linux/uio.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -676,6 +677,37 @@ ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+ EXPORT_SYMBOL(simple_write_to_buffer);
+ 
+ /**
++ * simple_read_iter_from_buffer - copy data from the buffer to user space
++ * @iocb: struct containing the file, the current position and other info
++ * @to: the user space buffer to read to
++ * @from: the buffer to read from
++ * @available: the size of the buffer
++ *
++ * The simple_read_iter_from_buffer() function reads up to @available bytes
++ * from the current buffer into the user space buffer.
++ *
++ * On success, the current buffer offset is advanced by the number of bytes
++ * read, or a negative value is returned on error.
++ **/
++ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
++                                const void *from, size_t available)
++{
++	loff_t pos = iocb->ki_pos;
++	size_t ret;
++
++	if (pos < 0)
++		return -EINVAL;
++	if (pos >= available)
++		return 0;
++	ret = copy_to_iter(from + pos, available - pos, to);
++	if (!ret && iov_iter_count(to))
++		return -EFAULT;
++	iocb->ki_pos = pos + ret;
++	return ret;
++}
++EXPORT_SYMBOL(simple_read_iter_from_buffer);
++
++/**
+  * memory_read_from_buffer - copy data from the buffer
+  * @to: the kernel space buffer to read to
+  * @count: the maximum number of bytes to read
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 36edfe84c4bf..d85d2c43afd9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3012,6 +3012,8 @@ extern void simple_release_fs(struct vfsmount **mount, int *count);
+ 
+ extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
+ 			loff_t *ppos, const void *from, size_t available);
++extern ssize_t simple_read_iter_from_buffer(struct kiocb *iocb,
++		struct iov_iter *to, const void *from, size_t available);
+ extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+ 		const void __user *from, size_t count);
+ 
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
