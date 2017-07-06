@@ -1,117 +1,125 @@
-From: jlayton@kernel.org (Jeff Layton)
-Date: Thu,  6 Jul 2017 12:23:20 -0400
-Subject: [PATCH] integrity: track ctime in addition to i_version for assessment
-Message-ID: <20170706162320.13174-1-jlayton@kernel.org>
+From: jglisse@redhat.com (Jerome Glisse)
+Date: Thu, 6 Jul 2017 12:27:43 -0400
+Subject: [PATCH 1/3] Protectable memory support
+In-Reply-To: <20170705134628.3803-2-igor.stoppa@huawei.com>
+References: <20170705134628.3803-1-igor.stoppa@huawei.com>
+	<20170705134628.3803-2-igor.stoppa@huawei.com>
+Message-ID: <20170706162742.GA2919@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+On Wed, Jul 05, 2017 at 04:46:26PM +0300, Igor Stoppa wrote:
+> The MMU available in many systems running Linux can often provide R/O
+> protection to the memory pages it handles.
+> 
+> However, the MMU-based protection works efficiently only when said pages
+> contain exclusively data that will not need further modifications.
+> 
+> Statically allocated variables can be segregated into a dedicated
+> section, but this does not sit very well with dynamically allocated ones.
+> 
+> Dynamic allocation does not provide, currently, any means for grouping
+> variables in memory pages that would contain exclusively data suitable
+> for conversion to read only access mode.
+> 
+> The allocator here provided (pmalloc - protectable memory allocator)
+> introduces the concept of pools of protectable memory.
+> 
+> A module can request a pool and then refer any allocation request to the
+> pool handler it has received.
+> 
+> Once all the chunks of memory associated to a specific pool are
+> initialized, the pool can be protected.
+> 
+> After this point, the pool can only be destroyed (it is up to the module
+> to avoid any further references to the memory from the pool, after
+> the destruction is invoked).
+> 
+> The latter case is mainly meant for releasing memory, when a module is
+> unloaded.
+> 
+> A module can have as many pools as needed, for example to support the
+> protection of data that is initialized in sufficiently distinct phases.
+> 
+> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> ---
+>  arch/Kconfig                   |   1 +
+>  include/linux/page-flags.h     |   2 +
+>  include/linux/pmalloc.h        | 127 +++++++++++++++
+>  include/trace/events/mmflags.h |   1 +
+>  lib/Kconfig                    |   1 +
+>  mm/Makefile                    |   1 +
+>  mm/pmalloc.c                   | 356 +++++++++++++++++++++++++++++++++++++++++
+>  mm/usercopy.c                  |  24 +--
+>  8 files changed, 504 insertions(+), 9 deletions(-)
+>  create mode 100644 include/linux/pmalloc.h
+>  create mode 100644 mm/pmalloc.c
+> 
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 6c00e5b..9d16b51 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -228,6 +228,7 @@ config GENERIC_IDLE_POLL_SETUP
+>  
+>  # Select if arch has all set_memory_ro/rw/x/nx() functions in asm/cacheflush.h
+>  config ARCH_HAS_SET_MEMORY
+> +	select GENERIC_ALLOCATOR
+>  	bool
+>  
+>  # Select if arch init_task initializer is different to init/init_task.c
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index 6b5818d..acc0723 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -81,6 +81,7 @@ enum pageflags {
+>  	PG_active,
+>  	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
+>  	PG_slab,
+> +	PG_pmalloc,
+>  	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
+>  	PG_arch_1,
+>  	PG_reserved,
+> @@ -274,6 +275,7 @@ PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
+>  	TESTCLEARFLAG(Active, active, PF_HEAD)
+>  __PAGEFLAG(Slab, slab, PF_NO_TAIL)
+>  __PAGEFLAG(SlobFree, slob_free, PF_NO_TAIL)
+> +__PAGEFLAG(Pmalloc, pmalloc, PF_NO_TAIL)
+>  PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
+>  
+>  /* Xen */
 
-The IMA assessment code tries to use the i_version counter to detect
-when changes to a file have occurred. Many filesystems don't increment
-it properly (or at all) so detecting changes with that is not always
-reliable.
 
-That check should really be gated on IS_I_VERSION. When that returns
-false, you can't rely on the i_version field changing like you expect.
+So i don't think we want to waste a page flag on this. The struct 
+page flags field is already full AFAIK (see page-flags-layout.h)
 
-Have the code also track and check the ctime for the file. If the
-IS_I_VERSION returns false, then use it to detect whether the file
-might have changed.
+Moreover there is easier way to tag such page. So my understanding
+is that pmalloc() is always suppose to be in vmalloc area. From
+the look of it all you do is check that there is a valid page behind
+the vmalloc vaddr and you check for the PG_malloc flag of that page.
 
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- security/integrity/ima/ima_api.c  |  4 +++-
- security/integrity/ima/ima_main.c | 32 ++++++++++++++++++++++++--------
- security/integrity/integrity.h    |  1 +
- 3 files changed, 28 insertions(+), 9 deletions(-)
+Why do you need to check the PG_malloc flag for the page ? Isn't the
+fact that there is a page behind the vmalloc vaddr enough ? If not
+enough wouldn't checking the pte flags of the page enough ? ie if
+the page is read only inside vmalloc than it would be for sure some
+pmalloc area.
 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c2edba8de35e..2a01e8f3c613 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -205,7 +205,8 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
- 	} hash;
- 
- 	if (!(iint->flags & IMA_COLLECTED)) {
--		u64 i_version = file_inode(file)->i_version;
-+		u64 i_version = inode->i_version;
-+		struct timespec i_ctime = inode->i_ctime;
- 
- 		if (file->f_flags & O_DIRECT) {
- 			audit_cause = "failed(directio)";
-@@ -225,6 +226,7 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
- 				iint->ima_hash = tmpbuf;
- 				memcpy(iint->ima_hash, &hash, length);
- 				iint->version = i_version;
-+				iint->ctime = i_ctime;
- 				iint->flags |= IMA_COLLECTED;
- 			} else
- 				result = -ENOMEM;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2aebb7984437..3508b13e7181 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -113,6 +113,25 @@ static void ima_rdwr_violation_check(struct file *file,
- 				  "invalid_pcr", "open_writers");
- }
- 
-+static bool ima_should_update_iint(struct integrity_iint_cache *iint,
-+				struct inode *inode)
-+{
-+	if (atomic_read(&inode->i_writecount) != 1)
-+		return false;
-+	if (iint->flags & IMA_NEW_FILE)
-+		return true;
-+	if (IS_I_VERSION(inode)) {
-+		if (iint->version != inode->i_version)
-+			return true;
-+	} else {
-+		if (iint->ctime.tv_sec != inode->i_ctime.tv_sec)
-+			return true;
-+		if (iint->ctime.tv_nsec != inode->i_ctime.tv_nsec)
-+			return true;
-+	}
-+	return false;
-+}
-+
- static void ima_check_last_writer(struct integrity_iint_cache *iint,
- 				  struct inode *inode, struct file *file)
- {
-@@ -122,14 +141,11 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
- 		return;
- 
- 	inode_lock(inode);
--	if (atomic_read(&inode->i_writecount) == 1) {
--		if ((iint->version != inode->i_version) ||
--		    (iint->flags & IMA_NEW_FILE)) {
--			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
--			iint->measured_pcrs = 0;
--			if (iint->flags & IMA_APPRAISE)
--				ima_update_xattr(iint, file);
--		}
-+	if (ima_should_update_iint(iint, inode)) {
-+		iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
-+		iint->measured_pcrs = 0;
-+		if (iint->flags & IMA_APPRAISE)
-+			ima_update_xattr(iint, file);
- 	}
- 	inode_unlock(inode);
- }
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index a53e7e4ab06c..10c3f96beb98 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -102,6 +102,7 @@ struct integrity_iint_cache {
- 	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
- 	struct inode *inode;	/* back pointer to inode in question */
- 	u64 version;		/* track inode changes */
-+	struct timespec ctime;	/* track inode changes */
- 	unsigned long flags;
- 	unsigned long measured_pcrs;
- 	enum integrity_status ima_file_status:4;
--- 
-2.13.0
+Other way to distinguish between regular vmalloc and pmalloc can be
+to carveout a region of vmalloc for pmalloc purpose. Issue is that
+it might be hard to find right size for such carveout.
+
+Yet another way is to use some of the free struct page fields ie
+when a page is allocated for vmalloc i think most of struct page
+fields are unuse (mapping, index, lru, ...). It would be better
+to use those rather than adding a page flag.
+
+
+Everything else looks good to me, thought i am unsure on how much
+useful such feature is but i am not familiar too much with security
+side of thing.
+
+
+Cheers,
+J?r?me
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
