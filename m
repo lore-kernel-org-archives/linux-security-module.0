@@ -1,177 +1,193 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Fri,  7 Jul 2017 12:56:59 -0700
-Subject: [PATCH 1/2] exec: Move security_bprm_secureexec() earlier
-In-Reply-To: <1499457420-83038-1-git-send-email-keescook@chromium.org>
-References: <1499457420-83038-1-git-send-email-keescook@chromium.org>
-Message-ID: <1499457420-83038-2-git-send-email-keescook@chromium.org>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 07 Jul 2017 15:59:18 -0400
+Subject: [PATCH v2] integrity: track mtime in addition to i_version for
+	assessment
+In-Reply-To: <1499449777.4852.3.camel@redhat.com>
+References: <20170707140530.30452-1-jlayton@kernel.org>
+	<1499446642.4967.3.camel@poochiereds.net>
+	<1499448249.3130.143.camel@linux.vnet.ibm.com>
+	<1499449777.4852.3.camel@redhat.com>
+Message-ID: <1499457558.3130.173.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-There are several places where exec needs to know if a privilege-gain
-has happened. Right now it only checks uid/euid differences, though
-capabilities could have been elevated too. This moves the secureexec
-check ahead of committing credentials, and retains the value for later
-examination. A resulting redundant case of clearing pdeath_signal is
-also removed from Smack, and commoncap is updated to examine bprm->cred
-instead of current->cred.
+On Fri, 2017-07-07 at 13:49 -0400, Jeff Layton wrote:
+> On Fri, 2017-07-07 at 13:24 -0400, Mimi Zohar wrote:
+> > On Fri, 2017-07-07 at 12:57 -0400, Jeff Layton wrote:
+> > > On Fri, 2017-07-07 at 10:05 -0400, Jeff Layton wrote:
+> > > > From: Jeff Layton <jlayton@redhat.com>
+> > > > 
+> > > > The IMA assessment code tries to use the i_version counter to detect
+> > > > when changes to a file have occurred. Many filesystems don't increment
+> > > > it properly (or at all) so detecting changes with that is not always
+> > > > reliable.
+> > > > 
+> > > > That check should be gated on IS_I_VERSION, as you can't rely on the
+> > > > i_version field changing unless that returns true.
+> > > > 
+> > > > Have the code also track and check the mtime for the file. If the
+> > > > IS_I_VERSION returns false, then use it to detect whether the file's
+> > > > contents might have changed.
+> > > > 
+> > > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> > > > ---
+> > > >  security/integrity/ima/ima_api.c  |  4 +++-
+> > > >  security/integrity/ima/ima_main.c | 32 ++++++++++++++++++++++++--------
+> > > >  security/integrity/integrity.h    |  1 +
+> > > >  3 files changed, 28 insertions(+), 9 deletions(-)
+> > > > 
+> > > > v2: switch to storing/checking mtime instead of ctime
+> > > > 
+> > > 
+> > > To be clear here, I don't have a large interest in IMA, but I am looking
+> > > at making changes to how the i_version counter is handled. IMA's use of
+> > > it is problematic for some of those changes (and somewhat sketchy).
+> > > 
+> > > I think you either want something like the patch below, or you need to
+> > > somehow ensure that you're not doing any of this on a superblock that
+> > > doesn't have MS_I_VERSION set on it.
+> > > 
+> > > I'm not that familiar with IMA in general though, so it's possible I'm
+> > > missing something. Is that already being done somehow?
+> > 
+> > Before reverting to using mtime, which wasn't fine grained enough at
+> > the time, it would be helpful to first understand the type of changes
+> > and the reasons for the changes you're looking to make to i_version.
+> 
+> Sure, I posted a patchset back in December, actually:
+> 
+>     [RFC PATCH v1 00/30] fs: inode->i_version rework and optimization
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/binfmt_elf.c            |  2 +-
- fs/binfmt_elf_fdpic.c      |  2 +-
- fs/exec.c                  | 15 ++++++++++-----
- include/linux/binfmts.h    |  3 ++-
- include/linux/lsm_hooks.h  |  3 ++-
- security/commoncap.c       |  4 +---
- security/smack/smack_lsm.c | 15 ---------------
- 7 files changed, 17 insertions(+), 27 deletions(-)
+Thanks you.
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 5075fd5c62c8..7f6ec4dac13d 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -254,7 +254,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID, from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID, from_kgid_munged(cred->user_ns, cred->egid));
-- 	NEW_AUX_ENT(AT_SECURE, security_bprm_secureexec(bprm));
-+	NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
- 	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
- #ifdef ELF_HWCAP2
- 	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index cf93a4fad012..5aa9199dfb13 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -650,7 +650,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
--	NEW_AUX_ENT(AT_SECURE,	security_bprm_secureexec(bprm));
-+	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
- 	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
- 
- #ifdef ARCH_DLINFO
-diff --git a/fs/exec.c b/fs/exec.c
-index ddca2cf15f71..1e8d647d8e7c 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1330,12 +1330,18 @@ EXPORT_SYMBOL(would_dump);
- 
- void setup_new_exec(struct linux_binprm * bprm)
- {
-+	/* This is the point of no return */
-+
-+	if (security_bprm_secureexec(bprm)) {
-+		/* Record for AT_SECURE. */
-+		bprm->secureexec = 1;
-+	}
-+
- 	arch_pick_mmap_layout(current->mm);
- 
--	/* This is the point of no return */
- 	current->sas_ss_sp = current->sas_ss_size = 0;
- 
--	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
-+	if (!bprm->secureexec)
- 		set_dumpable(current->mm, SUID_DUMP_USER);
- 	else
- 		set_dumpable(current->mm, suid_dumpable);
-@@ -1350,9 +1356,8 @@ void setup_new_exec(struct linux_binprm * bprm)
- 	 */
- 	current->mm->task_size = TASK_SIZE;
- 
--	/* install the new credentials */
--	if (!uid_eq(bprm->cred->uid, current_euid()) ||
--	    !gid_eq(bprm->cred->gid, current_egid())) {
-+	/* prepare to install the new credentials */
-+	if (bprm->secureexec) {
- 		current->pdeath_signal = 0;
- 	} else {
- 		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 05488da3aee9..1afaa303cad0 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -27,9 +27,10 @@ struct linux_binprm {
- 	unsigned int
- 		cred_prepared:1,/* true if creds already prepared (multiple
- 				 * preps happen for interpreters) */
--		cap_effective:1;/* true if has elevated effective capabilities,
-+		cap_effective:1,/* true if has elevated effective capabilities,
- 				 * false if not; except for init which inherits
- 				 * its parent's caps anyway */
-+		secureexec:1;	/* true when gaining privileges */
- #ifdef __alpha__
- 	unsigned int taso:1;
- #endif
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 080f34e66017..d1bd24fb4a33 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -72,7 +72,8 @@
-  *	Return a boolean value (0 or 1) indicating whether a "secure exec"
-  *	is required.  The flag is passed in the auxiliary table
-  *	on the initial stack to the ELF interpreter to indicate whether libc
-- *	should enable secure mode.
-+ *	should enable secure mode. Called before bprm_committing_creds(),
-+ *	so pending credentials are in @bprm->cred.
-  *	@bprm contains the linux_binprm structure.
-  *
-  * Security hooks for filesystem operations.
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 7abebd782d5e..482d3aac2fc6 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -624,12 +624,10 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
-  * Determine whether a secure execution is required, return 1 if it is, and 0
-  * if it is not.
-  *
-- * The credentials have been committed by this point, and so are no longer
-- * available through @bprm->cred.
-  */
- int cap_bprm_secureexec(struct linux_binprm *bprm)
- {
--	const struct cred *cred = current_cred();
-+	const struct cred *cred = bprm->cred;
- 	kuid_t root_uid = make_kuid(cred->user_ns, 0);
- 
- 	if (!uid_eq(cred->uid, root_uid)) {
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 658f5d8c7e76..0c89afcb24c4 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -954,20 +954,6 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
- }
- 
- /**
-- * smack_bprm_committing_creds - Prepare to install the new credentials
-- * from bprm.
-- *
-- * @bprm: binprm for exec
-- */
--static void smack_bprm_committing_creds(struct linux_binprm *bprm)
--{
--	struct task_smack *bsp = bprm->cred->security;
--
--	if (bsp->smk_task != bsp->smk_forked)
--		current->pdeath_signal = 0;
--}
--
--/**
-  * smack_bprm_secureexec - Return the decision to use secureexec.
-  * @bprm: binprm for exec
-  *
-@@ -4645,7 +4631,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(sb_parse_opts_str, smack_parse_opts_str),
- 
- 	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
--	LSM_HOOK_INIT(bprm_committing_creds, smack_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_secureexec, smack_bprm_secureexec),
- 
- 	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
--- 
-2.7.4
+> The basic idea is to improve performance on filesystems that implement
+> the i_version counter by allowing them to optimize away metadata updates
+> that are due solely to i_version counter change when no one is actually
+> using it. This will also pave the way to allow us to more reasonably
+> provide an i_version counter on network filesystems and the like that
+> might have weaker consistency guarantees than a local fs.
+
+> Your point about mtime not being granular enough is valid however. It's
+> certainly possible for extra writes to race in during the jiffy or so
+> window that represents the mtime resolution. It's just that that is
+> still more granular than you'll get on a filesystem that never actually
+> increments the i_version counter on a write.
+
+> >  After all, i_version has been working all this time (~2009).
+> > 
+> 
+> The i_version counter works just fine on filesystems that implement it
+> properly. That's a very short list: xfs, btrfs, and ext4 for local
+> filesystems. NFS and AFS would also likely be fine here, though they
+> don't set MS_I_VERSION.
+
+> The rest though do not support it consistently and IMA should not be
+> relying on it on them. This is why the kernel nfs server only relies on
+> the i_version field when IS_I_VERSION returns true.
+> 
+> I'll ask again -- is IMA somehow limited only being used only on that
+> subset of filesystems? My guess from a glance at the integrity_read
+> patchset is that it is not.
+
+Our main use case scenario is verifying the integrity of files,
+updating the file hash for mutable files, and maintaining a
+measurement list, including re-measurement of files that have changed,
+on local file systems. ?Without being in the file write path (or more
+precisely __fput), there are no guarantees of file change
+notification.
+
+For file systems which do not support i_version, we are limited to an
+initial file integrity verification and measurement.
+
+Mimi
+
+> > > > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > > > index c2edba8de35e..b8d746bbc43d 100644
+> > > > --- a/security/integrity/ima/ima_api.c
+> > > > +++ b/security/integrity/ima/ima_api.c
+> > > > @@ -205,7 +205,8 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+> > > >  	} hash;
+> > > >  
+> > > >  	if (!(iint->flags & IMA_COLLECTED)) {
+> > > > -		u64 i_version = file_inode(file)->i_version;
+> > > > +		u64 i_version = inode->i_version;
+> > > > +		struct timespec i_mtime = inode->i_mtime;
+> > > >  
+> > > >  		if (file->f_flags & O_DIRECT) {
+> > > >  			audit_cause = "failed(directio)";
+> > > > @@ -225,6 +226,7 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+> > > >  				iint->ima_hash = tmpbuf;
+> > > >  				memcpy(iint->ima_hash, &hash, length);
+> > > >  				iint->version = i_version;
+> > > > +				iint->mtime = i_mtime;
+> > > >  				iint->flags |= IMA_COLLECTED;
+> > > >  			} else
+> > > >  				result = -ENOMEM;
+> > > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > > index 2aebb7984437..8d12ef2d3ba2 100644
+> > > > --- a/security/integrity/ima/ima_main.c
+> > > > +++ b/security/integrity/ima/ima_main.c
+> > > > @@ -113,6 +113,25 @@ static void ima_rdwr_violation_check(struct file *file,
+> > > >  				  "invalid_pcr", "open_writers");
+> > > >  }
+> > > >  
+> > > > +static bool ima_should_update_iint(struct integrity_iint_cache *iint,
+> > > > +				struct inode *inode)
+> > > > +{
+> > > > +	if (atomic_read(&inode->i_writecount) != 1)
+> > > > +		return false;
+> > > > +	if (iint->flags & IMA_NEW_FILE)
+> > > > +		return true;
+> > > > +	if (IS_I_VERSION(inode)) {
+> > > > +		if (iint->version != inode->i_version)
+> > > > +			return true;
+> > > > +	} else {
+> > > > +		if (iint->mtime.tv_sec != inode->i_mtime.tv_sec)
+> > > > +			return true;
+> > > > +		if (iint->mtime.tv_nsec != inode->i_mtime.tv_nsec)
+> > > > +			return true;
+> > > > +	}
+> > > > +	return false;
+> > > > +}
+> > > > +
+> > > >  static void ima_check_last_writer(struct integrity_iint_cache *iint,
+> > > >  				  struct inode *inode, struct file *file)
+> > > >  {
+> > > > @@ -122,14 +141,11 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+> > > >  		return;
+> > > >  
+> > > >  	inode_lock(inode);
+> > > > -	if (atomic_read(&inode->i_writecount) == 1) {
+> > > > -		if ((iint->version != inode->i_version) ||
+> > > > -		    (iint->flags & IMA_NEW_FILE)) {
+> > > > -			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> > > > -			iint->measured_pcrs = 0;
+> > > > -			if (iint->flags & IMA_APPRAISE)
+> > > > -				ima_update_xattr(iint, file);
+> > > > -		}
+> > > > +	if (ima_should_update_iint(iint, inode)) {
+> > > > +		iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> > > > +		iint->measured_pcrs = 0;
+> > > > +		if (iint->flags & IMA_APPRAISE)
+> > > > +			ima_update_xattr(iint, file);
+> > > >  	}
+> > > >  	inode_unlock(inode);
+> > > >  }
+> > > > diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> > > > index a53e7e4ab06c..61fffa7583bf 100644
+> > > > --- a/security/integrity/integrity.h
+> > > > +++ b/security/integrity/integrity.h
+> > > > @@ -102,6 +102,7 @@ struct integrity_iint_cache {
+> > > >  	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
+> > > >  	struct inode *inode;	/* back pointer to inode in question */
+> > > >  	u64 version;		/* track inode changes */
+> > > > +	struct timespec mtime;	/* track inode changes */
+> > > >  	unsigned long flags;
+> > > >  	unsigned long measured_pcrs;
+> > > >  	enum integrity_status ima_file_status:4;
+> > 
+> > 
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
