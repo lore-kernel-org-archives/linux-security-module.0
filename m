@@ -1,62 +1,112 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 7 Jul 2017 10:06:32 +1000 (AEST)
-Subject: [GIT PULL] security susbsytem updates #2: TPM and SELinux fixes
-Message-ID: <alpine.LRH.2.20.1707071004180.10938@namei.org>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Fri, 7 Jul 2017 11:42:09 +0300
+Subject: [PATCH 1/3] Protectable memory support
+In-Reply-To: <20170706162742.GA2919@redhat.com>
+References: <20170705134628.3803-1-igor.stoppa@huawei.com>
+	<20170705134628.3803-2-igor.stoppa@huawei.com>
+	<20170706162742.GA2919@redhat.com>
+Message-ID: <1665fd00-5908-2399-577d-1972c7d1c63b@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Please pull these bugfixes for TPM and SELinux.
+On 06/07/17 19:27, Jerome Glisse wrote:
+> On Wed, Jul 05, 2017 at 04:46:26PM +0300, Igor Stoppa wrote:
 
----
+[...]
 
-The following changes since commit b4b8cbf679c4866a523a35d1454884a31bd5d8dc:
+>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>> index 6b5818d..acc0723 100644
+>> --- a/include/linux/page-flags.h
+>> +++ b/include/linux/page-flags.h
+>> @@ -81,6 +81,7 @@ enum pageflags {
+>>  	PG_active,
+>>  	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
+>>  	PG_slab,
+>> +	PG_pmalloc,
+>>  	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
+>>  	PG_arch_1,
+>>  	PG_reserved,
+>> @@ -274,6 +275,7 @@ PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
+>>  	TESTCLEARFLAG(Active, active, PF_HEAD)
+>>  __PAGEFLAG(Slab, slab, PF_NO_TAIL)
+>>  __PAGEFLAG(SlobFree, slob_free, PF_NO_TAIL)
+>> +__PAGEFLAG(Pmalloc, pmalloc, PF_NO_TAIL)
+>>  PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
+>>  
+>>  /* Xen */
+> 
+> 
+> So i don't think we want to waste a page flag on this. The struct 
+> page flags field is already full AFAIK (see page-flags-layout.h)
 
-  Cavium CNN55XX: fix broken default Kconfig entry (2017-07-05 13:03:05 -0700)
+okay, I do not have any specific need to have a page flag, if there is
+an equally effective way to identify pages that are served by pmalloc.
+I just replicated what seemed to be the typical way.
 
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git for-linus
+> Moreover there is easier way to tag such page. So my understanding
+> is that pmalloc() is always suppose to be in vmalloc area. 
 
-Azhar Shaikh (1):
-      tpm: Enable CLKRUN protocol for Braswell systems
+At least for now, yes.
+I need to have some sort of memory-provider backend.
+I tried to use a dedicated memory zone and kmalloc [1] but it was
+explained to me that it would have been a bad idea.
+So I defaulted to vmalloc and so far it didn't rise any objection.
 
-Colin Ian King (1):
-      tpm_tis: make ilb_base_addr static
+> From
+> the look of it all you do is check that there is a valid page behind
+> the vmalloc vaddr and you check for the PG_malloc flag of that page.
+> 
+> Why do you need to check the PG_malloc flag for the page ? Isn't the
+> fact that there is a page behind the vmalloc vaddr enough ? If not
+> enough wouldn't checking the pte flags of the page enough ? ie if
+> the page is read only inside vmalloc than it would be for sure some
+> pmalloc area.
 
-Daniel Jurgens (2):
-      IB/core: Fix uninitialized variable use in check_qp_port_pkey_settings
-      IB/core: Fix static analysis warning in ib_policy_change_task
+I had similar discussion with Kees Cook [2].
+The reason why he asked me to differentiate between pmalloc and vmalloc
+is that, from security perspective, there is a certain amount of
+information associated to the fact that a page was obtained through
+pmalloc. Checking only for pmalloc, would discard such information and
+relax the constraint enforced from hardened user copy.
 
-Enric Balletbo i Serra (1):
-      tpm: do not suspend/resume if power stays on
+> Other way to distinguish between regular vmalloc and pmalloc can be
+> to carveout a region of vmalloc for pmalloc purpose. Issue is that
+> it might be hard to find right size for such carveout.
 
-Jarkko Sakkinen (2):
-      tpm: fix a kernel memory leak in tpm-sysfs.c
-      tpm: consolidate the TPM startup code
+Yes, I considered that, but I'd prefer to avoid it, because then I
+either have to fix the maximum size of such region or start managing the
+creation of pools of pools. I'm not a big fan of such idea.
 
-Josh Zimmerman (2):
-      Add "shutdown" to "struct class".
-      tpm: Issue a TPM2_Shutdown for TPM2 devices.
+> Yet another way is to use some of the free struct page fields ie
+> when a page is allocated for vmalloc i think most of struct page
+> fields are unuse (mapping, index, lru, ...). It would be better
+> to use those rather than adding a page flag.
 
-Manuel Lauss (1):
-      tpm/tpm_crb: fix priv->cmd_size initialisation
+Like introducing an unnamed union? Some sort of vmalloc_page_subtype?
+If that is what you are proposing, I agree that it would work in a
+similar fashion as what I have now, but without introducing the overhead
+of the extra page flag.
 
-Roberto Sassu (2):
-      tpm: use tpm_buf functions in tpm2_pcr_read()
-      tpm: use tpm2_pcr_read() in tpm2_do_selftest()
+@Kees: would this be ok from a hardened usercopy perspective?
 
- drivers/base/core.c                |    6 ++-
- drivers/char/tpm/tpm-chip.c        |   34 ++++++++++
- drivers/char/tpm/tpm-interface.c   |   70 +++++++++++++--------
- drivers/char/tpm/tpm-sysfs.c       |    6 ++-
- drivers/char/tpm/tpm.h             |   11 ++--
- drivers/char/tpm/tpm2-cmd.c        |  121 +++++++++--------------------------
- drivers/char/tpm/tpm_crb.c         |    5 +-
- drivers/char/tpm/tpm_of.c          |    3 +
- drivers/char/tpm/tpm_tis.c         |  113 +++++++++++++++++++++++++++++++++
- drivers/infiniband/core/device.c   |    3 +-
- drivers/infiniband/core/security.c |   20 ++++---
- include/linux/device.h             |    2 +
- 12 files changed, 261 insertions(+), 133 deletions(-)
+> Everything else looks good to me, thought i am unsure on how much
+> useful such feature is but i am not familiar too much with security
+> side of thing.
+
+The other 2 patches from the patchset give an example of how to turn a
+compile time decision (locking down after init or not the lsm hooks)
+into a boot time option.
+
+I also want to move the SE Linux policy db to use pmalloc as allocator,
+once pmalloc is merged.
+
+But it seemed better to first get pmalloc merged and only after start
+the policy db rework.
+
+thanks, igor
+
+[1] https://lkml.org/lkml/2017/5/4/517
+[2] https://lkml.org/lkml/2017/5/23/1406
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
