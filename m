@@ -1,45 +1,35 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Fri, 7 Jul 2017 20:59:32 -0700
-Subject: [PATCH 0/2] exec: Use sane stack rlimit for setuid exec
-In-Reply-To: <CA+55aFx21616pqhGA_-g-GzYCQNN8Jn2DRm=3+_W1GuBdmb1gA@mail.gmail.com>
-References: <1499457420-83038-1-git-send-email-keescook@chromium.org>
-	<CA+55aFx21616pqhGA_-g-GzYCQNN8Jn2DRm=3+_W1GuBdmb1gA@mail.gmail.com>
-Message-ID: <CAGXu5jLTAXdPw7ZQ3B=EupO_+6-4Y4rsJN0xbaFkX2amjdC5tQ@mail.gmail.com>
+From: chris.gekas@gmail.com (Christos Gkekas)
+Date: Sat,  8 Jul 2017 20:50:21 +0100
+Subject: [PATCH] apparmor: Fix logical error in verify_header()
+Message-ID: <1499543421-5544-1-git-send-email-chris.gekas@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jul 7, 2017 at 1:04 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, Jul 7, 2017 at 12:56 PM, Kees Cook <keescook@chromium.org> wrote:
->> As discussed with Linus and Andy, we need to reset the stack rlimit
->> before we do memory layouts when execing a privilege-gaining (e.g.
->> setuid) program. This moves security_bprm_secureexec() earlier (with
->> required changes), and then lowers the stack limit when appropriate.
->
-> Looks sane to me, and that first patch looks like a nice cleanup
-> regardless - the old semantics were insane.
->
-> But yes, we should have more people look at this, particular have the
-> security module people look at that first patch to make sure it is the
-> right thing to do for their policies, and make sure that everybody's
-> bprm_secureexec() function actually looks at the creds in the brmp,
-> not "current" (well, maybe they compare the two, which makes tons of
-> sense, and which the old  placement didn't sanely support).
->
-> It looks like Kees went through the security modules, but having the
-> people involved double-check is a good good idea.
+verify_header() is currently checking whether interface version is less
+than 5 *and* greater than 7, which always evaluates to false. Instead it
+should check whether it is less than 5 *or* greater than 7.
 
-Updated tree here, I'll send the series in email on Monday:
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/setuid-rlimits/secureexec
+Signed-off-by: Christos Gkekas <chris.gekas@gmail.com>
+---
+ security/apparmor/policy_unpack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This should fix the missed bprm->cred->security and breaks out each
-step into logical pieces in case we need to sanely bisect.
-
--Kees
-
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index c600f4d..f273c61 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -832,7 +832,7 @@ static int verify_header(struct aa_ext *e, int required, const char **ns)
+ 	 * if not specified use previous version
+ 	 * Mask off everything that is not kernel abi version
+ 	 */
+-	if (VERSION_LT(e->version, v5) && VERSION_GT(e->version, v7)) {
++	if (VERSION_LT(e->version, v5) || VERSION_GT(e->version, v7)) {
+ 		audit_iface(NULL, NULL, NULL, "unsupported interface version",
+ 			    e, error);
+ 		return error;
 -- 
-Kees Cook
-Pixel Security
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
