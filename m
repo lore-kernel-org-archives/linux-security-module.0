@@ -1,81 +1,47 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Mon, 10 Jul 2017 00:57:27 -0700
-Subject: [PATCH v2 4/8] exec: Use secureexec for clearing pdeath_signal
-In-Reply-To: <1499673451-66160-1-git-send-email-keescook@chromium.org>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Mon, 10 Jul 2017 03:46:18 -0500
+Subject: [PATCH v2 1/8] exec: Correct comments about "point of no return"
+In-Reply-To: <1499673451-66160-2-git-send-email-keescook@chromium.org> (Kees
+	Cook's message of "Mon, 10 Jul 2017 00:57:24 -0700")
 References: <1499673451-66160-1-git-send-email-keescook@chromium.org>
-Message-ID: <1499673451-66160-5-git-send-email-keescook@chromium.org>
+	<1499673451-66160-2-git-send-email-keescook@chromium.org>
+Message-ID: <87van0r86d.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Like dumpability, clearing pdeath_signal happens both in setup_new_exec()
-and later in commit_creds(). The test in setup_new_exec() is different
-from all other privilege comparisons, though: it is checking the new cred
-(bprm) uid vs the old cred (current) euid. This appears to be a bug,
-introduced by commit a6f76f23d297 ("CRED: Make execve() take advantage of
-copy-on-write credentials"):
 
--       if (bprm->e_uid != current_euid() ||
--           bprm->e_gid != current_egid()) {
--               set_dumpable(current->mm, suid_dumpable);
-+       /* install the new credentials */
-+       if (bprm->cred->uid != current_euid() ||
-+           bprm->cred->gid != current_egid()) {
+But you miss it.
 
-It was bprm euid vs current euid (and egids), but the effective got
-dropped. Nothing in the exec flow changes bprm->cred->uid (nor gid).
-The call traces are:
+The "point of no return" is the call to de_thread.  Or aguably anything in
+flush_old_exec.  Once anything in the current task is modified you can't
+return an error.
 
-	prepare_bprm_creds()
-	    prepare_exec_creds()
-	        prepare_creds()
-	            memcpy(new_creds, old_creds, ...)
-	            security_prepare_creds() (unimplemented by commoncap)
-	...
-	prepare_binprm()
-	    bprm_fill_uid()
-	        resets euid/egid to current euid/egid
-	        sets euid/egid on bprm based on set*id file bits
-	    security_bprm_set_creds()
-		cap_bprm_set_creds()
-		        handle all caps-based manipulations
+It very much does not have anything to do with brpm.    It has
+everything to do with current.
 
-so this test is effectively a test of current_uid() vs current_euid(),
-which is wrong, just like the prior dumpability tests were wrong.
 
-The commit log says "Clear pdeath_signal and set dumpable on
-certain circumstances that may not be covered by commit_creds()." This
-may be meaning the earlier old euid vs new euid (and egid) test that
-got changed.
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 904199086490..7842ae661e34 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1285,7 +1285,14 @@ int flush_old_exec(struct linux_binprm * bprm)
+>  	if (retval)
+>  		goto out;
+>  
+> -	bprm->mm = NULL;		/* We're using it now */
+> +	/*
+> +	 * After clearing bprm->mm (to mark that current is using the
+> +	 * prepared mm now), we are at the point of no return. If
+> +	 * anything from here on returns an error, the check in
+> +	 * search_binary_handler() will kill current (since the mm has
+> +	 * been replaced).
+> +	 */
+> +	bprm->mm = NULL;
+>  
+>  	set_fs(USER_DS);
+>  	current->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
 
-Luckily, as with dumpability, this is all masked by commit_creds()
-which performs old/new euid and egid tests and clears pdeath_signal.
-
-And again, like dumpability, we should include LSM secureexec logic for
-pdeath_signal clearing. For example, Smack goes out of its way to clear
-pdeath_signal when it finds a secureexec condition.
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/exec.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 3e519d4f0bd3..d7bda5b60e7b 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1361,8 +1361,7 @@ void setup_new_exec(struct linux_binprm * bprm)
- 	 */
- 	current->mm->task_size = TASK_SIZE;
- 
--	if (!uid_eq(bprm->cred->uid, current_euid()) ||
--	    !gid_eq(bprm->cred->gid, current_egid())) {
-+	if (bprm->secureexec) {
- 		current->pdeath_signal = 0;
- 	} else {
- 		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
--- 
-2.7.4
-
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
