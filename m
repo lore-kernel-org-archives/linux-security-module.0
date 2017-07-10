@@ -1,136 +1,106 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 10 Jul 2017 08:10:12 -0400
-Subject: [PATCH v2] integrity: track mtime in addition to i_version for
-	assessment
-In-Reply-To: <1499459718.4852.8.camel@redhat.com>
-References: <20170707140530.30452-1-jlayton@kernel.org>
-	<1499446642.4967.3.camel@poochiereds.net>
-	<1499448249.3130.143.camel@linux.vnet.ibm.com>
-	<1499449777.4852.3.camel@redhat.com>
-	<1499457558.3130.173.camel@linux.vnet.ibm.com>
-	<1499459718.4852.8.camel@redhat.com>
-Message-ID: <1499688612.6034.111.camel@linux.vnet.ibm.com>
+From: dmitry.kasatkin@gmail.com (Dmitry Kasatkin)
+Date: Mon, 10 Jul 2017 17:03:44 +0300
+Subject: [Linux-ima-devel] [PATCH 3/4] ima: use existing read file
+	operation method to calculate file hash
+In-Reply-To: <1497031364-19949-4-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1497031364-19949-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1497031364-19949-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <CACE9dm8SVrkVm+5MmDg+BTGiJYzoqwB-jCCXJ5ac8xkG65qAcw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-07-07 at 16:35 -0400, Jeff Layton wrote:
-> On Fri, 2017-07-07 at 15:59 -0400, Mimi Zohar wrote:
-> > On Fri, 2017-07-07 at 13:49 -0400, Jeff Layton wrote:
-> > > On Fri, 2017-07-07 at 13:24 -0400, Mimi Zohar wrote:
-> > > > On Fri, 2017-07-07 at 12:57 -0400, Jeff Layton wrote:
-> > > > > On Fri, 2017-07-07 at 10:05 -0400, Jeff Layton wrote:
-> > > > > > From: Jeff Layton <jlayton@redhat.com>
-> > > > > > 
-> > > > > > The IMA assessment code tries to use the i_version counter to detect
-> > > > > > when changes to a file have occurred. Many filesystems don't increment
-> > > > > > it properly (or at all) so detecting changes with that is not always
-> > > > > > reliable.
-> > > > > > 
-> > > > > > That check should be gated on IS_I_VERSION, as you can't rely on the
-> > > > > > i_version field changing unless that returns true.
-> > > > > > 
-> > > > > > Have the code also track and check the mtime for the file. If the
-> > > > > > IS_I_VERSION returns false, then use it to detect whether the file's
-> > > > > > contents might have changed.
-> > > > > > 
-> > > > > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> > > > > > ---
-> > > > > >  security/integrity/ima/ima_api.c  |  4 +++-
-> > > > > >  security/integrity/ima/ima_main.c | 32 ++++++++++++++++++++++++--------
-> > > > > >  security/integrity/integrity.h    |  1 +
-> > > > > >  3 files changed, 28 insertions(+), 9 deletions(-)
-> > > > > > 
-> > > > > > v2: switch to storing/checking mtime instead of ctime
-> > > > > > 
-> > > > > 
-> > > > > To be clear here, I don't have a large interest in IMA, but I am looking
-> > > > > at making changes to how the i_version counter is handled. IMA's use of
-> > > > > it is problematic for some of those changes (and somewhat sketchy).
-> > > > > 
-> > > > > I think you either want something like the patch below, or you need to
-> > > > > somehow ensure that you're not doing any of this on a superblock that
-> > > > > doesn't have MS_I_VERSION set on it.
-> > > > > 
-> > > > > I'm not that familiar with IMA in general though, so it's possible I'm
-> > > > > missing something. Is that already being done somehow?
-> > > > 
-> > > > Before reverting to using mtime, which wasn't fine grained enough at
-> > > > the time, it would be helpful to first understand the type of changes
-> > > > and the reasons for the changes you're looking to make to i_version.
-> > > 
-> > > Sure, I posted a patchset back in December, actually:
-> > > 
-> > >     [RFC PATCH v1 00/30] fs: inode->i_version rework and optimization
-> > 
-> > Thanks you.
-> > 
-> > > The basic idea is to improve performance on filesystems that implement
-> > > the i_version counter by allowing them to optimize away metadata updates
-> > > that are due solely to i_version counter change when no one is actually
-> > > using it. This will also pave the way to allow us to more reasonably
-> > > provide an i_version counter on network filesystems and the like that
-> > > might have weaker consistency guarantees than a local fs.
-> > > Your point about mtime not being granular enough is valid however. It's
-> > > certainly possible for extra writes to race in during the jiffy or so
-> > > window that represents the mtime resolution. It's just that that is
-> > > still more granular than you'll get on a filesystem that never actually
-> > > increments the i_version counter on a write.
-> > > >  After all, i_version has been working all this time (~2009).
-> > > > 
-> > > 
-> > > The i_version counter works just fine on filesystems that implement it
-> > > properly. That's a very short list: xfs, btrfs, and ext4 for local
-> > > filesystems. NFS and AFS would also likely be fine here, though they
-> > > don't set MS_I_VERSION.
-> > > The rest though do not support it consistently and IMA should not be
-> > > relying on it on them. This is why the kernel nfs server only relies on
-> > > the i_version field when IS_I_VERSION returns true.
-> > > 
-> > > I'll ask again -- is IMA somehow limited only being used only on that
-> > > subset of filesystems? My guess from a glance at the integrity_read
-> > > patchset is that it is not.
-> > 
-> > Our main use case scenario is verifying the integrity of files,
-> > updating the file hash for mutable files, and maintaining a
-> > measurement list, including re-measurement of files that have changed,
-> > on local file systems.  Without being in the file write path (or more
-> > precisely __fput), there are no guarantees of file change
-> > notification.
-> > 
-> > For file systems which do not support i_version, we are limited to an
-> > initial file integrity verification and measurement.
-> 
-> How is your typical user to know whether to expect this guarantee from
-> the filesystem?
+On Fri, Jun 9, 2017 at 9:02 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> The few filesystems that currently define the read file operation
+> method, either call seq_read() or have a filesystem specific read
+> method.  None of them, at least in the fs directory, take the
+> i_rwsem.
+>
+> Since some files on these filesystems were previously
+> measured/appraised, not measuring them would change the PCR hash
+> value(s), possibly breaking userspace.  For filesystems that do
+> not define the integrity_read file operation method and have a
+> read method, use the read method to calculate the file hash.
+>
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> ---
+>  security/integrity/iint.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index c5489672b5aa..e3ef3fba16dc 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -189,20 +189,29 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>         struct iovec iov = { .iov_base = addr, .iov_len = count };
+>         struct kiocb kiocb;
+>         struct iov_iter iter;
+> -       ssize_t ret;
+> +       ssize_t ret = -EBADF;
+>
+>         lockdep_assert_held(&inode->i_rwsem);
+>
+>         if (!(file->f_mode & FMODE_READ))
+>                 return -EBADF;
+> -       if (!file->f_op->integrity_read)
+> -               return -EBADF;
+>
+>         init_sync_kiocb(&kiocb, file);
+>         kiocb.ki_pos = offset;
+>         iov_iter_init(&iter, READ | ITER_KVEC, &iov, 1, count);
+>
+> -       ret = file->f_op->integrity_read(&kiocb, &iter);
+> +       if (file->f_op->integrity_read) {
+> +               ret = file->f_op->integrity_read(&kiocb, &iter);
+> +       } else if (file->f_op->read) {
+> +               mm_segment_t old_fs;
+> +               char __user *buf = (char __user *)addr;
+> +
+> +               old_fs = get_fs();
+> +               set_fs(get_ds());
+> +               ret = file->f_op->read(file, buf, count, &offset);
+> +               set_fs(old_fs);
+> +       }
 
-IMA can be configured in a number of different ways. ?There are three
-main aspects - prevention (IMA-appraisal), detection (IMA-
-measurement), and forensics/analytics/remediation (IMA-audit). ?A lot
-depends on the environment (eg. embedded, laptop, server, cloud) and
-what is being protected.
+Hi,
 
-For example, the large majority of files in the Trusted Computing
-Base(TCB) are immutable files and should be signed.??File hashes only
-need to be re-calculated and stored as extended attributes for mutable
-files.
+Original code was using "__vfs_read()".
+Patch 1 replaced use of it by ->integrity_read.
+This patch re-added f_op->read() directly...
 
-A "typical user" would first want all immutable files to come with a
-file signature, or would need to sign them locally. ?Files that are
-modified locally (eg. scripts, configuration files) should be re-
-signed. ?Only then would a "typical user" be concerned with files that
-change - the mutable files. ?With EVM configured, these file hashes
-would be protected from offline modification. ?
+While __vfs_read() did it differently
 
-A "typical user" should also enable IMA-measurement and IMA-audit,
-just in case something happens...
+if (file->f_op->read)
+         return file->f_op->read(file, buf, count, pos);
+else if (file->f_op->read_iter)
+         return new_sync_read(file, buf, count, pos);
 
-Last year, my colleagues Stefan Berger and Mehmet Kayaalp gave a talk
-at LPC titled "File signatures needed!". ?I'm looking forward to
-hearing Matthew Garrett's talk at the Open Source Summit titled
-"Signing Linux Executables for Fun and Security".
 
-Mimi
+Is avoiding use of __vfs_read() is intentional?
 
+Dmitry
+
+
+> +
+>         BUG_ON(ret == -EIOCBQUEUED);
+>         return ret;
+>  }
+> --
+> 2.7.4
+>
+>
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-ima-devel mailing list
+> Linux-ima-devel at lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-ima-devel
+
+
+
+-- 
+Thanks,
+Dmitry
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
