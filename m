@@ -1,50 +1,52 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 10 Jul 2017 00:57:31 -0700
-Subject: [PATCH v2 8/8] exec: Use sane stack rlimit under secureexec
+Date: Mon, 10 Jul 2017 00:57:29 -0700
+Subject: [PATCH v2 6/8] exec: Consolidate dumpability logic
 In-Reply-To: <1499673451-66160-1-git-send-email-keescook@chromium.org>
 References: <1499673451-66160-1-git-send-email-keescook@chromium.org>
-Message-ID: <1499673451-66160-9-git-send-email-keescook@chromium.org>
+Message-ID: <1499673451-66160-7-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-For a secureexec, before memory layout selection has happened, reset the
-stack rlimit to something sane to avoid the caller having control over
-the resulting layouts.
-
-$ ulimit -s
-8192
-$ ulimit -s unlimited
-$ /bin/sh -c 'ulimit -s'
-unlimited
-$ sudo /bin/sh -c 'ulimit -s'
-8192
+Since it's already valid to set dumpability in the early part of
+setup_new_exec(), we can consolidate the logic into a single place.
+The BINPRM_FLAGS_ENFORCE_NONDUMP is set during would_dump() calls
+before setup_new_exec(), so its test is safe to move as well.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/exec.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/exec.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index e0186db02f90..1e3463854a16 100644
+index d7bda5b60e7b..eeb8323977d1 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1343,6 +1343,16 @@ void setup_new_exec(struct linux_binprm * bprm)
+@@ -1346,10 +1346,12 @@ void setup_new_exec(struct linux_binprm * bprm)
  
- 		/* Make sure parent cannot signal privileged process. */
+ 	current->sas_ss_sp = current->sas_ss_size = 0;
+ 
+-	if (!bprm->secureexec)
+-		set_dumpable(current->mm, SUID_DUMP_USER);
+-	else
++	/* Figure out dumpability. */
++	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
++	    bprm->secureexec)
+ 		set_dumpable(current->mm, suid_dumpable);
++	else
++		set_dumpable(current->mm, SUID_DUMP_USER);
+ 
+ 	arch_setup_new_exec();
+ 	perf_event_exec();
+@@ -1363,9 +1365,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 
+ 	if (bprm->secureexec) {
  		current->pdeath_signal = 0;
-+
-+		/*
-+		 * For secureexec, reset the stack limit to sane default to
-+		 * avoid bad behavior from the prior rlimits. This has to
-+		 * happen before arch_pick_mmap_layout(), which examines
-+		 * RLIMIT_STACK, but after the point of no return to avoid
-+		 * needing to clean up the change on failure.
-+		 */
-+		if (current->signal->rlim[RLIMIT_STACK].rlim_cur > _STK_LIM)
-+			current->signal->rlim[RLIMIT_STACK].rlim_cur = _STK_LIM;
+-	} else {
+-		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
+-			set_dumpable(current->mm, suid_dumpable);
  	}
  
- 	arch_pick_mmap_layout(current->mm);
+ 	/* An exec changes our domain. We are no longer part of the thread
 -- 
 2.7.4
 
