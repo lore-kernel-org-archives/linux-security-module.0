@@ -1,182 +1,136 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Mon, 10 Jul 2017 03:57:07 -0500
-Subject: [PATCH v2 2/8] exec: Move security_bprm_secureexec() earlier
-In-Reply-To: <1499673451-66160-3-git-send-email-keescook@chromium.org> (Kees
-	Cook's message of "Mon, 10 Jul 2017 00:57:25 -0700")
-References: <1499673451-66160-1-git-send-email-keescook@chromium.org>
-	<1499673451-66160-3-git-send-email-keescook@chromium.org>
-Message-ID: <87a84cr7oc.fsf@xmission.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 10 Jul 2017 08:10:12 -0400
+Subject: [PATCH v2] integrity: track mtime in addition to i_version for
+	assessment
+In-Reply-To: <1499459718.4852.8.camel@redhat.com>
+References: <20170707140530.30452-1-jlayton@kernel.org>
+	<1499446642.4967.3.camel@poochiereds.net>
+	<1499448249.3130.143.camel@linux.vnet.ibm.com>
+	<1499449777.4852.3.camel@redhat.com>
+	<1499457558.3130.173.camel@linux.vnet.ibm.com>
+	<1499459718.4852.8.camel@redhat.com>
+Message-ID: <1499688612.6034.111.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On Fri, 2017-07-07 at 16:35 -0400, Jeff Layton wrote:
+> On Fri, 2017-07-07 at 15:59 -0400, Mimi Zohar wrote:
+> > On Fri, 2017-07-07 at 13:49 -0400, Jeff Layton wrote:
+> > > On Fri, 2017-07-07 at 13:24 -0400, Mimi Zohar wrote:
+> > > > On Fri, 2017-07-07 at 12:57 -0400, Jeff Layton wrote:
+> > > > > On Fri, 2017-07-07 at 10:05 -0400, Jeff Layton wrote:
+> > > > > > From: Jeff Layton <jlayton@redhat.com>
+> > > > > > 
+> > > > > > The IMA assessment code tries to use the i_version counter to detect
+> > > > > > when changes to a file have occurred. Many filesystems don't increment
+> > > > > > it properly (or at all) so detecting changes with that is not always
+> > > > > > reliable.
+> > > > > > 
+> > > > > > That check should be gated on IS_I_VERSION, as you can't rely on the
+> > > > > > i_version field changing unless that returns true.
+> > > > > > 
+> > > > > > Have the code also track and check the mtime for the file. If the
+> > > > > > IS_I_VERSION returns false, then use it to detect whether the file's
+> > > > > > contents might have changed.
+> > > > > > 
+> > > > > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> > > > > > ---
+> > > > > >  security/integrity/ima/ima_api.c  |  4 +++-
+> > > > > >  security/integrity/ima/ima_main.c | 32 ++++++++++++++++++++++++--------
+> > > > > >  security/integrity/integrity.h    |  1 +
+> > > > > >  3 files changed, 28 insertions(+), 9 deletions(-)
+> > > > > > 
+> > > > > > v2: switch to storing/checking mtime instead of ctime
+> > > > > > 
+> > > > > 
+> > > > > To be clear here, I don't have a large interest in IMA, but I am looking
+> > > > > at making changes to how the i_version counter is handled. IMA's use of
+> > > > > it is problematic for some of those changes (and somewhat sketchy).
+> > > > > 
+> > > > > I think you either want something like the patch below, or you need to
+> > > > > somehow ensure that you're not doing any of this on a superblock that
+> > > > > doesn't have MS_I_VERSION set on it.
+> > > > > 
+> > > > > I'm not that familiar with IMA in general though, so it's possible I'm
+> > > > > missing something. Is that already being done somehow?
+> > > > 
+> > > > Before reverting to using mtime, which wasn't fine grained enough at
+> > > > the time, it would be helpful to first understand the type of changes
+> > > > and the reasons for the changes you're looking to make to i_version.
+> > > 
+> > > Sure, I posted a patchset back in December, actually:
+> > > 
+> > >     [RFC PATCH v1 00/30] fs: inode->i_version rework and optimization
+> > 
+> > Thanks you.
+> > 
+> > > The basic idea is to improve performance on filesystems that implement
+> > > the i_version counter by allowing them to optimize away metadata updates
+> > > that are due solely to i_version counter change when no one is actually
+> > > using it. This will also pave the way to allow us to more reasonably
+> > > provide an i_version counter on network filesystems and the like that
+> > > might have weaker consistency guarantees than a local fs.
+> > > Your point about mtime not being granular enough is valid however. It's
+> > > certainly possible for extra writes to race in during the jiffy or so
+> > > window that represents the mtime resolution. It's just that that is
+> > > still more granular than you'll get on a filesystem that never actually
+> > > increments the i_version counter on a write.
+> > > >  After all, i_version has been working all this time (~2009).
+> > > > 
+> > > 
+> > > The i_version counter works just fine on filesystems that implement it
+> > > properly. That's a very short list: xfs, btrfs, and ext4 for local
+> > > filesystems. NFS and AFS would also likely be fine here, though they
+> > > don't set MS_I_VERSION.
+> > > The rest though do not support it consistently and IMA should not be
+> > > relying on it on them. This is why the kernel nfs server only relies on
+> > > the i_version field when IS_I_VERSION returns true.
+> > > 
+> > > I'll ask again -- is IMA somehow limited only being used only on that
+> > > subset of filesystems? My guess from a glance at the integrity_read
+> > > patchset is that it is not.
+> > 
+> > Our main use case scenario is verifying the integrity of files,
+> > updating the file hash for mutable files, and maintaining a
+> > measurement list, including re-measurement of files that have changed,
+> > on local file systems.  Without being in the file write path (or more
+> > precisely __fput), there are no guarantees of file change
+> > notification.
+> > 
+> > For file systems which do not support i_version, we are limited to an
+> > initial file integrity verification and measurement.
+> 
+> How is your typical user to know whether to expect this guarantee from
+> the filesystem?
 
-> There are several places where exec needs to know if a privilege-gain has
-> happened. These should be using the results of security_bprm_secureexec()
-> but it is getting (needlessly) called very late.
+IMA can be configured in a number of different ways. ?There are three
+main aspects - prevention (IMA-appraisal), detection (IMA-
+measurement), and forensics/analytics/remediation (IMA-audit). ?A lot
+depends on the environment (eg. embedded, laptop, server, cloud) and
+what is being protected.
 
-It is hard to tell at a glance but I believe this introduces a
-regression.
+For example, the large majority of files in the Trusted Computing
+Base(TCB) are immutable files and should be signed.??File hashes only
+need to be re-calculated and stored as extended attributes for mutable
+files.
 
-cap_bprm_set_creds is currently called before cap_bprm_secureexec and
-it has a number of cases such as no_new_privs and ptrace that can result
-in some of the precomputed credential changes not happening.
+A "typical user" would first want all immutable files to come with a
+file signature, or would need to sign them locally. ?Files that are
+modified locally (eg. scripts, configuration files) should be re-
+signed. ?Only then would a "typical user" be concerned with files that
+change - the mutable files. ?With EVM configured, these file hashes
+would be protected from offline modification. ?
 
-Without accounting for that I believe your cap_bprm_securexec now
-returns a postive value too early.
+A "typical user" should also enable IMA-measurement and IMA-audit,
+just in case something happens...
 
-> Instead, move this earlier in the exec code, to the start of the point
-> of no return in setup_new_exec(). Here, the new creds have already
-> been calculated (and stored in bprm->cred), which is normally what
-> security_bprm_secureexec() wants to examine. Since it's moved earlier,
-> LSMs hooking bprm_secureexec() need to be adjusted to use the creds in
-> bprm:
->
-> $ git grep LSM_HOOK_INIT.*bprm_secureexec
-> apparmor/lsm.c:    LSM_HOOK_INIT(bprm_secureexec, apparmor_bprm_secureexec),
-> commoncap.c:       LSM_HOOK_INIT(bprm_secureexec, cap_bprm_secureexec),
-> selinux/hooks.c:   LSM_HOOK_INIT(bprm_secureexec, selinux_bprm_secureexec),
-> smack/smack_lsm.c: LSM_HOOK_INIT(bprm_secureexec, smack_bprm_secureexec),
->
-> AppArmor does not access creds in apparmor_bprm_secureexec.
->
-> Capabilities needed to be adjusted to use bprm creds.
->
-> SELinux needed to be adjusted to use bprm creds for the security structure.
->
-> Smack needed to be adjusted to use bprm creds for the security structure.
->
-> The result of the bprm_secureexec() hook is saved in a new bprm field
-> "secureexec" so it can be queried later (just AT_SECURE currently).
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  fs/binfmt_elf.c            | 2 +-
->  fs/binfmt_elf_fdpic.c      | 2 +-
->  fs/exec.c                  | 5 +++++
->  include/linux/binfmts.h    | 3 ++-
->  include/linux/lsm_hooks.h  | 3 ++-
->  security/commoncap.c       | 4 +---
->  security/selinux/hooks.c   | 2 +-
->  security/smack/smack_lsm.c | 2 +-
->  8 files changed, 14 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 5075fd5c62c8..7f6ec4dac13d 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -254,7 +254,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
->  	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
->  	NEW_AUX_ENT(AT_GID, from_kgid_munged(cred->user_ns, cred->gid));
->  	NEW_AUX_ENT(AT_EGID, from_kgid_munged(cred->user_ns, cred->egid));
-> - 	NEW_AUX_ENT(AT_SECURE, security_bprm_secureexec(bprm));
-> +	NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
->  	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
->  #ifdef ELF_HWCAP2
->  	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index cf93a4fad012..5aa9199dfb13 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -650,7 +650,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->  	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
->  	NEW_AUX_ENT(AT_GID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->gid));
->  	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
-> -	NEW_AUX_ENT(AT_SECURE,	security_bprm_secureexec(bprm));
-> +	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
->  	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
->  
->  #ifdef ARCH_DLINFO
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 7842ae661e34..b92e37fb53aa 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1337,6 +1337,11 @@ EXPORT_SYMBOL(would_dump);
->  
->  void setup_new_exec(struct linux_binprm * bprm)
->  {
-> +	if (security_bprm_secureexec(bprm)) {
-> +		/* Record for AT_SECURE. */
-> +		bprm->secureexec = 1;
-> +	}
-> +
->  	arch_pick_mmap_layout(current->mm);
->  
->  	current->sas_ss_sp = current->sas_ss_size = 0;
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index 05488da3aee9..1afaa303cad0 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -27,9 +27,10 @@ struct linux_binprm {
->  	unsigned int
->  		cred_prepared:1,/* true if creds already prepared (multiple
->  				 * preps happen for interpreters) */
-> -		cap_effective:1;/* true if has elevated effective capabilities,
-> +		cap_effective:1,/* true if has elevated effective capabilities,
->  				 * false if not; except for init which inherits
->  				 * its parent's caps anyway */
-> +		secureexec:1;	/* true when gaining privileges */
->  #ifdef __alpha__
->  	unsigned int taso:1;
->  #endif
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 080f34e66017..d1bd24fb4a33 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -72,7 +72,8 @@
->   *	Return a boolean value (0 or 1) indicating whether a "secure exec"
->   *	is required.  The flag is passed in the auxiliary table
->   *	on the initial stack to the ELF interpreter to indicate whether libc
-> - *	should enable secure mode.
-> + *	should enable secure mode. Called before bprm_committing_creds(),
-> + *	so pending credentials are in @bprm->cred.
->   *	@bprm contains the linux_binprm structure.
->   *
->   * Security hooks for filesystem operations.
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 7abebd782d5e..482d3aac2fc6 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -624,12 +624,10 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
->   * Determine whether a secure execution is required, return 1 if it is, and 0
->   * if it is not.
->   *
-> - * The credentials have been committed by this point, and so are no longer
-> - * available through @bprm->cred.
->   */
->  int cap_bprm_secureexec(struct linux_binprm *bprm)
->  {
-> -	const struct cred *cred = current_cred();
-> +	const struct cred *cred = bprm->cred;
->  	kuid_t root_uid = make_kuid(cred->user_ns, 0);
->  
->  	if (!uid_eq(cred->uid, root_uid)) {
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 819fd6858b49..9381c8474cf4 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2420,7 +2420,7 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
->  
->  static int selinux_bprm_secureexec(struct linux_binprm *bprm)
->  {
-> -	const struct task_security_struct *tsec = current_security();
-> +	const struct task_security_struct *tsec = bprm->cred->security;
->  	u32 sid, osid;
->  	int atsecure = 0;
->  
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 658f5d8c7e76..13cf9e66d5fe 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -975,7 +975,7 @@ static void smack_bprm_committing_creds(struct linux_binprm *bprm)
->   */
->  static int smack_bprm_secureexec(struct linux_binprm *bprm)
->  {
-> -	struct task_smack *tsp = current_security();
-> +	struct task_smack *tsp = bprm->cred->security;
->  
->  	if (tsp->smk_task != tsp->smk_forked)
->  		return 1;
+Last year, my colleagues Stefan Berger and Mehmet Kayaalp gave a talk
+at LPC titled "File signatures needed!". ?I'm looking forward to
+hearing Matthew Garrett's talk at the Open Source Summit titled
+"Signing Linux Executables for Fun and Security".
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
