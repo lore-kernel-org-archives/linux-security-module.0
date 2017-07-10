@@ -1,52 +1,55 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 10 Jul 2017 00:57:29 -0700
-Subject: [PATCH v2 6/8] exec: Consolidate dumpability logic
+Date: Mon, 10 Jul 2017 00:57:28 -0700
+Subject: [PATCH v2 5/8] smack: Remove redundant pdeath_signal clearing
 In-Reply-To: <1499673451-66160-1-git-send-email-keescook@chromium.org>
 References: <1499673451-66160-1-git-send-email-keescook@chromium.org>
-Message-ID: <1499673451-66160-7-git-send-email-keescook@chromium.org>
+Message-ID: <1499673451-66160-6-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Since it's already valid to set dumpability in the early part of
-setup_new_exec(), we can consolidate the logic into a single place.
-The BINPRM_FLAGS_ENFORCE_NONDUMP is set during would_dump() calls
-before setup_new_exec(), so its test is safe to move as well.
+This removes the redundant pdeath_signal clearing in Smack: the check in
+smack_bprm_committing_creds() matches the check in smack_bprm_secureexec(),
+and since secureexec is now being checked for clearing pdeath_signal, this
+is redundant to the common exec code.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/exec.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ security/smack/smack_lsm.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index d7bda5b60e7b..eeb8323977d1 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1346,10 +1346,12 @@ void setup_new_exec(struct linux_binprm * bprm)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 13cf9e66d5fe..4b10b782aecc 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -954,20 +954,6 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+ }
  
- 	current->sas_ss_sp = current->sas_ss_size = 0;
+ /**
+- * smack_bprm_committing_creds - Prepare to install the new credentials
+- * from bprm.
+- *
+- * @bprm: binprm for exec
+- */
+-static void smack_bprm_committing_creds(struct linux_binprm *bprm)
+-{
+-	struct task_smack *bsp = bprm->cred->security;
+-
+-	if (bsp->smk_task != bsp->smk_forked)
+-		current->pdeath_signal = 0;
+-}
+-
+-/**
+  * smack_bprm_secureexec - Return the decision to use secureexec.
+  * @bprm: binprm for exec
+  *
+@@ -4645,7 +4631,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_parse_opts_str, smack_parse_opts_str),
  
--	if (!bprm->secureexec)
--		set_dumpable(current->mm, SUID_DUMP_USER);
--	else
-+	/* Figure out dumpability. */
-+	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-+	    bprm->secureexec)
- 		set_dumpable(current->mm, suid_dumpable);
-+	else
-+		set_dumpable(current->mm, SUID_DUMP_USER);
+ 	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
+-	LSM_HOOK_INIT(bprm_committing_creds, smack_bprm_committing_creds),
+ 	LSM_HOOK_INIT(bprm_secureexec, smack_bprm_secureexec),
  
- 	arch_setup_new_exec();
- 	perf_event_exec();
-@@ -1363,9 +1365,6 @@ void setup_new_exec(struct linux_binprm * bprm)
- 
- 	if (bprm->secureexec) {
- 		current->pdeath_signal = 0;
--	} else {
--		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
--			set_dumpable(current->mm, suid_dumpable);
- 	}
- 
- 	/* An exec changes our domain. We are no longer part of the thread
+ 	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
 -- 
 2.7.4
 
