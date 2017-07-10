@@ -1,33 +1,48 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 10 Jul 2017 00:57:23 -0700
-Subject: [PATCH v2 0/8] exec: Use sane stack rlimit under secureexec
-Message-ID: <1499673451-66160-1-git-send-email-keescook@chromium.org>
+Date: Mon, 10 Jul 2017 00:57:30 -0700
+Subject: [PATCH v2 7/8] exec: Consolidate pdeath_signal clearing
+In-Reply-To: <1499673451-66160-1-git-send-email-keescook@chromium.org>
+References: <1499673451-66160-1-git-send-email-keescook@chromium.org>
+Message-ID: <1499673451-66160-8-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-As discussed with Linus and Andy, we need to reset the stack rlimit
-before we do memory layouts when execing a privilege-gaining (e.g.
-setuid) program. This moves security_bprm_secureexec() earlier (with
-required changes), and then lowers the stack limit when appropriate.
+Instead of an additional secureexec check for pdeath_signal, just move it
+up into the initial secureexec test. Neither perf nor arch code touches
+pdeath_signal, so the relocation shouldn't change anything.
 
-As a side-effect, dumpability and pdeath_signal clearing is expanded
-to cover LSM definitions of secureexec (and Smack can drop its special
-handler for pdeath_signal clearing).
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/exec.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-I'd appreciate some extra eyes on this to make sure this isn't
-broken in some special way. I couldn't find anything that _depended_
-on security_bprm_secureexec() being called late.
-
-Thanks!
-
--Kees
-
-v2:
-- fix missed current_security() uses in LSMs.
-- research/consolidate dumpability setting logic
-- research/consolidate pdeath_signal clearing logic
-- split up logical steps a little more for easier review (and bisection)
-- fix some old broken comments
+diff --git a/fs/exec.c b/fs/exec.c
+index eeb8323977d1..e0186db02f90 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1340,6 +1340,9 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	if (security_bprm_secureexec(bprm)) {
+ 		/* Record for AT_SECURE. */
+ 		bprm->secureexec = 1;
++
++		/* Make sure parent cannot signal privileged process. */
++		current->pdeath_signal = 0;
+ 	}
+ 
+ 	arch_pick_mmap_layout(current->mm);
+@@ -1363,10 +1366,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	 */
+ 	current->mm->task_size = TASK_SIZE;
+ 
+-	if (bprm->secureexec) {
+-		current->pdeath_signal = 0;
+-	}
+-
+ 	/* An exec changes our domain. We are no longer part of the thread
+ 	   group */
+ 	current->self_exec_id++;
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
