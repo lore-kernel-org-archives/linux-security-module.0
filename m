@@ -1,133 +1,69 @@
-From: bfields@fieldses.org (J. Bruce Fields)
-Date: Tue, 11 Jul 2017 12:13:24 -0400
-Subject: [PATCH v2] integrity: track mtime in addition to i_version for
-	assessment
-In-Reply-To: <20170707140530.30452-1-jlayton@kernel.org>
-References: <20170707140530.30452-1-jlayton@kernel.org>
-Message-ID: <20170711161324.GA31196@fieldses.org>
+From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
+Date: Tue, 11 Jul 2017 12:33:42 -0400
+Subject: [PATCH] ima: namespacing IMA (PoC) - experimental 
+Message-ID: <D984A9E8-34DA-4A96-A134-5F87241F08E8@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jul 07, 2017 at 10:05:30AM -0400, Jeff Layton wrote:
-> From: Jeff Layton <jlayton@redhat.com>
-> 
-> The IMA assessment code tries to use the i_version counter to detect
-> when changes to a file have occurred. Many filesystems don't increment
-> it properly (or at all) so detecting changes with that is not always
-> reliable.
-> 
-> That check should be gated on IS_I_VERSION, as you can't rely on the
-> i_version field changing unless that returns true.
-> 
-> Have the code also track and check the mtime for the file. If the
-> IS_I_VERSION returns false, then use it to detect whether the file's
-> contents might have changed.
+This IMA namespacing patch set was initially implemented by Yuqiong Sun, 
+while at IBM Research as a summer intern working with David Safford. It 
+was subsequently modified and rebased by Stefan Berger and Mehmet 
+Kayaalp. The resulting patches are being made available from the 
+"next-namespacing-experimental" branch on 
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git 
+as a proof of concept, but will not be upstreamed.
 
-Do they care about attribute changes?  It's still better than nothing, I
-suppose.
+Namespacing IMA is complex. It involves differentiating the IMA global 
+information (e.g. file hashes) from the IMA namespace specific 
+information (e.g. collected, measured, appraised). This information 
+needs to be created, updated, and freed as namespaces come and go, and 
+also freed when files are removed from the file system. In addition, 
+namespacing IMA properly also requires namespacing the securityfs files 
+(eg. policy, ascii/binary measurement lists), keyrings needed for 
+validating file signatures, and the hash table used to prevent the same 
+file from being measured multiple times within the same namespace, yet 
+separately in each namespace.
 
-I also wonder whether they should be mixing in ctime as I plan to for
-nfsd--the difference is whether they use it to check changes across
-reboots.
+This requires some form of capability/permission checking. Currently, 
+only root with CAP_SYS_ADMIN permission is able to write securityfs 
+files and security xattrs. In addition, the IMA security xattrs need to 
+be namespace aware. (Other LSM subsystems are making similar changes.)
 
---b.
+Like other initial subsystem namespacing, this IMA namespacing patch set 
+defines a new IMA namespace that is created with a new clone flag (this 
+needs to be changed). An unprivileged user can create an IMA namespace 
+in a new user namespace. The IMA securityfs policy file can be read and 
+set by a user with CAP_SYS_ADMIN within the user namespace, where the 
+IMA namespace is created. The policy can define the namespace 
+measurement and appraisal rules. Measurement is done recursively for 
+each nested IMA namespace. If the file to be measured is in policy for 
+multiple IMA namespaces, it is measured for each namespace. The list of 
+measurements are available to the CAP_SYS_ADMIN under the owner user 
+namespace. For appraisal, the non-init IMA namespaces use the "_ima" 
+session keyring. If the keyring is created and populated with keys, 
+these keys will be used for the appraisal rules defined in the policy of 
+the IMA namespace. Attestation for the IMA namespace is not supported in 
+this patchset.
 
-> 
-> Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> ---
->  security/integrity/ima/ima_api.c  |  4 +++-
->  security/integrity/ima/ima_main.c | 32 ++++++++++++++++++++++++--------
->  security/integrity/integrity.h    |  1 +
->  3 files changed, 28 insertions(+), 9 deletions(-)
-> 
-> v2: switch to storing/checking mtime instead of ctime
-> 
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index c2edba8de35e..b8d746bbc43d 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -205,7 +205,8 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
->  	} hash;
->  
->  	if (!(iint->flags & IMA_COLLECTED)) {
-> -		u64 i_version = file_inode(file)->i_version;
-> +		u64 i_version = inode->i_version;
-> +		struct timespec i_mtime = inode->i_mtime;
->  
->  		if (file->f_flags & O_DIRECT) {
->  			audit_cause = "failed(directio)";
-> @@ -225,6 +226,7 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
->  				iint->ima_hash = tmpbuf;
->  				memcpy(iint->ima_hash, &hash, length);
->  				iint->version = i_version;
-> +				iint->mtime = i_mtime;
->  				iint->flags |= IMA_COLLECTED;
->  			} else
->  				result = -ENOMEM;
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 2aebb7984437..8d12ef2d3ba2 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -113,6 +113,25 @@ static void ima_rdwr_violation_check(struct file *file,
->  				  "invalid_pcr", "open_writers");
->  }
->  
-> +static bool ima_should_update_iint(struct integrity_iint_cache *iint,
-> +				struct inode *inode)
-> +{
-> +	if (atomic_read(&inode->i_writecount) != 1)
-> +		return false;
-> +	if (iint->flags & IMA_NEW_FILE)
-> +		return true;
-> +	if (IS_I_VERSION(inode)) {
-> +		if (iint->version != inode->i_version)
-> +			return true;
-> +	} else {
-> +		if (iint->mtime.tv_sec != inode->i_mtime.tv_sec)
-> +			return true;
-> +		if (iint->mtime.tv_nsec != inode->i_mtime.tv_nsec)
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
->  static void ima_check_last_writer(struct integrity_iint_cache *iint,
->  				  struct inode *inode, struct file *file)
->  {
-> @@ -122,14 +141,11 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
->  		return;
->  
->  	inode_lock(inode);
-> -	if (atomic_read(&inode->i_writecount) == 1) {
-> -		if ((iint->version != inode->i_version) ||
-> -		    (iint->flags & IMA_NEW_FILE)) {
-> -			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
-> -			iint->measured_pcrs = 0;
-> -			if (iint->flags & IMA_APPRAISE)
-> -				ima_update_xattr(iint, file);
-> -		}
-> +	if (ima_should_update_iint(iint, inode)) {
-> +		iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
-> +		iint->measured_pcrs = 0;
-> +		if (iint->flags & IMA_APPRAISE)
-> +			ima_update_xattr(iint, file);
->  	}
->  	inode_unlock(inode);
->  }
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> index a53e7e4ab06c..61fffa7583bf 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -102,6 +102,7 @@ struct integrity_iint_cache {
->  	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
->  	struct inode *inode;	/* back pointer to inode in question */
->  	u64 version;		/* track inode changes */
-> +	struct timespec mtime;	/* track inode changes */
->  	unsigned long flags;
->  	unsigned long measured_pcrs;
->  	enum integrity_status ima_file_status:4;
-> -- 
-> 2.13.0
+For testing, we modified "runc" to create an IMA namespace and 
+initialized the policy and the keyring inside the container between the 
+clone() and exec() system calls. For accessing the IMA files in 
+securityfs inside the container, CAP_SYS_ADMIN is required to be added 
+to the list of capabilities in the config.json file. "runc" tries 
+loading the policy from /etc/default/ima-policy, and keys from 
+/etc/keys/ima/ inside the rootfs of the container. The runc patches are 
+available at the "imans" branch on https://github.com/stefanberger/runc.
+
+Major changes include:
+* Keyring creation is moved to userspace.
+* Policy file is changed back from procfs to securityfs. 
+* Temporarily the IMA files are only accessible to CAP_SYS_ADMIN with 
+permissions set to user, group, and other.
+* Patches should now be bisect-safe.
+
+Regards,
+Mehmet
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
