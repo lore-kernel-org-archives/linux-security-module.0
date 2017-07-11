@@ -1,74 +1,163 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 11 Jul 2017 18:58:13 +0200
-Subject: [kernel-hardening] [PATCH 00/11] S.A.R.A. a new stacked LSM
-In-Reply-To: <c19917fa-f62c-b7e0-8cbd-f10a96f686ba@digikod.net>
-References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<53a2d710-b0f0-cdf9-e7ad-cd8d03fc835a@digikod.net>
-	<CAJHCu1+=uYQ-N7CH4KfmTHrN2hJjwzN0tgg4sWHU0LjVr+uGGA@mail.gmail.com>
-	<c19917fa-f62c-b7e0-8cbd-f10a96f686ba@digikod.net>
-Message-ID: <CAJHCu1K1Hg5M2HhJxN_aj2P_S8Pez9+8KL=wHKBgAN0jN1+mLg@mail.gmail.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Tue, 11 Jul 2017 12:12:22 -0500
+Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
+In-Reply-To: <1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
+References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
+Message-ID: <20170711171222.GB31603@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-07-11 1:40 GMT+02:00 Micka?l Sala?n <mic@digikod.net>:
->
-> On 10/07/2017 09:59, Salvatore Mesoraca wrote:
->> 2017-07-09 21:35 GMT+02:00 Micka?l Sala?n <mic@digikod.net>:
->>> Hi,
->>>
->>> I think it make sense to merge the W^X features with the TPE/shebang LSM
->>> [1].
->>>
->>> Regards,
->>>  Micka?l
->>>
->>> [1]
->>> https://lkml.kernel.org/r/d9aca46b-97c6-4faf-b559-484feb4aa640 at digikod.net
->>
->> Hi,
->> Can you elaborate why it would be an advantage to have those features merged?
->> They seem quite unrelated.
->> Also, they work in rather different ways in respect to how they are configured.
->> I'm not sure what would be a reasonable way to merge them.
->> Thank you for your comment,
->>
->> Salvatore
->>
->
-> The aim of the Trusted Path Execution is to constraint calls to execve
-> (e.g. forbid an user to execute his own binaries, i.e. apply a W^X
-> security policy). This should handle binaries and could handle scripts
-> too [1]. However, there is always a way for a process to mmap/mprotect
-> arbitrary data and make it executable, be it intentional or not. PaX and
-> the W^X part of your LSM can handle this, or make exceptions by marking
-> a file with dedicated xattr values. This kind of exception fit well with
-> TPE to get a more hardened executable security policy (e.g. forbid an
-> user to execute his own binaries or to mmap arbitrary executable code).
-> Moreover, TPE could handle some part of its configuration from some
-> xattr values (e.g. allow scripts/interpreters, a whitelist of
-> environment variables, additional memory restrictions?) as you do with
-> SARA thanks to your tools.
+Quoting Stefan Berger (Stefan Bergerstefanb at linux.vnet.ibm.com):
+> er.kernel.org>
+> X-Mailing-List: linux-kernel at vger.kernel.org
+> Content-Length: 19839
+> Lines: 700
+> X-UID: 24770                                                 
+> Status: RO
+> 
+> From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> 
+> This patch enables security.capability in user namespaces but also
+> takes a more general approach to enabling extended attributes in user
+> namespaces.
+> 
+> The following rules describe the approach using security.foo as a
+> 'user namespace enabled' extended attribute:
+> 
+> Reading of extended attributes:
+> 
+> 1a) Reading security.foo from a user namespace will read
+>     security.foo at uid=<uid> of the parent user namespace instead with uid
+>     being the mapping of root in that parent user namespace. An
+>     exception is if root is mapped to uid 0 on the host, and in this case
+>     we will read security.foo directly.
+>     --> reading security.foo will read security.foo at uid=1000 for uid
+>         mapping of root to 1000.
+> 
+> 1b) If security.foo at uid=<uid> is not available, the security.foo of the
+>     parent namespace is tried to be read. This procedure is repeated up to
+>     the init user namespace. This step only applies for reading of extended
+>     attributes and provides the same behavior as older system where the
+>     host's extended attributes applied to user namespaces.
+> 
+> 2) All security.foo at uid=<uid> with valid uid mapping in the user namespace
+>    can be read. The uid within the user namespace will be mapped to the
+>    corresponding uid on the host and that uid will be used in the name of
+>    the extended attribute.
+>    -> reading security.foo at uid=1 will read security.foo at uid=1001 for uid
+>       mapping of root to 1000, size of at least 2.
+> 
+>    All security.foo at uid=<uid> can be read (by root) on the host with values
+>    of <uid> also being subject to checking for valid mappings.
+> 
+> 3) No other security.foo* can be read.
+> 
+> The same rules for reading apply to writing and removing of user
+> namespace enabled extended attributes.
+> 
+> When listing extended attributes of a file, only those are presented
+> to the user namespace that have a valid mapping. Besides that, names
+> of the extended attributes are adjusted to represent the mapping.
+> This means that if root is mapped to uid 1000 on the host, the
+> security.foo at uid=1000 will be listed as security.foo in the user
+> namespace, security.foo at uid=1001 becomes security.foo at uid=1 and so on.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> Signed-off-by: Serge Hallyn <serge@hallyn.com>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> ---
+>  fs/xattr.c               | 509 +++++++++++++++++++++++++++++++++++++++++++++--
+>  security/commoncap.c     |  36 +++-
+>  security/selinux/hooks.c |   9 +-
+>  3 files changed, 523 insertions(+), 31 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 464c94b..eacad9e 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -133,20 +133,440 @@ xattr_permission(struct inode *inode, const char *name, int mask)
+>  	return inode_permission(inode, mask);
+>  }
+>  
+> +/*
+> + * A list of extended attributes that are supported in user namespaces
+> + */
+> +static const char *const userns_xattrs[] = {
+> +	XATTR_NAME_CAPS,
+> +	NULL
+> +};
+> +
+> +/*
+> + * xattrs_is_userns_supported - Check whether an xattr is supported in userns
+> + *
+> + * @name:   full name of the extended attribute
+> + * @prefix: do a prefix match (true) or a full match (false)
+> + *
+> + * This function returns < 0 if not supported, an index into userns_xattrs[]
+> + * otherwise.
+> + */
+> +static int
+> +xattr_is_userns_supported(const char *name, int prefix)
+> +{
+> +	int i;
+> +
+> +	if (!name)
+> +		return -1;
+> +
+> +	for (i = 0; userns_xattrs[i]; i++) {
+> +		if (prefix) {
+> +			if (!strncmp(userns_xattrs[i], name,
+> +				     strlen(userns_xattrs[i])))
+> +				return i;
 
-I understand your point. They complement each other in some sense.
-On the other hand, I'm still worried about the suitability of merging,
-under the same LSM, two features that are managed in two
-completely different ways.
-IMHO, if they have to be merged, they should be "integrated".
-As I see it, there are only 3 possible solutions to this problem:
-1 - SARA gives up its configuration mechanics and starts using xattrs
-2 - TPE/shebang gives up xattrs and starts using SARA-style configurations
-3 - SARA adds xattrs support to its quiver *and* TPE/shebang adds SARA-style
-     configuration support.
+I think you here need to also check that the next char is either
+'\0' or '.' (or maybe '@')
 
-The solution number 1 is the one I'm less inclined to, as you can imagine.
-I'm in favor of solutions 2 and 3, but of course we need to know Mimi Zohar and
-Matt Brown opinion on this matter.
-If we can find a consensus on the best way to merge them, I'm not against
-the merge.
-Anyway, these LSMs are stackable and they can be used together even if they
-don't get merged. So I think that merging them is not a "must".
+> +		} else {
+> +			if (!strcmp(userns_xattrs[i], name))
+> +				return i;
+> +		}
+> +	}
+> +	return -1;
+> +}
+> +
+> +/*
+> + * xattr_write_uid - print a string in the format of "%s at uid=%u", which
+> + *                   includes a prefix string
+> + *
+> + * @uid:     the uid
+> + * @prefix:  prefix string; may be NULL
+> + *
+> + * This function returns a buffer with the string, or a NULL pointer in
+> + * case of out-of-memory error.
+> + */
+> +static char *
+> +xattr_write_uid(uid_t uid, const char *prefix)
+> +{
+> +	size_t buflen;
+> +	char *buffer;
+> +
+> +	buflen = sizeof("@uid=") - 1 + sizeof("4294967295") - 1 + 1;
+> +	if (prefix)
+> +		buflen += strlen(prefix);
+> +
+> +	buffer = kmalloc(buflen, GFP_KERNEL);
+> +	if (!buffer)
+> +		return NULL;
+> +
+> +	if (uid == 0)
+> +		*buffer = 0;
 
-Salvatore
+Do you need to print out the prefix here?
+
+> +	else
+> +		sprintf(buffer, "%s at uid=%u",
+> +			(prefix) ? prefix : "",
+> +			uid);
+> +
+> +	return buffer;
+> +}
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
