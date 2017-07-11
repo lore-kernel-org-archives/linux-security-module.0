@@ -1,90 +1,150 @@
-From: matt@nmatt.com (Matt Brown)
-Date: Tue, 11 Jul 2017 13:49:22 -0400
-Subject: [kernel-hardening] [PATCH 00/11] S.A.R.A. a new stacked LSM
-In-Reply-To: <CAJHCu1K1Hg5M2HhJxN_aj2P_S8Pez9+8KL=wHKBgAN0jN1+mLg@mail.gmail.com>
-References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<53a2d710-b0f0-cdf9-e7ad-cd8d03fc835a@digikod.net>
-	<CAJHCu1+=uYQ-N7CH4KfmTHrN2hJjwzN0tgg4sWHU0LjVr+uGGA@mail.gmail.com>
-	<c19917fa-f62c-b7e0-8cbd-f10a96f686ba@digikod.net>
-	<CAJHCu1K1Hg5M2HhJxN_aj2P_S8Pez9+8KL=wHKBgAN0jN1+mLg@mail.gmail.com>
-Message-ID: <69ff2195-d0e1-8a0f-b80e-5d8d55947907@nmatt.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 11 Jul 2017 14:47:22 -0400
+Subject: [PATCH v2] integrity: track mtime in addition to i_version for
+	assessment
+In-Reply-To: <20170711161324.GA31196@fieldses.org>
+References: <20170707140530.30452-1-jlayton@kernel.org>
+	<20170711161324.GA31196@fieldses.org>
+Message-ID: <1499798842.6034.248.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 7/11/17 12:58 PM, Salvatore Mesoraca wrote:
-> 2017-07-11 1:40 GMT+02:00 Micka?l Sala?n <mic@digikod.net>:
->>
->> On 10/07/2017 09:59, Salvatore Mesoraca wrote:
->>> 2017-07-09 21:35 GMT+02:00 Micka?l Sala?n <mic@digikod.net>:
->>>> Hi,
->>>>
->>>> I think it make sense to merge the W^X features with the TPE/shebang LSM
->>>> [1].
->>>>
->>>> Regards,
->>>>  Micka?l
->>>>
->>>> [1]
->>>> https://lkml.kernel.org/r/d9aca46b-97c6-4faf-b559-484feb4aa640 at digikod.net
->>>
->>> Hi,
->>> Can you elaborate why it would be an advantage to have those features merged?
->>> They seem quite unrelated.
->>> Also, they work in rather different ways in respect to how they are configured.
->>> I'm not sure what would be a reasonable way to merge them.
->>> Thank you for your comment,
->>>
->>> Salvatore
->>>
->>
->> The aim of the Trusted Path Execution is to constraint calls to execve
->> (e.g. forbid an user to execute his own binaries, i.e. apply a W^X
->> security policy). This should handle binaries and could handle scripts
->> too [1]. However, there is always a way for a process to mmap/mprotect
->> arbitrary data and make it executable, be it intentional or not. PaX and
->> the W^X part of your LSM can handle this, or make exceptions by marking
->> a file with dedicated xattr values. This kind of exception fit well with
->> TPE to get a more hardened executable security policy (e.g. forbid an
->> user to execute his own binaries or to mmap arbitrary executable code).
->> Moreover, TPE could handle some part of its configuration from some
->> xattr values (e.g. allow scripts/interpreters, a whitelist of
->> environment variables, additional memory restrictions?) as you do with
->> SARA thanks to your tools.
+On Tue, 2017-07-11 at 12:13 -0400, J. Bruce Fields wrote:
+> On Fri, Jul 07, 2017 at 10:05:30AM -0400, Jeff Layton wrote:
+> > From: Jeff Layton <jlayton@redhat.com>
+> > 
+> > The IMA assessment code tries to use the i_version counter to detect
+> > when changes to a file have occurred. Many filesystems don't increment
+> > it properly (or at all) so detecting changes with that is not always
+> > reliable.
+> > 
+> > That check should be gated on IS_I_VERSION, as you can't rely on the
+> > i_version field changing unless that returns true.
+> > 
+> > Have the code also track and check the mtime for the file. If the
+> > IS_I_VERSION returns false, then use it to detect whether the file's
+> > contents might have changed.
 > 
-> I understand your point. They complement each other in some sense.
-> On the other hand, I'm still worried about the suitability of merging,
-> under the same LSM, two features that are managed in two
-> completely different ways.
-> IMHO, if they have to be merged, they should be "integrated".
-> As I see it, there are only 3 possible solutions to this problem:
-> 1 - SARA gives up its configuration mechanics and starts using xattrs
-> 2 - TPE/shebang gives up xattrs and starts using SARA-style configurations
-> 3 - SARA adds xattrs support to its quiver *and* TPE/shebang adds SARA-style
->      configuration support.
+> Do they care about attribute changes?  It's still better than nothing, I
+> suppose.
+
+IMA is only interested in file data changes, not file meta-data
+changes. ?EVM needs to recalculate the hmac stored as security.evm,
+when file meta-data changes (eg. xattrs, uid, gid, mode,
+i_generations), but this is dependent on being in the setxattr or
+notify_change() paths, not i_version.
+
+Mimi
+
 > 
-> The solution number 1 is the one I'm less inclined to, as you can imagine.
-> I'm in favor of solutions 2 and 3, but of course we need to know Mimi Zohar and
-> Matt Brown opinion on this matter.
-> If we can find a consensus on the best way to merge them, I'm not against
-> the merge.
-> Anyway, these LSMs are stackable and they can be used together even if they
-> don't get merged. So I think that merging them is not a "must".
+> I also wonder whether they should be mixing in ctime as I plan to for
+> nfsd--the difference is whether they use it to check changes across
+> reboots.
 > 
-> Salvatore
+> --b.
+> 
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> > ---
+> >  security/integrity/ima/ima_api.c  |  4 +++-
+> >  security/integrity/ima/ima_main.c | 32 ++++++++++++++++++++++++--------
+> >  security/integrity/integrity.h    |  1 +
+> >  3 files changed, 28 insertions(+), 9 deletions(-)
+> > 
+> > v2: switch to storing/checking mtime instead of ctime
+> > 
+> > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > index c2edba8de35e..b8d746bbc43d 100644
+> > --- a/security/integrity/ima/ima_api.c
+> > +++ b/security/integrity/ima/ima_api.c
+> > @@ -205,7 +205,8 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+> >  	} hash;
+> >  
+> >  	if (!(iint->flags & IMA_COLLECTED)) {
+> > -		u64 i_version = file_inode(file)->i_version;
+> > +		u64 i_version = inode->i_version;
+> > +		struct timespec i_mtime = inode->i_mtime;
+> >  
+> >  		if (file->f_flags & O_DIRECT) {
+> >  			audit_cause = "failed(directio)";
+> > @@ -225,6 +226,7 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+> >  				iint->ima_hash = tmpbuf;
+> >  				memcpy(iint->ima_hash, &hash, length);
+> >  				iint->version = i_version;
+> > +				iint->mtime = i_mtime;
+> >  				iint->flags |= IMA_COLLECTED;
+> >  			} else
+> >  				result = -ENOMEM;
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 2aebb7984437..8d12ef2d3ba2 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -113,6 +113,25 @@ static void ima_rdwr_violation_check(struct file *file,
+> >  				  "invalid_pcr", "open_writers");
+> >  }
+> >  
+> > +static bool ima_should_update_iint(struct integrity_iint_cache *iint,
+> > +				struct inode *inode)
+> > +{
+> > +	if (atomic_read(&inode->i_writecount) != 1)
+> > +		return false;
+> > +	if (iint->flags & IMA_NEW_FILE)
+> > +		return true;
+> > +	if (IS_I_VERSION(inode)) {
+> > +		if (iint->version != inode->i_version)
+> > +			return true;
+> > +	} else {
+> > +		if (iint->mtime.tv_sec != inode->i_mtime.tv_sec)
+> > +			return true;
+> > +		if (iint->mtime.tv_nsec != inode->i_mtime.tv_nsec)
+> > +			return true;
+> > +	}
+> > +	return false;
+> > +}
+> > +
+> >  static void ima_check_last_writer(struct integrity_iint_cache *iint,
+> >  				  struct inode *inode, struct file *file)
+> >  {
+> > @@ -122,14 +141,11 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+> >  		return;
+> >  
+> >  	inode_lock(inode);
+> > -	if (atomic_read(&inode->i_writecount) == 1) {
+> > -		if ((iint->version != inode->i_version) ||
+> > -		    (iint->flags & IMA_NEW_FILE)) {
+> > -			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> > -			iint->measured_pcrs = 0;
+> > -			if (iint->flags & IMA_APPRAISE)
+> > -				ima_update_xattr(iint, file);
+> > -		}
+> > +	if (ima_should_update_iint(iint, inode)) {
+> > +		iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> > +		iint->measured_pcrs = 0;
+> > +		if (iint->flags & IMA_APPRAISE)
+> > +			ima_update_xattr(iint, file);
+> >  	}
+> >  	inode_unlock(inode);
+> >  }
+> > diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> > index a53e7e4ab06c..61fffa7583bf 100644
+> > --- a/security/integrity/integrity.h
+> > +++ b/security/integrity/integrity.h
+> > @@ -102,6 +102,7 @@ struct integrity_iint_cache {
+> >  	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
+> >  	struct inode *inode;	/* back pointer to inode in question */
+> >  	u64 version;		/* track inode changes */
+> > +	struct timespec mtime;	/* track inode changes */
+> >  	unsigned long flags;
+> >  	unsigned long measured_pcrs;
+> >  	enum integrity_status ima_file_status:4;
+> > -- 
+> > 2.13.0
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
 
-I have merged my TPE LSM with Mimi Zohar's shebang LSM and will be
-releasing a version 3 soon. I have also added securityfs support to
-shebang that will allow users to update the interpreter list at run
-time. This allows for user's to configure TPE/Shebang without any
-xattrs. For a preview of my version 3 you can check out my dev tree
-here:
-https://github.com/nmatt0/linux-security/tree/tpe/security/tpe
-
-Note: that git tree is WIP and may not have all of the attribution and
-documentation needed.
-
-Matt Brown
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
