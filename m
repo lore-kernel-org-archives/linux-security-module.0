@@ -1,91 +1,55 @@
-From: vgoyal@redhat.com (Vivek Goyal)
-Date: Wed, 12 Jul 2017 13:53:57 -0400
-Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <20170712175357.GA32609@redhat.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 12 Jul 2017 13:56:50 -0400
+Subject: [PATCH v2] integrity: track mtime in addition to i_version for
+	assessment
+In-Reply-To: <20170712143504.GB31196@fieldses.org>
+References: <20170707140530.30452-1-jlayton@kernel.org>
+	<1499446642.4967.3.camel@poochiereds.net>
+	<1499448249.3130.143.camel@linux.vnet.ibm.com>
+	<1499449777.4852.3.camel@redhat.com>
+	<1499457558.3130.173.camel@linux.vnet.ibm.com>
+	<1499459718.4852.8.camel@redhat.com>
+	<1499688612.6034.111.camel@linux.vnet.ibm.com>
+	<1499822252.26839.5.camel@redhat.com>
+	<1499862021.3904.23.camel@linux.vnet.ibm.com>
+	<20170712143504.GB31196@fieldses.org>
+Message-ID: <1499882210.3426.47.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jul 11, 2017 at 11:05:11AM -0400, Stefan Berger wrote:
+On Wed, 2017-07-12 at 10:35 -0400, Bruce Fields wrote:
+> On Wed, Jul 12, 2017 at 08:20:21AM -0400, Mimi Zohar wrote:
+> > Right, currently the only way of knowing is by looking at the IMA
+> > measurement list to see if modified files are re-measured or, as you
+> > said, by looking at the code.
+> 
+> Who's actually using this, and do they do any kind of checks, or
+> document the filesystem-specific limitations?
 
-[..]
-> @@ -301,14 +721,39 @@ ssize_t
->  __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
->  	       void *value, size_t size)
->  {
-> -	const struct xattr_handler *handler;
-> +	const struct xattr_handler *handler = NULL;
-> +	char *newname =  NULL;
-> +	int ret, userns_supt_xattr;
-> +	struct user_namespace *userns = current_user_ns();
-> +
-> +	userns_supt_xattr = (xattr_is_userns_supported(name, false) >= 0);
-> +
+Knowing who is using it and how it is being used is the big question.
+?I only hear about it when there are problems.
 
-Hi Stephan,
+Over the years, there have been a number of Linux Security Summit
+(LSS) talks, which have been mostly about embedded systems or locked
+down systems, not so much for generic systems.
 
-> +	do {
-> +		kfree(newname);
-> +
-> +		newname = xattr_userns_name(name, userns);
-					    ^^^
-Will name be pointing to a freed string in second iteration of loop. 
+Examples include:
 
-> +		if (IS_ERR(newname))
-> +			return PTR_ERR(newname);
-> +
-> +		if (!handler) {
-> +			name = newname;
+- Design and Implementation of a Security Architecture for Critical
+Infrastructure Industrial Control Systems - David Safford, GE 2016
 
-Here we assign name and at the beginning of second iteration we free 
-newname.
+- IMA/EVM: Real Applications for Embedded Networking Systems - Petko
+Manolov, Konsulko Group, and Mark Baushke, Juniper Networks 2015
 
-Also I am not sure why do we do this assignment only if handler is NULL.
+-?CC3: An Identity Attested Linux Security Supervisor Architecture
+?-?Greg Wettstein, IDfusion 2015
 
-BTW, I set cap_sys_admin on a file outside usernamespace and then launched
-user namespace (mapping 1000 to 0). And then tried to do getcap on file
-and I am not seeing security.capability set by host. Not sure what am I 
-doing wrong. getxattr() seems to return -ENODATA. Still debugging it.
+- The Linux Integrity Subsystem and TPM-based Network Endpoint
+Assessment -?Andreas Steffen, HSR University of Applied Sciences
+Rapperswil, Switzerland 2012
 
-Also, have we resovled the question of stacked filesystem like overlayfs.
-There we are switching creds to mounter's creds when doing operations on
-underlying filesystem. I am concenrned does that mean, we will get and
-return security.capability to caller in usernamespace instead of
-security.capability at uid=1000. 
+Mimi
 
-Vivek
-
-> +			handler = xattr_resolve_name(inode, &name);
-> +			if (IS_ERR(handler)) {
-> +				ret = PTR_ERR(handler);
-> +				goto out;
-> +			}
-> +			if (!handler->get) {
-> +				ret = -EOPNOTSUPP;
-> +				goto out;
-> +			}
-> +		}
-> +		ret = handler->get(handler, dentry, inode, name, value, size);
-> +		userns = userns->parent;
-> +	} while ((ret == -ENODATA) && userns && userns_supt_xattr);
->  
-> -	handler = xattr_resolve_name(inode, &name);
-> -	if (IS_ERR(handler))
-> -		return PTR_ERR(handler);
-> -	if (!handler->get)
-> -		return -EOPNOTSUPP;
-> -	return handler->get(handler, dentry, inode, name, value, size);
-> +out:
-> +	kfree(newname);
-> +	return ret;
->  }
->  EXPORT_SYMBOL(__vfs_getxattr);
->  
-
-Thanks
-Vivek
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
