@@ -1,66 +1,41 @@
-From: bfields@fieldses.org (Bruce Fields)
-Date: Wed, 12 Jul 2017 10:35:04 -0400
-Subject: [PATCH v2] integrity: track mtime in addition to i_version for
-	assessment
-In-Reply-To: <1499862021.3904.23.camel@linux.vnet.ibm.com>
-References: <20170707140530.30452-1-jlayton@kernel.org>
-	<1499446642.4967.3.camel@poochiereds.net>
-	<1499448249.3130.143.camel@linux.vnet.ibm.com>
-	<1499449777.4852.3.camel@redhat.com>
-	<1499457558.3130.173.camel@linux.vnet.ibm.com>
-	<1499459718.4852.8.camel@redhat.com>
-	<1499688612.6034.111.camel@linux.vnet.ibm.com>
-	<1499822252.26839.5.camel@redhat.com>
-	<1499862021.3904.23.camel@linux.vnet.ibm.com>
-Message-ID: <20170712143504.GB31196@fieldses.org>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 12 Jul 2017 12:03:46 -0500
+Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
+In-Reply-To: <87mv89iy7q.fsf@xmission.com>
+References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<87mv89iy7q.fsf@xmission.com>
+Message-ID: <20170712170346.GA17974@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jul 12, 2017 at 08:20:21AM -0400, Mimi Zohar wrote:
-> Right, currently the only way of knowing is by looking at the IMA
-> measurement list to see if modified files are re-measured or, as you
-> said, by looking at the code.
+Quoting Eric W. Biederman (ebiederm at xmission.com):
+> Stefan Berger <"Stefan Bergerstefanb"@linux.vnet.ibm.com> writes:
+> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> > Signed-off-by: Serge Hallyn <serge@hallyn.com>
+> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> 
+> It doesn't look like this is coming through Serge so I don't see how
+> the Signed-off-by tag is legtimate.
 
-Who's actually using this, and do they do any kind of checks, or
-document the filesystem-specific limitations?
+This is mostly explained by the fact that there have been a *lot* of
+changes, many of them discussed in private emails.
 
---b.
+> >From the replies to this it doesn't look like Serge has reviewed this
+> version either.
+> 
+> I am disappointed that all of my concerns about technical feasibility
+> remain unaddressed.
 
-> 
-> I started working on adding logging/audit messages, but have not yet
-> posted them. ?A very preliminary set of patches is available from
-> https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.
-> git/next-log-iversion-experimental.
-> 
-> 2745b7be961a ima: indicate possibly missing file measurements or verification
-> 0c81a8c56153 security: define new LSM sb_post_new_mount hook
-> 
-> Mimi
-> 
-> > 
-> > ext4 only provides a working i_version counter when you mount with "-o
-> > i_version", so it's trivial to tell there. xfs and btrfs also have
-> > functional i_version counter implementations, but there is no such
-> > mount option for them (it's always on there). NFSv4 and AFS can provide
-> > one too (as they're supplied by the server).
-> > 
-> > Suppose I want to use IMA on something else (say, ubifs). How do I know
-> > whether I'm only going to get "initial file integrity verification and
-> > measurement" or whether it'll be updated after being written?
-> > 
-> > Now, I happen to know that ubifs does _not_ support the i_version
-> > counter because I can poke through the kernel sources and tell, but how
-> > is Joe Random Linux User to know this?
-> > 
-> > Does that not matter for some reason? Is there a whitelist of
-> > filesystems being maintained in some userland package?
-> > 
-> > Sorry if it seems like I'm being dense here, but I really just don't
-> > understand how we can allow this code to be so cavalier about using the
-> > i_version counter without taking steps to ensure that it actually does
-> > a damned thing at all.
-> 
-> 
+Can you re-state those, or give a link to them?
+
+I'd really like to get to a point where unprivileged containers can start
+using filecaps - at this point if that means having an extra temporary
+file format based on my earlier patchset while we hash this out, that
+actually seems worthwhile.  But it would of course be ideal if we could
+do the name based caps right in the first place.
+
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
