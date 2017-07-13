@@ -1,89 +1,83 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 13 Jul 2017 15:15:53 -0400
-Subject: [PATCH v3 2/4] ima: use fs method to read integrity data
-In-Reply-To: <20170713160307.GG5884@quack2.suse.cz>
-References: <1499954090-30054-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1499954090-30054-3-git-send-email-zohar@linux.vnet.ibm.com>
-	<20170713160307.GG5884@quack2.suse.cz>
-Message-ID: <1499973353.4220.53.camel@linux.vnet.ibm.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 13 Jul 2017 14:41:05 -0500
+Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
+In-Reply-To: <20170713191429.vfaetqscxd7hniwq@thunk.org>
+References: <87mv89iy7q.fsf@xmission.com>
+	<20170712170346.GA17974@mail.hallyn.com>
+	<877ezdgsey.fsf@xmission.com>
+	<74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
+	<20170713011554.xwmrgkzfwnibvgcu@thunk.org>
+	<87y3rscz9j.fsf@xmission.com>
+	<20170713164012.brj2flnkaaks2oci@thunk.org>
+	<29fdda5e-ed4a-bcda-e3cc-c06ab87973ce@linux.vnet.ibm.com>
+	<8760ew9qyp.fsf@xmission.com>
+	<20170713191429.vfaetqscxd7hniwq@thunk.org>
+Message-ID: <20170713194105.GA4895@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-07-13 at 18:03 +0200, Jan Kara wrote:
-> On Thu 13-07-17 09:54:48, Mimi Zohar wrote:
-> > diff --git a/fs/ext2/file.c b/fs/ext2/file.c
-> > index b21891a6bfca..d57c4259945d 100644
-> > --- a/fs/ext2/file.c
-> > +++ b/fs/ext2/file.c
-> > @@ -219,6 +219,7 @@ const struct file_operations ext2_file_operations = {
-> >  	.get_unmapped_area = thp_get_unmapped_area,
-> >  	.splice_read	= generic_file_splice_read,
-> >  	.splice_write	= iter_file_splice_write,
-> > +	.integrity_read	= generic_file_read_iter,
-> >  };
-> >  
-> >  const struct inode_operations ext2_file_inode_operations = {
-> > diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> > index 831fd6beebf0..e7b2bd43cdc4 100644
-> > --- a/fs/ext4/file.c
-> > +++ b/fs/ext4/file.c
-> > @@ -753,6 +753,7 @@ const struct file_operations ext4_file_operations = {
-> >  	.splice_read	= generic_file_splice_read,
-> >  	.splice_write	= iter_file_splice_write,
-> >  	.fallocate	= ext4_fallocate,
-> > +	.integrity_read	= ext4_file_read_iter,
-> >  };
+Quoting Theodore Ts'o (tytso at mit.edu):
+> On Thu, Jul 13, 2017 at 12:39:10PM -0500, Eric W. Biederman wrote:
+> > > Can you define what 'scalable' means for you in this context?
+> > > From what I can see sharing a filesystem between multiple containers
+> > > doesn't 'scale well' for virtualizing the xattrs primarily because of
+> > > size limitations of xattrs per file.
+> > 
+> > Worse than that I believe you will find that filesystems are built on
+> > the assumption that there will be a small number of xattrs per file.
+> > So even if the vfs limitations were lifted the filesystem performance
+> > would suffer.
 > 
-> I think both ext2 and ext4 need a bit more special handling (similarly to
-> XFS) due to DAX. E.g. ext4_dax_read_iter() will try to get i_rwsem which is
-> wrong for integrity_read handler as far as I understand.
-
-True, thanks.  This will be addressed in the next version.
-
-> > index c2062a108d19..9b49d09ba180 100644
-> > --- a/fs/gfs2/file.c
-> > +++ b/fs/gfs2/file.c
-> > @@ -1124,6 +1124,7 @@ const struct file_operations gfs2_file_fops = {
-> >  	.splice_write	= gfs2_file_splice_write,
-> >  	.setlease	= simple_nosetlease,
-> >  	.fallocate	= gfs2_fallocate,
-> > +	.integrity_read	= generic_file_read_iter,
-> >  };
-> >  
-> >  const struct file_operations gfs2_dir_fops = {
-> > @@ -1152,6 +1153,7 @@ const struct file_operations gfs2_file_fops_nolock = {
-> >  	.splice_write	= gfs2_file_splice_write,
-> >  	.setlease	= generic_setlease,
-> >  	.fallocate	= gfs2_fallocate,
-> > +	.integrity_read	= generic_file_read_iter,
-> >  };
-> >  
-> >  const struct file_operations gfs2_dir_fops_nolock = {
-> ...
-> > diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-> > index bfeb647459d9..2832a7c92acd 100644
-> > --- a/fs/ocfs2/file.c
-> > +++ b/fs/ocfs2/file.c
-> > @@ -2536,6 +2536,7 @@ const struct file_operations ocfs2_fops = {
-> >  	.fallocate	= ocfs2_fallocate,
-> >  	.clone_file_range = ocfs2_file_clone_range,
-> >  	.dedupe_file_range = ocfs2_file_dedupe_range,
-> > +	.integrity_read	= ocfs2_file_read_iter,
-> >  };
-> >  
-> >  const struct file_operations ocfs2_dops = {
+> That's why I've been pushing here.  If people try to do
 > 
-> For cluster filesystems like gfs2 or ocfs2 I actually wonder whether IMA
-> works as it should - without special cluster locking another node may be
-> modifying the file while you read it even when you hold i_rwsem. So don't
-> these filesystems need some special treatment?
+>    security.capable at uid=1000
+>    security.capable at uid=2000
+>    security.capable at uid=3000
+>    security.capable at uid=4000
+>    security.capable at uid=5000
+>    security.capable at uid=6000
+>    security.capable at uid=7000
+>    security.capable at uid=8000
+>    security.capable at uid=9000
+>          .
+> 	 .
+> 	 .
+> 
+> ... where the values of all of these will be the same, this is going
+> to be *awful* even if the file system can support it.
 
-Both ocf2 and gfs2 can be created as a local filesystem, not only as
-part of a cluster. ?As part of a clustered node, you're probably
-right. ?
+Typically users will be allocated a single range of ids, for instance
+100000-200000.  We might therefore consider putting a range in the uid=,
+i.e. security.capable at uid=100000-200000.  I don't think that's really
+needed, but it's an option.
 
-Mimi
+Consider that the executable will be owned by some kuid+kgid.  If we
+have all the xattrs you list above, then who would we have actually
+owning the file?  If we're chown'ing it anyway (to be root-owned but
+not seutid-root), then this discussion is moot, because we'll have
+to re-write the xattr after the chown.  So for this to matter, we
+would have an fs owned by either uid nobody in the container, or
+by some special user (mapped to 100000 in the container perhaps)
+which is always special-case-mapped into the container.
 
+> So maybe we are better off if we define an xattr
+> 
+>    security.capable at guest-container
+> ... so the property is that it is ignored by the host ("real")
+> container, and in all of the subcontainers, it will be used if the
+> local container root is trying to execute the file.
+
+In the previous discussion we considered having 'security.capable at uid='
+with no following integer, meaning that it would take effect in all
+user namespaces which do not have kuid 0 as root.
+
+This could be useful for cases like docker hosts, but note that writing
+this has to require either global CAP_SETFCAP, or CAP_SETFCAP in a
+user namespace that has every kuid except 0 mapped.  If joe, uid 1000,
+has subuids 100000-20000 delegated to him, then he must not be allowed
+to write something that can affect someone with kuids 300000-400000.
+
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
