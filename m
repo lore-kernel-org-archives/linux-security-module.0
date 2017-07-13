@@ -1,57 +1,53 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 13 Jul 2017 13:16:56 +0100
-Subject: [PATCH 2/3] KEYS: DH: validate __spare field
+Date: Thu, 13 Jul 2017 13:16:49 +0100
+Subject: [PATCH 1/3] modsign: add markers to endif-statements in certs/Makefile
 In-Reply-To: <149994820255.15267.8445091158769841444.stgit@warthog.procyon.org.uk>
 References: <149994820255.15267.8445091158769841444.stgit@warthog.procyon.org.uk>
-Message-ID: <149994821634.15267.4855955837816300806.stgit@warthog.procyon.org.uk>
+Message-ID: <149994820943.15267.5536873590902306268.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Syscalls must validate that their reserved arguments are zero and return
-EINVAL otherwise.  Otherwise, it will be impossible to actually use them
-for anything in the future because existing programs may be passing
-garbage in.  This is standard practice when adding new APIs.
+It's a bit hard for eye to track certs/Makefile if you are not
+accustomed to it. This commit adds comments to key endif statements in
+order to help to keep the context while reading this file.
 
-Cc: stable at vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/compat_dh.c |    2 ++
- security/keys/dh.c        |    5 +++++
- 2 files changed, 7 insertions(+)
+ certs/Makefile |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/security/keys/compat_dh.c b/security/keys/compat_dh.c
-index a6a659b6bcb6..aa6b34cafe5f 100644
---- a/security/keys/compat_dh.c
-+++ b/security/keys/compat_dh.c
-@@ -33,6 +33,8 @@ long compat_keyctl_dh_compute(struct keyctl_dh_params __user *params,
- 	kdfcopy.hashname = compat_ptr(compat_kdfcopy.hashname);
- 	kdfcopy.otherinfo = compat_ptr(compat_kdfcopy.otherinfo);
- 	kdfcopy.otherinfolen = compat_kdfcopy.otherinfolen;
-+	memcpy(kdfcopy.__spare, compat_kdfcopy.__spare,
-+	       sizeof(kdfcopy.__spare));
+diff --git a/certs/Makefile b/certs/Makefile
+index 4119bb376ea1..847361ce14d1 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -26,7 +26,7 @@ quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
+ targets += x509_certificate_list
+ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(SYSTEM_TRUSTED_KEYS_FILENAME) FORCE
+ 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
+-endif
++endif # CONFIG_SYSTEM_TRUSTED_KEYRING
  
- 	return __keyctl_dh_compute(params, buffer, buflen, &kdfcopy);
- }
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index 4755d4b4f945..d1ea9f325f94 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -266,6 +266,11 @@ long __keyctl_dh_compute(struct keyctl_dh_params __user *params,
- 	if (kdfcopy) {
- 		char *hashname;
+ clean-files := x509_certificate_list .x509.list
  
-+		if (memchr_inv(kdfcopy->__spare, 0, sizeof(kdfcopy->__spare))) {
-+			ret = -EINVAL;
-+			goto out1;
-+		}
-+
- 		if (buflen > KEYCTL_KDF_MAX_OUTPUT_LEN ||
- 		    kdfcopy->otherinfolen > KEYCTL_KDF_MAX_OI_LEN) {
- 			ret = -EMSGSIZE;
+@@ -87,7 +87,7 @@ $(obj)/x509.genkey:
+ 	@echo >>$@ "keyUsage=digitalSignature"
+ 	@echo >>$@ "subjectKeyIdentifier=hash"
+ 	@echo >>$@ "authorityKeyIdentifier=keyid"
+-endif
++endif # CONFIG_MODULE_SIG_KEY
+ 
+ $(eval $(call config_filename,MODULE_SIG_KEY))
+ 
+@@ -102,4 +102,4 @@ $(obj)/system_certificates.o: $(obj)/signing_key.x509
+ targets += signing_key.x509
+ $(obj)/signing_key.x509: scripts/extract-cert $(X509_DEP) FORCE
+ 	$(call if_changed,extract_certs,$(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY))
+-endif
++endif # CONFIG_MODULE_SIG
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
