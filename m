@@ -1,93 +1,87 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 12 Jul 2017 19:43:44 -0500
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Wed, 12 Jul 2017 20:44:28 -0400
 Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
 In-Reply-To: <877ezdgsey.fsf@xmission.com>
 References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
 	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
-	<87mv89iy7q.fsf@xmission.com>
-	<20170712170346.GA17974@mail.hallyn.com>
+	<87mv89iy7q.fsf@xmission.com> <20170712170346.GA17974@mail.hallyn.com>
 	<877ezdgsey.fsf@xmission.com>
-Message-ID: <20170713004344.GA23272@mail.hallyn.com>
+Message-ID: <74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Eric W. Biederman (ebiederm at xmission.com):
+On 07/12/2017 07:13 PM, Eric W. Biederman wrote:
 > "Serge E. Hallyn" <serge@hallyn.com> writes:
-> 
-> > Quoting Eric W. Biederman (ebiederm at xmission.com):
-> >> Stefan Berger <"Stefan Bergerstefanb"@linux.vnet.ibm.com> writes:
-> >> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> >> > Signed-off-by: Serge Hallyn <serge@hallyn.com>
-> >> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> >> 
-> >> It doesn't look like this is coming through Serge so I don't see how
-> >> the Signed-off-by tag is legtimate.
-> >
-> > This is mostly explained by the fact that there have been a *lot* of
-> > changes, many of them discussed in private emails.
-> >
-> >> >From the replies to this it doesn't look like Serge has reviewed this
-> >> version either.
-> >> 
-> >> I am disappointed that all of my concerns about technical feasibility
-> >> remain unaddressed.
-> >
-> > Can you re-state those, or give a link to them?
-> 
+>
+>> Quoting Eric W. Biederman (ebiederm at xmission.com):
+>>> Stefan Berger <"Stefan Bergerstefanb"@linux.vnet.ibm.com> writes:
+>>>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>>>> Signed-off-by: Serge Hallyn <serge@hallyn.com>
+>>>> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+>>> It doesn't look like this is coming through Serge so I don't see how
+>>> the Signed-off-by tag is legtimate.
+>> This is mostly explained by the fact that there have been a *lot* of
+>> changes, many of them discussed in private emails.
+>>
+>>> >From the replies to this it doesn't look like Serge has reviewed this
+>>> version either.
+>>>
+>>> I am disappointed that all of my concerns about technical feasibility
+>>> remain unaddressed.
+>> Can you re-state those, or give a link to them?
 > Well I only posted about one substantive comment on the last round
 > so it should be easy to find that said.
-
-Ok so you are likely referring to http://lkml.org/lkml/2017/6/23/551 ,
-thanks.  I had actually read that differently when you sent it, and
-thought it was more to do with the suggestion of putting the nsid
-tags in the middle of the xattr name versus putting it on the end.
-As far as that is concerned, note that no other tags besides uid=
-are currently supported, and only security.capability is being
-namespaced.
-
+>
 > The big question is how does this intereact with filesystems
 > xattr implementations?
-> 
+>
 > There is the potential that we create many more security xattrs this
 > way.  How does that scale?  With more names etc.
+
+It doesn't scale. Shared filesystems are a problem if many containers 
+use them.
+
+'man listxattr' also mentions this here as a BUG:
+
+" As noted in xattr(7), the VFS imposes a limit of 64 kB on the size of
+        the extended attribute name list returned by listxattr(7). If the
+        total size of attribute names attached to a file exceeds this limit,
+        it is no longer possible to retrieve the list of attribute names."
+
+A simple test on ext4:
+
+#> touch foo
+#> for ((i = 0; i < 200; i++)); do setfattr -n user.foo${i} -v hello 
+foo; done
+
+user.foo126 was the last one created...
+
+Depending on the size of the data the xattrs are writing, the limit is 
+reached sooner. Writing 'hellohello' only goes up to 'user.foo112'. 
+Maybe one could try to encode the data more efficiently or as Serge did 
+write the uid on the xattr value side, but either way, it won't scale 
+due to that VFS limit.
+
+     Stefan
+
 > What happens if we have one xattr per uid for 1000+ uids?
 
-Well, that's not the intent here.  The goal is *not* to make one fs image
-that satisfies 200k possible uid mappings.  The goal is to reconcile the
-support for an unprivileged user to set uid agnostic (within the
-container) file capabilities with the uid namespace's design goals -
-namely root in a container is privileged over the container but
-completely unprivileged wrt the host.
-
-This is in part why in my previous version I only allowed a single
-namespaced fscap.  But I don't think that we have to enforce a
-single fscap - I think it's fair to tell users "go ahead and shoot
-yourself in the foot" performance-wise, if they insist on doing
-this.
-
-The goal of now putting the root kuid in the name is not to support
-multiple containers, but to have common code supporting
-security.capability and security.ima, and maybe a few more.
-
+>
 > How does this interact with filesystems optimization of xattr names?
 > For some filesystems they optmize the xattr names, and don't store the
 > entire thing.
-
-This I have no idea on.  Stefan, have you looked at this?
-
-> > I'd really like to get to a point where unprivileged containers can start
-> > using filecaps - at this point if that means having an extra temporary
-> > file format based on my earlier patchset while we hash this out, that
-> > actually seems worthwhile.  But it would of course be ideal if we could
-> > do the name based caps right in the first place.
-> 
+>
+>> I'd really like to get to a point where unprivileged containers can start
+>> using filecaps - at this point if that means having an extra temporary
+>> file format based on my earlier patchset while we hash this out, that
+>> actually seems worthwhile.  But it would of course be ideal if we could
+>> do the name based caps right in the first place.
 > This whole new version has set my review back to square one
 > unfortunately.
+>
+> Eric
+>
 
-Well it is a whole new approach and whole new patch, so of course that's
-to be expected :(
-
--serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
