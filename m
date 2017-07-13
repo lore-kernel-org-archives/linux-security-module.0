@@ -1,51 +1,35 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 12 Jul 2017 20:01:38 -0500
+From: tytso@mit.edu (Theodore Ts'o)
+Date: Wed, 12 Jul 2017 21:15:54 -0400
 Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <87o9spfa5v.fsf@xmission.com>
+In-Reply-To: <74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
 References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
 	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
 	<87mv89iy7q.fsf@xmission.com>
 	<20170712170346.GA17974@mail.hallyn.com>
-	<alpine.LRH.2.20.1707130820050.16810@namei.org>
-	<87o9spfa5v.fsf@xmission.com>
-Message-ID: <20170713010137.GA23575@mail.hallyn.com>
+	<877ezdgsey.fsf@xmission.com>
+	<74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
+Message-ID: <20170713011554.xwmrgkzfwnibvgcu@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Eric W. Biederman (ebiederm at xmission.com):
-> James Morris <jmorris@namei.org> writes:
-> 
-> > On Wed, 12 Jul 2017, Serge E. Hallyn wrote:
-> >
-> >> Quoting Eric W. Biederman (ebiederm at xmission.com):
-> >> > Stefan Berger <"Stefan Bergerstefanb"@linux.vnet.ibm.com> writes:
-> >> > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> >> > > Signed-off-by: Serge Hallyn <serge@hallyn.com>
-> >> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> >> > 
-> >> > It doesn't look like this is coming through Serge so I don't see how
-> >> > the Signed-off-by tag is legtimate.
-> >> 
-> >> This is mostly explained by the fact that there have been a *lot* of
-> >> changes, many of them discussed in private emails.
+I'm really confused what problem that is trying to be solved, here,
+but it **feels** really, really wrong.
 
-I wasn't clear here.  There were a lot of changes between the first
-mention of the approach and the posting of v1.
+Why do we need to store all of this state on a per-file basis, instead
+of some kind of per-file system or per-container data structure?
 
-My point was that I did in fact agree to Reviewed-by, and the fact that
-I've found a few more things to point out only reflects my missing them
-before.  I don't think my name is being mis-used.
+And how many of these security.foo at uid=bar xattrs do you expect there
+to be?  How many "foo", and how many "bar"?
 
-> > Please try and keep technical discussions public or at least document them 
-> > when reposting the patches.
-> 
-> Yes please.
-> 
-> A public discussion helps to understand what the challenges are.
+Maybe I missed the full write up, in which case please send me a link
+to the full writeup --- ideally in the form of a design doc that
+explains the problem statement, gives some examples of how it's going
+to be used, what were the other alternatives that were considered, and
+why they were rejected, etc.
 
-Yes, all discussion (that I can find in my mbox) since v1 has been public.
+Thanks,
 
--serge
+					- Ted
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
