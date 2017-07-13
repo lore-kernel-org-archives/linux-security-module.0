@@ -1,33 +1,52 @@
-From: dan.carpenter@oracle.com (Dan Carpenter)
-Date: Thu, 13 Jul 2017 10:39:20 +0300
-Subject: [PATCH] apparmor: Fix an error code in aafs_create()
-Message-ID: <20170713073920.tdhewrs2ggtxylfs@mwanda>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 13 Jul 2017 13:14:59 +0100
+Subject: [PATCH 1/3] modsign: add markers to endif-statements in certs/Makefile
+Message-ID: <149994809940.15079.2922232291613184365.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-We accidentally forgot to set the error code on this path.  It means we
-return NULL instead of an error pointer.  I looked through a bunch of
-callers and I don't think it really causes a big issue, but the
-documentation says we're supposed to return error pointers here.
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's a bit hard for eye to track certs/Makefile if you are not
+accustomed to it. This commit adds comments to key endif statements in
+order to help to keep the context while reading this file.
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 853c2ec8e0c9..2caeb748070c 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -248,8 +248,10 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ certs/Makefile |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/certs/Makefile b/certs/Makefile
+index 4119bb376ea1..847361ce14d1 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -26,7 +26,7 @@ quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
+ targets += x509_certificate_list
+ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(SYSTEM_TRUSTED_KEYS_FILENAME) FORCE
+ 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
+-endif
++endif # CONFIG_SYSTEM_TRUSTED_KEYRING
  
- 	inode_lock(dir);
- 	dentry = lookup_one_len(name, parent, strlen(name));
--	if (IS_ERR(dentry))
-+	if (IS_ERR(dentry)) {
-+		error = PTR_ERR(dentry);
- 		goto fail_lock;
-+	}
+ clean-files := x509_certificate_list .x509.list
  
- 	if (d_really_is_positive(dentry)) {
- 		error = -EEXIST;
+@@ -87,7 +87,7 @@ $(obj)/x509.genkey:
+ 	@echo >>$@ "keyUsage=digitalSignature"
+ 	@echo >>$@ "subjectKeyIdentifier=hash"
+ 	@echo >>$@ "authorityKeyIdentifier=keyid"
+-endif
++endif # CONFIG_MODULE_SIG_KEY
+ 
+ $(eval $(call config_filename,MODULE_SIG_KEY))
+ 
+@@ -102,4 +102,4 @@ $(obj)/system_certificates.o: $(obj)/signing_key.x509
+ targets += signing_key.x509
+ $(obj)/signing_key.x509: scripts/extract-cert $(X509_DEP) FORCE
+ 	$(call if_changed,extract_certs,$(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY))
+-endif
++endif # CONFIG_MODULE_SIG
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
