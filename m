@@ -1,156 +1,56 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 13 Jul 2017 13:17:03 +0100
-Subject: [PATCH 3/3] KEYS: Add documentation for asymmetric keyring
-	restrictions
-In-Reply-To: <149994820255.15267.8445091158769841444.stgit@warthog.procyon.org.uk>
-References: <149994820255.15267.8445091158769841444.stgit@warthog.procyon.org.uk>
-Message-ID: <149994822344.15267.105515065063026844.stgit@warthog.procyon.org.uk>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Thu, 13 Jul 2017 07:11:36 -0500
+Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
+In-Reply-To: <20170713011554.xwmrgkzfwnibvgcu@thunk.org> (Theodore Ts'o's
+	message of "Wed, 12 Jul 2017 21:15:54 -0400")
+References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<87mv89iy7q.fsf@xmission.com> <20170712170346.GA17974@mail.hallyn.com>
+	<877ezdgsey.fsf@xmission.com>
+	<74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
+	<20170713011554.xwmrgkzfwnibvgcu@thunk.org>
+Message-ID: <87y3rscz9j.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Mat Martineau <mathew.j.martineau@linux.intel.com>
+Theodore Ts'o <tytso@mit.edu> writes:
 
-Provide more specific examples of keyring restrictions as applied to
-X.509 signature chain verification.
+> I'm really confused what problem that is trying to be solved, here,
+> but it **feels** really, really wrong.
+>
+> Why do we need to store all of this state on a per-file basis, instead
+> of some kind of per-file system or per-container data structure?
+>
+> And how many of these security.foo at uid=bar xattrs do you expect there
+> to be?  How many "foo", and how many "bar"?
+>
+> Maybe I missed the full write up, in which case please send me a link
+> to the full writeup --- ideally in the form of a design doc that
+> explains the problem statement, gives some examples of how it's going
+> to be used, what were the other alternatives that were considered, and
+> why they were rejected, etc.
 
-Signed-off-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+The concise summary:
 
- Documentation/crypto/asymmetric-keys.txt |   65 ++++++++++++++++++++++++++----
- Documentation/security/keys/core.rst     |    6 +++
- 2 files changed, 63 insertions(+), 8 deletions(-)
+Today we have the xattr security.capable that holds a set of
+capabilities that an application gains when executed.  AKA setuid root exec
+without actually being setuid root.
 
-diff --git a/Documentation/crypto/asymmetric-keys.txt b/Documentation/crypto/asymmetric-keys.txt
-index b82b6ad48488..5969bf42562a 100644
---- a/Documentation/crypto/asymmetric-keys.txt
-+++ b/Documentation/crypto/asymmetric-keys.txt
-@@ -10,6 +10,7 @@ Contents:
-     - Signature verification.
-   - Asymmetric key subtypes.
-   - Instantiation data parsers.
-+  - Keyring link restrictions.
- 
- 
- ========
-@@ -318,7 +319,8 @@ KEYRING LINK RESTRICTIONS
- =========================
- 
- Keyrings created from userspace using add_key can be configured to check the
--signature of the key being linked.
-+signature of the key being linked.  Keys without a valid signature are not
-+allowed to link.
- 
- Several restriction methods are available:
- 
-@@ -327,9 +329,10 @@ Several restriction methods are available:
-      - Option string used with KEYCTL_RESTRICT_KEYRING:
-        - "builtin_trusted"
- 
--     The kernel builtin trusted keyring will be searched for the signing
--     key. The ca_keys kernel parameter also affects which keys are used for
--     signature verification.
-+     The kernel builtin trusted keyring will be searched for the signing key.
-+     If the builtin trusted keyring is not configured, all links will be
-+     rejected.  The ca_keys kernel parameter also affects which keys are used
-+     for signature verification.
- 
-  (2) Restrict using the kernel builtin and secondary trusted keyrings
- 
-@@ -337,8 +340,10 @@ Several restriction methods are available:
-        - "builtin_and_secondary_trusted"
- 
-      The kernel builtin and secondary trusted keyrings will be searched for the
--     signing key. The ca_keys kernel parameter also affects which keys are used
--     for signature verification.
-+     signing key.  If the secondary trusted keyring is not configured, this
-+     restriction will behave like the "builtin_trusted" option.  The ca_keys
-+     kernel parameter also affects which keys are used for signature
-+     verification.
- 
-  (3) Restrict using a separate key or keyring
- 
-@@ -346,7 +351,7 @@ Several restriction methods are available:
-        - "key_or_keyring:<key or keyring serial number>[:chain]"
- 
-      Whenever a key link is requested, the link will only succeed if the key
--     being linked is signed by one of the designated keys. This key may be
-+     being linked is signed by one of the designated keys.  This key may be
-      specified directly by providing a serial number for one asymmetric key, or
-      a group of keys may be searched for the signing key by providing the
-      serial number for a keyring.
-@@ -354,7 +359,51 @@ Several restriction methods are available:
-      When the "chain" option is provided at the end of the string, the keys
-      within the destination keyring will also be searched for signing keys.
-      This allows for verification of certificate chains by adding each
--     cert in order (starting closest to the root) to one keyring.
-+     certificate in order (starting closest to the root) to a keyring.  For
-+     instance, one keyring can be populated with links to a set of root
-+     certificates, with a separate, restricted keyring set up for each
-+     certificate chain to be validated:
-+
-+	# Create and populate a keyring for root certificates
-+	root_id=`keyctl add keyring root-certs "" @s`
-+	keyctl padd asymmetric "" $root_id < root1.cert
-+	keyctl padd asymmetric "" $root_id < root2.cert
-+
-+	# Create and restrict a keyring for the certificate chain
-+	chain_id=`keyctl add keyring chain "" @s`
-+	keyctl restrict_keyring $chain_id asymmetric key_or_keyring:$root_id:chain
-+
-+	# Attempt to add each certificate in the chain, starting with the
-+	# certificate closest to the root.
-+	keyctl padd asymmetric "" $chain_id < intermediateA.cert
-+	keyctl padd asymmetric "" $chain_id < intermediateB.cert
-+	keyctl padd asymmetric "" $chain_id < end-entity.cert
-+
-+     If the final end-entity certificate is successfully added to the "chain"
-+     keyring, we can be certain that it has a valid signing chain going back to
-+     one of the root certificates.
-+
-+     A single keyring can be used to verify a chain of signatures by
-+     restricting the keyring after linking the root certificate:
-+
-+	# Create a keyring for the certificate chain and add the root
-+	chain2_id=`keyctl add keyring chain2 "" @s`
-+	keyctl padd asymmetric "" $chain2_id < root1.cert
-+
-+	# Restrict the keyring that already has root1.cert linked.  The cert
-+	# will remain linked by the keyring.
-+	keyctl restrict_keyring $chain2_id asymmetric key_or_keyring:0:chain
-+
-+	# Attempt to add each certificate in the chain, starting with the
-+	# certificate closest to the root.
-+	keyctl padd asymmetric "" $chain2_id < intermediateA.cert
-+	keyctl padd asymmetric "" $chain2_id < intermediateB.cert
-+	keyctl padd asymmetric "" $chain2_id < end-entity.cert
-+
-+     If the final end-entity certificate is successfully added to the "chain2"
-+     keyring, we can be certain that there is a valid signing chain going back
-+     to the root certificate that was added before the keyring was restricted.
-+
- 
- In all of these cases, if the signing key is found the signature of the key to
- be linked will be verified using the signing key.  The requested key is added
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 0d831a7afe4f..1648fa80b3bf 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -894,6 +894,12 @@ The keyctl syscall functions are:
-      To apply a keyring restriction the process must have Set Attribute
-      permission and the keyring must not be previously restricted.
- 
-+     One application of restricted keyrings is to verify X.509 certificate
-+     chains or individual certificate signatures using the asymmetric key type.
-+     See Documentation/crypto/asymmetric-keys.txt for specific restrictions
-+     applicable to the asymmetric key type.
-+
-+
- Kernel Services
- ===============
- 
+User namespaces have the concept of capabilities that are not global but
+are limited to their user namespace.  We do not currently have
+filesystem support for this concept.
 
+We currently have two proposals on the table.  One is to bump the
+revision number of security.capable and add more information in that xattr.
+The other is to use a sligthly different capability name.
+
+We are currently evaluating between the two proposals.
+
+Given that it appears the IMA xattrs will want similar treatment coming
+up with a good pattern to follow is part of the analysis here.
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
