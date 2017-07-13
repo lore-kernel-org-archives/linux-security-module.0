@@ -1,107 +1,83 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 13 Jul 2017 11:19:39 -0400
-Subject: [kernel-hardening] [PATCH 00/11] S.A.R.A. a new stacked LSM
-In-Reply-To: <988555a2-bed9-234c-843c-0bb68dc60d3f@nmatt.com>
-References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
-	<53a2d710-b0f0-cdf9-e7ad-cd8d03fc835a@digikod.net>
-	<CAJHCu1+=uYQ-N7CH4KfmTHrN2hJjwzN0tgg4sWHU0LjVr+uGGA@mail.gmail.com>
-	<c19917fa-f62c-b7e0-8cbd-f10a96f686ba@digikod.net>
-	<CAJHCu1K1Hg5M2HhJxN_aj2P_S8Pez9+8KL=wHKBgAN0jN1+mLg@mail.gmail.com>
-	<69ff2195-d0e1-8a0f-b80e-5d8d55947907@nmatt.com>
-	<1499801476.6034.265.camel@linux.vnet.ibm.com>
-	<988555a2-bed9-234c-843c-0bb68dc60d3f@nmatt.com>
-Message-ID: <1499959179.4220.45.camel@linux.vnet.ibm.com>
+From: jack@suse.cz (Jan Kara)
+Date: Thu, 13 Jul 2017 18:03:07 +0200
+Subject: [PATCH v3 2/4] ima: use fs method to read integrity data
+In-Reply-To: <1499954090-30054-3-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1499954090-30054-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1499954090-30054-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20170713160307.GG5884@quack2.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-07-13 at 08:39 -0400, Matt Brown wrote:
-> On 7/11/17 3:31 PM, Mimi Zohar wrote:
-> > On Tue, 2017-07-11 at 13:49 -0400, Matt Brown wrote:
-> > 
-> >> I have merged my TPE LSM with Mimi Zohar's shebang LSM and will be
-> >> releasing a version 3 soon. I have also added securityfs support to
-> >> shebang that will allow users to update the interpreter list at run
-> >> time. This allows for user's to configure TPE/Shebang without any
-> >> xattrs. For a preview of my version 3 you can check out my dev tree
-> >> here:
-> >> https://github.com/nmatt0/linux-security/tree/tpe/security/tpe
-> >>
-> >> Note: that git tree is WIP and may not have all of the attribution and
-> >> documentation needed.
-> > 
-> > You'll want to detect when an interpreter is deleted or renamed.  I
-> > would define security_inode_rename, security_path_rename,
-> > security_inode_unlink and security_path_unlink hooks.
-> > 
-> > "rename" could be an indication that the existing interpreter is being
-> > updated. "unlink" indicates that the interpreter has been deleted.  At
-> > either of these points, you'll want to start checking for the creation
-> > of a new file with the expected pathname.
-> > 
-> > Mimi
-> > 
-> 
-> Would it be better just to check for paths rather than inodes?
+On Thu 13-07-17 09:54:48, Mimi Zohar wrote:
+> diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+> index b21891a6bfca..d57c4259945d 100644
+> --- a/fs/ext2/file.c
+> +++ b/fs/ext2/file.c
+> @@ -219,6 +219,7 @@ const struct file_operations ext2_file_operations = {
+>  	.get_unmapped_area = thp_get_unmapped_area,
+>  	.splice_read	= generic_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+>  
+>  const struct inode_operations ext2_file_inode_operations = {
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 831fd6beebf0..e7b2bd43cdc4 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -753,6 +753,7 @@ const struct file_operations ext4_file_operations = {
+>  	.splice_read	= generic_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fallocate	= ext4_fallocate,
+> +	.integrity_read	= ext4_file_read_iter,
+>  };
 
-Below is a simple example on my laptop of the same inode with
-different path names. ?In this case, a list of pathnames would be
-double the number of inodes. ?I'm not sure from a performance
-perspective if this really matters, or if doing string compares
-matters. ?We're not talking about thousands or even hundreds of files,
-though this is on the LSM bprm check hook.
+I think both ext2 and ext4 need a bit more special handling (similarly to
+XFS) due to DAX. E.g. ext4_dax_read_iter() will try to get i_rwsem which is
+wrong for integrity_read handler as far as I understand.
 
-The question is really from a security perspective which is better?
-?Obviously, as v2 of the patch set changed from using pathnames to
-inodes, it's pretty clear that I think inodes would be better. ?Kees,
-Serge, Casey any comments?
+> index c2062a108d19..9b49d09ba180 100644
+> --- a/fs/gfs2/file.c
+> +++ b/fs/gfs2/file.c
+> @@ -1124,6 +1124,7 @@ const struct file_operations gfs2_file_fops = {
+>  	.splice_write	= gfs2_file_splice_write,
+>  	.setlease	= simple_nosetlease,
+>  	.fallocate	= gfs2_fallocate,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+>  
+>  const struct file_operations gfs2_dir_fops = {
+> @@ -1152,6 +1153,7 @@ const struct file_operations gfs2_file_fops_nolock = {
+>  	.splice_write	= gfs2_file_splice_write,
+>  	.setlease	= generic_setlease,
+>  	.fallocate	= gfs2_fallocate,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+>  
+>  const struct file_operations gfs2_dir_fops_nolock = {
+...
+> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+> index bfeb647459d9..2832a7c92acd 100644
+> --- a/fs/ocfs2/file.c
+> +++ b/fs/ocfs2/file.c
+> @@ -2536,6 +2536,7 @@ const struct file_operations ocfs2_fops = {
+>  	.fallocate	= ocfs2_fallocate,
+>  	.clone_file_range = ocfs2_file_clone_range,
+>  	.dedupe_file_range = ocfs2_file_dedupe_range,
+> +	.integrity_read	= ocfs2_file_read_iter,
+>  };
+>  
+>  const struct file_operations ocfs2_dops = {
 
-example:
-$ rpm -qf /usr/bin/bash
-bash-4.3.42-7.fc24.x86_64
+For cluster filesystems like gfs2 or ocfs2 I actually wonder whether IMA
+works as it should - without special cluster locking another node may be
+modifying the file while you read it even when you hold i_rwsem. So don't
+these filesystems need some special treatment?
 
-$ rpm -q --dump bash | grep \/bin\/bash
-/usr/bin/bash 1071984 1475233750
-84c7d10de5f9c729f9d60e95bc97197a5e029a14e07820bc45ad309da91703f9
-0100755 root root 0 0 0 X
-/usr/bin/bashbug 10 1475233749
-0000000000000000000000000000000000000000000000000000000000000000
-0120777 root root 0 0 0 bashbug-64
-/usr/bin/bashbug-64 7110 1475233745
-0dd706d221569a7966f0246fcb40dd7f3bff4550c4ad0ee70ae8b0c6bc350157
-0100755 root root 0 0 0 X
-
-$ stat /bin/bash
-? File: '/bin/bash'
-? Size: 1071984???	Blocks: 2104???????IO Block: 4096???regular
-file
-Device: 804h/2052d	Inode: 1180420?????Links: 1
-Access: (0755/-rwxr-xr-x)??Uid: (????0/????root)???Gid:
-(????0/????root)
-Context: system_u:object_r:shell_exec_t:s0
-Access: 2017-07-12 21:56:28.125594261 -0400
-Modify: 2016-09-30 07:09:10.000000000 -0400
-Change: 2017-01-25 10:10:18.784719749 -0500
-?Birth: -
-
-$ stat /usr/bin/bash
-? File: '/usr/bin/bash'
-? Size: 1071984???	Blocks: 2104???????IO Block: 4096???regular
-file
-Device: 804h/2052d	Inode: 1180420?????Links: 1
-Access: (0755/-rwxr-xr-x)??Uid: (????0/????root)???Gid:
-(????0/????root)
-Context: system_u:object_r:shell_exec_t:s0
-Access: 2017-07-12 21:56:28.125594261 -0400
-Modify: 2016-09-30 07:09:10.000000000 -0400
-Change: 2017-01-25 10:10:18.784719749 -0500
-?Birth: -
-
-$ ls -lat / | grep bin
-lrwxrwxrwx.???1 root root?????7 Feb??3??2016 bin -> usr/bin
-lrwxrwxrwx.???1 root root?????8 Feb??3??2016 sbin -> usr/sbin
-
-Mimi
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
