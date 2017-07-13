@@ -1,37 +1,57 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 13 Jul 2017 13:16:42 +0100
-Subject: [PATCH 0/3] KEYS: Miscellany
-Message-ID: <149994820255.15267.8445091158769841444.stgit@warthog.procyon.org.uk>
+Date: Thu, 13 Jul 2017 13:16:56 +0100
+Subject: [PATCH 2/3] KEYS: DH: validate __spare field
+In-Reply-To: <149994820255.15267.8445091158769841444.stgit@warthog.procyon.org.uk>
+References: <149994820255.15267.8445091158769841444.stgit@warthog.procyon.org.uk>
+Message-ID: <149994821634.15267.4855955837816300806.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+From: Eric Biggers <ebiggers@google.com>
 
-Hi James,
+Syscalls must validate that their reserved arguments are zero and return
+EINVAL otherwise.  Otherwise, it will be impossible to actually use them
+for anything in the future because existing programs may be passing
+garbage in.  This is standard practice when adding new APIs.
 
-Could you pass these on to Linus please?
-
-The patches can be found here also:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-next
-
-David
+Cc: stable at vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-Eric Biggers (1):
-      KEYS: DH: validate __spare field
 
-Jarkko Sakkinen (1):
-      modsign: add markers to endif-statements in certs/Makefile
+ security/keys/compat_dh.c |    2 ++
+ security/keys/dh.c        |    5 +++++
+ 2 files changed, 7 insertions(+)
 
-Mat Martineau (1):
-      KEYS: Add documentation for asymmetric keyring restrictions
-
-
- Documentation/crypto/asymmetric-keys.txt |   65 ++++++++++++++++++++++++++----
- Documentation/security/keys/core.rst     |    6 +++
- certs/Makefile                           |    6 +--
- security/keys/compat_dh.c                |    2 +
- security/keys/dh.c                       |    5 ++
- 5 files changed, 73 insertions(+), 11 deletions(-)
+diff --git a/security/keys/compat_dh.c b/security/keys/compat_dh.c
+index a6a659b6bcb6..aa6b34cafe5f 100644
+--- a/security/keys/compat_dh.c
++++ b/security/keys/compat_dh.c
+@@ -33,6 +33,8 @@ long compat_keyctl_dh_compute(struct keyctl_dh_params __user *params,
+ 	kdfcopy.hashname = compat_ptr(compat_kdfcopy.hashname);
+ 	kdfcopy.otherinfo = compat_ptr(compat_kdfcopy.otherinfo);
+ 	kdfcopy.otherinfolen = compat_kdfcopy.otherinfolen;
++	memcpy(kdfcopy.__spare, compat_kdfcopy.__spare,
++	       sizeof(kdfcopy.__spare));
+ 
+ 	return __keyctl_dh_compute(params, buffer, buflen, &kdfcopy);
+ }
+diff --git a/security/keys/dh.c b/security/keys/dh.c
+index 4755d4b4f945..d1ea9f325f94 100644
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -266,6 +266,11 @@ long __keyctl_dh_compute(struct keyctl_dh_params __user *params,
+ 	if (kdfcopy) {
+ 		char *hashname;
+ 
++		if (memchr_inv(kdfcopy->__spare, 0, sizeof(kdfcopy->__spare))) {
++			ret = -EINVAL;
++			goto out1;
++		}
++
+ 		if (buflen > KEYCTL_KDF_MAX_OUTPUT_LEN ||
+ 		    kdfcopy->otherinfolen > KEYCTL_KDF_MAX_OI_LEN) {
+ 			ret = -EMSGSIZE;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
