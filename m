@@ -1,422 +1,178 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 13 Jul 2017 09:54:48 -0400
-Subject: [PATCH v3 2/4] ima: use fs method to read integrity data
+Date: Thu, 13 Jul 2017 09:54:49 -0400
+Subject: [PATCH v3 3/4] ima: define "dont_failsafe" policy action rule
 In-Reply-To: <1499954090-30054-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1499954090-30054-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1499954090-30054-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1499954090-30054-4-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+Permit normally denied access/execute permission for files in policy
+on IMA unsupported filesystems.  This patch defines the "dont_failsafe"
+policy action rule.
 
-Add a new ->integrity_read file operation to read data for integrity
-hash collection.  This is defined to be equivalent to ->read_iter,
-except that it will be called with the i_rwsem held exclusively.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Garrett <matthew.garrett@nebula.com>
-Cc: Jan Kara <jack@suse.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: Steven Whitehouse <swhiteho@redhat.com>
-Cc: Bob Peterson <rpeterso@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Dave Kleikamp <shaggy@kernel.org>
-Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Chris Mason <clm@fb.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
 Changelog v3:
-- define simple_read_iter_from_buffer as suggested by Al Viro
-- replace the existing efivarfs ->read method with ->read_iter method.
-- squashed other fs definitions of ->integrity_read with this patch.
-- Cc'ing maintainers
-- moved '---' divider before change log, as requested in patch review
+- include dont_failsafe rule when displaying policy
+- fail attempt to add dont_failsafe rule when appending to the policy
 
-Changelog v2:
-- change iovec to kvec
+ Documentation/ABI/testing/ima_policy |  3 ++-
+ security/integrity/ima/ima.h         |  1 +
+ security/integrity/ima/ima_main.c    | 11 ++++++++++-
+ security/integrity/ima/ima_policy.c  | 29 ++++++++++++++++++++++++++++-
+ 4 files changed, 41 insertions(+), 3 deletions(-)
 
-Changelog v1:
-- update the patch description, removing the concept that the presence of
-->integrity_read indicates that the file system can support IMA. (Mimi)
-
- fs/btrfs/file.c           |  1 +
- fs/efivarfs/file.c        | 12 +++++++-----
- fs/ext2/file.c            |  1 +
- fs/ext4/file.c            |  1 +
- fs/f2fs/file.c            |  1 +
- fs/gfs2/file.c            |  2 ++
- fs/jffs2/file.c           |  1 +
- fs/jfs/file.c             |  1 +
- fs/libfs.c                | 32 ++++++++++++++++++++++++++++++++
- fs/nilfs2/file.c          |  1 +
- fs/ocfs2/file.c           |  1 +
- fs/ramfs/file-mmu.c       |  1 +
- fs/ramfs/file-nommu.c     |  1 +
- fs/ubifs/file.c           |  1 +
- fs/xfs/xfs_file.c         | 21 +++++++++++++++++++++
- include/linux/fs.h        |  3 +++
- mm/shmem.c                |  1 +
- security/integrity/iint.c | 20 ++++++++++++++------
- 18 files changed, 91 insertions(+), 11 deletions(-)
-
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index da1096eb1a40..003e859b56c4 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -3087,6 +3087,7 @@ const struct file_operations btrfs_file_operations = {
- #endif
- 	.clone_file_range = btrfs_clone_file_range,
- 	.dedupe_file_range = btrfs_dedupe_file_range,
-+	.integrity_read = generic_file_read_iter,
- };
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index e76432b9954d..f271207743e5 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -17,7 +17,8 @@ Description:
  
- void btrfs_auto_defrag_exit(void)
-diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
-index 5f22e74bbade..17955a92a5b3 100644
---- a/fs/efivarfs/file.c
-+++ b/fs/efivarfs/file.c
-@@ -64,9 +64,10 @@ static ssize_t efivarfs_file_write(struct file *file,
- 	return bytes;
- }
+ 		rule format: action [condition ...]
  
--static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
--		size_t count, loff_t *ppos)
-+static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
-+				       struct iov_iter *iter)
- {
-+	struct file *file = iocb->ki_filp;
- 	struct efivar_entry *var = file->private_data;
- 	unsigned long datasize = 0;
- 	u32 attributes;
-@@ -96,8 +97,8 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
- 		goto out_free;
+-		action: measure | dont_measure | appraise | dont_appraise | audit
++		action: measure | dont_meaure | appraise | dont_appraise |
++			audit | dont_failsafe
+ 		condition:= base | lsm  [option]
+ 			base:	[[func=] [mask=] [fsmagic=] [fsuuid=] [uid=]
+ 				[euid=] [fowner=]]
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d52b487ad259..c5f34f7c5b0f 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -224,6 +224,7 @@ void *ima_policy_start(struct seq_file *m, loff_t *pos);
+ void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos);
+ void ima_policy_stop(struct seq_file *m, void *v);
+ int ima_policy_show(struct seq_file *m, void *v);
++void set_failsafe(bool flag);
  
- 	memcpy(data, &attributes, sizeof(attributes));
--	size = simple_read_from_buffer(userbuf, count, ppos,
--				       data, datasize + sizeof(attributes));
-+	size = simple_read_iter_from_buffer(iocb, iter, data,
-+					    datasize + sizeof(attributes));
- out_free:
- 	kfree(data);
+ /* Appraise integrity measurements */
+ #define IMA_APPRAISE_ENFORCE	0x01
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 63777d1210b1..59e271a20600 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -38,6 +38,11 @@ int ima_appraise;
+ int ima_hash_algo = HASH_ALGO_SHA1;
+ static int hash_setup_done;
  
-@@ -174,8 +175,9 @@ efivarfs_file_ioctl(struct file *file, unsigned int cmd, unsigned long p)
- 
- const struct file_operations efivarfs_file_operations = {
- 	.open	= simple_open,
--	.read	= efivarfs_file_read,
-+	.read_iter = efivarfs_file_read_iter,
- 	.write	= efivarfs_file_write,
- 	.llseek	= no_llseek,
- 	.unlocked_ioctl = efivarfs_file_ioctl,
-+	.integrity_read	= efivarfs_file_read_iter,
- };
-diff --git a/fs/ext2/file.c b/fs/ext2/file.c
-index b21891a6bfca..d57c4259945d 100644
---- a/fs/ext2/file.c
-+++ b/fs/ext2/file.c
-@@ -219,6 +219,7 @@ const struct file_operations ext2_file_operations = {
- 	.get_unmapped_area = thp_get_unmapped_area,
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
-+	.integrity_read	= generic_file_read_iter,
- };
- 
- const struct inode_operations ext2_file_inode_operations = {
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 831fd6beebf0..e7b2bd43cdc4 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -753,6 +753,7 @@ const struct file_operations ext4_file_operations = {
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.fallocate	= ext4_fallocate,
-+	.integrity_read	= ext4_file_read_iter,
- };
- 
- const struct inode_operations ext4_file_inode_operations = {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 61af721329fa..e93fdeb3eba4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2406,4 +2406,5 @@ const struct file_operations f2fs_file_operations = {
- #endif
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
-+	.integrity_read	= generic_file_read_iter,
- };
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index c2062a108d19..9b49d09ba180 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -1124,6 +1124,7 @@ const struct file_operations gfs2_file_fops = {
- 	.splice_write	= gfs2_file_splice_write,
- 	.setlease	= simple_nosetlease,
- 	.fallocate	= gfs2_fallocate,
-+	.integrity_read	= generic_file_read_iter,
- };
- 
- const struct file_operations gfs2_dir_fops = {
-@@ -1152,6 +1153,7 @@ const struct file_operations gfs2_file_fops_nolock = {
- 	.splice_write	= gfs2_file_splice_write,
- 	.setlease	= generic_setlease,
- 	.fallocate	= gfs2_fallocate,
-+	.integrity_read	= generic_file_read_iter,
- };
- 
- const struct file_operations gfs2_dir_fops_nolock = {
-diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
-index c12476e309c6..5a63034cccf5 100644
---- a/fs/jffs2/file.c
-+++ b/fs/jffs2/file.c
-@@ -57,6 +57,7 @@ const struct file_operations jffs2_file_operations =
- 	.mmap =		generic_file_readonly_mmap,
- 	.fsync =	jffs2_fsync,
- 	.splice_read =	generic_file_splice_read,
-+	.integrity_read = generic_file_read_iter,
- };
- 
- /* jffs2_file_inode_operations */
-diff --git a/fs/jfs/file.c b/fs/jfs/file.c
-index 739492c7a3fd..423512a810e4 100644
---- a/fs/jfs/file.c
-+++ b/fs/jfs/file.c
-@@ -162,4 +162,5 @@ const struct file_operations jfs_file_operations = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= jfs_compat_ioctl,
- #endif
-+	.integrity_read	= generic_file_read_iter,
- };
-diff --git a/fs/libfs.c b/fs/libfs.c
-index a04395334bb1..e1b4f8695013 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -16,6 +16,7 @@
- #include <linux/exportfs.h>
- #include <linux/writeback.h>
- #include <linux/buffer_head.h> /* sync_mapping_buffers */
-+#include <linux/uio.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -676,6 +677,37 @@ ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- EXPORT_SYMBOL(simple_write_to_buffer);
- 
- /**
-+ * simple_read_iter_from_buffer - copy data from the buffer to user space
-+ * @iocb: struct containing the file, the current position and other info
-+ * @to: the user space buffer to read to
-+ * @from: the buffer to read from
-+ * @available: the size of the buffer
-+ *
-+ * The simple_read_iter_from_buffer() function reads up to @available bytes
-+ * from the current buffer into the user space buffer.
-+ *
-+ * On success, the current buffer offset is advanced by the number of bytes
-+ * read, or a negative value is returned on error.
-+ **/
-+ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
-+                                const void *from, size_t available)
-+{
-+	loff_t pos = iocb->ki_pos;
-+	size_t ret;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available)
-+		return 0;
-+	ret = copy_to_iter(from + pos, available - pos, to);
-+	if (!ret && iov_iter_count(to))
-+		return -EFAULT;
-+	iocb->ki_pos = pos + ret;
-+	return ret;
-+}
-+EXPORT_SYMBOL(simple_read_iter_from_buffer);
-+
-+/**
-  * memory_read_from_buffer - copy data from the buffer
-  * @to: the kernel space buffer to read to
-  * @count: the maximum number of bytes to read
-diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
-index c5fa3dee72fc..55e058ac487f 100644
---- a/fs/nilfs2/file.c
-+++ b/fs/nilfs2/file.c
-@@ -150,6 +150,7 @@ const struct file_operations nilfs_file_operations = {
- 	/* .release	= nilfs_release_file, */
- 	.fsync		= nilfs_sync_file,
- 	.splice_read	= generic_file_splice_read,
-+	.integrity_read	= generic_file_read_iter,
- };
- 
- const struct inode_operations nilfs_file_inode_operations = {
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index bfeb647459d9..2832a7c92acd 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -2536,6 +2536,7 @@ const struct file_operations ocfs2_fops = {
- 	.fallocate	= ocfs2_fallocate,
- 	.clone_file_range = ocfs2_file_clone_range,
- 	.dedupe_file_range = ocfs2_file_dedupe_range,
-+	.integrity_read	= ocfs2_file_read_iter,
- };
- 
- const struct file_operations ocfs2_dops = {
-diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
-index 12af0490322f..4f24d1b589b1 100644
---- a/fs/ramfs/file-mmu.c
-+++ b/fs/ramfs/file-mmu.c
-@@ -47,6 +47,7 @@ const struct file_operations ramfs_file_operations = {
- 	.splice_write	= iter_file_splice_write,
- 	.llseek		= generic_file_llseek,
- 	.get_unmapped_area	= ramfs_mmu_get_unmapped_area,
-+	.integrity_read	= generic_file_read_iter,
- };
- 
- const struct inode_operations ramfs_file_inode_operations = {
-diff --git a/fs/ramfs/file-nommu.c b/fs/ramfs/file-nommu.c
-index 2ef7ce75c062..5ee704fa84e0 100644
---- a/fs/ramfs/file-nommu.c
-+++ b/fs/ramfs/file-nommu.c
-@@ -50,6 +50,7 @@ const struct file_operations ramfs_file_operations = {
- 	.splice_read		= generic_file_splice_read,
- 	.splice_write		= iter_file_splice_write,
- 	.llseek			= generic_file_llseek,
-+	.integrity_read		= generic_file_read_iter,
- };
- 
- const struct inode_operations ramfs_file_inode_operations = {
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 2cda3d67e2d0..eeb4e872e47a 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1754,4 +1754,5 @@ const struct file_operations ubifs_file_operations = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl   = ubifs_compat_ioctl,
- #endif
-+	.integrity_read = generic_file_read_iter,
- };
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 35703a801372..3d6ace2a79bc 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -288,6 +288,26 @@ xfs_file_read_iter(
- 	return ret;
- }
- 
-+static ssize_t
-+xfs_integrity_read(
-+	struct kiocb		*iocb,
-+	struct iov_iter		*to)
-+{
-+	struct inode		*inode = file_inode(iocb->ki_filp);
-+	struct xfs_mount	*mp = XFS_I(inode)->i_mount;
-+
-+	lockdep_assert_held(&inode->i_rwsem);
-+
-+	XFS_STATS_INC(mp, xs_read_calls);
-+
-+	if (XFS_FORCED_SHUTDOWN(mp))
-+		return -EIO;
-+
-+	if (IS_DAX(inode))
-+		return dax_iomap_rw(iocb, to, &xfs_iomap_ops);
-+	return generic_file_read_iter(iocb, to);
++static bool ima_failsafe = 1;
++void set_failsafe(bool flag) {
++	ima_failsafe = flag;
 +}
 +
- /*
-  * Zero any on disk space between the current EOF and the new, larger EOF.
-  *
-@@ -1534,6 +1554,7 @@ const struct file_operations xfs_file_operations = {
- 	.fallocate	= xfs_file_fallocate,
- 	.clone_file_range = xfs_file_clone_range,
- 	.dedupe_file_range = xfs_file_dedupe_range,
-+	.integrity_read	= xfs_integrity_read,
- };
- 
- const struct file_operations xfs_dir_file_operations = {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 803e5a9b2654..d85d2c43afd9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1690,6 +1690,7 @@ struct file_operations {
- 			u64);
- 	ssize_t (*dedupe_file_range)(struct file *, u64, u64, struct file *,
- 			u64);
-+	ssize_t (*integrity_read)(struct kiocb *, struct iov_iter *);
- };
- 
- struct inode_operations {
-@@ -3011,6 +3012,8 @@ extern void simple_release_fs(struct vfsmount **mount, int *count);
- 
- extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- 			loff_t *ppos, const void *from, size_t available);
-+extern ssize_t simple_read_iter_from_buffer(struct kiocb *iocb,
-+		struct iov_iter *to, const void *from, size_t available);
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e67d6ba4e98e..16958b20946f 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3846,6 +3846,7 @@ static const struct file_operations shmem_file_operations = {
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.fallocate	= shmem_fallocate,
-+	.integrity_read	= shmem_file_read_iter,
- #endif
- };
- 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 6fc888ca468e..df04f35a1d40 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -21,6 +21,7 @@
- #include <linux/rbtree.h>
- #include <linux/file.h>
- #include <linux/uaccess.h>
-+#include <linux/uio.h>
- #include "integrity.h"
- 
- static struct rb_root integrity_iint_tree = RB_ROOT;
-@@ -184,18 +185,25 @@ security_initcall(integrity_iintcache_init);
- int integrity_kernel_read(struct file *file, loff_t offset,
- 			  void *addr, unsigned long count)
+ static int __init hash_setup(char *str)
  {
--	mm_segment_t old_fs;
--	char __user *buf = (char __user *)addr;
-+	struct inode *inode = file_inode(file);
-+	struct kvec iov = { .iov_base = addr, .iov_len = count };
-+	struct kiocb kiocb;
-+	struct iov_iter iter;
- 	ssize_t ret;
- 
-+	lockdep_assert_held(&inode->i_rwsem);
+ 	struct ima_template_desc *template_desc = ima_template_desc_current();
+@@ -263,8 +268,12 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 		__putname(pathbuf);
+ out:
+ 	inode_unlock(inode);
+-	if ((rc && must_appraise) && (ima_appraise & IMA_APPRAISE_ENFORCE))
++	if ((rc && must_appraise) && (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++		if (!ima_failsafe && rc == -EBADF)
++			return 0;
 +
- 	if (!(file->f_mode & FMODE_READ))
- 		return -EBADF;
-+	if (!file->f_op->integrity_read)
-+		return -EBADF;
- 
--	old_fs = get_fs();
--	set_fs(get_ds());
--	ret = __vfs_read(file, buf, count, &offset);
--	set_fs(old_fs);
-+	init_sync_kiocb(&kiocb, file);
-+	kiocb.ki_pos = offset;
-+	iov_iter_kvec(&iter, READ | ITER_KVEC, &iov, 1, count);
- 
-+	ret = file->f_op->integrity_read(&kiocb, &iter);
-+	BUG_ON(ret == -EIOCBQUEUED);
- 	return ret;
+ 		return -EACCES;
++	}
+ 	return 0;
  }
+ 
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index f4436626ccb7..3c29aa4e7980 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -40,12 +40,14 @@
+ #define APPRAISE	0x0004	/* same as IMA_APPRAISE */
+ #define DONT_APPRAISE	0x0008
+ #define AUDIT		0x0040
++#define DONT_FAILSAFE	0x0400
+ 
+ #define INVALID_PCR(a) (((a) < 0) || \
+ 	(a) >= (FIELD_SIZEOF(struct integrity_iint_cache, measured_pcrs) * 8))
+ 
+ int ima_policy_flag;
+ static int temp_ima_appraise;
++static bool temp_failsafe = 1;
+ 
+ #define MAX_LSM_RULES 6
+ enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
+@@ -513,6 +515,9 @@ void ima_update_policy(void)
+ 	if (ima_rules != policy) {
+ 		ima_policy_flag = 0;
+ 		ima_rules = policy;
++
++		/* Only update on initial policy replacement, not append */
++		set_failsafe(temp_failsafe);
+ 	}
+ 	ima_update_policy_flag();
+ }
+@@ -529,7 +534,7 @@ enum {
+ 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+ 	Opt_appraise_type, Opt_permit_directio,
+-	Opt_pcr
++	Opt_pcr, Opt_dont_failsafe
+ };
+ 
+ static match_table_t policy_tokens = {
+@@ -560,6 +565,7 @@ static match_table_t policy_tokens = {
+ 	{Opt_appraise_type, "appraise_type=%s"},
+ 	{Opt_permit_directio, "permit_directio"},
+ 	{Opt_pcr, "pcr=%s"},
++	{Opt_dont_failsafe, "dont_failsafe"},
+ 	{Opt_err, NULL}
+ };
+ 
+@@ -630,6 +636,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		if ((*p == '\0') || (*p == ' ') || (*p == '\t'))
+ 			continue;
+ 		token = match_token(p, policy_tokens, args);
++		if (entry->action == DONT_FAILSAFE) {
++			/* no args permitted, force invalid rule */
++			token = Opt_dont_failsafe;
++		}
++
+ 		switch (token) {
+ 		case Opt_measure:
+ 			ima_log_string(ab, "action", "measure");
+@@ -671,6 +682,19 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 
+ 			entry->action = AUDIT;
+ 			break;
++		case Opt_dont_failsafe:
++			ima_log_string(ab, "action", "dont_failsafe");
++
++			if (entry->action != UNKNOWN)
++				result = -EINVAL;
++
++			/* Permit on initial policy replacement only */
++			if (ima_rules != &ima_policy_rules)
++				temp_failsafe = 0;
++			else
++				result = -EINVAL;
++			entry->action = DONT_FAILSAFE;
++			break;
+ 		case Opt_func:
+ 			ima_log_string(ab, "func", args[0].from);
+ 
+@@ -951,6 +975,7 @@ void ima_delete_rules(void)
+ 	int i;
+ 
+ 	temp_ima_appraise = 0;
++	temp_failsafe = 1;
+ 	list_for_each_entry_safe(entry, tmp, &ima_temp_rules, list) {
+ 		for (i = 0; i < MAX_LSM_RULES; i++)
+ 			kfree(entry->lsm[i].args_p);
+@@ -1042,6 +1067,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, pt(Opt_dont_appraise));
+ 	if (entry->action & AUDIT)
+ 		seq_puts(m, pt(Opt_audit));
++	if (entry->action & DONT_FAILSAFE)
++		seq_puts(m, pt(Opt_dont_failsafe));
+ 
+ 	seq_puts(m, " ");
  
 -- 
 2.7.4
