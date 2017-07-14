@@ -1,8 +1,10 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 14 Jul 2017 15:43:46 -0400
+Date: Fri, 14 Jul 2017 16:03:39 -0400
 Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <20170714192909.zoxnlm32nrxguqao@thunk.org>
-References: <87k23cb6os.fsf@xmission.com>
+In-Reply-To: <1500058362.2853.28.camel@HansenPartnership.com>
+References: <87y3rscz9j.fsf@xmission.com>
+	<20170713164012.brj2flnkaaks2oci@thunk.org>
+	<87k23cb6os.fsf@xmission.com>
 	<847ccb2a-30c0-a94c-df6f-091c8901eaa0@linux.vnet.ibm.com>
 	<87bmoo8bxb.fsf@xmission.com>
 	<9a3010e5-ca2b-5e7a-656b-fcc14f7bec4e@linux.vnet.ibm.com>
@@ -12,31 +14,33 @@ References: <87k23cb6os.fsf@xmission.com>
 	<596f808b-e21d-8296-5fef-23c1ce7ab778@linux.vnet.ibm.com>
 	<20170714173556.GA19669@mail.hallyn.com>
 	<1500058090.3583.28.camel@linux.vnet.ibm.com>
-	<20170714192909.zoxnlm32nrxguqao@thunk.org>
-Message-ID: <1500061426.3583.65.camel@linux.vnet.ibm.com>
+	<1500058362.2853.28.camel@HansenPartnership.com>
+Message-ID: <1500062619.3583.71.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-07-14 at 15:29 -0400, Theodore Ts'o wrote:
-> On Fri, Jul 14, 2017 at 02:48:10PM -0400, Mimi Zohar wrote:
-> > 
-> > If I'm understanding the discussion correctly, this isn't an issue for
-> > layered copy on write filesystems, as each fs layer could have it's
-> > own set of xattrs. ?The underlying and layered xattrs should be able
-> > to co-exist. ?Use the layered xattr if it exists, but fall back to
-> > using the underlying xattr if it doesn't.
+On Fri, 2017-07-14 at 11:52 -0700, James Bottomley wrote:
+> On Fri, 2017-07-14 at 14:48 -0400, Mimi Zohar wrote:
+> > The concern is with a shared filesystems. ?In that case, for IMA it
+> > would make sense to support a native and a namespace xattr. ?If due
+> > to xattr space limitations we have to limit the number of xattrs,
+> > then we should limit it to two - a native and a namespace version,
+> > with a "uid=" tag - first namespace gets permission to write the
+> > namespace xattr. ?Again, like in the layered case, if the namespace
+> > xattr doesn't exist, fall back to using the native xattr.
 > 
-> Note that this assumes that it is possible to "copy up" the xattrs
-> without necessarily "copying up" all of the data blocks.  This might
-> be true for some layers, but I don't believe it is currently true for
-> overlayfs, for example.
+> Just on this point: if we're really concerned about the need on shared
+> filesystems to have multiple IMA signatures per file, might it not make
+> sense simply to support multiple signatures within the security.ima
+> xattr? The rules for writing signature updates within user namespaces
+> would be somewhat complex (say only able to replace a signature for
+> which you demonstrate you possess the key) but it would lead to an
+> implementation which would work for traditional shared filesystems
+> (like NFS) as well as containerised bind mounts.
 
-Ok, so for the use case scneario where the container owner is willing
-to use the public key distributed with the files, then only those
-files that are new or modified in the overlay would need to be signed
-with a key local to the overlay. ?In the worst case scenario, where
-the container owner is only willing to trust their own public key, I
-guess we can live with having to copy up the files.
+Writing security.ima requires being root with CAP_SYS_ADMIN
+privileges. ?I wouldn't want to give root within the namespace
+permission to over write or just extend the native security.ima.
 
 Mimi
 
