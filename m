@@ -1,7 +1,7 @@
-From: tytso@mit.edu (Theodore Ts'o)
-Date: Fri, 14 Jul 2017 15:29:09 -0400
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 14 Jul 2017 15:43:46 -0400
 Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <1500058090.3583.28.camel@linux.vnet.ibm.com>
+In-Reply-To: <20170714192909.zoxnlm32nrxguqao@thunk.org>
 References: <87k23cb6os.fsf@xmission.com>
 	<847ccb2a-30c0-a94c-df6f-091c8901eaa0@linux.vnet.ibm.com>
 	<87bmoo8bxb.fsf@xmission.com>
@@ -12,24 +12,34 @@ References: <87k23cb6os.fsf@xmission.com>
 	<596f808b-e21d-8296-5fef-23c1ce7ab778@linux.vnet.ibm.com>
 	<20170714173556.GA19669@mail.hallyn.com>
 	<1500058090.3583.28.camel@linux.vnet.ibm.com>
-Message-ID: <20170714192909.zoxnlm32nrxguqao@thunk.org>
+	<20170714192909.zoxnlm32nrxguqao@thunk.org>
+Message-ID: <1500061426.3583.65.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jul 14, 2017 at 02:48:10PM -0400, Mimi Zohar wrote:
+On Fri, 2017-07-14 at 15:29 -0400, Theodore Ts'o wrote:
+> On Fri, Jul 14, 2017 at 02:48:10PM -0400, Mimi Zohar wrote:
+> > 
+> > If I'm understanding the discussion correctly, this isn't an issue for
+> > layered copy on write filesystems, as each fs layer could have it's
+> > own set of xattrs. ?The underlying and layered xattrs should be able
+> > to co-exist. ?Use the layered xattr if it exists, but fall back to
+> > using the underlying xattr if it doesn't.
 > 
-> If I'm understanding the discussion correctly, this isn't an issue for
-> layered copy on write filesystems, as each fs layer could have it's
-> own set of xattrs. ?The underlying and layered xattrs should be able
-> to co-exist. ?Use the layered xattr if it exists, but fall back to
-> using the underlying xattr if it doesn't.
+> Note that this assumes that it is possible to "copy up" the xattrs
+> without necessarily "copying up" all of the data blocks.  This might
+> be true for some layers, but I don't believe it is currently true for
+> overlayfs, for example.
 
-Note that this assumes that it is possible to "copy up" the xattrs
-without necessarily "copying up" all of the data blocks.  This might
-be true for some layers, but I don't believe it is currently true for
-overlayfs, for example.
+Ok, so for the use case scneario where the container owner is willing
+to use the public key distributed with the files, then only those
+files that are new or modified in the overlay would need to be signed
+with a key local to the overlay. ?In the worst case scenario, where
+the container owner is only willing to trust their own public key, I
+guess we can live with having to copy up the files.
 
-					- Ted
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
