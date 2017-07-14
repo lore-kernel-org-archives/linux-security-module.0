@@ -1,39 +1,112 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 13 Jul 2017 19:38:30 -0500
-Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <9a3010e5-ca2b-5e7a-656b-fcc14f7bec4e@linux.vnet.ibm.com> (Stefan
-	Berger's message of "Thu, 13 Jul 2017 17:35:22 -0400")
-References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
-	<87mv89iy7q.fsf@xmission.com> <20170712170346.GA17974@mail.hallyn.com>
-	<877ezdgsey.fsf@xmission.com>
-	<74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
-	<20170713011554.xwmrgkzfwnibvgcu@thunk.org>
-	<87y3rscz9j.fsf@xmission.com>
-	<20170713164012.brj2flnkaaks2oci@thunk.org>
-	<87k23cb6os.fsf@xmission.com>
-	<847ccb2a-30c0-a94c-df6f-091c8901eaa0@linux.vnet.ibm.com>
-	<87bmoo8bxb.fsf@xmission.com>
-	<9a3010e5-ca2b-5e7a-656b-fcc14f7bec4e@linux.vnet.ibm.com>
-Message-ID: <87h8yf7szd.fsf@xmission.com>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Fri, 14 Jul 2017 19:38:36 +0900
+Subject: [PATCH] LSM: Remove security_task_create() hook.
+Message-ID: <1500028716-29328-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+Since commit a79be238600d1a03 ("selinux: Use task_alloc hook rather than
+task_create hook") changed to use task_alloc hook, task_create hook is
+no longer used.
 
-> On 07/13/2017 01:49 PM, Eric W. Biederman wrote:
->
-> > My big question right now is can you implement Ted's suggested
-> > restriction.  Only one security.foo or secuirty.foo at ... attribute ?
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/lsm_hooks.h | 7 -------
+ include/linux/security.h  | 6 ------
+ kernel/fork.c             | 4 ----
+ security/security.c       | 5 -----
+ 4 files changed, 22 deletions(-)
 
-> We need to raw-list the xattrs and do the check before writing them. I am fairly sure this can be done.
->
-> So now you want to allow security.foo and one security.foo at uid=<> or just a single one security.foo(@[[:print:]]*)?
->
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 3cc9d77..575703c 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -529,11 +529,6 @@
+  *
+  * Security hooks for task operations.
+  *
+- * @task_create:
+- *	Check permission before creating a child process.  See the clone(2)
+- *	manual page for definitions of the @clone_flags.
+- *	@clone_flags contains the flags indicating what should be shared.
+- *	Return 0 if permission is granted.
+  * @task_alloc:
+  *	@task task being allocated.
+  *	@clone_flags contains the flags indicating what should be shared.
+@@ -1509,7 +1504,6 @@
+ 	int (*file_receive)(struct file *file);
+ 	int (*file_open)(struct file *file, const struct cred *cred);
+ 
+-	int (*task_create)(unsigned long clone_flags);
+ 	int (*task_alloc)(struct task_struct *task, unsigned long clone_flags);
+ 	void (*task_free)(struct task_struct *task);
+ 	int (*cred_alloc_blank)(struct cred *cred, gfp_t gfp);
+@@ -1784,7 +1778,6 @@ struct security_hook_heads {
+ 	struct list_head file_send_sigiotask;
+ 	struct list_head file_receive;
+ 	struct list_head file_open;
+-	struct list_head task_create;
+ 	struct list_head task_alloc;
+ 	struct list_head task_free;
+ 	struct list_head cred_alloc_blank;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index b6ea1dc..458e24b 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -318,7 +318,6 @@ int security_file_send_sigiotask(struct task_struct *tsk,
+ 				 struct fown_struct *fown, int sig);
+ int security_file_receive(struct file *file);
+ int security_file_open(struct file *file, const struct cred *cred);
+-int security_task_create(unsigned long clone_flags);
+ int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
+ void security_task_free(struct task_struct *task);
+ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+@@ -885,11 +884,6 @@ static inline int security_file_open(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline int security_task_create(unsigned long clone_flags)
+-{
+-	return 0;
+-}
+-
+ static inline int security_task_alloc(struct task_struct *task,
+ 				      unsigned long clone_flags)
+ {
+diff --git a/kernel/fork.c b/kernel/fork.c
+index aa1076c..3a13a94 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1568,10 +1568,6 @@ static __latent_entropy struct task_struct *copy_process(
+ 			return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	retval = security_task_create(clone_flags);
+-	if (retval)
+-		goto fork_out;
+-
+ 	retval = -ENOMEM;
+ 	p = dup_task_struct(current, node);
+ 	if (!p)
+diff --git a/security/security.c b/security/security.c
+index 3013237..55b5997 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -979,11 +979,6 @@ int security_file_open(struct file *file, const struct cred *cred)
+ 	return fsnotify_perm(file, MAY_OPEN);
+ }
+ 
+-int security_task_create(unsigned long clone_flags)
+-{
+-	return call_int_hook(task_create, 0, clone_flags);
+-}
+-
+ int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
+ {
+ 	return call_int_hook(task_alloc, 0, task, clone_flags);
+-- 
+1.8.3.1
 
-The latter.
-
-Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
