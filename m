@@ -1,80 +1,75 @@
 From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Fri, 14 Jul 2017 18:41:39 -0500
+Date: Fri, 14 Jul 2017 18:53:16 -0500
 Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
-	(Stefan Berger's message of "Tue, 11 Jul 2017 11:05:11 -0400")
-References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
-	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <87d192si18.fsf@xmission.com>
+In-Reply-To: <1500064799.2853.36.camel@HansenPartnership.com> (James
+	Bottomley's message of "Fri, 14 Jul 2017 13:39:59 -0700")
+References: <87y3rscz9j.fsf@xmission.com>
+	<20170713164012.brj2flnkaaks2oci@thunk.org>
+	<87k23cb6os.fsf@xmission.com>
+	<847ccb2a-30c0-a94c-df6f-091c8901eaa0@linux.vnet.ibm.com>
+	<87bmoo8bxb.fsf@xmission.com>
+	<9a3010e5-ca2b-5e7a-656b-fcc14f7bec4e@linux.vnet.ibm.com>
+	<87h8yf7szd.fsf@xmission.com>
+	<65dbe654-0d99-03fa-c838-5a726b462826@linux.vnet.ibm.com>
+	<20170714133437.GA16737@mail.hallyn.com>
+	<596f808b-e21d-8296-5fef-23c1ce7ab778@linux.vnet.ibm.com>
+	<20170714173556.GA19669@mail.hallyn.com>
+	<1500058090.3583.28.camel@linux.vnet.ibm.com>
+	<1500058362.2853.28.camel@HansenPartnership.com>
+	<1500062619.3583.71.camel@linux.vnet.ibm.com>
+	<1500064799.2853.36.camel@HansenPartnership.com>
+Message-ID: <87379yshhv.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Stefan Berger <"Stefan Bergerstefanb"@linux.vnet.ibm.com> writes:
+James Bottomley <James.Bottomley@HansenPartnership.com> writes:
 
-> From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> On Fri, 2017-07-14 at 16:03 -0400, Mimi Zohar wrote:
+>> On Fri, 2017-07-14 at 11:52 -0700, James Bottomley wrote:
+>> > 
+>> > On Fri, 2017-07-14 at 14:48 -0400, Mimi Zohar wrote:
+>> > > 
+>> > > The concern is with a shared filesystems. ?In that case, for IMA
+>> > > it would make sense to support a native and a namespace xattr.
+>> > > ?If due to xattr space limitations we have to limit the number of
+>> > > xattrs, then we should limit it to two - a native and a namespace
+>> > > version, with a "uid=" tag - first namespace gets permission to
+>> > > write the namespace xattr. ?Again, like in the layered case, if
+>> > > the namespace xattr doesn't exist, fall back to using the native
+>> > > xattr.
+>> > 
+>> > Just on this point: if we're really concerned about the need on
+>> > shared filesystems to have multiple IMA signatures per file, might
+>> > it not make sense simply to support multiple signatures within the
+>> > security.ima xattr? The rules for writing signature updates within
+>> > user namespaces would be somewhat complex (say only able to replace
+>> > a signature for which you demonstrate you possess the key) but it
+>> > would lead to an implementation which would work for traditional
+>> > shared filesystems (like NFS) as well as containerised bind mounts.
+>> 
+>> Writing security.ima requires being root with CAP_SYS_ADMIN
+>> privileges. ?I wouldn't want to give root within the namespace
+>> permission to over write or just extend the native security.ima.
 >
-> This patch enables security.capability in user namespaces but also
-> takes a more general approach to enabling extended attributes in user
-> namespaces.
->
-> The following rules describe the approach using security.foo as a
-> 'user namespace enabled' extended attribute:
->
-> Reading of extended attributes:
->
-> 1a) Reading security.foo from a user namespace will read
->     security.foo at uid=<uid> of the parent user namespace instead with uid
->     being the mapping of root in that parent user namespace. An
->     exception is if root is mapped to uid 0 on the host, and in this case
->     we will read security.foo directly.
->     --> reading security.foo will read security.foo at uid=1000 for uid
->         mapping of root to 1000.
->
-> 1b) If security.foo at uid=<uid> is not available, the security.foo of the
->     parent namespace is tried to be read. This procedure is repeated up to
->     the init user namespace. This step only applies for reading of extended
->     attributes and provides the same behavior as older system where the
->     host's extended attributes applied to user namespaces.
->
-> 2) All security.foo at uid=<uid> with valid uid mapping in the user namespace
->    can be read. The uid within the user namespace will be mapped to the
->    corresponding uid on the host and that uid will be used in the name of
->    the extended attribute.
->    -> reading security.foo at uid=1 will read security.foo at uid=1001 for uid
->       mapping of root to 1000, size of at least 2.
->
->    All security.foo at uid=<uid> can be read (by root) on the host with values
->    of <uid> also being subject to checking for valid mappings.
->
-> 3) No other security.foo* can be read.
->
-> The same rules for reading apply to writing and removing of user
-> namespace enabled extended attributes.
->
-> When listing extended attributes of a file, only those are presented
-> to the user namespace that have a valid mapping. Besides that, names
-> of the extended attributes are adjusted to represent the mapping.
-> This means that if root is mapped to uid 1000 on the host, the
-> security.foo at uid=1000 will be listed as security.foo in the user
-> namespace, security.foo at uid=1001 becomes security.foo at uid=1 and so on.
->
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> Signed-off-by: Serge Hallyn <serge@hallyn.com>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> ---
->  fs/xattr.c               | 509 +++++++++++++++++++++++++++++++++++++++++++++--
->  security/commoncap.c     |  36 +++-
->  security/selinux/hooks.c |   9 +-
->  3 files changed, 523 insertions(+), 31 deletions(-)
+> but why? ?That's partly the point of all of this: some security.
+> attributes can't be written by container root without some supervision
+> (the capability ones are the hugely problematic ones from this point of
+> view), but for some there's no reason they shouldn't be. ?What would be
+> the reason that root in a container shouldn't be able to write the ima
+> xattr the same as host root could on its filesystem?
 
-I am just going to quickly and publicly point out that as designed this
-patch breaks evm inode metadata signing.  As evm_config_xattrnames is not
-updated.
+Mimi said she ``native''.  It competely makes sense for the things that
+the container doesn't ``own'' to not be allowed to be written/updated by
+the container.
 
-While not completely insurmountable that seems like a strong limitation of
-this design.
+James you are making the case here for root in the container to write
+to the ima and evm attributes that are for the container.
+
+So I don't actually see any disagreement here except perhaps for
+terminology.
 
 Eric
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
