@@ -1,8 +1,8 @@
 From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Fri, 14 Jul 2017 18:53:16 -0500
+Date: Fri, 14 Jul 2017 19:02:42 -0500
 Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <1500064799.2853.36.camel@HansenPartnership.com> (James
-	Bottomley's message of "Fri, 14 Jul 2017 13:39:59 -0700")
+In-Reply-To: <1500060374.3583.57.camel@linux.vnet.ibm.com> (Mimi Zohar's
+	message of "Fri, 14 Jul 2017 15:26:14 -0400")
 References: <87y3rscz9j.fsf@xmission.com>
 	<20170713164012.brj2flnkaaks2oci@thunk.org>
 	<87k23cb6os.fsf@xmission.com>
@@ -14,59 +14,134 @@ References: <87y3rscz9j.fsf@xmission.com>
 	<20170714133437.GA16737@mail.hallyn.com>
 	<596f808b-e21d-8296-5fef-23c1ce7ab778@linux.vnet.ibm.com>
 	<20170714173556.GA19669@mail.hallyn.com>
-	<1500058090.3583.28.camel@linux.vnet.ibm.com>
-	<1500058362.2853.28.camel@HansenPartnership.com>
-	<1500062619.3583.71.camel@linux.vnet.ibm.com>
-	<1500064799.2853.36.camel@HansenPartnership.com>
-Message-ID: <87379yshhv.fsf@xmission.com>
+	<xagsmtp2.20170714182525.6604@vmsdvm4.vnet.ibm.com>
+	<1500060374.3583.57.camel@linux.vnet.ibm.com>
+Message-ID: <871spir2hp.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-> On Fri, 2017-07-14 at 16:03 -0400, Mimi Zohar wrote:
->> On Fri, 2017-07-14 at 11:52 -0700, James Bottomley wrote:
->> > 
->> > On Fri, 2017-07-14 at 14:48 -0400, Mimi Zohar wrote:
->> > > 
->> > > The concern is with a shared filesystems. ?In that case, for IMA
->> > > it would make sense to support a native and a namespace xattr.
->> > > ?If due to xattr space limitations we have to limit the number of
->> > > xattrs, then we should limit it to two - a native and a namespace
->> > > version, with a "uid=" tag - first namespace gets permission to
->> > > write the namespace xattr. ?Again, like in the layered case, if
->> > > the namespace xattr doesn't exist, fall back to using the native
->> > > xattr.
->> > 
->> > Just on this point: if we're really concerned about the need on
->> > shared filesystems to have multiple IMA signatures per file, might
->> > it not make sense simply to support multiple signatures within the
->> > security.ima xattr? The rules for writing signature updates within
->> > user namespaces would be somewhat complex (say only able to replace
->> > a signature for which you demonstrate you possess the key) but it
->> > would lead to an implementation which would work for traditional
->> > shared filesystems (like NFS) as well as containerised bind mounts.
+> On Fri, 2017-07-14 at 13:17 -0500, Eric W. Biederman wrote:
+>> "Serge E. Hallyn" <serge@hallyn.com> writes:
 >> 
->> Writing security.ima requires being root with CAP_SYS_ADMIN
->> privileges. ?I wouldn't want to give root within the namespace
->> permission to over write or just extend the native security.ima.
+>> > Quoting Stefan Berger (stefanb at linux.vnet.ibm.com):
+>> >> On 07/14/2017 09:34 AM, Serge E. Hallyn wrote:
+>> >> >Quoting Stefan Berger (stefanb at linux.vnet.ibm.com):
+>> >> >>On 07/13/2017 08:38 PM, Eric W. Biederman wrote:
+>> >> >>>Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+>> >> >>>
+>> >> >>>>On 07/13/2017 01:49 PM, Eric W. Biederman wrote:
+>> >> >>>>
+>> >> >>>>>My big question right now is can you implement Ted's suggested
+>> >> >>>>>restriction.  Only one security.foo or secuirty.foo at ... attribute ?
+>> >> >>>>We need to raw-list the xattrs and do the check before writing them. I am fairly sure this can be done.
+>> >> >>>>
+>> >> >>>>So now you want to allow security.foo and one security.foo at uid=<> or just a single one security.foo(@[[:print:]]*)?
+>> >> >>>>
+>> >> >>>The latter.
+>> >> >>That case would prevent a container user from overriding the xattr
+>> >> >>on the host. Is that what we want? For limiting the number of xattrs
+>> >> >Not really.  If the file is owned by a uid mapped into the container,
+>> >> >then the container root can chown the file which will clear the file
+>> >> >capability, after which he can set a new one.  If the file is not
+>> >> >owned by a uid mapped into the container, then container root could
+>> >> >not set a filecap anyway.
+>> >> 
+>> >> Let's say I installed a container where all files are signed and
+>> >> thus have security.ima. Now for some reason I want to re-sign some
+>> >> or all files inside that container. How would I do that ? Would I
+>> >> need to get rid of security.ima first, possibly by copying each
+>> >> file, deleting the original file, and renaming the copied file to
+>> >> the original name, or should I just be able to write out a new
+>> >> signature, thus creating security.ima at uid=1000 besides the
+>> >> security.ima ?
+>> >> 
+>> >>    Stefan
+>> >
+>> > Hi Mimi,
+>> >
+>> > what do you think makes most sense for IMA?
+>> 
+>> I am going to give my two cents since I have been thinking about this.
+>> 
+>> First I think this entire scheme plays hobs with the security.evm
+>> attribute as security.evm needs to know the names of the xattrs to
+>> protect.
+>> 
+>> I forget which attributes has a hash and what has a message
+>> athentication code.
 >
-> but why? ?That's partly the point of all of this: some security.
-> attributes can't be written by container root without some supervision
-> (the capability ones are the hugely problematic ones from this point of
-> view), but for some there's no reason they shouldn't be. ?What would be
-> the reason that root in a container shouldn't be able to write the ima
-> xattr the same as host root could on its filesystem?
+> security.ima contains either a file hash or a signature.  (file data)
+> security.evm contains either a signature or an hmac of the security
+> xattrs and other file metadata. (file meta-data)
+>
+> The same rules would apply to security.evm, as described in my
+> response. ?Based on it's view of the security xattrs, either the
+> native or namespace security.evm would be updated.
+>
+>> If there is an attribute with a simple file hash I think it only make
+>> sense for the kernel to touch it, and I don't see any sense in having
+>> multiples.
+>
+> Only files that are in the IMA-appraisal policy is the file hash
+> calculated and written out as security.ima. ?Depending this policy,
+> does the security.ima exist. ?So if the file is in policy for both the
+> native and namespace policies, agreed the same hash doesn't need to be
+> written as two different xattrs.
+>
+>> If there is an attribute with a message authentication code (roughly a
+>> signed hash) it makes sense to have that to be tied to the kernel key
+>> ring that controlls the keys.  (Which probably means a per user
+>> namespace thing at some point).  But again pretty untouchable otherwise.
+>
+> Right, the namespace would require it's own EVM key. 
+>
+>> Which brings us to the semantic question of would it be nice to have
+>> stacked IMA/EVM on the same file.
+>> 
+>> I really don't think we do.  I think allowing multiple keys for
+>> different part of trusting files is easy enough that we should have no
+>> need to fight over which keys do which.
+>
+> We definitely want to support different policies on the native and in
+> the namespace with different keys and keyrings.
+>
+> Refer to Mehmet Kaaylap's recent post, which refers to a PoC version
+> of IMA namespacing - kernsec.org/pipermail/linux-security-module-
+> archive/2017-July/002286.html.
+>
+>> Looking at integrity.h I see signature_v2_hdr that has a keyid.  Any use
+>> case I can think of for distributing a distribution image with ima/evm
+>> xattrs will need to use asymmetric keys aka public/private keypairs so
+>> that the originator of the content does not give away their private
+>> keys.
+>
+> Agreed.
+>
+>> Given that usefully we are talking about content that should be
+>> connected to keys in one way or another I don't believe it even makes
+>> sense at this point to attempt to use uids for dealing with ima and
+>> evm content.
+>
+> We need to resolve the xattr issue in order to namespace IMA-
+> appraisal.?
 
-Mimi said she ``native''.  It competely makes sense for the things that
-the container doesn't ``own'' to not be allowed to be written/updated by
-the container.
 
-James you are making the case here for root in the container to write
-to the ima and evm attributes that are for the container.
+Mimi I have two questions:
 
-So I don't actually see any disagreement here except perhaps for
-terminology.
+a) Is the keyid enough to distinguish the security.ima and security.evm
+   xattrs of one container from another container and from native?  Or
+   do we have some important security xattrs that are associated with
+   keys that don't have a keyid?
+
+b) Can we reasonably live with a limitation that the native and the
+   namespace'd policies don't intersect?  Or in the case of an
+   interesection the native policy is the only one that is executed?
+
+I submit that if the answer is keyids are always present, and we can
+live with the native policy taking precedence over the container policy
+then we have a solution to the IMA xattrs.
 
 Eric
 
