@@ -1,161 +1,71 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 16 Jul 2017 07:25:59 -0400
-Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <xagsmtp3.20170715001054.9173@uk1vsc.vnet.ibm.com>
-References: <87y3rscz9j.fsf@xmission.com>
-	<20170713164012.brj2flnkaaks2oci@thunk.org>
-	<87k23cb6os.fsf@xmission.com>
-	<847ccb2a-30c0-a94c-df6f-091c8901eaa0@linux.vnet.ibm.com>
-	<87bmoo8bxb.fsf@xmission.com>
-	<9a3010e5-ca2b-5e7a-656b-fcc14f7bec4e@linux.vnet.ibm.com>
-	<87h8yf7szd.fsf@xmission.com>
-	<65dbe654-0d99-03fa-c838-5a726b462826@linux.vnet.ibm.com>
-	<20170714133437.GA16737@mail.hallyn.com>
-	<596f808b-e21d-8296-5fef-23c1ce7ab778@linux.vnet.ibm.com>
-	<20170714173556.GA19669@mail.hallyn.com>
-	<xagsmtp2.20170714182525.6604@vmsdvm4.vnet.ibm.com>
-	<1500060374.3583.57.camel@linux.vnet.ibm.com>
-	<xagsmtp3.20170715001054.9173@uk1vsc.vnet.ibm.com>
-Message-ID: <1500204359.3583.126.camel@linux.vnet.ibm.com>
+From: Jason@zx2c4.com (Jason A. Donenfeld)
+Date: Sun, 16 Jul 2017 19:21:13 +0200
+Subject: [PATCH] security/keys: ensure RNG is seeded before use
+Message-ID: <20170716172113.6223-1-Jason@zx2c4.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-07-14 at 19:02 -0500, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
-> > On Fri, 2017-07-14 at 13:17 -0500, Eric W. Biederman wrote:
-> >> "Serge E. Hallyn" <serge@hallyn.com> writes:
-> >> 
-> >> > Quoting Stefan Berger (stefanb at linux.vnet.ibm.com):
-> >> >> On 07/14/2017 09:34 AM, Serge E. Hallyn wrote:
-> >> >> >Quoting Stefan Berger (stefanb at linux.vnet.ibm.com):
-> >> >> >>On 07/13/2017 08:38 PM, Eric W. Biederman wrote:
-> >> >> >>>Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
-> >> >> >>>
-> >> >> >>>>On 07/13/2017 01:49 PM, Eric W. Biederman wrote:
-> >> >> >>>>
-> >> >> >>>>>My big question right now is can you implement Ted's suggested
-> >> >> >>>>>restriction.  Only one security.foo or secuirty.foo at ... attribute ?
-> >> >> >>>>We need to raw-list the xattrs and do the check before writing them. I am fairly sure this can be done.
-> >> >> >>>>
-> >> >> >>>>So now you want to allow security.foo and one security.foo at uid=<> or just a single one security.foo(@[[:print:]]*)?
-> >> >> >>>>
-> >> >> >>>The latter.
-> >> >> >>That case would prevent a container user from overriding the xattr
-> >> >> >>on the host. Is that what we want? For limiting the number of xattrs
-> >> >> >Not really.  If the file is owned by a uid mapped into the container,
-> >> >> >then the container root can chown the file which will clear the file
-> >> >> >capability, after which he can set a new one.  If the file is not
-> >> >> >owned by a uid mapped into the container, then container root could
-> >> >> >not set a filecap anyway.
-> >> >> 
-> >> >> Let's say I installed a container where all files are signed and
-> >> >> thus have security.ima. Now for some reason I want to re-sign some
-> >> >> or all files inside that container. How would I do that ? Would I
-> >> >> need to get rid of security.ima first, possibly by copying each
-> >> >> file, deleting the original file, and renaming the copied file to
-> >> >> the original name, or should I just be able to write out a new
-> >> >> signature, thus creating security.ima at uid=1000 besides the
-> >> >> security.ima ?
-> >> >> 
-> >> >>    Stefan
-> >> >
-> >> > Hi Mimi,
-> >> >
-> >> > what do you think makes most sense for IMA?
-> >> 
-> >> I am going to give my two cents since I have been thinking about this.
-> >> 
-> >> First I think this entire scheme plays hobs with the security.evm
-> >> attribute as security.evm needs to know the names of the xattrs to
-> >> protect.
-> >> 
-> >> I forget which attributes has a hash and what has a message
-> >> athentication code.
-> >
-> > security.ima contains either a file hash or a signature.  (file data)
-> > security.evm contains either a signature or an hmac of the security
-> > xattrs and other file metadata. (file meta-data)
-> >
-> > The same rules would apply to security.evm, as described in my
-> > response. ?Based on it's view of the security xattrs, either the
-> > native or namespace security.evm would be updated.
-> >
-> >> If there is an attribute with a simple file hash I think it only make
-> >> sense for the kernel to touch it, and I don't see any sense in having
-> >> multiples.
-> >
-> > Only files that are in the IMA-appraisal policy is the file hash
-> > calculated and written out as security.ima. ?Depending this policy,
-> > does the security.ima exist. ?So if the file is in policy for both the
-> > native and namespace policies, agreed the same hash doesn't need to be
-> > written as two different xattrs.
-> >
-> >> If there is an attribute with a message authentication code (roughly a
-> >> signed hash) it makes sense to have that to be tied to the kernel key
-> >> ring that controlls the keys.  (Which probably means a per user
-> >> namespace thing at some point).  But again pretty untouchable otherwise.
-> >
-> > Right, the namespace would require it's own EVM key. 
-> >
-> >> Which brings us to the semantic question of would it be nice to have
-> >> stacked IMA/EVM on the same file.
-> >> 
-> >> I really don't think we do.  I think allowing multiple keys for
-> >> different part of trusting files is easy enough that we should have no
-> >> need to fight over which keys do which.
-> >
-> > We definitely want to support different policies on the native and in
-> > the namespace with different keys and keyrings.
-> >
-> > Refer to Mehmet Kaaylap's recent post, which refers to a PoC version
-> > of IMA namespacing - kernsec.org/pipermail/linux-security-module-
-> > archive/2017-July/002286.html.
-> >
-> >> Looking at integrity.h I see signature_v2_hdr that has a keyid.  Any use
-> >> case I can think of for distributing a distribution image with ima/evm
-> >> xattrs will need to use asymmetric keys aka public/private keypairs so
-> >> that the originator of the content does not give away their private
-> >> keys.
-> >
-> > Agreed.
-> >
-> >> Given that usefully we are talking about content that should be
-> >> connected to keys in one way or another I don't believe it even makes
-> >> sense at this point to attempt to use uids for dealing with ima and
-> >> evm content.
-> >
-> > We need to resolve the xattr issue in order to namespace IMA-
-> > appraisal.?
-> 
-> 
-> Mimi I have two questions:
-> 
-> a) Is the keyid enough to distinguish the security.ima and security.evm
->    xattrs of one container from another container and from native?  Or
->    do we have some important security xattrs that are associated with
->    keys that don't have a keyid?
-> 
-> b) Can we reasonably live with a limitation that the native and the
->    namespace'd policies don't intersect?  Or in the case of an
->    interesection the native policy is the only one that is executed?
-> 
-> I submit that if the answer is keyids are always present, and we can
-> live with the native policy taking precedence over the container policy
-> then we have a solution to the IMA xattrs.
+Otherwise, we might use bad random numbers which, particularly in the
+case of IV generation, could be quite bad. It makes sense to use the
+synchronous API here, because we're always in process context (as the
+code is littered with GFP_KERNEL and the like). However, we can't change
+to using a blocking function in key serial allocation, because this will
+block booting in some configurations, so here we use the more
+appropriate get_random_u32, which will use RDRAND if available.
 
-IMA-measurement is hierachical, meaning that the measurement policy
-determines whether the measurement exists in the native, the
-container, or both measurement lists.
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: David Safford <safford@us.ibm.com>
+---
+ security/keys/encrypted-keys/encrypted.c | 8 +++++---
+ security/keys/key.c                      | 8 +++-----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-One of the main namespacing use cases for IMA-appraisal is the ability
-to limit running an executable to a particular container. ?So unlike
-IMA-measurement, which is hierarchical, the IMA-appraisal namespace
-policy takes precedence over the native policy.
-
-Mimi
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 69855ba0d3b3..7640fa46b3e5 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -759,10 +759,12 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
+ 
+ 	__ekey_init(epayload, format, master_desc, datalen);
+ 	if (!hex_encoded_iv) {
+-		get_random_bytes(epayload->iv, ivsize);
++		ret = get_random_bytes_wait(epayload->iv, ivsize);
++		if (unlikely(ret))
++			return ret;
+ 
+-		get_random_bytes(epayload->decrypted_data,
+-				 epayload->decrypted_datalen);
++		ret = get_random_bytes_wait(epayload->decrypted_data,
++					    epayload->decrypted_datalen);
+ 	} else
+ 		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
+ 	return ret;
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 83da68d98b40..ee443d2a4f7e 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -139,12 +139,10 @@ static inline void key_alloc_serial(struct key *key)
+ 	struct rb_node *parent, **p;
+ 	struct key *xkey;
+ 
+-	/* propose a random serial number and look for a hole for it in the
+-	 * serial number tree */
++	/* propose a non-negative random serial number and look for a hole for
++	 * it in the serial number tree */
+ 	do {
+-		get_random_bytes(&key->serial, sizeof(key->serial));
+-
+-		key->serial >>= 1; /* negative numbers are not permitted */
++		key->serial = get_random_u32() >> 1;
+ 	} while (key->serial < 3);
+ 
+ 	spin_lock(&key_serial_lock);
+-- 
+2.13.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
