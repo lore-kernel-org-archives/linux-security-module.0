@@ -1,71 +1,60 @@
-From: Jason@zx2c4.com (Jason A. Donenfeld)
-Date: Sun, 16 Jul 2017 19:21:13 +0200
-Subject: [PATCH] security/keys: ensure RNG is seeded before use
-Message-ID: <20170716172113.6223-1-Jason@zx2c4.com>
+From: vgoyal@redhat.com (Vivek Goyal)
+Date: Mon, 17 Jul 2017 14:58:11 -0400
+Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
+In-Reply-To: <1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
+References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
+Message-ID: <20170717185811.GC15794@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Otherwise, we might use bad random numbers which, particularly in the
-case of IV generation, could be quite bad. It makes sense to use the
-synchronous API here, because we're always in process context (as the
-code is littered with GFP_KERNEL and the like). However, we can't change
-to using a blocking function in key serial allocation, because this will
-block booting in some configurations, so here we use the more
-appropriate get_random_u32, which will use RDRAND if available.
+On Tue, Jul 11, 2017 at 11:05:11AM -0400, Stefan Berger wrote:
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Safford <safford@us.ibm.com>
----
- security/keys/encrypted-keys/encrypted.c | 8 +++++---
- security/keys/key.c                      | 8 +++-----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+[..]
+> +/*
+> + * xattr_list_userns_rewrite - Rewrite list of xattr names for user namespaces
+> + *                             or determine needed size for attribute list
+> + *                             in case size == 0
+> + *
+> + * In a user namespace we do not present all extended attributes to the
+> + * user. We filter out those that are in the list of userns supported xattr.
+> + * Besides that we filter out those with @uid=<uid> when there is no mapping
+> + * for that uid in the current user namespace.
+> + *
+> + * @list:        list of 0-byte separated xattr names
+> + * @size:        the size of the list; may be 0 to determine needed list size
+> + * @list_maxlen: allocated buffer size of list
+> + */
+> +static ssize_t
+> +xattr_list_userns_rewrite(char *list, ssize_t size, size_t list_maxlen)
+> +{
+> +	char *nlist = NULL;
+> +	size_t s_off, len, nlen;
+> +	ssize_t d_off;
+> +	char *name, *newname;
+> +
+> +	if (!list || size < 0 || current_user_ns() == &init_user_ns)
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 69855ba0d3b3..7640fa46b3e5 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -759,10 +759,12 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
- 
- 	__ekey_init(epayload, format, master_desc, datalen);
- 	if (!hex_encoded_iv) {
--		get_random_bytes(epayload->iv, ivsize);
-+		ret = get_random_bytes_wait(epayload->iv, ivsize);
-+		if (unlikely(ret))
-+			return ret;
- 
--		get_random_bytes(epayload->decrypted_data,
--				 epayload->decrypted_datalen);
-+		ret = get_random_bytes_wait(epayload->decrypted_data,
-+					    epayload->decrypted_datalen);
- 	} else
- 		ret = encrypted_key_decrypt(epayload, format, hex_encoded_iv);
- 	return ret;
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 83da68d98b40..ee443d2a4f7e 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -139,12 +139,10 @@ static inline void key_alloc_serial(struct key *key)
- 	struct rb_node *parent, **p;
- 	struct key *xkey;
- 
--	/* propose a random serial number and look for a hole for it in the
--	 * serial number tree */
-+	/* propose a non-negative random serial number and look for a hole for
-+	 * it in the serial number tree */
- 	do {
--		get_random_bytes(&key->serial, sizeof(key->serial));
--
--		key->serial >>= 1; /* negative numbers are not permitted */
-+		key->serial = get_random_u32() >> 1;
- 	} while (key->serial < 3);
- 
- 	spin_lock(&key_serial_lock);
--- 
-2.13.3
+size will never be less than 0 here. Only caller calls this function only
+if size is >0. So can we remove this?
 
+What about case of "!list". So if user space called listxattr(foo, NULL,
+0), we want to return the size of buffer as if all the xattrs will be
+returned to user space. But in practice we probably will filter out some
+xattrs so actually returned string will be smaller than size reported
+previously.
+
+Looks like that's the intent of "!list" condition here. Just wanted to
+make sure, hence asking.
+
+BTW, I am testing this with overlayfs and trying to figure out if
+switching of creds will create issues. Simple operations like listxattr
+and getxattr and setxattr so far worked for me. And reason seems to be
+that name transformation we are doing in top layer based on creds of
+caller (and not based on creds of mounter). 
+
+Vivek
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
