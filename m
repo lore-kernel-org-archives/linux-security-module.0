@@ -1,52 +1,46 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Jul 2017 15:25:34 -0700
-Subject: [PATCH v3 13/15] exec: Consolidate dumpability logic
+Date: Tue, 18 Jul 2017 15:25:36 -0700
+Subject: [PATCH v3 15/15] exec: Consolidate pdeath_signal clearing
 In-Reply-To: <1500416736-49829-1-git-send-email-keescook@chromium.org>
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-Message-ID: <1500416736-49829-14-git-send-email-keescook@chromium.org>
+Message-ID: <1500416736-49829-16-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Since it's already valid to set dumpability in the early part of
-setup_new_exec(), we can consolidate the logic into a single place.
-The BINPRM_FLAGS_ENFORCE_NONDUMP is set during would_dump() calls
-before setup_new_exec(), so its test is safe to move as well.
+Instead of an additional secureexec check for pdeath_signal, just move it
+up into the initial secureexec test. Neither perf nor arch code touches
+pdeath_signal, so the relocation shouldn't change anything.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/exec.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ fs/exec.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 81793a193d92..45418d6ec583 100644
+index 4227c1e56566..9525ac15b897 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1353,10 +1353,12 @@ void setup_new_exec(struct linux_binprm * bprm)
- 
- 	current->sas_ss_sp = current->sas_ss_size = 0;
- 
--	if (!bprm->secureexec)
--		set_dumpable(current->mm, SUID_DUMP_USER);
--	else
-+	/* Figure out dumpability. */
-+	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-+	    bprm->secureexec)
- 		set_dumpable(current->mm, suid_dumpable);
-+	else
-+		set_dumpable(current->mm, SUID_DUMP_USER);
- 
- 	arch_setup_new_exec();
- 	perf_event_exec();
-@@ -1370,9 +1372,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+@@ -1350,6 +1350,9 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	bprm->secureexec |= bprm->cap_elevated;
  
  	if (bprm->secureexec) {
- 		current->pdeath_signal = 0;
--	} else {
--		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
--			set_dumpable(current->mm, suid_dumpable);
- 	}
++		/* Make sure parent cannot signal privileged process. */
++		current->pdeath_signal = 0;
++
+ 		/*
+ 		 * For secureexec, reset the stack limit to sane default to
+ 		 * avoid bad behavior from the prior rlimits. This has to
+@@ -1382,10 +1385,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	 */
+ 	current->mm->task_size = TASK_SIZE;
  
+-	if (bprm->secureexec) {
+-		current->pdeath_signal = 0;
+-	}
+-
  	/* An exec changes our domain. We are no longer part of the thread
+ 	   group */
+ 	current->self_exec_id++;
 -- 
 2.7.4
 
