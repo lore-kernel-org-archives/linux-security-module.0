@@ -1,76 +1,97 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Jul 2017 15:25:25 -0700
-Subject: [PATCH v3 04/15] selinux: Refactor to remove bprm_secureexec hook
+Date: Tue, 18 Jul 2017 15:25:22 -0700
+Subject: [PATCH v3 01/15] binfmt: Introduce secureexec flag
 In-Reply-To: <1500416736-49829-1-git-send-email-keescook@chromium.org>
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-Message-ID: <1500416736-49829-5-git-send-email-keescook@chromium.org>
+Message-ID: <1500416736-49829-2-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The SELinux bprm_secureexec hook can be merged with the bprm_set_creds
-hook since it's dealing with the same information, and all of the details
-are finalized during the first call to the bprm_set_creds hook via
-prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
-via bprm->called_set_creds).
+The bprm_secureexec hook can be moved earlier. Right now, it is called
+during create_elf_tables(), via load_binary(), via search_binary_handler(),
+via exec_binprm(). Nearly all (see exception below) state used by
+bprm_secureexec is created during the bprm_set_creds hook, called from
+prepare_binprm().
 
-Here, the test can just happen at the end of the bprm_set_creds hook,
-and the bprm_secureexec hook can be dropped.
+For all LSMs (except commoncaps described next), only the first execution
+of bprm_set_creds takes any effect (they all check bprm->cred_prepared which
+prepare_binprm() sets after the first call to the bprm_set_creds hook).
+However, all these LSMs also only do anything with bprm_secureexec when
+they detected a secure state during their first run of bprm_set_creds.
+Therefore, it is functionally identical to move the detection into
+bprm_set_creds, since the results from secureexec here only need to be
+based on the first call to the LSM's bprm_set_creds hook.
 
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
+The single exception is that the commoncaps secureexec hook also examines
+euid/uid and egid/gid differences which are controlled by bprm_fill_uid(),
+via prepare_binprm(), which can be called multiple times (e.g.
+binfmt_script, binfmt_misc), and may clear the euid/egid for the final
+load (i.e. the script interpreter). However, while commoncaps specifically
+ignores bprm->cred_prepared, and runs its bprm_set_creds hook each time
+prepare_binprm() may get called, it needs to base the secureexec decision
+on the final call to bprm_set_creds. As a result, it will need special
+handling.
+
+To begin this refactoring, this adds the secureexec flag to the bprm
+struct, which will eventually be used in place of the LSM hook.
+
+Cc: David Howells <dhowells@redhat.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/selinux/hooks.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ fs/binfmt_elf.c         | 3 ++-
+ fs/binfmt_elf_fdpic.c   | 3 ++-
+ include/linux/binfmts.h | 8 +++++++-
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 0f1450a06b02..18038f73a2f7 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2413,30 +2413,17 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 5075fd5c62c8..991e4de3515f 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -254,7 +254,8 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+ 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
+ 	NEW_AUX_ENT(AT_GID, from_kgid_munged(cred->user_ns, cred->gid));
+ 	NEW_AUX_ENT(AT_EGID, from_kgid_munged(cred->user_ns, cred->egid));
+- 	NEW_AUX_ENT(AT_SECURE, security_bprm_secureexec(bprm));
++	bprm->secureexec |= security_bprm_secureexec(bprm);
++	NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
+ 	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
+ #ifdef ELF_HWCAP2
+ 	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index cf93a4fad012..c88b35d4a6b3 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -650,7 +650,8 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+ 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
+ 	NEW_AUX_ENT(AT_GID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->gid));
+ 	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
+-	NEW_AUX_ENT(AT_SECURE,	security_bprm_secureexec(bprm));
++	bprm->secureexec |= security_bprm_secureexec(bprm);
++	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
+ 	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
  
- 		/* Clear any possibly unsafe personality bits on exec: */
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
--	}
--
--	return 0;
--}
--
--static int selinux_bprm_secureexec(struct linux_binprm *bprm)
--{
--	const struct task_security_struct *tsec = current_security();
--	u32 sid, osid;
--	int atsecure = 0;
--
--	sid = tsec->sid;
--	osid = tsec->osid;
- 
--	if (osid != sid) {
- 		/* Enable secure mode for SIDs transitions unless
- 		   the noatsecure permission is granted between
- 		   the two SIDs, i.e. ahp returns 0. */
--		atsecure = avc_has_perm(osid, sid,
--					SECCLASS_PROCESS,
--					PROCESS__NOATSECURE, NULL);
-+		rc = avc_has_perm(old_tsec->sid, new_tsec->sid,
-+				  SECCLASS_PROCESS, PROCESS__NOATSECURE,
-+				  NULL);
-+		bprm->secureexec |= !!rc;
- 	}
- 
--	return !!atsecure;
-+	return 0;
- }
- 
- static int match_file(const void *p, struct file *file, unsigned fd)
-@@ -6151,7 +6138,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_set_creds, selinux_bprm_set_creds),
- 	LSM_HOOK_INIT(bprm_committing_creds, selinux_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
--	LSM_HOOK_INIT(bprm_secureexec, selinux_bprm_secureexec),
- 
- 	LSM_HOOK_INIT(sb_alloc_security, selinux_sb_alloc_security),
- 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+ #ifdef ARCH_DLINFO
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index 05488da3aee9..9508b5f83c7e 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -27,9 +27,15 @@ struct linux_binprm {
+ 	unsigned int
+ 		cred_prepared:1,/* true if creds already prepared (multiple
+ 				 * preps happen for interpreters) */
+-		cap_effective:1;/* true if has elevated effective capabilities,
++		cap_effective:1,/* true if has elevated effective capabilities,
+ 				 * false if not; except for init which inherits
+ 				 * its parent's caps anyway */
++		/*
++		 * Set by bprm_set_creds hook to indicate a privilege-gaining
++		 * exec has happened. Used to sanitize execution environment
++		 * and to set AT_SECURE auxv for glibc.
++		 */
++		secureexec:1;
+ #ifdef __alpha__
+ 	unsigned int taso:1;
+ #endif
 -- 
 2.7.4
 
