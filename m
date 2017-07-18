@@ -1,96 +1,132 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Jul 2017 15:25:21 -0700
-Subject: [PATCH v3 00/15] exec: Use sane stack rlimit under secureexec
-Message-ID: <1500416736-49829-1-git-send-email-keescook@chromium.org>
+Date: Tue, 18 Jul 2017 15:25:23 -0700
+Subject: [PATCH v3 02/15] exec: Rename bprm->cred_prepared to called_set_creds
+In-Reply-To: <1500416736-49829-1-git-send-email-keescook@chromium.org>
+References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
+Message-ID: <1500416736-49829-3-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This series has grown... :P
+The cred_prepared bprm flag has a misleading name. It has nothing to do
+with the bprm_prepare_cred hook, and actually tracks if bprm_set_creds has
+been called. Rename this flag and improve its comment.
 
-As discussed with Linus and Andy, we need to reset the stack rlimit
-before we do memory layouts when execing a privilege-gaining (e.g.
-setuid) program. To do this, we need to know the results of the
-bprm_secureexec hook before memory layouts. As it turns out, this
-can be made _mostly_ trivial by collapsing bprm_secureexec into
-bprm_set_creds.
+Cc: David Howells <dhowells@redhat.com>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/binfmt_flat.c           | 2 +-
+ fs/exec.c                  | 2 +-
+ include/linux/binfmts.h    | 8 ++++++--
+ security/apparmor/domain.c | 2 +-
+ security/selinux/hooks.c   | 2 +-
+ security/smack/smack_lsm.c | 2 +-
+ security/tomoyo/tomoyo.c   | 2 +-
+ 7 files changed, 12 insertions(+), 8 deletions(-)
 
-The LSMs using bprm_secureexec nearly always save state between
-bprm_set_creds and bprm_secureexec. In the face of multiple calls to
-bprm_set_creds (via prepare_binprm() calls from binfmt_script, etc),
-all LSMs except commoncap only pay attention to the first call, so
-that aligns well with collapsing bprm_secureexec into bprm_set_creds.
-The commoncaps, though, needs to check the _last_ bprm_set_creds, so
-this series just swaps one bprm flag for another (cap_effective is no
-longer needed to save state between bprm_set_creds and bprm_secureexec,
-but we do need to keep a separate state, so we add the cap_elevated flag).
-
-Once secureexec is available to setup_new_exec() before the memory
-layout, we can add an rlimit sanity-check for setuid execs. (With no
-need to clean up since we're past the point of no return.)
-
-Along the way, this fixes comments, renames a variable, and consolidates
-dumpability and pdeath_signal clearing, which includes some commit log
-archeology to examine the subtle differences between what we had and
-what we need.
-
-I'd appreciate some extra eyes on this to make sure this isn't broken
-in some special way. Looking at the diffstat, even after all my long
-comments, this is a net reduction in lines. :)
-
-Given this crosses a bunch of areas, I think this is likely best to
-go via the -mm tree, which is where nearly all of my prior exec work
-has lived too.
-
-Thanks!
-
--Kees
-----------------------------------------------------------------
-Kees Cook (15):
-      binfmt: Introduce secureexec flag
-      exec: Rename bprm->cred_prepared to called_set_creds
-      apparmor: Refactor to remove bprm_secureexec hook
-      selinux: Refactor to remove bprm_secureexec hook
-      smack: Refactor to remove bprm_secureexec hook
-      commoncap: Refactor to remove bprm_secureexec hook
-      commoncap: Move cap_elevated calculation into bprm_set_creds
-      LSM: drop bprm_secureexec hook
-      exec: Correct comments about "point of no return"
-      exec: Use secureexec for setting dumpability
-      exec: Use secureexec for clearing pdeath_signal
-      smack: Remove redundant pdeath_signal clearing
-      exec: Consolidate dumpability logic
-      exec: Use sane stack rlimit under secureexec
-      exec: Consolidate pdeath_signal clearing
-
- fs/binfmt_elf.c                    |  2 +-
- fs/binfmt_elf_fdpic.c              |  2 +-
- fs/binfmt_flat.c                   |  2 +-
- fs/exec.c                          | 56 ++++++++++++++++++++++++++++----------
- include/linux/binfmts.h            | 24 ++++++++++++----
- include/linux/lsm_hooks.h          | 14 ++++------
- include/linux/security.h           |  7 -----
- security/apparmor/domain.c         | 24 ++--------------
- security/apparmor/include/domain.h |  1 -
- security/apparmor/include/file.h   |  3 --
- security/apparmor/lsm.c            |  1 -
- security/commoncap.c               | 50 ++++++++--------------------------
- security/security.c                |  5 ----
- security/selinux/hooks.c           | 26 ++++--------------
- security/smack/smack_lsm.c         | 34 ++---------------------
- security/tomoyo/tomoyo.c           |  2 +-
- 16 files changed, 91 insertions(+), 162 deletions(-)
-
-v3:
-- collapse brpm_secureexec into bprm_set_creds; ebiederm.
-- continue to improve various comments
-
-v2:
-- fix missed current_security() uses in LSMs.
-- research/consolidate dumpability setting logic
-- research/consolidate pdeath_signal clearing logic
-- split up logical steps a little more for easier review (and bisection)
-- fix some old broken comments
-
+diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+index 2edcefc0a294..a722530cc468 100644
+--- a/fs/binfmt_flat.c
++++ b/fs/binfmt_flat.c
+@@ -885,7 +885,7 @@ static int load_flat_shared_library(int id, struct lib_info *libs)
+ 	 * as we're past the point of no return and are dealing with shared
+ 	 * libraries.
+ 	 */
+-	bprm.cred_prepared = 1;
++	bprm.called_set_creds = 1;
+ 
+ 	res = prepare_binprm(&bprm);
+ 
+diff --git a/fs/exec.c b/fs/exec.c
+index 904199086490..925c85a45d97 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1547,7 +1547,7 @@ int prepare_binprm(struct linux_binprm *bprm)
+ 	retval = security_bprm_set_creds(bprm);
+ 	if (retval)
+ 		return retval;
+-	bprm->cred_prepared = 1;
++	bprm->called_set_creds = 1;
+ 
+ 	memset(bprm->buf, 0, BINPRM_BUF_SIZE);
+ 	return kernel_read(bprm->file, 0, bprm->buf, BINPRM_BUF_SIZE);
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index 9508b5f83c7e..36be5a67517a 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -25,8 +25,12 @@ struct linux_binprm {
+ 	struct mm_struct *mm;
+ 	unsigned long p; /* current top of mem */
+ 	unsigned int
+-		cred_prepared:1,/* true if creds already prepared (multiple
+-				 * preps happen for interpreters) */
++		/*
++		 * True after the bprm_set_creds hook has been called once
++		 * (multiple calls can be made via prepare_binprm() for
++		 * binfmt_script/misc).
++		 */
++		called_set_creds:1,
+ 		cap_effective:1,/* true if has elevated effective capabilities,
+ 				 * false if not; except for init which inherits
+ 				 * its parent's caps anyway */
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 001e133a3c8c..878407e023e3 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -350,7 +350,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 	const char *name = NULL, *info = NULL;
+ 	int error = 0;
+ 
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ 
+ 	ctx = cred_ctx(bprm->cred);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 819fd6858b49..0f1450a06b02 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2327,7 +2327,7 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
+ 
+ 	/* SELinux context only depends on initial program or script and not
+ 	 * the script interpreter */
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ 
+ 	old_tsec = current_security();
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 658f5d8c7e76..7d4b2e221124 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -917,7 +917,7 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+ 	struct superblock_smack *sbsp;
+ 	int rc;
+ 
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ 
+ 	isp = inode->i_security;
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 130b4fa4f65f..d25b705360e0 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -76,7 +76,7 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
+ 	 * Do only if this function is called for the first time of an execve
+ 	 * operation.
+ 	 */
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ #ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
+ 	/*
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
