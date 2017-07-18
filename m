@@ -1,89 +1,82 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Tue, 18 Jul 2017 19:59:53 +0900
-Subject: [PATCH] tomoyo: Update URLs in
-	Documentation/admin-guide/LSM/tomoyo.rst
-Message-ID: <1500375593-4537-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+From: vgoyal@redhat.com (Vivek Goyal)
+Date: Tue, 18 Jul 2017 07:48:49 -0400
+Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
+In-Reply-To: <7a39e8a6-a33b-f6a8-3fd5-6211c075ab91@linux.vnet.ibm.com>
+References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<20170717185811.GC15794@redhat.com>
+	<7a39e8a6-a33b-f6a8-3fd5-6211c075ab91@linux.vnet.ibm.com>
+Message-ID: <20170718114849.GA8233@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Fix outdated links.
+On Mon, Jul 17, 2017 at 04:50:22PM -0400, Stefan Berger wrote:
+> On 07/17/2017 02:58 PM, Vivek Goyal wrote:
+> > On Tue, Jul 11, 2017 at 11:05:11AM -0400, Stefan Berger wrote:
+> > 
+> > [..]
+> > > +/*
+> > > + * xattr_list_userns_rewrite - Rewrite list of xattr names for user namespaces
+> > > + *                             or determine needed size for attribute list
+> > > + *                             in case size == 0
+> > > + *
+> > > + * In a user namespace we do not present all extended attributes to the
+> > > + * user. We filter out those that are in the list of userns supported xattr.
+> > > + * Besides that we filter out those with @uid=<uid> when there is no mapping
+> > > + * for that uid in the current user namespace.
+> > > + *
+> > > + * @list:        list of 0-byte separated xattr names
+> > > + * @size:        the size of the list; may be 0 to determine needed list size
+> > > + * @list_maxlen: allocated buffer size of list
+> > > + */
+> > > +static ssize_t
+> > > +xattr_list_userns_rewrite(char *list, ssize_t size, size_t list_maxlen)
+> > > +{
+> > > +	char *nlist = NULL;
+> > > +	size_t s_off, len, nlen;
+> > > +	ssize_t d_off;
+> > > +	char *name, *newname;
+> > > +
+> > > +	if (!list || size < 0 || current_user_ns() == &init_user_ns)
+> > size will never be less than 0 here. Only caller calls this function only
+> > if size is >0. So can we remove this?
+> 
+> Correct.
+> 
+> > 
+> > What about case of "!list". So if user space called listxattr(foo, NULL,
+> > 0), we want to return the size of buffer as if all the xattrs will be
+> > returned to user space. But in practice we probably will filter out some
+> > xattrs so actually returned string will be smaller than size reported
+> > previously.
+> 
+> This case of size=0 is a problem in userns. Depending on the mapping of the
+> userid's the list can expand. A security.foo at uid=100 can become
+> security.foo at uid=100000, if the mapping is set up so that uid 100 on the
+> host becomes uid 100000 inside the container. So for now we only have
+> security.capability and the way I solved this is by allocating a 65k buffer
+> when calling from a userns. In this buffer where we gather the xattr names
+> and then walk them to determine the size that's needed for the buffer by
+> simulating the rewriting. It's not nice but I don't know of any other
+> solution.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- Documentation/admin-guide/LSM/tomoyo.rst | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Hi Stefan,
 
-diff --git a/Documentation/admin-guide/LSM/tomoyo.rst b/Documentation/admin-guide/LSM/tomoyo.rst
-index a594721..e2d6b6e 100644
---- a/Documentation/admin-guide/LSM/tomoyo.rst
-+++ b/Documentation/admin-guide/LSM/tomoyo.rst
-@@ -9,8 +9,8 @@ TOMOYO is a name-based MAC extension (LSM module) for the Linux kernel.
- 
- LiveCD-based tutorials are available at
- 
--http://tomoyo.sourceforge.jp/1.7/1st-step/ubuntu10.04-live/
--http://tomoyo.sourceforge.jp/1.7/1st-step/centos5-live/
-+http://tomoyo.sourceforge.jp/1.8/ubuntu12.04-live.html
-+http://tomoyo.sourceforge.jp/1.8/centos6-live.html
- 
- Though these tutorials use non-LSM version of TOMOYO, they are useful for you
- to know what TOMOYO is.
-@@ -21,35 +21,35 @@ How to enable TOMOYO?
- Build the kernel with ``CONFIG_SECURITY_TOMOYO=y`` and pass ``security=tomoyo`` on
- kernel's command line.
- 
--Please see http://tomoyo.sourceforge.jp/2.3/ for details.
-+Please see http://tomoyo.osdn.jp/2.5/ for details.
- 
- Where is documentation?
- =======================
- 
- User <-> Kernel interface documentation is available at
--http://tomoyo.sourceforge.jp/2.3/policy-reference.html .
-+http://tomoyo.osdn.jp/2.5/policy-specification/index.html .
- 
- Materials we prepared for seminars and symposiums are available at
--http://sourceforge.jp/projects/tomoyo/docs/?category_id=532&language_id=1 .
-+http://osdn.jp/projects/tomoyo/docs/?category_id=532&language_id=1 .
- Below lists are chosen from three aspects.
- 
- What is TOMOYO?
-   TOMOYO Linux Overview
--    http://sourceforge.jp/projects/tomoyo/docs/lca2009-takeda.pdf
-+    http://osdn.jp/projects/tomoyo/docs/lca2009-takeda.pdf
-   TOMOYO Linux: pragmatic and manageable security for Linux
--    http://sourceforge.jp/projects/tomoyo/docs/freedomhectaipei-tomoyo.pdf
-+    http://osdn.jp/projects/tomoyo/docs/freedomhectaipei-tomoyo.pdf
-   TOMOYO Linux: A Practical Method to Understand and Protect Your Own Linux Box
--    http://sourceforge.jp/projects/tomoyo/docs/PacSec2007-en-no-demo.pdf
-+    http://osdn.jp/projects/tomoyo/docs/PacSec2007-en-no-demo.pdf
- 
- What can TOMOYO do?
-   Deep inside TOMOYO Linux
--    http://sourceforge.jp/projects/tomoyo/docs/lca2009-kumaneko.pdf
-+    http://osdn.jp/projects/tomoyo/docs/lca2009-kumaneko.pdf
-   The role of "pathname based access control" in security.
--    http://sourceforge.jp/projects/tomoyo/docs/lfj2008-bof.pdf
-+    http://osdn.jp/projects/tomoyo/docs/lfj2008-bof.pdf
- 
- History of TOMOYO?
-   Realities of Mainlining
--    http://sourceforge.jp/projects/tomoyo/docs/lfj2008.pdf
-+    http://osdn.jp/projects/tomoyo/docs/lfj2008.pdf
- 
- What is future plan?
- ====================
-@@ -60,6 +60,6 @@ multiple LSM modules at the same time. We feel sorry that you have to give up
- SELinux/SMACK/AppArmor etc. when you want to use TOMOYO.
- 
- We hope that LSM becomes stackable in future. Meanwhile, you can use non-LSM
--version of TOMOYO, available at http://tomoyo.sourceforge.jp/1.7/ .
-+version of TOMOYO, available at http://tomoyo.osdn.jp/1.8/ .
- LSM version of TOMOYO is a subset of non-LSM version of TOMOYO. We are planning
- to port non-LSM version's functionalities to LSM versions.
--- 
-1.8.3.1
+For the case of size==0, why don't we iterate through all the xattr,
+filter them, remap them and then return the size to process in user
+namespace. That should fix this? I thought that's what
+xattr_list_userns_rewrite() was doing. But looks like this logic will not
+kick in for the case of size==0 due to "!list" condition.
 
+Also we could probably replace "!list" with "!size" wheverever required.
+Its little easy to read and understand.
+
+For the other case where some xattrs can get filtered out and we report
+a buffer size bigger than actually needed, I am hoping that its acceptable
+and none of the existing users are broken.
+
+Thanks
+Vivek
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
