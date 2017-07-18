@@ -1,99 +1,96 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Jul 2017 15:25:22 -0700
-Subject: [PATCH v3 01/15] binfmt: Introduce secureexec flag
-In-Reply-To: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-Message-ID: <1500416736-49829-2-git-send-email-keescook@chromium.org>
+Date: Tue, 18 Jul 2017 15:25:21 -0700
+Subject: [PATCH v3 00/15] exec: Use sane stack rlimit under secureexec
+Message-ID: <1500416736-49829-1-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The bprm_secureexec hook can be moved earlier. Right now, it is called
-during create_elf_tables(), via load_binary(), via search_binary_handler(),
-via exec_binprm(). Nearly all (see exception below) state used by
-bprm_secureexec is created during the bprm_set_creds hook, called from
-prepare_binprm().
+This series has grown... :P
 
-For all LSMs (except commoncaps described next), only the first execution
-of bprm_set_creds takes any effect (they all check bprm->cred_prepared which
-prepare_binprm() sets after the first call to the bprm_set_creds hook).
-However, all these LSMs also only do anything with bprm_secureexec when
-they detected a secure state during their first run of bprm_set_creds.
-Therefore, it is functionally identical to move the detection into
-bprm_set_creds, since the results from secureexec here only need to be
-based on the first call to the LSM's bprm_set_creds hook.
+As discussed with Linus and Andy, we need to reset the stack rlimit
+before we do memory layouts when execing a privilege-gaining (e.g.
+setuid) program. To do this, we need to know the results of the
+bprm_secureexec hook before memory layouts. As it turns out, this
+can be made _mostly_ trivial by collapsing bprm_secureexec into
+bprm_set_creds.
 
-The single exception is that the commoncaps secureexec hook also examines
-euid/uid and egid/gid differences which are controlled by bprm_fill_uid(),
-via prepare_binprm(), which can be called multiple times (e.g.
-binfmt_script, binfmt_misc), and may clear the euid/egid for the final
-load (i.e. the script interpreter). However, while commoncaps specifically
-ignores bprm->cred_prepared, and runs its bprm_set_creds hook each time
-prepare_binprm() may get called, it needs to base the secureexec decision
-on the final call to bprm_set_creds. As a result, it will need special
-handling.
+The LSMs using bprm_secureexec nearly always save state between
+bprm_set_creds and bprm_secureexec. In the face of multiple calls to
+bprm_set_creds (via prepare_binprm() calls from binfmt_script, etc),
+all LSMs except commoncap only pay attention to the first call, so
+that aligns well with collapsing bprm_secureexec into bprm_set_creds.
+The commoncaps, though, needs to check the _last_ bprm_set_creds, so
+this series just swaps one bprm flag for another (cap_effective is no
+longer needed to save state between bprm_set_creds and bprm_secureexec,
+but we do need to keep a separate state, so we add the cap_elevated flag).
 
-To begin this refactoring, this adds the secureexec flag to the bprm
-struct, which will eventually be used in place of the LSM hook.
+Once secureexec is available to setup_new_exec() before the memory
+layout, we can add an rlimit sanity-check for setuid execs. (With no
+need to clean up since we're past the point of no return.)
 
-Cc: David Howells <dhowells@redhat.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/binfmt_elf.c         | 3 ++-
- fs/binfmt_elf_fdpic.c   | 3 ++-
- include/linux/binfmts.h | 8 +++++++-
- 3 files changed, 11 insertions(+), 3 deletions(-)
+Along the way, this fixes comments, renames a variable, and consolidates
+dumpability and pdeath_signal clearing, which includes some commit log
+archeology to examine the subtle differences between what we had and
+what we need.
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 5075fd5c62c8..991e4de3515f 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -254,7 +254,8 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID, from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID, from_kgid_munged(cred->user_ns, cred->egid));
-- 	NEW_AUX_ENT(AT_SECURE, security_bprm_secureexec(bprm));
-+	bprm->secureexec |= security_bprm_secureexec(bprm);
-+	NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
- 	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
- #ifdef ELF_HWCAP2
- 	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index cf93a4fad012..c88b35d4a6b3 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -650,7 +650,8 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
--	NEW_AUX_ENT(AT_SECURE,	security_bprm_secureexec(bprm));
-+	bprm->secureexec |= security_bprm_secureexec(bprm);
-+	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
- 	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
- 
- #ifdef ARCH_DLINFO
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 05488da3aee9..9508b5f83c7e 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -27,9 +27,15 @@ struct linux_binprm {
- 	unsigned int
- 		cred_prepared:1,/* true if creds already prepared (multiple
- 				 * preps happen for interpreters) */
--		cap_effective:1;/* true if has elevated effective capabilities,
-+		cap_effective:1,/* true if has elevated effective capabilities,
- 				 * false if not; except for init which inherits
- 				 * its parent's caps anyway */
-+		/*
-+		 * Set by bprm_set_creds hook to indicate a privilege-gaining
-+		 * exec has happened. Used to sanitize execution environment
-+		 * and to set AT_SECURE auxv for glibc.
-+		 */
-+		secureexec:1;
- #ifdef __alpha__
- 	unsigned int taso:1;
- #endif
--- 
-2.7.4
+I'd appreciate some extra eyes on this to make sure this isn't broken
+in some special way. Looking at the diffstat, even after all my long
+comments, this is a net reduction in lines. :)
+
+Given this crosses a bunch of areas, I think this is likely best to
+go via the -mm tree, which is where nearly all of my prior exec work
+has lived too.
+
+Thanks!
+
+-Kees
+----------------------------------------------------------------
+Kees Cook (15):
+      binfmt: Introduce secureexec flag
+      exec: Rename bprm->cred_prepared to called_set_creds
+      apparmor: Refactor to remove bprm_secureexec hook
+      selinux: Refactor to remove bprm_secureexec hook
+      smack: Refactor to remove bprm_secureexec hook
+      commoncap: Refactor to remove bprm_secureexec hook
+      commoncap: Move cap_elevated calculation into bprm_set_creds
+      LSM: drop bprm_secureexec hook
+      exec: Correct comments about "point of no return"
+      exec: Use secureexec for setting dumpability
+      exec: Use secureexec for clearing pdeath_signal
+      smack: Remove redundant pdeath_signal clearing
+      exec: Consolidate dumpability logic
+      exec: Use sane stack rlimit under secureexec
+      exec: Consolidate pdeath_signal clearing
+
+ fs/binfmt_elf.c                    |  2 +-
+ fs/binfmt_elf_fdpic.c              |  2 +-
+ fs/binfmt_flat.c                   |  2 +-
+ fs/exec.c                          | 56 ++++++++++++++++++++++++++++----------
+ include/linux/binfmts.h            | 24 ++++++++++++----
+ include/linux/lsm_hooks.h          | 14 ++++------
+ include/linux/security.h           |  7 -----
+ security/apparmor/domain.c         | 24 ++--------------
+ security/apparmor/include/domain.h |  1 -
+ security/apparmor/include/file.h   |  3 --
+ security/apparmor/lsm.c            |  1 -
+ security/commoncap.c               | 50 ++++++++--------------------------
+ security/security.c                |  5 ----
+ security/selinux/hooks.c           | 26 ++++--------------
+ security/smack/smack_lsm.c         | 34 ++---------------------
+ security/tomoyo/tomoyo.c           |  2 +-
+ 16 files changed, 91 insertions(+), 162 deletions(-)
+
+v3:
+- collapse brpm_secureexec into bprm_set_creds; ebiederm.
+- continue to improve various comments
+
+v2:
+- fix missed current_security() uses in LSMs.
+- research/consolidate dumpability setting logic
+- research/consolidate pdeath_signal clearing logic
+- split up logical steps a little more for easier review (and bisection)
+- fix some old broken comments
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
