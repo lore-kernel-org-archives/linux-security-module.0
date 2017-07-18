@@ -1,79 +1,57 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Jul 2017 15:25:32 -0700
-Subject: [PATCH v3 11/15] exec: Use secureexec for clearing pdeath_signal
+Date: Tue, 18 Jul 2017 15:25:33 -0700
+Subject: [PATCH v3 12/15] smack: Remove redundant pdeath_signal clearing
 In-Reply-To: <1500416736-49829-1-git-send-email-keescook@chromium.org>
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-Message-ID: <1500416736-49829-12-git-send-email-keescook@chromium.org>
+Message-ID: <1500416736-49829-13-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Like dumpability, clearing pdeath_signal happens both in setup_new_exec()
-and later in commit_creds(). The test in setup_new_exec() is different
-from all other privilege comparisons, though: it is checking the new cred
-(bprm) uid vs the old cred (current) euid. This appears to be a bug,
-introduced by commit a6f76f23d297 ("CRED: Make execve() take advantage of
-copy-on-write credentials"):
+This removes the redundant pdeath_signal clearing in Smack: the check in
+smack_bprm_committing_creds() matches the check in smack_bprm_set_creds()
+(which used to be in the now-removed smack_bprm_securexec() hook) and
+since secureexec is now being checked for clearing pdeath_signal, this
+is redundant to the common exec code.
 
--       if (bprm->e_uid != current_euid() ||
--           bprm->e_gid != current_egid()) {
--               set_dumpable(current->mm, suid_dumpable);
-+       /* install the new credentials */
-+       if (bprm->cred->uid != current_euid() ||
-+           bprm->cred->gid != current_egid()) {
-
-It was bprm euid vs current euid (and egids), but the effective got
-dropped. Nothing in the exec flow changes bprm->cred->uid (nor gid).
-The call traces are:
-
-	prepare_bprm_creds()
-	    prepare_exec_creds()
-	        prepare_creds()
-	            memcpy(new_creds, old_creds, ...)
-	            security_prepare_creds() (unimplemented by commoncap)
-	...
-	prepare_binprm()
-	    bprm_fill_uid()
-	        resets euid/egid to current euid/egid
-	        sets euid/egid on bprm based on set*id file bits
-	    security_bprm_set_creds()
-		cap_bprm_set_creds()
-		        handle all caps-based manipulations
-
-so this test is effectively a test of current_uid() vs current_euid(),
-which is wrong, just like the prior dumpability tests were wrong.
-
-The commit log says "Clear pdeath_signal and set dumpable on
-certain circumstances that may not be covered by commit_creds()." This
-may be meaning the earlier old euid vs new euid (and egid) test that
-got changed.
-
-Luckily, as with dumpability, this is all masked by commit_creds()
-which performs old/new euid and egid tests and clears pdeath_signal.
-
-And again, like dumpability, we should include LSM secureexec logic for
-pdeath_signal clearing. For example, Smack goes out of its way to clear
-pdeath_signal when it finds a secureexec condition.
-
-Cc: David Howells <dhowells@redhat.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/exec.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ security/smack/smack_lsm.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 5241c8f25f5d..81793a193d92 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1368,8 +1368,7 @@ void setup_new_exec(struct linux_binprm * bprm)
- 	 */
- 	current->mm->task_size = TASK_SIZE;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4f1967be3d20..4e33c650b224 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -957,20 +957,6 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+ 	return 0;
+ }
  
--	if (!uid_eq(bprm->cred->uid, current_euid()) ||
--	    !gid_eq(bprm->cred->gid, current_egid())) {
-+	if (bprm->secureexec) {
- 		current->pdeath_signal = 0;
- 	} else {
- 		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
+-/**
+- * smack_bprm_committing_creds - Prepare to install the new credentials
+- * from bprm.
+- *
+- * @bprm: binprm for exec
+- */
+-static void smack_bprm_committing_creds(struct linux_binprm *bprm)
+-{
+-	struct task_smack *bsp = bprm->cred->security;
+-
+-	if (bsp->smk_task != bsp->smk_forked)
+-		current->pdeath_signal = 0;
+-}
+-
+ /*
+  * Inode hooks
+  */
+@@ -4633,7 +4619,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_parse_opts_str, smack_parse_opts_str),
+ 
+ 	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
+-	LSM_HOOK_INIT(bprm_committing_creds, smack_bprm_committing_creds),
+ 
+ 	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
+ 	LSM_HOOK_INIT(inode_free_security, smack_inode_free_security),
 -- 
 2.7.4
 
