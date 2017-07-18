@@ -1,53 +1,86 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Jul 2017 15:25:35 -0700
-Subject: [PATCH v3 14/15] exec: Use sane stack rlimit under secureexec
+Date: Tue, 18 Jul 2017 15:25:30 -0700
+Subject: [PATCH v3 09/15] exec: Correct comments about "point of no return"
 In-Reply-To: <1500416736-49829-1-git-send-email-keescook@chromium.org>
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-Message-ID: <1500416736-49829-15-git-send-email-keescook@chromium.org>
+Message-ID: <1500416736-49829-10-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-For a secureexec, before memory layout selection has happened, reset the
-stack rlimit to something sane to avoid the caller having control over
-the resulting layouts.
+In commit 221af7f87b97 ("Split 'flush_old_exec' into two functions"),
+the comment about the point of no return should have stayed in
+flush_old_exec() since it refers to "bprm->mm = NULL;" line, but prior
+changes in commits c89681ed7d0e ("remove steal_locks()"), and
+fd8328be874f ("sanitize handling of shared descriptor tables in failing
+execve()") made it look like it meant the current->sas_ss_sp line instead.
 
-$ ulimit -s
-8192
-$ ulimit -s unlimited
-$ /bin/sh -c 'ulimit -s'
-unlimited
-$ sudo /bin/sh -c 'ulimit -s'
-8192
+The comment was referring to the fact that once bprm->mm is NULL, all
+failures from a binfmt load_binary hook (e.g. load_elf_binary), will
+get SEGV raised against current. Move this comment and expand the
+explanation a bit, putting it above the assignment this time, and add
+details about the true nature of "point of no return" being the call
+to flush_old_exec() itself.
 
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+This also removes an erroneous commet about when credentials are being
+installed. That has its own dedicated function, install_exec_creds(),
+which carries a similar (and correct) comment, so remove the bogus comment
+where installation is not actually happening.
+
+Cc: David Howells <dhowells@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/exec.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/exec.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 45418d6ec583..4227c1e56566 100644
+index 53ffa739fb58..f9480d3e0b82 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1349,6 +1349,18 @@ void setup_new_exec(struct linux_binprm * bprm)
- 	 */
- 	bprm->secureexec |= bprm->cap_elevated;
+@@ -1258,6 +1258,12 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+ 	perf_event_comm(tsk, exec);
+ }
  
-+	if (bprm->secureexec) {
-+		/*
-+		 * For secureexec, reset the stack limit to sane default to
-+		 * avoid bad behavior from the prior rlimits. This has to
-+		 * happen before arch_pick_mmap_layout(), which examines
-+		 * RLIMIT_STACK, but after the point of no return to avoid
-+		 * needing to clean up the change on failure.
-+		 */
-+		if (current->signal->rlim[RLIMIT_STACK].rlim_cur > _STK_LIM)
-+			current->signal->rlim[RLIMIT_STACK].rlim_cur = _STK_LIM;
-+	}
-+
++/*
++ * Calling this is the point of no return. None of the failures will be
++ * seen by userspace since either the process is already taking a fatal
++ * signal (via de_thread() or coredump), or will have SEGV raised
++ * (after exec_mmap()) by search_binary_handlers (see below).
++ */
+ int flush_old_exec(struct linux_binprm * bprm)
+ {
+ 	int retval;
+@@ -1285,7 +1291,13 @@ int flush_old_exec(struct linux_binprm * bprm)
+ 	if (retval)
+ 		goto out;
+ 
+-	bprm->mm = NULL;		/* We're using it now */
++	/*
++	 * After clearing bprm->mm (to mark that current is using the
++	 * prepared mm now), we have nothing left of the original
++	 * process. If anything from here on returns an error, the check
++	 * in search_binary_handler() will SEGV current.
++	 */
++	bprm->mm = NULL;
+ 
+ 	set_fs(USER_DS);
+ 	current->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
+@@ -1339,7 +1351,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 
  	arch_pick_mmap_layout(current->mm);
  
+-	/* This is the point of no return */
  	current->sas_ss_sp = current->sas_ss_size = 0;
+ 
+ 	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
+@@ -1357,7 +1368,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	 */
+ 	current->mm->task_size = TASK_SIZE;
+ 
+-	/* install the new credentials */
+ 	if (!uid_eq(bprm->cred->uid, current_euid()) ||
+ 	    !gid_eq(bprm->cred->gid, current_egid())) {
+ 		current->pdeath_signal = 0;
 -- 
 2.7.4
 
