@@ -1,47 +1,52 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue, 18 Jul 2017 15:25:31 -0700
-Subject: [PATCH v3 10/15] exec: Use secureexec for setting dumpability
+Date: Tue, 18 Jul 2017 15:25:34 -0700
+Subject: [PATCH v3 13/15] exec: Consolidate dumpability logic
 In-Reply-To: <1500416736-49829-1-git-send-email-keescook@chromium.org>
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-Message-ID: <1500416736-49829-11-git-send-email-keescook@chromium.org>
+Message-ID: <1500416736-49829-14-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The examination of "current" to decide dumpability is wrong. This was a
-check of and euid/uid (or egid/gid) mismatch in the existing process,
-not the newly created one. This appears to stretch back into even the
-"history.git" tree. Luckily, dumpability is later set in commit_creds().
-In earlier kernel versions before creds existed, similar checks also
-existed late in the exec flow, covering up the mistake as far back as I
-could find.
+Since it's already valid to set dumpability in the early part of
+setup_new_exec(), we can consolidate the logic into a single place.
+The BINPRM_FLAGS_ENFORCE_NONDUMP is set during would_dump() calls
+before setup_new_exec(), so its test is safe to move as well.
 
-Note that because the commit_creds() check examines differences of euid,
-uid, egid, gid, and capabilities between the old and new creds, it would
-look like the setup_new_exec() dumpability test could be entirely removed.
-However, the secureexec test may cover a different set of tests (specific
-to the LSMs) than what commit_creds() checks for. So, fix this test to
-use secureexec (the removed euid tests are redundant to the commoncap
-secureexec checks now).
-
-Cc: David Howells <dhowells@redhat.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/exec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/exec.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index f9480d3e0b82..5241c8f25f5d 100644
+index 81793a193d92..45418d6ec583 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1353,7 +1353,7 @@ void setup_new_exec(struct linux_binprm * bprm)
+@@ -1353,10 +1353,12 @@ void setup_new_exec(struct linux_binprm * bprm)
  
  	current->sas_ss_sp = current->sas_ss_size = 0;
  
--	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
-+	if (!bprm->secureexec)
- 		set_dumpable(current->mm, SUID_DUMP_USER);
- 	else
+-	if (!bprm->secureexec)
+-		set_dumpable(current->mm, SUID_DUMP_USER);
+-	else
++	/* Figure out dumpability. */
++	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
++	    bprm->secureexec)
  		set_dumpable(current->mm, suid_dumpable);
++	else
++		set_dumpable(current->mm, SUID_DUMP_USER);
+ 
+ 	arch_setup_new_exec();
+ 	perf_event_exec();
+@@ -1370,9 +1372,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 
+ 	if (bprm->secureexec) {
+ 		current->pdeath_signal = 0;
+-	} else {
+-		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
+-			set_dumpable(current->mm, suid_dumpable);
+ 	}
+ 
+ 	/* An exec changes our domain. We are no longer part of the thread
 -- 
 2.7.4
 
