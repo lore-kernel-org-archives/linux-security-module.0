@@ -1,63 +1,103 @@
 From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Tue, 18 Jul 2017 08:26:37 -0500
+Date: Tue, 18 Jul 2017 08:29:28 -0500
 Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <aae67245-4c9c-f79e-b821-40753e732f65@linux.vnet.ibm.com> (Stefan
-	Berger's message of "Tue, 18 Jul 2017 08:12:13 -0400")
+In-Reply-To: <20170718123603.GC8233@redhat.com> (Vivek Goyal's message of
+	"Tue, 18 Jul 2017 08:36:03 -0400")
 References: <1499785511-17192-1-git-send-email-stefanb@linux.vnet.ibm.com>
 	<1499785511-17192-2-git-send-email-stefanb@linux.vnet.ibm.com>
-	<87mv89iy7q.fsf@xmission.com> <20170712170346.GA17974@mail.hallyn.com>
-	<877ezdgsey.fsf@xmission.com>
-	<74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
-	<20170713011554.xwmrgkzfwnibvgcu@thunk.org>
-	<87y3rscz9j.fsf@xmission.com>
-	<20170713164012.brj2flnkaaks2oci@thunk.org>
-	<29fdda5e-ed4a-bcda-e3cc-c06ab87973ce@linux.vnet.ibm.com>
-	<alpine.LRH.2.20.1707181659030.5209@namei.org>
-	<aae67245-4c9c-f79e-b821-40753e732f65@linux.vnet.ibm.com>
-Message-ID: <871spdj2pe.fsf@xmission.com>
+	<20170717185811.GC15794@redhat.com>
+	<7a39e8a6-a33b-f6a8-3fd5-6211c075ab91@linux.vnet.ibm.com>
+	<20170718114849.GA8233@redhat.com>
+	<55971eea-fde2-439a-2fe5-d0ae5e80bc22@linux.vnet.ibm.com>
+	<20170718123009.GB8233@redhat.com> <20170718123603.GC8233@redhat.com>
+Message-ID: <87shhtho07.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+Vivek Goyal <vgoyal@redhat.com> writes:
 
-> On 07/18/2017 03:01 AM, James Morris wrote:
->> On Thu, 13 Jul 2017, Stefan Berger wrote:
->>
->>> A file shared by 2 containers, one mapping root to uid=1000, the other mapping
->>> root to uid=2000, will show these two xattrs on the host (init_user_ns) once
->>> these containers set xattrs on that file.
->> I may be missing something here, but what happens when say the uid=2000
->> container and associated user is deleted from the system, then another is
->> created with the same uid?
->>
->> Won't this mean that you have unexpected capabilities turning up in the
->> new container?
->>
+> On Tue, Jul 18, 2017 at 08:30:09AM -0400, Vivek Goyal wrote:
+>> On Tue, Jul 18, 2017 at 08:05:18AM -0400, Stefan Berger wrote:
+>> > On 07/18/2017 07:48 AM, Vivek Goyal wrote:
+>> > > On Mon, Jul 17, 2017 at 04:50:22PM -0400, Stefan Berger wrote:
+>> > > > On 07/17/2017 02:58 PM, Vivek Goyal wrote:
+>> > > > > On Tue, Jul 11, 2017 at 11:05:11AM -0400, Stefan Berger wrote:
+>> > > > > 
+>> > > > > [..]
+>> > > > > > +/*
+>> > > > > > + * xattr_list_userns_rewrite - Rewrite list of xattr names for user namespaces
+>> > > > > > + *                             or determine needed size for attribute list
+>> > > > > > + *                             in case size == 0
+>> > > > > > + *
+>> > > > > > + * In a user namespace we do not present all extended attributes to the
+>> > > > > > + * user. We filter out those that are in the list of userns supported xattr.
+>> > > > > > + * Besides that we filter out those with @uid=<uid> when there is no mapping
+>> > > > > > + * for that uid in the current user namespace.
+>> > > > > > + *
+>> > > > > > + * @list:        list of 0-byte separated xattr names
+>> > > > > > + * @size:        the size of the list; may be 0 to determine needed list size
+>> > > > > > + * @list_maxlen: allocated buffer size of list
+>> > > > > > + */
+>> > > > > > +static ssize_t
+>> > > > > > +xattr_list_userns_rewrite(char *list, ssize_t size, size_t list_maxlen)
+>> > > > > > +{
+>> > > > > > +	char *nlist = NULL;
+>> > > > > > +	size_t s_off, len, nlen;
+>> > > > > > +	ssize_t d_off;
+>> > > > > > +	char *name, *newname;
+>> > > > > > +
+>> > > > > > +	if (!list || size < 0 || current_user_ns() == &init_user_ns)
+>> > > > > size will never be less than 0 here. Only caller calls this function only
+>> > > > > if size is >0. So can we remove this?
+>> > > > Correct.
+>> > > > 
+>> > > > > What about case of "!list". So if user space called listxattr(foo, NULL,
+>> > > > > 0), we want to return the size of buffer as if all the xattrs will be
+>> > > > > returned to user space. But in practice we probably will filter out some
+>> > > > > xattrs so actually returned string will be smaller than size reported
+>> > > > > previously.
+>> > > > This case of size=0 is a problem in userns. Depending on the mapping of the
+>> > > > userid's the list can expand. A security.foo at uid=100 can become
+>> > > > security.foo at uid=100000, if the mapping is set up so that uid 100 on the
+>> > > > host becomes uid 100000 inside the container. So for now we only have
+>> > > > security.capability and the way I solved this is by allocating a 65k buffer
+>> > > > when calling from a userns. In this buffer where we gather the xattr names
+>> > > > and then walk them to determine the size that's needed for the buffer by
+>> > > > simulating the rewriting. It's not nice but I don't know of any other
+>> > > > solution.
+>> > > Hi Stefan,
+>> > > 
+>> > > For the case of size==0, why don't we iterate through all the xattr,
+>> > > filter them, remap them and then return the size to process in user
+>> > > namespace. That should fix this? I thought that's what
+>> > 
+>> > 
+>> > For the size==0 we need a temp. buffer where the raw xattr names are written
+>> > to so that the xattr_list_userns_rewrite() can actually rewrite what the
+>> > filesystem drivers returned.
+>> 
+>> I am probably missing something, but for the case of size==0, we don't
+>> have to copy all xattrs. We just need to determine size. So we can walk
+>> through each xattr, remap it and add to the size. I mean there should not
+>> be a need to allocate this 65K buffer. Just enough space needed to be
+>> able to store remapped xattr.
+>> 
+>> You are already doing it in xattr_parse_uid_from_kuid(). It returns the
+>> buffer containing remapped xattr. So we should be able to just determine
+>> the size and free the buffer. And do it for all the xattrs returned by
+>> filesystem.
+>> 
+>> What am I missing?
 >
-> Yes, that's right. I don't know any solution for that. We would have to walk the
-> filesystems and find all 'stale' xattrs with such a uid. This is independent of
-> whether the uid is encoded on the name side, as in this patch, or on the value
-> side, as in Serge's original proposal. And uids of a mapped container root user
-> don't necessarily have to have an account on the host so that an account
-> deletion could trigger that.
+> Oh, I think I get it. If I don't pass a buffer to underlying driver, then
+> it will just return the size (and not actual list). So that's why you are
+> allocating that big buffer and getting the whole list internally, doing
+> mapping and returning size to user space. Hmm...
 
-This problem is actually independent of this piece of code entirely.
-Any lingering files owned by that uid have the same issue.
-
-Uids are are persistent system property.  It must be arranged that they
-are managed carefully.  If you want to reuse a uid userdel or the
-equivalent must be able to go out and delete everything they have owned.
-
-Which is to say fundamentally this is userspaces's responsibility.
-
-I don't see this as being particularly subtle or novel.  We already
-track which uids and which subordinate uids go together.  I will nack
-anything that allows multiple capability attributes per file as we have
-established they are unnecessary.  So I don't see any scenarios where
-this is likely to come up that it would not be a problem without these
-uid tagged security capabilities.
+A valid reason to be leary of storing attributs in the xattrs.
 
 Eric
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
