@@ -1,93 +1,63 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Tue, 18 Jul 2017 19:45:52 -0500
-Subject: [PATCH v3 09/15] exec: Correct comments about "point of no return"
-In-Reply-To: <1500416736-49829-10-git-send-email-keescook@chromium.org> (Kees
-	Cook's message of "Tue, 18 Jul 2017 15:25:30 -0700")
+From: luto@kernel.org (Andy Lutomirski)
+Date: Tue, 18 Jul 2017 18:01:22 -0700
+Subject: [PATCH v3 01/15] binfmt: Introduce secureexec flag
+In-Reply-To: <1500416736-49829-2-git-send-email-keescook@chromium.org>
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-	<1500416736-49829-10-git-send-email-keescook@chromium.org>
-Message-ID: <874lu9b6f3.fsf@xmission.com>
+	<1500416736-49829-2-git-send-email-keescook@chromium.org>
+Message-ID: <CALCETrXRzNZU2uR4S7h=d0G-Rcr9rSMVkNOK7ymcovLP4waV=Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On Tue, Jul 18, 2017 at 3:25 PM, Kees Cook <keescook@chromium.org> wrote:
+> To begin this refactoring, this adds the secureexec flag to the bprm
+> struct, which will eventually be used in place of the LSM hook.
 
-> In commit 221af7f87b97 ("Split 'flush_old_exec' into two functions"),
-> the comment about the point of no return should have stayed in
-> flush_old_exec() since it refers to "bprm->mm = NULL;" line, but prior
-> changes in commits c89681ed7d0e ("remove steal_locks()"), and
-> fd8328be874f ("sanitize handling of shared descriptor tables in failing
-> execve()") made it look like it meant the current->sas_ss_sp line instead.
->
-> The comment was referring to the fact that once bprm->mm is NULL, all
-> failures from a binfmt load_binary hook (e.g. load_elf_binary), will
-> get SEGV raised against current. Move this comment and expand the
-> explanation a bit, putting it above the assignment this time, and add
-> details about the true nature of "point of no return" being the call
-> to flush_old_exec() itself.
->
-> This also removes an erroneous commet about when credentials are being
-> installed. That has its own dedicated function, install_exec_creds(),
-> which carries a similar (and correct) comment, so remove the bogus comment
-> where installation is not actually happening.
-
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+I'm very confused.  See below.  Maybe a later patch will unconfuse me.
 
 >
 > Cc: David Howells <dhowells@redhat.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 > ---
->  fs/exec.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
+>  fs/binfmt_elf.c         | 3 ++-
+>  fs/binfmt_elf_fdpic.c   | 3 ++-
+>  include/linux/binfmts.h | 8 +++++++-
+>  3 files changed, 11 insertions(+), 3 deletions(-)
 >
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 53ffa739fb58..f9480d3e0b82 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1258,6 +1258,12 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
->  	perf_event_comm(tsk, exec);
->  }
->  
-> +/*
-> + * Calling this is the point of no return. None of the failures will be
-> + * seen by userspace since either the process is already taking a fatal
-> + * signal (via de_thread() or coredump), or will have SEGV raised
-> + * (after exec_mmap()) by search_binary_handlers (see below).
-> + */
->  int flush_old_exec(struct linux_binprm * bprm)
->  {
->  	int retval;
-> @@ -1285,7 +1291,13 @@ int flush_old_exec(struct linux_binprm * bprm)
->  	if (retval)
->  		goto out;
->  
-> -	bprm->mm = NULL;		/* We're using it now */
-> +	/*
-> +	 * After clearing bprm->mm (to mark that current is using the
-> +	 * prepared mm now), we have nothing left of the original
-> +	 * process. If anything from here on returns an error, the check
-> +	 * in search_binary_handler() will SEGV current.
-> +	 */
-> +	bprm->mm = NULL;
->  
->  	set_fs(USER_DS);
->  	current->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
-> @@ -1339,7 +1351,6 @@ void setup_new_exec(struct linux_binprm * bprm)
->  
->  	arch_pick_mmap_layout(current->mm);
->  
-> -	/* This is the point of no return */
->  	current->sas_ss_sp = current->sas_ss_size = 0;
->  
->  	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
-> @@ -1357,7 +1368,6 @@ void setup_new_exec(struct linux_binprm * bprm)
->  	 */
->  	current->mm->task_size = TASK_SIZE;
->  
-> -	/* install the new credentials */
->  	if (!uid_eq(bprm->cred->uid, current_euid()) ||
->  	    !gid_eq(bprm->cred->gid, current_egid())) {
->  		current->pdeath_signal = 0;
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 5075fd5c62c8..991e4de3515f 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -254,7 +254,8 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+>         NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
+>         NEW_AUX_ENT(AT_GID, from_kgid_munged(cred->user_ns, cred->gid));
+>         NEW_AUX_ENT(AT_EGID, from_kgid_munged(cred->user_ns, cred->egid));
+> -       NEW_AUX_ENT(AT_SECURE, security_bprm_secureexec(bprm));
+> +       bprm->secureexec |= security_bprm_secureexec(bprm);
+> +       NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
+
+This is ->load_binary ...
+
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index 05488da3aee9..9508b5f83c7e 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -27,9 +27,15 @@ struct linux_binprm {
+>         unsigned int
+>                 cred_prepared:1,/* true if creds already prepared (multiple
+>                                  * preps happen for interpreters) */
+> -               cap_effective:1;/* true if has elevated effective capabilities,
+> +               cap_effective:1,/* true if has elevated effective capabilities,
+>                                  * false if not; except for init which inherits
+>                                  * its parent's caps anyway */
+> +               /*
+> +                * Set by bprm_set_creds hook to indicate a privilege-gaining
+> +                * exec has happened. Used to sanitize execution environment
+> +                * and to set AT_SECURE auxv for glibc.
+> +                */
+
+... which is not bprm_set_creds().
+
+What am I missing here?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
