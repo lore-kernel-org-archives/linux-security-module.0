@@ -1,140 +1,93 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Tue, 18 Jul 2017 17:08:08 -0700
-Subject: [PATCH v3 02/15] exec: Rename bprm->cred_prepared to
-	called_set_creds
-In-Reply-To: <1500416736-49829-3-git-send-email-keescook@chromium.org>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Tue, 18 Jul 2017 19:45:52 -0500
+Subject: [PATCH v3 09/15] exec: Correct comments about "point of no return"
+In-Reply-To: <1500416736-49829-10-git-send-email-keescook@chromium.org> (Kees
+	Cook's message of "Tue, 18 Jul 2017 15:25:30 -0700")
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-	<1500416736-49829-3-git-send-email-keescook@chromium.org>
-Message-ID: <e9f2a4b5-93f3-df86-71ab-7f54a4591ba3@canonical.com>
+	<1500416736-49829-10-git-send-email-keescook@chromium.org>
+Message-ID: <874lu9b6f3.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 07/18/2017 03:25 PM, Kees Cook wrote:
-> The cred_prepared bprm flag has a misleading name. It has nothing to do
-> with the bprm_prepare_cred hook, and actually tracks if bprm_set_creds has
-> been called. Rename this flag and improve its comment.
-> 
+Kees Cook <keescook@chromium.org> writes:
+
+> In commit 221af7f87b97 ("Split 'flush_old_exec' into two functions"),
+> the comment about the point of no return should have stayed in
+> flush_old_exec() since it refers to "bprm->mm = NULL;" line, but prior
+> changes in commits c89681ed7d0e ("remove steal_locks()"), and
+> fd8328be874f ("sanitize handling of shared descriptor tables in failing
+> execve()") made it look like it meant the current->sas_ss_sp line instead.
+>
+> The comment was referring to the fact that once bprm->mm is NULL, all
+> failures from a binfmt load_binary hook (e.g. load_elf_binary), will
+> get SEGV raised against current. Move this comment and expand the
+> explanation a bit, putting it above the assignment this time, and add
+> details about the true nature of "point of no return" being the call
+> to flush_old_exec() itself.
+>
+> This also removes an erroneous commet about when credentials are being
+> installed. That has its own dedicated function, install_exec_creds(),
+> which carries a similar (and correct) comment, so remove the bogus comment
+> where installation is not actually happening.
+
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+
+>
 > Cc: David Howells <dhowells@redhat.com>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <james.l.morris@oracle.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
 > Signed-off-by: Kees Cook <keescook@chromium.org>
-
-looks good
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
 > ---
->  fs/binfmt_flat.c           | 2 +-
->  fs/exec.c                  | 2 +-
->  include/linux/binfmts.h    | 8 ++++++--
->  security/apparmor/domain.c | 2 +-
->  security/selinux/hooks.c   | 2 +-
->  security/smack/smack_lsm.c | 2 +-
->  security/tomoyo/tomoyo.c   | 2 +-
->  7 files changed, 12 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-> index 2edcefc0a294..a722530cc468 100644
-> --- a/fs/binfmt_flat.c
-> +++ b/fs/binfmt_flat.c
-> @@ -885,7 +885,7 @@ static int load_flat_shared_library(int id, struct lib_info *libs)
->  	 * as we're past the point of no return and are dealing with shared
->  	 * libraries.
->  	 */
-> -	bprm.cred_prepared = 1;
-> +	bprm.called_set_creds = 1;
->  
->  	res = prepare_binprm(&bprm);
->  
+>  fs/exec.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+>
 > diff --git a/fs/exec.c b/fs/exec.c
-> index 904199086490..925c85a45d97 100644
+> index 53ffa739fb58..f9480d3e0b82 100644
 > --- a/fs/exec.c
 > +++ b/fs/exec.c
-> @@ -1547,7 +1547,7 @@ int prepare_binprm(struct linux_binprm *bprm)
->  	retval = security_bprm_set_creds(bprm);
+> @@ -1258,6 +1258,12 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+>  	perf_event_comm(tsk, exec);
+>  }
+>  
+> +/*
+> + * Calling this is the point of no return. None of the failures will be
+> + * seen by userspace since either the process is already taking a fatal
+> + * signal (via de_thread() or coredump), or will have SEGV raised
+> + * (after exec_mmap()) by search_binary_handlers (see below).
+> + */
+>  int flush_old_exec(struct linux_binprm * bprm)
+>  {
+>  	int retval;
+> @@ -1285,7 +1291,13 @@ int flush_old_exec(struct linux_binprm * bprm)
 >  	if (retval)
->  		return retval;
-> -	bprm->cred_prepared = 1;
-> +	bprm->called_set_creds = 1;
+>  		goto out;
 >  
->  	memset(bprm->buf, 0, BINPRM_BUF_SIZE);
->  	return kernel_read(bprm->file, 0, bprm->buf, BINPRM_BUF_SIZE);
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index 9508b5f83c7e..36be5a67517a 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -25,8 +25,12 @@ struct linux_binprm {
->  	struct mm_struct *mm;
->  	unsigned long p; /* current top of mem */
->  	unsigned int
-> -		cred_prepared:1,/* true if creds already prepared (multiple
-> -				 * preps happen for interpreters) */
-> +		/*
-> +		 * True after the bprm_set_creds hook has been called once
-> +		 * (multiple calls can be made via prepare_binprm() for
-> +		 * binfmt_script/misc).
-> +		 */
-> +		called_set_creds:1,
->  		cap_effective:1,/* true if has elevated effective capabilities,
->  				 * false if not; except for init which inherits
->  				 * its parent's caps anyway */
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 001e133a3c8c..878407e023e3 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -350,7 +350,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
->  	const char *name = NULL, *info = NULL;
->  	int error = 0;
+> -	bprm->mm = NULL;		/* We're using it now */
+> +	/*
+> +	 * After clearing bprm->mm (to mark that current is using the
+> +	 * prepared mm now), we have nothing left of the original
+> +	 * process. If anything from here on returns an error, the check
+> +	 * in search_binary_handler() will SEGV current.
+> +	 */
+> +	bprm->mm = NULL;
 >  
-> -	if (bprm->cred_prepared)
-> +	if (bprm->called_set_creds)
->  		return 0;
+>  	set_fs(USER_DS);
+>  	current->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
+> @@ -1339,7 +1351,6 @@ void setup_new_exec(struct linux_binprm * bprm)
 >  
->  	ctx = cred_ctx(bprm->cred);
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 819fd6858b49..0f1450a06b02 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2327,7 +2327,7 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
+>  	arch_pick_mmap_layout(current->mm);
 >  
->  	/* SELinux context only depends on initial program or script and not
->  	 * the script interpreter */
-> -	if (bprm->cred_prepared)
-> +	if (bprm->called_set_creds)
->  		return 0;
+> -	/* This is the point of no return */
+>  	current->sas_ss_sp = current->sas_ss_size = 0;
 >  
->  	old_tsec = current_security();
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 658f5d8c7e76..7d4b2e221124 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -917,7 +917,7 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
->  	struct superblock_smack *sbsp;
->  	int rc;
->  
-> -	if (bprm->cred_prepared)
-> +	if (bprm->called_set_creds)
->  		return 0;
->  
->  	isp = inode->i_security;
-> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> index 130b4fa4f65f..d25b705360e0 100644
-> --- a/security/tomoyo/tomoyo.c
-> +++ b/security/tomoyo/tomoyo.c
-> @@ -76,7 +76,7 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
->  	 * Do only if this function is called for the first time of an execve
->  	 * operation.
+>  	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
+> @@ -1357,7 +1368,6 @@ void setup_new_exec(struct linux_binprm * bprm)
 >  	 */
-> -	if (bprm->cred_prepared)
-> +	if (bprm->called_set_creds)
->  		return 0;
->  #ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
->  	/*
-> 
-
+>  	current->mm->task_size = TASK_SIZE;
+>  
+> -	/* install the new credentials */
+>  	if (!uid_eq(bprm->cred->uid, current_euid()) ||
+>  	    !gid_eq(bprm->cred->gid, current_egid())) {
+>  		current->pdeath_signal = 0;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
