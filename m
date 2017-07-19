@@ -1,52 +1,121 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Tue, 18 Jul 2017 18:13:50 -0500
-Subject: [PATCH v2] xattr: Enable security.capability in user namespaces
-In-Reply-To: <871spdj2pe.fsf@xmission.com>
-References: <20170712170346.GA17974@mail.hallyn.com>
-	<877ezdgsey.fsf@xmission.com>
-	<74664cc8-bc3e-75d6-5892-f8934404349f@linux.vnet.ibm.com>
-	<20170713011554.xwmrgkzfwnibvgcu@thunk.org>
-	<87y3rscz9j.fsf@xmission.com>
-	<20170713164012.brj2flnkaaks2oci@thunk.org>
-	<29fdda5e-ed4a-bcda-e3cc-c06ab87973ce@linux.vnet.ibm.com>
-	<alpine.LRH.2.20.1707181659030.5209@namei.org>
-	<aae67245-4c9c-f79e-b821-40753e732f65@linux.vnet.ibm.com>
-	<871spdj2pe.fsf@xmission.com>
-Message-ID: <20170718231350.GA20787@mail.hallyn.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Tue, 18 Jul 2017 17:00:04 -0700
+Subject: [PATCH v3 03/15] apparmor: Refactor to remove bprm_secureexec hook
+In-Reply-To: <1500416736-49829-4-git-send-email-keescook@chromium.org>
+References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
+	<1500416736-49829-4-git-send-email-keescook@chromium.org>
+Message-ID: <265c3b84-36c2-53cf-ca7f-b70413c16fff@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Eric W. Biederman (ebiederm at xmission.com):
-> Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+On 07/18/2017 03:25 PM, Kees Cook wrote:
+> The AppArmor bprm_secureexec hook can be merged with the bprm_set_creds
+> hook since it's dealing with the same information, and all of the details
+> are finalized during the first call to the bprm_set_creds hook via
+> prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
+> via bprm->called_set_creds).
 > 
-> > On 07/18/2017 03:01 AM, James Morris wrote:
-> >> On Thu, 13 Jul 2017, Stefan Berger wrote:
-> >>
-> >>> A file shared by 2 containers, one mapping root to uid=1000, the other mapping
-> >>> root to uid=2000, will show these two xattrs on the host (init_user_ns) once
-> >>> these containers set xattrs on that file.
-> >> I may be missing something here, but what happens when say the uid=2000
-> >> container and associated user is deleted from the system, then another is
-> >> created with the same uid?
-> >>
-> >> Won't this mean that you have unexpected capabilities turning up in the
-> >> new container?
-> >>
-> >
-> > Yes, that's right. I don't know any solution for that. We would have to walk the
-> > filesystems and find all 'stale' xattrs with such a uid. This is independent of
-> > whether the uid is encoded on the name side, as in this patch, or on the value
-> > side, as in Serge's original proposal. And uids of a mapped container root user
-> > don't necessarily have to have an account on the host so that an account
-> > deletion could trigger that.
+> Here, all the comments describe how secureexec is actually calculated
+> during bprm_set_creds, so this actually does it, drops the bprm flag that
+> was being used internally by AppArmor, and drops the bprm_secureexec hook.
 > 
-> This problem is actually independent of this piece of code entirely.
-> Any lingering files owned by that uid have the same issue.
+> Cc: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-In particular, any setuid-root files in that container have the precisely
-analogous issue.
+Acked-by: John Johansen <john.johansen@canonical.com>
 
--serge
+
+> ---
+>  security/apparmor/domain.c         | 22 +---------------------
+>  security/apparmor/include/domain.h |  1 -
+>  security/apparmor/include/file.h   |  3 ---
+>  security/apparmor/lsm.c            |  1 -
+>  4 files changed, 1 insertion(+), 26 deletions(-)
+> 
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 878407e023e3..1a1b1ec89d9d 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -485,14 +485,11 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+>  	 *
+>  	 * Cases 2 and 3 are marked as requiring secure exec
+>  	 * (unless policy specified "unsafe exec")
+> -	 *
+> -	 * bprm->unsafe is used to cache the AA_X_UNSAFE permission
+> -	 * to avoid having to recompute in secureexec
+>  	 */
+>  	if (!(perms.xindex & AA_X_UNSAFE)) {
+>  		AA_DEBUG("scrubbing environment variables for %s profile=%s\n",
+>  			 name, new_profile->base.hname);
+> -		bprm->unsafe |= AA_SECURE_X_NEEDED;
+> +		bprm->secureexec = 1;
+>  	}
+>  apply:
+>  	/* when transitioning profiles clear unsafe personality bits */
+> @@ -521,23 +518,6 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+>  }
+>  
+>  /**
+> - * apparmor_bprm_secureexec - determine if secureexec is needed
+> - * @bprm: binprm for exec  (NOT NULL)
+> - *
+> - * Returns: %1 if secureexec is needed else %0
+> - */
+> -int apparmor_bprm_secureexec(struct linux_binprm *bprm)
+> -{
+> -	/* the decision to use secure exec is computed in set_creds
+> -	 * and stored in bprm->unsafe.
+> -	 */
+> -	if (bprm->unsafe & AA_SECURE_X_NEEDED)
+> -		return 1;
+> -
+> -	return 0;
+> -}
+> -
+> -/**
+>   * apparmor_bprm_committing_creds - do task cleanup on committing new creds
+>   * @bprm: binprm for the exec  (NOT NULL)
+>   */
+> diff --git a/security/apparmor/include/domain.h b/security/apparmor/include/domain.h
+> index 30544729878a..2495af293587 100644
+> --- a/security/apparmor/include/domain.h
+> +++ b/security/apparmor/include/domain.h
+> @@ -24,7 +24,6 @@ struct aa_domain {
+>  };
+>  
+>  int apparmor_bprm_set_creds(struct linux_binprm *bprm);
+> -int apparmor_bprm_secureexec(struct linux_binprm *bprm);
+>  void apparmor_bprm_committing_creds(struct linux_binprm *bprm);
+>  void apparmor_bprm_committed_creds(struct linux_binprm *bprm);
+>  
+> diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
+> index 38f821bf49b6..076ac4501d97 100644
+> --- a/security/apparmor/include/file.h
+> +++ b/security/apparmor/include/file.h
+> @@ -66,9 +66,6 @@ struct path;
+>  #define AA_X_INHERIT		0x4000
+>  #define AA_X_UNCONFINED		0x8000
+>  
+> -/* AA_SECURE_X_NEEDED - is passed in the bprm->unsafe field */
+> -#define AA_SECURE_X_NEEDED	0x8000
+> -
+>  /* need to make conditional which ones are being set */
+>  struct path_cond {
+>  	kuid_t uid;
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 8f3c0f7aca5a..291c7126350f 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -624,7 +624,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(bprm_set_creds, apparmor_bprm_set_creds),
+>  	LSM_HOOK_INIT(bprm_committing_creds, apparmor_bprm_committing_creds),
+>  	LSM_HOOK_INIT(bprm_committed_creds, apparmor_bprm_committed_creds),
+> -	LSM_HOOK_INIT(bprm_secureexec, apparmor_bprm_secureexec),
+>  
+>  	LSM_HOOK_INIT(task_setrlimit, apparmor_task_setrlimit),
+>  };
+> 
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
