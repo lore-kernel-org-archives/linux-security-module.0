@@ -1,37 +1,40 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Jul 2017 10:06:39 -0700
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 20 Jul 2017 16:42:11 -0400
 Subject: [PATCH v3 04/15] selinux: Refactor to remove bprm_secureexec hook
-In-Reply-To: <CAHC9VhQRhQAbH4c5ZjdEJy-fcMz=oUrd5F4Q755AHVFZVmFR+w@mail.gmail.com>
+In-Reply-To: <CAGXu5j+mFMRKhjSwkzYZ1qMDCoD44g42wYpLBPm3m2Zjq5BwNA@mail.gmail.com>
 References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
 	<1500416736-49829-5-git-send-email-keescook@chromium.org>
 	<CAHC9VhTLP7kpJW65y_csgnc9hvp8ouB36U2WPyHGYgGtq8M4hg@mail.gmail.com>
 	<CAHC9VhQJxyRF4f1vX6+00uVHbn8DJDBRLPyRFhU4SBQKGcgQMw@mail.gmail.com>
 	<CAGXu5j+ayWRKxn5EneOAJO-XXTo2qsxo-nwKLtjoM60_H6PFOA@mail.gmail.com>
 	<CAHC9VhQRhQAbH4c5ZjdEJy-fcMz=oUrd5F4Q755AHVFZVmFR+w@mail.gmail.com>
-Message-ID: <CAGXu5j+mFMRKhjSwkzYZ1qMDCoD44g42wYpLBPm3m2Zjq5BwNA@mail.gmail.com>
+	<CAGXu5j+mFMRKhjSwkzYZ1qMDCoD44g42wYpLBPm3m2Zjq5BwNA@mail.gmail.com>
+Message-ID: <CAHC9VhQoLxRFFuVSoDPqCS3Gy5fHx5uXxFTcEGCi9d=UWmZkEg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jul 20, 2017 at 6:42 AM, Paul Moore <paul@paul-moore.com> wrote:
-> Alternatively, if you've got a fairly recent git repo with all the
-> patches merged I can build a test kernel and give it a shot for you,
-> although fair warning it may take a day or two for me to get to it.
+On Thu, Jul 20, 2017 at 1:06 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Jul 20, 2017 at 6:42 AM, Paul Moore <paul@paul-moore.com> wrote:
+>> Alternatively, if you've got a fairly recent git repo with all the
+>> patches merged I can build a test kernel and give it a shot for you,
+>> although fair warning it may take a day or two for me to get to it.
+>
+> Hurm, I think this will take quite a bit of time for me to set up. :P
+> If you have a chance, I'd appreciate it if you could test the series.
+> It's currently based on v4.12:
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/setuid-rlimits/secureexec-no-hook
+>
+> If it doesn't work out or takes too much time I can work on setting up
+> the test environment next week (travelling at the moment).
 
-Hurm, I think this will take quite a bit of time for me to set up. :P
-If you have a chance, I'd appreciate it if you could test the series.
-It's currently based on v4.12:
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/setuid-rlimits/secureexec-no-hook
+Building a kernel now, in case anyone on Fedora wants to play with it,
+you can find it here (when it finishes):
 
-If it doesn't work out or takes too much time I can work on setting up
-the test environment next week (travelling at the moment).
-
-Thanks for the details!
-
--Kees
+* https://copr.fedorainfracloud.org/coprs/pcmoore/kernel-testing/build/581947
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
