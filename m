@@ -1,99 +1,44 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 21 Jul 2017 11:10:13 +1000 (AEST)
-Subject: [PATCH] tomoyo: Update URLs in
-	Documentation/admin-guide/LSM/tomoyo.rst
-In-Reply-To: <1500375593-4537-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1500375593-4537-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.LRH.2.20.1707211109390.737@namei.org>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 21 Jul 2017 11:40:29 -0400
+Subject: [PATCH v3 04/15] selinux: Refactor to remove bprm_secureexec hook
+In-Reply-To: <CAHC9VhQoLxRFFuVSoDPqCS3Gy5fHx5uXxFTcEGCi9d=UWmZkEg@mail.gmail.com>
+References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
+	<1500416736-49829-5-git-send-email-keescook@chromium.org>
+	<CAHC9VhTLP7kpJW65y_csgnc9hvp8ouB36U2WPyHGYgGtq8M4hg@mail.gmail.com>
+	<CAHC9VhQJxyRF4f1vX6+00uVHbn8DJDBRLPyRFhU4SBQKGcgQMw@mail.gmail.com>
+	<CAGXu5j+ayWRKxn5EneOAJO-XXTo2qsxo-nwKLtjoM60_H6PFOA@mail.gmail.com>
+	<CAHC9VhQRhQAbH4c5ZjdEJy-fcMz=oUrd5F4Q755AHVFZVmFR+w@mail.gmail.com>
+	<CAGXu5j+mFMRKhjSwkzYZ1qMDCoD44g42wYpLBPm3m2Zjq5BwNA@mail.gmail.com>
+	<CAHC9VhQoLxRFFuVSoDPqCS3Gy5fHx5uXxFTcEGCi9d=UWmZkEg@mail.gmail.com>
+Message-ID: <CAHC9VhTeU3cH3E+SgW+F4sYm6zxdEip0LYR_Ht0O9TDFQrzGMw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 18 Jul 2017, Tetsuo Handa wrote:
+On Thu, Jul 20, 2017 at 4:42 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Thu, Jul 20, 2017 at 1:06 PM, Kees Cook <keescook@chromium.org> wrote:
+>> On Thu, Jul 20, 2017 at 6:42 AM, Paul Moore <paul@paul-moore.com> wrote:
+>>> Alternatively, if you've got a fairly recent git repo with all the
+>>> patches merged I can build a test kernel and give it a shot for you,
+>>> although fair warning it may take a day or two for me to get to it.
+>>
+>> Hurm, I think this will take quite a bit of time for me to set up. :P
+>> If you have a chance, I'd appreciate it if you could test the series.
+>> It's currently based on v4.12:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/setuid-rlimits/secureexec-no-hook
+>>
+>> If it doesn't work out or takes too much time I can work on setting up
+>> the test environment next week (travelling at the moment).
+>
+> Building a kernel now, in case anyone on Fedora wants to play with it,
+> you can find it here (when it finishes):
+>
+> * https://copr.fedorainfracloud.org/coprs/pcmoore/kernel-testing/build/581947
 
-> Fix outdated links.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-
-This doesn't apply to my -next tree, I'll do so when I rebase to -rc2.
-
-> ---
->  Documentation/admin-guide/LSM/tomoyo.rst | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/LSM/tomoyo.rst b/Documentation/admin-guide/LSM/tomoyo.rst
-> index a594721..e2d6b6e 100644
-> --- a/Documentation/admin-guide/LSM/tomoyo.rst
-> +++ b/Documentation/admin-guide/LSM/tomoyo.rst
-> @@ -9,8 +9,8 @@ TOMOYO is a name-based MAC extension (LSM module) for the Linux kernel.
->  
->  LiveCD-based tutorials are available at
->  
-> -http://tomoyo.sourceforge.jp/1.7/1st-step/ubuntu10.04-live/
-> -http://tomoyo.sourceforge.jp/1.7/1st-step/centos5-live/
-> +http://tomoyo.sourceforge.jp/1.8/ubuntu12.04-live.html
-> +http://tomoyo.sourceforge.jp/1.8/centos6-live.html
->  
->  Though these tutorials use non-LSM version of TOMOYO, they are useful for you
->  to know what TOMOYO is.
-> @@ -21,35 +21,35 @@ How to enable TOMOYO?
->  Build the kernel with ``CONFIG_SECURITY_TOMOYO=y`` and pass ``security=tomoyo`` on
->  kernel's command line.
->  
-> -Please see http://tomoyo.sourceforge.jp/2.3/ for details.
-> +Please see http://tomoyo.osdn.jp/2.5/ for details.
->  
->  Where is documentation?
->  =======================
->  
->  User <-> Kernel interface documentation is available at
-> -http://tomoyo.sourceforge.jp/2.3/policy-reference.html .
-> +http://tomoyo.osdn.jp/2.5/policy-specification/index.html .
->  
->  Materials we prepared for seminars and symposiums are available at
-> -http://sourceforge.jp/projects/tomoyo/docs/?category_id=532&language_id=1 .
-> +http://osdn.jp/projects/tomoyo/docs/?category_id=532&language_id=1 .
->  Below lists are chosen from three aspects.
->  
->  What is TOMOYO?
->    TOMOYO Linux Overview
-> -    http://sourceforge.jp/projects/tomoyo/docs/lca2009-takeda.pdf
-> +    http://osdn.jp/projects/tomoyo/docs/lca2009-takeda.pdf
->    TOMOYO Linux: pragmatic and manageable security for Linux
-> -    http://sourceforge.jp/projects/tomoyo/docs/freedomhectaipei-tomoyo.pdf
-> +    http://osdn.jp/projects/tomoyo/docs/freedomhectaipei-tomoyo.pdf
->    TOMOYO Linux: A Practical Method to Understand and Protect Your Own Linux Box
-> -    http://sourceforge.jp/projects/tomoyo/docs/PacSec2007-en-no-demo.pdf
-> +    http://osdn.jp/projects/tomoyo/docs/PacSec2007-en-no-demo.pdf
->  
->  What can TOMOYO do?
->    Deep inside TOMOYO Linux
-> -    http://sourceforge.jp/projects/tomoyo/docs/lca2009-kumaneko.pdf
-> +    http://osdn.jp/projects/tomoyo/docs/lca2009-kumaneko.pdf
->    The role of "pathname based access control" in security.
-> -    http://sourceforge.jp/projects/tomoyo/docs/lfj2008-bof.pdf
-> +    http://osdn.jp/projects/tomoyo/docs/lfj2008-bof.pdf
->  
->  History of TOMOYO?
->    Realities of Mainlining
-> -    http://sourceforge.jp/projects/tomoyo/docs/lfj2008.pdf
-> +    http://osdn.jp/projects/tomoyo/docs/lfj2008.pdf
->  
->  What is future plan?
->  ====================
-> @@ -60,6 +60,6 @@ multiple LSM modules at the same time. We feel sorry that you have to give up
->  SELinux/SMACK/AppArmor etc. when you want to use TOMOYO.
->  
->  We hope that LSM becomes stackable in future. Meanwhile, you can use non-LSM
-> -version of TOMOYO, available at http://tomoyo.sourceforge.jp/1.7/ .
-> +version of TOMOYO, available at http://tomoyo.osdn.jp/1.8/ .
->  LSM version of TOMOYO is a subset of non-LSM version of TOMOYO. We are planning
->  to port non-LSM version's functionalities to LSM versions.
-> 
+Quick follow up, the kernel above passes the selinux-testsuite atsecure test.
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
