@@ -1,54 +1,49 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 21 Jul 2017 15:16:23 -0400
-Subject: [PATCH v3 04/15] selinux: Refactor to remove bprm_secureexec hook
-In-Reply-To: <CAGXu5jLT1V_=9Hh-DDJJqvf9Z7ZeaCpLbXnLLZ-e+JTQb2u99w@mail.gmail.com>
-References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-	<1500416736-49829-5-git-send-email-keescook@chromium.org>
-	<CAHC9VhTLP7kpJW65y_csgnc9hvp8ouB36U2WPyHGYgGtq8M4hg@mail.gmail.com>
-	<CAHC9VhQJxyRF4f1vX6+00uVHbn8DJDBRLPyRFhU4SBQKGcgQMw@mail.gmail.com>
-	<CAGXu5j+ayWRKxn5EneOAJO-XXTo2qsxo-nwKLtjoM60_H6PFOA@mail.gmail.com>
-	<CAHC9VhQRhQAbH4c5ZjdEJy-fcMz=oUrd5F4Q755AHVFZVmFR+w@mail.gmail.com>
-	<CAGXu5j+mFMRKhjSwkzYZ1qMDCoD44g42wYpLBPm3m2Zjq5BwNA@mail.gmail.com>
-	<CAHC9VhQoLxRFFuVSoDPqCS3Gy5fHx5uXxFTcEGCi9d=UWmZkEg@mail.gmail.com>
-	<CAHC9VhTeU3cH3E+SgW+F4sYm6zxdEip0LYR_Ht0O9TDFQrzGMw@mail.gmail.com>
-	<CAGXu5jLT1V_=9Hh-DDJJqvf9Z7ZeaCpLbXnLLZ-e+JTQb2u99w@mail.gmail.com>
-Message-ID: <CAHC9VhTQRqF+nCJbOA59XPJWAkXZEJJxEXSeq5z=xF6oK5Wqmg@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Sun, 23 Jul 2017 17:58:56 -0700
+Subject: [kernel-hardening] [PATCH 00/11] S.A.R.A. a new stacked LSM
+In-Reply-To: <20170713195106.GD4895@mail.hallyn.com>
+References: <1497286620-15027-1-git-send-email-s.mesoraca16@gmail.com>
+	<53a2d710-b0f0-cdf9-e7ad-cd8d03fc835a@digikod.net>
+	<CAJHCu1+=uYQ-N7CH4KfmTHrN2hJjwzN0tgg4sWHU0LjVr+uGGA@mail.gmail.com>
+	<c19917fa-f62c-b7e0-8cbd-f10a96f686ba@digikod.net>
+	<CAJHCu1K1Hg5M2HhJxN_aj2P_S8Pez9+8KL=wHKBgAN0jN1+mLg@mail.gmail.com>
+	<69ff2195-d0e1-8a0f-b80e-5d8d55947907@nmatt.com>
+	<1499801476.6034.265.camel@linux.vnet.ibm.com>
+	<988555a2-bed9-234c-843c-0bb68dc60d3f@nmatt.com>
+	<1499959179.4220.45.camel@linux.vnet.ibm.com>
+	<20170713195106.GD4895@mail.hallyn.com>
+Message-ID: <6be222da-79b3-b406-53c9-10ee691bb9c6@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jul 21, 2017 at 1:37 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Fri, Jul 21, 2017 at 8:40 AM, Paul Moore <paul@paul-moore.com> wrote:
->> On Thu, Jul 20, 2017 at 4:42 PM, Paul Moore <paul@paul-moore.com> wrote:
->>> On Thu, Jul 20, 2017 at 1:06 PM, Kees Cook <keescook@chromium.org> wrote:
->>>> On Thu, Jul 20, 2017 at 6:42 AM, Paul Moore <paul@paul-moore.com> wrote:
->>>>> Alternatively, if you've got a fairly recent git repo with all the
->>>>> patches merged I can build a test kernel and give it a shot for you,
->>>>> although fair warning it may take a day or two for me to get to it.
->>>>
->>>> Hurm, I think this will take quite a bit of time for me to set up. :P
->>>> If you have a chance, I'd appreciate it if you could test the series.
->>>> It's currently based on v4.12:
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/setuid-rlimits/secureexec-no-hook
->>>>
->>>> If it doesn't work out or takes too much time I can work on setting up
->>>> the test environment next week (travelling at the moment).
->>>
->>> Building a kernel now, in case anyone on Fedora wants to play with it,
->>> you can find it here (when it finishes):
->>>
->>> * https://copr.fedorainfracloud.org/coprs/pcmoore/kernel-testing/build/581947
->>
->> Quick follow up, the kernel above passes the selinux-testsuite atsecure test.
+On 7/13/2017 12:51 PM, Serge E. Hallyn wrote:
+> Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
+>> On Thu, 2017-07-13 at 08:39 -0400, Matt Brown wrote:
+>> The question is really from a security perspective which is better?
+>>  Obviously, as v2 of the patch set changed from using pathnames to
+>> inodes, it's pretty clear that I think inodes would be better.  Kees,
+>> Serge, Casey any comments?
+> Yes, inode seems clearly better.  Paths are too easily worked around.
+
+An inode identifies the object, while a pathname identifies the intent.
+Using the inode will be easier to code and easier to model. Using the
+pathname will be much more likely to reflect what the human means to
+accomplish, provided all the idiosyncrasies of the Linux filesystem
+namespace are taken into account. Ever since the link count on an inode
+was allowed to exceed 1* this has been difficult to accomplish.
+
+----
+* The link count has always been allowed to exceed 1. Then there
+  are symlinks, mount points, overlay filesystems and all manner
+  of other slick features that make the filesystem namespace
+  difficult to deal with from the security standpoint.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
-> Awesome, thanks for taking the time to test it. :) Can I add your Tested-by?
 
-Sorry, I should have included that, here ya go:
-
-Tested-by: Paul Moore <paul@paul-moore.com>
-
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
