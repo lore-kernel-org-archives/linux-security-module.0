@@ -1,106 +1,110 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 25 Jul 2017 17:44:11 +0200
-Subject: [PATCH 00/12] ima: measure digest lists instead of individual files
-Message-ID: <20170725154423.24845-1-roberto.sassu@huawei.com>
+Date: Tue, 25 Jul 2017 17:44:18 +0200
+Subject: [PATCH 07/12] ima: added parser for compact digest list
+In-Reply-To: <20170725154423.24845-1-roberto.sassu@huawei.com>
+References: <20170725154423.24845-1-roberto.sassu@huawei.com>
+Message-ID: <20170725154423.24845-8-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch set applies on top of kernel v4.13-rc2.
+This patch introduces the parser for the compact digest list.
+Its format is:
 
-IMA, for each file matching policy rules, calculates a digest, creates
-a new entry in the measurement list and extends a TPM PCR with the digest
-of entry data. The last step causes a noticeable performance reduction.
+entry_id[2] count[4] data_len[4]
+data[data_len]
+entry_id[2] count[4] data_len[4]
+data[data_len]
+...
 
-Since systems likely access the same files, repeating the above tasks at
-every boot can be avoided by replacing individual measurements of likely
-accessed files with only one measurement of their digests: the advantage
-is that the system performance significantly improves due to less PCR
-extend operations; on the other hand, the information about which files
-have exactly been accessed and in which sequence is lost.
+The parser supports the COMPACT_LIST_ID_DIGEST entry ID.
 
-If this new measurement reports only good digests (e.g. those of
-files included in a Linux distribution), and if verifiers only check
-that a system executed good software and didn't access malicious data,
-the disadvantages reported earlier would be acceptable.
+This format is suitable to store a large number of digests, as there is
+no metadata provided for each. Digests (which have all the same size) are
+concatenated together and placed after the header.
 
-The Trusted Computing paradigm measure & load is still respected by IMA
-with the proposed optimization. If a file being accessed is not in a
-measured digest list, a measurement will be recorded as before. If it is,
-the list has already been measured, and the verifier must assume that
-files with digest in the list have been accessed.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_digest_list.c | 60 ++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-Measuring digest lists gives the following benefits:
-
-- boot time reduction
-  For a minimal Linux installation with 1400 measurements, the boot time
-  decreases from 1 minute 30 seconds to 15 seconds, after loading to IMA
-  the digest of all files packaged by the distribution (32000). The new
-  list contains 92 entries. Without IMA, the boot time is 8.5 seconds.
-
-- lower network and CPU requirements for remote attestation
-  With the IMA optimization, both the measurement and digest lists
-  must be verified for a complete evaluation. However, since the lists
-  are fixed, they could be sent to and checked by the verifier only once.
-  Then, during a remote attestation, the only remaining task is to verify
-  the short measurement list.
-
-- signature-based remote attestation
-  Digest list signature can be used as a proof of the provenance for the
-  files whose digest is in the list. Then, if verifiers trust the signer
-  and only check provenance, remote attestation verification would simply
-  consist on checking digest lists signatures and that the measurement
-  list only contain list metadata digests (reference measurement databases
-  would be no longer required). An example of a signed digest list,
-  that can be parsed with this patch set, is the RPM package header.
-
-Digest lists are loaded in two stages by IMA through the new securityfs
-interface called 'digest_lists'. Users supply metadata, for the digest
-lists they want to load: path, format, digest, signature and algorithm
-of the digest.
-
-Then, after the metadata digest is added to the measurement list, IMA
-reads the digest lists at the path specified and loads the digests in
-a hash table (digest lists are not measured, since their digest is already
-included in the metadata). With metadata measurement instead of digest list
-measurement, it is possible to avoid a performance reduction that would
-occur by measuring many digest lists (e.g. RPM headers) individually.
-If, alternatively, digest lists are loaded together, their signature
-cannot be verified.
-
-Lastly, when a file is accessed, IMA searches the calculated digest in
-the hash table. Only if the digest is not found a new entry is added
-to the measurement list.
-
-
-Roberto Sassu (12):
-  ima: generalize ima_read_policy()
-  ima: generalize ima_write_policy()
-  ima: generalize policy file operations
-  ima: use ima_show_htable_value to show hash table data
-  ima: add functions to manage digest lists
-  ima: added parser of digest lists metadata
-  ima: added parser for compact digest list
-  ima: added parser for RPM data type
-  ima: introduce securityfs interfaces for digest lists
-  ima: disable digest lookup if digest lists are not measured
-  ima: don't report measurements if digests are included in the loaded
-    lists
-  ima: added Documentation/security/IMA-digest-lists.txt
-
- Documentation/security/IMA-digest-lists.txt | 150 +++++++++++++++++
- include/linux/fs.h                          |   1 +
- security/integrity/ima/Kconfig              |  11 ++
- security/integrity/ima/Makefile             |   1 +
- security/integrity/ima/ima.h                |  17 ++
- security/integrity/ima/ima_digest_list.c    | 247 ++++++++++++++++++++++++++++
- security/integrity/ima/ima_fs.c             | 178 ++++++++++++--------
- security/integrity/ima/ima_main.c           |  23 ++-
- security/integrity/ima/ima_policy.c         |   1 +
- security/integrity/ima/ima_queue.c          |  39 +++++
- 10 files changed, 602 insertions(+), 66 deletions(-)
- create mode 100644 Documentation/security/IMA-digest-lists.txt
- create mode 100644 security/integrity/ima/ima_digest_list.c
-
+diff --git a/security/integrity/ima/ima_digest_list.c b/security/integrity/ima/ima_digest_list.c
+index 3e1ff69b..c1ef79a 100644
+--- a/security/integrity/ima/ima_digest_list.c
++++ b/security/integrity/ima/ima_digest_list.c
+@@ -23,6 +23,63 @@ enum digest_metadata_fields {DATA_ALGO, DATA_DIGEST, DATA_SIGNATURE,
+ 			     DATA_FILE_PATH, DATA_REF_ID, DATA_TYPE,
+ 			     DATA__LAST};
+ 
++enum digest_data_types {DATA_TYPE_COMPACT_LIST};
++
++enum compact_list_entry_ids {COMPACT_LIST_ID_DIGEST};
++
++struct compact_list_hdr {
++	u16 entry_id;
++	u32 count;
++	u32 datalen;
++} __packed;
++
++static int ima_parse_compact_list(loff_t size, void *buf)
++{
++	void *bufp = buf, *bufendp = buf + size;
++	int digest_len = hash_digest_size[ima_hash_algo];
++	struct compact_list_hdr *hdr;
++	int ret, i;
++
++	while (bufp < bufendp) {
++		if (bufp + sizeof(*hdr) > bufendp) {
++			pr_err("compact list, missing header\n");
++			return -EINVAL;
++		}
++
++		hdr = bufp;
++
++		if (ima_canonical_fmt) {
++			hdr->entry_id = le16_to_cpu(hdr->entry_id);
++			hdr->count = le32_to_cpu(hdr->count);
++			hdr->datalen = le32_to_cpu(hdr->datalen);
++		}
++
++		if (hdr->entry_id != COMPACT_LIST_ID_DIGEST) {
++			pr_err("compact list, invalid data type\n");
++			return -EINVAL;
++		}
++
++		bufp += sizeof(*hdr);
++
++		for (i = 0; i < hdr->count &&
++		     bufp + digest_len <= bufendp; i++) {
++			ret = ima_add_digest_data_entry(bufp);
++			if (ret < 0 && ret != -EEXIST)
++				return ret;
++
++			bufp += digest_len;
++		}
++
++		if (i != hdr->count ||
++		    bufp != (void *)hdr + sizeof(*hdr) + hdr->datalen) {
++			pr_err("compact list, invalid data\n");
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
+ static int ima_parse_digest_list_data(struct ima_field_data *data)
+ {
+ 	void *digest_list;
+@@ -47,6 +104,9 @@ static int ima_parse_digest_list_data(struct ima_field_data *data)
+ 	}
+ 
+ 	switch (data_type) {
++	case DATA_TYPE_COMPACT_LIST:
++		ret = ima_parse_compact_list(digest_list_size, digest_list);
++		break;
+ 	default:
+ 		pr_err("Parser for data type %d not implemented\n", data_type);
+ 		ret = -EINVAL;
 -- 
 2.9.3
 
