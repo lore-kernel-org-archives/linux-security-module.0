@@ -1,218 +1,110 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 25 Jul 2017 17:44:17 +0200
-Subject: [PATCH 06/12] ima: added parser of digest lists metadata
-In-Reply-To: <20170725154423.24845-1-roberto.sassu@huawei.com>
-References: <20170725154423.24845-1-roberto.sassu@huawei.com>
-Message-ID: <20170725154423.24845-7-roberto.sassu@huawei.com>
+Date: Tue, 25 Jul 2017 17:44:11 +0200
+Subject: [PATCH 00/12] ima: measure digest lists instead of individual files
+Message-ID: <20170725154423.24845-1-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Userspace applications will be able to load digest lists by supplying
-their metadata.
+This patch set applies on top of kernel v4.13-rc2.
 
-Digest list metadata are:
+IMA, for each file matching policy rules, calculates a digest, creates
+a new entry in the measurement list and extends a TPM PCR with the digest
+of entry data. The last step causes a noticeable performance reduction.
 
-- DATA_ALGO: algorithm of the digests to be uploaded
-- DATA_DIGEST: digest of the file containing the digest list
-- DATA_SIGNATURE: signature of the file containing the digest list
-- DATA_FILE_PATH: pathname
-- DATA_REF_ID: reference ID of the digest list
-- DATA_TYPE: type of digest list
+Since systems likely access the same files, repeating the above tasks at
+every boot can be avoided by replacing individual measurements of likely
+accessed files with only one measurement of their digests: the advantage
+is that the system performance significantly improves due to less PCR
+extend operations; on the other hand, the information about which files
+have exactly been accessed and in which sequence is lost.
 
-The new function ima_parse_digest_list_metadata() parses the metadata
-and load each file individually. Then, it parses the data according
-to the data type specified.
+If this new measurement reports only good digests (e.g. those of
+files included in a Linux distribution), and if verifiers only check
+that a system executed good software and didn't access malicious data,
+the disadvantages reported earlier would be acceptable.
 
-Since digest lists are measured, their digest is added to the hash table
-so that IMA does not create a measurement entry for them (which would
-affect the performance). The only measurement entry created will be
-for the metadata.
+The Trusted Computing paradigm measure & load is still respected by IMA
+with the proposed optimization. If a file being accessed is not in a
+measured digest list, a measurement will be recorded as before. If it is,
+the list has already been measured, and the verifier must assume that
+files with digest in the list have been accessed.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- include/linux/fs.h                       |   1 +
- security/integrity/ima/Kconfig           |  11 ++++
- security/integrity/ima/Makefile          |   1 +
- security/integrity/ima/ima.h             |   8 +++
- security/integrity/ima/ima_digest_list.c | 105 +++++++++++++++++++++++++++++++
- 5 files changed, 126 insertions(+)
+Measuring digest lists gives the following benefits:
+
+- boot time reduction
+  For a minimal Linux installation with 1400 measurements, the boot time
+  decreases from 1 minute 30 seconds to 15 seconds, after loading to IMA
+  the digest of all files packaged by the distribution (32000). The new
+  list contains 92 entries. Without IMA, the boot time is 8.5 seconds.
+
+- lower network and CPU requirements for remote attestation
+  With the IMA optimization, both the measurement and digest lists
+  must be verified for a complete evaluation. However, since the lists
+  are fixed, they could be sent to and checked by the verifier only once.
+  Then, during a remote attestation, the only remaining task is to verify
+  the short measurement list.
+
+- signature-based remote attestation
+  Digest list signature can be used as a proof of the provenance for the
+  files whose digest is in the list. Then, if verifiers trust the signer
+  and only check provenance, remote attestation verification would simply
+  consist on checking digest lists signatures and that the measurement
+  list only contain list metadata digests (reference measurement databases
+  would be no longer required). An example of a signed digest list,
+  that can be parsed with this patch set, is the RPM package header.
+
+Digest lists are loaded in two stages by IMA through the new securityfs
+interface called 'digest_lists'. Users supply metadata, for the digest
+lists they want to load: path, format, digest, signature and algorithm
+of the digest.
+
+Then, after the metadata digest is added to the measurement list, IMA
+reads the digest lists at the path specified and loads the digests in
+a hash table (digest lists are not measured, since their digest is already
+included in the metadata). With metadata measurement instead of digest list
+measurement, it is possible to avoid a performance reduction that would
+occur by measuring many digest lists (e.g. RPM headers) individually.
+If, alternatively, digest lists are loaded together, their signature
+cannot be verified.
+
+Lastly, when a file is accessed, IMA searches the calculated digest in
+the hash table. Only if the digest is not found a new entry is added
+to the measurement list.
+
+
+Roberto Sassu (12):
+  ima: generalize ima_read_policy()
+  ima: generalize ima_write_policy()
+  ima: generalize policy file operations
+  ima: use ima_show_htable_value to show hash table data
+  ima: add functions to manage digest lists
+  ima: added parser of digest lists metadata
+  ima: added parser for compact digest list
+  ima: added parser for RPM data type
+  ima: introduce securityfs interfaces for digest lists
+  ima: disable digest lookup if digest lists are not measured
+  ima: don't report measurements if digests are included in the loaded
+    lists
+  ima: added Documentation/security/IMA-digest-lists.txt
+
+ Documentation/security/IMA-digest-lists.txt | 150 +++++++++++++++++
+ include/linux/fs.h                          |   1 +
+ security/integrity/ima/Kconfig              |  11 ++
+ security/integrity/ima/Makefile             |   1 +
+ security/integrity/ima/ima.h                |  17 ++
+ security/integrity/ima/ima_digest_list.c    | 247 ++++++++++++++++++++++++++++
+ security/integrity/ima/ima_fs.c             | 178 ++++++++++++--------
+ security/integrity/ima/ima_main.c           |  23 ++-
+ security/integrity/ima/ima_policy.c         |   1 +
+ security/integrity/ima/ima_queue.c          |  39 +++++
+ 10 files changed, 602 insertions(+), 66 deletions(-)
+ create mode 100644 Documentation/security/IMA-digest-lists.txt
  create mode 100644 security/integrity/ima/ima_digest_list.c
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6e1fd5d..2eb6e7c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2751,6 +2751,7 @@ extern int do_pipe_flags(int *, int);
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
- 	id(POLICY, security-policy)		\
-+	id(DIGEST_LIST, security-digest-list)	\
- 	id(MAX_ID, )
- 
- #define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 35ef693..8965dcc 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -227,3 +227,14 @@ config IMA_APPRAISE_SIGNED_INIT
- 	default n
- 	help
- 	   This option requires user-space init to be signed.
-+
-+config IMA_DIGEST_LIST
-+	bool "Measure files depending on uploaded digest lists"
-+	depends on IMA
-+	default n
-+	help
-+	   This option allows users to load digest lists. If a measured
-+	   file has the same digest of one from loaded lists, IMA will
-+	   not create a new measurement entry. A measurement entry will
-+	   be created only when digest lists are loaded (this entry
-+	   contains the digest of digest lists metadata).
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index 29f198b..00dbe3a 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -9,4 +9,5 @@ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
- 	 ima_policy.o ima_template.o ima_template_lib.o
- ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
- ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
-+ima-$(CONFIG_IMA_DIGEST_LIST) += ima_digest_list.o
- obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index a0c6808..77dd4d0 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -157,6 +157,14 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry);
- int ima_restore_measurement_list(loff_t bufsize, void *buf);
- struct ima_digest *ima_lookup_loaded_digest(u8 *digest);
- int ima_add_digest_data_entry(u8 *digest);
-+#ifdef CONFIG_IMA_DIGEST_LIST
-+ssize_t ima_parse_digest_list_metadata(loff_t size, void *buf);
-+#else
-+static inline ssize_t ima_parse_digest_list_metadata(loff_t size, void *buf)
-+{
-+	return -ENOTSUP;
-+}
-+#endif
- int ima_measurements_show(struct seq_file *m, void *v);
- unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
-diff --git a/security/integrity/ima/ima_digest_list.c b/security/integrity/ima/ima_digest_list.c
-new file mode 100644
-index 0000000..3e1ff69b
---- /dev/null
-+++ b/security/integrity/ima/ima_digest_list.c
-@@ -0,0 +1,105 @@
-+/*
-+ * Copyright (C) 2017 Huawei Technologies Co. Ltd.
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation, version 2 of the
-+ * License.
-+ *
-+ * File: ima_digest_list.c
-+ *      Functions to manage digest lists.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/vmalloc.h>
-+
-+#include "ima.h"
-+#include "ima_template_lib.h"
-+
-+enum digest_metadata_fields {DATA_ALGO, DATA_DIGEST, DATA_SIGNATURE,
-+			     DATA_FILE_PATH, DATA_REF_ID, DATA_TYPE,
-+			     DATA__LAST};
-+
-+static int ima_parse_digest_list_data(struct ima_field_data *data)
-+{
-+	void *digest_list;
-+	loff_t digest_list_size;
-+	u16 data_algo = le16_to_cpu(*(u16 *)data[DATA_ALGO].data);
-+	u16 data_type = le16_to_cpu(*(u16 *)data[DATA_TYPE].data);
-+	int ret;
-+
-+	if (data_algo != ima_hash_algo) {
-+		pr_err("Incompatible digest algorithm, expected %s\n",
-+		       hash_algo_name[ima_hash_algo]);
-+		return -EINVAL;
-+	}
-+
-+	ret = kernel_read_file_from_path(data[DATA_FILE_PATH].data,
-+					 &digest_list, &digest_list_size,
-+					 0, READING_DIGEST_LIST);
-+	if (ret < 0) {
-+		pr_err("Unable to open file: %s (%d)",
-+		       data[DATA_FILE_PATH].data, ret);
-+		return ret;
-+	}
-+
-+	switch (data_type) {
-+	default:
-+		pr_err("Parser for data type %d not implemented\n", data_type);
-+		ret = -EINVAL;
-+	}
-+
-+	if (ret < 0) {
-+		pr_err("Error parsing file: %s (%d)\n",
-+		       data[DATA_FILE_PATH].data, ret);
-+		return ret;
-+	}
-+
-+	vfree(digest_list);
-+	return ret;
-+}
-+
-+ssize_t ima_parse_digest_list_metadata(loff_t size, void *buf)
-+{
-+	struct ima_field_data entry;
-+
-+	struct ima_field_data entry_data[DATA__LAST] = {
-+		[DATA_ALGO] = {.len = sizeof(u16)},
-+		[DATA_TYPE] = {.len = sizeof(u16)},
-+	};
-+
-+	DECLARE_BITMAP(data_mask, DATA__LAST);
-+	void *bufp = buf, *bufendp = buf + size;
-+	int ret;
-+
-+	bitmap_zero(data_mask, DATA__LAST);
-+	bitmap_set(data_mask, DATA_ALGO, 1);
-+	bitmap_set(data_mask, DATA_TYPE, 1);
-+
-+	ret = ima_parse_buf(bufp, bufendp, &bufp, 1, &entry, NULL, NULL,
-+			    ENFORCE_FIELDS, "metadata list entry");
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ima_parse_buf(entry.data, entry.data + entry.len, NULL,
-+			    DATA__LAST, entry_data, NULL, data_mask,
-+			    ENFORCE_FIELDS | ENFORCE_BUFEND,
-+			    "metadata entry data");
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = ima_add_digest_data_entry(entry_data[DATA_DIGEST].data);
-+	if (ret < 0) {
-+		if (ret == -EEXIST)
-+			ret = 0;
-+
-+		goto out;
-+	}
-+
-+	ret = ima_parse_digest_list_data(entry_data);
-+out:
-+	return ret < 0 ? ret : bufp - buf;
-+}
 -- 
 2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
