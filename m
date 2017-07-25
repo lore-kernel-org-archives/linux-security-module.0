@@ -1,145 +1,86 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 25 Jul 2017 17:44:19 +0200
-Subject: [PATCH 08/12] ima: added parser for RPM data type
+Date: Tue, 25 Jul 2017 17:44:20 +0200
+Subject: [PATCH 09/12] ima: introduce securityfs interfaces for digest lists
 In-Reply-To: <20170725154423.24845-1-roberto.sassu@huawei.com>
 References: <20170725154423.24845-1-roberto.sassu@huawei.com>
-Message-ID: <20170725154423.24845-9-roberto.sassu@huawei.com>
+Message-ID: <20170725154423.24845-10-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch introduces a parser for RPM packages. It extracts the digests
-from the RPMTAG_FILEDIGESTS header section and converts them to binary data
-before adding them to the hash table.
+This patch introduces the file 'digest_lists' in the securityfs
+filesystem, to load digest lists metadata. IMA will parse the metadata
+and loads the digest lists from the path provided.
 
-The advantage of this data type is that verifiers can determine who
-produced that data, as headers are signed by Linux distributions vendors.
-RPM headers signatures can be provided as digest list metadata.
+It also introduces 'digests_count', to show the number of digests
+stored in the digest hash table.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_digest_list.c | 84 +++++++++++++++++++++++++++++++-
- 1 file changed, 83 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_fs.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/security/integrity/ima/ima_digest_list.c b/security/integrity/ima/ima_digest_list.c
-index c1ef79a..11ee77e 100644
---- a/security/integrity/ima/ima_digest_list.c
-+++ b/security/integrity/ima/ima_digest_list.c
-@@ -19,11 +19,13 @@
- #include "ima.h"
- #include "ima_template_lib.h"
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ad3d674..08174c1 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -34,11 +34,15 @@ static struct dentry *ascii_runtime_measurements;
+ static struct dentry *runtime_measurements_count;
+ static struct dentry *violations;
+ static struct dentry *ima_policy;
++static struct dentry *digest_lists;
++static struct dentry *digests_count;
  
-+#define RPMTAG_FILEDIGESTS 1035
-+
- enum digest_metadata_fields {DATA_ALGO, DATA_DIGEST, DATA_SIGNATURE,
- 			     DATA_FILE_PATH, DATA_REF_ID, DATA_TYPE,
- 			     DATA__LAST};
- 
--enum digest_data_types {DATA_TYPE_COMPACT_LIST};
-+enum digest_data_types {DATA_TYPE_COMPACT_LIST, DATA_TYPE_RPM};
- 
- enum compact_list_entry_ids {COMPACT_LIST_ID_DIGEST};
- 
-@@ -33,6 +35,20 @@ struct compact_list_hdr {
- 	u32 datalen;
- } __packed;
- 
-+struct rpm_hdr {
-+	u32 magic;
-+	u32 reserved;
-+	u32 tags;
-+	u32 datasize;
-+} __packed;
-+
-+struct rpm_entryinfo {
-+	int32_t tag;
-+	u32 type;
-+	int32_t offset;
-+	u32 count;
-+} __packed;
-+
- static int ima_parse_compact_list(loff_t size, void *buf)
+ static enum kernel_read_file_id ima_get_file_id(struct dentry *dentry)
  {
- 	void *bufp = buf, *bufendp = buf + size;
-@@ -80,6 +96,69 @@ static int ima_parse_compact_list(loff_t size, void *buf)
- 	return 0;
+ 	if (dentry == ima_policy)
+ 		return READING_POLICY;
++	else if (dentry == digest_lists)
++		return READING_DIGEST_LIST;
+ 
+ 	return READING_UNKNOWN;
  }
+@@ -66,6 +70,8 @@ static ssize_t ima_show_htable_value(struct file *filp, char __user *buf,
+ 		val = &ima_htable.violations;
+ 	else if (filp->f_path.dentry == runtime_measurements_count)
+ 		val = &ima_htable.len;
++	else if (filp->f_path.dentry == digests_count)
++		val = &ima_digests_htable.len;
  
-+static int ima_parse_rpm(loff_t size, void *buf)
-+{
-+	void *bufp = buf, *bufendp = buf + size;
-+	struct rpm_hdr *hdr = bufp;
-+	u32 tags = be32_to_cpu(hdr->tags);
-+	struct rpm_entryinfo *entry;
-+	void *datap = bufp + sizeof(*hdr) + tags * sizeof(struct rpm_entryinfo);
-+	int digest_len = hash_digest_size[ima_hash_algo];
-+	u8 digest[digest_len];
-+	int ret, i, j;
+ 	len = scnprintf(tmpbuf, TMPBUFLEN, "%li\n", atomic_long_read(val));
+ 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
+@@ -301,6 +307,9 @@ static ssize_t ima_read_file(char *path, enum kernel_read_file_id file_id)
+ 
+ 			pr_debug("rule: %s\n", p);
+ 			rc = ima_parse_add_rule(p);
++		} else if (file_id == READING_DIGEST_LIST) {
++			rc = ima_parse_digest_list_metadata(size, datap);
++			datap += rc;
+ 		}
+ 		if (rc < 0)
+ 			break;
+@@ -510,8 +519,22 @@ int __init ima_fs_init(void)
+ 	if (IS_ERR(ima_policy))
+ 		goto out;
+ 
++#ifdef CONFIG_IMA_DIGEST_LIST
++	digest_lists = securityfs_create_file("digest_lists", S_IWUSR, ima_dir,
++					      NULL, &ima_data_upload_ops);
++	if (IS_ERR(digest_lists))
++		goto out;
 +
-+	const unsigned char rpm_header_magic[8] = {
-+		0x8e, 0xad, 0xe8, 0x01, 0x00, 0x00, 0x00, 0x00
-+	};
-+
-+	if (size < sizeof(*hdr)) {
-+		pr_err("Missing RPM header\n");
-+		return -EINVAL;
-+	}
-+
-+	if (memcmp(bufp, rpm_header_magic, sizeof(rpm_header_magic))) {
-+		pr_err("Invalid RPM header\n");
-+		return -EINVAL;
-+	}
-+
-+	bufp += sizeof(*hdr);
-+
-+	for (i = 0; i < tags && (bufp + sizeof(*entry)) <= bufendp;
-+	     i++, bufp += sizeof(*entry)) {
-+		entry = bufp;
-+
-+		if (be32_to_cpu(entry->tag) != RPMTAG_FILEDIGESTS)
-+			continue;
-+
-+		datap += be32_to_cpu(entry->offset);
-+
-+		for (j = 0; j < be32_to_cpu(entry->count) &&
-+		     datap < bufendp; j++) {
-+			if (strlen(datap) == 0) {
-+				datap++;
-+				continue;
-+			}
-+
-+			if (datap + digest_len * 2 + 1 > bufendp) {
-+				pr_err("RPM header read at invalid offset\n");
-+				return -EINVAL;
-+			}
-+
-+			hex2bin(digest, datap, digest_len);
-+
-+			ret = ima_add_digest_data_entry(digest);
-+			if (ret < 0 && ret != -EEXIST)
-+				return ret;
-+
-+			datap += digest_len * 2 + 1;
-+		}
-+
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
- static int ima_parse_digest_list_data(struct ima_field_data *data)
- {
- 	void *digest_list;
-@@ -107,6 +186,9 @@ static int ima_parse_digest_list_data(struct ima_field_data *data)
- 	case DATA_TYPE_COMPACT_LIST:
- 		ret = ima_parse_compact_list(digest_list_size, digest_list);
- 		break;
-+	case DATA_TYPE_RPM:
-+		ret = ima_parse_rpm(digest_list_size, digest_list);
-+		break;
- 	default:
- 		pr_err("Parser for data type %d not implemented\n", data_type);
- 		ret = -EINVAL;
++	digests_count = securityfs_create_file("digests_count",
++					       S_IRUSR | S_IRGRP, ima_dir,
++					       NULL, &ima_htable_value_ops);
++	if (IS_ERR(digests_count))
++		goto out;
++#endif
+ 	return 0;
+ out:
++	securityfs_remove(digests_count);
++	securityfs_remove(digest_lists);
+ 	securityfs_remove(violations);
+ 	securityfs_remove(runtime_measurements_count);
+ 	securityfs_remove(ascii_runtime_measurements);
 -- 
 2.9.3
 
