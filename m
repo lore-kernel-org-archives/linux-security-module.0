@@ -1,73 +1,131 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 25 Jul 2017 17:44:12 +0200
-Subject: [PATCH 01/12] ima: generalize ima_read_policy()
+Date: Tue, 25 Jul 2017 17:44:14 +0200
+Subject: [PATCH 03/12] ima: generalize policy file operations
 In-Reply-To: <20170725154423.24845-1-roberto.sassu@huawei.com>
 References: <20170725154423.24845-1-roberto.sassu@huawei.com>
-Message-ID: <20170725154423.24845-2-roberto.sassu@huawei.com>
+Message-ID: <20170725154423.24845-4-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Rename ima_read_policy() to ima_read_file(), and add file_id as new
-parameter. If file_id is equal to READING_POLICY, ima_read_file()
-behavior is the same of that without the patch.
+This patch renames ima_open_policy() and ima_release_policy() respectively
+to ima_open_data_upload() and ima_release_data_upload(). They will be used
+to implement file operations for interfaces allowing to upload and read
+provided data.
 
-ima_read_file() will be used to read digest lists, to avoid reporting
-measurements when the file digest is known.
+Also, the new flag IMA_POLICY_BUSY has been defined specifically for
+the policy, as it might not be cleared at file release. This would prevent
+userspace applications from uploading files after a policy has been loaded.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_fs.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ security/integrity/ima/ima_fs.c | 46 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 32 insertions(+), 14 deletions(-)
 
 diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ad491c5..058d3c1 100644
+index e375206..f4199f2 100644
 --- a/security/integrity/ima/ima_fs.c
 +++ b/security/integrity/ima/ima_fs.c
-@@ -272,7 +272,7 @@ static const struct file_operations ima_ascii_measurements_ops = {
- 	.release = seq_release,
+@@ -384,6 +384,7 @@ static ssize_t ima_write_data(struct file *file, const char __user *buf,
+ }
+ 
+ enum ima_fs_flags {
++	IMA_POLICY_BUSY,
+ 	IMA_FS_BUSY,
  };
  
--static ssize_t ima_read_policy(char *path)
-+static ssize_t ima_read_file(char *path, enum kernel_read_file_id file_id)
+@@ -399,22 +400,33 @@ static const struct seq_operations ima_policy_seqops = {
+ #endif
+ 
+ /*
+- * ima_open_policy: sequentialize access to the policy file
++ * ima_open_data_upload: sequentialize access to the data upload interface
+  */
+-static int ima_open_policy(struct inode *inode, struct file *filp)
++static int ima_open_data_upload(struct inode *inode, struct file *filp)
  {
- 	void *data;
- 	char *datap;
-@@ -285,16 +285,22 @@ static ssize_t ima_read_policy(char *path)
- 	datap = path;
- 	strsep(&datap, "\n");
- 
--	rc = kernel_read_file_from_path(path, &data, &size, 0, READING_POLICY);
-+	rc = kernel_read_file_from_path(path, &data, &size, 0, file_id);
- 	if (rc < 0) {
- 		pr_err("Unable to open file: %s (%d)", path, rc);
- 		return rc;
- 	}
- 
- 	datap = data;
--	while (size > 0 && (p = strsep(&datap, "\n"))) {
--		pr_debug("rule: %s\n", p);
--		rc = ima_parse_add_rule(p);
-+	while (size > 0) {
-+		if (file_id == READING_POLICY) {
-+			p = strsep(&datap, "\n");
-+			if (p == NULL)
-+				break;
++	enum kernel_read_file_id file_id = ima_get_file_id(filp->f_path.dentry);
++	const struct seq_operations *seq_ops = NULL;
++	enum ima_fs_flags flag = IMA_FS_BUSY;
++	bool read_allowed = false;
 +
-+			pr_debug("rule: %s\n", p);
-+			rc = ima_parse_add_rule(p);
-+		}
- 		if (rc < 0)
- 			break;
- 		size -= rc;
-@@ -334,7 +340,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
- 		goto out_free;
++	if (file_id == READING_POLICY) {
++		flag = IMA_POLICY_BUSY;
++#ifdef	CONFIG_IMA_READ_POLICY
++		read_allowed = true;
++		seq_ops = &ima_policy_seqops;
++#endif
++	}
++
+ 	if (!(filp->f_flags & O_WRONLY)) {
+-#ifndef	CONFIG_IMA_READ_POLICY
+-		return -EACCES;
+-#else
++		if (!read_allowed)
++			return -EACCES;
+ 		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
+ 			return -EACCES;
+ 		if (!capable(CAP_SYS_ADMIN))
+ 			return -EPERM;
+-		return seq_open(filp, &ima_policy_seqops);
+-#endif
++		return seq_open(filp, seq_ops);
+ 	}
+-	if (test_and_set_bit(IMA_FS_BUSY, &ima_fs_flags))
++	if (test_and_set_bit(flag, &ima_fs_flags))
+ 		return -EBUSY;
+ 	return 0;
+ }
+@@ -426,13 +438,19 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
+  * point to the new policy rules, and remove the securityfs policy file,
+  * assuming a valid policy.
+  */
+-static int ima_release_policy(struct inode *inode, struct file *file)
++static int ima_release_data_upload(struct inode *inode, struct file *file)
+ {
++	enum kernel_read_file_id file_id = ima_get_file_id(file->f_path.dentry);
+ 	const char *cause = valid_policy ? "completed" : "failed";
  
- 	if (data[0] == '/') {
--		result = ima_read_policy(data);
-+		result = ima_read_file(data, READING_POLICY);
- 	} else if (ima_appraise & IMA_APPRAISE_POLICY) {
- 		pr_err("IMA: signed policy file (specified as an absolute pathname) required\n");
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+ 	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
+ 		return seq_release(inode, file);
+ 
++	if (file_id != READING_POLICY) {
++		clear_bit(IMA_FS_BUSY, &ima_fs_flags);
++		return 0;
++	}
++
+ 	if (valid_policy && ima_check_policy() < 0) {
+ 		cause = "failed";
+ 		valid_policy = 0;
+@@ -454,16 +472,16 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+ 	securityfs_remove(ima_policy);
+ 	ima_policy = NULL;
+ #else
+-	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
++	clear_bit(IMA_POLICY_BUSY, &ima_fs_flags);
+ #endif
+ 	return 0;
+ }
+ 
+-static const struct file_operations ima_measure_policy_ops = {
+-	.open = ima_open_policy,
++static const struct file_operations ima_data_upload_ops = {
++	.open = ima_open_data_upload,
+ 	.write = ima_write_data,
+ 	.read = seq_read,
+-	.release = ima_release_policy,
++	.release = ima_release_data_upload,
+ 	.llseek = generic_file_llseek,
+ };
+ 
+@@ -502,7 +520,7 @@ int __init ima_fs_init(void)
+ 
+ 	ima_policy = securityfs_create_file("policy", POLICY_FILE_FLAGS,
+ 					    ima_dir, NULL,
+-					    &ima_measure_policy_ops);
++					    &ima_data_upload_ops);
+ 	if (IS_ERR(ima_policy))
+ 		goto out;
+ 
 -- 
 2.9.3
 
