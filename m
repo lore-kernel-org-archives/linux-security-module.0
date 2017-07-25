@@ -1,155 +1,77 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue, 25 Jul 2017 16:25:08 -0400
-Subject: [RFC PATCH 2/5] ima: Add ns_status for storing namespaced iint
-	data
-In-Reply-To: <1501013725.27413.27.camel@linux.vnet.ibm.com>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Tue, 25 Jul 2017 13:31:35 -0700
+Subject: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
+In-Reply-To: <1501012082.27413.17.camel@linux.vnet.ibm.com>
 References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
-	<20170720225033.21298-3-mkayaalp@linux.vnet.ibm.com>
-	<20170725194315.GA2397@mail.hallyn.com>
-	<1501013725.27413.27.camel@linux.vnet.ibm.com>
-Message-ID: <93604a2b-cee3-7506-bf8d-ebcddac64e82@linux.vnet.ibm.com>
+	<20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+	<20170725175317.GA727@mail.hallyn.com>
+	<1501008554.3689.30.camel@HansenPartnership.com>
+	<20170725190406.GA1883@mail.hallyn.com>
+	<1501009739.3689.33.camel@HansenPartnership.com>
+	<1501012082.27413.17.camel@linux.vnet.ibm.com>
+Message-ID: <1501014695.3689.41.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 07/25/2017 04:15 PM, Mimi Zohar wrote:
-> On Tue, 2017-07-25 at 14:43 -0500, Serge E. Hallyn wrote:
->> ...
->>> +static void free_ns_status_cache(struct ima_namespace *ns)
->>> +{
->>> +	struct ns_status *status, *next;
->>> +
->>> +	write_lock(&ns->ns_status_lock);
->>> +	rbtree_postorder_for_each_entry_safe(status, next,
->>> +					     &ns->ns_status_tree, rb_node)
->>> +		kmem_cache_free(ns->ns_status_cache, status);
->>> +	ns->ns_status_tree = RB_ROOT;
->>> +	write_unlock(&ns->ns_status_lock);
->>> +	kmem_cache_destroy(ns->ns_status_cache);
->>> +}
->>> +
->>>   static void destroy_ima_ns(struct ima_namespace *ns)
->>>   {
->>>   	put_user_ns(ns->user_ns);
->>>   	ns_free_inum(&ns->ns);
->>> +	free_ns_status_cache(ns);
->>>   	kfree(ns);
->>>   }
->>>   
->>> @@ -181,3 +198,106 @@ struct ima_namespace init_ima_ns = {
->>>   	.parent = NULL,
->>>   };
->>>   EXPORT_SYMBOL(init_ima_ns);
->>> +
->>> +/*
->>> + * __ima_ns_status_find - return the ns_status associated with an inode
->>> + */
->>> +static struct ns_status *__ima_ns_status_find(struct ima_namespace *ns,
->>> +					      struct inode *inode)
->>> +{
->>> +	struct ns_status *status;
->>> +	struct rb_node *n = ns->ns_status_tree.rb_node;
->>> +
->>> +	while (n) {
->>> +		status = rb_entry(n, struct ns_status, rb_node);
->>> +
->>> +		if (inode < status->inode)
->>> +			n = n->rb_left;
->>> +		else if (inode->i_ino > status->i_ino)
->>> +			n = n->rb_right;
->>> +		else
->>> +			break;
->>> +	}
->>> +	if (!n)
->>> +		return NULL;
->>> +
->>> +	return status;
->>> +}
->>> +
->>> +/*
->>> + * ima_ns_status_find - return the ns_status associated with an inode
->>> + */
->>> +static struct ns_status *ima_ns_status_find(struct ima_namespace *ns,
->>> +					    struct inode *inode)
->>> +{
->>> +	struct ns_status *status;
->>> +
->>> +	read_lock(&ns->ns_status_lock);
->>> +	status = __ima_ns_status_find(ns, inode);
->>> +	read_unlock(&ns->ns_status_lock);
->>> +
->>> +	return status;
->>> +}
->> ...
->>> +
->>> +struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
->>> +				    struct inode *inode)
->>> +{
->>> +	struct ns_status *status;
->>> +	int skip_insert = 0;
->>> +
->>> +	status = ima_ns_status_find(ns, inode);
->>> +	if (status) {
->>> +		/*
->>> +		 * Unlike integrity_iint_cache we are not free'ing the
->>> +		 * ns_status data when the inode is free'd. So, in addition to
->>> +		 * checking the inode pointer, we need to make sure the
->>> +		 * (i_generation, i_ino) pair matches as well. In the future
->>> +		 * we might want to add support for lazily walking the rbtree
->>> +		 * to clean it up.
->>> +		 */
->>> +		if (inode->i_ino == status->i_ino &&
->>> +		    inode->i_generation == status->i_generation)
->>> +			return status;
->>> +
->>> +		/* Same inode number is reused, overwrite the ns_status */
->>> +		skip_insert = 1;
->>> +	} else {
->>> +		status = kmem_cache_alloc(ns->ns_status_cache, GFP_NOFS);
->>> +		if (!status)
->>> +			return ERR_PTR(-ENOMEM);
->>> +	}
->> What prevents the status from being freed between the read_lock
->> in ima_ns_status_find() and the write_lock in the following line?
->>
->> IIUC it's that ns is always current's ima_ns, which will pin the ns
->> and cause no statuses to be freed.  But then the ns should probably
->> not be passed in here?  Or a comment should say that ns must be
->> pinned?
->>
->> Just trying to make sure I understand the locking.
-> iint's are only freed after the last reference to the inode is deleted
-> in __fput().  Refer to ima_file_free().  ns_status is a bit different
-> in that they are freed on namespace cleanup.
+On Tue, 2017-07-25 at 15:48 -0400, Mimi Zohar wrote:
+> On Tue, 2017-07-25 at 12:08 -0700, James Bottomley wrote:
+> > 
+> > On Tue, 2017-07-25 at 14:04 -0500, Serge E. Hallyn wrote:
+> > > 
+> > > On Tue, Jul 25, 2017 at 11:49:14AM -0700, James Bottomley wrote:
+> > > > 
+> > > > 
+> > > > On Tue, 2017-07-25 at 12:53 -0500, Serge E. Hallyn wrote:
+[...]
+> > > > the latter, it does seem that this should be a property of
+> > > > either the mount or user ns rather than its own separate ns. ?I
+> > > > could see a use where even a container might want multiple ima
+> > > > keyrings within the container (say containerised apache service
+> > > > with multiple tenants), so instinct tells me that mount ns is
+> > > > the correct granularity for this.
+> > > 
+> > > I wonder whether we could use echo 1 >
+> > > /sys/kernel/security/ima/newns
+> > > as the trigger for requesting a new ima ns on the next
+> > > clone(CLONE_NEWNS).
+> > 
+> > I could go with that, but what about the trigger being installing
+> > or updating the keyring? ?That's the only operation that needs
+> > namespace separation, so on mount ns clone, you get a pointer to
+> > the old ima_ns until you do something that requires a new key,
+> > which then triggers the copy of the namespace and installing it?
+> 
+> It isn't just the keyrings that need to be namespaced, but the
+> measurement list and policy as well.
 
-It should be possible to move the write_lock() above the
+OK, so trigger to do a just in time copy would be new key or new
+policy. ?The measurement list is basically just a has of a file taken
+at a policy point. ?Presumably it doesn't change if we install a new
+policy or key, so it sounds like it should be tied to the underlying
+mount point? ?I'm thinking if we set up a hundred mount ns each
+pointing to /var/container, we don't want /var/container/bin/something
+to have 100 separate measurements each with the same hash.
 
-status = ima_ns_status_find(ns, inode);
+> IMA-measurement, IMA-appraisal and IMA-audit are all policy based.
+> 
+> As soon as the namespace starts, measurements should be added to the
+> namespace specific measurement list, not it's parent.
+
+Would the measurement in a child namespace yield a different
+measurement in the parent? ?I'm thinking not, because a measurement is
+just a hash. ?Now if the signature of the hash in the xattr needs a
+different key, obviously this differs, but the expensive part
+(computing the hash) shouldn't change.
+
+James
 
 
-and instead call __ima_ns_status_find() with the write_lock() held.
-
-     Stefan
-
-
->
 > Mimi
->
->>> +	write_lock(&ns->ns_status_lock);
->>> +
->>> +	if (!skip_insert)
->>> +		insert_ns_status(ns, inode, status);
->>> +
->>> +	status->inode = inode;
->>> +	status->i_ino = inode->i_ino;
->>> +	status->i_generation = inode->i_generation;
->>> +	status->flags = 0UL;
->>> +	write_unlock(&ns->ns_status_lock);
->>> +
->>> +	return status;
->>> +}
->>> -- 
->>> 2.9.
-
+> 
+> _______________________________________________
+> Containers mailing list
+> Containers at lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/containers
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
