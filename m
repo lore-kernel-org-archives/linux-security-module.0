@@ -1,30 +1,77 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 25 Jul 2017 10:57:35 +1000 (AEST)
-Subject: [PATCH] tomoyo: Update URLs in
-	Documentation/admin-guide/LSM/tomoyo.rst
-In-Reply-To: <1500375593-4537-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1500375593-4537-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.LRH.2.20.1707251057210.17168@namei.org>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Tue, 25 Jul 2017 17:44:12 +0200
+Subject: [PATCH 01/12] ima: generalize ima_read_policy()
+In-Reply-To: <20170725154423.24845-1-roberto.sassu@huawei.com>
+References: <20170725154423.24845-1-roberto.sassu@huawei.com>
+Message-ID: <20170725154423.24845-2-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 18 Jul 2017, Tetsuo Handa wrote:
+Rename ima_read_policy() to ima_read_file(), and add file_id as new
+parameter. If file_id is equal to READING_POLICY, ima_read_file()
+behavior is the same of that without the patch.
 
-> Fix outdated links.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
->  Documentation/admin-guide/LSM/tomoyo.rst | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+ima_read_file() will be used to read digest lists, to avoid reporting
+measurements when the file digest is known.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_fs.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ad491c5..058d3c1 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -272,7 +272,7 @@ static const struct file_operations ima_ascii_measurements_ops = {
+ 	.release = seq_release,
+ };
+ 
+-static ssize_t ima_read_policy(char *path)
++static ssize_t ima_read_file(char *path, enum kernel_read_file_id file_id)
+ {
+ 	void *data;
+ 	char *datap;
+@@ -285,16 +285,22 @@ static ssize_t ima_read_policy(char *path)
+ 	datap = path;
+ 	strsep(&datap, "\n");
+ 
+-	rc = kernel_read_file_from_path(path, &data, &size, 0, READING_POLICY);
++	rc = kernel_read_file_from_path(path, &data, &size, 0, file_id);
+ 	if (rc < 0) {
+ 		pr_err("Unable to open file: %s (%d)", path, rc);
+ 		return rc;
+ 	}
+ 
+ 	datap = data;
+-	while (size > 0 && (p = strsep(&datap, "\n"))) {
+-		pr_debug("rule: %s\n", p);
+-		rc = ima_parse_add_rule(p);
++	while (size > 0) {
++		if (file_id == READING_POLICY) {
++			p = strsep(&datap, "\n");
++			if (p == NULL)
++				break;
++
++			pr_debug("rule: %s\n", p);
++			rc = ima_parse_add_rule(p);
++		}
+ 		if (rc < 0)
+ 			break;
+ 		size -= rc;
+@@ -334,7 +340,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 		goto out_free;
+ 
+ 	if (data[0] == '/') {
+-		result = ima_read_policy(data);
++		result = ima_read_file(data, READING_POLICY);
+ 	} else if (ima_appraise & IMA_APPRAISE_POLICY) {
+ 		pr_err("IMA: signed policy file (specified as an absolute pathname) required\n");
+ 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
 -- 
-James Morris
-<jmorris@namei.org>
+2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
