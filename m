@@ -1,49 +1,32 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 25 Jul 2017 17:44:22 +0200
-Subject: [PATCH 11/12] ima: don't report measurements if digests are included
-	in the loaded lists
-In-Reply-To: <20170725154423.24845-1-roberto.sassu@huawei.com>
-References: <20170725154423.24845-1-roberto.sassu@huawei.com>
-Message-ID: <20170725154423.24845-12-roberto.sassu@huawei.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Tue, 25 Jul 2017 12:53:17 -0500
+Subject: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
+In-Reply-To: <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
+	<20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+Message-ID: <20170725175317.GA727@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Don't report measurements if the file digest has been included in
-an uploaded digest list.
+On Thu, Jul 20, 2017 at 06:50:29PM -0400, Mehmet Kayaalp wrote:
+> From: Yuqiong Sun <suny@us.ibm.com>
+> 
+> Add new CONFIG_IMA_NS config option.  Let clone() create a new IMA
+> namespace upon CLONE_NEWNS flag. Add ima_ns data structure in nsproxy.
+> ima_ns is allocated and freed upon IMA namespace creation and exit.
+> Currently, the ima_ns contains no useful IMA data but only a dummy
+> interface. This patch creates the framework for namespacing the different
+> aspects of IMA (eg. IMA-audit, IMA-measurement, IMA-appraisal).
+> 
+> Signed-off-by: Yuqiong Sun <suny@us.ibm.com>
+> 
+> Changelog:
+> * Use CLONE_NEWNS instead of a new CLONE_NEWIMA flag
 
-The advantage of this solution is that the boot time overhead, when
-a TPM is available, is very small because a PCR is extended only
-for unknown files. The disadvantage is that verifiers do not know
-anymore which and when files are accessed (they must assume that
-the worst case happened, i.e. all files have been accessed).
+Hi,
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c329549..e289b7c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -253,6 +253,14 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 		goto out_digsig;
- 	}
- 
-+	if (!ima_disable_digest_check) {
-+		if (ima_lookup_loaded_digest(iint->ima_hash->digest)) {
-+			action ^= IMA_MEASURE;
-+			iint->flags |= IMA_MEASURED;
-+			iint->measured_pcrs |= (0x1 << pcr);
-+		}
-+	}
-+
- 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
- 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
- 
--- 
-2.9.3
-
+So this means that every mount namespace clone will clone a new IMA
+namespace.  Is that really ok?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
