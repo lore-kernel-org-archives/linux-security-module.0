@@ -1,177 +1,46 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 25 Jul 2017 17:44:23 +0200
-Subject: [PATCH 12/12] ima: added Documentation/security/IMA-digest-lists.txt
+Date: Tue, 25 Jul 2017 17:44:22 +0200
+Subject: [PATCH 11/12] ima: don't report measurements if digests are included
+	in the loaded lists
 In-Reply-To: <20170725154423.24845-1-roberto.sassu@huawei.com>
 References: <20170725154423.24845-1-roberto.sassu@huawei.com>
-Message-ID: <20170725154423.24845-13-roberto.sassu@huawei.com>
+Message-ID: <20170725154423.24845-12-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch adds the documentation of the new IMA feature, to load
-and measure file digest lists.
+Don't report measurements if the file digest has been included in
+an uploaded digest list.
+
+The advantage of this solution is that the boot time overhead, when
+a TPM is available, is very small because a PCR is extended only
+for unknown files. The disadvantage is that verifiers do not know
+anymore which and when files are accessed (they must assume that
+the worst case happened, i.e. all files have been accessed).
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/security/IMA-digest-lists.txt | 150 ++++++++++++++++++++++++++++
- 1 file changed, 150 insertions(+)
- create mode 100644 Documentation/security/IMA-digest-lists.txt
+ security/integrity/ima/ima_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/security/IMA-digest-lists.txt b/Documentation/security/IMA-digest-lists.txt
-new file mode 100644
-index 0000000..f9eed21
---- /dev/null
-+++ b/Documentation/security/IMA-digest-lists.txt
-@@ -0,0 +1,150 @@
-+                            File Digest Lists
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c329549..e289b7c 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -253,6 +253,14 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 		goto out_digsig;
+ 	}
+ 
++	if (!ima_disable_digest_check) {
++		if (ima_lookup_loaded_digest(iint->ima_hash->digest)) {
++			action ^= IMA_MEASURE;
++			iint->flags |= IMA_MEASURED;
++			iint->measured_pcrs |= (0x1 << pcr);
++		}
++	}
 +
-+==== INTRODUCTION ====
-+
-+IMA, for each file matching policy rules, calculates a digest, creates
-+a new entry in the measurement list and extends a TPM PCR with the digest
-+of entry data. The last step causes a noticeable performance reduction.
-+
-+Since systems likely access the same files, repeating the above tasks at
-+every boot can be avoided by replacing individual measurements of likely
-+accessed files with only one measurement of their digests: the advantage
-+is that the system performance significantly improves due to less PCR
-+extend operations; on the other hand, the information about which files
-+have exactly been accessed and in which sequence is lost.
-+
-+If this new measurement reports only good digests (e.g. those of
-+files included in a Linux distribution), and if verifiers only check
-+that a system executed good software and didn't access malicious data,
-+the disadvantages reported earlier would be acceptable.
-+
-+The Trusted Computing paradigm measure & load is still respected by IMA
-+with the proposed optimization. If a file being accessed is not in a
-+measured digest list, a measurement will be recorded as before. If it is,
-+the list has already been measured, and the verifier must assume that
-+files with digest in the list have been accessed.
-+
-+Measuring digest lists gives the following benefits:
-+
-+- boot time reduction
-+  For a minimal Linux installation with 1400 measurements, the boot time
-+  decreases from 1 minute 30 seconds to 15 seconds, after loading to IMA
-+  the digest of all files packaged by the distribution (32000). The new
-+  list contains 92 entries. Without IMA, the boot time is 8.5 seconds.
-+
-+- lower network and CPU requirements for remote attestation
-+  With the IMA optimization, both the measurement and digest lists
-+  must be verified for a complete evaluation. However, since the lists
-+  are fixed, they could be sent to and checked by the verifier only once.
-+  Then, during a remote attestation, the only remaining task is to verify
-+  the short measurement list.
-+
-+- signature-based remote attestation
-+  Digest list signature can be used as a proof of the provenance for the
-+  files whose digest is in the list. Then, if verifiers trust the signer
-+  and only check provenance, remote attestation verification would simply
-+  consist on checking digest lists signatures and that the measurement
-+  list only contain list metadata digests (reference measurement databases
-+  would be no longer required). An example of a signed digest list,
-+  that can be parsed with this patch set, is the RPM package header.
-+
-+Digest lists are loaded in two stages by IMA through the new securityfs
-+interface called 'digest_lists'. Users supply metadata, for the digest
-+lists they want to load: path, format, digest, signature and algorithm
-+of the digest.
-+
-+Then, after the metadata digest is added to the measurement list, IMA
-+reads the digest lists at the path specified and loads the digests in
-+a hash table (digest lists are not measured, since their digest is already
-+included in the metadata). With metadata measurement instead of digest list
-+measurement, it is possible to avoid a performance reduction that would
-+occur by measuring many digest lists (e.g. RPM headers) individually.
-+If, alternatively, digest lists are loaded together, their signature
-+cannot be verified.
-+
-+Lastly, when a file is accessed, IMA searches the calculated digest in
-+the hash table. Only if the digest is not found a new entry is added
-+to the measurement list.
-+
-+
-+
-+==== FORMAT ====
-+
-+The format of digest list metadata is:
-+
-+algo[2] digest_len[4] digest[digest_len]
-+        signature_len[4] signature[signature_len]
-+        path_len[4] path[path_len]
-+        ref_id_len[4] ref_id[ref_id_len]
-+        list_type_len[4] list_type[list_type_len]
-+
-+algo, list_type and _len are little endian.
-+
-+
-+algo values are defined in include/uapi/linux/hash_info.h. The algorithms
-+in the list metadata must be the same of ima_hash_algo (algorithm used
-+by IMA to calculate the file digest).
-+
-+list type values:
-+
-+0: compact digest list
-+1: RPM package header
-+
-+
-+The format of the compact digest list is:
-+
-+entry_id[2] count[4] data_len[4]
-+data[data_len]
-+[...]
-+entry_id[2] count[4] data_len[4]
-+data[data_len]
-+
-+entry_id, count and data_len are little endian.
-+
-+At the moment, entry_id can have value 0, which means that 'data' contains
-+'count' digests concatenated together. For example, a compact digest list
-+with 10 SHA256 digests will look like:
-+
-+0 10 320
-+digest1..digest10
-+
-+
-+
-+==== MEASUREMENT LIST ====
-+
-+systemd has been modified to load the path of files containing digest list
-+metadata to the new securityfs interface. Paths must be stored in
-+/etc/ima/digest-lists. If digest lists, metadata and systemd configuration
-+file are included in the initial ram disk, a typical measurement list
-+will look like:
-+
-+10 <template digest> ima-ng sha1:<digest> boot_aggregate
-+10 <template digest> ima-ng sha256:<digest> /usr/lib/systemd/systemd
-+10 <template digest> ima-ng sha256:<digest> /usr/lib64/ld-2.17.so
-+[...]
-+10 <template digest> ima-ng sha256:<digest> /etc/ima/digest-lists
-+10 <template digest> ima-ng sha256:<digest> /digests/headers
-+[...]
-+
-+systemd executable and libraries still appear in the measurement list,
-+even if they are in a digest list, because digests lists have not been
-+loaded yet.
-+
-+Then, the next measurement should be for /etc/ima/digest-lists.
-+At verification time, the file digest can be verified by calculating
-+the digest of the path of list metadata (/digests/headers). If multiple
-+metadata files are specified in /etc/ima/digest-lists, it is task of the
-+system administrator to use appropriate names, so that a verifier can
-+recognize them from the measurement list.
-+
-+The last measurement to verify is of /digests/headers. During remote
-+attestation, the content of this file should be sent to the verifier,
-+together with the digest lists (unless a reference ID is provided,
-+so that lists can be fetched from a repository).
-+
-+A verifier should check if:
-+
-+1) the digest of received metadata matches that in the measurement list
-+2) the digest of digest lists matches the digests in the list metadata
-+3a) each file digest in the digest list is acceptable
-+3b) the signature of the digest list is valid and the signer is trusted
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+ 
 -- 
 2.9.3
 
