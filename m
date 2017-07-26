@@ -1,99 +1,130 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 26 Jul 2017 09:22:50 -0400
-Subject: [PATCH v4 0/5] define new fs integrity_read method 
-Message-ID: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Wed, 26 Jul 2017 09:22:51 -0400
+Subject: [PATCH v4 1/5] ima: always measure and audit files in policy
+In-Reply-To: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1501075375-29469-2-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-With the introduction of IMA-appraisal and the need to write file
-hashes as security xattrs, IMA needed to take the global i_mutex
-lock.  process_measurement() took the iint->mutex first and then
-the i_mutex, while setxattr, chmod and chown took the locks in
-reverse order.  To resolve this potential deadlock, the iint->mutex
-was removed.
+All files matching a "measure" rule must be included in the IMA
+measurement list, even when the file hash cannot be calculated.
+Similarly, all files matching an "audit" rule must be audited, even when
+the file hash can not be calculated.
 
-Some filesystems have recently replaced their filesystem dependent
-lock with the global i_rwsem (formerly the i_mutex) to read a file.
-As a result, when IMA attempts to calculate the file hash, reading
-the file attempts to take the i_rwsem again.
+The file data hash field contained in the IMA measurement list template
+data will contain 0's instead of the actual file hash digest.
 
-To resolve this locking problem, this patch set introduces a new
-->integrity_read file operation method.  Until all filesystems
-define the new ->integrity_read method, files that were previously
-measured might not be currently measured and files that were
-previously appraised might fail to be appraised properly.
+Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Version 2 of this patch set, introduced measurement entries and
-IMA-audit messages containing file hash values containing 0's,
-instead of the actual file hash, for files which the file hash
-could not be calculated.  Like for any other file signature
-verification error, file access/execute permission will be denied,
-for files in policy that the file hash could not be calculated.
+---
+Changelog v4:
+- Based on both -EBADF and -EINVAL
+- clean up ima_collect_measurement()
 
-To override the IMA policy, allowing unverified code to be
-accessed/executed on filesystems not supported by IMA, version 2 of
-this patch set defined a new policy "action" named "dont_failsafe"
-and a new builtin policy named "fs_unsafe", which can be specified
-on the boot command line.
+ security/integrity/ima/ima_api.c  | 58 +++++++++++++++++++++++----------------
+ security/integrity/ima/ima_main.c |  4 +--
+ 2 files changed, 37 insertions(+), 25 deletions(-)
 
-The new ->integrity_read method supports opening files with O_DIRECT
-on block devices that support direct IO and are mounted with the
-"-o dax" option.  Version 4 of this patch set removes the
-"permit_direction" IMA policy option, which is no longer necessary.
-
-Change log v4:
-- define ext2/4 specific ->integrity_read functions based Jan Kara's
-review.
-- properly fail file open with O_DIRECT on filesystems not mounted
-with "-o dax".
-- remove the "permit_directio" IMA policy option.
-
-Change log v3:
-- define simple_read_iter_from_buffer
-- replace the existing efivarfs ->read method with ->read_iter method.
-- squashed other fs definitions of ->integrity_read with this patch.
-- include dont_failsafe rule when displaying policy.
-- fail attempt to add dont_failsafe rule when appending to the policy.
-- moved '---' divider before change log, as requested in review.
-
-Mimi
-
-Christoph Hellwig (1):
-  ima: use fs method to read integrity data
-
-Mimi Zohar (4):
-  ima: always measure and audit files in policy
-  ima: define "dont_failsafe" policy action rule
-  ima: define "fs_unsafe" builtin policy
-  ima: remove permit_directio policy option
-
- Documentation/ABI/testing/ima_policy            |  5 ++-
- Documentation/admin-guide/kernel-parameters.txt |  8 +++-
- fs/btrfs/file.c                                 |  1 +
- fs/efivarfs/file.c                              | 12 +++---
- fs/ext2/file.c                                  | 17 ++++++++
- fs/ext4/file.c                                  | 23 +++++++++++
- fs/f2fs/file.c                                  |  1 +
- fs/gfs2/file.c                                  |  2 +
- fs/jffs2/file.c                                 |  1 +
- fs/jfs/file.c                                   |  1 +
- fs/libfs.c                                      | 32 +++++++++++++++
- fs/nilfs2/file.c                                |  1 +
- fs/ocfs2/file.c                                 |  1 +
- fs/ramfs/file-mmu.c                             |  1 +
- fs/ramfs/file-nommu.c                           |  1 +
- fs/ubifs/file.c                                 |  1 +
- fs/xfs/xfs_file.c                               | 21 ++++++++++
- include/linux/fs.h                              |  3 ++
- mm/shmem.c                                      |  1 +
- security/integrity/iint.c                       | 20 +++++++---
- security/integrity/ima/ima.h                    |  1 +
- security/integrity/ima/ima_api.c                | 52 ++++++++++++++-----------
- security/integrity/ima/ima_main.c               | 18 ++++++---
- security/integrity/ima/ima_policy.c             | 49 +++++++++++++++++++----
- security/integrity/integrity.h                  |  1 -
- 25 files changed, 222 insertions(+), 52 deletions(-)
-
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c2edba8de35e..bbf3ba8bbb09 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -199,37 +199,49 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 	struct inode *inode = file_inode(file);
+ 	const char *filename = file->f_path.dentry->d_name.name;
+ 	int result = 0;
++	int length;
++	void *tmpbuf;
++	u64 i_version;
+ 	struct {
+ 		struct ima_digest_data hdr;
+ 		char digest[IMA_MAX_DIGEST_SIZE];
+ 	} hash;
+ 
+-	if (!(iint->flags & IMA_COLLECTED)) {
+-		u64 i_version = file_inode(file)->i_version;
++	if (iint->flags & IMA_COLLECTED)
++		goto out;
+ 
+-		if (file->f_flags & O_DIRECT) {
+-			audit_cause = "failed(directio)";
+-			result = -EACCES;
+-			goto out;
+-		}
++	if (file->f_flags & O_DIRECT) {
++		audit_cause = "failed(directio)";
++		result = -EACCES;
++		goto out;
++	}
+ 
+-		hash.hdr.algo = algo;
+-
+-		result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
+-			ima_calc_buffer_hash(buf, size, &hash.hdr);
+-		if (!result) {
+-			int length = sizeof(hash.hdr) + hash.hdr.length;
+-			void *tmpbuf = krealloc(iint->ima_hash, length,
+-						GFP_NOFS);
+-			if (tmpbuf) {
+-				iint->ima_hash = tmpbuf;
+-				memcpy(iint->ima_hash, &hash, length);
+-				iint->version = i_version;
+-				iint->flags |= IMA_COLLECTED;
+-			} else
+-				result = -ENOMEM;
+-		}
++	i_version = file_inode(file)->i_version;
++	hash.hdr.algo = algo;
++
++	/* Initialize hash digest to 0's in case of failure */
++	memset(&hash.digest, 0, sizeof(hash.digest));
++
++	result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
++		ima_calc_buffer_hash(buf, size, &hash.hdr);
++
++	if (result && result != -EBADF && result != -EINVAL)
++		goto out;
++
++	length = sizeof(hash.hdr) + hash.hdr.length;
++	tmpbuf = krealloc(iint->ima_hash, length, GFP_NOFS);
++	if (!tmpbuf) {
++		result = -ENOMEM;
++		goto out;
+ 	}
++
++	iint->ima_hash = tmpbuf;
++	memcpy(iint->ima_hash, &hash, length);
++	iint->version = i_version;
++
++	/* Possibly temporary failure due to type of read (eg. DAX, O_DIRECT) */
++	if (result != -EBADF && result != -EINVAL)
++		iint->flags |= IMA_COLLECTED;
+ out:
+ 	if (result)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2aebb7984437..3941371402ff 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -235,7 +235,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+ 
+ 	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+-	if (rc != 0) {
++	if (rc != 0 && rc != -EBADF && rc != -EINVAL) {
+ 		if (file->f_flags & O_DIRECT)
+ 			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
+ 		goto out_digsig;
+@@ -247,7 +247,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+-	if (action & IMA_APPRAISE_SUBMASK)
++	if ((rc == 0) && (action & IMA_APPRAISE_SUBMASK))
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+ 					      xattr_value, xattr_len, opened);
+ 	if (action & IMA_AUDIT)
 -- 
 2.7.4
 
