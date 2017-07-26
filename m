@@ -1,67 +1,102 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 25 Jul 2017 20:59:15 -0700
-Subject: [PATCH v3 10/15] exec: Use secureexec for setting dumpability
-In-Reply-To: <1500416736-49829-11-git-send-email-keescook@chromium.org>
-References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-	<1500416736-49829-11-git-send-email-keescook@chromium.org>
-Message-ID: <CAGXu5jJe5PB8Cof4GomKa6HO28ioCDtGjhcSH6Ruy0RvAZ+R8A@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 26 Jul 2017 09:22:50 -0400
+Subject: [PATCH v4 0/5] define new fs integrity_read method 
+Message-ID: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jul 18, 2017 at 3:25 PM, Kees Cook <keescook@chromium.org> wrote:
-> The examination of "current" to decide dumpability is wrong. This was a
-> check of and euid/uid (or egid/gid) mismatch in the existing process,
-> not the newly created one. This appears to stretch back into even the
-> "history.git" tree. Luckily, dumpability is later set in commit_creds().
-> In earlier kernel versions before creds existed, similar checks also
-> existed late in the exec flow, covering up the mistake as far back as I
-> could find.
->
-> Note that because the commit_creds() check examines differences of euid,
-> uid, egid, gid, and capabilities between the old and new creds, it would
-> look like the setup_new_exec() dumpability test could be entirely removed.
-> However, the secureexec test may cover a different set of tests (specific
-> to the LSMs) than what commit_creds() checks for. So, fix this test to
-> use secureexec (the removed euid tests are redundant to the commoncap
-> secureexec checks now).
->
-> Cc: David Howells <dhowells@redhat.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+With the introduction of IMA-appraisal and the need to write file
+hashes as security xattrs, IMA needed to take the global i_mutex
+lock.  process_measurement() took the iint->mutex first and then
+the i_mutex, while setxattr, chmod and chown took the locks in
+reverse order.  To resolve this potential deadlock, the iint->mutex
+was removed.
 
-David (or anyone else), how does this (and the following undiscussed
-patches) look? I only have a few unreviewed patches in this series,
-and I'd like to get some more eyes on it.
+Some filesystems have recently replaced their filesystem dependent
+lock with the global i_rwsem (formerly the i_mutex) to read a file.
+As a result, when IMA attempts to calculate the file hash, reading
+the file attempts to take the i_rwsem again.
 
-Thanks!
+To resolve this locking problem, this patch set introduces a new
+->integrity_read file operation method.  Until all filesystems
+define the new ->integrity_read method, files that were previously
+measured might not be currently measured and files that were
+previously appraised might fail to be appraised properly.
 
--Kees
+Version 2 of this patch set, introduced measurement entries and
+IMA-audit messages containing file hash values containing 0's,
+instead of the actual file hash, for files which the file hash
+could not be calculated.  Like for any other file signature
+verification error, file access/execute permission will be denied,
+for files in policy that the file hash could not be calculated.
 
-> ---
->  fs/exec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index f9480d3e0b82..5241c8f25f5d 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1353,7 +1353,7 @@ void setup_new_exec(struct linux_binprm * bprm)
->
->         current->sas_ss_sp = current->sas_ss_size = 0;
->
-> -       if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
-> +       if (!bprm->secureexec)
->                 set_dumpable(current->mm, SUID_DUMP_USER);
->         else
->                 set_dumpable(current->mm, suid_dumpable);
-> --
-> 2.7.4
->
+To override the IMA policy, allowing unverified code to be
+accessed/executed on filesystems not supported by IMA, version 2 of
+this patch set defined a new policy "action" named "dont_failsafe"
+and a new builtin policy named "fs_unsafe", which can be specified
+on the boot command line.
 
+The new ->integrity_read method supports opening files with O_DIRECT
+on block devices that support direct IO and are mounted with the
+"-o dax" option.  Version 4 of this patch set removes the
+"permit_direction" IMA policy option, which is no longer necessary.
 
+Change log v4:
+- define ext2/4 specific ->integrity_read functions based Jan Kara's
+review.
+- properly fail file open with O_DIRECT on filesystems not mounted
+with "-o dax".
+- remove the "permit_directio" IMA policy option.
+
+Change log v3:
+- define simple_read_iter_from_buffer
+- replace the existing efivarfs ->read method with ->read_iter method.
+- squashed other fs definitions of ->integrity_read with this patch.
+- include dont_failsafe rule when displaying policy.
+- fail attempt to add dont_failsafe rule when appending to the policy.
+- moved '---' divider before change log, as requested in review.
+
+Mimi
+
+Christoph Hellwig (1):
+  ima: use fs method to read integrity data
+
+Mimi Zohar (4):
+  ima: always measure and audit files in policy
+  ima: define "dont_failsafe" policy action rule
+  ima: define "fs_unsafe" builtin policy
+  ima: remove permit_directio policy option
+
+ Documentation/ABI/testing/ima_policy            |  5 ++-
+ Documentation/admin-guide/kernel-parameters.txt |  8 +++-
+ fs/btrfs/file.c                                 |  1 +
+ fs/efivarfs/file.c                              | 12 +++---
+ fs/ext2/file.c                                  | 17 ++++++++
+ fs/ext4/file.c                                  | 23 +++++++++++
+ fs/f2fs/file.c                                  |  1 +
+ fs/gfs2/file.c                                  |  2 +
+ fs/jffs2/file.c                                 |  1 +
+ fs/jfs/file.c                                   |  1 +
+ fs/libfs.c                                      | 32 +++++++++++++++
+ fs/nilfs2/file.c                                |  1 +
+ fs/ocfs2/file.c                                 |  1 +
+ fs/ramfs/file-mmu.c                             |  1 +
+ fs/ramfs/file-nommu.c                           |  1 +
+ fs/ubifs/file.c                                 |  1 +
+ fs/xfs/xfs_file.c                               | 21 ++++++++++
+ include/linux/fs.h                              |  3 ++
+ mm/shmem.c                                      |  1 +
+ security/integrity/iint.c                       | 20 +++++++---
+ security/integrity/ima/ima.h                    |  1 +
+ security/integrity/ima/ima_api.c                | 52 ++++++++++++++-----------
+ security/integrity/ima/ima_main.c               | 18 ++++++---
+ security/integrity/ima/ima_policy.c             | 49 +++++++++++++++++++----
+ security/integrity/integrity.h                  |  1 -
+ 25 files changed, 222 insertions(+), 52 deletions(-)
 
 -- 
-Kees Cook
-Pixel Security
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
