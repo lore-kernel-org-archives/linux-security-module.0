@@ -1,49 +1,101 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 26 Jul 2017 21:42:17 -0500
-Subject: [PATCH v2] security: fix description of values returned by
-	cap_inode_need_killpriv
-In-Reply-To: <1501122425-12250-1-git-send-email-stefanb@linux.vnet.ibm.com>
-References: <1501122425-12250-1-git-send-email-stefanb@linux.vnet.ibm.com>
-Message-ID: <20170727024217.GA12236@mail.hallyn.com>
+From: lkp@intel.com (kbuild test robot)
+Date: Thu, 27 Jul 2017 13:03:29 +0800
+Subject: [PATCH 08/12] ima: added parser for RPM data type
+In-Reply-To: <20170725154423.24845-9-roberto.sassu@huawei.com>
+Message-ID: <201707271234.frmWtQgI%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jul 26, 2017 at 10:27:05PM -0400, Stefan Berger wrote:
-> cap_inode_need_killpriv returns 1 if security.capability exists and
-> has a value and inode_killpriv() is required, 0 otherwise. Fix the
-> description of the return value to reflect this.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Hi Roberto,
 
-Thanks, Stefan.
+[auto build test WARNING on integrity/next]
+[also build test WARNING on v4.13-rc2 next-20170726]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+url:    https://github.com/0day-ci/linux/commits/Roberto-Sassu/ima-measure-digest-lists-instead-of-individual-files/20170727-123131
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next
+config: xtensa-allyesconfig (attached as .config)
+compiler: xtensa-linux-gcc (GCC) 4.9.0
+reproduce:
+        wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=xtensa 
 
-> ---
->  security/commoncap.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 7abebd7..1234269 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -300,10 +300,10 @@ static inline void bprm_clear_caps(struct linux_binprm *bprm)
->   *
->   * Determine if an inode having a change applied that's marked ATTR_KILL_PRIV
->   * affects the security markings on that inode, and if it is, should
-> - * inode_killpriv() be invoked or the change rejected?
-> + * inode_killpriv() be invoked or the change rejected.
->   *
-> - * Returns 0 if granted; +ve if granted, but inode_killpriv() is required; and
-> - * -ve to deny the change.
-> + * Returns 1 if security.capability has a value, meaning inode_killpriv()
-> + * is required, 0 otherwise, meaning inode_killpriv() is not required.
->   */
->  int cap_inode_need_killpriv(struct dentry *dentry)
->  {
-> -- 
-> 2.7.4
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+All warnings (new ones prefixed by >>):
+
+   security/integrity/ima/ima_digest_list.c: In function 'ima_parse_rpm':
+>> security/integrity/ima/ima_digest_list.c:147:4: warning: ignoring return value of 'hex2bin', declared with attribute warn_unused_result [-Wunused-result]
+       hex2bin(digest, datap, digest_len);
+       ^
+
+vim +/hex2bin +147 security/integrity/ima/ima_digest_list.c
+
+    98	
+    99	static int ima_parse_rpm(loff_t size, void *buf)
+   100	{
+   101		void *bufp = buf, *bufendp = buf + size;
+   102		struct rpm_hdr *hdr = bufp;
+   103		u32 tags = be32_to_cpu(hdr->tags);
+   104		struct rpm_entryinfo *entry;
+   105		void *datap = bufp + sizeof(*hdr) + tags * sizeof(struct rpm_entryinfo);
+   106		int digest_len = hash_digest_size[ima_hash_algo];
+   107		u8 digest[digest_len];
+   108		int ret, i, j;
+   109	
+   110		const unsigned char rpm_header_magic[8] = {
+   111			0x8e, 0xad, 0xe8, 0x01, 0x00, 0x00, 0x00, 0x00
+   112		};
+   113	
+   114		if (size < sizeof(*hdr)) {
+   115			pr_err("Missing RPM header\n");
+   116			return -EINVAL;
+   117		}
+   118	
+   119		if (memcmp(bufp, rpm_header_magic, sizeof(rpm_header_magic))) {
+   120			pr_err("Invalid RPM header\n");
+   121			return -EINVAL;
+   122		}
+   123	
+   124		bufp += sizeof(*hdr);
+   125	
+   126		for (i = 0; i < tags && (bufp + sizeof(*entry)) <= bufendp;
+   127		     i++, bufp += sizeof(*entry)) {
+   128			entry = bufp;
+   129	
+   130			if (be32_to_cpu(entry->tag) != RPMTAG_FILEDIGESTS)
+   131				continue;
+   132	
+   133			datap += be32_to_cpu(entry->offset);
+   134	
+   135			for (j = 0; j < be32_to_cpu(entry->count) &&
+   136			     datap < bufendp; j++) {
+   137				if (strlen(datap) == 0) {
+   138					datap++;
+   139					continue;
+   140				}
+   141	
+   142				if (datap + digest_len * 2 + 1 > bufendp) {
+   143					pr_err("RPM header read at invalid offset\n");
+   144					return -EINVAL;
+   145				}
+   146	
+ > 147				hex2bin(digest, datap, digest_len);
+   148	
+   149				ret = ima_add_digest_data_entry(digest);
+   150				if (ret < 0 && ret != -EEXIST)
+   151					return ret;
+   152	
+   153				datap += digest_len * 2 + 1;
+   154			}
+   155	
+   156			break;
+   157		}
+   158	
+   159		return 0;
+   160	}
+   161	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
