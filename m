@@ -1,79 +1,55 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:29 -0700
-Subject: [PATCH v4 11/15] exec: Use secureexec for clearing pdeath_signal
+Date: Mon, 31 Jul 2017 16:51:32 -0700
+Subject: [PATCH v4 14/15] exec: Use sane stack rlimit under secureexec
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-12-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-15-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Like dumpability, clearing pdeath_signal happens both in setup_new_exec()
-and later in commit_creds(). The test in setup_new_exec() is different
-from all other privilege comparisons, though: it is checking the new cred
-(bprm) uid vs the old cred (current) euid. This appears to be a bug,
-introduced by commit a6f76f23d297 ("CRED: Make execve() take advantage of
-copy-on-write credentials"):
+For a secureexec, before memory layout selection has happened, reset the
+stack rlimit to something sane to avoid the caller having control over
+the resulting layouts.
 
--       if (bprm->e_uid != current_euid() ||
--           bprm->e_gid != current_egid()) {
--               set_dumpable(current->mm, suid_dumpable);
-+       if (bprm->cred->uid != current_euid() ||
-+           bprm->cred->gid != current_egid()) {
+$ ulimit -s
+8192
+$ ulimit -s unlimited
+$ /bin/sh -c 'ulimit -s'
+unlimited
+$ sudo /bin/sh -c 'ulimit -s'
+8192
 
-It was bprm euid vs current euid (and egids), but the effective got
-dropped. Nothing in the exec flow changes bprm->cred->uid (nor gid).
-The call traces are:
-
-	prepare_bprm_creds()
-	    prepare_exec_creds()
-	        prepare_creds()
-	            memcpy(new_creds, old_creds, ...)
-	            security_prepare_creds() (unimplemented by commoncap)
-	...
-	prepare_binprm()
-	    bprm_fill_uid()
-	        resets euid/egid to current euid/egid
-	        sets euid/egid on bprm based on set*id file bits
-	    security_bprm_set_creds()
-		cap_bprm_set_creds()
-		        handle all caps-based manipulations
-
-so this test is effectively a test of current_uid() vs current_euid(),
-which is wrong, just like the prior dumpability tests were wrong.
-
-The commit log says "Clear pdeath_signal and set dumpable on
-certain circumstances that may not be covered by commit_creds()." This
-may be meaning the earlier old euid vs new euid (and egid) test that
-got changed.
-
-Luckily, as with dumpability, this is all masked by commit_creds()
-which performs old/new euid and egid tests and clears pdeath_signal.
-
-And again, like dumpability, we should include LSM secureexec logic for
-pdeath_signal clearing. For example, Smack goes out of its way to clear
-pdeath_signal when it finds a secureexec condition.
-
-Cc: David Howells <dhowells@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- fs/exec.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/exec.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index f9997ea6414e..708a72f93320 100644
+index 3ae8a40c587b..cddd2a2cbc1f 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1348,8 +1348,7 @@ void setup_new_exec(struct linux_binprm * bprm)
+@@ -1329,6 +1329,18 @@ void setup_new_exec(struct linux_binprm * bprm)
  	 */
- 	current->mm->task_size = TASK_SIZE;
+ 	bprm->secureexec |= bprm->cap_elevated;
  
--	if (!uid_eq(bprm->cred->uid, current_euid()) ||
--	    !gid_eq(bprm->cred->gid, current_egid())) {
 +	if (bprm->secureexec) {
- 		current->pdeath_signal = 0;
- 	} else {
- 		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
++		/*
++		 * For secureexec, reset the stack limit to sane default to
++		 * avoid bad behavior from the prior rlimits. This has to
++		 * happen before arch_pick_mmap_layout(), which examines
++		 * RLIMIT_STACK, but after the point of no return to avoid
++		 * needing to clean up the change on failure.
++		 */
++		if (current->signal->rlim[RLIMIT_STACK].rlim_cur > _STK_LIM)
++			current->signal->rlim[RLIMIT_STACK].rlim_cur = _STK_LIM;
++	}
++
+ 	arch_pick_mmap_layout(current->mm);
+ 
+ 	current->sas_ss_sp = current->sas_ss_size = 0;
 -- 
 2.7.4
 
