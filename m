@@ -1,671 +1,496 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 30 Jul 2017 10:29:48 -0400
-Subject: [PATCH v3 7/7] ima: Support module-style appended signatures
-	for appraisal
-In-Reply-To: <20170706221753.17380-8-bauerman@linux.vnet.ibm.com>
-References: <20170706221753.17380-1-bauerman@linux.vnet.ibm.com>
-	<20170706221753.17380-8-bauerman@linux.vnet.ibm.com>
-Message-ID: <1501424988.9230.67.camel@linux.vnet.ibm.com>
+From: jack@suse.cz (Jan Kara)
+Date: Mon, 31 Jul 2017 09:01:51 +0200
+Subject: [PATCH v4 2/5] ima: use fs method to read integrity data
+In-Reply-To: <1501075375-29469-3-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1501075375-29469-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20170731070151.GA18621@quack2.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-07-06 at 19:17 -0300, Thiago Jung Bauermann wrote:
-> This patch introduces the modsig keyword to the IMA policy syntax to
-> specify that a given hook should expect the file to have the IMA signature
-> appended to it. Here is how it can be used in a rule:
+On Wed 26-07-17 09:22:52, Mimi Zohar wrote:
+> From: Christoph Hellwig <hch@lst.de>
 > 
-> appraise func=KEXEC_KERNEL_CHECK appraise_type=modsig|imasig
+> Add a new ->integrity_read file operation to read data for integrity
+> hash collection.  This is defined to be equivalent to ->read_iter,
+> except that it will be called with the i_rwsem held exclusively.
+
+The patch looks mostly good to me. Just one question: How did you select
+filesystems that implement .integrity_read method? And I still maintain
+that it would be IMHO safer to not pretend we support IMA on gfs2 and ocfs2
+unless you either make sure they are mounted in local-only mode or figure
+out how to deal with proper cluster locking.
+
+								Honza
+ 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Cc: Matthew Garrett <matthew.garrett@nebula.com>
+> Cc: Jan Kara <jack@suse.com>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <yuchao0@huawei.com>
+> Cc: Steven Whitehouse <swhiteho@redhat.com>
+> Cc: Bob Peterson <rpeterso@redhat.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Dave Kleikamp <shaggy@kernel.org>
+> Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+> Cc: Mark Fasheh <mfasheh@versity.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Chris Mason <clm@fb.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > 
-> With this rule, IMA will accept either an appended signature or a signature
-> stored in the extended attribute. In that case, it will first check whether
-> there is an appended signature, and if not it will read it from the
-> extended attribute.
+> Changelog v4:
+> - define ext2/4 specific ->integrity_read functions.
+> - properly fail file open with O_DIRECT on filesystem not mounted
+> with "-o dax".
 > 
-> The format of the appended signature is the same used for signed kernel
-> modules. This means that the file can be signed with the scripts/sign-file
-> tool, with a command line such as this:
-> 
-> $ sign-file sha256 privkey_ima.pem x509_ima.der vmlinux
-> 
-> This code only works for files that are hashed from a memory buffer, not
-> for files that are read from disk at the time of hash calculation. In other
-> words, only hooks that use kernel_read_file can support appended
-> signatures. This means that only FIRMWARE_CHECK, KEXEC_KERNEL_CHECK,
-> KEXEC_INITRAMFS_CHECK and POLICY_CHECK can be supported.
-> 
-> This feature warrants a separate config option because enabling it brings
-> in many other config options.
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 > ---
->  security/integrity/ima/Kconfig            |  13 +++
->  security/integrity/ima/Makefile           |   1 +
->  security/integrity/ima/ima.h              |  60 ++++++++++--
->  security/integrity/ima/ima_appraise.c     | 102 ++++++++++++++++++---
->  security/integrity/ima/ima_main.c         |   7 +-
->  security/integrity/ima/ima_modsig.c       | 147 ++++++++++++++++++++++++++++++
->  security/integrity/ima/ima_policy.c       |  26 ++++--
->  security/integrity/ima/ima_template_lib.c |  14 ++-
->  security/integrity/integrity.h            |   4 +-
->  9 files changed, 343 insertions(+), 31 deletions(-)
+> Changelog v3:
+> - define simple_read_iter_from_buffer
+> - replace the existing efivarfs ->read method with ->read_iter method.
+> - squashed other fs definitions of ->integrity_read with this patch.
 > 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index 35ef69312811..55f734a6124b 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -163,6 +163,19 @@ config IMA_APPRAISE_BOOTPARAM
->  	  This option enables the different "ima_appraise=" modes
->  	  (eg. fix, log) from the boot command line.
+> Changelog v2:
+> - change iovec to kvec
 > 
-> +config IMA_APPRAISE_MODSIG
-> +	bool "Support module-style signatures for appraisal"
-> +	depends on IMA_APPRAISE
-> +	depends on INTEGRITY_ASYMMETRIC_KEYS
-> +	select PKCS7_MESSAGE_PARSER
-> +	select MODULE_SIG_FORMAT
-> +	default n
-> +	help
-> +	   Adds support for signatures appended to files. The format of the
-> +	   appended signature is the same used for signed kernel modules.
-> +	   The modsig keyword can be used in the IMA policy to allow a hook
-> +	   to accept such signatures.
-> +
->  config IMA_TRUSTED_KEYRING
->  	bool "Require all keys on the .ima keyring be signed (deprecated)"
->  	depends on IMA_APPRAISE && SYSTEM_TRUSTED_KEYRING
-> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-> index 29f198bde02b..c72026acecc3 100644
-> --- a/security/integrity/ima/Makefile
-> +++ b/security/integrity/ima/Makefile
-> @@ -8,5 +8,6 @@ obj-$(CONFIG_IMA) += ima.o
->  ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
->  	 ima_policy.o ima_template.o ima_template_lib.o
->  ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-> +ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
->  ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
->  obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index d52b487ad259..1e1e7c41ca19 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -190,6 +190,8 @@ enum ima_hooks {
->  	__ima_hooks(__ima_hook_enumify)
+> Changelog v1:
+> - update the patch description, removing the concept that the presence of
+> ->integrity_read indicates that the file system can support IMA. (Mimi)
+> 
+>  fs/btrfs/file.c           |  1 +
+>  fs/efivarfs/file.c        | 12 +++++++-----
+>  fs/ext2/file.c            | 17 +++++++++++++++++
+>  fs/ext4/file.c            | 23 +++++++++++++++++++++++
+>  fs/f2fs/file.c            |  1 +
+>  fs/gfs2/file.c            |  2 ++
+>  fs/jffs2/file.c           |  1 +
+>  fs/jfs/file.c             |  1 +
+>  fs/libfs.c                | 32 ++++++++++++++++++++++++++++++++
+>  fs/nilfs2/file.c          |  1 +
+>  fs/ocfs2/file.c           |  1 +
+>  fs/ramfs/file-mmu.c       |  1 +
+>  fs/ramfs/file-nommu.c     |  1 +
+>  fs/ubifs/file.c           |  1 +
+>  fs/xfs/xfs_file.c         | 21 +++++++++++++++++++++
+>  include/linux/fs.h        |  3 +++
+>  mm/shmem.c                |  1 +
+>  security/integrity/iint.c | 20 ++++++++++++++------
+>  18 files changed, 129 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 9e75d8a39aac..2542dc66c85c 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -3125,6 +3125,7 @@ const struct file_operations btrfs_file_operations = {
+>  #endif
+>  	.clone_file_range = btrfs_clone_file_range,
+>  	.dedupe_file_range = btrfs_dedupe_file_range,
+> +	.integrity_read = generic_file_read_iter,
 >  };
-> 
-> +extern const char *const func_tokens[];
-> +
->  /* LIM API function definitions */
->  int ima_get_action(struct inode *inode, int mask,
->  		   enum ima_hooks func, int *pcr);
-> @@ -236,9 +238,10 @@ int ima_policy_show(struct seq_file *m, void *v);
->  #ifdef CONFIG_IMA_APPRAISE
->  int ima_appraise_measurement(enum ima_hooks func,
->  			     struct integrity_iint_cache *iint,
-> -			     struct file *file, const unsigned char *filename,
-> -			     struct evm_ima_xattr_data *xattr_value,
-> -			     int xattr_len, int opened);
-> +			     struct file *file, const void *buf, loff_t size,
-> +			     const unsigned char *filename,
-> +			     struct evm_ima_xattr_data **xattr_value,
-> +			     int *xattr_len, int opened);
->  int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func);
->  void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
->  enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
-> @@ -248,13 +251,26 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
->  int ima_read_xattr(struct dentry *dentry,
->  		   struct evm_ima_xattr_data **xattr_value);
-> 
-> +#ifdef CONFIG_IMA_APPRAISE_MODSIG
-> +bool ima_hook_supports_modsig(enum ima_hooks func);
-> +int ima_read_modsig(const void *buf, loff_t buf_len,
-> +		    struct evm_ima_xattr_data **xattr_value,
-> +		    int *xattr_len);
-> +int ima_modsig_serialize_data(struct evm_ima_xattr_data *hdr,
-> +			      struct evm_ima_xattr_data **data, int *data_len);
-> +int ima_modsig_verify(const unsigned int keyring_id,
-> +		      struct evm_ima_xattr_data *hdr);
-> +void ima_free_xattr_data(struct evm_ima_xattr_data *hdr);
-> +#endif
-> +
->  #else
->  static inline int ima_appraise_measurement(enum ima_hooks func,
->  					   struct integrity_iint_cache *iint,
-> -					   struct file *file,
-> +					   struct file *file, const void *buf,
-> +					   loff_t size,
->  					   const unsigned char *filename,
-> -					   struct evm_ima_xattr_data *xattr_value,
-> -					   int xattr_len, int opened)
-> +					   struct evm_ima_xattr_data **xattr_value,
-> +					   int *xattr_len, int opened)
->  {
->  	return INTEGRITY_UNKNOWN;
+>  
+>  void btrfs_auto_defrag_exit(void)
+> diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
+> index 5f22e74bbade..17955a92a5b3 100644
+> --- a/fs/efivarfs/file.c
+> +++ b/fs/efivarfs/file.c
+> @@ -64,9 +64,10 @@ static ssize_t efivarfs_file_write(struct file *file,
+>  	return bytes;
 >  }
-> @@ -291,6 +307,38 @@ static inline int ima_read_xattr(struct dentry *dentry,
-> 
->  #endif /* CONFIG_IMA_APPRAISE */
-> 
-> +#ifndef CONFIG_IMA_APPRAISE_MODSIG
-> +static inline bool ima_hook_supports_modsig(enum ima_hooks func)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline int ima_read_modsig(const void *buf, loff_t buf_len,
-> +				  struct evm_ima_xattr_data **xattr_value,
-> +				  int *xattr_len)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static inline int ima_modsig_serialize_data(struct evm_ima_xattr_data *hdr,
-> +					    struct evm_ima_xattr_data **data,
-> +					    int *data_len)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static inline int ima_modsig_verify(const unsigned int keyring_id,
-> +				    struct evm_ima_xattr_data *hdr)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static inline void ima_free_xattr_data(struct evm_ima_xattr_data *hdr)
-> +{
-> +	kfree(hdr);
-> +}
-> +#endif
-> +
->  /* LSM based policy rules require audit */
->  #ifdef CONFIG_IMA_LSM_RULES
-> 
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 87d2b601cf8e..b80aae429314 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -200,18 +200,40 @@ int ima_read_xattr(struct dentry *dentry,
->   */
->  int ima_appraise_measurement(enum ima_hooks func,
->  			     struct integrity_iint_cache *iint,
-> -			     struct file *file, const unsigned char *filename,
-> -			     struct evm_ima_xattr_data *xattr_value,
-> -			     int xattr_len, int opened)
-> +			     struct file *file, const void *buf, loff_t size,
-> +			     const unsigned char *filename,
-> +			     struct evm_ima_xattr_data **xattr_value_,
-> +			     int *xattr_len_, int opened)
+>  
+> -static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+> -		size_t count, loff_t *ppos)
+> +static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
+> +				       struct iov_iter *iter)
 >  {
->  	static const char op[] = "appraise_data";
->  	char *cause = "unknown";
->  	struct dentry *dentry = file_dentry(file);
->  	struct inode *inode = d_backing_inode(dentry);
->  	enum integrity_status status = INTEGRITY_UNKNOWN;
-> -	int rc = xattr_len, hash_start = 0;
-> +	struct evm_ima_xattr_data *xattr_value = *xattr_value_;
-> +	int xattr_len = *xattr_len_, rc = xattr_len, hash_start = 0;
-> +	bool appraising_modsig = false;
-> +	void *xattr_value_evm;
-> +	size_t xattr_len_evm;
-> +
-> +	if (iint->flags & IMA_MODSIG_ALLOWED) {
-> +		/*
-> +		 * Not supposed to happen. Hooks that support modsig are
-> +		 * whitelisted when parsing the policy using
-> +		 * ima_hooks_supports_modsig.
-> +		 */
-> +		if (!buf || !size)
-> +			WARN_ONCE(true, "%s doesn't support modsig\n",
-> +				  func_tokens[func]);
-
-ima _appraise_measurement() is getting kind of long. ?Is there any
-reason we can't move this comment and test to ima_read_modsig()?
-
-> +		else if (!ima_read_modsig(buf, size,
-> +					  &xattr_value, &xattr_len)) {
-> +			appraising_modsig = true;
-> +			rc = xattr_len;
-> +		}
-> +	}
-> 
-> -	if (!(inode->i_opflags & IOP_XATTR))
-> +	/* If not appraising a modsig, we need an xattr. */
-> +	if (!appraising_modsig && !(inode->i_opflags & IOP_XATTR))
->  		return INTEGRITY_UNKNOWN;
-> 
->  	if (rc <= 0) {
-> @@ -229,8 +251,24 @@ int ima_appraise_measurement(enum ima_hooks func,
->  		goto out;
->  	}
-> 
-> -	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
-> -	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
-> +	/*
-> +	 * Appended signatures aren't protected by EVM but we still call
-> +	 * evm_verifyxattr to check other security xattrs, if they exist.
-> +	 */
-> +	if (appraising_modsig) {
-> +		xattr_value_evm = NULL;
-> +		xattr_len_evm = 0;
-> +	} else {
-> +		xattr_value_evm = xattr_value;
-> +		xattr_len_evm = xattr_len;
-> +	}
-> +
-> +	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value_evm,
-> +				 xattr_len_evm, iint);
-> +	if (appraising_modsig && status == INTEGRITY_FAIL) {
-> +		cause = "invalid-HMAC";
-> +		goto out;
-
-"modsig" is special, because having any security xattrs is not
-required. ?This test doesn't prevent status from being set to
-"missing-HMAC". ?This test is redundant with the original tests below.
-
-> +	} else if (status != INTEGRITY_PASS && status != INTEGRITY_UNKNOWN) {
->  		if ((status == INTEGRITY_NOLABEL)
->  		    || (status == INTEGRITY_NOXATTRS))
->  			cause = "missing-HMAC";
-> @@ -281,6 +319,43 @@ int ima_appraise_measurement(enum ima_hooks func,
->  			status = INTEGRITY_PASS;
->  		}
-
-Calling evm_verifyxattr() with the IMA xattr value prevents EVM from
-having to re-read the IMA xattr, but isn't necessary.??On modsig
-signature verification failure, calling evm_verifyxattr() a second
-time isn't necessary.
-
->  		break;
-> +	case IMA_MODSIG:
-> +		/*
-> +		 * To avoid being tricked into recursion, we don't allow a
-> +		 * modsig stored in the xattr.
-> +		 */
-> +		if (!appraising_modsig) {
-> +			status = INTEGRITY_UNKNOWN;
-> +			cause = "unknown-ima-data";
-> +
-> +			break;
-> +		}
-> +
-> +		rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA, xattr_value);
-> +		if (!rc) {
-> +			iint->flags |= IMA_DIGSIG;
-> +			status = 
-> +
-> +			kfree(*xattr_value_);
-> +			*xattr_value_ = xattr_value;
-> +			*xattr_len_ = xattr_len;
-> +
-> +			break;
-> +		}
-
-When including the appended signature in the measurement list, the
-corresponding file hash needs to be included in the measurement list,
-which might be different than the previously calculated file hash
-based on the hash algorithm as defined in the IMA xattr.
-
-Including the file hash and signature in the measurement list allows
-the attestation server, with just a public key, to verify the file
-signature against the file hash. ?No need for a white list.
-
-ima_modsig_verify() must calculate the file hash in order to verify
-the file signature. ?This file hash value somehow needs to be returned
-in order for it to be included in the measurement list.
-
-> +		/*
-> +		 * The appended signature failed verification. Let's try
-> +		 * reading a signature from the extended attribute instead.
-> +		 */
-> +
-> +		pr_debug("modsig didn't verify, trying the xattr signature\n");
-> +
-> +		ima_free_xattr_data(xattr_value);
-> +		iint->flags &= ~IMA_MODSIG_ALLOWED;
-> +
-> +		return ima_appraise_measurement(func, iint, file, buf, size,
-> +						filename, xattr_value_,
-> +						xattr_len_, opened);
-
-Most of the code before "switch" needs to be done only once. ?Is
-recursion necessary? ?Or can we just retry the "switch" using the IMA
-xattr, assuming there is an IMA xattr?
-
-Mimi
-
->  	default:
->  		status = INTEGRITY_UNKNOWN;
->  		cause = "unknown-ima-data";
-> @@ -291,13 +366,15 @@ int ima_appraise_measurement(enum ima_hooks func,
->  	if (status != INTEGRITY_PASS) {
->  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
->  		    (!xattr_value ||
-> -		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-> +		     (xattr_value->type != EVM_IMA_XATTR_DIGSIG &&
-> +		      xattr_value->type != IMA_MODSIG))) {
->  			if (!ima_fix_xattr(dentry, iint))
->  				status = INTEGRITY_PASS;
->  		} else if ((inode->i_size == 0) &&
->  			   (iint->flags & IMA_NEW_FILE) &&
->  			   (xattr_value &&
-> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
-> +			    (xattr_value->type == EVM_IMA_XATTR_DIGSIG ||
-> +			     xattr_value->type == IMA_MODSIG))) {
->  			status = INTEGRITY_PASS;
->  		}
->  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> @@ -398,6 +475,7 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
->  		       const void *xattr_value, size_t xattr_value_len)
->  {
->  	const struct evm_ima_xattr_data *xvalue = xattr_value;
-> +	bool digsig;
->  	int result;
-> 
->  	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
-> @@ -405,8 +483,10 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
->  	if (result == 1) {
->  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
->  			return -EINVAL;
-> -		ima_reset_appraise_flags(d_backing_inode(dentry),
-> -			 (xvalue->type == EVM_IMA_XATTR_DIGSIG) ? 1 : 0);
-> +
-> +		digsig = xvalue->type == EVM_IMA_XATTR_DIGSIG ||
-> +				xvalue->type == IMA_MODSIG;
-> +		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
->  		result = 0;
->  	}
->  	return result;
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 0b4845e7248d..93fa257c71a7 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -245,8 +245,9 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->  		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
-> 
->  	if (action & IMA_APPRAISE_SUBMASK)
-> -		rc = ima_appraise_measurement(func, iint, file, pathname,
-> -					      xattr_value, xattr_len, opened);
-> +		rc = ima_appraise_measurement(func, iint, file, buf, size,
-> +					      pathname, &xattr_value,
-> +					      &xattr_len, opened);
->  	if (action & IMA_MEASURE)
->  		ima_store_measurement(iint, file, pathname,
->  				      xattr_value, xattr_len, pcr);
-> @@ -257,7 +258,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->  	if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
->  	     !(iint->flags & IMA_NEW_FILE))
->  		rc = -EACCES;
-> -	kfree(xattr_value);
-> +	ima_free_xattr_data(xattr_value);
+> +	struct file *file = iocb->ki_filp;
+>  	struct efivar_entry *var = file->private_data;
+>  	unsigned long datasize = 0;
+>  	u32 attributes;
+> @@ -96,8 +97,8 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+>  		goto out_free;
+>  
+>  	memcpy(data, &attributes, sizeof(attributes));
+> -	size = simple_read_from_buffer(userbuf, count, ppos,
+> -				       data, datasize + sizeof(attributes));
+> +	size = simple_read_iter_from_buffer(iocb, iter, data,
+> +					    datasize + sizeof(attributes));
 >  out_free:
->  	if (pathbuf)
->  		__putname(pathbuf);
-> diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-> new file mode 100644
-> index 000000000000..a74f8aa36aa7
-> --- /dev/null
-> +++ b/security/integrity/ima/ima_modsig.c
-> @@ -0,0 +1,147 @@
-> +/*
-> + * IMA support for appraising module-style appended signatures.
-> + *
-> + * Copyright (C) 2017  IBM Corporation
-> + *
-> + * Author:
-> + * Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation (version 2 of the License).
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+>  	kfree(data);
+>  
+> @@ -174,8 +175,9 @@ efivarfs_file_ioctl(struct file *file, unsigned int cmd, unsigned long p)
+>  
+>  const struct file_operations efivarfs_file_operations = {
+>  	.open	= simple_open,
+> -	.read	= efivarfs_file_read,
+> +	.read_iter = efivarfs_file_read_iter,
+>  	.write	= efivarfs_file_write,
+>  	.llseek	= no_llseek,
+>  	.unlocked_ioctl = efivarfs_file_ioctl,
+> +	.integrity_read	= efivarfs_file_read_iter,
+>  };
+> diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+> index d34d32bdc944..111069de1973 100644
+> --- a/fs/ext2/file.c
+> +++ b/fs/ext2/file.c
+> @@ -192,6 +192,22 @@ static ssize_t ext2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  	return generic_file_read_iter(iocb, to);
+>  }
+>  
+> +static ssize_t ext2_file_integrity_read_iter(struct kiocb *iocb,
+> +					     struct iov_iter *to)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
 > +
-> +#include <linux/types.h>
-> +#include <linux/module_signature.h>
-> +#include <keys/asymmetric-type.h>
-> +#include <crypto/pkcs7.h>
+> +	lockdep_assert_held(&inode->i_rwsem);
+> +#ifdef CONFIG_FS_DAX
+> +	if (!iov_iter_count(to))
+> +		return 0; /* skip atime */
 > +
-> +#include "ima.h"
+> +	if (IS_DAX(iocb->ki_filp->f_mapping->host))
+> +		return dax_iomap_rw(iocb, to, &ext2_iomap_ops);
+> +#endif
+> +	return generic_file_read_iter(iocb, to);
+> +}
 > +
-> +struct modsig_hdr {
-> +	uint8_t type;		/* Should be IMA_MODSIG. */
-> +	const void *data;	/* Pointer to data covered by pkcs7_msg. */
-> +	size_t data_len;
-> +	struct pkcs7_message *pkcs7_msg;
-> +	int raw_pkcs7_len;
+>  static ssize_t ext2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  {
+>  #ifdef CONFIG_FS_DAX
+> @@ -216,6 +232,7 @@ const struct file_operations ext2_file_operations = {
+>  	.get_unmapped_area = thp_get_unmapped_area,
+>  	.splice_read	= generic_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+> +	.integrity_read	= ext2_file_integrity_read_iter,
+>  };
+>  
+>  const struct inode_operations ext2_file_inode_operations = {
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 58294c9a7e1d..cb423fff935f 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -74,6 +74,28 @@ static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  	return generic_file_read_iter(iocb, to);
+>  }
+>  
+> +static ssize_t ext4_file_integrity_read_iter(struct kiocb *iocb,
+> +					     struct iov_iter *to)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	int o_direct = iocb->ki_flags & IOCB_DIRECT;
 > +
-> +	/* This will be in the measurement list if required by the template. */
-> +	struct evm_ima_xattr_data raw_pkcs7;
-> +};
+> +	lockdep_assert_held(&inode->i_rwsem);
+> +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+> +		return -EIO;
+> +
+> +	if (!iov_iter_count(to))
+> +		return 0; /* skip atime */
+> +
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode))
+> +		return dax_iomap_rw(iocb, to, &ext4_iomap_ops);
+> +#endif
+> +	if (o_direct)
+> +		return -EINVAL;
+> +	return generic_file_read_iter(iocb, to);
+> +}
+> +
+>  /*
+>   * Called when an inode is released. Note that this is different
+>   * from ext4_file_open: open gets called at every open, but release
+> @@ -747,6 +769,7 @@ const struct file_operations ext4_file_operations = {
+>  	.splice_read	= generic_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fallocate	= ext4_fallocate,
+> +	.integrity_read	= ext4_file_integrity_read_iter,
+>  };
+>  
+>  const struct inode_operations ext4_file_inode_operations = {
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 2706130c261b..82ea81da0b2d 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2514,4 +2514,5 @@ const struct file_operations f2fs_file_operations = {
+>  #endif
+>  	.splice_read	= generic_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> index c2062a108d19..9b49d09ba180 100644
+> --- a/fs/gfs2/file.c
+> +++ b/fs/gfs2/file.c
+> @@ -1124,6 +1124,7 @@ const struct file_operations gfs2_file_fops = {
+>  	.splice_write	= gfs2_file_splice_write,
+>  	.setlease	= simple_nosetlease,
+>  	.fallocate	= gfs2_fallocate,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+>  
+>  const struct file_operations gfs2_dir_fops = {
+> @@ -1152,6 +1153,7 @@ const struct file_operations gfs2_file_fops_nolock = {
+>  	.splice_write	= gfs2_file_splice_write,
+>  	.setlease	= generic_setlease,
+>  	.fallocate	= gfs2_fallocate,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+>  
+>  const struct file_operations gfs2_dir_fops_nolock = {
+> diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+> index c12476e309c6..5a63034cccf5 100644
+> --- a/fs/jffs2/file.c
+> +++ b/fs/jffs2/file.c
+> @@ -57,6 +57,7 @@ const struct file_operations jffs2_file_operations =
+>  	.mmap =		generic_file_readonly_mmap,
+>  	.fsync =	jffs2_fsync,
+>  	.splice_read =	generic_file_splice_read,
+> +	.integrity_read = generic_file_read_iter,
+>  };
+>  
+>  /* jffs2_file_inode_operations */
+> diff --git a/fs/jfs/file.c b/fs/jfs/file.c
+> index 739492c7a3fd..423512a810e4 100644
+> --- a/fs/jfs/file.c
+> +++ b/fs/jfs/file.c
+> @@ -162,4 +162,5 @@ const struct file_operations jfs_file_operations = {
+>  #ifdef CONFIG_COMPAT
+>  	.compat_ioctl	= jfs_compat_ioctl,
+>  #endif
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 3aabe553fc45..99333264a0a7 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/exportfs.h>
+>  #include <linux/writeback.h>
+>  #include <linux/buffer_head.h> /* sync_mapping_buffers */
+> +#include <linux/uio.h>
+>  
+>  #include <linux/uaccess.h>
+>  
+> @@ -676,6 +677,37 @@ ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+>  EXPORT_SYMBOL(simple_write_to_buffer);
+>  
+>  /**
+> + * simple_read_iter_from_buffer - copy data from the buffer to user space
+> + * @iocb: struct containing the file, the current position and other info
+> + * @to: the user space buffer to read to
+> + * @from: the buffer to read from
+> + * @available: the size of the buffer
+> + *
+> + * The simple_read_iter_from_buffer() function reads up to @available bytes
+> + * from the current buffer into the user space buffer.
+> + *
+> + * On success, the current buffer offset is advanced by the number of bytes
+> + * read, or a negative value is returned on error.
+> + **/
+> +ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
+> +                                const void *from, size_t available)
+> +{
+> +	loff_t pos = iocb->ki_pos;
+> +	size_t ret;
+> +
+> +	if (pos < 0)
+> +		return -EINVAL;
+> +	if (pos >= available)
+> +		return 0;
+> +	ret = copy_to_iter(from + pos, available - pos, to);
+> +	if (!ret && iov_iter_count(to))
+> +		return -EFAULT;
+> +	iocb->ki_pos = pos + ret;
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(simple_read_iter_from_buffer);
 > +
 > +/**
-> + * ima_hook_supports_modsig - can the policy allow modsig for this hook?
-> + *
-> + * modsig is only supported by hooks using ima_post_read_file, because only they
-> + * preload the contents of the file in a buffer. FILE_CHECK does that in some
-> + * cases, but not when reached from vfs_open. POLICY_CHECK can support it, but
-> + * it's not useful in practice because it's a text file so deny.
-> + */
-> +bool ima_hook_supports_modsig(enum ima_hooks func)
-> +{
-> +	switch (func) {
-> +	case FIRMWARE_CHECK:
-> +	case KEXEC_KERNEL_CHECK:
-> +	case KEXEC_INITRAMFS_CHECK:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +int ima_read_modsig(const void *buf, loff_t buf_len,
-> +		    struct evm_ima_xattr_data **xattr_value,
-> +		    int *xattr_len)
-> +{
-> +	const size_t marker_len = sizeof(MODULE_SIG_STRING) - 1;
-> +	const struct module_signature *sig;
-> +	struct modsig_hdr *hdr;
-> +	size_t sig_len;
-> +	const void *p;
-> +	int rc;
-> +
-> +	if (buf_len <= marker_len + sizeof(*sig))
-> +		return -ENOENT;
-> +
-> +	p = buf + buf_len - marker_len;
-> +	if (memcmp(p, MODULE_SIG_STRING, marker_len))
-> +		return -ENOENT;
-> +
-> +	buf_len -= marker_len;
-> +	sig = (const struct module_signature *) (p - sizeof(*sig));
-> +
-> +	rc = validate_module_sig(sig, buf_len);
-> +	if (rc)
-> +		return rc;
-> +
-> +	sig_len = be32_to_cpu(sig->sig_len);
-> +	buf_len -= sig_len + sizeof(*sig);
-> +
-> +	hdr = kmalloc(sizeof(*hdr) + sig_len, GFP_KERNEL);
-> +	if (!hdr)
-> +		return -ENOMEM;
-> +
-> +	hdr->pkcs7_msg = pkcs7_parse_message(buf + buf_len, sig_len);
-> +	if (IS_ERR(hdr->pkcs7_msg)) {
-> +		rc = PTR_ERR(hdr->pkcs7_msg);
-> +		kfree(hdr);
-> +		return rc;
-> +	}
-> +
-> +	memcpy(hdr->raw_pkcs7.data, buf + buf_len, sig_len);
-> +	hdr->raw_pkcs7_len = sig_len + 1;
-> +	hdr->raw_pkcs7.type = IMA_MODSIG;
-> +
-> +	hdr->type = IMA_MODSIG;
-> +	hdr->data = buf;
-> +	hdr->data_len = buf_len;
-> +
-> +	*xattr_value = (typeof(*xattr_value)) hdr;
-> +	*xattr_len = sizeof(*hdr);
-> +
-> +	return 0;
-> +}
-> +
-> +int ima_modsig_serialize_data(struct evm_ima_xattr_data *hdr,
-> +			      struct evm_ima_xattr_data **data, int *data_len)
-> +{
-> +	struct modsig_hdr *modsig = (struct modsig_hdr *) hdr;
-> +
-> +	*data = &modsig->raw_pkcs7;
-> +	*data_len = modsig->raw_pkcs7_len;
-> +
-> +	return 0;
-> +}
-> +
-> +int ima_modsig_verify(const unsigned int keyring_id,
-> +		      struct evm_ima_xattr_data *hdr)
-> +{
-> +	struct modsig_hdr *modsig = (struct modsig_hdr *) hdr;
-> +	struct key *trusted_keys = integrity_keyring_from_id(keyring_id);
-> +
-> +	if (IS_ERR(trusted_keys))
-> +		return -EINVAL;
-> +
-> +	return verify_pkcs7_message_sig(modsig->data, modsig->data_len,
-> +					modsig->pkcs7_msg, trusted_keys,
-> +					VERIFYING_MODULE_SIGNATURE, NULL, NULL);
-> +}
-> +
-> +void ima_free_xattr_data(struct evm_ima_xattr_data *hdr)
-> +{
-> +	if (!hdr)
-> +		return;
-> +
-> +	if (hdr->type == IMA_MODSIG) {
-> +		struct modsig_hdr *modsig = (struct modsig_hdr *) hdr;
-> +
-> +		pkcs7_free_message(modsig->pkcs7_msg);
-> +	}
-> +
-> +	kfree(hdr);
-> +}
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index f4436626ccb7..4047ccabcbbf 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -853,8 +853,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  			}
-> 
->  			ima_log_string(ab, "appraise_type", args[0].from);
-> -			if ((strcmp(args[0].from, "imasig")) == 0)
-> +			if (strcmp(args[0].from, "imasig") == 0)
->  				entry->flags |= IMA_DIGSIG_REQUIRED;
-> +			else if (ima_hook_supports_modsig(entry->func) &&
-> +				 strcmp(args[0].from, "modsig|imasig") == 0)
-> +				entry->flags |= IMA_DIGSIG_REQUIRED
-> +						| IMA_MODSIG_ALLOWED;
->  			else
->  				result = -EINVAL;
->  			break;
-> @@ -960,6 +964,12 @@ void ima_delete_rules(void)
->  	}
+>   * memory_read_from_buffer - copy data from the buffer
+>   * @to: the kernel space buffer to read to
+>   * @count: the maximum number of bytes to read
+> diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
+> index c5fa3dee72fc..55e058ac487f 100644
+> --- a/fs/nilfs2/file.c
+> +++ b/fs/nilfs2/file.c
+> @@ -150,6 +150,7 @@ const struct file_operations nilfs_file_operations = {
+>  	/* .release	= nilfs_release_file, */
+>  	.fsync		= nilfs_sync_file,
+>  	.splice_read	= generic_file_splice_read,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+>  
+>  const struct inode_operations nilfs_file_inode_operations = {
+> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+> index bfeb647459d9..2832a7c92acd 100644
+> --- a/fs/ocfs2/file.c
+> +++ b/fs/ocfs2/file.c
+> @@ -2536,6 +2536,7 @@ const struct file_operations ocfs2_fops = {
+>  	.fallocate	= ocfs2_fallocate,
+>  	.clone_file_range = ocfs2_file_clone_range,
+>  	.dedupe_file_range = ocfs2_file_dedupe_range,
+> +	.integrity_read	= ocfs2_file_read_iter,
+>  };
+>  
+>  const struct file_operations ocfs2_dops = {
+> diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
+> index 12af0490322f..4f24d1b589b1 100644
+> --- a/fs/ramfs/file-mmu.c
+> +++ b/fs/ramfs/file-mmu.c
+> @@ -47,6 +47,7 @@ const struct file_operations ramfs_file_operations = {
+>  	.splice_write	= iter_file_splice_write,
+>  	.llseek		= generic_file_llseek,
+>  	.get_unmapped_area	= ramfs_mmu_get_unmapped_area,
+> +	.integrity_read	= generic_file_read_iter,
+>  };
+>  
+>  const struct inode_operations ramfs_file_inode_operations = {
+> diff --git a/fs/ramfs/file-nommu.c b/fs/ramfs/file-nommu.c
+> index 2ef7ce75c062..5ee704fa84e0 100644
+> --- a/fs/ramfs/file-nommu.c
+> +++ b/fs/ramfs/file-nommu.c
+> @@ -50,6 +50,7 @@ const struct file_operations ramfs_file_operations = {
+>  	.splice_read		= generic_file_splice_read,
+>  	.splice_write		= iter_file_splice_write,
+>  	.llseek			= generic_file_llseek,
+> +	.integrity_read		= generic_file_read_iter,
+>  };
+>  
+>  const struct inode_operations ramfs_file_inode_operations = {
+> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+> index 8cad0b19b404..5e52a315e18b 100644
+> --- a/fs/ubifs/file.c
+> +++ b/fs/ubifs/file.c
+> @@ -1747,4 +1747,5 @@ const struct file_operations ubifs_file_operations = {
+>  #ifdef CONFIG_COMPAT
+>  	.compat_ioctl   = ubifs_compat_ioctl,
+>  #endif
+> +	.integrity_read = generic_file_read_iter,
+>  };
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index c4893e226fd8..0a6704b563d6 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -292,6 +292,26 @@ xfs_file_read_iter(
+>  	return ret;
 >  }
-> 
-> +#define __ima_hook_stringify(str)	(#str),
+>  
+> +static ssize_t
+> +xfs_integrity_read(
+> +	struct kiocb		*iocb,
+> +	struct iov_iter		*to)
+> +{
+> +	struct inode		*inode = file_inode(iocb->ki_filp);
+> +	struct xfs_mount	*mp = XFS_I(inode)->i_mount;
 > +
-> +const char *const func_tokens[] = {
-> +	__ima_hooks(__ima_hook_stringify)
-> +};
+> +	lockdep_assert_held(&inode->i_rwsem);
 > +
->  #ifdef	CONFIG_IMA_READ_POLICY
->  enum {
->  	mask_exec = 0, mask_write, mask_read, mask_append
-> @@ -972,12 +982,6 @@ static const char *const mask_tokens[] = {
->  	"MAY_APPEND"
+> +	XFS_STATS_INC(mp, xs_read_calls);
+> +
+> +	if (XFS_FORCED_SHUTDOWN(mp))
+> +		return -EIO;
+> +
+> +	if (IS_DAX(inode))
+> +		return dax_iomap_rw(iocb, to, &xfs_iomap_ops);
+> +	return generic_file_read_iter(iocb, to);
+> +}
+> +
+>  /*
+>   * Zero any on disk space between the current EOF and the new, larger EOF.
+>   *
+> @@ -1175,6 +1195,7 @@ const struct file_operations xfs_file_operations = {
+>  	.fallocate	= xfs_file_fallocate,
+>  	.clone_file_range = xfs_file_clone_range,
+>  	.dedupe_file_range = xfs_file_dedupe_range,
+> +	.integrity_read	= xfs_integrity_read,
 >  };
-> 
-> -#define __ima_hook_stringify(str)	(#str),
-> -
-> -static const char *const func_tokens[] = {
-> -	__ima_hooks(__ima_hook_stringify)
-> -};
-> -
->  void *ima_policy_start(struct seq_file *m, loff_t *pos)
+>  
+>  const struct file_operations xfs_dir_file_operations = {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 6e1fd5d21248..8d0d10e1dd93 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1699,6 +1699,7 @@ struct file_operations {
+>  			u64);
+>  	ssize_t (*dedupe_file_range)(struct file *, u64, u64, struct file *,
+>  			u64);
+> +	ssize_t (*integrity_read)(struct kiocb *, struct iov_iter *);
+>  } __randomize_layout;
+>  
+>  struct inode_operations {
+> @@ -3097,6 +3098,8 @@ extern void simple_release_fs(struct vfsmount **mount, int *count);
+>  
+>  extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
+>  			loff_t *ppos, const void *from, size_t available);
+> +extern ssize_t simple_read_iter_from_buffer(struct kiocb *iocb,
+> +		struct iov_iter *to, const void *from, size_t available);
+>  extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+>  		const void __user *from, size_t count);
+>  
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b0aa6075d164..805d99011ca4 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3849,6 +3849,7 @@ static const struct file_operations shmem_file_operations = {
+>  	.splice_read	= generic_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fallocate	= shmem_fallocate,
+> +	.integrity_read	= shmem_file_read_iter,
+>  #endif
+>  };
+>  
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index 6fc888ca468e..df04f35a1d40 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/rbtree.h>
+>  #include <linux/file.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/uio.h>
+>  #include "integrity.h"
+>  
+>  static struct rb_root integrity_iint_tree = RB_ROOT;
+> @@ -184,18 +185,25 @@ security_initcall(integrity_iintcache_init);
+>  int integrity_kernel_read(struct file *file, loff_t offset,
+>  			  void *addr, unsigned long count)
 >  {
->  	loff_t l = *pos;
-> @@ -1140,8 +1144,12 @@ int ima_policy_show(struct seq_file *m, void *v)
->  			}
->  		}
->  	}
-> -	if (entry->flags & IMA_DIGSIG_REQUIRED)
-> -		seq_puts(m, "appraise_type=imasig ");
-> +	if (entry->flags & IMA_DIGSIG_REQUIRED) {
-> +		if (entry->flags & IMA_MODSIG_ALLOWED)
-> +			seq_puts(m, "appraise_type=modsig|imasig ");
-> +		else
-> +			seq_puts(m, "appraise_type=imasig ");
-> +	}
->  	if (entry->flags & IMA_PERMIT_DIRECTIO)
->  		seq_puts(m, "permit_directio ");
->  	rcu_read_unlock();
-> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-> index 28af43f63572..8c7fa52604a5 100644
-> --- a/security/integrity/ima/ima_template_lib.c
-> +++ b/security/integrity/ima/ima_template_lib.c
-> @@ -383,9 +383,21 @@ int ima_eventsig_init(struct ima_event_data *event_data,
->  	int xattr_len = event_data->xattr_len;
->  	int rc = 0;
-> 
-> -	if ((!xattr_value) || (xattr_value->type != EVM_IMA_XATTR_DIGSIG))
-> +	if (!xattr_value || (xattr_value->type != EVM_IMA_XATTR_DIGSIG &&
-> +			     xattr_value->type != IMA_MODSIG))
->  		goto out;
-> 
-> +	/*
-> +	 * The xattr_value for IMA_MODSIG is a runtime structure containing
-> +	 * pointers. Get its raw data instead.
-> +	 */
-> +	if (xattr_value->type == IMA_MODSIG) {
-> +		rc = ima_modsig_serialize_data(xattr_value, &xattr_value,
-> +					       &xattr_len);
-> +		if (rc)
-> +			goto out;
-> +	}
+> -	mm_segment_t old_fs;
+> -	char __user *buf = (char __user *)addr;
+> +	struct inode *inode = file_inode(file);
+> +	struct kvec iov = { .iov_base = addr, .iov_len = count };
+> +	struct kiocb kiocb;
+> +	struct iov_iter iter;
+>  	ssize_t ret;
+>  
+> +	lockdep_assert_held(&inode->i_rwsem);
 > +
->  	rc = ima_write_template_field_data(xattr_value, xattr_len, fmt,
->  					   field_data);
->  out:
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> index ba5f13f94ed3..2c9393cf2860 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -28,11 +28,12 @@
+>  	if (!(file->f_mode & FMODE_READ))
+>  		return -EBADF;
+> +	if (!file->f_op->integrity_read)
+> +		return -EBADF;
+>  
+> -	old_fs = get_fs();
+> -	set_fs(get_ds());
+> -	ret = __vfs_read(file, buf, count, &offset);
+> -	set_fs(old_fs);
+> +	init_sync_kiocb(&kiocb, file);
+> +	kiocb.ki_pos = offset;
+> +	iov_iter_kvec(&iter, READ | ITER_KVEC, &iov, 1, count);
+>  
+> +	ret = file->f_op->integrity_read(&kiocb, &iter);
+> +	BUG_ON(ret == -EIOCBQUEUED);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.7.4
 > 
->  /* iint cache flags */
->  #define IMA_ACTION_FLAGS	0xff000000
-> -#define IMA_ACTION_RULE_FLAGS	0x06000000
-> +#define IMA_ACTION_RULE_FLAGS	0x16000000
->  #define IMA_DIGSIG		0x01000000
->  #define IMA_DIGSIG_REQUIRED	0x02000000
->  #define IMA_PERMIT_DIRECTIO	0x04000000
->  #define IMA_NEW_FILE		0x08000000
-> +#define IMA_MODSIG_ALLOWED	0x10000000
 > 
->  #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
->  				 IMA_APPRAISE_SUBMASK)
-> @@ -58,6 +59,7 @@ enum evm_ima_xattr_type {
->  	EVM_XATTR_HMAC,
->  	EVM_IMA_XATTR_DIGSIG,
->  	IMA_XATTR_DIGEST_NG,
-> +	IMA_MODSIG,
->  	IMA_XATTR_LAST
->  };
-> 
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
