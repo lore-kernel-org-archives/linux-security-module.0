@@ -1,115 +1,134 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:22 -0700
-Subject: [PATCH v4 04/15] apparmor: Refactor to remove bprm_secureexec hook
+Date: Mon, 31 Jul 2017 16:51:19 -0700
+Subject: [PATCH v4 01/15] exec: Rename bprm->cred_prepared to called_set_creds
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-5-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-2-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The AppArmor bprm_secureexec hook can be merged with the bprm_set_creds
-hook since it's dealing with the same information, and all of the details
-are finalized during the first call to the bprm_set_creds hook via
-prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
-via bprm->called_set_creds).
+The cred_prepared bprm flag has a misleading name. It has nothing to do
+with the bprm_prepare_cred hook, and actually tracks if bprm_set_creds has
+been called. Rename this flag and improve its comment.
 
-Here, all the comments describe how secureexec is actually calculated
-during bprm_set_creds, so this actually does it, drops the bprm flag that
-was being used internally by AppArmor, and drops the bprm_secureexec hook.
-
+Cc: David Howells <dhowells@redhat.com>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <james.l.morris@oracle.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Acked-by: John Johansen <john.johansen@canonical.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
+Acked-by: James Morris <james.l.morris@oracle.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- security/apparmor/domain.c         | 22 +---------------------
- security/apparmor/include/domain.h |  1 -
- security/apparmor/include/file.h   |  3 ---
- security/apparmor/lsm.c            |  1 -
- 4 files changed, 1 insertion(+), 26 deletions(-)
+ fs/binfmt_flat.c           | 2 +-
+ fs/exec.c                  | 2 +-
+ include/linux/binfmts.h    | 8 ++++++--
+ security/apparmor/domain.c | 2 +-
+ security/selinux/hooks.c   | 2 +-
+ security/smack/smack_lsm.c | 2 +-
+ security/tomoyo/tomoyo.c   | 2 +-
+ 7 files changed, 12 insertions(+), 8 deletions(-)
 
+diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+index 2edcefc0a294..a722530cc468 100644
+--- a/fs/binfmt_flat.c
++++ b/fs/binfmt_flat.c
+@@ -885,7 +885,7 @@ static int load_flat_shared_library(int id, struct lib_info *libs)
+ 	 * as we're past the point of no return and are dealing with shared
+ 	 * libraries.
+ 	 */
+-	bprm.cred_prepared = 1;
++	bprm.called_set_creds = 1;
+ 
+ 	res = prepare_binprm(&bprm);
+ 
+diff --git a/fs/exec.c b/fs/exec.c
+index 72934df68471..cedae1620d2f 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1527,7 +1527,7 @@ int prepare_binprm(struct linux_binprm *bprm)
+ 	retval = security_bprm_set_creds(bprm);
+ 	if (retval)
+ 		return retval;
+-	bprm->cred_prepared = 1;
++	bprm->called_set_creds = 1;
+ 
+ 	memset(bprm->buf, 0, BINPRM_BUF_SIZE);
+ 	return kernel_read(bprm->file, 0, bprm->buf, BINPRM_BUF_SIZE);
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index 05488da3aee9..3cd98e8bc9dc 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -25,8 +25,12 @@ struct linux_binprm {
+ 	struct mm_struct *mm;
+ 	unsigned long p; /* current top of mem */
+ 	unsigned int
+-		cred_prepared:1,/* true if creds already prepared (multiple
+-				 * preps happen for interpreters) */
++		/*
++		 * True after the bprm_set_creds hook has been called once
++		 * (multiple calls can be made via prepare_binprm() for
++		 * binfmt_script/misc).
++		 */
++		called_set_creds:1,
+ 		cap_effective:1;/* true if has elevated effective capabilities,
+ 				 * false if not; except for init which inherits
+ 				 * its parent's caps anyway */
 diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 878407e023e3..1a1b1ec89d9d 100644
+index 001e133a3c8c..878407e023e3 100644
 --- a/security/apparmor/domain.c
 +++ b/security/apparmor/domain.c
-@@ -485,14 +485,11 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
- 	 *
- 	 * Cases 2 and 3 are marked as requiring secure exec
- 	 * (unless policy specified "unsafe exec")
--	 *
--	 * bprm->unsafe is used to cache the AA_X_UNSAFE permission
--	 * to avoid having to recompute in secureexec
+@@ -350,7 +350,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 	const char *name = NULL, *info = NULL;
+ 	int error = 0;
+ 
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ 
+ 	ctx = cred_ctx(bprm->cred);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e67a526d1f30..5d4051541518 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2328,7 +2328,7 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
+ 
+ 	/* SELinux context only depends on initial program or script and not
+ 	 * the script interpreter */
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ 
+ 	old_tsec = current_security();
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 658f5d8c7e76..7d4b2e221124 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -917,7 +917,7 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+ 	struct superblock_smack *sbsp;
+ 	int rc;
+ 
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ 
+ 	isp = inode->i_security;
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 130b4fa4f65f..d25b705360e0 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -76,7 +76,7 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
+ 	 * Do only if this function is called for the first time of an execve
+ 	 * operation.
  	 */
- 	if (!(perms.xindex & AA_X_UNSAFE)) {
- 		AA_DEBUG("scrubbing environment variables for %s profile=%s\n",
- 			 name, new_profile->base.hname);
--		bprm->unsafe |= AA_SECURE_X_NEEDED;
-+		bprm->secureexec = 1;
- 	}
- apply:
- 	/* when transitioning profiles clear unsafe personality bits */
-@@ -521,23 +518,6 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
- }
- 
- /**
-- * apparmor_bprm_secureexec - determine if secureexec is needed
-- * @bprm: binprm for exec  (NOT NULL)
-- *
-- * Returns: %1 if secureexec is needed else %0
-- */
--int apparmor_bprm_secureexec(struct linux_binprm *bprm)
--{
--	/* the decision to use secure exec is computed in set_creds
--	 * and stored in bprm->unsafe.
--	 */
--	if (bprm->unsafe & AA_SECURE_X_NEEDED)
--		return 1;
--
--	return 0;
--}
--
--/**
-  * apparmor_bprm_committing_creds - do task cleanup on committing new creds
-  * @bprm: binprm for the exec  (NOT NULL)
-  */
-diff --git a/security/apparmor/include/domain.h b/security/apparmor/include/domain.h
-index 30544729878a..2495af293587 100644
---- a/security/apparmor/include/domain.h
-+++ b/security/apparmor/include/domain.h
-@@ -24,7 +24,6 @@ struct aa_domain {
- };
- 
- int apparmor_bprm_set_creds(struct linux_binprm *bprm);
--int apparmor_bprm_secureexec(struct linux_binprm *bprm);
- void apparmor_bprm_committing_creds(struct linux_binprm *bprm);
- void apparmor_bprm_committed_creds(struct linux_binprm *bprm);
- 
-diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
-index 38f821bf49b6..076ac4501d97 100644
---- a/security/apparmor/include/file.h
-+++ b/security/apparmor/include/file.h
-@@ -66,9 +66,6 @@ struct path;
- #define AA_X_INHERIT		0x4000
- #define AA_X_UNCONFINED		0x8000
- 
--/* AA_SECURE_X_NEEDED - is passed in the bprm->unsafe field */
--#define AA_SECURE_X_NEEDED	0x8000
--
- /* need to make conditional which ones are being set */
- struct path_cond {
- 	kuid_t uid;
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 8f3c0f7aca5a..291c7126350f 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -624,7 +624,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_set_creds, apparmor_bprm_set_creds),
- 	LSM_HOOK_INIT(bprm_committing_creds, apparmor_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_committed_creds, apparmor_bprm_committed_creds),
--	LSM_HOOK_INIT(bprm_secureexec, apparmor_bprm_secureexec),
- 
- 	LSM_HOOK_INIT(task_setrlimit, apparmor_task_setrlimit),
- };
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ #ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
+ 	/*
 -- 
 2.7.4
 
