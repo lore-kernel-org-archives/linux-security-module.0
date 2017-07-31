@@ -1,134 +1,88 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:27 -0700
-Subject: [PATCH v4 09/15] LSM: drop bprm_secureexec hook
+Date: Mon, 31 Jul 2017 16:51:20 -0700
+Subject: [PATCH v4 02/15] exec: Correct comments about "point of no return"
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-10-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-3-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This removes the bprm_secureexec hook since the logic has been folded into
-the bprm_set_creds hook for all LSMs now.
+In commit 221af7f87b97 ("Split 'flush_old_exec' into two functions"),
+the comment about the point of no return should have stayed in
+flush_old_exec() since it refers to "bprm->mm = NULL;" line, but prior
+changes in commits c89681ed7d0e ("remove steal_locks()"), and
+fd8328be874f ("sanitize handling of shared descriptor tables in failing
+execve()") made it look like it meant the current->sas_ss_sp line instead.
 
+The comment was referring to the fact that once bprm->mm is NULL, all
+failures from a binfmt load_binary hook (e.g. load_elf_binary), will
+get SEGV raised against current. Move this comment and expand the
+explanation a bit, putting it above the assignment this time, and add
+details about the true nature of "point of no return" being the call
+to flush_old_exec() itself.
+
+This also removes an erroneous commet about when credentials are being
+installed. That has its own dedicated function, install_exec_creds(),
+which carries a similar (and correct) comment, so remove the bogus comment
+where installation is not actually happening.
+
+Cc: David Howells <dhowells@redhat.com>
 Cc: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: James Morris <james.l.morris@oracle.com>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- fs/exec.c                 |  2 --
- include/linux/lsm_hooks.h | 14 +++++---------
- include/linux/security.h  |  7 -------
- security/security.c       |  5 -----
- 4 files changed, 5 insertions(+), 23 deletions(-)
+ fs/exec.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 3762aef8b49e..f0e8d25eba9f 100644
+index cedae1620d2f..90bd5b85814f 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1322,8 +1322,6 @@ EXPORT_SYMBOL(would_dump);
- 
- void setup_new_exec(struct linux_binprm * bprm)
- {
--	bprm->secureexec |= security_bprm_secureexec(bprm);
--
- 	/*
- 	 * Once here, prepare_binrpm() will not be called any more, so
- 	 * the final state of setuid/setgid/fscaps can be merged into the
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 080f34e66017..2ddc1c7e8923 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -40,7 +40,11 @@
-  *	interpreters.  The hook can tell whether it has already been called by
-  *	checking to see if @bprm->security is non-NULL.  If so, then the hook
-  *	may decide either to retain the security information saved earlier or
-- *	to replace it.
-+ *	to replace it.  The hook must set @bprm->secureexec to 1 if a "secure
-+ *	exec" has happened as a result of this hook call.  The flag is used to
-+ *	indicate the need for a sanitized execution environment, and is also
-+ *	passed in the ELF auxiliary table on the initial stack to indicate
-+ *	whether libc should enable secure mode.
-  *	@bprm contains the linux_binprm structure.
-  *	Return 0 if the hook is successful and permission is granted.
-  * @bprm_check_security:
-@@ -68,12 +72,6 @@
-  *	linux_binprm structure.  This hook is a good place to perform state
-  *	changes on the process such as clearing out non-inheritable signal
-  *	state.  This is called immediately after commit_creds().
-- * @bprm_secureexec:
-- *	Return a boolean value (0 or 1) indicating whether a "secure exec"
-- *	is required.  The flag is passed in the auxiliary table
-- *	on the initial stack to the ELF interpreter to indicate whether libc
-- *	should enable secure mode.
-- *	@bprm contains the linux_binprm structure.
-  *
-  * Security hooks for filesystem operations.
-  *
-@@ -1368,7 +1366,6 @@ union security_list_options {
- 
- 	int (*bprm_set_creds)(struct linux_binprm *bprm);
- 	int (*bprm_check_security)(struct linux_binprm *bprm);
--	int (*bprm_secureexec)(struct linux_binprm *bprm);
- 	void (*bprm_committing_creds)(struct linux_binprm *bprm);
- 	void (*bprm_committed_creds)(struct linux_binprm *bprm);
- 
-@@ -1680,7 +1677,6 @@ struct security_hook_heads {
- 	struct list_head vm_enough_memory;
- 	struct list_head bprm_set_creds;
- 	struct list_head bprm_check_security;
--	struct list_head bprm_secureexec;
- 	struct list_head bprm_committing_creds;
- 	struct list_head bprm_committed_creds;
- 	struct list_head sb_alloc_security;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index af675b576645..133c41bb666d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -80,7 +80,6 @@ extern int cap_capset(struct cred *new, const struct cred *old,
- 		      const kernel_cap_t *inheritable,
- 		      const kernel_cap_t *permitted);
- extern int cap_bprm_set_creds(struct linux_binprm *bprm);
--extern int cap_bprm_secureexec(struct linux_binprm *bprm);
- extern int cap_inode_setxattr(struct dentry *dentry, const char *name,
- 			      const void *value, size_t size, int flags);
- extern int cap_inode_removexattr(struct dentry *dentry, const char *name);
-@@ -223,7 +222,6 @@ int security_bprm_set_creds(struct linux_binprm *bprm);
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(struct linux_binprm *bprm);
- void security_bprm_committed_creds(struct linux_binprm *bprm);
--int security_bprm_secureexec(struct linux_binprm *bprm);
- int security_sb_alloc(struct super_block *sb);
- void security_sb_free(struct super_block *sb);
- int security_sb_copy_data(char *orig, char *copy);
-@@ -515,11 +513,6 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
- {
+@@ -1238,6 +1238,12 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+ 	perf_event_comm(tsk, exec);
  }
  
--static inline int security_bprm_secureexec(struct linux_binprm *bprm)
--{
--	return cap_bprm_secureexec(bprm);
--}
--
- static inline int security_sb_alloc(struct super_block *sb)
++/*
++ * Calling this is the point of no return. None of the failures will be
++ * seen by userspace since either the process is already taking a fatal
++ * signal (via de_thread() or coredump), or will have SEGV raised
++ * (after exec_mmap()) by search_binary_handlers (see below).
++ */
+ int flush_old_exec(struct linux_binprm * bprm)
  {
- 	return 0;
-diff --git a/security/security.c b/security/security.c
-index b9fea3999cf8..750b83186869 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -311,11 +311,6 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
- }
+ 	int retval;
+@@ -1265,7 +1271,13 @@ int flush_old_exec(struct linux_binprm * bprm)
+ 	if (retval)
+ 		goto out;
  
--int security_bprm_secureexec(struct linux_binprm *bprm)
--{
--	return call_int_hook(bprm_secureexec, 0, bprm);
--}
--
- int security_sb_alloc(struct super_block *sb)
+-	bprm->mm = NULL;		/* We're using it now */
++	/*
++	 * After clearing bprm->mm (to mark that current is using the
++	 * prepared mm now), we have nothing left of the original
++	 * process. If anything from here on returns an error, the check
++	 * in search_binary_handler() will SEGV current.
++	 */
++	bprm->mm = NULL;
+ 
+ 	set_fs(USER_DS);
+ 	current->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
+@@ -1312,7 +1324,6 @@ void setup_new_exec(struct linux_binprm * bprm)
  {
- 	return call_int_hook(sb_alloc_security, 0, sb);
+ 	arch_pick_mmap_layout(current->mm);
+ 
+-	/* This is the point of no return */
+ 	current->sas_ss_sp = current->sas_ss_size = 0;
+ 
+ 	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
+@@ -1330,7 +1341,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	 */
+ 	current->mm->task_size = TASK_SIZE;
+ 
+-	/* install the new credentials */
+ 	if (!uid_eq(bprm->cred->uid, current_euid()) ||
+ 	    !gid_eq(bprm->cred->gid, current_egid())) {
+ 		current->pdeath_signal = 0;
 -- 
 2.7.4
 
