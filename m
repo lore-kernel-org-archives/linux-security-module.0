@@ -1,78 +1,47 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:23 -0700
-Subject: [PATCH v4 05/15] selinux: Refactor to remove bprm_secureexec hook
+Date: Mon, 31 Jul 2017 16:51:33 -0700
+Subject: [PATCH v4 15/15] exec: Consolidate pdeath_signal clearing
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-6-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-16-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The SELinux bprm_secureexec hook can be merged with the bprm_set_creds
-hook since it's dealing with the same information, and all of the details
-are finalized during the first call to the bprm_set_creds hook via
-prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
-via bprm->called_set_creds).
+Instead of an additional secureexec check for pdeath_signal, just move it
+up into the initial secureexec test. Neither perf nor arch code touches
+pdeath_signal, so the relocation shouldn't change anything.
 
-Here, the test can just happen at the end of the bprm_set_creds hook,
-and the bprm_secureexec hook can be dropped.
-
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Tested-by: Paul Moore <paul@paul-moore.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- security/selinux/hooks.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ fs/exec.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 5d4051541518..edbc1c76964e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2414,30 +2414,17 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
+diff --git a/fs/exec.c b/fs/exec.c
+index cddd2a2cbc1f..5a19912a4f53 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1330,6 +1330,9 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	bprm->secureexec |= bprm->cap_elevated;
  
- 		/* Clear any possibly unsafe personality bits on exec: */
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
+ 	if (bprm->secureexec) {
++		/* Make sure parent cannot signal privileged process. */
++		current->pdeath_signal = 0;
++
+ 		/*
+ 		 * For secureexec, reset the stack limit to sane default to
+ 		 * avoid bad behavior from the prior rlimits. This has to
+@@ -1362,10 +1365,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	 */
+ 	current->mm->task_size = TASK_SIZE;
+ 
+-	if (bprm->secureexec) {
+-		current->pdeath_signal = 0;
 -	}
 -
--	return 0;
--}
--
--static int selinux_bprm_secureexec(struct linux_binprm *bprm)
--{
--	const struct task_security_struct *tsec = current_security();
--	u32 sid, osid;
--	int atsecure = 0;
--
--	sid = tsec->sid;
--	osid = tsec->osid;
- 
--	if (osid != sid) {
- 		/* Enable secure mode for SIDs transitions unless
- 		   the noatsecure permission is granted between
- 		   the two SIDs, i.e. ahp returns 0. */
--		atsecure = avc_has_perm(osid, sid,
--					SECCLASS_PROCESS,
--					PROCESS__NOATSECURE, NULL);
-+		rc = avc_has_perm(old_tsec->sid, new_tsec->sid,
-+				  SECCLASS_PROCESS, PROCESS__NOATSECURE,
-+				  NULL);
-+		bprm->secureexec |= !!rc;
- 	}
- 
--	return !!atsecure;
-+	return 0;
- }
- 
- static int match_file(const void *p, struct file *file, unsigned fd)
-@@ -6152,7 +6139,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_set_creds, selinux_bprm_set_creds),
- 	LSM_HOOK_INIT(bprm_committing_creds, selinux_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
--	LSM_HOOK_INIT(bprm_secureexec, selinux_bprm_secureexec),
- 
- 	LSM_HOOK_INIT(sb_alloc_security, selinux_sb_alloc_security),
- 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+ 	/* An exec changes our domain. We are no longer part of the thread
+ 	   group */
+ 	current->self_exec_id++;
 -- 
 2.7.4
 
