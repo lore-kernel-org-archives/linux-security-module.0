@@ -1,147 +1,48 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:26 -0700
-Subject: [PATCH v4 08/15] commoncap: Move cap_elevated calculation into
-	bprm_set_creds
+Date: Mon, 31 Jul 2017 16:51:28 -0700
+Subject: [PATCH v4 10/15] exec: Use secureexec for setting dumpability
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-9-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-11-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Instead of a separate function, open-code the cap_elevated test, which
-lets us entirely remove bprm->cap_effective (to use the local "effective"
-variable instead), and more accurately examine euid/egid changes via the
-existing local "is_setid".
+The examination of "current" to decide dumpability is wrong. This was a
+check of and euid/uid (or egid/gid) mismatch in the existing process,
+not the newly created one. This appears to stretch back into even the
+"history.git" tree. Luckily, dumpability is later set in commit_creds().
+In earlier kernel versions before creds existed, similar checks also
+existed late in the exec flow, covering up the mistake as far back as I
+could find.
 
-The following LTP tests were run to validate the changes:
+Note that because the commit_creds() check examines differences of euid,
+uid, egid, gid, and capabilities between the old and new creds, it would
+look like the setup_new_exec() dumpability test could be entirely removed.
+However, the secureexec test may cover a different set of tests (specific
+to the LSMs) than what commit_creds() checks for. So, fix this test to
+use secureexec (the removed euid tests are redundant to the commoncap
+secureexec checks now).
 
-	# ./runltp -f syscalls -s cap
-	# ./runltp -f securebits
-	# ./runltp -f cap_bounds
-	# ./runltp -f filecaps
-
-All kernel selftests for capabilities and exec continue to pass as well.
-
-Cc: Andy Lutomirski <luto@kernel.org>
+Cc: David Howells <dhowells@redhat.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- include/linux/binfmts.h |  3 ---
- security/commoncap.c    | 52 ++++++++++---------------------------------------
- 2 files changed, 10 insertions(+), 45 deletions(-)
+ fs/exec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index ebc4030fc6bb..b2c1563091e5 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -31,9 +31,6 @@ struct linux_binprm {
- 		 * binfmt_script/misc).
- 		 */
- 		called_set_creds:1,
--		cap_effective:1;/* true if has elevated effective capabilities,
--				 * false if not; except for init which inherits
--				 * its parent's caps anyway */
- 		/*
- 		 * True if most recent call to the commoncaps bprm_set_creds
- 		 * hook (due to multiple prepare_binprm() calls from the
-diff --git a/security/commoncap.c b/security/commoncap.c
-index abb6050c8083..d8e26fb9781d 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -285,15 +285,6 @@ int cap_capset(struct cred *new,
- 	return 0;
- }
+diff --git a/fs/exec.c b/fs/exec.c
+index f0e8d25eba9f..f9997ea6414e 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1333,7 +1333,7 @@ void setup_new_exec(struct linux_binprm * bprm)
  
--/*
-- * Clear proposed capability sets for execve().
-- */
--static inline void bprm_clear_caps(struct linux_binprm *bprm)
--{
--	cap_clear(bprm->cred->cap_permitted);
--	bprm->cap_effective = false;
--}
--
- /**
-  * cap_inode_need_killpriv - Determine if inode change affects privileges
-  * @dentry: The inode/dentry in being changed with change marked ATTR_KILL_PRIV
-@@ -443,7 +434,7 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
- 	int rc = 0;
- 	struct cpu_vfs_cap_data vcaps;
+ 	current->sas_ss_sp = current->sas_ss_size = 0;
  
--	bprm_clear_caps(bprm);
-+	cap_clear(bprm->cred->cap_permitted);
- 
- 	if (!file_caps_enabled)
- 		return 0;
-@@ -476,13 +467,11 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
- 
- out:
- 	if (rc)
--		bprm_clear_caps(bprm);
-+		cap_clear(bprm->cred->cap_permitted);
- 
- 	return rc;
- }
- 
--static int is_secureexec(struct linux_binprm *bprm);
--
- /**
-  * cap_bprm_set_creds - Set up the proposed credentials for execve().
-  * @bprm: The execution parameters, including the proposed creds
-@@ -587,8 +576,6 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	if (WARN_ON(!cap_ambient_invariant_ok(new)))
- 		return -EPERM;
- 
--	bprm->cap_effective = effective;
--
- 	/*
- 	 * Audit candidate if current->cap_effective is set
- 	 *
-@@ -617,35 +604,16 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 		return -EPERM;
- 
- 	/* Check for privilege-elevated exec. */
--	bprm->cap_elevated = is_secureexec(bprm);
--
--	return 0;
--}
--
--/**
-- * is_secureexec - Determine whether a secure execution is required
-- * @bprm: The execution parameters
-- *
-- * Determine whether a secure execution is required, return 1 if it is, and 0
-- * if it is not.
-- *
-- * The credentials have been committed by this point, and so are no longer
-- * available through @bprm->cred.
-- */
--static int is_secureexec(struct linux_binprm *bprm)
--{
--	const struct cred *cred = bprm->cred;
--	kuid_t root_uid = make_kuid(cred->user_ns, 0);
--
--	if (!uid_eq(cred->uid, root_uid)) {
--		if (bprm->cap_effective)
--			return 1;
--		if (!cap_issubset(cred->cap_permitted, cred->cap_ambient))
--			return 1;
-+	bprm->cap_elevated = 0;
-+	if (is_setid) {
-+		bprm->cap_elevated = 1;
-+	} else if (!uid_eq(new->uid, root_uid)) {
-+		if (effective ||
-+		    !cap_issubset(new->cap_permitted, new->cap_ambient))
-+			bprm->cap_elevated = 1;
- 	}
- 
--	return (!uid_eq(cred->euid, cred->uid) ||
--		!gid_eq(cred->egid, cred->gid));
-+	return 0;
- }
- 
- /**
+-	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
++	if (!bprm->secureexec)
+ 		set_dumpable(current->mm, SUID_DUMP_USER);
+ 	else
+ 		set_dumpable(current->mm, suid_dumpable);
 -- 
 2.7.4
 
