@@ -1,128 +1,147 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:25 -0700
-Subject: [PATCH v4 07/15] commoncap: Refactor to remove bprm_secureexec hook
+Date: Mon, 31 Jul 2017 16:51:26 -0700
+Subject: [PATCH v4 08/15] commoncap: Move cap_elevated calculation into
+	bprm_set_creds
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-8-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-9-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The commoncap implementation of the bprm_secureexec hook is the only LSM
-that depends on the final call to its bprm_set_creds hook (since it may
-be called for multiple files, it ignores bprm->called_set_creds). As a
-result, it cannot safely _clear_ bprm->secureexec since other LSMs may
-have set it. Instead, remove the bprm_secureexec hook by introducing a
-new flag to bprm specific to commoncap: cap_elevated. This is similar to
-cap_effective, but that is used for a specific subset of elevated
-privileges, and exists solely to track state from bprm_set_creds to
-bprm_secureexec. As such, it will be removed in the next patch.
+Instead of a separate function, open-code the cap_elevated test, which
+lets us entirely remove bprm->cap_effective (to use the local "effective"
+variable instead), and more accurately examine euid/egid changes via the
+existing local "is_setid".
 
-Here, set the new bprm->cap_elevated flag when setuid/setgid has happened
-from bprm_fill_uid() or fscapabilities have been prepared. This temporarily
-moves the bprm_secureexec hook to a static inline. The helper will be
-removed in the next patch; this makes the step easier to review and bisect,
-since this does not introduce any changes to inputs nor outputs to the
-"elevated privileges" calculation.
+The following LTP tests were run to validate the changes:
 
-The new flag is merged with the bprm->secureexec flag in setup_new_exec()
-since this marks the end of any further prepare_binprm() calls.
+	# ./runltp -f syscalls -s cap
+	# ./runltp -f securebits
+	# ./runltp -f cap_bounds
+	# ./runltp -f filecaps
+
+All kernel selftests for capabilities and exec continue to pass as well.
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: James Morris <james.l.morris@oracle.com>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- fs/exec.c               |  7 +++++++
- include/linux/binfmts.h |  7 +++++++
- security/commoncap.c    | 12 ++++++++----
- 3 files changed, 22 insertions(+), 4 deletions(-)
+ include/linux/binfmts.h |  3 ---
+ security/commoncap.c    | 52 ++++++++++---------------------------------------
+ 2 files changed, 10 insertions(+), 45 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 77244367c773..3762aef8b49e 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1324,6 +1324,13 @@ void setup_new_exec(struct linux_binprm * bprm)
- {
- 	bprm->secureexec |= security_bprm_secureexec(bprm);
- 
-+	/*
-+	 * Once here, prepare_binrpm() will not be called any more, so
-+	 * the final state of setuid/setgid/fscaps can be merged into the
-+	 * secureexec flag.
-+	 */
-+	bprm->secureexec |= bprm->cap_elevated;
-+
- 	arch_pick_mmap_layout(current->mm);
- 
- 	current->sas_ss_sp = current->sas_ss_size = 0;
 diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 6cfd36a27d4e..ebc4030fc6bb 100644
+index ebc4030fc6bb..b2c1563091e5 100644
 --- a/include/linux/binfmts.h
 +++ b/include/linux/binfmts.h
-@@ -35,6 +35,13 @@ struct linux_binprm {
- 				 * false if not; except for init which inherits
- 				 * its parent's caps anyway */
+@@ -31,9 +31,6 @@ struct linux_binprm {
+ 		 * binfmt_script/misc).
+ 		 */
+ 		called_set_creds:1,
+-		cap_effective:1;/* true if has elevated effective capabilities,
+-				 * false if not; except for init which inherits
+-				 * its parent's caps anyway */
  		/*
-+		 * True if most recent call to the commoncaps bprm_set_creds
-+		 * hook (due to multiple prepare_binprm() calls from the
-+		 * binfmt_script/misc handlers) resulted in elevated
-+		 * privileges.
-+		 */
-+		cap_elevated:1,
-+		/*
- 		 * Set by bprm_set_creds hook to indicate a privilege-gaining
- 		 * exec has happened. Used to sanitize execution environment
- 		 * and to set AT_SECURE auxv for glibc.
+ 		 * True if most recent call to the commoncaps bprm_set_creds
+ 		 * hook (due to multiple prepare_binprm() calls from the
 diff --git a/security/commoncap.c b/security/commoncap.c
-index 7abebd782d5e..abb6050c8083 100644
+index abb6050c8083..d8e26fb9781d 100644
 --- a/security/commoncap.c
 +++ b/security/commoncap.c
-@@ -481,6 +481,8 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
- 	return rc;
- }
- 
-+static int is_secureexec(struct linux_binprm *bprm);
-+
- /**
-  * cap_bprm_set_creds - Set up the proposed credentials for execve().
-  * @bprm: The execution parameters, including the proposed creds
-@@ -614,11 +616,14 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	if (WARN_ON(!cap_ambient_invariant_ok(new)))
- 		return -EPERM;
- 
-+	/* Check for privilege-elevated exec. */
-+	bprm->cap_elevated = is_secureexec(bprm);
-+
+@@ -285,15 +285,6 @@ int cap_capset(struct cred *new,
  	return 0;
  }
  
+-/*
+- * Clear proposed capability sets for execve().
+- */
+-static inline void bprm_clear_caps(struct linux_binprm *bprm)
+-{
+-	cap_clear(bprm->cred->cap_permitted);
+-	bprm->cap_effective = false;
+-}
+-
  /**
-- * cap_bprm_secureexec - Determine whether a secure execution is required
-+ * is_secureexec - Determine whether a secure execution is required
-  * @bprm: The execution parameters
-  *
-  * Determine whether a secure execution is required, return 1 if it is, and 0
-@@ -627,9 +632,9 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
-  * The credentials have been committed by this point, and so are no longer
-  * available through @bprm->cred.
-  */
--int cap_bprm_secureexec(struct linux_binprm *bprm)
-+static int is_secureexec(struct linux_binprm *bprm)
- {
--	const struct cred *cred = current_cred();
-+	const struct cred *cred = bprm->cred;
- 	kuid_t root_uid = make_kuid(cred->user_ns, 0);
+  * cap_inode_need_killpriv - Determine if inode change affects privileges
+  * @dentry: The inode/dentry in being changed with change marked ATTR_KILL_PRIV
+@@ -443,7 +434,7 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
+ 	int rc = 0;
+ 	struct cpu_vfs_cap_data vcaps;
  
- 	if (!uid_eq(cred->uid, root_uid)) {
-@@ -1079,7 +1084,6 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(capget, cap_capget),
- 	LSM_HOOK_INIT(capset, cap_capset),
- 	LSM_HOOK_INIT(bprm_set_creds, cap_bprm_set_creds),
--	LSM_HOOK_INIT(bprm_secureexec, cap_bprm_secureexec),
- 	LSM_HOOK_INIT(inode_need_killpriv, cap_inode_need_killpriv),
- 	LSM_HOOK_INIT(inode_killpriv, cap_inode_killpriv),
- 	LSM_HOOK_INIT(mmap_addr, cap_mmap_addr),
+-	bprm_clear_caps(bprm);
++	cap_clear(bprm->cred->cap_permitted);
+ 
+ 	if (!file_caps_enabled)
+ 		return 0;
+@@ -476,13 +467,11 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
+ 
+ out:
+ 	if (rc)
+-		bprm_clear_caps(bprm);
++		cap_clear(bprm->cred->cap_permitted);
+ 
+ 	return rc;
+ }
+ 
+-static int is_secureexec(struct linux_binprm *bprm);
+-
+ /**
+  * cap_bprm_set_creds - Set up the proposed credentials for execve().
+  * @bprm: The execution parameters, including the proposed creds
+@@ -587,8 +576,6 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	if (WARN_ON(!cap_ambient_invariant_ok(new)))
+ 		return -EPERM;
+ 
+-	bprm->cap_effective = effective;
+-
+ 	/*
+ 	 * Audit candidate if current->cap_effective is set
+ 	 *
+@@ -617,35 +604,16 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 		return -EPERM;
+ 
+ 	/* Check for privilege-elevated exec. */
+-	bprm->cap_elevated = is_secureexec(bprm);
+-
+-	return 0;
+-}
+-
+-/**
+- * is_secureexec - Determine whether a secure execution is required
+- * @bprm: The execution parameters
+- *
+- * Determine whether a secure execution is required, return 1 if it is, and 0
+- * if it is not.
+- *
+- * The credentials have been committed by this point, and so are no longer
+- * available through @bprm->cred.
+- */
+-static int is_secureexec(struct linux_binprm *bprm)
+-{
+-	const struct cred *cred = bprm->cred;
+-	kuid_t root_uid = make_kuid(cred->user_ns, 0);
+-
+-	if (!uid_eq(cred->uid, root_uid)) {
+-		if (bprm->cap_effective)
+-			return 1;
+-		if (!cap_issubset(cred->cap_permitted, cred->cap_ambient))
+-			return 1;
++	bprm->cap_elevated = 0;
++	if (is_setid) {
++		bprm->cap_elevated = 1;
++	} else if (!uid_eq(new->uid, root_uid)) {
++		if (effective ||
++		    !cap_issubset(new->cap_permitted, new->cap_ambient))
++			bprm->cap_elevated = 1;
+ 	}
+ 
+-	return (!uid_eq(cred->euid, cred->uid) ||
+-		!gid_eq(cred->egid, cred->gid));
++	return 0;
+ }
+ 
+ /**
 -- 
 2.7.4
 
