@@ -1,55 +1,58 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:32 -0700
-Subject: [PATCH v4 14/15] exec: Use sane stack rlimit under secureexec
+Date: Mon, 31 Jul 2017 16:51:30 -0700
+Subject: [PATCH v4 12/15] smack: Remove redundant pdeath_signal clearing
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-15-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-13-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-For a secureexec, before memory layout selection has happened, reset the
-stack rlimit to something sane to avoid the caller having control over
-the resulting layouts.
+This removes the redundant pdeath_signal clearing in Smack: the check in
+smack_bprm_committing_creds() matches the check in smack_bprm_set_creds()
+(which used to be in the now-removed smack_bprm_securexec() hook) and
+since secureexec is now being checked for clearing pdeath_signal, this
+is redundant to the common exec code.
 
-$ ulimit -s
-8192
-$ ulimit -s unlimited
-$ /bin/sh -c 'ulimit -s'
-unlimited
-$ sudo /bin/sh -c 'ulimit -s'
-8192
-
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- fs/exec.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ security/smack/smack_lsm.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 3ae8a40c587b..cddd2a2cbc1f 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1329,6 +1329,18 @@ void setup_new_exec(struct linux_binprm * bprm)
- 	 */
- 	bprm->secureexec |= bprm->cap_elevated;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4f1967be3d20..4e33c650b224 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -957,20 +957,6 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+ 	return 0;
+ }
  
-+	if (bprm->secureexec) {
-+		/*
-+		 * For secureexec, reset the stack limit to sane default to
-+		 * avoid bad behavior from the prior rlimits. This has to
-+		 * happen before arch_pick_mmap_layout(), which examines
-+		 * RLIMIT_STACK, but after the point of no return to avoid
-+		 * needing to clean up the change on failure.
-+		 */
-+		if (current->signal->rlim[RLIMIT_STACK].rlim_cur > _STK_LIM)
-+			current->signal->rlim[RLIMIT_STACK].rlim_cur = _STK_LIM;
-+	}
-+
- 	arch_pick_mmap_layout(current->mm);
+-/**
+- * smack_bprm_committing_creds - Prepare to install the new credentials
+- * from bprm.
+- *
+- * @bprm: binprm for exec
+- */
+-static void smack_bprm_committing_creds(struct linux_binprm *bprm)
+-{
+-	struct task_smack *bsp = bprm->cred->security;
+-
+-	if (bsp->smk_task != bsp->smk_forked)
+-		current->pdeath_signal = 0;
+-}
+-
+ /*
+  * Inode hooks
+  */
+@@ -4633,7 +4619,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_parse_opts_str, smack_parse_opts_str),
  
- 	current->sas_ss_sp = current->sas_ss_size = 0;
+ 	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
+-	LSM_HOOK_INIT(bprm_committing_creds, smack_bprm_committing_creds),
+ 
+ 	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
+ 	LSM_HOOK_INIT(inode_free_security, smack_inode_free_security),
 -- 
 2.7.4
 
