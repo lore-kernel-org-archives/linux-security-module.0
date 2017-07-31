@@ -1,53 +1,128 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:31 -0700
-Subject: [PATCH v4 13/15] exec: Consolidate dumpability logic
+Date: Mon, 31 Jul 2017 16:51:25 -0700
+Subject: [PATCH v4 07/15] commoncap: Refactor to remove bprm_secureexec hook
 In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-14-git-send-email-keescook@chromium.org>
+Message-ID: <1501545093-56634-8-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Since it's already valid to set dumpability in the early part of
-setup_new_exec(), we can consolidate the logic into a single place.
-The BINPRM_FLAGS_ENFORCE_NONDUMP is set during would_dump() calls
-before setup_new_exec(), so its test is safe to move as well.
+The commoncap implementation of the bprm_secureexec hook is the only LSM
+that depends on the final call to its bprm_set_creds hook (since it may
+be called for multiple files, it ignores bprm->called_set_creds). As a
+result, it cannot safely _clear_ bprm->secureexec since other LSMs may
+have set it. Instead, remove the bprm_secureexec hook by introducing a
+new flag to bprm specific to commoncap: cap_elevated. This is similar to
+cap_effective, but that is used for a specific subset of elevated
+privileges, and exists solely to track state from bprm_set_creds to
+bprm_secureexec. As such, it will be removed in the next patch.
 
+Here, set the new bprm->cap_elevated flag when setuid/setgid has happened
+from bprm_fill_uid() or fscapabilities have been prepared. This temporarily
+moves the bprm_secureexec hook to a static inline. The helper will be
+removed in the next patch; this makes the step easier to review and bisect,
+since this does not introduce any changes to inputs nor outputs to the
+"elevated privileges" calculation.
+
+The new flag is merged with the bprm->secureexec flag in setup_new_exec()
+since this marks the end of any further prepare_binprm() calls.
+
+Cc: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Acked-by: James Morris <james.l.morris@oracle.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- fs/exec.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ fs/exec.c               |  7 +++++++
+ include/linux/binfmts.h |  7 +++++++
+ security/commoncap.c    | 12 ++++++++----
+ 3 files changed, 22 insertions(+), 4 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 708a72f93320..3ae8a40c587b 100644
+index 77244367c773..3762aef8b49e 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1333,10 +1333,12 @@ void setup_new_exec(struct linux_binprm * bprm)
+@@ -1324,6 +1324,13 @@ void setup_new_exec(struct linux_binprm * bprm)
+ {
+ 	bprm->secureexec |= security_bprm_secureexec(bprm);
+ 
++	/*
++	 * Once here, prepare_binrpm() will not be called any more, so
++	 * the final state of setuid/setgid/fscaps can be merged into the
++	 * secureexec flag.
++	 */
++	bprm->secureexec |= bprm->cap_elevated;
++
+ 	arch_pick_mmap_layout(current->mm);
  
  	current->sas_ss_sp = current->sas_ss_size = 0;
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index 6cfd36a27d4e..ebc4030fc6bb 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -35,6 +35,13 @@ struct linux_binprm {
+ 				 * false if not; except for init which inherits
+ 				 * its parent's caps anyway */
+ 		/*
++		 * True if most recent call to the commoncaps bprm_set_creds
++		 * hook (due to multiple prepare_binprm() calls from the
++		 * binfmt_script/misc handlers) resulted in elevated
++		 * privileges.
++		 */
++		cap_elevated:1,
++		/*
+ 		 * Set by bprm_set_creds hook to indicate a privilege-gaining
+ 		 * exec has happened. Used to sanitize execution environment
+ 		 * and to set AT_SECURE auxv for glibc.
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 7abebd782d5e..abb6050c8083 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -481,6 +481,8 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
+ 	return rc;
+ }
  
--	if (!bprm->secureexec)
--		set_dumpable(current->mm, SUID_DUMP_USER);
--	else
-+	/* Figure out dumpability. */
-+	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-+	    bprm->secureexec)
- 		set_dumpable(current->mm, suid_dumpable);
-+	else
-+		set_dumpable(current->mm, SUID_DUMP_USER);
++static int is_secureexec(struct linux_binprm *bprm);
++
+ /**
+  * cap_bprm_set_creds - Set up the proposed credentials for execve().
+  * @bprm: The execution parameters, including the proposed creds
+@@ -614,11 +616,14 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	if (WARN_ON(!cap_ambient_invariant_ok(new)))
+ 		return -EPERM;
  
- 	arch_setup_new_exec();
- 	perf_event_exec();
-@@ -1350,9 +1352,6 @@ void setup_new_exec(struct linux_binprm * bprm)
++	/* Check for privilege-elevated exec. */
++	bprm->cap_elevated = is_secureexec(bprm);
++
+ 	return 0;
+ }
  
- 	if (bprm->secureexec) {
- 		current->pdeath_signal = 0;
--	} else {
--		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
--			set_dumpable(current->mm, suid_dumpable);
- 	}
+ /**
+- * cap_bprm_secureexec - Determine whether a secure execution is required
++ * is_secureexec - Determine whether a secure execution is required
+  * @bprm: The execution parameters
+  *
+  * Determine whether a secure execution is required, return 1 if it is, and 0
+@@ -627,9 +632,9 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+  * The credentials have been committed by this point, and so are no longer
+  * available through @bprm->cred.
+  */
+-int cap_bprm_secureexec(struct linux_binprm *bprm)
++static int is_secureexec(struct linux_binprm *bprm)
+ {
+-	const struct cred *cred = current_cred();
++	const struct cred *cred = bprm->cred;
+ 	kuid_t root_uid = make_kuid(cred->user_ns, 0);
  
- 	/* An exec changes our domain. We are no longer part of the thread
+ 	if (!uid_eq(cred->uid, root_uid)) {
+@@ -1079,7 +1084,6 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(capget, cap_capget),
+ 	LSM_HOOK_INIT(capset, cap_capset),
+ 	LSM_HOOK_INIT(bprm_set_creds, cap_bprm_set_creds),
+-	LSM_HOOK_INIT(bprm_secureexec, cap_bprm_secureexec),
+ 	LSM_HOOK_INIT(inode_need_killpriv, cap_inode_need_killpriv),
+ 	LSM_HOOK_INIT(inode_killpriv, cap_inode_killpriv),
+ 	LSM_HOOK_INIT(mmap_addr, cap_mmap_addr),
 -- 
 2.7.4
 
