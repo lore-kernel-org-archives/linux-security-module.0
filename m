@@ -1,82 +1,105 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 15:43:13 -0700
-Subject: [PATCH v3 06/15] commoncap: Refactor to remove bprm_secureexec
-	hook
-In-Reply-To: <CALCETrVjCgcGvHberis3eiGDf6S4gVyp5EGdpsK4giibssAooQ@mail.gmail.com>
-References: <1500416736-49829-1-git-send-email-keescook@chromium.org>
-	<1500416736-49829-7-git-send-email-keescook@chromium.org>
-	<CALCETrVwR580iJA-Wb=-Do+XhyfQhefp6R7Hxy=TLE53hMvFvw@mail.gmail.com>
-	<CALCETrVjCgcGvHberis3eiGDf6S4gVyp5EGdpsK4giibssAooQ@mail.gmail.com>
-Message-ID: <CAGXu5jLyahmnWevHm02pJm7HSChaAOyNddbsLJepKvP2xYWJXw@mail.gmail.com>
+Date: Mon, 31 Jul 2017 16:51:18 -0700
+Subject: [PATCH v4 00/15] exec: Use sane stack rlimit under secureexec
+Message-ID: <1501545093-56634-1-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jul 19, 2017 at 9:53 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Tue, Jul 18, 2017 at 6:10 PM, Andy Lutomirski <luto@kernel.org> wrote:
->> On Tue, Jul 18, 2017 at 3:25 PM, Kees Cook <keescook@chromium.org> wrote:
->>> The commoncap implementation of the bprm_secureexec hook is the only LSM
->>> that depends on the final call to its bprm_set_creds hook (since it may
->>> be called for multiple files, it ignores bprm->called_set_creds). As a
->>> result, it cannot safely _clear_ bprm->secureexec since other LSMs may
->>> have set it.  Instead, remove the bprm_secureexec hook by introducing a
->>> new flag to bprm specific to commoncap: cap_elevated. This is similar to
->>> cap_effective, but that is used for a specific subset of elevated
->>> privileges, and exists solely to track state from bprm_set_creds to
->>> bprm_secureexec. As such, it will be removed in the next patch.
->>>
->>> Here, set the new bprm->cap_elevated flag when setuid/setgid has happened
->>> from bprm_fill_uid() or fscapabilities have been prepared. This temporarily
->>> moves the bprm_secureexec hook to a static inline. The helper will be
->>> removed in the next patch; this makes the step easier to review and bisect,
->>> since this does not introduce any changes to inputs nor outputs to the
->>> "elevated privileges" calculation.
->>>
->>> The new flag is merged with the bprm->secureexec flag in setup_new_exec()
->>> since this marks the end of any further prepare_binprm() calls.
->>
->> Reviewed-by: Andy Lutomirski <luto@kernel.org>
->>
->> with the redundant caveat that...
->>
->>> --- a/fs/exec.c
->>> +++ b/fs/exec.c
->>> @@ -1330,6 +1330,13 @@ EXPORT_SYMBOL(would_dump);
->>>
->>>  void setup_new_exec(struct linux_binprm * bprm)
->>>  {
->>> +       /*
->>> +        * Once here, prepare_binrpm() will not be called any more, so
->>> +        * the final state of setuid/setgid/fscaps can be merged into the
->>> +        * secureexec flag.
->>> +        */
->>> +       bprm->secureexec |= bprm->cap_elevated;
->>> +
->>
->> ...the weird placement of the other assignments to bprm->secureexec
->> makes this exceedingly confusing.
->
-> Can you just put the bprm->secureexec |=
-> security_bprm_secureexec(bprm); assignment in prepare_binprm() right
-> after security_bprm_set_creds()? This would make patch 1 make sense
-> and make this make sense too, I think.  Or is there some reason why it
-> wouldn't work?  If the latter, I think the patch descriptions and
-> comments should maybe be fixed up.
+As discussed with Linus and Andy, we need to reset the stack rlimit
+before we do memory layouts when execing a privilege-gaining (e.g.
+setuid) program. To do this, we need to know the results of the
+bprm_secureexec hook before memory layouts. As it turns out, this
+can be made _mostly_ trivial by collapsing bprm_secureexec into
+bprm_set_creds.
 
-Yeah, I'll make this change for the next version. It makes things a
-little less ugly in the series. In this version I was trying to focus
-on eliminating the LSM hook instead of first moving it (to
-setup_new_exec()) and then moving it a second time (to the
-bprm_set_creds() hook).
+The LSMs using bprm_secureexec nearly always save state between
+bprm_set_creds and bprm_secureexec. In the face of multiple calls to
+bprm_set_creds (via prepare_binprm() calls from binfmt_script, etc),
+all LSMs except commoncap only pay attention to the first call, so
+that aligns well with collapsing bprm_secureexec into bprm_set_creds.
+The commoncaps, though, needs to check the _last_ bprm_set_creds, so
+this series just swaps one bprm flag for another (cap_effective is no
+longer needed to save state between bprm_set_creds and bprm_secureexec,
+but we do need to keep a separate state, so we add the cap_elevated flag).
 
-Have you had a chance to review the later consolidation patches? So
-far no one else has reviewed those. (David, any chance you have some
-time too?) I'd love to get at least some Reviewed-bys for them...
+Once secureexec is available to setup_new_exec() before the memory
+layout, we can add an rlimit sanity-check for setuid execs. (With no
+need to clean up since we're past the point of no return.)
+
+Along the way, this fixes comments, renames a variable, and consolidates
+dumpability and pdeath_signal clearing, which includes some commit log
+archeology to examine the subtle differences between what we had and
+what we need.
+
+Several folks have looked at this already (thank you!) but I'd appreciate
+any other eyes on this to make sure it isn't broken in some special
+way. Looking at the diffstat, even after all my long comments, this is
+a net reduction in lines. :)
+
+Given this crosses a bunch of areas, I think this is likely best to go
+via the -mm tree, which is where nearly all of my prior exec work has
+lived too. It's also after rc2 at this point, so I'd be slightly nervous
+to see this land directly in Linus's tree, but I leave that decision up
+to Linus. :) Regardless, very little has changed between v3 and v4, so I
+think this is ready to go.
+
+Thanks!
 
 -Kees
 
--- 
-Kees Cook
-Pixel Security
+----------------------------------------------------------------
+Kees Cook (15):
+      exec: Rename bprm->cred_prepared to called_set_creds
+      exec: Correct comments about "point of no return"
+      binfmt: Introduce secureexec flag
+      apparmor: Refactor to remove bprm_secureexec hook
+      selinux: Refactor to remove bprm_secureexec hook
+      smack: Refactor to remove bprm_secureexec hook
+      commoncap: Refactor to remove bprm_secureexec hook
+      commoncap: Move cap_elevated calculation into bprm_set_creds
+      LSM: drop bprm_secureexec hook
+      exec: Use secureexec for setting dumpability
+      exec: Use secureexec for clearing pdeath_signal
+      smack: Remove redundant pdeath_signal clearing
+      exec: Consolidate dumpability logic
+      exec: Use sane stack rlimit under secureexec
+      exec: Consolidate pdeath_signal clearing
+
+ fs/binfmt_elf.c                    |  2 +-
+ fs/binfmt_elf_fdpic.c              |  2 +-
+ fs/binfmt_flat.c                   |  2 +-
+ fs/exec.c                          | 56 ++++++++++++++++++++++++++++----------
+ include/linux/binfmts.h            | 24 ++++++++++++----
+ include/linux/lsm_hooks.h          | 14 ++++------
+ include/linux/security.h           |  7 -----
+ security/apparmor/domain.c         | 24 ++--------------
+ security/apparmor/include/domain.h |  1 -
+ security/apparmor/include/file.h   |  3 --
+ security/apparmor/lsm.c            |  1 -
+ security/commoncap.c               | 50 ++++++++--------------------------
+ security/security.c                |  5 ----
+ security/selinux/hooks.c           | 26 ++++--------------
+ security/smack/smack_lsm.c         | 34 ++---------------------
+ security/tomoyo/tomoyo.c           |  2 +-
+ 16 files changed, 91 insertions(+), 162 deletions(-)
+
+v4:
+- add {Ack,Review,Test}ed-bys
+- reorder patches to move trivial refactoring to the front
+- move secureexec flag set earlier in the series to setup_new_exec(); amluto
+
+v3:
+- collapse brpm_secureexec into bprm_set_creds; ebiederm.
+- continue to improve various comments
+
+v2:
+- fix missed current_security() uses in LSMs.
+- research/consolidate dumpability setting logic
+- research/consolidate pdeath_signal clearing logic
+- split up logical steps a little more for easier review (and bisection)
+- fix some old broken comments
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
