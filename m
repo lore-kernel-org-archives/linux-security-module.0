@@ -1,47 +1,80 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue,  1 Aug 2017 12:16:38 -0700
-Subject: [PATCH v5 15/15] exec: Consolidate pdeath_signal clearing
+Date: Tue,  1 Aug 2017 12:16:34 -0700
+Subject: [PATCH v5 11/15] exec: Use secureexec for clearing pdeath_signal
 In-Reply-To: <1501614998-62619-1-git-send-email-keescook@chromium.org>
 References: <1501614998-62619-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501614998-62619-16-git-send-email-keescook@chromium.org>
+Message-ID: <1501614998-62619-12-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Instead of an additional secureexec check for pdeath_signal, just move it
-up into the initial secureexec test. Neither perf nor arch code touches
-pdeath_signal, so the relocation shouldn't change anything.
+Like dumpability, clearing pdeath_signal happens both in setup_new_exec()
+and later in commit_creds(). The test in setup_new_exec() is different
+from all other privilege comparisons, though: it is checking the new cred
+(bprm) uid vs the old cred (current) euid. This appears to be a bug,
+introduced by commit a6f76f23d297 ("CRED: Make execve() take advantage of
+copy-on-write credentials"):
 
+-       if (bprm->e_uid != current_euid() ||
+-           bprm->e_gid != current_egid()) {
+-               set_dumpable(current->mm, suid_dumpable);
++       if (bprm->cred->uid != current_euid() ||
++           bprm->cred->gid != current_egid()) {
+
+It was bprm euid vs current euid (and egids), but the effective got
+dropped. Nothing in the exec flow changes bprm->cred->uid (nor gid).
+The call traces are:
+
+	prepare_bprm_creds()
+	    prepare_exec_creds()
+	        prepare_creds()
+	            memcpy(new_creds, old_creds, ...)
+	            security_prepare_creds() (unimplemented by commoncap)
+	...
+	prepare_binprm()
+	    bprm_fill_uid()
+	        resets euid/egid to current euid/egid
+	        sets euid/egid on bprm based on set*id file bits
+	    security_bprm_set_creds()
+		cap_bprm_set_creds()
+		        handle all caps-based manipulations
+
+so this test is effectively a test of current_uid() vs current_euid(),
+which is wrong, just like the prior dumpability tests were wrong.
+
+The commit log says "Clear pdeath_signal and set dumpable on
+certain circumstances that may not be covered by commit_creds()." This
+may be meaning the earlier old euid vs new euid (and egid) test that
+got changed.
+
+Luckily, as with dumpability, this is all masked by commit_creds()
+which performs old/new euid and egid tests and clears pdeath_signal.
+
+And again, like dumpability, we should include LSM secureexec logic for
+pdeath_signal clearing. For example, Smack goes out of its way to clear
+pdeath_signal when it finds a secureexec condition.
+
+Cc: David Howells <dhowells@redhat.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Acked-by: Serge Hallyn <serge@hallyn.com>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 ---
- fs/exec.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/exec.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 3235cbd85efa..01a9fb9d8ac3 100644
+index 3536437ffd76..7a9288551d62 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1351,6 +1351,9 @@ void setup_new_exec(struct linux_binprm * bprm)
- 	bprm->secureexec |= bprm->cap_elevated;
- 
- 	if (bprm->secureexec) {
-+		/* Make sure parent cannot signal privileged process. */
-+		current->pdeath_signal = 0;
-+
- 		/*
- 		 * For secureexec, reset the stack limit to sane default to
- 		 * avoid bad behavior from the prior rlimits. This has to
-@@ -1383,10 +1386,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+@@ -1369,8 +1369,7 @@ void setup_new_exec(struct linux_binprm * bprm)
  	 */
  	current->mm->task_size = TASK_SIZE;
  
--	if (bprm->secureexec) {
--		current->pdeath_signal = 0;
--	}
--
- 	/* An exec changes our domain. We are no longer part of the thread
- 	   group */
- 	current->self_exec_id++;
+-	if (!uid_eq(bprm->cred->uid, current_euid()) ||
+-	    !gid_eq(bprm->cred->gid, current_egid())) {
++	if (bprm->secureexec) {
+ 		current->pdeath_signal = 0;
+ 	} else {
+ 		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
 -- 
 2.7.4
 
