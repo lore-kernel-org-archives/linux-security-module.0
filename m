@@ -1,24 +1,32 @@
 From: jmorris@namei.org (James Morris)
-Date: Tue, 1 Aug 2017 10:50:03 +1000 (AEST)
-Subject: [PATCH v4 11/15] exec: Use secureexec for clearing pdeath_signal
-In-Reply-To: <1501545093-56634-12-git-send-email-keescook@chromium.org>
+Date: Tue, 1 Aug 2017 10:50:29 +1000 (AEST)
+Subject: [PATCH v4 12/15] smack: Remove redundant pdeath_signal
+ clearing
+In-Reply-To: <1501545093-56634-13-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-	<1501545093-56634-12-git-send-email-keescook@chromium.org>
-Message-ID: <alpine.LRH.2.20.1708011049420.6845@namei.org>
+	<1501545093-56634-13-git-send-email-keescook@chromium.org>
+Message-ID: <alpine.LRH.2.20.1708011050170.6845@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Mon, 31 Jul 2017, Kees Cook wrote:
 
-> Cc: David Howells <dhowells@redhat.com>
+> This removes the redundant pdeath_signal clearing in Smack: the check in
+> smack_bprm_committing_creds() matches the check in smack_bprm_set_creds()
+> (which used to be in the now-removed smack_bprm_securexec() hook) and
+> since secureexec is now being checked for clearing pdeath_signal, this
+> is redundant to the common exec code.
+> 
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 > Acked-by: Serge Hallyn <serge@hallyn.com>
 > ---
->  fs/exec.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  security/smack/smack_lsm.c | 15 ---------------
+>  1 file changed, 15 deletions(-)
 
 
 Reviewed-by: James Morris <james.l.morris@oracle.com>
+
 
 -- 
 James Morris
