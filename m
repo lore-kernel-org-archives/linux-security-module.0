@@ -1,32 +1,37 @@
 From: jmorris@namei.org (James Morris)
-Date: Tue, 1 Aug 2017 10:46:59 +1000 (AEST)
-Subject: [PATCH v4 06/15] smack: Refactor to remove bprm_secureexec
- hook
-In-Reply-To: <1501545093-56634-7-git-send-email-keescook@chromium.org>
+Date: Tue, 1 Aug 2017 10:48:17 +1000 (AEST)
+Subject: [PATCH v4 10/15] exec: Use secureexec for setting dumpability
+In-Reply-To: <1501545093-56634-11-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-	<1501545093-56634-7-git-send-email-keescook@chromium.org>
-Message-ID: <alpine.LRH.2.20.1708011046410.6845@namei.org>
+	<1501545093-56634-11-git-send-email-keescook@chromium.org>
+Message-ID: <alpine.LRH.2.20.1708011048030.6845@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Mon, 31 Jul 2017, Kees Cook wrote:
 
-> The Smack bprm_secureexec hook can be merged with the bprm_set_creds
-> hook since it's dealing with the same information, and all of the details
-> are finalized during the first call to the bprm_set_creds hook via
-> prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
-> via bprm->called_set_creds).
+> The examination of "current" to decide dumpability is wrong. This was a
+> check of and euid/uid (or egid/gid) mismatch in the existing process,
+> not the newly created one. This appears to stretch back into even the
+> "history.git" tree. Luckily, dumpability is later set in commit_creds().
+> In earlier kernel versions before creds existed, similar checks also
+> existed late in the exec flow, covering up the mistake as far back as I
+> could find.
 > 
-> Here, the test can just happen at the end of the bprm_set_creds hook,
-> and the bprm_secureexec hook can be dropped.
+> Note that because the commit_creds() check examines differences of euid,
+> uid, egid, gid, and capabilities between the old and new creds, it would
+> look like the setup_new_exec() dumpability test could be entirely removed.
+> However, the secureexec test may cover a different set of tests (specific
+> to the LSMs) than what commit_creds() checks for. So, fix this test to
+> use secureexec (the removed euid tests are redundant to the commoncap
+> secureexec checks now).
 > 
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: David Howells <dhowells@redhat.com>
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 > Acked-by: Serge Hallyn <serge@hallyn.com>
 > ---
->  security/smack/smack_lsm.c | 21 ++++-----------------
->  1 file changed, 4 insertions(+), 17 deletions(-)
-
+>  fs/exec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Reviewed-by: James Morris <james.l.morris@oracle.com>
 
