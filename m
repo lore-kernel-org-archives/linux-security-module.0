@@ -1,115 +1,108 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue,  1 Aug 2017 12:16:26 -0700
-Subject: [PATCH v5 03/15] binfmt: Introduce secureexec flag
+Date: Tue,  1 Aug 2017 12:16:27 -0700
+Subject: [PATCH v5 04/15] apparmor: Refactor to remove bprm_secureexec hook
 In-Reply-To: <1501614998-62619-1-git-send-email-keescook@chromium.org>
 References: <1501614998-62619-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501614998-62619-4-git-send-email-keescook@chromium.org>
+Message-ID: <1501614998-62619-5-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The bprm_secureexec hook can be moved earlier. Right now, it is called
-during create_elf_tables(), via load_binary(), via search_binary_handler(),
-via exec_binprm(). Nearly all (see exception below) state used by
-bprm_secureexec is created during the bprm_set_creds hook, called from
-prepare_binprm().
+The AppArmor bprm_secureexec hook can be merged with the bprm_set_creds
+hook since it's dealing with the same information, and all of the details
+are finalized during the first call to the bprm_set_creds hook via
+prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
+via bprm->called_set_creds).
 
-For all LSMs (except commoncaps described next), only the first execution
-of bprm_set_creds takes any effect (they all check bprm->called_set_creds
-which prepare_binprm() sets after the first call to the bprm_set_creds
-hook).  However, all these LSMs also only do anything with bprm_secureexec
-when they detected a secure state during their first run of bprm_set_creds.
-Therefore, it is functionally identical to move the detection into
-bprm_set_creds, since the results from secureexec here only need to be
-based on the first call to the LSM's bprm_set_creds hook.
+Here, all the comments describe how secureexec is actually calculated
+during bprm_set_creds, so this actually does it, drops the bprm flag that
+was being used internally by AppArmor, and drops the bprm_secureexec hook.
 
-The single exception is that the commoncaps secureexec hook also examines
-euid/uid and egid/gid differences which are controlled by bprm_fill_uid(),
-via prepare_binprm(), which can be called multiple times (e.g.
-binfmt_script, binfmt_misc), and may clear the euid/egid for the final
-load (i.e. the script interpreter). However, while commoncaps specifically
-ignores bprm->cred_prepared, and runs its bprm_set_creds hook each time
-prepare_binprm() may get called, it needs to base the secureexec decision
-on the final call to bprm_set_creds. As a result, it will need special
-handling.
-
-To begin this refactoring, this adds the secureexec flag to the bprm
-struct, and calls the secureexec hook during setup_new_exec(). This is
-safe since all the cred work is finished (and past the point of no return).
-This explicit call will be removed in later patches once the hook has been
-removed.
-
-Cc: David Howells <dhowells@redhat.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
 Reviewed-by: James Morris <james.l.morris@oracle.com>
+Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- fs/binfmt_elf.c         | 2 +-
- fs/binfmt_elf_fdpic.c   | 2 +-
- fs/exec.c               | 2 ++
- include/linux/binfmts.h | 8 +++++++-
- 4 files changed, 11 insertions(+), 3 deletions(-)
+ security/apparmor/domain.c         | 19 +------------------
+ security/apparmor/include/domain.h |  1 -
+ security/apparmor/include/file.h   |  3 ---
+ security/apparmor/lsm.c            |  1 -
+ 4 files changed, 1 insertion(+), 23 deletions(-)
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 879ff9c7ffd0..3b7dda91b07b 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -252,7 +252,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID, from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID, from_kgid_munged(cred->user_ns, cred->egid));
-- 	NEW_AUX_ENT(AT_SECURE, security_bprm_secureexec(bprm));
-+	NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
- 	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
- #ifdef ELF_HWCAP2
- 	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index cf93a4fad012..5aa9199dfb13 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -650,7 +650,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
--	NEW_AUX_ENT(AT_SECURE,	security_bprm_secureexec(bprm));
-+	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
- 	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 67ec52cfc523..17a601c67b62 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -807,7 +807,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 			aa_label_printk(new, GFP_ATOMIC);
+ 			dbg_printk("\n");
+ 		}
+-		bprm->unsafe |= AA_SECURE_X_NEEDED;
++		bprm->secureexec = 1;
+ 	}
  
- #ifdef ARCH_DLINFO
-diff --git a/fs/exec.c b/fs/exec.c
-index 26b98072be50..0f361115c88f 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1343,6 +1343,8 @@ EXPORT_SYMBOL(would_dump);
+ 	if (label->proxy != new->proxy) {
+@@ -843,23 +843,6 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 	goto done;
+ }
  
- void setup_new_exec(struct linux_binprm * bprm)
- {
-+	bprm->secureexec |= security_bprm_secureexec(bprm);
-+
- 	arch_pick_mmap_layout(current->mm);
+-/**
+- * apparmor_bprm_secureexec - determine if secureexec is needed
+- * @bprm: binprm for exec  (NOT NULL)
+- *
+- * Returns: %1 if secureexec is needed else %0
+- */
+-int apparmor_bprm_secureexec(struct linux_binprm *bprm)
+-{
+-	/* the decision to use secure exec is computed in set_creds
+-	 * and stored in bprm->unsafe.
+-	 */
+-	if (bprm->unsafe & AA_SECURE_X_NEEDED)
+-		return 1;
+-
+-	return 0;
+-}
+-
+ /*
+  * Functions for self directed profile change
+  */
+diff --git a/security/apparmor/include/domain.h b/security/apparmor/include/domain.h
+index bab5810b6e9a..24c5976d6143 100644
+--- a/security/apparmor/include/domain.h
++++ b/security/apparmor/include/domain.h
+@@ -30,7 +30,6 @@ struct aa_domain {
+ #define AA_CHANGE_STACK 8
  
- 	current->sas_ss_sp = current->sas_ss_size = 0;
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 9023e1d2d5cd..16838ba7ee75 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -31,9 +31,15 @@ struct linux_binprm {
- 		 * binfmt_script/misc).
- 		 */
- 		called_set_creds:1,
--		cap_effective:1;/* true if has elevated effective capabilities,
-+		cap_effective:1,/* true if has elevated effective capabilities,
- 				 * false if not; except for init which inherits
- 				 * its parent's caps anyway */
-+		/*
-+		 * Set by bprm_set_creds hook to indicate a privilege-gaining
-+		 * exec has happened. Used to sanitize execution environment
-+		 * and to set AT_SECURE auxv for glibc.
-+		 */
-+		secureexec:1;
- #ifdef __alpha__
- 	unsigned int taso:1;
- #endif
+ int apparmor_bprm_set_creds(struct linux_binprm *bprm);
+-int apparmor_bprm_secureexec(struct linux_binprm *bprm);
+ 
+ void aa_free_domain_entries(struct aa_domain *domain);
+ int aa_change_hat(const char *hats[], int count, u64 token, int flags);
+diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
+index 001e40073ff9..4c2c8ac8842f 100644
+--- a/security/apparmor/include/file.h
++++ b/security/apparmor/include/file.h
+@@ -101,9 +101,6 @@ static inline struct aa_label *aa_get_file_label(struct aa_file_ctx *ctx)
+ #define AA_X_INHERIT		0x4000
+ #define AA_X_UNCONFINED		0x8000
+ 
+-/* AA_SECURE_X_NEEDED - is passed in the bprm->unsafe field */
+-#define AA_SECURE_X_NEEDED	0x8000
+-
+ /* need to make conditional which ones are being set */
+ struct path_cond {
+ 	kuid_t uid;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 867bcd154c7e..7a82c0f61452 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -694,7 +694,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_set_creds, apparmor_bprm_set_creds),
+ 	LSM_HOOK_INIT(bprm_committing_creds, apparmor_bprm_committing_creds),
+ 	LSM_HOOK_INIT(bprm_committed_creds, apparmor_bprm_committed_creds),
+-	LSM_HOOK_INIT(bprm_secureexec, apparmor_bprm_secureexec),
+ 
+ 	LSM_HOOK_INIT(task_setrlimit, apparmor_task_setrlimit),
+ };
 -- 
 2.7.4
 
