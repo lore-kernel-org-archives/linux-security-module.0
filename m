@@ -1,108 +1,88 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue,  1 Aug 2017 12:16:27 -0700
-Subject: [PATCH v5 04/15] apparmor: Refactor to remove bprm_secureexec hook
+Date: Tue,  1 Aug 2017 12:16:25 -0700
+Subject: [PATCH v5 02/15] exec: Correct comments about "point of no return"
 In-Reply-To: <1501614998-62619-1-git-send-email-keescook@chromium.org>
 References: <1501614998-62619-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501614998-62619-5-git-send-email-keescook@chromium.org>
+Message-ID: <1501614998-62619-3-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The AppArmor bprm_secureexec hook can be merged with the bprm_set_creds
-hook since it's dealing with the same information, and all of the details
-are finalized during the first call to the bprm_set_creds hook via
-prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
-via bprm->called_set_creds).
+In commit 221af7f87b97 ("Split 'flush_old_exec' into two functions"),
+the comment about the point of no return should have stayed in
+flush_old_exec() since it refers to "bprm->mm = NULL;" line, but prior
+changes in commits c89681ed7d0e ("remove steal_locks()"), and
+fd8328be874f ("sanitize handling of shared descriptor tables in failing
+execve()") made it look like it meant the current->sas_ss_sp line instead.
 
-Here, all the comments describe how secureexec is actually calculated
-during bprm_set_creds, so this actually does it, drops the bprm flag that
-was being used internally by AppArmor, and drops the bprm_secureexec hook.
+The comment was referring to the fact that once bprm->mm is NULL, all
+failures from a binfmt load_binary hook (e.g. load_elf_binary), will
+get SEGV raised against current. Move this comment and expand the
+explanation a bit, putting it above the assignment this time, and add
+details about the true nature of "point of no return" being the call
+to flush_old_exec() itself.
 
+This also removes an erroneous commet about when credentials are being
+installed. That has its own dedicated function, install_exec_creds(),
+which carries a similar (and correct) comment, so remove the bogus comment
+where installation is not actually happening.
+
+Cc: David Howells <dhowells@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: John Johansen <john.johansen@canonical.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- security/apparmor/domain.c         | 19 +------------------
- security/apparmor/include/domain.h |  1 -
- security/apparmor/include/file.h   |  3 ---
- security/apparmor/lsm.c            |  1 -
- 4 files changed, 1 insertion(+), 23 deletions(-)
+ fs/exec.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 67ec52cfc523..17a601c67b62 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -807,7 +807,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
- 			aa_label_printk(new, GFP_ATOMIC);
- 			dbg_printk("\n");
- 		}
--		bprm->unsafe |= AA_SECURE_X_NEEDED;
-+		bprm->secureexec = 1;
- 	}
- 
- 	if (label->proxy != new->proxy) {
-@@ -843,23 +843,6 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
- 	goto done;
+diff --git a/fs/exec.c b/fs/exec.c
+index a0fff86269e4..26b98072be50 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1259,6 +1259,12 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+ 	perf_event_comm(tsk, exec);
  }
  
--/**
-- * apparmor_bprm_secureexec - determine if secureexec is needed
-- * @bprm: binprm for exec  (NOT NULL)
-- *
-- * Returns: %1 if secureexec is needed else %0
-- */
--int apparmor_bprm_secureexec(struct linux_binprm *bprm)
--{
--	/* the decision to use secure exec is computed in set_creds
--	 * and stored in bprm->unsafe.
--	 */
--	if (bprm->unsafe & AA_SECURE_X_NEEDED)
--		return 1;
--
--	return 0;
--}
--
- /*
-  * Functions for self directed profile change
-  */
-diff --git a/security/apparmor/include/domain.h b/security/apparmor/include/domain.h
-index bab5810b6e9a..24c5976d6143 100644
---- a/security/apparmor/include/domain.h
-+++ b/security/apparmor/include/domain.h
-@@ -30,7 +30,6 @@ struct aa_domain {
- #define AA_CHANGE_STACK 8
++/*
++ * Calling this is the point of no return. None of the failures will be
++ * seen by userspace since either the process is already taking a fatal
++ * signal (via de_thread() or coredump), or will have SEGV raised
++ * (after exec_mmap()) by search_binary_handlers (see below).
++ */
+ int flush_old_exec(struct linux_binprm * bprm)
+ {
+ 	int retval;
+@@ -1286,7 +1292,13 @@ int flush_old_exec(struct linux_binprm * bprm)
+ 	if (retval)
+ 		goto out;
  
- int apparmor_bprm_set_creds(struct linux_binprm *bprm);
--int apparmor_bprm_secureexec(struct linux_binprm *bprm);
+-	bprm->mm = NULL;		/* We're using it now */
++	/*
++	 * After clearing bprm->mm (to mark that current is using the
++	 * prepared mm now), we have nothing left of the original
++	 * process. If anything from here on returns an error, the check
++	 * in search_binary_handler() will SEGV current.
++	 */
++	bprm->mm = NULL;
  
- void aa_free_domain_entries(struct aa_domain *domain);
- int aa_change_hat(const char *hats[], int count, u64 token, int flags);
-diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
-index 001e40073ff9..4c2c8ac8842f 100644
---- a/security/apparmor/include/file.h
-+++ b/security/apparmor/include/file.h
-@@ -101,9 +101,6 @@ static inline struct aa_label *aa_get_file_label(struct aa_file_ctx *ctx)
- #define AA_X_INHERIT		0x4000
- #define AA_X_UNCONFINED		0x8000
+ 	set_fs(USER_DS);
+ 	current->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
+@@ -1333,7 +1345,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ {
+ 	arch_pick_mmap_layout(current->mm);
  
--/* AA_SECURE_X_NEEDED - is passed in the bprm->unsafe field */
--#define AA_SECURE_X_NEEDED	0x8000
--
- /* need to make conditional which ones are being set */
- struct path_cond {
- 	kuid_t uid;
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 867bcd154c7e..7a82c0f61452 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -694,7 +694,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_set_creds, apparmor_bprm_set_creds),
- 	LSM_HOOK_INIT(bprm_committing_creds, apparmor_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_committed_creds, apparmor_bprm_committed_creds),
--	LSM_HOOK_INIT(bprm_secureexec, apparmor_bprm_secureexec),
+-	/* This is the point of no return */
+ 	current->sas_ss_sp = current->sas_ss_size = 0;
  
- 	LSM_HOOK_INIT(task_setrlimit, apparmor_task_setrlimit),
- };
+ 	if (uid_eq(current_euid(), current_uid()) && gid_eq(current_egid(), current_gid()))
+@@ -1351,7 +1362,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	 */
+ 	current->mm->task_size = TASK_SIZE;
+ 
+-	/* install the new credentials */
+ 	if (!uid_eq(bprm->cred->uid, current_euid()) ||
+ 	    !gid_eq(bprm->cred->gid, current_egid())) {
+ 		current->pdeath_signal = 0;
 -- 
 2.7.4
 
