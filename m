@@ -1,59 +1,47 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue,  1 Aug 2017 12:16:35 -0700
-Subject: [PATCH v5 12/15] smack: Remove redundant pdeath_signal clearing
+Date: Tue,  1 Aug 2017 12:16:38 -0700
+Subject: [PATCH v5 15/15] exec: Consolidate pdeath_signal clearing
 In-Reply-To: <1501614998-62619-1-git-send-email-keescook@chromium.org>
 References: <1501614998-62619-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501614998-62619-13-git-send-email-keescook@chromium.org>
+Message-ID: <1501614998-62619-16-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This removes the redundant pdeath_signal clearing in Smack: the check in
-smack_bprm_committing_creds() matches the check in smack_bprm_set_creds()
-(which used to be in the now-removed smack_bprm_securexec() hook) and
-since secureexec is now being checked for clearing pdeath_signal, this
-is redundant to the common exec code.
+Instead of an additional secureexec check for pdeath_signal, just move it
+up into the initial secureexec test. Neither perf nor arch code touches
+pdeath_signal, so the relocation shouldn't change anything.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Acked-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/smack/smack_lsm.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+ fs/exec.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 791d028207b9..319add31b4a4 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -957,20 +957,6 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
- 	return 0;
- }
+diff --git a/fs/exec.c b/fs/exec.c
+index 3235cbd85efa..01a9fb9d8ac3 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1351,6 +1351,9 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	bprm->secureexec |= bprm->cap_elevated;
  
--/**
-- * smack_bprm_committing_creds - Prepare to install the new credentials
-- * from bprm.
-- *
-- * @bprm: binprm for exec
-- */
--static void smack_bprm_committing_creds(struct linux_binprm *bprm)
--{
--	struct task_smack *bsp = bprm->cred->security;
--
--	if (bsp->smk_task != bsp->smk_forked)
+ 	if (bprm->secureexec) {
++		/* Make sure parent cannot signal privileged process. */
++		current->pdeath_signal = 0;
++
+ 		/*
+ 		 * For secureexec, reset the stack limit to sane default to
+ 		 * avoid bad behavior from the prior rlimits. This has to
+@@ -1383,10 +1386,6 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	 */
+ 	current->mm->task_size = TASK_SIZE;
+ 
+-	if (bprm->secureexec) {
 -		current->pdeath_signal = 0;
--}
+-	}
 -
- /*
-  * Inode hooks
-  */
-@@ -4633,7 +4619,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(sb_parse_opts_str, smack_parse_opts_str),
- 
- 	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
--	LSM_HOOK_INIT(bprm_committing_creds, smack_bprm_committing_creds),
- 
- 	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
- 	LSM_HOOK_INIT(inode_free_security, smack_inode_free_security),
+ 	/* An exec changes our domain. We are no longer part of the thread
+ 	   group */
+ 	current->self_exec_id++;
 -- 
 2.7.4
 
