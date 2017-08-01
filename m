@@ -1,45 +1,40 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Mon, 31 Jul 2017 17:22:29 -0700
-Subject: [PATCH] apparmor: Fix logical error in verify_header()
-In-Reply-To: <1499543421-5544-1-git-send-email-chris.gekas@gmail.com>
-References: <1499543421-5544-1-git-send-email-chris.gekas@gmail.com>
-Message-ID: <2ea41bda-6a90-4d11-bb85-e56073b64274@canonical.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 31 Jul 2017 17:23:31 -0700
+Subject: [PATCH v4 03/15] binfmt: Introduce secureexec flag
+In-Reply-To: <1501545093-56634-4-git-send-email-keescook@chromium.org>
+References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
+	<1501545093-56634-4-git-send-email-keescook@chromium.org>
+Message-ID: <CAGXu5j+Ubbp6guLUUDF7PuF7chbj5V1M=VjkjYfif=hW9bst9w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 07/08/2017 12:50 PM, Christos Gkekas wrote:
-> verify_header() is currently checking whether interface version is less
-> than 5 *and* greater than 7, which always evaluates to false. Instead it
-> should check whether it is less than 5 *or* greater than 7.
-> 
-> Signed-off-by: Christos Gkekas <chris.gekas@gmail.com>
+On Mon, Jul 31, 2017 at 4:51 PM, Kees Cook <keescook@chromium.org> wrote:
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index 3cd98e8bc9dc..6cfd36a27d4e 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -34,6 +34,12 @@ struct linux_binprm {
+>                 cap_effective:1;/* true if has elevated effective capabilities,
+>                                  * false if not; except for init which inherits
+>                                  * its parent's caps anyway */
+> +               /*
+> +                * Set by bprm_set_creds hook to indicate a privilege-gaining
+> +                * exec has happened. Used to sanitize execution environment
+> +                * and to set AT_SECURE auxv for glibc.
+> +                */
+> +               secureexec:1;
+>  #ifdef __alpha__
+>         unsigned int taso:1;
+>  #endif
 
-sigh, yes. sorry for the delay this ended up in the wrong bucket.
+Grrr. git rebase messed me up. (; vs , in variable list.) I will send
+a v5 and double-check the per-patch builds. Bleh.
 
-I've pulled it in for the next pull
+-Kees
 
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-
-> ---
->  security/apparmor/policy_unpack.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index c600f4d..f273c61 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -832,7 +832,7 @@ static int verify_header(struct aa_ext *e, int required, const char **ns)
->  	 * if not specified use previous version
->  	 * Mask off everything that is not kernel abi version
->  	 */
-> -	if (VERSION_LT(e->version, v5) && VERSION_GT(e->version, v7)) {
-> +	if (VERSION_LT(e->version, v5) || VERSION_GT(e->version, v7)) {
->  		audit_iface(NULL, NULL, NULL, "unsupported interface version",
->  			    e, error);
->  		return error;
-> 
-
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
