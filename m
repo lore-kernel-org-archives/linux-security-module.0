@@ -1,80 +1,131 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Tue,  1 Aug 2017 12:16:28 -0700
-Subject: [PATCH v5 05/15] selinux: Refactor to remove bprm_secureexec hook
+Date: Tue,  1 Aug 2017 12:16:24 -0700
+Subject: [PATCH v5 01/15] exec: Rename bprm->cred_prepared to called_set_creds
 In-Reply-To: <1501614998-62619-1-git-send-email-keescook@chromium.org>
 References: <1501614998-62619-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501614998-62619-6-git-send-email-keescook@chromium.org>
+Message-ID: <1501614998-62619-2-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The SELinux bprm_secureexec hook can be merged with the bprm_set_creds
-hook since it's dealing with the same information, and all of the details
-are finalized during the first call to the bprm_set_creds hook via
-prepare_binprm() (subsequent calls due to binfmt_script, etc, are ignored
-via bprm->called_set_creds).
+The cred_prepared bprm flag has a misleading name. It has nothing to do
+with the bprm_prepare_cred hook, and actually tracks if bprm_set_creds has
+been called. Rename this flag and improve its comment.
 
-Here, the test can just happen at the end of the bprm_set_creds hook,
-and the bprm_secureexec hook can be dropped.
-
+Cc: David Howells <dhowells@redhat.com>
 Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: John Johansen <john.johansen@canonical.com>
+Acked-by: James Morris <james.l.morris@oracle.com>
 Acked-by: Paul Moore <paul@paul-moore.com>
-Tested-by: Paul Moore <paul@paul-moore.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
 ---
- security/selinux/hooks.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ fs/binfmt_flat.c           | 2 +-
+ fs/exec.c                  | 2 +-
+ include/linux/binfmts.h    | 8 ++++++--
+ security/apparmor/domain.c | 2 +-
+ security/selinux/hooks.c   | 2 +-
+ security/smack/smack_lsm.c | 2 +-
+ security/tomoyo/tomoyo.c   | 2 +-
+ 7 files changed, 12 insertions(+), 8 deletions(-)
 
+diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+index a1e6860b6f46..604a176df0c2 100644
+--- a/fs/binfmt_flat.c
++++ b/fs/binfmt_flat.c
+@@ -890,7 +890,7 @@ static int load_flat_shared_library(int id, struct lib_info *libs)
+ 	 * as we're past the point of no return and are dealing with shared
+ 	 * libraries.
+ 	 */
+-	bprm.cred_prepared = 1;
++	bprm.called_set_creds = 1;
+ 
+ 	res = prepare_binprm(&bprm);
+ 
+diff --git a/fs/exec.c b/fs/exec.c
+index 62175cbcc801..a0fff86269e4 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1548,7 +1548,7 @@ int prepare_binprm(struct linux_binprm *bprm)
+ 	retval = security_bprm_set_creds(bprm);
+ 	if (retval)
+ 		return retval;
+-	bprm->cred_prepared = 1;
++	bprm->called_set_creds = 1;
+ 
+ 	memset(bprm->buf, 0, BINPRM_BUF_SIZE);
+ 	return kernel_read(bprm->file, 0, bprm->buf, BINPRM_BUF_SIZE);
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index 3ae9013eeaaa..9023e1d2d5cd 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -25,8 +25,12 @@ struct linux_binprm {
+ 	struct mm_struct *mm;
+ 	unsigned long p; /* current top of mem */
+ 	unsigned int
+-		cred_prepared:1,/* true if creds already prepared (multiple
+-				 * preps happen for interpreters) */
++		/*
++		 * True after the bprm_set_creds hook has been called once
++		 * (multiple calls can be made via prepare_binprm() for
++		 * binfmt_script/misc).
++		 */
++		called_set_creds:1,
+ 		cap_effective:1;/* true if has elevated effective capabilities,
+ 				 * false if not; except for init which inherits
+ 				 * its parent's caps anyway */
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index d0594446ae3f..67ec52cfc523 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -758,7 +758,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 		file_inode(bprm->file)->i_mode
+ 	};
+ 
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ 
+ 	ctx = cred_ctx(bprm->cred);
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 1db40195d178..a1f5f5ddfba7 100644
+index 33fd061305c4..1db40195d178 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -2442,30 +2442,17 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
+@@ -2356,7 +2356,7 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
  
- 		/* Clear any possibly unsafe personality bits on exec: */
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
--	}
--
--	return 0;
--}
--
--static int selinux_bprm_secureexec(struct linux_binprm *bprm)
--{
--	const struct task_security_struct *tsec = current_security();
--	u32 sid, osid;
--	int atsecure = 0;
--
--	sid = tsec->sid;
--	osid = tsec->osid;
+ 	/* SELinux context only depends on initial program or script and not
+ 	 * the script interpreter */
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
  
--	if (osid != sid) {
- 		/* Enable secure mode for SIDs transitions unless
- 		   the noatsecure permission is granted between
- 		   the two SIDs, i.e. ahp returns 0. */
--		atsecure = avc_has_perm(osid, sid,
--					SECCLASS_PROCESS,
--					PROCESS__NOATSECURE, NULL);
-+		rc = avc_has_perm(old_tsec->sid, new_tsec->sid,
-+				  SECCLASS_PROCESS, PROCESS__NOATSECURE,
-+				  NULL);
-+		bprm->secureexec |= !!rc;
- 	}
+ 	old_tsec = current_security();
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 463af86812c7..db8e16ec223b 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -917,7 +917,7 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+ 	struct superblock_smack *sbsp;
+ 	int rc;
  
--	return !!atsecure;
-+	return 0;
- }
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
  
- static int match_file(const void *p, struct file *file, unsigned fd)
-@@ -6266,7 +6253,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_set_creds, selinux_bprm_set_creds),
- 	LSM_HOOK_INIT(bprm_committing_creds, selinux_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
--	LSM_HOOK_INIT(bprm_secureexec, selinux_bprm_secureexec),
- 
- 	LSM_HOOK_INIT(sb_alloc_security, selinux_sb_alloc_security),
- 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+ 	isp = inode->i_security;
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 130b4fa4f65f..d25b705360e0 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -76,7 +76,7 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
+ 	 * Do only if this function is called for the first time of an execve
+ 	 * operation.
+ 	 */
+-	if (bprm->cred_prepared)
++	if (bprm->called_set_creds)
+ 		return 0;
+ #ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
+ 	/*
 -- 
 2.7.4
 
