@@ -1,40 +1,64 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 1 Aug 2017 08:04:54 -0700
-Subject: [PATCH v4 00/15] exec: Use sane stack rlimit under secureexec
-In-Reply-To: <CA+55aFyudxKya3aVa5sQRiMH0TrP0SyNvyT+q8geJ47m3xfdKA@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 1 Aug 2017 08:24:00 -0700
+Subject: [PATCH v4 12/15] smack: Remove redundant pdeath_signal clearing
+In-Reply-To: <1501545093-56634-13-git-send-email-keescook@chromium.org>
 References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-	<CAGXu5j+hdDXA99raDRu1x5M3XuPN6TM0AfxXmJe=qGUDZWPeEQ@mail.gmail.com>
-	<alpine.LRH.2.20.1708011053210.6845@namei.org>
-	<CAGXu5jJ+UYXa3VxAghMwNfEsZ2g7PHJkdU7_SCCgOg9XEvy5Yw@mail.gmail.com>
-	<CA+55aFyudxKya3aVa5sQRiMH0TrP0SyNvyT+q8geJ47m3xfdKA@mail.gmail.com>
-Message-ID: <CAGXu5jJafQh84hPwy234b=nwCAwdsnx=Dz3GJ5voJLGSt3xwgQ@mail.gmail.com>
+	<1501545093-56634-13-git-send-email-keescook@chromium.org>
+Message-ID: <7732a031-6603-7f9d-232c-cb8311be74e4@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Jul 31, 2017 at 10:11 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Mon, Jul 31, 2017 at 8:03 PM, Kees Cook <keescook@chromium.org> wrote:
->>
->> Yeah, I'm open to whatever. It's not clear where it should go, but if
->> you want to take it and Linus doesn't want it "early", that works for
->> me. Linus, Andrew, thoughts?
+On 7/31/2017 4:51 PM, Kees Cook wrote:
+> This removes the redundant pdeath_signal clearing in Smack: the check in
+> smack_bprm_committing_creds() matches the check in smack_bprm_set_creds()
+> (which used to be in the now-removed smack_bprm_securexec() hook) and
+> since secureexec is now being checked for clearing pdeath_signal, this
+> is redundant to the common exec code.
 >
-> I'd actually like this to go in separately from all the other security stuff.
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+
+> ---
+>  security/smack/smack_lsm.c | 15 ---------------
+>  1 file changed, 15 deletions(-)
 >
-> And I just checked this on a separate branch, just because I wanted to
-> see what the overall diff was. There's a conflict with apparmor
-> already - the resolution looks fairly straightforward, but considering
-> the area this touches, it would probably be good that Kees keeps this
-> branch and verifies things like that.
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 4f1967be3d20..4e33c650b224 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -957,20 +957,6 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+>  	return 0;
+>  }
+>  
+> -/**
+> - * smack_bprm_committing_creds - Prepare to install the new credentials
+> - * from bprm.
+> - *
+> - * @bprm: binprm for exec
+> - */
+> -static void smack_bprm_committing_creds(struct linux_binprm *bprm)
+> -{
+> -	struct task_smack *bsp = bprm->cred->security;
+> -
+> -	if (bsp->smk_task != bsp->smk_forked)
+> -		current->pdeath_signal = 0;
+> -}
+> -
+>  /*
+>   * Inode hooks
+>   */
+> @@ -4633,7 +4619,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(sb_parse_opts_str, smack_parse_opts_str),
+>  
+>  	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
+> -	LSM_HOOK_INIT(bprm_committing_creds, smack_bprm_committing_creds),
+>  
+>  	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
+>  	LSM_HOOK_INIT(inode_free_security, smack_inode_free_security),
 
-Do you want me to carry this for -next and send it as a distinct pull
-request for v4.14?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
