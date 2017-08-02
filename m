@@ -1,186 +1,139 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 2 Aug 2017 17:23:52 +0300
-Subject: [PATCH 2/2] tpm: migrate pubek_show to struct tpm_buf
-In-Reply-To: <20170620093804.23803-3-jarkko.sakkinen@linux.intel.com>
-References: <20170620093804.23803-1-jarkko.sakkinen@linux.intel.com>
-	<20170620093804.23803-3-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20170802142352.3ebekkilr4lfvgnl@linux.intel.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 2 Aug 2017 18:14:28 +0300
+Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc allocator
+Message-ID: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jun 20, 2017 at 11:38:03AM +0200, Jarkko Sakkinen wrote:
-> Migrated pubek_show to struct tpm_buf and cleaned up its implementation.
-> Previously the output parameter structure was declared but left
-> completely unused. Now it is used to refer different fields of the
-> output. We can move it to tpm-sysfs.c as it does not have any use
-> outside of that file.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Hi,
+while I am working to another example of using pmalloc [1],
+it was pointed out to me that:
 
-Can anyone help peer testing this change?
+1) I had introduced a bug when I switched to using a field of the page
+structure [2]
 
-https://patchwork.kernel.org/patch/9799057/
+2) I was also committing a layer violation in the way I was tagging the
+pages.
 
-/Jarkko
+I am seeking help to understand what would be the correct way to do the
+tagging.
 
-> ---
->  drivers/char/tpm/tpm-sysfs.c | 87 ++++++++++++++++++++++++--------------------
->  drivers/char/tpm/tpm.h       | 13 -------
->  2 files changed, 48 insertions(+), 52 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-> index eedb8e47bde2..fcb69f1162ab 100644
-> --- a/drivers/char/tpm/tpm-sysfs.c
-> +++ b/drivers/char/tpm/tpm-sysfs.c
-> @@ -20,44 +20,48 @@
->  #include <linux/device.h>
->  #include "tpm.h"
->  
-> -#define READ_PUBEK_RESULT_SIZE 314
-> +struct tpm_readpubek_out {
-> +	u8 algorithm[4];
-> +	u8 encscheme[2];
-> +	u8 sigscheme[2];
-> +	__be32 paramsize;
-> +	u8 parameters[12];
-> +	__be32 keysize;
-> +	u8 modulus[256];
-> +	u8 checksum[20];
-> +} __packed;
-> +
->  #define READ_PUBEK_RESULT_MIN_BODY_SIZE (28 + 256)
->  #define TPM_ORD_READPUBEK 124
-> -static const struct tpm_input_header tpm_readpubek_header = {
-> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-> -	.length = cpu_to_be32(30),
-> -	.ordinal = cpu_to_be32(TPM_ORD_READPUBEK)
-> -};
-> +
->  static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
->  			  char *buf)
->  {
-> -	u8 *data;
-> -	struct tpm_cmd_t tpm_cmd;
-> -	ssize_t err;
-> -	int i, rc;
-> +	struct tpm_buf tpm_buf;
-> +	struct tpm_readpubek_out *out;
-> +	ssize_t rc;
-> +	int i;
->  	char *str = buf;
->  	struct tpm_chip *chip = to_tpm_chip(dev);
-> +	char anti_replay[20];
->  
-> -	memset(&tpm_cmd, 0, sizeof(tpm_cmd));
-> -
-> -	tpm_cmd.header.in = tpm_readpubek_header;
-> -	err = tpm_transmit_cmd(chip, NULL, &tpm_cmd, READ_PUBEK_RESULT_SIZE,
-> -			       READ_PUBEK_RESULT_MIN_BODY_SIZE, 0,
-> -			       "attempting to read the PUBEK");
-> -	if (err)
-> -		goto out;
-> -
-> -	/*
-> -	   ignore header 10 bytes
-> -	   algorithm 32 bits (1 == RSA )
-> -	   encscheme 16 bits
-> -	   sigscheme 16 bits
-> -	   parameters (RSA 12->bytes: keybit, #primes, expbit)
-> -	   keylenbytes 32 bits
-> -	   256 byte modulus
-> -	   ignore checksum 20 bytes
-> -	 */
-> -	data = tpm_cmd.params.readpubek_out_buffer;
-> +	memset(&anti_replay, 0, sizeof(anti_replay));
-> +
-> +	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
-> +	if (rc)
-> +		return rc;
-> +
-> +	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
-> +
-> +	rc = tpm_transmit_cmd(chip, NULL, tpm_buf.data, PAGE_SIZE,
-> +			      READ_PUBEK_RESULT_MIN_BODY_SIZE, 0,
-> +			      "attempting to read the PUBEK");
-> +	if (rc) {
-> +		tpm_buf_destroy(&tpm_buf);
-> +		return 0;
-> +	}
-> +
-> +	out = (struct tpm_readpubek_out *)&tpm_buf.data[10];
->  	str +=
->  	    sprintf(str,
->  		    "Algorithm: %02X %02X %02X %02X\n"
-> @@ -68,21 +72,26 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
->  		    "%02X %02X %02X %02X\n"
->  		    "Modulus length: %d\n"
->  		    "Modulus:\n",
-> -		    data[0], data[1], data[2], data[3],
-> -		    data[4], data[5],
-> -		    data[6], data[7],
-> -		    data[12], data[13], data[14], data[15],
-> -		    data[16], data[17], data[18], data[19],
-> -		    data[20], data[21], data[22], data[23],
-> -		    be32_to_cpu(*((__be32 *) (data + 24))));
-> +		    out->algorithm[0], out->algorithm[1], out->algorithm[2],
-> +		    out->algorithm[3],
-> +		    out->encscheme[0], out->encscheme[1],
-> +		    out->sigscheme[0], out->sigscheme[1],
-> +		    out->parameters[0], out->parameters[1],
-> +		    out->parameters[2], out->parameters[3],
-> +		    out->parameters[4], out->parameters[5],
-> +		    out->parameters[6], out->parameters[7],
-> +		    out->parameters[8], out->parameters[9],
-> +		    out->parameters[10], out->parameters[11],
-> +		    be32_to_cpu(out->keysize));
->  
->  	for (i = 0; i < 256; i++) {
-> -		str += sprintf(str, "%02X ", data[i + 28]);
-> +		str += sprintf(str, "%02X ", out->modulus[i]);
->  		if ((i + 1) % 16 == 0)
->  			str += sprintf(str, "\n");
->  	}
-> -out:
-> +
->  	rc = str - buf;
-> +	tpm_buf_destroy(&tpm_buf);
->  	return rc;
->  }
->  static DEVICE_ATTR_RO(pubek);
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index cdd261383dea..d9835b31f652 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -343,17 +343,6 @@ enum tpm_sub_capabilities {
->  	TPM_CAP_PROP_TIS_DURATION = 0x120,
->  };
->  
-> -struct	tpm_readpubek_params_out {
-> -	u8	algorithm[4];
-> -	u8	encscheme[2];
-> -	u8	sigscheme[2];
-> -	__be32	paramsize;
-> -	u8	parameters[12]; /*assuming RSA*/
-> -	__be32	keysize;
-> -	u8	modulus[256];
-> -	u8	checksum[20];
-> -} __packed;
-> -
->  typedef union {
->  	struct	tpm_input_header in;
->  	struct	tpm_output_header out;
-> @@ -387,8 +376,6 @@ struct tpm_startup_in {
->  } __packed;
->  
->  typedef union {
-> -	struct	tpm_readpubek_params_out readpubek_out;
-> -	u8	readpubek_out_buffer[sizeof(struct tpm_readpubek_params_out)];
->  	struct	tpm_pcrread_in	pcrread_in;
->  	struct	tpm_pcrread_out	pcrread_out;
->  	struct	tpm_getrandom_in getrandom_in;
-> -- 
-> 2.11.0
-> 
+Here are snippets describing the problems:
+
+
+1) from pmalloc.c:
+
+...
+
++static const unsigned long pmalloc_signature = (unsigned
+long)&pmalloc_mutex;
+
+...
+
++int __pmalloc_tag_pages(void *base, const size_t size, const bool set_tag)
++{
++	void *end = base + size - 1;
++
++	do {
++		struct page *page;
++
++		if (!is_vmalloc_addr(base))
++			return -EINVAL;
++		page = vmalloc_to_page(base);
++		if (set_tag) {
++			BUG_ON(page_private(page) || page->private);
++			set_page_private(page, 1);
++			page->private = pmalloc_signature;
++		} else {
++			BUG_ON(!(page_private(page) &&
++				 page->private == pmalloc_signature));
++			set_page_private(page, 0);
++			page->private = 0;
++		}
++		base += PAGE_SIZE;
++	} while ((PAGE_MASK & (unsigned long)base) <=
++		 (PAGE_MASK & (unsigned long)end));
++	return 0;
++}
+
+...
+
++static const char msg[] = "Not a valid Pmalloc object.";
++const char *pmalloc_check_range(const void *ptr, unsigned long n)
++{
++	unsigned long p;
++
++	p = (unsigned long)ptr;
++	n = p + n - 1;
++	for (; (PAGE_MASK & p) <= (PAGE_MASK & n); p += PAGE_SIZE) {
++		struct page *page;
++
++		if (!is_vmalloc_addr((void *)p))
++			return msg;
++		page = vmalloc_to_page((void *)p);
++		if (!(page && page_private(page) &&
++		      page->private == pmalloc_signature))
++			return msg;
++	}
++	return NULL;
++}
+
+
+The problem here comes from the way I am using page->private:
+the fact that the page is marked as private means only that someone is
+using it, and the way it is used could create (spoiler: it happens) a
+collision with pmalloc_signature, which can generate false positives.
+
+A way to ensure that the address really belongs to pmalloc would be to
+pre-screen it, against either the signature or some magic number and,
+if such test is passed, then compare the address against those really
+available in the pmalloc pools.
+
+This would be slower, but it would be limited only to those cases where
+the signature/magic number matches and the answer is likely to be true.
+
+2) However, both the current (incorrect) implementation and the one I am
+considering, are abusing something that should be used otherwise (see
+the following snippet):
+
+from include/linux/mm_types.h:
+
+struct page {
+...
+  union {
+    unsigned long private;		/* Mapping-private opaque data:
+				 	 * usually used for buffer_heads
+					 * if PagePrivate set; used for
+					 * swp_entry_t if PageSwapCache;
+					 * indicates order in the buddy
+					 * system if PG_buddy is set.
+					 */
+#if USE_SPLIT_PTE_PTLOCKS
+#if ALLOC_SPLIT_PTLOCKS
+		spinlock_t *ptl;
+#else
+		spinlock_t ptl;
+#endif
+#endif
+		struct kmem_cache *slab_cache;	/* SL[AU]B: Pointer to slab */
+	};
+...
+}
+
+
+The "private" field is meant for mapping-private opaque data, which is
+not how I am using it.
+
+Yet it seems the least harmful field to choose.
+Is this acceptable?
+Otherwise, what would be the best course of action?
+
+
+thanks, igor
+
+
+[1] https://lkml.org/lkml/2017/7/10/400
+[2] https://lkml.org/lkml/2017/7/6/573
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
