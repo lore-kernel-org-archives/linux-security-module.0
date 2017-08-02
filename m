@@ -1,55 +1,73 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 2 Aug 2017 17:22:30 +1000 (AEST)
-Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for
-	RPM data type
-In-Reply-To: <11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
-References: <20170725154423.24845-9-roberto.sassu@huawei.com>
-	<20170801102036.15371-1-roberto.sassu@huawei.com>
-	<20170801102709.GA24285@infradead.org>
-	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
-Message-ID: <alpine.LRH.2.20.1708021716440.1117@namei.org>
+From: jack@suse.cz (Jan Kara)
+Date: Wed, 2 Aug 2017 10:01:08 +0200
+Subject: [PATCH v4 2/5] ima: use fs method to read integrity data [updated]
+In-Reply-To: <1501619070.3204.4.camel@linux.vnet.ibm.com>
+References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1501075375-29469-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<1501619070.3204.4.camel@linux.vnet.ibm.com>
+Message-ID: <20170802080108.GB2732@quack2.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 1 Aug 2017, Roberto Sassu wrote:
-
-> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
-> > On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
-> > > This patch introduces a parser for RPM packages. It extracts the digests
-> > > from the RPMTAG_FILEDIGESTS header section and converts them to binary
-> > > data
-> > > before adding them to the hash table.
-> > >
-> > > The advantage of this data type is that verifiers can determine who
-> > > produced that data, as headers are signed by Linux distributions vendors.
-> > > RPM headers signatures can be provided as digest list metadata.
-> >
-> > Err, parsing arbitrary file formats has no business in the kernel.
+On Tue 01-08-17 16:24:30, Mimi Zohar wrote:
+> From: Christoph Hellwig <hch@lst.de>
 > 
-> The benefit of this choice is that no actions are required for
-> Linux distribution vendors to support the solution I'm proposing,
-> because they already provide signed digest lists (RPM headers).
+> Add a new ->integrity_read file operation to read data for integrity
+> hash collection.  This is defined to be equivalent to ->read_iter,
+> except that it will be called with the i_rwsem held exclusively.
 > 
-> Since the proof of loading a digest list is the digest of the
-> digest list (included in the list metadata), if RPM headers are
-> converted to a different format, remote attestation verifiers
-> cannot check the signature.
-> 
-> If the concern is security, it would be possible to prevent unsigned
-> RPM headers from being parsed, if the PGP key type is upstreamed
-> (adding in CC keyrings at vger.kernel.org).
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Cc: Matthew Garrett <matthew.garrett@nebula.com>
+> Cc: Jan Kara <jack@suse.com>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <yuchao0@huawei.com>
+> Cc: Steven Whitehouse <swhiteho@redhat.com>
+> Cc: Bob Peterson <rpeterso@redhat.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Dave Kleikamp <shaggy@kernel.org>
+> Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+> Cc: Mark Fasheh <mfasheh@versity.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Chris Mason <clm@fb.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-It's a security concern and also a layering violation, there should be no 
-need to parse package file formats in the kernel.
+...
 
-I'm not really clear on exactly how this patch series works.  Can you 
-provide a more concrete explanation of what steps would occur during boot 
-and attestation? 
+> +static ssize_t ext4_file_integrity_read_iter(struct kiocb *iocb,
+> +					     struct iov_iter *to)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	int o_direct = iocb->ki_flags & IOCB_DIRECT;
+> +
+> +	lockdep_assert_held(&inode->i_rwsem);
+> +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+> +		return -EIO;
+> +
+> +	if (!iov_iter_count(to))
+> +		return 0; /* skip atime */
+> +
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode))
+> +		return dax_iomap_rw(iocb, to, &ext4_iomap_ops);
+> +#endif
+> +	if (o_direct)
+> +		return -EINVAL;
+> +	return generic_file_read_iter(iocb, to);
+> +}
 
+I have noticed this o_direct check - why is it only in ext4 and shouldn't
+rather higher layers make sure IOCB_DIRECT iocbs cannot reach
+.integrity_read() methods?
+
+								Honza
 -- 
-James Morris
-<jmorris@namei.org>
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
