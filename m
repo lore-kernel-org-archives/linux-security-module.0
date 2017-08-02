@@ -1,164 +1,186 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 2 Aug 2017 13:22:35 +0200
-Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for RPM
-	data type
-In-Reply-To: <alpine.LRH.2.20.1708021716440.1117@namei.org>
-References: <20170725154423.24845-9-roberto.sassu@huawei.com>
-	<20170801102036.15371-1-roberto.sassu@huawei.com>
-	<20170801102709.GA24285@infradead.org>
-	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
-	<alpine.LRH.2.20.1708021716440.1117@namei.org>
-Message-ID: <5de9c4a2-dc96-b916-162a-adafd7da278b@huawei.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 2 Aug 2017 17:23:52 +0300
+Subject: [PATCH 2/2] tpm: migrate pubek_show to struct tpm_buf
+In-Reply-To: <20170620093804.23803-3-jarkko.sakkinen@linux.intel.com>
+References: <20170620093804.23803-1-jarkko.sakkinen@linux.intel.com>
+	<20170620093804.23803-3-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20170802142352.3ebekkilr4lfvgnl@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 8/2/2017 9:22 AM, James Morris wrote:
-> On Tue, 1 Aug 2017, Roberto Sassu wrote:
->
->> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
->>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
->>>> This patch introduces a parser for RPM packages. It extracts the digests
->>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
->>>> data
->>>> before adding them to the hash table.
->>>>
->>>> The advantage of this data type is that verifiers can determine who
->>>> produced that data, as headers are signed by Linux distributions vendors.
->>>> RPM headers signatures can be provided as digest list metadata.
->>>
->>> Err, parsing arbitrary file formats has no business in the kernel.
->>
->> The benefit of this choice is that no actions are required for
->> Linux distribution vendors to support the solution I'm proposing,
->> because they already provide signed digest lists (RPM headers).
->>
->> Since the proof of loading a digest list is the digest of the
->> digest list (included in the list metadata), if RPM headers are
->> converted to a different format, remote attestation verifiers
->> cannot check the signature.
->>
->> If the concern is security, it would be possible to prevent unsigned
->> RPM headers from being parsed, if the PGP key type is upstreamed
->> (adding in CC keyrings at vger.kernel.org).
->
-> It's a security concern and also a layering violation, there should be no
-> need to parse package file formats in the kernel.
->
-> I'm not really clear on exactly how this patch series works.  Can you
-> provide a more concrete explanation of what steps would occur during boot
-> and attestation?
+On Tue, Jun 20, 2017 at 11:38:03AM +0200, Jarkko Sakkinen wrote:
+> Migrated pubek_show to struct tpm_buf and cleaned up its implementation.
+> Previously the output parameter structure was declared but left
+> completely unused. Now it is used to refer different fields of the
+> output. We can move it to tpm-sysfs.c as it does not have any use
+> outside of that file.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-The main idea of this patch set is that, if a system executes
-or reads good files (e.g. those from a Linux distribution),
-the difference between the assertion 'a file could have possibly
-been accessed' and 'a file has been accessed' is not relevant
-for verifiers that only check the provenance of software.
+Can anyone help peer testing this change?
 
-Then, for those verifiers, a measurement representing the list of
-good files which could have possibly been accessed gives the same
-guarantees of individual file measurements.
+https://patchwork.kernel.org/patch/9799057/
 
-The patch set introduces two data types:
+/Jarkko
 
-- digest list: contains the digests of good files
-- list metadata: contains the digest, the signature and the path
-                  of each digest list to load (why loading many
-                  lists instead of one will be clear after I explain
-                  the remote attestation verification process)
-
-Steps at boot:
-
-1) systemd reads the path of list metadata from /etc/ima/digest-lists
-    and writes it to a new securityfs file created by IMA
-2) IMA reads and parses the list metadata (same mechanism for
-    loading a policy, already upstreamed)
-3) for each list metadata, IMA reads and parses the digest list
-    and adds the file digests to a hash table
-4) when a file is accessed, IMA calculates the digest as before
-    and searches the file digest in the new hash table; if the
-    digest is found, IMA sets the IMA_MEASURED flag in the inode
-    metadata and clears the IMA_MEASURE action
-
-Notes:
-
-- list metadata and digest lists are measured before IMA reads them
-- the digest of digest lists is also added to the hash table, otherwise
-   there would be a measurement for each digest list
-
-The measurement list looks like:
-
-10 <template digest> ima-ng <digest> boot_aggregate
-10 <template digest> ima-ng <digest> systemd (exe + libs)
-10 <template digest> ima-ng <digest> /etc/ima/digest-lists
-10 <template digest> ima-ng <digest> <list metadata>
-10 <template digest> ima-ng <digest> <unknown files>
-
-
-Steps during the verification:
-
-Case 1: list metadata and digest lists are provided to verifiers
-
-This is necessary when:
-- digest lists are not signed
-- verifiers do not trust the signer
-- verifiers want to perform more checks on digest lists
-   (digest lists may contain digest of outdated software)
-
-Verifiers:
-
-1) parse the list metadata received
-2) for each digest list received, calculate the digest and
-    compare it with the digest included in the list metadata
-3) calculate the digest of list metadata and compare it with
-    the digest in the measurement list
-4) calculate the digest of the path of list metadata and compare
-    it with the digest of /etc/ima/digest-lists in the measurement list
-5) check boot_aggregate, systemd exe and libs, and unknown files
-6) check the digest lists
-
-
-Case 2: only list metadata is provided to verifiers
-
-Verifiers:
-
-1) parse the list metadata received
-2) for each digest list, verify the signature
-3) calculate the digest of the path of list metadata and compare
-    it with the digest of /etc/ima/digest-lists in the measurement list
-4) check boot_aggregate, systemd exe and libs, and unknown files
-
-In Case 2, the verification process is simplified, because if
-the signature of digest lists is valid, this means that possibly
-accessed files are provided by the signer.
-
-The problem here is that verifiers know the digest of possibly
-accessed files from the measurement done by IMA at the time
-digest lists are read. If IMA cannot parse the original (signed)
-digest list, it would measure something that cannot be verified
-with the signature.
-
-RPM-based distributions already provide signed digest lists
-(the RPM headers) for each package. To avoid the performance
-penalty due to extending a PCR for each digest list, only
-an entry for the list metadata is added to the measurement list.
-
-For RPM-based Linux distributions, the full lifecycle for configuring
-IMA can be implemented with very low effort. The tasks are:
-
-1) systemd patch to load list metadata: just extend the existing
-    patch to load the policy
-2) userspace tools to parse the RPM database: done
-3) dracut module to generate and include the digest lists and
-    metadata into the initial ram disk: at the moment this is done
-    from the dracut command line
-4) plugin for the software management that executes the tool
-    to generate the digest list for updated packages: to be implemented
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+> ---
+>  drivers/char/tpm/tpm-sysfs.c | 87 ++++++++++++++++++++++++--------------------
+>  drivers/char/tpm/tpm.h       | 13 -------
+>  2 files changed, 48 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+> index eedb8e47bde2..fcb69f1162ab 100644
+> --- a/drivers/char/tpm/tpm-sysfs.c
+> +++ b/drivers/char/tpm/tpm-sysfs.c
+> @@ -20,44 +20,48 @@
+>  #include <linux/device.h>
+>  #include "tpm.h"
+>  
+> -#define READ_PUBEK_RESULT_SIZE 314
+> +struct tpm_readpubek_out {
+> +	u8 algorithm[4];
+> +	u8 encscheme[2];
+> +	u8 sigscheme[2];
+> +	__be32 paramsize;
+> +	u8 parameters[12];
+> +	__be32 keysize;
+> +	u8 modulus[256];
+> +	u8 checksum[20];
+> +} __packed;
+> +
+>  #define READ_PUBEK_RESULT_MIN_BODY_SIZE (28 + 256)
+>  #define TPM_ORD_READPUBEK 124
+> -static const struct tpm_input_header tpm_readpubek_header = {
+> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> -	.length = cpu_to_be32(30),
+> -	.ordinal = cpu_to_be32(TPM_ORD_READPUBEK)
+> -};
+> +
+>  static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+>  			  char *buf)
+>  {
+> -	u8 *data;
+> -	struct tpm_cmd_t tpm_cmd;
+> -	ssize_t err;
+> -	int i, rc;
+> +	struct tpm_buf tpm_buf;
+> +	struct tpm_readpubek_out *out;
+> +	ssize_t rc;
+> +	int i;
+>  	char *str = buf;
+>  	struct tpm_chip *chip = to_tpm_chip(dev);
+> +	char anti_replay[20];
+>  
+> -	memset(&tpm_cmd, 0, sizeof(tpm_cmd));
+> -
+> -	tpm_cmd.header.in = tpm_readpubek_header;
+> -	err = tpm_transmit_cmd(chip, NULL, &tpm_cmd, READ_PUBEK_RESULT_SIZE,
+> -			       READ_PUBEK_RESULT_MIN_BODY_SIZE, 0,
+> -			       "attempting to read the PUBEK");
+> -	if (err)
+> -		goto out;
+> -
+> -	/*
+> -	   ignore header 10 bytes
+> -	   algorithm 32 bits (1 == RSA )
+> -	   encscheme 16 bits
+> -	   sigscheme 16 bits
+> -	   parameters (RSA 12->bytes: keybit, #primes, expbit)
+> -	   keylenbytes 32 bits
+> -	   256 byte modulus
+> -	   ignore checksum 20 bytes
+> -	 */
+> -	data = tpm_cmd.params.readpubek_out_buffer;
+> +	memset(&anti_replay, 0, sizeof(anti_replay));
+> +
+> +	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
+> +	if (rc)
+> +		return rc;
+> +
+> +	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
+> +
+> +	rc = tpm_transmit_cmd(chip, NULL, tpm_buf.data, PAGE_SIZE,
+> +			      READ_PUBEK_RESULT_MIN_BODY_SIZE, 0,
+> +			      "attempting to read the PUBEK");
+> +	if (rc) {
+> +		tpm_buf_destroy(&tpm_buf);
+> +		return 0;
+> +	}
+> +
+> +	out = (struct tpm_readpubek_out *)&tpm_buf.data[10];
+>  	str +=
+>  	    sprintf(str,
+>  		    "Algorithm: %02X %02X %02X %02X\n"
+> @@ -68,21 +72,26 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+>  		    "%02X %02X %02X %02X\n"
+>  		    "Modulus length: %d\n"
+>  		    "Modulus:\n",
+> -		    data[0], data[1], data[2], data[3],
+> -		    data[4], data[5],
+> -		    data[6], data[7],
+> -		    data[12], data[13], data[14], data[15],
+> -		    data[16], data[17], data[18], data[19],
+> -		    data[20], data[21], data[22], data[23],
+> -		    be32_to_cpu(*((__be32 *) (data + 24))));
+> +		    out->algorithm[0], out->algorithm[1], out->algorithm[2],
+> +		    out->algorithm[3],
+> +		    out->encscheme[0], out->encscheme[1],
+> +		    out->sigscheme[0], out->sigscheme[1],
+> +		    out->parameters[0], out->parameters[1],
+> +		    out->parameters[2], out->parameters[3],
+> +		    out->parameters[4], out->parameters[5],
+> +		    out->parameters[6], out->parameters[7],
+> +		    out->parameters[8], out->parameters[9],
+> +		    out->parameters[10], out->parameters[11],
+> +		    be32_to_cpu(out->keysize));
+>  
+>  	for (i = 0; i < 256; i++) {
+> -		str += sprintf(str, "%02X ", data[i + 28]);
+> +		str += sprintf(str, "%02X ", out->modulus[i]);
+>  		if ((i + 1) % 16 == 0)
+>  			str += sprintf(str, "\n");
+>  	}
+> -out:
+> +
+>  	rc = str - buf;
+> +	tpm_buf_destroy(&tpm_buf);
+>  	return rc;
+>  }
+>  static DEVICE_ATTR_RO(pubek);
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index cdd261383dea..d9835b31f652 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -343,17 +343,6 @@ enum tpm_sub_capabilities {
+>  	TPM_CAP_PROP_TIS_DURATION = 0x120,
+>  };
+>  
+> -struct	tpm_readpubek_params_out {
+> -	u8	algorithm[4];
+> -	u8	encscheme[2];
+> -	u8	sigscheme[2];
+> -	__be32	paramsize;
+> -	u8	parameters[12]; /*assuming RSA*/
+> -	__be32	keysize;
+> -	u8	modulus[256];
+> -	u8	checksum[20];
+> -} __packed;
+> -
+>  typedef union {
+>  	struct	tpm_input_header in;
+>  	struct	tpm_output_header out;
+> @@ -387,8 +376,6 @@ struct tpm_startup_in {
+>  } __packed;
+>  
+>  typedef union {
+> -	struct	tpm_readpubek_params_out readpubek_out;
+> -	u8	readpubek_out_buffer[sizeof(struct tpm_readpubek_params_out)];
+>  	struct	tpm_pcrread_in	pcrread_in;
+>  	struct	tpm_pcrread_out	pcrread_out;
+>  	struct	tpm_getrandom_in getrandom_in;
+> -- 
+> 2.11.0
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
