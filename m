@@ -1,79 +1,164 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 02 Aug 2017 13:11:52 -0400
-Subject: [PATCH v4 2/5] ima: use fs method to read integrity data [updated]
-In-Reply-To: <20170802080108.GB2732@quack2.suse.cz>
-References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1501075375-29469-3-git-send-email-zohar@linux.vnet.ibm.com>
-	<1501619070.3204.4.camel@linux.vnet.ibm.com>
-	<20170802080108.GB2732@quack2.suse.cz>
-Message-ID: <1501693912.20268.29.camel@linux.vnet.ibm.com>
+From: jglisse@redhat.com (Jerome Glisse)
+Date: Wed, 2 Aug 2017 13:08:48 -0400
+Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
+	allocator
+In-Reply-To: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
+References: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
+Message-ID: <20170802170848.GA3240@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-08-02 at 10:01 +0200, Jan Kara wrote:
-> On Tue 01-08-17 16:24:30, Mimi Zohar wrote:
-> > From: Christoph Hellwig <hch@lst.de>
-> > 
-> > Add a new ->integrity_read file operation to read data for integrity
-> > hash collection.  This is defined to be equivalent to ->read_iter,
-> > except that it will be called with the i_rwsem held exclusively.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > Cc: Matthew Garrett <matthew.garrett@nebula.com>
-> > Cc: Jan Kara <jack@suse.com>
-> > Cc: "Theodore Ts'o" <tytso@mit.edu>
-> > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> > Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Cc: Chao Yu <yuchao0@huawei.com>
-> > Cc: Steven Whitehouse <swhiteho@redhat.com>
-> > Cc: Bob Peterson <rpeterso@redhat.com>
-> > Cc: David Woodhouse <dwmw2@infradead.org>
-> > Cc: Dave Kleikamp <shaggy@kernel.org>
-> > Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-> > Cc: Mark Fasheh <mfasheh@versity.com>
-> > Cc: Joel Becker <jlbec@evilplan.org>
-> > Cc: Richard Weinberger <richard@nod.at>
-> > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > Cc: Hugh Dickins <hughd@google.com>
-> > Cc: Chris Mason <clm@fb.com>
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+On Wed, Aug 02, 2017 at 06:14:28PM +0300, Igor Stoppa wrote:
+> Hi,
+> while I am working to another example of using pmalloc [1],
+> it was pointed out to me that:
+> 
+> 1) I had introduced a bug when I switched to using a field of the page
+> structure [2]
+> 
+> 2) I was also committing a layer violation in the way I was tagging the
+> pages.
+> 
+> I am seeking help to understand what would be the correct way to do the
+> tagging.
+> 
+> Here are snippets describing the problems:
+> 
+> 
+> 1) from pmalloc.c:
 > 
 > ...
 > 
-> > +static ssize_t ext4_file_integrity_read_iter(struct kiocb *iocb,
-> > +					     struct iov_iter *to)
-> > +{
-> > +	struct inode *inode = file_inode(iocb->ki_filp);
-> > +	int o_direct = iocb->ki_flags & IOCB_DIRECT;
-> > +
-> > +	lockdep_assert_held(&inode->i_rwsem);
-> > +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-> > +		return -EIO;
-> > +
-> > +	if (!iov_iter_count(to))
-> > +		return 0; /* skip atime */
-> > +
-> > +#ifdef CONFIG_FS_DAX
-> > +	if (IS_DAX(inode))
-> > +		return dax_iomap_rw(iocb, to, &ext4_iomap_ops);
-> > +#endif
-> > +	if (o_direct)
-> > +		return -EINVAL;
-> > +	return generic_file_read_iter(iocb, to);
-> > +}
+> +static const unsigned long pmalloc_signature = (unsigned
+> long)&pmalloc_mutex;
 > 
-> I have noticed this o_direct check - why is it only in ext4 and shouldn't
-> rather higher layers make sure IOCB_DIRECT iocbs cannot reach
-> .integrity_read() methods?
- 
-This failure happens when opening a file with O_DIRECT on a block
-device that does not support dax (eg. loop). xfs makes it to here too,
-but the call to generic_file_read_iter() fails properly with -EINVAL.?
-(Only tested on those filesystems included that support dax (eg. ext2,
-ext4, and xfs).)
+> ...
+> 
+> +int __pmalloc_tag_pages(void *base, const size_t size, const bool set_tag)
+> +{
+> +	void *end = base + size - 1;
+> +
+> +	do {
+> +		struct page *page;
+> +
+> +		if (!is_vmalloc_addr(base))
+> +			return -EINVAL;
+> +		page = vmalloc_to_page(base);
+> +		if (set_tag) {
+> +			BUG_ON(page_private(page) || page->private);
+> +			set_page_private(page, 1);
 
-Mimi
+Above line is pointless you overwrite value right below
 
+> +			page->private = pmalloc_signature;
+> +		} else {
+> +			BUG_ON(!(page_private(page) &&
+> +				 page->private == pmalloc_signature));
+> +			set_page_private(page, 0);
+
+Same as above
+
+> +			page->private = 0;
+> +		}
+> +		base += PAGE_SIZE;
+> +	} while ((PAGE_MASK & (unsigned long)base) <=
+> +		 (PAGE_MASK & (unsigned long)end));
+> +	return 0;
+> +}
+> 
+> ...
+> 
+> +static const char msg[] = "Not a valid Pmalloc object.";
+> +const char *pmalloc_check_range(const void *ptr, unsigned long n)
+> +{
+> +	unsigned long p;
+> +
+> +	p = (unsigned long)ptr;
+> +	n = p + n - 1;
+> +	for (; (PAGE_MASK & p) <= (PAGE_MASK & n); p += PAGE_SIZE) {
+> +		struct page *page;
+> +
+> +		if (!is_vmalloc_addr((void *)p))
+> +			return msg;
+> +		page = vmalloc_to_page((void *)p);
+> +		if (!(page && page_private(page) &&
+> +		      page->private == pmalloc_signature))
+> +			return msg;
+> +	}
+> +	return NULL;
+> +}
+> 
+> 
+> The problem here comes from the way I am using page->private:
+> the fact that the page is marked as private means only that someone is
+> using it, and the way it is used could create (spoiler: it happens) a
+> collision with pmalloc_signature, which can generate false positives.
+
+Is page->private use for vmalloc memory ? If so then pick another field.
+Thought i doubt it is use i would need to check. What was the exact
+objection made ?
+
+> 
+> A way to ensure that the address really belongs to pmalloc would be to
+> pre-screen it, against either the signature or some magic number and,
+> if such test is passed, then compare the address against those really
+> available in the pmalloc pools.
+> 
+> This would be slower, but it would be limited only to those cases where
+> the signature/magic number matches and the answer is likely to be true.
+> 
+> 2) However, both the current (incorrect) implementation and the one I am
+> considering, are abusing something that should be used otherwise (see
+> the following snippet):
+> 
+> from include/linux/mm_types.h:
+> 
+> struct page {
+> ...
+>   union {
+>     unsigned long private;		/* Mapping-private opaque data:
+> 				 	 * usually used for buffer_heads
+> 					 * if PagePrivate set; used for
+> 					 * swp_entry_t if PageSwapCache;
+> 					 * indicates order in the buddy
+> 					 * system if PG_buddy is set.
+> 					 */
+> #if USE_SPLIT_PTE_PTLOCKS
+> #if ALLOC_SPLIT_PTLOCKS
+> 		spinlock_t *ptl;
+> #else
+> 		spinlock_t ptl;
+> #endif
+> #endif
+> 		struct kmem_cache *slab_cache;	/* SL[AU]B: Pointer to slab */
+> 	};
+> ...
+> }
+> 
+> 
+> The "private" field is meant for mapping-private opaque data, which is
+> not how I am using it.
+
+As you can see this is an union and thus the meaning of that field depends
+on how the page is use. The private comment you see is only meaningfull for
+page that are in the page cache and are coming from a file system ie when
+a process does an mmap of a file. When page is use by sl[au]b the slab_cache
+field is how it is interpreted ... Context in which a page is use do matter.
+
+Here we are talking about memory that is allocated to back vmalloc area so
+the private field is unuse AFAICR and it is safe to use it while the page
+is use for vmalloc.
+
+Note that i don't think anyone is doing vmap() of pages that are in the page
+cache that would seem wrong from my point of view but maybe some one is.
+Thought someone might be doing vmap() of pages in which the private field is
+use for something (like a device driver private field) in which case you might
+still have false positive. You might want to simply add something either to
+vm_struct or vmap_area to know if a range of vmalloc area has been created
+by pmalloc or not. Maybe you don't even need to tag page and storing flag
+in vmap_area or vm_struct would be enough.
+
+J?r?me
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
