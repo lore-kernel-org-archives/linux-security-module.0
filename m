@@ -1,86 +1,91 @@
-From: mhocko@kernel.org (Michal Hocko)
-Date: Thu, 3 Aug 2017 15:55:50 +0200
-Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
-	allocator
-In-Reply-To: <c3a250a6-ad4d-d24d-d0bf-4c43c467ebe6@huawei.com>
-References: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
-	<20170802170848.GA3240@redhat.com>
-	<8e82639c-40db-02ce-096a-d114b0436d3c@huawei.com>
-	<20170803114844.GO12521@dhcp22.suse.cz>
-	<c3a250a6-ad4d-d24d-d0bf-4c43c467ebe6@huawei.com>
-Message-ID: <20170803135549.GW12521@dhcp22.suse.cz>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 03 Aug 2017 10:37:45 -0400
+Subject: [PATCH v3 7/7] ima: Support module-style appended signatures
+	for appraisal
+In-Reply-To: <1501714334.27872.38.camel@linux.vnet.ibm.com>
+References: <20170706221753.17380-1-bauerman@linux.vnet.ibm.com>
+	<20170706221753.17380-8-bauerman@linux.vnet.ibm.com>
+	<1501424988.9230.67.camel@linux.vnet.ibm.com>
+	<87fud9yig8.fsf@linux.vnet.ibm.com>
+	<1501714334.27872.38.camel@linux.vnet.ibm.com>
+Message-ID: <1501771065.27872.63.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu 03-08-17 15:20:31, Igor Stoppa wrote:
-> On 03/08/17 14:48, Michal Hocko wrote:
-> > On Thu 03-08-17 13:11:45, Igor Stoppa wrote:
-> >> On 02/08/17 20:08, Jerome Glisse wrote:
-> >>> On Wed, Aug 02, 2017 at 06:14:28PM +0300, Igor Stoppa wrote:
-> 
-> [...]
-> 
-> >>>> from include/linux/mm_types.h:
-> >>>>
-> >>>> struct page {
-> >>>> ...
-> >>>>   union {
-> >>>>     unsigned long private;		/* Mapping-private opaque data:
-> >>>> 				 	 * usually used for buffer_heads
-> >>>> 					 * if PagePrivate set; used for
-> >>>> 					 * swp_entry_t if PageSwapCache;
-> >>>> 					 * indicates order in the buddy
-> >>>> 					 * system if PG_buddy is set.
-> >>>> 					 */
-> 
-> [...]
-> 
-> >> If the "Mapping-private" was dropped or somehow connected exclusively to
-> >> the cases listed in the comment, then I think it would be more clear
-> >> that the comment needs to be intended as related to mapping in certain
-> >> cases only.
-> >> But it is otherwise ok to use the "private" field for whatever purpose
-> >> it might be suitable, as long as it is not already in use.
+On Wed, 2017-08-02 at 18:52 -0400, Mimi Zohar wrote:
+> On Wed, 2017-08-02 at 14:42 -0300, Thiago Jung Bauermann wrote:
+> > Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+
+> > >> @@ -229,8 +251,24 @@ int ima_appraise_measurement(enum ima_hooks func,
+> > >>  		goto out;
+> > >>  	}
+> > >> 
+> > >> -	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+> > >> -	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
+> > >> +	/*
+> > >> +	 * Appended signatures aren't protected by EVM but we still call
+> > >> +	 * evm_verifyxattr to check other security xattrs, if they exist.
+> > >> +	 */
+> > >> +	if (appraising_modsig) {
+> > >> +		xattr_value_evm = NULL;
+> > >> +		xattr_len_evm = 0;
+> > >> +	} else {
+> > >> +		xattr_value_evm = xattr_value;
+> > >> +		xattr_len_evm = xattr_len;
+> > >> +	}
+> > >> +
+> > >> +	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value_evm,
+> > >> +				 xattr_len_evm, iint);
+> > >> +	if (appraising_modsig && status == INTEGRITY_FAIL) {
+> > >> +		cause = "invalid-HMAC";
+> > >> +		goto out;
+> > >
+> > > "modsig" is special, because having any security xattrs is not
+> > > required. This test doesn't prevent status from being set to
+> > > "missing-HMAC". This test is redundant with the original tests below.
 > > 
-> > I would recommend adding a new field into the enum...
+> > Indeed, that is wrong. I'm still a bit fuzzy about how EVM works and how
+> > it interacts with IMA. The only way I can think of singling out modsig
+> > without reintroduced the complex expression you didn't like in v2 is as
+> > below. What do you think?
 > 
-> s/enum/union/ ?
-> 
-> If not, I am not sure what is the enum that you are talking about.
+> The original code, without any extra tests, should be fine.
 
-yeah, fat fingers on my side
+There is one major difference.
 
-> 
-> [...]
-> 
-> >> But, to reply more specifically to your advice, yes, I think I could add
-> >> a flag to vm_struct and then retrieve its value, for the address being
-> >> processed, by passing through find_vm_area().
-> > 
-> > ... and you can store vm_struct pointer to the struct page there 
-> 
-> "there" as in the new field of the union?
-> btw, what would be a meaningful name, since "private" is already taken?
-> 
-> For simplicity, I'll use, for now, "private2"
+EVM verifies a file's metadata has not been modified based on either
+an HMAC or signature stored as security.evm. ?Prior to the appended
+signatures patch set, all files in policy required a security.evm
+xattr. With IMA enabled we could guarantee that at least one security
+xattr existed. ?The only exception were new files, which hadn't yet
+been labeled.?
 
-why not explicit vm_area?
+With appended signatures, there is now no guarantee that at least one
+security xattr exists.
 
-> > and you> won't need to do the slow find_vm_area. I haven't checked
-> very closely
-> > but this should be possible in principle. I guess other callers might
-> > benefit from this as well.
-> 
-> I am confused about this: if "private2" is a pointer, but when I get an
-> address, I do not even know if the address represents a valid pmalloc
-> page, how can i know when it's ok to dereference "private2"?
+Perhaps the code snippet below will help clarify the meaning of the
+integrity_status results.?
 
-because you can make all pages which back vmalloc mappings have vm_area
-pointer set.
+? ? ? ? switch (status) {
+????????case INTEGRITY_PASS:
+????????case INTEGRITY_UNKNOWN: ? ? ?
+? ? ? ? ? ? ? break;		
+? ? ? ? case INTEGRITY_NOXATTRS:????????/* no EVM protected xattrs */
+????????????????if (appraising_modsig)
+????????????????????????break;
+????????case INTEGRITY_NOLABEL:?????????/* no security.evm xattr */
+????????????????cause = "missing-HMAC";
+????????????????fail = 1;
+????????????????break;
+????????case INTEGRITY_FAIL:????????????/* invalid HMAC/signature */
+????????default:
+????????????????cause = "invalid-HMAC";
+????????????????fail = 1;
+????????????????break;
+????????}
 
--- 
-Michal Hocko
-SUSE Labs
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
