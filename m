@@ -1,8 +1,8 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Thu, 3 Aug 2017 18:06:11 +0300
+From: mhocko@kernel.org (Michal Hocko)
+Date: Thu, 3 Aug 2017 17:15:50 +0200
 Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
 	allocator
-In-Reply-To: <20170803144746.GA9501@redhat.com>
+In-Reply-To: <ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
 References: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
 	<20170802170848.GA3240@redhat.com>
 	<8e82639c-40db-02ce-096a-d114b0436d3c@huawei.com>
@@ -10,44 +10,46 @@ References: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
 	<c3a250a6-ad4d-d24d-d0bf-4c43c467ebe6@huawei.com>
 	<20170803135549.GW12521@dhcp22.suse.cz>
 	<20170803144746.GA9501@redhat.com>
-Message-ID: <ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
+	<ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
+Message-ID: <20170803151550.GX12521@dhcp22.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 03/08/17 17:47, Jerome Glisse wrote:
-> On Thu, Aug 03, 2017 at 03:55:50PM +0200, Michal Hocko wrote:
->> On Thu 03-08-17 15:20:31, Igor Stoppa wrote:
-
-[...]
-
->>> I am confused about this: if "private2" is a pointer, but when I get an
->>> address, I do not even know if the address represents a valid pmalloc
->>> page, how can i know when it's ok to dereference "private2"?
->>
->> because you can make all pages which back vmalloc mappings have vm_area
->> pointer set.
+On Thu 03-08-17 18:06:11, Igor Stoppa wrote:
 > 
-> Note that i think this might break some device driver that use vmap()
-> i think some of them use private field to store device driver specific
-> informations. But there likely is an unuse field in struct page that
-> can be use for that.
+> 
+> On 03/08/17 17:47, Jerome Glisse wrote:
+> > On Thu, Aug 03, 2017 at 03:55:50PM +0200, Michal Hocko wrote:
+> >> On Thu 03-08-17 15:20:31, Igor Stoppa wrote:
+> 
+> [...]
+> 
+> >>> I am confused about this: if "private2" is a pointer, but when I get an
+> >>> address, I do not even know if the address represents a valid pmalloc
+> >>> page, how can i know when it's ok to dereference "private2"?
+> >>
+> >> because you can make all pages which back vmalloc mappings have vm_area
+> >> pointer set.
+> > 
+> > Note that i think this might break some device driver that use vmap()
+> > i think some of them use private field to store device driver specific
+> > informations. But there likely is an unuse field in struct page that
+> > can be use for that.
+> 
+> This increases the unease from my side ... it looks like there is no way
+> to fully understand if a field is really used or not, without having
+> deep intimate knowledge of lots of code that is only marginally involved :-/
 
-This increases the unease from my side ... it looks like there is no way
-to fully understand if a field is really used or not, without having
-deep intimate knowledge of lots of code that is only marginally involved :-/
+welcome to the struct page heaven...
+ 
+> Similarly, how would I be able to specify what would be the correct way
+> to decide the member of the union to use for handling the field?
 
-Similarly, how would I be able to specify what would be the correct way
-to decide the member of the union to use for handling the field?
-
-If there were either some sort of non-multiplexed tag/cookie field or a
-function, that would specify how to treat the various unions, then it
-would be easier to multiplex the remaining data, according to how the
-page is used.
-
---
-igor
+I would check the one where we have mapping. It is rather unlikely
+vmalloc users would touch this one.
+-- 
+Michal Hocko
+SUSE Labs
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
