@@ -1,55 +1,99 @@
-From: mhocko@kernel.org (Michal Hocko)
-Date: Thu, 3 Aug 2017 17:15:50 +0200
-Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
-	allocator
-In-Reply-To: <ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
-References: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
-	<20170802170848.GA3240@redhat.com>
-	<8e82639c-40db-02ce-096a-d114b0436d3c@huawei.com>
-	<20170803114844.GO12521@dhcp22.suse.cz>
-	<c3a250a6-ad4d-d24d-d0bf-4c43c467ebe6@huawei.com>
-	<20170803135549.GW12521@dhcp22.suse.cz>
-	<20170803144746.GA9501@redhat.com>
-	<ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
-Message-ID: <20170803151550.GX12521@dhcp22.suse.cz>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Thu, 03 Aug 2017 18:01:06 -0300
+Subject: [PATCH v3 7/7] ima: Support module-style appended signatures for
+	appraisal
+In-Reply-To: <1501771065.27872.63.camel@linux.vnet.ibm.com>
+References: <20170706221753.17380-1-bauerman@linux.vnet.ibm.com>
+	<20170706221753.17380-8-bauerman@linux.vnet.ibm.com>
+	<1501424988.9230.67.camel@linux.vnet.ibm.com>
+	<87fud9yig8.fsf@linux.vnet.ibm.com>
+	<1501714334.27872.38.camel@linux.vnet.ibm.com>
+	<1501771065.27872.63.camel@linux.vnet.ibm.com>
+Message-ID: <87y3r0xt65.fsf@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu 03-08-17 18:06:11, Igor Stoppa wrote:
-> 
-> 
-> On 03/08/17 17:47, Jerome Glisse wrote:
-> > On Thu, Aug 03, 2017 at 03:55:50PM +0200, Michal Hocko wrote:
-> >> On Thu 03-08-17 15:20:31, Igor Stoppa wrote:
-> 
-> [...]
-> 
-> >>> I am confused about this: if "private2" is a pointer, but when I get an
-> >>> address, I do not even know if the address represents a valid pmalloc
-> >>> page, how can i know when it's ok to dereference "private2"?
-> >>
-> >> because you can make all pages which back vmalloc mappings have vm_area
-> >> pointer set.
-> > 
-> > Note that i think this might break some device driver that use vmap()
-> > i think some of them use private field to store device driver specific
-> > informations. But there likely is an unuse field in struct page that
-> > can be use for that.
-> 
-> This increases the unease from my side ... it looks like there is no way
-> to fully understand if a field is really used or not, without having
-> deep intimate knowledge of lots of code that is only marginally involved :-/
 
-welcome to the struct page heaven...
- 
-> Similarly, how would I be able to specify what would be the correct way
-> to decide the member of the union to use for handling the field?
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-I would check the one where we have mapping. It is rather unlikely
-vmalloc users would touch this one.
+> On Wed, 2017-08-02 at 18:52 -0400, Mimi Zohar wrote:
+>> On Wed, 2017-08-02 at 14:42 -0300, Thiago Jung Bauermann wrote:
+>> > Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>
+>> > >> @@ -229,8 +251,24 @@ int ima_appraise_measurement(enum ima_hooks func,
+>> > >>  		goto out;
+>> > >>  	}
+>> > >> 
+>> > >> -	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+>> > >> -	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
+>> > >> +	/*
+>> > >> +	 * Appended signatures aren't protected by EVM but we still call
+>> > >> +	 * evm_verifyxattr to check other security xattrs, if they exist.
+>> > >> +	 */
+>> > >> +	if (appraising_modsig) {
+>> > >> +		xattr_value_evm = NULL;
+>> > >> +		xattr_len_evm = 0;
+>> > >> +	} else {
+>> > >> +		xattr_value_evm = xattr_value;
+>> > >> +		xattr_len_evm = xattr_len;
+>> > >> +	}
+>> > >> +
+>> > >> +	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value_evm,
+>> > >> +				 xattr_len_evm, iint);
+>> > >> +	if (appraising_modsig && status == INTEGRITY_FAIL) {
+>> > >> +		cause = "invalid-HMAC";
+>> > >> +		goto out;
+>> > >
+>> > > "modsig" is special, because having any security xattrs is not
+>> > > required. This test doesn't prevent status from being set to
+>> > > "missing-HMAC". This test is redundant with the original tests below.
+>> > 
+>> > Indeed, that is wrong. I'm still a bit fuzzy about how EVM works and how
+>> > it interacts with IMA. The only way I can think of singling out modsig
+>> > without reintroduced the complex expression you didn't like in v2 is as
+>> > below. What do you think?
+>> 
+>> The original code, without any extra tests, should be fine.
+>
+> There is one major difference.
+>
+> EVM verifies a file's metadata has not been modified based on either
+> an HMAC or signature stored as security.evm. Prior to the appended
+> signatures patch set, all files in policy required a security.evm
+> xattr. With IMA enabled we could guarantee that at least one security
+> xattr existed. The only exception were new files, which hadn't yet
+> been labeled.
+>
+> With appended signatures, there is now no guarantee that at least one
+> security xattr exists.
+>
+> Perhaps the code snippet below will help clarify the meaning of the
+> integrity_status results.
+>
+>     switch (status) {
+> case INTEGRITY_PASS:
+> case INTEGRITY_UNKNOWN:   
+>        break;		
+>     case INTEGRITY_NOXATTRS:/* no EVM protected xattrs */
+> if (appraising_modsig)
+> break;
+> case INTEGRITY_NOLABEL:/* no security.evm xattr */
+> cause = "missing-HMAC";
+> fail = 1;
+> break;
+> case INTEGRITY_FAIL:/* invalid HMAC/signature */
+> default:
+> cause = "invalid-HMAC";
+> fail = 1;
+> break;
+> }
+
+Thanks! I'll use the switch above in the next version of the patch.
+
 -- 
-Michal Hocko
-SUSE Labs
+Thiago Jung Bauermann
+IBM Linux Technology Center
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
