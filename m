@@ -1,99 +1,59 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Thu, 03 Aug 2017 18:01:06 -0300
-Subject: [PATCH v3 7/7] ima: Support module-style appended signatures for
-	appraisal
-In-Reply-To: <1501771065.27872.63.camel@linux.vnet.ibm.com>
-References: <20170706221753.17380-1-bauerman@linux.vnet.ibm.com>
-	<20170706221753.17380-8-bauerman@linux.vnet.ibm.com>
-	<1501424988.9230.67.camel@linux.vnet.ibm.com>
-	<87fud9yig8.fsf@linux.vnet.ibm.com>
-	<1501714334.27872.38.camel@linux.vnet.ibm.com>
-	<1501771065.27872.63.camel@linux.vnet.ibm.com>
-Message-ID: <87y3r0xt65.fsf@linux.vnet.ibm.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Fri, 4 Aug 2017 11:02:46 +0300
+Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
+	allocator
+In-Reply-To: <20170803151550.GX12521@dhcp22.suse.cz>
+References: <07063abd-2f5d-20d9-a182-8ae9ead26c3c@huawei.com>
+	<20170802170848.GA3240@redhat.com>
+	<8e82639c-40db-02ce-096a-d114b0436d3c@huawei.com>
+	<20170803114844.GO12521@dhcp22.suse.cz>
+	<c3a250a6-ad4d-d24d-d0bf-4c43c467ebe6@huawei.com>
+	<20170803135549.GW12521@dhcp22.suse.cz>
+	<20170803144746.GA9501@redhat.com>
+	<ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
+	<20170803151550.GX12521@dhcp22.suse.cz>
+Message-ID: <abe0c086-8c5a-d6fb-63c4-bf75528d0ec5@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-> On Wed, 2017-08-02 at 18:52 -0400, Mimi Zohar wrote:
->> On Wed, 2017-08-02 at 14:42 -0300, Thiago Jung Bauermann wrote:
->> > Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
->
->> > >> @@ -229,8 +251,24 @@ int ima_appraise_measurement(enum ima_hooks func,
->> > >>  		goto out;
->> > >>  	}
->> > >> 
->> > >> -	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
->> > >> -	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
->> > >> +	/*
->> > >> +	 * Appended signatures aren't protected by EVM but we still call
->> > >> +	 * evm_verifyxattr to check other security xattrs, if they exist.
->> > >> +	 */
->> > >> +	if (appraising_modsig) {
->> > >> +		xattr_value_evm = NULL;
->> > >> +		xattr_len_evm = 0;
->> > >> +	} else {
->> > >> +		xattr_value_evm = xattr_value;
->> > >> +		xattr_len_evm = xattr_len;
->> > >> +	}
->> > >> +
->> > >> +	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value_evm,
->> > >> +				 xattr_len_evm, iint);
->> > >> +	if (appraising_modsig && status == INTEGRITY_FAIL) {
->> > >> +		cause = "invalid-HMAC";
->> > >> +		goto out;
->> > >
->> > > "modsig" is special, because having any security xattrs is not
->> > > required. This test doesn't prevent status from being set to
->> > > "missing-HMAC". This test is redundant with the original tests below.
->> > 
->> > Indeed, that is wrong. I'm still a bit fuzzy about how EVM works and how
->> > it interacts with IMA. The only way I can think of singling out modsig
->> > without reintroduced the complex expression you didn't like in v2 is as
->> > below. What do you think?
->> 
->> The original code, without any extra tests, should be fine.
->
-> There is one major difference.
->
-> EVM verifies a file's metadata has not been modified based on either
-> an HMAC or signature stored as security.evm. Prior to the appended
-> signatures patch set, all files in policy required a security.evm
-> xattr. With IMA enabled we could guarantee that at least one security
-> xattr existed. The only exception were new files, which hadn't yet
-> been labeled.
->
-> With appended signatures, there is now no guarantee that at least one
-> security xattr exists.
->
-> Perhaps the code snippet below will help clarify the meaning of the
-> integrity_status results.
->
->     switch (status) {
-> case INTEGRITY_PASS:
-> case INTEGRITY_UNKNOWN:   
->        break;		
->     case INTEGRITY_NOXATTRS:/* no EVM protected xattrs */
-> if (appraising_modsig)
-> break;
-> case INTEGRITY_NOLABEL:/* no security.evm xattr */
-> cause = "missing-HMAC";
-> fail = 1;
-> break;
-> case INTEGRITY_FAIL:/* invalid HMAC/signature */
-> default:
-> cause = "invalid-HMAC";
-> fail = 1;
-> break;
-> }
+On 03/08/17 18:15, Michal Hocko wrote:
 
-Thanks! I'll use the switch above in the next version of the patch.
+> I would check the one where we have mapping. It is rather unlikely
+> vmalloc users would touch this one.
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+That was also the initial recommendation from Jerome Glisse, but it
+seemed unusable, because of the related comment.
 
+I should have asked for clarifications back then :-(
+
+But it's never too late ...
+
+
+struct page {
+  /* First double word block */
+  unsigned long flags;		/* Atomic flags, some possibly
+				 * updated asynchronously */
+union {
+	struct address_space *mapping;	/* If low bit clear, points to
+					 * inode address_space, or NULL.
+					 * If page mapped as anonymous
+					 * memory, low bit is set, and
+					 * it points to anon_vma object:
+					 * see PAGE_MAPPING_ANON below.
+					 */
+...
+}
+
+mapping seems to be used exclusively in 2 ways, based on the value of
+its lower bit.
+
+Therefore I discarded it as valid option ("private", otoh was far more
+alluring), but maybe I could wrap it inside a union, together with vm_area?
+
+---
+thanks, igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
