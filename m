@@ -1,259 +1,117 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Fri,  4 Aug 2017 19:03:25 -0300
-Subject: [PATCH v4 2/7] MODSIGN: Export module signature definitions
-In-Reply-To: <20170804220330.30026-1-bauerman@linux.vnet.ibm.com>
-References: <20170804220330.30026-1-bauerman@linux.vnet.ibm.com>
-Message-ID: <20170804220330.30026-3-bauerman@linux.vnet.ibm.com>
+From: jack@suse.cz (Jan Kara)
+Date: Mon, 7 Aug 2017 12:04:45 +0200
+Subject: [PATCH v4 2/5] ima: use fs method to read integrity data [updated]
+In-Reply-To: <1501880831.27872.153.camel@linux.vnet.ibm.com>
+References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1501075375-29469-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<1501619070.3204.4.camel@linux.vnet.ibm.com>
+	<20170802080108.GB2732@quack2.suse.cz>
+	<1501693912.20268.29.camel@linux.vnet.ibm.com>
+	<20170803105631.GB2579@quack2.suse.cz>
+	<1501880831.27872.153.camel@linux.vnet.ibm.com>
+Message-ID: <20170807100445.GB6470@quack2.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-IMA will use the module_signature format for append signatures, so export
-the relevant definitions and factor out the code which verifies that the
-appended signature trailer is valid.
+On Fri 04-08-17 17:07:11, Mimi Zohar wrote:
+> On Thu, 2017-08-03 at 12:56 +0200, Jan Kara wrote:
+> > On Wed 02-08-17 13:11:52, Mimi Zohar wrote:
+> > > On Wed, 2017-08-02 at 10:01 +0200, Jan Kara wrote:
+> > > > On Tue 01-08-17 16:24:30, Mimi Zohar wrote:
+> > > > > From: Christoph Hellwig <hch@lst.de>
+> > > > > 
+> > > > > Add a new ->integrity_read file operation to read data for integrity
+> > > > > hash collection.  This is defined to be equivalent to ->read_iter,
+> > > > > except that it will be called with the i_rwsem held exclusively.
+> > > > > 
+> > > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > > > Cc: Matthew Garrett <matthew.garrett@nebula.com>
+> > > > > Cc: Jan Kara <jack@suse.com>
+> > > > > Cc: "Theodore Ts'o" <tytso@mit.edu>
+> > > > > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> > > > > Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > > > Cc: Chao Yu <yuchao0@huawei.com>
+> > > > > Cc: Steven Whitehouse <swhiteho@redhat.com>
+> > > > > Cc: Bob Peterson <rpeterso@redhat.com>
+> > > > > Cc: David Woodhouse <dwmw2@infradead.org>
+> > > > > Cc: Dave Kleikamp <shaggy@kernel.org>
+> > > > > Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+> > > > > Cc: Mark Fasheh <mfasheh@versity.com>
+> > > > > Cc: Joel Becker <jlbec@evilplan.org>
+> > > > > Cc: Richard Weinberger <richard@nod.at>
+> > > > > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> > > > > Cc: Hugh Dickins <hughd@google.com>
+> > > > > Cc: Chris Mason <clm@fb.com>
+> > > > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > > > 
+> > > > ...
+> > > > 
+> > > > > +static ssize_t ext4_file_integrity_read_iter(struct kiocb *iocb,
+> > > > > +					     struct iov_iter *to)
+> > > > > +{
+> > > > > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > > > > +	int o_direct = iocb->ki_flags & IOCB_DIRECT;
+> > > > > +
+> > > > > +	lockdep_assert_held(&inode->i_rwsem);
+> > > > > +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+> > > > > +		return -EIO;
+> > > > > +
+> > > > > +	if (!iov_iter_count(to))
+> > > > > +		return 0; /* skip atime */
+> > > > > +
+> > > > > +#ifdef CONFIG_FS_DAX
+> > > > > +	if (IS_DAX(inode))
+> > > > > +		return dax_iomap_rw(iocb, to, &ext4_iomap_ops);
+> > > > > +#endif
+> > > > > +	if (o_direct)
+> > > > > +		return -EINVAL;
+> > > > > +	return generic_file_read_iter(iocb, to);
+> > > > > +}
+> > > > 
+> > > > I have noticed this o_direct check - why is it only in ext4 and shouldn't
+> > > > rather higher layers make sure IOCB_DIRECT iocbs cannot reach
+> > > > .integrity_read() methods?
+> > >  
+> > > This failure happens when opening a file with O_DIRECT on a block
+> > > device that does not support dax (eg. loop). xfs makes it to here too,
+> > > but the call to generic_file_read_iter() fails properly with -EINVAL.?
+> > > (Only tested on those filesystems included that support dax (eg. ext2,
+> > > ext4, and xfs).)
+> > 
+> > Well, yes, ext2 and ext4 will silently fall back to buffered read (as do
+> > pretty much all filesystems except for XFS). However I fail to see why IMA
+> > should care (which is probably due to my lack of knowledge about IMA).
+> > Is O_DIRECT somehow excepted from IMA? But then why it is not for DAX?
+> 
+> Thank you for the explanation! ?(I was confused about the relationship
+> between O_DIRECT and DAX.) ?You're correct. ?IMA does not support
+> O_DIRECT in the buffered case for two reasons, locking and updating
+> the file hash, which are described in commit?f9b2a735bddd "ima: audit
+> log files opened with O_DIRECT flag". ?After reverting this commit,
+> the O_DIRECT check is needed before calling generic_file_read_iter().
 
-Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
-and be able to use validate_module_signature without having to depend on
-CONFIG_MODULE_SIG.
+Thanks for the pointer. This cleaned up the issue for me.
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
----
- include/linux/module.h           |  3 --
- include/linux/module_signature.h | 47 +++++++++++++++++++++++++
- init/Kconfig                     |  6 +++-
- kernel/Makefile                  |  2 +-
- kernel/module.c                  |  1 +
- kernel/module_signing.c          | 74 +++++++++++++++++-----------------------
- 6 files changed, 85 insertions(+), 48 deletions(-)
+> ?Most likely the same would need to be done for other filesystems that
+> support O_DIRECT. ?Probably a generic_integrity_file_read_iter()
+> should be defined.
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index e7bdd549e527..672ad2016262 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -23,9 +23,6 @@
- #include <linux/percpu.h>
- #include <asm/module.h>
- 
--/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
--#define MODULE_SIG_STRING "~Module signature appended~\n"
--
- /* Not Yet Implemented */
- #define MODULE_SUPPORTED_DEVICE(name)
- 
-diff --git a/include/linux/module_signature.h b/include/linux/module_signature.h
-new file mode 100644
-index 000000000000..e80728e5b86c
---- /dev/null
-+++ b/include/linux/module_signature.h
-@@ -0,0 +1,47 @@
-+/* Module signature handling.
-+ *
-+ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#ifndef _LINUX_MODULE_SIGNATURE_H
-+#define _LINUX_MODULE_SIGNATURE_H
-+
-+/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
-+#define MODULE_SIG_STRING "~Module signature appended~\n"
-+
-+enum pkey_id_type {
-+	PKEY_ID_PGP,		/* OpenPGP generated key ID */
-+	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
-+	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
-+};
-+
-+/*
-+ * Module signature information block.
-+ *
-+ * The constituents of the signature section are, in order:
-+ *
-+ *	- Signer's name
-+ *	- Key identifier
-+ *	- Signature data
-+ *	- Information block
-+ */
-+struct module_signature {
-+	u8	algo;		/* Public-key crypto algorithm [0] */
-+	u8	hash;		/* Digest algorithm [0] */
-+	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-+	u8	signer_len;	/* Length of signer's name [0] */
-+	u8	key_id_len;	/* Length of key identifier [0] */
-+	u8	__pad[3];
-+	__be32	sig_len;	/* Length of signature data */
-+};
-+
-+int validate_module_sig(const struct module_signature *ms, size_t file_len);
-+int mod_verify_sig(const void *mod, unsigned long *_modlen);
-+
-+#endif /* _LINUX_MODULE_SIGNATURE_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index 8514b25db21c..c3ac1170b93a 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1734,7 +1734,7 @@ config MODULE_SRCVERSION_ALL
- config MODULE_SIG
- 	bool "Module signature verification"
- 	depends on MODULES
--	select SYSTEM_DATA_VERIFICATION
-+	select MODULE_SIG_FORMAT
- 	help
- 	  Check modules for valid signatures upon load: the signature
- 	  is simply appended to the module. For more information see
-@@ -1749,6 +1749,10 @@ config MODULE_SIG
- 	  debuginfo strip done by some packagers (such as rpmbuild) and
- 	  inclusion into an initramfs that wants the module size reduced.
- 
-+config MODULE_SIG_FORMAT
-+	def_bool n
-+	select SYSTEM_DATA_VERIFICATION
-+
- config MODULE_SIG_FORCE
- 	bool "Require modules to be validly signed"
- 	depends on MODULE_SIG
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 4cb8e8b23c6e..d5f9748ab19f 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -56,7 +56,7 @@ obj-y += up.o
- endif
- obj-$(CONFIG_UID16) += uid16.o
- obj-$(CONFIG_MODULES) += module.o
--obj-$(CONFIG_MODULE_SIG) += module_signing.o
-+obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signing.o
- obj-$(CONFIG_KALLSYMS) += kallsyms.o
- obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
- obj-$(CONFIG_CRASH_CORE) += crash_core.o
-diff --git a/kernel/module.c b/kernel/module.c
-index 40f983cbea81..52921fccb51a 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -19,6 +19,7 @@
- #include <linux/export.h>
- #include <linux/extable.h>
- #include <linux/moduleloader.h>
-+#include <linux/module_signature.h>
- #include <linux/trace_events.h>
- #include <linux/init.h>
- #include <linux/kallsyms.h>
-diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-index 937c844bee4a..204c60d4cc9f 100644
---- a/kernel/module_signing.c
-+++ b/kernel/module_signing.c
-@@ -11,36 +11,38 @@
- 
- #include <linux/kernel.h>
- #include <linux/errno.h>
-+#include <linux/module_signature.h>
- #include <linux/string.h>
- #include <linux/verification.h>
- #include <crypto/public_key.h>
- #include "module-internal.h"
- 
--enum pkey_id_type {
--	PKEY_ID_PGP,		/* OpenPGP generated key ID */
--	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
--	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
--};
--
--/*
-- * Module signature information block.
-- *
-- * The constituents of the signature section are, in order:
-+/**
-+ * validate_module_sig - validate that the given signature is sane
-  *
-- *	- Signer's name
-- *	- Key identifier
-- *	- Signature data
-- *	- Information block
-+ * @ms:		Signature to validate.
-+ * @file_len:	Size of the file to which @ms is appended.
-  */
--struct module_signature {
--	u8	algo;		/* Public-key crypto algorithm [0] */
--	u8	hash;		/* Digest algorithm [0] */
--	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
--	u8	signer_len;	/* Length of signer's name [0] */
--	u8	key_id_len;	/* Length of key identifier [0] */
--	u8	__pad[3];
--	__be32	sig_len;	/* Length of signature data */
--};
-+int validate_module_sig(const struct module_signature *ms, size_t file_len)
-+{
-+	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
-+		return -EBADMSG;
-+	else if (ms->id_type != PKEY_ID_PKCS7) {
-+		pr_err("Module is not signed with expected PKCS#7 message\n");
-+		return -ENOPKG;
-+	} else if (ms->algo != 0 ||
-+		   ms->hash != 0 ||
-+		   ms->signer_len != 0 ||
-+		   ms->key_id_len != 0 ||
-+		   ms->__pad[0] != 0 ||
-+		   ms->__pad[1] != 0 ||
-+		   ms->__pad[2] != 0) {
-+		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
-+		return -EBADMSG;
-+	}
-+
-+	return 0;
-+}
- 
- /*
-  * Verify the signature on a module.
-@@ -49,6 +51,7 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
- {
- 	struct module_signature ms;
- 	size_t modlen = *_modlen, sig_len;
-+	int ret;
- 
- 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
- 
-@@ -56,30 +59,15 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
- 		return -EBADMSG;
- 
- 	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
--	modlen -= sizeof(ms);
-+
-+	ret = validate_module_sig(&ms, modlen);
-+	if (ret)
-+		return ret;
- 
- 	sig_len = be32_to_cpu(ms.sig_len);
--	if (sig_len >= modlen)
--		return -EBADMSG;
--	modlen -= sig_len;
-+	modlen -= sig_len + sizeof(ms);
- 	*_modlen = modlen;
- 
--	if (ms.id_type != PKEY_ID_PKCS7) {
--		pr_err("Module is not signed with expected PKCS#7 message\n");
--		return -ENOPKG;
--	}
--
--	if (ms.algo != 0 ||
--	    ms.hash != 0 ||
--	    ms.signer_len != 0 ||
--	    ms.key_id_len != 0 ||
--	    ms.__pad[0] != 0 ||
--	    ms.__pad[1] != 0 ||
--	    ms.__pad[2] != 0) {
--		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
--		return -EBADMSG;
--	}
--
- 	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
- 				      NULL, VERIFYING_MODULE_SIGNATURE,
- 				      NULL, NULL);
+Yeah, then please define some common helper that takes care of refusing
+direct IO - IMO you should check this even before calling into
+->integrity_read helper.
+
+> For DAX, unlike do_blockdev_direct_IO() which takes the lock, reading
+> the file with O_DIRECT is fine, as dax_iomap_rw() only checks that the
+> lock has been taken. ?Assuming the file system is mounted with
+> i_version, the file hash is updated properly.
+
+Yes, for DAX direct IO is basically no different but frankly I would just
+refuse O_DIRECT on DAX inodes as well just for the consistency sake.
+
+								Honza
 -- 
-2.13.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
