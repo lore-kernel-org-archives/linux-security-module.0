@@ -1,44 +1,183 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 7 Aug 2017 18:46:03 -0700
-Subject: [PATCH 1/4] seccomp: Provide matching filter for introspection
-In-Reply-To: <b1441a9f-acf0-3133-d70e-ea62564cc321@canonical.com>
+Date: Mon, 7 Aug 2017 18:54:37 -0700
+Subject: [PATCH 2/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
+In-Reply-To: <84366abd-bf72-83be-ce42-be5332300eb2@canonical.com>
 References: <1501730353-46840-1-git-send-email-keescook@chromium.org>
-	<1501730353-46840-2-git-send-email-keescook@chromium.org>
-	<b1441a9f-acf0-3133-d70e-ea62564cc321@canonical.com>
-Message-ID: <CAGXu5jJRFO8irmy1cYVbBUe2oR=B4MbvUZXPZVh4LjbUUto-CQ@mail.gmail.com>
+	<1501730353-46840-3-git-send-email-keescook@chromium.org>
+	<84366abd-bf72-83be-ce42-be5332300eb2@canonical.com>
+Message-ID: <CAGXu5jJzY+gzFQfOjseOEotj8aDiNieRXMZf9qsMDHkVkGyV4g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Aug 7, 2017 at 6:03 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
->> -static u32 seccomp_run_filters(const struct seccomp_data *sd)
->> +static u32 seccomp_run_filters(const struct seccomp_data *sd,
->> +                            struct seccomp_filter **match)
->>  {
->>       struct seccomp_data sd_local;
->>       u32 ret = SECCOMP_RET_ALLOW;
+On Mon, Aug 7, 2017 at 6:23 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
+> On 08/02/2017 10:19 PM, Kees Cook wrote:
+>> Right now, SECCOMP_RET_KILL kills the current thread. There have been
+>> a few requests for RET_KILL to kill the entire process (the thread
+>> group), but since seccomp's u32 return values are ABI, and ordered by
+>> lowest value, with RET_KILL as 0, there isn't a trivial way to provide
+>> an even smaller value that would mean the more restrictive action of
+>> killing the thread group.
+>>
+>> Instead, create a filter flag that indicates that a RET_KILL from this
+>> filter must kill the process rather than the thread. This can be set
+>> (and not cleared) via the new SECCOMP_FILTER_FLAG_KILL_PROCESS flag.
+>>
+>> Pros:
+>>  - the logic for the filter action is contained in the filter.
+>>  - userspace can detect support for the feature since earlier kernels
+>>    will reject the new flag.
+>> Cons:
+>>  - depends on adding an assignment to the seccomp_run_filters() loop
+>>    (previous patch).
+>>
+>> Alternatives to this approach with pros/cons:
+>>
+>> - Use a new test during seccomp_run_filters() that treats the RET_DATA
+>>   mask of a RET_KILL action as special. If a new bit is set in the data,
+>>   then treat the return value as -1 (lower than 0).
+>>   Pros:
+>>    - the logic for the filter action is contained in the filter.
+>>   Cons:
+>>    - added complexity to time-sensitive seccomp_run_filters() loop.
+>>    - there isn't a trivial way for userspace to detect if the kernel
+>>      supports the feature (earlier kernels will silently ignore the
+>>      RET_DATA and only kill the thread).
 >
-> My version of this patch initialized *match to f here. The reason I did
-> that is because if BPF_PROG_RUN() returns RET_ALLOW for all
-> filters, I didn't want *match to remain NULL when seccomp_run_filters()
-> returns. FILTER_FLAG_LOG nor FILTER_FLAG_KILL_PROCESS would be affected
-> by this because they don't care about RET_ALLOW actions but there could
-> conceivably be a filter flag in the future that cares about RET_ALLOW
-> and not initializing *match to the first filter could result in a latent
-> bug for that filter flag.
+> I prefer using a filter flag over a special RET_DATA mask but, for
+> completeness, I wanted to mention that SECCOMP_GET_ACTION_AVAIL
+> operation could be extended to validate special RET_DATA masks. However,
+> I don't think that is a clean design.
+>
+>> - Have SECCOMP_FILTER_FLAG_KILL_PROCESS attach to the seccomp struct
+>>   rather than the filter.
+>>   Pros:
+>>    - no change needed to seccomp_run_filters() loop.
+>>   Cons:
+>>    - the change in behavior technically originates external to the
+>>      filter, which allows for later filters to "enhance" a previously
+>>      applied filter's RET_KILL to kill the entire process, which may
+>>      be unexpected.
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  include/linux/seccomp.h      |  3 ++-
+>>  include/uapi/linux/seccomp.h |  3 ++-
+>>  kernel/seccomp.c             | 12 +++++++++++-
+>>  3 files changed, 15 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+>> index ecc296c137cd..59d001ba655c 100644
+>> --- a/include/linux/seccomp.h
+>> +++ b/include/linux/seccomp.h
+>> @@ -3,7 +3,8 @@
+>>
+>>  #include <uapi/linux/seccomp.h>
+>>
+>> -#define SECCOMP_FILTER_FLAG_MASK     (SECCOMP_FILTER_FLAG_TSYNC)
+>> +#define SECCOMP_FILTER_FLAG_MASK     (SECCOMP_FILTER_FLAG_TSYNC | \
+>> +                                      SECCOMP_FILTER_FLAG_KILL_PROCESS)
+>>
+>>  #ifdef CONFIG_SECCOMP
+>>
+>> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+>> index 0f238a43ff1e..4b75d8c297b6 100644
+>> --- a/include/uapi/linux/seccomp.h
+>> +++ b/include/uapi/linux/seccomp.h
+>> @@ -15,7 +15,8 @@
+>>  #define SECCOMP_SET_MODE_FILTER      1
+>>
+>>  /* Valid flags for SECCOMP_SET_MODE_FILTER */
+>> -#define SECCOMP_FILTER_FLAG_TSYNC    1
+>> +#define SECCOMP_FILTER_FLAG_TSYNC            1
+>> +#define SECCOMP_FILTER_FLAG_KILL_PROCESS     2
+>>
+>>  /*
+>>   * All BPF programs must return a 32-bit value.
+>> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+>> index 8bdcf01379e4..931eb9cbd093 100644
+>> --- a/kernel/seccomp.c
+>> +++ b/kernel/seccomp.c
+>> @@ -44,6 +44,7 @@
+>>   *         is only needed for handling filters shared across tasks.
+>>   * @prev: points to a previously installed, or inherited, filter
+>>   * @prog: the BPF program to evaluate
+>> + * @kill_process: if true, RET_KILL will kill process rather than thread.
+>>   *
+>>   * seccomp_filter objects are organized in a tree linked via the @prev
+>>   * pointer.  For any task, it appears to be a singly-linked list starting
+>> @@ -59,6 +60,7 @@ struct seccomp_filter {
+>>       refcount_t usage;
+>>       struct seccomp_filter *prev;
+>>       struct bpf_prog *prog;
+>> +     bool kill_process;
+>
+> Just a reminder to move bool up to be the 2nd member of the struct for
+> improved struct packing. (You already said you were going to this while
+> you were reviewing my logging patches)
 
-Very true, yes. I did intentionally adjust this because I wanted to
-keep the hot path as untouched as possible.
+Thanks! Yeah, done now.
 
-> I'm fine with not adding the initialization since this is a hot path and
-> it doesn't help any of the currently existing/planned filter flags but I
-> wanted to at least mention it.
+>>  };
+>>
+>>  /* Limit any path through the tree to 256KB worth of instructions. */
+>> @@ -448,6 +450,10 @@ static long seccomp_attach_filter(unsigned int flags,
+>>                       return ret;
+>>       }
+>>
+>> +     /* Set process-killing flag, if present. */
+>> +     if (flags & SECCOMP_FILTER_FLAG_KILL_PROCESS)
+>> +             filter->kill_process = true;
+>> +
+>>       /*
+>>        * If there is an existing filter, make it the prev and don't drop its
+>>        * task reference.
+>> @@ -658,7 +664,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+>>                       seccomp_init_siginfo(&info, this_syscall, data);
+>>                       do_coredump(&info);
+>>               }
+>> -             do_exit(SIGSYS);
+>> +             /* Kill entire thread group if requested (or went haywire). */
+>> +             if (!match || match->kill_process)
+>
+> I found this conditional to be a little surprising. I would have expected:
+>
+> if (match && match->kill_process)
+>         do_group_exit(SIGSYS);
+> else
+>         do_exit(SIGSYS);
+>
+> A resulting NULL match pointer is unexpected but callers of
+> seccomp_run_filters() are expected to handle such a situation so it is
+> possible. Are you preferring to fail closed as much as possible
+> (considering that killing the process is more restrictive than killing
+> the thread)?
 
-Yeah, and while I doubt I'll want to ever check "match" for RET_ALLOW,
-I'll add a big comment there to explain it.
+Yeah, that was my thinking. The only way for this to happen is if we
+have a totally impossible state: NULL filter in struct seccomp but
+seccomp mode is non-zero. I'll add a comment above this.
 
-> Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+> I don't know the specific situations that would result in the match
+> pointer not being set in seccomp_run_filters() but I'm curious if
+> existing, old userspace code that only expected the thread to be killed
+> could potentially tickle such a situation and result in the entire
+> thread group being unexpectedly killed.
 
-Thanks!
+There should be no way for userspace to reach this condition. It
+shouldn't ever be possible to set the seccomp mode without a filter
+attached.
+
+> FWIW, I like the way the conditional is written and am only thinking out
+> loud about the possible side effects.
+
+Yup, very appreciated!
+
+> Side note: I initially expected to see
+> Documentation/userspace-api/seccomp_filter.rst being updated in this
+> patch and then remembered that seccomp(2) isn't documented in that file
+> and, therefore, it isn't trivial to add blurbs about filter flags in
+> there. We should fix that after the dust settles on these two patch sets.
+
+Hm, excellent point. Agreed, let's fix that as a separate step.
 
 -Kees
 
