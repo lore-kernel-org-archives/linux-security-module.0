@@ -1,189 +1,182 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 7 Aug 2017 18:54:37 -0700
-Subject: [PATCH 2/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
-In-Reply-To: <84366abd-bf72-83be-ce42-be5332300eb2@canonical.com>
-References: <1501730353-46840-1-git-send-email-keescook@chromium.org>
-	<1501730353-46840-3-git-send-email-keescook@chromium.org>
-	<84366abd-bf72-83be-ce42-be5332300eb2@canonical.com>
-Message-ID: <CAGXu5jJzY+gzFQfOjseOEotj8aDiNieRXMZf9qsMDHkVkGyV4g@mail.gmail.com>
+Date: Mon,  7 Aug 2017 18:59:07 -0700
+Subject: [PATCH v2 3/4] selftests/seccomp: Refactor RET_ERRNO tests
+In-Reply-To: <1502157548-111843-1-git-send-email-keescook@chromium.org>
+References: <1502157548-111843-1-git-send-email-keescook@chromium.org>
+Message-ID: <1502157548-111843-4-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Aug 7, 2017 at 6:23 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
-> On 08/02/2017 10:19 PM, Kees Cook wrote:
->> Right now, SECCOMP_RET_KILL kills the current thread. There have been
->> a few requests for RET_KILL to kill the entire process (the thread
->> group), but since seccomp's u32 return values are ABI, and ordered by
->> lowest value, with RET_KILL as 0, there isn't a trivial way to provide
->> an even smaller value that would mean the more restrictive action of
->> killing the thread group.
->>
->> Instead, create a filter flag that indicates that a RET_KILL from this
->> filter must kill the process rather than the thread. This can be set
->> (and not cleared) via the new SECCOMP_FILTER_FLAG_KILL_PROCESS flag.
->>
->> Pros:
->>  - the logic for the filter action is contained in the filter.
->>  - userspace can detect support for the feature since earlier kernels
->>    will reject the new flag.
->> Cons:
->>  - depends on adding an assignment to the seccomp_run_filters() loop
->>    (previous patch).
->>
->> Alternatives to this approach with pros/cons:
->>
->> - Use a new test during seccomp_run_filters() that treats the RET_DATA
->>   mask of a RET_KILL action as special. If a new bit is set in the data,
->>   then treat the return value as -1 (lower than 0).
->>   Pros:
->>    - the logic for the filter action is contained in the filter.
->>   Cons:
->>    - added complexity to time-sensitive seccomp_run_filters() loop.
->>    - there isn't a trivial way for userspace to detect if the kernel
->>      supports the feature (earlier kernels will silently ignore the
->>      RET_DATA and only kill the thread).
->
-> I prefer using a filter flag over a special RET_DATA mask but, for
-> completeness, I wanted to mention that SECCOMP_GET_ACTION_AVAIL
-> operation could be extended to validate special RET_DATA masks. However,
-> I don't think that is a clean design.
->
->> - Have SECCOMP_FILTER_FLAG_KILL_PROCESS attach to the seccomp struct
->>   rather than the filter.
->>   Pros:
->>    - no change needed to seccomp_run_filters() loop.
->>   Cons:
->>    - the change in behavior technically originates external to the
->>      filter, which allows for later filters to "enhance" a previously
->>      applied filter's RET_KILL to kill the entire process, which may
->>      be unexpected.
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  include/linux/seccomp.h      |  3 ++-
->>  include/uapi/linux/seccomp.h |  3 ++-
->>  kernel/seccomp.c             | 12 +++++++++++-
->>  3 files changed, 15 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
->> index ecc296c137cd..59d001ba655c 100644
->> --- a/include/linux/seccomp.h
->> +++ b/include/linux/seccomp.h
->> @@ -3,7 +3,8 @@
->>
->>  #include <uapi/linux/seccomp.h>
->>
->> -#define SECCOMP_FILTER_FLAG_MASK     (SECCOMP_FILTER_FLAG_TSYNC)
->> +#define SECCOMP_FILTER_FLAG_MASK     (SECCOMP_FILTER_FLAG_TSYNC | \
->> +                                      SECCOMP_FILTER_FLAG_KILL_PROCESS)
->>
->>  #ifdef CONFIG_SECCOMP
->>
->> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
->> index 0f238a43ff1e..4b75d8c297b6 100644
->> --- a/include/uapi/linux/seccomp.h
->> +++ b/include/uapi/linux/seccomp.h
->> @@ -15,7 +15,8 @@
->>  #define SECCOMP_SET_MODE_FILTER      1
->>
->>  /* Valid flags for SECCOMP_SET_MODE_FILTER */
->> -#define SECCOMP_FILTER_FLAG_TSYNC    1
->> +#define SECCOMP_FILTER_FLAG_TSYNC            1
->> +#define SECCOMP_FILTER_FLAG_KILL_PROCESS     2
->>
->>  /*
->>   * All BPF programs must return a 32-bit value.
->> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
->> index 8bdcf01379e4..931eb9cbd093 100644
->> --- a/kernel/seccomp.c
->> +++ b/kernel/seccomp.c
->> @@ -44,6 +44,7 @@
->>   *         is only needed for handling filters shared across tasks.
->>   * @prev: points to a previously installed, or inherited, filter
->>   * @prog: the BPF program to evaluate
->> + * @kill_process: if true, RET_KILL will kill process rather than thread.
->>   *
->>   * seccomp_filter objects are organized in a tree linked via the @prev
->>   * pointer.  For any task, it appears to be a singly-linked list starting
->> @@ -59,6 +60,7 @@ struct seccomp_filter {
->>       refcount_t usage;
->>       struct seccomp_filter *prev;
->>       struct bpf_prog *prog;
->> +     bool kill_process;
->
-> Just a reminder to move bool up to be the 2nd member of the struct for
-> improved struct packing. (You already said you were going to this while
-> you were reviewing my logging patches)
+This refactors the errno tests (since they all use the same pattern for
+their filter) and adds a RET_DATA field ordering test.
 
-Thanks! Yeah, done now.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 95 ++++++++++++++++-----------
+ 1 file changed, 58 insertions(+), 37 deletions(-)
 
->>  };
->>
->>  /* Limit any path through the tree to 256KB worth of instructions. */
->> @@ -448,6 +450,10 @@ static long seccomp_attach_filter(unsigned int flags,
->>                       return ret;
->>       }
->>
->> +     /* Set process-killing flag, if present. */
->> +     if (flags & SECCOMP_FILTER_FLAG_KILL_PROCESS)
->> +             filter->kill_process = true;
->> +
->>       /*
->>        * If there is an existing filter, make it the prev and don't drop its
->>        * task reference.
->> @@ -658,7 +664,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
->>                       seccomp_init_siginfo(&info, this_syscall, data);
->>                       do_coredump(&info);
->>               }
->> -             do_exit(SIGSYS);
->> +             /* Kill entire thread group if requested (or went haywire). */
->> +             if (!match || match->kill_process)
->
-> I found this conditional to be a little surprising. I would have expected:
->
-> if (match && match->kill_process)
->         do_group_exit(SIGSYS);
-> else
->         do_exit(SIGSYS);
->
-> A resulting NULL match pointer is unexpected but callers of
-> seccomp_run_filters() are expected to handle such a situation so it is
-> possible. Are you preferring to fail closed as much as possible
-> (considering that killing the process is more restrictive than killing
-> the thread)?
-
-Yeah, that was my thinking. The only way for this to happen is if we
-have a totally impossible state: NULL filter in struct seccomp but
-seccomp mode is non-zero. I'll add a comment above this.
-
-> I don't know the specific situations that would result in the match
-> pointer not being set in seccomp_run_filters() but I'm curious if
-> existing, old userspace code that only expected the thread to be killed
-> could potentially tickle such a situation and result in the entire
-> thread group being unexpectedly killed.
-
-There should be no way for userspace to reach this condition. It
-shouldn't ever be possible to set the seccomp mode without a filter
-attached.
-
-> FWIW, I like the way the conditional is written and am only thinking out
-> loud about the possible side effects.
-
-Yup, very appreciated!
-
-> Side note: I initially expected to see
-> Documentation/userspace-api/seccomp_filter.rst being updated in this
-> patch and then remembered that seccomp(2) isn't documented in that file
-> and, therefore, it isn't trivial to add blurbs about filter flags in
-> there. We should fix that after the dust settles on these two patch sets.
-
-Hm, excellent point. Agreed, let's fix that as a separate step.
-
--Kees
-
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 73f5ea6778ce..ee78a53da5d1 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -136,7 +136,7 @@ TEST(no_new_privs_support)
+ 	}
+ }
+ 
+-/* Tests kernel support by checking for a copy_from_user() fault on * NULL. */
++/* Tests kernel support by checking for a copy_from_user() fault on NULL. */
+ TEST(mode_filter_support)
+ {
+ 	long ret;
+@@ -541,26 +541,30 @@ TEST(arg_out_of_range)
+ 	EXPECT_EQ(EINVAL, errno);
+ }
+ 
++#define ERRNO_FILTER(name, errno)					\
++	struct sock_filter _read_filter_##name[] = {			\
++		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,				\
++			offsetof(struct seccomp_data, nr)),		\
++		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),	\
++		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | errno),	\
++		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),		\
++	};								\
++	struct sock_fprog prog_##name = {				\
++		.len = (unsigned short)ARRAY_SIZE(_read_filter_##name),	\
++		.filter = _read_filter_##name,				\
++	}
++
++/* Make sure basic errno values are correctly passed through a filter. */
+ TEST(ERRNO_valid)
+ {
+-	struct sock_filter filter[] = {
+-		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
+-			offsetof(struct seccomp_data, nr)),
+-		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),
+-		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | E2BIG),
+-		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
+-	};
+-	struct sock_fprog prog = {
+-		.len = (unsigned short)ARRAY_SIZE(filter),
+-		.filter = filter,
+-	};
++	ERRNO_FILTER(valid, E2BIG);
+ 	long ret;
+ 	pid_t parent = getppid();
+ 
+ 	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+ 	ASSERT_EQ(0, ret);
+ 
+-	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_valid);
+ 	ASSERT_EQ(0, ret);
+ 
+ 	EXPECT_EQ(parent, syscall(__NR_getppid));
+@@ -568,26 +572,17 @@ TEST(ERRNO_valid)
+ 	EXPECT_EQ(E2BIG, errno);
+ }
+ 
++/* Make sure an errno of zero is correctly handled by the arch code. */
+ TEST(ERRNO_zero)
+ {
+-	struct sock_filter filter[] = {
+-		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
+-			offsetof(struct seccomp_data, nr)),
+-		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),
+-		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | 0),
+-		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
+-	};
+-	struct sock_fprog prog = {
+-		.len = (unsigned short)ARRAY_SIZE(filter),
+-		.filter = filter,
+-	};
++	ERRNO_FILTER(zero, 0);
+ 	long ret;
+ 	pid_t parent = getppid();
+ 
+ 	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+ 	ASSERT_EQ(0, ret);
+ 
+-	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_zero);
+ 	ASSERT_EQ(0, ret);
+ 
+ 	EXPECT_EQ(parent, syscall(__NR_getppid));
+@@ -595,26 +590,21 @@ TEST(ERRNO_zero)
+ 	EXPECT_EQ(0, read(0, NULL, 0));
+ }
+ 
++/*
++ * The SECCOMP_RET_DATA mask is 16 bits wide, but errno is smaller.
++ * This tests that the errno value gets capped correctly, fixed by
++ * 580c57f10768 ("seccomp: cap SECCOMP_RET_ERRNO data to MAX_ERRNO").
++ */
+ TEST(ERRNO_capped)
+ {
+-	struct sock_filter filter[] = {
+-		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
+-			offsetof(struct seccomp_data, nr)),
+-		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),
+-		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | 4096),
+-		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
+-	};
+-	struct sock_fprog prog = {
+-		.len = (unsigned short)ARRAY_SIZE(filter),
+-		.filter = filter,
+-	};
++	ERRNO_FILTER(capped, 4096);
+ 	long ret;
+ 	pid_t parent = getppid();
+ 
+ 	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+ 	ASSERT_EQ(0, ret);
+ 
+-	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_capped);
+ 	ASSERT_EQ(0, ret);
+ 
+ 	EXPECT_EQ(parent, syscall(__NR_getppid));
+@@ -622,6 +612,37 @@ TEST(ERRNO_capped)
+ 	EXPECT_EQ(4095, errno);
+ }
+ 
++/*
++ * Filters are processed in reverse order: last applied is executed first.
++ * Since only the SECCOMP_RET_ACTION mask is tested for return values, the
++ * SECCOMP_RET_DATA mask results will follow the most recently applied
++ * matching filter return (and not the lowest or highest value).
++ */
++TEST(ERRNO_order)
++{
++	ERRNO_FILTER(first,  11);
++	ERRNO_FILTER(second, 13);
++	ERRNO_FILTER(third,  12);
++	long ret;
++	pid_t parent = getppid();
++
++	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
++	ASSERT_EQ(0, ret);
++
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_first);
++	ASSERT_EQ(0, ret);
++
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_second);
++	ASSERT_EQ(0, ret);
++
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_third);
++	ASSERT_EQ(0, ret);
++
++	EXPECT_EQ(parent, syscall(__NR_getppid));
++	EXPECT_EQ(-1, read(0, NULL, 0));
++	EXPECT_EQ(12, errno);
++}
++
+ FIXTURE_DATA(TRAP) {
+ 	struct sock_fprog prog;
+ };
 -- 
-Kees Cook
-Pixel Security
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
