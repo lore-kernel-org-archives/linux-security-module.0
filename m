@@ -1,132 +1,35 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 07 Aug 2017 16:12:51 -0400
-Subject: [PATCH v4 2/5] ima: use fs method to read integrity data [updated]
-In-Reply-To: <20170807100445.GB6470@quack2.suse.cz>
-References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1501075375-29469-3-git-send-email-zohar@linux.vnet.ibm.com>
-	<1501619070.3204.4.camel@linux.vnet.ibm.com>
-	<20170802080108.GB2732@quack2.suse.cz>
-	<1501693912.20268.29.camel@linux.vnet.ibm.com>
-	<20170803105631.GB2579@quack2.suse.cz>
-	<1501880831.27872.153.camel@linux.vnet.ibm.com>
-	<20170807100445.GB6470@quack2.suse.cz>
-Message-ID: <1502136771.24050.30.camel@linux.vnet.ibm.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 7 Aug 2017 18:37:04 -0700
+Subject: [PATCH 4/4] selftests/seccomp: Test thread vs process killing
+In-Reply-To: <2185ad3f-2a08-09b9-2df6-1fa5853506d7@canonical.com>
+References: <1501730353-46840-1-git-send-email-keescook@chromium.org>
+	<1501730353-46840-5-git-send-email-keescook@chromium.org>
+	<2185ad3f-2a08-09b9-2df6-1fa5853506d7@canonical.com>
+Message-ID: <CAGXu5jKgOC64uJZBh8NHyHvFTKYtopx6gTXT3GCTPhpuPG82Hw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2017-08-07 at 12:04 +0200, Jan Kara wrote:
-> On Fri 04-08-17 17:07:11, Mimi Zohar wrote:
-> > On Thu, 2017-08-03 at 12:56 +0200, Jan Kara wrote:
-> > > On Wed 02-08-17 13:11:52, Mimi Zohar wrote:
-> > > > On Wed, 2017-08-02 at 10:01 +0200, Jan Kara wrote:
-> > > > > On Tue 01-08-17 16:24:30, Mimi Zohar wrote:
-> > > > > > From: Christoph Hellwig <hch@lst.de>
-> > > > > > 
-> > > > > > Add a new ->integrity_read file operation to read data for integrity
-> > > > > > hash collection.  This is defined to be equivalent to ->read_iter,
-> > > > > > except that it will be called with the i_rwsem held exclusively.
-> > > > > > 
-> > > > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > > > > Cc: Matthew Garrett <matthew.garrett@nebula.com>
-> > > > > > Cc: Jan Kara <jack@suse.com>
-> > > > > > Cc: "Theodore Ts'o" <tytso@mit.edu>
-> > > > > > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> > > > > > Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > > > Cc: Chao Yu <yuchao0@huawei.com>
-> > > > > > Cc: Steven Whitehouse <swhiteho@redhat.com>
-> > > > > > Cc: Bob Peterson <rpeterso@redhat.com>
-> > > > > > Cc: David Woodhouse <dwmw2@infradead.org>
-> > > > > > Cc: Dave Kleikamp <shaggy@kernel.org>
-> > > > > > Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-> > > > > > Cc: Mark Fasheh <mfasheh@versity.com>
-> > > > > > Cc: Joel Becker <jlbec@evilplan.org>
-> > > > > > Cc: Richard Weinberger <richard@nod.at>
-> > > > > > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > > > > > Cc: Hugh Dickins <hughd@google.com>
-> > > > > > Cc: Chris Mason <clm@fb.com>
-> > > > > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > > > > 
-> > > > > ...
-> > > > > 
-> > > > > > +static ssize_t ext4_file_integrity_read_iter(struct kiocb *iocb,
-> > > > > > +					     struct iov_iter *to)
-> > > > > > +{
-> > > > > > +	struct inode *inode = file_inode(iocb->ki_filp);
-> > > > > > +	int o_direct = iocb->ki_flags & IOCB_DIRECT;
-> > > > > > +
-> > > > > > +	lockdep_assert_held(&inode->i_rwsem);
-> > > > > > +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-> > > > > > +		return -EIO;
-> > > > > > +
-> > > > > > +	if (!iov_iter_count(to))
-> > > > > > +		return 0; /* skip atime */
-> > > > > > +
-> > > > > > +#ifdef CONFIG_FS_DAX
-> > > > > > +	if (IS_DAX(inode))
-> > > > > > +		return dax_iomap_rw(iocb, to, &ext4_iomap_ops);
-> > > > > > +#endif
-> > > > > > +	if (o_direct)
-> > > > > > +		return -EINVAL;
-> > > > > > +	return generic_file_read_iter(iocb, to);
-> > > > > > +}
-> > > > > 
-> > > > > I have noticed this o_direct check - why is it only in ext4 and shouldn't
-> > > > > rather higher layers make sure IOCB_DIRECT iocbs cannot reach
-> > > > > .integrity_read() methods?
-> > > >  
-> > > > This failure happens when opening a file with O_DIRECT on a block
-> > > > device that does not support dax (eg. loop). xfs makes it to here too,
-> > > > but the call to generic_file_read_iter() fails properly with -EINVAL.?
-> > > > (Only tested on those filesystems included that support dax (eg. ext2,
-> > > > ext4, and xfs).)
-> > > 
-> > > Well, yes, ext2 and ext4 will silently fall back to buffered read (as do
-> > > pretty much all filesystems except for XFS). However I fail to see why IMA
-> > > should care (which is probably due to my lack of knowledge about IMA).
-> > > Is O_DIRECT somehow excepted from IMA? But then why it is not for DAX?
-> > 
-> > Thank you for the explanation! ?(I was confused about the relationship
-> > between O_DIRECT and DAX.) ?You're correct. ?IMA does not support
-> > O_DIRECT in the buffered case for two reasons, locking and updating
-> > the file hash, which are described in commit?f9b2a735bddd "ima: audit
-> > log files opened with O_DIRECT flag". ?After reverting this commit,
-> > the O_DIRECT check is needed before calling generic_file_read_iter().
-> 
-> Thanks for the pointer. This cleaned up the issue for me.
+On Mon, Aug 7, 2017 at 6:29 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
+>> +     /* Only the thread died. Let parent know this thread didn't die. */
+>
+> This read a little odd to me. How about, "Only the created thread died.
+> Let parent know the this creating thread didn't die."?
 
-Great!
+Sounds good. I've updated this to be more descriptive.
 
-> > ?Most likely the same would need to be done for other filesystems that
-> > support O_DIRECT. ?Probably a generic_integrity_file_read_iter()
-> > should be defined.
-> 
-> Yeah, then please define some common helper that takes care of refusing
-> direct IO - IMO you should check this even before calling into
-> ->integrity_read helper.
+>> +     ASSERT_EQ(1, WIFEXITED(status));
+>
+> This is probably nitpicky but, after reading the wait(2) man page, I
+> feel like this should be ASSERT_TRUE(WIFEXITED(status)) instead of
+> comparing to 1. There's no documented guarantee that 1 will be returned.
 
-Agreed.
+That's a fair point. I've updated this and WIFSIGNALED now, thanks!
 
-> > For DAX, unlike do_blockdev_direct_IO() which takes the lock, reading
-> > the file with O_DIRECT is fine, as dax_iomap_rw() only checks that the
-> > lock has been taken. ?Assuming the file system is mounted with
-> > i_version, the file hash is updated properly.
-> 
-> Yes, for DAX direct IO is basically no different but frankly I would just
-> refuse O_DIRECT on DAX inodes as well just for the consistency sake.
+-Kees
 
-Ok. ?So I shouldn't revert the original commit, which fails the
-O_DIRECT open for either the buffered read or DAX. ?I'll just move the
-code to a bit later, so that the failure is added to the measurement
-list.
-
-The original commit returned -EACCES.??On xfs, the open for direct IO
-buffer read fails with -EINVAL.??Do you have a preference IMA should
-return?
-
-thanks!
-
-Mimi
-
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
