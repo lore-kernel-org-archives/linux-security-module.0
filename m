@@ -1,94 +1,147 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon,  7 Aug 2017 18:59:05 -0700
-Subject: [PATCH v2 1/4] seccomp: Provide matching filter for introspection
+Date: Mon,  7 Aug 2017 18:59:06 -0700
+Subject: [PATCH v2 2/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
 In-Reply-To: <1502157548-111843-1-git-send-email-keescook@chromium.org>
 References: <1502157548-111843-1-git-send-email-keescook@chromium.org>
-Message-ID: <1502157548-111843-2-git-send-email-keescook@chromium.org>
+Message-ID: <1502157548-111843-3-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Both the upcoming logging improvements and changes to RET_KILL will need
-to know which filter a given seccomp return value originated from. In
-order to delay logic processing of result until after the seccomp loop,
-this adds a single pointer assignment on matches. This will allow both
-log and RET_KILL logic to work off the filter rather than doing more
-expensive tests inside the time-critical run_filters loop.
+Right now, SECCOMP_RET_KILL kills the current thread. There have been
+a few requests for RET_KILL to kill the entire process (the thread
+group), but since seccomp's u32 return values are ABI, and ordered by
+lowest value, with RET_KILL as 0, there isn't a trivial way to provide
+an even smaller value that would mean the more restrictive action of
+killing the thread group.
 
-Running tight cycles of getpid() with filters attached shows no measurable
-difference in speed.
+Instead, create a filter flag that indicates that a RET_KILL from this
+filter must kill the process rather than the thread. This can be set
+(and not cleared) via the new SECCOMP_FILTER_FLAG_KILL_PROCESS flag.
 
-Suggested-by: Tyler Hicks <tyhicks@canonical.com>
+Pros:
+ - the logic for the filter action is contained in the filter.
+ - userspace can detect support for the feature since earlier kernels
+   will reject the new flag.
+Cons:
+ - depends on adding an assignment to the seccomp_run_filters() loop
+   (previous patch).
+
+Alternatives to this approach with pros/cons:
+
+- Use a new test during seccomp_run_filters() that treats the RET_DATA
+  mask of a RET_KILL action as special. If a new bit is set in the data,
+  then treat the return value as -1 (lower than 0).
+  Pros:
+   - the logic for the filter action is contained in the filter.
+  Cons:
+   - added complexity to time-sensitive seccomp_run_filters() loop.
+   - there isn't a trivial way for userspace to detect if the kernel
+     supports the feature (earlier kernels will silently ignore the
+     RET_DATA and only kill the thread).
+
+- Have SECCOMP_FILTER_FLAG_KILL_PROCESS attach to the seccomp struct
+  rather than the filter.
+  Pros:
+   - no change needed to seccomp_run_filters() loop.
+  Cons:
+   - the change in behavior technically originates external to the
+     filter, which allows for later filters to "enhance" a previously
+     applied filter's RET_KILL to kill the entire process, which may
+     be unexpected.
+
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
 ---
- kernel/seccomp.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ include/linux/seccomp.h      |  3 ++-
+ include/uapi/linux/seccomp.h |  3 ++-
+ kernel/seccomp.c             | 22 +++++++++++++++++++++-
+ 3 files changed, 25 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+index ecc296c137cd..59d001ba655c 100644
+--- a/include/linux/seccomp.h
++++ b/include/linux/seccomp.h
+@@ -3,7 +3,8 @@
+ 
+ #include <uapi/linux/seccomp.h>
+ 
+-#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC)
++#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC | \
++					 SECCOMP_FILTER_FLAG_KILL_PROCESS)
+ 
+ #ifdef CONFIG_SECCOMP
+ 
+diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+index 0f238a43ff1e..4b75d8c297b6 100644
+--- a/include/uapi/linux/seccomp.h
++++ b/include/uapi/linux/seccomp.h
+@@ -15,7 +15,8 @@
+ #define SECCOMP_SET_MODE_FILTER	1
+ 
+ /* Valid flags for SECCOMP_SET_MODE_FILTER */
+-#define SECCOMP_FILTER_FLAG_TSYNC	1
++#define SECCOMP_FILTER_FLAG_TSYNC		1
++#define SECCOMP_FILTER_FLAG_KILL_PROCESS	2
+ 
+ /*
+  * All BPF programs must return a 32-bit value.
 diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 98b59b5db90b..1f3347fc2605 100644
+index 1f3347fc2605..297f8bfc3b72 100644
 --- a/kernel/seccomp.c
 +++ b/kernel/seccomp.c
-@@ -171,10 +171,14 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
- /**
-  * seccomp_run_filters - evaluates all seccomp filters against @sd
-  * @sd: optional seccomp data to be passed to filters
-+ * @match: stores struct seccomp_filter that resulted in the return value,
-+ *         unless filter returned SECCOMP_RET_ALLOW, in which case it will
-+ *         be unchanged.
+@@ -44,6 +44,7 @@
+  *         is only needed for handling filters shared across tasks.
+  * @prev: points to a previously installed, or inherited, filter
+  * @prog: the BPF program to evaluate
++ * @kill_process: if true, RET_KILL will kill process rather than thread.
   *
-  * Returns valid seccomp BPF response codes.
+  * seccomp_filter objects are organized in a tree linked via the @prev
+  * pointer.  For any task, it appears to be a singly-linked list starting
+@@ -57,6 +58,7 @@
   */
--static u32 seccomp_run_filters(const struct seccomp_data *sd)
-+static u32 seccomp_run_filters(const struct seccomp_data *sd,
-+			       struct seccomp_filter **match)
- {
- 	struct seccomp_data sd_local;
- 	u32 ret = SECCOMP_RET_ALLOW;
-@@ -198,8 +202,10 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd)
- 	for (; f; f = f->prev) {
- 		u32 cur_ret = BPF_PROG_RUN(f->prog, sd);
- 
--		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION))
-+		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION)) {
- 			ret = cur_ret;
-+			*match = f;
-+		}
+ struct seccomp_filter {
+ 	refcount_t usage;
++	bool kill_process;
+ 	struct seccomp_filter *prev;
+ 	struct bpf_prog *prog;
+ };
+@@ -450,6 +452,10 @@ static long seccomp_attach_filter(unsigned int flags,
+ 			return ret;
  	}
- 	return ret;
- }
-@@ -566,6 +572,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 			    const bool recheck_after_trace)
- {
- 	u32 filter_ret, action;
-+	struct seccomp_filter *match = NULL;
- 	int data;
  
++	/* Set process-killing flag, if present. */
++	if (flags & SECCOMP_FILTER_FLAG_KILL_PROCESS)
++		filter->kill_process = true;
++
  	/*
-@@ -574,7 +581,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 	 */
- 	rmb();
- 
--	filter_ret = seccomp_run_filters(sd);
-+	filter_ret = seccomp_run_filters(sd, &match);
- 	data = filter_ret & SECCOMP_RET_DATA;
- 	action = filter_ret & SECCOMP_RET_ACTION;
- 
-@@ -638,6 +645,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 		return 0;
- 
- 	case SECCOMP_RET_ALLOW:
+ 	 * If there is an existing filter, make it the prev and don't drop its
+ 	 * task reference.
+@@ -665,7 +671,21 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 			seccomp_init_siginfo(&info, this_syscall, data);
+ 			do_coredump(&info);
+ 		}
+-		do_exit(SIGSYS);
 +		/*
-+		 * Note that the "match" filter will always be NULL for
-+		 * this action since SECCOMP_RET_ALLOW is the starting
-+		 * state in seccomp_run_filters().
++		 * The only way match can be NULL here is if something
++		 * went very wrong in seccomp_run_filters() (e.g. a NULL
++		 * filter list in struct seccomp) and the return action
++		 * falls back to failing closed. In this case, take the
++		 * strongest possible action.
++		 *
++		 * If we get here with match->kill_process set, we need
++		 * to kill the entire thread group. Otherwise, kill only
++		 * the offending thread.
 +		 */
- 		return 0;
++		if (!match || match->kill_process)
++			do_group_exit(SIGSYS);
++		else
++			do_exit(SIGSYS);
+ 	}
  
- 	case SECCOMP_RET_KILL:
+ 	unreachable();
 -- 
 2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
