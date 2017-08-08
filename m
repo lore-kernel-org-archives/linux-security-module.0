@@ -1,83 +1,121 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 9 Aug 2017 00:50:10 +0300
-Subject: [PATCH] tpm: improve tpm_tis send() performance by ignoring
-	burstcount
-In-Reply-To: <5988786D.3080301@linux.vnet.ibm.com>
-References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
-	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
-	<5988786D.3080301@linux.vnet.ibm.com>
-Message-ID: <20170808214638.4cbws5uogtihhtzg@linux.intel.com>
+From: jglisse@redhat.com (Jerome Glisse)
+Date: Tue, 8 Aug 2017 19:15:36 -0400
+Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
+	allocator
+In-Reply-To: <c06fdd1a-fb18-8e17-b4fb-ea73ccd93f90@huawei.com>
+References: <20170803144746.GA9501@redhat.com>
+	<ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
+	<20170803151550.GX12521@dhcp22.suse.cz>
+	<abe0c086-8c5a-d6fb-63c4-bf75528d0ec5@huawei.com>
+	<20170804081240.GF26029@dhcp22.suse.cz>
+	<7733852a-67c9-17a3-4031-cb08520b9ad2@huawei.com>
+	<20170807133107.GA16616@redhat.com>
+	<555dc453-3028-199a-881a-3ddeb41e4d6d@huawei.com>
+	<20170807191235.GE16616@redhat.com>
+	<c06fdd1a-fb18-8e17-b4fb-ea73ccd93f90@huawei.com>
+Message-ID: <20170808231535.GA20840@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Aug 07, 2017 at 07:55:49PM +0530, Nayna wrote:
+On Tue, Aug 08, 2017 at 03:59:36PM +0300, Igor Stoppa wrote:
+> On 07/08/17 22:12, Jerome Glisse wrote:
+> > On Mon, Aug 07, 2017 at 05:13:00PM +0300, Igor Stoppa wrote:
 > 
+> [...]
 > 
-> On 08/07/2017 05:22 PM, Peter Huewe wrote:
+> >> I have an updated version of the old proposal:
+> >>
+> >> * put a magic number in the private field, during initialization of
+> >> pmalloc pages
+> >>
+> >> * during hardened usercopy verification, when I have to assess if a page
+> >> is of pmalloc type, compare the private field against the magic number
+> >>
+> >> * if and only if the private field matches the magic number, then invoke
+> >> find_vm_area(), so that the slowness affects only a possibly limited
+> >> amount of false positives.
 > > 
-> > 
-> > Am 7. August 2017 13:46:32 MESZ schrieb Nayna Jain <nayna@linux.vnet.ibm.com>:
-> > > The TPM burstcount status indicates the number of bytes that can
-> > > be sent to the TPM without causing bus wait states.  Effectively,
-> > > it is the number of empty bytes in the command FIFO. Further,
-> > > some TPMs have a static burstcount, when the value remains zero
-> > > until the entire FIFO is empty.
-> > > 
-> > > This patch ignores burstcount, permitting wait states, and thus
-> > > writes the command as fast as the TPM can accept the bytes.
-> > > The performance of a 34 byte extend on a TPM 1.2 improved from
-> > > 52 msec to 11 msec.
-> > > 
-> > > Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-> > > conjunction with the TPM Device Driver work group.
-> > > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> > > Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > 
-> > Are you sure this is a good idea?
-> > On lpc systems this more or less stalls the bus, including keyboard/mouse (if connected via superio lpc).
+> > This all sounds good to me.
 > 
-> Thanks Peter for quick response.
+> ok, I still have one doubt wrt defining the flag.
+> Where should I do it?
 > 
-> I actually meant to post this patch as RFC. Sorry, missed that.
-> It was meant to be a starting place for the discussion related to
-> burst_count.
+> vmalloc.h has the following:
 > 
-> > 
-> > On which systems have you tested this?
-> > Spi/Lpc? Architecture?
+> /* bits in flags of vmalloc's vm_struct below */
+> #define VM_IOREMAP		0x00000001	/* ioremap() and friends
+> 						*/
+> #define VM_ALLOC		0x00000002	/* vmalloc() */
+> #define VM_MAP			0x00000004	/* vmap()ed pages */
+> #define VM_USERMAP		0x00000008	/* suitable for
+> 						   remap_vmalloc_range
+> 						*/
+> #define VM_UNINITIALIZED	0x00000020	/* vm_struct is not
+> 						   fully initialized */
+> #define VM_NO_GUARD		0x00000040      /* don't add guard page
+> 						*/
+> #define VM_KASAN		0x00000080      /* has allocated kasan
+> 						shadow memory */
+> /* bits [20..32] reserved for arch specific ioremap internals */
 > 
-> Tested it with LPC on x86.
 > 
-> > 
-> > This might not be noticable for small transfers, but think about much larger transfers....
 > 
-> I did the following testing:
+> I am tempted to add
 > 
-> * Ran a script with 1000 extends. This was to test continuous extends
-> which are generally in large numbers when IMA is enabled.
+> #define VM_PMALLOC		0x00000100
 > 
-> * Ran a command to ask TPM to hash big size file like 1MB. This was to
-> test the long command.
+> But would it be acceptable, to mention pmalloc into vmalloc?
 > 
-> In both of the above cases, I didn't face any tpm specific errors.
+> Should I name it VM_PRIVATE bit, instead?
 > 
-> Is there any test-script or test-cases which I can try to test the
-> scenario(stalling the bus, including keyboard/mouse) with the patch ?
+> Using VM_PRIVATE would avoid contaminating vmalloc with something that
+> depends on it (like VM_PMALLOC would do).
 > 
-> Thanks & Regards,
->    - Nayna
+> But using VM_PRIVATE will likely add tracking issues, if someone else
+> wants to use the same bit and it's not clear who is the user, if any.
 
-My stand here is that if you want to such patch included there should
-be outstanding evidence that:
+VM_PMALLOC sounds fine to me also adding a comment there pointing to
+pmalloc documentation would be a good thing to do. The above are flags
+that are use only inside vmalloc context and so there is no issue
+here of conflicting with other potential user.
 
-- Burst count could be always safely ignored.
-- There's no hardware platform including TPM that assumes that driver
-  takes the burst count into account.
+> 
+> Unless it's acceptable to check the private field in the page struct.
+> It would bear the pmalloc magic number.
 
-My main concern is stability and only if the stability is not at risk
-we can consider this. There's no test script to take care all of this.
+I thought you wanted to do:
+  check struct page mapping field
+  check vmap->flags for VM_PMALLOC
 
-/Jarkko
+bool is_pmalloc(unsigned long addr)
+{
+    struct page *page;
+    struct vm_struct *vm_struct;
+
+    if (!is_vmalloc_addr(addr))
+        return false;
+    page = vmalloc_to_page(addr);
+    if (!page)
+        return false;
+    if (page->mapping != pmalloc_magic_key)
+        return false;
+
+    vm_struct = find_vm_area(addr);
+    if (!vm_struct)
+        return false;
+
+    return vm_struct->flags & VM_PMALLOC;
+}
+
+Did you change your plan ?
+
+> 
+> I'm thinking to use a pointer to one of pmalloc data items, as signature.
+
+What ever is easier for you. Note that dereferencing such pointer before
+asserting this is really a pmalloc page would be hazardous.
+
+J?r?me
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
