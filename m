@@ -1,42 +1,74 @@
-From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Tue, 8 Aug 2017 16:45:36 +0300
-Subject: [PATCH v4 06/19] crypto: move algif to generic async completion
-In-Reply-To: <8585274.Umn6qnzcUd@tauon.chronox.de>
+From: gary.hook@amd.com (Gary R Hook)
+Date: Tue, 8 Aug 2017 10:24:49 -0500
+Subject: [PATCH v4 02/19] crypto: ccm: use -EAGAIN for transient busy
+	indication
+In-Reply-To: <1502193834-11289-3-git-send-email-gilad@benyossef.com>
 References: <1502193834-11289-1-git-send-email-gilad@benyossef.com>
-	<1502193834-11289-7-git-send-email-gilad@benyossef.com>
-	<8585274.Umn6qnzcUd@tauon.chronox.de>
-Message-ID: <CAOtvUMfp7Hie_RA8XNmWS084PvyO_xB0VAf2Vt9nR68cQhz3=g@mail.gmail.com>
+	<1502193834-11289-3-git-send-email-gilad@benyossef.com>
+Message-ID: <4600c898-a2f2-f95f-15b4-0adcc6acc0b5@amd.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Aug 8, 2017 at 4:10 PM, Stephan Mueller <smueller@chronox.de> wrote:
-> Am Dienstag, 8. August 2017, 14:03:37 CEST schrieb Gilad Ben-Yossef:
+On 08/08/2017 07:03 AM, Gilad Ben-Yossef wrote:
+> Replace -EBUSY with -EAGAIN when reporting transient busy
+> indication in the absence of backlog.
 >
-> Hi Gilad,
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+
+Could we use "ccp" in the subject line, please?
+
+> ---
+>  drivers/crypto/ccp/ccp-crypto-main.c | 8 +++-----
+>  drivers/crypto/ccp/ccp-dev.c         | 7 +++++--
+>  2 files changed, 8 insertions(+), 7 deletions(-)
 >
->> algif starts several async crypto ops and waits for their completion.
->> Move it over to generic code doing the same.
+> diff --git a/drivers/crypto/ccp/ccp-crypto-main.c b/drivers/crypto/ccp/ccp-crypto-main.c
+> index 35a9de7..403ff0a 100644
+> --- a/drivers/crypto/ccp/ccp-crypto-main.c
+> +++ b/drivers/crypto/ccp/ccp-crypto-main.c
+> @@ -222,9 +222,10 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
 >
-> Just FYI: your patch set and my patch [1] will clash.
+>  	/* Check if the cmd can/should be queued */
+>  	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
+> -		ret = -EBUSY;
+> -		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
+> +		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG)) {
+> +			ret = -EAGAIN;
+>  			goto e_lock;
+> +		}
+>  	}
 >
-> [1] https://patchwork.kernel.org/patch/9875959/
-
-I'll try to rebase on linux-next + your patch than.
-
-Thanks for letting me know.
-
-Gilad
-
-
-
-
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+>  	/* Look for an entry with the same tfm.  If there is a cmd
+> @@ -243,9 +244,6 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
+>  		ret = ccp_enqueue_cmd(crypto_cmd->cmd);
+>  		if (!ccp_crypto_success(ret))
+>  			goto e_lock;	/* Error, don't queue it */
+> -		if ((ret == -EBUSY) &&
+> -		    !(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
+> -			goto e_lock;	/* Not backlogging, don't queue it */
+>  	}
+>
+>  	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
+> diff --git a/drivers/crypto/ccp/ccp-dev.c b/drivers/crypto/ccp/ccp-dev.c
+> index 4e029b1..3d637e3 100644
+> --- a/drivers/crypto/ccp/ccp-dev.c
+> +++ b/drivers/crypto/ccp/ccp-dev.c
+> @@ -292,9 +292,12 @@ int ccp_enqueue_cmd(struct ccp_cmd *cmd)
+>  	i = ccp->cmd_q_count;
+>
+>  	if (ccp->cmd_count >= MAX_CMD_QLEN) {
+> -		ret = -EBUSY;
+> -		if (cmd->flags & CCP_CMD_MAY_BACKLOG)
+> +		if (cmd->flags & CCP_CMD_MAY_BACKLOG) {
+> +			ret = -EBUSY;
+>  			list_add_tail(&cmd->entry, &ccp->backlog);
+> +		} else {
+> +			ret = -EAGAIN;
+> +		}
+>  	} else {
+>  		ret = -EINPROGRESS;
+>  		ccp->cmd_count++;
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
