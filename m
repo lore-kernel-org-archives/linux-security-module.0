@@ -1,87 +1,86 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Tue, 8 Aug 2017 15:59:36 +0300
-Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
-	allocator
-In-Reply-To: <20170807191235.GE16616@redhat.com>
-References: <c3a250a6-ad4d-d24d-d0bf-4c43c467ebe6@huawei.com>
-	<20170803135549.GW12521@dhcp22.suse.cz>
-	<20170803144746.GA9501@redhat.com>
-	<ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
-	<20170803151550.GX12521@dhcp22.suse.cz>
-	<abe0c086-8c5a-d6fb-63c4-bf75528d0ec5@huawei.com>
-	<20170804081240.GF26029@dhcp22.suse.cz>
-	<7733852a-67c9-17a3-4031-cb08520b9ad2@huawei.com>
-	<20170807133107.GA16616@redhat.com>
-	<555dc453-3028-199a-881a-3ddeb41e4d6d@huawei.com>
-	<20170807191235.GE16616@redhat.com>
-Message-ID: <c06fdd1a-fb18-8e17-b4fb-ea73ccd93f90@huawei.com>
+From: guilherme.magalhaes@hpe.com (Magalhaes, Guilherme (Brazil R&D-CL))
+Date: Tue, 8 Aug 2017 13:22:23 +0000
+Subject: [Linux-ima-devel] [RFC PATCH 1/5] ima: extend clone() with IMA
+Message-ID: <TU4PR84MB0302CDE76E5E05075CF16A11FF8A0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 07/08/17 22:12, Jerome Glisse wrote:
-> On Mon, Aug 07, 2017 at 05:13:00PM +0300, Igor Stoppa wrote:
+Stefan,
+Still on the vTPM requirements, could you help answering the following
+questions?
 
-[...]
+1. Where will the boot measurements be stored? What is the integrity 
+measurement domain for this vTPM? The current proposal is that the 
+vTPM would be used for the container (or namespace) files/inodes. 
+What else will be available from the vTPM? For example, will the vTPM 
+provide the UEFI measurements on the first PCRs (copied/proxied from 
+physical TPM)?
 
->> I have an updated version of the old proposal:
->>
->> * put a magic number in the private field, during initialization of
->> pmalloc pages
->>
->> * during hardened usercopy verification, when I have to assess if a page
->> is of pmalloc type, compare the private field against the magic number
->>
->> * if and only if the private field matches the magic number, then invoke
->> find_vm_area(), so that the slowness affects only a possibly limited
->> amount of false positives.
-> 
-> This all sounds good to me.
+2. From an attestation/quote perspective, how do you envision the key 
+material to be managed (e.g. the vTPM EK and/or Attestation Key is 
+fixed to the physical TPM, or it's cryptographically bound to it)?
 
-ok, I still have one doubt wrt defining the flag.
-Where should I do it?
+3. Can you elaborate more on the alignment of this solution with the 
+TCG requirements, especially considering the lack of isolation on the 
+vTPM solution, do you have a future plan to cover those issues?
 
-vmalloc.h has the following:
-
-/* bits in flags of vmalloc's vm_struct below */
-#define VM_IOREMAP		0x00000001	/* ioremap() and friends
-						*/
-#define VM_ALLOC		0x00000002	/* vmalloc() */
-#define VM_MAP			0x00000004	/* vmap()ed pages */
-#define VM_USERMAP		0x00000008	/* suitable for
-						   remap_vmalloc_range
-						*/
-#define VM_UNINITIALIZED	0x00000020	/* vm_struct is not
-						   fully initialized */
-#define VM_NO_GUARD		0x00000040      /* don't add guard page
-						*/
-#define VM_KASAN		0x00000080      /* has allocated kasan
-						shadow memory */
-/* bits [20..32] reserved for arch specific ioremap internals */
-
-
-
-I am tempted to add
-
-#define VM_PMALLOC		0x00000100
-
-But would it be acceptable, to mention pmalloc into vmalloc?
-
-Should I name it VM_PRIVATE bit, instead?
-
-Using VM_PRIVATE would avoid contaminating vmalloc with something that
-depends on it (like VM_PMALLOC would do).
-
-But using VM_PRIVATE will likely add tracking issues, if someone else
-wants to use the same bit and it's not clear who is the user, if any.
-
-Unless it's acceptable to check the private field in the page struct.
-It would bear the pmalloc magic number.
-
-I'm thinking to use a pointer to one of pmalloc data items, as signature.
-
+4. In a micro services pattern, or a serverless compute pattern, in 
+which one or more containers are created to handle each individual 
+request it is possible that there will be several thousand containers 
+created per hour on a busy server. What is the expected performance 
+and scalability of vTPMs within such an environment?
 
 --
-igor
+Guilherme
+
+> -----Original Message-----
+> From: Stefan Berger [mailto:stefanb at linux.vnet.ibm.com]
+> Sent: quinta-feira, 27 de julho de 2017 17:52
+> To: Magalhaes, Guilherme (Brazil R&D-CL) <guilherme.magalhaes@hpe.com>;
+> Mimi Zohar <zohar@linux.vnet.ibm.com>; Serge E. Hallyn <serge@hallyn.com>
+> Cc: Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>; Yuqiong Sun
+> <sunyuqiong1988@gmail.com>; containers <containers@lists.linux-
+> foundation.org>; linux-kernel <linux-kernel@vger.kernel.org>; David Safford
+> <david.safford@ge.com>; James Bottomley
+> <James.Bottomley@HansenPartnership.com>; linux-security-module <linux-
+> security-module at vger.kernel.org>; ima-devel <linux-ima-
+> devel at lists.sourceforge.net>; Yuqiong Sun <suny@us.ibm.com>
+> Subject: Re: [Linux-ima-devel] [RFC PATCH 1/5] ima: extend clone() with IMA
+> namespace support
+> 
+> On 07/27/2017 03:39 PM, Magalhaes, Guilherme (Brazil R&D-CL) wrote:
+> >
+> >> There's a vTPM proxy driver in the kernel that enables spawning a
+> >> frontend /dev/tpm%d and an anonymous backend file descriptor where a
+> >> vTPM can listen on for TPM commands. I integrated this with 'swtpm' and
+> >> I have been working on integrating this into runc. Currently each
+> >> container started with runc can get one (or multiple) vTPMs and
+> >> /dev/tpm0 [and /dev/tpmrm0 in case of TPM2] then appear inside the
+> >> container.
+> >>
+> > This is an interesting solution especially for nested namespaces with the
+> > recursive application of measurements and a having list per container.
+> >
+> > Following the TCG specs/requirements, what could we say about security
+> > guarantees of real TPMs Vs this vTPM implementation?
+> 
+> 
+> A non-root user may not be able to do access the (permanent) state of
+> the vTPM state files since the container management stack would restrict
+> access to the files using DAC. Access to runtime data is also prevented
+> since the vTPM would not run under the account of the non-root user.
+> 
+> To protect the vTPM's permanent state file from access by a root user it
+> comes down to preventing the root user from getting a hold of the key
+> used for encrypting that file. Encrypting the state of the vTPM is
+> probably the best we can do to approximate a temper-resistant chip, but
+> preventing the root user from accessing the key may be more challenging.
+> Preventing root from accessing runtime data could be achieved by using
+> XGS or a similar technology.
+> 
+>      Stefan
+> 
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
