@@ -1,68 +1,58 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 9 Aug 2017 13:40:08 -0700
-Subject: [PATCH v3 0/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
-In-Reply-To: <a0bddc6f-686e-2a5a-4833-acf04a10722f@canonical.com>
-References: <1502305317-85052-1-git-send-email-keescook@chromium.org>
-	<20170809202230.ivyv2cdeknb4tyn7@smitten>
-	<a0bddc6f-686e-2a5a-4833-acf04a10722f@canonical.com>
-Message-ID: <CAGXu5jJwYdESzw8rDrz1=kFNsHc72q-agXWqNFjtj-HPtkewiw@mail.gmail.com>
+From: PeterHuewe@gmx.de (Peter Huewe)
+Date: Wed, 9 Aug 2017 23:00:36 +0200
+Subject: Aw: Re: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send()
+	performance by ignoring burstcount
+In-Reply-To: <db0359cc-5e6b-2055-734a-bd9104e4a99f@linux.vnet.ibm.com>
+References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
+	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
+	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
+	<db0359cc-5e6b-2055-734a-bd9104e4a99f@linux.vnet.ibm.com>
+Message-ID: <trinity-b615e596-8095-4a0a-9922-3fa9a5724c30-1502312435959@3c-app-gmx-bs76>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Aug 9, 2017 at 1:33 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
-> Hey Tycho!
->
-> On 08/09/2017 03:22 PM, Tycho Andersen wrote:
->> On Wed, Aug 09, 2017 at 12:01:53PM -0700, Kees Cook wrote:
->>> This series is the result of Fabricio and I going around a few times
->>> on possible solutions for finding a way to enhance RET_KILL to kill
->>> the process group. There's a lot of ways this could be done, but I
->>> wanted something that felt cleanest. As it happens, Tyler's recent
->>> patch series for logging improvement also needs to know a litte bit
->>> more during filter runs, and the solution for both is to pass back
->>> the matched filter. This lets us examine it here for RET_KILL and
->>> in the future for logging changes.
->>>
->>> The filter passing is patch 1, the new flag for RET_KILL is patch 2.
->>> Some test refactoring is in patch 3 for the RET_DATA ordering, and
->>> patch 4 is the test for the new RET_KILL flag.
->>>
->>> One thing missing is that CRIU will likely need to be updated, since
->>> saving/restoring seccomp filter _rules_ will not include the filter
->>> _flags_ for a process. This can be addressed separately.
->>
->> Thanks for the heads up, I suppose PTRACE_SECCOMP_GET_FLAGS similar to
->> how PTRACE_SECCOMP_GET_FILTER works will be fine for this. One
->> question is: would we then also need to keep track of the TSYNC flag?
->> I don't think CRIU needs this to be correct, and we can grab the
->> KILL_PROCESS flag from filter->kill_process, so perhaps it's moot.
+Hi Ken,
+(again speaking only on my behalf, not my employer)
 
-It does not need to track TSYNC (since the results of that flag are
-represented in the filter tree itself).
+> Does anyone know of platforms where this occurs?
+> I suspect (but not sure) that the days of SuperIO connecting floppy
+> drives, printer ports, and PS/2 mouse ports on the LPC bus are over, and
+> such legacy systems will not have a TPM. Would SuperIO even support the
+> special TPM LPC bus cycles?
 
-> Note that the logging changes that I'm working on also introduce a new
-> filter flag (as Kees mentioned above). My filter flag is a lot like the
-> KILL_PROCESS filter flag in that it is stored as a member of the
-> seccomp_filter struct.
->
-> I would think that you'd want to be able to do something like
-> PTRACE_SECCOMP_GET_FILTER to (hopefully) future proof CRIU against all
-> newly added filter flags.
+Since we are the linux kernel, we do have to care for legacy devices.
+And a system with LPC, PS2Mouse on SuperIO and a TPM are not that uncommon.
 
-I didn't see an obvious way to extend the existing
-PTRACE_SECCOMP_GET_FILTER to also return flags, so I think either a
-new function for just flags or a new versioned function for rules and
-flags will be needed.
+And heck, we even have support for 1.1b TPM devices....
 
->> Anyway, happy to do this and the userspace part when this lands.
 
-Okay, great! Thanks!
+>> One more viewpoint: TCG must added the burst count for a reason (might
+>> be very well related what Peter said). Is ignoring it something that TCG
+>> recommends? Not following standard exactly in the driver code sometimes
+>> makes sense on *small details* but I would not say that this a small
+>> detail...
 
--Kees
+> I checked with the TCG's device driver work group (DDWG). Both the spec
+> editor and 3 TPM vendors - Infineon, Nuvoton, and ST Micro - agreed that
+> ignoring burst count may incur wait states but nothing more. Operations
+> will still be successful.
 
--- 
-Kees Cook
-Pixel Security
+Interesting - let me check with Georg tomorrow.
+Unfortunately I do not have access to my tcg mails from home (since I'm not working :), 
+but did you _explicitly_ talk about LPC and the system?
+I'm sure the TPM does not care about the waitstates...
+
+If my memory does not betray me, 
+it is actually possible to "freeze up" a system completly by flooding the lpc bus.
+Let me double check tomorrow...
+
+
+In anycase - I really would like to see a much more performant tpm subsystem - 
+however it will be quite an effort with a lot of legacy testing.
+(which I unfortunately cannot spend on my private time ... and also of course lacking test systems).
+
+Thanks,
+Peter
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
