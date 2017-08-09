@@ -1,107 +1,52 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 09 Aug 2017 10:30:48 -0400
-Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for
-	RPM data type
-In-Reply-To: <0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
-References: <20170725154423.24845-9-roberto.sassu@huawei.com>
-	<20170801102036.15371-1-roberto.sassu@huawei.com>
-	<20170801102709.GA24285@infradead.org>
-	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
-	<alpine.LRH.2.20.1708021716440.1117@namei.org>
-	<0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
-Message-ID: <1502289048.19092.62.camel@linux.vnet.ibm.com>
+From: arnd@arndb.de (Arnd Bergmann)
+Date: Wed, 9 Aug 2017 17:12:58 +0200
+Subject: [PATCH 3/3] net: rxrpc: Replace time_t type with time64_t type
+In-Reply-To: <11686.1502285205@warthog.procyon.org.uk>
+References: <cover.1502246501.git.baolin.wang@linaro.org>
+	<8ac57c96bf5a0695ecc67fd230440b0b9d15740f.1502246502.git.baolin.wang@linaro.org>
+	<CAK8P3a2WU5uYddGrkWhyfNB4qTEDYne_pyCVG6n5b1w+vb1-OQ@mail.gmail.com>
+	<6767.1502271233@warthog.procyon.org.uk>
+	<CAK8P3a3L11rXAV8-hE1fNtAZyMBNnQneRm5g7F8VDmk7HjQV4A@mail.gmail.com>
+	<11686.1502285205@warthog.procyon.org.uk>
+Message-ID: <CAK8P3a2STbhgFB5kbVTZqAgY70K_GCaWgj6Kqs4RJOOt2oSd-g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-08-09 at 11:15 +0200, Roberto Sassu wrote:
-> On 8/2/2017 9:22 AM, James Morris wrote:
-> > On Tue, 1 Aug 2017, Roberto Sassu wrote:
-> >
-> >> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
-> >>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
-> >>>> This patch introduces a parser for RPM packages. It extracts the digests
-> >>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
-> >>>> data
-> >>>> before adding them to the hash table.
-> >>>>
-> >>>> The advantage of this data type is that verifiers can determine who
-> >>>> produced that data, as headers are signed by Linux distributions vendors.
-> >>>> RPM headers signatures can be provided as digest list metadata.
-> >>>
-> >>> Err, parsing arbitrary file formats has no business in the kernel.
-> >>
-> >> The benefit of this choice is that no actions are required for
-> >> Linux distribution vendors to support the solution I'm proposing,
-> >> because they already provide signed digest lists (RPM headers).
-> >>
-> >> Since the proof of loading a digest list is the digest of the
-> >> digest list (included in the list metadata), if RPM headers are
-> >> converted to a different format, remote attestation verifiers
-> >> cannot check the signature.
-> >>
-> >> If the concern is security, it would be possible to prevent unsigned
-> >> RPM headers from being parsed, if the PGP key type is upstreamed
-> >> (adding in CC keyrings at vger.kernel.org).
-> >
-> > It's a security concern and also a layering violation, there should be no
-> > need to parse package file formats in the kernel.
-> 
-> Parsing RPMs is not strictly necessary. Digests from the headers
-> can be extracted and written to a new file using the compact data
-> format (introduced with patch 7/12).
-> 
-> At boot time, IMA measures this file before digests are uploaded to the
-> kernel. At this point, only files with unknown digest will be added
-> to the measurement list. At verification time, verifiers recreate the
-> measurement list by merging together the digests uploaded to the
-> kernel with the unknown digests. Then, they verify the obtained list.
-> 
-> There are two ways to verify the digests: searching them in a reference
-> database, or checking a signature. With the 'ima-sig' measurement list
-> template, it is possible to verify signatures for each accessed file.
-> With this patch set, it is possible to verify the signature of
-> the file containing the digests uploaded to the kernel. If the data
-> format changes, the signature cannot be verified.
-> 
-> To avoid this limitation, the parsers could be moved to a userspace
-> tool which then uploads the parsed digests to the kernel. IMA would
-> measure the original files. But, if the tool is compromised, it could
-> load digests not included in the parsed files. With the current solution
-> this problem does not arise because no changes can be done by userspace
-> applications to the uploaded data while digests are parsed by IMA.
-> 
-> I could remove the RPM parser from the patch set for now.
-> 
-> Is the remaining part of the patch set ok, and is the explanation of
-> what it does clear?
+On Wed, Aug 9, 2017 at 3:26 PM, David Howells <dhowells@redhat.com> wrote:
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> Do you know which format is used in practice? Are both kad and k5 common
+>> among rxrpc users?
+>
+> The aklog program I'm using uses the non-XDR interface to push a Kerberos 5
+> ticket to the kernel, so it doesn't actually invoke rxrpc_preparse_xdr() from
+> rxrpc_preparse().
 
->From a trusted boot perspective, file measurements are added to the
-measurement list, before access to the file is given. ?The measurement
-list contains ALL measurements, as defined by policy. ?This patch set
-changes that meaning to be all measurements, as defined by policy,
-with the exception of those in a white list.
+Ah, I'm slowly starting to understand how this fits together. So you can add
+a key either through key_add() from local user space, or through an rxrpc
+socket.
 
-Changing the fundamental meaning of the measurement list is not
-acceptable. ?You could define a new securityfs file to differentiate
-between the full measurement list and this abbreviated one. ?But
-before making this sort of change, I would prefer to address the
-underlying problem - TPM peformance.
+>From what I can tell, the program you have at
+http://people.redhat.com/~dhowells/rxrpc/klog.c will keep working beyond
+2038 but not beyond 2106 on all 64-bit architectures and on those
+32-bit systems that have a libc with 64-bit time_t. It could be modified
+to use the xdr_rxk5 key format, which would make it use 64-bit time
+values (and require the kernel fix mentioned above).
 
-There are a couple of things that could be done to improve the TPM
-driver performance, itself. ?Once all of these options have been
-pursued, we could then consider batching the measurements to the TPM,
-meaning that the measurement list would still contain all the file
-measurements, but instead of extending the TPM for each measurement, a
-batched hash - a hash of a group of file measurements - would be
-extended into the TPM.
+In contrast, the rxrpc socket interface would need a major rework to
+support 64-bit expiration times. It receives a kerberos ticket with a
+32-bit issue time
+that gets used to calculate the expiry time in rxkad_decrypt_ticket, and from
+there we pass it through a  rxrpc_key_data_v1 into key_instantiate_and_link(),
+which calls rxrpc_preparse() and that just takes the expiry out again and sticks
+it into another 32-bit field in struct rxkad_key, from where it
+finally gets copied
+into the (now 64-bit) key_preparsed_payload->expiry field.
 
-Mimi
+Does my understanding match what you intended for the interfaces? Is there
+a need to extend the rxrpc socket interface to support xdr_rxk5 keys as well?
 
-> > I'm not really clear on exactly how this patch series works.  Can you
-> > provide a more concrete explanation of what steps would occur during boot
-> > and attestation?
-> >
-
+         Arnd
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
