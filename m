@@ -1,183 +1,94 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Wed,  9 Aug 2017 12:01:56 -0700
-Subject: [PATCH v3 3/4] selftests/seccomp: Refactor RET_ERRNO tests
+Date: Wed,  9 Aug 2017 12:01:54 -0700
+Subject: [PATCH v3 1/4] seccomp: Provide matching filter for introspection
 In-Reply-To: <1502305317-85052-1-git-send-email-keescook@chromium.org>
 References: <1502305317-85052-1-git-send-email-keescook@chromium.org>
-Message-ID: <1502305317-85052-4-git-send-email-keescook@chromium.org>
+Message-ID: <1502305317-85052-2-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This refactors the errno tests (since they all use the same pattern for
-their filter) and adds a RET_DATA field ordering test.
+Both the upcoming logging improvements and changes to RET_KILL will need
+to know which filter a given seccomp return value originated from. In
+order to delay logic processing of result until after the seccomp loop,
+this adds a single pointer assignment on matches. This will allow both
+log and RET_KILL logic to work off the filter rather than doing more
+expensive tests inside the time-critical run_filters loop.
 
+Running tight cycles of getpid() with filters attached shows no measurable
+difference in speed.
+
+Suggested-by: Tyler Hicks <tyhicks@canonical.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
 ---
- tools/testing/selftests/seccomp/seccomp_bpf.c | 95 ++++++++++++++++-----------
- 1 file changed, 58 insertions(+), 37 deletions(-)
+ kernel/seccomp.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 73f5ea6778ce..ee78a53da5d1 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -136,7 +136,7 @@ TEST(no_new_privs_support)
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 98b59b5db90b..1f3347fc2605 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -171,10 +171,14 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
+ /**
+  * seccomp_run_filters - evaluates all seccomp filters against @sd
+  * @sd: optional seccomp data to be passed to filters
++ * @match: stores struct seccomp_filter that resulted in the return value,
++ *         unless filter returned SECCOMP_RET_ALLOW, in which case it will
++ *         be unchanged.
+  *
+  * Returns valid seccomp BPF response codes.
+  */
+-static u32 seccomp_run_filters(const struct seccomp_data *sd)
++static u32 seccomp_run_filters(const struct seccomp_data *sd,
++			       struct seccomp_filter **match)
+ {
+ 	struct seccomp_data sd_local;
+ 	u32 ret = SECCOMP_RET_ALLOW;
+@@ -198,8 +202,10 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd)
+ 	for (; f; f = f->prev) {
+ 		u32 cur_ret = BPF_PROG_RUN(f->prog, sd);
+ 
+-		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION))
++		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION)) {
+ 			ret = cur_ret;
++			*match = f;
++		}
  	}
+ 	return ret;
  }
- 
--/* Tests kernel support by checking for a copy_from_user() fault on * NULL. */
-+/* Tests kernel support by checking for a copy_from_user() fault on NULL. */
- TEST(mode_filter_support)
+@@ -566,6 +572,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 			    const bool recheck_after_trace)
  {
- 	long ret;
-@@ -541,26 +541,30 @@ TEST(arg_out_of_range)
- 	EXPECT_EQ(EINVAL, errno);
- }
+ 	u32 filter_ret, action;
++	struct seccomp_filter *match = NULL;
+ 	int data;
  
-+#define ERRNO_FILTER(name, errno)					\
-+	struct sock_filter _read_filter_##name[] = {			\
-+		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,				\
-+			offsetof(struct seccomp_data, nr)),		\
-+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),	\
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | errno),	\
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),		\
-+	};								\
-+	struct sock_fprog prog_##name = {				\
-+		.len = (unsigned short)ARRAY_SIZE(_read_filter_##name),	\
-+		.filter = _read_filter_##name,				\
-+	}
-+
-+/* Make sure basic errno values are correctly passed through a filter. */
- TEST(ERRNO_valid)
- {
--	struct sock_filter filter[] = {
--		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
--			offsetof(struct seccomp_data, nr)),
--		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),
--		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | E2BIG),
--		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
--	};
--	struct sock_fprog prog = {
--		.len = (unsigned short)ARRAY_SIZE(filter),
--		.filter = filter,
--	};
-+	ERRNO_FILTER(valid, E2BIG);
- 	long ret;
- 	pid_t parent = getppid();
+ 	/*
+@@ -574,7 +581,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 	 */
+ 	rmb();
  
- 	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
- 	ASSERT_EQ(0, ret);
+-	filter_ret = seccomp_run_filters(sd);
++	filter_ret = seccomp_run_filters(sd, &match);
+ 	data = filter_ret & SECCOMP_RET_DATA;
+ 	action = filter_ret & SECCOMP_RET_ACTION;
  
--	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_valid);
- 	ASSERT_EQ(0, ret);
+@@ -638,6 +645,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 		return 0;
  
- 	EXPECT_EQ(parent, syscall(__NR_getppid));
-@@ -568,26 +572,17 @@ TEST(ERRNO_valid)
- 	EXPECT_EQ(E2BIG, errno);
- }
+ 	case SECCOMP_RET_ALLOW:
++		/*
++		 * Note that the "match" filter will always be NULL for
++		 * this action since SECCOMP_RET_ALLOW is the starting
++		 * state in seccomp_run_filters().
++		 */
+ 		return 0;
  
-+/* Make sure an errno of zero is correctly handled by the arch code. */
- TEST(ERRNO_zero)
- {
--	struct sock_filter filter[] = {
--		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
--			offsetof(struct seccomp_data, nr)),
--		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),
--		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | 0),
--		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
--	};
--	struct sock_fprog prog = {
--		.len = (unsigned short)ARRAY_SIZE(filter),
--		.filter = filter,
--	};
-+	ERRNO_FILTER(zero, 0);
- 	long ret;
- 	pid_t parent = getppid();
- 
- 	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
- 	ASSERT_EQ(0, ret);
- 
--	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_zero);
- 	ASSERT_EQ(0, ret);
- 
- 	EXPECT_EQ(parent, syscall(__NR_getppid));
-@@ -595,26 +590,21 @@ TEST(ERRNO_zero)
- 	EXPECT_EQ(0, read(0, NULL, 0));
- }
- 
-+/*
-+ * The SECCOMP_RET_DATA mask is 16 bits wide, but errno is smaller.
-+ * This tests that the errno value gets capped correctly, fixed by
-+ * 580c57f10768 ("seccomp: cap SECCOMP_RET_ERRNO data to MAX_ERRNO").
-+ */
- TEST(ERRNO_capped)
- {
--	struct sock_filter filter[] = {
--		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
--			offsetof(struct seccomp_data, nr)),
--		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_read, 0, 1),
--		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | 4096),
--		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
--	};
--	struct sock_fprog prog = {
--		.len = (unsigned short)ARRAY_SIZE(filter),
--		.filter = filter,
--	};
-+	ERRNO_FILTER(capped, 4096);
- 	long ret;
- 	pid_t parent = getppid();
- 
- 	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
- 	ASSERT_EQ(0, ret);
- 
--	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_capped);
- 	ASSERT_EQ(0, ret);
- 
- 	EXPECT_EQ(parent, syscall(__NR_getppid));
-@@ -622,6 +612,37 @@ TEST(ERRNO_capped)
- 	EXPECT_EQ(4095, errno);
- }
- 
-+/*
-+ * Filters are processed in reverse order: last applied is executed first.
-+ * Since only the SECCOMP_RET_ACTION mask is tested for return values, the
-+ * SECCOMP_RET_DATA mask results will follow the most recently applied
-+ * matching filter return (and not the lowest or highest value).
-+ */
-+TEST(ERRNO_order)
-+{
-+	ERRNO_FILTER(first,  11);
-+	ERRNO_FILTER(second, 13);
-+	ERRNO_FILTER(third,  12);
-+	long ret;
-+	pid_t parent = getppid();
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	ASSERT_EQ(0, ret);
-+
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_first);
-+	ASSERT_EQ(0, ret);
-+
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_second);
-+	ASSERT_EQ(0, ret);
-+
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog_third);
-+	ASSERT_EQ(0, ret);
-+
-+	EXPECT_EQ(parent, syscall(__NR_getppid));
-+	EXPECT_EQ(-1, read(0, NULL, 0));
-+	EXPECT_EQ(12, errno);
-+}
-+
- FIXTURE_DATA(TRAP) {
- 	struct sock_fprog prog;
- };
+ 	case SECCOMP_RET_KILL:
 -- 
 2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
