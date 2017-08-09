@@ -1,91 +1,41 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 9 Aug 2017 11:15:32 +0200
-Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for RPM
-	data type
-In-Reply-To: <alpine.LRH.2.20.1708021716440.1117@namei.org>
-References: <20170725154423.24845-9-roberto.sassu@huawei.com>
-	<20170801102036.15371-1-roberto.sassu@huawei.com>
-	<20170801102709.GA24285@infradead.org>
-	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
-	<alpine.LRH.2.20.1708021716440.1117@namei.org>
-Message-ID: <0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 09 Aug 2017 10:33:53 +0100
+Subject: [PATCH 3/3] net: rxrpc: Replace time_t type with time64_t type
+In-Reply-To: <CAK8P3a2WU5uYddGrkWhyfNB4qTEDYne_pyCVG6n5b1w+vb1-OQ@mail.gmail.com>
+References: <CAK8P3a2WU5uYddGrkWhyfNB4qTEDYne_pyCVG6n5b1w+vb1-OQ@mail.gmail.com>
+	<cover.1502246501.git.baolin.wang@linaro.org>
+	<8ac57c96bf5a0695ecc67fd230440b0b9d15740f.1502246502.git.baolin.wang@linaro.org>
+Message-ID: <6767.1502271233@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 8/2/2017 9:22 AM, James Morris wrote:
-> On Tue, 1 Aug 2017, Roberto Sassu wrote:
+Arnd Bergmann <arnd@arndb.de> wrote:
+
+> > @@ -533,8 +536,9 @@ static int rxrpc_preparse_xdr_rxk5(struct key_preparsed_payload *prep,
+> >              pptoken = &(*pptoken)->next)
+> >                 continue;
+> >         *pptoken = token;
+> > -       if (token->kad->expiry < prep->expiry)
+> > -               prep->expiry = token->kad->expiry;
+> ...
 >
->> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
->>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
->>>> This patch introduces a parser for RPM packages. It extracts the digests
->>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
->>>> data
->>>> before adding them to the hash table.
->>>>
->>>> The advantage of this data type is that verifiers can determine who
->>>> produced that data, as headers are signed by Linux distributions vendors.
->>>> RPM headers signatures can be provided as digest list metadata.
->>>
->>> Err, parsing arbitrary file formats has no business in the kernel.
->>
->> The benefit of this choice is that no actions are required for
->> Linux distribution vendors to support the solution I'm proposing,
->> because they already provide signed digest lists (RPM headers).
->>
->> Since the proof of loading a digest list is the digest of the
->> digest list (included in the list metadata), if RPM headers are
->> converted to a different format, remote attestation verifiers
->> cannot check the signature.
->>
->> If the concern is security, it would be possible to prevent unsigned
->> RPM headers from being parsed, if the PGP key type is upstreamed
->> (adding in CC keyrings at vger.kernel.org).
->
-> It's a security concern and also a layering violation, there should be no
-> need to parse package file formats in the kernel.
+> I'm still slightly puzzled by what this function does: it does have four
+> timestamps (authtime, starttime, endtime, renew_till) that are all
+> transferred as 64-bit values and won't expire, but then it also uses the
+> 32-bit expiry field in rxrpc_key_token->kad->expiry instead of the 64-bit
+> rxrpc_key_token->k5 fields.
 
-Parsing RPMs is not strictly necessary. Digests from the headers
-can be extracted and written to a new file using the compact data
-format (introduced with patch 7/12).
+Good catch.  This is a cut'n'paste error.  It should be using
+token->k5->expiry here not token->kad->expiry.
 
-At boot time, IMA measures this file before digests are uploaded to the
-kernel. At this point, only files with unknown digest will be added
-to the measurement list. At verification time, verifiers recreate the
-measurement list by merging together the digests uploaded to the
-kernel with the unknown digests. Then, they verify the obtained list.
+> This appears to overlay the first 32 bits of the
+> rxrpc_key_token->k5->starttime field, which is also a time value on
+> little-endian architectures by chance, but I would assume that it's always
+> in the past, meaning the keys would already be expired.
 
-There are two ways to verify the digests: searching them in a reference
-database, or checking a signature. With the 'ima-sig' measurement list
-template, it is possible to verify signatures for each accessed file.
-With this patch set, it is possible to verify the signature of
-the file containing the digests uploaded to the kernel. If the data
-format changes, the signature cannot be verified.
+Yeah - I'm not sure why it works.
 
-To avoid this limitation, the parsers could be moved to a userspace
-tool which then uploads the parsed digests to the kernel. IMA would
-measure the original files. But, if the tool is compromised, it could
-load digests not included in the parsed files. With the current solution
-this problem does not arise because no changes can be done by userspace
-applications to the uploaded data while digests are parsed by IMA.
-
-I could remove the RPM parser from the patch set for now.
-
-Is the remaining part of the patch set ok, and is the explanation of
-what it does clear?
-
-Thanks
-
-Roberto
-
-
-> I'm not really clear on exactly how this patch series works.  Can you
-> provide a more concrete explanation of what steps would occur during boot
-> and attestation?
->
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
