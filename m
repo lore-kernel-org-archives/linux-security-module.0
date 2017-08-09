@@ -1,45 +1,79 @@
-From: kgold@linux.vnet.ibm.com (Ken Goldman)
-Date: Wed, 9 Aug 2017 16:36:01 -0400
-Subject: [Linux-ima-devel] [PATCH 11/12] ima: don't report measurements if
-	digests are included in the loaded lists
-In-Reply-To: <20170725154423.24845-12-roberto.sassu@huawei.com>
-References: <20170725154423.24845-1-roberto.sassu@huawei.com>
-	<20170725154423.24845-12-roberto.sassu@huawei.com>
-Message-ID: <96860a64-2ba1-d445-dd8e-08b131fe402b@linux.vnet.ibm.com>
+From: PeterHuewe@gmx.de (Peter Huewe)
+Date: Wed, 9 Aug 2017 22:43:07 +0200
+Subject: Aw: Re: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send()
+	performance by ignoring burstcount
+In-Reply-To: <819e3d38-3f16-a32b-1928-c425b763d5f8@linux.vnet.ibm.com>
+References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
+	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
+	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
+	<819e3d38-3f16-a32b-1928-c425b763d5f8@linux.vnet.ibm.com>
+Message-ID: <trinity-56ff4f3f-5e08-4aac-9353-a7b88fe91f01-1502311387207@3c-app-gmx-bs76>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 7/25/2017 11:44 AM, Roberto Sassu wrote:
-> Don't report measurements if the file digest has been included in
-> an uploaded digest list.
-> 
-> The advantage of this solution is that the boot time overhead, when
-> a TPM is available, is very small because a PCR is extended only
-> for unknown files. The disadvantage is that verifiers do not know
-> anymore which and when files are accessed (they must assume that
-> the worst case happened, i.e. all files have been accessed).
+Hi Ken,
 
-Am I reading this correctly that you want to measure certain files, but 
-not ones that have been included in a "digest list", which sounds like a 
-white list of sorts.
+(speaking on behalf of myself here, not my employer :) )
+> On Mon, Aug 07, 2017 at 01:52:34PM +0200, Peter Huewe wrote:
+>> Imho: NACK from my side.
+> After these viewpoints definitive NACK from my side too...
 
-If so, I have two concerns:
 
-1 - How would the client get this digest list?  Shouldn't it be up to 
-the relying party to decide what is trusted and not trusted, not the client?
+> I responded to the thread comments separately. However, assuming NACK
+> is the final response, I have a question.
 
-What of the case with two different relying parties that have a 
-different list of trusted applications?  E.g., one trusts any version of 
-program X, while the other trusts only version 3.1 and up?
+Nothing is ever final :)
 
-2 - What about files on the digest list that were not run?  The relying 
-party may want to know if a program wasn't run?  E.g., antivirus or a 
-firewall.
+> The problem is the 5 msec sleep between polls of burst count. In the
+> case of one TPM with an 8 byte FIFO, a 32 byte transfer incurs 4 of
+> these sleeps.
 
-If the rule is "don't measure if it's on the digest list", how does the 
-relying party know if it was run?
+Yes that's bad, especially with current msleep(5) is actually msleep(20).
+However, please also keep in mind SPI tpms show a much higher burst count value,  (255)
+our I2C TPM SLB9645 even shows something in the range of 1k. :)
+
+
+> Would another solution be to reduce the burst count poll and sleep to,
+> e.g., 100 usec or even 10 usec? This would probably help greatly, but
+> till not incur the wait states that triggered the NACK.
+
+Imho the 5ms were an arbitrary chosen value for old old tpms.
+Back then also only msleep was available which was msleep(20) anyway.
+
+
+> My worry is that the scheduler would not be able to context switch that
+> fast, and so we wouldn't actually see usec speed polling.
+> Can a kernel expert offer an opinion?
+If you use sleep it's not guaranteed that you wakeup after exactly xx specified amount of time.
+Just that you sleep at least xx amount of time. Otherwise you would have to do delay/busywaiting.
+
+https://www.kernel.org/doc/Documentation/timers/timers-howto.txt
+
+
+Imho the best option is to
+figure out whether any vendor can determine the "FIFO flush time" i.e. how much time does it take to empty the fifo and fillup the burstcount and use this on the lower bound of an usleep range.
+I don't think tpms are in the range of < 10 us...
+
+@Ken: Maybe can you check in DDWG?
+
+What we often see/saw during some performance optimization tests is something like 
+burstcount 7, burstcount 1, burstcount 7, burstcount 1...
+which is the oposite of what you want to achieve.
+
+You'd like to have something like
+burstcount 8, burstcount 8, burstcount 8....
+
+Unfortunately TPMS don't report their max burstcount (afaik),
+otherwise it would be easy to write a calibration routine for the poll times.
+
+
+Thanks,
+Peter
+
+
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
