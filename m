@@ -1,154 +1,237 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Wed, 9 Aug 2017 19:18:32 +0200
-Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for RPM
-	data type
-In-Reply-To: <1502289048.19092.62.camel@linux.vnet.ibm.com>
-References: <20170725154423.24845-9-roberto.sassu@huawei.com>
-	<20170801102036.15371-1-roberto.sassu@huawei.com>
-	<20170801102709.GA24285@infradead.org>
-	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
-	<alpine.LRH.2.20.1708021716440.1117@namei.org>
-	<0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
-	<1502289048.19092.62.camel@linux.vnet.ibm.com>
-Message-ID: <fffaf219-a633-478a-ec0e-2869419fe3b0@huawei.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed,  9 Aug 2017 12:01:55 -0700
+Subject: [PATCH v3 2/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
+In-Reply-To: <1502305317-85052-1-git-send-email-keescook@chromium.org>
+References: <1502305317-85052-1-git-send-email-keescook@chromium.org>
+Message-ID: <1502305317-85052-3-git-send-email-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 8/9/2017 4:30 PM, Mimi Zohar wrote:
-> On Wed, 2017-08-09 at 11:15 +0200, Roberto Sassu wrote:
->> On 8/2/2017 9:22 AM, James Morris wrote:
->>> On Tue, 1 Aug 2017, Roberto Sassu wrote:
->>>
->>>> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
->>>>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
->>>>>> This patch introduces a parser for RPM packages. It extracts the digests
->>>>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
->>>>>> data
->>>>>> before adding them to the hash table.
->>>>>>
->>>>>> The advantage of this data type is that verifiers can determine who
->>>>>> produced that data, as headers are signed by Linux distributions vendors.
->>>>>> RPM headers signatures can be provided as digest list metadata.
->>>>>
->>>>> Err, parsing arbitrary file formats has no business in the kernel.
->>>>
->>>> The benefit of this choice is that no actions are required for
->>>> Linux distribution vendors to support the solution I'm proposing,
->>>> because they already provide signed digest lists (RPM headers).
->>>>
->>>> Since the proof of loading a digest list is the digest of the
->>>> digest list (included in the list metadata), if RPM headers are
->>>> converted to a different format, remote attestation verifiers
->>>> cannot check the signature.
->>>>
->>>> If the concern is security, it would be possible to prevent unsigned
->>>> RPM headers from being parsed, if the PGP key type is upstreamed
->>>> (adding in CC keyrings at vger.kernel.org).
->>>
->>> It's a security concern and also a layering violation, there should be no
->>> need to parse package file formats in the kernel.
->>
->> Parsing RPMs is not strictly necessary. Digests from the headers
->> can be extracted and written to a new file using the compact data
->> format (introduced with patch 7/12).
->>
->> At boot time, IMA measures this file before digests are uploaded to the
->> kernel. At this point, only files with unknown digest will be added
->> to the measurement list. At verification time, verifiers recreate the
->> measurement list by merging together the digests uploaded to the
->> kernel with the unknown digests. Then, they verify the obtained list.
->>
->> There are two ways to verify the digests: searching them in a reference
->> database, or checking a signature. With the 'ima-sig' measurement list
->> template, it is possible to verify signatures for each accessed file.
->> With this patch set, it is possible to verify the signature of
->> the file containing the digests uploaded to the kernel. If the data
->> format changes, the signature cannot be verified.
->>
->> To avoid this limitation, the parsers could be moved to a userspace
->> tool which then uploads the parsed digests to the kernel. IMA would
->> measure the original files. But, if the tool is compromised, it could
->> load digests not included in the parsed files. With the current solution
->> this problem does not arise because no changes can be done by userspace
->> applications to the uploaded data while digests are parsed by IMA.
->>
->> I could remove the RPM parser from the patch set for now.
->>
->> Is the remaining part of the patch set ok, and is the explanation of
->> what it does clear?
->
-> From a trusted boot perspective, file measurements are added to the
-> measurement list, before access to the file is given.  The measurement
-> list contains ALL measurements, as defined by policy.  This patch set
-> changes that meaning to be all measurements, as defined by policy,
-> with the exception of those in a white list.
+Right now, SECCOMP_RET_KILL kills the current thread. There have been
+a few requests for RET_KILL to kill the entire process (the thread
+group), but since seccomp's u32 return values are ABI, and ordered by
+lowest value, with RET_KILL as 0, there isn't a trivial way to provide
+an even smaller value that would mean the more restrictive action of
+killing the thread group.
 
-The digest list is also measured, so the measurement list is complete.
-Verifiers have to check the digest of digest lists. Otherwise, they
-would get an unknown digest and conclude that the system being verified
-has been compromised.
+Changing the definition of SECCOMP_RET_KILL to mean "kill process" and
+then adding a new higher definition of SECCOMP_RET_KILL_THREAD isn't
+possible since there are already userspace programs depending on the
+kill-thread behavior.
 
-If you prefer, I could add a new policy rule option to avoid file
-measurements if the digest is in the digest list.
+Instead, create a simulated SECCOMP_RET_KILL_PROCESS action which
+has the semantics of such a return had it been possible to create
+it naturally. This is done by adding a filter flag that indicates
+that a RET_KILL from this filter must kill the process rather
+than the thread. This can be set (and not cleared) via the new
+SECCOMP_FILTER_FLAG_KILL_PROCESS flag.
 
+Pros:
+ - the logic for the filter action is contained in the filter.
+ - userspace can detect support for the feature since earlier kernels
+   will reject the new flag.
+ - can be distinguished from "normal" RET_KILL in the same filter
+   chain (in case a program wants to choose to kill thread or process).
+Cons:
+ - depends on adding an assignment to the seccomp_run_filters() loop
+   (previous patch).
+ - adds logic to the seccomp_run_filters() loop (though it is a single
+   unlikely test for zero, so the cycle count change isn't measurable).
 
-> Changing the fundamental meaning of the measurement list is not
-> acceptable.  You could define a new securityfs file to differentiate
-> between the full measurement list and this abbreviated one.  But
+Alternatives to this approach with pros/cons:
 
-There cannot be two measurement lists at the same time. Providing the
-full measurement list (containing the digest of files being accessed)
-implies that its integrity must be protected with PCR extends, making
-the optimization done by this patch set useless.
+- Change userspace API to use an s32 for BPF return value, and use a
+  negative value to indicate SECCOMP_RET_KILL_PROCESS.
+  Pros:
+   - no change needed to seccomp_run_filters() loop.
+   - the logic for the filter action is contained in the filter.
+   - can be distinguished from "normal" RET_KILL in the same filter
+     chain (in case a program wants to choose to kill thread or process).
+  Cons:
+   - there isn't a trivial way for userspace to detect if the kernel
+     supports the feature (earlier kernels will silently ignore the
+     new value, only kill the thread).
+   - need to teach libseccomp about new details, extensive updates
+     to documentation, and hope there is not confusion about signedness
+     in existing userspace.
 
+- Use a new test during seccomp_run_filters() that treats the RET_DATA
+  mask of a RET_KILL action as special. If a new bit is set in the data,
+  then treat the return value as -1 (lower than 0).
+  Pros:
+   - the logic for the filter action is contained in the filter.
+   - can be distinguished from "normal" RET_KILL in the same filter
+     chain (in case a program wants to choose to kill thread or process).
+  Cons:
+   - adds more than a single unlikely test to time-sensitive
+     seccomp_run_filters() loop.
+   - there isn't a trivial way for userspace to detect if the kernel
+     supports the feature (earlier kernels will silently ignore the
+     RET_DATA and only kill the thread).
+   - Violates the "most recent RET_DATA" return value used for all
+     other actions (since processing must continue to find the first
+     RET_KILL with the flag set).
+   - May create problems for existing programs that were using RET_DATA
+     to distinguish between various SECCOMP_RET_KILL locations.
 
-> before making this sort of change, I would prefer to address the
-> underlying problem - TPM peformance.
+- Have SECCOMP_FILTER_FLAG_KILL_PROCESS attach to the seccomp struct
+  rather than the filter.
+  Pros:
+   - no change needed to seccomp_run_filters() loop.
+   - userspace can detect support for the feature since earlier kernels
+     will reject the new flag.
+  Cons:
+   - does not provide a way for a set of filters to distinguish
+     between wanting to kill a thread or a process.
+   - the logic for the filter action isn't contained in the filter,
+     which may lead to synchronization bugs (e.g. vs TSYNC, vs CRIU, etc).
 
-Even if the TPM driver performance improves significantly (17 seconds
-for 1000 extends), the boot time delay would be still noticeable
-(8.5 seconds for normal boot + 24 seconds for 1400 PCR extends).
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/linux/seccomp.h      |  3 ++-
+ include/uapi/linux/seccomp.h |  3 ++-
+ kernel/seccomp.c             | 54 ++++++++++++++++++++++++++++++++++++++++----
+ 3 files changed, 54 insertions(+), 6 deletions(-)
 
-In my opinion, this patch set is useful without considering the
-performance improvement: reduced size of measurement lists and
-verification of digest list signatures, instead of file signatures,
-where signatures are already provided by Linux distributions.
-
-
-> There are a couple of things that could be done to improve the TPM
-> driver performance, itself.  Once all of these options have been
-> pursued, we could then consider batching the measurements to the TPM,
-> meaning that the measurement list would still contain all the file
-> measurements, but instead of extending the TPM for each measurement, a
-> batched hash - a hash of a group of file measurements - would be
-> extended into the TPM.
-
-Probably, I didn't explain clearly that this patch set does not decrease
-the security of IMA.
-
-Extending the PCR for a group of file measurements means that the system
-can be compromised between two PCR extends without detection because
-a malicious binary could alter IMA before the next extend.
-
-This patch set extends the PCR with the digest of digest lists, before
-files are accessed. No actions happen before either the digest lists
-have been measured or the file measurement is added to the measurement
-list, if the file digest is not included in the digest list.
-
-Roberto
-
-
-> Mimi
->
->>> I'm not really clear on exactly how this patch series works.  Can you
->>> provide a more concrete explanation of what steps would occur during boot
->>> and attestation?
->>>
->
-
+diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+index ecc296c137cd..59d001ba655c 100644
+--- a/include/linux/seccomp.h
++++ b/include/linux/seccomp.h
+@@ -3,7 +3,8 @@
+ 
+ #include <uapi/linux/seccomp.h>
+ 
+-#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC)
++#define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC | \
++					 SECCOMP_FILTER_FLAG_KILL_PROCESS)
+ 
+ #ifdef CONFIG_SECCOMP
+ 
+diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+index 0f238a43ff1e..4b75d8c297b6 100644
+--- a/include/uapi/linux/seccomp.h
++++ b/include/uapi/linux/seccomp.h
+@@ -15,7 +15,8 @@
+ #define SECCOMP_SET_MODE_FILTER	1
+ 
+ /* Valid flags for SECCOMP_SET_MODE_FILTER */
+-#define SECCOMP_FILTER_FLAG_TSYNC	1
++#define SECCOMP_FILTER_FLAG_TSYNC		1
++#define SECCOMP_FILTER_FLAG_KILL_PROCESS	2
+ 
+ /*
+  * All BPF programs must return a 32-bit value.
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 1f3347fc2605..6a196d1495e6 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -44,6 +44,7 @@
+  *         is only needed for handling filters shared across tasks.
+  * @prev: points to a previously installed, or inherited, filter
+  * @prog: the BPF program to evaluate
++ * @kill_process: if true, RET_KILL will kill process rather than thread.
+  *
+  * seccomp_filter objects are organized in a tree linked via the @prev
+  * pointer.  For any task, it appears to be a singly-linked list starting
+@@ -57,6 +58,7 @@
+  */
+ struct seccomp_filter {
+ 	refcount_t usage;
++	bool kill_process;
+ 	struct seccomp_filter *prev;
+ 	struct bpf_prog *prog;
+ };
+@@ -201,8 +203,25 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd,
+ 	 */
+ 	for (; f; f = f->prev) {
+ 		u32 cur_ret = BPF_PROG_RUN(f->prog, sd);
++		u32 action = cur_ret & SECCOMP_RET_ACTION;
+ 
+-		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION)) {
++		/*
++		 * In order to distinguish between SECCOMP_RET_KILL and
++		 * "higher priority" synthetic SECCOMP_RET_KILL_PROCESS
++		 * identified by the kill_process filter flag, treat any
++		 * case as immediately stopping filter processing. No
++		 * higher priority action can exist, and we can't stop
++		 * on the first RET_KILL (which may not have set
++		 * f->kill_process) when a RET_KILL further up the filter
++		 * list may have f->kill_process set which would go
++		 * unnoticed.
++		 */
++		if (unlikely(action == SECCOMP_RET_KILL && f->kill_process)) {
++			*match = f;
++			return cur_ret;
++		}
++
++		if (action < (ret & SECCOMP_RET_ACTION)) {
+ 			ret = cur_ret;
+ 			*match = f;
+ 		}
+@@ -450,6 +469,10 @@ static long seccomp_attach_filter(unsigned int flags,
+ 			return ret;
+ 	}
+ 
++	/* Set process-killing flag, if present. */
++	if (flags & SECCOMP_FILTER_FLAG_KILL_PROCESS)
++		filter->kill_process = true;
++
+ 	/*
+ 	 * If there is an existing filter, make it the prev and don't drop its
+ 	 * task reference.
+@@ -574,6 +597,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 	u32 filter_ret, action;
+ 	struct seccomp_filter *match = NULL;
+ 	int data;
++	bool kill_process;
+ 
+ 	/*
+ 	 * Make sure that any changes to mode from another thread have
+@@ -655,8 +679,26 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 	case SECCOMP_RET_KILL:
+ 	default:
+ 		audit_seccomp(this_syscall, SIGSYS, action);
+-		/* Dump core only if this is the last remaining thread. */
+-		if (get_nr_threads(current) == 1) {
++
++		/*
++		 * The only way match can be NULL here is if something
++		 * went very wrong in seccomp_run_filters() (e.g. a NULL
++		 * filter list in struct seccomp) and the return action
++		 * falls back to failing closed. In this case, take the
++		 * strongest possible action.
++		 *
++		 * If we get here with match->kill_process set, we need
++		 * to kill the entire thread group. Otherwise, kill only
++		 * the offending thread.
++		 */
++		kill_process = (!match || match->kill_process);
++
++		/*
++		 * Dumping core kills the entire thread group, so only
++		 * coredump if that has been requested or this was already
++		 * the only thread running.
++		 */
++		if (kill_process || get_nr_threads(current) == 1) {
+ 			siginfo_t info;
+ 
+ 			/* Show the original registers in the dump. */
+@@ -665,7 +707,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 			seccomp_init_siginfo(&info, this_syscall, data);
+ 			do_coredump(&info);
+ 		}
+-		do_exit(SIGSYS);
++
++		if (kill_process)
++			do_group_exit(SIGSYS);
++		else
++			do_exit(SIGSYS);
+ 	}
+ 
+ 	unreachable();
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
