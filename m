@@ -1,94 +1,60 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed,  9 Aug 2017 12:01:54 -0700
-Subject: [PATCH v3 1/4] seccomp: Provide matching filter for introspection
+From: tycho@docker.com (Tycho Andersen)
+Date: Wed, 9 Aug 2017 14:22:30 -0600
+Subject: [PATCH v3 0/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
 In-Reply-To: <1502305317-85052-1-git-send-email-keescook@chromium.org>
 References: <1502305317-85052-1-git-send-email-keescook@chromium.org>
-Message-ID: <1502305317-85052-2-git-send-email-keescook@chromium.org>
+Message-ID: <20170809202230.ivyv2cdeknb4tyn7@smitten>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Both the upcoming logging improvements and changes to RET_KILL will need
-to know which filter a given seccomp return value originated from. In
-order to delay logic processing of result until after the seccomp loop,
-this adds a single pointer assignment on matches. This will allow both
-log and RET_KILL logic to work off the filter rather than doing more
-expensive tests inside the time-critical run_filters loop.
+On Wed, Aug 09, 2017 at 12:01:53PM -0700, Kees Cook wrote:
+> This series is the result of Fabricio and I going around a few times
+> on possible solutions for finding a way to enhance RET_KILL to kill
+> the process group. There's a lot of ways this could be done, but I
+> wanted something that felt cleanest. As it happens, Tyler's recent
+> patch series for logging improvement also needs to know a litte bit
+> more during filter runs, and the solution for both is to pass back
+> the matched filter. This lets us examine it here for RET_KILL and
+> in the future for logging changes.
+> 
+> The filter passing is patch 1, the new flag for RET_KILL is patch 2.
+> Some test refactoring is in patch 3 for the RET_DATA ordering, and
+> patch 4 is the test for the new RET_KILL flag.
+> 
+> One thing missing is that CRIU will likely need to be updated, since
+> saving/restoring seccomp filter _rules_ will not include the filter
+> _flags_ for a process. This can be addressed separately.
 
-Running tight cycles of getpid() with filters attached shows no measurable
-difference in speed.
+Thanks for the heads up, I suppose PTRACE_SECCOMP_GET_FLAGS similar to
+how PTRACE_SECCOMP_GET_FILTER works will be fine for this. One
+question is: would we then also need to keep track of the TSYNC flag?
+I don't think CRIU needs this to be correct, and we can grab the
+KILL_PROCESS flag from filter->kill_process, so perhaps it's moot.
 
-Suggested-by: Tyler Hicks <tyhicks@canonical.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
----
- kernel/seccomp.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Anyway, happy to do this and the userspace part when this lands.
 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 98b59b5db90b..1f3347fc2605 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -171,10 +171,14 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
- /**
-  * seccomp_run_filters - evaluates all seccomp filters against @sd
-  * @sd: optional seccomp data to be passed to filters
-+ * @match: stores struct seccomp_filter that resulted in the return value,
-+ *         unless filter returned SECCOMP_RET_ALLOW, in which case it will
-+ *         be unchanged.
-  *
-  * Returns valid seccomp BPF response codes.
-  */
--static u32 seccomp_run_filters(const struct seccomp_data *sd)
-+static u32 seccomp_run_filters(const struct seccomp_data *sd,
-+			       struct seccomp_filter **match)
- {
- 	struct seccomp_data sd_local;
- 	u32 ret = SECCOMP_RET_ALLOW;
-@@ -198,8 +202,10 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd)
- 	for (; f; f = f->prev) {
- 		u32 cur_ret = BPF_PROG_RUN(f->prog, sd);
- 
--		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION))
-+		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION)) {
- 			ret = cur_ret;
-+			*match = f;
-+		}
- 	}
- 	return ret;
- }
-@@ -566,6 +572,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 			    const bool recheck_after_trace)
- {
- 	u32 filter_ret, action;
-+	struct seccomp_filter *match = NULL;
- 	int data;
- 
- 	/*
-@@ -574,7 +581,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 	 */
- 	rmb();
- 
--	filter_ret = seccomp_run_filters(sd);
-+	filter_ret = seccomp_run_filters(sd, &match);
- 	data = filter_ret & SECCOMP_RET_DATA;
- 	action = filter_ret & SECCOMP_RET_ACTION;
- 
-@@ -638,6 +645,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 		return 0;
- 
- 	case SECCOMP_RET_ALLOW:
-+		/*
-+		 * Note that the "match" filter will always be NULL for
-+		 * this action since SECCOMP_RET_ALLOW is the starting
-+		 * state in seccomp_run_filters().
-+		 */
- 		return 0;
- 
- 	case SECCOMP_RET_KILL:
--- 
-2.7.4
+Cheers,
 
+Tycho
+
+> Please take a look!
+> 
+> Thanks,
+> 
+> -Kees
+> 
+> v3:
+> - adjust seccomp_run_filters() to avoid later filters from masking
+>   kill-process RET_KILL actions (drewry)
+> - add test for masked RET_KILL.
+> 
+> v2:
+> - moved kill_process bool into struct padding gap (tyhicks)
+> - improved comments/docs in various places for clarify (tyhicks)
+> - use ASSERT_TRUE() for WIFEXITED and WIFSIGNALLED (tyhicks)
+> - adding Reviewed-bys from tyhicks
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
