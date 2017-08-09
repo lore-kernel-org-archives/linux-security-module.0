@@ -1,37 +1,96 @@
-From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Wed, 9 Aug 2017 08:18:03 +0300
-Subject: [PATCH v4 02/19] crypto: ccm: use -EAGAIN for transient busy
-	indication
-In-Reply-To: <4600c898-a2f2-f95f-15b4-0adcc6acc0b5@amd.com>
-References: <1502193834-11289-1-git-send-email-gilad@benyossef.com>
-	<1502193834-11289-3-git-send-email-gilad@benyossef.com>
-	<4600c898-a2f2-f95f-15b4-0adcc6acc0b5@amd.com>
-Message-ID: <CAOtvUMeUHk9KxQumhuvJ52dp-_-LFOD8XGvCWvhU6LjEZhEF7A@mail.gmail.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 9 Aug 2017 10:27:32 +0300
+Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
+	allocator
+In-Reply-To: <20170808231535.GA20840@redhat.com>
+References: <20170803144746.GA9501@redhat.com>
+	<ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
+	<20170803151550.GX12521@dhcp22.suse.cz>
+	<abe0c086-8c5a-d6fb-63c4-bf75528d0ec5@huawei.com>
+	<20170804081240.GF26029@dhcp22.suse.cz>
+	<7733852a-67c9-17a3-4031-cb08520b9ad2@huawei.com>
+	<20170807133107.GA16616@redhat.com>
+	<555dc453-3028-199a-881a-3ddeb41e4d6d@huawei.com>
+	<20170807191235.GE16616@redhat.com>
+	<c06fdd1a-fb18-8e17-b4fb-ea73ccd93f90@huawei.com>
+	<20170808231535.GA20840@redhat.com>
+Message-ID: <b83b980d-8adb-52ea-9b62-af33aff8f898@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Aug 8, 2017 at 6:24 PM, Gary R Hook <gary.hook@amd.com> wrote:
-> On 08/08/2017 07:03 AM, Gilad Ben-Yossef wrote:
+
+
+On 09/08/17 02:15, Jerome Glisse wrote:
+> On Tue, Aug 08, 2017 at 03:59:36PM +0300, Igor Stoppa wrote:
+
+[...]
+
+>> I am tempted to add
 >>
->> Replace -EBUSY with -EAGAIN when reporting transient busy
->> indication in the absence of backlog.
+>> #define VM_PMALLOC		0x00000100
+
+[...]
+
+> VM_PMALLOC sounds fine to me also adding a comment there pointing to
+> pmalloc documentation would be a good thing to do. The above are flags
+> that are use only inside vmalloc context and so there is no issue
+> here of conflicting with other potential user.
+
+ok, will do
+
 >>
->> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->
->
-> Could we use "ccp" in the subject line, please?
+>> Unless it's acceptable to check the private field in the page struct.
+>> It would bear the pmalloc magic number.
+> 
+> I thought you wanted to do:
+>   check struct page mapping field
+>   check vmap->flags for VM_PMALLOC
+> 
+> bool is_pmalloc(unsigned long addr)
+> {
+>     struct page *page;
+>     struct vm_struct *vm_struct;
+> 
+>     if (!is_vmalloc_addr(addr))
+>         return false;
+>     page = vmalloc_to_page(addr);
+>     if (!page)
+>         return false;
+>     if (page->mapping != pmalloc_magic_key)
 
-Of course, sorry about the the typo.
+page->private  ?
+I thought mapping would not work in the cases you mentioned?
 
-Gilad
+>         return false;
+> 
+>     vm_struct = find_vm_area(addr);
+>     if (!vm_struct)
+>         return false;
+> 
+>     return vm_struct->flags & VM_PMALLOC;
+> }
+> 
+> Did you change your plan ?
 
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+No, the code I have is almost 1:1 what you wrote.
+Apart from mapping <=> private
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+In my previous mail I referred to page->private.
+
+Maybe I was not very clear in what I wrote, but I'm almost 100% aligned
+with your snippet.
+
+>> I'm thinking to use a pointer to one of pmalloc data items, as signature.
+> 
+> What ever is easier for you. Note that dereferencing such pointer before
+> asserting this is really a pmalloc page would be hazardous.
+
+Yes, it's not even needed in this scenario.
+It was just a way to ensure that it would be a value that cannot be come
+out accidentally as pointer value, since it is already taken.
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
