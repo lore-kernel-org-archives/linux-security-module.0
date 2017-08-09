@@ -1,79 +1,63 @@
-From: PeterHuewe@gmx.de (Peter Huewe)
-Date: Wed, 9 Aug 2017 22:43:07 +0200
-Subject: Aw: Re: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send()
-	performance by ignoring burstcount
-In-Reply-To: <819e3d38-3f16-a32b-1928-c425b763d5f8@linux.vnet.ibm.com>
-References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
-	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
-	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
-	<819e3d38-3f16-a32b-1928-c425b763d5f8@linux.vnet.ibm.com>
-Message-ID: <trinity-56ff4f3f-5e08-4aac-9353-a7b88fe91f01-1502311387207@3c-app-gmx-bs76>
+From: tycho@docker.com (Tycho Andersen)
+Date: Wed, 9 Aug 2017 14:41:41 -0600
+Subject: [PATCH v3 0/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
+In-Reply-To: <a0bddc6f-686e-2a5a-4833-acf04a10722f@canonical.com>
+References: <1502305317-85052-1-git-send-email-keescook@chromium.org>
+	<20170809202230.ivyv2cdeknb4tyn7@smitten>
+	<a0bddc6f-686e-2a5a-4833-acf04a10722f@canonical.com>
+Message-ID: <20170809204141.x2nnpogjcok73d4f@smitten>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Ken,
+Hey Tyler :)
 
-(speaking on behalf of myself here, not my employer :) )
-> On Mon, Aug 07, 2017 at 01:52:34PM +0200, Peter Huewe wrote:
->> Imho: NACK from my side.
-> After these viewpoints definitive NACK from my side too...
+On Wed, Aug 09, 2017 at 03:33:28PM -0500, Tyler Hicks wrote:
+> Hey Tycho!
+> 
+> On 08/09/2017 03:22 PM, Tycho Andersen wrote:
+> > On Wed, Aug 09, 2017 at 12:01:53PM -0700, Kees Cook wrote:
+> >> This series is the result of Fabricio and I going around a few times
+> >> on possible solutions for finding a way to enhance RET_KILL to kill
+> >> the process group. There's a lot of ways this could be done, but I
+> >> wanted something that felt cleanest. As it happens, Tyler's recent
+> >> patch series for logging improvement also needs to know a litte bit
+> >> more during filter runs, and the solution for both is to pass back
+> >> the matched filter. This lets us examine it here for RET_KILL and
+> >> in the future for logging changes.
+> >>
+> >> The filter passing is patch 1, the new flag for RET_KILL is patch 2.
+> >> Some test refactoring is in patch 3 for the RET_DATA ordering, and
+> >> patch 4 is the test for the new RET_KILL flag.
+> >>
+> >> One thing missing is that CRIU will likely need to be updated, since
+> >> saving/restoring seccomp filter _rules_ will not include the filter
+> >> _flags_ for a process. This can be addressed separately.
+> > 
+> > Thanks for the heads up, I suppose PTRACE_SECCOMP_GET_FLAGS similar to
+> > how PTRACE_SECCOMP_GET_FILTER works will be fine for this. One
+> > question is: would we then also need to keep track of the TSYNC flag?
+> > I don't think CRIU needs this to be correct, and we can grab the
+> > KILL_PROCESS flag from filter->kill_process, so perhaps it's moot.
+> 
+> Note that the logging changes that I'm working on also introduce a new
+> filter flag (as Kees mentioned above). My filter flag is a lot like the
+> KILL_PROCESS filter flag in that it is stored as a member of the
+> seccomp_filter struct.
+> 
+> I would think that you'd want to be able to do something like
+> PTRACE_SECCOMP_GET_FILTER to (hopefully) future proof CRIU against all
+> newly added filter flags.
 
+Yep, the theoretical GET_FLAGS above would handle this, I think. What
+I was wondering about is for TSYNC (or any future flags) which aren't
+tracked in the struct seccomp_filter; would the existence of GET_FLAGS
+mean we need to remember such flags as well somewhere? Not necessary
+for CRIU's correctness right now at least, but...
 
-> I responded to the thread comments separately. However, assuming NACK
-> is the final response, I have a question.
+Cheers,
 
-Nothing is ever final :)
-
-> The problem is the 5 msec sleep between polls of burst count. In the
-> case of one TPM with an 8 byte FIFO, a 32 byte transfer incurs 4 of
-> these sleeps.
-
-Yes that's bad, especially with current msleep(5) is actually msleep(20).
-However, please also keep in mind SPI tpms show a much higher burst count value,  (255)
-our I2C TPM SLB9645 even shows something in the range of 1k. :)
-
-
-> Would another solution be to reduce the burst count poll and sleep to,
-> e.g., 100 usec or even 10 usec? This would probably help greatly, but
-> till not incur the wait states that triggered the NACK.
-
-Imho the 5ms were an arbitrary chosen value for old old tpms.
-Back then also only msleep was available which was msleep(20) anyway.
-
-
-> My worry is that the scheduler would not be able to context switch that
-> fast, and so we wouldn't actually see usec speed polling.
-> Can a kernel expert offer an opinion?
-If you use sleep it's not guaranteed that you wakeup after exactly xx specified amount of time.
-Just that you sleep at least xx amount of time. Otherwise you would have to do delay/busywaiting.
-
-https://www.kernel.org/doc/Documentation/timers/timers-howto.txt
-
-
-Imho the best option is to
-figure out whether any vendor can determine the "FIFO flush time" i.e. how much time does it take to empty the fifo and fillup the burstcount and use this on the lower bound of an usleep range.
-I don't think tpms are in the range of < 10 us...
-
-@Ken: Maybe can you check in DDWG?
-
-What we often see/saw during some performance optimization tests is something like 
-burstcount 7, burstcount 1, burstcount 7, burstcount 1...
-which is the oposite of what you want to achieve.
-
-You'd like to have something like
-burstcount 8, burstcount 8, burstcount 8....
-
-Unfortunately TPMS don't report their max burstcount (afaik),
-otherwise it would be easy to write a calibration routine for the poll times.
-
-
-Thanks,
-Peter
-
-
-
-
+Tycho
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
