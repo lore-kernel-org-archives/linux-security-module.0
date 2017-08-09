@@ -1,63 +1,43 @@
 From: kgold@linux.vnet.ibm.com (Ken Goldman)
-Date: Wed, 9 Aug 2017 16:25:48 -0400
-Subject: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send() performance by
-	ignoring burstcount
-In-Reply-To: <20170808191145.kggmoczd5laiccrn@linux.intel.com>
-References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
-	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
-	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
-Message-ID: <db0359cc-5e6b-2055-734a-bd9104e4a99f@linux.vnet.ibm.com>
+Date: Wed, 9 Aug 2017 16:36:01 -0400
+Subject: [Linux-ima-devel] [PATCH 11/12] ima: don't report measurements if
+	digests are included in the loaded lists
+In-Reply-To: <20170725154423.24845-12-roberto.sassu@huawei.com>
+References: <20170725154423.24845-1-roberto.sassu@huawei.com>
+	<20170725154423.24845-12-roberto.sassu@huawei.com>
+Message-ID: <96860a64-2ba1-d445-dd8e-08b131fe402b@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 8/8/2017 3:11 PM, Jarkko Sakkinen wrote:
- > On Mon, Aug 07, 2017 at 01:52:34PM +0200, Peter Huewe wrote:
+On 7/25/2017 11:44 AM, Roberto Sassu wrote:
+> Don't report measurements if the file digest has been included in
+> an uploaded digest list.
+> 
+> The advantage of this solution is that the boot time overhead, when
+> a TPM is available, is very small because a PCR is extended only
+> for unknown files. The disadvantage is that verifiers do not know
+> anymore which and when files are accessed (they must assume that
+> the worst case happened, i.e. all files have been accessed).
 
- >> Are you sure this is a good idea?
- >> On lpc systems this more or less stalls the bus, including 
-keyboard/mouse (if connected via superio lpc).
- >>
- >> On which systems have you tested this?
- >> Spi/Lpc? Architecture?
- >>
- >> This might not be noticable for small transfers, but think about 
-much larger transfers....
- >>
- >> Imho: NACK from my side.
- >>
- >> Thanks,
- >> Peter
- >
- > Thanks Peter, a great insight. TPM could share the bus with other
- > devices. Even if this optimizes the performance for TPM it might cause
- > performance issues elsewhere.
+Am I reading this correctly that you want to measure certain files, but 
+not ones that have been included in a "digest list", which sounds like a 
+white list of sorts.
 
-Does anyone know of platforms where this occurs?
+If so, I have two concerns:
 
-I suspect (but not sure) that the days of SuperIO connecting floppy 
-drives, printer ports, and PS/2 mouse ports on the LPC bus are over, and 
-such legacy systems will not have a TPM. Would SuperIO even support the 
-special TPM LPC bus cycles?
+1 - How would the client get this digest list?  Shouldn't it be up to 
+the relying party to decide what is trusted and not trusted, not the client?
 
-Even then, the wait states of a mhz speed LPC are likely to be usec,
-not noticeable for even a mouse.
+What of the case with two different relying parties that have a 
+different list of trusted applications?  E.g., one trusts any version of 
+program X, while the other trusts only version 3.1 and up?
 
-Is this a reasonable assumption?
+2 - What about files on the digest list that were not run?  The relying 
+party may want to know if a program wasn't run?  E.g., antivirus or a 
+firewall.
 
-If so, to we affect TPM performance to the point where it's unusable to 
-help a case that is unlikely to appear in current platforms?
-
- >
- > One more viewpoint: TCG must added the burst count for a reason (might
- > be very well related what Peter said). Is ignoring it something that TCG
- > recommends? Not following standard exactly in the driver code sometimes
- > makes sense on *small details* but I would not say that this a small
- > detail...
-
-I checked with the TCG's device driver work group (DDWG).  Both the spec 
-editor and 3 TPM vendors - Infineon, Nuvoton, and ST Micro - agreed that 
-ignoring burst count may incur wait states but nothing more.  Operations 
-will still be successful.
+If the rule is "don't measure if it's on the digest list", how does the 
+relying party know if it was run?
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
