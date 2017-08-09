@@ -1,39 +1,37 @@
-From: baolin.wang@linaro.org (Baolin Wang)
-Date: Wed,  9 Aug 2017 10:51:29 +0800
-Subject: [PATCH 0/3] Fix y2038 issues for security/keys subsystem
-Message-ID: <cover.1502246501.git.baolin.wang@linaro.org>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Wed, 9 Aug 2017 08:18:03 +0300
+Subject: [PATCH v4 02/19] crypto: ccm: use -EAGAIN for transient busy
+	indication
+In-Reply-To: <4600c898-a2f2-f95f-15b4-0adcc6acc0b5@amd.com>
+References: <1502193834-11289-1-git-send-email-gilad@benyossef.com>
+	<1502193834-11289-3-git-send-email-gilad@benyossef.com>
+	<4600c898-a2f2-f95f-15b4-0adcc6acc0b5@amd.com>
+Message-ID: <CAOtvUMeUHk9KxQumhuvJ52dp-_-LFOD8XGvCWvhU6LjEZhEF7A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Since 'time_t', 'timeval' and 'timespec' types are not year 2038 safe on
-32 bits system, this patchset tries to fix this issues for security/keys
-subsystem and net/rxrpc subsystem which is connected with security/keys
-subsystem.
+On Tue, Aug 8, 2017 at 6:24 PM, Gary R Hook <gary.hook@amd.com> wrote:
+> On 08/08/2017 07:03 AM, Gilad Ben-Yossef wrote:
+>>
+>> Replace -EBUSY with -EAGAIN when reporting transient busy
+>> indication in the absence of backlog.
+>>
+>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+>
+> Could we use "ccp" in the subject line, please?
 
-Baolin Wang (3):
-  security: keys: Replace time_t/timespec with time64_t
-  security: keys: Replace time_t with time64_t for struct
-    key_preparsed_payload
-  net: rxrpc: Replace time_t type with time64_t type
+Of course, sorry about the the typo.
 
- include/keys/rxrpc-type.h    |   21 +++++++++++++++++++++
- include/linux/key-type.h     |    2 +-
- include/linux/key.h          |    7 ++++---
- net/rxrpc/ar-internal.h      |    2 +-
- net/rxrpc/key.c              |   22 ++++++++++++++--------
- net/rxrpc/rxkad.c            |   14 +++++++-------
- security/keys/gc.c           |   20 ++++++++++----------
- security/keys/internal.h     |    8 ++++----
- security/keys/key.c          |   27 ++++++++++-----------------
- security/keys/keyring.c      |   18 +++++++++---------
- security/keys/permission.c   |    3 +--
- security/keys/proc.c         |   20 ++++++++++----------
- security/keys/process_keys.c |    2 +-
- 13 files changed, 93 insertions(+), 73 deletions(-)
+Gilad
 
 -- 
-1.7.9.5
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
