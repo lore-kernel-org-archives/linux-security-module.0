@@ -1,44 +1,154 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 09 Aug 2017 16:45:47 +0100
-Subject: [PATCH 3/3] net: rxrpc: Replace time_t type with time64_t type
-In-Reply-To: <CAK8P3a2STbhgFB5kbVTZqAgY70K_GCaWgj6Kqs4RJOOt2oSd-g@mail.gmail.com>
-References: <CAK8P3a2STbhgFB5kbVTZqAgY70K_GCaWgj6Kqs4RJOOt2oSd-g@mail.gmail.com>
-	<cover.1502246501.git.baolin.wang@linaro.org>
-	<8ac57c96bf5a0695ecc67fd230440b0b9d15740f.1502246502.git.baolin.wang@linaro.org>
-	<CAK8P3a2WU5uYddGrkWhyfNB4qTEDYne_pyCVG6n5b1w+vb1-OQ@mail.gmail.com>
-	<6767.1502271233@warthog.procyon.org.uk>
-	<CAK8P3a3L11rXAV8-hE1fNtAZyMBNnQneRm5g7F8VDmk7HjQV4A@mail.gmail.com>
-	<11686.1502285205@warthog.procyon.org.uk>
-Message-ID: <29920.1502293547@warthog.procyon.org.uk>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Wed, 9 Aug 2017 19:18:32 +0200
+Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for RPM
+	data type
+In-Reply-To: <1502289048.19092.62.camel@linux.vnet.ibm.com>
+References: <20170725154423.24845-9-roberto.sassu@huawei.com>
+	<20170801102036.15371-1-roberto.sassu@huawei.com>
+	<20170801102709.GA24285@infradead.org>
+	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
+	<alpine.LRH.2.20.1708021716440.1117@namei.org>
+	<0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
+	<1502289048.19092.62.camel@linux.vnet.ibm.com>
+Message-ID: <fffaf219-a633-478a-ec0e-2869419fe3b0@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> wrote:
+On 8/9/2017 4:30 PM, Mimi Zohar wrote:
+> On Wed, 2017-08-09 at 11:15 +0200, Roberto Sassu wrote:
+>> On 8/2/2017 9:22 AM, James Morris wrote:
+>>> On Tue, 1 Aug 2017, Roberto Sassu wrote:
+>>>
+>>>> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
+>>>>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
+>>>>>> This patch introduces a parser for RPM packages. It extracts the digests
+>>>>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
+>>>>>> data
+>>>>>> before adding them to the hash table.
+>>>>>>
+>>>>>> The advantage of this data type is that verifiers can determine who
+>>>>>> produced that data, as headers are signed by Linux distributions vendors.
+>>>>>> RPM headers signatures can be provided as digest list metadata.
+>>>>>
+>>>>> Err, parsing arbitrary file formats has no business in the kernel.
+>>>>
+>>>> The benefit of this choice is that no actions are required for
+>>>> Linux distribution vendors to support the solution I'm proposing,
+>>>> because they already provide signed digest lists (RPM headers).
+>>>>
+>>>> Since the proof of loading a digest list is the digest of the
+>>>> digest list (included in the list metadata), if RPM headers are
+>>>> converted to a different format, remote attestation verifiers
+>>>> cannot check the signature.
+>>>>
+>>>> If the concern is security, it would be possible to prevent unsigned
+>>>> RPM headers from being parsed, if the PGP key type is upstreamed
+>>>> (adding in CC keyrings at vger.kernel.org).
+>>>
+>>> It's a security concern and also a layering violation, there should be no
+>>> need to parse package file formats in the kernel.
+>>
+>> Parsing RPMs is not strictly necessary. Digests from the headers
+>> can be extracted and written to a new file using the compact data
+>> format (introduced with patch 7/12).
+>>
+>> At boot time, IMA measures this file before digests are uploaded to the
+>> kernel. At this point, only files with unknown digest will be added
+>> to the measurement list. At verification time, verifiers recreate the
+>> measurement list by merging together the digests uploaded to the
+>> kernel with the unknown digests. Then, they verify the obtained list.
+>>
+>> There are two ways to verify the digests: searching them in a reference
+>> database, or checking a signature. With the 'ima-sig' measurement list
+>> template, it is possible to verify signatures for each accessed file.
+>> With this patch set, it is possible to verify the signature of
+>> the file containing the digests uploaded to the kernel. If the data
+>> format changes, the signature cannot be verified.
+>>
+>> To avoid this limitation, the parsers could be moved to a userspace
+>> tool which then uploads the parsed digests to the kernel. IMA would
+>> measure the original files. But, if the tool is compromised, it could
+>> load digests not included in the parsed files. With the current solution
+>> this problem does not arise because no changes can be done by userspace
+>> applications to the uploaded data while digests are parsed by IMA.
+>>
+>> I could remove the RPM parser from the patch set for now.
+>>
+>> Is the remaining part of the patch set ok, and is the explanation of
+>> what it does clear?
+>
+> From a trusted boot perspective, file measurements are added to the
+> measurement list, before access to the file is given.  The measurement
+> list contains ALL measurements, as defined by policy.  This patch set
+> changes that meaning to be all measurements, as defined by policy,
+> with the exception of those in a white list.
 
-> Ah, I'm slowly starting to understand how this fits together. So you can add
-> a key either through key_add() from local user space, or through an rxrpc
-> socket.
+The digest list is also measured, so the measurement list is complete.
+Verifiers have to check the digest of digest lists. Otherwise, they
+would get an unknown digest and conclude that the system being verified
+has been compromised.
 
-No, you can't add keys through an rxrpc socket.
+If you prefer, I could add a new policy rule option to avoid file
+measurements if the digest is in the digest list.
 
-There are three 'classes' of key:
 
- (1) Client keys (type rxrpc).  These must be added by add_key() by userspace
-     (but could also be acquired by upcalling to /sbin/request-key) and then
-     the kernel calls request_key() to locate them on entry through either a
-     kafs inode/file operation or through sendmsg() to an AF_RXRPC socket.
+> Changing the fundamental meaning of the measurement list is not
+> acceptable.  You could define a new securityfs file to differentiate
+> between the full measurement list and this abbreviated one.  But
 
- (2) Server keys (type rxrpc_s).  These are created by userspace and are
-     presented to an AF_RXRPC server socket by calling setsockopt().  The
-     server uses these to validate/decrypt the token passed by a RESPONSE
-     packet.
+There cannot be two measurement lists at the same time. Providing the
+full measurement list (containing the digest of files being accessed)
+implies that its integrity must be protected with PCR extends, making
+the optimization done by this patch set useless.
 
- (3) Service connection keys (type rxrpc).  These are created internally by
-     AF_RXRPC after a successful challenge/response negotiation to hold the
-     security details so that we have a struct key to pass around that
-     corresponds to the key in (1).
 
-David
+> before making this sort of change, I would prefer to address the
+> underlying problem - TPM peformance.
+
+Even if the TPM driver performance improves significantly (17 seconds
+for 1000 extends), the boot time delay would be still noticeable
+(8.5 seconds for normal boot + 24 seconds for 1400 PCR extends).
+
+In my opinion, this patch set is useful without considering the
+performance improvement: reduced size of measurement lists and
+verification of digest list signatures, instead of file signatures,
+where signatures are already provided by Linux distributions.
+
+
+> There are a couple of things that could be done to improve the TPM
+> driver performance, itself.  Once all of these options have been
+> pursued, we could then consider batching the measurements to the TPM,
+> meaning that the measurement list would still contain all the file
+> measurements, but instead of extending the TPM for each measurement, a
+> batched hash - a hash of a group of file measurements - would be
+> extended into the TPM.
+
+Probably, I didn't explain clearly that this patch set does not decrease
+the security of IMA.
+
+Extending the PCR for a group of file measurements means that the system
+can be compromised between two PCR extends without detection because
+a malicious binary could alter IMA before the next extend.
+
+This patch set extends the PCR with the digest of digest lists, before
+files are accessed. No actions happen before either the digest lists
+have been measured or the file measurement is added to the measurement
+list, if the file digest is not included in the digest list.
+
+Roberto
+
+
+> Mimi
+>
+>>> I'm not really clear on exactly how this patch series works.  Can you
+>>> provide a more concrete explanation of what steps would occur during boot
+>>> and attestation?
+>>>
+>
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
