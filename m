@@ -1,122 +1,44 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Wed, 9 Aug 2017 11:31:15 -0400
-Subject: [Linux-ima-devel] [RFC PATCH 1/5] ima: extend clone() with IMA
-In-Reply-To: <TU4PR84MB0302CDE76E5E05075CF16A11FF8A0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
-References: <TU4PR84MB0302CDE76E5E05075CF16A11FF8A0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
-Message-ID: <16ab6c1f-3071-22ee-f526-3ac3603a047e@linux.vnet.ibm.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 09 Aug 2017 16:45:47 +0100
+Subject: [PATCH 3/3] net: rxrpc: Replace time_t type with time64_t type
+In-Reply-To: <CAK8P3a2STbhgFB5kbVTZqAgY70K_GCaWgj6Kqs4RJOOt2oSd-g@mail.gmail.com>
+References: <CAK8P3a2STbhgFB5kbVTZqAgY70K_GCaWgj6Kqs4RJOOt2oSd-g@mail.gmail.com>
+	<cover.1502246501.git.baolin.wang@linaro.org>
+	<8ac57c96bf5a0695ecc67fd230440b0b9d15740f.1502246502.git.baolin.wang@linaro.org>
+	<CAK8P3a2WU5uYddGrkWhyfNB4qTEDYne_pyCVG6n5b1w+vb1-OQ@mail.gmail.com>
+	<6767.1502271233@warthog.procyon.org.uk>
+	<CAK8P3a3L11rXAV8-hE1fNtAZyMBNnQneRm5g7F8VDmk7HjQV4A@mail.gmail.com>
+	<11686.1502285205@warthog.procyon.org.uk>
+Message-ID: <29920.1502293547@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08/08/2017 09:22 AM, Magalhaes, Guilherme (Brazil R&D-CL) wrote:
-> Stefan,
-> Still on the vTPM requirements, could you help answering the following
-> questions?
->
-> 1. Where will the boot measurements be stored? What is the integrity
-> measurement domain for this vTPM? The current proposal is that the
-> vTPM would be used for the container (or namespace) files/inodes.
-> What else will be available from the vTPM? For example, will the vTPM
-> provide the UEFI measurements on the first PCRs (copied/proxied from
-> physical TPM)?
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-The vTPM will receive PCR extends exclusively from the namespace it is 
-associated with. The UEFI measurements could be retrieved from the 
-hardware TPM. They are not copied since this would require copying the 
-UEFI measurement list of the host as well. Otherwise the vTPM allows all 
-commands to be used.
+> Ah, I'm slowly starting to understand how this fits together. So you can add
+> a key either through key_add() from local user space, or through an rxrpc
+> socket.
 
->
-> 2. From an attestation/quote perspective, how do you envision the key
-> material to be managed (e.g. the vTPM EK and/or Attestation Key is
-> fixed to the physical TPM, or it's cryptographically bound to it)?
+No, you can't add keys through an rxrpc socket.
 
-For quotes by the vTPM to work the EK and AIK need to be inside the 
-vTPM. Similarly the EK and AIK of the hardware TPM would need be bound 
-to the hardware TPM for the quoting of the hardware TPM's PCRs to work. 
-If there's an official way, design by TCG for example, for how to quote 
-the PCRs of a virtual TPM by the hardware TPM, I would like to know.
+There are three 'classes' of key:
 
->
-> 3. Can you elaborate more on the alignment of this solution with the
-> TCG requirements, especially considering the lack of isolation on the
-> vTPM solution, do you have a future plan to cover those issues?
+ (1) Client keys (type rxrpc).  These must be added by add_key() by userspace
+     (but could also be acquired by upcalling to /sbin/request-key) and then
+     the kernel calls request_key() to locate them on entry through either a
+     kafs inode/file operation or through sendmsg() to an AF_RXRPC socket.
 
-A software emulated TPM does have its challenges when it comes to 
-isolation from the root user, as explained in the last email. I am not 
-sure there is a solution for protecting it from attacks from root, 
-though we can protect it from non-root users fairly easily. If there are 
-other isolation requirements than that, let me know.
+ (2) Server keys (type rxrpc_s).  These are created by userspace and are
+     presented to an AF_RXRPC server socket by calling setsockopt().  The
+     server uses these to validate/decrypt the token passed by a RESPONSE
+     packet.
 
+ (3) Service connection keys (type rxrpc).  These are created internally by
+     AF_RXRPC after a successful challenge/response negotiation to hold the
+     security details so that we have a struct key to pass around that
+     corresponds to the key in (1).
 
->
-> 4. In a micro services pattern, or a serverless compute pattern, in
-> which one or more containers are created to handle each individual
-> request it is possible that there will be several thousand containers
-> created per hour on a busy server. What is the expected performance
-> and scalability of vTPMs within such an environment?
-
-A vTPM would be created as part of creating a container. The creation of 
-certificates takes a couple of seconds to contact the CA and mint the 
-cert. I would say not all of the containers would need to have a 
-certificate.
-
-     Stefan
-
->
-> --
-> Guilherme
->
->> -----Original Message-----
->> From: Stefan Berger [mailto:stefanb at linux.vnet.ibm.com]
->> Sent: quinta-feira, 27 de julho de 2017 17:52
->> To: Magalhaes, Guilherme (Brazil R&D-CL) <guilherme.magalhaes@hpe.com>;
->> Mimi Zohar <zohar@linux.vnet.ibm.com>; Serge E. Hallyn <serge@hallyn.com>
->> Cc: Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>; Yuqiong Sun
->> <sunyuqiong1988@gmail.com>; containers <containers@lists.linux-
->> foundation.org>; linux-kernel <linux-kernel@vger.kernel.org>; David Safford
->> <david.safford@ge.com>; James Bottomley
->> <James.Bottomley@HansenPartnership.com>; linux-security-module <linux-
->> security-module at vger.kernel.org>; ima-devel <linux-ima-
->> devel at lists.sourceforge.net>; Yuqiong Sun <suny@us.ibm.com>
->> Subject: Re: [Linux-ima-devel] [RFC PATCH 1/5] ima: extend clone() with IMA
->> namespace support
->>
->> On 07/27/2017 03:39 PM, Magalhaes, Guilherme (Brazil R&D-CL) wrote:
->>>> There's a vTPM proxy driver in the kernel that enables spawning a
->>>> frontend /dev/tpm%d and an anonymous backend file descriptor where a
->>>> vTPM can listen on for TPM commands. I integrated this with 'swtpm' and
->>>> I have been working on integrating this into runc. Currently each
->>>> container started with runc can get one (or multiple) vTPMs and
->>>> /dev/tpm0 [and /dev/tpmrm0 in case of TPM2] then appear inside the
->>>> container.
->>>>
->>> This is an interesting solution especially for nested namespaces with the
->>> recursive application of measurements and a having list per container.
->>>
->>> Following the TCG specs/requirements, what could we say about security
->>> guarantees of real TPMs Vs this vTPM implementation?
->>
->> A non-root user may not be able to do access the (permanent) state of
->> the vTPM state files since the container management stack would restrict
->> access to the files using DAC. Access to runtime data is also prevented
->> since the vTPM would not run under the account of the non-root user.
->>
->> To protect the vTPM's permanent state file from access by a root user it
->> comes down to preventing the root user from getting a hold of the key
->> used for encrypting that file. Encrypting the state of the vTPM is
->> probably the best we can do to approximate a temper-resistant chip, but
->> preventing the root user from accessing the key may be more challenging.
->> Preventing root from accessing runtime data could be achieved by using
->> XGS or a similar technology.
->>
->>       Stefan
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
