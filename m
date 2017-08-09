@@ -1,59 +1,38 @@
-From: tycho@docker.com (Tycho Andersen)
-Date: Wed, 9 Aug 2017 14:22:30 -0600
-Subject: [PATCH v3 0/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
-In-Reply-To: <1502305317-85052-1-git-send-email-keescook@chromium.org>
-References: <1502305317-85052-1-git-send-email-keescook@chromium.org>
-Message-ID: <20170809202230.ivyv2cdeknb4tyn7@smitten>
+From: kgold@linux.vnet.ibm.com (Ken Goldman)
+Date: Wed, 9 Aug 2017 16:23:12 -0400
+Subject: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send() performance by
+	ignoring burstcount
+In-Reply-To: <20170808191145.kggmoczd5laiccrn@linux.intel.com>
+References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
+	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
+	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
+Message-ID: <819e3d38-3f16-a32b-1928-c425b763d5f8@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Aug 09, 2017 at 12:01:53PM -0700, Kees Cook wrote:
-> This series is the result of Fabricio and I going around a few times
-> on possible solutions for finding a way to enhance RET_KILL to kill
-> the process group. There's a lot of ways this could be done, but I
-> wanted something that felt cleanest. As it happens, Tyler's recent
-> patch series for logging improvement also needs to know a litte bit
-> more during filter runs, and the solution for both is to pass back
-> the matched filter. This lets us examine it here for RET_KILL and
-> in the future for logging changes.
-> 
-> The filter passing is patch 1, the new flag for RET_KILL is patch 2.
-> Some test refactoring is in patch 3 for the RET_DATA ordering, and
-> patch 4 is the test for the new RET_KILL flag.
-> 
-> One thing missing is that CRIU will likely need to be updated, since
-> saving/restoring seccomp filter _rules_ will not include the filter
-> _flags_ for a process. This can be addressed separately.
+On 8/8/2017 3:11 PM, Jarkko Sakkinen wrote:
+> On Mon, Aug 07, 2017 at 01:52:34PM +0200, Peter Huewe wrote:
+>> Imho: NACK from my side.
+> After these viewpoints definitive NACK from my side too...
 
-Thanks for the heads up, I suppose PTRACE_SECCOMP_GET_FLAGS similar to
-how PTRACE_SECCOMP_GET_FILTER works will be fine for this. One
-question is: would we then also need to keep track of the TSYNC flag?
-I don't think CRIU needs this to be correct, and we can grab the
-KILL_PROCESS flag from filter->kill_process, so perhaps it's moot.
 
-Anyway, happy to do this and the userspace part when this lands.
+I responded to the thread comments separately.  However, assuming NACK 
+is the final response, I have a question.
 
-Cheers,
+The problem is the 5 msec sleep between polls of burst count.  In the 
+case of one TPM with an 8 byte FIFO, a 32 byte transfer incurs 4 of 
+these sleeps.
 
-Tycho
+Would another solution be to reduce the burst count poll and sleep to, 
+e.g., 100 usec or even 10 usec?  This would probably help greatly, but 
+still not incur the wait states that triggered the NACK.
 
-> Please take a look!
-> 
-> Thanks,
-> 
-> -Kees
-> 
-> v3:
-> - adjust seccomp_run_filters() to avoid later filters from masking
->   kill-process RET_KILL actions (drewry)
-> - add test for masked RET_KILL.
-> 
-> v2:
-> - moved kill_process bool into struct padding gap (tyhicks)
-> - improved comments/docs in various places for clarify (tyhicks)
-> - use ASSERT_TRUE() for WIFEXITED and WIFSIGNALLED (tyhicks)
-> - adding Reviewed-bys from tyhicks
-> 
+My worry is that the scheduler would not be able to context switch that 
+fast, and so we wouldn't actually see usec speed polling.
+
+Can a kernel expert offer an opinion?
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
