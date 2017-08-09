@@ -1,86 +1,91 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Wed, 9 Aug 2017 11:01:17 +0200
-Subject: [PATCH 3/3] net: rxrpc: Replace time_t type with time64_t type
-In-Reply-To: <8ac57c96bf5a0695ecc67fd230440b0b9d15740f.1502246502.git.baolin.wang@linaro.org>
-References: <cover.1502246501.git.baolin.wang@linaro.org>
-	<8ac57c96bf5a0695ecc67fd230440b0b9d15740f.1502246502.git.baolin.wang@linaro.org>
-Message-ID: <CAK8P3a2WU5uYddGrkWhyfNB4qTEDYne_pyCVG6n5b1w+vb1-OQ@mail.gmail.com>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Wed, 9 Aug 2017 11:15:32 +0200
+Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for RPM
+	data type
+In-Reply-To: <alpine.LRH.2.20.1708021716440.1117@namei.org>
+References: <20170725154423.24845-9-roberto.sassu@huawei.com>
+	<20170801102036.15371-1-roberto.sassu@huawei.com>
+	<20170801102709.GA24285@infradead.org>
+	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
+	<alpine.LRH.2.20.1708021716440.1117@namei.org>
+Message-ID: <0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Aug 9, 2017 at 4:51 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
-
-> diff --git a/include/keys/rxrpc-type.h b/include/keys/rxrpc-type.h
-> index 5de0673..76421e2 100644
-> --- a/include/keys/rxrpc-type.h
-> +++ b/include/keys/rxrpc-type.h
-> @@ -127,4 +127,25 @@ struct rxrpc_key_data_v1 {
->  #define AFSTOKEN_K5_ADDRESSES_MAX      16      /* max K5 addresses */
->  #define AFSTOKEN_K5_AUTHDATA_MAX       16      /* max K5 pieces of auth data */
+On 8/2/2017 9:22 AM, James Morris wrote:
+> On Tue, 1 Aug 2017, Roberto Sassu wrote:
 >
-> +/*
-> + * truncate a time64_t to the range from 1970 to 2106 as
-> + * in the network protocol
-> + */
-> +static inline u32 rxrpc_time64_to_u32(time64_t time)
-> +{
-> +       if (time < 0)
-> +               return 0;
-> +
-> +       if (time > UINT_MAX)
-> +               return UINT_MAX;
-> +
-> +       return (u32)time;
-> +}
->+
-> +/* extend u32 back to time64_t using the same 1970-2106 range */
-> +static inline time64_t rxrpc_u32_to_time64(u32 time)
-> +{
-> +       return (time64_t)time;
-> +}
-
-When reviewing this, I could not find any clear definition on whether
-the preparse functions should treat this as a signed or unsigned
-32-bit number. The function as defined here documents as an unsigned
-as that is more useful (it pushes out the last day this works from year
-2038 to 2106) and matches the existing behavior that we got on
-64-bit architectures (intentionally or not).
-
-> @@ -433,6 +435,7 @@ static int rxrpc_preparse_xdr_rxk5(struct key_preparsed_payload *prep,
->         struct rxrpc_key_token *token, **pptoken;
->         struct rxk5_key *rxk5;
->         const __be32 *end_xdr = xdr + (toklen >> 2);
-> +       time64_t expiry;
->         int ret;
+>> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
+>>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
+>>>> This patch introduces a parser for RPM packages. It extracts the digests
+>>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
+>>>> data
+>>>> before adding them to the hash table.
+>>>>
+>>>> The advantage of this data type is that verifiers can determine who
+>>>> produced that data, as headers are signed by Linux distributions vendors.
+>>>> RPM headers signatures can be provided as digest list metadata.
+>>>
+>>> Err, parsing arbitrary file formats has no business in the kernel.
+>>
+>> The benefit of this choice is that no actions are required for
+>> Linux distribution vendors to support the solution I'm proposing,
+>> because they already provide signed digest lists (RPM headers).
+>>
+>> Since the proof of loading a digest list is the digest of the
+>> digest list (included in the list metadata), if RPM headers are
+>> converted to a different format, remote attestation verifiers
+>> cannot check the signature.
+>>
+>> If the concern is security, it would be possible to prevent unsigned
+>> RPM headers from being parsed, if the PGP key type is upstreamed
+>> (adding in CC keyrings at vger.kernel.org).
 >
->         _enter(",{%x,%x,%x,%x},%u",
-> @@ -533,8 +536,9 @@ static int rxrpc_preparse_xdr_rxk5(struct key_preparsed_payload *prep,
->              pptoken = &(*pptoken)->next)
->                 continue;
->         *pptoken = token;
-> -       if (token->kad->expiry < prep->expiry)
-> -               prep->expiry = token->kad->expiry;
-> +       expiry = rxrpc_u32_to_time64(token->kad->expiry);
-> +       if (expiry < prep->expiry)
-> +               prep->expiry = expiry;
+> It's a security concern and also a layering violation, there should be no
+> need to parse package file formats in the kernel.
+
+Parsing RPMs is not strictly necessary. Digests from the headers
+can be extracted and written to a new file using the compact data
+format (introduced with patch 7/12).
+
+At boot time, IMA measures this file before digests are uploaded to the
+kernel. At this point, only files with unknown digest will be added
+to the measurement list. At verification time, verifiers recreate the
+measurement list by merging together the digests uploaded to the
+kernel with the unknown digests. Then, they verify the obtained list.
+
+There are two ways to verify the digests: searching them in a reference
+database, or checking a signature. With the 'ima-sig' measurement list
+template, it is possible to verify signatures for each accessed file.
+With this patch set, it is possible to verify the signature of
+the file containing the digests uploaded to the kernel. If the data
+format changes, the signature cannot be verified.
+
+To avoid this limitation, the parsers could be moved to a userspace
+tool which then uploads the parsed digests to the kernel. IMA would
+measure the original files. But, if the tool is compromised, it could
+load digests not included in the parsed files. With the current solution
+this problem does not arise because no changes can be done by userspace
+applications to the uploaded data while digests are parsed by IMA.
+
+I could remove the RPM parser from the patch set for now.
+
+Is the remaining part of the patch set ok, and is the explanation of
+what it does clear?
+
+Thanks
+
+Roberto
+
+
+> I'm not really clear on exactly how this patch series works.  Can you
+> provide a more concrete explanation of what steps would occur during boot
+> and attestation?
 >
->         _leave(" = 0");
->         return 0;
 
-I'm still slightly puzzled by what this function does: it does have
-four timestamps
-(authtime, starttime, endtime, renew_till) that are all transferred as
-64-bit values
-and won't expire, but then it also uses the 32-bit expiry field in
-rxrpc_key_token->kad->expiry instead of the 64-bit rxrpc_key_token->k5
-fields.
-
-This appears to overlay the first 32 bits of the rxrpc_key_token->k5->starttime
-field, which is also a time value on little-endian architectures by chance,
-but I would assume that it's always in the past, meaning the keys would
-already be expired. Any idea what is the intended behavior here?
-
-       Arnd
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
