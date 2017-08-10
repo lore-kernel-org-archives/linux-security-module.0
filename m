@@ -1,96 +1,104 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 10 Aug 2017 19:41:47 -0400
-Subject: [PATCH v5 4/4] ima: define "fs_unsafe" builtin policy
-In-Reply-To: <1502408507-4257-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1502408507-4257-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1502408507-4257-5-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Thu, 10 Aug 2017 19:41:43 -0400
+Subject: [PATCH v5 0/4] define new fs integrity_read method 
+Message-ID: <1502408507-4257-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Permit normally denied access/execute permission for files in policy
-on IMA unsupported filesystems.  This patch defines "fs_unsafe", a
-builtin policy.
+With the introduction of IMA-appraisal and the need to write file
+hashes as security xattrs, IMA needed to take the global i_mutex
+lock.  process_measurement() took the iint->mutex first and then
+the i_mutex, while setxattr, chmod and chown took the locks in
+reverse order.  To resolve this potential deadlock, the iint->mutex
+was removed.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Some filesystems have recently replaced their filesystem dependent
+lock with the global i_rwsem (formerly the i_mutex) to read a file.
+As a result, when IMA attempts to calculate the file hash, reading
+the file attempts to take the i_rwsem again.
 
----
-Changelog v3:
-- include dont_failsafe rule when displaying policy
+To resolve this locking problem, this patch set introduces a new
+->integrity_read file operation method.  Until all filesystems
+define the new ->integrity_read method, files that were previously
+measured might not be currently measured and files that were
+previously appraised might fail to be appraised properly.
 
- Documentation/admin-guide/kernel-parameters.txt |  8 +++++++-
- security/integrity/ima/ima_policy.c             | 12 ++++++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
+Version 2 of this patch set, introduced measurement entries and
+IMA-audit messages containing file hash values of 0's, instead
+of the actual file hash, to indicate that the file hash could not
+be calculated.  Like for any other file signature verification
+error, file access/execute permission is denied.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d9c171ce4190..4e303be83df6 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1502,7 +1502,7 @@
- 
- 	ima_policy=	[IMA]
- 			The builtin policies to load during IMA setup.
--			Format: "tcb | appraise_tcb | secure_boot"
-+			Format: "tcb | appraise_tcb | secure_boot | fs_unsafe"
- 
- 			The "tcb" policy measures all programs exec'd, files
- 			mmap'd for exec, and all files opened with the read
-@@ -1517,6 +1517,12 @@
- 			of files (eg. kexec kernel image, kernel modules,
- 			firmware, policy, etc) based on file signatures.
- 
-+			The "fs_unsafe" policy permits normally denied
-+			access/execute permission for files in policy on IMA
-+			unsupported filesystems.  Note this option, as the
-+			name implies, is not safe and not recommended for
-+			any environments other than testing.
-+
- 	ima_tcb		[IMA] Deprecated.  Use ima_policy= instead.
- 			Load a policy which meets the needs of the Trusted
- 			Computing Base.  This means IMA will measure all
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 43b85a4fb8e8..cddd9dfb01e1 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -169,6 +169,10 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
- };
- 
-+static struct ima_rule_entry dont_failsafe_rules[] __ro_after_init = {
-+	{.action = DONT_FAILSAFE}
-+};
-+
- static LIST_HEAD(ima_default_rules);
- static LIST_HEAD(ima_policy_rules);
- static LIST_HEAD(ima_temp_rules);
-@@ -188,6 +192,7 @@ __setup("ima_tcb", default_measure_policy_setup);
- 
- static bool ima_use_appraise_tcb __initdata;
- static bool ima_use_secure_boot __initdata;
-+static bool ima_use_dont_failsafe __initdata;
- static int __init policy_setup(char *str)
- {
- 	char *p;
-@@ -201,6 +206,10 @@ static int __init policy_setup(char *str)
- 			ima_use_appraise_tcb = 1;
- 		else if (strcmp(p, "secure_boot") == 0)
- 			ima_use_secure_boot = 1;
-+		else if (strcmp(p, "fs_unsafe") == 0) {
-+			ima_use_dont_failsafe = 1;
-+			set_failsafe(0);
-+		}
- 	}
- 
- 	return 1;
-@@ -470,6 +479,9 @@ void __init ima_init_policy(void)
- 			temp_ima_appraise |= IMA_APPRAISE_POLICY;
- 	}
- 
-+	if (ima_use_dont_failsafe)
-+		list_add_tail(&dont_failsafe_rules[0].list, &ima_default_rules);
-+
- 	ima_rules = &ima_default_rules;
- 	ima_update_policy_flag();
- }
+To override the IMA policy, allowing unverified code to be
+accessed/executed on filesystems not supported by IMA, version 2 of
+this patch set defined a new policy "action" named "dont_failsafe"
+and a new builtin policy named "fs_unsafe", which can be specified
+on the boot command line.
+
+Direct Access:
+Although the new integrity_read method works for files opened with
+the "O_DIRECT" flag on block devices that support DAX, for consistency
+instead of failing just the buffered read, this patch set fails both
+buffered read and DAX.  (Refer to commit f9b2a735bddd "ima: audit log
+files opened with O_DIRECT flag" for an explanation of the buffered
+read locking issues.)
+
+
+Change log v5:
+- fail files opened O_DIRECT, but include access attempt in measurement
+list.
+- removed ocf2 and gfs2 integrity_read support.
+
+Change log v4:
+- define ext2/4 specific ->integrity_read functions based Jan Kara's
+review.
+- properly fail file open with O_DIRECT on filesystems not mounted
+with "-o dax".
+- remove the "permit_directio" IMA policy option.
+
+Change log v3:
+- define simple_read_iter_from_buffer
+- replace the existing efivarfs ->read method with ->read_iter method.
+- squashed other fs definitions of ->integrity_read with this patch.
+- include dont_failsafe rule when displaying policy.
+- fail attempt to add dont_failsafe rule when appending to the policy.
+- moved '---' divider before change log, as requested in review.
+
+Mimi
+
+Christoph Hellwig (1):
+  ima: use fs method to read integrity data
+
+Mimi Zohar (3):
+  ima: always measure and audit files in policy
+  ima: define "dont_failsafe" policy action rule
+  ima: define "fs_unsafe" builtin policy
+
+ Documentation/ABI/testing/ima_policy            |  3 +-
+ Documentation/admin-guide/kernel-parameters.txt |  8 +++-
+ fs/btrfs/file.c                                 |  1 +
+ fs/efivarfs/file.c                              | 12 ++---
+ fs/ext2/file.c                                  | 17 +++++++
+ fs/ext4/file.c                                  | 20 +++++++++
+ fs/f2fs/file.c                                  |  1 +
+ fs/jffs2/file.c                                 |  1 +
+ fs/jfs/file.c                                   |  1 +
+ fs/libfs.c                                      | 32 +++++++++++++
+ fs/nilfs2/file.c                                |  1 +
+ fs/ramfs/file-mmu.c                             |  1 +
+ fs/ramfs/file-nommu.c                           |  1 +
+ fs/ubifs/file.c                                 |  1 +
+ fs/xfs/xfs_file.c                               | 21 +++++++++
+ include/linux/fs.h                              |  3 ++
+ mm/shmem.c                                      |  1 +
+ security/integrity/iint.c                       | 20 ++++++---
+ security/integrity/ima/ima.h                    |  1 +
+ security/integrity/ima/ima_api.c                | 60 ++++++++++++++-----------
+ security/integrity/ima/ima_crypto.c             | 10 +++++
+ security/integrity/ima/ima_main.c               | 19 +++++---
+ security/integrity/ima/ima_policy.c             | 41 ++++++++++++++++-
+ 23 files changed, 231 insertions(+), 45 deletions(-)
+
 -- 
 2.7.4
 
