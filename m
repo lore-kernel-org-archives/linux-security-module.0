@@ -1,91 +1,191 @@
-From: mhocko@kernel.org (Michal Hocko)
-Date: Thu, 10 Aug 2017 09:14:05 +0200
-Subject: [RFC] Tagging of vmalloc pages for supporting the pmalloc
-	allocator
-In-Reply-To: <20170808231535.GA20840@redhat.com>
-References: <ab4809cd-0efc-a79d-6852-4bd2349a2b3f@huawei.com>
-	<20170803151550.GX12521@dhcp22.suse.cz>
-	<abe0c086-8c5a-d6fb-63c4-bf75528d0ec5@huawei.com>
-	<20170804081240.GF26029@dhcp22.suse.cz>
-	<7733852a-67c9-17a3-4031-cb08520b9ad2@huawei.com>
-	<20170807133107.GA16616@redhat.com>
-	<555dc453-3028-199a-881a-3ddeb41e4d6d@huawei.com>
-	<20170807191235.GE16616@redhat.com>
-	<c06fdd1a-fb18-8e17-b4fb-ea73ccd93f90@huawei.com>
-	<20170808231535.GA20840@redhat.com>
-Message-ID: <20170810071404.GD23863@dhcp22.suse.cz>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 10 Aug 2017 09:12:45 -0400
+Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for
+	RPM data type
+In-Reply-To: <fffaf219-a633-478a-ec0e-2869419fe3b0@huawei.com>
+References: <20170725154423.24845-9-roberto.sassu@huawei.com>
+	<20170801102036.15371-1-roberto.sassu@huawei.com>
+	<20170801102709.GA24285@infradead.org>
+	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
+	<alpine.LRH.2.20.1708021716440.1117@namei.org>
+	<0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
+	<1502289048.19092.62.camel@linux.vnet.ibm.com>
+	<fffaf219-a633-478a-ec0e-2869419fe3b0@huawei.com>
+Message-ID: <1502370765.3367.69.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue 08-08-17 19:15:36, Jerome Glisse wrote:
-> On Tue, Aug 08, 2017 at 03:59:36PM +0300, Igor Stoppa wrote:
-> > On 07/08/17 22:12, Jerome Glisse wrote:
-> > > On Mon, Aug 07, 2017 at 05:13:00PM +0300, Igor Stoppa wrote:
-> > 
-> > [...]
-> > 
-> > >> I have an updated version of the old proposal:
-> > >>
-> > >> * put a magic number in the private field, during initialization of
-> > >> pmalloc pages
-> > >>
-> > >> * during hardened usercopy verification, when I have to assess if a page
-> > >> is of pmalloc type, compare the private field against the magic number
-> > >>
-> > >> * if and only if the private field matches the magic number, then invoke
-> > >> find_vm_area(), so that the slowness affects only a possibly limited
-> > >> amount of false positives.
-> > > 
-> > > This all sounds good to me.
-> > 
-> > ok, I still have one doubt wrt defining the flag.
-> > Where should I do it?
-> > 
-> > vmalloc.h has the following:
-> > 
-> > /* bits in flags of vmalloc's vm_struct below */
-> > #define VM_IOREMAP		0x00000001	/* ioremap() and friends
-> > 						*/
-> > #define VM_ALLOC		0x00000002	/* vmalloc() */
-> > #define VM_MAP			0x00000004	/* vmap()ed pages */
-> > #define VM_USERMAP		0x00000008	/* suitable for
-> > 						   remap_vmalloc_range
-> > 						*/
-> > #define VM_UNINITIALIZED	0x00000020	/* vm_struct is not
-> > 						   fully initialized */
-> > #define VM_NO_GUARD		0x00000040      /* don't add guard page
-> > 						*/
-> > #define VM_KASAN		0x00000080      /* has allocated kasan
-> > 						shadow memory */
-> > /* bits [20..32] reserved for arch specific ioremap internals */
-> > 
-> > 
-> > 
-> > I am tempted to add
-> > 
-> > #define VM_PMALLOC		0x00000100
-> > 
-> > But would it be acceptable, to mention pmalloc into vmalloc?
-> > 
-> > Should I name it VM_PRIVATE bit, instead?
-> > 
-> > Using VM_PRIVATE would avoid contaminating vmalloc with something that
-> > depends on it (like VM_PMALLOC would do).
-> > 
-> > But using VM_PRIVATE will likely add tracking issues, if someone else
-> > wants to use the same bit and it's not clear who is the user, if any.
+On Wed, 2017-08-09 at 19:18 +0200, Roberto Sassu wrote:
+> On 8/9/2017 4:30 PM, Mimi Zohar wrote:
+> > On Wed, 2017-08-09 at 11:15 +0200, Roberto Sassu wrote:
+> >> On 8/2/2017 9:22 AM, James Morris wrote:
+> >>> On Tue, 1 Aug 2017, Roberto Sassu wrote:
+> >>>
+> >>>> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
+> >>>>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
+> >>>>>> This patch introduces a parser for RPM packages. It extracts the digests
+> >>>>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
+> >>>>>> data
+> >>>>>> before adding them to the hash table.
+> >>>>>>
+> >>>>>> The advantage of this data type is that verifiers can determine who
+> >>>>>> produced that data, as headers are signed by Linux distributions vendors.
+> >>>>>> RPM headers signatures can be provided as digest list metadata.
+> >>>>>
+> >>>>> Err, parsing arbitrary file formats has no business in the kernel.
+> >>>>
+> >>>> The benefit of this choice is that no actions are required for
+> >>>> Linux distribution vendors to support the solution I'm proposing,
+> >>>> because they already provide signed digest lists (RPM headers).
+> >>>>
+> >>>> Since the proof of loading a digest list is the digest of the
+> >>>> digest list (included in the list metadata), if RPM headers are
+> >>>> converted to a different format, remote attestation verifiers
+> >>>> cannot check the signature.
+> >>>>
+> >>>> If the concern is security, it would be possible to prevent unsigned
+> >>>> RPM headers from being parsed, if the PGP key type is upstreamed
+> >>>> (adding in CC keyrings at vger.kernel.org).
+> >>>
+> >>> It's a security concern and also a layering violation, there should be no
+> >>> need to parse package file formats in the kernel.
+> >>
+> >> Parsing RPMs is not strictly necessary. Digests from the headers
+> >> can be extracted and written to a new file using the compact data
+> >> format (introduced with patch 7/12).
+> >>
+> >> At boot time, IMA measures this file before digests are uploaded to the
+> >> kernel. At this point, only files with unknown digest will be added
+> >> to the measurement list. At verification time, verifiers recreate the
+> >> measurement list by merging together the digests uploaded to the
+> >> kernel with the unknown digests. Then, they verify the obtained list.
+> >>
+> >> There are two ways to verify the digests: searching them in a reference
+> >> database, or checking a signature. With the 'ima-sig' measurement list
+> >> template, it is possible to verify signatures for each accessed file.
+> >> With this patch set, it is possible to verify the signature of
+> >> the file containing the digests uploaded to the kernel. If the data
+> >> format changes, the signature cannot be verified.
+> >>
+> >> To avoid this limitation, the parsers could be moved to a userspace
+> >> tool which then uploads the parsed digests to the kernel. IMA would
+> >> measure the original files. But, if the tool is compromised, it could
+> >> load digests not included in the parsed files. With the current solution
+> >> this problem does not arise because no changes can be done by userspace
+> >> applications to the uploaded data while digests are parsed by IMA.
+> >>
+> >> I could remove the RPM parser from the patch set for now.
+> >>
+> >> Is the remaining part of the patch set ok, and is the explanation of
+> >> what it does clear?
+> >
+> > From a trusted boot perspective, file measurements are added to the
+> > measurement list, before access to the file is given.  The measurement
+> > list contains ALL measurements, as defined by policy.  This patch set
+> > changes that meaning to be all measurements, as defined by policy,
+> > with the exception of those in a white list.
 > 
-> VM_PMALLOC sounds fine to me also adding a comment there pointing to
-> pmalloc documentation would be a good thing to do. The above are flags
-> that are use only inside vmalloc context and so there is no issue
-> here of conflicting with other potential user.
+> The digest list is also measured, so the measurement list is complete.
+> Verifiers have to check the digest of digest lists. Otherwise, they
+> would get an unknown digest and conclude that the system being verified
+> has been compromised.
 
-Yes I agree. VM_PRIVATE just calls for the issues you are dealing with
-at struct page level where you simply do not know who might be (ab)using
-mapping and what not because the naming is just too generic...
--- 
-Michal Hocko
-SUSE Labs
+Your proposal is basically a pre-approved "batched" measurement, of a
+set of known good measurements, without the corresponding list of
+measurements that this "batched" measurement represents. ?Right?
+
+This pre-approved "batched" measurement represents not what has been
+accessed/executed on the system, but what potentially could be
+accessed/executed. ?That's a major difference.
+
+> If you prefer, I could add a new policy rule option to avoid file
+> measurements if the digest is in the digest list.
+
+Huh? ?Patch "ima: don't report measurements if digests are included in
+the loaded lists" is already doing this.
+
+> 
+> > Changing the fundamental meaning of the measurement list is not
+> > acceptable.  You could define a new securityfs file to differentiate
+> > between the full measurement list and this abbreviated one.  But
+> 
+> There cannot be two measurement lists at the same time. Providing the
+> full measurement list (containing the digest of files being accessed)
+> implies that its integrity must be protected with PCR extends, making
+> the optimization done by this patch set useless.
+
+True, so you would be able to configure the system with one or the
+other type of list, not both. ?At least there would be a clear
+understanding of what that list represents.
+
+> 
+> > before making this sort of change, I would prefer to address the
+> > underlying problem - TPM peformance.
+> 
+> Even if the TPM driver performance improves significantly (17 seconds
+> for 1000 extends), the boot time delay would be still noticeable
+> (8.5 seconds for normal boot + 24 seconds for 1400 PCR extends).
+
+Agreed, there is still room for more TPM improvements. ?Just Nayna's
+one patch, without any other changes, brought the timing down from 53s
+for a 1000 extends to just 11s. ?(The initial patch was Nack'ed, but
+we're working with the tpmdd and the TCG's device driver work group
+(DDWG).)
+
+> In my opinion, this patch set is useful without considering the
+> performance improvement: reduced size of measurement lists and
+> verification of digest list signatures, instead of file signatures,
+> where signatures are already provided by Linux distributions.
+
+Right, there's always a trade off. ?My suggestion, assuming we go with
+this approach, would be to make that trade off clear by using
+different lists.
+
+> 
+> > There are a couple of things that could be done to improve the TPM
+> > driver performance, itself.  Once all of these options have been
+> > pursued, we could then consider batching the measurements to the TPM,
+> > meaning that the measurement list would still contain all the file
+> > measurements, but instead of extending the TPM for each measurement, a
+> > batched hash - a hash of a group of file measurements - would be
+> > extended into the TPM.
+> 
+> Probably, I didn't explain clearly that this patch set does not decrease
+> the security of IMA.
+> 
+> Extending the PCR for a group of file measurements means that the system
+> can be compromised between two PCR extends without detection because
+> a malicious binary could alter IMA before the next extend.
+
+Currently, a measurement is added to the measurement list and then is
+used to extend the TPM, before returning to the caller.
+
+A performance improvement would still first add the measurement to the
+measurement list, but would then queue and wait for the measurement to
+extend the TPM, before returning to the caller. ?In a multi threaded
+environment, the queued measurements could be "batched" - a hash of a
+set of hashes - to extend the TPM.
+
+The delay would be at most two times it takes to extend the TPM - one
+to complete an existing current "batched" extend and another new
+"batched" extend.
+
+The difficulty with this approach is identifying which measurements
+are included in which "batched" measurement. ?This approach provides
+the same guarantees as previously.
+
+Before making the TPM performance problem an IMA issue and "fixing" it
+in IMA, I would prefer that the TPM performance be addressed directly.
+
+Mimi
+
+> 
+> This patch set extends the PCR with the digest of digest lists, before
+> files are accessed. No actions happen before either the digest lists
+> have been measured or the file measurement is added to the measurement
+> list, if the file digest is not included in the digest list.
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
