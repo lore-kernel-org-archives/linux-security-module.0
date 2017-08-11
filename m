@@ -1,44 +1,55 @@
 From: hch@lst.de (Christoph Hellwig)
-Date: Fri, 11 Aug 2017 12:18:09 +0200
-Subject: [PATCH v5 1/4] ima: always measure and audit files in policy
-In-Reply-To: <1502408507-4257-2-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Fri, 11 Aug 2017 12:21:13 +0200
+Subject: [PATCH v5 2/4] ima: use fs method to read integrity data
+In-Reply-To: <1502408507-4257-3-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1502408507-4257-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502408507-4257-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20170811101809.GB11531@lst.de>
+	<1502408507-4257-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20170811102113.GC11531@lst.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> +	i_version = file_inode(file)->i_version;
+On Thu, Aug 10, 2017 at 07:41:45PM -0400, Mimi Zohar wrote:
+> From: Christoph Hellwig <hch@lst.de>
+> 
+> Add a new ->integrity_read file operation to read data for integrity
+> hash collection.  This is defined to be equivalent to ->read_iter,
+> except that it will be called with the i_rwsem held exclusively.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-This probably wants a comment that i_version might be unreliable
-unless the file system supports the change attribute.
+Btw, most of this is yours now, feel free to take over the authorship
+with a little credit to me for the initial patch if you want.
 
-> +	result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
-> +		ima_calc_buffer_hash(buf, size, &hash.hdr);
+> Cc: Matthew Garrett <matthew.garrett@nebula.com>
 
-Please write this like proper C code:
+I don't think that will reach Matthew anymore :)
 
-	if (buf)
-		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
-	else
-		result = ima_calc_file_hash(file, &hash.hdr);
+> -static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+> -		size_t count, loff_t *ppos)
+> +static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
+> +				       struct iov_iter *iter)
 
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -441,6 +441,16 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
->  	loff_t i_size;
->  	int rc;
->  
-> +	/*
-> +	 * O_DIRECT not supported for buffered read. For consistency,
-> +	 * don't support O_DIRECT on DAX either.
-> +	 */
+The efivars switch to read_iter should be a separate patch before
+this one.
 
-I can't parse this - O_DIRECT is the opposite of a buffered I/O, including
-reads.
+>  /**
+> + * simple_read_iter_from_buffer - copy data from the buffer to user space
+> + * @iocb: struct containing the file, the current position and other info
+> + * @to: the user space buffer to read to
+> + * @from: the buffer to read from
+> + * @available: the size of the buffer
+> + *
+> + * The simple_read_iter_from_buffer() function reads up to @available bytes
+> + * from the current buffer into the user space buffer.
+> + *
+> + * On success, the current buffer offset is advanced by the number of bytes
+> + * read, or a negative value is returned on error.
+> + **/
+> +ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
+> +				     const void *from, size_t available)
 
-> +	if ((rc == 0) && (action & IMA_APPRAISE_SUBMASK))
-
-no need for the first set of inner braces.
+The addition of simple_read_iter_from_buffer should be another separate
+patch, before efivars starts using it.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
