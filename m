@@ -1,56 +1,66 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 11 Aug 2017 08:34:22 -0400
-Subject: [PATCH v5 1/4] ima: always measure and audit files in policy
-In-Reply-To: <20170811101809.GB11531@lst.de>
+Date: Fri, 11 Aug 2017 09:20:06 -0400
+Subject: [PATCH v5 2/4] ima: use fs method to read integrity data
+In-Reply-To: <20170811102113.GC11531@lst.de>
 References: <1502408507-4257-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502408507-4257-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<20170811101809.GB11531@lst.de>
-Message-ID: <1502454862.3579.65.camel@linux.vnet.ibm.com>
+	<1502408507-4257-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170811102113.GC11531@lst.de>
+Message-ID: <1502457606.3579.87.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-08-11 at 12:18 +0200, Christoph Hellwig wrote:
-> > +	i_version = file_inode(file)->i_version;
+On Fri, 2017-08-11 at 12:21 +0200, Christoph Hellwig wrote:
+> On Thu, Aug 10, 2017 at 07:41:45PM -0400, Mimi Zohar wrote:
+> > From: Christoph Hellwig <hch@lst.de>
+> > 
+> > Add a new ->integrity_read file operation to read data for integrity
+> > hash collection.  This is defined to be equivalent to ->read_iter,
+> > except that it will be called with the i_rwsem held exclusively.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> This probably wants a comment that i_version might be unreliable
-> unless the file system supports the change attribute.
-> 
-> > +	result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
-> > +		ima_calc_buffer_hash(buf, size, &hash.hdr);
-> 
-> Please write this like proper C code:
-> 
-> 	if (buf)
-> 		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
-> 	else
-> 		result = ima_calc_file_hash(file, &hash.hdr);
+> Btw, most of this is yours now, feel free to take over the authorship
+> with a little credit to me for the initial patch if you want.
 
-Sure
+Thank you so much for the initial design and patch!
 
+> > Cc: Matthew Garrett <matthew.garrett@nebula.com>
 > 
-> > +++ b/security/integrity/ima/ima_crypto.c
-> > @@ -441,6 +441,16 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
-> >  	loff_t i_size;
-> >  	int rc;
-> >  
-> > +	/*
-> > +	 * O_DIRECT not supported for buffered read. For consistency,
-> > +	 * don't support O_DIRECT on DAX either.
-> > +	 */
-> 
-> I can't parse this - O_DIRECT is the opposite of a buffered I/O, including
-> reads.
+> I don't think that will reach Matthew anymore :)
 
-Right. I'm trying to differentiate between a file opened with the
-O_DIRECT flag on a filesystem mounted with/without DAX. ?For
-consistency, it was recommended to fail both.
+Trying his other address as listed in MAINTAINERS.
 
 > 
-> > +	if ((rc == 0) && (action & IMA_APPRAISE_SUBMASK))
+> > -static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+> > -		size_t count, loff_t *ppos)
+> > +static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
+> > +				       struct iov_iter *iter)
 > 
-> no need for the first set of inner braces.
+> The efivars switch to read_iter should be a separate patch before
+> this one.
 
-thanks,
+Agreed
+
+> >  /**
+> > + * simple_read_iter_from_buffer - copy data from the buffer to user space
+> > + * @iocb: struct containing the file, the current position and other info
+> > + * @to: the user space buffer to read to
+> > + * @from: the buffer to read from
+> > + * @available: the size of the buffer
+> > + *
+> > + * The simple_read_iter_from_buffer() function reads up to @available bytes
+> > + * from the current buffer into the user space buffer.
+> > + *
+> > + * On success, the current buffer offset is advanced by the number of bytes
+> > + * read, or a negative value is returned on error.
+> > + **/
+> > +ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
+> > +				     const void *from, size_t available)
+> 
+> The addition of simple_read_iter_from_buffer should be another separate
+> patch, before efivars starts using it.
+
+Agreed
 
 Mimi
 
