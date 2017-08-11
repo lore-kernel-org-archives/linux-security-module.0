@@ -1,174 +1,115 @@
-From: fengguang.wu@intel.com (kbuild test robot)
-Date: Sat, 12 Aug 2017 01:29:06 +0800
-Subject: [integrity:next-integrity-read 3/7] fs/efivarfs/file.c:100:9: error:
-	implicit declaration of function 'simple_read_iter_from_buffer'
-Message-ID: <201708120105.yipbvddb%fengguang.wu@intel.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Fri, 11 Aug 2017 11:32:50 -0700
+Subject: [PATCH v3 2/4] seccomp: Add SECCOMP_FILTER_FLAG_KILL_PROCESS
+In-Reply-To: <b1177c7d-7180-a5ad-881e-89ecbf5c80e2@canonical.com>
+References: <1502305317-85052-1-git-send-email-keescook@chromium.org>
+	<1502305317-85052-3-git-send-email-keescook@chromium.org>
+	<b1177c7d-7180-a5ad-881e-89ecbf5c80e2@canonical.com>
+Message-ID: <CAGXu5jJ7nq0VF9tLz=i98eo=DaMKXVNO7NqmtxJHNwVwuZHZGg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity-read
-head:   41c220b87122b621b88186b108b2cfd0fd7d71c2
-commit: 3e7f7650643140c43341b6839a2e4cdc72e3c16a [3/7] efivarfs: replaces the read file operation with read_iter
-config: i386-randconfig-x019-201732 (attached as .config)
-compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-reproduce:
-        git checkout 3e7f7650643140c43341b6839a2e4cdc72e3c16a
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+On Fri, Aug 11, 2017 at 9:58 AM, Tyler Hicks <tyhicks@canonical.com> wrote:
+>> @@ -201,8 +203,25 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd,
+>>        */
+>>       for (; f; f = f->prev) {
+>>               u32 cur_ret = BPF_PROG_RUN(f->prog, sd);
+>> +             u32 action = cur_ret & SECCOMP_RET_ACTION;
+>>
+>> -             if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION)) {
+>> +             /*
+>> +              * In order to distinguish between SECCOMP_RET_KILL and
+>> +              * "higher priority" synthetic SECCOMP_RET_KILL_PROCESS
+>> +              * identified by the kill_process filter flag, treat any
+>> +              * case as immediately stopping filter processing. No
+>> +              * higher priority action can exist, and we can't stop
+>> +              * on the first RET_KILL (which may not have set
+>> +              * f->kill_process) when a RET_KILL further up the filter
+>> +              * list may have f->kill_process set which would go
+>> +              * unnoticed.
+>> +              */
+>> +             if (unlikely(action == SECCOMP_RET_KILL && f->kill_process)) {
+>> +                     *match = f;
+>> +                     return cur_ret;
+>> +             }
+>
+> Why not let the application enforce this via the seccomp filter? In
+> other words, the first filter loaded with
+> SECCOMP_FILTER_FLAG_KILL_PROCESS set could have a rule in the filter
+> that only allows seccomp(2) to be called in the future with the
+> SECCOMP_FILTER_FLAG_KILL_PROCESS flag set.
 
-Note: the integrity/next-integrity-read HEAD 41c220b87122b621b88186b108b2cfd0fd7d71c2 builds fine.
-      It only hurts bisectibility.
+I've been using the guide of "if SECCOMP_RET_KILL_PROCESS _did_ exist,
+how would its semantics differ?"
 
-All errors (new ones prefixed by >>):
+In that magic world, it wouldn't be possible to create a seccomp
+filter to screen out SECCOMP_RET_KILL_PROCESS. Also, being able to
+distinguish between the two states (see below).
 
-   fs/efivarfs/file.c: In function 'efivarfs_file_read_iter':
->> fs/efivarfs/file.c:100:9: error: implicit declaration of function 'simple_read_iter_from_buffer' [-Werror=implicit-function-declaration]
-     size = simple_read_iter_from_buffer(iocb, iter, data,
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/init.h:4:0,
-                    from include/linux/efi.h:14,
-                    from fs/efivarfs/file.c:10:
-   fs/efivarfs/file.c: At top level:
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'strcpy' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:390:2: note: in expansion of macro 'if'
-     if (p_size == (size_t)-1 && q_size == (size_t)-1)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'kmemdup' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:380:2: note: in expansion of macro 'if'
-     if (p_size < size)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'kmemdup' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:378:2: note: in expansion of macro 'if'
-     if (__builtin_constant_p(size) && p_size < size)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memchr_inv' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:369:2: note: in expansion of macro 'if'
-     if (p_size < size)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memchr_inv' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:367:2: note: in expansion of macro 'if'
-     if (__builtin_constant_p(size) && p_size < size)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memchr' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:358:2: note: in expansion of macro 'if'
-     if (p_size < size)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memchr' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:356:2: note: in expansion of macro 'if'
-     if (__builtin_constant_p(size) && p_size < size)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memcmp' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:348:2: note: in expansion of macro 'if'
-     if (p_size < size || q_size < size)
-     ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memcmp' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:345:3: note: in expansion of macro 'if'
-      if (q_size < size)
-      ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memcmp' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
-    #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                          ^~~~~~~~~~
-   include/linux/string.h:343:3: note: in expansion of macro 'if'
-      if (p_size < size)
-      ^~
-   include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'memcmp' which is not static
-       ______f = {     \
-       ^
-   include/linux/compiler.h:154:23: note: in expansion of macro '__trace_if'
+> I understand the reasoning for wanting to enforce this automatically at
+> the kernel level but I think mixing return action priorities with filter
+> flags could be confusing and inflexible in the long run since filters
+> are inherited and your parent's desire to kill the entire thread group
+> may not mix with your desire to only kill a single thread.
 
-vim +/simple_read_iter_from_buffer +100 fs/efivarfs/file.c
+Blocking the use of SECCOMP_FILTER_FLAG_KILL_PROCESS just means a
+child can never perform a KILL_PROCESS, which doesn't really make much
+sense, IMO.
 
-    66	
-    67	static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
-    68					       struct iov_iter *iter)
-    69	{
-    70		struct file *file = iocb->ki_filp;
-    71		struct efivar_entry *var = file->private_data;
-    72		unsigned long datasize = 0;
-    73		u32 attributes;
-    74		void *data;
-    75		ssize_t size = 0;
-    76		int err;
-    77	
-    78		err = efivar_entry_size(var, &datasize);
-    79	
-    80		/*
-    81		 * efivarfs represents uncommitted variables with
-    82		 * zero-length files. Reading them should return EOF.
-    83		 */
-    84		if (err == -ENOENT)
-    85			return 0;
-    86		else if (err)
-    87			return err;
-    88	
-    89		data = kmalloc(datasize + sizeof(attributes), GFP_KERNEL);
-    90	
-    91		if (!data)
-    92			return -ENOMEM;
-    93	
-    94		size = efivar_entry_get(var, &attributes, &datasize,
-    95					data + sizeof(attributes));
-    96		if (size)
-    97			goto out_free;
-    98	
-    99		memcpy(data, &attributes, sizeof(attributes));
- > 100		size = simple_read_iter_from_buffer(iocb, iter, data,
-   101						    datasize + sizeof(attributes));
-   102	out_free:
-   103		kfree(data);
-   104	
-   105		return size;
-   106	}
-   107	
+The trouble may be that KILL_PROCESS would be used sparingly by either
+parent or child, in the sense that maybe "unknown syscall gets
+KILL_PROCESS, but 'connect' should just do KILL_THREAD". Or the
+reverse. There isn't a way to mix combinations of return values across
+filter chains without treating it exactly like a "real"
+SECCOMP_RET_KILL_PROCESS would have worked. That means I have to treat
+it as "higher priority" in the seccomp_run_filters() loop (which is
+luckily very very cheap, as the "unlikely(register == zero)" test is
+correct branch-predicted for the non-zero case, and the test is cheap
+(we've already done the assignment which we need for the "<" test
+below it, so it's a single pipelined instruction for the zero flag).
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+I don't expect to adjust KILL_THREAD vs KILL_PROCESS ever again, so
+I'm not too worried about inflexibility.
+
+What I don't get in this version is a _single_ filter being able to
+distinguish between KILL_THREAD and KILL_PROCESS. Userspace is forced
+to split up a rule if it wants to have different results. Also, parent
+_can_ stop a child from escalating their KILL_THREADs to KILL_PROCESS
+via the filter you mentioned, which is weird.
+
+I spent some time trying to use the high bit in the return, to make
+this signed, and in the end it was much much more ugly, and I didn't
+want to deal with the fallout to userspace which may suddenly have to
+deal with unexpected bits in the BPF return:
+
+basically s/u32/s32/ in __seccomp_filter() and seccomp_run_filters().
+add #define SECCOMP_RET_ACTION_FULL 0xffff0000
+add #define SECCOMP_RET_KILL_PROC      0x80000000
+
+Then use SECCOMP_RET_ACTION_FULL to mask everything (after forcing a u32 cast).
+
+But the more I stare@this, the more I just want a value that that
+works correctly without totally crazy flags and things.
+
+> Another way that this doesn't mix perfectly with the existing design is
+> when the action is unknown. In that situation, we treat it as RET_KILL.
+> However, this patch hard-codes the comparison with RET_KILL so we get
+> into this situation where an unknown action is treated as RET_KILL
+> except when the filter has the FILTER_FLAG_KILL_PROCESS flag set and
+> then this short-circuit doesn't kick in. It is a corner case, for sure,
+> but worth mentioning.
+
+Hm, yeah, good point. This leaves unknown returns as KILL_THREAD, not
+KILL_PROCESS.
+
+Let me spent some more time looking at the high bit version of this...
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
