@@ -1,68 +1,59 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 11 Aug 2017 09:20:06 -0400
-Subject: [PATCH v5 2/4] ima: use fs method to read integrity data
-In-Reply-To: <20170811102113.GC11531@lst.de>
-References: <1502408507-4257-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502408507-4257-3-git-send-email-zohar@linux.vnet.ibm.com>
-	<20170811102113.GC11531@lst.de>
-Message-ID: <1502457606.3579.87.camel@linux.vnet.ibm.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Fri, 11 Aug 2017 11:00:52 -0400
+Subject: [RFC PATCH 2/5] ima: Add ns_status for storing namespaced iint
+	data
+In-Reply-To: <20170720225033.21298-3-mkayaalp@linux.vnet.ibm.com>
+References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
+	<20170720225033.21298-3-mkayaalp@linux.vnet.ibm.com>
+Message-ID: <9a2ae1ef-95c3-6eb3-bf4d-78b84d5a77e4@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-08-11 at 12:21 +0200, Christoph Hellwig wrote:
-> On Thu, Aug 10, 2017 at 07:41:45PM -0400, Mimi Zohar wrote:
-> > From: Christoph Hellwig <hch@lst.de>
-> > 
-> > Add a new ->integrity_read file operation to read data for integrity
-> > hash collection.  This is defined to be equivalent to ->read_iter,
-> > except that it will be called with the i_rwsem held exclusively.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> Btw, most of this is yours now, feel free to take over the authorship
-> with a little credit to me for the initial patch if you want.
+On 07/20/2017 06:50 PM, Mehmet Kayaalp wrote:
+> This patch adds an rbtree to the IMA namespace structure that stores a
+> namespaced version of iint->flags in ns_status struct. Similar to the
+> integrity_iint_cache, both the iint ns_struct are looked up using the
+> inode pointer value. The lookup, allocate, and insertion code is also
+> similar, except ns_struct is not free'd when the inode is free'd.
+> Instead, the lookup verifies the i_ino and i_generation fields are also a
+> match. A lazy clean up of the rbtree that removes free'd inodes could be
+> implemented to reclaim the invalid entries.
+>
+> Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+> ---
+>   include/linux/ima.h             |   3 +
+>   security/integrity/ima/ima.h    |  16 ++++++
+>   security/integrity/ima/ima_ns.c | 120 ++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 139 insertions(+)
+>
+>
+> @@ -181,3 +198,106 @@ struct ima_namespace init_ima_ns = {
+>   	.parent = NULL,
+>   };
+>   EXPORT_SYMBOL(init_ima_ns);
+> +
+> +/*
+> + * __ima_ns_status_find - return the ns_status associated with an inode
+> + */
+> +static struct ns_status *__ima_ns_status_find(struct ima_namespace *ns,
+> +					      struct inode *inode)
+> +{
+> +	struct ns_status *status;
+> +	struct rb_node *n = ns->ns_status_tree.rb_node;
+> +
+> +	while (n) {
+> +		status = rb_entry(n, struct ns_status, rb_node);
+> +
+> +		if (inode < status->inode)
+> +			n = n->rb_left;
+> +		else if (inode->i_ino > status->i_ino)
+> +			n = n->rb_right;
 
-Thank you so much for the initial design and patch!
+Above you are comparing with the inode ptr, here with i_ino. Why can you 
+not compare with inode both times. Also the insertion only seems to 
+consider the inode ptr.
 
-> > Cc: Matthew Garrett <matthew.garrett@nebula.com>
-> 
-> I don't think that will reach Matthew anymore :)
-
-Trying his other address as listed in MAINTAINERS.
-
-> 
-> > -static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
-> > -		size_t count, loff_t *ppos)
-> > +static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
-> > +				       struct iov_iter *iter)
-> 
-> The efivars switch to read_iter should be a separate patch before
-> this one.
-
-Agreed
-
-> >  /**
-> > + * simple_read_iter_from_buffer - copy data from the buffer to user space
-> > + * @iocb: struct containing the file, the current position and other info
-> > + * @to: the user space buffer to read to
-> > + * @from: the buffer to read from
-> > + * @available: the size of the buffer
-> > + *
-> > + * The simple_read_iter_from_buffer() function reads up to @available bytes
-> > + * from the current buffer into the user space buffer.
-> > + *
-> > + * On success, the current buffer offset is advanced by the number of bytes
-> > + * read, or a negative value is returned on error.
-> > + **/
-> > +ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
-> > +				     const void *from, size_t available)
-> 
-> The addition of simple_read_iter_from_buffer should be another separate
-> patch, before efivars starts using it.
-
-Agreed
-
-Mimi
+    Stefan
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
