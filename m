@@ -1,73 +1,59 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 11 Aug 2017 14:14:21 +0300
-Subject: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send()
-	performance by ignoring burstcount
-In-Reply-To: <trinity-b615e596-8095-4a0a-9922-3fa9a5724c30-1502312435959@3c-app-gmx-bs76>
-References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
-	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
-	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
-	<db0359cc-5e6b-2055-734a-bd9104e4a99f@linux.vnet.ibm.com>
-	<trinity-b615e596-8095-4a0a-9922-3fa9a5724c30-1502312435959@3c-app-gmx-bs76>
-Message-ID: <20170811111421.bg2we53rdeecjtac@linux.intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 11 Aug 2017 08:34:22 -0400
+Subject: [PATCH v5 1/4] ima: always measure and audit files in policy
+In-Reply-To: <20170811101809.GB11531@lst.de>
+References: <1502408507-4257-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1502408507-4257-2-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170811101809.GB11531@lst.de>
+Message-ID: <1502454862.3579.65.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Aug 09, 2017 at 11:00:36PM +0200, Peter Huewe wrote:
-> Hi Ken,
-> (again speaking only on my behalf, not my employer)
+On Fri, 2017-08-11 at 12:18 +0200, Christoph Hellwig wrote:
+> > +	i_version = file_inode(file)->i_version;
 > 
-> > Does anyone know of platforms where this occurs?
-> > I suspect (but not sure) that the days of SuperIO connecting floppy
-> > drives, printer ports, and PS/2 mouse ports on the LPC bus are over, and
-> > such legacy systems will not have a TPM. Would SuperIO even support the
-> > special TPM LPC bus cycles?
+> This probably wants a comment that i_version might be unreliable
+> unless the file system supports the change attribute.
 > 
-> Since we are the linux kernel, we do have to care for legacy devices.
-> And a system with LPC, PS2Mouse on SuperIO and a TPM are not that uncommon.
+> > +	result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
+> > +		ima_calc_buffer_hash(buf, size, &hash.hdr);
 > 
-> And heck, we even have support for 1.1b TPM devices....
+> Please write this like proper C code:
 > 
-> 
-> >> One more viewpoint: TCG must added the burst count for a reason (might
-> >> be very well related what Peter said). Is ignoring it something that TCG
-> >> recommends? Not following standard exactly in the driver code sometimes
-> >> makes sense on *small details* but I would not say that this a small
-> >> detail...
-> 
-> > I checked with the TCG's device driver work group (DDWG). Both the spec
-> > editor and 3 TPM vendors - Infineon, Nuvoton, and ST Micro - agreed that
-> > ignoring burst count may incur wait states but nothing more. Operations
-> > will still be successful.
-> 
-> Interesting - let me check with Georg tomorrow.
-> Unfortunately I do not have access to my tcg mails from home (since I'm not working :), 
-> but did you _explicitly_ talk about LPC and the system?
-> I'm sure the TPM does not care about the waitstates...
-> 
-> If my memory does not betray me, 
-> it is actually possible to "freeze up" a system completly by flooding the lpc bus.
-> Let me double check tomorrow...
-> 
-> 
-> In anycase - I really would like to see a much more performant tpm subsystem - 
-> however it will be quite an effort with a lot of legacy testing.
-> (which I unfortunately cannot spend on my private time ... and also of course lacking test systems).
-> 
-> Thanks,
-> Peter
+> 	if (buf)
+> 		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
+> 	else
+> 		result = ima_calc_file_hash(file, &hash.hdr);
 
-I would like to see tpm_msleep() wrapper to replace current msleep()
-usage across the subsystem before considering this. I.e. wrapper that
-internally uses usleep_range(). This way we can mechanically convert
-everything to a more low latency option.
+Sure
 
-This should have been done already for patch that Mini and Nayna
-provided instead of open coding stuff.
+> 
+> > +++ b/security/integrity/ima/ima_crypto.c
+> > @@ -441,6 +441,16 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+> >  	loff_t i_size;
+> >  	int rc;
+> >  
+> > +	/*
+> > +	 * O_DIRECT not supported for buffered read. For consistency,
+> > +	 * don't support O_DIRECT on DAX either.
+> > +	 */
+> 
+> I can't parse this - O_DIRECT is the opposite of a buffered I/O, including
+> reads.
 
-That change is something that can be applied right now. On the other
-hand, this is a very controversial change.
+Right. I'm trying to differentiate between a file opened with the
+O_DIRECT flag on a filesystem mounted with/without DAX. ?For
+consistency, it was recommended to fail both.
 
-/Jarkko
+> 
+> > +	if ((rc == 0) && (action & IMA_APPRAISE_SUBMASK))
+> 
+> no need for the first set of inner braces.
+
+thanks,
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
