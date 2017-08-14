@@ -1,50 +1,132 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 14 Aug 2017 08:12:53 -0400
-Subject: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send()
-	performance by ignoring burstcount
-In-Reply-To: <20170814105651.eo3e7tokt7mujeba@linux.intel.com>
-References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
-	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
-	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
-	<db0359cc-5e6b-2055-734a-bd9104e4a99f@linux.vnet.ibm.com>
-	<trinity-b615e596-8095-4a0a-9922-3fa9a5724c30-1502312435959@3c-app-gmx-bs76>
-	<20170811111421.bg2we53rdeecjtac@linux.intel.com>
-	<1502465419.3579.109.camel@linux.vnet.ibm.com>
-	<20170814105130.4jjdcop4mqkoxhgh@linux.intel.com>
-	<20170814105651.eo3e7tokt7mujeba@linux.intel.com>
-Message-ID: <1502712773.6179.26.camel@linux.vnet.ibm.com>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Mon, 14 Aug 2017 18:21:11 +0300
+Subject: [PATCH v5 01/19] crypto: change transient busy return code to -EAGAIN
+In-Reply-To: <1502724094-23305-1-git-send-email-gilad@benyossef.com>
+References: <1502724094-23305-1-git-send-email-gilad@benyossef.com>
+Message-ID: <1502724094-23305-2-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2017-08-14 at 13:56 +0300, Jarkko Sakkinen wrote:
+The crypto API was using the -EBUSY return value to indicate
+both a hard failure to submit a crypto operation into a
+transformation provider when the latter was busy and the backlog
+mechanism was not enabled as well as a notification that the
+operation was queued into the backlog when the backlog mechanism
+was enabled.
 
-> > > Since the main concern about this change is breaking old systems that
-> > > might potentially have other peripherals hanging off the LPC bus, can
-> > > we define a new Kconfig option, with the default as 'N'?
-> > > 
-> > > Mimi
-> > 
-> > I guess that could make sense but I would like to hear feedback first.
-> > 
-> > /Jarkko
-> 
-> And I'm worried would that it'd be left for many years to come as an
-> option.  I do not have any metrics what portion of hardware in the field
-> would break if this is turned on.
-> 
-> It would slow down kernel testing as I would have to run tests for the
-> driver with that option turned on and off because it is a major shift
-> from how driver functions. And I have zero idea how long I would go on
-> doing this.
-> 
-> One maybe a little bit better option would be to have a sysfs attribute
-> for this functionality (disable_burst_count). What do you think about
-> that?
+Having the same return code indicate two very different conditions
+depending on a flag is both error prone and requires extra runtime
+check like the following to discern between the cases:
 
-That works!  So we'll define a module_param named disable_burst_count,
-which can be specified on the boot command line.
+	if (err == -EINPROGRESS ||
+	    (err == -EBUSY && (ahash_request_flags(req) &
+			       CRYPTO_TFM_REQ_MAY_BACKLOG)))
 
-Mimi
+This patch changes the return code used to indicate a crypto op
+failed due to the transformation provider being transiently busy
+to -EAGAIN.
+
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
+ crypto/algapi.c     |  6 ++++--
+ crypto/algif_hash.c | 20 +++++++++++++++++---
+ crypto/cryptd.c     |  4 +---
+ 3 files changed, 22 insertions(+), 8 deletions(-)
+
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index aa699ff..916bee3 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -897,9 +897,11 @@ int crypto_enqueue_request(struct crypto_queue *queue,
+ 	int err = -EINPROGRESS;
+ 
+ 	if (unlikely(queue->qlen >= queue->max_qlen)) {
+-		err = -EBUSY;
+-		if (!(request->flags & CRYPTO_TFM_REQ_MAY_BACKLOG))
++		if (!(request->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)) {
++			err = -EAGAIN;
+ 			goto out;
++		}
++		err = -EBUSY;
+ 		if (queue->backlog == &queue->list)
+ 			queue->backlog = &request->list;
+ 	}
+diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+index 5e92bd2..3b3c154 100644
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -39,6 +39,20 @@ struct algif_hash_tfm {
+ 	bool has_key;
+ };
+ 
++/* Previous versions of crypto_* ops used to return -EBUSY
++ * rather than -EAGAIN to indicate being tied up. The in
++ * kernel API changed but we don't want to break the user
++ * space API. As only the hash user interface exposed this
++ * error ever to the user, do the translation here.
++ */
++static inline int crypto_user_err(int err)
++{
++	if (err == -EAGAIN)
++		return -EBUSY;
++
++	return err;
++}
++
+ static int hash_alloc_result(struct sock *sk, struct hash_ctx *ctx)
+ {
+ 	unsigned ds;
+@@ -136,7 +150,7 @@ static int hash_sendmsg(struct socket *sock, struct msghdr *msg,
+ unlock:
+ 	release_sock(sk);
+ 
+-	return err ?: copied;
++	return err ? crypto_user_err(err) : copied;
+ }
+ 
+ static ssize_t hash_sendpage(struct socket *sock, struct page *page,
+@@ -188,7 +202,7 @@ static ssize_t hash_sendpage(struct socket *sock, struct page *page,
+ unlock:
+ 	release_sock(sk);
+ 
+-	return err ?: size;
++	return err ? crypto_user_err(err) : size;
+ }
+ 
+ static int hash_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+@@ -236,7 +250,7 @@ static int hash_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 	hash_free_result(sk, ctx);
+ 	release_sock(sk);
+ 
+-	return err ?: len;
++	return err ? crypto_user_err(err) : len;
+ }
+ 
+ static int hash_accept(struct socket *sock, struct socket *newsock, int flags,
+diff --git a/crypto/cryptd.c b/crypto/cryptd.c
+index 0508c48..d1dbdce 100644
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -137,16 +137,14 @@ static int cryptd_enqueue_request(struct cryptd_queue *queue,
+ 	int cpu, err;
+ 	struct cryptd_cpu_queue *cpu_queue;
+ 	atomic_t *refcnt;
+-	bool may_backlog;
+ 
+ 	cpu = get_cpu();
+ 	cpu_queue = this_cpu_ptr(queue->cpu_queue);
+ 	err = crypto_enqueue_request(&cpu_queue->queue, request);
+ 
+ 	refcnt = crypto_tfm_ctx(request->tfm);
+-	may_backlog = request->flags & CRYPTO_TFM_REQ_MAY_BACKLOG;
+ 
+-	if (err == -EBUSY && !may_backlog)
++	if (err == -EAGAIN)
+ 		goto out_put_cpu;
+ 
+ 	queue_work_on(cpu, kcrypto_wq, &cpu_queue->work);
+-- 
+2.1.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
