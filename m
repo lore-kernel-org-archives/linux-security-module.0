@@ -1,162 +1,43 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Mon, 14 Aug 2017 13:53:49 -0700
-Subject: [PATCH] selftests/seccomp: Add simple seccomp overhead benchmark
-Message-ID: <20170814205349.GA60377@beast>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 14 Aug 2017 16:59:55 -0400
+Subject: [PATCH 0/4] SELinux: Fine-tuning for some function implementations
+In-Reply-To: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
+References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
+Message-ID: <CAHC9VhQOVyA8bu5qWz7=KtGQ_kEVQmso539-VHpd+gGb7L7rig@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This attempts to produce a comparison between native getpid() and a
-RET_ALLOW-filtered getpid(), to measure the overhead cost of using
-seccomp().
+On Sun, Aug 13, 2017 at 10:43 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 13 Aug 2017 16:25:43 +0200
+>
+> A few update suggestions were taken into account
+> from static source code analysis.
+>
+> Markus Elfring (4):
+>   Delete eight unnecessary variable assignments
+>   Adjust jump targets in ebitmap_read()
+>   Delete an unnecessary return statement in ebitmap_destroy()
+>   Adjust five checks for null pointers
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-As with the other, I'd like this to go via the seccomp tree. Getting an
-Ack would be great. :) Thanks!
----
- tools/testing/selftests/seccomp/Makefile           | 18 ++--
- .../testing/selftests/seccomp/seccomp_benchmark.c  | 99 ++++++++++++++++++++++
- 2 files changed, 112 insertions(+), 5 deletions(-)
- create mode 100644 tools/testing/selftests/seccomp/seccomp_benchmark.c
+Hi Markus,
 
-diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/selftests/seccomp/Makefile
-index aeb0c805f3ca..553d870b4ca9 100644
---- a/tools/testing/selftests/seccomp/Makefile
-+++ b/tools/testing/selftests/seccomp/Makefile
-@@ -1,8 +1,16 @@
--TEST_GEN_PROGS := seccomp_bpf
--CFLAGS += -Wl,-no-as-needed -Wall
--LDFLAGS += -lpthread
-+all:
- 
- include ../lib.mk
- 
--$(TEST_GEN_PROGS): seccomp_bpf.c ../kselftest_harness.h
--	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+.PHONY: all clean
-+
-+BINARIES := seccomp_bpf seccomp_benchmark
-+CFLAGS += -Wl,-no-as-needed -Wall
-+
-+seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
-+	$(CC) $(CFLAGS) $(LDFLAGS) -lpthread $< -o $@
-+
-+TEST_PROGS += $(BINARIES)
-+EXTRA_CLEAN := $(BINARIES)
-+
-+all: $(BINARIES)
-diff --git a/tools/testing/selftests/seccomp/seccomp_benchmark.c b/tools/testing/selftests/seccomp/seccomp_benchmark.c
-new file mode 100644
-index 000000000000..5838c8697ec3
---- /dev/null
-+++ b/tools/testing/selftests/seccomp/seccomp_benchmark.c
-@@ -0,0 +1,99 @@
-+/*
-+ * Strictly speaking, this is not a test. But it can report during test
-+ * runs so relative performace can be measured.
-+ */
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <time.h>
-+#include <unistd.h>
-+#include <linux/filter.h>
-+#include <linux/seccomp.h>
-+#include <sys/prctl.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+
-+#define ARRAY_SIZE(a)    (sizeof(a) / sizeof(a[0]))
-+
-+unsigned long long timing(clockid_t clk_id, unsigned long long samples)
-+{
-+	pid_t pid, ret;
-+	unsigned long long i;
-+	struct timespec start, finish;
-+
-+	pid = getpid();
-+	assert(clock_gettime(clk_id, &start) == 0);
-+	for (i = 0; i < samples; i++) {
-+		ret = syscall(__NR_getpid);
-+		assert(pid == ret);
-+	}
-+	assert(clock_gettime(clk_id, &finish) == 0);
-+
-+	i = finish.tv_sec - start.tv_sec;
-+	i *= 1000000000;
-+	i += finish.tv_nsec - start.tv_nsec;
-+
-+	printf("%lu.%09lu - %lu.%09lu = %llu\n",
-+		finish.tv_sec, finish.tv_nsec,
-+		start.tv_sec, start.tv_nsec,
-+		i);
-+
-+	return i;
-+}
-+
-+unsigned long long calibrate(void)
-+{
-+	unsigned long long i;
-+
-+	printf("Calibrating reasonable sample size...\n");
-+
-+	for (i = 5; ; i++) {
-+		unsigned long long samples = 1 << i;
-+
-+		/* Find something that takes more than 5 seconds to run. */
-+		if (timing(CLOCK_REALTIME, samples) / 1000000000ULL > 5)
-+			return samples;
-+	}
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct sock_filter filter[] = {
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
-+	};
-+	struct sock_fprog prog = {
-+		.len = (unsigned short)ARRAY_SIZE(filter),
-+		.filter = filter,
-+	};
-+	long ret;
-+	unsigned long long samples;
-+	unsigned long long native, filtered;
-+
-+	if (argc > 1)
-+		samples = strtoull(argv[1], NULL, 0);
-+	else
-+		samples = calibrate();
-+
-+	printf("Benchmarking %llu samples...\n", samples);
-+
-+	native = timing(CLOCK_PROCESS_CPUTIME_ID, samples) / samples;
-+	printf("getpid native: %llu ns\n", native);
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	assert(ret == 0);
-+
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
-+	assert(ret == 0);
-+
-+	filtered = timing(CLOCK_PROCESS_CPUTIME_ID, samples) / samples;
-+	printf("getpid RET_ALLOW: %llu ns\n", filtered);
-+
-+	printf("Estimated seccomp overhead per syscall: %llu ns\n",
-+		filtered - native);
-+
-+	if (filtered == native)
-+		printf("Trying running again with more samples.\n");
-+
-+	return 0;
-+}
--- 
-2.7.4
+I merged many of your patches in the past because I wanted to help
+encourage your involvement, but you will remember I mentioned at the
+time that I generally dislike merging these trivial, and often
+style-only, patches.  I believe I even pointed you in the direction of
+our SELinux kernel issue tracker for a list of areas where you could
+help contribute in a meaningful way (link below).  My earlier comments
+still apply; if you want to continue to contribute to SELinux in the
+kernel, please focus your attention on more meaningful changes.  I am
+not going to merge any of these patches.
 
+* https://github.com/SELinuxProject/selinux-kernel/issues
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
