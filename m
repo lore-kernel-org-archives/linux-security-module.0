@@ -1,201 +1,35 @@
-From: hamza@hpe.com (Hamza Attak)
-Date: Mon, 14 Aug 2017 19:09:16 +0100
-Subject: [PATCH v2] msleep() delays - replace with usleep_range() in TPM
-	1.2/2.0 generic drivers
-Message-ID: <20170814180916.GA5574@dev-HP-EliteBook-Folio-1040-G1>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 14 Aug 2017 16:46:22 -0400
+Subject: [PATCH v4 0/4] seccomp: Implement SECCOMP_RET_KILL_PROCESS action
+In-Reply-To: <1502489117-70522-1-git-send-email-keescook@chromium.org>
+References: <1502489117-70522-1-git-send-email-keescook@chromium.org>
+Message-ID: <CAHC9VhTeotOHSD+qKG=TF-SidFT0-46GnE_pz=rjGt6gzr1mcw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The patch simply replaces all msleep function calls with usleep_range calls
-in the generic drivers.
+On Fri, Aug 11, 2017 at 6:05 PM, Kees Cook <keescook@chromium.org> wrote:
+> This series is the result of Fabricio, Tyler, Will and I going around a
+> few times on possible solutions for finding a way to enhance RET_KILL
+> to kill the process group. There's a lot of ways this could be done,
+> but I wanted something that felt cleanest. My sense of what constitutes
+> "clean" has shifted a few times, and after continually running into
+> weird corner cases, I decided to make changes to the seccomp action mask,
+> which shouldn't be too invasive to userspace as it turns out. Everything
+> else becomes much easier, especially after being able to use Tyler's
+> new SECCOMP_GET_ACTION_AVAIL operation.
+>
+> This renames SECCOMP_RET_KILL to SECCOMP_RET_KILL_THREAD and adds
+> SECCOMP_RET_KILL_PROCESS.
 
-Tested with an Infineon TPM 1.2, using the generic tpm-tis module, for a
-thousand PCR extends, we see results going from 1m57s unpatched to 40s
-with the new patch. We obtain similar results when using the original and
-patched tpm_infineon driver, which is also part of the patch.
-Similarly with a STM TPM 2.0, using the CRB driver, it takes about 20ms per
-extend unpatched and around 7ms with the new patch.
+I just took a very quick look and I'm not seeing anything that would
+cause any backwards compatibility issues for libseccomp.  You could
+try running the libseccomp tests against a patched kernel to make
+sure; the README has all the info you need (pay special attention to
+the "live" tests, although those are pretty meager at the moment).
 
-Note that the PCR consistency is untouched with this patch, each TPM has
-been tested with 10 million extends and the aggregated PCR value is
-continuously verified to be correct.
-
-As an extension of this work, this could potentially and easily be applied
-to other vendor's drivers. Still, these changes are not included in the
-proposed patch as they are untested.
-
-Signed-off-by: Hamza Attak <hamza@hpe.com>
----
- drivers/char/tpm/tpm-interface.c | 10 +++++-----
- drivers/char/tpm/tpm.h           |  9 ++++++++-
- drivers/char/tpm/tpm2-cmd.c      |  2 +-
- drivers/char/tpm/tpm_infineon.c  |  6 +++---
- drivers/char/tpm/tpm_tis_core.c  |  8 ++++----
- 5 files changed, 21 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index bd2128e..123a73a 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -395,7 +395,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, const u8 *buf, size_t bufsiz,
- 			goto out;
- 		}
- 
--		msleep(TPM_TIMEOUT);	/* CHECK */
-+		tpm_msleep(TPM_TIMEOUT);
- 		rmb();
- 	} while (time_before(jiffies, stop));
- 
-@@ -862,7 +862,7 @@ int tpm_do_selftest(struct tpm_chip *chip)
- 			dev_info(
- 			    &chip->dev, HW_ERR
- 			    "TPM command timed out during continue self test");
--			msleep(delay_msec);
-+			tpm_msleep(delay_msec);
- 			continue;
- 		}
- 
-@@ -877,7 +877,7 @@ int tpm_do_selftest(struct tpm_chip *chip)
- 		}
- 		if (rc != TPM_WARN_DOING_SELFTEST)
- 			return rc;
--		msleep(delay_msec);
-+		tpm_msleep(delay_msec);
- 	} while (--loops > 0);
- 
- 	return rc;
-@@ -977,7 +977,7 @@ again:
- 		}
- 	} else {
- 		do {
--			msleep(TPM_TIMEOUT);
-+			tpm_msleep(TPM_TIMEOUT);
- 			status = chip->ops->status(chip);
- 			if ((status & mask) == mask)
- 				return 0;
-@@ -1045,7 +1045,7 @@ int tpm_pm_suspend(struct device *dev)
- 		 */
- 		if (rc != TPM_WARN_RETRY)
- 			break;
--		msleep(TPM_TIMEOUT_RETRY);
-+		tpm_msleep(TPM_TIMEOUT_RETRY);
- 	}
- 
- 	if (rc)
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4937b56..255ecdc 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -46,7 +46,8 @@ enum tpm_const {
- 
- enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
--	TPM_TIMEOUT_RETRY = 100 /* msecs */
-+	TPM_TIMEOUT_RETRY = 100, /* msecs */
-+	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
- };
- 
- /* TPM addresses */
-@@ -509,6 +510,12 @@ int tpm_pm_resume(struct device *dev);
- int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
- 		      wait_queue_head_t *queue, bool check_cancel);
- 
-+static inline void tpm_msleep(unsigned int delay_msec)
-+{
-+	usleep_range(delay_msec * 1000,
-+		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
-+};
-+
- struct tpm_chip *tpm_chip_find_get(int chip_num);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 881aea9..13c77fc 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -961,7 +961,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 		if (rc != TPM2_RC_TESTING)
- 			break;
- 
--		msleep(delay_msec);
-+		tpm_msleep(delay_msec);
- 	}
- 
- 	return rc;
-diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-index e3cf9f3..690d948 100644
---- a/drivers/char/tpm/tpm_infineon.c
-+++ b/drivers/char/tpm/tpm_infineon.c
-@@ -191,7 +191,7 @@ static int wait(struct tpm_chip *chip, int wait_for_bit)
- 		/* check the status-register if wait_for_bit is set */
- 		if (status & 1 << wait_for_bit)
- 			break;
--		msleep(TPM_MSLEEP_TIME);
-+		tpm_msleep(TPM_MSLEEP_TIME);
- 	}
- 	if (i == TPM_MAX_TRIES) {	/* timeout occurs */
- 		if (wait_for_bit == STAT_XFE)
-@@ -226,7 +226,7 @@ static void tpm_wtx(struct tpm_chip *chip)
- 	wait_and_send(chip, TPM_CTRL_WTX);
- 	wait_and_send(chip, 0x00);
- 	wait_and_send(chip, 0x00);
--	msleep(TPM_WTX_MSLEEP_TIME);
-+	tpm_msleep(TPM_WTX_MSLEEP_TIME);
- }
- 
- static void tpm_wtx_abort(struct tpm_chip *chip)
-@@ -237,7 +237,7 @@ static void tpm_wtx_abort(struct tpm_chip *chip)
- 	wait_and_send(chip, 0x00);
- 	wait_and_send(chip, 0x00);
- 	number_of_wtx = 0;
--	msleep(TPM_WTX_MSLEEP_TIME);
-+	tpm_msleep(TPM_WTX_MSLEEP_TIME);
- }
- 
- static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index c0f296b..a305448 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -51,7 +51,7 @@ static int wait_startup(struct tpm_chip *chip, int l)
- 
- 		if (access & TPM_ACCESS_VALID)
- 			return 0;
--		msleep(TPM_TIMEOUT);
-+		tpm_msleep(TPM_TIMEOUT);
- 	} while (time_before(jiffies, stop));
- 	return -1;
- }
-@@ -125,7 +125,7 @@ again:
- 		do {
- 			if (check_locality(chip, l) >= 0)
- 				return l;
--			msleep(TPM_TIMEOUT);
-+			tpm_msleep(TPM_TIMEOUT);
- 		} while (time_before(jiffies, stop));
- 	}
- 	return -1;
-@@ -170,7 +170,7 @@ static int get_burstcount(struct tpm_chip *chip)
- 		burstcnt = (value >> 8) & 0xFFFF;
- 		if (burstcnt)
- 			return burstcnt;
--		msleep(TPM_TIMEOUT);
-+		tpm_msleep(TPM_TIMEOUT);
- 	} while (time_before(jiffies, stop));
- 	return -EBUSY;
- }
-@@ -408,7 +408,7 @@ static int tpm_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 	priv->irq = irq;
- 	chip->flags |= TPM_CHIP_FLAG_IRQ;
- 	if (!priv->irq_tested)
--		msleep(1);
-+		tpm_msleep(1);
- 	if (!priv->irq_tested)
- 		disable_interrupts(chip);
- 	priv->irq_tested = true;
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
