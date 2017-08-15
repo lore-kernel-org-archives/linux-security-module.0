@@ -1,41 +1,133 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Mon, 14 Aug 2017 14:10:54 -0700
-Subject: [PATCH v4 0/4] seccomp: Implement SECCOMP_RET_KILL_PROCESS action
-In-Reply-To: <CAHC9VhTeotOHSD+qKG=TF-SidFT0-46GnE_pz=rjGt6gzr1mcw@mail.gmail.com>
-References: <1502489117-70522-1-git-send-email-keescook@chromium.org>
-	<CAHC9VhTeotOHSD+qKG=TF-SidFT0-46GnE_pz=rjGt6gzr1mcw@mail.gmail.com>
-Message-ID: <CAGXu5jKbpJ8YUZX5G_4eyk5WoScv9sSnU8xMes=pXf2C3u7PfA@mail.gmail.com>
+From: Jonathan.Cameron@huawei.com (Jonathan Cameron)
+Date: Tue, 15 Aug 2017 03:23:03 +0100
+Subject: [PATCH v5 05/19] crypto: introduce crypto wait for async op
+In-Reply-To: <1502724094-23305-6-git-send-email-gilad@benyossef.com>
+References: <1502724094-23305-1-git-send-email-gilad@benyossef.com>
+	<1502724094-23305-6-git-send-email-gilad@benyossef.com>
+Message-ID: <20170815032303.000042b2@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Aug 14, 2017 at 1:46 PM, Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Aug 11, 2017 at 6:05 PM, Kees Cook <keescook@chromium.org> wrote:
->> This series is the result of Fabricio, Tyler, Will and I going around a
->> few times on possible solutions for finding a way to enhance RET_KILL
->> to kill the process group. There's a lot of ways this could be done,
->> but I wanted something that felt cleanest. My sense of what constitutes
->> "clean" has shifted a few times, and after continually running into
->> weird corner cases, I decided to make changes to the seccomp action mask,
->> which shouldn't be too invasive to userspace as it turns out. Everything
->> else becomes much easier, especially after being able to use Tyler's
->> new SECCOMP_GET_ACTION_AVAIL operation.
->>
->> This renames SECCOMP_RET_KILL to SECCOMP_RET_KILL_THREAD and adds
->> SECCOMP_RET_KILL_PROCESS.
->
-> I just took a very quick look and I'm not seeing anything that would
-> cause any backwards compatibility issues for libseccomp.  You could
-> try running the libseccomp tests against a patched kernel to make
-> sure; the README has all the info you need (pay special attention to
-> the "live" tests, although those are pretty meager at the moment).
+On Mon, 14 Aug 2017 18:21:15 +0300
+Gilad Ben-Yossef <gilad@benyossef.com> wrote:
 
-Ah-ha, perfect. Ran it now and yup, these all pass. Thanks!
+> Invoking a possibly async. crypto op and waiting for completion
+> while correctly handling backlog processing is a common task
+> in the crypto API implementation and outside users of it.
+> 
+> This patch adds a generic implementation for doing so in
+> preparation for using it across the board instead of hand
+> rolled versions.
+> 
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> CC: Eric Biggers <ebiggers3@gmail.com>
 
--Kees
+One really trivial point inline I happened to notice.
 
--- 
-Kees Cook
-Pixel Security
+> ---
+>  crypto/api.c           | 13 +++++++++++++
+>  include/linux/crypto.h | 41 +++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+> 
+> diff --git a/crypto/api.c b/crypto/api.c
+> index 941cd4c..2a2479d 100644
+> --- a/crypto/api.c
+> +++ b/crypto/api.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/sched/signal.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+> +#include <linux/completion.h>
+>  #include "internal.h"
+>  
+>  LIST_HEAD(crypto_alg_list);
+> @@ -595,5 +596,17 @@ int crypto_has_alg(const char *name, u32 type, u32 mask)
+>  }
+>  EXPORT_SYMBOL_GPL(crypto_has_alg);
+>  
+> +void crypto_req_done(struct crypto_async_request *req, int err)
+> +{
+> +	struct crypto_wait *wait = req->data;
+> +
+> +	if (err == -EINPROGRESS)
+> +		return;
+> +
+> +	wait->err = err;
+> +	complete(&wait->completion);
+> +}
+> +EXPORT_SYMBOL_GPL(crypto_req_done);
+> +
+>  MODULE_DESCRIPTION("Cryptographic core API");
+>  MODULE_LICENSE("GPL");
+> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+> index 84da997..bb00186 100644
+> --- a/include/linux/crypto.h
+> +++ b/include/linux/crypto.h
+> @@ -24,6 +24,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/completion.h>
+>  
+>  /*
+>   * Autoloaded crypto modules should only use a prefixed name to avoid allowing
+> @@ -468,6 +469,45 @@ struct crypto_alg {
+>  } CRYPTO_MINALIGN_ATTR;
+>  
+>  /*
+> + * A helper struct for waiting for completion of async crypto ops
+> + */
+> +struct crypto_wait {
+> +	struct completion completion;
+> +	int err;
+> +};
+> +
+> +/*
+> + * Macro for declaring a crypto op async wait object on stack
+> + */
+> +#define DECLARE_CRYPTO_WAIT(_wait) \
+> +	struct crypto_wait _wait = { \
+> +		COMPLETION_INITIALIZER_ONSTACK((_wait).completion), 0 }
+> +
+> +/*
+> + * Async ops completion helper functioons
+> + */
+> +void crypto_req_done(struct crypto_async_request *req, int err);
+> +
+> +static inline int crypto_wait_req(int err, struct crypto_wait *wait)
+> +{
+> +	switch (err) {
+> +	case -EINPROGRESS:
+> +	case -EBUSY:
+> +		wait_for_completion(&wait->completion);
+> +		reinit_completion(&wait->completion);
+> +		err = wait->err;
+> +		break;
+> +	};
+> +
+> +	return err;
+> +}
+> +
+> +static inline void crypto_init_wait(struct crypto_wait *wait)
+> +{
+> +	init_completion(&wait->completion);
+> +}
+> +
+> +/*
+>   * Algorithm registration interface.
+>   */
+>  int crypto_register_alg(struct crypto_alg *alg);
+> @@ -1604,5 +1644,6 @@ static inline int crypto_comp_decompress(struct crypto_comp *tfm,
+>  						    src, slen, dst, dlen);
+>  }
+>  
+> +
+
+Trivial observation.  Shouldn't have this bonus blank line inserted here.
+
+>  #endif	/* _LINUX_CRYPTO_H */
+>  
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
