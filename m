@@ -1,132 +1,97 @@
-From: Jonathan.Cameron@huawei.com (Jonathan Cameron)
-Date: Tue, 15 Aug 2017 03:23:03 +0100
-Subject: [PATCH v5 05/19] crypto: introduce crypto wait for async op
-In-Reply-To: <1502724094-23305-6-git-send-email-gilad@benyossef.com>
+From: ryder.lee@mediatek.com (Ryder Lee)
+Date: Tue, 15 Aug 2017 13:13:58 +0800
+Subject: [PATCH v5 18/19] crypto: mediatek: move to generic async
+	completion
+In-Reply-To: <1502724094-23305-19-git-send-email-gilad@benyossef.com>
 References: <1502724094-23305-1-git-send-email-gilad@benyossef.com>
-	<1502724094-23305-6-git-send-email-gilad@benyossef.com>
-Message-ID: <20170815032303.000042b2@huawei.com>
+	<1502724094-23305-19-git-send-email-gilad@benyossef.com>
+Message-ID: <1502774038.962.2.camel@mtkswgap22>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 14 Aug 2017 18:21:15 +0300
-Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-
-> Invoking a possibly async. crypto op and waiting for completion
-> while correctly handling backlog processing is a common task
-> in the crypto API implementation and outside users of it.
-> 
-> This patch adds a generic implementation for doing so in
-> preparation for using it across the board instead of hand
-> rolled versions.
+On Mon, 2017-08-14 at 18:21 +0300, Gilad Ben-Yossef wrote:
+> The mediatek driver starts several async crypto ops and waits for their
+> completions. Move it over to generic code doing the same.
 > 
 > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> CC: Eric Biggers <ebiggers3@gmail.com>
-
-One really trivial point inline I happened to notice.
-
 > ---
->  crypto/api.c           | 13 +++++++++++++
->  include/linux/crypto.h | 41 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
+
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+
+>  drivers/crypto/mediatek/mtk-aes.c | 31 +++++--------------------------
+>  1 file changed, 5 insertions(+), 26 deletions(-)
 > 
-> diff --git a/crypto/api.c b/crypto/api.c
-> index 941cd4c..2a2479d 100644
-> --- a/crypto/api.c
-> +++ b/crypto/api.c
-> @@ -24,6 +24,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/slab.h>
->  #include <linux/string.h>
-> +#include <linux/completion.h>
->  #include "internal.h"
+> diff --git a/drivers/crypto/mediatek/mtk-aes.c b/drivers/crypto/mediatek/mtk-aes.c
+> index 9e845e8..e2c7c95 100644
+> --- a/drivers/crypto/mediatek/mtk-aes.c
+> +++ b/drivers/crypto/mediatek/mtk-aes.c
+> @@ -137,11 +137,6 @@ struct mtk_aes_gcm_ctx {
+>  	struct crypto_skcipher *ctr;
+>  };
 >  
->  LIST_HEAD(crypto_alg_list);
-> @@ -595,5 +596,17 @@ int crypto_has_alg(const char *name, u32 type, u32 mask)
->  }
->  EXPORT_SYMBOL_GPL(crypto_has_alg);
->  
-> +void crypto_req_done(struct crypto_async_request *req, int err)
-> +{
-> +	struct crypto_wait *wait = req->data;
-> +
-> +	if (err == -EINPROGRESS)
-> +		return;
-> +
-> +	wait->err = err;
-> +	complete(&wait->completion);
-> +}
-> +EXPORT_SYMBOL_GPL(crypto_req_done);
-> +
->  MODULE_DESCRIPTION("Cryptographic core API");
->  MODULE_LICENSE("GPL");
-> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-> index 84da997..bb00186 100644
-> --- a/include/linux/crypto.h
-> +++ b/include/linux/crypto.h
-> @@ -24,6 +24,7 @@
->  #include <linux/slab.h>
->  #include <linux/string.h>
->  #include <linux/uaccess.h>
-> +#include <linux/completion.h>
->  
->  /*
->   * Autoloaded crypto modules should only use a prefixed name to avoid allowing
-> @@ -468,6 +469,45 @@ struct crypto_alg {
->  } CRYPTO_MINALIGN_ATTR;
->  
->  /*
-> + * A helper struct for waiting for completion of async crypto ops
-> + */
-> +struct crypto_wait {
-> +	struct completion completion;
-> +	int err;
-> +};
-> +
-> +/*
-> + * Macro for declaring a crypto op async wait object on stack
-> + */
-> +#define DECLARE_CRYPTO_WAIT(_wait) \
-> +	struct crypto_wait _wait = { \
-> +		COMPLETION_INITIALIZER_ONSTACK((_wait).completion), 0 }
-> +
-> +/*
-> + * Async ops completion helper functioons
-> + */
-> +void crypto_req_done(struct crypto_async_request *req, int err);
-> +
-> +static inline int crypto_wait_req(int err, struct crypto_wait *wait)
-> +{
-> +	switch (err) {
-> +	case -EINPROGRESS:
-> +	case -EBUSY:
-> +		wait_for_completion(&wait->completion);
-> +		reinit_completion(&wait->completion);
-> +		err = wait->err;
-> +		break;
-> +	};
-> +
-> +	return err;
-> +}
-> +
-> +static inline void crypto_init_wait(struct crypto_wait *wait)
-> +{
-> +	init_completion(&wait->completion);
-> +}
-> +
-> +/*
->   * Algorithm registration interface.
->   */
->  int crypto_register_alg(struct crypto_alg *alg);
-> @@ -1604,5 +1644,6 @@ static inline int crypto_comp_decompress(struct crypto_comp *tfm,
->  						    src, slen, dst, dlen);
+> -struct mtk_aes_gcm_setkey_result {
+> -	int err;
+> -	struct completion completion;
+> -};
+> -
+>  struct mtk_aes_drv {
+>  	struct list_head dev_list;
+>  	/* Device list lock */
+> @@ -936,17 +931,6 @@ static int mtk_aes_gcm_crypt(struct aead_request *req, u64 mode)
+>  				    &req->base);
 >  }
 >  
-> +
-
-Trivial observation.  Shouldn't have this bonus blank line inserted here.
-
->  #endif	/* _LINUX_CRYPTO_H */
+> -static void mtk_gcm_setkey_done(struct crypto_async_request *req, int err)
+> -{
+> -	struct mtk_aes_gcm_setkey_result *result = req->data;
+> -
+> -	if (err == -EINPROGRESS)
+> -		return;
+> -
+> -	result->err = err;
+> -	complete(&result->completion);
+> -}
+> -
+>  /*
+>   * Because of the hardware limitation, we need to pre-calculate key(H)
+>   * for the GHASH operation. The result of the encryption operation
+> @@ -962,7 +946,7 @@ static int mtk_aes_gcm_setkey(struct crypto_aead *aead, const u8 *key,
+>  		u32 hash[4];
+>  		u8 iv[8];
 >  
+> -		struct mtk_aes_gcm_setkey_result result;
+> +		struct crypto_wait wait;
+>  
+>  		struct scatterlist sg[1];
+>  		struct skcipher_request req;
+> @@ -1002,22 +986,17 @@ static int mtk_aes_gcm_setkey(struct crypto_aead *aead, const u8 *key,
+>  	if (!data)
+>  		return -ENOMEM;
+>  
+> -	init_completion(&data->result.completion);
+> +	crypto_init_wait(&data->wait);
+>  	sg_init_one(data->sg, &data->hash, AES_BLOCK_SIZE);
+>  	skcipher_request_set_tfm(&data->req, ctr);
+>  	skcipher_request_set_callback(&data->req, CRYPTO_TFM_REQ_MAY_SLEEP |
+>  				      CRYPTO_TFM_REQ_MAY_BACKLOG,
+> -				      mtk_gcm_setkey_done, &data->result);
+> +				      crypto_req_done, &data->wait);
+>  	skcipher_request_set_crypt(&data->req, data->sg, data->sg,
+>  				   AES_BLOCK_SIZE, data->iv);
+>  
+> -	err = crypto_skcipher_encrypt(&data->req);
+> -	if (err == -EINPROGRESS || err == -EBUSY) {
+> -		err = wait_for_completion_interruptible(
+> -			&data->result.completion);
+> -		if (!err)
+> -			err = data->result.err;
+> -	}
+> +	err = crypto_wait_req(crypto_skcipher_encrypt(&data->req),
+> +			      &data->wait);
+>  	if (err)
+>  		goto out;
+>  
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
