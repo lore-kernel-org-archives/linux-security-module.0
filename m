@@ -1,57 +1,112 @@
-From: boris.brezillon@free-electrons.com (Boris Brezillon)
-Date: Tue, 15 Aug 2017 10:16:29 +0200
-Subject: [PATCH v5 04/19] crypto: marvell/cesa: remove redundant backlog
-	checks on EBUSY
-In-Reply-To: <1502724094-23305-5-git-send-email-gilad@benyossef.com>
-References: <1502724094-23305-1-git-send-email-gilad@benyossef.com>
-	<1502724094-23305-5-git-send-email-gilad@benyossef.com>
-Message-ID: <20170815101629.7d323845@bbrezillon>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 15 Aug 2017 10:43:51 -0400
+Subject: [PATCH v6 0/6] define new fs integrity_read method 
+Message-ID: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Le Mon, 14 Aug 2017 18:21:14 +0300,
-Gilad Ben-Yossef <gilad@benyossef.com> a ?crit :
+With the introduction of IMA-appraisal and the need to write file
+hashes as security xattrs, IMA needed to take the global i_mutex
+lock.  process_measurement() took the iint->mutex first and then
+the i_mutex, while setxattr, chmod and chown took the locks in
+reverse order.  To resolve this potential deadlock, the iint->mutex
+was removed.
 
-> Now that -EBUSY return code only indicates backlog queueing
-> we can safely remove the now redundant check for the
-> CRYPTO_TFM_REQ_MAY_BACKLOG flag when -EBUSY is returned.
-> 
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Some filesystems have recently replaced their filesystem dependent
+lock with the global i_rwsem (formerly the i_mutex) to read a file.
+As a result, when IMA attempts to calculate the file hash, reading
+the file attempts to take the i_rwsem again.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+To resolve this locking problem, this patch set introduces a new
+->integrity_read file operation method.  Until all filesystems
+define the new ->integrity_read method, files that were previously
+measured might not be currently measured and files that were
+previously appraised might fail to be appraised properly.
 
-> ---
->  drivers/crypto/marvell/cesa.c | 3 +--
->  drivers/crypto/marvell/cesa.h | 2 +-
->  2 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/crypto/marvell/cesa.c b/drivers/crypto/marvell/cesa.c
-> index 6e7a5c7..269737f 100644
-> --- a/drivers/crypto/marvell/cesa.c
-> +++ b/drivers/crypto/marvell/cesa.c
-> @@ -183,8 +183,7 @@ int mv_cesa_queue_req(struct crypto_async_request *req,
->  	spin_lock_bh(&engine->lock);
->  	ret = crypto_enqueue_request(&engine->queue, req);
->  	if ((mv_cesa_req_get_type(creq) == CESA_DMA_REQ) &&
-> -	    (ret == -EINPROGRESS ||
-> -	    (ret == -EBUSY && req->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)))
-> +	    (ret == -EINPROGRESS || ret == -EBUSY)
->  		mv_cesa_tdma_chain(engine, creq);
->  	spin_unlock_bh(&engine->lock);
->  
-> diff --git a/drivers/crypto/marvell/cesa.h b/drivers/crypto/marvell/cesa.h
-> index b7872f6..63c8457 100644
-> --- a/drivers/crypto/marvell/cesa.h
-> +++ b/drivers/crypto/marvell/cesa.h
-> @@ -763,7 +763,7 @@ static inline int mv_cesa_req_needs_cleanup(struct crypto_async_request *req,
->  	 * the backlog and will be processed later. There's no need to
->  	 * clean it up.
->  	 */
-> -	if (ret == -EBUSY && req->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)
-> +	if (ret == -EBUSY)
->  		return false;
->  
->  	/* Request wasn't queued, we need to clean it up */
+Version 2 of this patch set, introduced measurement entries and
+IMA-audit messages containing file hash values of 0's, instead
+of the actual file hash, to indicate that the file hash could not
+be calculated.  Like for any other file signature verification
+error, file access/execute permission is denied.
+
+To override the IMA policy, allowing unverified code to be
+accessed/executed on filesystems not supported by IMA, version 2 of
+this patch set defined a new policy "action" named "dont_failsafe"
+and a new builtin policy named "fs_unsafe", which can be specified
+on the boot command line.
+
+Direct Access:
+Although the new integrity_read method works for files opened with
+the "O_DIRECT" flag on block devices that support DAX, for consistency
+fail filesystems mounted with/without DAX.  (Refer to commit f9b2a735bddd
+"ima: audit log files opened with O_DIRECT flag" for detals.)
+
+Changelog v6:
+- Defined simple_read_iter_from_buffer() as a separate patch.
+- Made efivarfs usage of simple_read_iter_from_buffer() a separate patch.
+
+Changelog v5:
+- fail files opened O_DIRECT, but include access attempt in measurement
+list.
+- removed ocf2 and gfs2 integrity_read support.
+
+Changelog v4:
+- define ext2/4 specific ->integrity_read functions based Jan Kara's
+review.
+- properly fail file open with O_DIRECT on filesystems not mounted
+with "-o dax".
+- remove the "permit_directio" IMA policy option.
+
+Changelog v3:
+- define simple_read_iter_from_buffer
+- replace the existing efivarfs ->read method with ->read_iter method.
+- squashed other fs definitions of ->integrity_read with this patch.
+- include dont_failsafe rule when displaying policy.
+- fail attempt to add dont_failsafe rule when appending to the policy.
+- moved '---' divider before change log, as requested in review.
+
+Mimi
+
+Christoph Hellwig (1):
+*** BLURB HERE ***
+
+Christoph Hellwig (1):
+  ima: use fs method to read integrity data
+
+Mimi Zohar (5):
+  libfs: define simple_read_iter_from_buffer
+  efivarfs: replaces the read file operation with read_iter
+  ima: always measure and audit files in policy
+  ima: define "dont_failsafe" policy action rule
+  ima: define "fs_unsafe" builtin policy
+
+ Documentation/ABI/testing/ima_policy            |  3 +-
+ Documentation/admin-guide/kernel-parameters.txt |  8 ++-
+ fs/btrfs/file.c                                 |  1 +
+ fs/efivarfs/file.c                              | 12 +++--
+ fs/ext2/file.c                                  | 17 +++++++
+ fs/ext4/file.c                                  | 20 ++++++++
+ fs/f2fs/file.c                                  |  1 +
+ fs/jffs2/file.c                                 |  1 +
+ fs/jfs/file.c                                   |  1 +
+ fs/libfs.c                                      | 32 ++++++++++++
+ fs/nilfs2/file.c                                |  1 +
+ fs/ramfs/file-mmu.c                             |  1 +
+ fs/ramfs/file-nommu.c                           |  1 +
+ fs/ubifs/file.c                                 |  1 +
+ fs/xfs/xfs_file.c                               | 21 ++++++++
+ include/linux/fs.h                              |  3 ++
+ mm/shmem.c                                      |  1 +
+ security/integrity/iint.c                       | 20 +++++---
+ security/integrity/ima/ima.h                    |  1 +
+ security/integrity/ima/ima_api.c                | 67 ++++++++++++++++---------
+ security/integrity/ima/ima_crypto.c             | 10 ++++
+ security/integrity/ima/ima_main.c               | 19 ++++---
+ security/integrity/ima/ima_policy.c             | 41 ++++++++++++++-
+ 23 files changed, 238 insertions(+), 45 deletions(-)
+
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
