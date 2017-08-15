@@ -1,93 +1,64 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 15 Aug 2017 10:43:52 -0400
-Subject: [PATCH v6 1/6] libfs: define simple_read_iter_from_buffer
+Date: Tue, 15 Aug 2017 10:43:53 -0400
+Subject: [PATCH v6 2/6] efivarfs: replaces the read file operation with
+	read_iter
 In-Reply-To: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1502808237-2035-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1502808237-2035-3-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation for defining an integrity_read file operation
-method for efivarfs, define a simple_read_iter_from_buffer()
-function.
+In preparation for defining the integrity_read file operation
+method, replace the read file operation method with read_iter.
 
-(Based on Al's code as posted in thread.)
-
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Suggested-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Matthew Garrett <mjg59@srcf.ucam.org>
 
 ---
 Changelog v6:
-- defined as a separate patch
+- Defined as a separate patch.
  
- fs/libfs.c         | 32 ++++++++++++++++++++++++++++++++
- include/linux/fs.h |  2 ++
- 2 files changed, 34 insertions(+)
+ fs/efivarfs/file.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 3aabe553fc45..b6e304c6828b 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -16,6 +16,7 @@
- #include <linux/exportfs.h>
- #include <linux/writeback.h>
- #include <linux/buffer_head.h> /* sync_mapping_buffers */
-+#include <linux/uio.h>
+diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
+index 5f22e74bbade..863f1b100165 100644
+--- a/fs/efivarfs/file.c
++++ b/fs/efivarfs/file.c
+@@ -64,9 +64,10 @@ static ssize_t efivarfs_file_write(struct file *file,
+ 	return bytes;
+ }
  
- #include <linux/uaccess.h>
+-static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+-		size_t count, loff_t *ppos)
++static ssize_t efivarfs_file_read_iter(struct kiocb *iocb,
++				       struct iov_iter *iter)
+ {
++	struct file *file = iocb->ki_filp;
+ 	struct efivar_entry *var = file->private_data;
+ 	unsigned long datasize = 0;
+ 	u32 attributes;
+@@ -96,8 +97,8 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+ 		goto out_free;
  
-@@ -676,6 +677,37 @@ ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- EXPORT_SYMBOL(simple_write_to_buffer);
+ 	memcpy(data, &attributes, sizeof(attributes));
+-	size = simple_read_from_buffer(userbuf, count, ppos,
+-				       data, datasize + sizeof(attributes));
++	size = simple_read_iter_from_buffer(iocb, iter, data,
++					    datasize + sizeof(attributes));
+ out_free:
+ 	kfree(data);
  
- /**
-+ * simple_read_iter_from_buffer - copy data from the buffer to user space
-+ * @iocb: struct containing the file, the current position and other info
-+ * @to: the user space buffer to read to
-+ * @from: the buffer to read from
-+ * @available: the size of the buffer
-+ *
-+ * The simple_read_iter_from_buffer() function reads up to @available bytes
-+ * from the current buffer into the user space buffer.
-+ *
-+ * On success, the current buffer offset is advanced by the number of bytes
-+ * read, or a negative value is returned on error.
-+ **/
-+ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
-+				     const void *from, size_t available)
-+{
-+	loff_t pos = iocb->ki_pos;
-+	size_t ret;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available)
-+		return 0;
-+	ret = copy_to_iter(from + pos, available - pos, to);
-+	if (!ret && iov_iter_count(to))
-+		return -EFAULT;
-+	iocb->ki_pos = pos + ret;
-+	return ret;
-+}
-+EXPORT_SYMBOL(simple_read_iter_from_buffer);
-+
-+/**
-  * memory_read_from_buffer - copy data from the buffer
-  * @to: the kernel space buffer to read to
-  * @count: the maximum number of bytes to read
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6e1fd5d21248..fdec9b763b54 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3097,6 +3097,8 @@ extern void simple_release_fs(struct vfsmount **mount, int *count);
+@@ -174,7 +175,7 @@ efivarfs_file_ioctl(struct file *file, unsigned int cmd, unsigned long p)
  
- extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- 			loff_t *ppos, const void *from, size_t available);
-+extern ssize_t simple_read_iter_from_buffer(struct kiocb *iocb,
-+		struct iov_iter *to, const void *from, size_t available);
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
- 
+ const struct file_operations efivarfs_file_operations = {
+ 	.open	= simple_open,
+-	.read	= efivarfs_file_read,
++	.read_iter = efivarfs_file_read_iter,
+ 	.write	= efivarfs_file_write,
+ 	.llseek	= no_llseek,
+ 	.unlocked_ioctl = efivarfs_file_ioctl,
 -- 
 2.7.4
 
