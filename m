@@ -1,122 +1,104 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 16 Aug 2017 13:30:19 -0400
-Subject: [RFC PATCH 3/4] security: define a new LSM sb_post_remount hook
+Date: Wed, 16 Aug 2017 13:30:20 -0400
+Subject: [RFC PATCH 4/4] ima: define a new ima_sb_post_remount hook
 In-Reply-To: <1502904620-20075-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1502904620-20075-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1502904620-20075-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1502904620-20075-5-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Allow LSMs to compare the previous and new mount flags. This patch
-defines a new LSM hook named security_sb_post_remount.
+Compare the previous i_version flag with the remounted i_version
+flag.  Only if there is a change, log change message.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- fs/namespace.c            | 3 +++
- include/linux/lsm_hooks.h | 9 +++++++++
- include/linux/security.h  | 8 ++++++++
- security/security.c       | 7 +++++++
- 4 files changed, 27 insertions(+)
+ include/linux/ima.h               |  9 +++++++++
+ security/integrity/ima/ima_main.c | 22 ++++++++++++++++++++--
+ security/security.c               |  1 +
+ 3 files changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a7fa13f422ad..e6f4ea9a1008 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2228,6 +2228,7 @@ static int do_remount(struct path *path, int flags, int mnt_flags,
- 	int err;
- 	struct super_block *sb = path->mnt->mnt_sb;
- 	struct mount *mnt = real_mount(path->mnt);
-+	unsigned long prev_sb_flags = sb->s_flags;
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 4475cb01149c..bd98221c00d5 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -25,6 +25,9 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern void ima_sb_post_new_mount(const struct vfsmount *newmnt,
+ 				  const struct path *path);
++extern  void ima_sb_post_remount(const struct super_block *sb,
++				 unsigned long prev_sb_flags,
++				 const struct path *path);
  
- 	if (!check_mnt(mnt))
- 		return -EINVAL;
-@@ -2279,6 +2280,8 @@ static int do_remount(struct path *path, int flags, int mnt_flags,
- 		mnt->mnt.mnt_flags = mnt_flags;
- 		touch_mnt_namespace(mnt->mnt_ns);
- 		unlock_mount_hash();
+ #ifdef CONFIG_IMA_KEXEC
+ extern void ima_add_kexec_buffer(struct kimage *image);
+@@ -70,6 +73,12 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
+ static inline void ima_sb_post_new_mount(const struct vfsmount *newmnt,
+ 					 const struct path *path)
+ { }
 +
-+		security_sb_post_remount(sb, prev_sb_flags, path);
- 	}
- 	up_write(&sb->s_umount);
- 	return err;
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index c3ecea0d0dca..e940dc43786c 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -123,6 +123,11 @@
-  *	@sb superblock being remounted
-  *	@data contains the filesystem-specific data.
-  *	Return 0 if permission is granted.
-+ * @sb_post_remount:
-+ *	Allow comparison between new and previous mount flags.
-+ *	@sb superblock being remounted
-+ *	@prev_sb_flags previous mount flags
-+ *	@path contains the path for mount point object.
-  * @sb_umount:
-  *	Check permission before the @mnt file system is unmounted.
-  *	@mnt contains the mounted file system.
-@@ -1395,6 +1400,9 @@ union security_list_options {
- 	void (*sb_free_security)(struct super_block *sb);
- 	int (*sb_copy_data)(char *orig, char *copy);
- 	int (*sb_remount)(struct super_block *sb, void *data);
-+	void (*sb_post_remount)(const struct super_block *sb,
-+				const unsigned long prev_sb_flags,
-+				const struct path *path);
- 	int (*sb_kern_mount)(struct super_block *sb, int flags, void *data);
- 	int (*sb_show_options)(struct seq_file *m, struct super_block *sb);
- 	int (*sb_statfs)(struct dentry *dentry);
-@@ -1717,6 +1725,7 @@ struct security_hook_heads {
- 	struct list_head sb_free_security;
- 	struct list_head sb_copy_data;
- 	struct list_head sb_remount;
-+	struct list_head sb_post_remount;
- 	struct list_head sb_kern_mount;
- 	struct list_head sb_show_options;
- 	struct list_head sb_statfs;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 4acdaae7aa04..fa963a870a84 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -237,6 +237,9 @@ int security_sb_alloc(struct super_block *sb);
- void security_sb_free(struct super_block *sb);
- int security_sb_copy_data(char *orig, char *copy);
- int security_sb_remount(struct super_block *sb, void *data);
-+void security_sb_post_remount(const struct super_block *sb,
-+			      unsigned long prev_sb_flags,
-+			      const struct path *path);
- int security_sb_kern_mount(struct super_block *sb, int flags, void *data);
- int security_sb_show_options(struct seq_file *m, struct super_block *sb);
- int security_sb_statfs(struct dentry *dentry);
-@@ -565,6 +568,11 @@ static inline int security_sb_remount(struct super_block *sb, void *data)
- 	return 0;
- }
- 
-+static inline void security_sb_post_remount(const struct super_block *sb,
-+					    unsigned long prev_sb_flags,
-+					    const struct path *path))
++static inline void ima_sb_post_remount(const struct super_block *sb,
++				       unsigned long prev_sb_flags,
++				       const struct path *path)
 +{ }
 +
- static inline int security_sb_kern_mount(struct super_block *sb, int flags, void *data)
- {
- 	return 0;
-diff --git a/security/security.c b/security/security.c
-index 79111141b383..7981ad9019c9 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -377,6 +377,13 @@ int security_sb_remount(struct super_block *sb, void *data)
- 	return call_int_hook(sb_remount, 0, sb, data);
+ #endif /* CONFIG_IMA */
+ 
+ #ifndef CONFIG_IMA_KEXEC
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index a0a685189001..1b180f974e8d 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -373,8 +373,10 @@ void ima_sb_post_new_mount(const struct vfsmount *newmnt,
+ 
+ 	sb = newmnt ? newmnt->mnt_sb : path->mnt->mnt_sb;
+ 
+-	if ((sb->s_flags & MS_I_VERSION) || (sb->s_flags & MS_RDONLY) ||
+-	    (sb->s_flags & MS_KERNMOUNT))
++	if ((sb->s_flags & MS_KERNMOUNT) || (sb->s_flags & MS_RDONLY))
++		return;
++
++	if (newmnt && (sb->s_flags & MS_I_VERSION))
+ 		return;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(pseudo_fs); i++) {
+@@ -394,9 +396,25 @@ void ima_sb_post_new_mount(const struct vfsmount *newmnt,
+ 	if (newmnt)
+ 		pr_warn("ima: %s mounted without i_version enabled\n",
+ 			pathname);
++	else if (sb->s_flags & MS_I_VERSION)
++		pr_warn("ima: %s re-mounted with i_version enabled\n",
++			pathname);
++	else
++		pr_warn("ima: %s re-mounted without i_version enabled\n",
++			pathname);
+ 	 __putname(pathbuf);
  }
  
-+void security_sb_post_remount(const struct super_block *sb,
-+			      unsigned long prev_sb_flags,
-+			      const struct path *path)
++void ima_sb_post_remount(const struct super_block *sb,
++			 unsigned long prev_sb_flags,
++			 const struct path *path)
 +{
-+	call_void_hook(sb_post_remount, sb, prev_sb_flags, path);
++	if ((sb->s_flags & MS_I_VERSION) == (prev_sb_flags & MS_I_VERSION))
++		return;		/* nothing changed */
++
++	ima_sb_post_new_mount(NULL, path);
 +}
 +
- int security_sb_kern_mount(struct super_block *sb, int flags, void *data)
+ /**
+  * ima_read_file - pre-measure/appraise hook decision based on policy
+  * @file: pointer to the file to be measured/appraised/audit
+diff --git a/security/security.c b/security/security.c
+index 7981ad9019c9..1e2051a52b9f 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -382,6 +382,7 @@ void security_sb_post_remount(const struct super_block *sb,
+ 			      const struct path *path)
  {
- 	return call_int_hook(sb_kern_mount, 0, sb, flags, data);
+ 	call_void_hook(sb_post_remount, sb, prev_sb_flags, path);
++	ima_sb_post_remount(sb, prev_sb_flags, path);
+ }
+ 
+ int security_sb_kern_mount(struct super_block *sb, int flags, void *data)
 -- 
 2.7.4
 
