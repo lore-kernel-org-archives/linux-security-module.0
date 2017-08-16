@@ -1,30 +1,49 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 16 Aug 2017 13:43:06 -0400
-Subject: [PATCH v6 1/6] libfs: define simple_read_iter_from_buffer
-In-Reply-To: <20170816063508.GA16683@lst.de>
+Date: Wed, 16 Aug 2017 13:43:45 -0400
+Subject: [PATCH v6 4/6] ima: use fs method to read integrity data
+In-Reply-To: <20170816131748.GB4898@quack2.suse.cz>
 References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502808237-2035-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<20170816063508.GA16683@lst.de>
-Message-ID: <1502905386.21278.2.camel@linux.vnet.ibm.com>
+	<1502808237-2035-5-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170816131748.GB4898@quack2.suse.cz>
+Message-ID: <1502905425.21278.3.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-08-16 at 08:35 +0200, Christoph Hellwig wrote:
-> Looks good,
+On Wed, 2017-08-16 at 15:17 +0200, Jan Kara wrote:
+> On Tue 15-08-17 10:43:55, Mimi Zohar wrote:
+> > From: Christoph Hellwig <hch@lst.de>
+> > 
+> > Add a new ->integrity_read file operation to read data for integrity
+> > hash collection.  This is defined to be equivalent to ->read_iter,
+> > except that it will be called with the i_rwsem held exclusively.
+> > 
+> > (Based on Christoph's original patch.)
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+> > Cc: Jan Kara <jack@suse.com>
+> > Cc: "Theodore Ts'o" <tytso@mit.edu>
+> > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> > Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> > Cc: Chao Yu <yuchao0@huawei.com>
+> > Cc: Steven Whitehouse <swhiteho@redhat.com>
+> > Cc: Bob Peterson <rpeterso@redhat.com>
+> > Cc: David Woodhouse <dwmw2@infradead.org>
+> > Cc: Dave Kleikamp <shaggy@kernel.org>
+> > Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+> > Cc: Mark Fasheh <mfasheh@versity.com>
+> > Cc: Joel Becker <jlbec@evilplan.org>
+> > Cc: Richard Weinberger <richard@nod.at>
+> > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Chris Mason <clm@fb.com>
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Looks good to me. You can add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thank you for the reviewed-by's.
-
-Up to now I haven't been removing the Changelog before sending James a
-pull request.??Adding the dashes in the commit itself, only changes
-how the patches are applied by others to their local branch, not to
-what would be upstreamed.??Am I suppose to be removing the changelog
-before sending a pull request?
-
-thanks,
-
-Mimi
+Thanks!
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
