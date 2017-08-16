@@ -1,20 +1,22 @@
 From: jmorris@namei.org (James Morris)
-Date: Wed, 16 Aug 2017 12:33:32 +1000 (AEST)
-Subject: [GIT PULL] seccomp updates for next
-In-Reply-To: <20170815220319.GA63342@beast>
-References: <20170815220319.GA63342@beast>
-Message-ID: <alpine.LRH.2.20.1708161233180.30541@namei.org>
+Date: Wed, 16 Aug 2017 12:43:58 +1000 (AEST)
+Subject: [PATCH v6 0/6] define new fs integrity_read method 
+In-Reply-To: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.20.1708161240220.30541@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 15 Aug 2017, Kees Cook wrote:
+On Tue, 15 Aug 2017, Mimi Zohar wrote:
 
-> Hi James,
-> 
-> Please pull these seccomp changes for next.
-> 
+> To resolve this locking problem, this patch set introduces a new
+> ->integrity_read file operation method.  Until all filesystems
+> define the new ->integrity_read method, files that were previously
+> measured might not be currently measured and files that were
+> previously appraised might fail to be appraised properly.
 
-Pulled to -next, thanks!
+Are there any such filesystems in mainline which are not getting an 
+integrity_read method in this patchset?
 
 -- 
 James Morris
