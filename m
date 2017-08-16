@@ -1,10 +1,11 @@
 From: hch@lst.de (Christoph Hellwig)
-Date: Wed, 16 Aug 2017 08:35:08 +0200
-Subject: [PATCH v6 1/6] libfs: define simple_read_iter_from_buffer
-In-Reply-To: <1502808237-2035-2-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Wed, 16 Aug 2017 08:35:19 +0200
+Subject: [PATCH v6 2/6] efivarfs: replaces the read file operation with
+	read_iter
+In-Reply-To: <1502808237-2035-3-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502808237-2035-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20170816063508.GA16683@lst.de>
+	<1502808237-2035-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20170816063519.GB16683@lst.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
