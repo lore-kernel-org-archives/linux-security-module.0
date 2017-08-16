@@ -1,51 +1,43 @@
-From: jack@suse.cz (Jan Kara)
-Date: Wed, 16 Aug 2017 15:17:48 +0200
-Subject: [PATCH v6 4/6] ima: use fs method to read integrity data
-In-Reply-To: <1502808237-2035-5-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502808237-2035-5-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20170816131748.GB4898@quack2.suse.cz>
+From: fengguang.wu@intel.com (kbuild test robot)
+Date: Thu, 17 Aug 2017 00:20:17 +0800
+Subject: [integrity:next-log-iversion 9/11] include/linux/ima.h:72:1: error:
+	expected identifier or '(' before '{' token
+Message-ID: <201708170014.CbV8SsRT%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue 15-08-17 10:43:55, Mimi Zohar wrote:
-> From: Christoph Hellwig <hch@lst.de>
-> 
-> Add a new ->integrity_read file operation to read data for integrity
-> hash collection.  This is defined to be equivalent to ->read_iter,
-> except that it will be called with the i_rwsem held exclusively.
-> 
-> (Based on Christoph's original patch.)
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-> Cc: Jan Kara <jack@suse.com>
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> Cc: Chao Yu <yuchao0@huawei.com>
-> Cc: Steven Whitehouse <swhiteho@redhat.com>
-> Cc: Bob Peterson <rpeterso@redhat.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Dave Kleikamp <shaggy@kernel.org>
-> Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-> Cc: Mark Fasheh <mfasheh@versity.com>
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Chris Mason <clm@fb.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-log-iversion
+head:   5873cd8f629e0306acdc40d3a9142eb50ae70c2d
+commit: 58015ce0b48226300bb6805a75c99cf538a524c6 [9/11] ima: define new ima_sb_post_new_mount hook
+config: i386-tinyconfig (attached as .config)
+compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+reproduce:
+        git checkout 58015ce0b48226300bb6805a75c99cf538a524c6
+        # save the attached .config to linux build tree
+        make ARCH=i386 
 
-Looks good to me. You can add:
+Note: the integrity/next-log-iversion HEAD 5873cd8f629e0306acdc40d3a9142eb50ae70c2d builds fine.
+      It only hurts bisectibility.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+All errors (new ones prefixed by >>):
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+   In file included from fs//attr.c:18:0:
+>> include/linux/ima.h:72:1: error: expected identifier or '(' before '{' token
+    { }
+    ^
+   include/linux/ima.h:70:20: warning: 'ima_sb_post_new_mount' declared 'static' but never defined [-Wunused-function]
+    static inline void ima_sb_post_new_mount(const struct vfsmount *newmnt,
+                       ^~~~~~~~~~~~~~~~~~~~~
+
+vim +72 include/linux/ima.h
+
+    69	
+    70	static inline void ima_sb_post_new_mount(const struct vfsmount *newmnt,
+    71						 const struct path *path);
+  > 72	{ }
+    73	#endif /* CONFIG_IMA */
+    74	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
