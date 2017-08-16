@@ -1,43 +1,54 @@
-From: fengguang.wu@intel.com (kbuild test robot)
-Date: Thu, 17 Aug 2017 00:20:17 +0800
-Subject: [integrity:next-log-iversion 9/11] include/linux/ima.h:72:1: error:
-	expected identifier or '(' before '{' token
-Message-ID: <201708170014.CbV8SsRT%fengguang.wu@intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 16 Aug 2017 13:30:16 -0400
+Subject: [RFC PATCH 0/4] ima: filesystems not mounted with i_version 
+Message-ID: <1502904620-20075-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-log-iversion
-head:   5873cd8f629e0306acdc40d3a9142eb50ae70c2d
-commit: 58015ce0b48226300bb6805a75c99cf538a524c6 [9/11] ima: define new ima_sb_post_new_mount hook
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-reproduce:
-        git checkout 58015ce0b48226300bb6805a75c99cf538a524c6
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+IMA measures a file, verifies a file's integrity, and caches the
+results.  On filesystems with MS_I_VERSION enabled, IMA can detect
+file changes and cause them to be re-measured and verified.  On
+filesystems without MS_I_VERSION enabled, files are measured and
+verified just once.
 
-Note: the integrity/next-log-iversion HEAD 5873cd8f629e0306acdc40d3a9142eb50ae70c2d builds fine.
-      It only hurts bisectibility.
+Currently users either have to look at the source code or test 
+to determine if the file system supports i_version.  Even if the
+file system supports i_version, there is no guarantee that the
+filesystem was actually mounted with the i_version flag.
 
-All errors (new ones prefixed by >>):
+This patch set emits warning messages when filesystems are not
+mounted with i_version support.  This patch set defines two new post
+LSM hooks named security_sb_post_new_mount and
+security_sb_post_remount, with their corresponding IMA functions.
 
-   In file included from fs//attr.c:18:0:
->> include/linux/ima.h:72:1: error: expected identifier or '(' before '{' token
-    { }
-    ^
-   include/linux/ima.h:70:20: warning: 'ima_sb_post_new_mount' declared 'static' but never defined [-Wunused-function]
-    static inline void ima_sb_post_new_mount(const struct vfsmount *newmnt,
-                       ^~~~~~~~~~~~~~~~~~~~~
+Questions:
+- IMA can call out directly to the IMA functions, without having to
+  define these LSM hooks.  Is there a need for these LSM hooks?
 
-vim +72 include/linux/ima.h
+- do_new_mount() creates a new vfsmount. If there is a way of accessing
+  this new vfsmount from the caller do_mount(), we would only need one
+  new LSM hook and corresponding IMA hook.
 
-    69	
-    70	static inline void ima_sb_post_new_mount(const struct vfsmount *newmnt,
-    71						 const struct path *path);
-  > 72	{ }
-    73	#endif /* CONFIG_IMA */
-    74	
+Mimi
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Mimi Zohar (4):
+  security: define new LSM sb_post_new_mount hook
+  ima: define new ima_sb_post_new_mount hook
+  security: define a new LSM sb_post_remount hook
+  ima: define a new ima_sb_post_remount hook
+
+ fs/namespace.c                    |  5 ++++
+ include/linux/ima.h               | 14 +++++++++
+ include/linux/lsm_hooks.h         | 16 ++++++++++
+ include/linux/security.h          | 10 +++++++
+ security/integrity/ima/ima_main.c | 62 +++++++++++++++++++++++++++++++++++++++
+ security/security.c               | 15 ++++++++++
+ 6 files changed, 122 insertions(+)
+
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
