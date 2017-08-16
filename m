@@ -1,40 +1,51 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 16 Aug 2017 19:52:17 +1000 (AEST)
-Subject: [PATCH v6 0/6] define new fs integrity_read method
-In-Reply-To: <20170816063410.GB16531@lst.de>
-References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<alpine.LRH.2.20.1708161240220.30541@namei.org>
-	<20170816063410.GB16531@lst.de>
-Message-ID: <alpine.LRH.2.20.1708161951210.13272@namei.org>
+From: msuchanek@suse.de (Michal =?UTF-8?B?U3VjaMOhbmVr?=)
+Date: Wed, 16 Aug 2017 12:24:23 +0200
+Subject: [tpmdd-devel] [PATCH] tpm: improve tpm_tis send() performance
+	by ignoring burstcount
+In-Reply-To: <869cc1b1-0836-a53b-31d7-9fec50d8cc52@linux.vnet.ibm.com>
+References: <20170807114632.1339-1-nayna@linux.vnet.ibm.com>
+	<E37DFCB0-2E74-45F6-B2DF-70EF59F310BC@gmx.de>
+	<20170808191145.kggmoczd5laiccrn@linux.intel.com>
+	<db0359cc-5e6b-2055-734a-bd9104e4a99f@linux.vnet.ibm.com>
+	<trinity-b615e596-8095-4a0a-9922-3fa9a5724c30-1502312435959@3c-app-gmx-bs76>
+	<9cb350b6-32fd-529e-eb31-6800339cddb2@linux.vnet.ibm.com>
+	<20170814015359.30177c87@naga>
+	<869cc1b1-0836-a53b-31d7-9fec50d8cc52@linux.vnet.ibm.com>
+Message-ID: <20170816122423.315817c7@kitsune.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 16 Aug 2017, Christoph Hellwig wrote:
+On Tue, 15 Aug 2017 18:02:57 -0400
+Ken Goldman <kgold@linux.vnet.ibm.com> wrote:
 
-> On Wed, Aug 16, 2017 at 12:43:58PM +1000, James Morris wrote:
-> > On Tue, 15 Aug 2017, Mimi Zohar wrote:
+> On 8/13/2017 7:53 PM, msuchanek wrote:
+> > About 500 out of 700 mainboards sold today has a PS/2 port which is
+> > probably due to prevalence of legacy devices and usbhid limitations.
 > > 
-> > > To resolve this locking problem, this patch set introduces a new
-> > > ->integrity_read file operation method.  Until all filesystems
-> > > define the new ->integrity_read method, files that were previously
-> > > measured might not be currently measured and files that were
-> > > previously appraised might fail to be appraised properly.
+> > Similarily many boards have serial and parallel hardware ports.
 > > 
-> > Are there any such filesystems in mainline which are not getting an 
-> > integrity_read method in this patchset?
+> > In all diagrams detailed enough to show these ports I have seen them
+> > attached to the LPC bus.  
 > 
-> There are a few, mostly because we're pretty sure the previous integrity
-> code did the wrong thing for them - e.g. ocfs2 and gfs2 where locking
-> vs operations on other cluster nodes was missing, or NFS where in addition
-> to the above deadlocks were 100% reprodicible with current code.
+> Do these boards have a TPM?  Remember that the TPM requires special
+> LPC bus cycles.
 
-Should we do a warn_once for these filesystems when IMA is used?
+Out of nearly 700 boards over 500 have PS/2 connector and over 400
+have TPM slot (which is subset of the PS/2 enabled boards). Some more
+possibly have on-board TPM chip.
 
+> 
+> Even if so, the TPM LPC bus wait states are less than a usec.  My 
+> thought is that  it's unlikely that any device (serial port, mouse, 
+> keyboard, printer) will be adversely affected.
 
--- 
-James Morris
-<jmorris@namei.org>
+Yes, in theory this is negligible. So unless there is a possibility
+these wait states chain or the device otherwise takes over the bus for
+extended period of time this should be fine.
 
+Thanks
+
+Michal
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
