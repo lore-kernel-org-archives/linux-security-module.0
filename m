@@ -1,95 +1,211 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Thu, 17 Aug 2017 10:32:40 +0200
-Subject: [Linux-ima-devel] [PATCH 11/12] ima: don't report measurements if
-	digests are included in the loaded lists
-In-Reply-To: <96860a64-2ba1-d445-dd8e-08b131fe402b@linux.vnet.ibm.com>
-References: <20170725154423.24845-1-roberto.sassu@huawei.com>
-	<20170725154423.24845-12-roberto.sassu@huawei.com>
-	<96860a64-2ba1-d445-dd8e-08b131fe402b@linux.vnet.ibm.com>
-Message-ID: <f0dd1d3f-766a-0a8a-ccfc-e6b1ddd06adf@huawei.com>
+Date: Thu, 17 Aug 2017 11:15:52 +0200
+Subject: [Linux-ima-devel] [PATCH, RESEND 08/12] ima: added parser for RPM
+	data type
+In-Reply-To: <1502370765.3367.69.camel@linux.vnet.ibm.com>
+References: <20170725154423.24845-9-roberto.sassu@huawei.com>
+	<20170801102036.15371-1-roberto.sassu@huawei.com>
+	<20170801102709.GA24285@infradead.org>
+	<11206fd8-d189-deb0-ab67-aec373f8d979@huawei.com>
+	<alpine.LRH.2.20.1708021716440.1117@namei.org>
+	<0506050f-c4f1-1b36-a25b-c5418607906d@huawei.com>
+	<1502289048.19092.62.camel@linux.vnet.ibm.com>
+	<fffaf219-a633-478a-ec0e-2869419fe3b0@huawei.com>
+	<1502370765.3367.69.camel@linux.vnet.ibm.com>
+Message-ID: <edf5405d-ffc0-cd59-d590-e0a42741b633@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 8/9/2017 10:36 PM, Ken Goldman wrote:
-> On 7/25/2017 11:44 AM, Roberto Sassu wrote:
->> Don't report measurements if the file digest has been included in
->> an uploaded digest list.
+On 8/10/2017 3:12 PM, Mimi Zohar wrote:
+> On Wed, 2017-08-09 at 19:18 +0200, Roberto Sassu wrote:
+>> On 8/9/2017 4:30 PM, Mimi Zohar wrote:
+>>> On Wed, 2017-08-09 at 11:15 +0200, Roberto Sassu wrote:
+>>>> On 8/2/2017 9:22 AM, James Morris wrote:
+>>>>> On Tue, 1 Aug 2017, Roberto Sassu wrote:
+>>>>>
+>>>>>> On 8/1/2017 12:27 PM, Christoph Hellwig wrote:
+>>>>>>> On Tue, Aug 01, 2017 at 12:20:36PM +0200, Roberto Sassu wrote:
+>>>>>>>> This patch introduces a parser for RPM packages. It extracts the digests
+>>>>>>>> from the RPMTAG_FILEDIGESTS header section and converts them to binary
+>>>>>>>> data
+>>>>>>>> before adding them to the hash table.
+>>>>>>>>
+>>>>>>>> The advantage of this data type is that verifiers can determine who
+>>>>>>>> produced that data, as headers are signed by Linux distributions vendors.
+>>>>>>>> RPM headers signatures can be provided as digest list metadata.
+>>>>>>>
+>>>>>>> Err, parsing arbitrary file formats has no business in the kernel.
+>>>>>>
+>>>>>> The benefit of this choice is that no actions are required for
+>>>>>> Linux distribution vendors to support the solution I'm proposing,
+>>>>>> because they already provide signed digest lists (RPM headers).
+>>>>>>
+>>>>>> Since the proof of loading a digest list is the digest of the
+>>>>>> digest list (included in the list metadata), if RPM headers are
+>>>>>> converted to a different format, remote attestation verifiers
+>>>>>> cannot check the signature.
+>>>>>>
+>>>>>> If the concern is security, it would be possible to prevent unsigned
+>>>>>> RPM headers from being parsed, if the PGP key type is upstreamed
+>>>>>> (adding in CC keyrings at vger.kernel.org).
+>>>>>
+>>>>> It's a security concern and also a layering violation, there should be no
+>>>>> need to parse package file formats in the kernel.
+>>>>
+>>>> Parsing RPMs is not strictly necessary. Digests from the headers
+>>>> can be extracted and written to a new file using the compact data
+>>>> format (introduced with patch 7/12).
+>>>>
+>>>> At boot time, IMA measures this file before digests are uploaded to the
+>>>> kernel. At this point, only files with unknown digest will be added
+>>>> to the measurement list. At verification time, verifiers recreate the
+>>>> measurement list by merging together the digests uploaded to the
+>>>> kernel with the unknown digests. Then, they verify the obtained list.
+>>>>
+>>>> There are two ways to verify the digests: searching them in a reference
+>>>> database, or checking a signature. With the 'ima-sig' measurement list
+>>>> template, it is possible to verify signatures for each accessed file.
+>>>> With this patch set, it is possible to verify the signature of
+>>>> the file containing the digests uploaded to the kernel. If the data
+>>>> format changes, the signature cannot be verified.
+>>>>
+>>>> To avoid this limitation, the parsers could be moved to a userspace
+>>>> tool which then uploads the parsed digests to the kernel. IMA would
+>>>> measure the original files. But, if the tool is compromised, it could
+>>>> load digests not included in the parsed files. With the current solution
+>>>> this problem does not arise because no changes can be done by userspace
+>>>> applications to the uploaded data while digests are parsed by IMA.
+>>>>
+>>>> I could remove the RPM parser from the patch set for now.
+>>>>
+>>>> Is the remaining part of the patch set ok, and is the explanation of
+>>>> what it does clear?
+>>>
+>>> From a trusted boot perspective, file measurements are added to the
+>>> measurement list, before access to the file is given.  The measurement
+>>> list contains ALL measurements, as defined by policy.  This patch set
+>>> changes that meaning to be all measurements, as defined by policy,
+>>> with the exception of those in a white list.
 >>
->> The advantage of this solution is that the boot time overhead, when
->> a TPM is available, is very small because a PCR is extended only
->> for unknown files. The disadvantage is that verifiers do not know
->> anymore which and when files are accessed (they must assume that
->> the worst case happened, i.e. all files have been accessed).
+>> The digest list is also measured, so the measurement list is complete.
+>> Verifiers have to check the digest of digest lists. Otherwise, they
+>> would get an unknown digest and conclude that the system being verified
+>> has been compromised.
 >
-> Am I reading this correctly that you want to measure certain files, but
-> not ones that have been included in a "digest list", which sounds like a
-> white list of sorts.
+> Your proposal is basically a pre-approved "batched" measurement, of a
+> set of known good measurements, without the corresponding list of
+> measurements that this "batched" measurement represents.  Right?
+
+Yes, correct.
+
+
+> This pre-approved "batched" measurement represents not what has been
+> accessed/executed on the system, but what potentially could be
+> accessed/executed.  That's a major difference.
 >
-> If so, I have two concerns:
+>> If you prefer, I could add a new policy rule option to avoid file
+>> measurements if the digest is in the digest list.
 >
-> 1 - How would the client get this digest list?  Shouldn't it be up to
-> the relying party to decide what is trusted and not trusted, not the
-> client?
+> Huh?  Patch "ima: don't report measurements if digests are included in
+> the loaded lists" is already doing this.
 
-The client can get the digest list from the RPM database or the
-measurement list of a previous boot. A verifier still decides if the
-client is trusted or not, depending on what could be possibly accessed
-rather than what has been accessed.
+Since the content of the measurement list depends on the policy,
+adding a new option would give a better understanding of what the
+measurement list represents. But, I agree that this is redundant.
 
 
-> What of the case with two different relying parties that have a
-> different list of trusted applications?  E.g., one trusts any version of
-> program X, while the other trusts only version 3.1 and up?
-
-There are two ways to provide more accurate information (make the list
-of possibly accessed files closer to the list of accessed files):
-
-1) use the measurement list of a previous boot as a source for
-    the digest list
-
-2) use the RPM database as a source for the digest lists, and load the
-    headers of the latest version of RPMs
-
-    and:
-
-    load only the headers of RPMs including files that appear in the
-    measurement list of a previous boot (this solution should be
-    preferred to solution 1, as signature-based attestation can be done)
-
-
-> 2 - What about files on the digest list that were not run?  The relying
-> party may want to know if a program wasn't run?  E.g., antivirus or a
-> firewall.
+>>> Changing the fundamental meaning of the measurement list is not
+>>> acceptable.  You could define a new securityfs file to differentiate
+>>> between the full measurement list and this abbreviated one.  But
+>>
+>> There cannot be two measurement lists at the same time. Providing the
+>> full measurement list (containing the digest of files being accessed)
+>> implies that its integrity must be protected with PCR extends, making
+>> the optimization done by this patch set useless.
 >
-> If the rule is "don't measure if it's on the digest list", how does the
-> relying party know if it was run?
+> True, so you would be able to configure the system with one or the
+> other type of list, not both.  At least there would be a clear
+> understanding of what that list represents.
+>
+>>
+>>> before making this sort of change, I would prefer to address the
+>>> underlying problem - TPM peformance.
+>>
+>> Even if the TPM driver performance improves significantly (17 seconds
+>> for 1000 extends), the boot time delay would be still noticeable
+>> (8.5 seconds for normal boot + 24 seconds for 1400 PCR extends).
+>
+> Agreed, there is still room for more TPM improvements.  Just Nayna's
+> one patch, without any other changes, brought the timing down from 53s
+> for a 1000 extends to just 11s.  (The initial patch was Nack'ed, but
+> we're working with the tpmdd and the TCG's device driver work group
+> (DDWG).)
+>
+>> In my opinion, this patch set is useful without considering the
+>> performance improvement: reduced size of measurement lists and
+>> verification of digest list signatures, instead of file signatures,
+>> where signatures are already provided by Linux distributions.
+>
+> Right, there's always a trade off.  My suggestion, assuming we go with
+> this approach, would be to make that trade off clear by using
+> different lists.
 
-If a measurement list does not contain unknown digests, this means that
-no malicious software was loaded. But, if the measurement list contains
-the digest of an antivirus binary, this does not necessarily mean that
-it was loaded.
+You mean to add a new kernel command line option to create new
+securityfs files instead of the existing ones
+(ascii_runtime_measurements, binary_runtime_measurements)? I would
+prefer a solution that does not change the interfaces, otherwise
+remote attestation agents have to be modified. They can handle
+the new list type, as the data format didn't change.
 
-Since PCR 10 can be extended from userspace, a malicious user can
-extend the PCR with the digest of a fake measurement entry reporting
-the loading of the antivirus. He can then add the fake entry to the
-measurement list before it is sent to verifiers, so that they won't
-notice the addition.
-
-A possible countermeasure to this attack would be to modify the TPM
-driver to refuse to extend the PCRs used by IMA.
-
-Then, IMA could be further extended to accept a list of digests of files
-that will be certainly used and to create a measurement entry only after
-all files have been accessed.
+Thanks
 
 Roberto
 
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>> There are a couple of things that could be done to improve the TPM
+>>> driver performance, itself.  Once all of these options have been
+>>> pursued, we could then consider batching the measurements to the TPM,
+>>> meaning that the measurement list would still contain all the file
+>>> measurements, but instead of extending the TPM for each measurement, a
+>>> batched hash - a hash of a group of file measurements - would be
+>>> extended into the TPM.
+>>
+>> Probably, I didn't explain clearly that this patch set does not decrease
+>> the security of IMA.
+>>
+>> Extending the PCR for a group of file measurements means that the system
+>> can be compromised between two PCR extends without detection because
+>> a malicious binary could alter IMA before the next extend.
+>
+> Currently, a measurement is added to the measurement list and then is
+> used to extend the TPM, before returning to the caller.
+>
+> A performance improvement would still first add the measurement to the
+> measurement list, but would then queue and wait for the measurement to
+> extend the TPM, before returning to the caller.  In a multi threaded
+> environment, the queued measurements could be "batched" - a hash of a
+> set of hashes - to extend the TPM.
+>
+> The delay would be at most two times it takes to extend the TPM - one
+> to complete an existing current "batched" extend and another new
+> "batched" extend.
+>
+> The difficulty with this approach is identifying which measurements
+> are included in which "batched" measurement.  This approach provides
+> the same guarantees as previously.
+>
+> Before making the TPM performance problem an IMA issue and "fixing" it
+> in IMA, I would prefer that the TPM performance be addressed directly.
+>
+> Mimi
+>
+>>
+>> This patch set extends the PCR with the digest of digest lists, before
+>> files are accessed. No actions happen before either the digest lists
+>> have been measured or the file measurement is added to the measurement
+>> list, if the file digest is not included in the digest list.
+>
+>
 
 -- 
 HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
