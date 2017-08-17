@@ -1,28 +1,32 @@
 From: jmorris@namei.org (James Morris)
-Date: Thu, 17 Aug 2017 12:39:00 +1000 (AEST)
-Subject: [Linux-ima-devel] [RFC PATCH 2/4] ima: define new
-	ima_sb_post_new_mount hook
-In-Reply-To: <1502917153.21278.48.camel@linux.vnet.ibm.com>
-References: <1502904620-20075-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502904620-20075-3-git-send-email-zohar@linux.vnet.ibm.com>
-	<63522b3b-5e61-f760-5f74-f9fbe44741f5@schaufler-ca.com>
-	<1502917153.21278.48.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.20.1708171233440.10905@namei.org>
+Date: Thu, 17 Aug 2017 12:42:16 +1000 (AEST)
+Subject: [PATCH v6 1/6] libfs: define simple_read_iter_from_buffer
+In-Reply-To: <1502905386.21278.2.camel@linux.vnet.ibm.com>
+References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1502808237-2035-2-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170816063508.GA16683@lst.de>
+	<1502905386.21278.2.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.20.1708171241420.10905@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, 16 Aug 2017, Mimi Zohar wrote:
 
-> In this context, I'm not sure what you mean by "loaded".? IMA needs to
-> be enabled from the very beginning to capture all measurements and
-> verify the integrity of files, without any gaps. ?At some point this
-> would include other LSM policies.
+> On Wed, 2017-08-16 at 08:35 +0200, Christoph Hellwig wrote:
+> > Looks good,
+> > 
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> Thank you for the reviewed-by's.
+> 
+> Up to now I haven't been removing the Changelog before sending James a
+> pull request.??Adding the dashes in the commit itself, only changes
+> how the patches are applied by others to their local branch, not to
+> what would be upstreamed.??Am I suppose to be removing the changelog
+> before sending a pull request?
 
-I think it's better to keep IMA orthogonal to LSM for this reason.
+I don't really understand this, but leave the changelog in?
 
-The original motivation to implement IMA as a separate API was because LSM 
-was at the time considered specific to access control mechanisms, although 
-that is not the case now.
 
 -- 
 James Morris
