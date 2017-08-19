@@ -1,56 +1,43 @@
-From: fengguang.wu@intel.com (kbuild test robot)
-Date: Sat, 19 Aug 2017 17:40:48 +0800
-Subject: [security:next 6/15] security/apparmor/mount.c:227: warning:
-	'perms.prompt' is used uninitialized in this function
-Message-ID: <201708191743.FPV3TuQ6%fengguang.wu@intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 19 Aug 2017 15:16:20 +0300
+Subject: [PATCH v2] msleep() delays - replace with usleep_range() in TPM
+	1.2/2.0 generic drivers
+In-Reply-To: <20170814180916.GA5574@dev-HP-EliteBook-Folio-1040-G1>
+References: <20170814180916.GA5574@dev-HP-EliteBook-Folio-1040-G1>
+Message-ID: <20170819121620.4zxnvz5ki76jbbe4@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-head:   76e22e212a850bbd16cf49f9c586d4635507e0b5
-commit: fa488437d0f95b2e5db1e624341fe0d5a233f729 [6/15] apparmor: add mount mediation
-config: x86_64-randconfig-a0-08191640 (attached as .config)
-compiler: gcc-4.4 (Debian 4.4.7-8) 4.4.7
-reproduce:
-        git checkout fa488437d0f95b2e5db1e624341fe0d5a233f729
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+On Mon, Aug 14, 2017 at 07:09:16PM +0100, Hamza Attak wrote:
+> The patch simply replaces all msleep function calls with usleep_range calls
+> in the generic drivers.
+> 
+> Tested with an Infineon TPM 1.2, using the generic tpm-tis module, for a
+> thousand PCR extends, we see results going from 1m57s unpatched to 40s
+> with the new patch. We obtain similar results when using the original and
+> patched tpm_infineon driver, which is also part of the patch.
+> Similarly with a STM TPM 2.0, using the CRB driver, it takes about 20ms per
+> extend unpatched and around 7ms with the new patch.
+> 
+> Note that the PCR consistency is untouched with this patch, each TPM has
+> been tested with 10 million extends and the aggregated PCR value is
+> continuously verified to be correct.
+> 
+> As an extension of this work, this could potentially and easily be applied
+> to other vendor's drivers. Still, these changes are not included in the
+> proposed patch as they are untested.
+> 
+> Signed-off-by: Hamza Attak <hamza@hpe.com>
 
-All warnings (new ones prefixed by >>):
+Applying this.
 
-   security/apparmor/mount.c: In function 'compute_mnt_perms':
->> security/apparmor/mount.c:227: warning: 'perms.prompt' is used uninitialized in this function
->> security/apparmor/mount.c:227: warning: 'perms.hide' is used uninitialized in this function
->> security/apparmor/mount.c:227: warning: 'perms.cond' is used uninitialized in this function
->> security/apparmor/mount.c:227: warning: 'perms.complain' is used uninitialized in this function
->> security/apparmor/mount.c:227: warning: 'perms.stop' is used uninitialized in this function
->> security/apparmor/mount.c:227: warning: 'perms.deny' is used uninitialized in this function
+Tested-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
 
-vim +227 security/apparmor/mount.c
+PS. Your short summary is broken. See how I fixed it. Otherwise,
+no complains.
 
-   208	
-   209	/**
-   210	 * compute_mnt_perms - compute mount permission associated with @state
-   211	 * @dfa: dfa to match against (NOT NULL)
-   212	 * @state: state match finished in
-   213	 *
-   214	 * Returns: mount permissions
-   215	 */
-   216	static struct aa_perms compute_mnt_perms(struct aa_dfa *dfa,
-   217						   unsigned int state)
-   218	{
-   219		struct aa_perms perms;
-   220	
-   221		perms.kill = 0;
-   222		perms.allow = dfa_user_allow(dfa, state);
-   223		perms.audit = dfa_user_audit(dfa, state);
-   224		perms.quiet = dfa_user_quiet(dfa, state);
-   225		perms.xindex = dfa_user_xindex(dfa, state);
-   226	
- > 227		return perms;
-   228	}
-   229	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+/Jarkko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
