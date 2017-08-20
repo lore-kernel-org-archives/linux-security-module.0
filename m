@@ -1,251 +1,111 @@
-From: mpatocka@redhat.com (Mikulas Patocka)
-Date: Sat, 19 Aug 2017 16:08:02 -0400 (EDT)
-Subject: [dm-devel] [PATCH v5 12/19] dm: move dm-verity to generic async
-	completion
-In-Reply-To: <1502724094-23305-13-git-send-email-gilad@benyossef.com>
-References: <1502724094-23305-1-git-send-email-gilad@benyossef.com>
-	<1502724094-23305-13-git-send-email-gilad@benyossef.com>
-Message-ID: <alpine.LRH.2.02.1708191605370.2380@file01.intranet.prod.int.rdu2.redhat.com>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Sat, 19 Aug 2017 23:20:17 -0400
+Subject: setcap/getcap limitations
+In-Reply-To: <20170512033718.GA29494@mail.hallyn.com>
+References: <20170511211146.GZ25861@madcap2.tricolour.ca>
+	<20170512033718.GA29494@mail.hallyn.com>
+Message-ID: <20170820032017.GO29957@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On Mon, 14 Aug 2017, Gilad Ben-Yossef wrote:
-
-> dm-verity is starting async. crypto ops and waiting for them to complete.
-> Move it over to generic code doing the same.
+On 2017-05-11 22:37, Serge E. Hallyn wrote:
+> Quoting Richard Guy Briggs (rgb at redhat.com):
+> > Capabilities gurus,
 > 
-> This also fixes a possible data coruption bug created by the
-> use of wait_for_completion_interruptible() without dealing
-> correctly with an interrupt aborting the wait prior to the
-> async op finishing.
-
-What is the exact problem there? The interruptible sleep is called from a 
-workqueue and workqueues have all signals blocked. Are signals unblocked 
-for some reason there?
-
-Should there be another patch for stable kernels that fixes the 
-interruptible sleep?
-
-Mikulas
-
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> ---
->  drivers/md/dm-verity-target.c | 81 +++++++++++--------------------------------
->  drivers/md/dm-verity.h        |  5 ---
->  2 files changed, 20 insertions(+), 66 deletions(-)
+> I cc:d Andrew as he maintains the source package,
 > 
-> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-> index 79f18d4..8df08a8 100644
-> --- a/drivers/md/dm-verity-target.c
-> +++ b/drivers/md/dm-verity-target.c
-> @@ -92,74 +92,33 @@ static sector_t verity_position_at_level(struct dm_verity *v, sector_t block,
->  	return block >> (level * v->hash_per_block_bits);
->  }
->  
-> -/*
-> - * Callback function for asynchrnous crypto API completion notification
-> - */
-> -static void verity_op_done(struct crypto_async_request *base, int err)
-> -{
-> -	struct verity_result *res = (struct verity_result *)base->data;
-> -
-> -	if (err == -EINPROGRESS)
-> -		return;
-> -
-> -	res->err = err;
-> -	complete(&res->completion);
-> -}
-> -
-> -/*
-> - * Wait for async crypto API callback
-> - */
-> -static inline int verity_complete_op(struct verity_result *res, int ret)
-> -{
-> -	switch (ret) {
-> -	case 0:
-> -		break;
-> -
-> -	case -EINPROGRESS:
-> -	case -EBUSY:
-> -		ret = wait_for_completion_interruptible(&res->completion);
-> -		if (!ret)
-> -			ret = res->err;
-> -		reinit_completion(&res->completion);
-> -		break;
-> -
-> -	default:
-> -		DMERR("verity_wait_hash: crypto op submission failed: %d", ret);
-> -	}
-> -
-> -	if (unlikely(ret < 0))
-> -		DMERR("verity_wait_hash: crypto op failed: %d", ret);
-> -
-> -	return ret;
-> -}
-> -
->  static int verity_hash_update(struct dm_verity *v, struct ahash_request *req,
->  				const u8 *data, size_t len,
-> -				struct verity_result *res)
-> +				struct crypto_wait *wait)
->  {
->  	struct scatterlist sg;
->  
->  	sg_init_one(&sg, data, len);
->  	ahash_request_set_crypt(req, &sg, NULL, len);
->  
-> -	return verity_complete_op(res, crypto_ahash_update(req));
-> +	return crypto_wait_req(crypto_ahash_update(req), wait);
->  }
->  
->  /*
->   * Wrapper for crypto_ahash_init, which handles verity salting.
->   */
->  static int verity_hash_init(struct dm_verity *v, struct ahash_request *req,
-> -				struct verity_result *res)
-> +				struct crypto_wait *wait)
->  {
->  	int r;
->  
->  	ahash_request_set_tfm(req, v->tfm);
->  	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
->  					CRYPTO_TFM_REQ_MAY_BACKLOG,
-> -					verity_op_done, (void *)res);
-> -	init_completion(&res->completion);
-> +					crypto_req_done, (void *)wait);
-> +	crypto_init_wait(wait);
->  
-> -	r = verity_complete_op(res, crypto_ahash_init(req));
-> +	r = crypto_wait_req(crypto_ahash_init(req), wait);
->  
->  	if (unlikely(r < 0)) {
->  		DMERR("crypto_ahash_init failed: %d", r);
-> @@ -167,18 +126,18 @@ static int verity_hash_init(struct dm_verity *v, struct ahash_request *req,
->  	}
->  
->  	if (likely(v->salt_size && (v->version >= 1)))
-> -		r = verity_hash_update(v, req, v->salt, v->salt_size, res);
-> +		r = verity_hash_update(v, req, v->salt, v->salt_size, wait);
->  
->  	return r;
->  }
->  
->  static int verity_hash_final(struct dm_verity *v, struct ahash_request *req,
-> -			     u8 *digest, struct verity_result *res)
-> +			     u8 *digest, struct crypto_wait *wait)
->  {
->  	int r;
->  
->  	if (unlikely(v->salt_size && (!v->version))) {
-> -		r = verity_hash_update(v, req, v->salt, v->salt_size, res);
-> +		r = verity_hash_update(v, req, v->salt, v->salt_size, wait);
->  
->  		if (r < 0) {
->  			DMERR("verity_hash_final failed updating salt: %d", r);
-> @@ -187,7 +146,7 @@ static int verity_hash_final(struct dm_verity *v, struct ahash_request *req,
->  	}
->  
->  	ahash_request_set_crypt(req, NULL, digest, 0);
-> -	r = verity_complete_op(res, crypto_ahash_final(req));
-> +	r = crypto_wait_req(crypto_ahash_final(req), wait);
->  out:
->  	return r;
->  }
-> @@ -196,17 +155,17 @@ int verity_hash(struct dm_verity *v, struct ahash_request *req,
->  		const u8 *data, size_t len, u8 *digest)
->  {
->  	int r;
-> -	struct verity_result res;
-> +	struct crypto_wait wait;
->  
-> -	r = verity_hash_init(v, req, &res);
-> +	r = verity_hash_init(v, req, &wait);
->  	if (unlikely(r < 0))
->  		goto out;
->  
-> -	r = verity_hash_update(v, req, data, len, &res);
-> +	r = verity_hash_update(v, req, data, len, &wait);
->  	if (unlikely(r < 0))
->  		goto out;
->  
-> -	r = verity_hash_final(v, req, digest, &res);
-> +	r = verity_hash_final(v, req, digest, &wait);
->  
->  out:
->  	return r;
-> @@ -389,7 +348,7 @@ int verity_hash_for_block(struct dm_verity *v, struct dm_verity_io *io,
->   * Calculates the digest for the given bio
->   */
->  int verity_for_io_block(struct dm_verity *v, struct dm_verity_io *io,
-> -			struct bvec_iter *iter, struct verity_result *res)
-> +			struct bvec_iter *iter, struct crypto_wait *wait)
->  {
->  	unsigned int todo = 1 << v->data_dev_block_bits;
->  	struct bio *bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
-> @@ -414,7 +373,7 @@ int verity_for_io_block(struct dm_verity *v, struct dm_verity_io *io,
->  		 */
->  		sg_set_page(&sg, bv.bv_page, len, bv.bv_offset);
->  		ahash_request_set_crypt(req, &sg, NULL, len);
-> -		r = verity_complete_op(res, crypto_ahash_update(req));
-> +		r = crypto_wait_req(crypto_ahash_update(req), wait);
->  
->  		if (unlikely(r < 0)) {
->  			DMERR("verity_for_io_block crypto op failed: %d", r);
-> @@ -482,7 +441,7 @@ static int verity_verify_io(struct dm_verity_io *io)
->  	struct dm_verity *v = io->v;
->  	struct bvec_iter start;
->  	unsigned b;
-> -	struct verity_result res;
-> +	struct crypto_wait wait;
->  
->  	for (b = 0; b < io->n_blocks; b++) {
->  		int r;
-> @@ -507,17 +466,17 @@ static int verity_verify_io(struct dm_verity_io *io)
->  			continue;
->  		}
->  
-> -		r = verity_hash_init(v, req, &res);
-> +		r = verity_hash_init(v, req, &wait);
->  		if (unlikely(r < 0))
->  			return r;
->  
->  		start = io->iter;
-> -		r = verity_for_io_block(v, io, &io->iter, &res);
-> +		r = verity_for_io_block(v, io, &io->iter, &wait);
->  		if (unlikely(r < 0))
->  			return r;
->  
->  		r = verity_hash_final(v, req, verity_io_real_digest(v, io),
-> -					&res);
-> +					&wait);
->  		if (unlikely(r < 0))
->  			return r;
->  
-> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-> index a59e0ad..b675bc0 100644
-> --- a/drivers/md/dm-verity.h
-> +++ b/drivers/md/dm-verity.h
-> @@ -90,11 +90,6 @@ struct dm_verity_io {
->  	 */
->  };
->  
-> -struct verity_result {
-> -	struct completion completion;
-> -	int err;
-> -};
-> -
->  static inline struct ahash_request *verity_io_hash_req(struct dm_verity *v,
->  						     struct dm_verity_io *io)
->  {
-> -- 
-> 2.1.4
+> > These may arguably be useless or meaningless combinations, but I found them
+> > sufficiently puzzling as to need to document and report the behaviour.  They
+> > appear to be leftovers from a time when fE may have been a bitfield rather than
+> > a boolean.
+> > 
+> > 
+> > 1 - BUG: setcap manpage refers to non-existant cap_from_text(3) and cap_set_file(3)
+> > manpages (fedora).  (It turns out it is in libcap-devel which makes
+> > sense, but isn't very useful for users of setcap/getcap(8) rather than
+> > developers.)
 > 
-> --
-> dm-devel mailing list
-> dm-devel at redhat.com
-> https://www.redhat.com/mailman/listinfo/dm-devel
+> Hm, yeah, I suppose.  In the libcap source though they all come
+> together.  Perhaps this is cause for distro bugs to make a
+> common libcap-doc package which both libcap-devel and libcap2-bin
+> depend on?  Really not sure of the best solution.
+
+I agree it sounds like a distro-level issue, thanks.
+
+> > 2 - BUG: setcap requires dummy capability present to set or clear effective bit
 > 
+> Getting ready for a short road trip, will look at the rest this weekend.
+
+Any further thoughts on the three below?
+
+> > While attempting to issue the setcap command to set or clear the effective bit,
+> > the latter of which is a boolean rather than a capability set, a fatal error
+> > was returned with a usage message that didn't make much sense:
+> > 	# setcap +e /tmp/test
+> > 	fatal error: Invalid argument
+> > 	usage: setcap [-q] [-v] (-r|-|<caps>) <filename> [ ... (-r|-|<capsN>) <filenameN> ]
+> >  	Note <filename> must be a regular (non-symlink) file.
+> > So in order to set it, I need to use a dummy capability, such as:
+> > 	# setcap cap_sys_admin+e /tmp/test
+> > 
+> > 
+> > 3- BUG: getcap doesn't show effective bit set if no other fP or fI bits are set
+> > 
+> > 	# setcap cap_sys_admin+pe /tmp/test
+> > 	# getcap /tmp/test
+> > 	/tmp/test = cap_sys_admin+ep
+> > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
+> > 	security.capability=0x0100000200002000000000000000000000000000
+> > 	# setfattr -n security.capability -v 0x0100000200000000000000000000000000000000 /tmp/test
+> > 	# getcap /tmp/test 
+> > 	/tmp/test =
+> > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
+> > 	security.capability=0x0100000200000000000000000000000000000000
+> > 	# setcap cap_sys_admin-p /tmp/test
+> > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
+> > 	# file: /tmp/test
+> > 	security.capability=0x0000000200000000000000000000000000000000
+> > So, getcap lies, where getfattr is more honest but awkward.
+> > 
+> > 
+> > Q: How do I set one fP capability and a different fI capability?
+> > 
+> > >From looking at the manpage for cap_from_text, it appears that capability sets
+> > can be specified in a similar manner to chmod(1), using "=", "+" and "-"
+> > operators, but pracitical poking doesn't seem to work that way.  "+" seems to
+> > work like "=" and "-" seems to clear all except the version field.
+> > Other than resorting to setfattr, how can I set something like
+> > cap_sys_admin+p with cap_audit_read,cap_audit_write,cap_audit_control+i ?
+> > 
+> > 
+> > 4 - BUG: The capabilities version doesn't get cleared when all cap bits are
+> > cleared.  This fools kernel into thinking there are fcaps set.
+> > 
+> > As can be seen above, if setcap is used with "<capability>-<p|e|i>" to unset
+> > capabilities then the version field is leftover, set.  Arguably the -r option
+> > should have been used to remove the attribute entirely, but in this case, the
+> > kernel assumes that capabilities are in use due to a valid version number
+> > present (VFS_CAP_REVISION_MASK).  This could be solved in the kernel by
+> > clearing that attribute field entirely if there are no values set other than
+> > the version number, or by having "has_cap" check for a value more than just the
+> > version number.  Is it possible to remove some capabilities from a file but not
+> > all?  Or is it intended to simply specify the new set of capabilities that are
+> > to be set and ignore or strip away the unwanted ones from the set?
+> > 
+> > 
+> > Thanks!
+> > 
+> > 
+> > - RGB
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
