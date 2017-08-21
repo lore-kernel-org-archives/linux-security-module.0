@@ -1,37 +1,24 @@
-From: jmorris@namei.org (James Morris)
-Date: Mon, 21 Aug 2017 12:33:37 +1000 (AEST)
-Subject: [GIT PULL] tpmdd updates for Linux 4.14
-In-Reply-To: <20170819172708.opyeyort3pebklje@linux.intel.com>
-References: <20170819172708.opyeyort3pebklje@linux.intel.com>
-Message-ID: <alpine.LRH.2.20.1708211233220.10430@namei.org>
+From: baolin.wang@linaro.org (Baolin Wang)
+Date: Mon, 21 Aug 2017 20:12:43 +0800
+Subject: [PATCH 0/3] Fix y2038 issues for security/keys subsystem
+In-Reply-To: <4455.1502267323@warthog.procyon.org.uk>
+References: <cover.1502246501.git.baolin.wang@linaro.org>
+	<4455.1502267323@warthog.procyon.org.uk>
+Message-ID: <CAMz4kuL-mriUk3YV6Mz9xgC7geNe5a05vhjfXaxt58x=7BUo0w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 19 Aug 2017, Jarkko Sakkinen wrote:
+Hi David and James,
 
-> Hi James,
-> 
-> Not much this time except a few fixes.
-> 
-> /Jarkko
-> 
-> The following changes since commit 76e22e212a850bbd16cf49f9c586d4635507e0b5:
-> 
->   apparmor: fix incorrect type assignment when freeing proxies (2017-08-18 06:45:37 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20170819
-> 
-> for you to fetch changes up to 08f49ffce0522ae4738308f400795ee4d92f6e3d:
+On 9 August 2017 at 16:28, David Howells <dhowells@redhat.com> wrote:
+> The rxrpc patch isn't part of the security/keys subsystem.  I'll push it
+> to the network tree.  The other two I'll push to James.
 
-Pulled.
-
+Could you apply this patch serials if there are no other comments? Thanks.
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+Baolin.wang
+Best Regards
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
