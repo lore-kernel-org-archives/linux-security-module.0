@@ -1,145 +1,217 @@
 From: mic@digikod.net (=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=)
-Date: Mon, 21 Aug 2017 02:09:24 +0200
-Subject: [PATCH net-next v7 01/10] selftest: Enhance kselftest_harness.h with
-	a step mechanism
+Date: Mon, 21 Aug 2017 02:09:30 +0200
+Subject: [PATCH net-next v7 07/10] landlock: Add ptrace restrictions
 In-Reply-To: <20170821000933.13024-1-mic@digikod.net>
 References: <20170821000933.13024-1-mic@digikod.net>
-Message-ID: <20170821000933.13024-2-mic@digikod.net>
+Message-ID: <20170821000933.13024-8-mic@digikod.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This step mechanism may be useful to return an information about the
-error without being able to write to TH_LOG_STREAM.
-
-Set _metadata->no_print to true to print this counter.
+A landlocked process has less privileges than a non-landlocked process
+and must then be subject to additional restrictions when manipulating
+processes. To be allowed to use ptrace(2) and related syscalls on a
+target process, a landlocked process must have a subset of the target
+process' rules.
 
 Signed-off-by: Micka?l Sala?n <mic@digikod.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: James Morris <james.l.morris@oracle.com>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Will Drewry <wad@chromium.org>
-Link: https://lkml.kernel.org/r/CAGXu5j+D-FP8Kt9unNOqKrQJP4DYTpmgkJxWykZyrYiVPz3Y3Q at mail.gmail.com
+Cc: Serge E. Hallyn <serge@hallyn.com>
 ---
-
-This patch is intended to the kselftest tree:
-https://lkml.kernel.org/r/20170806232337.4191-1-mic at digikod.net
 
 Changes since v6:
-* add the step counter in assert/expect macros and use _metadata to
-  enable the counter (suggested by Kees Cook)
+* factor out ptrace check
+* constify pointers
+* cleanup headers
+* use the new security_add_hooks()
 ---
- tools/testing/selftests/kselftest_harness.h   | 31 ++++++++++++++++++++++-----
- tools/testing/selftests/seccomp/seccomp_bpf.c |  2 +-
- 2 files changed, 27 insertions(+), 6 deletions(-)
+ security/landlock/Makefile       |   2 +-
+ security/landlock/hooks_ptrace.c | 123 +++++++++++++++++++++++++++++++++++++++
+ security/landlock/hooks_ptrace.h |  11 ++++
+ security/landlock/init.c         |   2 +
+ 4 files changed, 137 insertions(+), 1 deletion(-)
+ create mode 100644 security/landlock/hooks_ptrace.c
+ create mode 100644 security/landlock/hooks_ptrace.h
 
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index c56f72e07cd7..850ff6946027 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -51,6 +51,9 @@
- #define __KSELFTEST_HARNESS_H
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index 8153b024ffd7..7ff911328e74 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -5,4 +5,4 @@ ccflags-$(CONFIG_SECURITY_LANDLOCK) += -Werror=unused-function
  
- #define _GNU_SOURCE
-+#include <asm/types.h>
-+#include <errno.h>
-+#include <stdbool.h>
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -555,12 +558,18 @@
-  * return while still providing an optional block to the API consumer.
-  */
- #define OPTIONAL_HANDLER(_assert) \
--	for (; _metadata->trigger;  _metadata->trigger = __bail(_assert))
-+	for (; _metadata->trigger; _metadata->trigger = \
-+			__bail(_assert, _metadata->no_print, _metadata->step))
+ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+ 
+-landlock-y := init.o providers.o hooks.o hooks_fs.o
++landlock-y := init.o providers.o hooks.o hooks_ptrace.o hooks_fs.o
+diff --git a/security/landlock/hooks_ptrace.c b/security/landlock/hooks_ptrace.c
+new file mode 100644
+index 000000000000..0f1c13172f54
+--- /dev/null
++++ b/security/landlock/hooks_ptrace.c
+@@ -0,0 +1,123 @@
++/*
++ * Landlock LSM - ptrace hooks
++ *
++ * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ */
 +
-+#define __INC_STEP(_metadata) \
-+	if (_metadata->passed && _metadata->step < 255) \
-+		_metadata->step++;
- 
- #define __EXPECT(_expected, _seen, _t, _assert) do { \
- 	/* Avoid multiple evaluation of the cases */ \
- 	__typeof__(_expected) __exp = (_expected); \
- 	__typeof__(_seen) __seen = (_seen); \
-+	__INC_STEP(_metadata); \
- 	if (!(__exp _t __seen)) { \
- 		unsigned long long __exp_print = (uintptr_t)__exp; \
- 		unsigned long long __seen_print = (uintptr_t)__seen; \
-@@ -576,6 +585,7 @@
- #define __EXPECT_STR(_expected, _seen, _t, _assert) do { \
- 	const char *__exp = (_expected); \
- 	const char *__seen = (_seen); \
-+	__INC_STEP(_metadata); \
- 	if (!(strcmp(__exp, __seen) _t 0))  { \
- 		__TH_LOG("Expected '%s' %s '%s'.", __exp, #_t, __seen); \
- 		_metadata->passed = 0; \
-@@ -590,6 +600,8 @@ struct __test_metadata {
- 	int termsig;
- 	int passed;
- 	int trigger; /* extra handler after the evaluation */
-+	__u8 step;
-+	bool no_print; /* manual trigger when TH_LOG_STREAM is not available */
- 	struct __test_metadata *prev, *next;
- };
- 
-@@ -634,10 +646,13 @@ static inline void __register_test(struct __test_metadata *t)
- 	}
- }
- 
--static inline int __bail(int for_realz)
-+static inline int __bail(int for_realz, bool no_print, __u8 step)
- {
--	if (for_realz)
-+	if (for_realz) {
-+		if (no_print)
-+			_exit(step);
- 		abort();
++#include <asm/current.h>
++#include <linux/errno.h>
++#include <linux/kernel.h> /* ARRAY_SIZE */
++#include <linux/lsm_hooks.h>
++#include <linux/sched.h> /* struct task_struct */
++#include <linux/seccomp.h>
++
++#include "common.h" /* struct landlock_events */
++#include "hooks.h" /* landlocked() */
++#include "hooks_ptrace.h"
++
++
++static bool landlock_events_are_subset(const struct landlock_events *parent,
++		const struct landlock_events *child)
++{
++	size_t i;
++
++	if (!parent || !child)
++		return false;
++	if (parent == child)
++		return true;
++
++	for (i = 0; i < ARRAY_SIZE(child->rules); i++) {
++		struct landlock_rule *walker;
++		bool found_parent = false;
++
++		if (!parent->rules[i])
++			continue;
++		for (walker = child->rules[i]; walker; walker = walker->prev) {
++			if (walker == parent->rules[i]) {
++				found_parent = true;
++				break;
++			}
++		}
++		if (!found_parent)
++			return false;
 +	}
- 	return 0;
- }
++	return true;
++}
++
++static bool landlock_task_has_subset_events(const struct task_struct *parent,
++		const struct task_struct *child)
++{
++#ifdef CONFIG_SECCOMP_FILTER
++	if (landlock_events_are_subset(parent->seccomp.landlock_events,
++				child->seccomp.landlock_events))
++		/* must be ANDed with other providers (i.e. cgroup) */
++		return true;
++#endif /* CONFIG_SECCOMP_FILTER */
++	return false;
++}
++
++static int landlock_task_ptrace(const struct task_struct *parent,
++		const struct task_struct *child)
++{
++	if (!landlocked(parent))
++		return 0;
++
++	if (!landlocked(child))
++		return -EPERM;
++
++	if (landlock_task_has_subset_events(parent, child))
++		return 0;
++
++	return -EPERM;
++}
++
++/**
++ * landlock_ptrace_access_check - determine whether the current process may
++ *				  access another
++ *
++ * @child: the process to be accessed
++ * @mode: the mode of attachment
++ *
++ * If the current task has Landlock rules, then the child must have at least
++ * the same rules.  Else denied.
++ *
++ * Determine whether a process may access another, returning 0 if permission
++ * granted, -errno if denied.
++ */
++static int landlock_ptrace_access_check(struct task_struct *child,
++		unsigned int mode)
++{
++	return landlock_task_ptrace(current, child);
++}
++
++/**
++ * landlock_ptrace_traceme - determine whether another process may trace the
++ *			     current one
++ *
++ * @parent: the task proposed to be the tracer
++ *
++ * If the parent has Landlock rules, then the current task must have the same
++ * or more rules.
++ * Else denied.
++ *
++ * Determine whether the nominated task is permitted to trace the current
++ * process, returning 0 if permission is granted, -errno if denied.
++ */
++static int landlock_ptrace_traceme(struct task_struct *parent)
++{
++	return landlock_task_ptrace(parent, current);
++}
++
++static struct security_hook_list landlock_hooks[] = {
++	LSM_HOOK_INIT(ptrace_access_check, landlock_ptrace_access_check),
++	LSM_HOOK_INIT(ptrace_traceme, landlock_ptrace_traceme),
++};
++
++__init void landlock_add_hooks_ptrace(void)
++{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks), LANDLOCK_NAME);
++}
+diff --git a/security/landlock/hooks_ptrace.h b/security/landlock/hooks_ptrace.h
+new file mode 100644
+index 000000000000..15b1f3479e0e
+--- /dev/null
++++ b/security/landlock/hooks_ptrace.h
+@@ -0,0 +1,11 @@
++/*
++ * Landlock LSM - ptrace hooks
++ *
++ * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ */
++
++__init void landlock_add_hooks_ptrace(void);
+diff --git a/security/landlock/init.c b/security/landlock/init.c
+index 81f373f7cc52..424f457b1832 100644
+--- a/security/landlock/init.c
++++ b/security/landlock/init.c
+@@ -14,6 +14,7 @@
  
-@@ -655,18 +670,24 @@ void __run_test(struct __test_metadata *t)
- 		t->passed = 0;
- 	} else if (child_pid == 0) {
- 		t->fn(t);
--		_exit(t->passed);
-+		/* return the step that failed or 0 */
-+		_exit(t->passed ? 0 : t->step);
- 	} else {
- 		/* TODO(wad) add timeout support. */
- 		waitpid(child_pid, &status, 0);
- 		if (WIFEXITED(status)) {
--			t->passed = t->termsig == -1 ? WEXITSTATUS(status) : 0;
-+			t->passed = t->termsig == -1 ? !WEXITSTATUS(status) : 0;
- 			if (t->termsig != -1) {
- 				fprintf(TH_LOG_STREAM,
- 					"%s: Test exited normally "
- 					"instead of by signal (code: %d)\n",
- 					t->name,
- 					WEXITSTATUS(status));
-+			} else if (!t->passed) {
-+				fprintf(TH_LOG_STREAM,
-+					"%s: Test failed at step #%d\n",
-+					t->name,
-+					WEXITSTATUS(status));
- 			}
- 		} else if (WIFSIGNALED(status)) {
- 			t->passed = 0;
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 73f5ea6778ce..4d6f92a9df6b 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -107,7 +107,7 @@ TEST(mode_strict_support)
- 	ASSERT_EQ(0, ret) {
- 		TH_LOG("Kernel does not support CONFIG_SECCOMP");
- 	}
--	syscall(__NR_exit, 1);
-+	syscall(__NR_exit, 0);
- }
+ #include "common.h" /* LANDLOCK_* */
+ #include "hooks_fs.h"
++#include "hooks_ptrace.h"
  
- TEST_SIGNAL(mode_strict_cannot_call_prctl, SIGKILL)
+ 
+ static inline bool bpf_landlock_is_valid_access(int off, int size,
+@@ -122,5 +123,6 @@ void __init landlock_add_hooks(void)
+ {
+ 	pr_info("%s: ABI %u, ready to sandbox with %s\n",
+ 			LANDLOCK_NAME, LANDLOCK_ABI, "seccomp");
++	landlock_add_hooks_ptrace();
+ 	landlock_add_hooks_fs();
+ }
 -- 
 2.14.1
 
