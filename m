@@ -1,14 +1,27 @@
 From: mic@digikod.net (=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=)
-Date: Mon, 21 Aug 2017 02:09:32 +0200
-Subject: [PATCH net-next v7 09/10] bpf,landlock: Add tests for Landlock
+Date: Mon, 21 Aug 2017 02:09:28 +0200
+Subject: [PATCH net-next v7 05/10] landlock: Add LSM hooks related to
+	filesystem
 In-Reply-To: <20170821000933.13024-1-mic@digikod.net>
 References: <20170821000933.13024-1-mic@digikod.net>
-Message-ID: <20170821000933.13024-10-mic@digikod.net>
+Message-ID: <20170821000933.13024-6-mic@digikod.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Test basic context access, ptrace protection and filesystem event with
-multiple cases.
+Handle 33 filesystem-related LSM hooks for the Landlock filesystem
+event: LANDLOCK_SUBTYPE_EVENT_FS.
+
+A Landlock event wrap LSM hooks for similar kernel object types (e.g.
+struct file, struct path...). Multiple LSM hooks can trigger the same
+Landlock event.
+
+Landlock handle nine coarse-grained actions: read, write, execute, new,
+get, remove, ioctl, lock and fcntl. Each of them abstract LSM hook
+access control in a way that can be extended in the future.
+
+The Landlock LSM hook registration is done after other LSM to only run
+actions from user-space, via eBPF programs, if the access was granted by
+major (privileged) LSMs.
 
 Signed-off-by: Micka?l Sala?n <mic@digikod.net>
 Cc: Alexei Starovoitov <ast@kernel.org>
@@ -18,306 +31,966 @@ Cc: David S. Miller <davem@davemloft.net>
 Cc: James Morris <james.l.morris@oracle.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Will Drewry <wad@chromium.org>
 ---
 
 Changes since v6:
-* use the new kselftest_harness.h
-* use const variables
-* replace ASSERT_STEP with ASSERT_*
-* rename BPF_PROG_TYPE_LANDLOCK to BPF_PROG_TYPE_LANDLOCK_RULE
-* force sample library rebuild
-* fix install target
+* add 3 more sub-events: IOCTL, LOCK, FCNTL
+  https://lkml.kernel.org/r/2fbc99a6-f190-f335-bd14-04bdeed35571 at digikod.net
+* use the new security_add_hooks()
+* explain the -Werror=unused-function
+* constify pointers
+* cleanup headers
 
 Changes since v5:
-* add subtype test
-* add ptrace tests
-* split and rename files
-* cleanup and rebase
----
- tools/testing/selftests/Makefile                   |   1 +
- tools/testing/selftests/bpf/test_verifier.c        |  55 ++++
- tools/testing/selftests/landlock/.gitignore        |   5 +
- tools/testing/selftests/landlock/Makefile          |  48 ++++
- tools/testing/selftests/landlock/bpf/Makefile      |  55 ++++
- tools/testing/selftests/landlock/bpf/README.rst    |   1 +
- .../selftests/landlock/bpf/rule_fs_no_open.c       |  32 +++
- .../selftests/landlock/bpf/rule_fs_read_only.c     |  32 +++
- tools/testing/selftests/landlock/test.h            |  28 ++
- tools/testing/selftests/landlock/test_base.c       |  27 ++
- tools/testing/selftests/landlock/test_fs.c         | 296 +++++++++++++++++++++
- tools/testing/selftests/landlock/test_ptrace.c     | 158 +++++++++++
- 12 files changed, 738 insertions(+)
- create mode 100644 tools/testing/selftests/landlock/.gitignore
- create mode 100644 tools/testing/selftests/landlock/Makefile
- create mode 100644 tools/testing/selftests/landlock/bpf/Makefile
- create mode 120000 tools/testing/selftests/landlock/bpf/README.rst
- create mode 100644 tools/testing/selftests/landlock/bpf/rule_fs_no_open.c
- create mode 100644 tools/testing/selftests/landlock/bpf/rule_fs_read_only.c
- create mode 100644 tools/testing/selftests/landlock/test.h
- create mode 100644 tools/testing/selftests/landlock/test_base.c
- create mode 100644 tools/testing/selftests/landlock/test_fs.c
- create mode 100644 tools/testing/selftests/landlock/test_ptrace.c
+* split hooks.[ch] into hooks.[ch] and hooks_fs.[ch]
+* add more documentation
+* cosmetic fixes
+* rebase (SCALAR_VALUE)
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 26ce4f7168be..099d19950739 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -12,6 +12,7 @@ TARGETS += gpio
- TARGETS += intel_pstate
- TARGETS += ipc
- TARGETS += kcmp
-+TARGETS += landlock
- TARGETS += lib
- TARGETS += membarrier
- TARGETS += memfd
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 3146839a51bf..9fb19c975c1b 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -6499,6 +6499,61 @@ static struct bpf_test tests[] = {
- 		.result = REJECT,
- 		.has_prog_subtype = true,
- 	},
-+	{
-+		"missing subtype",
-+		.insns = {
-+			BPF_MOV32_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.errstr = "",
-+		.result = REJECT,
-+		.prog_type = BPF_PROG_TYPE_LANDLOCK_RULE,
-+	},
-+	{
-+		"landlock/fs: always accept",
-+		.insns = {
-+			BPF_MOV32_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = ACCEPT,
-+		.prog_type = BPF_PROG_TYPE_LANDLOCK_RULE,
-+		.has_prog_subtype = true,
-+		.prog_subtype = {
-+			.landlock_rule = {
-+				.abi = 1,
-+				.event = LANDLOCK_SUBTYPE_EVENT_FS,
-+			}
-+		},
-+	},
-+	{
-+		"landlock/fs: read context",
-+		.insns = {
-+			BPF_MOV64_REG(BPF_REG_6, BPF_REG_1),
-+			BPF_LDX_MEM(BPF_DW, BPF_REG_7, BPF_REG_6,
-+				offsetof(struct landlock_context, status)),
-+			/* test operations on raw values */
-+			BPF_ALU64_IMM(BPF_ADD, BPF_REG_7, 1),
-+			BPF_LDX_MEM(BPF_DW, BPF_REG_7, BPF_REG_6,
-+				offsetof(struct landlock_context, event)),
-+			BPF_ALU64_IMM(BPF_ADD, BPF_REG_7, 1),
-+			BPF_LDX_MEM(BPF_DW, BPF_REG_7, BPF_REG_6,
-+				offsetof(struct landlock_context, arg1)),
-+			BPF_LDX_MEM(BPF_DW, BPF_REG_7, BPF_REG_6,
-+				offsetof(struct landlock_context, arg2)),
-+			BPF_ALU64_IMM(BPF_ADD, BPF_REG_7, 1),
-+			BPF_MOV32_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = ACCEPT,
-+		.prog_type = BPF_PROG_TYPE_LANDLOCK_RULE,
-+		.has_prog_subtype = true,
-+		.prog_subtype = {
-+			.landlock_rule = {
-+				.abi = 1,
-+				.event = LANDLOCK_SUBTYPE_EVENT_FS,
-+			}
-+		},
-+	},
- };
+Changes since v4:
+* add LSM hook abstraction called Landlock event
+  * use the compiler type checking to verify hooks use by an event
+  * handle all filesystem related LSM hooks (e.g. file_permission,
+    mmap_file, sb_mount...)
+* register BPF programs for Landlock just after LSM hooks registration
+* move hooks registration after other LSMs
+* add failsafes to check if a hook is not used by the kernel
+* allow partial raw value access form the context (needed for programs
+  generated by LLVM)
+
+Changes since v3:
+* split commit
+* add hooks dealing with struct inode and struct path pointers:
+  inode_permission and inode_getattr
+* add abstraction over eBPF helper arguments thanks to wrapping structs
+---
+ include/linux/lsm_hooks.h    |   5 +
+ security/landlock/Makefile   |   7 +-
+ security/landlock/common.h   |   2 +
+ security/landlock/hooks.c    |  83 ++++++
+ security/landlock/hooks.h    | 177 +++++++++++++
+ security/landlock/hooks_fs.c | 586 +++++++++++++++++++++++++++++++++++++++++++
+ security/landlock/hooks_fs.h |  19 ++
+ security/landlock/init.c     |  10 +
+ security/security.c          |  12 +-
+ 9 files changed, 899 insertions(+), 2 deletions(-)
+ create mode 100644 security/landlock/hooks.c
+ create mode 100644 security/landlock/hooks.h
+ create mode 100644 security/landlock/hooks_fs.c
+ create mode 100644 security/landlock/hooks_fs.h
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 3a90febadbe2..7614c3d66265 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1982,5 +1982,10 @@ void __init loadpin_add_hooks(void);
+ #else
+ static inline void loadpin_add_hooks(void) { };
+ #endif
++#ifdef CONFIG_SECURITY_LANDLOCK
++extern void __init landlock_add_hooks(void);
++#else
++static inline void __init landlock_add_hooks(void) { }
++#endif /* CONFIG_SECURITY_LANDLOCK */
  
- static int probe_filter_length(const struct bpf_insn *fp)
-diff --git a/tools/testing/selftests/landlock/.gitignore b/tools/testing/selftests/landlock/.gitignore
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index 7205f9a7a2ee..b382be409b3b 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -1,3 +1,8 @@
++# Catch defined but unused hooks, e.g. error out if a HOOK_NEW_FS(foo) is not
++# used with a HOOK_INIT_FS(foo) in the struct security_hook_list
++# landlock_hooks.
++ccflags-$(CONFIG_SECURITY_LANDLOCK) += -Werror=unused-function
++
+ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+ 
+-landlock-y := init.o
++landlock-y := init.o hooks.o hooks_fs.o
+diff --git a/security/landlock/common.h b/security/landlock/common.h
+index c82cbd3fb640..a69c35231d35 100644
+--- a/security/landlock/common.h
++++ b/security/landlock/common.h
+@@ -18,4 +18,6 @@
+  */
+ #define LANDLOCK_ABI 1
+ 
++#define LANDLOCK_NAME "landlock"
++
+ #endif /* _SECURITY_LANDLOCK_COMMON_H */
+diff --git a/security/landlock/hooks.c b/security/landlock/hooks.c
 new file mode 100644
-index 000000000000..04d01e3646da
+index 000000000000..b48caeb0a49a
 --- /dev/null
-+++ b/tools/testing/selftests/landlock/.gitignore
-@@ -0,0 +1,5 @@
-+/rule_*
-+/test_base
-+/test_fs
-+/test_ptrace
-+/tmp_*
-diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
-new file mode 100644
-index 000000000000..77bbadfe373c
---- /dev/null
-+++ b/tools/testing/selftests/landlock/Makefile
-@@ -0,0 +1,48 @@
-+LIBDIR := ../../../lib
-+BPFOBJ := $(LIBDIR)/bpf/bpf.o
-+LOADOBJ := ../../../../samples/bpf/bpf_load.o
-+
-+CFLAGS += -Wl,-no-as-needed -Wall -O2 -I../../../include/uapi -I$(LIBDIR)
-+LDFLAGS += -lelf
-+
-+test_src = $(wildcard test_*.c)
-+rule_src = $(wildcard bpf/rule_*.c)
-+
-+test_objs := $(test_src:.c=)
-+rule_objs := $(notdir $(rule_src:.c=.o))
-+
-+TEST_PROGS := $(test_objs)
-+TEST_PROGS_EXTENDED := $(rule_objs)
-+
-+.PHONY: all clean clean_tmp force
-+
-+all: $(test_objs) $(rule_objs)
-+
-+# force a rebuild of BPFOBJ when its dependencies are updated
-+force:
-+
-+$(BPFOBJ): force
-+	$(MAKE) -C $(dir $(BPFOBJ))
-+
-+$(LOADOBJ): force
-+	$(MAKE) -C $(dir $(LOADOBJ))
-+
-+# minimize builds
-+bpf/modules.order: $(rule_src)
-+	$(MAKE) -C bpf
-+	@touch $@
-+
-+$(rule_objs): bpf/modules.order
-+	@
-+
-+$(test_objs): $(BPFOBJ) $(LOADOBJ) ../kselftest_harness.h
-+
-+include ../lib.mk
-+
-+clean_tmp:
-+	$(RM) -r tmp_*
-+
-+clean: clean_tmp
-+	$(MAKE) -C bpf clean
-+	$(RM) $(test_objs)
-+
-diff --git a/tools/testing/selftests/landlock/bpf/Makefile b/tools/testing/selftests/landlock/bpf/Makefile
-new file mode 100644
-index 000000000000..857ad2483289
---- /dev/null
-+++ b/tools/testing/selftests/landlock/bpf/Makefile
-@@ -0,0 +1,55 @@
-+# copied from samples/bpf/Makefile
-+#
-+# kbuild trick to avoid linker error. Can be omitted if a module is built.
-+obj- := dummy.o
-+
-+# Tell kbuild to always build the programs
-+always := ../rule_fs_read_only.o
-+always += ../rule_fs_no_open.o
-+
-+EXTRA_CFLAGS = -Wall -Wextra
-+
-+# Allows pointing LLC/CLANG to a LLVM backend with bpf support, redefine on cmdline:
-+#  make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
-+LLC ?= llc
-+CLANG ?= clang
-+
-+# Verify LLVM compiler tools are available and bpf target is supported by llc
-+.PHONY: all clean verify_cmds verify_target_bpf $(CLANG) $(LLC)
-+
-+# Trick to allow make to be run from this directory
-+all:
-+	$(MAKE) -C ../../../../../ $(CURDIR)/
-+
-+clean:
-+	$(MAKE) -C ../../../../../ M=$(CURDIR) clean
-+
-+verify_cmds: $(CLANG) $(LLC)
-+	@for TOOL in $^ ; do \
-+		if ! (which -- "$${TOOL}" > /dev/null 2>&1); then \
-+			echo "*** ERROR: Cannot find LLVM tool $${TOOL}" ;\
-+			exit 1; \
-+		else true; fi; \
-+	done
-+
-+verify_target_bpf: verify_cmds
-+	@if ! (${LLC} -march=bpf -mattr=help > /dev/null 2>&1); then \
-+		echo "*** ERROR: LLVM (${LLC}) does not support 'bpf' target" ;\
-+		echo "   NOTICE: LLVM version >= 3.7.1 required" ;\
-+		exit 2; \
-+	else true; fi
-+
-+$(src)/*.c: verify_target_bpf
-+
-+# asm/sysreg.h - inline assembly used by it is incompatible with llvm.
-+# But, there is no easy way to fix it, so just exclude it since it is
-+# useless for BPF samples.
-+$(obj)/../rule_%.o: $(src)/rule_%.c
-+	$(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(EXTRA_CFLAGS) -I$(obj) \
-+		-I$(srctree)/tools/testing/selftests/bpf/ \
-+		-D__KERNEL__ -D__ASM_SYSREG_H -Wno-unused-value -Wno-pointer-sign \
-+		-Wno-compare-distinct-pointer-types \
-+		-Wno-gnu-variable-sized-type-not-at-end \
-+		-Wno-address-of-packed-member -Wno-tautological-compare \
-+		-Wno-unknown-warning-option \
-+		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf -filetype=obj -o $@
-diff --git a/tools/testing/selftests/landlock/bpf/README.rst b/tools/testing/selftests/landlock/bpf/README.rst
-new file mode 120000
-index 000000000000..605f48aa6f72
---- /dev/null
-+++ b/tools/testing/selftests/landlock/bpf/README.rst
-@@ -0,0 +1 @@
-+../../../../../samples/bpf/README.rst
-\ No newline at end of file
-diff --git a/tools/testing/selftests/landlock/bpf/rule_fs_no_open.c b/tools/testing/selftests/landlock/bpf/rule_fs_no_open.c
-new file mode 100644
-index 000000000000..acde56b636a3
---- /dev/null
-+++ b/tools/testing/selftests/landlock/bpf/rule_fs_no_open.c
-@@ -0,0 +1,32 @@
++++ b/security/landlock/hooks.c
+@@ -0,0 +1,83 @@
 +/*
-+ * Landlock rule - no-open filesystem
++ * Landlock LSM - hook helpers
 + *
-+ * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
++ * Copyright ? 2016-2017 Micka?l Sala?n <mic@digikod.net>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2, as
 + * published by the Free Software Foundation.
 + */
 +
-+#include <uapi/linux/bpf.h>
++#include <asm/current.h>
++#include <linux/bpf.h> /* enum bpf_access_type, struct landlock_context */
++#include <linux/errno.h>
++#include <linux/filter.h> /* BPF_PROG_RUN() */
++#include <linux/rculist.h> /* list_add_tail_rcu */
++#include <linux/stddef.h> /* offsetof */
 +
-+#include <bpf_helpers.h>
++#include "hooks.h" /* CTX_ARG_NB */
 +
-+SEC("landlock1")
-+static int landlock_fs_prog1(struct landlock_context *ctx)
++
++bool landlock_is_valid_access(int off, int size, enum bpf_access_type type,
++		enum bpf_reg_type *reg_type,
++		enum bpf_reg_type ctx_types[CTX_ARG_NB],
++		const union bpf_prog_subtype *prog_subtype)
 +{
-+	if (!(ctx->arg2 & LANDLOCK_ACTION_FS_GET))
-+		return 0;
-+	return 1;
++	int max_size;
++
++	if (type != BPF_READ)
++		return false;
++	if (off < 0 || off >= sizeof(struct landlock_context))
++		return false;
++	if (size <= 0 || size > sizeof(__u64))
++		return false;
++
++	/* set max size */
++	switch (off) {
++	case offsetof(struct landlock_context, status):
++	case offsetof(struct landlock_context, event):
++	case offsetof(struct landlock_context, arg1):
++	case offsetof(struct landlock_context, arg2):
++		max_size = sizeof(__u64);
++		break;
++	default:
++		return false;
++	}
++
++	/* set register type */
++	switch (off) {
++	case offsetof(struct landlock_context, arg1):
++		*reg_type = ctx_types[0];
++		break;
++	case offsetof(struct landlock_context, arg2):
++		*reg_type = ctx_types[1];
++		break;
++	default:
++		*reg_type = SCALAR_VALUE;
++	}
++
++	/* check memory range access */
++	switch (*reg_type) {
++	case NOT_INIT:
++		return false;
++	case SCALAR_VALUE:
++		/* allow partial raw value */
++		if (size > max_size)
++			return false;
++		break;
++	default:
++		/* deny partial pointer */
++		if (size != max_size)
++			return false;
++	}
++
++	return true;
 +}
 +
-+SEC("subtype")
-+static const union bpf_prog_subtype _subtype = {
-+	.landlock_rule = {
-+		.abi = 1,
-+		.event = LANDLOCK_SUBTYPE_EVENT_FS,
-+	}
++int landlock_decide(enum landlock_subtype_event event,
++		__u64 ctx_values[CTX_ARG_NB], const char *hook)
++{
++	bool deny = false;
++
++	return deny ? -EPERM : 0;
++}
+diff --git a/security/landlock/hooks.h b/security/landlock/hooks.h
+new file mode 100644
+index 000000000000..51957211b67d
+--- /dev/null
++++ b/security/landlock/hooks.h
+@@ -0,0 +1,177 @@
++/*
++ * Landlock LSM - hooks helpers
++ *
++ * Copyright ? 2016-2017 Micka?l Sala?n <mic@digikod.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ */
++
++#include <asm/current.h>
++#include <linux/bpf.h> /* enum bpf_access_type */
++#include <linux/lsm_hooks.h>
++#include <linux/sched.h> /* struct task_struct */
++
++/* separators */
++#define SEP_COMMA() ,
++#define SEP_SPACE()
++#define SEP_AND() &&
++
++#define MAP2x1(s, m, x1, x2, ...) m(x1, x2)
++#define MAP2x2(s, m, x1, x2, ...) m(x1, x2) s() MAP2x1(s, m, __VA_ARGS__)
++#define MAP2x3(s, m, x1, x2, ...) m(x1, x2) s() MAP2x2(s, m, __VA_ARGS__)
++#define MAP2x4(s, m, x1, x2, ...) m(x1, x2) s() MAP2x3(s, m, __VA_ARGS__)
++#define MAP2x5(s, m, x1, x2, ...) m(x1, x2) s() MAP2x4(s, m, __VA_ARGS__)
++#define MAP2x6(s, m, x1, x2, ...) m(x1, x2) s() MAP2x5(s, m, __VA_ARGS__)
++#define MAP2x(n, ...) MAP2x##n(__VA_ARGS__)
++
++#define MAP1x1(s, m, x1, ...) m(x1)
++#define MAP1x2(s, m, x1, ...) m(x1) s() MAP1x1(s, m, __VA_ARGS__)
++#define MAP1x(n, ...) MAP1x##n(__VA_ARGS__)
++
++#define SKIP2x1(x1, x2, ...) __VA_ARGS__
++#define SKIP2x2(x1, x2, ...) SKIP2x1(__VA_ARGS__)
++#define SKIP2x3(x1, x2, ...) SKIP2x2(__VA_ARGS__)
++#define SKIP2x4(x1, x2, ...) SKIP2x3(__VA_ARGS__)
++#define SKIP2x5(x1, x2, ...) SKIP2x4(__VA_ARGS__)
++#define SKIP2x6(x1, x2, ...) SKIP2x5(__VA_ARGS__)
++#define SKIP2x(n, ...) SKIP2x##n(__VA_ARGS__)
++
++/* LSM hook argument helpers */
++#define MAP_HOOK_COMMA(n, ...) MAP2x(n, SEP_COMMA, __VA_ARGS__)
++
++#define GET_HOOK_TA(t, a) t a
++
++/* Landlock event argument helpers  */
++#define MAP_EVENT_COMMA(h, n, m, ...) MAP2x(n, SEP_COMMA, m, SKIP2x(h, __VA_ARGS__))
++#define MAP_EVENT_SPACE(h, n, m, ...) MAP2x(n, SEP_SPACE, m, SKIP2x(h, __VA_ARGS__))
++#define MAP_EVENT_AND(h, n, m, ...) MAP2x(n, SEP_AND, m, SKIP2x(h, __VA_ARGS__))
++
++#define EXPAND_TYPE(d) d##_TYPE
++#define EXPAND_BPF(d) d##_BPF
++#define EXPAND_C(d) d##_C
++
++#define GET_TYPE_BPF(t) EXPAND_BPF(t)
++#define GET_TYPE_C(t) EXPAND_C(t) *
++
++#define GET_EVENT_C(d, a) GET_TYPE_C(EXPAND_TYPE(d))
++#define GET_EVENT_U64(d, a) ((u64)(d##_VAL(a)))
++#define GET_EVENT_DEC(d, a) d##_DEC(a)
++#define GET_EVENT_OK(d, a) d##_OK(a)
++
++/**
++ * HOOK_ACCESS
++ *
++ * @EVENT: Landlock event name
++ * @NA: number of event arguments
++ *
++ * The __consistent_##EVENT() extern functions and __wrapcheck_* types are
++ * useful to catch inconsistencies in LSM hook definitions thanks to the
++ * compiler type checking.
++ */
++#define HOOK_ACCESS(EVENT, NA, ...)					\
++	inline bool landlock_is_valid_access_event_##EVENT(		\
++			int off, int size, enum bpf_access_type type,	\
++			enum bpf_reg_type *reg_type,			\
++			const union bpf_prog_subtype *prog_subtype)	\
++	{								\
++		enum bpf_reg_type _ctx_types[CTX_ARG_NB] = {		\
++			MAP1x(NA, SEP_COMMA, GET_TYPE_BPF, __VA_ARGS__)	\
++		};							\
++		return landlock_is_valid_access(off, size, type,	\
++				reg_type, _ctx_types, prog_subtype);	\
++	}								\
++	extern void __consistent_##EVENT(				\
++			MAP1x(NA, SEP_COMMA, GET_TYPE_C, __VA_ARGS__))
++
++/**
++ * HOOK_NEW
++ *
++ * @INST: event instance for this hook
++ * @EVENT: Landlock event name
++ * @NE: number of event arguments
++ * @HOOK: LSM hook name
++ * @NH: number of hook arguments
++ */
++#define HOOK_NEW(INST, EVENT, NE, HOOK, NH, ...)			\
++	static int landlock_hook_##EVENT##_##HOOK##_##INST(		\
++			MAP_HOOK_COMMA(NH, GET_HOOK_TA, __VA_ARGS__))	\
++	{								\
++		if (!landlocked(current))				\
++			return 0;					\
++		if (!(MAP_EVENT_AND(NH, NE, GET_EVENT_OK,		\
++						__VA_ARGS__)))		\
++			return 0;					\
++		{							\
++		MAP_EVENT_SPACE(NH, NE, GET_EVENT_DEC, __VA_ARGS__)	\
++		__u64 _ctx_values[CTX_ARG_NB] = {			\
++			MAP_EVENT_COMMA(NH, NE, GET_EVENT_U64,		\
++					__VA_ARGS__)			\
++		};							\
++		return landlock_decide(LANDLOCK_SUBTYPE_EVENT_##EVENT,	\
++				_ctx_values, #HOOK);			\
++		}							\
++	}								\
++	extern void __consistent_##EVENT(MAP_EVENT_COMMA(		\
++				NH, NE, GET_EVENT_C, __VA_ARGS__))
++
++#define HOOK_INIT(EVENT, HOOK, ID) \
++	LSM_HOOK_INIT(HOOK, landlock_hook_##EVENT##_##HOOK##_##ID)
++
++/*
++ * The WRAP_TYPE_* definitions group the bpf_reg_type enum value and the C
++ * type. This C type may remains unused except to catch inconsistencies in LSM
++ * hook definitions thanks to the compiler type checking.
++ */
++
++/* WRAP_TYPE_NONE */
++#define WRAP_TYPE_NONE_BPF	NOT_INIT
++#define WRAP_TYPE_NONE_C	struct __wrapcheck_none
++WRAP_TYPE_NONE_C;
++
++/* WRAP_TYPE_RAW */
++#define WRAP_TYPE_RAW_BPF	SCALAR_VALUE
++#define WRAP_TYPE_RAW_C		struct __wrapcheck_raw
++WRAP_TYPE_RAW_C;
++
++/*
++ * The WRAP_ARG_* definitions group the LSM hook argument type (C and BPF), the
++ * wrapping struct declaration (if any) and the value to copy to the BPF
++ * context. This definitions may be used thanks to the EXPAND_* helpers.
++ *
++ * WRAP_ARG_*_TYPE: type for BPF and C (cf. WRAP_TYPE_*)
++ * WRAP_ARG_*_DEC: declare a wrapper
++ * WRAP_ARG_*_VAL: get this wrapper's address
++ * WRAP_ARG_*_OK: check if the argument is usable
++ */
++
++/* WRAP_ARG_NONE */
++#define WRAP_ARG_NONE_TYPE	WRAP_TYPE_NONE
++#define WRAP_ARG_NONE_DEC(arg)
++#define WRAP_ARG_NONE_VAL(arg)	0
++#define WRAP_ARG_NONE_OK(arg)	(!WARN_ON(true))
++
++/* WRAP_ARG_RAW */
++#define WRAP_ARG_RAW_TYPE	WRAP_TYPE_RAW
++#define WRAP_ARG_RAW_DEC(arg)
++#define WRAP_ARG_RAW_VAL(arg)	arg
++#define WRAP_ARG_RAW_OK(arg)	(true)
++
++
++#define CTX_ARG_NB 2
++
++static inline bool landlocked(const struct task_struct *task)
++{
++	return false;
++}
++
++__init void landlock_register_hooks(struct security_hook_list *hooks, int count);
++
++bool landlock_is_valid_access(int off, int size, enum bpf_access_type type,
++		enum bpf_reg_type *reg_type,
++		enum bpf_reg_type ctx_types[CTX_ARG_NB],
++		const union bpf_prog_subtype *prog_subtype);
++
++int landlock_decide(enum landlock_subtype_event event,
++		__u64 ctx_values[CTX_ARG_NB], const char *hook);
+diff --git a/security/landlock/hooks_fs.c b/security/landlock/hooks_fs.c
+new file mode 100644
+index 000000000000..fa80b35a269d
+--- /dev/null
++++ b/security/landlock/hooks_fs.c
+@@ -0,0 +1,586 @@
++/*
++ * Landlock LSM - filesystem hooks
++ *
++ * Copyright ? 2016-2017 Micka?l Sala?n <mic@digikod.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h> /* ARRAY_SIZE */
++#include <linux/lsm_hooks.h>
++#include <linux/types.h> /* uintptr_t */
++
++/* permissions translation */
++#include <linux/fs.h> /* MAY_* */
++#include <linux/mman.h> /* PROT_* */
++
++/* hook arguments */
++#include <linux/cred.h>
++#include <linux/dcache.h> /* struct dentry */
++#include <linux/fs.h> /* struct inode, struct iattr */
++#include <linux/mm_types.h> /* struct vm_area_struct */
++#include <linux/mount.h> /* struct vfsmount */
++#include <linux/path.h> /* struct path */
++#include <linux/sched.h> /* struct task_struct */
++#include <linux/time.h> /* struct timespec */
++
++#include "common.h"
++#include "hooks.h"
++#include "hooks_fs.h"
++
++
++#define HOOK_NEW_FS(...) HOOK_NEW(1, FS, 2, __VA_ARGS__)
++#define HOOK_NEW_FS2(...) HOOK_NEW(2, FS, 2, __VA_ARGS__)
++#define HOOK_NEW_FS3(...) HOOK_NEW(3, FS, 2, __VA_ARGS__)
++#define HOOK_NEW_FS4(...) HOOK_NEW(4, FS, 2, __VA_ARGS__)
++
++#define HOOK_INIT_FS(HOOK) HOOK_INIT(FS, HOOK, 1)
++#define HOOK_INIT_FS2(HOOK) HOOK_INIT(FS, HOOK, 2)
++#define HOOK_INIT_FS3(HOOK) HOOK_INIT(FS, HOOK, 3)
++#define HOOK_INIT_FS4(HOOK) HOOK_INIT(FS, HOOK, 4)
++
++/* WRAP_TYPE_FS */
++#define WRAP_TYPE_FS_BPF	CONST_PTR_TO_HANDLE_FS
++#define WRAP_TYPE_FS_C		const struct bpf_handle_fs
++
++/* WRAP_ARG_FILE */
++#define WRAP_ARG_FILE_TYPE	WRAP_TYPE_FS
++#define WRAP_ARG_FILE_DEC(arg)					\
++	EXPAND_C(WRAP_TYPE_FS) wrap_##arg =			\
++	{ .type = BPF_HANDLE_FS_TYPE_FILE, .file = arg };
++#define WRAP_ARG_FILE_VAL(arg)	((uintptr_t)&wrap_##arg)
++#define WRAP_ARG_FILE_OK(arg)	(arg)
++
++/* WRAP_ARG_VMAF */
++#define WRAP_ARG_VMAF_TYPE	WRAP_TYPE_FS
++#define WRAP_ARG_VMAF_DEC(arg)					\
++	EXPAND_C(WRAP_TYPE_FS) wrap_##arg =			\
++	{ .type = BPF_HANDLE_FS_TYPE_FILE, .file = arg->vm_file };
++#define WRAP_ARG_VMAF_VAL(arg)	((uintptr_t)&wrap_##arg)
++#define WRAP_ARG_VMAF_OK(arg)	(arg && arg->vm_file)
++
++/* WRAP_ARG_INODE */
++#define WRAP_ARG_INODE_TYPE	WRAP_TYPE_FS
++#define WRAP_ARG_INODE_DEC(arg)					\
++	EXPAND_C(WRAP_TYPE_FS) wrap_##arg =			\
++	{ .type = BPF_HANDLE_FS_TYPE_INODE, .inode = arg };
++#define WRAP_ARG_INODE_VAL(arg)	((uintptr_t)&wrap_##arg)
++#define WRAP_ARG_INODE_OK(arg)	(arg)
++
++/* WRAP_ARG_PATH */
++#define WRAP_ARG_PATH_TYPE	WRAP_TYPE_FS
++#define WRAP_ARG_PATH_DEC(arg)					\
++	EXPAND_C(WRAP_TYPE_FS) wrap_##arg =			\
++	{ .type = BPF_HANDLE_FS_TYPE_PATH, .path = arg };
++#define WRAP_ARG_PATH_VAL(arg)	((uintptr_t)&wrap_##arg)
++#define WRAP_ARG_PATH_OK(arg)	(arg)
++
++/* WRAP_ARG_DENTRY */
++#define WRAP_ARG_DENTRY_TYPE	WRAP_TYPE_FS
++#define WRAP_ARG_DENTRY_DEC(arg)				\
++	EXPAND_C(WRAP_TYPE_FS) wrap_##arg =			\
++	{ .type = BPF_HANDLE_FS_TYPE_DENTRY, .dentry = arg };
++#define WRAP_ARG_DENTRY_VAL(arg)	((uintptr_t)&wrap_##arg)
++#define WRAP_ARG_DENTRY_OK(arg)	(arg)
++
++/* WRAP_ARG_SB */
++#define WRAP_ARG_SB_TYPE	WRAP_TYPE_FS
++#define WRAP_ARG_SB_DEC(arg)					\
++	EXPAND_C(WRAP_TYPE_FS) wrap_##arg =			\
++	{ .type = BPF_HANDLE_FS_TYPE_DENTRY, .dentry = arg->s_root };
++#define WRAP_ARG_SB_VAL(arg)	((uintptr_t)&wrap_##arg)
++#define WRAP_ARG_SB_OK(arg)	(arg && arg->s_root)
++
++/* WRAP_ARG_MNTROOT */
++#define WRAP_ARG_MNTROOT_TYPE	WRAP_TYPE_FS
++#define WRAP_ARG_MNTROOT_DEC(arg)				\
++	EXPAND_C(WRAP_TYPE_FS) wrap_##arg =			\
++	{ .type = BPF_HANDLE_FS_TYPE_DENTRY, .dentry = arg->mnt_root };
++#define WRAP_ARG_MNTROOT_VAL(arg)	((uintptr_t)&wrap_##arg)
++#define WRAP_ARG_MNTROOT_OK(arg)	(arg && arg->mnt_root)
++
++
++static inline u64 fs_may_to_access(int fs_may)
++{
++	u64 ret = 0;
++
++	if (fs_may & MAY_EXEC)
++		ret |= LANDLOCK_ACTION_FS_EXEC;
++	if (fs_may & MAY_READ)
++		ret |= LANDLOCK_ACTION_FS_READ;
++	if (fs_may & MAY_WRITE)
++		ret |= LANDLOCK_ACTION_FS_WRITE;
++	if (fs_may & MAY_APPEND)
++		ret |= LANDLOCK_ACTION_FS_WRITE;
++	if (fs_may & MAY_OPEN)
++		ret |= LANDLOCK_ACTION_FS_GET;
++	/* ignore MAY_CHDIR and MAY_ACCESS */
++
++	return ret;
++}
++
++static u64 mem_prot_to_access(unsigned long prot, bool private)
++{
++	u64 ret = 0;
++
++	/* private mapping do not write to files */
++	if (!private && (prot & PROT_WRITE))
++		ret |= LANDLOCK_ACTION_FS_WRITE;
++	if (prot & PROT_READ)
++		ret |= LANDLOCK_ACTION_FS_READ;
++	if (prot & PROT_EXEC)
++		ret |= LANDLOCK_ACTION_FS_EXEC;
++
++	return ret;
++}
++
++/* hook definitions */
++
++HOOK_ACCESS(FS, 2, WRAP_TYPE_FS, WRAP_TYPE_RAW);
++
++/* binder_* hooks */
++
++HOOK_NEW_FS(binder_transfer_file, 3,
++	struct task_struct *, from,
++	struct task_struct *, to,
++	struct file *, file,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++/* sb_* hooks */
++
++HOOK_NEW_FS(sb_statfs, 1,
++	struct dentry *, dentry,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++/*
++ * Being able to mount on a path means being able to override the underlying
++ * filesystem view of this path, hence the need for a write access right.
++ */
++HOOK_NEW_FS(sb_mount, 5,
++	const char *, dev_name,
++	const struct path *, path,
++	const char *, type,
++	unsigned long, flags,
++	void *, data,
++	WRAP_ARG_PATH, path,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS(sb_remount, 2,
++	struct super_block *, sb,
++	void *, data,
++	WRAP_ARG_SB, sb,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS(sb_umount, 2,
++	struct vfsmount *, mnt,
++	int, flags,
++	WRAP_ARG_MNTROOT, mnt,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++/*
++ * The old_path is similar to a destination mount point.
++ */
++HOOK_NEW_FS(sb_pivotroot, 2,
++	const struct path *, old_path,
++	const struct path *, new_path,
++	WRAP_ARG_PATH, old_path,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++/* inode_* hooks */
++
++/* a directory inode contains only one dentry */
++HOOK_NEW_FS(inode_create, 3,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	umode_t, mode,
++	WRAP_ARG_INODE, dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS2(inode_create, 3,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	umode_t, mode,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_NEW
++);
++
++HOOK_NEW_FS(inode_link, 3,
++	struct dentry *, old_dentry,
++	struct inode *, dir,
++	struct dentry *, new_dentry,
++	WRAP_ARG_DENTRY, old_dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++HOOK_NEW_FS2(inode_link, 3,
++	struct dentry *, old_dentry,
++	struct inode *, dir,
++	struct dentry *, new_dentry,
++	WRAP_ARG_INODE, dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS3(inode_link, 3,
++	struct dentry *, old_dentry,
++	struct inode *, dir,
++	struct dentry *, new_dentry,
++	WRAP_ARG_DENTRY, new_dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_NEW
++);
++
++HOOK_NEW_FS(inode_unlink, 2,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	WRAP_ARG_INODE, dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS2(inode_unlink, 2,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_REMOVE
++);
++
++HOOK_NEW_FS(inode_symlink, 3,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	const char *, old_name,
++	WRAP_ARG_INODE, dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS2(inode_symlink, 3,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	const char *, old_name,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_NEW
++);
++
++HOOK_NEW_FS(inode_mkdir, 3,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	umode_t, mode,
++	WRAP_ARG_INODE, dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS2(inode_mkdir, 3,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	umode_t, mode,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_NEW
++);
++
++HOOK_NEW_FS(inode_rmdir, 2,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	WRAP_ARG_INODE, dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS2(inode_rmdir, 2,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_REMOVE
++);
++
++HOOK_NEW_FS(inode_mknod, 4,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	umode_t, mode,
++	dev_t, dev,
++	WRAP_ARG_INODE, dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS2(inode_mknod, 4,
++	struct inode *, dir,
++	struct dentry *, dentry,
++	umode_t, mode,
++	dev_t, dev,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_NEW
++);
++
++HOOK_NEW_FS(inode_rename, 4,
++	struct inode *, old_dir,
++	struct dentry *, old_dentry,
++	struct inode *, new_dir,
++	struct dentry *, new_dentry,
++	WRAP_ARG_INODE, old_dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS2(inode_rename, 4,
++	struct inode *, old_dir,
++	struct dentry *, old_dentry,
++	struct inode *, new_dir,
++	struct dentry *, new_dentry,
++	WRAP_ARG_DENTRY, old_dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_REMOVE
++);
++
++HOOK_NEW_FS3(inode_rename, 4,
++	struct inode *, old_dir,
++	struct dentry *, old_dentry,
++	struct inode *, new_dir,
++	struct dentry *, new_dentry,
++	WRAP_ARG_INODE, new_dir,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS4(inode_rename, 4,
++	struct inode *, old_dir,
++	struct dentry *, old_dentry,
++	struct inode *, new_dir,
++	struct dentry *, new_dentry,
++	WRAP_ARG_DENTRY, new_dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_NEW
++);
++
++HOOK_NEW_FS(inode_readlink, 1,
++	struct dentry *, dentry,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++// XXX: handle inode?
++HOOK_NEW_FS(inode_follow_link, 3,
++	struct dentry *, dentry,
++	struct inode *, inode,
++	bool, rcu,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++HOOK_NEW_FS(inode_permission, 2,
++	struct inode *, inode,
++	int, mask,
++	WRAP_ARG_INODE, inode,
++	WRAP_ARG_RAW, fs_may_to_access(mask)
++);
++
++HOOK_NEW_FS(inode_setattr, 2,
++	struct dentry *, dentry,
++	struct iattr *, attr,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS(inode_getattr, 1,
++	const struct path *, path,
++	WRAP_ARG_PATH, path,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++HOOK_NEW_FS(inode_setxattr, 5,
++	struct dentry *, dentry,
++	const char *, name,
++	const void *, value,
++	size_t, size,
++	int, flags,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS(inode_getxattr, 2,
++	struct dentry *, dentry,
++	const char *, name,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++HOOK_NEW_FS(inode_listxattr, 1,
++	struct dentry *, dentry,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++HOOK_NEW_FS(inode_removexattr, 2,
++	struct dentry *, dentry,
++	const char *, name,
++	WRAP_ARG_DENTRY, dentry,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++HOOK_NEW_FS(inode_getsecurity, 4,
++	struct inode *, inode,
++	const char *, name,
++	void **, buffer,
++	bool, alloc,
++	WRAP_ARG_INODE, inode,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_READ
++);
++
++HOOK_NEW_FS(inode_setsecurity, 5,
++	struct inode *, inode,
++	const char *, name,
++	const void *, value,
++	size_t, size,
++	int, flag,
++	WRAP_ARG_INODE, inode,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_WRITE
++);
++
++/* file_* hooks */
++
++HOOK_NEW_FS(file_permission, 2,
++	struct file *, file,
++	int, mask,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, fs_may_to_access(mask)
++);
++
++/*
++ * An ioctl command can be a read or a write. This can be checked with _IOC*()
++ * for some commands but a Landlock rule should check the ioctl command to
++ * whitelist them.
++ */
++HOOK_NEW_FS(file_ioctl, 3,
++	struct file *, file,
++	unsigned int, cmd,
++	unsigned long, arg,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_IOCTL
++);
++
++HOOK_NEW(1, FS_IOCTL, 2, file_ioctl, 3,
++	struct file *, file,
++	unsigned int, cmd,
++	unsigned long, arg,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, cmd
++);
++
++HOOK_NEW_FS(file_lock, 2,
++	struct file *, file,
++	unsigned int, cmd,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_LOCK
++);
++
++HOOK_NEW(1, FS_LOCK, 2, file_lock, 2,
++	struct file *, file,
++	unsigned int, cmd,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, cmd
++);
++
++HOOK_NEW_FS(file_fcntl, 3,
++	struct file *, file,
++	unsigned int, cmd,
++	unsigned long, arg,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_FCNTL
++);
++
++HOOK_NEW(1, FS_FCNTL, 2, file_fcntl, 3,
++	struct file *, file,
++	unsigned int, cmd,
++	unsigned long, arg,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, cmd
++);
++
++HOOK_NEW_FS(mmap_file, 4,
++	struct file *, file,
++	unsigned long, reqprot,
++	unsigned long, prot,
++	unsigned long, flags,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, mem_prot_to_access(prot, flags & MAP_PRIVATE)
++);
++
++HOOK_NEW_FS(file_mprotect, 3,
++	struct vm_area_struct *, vma,
++	unsigned long, reqprot,
++	unsigned long, prot,
++	WRAP_ARG_VMAF, vma,
++	WRAP_ARG_RAW, mem_prot_to_access(prot, !(vma->vm_flags & VM_SHARED))
++);
++
++HOOK_NEW_FS(file_receive, 1,
++	struct file *, file,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_GET
++);
++
++HOOK_NEW_FS(file_open, 2,
++	struct file *, file,
++	const struct cred *, cred,
++	WRAP_ARG_FILE, file,
++	WRAP_ARG_RAW, LANDLOCK_ACTION_FS_GET
++);
++
++static struct security_hook_list landlock_hooks[] = {
++	HOOK_INIT_FS(binder_transfer_file),
++
++	HOOK_INIT_FS(sb_statfs),
++	HOOK_INIT_FS(sb_mount),
++	HOOK_INIT_FS(sb_remount),
++	HOOK_INIT_FS(sb_umount),
++	HOOK_INIT_FS(sb_pivotroot),
++
++	HOOK_INIT_FS(inode_create),
++	HOOK_INIT_FS2(inode_create),
++	HOOK_INIT_FS(inode_link),
++	HOOK_INIT_FS2(inode_link),
++	HOOK_INIT_FS3(inode_link),
++	HOOK_INIT_FS(inode_unlink),
++	HOOK_INIT_FS2(inode_unlink),
++	HOOK_INIT_FS(inode_symlink),
++	HOOK_INIT_FS2(inode_symlink),
++	HOOK_INIT_FS(inode_mkdir),
++	HOOK_INIT_FS2(inode_mkdir),
++	HOOK_INIT_FS(inode_rmdir),
++	HOOK_INIT_FS2(inode_rmdir),
++	HOOK_INIT_FS(inode_mknod),
++	HOOK_INIT_FS2(inode_mknod),
++	HOOK_INIT_FS(inode_rename),
++	HOOK_INIT_FS2(inode_rename),
++	HOOK_INIT_FS3(inode_rename),
++	HOOK_INIT_FS4(inode_rename),
++	HOOK_INIT_FS(inode_readlink),
++	HOOK_INIT_FS(inode_follow_link),
++	HOOK_INIT_FS(inode_permission),
++	HOOK_INIT_FS(inode_setattr),
++	HOOK_INIT_FS(inode_getattr),
++	HOOK_INIT_FS(inode_setxattr),
++	HOOK_INIT_FS(inode_getxattr),
++	HOOK_INIT_FS(inode_listxattr),
++	HOOK_INIT_FS(inode_removexattr),
++	HOOK_INIT_FS(inode_getsecurity),
++	HOOK_INIT_FS(inode_setsecurity),
++
++	HOOK_INIT_FS(file_permission),
++	HOOK_INIT_FS(file_ioctl),
++	HOOK_INIT(FS_IOCTL, file_ioctl, 1),
++	HOOK_INIT_FS(file_lock),
++	HOOK_INIT(FS_LOCK, file_lock, 1),
++	HOOK_INIT_FS(file_fcntl),
++	HOOK_INIT(FS_FCNTL, file_fcntl, 1),
++	HOOK_INIT_FS(mmap_file),
++	HOOK_INIT_FS(file_mprotect),
++	HOOK_INIT_FS(file_receive),
++	HOOK_INIT_FS(file_open),
 +};
 +
-+SEC("license")
-+static const char _license[] = "GPL";
-diff --git a/tools/testing/selftests/landlock/bpf/rule_fs_read_only.c b/tools/testing/selftests/landlock/bpf/rule_fs_read_only.c
++__init void landlock_add_hooks_fs(void)
++{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks), LANDLOCK_NAME);
++}
+diff --git a/security/landlock/hooks_fs.h b/security/landlock/hooks_fs.h
 new file mode 100644
-index 000000000000..17680f2e90b0
+index 000000000000..aab07c018f38
 --- /dev/null
-+++ b/tools/testing/selftests/landlock/bpf/rule_fs_read_only.c
-@@ -0,0 +1,32 @@
++++ b/security/landlock/hooks_fs.h
+@@ -0,0 +1,19 @@
 +/*
-+ * Landlock rule - read-only filesystem
++ * Landlock LSM - filesystem hooks
 + *
 + * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
 + *
@@ -326,561 +999,75 @@ index 000000000000..17680f2e90b0
 + * published by the Free Software Foundation.
 + */
 +
-+#include <uapi/linux/bpf.h>
++#include <linux/bpf.h> /* enum bpf_access_type */
 +
-+#include <bpf_helpers.h>
 +
-+SEC("landlock1")
-+static int landlock_fs_prog1(struct landlock_context *ctx)
++bool landlock_is_valid_access_event_FS(
++		int off, int size, enum bpf_access_type type,
++		enum bpf_reg_type *reg_type,
++		const union bpf_prog_subtype *prog_subtype);
++
++__init void landlock_add_hooks_fs(void);
+diff --git a/security/landlock/init.c b/security/landlock/init.c
+index 09acbc74abd6..1e6660fed697 100644
+--- a/security/landlock/init.c
++++ b/security/landlock/init.c
+@@ -10,8 +10,10 @@
+ 
+ #include <linux/bpf.h> /* enum bpf_access_type */
+ #include <linux/capability.h> /* capable */
++#include <linux/lsm_hooks.h>
+ 
+ #include "common.h" /* LANDLOCK_* */
++#include "hooks_fs.h"
+ 
+ 
+ static inline bool bpf_landlock_is_valid_access(int off, int size,
+@@ -23,6 +25,8 @@ static inline bool bpf_landlock_is_valid_access(int off, int size,
+ 
+ 	switch (prog_subtype->landlock_rule.event) {
+ 	case LANDLOCK_SUBTYPE_EVENT_FS:
++		return landlock_is_valid_access_event_FS(off, size, type,
++				&info->reg_type, prog_subtype);
+ 	case LANDLOCK_SUBTYPE_EVENT_UNSPEC:
+ 	default:
+ 		return false;
+@@ -113,3 +117,9 @@ const struct bpf_verifier_ops bpf_landlock_ops = {
+ 	.is_valid_access = bpf_landlock_is_valid_access,
+ 	.is_valid_subtype = bpf_landlock_is_valid_subtype,
+ };
++
++void __init landlock_add_hooks(void)
 +{
-+	if (!(ctx->arg2 & LANDLOCK_ACTION_FS_WRITE))
-+		return 0;
-+	return 1;
++	pr_info("%s: ABI %u", LANDLOCK_NAME, LANDLOCK_ABI);
++	landlock_add_hooks_fs();
 +}
-+
-+SEC("subtype")
-+static const union bpf_prog_subtype _subtype = {
-+	.landlock_rule = {
-+		.abi = 1,
-+		.event = LANDLOCK_SUBTYPE_EVENT_FS,
-+	}
-+};
-+
-+SEC("license")
-+static const char _license[] = "GPL";
-diff --git a/tools/testing/selftests/landlock/test.h b/tools/testing/selftests/landlock/test.h
-new file mode 100644
-index 000000000000..e15392bb84d4
---- /dev/null
-+++ b/tools/testing/selftests/landlock/test.h
-@@ -0,0 +1,28 @@
-+/*
-+ * Landlock helpers
-+ *
-+ * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <errno.h>
-+#include <sys/prctl.h>
-+#include <sys/syscall.h>
-+
-+#include "../kselftest_harness.h"
-+#include "../../../../samples/bpf/bpf_load.h"
-+
-+#ifndef SECCOMP_PREPEND_LANDLOCK_RULE
-+#define SECCOMP_PREPEND_LANDLOCK_RULE	2
-+#endif
-+
-+#ifndef seccomp
-+static int seccomp(unsigned int op, unsigned int flags, void *args)
-+{
-+	errno = 0;
-+	return syscall(__NR_seccomp, op, flags, args);
-+}
-+#endif
-diff --git a/tools/testing/selftests/landlock/test_base.c b/tools/testing/selftests/landlock/test_base.c
-new file mode 100644
-index 000000000000..dbf4f57f9690
---- /dev/null
-+++ b/tools/testing/selftests/landlock/test_base.c
-@@ -0,0 +1,27 @@
-+/*
-+ * Landlock tests - base
-+ *
-+ * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+
-+#include "test.h"
-+
-+TEST(seccomp_landlock)
-+{
-+	int ret;
-+
-+	ret = seccomp(SECCOMP_PREPEND_LANDLOCK_RULE, 0, NULL);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EFAULT, errno) {
-+		TH_LOG("Kernel does not support CONFIG_SECURITY_LANDLOCK");
-+	}
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/landlock/test_fs.c b/tools/testing/selftests/landlock/test_fs.c
-new file mode 100644
-index 000000000000..7404734d2c58
---- /dev/null
-+++ b/tools/testing/selftests/landlock/test_fs.c
-@@ -0,0 +1,296 @@
-+/*
-+ * Landlock tests - filesystem
-+ *
-+ * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <linux/bpf.h>
-+#include <linux/filter.h>
-+#include <linux/seccomp.h>
-+#include <stddef.h>
-+#include <string.h>
-+#include <sys/prctl.h>
-+#include <sys/syscall.h>
-+
-+#include <fcntl.h> /* open() */
-+#include <sys/mount.h>
-+#include <sys/stat.h> /* mkdir() */
-+#include <sys/mman.h> /* mmap() */
-+
-+#include "test.h"
-+
-+#define TMP_PREFIX "tmp_"
-+
-+struct layout1 {
-+	int file_ro;
-+	int file_rw;
-+	int file_wo;
-+};
-+
-+static void setup_layout1(struct __test_metadata *_metadata,
-+		struct layout1 *l1)
-+{
-+	int fd;
-+	char buf[] = "fs_read_only";
-+
-+	l1->file_ro = -1;
-+	l1->file_rw = -1;
-+	l1->file_wo = -1;
-+
-+	fd = open(TMP_PREFIX "file_created",
-+			O_CREAT | O_EXCL | O_WRONLY | O_CLOEXEC, 0600);
-+	ASSERT_GE(fd, 0);
-+	ASSERT_EQ(sizeof(buf), write(fd, buf, sizeof(buf)));
-+	ASSERT_EQ(0, close(fd));
-+
-+	fd = mkdir(TMP_PREFIX "dir_created", 0600);
-+	ASSERT_GE(fd, 0);
-+	ASSERT_EQ(0, close(fd));
-+
-+	l1->file_ro = open(TMP_PREFIX "file_ro",
-+			O_CREAT | O_EXCL | O_WRONLY | O_CLOEXEC, 0600);
-+	ASSERT_LE(0, l1->file_ro);
-+	ASSERT_EQ(sizeof(buf), write(l1->file_ro, buf, sizeof(buf)));
-+	ASSERT_EQ(0, close(l1->file_ro));
-+	l1->file_ro = open(TMP_PREFIX "file_ro",
-+			O_RDONLY | O_CLOEXEC, 0600);
-+	ASSERT_LE(0, l1->file_ro);
-+
-+	l1->file_rw = open(TMP_PREFIX "file_rw",
-+			O_CREAT | O_EXCL | O_RDWR | O_CLOEXEC, 0600);
-+	ASSERT_LE(0, l1->file_rw);
-+	ASSERT_EQ(sizeof(buf), write(l1->file_rw, buf, sizeof(buf)));
-+	ASSERT_EQ(0, lseek(l1->file_rw, 0, SEEK_SET));
-+
-+	l1->file_wo = open(TMP_PREFIX "file_wo",
-+			O_CREAT | O_EXCL | O_WRONLY | O_CLOEXEC, 0600);
-+	ASSERT_LE(0, l1->file_wo);
-+	ASSERT_EQ(sizeof(buf), write(l1->file_wo, buf, sizeof(buf)));
-+	ASSERT_EQ(0, lseek(l1->file_wo, 0, SEEK_SET));
-+}
-+
-+static void cleanup_layout1(void)
-+{
-+	unlink(TMP_PREFIX "file_created");
-+	unlink(TMP_PREFIX "file_ro");
-+	unlink(TMP_PREFIX "file_rw");
-+	unlink(TMP_PREFIX "file_wo");
-+	unlink(TMP_PREFIX "should_not_exist");
-+	rmdir(TMP_PREFIX "dir_created");
-+}
-+
-+FIXTURE(fs_read_only) {
-+	struct layout1 l1;
-+	int prog;
-+};
-+
-+FIXTURE_SETUP(fs_read_only)
-+{
-+	cleanup_layout1();
-+	setup_layout1(_metadata, &self->l1);
-+
-+	ASSERT_EQ(0, load_bpf_file("rule_fs_read_only.o")) {
-+		TH_LOG("%s", bpf_log_buf);
-+	}
-+	self->prog = prog_fd[0];
-+}
-+
-+FIXTURE_TEARDOWN(fs_read_only)
-+{
-+	EXPECT_EQ(0, close(self->prog));
-+	/* cleanup_layout1() would be denied here */
-+}
-+
-+TEST_F(fs_read_only, load_prog) {}
-+
-+TEST_F(fs_read_only, read_only_file)
-+{
-+	int fd;
-+	char buf_write[] = "should not be written";
-+	char buf_read[2];
-+
-+	ASSERT_EQ(-1, write(self->l1.file_ro, buf_write, sizeof(buf_write)));
-+	ASSERT_EQ(EBADF, errno);
-+
-+	ASSERT_EQ(-1, read(self->l1.file_wo, buf_read, sizeof(buf_read)));
-+	ASSERT_EQ(EBADF, errno);
-+
-+	ASSERT_EQ(0, seccomp(SECCOMP_PREPEND_LANDLOCK_RULE, 0, &self->prog)) {
-+		TH_LOG("Failed to apply rule fs_read_only: %s",
-+				strerror(errno));
-+	}
-+	_metadata->no_print = true;
-+
-+	fd = open(".", O_TMPFILE | O_EXCL | O_RDWR | O_CLOEXEC, 0600);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_NE(errno, EOPNOTSUPP)
-+	ASSERT_EQ(errno, EPERM);
-+
-+	fd = open(TMP_PREFIX "file_created",
-+			O_RDONLY | O_CLOEXEC);
-+	ASSERT_GE(fd, 0);
-+	ASSERT_EQ(close(fd), 0);
-+
-+	fd = open(TMP_PREFIX "file_created",
-+			O_RDWR | O_CLOEXEC);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EPERM);
-+
-+	fd = open(TMP_PREFIX "file_created",
-+			O_WRONLY | O_CLOEXEC);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EPERM);
-+
-+	fd = open(TMP_PREFIX "should_not_exist",
-+			O_CREAT | O_EXCL | O_CLOEXEC, 0600);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EPERM);
-+
-+	ASSERT_EQ(-1,
-+			write(self->l1.file_ro, buf_write, sizeof(buf_write)));
-+	ASSERT_EQ(errno, EBADF);
-+	ASSERT_EQ(sizeof(buf_read),
-+			read(self->l1.file_ro, buf_read, sizeof(buf_read)));
-+
-+	ASSERT_EQ(-1,
-+			write(self->l1.file_rw, buf_write, sizeof(buf_write)));
-+	ASSERT_EQ(errno, EPERM);
-+	ASSERT_EQ(sizeof(buf_read),
-+			read(self->l1.file_rw, buf_read, sizeof(buf_read)));
-+
-+	ASSERT_EQ(-1, write(self->l1.file_wo, buf_write, sizeof(buf_write)));
-+	ASSERT_EQ(errno, EPERM);
-+	ASSERT_EQ(-1, read(self->l1.file_wo, buf_read, sizeof(buf_read)));
-+	ASSERT_EQ(errno, EBADF);
-+
-+	ASSERT_EQ(-1, unlink(TMP_PREFIX "file_created"));
-+	ASSERT_EQ(errno, EPERM);
-+	ASSERT_EQ(-1, rmdir(TMP_PREFIX "dir_created"));
-+	ASSERT_EQ(errno, EPERM);
-+
-+	ASSERT_EQ(0, close(self->l1.file_ro));
-+	ASSERT_EQ(0, close(self->l1.file_rw));
-+	ASSERT_EQ(0, close(self->l1.file_wo));
-+}
-+
-+TEST_F(fs_read_only, read_only_mount)
-+{
-+	ASSERT_EQ(0, mount(".", TMP_PREFIX "dir_created",
-+				NULL, MS_BIND, NULL));
-+	ASSERT_EQ(0, umount2(TMP_PREFIX "dir_created", MNT_FORCE));
-+
-+	ASSERT_EQ(0, seccomp(SECCOMP_PREPEND_LANDLOCK_RULE, 0, &self->prog)) {
-+		TH_LOG("Failed to apply rule fs_read_only: %s",
-+				strerror(errno));
-+	}
-+
-+	ASSERT_EQ(-1, mount(".", TMP_PREFIX "dir_created",
-+				NULL, MS_BIND, NULL));
-+	ASSERT_EQ(errno, EPERM);
-+	ASSERT_EQ(-1, umount("/"));
-+	ASSERT_EQ(errno, EPERM);
-+}
-+
-+TEST_F(fs_read_only, read_only_mem)
-+{
-+	void *addr;
-+
-+	addr = mmap(NULL, 1, PROT_READ | PROT_WRITE,
-+			MAP_SHARED, self->l1.file_rw, 0);
-+	ASSERT_NE(NULL, addr);
-+	ASSERT_EQ(0, munmap(addr, 1));
-+
-+	ASSERT_EQ(0, seccomp(SECCOMP_PREPEND_LANDLOCK_RULE, 0, &self->prog)) {
-+		TH_LOG("Failed to apply rule fs_read_only: %s",
-+				strerror(errno));
-+	}
-+
-+	addr = mmap(NULL, 1, PROT_READ, MAP_SHARED,
-+			self->l1.file_rw, 0);
-+	ASSERT_NE(addr, NULL);
-+	ASSERT_EQ(-1, mprotect(addr, 1, PROT_WRITE));
-+	ASSERT_EQ(errno, EPERM);
-+	ASSERT_EQ(0, munmap(addr, 1));
-+
-+	addr = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED,
-+			self->l1.file_rw, 0);
-+	ASSERT_NE(addr, NULL);
-+	ASSERT_EQ(errno, EPERM);
-+
-+	addr = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_PRIVATE,
-+			self->l1.file_rw, 0);
-+	ASSERT_NE(addr, NULL);
-+	ASSERT_EQ(0, munmap(addr, 1));
-+}
-+
-+FIXTURE(fs_no_open) {
-+	struct layout1 l1;
-+	int prog;
-+};
-+
-+FIXTURE_SETUP(fs_no_open)
-+{
-+	cleanup_layout1();
-+	setup_layout1(_metadata, &self->l1);
-+
-+	ASSERT_EQ(0, load_bpf_file("rule_fs_no_open.o")) {
-+		TH_LOG("%s", bpf_log_buf);
-+	}
-+	self->prog = prog_fd[0];
-+}
-+
-+FIXTURE_TEARDOWN(fs_no_open)
-+{
-+	EXPECT_EQ(0, close(self->prog));
-+	cleanup_layout1();
-+}
-+
-+static void landlocked_deny_open(struct __test_metadata *_metadata,
-+		struct layout1 *l1)
-+{
-+	int fd;
-+	void *addr;
-+
-+	fd = open(".", O_DIRECTORY | O_CLOEXEC);
-+	ASSERT_EQ(-1, fd);
-+	ASSERT_EQ(EPERM, errno);
-+
-+	addr = mmap(NULL, 1, PROT_READ | PROT_WRITE,
-+			MAP_SHARED, l1->file_rw, 0);
-+	ASSERT_NE(NULL, addr);
-+	ASSERT_EQ(0, munmap(addr, 1));
-+}
-+
-+TEST_F(fs_no_open, deny_open_for_hierarchy) {
-+	int fd;
-+	int status;
-+	pid_t child;
-+
-+	fd = open(".", O_DIRECTORY | O_CLOEXEC);
-+	ASSERT_LE(0, fd);
-+	ASSERT_EQ(0, close(fd));
-+
-+	ASSERT_EQ(0, seccomp(SECCOMP_PREPEND_LANDLOCK_RULE, 0, &self->prog)) {
-+		TH_LOG("Failed to apply rule fs_no_open: %s", strerror(errno));
-+	}
-+
-+	landlocked_deny_open(_metadata, &self->l1);
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (!child) {
-+		landlocked_deny_open(_metadata, &self->l1);
-+		_exit(0);
-+	}
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	_exit(WEXITSTATUS(status));
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/landlock/test_ptrace.c b/tools/testing/selftests/landlock/test_ptrace.c
-new file mode 100644
-index 000000000000..8d4d243cae1f
---- /dev/null
-+++ b/tools/testing/selftests/landlock/test_ptrace.c
-@@ -0,0 +1,158 @@
-+/*
-+ * Landlock tests - ptrace
-+ *
-+ * Copyright ? 2017 Micka?l Sala?n <mic@digikod.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <signal.h> /* raise */
-+#include <sys/ptrace.h>
-+#include <sys/types.h> /* waitpid */
-+#include <sys/wait.h> /* waitpid */
-+#include <unistd.h> /* fork, pipe */
-+
-+#include "test.h"
-+
-+static void apply_null_sandbox(struct __test_metadata *_metadata)
-+{
-+	const struct bpf_insn prog_accept[] = {
-+		BPF_MOV32_IMM(BPF_REG_0, 0),
-+		BPF_EXIT_INSN(),
-+	};
-+	const union bpf_prog_subtype subtype = {
-+		.landlock_rule = {
-+			.abi = 1,
-+			.event = LANDLOCK_SUBTYPE_EVENT_FS,
-+		}
-+	};
-+	int prog;
-+	char log[256] = "";
-+
-+	prog = bpf_load_program(BPF_PROG_TYPE_LANDLOCK_RULE,
-+			(const struct bpf_insn *)&prog_accept,
-+			sizeof(prog_accept) / sizeof(struct bpf_insn), "GPL",
-+			0, log, sizeof(log), &subtype);
-+	ASSERT_NE(-1, prog) {
-+		TH_LOG("Failed to load minimal rule: %s\n%s",
-+				strerror(errno), log);
-+	}
-+	ASSERT_EQ(0, seccomp(SECCOMP_PREPEND_LANDLOCK_RULE, 0, &prog)) {
-+		TH_LOG("Failed to apply minimal rule: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(0, close(prog));
-+}
-+
-+/* PTRACE_TRACEME and PTRACE_ATTACH without Landlock rules effect */
-+static void check_ptrace(struct __test_metadata *_metadata,
-+		int sandbox_both, int sandbox_parent, int sandbox_child,
-+		int expect_ptrace)
-+{
-+	pid_t child;
-+	int status;
-+	int pipefd[2];
-+
-+	ASSERT_EQ(0, pipe(pipefd));
-+	if (sandbox_both)
-+		apply_null_sandbox(_metadata);
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		char buf;
-+
-+		EXPECT_EQ(0, close(pipefd[1]));
-+		if (sandbox_child)
-+			apply_null_sandbox(_metadata);
-+
-+		/* test traceme */
-+		ASSERT_EQ(expect_ptrace, ptrace(PTRACE_TRACEME));
-+		if (expect_ptrace) {
-+			ASSERT_EQ(EPERM, errno);
-+		} else {
-+			ASSERT_EQ(0, raise(SIGSTOP));
-+		}
-+
-+		/* sync */
-+		ASSERT_EQ(1, read(pipefd[0], &buf, 1)) {
-+			TH_LOG("Failed to read() sync from parent");
-+		}
-+		ASSERT_EQ('.', buf);
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+	}
-+
-+	EXPECT_EQ(0, close(pipefd[0]));
-+	if (sandbox_parent)
-+		apply_null_sandbox(_metadata);
-+
-+	/* test traceme */
-+	if (!expect_ptrace) {
-+		ASSERT_EQ(child, waitpid(child, &status, 0));
-+		ASSERT_EQ(1, WIFSTOPPED(status));
-+		ASSERT_EQ(0, ptrace(PTRACE_DETACH, child, NULL, 0));
-+	}
-+	/* test attach */
-+	ASSERT_EQ(expect_ptrace, ptrace(PTRACE_ATTACH, child, NULL, 0));
-+	if (expect_ptrace) {
-+		ASSERT_EQ(EPERM, errno);
-+	} else {
-+		ASSERT_EQ(child, waitpid(child, &status, 0));
-+		ASSERT_EQ(1, WIFSTOPPED(status));
-+		ASSERT_EQ(0, ptrace(PTRACE_CONT, child, NULL, 0));
-+	}
-+
-+	/* sync */
-+	ASSERT_EQ(1, write(pipefd[1], ".", 1)) {
-+		TH_LOG("Failed to write() sync to child");
-+	}
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	if (WIFSIGNALED(status) || WEXITSTATUS(status))
-+		_metadata->passed = 0;
-+}
-+
-+TEST(ptrace_allow_without_sandbox)
-+{
-+	/* no sandbox */
-+	check_ptrace(_metadata, 0, 0, 0, 0);
-+}
-+
-+TEST(ptrace_allow_with_one_sandbox)
-+{
-+	/* child sandbox */
-+	check_ptrace(_metadata, 0, 0, 1, 0);
-+}
-+
-+TEST(ptrace_allow_with_nested_sandbox)
-+{
-+	/* inherited and child sandbox */
-+	check_ptrace(_metadata, 1, 0, 1, 0);
-+}
-+
-+TEST(ptrace_deny_with_parent_sandbox)
-+{
-+	/* parent sandbox */
-+	check_ptrace(_metadata, 0, 1, 0, -1);
-+}
-+
-+TEST(ptrace_deny_with_nested_and_parent_sandbox)
-+{
-+	/* inherited and parent sandbox */
-+	check_ptrace(_metadata, 1, 1, 0, -1);
-+}
-+
-+TEST(ptrace_deny_with_forked_sandbox)
-+{
-+	/* inherited, parent and child sandbox */
-+	check_ptrace(_metadata, 1, 1, 1, -1);
-+}
-+
-+TEST(ptrace_deny_with_sibling_sandbox)
-+{
-+	/* parent and child sandbox */
-+	check_ptrace(_metadata, 0, 1, 1, -1);
-+}
-+
-+TEST_HARNESS_MAIN
+diff --git a/security/security.c b/security/security.c
+index 30132378d103..000d95d53902 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -75,10 +75,20 @@ int __init security_init(void)
+ 	loadpin_add_hooks();
+ 
+ 	/*
+-	 * Load all the remaining security modules.
++	 * Load all remaining privileged security modules.
+ 	 */
+ 	do_security_initcalls();
+ 
++	/*
++	 * Load potentially-unprivileged security modules at the end.
++	 *
++	 * For an unprivileged access-control, we don't want to give the
++	 * ability to any process to do some checks (e.g. through an eBPF
++	 * program) on kernel objects (e.g. files) if a privileged security
++	 * policy forbid their access.
++	 */
++	landlock_add_hooks();
++
+ 	return 0;
+ }
+ 
 -- 
 2.14.1
 
