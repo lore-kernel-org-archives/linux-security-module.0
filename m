@@ -1,46 +1,72 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Mon, 21 Aug 2017 15:49:41 +0300
-Subject: [PATCH v5 05/19] crypto: introduce crypto wait for async op
-In-Reply-To: <20170815032303.000042b2@huawei.com>
-References: <1502724094-23305-1-git-send-email-gilad@benyossef.com>
-	<1502724094-23305-6-git-send-email-gilad@benyossef.com>
-	<20170815032303.000042b2@huawei.com>
-Message-ID: <CAOtvUMfJaG-Uomc1EnD1+HySz+X8SUaRUm1SEx4DusquWfOF0w@mail.gmail.com>
+Date: Mon, 21 Aug 2017 17:04:48 +0300
+Subject: [PATCH v6 02/19] crypto: ccp: use -EAGAIN for transient busy
+	indication
+In-Reply-To: <1503324309-13673-1-git-send-email-gilad@benyossef.com>
+References: <1503324309-13673-1-git-send-email-gilad@benyossef.com>
+Message-ID: <1503324309-13673-3-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Aug 15, 2017 at 5:23 AM, Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
-> On Mon, 14 Aug 2017 18:21:15 +0300
-> Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->
->> Invoking a possibly async. crypto op and waiting for completion
->> while correctly handling backlog processing is a common task
->> in the crypto API implementation and outside users of it.
->>
->> This patch adds a generic implementation for doing so in
->> preparation for using it across the board instead of hand
->> rolled versions.
+Replace -EBUSY with -EAGAIN when reporting transient busy
+indication in the absence of backlog.
 
->
-> Trivial observation.  Shouldn't have this bonus blank line inserted here.
->
->>  #endif       /* _LINUX_CRYPTO_H */
->>
->
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Reviewed-by: Gary R Hook <gary.hook@amd.com>
+---
+ drivers/crypto/ccp/ccp-crypto-main.c | 8 +++-----
+ drivers/crypto/ccp/ccp-dev.c         | 7 +++++--
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-Indeed. Will be fixed.
-
-Thanks,
-Gilad
-
+diff --git a/drivers/crypto/ccp/ccp-crypto-main.c b/drivers/crypto/ccp/ccp-crypto-main.c
+index 35a9de7..403ff0a 100644
+--- a/drivers/crypto/ccp/ccp-crypto-main.c
++++ b/drivers/crypto/ccp/ccp-crypto-main.c
+@@ -222,9 +222,10 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
+ 
+ 	/* Check if the cmd can/should be queued */
+ 	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
+-		ret = -EBUSY;
+-		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
++		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG)) {
++			ret = -EAGAIN;
+ 			goto e_lock;
++		}
+ 	}
+ 
+ 	/* Look for an entry with the same tfm.  If there is a cmd
+@@ -243,9 +244,6 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
+ 		ret = ccp_enqueue_cmd(crypto_cmd->cmd);
+ 		if (!ccp_crypto_success(ret))
+ 			goto e_lock;	/* Error, don't queue it */
+-		if ((ret == -EBUSY) &&
+-		    !(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
+-			goto e_lock;	/* Not backlogging, don't queue it */
+ 	}
+ 
+ 	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
+diff --git a/drivers/crypto/ccp/ccp-dev.c b/drivers/crypto/ccp/ccp-dev.c
+index 4e029b1..3d637e3 100644
+--- a/drivers/crypto/ccp/ccp-dev.c
++++ b/drivers/crypto/ccp/ccp-dev.c
+@@ -292,9 +292,12 @@ int ccp_enqueue_cmd(struct ccp_cmd *cmd)
+ 	i = ccp->cmd_q_count;
+ 
+ 	if (ccp->cmd_count >= MAX_CMD_QLEN) {
+-		ret = -EBUSY;
+-		if (cmd->flags & CCP_CMD_MAY_BACKLOG)
++		if (cmd->flags & CCP_CMD_MAY_BACKLOG) {
++			ret = -EBUSY;
+ 			list_add_tail(&cmd->entry, &ccp->backlog);
++		} else {
++			ret = -EAGAIN;
++		}
+ 	} else {
+ 		ret = -EINPROGRESS;
+ 		ccp->cmd_count++;
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+2.1.4
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
