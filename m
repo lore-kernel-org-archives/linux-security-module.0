@@ -1,111 +1,148 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Sat, 19 Aug 2017 23:20:17 -0400
-Subject: setcap/getcap limitations
-In-Reply-To: <20170512033718.GA29494@mail.hallyn.com>
-References: <20170511211146.GZ25861@madcap2.tricolour.ca>
-	<20170512033718.GA29494@mail.hallyn.com>
-Message-ID: <20170820032017.GO29957@madcap2.tricolour.ca>
+From: mic@digikod.net (=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=)
+Date: Mon, 21 Aug 2017 02:09:24 +0200
+Subject: [PATCH net-next v7 01/10] selftest: Enhance kselftest_harness.h with
+	a step mechanism
+In-Reply-To: <20170821000933.13024-1-mic@digikod.net>
+References: <20170821000933.13024-1-mic@digikod.net>
+Message-ID: <20170821000933.13024-2-mic@digikod.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-05-11 22:37, Serge E. Hallyn wrote:
-> Quoting Richard Guy Briggs (rgb at redhat.com):
-> > Capabilities gurus,
-> 
-> I cc:d Andrew as he maintains the source package,
-> 
-> > These may arguably be useless or meaningless combinations, but I found them
-> > sufficiently puzzling as to need to document and report the behaviour.  They
-> > appear to be leftovers from a time when fE may have been a bitfield rather than
-> > a boolean.
-> > 
-> > 
-> > 1 - BUG: setcap manpage refers to non-existant cap_from_text(3) and cap_set_file(3)
-> > manpages (fedora).  (It turns out it is in libcap-devel which makes
-> > sense, but isn't very useful for users of setcap/getcap(8) rather than
-> > developers.)
-> 
-> Hm, yeah, I suppose.  In the libcap source though they all come
-> together.  Perhaps this is cause for distro bugs to make a
-> common libcap-doc package which both libcap-devel and libcap2-bin
-> depend on?  Really not sure of the best solution.
+This step mechanism may be useful to return an information about the
+error without being able to write to TH_LOG_STREAM.
 
-I agree it sounds like a distro-level issue, thanks.
+Set _metadata->no_print to true to print this counter.
 
-> > 2 - BUG: setcap requires dummy capability present to set or clear effective bit
-> 
-> Getting ready for a short road trip, will look at the rest this weekend.
+Signed-off-by: Micka?l Sala?n <mic@digikod.net>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Will Drewry <wad@chromium.org>
+Link: https://lkml.kernel.org/r/CAGXu5j+D-FP8Kt9unNOqKrQJP4DYTpmgkJxWykZyrYiVPz3Y3Q at mail.gmail.com
+---
 
-Any further thoughts on the three below?
+This patch is intended to the kselftest tree:
+https://lkml.kernel.org/r/20170806232337.4191-1-mic at digikod.net
 
-> > While attempting to issue the setcap command to set or clear the effective bit,
-> > the latter of which is a boolean rather than a capability set, a fatal error
-> > was returned with a usage message that didn't make much sense:
-> > 	# setcap +e /tmp/test
-> > 	fatal error: Invalid argument
-> > 	usage: setcap [-q] [-v] (-r|-|<caps>) <filename> [ ... (-r|-|<capsN>) <filenameN> ]
-> >  	Note <filename> must be a regular (non-symlink) file.
-> > So in order to set it, I need to use a dummy capability, such as:
-> > 	# setcap cap_sys_admin+e /tmp/test
-> > 
-> > 
-> > 3- BUG: getcap doesn't show effective bit set if no other fP or fI bits are set
-> > 
-> > 	# setcap cap_sys_admin+pe /tmp/test
-> > 	# getcap /tmp/test
-> > 	/tmp/test = cap_sys_admin+ep
-> > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
-> > 	security.capability=0x0100000200002000000000000000000000000000
-> > 	# setfattr -n security.capability -v 0x0100000200000000000000000000000000000000 /tmp/test
-> > 	# getcap /tmp/test 
-> > 	/tmp/test =
-> > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
-> > 	security.capability=0x0100000200000000000000000000000000000000
-> > 	# setcap cap_sys_admin-p /tmp/test
-> > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
-> > 	# file: /tmp/test
-> > 	security.capability=0x0000000200000000000000000000000000000000
-> > So, getcap lies, where getfattr is more honest but awkward.
-> > 
-> > 
-> > Q: How do I set one fP capability and a different fI capability?
-> > 
-> > >From looking at the manpage for cap_from_text, it appears that capability sets
-> > can be specified in a similar manner to chmod(1), using "=", "+" and "-"
-> > operators, but pracitical poking doesn't seem to work that way.  "+" seems to
-> > work like "=" and "-" seems to clear all except the version field.
-> > Other than resorting to setfattr, how can I set something like
-> > cap_sys_admin+p with cap_audit_read,cap_audit_write,cap_audit_control+i ?
-> > 
-> > 
-> > 4 - BUG: The capabilities version doesn't get cleared when all cap bits are
-> > cleared.  This fools kernel into thinking there are fcaps set.
-> > 
-> > As can be seen above, if setcap is used with "<capability>-<p|e|i>" to unset
-> > capabilities then the version field is leftover, set.  Arguably the -r option
-> > should have been used to remove the attribute entirely, but in this case, the
-> > kernel assumes that capabilities are in use due to a valid version number
-> > present (VFS_CAP_REVISION_MASK).  This could be solved in the kernel by
-> > clearing that attribute field entirely if there are no values set other than
-> > the version number, or by having "has_cap" check for a value more than just the
-> > version number.  Is it possible to remove some capabilities from a file but not
-> > all?  Or is it intended to simply specify the new set of capabilities that are
-> > to be set and ignore or strip away the unwanted ones from the set?
-> > 
-> > 
-> > Thanks!
-> > 
-> > 
-> > - RGB
+Changes since v6:
+* add the step counter in assert/expect macros and use _metadata to
+  enable the counter (suggested by Kees Cook)
+---
+ tools/testing/selftests/kselftest_harness.h   | 31 ++++++++++++++++++++++-----
+ tools/testing/selftests/seccomp/seccomp_bpf.c |  2 +-
+ 2 files changed, 27 insertions(+), 6 deletions(-)
 
-- RGB
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index c56f72e07cd7..850ff6946027 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -51,6 +51,9 @@
+ #define __KSELFTEST_HARNESS_H
+ 
+ #define _GNU_SOURCE
++#include <asm/types.h>
++#include <errno.h>
++#include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -555,12 +558,18 @@
+  * return while still providing an optional block to the API consumer.
+  */
+ #define OPTIONAL_HANDLER(_assert) \
+-	for (; _metadata->trigger;  _metadata->trigger = __bail(_assert))
++	for (; _metadata->trigger; _metadata->trigger = \
++			__bail(_assert, _metadata->no_print, _metadata->step))
++
++#define __INC_STEP(_metadata) \
++	if (_metadata->passed && _metadata->step < 255) \
++		_metadata->step++;
+ 
+ #define __EXPECT(_expected, _seen, _t, _assert) do { \
+ 	/* Avoid multiple evaluation of the cases */ \
+ 	__typeof__(_expected) __exp = (_expected); \
+ 	__typeof__(_seen) __seen = (_seen); \
++	__INC_STEP(_metadata); \
+ 	if (!(__exp _t __seen)) { \
+ 		unsigned long long __exp_print = (uintptr_t)__exp; \
+ 		unsigned long long __seen_print = (uintptr_t)__seen; \
+@@ -576,6 +585,7 @@
+ #define __EXPECT_STR(_expected, _seen, _t, _assert) do { \
+ 	const char *__exp = (_expected); \
+ 	const char *__seen = (_seen); \
++	__INC_STEP(_metadata); \
+ 	if (!(strcmp(__exp, __seen) _t 0))  { \
+ 		__TH_LOG("Expected '%s' %s '%s'.", __exp, #_t, __seen); \
+ 		_metadata->passed = 0; \
+@@ -590,6 +600,8 @@ struct __test_metadata {
+ 	int termsig;
+ 	int passed;
+ 	int trigger; /* extra handler after the evaluation */
++	__u8 step;
++	bool no_print; /* manual trigger when TH_LOG_STREAM is not available */
+ 	struct __test_metadata *prev, *next;
+ };
+ 
+@@ -634,10 +646,13 @@ static inline void __register_test(struct __test_metadata *t)
+ 	}
+ }
+ 
+-static inline int __bail(int for_realz)
++static inline int __bail(int for_realz, bool no_print, __u8 step)
+ {
+-	if (for_realz)
++	if (for_realz) {
++		if (no_print)
++			_exit(step);
+ 		abort();
++	}
+ 	return 0;
+ }
+ 
+@@ -655,18 +670,24 @@ void __run_test(struct __test_metadata *t)
+ 		t->passed = 0;
+ 	} else if (child_pid == 0) {
+ 		t->fn(t);
+-		_exit(t->passed);
++		/* return the step that failed or 0 */
++		_exit(t->passed ? 0 : t->step);
+ 	} else {
+ 		/* TODO(wad) add timeout support. */
+ 		waitpid(child_pid, &status, 0);
+ 		if (WIFEXITED(status)) {
+-			t->passed = t->termsig == -1 ? WEXITSTATUS(status) : 0;
++			t->passed = t->termsig == -1 ? !WEXITSTATUS(status) : 0;
+ 			if (t->termsig != -1) {
+ 				fprintf(TH_LOG_STREAM,
+ 					"%s: Test exited normally "
+ 					"instead of by signal (code: %d)\n",
+ 					t->name,
+ 					WEXITSTATUS(status));
++			} else if (!t->passed) {
++				fprintf(TH_LOG_STREAM,
++					"%s: Test failed at step #%d\n",
++					t->name,
++					WEXITSTATUS(status));
+ 			}
+ 		} else if (WIFSIGNALED(status)) {
+ 			t->passed = 0;
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 73f5ea6778ce..4d6f92a9df6b 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -107,7 +107,7 @@ TEST(mode_strict_support)
+ 	ASSERT_EQ(0, ret) {
+ 		TH_LOG("Kernel does not support CONFIG_SECCOMP");
+ 	}
+-	syscall(__NR_exit, 1);
++	syscall(__NR_exit, 0);
+ }
+ 
+ TEST_SIGNAL(mode_strict_cannot_call_prctl, SIGKILL)
+-- 
+2.14.1
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
