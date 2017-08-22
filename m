@@ -1,142 +1,130 @@
 From: dmitry.kasatkin@gmail.com (Dmitry Kasatkin)
-Date: Tue, 22 Aug 2017 12:24:40 +0300
-Subject: [Linux-ima-devel] [PATCH v4 1/5] ima: always measure and audit
-	files in policy
-In-Reply-To: <1501075375-29469-2-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Tue, 22 Aug 2017 12:27:22 +0300
+Subject: [Linux-ima-devel] [PATCH v4 5/5] ima: remove permit_directio
+	policy option
+In-Reply-To: <1501075375-29469-6-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1501075375-29469-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <CACE9dm-zy0RpWNLn4EqLKU0y_JicL5wiZs3STjQA9NnZp98jHw@mail.gmail.com>
+	<1501075375-29469-6-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <CACE9dm_q=10NH3KuwweW9hf_tHnuF_0qkfYEbnjWZqyvWmOfVw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Looks good to me.
+
 On Wed, Jul 26, 2017 at 4:22 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> All files matching a "measure" rule must be included in the IMA
-> measurement list, even when the file hash cannot be calculated.
-> Similarly, all files matching an "audit" rule must be audited, even when
-> the file hash can not be calculated.
+> With the new ->integrity_read file_operations method support, files
+> opened with the O_DIRECT flag should work properly.  This patch
+> reverts commit f9b2a735bddd "ima: audit log files opened with O_DIRECT
+> flag".
 >
-> The file data hash field contained in the IMA measurement list template
-> data will contain 0's instead of the actual file hash digest.
->
-> Mimi Zohar <zohar@linux.vnet.ibm.com>
->
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > ---
-> Changelog v4:
-> - Based on both -EBADF and -EINVAL
-> - clean up ima_collect_measurement()
+>  Documentation/ABI/testing/ima_policy | 2 +-
+>  security/integrity/ima/ima_api.c     | 6 ------
+>  security/integrity/ima/ima_main.c    | 5 +----
+>  security/integrity/ima/ima_policy.c  | 8 +-------
+>  security/integrity/integrity.h       | 1 -
+>  5 files changed, 3 insertions(+), 19 deletions(-)
 >
->  security/integrity/ima/ima_api.c  | 58 +++++++++++++++++++++++----------------
->  security/integrity/ima/ima_main.c |  4 +--
->  2 files changed, 37 insertions(+), 25 deletions(-)
+> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+> index f271207743e5..441a78e7b87e 100644
+> --- a/Documentation/ABI/testing/ima_policy
+> +++ b/Documentation/ABI/testing/ima_policy
+> @@ -24,7 +24,7 @@ Description:
+>                                 [euid=] [fowner=]]
+>                         lsm:    [[subj_user=] [subj_role=] [subj_type=]
+>                                  [obj_user=] [obj_role=] [obj_type=]]
+> -                       option: [[appraise_type=]] [permit_directio]
+> +                       option: [[appraise_type=]]
 >
+>                 base:   func:= [BPRM_CHECK][MMAP_CHECK][FILE_CHECK][MODULE_CHECK]
+>                                 [FIRMWARE_CHECK]
 > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index c2edba8de35e..bbf3ba8bbb09 100644
+> index bbf3ba8bbb09..7bc8e76c06f5 100644
 > --- a/security/integrity/ima/ima_api.c
 > +++ b/security/integrity/ima/ima_api.c
-> @@ -199,37 +199,49 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
->         struct inode *inode = file_inode(file);
->         const char *filename = file->f_path.dentry->d_name.name;
->         int result = 0;
-> +       int length;
-> +       void *tmpbuf;
-> +       u64 i_version;
->         struct {
->                 struct ima_digest_data hdr;
->                 char digest[IMA_MAX_DIGEST_SIZE];
->         } hash;
+> @@ -210,12 +210,6 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+>         if (iint->flags & IMA_COLLECTED)
+>                 goto out;
 >
-> -       if (!(iint->flags & IMA_COLLECTED)) {
-> -               u64 i_version = file_inode(file)->i_version;
-> +       if (iint->flags & IMA_COLLECTED)
-> +               goto out;
->
-> -               if (file->f_flags & O_DIRECT) {
-> -                       audit_cause = "failed(directio)";
-> -                       result = -EACCES;
-> -                       goto out;
-> -               }
-> +       if (file->f_flags & O_DIRECT) {
-> +               audit_cause = "failed(directio)";
-> +               result = -EACCES;
-> +               goto out;
-> +       }
->
-> -               hash.hdr.algo = algo;
+> -       if (file->f_flags & O_DIRECT) {
+> -               audit_cause = "failed(directio)";
+> -               result = -EACCES;
+> -               goto out;
+> -       }
 > -
-> -               result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
-> -                       ima_calc_buffer_hash(buf, size, &hash.hdr);
-> -               if (!result) {
-> -                       int length = sizeof(hash.hdr) + hash.hdr.length;
-> -                       void *tmpbuf = krealloc(iint->ima_hash, length,
-> -                                               GFP_NOFS);
-> -                       if (tmpbuf) {
-> -                               iint->ima_hash = tmpbuf;
-> -                               memcpy(iint->ima_hash, &hash, length);
-> -                               iint->version = i_version;
-> -                               iint->flags |= IMA_COLLECTED;
-> -                       } else
-> -                               result = -ENOMEM;
-> -               }
-> +       i_version = file_inode(file)->i_version;
-> +       hash.hdr.algo = algo;
-> +
-> +       /* Initialize hash digest to 0's in case of failure */
-> +       memset(&hash.digest, 0, sizeof(hash.digest));
-> +
-> +       result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
-> +               ima_calc_buffer_hash(buf, size, &hash.hdr);
-> +
-> +       if (result && result != -EBADF && result != -EINVAL)
-> +               goto out;
-> +
-> +       length = sizeof(hash.hdr) + hash.hdr.length;
-> +       tmpbuf = krealloc(iint->ima_hash, length, GFP_NOFS);
-> +       if (!tmpbuf) {
-> +               result = -ENOMEM;
-> +               goto out;
->         }
-> +
-> +       iint->ima_hash = tmpbuf;
-> +       memcpy(iint->ima_hash, &hash, length);
-> +       iint->version = i_version;
-> +
-> +       /* Possibly temporary failure due to type of read (eg. DAX, O_DIRECT) */
-> +       if (result != -EBADF && result != -EINVAL)
-> +               iint->flags |= IMA_COLLECTED;
-
-Result can be other than 0, EBADF and EINVAL here?
-It is confusing.. simpler than can be just
-
-if (!result)
- iint->flags |= IMA_COLLECTED;
-
-Isn't it?
-
->  out:
->         if (result)
->                 integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+>         i_version = file_inode(file)->i_version;
+>         hash.hdr.algo = algo;
+>
 > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 2aebb7984437..3941371402ff 100644
+> index 664edab0f758..9b8ede84337f 100644
 > --- a/security/integrity/ima/ima_main.c
 > +++ b/security/integrity/ima/ima_main.c
-> @@ -235,7 +235,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> @@ -240,11 +240,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
 >         hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
 >
 >         rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
-> -       if (rc != 0) {
-> +       if (rc != 0 && rc != -EBADF && rc != -EINVAL) {
->                 if (file->f_flags & O_DIRECT)
->                         rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
+> -       if (rc != 0 && rc != -EBADF && rc != -EINVAL) {
+> -               if (file->f_flags & O_DIRECT)
+> -                       rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
+> +       if (rc != 0 && rc != -EBADF && rc != -EINVAL)
 >                 goto out_digsig;
-> @@ -247,7 +247,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->         if (action & IMA_MEASURE)
->                 ima_store_measurement(iint, file, pathname,
->                                       xattr_value, xattr_len, pcr);
-> -       if (action & IMA_APPRAISE_SUBMASK)
-> +       if ((rc == 0) && (action & IMA_APPRAISE_SUBMASK))
->                 rc = ima_appraise_measurement(func, iint, file, pathname,
->                                               xattr_value, xattr_len, opened);
->         if (action & IMA_AUDIT)
+> -       }
+>
+>         if (!pathbuf)   /* ima_rdwr_violation possibly pre-fetched */
+>                 pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index cddd9dfb01e1..3b54fb32e837 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -545,7 +545,7 @@ enum {
+>         Opt_fsuuid, Opt_uid_eq, Opt_euid_eq, Opt_fowner_eq,
+>         Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
+>         Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+> -       Opt_appraise_type, Opt_permit_directio,
+> +       Opt_appraise_type,
+>         Opt_pcr, Opt_dont_failsafe
+>  };
+>
+> @@ -575,7 +575,6 @@ static match_table_t policy_tokens = {
+>         {Opt_euid_lt, "euid<%s"},
+>         {Opt_fowner_lt, "fowner<%s"},
+>         {Opt_appraise_type, "appraise_type=%s"},
+> -       {Opt_permit_directio, "permit_directio"},
+>         {Opt_pcr, "pcr=%s"},
+>         {Opt_dont_failsafe, "dont_failsafe"},
+>         {Opt_err, NULL}
+> @@ -892,9 +891,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>                         else
+>                                 result = -EINVAL;
+>                         break;
+> -               case Opt_permit_directio:
+> -                       entry->flags |= IMA_PERMIT_DIRECTIO;
+> -                       break;
+>                 case Opt_pcr:
+>                         if (entry->action != MEASURE) {
+>                                 result = -EINVAL;
+> @@ -1179,8 +1175,6 @@ int ima_policy_show(struct seq_file *m, void *v)
+>         }
+>         if (entry->flags & IMA_DIGSIG_REQUIRED)
+>                 seq_puts(m, "appraise_type=imasig ");
+> -       if (entry->flags & IMA_PERMIT_DIRECTIO)
+> -               seq_puts(m, "permit_directio ");
+>         rcu_read_unlock();
+>         seq_puts(m, "\n");
+>         return 0;
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index a53e7e4ab06c..790f07e515a7 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -31,7 +31,6 @@
+>  #define IMA_ACTION_RULE_FLAGS  0x06000000
+>  #define IMA_DIGSIG             0x01000000
+>  #define IMA_DIGSIG_REQUIRED    0x02000000
+> -#define IMA_PERMIT_DIRECTIO    0x04000000
+>  #define IMA_NEW_FILE           0x08000000
+>
+>  #define IMA_DO_MASK            (IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
 > --
 > 2.7.4
 >
