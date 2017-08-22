@@ -1,137 +1,159 @@
-From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Mon, 21 Aug 2017 17:04:46 +0300
-Subject: [PATCH v6 00/19] simplify crypto wait for async op
-Message-ID: <1503324309-13673-1-git-send-email-gilad@benyossef.com>
+From: dmitry.kasatkin@gmail.com (Dmitry Kasatkin)
+Date: Tue, 22 Aug 2017 12:24:40 +0300
+Subject: [Linux-ima-devel] [PATCH v4 1/5] ima: always measure and audit
+	files in policy
+In-Reply-To: <1501075375-29469-2-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1501075375-29469-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1501075375-29469-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <CACE9dm-zy0RpWNLn4EqLKU0y_JicL5wiZs3STjQA9NnZp98jHw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Many users of kernel async. crypto services have a pattern of
-starting an async. crypto op and than using a completion
-to wait for it to end.
+On Wed, Jul 26, 2017 at 4:22 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> All files matching a "measure" rule must be included in the IMA
+> measurement list, even when the file hash cannot be calculated.
+> Similarly, all files matching an "audit" rule must be audited, even when
+> the file hash can not be calculated.
+>
+> The file data hash field contained in the IMA measurement list template
+> data will contain 0's instead of the actual file hash digest.
+>
+> Mimi Zohar <zohar@linux.vnet.ibm.com>
+>
+> ---
+> Changelog v4:
+> - Based on both -EBADF and -EINVAL
+> - clean up ima_collect_measurement()
+>
+>  security/integrity/ima/ima_api.c  | 58 +++++++++++++++++++++++----------------
+>  security/integrity/ima/ima_main.c |  4 +--
+>  2 files changed, 37 insertions(+), 25 deletions(-)
+>
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index c2edba8de35e..bbf3ba8bbb09 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -199,37 +199,49 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+>         struct inode *inode = file_inode(file);
+>         const char *filename = file->f_path.dentry->d_name.name;
+>         int result = 0;
+> +       int length;
+> +       void *tmpbuf;
+> +       u64 i_version;
+>         struct {
+>                 struct ima_digest_data hdr;
+>                 char digest[IMA_MAX_DIGEST_SIZE];
+>         } hash;
+>
+> -       if (!(iint->flags & IMA_COLLECTED)) {
+> -               u64 i_version = file_inode(file)->i_version;
+> +       if (iint->flags & IMA_COLLECTED)
+> +               goto out;
+>
+> -               if (file->f_flags & O_DIRECT) {
+> -                       audit_cause = "failed(directio)";
+> -                       result = -EACCES;
+> -                       goto out;
+> -               }
+> +       if (file->f_flags & O_DIRECT) {
+> +               audit_cause = "failed(directio)";
+> +               result = -EACCES;
+> +               goto out;
+> +       }
+>
+> -               hash.hdr.algo = algo;
+> -
+> -               result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
+> -                       ima_calc_buffer_hash(buf, size, &hash.hdr);
+> -               if (!result) {
+> -                       int length = sizeof(hash.hdr) + hash.hdr.length;
+> -                       void *tmpbuf = krealloc(iint->ima_hash, length,
+> -                                               GFP_NOFS);
+> -                       if (tmpbuf) {
+> -                               iint->ima_hash = tmpbuf;
+> -                               memcpy(iint->ima_hash, &hash, length);
+> -                               iint->version = i_version;
+> -                               iint->flags |= IMA_COLLECTED;
+> -                       } else
+> -                               result = -ENOMEM;
+> -               }
+> +       i_version = file_inode(file)->i_version;
+> +       hash.hdr.algo = algo;
+> +
+> +       /* Initialize hash digest to 0's in case of failure */
+> +       memset(&hash.digest, 0, sizeof(hash.digest));
+> +
+> +       result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
+> +               ima_calc_buffer_hash(buf, size, &hash.hdr);
+> +
+> +       if (result && result != -EBADF && result != -EINVAL)
+> +               goto out;
+> +
+> +       length = sizeof(hash.hdr) + hash.hdr.length;
+> +       tmpbuf = krealloc(iint->ima_hash, length, GFP_NOFS);
+> +       if (!tmpbuf) {
+> +               result = -ENOMEM;
+> +               goto out;
+>         }
+> +
+> +       iint->ima_hash = tmpbuf;
+> +       memcpy(iint->ima_hash, &hash, length);
+> +       iint->version = i_version;
+> +
+> +       /* Possibly temporary failure due to type of read (eg. DAX, O_DIRECT) */
+> +       if (result != -EBADF && result != -EINVAL)
+> +               iint->flags |= IMA_COLLECTED;
 
-This patch set simplifies this common use case in two ways:
+Result can be other than 0, EBADF and EINVAL here?
+It is confusing.. simpler than can be just
 
-First, by separating the return codes of the case where a
-request is queued to a backlog due to the provider being
-busy (-EBUSY) from the case the request has failed due
-to the provider being busy and backlogging is not enabled
-(-EAGAIN).
+if (!result)
+ iint->flags |= IMA_COLLECTED;
 
-Next, this change is than built on to create a generic API
-to wait for a async. crypto operation to complete.
+Isn't it?
 
-The end result is a smaller code base and an API that is
-easier to use and more difficult to get wrong.
+>  out:
+>         if (result)
+>                 integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 2aebb7984437..3941371402ff 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -235,7 +235,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>         hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+>
+>         rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+> -       if (rc != 0) {
+> +       if (rc != 0 && rc != -EBADF && rc != -EINVAL) {
+>                 if (file->f_flags & O_DIRECT)
+>                         rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
+>                 goto out_digsig;
+> @@ -247,7 +247,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>         if (action & IMA_MEASURE)
+>                 ima_store_measurement(iint, file, pathname,
+>                                       xattr_value, xattr_len, pcr);
+> -       if (action & IMA_APPRAISE_SUBMASK)
+> +       if ((rc == 0) && (action & IMA_APPRAISE_SUBMASK))
+>                 rc = ima_appraise_measurement(func, iint, file, pathname,
+>                                               xattr_value, xattr_len, opened);
+>         if (action & IMA_AUDIT)
+> --
+> 2.7.4
+>
+>
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-ima-devel mailing list
+> Linux-ima-devel at lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-ima-devel
 
-The patch set was boot tested on x86_64 and arm64 which
-at the very least tests the crypto users via testmgr and
-tcrypt but I do note that I do not have access to some
-of the HW whose drivers are modified nor do I claim I was
-able to test all of the corner cases.
 
-The patch set is based upon linux-next release tagged
-next-20170817.
-
-Changes from v5:
-- Remove redundant new line as spotted by Jonathan
-  Cameron.
-- Reworded dm-verity change commit message to better
-  clarify potential issue averted by change as
-  pointed out by Mikulas Patocka.
-
-Changes from v4:
-- Rebase on top of latest algif changes from Stephan
-  Mueller.
-- Fix typo in ccp patch title.
-
-Changes from v3:
-- Instead of changing the return code to indicate
-  backlog queueing, change the return code to indicate
-  transient busy state, as suggested by Herbert Xu.
-
-Changes from v2:
-- Patch title changed from "introduce crypto wait for
-  async op" to better reflect the current state.
-- Rebase on top of latest linux-next.
-- Add a new return code of -EIOCBQUEUED for backlog
-  queueing, as suggested by Herbert Xu.
-- Transform more users to the new API.
-- Update the drbg change to account for new init as
-  indicated by Stephan Muller.
-
-Changes from v1:
-- Address review comments from Eric Biggers.
-- Separated out bug fixes of existing code and rebase
-  on top of that patch set.
-- Rename 'ecr' to 'wait' in fscrypto code.
-- Split patch introducing the new API from the change
-  moving over the algif code which it originated from
-  to the new API.
-- Inline crypto_wait_req().
-- Some code indentation fixes.
-
-Gilad Ben-Yossef (19):
-  crypto: change transient busy return code to -EAGAIN
-  crypto: ccp: use -EAGAIN for transient busy indication
-  crypto: remove redundant backlog checks on EBUSY
-  crypto: marvell/cesa: remove redundant backlog checks on EBUSY
-  crypto: introduce crypto wait for async op
-  crypto: move algif to generic async completion
-  crypto: move pub key to generic async completion
-  crypto: move drbg to generic async completion
-  crypto: move gcm to generic async completion
-  crypto: move testmgr to generic async completion
-  fscrypt: move to generic async completion
-  dm: move dm-verity to generic async completion
-  cifs: move to generic async completion
-  ima: move to generic async completion
-  crypto: tcrypt: move to generic async completion
-  crypto: talitos: move to generic async completion
-  crypto: qce: move to generic async completion
-  crypto: mediatek: move to generic async completion
-  crypto: adapt api sample to use async. op wait
-
- Documentation/crypto/api-samples.rst |  52 ++-------
- crypto/af_alg.c                      |  27 -----
- crypto/ahash.c                       |  12 +--
- crypto/algapi.c                      |   6 +-
- crypto/algif_aead.c                  |   8 +-
- crypto/algif_hash.c                  |  50 +++++----
- crypto/algif_skcipher.c              |   9 +-
- crypto/api.c                         |  13 +++
- crypto/asymmetric_keys/public_key.c  |  28 +----
- crypto/cryptd.c                      |   4 +-
- crypto/cts.c                         |   6 +-
- crypto/drbg.c                        |  36 ++-----
- crypto/gcm.c                         |  32 ++----
- crypto/lrw.c                         |   8 +-
- crypto/rsa-pkcs1pad.c                |  16 +--
- crypto/tcrypt.c                      |  84 +++++----------
- crypto/testmgr.c                     | 204 ++++++++++++-----------------------
- crypto/xts.c                         |   8 +-
- drivers/crypto/ccp/ccp-crypto-main.c |   8 +-
- drivers/crypto/ccp/ccp-dev.c         |   7 +-
- drivers/crypto/marvell/cesa.c        |   3 +-
- drivers/crypto/marvell/cesa.h        |   2 +-
- drivers/crypto/mediatek/mtk-aes.c    |  31 +-----
- drivers/crypto/qce/sha.c             |  30 +-----
- drivers/crypto/talitos.c             |  38 +------
- drivers/md/dm-verity-target.c        |  81 ++++----------
- drivers/md/dm-verity.h               |   5 -
- fs/cifs/smb2ops.c                    |  30 +-----
- fs/crypto/crypto.c                   |  28 +----
- fs/crypto/fname.c                    |  36 ++-----
- fs/crypto/fscrypt_private.h          |  10 --
- fs/crypto/keyinfo.c                  |  21 +---
- include/crypto/drbg.h                |   3 +-
- include/crypto/if_alg.h              |  15 +--
- include/linux/crypto.h               |  40 +++++++
- security/integrity/ima/ima_crypto.c  |  56 +++-------
- 36 files changed, 310 insertions(+), 737 deletions(-)
 
 -- 
-2.1.4
-
+Thanks,
+Dmitry
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
