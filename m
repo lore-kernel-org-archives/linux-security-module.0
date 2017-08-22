@@ -1,98 +1,197 @@
 From: dmitry.kasatkin@gmail.com (Dmitry Kasatkin)
-Date: Tue, 22 Aug 2017 13:04:37 +0300
-Subject: [PATCH v6 1/6] libfs: define simple_read_iter_from_buffer
-In-Reply-To: <1502808237-2035-2-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Tue, 22 Aug 2017 13:05:54 +0300
+Subject: [PATCH v6 3/6] ima: always measure and audit files in policy
+In-Reply-To: <1502808237-2035-4-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502808237-2035-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <CACE9dm-nQWLqC2hhobWoFs4ap277HzYpKD=ztg-zQrOMxf+Zmw@mail.gmail.com>
+	<1502808237-2035-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <CACE9dm_xVdJU8+7GfB_0mtjD1jH+cxMq5JstM1_TkYaZU02JGw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Looks good to me.
-
-
 On Tue, Aug 15, 2017 at 5:43 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> In preparation for defining an integrity_read file operation
-> method for efivarfs, define a simple_read_iter_from_buffer()
-> function.
+> All files matching a "measure" rule must be included in the IMA
+> measurement list, even when the file hash cannot be calculated.
+> Similarly, all files matching an "audit" rule must be audited, even when
+> the file hash can not be calculated.
 >
-> (Based on Al's code as posted in thread.)
+> The file data hash field contained in the IMA measurement list template
+> data will contain 0's instead of the actual file hash digest.
 >
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
 > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Matthew Garrett <mjg59@srcf.ucam.org>
 >
 > ---
 > Changelog v6:
-> - defined as a separate patch
+> - replace "?:" with if/then
+> - annotate i_version usage
+> - reword O_DIRECT comment
 >
->  fs/libfs.c         | 32 ++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  2 ++
->  2 files changed, 34 insertions(+)
+> Changelog v5:
+> - Fail files opened O_DIRECT, but include attempt in measurement list.
 >
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 3aabe553fc45..b6e304c6828b 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -16,6 +16,7 @@
->  #include <linux/exportfs.h>
->  #include <linux/writeback.h>
->  #include <linux/buffer_head.h> /* sync_mapping_buffers */
-> +#include <linux/uio.h>
+> Changelog v4:
+> - Based on both -EBADF and -EINVAL
+> - clean up ima_collect_measurement()
 >
->  #include <linux/uaccess.h>
+>  security/integrity/ima/ima_api.c    | 67 +++++++++++++++++++++++--------------
+>  security/integrity/ima/ima_crypto.c | 10 ++++++
+>  security/integrity/ima/ima_main.c   |  7 ++--
+>  3 files changed, 54 insertions(+), 30 deletions(-)
 >
-> @@ -676,6 +677,37 @@ ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
->  EXPORT_SYMBOL(simple_write_to_buffer);
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index c2edba8de35e..1dee695642a4 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -199,42 +199,59 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+>         struct inode *inode = file_inode(file);
+>         const char *filename = file->f_path.dentry->d_name.name;
+>         int result = 0;
+> +       int length;
+> +       void *tmpbuf;
+> +       u64 i_version;
+>         struct {
+>                 struct ima_digest_data hdr;
+>                 char digest[IMA_MAX_DIGEST_SIZE];
+>         } hash;
 >
->  /**
-> + * simple_read_iter_from_buffer - copy data from the buffer to user space
-> + * @iocb: struct containing the file, the current position and other info
-> + * @to: the user space buffer to read to
-> + * @from: the buffer to read from
-> + * @available: the size of the buffer
-> + *
-> + * The simple_read_iter_from_buffer() function reads up to @available bytes
-> + * from the current buffer into the user space buffer.
-> + *
-> + * On success, the current buffer offset is advanced by the number of bytes
-> + * read, or a negative value is returned on error.
-> + **/
-> +ssize_t simple_read_iter_from_buffer(struct kiocb *iocb, struct iov_iter *to,
-> +                                    const void *from, size_t available)
-> +{
-> +       loff_t pos = iocb->ki_pos;
-> +       size_t ret;
+> -       if (!(iint->flags & IMA_COLLECTED)) {
+> -               u64 i_version = file_inode(file)->i_version;
+> +       if (iint->flags & IMA_COLLECTED)
+> +               goto out;
+>
+> -               if (file->f_flags & O_DIRECT) {
+> -                       audit_cause = "failed(directio)";
+> -                       result = -EACCES;
+> -                       goto out;
+> -               }
+> +       /*
+> +        * Dectecting file change is based on i_version. On filesystems
+> +        * which do not support i_version, support is limited to an initial
+> +        * measurement/appraisal/audit.
+> +        */
+> +       i_version = file_inode(file)->i_version;
+> +       hash.hdr.algo = algo;
+>
+> -               hash.hdr.algo = algo;
+> -
+> -               result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
+> -                       ima_calc_buffer_hash(buf, size, &hash.hdr);
+> -               if (!result) {
+> -                       int length = sizeof(hash.hdr) + hash.hdr.length;
+> -                       void *tmpbuf = krealloc(iint->ima_hash, length,
+> -                                               GFP_NOFS);
+> -                       if (tmpbuf) {
+> -                               iint->ima_hash = tmpbuf;
+> -                               memcpy(iint->ima_hash, &hash, length);
+> -                               iint->version = i_version;
+> -                               iint->flags |= IMA_COLLECTED;
+> -                       } else
+> -                               result = -ENOMEM;
+> -               }
+> +       /* Initialize hash digest to 0's in case of failure */
+> +       memset(&hash.digest, 0, sizeof(hash.digest));
 > +
-> +       if (pos < 0)
+> +       if (buf)
+> +               result = ima_calc_buffer_hash(buf, size, &hash.hdr);
+> +       else
+> +               result = ima_calc_file_hash(file, &hash.hdr);
+> +
+> +       if (result && result != -EBADF && result != -EINVAL)
+> +               goto out;
+> +
+> +       length = sizeof(hash.hdr) + hash.hdr.length;
+> +       tmpbuf = krealloc(iint->ima_hash, length, GFP_NOFS);
+> +       if (!tmpbuf) {
+> +               result = -ENOMEM;
+> +               goto out;
+>         }
+> +
+> +       iint->ima_hash = tmpbuf;
+> +       memcpy(iint->ima_hash, &hash, length);
+> +       iint->version = i_version;
+> +
+> +       /* Possibly temporary failure due to type of read (eg. O_DIRECT) */
+> +       if (result != -EBADF && result != -EINVAL)
+> +               iint->flags |= IMA_COLLECTED;
+
+
+Result can be other than 0, EBADF and EINVAL here?
+It is confusing.. simpler than can be just
+
+if (!result)
+ iint->flags |= IMA_COLLECTED;
+
+Isn't it?
+
+
+>  out:
+> -       if (result)
+> +       if (result) {
+> +               if (file->f_flags & O_DIRECT)
+> +                       audit_cause = "failed(directio)";
+> +
+>                 integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+>                                     filename, "collect_data", audit_cause,
+>                                     result, 0);
+> +       }
+>         return result;
+>  }
+>
+> @@ -278,7 +295,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+>         }
+>
+>         result = ima_store_template(entry, violation, inode, filename, pcr);
+> -       if (!result || result == -EEXIST) {
+> +       if ((!result || result == -EEXIST) && !(file->f_flags & O_DIRECT)) {
+>                 iint->flags |= IMA_MEASURED;
+>                 iint->measured_pcrs |= (0x1 << pcr);
+>         }
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 802d5d20f36f..a856d8c9c9f3 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -441,6 +441,16 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+>         loff_t i_size;
+>         int rc;
+>
+> +       /*
+> +        * For consistency, fail file's opened with the O_DIRECT flag on
+> +        * filesystems mounted with/without DAX option.
+> +        */
+> +       if (file->f_flags & O_DIRECT) {
+> +               hash->length = hash_digest_size[ima_hash_algo];
+> +               hash->algo = ima_hash_algo;
 > +               return -EINVAL;
-> +       if (pos >= available)
-> +               return 0;
-> +       ret = copy_to_iter(from + pos, available - pos, to);
-> +       if (!ret && iov_iter_count(to))
-> +               return -EFAULT;
-> +       iocb->ki_pos = pos + ret;
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(simple_read_iter_from_buffer);
+> +       }
 > +
-> +/**
->   * memory_read_from_buffer - copy data from the buffer
->   * @to: the kernel space buffer to read to
->   * @count: the maximum number of bytes to read
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 6e1fd5d21248..fdec9b763b54 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3097,6 +3097,8 @@ extern void simple_release_fs(struct vfsmount **mount, int *count);
+>         i_size = i_size_read(file_inode(file));
 >
->  extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
->                         loff_t *ppos, const void *from, size_t available);
-> +extern ssize_t simple_read_iter_from_buffer(struct kiocb *iocb,
-> +               struct iov_iter *to, const void *from, size_t available);
->  extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
->                 const void __user *from, size_t count);
+>         if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 2aebb7984437..d23dfe6ede18 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -235,11 +235,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>         hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
 >
+>         rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+> -       if (rc != 0) {
+> -               if (file->f_flags & O_DIRECT)
+> -                       rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
+> +       if (rc != 0 && rc != -EBADF && rc != -EINVAL)
+>                 goto out_digsig;
+> -       }
+>
+>         if (!pathbuf)   /* ima_rdwr_violation possibly pre-fetched */
+>                 pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+> @@ -247,7 +244,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>         if (action & IMA_MEASURE)
+>                 ima_store_measurement(iint, file, pathname,
+>                                       xattr_value, xattr_len, pcr);
+> -       if (action & IMA_APPRAISE_SUBMASK)
+> +       if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
+>                 rc = ima_appraise_measurement(func, iint, file, pathname,
+>                                               xattr_value, xattr_len, opened);
+>         if (action & IMA_AUDIT)
 > --
 > 2.7.4
 >
