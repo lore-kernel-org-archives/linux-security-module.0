@@ -1,70 +1,111 @@
 From: rgb@redhat.com (Richard Guy Briggs)
-Date: Wed, 23 Aug 2017 06:12:53 -0400
-Subject: [PATCH V3 02/10] capabilities: intuitive names for cap gain status
+Date: Wed, 23 Aug 2017 06:12:54 -0400
+Subject: [PATCH V3 03/10] capabilities: rename has_cap to has_fcap
 In-Reply-To: <cover.1503459890.git.rgb@redhat.com>
 References: <cover.1503459890.git.rgb@redhat.com>
-Message-ID: <9e3f99d3c2cbfee24fb3af7ec9b4cf93e4430112.1503459890.git.rgb@redhat.com>
+Message-ID: <8d77769c458b997ac9b07363bb865415a937848e.1503459890.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Introduce macros cap_gained, cap_grew, cap_full to make the use of the
-negation of is_subset() easier to read and analyse.
+Rename has_cap to has_fcap to clarify it applies to file capabilities
+since the entire source file is about capabilities.
 
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- security/commoncap.c |   16 ++++++++++------
- 1 files changed, 10 insertions(+), 6 deletions(-)
+ security/commoncap.c |   20 ++++++++++----------
+ 1 files changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/security/commoncap.c b/security/commoncap.c
-index b7fbf77..6f05ec0 100644
+index 6f05ec0..028d4e4 100644
 --- a/security/commoncap.c
 +++ b/security/commoncap.c
-@@ -513,6 +513,12 @@ void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effec
+@@ -339,7 +339,7 @@ int cap_inode_killpriv(struct dentry *dentry)
+ static inline int bprm_caps_from_vfs_caps(struct cpu_vfs_cap_data *caps,
+ 					  struct linux_binprm *bprm,
+ 					  bool *effective,
+-					  bool *has_cap)
++					  bool *has_fcap)
+ {
+ 	struct cred *new = bprm->cred;
+ 	unsigned i;
+@@ -349,7 +349,7 @@ static inline int bprm_caps_from_vfs_caps(struct cpu_vfs_cap_data *caps,
  		*effective = true;
+ 
+ 	if (caps->magic_etc & VFS_CAP_REVISION_MASK)
+-		*has_cap = true;
++		*has_fcap = true;
+ 
+ 	CAP_FOR_EACH_U32(i) {
+ 		__u32 permitted = caps->permitted.cap[i];
+@@ -438,7 +438,7 @@ int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data 
+  * its xattrs and, if present, apply them to the proposed credentials being
+  * constructed by execve().
+  */
+-static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_cap)
++static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_fcap)
+ {
+ 	int rc = 0;
+ 	struct cpu_vfs_cap_data vcaps;
+@@ -469,7 +469,7 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
+ 		goto out;
+ 	}
+ 
+-	rc = bprm_caps_from_vfs_caps(&vcaps, bprm, effective, has_cap);
++	rc = bprm_caps_from_vfs_caps(&vcaps, bprm, effective, has_fcap);
+ 	if (rc == -EINVAL)
+ 		printk(KERN_NOTICE "%s: cap_from_disk returned %d for %s\n",
+ 		       __func__, rc, bprm->filename);
+@@ -481,7 +481,7 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
+ 	return rc;
  }
  
-+#define cap_gained(field, target, source) \
-+	!cap_issubset(target->cap_##field, source->cap_##field)
-+#define cap_grew(target, source, cred) \
-+	!cap_issubset(cred->cap_##target, cred->cap_##source)
-+#define cap_full(field, cred) \
-+	cap_issubset(CAP_FULL_SET, cred->cap_##field)
- /**
-  * cap_bprm_set_creds - Set up the proposed credentials for execve().
-  * @bprm: The execution parameters, including the proposed creds
-@@ -541,10 +547,9 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	handle_privileged_root(bprm, has_cap, &effective, root_uid);
+-void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effective, kuid_t root_uid)
++void handle_privileged_root(struct linux_binprm *bprm, bool has_fcap, bool *effective, kuid_t root_uid)
+ {
+ 	const struct cred *old = current_cred();
+ 	struct cred *new = bprm->cred;
+@@ -493,7 +493,7 @@ void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effec
+ 	 * for a setuid root binary run by a non-root user.  Do set it
+ 	 * for a root user just to cause least surprise to an admin.
+ 	 */
+-	if (has_cap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
++	if (has_fcap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
+ 		warn_setuid_and_fcaps_mixed(bprm->filename);
+ 		return;
+ 	}
+@@ -531,20 +531,20 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ {
+ 	const struct cred *old = current_cred();
+ 	struct cred *new = bprm->cred;
+-	bool effective = false, has_cap = false, is_setid;
++	bool effective = false, has_fcap = false, is_setid;
+ 	int ret;
+ 	kuid_t root_uid;
+ 
+ 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
+ 		return -EPERM;
+ 
+-	ret = get_file_caps(bprm, &effective, &has_cap);
++	ret = get_file_caps(bprm, &effective, &has_fcap);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	root_uid = make_kuid(new->user_ns, 0);
+ 
+-	handle_privileged_root(bprm, has_cap, &effective, root_uid);
++	handle_privileged_root(bprm, has_fcap, &effective, root_uid);
  
  	/* if we have fs caps, clear dangerous personality flags */
--	if (!cap_issubset(new->cap_permitted, old->cap_permitted))
-+	if (cap_gained(permitted, new, old))
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
+ 	if (cap_gained(permitted, new, old))
+@@ -574,7 +574,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	new->sgid = new->fsgid = new->egid;
  
--
- 	/* Don't let someone trace a set[ug]id/setpcap binary with the revised
- 	 * credentials unless they have the appropriate permit.
- 	 *
-@@ -552,8 +557,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	 */
- 	is_setid = !uid_eq(new->euid, old->uid) || !gid_eq(new->egid, old->gid);
+ 	/* File caps or setid cancels ambient. */
+-	if (has_cap || is_setid)
++	if (has_fcap || is_setid)
+ 		cap_clear(new->cap_ambient);
  
--	if ((is_setid ||
--	     !cap_issubset(new->cap_permitted, old->cap_permitted)) &&
-+	if ((is_setid || cap_gained(permitted, new, old)) &&
- 	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
- 	     !ptracer_capable(current, new->user_ns))) {
- 		/* downgrade; they get no more than they had, and maybe less */
-@@ -605,8 +609,8 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	 * Number 1 above might fail if you don't have a full bset, but I think
- 	 * that is interesting information to audit.
- 	 */
--	if (!cap_issubset(new->cap_effective, new->cap_ambient)) {
--		if (!cap_issubset(CAP_FULL_SET, new->cap_effective) ||
-+	if (cap_grew(effective, ambient, new)) {
-+		if (!cap_full(effective, new) ||
- 		    !uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid) ||
- 		    issecure(SECURE_NOROOT)) {
- 			ret = audit_log_bprm_fcaps(bprm, new, old);
+ 	/*
 -- 
 1.7.1
 
