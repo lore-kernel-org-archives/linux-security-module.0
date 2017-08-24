@@ -1,141 +1,121 @@
-From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Thu, 24 Aug 2017 17:18:47 +0300
-Subject: [PATCH v7 00/19] simplify crypto wait for async op
-Message-ID: <1503584350-7831-1-git-send-email-gilad@benyossef.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 24 Aug 2017 10:42:08 -0500
+Subject: [PATCH V3 01/10] capabilities: factor out cap_bprm_set_creds
+	privileged root
+In-Reply-To: <63333a7ed7e3ce62e3142b5e34ee942f3874a0d6.1503459890.git.rgb@redhat.com>
+References: <cover.1503459890.git.rgb@redhat.com>
+	<63333a7ed7e3ce62e3142b5e34ee942f3874a0d6.1503459890.git.rgb@redhat.com>
+Message-ID: <20170824154208.GA10515@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Many users of kernel async. crypto services have a pattern of
-starting an async. crypto op and than using a completion
-to wait for it to end.
+Quoting Richard Guy Briggs (rgb at redhat.com):
+> Factor out the case of privileged root from the function
+> cap_bprm_set_creds() to make the latter easier to read and analyse.
+> 
+> Suggested-by: Serge Hallyn <serge@hallyn.com>
 
-This patch set simplifies this common use case in two ways:
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-First, by separating the return codes of the case where a
-request is queued to a backlog due to the provider being
-busy (-EBUSY) from the case the request has failed due
-to the provider being busy and backlogging is not enabled
-(-EAGAIN).
-
-Next, this change is than built on to create a generic API
-to wait for a async. crypto operation to complete.
-
-The end result is a smaller code base and an API that is
-easier to use and more difficult to get wrong.
-
-The patch set was boot tested on x86_64 and arm64 which
-at the very least tests the crypto users via testmgr and
-tcrypt but I do note that I do not have access to some
-of the HW whose drivers are modified nor do I claim I was
-able to test all of the corner cases.
-
-The patch set is based upon linux-next release tagged
-next-20170824.
-
-Changes from v6:
-- Fix brown paper bag compile error on marvell/cesa
-  code.
-
-Changes from v5:
-- Remove redundant new line as spotted by Jonathan
-  Cameron.
-- Reworded dm-verity change commit message to better
-  clarify potential issue averted by change as
-  pointed out by Mikulas Patocka.
-
-Changes from v4:
-- Rebase on top of latest algif changes from Stephan
-  Mueller.
-- Fix typo in ccp patch title.
-
-Changes from v3:
-- Instead of changing the return code to indicate
-  backlog queueing, change the return code to indicate
-  transient busy state, as suggested by Herbert Xu.
-
-Changes from v2:
-- Patch title changed from "introduce crypto wait for
-  async op" to better reflect the current state.
-- Rebase on top of latest linux-next.
-- Add a new return code of -EIOCBQUEUED for backlog
-  queueing, as suggested by Herbert Xu.
-- Transform more users to the new API.
-- Update the drbg change to account for new init as
-  indicated by Stephan Muller.
-
-Changes from v1:
-- Address review comments from Eric Biggers.
-- Separated out bug fixes of existing code and rebase
-  on top of that patch set.
-- Rename 'ecr' to 'wait' in fscrypto code.
-- Split patch introducing the new API from the change
-  moving over the algif code which it originated from
-  to the new API.
-- Inline crypto_wait_req().
-- Some code indentation fixes.
-
-Gilad Ben-Yossef (19):
-  crypto: change transient busy return code to -EAGAIN
-  crypto: ccp: use -EAGAIN for transient busy indication
-  crypto: remove redundant backlog checks on EBUSY
-  crypto: marvell/cesa: remove redundant backlog checks on EBUSY
-  crypto: introduce crypto wait for async op
-  crypto: move algif to generic async completion
-  crypto: move pub key to generic async completion
-  crypto: move drbg to generic async completion
-  crypto: move gcm to generic async completion
-  crypto: move testmgr to generic async completion
-  fscrypt: move to generic async completion
-  dm: move dm-verity to generic async completion
-  cifs: move to generic async completion
-  ima: move to generic async completion
-  crypto: tcrypt: move to generic async completion
-  crypto: talitos: move to generic async completion
-  crypto: qce: move to generic async completion
-  crypto: mediatek: move to generic async completion
-  crypto: adapt api sample to use async. op wait
-
- Documentation/crypto/api-samples.rst |  52 ++-------
- crypto/af_alg.c                      |  27 -----
- crypto/ahash.c                       |  12 +--
- crypto/algapi.c                      |   6 +-
- crypto/algif_aead.c                  |   8 +-
- crypto/algif_hash.c                  |  50 +++++----
- crypto/algif_skcipher.c              |   9 +-
- crypto/api.c                         |  13 +++
- crypto/asymmetric_keys/public_key.c  |  28 +----
- crypto/cryptd.c                      |   4 +-
- crypto/cts.c                         |   6 +-
- crypto/drbg.c                        |  36 ++-----
- crypto/gcm.c                         |  32 ++----
- crypto/lrw.c                         |   8 +-
- crypto/rsa-pkcs1pad.c                |  16 +--
- crypto/tcrypt.c                      |  84 +++++----------
- crypto/testmgr.c                     | 204 ++++++++++++-----------------------
- crypto/xts.c                         |   8 +-
- drivers/crypto/ccp/ccp-crypto-main.c |   8 +-
- drivers/crypto/ccp/ccp-dev.c         |   7 +-
- drivers/crypto/marvell/cesa.c        |   3 +-
- drivers/crypto/marvell/cesa.h        |   2 +-
- drivers/crypto/mediatek/mtk-aes.c    |  31 +-----
- drivers/crypto/qce/sha.c             |  30 +-----
- drivers/crypto/talitos.c             |  38 +------
- drivers/md/dm-verity-target.c        |  81 ++++----------
- drivers/md/dm-verity.h               |   5 -
- fs/cifs/smb2ops.c                    |  30 +-----
- fs/crypto/crypto.c                   |  28 +----
- fs/crypto/fname.c                    |  36 ++-----
- fs/crypto/fscrypt_private.h          |  10 --
- fs/crypto/keyinfo.c                  |  21 +---
- include/crypto/drbg.h                |   3 +-
- include/crypto/if_alg.h              |  15 +--
- include/linux/crypto.h               |  40 +++++++
- security/integrity/ima/ima_crypto.c  |  56 +++-------
- 36 files changed, 310 insertions(+), 737 deletions(-)
-
--- 
-2.1.4
-
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  security/commoncap.c |   62 +++++++++++++++++++++++++++----------------------
+>  1 files changed, 34 insertions(+), 28 deletions(-)
+> 
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 78b3783..b7fbf77 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -481,6 +481,38 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
+>  	return rc;
+>  }
+>  
+> +void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effective, kuid_t root_uid)
+> +{
+> +	const struct cred *old = current_cred();
+> +	struct cred *new = bprm->cred;
+> +
+> +	if (issecure(SECURE_NOROOT))
+> +		return;
+> +	/*
+> +	 * If the legacy file capability is set, then don't set privs
+> +	 * for a setuid root binary run by a non-root user.  Do set it
+> +	 * for a root user just to cause least surprise to an admin.
+> +	 */
+> +	if (has_cap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
+> +		warn_setuid_and_fcaps_mixed(bprm->filename);
+> +		return;
+> +	}
+> +	/*
+> +	 * To support inheritance of root-permissions and suid-root
+> +	 * executables under compatibility mode, we override the
+> +	 * capability sets for the file.
+> +	 *
+> +	 * If only the real uid is 0, we do not set the effective bit.
+> +	 */
+> +	if (uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid)) {
+> +		/* pP' = (cap_bset & ~0) | (pI & ~0) */
+> +		new->cap_permitted = cap_combine(old->cap_bset,
+> +						 old->cap_inheritable);
+> +	}
+> +	if (uid_eq(new->euid, root_uid))
+> +		*effective = true;
+> +}
+> +
+>  /**
+>   * cap_bprm_set_creds - Set up the proposed credentials for execve().
+>   * @bprm: The execution parameters, including the proposed creds
+> @@ -493,46 +525,20 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+>  {
+>  	const struct cred *old = current_cred();
+>  	struct cred *new = bprm->cred;
+> -	bool effective, has_cap = false, is_setid;
+> +	bool effective = false, has_cap = false, is_setid;
+>  	int ret;
+>  	kuid_t root_uid;
+>  
+>  	if (WARN_ON(!cap_ambient_invariant_ok(old)))
+>  		return -EPERM;
+>  
+> -	effective = false;
+>  	ret = get_file_caps(bprm, &effective, &has_cap);
+>  	if (ret < 0)
+>  		return ret;
+>  
+>  	root_uid = make_kuid(new->user_ns, 0);
+>  
+> -	if (!issecure(SECURE_NOROOT)) {
+> -		/*
+> -		 * If the legacy file capability is set, then don't set privs
+> -		 * for a setuid root binary run by a non-root user.  Do set it
+> -		 * for a root user just to cause least surprise to an admin.
+> -		 */
+> -		if (has_cap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
+> -			warn_setuid_and_fcaps_mixed(bprm->filename);
+> -			goto skip;
+> -		}
+> -		/*
+> -		 * To support inheritance of root-permissions and suid-root
+> -		 * executables under compatibility mode, we override the
+> -		 * capability sets for the file.
+> -		 *
+> -		 * If only the real uid is 0, we do not set the effective bit.
+> -		 */
+> -		if (uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid)) {
+> -			/* pP' = (cap_bset & ~0) | (pI & ~0) */
+> -			new->cap_permitted = cap_combine(old->cap_bset,
+> -							 old->cap_inheritable);
+> -		}
+> -		if (uid_eq(new->euid, root_uid))
+> -			effective = true;
+> -	}
+> -skip:
+> +	handle_privileged_root(bprm, has_cap, &effective, root_uid);
+>  
+>  	/* if we have fs caps, clear dangerous personality flags */
+>  	if (!cap_issubset(new->cap_permitted, old->cap_permitted))
+> -- 
+> 1.7.1
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
