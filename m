@@ -1,92 +1,67 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Thu, 24 Aug 2017 11:47:56 -0500
-Subject: [PATCH V3 09/10] capabilities: fix logic for effective root or
-	real root
-In-Reply-To: <20170824164435.GJ24692@madcap2.tricolour.ca>
+From: keescook@chromium.org (Kees Cook)
+Date: Thu, 24 Aug 2017 12:06:17 -0700
+Subject: [PATCH V3 02/10] capabilities: intuitive names for cap gain status
+In-Reply-To: <20170824163717.GK10515@mail.hallyn.com>
 References: <cover.1503459890.git.rgb@redhat.com>
-	<0d9646956d9b2d99e8699c009de21f14fa592e7a.1503459890.git.rgb@redhat.com>
-	<20170824162946.GI10515@mail.hallyn.com>
-	<20170824164435.GJ24692@madcap2.tricolour.ca>
-Message-ID: <20170824164756.GA12056@mail.hallyn.com>
+	<9e3f99d3c2cbfee24fb3af7ec9b4cf93e4430112.1503459890.git.rgb@redhat.com>
+	<20170824160344.GB10515@mail.hallyn.com>
+	<20170824161912.GI24692@madcap2.tricolour.ca>
+	<20170824163717.GK10515@mail.hallyn.com>
+Message-ID: <CAGXu5jJbgoeBpaHt=2u+KkSsewwVdjZmtxMMuFOv927XkW0uig@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Richard Guy Briggs (rgb at redhat.com):
-> On 2017-08-24 11:29, Serge E. Hallyn wrote:
-> > Quoting Richard Guy Briggs (rgb at redhat.com):
-> > > Now that the logic is inverted, it is much easier to see that both real root
-> > > and effective root conditions had to be met to avoid printing the BPRM_FCAPS
-> > > record with audit syscalls.  This meant that any setuid root applications would
-> > > print a full BPRM_FCAPS record when it wasn't necessary, cluttering the event
-> > > output, since the SYSCALL and PATH records indicated the presence of the setuid
-> > > bit and effective root user id.
-> > > 
-> > > Require only one of effective root or real root to avoid printing the
-> > > unnecessary record.
-> > > 
-> > > Ref: 3fc689e96c0c (Add audit_log_bprm_fcaps/AUDIT_BPRM_FCAPS)
-> > > See: https://github.com/linux-audit/audit-kernel/issues/16
-> > > 
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > 
-> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > 
-> > I wonder whether,
-> > 
-> > > ---
-> > >  security/commoncap.c |    6 +++---
-> > >  1 files changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/security/commoncap.c b/security/commoncap.c
-> > > index eb2da69..49cce06 100644
-> > > --- a/security/commoncap.c
-> > > +++ b/security/commoncap.c
-> > > @@ -540,7 +540,7 @@ static inline bool is_setgid(struct cred *new, const struct cred *old)
-> > >   *
-> > >   * We do not bother to audit if 3 things are true:
-> > >   *   1) cap_effective has all caps
-> > > - *   2) we are root
-> > > + *   2) we became root *OR* are root
-> > 
-> > For clarity, what do you think about adding "(because fcaps were not used)"?
-> 
-> Possibly.  Is it possible to become root without fcaps other than
-> logging in on a console as root from the get-go?  But I see your point.
-> Even if su or sudo were used to gain root, it would have been on a
-> previous operation and not the immediate one being audited.
-> 
-> The intention behind the change in the comment wording was to emphasize
-> that the original comment hand-waved a bit about effective root vs real
-> root without being explicit that it could be one or the other rather
-> than requiring both, which affected the logic used to express it.
+On Thu, Aug 24, 2017 at 9:37 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> Quoting Richard Guy Briggs (rgb at redhat.com):
+>> On 2017-08-24 11:03, Serge E. Hallyn wrote:
+>> > Quoting Richard Guy Briggs (rgb at redhat.com):
+>> > > Introduce macros cap_gained, cap_grew, cap_full to make the use of the
+>> > > negation of is_subset() easier to read and analyse.
+>> > >
+>> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> > > ---
+>> > >  security/commoncap.c |   16 ++++++++++------
+>> > >  1 files changed, 10 insertions(+), 6 deletions(-)
+>> > >
+>> > > diff --git a/security/commoncap.c b/security/commoncap.c
+>> > > index b7fbf77..6f05ec0 100644
+>> > > --- a/security/commoncap.c
+>> > > +++ b/security/commoncap.c
+>> > > @@ -513,6 +513,12 @@ void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effec
+>> > >           *effective = true;
+>> > >  }
+>> > >
+>> >
+>> > It's subjective and so might be just me, but I think I'd find it easier
+>> > to read if it was cap_gained(source, target, field) and cap_grew(cred, source, target)
+>>
+>> In more than one place, I wanted to put the parameter that I was trying
+>> to read aloud closest to the function name to make reading it flow
+>> better, leaving the parameters less critical to comprehension towards
+>> the end.
+>
+> And I see that in the final patch it looks nicer the way you have it.
+>
+>> > This looks correct though, so either way
+>> >
+>> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+>>
+>> Thanks.  Did you want to put this through, or send it through Paul's
+>> audit tree?
+>
+> If Paul's around I'm happy to have it go through his tree.
 
-Ok - let's leave it as is.  Thanks for the set!
+Is this series based against -next with the changes that touch commoncap.c?
 
-> > >   *   3) root is supposed to have all caps (SECURE_NOROOT)
-> > >   * Since this is just a normal root execing a process.
-> > >   *
-> > > @@ -553,8 +553,8 @@ static inline bool nonroot_raised_pE(struct cred *cred, kuid_t root)
-> > >  
-> > >  	if (cap_grew(effective, ambient, cred) &&
-> > >  	    !(cap_full(effective, cred) &&
-> > > -	      is_eff(root, cred) &&
-> > > -	      is_real(root, cred) &&
-> > > +	      (is_eff(root, cred) ||
-> > > +	       is_real(root, cred)) &&
-> > >  	      root_privileged()))
-> > >  		ret = true;
-> > >  	return ret;
-> > > -- 
-> > > 1.7.1
-> 
-> - RGB
-> 
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
+Also, did you validate this with the existing LTP tests and selftests?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/secureexec&id=ee67ae7ef6ff499137292ac8a9dfe86096796283
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
