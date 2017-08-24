@@ -1,45 +1,57 @@
-From: colin.king@canonical.com (Colin King)
-Date: Thu, 24 Aug 2017 09:31:45 +0100
-Subject: [PATCH] apparmor: fix spelling mistake: "resoure" -> "resource"
-Message-ID: <20170824083145.18799-1-colin.king@canonical.com>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Thu, 24 Aug 2017 16:25:14 +0300
+Subject: [PATCH v6 04/19] crypto: marvell/cesa: remove redundant backlog
+	checks on EBUSY
+In-Reply-To: <201708242036.ODpqdw7q%fengguang.wu@intel.com>
+References: <1503324309-13673-5-git-send-email-gilad@benyossef.com>
+	<201708242036.ODpqdw7q%fengguang.wu@intel.com>
+Message-ID: <CAOtvUMcJXyupc1N+wRRfJNWwS2P9V36J0_eYHLbdDtj4kWaYxw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Aug 24, 2017 at 4:01 PM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Gilad,
+>
+> [auto build test ERROR on cryptodev/master]
+> [also build test ERROR on v4.13-rc6 next-20170823]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Gilad-Ben-Yossef/crypto-change-transient-busy-return-code-to-EAGAIN/20170824-180606
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+> config: arm-allmodconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
+> reproduce:
+>         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=arm
+>
+> All error/warnings (new ones prefixed by >>):
+>
+>    drivers/crypto/marvell/cesa.c: In function 'mv_cesa_queue_req':
+>>> drivers/crypto/marvell/cesa.c:187:3: error: expected ')' before 'mv_cesa_tdma_chain'
+>       mv_cesa_tdma_chain(engine, creq);
+>       ^~~~~~~~~~~~~~~~~~
+>>> drivers/crypto/marvell/cesa.c:196:1: error: expected expression before '}' token
+>     }
+>     ^
+>>> drivers/crypto/marvell/cesa.c:196:1: warning: control reaches end of non-void function [-Wreturn-type]
+>     }
+>     ^
 
-Trivial fix to spelling mistake in comment and also with text in
-audit_resource call.
+Oy! I thought I've added COMPILE_TEST to my local tree to build it. I didn't.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/apparmor/resource.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Fix underway.
 
-diff --git a/security/apparmor/resource.c b/security/apparmor/resource.c
-index d8bc842594ed..cf4d234febe9 100644
---- a/security/apparmor/resource.c
-+++ b/security/apparmor/resource.c
-@@ -47,7 +47,7 @@ static void audit_cb(struct audit_buffer *ab, void *va)
- /**
-  * audit_resource - audit setting resource limit
-  * @profile: profile being enforced  (NOT NULL)
-- * @resoure: rlimit being auditing
-+ * @resource: rlimit being auditing
-  * @value: value being set
-  * @error: error value
-  *
-@@ -128,7 +128,7 @@ int aa_task_setrlimit(struct aa_label *label, struct task_struct *task,
- 		error = fn_for_each(label, profile,
- 				audit_resource(profile, resource,
- 					       new_rlim->rlim_max, peer,
--					       "cap_sys_resoure", -EACCES));
-+					       "cap_sys_resource", -EACCES));
- 	else
- 		error = fn_for_each_confined(label, profile,
- 				profile_setrlimit(profile, resource, new_rlim));
+Gilad
+
 -- 
-2.14.1
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
