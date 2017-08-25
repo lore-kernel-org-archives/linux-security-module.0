@@ -1,28 +1,25 @@
 From: jmorris@namei.org (James Morris)
-Date: Fri, 25 Aug 2017 15:58:22 +1000 (AEST)
-Subject: [PATCH V3 04/10] capabilities: use root_priveleged inline to
-	clarify logic
-In-Reply-To: <cf456cee4480719b861c5f62f0d96f9083f9f3c4.1503459890.git.rgb@redhat.com>
+Date: Fri, 25 Aug 2017 15:59:48 +1000 (AEST)
+Subject: [PATCH V3 05/10] capabilities: use intuitive names for id changes
+In-Reply-To: <1360ed3437f87ac0b9e076ff5ea05c67ee8a7ed8.1503459890.git.rgb@redhat.com>
 References: <cover.1503459890.git.rgb@redhat.com>
-	<cf456cee4480719b861c5f62f0d96f9083f9f3c4.1503459890.git.rgb@redhat.com>
-Message-ID: <alpine.LRH.2.20.1708251558090.29541@namei.org>
+	<1360ed3437f87ac0b9e076ff5ea05c67ee8a7ed8.1503459890.git.rgb@redhat.com>
+Message-ID: <alpine.LRH.2.20.1708251559330.29541@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, 23 Aug 2017, Richard Guy Briggs wrote:
 
-> Introduce inline root_privileged() to make use of SECURE_NONROOT
-> easier to read.
+> Introduce a number of inlines to make the use of the negation of
+> uid_eq() easier to read and analyse.
 > 
-> Suggested-by: Serge Hallyn <serge@hallyn.com>
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  security/commoncap.c |    9 +++++----
->  1 files changed, 5 insertions(+), 4 deletions(-)
+>  security/commoncap.c |   26 +++++++++++++++++++++-----
+>  1 files changed, 21 insertions(+), 5 deletions(-)
 
 
 Acked-by: James Morris <james.l.morris@oracle.com>
-
 
 -- 
 James Morris
