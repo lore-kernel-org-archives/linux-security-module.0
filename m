@@ -1,45 +1,60 @@
 From: luto@kernel.org (Andy Lutomirski)
-Date: Fri, 25 Aug 2017 08:08:58 -0700
-Subject: [PATCH V3 02/10] capabilities: intuitive names for cap gain status
-In-Reply-To: <9e3f99d3c2cbfee24fb3af7ec9b4cf93e4430112.1503459890.git.rgb@redhat.com>
+Date: Fri, 25 Aug 2017 08:11:24 -0700
+Subject: [PATCH V3 07/10] capabilities: remove a layer of conditional logic
+In-Reply-To: <b656082f8697c02165b4240ecf4ae60fe08811dd.1503459890.git.rgb@redhat.com>
 References: <cover.1503459890.git.rgb@redhat.com>
-	<9e3f99d3c2cbfee24fb3af7ec9b4cf93e4430112.1503459890.git.rgb@redhat.com>
-Message-ID: <CALCETrUC4hjsCyOeT8R-L8KL5k5BCAfxQQC-XqMWhKMW8ZtvSQ@mail.gmail.com>
+	<b656082f8697c02165b4240ecf4ae60fe08811dd.1503459890.git.rgb@redhat.com>
+Message-ID: <CALCETrXoY_DAMAdcFcOY67SnyW3RaMn=Qa_wFnt0iYNRt1HTHQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, Aug 23, 2017 at 3:12 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Introduce macros cap_gained, cap_grew, cap_full to make the use of the
-> negation of is_subset() easier to read and analyse.
+> Remove a layer of conditional logic to make the use of conditions
+> easier to read and analyse.
 >
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  security/commoncap.c |   16 ++++++++++------
->  1 files changed, 10 insertions(+), 6 deletions(-)
+>  security/commoncap.c |   13 ++++++-------
+>  1 files changed, 6 insertions(+), 7 deletions(-)
 >
 > diff --git a/security/commoncap.c b/security/commoncap.c
-> index b7fbf77..6f05ec0 100644
+> index 5d81354..ffcaff0 100644
 > --- a/security/commoncap.c
 > +++ b/security/commoncap.c
-> @@ -513,6 +513,12 @@ void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effec
->                 *effective = true;
+> @@ -551,13 +551,12 @@ static inline bool nonroot_raised_pE(struct cred *cred, kuid_t root)
+>  {
+>         bool ret = false;
+>
+> -       if (cap_grew(effective, ambient, cred)) {
+> -               if (!cap_full(effective, cred) ||
+> -                   !is_eff(root, cred) || !is_real(root, cred) ||
+> -                   !root_privileged()) {
+> -                       ret = true;
+> -               }
+> -       }
+> +       if (cap_grew(effective, ambient, cred) &&
+> +           (!cap_full(effective, cred) ||
+> +            !is_eff(root, cred) ||
+> +            !is_real(root, cred) ||
+> +            !root_privileged()))
+> +               ret = true;
+
+I'm trying to give this whole series the benefit of the doubt.  Here's
+what happens when I try to read this:
+
+Did effective grow ambient caps?  No, makes no sense.  Did ambient
+grow effective caps?  No, not that either.  Is effective more fully
+grown than ambient?  That's probably it, but that sounds really weird.
+
+The rest would IMO be clearer if you named the helpers ruid_eq and
+euid_eq instead of is_eff and is_real.
+
+>         return ret;
 >  }
 >
-> +#define cap_gained(field, target, source) \
-> +       !cap_issubset(target->cap_##field, source->cap_##field)
-> +#define cap_grew(target, source, cred) \
-> +       !cap_issubset(cred->cap_##target, cred->cap_##source)
-> +#define cap_full(field, cred) \
-> +       cap_issubset(CAP_FULL_SET, cred->cap_##field)
-
-I read this several times and I can't figure out what "gain" means,
-what "grew" means, and why it's more intuitive that they signify weird
-permutations of the parameters.  I also don't know what "source" and
-"target" mean in this context.
-
-Can you clearly articulate how this is better than the status quo?
-
---Andy
+> --
+> 1.7.1
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
