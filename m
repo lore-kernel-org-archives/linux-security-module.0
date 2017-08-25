@@ -1,36 +1,25 @@
 From: jmorris@namei.org (James Morris)
-Date: Fri, 25 Aug 2017 15:55:20 +1000 (AEST)
-Subject: [PATCH V3 01/10] capabilities: factor out cap_bprm_set_creds
-	privileged root
-In-Reply-To: <63333a7ed7e3ce62e3142b5e34ee942f3874a0d6.1503459890.git.rgb@redhat.com>
+Date: Fri, 25 Aug 2017 15:56:25 +1000 (AEST)
+Subject: [PATCH V3 02/10] capabilities: intuitive names for cap gain status
+In-Reply-To: <9e3f99d3c2cbfee24fb3af7ec9b4cf93e4430112.1503459890.git.rgb@redhat.com>
 References: <cover.1503459890.git.rgb@redhat.com>
-	<63333a7ed7e3ce62e3142b5e34ee942f3874a0d6.1503459890.git.rgb@redhat.com>
-Message-ID: <alpine.LRH.2.20.1708251554500.29541@namei.org>
+	<9e3f99d3c2cbfee24fb3af7ec9b4cf93e4430112.1503459890.git.rgb@redhat.com>
+Message-ID: <alpine.LRH.2.20.1708251556130.29541@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, 23 Aug 2017, Richard Guy Briggs wrote:
 
-> Factor out the case of privileged root from the function
-> cap_bprm_set_creds() to make the latter easier to read and analyse.
+> Introduce macros cap_gained, cap_grew, cap_full to make the use of the
+> negation of is_subset() easier to read and analyse.
 > 
-> Suggested-by: Serge Hallyn <serge@hallyn.com>
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  security/commoncap.c |   62 +++++++++++++++++++++++++++----------------------
->  1 files changed, 34 insertions(+), 28 deletions(-)
-> 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 78b3783..b7fbf77 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -481,6 +481,38 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
->  	return rc;
->  }
->  
-> +void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effective, kuid_t root_uid)
+>  security/commoncap.c |   16 ++++++++++------
+>  1 files changed, 10 insertions(+), 6 deletions(-)
 
-Can this be static?
+
+Acked-by: James Morris <james.l.morris@oracle.com>
 
 
 -- 
