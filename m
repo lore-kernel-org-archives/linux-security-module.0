@@ -1,64 +1,50 @@
 From: jmorris@namei.org (James Morris)
-Date: Fri, 25 Aug 2017 15:48:45 +1000 (AEST)
-Subject: [PATCH V3 09/10] capabilities: fix logic for effective root or
-	real root
-In-Reply-To: <0d9646956d9b2d99e8699c009de21f14fa592e7a.1503459890.git.rgb@redhat.com>
+Date: Fri, 25 Aug 2017 15:50:23 +1000 (AEST)
+Subject: [PATCH V3 10/10] capabilities: audit log other surprising
+	conditions
+In-Reply-To: <11df9e69904600785a8a609f471ff30431ef5464.1503459890.git.rgb@redhat.com>
 References: <cover.1503459890.git.rgb@redhat.com>
-	<0d9646956d9b2d99e8699c009de21f14fa592e7a.1503459890.git.rgb@redhat.com>
-Message-ID: <alpine.LRH.2.20.1708251548360.29541@namei.org>
+	<11df9e69904600785a8a609f471ff30431ef5464.1503459890.git.rgb@redhat.com>
+Message-ID: <alpine.LRH.2.20.1708251550050.29541@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, 23 Aug 2017, Richard Guy Briggs wrote:
 
-> Now that the logic is inverted, it is much easier to see that both real root
-> and effective root conditions had to be met to avoid printing the BPRM_FCAPS
-> record with audit syscalls.  This meant that any setuid root applications would
-> print a full BPRM_FCAPS record when it wasn't necessary, cluttering the event
-> output, since the SYSCALL and PATH records indicated the presence of the setuid
-> bit and effective root user id.
+> The existing condition tested for process effective capabilities set by file
+> attributes but intended to ignore the change if the result was unsurprisingly an
+> effective full set in the case root is special with a setuid root executable
+> file and we are root.
 > 
-> Require only one of effective root or real root to avoid printing the
-> unnecessary record.
+> Stated again:
+> - When you execute a setuid root application, it is no surprise and expected
+> that it got all capabilities, so we do not want capabilities recorded.
+>         if (pE_grew && !(pE_fullset && (eff_root || real_root) && root_priveleged) )
 > 
-> Ref: 3fc689e96c0c (Add audit_log_bprm_fcaps/AUDIT_BPRM_FCAPS)
-> See: https://github.com/linux-audit/audit-kernel/issues/16
+> Now make sure we cover other cases:
+> - If something prevented a setuid root app getting all capabilities and it
+> wound up with one capability only, then it is a surprise and should be logged.
+> When it is a setuid root file, we only want capabilities when the process does
+> not get full capabilities..
+>         root_priveleged && setuid_root && !pE_fullset
+> 
+> - Similarly if a non-setuid program does pick up capabilities due to file system
+> based capabilities, then we want to know what capabilities were picked up.
+> When it has file system based capabilities we want the capabilities.
+>         !is_setuid && (has_fcap && pP_gained)
+> 
+> - If it is a non-setuid file and it gets ambient capabilities, we want the
+> capabilities.
+>         !is_setuid && pA_gained
+> 
+> - These last two are combined into one due to the common first parameter.
+> 
+> Related: https://github.com/linux-audit/audit-kernel/issues/16
 > 
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  security/commoncap.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
 
 
 Acked-by: James Morris <james.l.morris@oracle.com>
-
-
-> 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index eb2da69..49cce06 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -540,7 +540,7 @@ static inline bool is_setgid(struct cred *new, const struct cred *old)
->   *
->   * We do not bother to audit if 3 things are true:
->   *   1) cap_effective has all caps
-> - *   2) we are root
-> + *   2) we became root *OR* are root
->   *   3) root is supposed to have all caps (SECURE_NOROOT)
->   * Since this is just a normal root execing a process.
->   *
-> @@ -553,8 +553,8 @@ static inline bool nonroot_raised_pE(struct cred *cred, kuid_t root)
->  
->  	if (cap_grew(effective, ambient, cred) &&
->  	    !(cap_full(effective, cred) &&
-> -	      is_eff(root, cred) &&
-> -	      is_real(root, cred) &&
-> +	      (is_eff(root, cred) ||
-> +	       is_real(root, cred)) &&
->  	      root_privileged()))
->  		ret = true;
->  	return ret;
-> 
 
 -- 
 James Morris
