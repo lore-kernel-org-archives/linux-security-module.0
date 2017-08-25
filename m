@@ -1,22 +1,23 @@
 From: jmorris@namei.org (James Morris)
-Date: Fri, 25 Aug 2017 15:59:48 +1000 (AEST)
-Subject: [PATCH V3 05/10] capabilities: use intuitive names for id changes
-In-Reply-To: <1360ed3437f87ac0b9e076ff5ea05c67ee8a7ed8.1503459890.git.rgb@redhat.com>
+Date: Fri, 25 Aug 2017 16:01:19 +1000 (AEST)
+Subject: [PATCH V3 06/10] capabilities: move audit log decision to function
+In-Reply-To: <0ef18e4236773f4ccd55f9b47639adb6a992d104.1503459890.git.rgb@redhat.com>
 References: <cover.1503459890.git.rgb@redhat.com>
-	<1360ed3437f87ac0b9e076ff5ea05c67ee8a7ed8.1503459890.git.rgb@redhat.com>
-Message-ID: <alpine.LRH.2.20.1708251559330.29541@namei.org>
+	<0ef18e4236773f4ccd55f9b47639adb6a992d104.1503459890.git.rgb@redhat.com>
+Message-ID: <alpine.LRH.2.20.1708251601040.29541@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Wed, 23 Aug 2017, Richard Guy Briggs wrote:
 
-> Introduce a number of inlines to make the use of the negation of
-> uid_eq() easier to read and analyse.
+> Move the audit log decision logic to its own function to isolate the
+> complexity in one place.
 > 
+> Suggested-by: Serge Hallyn <serge@hallyn.com>
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  security/commoncap.c |   26 +++++++++++++++++++++-----
->  1 files changed, 21 insertions(+), 5 deletions(-)
+>  security/commoncap.c |   50 ++++++++++++++++++++++++++++++--------------------
+>  1 files changed, 30 insertions(+), 20 deletions(-)
 
 
 Acked-by: James Morris <james.l.morris@oracle.com>
