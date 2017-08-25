@@ -1,26 +1,48 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Fri, 25 Aug 2017 10:53:09 -0600
-Subject: [PATCH] tpm/tpm_crb: Access locality for non-ACPI and non-SMC
-	start method
-In-Reply-To: <20170825162139.s5oasztecntzg223@linux.intel.com>
-References: <1503029736-591-1-git-send-email-anjiandi@codeaurora.org>
-	<20170822173956.zpqe4scdnv7plrhj@linux.intel.com>
-	<d88e255c-f8c9-b6fc-64bd-8cf56153fcce@codeaurora.org>
-	<20170824122630.75sxjmkj5f7p7tv5@linux.intel.com>
-	<7478e964-6553-9d1e-3d8f-83b044a9a562@codeaurora.org>
-	<20170825162139.s5oasztecntzg223@linux.intel.com>
-Message-ID: <20170825165309.GB5254@obsidianresearch.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 25 Aug 2017 20:20:21 +0300
+Subject: [PATCH RESEND 3/3] tpm-chip: Export TPM device to user space
+	even when startup failed
+In-Reply-To: <20170824083714.10016-4-Alexander.Steffen@infineon.com>
+References: <20170824083714.10016-1-Alexander.Steffen@infineon.com>
+	<20170824083714.10016-4-Alexander.Steffen@infineon.com>
+Message-ID: <20170825172021.lw3ycxqw63ubrcm2@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Aug 25, 2017 at 07:21:39PM +0300, Jarkko Sakkinen wrote:
-> As I said before it would make much more sense to make code always deal
-> with sm and remove flags completely. That would help maintaining code
-> easier as new logic for TZ is introduced.
+On Thu, Aug 24, 2017 at 10:37:14AM +0200, Alexander Steffen wrote:
+> When one of the commands during the auto_startup sequences does not return
+> TPM_RC_SUCCESS, tpm_chip_register misleadingly returns ENODEV, even though
+> a TPM device is definitely present.
+> 
+> An error response during those sequences is indeed unexpected, so to
+> prevent subsequent errors, the kernel should not make use of the TPM
+> device. But user space applications still might be able to communicate with
+> the TPM, so they can be used to further diagnose and/or fix the problem. To
+> allow this, with this patch the device is still exported to user space,
+> even if a TPM error code has been received, but the kernel itself will not
+> be allowed to use the device for anything.
+> 
+> This is not a hypothetical scenario, but there are devices in the wild that
+> show this behavior. With this fix, those devices can be recovered from
+> their failed state.
+> 
+> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 
-Yes please
+I can understand the benefits but you could make the same argument for
+any class devices that kernel handles. I don't think it is that common
+to let user space access malfunctioning devices.
 
-Jason
+Adding linux-security-module.
+
+PS. You should have in *all* patches that you don't tag as RFC have
+linux-kernel at vger.kernel.org. Now you have it in *none* of your patches.
+When you don't have RFC you are saying out loud that this is production
+ready code that should be included to the mainline kernel.
+
+PPS. This patch set should be obviously RFC. It's  avery questionable and
+intrusive change. That's why I didn't include linux-kernel.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
