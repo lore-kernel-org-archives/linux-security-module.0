@@ -1,7 +1,7 @@
 From: arvind.yadav.cs@gmail.com (Arvind Yadav)
-Date: Sat, 26 Aug 2017 16:17:35 +0530
-Subject: [PATCH] selinux: constify nf_hook_ops
-Message-ID: <0cf3cc3fd48c3b0b9d1766c73ac4faea2a733bf3.1503744266.git.arvind.yadav.cs@gmail.com>
+Date: Sat, 26 Aug 2017 16:18:46 +0530
+Subject: [PATCH] smack: constify nf_hook_ops
+Message-ID: <34731ab554f22661849c01f4e6a675798e834245.1503744327.git.arvind.yadav.cs@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -11,21 +11,21 @@ So mark the non-const nf_hook_ops structs as const.
 
 Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- security/selinux/hooks.c | 2 +-
+ security/smack/smack_netfilter.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 33fd061..2f2e133 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6530,7 +6530,7 @@ security_initcall(selinux_init);
+diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+index cdeb0f3..e36d178 100644
+--- a/security/smack/smack_netfilter.c
++++ b/security/smack/smack_netfilter.c
+@@ -58,7 +58,7 @@ static unsigned int smack_ipv4_output(void *priv,
+ 	return NF_ACCEPT;
+ }
  
- #if defined(CONFIG_NETFILTER)
- 
--static struct nf_hook_ops selinux_nf_ops[] = {
-+static const struct nf_hook_ops selinux_nf_ops[] = {
+-static struct nf_hook_ops smack_nf_ops[] = {
++static const struct nf_hook_ops smack_nf_ops[] = {
  	{
- 		.hook =		selinux_ipv4_postroute,
+ 		.hook =		smack_ipv4_output,
  		.pf =		NFPROTO_IPV4,
 -- 
 2.7.4
