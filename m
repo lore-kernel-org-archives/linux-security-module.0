@@ -1,35 +1,33 @@
-From: arvind.yadav.cs@gmail.com (Arvind Yadav)
-Date: Sat, 26 Aug 2017 16:18:46 +0530
-Subject: [PATCH] smack: constify nf_hook_ops
-Message-ID: <34731ab554f22661849c01f4e6a675798e834245.1503744327.git.arvind.yadav.cs@gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 26 Aug 2017 14:19:45 +0300
+Subject: [PATCH RESEND] tpm: migrate pubek_show to struct tpm_buf
+In-Reply-To: <20170826081004.cf3kbr5ild6vfv2y@linux.intel.com>
+References: <20170825172946.18357-1-jarkko.sakkinen@linux.intel.com>
+	<20170826081004.cf3kbr5ild6vfv2y@linux.intel.com>
+Message-ID: <20170826111945.kelicskdcquf6ddz@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-nf_hook_ops are not supposed to change at runtime. nf_register_net_hooks
-and nf_unregister_net_hooks are working with const nf_hook_ops.
-So mark the non-const nf_hook_ops structs as const.
+On Sat, Aug 26, 2017 at 11:10:04AM +0300, Jarkko Sakkinen wrote:
+> On Fri, Aug 25, 2017 at 08:29:46PM +0300, Jarkko Sakkinen wrote:
+> > Migrated pubek_show to struct tpm_buf and cleaned up its implementation.
+> > Previously the output parameter structure was declared but left
+> > completely unused. Now it is used to refer different fields of the
+> > output. We can move it to tpm-sysfs.c as it does not have any use
+> > outside of that file.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> I'm going to apply this if there are no obligations. I sent this updated
+> patch 2017-06-20 based on feedback I got on [1].
+> 
+> [1] https://patchwork.kernel.org/patch/9749151/
+> 
+> /Jarkko
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- security/smack/smack_netfilter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied (master, next).
 
-diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
-index cdeb0f3..e36d178 100644
---- a/security/smack/smack_netfilter.c
-+++ b/security/smack/smack_netfilter.c
-@@ -58,7 +58,7 @@ static unsigned int smack_ipv4_output(void *priv,
- 	return NF_ACCEPT;
- }
- 
--static struct nf_hook_ops smack_nf_ops[] = {
-+static const struct nf_hook_ops smack_nf_ops[] = {
- 	{
- 		.hook =		smack_ipv4_output,
- 		.pf =		NFPROTO_IPV4,
--- 
-2.7.4
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
