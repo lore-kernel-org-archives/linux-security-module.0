@@ -1,68 +1,46 @@
-From: shuah@kernel.org (Shuah Khan)
-Date: Mon, 28 Aug 2017 12:01:08 -0600
-Subject: [PATCH net-next v7 01/10] selftest: Enhance kselftest_harness.h
-	with a step mechanism
-In-Reply-To: <20170826010711.dksmgg4mcni5q2xd@ast-mbp>
-References: <20170821000933.13024-1-mic@digikod.net>
-	<20170821000933.13024-2-mic@digikod.net>
-	<20170824023105.gt6lyn2snhczryik@ast-mbp>
-	<0e15da13-fad0-ba01-053c-1b4853e2bd6f@digikod.net>
-	<20170826010711.dksmgg4mcni5q2xd@ast-mbp>
-Message-ID: <af24658e-4225-118e-59aa-0b78d6227cb8@kernel.org>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 28 Aug 2017 14:30:25 -0400
+Subject: [PATCH v6 4/6] ima: use fs method to read integrity data
+In-Reply-To: <20170828041301.GA21125@ZenIV.linux.org.uk>
+References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1502808237-2035-5-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170828041301.GA21125@ZenIV.linux.org.uk>
+Message-ID: <1503945025.5847.91.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08/25/2017 07:07 PM, Alexei Starovoitov wrote:
-> On Fri, Aug 25, 2017 at 09:58:33AM +0200, Micka?l Sala?n wrote:
->>
->>
->> On 24/08/2017 04:31, Alexei Starovoitov wrote:
->>> On Mon, Aug 21, 2017 at 02:09:24AM +0200, Micka?l Sala?n wrote:
->>>> This step mechanism may be useful to return an information about the
->>>> error without being able to write to TH_LOG_STREAM.
->>>>
->>>> Set _metadata->no_print to true to print this counter.
->>>>
->>>> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
->>>> Cc: Andy Lutomirski <luto@amacapital.net>
->>>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->>>> Cc: Kees Cook <keescook@chromium.org>
->>>> Cc: Shuah Khan <shuah@kernel.org>
->>>> Cc: Will Drewry <wad@chromium.org>
->>>> Link: https://lkml.kernel.org/r/CAGXu5j+D-FP8Kt9unNOqKrQJP4DYTpmgkJxWykZyrYiVPz3Y3Q at mail.gmail.com
->>>> ---
->>>>
->>>> This patch is intended to the kselftest tree:
->>>> https://lkml.kernel.org/r/20170806232337.4191-1-mic at digikod.net
->>>>
->>>> Changes since v6:
->>>> * add the step counter in assert/expect macros and use _metadata to
->>>>   enable the counter (suggested by Kees Cook)
->>>> ---
->>>>  tools/testing/selftests/kselftest_harness.h   | 31 ++++++++++++++++++++++-----
->>>>  tools/testing/selftests/seccomp/seccomp_bpf.c |  2 +-
->>>>  2 files changed, 27 insertions(+), 6 deletions(-)
->>>
->>> is there a dependency on this in patches 2+ ?
->>> if not, I would send this patch to selftests right away.
->>>
->>>
->>
->> The Landlock tests [patch 9/10] rely on it for now.
->>
->> I sent it three weeks ago:
->> https://lkml.kernel.org/r/20170806232337.4191-1-mic at digikod.net
->>
->> Anyway, until this patch is merged in the kselftest tree and then
->> available to net-next, I'll have to keep it here.
+On Mon, 2017-08-28 at 05:13 +0100, Al Viro wrote:
+> On Tue, Aug 15, 2017 at 10:43:55AM -0400, Mimi Zohar wrote:
+> > From: Christoph Hellwig <hch@lst.de>
+> > 
+> > Add a new ->integrity_read file operation to read data for integrity
+> > hash collection.  This is defined to be equivalent to ->read_iter,
+> > except that it will be called with the i_rwsem held exclusively.
 > 
-> Shuah,
-> could you please pick up this patch into your tree?
+> Hmm...  I'm really tempted to add default_integrity_read() that would
+> just call ->read_iter(), with boilerplate part becoming
+> 	.integrity_read = default_integrity_read
+
+How can it automatically call the fs read_iter() without knowing if
+the fs read_iter() takes the i_rwsem? ?Or are you suggesting that the
+default_integrity_read is defined as generic_file_read_iter()?
+
+Mimi
+
+> Note that all stuff accessed in it would be fresh in caches, so
+> it's not as if we had serious overhead there.  And we are going
+> to be reading from file, anyway...
 > 
-
-Thanks. Applied to linux-kselftest next for 4.14-rc1.
-
--- Shuah
+> I agree that it should be an opt-in from filesystem; default is still
+> "don't know how to read, sod off".  It's just that telling at the
+> glance whether it's supposed to be a simple case or something tricky
+> is needed would be simpler that way and it might turn out to be
+> more robust that way...
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
