@@ -1,60 +1,70 @@
-From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
-Date: Mon, 28 Aug 2017 17:15:58 +0000
-Subject: [PATCH RESEND 3/3] tpm-chip: Export TPM device to user space even
-	when startup failed
-In-Reply-To: <20170825172021.lw3ycxqw63ubrcm2@linux.intel.com>
-References: <20170824083714.10016-1-Alexander.Steffen@infineon.com>
-	<20170824083714.10016-4-Alexander.Steffen@infineon.com>
-	<20170825172021.lw3ycxqw63ubrcm2@linux.intel.com>
-Message-ID: <adaaeae32ba64d979abfc4b758c63fc0@MUCSE603.infineon.com>
+From: shuah@kernel.org (Shuah Khan)
+Date: Mon, 28 Aug 2017 12:01:08 -0600
+Subject: [PATCH net-next v7 01/10] selftest: Enhance kselftest_harness.h
+	with a step mechanism
+In-Reply-To: <20170826010711.dksmgg4mcni5q2xd@ast-mbp>
+References: <20170821000933.13024-1-mic@digikod.net>
+	<20170821000933.13024-2-mic@digikod.net>
+	<20170824023105.gt6lyn2snhczryik@ast-mbp>
+	<0e15da13-fad0-ba01-053c-1b4853e2bd6f@digikod.net>
+	<20170826010711.dksmgg4mcni5q2xd@ast-mbp>
+Message-ID: <af24658e-4225-118e-59aa-0b78d6227cb8@kernel.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> On Thu, Aug 24, 2017 at 10:37:14AM +0200, Alexander Steffen wrote:
-> > When one of the commands during the auto_startup sequences does not
-> > return TPM_RC_SUCCESS, tpm_chip_register misleadingly returns
-> ENODEV,
-> > even though a TPM device is definitely present.
-> >
-> > An error response during those sequences is indeed unexpected, so to
-> > prevent subsequent errors, the kernel should not make use of the TPM
-> > device. But user space applications still might be able to communicate
-> > with the TPM, so they can be used to further diagnose and/or fix the
-> > problem. To allow this, with this patch the device is still exported
-> > to user space, even if a TPM error code has been received, but the
-> > kernel itself will not be allowed to use the device for anything.
-> >
-> > This is not a hypothetical scenario, but there are devices in the wild
-> > that show this behavior. With this fix, those devices can be recovered
-> > from their failed state.
-> >
-> > Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+On 08/25/2017 07:07 PM, Alexei Starovoitov wrote:
+> On Fri, Aug 25, 2017 at 09:58:33AM +0200, Micka?l Sala?n wrote:
+>>
+>>
+>> On 24/08/2017 04:31, Alexei Starovoitov wrote:
+>>> On Mon, Aug 21, 2017 at 02:09:24AM +0200, Micka?l Sala?n wrote:
+>>>> This step mechanism may be useful to return an information about the
+>>>> error without being able to write to TH_LOG_STREAM.
+>>>>
+>>>> Set _metadata->no_print to true to print this counter.
+>>>>
+>>>> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
+>>>> Cc: Andy Lutomirski <luto@amacapital.net>
+>>>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+>>>> Cc: Kees Cook <keescook@chromium.org>
+>>>> Cc: Shuah Khan <shuah@kernel.org>
+>>>> Cc: Will Drewry <wad@chromium.org>
+>>>> Link: https://lkml.kernel.org/r/CAGXu5j+D-FP8Kt9unNOqKrQJP4DYTpmgkJxWykZyrYiVPz3Y3Q at mail.gmail.com
+>>>> ---
+>>>>
+>>>> This patch is intended to the kselftest tree:
+>>>> https://lkml.kernel.org/r/20170806232337.4191-1-mic at digikod.net
+>>>>
+>>>> Changes since v6:
+>>>> * add the step counter in assert/expect macros and use _metadata to
+>>>>   enable the counter (suggested by Kees Cook)
+>>>> ---
+>>>>  tools/testing/selftests/kselftest_harness.h   | 31 ++++++++++++++++++++++-----
+>>>>  tools/testing/selftests/seccomp/seccomp_bpf.c |  2 +-
+>>>>  2 files changed, 27 insertions(+), 6 deletions(-)
+>>>
+>>> is there a dependency on this in patches 2+ ?
+>>> if not, I would send this patch to selftests right away.
+>>>
+>>>
+>>
+>> The Landlock tests [patch 9/10] rely on it for now.
+>>
+>> I sent it three weeks ago:
+>> https://lkml.kernel.org/r/20170806232337.4191-1-mic at digikod.net
+>>
+>> Anyway, until this patch is merged in the kselftest tree and then
+>> available to net-next, I'll have to keep it here.
 > 
-> I can understand the benefits but you could make the same argument for
-> any class devices that kernel handles.
-
-In a similar situation I probably would make that argument for other devices as well :-)
-
-> I don't think it is that common to let user space access malfunctioning
-> devices.
-
-But is that just because nobody bothered to implement the necessary logic or for some other reason?
-
-In my opinion, it strongly depends on the effects of the malfunction. If the device does not respond at all or returns only garbage, it is of course not useful to make it available. But the case that I want to handle here has a TPM that communicates correctly, i.e. the TIS layer works fine, it just does not return the application-level responses that the kernel expects. I'd like to think of it more as a transparent communication channel that the kernel provides to user space applications, without interfering with the data that is transmitted, similar to how a TCP socket is a transparent channel, that does not care about HTTP 500 codes being transmitted. So it is okay for the kernel to refuse to use such a device internally (the kernel knows there is nothing it can do with a broken device), but why assume that no user space application can use it either?
-
-I'd rather argue that user space applications already need to be prepared to handle TPM errors/malfunctions at any time, so removing this one check does not put them into a worse position. The TPM driver just checks *at startup* that the TPM seems to be okay (i.e. executes all self tests correctly). But if you keep your machine running for two years the TPM may fail at any point and the driver never checks it again, so an application may never assume that simply because /dev/tpm0 exists it can send arbitrary commands there that will always work (in fact, such a look-before-you-leap approach can never be guaranteed to succeed).
-
-Also, what would be the alternative? Your TPM is broken in a way that the kernel does not export it, how do you debug/fix the problem? You cannot even execute a TPM2_GetTestResult to get more detailed error information. So at the moment, we have user space applications bypassing the kernel driver completely, by accessing /dev/mem and reimplementing all the TIS logic. But this is just duplicated code (with its own set of problems, for example, if the kernel driver is active at the same time, there is nothing that prevents concurrent accesses), so nobody wants to implement a similar solution for SPI, and I2C, and all the other interfaces that might be necessary in the future.
-
-> PS. You should have in *all* patches that you don't tag as RFC have linux-
-> kernel at vger.kernel.org. Now you have it in *none* of your patches.
-> When you don't have RFC you are saying out loud that this is production
-> ready code that should be included to the mainline kernel.
+> Shuah,
+> could you please pick up this patch into your tree?
 > 
-> PPS. This patch set should be obviously RFC. It's  avery questionable and
-> intrusive change. That's why I didn't include linux-kernel.
 
-Sorry, thanks for explaining, will do that next time.
+Thanks. Applied to linux-kselftest next for 4.14-rc1.
 
-Alexander
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+-- Shuah
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
