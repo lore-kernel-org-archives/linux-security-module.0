@@ -1,33 +1,27 @@
 From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Mon, 28 Aug 2017 05:13:01 +0100
-Subject: [PATCH v6 4/6] ima: use fs method to read integrity data
-In-Reply-To: <1502808237-2035-5-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Mon, 28 Aug 2017 05:18:05 +0100
+Subject: [PATCH v6 0/6] define new fs integrity_read method
+In-Reply-To: <alpine.LRH.2.20.1708161240220.30541@namei.org>
 References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1502808237-2035-5-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20170828041301.GA21125@ZenIV.linux.org.uk>
+	<alpine.LRH.2.20.1708161240220.30541@namei.org>
+Message-ID: <20170828041805.GB21125@ZenIV.linux.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Aug 15, 2017 at 10:43:55AM -0400, Mimi Zohar wrote:
-> From: Christoph Hellwig <hch@lst.de>
+On Wed, Aug 16, 2017 at 12:43:58PM +1000, James Morris wrote:
+> On Tue, 15 Aug 2017, Mimi Zohar wrote:
 > 
-> Add a new ->integrity_read file operation to read data for integrity
-> hash collection.  This is defined to be equivalent to ->read_iter,
-> except that it will be called with the i_rwsem held exclusively.
+> > To resolve this locking problem, this patch set introduces a new
+> > ->integrity_read file operation method.  Until all filesystems
+> > define the new ->integrity_read method, files that were previously
+> > measured might not be currently measured and files that were
+> > previously appraised might fail to be appraised properly.
+> 
+> Are there any such filesystems in mainline which are not getting an 
+> integrity_read method in this patchset?
 
-Hmm...  I'm really tempted to add default_integrity_read() that would
-just call ->read_iter(), with boilerplate part becoming
-	.integrity_read = default_integrity_read
-
-Note that all stuff accessed in it would be fresh in caches, so
-it's not as if we had serious overhead there.  And we are going
-to be reading from file, anyway...
-
-I agree that it should be an opt-in from filesystem; default is still
-"don't know how to read, sod off".  It's just that telling at the
-glance whether it's supposed to be a simple case or something tricky
-is needed would be simpler that way and it might turn out to be
-more robust that way...
+A lot - all network ones, minix/sysv/ufs, isofs/udf/efs, fat/hfs/hfs+/hpfs/affs/ntfs,
+ecryptfs, reiserfs, romfs, cramfs, bfs, qnx[46], etc.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
