@@ -1,43 +1,43 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Mon, 28 Aug 2017 08:03:07 -0400
-Subject: [PATCH V3 04/10] capabilities: use root_priveleged inline to
-	clarify logic
-In-Reply-To: <alpine.LRH.2.20.1708251558090.29541@namei.org>
-References: <cover.1503459890.git.rgb@redhat.com>
-	<cf456cee4480719b861c5f62f0d96f9083f9f3c4.1503459890.git.rgb@redhat.com>
-	<alpine.LRH.2.20.1708251558090.29541@namei.org>
-Message-ID: <20170828120307.GN24692@madcap2.tricolour.ca>
+From: geliangtang@gmail.com (Geliang Tang)
+Date: Mon, 28 Aug 2017 21:58:58 +0800
+Subject: [PATCH] lsm_audit: use get_task_comm
+Message-ID: <304ab87b276f87462fbeaccacb9dc1e02300df75.1502451616.git.geliangtang@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-08-25 15:58, James Morris wrote:
-> On Wed, 23 Aug 2017, Richard Guy Briggs wrote:
-> 
-> > Introduce inline root_privileged() to make use of SECURE_NONROOT
-> > easier to read.
-> > 
-> > Suggested-by: Serge Hallyn <serge@hallyn.com>
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  security/commoncap.c |    9 +++++----
-> >  1 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> Acked-by: James Morris <james.l.morris@oracle.com>
+get_task_comm() copys the task's comm under the task_lock, it's safer
+than directly using memcpy().
 
-Does anyone have the appetite to move this helper function to
-include/linux/securebits.h along with issecure() to make it more widely
-available?
+Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+---
+ security/lsm_audit.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> James Morris
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index 28d4c3a..555b1c4 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -221,7 +221,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 	BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
+ 
+ 	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
+-	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
++	audit_log_untrustedstring(ab, get_task_comm(comm, current));
+ 
+ 	switch (a->type) {
+ 	case LSM_AUDIT_DATA_NONE:
+@@ -312,7 +312,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 				char comm[sizeof(tsk->comm)];
+ 				audit_log_format(ab, " opid=%d ocomm=", pid);
+ 				audit_log_untrustedstring(ab,
+-				    memcpy(comm, tsk->comm, sizeof(comm)));
++				    get_task_comm(comm, tsk));
+ 			}
+ 		}
+ 		break;
+-- 
+2.9.3
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
