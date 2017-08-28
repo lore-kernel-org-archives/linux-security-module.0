@@ -1,27 +1,56 @@
-From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Mon, 28 Aug 2017 05:18:05 +0100
-Subject: [PATCH v6 0/6] define new fs integrity_read method
-In-Reply-To: <alpine.LRH.2.20.1708161240220.30541@namei.org>
-References: <1502808237-2035-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<alpine.LRH.2.20.1708161240220.30541@namei.org>
-Message-ID: <20170828041805.GB21125@ZenIV.linux.org.uk>
+From: alexei.starovoitov@gmail.com (Alexei Starovoitov)
+Date: Sun, 27 Aug 2017 22:26:22 -0700
+Subject: [PATCH net-next v7 05/10] landlock: Add LSM hooks related to
+	filesystem
+In-Reply-To: <3325bd7d-f3d8-2f51-384c-b5e8cee5cb91@digikod.net>
+References: <20170821000933.13024-1-mic@digikod.net>
+	<20170821000933.13024-6-mic@digikod.net>
+	<20170824025030.sxl2hkpcbzipb47y@ast-mbp>
+	<22d09137-7212-5803-af64-0964fad875c7@digikod.net>
+	<20170826011614.iqya5dqii3n7dtdb@ast-mbp>
+	<3325bd7d-f3d8-2f51-384c-b5e8cee5cb91@digikod.net>
+Message-ID: <20170828052620.kn5zq2q6dm3iud6g@ast-mbp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Aug 16, 2017 at 12:43:58PM +1000, James Morris wrote:
-> On Tue, 15 Aug 2017, Mimi Zohar wrote:
+On Sun, Aug 27, 2017 at 03:31:35PM +0200, Micka?l Sala?n wrote:
 > 
-> > To resolve this locking problem, this patch set introduces a new
-> > ->integrity_read file operation method.  Until all filesystems
-> > define the new ->integrity_read method, files that were previously
-> > measured might not be currently measured and files that were
-> > previously appraised might fail to be appraised properly.
+> > How can you add 3rd argument? All FS events would have to get it,
+> > but in some LSM hooks such argument will be meaningless, whereas
+> > in other places it will carry useful info that rule can operate on.
+> > Would that mean that we'll have FS_3 event type and only few LSM
+> > hooks will be converted to it. That works, but then we'll lose
+> > compatiblity with old rules written for FS event and that given hook.
+> > Otherwise we'd need to have fancy logic to accept old FS event
+> > into FS_3 LSM hook.
 > 
-> Are there any such filesystems in mainline which are not getting an 
-> integrity_read method in this patchset?
+> If we want to add a third argument to the FS event, then it will become
+> accessible because its type will be different than NOT_INIT. This keep
+> the compatibility with old rules because this new field was then denied.
+> 
+> If we want to add a new argument but only for a subset of the hooks used
+> by the FS event, then we need to create a new event, like FS_FCNTL. For
+> example, we may want to add a FS_RENAME event to be able to tie the
+> source file and the destination file of a rename call.
 
-A lot - all network ones, minix/sysv/ufs, isofs/udf/efs, fat/hfs/hfs+/hpfs/affs/ntfs,
-ecryptfs, reiserfs, romfs, cramfs, bfs, qnx[46], etc.
+that's exactly my point. To add another argument FS event
+to a subset of hooks will require either new FS_FOO and
+to be backwards compatible these hooks will call _both_ FS and FS_FOO
+or some magic logic on kernel side that will allow old FS rules
+to be attached to FS_FOO hooks?
+Two calls doesn't scale and if we do 'magic logic' can we do it now
+and avoid introducing events altogether?
+Like all landlock programs can be landlock type and they would need
+to declare what arg1, arg2, argN they expect. Then at attach
+time the kernel only needs to verify that hook arg types match
+what program requested.
+
+> Anyway, I added the subtype/ABI version as a safeguard in case of
+> unexpected future evolution.
+
+I don't think that abi/version field adds anything in this context.
+I still think it should simply be removed.
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
