@@ -1,25 +1,46 @@
 From: Alexander.Steffen@infineon.com (Alexander Steffen)
-Date: Thu, 31 Aug 2017 19:18:55 +0200
-Subject: [PATCH RESEND v2 0/3] tpm2-cmd: Improve self test execution
-Message-ID: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
+Date: Thu, 31 Aug 2017 19:18:56 +0200
+Subject: [PATCH RESEND v2 1/3] tpm2-cmd: Trigger only missing self tests
+In-Reply-To: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
+References: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
+Message-ID: <20170831171858.13252-2-Alexander.Steffen@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The self test logic for TPM 2.0 was probably based on the implementation
-for TPM 1.2, but did not correctly take into account some TPM 2.0 specifics.
-This patch series fixes those issues.
+tpm2_do_selftest is only used during initialization of the TPM to ensure
+that the device functions correctly. Therefore, it is sufficient to request
+only missing self tests (parameter full_test=0), not a reexecution of all
+self tests, as was done before. This allows for a faster execution of this
+command.
 
-v2:
-- Moved implementation description from comment to commit message.
+Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Alexander Steffen (3):
-  tpm2-cmd: Trigger only missing self tests
-  tpm2-cmd: Use dynamic delay to wait for self test result
-  tpm2-cmd: React correctly to RC_TESTING from self tests
-
- drivers/char/tpm/tpm2-cmd.c | 69 +++++++++++++--------------------------------
- 1 file changed, 20 insertions(+), 49 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index e1a41b7..8e940a5 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -865,7 +865,7 @@ static int tpm2_start_selftest(struct tpm_chip *chip, bool full)
+ }
+ 
+ /**
+- * tpm2_do_selftest() - run a full self test
++ * tpm2_do_selftest() - ensure that all self tests have passed
+  *
+  * @chip: TPM chip to use
+  *
+@@ -886,7 +886,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+ 
+ 	loops = jiffies_to_msecs(duration) / delay_msec;
+ 
+-	rc = tpm2_start_selftest(chip, true);
++	rc = tpm2_start_selftest(chip, false);
+ 	if (rc)
+ 		return rc;
+ 
 -- 
 2.7.4
 
