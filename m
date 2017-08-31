@@ -1,129 +1,29 @@
 From: Alexander.Steffen@infineon.com (Alexander Steffen)
-Date: Thu, 31 Aug 2017 19:18:58 +0200
-Subject: [PATCH RESEND v2 3/3] tpm2-cmd: React correctly to RC_TESTING from
-	self tests
-In-Reply-To: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
-References: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
-Message-ID: <20170831171858.13252-4-Alexander.Steffen@infineon.com>
+Date: Thu, 31 Aug 2017 19:18:55 +0200
+Subject: [PATCH RESEND v2 0/3] tpm2-cmd: Improve self test execution
+Message-ID: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The TPM can choose one of two ways to react to the TPM2_SelfTest command.
-It can either run all self tests synchronously and then return RC_SUCCESS
-once all tests were successful. Or it can choose to run the tests
-asynchronously and return RC_TESTING immediately while the self tests still
-execute in the background.
+The self test logic for TPM 2.0 was probably based on the implementation
+for TPM 1.2, but did not correctly take into account some TPM 2.0 specifics.
+This patch series fixes those issues.
 
-The previous implementation apparently was not aware of those possibilities
-and attributed RC_TESTING to some prototype chips instead. With this change
-the return code of TPM2_SelfTest is interpreted correctly, i.e. the self
-test result is polled if and only if RC_TESTING is received.
+v2:
+- Moved implementation description from comment to commit message.
 
-Unfortunately, the polling cannot be done in the most straightforward way.
-If RC_TESTING is received, ideally the code should now poll the
-selfTestDone bit in the STS register, as this avoids sending more commands,
-that might interrupt self tests executing in the background and thus
-prevent them from ever completing. But it cannot be guaranteed that this
-bit is correctly implemented for all devices, so the next best thing would
-be to use TPM2_GetTestResult to query the test result. But the response to
-that command can be very long, and the code currently lacks the
-capabilities for efficient unmarshalling, so it is difficult to execute
-this command.
+Alexander Steffen (3):
+  tpm2-cmd: Trigger only missing self tests
+  tpm2-cmd: Use dynamic delay to wait for self test result
+  tpm2-cmd: React correctly to RC_TESTING from self tests
 
-Therefore, we simply run the TPM2_SelfTest command in a loop, which should
-complete eventually, since we only request the execution of self tests that
-have not yet been done.
+ drivers/char/tpm/tpm2-cmd.c | 69 +++++++++++++--------------------------------
+ 1 file changed, 20 insertions(+), 49 deletions(-)
 
-Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm2-cmd.c | 52 ++++++++++-----------------------------------
- 1 file changed, 11 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 2178437..70ee328 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -834,64 +834,34 @@ static const struct tpm_input_header tpm2_selftest_header = {
- };
- 
- /**
-- * tpm2_continue_selftest() - start a self test
-- *
-- * @chip: TPM chip to use
-- * @full: test all commands instead of testing only those that were not
-- *        previously tested.
-- *
-- * Return: Same as with tpm_transmit_cmd with exception of RC_TESTING.
-- */
--static int tpm2_start_selftest(struct tpm_chip *chip, bool full)
--{
--	int rc;
--	struct tpm2_cmd cmd;
--
--	cmd.header.in = tpm2_selftest_header;
--	cmd.params.selftest_in.full_test = full;
--
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE, 0, 0,
--			      "continue selftest");
--
--	/* At least some prototype chips seem to give RC_TESTING error
--	 * immediately. This is a workaround for that.
--	 */
--	if (rc == TPM2_RC_TESTING) {
--		dev_warn(&chip->dev, "Got RC_TESTING, ignoring\n");
--		rc = 0;
--	}
--
--	return rc;
--}
--
--/**
-  * tpm2_do_selftest() - ensure that all self tests have passed
-  *
-  * @chip: TPM chip to use
-  *
-  * Return: Same as with tpm_transmit_cmd.
-  *
-- * During the self test TPM2 commands return with the error code RC_TESTING.
-- * Waiting is done by issuing PCR read until it executes successfully.
-+ * The TPM can either run all self tests synchronously and then return
-+ * RC_SUCCESS once all tests were successful. Or it can choose to run the tests
-+ * asynchronously and return RC_TESTING immediately while the self tests still
-+ * execute in the background. This function handles both cases and waits until
-+ * all tests have completed.
-  */
- static int tpm2_do_selftest(struct tpm_chip *chip)
- {
- 	int rc;
- 	unsigned int delay_msec = 20;
- 	long duration;
-+	struct tpm2_cmd cmd;
- 
- 	duration = jiffies_to_msecs(
- 		tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
- 
--	rc = tpm2_start_selftest(chip, false);
--	if (rc)
--		return rc;
--
- 	while (duration > 0) {
--		/* Attempt to read a PCR value */
--		rc = tpm2_pcr_read(chip, 0, NULL);
--		if (rc < 0)
--			break;
-+		cmd.header.in = tpm2_selftest_header;
-+		cmd.params.selftest_in.full_test = 0;
-+
-+		rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE,
-+				      0, 0, "continue selftest");
- 
- 		if (rc != TPM2_RC_TESTING)
- 			break;
 -- 
 2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
