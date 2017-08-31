@@ -1,104 +1,77 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 31 Aug 2017 15:37:44 -0400
-Subject: [GIT PULL] SELinux patches for v4.14
-Message-ID: <CAHC9VhRCnJAHLA8o7t0kF4a=KtA-mrmr5=okLODvb4WEntPTrQ@mail.gmail.com>
+From: chenbofeng.kernel@gmail.com (Chenbo Feng)
+Date: Thu, 31 Aug 2017 13:56:32 -0700
+Subject: [PATCH 0/3] Security: add lsm hooks for checking permissions on eBPF
+	objects
+Message-ID: <20170831205635.80256-1-chenbofeng.kernel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi James,
+From: Chenbo Feng <fengc@google.com>
 
-A relatively quiet period for SELinux, 11 patches with only two/three
-having any substantive changes.  These noteworthy changes include
-another tweak to the NNP/nosuid handling, per-file labeling for
-cgroups, and an object class fix for AF_UNIX/SOCK_RAW sockets; the
-rest of the changes are minor tweaks or administrative updates
-(Stephen's email update explains the file explosion in the diffstat).
-Everything passes the selinux-testsuite and merged cleanly on top of
-the linux-security/next branch from earlier today.
+Much like files and sockets, eBPF objects are accessed, controlled, and
+shared via a file descriptor (FD). Unlike files and sockets, the existing
+mechanism for eBPF object access control is very limited. Currently there
+are two options for granting accessing to eBPF operations: grant access to
+all processes, or only CAP_SYS_ADMIN processes. The CAP_SYS_ADMIN-only
+mode is not ideal because most users do not have this capability and
+granting a user CAP_SYS_ADMIN grants too many other security-sensitive
+permissions. It also unnecessarily allows all CAP_SYS_ADMIN processes
+access to eBPF functionality. Allowing all processes to access to eBPF
+objects is also undesirable since it has potential to allow unprivileged
+processes to consume kernel memory, and opens up attack surface to the
+kernel.
 
-Please apply.
+Adding LSM hooks maintains the status quo for systems which do not use an
+LSM, preserving compatibility with userspace, while allowing security
+modules to choose how best to handle permissions on eBPF objects. Here is
+a possible use case for the lsm hooks with selinux module:
 
-Thanks,
--Paul
+The network-control daemon (netd) creates and loads an eBPF object for
+network packet filtering and analysis. It passes the object FD to an
+unprivileged network monitor app (netmonitor), which is not allowed to
+create, modify or load eBPF objects, but is allowed to read the traffic
+stats from the object.
 
----
-The following changes since commit 31368ce83c59a5422ee621a38aeea98142d0ecf7:
+Selinux could use these hooks to grant the following permissions:
+allow netd self:bpf { create modify read?};
+allow netmonitor netd:bpf read;
 
- tomoyo: Update URLs in Documentation/admin-guide/LSM/tomoyo.rst
-  (2017-07-25 11:00:26 +1000)
+In this patch series, 5 security hooks is added to the eBPF syscall
+implementations to do permissions checks. The LSM hooks introduced to eBPF
+maps and programs can be summarized as follows:
 
-are available in the git repository at:
+	Bpf_map_create: check for the ability of creating eBPF maps.
+        Bpf_map_modify: check the ability of update and delete eBPF map
+			entries.
+        Bpf_map_read: 	check the ability of lookup map element as well as
+		      	get map keys.
+        Bpf_post_create: initialize the security struct inside struct
+			 bpf_map
+        Bpf_prog_load: check the ability for loading the eBPF program.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-  tags/selinux-pr-20170831
+In order to store the ownership and security information about eBPF maps,
+a security field pointer is added to the struct bpf_map. And a simple
+implementation of selinux check on these hooks is added in selinux
+subsystem.
 
-for you to fetch changes up to 0c3014f22dec0e1d14c8298551bfb6434638bdd9:
+Chenbo Feng (3):
+  security: bpf: Add eBPF LSM hooks to security module
+  security: bpf: Add eBPF LSM hooks and security field to eBPF map
+  selinux: bpf: Implement the selinux checks for eBPF object
 
- selinux: constify nf_hook_ops (2017-08-28 17:33:19 -0400)
+ include/linux/bpf.h                 |  3 +++
+ include/linux/lsm_hooks.h           | 41 ++++++++++++++++++++++++++++
+ include/linux/security.h            | 36 +++++++++++++++++++++++++
+ kernel/bpf/syscall.c                | 28 +++++++++++++++++++
+ security/security.c                 | 28 +++++++++++++++++++
+ security/selinux/hooks.c            | 54 +++++++++++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h |  2 ++
+ security/selinux/include/objsec.h   |  4 +++
+ 8 files changed, 196 insertions(+)
 
-----------------------------------------------------------------
-selinux/stable-4.14 PR 20170831
+--
+2.14.1.581.gf28d330327-goog
 
-----------------------------------------------------------------
-Antonio Murdaca (1):
-     selinux: allow per-file labeling for cgroupfs
-
-Arvind Yadav (1):
-     selinux: constify nf_hook_ops
-
-Luis Ressel (1):
-     selinux: Assign proper class to PF_UNIX/SOCK_RAW sockets
-
-Michal Hocko (1):
-     selinux: use GFP_NOWAIT in the AVC kmem_caches
-
-Paul Moore (3):
-     credits: update Paul Moore's info
-     selinux: update the selinux info in MAINTAINERS
-     MAINTAINERS: update the NetLabel and Labeled Networking information
-
-Stephen Smalley (4):
-     selinux: genheaders should fail if too many permissions are defined
-     selinux: Generalize support for NNP/nosuid SELinux domain transitions
-     selinux: update my email address
-     lsm_audit: update my email address
-
-CREDITS                                 |  8 ++---
-MAINTAINERS                             | 29 ++++++++++-------
-include/linux/lsm_audit.h               |  2 +-
-scripts/selinux/genheaders/genheaders.c |  7 ++++-
-security/lsm_audit.c                    |  2 +-
-security/selinux/avc.c                  | 16 +++++-----
-security/selinux/hooks.c                | 56 ++++++++++++++++++++---------
-security/selinux/include/avc.h          |  2 +-
-security/selinux/include/avc_ss.h       |  2 +-
-security/selinux/include/classmap.h     |  2 ++
-security/selinux/include/objsec.h       |  2 +-
-security/selinux/include/security.h     |  4 ++-
-security/selinux/ss/avtab.c             |  2 +-
-security/selinux/ss/avtab.h             |  2 +-
-security/selinux/ss/constraint.h        |  2 +-
-security/selinux/ss/context.h           |  2 +-
-security/selinux/ss/ebitmap.c           |  2 +-
-security/selinux/ss/ebitmap.h           |  2 +-
-security/selinux/ss/hashtab.c           |  2 +-
-security/selinux/ss/hashtab.h           |  2 +-
-security/selinux/ss/mls.c               |  2 +-
-security/selinux/ss/mls.h               |  2 +-
-security/selinux/ss/mls_types.h         |  2 +-
-security/selinux/ss/policydb.c          |  2 +-
-security/selinux/ss/policydb.h          |  2 +-
-security/selinux/ss/services.c          |  9 ++++--
-security/selinux/ss/services.h          |  2 +-
-security/selinux/ss/sidtab.c            |  2 +-
-security/selinux/ss/sidtab.h            |  2 +-
-security/selinux/ss/symtab.c            |  2 +-
-security/selinux/ss/symtab.h            |  2 +-
-31 files changed, 106 insertions(+), 71 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
