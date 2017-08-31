@@ -1,117 +1,129 @@
 From: Alexander.Steffen@infineon.com (Alexander Steffen)
-Date: Thu, 31 Aug 2017 18:58:19 +0200
-Subject: [PATCH RESEND v3 2/2] tpm_tis_spi: Use a single buffer for SPI
-	transfers
-In-Reply-To: <20170831165819.13544-1-Alexander.Steffen@infineon.com>
-References: <20170831165819.13544-1-Alexander.Steffen@infineon.com>
-Message-ID: <20170831165819.13544-3-Alexander.Steffen@infineon.com>
+Date: Thu, 31 Aug 2017 19:18:58 +0200
+Subject: [PATCH RESEND v2 3/3] tpm2-cmd: React correctly to RC_TESTING from
+	self tests
+In-Reply-To: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
+References: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
+Message-ID: <20170831171858.13252-4-Alexander.Steffen@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-A single buffer is sufficient for both tx and rx, since bytes that have
-already been sent are not used anymore and can safely be overwritten with
-the received bytes.
+The TPM can choose one of two ways to react to the TPM2_SelfTest command.
+It can either run all self tests synchronously and then return RC_SUCCESS
+once all tests were successful. Or it can choose to run the tests
+asynchronously and return RC_TESTING immediately while the self tests still
+execute in the background.
+
+The previous implementation apparently was not aware of those possibilities
+and attributed RC_TESTING to some prototype chips instead. With this change
+the return code of TPM2_SelfTest is interpreted correctly, i.e. the self
+test result is polled if and only if RC_TESTING is received.
+
+Unfortunately, the polling cannot be done in the most straightforward way.
+If RC_TESTING is received, ideally the code should now poll the
+selfTestDone bit in the STS register, as this avoids sending more commands,
+that might interrupt self tests executing in the background and thus
+prevent them from ever completing. But it cannot be guaranteed that this
+bit is correctly implemented for all devices, so the next best thing would
+be to use TPM2_GetTestResult to query the test result. But the response to
+that command can be very long, and the code currently lacks the
+capabilities for efficient unmarshalling, so it is difficult to execute
+this command.
+
+Therefore, we simply run the TPM2_SelfTest command in a loop, which should
+complete eventually, since we only request the execution of self tests that
+have not yet been done.
 
 Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm_tis_spi.c | 34 ++++++++++++++--------------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
+ drivers/char/tpm/tpm2-cmd.c | 52 ++++++++++-----------------------------------
+ 1 file changed, 11 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
-index 05ce841..5321245 100644
---- a/drivers/char/tpm/tpm_tis_spi.c
-+++ b/drivers/char/tpm/tpm_tis_spi.c
-@@ -46,9 +46,7 @@
- struct tpm_tis_spi_phy {
- 	struct tpm_tis_data priv;
- 	struct spi_device *spi_device;
--
--	u8 *tx_buf;
--	u8 *rx_buf;
-+	u8 *iobuf;
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 2178437..70ee328 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -834,64 +834,34 @@ static const struct tpm_input_header tpm2_selftest_header = {
  };
  
- static inline struct tpm_tis_spi_phy *to_tpm_tis_spi_phy(struct tpm_tis_data *data)
-@@ -71,14 +69,14 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
- 	while (len) {
- 		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
- 
--		phy->tx_buf[0] = direction | (transfer_len - 1);
--		phy->tx_buf[1] = 0xd4;
--		phy->tx_buf[2] = addr >> 8;
--		phy->tx_buf[3] = addr;
-+		phy->iobuf[0] = direction | (transfer_len - 1);
-+		phy->iobuf[1] = 0xd4;
-+		phy->iobuf[2] = addr >> 8;
-+		phy->iobuf[3] = addr;
- 
- 		memset(&spi_xfer, 0, sizeof(spi_xfer));
--		spi_xfer.tx_buf = phy->tx_buf;
--		spi_xfer.rx_buf = phy->rx_buf;
-+		spi_xfer.tx_buf = phy->iobuf;
-+		spi_xfer.rx_buf = phy->iobuf;
- 		spi_xfer.len = 4;
- 		spi_xfer.cs_change = 1;
- 
-@@ -88,9 +86,9 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
- 		if (ret < 0)
- 			goto exit;
- 
--		if ((phy->rx_buf[3] & 0x01) == 0) {
-+		if ((phy->iobuf[3] & 0x01) == 0) {
- 			// handle SPI wait states
--			phy->tx_buf[0] = 0;
-+			phy->iobuf[0] = 0;
- 
- 			for (i = 0; i < TPM_RETRY; i++) {
- 				spi_xfer.len = 1;
-@@ -99,7 +97,7 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
- 				ret = spi_sync_locked(phy->spi_device, &m);
- 				if (ret < 0)
- 					goto exit;
--				if (phy->rx_buf[0] & 0x01)
-+				if (phy->iobuf[0] & 0x01)
- 					break;
- 			}
- 
-@@ -117,7 +115,7 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
- 			spi_xfer.tx_buf = NULL;
- 		} else {
- 			spi_xfer.rx_buf = NULL;
--			memcpy(phy->tx_buf, buffer, transfer_len);
-+			memcpy(phy->iobuf, buffer, transfer_len);
- 		}
- 
- 		spi_message_init(&m);
-@@ -127,7 +125,7 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
- 			goto exit;
- 
- 		if (direction)
--			memcpy(buffer, phy->rx_buf, transfer_len);
-+			memcpy(buffer, phy->iobuf, transfer_len);
- 
- 		len -= transfer_len;
- 		buffer += transfer_len;
-@@ -196,12 +194,8 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
- 
- 	phy->spi_device = dev;
- 
--	phy->tx_buf = devm_kmalloc(&dev->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
--	if (!phy->tx_buf)
--		return -ENOMEM;
+ /**
+- * tpm2_continue_selftest() - start a self test
+- *
+- * @chip: TPM chip to use
+- * @full: test all commands instead of testing only those that were not
+- *        previously tested.
+- *
+- * Return: Same as with tpm_transmit_cmd with exception of RC_TESTING.
+- */
+-static int tpm2_start_selftest(struct tpm_chip *chip, bool full)
+-{
+-	int rc;
+-	struct tpm2_cmd cmd;
 -
--	phy->rx_buf = devm_kmalloc(&dev->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
--	if (!phy->rx_buf)
-+	phy->iobuf = devm_kmalloc(&dev->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
-+	if (!phy->iobuf)
- 		return -ENOMEM;
+-	cmd.header.in = tpm2_selftest_header;
+-	cmd.params.selftest_in.full_test = full;
+-
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE, 0, 0,
+-			      "continue selftest");
+-
+-	/* At least some prototype chips seem to give RC_TESTING error
+-	 * immediately. This is a workaround for that.
+-	 */
+-	if (rc == TPM2_RC_TESTING) {
+-		dev_warn(&chip->dev, "Got RC_TESTING, ignoring\n");
+-		rc = 0;
+-	}
+-
+-	return rc;
+-}
+-
+-/**
+  * tpm2_do_selftest() - ensure that all self tests have passed
+  *
+  * @chip: TPM chip to use
+  *
+  * Return: Same as with tpm_transmit_cmd.
+  *
+- * During the self test TPM2 commands return with the error code RC_TESTING.
+- * Waiting is done by issuing PCR read until it executes successfully.
++ * The TPM can either run all self tests synchronously and then return
++ * RC_SUCCESS once all tests were successful. Or it can choose to run the tests
++ * asynchronously and return RC_TESTING immediately while the self tests still
++ * execute in the background. This function handles both cases and waits until
++ * all tests have completed.
+  */
+ static int tpm2_do_selftest(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 	unsigned int delay_msec = 20;
+ 	long duration;
++	struct tpm2_cmd cmd;
  
- 	return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_spi_phy_ops,
+ 	duration = jiffies_to_msecs(
+ 		tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
+ 
+-	rc = tpm2_start_selftest(chip, false);
+-	if (rc)
+-		return rc;
+-
+ 	while (duration > 0) {
+-		/* Attempt to read a PCR value */
+-		rc = tpm2_pcr_read(chip, 0, NULL);
+-		if (rc < 0)
+-			break;
++		cmd.header.in = tpm2_selftest_header;
++		cmd.params.selftest_in.full_test = 0;
++
++		rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE,
++				      0, 0, "continue selftest");
+ 
+ 		if (rc != TPM2_RC_TESTING)
+ 			break;
 -- 
 2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
