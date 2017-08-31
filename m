@@ -1,116 +1,103 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Thu, 31 Aug 2017 12:09:17 -0400
-Subject: [Non-DoD Source] [PATCH 05/11] LSM: Infrastructure management
-	of the remaining blobs
-In-Reply-To: <723289df-08c6-daf3-fbff-bfae76c3a0dc@schaufler-ca.com>
-References: <bbf8bc4a-b56d-e800-4231-60058e4a88bc@schaufler-ca.com>
-	<723289df-08c6-daf3-fbff-bfae76c3a0dc@schaufler-ca.com>
-Message-ID: <1504195757.26651.10.camel@tycho.nsa.gov>
+From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
+Date: Thu, 31 Aug 2017 16:18:42 +0000
+Subject: [tpmdd-devel] [PATCH RESEND 3/3] tpm-chip: Export TPM device to
+	user space even when startup failed
+In-Reply-To: <20170830110721.edidi46sx2qgovzu@linux.intel.com>
+References: <20170824083714.10016-1-Alexander.Steffen@infineon.com>
+	<20170824083714.10016-4-Alexander.Steffen@infineon.com>
+	<20170825172021.lw3ycxqw63ubrcm2@linux.intel.com>
+	<adaaeae32ba64d979abfc4b758c63fc0@MUCSE603.infineon.com>
+	<20170829125509.55aylht3ikes3bpy@linux.intel.com>
+	<20170829151739.315ae581@kitsune.suse.cz>
+	<20170830101510.rlkh2p3zecfsrhgl@linux.intel.com>
+	<20170830102002.nufnr77whz5jzwfr@linux.intel.com>
+	<20170830123416.29117269@kitsune.suse.cz>
+	<20170830110721.edidi46sx2qgovzu@linux.intel.com>
+Message-ID: <d284fb46422f468cb2e5c70d3836be69@MUCSE603.infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-08-29 at 13:59 -0700, Casey Schaufler wrote:
-> Subject: [PATCH 05/11] LSM: Infrastructure management of the
-> remaining blobs
+> On Wed, Aug 30, 2017 at 12:34:16PM +0200, Michal Such??nek wrote:
+> > On Wed, 30 Aug 2017 13:20:02 +0300
+> > Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > > On Wed, Aug 30, 2017 at 01:15:10PM +0300, Jarkko Sakkinen wrote:
+> > > > On Tue, Aug 29, 2017 at 03:17:39PM +0200, Michal Such??nek wrote:
+> > > > > Hello,
+> > > > >
+> > > > > On Tue, 29 Aug 2017 15:55:09 +0300 Jarkko Sakkinen
+> > > > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > >
+> > > > > > On Mon, Aug 28, 2017 at 05:15:58PM +0000,
+> > > > > > Alexander.Steffen at infineon.com wrote:
+> > > > > > > But is that just because nobody bothered to implement the
+> > > > > > > necessary logic or for some other reason?
+> > > > > >
+> > > > > > We do not want user space to access broken hardware. It's a
+> > > > > > huge risk for system stability and potentially could be used
+> > > > > > for evil purposes.
+> > > > > >
+> > > > > > This is not going to mainline as it is not suitable for
+> > > > > > general consumption. You must use a patched kernel if you want
+> this.
+> > > > > >
+> > > > > > /Jarkko
+> > > > > >
+> > > > >
+> > > > > It has been pointed out that userspace applications that use
+> > > > > direct IO access exist for the purpose. So using a kernel driver
+> > > > > is an improvement over that if the interface is otherwise sane.
+> > > > >
+> > > > > What do you expect is the potential for instability or evil use?
+> > > >
+> > > > By definition the use of broken hardware can have unpredictable
+> > > > effects. Use a patched kernel if you want to do it.
+> > > >
+> > > > /Jarkko
+> > >
+> > > I.e. too many unknown unknowns for mainline.
+> > >
+> > > I could consider a solution for the TPM error case on self-test that
+> > > allows only restricted subset of commands.
+> > >
+> > > The patch description did not go to *any* detail on how it is used
+> > > so practically it's unreviewable at this point. There's a big burder
+> > > of proof and now there's only hand waving.
+> > >
+> > Hello,
+> >
+> > there was a bug patched recently in which Linux was not sending the
+> > shutdown command on system shutdown. Presumably with this bug some
+> > TPMs consider being under attack and stop performing most functions.
+> > However, you should be able to read the log if this is implemented
+> > sanely. For that the TPM needs to be accessible.
+> >
+> > There are probably other cases when the TPM might be useless for
+> > system use but it might be useful to access it. For example, does
+> > Linux handle uninitialized TPMs?
+> >
+> > Thanks
+> >
+> > Michal
+
+The two scenarios that I had in mind:
+
+1. A TPM in failure mode. This signals a broken device, yes, but it is part of the specification, so we should support it. If it was unreasonable to talk to such a device, why specify failure mode in the first place?
+
+2. A TPM in some vendor-specific mode. This is what happens during field upgrade with some Infineon TPMs. During the field upgrade process, the communication looks TPM-like (i.e. the usual 10-byte header is present), but it is not part of any (public) specification, and standard TPM commands are obviously unsupported. This works fine with the current driver, as long as you do not interrupt the upgrade process, as the driver never checks the device again during usage. But if the upgrade process is interrupted (e.g. by power loss) and the TPM has to start again in this vendor-specific mode, then the device simply disappears from the system and you have no chance to fix the problem.
+
+> Agreed. I still think it would make sense to start with a limited subset of TPM
+> commands, not with all-command-allowed.
 > 
-> Move management of the inode, ipc, key, msg_msg, sock and superblock
-> security blobs from the security modules to the infrastructure.
-> Use of the blob pointers is abstracted in the security modules.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
-> ?include/linux/lsm_hooks.h?????????|???8 +
-> ?security/security.c???????????????| 259 +++++++++++++++++++++++++++-
-> ?security/selinux/hooks.c??????????| 333 ++++++++++++--------------
-> ----------
-> ?security/selinux/include/objsec.h |??65 +++++++-
-> ?security/selinux/netlabel.c???????|??15 +-
-> ?security/selinux/selinuxfs.c??????|???4 +-
-> ?security/selinux/ss/services.c????|???3 +-
-> ?security/smack/smack.h????????????|??61 ++++++-
-> ?security/smack/smack_lsm.c????????| 343 +++++++++++-----------------
-> ----------
-> ?security/smack/smack_netfilter.c??|???8 +-
-> ?10 files changed, 599 insertions(+), 500 deletions(-)
-> 
+> I guess Alexander should be able to propose such subset.
 
-<snip>
-> @@ -319,6 +341,166 @@ int lsm_task_alloc(struct task_struct *task)
-> ?	return 0;
-> ?}
-> ?
-> +/**
-> + * lsm_inode_alloc - allocate a composite inode blob
-> + * @inode: the inode that needs a blob
-> + *
-> + * Allocate the inode blob for all the modules
-> + *
-> + * Returns 0, or -ENOMEM if memory can't be allocated.
-> + */
-> +int lsm_inode_alloc(struct inode *inode)
-> +{
-> +#ifdef CONFIG_SECURITY_LSM_DEBUG
-> +	if (inode->i_security)
-> +		pr_info("%s: Inbound inode blob is not NULL.\n",
-> __func__);
-> +#endif
-> +	if (blob_sizes.lbs_inode == 0)
-> +		return 0;
-> +
-> +	inode->i_security = kzalloc(blob_sizes.lbs_inode,
-> GFP_KERNEL);
-> +	if (inode->i_security == NULL)
-> +		return -ENOMEM;
-> +	return 0;
-> +}
+For scenario #1 you could probably come up with a list of commands that are generally useful. But once you are restricted to those five commands, you block iterative debugging of the "I see where the problem might be, could you try to execute ..." fashion by requiring the other person to patch and rebuild their kernel.
 
-NAK. See commit 7cae7e26f245151b9ccad868bf2edf8c8048d307 for why we
-moved to using our own cache for inode security blobs in SELinux; we
-don't want to regress here.  Also, you need to use GFP_NOFS here, see
-commit a02fe13297af26c13d004b1d44f391c077094ea0.
+For scenario #2 I see no chance to do that in a generic way. I could maybe tell you what the commands in this mode currently look like for Infineon TPMs, so that they can be whitelisted, but they might look different in the future and they are certainly different for other vendor's implementations.
 
-<snip>
-> @@ -570,14 +758,39 @@ EXPORT_SYMBOL(security_sb_parse_opts_str);
-> ?
-> ?int security_inode_alloc(struct inode *inode)
-> ?{
-> -	inode->i_security = NULL;
-> +	int rc = lsm_inode_alloc(inode);
-> +
-> +	if (rc)
-> +		return rc;
-> ?	return call_int_hook(inode_alloc_security, 0, inode);
-> ?}
-> ?
-> +static void inode_free_by_rcu(struct rcu_head *head)
-> +{
-> +	/*
-> +	?* The rcu head is at the start of the inode blob
-> +	?*/
-> +	kfree(head);
-> +}
-> +
-> ?void security_inode_free(struct inode *inode)
-> ?{
-> ?	integrity_inode_free(inode);
-> ?	call_void_hook(inode_free_security, inode);
-> +	/*
-> +	?* The inode may still be referenced in a path walk and
-> +	?* a call to security_inode_permission() can be made
-> +	?* after inode_free_security() is called. Ideally, the VFS
-> +	?* wouldn't do this, but fixing that is a much harder
-> +	?* job. For now, simply free the i_security via RCU, and
-> +	?* leave the current inode->i_security pointer intact.
-> +	?* The inode will be freed after the RCU grace period too.
-> +	?*/
-> +	if (inode->i_security != NULL) {
-> +		call_rcu((struct rcu_head *)inode->i_security,
-> +				inode_free_by_rcu);
-> +		inode->i_security = NULL;
+So with both scenarios you end up with a lot of infrastructure for this whitelist approach in general and add a growing list of allowed commands, that are initially never present in the kernel version where you need them most, and where it then takes several months or years until they finally reach your users through official channels. And with all that in place, you gain what exactly? Why is it even useful to whitelist functionality based on command codes? If the device is broken, it might be that just some TIS registers do not work correctly. Or maybe just some parameter combinations for specific commands do not work anymore (e.g. your RSA hardware is broken, so RSA operations fail, but ECC is still good).
 
-You can't clear inode->i_security here; see the comment above that you
-copied from the original SELinux code.
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+My point is: You already need to guard against misbehaving devices, but you cannot do so by trying to classify devices as either "good" or "bad". A device that initially looks good can turn bad at any time. So for example, you cannot run an endless loop until the good device returns the expected answer, but you always have to use proper timeouts. If such safeguards are missing somewhere, then it is already a bug that needs to be fixed. But if such safeguards are present everywhere where needed, there should be nothing that a good or a bad device can do, that harms the kernel or any (well-written) application.
+
+Alexander
+????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
