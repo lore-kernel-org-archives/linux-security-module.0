@@ -1,226 +1,165 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Sat, 30 Sep 2017 16:22:12 -0700
-Subject: [RFC][PATCH] security: Make the selinux setxattr and removexattr
-	hooks behave
-In-Reply-To: <87d167ncms.fsf@xmission.com>
-References: <87tvzmqwoi.fsf@xmission.com>
-	<1913d5c4-64ef-36c1-e8ad-c779ff5c7995@schaufler-ca.com>
-	<1506694737.5571.9.camel@tycho.nsa.gov>
-	<6f293107-6ff9-c4c7-f682-207a546c5061@schaufler-ca.com>
-	<87vak0ma00.fsf@xmission.com>
-	<db1c58f3-5a01-5276-eba7-5aac7cdcbcf5@schaufler-ca.com>
-	<87d167ncms.fsf@xmission.com>
-Message-ID: <bf18e641-91ed-0d75-f514-c059b5dfbb14@schaufler-ca.com>
+From: daniel@iogearbox.net (Daniel Borkmann)
+Date: Fri, 01 Sep 2017 00:38:40 +0200
+Subject: [PATCH 2/3] security: bpf: Add eBPF LSM hooks and security field
+	to eBPF map
+In-Reply-To: <20170831205635.80256-3-chenbofeng.kernel@gmail.com>
+References: <20170831205635.80256-1-chenbofeng.kernel@gmail.com>
+	<20170831205635.80256-3-chenbofeng.kernel@gmail.com>
+Message-ID: <59A88FF0.9010605@iogearbox.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/30/2017 1:40 PM, Eric W. Biederman wrote:
-> Casey Schaufler <casey@schaufler-ca.com> writes:
+On 08/31/2017 10:56 PM, Chenbo Feng wrote:
+> From: Chenbo Feng <fengc@google.com>
 >
->> On 9/30/2017 9:22 AM, Eric W. Biederman wrote:
->>> Casey Schaufler <casey@schaufler-ca.com> writes:
->>>
->>>> On 9/29/2017 7:18 AM, Stephen Smalley wrote:
->>>>> On Thu, 2017-09-28 at 18:16 -0700, Casey Schaufler wrote:
->>>>>> On 9/28/2017 3:34 PM, Eric W. Biederman wrote:
->>>>>>> It looks like once upon a time a long time ago selinux copied code
->>>>>>> from cap_inode_removexattr and cap_inode_setxattr into
->>>>>>> selinux_inode_setotherxattr.??However the code has now diverged and
->>>>>>> selinux is implementing a policy that is quite different than
->>>>>>> cap_inode_setxattr and cap_inode_removexattr especially when it
->>>>>>> comes
->>>>>>> to the security.capable xattr.
->>>>>> What leads you to believe that this isn't intentional?
->>>>>> It's most likely the case that this change occurred as
->>>>>> part of the first round module stacking change. What behavior
->>>>>> do you see that you're unhappy with?
->>>>>>
->>>>>>> To keep things working
->>>>>> Which "things"? How are they not "working"?
->>>>>>
->>>>>>> ?and to make the comments in security/security.c
->>>>>>> correct when the xattr is securit.capable, call cap_inode_setxattr
->>>>>>> or cap_inode_removexattr as appropriate.
->>>>>>>
->>>>>>> I suspect there is a larger conversation to be had here but this
->>>>>>> is enough to keep selinux from implementing a non-sense hard coded
->>>>>>> policy that breaks other parts of the kernel.
->>>>>> Specifics, please. Since I can't guess what problem you've
->>>>>> encountered I can't tell if it's here, in the infrastructure,
->>>>>> or in your perception of what constitutes "broken".
->>>>>>
->>>>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>>>>>> ---
->>>>>>> ?security/selinux/hooks.c | 6 ++++++
->>>>>>> ?1 file changed, 6 insertions(+)
->>>>>>>
->>>>>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>>>>>> index f5d304736852..edf4bd292dc7 100644
->>>>>>> --- a/security/selinux/hooks.c
->>>>>>> +++ b/security/selinux/hooks.c
->>>>>>> @@ -3167,6 +3167,9 @@ static int selinux_inode_setxattr(struct
->>>>>>> dentry *dentry, const char *name,
->>>>>>> ?	u32 newsid, sid = current_sid();
->>>>>>> ?	int rc = 0;
->>>>>>> ?
->>>>>>> +	if (strcmp(name, XATTR_NAME_CAPS) == 0)
->>>>>>> +		return cap_inode_setxattr(dentry, name, value,
->>>>>>> size, flags);
->>>>>>> +
->>>>>> No. Don't even think of contemplating considering embedding the cap
->>>>>> attribute check in the SELinux code. cap_inode_setxattr() is called
->>>>>> in
->>>>>> the infrastructure.
->>>>> Except that it isn't, not if any other security module is enabled and
->>>>> implements those hooks, to prevent imposing CAP_SYS_ADMIN checks when
->>>>> setting security.selinux or security.SMACK*.
->>>> OK. Yes, this bit of the infrastructure is some of the
->>>> worst I've done in a long time. This is a case where we
->>>> already need special case stacking infrastructure. It looks
->>>> like we'll have to separate setting the cap attribute from
->>>> checking the cap state in order to make this work. In any
->>>> case, the security_inode_setxattr() code is where the change
->>>> belongs. There will likely be fallout changes in the modules,
->>>> including the cap module.
->>>> ?
->>>>
->>>>> An alternative approach to fixing this would be to change the cap
->>>>> functions to only apply their checks if setting the capability
->>>>> attribute and defer any checks on other security.* attributes to either
->>>>> the security framework or the other security modules.  Then the
->>>>> framework could always call all the modules on the inode_setxattr and
->>>>> inode_removexattr hooks as with other hooks.  The security framework
->>>>> would then need to ensure that a check is still applied when setting
->>>>> security.* attributes if it isn't already handled by one of the enabled
->>>>> security modules, as you don't want unprivileged userspace to be able
->>>>> to set arbitrary security.foo attributes or to set up security.selinux
->>>>> or security.SMACK* attributes if those modules happen to be disabled.
->>>> Agreed. This isn't a two line change. Grumble.
->>>>
->>>> I can guess at what the problem might be, but I hate making
->>>> assumptions when I go to fix a problem. I will start looking
->>>> at a patch, but it would really help if I could say for sure
->>>> what I'm out to accomplish. It may be obvious to the casual
->>>> observer, but that description has not been applied to me very
->>>> often.
->>> Apologies for the delayed reply.
->>>
->>> I am looking at security_inode_setxattr.
->>>
->>> For setting attributes in the security.* the generic code in fs/xattr.c
->>> applies no permission checks.
->>>
->>> Each security module that implements an xattr in security.* then imposes
->>> it's own policy on it's own attribute.
->>>
->>> For smack the basic rule is smack_privileged(CAP_MAC_ADMIN).
->>> For selinux the basic rule is inode_or_owner_capable(inode).
->>> For commoncap the basic rule is capable_wrt_inode_uidgid(inode, CAP_SETFCAP).
->>>
->>> commoncap also applies a default policity to setting security.* xattrs.
->>> ns_capable(dentry->d_sb->s_userns, CAP_SYS_ADMIN).
->>>
->>> smack reuses that default policy by calling cap_inode_setxattr if it
->>> isn't a smack security.* xattr.
->>>
->>> selinux has what looks like an old copy of the commoncap checks for
->>> the security.* in selinux_inode_setotherxattr.  Testing for
->>> capable(CAP_SETFCAP) for security.capable and capable(CAP_SYS_ADMIN)
->>> for the others.
->>>
->>> With the added complication that selinux calls
->>> selinux_inode_setotherxattr also for the remove_xattr case.  So fixing
->>> this in selinux_inode_setotherxattr is not appropriate.
->>>
->>> I believe selinux also has general policy hooks it applies to all
->>> invocations of setxattr.
->>>
->>> So I think to really fix this we need to separate the cases of is this
->>> your security modules attribute from general policy checks added by the
->>> security modules.  Perhaps something like this for
->>> security_inode_setxattr:
->>>
->>> Hmm.  Looking at least ima also has the distinction between protecting
->>> it's own xattr writes and running generaly security module policy on
->>> xattr writes.
->>>
->>> int security_inode_setxattr(struct dentry *dentry, const char *name,
->>> 			    const void *value, size_t size, int flags)
->>> {
->>> 	int ret = 0;
->>>
->>> 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->>> 		return 0;
->>>
->>> 	if (strncmp(name, XATTR_SECURITY_PREFIX,
->>> 			sizeof(XATTR_SECURITY_PREFIX) - 1) == 0) {
->>> 		/* Call the security modules and see if they all return
->>>                  * -EOPNOTSUPP if so apply the default permission
->>>                  * check of ns_capable(dentry->d_sb->s_user_ns, CAP_SYS_ADMIN)
->>>                  * otherwise if one of the security modules supports
->>> 		 * this attribute (signaled by returning something other
->>> 		 * -EOPNOTSUPP) then set ret to that result.
->>>                  *
->>>                  * The security modules include at least smack, selinux,
->>> 		 * commoncap, ima, and evm.
->>>                  */
->>>                  ret = magic_inode_protect_setxattr(dentry, name, value, size);
->>>         }
->>> 	if (ret)
->>> 		return ret;
->>>
->>>         /* Run all of the security module policy against this setxattr call */
->>>         return magic_inode_policy_setxattr(dentry, name, value, size);
->>> }
->>>
->>> Eric
->> Yup, that's pretty much what I'm thinking. It's unfortunate
->> that the magic_ API isn't fully implemented. There's going to
->> be a good deal of code surgery instead. Is there an observed
->> problem today? This is going to have to get addressed for stacking,
->> so if there isn't a behavioral issue that impacts something real
->> I would like to defer spending significant time on it. Do you have
->> a case where this is not working correctly?
-> Merged as of 4.14-rc1 is the support for user namespace root to set
-> sercurity.capable.  This fails when selinux is loaded.
-
-OK. Is the failure unique to SELinux, or does it fail with
-Smack as well?
-
-> removexattr has the same problem and the code is a little less
-> convoluted in that case.
-
-Right. Because removexattr is a simpler situation.
-
-> Not being able to set the capability when you should be able to is
-> very noticable.  Like running into a brick wall noticable.
-
-Ah, now you've identified the problem. Yes, I would agree that you've
-uncovered an undesirable behavior.
-
-> Which is where the minimal patch for selinux comes in.  I think it
-> solves the exact case in question, even if it isn't the perfect long
-> term solution.
-
-If the problem is unique to SELinux I can see your logic. If it
-isn't, that is, if it's also a problem with any other security
-module, there either needs to be a fix for that/those module/s
-as well or a "real" fix.
-
-I'm not opposed to the SELinux short term fix if you can say
-that that's the only module with the problem.
-
+> Introduce a pointer into struct bpf_map to hold the security information
+> about the map. The actual security struct varies based on the security
+> models implemented. Place the LSM hooks before each of the unrestricted
+> eBPF operations, the map_update_elem and map_delete_elem operations are
+> checked by security_map_modify. The map_lookup_elem and map_get_next_key
+> operations are checked by securtiy_map_read.
 >
-> Eric
+> Signed-off-by: Chenbo Feng <fengc@google.com>
+
+Against which tree is this by the way, net-next? There are
+changes here which require a rebase of your set.
+
+> ---
+>   include/linux/bpf.h  |  3 +++
+>   kernel/bpf/syscall.c | 28 ++++++++++++++++++++++++++++
+>   2 files changed, 31 insertions(+)
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index b69e7a5869ff..ca3e6ff7091d 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -53,6 +53,9 @@ struct bpf_map {
+>   	struct work_struct work;
+>   	atomic_t usercnt;
+>   	struct bpf_map *inner_map_meta;
+> +#ifdef CONFIG_SECURITY
+> +	void *security;
+> +#endif
+>   };
+>
+>   /* function argument constraints */
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 045646da97cc..b15580bcf3b1 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -279,6 +279,10 @@ static int map_create(union bpf_attr *attr)
+>   	if (err)
+>   		return -EINVAL;
+>
+> +	err = security_map_create();
+
+Seems a bit limited to me, don't you want to be able to
+also differentiate between different map types? Same goes
+for security_prog_load() wrt prog types, no?
+
+> +	if (err)
+> +		return -EACCES;
+> +
+>   	/* find map type and init map: hashtable vs rbtree vs bloom vs ... */
+>   	map = find_and_alloc_map(attr);
+>   	if (IS_ERR(map))
+> @@ -291,6 +295,10 @@ static int map_create(union bpf_attr *attr)
+>   	if (err)
+>   		goto free_map_nouncharge;
+>
+> +	err = security_post_create(map);
+> +	if (err < 0)
+> +		goto free_map;
+> +
+
+So the hook you implement in patch 3/3 does:
+
++static int selinux_bpf_post_create(struct bpf_map *map)
++{
++	struct bpf_security_struct *bpfsec;
++
++	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
++	if (!bpfsec)
++		return -ENOMEM;
++
++	bpfsec->sid = current_sid();
++	map->security = bpfsec;
++
++	return 0;
++}
+
+Where do you kfree() bpfsec when the map gets released
+normally or in error path?
+
+>   	err = bpf_map_alloc_id(map);
+>   	if (err)
+>   		goto free_map;
+> @@ -410,6 +418,10 @@ static int map_lookup_elem(union bpf_attr *attr)
+>   	if (IS_ERR(map))
+>   		return PTR_ERR(map);
+>
+> +	err = security_map_read(map);
+> +	if (err)
+> +		return -EACCES;
+
+How about actually dropping ref?
+
+> +
+>   	key = memdup_user(ukey, map->key_size);
+>   	if (IS_ERR(key)) {
+>   		err = PTR_ERR(key);
+> @@ -490,6 +502,10 @@ static int map_update_elem(union bpf_attr *attr)
+>   	if (IS_ERR(map))
+>   		return PTR_ERR(map);
+>
+> +	err = security_map_modify(map);
+> +	if (err)
+> +		return -EACCES;
+
+Ditto ...
+
+>   	key = memdup_user(ukey, map->key_size);
+>   	if (IS_ERR(key)) {
+>   		err = PTR_ERR(key);
+> @@ -573,6 +589,10 @@ static int map_delete_elem(union bpf_attr *attr)
+>   	if (IS_ERR(map))
+>   		return PTR_ERR(map);
+>
+> +	err = security_map_modify(map);
+> +	if (err)
+> +		return -EACCES;
+
+Ditto ...
+
+>   	key = memdup_user(ukey, map->key_size);
+>   	if (IS_ERR(key)) {
+>   		err = PTR_ERR(key);
+> @@ -616,6 +636,10 @@ static int map_get_next_key(union bpf_attr *attr)
+>   	if (IS_ERR(map))
+>   		return PTR_ERR(map);
+>
+> +	err = security_map_read(map);
+> +	if (err)
+> +		return -EACCES;
+
+And once again here ... :(
+
+>   	if (ukey) {
+>   		key = memdup_user(ukey, map->key_size);
+>   		if (IS_ERR(key)) {
+> @@ -935,6 +959,10 @@ static int bpf_prog_load(union bpf_attr *attr)
+>   	if (CHECK_ATTR(BPF_PROG_LOAD))
+>   		return -EINVAL;
+>
+> +	err = security_prog_load();
+> +	if (err)
+> +		return -EACCES;
+> +
+>   	if (attr->prog_flags & ~BPF_F_STRICT_ALIGNMENT)
+>   		return -EINVAL;
+>
 >
 
-
-.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
