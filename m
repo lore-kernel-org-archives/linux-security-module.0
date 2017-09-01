@@ -1,113 +1,193 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Mon, 31 Jul 2017 16:51:21 -0700
-Subject: [PATCH v4 03/15] binfmt: Introduce secureexec flag
-In-Reply-To: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-References: <1501545093-56634-1-git-send-email-keescook@chromium.org>
-Message-ID: <1501545093-56634-4-git-send-email-keescook@chromium.org>
+From: fengc@google.com (Chenbo Feng)
+Date: Thu, 31 Aug 2017 17:29:42 -0700
+Subject: [PATCH 2/3] security: bpf: Add eBPF LSM hooks and security field
+	to eBPF map
+In-Reply-To: <59A88FF0.9010605@iogearbox.net>
+References: <20170831205635.80256-1-chenbofeng.kernel@gmail.com>
+	<20170831205635.80256-3-chenbofeng.kernel@gmail.com>
+	<59A88FF0.9010605@iogearbox.net>
+Message-ID: <CAMOXUJmW7-mOaWq1=qa8FXpvHdXSdAfDSboR-QN-u6DPkkCkkg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The bprm_secureexec hook can be moved earlier. Right now, it is called
-during create_elf_tables(), via load_binary(), via search_binary_handler(),
-via exec_binprm(). Nearly all (see exception below) state used by
-bprm_secureexec is created during the bprm_set_creds hook, called from
-prepare_binprm().
+On Thu, Aug 31, 2017 at 3:38 PM, Daniel Borkmann <daniel@iogearbox.net> wrote:
+> On 08/31/2017 10:56 PM, Chenbo Feng wrote:
+>>
+>> From: Chenbo Feng <fengc@google.com>
+>>
+>> Introduce a pointer into struct bpf_map to hold the security information
+>> about the map. The actual security struct varies based on the security
+>> models implemented. Place the LSM hooks before each of the unrestricted
+>> eBPF operations, the map_update_elem and map_delete_elem operations are
+>> checked by security_map_modify. The map_lookup_elem and map_get_next_key
+>> operations are checked by securtiy_map_read.
+>>
+>> Signed-off-by: Chenbo Feng <fengc@google.com>
+>
+>
+> Against which tree is this by the way, net-next? There are
+> changes here which require a rebase of your set.
+>
 
-For all LSMs (except commoncaps described next), only the first execution
-of bprm_set_creds takes any effect (they all check bprm->called_set_creds
-which prepare_binprm() sets after the first call to the bprm_set_creds
-hook). However, all these LSMs also only do anything with bprm_secureexec
-when they detected a secure state during their first run of bprm_set_creds.
-Therefore, it is functionally identical to move the detection into
-bprm_set_creds, since the results from secureexec here only need to be
-based on the first call to the LSM's bprm_set_creds hook.
-
-The single exception is that the commoncaps secureexec hook also examines
-euid/uid and egid/gid differences which are controlled by bprm_fill_uid(),
-via prepare_binprm(), which can be called multiple times (e.g.
-binfmt_script, binfmt_misc), and may clear the euid/egid for the final
-load (i.e. the script interpreter). However, while commoncaps specifically
-ignores bprm->cred_prepared, and runs its bprm_set_creds hook each time
-prepare_binprm() may get called, it needs to base the secureexec decision
-on the final call to bprm_set_creds. As a result, it will need special
-handling.
-
-To begin this refactoring, this adds the secureexec flag to the bprm
-struct, and calls the secureexec hook during setup_new_exec(). This is
-safe since all the cred work is finished (and past the point of no return).
-This explicit call will be removed in later patches once the hook has been
-removed.
-
-Cc: David Howells <dhowells@redhat.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Serge Hallyn <serge@hallyn.com>
----
- fs/binfmt_elf.c         | 2 +-
- fs/binfmt_elf_fdpic.c   | 2 +-
- fs/exec.c               | 2 ++
- include/linux/binfmts.h | 6 ++++++
- 4 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 5075fd5c62c8..7f6ec4dac13d 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -254,7 +254,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID, from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID, from_kgid_munged(cred->user_ns, cred->egid));
-- 	NEW_AUX_ENT(AT_SECURE, security_bprm_secureexec(bprm));
-+	NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
- 	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
- #ifdef ELF_HWCAP2
- 	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index cf93a4fad012..5aa9199dfb13 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -650,7 +650,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
- 	NEW_AUX_ENT(AT_GID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->gid));
- 	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
--	NEW_AUX_ENT(AT_SECURE,	security_bprm_secureexec(bprm));
-+	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
- 	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
- 
- #ifdef ARCH_DLINFO
-diff --git a/fs/exec.c b/fs/exec.c
-index 90bd5b85814f..77244367c773 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1322,6 +1322,8 @@ EXPORT_SYMBOL(would_dump);
- 
- void setup_new_exec(struct linux_binprm * bprm)
- {
-+	bprm->secureexec |= security_bprm_secureexec(bprm);
-+
- 	arch_pick_mmap_layout(current->mm);
- 
- 	current->sas_ss_sp = current->sas_ss_size = 0;
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 3cd98e8bc9dc..6cfd36a27d4e 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -34,6 +34,12 @@ struct linux_binprm {
- 		cap_effective:1;/* true if has elevated effective capabilities,
- 				 * false if not; except for init which inherits
- 				 * its parent's caps anyway */
-+		/*
-+		 * Set by bprm_set_creds hook to indicate a privilege-gaining
-+		 * exec has happened. Used to sanitize execution environment
-+		 * and to set AT_SECURE auxv for glibc.
-+		 */
-+		secureexec:1;
- #ifdef __alpha__
- 	unsigned int taso:1;
- #endif
--- 
-2.7.4
-
+This patch series is rebased on security subsystem since patch 1/3 is
+a patch for
+security system I assume. But I am not sure where this specific patch
+should go in.
+If I should submit this one to net-next, I will rebase it against
+net-next and submit again.
+>> ---
+>>   include/linux/bpf.h  |  3 +++
+>>   kernel/bpf/syscall.c | 28 ++++++++++++++++++++++++++++
+>>   2 files changed, 31 insertions(+)
+>>
+>> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+>> index b69e7a5869ff..ca3e6ff7091d 100644
+>> --- a/include/linux/bpf.h
+>> +++ b/include/linux/bpf.h
+>> @@ -53,6 +53,9 @@ struct bpf_map {
+>>         struct work_struct work;
+>>         atomic_t usercnt;
+>>         struct bpf_map *inner_map_meta;
+>> +#ifdef CONFIG_SECURITY
+>> +       void *security;
+>> +#endif
+>>   };
+>>
+>>   /* function argument constraints */
+>> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+>> index 045646da97cc..b15580bcf3b1 100644
+>> --- a/kernel/bpf/syscall.c
+>> +++ b/kernel/bpf/syscall.c
+>> @@ -279,6 +279,10 @@ static int map_create(union bpf_attr *attr)
+>>         if (err)
+>>                 return -EINVAL;
+>>
+>> +       err = security_map_create();
+>
+>
+> Seems a bit limited to me, don't you want to be able to
+> also differentiate between different map types? Same goes
+> for security_prog_load() wrt prog types, no?
+>
+I don't want to introduce extra complexity into it if not necessary.
+so I only included the
+thing needed for the selinux implementation for now.  But I agree that the map
+and program type information could be useful when people developing more complex
+security checks. I will add a union bpf_attr *attr pointer into the
+security hook functions
+for future needs.
+>> +       if (err)
+>> +               return -EACCES;
+>> +
+>>         /* find map type and init map: hashtable vs rbtree vs bloom vs ...
+>> */
+>>         map = find_and_alloc_map(attr);
+>>         if (IS_ERR(map))
+>> @@ -291,6 +295,10 @@ static int map_create(union bpf_attr *attr)
+>>         if (err)
+>>                 goto free_map_nouncharge;
+>>
+>> +       err = security_post_create(map);
+>> +       if (err < 0)
+>> +               goto free_map;
+>> +
+>
+>
+> So the hook you implement in patch 3/3 does:
+>
+> +static int selinux_bpf_post_create(struct bpf_map *map)
+> +{
+> +       struct bpf_security_struct *bpfsec;
+> +
+> +       bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
+> +       if (!bpfsec)
+> +               return -ENOMEM;
+> +
+> +       bpfsec->sid = current_sid();
+> +       map->security = bpfsec;
+> +
+> +       return 0;
+> +}
+>
+> Where do you kfree() bpfsec when the map gets released
+> normally or in error path?
+>
+Will add it in next version. Thanks for point it out.
+>>         err = bpf_map_alloc_id(map);
+>>         if (err)
+>>                 goto free_map;
+>> @@ -410,6 +418,10 @@ static int map_lookup_elem(union bpf_attr *attr)
+>>         if (IS_ERR(map))
+>>                 return PTR_ERR(map);
+>>
+>> +       err = security_map_read(map);
+>> +       if (err)
+>> +               return -EACCES;
+>
+>
+> How about actually dropping ref?
+>
+May bad, thanks again.
+>> +
+>>         key = memdup_user(ukey, map->key_size);
+>>         if (IS_ERR(key)) {
+>>                 err = PTR_ERR(key);
+>> @@ -490,6 +502,10 @@ static int map_update_elem(union bpf_attr *attr)
+>>         if (IS_ERR(map))
+>>                 return PTR_ERR(map);
+>>
+>> +       err = security_map_modify(map);
+>> +       if (err)
+>> +               return -EACCES;
+>
+>
+> Ditto ...
+>
+>>         key = memdup_user(ukey, map->key_size);
+>>         if (IS_ERR(key)) {
+>>                 err = PTR_ERR(key);
+>> @@ -573,6 +589,10 @@ static int map_delete_elem(union bpf_attr *attr)
+>>         if (IS_ERR(map))
+>>                 return PTR_ERR(map);
+>>
+>> +       err = security_map_modify(map);
+>> +       if (err)
+>> +               return -EACCES;
+>
+>
+> Ditto ...
+>
+>>         key = memdup_user(ukey, map->key_size);
+>>         if (IS_ERR(key)) {
+>>                 err = PTR_ERR(key);
+>> @@ -616,6 +636,10 @@ static int map_get_next_key(union bpf_attr *attr)
+>>         if (IS_ERR(map))
+>>                 return PTR_ERR(map);
+>>
+>> +       err = security_map_read(map);
+>> +       if (err)
+>> +               return -EACCES;
+>
+>
+> And once again here ... :(
+>
+>
+>>         if (ukey) {
+>>                 key = memdup_user(ukey, map->key_size);
+>>                 if (IS_ERR(key)) {
+>> @@ -935,6 +959,10 @@ static int bpf_prog_load(union bpf_attr *attr)
+>>         if (CHECK_ATTR(BPF_PROG_LOAD))
+>>                 return -EINVAL;
+>>
+>> +       err = security_prog_load();
+>> +       if (err)
+>> +               return -EACCES;
+>> +
+>>         if (attr->prog_flags & ~BPF_F_STRICT_ALIGNMENT)
+>>                 return -EINVAL;
+>>
+>>
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
