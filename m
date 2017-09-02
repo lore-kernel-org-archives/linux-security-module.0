@@ -1,108 +1,63 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Sat, 2 Sep 2017 00:37:32 -0500
-Subject: [PATCH V3 02/10] capabilities: intuitive names for cap gain status
-In-Reply-To: <20170901101843.GZ29957@madcap2.tricolour.ca>
-References: <cover.1503459890.git.rgb@redhat.com>
-	<9e3f99d3c2cbfee24fb3af7ec9b4cf93e4430112.1503459890.git.rgb@redhat.com>
-	<20170824160344.GB10515@mail.hallyn.com>
-	<20170824161912.GI24692@madcap2.tricolour.ca>
-	<20170824163717.GK10515@mail.hallyn.com>
-	<CAGXu5jJbgoeBpaHt=2u+KkSsewwVdjZmtxMMuFOv927XkW0uig@mail.gmail.com>
-	<20170828091908.GL24692@madcap2.tricolour.ca>
-	<20170828110835.GM24692@madcap2.tricolour.ca>
-	<20170901101843.GZ29957@madcap2.tricolour.ca>
-Message-ID: <20170902053732.GA7726@mail.hallyn.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Sat, 2 Sep 2017 08:31:05 +0200
+Subject: [PATCH v4 next 1/3] modules:capabilities: allow
+	__request_module() to take a capability argument
+In-Reply-To: <CAGXu5jJPk5a_66FpMd6D-XdWyzD7sxCPQirz1C6_hEFu4qsP5g@mail.gmail.com>
+References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
+	<1495454226-10027-2-git-send-email-tixxdz@gmail.com>
+	<CAGXu5jL9jRDkHj20kf4O6VrjiEpvXGzN3nn5Lw4fT2sx_Xg=+A@mail.gmail.com>
+	<CAEiveUe5cTCet6=Uzn64YANRZ2Qyqk5OSXqU3MybevbkbeNR3Q@mail.gmail.com>
+	<CAGXu5j+L1aEWqi7DC4StwAorfG4da0XqrouMvbz07cJ7gYi0AQ@mail.gmail.com>
+	<CAEiveUeZhHtPyLv8=3BsPh5Anr2ynnzD0bprUkeKUGygtRQKsw@mail.gmail.com>
+	<CAGXu5jK5exWBV+ub8ys86Ubu1vKwN=miOZxwp3zdWaWEfuJddQ@mail.gmail.com>
+	<CAEiveUeKU-zxXUeeuTZ2Sf1NrbH+t9JjwaWOK_2varRDsfbEWg@mail.gmail.com>
+	<CAGXu5jJPk5a_66FpMd6D-XdWyzD7sxCPQirz1C6_hEFu4qsP5g@mail.gmail.com>
+Message-ID: <CAEiveUdQzHjG0OSvG=63PBOmjL19f5-qM8Fap51xSM5eDUcihw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 01, 2017 at 06:18:43AM -0400, Richard Guy Briggs wrote:
-> On 2017-08-28 07:08, Richard Guy Briggs wrote:
-> > On 2017-08-28 05:19, Richard Guy Briggs wrote:
-> > > On 2017-08-24 12:06, Kees Cook wrote:
-> > > > On Thu, Aug 24, 2017 at 9:37 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > > Quoting Richard Guy Briggs (rgb at redhat.com):
-> > > > >> On 2017-08-24 11:03, Serge E. Hallyn wrote:
-> > > > >> > Quoting Richard Guy Briggs (rgb at redhat.com):
-> > > > >> > > Introduce macros cap_gained, cap_grew, cap_full to make the use of the
-> > > > >> > > negation of is_subset() easier to read and analyse.
-> > > > >> > >
-> > > > >> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > >> > > ---
-> > > > >> > >  security/commoncap.c |   16 ++++++++++------
-> > > > >> > >  1 files changed, 10 insertions(+), 6 deletions(-)
-> > > > >> > >
-> > > > >> > > diff --git a/security/commoncap.c b/security/commoncap.c
-> > > > >> > > index b7fbf77..6f05ec0 100644
-> > > > >> > > --- a/security/commoncap.c
-> > > > >> > > +++ b/security/commoncap.c
-> > > > >> > > @@ -513,6 +513,12 @@ void handle_privileged_root(struct linux_binprm *bprm, bool has_cap, bool *effec
-> > > > >> > >           *effective = true;
-> > > > >> > >  }
-> > > > >> > >
-> > > > >> >
-> > > > >> > It's subjective and so might be just me, but I think I'd find it easier
-> > > > >> > to read if it was cap_gained(source, target, field) and cap_grew(cred, source, target)
-> > > > >>
-> > > > >> In more than one place, I wanted to put the parameter that I was trying
-> > > > >> to read aloud closest to the function name to make reading it flow
-> > > > >> better, leaving the parameters less critical to comprehension towards
-> > > > >> the end.
-> > > > >
-> > > > > And I see that in the final patch it looks nicer the way you have it.
-> > > > >
-> > > > >> > This looks correct though, so either way
-> > > > >> >
-> > > > >> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > > > >>
-> > > > >> Thanks.  Did you want to put this through, or send it through Paul's
-> > > > >> audit tree?
-> > > > >
-> > > > > If Paul's around I'm happy to have it go through his tree.
-> > > > 
-> > > > Is this series based against -next with the changes that touch commoncap.c?
-> > > 
-> > > This series is against pcmoore's audit/next tree (I know I'm missing two
-> > > commits but they pose no conflict.).
-> > > 
-> > > Which -next tree are you talking about?  I might guess
-> > > linux-security/next or linux-next/master (I have at least a dozen "next"
-> > > in my git repo config.)
-> > > 
-> > > I did eventually find your patches in sfr's tree and in your for-next/kspp branch.
-> > > 
-> > > I'll have a look at the commoncap.c changes including the elimination of cap_effective.
-> > > 
-> > > > Also, did you validate this with the existing LTP tests and selftests?
-> > > > 
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/secureexec&id=ee67ae7ef6ff499137292ac8a9dfe86096796283
-> > > 
-> > > No.  I will look into doing that.  Thanks for the suggestion.
-> 
-> Ok, I'm running the kernel self-test
-> 
-> 	make TARGETS="capabilities" kselftest
-> 
-> and getting a good way through it and then hit this on an unmodified kernel:
-> 
-> 	[RUN]   +++ Tests with uid != 0 +++
-> 	[NOTE]  Using global UIDs for tests
-> 	[OK]    Child succeeded
-> 	test_execve: chdir to private tmpfs: Permission denied
+Hi Kees,
 
-Hm, just a hunch, anything in syslog?  The fact that you can mount the
-private tmp but not chdir to it just sounds like selinux contexts.
+On Thu, Jun 1, 2017 at 9:10 PM, Kees Cook <keescook@google.com> wrote:
+> On Thu, Jun 1, 2017 at 7:56 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
+...
+>
+>> BTW Kees, also in next version I won't remove the
+>> capable(CAP_NET_ADMIN) check from [1]
+>> even if there is the new request_module_cap(), I would like it to be
+>> in a different patches, this way we go incremental
+>> and maybe it is better to merge what we have now ?  and follow up
+>> later, and of course if other maintainers agree too!
+>
+> Yes, incremental. I would suggest first creating the API changes to
+> move a basic require_cap test into the LSM (which would drop the
+> open-coded capable() checks in the net code), and then add the
+> autoload logic in the following patches. That way the "infrastructure"
+> changes happen separately and do not change any behaviors, but moves
+> the caps test down where its wanted in the LSM, before then augmenting
+> the logic.
+>
+>> I just need a bit of free time to check again everything and will send
+>> a v5 with all requested changes.
+>
+> Great, thank you!
+>
 
-Might run it under strace...
+So sorry was busy these last months, I picked it again, will send v5 after the
+merge window.
 
-Boy, that's an interesting testcase.  
+Kees I am looking on a way to integrate a test for it, we should use
+something like
+the example here [1] or maybe something else ? and which module to use ?
 
-> 	[FAIL]  Child failed
-> 	selftests:  test_execve [FAIL]
-> 
-> Is this a known limitation or have I got something weird in my runtime
-> environment that is killing it at this part of the test?
+I still did not sort this out, if anyone has some suggestions, thank
+you in advance!
 
 
+[1] http://openwall.com/lists/kernel-hardening/2017/05/22/7
+
+-- 
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
