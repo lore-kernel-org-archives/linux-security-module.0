@@ -1,63 +1,35 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Sat, 2 Sep 2017 08:31:05 +0200
-Subject: [PATCH v4 next 1/3] modules:capabilities: allow
-	__request_module() to take a capability argument
-In-Reply-To: <CAGXu5jJPk5a_66FpMd6D-XdWyzD7sxCPQirz1C6_hEFu4qsP5g@mail.gmail.com>
-References: <1495454226-10027-1-git-send-email-tixxdz@gmail.com>
-	<1495454226-10027-2-git-send-email-tixxdz@gmail.com>
-	<CAGXu5jL9jRDkHj20kf4O6VrjiEpvXGzN3nn5Lw4fT2sx_Xg=+A@mail.gmail.com>
-	<CAEiveUe5cTCet6=Uzn64YANRZ2Qyqk5OSXqU3MybevbkbeNR3Q@mail.gmail.com>
-	<CAGXu5j+L1aEWqi7DC4StwAorfG4da0XqrouMvbz07cJ7gYi0AQ@mail.gmail.com>
-	<CAEiveUeZhHtPyLv8=3BsPh5Anr2ynnzD0bprUkeKUGygtRQKsw@mail.gmail.com>
-	<CAGXu5jK5exWBV+ub8ys86Ubu1vKwN=miOZxwp3zdWaWEfuJddQ@mail.gmail.com>
-	<CAEiveUeKU-zxXUeeuTZ2Sf1NrbH+t9JjwaWOK_2varRDsfbEWg@mail.gmail.com>
-	<CAGXu5jJPk5a_66FpMd6D-XdWyzD7sxCPQirz1C6_hEFu4qsP5g@mail.gmail.com>
-Message-ID: <CAEiveUdQzHjG0OSvG=63PBOmjL19f5-qM8Fap51xSM5eDUcihw@mail.gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 2 Sep 2017 13:16:44 +0300
+Subject: [PATCH RESEND v2 0/3] tpm2-cmd: Improve self test execution
+In-Reply-To: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
+References: <20170831171858.13252-1-Alexander.Steffen@infineon.com>
+Message-ID: <20170902101644.x254cv2jmlw3jruu@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Kees,
+On Thu, Aug 31, 2017 at 07:18:55PM +0200, Alexander Steffen wrote:
+> The self test logic for TPM 2.0 was probably based on the implementation
+> for TPM 1.2, but did not correctly take into account some TPM 2.0 specifics.
+> This patch series fixes those issues.
+> 
+> v2:
+> - Moved implementation description from comment to commit message.
+> 
+> Alexander Steffen (3):
+>   tpm2-cmd: Trigger only missing self tests
+>   tpm2-cmd: Use dynamic delay to wait for self test result
+>   tpm2-cmd: React correctly to RC_TESTING from self tests
+> 
+>  drivers/char/tpm/tpm2-cmd.c | 69 +++++++++++++--------------------------------
+>  1 file changed, 20 insertions(+), 49 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
 
-On Thu, Jun 1, 2017 at 9:10 PM, Kees Cook <keescook@google.com> wrote:
-> On Thu, Jun 1, 2017 at 7:56 AM, Djalal Harouni <tixxdz@gmail.com> wrote:
-...
->
->> BTW Kees, also in next version I won't remove the
->> capable(CAP_NET_ADMIN) check from [1]
->> even if there is the new request_module_cap(), I would like it to be
->> in a different patches, this way we go incremental
->> and maybe it is better to merge what we have now ?  and follow up
->> later, and of course if other maintainers agree too!
->
-> Yes, incremental. I would suggest first creating the API changes to
-> move a basic require_cap test into the LSM (which would drop the
-> open-coded capable() checks in the net code), and then add the
-> autoload logic in the following patches. That way the "infrastructure"
-> changes happen separately and do not change any behaviors, but moves
-> the caps test down where its wanted in the LSM, before then augmenting
-> the logic.
->
->> I just need a bit of free time to check again everything and will send
->> a v5 with all requested changes.
->
-> Great, thank you!
->
+Great, just have to test these.
 
-So sorry was busy these last months, I picked it again, will send v5 after the
-merge window.
-
-Kees I am looking on a way to integrate a test for it, we should use
-something like
-the example here [1] or maybe something else ? and which module to use ?
-
-I still did not sort this out, if anyone has some suggestions, thank
-you in advance!
-
-
-[1] http://openwall.com/lists/kernel-hardening/2017/05/22/7
-
--- 
-tixxdz
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
