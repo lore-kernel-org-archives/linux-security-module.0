@@ -1,274 +1,151 @@
-From: jmorris@namei.org (James Morris)
-Date: Mon, 4 Sep 2017 20:29:54 +1000 (AEST)
-Subject: [GIT PULL] Security subsystem updates for 4.14
-Message-ID: <alpine.LRH.2.21.1709041959220.27950@namei.org>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Mon, 4 Sep 2017 08:08:42 -0400
+Subject: setcap/getcap limitations
+In-Reply-To: <20170831155637.GB12295@mail.hallyn.com>
+References: <20170511211146.GZ25861@madcap2.tricolour.ca>
+	<20170512033718.GA29494@mail.hallyn.com>
+	<20170820032017.GO29957@madcap2.tricolour.ca>
+	<20170831155637.GB12295@mail.hallyn.com>
+Message-ID: <20170904120842.GC24692@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
+On 2017-08-31 10:56, Serge E. Hallyn wrote:
+> Quoting Richard Guy Briggs (rgb at redhat.com):
+> > On 2017-05-11 22:37, Serge E. Hallyn wrote:
+> > > Quoting Richard Guy Briggs (rgb at redhat.com):
+> > > > Capabilities gurus,
+> > > 
+> > > I cc:d Andrew as he maintains the source package,
+> > > 
+> > > > These may arguably be useless or meaningless combinations, but I found them
+> > > > sufficiently puzzling as to need to document and report the behaviour.  They
+> > > > appear to be leftovers from a time when fE may have been a bitfield rather than
+> > > > a boolean.
+> > > > 
+> > > > 
+> > > > 1 - BUG: setcap manpage refers to non-existant cap_from_text(3) and cap_set_file(3)
+> > > > manpages (fedora).  (It turns out it is in libcap-devel which makes
+> > > > sense, but isn't very useful for users of setcap/getcap(8) rather than
+> > > > developers.)
+> > > 
+> > > Hm, yeah, I suppose.  In the libcap source though they all come
+> > > together.  Perhaps this is cause for distro bugs to make a
+> > > common libcap-doc package which both libcap-devel and libcap2-bin
+> > > depend on?  Really not sure of the best solution.
+> > 
+> > I agree it sounds like a distro-level issue, thanks.
+> > 
+> > > > 2 - BUG: setcap requires dummy capability present to set or clear effective bit
+> > > 
+> > > Getting ready for a short road trip, will look at the rest this weekend.
+> > 
+> > Any further thoughts on the three below?
+> 
+> Sorry!  Yes, responses inline below.
+> 
+> > > > While attempting to issue the setcap command to set or clear the effective bit,
+> > > > the latter of which is a boolean rather than a capability set, a fatal error
+> > > > was returned with a usage message that didn't make much sense:
+> > > > 	# setcap +e /tmp/test
+> > > > 	fatal error: Invalid argument
+> > > > 	usage: setcap [-q] [-v] (-r|-|<caps>) <filename> [ ... (-r|-|<capsN>) <filenameN> ]
+> > > >  	Note <filename> must be a regular (non-symlink) file.
+> > > > So in order to set it, I need to use a dummy capability, such as:
+> > > > 	# setcap cap_sys_admin+e /tmp/test
+> 
+> This I think is a bug that should be fixed in setcap.  Like you say, just
+> setcap -e /tmp/test should work.
 
-Here are the security subsystem updates for 4.14.  Highlights:
+Ok, bug 1...
 
-AppArmor:
-  - Add mediation of mountpoints and signals
-  - Add support for absolute root view based labels
-  - add base infastructure for socket mediation
+> > > > 3- BUG: getcap doesn't show effective bit set if no other fP or fI bits are set
+> > > > 
+> > > > 	# setcap cap_sys_admin+pe /tmp/test
+> > > > 	# getcap /tmp/test
+> > > > 	/tmp/test = cap_sys_admin+ep
+> > > > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
+> > > > 	security.capability=0x0100000200002000000000000000000000000000
+> > > > 	# setfattr -n security.capability -v 0x0100000200000000000000000000000000000000 /tmp/test
+> > > > 	# getcap /tmp/test 
+> > > > 	/tmp/test =
+> > > > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
+> > > > 	security.capability=0x0100000200000000000000000000000000000000
+> > > > 	# setcap cap_sys_admin-p /tmp/test
+> > > > 	# getfattr --absolute-names --e hex -n security.capability /tmp/test
+> > > > 	# file: /tmp/test
+> > > > 	security.capability=0x0000000200000000000000000000000000000000
+> > > > So, getcap lies, where getfattr is more honest but awkward.
+> 
+> Yeah I'd call this a bug too.  In practice, from the kernel's point of
+> view, it's true there is no effective bit set that requires a p or i, but
+> this can lead to a dangerous situation where a a tool now only added cap_net_admin
+> to the permitted set, but the kernel recognized it as effective.
 
-LSM:
-  - Remove unused security_task_create() hook
+Bug 2...
 
-TPM: 
-  - Some constification and minor updates.
+> > > > Q: How do I set one fP capability and a different fI capability?
+> 
+> > > > >From looking at the manpage for cap_from_text, it appears that capability sets
+> > > > can be specified in a similar manner to chmod(1), using "=", "+" and "-"
+> > > > operators, but pracitical poking doesn't seem to work that way.  "+" seems to
+> > > > work like "=" and "-" seems to clear all except the version field.
+> > > > Other than resorting to setfattr, how can I set something like
+> > > > cap_sys_admin+p with cap_audit_read,cap_audit_write,cap_audit_control+i ?
+> 
+> The manpage points to you to cap_from_text which gives you an example - you
+> put it in quotes :)
+> 
+> ubuntu at oci:~$ sudo setcap "cap_sys_admin+p cap_net_admin+i" capsh
+> ubuntu at oci:~$ getfattr --absolute-names --e hex -n security.capability capsh
+> # file: capsh
+> security.capability=0x0000000200002000001000000000000000000000
 
-IMA: 
-  - A new integrity_read file operation method, avoids races when 
-    calculating file hashes
+Oops, ok, fair enough.
 
-SELinux:
-  - from Paul Moore:
-  "A relatively quiet period for SELinux, 11 patches with only two/three
-   having any substantive changes.  These noteworthy changes include 
-   another tweak to the NNP/nosuid handling, per-file labeling for 
-   cgroups, and an object class fix for AF_UNIX/SOCK_RAW sockets; the rest 
-   of the changes are minor tweaks or administrative updates (Stephen's 
-   email update explains the file explosion in the diffstat)."
+> > > > 4 - BUG: The capabilities version doesn't get cleared when all cap bits are
+> > > > cleared.  This fools kernel into thinking there are fcaps set.
+> > > > 
+> > > > As can be seen above, if setcap is used with "<capability>-<p|e|i>" to unset
+> > > > capabilities then the version field is leftover, set.  Arguably the -r option
+> > > > should have been used to remove the attribute entirely, but in this case, the
+> > > > kernel assumes that capabilities are in use due to a valid version number
+> > > > present (VFS_CAP_REVISION_MASK).  This could be solved in the kernel by
+> > > > clearing that attribute field entirely if there are no values set other than
+> > > > the version number, or by having "has_cap" check for a value more than just the
+> > > > version number.  Is it possible to remove some capabilities from a file but not
+> > > > all?  Or is it intended to simply specify the new set of capabilities that are
+> > > > to be set and ignore or strip away the unwanted ones from the set?
+> 
+> Yeah I'm gonna gree this seems like a bug which could have subtle consequences.
 
-Seccomp:
-  - from Kees Cook:
-  "Major additions:
-   - sysctl and seccomp operation to discover available actions. (tyhicks) 
-   - new per-filter configurable logging infrastructure and sysctl. (tyhicks) 
-   - SECCOMP_RET_LOG to log allowed syscalls. (tyhicks) 
-   - SECCOMP_RET_KILL_PROCESS as the new strictest possible action. 
-   - self-tests for new behaviors."
+Bug 3...
 
+> Do you have time to address these?  If not, I may find time later in the year,
+> but not right now.  So I'm wondering how we should track these, since there is
+> no issue tracker at https://git.kernel.org/pub/scm/linux/kernel/git/morgan/libcap.git/
+> If I'm not stepping on toes, I could create a copy of the kernel.org tree at github
+> to track issues and pull requests...  But I'm pretty sure I'd be stepping on toes.
 
-And nothing for Smack, for the first time perhaps.
+If it were kernel work, I could probably fit it in, but userspace stuff
+is going to need more ramp up with the specific packages involved which
+is harder to know when I can slot that in.
 
+Tracking it would be helpful.  How much work would it be to convince
+Andrew to enable a bugtracker on that git repo?  I'd offer to enter them
+in the audit userspace git repo bugtracker, but that would
+pollute/dillute it.
 
-Please pull.
+> -serge
 
----
+- RGB
 
-The following changes since commit 81a84ad3cb5711cec79f4dd53a4ce026b092c432:
-
-  Merge branch 'docs-next' of git://git.lwn.net/linux (2017-09-03 21:07:29 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-
-Antonio Murdaca (1):
-      selinux: allow per-file labeling for cgroupfs
-
-Arvind Yadav (3):
-      tpm: tpm_crb: constify acpi_device_id.
-      tpm: vtpm: constify vio_device_id
-      selinux: constify nf_hook_ops
-
-Christoph Hellwig (1):
-      ima: use fs method to read integrity data
-
-Christos Gkekas (1):
-      apparmor: Fix logical error in verify_header()
-
-Dan Carpenter (1):
-      apparmor: Fix an error code in aafs_create()
-
-Enric Balletbo i Serra (1):
-      Documentation: tpm: add powered-while-suspended binding documentation
-
-Geert Uytterhoeven (1):
-      apparmor: Fix shadowed local variable in unpack_trans_table()
-
-Hamza Attak (1):
-      tpm: replace msleep() with  usleep_range() in TPM 1.2/2.0 generic drivers
-
-James Morris (3):
-      sync to Linus v4.13-rc2 for subsystem developers to work against
-      Merge tag 'seccomp-next' of git://git.kernel.org/.../kees/linux into next
-      Merge tag 'selinux-pr-20170831' of git://git.kernel.org/.../pcmoore/selinux into next
-
-John Johansen (13):
-      apparmor: Redundant condition: prev_ns. in [label.c:1498]
-      apparmor: add the ability to mediate signals
-      apparmor: add mount mediation
-      apparmor: cleanup conditional check for label in label_print
-      apparmor: add support for absolute root view based labels
-      apparmor: make policy_unpack able to audit different info messages
-      apparmor: add more debug asserts to apparmorfs
-      apparmor: add base infastructure for socket mediation
-      apparmor: move new_null_profile to after profile lookup fns()
-      apparmor: fix race condition in null profile creation
-      apparmor: ensure unconfined profiles have dfas initialized
-      apparmor: fix incorrect type assignment when freeing proxies
-      apparmor: fix build failure on sparc caused by undeclared, signals
-
-Kees Cook (9):
-      selftests/seccomp: Add tests for basic ptrace actions
-      selftests/seccomp: Add simple seccomp overhead benchmark
-      selftests/seccomp: Refactor RET_ERRNO tests
-      seccomp: Provide matching filter for introspection
-      seccomp: Rename SECCOMP_RET_KILL to SECCOMP_RET_KILL_THREAD
-      seccomp: Introduce SECCOMP_RET_KILL_PROCESS
-      seccomp: Implement SECCOMP_RET_KILL_PROCESS action
-      selftests/seccomp: Test thread vs process killing
-      samples: Unrename SECCOMP_RET_KILL
-
-Luis Ressel (1):
-      selinux: Assign proper class to PF_UNIX/SOCK_RAW sockets
-
-Michal Hocko (1):
-      selinux: use GFP_NOWAIT in the AVC kmem_caches
-
-Michal Suchanek (1):
-      tpm: ibmvtpm: simplify crq initialization and document crq format
-
-Mimi Zohar (6):
-      ima: don't remove the securityfs policy file
-      libfs: define simple_read_iter_from_buffer
-      efivarfs: replaces the read file operation with read_iter
-      ima: always measure and audit files in policy
-      ima: define "dont_failsafe" policy action rule
-      ima: define "fs_unsafe" builtin policy
-
-Paul Moore (4):
-      credits: update Paul Moore's info
-      selinux: update the selinux info in MAINTAINERS
-      MAINTAINERS: update the NetLabel and Labeled Networking information
-      MAINTAINERS: update the NetLabel and Labeled Networking information
-
-Stefan Berger (1):
-      security: fix description of values returned by cap_inode_need_killpriv
-
-Stephen Smalley (4):
-      selinux: genheaders should fail if too many permissions are defined
-      selinux: Generalize support for NNP/nosuid SELinux domain transitions
-      selinux: update my email address
-      lsm_audit: update my email address
-
-Tetsuo Handa (2):
-      LSM: Remove security_task_create() hook.
-      tomoyo: Update URLs in Documentation/admin-guide/LSM/tomoyo.rst
-
-Tyler Hicks (6):
-      seccomp: Sysctl to display available actions
-      seccomp: Operation for checking if an action is available
-      seccomp: Sysctl to configure actions that are allowed to be logged
-      seccomp: Selftest for detection of filter flag support
-      seccomp: Filter flag to log all actions except SECCOMP_RET_ALLOW
-      seccomp: Action to log before allowing
-
- CREDITS                                            |    8 +-
- Documentation/ABI/testing/ima_policy               |    3 +-
- Documentation/admin-guide/LSM/tomoyo.rst           |   24 +-
- Documentation/admin-guide/kernel-parameters.txt    |    8 +-
- .../devicetree/bindings/security/tpm/tpm-i2c.txt   |    6 +
- Documentation/networking/filter.txt                |    2 +-
- Documentation/sysctl/kernel.txt                    |    1 +
- Documentation/userspace-api/seccomp_filter.rst     |   52 ++-
- MAINTAINERS                                        |   29 +-
- drivers/char/tpm/tpm-interface.c                   |   10 +-
- drivers/char/tpm/tpm.h                             |    9 +-
- drivers/char/tpm/tpm2-cmd.c                        |    2 +-
- drivers/char/tpm/tpm_crb.c                         |    2 +-
- drivers/char/tpm/tpm_ibmvtpm.c                     |   98 ++-
- drivers/char/tpm/tpm_infineon.c                    |    6 +-
- drivers/char/tpm/tpm_tis_core.c                    |    8 +-
- fs/btrfs/file.c                                    |    1 +
- fs/efivarfs/file.c                                 |   12 +-
- fs/ext2/file.c                                     |   17 +
- fs/ext4/file.c                                     |   20 +
- fs/f2fs/file.c                                     |    1 +
- fs/jffs2/file.c                                    |    1 +
- fs/jfs/file.c                                      |    1 +
- fs/libfs.c                                         |   32 +
- fs/nilfs2/file.c                                   |    1 +
- fs/ramfs/file-mmu.c                                |    1 +
- fs/ramfs/file-nommu.c                              |    1 +
- fs/ubifs/file.c                                    |    1 +
- fs/xfs/xfs_file.c                                  |   21 +
- include/linux/audit.h                              |    6 +-
- include/linux/fs.h                                 |    3 +
- include/linux/lsm_audit.h                          |    2 +-
- include/linux/lsm_hooks.h                          |    7 -
- include/linux/seccomp.h                            |    3 +-
- include/linux/security.h                           |    6 -
- include/uapi/linux/seccomp.h                       |   23 +-
- kernel/fork.c                                      |    4 -
- kernel/seccomp.c                                   |  321 +++++++++-
- mm/shmem.c                                         |    1 +
- scripts/selinux/genheaders/genheaders.c            |    7 +-
- security/apparmor/.gitignore                       |    1 +
- security/apparmor/Makefile                         |   43 ++-
- security/apparmor/apparmorfs.c                     |   37 +-
- security/apparmor/domain.c                         |    4 +-
- security/apparmor/file.c                           |   30 +
- security/apparmor/include/apparmor.h               |    2 +
- security/apparmor/include/audit.h                  |   39 +-
- security/apparmor/include/domain.h                 |    5 +
- security/apparmor/include/ipc.h                    |    6 +
- security/apparmor/include/label.h                  |    1 +
- security/apparmor/include/mount.h                  |   54 ++
- security/apparmor/include/net.h                    |  114 ++++
- security/apparmor/include/perms.h                  |    5 +-
- security/apparmor/include/policy.h                 |   13 +
- security/apparmor/include/sig_names.h              |   98 +++
- security/apparmor/ipc.c                            |   99 +++
- security/apparmor/label.c                          |   36 +-
- security/apparmor/lib.c                            |    5 +-
- security/apparmor/lsm.c                            |  472 +++++++++++++
- security/apparmor/mount.c                          |  696 ++++++++++++++++++++
- security/apparmor/net.c                            |  184 ++++++
- security/apparmor/policy.c                         |  166 +++---
- security/apparmor/policy_ns.c                      |    2 +
- security/apparmor/policy_unpack.c                  |  105 +++-
- security/commoncap.c                               |    6 +-
- security/integrity/iint.c                          |   20 +-
- security/integrity/ima/ima.h                       |    1 +
- security/integrity/ima/ima_api.c                   |   67 ++-
- security/integrity/ima/ima_crypto.c                |   10 +
- security/integrity/ima/ima_fs.c                    |    4 +-
- security/integrity/ima/ima_main.c                  |   19 +-
- security/integrity/ima/ima_policy.c                |   41 ++-
- security/lsm_audit.c                               |    2 +-
- security/security.c                                |    5 -
- security/selinux/avc.c                             |   16 +-
- security/selinux/hooks.c                           |   56 ++-
- security/selinux/include/avc.h                     |    2 +-
- security/selinux/include/avc_ss.h                  |    2 +-
- security/selinux/include/classmap.h                |    2 +
- security/selinux/include/objsec.h                  |    2 +-
- security/selinux/include/security.h                |    4 +-
- security/selinux/ss/avtab.c                        |    2 +-
- security/selinux/ss/avtab.h                        |    2 +-
- security/selinux/ss/constraint.h                   |    2 +-
- security/selinux/ss/context.h                      |    2 +-
- security/selinux/ss/ebitmap.c                      |    2 +-
- security/selinux/ss/ebitmap.h                      |    2 +-
- security/selinux/ss/hashtab.c                      |    2 +-
- security/selinux/ss/hashtab.h                      |    2 +-
- security/selinux/ss/mls.c                          |    2 +-
- security/selinux/ss/mls.h                          |    2 +-
- security/selinux/ss/mls_types.h                    |    2 +-
- security/selinux/ss/policydb.c                     |    2 +-
- security/selinux/ss/policydb.h                     |    2 +-
- security/selinux/ss/services.c                     |    9 +-
- security/selinux/ss/services.h                     |    2 +-
- security/selinux/ss/sidtab.c                       |    2 +-
- security/selinux/ss/sidtab.h                       |    2 +-
- security/selinux/ss/symtab.c                       |    2 +-
- security/selinux/ss/symtab.h                       |    2 +-
- tools/testing/selftests/seccomp/Makefile           |   18 +-
- .../testing/selftests/seccomp/seccomp_benchmark.c  |   99 +++
- tools/testing/selftests/seccomp/seccomp_bpf.c      |  610 +++++++++++++++---
- 103 files changed, 3540 insertions(+), 469 deletions(-)
- create mode 100644 security/apparmor/include/mount.h
- create mode 100644 security/apparmor/include/net.h
- create mode 100644 security/apparmor/include/sig_names.h
- create mode 100644 security/apparmor/mount.c
- create mode 100644 security/apparmor/net.c
- create mode 100644 tools/testing/selftests/seccomp/seccomp_benchmark.c
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
