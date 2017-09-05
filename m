@@ -1,107 +1,91 @@
 From: rgb@redhat.com (Richard Guy Briggs)
-Date: Tue,  5 Sep 2017 02:46:05 -0400
-Subject: [PATCH V4 05/10] capabilities: use intuitive names for id changes
+Date: Tue,  5 Sep 2017 02:46:06 -0400
+Subject: [PATCH V4 06/10] capabilities: move audit log decision to function
 In-Reply-To: <cover.1504591358.git.rgb@redhat.com>
 References: <cover.1504591358.git.rgb@redhat.com>
-Message-ID: <89d36249a96b5dce96c30608916e5c2aa2b77744.1504591358.git.rgb@redhat.com>
+Message-ID: <36700dd2a846de06fc5f6585e94d2f261f6f3083.1504591358.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Introduce a number of inlines to make the use of the negation of
-uid_eq() easier to read and analyse.
+Move the audit log decision logic to its own function to isolate the
+complexity in one place.
 
+Suggested-by: Serge Hallyn <serge@hallyn.com>
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
 Acked-by: James Morris <james.l.morris@oracle.com>
 ---
- security/commoncap.c |   28 ++++++++++++++++++++++------
- 1 files changed, 22 insertions(+), 6 deletions(-)
+ security/commoncap.c |   50 ++++++++++++++++++++++++++++++--------------------
+ 1 files changed, 30 insertions(+), 20 deletions(-)
 
 diff --git a/security/commoncap.c b/security/commoncap.c
-index 1904f49..d37ebec 100644
+index d37ebec..eae7431 100644
 --- a/security/commoncap.c
 +++ b/security/commoncap.c
-@@ -474,6 +474,15 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_f
+@@ -527,6 +527,32 @@ static inline bool __is_setuid(struct cred *new, const struct cred *old)
+ static inline bool __is_setgid(struct cred *new, const struct cred *old)
+ { return !gid_eq(new->egid, old->gid); }
  
- static inline bool root_privileged(void) { return !issecure(SECURE_NOROOT); }
- 
-+static inline bool __is_real(kuid_t uid, struct cred *cred)
-+{ return uid_eq(cred->uid, uid); }
++/*
++ * Audit candidate if current->cap_effective is set
++ *
++ * We do not bother to audit if 3 things are true:
++ *   1) cap_effective has all caps
++ *   2) we are root
++ *   3) root is supposed to have all caps (SECURE_NOROOT)
++ * Since this is just a normal root execing a process.
++ *
++ * Number 1 above might fail if you don't have a full bset, but I think
++ * that is interesting information to audit.
++ */
++static inline bool nonroot_raised_pE(struct cred *cred, kuid_t root)
++{
++	bool ret = false;
 +
-+static inline bool __is_eff(kuid_t uid, struct cred *cred)
-+{ return uid_eq(cred->euid, uid); }
-+
-+static inline bool __is_suid(kuid_t uid, struct cred *cred)
-+{ return !__is_real(uid, cred) && __is_eff(uid, cred); }
-+
- static void handle_privileged_root(struct linux_binprm *bprm, bool has_fcap,
- 				   bool *effective, kuid_t root_uid)
- {
-@@ -485,7 +494,7 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_fcap,
- 	 * for a setuid root binary run by a non-root user.  Do set it
- 	 * for a root user just to cause least surprise to an admin.
- 	 */
--	if (has_fcap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
-+	if (has_fcap && __is_suid(root_uid, new)) {
- 		warn_setuid_and_fcaps_mixed(bprm->filename);
- 		return;
- 	}
-@@ -496,12 +505,12 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_fcap,
- 	 *
- 	 * If only the real uid is 0, we do not set the effective bit.
- 	 */
--	if (uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid)) {
-+	if (__is_eff(root_uid, new) || __is_real(root_uid, new)) {
- 		/* pP' = (cap_bset & ~0) | (pI & ~0) */
- 		new->cap_permitted = cap_combine(old->cap_bset,
- 						 old->cap_inheritable);
- 	}
--	if (uid_eq(new->euid, root_uid))
-+	if (__is_eff(root_uid, new))
- 		*effective = true;
- }
- 
-@@ -511,6 +520,13 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_fcap,
- 	!cap_issubset(cred->cap_##target, cred->cap_##source)
- #define __cap_full(field, cred) \
- 	cap_issubset(CAP_FULL_SET, cred->cap_##field)
-+
-+static inline bool __is_setuid(struct cred *new, const struct cred *old)
-+{ return !uid_eq(new->euid, old->uid); }
-+
-+static inline bool __is_setgid(struct cred *new, const struct cred *old)
-+{ return !gid_eq(new->egid, old->gid); }
++	if (__cap_grew(effective, ambient, cred)) {
++		if (!__cap_full(effective, cred) ||
++		    !__is_eff(root, cred) || !__is_real(root, cred) ||
++		    !root_privileged()) {
++			ret = true;
++		}
++	}
++	return ret;
++}
 +
  /**
   * cap_bprm_set_creds - Set up the proposed credentials for execve().
   * @bprm: The execution parameters, including the proposed creds
-@@ -548,7 +564,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	 *
- 	 * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
- 	 */
--	is_setid = !uid_eq(new->euid, old->uid) || !gid_eq(new->egid, old->gid);
-+	is_setid = __is_setuid(new, old) || __is_setgid(new, old);
+@@ -604,26 +630,10 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	if (WARN_ON(!cap_ambient_invariant_ok(new)))
+ 		return -EPERM;
  
- 	if ((is_setid || __cap_gained(permitted, new, old)) &&
- 	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
-@@ -602,7 +618,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	 */
- 	if (__cap_grew(effective, ambient, new)) {
- 		if (!__cap_full(effective, new) ||
--		    !uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid) ||
-+		    !__is_eff(root_uid, new) || !__is_real(root_uid, new) ||
- 		    !root_privileged()) {
- 			ret = audit_log_bprm_fcaps(bprm, new, old);
- 			if (ret < 0)
-@@ -619,7 +635,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	bprm->cap_elevated = 0;
- 	if (is_setid) {
- 		bprm->cap_elevated = 1;
--	} else if (!uid_eq(new->uid, root_uid)) {
-+	} else if (!__is_real(root_uid, new)) {
- 		if (effective ||
- 		    __cap_grew(permitted, ambient, new))
- 			bprm->cap_elevated = 1;
+-	/*
+-	 * Audit candidate if current->cap_effective is set
+-	 *
+-	 * We do not bother to audit if 3 things are true:
+-	 *   1) cap_effective has all caps
+-	 *   2) we are root
+-	 *   3) root is supposed to have all caps (SECURE_NOROOT)
+-	 * Since this is just a normal root execing a process.
+-	 *
+-	 * Number 1 above might fail if you don't have a full bset, but I think
+-	 * that is interesting information to audit.
+-	 */
+-	if (__cap_grew(effective, ambient, new)) {
+-		if (!__cap_full(effective, new) ||
+-		    !__is_eff(root_uid, new) || !__is_real(root_uid, new) ||
+-		    !root_privileged()) {
+-			ret = audit_log_bprm_fcaps(bprm, new, old);
+-			if (ret < 0)
+-				return ret;
+-		}
++	if (nonroot_raised_pE(new, root_uid)) {
++		ret = audit_log_bprm_fcaps(bprm, new, old);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	new->securebits &= ~issecure_mask(SECURE_KEEP_CAPS);
 -- 
 1.7.1
 
