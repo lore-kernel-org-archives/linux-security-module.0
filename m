@@ -1,51 +1,79 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Tue,  5 Sep 2017 15:38:44 +0300
-Subject: [PATCH v8 05/20] crypto: marvell/cesa: remove redundant backlog
-	checks on EBUSY
+Date: Tue,  5 Sep 2017 15:38:42 +0300
+Subject: [PATCH v8 03/20] net: use -EAGAIN for transient busy indication
 In-Reply-To: <1504615144-29770-1-git-send-email-gilad@benyossef.com>
 References: <1504615144-29770-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1504615144-29770-6-git-send-email-gilad@benyossef.com>
+Message-ID: <1504615144-29770-4-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Now that -EBUSY return code only indicates backlog queueing
-we can safely remove the now redundant check for the
-CRYPTO_TFM_REQ_MAY_BACKLOG flag when -EBUSY is returned.
+Replace -EBUSY with -EAGAIN when handling transient busy
+indication in the absence of backlog.
 
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/crypto/marvell/cesa.c | 3 +--
- drivers/crypto/marvell/cesa.h | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/marvell/cesa.c b/drivers/crypto/marvell/cesa.c
-index 6e7a5c7..0c3909d 100644
---- a/drivers/crypto/marvell/cesa.c
-+++ b/drivers/crypto/marvell/cesa.c
-@@ -183,8 +183,7 @@ int mv_cesa_queue_req(struct crypto_async_request *req,
- 	spin_lock_bh(&engine->lock);
- 	ret = crypto_enqueue_request(&engine->queue, req);
- 	if ((mv_cesa_req_get_type(creq) == CESA_DMA_REQ) &&
--	    (ret == -EINPROGRESS ||
--	    (ret == -EBUSY && req->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)))
-+	    (ret == -EINPROGRESS || ret == -EBUSY))
- 		mv_cesa_tdma_chain(engine, creq);
- 	spin_unlock_bh(&engine->lock);
+---
+
+Please squash this patch with the previous one when merging upstream.
+---
+ net/ipv4/ah4.c  | 2 +-
+ net/ipv4/esp4.c | 2 +-
+ net/ipv6/ah6.c  | 2 +-
+ net/ipv6/esp6.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/net/ipv4/ah4.c b/net/ipv4/ah4.c
+index 37db44f..049cb0a 100644
+--- a/net/ipv4/ah4.c
++++ b/net/ipv4/ah4.c
+@@ -240,7 +240,7 @@ static int ah_output(struct xfrm_state *x, struct sk_buff *skb)
+ 		if (err == -EINPROGRESS)
+ 			goto out;
  
-diff --git a/drivers/crypto/marvell/cesa.h b/drivers/crypto/marvell/cesa.h
-index b7872f6..63c8457 100644
---- a/drivers/crypto/marvell/cesa.h
-+++ b/drivers/crypto/marvell/cesa.h
-@@ -763,7 +763,7 @@ static inline int mv_cesa_req_needs_cleanup(struct crypto_async_request *req,
- 	 * the backlog and will be processed later. There's no need to
- 	 * clean it up.
- 	 */
--	if (ret == -EBUSY && req->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)
-+	if (ret == -EBUSY)
- 		return false;
+-		if (err == -EBUSY)
++		if (err == -EAGAIN)
+ 			err = NET_XMIT_DROP;
+ 		goto out_free;
+ 	}
+diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
+index b00e4a4..ff8e088 100644
+--- a/net/ipv4/esp4.c
++++ b/net/ipv4/esp4.c
+@@ -432,7 +432,7 @@ int esp_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
+ 	case -EINPROGRESS:
+ 		goto error;
  
- 	/* Request wasn't queued, we need to clean it up */
+-	case -EBUSY:
++	case -EAGAIN:
+ 		err = NET_XMIT_DROP;
+ 		break;
+ 
+diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
+index 7802b72..ba0c145 100644
+--- a/net/ipv6/ah6.c
++++ b/net/ipv6/ah6.c
+@@ -443,7 +443,7 @@ static int ah6_output(struct xfrm_state *x, struct sk_buff *skb)
+ 		if (err == -EINPROGRESS)
+ 			goto out;
+ 
+-		if (err == -EBUSY)
++		if (err == -EAGAIN)
+ 			err = NET_XMIT_DROP;
+ 		goto out_free;
+ 	}
+diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
+index 89910e2..1a71ee5 100644
+--- a/net/ipv6/esp6.c
++++ b/net/ipv6/esp6.c
+@@ -396,7 +396,7 @@ int esp6_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info
+ 	case -EINPROGRESS:
+ 		goto error;
+ 
+-	case -EBUSY:
++	case -EAGAIN:
+ 		err = NET_XMIT_DROP;
+ 		break;
+ 
 -- 
 2.1.4
 
