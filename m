@@ -1,61 +1,73 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 5 Sep 2017 22:05:55 +0300
-Subject: [PATCH v2] tpm-dev-common: Reject too short writes
-In-Reply-To: <20170904173642.5988-1-Alexander.Steffen@infineon.com>
-References: <20170904173642.5988-1-Alexander.Steffen@infineon.com>
-Message-ID: <20170905190555.gfnpoohbptbjvbg3@linux.intel.com>
+From: fengc@google.com (Chenbo Feng)
+Date: Tue, 5 Sep 2017 14:59:38 -0700
+Subject: [PATCH 2/3] security: bpf: Add eBPF LSM hooks and security field
+	to eBPF map
+In-Reply-To: <20170901020520.uifv6b7tvelgxumf@ast-mbp>
+References: <20170831205635.80256-1-chenbofeng.kernel@gmail.com>
+	<20170831205635.80256-3-chenbofeng.kernel@gmail.com>
+	<20170901020520.uifv6b7tvelgxumf@ast-mbp>
+Message-ID: <CAMOXUJnF=UoWM7xm-Uk-zyhA1N9exjtDf8Xt+_EF2Kj6YUV0OQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 04, 2017 at 07:36:42PM +0200, Alexander Steffen wrote:
-> tpm_transmit() does not offer an explicit interface to indicate the number
-> of valid bytes in the communication buffer. Instead, it relies on the
-> commandSize field in the TPM header that is encoded within the buffer.
-> Therefore, ensure that a) enough data has been written to the buffer, so
-> that the commandSize field is present and b) the commandSize field does not
-> announce more data than has been written to the buffer.
-> 
-> This should have been fixed with CVE-2011-1161 long ago, but apparently
-> a correct version of that patch never made it into the kernel.
-> 
-> Cc: stable at vger.kernel.org
-> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> ---
-> v2:
-> - Moved all changes to tpm_common_write in a single patch.
-> 
->  drivers/char/tpm/tpm-dev-common.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index 610638a..ac25574 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -99,7 +99,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
->  	if (atomic_read(&priv->data_pending) != 0)
->  		return -EBUSY;
->  
-> -	if (in_size > TPM_BUFSIZE)
-> +	if (in_size > sizeof(priv->data_buffer) || in_size < 6 ||
-> +	    in_size < be32_to_cpu(*((__be32 *) (buf + 2))))
->  		return -E2BIG;
->  
->  	mutex_lock(&priv->buffer_mutex);
-> -- 
-> 2.7.4
-> 
-
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-There's now some delay getting patches to my git tree because next week
-is conference week and I have lots of stuff to do before I depart
-Finland. I'm sorry about that.
-
-At latest I push these during the plane trip (I can remotely access
-test machines with plane internet connection, not the first time I'm
-doing this).
-
-/Jarkko
+On Thu, Aug 31, 2017 at 7:05 PM, Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Thu, Aug 31, 2017 at 01:56:34PM -0700, Chenbo Feng wrote:
+>> From: Chenbo Feng <fengc@google.com>
+>>
+>> Introduce a pointer into struct bpf_map to hold the security information
+>> about the map. The actual security struct varies based on the security
+>> models implemented. Place the LSM hooks before each of the unrestricted
+>> eBPF operations, the map_update_elem and map_delete_elem operations are
+>> checked by security_map_modify. The map_lookup_elem and map_get_next_key
+>> operations are checked by securtiy_map_read.
+>>
+>> Signed-off-by: Chenbo Feng <fengc@google.com>
+>
+> ...
+>
+>> @@ -410,6 +418,10 @@ static int map_lookup_elem(union bpf_attr *attr)
+>>       if (IS_ERR(map))
+>>               return PTR_ERR(map);
+>>
+>> +     err = security_map_read(map);
+>> +     if (err)
+>> +             return -EACCES;
+>> +
+>>       key = memdup_user(ukey, map->key_size);
+>>       if (IS_ERR(key)) {
+>>               err = PTR_ERR(key);
+>> @@ -490,6 +502,10 @@ static int map_update_elem(union bpf_attr *attr)
+>>       if (IS_ERR(map))
+>>               return PTR_ERR(map);
+>>
+>> +     err = security_map_modify(map);
+>
+> I don't feel these extra hooks are really thought through.
+> With such hook you'll disallow map_update for given map. That's it.
+> The key/values etc won't be used in such security decision.
+> In such case you don't need such hooks in update/lookup at all.
+> Only in map_creation and object_get calls where FD can be received.
+> In other words I suggest to follow standard unix practices:
+> Do permissions checks in open() and allow read/write() if FD is valid.
+> Same here. Do permission checks in prog_load/map_create/obj_pin/get
+> and that will be enough to jail bpf subsystem.
+> bpf cmds that need to be fast (like lookup and update) should not
+> have security hooks.
+>
+Thanks for pointing out this. I agree we should only do checks on
+creating and passing
+the object from one processes to another. And if we can still
+distinguish the read/write operation
+when obtaining the file fd, that would be great. But that may require
+us to add a new mode
+field into bpf_map struct and change the attribute struct when doing
+the bpf syscall. How do you
+think about this approach? Or we can do simple checks for
+bpf_obj_create and bpf_obj_use when
+creating the object and passing the object respectively but this
+solution cannot distinguish map modify and
+read.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
