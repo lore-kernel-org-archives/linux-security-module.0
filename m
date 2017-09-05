@@ -1,82 +1,61 @@
-From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Tue,  5 Sep 2017 15:38:42 +0300
-Subject: [PATCH v8 03/20] net: use -EAGAIN for transient busy indication
-In-Reply-To: <1504615144-29770-1-git-send-email-gilad@benyossef.com>
-References: <1504615144-29770-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1504615144-29770-4-git-send-email-gilad@benyossef.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 5 Sep 2017 22:05:55 +0300
+Subject: [PATCH v2] tpm-dev-common: Reject too short writes
+In-Reply-To: <20170904173642.5988-1-Alexander.Steffen@infineon.com>
+References: <20170904173642.5988-1-Alexander.Steffen@infineon.com>
+Message-ID: <20170905190555.gfnpoohbptbjvbg3@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Replace -EBUSY with -EAGAIN when handling transient busy
-indication in the absence of backlog.
+On Mon, Sep 04, 2017 at 07:36:42PM +0200, Alexander Steffen wrote:
+> tpm_transmit() does not offer an explicit interface to indicate the number
+> of valid bytes in the communication buffer. Instead, it relies on the
+> commandSize field in the TPM header that is encoded within the buffer.
+> Therefore, ensure that a) enough data has been written to the buffer, so
+> that the commandSize field is present and b) the commandSize field does not
+> announce more data than has been written to the buffer.
+> 
+> This should have been fixed with CVE-2011-1161 long ago, but apparently
+> a correct version of that patch never made it into the kernel.
+> 
+> Cc: stable at vger.kernel.org
+> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> ---
+> v2:
+> - Moved all changes to tpm_common_write in a single patch.
+> 
+>  drivers/char/tpm/tpm-dev-common.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index 610638a..ac25574 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -99,7 +99,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>  	if (atomic_read(&priv->data_pending) != 0)
+>  		return -EBUSY;
+>  
+> -	if (in_size > TPM_BUFSIZE)
+> +	if (in_size > sizeof(priv->data_buffer) || in_size < 6 ||
+> +	    in_size < be32_to_cpu(*((__be32 *) (buf + 2))))
+>  		return -E2BIG;
+>  
+>  	mutex_lock(&priv->buffer_mutex);
+> -- 
+> 2.7.4
+> 
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
----
+There's now some delay getting patches to my git tree because next week
+is conference week and I have lots of stuff to do before I depart
+Finland. I'm sorry about that.
 
-Please squash this patch with the previous one when merging upstream.
----
- net/ipv4/ah4.c  | 2 +-
- net/ipv4/esp4.c | 2 +-
- net/ipv6/ah6.c  | 2 +-
- net/ipv6/esp6.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+At latest I push these during the plane trip (I can remotely access
+test machines with plane internet connection, not the first time I'm
+doing this).
 
-diff --git a/net/ipv4/ah4.c b/net/ipv4/ah4.c
-index 37db44f..049cb0a 100644
---- a/net/ipv4/ah4.c
-+++ b/net/ipv4/ah4.c
-@@ -240,7 +240,7 @@ static int ah_output(struct xfrm_state *x, struct sk_buff *skb)
- 		if (err == -EINPROGRESS)
- 			goto out;
- 
--		if (err == -EBUSY)
-+		if (err == -EAGAIN)
- 			err = NET_XMIT_DROP;
- 		goto out_free;
- 	}
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index b00e4a4..ff8e088 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -432,7 +432,7 @@ int esp_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
- 	case -EINPROGRESS:
- 		goto error;
- 
--	case -EBUSY:
-+	case -EAGAIN:
- 		err = NET_XMIT_DROP;
- 		break;
- 
-diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
-index 7802b72..ba0c145 100644
---- a/net/ipv6/ah6.c
-+++ b/net/ipv6/ah6.c
-@@ -443,7 +443,7 @@ static int ah6_output(struct xfrm_state *x, struct sk_buff *skb)
- 		if (err == -EINPROGRESS)
- 			goto out;
- 
--		if (err == -EBUSY)
-+		if (err == -EAGAIN)
- 			err = NET_XMIT_DROP;
- 		goto out_free;
- 	}
-diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
-index 89910e2..1a71ee5 100644
---- a/net/ipv6/esp6.c
-+++ b/net/ipv6/esp6.c
-@@ -396,7 +396,7 @@ int esp6_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info
- 	case -EINPROGRESS:
- 		goto error;
- 
--	case -EBUSY:
-+	case -EAGAIN:
- 		err = NET_XMIT_DROP;
- 		break;
- 
--- 
-2.1.4
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
