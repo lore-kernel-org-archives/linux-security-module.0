@@ -1,119 +1,62 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed,  6 Sep 2017 08:56:40 -0400
-Subject: [PATCH 1/4] tpm: ignore burstcount to improve tpm_tis send()
-	performance.
-In-Reply-To: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
-References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20170906125643.5070-6-nayna@linux.vnet.ibm.com>
+Date: Wed,  6 Sep 2017 08:56:35 -0400
+Subject: [PATCH v2 0/4] additional TPM performance improvements 
+Message-ID: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The TPM burstcount status indicates the number of bytes that can
-be sent to the TPM without causing bus wait states.  Effectively,
-it is the number of empty bytes in the command FIFO. Further,
-some TPMs have a static burstcount, when the value remains zero
-until the entire FIFO is empty.
+After further discussions with the Device Driver working group (ddwg),
+the following changes were made: 
 
-This patch adds an optimization to check for burstcount only once.
-And if it is valid, it writes all the bytes at once, permitting
-wait states. The performance of a 34 byte extend on a TPM 1.2 with
-an 8 byte burstcount improved from 41 msec to 14 msec.
+* Check for burstcount at least once to confirm the TPM is ready to accept
+the data. Similarly, query for the TPM Expect status as sanity check at
+the end.
 
-This functionality is enabled only by passing module
-parameter ignore_burst_count=1. By default, this parameter
-is disabled.
+* Make the sleep for status check during send() in the loop less than
+5msec.
 
-Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-conjunction with the TPM Device Driver work group.
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
- drivers/char/tpm/tpm_tis_core.c                 | 24 +++++++++++++++++++++---
- 2 files changed, 29 insertions(+), 3 deletions(-)
+* Make the sleep in the loop while querying for burstcount less than
+5msec.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 4e303be83df6..3c59bb91e1ee 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1465,6 +1465,14 @@
- 			mode generally follows that for the NaN encoding,
- 			except where unsupported by hardware.
- 
-+	ignore_burst_count [TPM_TIS_CORE]
-+			tpm_tis_core driver queries for the burstcount before
-+			every send call in a loop. However, it causes delay to
-+			the send command for TPMs with low burstcount value.
-+			Setting this value to 1, will make driver to query for
-+			burstcount only once in the loop to improve the
-+			performance. By default, its value is set to 0.
-+
- 	ignore_loglevel	[KNL]
- 			Ignore loglevel setting - this will print /all/
- 			kernel messages to the console. Useful for debugging.
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 63bc6c3b949e..6b9bf4c4d434 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -31,6 +31,11 @@
- #include "tpm.h"
- #include "tpm_tis_core.h"
- 
-+static bool ignore_burst_count = false;
-+module_param(ignore_burst_count, bool, 0444);
-+MODULE_PARM_DESC(ignore_burst_count,
-+		"Ignore burstcount value while writing data");
-+
- /* Before we attempt to access the TPM we must see that the valid bit is set.
-  * The specification says that this bit is 0 at reset and remains 0 until the
-  * 'TPM has gone through its self test and initialization and has established
-@@ -256,6 +261,7 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc, status, burstcnt;
-+	int sendcnt;
- 	size_t count = 0;
- 	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
- 
-@@ -271,19 +277,31 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- 	}
- 
- 	while (count < len - 1) {
-+
-+		/*
-+		 * Get the initial burstcount to ensure TPM is ready to
-+		 * accept data, even when waiting for burstcount is disabled.
-+		 */
- 		burstcnt = get_burstcount(chip);
- 		if (burstcnt < 0) {
- 			dev_err(&chip->dev, "Unable to read burstcount\n");
- 			rc = burstcnt;
- 			goto out_err;
- 		}
--		burstcnt = min_t(int, burstcnt, len - count - 1);
-+
-+		if (ignore_burst_count)
-+			sendcnt = len - 1;
-+		else
-+			sendcnt = min_t(int, burstcnt, len - count - 1);
-+
- 		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
--					 burstcnt, buf + count);
-+					 sendcnt, buf + count);
- 		if (rc < 0)
- 			goto out_err;
- 
--		count += burstcnt;
-+		count += sendcnt;
-+		if (ignore_burst_count)
-+			continue;
- 
- 		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
- 					&priv->int_queue, false) < 0) {
+Below is the list of patches along with the performance improvements
+seen with a TPM 1.2 with an 8 byte burstcount for 1000 extends: 
+
+Patch                                        |Improvement(time in sec)
+
+tpm: ignore burstcount to improve tpm_tis    | ~41 - ~14
+send() performance.
+
+tpm: define __wait_for_tpm_stat to specify   | ~14 - ~10
+variable polling sleep time
+
+tpm: reduce tpm_msleep() time in             | ~10 - ~9
+get_burstcount()
+
+tpm: modify tpm_msleep() function to have    | ~9 - ~8
+max range
+
+Changelog v2:
+
+* Add module parameter to handle ignoring of burst count during
+tpm tis send() operation.
+* Add improvements over sleep time to reduce delays.
+
+Nayna Jain (4):
+  tpm: ignore burstcount to improve tpm_tis send() performance.
+  tpm: define __wait_for_tpm_stat to specify variable polling sleep time
+  tpm: reduce tpm_msleep() time in get_burstcount()
+  tpm: use tpm_msleep() value as max delay
+
+ Documentation/admin-guide/kernel-parameters.txt |  8 ++++++
+ drivers/char/tpm/tpm-interface.c                | 15 ++++++++--
+ drivers/char/tpm/tpm.h                          |  7 +++--
+ drivers/char/tpm/tpm_tis_core.c                 | 37 +++++++++++++++++++------
+ 4 files changed, 53 insertions(+), 14 deletions(-)
+
 -- 
 2.13.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
