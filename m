@@ -1,10 +1,10 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed,  6 Sep 2017 08:56:36 -0400
-Subject: [PATCH v2 1/4] tpm: ignore burstcount to improve tpm_tis send()
+Date: Wed,  6 Sep 2017 08:56:40 -0400
+Subject: [PATCH 1/4] tpm: ignore burstcount to improve tpm_tis send()
 	performance.
 In-Reply-To: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
 References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20170906125643.5070-2-nayna@linux.vnet.ibm.com>
+Message-ID: <20170906125643.5070-6-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -22,9 +22,6 @@ an 8 byte burstcount improved from 41 msec to 14 msec.
 This functionality is enabled only by passing module
 parameter ignore_burst_count=1. By default, this parameter
 is disabled.
-
-After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~41sec to ~14sec.
 
 Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
 conjunction with the TPM Device Driver work group.
