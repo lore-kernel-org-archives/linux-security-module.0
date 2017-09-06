@@ -1,53 +1,70 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 6 Sep 2017 15:42:33 +0300
+Date: Wed, 6 Sep 2017 15:50:33 +0300
 Subject: [PATCH v2] tpm-dev-common: Reject too short writes
-In-Reply-To: <20170904173642.5988-1-Alexander.Steffen@infineon.com>
+In-Reply-To: <20170906124233.qquzut5lyuri2buu@linux.intel.com>
 References: <20170904173642.5988-1-Alexander.Steffen@infineon.com>
-Message-ID: <20170906124233.qquzut5lyuri2buu@linux.intel.com>
+	<20170906124233.qquzut5lyuri2buu@linux.intel.com>
+Message-ID: <20170906125033.32cwy27inzecfo3i@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 04, 2017 at 07:36:42PM +0200, Alexander Steffen wrote:
-> tpm_transmit() does not offer an explicit interface to indicate the number
-> of valid bytes in the communication buffer. Instead, it relies on the
-> commandSize field in the TPM header that is encoded within the buffer.
-> Therefore, ensure that a) enough data has been written to the buffer, so
-> that the commandSize field is present and b) the commandSize field does not
-> announce more data than has been written to the buffer.
+On Wed, Sep 06, 2017 at 03:42:33PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Sep 04, 2017 at 07:36:42PM +0200, Alexander Steffen wrote:
+> > tpm_transmit() does not offer an explicit interface to indicate the number
+> > of valid bytes in the communication buffer. Instead, it relies on the
+> > commandSize field in the TPM header that is encoded within the buffer.
+> > Therefore, ensure that a) enough data has been written to the buffer, so
+> > that the commandSize field is present and b) the commandSize field does not
+> > announce more data than has been written to the buffer.
+> > 
+> > This should have been fixed with CVE-2011-1161 long ago, but apparently
+> > a correct version of that patch never made it into the kernel.
+> > 
+> > Cc: stable at vger.kernel.org
+> > Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> > ---
+> > v2:
+> > - Moved all changes to tpm_common_write in a single patch.
+> > 
+> >  drivers/char/tpm/tpm-dev-common.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> > index 610638a..ac25574 100644
+> > --- a/drivers/char/tpm/tpm-dev-common.c
+> > +++ b/drivers/char/tpm/tpm-dev-common.c
+> > @@ -99,7 +99,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+> >  	if (atomic_read(&priv->data_pending) != 0)
+> >  		return -EBUSY;
+> >  
+> > -	if (in_size > TPM_BUFSIZE)
+> > +	if (in_size > sizeof(priv->data_buffer) || in_size < 6 ||
+> > +	    in_size < be32_to_cpu(*((__be32 *) (buf + 2))))
+> >  		return -E2BIG;
+> >  
+> >  	mutex_lock(&priv->buffer_mutex);
+> > -- 
+> > 2.7.4
+> > 
 > 
-> This should have been fixed with CVE-2011-1161 long ago, but apparently
-> a correct version of that patch never made it into the kernel.
+> How did you test this change after you implemented it?
 > 
-> Cc: stable at vger.kernel.org
-> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> ---
-> v2:
-> - Moved all changes to tpm_common_write in a single patch.
+> Just thinking what to add to https://github.com/jsakkine-intel/tpm2-scripts
 > 
->  drivers/char/tpm/tpm-dev-common.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index 610638a..ac25574 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -99,7 +99,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
->  	if (atomic_read(&priv->data_pending) != 0)
->  		return -EBUSY;
->  
-> -	if (in_size > TPM_BUFSIZE)
-> +	if (in_size > sizeof(priv->data_buffer) || in_size < 6 ||
-> +	    in_size < be32_to_cpu(*((__be32 *) (buf + 2))))
->  		return -E2BIG;
->  
->  	mutex_lock(&priv->buffer_mutex);
-> -- 
-> 2.7.4
-> 
+> /Jarkko
 
-How did you test this change after you implemented it?
+Just when I started to implement this that the bug fix itself does not
+have yet the right semantics.
 
-Just thinking what to add to https://github.com/jsakkine-intel/tpm2-scripts
+It should be just add a new check:
+
+if (in_size != be32_to_cpu(*((__be32 *) (buf + 2))))
+	return -EINVAL;
+
+The existing check is correct. This was missing. The reason for this is
+that we process whatever is in the in_size bytes as a full command.
+
+Sorry I didn't notice before I started to implement a test case.
 
 /Jarkko
 --
