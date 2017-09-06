@@ -1,45 +1,44 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 6 Sep 2017 15:54:58 +0300
-Subject: [PATCH RESEND v3 0/2] tpm_tis_spi: Use DMA-safe memory
-In-Reply-To: <20170831165819.13544-1-Alexander.Steffen@infineon.com>
-References: <20170831165819.13544-1-Alexander.Steffen@infineon.com>
-Message-ID: <20170906125458.ueqpmokh7bg64olc@linux.intel.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Wed,  6 Sep 2017 08:56:38 -0400
+Subject: [PATCH v2 3/4] tpm: reduce tpm_msleep() time in get_burstcount()
+In-Reply-To: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
+References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
+Message-ID: <20170906125643.5070-4-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Aug 31, 2017 at 06:58:17PM +0200, Alexander Steffen wrote:
-> The documentation says that DMA-safe memory is required for SPI transfers.
-> The I/O buffers passed in by the caller can be allocated anywhere,
-> including on the stack, which is not DMA-safe. So the data needs to be
-> copied to separate, DMA-safe buffers.
-> 
-> We did not see any DMA-related issues on our test systems, even without
-> DMA-safe buffers. But this might simply be due to the fact that the SPI
-> transfer size is rather small, so our systems do not bother to set up DMA
-> transfers. Other systems might do so.
-> 
-> v2:
-> - Updated commit message with more explanations.
-> 
-> v3:
-> - Split into two patches, one for making the buffers DMA-safe and another
->   for using only a single buffer.
-> 
-> Alexander Steffen (2):
->   tpm_tis_spi: Use DMA-safe memory for SPI transfers
->   tpm_tis_spi: Use a single buffer for SPI transfers
-> 
->  drivers/char/tpm/tpm_tis_spi.c | 32 ++++++++++++++++++--------------
->  1 file changed, 18 insertions(+), 14 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+Currently, get_burstcount() function sleeps for 5msec in a loop
+before retrying for next query to burstcount. However, if it takes
+lesser time for TPM to return, this 5 msec delay is longer
+than necessary.
 
-Applied to my bleeding edge master brach for more convenient testing.
-Have not yet applied to my next branch.
+This patch replaces the tpm_msleep time from 5msec to 1msec.
 
-/Jarkko
+After this change, performance on a TPM 1.2 with an 8 byte
+burstcount for 1000 extends improved from ~10sec to ~9sec.
+
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ drivers/char/tpm/tpm_tis_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index d1eab29cb447..d710bbc4608b 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -169,7 +169,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 		burstcnt = (value >> 8) & 0xFFFF;
+ 		if (burstcnt)
+ 			return burstcnt;
+-		tpm_msleep(TPM_TIMEOUT);
++		tpm_msleep(1);
+ 	} while (time_before(jiffies, stop));
+ 	return -EBUSY;
+ }
+-- 
+2.13.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
