@@ -1,90 +1,63 @@
-From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
-Date: Wed, 6 Sep 2017 14:19:28 +0000
-Subject: [PATCH v2] tpm-dev-common: Reject too short writes
-In-Reply-To: <20170906125033.32cwy27inzecfo3i@linux.intel.com>
-References: <20170904173642.5988-1-Alexander.Steffen@infineon.com>
-	<20170906124233.qquzut5lyuri2buu@linux.intel.com>
-	<20170906125033.32cwy27inzecfo3i@linux.intel.com>
-Message-ID: <f8ea7617d4da43439d59b30f4de63b87@MUCSE603.infineon.com>
+From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
+Date: Wed, 6 Sep 2017 10:12:46 -0600
+Subject: [PATCH v2 1/4] tpm: ignore burstcount to improve tpm_tis send()
+	performance.
+In-Reply-To: <20170906125643.5070-2-nayna@linux.vnet.ibm.com>
+References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
+	<20170906125643.5070-2-nayna@linux.vnet.ibm.com>
+Message-ID: <20170906161246.GA9747@obsidianresearch.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> On Wed, Sep 06, 2017 at 03:42:33PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Sep 04, 2017 at 07:36:42PM +0200, Alexander Steffen wrote:
-> > > tpm_transmit() does not offer an explicit interface to indicate the
-> > > number of valid bytes in the communication buffer. Instead, it
-> > > relies on the commandSize field in the TPM header that is encoded within
-> the buffer.
-> > > Therefore, ensure that a) enough data has been written to the
-> > > buffer, so that the commandSize field is present and b) the
-> > > commandSize field does not announce more data than has been written
-> to the buffer.
-> > >
-> > > This should have been fixed with CVE-2011-1161 long ago, but
-> > > apparently a correct version of that patch never made it into the kernel.
-> > >
-> > > Cc: stable at vger.kernel.org
-> > > Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> > > ---
-> > > v2:
-> > > - Moved all changes to tpm_common_write in a single patch.
-> > >
-> > >  drivers/char/tpm/tpm-dev-common.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm-dev-common.c
-> > > b/drivers/char/tpm/tpm-dev-common.c
-> > > index 610638a..ac25574 100644
-> > > --- a/drivers/char/tpm/tpm-dev-common.c
-> > > +++ b/drivers/char/tpm/tpm-dev-common.c
-> > > @@ -99,7 +99,8 @@ ssize_t tpm_common_write(struct file *file, const
-> char __user *buf,
-> > >  	if (atomic_read(&priv->data_pending) != 0)
-> > >  		return -EBUSY;
-> > >
-> > > -	if (in_size > TPM_BUFSIZE)
-> > > +	if (in_size > sizeof(priv->data_buffer) || in_size < 6 ||
-> > > +	    in_size < be32_to_cpu(*((__be32 *) (buf + 2))))
-> > >  		return -E2BIG;
-> > >
-> > >  	mutex_lock(&priv->buffer_mutex);
-> > > --
-> > > 2.7.4
-> > >
-> >
-> > How did you test this change after you implemented it?
-> >
-> > Just thinking what to add to
-> > https://github.com/jsakkine-intel/tpm2-scripts
+On Wed, Sep 06, 2017 at 08:56:36AM -0400, Nayna Jain wrote:
 
-I already had test cases that failed with some of my TPMs under some circumstances. I'll try to come up with a concise description of what those tests do or send you a patch directly for your tests. GitHub pull requests are okay for that repository? (I already have one waiting there.)
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 4e303be83df6..3c59bb91e1ee 100644
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1465,6 +1465,14 @@
+>  			mode generally follows that for the NaN encoding,
+>  			except where unsupported by hardware.
+>  
+> +	ignore_burst_count [TPM_TIS_CORE]
+> +			tpm_tis_core driver queries for the burstcount before
+> +			every send call in a loop. However, it causes delay to
+> +			the send command for TPMs with low burstcount value.
+> +			Setting this value to 1, will make driver to query for
+> +			burstcount only once in the loop to improve the
+> +			performance. By default, its value is set to 0.
 
-> >
-> > /Jarkko
-> 
-> Just when I started to implement this that the bug fix itself does not have yet
-> the right semantics.
-> 
-> It should be just add a new check:
-> 
-> if (in_size != be32_to_cpu(*((__be32 *) (buf + 2))))
-> 	return -EINVAL;
-> 
-> The existing check is correct. This was missing. The reason for this is that we
-> process whatever is in the in_size bytes as a full command.
+Really don't want to see a kernel command line parameter for this..
 
-There are two problems with this solution:
+Please figure out a different approach or at least a better name..
 
-1. You need to check for in_size < 6, otherwise you read data that has not been written there during that request. I haven't tested this, but I'd expect it to fail for example if you try to send the two commands "00 00 00 00 00 02" and "00 00". The first will be rejected with EINVAL, because 6 (in_size) != 2 (commandSize). But the second will pass that check, because now in_size happens to match the commandSize that has only been written to the buffer for the first command.
+> +		/*
+> +		 * Get the initial burstcount to ensure TPM is ready to
+> +		 * accept data, even when waiting for burstcount is disabled.
+> +		 */
+>  		burstcnt = get_burstcount(chip);
+>  		if (burstcnt < 0) {
+>  			dev_err(&chip->dev, "Unable to read burstcount\n");
+>  			rc = burstcnt;
+>  			goto out_err;
+>  		}
+> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+> +
+> +		if (ignore_burst_count)
+> +			sendcnt = len - 1;
+> +		else
+> +			sendcnt = min_t(int, burstcnt, len - count - 1);
+> +
+>  		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> -					 burstcnt, buf + count);
+> +					 sendcnt, buf + count);
 
-2. You may not reject commands where in_size > commandSize, because TIS/PTP require the TPM to throw away extra bytes (and process the command as usual), not fail the command. You can see that in the State Transition Table (Table 18 in TIS 1.3), line 20, with the TPM in Reception state and Expect=0, writing more data does not change the state ("Write is not expected. Drop write. TPM ignores this state transition."). Of course, since we do not pass on in_size, but only commandSize the TPM will never see those extra bytes, but the external behavior (for user space applications) is identical.
+The problem with this approach is that the TPM could totally block the CPU for
+very long periods of time.
 
-When you fix those two problems, you're probably back at my solution. The only other change I made (renaming TPM_BUFSIZE to sizeof(priv->data_buffer)) does not change anything, the values are identical. I just find it very confusing when you compare something against a magic constant to avoid buffer overflows in your memcpy. Using the buffer size directly is much more straightforward (and less prone to fail as soon as someone changes the structure definition).
+It seems very risky to enable..
 
-> 
-> Sorry I didn't notice before I started to implement a test case.
-> 
-> /Jarkko
-
-Alexander
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+Jason
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
