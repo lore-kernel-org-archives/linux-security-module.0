@@ -1,98 +1,135 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 7 Sep 2017 12:57:30 -0700
-Subject: [PATCH V4 02/10] capabilities: intuitive names for cap gain status
-In-Reply-To: <a36af00bd25e0cfe7eeea37bd99b82b9350de1e0.1504591358.git.rgb@redhat.com>
-References: <cover.1504591358.git.rgb@redhat.com>
-	<a36af00bd25e0cfe7eeea37bd99b82b9350de1e0.1504591358.git.rgb@redhat.com>
-Message-ID: <CAGXu5jKnB555Tu-kNPpjRe76r8RpDghxqO1499aXa2M6Bnf3pQ@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 7 Sep 2017 19:18:33 -0400
+Subject: [PATCH] selinux: Use kmem_cache for hashtab_node
+In-Reply-To: <1504691419-26972-1-git-send-email-kyeongdon.kim@lge.com>
+References: <1504691419-26972-1-git-send-email-kyeongdon.kim@lge.com>
+Message-ID: <CAHC9VhTfvOLw-v8ZbEhCkKn3FR9C5SzPS6kdz3w=fWxEGBAF1w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 4, 2017 at 11:46 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Introduce macros cap_gained, cap_grew, cap_full to make the use of the
-> negation of is_subset() easier to read and analyse.
+On Wed, Sep 6, 2017 at 5:50 AM, Kyeongdon Kim <kyeongdon.kim@lge.com> wrote:
+> During random test as own device to check slub account,
+> we found some slack memory from hashtab_node(kmalloc-64).
+> By using kzalloc(), middle of test result like below:
+> allocated size 240768
+> request size 45144
+> slack size 195624
+> allocation count 3762
 >
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> Acked-by: James Morris <james.l.morris@oracle.com>
-
-I still find these hard to read, but it IS better than it was before. ;)
-
-Acked-by: Kees Cook <keescook@chromium.org>
-
+> So, we want to use kmem_cache_zalloc() and that
+> can reduce memory size 52byte(slack size/alloc count) per each struct.
+>
+> Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
 > ---
->  security/commoncap.c |   18 +++++++++++-------
->  1 files changed, 11 insertions(+), 7 deletions(-)
+>  security/selinux/ss/hashtab.c  | 17 +++++++++++++++--
+>  security/selinux/ss/hashtab.h  |  4 ++++
+>  security/selinux/ss/services.c |  4 ++++
+>  3 files changed, 23 insertions(+), 2 deletions(-)
+
+This seems reasonale, but I'm going to refrain from merging this until
+after the merge window closes.
+
+> diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
+> index 686c391..bef7577 100644
+> --- a/security/selinux/ss/hashtab.c
+> +++ b/security/selinux/ss/hashtab.c
+> @@ -9,6 +9,8 @@
+>  #include <linux/sched.h>
+>  #include "hashtab.h"
 >
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 927fe93..cf6e2b0 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -505,6 +505,12 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_cap,
->                 *effective = true;
->  }
+> +static struct kmem_cache *hashtab_node_cachep;
+> +
+>  struct hashtab *hashtab_create(u32 (*hash_value)(struct hashtab *h, const void *key),
+>                                int (*keycmp)(struct hashtab *h, const void *key1, const void *key2),
+>                                u32 size)
+> @@ -57,7 +59,7 @@ int hashtab_insert(struct hashtab *h, void *key, void *datum)
+>         if (cur && (h->keycmp(h, key, cur->key) == 0))
+>                 return -EEXIST;
 >
-> +#define __cap_gained(field, target, source) \
-> +       !cap_issubset(target->cap_##field, source->cap_##field)
-> +#define __cap_grew(target, source, cred) \
-> +       !cap_issubset(cred->cap_##target, cred->cap_##source)
-> +#define __cap_full(field, cred) \
-> +       cap_issubset(CAP_FULL_SET, cred->cap_##field)
->
->  /**
->   * cap_bprm_set_creds - Set up the proposed credentials for execve().
->   * @bprm: The execution parameters, including the proposed creds
-> @@ -533,10 +539,9 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
->         handle_privileged_root(bprm, has_cap, &effective, root_uid);
->
->         /* if we have fs caps, clear dangerous personality flags */
-> -       if (!cap_issubset(new->cap_permitted, old->cap_permitted))
-> +       if (__cap_gained(permitted, new, old))
->                 bprm->per_clear |= PER_CLEAR_ON_SETID;
->
-> -
->         /* Don't let someone trace a set[ug]id/setpcap binary with the revised
->          * credentials unless they have the appropriate permit.
->          *
-> @@ -544,8 +549,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
->          */
->         is_setid = !uid_eq(new->euid, old->uid) || !gid_eq(new->egid, old->gid);
->
-> -       if ((is_setid ||
-> -            !cap_issubset(new->cap_permitted, old->cap_permitted)) &&
-> +       if ((is_setid || __cap_gained(permitted, new, old)) &&
->             ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
->              !ptracer_capable(current, new->user_ns))) {
->                 /* downgrade; they get no more than they had, and maybe less */
-> @@ -595,8 +599,8 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
->          * Number 1 above might fail if you don't have a full bset, but I think
->          * that is interesting information to audit.
->          */
-> -       if (!cap_issubset(new->cap_effective, new->cap_ambient)) {
-> -               if (!cap_issubset(CAP_FULL_SET, new->cap_effective) ||
-> +       if (__cap_grew(effective, ambient, new)) {
-> +               if (!__cap_full(effective, new) ||
->                     !uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid) ||
->                     issecure(SECURE_NOROOT)) {
->                         ret = audit_log_bprm_fcaps(bprm, new, old);
-> @@ -616,7 +620,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
->                 bprm->cap_elevated = 1;
->         } else if (!uid_eq(new->uid, root_uid)) {
->                 if (effective ||
-> -                   !cap_issubset(new->cap_permitted, new->cap_ambient))
-> +                   __cap_grew(permitted, ambient, new))
->                         bprm->cap_elevated = 1;
+> -       newnode = kzalloc(sizeof(*newnode), GFP_KERNEL);
+> +       newnode = kmem_cache_zalloc(hashtab_node_cachep, GFP_KERNEL);
+>         if (!newnode)
+>                 return -ENOMEM;
+>         newnode->key = key;
+> @@ -106,7 +108,7 @@ void hashtab_destroy(struct hashtab *h)
+>                 while (cur) {
+>                         temp = cur;
+>                         cur = cur->next;
+> -                       kfree(temp);
+> +                       kmem_cache_free(hashtab_node_cachep, temp);
+>                 }
+>                 h->htable[i] = NULL;
 >         }
+> @@ -166,3 +168,14 @@ void hashtab_stat(struct hashtab *h, struct hashtab_info *info)
+>         info->slots_used = slots_used;
+>         info->max_chain_len = max_chain_len;
+>  }
+> +void hashtab_cache_init(void)
+> +{
+> +               hashtab_node_cachep = kmem_cache_create("hashtab_node",
+> +                       sizeof(struct hashtab_node),
+> +                       0, SLAB_PANIC, NULL);
+> +}
+> +
+> +void hashtab_cache_destroy(void)
+> +{
+> +               kmem_cache_destroy(hashtab_node_cachep);
+> +}
+> diff --git a/security/selinux/ss/hashtab.h b/security/selinux/ss/hashtab.h
+> index 009fb5e..d6883d3 100644
+> --- a/security/selinux/ss/hashtab.h
+> +++ b/security/selinux/ss/hashtab.h
+> @@ -84,4 +84,8 @@ int hashtab_map(struct hashtab *h,
+>  /* Fill info with some hash table statistics */
+>  void hashtab_stat(struct hashtab *h, struct hashtab_info *info);
+>
+> +/* Use kmem_cache for hashtab_node */
+> +void hashtab_cache_init(void);
+> +void hashtab_cache_destroy(void);
+> +
+>  #endif /* _SS_HASHTAB_H */
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index e4a1c0d..33cfe5d 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -2060,10 +2060,12 @@ int security_load_policy(void *data, size_t len)
+>         if (!ss_initialized) {
+>                 avtab_cache_init();
+>                 ebitmap_cache_init();
+> +               hashtab_cache_init();
+>                 rc = policydb_read(&policydb, fp);
+>                 if (rc) {
+>                         avtab_cache_destroy();
+>                         ebitmap_cache_destroy();
+> +                       hashtab_cache_destroy();
+>                         goto out;
+>                 }
+>
+> @@ -2075,6 +2077,7 @@ int security_load_policy(void *data, size_t len)
+>                         policydb_destroy(&policydb);
+>                         avtab_cache_destroy();
+>                         ebitmap_cache_destroy();
+> +                       hashtab_cache_destroy();
+>                         goto out;
+>                 }
+>
+> @@ -2083,6 +2086,7 @@ int security_load_policy(void *data, size_t len)
+>                         policydb_destroy(&policydb);
+>                         avtab_cache_destroy();
+>                         ebitmap_cache_destroy();
+> +                       hashtab_cache_destroy();
+>                         goto out;
+>                 }
 >
 > --
-> 1.7.1
+> 2.6.2
 >
 
 
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
