@@ -1,130 +1,89 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 7 Sep 2017 12:42:11 -0700
-Subject: [PATCH V4 01/10] capabilities: factor out cap_bprm_set_creds
-	privileged root
-In-Reply-To: <c9900dda93bac311a7ce7da753eb430905301276.1504591358.git.rgb@redhat.com>
+Date: Thu, 7 Sep 2017 12:57:30 -0700
+Subject: [PATCH V4 02/10] capabilities: intuitive names for cap gain status
+In-Reply-To: <a36af00bd25e0cfe7eeea37bd99b82b9350de1e0.1504591358.git.rgb@redhat.com>
 References: <cover.1504591358.git.rgb@redhat.com>
-	<c9900dda93bac311a7ce7da753eb430905301276.1504591358.git.rgb@redhat.com>
-Message-ID: <CAGXu5jLEU_SMacBtX3jOqih0OoAEUqWH8J2wqj+AkDKhsZgGQQ@mail.gmail.com>
+	<a36af00bd25e0cfe7eeea37bd99b82b9350de1e0.1504591358.git.rgb@redhat.com>
+Message-ID: <CAGXu5jKnB555Tu-kNPpjRe76r8RpDghxqO1499aXa2M6Bnf3pQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Mon, Sep 4, 2017 at 11:46 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Factor out the case of privileged root from the function
-> cap_bprm_set_creds() to make the latter easier to read and analyse.
+> Introduce macros cap_gained, cap_grew, cap_full to make the use of the
+> negation of is_subset() easier to read and analyse.
 >
-> Suggested-by: Serge Hallyn <serge@hallyn.com>
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> Acked-by: James Morris <james.l.morris@oracle.com>
+
+I still find these hard to read, but it IS better than it was before. ;)
 
 Acked-by: Kees Cook <keescook@chromium.org>
 
-Note below...
-
 > ---
->  security/commoncap.c |   63 +++++++++++++++++++++++++++----------------------
->  1 files changed, 35 insertions(+), 28 deletions(-)
+>  security/commoncap.c |   18 +++++++++++-------
+>  1 files changed, 11 insertions(+), 7 deletions(-)
 >
 > diff --git a/security/commoncap.c b/security/commoncap.c
-> index d8e26fb..927fe93 100644
+> index 927fe93..cf6e2b0 100644
 > --- a/security/commoncap.c
 > +++ b/security/commoncap.c
-> @@ -472,6 +472,39 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
->         return rc;
+> @@ -505,6 +505,12 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_cap,
+>                 *effective = true;
 >  }
 >
-> +static void handle_privileged_root(struct linux_binprm *bprm, bool has_cap,
-> +                                  bool *effective, kuid_t root_uid)
-
-If you do a v5 of this, I think it'd be nice to add a comment here
-describing what is being checked and the side-effects (i.e.
-cap_permitted changes, when effective is set, etc).
-
--Kees
-
-> +{
-> +       const struct cred *old = current_cred();
-> +       struct cred *new = bprm->cred;
-> +
-> +       if (issecure(SECURE_NOROOT))
-> +               return;
-> +       /*
-> +        * If the legacy file capability is set, then don't set privs
-> +        * for a setuid root binary run by a non-root user.  Do set it
-> +        * for a root user just to cause least surprise to an admin.
-> +        */
-> +       if (has_cap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
-> +               warn_setuid_and_fcaps_mixed(bprm->filename);
-> +               return;
-> +       }
-> +       /*
-> +        * To support inheritance of root-permissions and suid-root
-> +        * executables under compatibility mode, we override the
-> +        * capability sets for the file.
-> +        *
-> +        * If only the real uid is 0, we do not set the effective bit.
-> +        */
-> +       if (uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid)) {
-> +               /* pP' = (cap_bset & ~0) | (pI & ~0) */
-> +               new->cap_permitted = cap_combine(old->cap_bset,
-> +                                                old->cap_inheritable);
-> +       }
-> +       if (uid_eq(new->euid, root_uid))
-> +               *effective = true;
-> +}
-> +
+> +#define __cap_gained(field, target, source) \
+> +       !cap_issubset(target->cap_##field, source->cap_##field)
+> +#define __cap_grew(target, source, cred) \
+> +       !cap_issubset(cred->cap_##target, cred->cap_##source)
+> +#define __cap_full(field, cred) \
+> +       cap_issubset(CAP_FULL_SET, cred->cap_##field)
+>
 >  /**
 >   * cap_bprm_set_creds - Set up the proposed credentials for execve().
 >   * @bprm: The execution parameters, including the proposed creds
-> @@ -484,46 +517,20 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
->  {
->         const struct cred *old = current_cred();
->         struct cred *new = bprm->cred;
-> -       bool effective, has_cap = false, is_setid;
-> +       bool effective = false, has_cap = false, is_setid;
->         int ret;
->         kuid_t root_uid;
->
->         if (WARN_ON(!cap_ambient_invariant_ok(old)))
->                 return -EPERM;
->
-> -       effective = false;
->         ret = get_file_caps(bprm, &effective, &has_cap);
->         if (ret < 0)
->                 return ret;
->
->         root_uid = make_kuid(new->user_ns, 0);
->
-> -       if (!issecure(SECURE_NOROOT)) {
-> -               /*
-> -                * If the legacy file capability is set, then don't set privs
-> -                * for a setuid root binary run by a non-root user.  Do set it
-> -                * for a root user just to cause least surprise to an admin.
-> -                */
-> -               if (has_cap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
-> -                       warn_setuid_and_fcaps_mixed(bprm->filename);
-> -                       goto skip;
-> -               }
-> -               /*
-> -                * To support inheritance of root-permissions and suid-root
-> -                * executables under compatibility mode, we override the
-> -                * capability sets for the file.
-> -                *
-> -                * If only the real uid is 0, we do not set the effective bit.
-> -                */
-> -               if (uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid)) {
-> -                       /* pP' = (cap_bset & ~0) | (pI & ~0) */
-> -                       new->cap_permitted = cap_combine(old->cap_bset,
-> -                                                        old->cap_inheritable);
-> -               }
-> -               if (uid_eq(new->euid, root_uid))
-> -                       effective = true;
-> -       }
-> -skip:
-> +       handle_privileged_root(bprm, has_cap, &effective, root_uid);
+> @@ -533,10 +539,9 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+>         handle_privileged_root(bprm, has_cap, &effective, root_uid);
 >
 >         /* if we have fs caps, clear dangerous personality flags */
->         if (!cap_issubset(new->cap_permitted, old->cap_permitted))
+> -       if (!cap_issubset(new->cap_permitted, old->cap_permitted))
+> +       if (__cap_gained(permitted, new, old))
+>                 bprm->per_clear |= PER_CLEAR_ON_SETID;
+>
+> -
+>         /* Don't let someone trace a set[ug]id/setpcap binary with the revised
+>          * credentials unless they have the appropriate permit.
+>          *
+> @@ -544,8 +549,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+>          */
+>         is_setid = !uid_eq(new->euid, old->uid) || !gid_eq(new->egid, old->gid);
+>
+> -       if ((is_setid ||
+> -            !cap_issubset(new->cap_permitted, old->cap_permitted)) &&
+> +       if ((is_setid || __cap_gained(permitted, new, old)) &&
+>             ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
+>              !ptracer_capable(current, new->user_ns))) {
+>                 /* downgrade; they get no more than they had, and maybe less */
+> @@ -595,8 +599,8 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+>          * Number 1 above might fail if you don't have a full bset, but I think
+>          * that is interesting information to audit.
+>          */
+> -       if (!cap_issubset(new->cap_effective, new->cap_ambient)) {
+> -               if (!cap_issubset(CAP_FULL_SET, new->cap_effective) ||
+> +       if (__cap_grew(effective, ambient, new)) {
+> +               if (!__cap_full(effective, new) ||
+>                     !uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid) ||
+>                     issecure(SECURE_NOROOT)) {
+>                         ret = audit_log_bprm_fcaps(bprm, new, old);
+> @@ -616,7 +620,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+>                 bprm->cap_elevated = 1;
+>         } else if (!uid_eq(new->uid, root_uid)) {
+>                 if (effective ||
+> -                   !cap_issubset(new->cap_permitted, new->cap_ambient))
+> +                   __cap_grew(permitted, ambient, new))
+>                         bprm->cap_elevated = 1;
+>         }
+>
 > --
 > 1.7.1
 >
