@@ -1,47 +1,34 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 8 Sep 2017 14:48:51 +1000 (AEST)
+From: hch@infradead.org (Christoph Hellwig)
+Date: Fri, 8 Sep 2017 00:09:43 -0700
 Subject: [GIT PULL] Security subsystem updates for 4.14
-In-Reply-To: <CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
+In-Reply-To: <alpine.LRH.2.21.1709081448090.7880@namei.org>
 References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
 	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1709081448090.7880@namei.org>
+	<alpine.LRH.2.21.1709081448090.7880@namei.org>
+Message-ID: <20170908070943.GA26549@infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 7 Sep 2017, Linus Torvalds wrote:
+The reason why I send out the original version of this patch
+is because IMA used to call ->read under i_rwsem, and that deadlocked
+on XFS and NFS, or ext3/4 with DAX.  The call path for that is
 
-> On Mon, Sep 4, 2017 at 3:29 AM, James Morris <jmorris@namei.org> wrote:
-> >
-> > IMA:
-> >   - A new integrity_read file operation method, avoids races when
-> >     calculating file hashes
-> 
-> Honestly, this seems really odd.
-> 
-> It documents that it needs to be called with i_rwsem held exclusively,
-> and even has a lockdep assert to that effect (well, not really: the
-> code claims "exclusive", but the lockdep assert does not), but I'm not
-> actually seeing anybody doing it.
-> 
-> Quite the reverse, I just see integrity_read_file() doing filp_open()
-> on the pathname and passing it to integrity_kernel_read() with no
-> locking.
-> 
-> It really looks like just pure garbage to me. I pulled, and I'm not
-> unpulling the whole thing. I don't think it's been tested, and I don't
-> think it can be right.
-> 
-> Tell me why I'm wrong, or tell me why that garbage made it in in the
-> first place?
+process_measurement (takes i_rwsem)
+  -> ima_collect_measurement
+    -> ima_calc_file_hash
+       -> ima_calc_file_ahash / ima_calc_file_shash
+         -> ima_calc_file_hash_atfm / ima_calc_file_hash_tfm
+	   -> integrity_kernel_read
 
-Mimi and Christoph worked together on this over several iterations -- I'll 
-let them respond.
+ima_check_last_writer (takes i_rwsem)
+  -> ima_update_xattr
+    -> ima_collect_measurement
+       -> (as above)
 
-
--- 
-James Morris
-<jmorris@namei.org>
-
+But yes, for the init-time integrity_read_file this is incorrect.
+It never tripped up, and I explicitly added the lockdep annotations
+so that anything would show up, and it's been half a year since
+I sent that first RFC patch..
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
