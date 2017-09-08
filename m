@@ -1,71 +1,29 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 9 Sep 2017 00:37:39 +0300
-Subject: [PATCH v3] tpm-dev-common: Reject too short writes
-In-Reply-To: <20170908152132.8728-1-Alexander.Steffen@infineon.com>
-References: <20170908152132.8728-1-Alexander.Steffen@infineon.com>
-Message-ID: <20170908213739.k7ifm2isz4dciaaa@linux.intel.com>
+From: jmorris@namei.org (James Morris)
+Date: Sat, 9 Sep 2017 08:09:01 +1000 (AEST)
+Subject: [PATCH] usb,signal,security: only pass the cred, not the secid,
+	to kill_pid_info_as_cred and security_task_kill
+In-Reply-To: <CAHC9VhSga+mg8VTtVoafdbpQ2K62PEBGrWidB8SUwWtRO+hahA@mail.gmail.com>
+References: <20170908164001.21138-1-sds@tycho.nsa.gov>
+	<CAHC9VhSga+mg8VTtVoafdbpQ2K62PEBGrWidB8SUwWtRO+hahA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1709090808200.15026@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 08, 2017 at 05:21:32PM +0200, Alexander Steffen wrote:
-> tpm_transmit() does not offer an explicit interface to indicate the number
-> of valid bytes in the communication buffer. Instead, it relies on the
-> commandSize field in the TPM header that is encoded within the buffer.
-> Therefore, ensure that a) enough data has been written to the buffer, so
-> that the commandSize field is present and b) the commandSize field does not
-> announce more data than has been written to the buffer.
-> 
-> This should have been fixed with CVE-2011-1161 long ago, but apparently
-> a correct version of that patch never made it into the kernel.
-> 
-> Cc: stable at vger.kernel.org
-> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> ---
-> v2:
-> - Moved all changes to tpm_common_write in a single patch.
-> v3:
-> - Access data copied from user space (priv->data_buffer) instead of user
->   space data directly (buf).
-> - Changed return code to EINVAL.
-> 
->  drivers/char/tpm/tpm-dev-common.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index 610638a..461bf0b 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -110,6 +110,12 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
->  		return -EFAULT;
->  	}
->  
-> +	if (in_size < 6 ||
-> +	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
-> +		mutex_unlock(&priv->buffer_mutex);
-> +		return -EINVAL;
-> +	}
-> +
->  	/* atomic tpm command send and result receive. We only hold the ops
->  	 * lock during this period so that the tpm can be unregistered even if
->  	 * the char dev is held open.
-> -- 
-> 2.7.4
+On Fri, 8 Sep 2017, Paul Moore wrote:
+
+> Looks fine to me from a SELinux perspective.  If Casey and John are
+> happy with this I can volunteer to pull it into the selinux/next tree
+> (once the merge window closes), otherwise if someone else wants to
+> merge this my ack is below.
 > 
 
-I'm not gonna fight about that "in_size < 6" check. I think it is not
-needed, I understand your point but still disagree but it is something
-where I can live with having it.
+As this impacts multiple LSMs, I'd prefer to take it via my tree.
 
-I kind of disagree also with allowing messages longer than the command
-size but it does not have to be in the scope of this commit and actually
-should be a separate discussion if we ever going to do something about
-it.
 
-Thanks for the patience!
+-- 
+James Morris
+<jmorris@namei.org>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
