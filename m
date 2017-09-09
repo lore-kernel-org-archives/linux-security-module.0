@@ -1,47 +1,42 @@
-From: tytso@mit.edu (Theodore Ts'o)
-Date: Fri, 8 Sep 2017 18:38:06 -0400
-Subject: [GIT PULL] Security subsystem updates for 4.14
-In-Reply-To: <alpine.LRH.2.21.1709081448090.7880@namei.org>
-References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
-	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
-	<alpine.LRH.2.21.1709081448090.7880@namei.org>
-Message-ID: <20170908223806.7yv6eohtsispwgas@thunk.org>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Sat, 9 Sep 2017 07:05:52 +0200
+Subject: [PATCH] usb,signal,security: only pass the cred, not the secid,
+	to kill_pid_info_as_cred and security_task_kill
+In-Reply-To: <20170908164001.21138-1-sds@tycho.nsa.gov>
+References: <20170908164001.21138-1-sds@tycho.nsa.gov>
+Message-ID: <20170909050552.GD3713@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 08, 2017 at 02:48:51PM +1000, James Morris wrote:
+On Fri, Sep 08, 2017 at 12:40:01PM -0400, Stephen Smalley wrote:
+> commit d178bc3a708f39cbfefc3fab37032d3f2511b4ec ("user namespace: usb:
+>  make usb urbs user namespace aware (v2)") changed kill_pid_info_as_uid
+> to kill_pid_info_as_cred, saving and passing a cred structure instead of
+> uids.  Since the secid can be obtained from the cred, drop the secid fields
+> from the usb_dev_state and async structures, and drop the secid argument to
+> kill_pid_info_as_cred.  Replace the secid argument to security_task_kill
+> with the cred.  Update SELinux, Smack, and AppArmor to use the cred, which
+> avoids the need for Smack and AppArmor to use a secid at all in this hook.
+> Further changes to Smack might still be required to take full advantage of
+> this change, since it should now be possible to perform capability
+> checking based on the supplied cred.  The changes to Smack and AppArmor
+> have only been compile-tested.
 > 
-> Mimi and Christoph worked together on this over several iterations -- I'll 
-> let them respond.
+> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+> ---
+>  drivers/usb/core/devio.c     | 10 ++--------
+>  include/linux/lsm_hooks.h    |  5 +++--
+>  include/linux/sched/signal.h |  2 +-
+>  include/linux/security.h     |  4 ++--
+>  kernel/signal.c              |  6 +++---
+>  security/apparmor/lsm.c      | 17 ++++++++++++-----
+>  security/security.c          |  4 ++--
+>  security/selinux/hooks.c     |  7 +++++--
+>  security/smack/smack_lsm.c   | 12 +++++-------
+>  9 files changed, 35 insertions(+), 32 deletions(-)
 
-Mimi --- we should chat next week in LA.  I've been working on a
-design internally at work which proposes a generic VFS-layer library
-(ala how fscrypt in fs/crypto works) which provides data integrity
-using per-file Merkle trees.
 
-The goals of this design:
-
-   * Simplicity; for ease in security review and upstream review and
-     acceptance
-   * Useful for multiple use cases.  It is *not* Android/APK specific,
-     and indeed can be used for other things
-      * A better way of providing Linux IMA/EVM support for immutable
-        files by moving the verification from time-of-open to
-        time-of-readpage.  (This significantly reduces the performance
-	impact, since we don't need to lock down the file while the kernel
-	needs to run SHA1 on potentially gigabytes worth of file data.)
-      * Most use cases for file-level checksums are for files that
-        don?t change over time (e.g., for Video, Audio, Backup files,
-        etc.)  This allows us to provide a cheap and efficient way to
-        provide checksum protect against storage-level corruption
-        fairly easily.  So by supporting both SHA and CRC-32, we can
-	make this feature useful for more than just the security heads.  :-)
-   * Like the encryption/fscrypt feature, most of the code to this
-     feature can be in a VFS-level library, with minimal hooks needed
-     to those file systems (ext4, f2fs) that wish to provide this
-     functionality.
-
-					- Ted
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
