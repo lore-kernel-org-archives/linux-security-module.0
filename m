@@ -1,57 +1,25 @@
 From: jmorris@namei.org (James Morris)
-Date: Sun, 10 Sep 2017 14:32:03 +1000 (AEST)
+Date: Sun, 10 Sep 2017 14:53:30 +1000 (AEST)
 Subject: [GIT PULL] Security subsystem updates for 4.14
-In-Reply-To: <CAHC9VhR2c1rC4--1Br0cx+3eALLdB8Oishw7wwcGwb1_3qN8+w@mail.gmail.com>
+In-Reply-To: <alpine.LRH.2.21.1709101419360.22614@namei.org>
 References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
 	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
 	<alpine.LRH.2.21.1709081448090.7880@namei.org>
 	<20170908070943.GA26549@infradead.org>
 	<CA+55aFwMgUJSMQ96XdKnTbn8UsxzHTb8tZQdH40nxDeF7fWObw@mail.gmail.com>
 	<CAHC9VhR2c1rC4--1Br0cx+3eALLdB8Oishw7wwcGwb1_3qN8+w@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1709101419360.22614@namei.org>
+	<alpine.LRH.2.21.1709101419360.22614@namei.org>
+Message-ID: <alpine.LRH.2.21.1709101452510.25526@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 8 Sep 2017, Paul Moore wrote:
+On Sun, 10 Sep 2017, James Morris wrote:
 
-> > This is also why I tend to prefer getting multiple branches for
-> > independent things.
+>   next-apparmor-next   (JJ's next branch)
+>   next-integrity-next  (Mimi's)
+>   next-tpm-next        (Jarkko's)
 
-[...]
-
-> 
-> Is it time to start sending pull request for each LSM and thing under
-> security/ directly?  I'm not sure I have a strong preference either
-> way, I just don't want to see the SELinux changes ignored during the
-> merge window.
-
-They won't be ignored, we just need to get this issue resolved now and 
-figure out how to implement multiple branches in the security tree.
-
-Looking at other git repos, the x86 folk have multiple branches.
-
-One option for me would be to publish the trees I pull from as branches 
-along side mine, with 'next' being a merge of all of directly applied 
-patchsets and those ready for Linus to pull as one.
-
-So, branches in 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security
-
-might be:
-
-  next-selinux         (Paul's next branch)
-  next-apparmor-next   (JJ's next branch)
-  next-integrity-next  (Mimi's)
-  next-tpm-next        (Jarkko's)
-  [etc.]
-
-  next                 (merge all of the above to here)
-
-That way, we have a coherent 'next' branch for people to develop against 
-and to push to Linus, but he can pull individual branches feeding into it 
-if something is broken in one of them.
-
-Does that sound useful?
+without '-next' on the end... (editing while jetlagged).
 
 
 -- 
