@@ -1,54 +1,55 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 10 Sep 2017 02:46:24 -0400
+Date: Sun, 10 Sep 2017 03:13:23 -0400
 Subject: [GIT PULL] Security subsystem updates for 4.14
-In-Reply-To: <CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
+In-Reply-To: <20170908223806.7yv6eohtsispwgas@thunk.org>
 References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
 	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
-Message-ID: <1505025984.3224.35.camel@linux.vnet.ibm.com>
+	<alpine.LRH.2.21.1709081448090.7880@namei.org>
+	<20170908223806.7yv6eohtsispwgas@thunk.org>
+Message-ID: <1505027603.3224.56.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-09-07 at 11:19 -0700, Linus Torvalds wrote:
-> On Mon, Sep 4, 2017 at 3:29 AM, James Morris <jmorris@namei.org> wrote:
-> >
-> > IMA:
-> >   - A new integrity_read file operation method, avoids races when
-> >     calculating file hashes
+On Fri, 2017-09-08 at 18:38 -0400, Theodore Ts'o wrote:
+> On Fri, Sep 08, 2017 at 02:48:51PM +1000, James Morris wrote:
+> > 
+> > Mimi and Christoph worked together on this over several iterations -- I'll 
+> > let them respond.
 > 
-> Honestly, this seems really odd.
+> Mimi --- we should chat next week in LA.  I've been working on a
+> design internally at work which proposes a generic VFS-layer library
+> (ala how fscrypt in fs/crypto works) which provides data integrity
+> using per-file Merkle trees.
 > 
-> It documents that it needs to be called with i_rwsem held exclusively,
-> and even has a lockdep assert to that effect (well, not really: the
-> code claims "exclusive", but the lockdep assert does not), but I'm not
-> actually seeing anybody doing it.
+> The goals of this design:
 > 
-> Quite the reverse, I just see integrity_read_file() doing filp_open()
-> on the pathname and passing it to integrity_kernel_read() with no
-> locking.
-> 
-> It really looks like just pure garbage to me. I pulled, and I'm not
-> unpulling the whole thing. I don't think it's been tested, and I don't
-> think it can be right.
-> 
-> Tell me why I'm wrong, or tell me why that garbage made it in in the
-> first place?
+>    * Simplicity; for ease in security review and upstream review and
+>      acceptance
+>    * Useful for multiple use cases.  It is *not* Android/APK specific,
+>      and indeed can be used for other things
+>       * A better way of providing Linux IMA/EVM support for immutable
+>         files by moving the verification from time-of-open to
+>         time-of-readpage.  (This significantly reduces the performance
+> 	impact, since we don't need to lock down the file while the kernel
+> 	needs to run SHA1 on potentially gigabytes worth of file data.)
+>       * Most use cases for file-level checksums are for files that
+>         don?t change over time (e.g., for Video, Audio, Backup files,
+>         etc.)  This allows us to provide a cheap and efficient way to
+>         provide checksum protect against storage-level corruption
+>         fairly easily.  So by supporting both SHA and CRC-32, we can
+> 	make this feature useful for more than just the security heads.  :-)
+>    * Like the encryption/fscrypt feature, most of the code to this
+>      feature can be in a VFS-level library, with minimal hooks needed
+>      to those file systems (ext4, f2fs) that wish to provide this
+>      functionality.
 
-I'm really sorry for the long delay in responding. ?I've been on
-vacation the last week, mostly without cell phone and very limited
-wifi access.?
+>From a file integrity perspective this would be interesting, but that
+only addresses IMA-appraisal, not IMA-integrity or IMA-audit. ?We
+would still need to calculate the file hash to be included in the
+measurement list and used for auditing.
 
-True, there is a side case where integrity_read_file() is being called
-without first taking the i_rwsem. ?This side case permits signed x509
-certificates to be loaded onto the trusted IMA/EVM keyrings, without
-verifying the file signature stored as security.ima/security.evm
-xattrs. ?Basically, the xattr signatures can not be verified until the
-keys are loaded. ?The main use case is embedded systems which do not
-have an initramfs, but have a specially crafted init script. ?It
-requires enabling CONFIG_IMA_LOAD_X509 or CONFIG_EVM_LOAD_X509. ?The
-new VFS integrity_read() file operation method would not be called.
-
-The main use case for the new VFS integrity_read() file operation
-method is to calculate the file hash, as Christoph described.
+Have you done any work on protecting the directory information itself
+(eg. file names) using Merkle trees?
 
 Mimi
 
