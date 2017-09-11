@@ -1,242 +1,214 @@
 From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Mon, 11 Sep 2017 21:50:19 +0200
-Subject: [RFC v3 1/9] S.A.R.A. Documentation
+Date: Mon, 11 Sep 2017 21:50:27 +0200
+Subject: [RFC v3 9/9] S.A.R.A. WX Protection procattr interface
 In-Reply-To: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
 References: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <1505159427-11747-2-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <1505159427-11747-10-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Adding documentation for S.A.R.A. LSM.
+This allow threads to get current WX Protection flags for themselves or
+for other threads (if they have CAP_MAC_ADMIN).
+It also allow a thread to set itself flags to a stricter set of rules than
+the current one.
+Via a new wxprot flag (SARA_WXP_FORCE_WXORX) is it possible to ask the
+kernel to rescan the memory and remove the VM_WRITE flag from any area
+that is marked both writable and executable.
+Protections that prevent the runtime creation of executable code
+can be troublesome for all those programs that actually need to do it
+e.g. programs shipping with a JIT compiler built-in.
+This feature can be use to run the JIT compiler with few restrictions while
+enforcing full WX Protection in the rest of the program.
+To simplify access to this interface a CC0 licensed library is available
+here: https://github.com/smeso/libsara
 
 Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- Documentation/admin-guide/LSM/SARA.rst          | 170 ++++++++++++++++++++++++
- Documentation/admin-guide/LSM/index.rst         |   1 +
- Documentation/admin-guide/kernel-parameters.txt |  24 ++++
- 3 files changed, 195 insertions(+)
- create mode 100644 Documentation/admin-guide/LSM/SARA.rst
+ security/sara/wxprot.c | 150 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 150 insertions(+)
 
-diff --git a/Documentation/admin-guide/LSM/SARA.rst b/Documentation/admin-guide/LSM/SARA.rst
-new file mode 100644
-index 0000000..65651d8
---- /dev/null
-+++ b/Documentation/admin-guide/LSM/SARA.rst
-@@ -0,0 +1,170 @@
-+========
-+S.A.R.A.
-+========
-+
-+S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux Security
-+Module that aims to collect heterogeneous security measures, providing a common
-+interface to manage them.
-+As of today it consists of one submodule:
-+
-+- WX Protection
-+
-+
-+The kernel-space part is complemented by its user-space counterpart: `saractl` [2]_.
-+A test suite for WX Protection, called `sara-test` [4]_, is also available.
-+More information about where to find these tools and the full S.A.R.A.
-+documentation are in the `External Links and Documentation`_ section.
-+
-+-------------------------------------------------------------------------------
-+
-+S.A.R.A.'s Submodules
-+=====================
-+
-+WX Protection
-+-------------
-+WX Protection aims to improve user-space programs security by applying:
-+
-+- `W^X enforcement`_
-+- `W!->X (once writable never executable) mprotect restriction`_
-+- `Executable MMAP prevention`_
-+
-+All of the above features can be enabled or disabled both system wide
-+or on a per executable basis through the use of configuration files managed by
-+`saractl` [2]_.
-+
-+It is important to note that some programs may have issues working with
-+WX Protection. In particular:
-+
-+- **W^X enforcement** will cause problems to any programs that needs
-+  memory pages mapped both as writable and executable at the same time e.g.
-+  programs with executable stack markings in the *PT_GNU_STACK* segment.
-+- **W!->X mprotect restriction** will cause problems to any program that
-+  needs to generate executable code at run time or to modify executable
-+  pages e.g. programs with a *JIT* compiler built-in or linked against a
-+  *non-PIC* library.
-+- **Executable MMAP prevention** can work only with programs that have at least
-+  partial *RELRO* support. It's disabled automatically for programs that
-+  lack this feature. It will cause problems to any program that uses *dlopen*
-+  or tries to do an executable mmap. Unfortunately this feature is the one
-+  that could create most problems and should be enabled only after careful
-+  evaluation.
-+
-+To extend the scope of the above features, despite the issues that they may
-+cause, they are complemented by **/proc/PID/attr/sara/wxprot** interface
-+and **trampoline emulation**.
-+
-+At the moment, WX Protection (unless specified otherwise) runs on `x86_64` and
-+`x86_32` (with PAE).
-+
-+Parts of WX Protection are inspired by some of the features available in PaX.
-+
-+For further information about configuration file format and user-space
-+utilities please take a look at the full documentation [1]_.
-+
-+W^X enforcement
-+----------------------
-+W^X means that a program can't have a page of memory that is marked, at the
-+same time, writable and executable. This also allow to detect many bad
-+behaviours that make life much more easy for attackers. Programs running with
-+this feature enabled will be more difficult to exploit in the case they are
-+affected by some vulnerabilities, because the attacker will be forced
-+to make more steps in order to exploit them.
-+
-+W!->X (once writable never executable) mprotect restriction
-+-----------------------------------------------------------
-+"Once writable never executable" means that any page that could have been
-+marked as writable in the past won't ever be allowed to be marked (e.g. via
-+an mprotect syscall) as executable.
-+This goes on the same track as W^X, but is much stricter and prevents
-+the runtime creation of new executable code in memory.
-+Obviously, this feature does not prevent a program from creating a new file and
-+*mmapping* it as executable, however, it will be way more difficult for attackers
-+to exploit vulnerabilities if this feature is enabled.
-+
-+Executable MMAP prevention
-+--------------------------
-+This feature prevents the creation of new executable mmaps after the dynamic
-+libraries have been loaded. When used in combination with **W!->X mprotect
-+restriction** this feature will completely prevent the creation of new
-+executable code in the current program.
-+Obviously, this feature does not prevent cases in which an attacker uses an
-+*execve* to start a completely new program. This kind of restriction, if
-+needed, can be applied using one of the other LSM that focuses on MAC.
-+Please be aware that this feature can break many programs and so it should be
-+enabled after careful evaluation.
-+
-+/proc/PID/attr/sara/wxprot interface
-+------------------------------------
-+The `procattr` interface can be used by a thread to discover which
-+WX Protection features are enabled and/or to tighten them: protection
-+can't be softened via procattr.
-+The interface is simple: it's a text file with an hexadecimal
-+number in it representing enabled features (more information can be
-+found in the `Flags values`_ section). Via this interface it is also
-+possible to perform a complete memory scan to remove the write permission
-+from pages that are both writable and executable.
-+
-+Protections that prevent the runtime creation of executable code
-+can be troublesome for all those programs that actually need to do it
-+e.g. programs shipping with a JIT compiler built-in.
-+This feature can be use to run the JIT compiler with few restrictions
-+while enforcing full WX Protection in the rest of the program.
-+
-+The preferred way to access this interface is via `libsara` [3]_.
-+If you don't want it as a dependency, you can just statically link it
-+in your project or copy/paste parts of it.
-+To make things simpler `libsara` is the only part of S.A.R.A. released under
-+*CC0 - No Rights Reserved* license.
-+
-+Trampoline emulation
-+--------------------
-+Some programs need to generate part of their code at runtime. Luckily enough,
-+in some cases they only generate well-known code sequences (the
-+*trampolines*) that can be easily recognized and emulated by the kernel.
-+This way WX Protection can still be active, so a potential attacker won't be
-+able to generate arbitrary sequences of code, but just those that are
-+explicitly allowed. This is not ideal, but it's still better than having WX
-+Protection completely disabled.
-+
-+In particular S.A.R.A. is able to recognize trampolines used by GCC for nested
-+C functions and libffi's trampolines.
-+This feature is available only on x86_32 and x86_64.
-+
-+Flags values
-+------------
-+Flags are represented as a 16 bit unsigned integer in which every bit indicates
-+the status of a given feature:
-+
-++------------------------------+----------+
-+|           Feature            |  Value   |
-++==============================+==========+
-+| W!->X Heap                   |  0x0001  |
-++------------------------------+----------+
-+| W!->X Stack                  |  0x0002  |
-++------------------------------+----------+
-+| W!->X Other memory           |  0x0004  |
-++------------------------------+----------+
-+| W^X                          |  0x0008  |
-++------------------------------+----------+
-+| Don't enforce, just complain |  0x0010  |
-++------------------------------+----------+
-+| Be Verbose                   |  0x0020  |
-++------------------------------+----------+
-+| Executable MMAP prevention   |  0x0040  |
-++------------------------------+----------+
-+| Force W^X on setprocattr     |  0x0080  |
-++------------------------------+----------+
-+| Trampoline emulation         |  0x0100  |
-++------------------------------+----------+
-+| Children will inherit flags  |  0x0200  |
-++------------------------------+----------+
-+
-+-------------------------------------------------------------------------------
-+
-+External Links and Documentation
-+================================
-+
-+.. [1] `Documentation	<https://github.com/smeso/sara-doc>`_
-+.. [2] `saractl		<https://github.com/smeso/saractl>`_
-+.. [3] `libsara		<https://github.com/smeso/libsara>`_
-+.. [4] `sara-test	<https://github.com/smeso/sara-test>`_
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index c980dfe..c0ae6bb3 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -39,3 +39,4 @@ the one "major" module (e.g. SELinux) if there is one configured.
-    Smack
-    tomoyo
-    Yama
-+   SARA
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0549662..bbfda53 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3791,6 +3791,30 @@
- 			1 -- enable.
- 			Default value is set via kernel config option.
+diff --git a/security/sara/wxprot.c b/security/sara/wxprot.c
+index d360833..afc4e13 100644
+--- a/security/sara/wxprot.c
++++ b/security/sara/wxprot.c
+@@ -12,6 +12,7 @@
+ #ifdef CONFIG_SECURITY_SARA_WXPROT
  
-+	sara.enabled=	[SARA] Disable or enable S.A.R.A. at boot time.
-+			If disabled this way S.A.R.A. can't be enabled
-+			again.
-+			Format: { "0" | "1" }
-+			See security/sara/Kconfig help text
-+			0 -- disable.
-+			1 -- enable.
-+			Default value is set via kernel config option.
-+
-+	sara.wxprot_enabled= [SARA]
-+			Disable or enable S.A.R.A. WX Protection
-+			at boot time.
-+			Format: { "0" | "1" }
-+			See security/sara/Kconfig help text
-+			0 -- disable.
-+			1 -- enable.
-+			Default value is 1.
-+
-+	sara.wxprot_default_flags= [SARA]
-+			Set S.A.R.A. WX Protection default flags.
-+			Format: <integer>
-+			See S.A.R.A. documentation.
-+			Default value is set via kernel config option.
-+
- 	serialnumber	[BUGS=X86-32]
+ #include <linux/binfmts.h>
++#include <linux/capability.h>
+ #include <linux/cred.h>
+ #include <linux/elf.h>
+ #include <linux/kref.h>
+@@ -43,6 +44,7 @@
+ #define SARA_WXP_COMPLAIN	0x0010
+ #define SARA_WXP_VERBOSE	0x0020
+ #define SARA_WXP_MMAP		0x0040
++#define SARA_WXP_FORCE_WXORX	0x0080
+ #define SARA_WXP_EMUTRAMP	0x0100
+ #define SARA_WXP_TRANSFER	0x0200
+ #define SARA_WXP_NONE		0x0000
+@@ -540,6 +542,152 @@ static inline int sara_pagefault_handler_x86_64(struct pt_regs *regs)
  
- 	shapers=	[NET]
+ #endif /* CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP */
+ 
++static int sara_getprocattr(struct task_struct *p, char *name, char **value)
++{
++	int ret;
++	u16 flags;
++	char *buf;
++
++	ret = -EINVAL;
++	if (strcmp(name, "wxprot") != 0)
++		goto out;
++
++	ret = -EACCES;
++	if (unlikely(current != p &&
++		     !capable(CAP_MAC_ADMIN)))
++		goto out;
++
++	ret = -ENOMEM;
++	buf = kzalloc(8, GFP_KERNEL);
++	if (unlikely(buf == NULL))
++		goto out;
++
++	if (!sara_enabled || !wxprot_enabled) {
++		flags = 0x0;
++	} else {
++		rcu_read_lock();
++		flags = get_sara_wxp_flags(__task_cred(p));
++		rcu_read_unlock();
++	}
++
++	snprintf(buf, 8, "0x%04x\n", flags);
++	ret = strlen(buf);
++	*value = buf;
++
++out:
++	return ret;
++}
++
++static int sara_setprocattr(const char *name, void *value, size_t size)
++{
++	int ret;
++	struct vm_area_struct *vma;
++	struct cred *new = prepare_creds();
++	u16 cur_flags;
++	u16 req_flags;
++	char *buf = NULL;
++
++	ret = -EINVAL;
++	if (!sara_enabled || !wxprot_enabled)
++		goto error;
++	if (unlikely(new == NULL))
++		return -ENOMEM;
++	if (strcmp(name, "wxprot") != 0)
++		goto error;
++	if (unlikely(value == NULL || size == 0 || size > 7))
++		goto error;
++	ret = -ENOMEM;
++	buf = kmalloc(size+1, GFP_KERNEL);
++	if (unlikely(buf == NULL))
++		goto error;
++	buf[size] = '\0';
++	memcpy(buf, value, size);
++	ret = -EINVAL;
++	if (unlikely(strlen(buf) != size))
++		goto error;
++	if (unlikely(kstrtou16(buf, 16, &req_flags) != 0))
++		goto error;
++	/*
++	 * SARA_WXP_FORCE_WXORX is a procattr only flag with a special
++	 * meaning and it isn't recognized by are_flags_valid
++	 */
++	if (unlikely(!are_flags_valid(req_flags & ~SARA_WXP_FORCE_WXORX)))
++		goto error;
++	/*
++	 * Extra checks on requested flags:
++	 *   - SARA_WXP_FORCE_WXORX requires SARA_WXP_WXORX
++	 *   - SARA_WXP_MMAP can only be activated if the program
++	 *     has a relro section
++	 *   - COMPLAIN mode can only be requested if it was already
++	 *     on (procattr can only be used to make protection stricter)
++	 *   - EMUTRAMP can only be activated if it was already on or
++	 *     if MPROTECT and WXORX weren't already on (procattr can
++	 *     only be used to make protection stricter)
++	 *   - VERBOSITY request is ignored
++	 */
++	if (unlikely(req_flags & SARA_WXP_FORCE_WXORX &&
++		     !(req_flags & SARA_WXP_WXORX)))
++		goto error;
++	if (unlikely(!get_current_sara_relro_page_found() &&
++		     req_flags & SARA_WXP_MMAP))
++		goto error;
++	cur_flags = get_current_sara_wxp_flags();
++	if (unlikely((req_flags & SARA_WXP_COMPLAIN) &&
++		     !(cur_flags & SARA_WXP_COMPLAIN)))
++		goto error;
++	if (unlikely((req_flags & SARA_WXP_EMUTRAMP) &&
++		     !(cur_flags & SARA_WXP_EMUTRAMP) &&
++		     (cur_flags & (SARA_WXP_MPROTECT |
++				   SARA_WXP_WXORX))))
++		goto error;
++	if (cur_flags & SARA_WXP_VERBOSE)
++		req_flags |= SARA_WXP_VERBOSE;
++	else
++		req_flags &= ~SARA_WXP_VERBOSE;
++	/*
++	 * Except SARA_WXP_COMPLAIN and SARA_WXP_EMUTRAMP,
++	 * any other flag can't be removed (procattr can
++	 * only be used to make protection stricter).
++	 */
++	if (unlikely(cur_flags & (req_flags ^ cur_flags) &
++		     ~(SARA_WXP_COMPLAIN|SARA_WXP_EMUTRAMP)))
++		goto error;
++	ret = -EINTR;
++	/*
++	 * When SARA_WXP_FORCE_WXORX is on we traverse all the
++	 * memory and remove the write permission from any area
++	 * that is both writable and executable.
++	 */
++	if (req_flags & SARA_WXP_FORCE_WXORX) {
++		if (down_write_killable(&current->mm->mmap_sem))
++			goto error;
++		for (vma = current->mm->mmap; vma; vma = vma->vm_next) {
++			if (vma->vm_flags & VM_EXEC &&
++			    vma->vm_flags & VM_WRITE) {
++				vma->vm_flags &= ~VM_WRITE;
++				vma_set_page_prot(vma);
++				change_protection(vma,
++						  vma->vm_start,
++						  vma->vm_end,
++						  vma->vm_page_prot,
++						  0,
++						  0);
++			}
++		}
++		up_write(&current->mm->mmap_sem);
++	}
++	get_sara_wxp_flags(new) = req_flags & ~SARA_WXP_FORCE_WXORX;
++	commit_creds(new);
++	ret = size;
++	goto out;
++
++error:
++	abort_creds(new);
++out:
++	kfree(buf);
++	return ret;
++}
++
+ static struct security_hook_list wxprot_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_set_creds, sara_bprm_set_creds),
+ 	LSM_HOOK_INIT(check_vmflags, sara_check_vmflags),
+@@ -547,6 +695,8 @@ static inline int sara_pagefault_handler_x86_64(struct pt_regs *regs)
+ #ifdef CONFIG_SECURITY_SARA_WXPROT_EMUTRAMP
+ 	LSM_HOOK_INIT(pagefault_handler, sara_pagefault_handler_x86),
+ #endif
++	LSM_HOOK_INIT(getprocattr, sara_getprocattr),
++	LSM_HOOK_INIT(setprocattr, sara_setprocattr),
+ };
+ 
+ struct binary_config_header {
 -- 
 1.9.1
 
