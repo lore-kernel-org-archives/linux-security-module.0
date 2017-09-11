@@ -1,164 +1,34 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Mon, 11 Sep 2017 21:50:18 +0200
-Subject: [RFC v3 0/9] S.A.R.A. a new stacked LSM
-Message-ID: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 11 Sep 2017 17:34:05 -0400
+Subject: [GIT PULL] Security subsystem updates for 4.14
+In-Reply-To: <20170911063834.GB10489@infradead.org>
+References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
+	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
+	<alpine.LRH.2.21.1709081448090.7880@namei.org>
+	<20170908070943.GA26549@infradead.org>
+	<CA+55aFwMgUJSMQ96XdKnTbn8UsxzHTb8tZQdH40nxDeF7fWObw@mail.gmail.com>
+	<20170910081047.GA19533@infradead.org>
+	<1505052162.3224.64.camel@linux.vnet.ibm.com>
+	<20170911063834.GB10489@infradead.org>
+Message-ID: <1505165645.3470.1.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux
-Security Module that aims to collect heterogeneous security measures,
-providing a common interface to manage them.
-It can be useful to allow minor security features to use advanced
-management options, like user-space configuration files and tools, without
-too much overhead.
-Some submodules that use this framework are also introduced.
-The code is quite long, I apologize for this. Thank you in advance to
-anyone who will take the time to review this patchset.
+On Sun, 2017-09-10 at 23:38 -0700, Christoph Hellwig wrote:
+> On Sun, Sep 10, 2017 at 10:02:42AM -0400, Mimi Zohar wrote:
+> > We need to differentiate between policies and x509 certificates. ?In
+> > the policy case, they need to be signed and appraised, while in the
+> > x509 certificate case, the certificate itself is signed so the file
+> > doesn't need to be signed or verified.
+> 
+> How about you take this sketch over - I don't know much about the
+> integrity code, and it seems like you actually wrote
+> kernel_read_file_from_path as well - so you're at least 3 times as
+> qualified as I am in this area..
 
-S.A.R.A. is meant to be stacked but it needs cred blobs and the procattr
-interface, so I temporarily implemented those parts in a way that won't
-be acceptable for upstream, but it works for now. I know that there
-is some ongoing work to make cred blobs and procattr stackable, as soon
-as the new interfaces will be available I'll reimplement the involved
-parts.
-At the moment I've been able to test it only on x86.
+Sure, it's been on my to do list.
 
-The only submodule introduced in this patchset is WX Protection.
-
-The kernel-space part is complemented by its user-space counterpart:
-saractl [1].
-A test suite for WX Protection, called sara-test [2], is also available.
-
-WX Protection aims to improve user-space programs security by applying:
-- W^X enforcement: program can't have a page of memory that is marked, at
-		   the same time, writable and executable.
-- W!->X restriction: any page that could have been marked as writable in
-		     the past won't ever be allowed to be marked as
-		     executable.
-- Executable MMAP prevention: prevents the creation of new executable mmaps
-			      after the dynamic libraries have been loaded.
-All of the above features can be enabled or disabled both system wide
-or on a per executable basis through the use of configuration files managed
-by "saractl".
-It is important to note that some programs may have issues working with
-WX Protection. In particular:
-- W^X enforcement will cause problems to any programs that needs
-  memory pages mapped both as writable and executable at the same time e.g.
-  programs with executable stack markings in the PT_GNU_STACK segment.
-- W!->X restriction will cause problems to any program that
-  needs to generate executable code at run time or to modify executable
-  pages e.g. programs with a JIT compiler built-in or linked against a
-  non-PIC library.
-- Executable MMAP prevention can work only with programs that have at least
-  partial RELRO support. It's disabled automatically for programs that
-  lack this feature. It will cause problems to any program that uses dlopen
-  or tries to do an executable mmap. Unfortunately this feature is the one
-  that could create most problems and should be enabled only after careful
-  evaluation.
-To extend the scope of the above features, despite the issues that they may
-cause, they are complemented by:
-- procattr interface: can be used by a program to discover which WX
-		      Protection features are enabled and/or to tighten
-		      them.
-- Trampoline emulation: emulates the execution of well-known "trampolines"
-			even when they are placed in non-executable memory.
-Parts of WX Protection are inspired by some of the features available in
-PaX.
-
-More information can be found in the documentation introduced in the first
-patch and in the "commit message" of the following emails.
-
-Changes in v2:
-	- Removed USB filtering submodule and relative hook
-	- s/saralib/libsara/ typo
-	- STR macro renamed to avoid conflicts
-	- check_vmflags hook now returns an error code instead of just 1
-	  or 0. (suggested by Casey Schaufler)
-	- pr_wxp macro rewritten as function for readability
-	- Fixed i386 compilation warnings
-	- Documentation now states clearly that changes done via procattr
-	  interface only apply to current thread. (suggested by Jann Horn)
-
-Changes in v3:
-	- Documentation has been moved to match the new directory structure.
-	- Kernel cmdline arguments are now accessed via module_param interface
-	  (suggested by Kees Cook).
-	- Created "sara_warn_or_return" macro to make WX Protection code more
-	  readable (suggested by Kees Cook).
-	- Added more comments, in the most important places, to clarify my
-	  intentions (suggested by Kees Cook).
-	- The "pagefault_handler" hook has been rewritten in a more "arch
-	  agnostic" way. Though it only support x86 at the moment
-	  (suggested by Kees Cook).
-
-Suggested improvements not added in v3:
-	- Kees Cook suggested to add the VMA as an argument to "check_vmflags"
-	  hook, because it could be useful for other potential users, but he
-	  wasn't certain about it. So I decided to not change this for the
-	  moment.
-	- Kees Cook suggested to move "trampolines.h" to "arch/x86". I'm not
-	  sure what would be the best place to put it, so, for the moment, I
-	  didn't move it.
-
-[1] https://github.com/smeso/saractl
-[2] https://github.com/smeso/sara-test
-
-Salvatore Mesoraca (9):
-  S.A.R.A. Documentation
-  S.A.R.A. framework creation
-  Creation of "check_vmflags" LSM hook
-  S.A.R.A. cred blob management
-  S.A.R.A. WX Protection
-  Creation of "pagefault_handler" LSM hook
-  Trampoline emulation
-  Allowing for stacking procattr support in S.A.R.A.
-  S.A.R.A. WX Protection procattr interface
-
- Documentation/admin-guide/LSM/SARA.rst          | 170 +++++
- Documentation/admin-guide/LSM/index.rst         |   1 +
- Documentation/admin-guide/kernel-parameters.txt |  24 +
- arch/Kconfig                                    |   6 +
- arch/x86/Kconfig                                |   1 +
- arch/x86/mm/fault.c                             |   6 +
- fs/proc/base.c                                  |  38 +
- include/linux/cred.h                            |   3 +
- include/linux/lsm_hooks.h                       |  24 +
- include/linux/security.h                        |  17 +
- mm/mmap.c                                       |  13 +
- security/Kconfig                                |   1 +
- security/Makefile                               |   2 +
- security/sara/Kconfig                           | 136 ++++
- security/sara/Makefile                          |   4 +
- security/sara/include/sara.h                    |  29 +
- security/sara/include/sara_data.h               |  47 ++
- security/sara/include/securityfs.h              |  59 ++
- security/sara/include/trampolines.h             | 173 +++++
- security/sara/include/utils.h                   |  80 ++
- security/sara/include/wxprot.h                  |  27 +
- security/sara/main.c                            | 117 +++
- security/sara/sara_data.c                       |  79 ++
- security/sara/securityfs.c                      | 560 ++++++++++++++
- security/sara/utils.c                           | 151 ++++
- security/sara/wxprot.c                          | 973 ++++++++++++++++++++++++
- security/security.c                             |  37 +-
- 27 files changed, 2776 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/admin-guide/LSM/SARA.rst
- create mode 100644 security/sara/Kconfig
- create mode 100644 security/sara/Makefile
- create mode 100644 security/sara/include/sara.h
- create mode 100644 security/sara/include/sara_data.h
- create mode 100644 security/sara/include/securityfs.h
- create mode 100644 security/sara/include/trampolines.h
- create mode 100644 security/sara/include/utils.h
- create mode 100644 security/sara/include/wxprot.h
- create mode 100644 security/sara/main.c
- create mode 100644 security/sara/sara_data.c
- create mode 100644 security/sara/securityfs.c
- create mode 100644 security/sara/utils.c
- create mode 100644 security/sara/wxprot.c
-
--- 
-1.9.1
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
