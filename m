@@ -1,29 +1,122 @@
-From: hch@infradead.org (Christoph Hellwig)
-Date: Sun, 10 Sep 2017 23:38:34 -0700
-Subject: [GIT PULL] Security subsystem updates for 4.14
-In-Reply-To: <1505052162.3224.64.camel@linux.vnet.ibm.com>
-References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
-	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
-	<alpine.LRH.2.21.1709081448090.7880@namei.org>
-	<20170908070943.GA26549@infradead.org>
-	<CA+55aFwMgUJSMQ96XdKnTbn8UsxzHTb8tZQdH40nxDeF7fWObw@mail.gmail.com>
-	<20170910081047.GA19533@infradead.org>
-	<1505052162.3224.64.camel@linux.vnet.ibm.com>
-Message-ID: <20170911063834.GB10489@infradead.org>
+From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
+Date: Mon, 11 Sep 2017 10:24:17 +0000
+Subject: [PATCH v3] tpm-dev-common: Reject too short writes
+In-Reply-To: <20170909125347.y3zgvpnbdywqxi54@linux.intel.com>
+References: <20170908152132.8728-1-Alexander.Steffen@infineon.com>
+	<20170908213739.k7ifm2isz4dciaaa@linux.intel.com>
+	<20170909125347.y3zgvpnbdywqxi54@linux.intel.com>
+Message-ID: <cd44dc6b622c4a65ad06bdbc851fe4a0@MUCSE603.infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Sep 10, 2017 at 10:02:42AM -0400, Mimi Zohar wrote:
-> We need to differentiate between policies and x509 certificates. ?In
-> the policy case, they need to be signed and appraised, while in the
-> x509 certificate case, the certificate itself is signed so the file
-> doesn't need to be signed or verified.
+> On Sat, Sep 09, 2017 at 12:37:39AM +0300, Jarkko Sakkinen wrote:
+> > On Fri, Sep 08, 2017 at 05:21:32PM +0200, Alexander Steffen wrote:
+> > > tpm_transmit() does not offer an explicit interface to indicate the
+> number
+> > > of valid bytes in the communication buffer. Instead, it relies on the
+> > > commandSize field in the TPM header that is encoded within the buffer.
+> > > Therefore, ensure that a) enough data has been written to the buffer, so
+> > > that the commandSize field is present and b) the commandSize field does
+> not
+> > > announce more data than has been written to the buffer.
+> > >
+> > > This should have been fixed with CVE-2011-1161 long ago, but apparently
+> > > a correct version of that patch never made it into the kernel.
+> > >
+> > > Cc: stable at vger.kernel.org
+> > > Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> > > ---
+> > > v2:
+> > > - Moved all changes to tpm_common_write in a single patch.
+> > > v3:
+> > > - Access data copied from user space (priv->data_buffer) instead of user
+> > >   space data directly (buf).
+> > > - Changed return code to EINVAL.
+> > >
+> > >  drivers/char/tpm/tpm-dev-common.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/drivers/char/tpm/tpm-dev-common.c
+> b/drivers/char/tpm/tpm-dev-common.c
+> > > index 610638a..461bf0b 100644
+> > > --- a/drivers/char/tpm/tpm-dev-common.c
+> > > +++ b/drivers/char/tpm/tpm-dev-common.c
+> > > @@ -110,6 +110,12 @@ ssize_t tpm_common_write(struct file *file,
+> const char __user *buf,
+> > >  		return -EFAULT;
+> > >  	}
+> > >
+> > > +	if (in_size < 6 ||
+> > > +	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
+> > > +		mutex_unlock(&priv->buffer_mutex);
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > >  	/* atomic tpm command send and result receive. We only hold the
+> ops
+> > >  	 * lock during this period so that the tpm can be unregistered even if
+> > >  	 * the char dev is held open.
+> > > --
+> > > 2.7.4
+> > >
+> >
+> > I'm not gonna fight about that "in_size < 6" check. I think it is not
+> > needed, I understand your point but still disagree but it is something
+> > where I can live with having it.
+> >
+> > I kind of disagree also with allowing messages longer than the command
+> > size but it does not have to be in the scope of this commit and actually
+> > should be a separate discussion if we ever going to do something about
+> > it.
+> >
+> > Thanks for the patience!
+> >
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> >
+> > /Jarkko
+> 
+> Without your fix:
+> 
+> $ python -m unittest -v tpm2_smoke.SmokeTest.test_too_short_cmd
+> test_too_short_cmd (tpm2_smoke.SmokeTest) ... FAIL
+> 
+> ==========================================================
+> ============
+> FAIL: test_too_short_cmd (tpm2_smoke.SmokeTest)
+> ----------------------------------------------------------------------
+> Traceback (most recent call last):
+>   File "tpm2_smoke.py", line 157, in test_too_short_cmd
+>     self.assertEqual(rejected, True)
+> AssertionError: False != True
+> 
+> ----------------------------------------------------------------------
+> Ran 1 test in 2.108s
+> 
+> FAILED (failures=1)
+> 
+> The test case expects to get a posix error, which it doesn't get.
+> 
+> With your fix:
+> 
+> $ python -m unittest -v tpm2_smoke.SmokeTest.test_too_short_cmd
+> test_too_short_cmd (tpm2_smoke.SmokeTest) ... ok
+> 
+> ----------------------------------------------------------------------
+> Ran 1 test in 2.099s
+> 
+> OK
+> 
+> So looks good to me.
+> 
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Can you test the master branch with SPI TPM? I had to tinker your
+> commits a bit because of merge conflicts with Arnd's commit. I'll
+> put everything back to next as soon as I hear from you. Thanks
+> 
+> /Jarkko
 
-How about you take this sketch over - I don't know much about the
-integrity code, and it seems like you actually wrote
-kernel_read_file_from_path as well - so you're at least 3 times as
-qualified as I am in this area..
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+tpm_tis_spi in master (3897f7c) is broken, it does not transfer any data. I'll send you a fixed patch for the DMA change.
+
+Alexander
+????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
