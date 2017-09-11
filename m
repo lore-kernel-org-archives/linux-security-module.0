@@ -1,122 +1,140 @@
-From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
-Date: Mon, 11 Sep 2017 10:24:17 +0000
-Subject: [PATCH v3] tpm-dev-common: Reject too short writes
-In-Reply-To: <20170909125347.y3zgvpnbdywqxi54@linux.intel.com>
-References: <20170908152132.8728-1-Alexander.Steffen@infineon.com>
-	<20170908213739.k7ifm2isz4dciaaa@linux.intel.com>
-	<20170909125347.y3zgvpnbdywqxi54@linux.intel.com>
-Message-ID: <cd44dc6b622c4a65ad06bdbc851fe4a0@MUCSE603.infineon.com>
+From: Alexander.Steffen@infineon.com (Alexander Steffen)
+Date: Mon, 11 Sep 2017 12:26:52 +0200
+Subject: [PATCH v4] tpm_tis_spi: Use DMA-safe memory for SPI transfers
+Message-ID: <20170911102652.15356-1-Alexander.Steffen@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> On Sat, Sep 09, 2017 at 12:37:39AM +0300, Jarkko Sakkinen wrote:
-> > On Fri, Sep 08, 2017 at 05:21:32PM +0200, Alexander Steffen wrote:
-> > > tpm_transmit() does not offer an explicit interface to indicate the
-> number
-> > > of valid bytes in the communication buffer. Instead, it relies on the
-> > > commandSize field in the TPM header that is encoded within the buffer.
-> > > Therefore, ensure that a) enough data has been written to the buffer, so
-> > > that the commandSize field is present and b) the commandSize field does
-> not
-> > > announce more data than has been written to the buffer.
-> > >
-> > > This should have been fixed with CVE-2011-1161 long ago, but apparently
-> > > a correct version of that patch never made it into the kernel.
-> > >
-> > > Cc: stable at vger.kernel.org
-> > > Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> > > ---
-> > > v2:
-> > > - Moved all changes to tpm_common_write in a single patch.
-> > > v3:
-> > > - Access data copied from user space (priv->data_buffer) instead of user
-> > >   space data directly (buf).
-> > > - Changed return code to EINVAL.
-> > >
-> > >  drivers/char/tpm/tpm-dev-common.c | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm-dev-common.c
-> b/drivers/char/tpm/tpm-dev-common.c
-> > > index 610638a..461bf0b 100644
-> > > --- a/drivers/char/tpm/tpm-dev-common.c
-> > > +++ b/drivers/char/tpm/tpm-dev-common.c
-> > > @@ -110,6 +110,12 @@ ssize_t tpm_common_write(struct file *file,
-> const char __user *buf,
-> > >  		return -EFAULT;
-> > >  	}
-> > >
-> > > +	if (in_size < 6 ||
-> > > +	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
-> > > +		mutex_unlock(&priv->buffer_mutex);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > >  	/* atomic tpm command send and result receive. We only hold the
-> ops
-> > >  	 * lock during this period so that the tpm can be unregistered even if
-> > >  	 * the char dev is held open.
-> > > --
-> > > 2.7.4
-> > >
-> >
-> > I'm not gonna fight about that "in_size < 6" check. I think it is not
-> > needed, I understand your point but still disagree but it is something
-> > where I can live with having it.
-> >
-> > I kind of disagree also with allowing messages longer than the command
-> > size but it does not have to be in the scope of this commit and actually
-> > should be a separate discussion if we ever going to do something about
-> > it.
-> >
-> > Thanks for the patience!
-> >
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >
-> > /Jarkko
-> 
-> Without your fix:
-> 
-> $ python -m unittest -v tpm2_smoke.SmokeTest.test_too_short_cmd
-> test_too_short_cmd (tpm2_smoke.SmokeTest) ... FAIL
-> 
-> ==========================================================
-> ============
-> FAIL: test_too_short_cmd (tpm2_smoke.SmokeTest)
-> ----------------------------------------------------------------------
-> Traceback (most recent call last):
->   File "tpm2_smoke.py", line 157, in test_too_short_cmd
->     self.assertEqual(rejected, True)
-> AssertionError: False != True
-> 
-> ----------------------------------------------------------------------
-> Ran 1 test in 2.108s
-> 
-> FAILED (failures=1)
-> 
-> The test case expects to get a posix error, which it doesn't get.
-> 
-> With your fix:
-> 
-> $ python -m unittest -v tpm2_smoke.SmokeTest.test_too_short_cmd
-> test_too_short_cmd (tpm2_smoke.SmokeTest) ... ok
-> 
-> ----------------------------------------------------------------------
-> Ran 1 test in 2.099s
-> 
-> OK
-> 
-> So looks good to me.
-> 
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> Can you test the master branch with SPI TPM? I had to tinker your
-> commits a bit because of merge conflicts with Arnd's commit. I'll
-> put everything back to next as soon as I hear from you. Thanks
-> 
-> /Jarkko
+The buffers used as tx_buf/rx_buf in a SPI transfer need to be DMA-safe.
+This cannot be guaranteed for the buffers passed to tpm_tis_spi_read_bytes
+and tpm_tis_spi_write_bytes. Therefore, we need to use our own DMA-safe
+buffer and copy the data to/from it.
 
-tpm_tis_spi in master (3897f7c) is broken, it does not transfer any data. I'll send you a fixed patch for the DMA change.
+The buffer needs to be allocated separately, to ensure that it is
+cacheline-aligned and not shared with other data, so that DMA can work
+correctly.
 
-Alexander
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+Fixes: 0edbfea537d1 ("tpm/tpm_tis_spi: Add support for spi phy")
+Cc: stable at vger.kernel.org
+Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+---
+v2:
+- Updated commit message with more explanations.
+v3:
+- Split into two patches, one for making the buffers DMA-safe and another
+  for using only a single buffer.
+v4:
+- Back to one patch, to fix conflicts with new const buffers.
+
+ drivers/char/tpm/tpm_tis_spi.c | 45 +++++++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
+index e49f5b9..8ab0bd8 100644
+--- a/drivers/char/tpm/tpm_tis_spi.c
++++ b/drivers/char/tpm/tpm_tis_spi.c
+@@ -46,9 +46,7 @@
+ struct tpm_tis_spi_phy {
+ 	struct tpm_tis_data priv;
+ 	struct spi_device *spi_device;
+-
+-	u8 tx_buf[4];
+-	u8 rx_buf[4];
++	u8 *iobuf;
+ };
+ 
+ static inline struct tpm_tis_spi_phy *to_tpm_tis_spi_phy(struct tpm_tis_data *data)
+@@ -71,14 +69,14 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+ 	while (len) {
+ 		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
+ 
+-		phy->tx_buf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
+-		phy->tx_buf[1] = 0xd4;
+-		phy->tx_buf[2] = addr >> 8;
+-		phy->tx_buf[3] = addr;
++		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
++		phy->iobuf[1] = 0xd4;
++		phy->iobuf[2] = addr >> 8;
++		phy->iobuf[3] = addr;
+ 
+ 		memset(&spi_xfer, 0, sizeof(spi_xfer));
+-		spi_xfer.tx_buf = phy->tx_buf;
+-		spi_xfer.rx_buf = phy->rx_buf;
++		spi_xfer.tx_buf = phy->iobuf;
++		spi_xfer.rx_buf = phy->iobuf;
+ 		spi_xfer.len = 4;
+ 		spi_xfer.cs_change = 1;
+ 
+@@ -88,9 +86,9 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+ 		if (ret < 0)
+ 			goto exit;
+ 
+-		if ((phy->rx_buf[3] & 0x01) == 0) {
++		if ((phy->iobuf[3] & 0x01) == 0) {
+ 			// handle SPI wait states
+-			phy->tx_buf[0] = 0;
++			phy->iobuf[0] = 0;
+ 
+ 			for (i = 0; i < TPM_RETRY; i++) {
+ 				spi_xfer.len = 1;
+@@ -99,7 +97,7 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+ 				ret = spi_sync_locked(phy->spi_device, &m);
+ 				if (ret < 0)
+ 					goto exit;
+-				if (phy->rx_buf[0] & 0x01)
++				if (phy->iobuf[0] & 0x01)
+ 					break;
+ 			}
+ 
+@@ -112,8 +110,14 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+ 		spi_xfer.cs_change = 0;
+ 		spi_xfer.len = transfer_len;
+ 		spi_xfer.delay_usecs = 5;
+-		spi_xfer.tx_buf = out;
+-		spi_xfer.rx_buf = in;
++
++		if (in) {
++			spi_xfer.tx_buf = NULL;
++		} else if (out) {
++			spi_xfer.rx_buf = NULL;
++			memcpy(phy->iobuf, out, transfer_len);
++			out += transfer_len;
++		}
+ 
+ 		spi_message_init(&m);
+ 		spi_message_add_tail(&spi_xfer, &m);
+@@ -121,11 +125,12 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+ 		if (ret < 0)
+ 			goto exit;
+ 
+-		len -= transfer_len;
+-		if (in)
++		if (in) {
++			memcpy(in, phy->iobuf, transfer_len);
+ 			in += transfer_len;
+-		if (out)
+-			out += transfer_len;
++		}
++
++		len -= transfer_len;
+ 	}
+ 
+ exit:
+@@ -191,6 +196,10 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
+ 
+ 	phy->spi_device = dev;
+ 
++	phy->iobuf = devm_kmalloc(&dev->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
++	if (!phy->iobuf)
++		return -ENOMEM;
++
+ 	return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_spi_phy_ops,
+ 				 NULL);
+ }
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
