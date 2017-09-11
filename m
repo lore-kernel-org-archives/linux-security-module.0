@@ -1,71 +1,246 @@
-From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
-Date: Mon, 11 Sep 2017 15:20:11 +0000
-Subject: [tpmdd-devel] [PATCH v2 0/4] additional TPM performance
-	improvements
-In-Reply-To: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
-References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
-Message-ID: <3c9f751de8af4b708ec47385acb3037f@MUCSE603.infineon.com>
+From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
+Date: Mon, 11 Sep 2017 21:50:19 +0200
+Subject: [RFC v3 1/9] S.A.R.A. Documentation
+In-Reply-To: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
+References: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <1505159427-11747-2-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> After further discussions with the Device Driver working group (ddwg),
-> the following changes were made:
-> 
-> * Check for burstcount at least once to confirm the TPM is ready to accept
-> the data. Similarly, query for the TPM Expect status as sanity check at
-> the end.
-> 
-> * Make the sleep for status check during send() in the loop less than
-> 5msec.
-> 
-> * Make the sleep in the loop while querying for burstcount less than
-> 5msec.
-> 
-> Below is the list of patches along with the performance improvements
-> seen with a TPM 1.2 with an 8 byte burstcount for 1000 extends:
-> 
-> Patch                                        |Improvement(time in sec)
-> 
-> tpm: ignore burstcount to improve tpm_tis    | ~41 - ~14
-> send() performance.
-> 
-> tpm: define __wait_for_tpm_stat to specify   | ~14 - ~10
-> variable polling sleep time
-> 
-> tpm: reduce tpm_msleep() time in             | ~10 - ~9
-> get_burstcount()
-> 
-> tpm: modify tpm_msleep() function to have    | ~9 - ~8
-> max range
-> 
-> Changelog v2:
-> 
-> * Add module parameter to handle ignoring of burst count during
-> tpm tis send() operation.
-> * Add improvements over sleep time to reduce delays.
-> 
-> Nayna Jain (4):
->   tpm: ignore burstcount to improve tpm_tis send() performance.
->   tpm: define __wait_for_tpm_stat to specify variable polling sleep time
->   tpm: reduce tpm_msleep() time in get_burstcount()
->   tpm: use tpm_msleep() value as max delay
-> 
->  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++
->  drivers/char/tpm/tpm-interface.c                | 15 ++++++++--
->  drivers/char/tpm/tpm.h                          |  7 +++--
->  drivers/char/tpm/tpm_tis_core.c                 | 37 +++++++++++++++++++------
->  4 files changed, 53 insertions(+), 14 deletions(-)
-> 
-> --
-> 2.13.3
+Adding documentation for S.A.R.A. LSM.
 
-I haven't looked at the changes in detail yet, but some initial comments:
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+---
+ Documentation/admin-guide/LSM/SARA.rst          | 170 ++++++++++++++++++++++++
+ Documentation/admin-guide/LSM/index.rst         |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |  24 ++++
+ 3 files changed, 195 insertions(+)
+ create mode 100644 Documentation/admin-guide/LSM/SARA.rst
 
-The ignore_burst_count functionality has already received some negative feedback and probably needs more iterations, if it can be accepted at all, so you might want to split it off from the rest of the series.
+diff --git a/Documentation/admin-guide/LSM/SARA.rst b/Documentation/admin-guide/LSM/SARA.rst
+new file mode 100644
+index 0000000..65651d8
+--- /dev/null
++++ b/Documentation/admin-guide/LSM/SARA.rst
+@@ -0,0 +1,170 @@
++========
++S.A.R.A.
++========
++
++S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux Security
++Module that aims to collect heterogeneous security measures, providing a common
++interface to manage them.
++As of today it consists of one submodule:
++
++- WX Protection
++
++
++The kernel-space part is complemented by its user-space counterpart: `saractl` [2]_.
++A test suite for WX Protection, called `sara-test` [4]_, is also available.
++More information about where to find these tools and the full S.A.R.A.
++documentation are in the `External Links and Documentation`_ section.
++
++-------------------------------------------------------------------------------
++
++S.A.R.A.'s Submodules
++=====================
++
++WX Protection
++-------------
++WX Protection aims to improve user-space programs security by applying:
++
++- `W^X enforcement`_
++- `W!->X (once writable never executable) mprotect restriction`_
++- `Executable MMAP prevention`_
++
++All of the above features can be enabled or disabled both system wide
++or on a per executable basis through the use of configuration files managed by
++`saractl` [2]_.
++
++It is important to note that some programs may have issues working with
++WX Protection. In particular:
++
++- **W^X enforcement** will cause problems to any programs that needs
++  memory pages mapped both as writable and executable at the same time e.g.
++  programs with executable stack markings in the *PT_GNU_STACK* segment.
++- **W!->X mprotect restriction** will cause problems to any program that
++  needs to generate executable code at run time or to modify executable
++  pages e.g. programs with a *JIT* compiler built-in or linked against a
++  *non-PIC* library.
++- **Executable MMAP prevention** can work only with programs that have at least
++  partial *RELRO* support. It's disabled automatically for programs that
++  lack this feature. It will cause problems to any program that uses *dlopen*
++  or tries to do an executable mmap. Unfortunately this feature is the one
++  that could create most problems and should be enabled only after careful
++  evaluation.
++
++To extend the scope of the above features, despite the issues that they may
++cause, they are complemented by **/proc/PID/attr/sara/wxprot** interface
++and **trampoline emulation**.
++
++At the moment, WX Protection (unless specified otherwise) runs on `x86_64` and
++`x86_32` (with PAE).
++
++Parts of WX Protection are inspired by some of the features available in PaX.
++
++For further information about configuration file format and user-space
++utilities please take a look at the full documentation [1]_.
++
++W^X enforcement
++----------------------
++W^X means that a program can't have a page of memory that is marked, at the
++same time, writable and executable. This also allow to detect many bad
++behaviours that make life much more easy for attackers. Programs running with
++this feature enabled will be more difficult to exploit in the case they are
++affected by some vulnerabilities, because the attacker will be forced
++to make more steps in order to exploit them.
++
++W!->X (once writable never executable) mprotect restriction
++-----------------------------------------------------------
++"Once writable never executable" means that any page that could have been
++marked as writable in the past won't ever be allowed to be marked (e.g. via
++an mprotect syscall) as executable.
++This goes on the same track as W^X, but is much stricter and prevents
++the runtime creation of new executable code in memory.
++Obviously, this feature does not prevent a program from creating a new file and
++*mmapping* it as executable, however, it will be way more difficult for attackers
++to exploit vulnerabilities if this feature is enabled.
++
++Executable MMAP prevention
++--------------------------
++This feature prevents the creation of new executable mmaps after the dynamic
++libraries have been loaded. When used in combination with **W!->X mprotect
++restriction** this feature will completely prevent the creation of new
++executable code in the current program.
++Obviously, this feature does not prevent cases in which an attacker uses an
++*execve* to start a completely new program. This kind of restriction, if
++needed, can be applied using one of the other LSM that focuses on MAC.
++Please be aware that this feature can break many programs and so it should be
++enabled after careful evaluation.
++
++/proc/PID/attr/sara/wxprot interface
++------------------------------------
++The `procattr` interface can be used by a thread to discover which
++WX Protection features are enabled and/or to tighten them: protection
++can't be softened via procattr.
++The interface is simple: it's a text file with an hexadecimal
++number in it representing enabled features (more information can be
++found in the `Flags values`_ section). Via this interface it is also
++possible to perform a complete memory scan to remove the write permission
++from pages that are both writable and executable.
++
++Protections that prevent the runtime creation of executable code
++can be troublesome for all those programs that actually need to do it
++e.g. programs shipping with a JIT compiler built-in.
++This feature can be use to run the JIT compiler with few restrictions
++while enforcing full WX Protection in the rest of the program.
++
++The preferred way to access this interface is via `libsara` [3]_.
++If you don't want it as a dependency, you can just statically link it
++in your project or copy/paste parts of it.
++To make things simpler `libsara` is the only part of S.A.R.A. released under
++*CC0 - No Rights Reserved* license.
++
++Trampoline emulation
++--------------------
++Some programs need to generate part of their code at runtime. Luckily enough,
++in some cases they only generate well-known code sequences (the
++*trampolines*) that can be easily recognized and emulated by the kernel.
++This way WX Protection can still be active, so a potential attacker won't be
++able to generate arbitrary sequences of code, but just those that are
++explicitly allowed. This is not ideal, but it's still better than having WX
++Protection completely disabled.
++
++In particular S.A.R.A. is able to recognize trampolines used by GCC for nested
++C functions and libffi's trampolines.
++This feature is available only on x86_32 and x86_64.
++
++Flags values
++------------
++Flags are represented as a 16 bit unsigned integer in which every bit indicates
++the status of a given feature:
++
+++------------------------------+----------+
++|           Feature            |  Value   |
+++==============================+==========+
++| W!->X Heap                   |  0x0001  |
+++------------------------------+----------+
++| W!->X Stack                  |  0x0002  |
+++------------------------------+----------+
++| W!->X Other memory           |  0x0004  |
+++------------------------------+----------+
++| W^X                          |  0x0008  |
+++------------------------------+----------+
++| Don't enforce, just complain |  0x0010  |
+++------------------------------+----------+
++| Be Verbose                   |  0x0020  |
+++------------------------------+----------+
++| Executable MMAP prevention   |  0x0040  |
+++------------------------------+----------+
++| Force W^X on setprocattr     |  0x0080  |
+++------------------------------+----------+
++| Trampoline emulation         |  0x0100  |
+++------------------------------+----------+
++| Children will inherit flags  |  0x0200  |
+++------------------------------+----------+
++
++-------------------------------------------------------------------------------
++
++External Links and Documentation
++================================
++
++.. [1] `Documentation	<https://github.com/smeso/sara-doc>`_
++.. [2] `saractl		<https://github.com/smeso/saractl>`_
++.. [3] `libsara		<https://github.com/smeso/libsara>`_
++.. [4] `sara-test	<https://github.com/smeso/sara-test>`_
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index c980dfe..c0ae6bb3 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -39,3 +39,4 @@ the one "major" module (e.g. SELinux) if there is one configured.
+    Smack
+    tomoyo
+    Yama
++   SARA
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 0549662..bbfda53 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3791,6 +3791,30 @@
+ 			1 -- enable.
+ 			Default value is set via kernel config option.
+ 
++	sara.enabled=	[SARA] Disable or enable S.A.R.A. at boot time.
++			If disabled this way S.A.R.A. can't be enabled
++			again.
++			Format: { "0" | "1" }
++			See security/sara/Kconfig help text
++			0 -- disable.
++			1 -- enable.
++			Default value is set via kernel config option.
++
++	sara.wxprot_enabled= [SARA]
++			Disable or enable S.A.R.A. WX Protection
++			at boot time.
++			Format: { "0" | "1" }
++			See security/sara/Kconfig help text
++			0 -- disable.
++			1 -- enable.
++			Default value is 1.
++
++	sara.wxprot_default_flags= [SARA]
++			Set S.A.R.A. WX Protection default flags.
++			Format: <integer>
++			See S.A.R.A. documentation.
++			Default value is set via kernel config option.
++
+ 	serialnumber	[BUGS=X86-32]
+ 
+ 	shapers=	[NET]
+-- 
+1.9.1
 
-Also, did you explore any alternative ways to activate that functionality besides a command line parameter? If it is off by default, then most users will never see the benefits, and if they do activate it manually, then they might hit some obscure bugs because those code paths receive only little testing. I could imagine for example activating this functionality automatically for certain safe drivers like tpm_tis_spi, where wait states cannot block us (or anyone else on the bus) indefinitely.
-
-I ran all your patches through my tests (though without making any changes, so ignore_burst_count was off, since that is the default) and did not see any failures. My test bench does not contain performance tests (yet), so I cannot confirm your measurements. checkpatch.pl has a couple of complaints though.
-
-Alexander
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
