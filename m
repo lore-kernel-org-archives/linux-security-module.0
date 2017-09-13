@@ -1,63 +1,69 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 12 Sep 2017 22:45:33 -0400
-Subject: [PATCH 1/2] vfs: constify path argument to kernel_read_file_from_path
-Message-ID: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 13 Sep 2017 05:27:57 -0700
+Subject: [PATCH] tpm: remove some recent additions to the authors lists
+Message-ID: <20170913122758.19575-1-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch constifies the path argument to kernel_read_file_from_path.
+Removed those additions to the authors lists within last few years
+that are not the original authors.
 
-(Extracted from Helwig's patch.)
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+In some ways authors list does not make sense at all because git log is
+really the ultimate authors list but it is fine to give yourself a bit
+of credit in rare cases if you create a new driver in the subsystem or
+something similar.
+
+This commit might seem a bit cosmetic but it is made to make the policy
+more sound and speeds up the code review process a tiny bit in the
+future.
+
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- fs/exec.c                  | 2 +-
- include/linux/fs.h         | 2 +-
- sound/oss/sound_firmware.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/char/tpm/tpm_acpi.c | 1 -
+ drivers/char/tpm/tpm_of.c   | 1 -
+ drivers/char/tpm/tpm_ppi.c  | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 62175cbcc801..54a4847649cc 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -974,7 +974,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- }
- EXPORT_SYMBOL_GPL(kernel_read_file);
- 
--int kernel_read_file_from_path(char *path, void **buf, loff_t *size,
-+int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
- 			       loff_t max_size, enum kernel_read_file_id id)
- {
- 	struct file *file;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fdec9b763b54..d783cc8340de 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2775,7 +2775,7 @@ static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
- extern int kernel_read(struct file *, loff_t, char *, unsigned long);
- extern int kernel_read_file(struct file *, void **, loff_t *, loff_t,
- 			    enum kernel_read_file_id);
--extern int kernel_read_file_from_path(char *, void **, loff_t *, loff_t,
-+extern int kernel_read_file_from_path(const char *, void **, loff_t *, loff_t,
- 				      enum kernel_read_file_id);
- extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
- 				    enum kernel_read_file_id);
-diff --git a/sound/oss/sound_firmware.h b/sound/oss/sound_firmware.h
-index da4c67e005ed..2be465277ba0 100644
---- a/sound/oss/sound_firmware.h
-+++ b/sound/oss/sound_firmware.h
-@@ -21,7 +21,7 @@ static inline int mod_firmware_load(const char *fn, char **fp)
- 	loff_t size;
- 	int err;
- 
--	err = kernel_read_file_from_path((char *)fn, (void **)fp, &size,
-+	err = kernel_read_file_from_path(fn, (void **)fp, &size,
- 					 131072, READING_FIRMWARE);
- 	if (err < 0)
- 		return 0;
+diff --git a/drivers/char/tpm/tpm_acpi.c b/drivers/char/tpm/tpm_acpi.c
+index 169edf3ce86d..31b146bdac4b 100644
+--- a/drivers/char/tpm/tpm_acpi.c
++++ b/drivers/char/tpm/tpm_acpi.c
+@@ -6,7 +6,6 @@
+  *	Stefan Berger <stefanb@us.ibm.com>
+  *	Reiner Sailer <sailer@watson.ibm.com>
+  *	Kylene Hall <kjhall@us.ibm.com>
+- *	Nayna Jain <nayna@linux.vnet.ibm.com>
+  *
+  * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+  *
+diff --git a/drivers/char/tpm/tpm_of.c b/drivers/char/tpm/tpm_of.c
+index aadb7f464076..635ee27809cc 100644
+--- a/drivers/char/tpm/tpm_of.c
++++ b/drivers/char/tpm/tpm_of.c
+@@ -2,7 +2,6 @@
+  * Copyright 2012 IBM Corporation
+  *
+  * Author: Ashley Lai <ashleydlai@gmail.com>
+- *         Nayna Jain <nayna@linux.vnet.ibm.com>
+  *
+  * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+  *
+diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
+index 86dd8521feef..d2e37e1977be 100644
+--- a/drivers/char/tpm/tpm_ppi.c
++++ b/drivers/char/tpm/tpm_ppi.c
+@@ -4,7 +4,6 @@
+  * Authors:
+  * Xiaoyan Zhang <xiaoyan.zhang@intel.com>
+  * Jiang Liu <jiang.liu@linux.intel.com>
+- * Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+  *
+  * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+  *
 -- 
-2.7.4
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
