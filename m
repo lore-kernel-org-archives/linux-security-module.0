@@ -1,187 +1,63 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 12 Sep 2017 22:45:34 -0400
-Subject: [PATCH 2/2] integrity: replace call to integrity_read_file with
-	kernel version
-In-Reply-To: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1505270734-4280-2-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Tue, 12 Sep 2017 22:45:33 -0400
+Subject: [PATCH 1/2] vfs: constify path argument to kernel_read_file_from_path
+Message-ID: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+This patch constifies the path argument to kernel_read_file_from_path.
 
-The CONFIG_IMA_LOAD_X509 and CONFIG_EVM_LOAD_X509 options permit
-loading x509 signed certificates onto the trusted keyrings without
-verifying the x509 certificate file's signature.
-
-This patch replaces the call to the integrity_read_file() specific
-function with the common kernel_read_file_from_path() function.
-To avoid verifying the file signature, this patch defines
-READING_X509_CERTFICATE.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+(Extracted from Helwig's patch.)
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-
 ---
-Changelog:
-- rewrote patch description
-- fixed parameters to kernel_read_file_from_path() and key_create_or_update()
-- defined READING_X509_CERTIFICATE, a new __kernel_read_file enumeration
-- removed constify change
----
- include/linux/fs.h                |  1 +
- security/integrity/digsig.c       | 14 +++++++----
- security/integrity/iint.c         | 49 ---------------------------------------
- security/integrity/ima/ima_main.c |  4 ++++
- security/integrity/integrity.h    |  2 --
- 5 files changed, 14 insertions(+), 56 deletions(-)
+ fs/exec.c                  | 2 +-
+ include/linux/fs.h         | 2 +-
+ sound/oss/sound_firmware.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/fs/exec.c b/fs/exec.c
+index 62175cbcc801..54a4847649cc 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -974,7 +974,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ }
+ EXPORT_SYMBOL_GPL(kernel_read_file);
+ 
+-int kernel_read_file_from_path(char *path, void **buf, loff_t *size,
++int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
+ 			       loff_t max_size, enum kernel_read_file_id id)
+ {
+ 	struct file *file;
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d783cc8340de..e522d25d0836 100644
+index fdec9b763b54..d783cc8340de 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2751,6 +2751,7 @@ extern int do_pipe_flags(int *, int);
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
- 	id(POLICY, security-policy)		\
-+	id(X509_CERTIFICATE, x509-certificate)	\
- 	id(MAX_ID, )
+@@ -2775,7 +2775,7 @@ static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
+ extern int kernel_read(struct file *, loff_t, char *, unsigned long);
+ extern int kernel_read_file(struct file *, void **, loff_t *, loff_t,
+ 			    enum kernel_read_file_id);
+-extern int kernel_read_file_from_path(char *, void **, loff_t *, loff_t,
++extern int kernel_read_file_from_path(const char *, void **, loff_t *, loff_t,
+ 				      enum kernel_read_file_id);
+ extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
+ 				    enum kernel_read_file_id);
+diff --git a/sound/oss/sound_firmware.h b/sound/oss/sound_firmware.h
+index da4c67e005ed..2be465277ba0 100644
+--- a/sound/oss/sound_firmware.h
++++ b/sound/oss/sound_firmware.h
+@@ -21,7 +21,7 @@ static inline int mod_firmware_load(const char *fn, char **fp)
+ 	loff_t size;
+ 	int err;
  
- #define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 06554c448dce..6f9e4ce568cd 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -112,21 +112,25 @@ int __init integrity_init_keyring(const unsigned int id)
- int __init integrity_load_x509(const unsigned int id, const char *path)
- {
- 	key_ref_t key;
--	char *data;
-+	void *data;
-+	loff_t size;
- 	int rc;
- 
- 	if (!keyring[id])
- 		return -EINVAL;
- 
--	rc = integrity_read_file(path, &data);
--	if (rc < 0)
-+	rc = kernel_read_file_from_path(path, &data, &size, 0,
-+					READING_X509_CERTIFICATE);
-+	if (rc < 0) {
-+		pr_err("Unable to open file: %s (%d)", path, rc);
- 		return rc;
-+	}
- 
- 	key = key_create_or_update(make_key_ref(keyring[id], 1),
- 				   "asymmetric",
- 				   NULL,
- 				   data,
--				   rc,
-+				   size,
- 				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
- 				    KEY_USR_VIEW | KEY_USR_READ),
- 				   KEY_ALLOC_NOT_IN_QUOTA);
-@@ -139,6 +143,6 @@ int __init integrity_load_x509(const unsigned int id, const char *path)
- 			  key_ref_to_ptr(key)->description, path);
- 		key_ref_put(key);
- 	}
--	kfree(data);
-+	vfree(data);
- 	return 0;
- }
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 6fc888ca468e..c84e05866052 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -200,55 +200,6 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- }
- 
- /*
-- * integrity_read_file - read entire file content into the buffer
-- *
-- * This is function opens a file, allocates the buffer of required
-- * size, read entire file content to the buffer and closes the file
-- *
-- * It is used only by init code.
-- *
-- */
--int __init integrity_read_file(const char *path, char **data)
--{
--	struct file *file;
--	loff_t size;
--	char *buf;
--	int rc = -EINVAL;
--
--	if (!path || !*path)
--		return -EINVAL;
--
--	file = filp_open(path, O_RDONLY, 0);
--	if (IS_ERR(file)) {
--		rc = PTR_ERR(file);
--		pr_err("Unable to open file: %s (%d)", path, rc);
--		return rc;
--	}
--
--	size = i_size_read(file_inode(file));
--	if (size <= 0)
--		goto out;
--
--	buf = kmalloc(size, GFP_KERNEL);
--	if (!buf) {
--		rc = -ENOMEM;
--		goto out;
--	}
--
--	rc = integrity_kernel_read(file, 0, buf, size);
--	if (rc == size) {
--		*data = buf;
--	} else {
--		kfree(buf);
--		if (rc >= 0)
--			rc = -EIO;
--	}
--out:
--	fput(file);
--	return rc;
--}
--
--/*
-  * integrity_load_keys - load integrity keys hook
-  *
-  * Hooks is called from init/main.c:kernel_init_freeable()
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index b00186914df8..72bd2b666a31 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -413,6 +413,10 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
+-	err = kernel_read_file_from_path((char *)fn, (void **)fp, &size,
++	err = kernel_read_file_from_path(fn, (void **)fp, &size,
+ 					 131072, READING_FIRMWARE);
+ 	if (err < 0)
  		return 0;
- 
-+	/* permit signed certs */
-+	if (!file && read_id == READING_X509_CERTIFICATE)
-+		return 0;
-+
- 	if (!file || !buf || size == 0) { /* should never happen */
- 		if (ima_appraise & IMA_APPRAISE_ENFORCE)
- 			return -EACCES;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index a53e7e4ab06c..e1bf040fb110 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -120,8 +120,6 @@ struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
- int integrity_kernel_read(struct file *file, loff_t offset,
- 			  void *addr, unsigned long count);
- 
--int __init integrity_read_file(const char *path, char **data);
--
- #define INTEGRITY_KEYRING_EVM		0
- #define INTEGRITY_KEYRING_IMA		1
- #define INTEGRITY_KEYRING_MODULE	2
 -- 
 2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
