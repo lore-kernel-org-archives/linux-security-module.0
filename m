@@ -1,20 +1,44 @@
-From: hch@infradead.org (Christoph Hellwig)
-Date: Wed, 13 Sep 2017 09:33:24 -0700
-Subject: [PATCH 1/2] vfs: constify path argument to
-	kernel_read_file_from_path
-In-Reply-To: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20170913163324.GA31421@infradead.org>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 13 Sep 2017 10:26:20 -0700
+Subject: [PATCH 1/3] tpm: fix type of a local variable in
+	tpm2_get_cc_attrs_tbl()
+Message-ID: <20170913172620.24829-1-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Sep 12, 2017 at 10:45:33PM -0400, Mimi Zohar wrote:
-> This patch constifies the path argument to kernel_read_file_from_path.
-> 
-> (Extracted from Helwig's patch.)
+The local variable 'attrs' should have the type __be32 instead of u32.
 
-Feel free to skip this given that it's trivial and you misspelled my
-name anyway :)
+Fixes: 58472f5cd4f6 ("tpm: validate TPM 2.0 commands")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 70ee32816c48..f40d20671a78 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -980,7 +980,7 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
+ {
+ 	struct tpm_buf buf;
+ 	u32 nr_commands;
+-	u32 *attrs;
++	__be32 *attrs;
+ 	u32 cc;
+ 	int i;
+ 	int rc;
+@@ -1020,7 +1020,7 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
+ 
+ 	chip->nr_commands = nr_commands;
+ 
+-	attrs = (u32 *)&buf.data[TPM_HEADER_SIZE + 9];
++	attrs = (__be32 *)&buf.data[TPM_HEADER_SIZE + 9];
+ 	for (i = 0; i < nr_commands; i++, attrs++) {
+ 		chip->cc_attrs_tbl[i] = be32_to_cpup(attrs);
+ 		cc = chip->cc_attrs_tbl[i] & 0xFFFF;
+-- 
+2.14.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
