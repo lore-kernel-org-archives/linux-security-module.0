@@ -1,41 +1,27 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 15 Sep 2017 06:21:28 +1000 (AEST)
+From: hch@infradead.org (Christoph Hellwig)
+Date: Thu, 14 Sep 2017 13:49:54 -0700
 Subject: [PATCH 2/2] integrity: replace call to integrity_read_file with
 	kernel version
-In-Reply-To: <1505270734-4280-2-git-send-email-zohar@linux.vnet.ibm.com>
+In-Reply-To: <alpine.LRH.2.21.1709150617350.4414@namei.org>
 References: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
 	<1505270734-4280-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1709150617350.4414@namei.org>
+	<alpine.LRH.2.21.1709150617350.4414@namei.org>
+Message-ID: <20170914204954.GA27029@infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 12 Sep 2017, Mimi Zohar wrote:
+On Fri, Sep 15, 2017 at 06:21:28AM +1000, James Morris wrote:
+> So, to be clear, this patch solves the XFS deadlock using a different 
+> approach (to the now reverted integrity_read approach), which Christoph 
+> also says is more correct generally.  Correct?
 
-> From: Christoph Hellwig <hch@lst.de>
-> 
-> The CONFIG_IMA_LOAD_X509 and CONFIG_EVM_LOAD_X509 options permit
-> loading x509 signed certificates onto the trusted keyrings without
-> verifying the x509 certificate file's signature.
-> 
-> This patch replaces the call to the integrity_read_file() specific
-> function with the common kernel_read_file_from_path() function.
-> To avoid verifying the file signature, this patch defines
-> READING_X509_CERTFICATE.
+No.  It is in addition to the previous patches - the patches were
+correct for the IMA interaction with the I/O path.  It just turns
+out that the function was also reused for reading certificates
+at initialization time, for which that change was incorrect.
 
-So, to be clear, this patch solves the XFS deadlock using a different 
-approach (to the now reverted integrity_read approach), which Christoph 
-also says is more correct generally.  Correct?
-
-What testing has this had?
-
-Should this go in with the rest of the security changes now or wait until 
-either -rc or the next merge window?
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+If this series is applied first the integrity_read code is not
+used for that path any more.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
