@@ -1,98 +1,104 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 14 Sep 2017 02:46:57 -0400
+Date: Thu, 14 Sep 2017 02:49:11 -0400
 Subject: [PATCH V4 00/10] capabilities: do not audit log BPRM_FCAPS on
 	set*id
-In-Reply-To: <20170914055405.GT3405@madcap2.tricolour.ca>
+In-Reply-To: <CAHC9VhQXCGD1sGdzXjgehcWQ4KK+-yC39iqmGPRZwgBL=e2_hQ@mail.gmail.com>
 References: <cover.1504591358.git.rgb@redhat.com>
 	<CAHC9VhTa_f+5zMq0OMmMgofCF-5FnMS-dwtiPZb4iEhg4P7a3A@mail.gmail.com>
 	<20170914055405.GT3405@madcap2.tricolour.ca>
-Message-ID: <CAHC9VhQXCGD1sGdzXjgehcWQ4KK+-yC39iqmGPRZwgBL=e2_hQ@mail.gmail.com>
+	<CAHC9VhQXCGD1sGdzXjgehcWQ4KK+-yC39iqmGPRZwgBL=e2_hQ@mail.gmail.com>
+Message-ID: <CAHC9VhS0N7bZP=HMPgLAr5nM=xgEQXTrjYs+Fp3ePH3f2iGKow@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 14, 2017 at 1:54 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2017-09-08 13:02, Paul Moore wrote:
->> On Tue, Sep 5, 2017 at 2:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> > The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
->> > application execution (SYSCALL execve). This is not expected as it was
->> > supposed to be limited to when the file system actually had capabilities
->> > in an extended attribute.  It lists all capabilities making the event
->> > really ugly to parse what is happening.  The PATH record correctly
->> > records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
->> > set*id.
->> >
->> > See: https://github.com/linux-audit/audit-kernel/issues/16
->> >
->> > The first to eighth just massage the logic to make it easier to
->> > understand.  Some of them could be squashed together.
->> >
->> > The patch that resolves this issue is the ninth.
->> >
->> > It would be possible to address the original issue with a change of
->> >         "!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
->> > to
->> >         "!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
->> > but it took me long enough to understand this logic that I don't think
->> > I'd be doing any favours by leaving it this difficult to understand.
->> >
->> > The final patch attempts to address all the conditions that need logging
->> > based on mailing list conversations, recoginizing there is probably some
->> > duplication in the logic.
->> >
->> > Passes: (ltp 20170516)
->> >         ./runltp -f syscalls -s cap
->> >         ./runltp -f securebits
->> >         ./runltp -f cap_bounds
->> >         ./runltp -f filecaps
->> >         make TARGETS=capabilities kselftest (when run locally, fails over nfs)
->> >
->> > v4
->> >   rebase on kees' 4.13 commoncap changes
->> >   minor local func renames
->> >
->> > v3
->> >   refactor into several sub-functions
->> >   convert most macros to inline funcs
->> >
->> > v2
->> >   use macros to clarify intent of calculations
->> >   fix original logic error
->> >   address additional audit logging conditions
->> >
->> > Richard Guy Briggs (10):
->> >   capabilities: factor out cap_bprm_set_creds privileged root
->> >   capabilities: intuitive names for cap gain status
->> >   capabilities: rename has_cap to has_fcap
->> >   capabilities: use root_priveleged inline to clarify logic
->> >   capabilities: use intuitive names for id changes
->> >   capabilities: move audit log decision to function
->> >   capabilities: remove a layer of conditional logic
->> >   capabilities: invert logic for clarity
->> >   capabilities: fix logic for effective root or real root
->> >   capabilities: audit log other surprising conditions
->> >
->> >  security/commoncap.c |  179 ++++++++++++++++++++++++++++++++------------------
->> >  1 files changed, 114 insertions(+), 65 deletions(-)
+On Thu, Sep 14, 2017 at 2:46 AM, Paul Moore <paul@paul-moore.com> wrote:
+> On Thu, Sep 14, 2017 at 1:54 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> On 2017-09-08 13:02, Paul Moore wrote:
+>>> On Tue, Sep 5, 2017 at 2:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>>> > The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
+>>> > application execution (SYSCALL execve). This is not expected as it was
+>>> > supposed to be limited to when the file system actually had capabilities
+>>> > in an extended attribute.  It lists all capabilities making the event
+>>> > really ugly to parse what is happening.  The PATH record correctly
+>>> > records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
+>>> > set*id.
+>>> >
+>>> > See: https://github.com/linux-audit/audit-kernel/issues/16
+>>> >
+>>> > The first to eighth just massage the logic to make it easier to
+>>> > understand.  Some of them could be squashed together.
+>>> >
+>>> > The patch that resolves this issue is the ninth.
+>>> >
+>>> > It would be possible to address the original issue with a change of
+>>> >         "!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
+>>> > to
+>>> >         "!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
+>>> > but it took me long enough to understand this logic that I don't think
+>>> > I'd be doing any favours by leaving it this difficult to understand.
+>>> >
+>>> > The final patch attempts to address all the conditions that need logging
+>>> > based on mailing list conversations, recoginizing there is probably some
+>>> > duplication in the logic.
+>>> >
+>>> > Passes: (ltp 20170516)
+>>> >         ./runltp -f syscalls -s cap
+>>> >         ./runltp -f securebits
+>>> >         ./runltp -f cap_bounds
+>>> >         ./runltp -f filecaps
+>>> >         make TARGETS=capabilities kselftest (when run locally, fails over nfs)
+>>> >
+>>> > v4
+>>> >   rebase on kees' 4.13 commoncap changes
+>>> >   minor local func renames
+>>> >
+>>> > v3
+>>> >   refactor into several sub-functions
+>>> >   convert most macros to inline funcs
+>>> >
+>>> > v2
+>>> >   use macros to clarify intent of calculations
+>>> >   fix original logic error
+>>> >   address additional audit logging conditions
+>>> >
+>>> > Richard Guy Briggs (10):
+>>> >   capabilities: factor out cap_bprm_set_creds privileged root
+>>> >   capabilities: intuitive names for cap gain status
+>>> >   capabilities: rename has_cap to has_fcap
+>>> >   capabilities: use root_priveleged inline to clarify logic
+>>> >   capabilities: use intuitive names for id changes
+>>> >   capabilities: move audit log decision to function
+>>> >   capabilities: remove a layer of conditional logic
+>>> >   capabilities: invert logic for clarity
+>>> >   capabilities: fix logic for effective root or real root
+>>> >   capabilities: audit log other surprising conditions
+>>> >
+>>> >  security/commoncap.c |  179 ++++++++++++++++++++++++++++++++------------------
+>>> >  1 files changed, 114 insertions(+), 65 deletions(-)
+>>>
+>>> I took a quick look at this latest revision and aside from some
+>>> disagreements on style/formatting it looks okayish to me.  However, I
+>>> am going to walk back my previous I-can-take-this-via-the-audit-tree
+>>> comments, I think this probably should go in via the capabilities
+>>> (Serge) and/or linux-security (James) tree.
 >>
->> I took a quick look at this latest revision and aside from some
->> disagreements on style/formatting it looks okayish to me.  However, I
->> am going to walk back my previous I-can-take-this-via-the-audit-tree
->> comments, I think this probably should go in via the capabilities
->> (Serge) and/or linux-security (James) tree.
+>> "okayish"?  That sounds positive.  :-)
 >
-> "okayish"?  That sounds positive.  :-)
+> It's intended to be positive~ish ;)
+>
+> Parts of the patchset looked good, others I didn't really agree with,
+> but in general a lot of the changes seem to be subjective judgement
+> calls.  As long as Serge is happy with it I'm okay(ish) with it.
+>
+>> Can you offer a clear ack or reviewed-by?
+>
+> I would need to look over the patchset again before I'm comfortable
+> providing either and due to LSS I'm not sure I'll have the opportunity
+> this week.  I'll add it to my todo list for next week.
 
-It's intended to be positive~ish ;)
-
-Parts of the patchset looked good, others I didn't really agree with,
-but in general a lot of the changes seem to be subjective judgement
-calls.  As long as Serge is happy with it I'm okay(ish) with it.
-
-> Can you offer a clear ack or reviewed-by?
-
-I would need to look over the patchset again before I'm comfortable
-providing either and due to LSS I'm not sure I'll have the opportunity
-this week.  I'll add it to my todo list for next week.
+Just to add, I'm "okay" with this going in - I don't remember anything
+objectionable from my perspective - I just didn't look closely enough
+to give it my Reviewed/Acked tag if that makes any sense.
 
 -- 
 paul moore
