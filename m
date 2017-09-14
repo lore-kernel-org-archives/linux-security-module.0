@@ -1,176 +1,95 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 13 Sep 2017 16:10:07 -0700
-Subject: [PATCH v2 1/4] tpm: ignore burstcount to improve tpm_tis send()
-	performance.
-In-Reply-To: <CB43D154-BE47-4016-AE2D-C372AFCAD5F9@gmx.de>
-References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
-	<20170906125643.5070-2-nayna@linux.vnet.ibm.com>
-	<20170912222010.ltm76m5vy2kupydi@linux.intel.com>
-	<CB43D154-BE47-4016-AE2D-C372AFCAD5F9@gmx.de>
-Message-ID: <20170913231007.22yb57hlx45aznt6@linux.intel.com>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Thu, 14 Sep 2017 01:54:05 -0400
+Subject: [PATCH V4 00/10] capabilities: do not audit log BPRM_FCAPS on
+	set*id
+In-Reply-To: <CAHC9VhTa_f+5zMq0OMmMgofCF-5FnMS-dwtiPZb4iEhg4P7a3A@mail.gmail.com>
+References: <cover.1504591358.git.rgb@redhat.com>
+	<CAHC9VhTa_f+5zMq0OMmMgofCF-5FnMS-dwtiPZb4iEhg4P7a3A@mail.gmail.com>
+Message-ID: <20170914055405.GT3405@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 13, 2017 at 11:39:03AM -0700, Peter Huewe wrote:
-> 
-> 
-> Am 12. September 2017 17:45:08 GMT-07:00 schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
-> >On Wed, Sep 06, 2017 at 08:56:36AM -0400, Nayna Jain wrote:
-> >> The TPM burstcount status indicates the number of bytes that can
-> >> be sent to the TPM without causing bus wait states.  Effectively,
-> >> it is the number of empty bytes in the command FIFO. Further,
-> >> some TPMs have a static burstcount, when the value remains zero
-> >> until the entire FIFO is empty.
-> >> 
-> >> This patch adds an optimization to check for burstcount only once.
-> >> And if it is valid, it writes all the bytes at once, permitting
-> >> wait states. The performance of a 34 byte extend on a TPM 1.2 with
-> >> an 8 byte burstcount improved from 41 msec to 14 msec.
-> >> 
-> >> This functionality is enabled only by passing module
-> >> parameter ignore_burst_count=1. By default, this parameter
-> >> is disabled.
-> >> 
-> >> After this change, performance on a TPM 1.2 with an 8 byte
-> >> burstcount for 1000 extends improved from ~41sec to ~14sec.
-> >> 
-> >> Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-> >> conjunction with the TPM Device Driver work group.
-> >> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> >> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> >> ---
-> >>  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
-> >>  drivers/char/tpm/tpm_tis_core.c                 | 24
-> >+++++++++++++++++++++---
-> >>  2 files changed, 29 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt
-> >b/Documentation/admin-guide/kernel-parameters.txt
-> >> index 4e303be83df6..3c59bb91e1ee 100644
-> >> --- a/Documentation/admin-guide/kernel-parameters.txt
-> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> >> @@ -1465,6 +1465,14 @@
-> >>  			mode generally follows that for the NaN encoding,
-> >>  			except where unsupported by hardware.
-> >>  
-> >> +	ignore_burst_count [TPM_TIS_CORE]
-> >> +			tpm_tis_core driver queries for the burstcount before
-> >> +			every send call in a loop. However, it causes delay to
-> >> +			the send command for TPMs with low burstcount value.
-> >> +			Setting this value to 1, will make driver to query for
-> >> +			burstcount only once in the loop to improve the
-> >> +			performance. By default, its value is set to 0.
-> >> +
-> >>  	ignore_loglevel	[KNL]
-> >>  			Ignore loglevel setting - this will print /all/
-> >>  			kernel messages to the console. Useful for debugging.
-> >> diff --git a/drivers/char/tpm/tpm_tis_core.c
-> >b/drivers/char/tpm/tpm_tis_core.c
-> >> index 63bc6c3b949e..6b9bf4c4d434 100644
-> >> --- a/drivers/char/tpm/tpm_tis_core.c
-> >> +++ b/drivers/char/tpm/tpm_tis_core.c
-> >> @@ -31,6 +31,11 @@
-> >>  #include "tpm.h"
-> >>  #include "tpm_tis_core.h"
-> >>  
-> >> +static bool ignore_burst_count = false;
-> >> +module_param(ignore_burst_count, bool, 0444);
-> >> +MODULE_PARM_DESC(ignore_burst_count,
-> >> +		"Ignore burstcount value while writing data");
-> >> +
-> >>  /* Before we attempt to access the TPM we must see that the valid
-> >bit is set.
-> >>   * The specification says that this bit is 0 at reset and remains 0
-> >until the
-> >>   * 'TPM has gone through its self test and initialization and has
-> >established
-> >> @@ -256,6 +261,7 @@ static int tpm_tis_send_data(struct tpm_chip
-> >*chip, u8 *buf, size_t len)
-> >>  {
-> >>  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-> >>  	int rc, status, burstcnt;
-> >> +	int sendcnt;
-> >>  	size_t count = 0;
-> >>  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-> >>  
-> >> @@ -271,19 +277,31 @@ static int tpm_tis_send_data(struct tpm_chip
-> >*chip, u8 *buf, size_t len)
-> >>  	}
-> >>  
-> >>  	while (count < len - 1) {
-> >> +
-> >> +		/*
-> >> +		 * Get the initial burstcount to ensure TPM is ready to
-> >> +		 * accept data, even when waiting for burstcount is disabled.
-> >> +		 */
-> >>  		burstcnt = get_burstcount(chip);
-> >>  		if (burstcnt < 0) {
-> >>  			dev_err(&chip->dev, "Unable to read burstcount\n");
-> >>  			rc = burstcnt;
-> >>  			goto out_err;
-> >>  		}
-> >> -		burstcnt = min_t(int, burstcnt, len - count - 1);
-> >> +
-> >> +		if (ignore_burst_count)
-> >> +			sendcnt = len - 1;
-> >> +		else
-> >> +			sendcnt = min_t(int, burstcnt, len - count - 1);
-> >> +
-> >>  		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-> >> -					 burstcnt, buf + count);
-> >> +					 sendcnt, buf + count);
-> >>  		if (rc < 0)
-> >>  			goto out_err;
-> >>  
-> >> -		count += burstcnt;
-> >> +		count += sendcnt;
-> >> +		if (ignore_burst_count)
-> >> +			continue;
-> >>  
-> >>  		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
-> >>  					&priv->int_queue, false) < 0) {
-> >> -- 
-> >> 2.13.3
-> >> 
+On 2017-09-08 13:02, Paul Moore wrote:
+> On Tue, Sep 5, 2017 at 2:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
+> > application execution (SYSCALL execve). This is not expected as it was
+> > supposed to be limited to when the file system actually had capabilities
+> > in an extended attribute.  It lists all capabilities making the event
+> > really ugly to parse what is happening.  The PATH record correctly
+> > records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
+> > set*id.
 > >
-> >Makes sense to discuss whether to have the kernel command-line
-> >parameter or not before applying this.
+> > See: https://github.com/linux-audit/audit-kernel/issues/16
 > >
-> >To fuel the discussion, alternative to this would be:
+> > The first to eighth just massage the logic to make it easier to
+> > understand.  Some of them could be squashed together.
 > >
-> >1. Have this always on i.e. no command-line parameter.
-> >2. If someone yells, we add the command-line parameter later on.
+> > The patch that resolves this issue is the ninth.
 > >
-> According to what I've read in the tcg ddwg group this patch should
-> not cause problems on _sane_ tpms.
+> > It would be possible to address the original issue with a change of
+> >         "!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
+> > to
+> >         "!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
+> > but it took me long enough to understand this logic that I don't think
+> > I'd be doing any favours by leaving it this difficult to understand.
+> >
+> > The final patch attempts to address all the conditions that need logging
+> > based on mailing list conversations, recoginizing there is probably some
+> > duplication in the logic.
+> >
+> > Passes: (ltp 20170516)
+> >         ./runltp -f syscalls -s cap
+> >         ./runltp -f securebits
+> >         ./runltp -f cap_bounds
+> >         ./runltp -f filecaps
+> >         make TARGETS=capabilities kselftest (when run locally, fails over nfs)
+> >
+> > v4
+> >   rebase on kees' 4.13 commoncap changes
+> >   minor local func renames
+> >
+> > v3
+> >   refactor into several sub-functions
+> >   convert most macros to inline funcs
+> >
+> > v2
+> >   use macros to clarify intent of calculations
+> >   fix original logic error
+> >   address additional audit logging conditions
+> >
+> > Richard Guy Briggs (10):
+> >   capabilities: factor out cap_bprm_set_creds privileged root
+> >   capabilities: intuitive names for cap gain status
+> >   capabilities: rename has_cap to has_fcap
+> >   capabilities: use root_priveleged inline to clarify logic
+> >   capabilities: use intuitive names for id changes
+> >   capabilities: move audit log decision to function
+> >   capabilities: remove a layer of conditional logic
+> >   capabilities: invert logic for clarity
+> >   capabilities: fix logic for effective root or real root
+> >   capabilities: audit log other surprising conditions
+> >
+> >  security/commoncap.c |  179 ++++++++++++++++++++++++++++++++------------------
+> >  1 files changed, 114 insertions(+), 65 deletions(-)
 > 
-> I'm not 100%convinced that all tpms are sane all the time, but I think
-> we do not want yet another cmdline parameter.
-> 
-> So if we want to pull it in (and ddwg does not see an issue, so yes)
-> it should be on by default, without a kernel parameter.
-> 
-> If there is a kernel parameter, then it should only be one called
-> "failsafe" - which includes the force behavior and maybe the "broken"
-> tpm path.
-> 
-> But I agree with Alex, every additonal code path reduces testing coverage.
-> 
-> 
-> We would be happy to test a "default on" patch.
-> 
-> Peter
-> 
-> >/Jarkko
+> I took a quick look at this latest revision and aside from some
+> disagreements on style/formatting it looks okayish to me.  However, I
+> am going to walk back my previous I-can-take-this-via-the-audit-tree
+> comments, I think this probably should go in via the capabilities
+> (Serge) and/or linux-security (James) tree.
 
-I'm starting to dilate to this direction.
+"okayish"?  That sounds positive.  :-)  Can you offer a clear ack or reviewed-by?
 
-It is hard to believe that any such TPM would be in active use anywhere
-assuming that there exist a TPM where this causes issues. This combined
-to the assumption that you would run the latest mainline on it makes it
-a pretty insignificant scenario.
+> paul moore
 
-/Jarkko
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
