@@ -1,39 +1,40 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 14 Sep 2017 14:25:36 -0700
-Subject: [GIT PULL] Security subsystem updates for 4.14
-In-Reply-To: <alpine.LRH.2.21.1709150710480.9907@namei.org>
-References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
-	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
-	<alpine.LRH.2.21.1709081448090.7880@namei.org>
-	<20170908070943.GA26549@infradead.org>
-	<CA+55aFwMgUJSMQ96XdKnTbn8UsxzHTb8tZQdH40nxDeF7fWObw@mail.gmail.com>
-	<CAHC9VhR2c1rC4--1Br0cx+3eALLdB8Oishw7wwcGwb1_3qN8+w@mail.gmail.com>
-	<alpine.LRH.2.21.1709101419360.22614@namei.org>
-	<CAGXu5jKVU2ecHna5Lb2eoJEHD+e1-sVOkghLdM+DcgG-jN6PcA@mail.gmail.com>
-	<alpine.LRH.2.21.1709150710480.9907@namei.org>
-Message-ID: <CAGXu5jKjwF-y-DD7w_RRciW07wyaMP2Tvuif1y4fjcq+PNzjwQ@mail.gmail.com>
+From: jmorris@namei.org (James Morris)
+Date: Fri, 15 Sep 2017 09:21:53 +1000 (AEST)
+Subject: [PATCH 2/2] integrity: replace call to integrity_read_file with
+	kernel version
+In-Reply-To: <20170914204954.GA27029@infradead.org>
+References: <1505270734-4280-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1505270734-4280-2-git-send-email-zohar@linux.vnet.ibm.com>
+	<alpine.LRH.2.21.1709150617350.4414@namei.org>
+	<20170914204954.GA27029@infradead.org>
+Message-ID: <alpine.LRH.2.21.1709150920390.21698@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 14, 2017 at 2:13 PM, James Morris <jmorris@namei.org> wrote:
-> On Thu, 14 Sep 2017, Kees Cook wrote:
->
->> How separable are the patches, normally?
->
-> They're usually mostly separate, but may depend on some core LSM change,
-> or similar.
->
-> Casey has mentioned off-list that it is useful to have a coherent up to
-> date security branch to work against when making core LSM changes.
+On Thu, 14 Sep 2017, Christoph Hellwig wrote:
 
-Yeah, for sure. This "merge all topics" tree is what I have for KSPP
-(and it's what I hand to -next).
+> On Fri, Sep 15, 2017 at 06:21:28AM +1000, James Morris wrote:
+> > So, to be clear, this patch solves the XFS deadlock using a different 
+> > approach (to the now reverted integrity_read approach), which Christoph 
+> > also says is more correct generally.  Correct?
+> 
+> No.  It is in addition to the previous patches - the patches were
+> correct for the IMA interaction with the I/O path.  It just turns
+> out that the function was also reused for reading certificates
+> at initialization time, for which that change was incorrect.
+> 
+> If this series is applied first the integrity_read code is not
+> used for that path any more.
 
--Kees
+Ok.  Sorry I hadn't looked at the code in detail at this stage during the 
+conference and wanting to just revert back to something that Linus can 
+safely pull before the merge window closes.
+
 
 -- 
-Kees Cook
-Pixel Security
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
