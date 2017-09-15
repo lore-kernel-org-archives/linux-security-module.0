@@ -1,414 +1,189 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 15 Sep 2017 05:09:29 -0400
-Subject: [PATCH 3/3] ima: use fs method to read integrity data
-In-Reply-To: <1505466296.4200.86.camel@linux.vnet.ibm.com>
-References: <1505451494-30228-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1505451494-30228-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<CA+55aFwVujvsdaq09O216u-uBbBbo5i_1d6aw3ksottR_uiJ6w@mail.gmail.com>
-	<1505466296.4200.86.camel@linux.vnet.ibm.com>
-Message-ID: <1505466569.4200.88.camel@linux.vnet.ibm.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Fri, 15 Sep 2017 17:59:21 +0530
+Subject: [PATCH v2 1/4] tpm: ignore burstcount to improve tpm_tis send()
+	performance.
+In-Reply-To: <20170913231007.22yb57hlx45aznt6@linux.intel.com>
+References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
+	<20170906125643.5070-2-nayna@linux.vnet.ibm.com>
+	<20170912222010.ltm76m5vy2kupydi@linux.intel.com>
+	<CB43D154-BE47-4016-AE2D-C372AFCAD5F9@gmx.de>
+	<20170913231007.22yb57hlx45aznt6@linux.intel.com>
+Message-ID: <3c83ac72-59cc-f6c8-26ca-b7f8a8887d39@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-09-15 at 05:04 -0400, Mimi Zohar wrote:
-> On Thu, 2017-09-14 at 22:50 -0700, Linus Torvalds wrote:
-> > This is still wrong.
-> > 
-> > (a) there is no explanation for why we need that exclusive lock in the
-> > first place
-> 
-> > Why should a read need exclusive access? You'd think shared is sufficient.
-> 
-> True, reading a file shouldn't require an exclusive lock. ?The
-> exclusive lock is taken to prevent the file from changing while the
-> file hash is being calculated.
 
-And also to prevent the file hash from being calculated multiple
-times.
 
-> 
-> > But regardless, it needs *explanation*.
-> 
-> Agreed. ?A fuller explanation was included in the cover letter that
-> should have also been included in the patch description. ?The
-> following is taken from the cover letter:
-> 
-> With the introduction of IMA-appraisal and the need to write file
-> hashes as security xattrs, IMA needed to take the global i_mutex
-> lock.??process_measurement() took the iint->mutex first and then
-> the i_mutex, while setxattr, chmod and chown took the locks in
-> reverse order.??To resolve this potential deadlock, the iint->mutex
-> was removed.
-> 
-> Some filesystems have recently replaced their filesystem dependent
-> lock with the global i_rwsem (formerly the i_mutex) to read a file.
-> As a result, when IMA attempts to calculate the file hash, reading
-> the file attempts to take the i_rwsem again.
-> 
-> To resolve this locking problem, this patch set defines a new
-> ->integrity_read file operation method.
-> 
-> (Fixes: Commit 6552321831dc "xfs: remove i_iolock and use i_rwsem in
-> the VFS inode instead")
-> 
-> Mimi
-> 
-> > (b) the lockdep test isn't for the exclusive lock that the code comment
-> > says it is
-> > 
-> > So no, this needs more work.
-> >?
-> >?????Linus
-> >?
-> 
-> > 
-> > On Sep 14, 2017 21:59, "Mimi Zohar" <zohar@linux.vnet.ibm.com> wrote:
-> > 
-> > > From: Christoph Hellwig <hch@lst.de>
-> > >
-> > > Add a new ->integrity_read file operation to read data for integrity
-> > > hash collection.  This is defined to be equivalent to ->read_iter,
-> > > except that it will be called with the i_rwsem held exclusively.
-> > >
-> > > (Based on Christoph's original patch.)
-> > >
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-> > > Cc: Jan Kara <jack@suse.com>
-> > > Cc: "Theodore Ts'o" <tytso@mit.edu>
-> > > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> > > Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > Cc: Chao Yu <yuchao0@huawei.com>
-> > > Cc: Steven Whitehouse <swhiteho@redhat.com>
-> > > Cc: Bob Peterson <rpeterso@redhat.com>
-> > > Cc: David Woodhouse <dwmw2@infradead.org>
-> > > Cc: Dave Kleikamp <shaggy@kernel.org>
-> > > Cc: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-> > > Cc: Mark Fasheh <mfasheh@versity.com>
-> > > Cc: Joel Becker <jlbec@evilplan.org>
-> > > Cc: Richard Weinberger <richard@nod.at>
-> > > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > > Cc: Hugh Dickins <hughd@google.com>
-> > > Cc: Chris Mason <clm@fb.com>
-> > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > Reviewed-by: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
-> > > ---
-> > >  fs/btrfs/file.c           |  1 +
-> > >  fs/efivarfs/file.c        |  1 +
-> > >  fs/ext2/file.c            | 17 +++++++++++++++++
-> > >  fs/ext4/file.c            | 20 ++++++++++++++++++++
-> > >  fs/f2fs/file.c            |  1 +
-> > >  fs/jffs2/file.c           |  1 +
-> > >  fs/jfs/file.c             |  1 +
-> > >  fs/nilfs2/file.c          |  1 +
-> > >  fs/ramfs/file-mmu.c       |  1 +
-> > >  fs/ramfs/file-nommu.c     |  1 +
-> > >  fs/ubifs/file.c           |  1 +
-> > >  fs/xfs/xfs_file.c         | 21 +++++++++++++++++++++
-> > >  include/linux/fs.h        |  1 +
-> > >  mm/shmem.c                |  1 +
-> > >  security/integrity/iint.c | 20 ++++++++++++++------
-> > >  15 files changed, 83 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> > > index 9e75d8a39aac..2542dc66c85c 100644
-> > > --- a/fs/btrfs/file.c
-> > > +++ b/fs/btrfs/file.c
-> > > @@ -3125,6 +3125,7 @@ const struct file_operations btrfs_file_operations =
-> > > {
-> > >  #endif
-> > >         .clone_file_range = btrfs_clone_file_range,
-> > >         .dedupe_file_range = btrfs_dedupe_file_range,
-> > > +       .integrity_read = generic_file_read_iter,
-> > >  };
-> > >
-> > >  void btrfs_auto_defrag_exit(void)
-> > > diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
-> > > index 863f1b100165..17955a92a5b3 100644
-> > > --- a/fs/efivarfs/file.c
-> > > +++ b/fs/efivarfs/file.c
-> > > @@ -179,4 +179,5 @@ const struct file_operations efivarfs_file_operations
-> > > = {
-> > >         .write  = efivarfs_file_write,
-> > >         .llseek = no_llseek,
-> > >         .unlocked_ioctl = efivarfs_file_ioctl,
-> > > +       .integrity_read = efivarfs_file_read_iter,
-> > >  };
-> > > diff --git a/fs/ext2/file.c b/fs/ext2/file.c
-> > > index d34d32bdc944..111069de1973 100644
-> > > --- a/fs/ext2/file.c
-> > > +++ b/fs/ext2/file.c
-> > > @@ -192,6 +192,22 @@ static ssize_t ext2_file_read_iter(struct kiocb
-> > > *iocb, struct iov_iter *to)
-> > >         return generic_file_read_iter(iocb, to);
-> > >  }
-> > >
-> > > +static ssize_t ext2_file_integrity_read_iter(struct kiocb *iocb,
-> > > +                                            struct iov_iter *to)
-> > > +{
-> > > +       struct inode *inode = file_inode(iocb->ki_filp);
-> > > +
-> > > +       lockdep_assert_held(&inode->i_rwsem);
-> > > +#ifdef CONFIG_FS_DAX
-> > > +       if (!iov_iter_count(to))
-> > > +               return 0; /* skip atime */
-> > > +
-> > > +       if (IS_DAX(iocb->ki_filp->f_mapping->host))
-> > > +               return dax_iomap_rw(iocb, to, &ext2_iomap_ops);
-> > > +#endif
-> > > +       return generic_file_read_iter(iocb, to);
-> > > +}
-> > > +
-> > >  static ssize_t ext2_file_write_iter(struct kiocb *iocb, struct iov_iter
-> > > *from)
-> > >  {
-> > >  #ifdef CONFIG_FS_DAX
-> > > @@ -216,6 +232,7 @@ const struct file_operations ext2_file_operations = {
-> > >         .get_unmapped_area = thp_get_unmapped_area,
-> > >         .splice_read    = generic_file_splice_read,
-> > >         .splice_write   = iter_file_splice_write,
-> > > +       .integrity_read = ext2_file_integrity_read_iter,
-> > >  };
-> > >
-> > >  const struct inode_operations ext2_file_inode_operations = {
-> > > diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> > > index 58294c9a7e1d..3ab4105c8578 100644
-> > > --- a/fs/ext4/file.c
-> > > +++ b/fs/ext4/file.c
-> > > @@ -74,6 +74,25 @@ static ssize_t ext4_file_read_iter(struct kiocb *iocb,
-> > > struct iov_iter *to)
-> > >         return generic_file_read_iter(iocb, to);
-> > >  }
-> > >
-> > > +static ssize_t ext4_file_integrity_read_iter(struct kiocb *iocb,
-> > > +                                            struct iov_iter *to)
-> > > +{
-> > > +       struct inode *inode = file_inode(iocb->ki_filp);
-> > > +
-> > > +       lockdep_assert_held(&inode->i_rwsem);
-> > > +       if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-> > > +               return -EIO;
-> > > +
-> > > +       if (!iov_iter_count(to))
-> > > +               return 0; /* skip atime */
-> > > +
-> > > +#ifdef CONFIG_FS_DAX
-> > > +       if (IS_DAX(inode))
-> > > +               return dax_iomap_rw(iocb, to, &ext4_iomap_ops);
-> > > +#endif
-> > > +       return generic_file_read_iter(iocb, to);
-> > > +}
-> > > +
-> > >  /*
-> > >   * Called when an inode is released. Note that this is different
-> > >   * from ext4_file_open: open gets called at every open, but release
-> > > @@ -747,6 +766,7 @@ const struct file_operations ext4_file_operations = {
-> > >         .splice_read    = generic_file_splice_read,
-> > >         .splice_write   = iter_file_splice_write,
-> > >         .fallocate      = ext4_fallocate,
-> > > +       .integrity_read = ext4_file_integrity_read_iter,
-> > >  };
-> > >
-> > >  const struct inode_operations ext4_file_inode_operations = {
-> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > > index 2706130c261b..82ea81da0b2d 100644
-> > > --- a/fs/f2fs/file.c
-> > > +++ b/fs/f2fs/file.c
-> > > @@ -2514,4 +2514,5 @@ const struct file_operations f2fs_file_operations = {
-> > >  #endif
-> > >         .splice_read    = generic_file_splice_read,
-> > >         .splice_write   = iter_file_splice_write,
-> > > +       .integrity_read = generic_file_read_iter,
-> > >  };
-> > > diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
-> > > index c12476e309c6..5a63034cccf5 100644
-> > > --- a/fs/jffs2/file.c
-> > > +++ b/fs/jffs2/file.c
-> > > @@ -57,6 +57,7 @@ const struct file_operations jffs2_file_operations =
-> > >         .mmap =         generic_file_readonly_mmap,
-> > >         .fsync =        jffs2_fsync,
-> > >         .splice_read =  generic_file_splice_read,
-> > > +       .integrity_read = generic_file_read_iter,
-> > >  };
-> > >
-> > >  /* jffs2_file_inode_operations */
-> > > diff --git a/fs/jfs/file.c b/fs/jfs/file.c
-> > > index 739492c7a3fd..423512a810e4 100644
-> > > --- a/fs/jfs/file.c
-> > > +++ b/fs/jfs/file.c
-> > > @@ -162,4 +162,5 @@ const struct file_operations jfs_file_operations = {
-> > >  #ifdef CONFIG_COMPAT
-> > >         .compat_ioctl   = jfs_compat_ioctl,
-> > >  #endif
-> > > +       .integrity_read = generic_file_read_iter,
-> > >  };
-> > > diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
-> > > index c5fa3dee72fc..55e058ac487f 100644
-> > > --- a/fs/nilfs2/file.c
-> > > +++ b/fs/nilfs2/file.c
-> > > @@ -150,6 +150,7 @@ const struct file_operations nilfs_file_operations = {
-> > >         /* .release     = nilfs_release_file, */
-> > >         .fsync          = nilfs_sync_file,
-> > >         .splice_read    = generic_file_splice_read,
-> > > +       .integrity_read = generic_file_read_iter,
-> > >  };
-> > >
-> > >  const struct inode_operations nilfs_file_inode_operations = {
-> > > diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
-> > > index 12af0490322f..4f24d1b589b1 100644
-> > > --- a/fs/ramfs/file-mmu.c
-> > > +++ b/fs/ramfs/file-mmu.c
-> > > @@ -47,6 +47,7 @@ const struct file_operations ramfs_file_operations = {
-> > >         .splice_write   = iter_file_splice_write,
-> > >         .llseek         = generic_file_llseek,
-> > >         .get_unmapped_area      = ramfs_mmu_get_unmapped_area,
-> > > +       .integrity_read = generic_file_read_iter,
-> > >  };
-> > >
-> > >  const struct inode_operations ramfs_file_inode_operations = {
-> > > diff --git a/fs/ramfs/file-nommu.c b/fs/ramfs/file-nommu.c
-> > > index 2ef7ce75c062..5ee704fa84e0 100644
-> > > --- a/fs/ramfs/file-nommu.c
-> > > +++ b/fs/ramfs/file-nommu.c
-> > > @@ -50,6 +50,7 @@ const struct file_operations ramfs_file_operations = {
-> > >         .splice_read            = generic_file_splice_read,
-> > >         .splice_write           = iter_file_splice_write,
-> > >         .llseek                 = generic_file_llseek,
-> > > +       .integrity_read         = generic_file_read_iter,
-> > >  };
-> > >
-> > >  const struct inode_operations ramfs_file_inode_operations = {
-> > > diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> > > index 8cad0b19b404..5e52a315e18b 100644
-> > > --- a/fs/ubifs/file.c
-> > > +++ b/fs/ubifs/file.c
-> > > @@ -1747,4 +1747,5 @@ const struct file_operations ubifs_file_operations =
-> > > {
-> > >  #ifdef CONFIG_COMPAT
-> > >         .compat_ioctl   = ubifs_compat_ioctl,
-> > >  #endif
-> > > +       .integrity_read = generic_file_read_iter,
-> > >  };
-> > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > > index c4893e226fd8..0a6704b563d6 100644
-> > > --- a/fs/xfs/xfs_file.c
-> > > +++ b/fs/xfs/xfs_file.c
-> > > @@ -292,6 +292,26 @@ xfs_file_read_iter(
-> > >         return ret;
-> > >  }
-> > >
-> > > +static ssize_t
-> > > +xfs_integrity_read(
-> > > +       struct kiocb            *iocb,
-> > > +       struct iov_iter         *to)
-> > > +{
-> > > +       struct inode            *inode = file_inode(iocb->ki_filp);
-> > > +       struct xfs_mount        *mp = XFS_I(inode)->i_mount;
-> > > +
-> > > +       lockdep_assert_held(&inode->i_rwsem);
-> > > +
-> > > +       XFS_STATS_INC(mp, xs_read_calls);
-> > > +
-> > > +       if (XFS_FORCED_SHUTDOWN(mp))
-> > > +               return -EIO;
-> > > +
-> > > +       if (IS_DAX(inode))
-> > > +               return dax_iomap_rw(iocb, to, &xfs_iomap_ops);
-> > > +       return generic_file_read_iter(iocb, to);
-> > > +}
-> > > +
-> > >  /*
-> > >   * Zero any on disk space between the current EOF and the new, larger EOF.
-> > >   *
-> > > @@ -1175,6 +1195,7 @@ const struct file_operations xfs_file_operations = {
-> > >         .fallocate      = xfs_file_fallocate,
-> > >         .clone_file_range = xfs_file_clone_range,
-> > >         .dedupe_file_range = xfs_file_dedupe_range,
-> > > +       .integrity_read = xfs_integrity_read,
-> > >  };
-> > >
-> > >  const struct file_operations xfs_dir_file_operations = {
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index e522d25d0836..f6a01d3efce5 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -1699,6 +1699,7 @@ struct file_operations {
-> > >                         u64);
-> > >         ssize_t (*dedupe_file_range)(struct file *, u64, u64, struct file
-> > > *,
-> > >                         u64);
-> > > +       ssize_t (*integrity_read)(struct kiocb *, struct iov_iter *);
-> > >  } __randomize_layout;
-> > >
-> > >  struct inode_operations {
-> > > diff --git a/mm/shmem.c b/mm/shmem.c
-> > > index b0aa6075d164..805d99011ca4 100644
-> > > --- a/mm/shmem.c
-> > > +++ b/mm/shmem.c
-> > > @@ -3849,6 +3849,7 @@ static const struct file_operations
-> > > shmem_file_operations = {
-> > >         .splice_read    = generic_file_splice_read,
-> > >         .splice_write   = iter_file_splice_write,
-> > >         .fallocate      = shmem_fallocate,
-> > > +       .integrity_read = shmem_file_read_iter,
-> > >  #endif
-> > >  };
-> > >
-> > > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> > > index c84e05866052..c3a07276f745 100644
-> > > --- a/security/integrity/iint.c
-> > > +++ b/security/integrity/iint.c
-> > > @@ -21,6 +21,7 @@
-> > >  #include <linux/rbtree.h>
-> > >  #include <linux/file.h>
-> > >  #include <linux/uaccess.h>
-> > > +#include <linux/uio.h>
-> > >  #include "integrity.h"
-> > >
-> > >  static struct rb_root integrity_iint_tree = RB_ROOT;
-> > > @@ -184,18 +185,25 @@ security_initcall(integrity_iintcache_init);
-> > >  int integrity_kernel_read(struct file *file, loff_t offset,
-> > >                           void *addr, unsigned long count)
-> > >  {
-> > > -       mm_segment_t old_fs;
-> > > -       char __user *buf = (char __user *)addr;
-> > > +       struct inode *inode = file_inode(file);
-> > > +       struct kvec iov = { .iov_base = addr, .iov_len = count };
-> > > +       struct kiocb kiocb;
-> > > +       struct iov_iter iter;
-> > >         ssize_t ret;
-> > >
-> > > +       lockdep_assert_held(&inode->i_rwsem);
-> > > +
-> > >         if (!(file->f_mode & FMODE_READ))
-> > >                 return -EBADF;
-> > > +       if (!file->f_op->integrity_read)
-> > > +               return -EBADF;
-> > >
-> > > -       old_fs = get_fs();
-> > > -       set_fs(get_ds());
-> > > -       ret = __vfs_read(file, buf, count, &offset);
-> > > -       set_fs(old_fs);
-> > > +       init_sync_kiocb(&kiocb, file);
-> > > +       kiocb.ki_pos = offset;
-> > > +       iov_iter_kvec(&iter, READ | ITER_KVEC, &iov, 1, count);
-> > >
-> > > +       ret = file->f_op->integrity_read(&kiocb, &iter);
-> > > +       BUG_ON(ret == -EIOCBQUEUED);
-> > >         return ret;
-> > >  }
-> > >
-> > > --
-> > > 2.7.4
-> > >
-> > >
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+On 09/14/2017 04:40 AM, Jarkko Sakkinen wrote:
+> On Wed, Sep 13, 2017 at 11:39:03AM -0700, Peter Huewe wrote:
+>>
+>> Am 12. September 2017 17:45:08 GMT-07:00 schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
+>>> On Wed, Sep 06, 2017 at 08:56:36AM -0400, Nayna Jain wrote:
+>>>> The TPM burstcount status indicates the number of bytes that can
+>>>> be sent to the TPM without causing bus wait states.  Effectively,
+>>>> it is the number of empty bytes in the command FIFO. Further,
+>>>> some TPMs have a static burstcount, when the value remains zero
+>>>> until the entire FIFO is empty.
+>>>>
+>>>> This patch adds an optimization to check for burstcount only once.
+>>>> And if it is valid, it writes all the bytes at once, permitting
+>>>> wait states. The performance of a 34 byte extend on a TPM 1.2 with
+>>>> an 8 byte burstcount improved from 41 msec to 14 msec.
+>>>>
+>>>> This functionality is enabled only by passing module
+>>>> parameter ignore_burst_count=1. By default, this parameter
+>>>> is disabled.
+>>>>
+>>>> After this change, performance on a TPM 1.2 with an 8 byte
+>>>> burstcount for 1000 extends improved from ~41sec to ~14sec.
+>>>>
+>>>> Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
+>>>> conjunction with the TPM Device Driver work group.
+>>>> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+>>>> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+>>>> ---
+>>>>   Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+>>>>   drivers/char/tpm/tpm_tis_core.c                 | 24
+>>> +++++++++++++++++++++---
+>>>>   2 files changed, 29 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+>>> b/Documentation/admin-guide/kernel-parameters.txt
+>>>> index 4e303be83df6..3c59bb91e1ee 100644
+>>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>>> @@ -1465,6 +1465,14 @@
+>>>>   			mode generally follows that for the NaN encoding,
+>>>>   			except where unsupported by hardware.
+>>>>   
+>>>> +	ignore_burst_count [TPM_TIS_CORE]
+>>>> +			tpm_tis_core driver queries for the burstcount before
+>>>> +			every send call in a loop. However, it causes delay to
+>>>> +			the send command for TPMs with low burstcount value.
+>>>> +			Setting this value to 1, will make driver to query for
+>>>> +			burstcount only once in the loop to improve the
+>>>> +			performance. By default, its value is set to 0.
+>>>> +
+>>>>   	ignore_loglevel	[KNL]
+>>>>   			Ignore loglevel setting - this will print /all/
+>>>>   			kernel messages to the console. Useful for debugging.
+>>>> diff --git a/drivers/char/tpm/tpm_tis_core.c
+>>> b/drivers/char/tpm/tpm_tis_core.c
+>>>> index 63bc6c3b949e..6b9bf4c4d434 100644
+>>>> --- a/drivers/char/tpm/tpm_tis_core.c
+>>>> +++ b/drivers/char/tpm/tpm_tis_core.c
+>>>> @@ -31,6 +31,11 @@
+>>>>   #include "tpm.h"
+>>>>   #include "tpm_tis_core.h"
+>>>>   
+>>>> +static bool ignore_burst_count = false;
+>>>> +module_param(ignore_burst_count, bool, 0444);
+>>>> +MODULE_PARM_DESC(ignore_burst_count,
+>>>> +		"Ignore burstcount value while writing data");
+>>>> +
+>>>>   /* Before we attempt to access the TPM we must see that the valid
+>>> bit is set.
+>>>>    * The specification says that this bit is 0 at reset and remains 0
+>>> until the
+>>>>    * 'TPM has gone through its self test and initialization and has
+>>> established
+>>>> @@ -256,6 +261,7 @@ static int tpm_tis_send_data(struct tpm_chip
+>>> *chip, u8 *buf, size_t len)
+>>>>   {
+>>>>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>>>>   	int rc, status, burstcnt;
+>>>> +	int sendcnt;
+>>>>   	size_t count = 0;
+>>>>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+>>>>   
+>>>> @@ -271,19 +277,31 @@ static int tpm_tis_send_data(struct tpm_chip
+>>> *chip, u8 *buf, size_t len)
+>>>>   	}
+>>>>   
+>>>>   	while (count < len - 1) {
+>>>> +
+>>>> +		/*
+>>>> +		 * Get the initial burstcount to ensure TPM is ready to
+>>>> +		 * accept data, even when waiting for burstcount is disabled.
+>>>> +		 */
+>>>>   		burstcnt = get_burstcount(chip);
+>>>>   		if (burstcnt < 0) {
+>>>>   			dev_err(&chip->dev, "Unable to read burstcount\n");
+>>>>   			rc = burstcnt;
+>>>>   			goto out_err;
+>>>>   		}
+>>>> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+>>>> +
+>>>> +		if (ignore_burst_count)
+>>>> +			sendcnt = len - 1;
+>>>> +		else
+>>>> +			sendcnt = min_t(int, burstcnt, len - count - 1);
+>>>> +
+>>>>   		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+>>>> -					 burstcnt, buf + count);
+>>>> +					 sendcnt, buf + count);
+>>>>   		if (rc < 0)
+>>>>   			goto out_err;
+>>>>   
+>>>> -		count += burstcnt;
+>>>> +		count += sendcnt;
+>>>> +		if (ignore_burst_count)
+>>>> +			continue;
+>>>>   
+>>>>   		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+>>>>   					&priv->int_queue, false) < 0) {
+>>>> -- 
+>>>> 2.13.3
+>>>>
+>>> Makes sense to discuss whether to have the kernel command-line
+>>> parameter or not before applying this.
+>>>
+>>> To fuel the discussion, alternative to this would be:
+>>>
+>>> 1. Have this always on i.e. no command-line parameter.
+>>> 2. If someone yells, we add the command-line parameter later on.
+>>>
+>> According to what I've read in the tcg ddwg group this patch should
+>> not cause problems on _sane_ tpms.
+>>
+>> I'm not 100%convinced that all tpms are sane all the time, but I think
+>> we do not want yet another cmdline parameter.
+>>
+>> So if we want to pull it in (and ddwg does not see an issue, so yes)
+>> it should be on by default, without a kernel parameter.
+>>
+>> If there is a kernel parameter, then it should only be one called
+>> "failsafe" - which includes the force behavior and maybe the "broken"
+>> tpm path.
+>>
+>> But I agree with Alex, every additonal code path reduces testing coverage.
+>>
+>>
+>> We would be happy to test a "default on" patch.
+>>
+>> Peter
+>>
+>>> /Jarkko
+> I'm starting to dilate to this direction.
+>
+> It is hard to believe that any such TPM would be in active use anywhere
+> assuming that there exist a TPM where this causes issues. This combined
+> to the assumption that you would run the latest mainline on it makes it
+> a pretty insignificant scenario.
+
+It sounds like we are getting in direction to have this change by default.
+Before removing the ignore_burst_count parameter, I will post a test version of this
+patch which enables ignore_burst_count by default, for testing purposes only.
+
+Thanks Peter and Alex for testing.
+
+Thanks & Regards,
+    - Nayna
+
+
+>
+> /Jarkko
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
