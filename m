@@ -1,62 +1,26 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Fri, 15 Sep 2017 18:10:49 +0530
-Subject: [PATCH v2 3/4] tpm: reduce tpm_msleep() time in get_burstcount()
-In-Reply-To: <20170913010011.myvhrj2f4i3piphl@linux.intel.com>
-References: <20170906125643.5070-1-nayna@linux.vnet.ibm.com>
-	<20170906125643.5070-4-nayna@linux.vnet.ibm.com>
-	<20170913010011.myvhrj2f4i3piphl@linux.intel.com>
-Message-ID: <32b07575-a895-fe45-eba3-15e47adfbcac@linux.vnet.ibm.com>
+From: hch@infradead.org (Christoph Hellwig)
+Date: Fri, 15 Sep 2017 07:49:03 -0700
+Subject: [PATCH 3/3] ima: use fs method to read integrity data
+In-Reply-To: <CA+55aFwVujvsdaq09O216u-uBbBbo5i_1d6aw3ksottR_uiJ6w@mail.gmail.com>
+References: <1505451494-30228-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1505451494-30228-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<CA+55aFwVujvsdaq09O216u-uBbBbo5i_1d6aw3ksottR_uiJ6w@mail.gmail.com>
+Message-ID: <20170915144903.GA3854@infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Thu, Sep 14, 2017 at 10:50:27PM -0700, Linus Torvalds wrote:
+> This is still wrong.
+> 
+> (a) there is no explanation for why we need that exclusive lock in the
+> first place
+> 
+> Why should a read need exclusive access? You'd think shared is sufficient.
+> But regardless, it needs *explanation*.
 
-
-On 09/13/2017 06:30 AM, Jarkko Sakkinen wrote:
-> On Wed, Sep 06, 2017 at 08:56:38AM -0400, Nayna Jain wrote:
->> Currently, get_burstcount() function sleeps for 5msec in a loop
->> before retrying for next query to burstcount. However, if it takes
->> lesser time for TPM to return, this 5 msec delay is longer
->> than necessary.
->>
->> This patch replaces the tpm_msleep time from 5msec to 1msec.
->>
->> After this change, performance on a TPM 1.2 with an 8 byte
->> burstcount for 1000 extends improved from ~10sec to ~9sec.
->>
->> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
->> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> ---
->>   drivers/char/tpm/tpm_tis_core.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
->> index d1eab29cb447..d710bbc4608b 100644
->> --- a/drivers/char/tpm/tpm_tis_core.c
->> +++ b/drivers/char/tpm/tpm_tis_core.c
->> @@ -169,7 +169,7 @@ static int get_burstcount(struct tpm_chip *chip)
->>   		burstcnt = (value >> 8) & 0xFFFF;
->>   		if (burstcnt)
->>   			return burstcnt;
->> -		tpm_msleep(TPM_TIMEOUT);
->> +		tpm_msleep(1);
->>   	} while (time_before(jiffies, stop));
->>   	return -EBUSY;
->>   }
->> -- 
->> 2.13.3
-> How did you pick 1 ms delay? Should there be a constant defining it?
-
-As per ddwg input, the command may not take more than a few
-microseconds. The minimum tpm_msleep() value is 1 msec, so we really
-don't have a choice. ?(We're working on a patch set to lower this
-value even more.)
-
-Thanks & Regards,
-     - Nayna
-
->
-> /Jarkko
->
+Shared is sufficient, and nothing in the patch (except for the
+description) actually requires an exclusive lock.  It just happens that
+ima holds it exclusive for other internal reasons.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
