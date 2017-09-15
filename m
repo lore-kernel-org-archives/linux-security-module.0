@@ -1,45 +1,43 @@
-From: joe@perches.com (Joe Perches)
-Date: Fri, 15 Sep 2017 11:01:51 -0700
-Subject: [tpmdd-devel] New ML for TPM and IMA
-In-Reply-To: <20170915175715.nl3m5vcrelykopx3@linux.intel.com>
-References: <20170915171825.5zjit5vsrvxgmvrb@linux.intel.com>
-	<1505496336.27581.7.camel@perches.com>
-	<20170915173632.6qfvtkj6yqzclsb2@linux.intel.com>
-	<1505497214.27581.9.camel@perches.com>
-	<114299C3-C931-4E10-A78B-C441F7A5723F@gmx.de>
-	<20170915175715.nl3m5vcrelykopx3@linux.intel.com>
-Message-ID: <1505498511.27581.11.camel@perches.com>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Fri, 15 Sep 2017 11:05:31 -0700
+Subject: [PATCH 3/3] ima: use fs method to read integrity data
+In-Reply-To: <1505466296.4200.86.camel@linux.vnet.ibm.com>
+References: <1505451494-30228-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1505451494-30228-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<CA+55aFwVujvsdaq09O216u-uBbBbo5i_1d6aw3ksottR_uiJ6w@mail.gmail.com>
+	<1505466296.4200.86.camel@linux.vnet.ibm.com>
+Message-ID: <CA+55aFwS39HcDEE3QrS0_nSahY9uQJBCYfqw1jhSa6x3Fg_=pw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2017-09-15 at 10:57 -0700, Jarkko Sakkinen wrote:
-> On Fri, Sep 15, 2017 at 10:47:06AM -0700, Peter Huewe wrote:
-> > Am 15. September 2017 10:40:14 GMT-07:00 schrieb Joe Perches <joe@perches.com>:
-> > > As the individual maintainers are different for the two sections,
-> > > I think you need both entries.
-> > 
-> > Try to get a hold of ashley and ask whether she is actively maintaining.
-> > 
-> > While updating Maintainers I vote for removing Marcel Selhorst for tpm.
-> > 
-> > You can keep me for now :)
-> > Peter
-> 
-> During the last bit less than couple of years I've been maintaining
-> TPM and a bit less than four years I've been contributing I've never
-> heard anything of Ashley.
-> 
-> What is the expiration time?
+On Fri, Sep 15, 2017 at 2:04 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Thu, 2017-09-14 at 22:50 -0700, Linus Torvalds wrote:
+>> This is still wrong.
+>>
+>> (a) there is no explanation for why we need that exclusive lock in the
+>> first place
+>
+>> Why should a read need exclusive access? You'd think shared is sufficient.
+>
+> True, reading a file shouldn't require an exclusive lock.  The
+> exclusive lock is taken to prevent the file from changing while the
+> file hash is being calculated.
 
-There is no fixed time at all.
-Generally when the email bounces or when the maintainer resigns.
-(involuntarily or not...)
+That really shouldn't need an exclusive lock either. The whole point
+is that you're just reading the file, so a shared lock should be fine.
 
-It seems a couple years since Ashley signed anything and five years
-since Marcel Selhorst signed anything.
+There may be other *higher* level reasons why the caller then might
+want an exclusive lock for other reasons, but that should have nothing
+to do with the reading part.
 
-It's polite to add a CREDITS entry when removing inactive maintainers.
+So this is the thing I want explained. Right now there are no
+explanations, and the few comments there are about exclusive locking
+don't make sense, and don't match the lockdep tests.
 
+So the patch itself may be fine, but the commentary and explanations
+are broken and/or missing.
+
+                     Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
