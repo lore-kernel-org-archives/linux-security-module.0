@@ -1,118 +1,32 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Fri, 15 Sep 2017 21:55:46 +0200
-Subject: [PATCH] apparmor: initialized returned struct aa_perms
-Message-ID: <20170915195620.1561044-1-arnd@arndb.de>
+From: kgold@linux.vnet.ibm.com (Ken Goldman)
+Date: Fri, 15 Sep 2017 16:07:58 -0400
+Subject: [tpmdd-devel] New ML for TPM and IMA
+In-Reply-To: <20170915171825.5zjit5vsrvxgmvrb@linux.intel.com>
+References: <20170915171825.5zjit5vsrvxgmvrb@linux.intel.com>
+Message-ID: <05fa761b-707c-4a24-a1a0-a9ce6c0e7eef@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-gcc-4.4 points out suspicious code in compute_mnt_perms, where
-the aa_perms structure is only partially initialized before getting
-returned:
+Newbie question:  Do I have to subscribe, or are email addresses being 
+migrated?
 
-security/apparmor/mount.c: In function 'compute_mnt_perms':
-security/apparmor/mount.c:227: error: 'perms.prompt' is used uninitialized in this function
-security/apparmor/mount.c:227: error: 'perms.hide' is used uninitialized in this function
-security/apparmor/mount.c:227: error: 'perms.cond' is used uninitialized in this function
-security/apparmor/mount.c:227: error: 'perms.complain' is used uninitialized in this function
-security/apparmor/mount.c:227: error: 'perms.stop' is used uninitialized in this function
-security/apparmor/mount.c:227: error: 'perms.deny' is used uninitialized in this function
-
-Returning or assigning partially initialized structures is a bit tricky,
-in particular it is explicitly allowed in c99 to assign a partially
-intialized structure to another, as long as only members are read that
-have been initialized earlier. Looking at what various compilers do here,
-the version that produced the warning copied unintialized stack data,
-while newer versions (and also clang) either set the other members to
-zero or don't update the parts of the return buffer that are not modified
-in the temporary structure, but they never warn about this.
-
-In case of apparmor, it seems better to be a little safer and always
-initialize the aa_perms structure. Most users already do that, this
-changes the remaining ones, including the one instance that I got the
-warning for.
-
-Fixes: fa488437d0f9 ("apparmor: add mount mediation")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- security/apparmor/file.c  |  8 +-------
- security/apparmor/lib.c   | 13 +++++--------
- security/apparmor/mount.c | 13 ++++++-------
- 3 files changed, 12 insertions(+), 22 deletions(-)
-
-diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-index db80221891c6..86d57e56fabe 100644
---- a/security/apparmor/file.c
-+++ b/security/apparmor/file.c
-@@ -227,18 +227,12 @@ static u32 map_old_perms(u32 old)
- struct aa_perms aa_compute_fperms(struct aa_dfa *dfa, unsigned int state,
- 				  struct path_cond *cond)
- {
--	struct aa_perms perms;
--
- 	/* FIXME: change over to new dfa format
- 	 * currently file perms are encoded in the dfa, new format
- 	 * splits the permissions from the dfa.  This mapping can be
- 	 * done at profile load
- 	 */
--	perms.deny = 0;
--	perms.kill = perms.stop = 0;
--	perms.complain = perms.cond = 0;
--	perms.hide = 0;
--	perms.prompt = 0;
-+	struct aa_perms perms = { };
- 
- 	if (uid_eq(current_fsuid(), cond->uid)) {
- 		perms.allow = map_old_perms(dfa_user_allow(dfa, state));
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 8818621b5d95..6cbc06da964c 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -318,14 +318,11 @@ static u32 map_other(u32 x)
- void aa_compute_perms(struct aa_dfa *dfa, unsigned int state,
- 		      struct aa_perms *perms)
- {
--	perms->deny = 0;
--	perms->kill = perms->stop = 0;
--	perms->complain = perms->cond = 0;
--	perms->hide = 0;
--	perms->prompt = 0;
--	perms->allow = dfa_user_allow(dfa, state);
--	perms->audit = dfa_user_audit(dfa, state);
--	perms->quiet = dfa_user_quiet(dfa, state);
-+	*perms = (struct aa_perms) {
-+		.allow = dfa_user_allow(dfa, state),
-+		.audit = dfa_user_audit(dfa, state),
-+		.quiet = dfa_user_quiet(dfa, state),
-+	};
- 
- 	/* for v5 perm mapping in the policydb, the other set is used
- 	 * to extend the general perm set
-diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
-index 82a64b58041d..ed9b4d0f9f7e 100644
---- a/security/apparmor/mount.c
-+++ b/security/apparmor/mount.c
-@@ -216,13 +216,12 @@ static unsigned int match_mnt_flags(struct aa_dfa *dfa, unsigned int state,
- static struct aa_perms compute_mnt_perms(struct aa_dfa *dfa,
- 					   unsigned int state)
- {
--	struct aa_perms perms;
--
--	perms.kill = 0;
--	perms.allow = dfa_user_allow(dfa, state);
--	perms.audit = dfa_user_audit(dfa, state);
--	perms.quiet = dfa_user_quiet(dfa, state);
--	perms.xindex = dfa_user_xindex(dfa, state);
-+	struct aa_perms perms = {
-+		.allow = dfa_user_allow(dfa, state),
-+		.audit = dfa_user_audit(dfa, state),
-+		.quiet = dfa_user_quiet(dfa, state),
-+		.xindex = dfa_user_xindex(dfa, state),
-+	};
- 
- 	return perms;
- }
--- 
-2.9.0
+On 9/15/2017 1:18 PM, Jarkko Sakkinen wrote:
+> Hi
+> 
+> Many people were kicked out from the SourceForge mailing list in the
+> July because SF required a resubscription, including non-human users,
+> such as patchwork.
+> 
+> We decided to create a new mailing list linux-integrit at vger.kernel.org
+> to cover both TPM and IMA since they tend to have cross dependencies.
+> Otherwise, the maintainer hierarchy etc. will stay the same.
+> 
+> It is all documented here:
+> 
+> http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
+> 
+>  From now on use this list for patches and discussion instead of the
+> legacy list.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
