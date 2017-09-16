@@ -1,37 +1,45 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 16 Sep 2017 08:36:29 -0700
-Subject: about context gap
-Message-ID: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Sat, 16 Sep 2017 11:20:47 -0700
+Subject: [PATCH 3/3] ima: use fs method to read integrity data (updated
+	patch description)
+In-Reply-To: <1505507142.4200.103.camel@linux.vnet.ibm.com>
+References: <1505451494-30228-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1505451494-30228-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<1505507142.4200.103.camel@linux.vnet.ibm.com>
+Message-ID: <CA+55aFxmeff53zeioTiQY6m=F18ekgX1-HWZyQUor=NJYrxM9A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi
+On Fri, Sep 15, 2017 at 1:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>
+> To resolve this locking problem, this patch defines a new
+> ->integrity_read file operation method, which is equivalent to
+> ->read_iter, except that it will not take the i_rwsem lock, but will
+> be called with the i_rwsem held exclusively.
+>
+> Since taking the i_rwsem exclusively is not required for reading the
+> file in order to calculate the file hash, the code only verifies
+> that the lock has been taken.
 
-While sitting at the airport I started to think a bit about the context
-gap issue.
+Ok, so I'm onboard with the commit message now, but realized that I'm
+not actually convinced that i_rwsem is even meaningful.
 
-I think first thing that would make sense would be to have a 64-bit
-shadow count for every TPM space i.e.
+Sure, generic_file_write_iter() does take that lock exclusively, but
+not everybody uses generic_file_write_iter() at all for writing.
 
-atomic_long_t tpm2_ctx_cnt;
+For example, xfs still uses that i_rwsem, but for block-aligned writes
+it will only get it shared. And I'm not convinced some other
+filesystem might not end up using some other lock entirely.
 
-struct tpm2_space {
-	/* ... */
-	u64 ctx_cnt;
-};
+So I'm basically not entirely convinced that these i_rwsem games make
+any sense at all.
 
-For every create and load of a session you will read the global count
-and increase it. This way we have get a well defined order.
+The filesystem can do its own locking, and I'm starting to think that
+it would be better to just pass this "this is an integrity read" down
+to the filesystem, and expect the filesystem to do the locking based
+on that.
 
-With this organization we could for example put tpm spaces to a
-red-black tree and refresh the oldest tpm space (just first thought
-that came to mind).
-
-PS. While doing LPC and LSS slides I found error from the TPM 2.0
-commands specification. TPM2_ContextSave can never emit
-TPM2_RC_CONTEXT_GAP albeit the specification says so.
-
-/Jarkko
+                 Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
