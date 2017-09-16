@@ -1,7 +1,9 @@
 From: Jason@zx2c4.com (Jason A. Donenfeld)
-Date: Sat, 16 Sep 2017 15:00:34 +0200
-Subject: [PATCH v4] security/keys: rewrite all of big_key crypto
-Message-ID: <20170916130034.17706-1-Jason@zx2c4.com>
+Date: Sat, 16 Sep 2017 15:05:33 +0200
+Subject: [PATCH v5] security/keys: rewrite all of big_key crypto
+In-Reply-To: <20170916130034.17706-1-Jason@zx2c4.com>
+References: <20170916130034.17706-1-Jason@zx2c4.com>
+Message-ID: <20170916130533.23036-1-Jason@zx2c4.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -43,22 +45,15 @@ Cc: David Howells <dhowells@redhat.com>
 Cc: Eric Biggers <ebiggers3@gmail.com>
 Cc: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Ilhan Gurel <ilhan.gurel@gmail.com>
 Cc: security at kernel.org
 Cc: stable at vger.kernel.org
 ---
  security/keys/Kconfig   |   4 +-
- security/keys/big_key.c | 139 ++++++++++++++++++++++--------------------------
- 2 files changed, 65 insertions(+), 78 deletions(-)
+ security/keys/big_key.c | 141 +++++++++++++++++++++++-------------------------
+ 2 files changed, 67 insertions(+), 78 deletions(-)
 
-Changes v3->v4:
-  - Patchset resurrected from the dead. Just like the original use of ECB,
-    which this patch fixes, crypto-related things are sometimes neglected,
-    unfortunately.
-  - Rebased on top of 4.13+ changes.
-  - Now that get_random_bytes_wait has been merged, we can actually use
-    it, just like in v1 of this patch.
+Changes v4->v5:
+ - Fix get_random_bytes_wait ret value derp.
 
 diff --git a/security/keys/Kconfig b/security/keys/Kconfig
 index a7a23b5541f8..91eafada3164 100644
@@ -77,7 +72,7 @@ index a7a23b5541f8..91eafada3164 100644
  	  This option provides support for holding large keys within the kernel
  	  (for example Kerberos ticket caches).  The data may be stored out to
 diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 6acb00f6f22c..36682686f8c2 100644
+index 6acb00f6f22c..26d74721b6b6 100644
 --- a/security/keys/big_key.c
 +++ b/security/keys/big_key.c
 @@ -1,5 +1,6 @@
@@ -223,7 +218,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  
  		/* generate random key */
  		enckey = kmalloc(ENC_KEY_SIZE, GFP_KERNEL);
-@@ -163,13 +171,10 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+@@ -163,13 +171,12 @@ int big_key_preparse(struct key_preparsed_payload *prep)
  			ret = -ENOMEM;
  			goto error;
  		}
@@ -231,7 +226,9 @@ index 6acb00f6f22c..36682686f8c2 100644
 -		ret = big_key_gen_enckey(enckey);
 -		if (ret)
 -			goto err_enckey;
-+		get_random_bytes_wait(enckey, ENC_KEY_SIZE);
++		ret = get_random_bytes_wait(enckey, ENC_KEY_SIZE);
++		if (unlikely(ret))
++			goto error;
  
  		/* encrypt aligned data */
 -		ret = big_key_crypt(BIG_KEY_ENC, data, enclen, enckey);
@@ -239,7 +236,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  		if (ret)
  			goto err_enckey;
  
-@@ -195,7 +200,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+@@ -195,7 +202,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
  		*path = file->f_path;
  		path_get(path);
  		fput(file);
@@ -248,7 +245,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  	} else {
  		/* Just store the data in a buffer */
  		void *data = kmalloc(datalen, GFP_KERNEL);
-@@ -211,9 +216,9 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+@@ -211,9 +218,9 @@ int big_key_preparse(struct key_preparsed_payload *prep)
  err_fput:
  	fput(file);
  err_enckey:
@@ -260,7 +257,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  	return ret;
  }
  
-@@ -227,7 +232,7 @@ void big_key_free_preparse(struct key_preparsed_payload *prep)
+@@ -227,7 +234,7 @@ void big_key_free_preparse(struct key_preparsed_payload *prep)
  
  		path_put(path);
  	}
@@ -269,7 +266,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  }
  
  /*
-@@ -259,7 +264,7 @@ void big_key_destroy(struct key *key)
+@@ -259,7 +266,7 @@ void big_key_destroy(struct key *key)
  		path->mnt = NULL;
  		path->dentry = NULL;
  	}
@@ -278,7 +275,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  	key->payload.data[big_key_data] = NULL;
  }
  
-@@ -295,7 +300,7 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
+@@ -295,7 +302,7 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
  		struct file *file;
  		u8 *data;
  		u8 *enckey = (u8 *)key->payload.data[big_key_data];
@@ -287,7 +284,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  		loff_t pos = 0;
  
  		data = kmalloc(enclen, GFP_KERNEL);
-@@ -328,7 +333,7 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
+@@ -328,7 +335,7 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
  err_fput:
  		fput(file);
  error:
@@ -296,7 +293,7 @@ index 6acb00f6f22c..36682686f8c2 100644
  	} else {
  		ret = datalen;
  		if (copy_to_user(buffer, key->payload.data[big_key_data],
-@@ -344,47 +349,31 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
+@@ -344,47 +351,31 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
   */
  static int __init big_key_init(void)
  {
