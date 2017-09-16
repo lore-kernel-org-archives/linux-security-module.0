@@ -1,45 +1,40 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Sat, 16 Sep 2017 11:20:47 -0700
-Subject: [PATCH 3/3] ima: use fs method to read integrity data (updated
-	patch description)
-In-Reply-To: <1505507142.4200.103.camel@linux.vnet.ibm.com>
-References: <1505451494-30228-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1505451494-30228-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<1505507142.4200.103.camel@linux.vnet.ibm.com>
-Message-ID: <CA+55aFxmeff53zeioTiQY6m=F18ekgX1-HWZyQUor=NJYrxM9A@mail.gmail.com>
+From: khlebnikov@yandex-team.ru (Konstantin Khlebnikov)
+Date: Sat, 16 Sep 2017 21:18:56 +0300
+Subject: [BUG] security_release_secctx seems broken
+Message-ID: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 15, 2017 at 1:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->
-> To resolve this locking problem, this patch defines a new
-> ->integrity_read file operation method, which is equivalent to
-> ->read_iter, except that it will not take the i_rwsem lock, but will
-> be called with the i_rwsem held exclusively.
->
-> Since taking the i_rwsem exclusively is not required for reading the
-> file in order to calculate the file hash, the code only verifies
-> that the lock has been taken.
+I've got this kmemleak splat
 
-Ok, so I'm onboard with the commit message now, but realized that I'm
-not actually convinced that i_rwsem is even meaningful.
+unreferenced object 0xffff880f687ff6a8 (size 32):
+   comm "cp", pid 4279, jiffies 4295784487 (age 2866.296s)
+   hex dump (first 32 bytes):
+     01 00 00 02 02 00 08 00 00 00 00 00 00 00 00 00  ................
+     00 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5  .....kkkkkkkkkk.
+   backtrace:
+     [<ffffffff8192d77a>] kmemleak_alloc+0x4a/0xa0
+     [<ffffffff8125b721>] __kmalloc_track_caller+0x171/0x280
+     [<ffffffff812125c7>] krealloc+0xa7/0xc0
+     [<ffffffff812abb2d>] vfs_getxattr_alloc+0xbd/0x110
+     [<ffffffff813ba789>] cap_inode_getsecurity+0x79/0x200
+     [<ffffffff813be4d2>] security_inode_getsecurity+0x52/0x80
+     [<ffffffff812aad1a>] xattr_getsecurity+0x3a/0xa0
+     [<ffffffff812aadf4>] vfs_getxattr+0x74/0xa0
+     [<ffffffff812ab27e>] getxattr+0x9e/0x170
+     [<ffffffff812abd2a>] SyS_fgetxattr+0x5a/0x90
+     [<ffffffff8193a67b>] entry_SYSCALL_64_fastpath+0x1e/0xae
+     [<ffffffffffffffff>] 0xffffffffffffffff
 
-Sure, generic_file_write_iter() does take that lock exclusively, but
-not everybody uses generic_file_write_iter() at all for writing.
+allocated in  xattr_getsecurity() security_inode_getsecurity() -> cap_inode_getsecurity()
+should be freed by security_release_secctx() but there is no release_secctx hook.
 
-For example, xfs still uses that i_rwsem, but for block-aligned writes
-it will only get it shared. And I'm not convinced some other
-filesystem might not end up using some other lock entirely.
-
-So I'm basically not entirely convinced that these i_rwsem games make
-any sense at all.
-
-The filesystem can do its own locking, and I'm starting to think that
-it would be better to just pass this "this is an integrity read" down
-to the filesystem, and expect the filesystem to do the locking based
-on that.
-
-                 Linus
+I don't know details about modern security models stack but it
+seems security_release_secctx() have to know which layer owns
+secdata to free it property: selinux just calls kfree,
+capability_hooks should do the same, but other modules returns
+non-freeable pointers. Currently security_release_secctx() calls
+release_secctx for all models, this is obviously wrong.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
