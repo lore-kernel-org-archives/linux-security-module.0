@@ -1,45 +1,36 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Sat, 16 Sep 2017 23:04:57 -0700
-Subject: [PATCH v5] security/keys: rewrite all of big_key crypto
-In-Reply-To: <20170916130533.23036-1-Jason@zx2c4.com>
-References: <20170916130034.17706-1-Jason@zx2c4.com>
-	<20170916130533.23036-1-Jason@zx2c4.com>
-Message-ID: <20170917060457.GB10599@zzz.localdomain>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Sun, 17 Sep 2017 03:36:40 -0400
+Subject: [GIT PULL] Security subsystem updates for 4.14
+In-Reply-To: <alpine.LRH.2.21.1709090554030.28267@namei.org>
+References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
+	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
+	<alpine.LRH.2.21.1709081448090.7880@namei.org>
+	<20170908070943.GA26549@infradead.org>
+	<CA+55aFwMgUJSMQ96XdKnTbn8UsxzHTb8tZQdH40nxDeF7fWObw@mail.gmail.com>
+	<alpine.LRH.2.21.1709090554030.28267@namei.org>
+Message-ID: <1505633800.4200.181.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Jason,
+On Sat, 2017-09-09 at 05:57 +1000, James Morris wrote:
+> On Fri, 8 Sep 2017, Linus Torvalds wrote:
+> 
+> > Now the whole security pull will be ignored because of this thing. I
+> > refuse to pull garbage where I notice major fundamental problems in
+> > code that has obviously never ever been tested.
+> 
+> If I revert the change from my my tree, will you pull it then?
 
-On Sat, Sep 16, 2017 at 03:05:33PM +0200, Jason A. Donenfeld wrote:
-> -
-> -		ret = big_key_gen_enckey(enckey);
-> -		if (ret)
-> -			goto err_enckey;
-> +		ret = get_random_bytes_wait(enckey, ENC_KEY_SIZE);
-> +		if (unlikely(ret))
-> +			goto error;
+Sigh, none of the patches, other than those included in Paul's pull
+request, are in 4.14-rc1. ?I feel really horrible!
 
-This should jump to 'err_enckey', otherwise it will leak 'enckey'.
+Linus, there would never have been a good time for something like this
+to happen, but this past week, in case you didn't realize, most of us
+were at the Linux Security Summit. ?The timing couldn't have been
+worse.
 
-Otherwise the changes all look good; after fixing the above, feel free to add my
-Reviewed-by.  Yes, AES-GCM is the right choice here.  It is, however, almost
-certainly the case that if someone can modify your swap partition, they can
-already own your system in many other ways, so the "authenticated" portion of
-"authenticated encryption" may not actually buy much in this situation :-)
+Mimi
 
-The patch is a little long and perhaps should be split into several patches,
-each of which fixes one bug; but see what David thinks.
-
-I should also note, that while there definitely were some inadmissible bugs
-here, the support for encrypting big_key's was only added recently, in the v4.7
-kernel.  And obviously not encrypting at all is at least as much as a
-"vulnerability" as using weak encryption.  I'm also a little skeptical that
-people actually care enough about big_key's for it to be worthwhile to mark a
-rewrite like this for stable, though I suppose it wouldn't be *too* hard to at
-least cherry-pick this to 4.9 if you wanted.  (There is a small conflict so
-you'd have to send the backport yourself after this goes into mainline.)
-
-Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
