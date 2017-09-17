@@ -1,36 +1,71 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 17 Sep 2017 03:36:40 -0400
-Subject: [GIT PULL] Security subsystem updates for 4.14
-In-Reply-To: <alpine.LRH.2.21.1709090554030.28267@namei.org>
-References: <alpine.LRH.2.21.1709041959220.27950@namei.org>
-	<CA+55aFw8wgA+jhBOhnY-TSdbPgiYcrFiipCV=rsS1=GQEN+JgQ@mail.gmail.com>
-	<alpine.LRH.2.21.1709081448090.7880@namei.org>
-	<20170908070943.GA26549@infradead.org>
-	<CA+55aFwMgUJSMQ96XdKnTbn8UsxzHTb8tZQdH40nxDeF7fWObw@mail.gmail.com>
-	<alpine.LRH.2.21.1709090554030.28267@namei.org>
-Message-ID: <1505633800.4200.181.camel@linux.vnet.ibm.com>
+From: Jason@zx2c4.com (Jason A. Donenfeld)
+Date: Sun, 17 Sep 2017 13:50:40 +0200
+Subject: [PATCH v5] security/keys: rewrite all of big_key crypto
+In-Reply-To: <20170917060457.GB10599@zzz.localdomain>
+References: <20170916130034.17706-1-Jason@zx2c4.com>
+	<20170916130533.23036-1-Jason@zx2c4.com>
+	<20170917060457.GB10599@zzz.localdomain>
+Message-ID: <CAHmME9rjrz2Pn39ay3myApBeBtQAPNt0C+NvmFoV28NeT4_zLg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2017-09-09 at 05:57 +1000, James Morris wrote:
-> On Fri, 8 Sep 2017, Linus Torvalds wrote:
-> 
-> > Now the whole security pull will be ignored because of this thing. I
-> > refuse to pull garbage where I notice major fundamental problems in
-> > code that has obviously never ever been tested.
-> 
-> If I revert the change from my my tree, will you pull it then?
+On Sun, Sep 17, 2017 at 8:04 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> This should jump to 'err_enckey', otherwise it will leak 'enckey'.
 
-Sigh, none of the patches, other than those included in Paul's pull
-request, are in 4.14-rc1. ?I feel really horrible!
+Yikes, good catch, thanks!
 
-Linus, there would never have been a good time for something like this
-to happen, but this past week, in case you didn't realize, most of us
-were at the Linux Security Summit. ?The timing couldn't have been
-worse.
+>
+> Otherwise the changes all look good; after fixing the above, feel free to add my
+> Reviewed-by.
 
-Mimi
+Ack.
 
+> Yes, AES-GCM is the right choice here.  It is, however, almost
+> certainly the case that if someone can modify your swap partition, they can
+> already own your system in many other ways, so the "authenticated" portion of
+> "authenticated encryption" may not actually buy much in this situation :-)
+
+True, though this is slightly different from people putting their
+big_keys on NFS, I guess (but who would do such a thing anyway?).
+
+> The patch is a little long and perhaps should be split into several patches,
+> each of which fixes one bug; but see what David thinks.
+
+Meh, it's a rewrite, so sure, it's long. I saw a bunch of bugs and
+rewrote the whole thing rather than going one-by-one with the bugs,
+which would have produced a series. Personally I'd prefer to keep it
+like this than spending the time needling away with git and extra
+commit messages and struggling to make them each build separately.
+Seems like very very little gain for the time required to do that
+right. *shrug* Will wait to hear from David.
+
+> I should also note, that while there definitely were some inadmissible bugs
+> here, the support for encrypting big_key's was only added recently, in the v4.7
+> kernel.  And obviously not encrypting at all is at least as much as a
+> "vulnerability" as using weak encryption.
+
+Yea that's fair. I'm mostly just running around like a headless
+chicken after seeing ECB and wondering how this got committed in the
+first place, but nobody really takes chickens seriously. But yes, I
+suppose one way of considering this is just to say, "big_keys did not
+use encryption before 4.14, even though the code was really
+complicated."
+
+> I'm also a little skeptical that
+> people actually care enough about big_key's for it to be worthwhile to mark a
+> rewrite like this for stable, though I suppose it wouldn't be *too* hard to at
+> least cherry-pick this to 4.9 if you wanted.  (There is a small conflict so
+> you'd have to send the backport yourself after this goes into mainline.)
+
+I imagine the conflicts will be moving back from get_random_bytes_wait
+to get_random_bytes and maybe the loff_t/kernel_{read,write} thing. Is
+this what you had in mind too? I should be able to handle those fairly
+easily and send it to Greg manually after this lands.
+
+Thanks again for the review, very appreciated.
+
+Regards,
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
