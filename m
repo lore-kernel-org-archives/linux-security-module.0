@@ -1,62 +1,54 @@
-From: swhiteho@redhat.com (Steven Whitehouse)
-Date: Mon, 18 Sep 2017 10:19:25 +0100
-Subject: [PATCH 3/3] ima: use fs method to read integrity data (updated
-	patch description)
-In-Reply-To: <20170917163828.GE5426@ZenIV.linux.org.uk>
-References: <1505451494-30228-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1505451494-30228-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<1505507142.4200.103.camel@linux.vnet.ibm.com>
-	<CA+55aFxmeff53zeioTiQY6m=F18ekgX1-HWZyQUor=NJYrxM9A@mail.gmail.com>
-	<20170917151757.GA14262@infradead.org>
-	<CA+55aFyrZ=YsfNc1vp=vArNgotLXGPr4F6uZiz22Uj2XHGUvaw@mail.gmail.com>
-	<1505664935.4200.191.camel@linux.vnet.ibm.com>
-	<CA+55aFyBhb_hQ84heyWnAP+1vn48Wjpnas0YSUY-R6Ej6bv_Dw@mail.gmail.com>
-	<20170917163828.GE5426@ZenIV.linux.org.uk>
-Message-ID: <517c83a6-d7c5-9638-ebaa-52800ca0962c@redhat.com>
+From: smueller@chronox.de (Stephan Mueller)
+Date: Mon, 18 Sep 2017 11:12:23 +0200
+Subject: [kernel-hardening] Re: [PATCH v4] security/keys: rewrite all of
+	big_key crypto
+In-Reply-To: <20170918090455.GA18325@kroah.com>
+References: <20170916130034.17706-1-Jason@zx2c4.com>
+	<2681038.03lnYPhpsa@tauon.chronox.de>
+	<20170918090455.GA18325@kroah.com>
+Message-ID: <1802190.3ov6B1aDpW@tauon.chronox.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+Am Montag, 18. September 2017, 11:04:55 CEST schrieb Greg KH:
 
+Hi Greg,
 
-On 17/09/17 17:38, Al Viro wrote:
-> On Sun, Sep 17, 2017 at 09:34:01AM -0700, Linus Torvalds wrote:
->> Now, I suspect most (all?) do, but that's a historical artifact rather
->> than "design". In particular, the VFS layer used to do the locking for
->> the filesystems, to guarantee the POSIX requirements (POSIX requires
->> that writes be seen atomically).
->>
->> But that lock was pushed down into the filesystems, since some
->> filesystems really wanted to have parallel writes (particularly for
->> direct IO, where that POSIX serialization requirement doesn't exist).
->>
->> That's all many years ago, though. New filesystems are likely to have
->> copied the pattern from old ones, but even then..
->>
->> Also, it's worth noting that "inode->i_rwlock" isn't even well-defined
->> as a lock. You can have the question of *which* inode gets talked
->> about when you have things like eoverlayfs etc. Normally it would be
->> obvious, but sometimes you'd use "file->f_mapping->host" (which is the
->> same thing in the simple cases), and sometimes it really wouldn't be
->> obvious at all..
->>
->> So... I'm really not at all convinced that i_rwsem is sensible. It's
->> one of those things that are "mostly right for the simple cases",
->> but...
-> The thing pretty much common to all of them is that write() might need
-> to modify permissions (suid removal), which brings ->i_rwsem in one
-> way or another - notify_change() needs that held...
+> On Mon, Sep 18, 2017 at 10:49:56AM +0200, Stephan Mueller wrote:
+> > Am Samstag, 16. September 2017, 15:00:34 CEST schrieb Jason A. Donenfeld:
+> > 
+> > Hi Jason,
+> > 
+> > > This started out as just replacing the use of crypto/rng with
+> > > get_random_bytes_wait,
+> > 
+> > This change is a challenge. The use of the kernel crypto API's DRNG has
+> > been made to allow FIPS 140-2 compliance. Otherwise, the entire key
+> > generation logic will not be using the right(TM) DRNG. Thus, I would not
+> > suggest to replace that for a stable tree.
+> 
+> Why not?
 
-For GFS2, if we are to hold the inode info constant while it is checked, 
-we would need to take a glock (read lock in this case) across the 
-relevant operations. The glock will be happy under i_rwlock, since we 
-have a lock ordering that takes local locks ahead of cluster locks. I've 
-not dug into this enough to figure out whether the current proposal will 
-allow this to work with GFS2 though. Does IMA cache the results from the 
-->read_integrity() operation?
+An SP800-90A-compliant DRNG must be used in those circumstances.
 
-Steve.
+> What is the issue here, there is only one "DRNG" in the kernel
+> now (and probably for a long time...)
 
+There are more DRNGs implemented in the kernel crypto API (see crypto/drbg.c 
+or crypto/ansi-cprng.c).
+> 
+> > Note, I am currently working on a pluggable DRNG apporach for /dev/random
+> > and /dev/urandom to be able to get rid of the use of the kernel crypto
+> > API's DRNG API. It is ready and I will air that solution shortly. Yet, it
+> > needs work to be integrated upstream (and approval from Ted Tso).
+> 
+> We don't postpone work for potential future patches that might or might
+> not ever happen or get merged.  That's how NetBSD died...
+
+Then I would recommend to leave it as is or hear complaints from other users.
+
+Ciao
+Stephan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
