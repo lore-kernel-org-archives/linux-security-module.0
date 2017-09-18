@@ -1,35 +1,47 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 18 Sep 2017 11:33:31 -0700
-Subject: [PATCH] KEYS: fix cred refcount leak in request_key_auth_new()
-Message-ID: <20170918183331.113261-1-ebiggers3@gmail.com>
+Date: Mon, 18 Sep 2017 11:36:12 -0700
+Subject: [PATCH] KEYS: fix key refcount leak in keyctl_assume_authority()
+Message-ID: <20170918183612.113941-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-In request_key_auth_new(), if alloc_key() or key_instantiate_and_link()
-were to fail, we would leak a reference to the 'struct cred'.  Currently
-this can only happen if alloc_key() fails to to allocate memory.  But it
-still should be fixed, as it is a more severe bug waiting to happen.
+In keyctl_assume_authority(), if keyctl_change_reqkey_auth() were to
+fail, we would leak the reference to the 'authkey'.  Currently this can
+only happen if prepare_creds() fails to allocate memory.  But it still
+should be fixed, as it is a more severe bug waiting to happen.
+
+This patch also moves the read of 'authkey->serial' to before the
+reference to the authkey is dropped.  Doing the read after dropping the
+reference is very fragile because it assumes we still hold another
+reference to the key.  (Which we do, in current->cred->request_key_auth,
+but there's no reason not to write it in the "obviously correct" way.)
 
 Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- security/keys/request_key_auth.c | 1 +
- 1 file changed, 1 insertion(+)
+ security/keys/keyctl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index afe9d22ab361..f2f29f13ecff 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -227,6 +227,7 @@ struct key *request_key_auth_new(struct key *target, const void *callout_info,
- 	key_revoke(authkey);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 6a82090c7fc1..552e4460683b 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1411,11 +1411,9 @@ long keyctl_assume_authority(key_serial_t id)
+ 	}
+ 
+ 	ret = keyctl_change_reqkey_auth(authkey);
+-	if (ret < 0)
+-		goto error;
++	if (ret == 0)
++		ret = authkey->serial;
  	key_put(authkey);
- error_alloc:
-+	put_cred(rka->cred);
- 	key_put(rka->target_key);
- 	key_put(rka->dest_keyring);
- 	kfree(rka->callout_info);
+-
+-	ret = authkey->serial;
+ error:
+ 	return ret;
+ }
 -- 
 2.14.1.690.gbb1197296e-goog
 
