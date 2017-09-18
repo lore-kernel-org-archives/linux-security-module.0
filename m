@@ -1,43 +1,74 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 18 Sep 2017 11:36:31 -0700
-Subject: [PATCH] KEYS: fix key refcount leak in keyctl_read_key()
-Message-ID: <20170918183631.113991-1-ebiggers3@gmail.com>
+Date: Mon, 18 Sep 2017 11:36:45 -0700
+Subject: [PATCH] KEYS: fix writing past end of user-supplied buffer in
+	keyring_read()
+Message-ID: <20170918183645.114070-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-In keyctl_read_key(), if key_permission() were to return an error code
-other than EACCES, we would leak a the reference to the key.  This can't
-actually happen currently because key_permission() can only return an
-error code other than EACCES if security_key_permission() does, only
-SELinux and Smack implement that hook, and neither can return an error
-code other than EACCES.  But it should still be fixed, as it is a bug
-waiting to happen.
+Userspace can call keyctl_read() on a keyring to get the list of IDs of
+keys in the keyring.  But if the user-supplied buffer is too small, the
+kernel would write the full list anyway --- which will corrupt whatever
+userspace memory happened to be past the end of the buffer.  Fix it by
+only filling the space that is available.
 
-Fixes: 29db91906340 ("[PATCH] Keys: Add LSM hooks for key management [try #3]")
+Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+Cc: <stable@vger.kernel.org>	[v3.13+]
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- security/keys/keyctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/keys/keyring.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 552e4460683b..365ff85d7e27 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -776,7 +776,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 	if (ret == 0)
- 		goto can_read_key;
- 	if (ret != -EACCES)
--		goto error;
-+		goto error2;
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index d8d08bd9c159..4fa82a8a9c0e 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -423,7 +423,7 @@ static void keyring_describe(const struct key *keyring, struct seq_file *m)
+ }
  
- 	/* we can't; see if it's searchable from this process's keyrings
- 	 * - we automatically take account of the fact that it may be
+ struct keyring_read_iterator_context {
+-	size_t			qty;
++	size_t			buflen;
+ 	size_t			count;
+ 	key_serial_t __user	*buffer;
+ };
+@@ -435,9 +435,9 @@ static int keyring_read_iterator(const void *object, void *data)
+ 	int ret;
+ 
+ 	kenter("{%s,%d},,{%zu/%zu}",
+-	       key->type->name, key->serial, ctx->count, ctx->qty);
++	       key->type->name, key->serial, ctx->count, ctx->buflen);
+ 
+-	if (ctx->count >= ctx->qty)
++	if (ctx->count >= ctx->buflen)
+ 		return 1;
+ 
+ 	ret = put_user(key->serial, ctx->buffer);
+@@ -472,16 +472,12 @@ static long keyring_read(const struct key *keyring,
+ 		return 0;
+ 
+ 	/* Calculate how much data we could return */
+-	ctx.qty = nr_keys * sizeof(key_serial_t);
+-
+ 	if (!buffer || !buflen)
+-		return ctx.qty;
+-
+-	if (buflen > ctx.qty)
+-		ctx.qty = buflen;
++		return nr_keys * sizeof(key_serial_t);
+ 
+ 	/* Copy the IDs of the subscribed keys into the buffer */
+ 	ctx.buffer = (key_serial_t __user *)buffer;
++	ctx.buflen = buflen;
+ 	ctx.count = 0;
+ 	ret = assoc_array_iterate(&keyring->keys, keyring_read_iterator, &ctx);
+ 	if (ret < 0) {
 -- 
 2.14.1.690.gbb1197296e-goog
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
