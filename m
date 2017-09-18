@@ -1,50 +1,38 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 18 Sep 2017 21:02:50 +0300
-Subject: about context gap
-In-Reply-To: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
-References: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
-Message-ID: <20170918180250.6db5ti4gpinqr5jz@linux.intel.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Mon, 18 Sep 2017 11:33:31 -0700
+Subject: [PATCH] KEYS: fix cred refcount leak in request_key_auth_new()
+Message-ID: <20170918183331.113261-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Sep 16, 2017 at 08:36:29AM -0700, Jarkko Sakkinen wrote:
-> Hi
-> 
-> While sitting at the airport I started to think a bit about the context
-> gap issue.
-> 
-> I think first thing that would make sense would be to have a 64-bit
-> shadow count for every TPM space i.e.
-> 
-> atomic_long_t tpm2_ctx_cnt;
-> 
-> struct tpm2_space {
-> 	/* ... */
-> 	u64 ctx_cnt;
-> };
-> 
-> For every create and load of a session you will read the global count
-> and increase it. This way we have get a well defined order.
-> 
-> With this organization we could for example put tpm spaces to a
-> red-black tree and refresh the oldest tpm space (just first thought
-> that came to mind).
-> 
-> PS. While doing LPC and LSS slides I found error from the TPM 2.0
-> commands specification. TPM2_ContextSave can never emit
-> TPM2_RC_CONTEXT_GAP albeit the specification says so.
-> 
-> /Jarkko
+From: Eric Biggers <ebiggers@google.com>
 
-Other than context gap it would probably make sense to estimate TPM
-capacity in order to make implementation more intelligent. We could
-measure memory capacity of a TPM in the driver initialization by filling
-it with fixed size dummy objects.
+In request_key_auth_new(), if alloc_key() or key_instantiate_and_link()
+were to fail, we would leak a reference to the 'struct cred'.  Currently
+this can only happen if alloc_key() fails to to allocate memory.  But it
+still should be fixed, as it is a more severe bug waiting to happen.
 
-TPM2_GetCapability gives stuff that cannot be really trusted as spec
-compliant TPM HW could just return always '1' for max.
+Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/request_key_auth.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-/Jarkko
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index afe9d22ab361..f2f29f13ecff 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -227,6 +227,7 @@ struct key *request_key_auth_new(struct key *target, const void *callout_info,
+ 	key_revoke(authkey);
+ 	key_put(authkey);
+ error_alloc:
++	put_cred(rka->cred);
+ 	key_put(rka->target_key);
+ 	key_put(rka->dest_keyring);
+ 	kfree(rka->callout_info);
+-- 
+2.14.1.690.gbb1197296e-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
