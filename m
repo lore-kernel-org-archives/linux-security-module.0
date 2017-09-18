@@ -1,83 +1,94 @@
-From: Jason@zx2c4.com (Jason A. Donenfeld)
-Date: Mon, 18 Sep 2017 13:24:18 +0200
-Subject: [PATCH v4] security/keys: rewrite all of big_key crypto
-In-Reply-To: <2681038.03lnYPhpsa@tauon.chronox.de>
-References: <20170916130034.17706-1-Jason@zx2c4.com>
-	<2681038.03lnYPhpsa@tauon.chronox.de>
-Message-ID: <CAHmME9p6uq0ELtgxB94bc4bUppa7UogWSEgj_9o8p2xXQfrz5A@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 18 Sep 2017 10:55:42 -0400
+Subject: [PATCH 3/3] ima: use fs method to read integrity data (updated
+	patch description)
+In-Reply-To: <20170918101350.GI32516@quack2.suse.cz>
+References: <1505451494-30228-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1505451494-30228-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<1505507142.4200.103.camel@linux.vnet.ibm.com>
+	<CA+55aFxmeff53zeioTiQY6m=F18ekgX1-HWZyQUor=NJYrxM9A@mail.gmail.com>
+	<20170917151757.GA14262@infradead.org>
+	<CA+55aFyrZ=YsfNc1vp=vArNgotLXGPr4F6uZiz22Uj2XHGUvaw@mail.gmail.com>
+	<1505664935.4200.191.camel@linux.vnet.ibm.com>
+	<CA+55aFyBhb_hQ84heyWnAP+1vn48Wjpnas0YSUY-R6Ej6bv_Dw@mail.gmail.com>
+	<20170917163828.GE5426@ZenIV.linux.org.uk>
+	<517c83a6-d7c5-9638-ebaa-52800ca0962c@redhat.com>
+	<20170918101350.GI32516@quack2.suse.cz>
+Message-ID: <1505746542.4200.242.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hello Stephan,
+On Mon, 2017-09-18 at 12:13 +0200, Jan Kara wrote:
+> On Mon 18-09-17 10:19:25, Steven Whitehouse wrote:
+> > On 17/09/17 17:38, Al Viro wrote:
+> > >On Sun, Sep 17, 2017 at 09:34:01AM -0700, Linus Torvalds wrote:
+> > >>Now, I suspect most (all?) do, but that's a historical artifact rather
+> > >>than "design". In particular, the VFS layer used to do the locking for
+> > >>the filesystems, to guarantee the POSIX requirements (POSIX requires
+> > >>that writes be seen atomically).
+> > >>
+> > >>But that lock was pushed down into the filesystems, since some
+> > >>filesystems really wanted to have parallel writes (particularly for
+> > >>direct IO, where that POSIX serialization requirement doesn't exist).
+> > >>
+> > >>That's all many years ago, though. New filesystems are likely to have
+> > >>copied the pattern from old ones, but even then..
+> > >>
+> > >>Also, it's worth noting that "inode->i_rwlock" isn't even well-defined
+> > >>as a lock. You can have the question of *which* inode gets talked
+> > >>about when you have things like eoverlayfs etc. Normally it would be
+> > >>obvious, but sometimes you'd use "file->f_mapping->host" (which is the
+> > >>same thing in the simple cases), and sometimes it really wouldn't be
+> > >>obvious at all..
+> > >>
+> > >>So... I'm really not at all convinced that i_rwsem is sensible. It's
+> > >>one of those things that are "mostly right for the simple cases",
+> > >>but...
+> > >The thing pretty much common to all of them is that write() might need
+> > >to modify permissions (suid removal), which brings ->i_rwsem in one
+> > >way or another - notify_change() needs that held...
+> > 
+> > For GFS2, if we are to hold the inode info constant while it is checked, we
+> > would need to take a glock (read lock in this case) across the relevant
+> > operations. The glock will be happy under i_rwlock, since we have a lock
+> > ordering that takes local locks ahead of cluster locks. I've not dug into
+> > this enough to figure out whether the current proposal will allow this to
+> > work with GFS2 though. Does IMA cache the results from the
+> > ->read_integrity() operation?
 
-I realize you have your Linux RNG project, which is a very worthwhile
-goal that I support you in. I hope you're eventually successful, and I
-apologize for not being more available in the last 2.5 months to chime
-in on that patchset thread you posted.
+Up to now, the hash calculation was stored in the iint structure,
+which is then used to extend the TPM, verify the file's integrity
+compared to the value stored in the xattr, and included in an audit
+message.
 
-However, your message to this thread here is a completely
-inappropriate and nonsensical hijacking, which makes me entirely
-question your overall judgement.
+A new patch set by Thiago Bauermann will add appended signature
+support, re-using the kernel module signature appended method, which
+might require re-calculating the file hash based on a different hash
+algorithm.
 
-(David -- please don't let such hijacking derail or delay these
-critical vulnerability fixes from landing.)
+> So I have asked Mimi about clustered filesystems before. And for now the
+> answer was that IMA for clustered filesystems is not supported (it will
+> return some error since ->integrity_read is NULL). If we would ever want to
+> support those it would require larger overhaul of the IMA architecture to
+> give filesystem more control over the locking (which is essentially what
+> Linus wants).
 
-> This change is a challenge. The use of the kernel crypto API's DRNG has been
-> made to allow FIPS 140-2 compliance. Otherwise, the entire key generation
-> logic will not be using the right(TM) DRNG. Thus, I would not suggest to
-> replace that for a stable tree.
+For performance reasons, IMA is not on a write hook, but detects file
+change on the last __fput() opened for write. ?At that point, the
+cached info is reset. ?The file hash is re-calculated and written out
+as an xattr. ?On the next file access (in policy), the file hash is
+re-calculated and stored in the iint.
 
-Complete and utter nonsense. This patch has a history (this is already
-v6), and it's pretty obvious from prior discussion and conclusion that
-the only reason "crypto/rng" was used for this is because the original
-author just had no idea what he was doing (thus leading to using ECB
-as well). Besides, from what RNG do you think the seed for that was
-generated?
+In terms of remote/clustered/fuse filesystems, we wouldn't be on the
+__fput() path. ?Support for remote/clustered/fuse filesystems, would
+be similar to filesystems that do not support i_version. ?Meaning only
+the first file access (in policy) would be measured/appraised, but not
+subsequent ones. ?Even if we could detect file change, we would be
+dependent on the remote/clustered/fuse filesystem to inform us of the
+change. ?What type of integrity guarantees would that provide?
 
-> Note, I am currently working on a pluggable DRNG apporach for /dev/random and
-> /dev/urandom to be able to get rid of the use of the kernel crypto API's DRNG
-> API. It is ready and I will air that solution shortly.
+Mimi
 
-Good to hear you're still working on that project.
-
-> Yet, it needs work to
-> be integrated upstream (and approval from Ted Tso).
-
-Good luck with getting approval... While Ted and I have our
-differences like any two kernel developers, I really tend agree with
-him in his attitude about this FIPS silliness. It's unlikely you're
-going to be able to shovel this stuff into random.c, and I think doing
-so will undermine your entire LRNG effort.
-
-> An SP800-90A-compliant DRNG must be used in those circumstances.
-
-Again, complete and utter unsubstantiated nonsense.
-
-> Then I would recommend to leave it as is or hear complaints from other users.
-
-What a poor lack of judgement.
-
-I get it -- this FIPS compliance backwardness is something you're keen
-about. But don't start hijacking every thread that involves randomness
-with a demand to replace calls to get_random_bytes with wrappers in
-outdated, flawed, government compliance crypto API key expanders. From
-a cryptographic point of view it's a ridiculous demand. And from an
-engineering point of view, it's a ridiculous demand too, for if
-get_random_bytes already returned FIPS-compliant randomness, you
-wouldn't be writing this email here.
-
-Instead, if you want your FIPS garbage in the Linux RNG, take your
-battle for that over to random.c. I'll oppose you to the end on it,
-but at the very least it will the the appropriate venue for that
-discussion. In the meantime, stop hijacking this thread.
-
-Thanks,
-Jason
-
-PS: apologies for what's probably perceived as an unfriendly and
-overly hostile tone of this email. It's not my intention to alienate
-you, but I do feel necessary in these circumstances to write as
-directly as possible.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
