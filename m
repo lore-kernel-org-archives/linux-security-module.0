@@ -1,74 +1,164 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 18 Sep 2017 11:36:45 -0700
-Subject: [PATCH] KEYS: fix writing past end of user-supplied buffer in
-	keyring_read()
-Message-ID: <20170918183645.114070-1-ebiggers3@gmail.com>
+Date: Mon, 18 Sep 2017 11:37:03 -0700
+Subject: [PATCH] KEYS: prevent creating a different user's keyrings
+Message-ID: <20170918183703.114134-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Userspace can call keyctl_read() on a keyring to get the list of IDs of
-keys in the keyring.  But if the user-supplied buffer is too small, the
-kernel would write the full list anyway --- which will corrupt whatever
-userspace memory happened to be past the end of the buffer.  Fix it by
-only filling the space that is available.
+It was possible for an unprivileged user to create the user and user
+session keyrings for another user.  For example:
 
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Cc: <stable@vger.kernel.org>	[v3.13+]
+    sudo -u '#3000' sh -c 'keyctl add keyring _uid.4000 "" @u
+                           keyctl add keyring _uid_ses.4000 "" @u
+                           sleep 15' &
+    sleep 1
+    sudo -u '#4000' keyctl describe @u
+    sudo -u '#4000' keyctl describe @us
+
+This is problematic because these "fake" keyrings won't have the right
+permissions.  In particular, the user who created them first will own
+them and will have full access to them via the possessor permissions,
+which can be used to compromise the security of a user's keys:
+
+    -4: alswrv-----v------------  3000     0 keyring: _uid.4000
+    -5: alswrv-----v------------  3000     0 keyring: _uid_ses.4000
+
+Fix it by marking user and user session keyrings with a flag
+KEY_FLAG_UID_KEYRING.  Then, when searching for a user or user session
+keyring by name, skip all keyrings that don't have the flag set.
+
+Fixes: 69664cf16af4 ("keys: don't generate user and user session keyrings unless they're accessed")
+Cc: <stable@vger.kernel.org>	[v2.6.26+]
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- security/keys/keyring.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ include/linux/key.h          |  2 ++
+ security/keys/internal.h     |  2 +-
+ security/keys/key.c          |  2 ++
+ security/keys/keyring.c      | 23 ++++++++++++++---------
+ security/keys/process_keys.c |  6 ++++--
+ 5 files changed, 23 insertions(+), 12 deletions(-)
 
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 044114185120..e315e16b6ff8 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -187,6 +187,7 @@ struct key {
+ #define KEY_FLAG_BUILTIN	8	/* set if key is built in to the kernel */
+ #define KEY_FLAG_ROOT_CAN_INVAL	9	/* set if key can be invalidated by root without permission */
+ #define KEY_FLAG_KEEP		10	/* set if key should not be removed */
++#define KEY_FLAG_UID_KEYRING	11	/* set if key is a user or user session keyring */
+ 
+ 	/* the key type and key description string
+ 	 * - the desc is used to match a key against search criteria
+@@ -243,6 +244,7 @@ extern struct key *key_alloc(struct key_type *type,
+ #define KEY_ALLOC_NOT_IN_QUOTA		0x0002	/* not in quota */
+ #define KEY_ALLOC_BUILT_IN		0x0004	/* Key is built into kernel */
+ #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
++#define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
+ 
+ extern void key_revoke(struct key *key);
+ extern void key_invalidate(struct key *key);
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 1c02c6547038..503adbae7b0d 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -141,7 +141,7 @@ extern key_ref_t keyring_search_aux(key_ref_t keyring_ref,
+ extern key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx);
+ extern key_ref_t search_process_keyrings(struct keyring_search_context *ctx);
+ 
+-extern struct key *find_keyring_by_name(const char *name, bool skip_perm_check);
++extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
+ 
+ extern int install_user_keyrings(void);
+ extern int install_thread_keyring_to_cred(struct cred *);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 83da68d98b40..e5c0896c3a8f 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -302,6 +302,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
+ 	if (flags & KEY_ALLOC_BUILT_IN)
+ 		key->flags |= 1 << KEY_FLAG_BUILTIN;
++	if (flags & KEY_ALLOC_UID_KEYRING)
++		key->flags |= 1 << KEY_FLAG_UID_KEYRING;
+ 
+ #ifdef KEY_DEBUGGING
+ 	key->magic = KEY_DEBUG_MAGIC;
 diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index d8d08bd9c159..4fa82a8a9c0e 100644
+index de81793f9920..d8d08bd9c159 100644
 --- a/security/keys/keyring.c
 +++ b/security/keys/keyring.c
-@@ -423,7 +423,7 @@ static void keyring_describe(const struct key *keyring, struct seq_file *m)
- }
+@@ -1101,15 +1101,15 @@ key_ref_t find_key_to_update(key_ref_t keyring_ref,
+ /*
+  * Find a keyring with the specified name.
+  *
+- * All named keyrings in the current user namespace are searched, provided they
+- * grant Search permission directly to the caller (unless this check is
+- * skipped).  Keyrings whose usage points have reached zero or who have been
+- * revoked are skipped.
++ * Only keyrings that have nonzero refcount, are not revoked, and are owned by a
++ * user in the current user namespace are considered.  If @uid_keyring is %true,
++ * the keyring additionally must have been allocated as a user or user session
++ * keyring; otherwise, it must grant Search permission directly to the caller.
+  *
+  * Returns a pointer to the keyring with the keyring's refcount having being
+  * incremented on success.  -ENOKEY is returned if a key could not be found.
+  */
+-struct key *find_keyring_by_name(const char *name, bool skip_perm_check)
++struct key *find_keyring_by_name(const char *name, bool uid_keyring)
+ {
+ 	struct key *keyring;
+ 	int bucket;
+@@ -1137,10 +1137,15 @@ struct key *find_keyring_by_name(const char *name, bool skip_perm_check)
+ 			if (strcmp(keyring->description, name) != 0)
+ 				continue;
  
- struct keyring_read_iterator_context {
--	size_t			qty;
-+	size_t			buflen;
- 	size_t			count;
- 	key_serial_t __user	*buffer;
- };
-@@ -435,9 +435,9 @@ static int keyring_read_iterator(const void *object, void *data)
- 	int ret;
+-			if (!skip_perm_check &&
+-			    key_permission(make_key_ref(keyring, 0),
+-					   KEY_NEED_SEARCH) < 0)
+-				continue;
++			if (uid_keyring) {
++				if (!test_bit(KEY_FLAG_UID_KEYRING,
++					      &keyring->flags))
++					continue;
++			} else {
++				if (key_permission(make_key_ref(keyring, 0),
++						   KEY_NEED_SEARCH) < 0)
++					continue;
++			}
  
- 	kenter("{%s,%d},,{%zu/%zu}",
--	       key->type->name, key->serial, ctx->count, ctx->qty);
-+	       key->type->name, key->serial, ctx->count, ctx->buflen);
- 
--	if (ctx->count >= ctx->qty)
-+	if (ctx->count >= ctx->buflen)
- 		return 1;
- 
- 	ret = put_user(key->serial, ctx->buffer);
-@@ -472,16 +472,12 @@ static long keyring_read(const struct key *keyring,
- 		return 0;
- 
- 	/* Calculate how much data we could return */
--	ctx.qty = nr_keys * sizeof(key_serial_t);
--
- 	if (!buffer || !buflen)
--		return ctx.qty;
--
--	if (buflen > ctx.qty)
--		ctx.qty = buflen;
-+		return nr_keys * sizeof(key_serial_t);
- 
- 	/* Copy the IDs of the subscribed keys into the buffer */
- 	ctx.buffer = (key_serial_t __user *)buffer;
-+	ctx.buflen = buflen;
- 	ctx.count = 0;
- 	ret = assoc_array_iterate(&keyring->keys, keyring_read_iterator, &ctx);
- 	if (ret < 0) {
+ 			/* we've got a match but we might end up racing with
+ 			 * key_cleanup() if the keyring is currently 'dead'
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 86bced9fdbdf..293d3598153b 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -77,7 +77,8 @@ int install_user_keyrings(void)
+ 		if (IS_ERR(uid_keyring)) {
+ 			uid_keyring = keyring_alloc(buf, user->uid, INVALID_GID,
+ 						    cred, user_keyring_perm,
+-						    KEY_ALLOC_IN_QUOTA,
++						    KEY_ALLOC_UID_KEYRING |
++							KEY_ALLOC_IN_QUOTA,
+ 						    NULL, NULL);
+ 			if (IS_ERR(uid_keyring)) {
+ 				ret = PTR_ERR(uid_keyring);
+@@ -94,7 +95,8 @@ int install_user_keyrings(void)
+ 			session_keyring =
+ 				keyring_alloc(buf, user->uid, INVALID_GID,
+ 					      cred, user_keyring_perm,
+-					      KEY_ALLOC_IN_QUOTA,
++					      KEY_ALLOC_UID_KEYRING |
++						  KEY_ALLOC_IN_QUOTA,
+ 					      NULL, NULL);
+ 			if (IS_ERR(session_keyring)) {
+ 				ret = PTR_ERR(session_keyring);
 -- 
 2.14.1.690.gbb1197296e-goog
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
