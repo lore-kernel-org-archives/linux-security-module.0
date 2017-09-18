@@ -1,160 +1,83 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 18 Sep 2017 11:37:03 -0700
-Subject: [PATCH] KEYS: prevent creating a different user's keyrings
-Message-ID: <20170918183703.114134-1-ebiggers3@gmail.com>
+Date: Mon, 18 Sep 2017 11:37:23 -0700
+Subject: [PATCH] KEYS: prevent KEYCTL_READ on negative key
+Message-ID: <20170918183723.114253-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-It was possible for an unprivileged user to create the user and user
-session keyrings for another user.  For example:
+Because keyctl_read_key() looks up the key with no permissions
+requested, it may find a negatively instantiated key.  If the key is
+also possessed, we went ahead and called ->read() on the key.  But the
+key payload will actually contain the ->reject_error rather than the
+normal payload.  Thus, the kernel oopses trying to read the
+user_key_payload from memory address (int)-ENOKEY = 0x00000000ffffff82.
 
-    sudo -u '#3000' sh -c 'keyctl add keyring _uid.4000 "" @u
-                           keyctl add keyring _uid_ses.4000 "" @u
-                           sleep 15' &
-    sleep 1
-    sudo -u '#4000' keyctl describe @u
-    sudo -u '#4000' keyctl describe @us
+Fortunately the payload data is stored inline, so it shouldn't be
+possible to abuse this as an arbitrary memory read primitive...
 
-This is problematic because these "fake" keyrings won't have the right
-permissions.  In particular, the user who created them first will own
-them and will have full access to them via the possessor permissions,
-which can be used to compromise the security of a user's keys:
+Reproducer:
+    keyctl new_session
+    keyctl request2 user desc '' @s
+    keyctl read $(keyctl show | awk '/user: desc/ {print $1}')
 
-    -4: alswrv-----v------------  3000     0 keyring: _uid.4000
-    -5: alswrv-----v------------  3000     0 keyring: _uid_ses.4000
+It causes a crash like the following:
+     BUG: unable to handle kernel paging request at 00000000ffffff92
+     IP: user_read+0x33/0xa0
+     PGD 36a54067 P4D 36a54067 PUD 0
+     Oops: 0000 [#1] SMP
+     CPU: 0 PID: 211 Comm: keyctl Not tainted 4.14.0-rc1 #337
+     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-20170228_101828-anatol 04/01/2014
+     task: ffff90aa3b74c3c0 task.stack: ffff9878c0478000
+     RIP: 0010:user_read+0x33/0xa0
+     RSP: 0018:ffff9878c047bee8 EFLAGS: 00010246
+     RAX: 0000000000000001 RBX: ffff90aa3d7da340 RCX: 0000000000000017
+     RDX: 0000000000000000 RSI: 00000000ffffff82 RDI: ffff90aa3d7da340
+     RBP: ffff9878c047bf00 R08: 00000024f95da94f R09: 0000000000000000
+     R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+     R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+     FS:  00007f58ece69740(0000) GS:ffff90aa3e200000(0000) knlGS:0000000000000000
+     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+     CR2: 00000000ffffff92 CR3: 0000000036adc001 CR4: 00000000003606f0
+     Call Trace:
+      keyctl_read_key+0xac/0xe0
+      SyS_keyctl+0x99/0x120
+      entry_SYSCALL_64_fastpath+0x1f/0xbe
+     RIP: 0033:0x7f58ec787bb9
+     RSP: 002b:00007ffc8d401678 EFLAGS: 00000206 ORIG_RAX: 00000000000000fa
+     RAX: ffffffffffffffda RBX: 00007ffc8d402800 RCX: 00007f58ec787bb9
+     RDX: 0000000000000000 RSI: 00000000174a63ac RDI: 000000000000000b
+     RBP: 0000000000000004 R08: 00007ffc8d402809 R09: 0000000000000020
+     R10: 0000000000000000 R11: 0000000000000206 R12: 00007ffc8d402800
+     R13: 00007ffc8d4016e0 R14: 0000000000000000 R15: 0000000000000000
+     Code: e5 41 55 49 89 f5 41 54 49 89 d4 53 48 89 fb e8 a4 b4 ad ff 85 c0 74 09 80 3d b9 4c 96 00 00 74 43 48 8b b3 20 01 00 00 4d 85 ed <0f> b7 5e 10 74 29 4d 85 e4 74 24 4c 39 e3 4c 89 e2 4c 89 ef 48
+     RIP: user_read+0x33/0xa0 RSP: ffff9878c047bee8
+     CR2: 00000000ffffff92
 
-Fix it by marking user and user session keyrings with a flag
-KEY_FLAG_UID_KEYRING.  Then, when searching for a user or user session
-keyring by name, skip all keyrings that don't have the flag set.
-
-Fixes: 69664cf16af4 ("keys: don't generate user and user session keyrings unless they're accessed")
-Cc: <stable@vger.kernel.org>	[v2.6.26+]
+Fixes: 61ea0c0ba904 ("KEYS: Skip key state checks when checking for possession")
+Cc: <stable@vger.kernel.org>	[v3.13+]
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- include/linux/key.h          |  2 ++
- security/keys/internal.h     |  2 +-
- security/keys/key.c          |  2 ++
- security/keys/keyring.c      | 23 ++++++++++++++---------
- security/keys/process_keys.c |  6 ++++--
- 5 files changed, 23 insertions(+), 12 deletions(-)
+ security/keys/keyctl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 044114185120..e315e16b6ff8 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -187,6 +187,7 @@ struct key {
- #define KEY_FLAG_BUILTIN	8	/* set if key is built in to the kernel */
- #define KEY_FLAG_ROOT_CAN_INVAL	9	/* set if key can be invalidated by root without permission */
- #define KEY_FLAG_KEEP		10	/* set if key should not be removed */
-+#define KEY_FLAG_UID_KEYRING	11	/* set if key is a user or user session keyring */
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index ab0b337c84b4..6a82090c7fc1 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -766,6 +766,11 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
  
- 	/* the key type and key description string
- 	 * - the desc is used to match a key against search criteria
-@@ -243,6 +244,7 @@ extern struct key *key_alloc(struct key_type *type,
- #define KEY_ALLOC_NOT_IN_QUOTA		0x0002	/* not in quota */
- #define KEY_ALLOC_BUILT_IN		0x0004	/* Key is built into kernel */
- #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
-+#define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
+ 	key = key_ref_to_ptr(key_ref);
  
- extern void key_revoke(struct key *key);
- extern void key_invalidate(struct key *key);
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 1c02c6547038..503adbae7b0d 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -141,7 +141,7 @@ extern key_ref_t keyring_search_aux(key_ref_t keyring_ref,
- extern key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx);
- extern key_ref_t search_process_keyrings(struct keyring_search_context *ctx);
- 
--extern struct key *find_keyring_by_name(const char *name, bool skip_perm_check);
-+extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
- 
- extern int install_user_keyrings(void);
- extern int install_thread_keyring_to_cred(struct cred *);
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 83da68d98b40..e5c0896c3a8f 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -302,6 +302,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
- 	if (flags & KEY_ALLOC_BUILT_IN)
- 		key->flags |= 1 << KEY_FLAG_BUILTIN;
-+	if (flags & KEY_ALLOC_UID_KEYRING)
-+		key->flags |= 1 << KEY_FLAG_UID_KEYRING;
- 
- #ifdef KEY_DEBUGGING
- 	key->magic = KEY_DEBUG_MAGIC;
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index de81793f9920..d8d08bd9c159 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -1101,15 +1101,15 @@ key_ref_t find_key_to_update(key_ref_t keyring_ref,
- /*
-  * Find a keyring with the specified name.
-  *
-- * All named keyrings in the current user namespace are searched, provided they
-- * grant Search permission directly to the caller (unless this check is
-- * skipped).  Keyrings whose usage points have reached zero or who have been
-- * revoked are skipped.
-+ * Only keyrings that have nonzero refcount, are not revoked, and are owned by a
-+ * user in the current user namespace are considered.  If @uid_keyring is %true,
-+ * the keyring additionally must have been allocated as a user or user session
-+ * keyring; otherwise, it must grant Search permission directly to the caller.
-  *
-  * Returns a pointer to the keyring with the keyring's refcount having being
-  * incremented on success.  -ENOKEY is returned if a key could not be found.
-  */
--struct key *find_keyring_by_name(const char *name, bool skip_perm_check)
-+struct key *find_keyring_by_name(const char *name, bool uid_keyring)
- {
- 	struct key *keyring;
- 	int bucket;
-@@ -1137,10 +1137,15 @@ struct key *find_keyring_by_name(const char *name, bool skip_perm_check)
- 			if (strcmp(keyring->description, name) != 0)
- 				continue;
- 
--			if (!skip_perm_check &&
--			    key_permission(make_key_ref(keyring, 0),
--					   KEY_NEED_SEARCH) < 0)
--				continue;
-+			if (uid_keyring) {
-+				if (!test_bit(KEY_FLAG_UID_KEYRING,
-+					      &keyring->flags))
-+					continue;
-+			} else {
-+				if (key_permission(make_key_ref(keyring, 0),
-+						   KEY_NEED_SEARCH) < 0)
-+					continue;
-+			}
- 
- 			/* we've got a match but we might end up racing with
- 			 * key_cleanup() if the keyring is currently 'dead'
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 86bced9fdbdf..293d3598153b 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -77,7 +77,8 @@ int install_user_keyrings(void)
- 		if (IS_ERR(uid_keyring)) {
- 			uid_keyring = keyring_alloc(buf, user->uid, INVALID_GID,
- 						    cred, user_keyring_perm,
--						    KEY_ALLOC_IN_QUOTA,
-+						    KEY_ALLOC_UID_KEYRING |
-+							KEY_ALLOC_IN_QUOTA,
- 						    NULL, NULL);
- 			if (IS_ERR(uid_keyring)) {
- 				ret = PTR_ERR(uid_keyring);
-@@ -94,7 +95,8 @@ int install_user_keyrings(void)
- 			session_keyring =
- 				keyring_alloc(buf, user->uid, INVALID_GID,
- 					      cred, user_keyring_perm,
--					      KEY_ALLOC_IN_QUOTA,
-+					      KEY_ALLOC_UID_KEYRING |
-+						  KEY_ALLOC_IN_QUOTA,
- 					      NULL, NULL);
- 			if (IS_ERR(session_keyring)) {
- 				ret = PTR_ERR(session_keyring);
++	if (test_bit(KEY_FLAG_NEGATIVE, &key->flags)) {
++		ret = -ENOKEY;
++		goto error2;
++	}
++
+ 	/* see if we can read it directly */
+ 	ret = key_permission(key_ref, KEY_NEED_READ);
+ 	if (ret == 0)
 -- 
 2.14.1.690.gbb1197296e-goog
 
