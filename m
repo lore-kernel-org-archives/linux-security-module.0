@@ -1,50 +1,49 @@
-From: bhumirks@gmail.com (Bhumika Goyal)
-Date: Tue, 19 Sep 2017 19:23:19 +0530
-Subject: [PATCH] apparmor: make allperms structure const
-Message-ID: <1505829199-6657-1-git-send-email-bhumirks@gmail.com>
+From: tytso@mit.edu (Theodore Ts'o)
+Date: Tue, 19 Sep 2017 09:39:59 -0400
+Subject: [PATCH v4] security/keys: rewrite all of big_key crypto
+In-Reply-To: <CAHmME9p6uq0ELtgxB94bc4bUppa7UogWSEgj_9o8p2xXQfrz5A@mail.gmail.com>
+References: <20170916130034.17706-1-Jason@zx2c4.com>
+	<2681038.03lnYPhpsa@tauon.chronox.de>
+	<CAHmME9p6uq0ELtgxB94bc4bUppa7UogWSEgj_9o8p2xXQfrz5A@mail.gmail.com>
+Message-ID: <20170919133959.5fgtioyonlsdyjf5@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Make this structure const as it is only used as a copy operations in the
-files referencing it. Add const to the declaration in the header too.
+On Mon, Sep 18, 2017 at 01:24:18PM +0200, Jason A. Donenfeld wrote:
+> Good luck with getting approval... While Ted and I have our
+> differences like any two kernel developers, I really tend agree with
+> him in his attitude about this FIPS silliness. It's unlikely you're
+> going to be able to shovel this stuff into random.c, and I think doing
+> so will undermine your entire LRNG effort.
 
-Structure found using a Coccinelle script and changes done by hand.
+Let me add one more reason why FIPS compliance for the kernel is just
+***stupid***.  The way FIPS compliance works, you have to pay hundreds
+of thousands of dollars to a FIPS certification lab to certify a
+specific binary, complete with the exact build environment (compiler,
+binutils, etc.) used to build that kernel binary.
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- security/apparmor/include/perms.h | 2 +-
- security/apparmor/lib.c           | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+The moment you need to make a change --- say, to fix a critical
+zero-day security bug --- this breaks the FIPS certification, and you
+then have to go back to the FIPS certification lab, and pay another
+hundreds of thousands of dollars for another certification.  This will
+take weeks/months, and while you are waiting for the results to come
+back from the FIPS certification lab, the hackers will be busy
+extracting another 143 million credit histories, or another 4.1
+million SF-86 Security Clearance Forms from the systems involved.  :-)
 
-diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
-index af04d5a..95ac9b6 100644
---- a/security/apparmor/include/perms.h
-+++ b/security/apparmor/include/perms.h
-@@ -90,7 +90,7 @@ struct aa_perms {
- 
- #define ALL_PERMS_MASK 0xffffffff
- extern struct aa_perms nullperms;
--extern struct aa_perms allperms;
-+extern const struct aa_perms allperms;
- 
- 
- #define xcheck(FN1, FN2)	\
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 8818621..5b2c245 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -25,7 +25,7 @@
- #include "include/policy.h"
- 
- struct aa_perms nullperms;
--struct aa_perms allperms = { .allow = ALL_PERMS_MASK,
-+const struct aa_perms allperms = { .allow = ALL_PERMS_MASK,
- 			     .quiet = ALL_PERMS_MASK,
- 			     .hide = ALL_PERMS_MASK };
- 
--- 
-1.9.1
+You might say that FIPS certification != FIPS compliance.  Sure, but
+the only silly people who care about FIPS compliance also need FIPS
+certification, for the US Goverment signoff.
 
+Realistically, people who need FIPS certification will need to use
+FIPS certified crypto in hardware.  In which case the FIPS certified
+RNG, as well as the FIPS certified crypto, will all be in a single
+certified lump of hardware, which doesn't have to change when we need
+to fix various kernel bugs.
+
+Cheers,
+
+						- Ted
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
