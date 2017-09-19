@@ -1,23 +1,24 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 19 Sep 2017 17:40:57 +0200
-Subject: [kernel-hardening] [RFC v3 0/9] S.A.R.A. a new stacked LSM
-In-Reply-To: <q3z6K12UF7xtgaJ-ju_WAbKAEmQdz6iD4aEefeqJXQg9sg7u_J76tH_5Wd4FD7pmUAlRdXZOMWAUZW39oouFnFsYSqPdFj_OpixobvkuVnQ=@protonmail.ch>
-References: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
-	<q3z6K12UF7xtgaJ-ju_WAbKAEmQdz6iD4aEefeqJXQg9sg7u_J76tH_5Wd4FD7pmUAlRdXZOMWAUZW39oouFnFsYSqPdFj_OpixobvkuVnQ=@protonmail.ch>
-Message-ID: <CAJHCu1+yCd3px66rVD+zsuDjetvWEN25pxVskvuj=GiRef3ixQ@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Tue, 19 Sep 2017 16:46:08 +0100
+Subject: [PATCH] KEYS: fix cred refcount leak in request_key_auth_new()
+In-Reply-To: <20170918183331.113261-1-ebiggers3@gmail.com>
+References: <20170918183331.113261-1-ebiggers3@gmail.com>
+Message-ID: <28352.1505835968@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2017-09-18 20:07 GMT+02:00 Jordan Glover <Golden_Miller83@protonmail.ch>:
-> Hi,
-Hi!
+Eric Biggers <ebiggers3@gmail.com> wrote:
 
-> I tested this S.A.R.A LSM and it works well. It's nice replacement for PaX
-> mprotect feature from grsecurity patschset. It doesn't need much learning
-> curve as SElinux. I hope it will be accepted in mainline. Great work!
-Thank you very much for your feedback and support!
+> In request_key_auth_new(), if alloc_key() or key_instantiate_and_link()
+> were to fail, we would leak a reference to the 'struct cred'.  Currently
+> this can only happen if alloc_key() fails to to allocate memory.  But it
+> still should be fixed, as it is a more severe bug waiting to happen.
 
-Salvatore
+It might be better to combine request_key_auth_destroy() and the error path
+that you're altering in request_key_auth_new() by pulling it into a separate
+function.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
