@@ -1,131 +1,34 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 19 Sep 2017 09:39:08 -0700
-Subject: [PATCH] fix security_release_secctx seems broken
-In-Reply-To: <c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
-References: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
-	<c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
-Message-ID: <ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
+From: vvs@virtuozzo.com (Vasily Averin)
+Date: Tue, 19 Sep 2017 19:51:08 +0300
+Subject: [PATCH] KEYS: key refcounting cleanup in keyctl_read_key
+Message-ID: <065a1f03-a342-c47c-ea6f-b4cc84f869bb@virtuozzo.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH] fix security_release_secctx seems broken
+key_put is lost if key_permission() returns non-EACCES error
 
-security_inode_getsecurity() provides the text string value
-of a security attribute. It does not provide a "secctx".
-The code in xattr_getsecurity() that calls security_inode_getsecurity()
-and then calls security_release_secctx() happened to work because
-SElinux and Smack treat the attribute and the secctx the same way.
-It fails for cap_inode_getsecurity(), because that module has no
-secctx that ever needs releasing. It turns out that Smack is the
-one that's doing things wrong by not allocating memory when instructed
-to do so by the "alloc" parameter.
-
-The fix is simple enough. Change the security_release_secctx() to
-kfree() because it isn't a secctx being returned by
-security_inode_getsecurity(). Change Smack to allocate the string when
-told to do so.
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-
+Fixes: 29db919063406 ("Keys: Add LSM hooks for key management [try #3]")
+Reported-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- fs/xattr.c                 |  2 +-
- security/smack/smack_lsm.c | 55 +++++++++++++++++++++-------------------------
- 2 files changed, 26 insertions(+), 31 deletions(-)
+ security/keys/keyctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 4424f7fecf14..61cd28ba25f3 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -250,7 +250,7 @@ xattr_getsecurity(struct inode *inode, const char *name, void *value,
- 	}
- 	memcpy(value, buffer, len);
- out:
--	security_release_secctx(buffer, len);
-+	kfree(buffer);
- out_noalloc:
- 	return len;
- }
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 319add31b4a4..286171a16ed2 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1473,7 +1473,7 @@ static int smack_inode_removexattr(struct dentry *dentry, const char *name)
-  * @inode: the object
-  * @name: attribute name
-  * @buffer: where to put the result
-- * @alloc: unused
-+ * @alloc: duplicate memory
-  *
-  * Returns the size of the attribute or an error code
-  */
-@@ -1486,43 +1486,38 @@ static int smack_inode_getsecurity(struct inode *inode,
- 	struct super_block *sbp;
- 	struct inode *ip = (struct inode *)inode;
- 	struct smack_known *isp;
--	int ilen;
--	int rc = 0;
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index ab0b337..70efb2d 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -771,7 +771,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 	if (ret == 0)
+ 		goto can_read_key;
+ 	if (ret != -EACCES)
+-		goto error;
++		goto error2;
  
--	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0) {
-+	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0)
- 		isp = smk_of_inode(inode);
--		ilen = strlen(isp->smk_known);
--		*buffer = isp->smk_known;
--		return ilen;
--	}
-+	else {
-+		/*
-+		 * The rest of the Smack xattrs are only on sockets.
-+		 */
-+		sbp = ip->i_sb;
-+		if (sbp->s_magic != SOCKFS_MAGIC)
-+			return -EOPNOTSUPP;
- 
--	/*
--	 * The rest of the Smack xattrs are only on sockets.
--	 */
--	sbp = ip->i_sb;
--	if (sbp->s_magic != SOCKFS_MAGIC)
--		return -EOPNOTSUPP;
-+		sock = SOCKET_I(ip);
-+		if (sock == NULL || sock->sk == NULL)
-+			return -EOPNOTSUPP;
- 
--	sock = SOCKET_I(ip);
--	if (sock == NULL || sock->sk == NULL)
--		return -EOPNOTSUPP;
--
--	ssp = sock->sk->sk_security;
-+		ssp = sock->sk->sk_security;
- 
--	if (strcmp(name, XATTR_SMACK_IPIN) == 0)
--		isp = ssp->smk_in;
--	else if (strcmp(name, XATTR_SMACK_IPOUT) == 0)
--		isp = ssp->smk_out;
--	else
--		return -EOPNOTSUPP;
-+		if (strcmp(name, XATTR_SMACK_IPIN) == 0)
-+			isp = ssp->smk_in;
-+		else if (strcmp(name, XATTR_SMACK_IPOUT) == 0)
-+			isp = ssp->smk_out;
-+		else
-+			return -EOPNOTSUPP;
-+	}
- 
--	ilen = strlen(isp->smk_known);
--	if (rc == 0) {
--		*buffer = isp->smk_known;
--		rc = ilen;
-+	if (alloc) {
-+		*buffer = kstrdup(isp->smk_known, GFP_KERNEL);
-+		if (*buffer == NULL)
-+			return -ENOMEM;
- 	}
- 
--	return rc;
-+	return strlen(isp->smk_known);
- }
- 
- 
+ 	/* we can't; see if it's searchable from this process's keyrings
+ 	 * - we automatically take account of the fact that it may be
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
