@@ -1,140 +1,29 @@
-From: khlebnikov@yandex-team.ru (Konstantin Khlebnikov)
-Date: Wed, 20 Sep 2017 14:48:13 +0300
-Subject: [PATCH] fix security_release_secctx seems broken
-In-Reply-To: <ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
-References: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
-	<c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
-	<ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
-Message-ID: <4ef8e89a-a88c-a9d1-bb32-44308e149e05@yandex-team.ru>
+From: Jason@zx2c4.com (Jason A. Donenfeld)
+Date: Wed, 20 Sep 2017 12:52:21 +0200
+Subject: [PATCH v6] security/keys: rewrite all of big_key crypto
+In-Reply-To: <1593673.B5xods8kYN@tauon.chronox.de>
+References: <CAHmME9rjrz2Pn39ay3myApBeBtQAPNt0C+NvmFoV28NeT4_zLg@mail.gmail.com>
+	<20170917115217.15805-1-Jason@zx2c4.com>
+	<1593673.B5xods8kYN@tauon.chronox.de>
+Message-ID: <CAHmME9pvZ-Q8qoUGjQjXX_DYNVv43C7MJRDzKZAAotM5UZircA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 19.09.2017 19:39, Casey Schaufler wrote:
-> Subject: [PATCH] fix security_release_secctx seems broken
-> 
-> security_inode_getsecurity() provides the text string value
-> of a security attribute. It does not provide a "secctx".
-> The code in xattr_getsecurity() that calls security_inode_getsecurity()
-> and then calls security_release_secctx() happened to work because
-> SElinux and Smack treat the attribute and the secctx the same way.
-> It fails for cap_inode_getsecurity(), because that module has no
-> secctx that ever needs releasing. It turns out that Smack is the
-> one that's doing things wrong by not allocating memory when instructed
-> to do so by the "alloc" parameter.
-> 
-> The fix is simple enough. Change the security_release_secctx() to
-> kfree() because it isn't a secctx being returned by
-> security_inode_getsecurity(). Change Smack to allocate the string when
-> told to do so.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+On Wed, Sep 20, 2017 at 7:30 AM, Stephan Mueller <smueller@chronox.de> wrote:
+> The use of GCM with the implementtion here is just as challenging. The
+> implementation uses a NULL IV. GCM is a very brittle cipher where the
+> construction of the IV is of special importance. SP800-38D section 8.2.1 and
+> 8.2.2 outlines the generation methods of the IV. A collision of keys/IVs is
+> fatal. I understand that keys are generated anew each time which makes that
+> issue less critical here. However, as user space may see the ciphertext, GCM
+> should simply not be used.
 
-Looks good for me.
-
-Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-
-
-> 
-> ---
->   fs/xattr.c                 |  2 +-
->   security/smack/smack_lsm.c | 55 +++++++++++++++++++++-------------------------
->   2 files changed, 26 insertions(+), 31 deletions(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 4424f7fecf14..61cd28ba25f3 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -250,7 +250,7 @@ xattr_getsecurity(struct inode *inode, const char *name, void *value,
->   	}
->   	memcpy(value, buffer, len);
->   out:
-> -	security_release_secctx(buffer, len);
-> +	kfree(buffer);
->   out_noalloc:
->   	return len;
->   }
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 319add31b4a4..286171a16ed2 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1473,7 +1473,7 @@ static int smack_inode_removexattr(struct dentry *dentry, const char *name)
->    * @inode: the object
->    * @name: attribute name
->    * @buffer: where to put the result
-> - * @alloc: unused
-> + * @alloc: duplicate memory
->    *
->    * Returns the size of the attribute or an error code
->    */
-> @@ -1486,43 +1486,38 @@ static int smack_inode_getsecurity(struct inode *inode,
->   	struct super_block *sbp;
->   	struct inode *ip = (struct inode *)inode;
->   	struct smack_known *isp;
-> -	int ilen;
-> -	int rc = 0;
->   
-> -	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0) {
-> +	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0)
->   		isp = smk_of_inode(inode);
-> -		ilen = strlen(isp->smk_known);
-> -		*buffer = isp->smk_known;
-> -		return ilen;
-> -	}
-> +	else {
-> +		/*
-> +		 * The rest of the Smack xattrs are only on sockets.
-> +		 */
-> +		sbp = ip->i_sb;
-> +		if (sbp->s_magic != SOCKFS_MAGIC)
-> +			return -EOPNOTSUPP;
->   
-> -	/*
-> -	 * The rest of the Smack xattrs are only on sockets.
-> -	 */
-> -	sbp = ip->i_sb;
-> -	if (sbp->s_magic != SOCKFS_MAGIC)
-> -		return -EOPNOTSUPP;
-> +		sock = SOCKET_I(ip);
-> +		if (sock == NULL || sock->sk == NULL)
-> +			return -EOPNOTSUPP;
->   
-> -	sock = SOCKET_I(ip);
-> -	if (sock == NULL || sock->sk == NULL)
-> -		return -EOPNOTSUPP;
-> -
-> -	ssp = sock->sk->sk_security;
-> +		ssp = sock->sk->sk_security;
->   
-> -	if (strcmp(name, XATTR_SMACK_IPIN) == 0)
-> -		isp = ssp->smk_in;
-> -	else if (strcmp(name, XATTR_SMACK_IPOUT) == 0)
-> -		isp = ssp->smk_out;
-> -	else
-> -		return -EOPNOTSUPP;
-> +		if (strcmp(name, XATTR_SMACK_IPIN) == 0)
-> +			isp = ssp->smk_in;
-> +		else if (strcmp(name, XATTR_SMACK_IPOUT) == 0)
-> +			isp = ssp->smk_out;
-> +		else
-> +			return -EOPNOTSUPP;
-> +	}
->   
-> -	ilen = strlen(isp->smk_known);
-> -	if (rc == 0) {
-> -		*buffer = isp->smk_known;
-> -		rc = ilen;
-> +	if (alloc) {
-> +		*buffer = kstrdup(isp->smk_known, GFP_KERNEL);
-> +		if (*buffer == NULL)
-> +			return -ENOMEM;
->   	}
->   
-> -	return rc;
-> +	return strlen(isp->smk_known);
->   }
->   
->   
-> 
+This sounds incorrect to me.  Choosing a fresh, random, one-time-use
+256-bit key and rolling with a zero nonce is a totally legitimate way
+of using GCM. There's no possible reuse of the key stream this way.
+However, on the off chance that you know what you're talking about,
+could you outline the cryptographic attack you have in mind, or if
+that's too difficult, simply link to the relevant paper on eprint?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
