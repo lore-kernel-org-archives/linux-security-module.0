@@ -1,58 +1,41 @@
-From: tytso@mit.edu (Theodore Ts'o)
-Date: Tue, 19 Sep 2017 21:16:42 -0400
-Subject: [kernel-hardening] Re: [PATCH v4] security/keys: rewrite all of
-	big_key crypto
-In-Reply-To: <CACXcFmmBzHu-9sCs+gJDbjeR4MTdOfMtUaBr+YjkwyfFquQMBA@mail.gmail.com>
-References: <20170916130034.17706-1-Jason@zx2c4.com>
-	<2681038.03lnYPhpsa@tauon.chronox.de>
-	<CAHmME9p6uq0ELtgxB94bc4bUppa7UogWSEgj_9o8p2xXQfrz5A@mail.gmail.com>
-	<20170919133959.5fgtioyonlsdyjf5@thunk.org>
-	<CACXcFmmBzHu-9sCs+gJDbjeR4MTdOfMtUaBr+YjkwyfFquQMBA@mail.gmail.com>
-Message-ID: <20170920011642.cczekznqebf2zq5u@thunk.org>
+From: smueller@chronox.de (Stephan Mueller)
+Date: Wed, 20 Sep 2017 07:30:56 +0200
+Subject: [PATCH v6] security/keys: rewrite all of big_key crypto
+In-Reply-To: <20170917115217.15805-1-Jason@zx2c4.com>
+References: <CAHmME9rjrz2Pn39ay3myApBeBtQAPNt0C+NvmFoV28NeT4_zLg@mail.gmail.com>
+	<20170917115217.15805-1-Jason@zx2c4.com>
+Message-ID: <1593673.B5xods8kYN@tauon.chronox.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Sep 19, 2017 at 03:04:29PM -0400, Sandy Harris wrote:
-> On the other hand, I do not see why the driver should not
-> use a FIPS-compliant PRNG where it can. This would make
-> things easier for anyone who does seek certification. One
-> of the big distro vendors? A gov't department or contractor
-> that wants to use Linux? A corporation's sys admin or
-> security reviewer? Stefan?
+Am Sonntag, 17. September 2017, 13:52:17 CEST schrieb Jason A. Donenfeld:
 
-First, making it easier for a sysadmin to seek certification is
-creating an attractive nuisance.  That means that after said company
-sinks $100,000+ into getting a certification, they will be hesitant to
-take the kernel update to fix that zero-day bug, less it causes them
-to lose that certification.
+Hi Jason,
 
-Secondly, I've worked with a defense contractor wanting to use (and
-did use) Linux.  Specifically, on the Zumwalt class destroyer, DD-21,
-although back when I worked on it was the DD(X) program.  I can assure
-you the fact that /dev/random wasn't FIPS certified wasn't a problem
-with either Raytheon or the US Navy.  Really.  If you're really
-serious about crypto, and you do government work, it will be type 1
-ciphers implemented in hardware, courtesy of the NSA.
+>   * Use of ECB mode, allowing an attacker to trivially swap blocks or
+>     compare identical plaintext blocks.
 
-So really.  You can use Linux without getting FIPS certification.
-Lots of copies of Linux are used in the government already, without
-FIPS certification.
+The use of GCM with the implementtion here is just as challenging. The 
+implementation uses a NULL IV. GCM is a very brittle cipher where the 
+construction of the IV is of special importance. SP800-38D section 8.2.1 and 
+8.2.2 outlines the generation methods of the IV. A collision of keys/IVs is 
+fatal. I understand that keys are generated anew each time which makes that 
+issue less critical here. However, as user space may see the ciphertext, GCM 
+should simply not be used.
 
-> I cannot see much downside to this. Is the current PRNG
-> more efficient? More easily maintained? Is it still the case
-> that random(4) must use only hashes, not ciphers, to
-> avoid restrictions under export laws?
+A fix could be as easy as to use CCM or one of the authenc() ciphers. Yet, for 
+both I am not sure how a zero IV affects the cipher.
 
-Linux is now using a Chacha20 based random number generator, much like
-OpenBSD.  It's stream cipher-based CSPRNG, which is much more
-efficient than a block cipher or HMAC based DRBG.  Unfortunately, it's
-also not one of the types defined in NIST 800-90A rev 1.
-
-       	     	     	     	     	 - Ted
+The cipher where you do not need to handle the IV at all would be the RFC3394/
+SP800-38F keywrapping cipher which is meant for the encryption of key material 
+which includes authentication as well. It is available as an skcipher under 
+the name of kw(aes). If you want to use it, please be careful that you obtain 
+the generated IV to be stored with the plaintext as documented in the comments 
+in crypto/keywrap.c
 
 
-
-
+Ciao
+Stephan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
