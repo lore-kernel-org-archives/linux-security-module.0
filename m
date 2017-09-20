@@ -1,80 +1,41 @@
-From: Jason@zx2c4.com (Jason A. Donenfeld)
-Date: Wed, 20 Sep 2017 16:58:38 +0200
-Subject: [PATCH v7 1/2] security/keys: properly zero out sensitive key
-	material in big_key
-Message-ID: <20170920145839.27511-1-Jason@zx2c4.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 20 Sep 2017 12:09:16 -0400
+Subject: [PATCH] selinux: Use kmem_cache for hashtab_node
+In-Reply-To: <CAHC9VhTfvOLw-v8ZbEhCkKn3FR9C5SzPS6kdz3w=fWxEGBAF1w@mail.gmail.com>
+References: <1504691419-26972-1-git-send-email-kyeongdon.kim@lge.com>
+	<CAHC9VhTfvOLw-v8ZbEhCkKn3FR9C5SzPS6kdz3w=fWxEGBAF1w@mail.gmail.com>
+Message-ID: <CAHC9VhSowi09zxj6bihnr3qLzt4MEsL3fY7y3Dcj50v8VNc0xg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Error paths forgot to zero out sensitive material, so this patch changes
-some kfrees into a kzfrees.
+On Thu, Sep 7, 2017 at 7:18 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, Sep 6, 2017 at 5:50 AM, Kyeongdon Kim <kyeongdon.kim@lge.com> wrote:
+>> During random test as own device to check slub account,
+>> we found some slack memory from hashtab_node(kmalloc-64).
+>> By using kzalloc(), middle of test result like below:
+>> allocated size 240768
+>> request size 45144
+>> slack size 195624
+>> allocation count 3762
+>>
+>> So, we want to use kmem_cache_zalloc() and that
+>> can reduce memory size 52byte(slack size/alloc count) per each struct.
+>>
+>> Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+>> ---
+>>  security/selinux/ss/hashtab.c  | 17 +++++++++++++++--
+>>  security/selinux/ss/hashtab.h  |  4 ++++
+>>  security/selinux/ss/services.c |  4 ++++
+>>  3 files changed, 23 insertions(+), 2 deletions(-)
+>
+> This seems reasonale, but I'm going to refrain from merging this until
+> after the merge window closes.
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Reviewed-by: Eric Biggers <ebiggers3@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: security at kernel.org
-Cc: stable at vger.kernel.org
----
- security/keys/big_key.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+I just merged this into selinux/next, thanks for your patience.
 
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 6acb00f6f22c..507d6fb86a4f 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -195,7 +195,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 		*path = file->f_path;
- 		path_get(path);
- 		fput(file);
--		kfree(data);
-+		kzfree(data);
- 	} else {
- 		/* Just store the data in a buffer */
- 		void *data = kmalloc(datalen, GFP_KERNEL);
-@@ -211,9 +211,9 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- err_fput:
- 	fput(file);
- err_enckey:
--	kfree(enckey);
-+	kzfree(enckey);
- error:
--	kfree(data);
-+	kzfree(data);
- 	return ret;
- }
- 
-@@ -227,7 +227,7 @@ void big_key_free_preparse(struct key_preparsed_payload *prep)
- 
- 		path_put(path);
- 	}
--	kfree(prep->payload.data[big_key_data]);
-+	kzfree(prep->payload.data[big_key_data]);
- }
- 
- /*
-@@ -259,7 +259,7 @@ void big_key_destroy(struct key *key)
- 		path->mnt = NULL;
- 		path->dentry = NULL;
- 	}
--	kfree(key->payload.data[big_key_data]);
-+	kzfree(key->payload.data[big_key_data]);
- 	key->payload.data[big_key_data] = NULL;
- }
- 
-@@ -328,7 +328,7 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
- err_fput:
- 		fput(file);
- error:
--		kfree(data);
-+		kzfree(data);
- 	} else {
- 		ret = datalen;
- 		if (copy_to_user(buffer, key->payload.data[big_key_data],
 -- 
-2.14.1
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
