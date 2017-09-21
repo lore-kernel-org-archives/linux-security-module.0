@@ -1,45 +1,42 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 21 Sep 2017 13:57:41 -0700
-Subject: [PATCH v2 2/3] KEYS: don't revoke uninstantiated key in
-	request_key_auth_new()
-In-Reply-To: <20170921205742.144596-1-ebiggers3@gmail.com>
-References: <20170921205742.144596-1-ebiggers3@gmail.com>
-Message-ID: <20170921205742.144596-3-ebiggers3@gmail.com>
+Date: Thu, 21 Sep 2017 15:00:29 -0700
+Subject: [PATCH] KEYS: prevent creating a different user's keyrings
+In-Reply-To: <29684.1505837120@warthog.procyon.org.uk>
+References: <20170918183703.114134-1-ebiggers3@gmail.com>
+	<29684.1505837120@warthog.procyon.org.uk>
+Message-ID: <20170921220029.GB89627@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Tue, Sep 19, 2017 at 05:05:20PM +0100, David Howells wrote:
+> Eric Biggers <ebiggers3@gmail.com> wrote:
+> 
+> > Fix it by marking user and user session keyrings with a flag
+> > KEY_FLAG_UID_KEYRING.  Then, when searching for a user or user session
+> > keyring by name, skip all keyrings that don't have the flag set.
+> 
+> I wonder if it's better just to reject attempts to manually create/join
+> keyrings of such names.  PAM uses the implicit creation method of specifying
+> the 'macro' key IDs for these keyrings.
+> 
+> David
 
-If key_instantiate_and_link() were to fail (which fortunately isn't
-possible currently), the call to key_revoke(authkey) would crash with a
-NULL pointer dereference in request_key_auth_revoke() because the key
-has not yet been instantiated.
+Well, maybe.  Whitelists are hard to get right, and it would be a bit ugly
+having to check the name in both add_key() and join_session_keyring().  And
+hopefully that would be everything?
 
-Fix this by removing the call to key_revoke().  key_put() is sufficient,
-as it's not possible for an uninstantiated authkey to have been used for
-anything yet.
+I think there's also a more fundamental problem with how keyring names work.  If
+you try to join a keyring with a certain name, how are you supposed to know
+which one you're joining?  There can be many keyrings that have the same name;
+and any unprivileged user can create a keyring with the name, and they can grant
+everyone SEARCH permission so that their keyring can be joined.  So it can be
+the case that a user is wanting to join a particular keyring, but they actually
+get a keyring that a malicious user has crafted for them...
 
-Fixes: b5f545c880a2 ("[PATCH] keys: Permit running process to instantiate keys")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/keys/request_key_auth.c | 1 -
- 1 file changed, 1 deletion(-)
+Also, if period ('.') is meant to be the reserved character in keyring names,
+why do most of the special names actually start with underscore ('_')?
 
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index 8f12645945ca..2df92b619a38 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -220,7 +220,6 @@ struct key *request_key_auth_new(struct key *target, const void *callout_info,
- 	return authkey;
- 
- error_put_authkey:
--	key_revoke(authkey);
- 	key_put(authkey);
- error_free_rka:
- 	free_request_key_auth(rka);
--- 
-2.14.1.821.g8fa685d3b7-goog
-
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
