@@ -1,86 +1,31 @@
-From: baolin.wang@linaro.org (Baolin Wang)
-Date: Thu, 21 Sep 2017 10:32:03 +0800
-Subject: [PATCH v2 2/2] security: keys: Replace time_t with time64_t for
-	struct key_preparsed_payload
-In-Reply-To: <cover.1505960744.git.baolin.wang@linaro.org>
-References: <cover.1505960744.git.baolin.wang@linaro.org>
-Message-ID: <0f08ea5fb66780d40f104244d5fcaa8c610ffe30.1505960744.git.baolin.wang@linaro.org>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Thu, 21 Sep 2017 13:37:43 -0700
+Subject: [PATCH] KEYS: fix cred refcount leak in request_key_auth_new()
+In-Reply-To: <28352.1505835968@warthog.procyon.org.uk>
+References: <20170918183331.113261-1-ebiggers3@gmail.com>
+	<28352.1505835968@warthog.procyon.org.uk>
+Message-ID: <20170921203743.GA89627@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The 'struct key_preparsed_payload' will use 'time_t' which we will
-try to remove in the kernel, since 'time_t' is not year 2038 safe on
-32bits systems.
+On Tue, Sep 19, 2017 at 04:46:08PM +0100, David Howells wrote:
+> Eric Biggers <ebiggers3@gmail.com> wrote:
+> 
+> > In request_key_auth_new(), if alloc_key() or key_instantiate_and_link()
+> > were to fail, we would leak a reference to the 'struct cred'.  Currently
+> > this can only happen if alloc_key() fails to to allocate memory.  But it
+> > still should be fixed, as it is a more severe bug waiting to happen.
+> 
+> It might be better to combine request_key_auth_destroy() and the error path
+> that you're altering in request_key_auth_new() by pulling it into a separate
+> function.
+> 
+> David
 
-Thus this patch replaces 'time_t' with 'time64_t' which is year 2038
-safe on 32 bits system for 'struct key_preparsed_payload', moreover
-we should use the 'TIME64_MAX' macro to initialize the 'time64_t'
-type variable.
+Agreed, I'll do that.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/key-type.h |    2 +-
- security/keys/key.c      |    8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/key-type.h b/include/linux/key-type.h
-index 9520fc3..05d8fb5 100644
---- a/include/linux/key-type.h
-+++ b/include/linux/key-type.h
-@@ -44,7 +44,7 @@ struct key_preparsed_payload {
- 	const void	*data;		/* Raw data */
- 	size_t		datalen;	/* Raw datalen */
- 	size_t		quotalen;	/* Quota length for proposed payload */
--	time_t		expiry;		/* Expiry time of key */
-+	time64_t	expiry;		/* Expiry time of key */
- } __randomize_layout;
- 
- typedef int (*request_key_actor_t)(struct key_construction *key,
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 291a67c..d5c8941 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -446,7 +446,7 @@ static int __key_instantiate_and_link(struct key *key,
- 			if (authkey)
- 				key_revoke(authkey);
- 
--			if (prep->expiry != TIME_T_MAX) {
-+			if (prep->expiry != TIME64_MAX) {
- 				key->expiry = prep->expiry;
- 				key_schedule_gc(prep->expiry + key_gc_delay);
- 			}
-@@ -492,7 +492,7 @@ int key_instantiate_and_link(struct key *key,
- 	prep.data = data;
- 	prep.datalen = datalen;
- 	prep.quotalen = key->type->def_datalen;
--	prep.expiry = TIME_T_MAX;
-+	prep.expiry = TIME64_MAX;
- 	if (key->type->preparse) {
- 		ret = key->type->preparse(&prep);
- 		if (ret < 0)
-@@ -834,7 +834,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 	prep.data = payload;
- 	prep.datalen = plen;
- 	prep.quotalen = index_key.type->def_datalen;
--	prep.expiry = TIME_T_MAX;
-+	prep.expiry = TIME64_MAX;
- 	if (index_key.type->preparse) {
- 		ret = index_key.type->preparse(&prep);
- 		if (ret < 0) {
-@@ -968,7 +968,7 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
- 	prep.data = payload;
- 	prep.datalen = plen;
- 	prep.quotalen = key->type->def_datalen;
--	prep.expiry = TIME_T_MAX;
-+	prep.expiry = TIME64_MAX;
- 	if (key->type->preparse) {
- 		ret = key->type->preparse(&prep);
- 		if (ret < 0)
--- 
-1.7.9.5
-
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
