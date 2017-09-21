@@ -1,40 +1,39 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 21 Sep 2017 15:00:29 -0700
-Subject: [PATCH] KEYS: prevent creating a different user's keyrings
-In-Reply-To: <29684.1505837120@warthog.procyon.org.uk>
-References: <20170918183703.114134-1-ebiggers3@gmail.com>
-	<29684.1505837120@warthog.procyon.org.uk>
-Message-ID: <20170921220029.GB89627@gmail.com>
+Date: Thu, 21 Sep 2017 16:34:16 -0700
+Subject: [PATCH] KEYS: prevent KEYCTL_READ on negative key
+In-Reply-To: <30124.1505837342@warthog.procyon.org.uk>
+References: <20170918183723.114253-1-ebiggers3@gmail.com>
+	<30124.1505837342@warthog.procyon.org.uk>
+Message-ID: <20170921233416.GC89627@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Sep 19, 2017 at 05:05:20PM +0100, David Howells wrote:
+On Tue, Sep 19, 2017 at 05:09:02PM +0100, David Howells wrote:
 > Eric Biggers <ebiggers3@gmail.com> wrote:
 > 
-> > Fix it by marking user and user session keyrings with a flag
-> > KEY_FLAG_UID_KEYRING.  Then, when searching for a user or user session
-> > keyring by name, skip all keyrings that don't have the flag set.
+> > +	if (test_bit(KEY_FLAG_NEGATIVE, &key->flags)) {
+> > +		ret = -ENOKEY;
+> > +		goto error2;
+> > +	}
 > 
-> I wonder if it's better just to reject attempts to manually create/join
-> keyrings of such names.  PAM uses the implicit creation method of specifying
-> the 'macro' key IDs for these keyrings.
+> It might be better to do this check in key_validate().  Also, it should
+> perhaps take the error from key->reject_error.
 > 
 > David
 
-Well, maybe.  Whitelists are hard to get right, and it would be a bit ugly
-having to check the name in both add_key() and join_session_keyring().  And
-hopefully that would be everything?
+Putting the check in key_validate() would make lookups with KEY_LOOKUP_PARTIAL
+stop returning negative keys, which would break keyctl_describe(),
+keyctl_chown(), keyctl_setperm(), keyctl_set_timeout(), keyctl_get_security() on
+negative keys.  I presume those are supposed to work?
 
-I think there's also a more fundamental problem with how keyring names work.  If
-you try to join a keyring with a certain name, how are you supposed to know
-which one you're joining?  There can be many keyrings that have the same name;
-and any unprivileged user can create a keyring with the name, and they can grant
-everyone SEARCH permission so that their keyring can be joined.  So it can be
-the case that a user is wanting to join a particular keyring, but they actually
-get a keyring that a malicious user has crafted for them...
-
-Also, if period ('.') is meant to be the reserved character in keyring names,
-why do most of the special names actually start with underscore ('_')?
+Another solution would be to remove the special case from lookup_user_key()
+where it can return a negative/revoked/invalidated/expired key if
+KEY_LOOKUP_PARTIAL is not specified and the 'perm' mask is 0.  The only callers
+it would affect are the case in question here which is clearly a bug, and the
+root-only exceptions for keyctl_invalidate() and keyctl_clear().  And I suspect
+the latter two are unintentional as well.  (Is root *supposed* to be able to
+invalidate a negative/revoked/invalidated/expired key, or clear a
+revoked/invalidated/expired keyring?)
 
 Eric
 --
