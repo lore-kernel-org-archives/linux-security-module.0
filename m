@@ -1,41 +1,44 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 21 Sep 2017 16:34:16 -0700
-Subject: [PATCH] KEYS: prevent KEYCTL_READ on negative key
-In-Reply-To: <30124.1505837342@warthog.procyon.org.uk>
-References: <20170918183723.114253-1-ebiggers3@gmail.com>
-	<30124.1505837342@warthog.procyon.org.uk>
-Message-ID: <20170921233416.GC89627@gmail.com>
+From: aalobaid@linux.com (Ahmad A Alobaid)
+Date: Sun, 24 Sep 2017 00:41:16 +0200
+Subject: [PATCH] security: commoncap: fix styling
+Message-ID: <20170923224116.9163-1-aalobaid@linux.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Sep 19, 2017 at 05:09:02PM +0100, David Howells wrote:
-> Eric Biggers <ebiggers3@gmail.com> wrote:
-> 
-> > +	if (test_bit(KEY_FLAG_NEGATIVE, &key->flags)) {
-> > +		ret = -ENOKEY;
-> > +		goto error2;
-> > +	}
-> 
-> It might be better to do this check in key_validate().  Also, it should
-> perhaps take the error from key->reject_error.
-> 
-> David
+From: "Ahmad A Alobaid" <aalobaid@linux.com>
 
-Putting the check in key_validate() would make lookups with KEY_LOOKUP_PARTIAL
-stop returning negative keys, which would break keyctl_describe(),
-keyctl_chown(), keyctl_setperm(), keyctl_set_timeout(), keyctl_get_security() on
-negative keys.  I presume those are supposed to work?
+fix trailing whitespace and Missing a blank line after
+declaration
 
-Another solution would be to remove the special case from lookup_user_key()
-where it can return a negative/revoked/invalidated/expired key if
-KEY_LOOKUP_PARTIAL is not specified and the 'perm' mask is 0.  The only callers
-it would affect are the case in question here which is clearly a bug, and the
-root-only exceptions for keyctl_invalidate() and keyctl_clear().  And I suspect
-the latter two are unintentional as well.  (Is root *supposed* to be able to
-invalidate a negative/revoked/invalidated/expired key, or clear a
-revoked/invalidated/expired keyring?)
+Signed-off-by: Ahmad A Alobaid <aalobaid@linux.com>
+---
+ security/commoncap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Eric
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 6bf72b1..c3330c4 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -89,7 +89,7 @@ int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
+ 		if (ns->level <= cred->user_ns->level)
+ 			return -EPERM;
+ 
+-		/* 
++		/*
+ 		 * The owner of the user namespace in the parent of the
+ 		 * user namespace has all caps.
+ 		 */
+@@ -446,6 +446,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+ 		if (*buffer) {
+ 			struct vfs_cap_data *cap = *buffer;
+ 			__le32 nsmagic, magic;
++
+ 			magic = VFS_CAP_REVISION_2;
+ 			nsmagic = le32_to_cpu(nscap->magic_etc);
+ 			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
