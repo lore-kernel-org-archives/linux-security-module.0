@@ -1,43 +1,59 @@
-From: aalobaid@linux.com (Ahmad A Alobaid)
-Date: Sun, 24 Sep 2017 00:41:16 +0200
-Subject: [PATCH] security: commoncap: fix styling
-Message-ID: <20170923224116.9163-1-aalobaid@linux.com>
+From: jmorris@namei.org (James Morris)
+Date: Sun, 24 Sep 2017 15:00:21 +1000 (AEST)
+Subject: [GIT PULL] TPM updates for v4.14
+Message-ID: <alpine.LRH.2.21.1709241454480.3941@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: "Ahmad A Alobaid" <aalobaid@linux.com>
+Here are the TPM updates from Jarkko for v4.14, which I've placed in their 
+own branch (next-tpm).  I ended up cherry-picking them as other changes 
+had been made in Jarkko's branch after he sent me his original pull 
+request.
 
-fix trailing whitespace and Missing a blank line after
-declaration
+I plan on maintaining a separate branch for TPM (and other security 
+subsystems) from now on.
 
-Signed-off-by: Ahmad A Alobaid <aalobaid@linux.com>
+>From Jarkko: "Not much this time except a few fixes." 
+
+Please pull.
+
 ---
- security/commoncap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 6bf72b1..c3330c4 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -89,7 +89,7 @@ int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
- 		if (ns->level <= cred->user_ns->level)
- 			return -EPERM;
- 
--		/* 
-+		/*
- 		 * The owner of the user namespace in the parent of the
- 		 * user namespace has all caps.
- 		 */
-@@ -446,6 +446,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- 		if (*buffer) {
- 			struct vfs_cap_data *cap = *buffer;
- 			__le32 nsmagic, magic;
-+
- 			magic = VFS_CAP_REVISION_2;
- 			nsmagic = le32_to_cpu(nscap->magic_etc);
- 			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
--- 
-1.9.1
+The following changes since commit 53a2ebaaabc1eb8458796fec3bc1e0e80746b642:
+
+  sync to Linus v4.13-rc2 for subsystem developers to work against (2017-07-25 10:44:18 +1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+
+for you to fetch changes up to fb154e0e0a95249459df054241a9e8f4cca56062:
+
+  tpm: ibmvtpm: simplify crq initialization and document crq format (2017-09-23 21:51:38 -0700)
+
+----------------------------------------------------------------
+Arvind Yadav (2):
+      tpm: vtpm: constify vio_device_id
+      tpm: tpm_crb: constify acpi_device_id.
+
+Enric Balletbo i Serra (1):
+      Documentation: tpm: add powered-while-suspended binding documentation
+
+Hamza Attak (1):
+      tpm: replace msleep() with  usleep_range() in TPM 1.2/2.0 generic drivers
+
+Michal Suchanek (1):
+      tpm: ibmvtpm: simplify crq initialization and document crq format
+
+ .../devicetree/bindings/security/tpm/tpm-i2c.txt   |  6 ++
+ drivers/char/tpm/tpm-interface.c                   | 10 +--
+ drivers/char/tpm/tpm.h                             |  9 +-
+ drivers/char/tpm/tpm2-cmd.c                        |  2 +-
+ drivers/char/tpm/tpm_crb.c                         |  2 +-
+ drivers/char/tpm/tpm_ibmvtpm.c                     | 98 ++++++++++++++--------
+ drivers/char/tpm/tpm_infineon.c                    |  6 +-
+ drivers/char/tpm/tpm_tis_core.c                    |  8 +-
+ 8 files changed, 89 insertions(+), 52 deletions(-)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
