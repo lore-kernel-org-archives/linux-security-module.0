@@ -1,19 +1,16 @@
 From: jmorris@namei.org (James Morris)
-Date: Sun, 24 Sep 2017 15:00:21 +1000 (AEST)
-Subject: [GIT PULL] TPM updates for v4.14
-Message-ID: <alpine.LRH.2.21.1709241454480.3941@namei.org>
+Date: Sun, 24 Sep 2017 15:12:59 +1000 (AEST)
+Subject: [GIT PULL] security: general update for v4.14
+Message-ID: <alpine.LRH.2.21.1709241501150.3941@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Here are the TPM updates from Jarkko for v4.14, which I've placed in their 
-own branch (next-tpm).  I ended up cherry-picking them as other changes 
-had been made in Jarkko's branch after he sent me his original pull 
-request.
+This is the remaining "general" change in the security tree for v4.14, 
+following the direct merging of SELinux (+ TOMOYO), AppArmor, and seccomp. 
 
-I plan on maintaining a separate branch for TPM (and other security 
-subsystems) from now on.
+That's everything now for the security tree except IMA, which will follow 
+shortly (I've been traveling for the past week with patchy internet).
 
->From Jarkko: "Not much this time except a few fixes." 
 
 Please pull.
 
@@ -25,35 +22,19 @@ The following changes since commit 53a2ebaaabc1eb8458796fec3bc1e0e80746b642:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 
-for you to fetch changes up to fb154e0e0a95249459df054241a9e8f4cca56062:
+for you to fetch changes up to ab5348c9c23cd253f5902980d2d8fe067dc24c82:
 
-  tpm: ibmvtpm: simplify crq initialization and document crq format (2017-09-23 21:51:38 -0700)
+  security: fix description of values returned by cap_inode_need_killpriv (2017-09-23 21:15:41 -0700)
 
 ----------------------------------------------------------------
-Arvind Yadav (2):
-      tpm: vtpm: constify vio_device_id
-      tpm: tpm_crb: constify acpi_device_id.
+Stefan Berger (1):
+      security: fix description of values returned by cap_inode_need_killpriv
 
-Enric Balletbo i Serra (1):
-      Documentation: tpm: add powered-while-suspended binding documentation
+ security/commoncap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Hamza Attak (1):
-      tpm: replace msleep() with  usleep_range() in TPM 1.2/2.0 generic drivers
-
-Michal Suchanek (1):
-      tpm: ibmvtpm: simplify crq initialization and document crq format
-
- .../devicetree/bindings/security/tpm/tpm-i2c.txt   |  6 ++
- drivers/char/tpm/tpm-interface.c                   | 10 +--
- drivers/char/tpm/tpm.h                             |  9 +-
- drivers/char/tpm/tpm2-cmd.c                        |  2 +-
- drivers/char/tpm/tpm_crb.c                         |  2 +-
- drivers/char/tpm/tpm_ibmvtpm.c                     | 98 ++++++++++++++--------
- drivers/char/tpm/tpm_infineon.c                    |  6 +-
- drivers/char/tpm/tpm_tis_core.c                    |  8 +-
- 8 files changed, 89 insertions(+), 52 deletions(-)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
