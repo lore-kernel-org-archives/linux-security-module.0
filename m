@@ -1,24 +1,46 @@
-From: dhowells@redhat.com (David Howells)
-Date: Mon, 25 Sep 2017 15:18:57 +0100
-Subject: [PATCH v2 1/3] KEYS: fix cred refcount leak in
-	request_key_auth_new()
-In-Reply-To: <20170921205742.144596-2-ebiggers3@gmail.com>
-References: <20170921205742.144596-2-ebiggers3@gmail.com>
-	<20170921205742.144596-1-ebiggers3@gmail.com>
-Message-ID: <30852.1506349137@warthog.procyon.org.uk>
+From: john.johansen@canonical.com (John Johansen)
+Date: Mon, 25 Sep 2017 10:21:35 -0400
+Subject: [PATCH] apparmor: fix off-by-one comparison on MAXMAPPED_SIG
+In-Reply-To: <20170822215832.5504-1-colin.king@canonical.com>
+References: <20170822215832.5504-1-colin.king@canonical.com>
+Message-ID: <1a49cc0a-949b-7821-6a32-d0e71a3491ec@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Eric Biggers <ebiggers3@gmail.com> wrote:
+On 08/22/2017 05:58 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a an off-by-one comparision on sig against MAXMAPPED_SIG
+> that can lead to a read outside the sig_map array if sig
+> is MAXMAPPED_SIG. Fix this.
+> 
+> Detected with cppcheck:
+> "Either the condition 'sig<=35' is redundant or the array 'sig_map[35]'
+> is accessed at index 35, which is out of bounds."
+> 
+> Fixes: c6bf1adaecaa ("apparmor: add the ability to mediate signals")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  security/apparmor/ipc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
+> index 66fb9ede9447..5091c78062e4 100644
+> --- a/security/apparmor/ipc.c
+> +++ b/security/apparmor/ipc.c
+> @@ -128,7 +128,7 @@ static inline int map_signal_num(int sig)
+>  		return SIGUNKNOWN;
+>  	else if (sig >= SIGRTMIN)
+>  		return sig - SIGRTMIN + 128;	/* rt sigs mapped to 128 */
+> -	else if (sig <= MAXMAPPED_SIG)
+> +	else if (sig < MAXMAPPED_SIG)
+>  		return sig_map[sig];
+>  	return SIGUNKNOWN;
+>  }
+> 
 
-> +	rka = kzalloc(sizeof(*rka), GFP_KERNEL);
-> +	if (!rka)
-> +		goto error_free_rka;
+I've pulled this in to apparmor-next
 
-But you haven't allocated an rka if you're in the error path.  I'll fix that
-to jump over the release.
-
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
