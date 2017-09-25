@@ -1,46 +1,49 @@
 From: john.johansen@canonical.com (John Johansen)
-Date: Mon, 25 Sep 2017 10:21:35 -0400
-Subject: [PATCH] apparmor: fix off-by-one comparison on MAXMAPPED_SIG
-In-Reply-To: <20170822215832.5504-1-colin.king@canonical.com>
-References: <20170822215832.5504-1-colin.king@canonical.com>
-Message-ID: <1a49cc0a-949b-7821-6a32-d0e71a3491ec@canonical.com>
+Date: Mon, 25 Sep 2017 10:24:02 -0400
+Subject: [PATCH] apparmor: fix spelling mistake: "resoure" -> "resource"
+In-Reply-To: <20170824083145.18799-1-colin.king@canonical.com>
+References: <20170824083145.18799-1-colin.king@canonical.com>
+Message-ID: <358b9115-2dbe-0a63-12e5-27b4c8e8d76d@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08/22/2017 05:58 PM, Colin King wrote:
+On 08/24/2017 04:31 AM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> There is a an off-by-one comparision on sig against MAXMAPPED_SIG
-> that can lead to a read outside the sig_map array if sig
-> is MAXMAPPED_SIG. Fix this.
+> Trivial fix to spelling mistake in comment and also with text in
+> audit_resource call.
 > 
-> Detected with cppcheck:
-> "Either the condition 'sig<=35' is redundant or the array 'sig_map[35]'
-> is accessed at index 35, which is out of bounds."
-> 
-> Fixes: c6bf1adaecaa ("apparmor: add the ability to mediate signals")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  security/apparmor/ipc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/apparmor/resource.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
-> index 66fb9ede9447..5091c78062e4 100644
-> --- a/security/apparmor/ipc.c
-> +++ b/security/apparmor/ipc.c
-> @@ -128,7 +128,7 @@ static inline int map_signal_num(int sig)
->  		return SIGUNKNOWN;
->  	else if (sig >= SIGRTMIN)
->  		return sig - SIGRTMIN + 128;	/* rt sigs mapped to 128 */
-> -	else if (sig <= MAXMAPPED_SIG)
-> +	else if (sig < MAXMAPPED_SIG)
->  		return sig_map[sig];
->  	return SIGUNKNOWN;
->  }
+> diff --git a/security/apparmor/resource.c b/security/apparmor/resource.c
+> index d8bc842594ed..cf4d234febe9 100644
+> --- a/security/apparmor/resource.c
+> +++ b/security/apparmor/resource.c
+> @@ -47,7 +47,7 @@ static void audit_cb(struct audit_buffer *ab, void *va)
+>  /**
+>   * audit_resource - audit setting resource limit
+>   * @profile: profile being enforced  (NOT NULL)
+> - * @resoure: rlimit being auditing
+> + * @resource: rlimit being auditing
+>   * @value: value being set
+>   * @error: error value
+>   *
+> @@ -128,7 +128,7 @@ int aa_task_setrlimit(struct aa_label *label, struct task_struct *task,
+>  		error = fn_for_each(label, profile,
+>  				audit_resource(profile, resource,
+>  					       new_rlim->rlim_max, peer,
+> -					       "cap_sys_resoure", -EACCES));
+> +					       "cap_sys_resource", -EACCES));
+>  	else
+>  		error = fn_for_each_confined(label, profile,
+>  				profile_setrlimit(profile, resource, new_rlim));
 > 
 
-I've pulled this in to apparmor-next
 
+pulled in to apparmor-next
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
