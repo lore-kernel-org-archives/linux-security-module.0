@@ -1,64 +1,54 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Mon, 25 Sep 2017 13:19:50 +0200
-Subject: [PATCH 3/3] tpm: add the crypto algorithm identifier to
-	active_bank_info
-In-Reply-To: <20170925111950.21511-1-roberto.sassu@huawei.com>
-References: <20170925111950.21511-1-roberto.sassu@huawei.com>
-Message-ID: <20170925111950.21511-4-roberto.sassu@huawei.com>
+From: geert@linux-m68k.org (Geert Uytterhoeven)
+Date: Mon, 25 Sep 2017 13:29:11 +0200
+Subject: [PATCH] apparmor: initialized returned struct aa_perms
+In-Reply-To: <20170915195620.1561044-1-arnd@arndb.de>
+References: <20170915195620.1561044-1-arnd@arndb.de>
+Message-ID: <CAMuHMdVo3uQEiTgqpGnhEsTRYs0p0GqjucWhEuUOKPjWP78COQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation for the patch introducing a function to pass supported TPM
-algorithms and digest sizes to TPM users, the crypto algorithm identifier
-is added to the active_bank_info structure.
+On Fri, Sep 15, 2017 at 9:55 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> gcc-4.4 points out suspicious code in compute_mnt_perms, where
+> the aa_perms structure is only partially initialized before getting
+> returned:
+>
+> security/apparmor/mount.c: In function 'compute_mnt_perms':
+> security/apparmor/mount.c:227: error: 'perms.prompt' is used uninitialized in this function
+> security/apparmor/mount.c:227: error: 'perms.hide' is used uninitialized in this function
+> security/apparmor/mount.c:227: error: 'perms.cond' is used uninitialized in this function
+> security/apparmor/mount.c:227: error: 'perms.complain' is used uninitialized in this function
+> security/apparmor/mount.c:227: error: 'perms.stop' is used uninitialized in this function
+> security/apparmor/mount.c:227: error: 'perms.deny' is used uninitialized in this function
+>
+> Returning or assigning partially initialized structures is a bit tricky,
+> in particular it is explicitly allowed in c99 to assign a partially
+> intialized structure to another, as long as only members are read that
+> have been initialized earlier. Looking at what various compilers do here,
+> the version that produced the warning copied unintialized stack data,
+> while newer versions (and also clang) either set the other members to
+> zero or don't update the parts of the return buffer that are not modified
+> in the temporary structure, but they never warn about this.
+>
+> In case of apparmor, it seems better to be a little safer and always
+> initialize the aa_perms structure. Most users already do that, this
+> changes the remaining ones, including the one instance that I got the
+> warning for.
+>
+> Fixes: fa488437d0f9 ("apparmor: add mount mediation")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-All members of active_bank_info are necessary: TPM algorithm identifiers
-will be used to create an event log (they are included in the Crypto Agile
-format defined by TCG); crypto identifiers will be used to calculate
-digests using the crypto subsystem; digest sizes will be used to truncate
-digests calculated with different algorithms.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- drivers/char/tpm/tpm2-cmd.c | 2 ++
- include/linux/tpm.h         | 1 +
- 2 files changed, 3 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index b1356be..8c58f6e 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -946,6 +946,7 @@ static int tpm2_init_active_bank_info(struct tpm_chip *chip, u16 alg_id,
- 	int rc, i;
- 
- 	active_bank->alg_id = alg_id;
-+	active_bank->crypto_id = HASH_ALGO__LAST;
- 
- 	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
- 		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
-@@ -954,6 +955,7 @@ static int tpm2_init_active_bank_info(struct tpm_chip *chip, u16 alg_id,
- 			continue;
- 
- 		active_bank->digest_size = hash_digest_size[crypto_algo];
-+		active_bank->crypto_id = crypto_algo;
- 		return 0;
- 	}
- 
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 3ecce21..fc927f3 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -54,6 +54,7 @@ struct tpm_class_ops {
- 
- struct active_bank_info {
- 	u16 alg_id;
-+	u16 crypto_id;
- 	u16 digest_size;
- };
- 
--- 
-2.9.3
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert at linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
