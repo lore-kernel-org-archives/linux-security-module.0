@@ -1,49 +1,29 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Mon, 25 Sep 2017 12:27:08 -0400
-Subject: [PATCH] apparmor: Fix harmless off by one in map_signal_num()
-In-Reply-To: <20170925150910.5bo2j2wwwojoyl43@mwanda>
-References: <20170901085225.dpuirzpj7aq3yyim@mwanda>
-	<d2c82d40-2b1b-163d-85d3-4a902f62e818@canonical.com>
-	<20170925150910.5bo2j2wwwojoyl43@mwanda>
-Message-ID: <d117fc46-ff6e-584d-2f9a-8fc253e42f7d@canonical.com>
+From: Jason@zx2c4.com (Jason A. Donenfeld)
+Date: Mon, 25 Sep 2017 18:38:13 +0200
+Subject: [PATCH v7 2/2] security/keys: rewrite all of big_key crypto
+In-Reply-To: <32200.1506350639@warthog.procyon.org.uk>
+References: <20170920145839.27511-1-Jason@zx2c4.com>
+	<20170920145839.27511-2-Jason@zx2c4.com>
+	<32200.1506350639@warthog.procyon.org.uk>
+Message-ID: <CAHmME9qUnYHYvgExmscQ91D-hsQApSk6FzmBG0cSUraLbQNYRQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 09/25/2017 11:09 AM, Dan Carpenter wrote:
-> On Mon, Sep 25, 2017 at 10:25:01AM -0400, John Johansen wrote:
->> On 09/01/2017 04:52 AM, Dan Carpenter wrote:
->>> This patch has no effect on runtime.
->>>
->>> The sig_map[] array has MAXMAPPED_SIG (35) members so my static checker
->>> complains that the <= should be <.  But in this case it's not possible
->>> for "sig" to be more than 31 because of the "else if (sig >= SIGRTMIN)"
->>> condition since SIGRTMIN is 32.  The last three elements, 32-34, of
->>> sig_map[] are empty so this code works as designed.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
->>> index 66fb9ede9447..5091c78062e4 100644
->>> --- a/security/apparmor/ipc.c
->>> +++ b/security/apparmor/ipc.c
->>> @@ -128,7 +128,7 @@ static inline int map_signal_num(int sig)
->>>  		return SIGUNKNOWN;
->>>  	else if (sig >= SIGRTMIN)
->>>  		return sig - SIGRTMIN + 128;	/* rt sigs mapped to 128 */
->>> -	else if (sig <= MAXMAPPED_SIG)
->>> +	else if (sig < MAXMAPPED_SIG)
->>>  		return sig_map[sig];
->>>  	return SIGUNKNOWN;
->>>  }
->>>
->>
->> Colin King beat you to this one, its in apparmor-next
-> 
-> apparmor doesn't seem to be in linux-next at all.  Why is that?
-> 
-hrmmm, apparmor is pulled in via security-next merges, but you are right
-apparmor-next isn't being merged and we should set that up.
+On Mon, Sep 25, 2017 at 4:43 PM, David Howells <dhowells@redhat.com> wrote:
+> Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+>> +     /* no ->update(); don't add it without changing big_key_crypt() nonce */
+>
+> Should update be a problem.  It's should be a complete payload replacement -
+> kind of like unlink and add, but keeping the same key ID and description.
 
+Not sure I parsed your message correctly, but that comment there was a
+suggestion from Eric several months ago when I first posted it. The
+idea is that the key shouldn't be reused with the same nonce, so in
+case somebody ambitious comes along and tries to add an .update
+function, they'll be reminded to take this into account. Alternatively
+they might choose to just generate a new key, which is fine too.
+Either way, it's a useful warning to have in place.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
