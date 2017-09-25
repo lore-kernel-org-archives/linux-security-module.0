@@ -1,49 +1,39 @@
 From: john.johansen@canonical.com (John Johansen)
-Date: Mon, 25 Sep 2017 10:24:02 -0400
-Subject: [PATCH] apparmor: fix spelling mistake: "resoure" -> "resource"
-In-Reply-To: <20170824083145.18799-1-colin.king@canonical.com>
-References: <20170824083145.18799-1-colin.king@canonical.com>
-Message-ID: <358b9115-2dbe-0a63-12e5-27b4c8e8d76d@canonical.com>
+Date: Mon, 25 Sep 2017 10:25:01 -0400
+Subject: [PATCH] apparmor: Fix harmless off by one in map_signal_num()
+In-Reply-To: <20170901085225.dpuirzpj7aq3yyim@mwanda>
+References: <20170901085225.dpuirzpj7aq3yyim@mwanda>
+Message-ID: <d2c82d40-2b1b-163d-85d3-4a902f62e818@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08/24/2017 04:31 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 09/01/2017 04:52 AM, Dan Carpenter wrote:
+> This patch has no effect on runtime.
 > 
-> Trivial fix to spelling mistake in comment and also with text in
-> audit_resource call.
+> The sig_map[] array has MAXMAPPED_SIG (35) members so my static checker
+> complains that the <= should be <.  But in this case it's not possible
+> for "sig" to be more than 31 because of the "else if (sig >= SIGRTMIN)"
+> condition since SIGRTMIN is 32.  The last three elements, 32-34, of
+> sig_map[] are empty so this code works as designed.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  security/apparmor/resource.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> diff --git a/security/apparmor/resource.c b/security/apparmor/resource.c
-> index d8bc842594ed..cf4d234febe9 100644
-> --- a/security/apparmor/resource.c
-> +++ b/security/apparmor/resource.c
-> @@ -47,7 +47,7 @@ static void audit_cb(struct audit_buffer *ab, void *va)
->  /**
->   * audit_resource - audit setting resource limit
->   * @profile: profile being enforced  (NOT NULL)
-> - * @resoure: rlimit being auditing
-> + * @resource: rlimit being auditing
->   * @value: value being set
->   * @error: error value
->   *
-> @@ -128,7 +128,7 @@ int aa_task_setrlimit(struct aa_label *label, struct task_struct *task,
->  		error = fn_for_each(label, profile,
->  				audit_resource(profile, resource,
->  					       new_rlim->rlim_max, peer,
-> -					       "cap_sys_resoure", -EACCES));
-> +					       "cap_sys_resource", -EACCES));
->  	else
->  		error = fn_for_each_confined(label, profile,
->  				profile_setrlimit(profile, resource, new_rlim));
+> diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
+> index 66fb9ede9447..5091c78062e4 100644
+> --- a/security/apparmor/ipc.c
+> +++ b/security/apparmor/ipc.c
+> @@ -128,7 +128,7 @@ static inline int map_signal_num(int sig)
+>  		return SIGUNKNOWN;
+>  	else if (sig >= SIGRTMIN)
+>  		return sig - SIGRTMIN + 128;	/* rt sigs mapped to 128 */
+> -	else if (sig <= MAXMAPPED_SIG)
+> +	else if (sig < MAXMAPPED_SIG)
+>  		return sig_map[sig];
+>  	return SIGUNKNOWN;
+>  }
 > 
 
-
-pulled in to apparmor-next
+Colin King beat you to this one, its in apparmor-next
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
