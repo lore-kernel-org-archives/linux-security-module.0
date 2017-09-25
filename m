@@ -1,39 +1,60 @@
-From: jmorris@namei.org (James Morris)
-Date: Mon, 25 Sep 2017 15:58:51 +1000 (AEST)
-Subject: Sync to v4.14-rc2
-Message-ID: <alpine.LRH.2.21.1709251548070.3093@namei.org>
+From: rppt@linux.vnet.ibm.com (Mike Rapoport)
+Date: Mon, 25 Sep 2017 09:12:01 +0300
+Subject: [PATCH v5 0/4] Certificate insertion support for x86 bzImages
+In-Reply-To: <1494440456-28671-1-git-send-email-mkayaalp@linux.vnet.ibm.com>
+Message-ID: <20170925061159.GA6934@rapoport-lnx>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Folks, I've synced the next-general branch of 
+Hi,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git 
+> These patches add support for modifying the reserved space for extra
+> certificates in a compressed bzImage in x86. This allows separating the
+> system keyring certificate from the kernel build process. After the kernel
+> image is distributed, the insert-sys-cert script can be used to insert the
+> certificate for x86.
 
-to v4.14-rc2.
+I know it's been a while since these patches were posted and they seem to
+fail between the cracks ...
+Is there anything that prevents merging them?
+ 
+> Changes:
+> 
+> v5:
+> * Added CRC fixing (3/4)
+> 
+> v4:
+> * Applied checkpatch.pl suggestions (2/4, 3/4)
+> * Cleaned up the commit messages (1/4, 2/4)
+> * Added the build file to .gitignore (1/4)
+> 
+> v3:
+> * Rewrote 1/4 to insert incompressible bytes are at build time. Previous
+> solution required changes to <arch>/boot/Makefile's for modifying the
+> vmlinux file after linking, and did not work well with cross compilation.
+> * Added 2/4 for ELF class-independent processing of vmlinux file, in case
+> the script was compiled for 64-bit and the kernel was compiled for 32-bit.
+> * Reordered 3/4, added x86 bzImage boot version (>=2.08) verification.
+> 
+> v2:
+> * Rebased arch/boot/x86/Makefile patch (removed in v3)
+> 
+> Mehmet Kayaalp (4):
+>   KEYS: Insert incompressible bytes to reserve space in bzImage
+>   KEYS: Add ELF class-independent certificate insertion support
+>   KEYS: Support for inserting a certificate into x86 bzImage
+>   KEYS: Print insert-sys-cert information to stdout instead of stderr
+> 
+>  certs/.gitignore            |   1 +
+>  certs/Makefile              |  21 +-
+>  certs/system_certificates.S |   2 +-
+>  scripts/Makefile            |   1 +
+>  scripts/insert-sys-cert.c   | 473 +++++++++++++++++++++++++++++++++-----------
+>  5 files changed, 381 insertions(+), 117 deletions(-)
 
-Please track and post against the new 'next-general' branch, which 
-replaces the 'next' branch.  This is part of providing branches for 
-security subsystems if he wishes to pull them independently, as well as 
-maintaining a combined branch for testing and development purposes.
-
-See:
-
-http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003160.html
-and
-http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003356.html
-
-
-I'll document this in more detail later in the week, but note that your 
-worklfow does not not change except for using 'next-general' in place of 
-'next'.
-
-
-
-
-- James
 -- 
-James Morris
-<jmorris@namei.org>
+Sincerely yours,
+Mike.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
