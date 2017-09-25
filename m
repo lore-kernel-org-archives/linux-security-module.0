@@ -1,54 +1,45 @@
-From: geert@linux-m68k.org (Geert Uytterhoeven)
-Date: Mon, 25 Sep 2017 13:29:11 +0200
-Subject: [PATCH] apparmor: initialized returned struct aa_perms
-In-Reply-To: <20170915195620.1561044-1-arnd@arndb.de>
-References: <20170915195620.1561044-1-arnd@arndb.de>
-Message-ID: <CAMuHMdVo3uQEiTgqpGnhEsTRYs0p0GqjucWhEuUOKPjWP78COQ@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Mon, 25 Sep 2017 12:54:20 +0100
+Subject: [PATCH] KEYS: prevent creating a different user's keyrings
+In-Reply-To: <20170921220029.GB89627@gmail.com>
+References: <20170921220029.GB89627@gmail.com>
+	<20170918183703.114134-1-ebiggers3@gmail.com>
+	<29684.1505837120@warthog.procyon.org.uk>
+Message-ID: <26475.1506340460@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 15, 2017 at 9:55 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> gcc-4.4 points out suspicious code in compute_mnt_perms, where
-> the aa_perms structure is only partially initialized before getting
-> returned:
->
-> security/apparmor/mount.c: In function 'compute_mnt_perms':
-> security/apparmor/mount.c:227: error: 'perms.prompt' is used uninitialized in this function
-> security/apparmor/mount.c:227: error: 'perms.hide' is used uninitialized in this function
-> security/apparmor/mount.c:227: error: 'perms.cond' is used uninitialized in this function
-> security/apparmor/mount.c:227: error: 'perms.complain' is used uninitialized in this function
-> security/apparmor/mount.c:227: error: 'perms.stop' is used uninitialized in this function
-> security/apparmor/mount.c:227: error: 'perms.deny' is used uninitialized in this function
->
-> Returning or assigning partially initialized structures is a bit tricky,
-> in particular it is explicitly allowed in c99 to assign a partially
-> intialized structure to another, as long as only members are read that
-> have been initialized earlier. Looking at what various compilers do here,
-> the version that produced the warning copied unintialized stack data,
-> while newer versions (and also clang) either set the other members to
-> zero or don't update the parts of the return buffer that are not modified
-> in the temporary structure, but they never warn about this.
->
-> In case of apparmor, it seems better to be a little safer and always
-> initialize the aa_perms structure. Most users already do that, this
-> changes the remaining ones, including the one instance that I got the
-> warning for.
->
-> Fixes: fa488437d0f9 ("apparmor: add mount mediation")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Eric Biggers <ebiggers3@gmail.com> wrote:
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Well, maybe.  Whitelists are hard to get right, and it would be a bit ugly
+> having to check the name in both add_key() and join_session_keyring().  And
+> hopefully that would be everything?
 
-Gr{oetje,eeting}s,
+Actually, having thought about it some more, I think your way is better.
 
-                        Geert
+> I think there's also a more fundamental problem with how keyring names work.
+> If you try to join a keyring with a certain name, how are you supposed to
+> know which one you're joining?  There can be many keyrings that have the
+> same name; and any unprivileged user can create a keyring with the name, and
+> they can grant everyone SEARCH permission so that their keyring can be
+> joined.  So it can be the case that a user is wanting to join a particular
+> keyring, but they actually get a keyring that a malicious user has crafted
+> for them...
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert at linux-m68k.org
+Yeah.  With hindsight, I think that firstly, joinable keyrings really need
+enablement and, secondly, thread, process, session, user and user-session need
+to have to be non-manually-creatable.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+However, I'm not sure they can be renamed, since they're searchable and
+joinable by name and fixing this might break something in userspace (though I
+should hope that this is unlikely).
+
+> Also, if period ('.') is meant to be the reserved character in keyring names,
+> why do most of the special names actually start with underscore ('_')?
+
+'.' wasn't a reserved char originally.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
