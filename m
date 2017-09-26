@@ -1,23 +1,30 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 26 Sep 2017 16:25:26 +0200
-Subject: [RFC v3 0/9] S.A.R.A. a new stacked LSM
-In-Reply-To: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
-References: <1505159427-11747-1-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <CAJHCu1JNBOHVUhF8W6iHmQWyRib0eyE3SdbCsrRkNOTf1_XDBQ@mail.gmail.com>
+From: kgold@linux.vnet.ibm.com (Ken Goldman)
+Date: Tue, 26 Sep 2017 14:46:59 -0400
+Subject: about context gap
+In-Reply-To: <20170918180250.6db5ti4gpinqr5jz@linux.intel.com>
+References: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
+	<20170918180250.6db5ti4gpinqr5jz@linux.intel.com>
+Message-ID: <03018f5e-4afc-7db5-b5a8-dfed8e2bd8d2@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-I've noticed that some of the latest upstream commits broke S.A.R.A.
-And now it doesn't compile.
-The fix is trivial (just some reordering in a function arguments' list) so
-I prefer to not flood the lists with a v4 with just for 2 lines change.
-For review and comments the code posted here is still valid.
-For those who want to compile S.A.R.A. with the latest upstream changes
-there is an always up-to-date patch available here:
-https://github.com/smeso/sara/compare/master...sarav3.patch
-I'm sorry for the inconvenient.
+On 9/18/2017 2:02 PM, Jarkko Sakkinen wrote:
 
-Salvatore
+> Other than context gap it would probably make sense to estimate TPM
+> capacity in order to make implementation more intelligent. We could
+> measure memory capacity of a TPM in the driver initialization by filling
+> it with fixed size dummy objects.
+> 
+> TPM2_GetCapability gives stuff that cannot be really trusted as spec
+> compliant TPM HW could just return always '1' for max.
+
+I don't see anything in the TPM specs that claim the TPM can return 1.
+
+E.g., the PC Client spec says that loaded sessions must return a minimum 
+of 3.  Active sessions must return a minimum of 64.
+
+I think the resource manager can safely use these getcapability values.
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
