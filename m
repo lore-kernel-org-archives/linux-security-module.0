@@ -1,54 +1,55 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Tue, 26 Sep 2017 13:11:02 -0700
-Subject: [PATCH v2 3/6] KEYS: load key flags and expiry time atomically in
-	key_validate()
+Date: Tue, 26 Sep 2017 13:11:03 -0700
+Subject: [PATCH v2 4/6] KEYS: load key flags and expiry time atomically in
+	keyring_search_iterator()
 In-Reply-To: <20170926201105.126166-1-ebiggers3@gmail.com>
 References: <20170926201105.126166-1-ebiggers3@gmail.com>
-Message-ID: <20170926201105.126166-4-ebiggers3@gmail.com>
+Message-ID: <20170926201105.126166-5-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-In key_validate(), load the flags and expiry time once atomically, since
-these can change concurrently if key_validate() is called without the
-key semaphore held.  And we don't want to get inconsistent results if a
-variable is referenced multiple times.  For example, key->expiry was
-referenced in both 'if (key->expiry)' and in 'if (now.tv_sec >=
-key->expiry)', making it theoretically possible to see a spurious
-EKEYEXPIRED while the expiration time was being removed, i.e. set to 0.
+Similar to the case for key_validate(), we should load the key ->flags
+and ->expiry once atomically in keyring_search_iterator(), since they
+can be changed concurrently whenever the key semaphore isn't held.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- security/keys/permission.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ security/keys/keyring.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/security/keys/permission.c b/security/keys/permission.c
-index 732cc0beffdf..a72b4dd70c8a 100644
---- a/security/keys/permission.c
-+++ b/security/keys/permission.c
-@@ -88,7 +88,8 @@ EXPORT_SYMBOL(key_task_permission);
-  */
- int key_validate(const struct key *key)
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 7fc661f492d3..1dfff0eac474 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -553,7 +553,7 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
  {
--	unsigned long flags = key->flags;
-+	unsigned long flags = READ_ONCE(key->flags);
-+	time_t expiry = READ_ONCE(key->expiry);
+ 	struct keyring_search_context *ctx = iterator_data;
+ 	const struct key *key = keyring_ptr_to_key(object);
+-	unsigned long kflags = key->flags;
++	unsigned long kflags = READ_ONCE(key->flags);
  
- 	if (flags & (1 << KEY_FLAG_INVALIDATED))
- 		return -ENOKEY;
-@@ -99,9 +100,9 @@ int key_validate(const struct key *key)
- 		return -EKEYREVOKED;
+ 	kenter("{%d}", key->serial);
  
- 	/* check it hasn't expired */
--	if (key->expiry) {
-+	if (expiry) {
- 		struct timespec now = current_kernel_time();
--		if (now.tv_sec >= key->expiry)
-+		if (now.tv_sec >= expiry)
- 			return -EKEYEXPIRED;
- 	}
+@@ -565,6 +565,8 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
  
+ 	/* skip invalidated, revoked and expired keys */
+ 	if (ctx->flags & KEYRING_SEARCH_DO_STATE_CHECK) {
++		time_t expiry = READ_ONCE(key->expiry);
++
+ 		if (kflags & ((1 << KEY_FLAG_INVALIDATED) |
+ 			      (1 << KEY_FLAG_REVOKED))) {
+ 			ctx->result = ERR_PTR(-EKEYREVOKED);
+@@ -572,7 +574,7 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
+ 			goto skipped;
+ 		}
+ 
+-		if (key->expiry && ctx->now.tv_sec >= key->expiry) {
++		if (expiry && ctx->now.tv_sec >= expiry) {
+ 			if (!(ctx->flags & KEYRING_SEARCH_SKIP_EXPIRED))
+ 				ctx->result = ERR_PTR(-EKEYEXPIRED);
+ 			kleave(" = %d [expire]", ctx->skipped_ret);
 -- 
 2.14.1.992.g2c7b836f3a-goog
 
