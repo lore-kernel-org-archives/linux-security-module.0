@@ -1,46 +1,35 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Tue, 26 Sep 2017 13:10:59 -0700
-Subject: [PATCH v2 0/6] KEYS: fix atomicity issues with key flags
-Message-ID: <20170926201105.126166-1-ebiggers3@gmail.com>
+Date: Tue, 26 Sep 2017 13:39:09 -0700
+Subject: [PATCH v2 1/6] KEYS: fix race between updating and finding
+	negative key
+In-Reply-To: <20170926201105.126166-2-ebiggers3@gmail.com>
+References: <20170926201105.126166-1-ebiggers3@gmail.com>
+	<20170926201105.126166-2-ebiggers3@gmail.com>
+Message-ID: <20170926203909.GA126069@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Tue, Sep 26, 2017 at 01:11:00PM -0700, Eric Biggers wrote:
+> +static void mark_key_instantiated(struct key *key, unsigned int reject_error)
+> +{
+> +	unsigned long old, new;
+> +
+> +	do {
+> +		old = READ_ONCE(key->flags);
+> +		new = (old & ~(KEY_FLAG_NEGATIVE |
+> +			       KEY_FLAGS_REJECT_ERROR_MASK)) |
+> +		      KEY_FLAG_INSTANTIATED |
+> +		      (reject_error ? KEY_FLAG_NEGATIVE : 0) |
+> +		      (reject_error << KEY_FLAGS_REJECT_ERROR_SHIFT);
+> +	} while (cmpxchg_release(&key->flags, old, new) != old);
+> +}
 
-The first patch in this series fixes the race between updating and
-finding a negative key, which could be used by an unprivileged user to
-cause a kernel oops.  That patch is Cc'ed to stable.
+Sorry, I realized I screwed this up --- the flags like KEY_FLAG_NEGATIVE need to
+be (1 << KEY_FLAG_NEGATIVE).  I'll send another version which will be better
+tested...
 
-The remaining patches fix some other, more theoretical atomicity issues
-with accessing key->flags and key->expiry, then eliminate
-KEY_FLAG_NEGATIVE, which becomes unnecessary after the first patch.
-
-Eric Biggers (6):
-  KEYS: fix race between updating and finding negative key
-  KEYS: load key flags atomically in key_is_instantiated()
-  KEYS: load key flags and expiry time atomically in key_validate()
-  KEYS: load key flags and expiry time atomically in
-    keyring_search_iterator()
-  KEYS: load key flags and expiry time atomically in proc_keys_show()
-  KEYS: remove KEY_FLAG_NEGATIVE
-
- include/linux/key.h                      | 37 +++++++++++++++++++++++---------
- security/keys/encrypted-keys/encrypted.c |  2 +-
- security/keys/gc.c                       |  4 +---
- security/keys/key.c                      | 24 +++++++++++++++------
- security/keys/keyctl.c                   |  5 ++++-
- security/keys/keyring.c                  | 12 ++++++-----
- security/keys/permission.c               |  7 +++---
- security/keys/proc.c                     | 28 +++++++++++++-----------
- security/keys/request_key.c              | 11 ++++++----
- security/keys/trusted.c                  |  2 +-
- security/keys/user_defined.c             |  2 +-
- 11 files changed, 86 insertions(+), 48 deletions(-)
-
--- 
-2.14.1.992.g2c7b836f3a-goog
-
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
