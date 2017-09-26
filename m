@@ -1,29 +1,62 @@
 From: kgold@linux.vnet.ibm.com (Ken Goldman)
-Date: Tue, 26 Sep 2017 14:46:59 -0400
+Date: Tue, 26 Sep 2017 15:10:32 -0400
 Subject: about context gap
-In-Reply-To: <20170918180250.6db5ti4gpinqr5jz@linux.intel.com>
+In-Reply-To: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
 References: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
-	<20170918180250.6db5ti4gpinqr5jz@linux.intel.com>
-Message-ID: <03018f5e-4afc-7db5-b5a8-dfed8e2bd8d2@linux.vnet.ibm.com>
+Message-ID: <f3d04c67-5470-e167-d186-755a56edf059@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/18/2017 2:02 PM, Jarkko Sakkinen wrote:
-
-> Other than context gap it would probably make sense to estimate TPM
-> capacity in order to make implementation more intelligent. We could
-> measure memory capacity of a TPM in the driver initialization by filling
-> it with fixed size dummy objects.
+On 9/16/2017 11:36 AM, Jarkko Sakkinen wrote:
+> Hi
 > 
-> TPM2_GetCapability gives stuff that cannot be really trusted as spec
-> compliant TPM HW could just return always '1' for max.
+> While sitting at the airport I started to think a bit about the context
+> gap issue.
+> 
+> I think first thing that would make sense would be to have a 64-bit
+> shadow count for every TPM space i.e.
+> 
+> atomic_long_t tpm2_ctx_cnt;
+> 
+> struct tpm2_space {
+> 	/* ... */
+> 	u64 ctx_cnt;
+> };
+> 
+> For every create and load of a session you will read the global count
+> and increase it. This way we have get a well defined order.
+> 
+> With this organization we could for example put tpm spaces to a
+> red-black tree and refresh the oldest tpm space (just first thought
+> that came to mind).
 
-I don't see anything in the TPM specs that claim the TPM can return 1.
+I think the algorithm is as follows:
 
-E.g., the PC Client spec says that loaded sessions must return a minimum 
-of 3.  Active sessions must return a minimum of 64.
+1 - Each saved context has a sequence number.  It can either be 
+extracted once and saved in a table or extracted from the context blob 
+when needed.
 
-I think the resource manager can safely use these getcapability values.
+2 - When a startauthsession or contextload returns the 
+TPM_RC_CONTEXT_GAP error
+
+2A - find the lowest context blob sequence number
+2B - contextload it
+2C - contextsave it
+
+This is just for sessions, not objects.
+
+~~
+
+A fundamental design question is whether the application can call 
+contextsave for sessions, or whether the command is reserved for the 
+resource manager.
+
+I personally think it adds a lot of complication - the session blob has 
+to be sort of virtualized.  The use case - one application saving a 
+session, then handing it over to another application that loads it - 
+doesn't seem worth the complexity.
+
+It should be discussed up front, because it affects the code.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
