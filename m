@@ -1,68 +1,28 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 27 Sep 2017 22:19:24 +0100
+From: jmorris@namei.org (James Morris)
+Date: Thu, 28 Sep 2017 09:14:58 +1000 (AEST)
 Subject: [GIT PULL] KEYS: Fixes and crypto fixes
-Message-ID: <28036.1506547164@warthog.procyon.org.uk>
+In-Reply-To: <28036.1506547164@warthog.procyon.org.uk>
+References: <28036.1506547164@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.21.1709280912400.12069@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi James,
+On Wed, 27 Sep 2017, David Howells wrote:
 
-Can you pull these and pass them on to Linus.  There are two sets of
-patches here:
+>  (2) Fixing big_key to use safe crypto from Jason A. Donenfeld.
+> 
 
- (1) A bunch of core keyrings bug fixes from Eric Biggers.
+I'm concerned about the lack of crypto review mentioned by Jason -- I 
+wonder if we can get this rewrite any more review from crypto folk.
 
- (2) Fixing big_key to use safe crypto from Jason A. Donenfeld.
+Also, are there any tests for this code?  If not, it would be good to make 
+some.
 
-There are more patches to come from Eric, but I haven't reviewed at them
-yet, so I haven't included them here.  Thanks to Eric for reviewing the
-keyrings code.
 
-David
----
-The following changes since commit ebb2c2437d8008d46796902ff390653822af6cc4:
+-- 
+James Morris
+<jmorris@namei.org>
 
-  Merge tag 'mmc-v4.14-2' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc (2017-09-18 08:44:51 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-fixes-20170927
-
-for you to fetch changes up to 428490e38b2e352812e0b765d8bceafab0ec441d:
-
-  security/keys: rewrite all of big_key crypto (2017-09-25 23:31:58 +0100)
-
-----------------------------------------------------------------
-Keyrings fixes
-
-----------------------------------------------------------------
-Eric Biggers (10):
-      KEYS: fix cred refcount leak in request_key_auth_new()
-      KEYS: don't revoke uninstantiated key in request_key_auth_new()
-      KEYS: fix key refcount leak in keyctl_assume_authority()
-      KEYS: fix key refcount leak in keyctl_read_key()
-      KEYS: fix writing past end of user-supplied buffer in keyring_read()
-      KEYS: prevent creating a different user's keyrings
-      KEYS: prevent KEYCTL_READ on negative key
-      KEYS: reset parent each time before searching key_user_tree
-      KEYS: restrict /proc/keys by credentials at open time
-      KEYS: use kmemdup() in request_key_auth_new()
-
-Jason A. Donenfeld (2):
-      security/keys: properly zero out sensitive key material in big_key
-      security/keys: rewrite all of big_key crypto
-
- include/linux/key.h              |   2 +
- security/keys/Kconfig            |   4 +-
- security/keys/big_key.c          | 139 ++++++++++++++++++---------------------
- security/keys/internal.h         |   2 +-
- security/keys/key.c              |   6 +-
- security/keys/keyctl.c           |  13 ++--
- security/keys/keyring.c          |  37 ++++++-----
- security/keys/proc.c             |   8 +--
- security/keys/process_keys.c     |   6 +-
- security/keys/request_key_auth.c |  74 ++++++++++-----------
- 10 files changed, 139 insertions(+), 152 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
