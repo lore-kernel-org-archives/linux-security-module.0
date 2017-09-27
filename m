@@ -1,49 +1,68 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Wed, 27 Sep 2017 12:50:40 -0700
-Subject: [PATCH v3 0/7] KEYS: instantiation and atomicity fixes
-Message-ID: <20170927195047.122358-1-ebiggers3@gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 27 Sep 2017 22:19:24 +0100
+Subject: [GIT PULL] KEYS: Fixes and crypto fixes
+Message-ID: <28036.1506547164@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hi James,
 
-The first two patches in this series fix bugs related to instantiating
-keys which allowed unprivileged users to cause a kernel oops.
-Specifically, the first patch removes the ability for add_key() to
-update an uninstantiated key, as this was heavily broken; and the second
-patch fixes a race condition related to add_key() updating a negative
-key into a positive one.
+Can you pull these and pass them on to Linus.  There are two sets of
+patches here:
 
-The remaining patches fix some other, more theoretical atomicity issues
-with accessing key->flags and key->expiry, then eliminate
-KEY_FLAG_NEGATIVE, which becomes unnecessary after the second patch.
+ (1) A bunch of core keyrings bug fixes from Eric Biggers.
 
-Eric Biggers (7):
-  KEYS: don't let add_key() update an uninstantiated key
-  KEYS: fix race between updating and finding negative key
-  KEYS: load key flags atomically in key_is_instantiated()
-  KEYS: load key flags and expiry time atomically in key_validate()
-  KEYS: load key flags and expiry time atomically in
-    keyring_search_iterator()
-  KEYS: load key flags and expiry time atomically in proc_keys_show()
-  KEYS: remove KEY_FLAG_NEGATIVE
+ (2) Fixing big_key to use safe crypto from Jason A. Donenfeld.
 
- include/linux/key.h                      | 25 +++++++++++++++++++++----
- security/keys/encrypted-keys/encrypted.c |  2 +-
- security/keys/gc.c                       |  4 +---
- security/keys/key.c                      | 24 +++++++++++++++++-------
- security/keys/keyctl.c                   |  5 ++++-
- security/keys/keyring.c                  | 22 +++++++++++++---------
- security/keys/permission.c               |  7 ++++---
- security/keys/proc.c                     | 28 ++++++++++++++++------------
- security/keys/request_key.c              | 11 +++++++----
- security/keys/trusted.c                  |  2 +-
- security/keys/user_defined.c             |  2 +-
- 11 files changed, 86 insertions(+), 46 deletions(-)
+There are more patches to come from Eric, but I haven't reviewed at them
+yet, so I haven't included them here.  Thanks to Eric for reviewing the
+keyrings code.
 
--- 
-2.14.2.822.g60be5d43e6-goog
+David
+---
+The following changes since commit ebb2c2437d8008d46796902ff390653822af6cc4:
 
+  Merge tag 'mmc-v4.14-2' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc (2017-09-18 08:44:51 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-fixes-20170927
+
+for you to fetch changes up to 428490e38b2e352812e0b765d8bceafab0ec441d:
+
+  security/keys: rewrite all of big_key crypto (2017-09-25 23:31:58 +0100)
+
+----------------------------------------------------------------
+Keyrings fixes
+
+----------------------------------------------------------------
+Eric Biggers (10):
+      KEYS: fix cred refcount leak in request_key_auth_new()
+      KEYS: don't revoke uninstantiated key in request_key_auth_new()
+      KEYS: fix key refcount leak in keyctl_assume_authority()
+      KEYS: fix key refcount leak in keyctl_read_key()
+      KEYS: fix writing past end of user-supplied buffer in keyring_read()
+      KEYS: prevent creating a different user's keyrings
+      KEYS: prevent KEYCTL_READ on negative key
+      KEYS: reset parent each time before searching key_user_tree
+      KEYS: restrict /proc/keys by credentials at open time
+      KEYS: use kmemdup() in request_key_auth_new()
+
+Jason A. Donenfeld (2):
+      security/keys: properly zero out sensitive key material in big_key
+      security/keys: rewrite all of big_key crypto
+
+ include/linux/key.h              |   2 +
+ security/keys/Kconfig            |   4 +-
+ security/keys/big_key.c          | 139 ++++++++++++++++++---------------------
+ security/keys/internal.h         |   2 +-
+ security/keys/key.c              |   6 +-
+ security/keys/keyctl.c           |  13 ++--
+ security/keys/keyring.c          |  37 ++++++-----
+ security/keys/proc.c             |   8 +--
+ security/keys/process_keys.c     |   6 +-
+ security/keys/request_key_auth.c |  74 ++++++++++-----------
+ 10 files changed, 139 insertions(+), 152 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
