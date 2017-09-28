@@ -1,59 +1,33 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 28 Sep 2017 17:34:53 -0500
-Subject: [RFC][PATCH] security: Make the selinux setxattr and removexattr
-	hooks behave
-Message-ID: <87tvzmqwoi.fsf@xmission.com>
+From: Jason@zx2c4.com (Jason A. Donenfeld)
+Date: Fri, 29 Sep 2017 00:39:02 +0200
+Subject: [GIT PULL] security: keys fixes for v4.14-rc3
+In-Reply-To: <alpine.LRH.2.21.1709290822590.15742@namei.org>
+References: <alpine.LRH.2.21.1709290822590.15742@namei.org>
+Message-ID: <CAHmME9oRwa+Oi=wa0MT3vRagZL6FTTzxwvE3NBO13_yxg4Kznw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Fri, Sep 29, 2017 at 12:33 AM, James Morris <jmorris@namei.org> wrote:
+> Generally speaking, we likely need to improve the amount of crypto review
+> for kernel crypto users including keys (I'll post a note separately to
+> ksummit-discuss).
 
-It looks like once upon a time a long time ago selinux copied code
-from cap_inode_removexattr and cap_inode_setxattr into
-selinux_inode_setotherxattr.  However the code has now diverged and
-selinux is implementing a policy that is quite different than
-cap_inode_setxattr and cap_inode_removexattr especially when it comes
-to the security.capable xattr.
+Indeed.
 
-To keep things working and to make the comments in security/security.c
-correct when the xattr is securit.capable, call cap_inode_setxattr
-or cap_inode_removexattr as appropriate.
+I won't be at kernel summit, regrettably, but I do intend to
+methodically work through the kernel reviewing the various crypto
+[mis]uses in places. I also have some larger plans regarding reworking
+a few aspects of the crypto API, that I'll start a discussion with
+Herbert about during the next several months. (I'm CCing Andy because
+this is something the two of us have also discussed.)
 
-I suspect there is a larger conversation to be had here but this
-is enough to keep selinux from implementing a non-sense hard coded
-policy that breaks other parts of the kernel.
+So, expect some more things like this patch to gradually be rolling
+your way, along with maybe larger overall changes. If you wind up
+discussing this in any substantial way at the summit this year, please
+do try to loop me in at some point.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- security/selinux/hooks.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f5d304736852..edf4bd292dc7 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3167,6 +3167,9 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
- 	u32 newsid, sid = current_sid();
- 	int rc = 0;
- 
-+	if (strcmp(name, XATTR_NAME_CAPS) == 0)
-+		return cap_inode_setxattr(dentry, name, value, size, flags);
-+
- 	if (strcmp(name, XATTR_NAME_SELINUX))
- 		return selinux_inode_setotherxattr(dentry, name);
- 
-@@ -3282,6 +3285,9 @@ static int selinux_inode_listxattr(struct dentry *dentry)
- 
- static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
- {
-+	if (strcmp(name, XATTR_NAME_CAPS) == 0)
-+		return cap_inode_removexattr(dentry, name);
-+
- 	if (strcmp(name, XATTR_NAME_SELINUX))
- 		return selinux_inode_setotherxattr(dentry, name);
- 
--- 
-2.14.1
-
+Talk soon,
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
