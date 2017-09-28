@@ -1,40 +1,38 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 29 Sep 2017 08:53:28 +1000 (AEST)
-Subject: [GIT PULL] security: keys fixes for v4.14-rc3
-In-Reply-To: <CAHmME9oRwa+Oi=wa0MT3vRagZL6FTTzxwvE3NBO13_yxg4Kznw@mail.gmail.com>
-References: <alpine.LRH.2.21.1709290822590.15742@namei.org>
-	<CAHmME9oRwa+Oi=wa0MT3vRagZL6FTTzxwvE3NBO13_yxg4Kznw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1709290852340.19449@namei.org>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Thu, 28 Sep 2017 16:39:23 -0700
+Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+	taken exclusively
+In-Reply-To: <20170928220215.GC15067@dastard>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170928220215.GC15067@dastard>
+Message-ID: <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 29 Sep 2017, Jason A. Donenfeld wrote:
+On Thu, Sep 28, 2017 at 3:02 PM, Dave Chinner <david@fromorbit.com> wrote:
+> On Thu, Sep 28, 2017 at 08:39:33AM -0400, Mimi Zohar wrote:
+>> Don't attempt to take the i_rwsem, if it has already been taken
+>> exclusively.
+>>
+>> Signed-off-by:  Mimi Zohar <zohar@linux.vnet.ibm.com>
+>
+> That's bloody awful.
+>
+> The locking in filesystem IO paths is already complex enough without
+> adding a new IO path semantic that says "caller has already locked
+> the i_rwsem in some order and some dependencies that we have no idea
+> about".
 
-> On Fri, Sep 29, 2017 at 12:33 AM, James Morris <jmorris@namei.org> wrote:
-> > Generally speaking, we likely need to improve the amount of crypto review
-> > for kernel crypto users including keys (I'll post a note separately to
-> > ksummit-discuss).
-> 
-> Indeed.
-> 
-> I won't be at kernel summit, regrettably, but I do intend to
-> methodically work through the kernel reviewing the various crypto
-> [mis]uses in places. I also have some larger plans regarding reworking
-> a few aspects of the crypto API, that I'll start a discussion with
-> Herbert about during the next several months. (I'm CCing Andy because
-> this is something the two of us have also discussed.)
-> 
-> So, expect some more things like this patch to gradually be rolling
-> your way, along with maybe larger overall changes. If you wind up
-> discussing this in any substantial way at the summit this year, please
-> do try to loop me in at some point.
+I do have to admit that I never got a satisfactory answer on why IMA
+doesn't just use its own private per-inode lock for this all.
 
-Absolutely.  This is important work and great to hear!
+It isn't using the i_rwsem for file consistency reasons anyway, so it
+seems to be purely about serializing the actual signature generation
+with the xattr writing, but since IMA does those both, why isn't IMA
+just using its own lock (not the filesystem lock) to do that?
 
--- 
-James Morris
-<jmorris@namei.org>
-
+                 Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
