@@ -1,76 +1,111 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 28 Sep 2017 08:39:30 -0400
-Subject: [RFC PATCH 0/3] define new read_iter file operation rwf flag
-Message-ID: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Thu, 28 Sep 2017 08:39:33 -0400
+Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been taken
+	exclusively
+In-Reply-To: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch set replaces the "integrity_read" file operation method,
-as defined in the "ima: use fs method to read integrity data" patch,
-with a new read_iter file operation "rwf" flag.  (The other patches
-are the same.*)
+Don't attempt to take the i_rwsem, if it has already been taken
+exclusively.
 
-The main difference between these approaches is whether IMA must be
-explicitly enabled (opt-in), by defining the "integrity_read" file
-operation method for each file system, or enabled by default, with
-modifications as needed to the read_iter.
+Signed-off-by:  Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ fs/ext2/file.c    |  6 ++++--
+ fs/ext4/file.c    |  8 +++++---
+ fs/xfs/xfs_file.c | 10 ++++++----
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-*The entire patch sets can be found in
-git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
-next-integrity-read and next-read-iter.
-
-Mimi
-
-Mimi Zohar (3):
-  fs: define new read_iter rwf flag
-  integrity: use call_read_iter to calculate the file hash
-  fs: detect that the i_rwsem has already been taken exclusively
-
- arch/s390/hypfs/inode.c                      |  3 ++-
- drivers/block/loop.c                         |  2 +-
- drivers/char/mem.c                           |  6 ++++--
- drivers/gpu/drm/drm_dp_aux_dev.c             |  3 ++-
- drivers/net/tap.c                            |  3 ++-
- drivers/net/tun.c                            |  3 ++-
- drivers/staging/android/ashmem.c             |  3 ++-
- drivers/staging/lustre/lustre/llite/file.c   |  3 ++-
- drivers/staging/lustre/lustre/llite/vvp_io.c |  2 +-
- drivers/usb/gadget/function/f_fs.c           |  3 ++-
- drivers/usb/gadget/legacy/inode.c            |  2 +-
- drivers/vhost/net.c                          |  3 ++-
- fs/9p/vfs_file.c                             |  8 +++++---
- fs/aio.c                                     |  2 +-
- fs/block_dev.c                               |  4 ++--
- fs/ceph/file.c                               |  5 +++--
- fs/cifs/cifsfs.c                             |  6 +++---
- fs/cifs/cifsfs.h                             |  4 ++--
- fs/cifs/file.c                               | 10 +++++-----
- fs/coda/file.c                               |  2 +-
- fs/ecryptfs/file.c                           |  4 ++--
- fs/efivarfs/file.c                           |  2 +-
- fs/ext2/file.c                               | 16 +++++++++------
- fs/ext4/file.c                               | 20 +++++++++++--------
- fs/fuse/cuse.c                               |  3 ++-
- fs/fuse/dev.c                                |  3 ++-
- fs/fuse/file.c                               |  8 +++++---
- fs/hugetlbfs/inode.c                         |  3 ++-
- fs/ncpfs/file.c                              |  2 +-
- fs/nfs/file.c                                |  4 ++--
- fs/nfs/internal.h                            |  2 +-
- fs/ocfs2/file.c                              |  5 +++--
- fs/orangefs/file.c                           |  3 ++-
- fs/pipe.c                                    |  2 +-
- fs/read_write.c                              |  4 ++--
- fs/splice.c                                  |  2 +-
- fs/xfs/xfs_file.c                            | 30 +++++++++++++++++-----------
- include/linux/fs.h                           | 10 +++++-----
- mm/filemap.c                                 |  3 ++-
- mm/shmem.c                                   |  3 ++-
- net/socket.c                                 |  4 ++--
- security/integrity/iint.c                    | 21 +++++++++++++------
- sound/core/pcm_native.c                      |  2 +-
- 43 files changed, 139 insertions(+), 94 deletions(-)
-
+diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+index 839095f66d8d..d174b2880929 100644
+--- a/fs/ext2/file.c
++++ b/fs/ext2/file.c
+@@ -38,9 +38,11 @@ static ssize_t ext2_dax_read_iter(struct kiocb *iocb, struct iov_iter *to,
+ 	if (!iov_iter_count(to))
+ 		return 0; /* skip atime */
+ 
+-	inode_lock_shared(inode);
++	if (!rwf)
++		inode_lock_shared(inode);
+ 	ret = dax_iomap_rw(iocb, to, &ext2_iomap_ops);
+-	inode_unlock_shared(inode);
++	if (!rwf)
++		inode_unlock_shared(inode);
+ 
+ 	file_accessed(iocb->ki_filp);
+ 	return ret;
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 10789666725e..7d7c0e380add 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -38,7 +38,7 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to,
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	ssize_t ret;
+ 
+-	if (!inode_trylock_shared(inode)) {
++	if (!rwf && !inode_trylock_shared(inode)) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			return -EAGAIN;
+ 		inode_lock_shared(inode);
+@@ -48,12 +48,14 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to,
+ 	 * change anymore
+ 	 */
+ 	if (!IS_DAX(inode)) {
+-		inode_unlock_shared(inode);
++		if (!rwf)
++			inode_unlock_shared(inode);
+ 		/* Fallback to buffered IO in case we cannot support DAX */
+ 		return generic_file_read_iter(iocb, to, rwf);
+ 	}
+ 	ret = dax_iomap_rw(iocb, to, &ext4_iomap_ops);
+-	inode_unlock_shared(inode);
++	if (!rwf)
++		inode_unlock_shared(inode);
+ 
+ 	file_accessed(iocb->ki_filp);
+ 	return ret;
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index cf1ce8961601..0cffca97ed68 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -239,7 +239,7 @@ xfs_file_dax_read(
+ 	if (!count)
+ 		return 0; /* skip atime */
+ 
+-	if (!xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
++	if (!rwf && !xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			return -EAGAIN;
+ 		xfs_ilock(ip, XFS_IOLOCK_SHARED);
+@@ -247,7 +247,8 @@ xfs_file_dax_read(
+ 	ret = dax_iomap_rw(iocb, to, &xfs_iomap_ops);
+ 	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+ 
+-	file_accessed(iocb->ki_filp);
++	if (!rwf)
++		file_accessed(iocb->ki_filp);
+ 	return ret;
+ }
+ 
+@@ -262,13 +263,14 @@ xfs_file_buffered_aio_read(
+ 
+ 	trace_xfs_file_buffered_read(ip, iov_iter_count(to), iocb->ki_pos);
+ 
+-	if (!xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
++	if (!rwf && !xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			return -EAGAIN;
+ 		xfs_ilock(ip, XFS_IOLOCK_SHARED);
+ 	}
+ 	ret = generic_file_read_iter(iocb, to, rwf);
+-	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
++	if (!rwf)
++		xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+ 
+ 	return ret;
+ }
 -- 
 2.7.4
 
