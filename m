@@ -1,52 +1,43 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 28 Sep 2017 14:25:56 -0700
-Subject: [PATCH 1/7] KEYS: encrypted: fix dereference of NULL user_key_payload
-In-Reply-To: <20170928212602.41744-1-ebiggers3@gmail.com>
-References: <20170928212602.41744-1-ebiggers3@gmail.com>
-Message-ID: <20170928212602.41744-2-ebiggers3@gmail.com>
+Date: Thu, 28 Sep 2017 14:25:55 -0700
+Subject: [PATCH 0/7] Fix dereferencing payload of revoked keys
+Message-ID: <20170928212602.41744-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-A key of type "encrypted" references a "master key" which is used to
-encrypt and decrypt the encrypted key's payload.  However, when we
-accessed the master key's payload, we failed to handle the case where
-the master key has been revoked, which sets the payload pointer to NULL.
-Note that request_key() *does* skip revoked keys, but there is still a
-window where the key can be revoked before we acquire its semaphore.
+This series fixes the various users of the keyrings service that access
+a "user" or "logon" key's payload without first checking whether the
+payload pointer is NULL, or calling key_validate() while holding the key
+semaphore.  Without one of these two checks, a NULL pointer dereference
+will occur if the key has been revoked concurrently.  Usually this is
+pretty easy to reproduce (in most of the cases even as an unprivileged
+user), although it may be unlikely to happen by accident.
 
-Fix it by checking for a NULL payload, treating it like a key which was
-already revoked at the time it was requested.
+Patch 6 also fixes the lack of key length validation in ecryptfs.
 
-This was an issue for master keys of type "user" only.  Master keys can
-also be of type "trusted", but those cannot be revoked.
+These fixes probably will need to be split up between a few different
+maintainers, but initially I'm sending the full series so that people
+can see the full context of the fixes.
 
-Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
-Cc: <stable@vger.kernel.org>    [v2.6.38+]
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/keys/encrypted-keys/encrypted.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Eric Biggers (7):
+  KEYS: encrypted: fix dereference of NULL user_key_payload
+  FS-Cache: fix dereference of NULL user_key_payload
+  lib/digsig: fix dereference of NULL user_key_payload
+  fscrypt: fix dereference of NULL user_key_payload
+  ecryptfs: fix dereference of NULL user_key_payload
+  ecryptfs: fix out-of-bounds read of key payload
+  ecryptfs: move key payload accessor functions into keystore.c
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index f54b92868bc3..d92cbf9687c3 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -309,6 +309,13 @@ static struct key *request_user_key(const char *master_desc, const u8 **master_k
- 
- 	down_read(&ukey->sem);
- 	upayload = user_key_payload_locked(ukey);
-+	if (!upayload) {
-+		/* key was revoked before we acquired its semaphore */
-+		up_read(&ukey->sem);
-+		key_put(ukey);
-+		ukey = ERR_PTR(-EKEYREVOKED);
-+		goto error;
-+	}
- 	*master_key = upayload->data;
- 	*master_keylen = upayload->datalen;
- error:
+ fs/crypto/keyinfo.c                      |  5 +++
+ fs/ecryptfs/ecryptfs_kernel.h            | 44 -------------------
+ fs/ecryptfs/keystore.c                   | 73 +++++++++++++++++++++++++++++++-
+ fs/fscache/object-list.c                 |  7 +++
+ lib/digsig.c                             |  6 +++
+ security/keys/encrypted-keys/encrypted.c |  7 +++
+ 6 files changed, 97 insertions(+), 45 deletions(-)
+
 -- 
 2.14.2.822.g60be5d43e6-goog
 
