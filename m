@@ -1,45 +1,120 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 28 Sep 2017 14:25:55 -0700
-Subject: [PATCH 0/7] Fix dereferencing payload of revoked keys
-Message-ID: <20170928212602.41744-1-ebiggers3@gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 28 Sep 2017 14:54:50 -0700
+Subject: [PATCH] Smack: Base support for overlayfs
+Message-ID: <408f9331-c780-9a35-f2fe-b803a38aa84f@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Subject: Smack: Base support for overlayfs
 
-This series fixes the various users of the keyrings service that access
-a "user" or "logon" key's payload without first checking whether the
-payload pointer is NULL, or calling key_validate() while holding the key
-semaphore.  Without one of these two checks, a NULL pointer dereference
-will occur if the key has been revoked concurrently.  Usually this is
-pretty easy to reproduce (in most of the cases even as an unprivileged
-user), although it may be unlikely to happen by accident.
+Supply the Smack module hooks in support of overlayfs.
+Ensure that the Smack label of new files gets the correct
+value when a directory is transmuting. Original implementation
+by Romanini Daniele, with a few tweaks added.
 
-Patch 6 also fixes the lack of key length validation in ecryptfs.
+Signed-off-by: Romanini Daniele <daniele.romanini@aalto.fi>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/smack/smack_lsm.c | 79 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-These fixes probably will need to be split up between a few different
-maintainers, but initially I'm sending the full series so that people
-can see the full context of the fixes.
-
-Eric Biggers (7):
-  KEYS: encrypted: fix dereference of NULL user_key_payload
-  FS-Cache: fix dereference of NULL user_key_payload
-  lib/digsig: fix dereference of NULL user_key_payload
-  fscrypt: fix dereference of NULL user_key_payload
-  ecryptfs: fix dereference of NULL user_key_payload
-  ecryptfs: fix out-of-bounds read of key payload
-  ecryptfs: move key payload accessor functions into keystore.c
-
- fs/crypto/keyinfo.c                      |  5 +++
- fs/ecryptfs/ecryptfs_kernel.h            | 44 -------------------
- fs/ecryptfs/keystore.c                   | 73 +++++++++++++++++++++++++++++++-
- fs/fscache/object-list.c                 |  7 +++
- lib/digsig.c                             |  6 +++
- security/keys/encrypted-keys/encrypted.c |  7 +++
- 6 files changed, 97 insertions(+), 45 deletions(-)
-
--- 
-2.14.2.822.g60be5d43e6-goog
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 319add3..569f280 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4605,6 +4605,82 @@ static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+ 	return 0;
+ }
+ 
++static int smack_inode_copy_up(struct dentry *dentry, struct cred **new)
++{
++
++	struct task_smack *tsp;
++	struct smack_known *skp;
++	struct inode_smack *isp;
++	struct cred *new_creds = *new;
++
++	if (new_creds == NULL) {
++		new_creds = prepare_creds();
++		if (new_creds == NULL)
++			return -ENOMEM;
++	}
++
++	tsp = new_creds->security;
++
++	/*
++	 * Get label from overlay inode and set it in create_sid
++	 */
++	isp = d_inode(dentry->d_parent)->i_security;
++	skp = isp->smk_inode;
++	tsp->smk_task = skp;
++	*new = new_creds;
++	return 0;
++}
++
++static int smack_inode_copy_up_xattr(const char *name)
++{
++	/*
++	 * Return 1 if this is the smack access Smack attribute.
++	 */
++	if (strcmp(name, XATTR_NAME_SMACK) == 0)
++		return 1;
++
++	return -EOPNOTSUPP;
++}
++
++static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
++					struct qstr *name,
++					const struct cred *old,
++					struct cred *new)
++{
++	struct task_smack *otsp = old->security;
++	struct task_smack *ntsp = new->security;
++	struct inode_smack *isp;
++	int may;
++
++	/*
++	 * Use the process credential unless all of
++	 * the transmuting criteria are met
++	 */
++	ntsp->smk_task = otsp->smk_task;
++
++	/*
++	 * the attribute of the containing directory
++	 */
++	isp = d_inode(dentry->d_parent)->i_security;
++
++	if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
++		rcu_read_lock();
++		may = smk_access_entry(otsp->smk_task->smk_known,
++				       isp->smk_inode->smk_known,
++				       &otsp->smk_task->smk_rules);
++		rcu_read_unlock();
++
++		/*
++		 * If the directory is transmuting and the rule
++		 * providing access is transmuting use the containing
++		 * directory label instead of the process label.
++		 */
++		if (may > 0 && (may & MAY_TRANSMUTE))
++			ntsp->smk_task = isp->smk_inode;
++	}
++	return 0;
++}
++
+ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_access_check, smack_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+@@ -4740,6 +4816,9 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_notifysecctx, smack_inode_notifysecctx),
+ 	LSM_HOOK_INIT(inode_setsecctx, smack_inode_setsecctx),
+ 	LSM_HOOK_INIT(inode_getsecctx, smack_inode_getsecctx),
++	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
++	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
++	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
+ };
+ 
+ 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
