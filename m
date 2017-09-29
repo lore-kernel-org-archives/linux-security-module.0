@@ -1,48 +1,73 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 28 Sep 2017 20:12:47 -0400
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Thu, 28 Sep 2017 17:33:34 -0700
 Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
 	taken exclusively
-In-Reply-To: <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
+In-Reply-To: <1506643967.5691.46.camel@linux.vnet.ibm.com>
 References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
 	<1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
 	<20170928220215.GC15067@dastard>
 	<CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
-Message-ID: <1506643967.5691.46.camel@linux.vnet.ibm.com>
+	<1506643967.5691.46.camel@linux.vnet.ibm.com>
+Message-ID: <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-09-28 at 16:39 -0700, Linus Torvalds wrote:
-> On Thu, Sep 28, 2017 at 3:02 PM, Dave Chinner <david@fromorbit.com> wrote:
-> > On Thu, Sep 28, 2017 at 08:39:33AM -0400, Mimi Zohar wrote:
-> >> Don't attempt to take the i_rwsem, if it has already been taken
-> >> exclusively.
-> >>
-> >> Signed-off-by:  Mimi Zohar <zohar@linux.vnet.ibm.com>
-> >
-> > That's bloody awful.
-> >
-> > The locking in filesystem IO paths is already complex enough without
-> > adding a new IO path semantic that says "caller has already locked
-> > the i_rwsem in some order and some dependencies that we have no idea
-> > about".
-> 
-> I do have to admit that I never got a satisfactory answer on why IMA
-> doesn't just use its own private per-inode lock for this all.
-> 
-> It isn't using the i_rwsem for file consistency reasons anyway, so it
-> seems to be purely about serializing the actual signature generation
-> with the xattr writing, but since IMA does those both, why isn't IMA
-> just using its own lock (not the filesystem lock) to do that?
+On Thu, Sep 28, 2017 at 5:12 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>
+> Originally IMA did define it's own lock, prior to IMA-appraisal.  IMA-
+> appraisal introduced writing the file hash as an xattr, which required
+> taking the i_mutex.  process_measurement() and ima_file_free() took
+> the iint->mutex first and then the i_mutex, while setxattr, chmod and
+> chown took the locks in reverse order.  To resolve the potential
+> deadlock, the iint->mutex was eliminated.
 
-Originally IMA did define it's own lock, prior to IMA-appraisal. ?IMA-
-appraisal introduced writing the file hash as an xattr, which required
-taking the i_mutex. ?process_measurement() and ima_file_free() took
-the iint->mutex first and then the i_mutex, while setxattr, chmod and
-chown took the locks in reverse order. ?To resolve the potential
-deadlock, the iint->mutex was eliminated.
+Umm. You already have an explicit invalidation model, where you
+invalidate after a write has occurred.
 
-Mimi
+But the locking of the generation count (or "invalidation status" or
+whatever) can - and should be - entirely independent of the locking of
+the actual appraisal.
 
+So make the appraisal itself use a semaphore ("only one appraisal at a time").
+
+But use a separate lock for the generation count.
+So then appraisal is:
+
+ - get appraisal semaphore
+      - get generation count lock
+            read generation count
+      - drop generation count lock
+      - do the actual appraisal
+ - drop appraisal semaphore
+
+Note that you now have a tuple of "generation count, appraisal" that
+you have *not* saved off yet, but it's your stable thing.
+
+Now you can write the xattr:
+
+  - get exclusive inode lock (for xattr)
+      - get generation count lock
+          - if the appraisal generation does not match, do NOT write
+the appraisal you just calculated, since it's pointless: it's already
+stale.
+          - otherwise write the appraisal and generation count to the xattr
+      - drop generation count lock
+  - release exclusive inode lock
+
+and then for anything that does setxattr or chmod or whatever, just
+use that generation count lock to invalidate the appraisal. You don't
+need to actual appraisal lock for that.
+
+So now the appraisal lock is always the outermost one, and the
+generation count lock is always the innermost.
+
+Anyway, I haven't looked at the details of what IMA does, but
+something like the above really sounds like it should work and seems
+pretty straightforward.
+
+No?
+
+               Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
