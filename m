@@ -1,9 +1,11 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 01 Oct 2017 19:42:42 -0400
+Date: Sun, 01 Oct 2017 19:54:39 -0400
 Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
 	taken exclusively
-In-Reply-To: <20171001223402.GG15067@dastard>
-References: <20170928220215.GC15067@dastard>
+In-Reply-To: <CA+55aFwD=+5trJbmuc2SL-DYcdmt2p4gq1uPBp8mznj1JYSVTg@mail.gmail.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170928220215.GC15067@dastard>
 	<CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
 	<1506643967.5691.46.camel@linux.vnet.ibm.com>
 	<CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
@@ -11,76 +13,87 @@ References: <20170928220215.GC15067@dastard>
 	<CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
 	<87mv5blki7.fsf@xmission.com>
 	<CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
-	<1506859691.5691.211.camel@linux.vnet.ibm.com>
-	<CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
-	<20171001223402.GG15067@dastard>
-Message-ID: <1506901362.5691.247.camel@linux.vnet.ibm.com>
+	<87shf2jzfr.fsf@xmission.com>
+	<CA+55aFwD=+5trJbmuc2SL-DYcdmt2p4gq1uPBp8mznj1JYSVTg@mail.gmail.com>
+Message-ID: <1506902079.5691.256.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2017-10-02 at 09:34 +1100, Dave Chinner wrote:
-> On Sun, Oct 01, 2017 at 11:41:48AM -0700, Linus Torvalds wrote:
-> > On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > >
-> > > Right, re-introducing the iint->mutex and a new i_generation field in
-> > > the iint struct with a separate set of locks should work.  It will be
-> > > reset if the file metadata changes (eg. setxattr, chown, chmod).
-> > 
-> > Note that the "inner lock" could possibly be omitted if the
-> > invalidation can be just a single atomic instruction.
-> > 
-> > So particularly if invalidation could be just an atomic_inc() on the
-> > generation count, there might not need to be any inner lock at all.
-> > 
-> > You'd have to serialize the actual measurement with the "read
-> > generation count", but that should be as simple as just doing a
-> > smp_rmb() between the "read generation count" and "do measurement on
-> > file contents".
+On Sun, 2017-10-01 at 15:20 -0700, Linus Torvalds wrote:
+> On Sun, Oct 1, 2017 at 3:06 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >
+> > Unless I misread something it was being pointed out there are some vfs
+> > operations today on which ima writes an ima xattr as a side effect.  And
+> > those operations hold the i_sem.  So perhaps I am misunderstanding
+> > things or writing the ima xattr needs to happen at some point.  Which
+> > implies something like queued work.
 > 
-> We already have a change counter on the inode, which is modified on
-> any data or metadata write (i_version) under filesystem locks.  The
-> i_version counter has well defined semantics - it's required by
-> NFSv4 to increment on any metadata or data change - so we should be
-> able to rely on it's behaviour to implement IMA as well. Filesystems
-> that support i_version are marked with [SB|MS]_I_VERSION in the
-> superblock (IS_I_VERSION(inode)) so it should be easy to tell if IMA
-> can be supported on a specific filesystem (btrfs, ext4, fuse and xfs
-> ATM).
+> So the issue is indeed the inode semaphore, as it is used by IMA. But
+> all these IMA patches to work around the issue are just horribly ugly.
+> One adds a VFS-layer filesystem method that most filesystems end up
+> not really needing (it's the same as the regular read), and other
+> filesystems end up then having hacks with ("oh, I don't need to take
+> this lock because it was already taken by the caller").
+> 
+> The second patch attempt avoided the need for a new filesystem method,
+> but added a flag in an annoying place (for the same basic logic). The
+> advantage is that now most filesystems don't actually need to care any
+> more (and the filesystems that used to care now check that flag).
+> 
+> There was discussion about moving the flag to a mode convenient spot,
+> which would have made it a lot less intrusive.
+> 
+> But the basic issue is that almost always when you see lock
+> inversions, the problem can just be fixed by doing the locking
+> differently instead.
 
-Recently I received a patch to replace i_version with mtime/atime.
-?Now, even more recently, I received a patch that claims that
-i_version is just a performance improvement. ?For file systems that
-don't support i_version, assume that the file has changed.
+This is what I've been missing. ?Thank you for taking the time to
+understand the problem and explain how!
 
-For file systems that don't support i_version, instead of assuming
-that the file has changed, we can at least use i_generation.
+> And that's what I was/am pushing for.
 
-With Linus' suggested changes, I think this will work nicely.
+> There really are two totally different issues:
+> 
+>  - the integrity _measurement_.
+> 
+>    This one wants to be serialized, so that you don't have multiple
+> concurrent measurements, and the serialization fundamentally has to be
+> around all the IO, so this lock pretty much has to be outside the
+> i_sem.
+> 
+>  - the integrity invalidation on certain operations.
+> 
+>    This one fundamentally had to be inside the i_sem, since some of
+> the operations that cause this end up already holding the i_sem at a
+> VFS layer.
+> 
+> so you had these two different requirements (inside _and_ outside),
+> and the IMA approach was basically to avoid the problem by making
+> i_sem *the* lock, and then making the IO routines aware of it already
+> being held. That does solve the inside/outside issue.
+> 
+> But the simpler way to fix it is to simply use two locks that nest
+> inside each other, with i_sem nesting in the middle.  That just avoids
+> the problem entirely, and doesn't require anybody to ever care about
+> i_sem semantic changes, because i_sem semantics simply didn't change
+> at all.
+> 
+> So that's the approach I'm pushing. I admittedly haven't actually
+> looked at the IMA details, but from a high-level standpoint you can
+> basically describe it (as above) without having to care too much about
+> exactly what IMA even wants.
+> 
+> The two-lock approach does require that the operations that invalidate
+> the integrity measurements always only invalidate it, and don't try to
+> re-compute it. But I suspect that would be entirely insane anyway
+> (imagine a world where "setxattr" would have to read the whole file
+> contents in order to revalidate the integrity measurement - even if
+> there is nobody who even *cares*).
 
-> The IMA code should be able to sample that at measurement time and
-> either fail or be retried if i_version changes during measurement.
-> We can then simply make the IMA xattr write conditional on the
-> i_version value being unchanged from the sample the IMA code passes
-> into the filesystem once the filesystem holds all the locks it needs
-> to write the xattr...
-
-> I note that IMA already grabs the i_version in
-> ima_collect_measurement(), so this shouldn't be too hard to do.
-> Perhaps we don't need any new locks or counterst all, maybe just
-> the ability to feed a version cookie to the set_xattr method?
-
-The security.ima xattr is normally written out in
-ima_check_last_writer(), not in ima_collect_measurement().
-?ima_collect_measurement() calculates the file hash for storing in the
-measurement list (IMA-measurement), verifying the hash/signature (IMA-
-appraisal) already stored in the xattr, and auditing (IMA-audit).
-
-The only time that ima_collect_measurement() writes the file xattr is
-in "fix" mode. ?Writing the xattr will need to be deferred until after
-the iint->mutex is released.
-
-There should be no open writers in ima_check_last_writer(), so the
-file shouldn't be changing.
+Right, the setxattr, chmod, chown syscalls just resets the cached
+flags, which indicate whether the file needs to be re-measured, re-
+validated, or re-audited. ?The file hash is not re-calculated at this
+point. ?That happens on the next access (in policy).
 
 Mimi
 
