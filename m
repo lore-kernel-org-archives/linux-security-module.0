@@ -1,44 +1,256 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Sun, 1 Oct 2017 11:41:48 -0700
-Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
-	taken exclusively
-In-Reply-To: <1506859691.5691.211.camel@linux.vnet.ibm.com>
-References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<20170928220215.GC15067@dastard>
-	<CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
-	<1506643967.5691.46.camel@linux.vnet.ibm.com>
-	<CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
-	<1506649980.5691.100.camel@linux.vnet.ibm.com>
-	<CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
-	<87mv5blki7.fsf@xmission.com>
-	<CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
-	<1506859691.5691.211.camel@linux.vnet.ibm.com>
-Message-ID: <CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Sun, 1 Oct 2017 11:52:29 -0700
+Subject: [RFC][PATCH] security: Make the selinux setxattr and removexattr
+	hooks behave
+In-Reply-To: <87tvzjllyu.fsf@xmission.com>
+References: <87tvzmqwoi.fsf@xmission.com>
+	<1913d5c4-64ef-36c1-e8ad-c779ff5c7995@schaufler-ca.com>
+	<1506694737.5571.9.camel@tycho.nsa.gov>
+	<6f293107-6ff9-c4c7-f682-207a546c5061@schaufler-ca.com>
+	<87vak0ma00.fsf@xmission.com>
+	<db1c58f3-5a01-5276-eba7-5aac7cdcbcf5@schaufler-ca.com>
+	<87d167ncms.fsf@xmission.com>
+	<bf18e641-91ed-0d75-f514-c059b5dfbb14@schaufler-ca.com>
+	<87tvzjllyu.fsf@xmission.com>
+Message-ID: <fa55814b-469d-65a5-16dc-3641614b8a18@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+On 9/30/2017 6:02 PM, Eric W. Biederman wrote:
+> Casey Schaufler <casey@schaufler-ca.com> writes:
 >
-> Right, re-introducing the iint->mutex and a new i_generation field in
-> the iint struct with a separate set of locks should work.  It will be
-> reset if the file metadata changes (eg. setxattr, chown, chmod).
+>> On 9/30/2017 1:40 PM, Eric W. Biederman wrote:
+>>> Casey Schaufler <casey@schaufler-ca.com> writes:
+>>>
+>>>> On 9/30/2017 9:22 AM, Eric W. Biederman wrote:
+>>>>> Casey Schaufler <casey@schaufler-ca.com> writes:
+>>>>>
+>>>>>> On 9/29/2017 7:18 AM, Stephen Smalley wrote:
+>>>>>>> On Thu, 2017-09-28 at 18:16 -0700, Casey Schaufler wrote:
+>>>>>>>> On 9/28/2017 3:34 PM, Eric W. Biederman wrote:
+>>>>>>>>> It looks like once upon a time a long time ago selinux copied code
+>>>>>>>>> from cap_inode_removexattr and cap_inode_setxattr into
+>>>>>>>>> selinux_inode_setotherxattr.??However the code has now diverged and
+>>>>>>>>> selinux is implementing a policy that is quite different than
+>>>>>>>>> cap_inode_setxattr and cap_inode_removexattr especially when it
+>>>>>>>>> comes
+>>>>>>>>> to the security.capable xattr.
+>>>>>>>> What leads you to believe that this isn't intentional?
+>>>>>>>> It's most likely the case that this change occurred as
+>>>>>>>> part of the first round module stacking change. What behavior
+>>>>>>>> do you see that you're unhappy with?
+>>>>>>>>
+>>>>>>>>> To keep things working
+>>>>>>>> Which "things"? How are they not "working"?
+>>>>>>>>
+>>>>>>>>> ?and to make the comments in security/security.c
+>>>>>>>>> correct when the xattr is securit.capable, call cap_inode_setxattr
+>>>>>>>>> or cap_inode_removexattr as appropriate.
+>>>>>>>>>
+>>>>>>>>> I suspect there is a larger conversation to be had here but this
+>>>>>>>>> is enough to keep selinux from implementing a non-sense hard coded
+>>>>>>>>> policy that breaks other parts of the kernel.
+>>>>>>>> Specifics, please. Since I can't guess what problem you've
+>>>>>>>> encountered I can't tell if it's here, in the infrastructure,
+>>>>>>>> or in your perception of what constitutes "broken".
+>>>>>>>>
+>>>>>>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>>>>>>>> ---
+>>>>>>>>> ?security/selinux/hooks.c | 6 ++++++
+>>>>>>>>> ?1 file changed, 6 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>>>>>>>>> index f5d304736852..edf4bd292dc7 100644
+>>>>>>>>> --- a/security/selinux/hooks.c
+>>>>>>>>> +++ b/security/selinux/hooks.c
+>>>>>>>>> @@ -3167,6 +3167,9 @@ static int selinux_inode_setxattr(struct
+>>>>>>>>> dentry *dentry, const char *name,
+>>>>>>>>> ?	u32 newsid, sid = current_sid();
+>>>>>>>>> ?	int rc = 0;
+>>>>>>>>> ?
+>>>>>>>>> +	if (strcmp(name, XATTR_NAME_CAPS) == 0)
+>>>>>>>>> +		return cap_inode_setxattr(dentry, name, value,
+>>>>>>>>> size, flags);
+>>>>>>>>> +
+>>>>>>>> No. Don't even think of contemplating considering embedding the cap
+>>>>>>>> attribute check in the SELinux code. cap_inode_setxattr() is called
+>>>>>>>> in
+>>>>>>>> the infrastructure.
+>>>>>>> Except that it isn't, not if any other security module is enabled and
+>>>>>>> implements those hooks, to prevent imposing CAP_SYS_ADMIN checks when
+>>>>>>> setting security.selinux or security.SMACK*.
+>>>>>> OK. Yes, this bit of the infrastructure is some of the
+>>>>>> worst I've done in a long time. This is a case where we
+>>>>>> already need special case stacking infrastructure. It looks
+>>>>>> like we'll have to separate setting the cap attribute from
+>>>>>> checking the cap state in order to make this work. In any
+>>>>>> case, the security_inode_setxattr() code is where the change
+>>>>>> belongs. There will likely be fallout changes in the modules,
+>>>>>> including the cap module.
+>>>>>> ?
+>>>>>>
+>>>>>>> An alternative approach to fixing this would be to change the cap
+>>>>>>> functions to only apply their checks if setting the capability
+>>>>>>> attribute and defer any checks on other security.* attributes to either
+>>>>>>> the security framework or the other security modules.  Then the
+>>>>>>> framework could always call all the modules on the inode_setxattr and
+>>>>>>> inode_removexattr hooks as with other hooks.  The security framework
+>>>>>>> would then need to ensure that a check is still applied when setting
+>>>>>>> security.* attributes if it isn't already handled by one of the enabled
+>>>>>>> security modules, as you don't want unprivileged userspace to be able
+>>>>>>> to set arbitrary security.foo attributes or to set up security.selinux
+>>>>>>> or security.SMACK* attributes if those modules happen to be disabled.
+>>>>>> Agreed. This isn't a two line change. Grumble.
+>>>>>>
+>>>>>> I can guess at what the problem might be, but I hate making
+>>>>>> assumptions when I go to fix a problem. I will start looking
+>>>>>> at a patch, but it would really help if I could say for sure
+>>>>>> what I'm out to accomplish. It may be obvious to the casual
+>>>>>> observer, but that description has not been applied to me very
+>>>>>> often.
+>>>>> Apologies for the delayed reply.
+>>>>>
+>>>>> I am looking at security_inode_setxattr.
+>>>>>
+>>>>> For setting attributes in the security.* the generic code in fs/xattr.c
+>>>>> applies no permission checks.
+>>>>>
+>>>>> Each security module that implements an xattr in security.* then imposes
+>>>>> it's own policy on it's own attribute.
+>>>>>
+>>>>> For smack the basic rule is smack_privileged(CAP_MAC_ADMIN).
+>>>>> For selinux the basic rule is inode_or_owner_capable(inode).
+>>>>> For commoncap the basic rule is capable_wrt_inode_uidgid(inode, CAP_SETFCAP).
+>>>>>
+>>>>> commoncap also applies a default policity to setting security.* xattrs.
+>>>>> ns_capable(dentry->d_sb->s_userns, CAP_SYS_ADMIN).
+>>>>>
+>>>>> smack reuses that default policy by calling cap_inode_setxattr if it
+>>>>> isn't a smack security.* xattr.
+>>>>>
+>>>>> selinux has what looks like an old copy of the commoncap checks for
+>>>>> the security.* in selinux_inode_setotherxattr.  Testing for
+>>>>> capable(CAP_SETFCAP) for security.capable and capable(CAP_SYS_ADMIN)
+>>>>> for the others.
+>>>>>
+>>>>> With the added complication that selinux calls
+>>>>> selinux_inode_setotherxattr also for the remove_xattr case.  So fixing
+>>>>> this in selinux_inode_setotherxattr is not appropriate.
+>>>>>
+>>>>> I believe selinux also has general policy hooks it applies to all
+>>>>> invocations of setxattr.
+>>>>>
+>>>>> So I think to really fix this we need to separate the cases of is this
+>>>>> your security modules attribute from general policy checks added by the
+>>>>> security modules.  Perhaps something like this for
+>>>>> security_inode_setxattr:
+>>>>>
+>>>>> Hmm.  Looking at least ima also has the distinction between protecting
+>>>>> it's own xattr writes and running generaly security module policy on
+>>>>> xattr writes.
+>>>>>
+>>>>> int security_inode_setxattr(struct dentry *dentry, const char *name,
+>>>>> 			    const void *value, size_t size, int flags)
+>>>>> {
+>>>>> 	int ret = 0;
+>>>>>
+>>>>> 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>>>>> 		return 0;
+>>>>>
+>>>>> 	if (strncmp(name, XATTR_SECURITY_PREFIX,
+>>>>> 			sizeof(XATTR_SECURITY_PREFIX) - 1) == 0) {
+>>>>> 		/* Call the security modules and see if they all return
+>>>>>                  * -EOPNOTSUPP if so apply the default permission
+>>>>>                  * check of ns_capable(dentry->d_sb->s_user_ns, CAP_SYS_ADMIN)
+>>>>>                  * otherwise if one of the security modules supports
+>>>>> 		 * this attribute (signaled by returning something other
+>>>>> 		 * -EOPNOTSUPP) then set ret to that result.
+>>>>>                  *
+>>>>>                  * The security modules include at least smack, selinux,
+>>>>> 		 * commoncap, ima, and evm.
+>>>>>                  */
+>>>>>                  ret = magic_inode_protect_setxattr(dentry, name, value, size);
+>>>>>         }
+>>>>> 	if (ret)
+>>>>> 		return ret;
+>>>>>
+>>>>>         /* Run all of the security module policy against this setxattr call */
+>>>>>         return magic_inode_policy_setxattr(dentry, name, value, size);
+>>>>> }
+>>>>>
+>>>>> Eric
+>>>> Yup, that's pretty much what I'm thinking. It's unfortunate
+>>>> that the magic_ API isn't fully implemented. There's going to
+>>>> be a good deal of code surgery instead. Is there an observed
+>>>> problem today? This is going to have to get addressed for stacking,
+>>>> so if there isn't a behavioral issue that impacts something real
+>>>> I would like to defer spending significant time on it. Do you have
+>>>> a case where this is not working correctly?
+>>> Merged as of 4.14-rc1 is the support for user namespace root to set
+>>> sercurity.capable.  This fails when selinux is loaded.
+>> OK. Is the failure unique to SELinux, or does it fail with
+>> Smack as well?
+> I don't have a smack configuration handy, but reading through
+> the code smack setxattr the permission checks for all xattrs
+> that are not smack xattrs to cap_inode_setxattr.
 
-Note that the "inner lock" could possibly be omitted if the
-invalidation can be just a single atomic instruction.
+It's not hard to configure Smack. But, if you have a test case
+I can run it for you.
 
-So particularly if invalidation could be just an atomic_inc() on the
-generation count, there might not need to be any inner lock at all.
+> So smack and commoncap combined will not fail.
+>
+> smack and selinux will result in people who should be able to set
+> selinux xattrs not being able to.  That however is less of an immediate
+> problem.
 
-You'd have to serialize the actual measurement with the "read
-generation count", but that should be as simple as just doing a
-smp_rmb() between the "read generation count" and "do measurement on
-file contents".
+That's not currently a problem as you can't configure
+them both to be enabled.
 
-Of course, if you do something more complex in invalidation, you may
-end up needing a real lock.
+>
+>>> removexattr has the same problem and the code is a little less
+>>> convoluted in that case.
+>> Right. Because removexattr is a simpler situation.
+>>
+>>> Not being able to set the capability when you should be able to is
+>>> very noticable.  Like running into a brick wall noticable.
+>> Ah, now you've identified the problem. Yes, I would agree that you've
+>> uncovered an undesirable behavior.
+> Apologies for not being clearer earlier, but I was still in shock from
+> running into a brick wall.
 
-                 Linus
+You clearly don't work in security is running into a brick
+wall is a shocking experience :)
+
+I'm kind of surprised that the capability changes got sent
+upstream without SELinux ever being tested. That's a very common
+configuration in the Android enabled world.
+
+>
+>>> Which is where the minimal patch for selinux comes in.  I think it
+>>> solves the exact case in question, even if it isn't the perfect long
+>>> term solution.
+>> If the problem is unique to SELinux I can see your logic. If it
+>> isn't, that is, if it's also a problem with any other security
+>> module, there either needs to be a fix for that/those module/s
+>> as well or a "real" fix.
+>>
+>> I'm not opposed to the SELinux short term fix if you can say
+>> that that's the only module with the problem.
+> So far there are exactly two implementation of
+> LSM_HOOK_INIT(inode_setxattr, ...)
+>
+> So as a practical case it looks like combination with selinux is the
+> only case where the problem will be observed right now.  And it makes
+> the code at least somewhat match the comments in
+> security_inode_setxattr.
+>
+> Eric
+>
+>
+>
+
+
+.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
