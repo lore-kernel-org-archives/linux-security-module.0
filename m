@@ -1,164 +1,45 @@
-From: daniel@iogearbox.net (Daniel Borkmann)
-Date: Fri, 01 Sep 2017 00:38:40 +0200
-Subject: [PATCH 2/3] security: bpf: Add eBPF LSM hooks and security field
-	to eBPF map
-In-Reply-To: <20170831205635.80256-3-chenbofeng.kernel@gmail.com>
-References: <20170831205635.80256-1-chenbofeng.kernel@gmail.com>
-	<20170831205635.80256-3-chenbofeng.kernel@gmail.com>
-Message-ID: <59A88FF0.9010605@iogearbox.net>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Sun, 01 Oct 2017 08:08:11 -0400
+Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+	taken exclusively
+In-Reply-To: <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170928220215.GC15067@dastard>
+	<CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
+	<1506643967.5691.46.camel@linux.vnet.ibm.com>
+	<CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
+	<1506649980.5691.100.camel@linux.vnet.ibm.com>
+	<CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
+	<87mv5blki7.fsf@xmission.com>
+	<CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+Message-ID: <1506859691.5691.211.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08/31/2017 10:56 PM, Chenbo Feng wrote:
-> From: Chenbo Feng <fengc@google.com>
->
-> Introduce a pointer into struct bpf_map to hold the security information
-> about the map. The actual security struct varies based on the security
-> models implemented. Place the LSM hooks before each of the unrestricted
-> eBPF operations, the map_update_elem and map_delete_elem operations are
-> checked by security_map_modify. The map_lookup_elem and map_get_next_key
-> operations are checked by securtiy_map_read.
->
-> Signed-off-by: Chenbo Feng <fengc@google.com>
+On Sat, 2017-09-30 at 18:56 -0700, Linus Torvalds wrote:
+> On Sep 30, 2017 18:33, "Eric W. Biederman" <ebiederm@xmission.com> wrote:.
+> 
+> 
+> That would require a task_work or another kind of work callback so that
+> the writes of the xattr are not synchronous with the vfs callback
+> correct?
+> 
+> 
+> No, why?
+> 
+> You should just invalidate the IMA on xattr write or other operations that
+> make the measurement invalid. You only need the inner lock.
 
-Against which tree is this by the way, net-next? There are
-changes here which require a rebase of your set.
+Right, re-introducing the iint->mutex and a new i_generation field in
+the iint struct with a separate set of locks should work. ?It will be
+reset if the file metadata changes (eg. setxattr, chown, chmod).
 
-> ---
->   include/linux/bpf.h  |  3 +++
->   kernel/bpf/syscall.c | 28 ++++++++++++++++++++++++++++
->   2 files changed, 31 insertions(+)
->
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index b69e7a5869ff..ca3e6ff7091d 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -53,6 +53,9 @@ struct bpf_map {
->   	struct work_struct work;
->   	atomic_t usercnt;
->   	struct bpf_map *inner_map_meta;
-> +#ifdef CONFIG_SECURITY
-> +	void *security;
-> +#endif
->   };
->
->   /* function argument constraints */
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 045646da97cc..b15580bcf3b1 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -279,6 +279,10 @@ static int map_create(union bpf_attr *attr)
->   	if (err)
->   		return -EINVAL;
->
-> +	err = security_map_create();
+(We need i_generation for namespacing IMA as well.)
 
-Seems a bit limited to me, don't you want to be able to
-also differentiate between different map types? Same goes
-for security_prog_load() wrt prog types, no?
+thanks,
 
-> +	if (err)
-> +		return -EACCES;
-> +
->   	/* find map type and init map: hashtable vs rbtree vs bloom vs ... */
->   	map = find_and_alloc_map(attr);
->   	if (IS_ERR(map))
-> @@ -291,6 +295,10 @@ static int map_create(union bpf_attr *attr)
->   	if (err)
->   		goto free_map_nouncharge;
->
-> +	err = security_post_create(map);
-> +	if (err < 0)
-> +		goto free_map;
-> +
-
-So the hook you implement in patch 3/3 does:
-
-+static int selinux_bpf_post_create(struct bpf_map *map)
-+{
-+	struct bpf_security_struct *bpfsec;
-+
-+	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
-+	if (!bpfsec)
-+		return -ENOMEM;
-+
-+	bpfsec->sid = current_sid();
-+	map->security = bpfsec;
-+
-+	return 0;
-+}
-
-Where do you kfree() bpfsec when the map gets released
-normally or in error path?
-
->   	err = bpf_map_alloc_id(map);
->   	if (err)
->   		goto free_map;
-> @@ -410,6 +418,10 @@ static int map_lookup_elem(union bpf_attr *attr)
->   	if (IS_ERR(map))
->   		return PTR_ERR(map);
->
-> +	err = security_map_read(map);
-> +	if (err)
-> +		return -EACCES;
-
-How about actually dropping ref?
-
-> +
->   	key = memdup_user(ukey, map->key_size);
->   	if (IS_ERR(key)) {
->   		err = PTR_ERR(key);
-> @@ -490,6 +502,10 @@ static int map_update_elem(union bpf_attr *attr)
->   	if (IS_ERR(map))
->   		return PTR_ERR(map);
->
-> +	err = security_map_modify(map);
-> +	if (err)
-> +		return -EACCES;
-
-Ditto ...
-
->   	key = memdup_user(ukey, map->key_size);
->   	if (IS_ERR(key)) {
->   		err = PTR_ERR(key);
-> @@ -573,6 +589,10 @@ static int map_delete_elem(union bpf_attr *attr)
->   	if (IS_ERR(map))
->   		return PTR_ERR(map);
->
-> +	err = security_map_modify(map);
-> +	if (err)
-> +		return -EACCES;
-
-Ditto ...
-
->   	key = memdup_user(ukey, map->key_size);
->   	if (IS_ERR(key)) {
->   		err = PTR_ERR(key);
-> @@ -616,6 +636,10 @@ static int map_get_next_key(union bpf_attr *attr)
->   	if (IS_ERR(map))
->   		return PTR_ERR(map);
->
-> +	err = security_map_read(map);
-> +	if (err)
-> +		return -EACCES;
-
-And once again here ... :(
-
->   	if (ukey) {
->   		key = memdup_user(ukey, map->key_size);
->   		if (IS_ERR(key)) {
-> @@ -935,6 +959,10 @@ static int bpf_prog_load(union bpf_attr *attr)
->   	if (CHECK_ATTR(BPF_PROG_LOAD))
->   		return -EINVAL;
->
-> +	err = security_prog_load();
-> +	if (err)
-> +		return -EACCES;
-> +
->   	if (attr->prog_flags & ~BPF_F_STRICT_ALIGNMENT)
->   		return -EINVAL;
->
->
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
