@@ -1,59 +1,91 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Sun, 01 Oct 2017 17:11:58 -0500
-Subject: [RFC][PATCH] security: Make the selinux setxattr and removexattr
-	hooks behave
-In-Reply-To: <fa55814b-469d-65a5-16dc-3641614b8a18@schaufler-ca.com> (Casey
-	Schaufler's message of "Sun, 1 Oct 2017 11:52:29 -0700")
-References: <87tvzmqwoi.fsf@xmission.com>
-	<1913d5c4-64ef-36c1-e8ad-c779ff5c7995@schaufler-ca.com>
-	<1506694737.5571.9.camel@tycho.nsa.gov>
-	<6f293107-6ff9-c4c7-f682-207a546c5061@schaufler-ca.com>
-	<87vak0ma00.fsf@xmission.com>
-	<db1c58f3-5a01-5276-eba7-5aac7cdcbcf5@schaufler-ca.com>
-	<87d167ncms.fsf@xmission.com>
-	<bf18e641-91ed-0d75-f514-c059b5dfbb14@schaufler-ca.com>
-	<87tvzjllyu.fsf@xmission.com>
-	<fa55814b-469d-65a5-16dc-3641614b8a18@schaufler-ca.com>
-Message-ID: <87a81ajz69.fsf@xmission.com>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Sun, 1 Oct 2017 15:20:04 -0700
+Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+	taken exclusively
+In-Reply-To: <87shf2jzfr.fsf@xmission.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<20170928220215.GC15067@dastard>
+	<CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
+	<1506643967.5691.46.camel@linux.vnet.ibm.com>
+	<CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
+	<1506649980.5691.100.camel@linux.vnet.ibm.com>
+	<CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
+	<87mv5blki7.fsf@xmission.com>
+	<CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+	<87shf2jzfr.fsf@xmission.com>
+Message-ID: <CA+55aFwD=+5trJbmuc2SL-DYcdmt2p4gq1uPBp8mznj1JYSVTg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> writes:
-
-> On 9/30/2017 6:02 PM, Eric W. Biederman wrote:
->> I don't have a smack configuration handy, but reading through
->> the code smack setxattr the permission checks for all xattrs
->> that are not smack xattrs to cap_inode_setxattr.
+On Sun, Oct 1, 2017 at 3:06 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
-> It's not hard to configure Smack. But, if you have a test case
-> I can run it for you.
+> Unless I misread something it was being pointed out there are some vfs
+> operations today on which ima writes an ima xattr as a side effect.  And
+> those operations hold the i_sem.  So perhaps I am misunderstanding
+> things or writing the ima xattr needs to happen at some point.  Which
+> implies something like queued work.
 
-All I did was take /bin/ping from a RHEL or equally a fedora code base
-where it is setcap, and copied it with rsync as root in a user namespace
-and looked at the xattr.
+So the issue is indeed the inode semaphore, as it is used by IMA. But
+all these IMA patches to work around the issue are just horribly ugly.
+One adds a VFS-layer filesystem method that most filesystems end up
+not really needing (it's the same as the regular read), and other
+filesystems end up then having hacks with ("oh, I don't need to take
+this lock because it was already taken by the caller").
 
->From memory:
-$ cd
-$ unshare -Ur
-# rsync -Xp /bin/ping ping
+The second patch attempt avoided the need for a new filesystem method,
+but added a flag in an annoying place (for the same basic logic). The
+advantage is that now most filesystems don't actually need to care any
+more (and the filesystems that used to care now check that flag).
 
->> So smack and commoncap combined will not fail.
->>
->> smack and selinux will result in people who should be able to set
->> selinux xattrs not being able to.  That however is less of an immediate
->> problem.
->
-> That's not currently a problem as you can't configure
-> them both to be enabled.
+There was discussion about moving the flag to a mode convenient spot,
+which would have made it a lot less intrusive.
 
-Like I said not immediate.
+But the basic issue is that almost always when you see lock
+inversions, the problem can just be fixed by doing the locking
+differently instead.
 
-> You clearly don't work in security is running into a brick
-> wall is a shocking experience :)
+And that's what I was/am pushing for.
 
-The shock was that the security code was so b0rked.
+There really are two totally different issues:
 
-Eric
+ - the integrity _measurement_.
+
+   This one wants to be serialized, so that you don't have multiple
+concurrent measurements, and the serialization fundamentally has to be
+around all the IO, so this lock pretty much has to be outside the
+i_sem.
+
+ - the integrity invalidation on certain operations.
+
+   This one fundamentally had to be inside the i_sem, since some of
+the operations that cause this end up already holding the i_sem at a
+VFS layer.
+
+so you had these two different requirements (inside _and_ outside),
+and the IMA approach was basically to avoid the problem by making
+i_sem *the* lock, and then making the IO routines aware of it already
+being held. That does solve the inside/outside issue.
+
+But the simpler way to fix it is to simply use two locks that nest
+inside each other, with i_sem nesting in the middle.  That just avoids
+the problem entirely, and doesn't require anybody to ever care about
+i_sem semantic changes, because i_sem semantics simply didn't change
+at all.
+
+So that's the approach I'm pushing. I admittedly haven't actually
+looked at the IMA details, but from a high-level standpoint you can
+basically describe it (as above) without having to care too much about
+exactly what IMA even wants.
+
+The two-lock approach does require that the operations that invalidate
+the integrity measurements always only invalidate it, and don't try to
+re-compute it. But I suspect that would be entirely insane anyway
+(imagine a world where "setxattr" would have to read the whole file
+contents in order to revalidate the integrity measurement - even if
+there is nobody who even *cares*).
+
+           Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
