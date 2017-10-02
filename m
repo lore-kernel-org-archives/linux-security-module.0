@@ -1,210 +1,136 @@
-From: jlayton@redhat.com (Jeff Layton)
-Date: Mon, 02 Oct 2017 08:43:40 -0400
-Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
-	taken exclusively
-In-Reply-To: <1506946195.5691.268.camel@linux.vnet.ibm.com>
-References: <1506643967.5691.46.camel@linux.vnet.ibm.com>
-	<CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
-	<1506649980.5691.100.camel@linux.vnet.ibm.com>
-	<CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
-	<87mv5blki7.fsf@xmission.com>
-	<CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
-	<1506859691.5691.211.camel@linux.vnet.ibm.com>
-	<CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
-	<20171001223402.GG15067@dastard>
-	<1506901362.5691.247.camel@linux.vnet.ibm.com>
-	<20171002043554.GI15067@dastard>
-	<1506946195.5691.268.camel@linux.vnet.ibm.com>
-Message-ID: <1506948220.1719.11.camel@redhat.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Mon, 02 Oct 2017 09:38:20 -0500
+Subject: [PATCH] selinux: Perform both commoncap and selinux xattr checks
+In-Reply-To: <1506688601.5571.1.camel@tycho.nsa.gov> (Stephen Smalley's
+	message of "Fri, 29 Sep 2017 08:36:41 -0400")
+References: <87tvzmqwoi.fsf@xmission.com>
+	<1506688601.5571.1.camel@tycho.nsa.gov>
+Message-ID: <873771ipib.fsf_-_@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2017-10-02 at 08:09 -0400, Mimi Zohar wrote:
-> On Mon, 2017-10-02 at 15:35 +1100, Dave Chinner wrote:
-> > On Sun, Oct 01, 2017 at 07:42:42PM -0400, Mimi Zohar wrote:
-> > > On Mon, 2017-10-02 at 09:34 +1100, Dave Chinner wrote:
-> > > > On Sun, Oct 01, 2017 at 11:41:48AM -0700, Linus Torvalds wrote:
-> > > > > On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.
-> > > > > ibm.com> wrote:
-> > > > > > 
-> > > > > > Right, re-introducing the iint->mutex and a new
-> > > > > > i_generation field in
-> > > > > > the iint struct with a separate set of locks should
-> > > > > > work.  It will be
-> > > > > > reset if the file metadata changes (eg. setxattr, chown,
-> > > > > > chmod).
-> > > > > 
-> > > > > Note that the "inner lock" could possibly be omitted if the
-> > > > > invalidation can be just a single atomic instruction.
-> > > > > 
-> > > > > So particularly if invalidation could be just an atomic_inc()
-> > > > > on the
-> > > > > generation count, there might not need to be any inner lock
-> > > > > at all.
-> > > > > 
-> > > > > You'd have to serialize the actual measurement with the "read
-> > > > > generation count", but that should be as simple as just doing
-> > > > > a
-> > > > > smp_rmb() between the "read generation count" and "do
-> > > > > measurement on
-> > > > > file contents".
-> > > > 
-> > > > We already have a change counter on the inode, which is
-> > > > modified on
-> > > > any data or metadata write (i_version) under filesystem
-> > > > locks.  The
-> > > > i_version counter has well defined semantics - it's required by
-> > > > NFSv4 to increment on any metadata or data change - so we
-> > > > should be
-> > > > able to rely on it's behaviour to implement IMA as well.
-> > > > Filesystems
-> > > > that support i_version are marked with [SB|MS]_I_VERSION in the
-> > > > superblock (IS_I_VERSION(inode)) so it should be easy to tell
-> > > > if IMA
-> > > > can be supported on a specific filesystem (btrfs, ext4, fuse
-> > > > and xfs
-> > > > ATM).
-> > > 
-> > > Recently I received a patch to replace i_version with
-> > > mtime/atime.
-> > 
 
-I assume you're talking here about the patch I sent a few months ago.
+When selinux is loaded the relax permission checks for writing
+security.capable are not honored.  Which keeps file capabilities
+from being used in user namespaces.
 
-I specifically do _not_ want to replace i_version with the mtime/atime.
-The point there was to stop trying to use i_version on filesystems that
-don't properly implement it (which is most of them).
+Stephen Smalley <sds@tycho.nsa.gov> writes:
+> Originally SELinux called the cap functions directly since there was no
+> stacking support in the infrastructure and one had to manually stack a
+> secondary module internally.  inode_setxattr and inode_removexattr
+> however were special cases because the cap functions would check
+> CAP_SYS_ADMIN for any non-capability attributes in the security.*
+> namespace, and we don't want to impose that requirement on setting
+> security.selinux.  Thus, we inlined the capabilities logic into the
+> selinux hook functions and adapted it appropriately.
 
-The next best approximation on those filesystems is the mtime. It's not
-perfect, but it's better than nothing (which is what you have now on
-filesystems that never increment i_version on writes). IOW, it just
-added a fallback for when you can't count on the i_version changing.
+Now that the permission checks in commoncap have evolved this
+inlining of their contents has become a problem.  So restructure
+selinux_inode_removexattr, and selinux_inode_setxattr to call
+both the corresponding cap_inode_ function and dentry_has_perm
+when the attribute is not a selinux security xattr.   This ensures
+the policies of both commoncap and selinux are enforced.
 
-(BTW: atime is worthless here -- who cares if the thing was accessed?
-IIUC, we only care if something changed.)
+This results in smack and selinux having the same basic structure
+for setxattr and removexattr.  Performing their own special permission
+checks when it is their modules xattr being written to, and deferring
+to commoncap when that is not the case.  Then finally performing their
+generic module policy on all xattr writes.
 
-Ideally, all filesystems would implement i_version properly. In
-practice, that's a tall order as that may require on-disk changes for
-some of them. That's not always possible where cross-OS compatibility
-is necessary (e.g. FAT or NTFS).
+This structure is fine when you only consider stacking with the
+commoncap lsm, but it becomes a problem if two lsms that don't want
+the commoncap security checks on their own attributes need to be
+stack.  This means there will need to be updates in the future as lsm
+stacking is improved, but at least now the structure between smack and
+selinux is common making the code easier to refactor.
 
-> > mtime is not guaranteed to change on data writes - the resolution
-> > of
-> > the filesystem timestamps may mean mtime only changes once a second
-> > regardless of the number of writes performed to that file. That's
-> > why NFS can't use it as a change attribute, and hence we have
-> > i_version....
-> > 
-> > >  Now, even more recently, I received a patch that claims that
-> > > i_version is just a performance improvement.
-> > 
-> > Did you ask them to explain/quantify the performance improvement?
-> 
-> Using i_version is a performance improvement as opposed to always
-> calculating the file hash and writing the xattr.  The patch is
-> intended for filesystems that don't support i_version (eg. ubifs).
->  
-> > e.g. Using i_version on XFS slows down performance on small
-> > writes by 2-3% because i_version because all data writes log a
-> > version change rather than only logging a change when mtime
-> > updates.
-> > We take that penalty because NFS requires specific change attribute
-> > behaviour, otherwise we wouldn't have implemented it at all in
-> > XFS...
-> > 
-> > >  For file systems that
-> > > don't support i_version, assume that the file has changed.
-> > > 
-> > > For file systems that don't support i_version, instead of
-> > > assuming
-> > > that the file has changed, we can at least use i_generation.
-> > 
-> > I'm not sure what you mean here - the struct inode already has a
-> > i_generation variable. It's a lifecycle indicator used to
-> > discriminate between alloc/free cycles on the same inode number.
-> > i.e. It only changes at inode allocation time, not whenever the
-> > data
-> > in the inode changes...
-> 
-> Sigh, my error.
-> 
-> > 
-> > > With Linus' suggested changes, I think this will work nicely.
-> > > 
-> > > > The IMA code should be able to sample that at measurement time
-> > > > and
-> > > > either fail or be retried if i_version changes during
-> > > > measurement.
-> > > > We can then simply make the IMA xattr write conditional on the
-> > > > i_version value being unchanged from the sample the IMA code
-> > > > passes
-> > > > into the filesystem once the filesystem holds all the locks it
-> > > > needs
-> > > > to write the xattr...
-> > > > I note that IMA already grabs the i_version in
-> > > > ima_collect_measurement(), so this shouldn't be too hard to do.
-> > > > Perhaps we don't need any new locks or counterst all, maybe
-> > > > just
-> > > > the ability to feed a version cookie to the set_xattr method?
-> > > 
-> > > The security.ima xattr is normally written out in
-> > > ima_check_last_writer(), not in ima_collect_measurement().
-> > 
-> > Which, if IIUC, does this to measure and update the xattr:
-> > 
-> > ima_check_last_writer
-> >   -> ima_update_xattr
-> >     -> ima_collect_measurement
-> >     -> ima_fix_xattr
-> > 
-> > >  ima_collect_measurement() calculates the file hash for storing
-> > > in the
-> > > measurement list (IMA-measurement), verifying the hash/signature
-> > > (IMA-
-> > > appraisal) already stored in the xattr, and auditing (IMA-audit).
-> > 
-> > Yup, and it samples the i_version before it calculates the hash and
-> > stores it in the iint, which then gets passed to ima_fix_xattr().
-> > Looks like all that is needed is to pass the i_version back to the
-> > filesystem through the xattr call....
-> > 
-> > IOWs, sample the i_version early while we hold the inode lock and
-> > check the writer count, then if it is the last writer drop the
-> > inode
-> > lock and call ima_update_xattr(). The sampled i_version then tells
-> > us if the file has changed before we write the updated xattr...
-> > 
-> > > The only time that ima_collect_measurement() writes the file
-> > > xattr is
-> > > in "fix" mode.  Writing the xattr will need to be deferred until
-> > > after
-> > > the iint->mutex is released.
-> > 
-> > ima_collect_measurement() doesn't write an xattr at all - it just
-> > reads the file data and calculates the hash.
-> 
-> There's another call to ima_fix_xattr() from
-> ima_appraise_measurement(). 
-> 
-> > > There should be no open writers in ima_check_last_writer(), so
-> > > the
-> > > file shouldn't be changing.
-> > 
-> > If that code is not holding the inode i_rwsem across
-> > ima_update_xattr(), then the writer check is racy as hell.  We're
-> > trying to get rid of the need for this code to hold the inode lock
-> > to stabilise the writer count for the entire operation, and it
-> > looks
-> > to me like everything is there to use the i_version to ensure the
-> > the IMA code doesn't need to hold the inode lock across
-> > ima_collect_measurement() and ima_fix_xattr()...
-> 
-> Ok
-> 
-> Mimi
-> 
+This change also has the effect that selinux_linux_setotherxattr becomes
+unnecessary so it is removed.
+
+Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
+Fixes: 7bbf0e052b76 ("[PATCH] selinux merge")
+Historical Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+
+While this fixes some things this isn't a regression so it should be
+able to wait until the next merge window to be merged.   Would you like
+to take this through the selinux tree?  Or shall I take it through mine?
+
+security/selinux/hooks.c | 43 ++++++++++++++++++-------------------------
+ 1 file changed, 18 insertions(+), 25 deletions(-)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f5d304736852..c78dbec627f6 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3124,27 +3124,6 @@ static int selinux_inode_getattr(const struct path *path)
+ 	return path_has_perm(current_cred(), path, FILE__GETATTR);
+ }
+ 
+-static int selinux_inode_setotherxattr(struct dentry *dentry, const char *name)
+-{
+-	const struct cred *cred = current_cred();
+-
+-	if (!strncmp(name, XATTR_SECURITY_PREFIX,
+-		     sizeof XATTR_SECURITY_PREFIX - 1)) {
+-		if (!strcmp(name, XATTR_NAME_CAPS)) {
+-			if (!capable(CAP_SETFCAP))
+-				return -EPERM;
+-		} else if (!capable(CAP_SYS_ADMIN)) {
+-			/* A different attribute in the security namespace.
+-			   Restrict to administrator. */
+-			return -EPERM;
+-		}
+-	}
+-
+-	/* Not an attribute we recognize, so just check the
+-	   ordinary setattr permission. */
+-	return dentry_has_perm(cred, dentry, FILE__SETATTR);
+-}
+-
+ static bool has_cap_mac_admin(bool audit)
+ {
+ 	const struct cred *cred = current_cred();
+@@ -3167,8 +3146,15 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
+ 	u32 newsid, sid = current_sid();
+ 	int rc = 0;
+ 
+-	if (strcmp(name, XATTR_NAME_SELINUX))
+-		return selinux_inode_setotherxattr(dentry, name);
++	if (strcmp(name, XATTR_NAME_SELINUX)) {
++		rc = cap_inode_setxattr(dentry, name, value, size, flags);
++		if (rc)
++			return rc;
++
++		/* Not an attribute we recognize, so just check the
++		   ordinary setattr permission. */
++		return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
++	}
+ 
+ 	sbsec = inode->i_sb->s_security;
+ 	if (!(sbsec->flags & SBLABEL_MNT))
+@@ -3282,8 +3268,15 @@ static int selinux_inode_listxattr(struct dentry *dentry)
+ 
+ static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
+ {
+-	if (strcmp(name, XATTR_NAME_SELINUX))
+-		return selinux_inode_setotherxattr(dentry, name);
++	if (strcmp(name, XATTR_NAME_SELINUX)) {
++		int rc = cap_inode_removexattr(dentry, name);
++		if (rc)
++			return rc;
++
++		/* Not an attribute we recognize, so just check the
++		   ordinary setattr permission. */
++		return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
++	}
+ 
+ 	/* No one is allowed to remove a SELinux security label.
+ 	   You can change the label, but all data must be labeled. */
 -- 
-Jeff Layton <jlayton@redhat.com>
+2.14.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
