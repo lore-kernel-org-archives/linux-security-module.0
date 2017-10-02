@@ -1,146 +1,95 @@
-From: david@fromorbit.com (Dave Chinner)
-Date: Mon, 2 Oct 2017 15:35:54 +1100
-Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
-	taken exclusively
-In-Reply-To: <1506901362.5691.247.camel@linux.vnet.ibm.com>
-References: <1506643967.5691.46.camel@linux.vnet.ibm.com>
-	<CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
-	<1506649980.5691.100.camel@linux.vnet.ibm.com>
-	<CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
-	<87mv5blki7.fsf@xmission.com>
-	<CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
-	<1506859691.5691.211.camel@linux.vnet.ibm.com>
-	<CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
-	<20171001223402.GG15067@dastard>
-	<1506901362.5691.247.camel@linux.vnet.ibm.com>
-Message-ID: <20171002043554.GI15067@dastard>
+From: geert@linux-m68k.org (Geert Uytterhoeven)
+Date: Mon, 2 Oct 2017 09:14:36 +0200
+Subject: Modular BIG_KEYS (was: Re: [PATCH v4] security/keys: rewrite all of
+	big_key crypto)
+Message-ID: <CAMuHMdWd3ttH7Zdpo=bodkOBw2xiyeX_R9MhPf=Bcf0-QLhOiQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Oct 01, 2017 at 07:42:42PM -0400, Mimi Zohar wrote:
-> On Mon, 2017-10-02 at 09:34 +1100, Dave Chinner wrote:
-> > On Sun, Oct 01, 2017 at 11:41:48AM -0700, Linus Torvalds wrote:
-> > > On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > > >
-> > > > Right, re-introducing the iint->mutex and a new i_generation field in
-> > > > the iint struct with a separate set of locks should work.  It will be
-> > > > reset if the file metadata changes (eg. setxattr, chown, chmod).
-> > > 
-> > > Note that the "inner lock" could possibly be omitted if the
-> > > invalidation can be just a single atomic instruction.
-> > > 
-> > > So particularly if invalidation could be just an atomic_inc() on the
-> > > generation count, there might not need to be any inner lock at all.
-> > > 
-> > > You'd have to serialize the actual measurement with the "read
-> > > generation count", but that should be as simple as just doing a
-> > > smp_rmb() between the "read generation count" and "do measurement on
-> > > file contents".
-> > 
-> > We already have a change counter on the inode, which is modified on
-> > any data or metadata write (i_version) under filesystem locks.  The
-> > i_version counter has well defined semantics - it's required by
-> > NFSv4 to increment on any metadata or data change - so we should be
-> > able to rely on it's behaviour to implement IMA as well. Filesystems
-> > that support i_version are marked with [SB|MS]_I_VERSION in the
-> > superblock (IS_I_VERSION(inode)) so it should be easy to tell if IMA
-> > can be supported on a specific filesystem (btrfs, ext4, fuse and xfs
-> > ATM).
-> 
-> Recently I received a patch to replace i_version with mtime/atime.
+Hi Jason,
 
-mtime is not guaranteed to change on data writes - the resolution of
-the filesystem timestamps may mean mtime only changes once a second
-regardless of the number of writes performed to that file. That's
-why NFS can't use it as a change attribute, and hence we have
-i_version....
+On Sat, Sep 16, 2017 at 3:00 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> This started out as just replacing the use of crypto/rng with
+> get_random_bytes_wait, so that we wouldn't use bad randomness at boot time.
+> But, upon looking further, it appears that there were even deeper
+> underlying cryptographic problems, and that this seems to have been
+> committed with very little crypto review. So, I rewrote the whole thing,
+> trying to keep to the conventions introduced by the previous author, to
+> fix these cryptographic flaws.
+>
+> It makes no sense to seed crypto/rng at boot time and then keep
+> using it like this, when in fact there's already get_random_bytes_wait,
+> which can ensure there's enough entropy and be a much more standard way
+> of generating keys. Since this sensitive material is being stored untrusted,
+> using ECB and no authentication is simply not okay at all. I find it
+> surprising and a bit horrifying that this code even made it past basic
+> crypto review, which perhaps points to some larger issues. This patch
+> moves from using AES-ECB to using AES-GCM. Since keys are uniquely generated
+> each time, we can set the nonce to zero. There was also a race condition in
+> which the same key would be reused at the same time in different threads. A
+> mutex fixes this issue now. And, some error paths forgot to zero out sensitive
+> material, so this patch changes a kfree into a kzfree.
+>
+> So, to summarize, this commit fixes the following vulnerabilities:
+>
+>   * Low entropy key generation, allowing an attacker to potentially
+>     guess or predict keys.
+>   * Unauthenticated encryption, allowing an attacker to modify the
+>     cipher text in particular ways in order to manipulate the plaintext,
+>     which is is even more frightening considering the next point.
+>   * Use of ECB mode, allowing an attacker to trivially swap blocks or
+>     compare identical plaintext blocks.
+>   * Key re-use.
+>   * Faulty memory zeroing.
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 
-> ?Now, even more recently, I received a patch that claims that
-> i_version is just a performance improvement.
+> --- a/security/keys/Kconfig
+> +++ b/security/keys/Kconfig
+> @@ -45,10 +45,8 @@ config BIG_KEYS
+>         bool "Large payload keys"
+>         depends on KEYS
+>         depends on TMPFS
+> -       depends on (CRYPTO_ANSI_CPRNG = y || CRYPTO_DRBG = y)
+>         select CRYPTO_AES
+> -       select CRYPTO_ECB
+> -       select CRYPTO_RNG
+> +       select CRYPTO_GCM
+>         help
+>           This option provides support for holding large keys within the kernel
+>           (for example Kerberos ticket caches).  The data may be stored out to
 
-Did you ask them to explain/quantify the performance improvement? 
+Now this has hit mainline, the "BIG_KEYS" Kconfig symbol appeared on my
+radar. Is there any reason this cannot be tristate?
 
-e.g. Using i_version on XFS slows down performance on small
-writes by 2-3% because i_version because all data writes log a
-version change rather than only logging a change when mtime updates.
-We take that penalty because NFS requires specific change attribute
-behaviour, otherwise we wouldn't have implemented it at all in
-XFS...
+The help text says:
 
-> ?For file systems that
-> don't support i_version, assume that the file has changed.
-> 
-> For file systems that don't support i_version, instead of assuming
-> that the file has changed, we can at least use i_generation.
+    This option provides support for holding large keys within the kernel
+    (for example Kerberos ticket caches).  The data may be stored out to
+    swapspace by tmpfs.
 
-I'm not sure what you mean here - the struct inode already has a
-i_generation variable. It's a lifecycle indicator used to
-discriminate between alloc/free cycles on the same inode number.
-i.e. It only changes at inode allocation time, not whenever the data
-in the inode changes...
+    If you are unsure as to whether this is required, answer N.
 
-> With Linus' suggested changes, I think this will work nicely.
-> 
-> > The IMA code should be able to sample that at measurement time and
-> > either fail or be retried if i_version changes during measurement.
-> > We can then simply make the IMA xattr write conditional on the
-> > i_version value being unchanged from the sample the IMA code passes
-> > into the filesystem once the filesystem holds all the locks it needs
-> > to write the xattr...
-> 
-> > I note that IMA already grabs the i_version in
-> > ima_collect_measurement(), so this shouldn't be too hard to do.
-> > Perhaps we don't need any new locks or counterst all, maybe just
-> > the ability to feed a version cookie to the set_xattr method?
-> 
-> The security.ima xattr is normally written out in
-> ima_check_last_writer(), not in ima_collect_measurement().
+So to save kernel size, I wan't to save N, but for a distro kernel that might
+have Kerberos users, you currently need to say Y, while M would be nicer.
 
-Which, if IIUC, does this to measure and update the xattr:
+The symbol seems to just control the build of security/keys/big_key.c,
+which could use module_init() in the modular case.
+I'm not sending a patch to change BIG_KEYS from bool to tristate, as this is
+crypto, and I don't understand the full implications.
 
-ima_check_last_writer
-  -> ima_update_xattr
-    -> ima_collect_measurement
-    -> ima_fix_xattr
+Thanks!
 
-> ?ima_collect_measurement() calculates the file hash for storing in the
-> measurement list (IMA-measurement), verifying the hash/signature (IMA-
-> appraisal) already stored in the xattr, and auditing (IMA-audit).
+Gr{oetje,eeting}s,
 
-Yup, and it samples the i_version before it calculates the hash and
-stores it in the iint, which then gets passed to ima_fix_xattr().
-Looks like all that is needed is to pass the i_version back to the
-filesystem through the xattr call....
+                        Geert
 
-IOWs, sample the i_version early while we hold the inode lock and
-check the writer count, then if it is the last writer drop the inode
-lock and call ima_update_xattr(). The sampled i_version then tells
-us if the file has changed before we write the updated xattr...
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert at linux-m68k.org
 
-> The only time that ima_collect_measurement() writes the file xattr is
-> in "fix" mode. ?Writing the xattr will need to be deferred until after
-> the iint->mutex is released.
-
-ima_collect_measurement() doesn't write an xattr at all - it just
-reads the file data and calculates the hash.
-
-> There should be no open writers in ima_check_last_writer(), so the
-> file shouldn't be changing.
-
-If that code is not holding the inode i_rwsem across
-ima_update_xattr(), then the writer check is racy as hell.  We're
-trying to get rid of the need for this code to hold the inode lock
-to stabilise the writer count for the entire operation, and it looks
-to me like everything is there to use the i_version to ensure the
-the IMA code doesn't need to hold the inode lock across
-ima_collect_measurement() and ima_fix_xattr()...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david at fromorbit.com
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
