@@ -1,67 +1,47 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Mon, 2 Oct 2017 10:52:37 -0500
-Subject: [PATCH] selinux: Perform both commoncap and selinux xattr checks
-In-Reply-To: <873771ipib.fsf_-_@xmission.com>
-References: <87tvzmqwoi.fsf@xmission.com>
-	<1506688601.5571.1.camel@tycho.nsa.gov>
-	<873771ipib.fsf_-_@xmission.com>
-Message-ID: <20171002155237.GA17251@mail.hallyn.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Mon, 2 Oct 2017 10:01:11 -0700
+Subject: Modular BIG_KEYS (was: Re: [PATCH v4] security/keys: rewrite all
+	of big_key crypto)
+In-Reply-To: <CAMuHMdWd3ttH7Zdpo=bodkOBw2xiyeX_R9MhPf=Bcf0-QLhOiQ@mail.gmail.com>
+References: <CAMuHMdWd3ttH7Zdpo=bodkOBw2xiyeX_R9MhPf=Bcf0-QLhOiQ@mail.gmail.com>
+Message-ID: <20171002170111.GA6713@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Eric W. Biederman (ebiederm at xmission.com):
-> -UID: 28009                                                  
-> Status: O
+On Mon, Oct 02, 2017 at 09:14:36AM +0200, Geert Uytterhoeven wrote:
+> Now this has hit mainline, the "BIG_KEYS" Kconfig symbol appeared on my
+> radar. Is there any reason this cannot be tristate?
 > 
+> The help text says:
 > 
-> When selinux is loaded the relax permission checks for writing
-> security.capable are not honored.  Which keeps file capabilities
-> from being used in user namespaces.
+>     This option provides support for holding large keys within the kernel
+>     (for example Kerberos ticket caches).  The data may be stored out to
+>     swapspace by tmpfs.
 > 
-> Stephen Smalley <sds@tycho.nsa.gov> writes:
-> > Originally SELinux called the cap functions directly since there was no
-> > stacking support in the infrastructure and one had to manually stack a
-> > secondary module internally.  inode_setxattr and inode_removexattr
-> > however were special cases because the cap functions would check
-> > CAP_SYS_ADMIN for any non-capability attributes in the security.*
-> > namespace, and we don't want to impose that requirement on setting
-> > security.selinux.  Thus, we inlined the capabilities logic into the
-> > selinux hook functions and adapted it appropriately.
+>     If you are unsure as to whether this is required, answer N.
 > 
-> Now that the permission checks in commoncap have evolved this
-> inlining of their contents has become a problem.  So restructure
-> selinux_inode_removexattr, and selinux_inode_setxattr to call
-> both the corresponding cap_inode_ function and dentry_has_perm
-> when the attribute is not a selinux security xattr.   This ensures
-> the policies of both commoncap and selinux are enforced.
+> So to save kernel size, I wan't to save N, but for a distro kernel that might
+> have Kerberos users, you currently need to say Y, while M would be nicer.
 > 
-> This results in smack and selinux having the same basic structure
-> for setxattr and removexattr.  Performing their own special permission
-> checks when it is their modules xattr being written to, and deferring
-> to commoncap when that is not the case.  Then finally performing their
-> generic module policy on all xattr writes.
+> The symbol seems to just control the build of security/keys/big_key.c,
+> which could use module_init() in the modular case.
+> I'm not sending a patch to change BIG_KEYS from bool to tristate, as this is
+> crypto, and I don't understand the full implications.
 > 
-> This structure is fine when you only consider stacking with the
-> commoncap lsm, but it becomes a problem if two lsms that don't want
-> the commoncap security checks on their own attributes need to be
-> stack.  This means there will need to be updates in the future as lsm
-> stacking is improved, but at least now the structure between smack and
-> selinux is common making the code easier to refactor.
-> 
-> This change also has the effect that selinux_linux_setotherxattr becomes
-> unnecessary so it is removed.
-> 
-> Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
-> Fixes: 7bbf0e052b76 ("[PATCH] selinux merge")
-> Historical Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-This is hairy, but it looks right:
+It's possible to have a key type in a module.  In fact, some of the existing key
+types such as key_type_rxrpc can already be modular.  But I don't think it
+really works as intended currently because there is no autoloading of key type
+modules.  That is, if big_key was a module and you tried to add a key of type
+"big_key", the big_key module would *not* be automatically loaded, so the call
+would return -ENODEV.  This could be fixed, I believe.
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+(I also still need to convince myself that there aren't any race conditions in
+key type unregistering.  It's a little weird how it changes the key type to the
+".dead" key type, rather than pinning the key type in memory while it's still
+used.)
 
-thanks,
--serge
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
