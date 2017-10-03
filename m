@@ -1,10 +1,10 @@
 From: jmorris@namei.org (James Morris)
-Date: Tue, 3 Oct 2017 21:52:54 +1100 (AEDT)
-Subject: [PATCH 3/7] lib/digsig: fix dereference of NULL user_key_payload
-In-Reply-To: <20170928212602.41744-4-ebiggers3@gmail.com>
+Date: Tue, 3 Oct 2017 21:56:19 +1100 (AEDT)
+Subject: [PATCH 4/7] fscrypt: fix dereference of NULL user_key_payload
+In-Reply-To: <20170928212602.41744-5-ebiggers3@gmail.com>
 References: <20170928212602.41744-1-ebiggers3@gmail.com>
-	<20170928212602.41744-4-ebiggers3@gmail.com>
-Message-ID: <alpine.LRH.2.21.1710032152430.25033@namei.org>
+	<20170928212602.41744-5-ebiggers3@gmail.com>
+Message-ID: <alpine.LRH.2.21.1710032156090.25033@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -12,7 +12,8 @@ On Thu, 28 Sep 2017, Eric Biggers wrote:
 
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> digsig_verify() requests a user key, then accesses its payload.
+> When an fscrypt-encrypted file is opened, we request the file's master
+> key from the keyrings service as a logon key, then access its payload.
 > However, a revoked key has a NULL payload, and we failed to check for
 > this.  request_key() *does* skip revoked keys, but there is still a
 > window where the key can be revoked before we acquire its semaphore.
@@ -20,12 +21,13 @@ On Thu, 28 Sep 2017, Eric Biggers wrote:
 > Fix it by checking for a NULL payload, treating it like a key which was
 > already revoked at the time it was requested.
 > 
-> Fixes: 051dbb918c7f ("crypto: digital signature verification support")
-> Cc: <stable@vger.kernel.org>    [v3.3+]
+> Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
+> Cc: <stable@vger.kernel.org>    [v4.1+]
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 
 
 Reviewed-by: James Morris <james.l.morris@oracle.com>
+
 
 -- 
 James Morris
