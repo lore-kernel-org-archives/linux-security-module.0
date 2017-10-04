@@ -1,46 +1,30 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Wed, 04 Oct 2017 16:27:52 -0400
-Subject: [PATCH 2/2] selinux: fix build warning
-In-Reply-To: <20171004183218.4786-2-clabbe.montjoie@gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 4 Oct 2017 16:33:50 -0400
+Subject: [PATCH 1/2] selinux: fix build warning by removing the unused sid
+	variable
+In-Reply-To: <1507148778.1491.10.camel@tycho.nsa.gov>
 References: <20171004183218.4786-1-clabbe.montjoie@gmail.com>
-	<20171004183218.4786-2-clabbe.montjoie@gmail.com>
-Message-ID: <1507148872.1491.11.camel@tycho.nsa.gov>
+	<1507148778.1491.10.camel@tycho.nsa.gov>
+Message-ID: <CAHC9VhSNVsFzMpCEa2gmADVF4G85VZDDqfpYsOCrzbJvjRX_GQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-10-04 at 20:32 +0200, Corentin Labbe wrote:
-> This patch make selinux_task_prlimit() static since it is not used
-> anywhere else.
-> This fix the following build warning:
-> security/selinux/hooks.c:3981:5: warning: no previous prototype for
-> 'selinux_task_prlimit' [-Wmissing-prototypes]
-> 
-> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+On Wed, Oct 4, 2017 at 4:26 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On Wed, 2017-10-04 at 20:32 +0200, Corentin Labbe wrote:
+>> This patch remove the unused variable sid
+>> This fix the following build warning:
+>> security/selinux/hooks.c:2921:6: warning: variable 'sid' set but not
+>> used [-Wunused-but-set-variable]
+>>
+>> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+>
+> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+Looks good to me too, merged into selinux/next.  Thanks.
 
-> ---
-> ?security/selinux/hooks.c | 4 ++--
-> ?1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 8507a56f85e4..b8a022f4b4a7 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3977,8 +3977,8 @@ static int selinux_task_getioprio(struct
-> task_struct *p)
-> ?			????PROCESS__GETSCHED, NULL);
-> ?}
-> ?
-> -int selinux_task_prlimit(const struct cred *cred, const struct cred
-> *tcred,
-> -			?unsigned int flags)
-> +static int selinux_task_prlimit(const struct cred *cred, const
-> struct cred *tcred,
-> +				unsigned int flags)
-> ?{
-> ?	u32 av = 0;
-> ?
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
