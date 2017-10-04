@@ -1,72 +1,107 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 4 Oct 2017 14:22:29 +0300
-Subject: [PATCH 3/3] tpm: add the crypto algorithm identifier to
-	active_bank_info
-In-Reply-To: <20170925111950.21511-4-roberto.sassu@huawei.com>
-References: <20170925111950.21511-1-roberto.sassu@huawei.com>
-	<20170925111950.21511-4-roberto.sassu@huawei.com>
-Message-ID: <20171004112229.7aafz6yttewq4pbb@linux.intel.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 04 Oct 2017 14:09:42 +0100
+Subject: [PATCH 4/4] KEYS: Add support for directly-specified uids and gids
+	in key ACLs
+In-Reply-To: <150712255850.28796.13303640645489194914.stgit@warthog.procyon.org.uk>
+References: <150712255850.28796.13303640645489194914.stgit@warthog.procyon.org.uk>
+Message-ID: <150712258210.28796.6772683563095078776.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 25, 2017 at 01:19:50PM +0200, Roberto Sassu wrote:
-> In preparation for the patch introducing a function to pass supported TPM
-> algorithms and digest sizes to TPM users, the crypto algorithm identifier
-> is added to the active_bank_info structure.
-> 
-> All members of active_bank_info are necessary: TPM algorithm identifiers
-> will be used to create an event log (they are included in the Crypto Agile
-> format defined by TCG); crypto identifiers will be used to calculate
-> digests using the crypto subsystem; digest sizes will be used to truncate
-> digests calculated with different algorithms.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-This should be in the patch set where it makes sense. Please remove it
-from the next version.
+---
 
-/Jarkko
+ include/uapi/linux/keyctl.h |    4 ++++
+ security/keys/permission.c  |   32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-> ---
->  drivers/char/tpm/tpm2-cmd.c | 2 ++
->  include/linux/tpm.h         | 1 +
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index b1356be..8c58f6e 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -946,6 +946,7 @@ static int tpm2_init_active_bank_info(struct tpm_chip *chip, u16 alg_id,
->  	int rc, i;
->  
->  	active_bank->alg_id = alg_id;
-> +	active_bank->crypto_id = HASH_ALGO__LAST;
->  
->  	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
->  		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
-> @@ -954,6 +955,7 @@ static int tpm2_init_active_bank_info(struct tpm_chip *chip, u16 alg_id,
->  			continue;
->  
->  		active_bank->digest_size = hash_digest_size[crypto_algo];
-> +		active_bank->crypto_id = crypto_algo;
->  		return 0;
->  	}
->  
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 3ecce21..fc927f3 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -54,6 +54,7 @@ struct tpm_class_ops {
->  
->  struct active_bank_info {
->  	u16 alg_id;
-> +	u16 crypto_id;
->  	u16 digest_size;
->  };
->  
-> -- 
-> 2.9.3
-> 
+diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+index 134052cba4f4..6b554074402d 100644
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -32,6 +32,8 @@ struct key_ace {
+ #define KEY_ACE__ORDINARY	0x0000001f /* Ordinary permissions */
+ #define KEY_ACE__PERMS		0x0fffffff
+ #define KEY_ACE_SUBJECT_ID	0x10000000 /* Subject specified by ->subject_id */
++#define KEY_ACE_UID		0x20000000 /* UID directly specified by ->uid */
++#define KEY_ACE_GID		0x30000000 /* GID directly specified by ->gid */
+ #define KEY_ACE__IDENTITY	0xf0000000
+ 
+ 	union {
+@@ -41,6 +43,8 @@ struct key_ace {
+ #define KEY_ACE_OWNER		3	/* The owner of the key */
+ #define KEY_ACE_POSSESSOR	4	/* Any process that possesses of the key */
+ #define KEY_ACE_SYS_ADMIN	5	/* Anyone with CAP_SYS_ADMIN */
++		uid_t		uid;
++		gid_t		gid;
+ 	};
+ };
+ 
+diff --git a/security/keys/permission.c b/security/keys/permission.c
+index 390885eb2bb7..4f20c6917287 100644
+--- a/security/keys/permission.c
++++ b/security/keys/permission.c
+@@ -105,6 +105,18 @@ int key_task_permission(const key_ref_t key_ref, const struct cred *cred,
+ 				break;
+ 			}
+ 			break;
++		case KEY_ACE_UID:
++			if (uid_eq(ace->uid, cred->fsuid))
++				allow |= ace->mask;
++			break;
++		case KEY_ACE_GID:
++			if (gid_valid(ace->gid)) {
++				if (gid_eq(ace->gid, cred->fsgid))
++					allow |= ace->mask;
++				else if (groups_search(cred->group_info, ace->gid))
++					allow |= ace->mask;
++			}
++			break;
+ 		}
+ 	}
+ 
+@@ -276,6 +288,14 @@ long keyctl_get_acl(key_serial_t keyid,
+ 			if (put_user(ace->subject_id, &_acl[i].subject_id) < 0)
+ 				goto error;
+ 			break;
++		case KEY_ACE_UID:
++			if (put_user(from_kuid_munged(ns, ace->uid), &_acl[i].uid) < 0)
++				goto error;
++			break;
++		case KEY_ACE_GID:
++			if (put_user(from_kgid_munged(ns, ace->gid), &_acl[i].gid) < 0)
++				goto error;
++			break;
+ 		}
+ 	}
+ 
+@@ -312,6 +332,8 @@ static struct key_acl *key_get_acl_from_user(const struct key_ace __user *_acl,
+ 	ns = current_user_ns();
+ 	for (i = 0; i < nr_ace; i++) {
+ 		struct kernel_key_ace *ace = &acl->aces[i];
++		uid_t uid;
++		gid_t gid;
+ 
+ 		if (get_user(ace->mask, &_acl[i].mask) < 0)
+ 			goto fault;
+@@ -324,6 +346,16 @@ static struct key_acl *key_get_acl_from_user(const struct key_ace __user *_acl,
+ 			    ace->subject_id > KEY_ACE_SYS_ADMIN)
+ 				goto inval;
+ 			break;
++		case KEY_ACE_UID:
++			if (get_user(uid, &_acl[i].uid) < 0)
++				goto fault;
++			ace->uid = make_kuid(ns, uid);
++			break;
++		case KEY_ACE_GID:
++			if (get_user(gid, &_acl[i].gid) < 0)
++				goto fault;
++			ace->gid = make_kgid(ns, gid);
++			break;
+ 		default:
+ 			goto inval;
+ 		}
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
