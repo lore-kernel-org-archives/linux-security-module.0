@@ -1,45 +1,104 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed,  4 Oct 2017 06:29:23 -0400
-Subject: [PATCH v3 4/5] tpm: reduce tpm_msleep() time in get_burstcount()
+Date: Wed,  4 Oct 2017 06:29:21 -0400
+Subject: [PATCH v3 2/5] tpm: ignore burstcount to improve tpm_tis send()
+	performance
 In-Reply-To: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
 References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20171004102924.12355-5-nayna@linux.vnet.ibm.com>
+Message-ID: <20171004102924.12355-3-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Currently, get_burstcount() function sleeps for 5msec in a loop
-before retrying for next query to burstcount. However, if it takes
-lesser time for TPM to return, this 5msec delay is longer
-than necessary.
+The TPM burstcount status indicates the number of bytes that can
+be sent to the TPM without causing bus wait states.  Effectively,
+it is the number of empty bytes in the command FIFO. Further,
+some TPMs have a static burstcount, when the value remains zero
+until the entire FIFO is empty.
 
-This patch replaces the tpm_msleep time from 5msec to 1msec.
+This patch optimizes the tpm_tis_send_data() function by checking
+the burstcount only once. And if the burstcount is valid, it writes
+all the bytes at once, permitting wait states. The performance of a
+34 byte extend on a TPM 1.2 with an 8 byte burstcount improved from
+41msec to 14msec.
 
 After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~10sec to ~9sec.
+burstcount for 1000 extends improved from ~41sec to ~14sec.
 
+Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
+conjunction with the TPM Device Driver work group.
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm_tis_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis_core.c | 42 ++++++++++++++++-------------------------
+ 1 file changed, 16 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 224842e06105..826a0b9c9201 100644
+index b33126a35694..8da425e1783f 100644
 --- a/drivers/char/tpm/tpm_tis_core.c
 +++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -226,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
- 		burstcnt = (value >> 8) & 0xFFFF;
- 		if (burstcnt)
- 			return burstcnt;
--		tpm_msleep(TPM_TIMEOUT);
-+		tpm_msleep(TPM_POLL_SLEEP);
- 	} while (time_before(jiffies, stop));
- 	return -EBUSY;
- }
+@@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 	int rc, status, burstcnt;
+-	size_t count = 0;
+ 	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+ 
+ 	status = tpm_tis_status(chip);
+@@ -330,35 +329,26 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+ 		}
+ 	}
+ 
+-	while (count < len - 1) {
+-		burstcnt = get_burstcount(chip);
+-		if (burstcnt < 0) {
+-			dev_err(&chip->dev, "Unable to read burstcount\n");
+-			rc = burstcnt;
+-			goto out_err;
+-		}
+-		burstcnt = min_t(int, burstcnt, len - count - 1);
+-		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+-					 burstcnt, buf + count);
+-		if (rc < 0)
+-			goto out_err;
++	/*
++	 * Get the initial burstcount to ensure TPM is ready to
++	 * accept data.
++	 */
++	burstcnt = get_burstcount(chip);
++	if (burstcnt < 0) {
++		dev_err(&chip->dev, "Unable to read burstcount\n");
++		rc = burstcnt;
++		goto out_err;
++	}
+ 
+-		count += burstcnt;
++	burstcnt = len - 1;
+ 
+-		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-					&priv->int_queue, false) < 0) {
+-			rc = -ETIME;
+-			goto out_err;
+-		}
+-		status = tpm_tis_status(chip);
+-		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
+-			rc = -EIO;
+-			goto out_err;
+-		}
+-	}
++	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
++			burstcnt, buf);
++	if (rc < 0)
++		goto out_err;
+ 
+ 	/* write last byte */
+-	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
++	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-1]);
+ 	if (rc < 0)
+ 		goto out_err;
+ 
 -- 
 2.13.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
