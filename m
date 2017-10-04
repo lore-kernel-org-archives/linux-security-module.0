@@ -1,34 +1,74 @@
-From: jmorris@namei.org (James Morris)
-Date: Thu, 5 Oct 2017 09:10:58 +1100 (AEDT)
-Subject: [PATCH] fix security_release_secctx seems broken
-In-Reply-To: <ff77bdc9-e642-113d-dbde-f4d0770fff00@yandex-team.ru>
-References: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
-	<c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
-	<ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
-	<alpine.LRH.2.21.1710041713160.19339@namei.org>
-	<ff77bdc9-e642-113d-dbde-f4d0770fff00@yandex-team.ru>
-Message-ID: <alpine.LRH.2.21.1710050910300.28944@namei.org>
+From: daniel@iogearbox.net (Daniel Borkmann)
+Date: Thu, 05 Oct 2017 01:29:49 +0200
+Subject: [PATCH net-next 1/4] bpf: Add file mode configuration into bpf
+	maps
+In-Reply-To: <20171004182932.140028-2-chenbofeng.kernel@gmail.com>
+References: <20171004182932.140028-1-chenbofeng.kernel@gmail.com>
+	<20171004182932.140028-2-chenbofeng.kernel@gmail.com>
+Message-ID: <59D56EED.1030804@iogearbox.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 4 Oct 2017, Konstantin Khlebnikov wrote:
+On 10/04/2017 08:29 PM, Chenbo Feng wrote:
+> From: Chenbo Feng <fengc@google.com>
+>
+> Introduce the map read/write flags to the eBPF syscalls that returns the
+> map fd. The flags is used to set up the file mode when construct a new
+> file descriptor for bpf maps. To not break the backward capability, the
+> f_flags is set to O_RDWR if the flag passed by syscall is 0. Otherwise
+> it should be O_RDONLY or O_WRONLY. When the userspace want to modify or
+> read the map content, it will check the file mode to see if it is
+> allowed to make the change.
+[...]
+> +int bpf_get_file_flag(int flags)
+> +{
+> +	if ((flags & BPF_F_RDONLY) && (flags & BPF_F_WRONLY))
+> +		return -EINVAL;
+> +	if (flags & BPF_F_RDONLY)
+> +		return O_RDONLY;
+> +	if (flags & BPF_F_WRONLY)
+> +		return O_WRONLY;
+> +	return O_RDWR;
+>   }
+>
+>   /* helper macro to check that unused fields 'union bpf_attr' are zero */
+> @@ -345,12 +376,17 @@ static int map_create(union bpf_attr *attr)
+>   {
+>   	int numa_node = bpf_map_attr_numa_node(attr);
+>   	struct bpf_map *map;
+> +	int f_flags;
+>   	int err;
+>
+>   	err = CHECK_ATTR(BPF_MAP_CREATE);
+>   	if (err)
+>   		return -EINVAL;
+>
+> +	f_flags = bpf_get_file_flag(attr->map_flags);
+> +	if (f_flags < 0)
+> +		return f_flags;
 
-> Just "getcap /bin/ping" is enough to tigger leak if file has capabilities.
-> Selinux shouldn't be loaded because its release_secctx hook call kfree.
+Wait, I just noticed, given you add BPF_F_RDONLY/BPF_F_WRONLY
+to attr->map_flags, and later go into find_and_alloc_map(),
+for map alloc, which is e.g. array_map_alloc(). There, we
+bail out with EINVAL on attr->map_flags & ~BPF_F_NUMA_NODE,
+which is the case for both BPF_F_RDONLY/BPF_F_WRONLY ... I
+would have expected that the entire code was tested properly;
+what was tested exactly in the set?
 
-Ahh, makes sense.
-
-> 
-> But sometimes it takes some time for kmemleak to find leak. Presumably
-> because stale poiner stays on stack which could be reused nowdays.
-
-Thanks for finding this!
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+>   	if (numa_node != NUMA_NO_NODE &&
+>   	    ((unsigned int)numa_node >= nr_node_ids ||
+>   	     !node_online(numa_node)))
+> @@ -376,7 +412,7 @@ static int map_create(union bpf_attr *attr)
+>   	if (err)
+>   		goto free_map;
+>
+> -	err = bpf_map_new_fd(map);
+> +	err = bpf_map_new_fd(map, f_flags);
+>   	if (err < 0) {
+>   		/* failed to allocate fd.
+>   		 * bpf_map_put() is needed because the above
+> @@ -491,6 +527,11 @@ static int map_lookup_elem(union bpf_attr *attr)
+[...]
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
