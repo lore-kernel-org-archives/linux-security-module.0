@@ -1,69 +1,253 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed,  4 Oct 2017 06:29:19 -0400
-Subject: [PATCH v3 0/4] additional TPM performance improvements 
-Message-ID: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
+Date: Wed,  4 Oct 2017 06:29:20 -0400
+Subject: [PATCH v3 1/5] tpm: move wait_for_tpm_stat() to respective driver
+	files
+In-Reply-To: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
+References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
+Message-ID: <20171004102924.12355-2-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-After further discussions with the TCG Device Driver working group (ddwg),
-the following changes were made: 
+The function wait_for_tpm_stat() is currently defined in
+tpm-interface file. It is a hardware specific function used
+only by tpm_tis and xen-tpmfront, so it is removed from
+tpm-interface.c and defined in respective driver files.
 
-* Check for burstcount at least once to confirm the TPM is ready to accept
-the data. Similarly, query for the TPM Expect status as sanity check at
-the end.
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+---
+ drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
+ drivers/char/tpm/tpm.h           |  2 --
+ drivers/char/tpm/tpm_tis_core.c  | 60 ++++++++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/xen-tpmfront.c  | 60 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 120 insertions(+), 62 deletions(-)
 
-* Make the sleep for status check in the loop less than 5msec.
-
-* Make the sleep in the loop while querying for burstcount less than
-5msec.
-
-Below is the list of patches along with the performance improvements
-seen with a TPM 1.2 with an 8 byte burstcount for 1000 extends: 
-
-Patch                                        |Improvement(time in sec)
-
-tpm: ignore burstcount to improve tpm_tis    | ~41 - ~14
-send() performance.
-
-tpm: reduce polling delay in tpm_tis         | ~14 - ~10
-wait_for_tpm_stat()
-
-tpm: reduce tpm_msleep() time in             | ~10 - ~9
-get_burstcount()
-
-tpm: modify tpm_msleep() function to have    | ~9 - ~8
-max range
-
-Changelog v3:
-
-* Include Jarkko's feedback to move wait_for_tpm_stat() from
-tpm-interface.c to respective driver files tpm_tis_core.c and
-xen-tpmfront.c.
-* Remove use of module parameter ignore_burst_count and is
-now alwaysed ignored in tpm tis send() operation.
-* Reduce sleep() time during polling in wait_for_tpm_stat() from
-5msec to 1msec for both recv() and send() operation. Version
-2 of the patches  had it only for send() operation.
-
-Changelog v2:
-
-* Add module parameter to handle ignoring of burst count during
-tpm tis send() operation.
-* Add improvements over sleep time to reduce delays.
-
-Nayna Jain (5):
-  tpm: move wait_for_tpm_stat() to respective driver files
-  tpm: ignore burstcount to improve tpm_tis send() performance
-  tpm: reduce polling delay in tpm_tis wait_for_tpm_stat()
-  tpm: reduce tpm_msleep() time in get_burstcount()
-  tpm: use tpm_msleep() value as max delay
-
- drivers/char/tpm/tpm-interface.c |  60 ----------------------
- drivers/char/tpm/tpm.h           |   6 +--
- drivers/char/tpm/tpm_tis_core.c  | 106 +++++++++++++++++++++++++++++----------
- drivers/char/tpm/xen-tpmfront.c  |  60 ++++++++++++++++++++++
- 4 files changed, 141 insertions(+), 91 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1d6729be4cd6..313f7618d569 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t buflen)
+ }
+ EXPORT_SYMBOL_GPL(tpm_send);
+ 
+-static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+-					bool check_cancel, bool *canceled)
+-{
+-	u8 status = chip->ops->status(chip);
+-
+-	*canceled = false;
+-	if ((status & mask) == mask)
+-		return true;
+-	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+-		*canceled = true;
+-		return true;
+-	}
+-	return false;
+-}
+-
+-int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
+-		      wait_queue_head_t *queue, bool check_cancel)
+-{
+-	unsigned long stop;
+-	long rc;
+-	u8 status;
+-	bool canceled = false;
+-
+-	/* check current status */
+-	status = chip->ops->status(chip);
+-	if ((status & mask) == mask)
+-		return 0;
+-
+-	stop = jiffies + timeout;
+-
+-	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+-again:
+-		timeout = stop - jiffies;
+-		if ((long)timeout <= 0)
+-			return -ETIME;
+-		rc = wait_event_interruptible_timeout(*queue,
+-			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+-					       &canceled),
+-			timeout);
+-		if (rc > 0) {
+-			if (canceled)
+-				return -ECANCELED;
+-			return 0;
+-		}
+-		if (rc == -ERESTARTSYS && freezing(current)) {
+-			clear_thread_flag(TIF_SIGPENDING);
+-			goto again;
+-		}
+-	} else {
+-		do {
+-			tpm_msleep(TPM_TIMEOUT);
+-			status = chip->ops->status(chip);
+-			if ((status & mask) == mask)
+-				return 0;
+-		} while (time_before(jiffies, stop));
+-	}
+-	return -ETIME;
+-}
+-EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
+-
+ #define TPM_ORD_SAVESTATE 152
+ #define SAVESTATE_RESULT_SIZE 10
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 2d5466a72e40..4fc83ac7abeb 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
+-int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
+-		      wait_queue_head_t *queue, bool check_cancel);
+ 
+ static inline void tpm_msleep(unsigned int delay_msec)
+ {
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 63bc6c3b949e..b33126a35694 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -31,6 +31,66 @@
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
+ 
++static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
++					bool check_cancel, bool *canceled)
++{
++	u8 status = chip->ops->status(chip);
++
++	*canceled = false;
++	if ((status & mask) == mask)
++		return true;
++	if (check_cancel && chip->ops->req_canceled(chip, status)) {
++		*canceled = true;
++		return true;
++	}
++	return false;
++}
++
++static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
++		unsigned long timeout, wait_queue_head_t *queue,
++		bool check_cancel)
++{
++	unsigned long stop;
++	long rc;
++	u8 status;
++	bool canceled = false;
++
++	/* check current status */
++	status = chip->ops->status(chip);
++	if ((status & mask) == mask)
++		return 0;
++
++	stop = jiffies + timeout;
++
++	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
++again:
++		timeout = stop - jiffies;
++		if ((long)timeout <= 0)
++			return -ETIME;
++		rc = wait_event_interruptible_timeout(*queue,
++			wait_for_tpm_stat_cond(chip, mask, check_cancel,
++					       &canceled),
++			timeout);
++		if (rc > 0) {
++			if (canceled)
++				return -ECANCELED;
++			return 0;
++		}
++		if (rc == -ERESTARTSYS && freezing(current)) {
++			clear_thread_flag(TIF_SIGPENDING);
++			goto again;
++		}
++	} else {
++		do {
++			tpm_msleep(TPM_TIMEOUT);
++			status = chip->ops->status(chip);
++			if ((status & mask) == mask)
++				return 0;
++		} while (time_before(jiffies, stop));
++	}
++	return -ETIME;
++}
++
+ /* Before we attempt to access the TPM we must see that the valid bit is set.
+  * The specification says that this bit is 0 at reset and remains 0 until the
+  * 'TPM has gone through its self test and initialization and has established
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 656e8af95d52..d20a0a9ded27 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -39,6 +39,66 @@ enum status_bits {
+ 	VTPM_STATUS_CANCELED = 0x8,
+ };
+ 
++static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
++					bool check_cancel, bool *canceled)
++{
++	u8 status = chip->ops->status(chip);
++
++	*canceled = false;
++	if ((status & mask) == mask)
++		return true;
++	if (check_cancel && chip->ops->req_canceled(chip, status)) {
++		*canceled = true;
++		return true;
++	}
++	return false;
++}
++
++static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
++		unsigned long timeout, wait_queue_head_t *queue,
++		bool check_cancel)
++{
++	unsigned long stop;
++	long rc;
++	u8 status;
++	bool canceled = false;
++
++	/* check current status */
++	status = chip->ops->status(chip);
++	if ((status & mask) == mask)
++		return 0;
++
++	stop = jiffies + timeout;
++
++	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
++again:
++		timeout = stop - jiffies;
++		if ((long)timeout <= 0)
++			return -ETIME;
++		rc = wait_event_interruptible_timeout(*queue,
++			wait_for_tpm_stat_cond(chip, mask, check_cancel,
++					       &canceled),
++			timeout);
++		if (rc > 0) {
++			if (canceled)
++				return -ECANCELED;
++			return 0;
++		}
++		if (rc == -ERESTARTSYS && freezing(current)) {
++			clear_thread_flag(TIF_SIGPENDING);
++			goto again;
++		}
++	} else {
++		do {
++			tpm_msleep(TPM_TIMEOUT);
++			status = chip->ops->status(chip);
++			if ((status & mask) == mask)
++				return 0;
++		} while (time_before(jiffies, stop));
++	}
++	return -ETIME;
++}
++
+ static u8 vtpm_status(struct tpm_chip *chip)
+ {
+ 	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
 -- 
 2.13.3
 
