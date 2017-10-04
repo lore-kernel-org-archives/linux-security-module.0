@@ -1,47 +1,159 @@
 From: jmorris@namei.org (James Morris)
-Date: Wed, 4 Oct 2017 17:17:39 +1100 (AEDT)
-Subject: [PATCH] fix security_release_secctx seems broken
-In-Reply-To: <ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
-References: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
-	<c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
-	<ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1710041713160.19339@namei.org>
+Date: Wed, 4 Oct 2017 18:04:45 +1100 (AEDT)
+Subject: [GIT PULL] lsm: fix smack_inode_removexattr and xattr_getsecurity
+	memleak
+Message-ID: <alpine.LRH.2.21.1710041758510.25071@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 19 Sep 2017, Casey Schaufler wrote:
+Please pull this fix for v4.14-rc4.
 
-> Subject: [PATCH] fix security_release_secctx seems broken
-> 
-> security_inode_getsecurity() provides the text string value
-> of a security attribute. It does not provide a "secctx".
-> The code in xattr_getsecurity() that calls security_inode_getsecurity()
-> and then calls security_release_secctx() happened to work because
-> SElinux and Smack treat the attribute and the secctx the same way.
-> It fails for cap_inode_getsecurity(), because that module has no
-> secctx that ever needs releasing. It turns out that Smack is the
-> one that's doing things wrong by not allocating memory when instructed
-> to do so by the "alloc" parameter.
-> 
-> The fix is simple enough. Change the security_release_secctx() to
-> kfree() because it isn't a secctx being returned by
-> security_inode_getsecurity(). Change Smack to allocate the string when
-> told to do so.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-
-Looks good to me.  I wonder why security_release_secctx was used in the 
-first place? (it arrived via commit 42492594)
-
-Konstantin: how did you trigger this?
-
-I plan to send this to Linus for -rc4 unless anyone has objections.
+It fixes a bug in xattr_getsecurity() where security_release_secctx() was 
+being called instead of kfree(), which leads to a memory leak in the 
+capabilities code.  smack_inode_getsecurity is also fixed to behave 
+correctly when called from there.
 
 
--- 
-James Morris
-<jmorris@namei.org>
+The following changes since commit d81fa669e3de7eb8a631d7d95dac5fbcb2bf9d4e:
 
+  Merge branch 'for-4.14-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq (2017-10-03 10:44:03 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.14-rc4
+
+Casey Schaufler (1):
+      lsm: fix smack_inode_removexattr and xattr_getsecurity memleak
+
+ fs/xattr.c                 |    2 +-
+ security/smack/smack_lsm.c |   55 ++++++++++++++++++++------------------------
+ 2 files changed, 26 insertions(+), 31 deletions(-)
+
+---
+
+commit 57e7ba04d422c3d41c8426380303ec9b7533ded9
+Author: Casey Schaufler <casey@schaufler-ca.com>
+Date:   Tue Sep 19 09:39:08 2017 -0700
+
+    lsm: fix smack_inode_removexattr and xattr_getsecurity memleak
+    
+    security_inode_getsecurity() provides the text string value
+    of a security attribute. It does not provide a "secctx".
+    The code in xattr_getsecurity() that calls security_inode_getsecurity()
+    and then calls security_release_secctx() happened to work because
+    SElinux and Smack treat the attribute and the secctx the same way.
+    It fails for cap_inode_getsecurity(), because that module has no
+    secctx that ever needs releasing. It turns out that Smack is the
+    one that's doing things wrong by not allocating memory when instructed
+    to do so by the "alloc" parameter.
+    
+    The fix is simple enough. Change the security_release_secctx() to
+    kfree() because it isn't a secctx being returned by
+    security_inode_getsecurity(). Change Smack to allocate the string when
+    told to do so.
+    
+    Note: this also fixes memory leaks for LSMs which implement
+    inode_getsecurity but not release_secctx, such as capabilities.
+    
+    Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+    Reported-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+    Cc: stable at vger.kernel.org
+    Signed-off-by: James Morris <james.l.morris@oracle.com>
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 4424f7f..61cd28b 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -250,7 +250,7 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
+ 	}
+ 	memcpy(value, buffer, len);
+ out:
+-	security_release_secctx(buffer, len);
++	kfree(buffer);
+ out_noalloc:
+ 	return len;
+ }
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 319add3..286171a 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1473,7 +1473,7 @@ static int smack_inode_removexattr(struct dentry *dentry, const char *name)
+  * @inode: the object
+  * @name: attribute name
+  * @buffer: where to put the result
+- * @alloc: unused
++ * @alloc: duplicate memory
+  *
+  * Returns the size of the attribute or an error code
+  */
+@@ -1486,43 +1486,38 @@ static int smack_inode_getsecurity(struct inode *inode,
+ 	struct super_block *sbp;
+ 	struct inode *ip = (struct inode *)inode;
+ 	struct smack_known *isp;
+-	int ilen;
+-	int rc = 0;
+ 
+-	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0) {
++	if (strcmp(name, XATTR_SMACK_SUFFIX) == 0)
+ 		isp = smk_of_inode(inode);
+-		ilen = strlen(isp->smk_known);
+-		*buffer = isp->smk_known;
+-		return ilen;
+-	}
++	else {
++		/*
++		 * The rest of the Smack xattrs are only on sockets.
++		 */
++		sbp = ip->i_sb;
++		if (sbp->s_magic != SOCKFS_MAGIC)
++			return -EOPNOTSUPP;
+ 
+-	/*
+-	 * The rest of the Smack xattrs are only on sockets.
+-	 */
+-	sbp = ip->i_sb;
+-	if (sbp->s_magic != SOCKFS_MAGIC)
+-		return -EOPNOTSUPP;
++		sock = SOCKET_I(ip);
++		if (sock == NULL || sock->sk == NULL)
++			return -EOPNOTSUPP;
+ 
+-	sock = SOCKET_I(ip);
+-	if (sock == NULL || sock->sk == NULL)
+-		return -EOPNOTSUPP;
+-
+-	ssp = sock->sk->sk_security;
++		ssp = sock->sk->sk_security;
+ 
+-	if (strcmp(name, XATTR_SMACK_IPIN) == 0)
+-		isp = ssp->smk_in;
+-	else if (strcmp(name, XATTR_SMACK_IPOUT) == 0)
+-		isp = ssp->smk_out;
+-	else
+-		return -EOPNOTSUPP;
++		if (strcmp(name, XATTR_SMACK_IPIN) == 0)
++			isp = ssp->smk_in;
++		else if (strcmp(name, XATTR_SMACK_IPOUT) == 0)
++			isp = ssp->smk_out;
++		else
++			return -EOPNOTSUPP;
++	}
+ 
+-	ilen = strlen(isp->smk_known);
+-	if (rc == 0) {
+-		*buffer = isp->smk_known;
+-		rc = ilen;
++	if (alloc) {
++		*buffer = kstrdup(isp->smk_known, GFP_KERNEL);
++		if (*buffer == NULL)
++			return -ENOMEM;
+ 	}
+ 
+-	return rc;
++	return strlen(isp->smk_known);
+ }
+ 
+ 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
