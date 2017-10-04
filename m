@@ -1,47 +1,71 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Wed,  4 Oct 2017 12:27:00 +0200
-Subject: [PATCH] security/keys: BIG_KEY requires CONFIG_CRYPTO
-Message-ID: <20171004102722.1834761-1-arnd@arndb.de>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Wed,  4 Oct 2017 06:29:19 -0400
+Subject: [PATCH v3 0/4] additional TPM performance improvements 
+Message-ID: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The recent rework introduced a possible randconfig build failure
-when CONFIG_CRYPTO configured to only allow modules:
+After further discussions with the TCG Device Driver working group (ddwg),
+the following changes were made: 
 
-security/keys/big_key.o: In function `big_key_crypt':
-big_key.c:(.text+0x29f): undefined reference to `crypto_aead_setkey'
-security/keys/big_key.o: In function `big_key_init':
-big_key.c:(.init.text+0x1a): undefined reference to `crypto_alloc_aead'
-big_key.c:(.init.text+0x45): undefined reference to `crypto_aead_setauthsize'
-big_key.c:(.init.text+0x77): undefined reference to `crypto_destroy_tfm'
-crypto/gcm.o: In function `gcm_hash_crypt_remain_continue':
-gcm.c:(.text+0x167): undefined reference to `crypto_ahash_finup'
-crypto/gcm.o: In function `crypto_gcm_exit_tfm':
-gcm.c:(.text+0x847): undefined reference to `crypto_destroy_tfm'
+* Check for burstcount at least once to confirm the TPM is ready to accept
+the data. Similarly, query for the TPM Expect status as sanity check at
+the end.
 
-When we 'select CRYPTO' like the other users, we always get a
-configuration that builds.
+* Make the sleep for status check in the loop less than 5msec.
 
-Fixes: 428490e38b2e ("security/keys: rewrite all of big_key crypto")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- security/keys/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+* Make the sleep in the loop while querying for burstcount less than
+5msec.
 
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 91eafada3164..6462e6654ccf 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -45,6 +45,7 @@ config BIG_KEYS
- 	bool "Large payload keys"
- 	depends on KEYS
- 	depends on TMPFS
-+	select CRYPTO
- 	select CRYPTO_AES
- 	select CRYPTO_GCM
- 	help
+Below is the list of patches along with the performance improvements
+seen with a TPM 1.2 with an 8 byte burstcount for 1000 extends: 
+
+Patch                                        |Improvement(time in sec)
+
+tpm: ignore burstcount to improve tpm_tis    | ~41 - ~14
+send() performance.
+
+tpm: reduce polling delay in tpm_tis         | ~14 - ~10
+wait_for_tpm_stat()
+
+tpm: reduce tpm_msleep() time in             | ~10 - ~9
+get_burstcount()
+
+tpm: modify tpm_msleep() function to have    | ~9 - ~8
+max range
+
+Changelog v3:
+
+* Include Jarkko's feedback to move wait_for_tpm_stat() from
+tpm-interface.c to respective driver files tpm_tis_core.c and
+xen-tpmfront.c.
+* Remove use of module parameter ignore_burst_count and is
+now alwaysed ignored in tpm tis send() operation.
+* Reduce sleep() time during polling in wait_for_tpm_stat() from
+5msec to 1msec for both recv() and send() operation. Version
+2 of the patches  had it only for send() operation.
+
+Changelog v2:
+
+* Add module parameter to handle ignoring of burst count during
+tpm tis send() operation.
+* Add improvements over sleep time to reduce delays.
+
+Nayna Jain (5):
+  tpm: move wait_for_tpm_stat() to respective driver files
+  tpm: ignore burstcount to improve tpm_tis send() performance
+  tpm: reduce polling delay in tpm_tis wait_for_tpm_stat()
+  tpm: reduce tpm_msleep() time in get_burstcount()
+  tpm: use tpm_msleep() value as max delay
+
+ drivers/char/tpm/tpm-interface.c |  60 ----------------------
+ drivers/char/tpm/tpm.h           |   6 +--
+ drivers/char/tpm/tpm_tis_core.c  | 106 +++++++++++++++++++++++++++++----------
+ drivers/char/tpm/xen-tpmfront.c  |  60 ++++++++++++++++++++++
+ 4 files changed, 141 insertions(+), 91 deletions(-)
+
 -- 
-2.9.0
+2.13.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
