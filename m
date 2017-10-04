@@ -1,347 +1,323 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 04 Oct 2017 14:09:34 +0100
-Subject: [PATCH 3/4] KEYS: Add the ability to grant permissions to an
-	administrator
+Date: Wed, 04 Oct 2017 14:09:27 +0100
+Subject: [PATCH 2/4] KEYS: Provide KEYCTL_GET/SET_ACL
 In-Reply-To: <150712255850.28796.13303640645489194914.stgit@warthog.procyon.org.uk>
 References: <150712255850.28796.13303640645489194914.stgit@warthog.procyon.org.uk>
-Message-ID: <150712257470.28796.6984541311150667881.stgit@warthog.procyon.org.uk>
+Message-ID: <150712256736.28796.5313045383738198800.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add support for specifying a privilege available to an administrator, such
-as invalidation of a network data caching key or the clearing of a cache
-keyring.
+Provide keyctl() operations to get and set a key's ACL.  The get operation,
+wrapped by libkeyutils, looks like:
 
-This is done by setting the fields of a key ACE to:
+	int ret = keyctl_get_acl(key_serial_t key, struct key_ace *acl,
+				 size_t max_acl_size);
 
-	{
-		.mask = KEY_ACE_SUBJECT_ID | perms,
-		.subject_id = KEY_ACE_SYS_ADMIN
-	}
+where the buffer to take the ACL is pointed to by acl and has size
+max_acl_size in bytes.  If the buffer is big enough, the ACL is written
+into the buffer.  The actual size of the ACL in bytes is returned whether
+or not an ACL is written.  VIEW permission is required for this.
 
-or:
+The set operation looks like:
 
-	KEY_SYS_ADMIN_ACE(perms)
+	int ret = keyctl_set_acl(key_serial_t key, const struct key_ace *acl,
+				 size_t acl_size);
 
-where perms is the permissions desired, such as KEY_ACE_INVAL or
-KEY_ACE_CLEAR.
+where acl is the acl to set and it is acl_size bytes in size.  0 is
+returned on success.  SET_SECURITY permission is required for this.
 
-This allows the KEY_FLAG_ROOT_CAN_CLEAR and KEY_FLAG_ROOT_CAN_INVAL key
-flags to be removed in favour of using an ACL.
 
-KEY_ACE_SYS_ADMIN specifies the administator of the root user namespace,
-rather than user namespace pointer to by the creds being used.
+The ACL consists of an array of elements of the following form:
 
-This is then used to allow the administrator to invalidate various network
-filesystem keys and clear the associated keyrings.
+	struct key_ace {
+		union {
+			uid_t		uid;
+			gid_t		gid;
+			unsigned int	subject_id;
+		};
+		unsigned int mask;
+	};
+
+where the top four bits of mask indicate the type of subject being checked:
+
+	KEY_ACE_SUBJECT_ID	A subject specified by ->subject_id
+	KEY_ACE_UID		A UID directly specified by ->uid
+	KEY_ACE_GID		A GID directly specified by ->gid
+	KEY_ACE__IDENTITY	Mask for these bits
+
+and if KEY_ACE_SUBJECT_ID is specified, subject_id is one of the following:
+
+	KEY_ACE_POSSESSOR	The possessor of the key
+	KEY_ACE_OWNER		The owner of the key
+	KEY_ACE_GROUP		The key's group
+	KEY_ACE_OTHER		Everyone else
+
+Each subject_id may occur only once in an ACL.
+
+The bottom 28 bits of mask indicate the permissions being granted:
+
+	KEY_ACE_VIEW		Can view the key metadata
+	KEY_ACE_READ		Can read the key content
+	KEY_ACE_WRITE		Can update/modify the key content
+	KEY_ACE_SEARCH		Can find the key by searching/requesting
+	KEY_ACE_LINK		Can make a link to the key
+	KEY_ACE_SET_SECURITY	Can set security
+	KEY_ACE_INVAL		Can invalidate
+	KEY_ACE_REVOKE		Can revoke
+	KEY_ACE_JOIN		Can join this keyring
+	KEY_ACE_CLEAR		Can clear this keyring
+	KEY_ACE__PERMS		Mask for these bits
+
+Currently, the ACL is limited to a maximum of 16 entries.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cifs/cifs_spnego.c        |    7 ++++---
- fs/cifs/cifsacl.c            |    7 ++++---
- fs/nfs/nfs4idmap.c           |    9 ++++-----
- include/linux/key.h          |    7 +++++--
- include/uapi/linux/keyctl.h  |    1 +
- net/dns_resolver/dns_key.c   |    4 ++--
- net/dns_resolver/dns_query.c |    4 ++--
- security/keys/keyctl.c       |   28 ----------------------------
- security/keys/permission.c   |    6 +++++-
- 9 files changed, 27 insertions(+), 46 deletions(-)
+ include/uapi/linux/keyctl.h |    2 +
+ security/keys/compat.c      |    6 ++
+ security/keys/internal.h    |    7 ++
+ security/keys/keyctl.c      |   10 +++
+ security/keys/permission.c  |  161 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 186 insertions(+)
 
-diff --git a/fs/cifs/cifs_spnego.c b/fs/cifs/cifs_spnego.c
-index 557be8100e0c..1dbf647a1579 100644
---- a/fs/cifs/cifs_spnego.c
-+++ b/fs/cifs/cifs_spnego.c
-@@ -34,19 +34,21 @@ static const struct cred *spnego_cred;
- 
- static struct key_acl cifs_spnego_key_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_VIEW | KEY_ACE_SEARCH | KEY_ACE_READ),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_INVAL),
- 	}
- };
- 
- static struct key_acl cifs_spnego_keyring_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_WRITE),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_CLEAR),
- 	}
- };
- 
-@@ -239,7 +241,6 @@ init_cifs_spnego(void)
- 	 * instruct request_key() to use this special keyring as a cache for
- 	 * the results it looks up
- 	 */
--	set_bit(KEY_FLAG_ROOT_CAN_CLEAR, &keyring->flags);
- 	cred->thread_keyring = keyring;
- 	cred->jit_keyring = KEY_REQKEY_DEFL_THREAD_KEYRING;
- 	spnego_cred = cred;
-diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
-index ee0b6ed07bf3..bb03a45305c5 100644
---- a/fs/cifs/cifsacl.c
-+++ b/fs/cifs/cifsacl.c
-@@ -35,19 +35,21 @@
- 
- static struct key_acl cifs_idmap_key_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_VIEW | KEY_ACE_SEARCH | KEY_ACE_READ),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_INVAL),
- 	}
- };
- 
- static struct key_acl cifs_idmap_keyring_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_WRITE),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_CLEAR),
- 	}
- };
- 
-@@ -514,7 +516,6 @@ init_cifs_idmap(void)
- 
- 	/* instruct request_key() to use this special keyring as a cache for
- 	 * the results it looks up */
--	set_bit(KEY_FLAG_ROOT_CAN_CLEAR, &keyring->flags);
- 	cred->thread_keyring = keyring;
- 	cred->jit_keyring = KEY_REQKEY_DEFL_THREAD_KEYRING;
- 	root_cred = cred;
-diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-index 13de8d91cbf6..7249c6dc37b0 100644
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -72,19 +72,21 @@ struct idmap {
- 
- static struct key_acl nfs_idmap_key_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_VIEW | KEY_ACE_SEARCH | KEY_ACE_READ),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_INVAL),
- 	}
- };
- 
- static struct key_acl nfs_idmap_keyring_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_WRITE),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_CLEAR),
- 	}
- };
- 
-@@ -232,7 +234,6 @@ int nfs_idmap_init(void)
- 	if (ret < 0)
- 		goto failed_reg_legacy;
- 
--	set_bit(KEY_FLAG_ROOT_CAN_CLEAR, &keyring->flags);
- 	cred->thread_keyring = keyring;
- 	cred->jit_keyring = KEY_REQKEY_DEFL_THREAD_KEYRING;
- 	id_resolver_cache = cred;
-@@ -302,8 +303,6 @@ static struct key *nfs_idmap_request_key(const char *name, size_t namelen,
- 						&nfs_idmap_key_acl);
- 		mutex_unlock(&idmap->idmap_mutex);
- 	}
--	if (!IS_ERR(rkey))
--		set_bit(KEY_FLAG_ROOT_CAN_INVAL, &rkey->flags);
- 
- 	kfree(desc);
- 	return rkey;
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 11a667c760a9..13aa3440e9b5 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -86,6 +86,11 @@ struct key_acl {
- 		.subject_id = KEY_ACE_OWNER		\
- 	}
- 
-+#define KEY_SYS_ADMIN_ACE(perms) {			\
-+		.mask = KEY_ACE_SUBJECT_ID | (perms),	\
-+		.subject_id = KEY_ACE_SYS_ADMIN		\
-+	}
-+
- /*****************************************************************************/
- /*
-  * key reference with possession attribute handling
-@@ -173,10 +178,8 @@ struct key {
- #define KEY_FLAG_IN_QUOTA	3	/* set if key consumes quota */
- #define KEY_FLAG_USER_CONSTRUCT	4	/* set if key is being constructed in userspace */
- #define KEY_FLAG_NEGATIVE	5	/* set if key is negative */
--#define KEY_FLAG_ROOT_CAN_CLEAR	6	/* set if key can be cleared by root without permission */
- #define KEY_FLAG_INVALIDATED	7	/* set if key has been invalidated */
- #define KEY_FLAG_BUILTIN	8	/* set if key is built in to the kernel */
--#define KEY_FLAG_ROOT_CAN_INVAL	9	/* set if key can be invalidated by root without permission */
- #define KEY_FLAG_KEEP		10	/* set if key should not be removed */
- #define KEY_FLAG_UID_KEYRING	11	/* set if key is a user or user session keyring */
- #define KEY_FLAG_HAS_ACL	12	/* Set if KEYCTL_SETACL called on key */
 diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index f112ab545198..134052cba4f4 100644
+index caed64c568b5..f112ab545198 100644
 --- a/include/uapi/linux/keyctl.h
 +++ b/include/uapi/linux/keyctl.h
-@@ -40,6 +40,7 @@ struct key_ace {
- #define KEY_ACE_GROUP		2	/* The key's group */
- #define KEY_ACE_OWNER		3	/* The owner of the key */
- #define KEY_ACE_POSSESSOR	4	/* Any process that possesses of the key */
-+#define KEY_ACE_SYS_ADMIN	5	/* Anyone with CAP_SYS_ADMIN */
- 	};
- };
+@@ -125,6 +125,8 @@ struct key_ace {
+ #define KEYCTL_GET_PERSISTENT		22	/* get a user's persistent keyring */
+ #define KEYCTL_DH_COMPUTE		23	/* Compute Diffie-Hellman values */
+ #define KEYCTL_RESTRICT_KEYRING		29	/* Restrict keys allowed to link to a keyring */
++#define KEYCTL_GET_ACL			30	/* Get a key's ACL */
++#define KEYCTL_SET_ACL			31	/* Set a key's ACL */
  
-diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-index 2b77f834fede..0fdbc2952352 100644
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -47,10 +47,11 @@ const struct cred *dns_resolver_cache;
+ /* keyctl structures */
+ struct keyctl_dh_params {
+diff --git a/security/keys/compat.c b/security/keys/compat.c
+index e87c89c0177c..4a6918f68f6b 100644
+--- a/security/keys/compat.c
++++ b/security/keys/compat.c
+@@ -141,6 +141,12 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
+ 		return keyctl_restrict_keyring(arg2, compat_ptr(arg3),
+ 					       compat_ptr(arg4));
  
- static struct key_acl dns_keyring_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_WRITE),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_CLEAR),
++	case KEYCTL_GET_ACL:
++		return keyctl_get_acl(arg2, compat_ptr(arg3), arg4);
++
++	case KEYCTL_SET_ACL:
++		return keyctl_set_acl(arg2, compat_ptr(arg3), arg4);
++
+ 	default:
+ 		return -EOPNOTSUPP;
  	}
- };
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 2123727f2751..1562923755d9 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -302,6 +302,13 @@ static inline long compat_keyctl_dh_compute(
+ #endif
+ #endif
  
-@@ -301,7 +302,6 @@ static int __init init_dns_resolver(void)
++extern long keyctl_get_acl(key_serial_t keyid,
++			   struct key_ace __user *_acl,
++			   size_t nr_elem);
++extern long keyctl_set_acl(key_serial_t keyid,
++			   const struct key_ace __user *_acl,
++			   size_t nr_elem);
++
  
- 	/* instruct request_key() to use this special keyring as a cache for
- 	 * the results it looks up */
--	set_bit(KEY_FLAG_ROOT_CAN_CLEAR, &keyring->flags);
- 	cred->thread_keyring = keyring;
- 	cred->jit_keyring = KEY_REQKEY_DEFL_THREAD_KEYRING;
- 	dns_resolver_cache = cred;
-diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
-index c09468d575d6..add4502cf12a 100644
---- a/net/dns_resolver/dns_query.c
-+++ b/net/dns_resolver/dns_query.c
-@@ -48,10 +48,11 @@
- 
- static struct key_acl dns_key_acl = {
- 	.usage	= REFCOUNT_INIT(1),
--	.nr_ace	= 2,
-+	.nr_ace	= 3,
- 	.aces = {
- 		KEY_POSSESSOR_ACE(KEY_ACE_VIEW | KEY_ACE_SEARCH | KEY_ACE_READ),
- 		KEY_OWNER_ACE(KEY_ACE_VIEW),
-+		KEY_SYS_ADMIN_ACE(KEY_ACE_INVAL),
- 	}
- };
- 
-@@ -140,7 +141,6 @@ int dns_query(const char *type, const char *name, size_t namelen,
- 	}
- 
- 	down_read(&rkey->sem);
--	set_bit(KEY_FLAG_ROOT_CAN_INVAL, &rkey->flags);
- 	ret = key_validate(rkey);
- 	if (ret < 0)
- 		goto put;
+ /*
+  * Debugging key validation
 diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index f95e3fdba865..dc6da2559d6d 100644
+index 965c7907718a..f95e3fdba865 100644
 --- a/security/keys/keyctl.c
 +++ b/security/keys/keyctl.c
-@@ -413,29 +413,15 @@ long keyctl_invalidate_key(key_serial_t id)
- 	key_ref = lookup_user_key(id, 0, KEY_NEED_INVAL);
- 	if (IS_ERR(key_ref)) {
- 		ret = PTR_ERR(key_ref);
--
--		/* Root is permitted to invalidate certain special keys */
--		if (capable(CAP_SYS_ADMIN)) {
--			key_ref = lookup_user_key(id, 0, 0);
--			if (IS_ERR(key_ref))
--				goto error;
--			if (test_bit(KEY_FLAG_ROOT_CAN_INVAL,
--				     &key_ref_to_ptr(key_ref)->flags))
--				goto invalidate;
--			goto error_put;
--		}
--
- 		goto error;
- 	}
+@@ -1797,6 +1797,16 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 					       (const char __user *) arg3,
+ 					       (const char __user *) arg4);
  
--invalidate:
- 	key = key_ref_to_ptr(key_ref);
- 	ret = 0;
- 	if (test_bit(KEY_FLAG_KEEP, &key->flags))
- 		ret = -EPERM;
- 	else
- 		key_invalidate(key);
--error_put:
- 	key_ref_put(key_ref);
- error:
- 	kleave(" = %ld", ret);
-@@ -458,28 +444,14 @@ long keyctl_keyring_clear(key_serial_t ringid)
- 	keyring_ref = lookup_user_key(ringid, KEY_LOOKUP_CREATE, KEY_NEED_CLEAR);
- 	if (IS_ERR(keyring_ref)) {
- 		ret = PTR_ERR(keyring_ref);
--
--		/* Root is permitted to invalidate certain special keyrings */
--		if (capable(CAP_SYS_ADMIN)) {
--			keyring_ref = lookup_user_key(ringid, 0, 0);
--			if (IS_ERR(keyring_ref))
--				goto error;
--			if (test_bit(KEY_FLAG_ROOT_CAN_CLEAR,
--				     &key_ref_to_ptr(keyring_ref)->flags))
--				goto clear;
--			goto error_put;
--		}
--
- 		goto error;
++	case KEYCTL_GET_ACL:
++		return keyctl_get_acl((key_serial_t)arg2,
++				      (struct key_ace __user *)arg3,
++				      (size_t)arg4);
++
++	case KEYCTL_SET_ACL:
++		return keyctl_set_acl((key_serial_t)arg2,
++				      (const struct key_ace __user *)arg3,
++				      (size_t)arg4);
++
+ 	default:
+ 		return -EOPNOTSUPP;
  	}
- 
--clear:
- 	keyring = key_ref_to_ptr(keyring_ref);
- 	if (test_bit(KEY_FLAG_KEEP, &keyring->flags))
- 		ret = -EPERM;
- 	else
- 		ret = keyring_clear(keyring);
--error_put:
- 	key_ref_put(keyring_ref);
- error:
- 	return ret;
 diff --git a/security/keys/permission.c b/security/keys/permission.c
-index b236ab0417e3..390885eb2bb7 100644
+index 1f8756ae2902..b236ab0417e3 100644
 --- a/security/keys/permission.c
 +++ b/security/keys/permission.c
-@@ -99,6 +99,10 @@ int key_task_permission(const key_ref_t key_ref, const struct cred *cred,
- 			case KEY_ACE_EVERYONE:
- 				allow |= ace->mask;
- 				break;
-+			case KEY_ACE_SYS_ADMIN:
-+				if (ns_capable(&init_user_ns, CAP_SYS_ADMIN))
-+					allow |= ace->mask;
-+				break;
- 			}
- 			break;
- 		}
-@@ -317,7 +321,7 @@ static struct key_acl *key_get_acl_from_user(const struct key_ace __user *_acl,
- 			if (get_user(ace->subject_id, &_acl[i].subject_id) < 0)
- 				goto fault;
- 			if (ace->subject_id == 0 ||
--			    ace->subject_id > KEY_ACE_POSSESSOR)
-+			    ace->subject_id > KEY_ACE_SYS_ADMIN)
- 				goto inval;
- 			break;
- 		default:
+@@ -217,3 +217,164 @@ void key_put_acl(struct key_acl *acl)
+ 	if (refcount_dec_and_test(&acl->usage))
+ 		kfree_rcu(acl, rcu);
+ }
++
++/*
++ * Get the ACL attached to key.
++ */
++long keyctl_get_acl(key_serial_t keyid,
++		    struct key_ace __user *_acl,
++		    size_t max_acl_size)
++{
++	struct user_namespace *ns;
++	struct key_acl *acl;
++	struct key *key, *instkey;
++	key_ref_t key_ref;
++	long ret;
++	int i;
++
++	key_ref = lookup_user_key(keyid, KEY_LOOKUP_PARTIAL, KEY_NEED_VIEW);
++	if (IS_ERR(key_ref)) {
++		if (PTR_ERR(key_ref) != -EACCES)
++			return PTR_ERR(key_ref);
++
++		/* viewing a key under construction is also permitted if we
++		 * have the authorisation token handy */
++		instkey = key_get_instantiation_authkey(keyid);
++		if (IS_ERR(instkey))
++			return PTR_ERR(instkey);
++		key_put(instkey);
++
++		key_ref = lookup_user_key(keyid, KEY_LOOKUP_PARTIAL, 0);
++		if (IS_ERR(key_ref))
++			return PTR_ERR(key_ref);
++	}
++
++	key = key_ref_to_ptr(key_ref);
++
++	down_read(&key->sem);
++	acl = key->acl;
++	refcount_inc(&acl->usage);
++	up_read(&key->sem);
++
++	if (acl->nr_ace * sizeof(struct key_ace) > max_acl_size)
++		goto out;
++
++	ns = current_user_ns();
++	ret = -EFAULT;
++	for (i = 0; i < acl->nr_ace; i++) {
++		const struct kernel_key_ace *ace = &acl->aces[i];
++
++		if (put_user(ace->mask, &_acl[i].mask) < 0)
++			goto error;
++
++		switch (ace->mask & KEY_ACE__IDENTITY) {
++		case KEY_ACE_SUBJECT_ID:
++			if (put_user(ace->subject_id, &_acl[i].subject_id) < 0)
++				goto error;
++			break;
++		}
++	}
++
++out:
++	ret = acl->nr_ace * sizeof(struct key_ace);
++error:
++	return ret;
++}
++
++/*
++ * Get ACL from userspace.
++ */
++static struct key_acl *key_get_acl_from_user(const struct key_ace __user *_acl,
++					     size_t acl_size)
++{
++	struct user_namespace *ns;
++	struct key_acl *acl;
++	long ret;
++	int nr_ace, i;
++
++	if (acl_size % sizeof(struct key_ace) != 0)
++		return ERR_PTR(-EINVAL);
++	nr_ace = acl_size / sizeof(struct key_ace);
++	if (nr_ace > 16)
++		return ERR_PTR(-EINVAL);
++
++	acl = kzalloc(sizeof(struct key_acl) + sizeof(struct kernel_key_ace) * nr_ace,
++		      GFP_KERNEL);
++	if (!acl)
++		return ERR_PTR(-ENOMEM);
++
++	refcount_set(&acl->usage, 1);
++	acl->nr_ace = nr_ace;
++	ns = current_user_ns();
++	for (i = 0; i < nr_ace; i++) {
++		struct kernel_key_ace *ace = &acl->aces[i];
++
++		if (get_user(ace->mask, &_acl[i].mask) < 0)
++			goto fault;
++
++		switch (ace->mask & KEY_ACE__IDENTITY) {
++		case KEY_ACE_SUBJECT_ID:
++			if (get_user(ace->subject_id, &_acl[i].subject_id) < 0)
++				goto fault;
++			if (ace->subject_id == 0 ||
++			    ace->subject_id > KEY_ACE_POSSESSOR)
++				goto inval;
++			break;
++		default:
++			goto inval;
++		}
++	}
++
++	return acl;
++
++fault:
++	ret = -EFAULT;
++	goto error;
++inval:
++	ret = -EINVAL;
++error:
++	key_put_acl(acl);
++	return ERR_PTR(ret);
++}
++
++/*
++ * Attach a new ACL to a key.
++ */
++long keyctl_set_acl(key_serial_t keyid,
++		    const struct key_ace __user *_acl,
++		    size_t acl_size)
++{
++	struct key_acl *acl, *discard;
++	struct key *key;
++	key_ref_t key_ref;
++	long ret;
++
++	acl = key_get_acl_from_user(_acl, acl_size);
++	if (IS_ERR(acl))
++		return PTR_ERR(acl);
++	discard = acl;
++
++	key_ref = lookup_user_key(keyid, KEY_LOOKUP_PARTIAL, KEY_NEED_SETSEC);
++	if (IS_ERR(key_ref)) {
++		ret = PTR_ERR(key_ref);
++		goto error_acl;
++	}
++
++	key = key_ref_to_ptr(key_ref);
++
++	ret = -EACCES;
++	down_write(&key->sem);
++
++	if (capable(CAP_SYS_ADMIN) || uid_eq(key->uid, current_fsuid())) {
++		discard = rcu_dereference_protected(key->acl,
++						    lockdep_is_held(&key->sem));
++		rcu_assign_pointer(key->acl, acl);
++		ret = 0;
++	}
++
++	up_write(&key->sem);
++	key_put(key);
++error_acl:
++	key_put_acl(discard);
++	return ret;
++}
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
