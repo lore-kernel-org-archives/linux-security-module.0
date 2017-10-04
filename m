@@ -1,44 +1,48 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed,  4 Oct 2017 06:29:24 -0400
-Subject: [PATCH v3 5/5] tpm: use tpm_msleep() value as max delay
+Date: Wed,  4 Oct 2017 06:29:22 -0400
+Subject: [PATCH v3 3/5] tpm: reduce polling delay in tpm_tis
+	wait_for_tpm_stat()
 In-Reply-To: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
 References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20171004102924.12355-6-nayna@linux.vnet.ibm.com>
+Message-ID: <20171004102924.12355-4-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Currently, tpm_msleep() uses delay_msec as the minimum value in
-usleep_range. However, that is the maximum time we want to wait.
-The function is modified to use the delay_msec as the maximum
-value, not the minimum value.
+The existing wait_for_tpm_stat() polls for the chip status after
+5msec sleep. As per TCG ddwg input, it is expected that tpm might
+return status in few usec. So, reducing the delay in polling to
+1msec.
 
 After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~9sec to ~8sec.
-
-Fixes: 3b9af007869("tpm: replace msleep() with usleep_range() in TPM 1.2/
-2.0 generic drivers")
+burstcount for 1000 extends improved from ~14sec to ~10sec.
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm_tis_core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4fc83ac7abeb..644de70de2cc 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -528,8 +528,8 @@ int tpm_pm_resume(struct device *dev);
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 8da425e1783f..224842e06105 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -31,6 +31,8 @@
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
  
- static inline void tpm_msleep(unsigned int delay_msec)
++#define TPM_POLL_SLEEP	1
++
+ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+ 					bool check_cancel, bool *canceled)
  {
--	usleep_range(delay_msec * 1000,
--		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
-+	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
-+		     delay_msec * 1000);
- };
- 
- struct tpm_chip *tpm_chip_find_get(int chip_num);
+@@ -82,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 		}
+ 	} else {
+ 		do {
+-			tpm_msleep(TPM_TIMEOUT);
++			tpm_msleep(TPM_POLL_SLEEP);
+ 			status = chip->ops->status(chip);
+ 			if ((status & mask) == mask)
+ 				return 0;
 -- 
 2.13.3
 
