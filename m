@@ -1,104 +1,52 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed,  4 Oct 2017 06:29:21 -0400
-Subject: [PATCH v3 2/5] tpm: ignore burstcount to improve tpm_tis send()
-	performance
-In-Reply-To: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20171004102924.12355-3-nayna@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 4 Oct 2017 13:45:14 +0300
+Subject: [PATCH 1/3] tpm: move PCR read code to static function
+	tpm2_pcr_read_common()
+In-Reply-To: <20170925111950.21511-2-roberto.sassu@huawei.com>
+References: <20170925111950.21511-1-roberto.sassu@huawei.com>
+	<20170925111950.21511-2-roberto.sassu@huawei.com>
+Message-ID: <20171004104514.udehflbyjaebxd3j@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The TPM burstcount status indicates the number of bytes that can
-be sent to the TPM without causing bus wait states.  Effectively,
-it is the number of empty bytes in the command FIFO. Further,
-some TPMs have a static burstcount, when the value remains zero
-until the entire FIFO is empty.
+On Mon, Sep 25, 2017 at 01:19:48PM +0200, Roberto Sassu wrote:
+> tpm2_pcr_read() copies the digest stored in a PCR to a buffer provided by
+> the caller. However, it does not return the digest size, included in the
+> output from the TPM. Retrieving it would be useful when a TPM algorithm
+> is not known by the crypto subsystem, which the TPM driver currently
+> depends upon.
 
-This patch optimizes the tpm_tis_send_data() function by checking
-the burstcount only once. And if the burstcount is valid, it writes
-all the bytes at once, permitting wait states. The performance of a
-34 byte extend on a TPM 1.2 with an 8 byte burstcount improved from
-41msec to 14msec.
+Remove this paragraph. It is just generic nonsense.
 
-After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~41sec to ~14sec.
+> Most of tpm2_pcr_read() code is moved to the static function
+> tpm2_pcr_read_common(), which writes the output of the PCR read to the
+> tpm_buf structure passed as input.
+> 
+> tpm2_pcr_read_common() will be called by tpm2_pcr_read(), and by the new
+> function tpm2_init_active_bank_info(), which will store the identifier
+> and the digest size of TPM algorithms in the tpm_chip structure.
 
-Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-conjunction with the TPM Device Driver work group.
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm_tis_core.c | 42 ++++++++++++++++-------------------------
- 1 file changed, 16 insertions(+), 26 deletions(-)
+1. Export tpm_buf to arch/x86/include/linux/tpm.h
+2. Repeal and replace tpm2_pcr_read().
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index b33126a35694..8da425e1783f 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc, status, burstcnt;
--	size_t count = 0;
- 	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
- 
- 	status = tpm_tis_status(chip);
-@@ -330,35 +329,26 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- 		}
- 	}
- 
--	while (count < len - 1) {
--		burstcnt = get_burstcount(chip);
--		if (burstcnt < 0) {
--			dev_err(&chip->dev, "Unable to read burstcount\n");
--			rc = burstcnt;
--			goto out_err;
--		}
--		burstcnt = min_t(int, burstcnt, len - count - 1);
--		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
--					 burstcnt, buf + count);
--		if (rc < 0)
--			goto out_err;
-+	/*
-+	 * Get the initial burstcount to ensure TPM is ready to
-+	 * accept data.
-+	 */
-+	burstcnt = get_burstcount(chip);
-+	if (burstcnt < 0) {
-+		dev_err(&chip->dev, "Unable to read burstcount\n");
-+		rc = burstcnt;
-+		goto out_err;
-+	}
- 
--		count += burstcnt;
-+	burstcnt = len - 1;
- 
--		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--					&priv->int_queue, false) < 0) {
--			rc = -ETIME;
--			goto out_err;
--		}
--		status = tpm_tis_status(chip);
--		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
--			rc = -EIO;
--			goto out_err;
--		}
--	}
-+	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-+			burstcnt, buf);
-+	if (rc < 0)
-+		goto out_err;
- 
- 	/* write last byte */
--	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
-+	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-1]);
- 	if (rc < 0)
- 		goto out_err;
- 
--- 
-2.13.3
+I would just pass one tpm_buf (i.e. no u8* res_buf) that is used both
+for input and output.
 
+Speaking about tpm2_inti_active_bank_info(), which is a *nonexistent*
+function is questionable. For me a sufficient commit message would be
+something like:
+
+"
+tpm: refine tpm2_pcr_read() access to all PCR banks
+
+Refine tpm2_pcr_read() interface and implementation in order to enable
+access to all PCR banks for other kernel subsystems such as IMA.
+"
+
+That describes all there is in this commit.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
