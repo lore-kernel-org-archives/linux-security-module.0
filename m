@@ -1,31 +1,34 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 4 Oct 2017 16:34:04 -0400
-Subject: [PATCH 2/2] selinux: fix build warning
-In-Reply-To: <1507148872.1491.11.camel@tycho.nsa.gov>
-References: <20171004183218.4786-1-clabbe.montjoie@gmail.com>
-	<20171004183218.4786-2-clabbe.montjoie@gmail.com>
-	<1507148872.1491.11.camel@tycho.nsa.gov>
-Message-ID: <CAHC9VhQvi8TerCU+aj8=sV91PXNE6V2fmC6bwAP+4icE7OcryQ@mail.gmail.com>
+From: jmorris@namei.org (James Morris)
+Date: Thu, 5 Oct 2017 09:10:58 +1100 (AEDT)
+Subject: [PATCH] fix security_release_secctx seems broken
+In-Reply-To: <ff77bdc9-e642-113d-dbde-f4d0770fff00@yandex-team.ru>
+References: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
+	<c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
+	<ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
+	<alpine.LRH.2.21.1710041713160.19339@namei.org>
+	<ff77bdc9-e642-113d-dbde-f4d0770fff00@yandex-team.ru>
+Message-ID: <alpine.LRH.2.21.1710050910300.28944@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Oct 4, 2017 at 4:27 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On Wed, 2017-10-04 at 20:32 +0200, Corentin Labbe wrote:
->> This patch make selinux_task_prlimit() static since it is not used
->> anywhere else.
->> This fix the following build warning:
->> security/selinux/hooks.c:3981:5: warning: no previous prototype for
->> 'selinux_task_prlimit' [-Wmissing-prototypes]
->>
->> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
->
-> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+On Wed, 4 Oct 2017, Konstantin Khlebnikov wrote:
 
-Merged, thanks again.
+> Just "getcap /bin/ping" is enough to tigger leak if file has capabilities.
+> Selinux shouldn't be loaded because its release_secctx hook call kfree.
+
+Ahh, makes sense.
+
+> 
+> But sometimes it takes some time for kmemleak to find leak. Presumably
+> because stale poiner stays on stack which could be reused nowdays.
+
+Thanks for finding this!
+
 
 -- 
-paul moore
-www.paul-moore.com
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
