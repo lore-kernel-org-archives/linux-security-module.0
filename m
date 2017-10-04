@@ -1,53 +1,48 @@
-From: khlebnikov@yandex-team.ru (Konstantin Khlebnikov)
-Date: Wed, 4 Oct 2017 12:29:37 +0300
-Subject: [PATCH] fix security_release_secctx seems broken
-In-Reply-To: <alpine.LRH.2.21.1710041713160.19339@namei.org>
-References: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
-	<c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
-	<ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
-	<alpine.LRH.2.21.1710041713160.19339@namei.org>
-Message-ID: <ff77bdc9-e642-113d-dbde-f4d0770fff00@yandex-team.ru>
+From: arnd@arndb.de (Arnd Bergmann)
+Date: Wed,  4 Oct 2017 12:27:00 +0200
+Subject: [PATCH] security/keys: BIG_KEY requires CONFIG_CRYPTO
+Message-ID: <20171004102722.1834761-1-arnd@arndb.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+The recent rework introduced a possible randconfig build failure
+when CONFIG_CRYPTO configured to only allow modules:
 
+security/keys/big_key.o: In function `big_key_crypt':
+big_key.c:(.text+0x29f): undefined reference to `crypto_aead_setkey'
+security/keys/big_key.o: In function `big_key_init':
+big_key.c:(.init.text+0x1a): undefined reference to `crypto_alloc_aead'
+big_key.c:(.init.text+0x45): undefined reference to `crypto_aead_setauthsize'
+big_key.c:(.init.text+0x77): undefined reference to `crypto_destroy_tfm'
+crypto/gcm.o: In function `gcm_hash_crypt_remain_continue':
+gcm.c:(.text+0x167): undefined reference to `crypto_ahash_finup'
+crypto/gcm.o: In function `crypto_gcm_exit_tfm':
+gcm.c:(.text+0x847): undefined reference to `crypto_destroy_tfm'
 
-On 04.10.2017 09:17, James Morris wrote:
-> On Tue, 19 Sep 2017, Casey Schaufler wrote:
-> 
->> Subject: [PATCH] fix security_release_secctx seems broken
->>
->> security_inode_getsecurity() provides the text string value
->> of a security attribute. It does not provide a "secctx".
->> The code in xattr_getsecurity() that calls security_inode_getsecurity()
->> and then calls security_release_secctx() happened to work because
->> SElinux and Smack treat the attribute and the secctx the same way.
->> It fails for cap_inode_getsecurity(), because that module has no
->> secctx that ever needs releasing. It turns out that Smack is the
->> one that's doing things wrong by not allocating memory when instructed
->> to do so by the "alloc" parameter.
->>
->> The fix is simple enough. Change the security_release_secctx() to
->> kfree() because it isn't a secctx being returned by
->> security_inode_getsecurity(). Change Smack to allocate the string when
->> told to do so.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> 
-> Looks good to me.  I wonder why security_release_secctx was used in the
-> first place? (it arrived via commit 42492594)
->  > Konstantin: how did you trigger this?
+When we 'select CRYPTO' like the other users, we always get a
+configuration that builds.
 
-Just "getcap /bin/ping" is enough to tigger leak if file has capabilities.
-Selinux shouldn't be loaded because its release_secctx hook call kfree.
+Fixes: 428490e38b2e ("security/keys: rewrite all of big_key crypto")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ security/keys/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-But sometimes it takes some time for kmemleak to find leak. Presumably
-because stale poiner stays on stack which could be reused nowdays.
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index 91eafada3164..6462e6654ccf 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -45,6 +45,7 @@ config BIG_KEYS
+ 	bool "Large payload keys"
+ 	depends on KEYS
+ 	depends on TMPFS
++	select CRYPTO
+ 	select CRYPTO_AES
+ 	select CRYPTO_GCM
+ 	help
+-- 
+2.9.0
 
-> 
-> I plan to send this to Linus for -rc4 unless anyone has objections.
-> 
-> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
