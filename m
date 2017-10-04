@@ -1,48 +1,41 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed,  4 Oct 2017 06:29:22 -0400
-Subject: [PATCH v3 3/5] tpm: reduce polling delay in tpm_tis
-	wait_for_tpm_stat()
+Date: Wed,  4 Oct 2017 06:29:23 -0400
+Subject: [PATCH v3 4/5] tpm: reduce tpm_msleep() time in get_burstcount()
 In-Reply-To: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
 References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20171004102924.12355-4-nayna@linux.vnet.ibm.com>
+Message-ID: <20171004102924.12355-5-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The existing wait_for_tpm_stat() polls for the chip status after
-5msec sleep. As per TCG ddwg input, it is expected that tpm might
-return status in few usec. So, reducing the delay in polling to
-1msec.
+Currently, get_burstcount() function sleeps for 5msec in a loop
+before retrying for next query to burstcount. However, if it takes
+lesser time for TPM to return, this 5msec delay is longer
+than necessary.
+
+This patch replaces the tpm_msleep time from 5msec to 1msec.
 
 After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~14sec to ~10sec.
+burstcount for 1000 extends improved from ~10sec to ~9sec.
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm_tis_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 8da425e1783f..224842e06105 100644
+index 224842e06105..826a0b9c9201 100644
 --- a/drivers/char/tpm/tpm_tis_core.c
 +++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -31,6 +31,8 @@
- #include "tpm.h"
- #include "tpm_tis_core.h"
- 
-+#define TPM_POLL_SLEEP	1
-+
- static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
- 					bool check_cancel, bool *canceled)
- {
-@@ -82,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 		}
- 	} else {
- 		do {
--			tpm_msleep(TPM_TIMEOUT);
-+			tpm_msleep(TPM_POLL_SLEEP);
- 			status = chip->ops->status(chip);
- 			if ((status & mask) == mask)
- 				return 0;
+@@ -226,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 		burstcnt = (value >> 8) & 0xFFFF;
+ 		if (burstcnt)
+ 			return burstcnt;
+-		tpm_msleep(TPM_TIMEOUT);
++		tpm_msleep(TPM_POLL_SLEEP);
+ 	} while (time_before(jiffies, stop));
+ 	return -EBUSY;
+ }
 -- 
 2.13.3
 
