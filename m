@@ -1,50 +1,53 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 4 Oct 2017 10:32:58 +0300
-Subject: [PATCH 0/3] tpm: retrieve digest size of unknown algorithms from
-	TPM
-In-Reply-To: <20170925111950.21511-1-roberto.sassu@huawei.com>
-References: <20170925111950.21511-1-roberto.sassu@huawei.com>
-Message-ID: <20171004073258.be2j7mdeud2pjbyk@linux.intel.com>
+From: khlebnikov@yandex-team.ru (Konstantin Khlebnikov)
+Date: Wed, 4 Oct 2017 12:29:37 +0300
+Subject: [PATCH] fix security_release_secctx seems broken
+In-Reply-To: <alpine.LRH.2.21.1710041713160.19339@namei.org>
+References: <d09e29aa-f34c-3260-677a-3017cd1cd347@yandex-team.ru>
+	<c007fac4-4e2a-6076-513d-6f52f7133a2d@schaufler-ca.com>
+	<ec271e46-07d3-78ba-e58d-3606b0889cbf@schaufler-ca.com>
+	<alpine.LRH.2.21.1710041713160.19339@namei.org>
+Message-ID: <ff77bdc9-e642-113d-dbde-f4d0770fff00@yandex-team.ru>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi
 
-And apologies for late review.
 
-On Mon, Sep 25, 2017 at 01:19:47PM +0200, Roberto Sassu wrote:
-> This patch set derives from a larger patch set which modifies the TPM
-> driver API in order to extend a PCR with multiple digests. It can be
-> retrieved at the URL:
+On 04.10.2017 09:17, James Morris wrote:
+> On Tue, 19 Sep 2017, Casey Schaufler wrote:
 > 
-> https://sourceforge.net/p/tpmdd/mailman/message/35905412/
-
-A patch set should be able to live on its own. Please remove this link.
-
-I don't care about that patch set at this point and I'm not going to
-give any distant promises.
-
-> The TPM driver currently relies on the crypto subsystem to determine the
-> digest size of supported TPM algorithms. In the future, TPM vendors might
-> implement new algorithms in their chips, and those algorithms might not
-> be supported by the crypto subsystem.
+>> Subject: [PATCH] fix security_release_secctx seems broken
+>>
+>> security_inode_getsecurity() provides the text string value
+>> of a security attribute. It does not provide a "secctx".
+>> The code in xattr_getsecurity() that calls security_inode_getsecurity()
+>> and then calls security_release_secctx() happened to work because
+>> SElinux and Smack treat the attribute and the secctx the same way.
+>> It fails for cap_inode_getsecurity(), because that module has no
+>> secctx that ever needs releasing. It turns out that Smack is the
+>> one that's doing things wrong by not allocating memory when instructed
+>> to do so by the "alloc" parameter.
+>>
+>> The fix is simple enough. Change the security_release_secctx() to
+>> kfree() because it isn't a secctx being returned by
+>> security_inode_getsecurity(). Change Smack to allocate the string when
+>> told to do so.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > 
-> Usually, vendors provide patches for the new hardware, and likely
-> the crypto subsystem will be updated before the new algorithm is
-> introduced. However, old kernels might be updated later, after patches
-> are included in the mainline kernel. This would leave the opportunity
-> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
-> are not extended.
+> Looks good to me.  I wonder why security_release_secctx was used in the
+> first place? (it arrived via commit 42492594)
+>  > Konstantin: how did you trigger this?
+
+Just "getcap /bin/ping" is enough to tigger leak if file has capabilities.
+Selinux shouldn't be loaded because its release_secctx hook call kfree.
+
+But sometimes it takes some time for kmemleak to find leak. Presumably
+because stale poiner stays on stack which could be reused nowdays.
+
 > 
-> This patch set provides a long term solution for this issue. If a TPM
-> algorithm is not known by the crypto subsystem, the TPM driver retrieves
-> the digest size from the TPM with a PCR read. All the PCR banks are
-> extended, even if the algorithm is not yet supported by the crypto
-> subsystem.
-
-This part makes sense to me.
-
-/Jarkko
+> I plan to send this to Linus for -rc4 unless anyone has objections.
+> 
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
