@@ -1,142 +1,55 @@
-From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
-Date: Thu, 5 Oct 2017 14:53:17 +0100
-Subject: Draft manpage explaining kernel lockdown
-In-Reply-To: <7969.1507201224@warthog.procyon.org.uk>
-References: <7969.1507201224@warthog.procyon.org.uk>
-Message-ID: <CAKv+Gu8D15QBYR16W0hhfdHiA-Uj2YMx-z_D2yVik6SqrDsCeA@mail.gmail.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 5 Oct 2017 10:39:14 -0500
+Subject: [PATCH] security/keys: BIG_KEY requires CONFIG_CRYPTO
+In-Reply-To: <20171004102722.1834761-1-arnd@arndb.de>
+References: <20171004102722.1834761-1-arnd@arndb.de>
+Message-ID: <20171005153914.GA19269@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5 October 2017 at 12:00, David Howells <dhowells@redhat.com> wrote:
-> Hi Ard, Michael,
->
-> Attached is a draft for a manual page (kernel_lockdown.7) that I intend to
-> point at from messages emitted when the kernel prohibits something because the
-> kernel is in 'lockdown' mode, typically triggered by EFI secure boot.
->
-> Let me know what you think.
->
+Quoting Arnd Bergmann (arnd at arndb.de):
+> The recent rework introduced a possible randconfig build failure
+> when CONFIG_CRYPTO configured to only allow modules:
+> 
+> security/keys/big_key.o: In function `big_key_crypt':
+> big_key.c:(.text+0x29f): undefined reference to `crypto_aead_setkey'
+> security/keys/big_key.o: In function `big_key_init':
+> big_key.c:(.init.text+0x1a): undefined reference to `crypto_alloc_aead'
+> big_key.c:(.init.text+0x45): undefined reference to `crypto_aead_setauthsize'
+> big_key.c:(.init.text+0x77): undefined reference to `crypto_destroy_tfm'
+> crypto/gcm.o: In function `gcm_hash_crypt_remain_continue':
+> gcm.c:(.text+0x167): undefined reference to `crypto_ahash_finup'
+> crypto/gcm.o: In function `crypto_gcm_exit_tfm':
+> gcm.c:(.text+0x847): undefined reference to `crypto_destroy_tfm'
+> 
+> When we 'select CRYPTO' like the other users, we always get a
+> configuration that builds.
+> 
+> Fixes: 428490e38b2e ("security/keys: rewrite all of big_key crypto")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> David
+Seems sensible, thanks.
+
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+
 > ---
-> .\"
-> .\" Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-> .\" Written by David Howells (dhowells at redhat.com)
-> .\"
-> .\" %%%LICENSE_START(GPLv2+_SW_ONEPARA)
-> .\" This program is free software; you can redistribute it and/or
-> .\" modify it under the terms of the GNU General Public License
-> .\" as published by the Free Software Foundation; either version
-> .\" 2 of the License, or (at your option) any later version.
-> .\" %%%LICENSE_END
-> .\"
-> .TH "KERNEL LOCKDOWN" 7 2017-10-05 Linux "Linux Programmer's Manual"
-> .SH NAME
-> Kernel Lockdown \- Kernel image access prevention feature
-> .SH DESCRIPTION
-> The Kernel Lockdown feature is designed to prevent both direct and indirect
-> access to a running kernel image, attempting to protect against unauthorised
-> modification of the kernel image and to prevent access to security and
-> cryptographic data located in kernel memory, whilst still permitting driver
-> modules to be loaded.
-> .P
-> Lockdown is typically enabled during boot and may be terminated, if configured,
-> by typing a special key combination on a directly attached physical keyboard.
-> .P
-> If a prohibited or restricted feature is accessed or used, the kernel will emit
-> a message that looks like:
-> .P
-> .RS
->         Lockdown: X is restricted, see man kernel_lockdown(7)
-> .RE
-> .P
-> where X indicates what is restricted.
-> .P
-> On an EFI-enabled x86 or arm64 machine, lockdown will be automatically enabled
-> if the system boots in EFI Secure Boot mode.
-> .P
-> If the kernel is appropriately configured, lockdown may be lifted by typing the
-> appropriate sequence on a directly attached physical keyboard.  For x86
-> machines, this is
-> .IR SysRq+x .
-> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-> .SH COVERAGE
-> When lockdown is in effect, a number of things are disabled or restricted in
-> use.  This includes special device files and kernel services that allow direct
-> access of the kernel image:
-> .P
-> .RS
-> /dev/mem
-> .br
-> /dev/kmem
-> .br
-> /dev/kcore
-> .br
-> /dev/ioports
-> .br
-> BPF memory access functions
-> .RE
-> .P
-> and the ability to directly configure and control devices, so as to prevent the
-> use of a device to access or modify a kernel image:
-> .P
-> .RS
-> The use of module parameters that directly specify hardware parameters to
-> drivers through the kernel command line or when loading a module.
-> .P
-> The use of direct PCI BAR access.
-> .P
-> The use of the ioperm and iopl instructions on x86.
-> .P
-> The use of the KD*IO console ioctls.
-> .P
-> The use of the TIOCSSERIAL serial ioctl.
-> .P
-> The alteration of MSR registers on x86.
-> .P
-> The replacement of the PCMCIA CIS.
-> .P
-> The overriding of ACPI tables.
-> .P
-> The use of ACPI error injection.
-> .P
-> The specification of the ACPI RDSP address.
-> .P
-> The use of ACPI custom methods.
-> .RE
-> .P
-> The following facilities are restricted:
-> .P
-> .RS
-> Only validly signed modules may be loaded.
-> .P
-> Only validly signed binaries may be kexec'd.
-> .P
-> Only validly signed device firmware may be loaded.
-> .P
-> Only validly signed wifi databases may be use.
-> .P
-> Unencrypted hibernation/suspend to swap are disallowed as the kernel image is
-> saved to a medium that can then be accessed.
-> .P
-> Use of debugfs is not permitted as this allows a whole range of actions
-> including direct configuration of, access to and driving of hardware.
-> .RE
-> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-> .SH SEE ALSO
-> .ad l
-> .nh
->
-
-Hello David,
-
-Thanks for putting this together. I will let others comment on the
-details, but in general, this fully addresses my concern regarding the
-unrealistic expectations one might create when printing 'your kernel
-is in lockdown mode' into the kernel log without any clarification
-what this might mean for your particular system.
-
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>  security/keys/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+> index 91eafada3164..6462e6654ccf 100644
+> --- a/security/keys/Kconfig
+> +++ b/security/keys/Kconfig
+> @@ -45,6 +45,7 @@ config BIG_KEYS
+>  	bool "Large payload keys"
+>  	depends on KEYS
+>  	depends on TMPFS
+> +	select CRYPTO
+>  	select CRYPTO_AES
+>  	select CRYPTO_GCM
+>  	help
+> -- 
+> 2.9.0
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
