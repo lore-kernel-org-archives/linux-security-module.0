@@ -1,20 +1,21 @@
-From: johannes@sipsolutions.net (Johannes Berg)
-Date: Thu, 05 Oct 2017 13:07:10 +0200
+From: fweimer@redhat.com (Florian Weimer)
+Date: Thu, 5 Oct 2017 14:33:30 +0200
 Subject: Draft manpage explaining kernel lockdown
 In-Reply-To: <7969.1507201224@warthog.procyon.org.uk>
 References: <7969.1507201224@warthog.procyon.org.uk>
-Message-ID: <1507201630.2387.16.camel@sipsolutions.net>
+Message-ID: <3765ad08-2c73-7285-02e1-e04f31dde3fd@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-10-05 at 12:00 +0100, David Howells wrote:
-> 
-> Only validly signed wifi databases may be use.
+On 10/05/2017 01:00 PM, David Howells wrote:
+> Lockdown is typically enabled during boot and may be terminated, if configured,
+> by typing a special key combination on a directly attached physical keyboard.
 
-We don't even have this yet, and when we do, we want this to be the
-case for typical configurations regardless of lockdown.
+Does this include a Bluetooth keyboard (which might not actually exist 
+and might in reality be another server in the same rack, of course).
 
-johannes
+Thanks,
+Florian
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
