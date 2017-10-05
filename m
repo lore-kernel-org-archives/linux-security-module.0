@@ -1,55 +1,44 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Thu, 5 Oct 2017 10:39:14 -0500
-Subject: [PATCH] security/keys: BIG_KEY requires CONFIG_CRYPTO
-In-Reply-To: <20171004102722.1834761-1-arnd@arndb.de>
-References: <20171004102722.1834761-1-arnd@arndb.de>
-Message-ID: <20171005153914.GA19269@mail.hallyn.com>
+From: daniel@iogearbox.net (Daniel Borkmann)
+Date: Thu, 05 Oct 2017 18:12:51 +0200
+Subject: [PATCH net-next 3/4] selinux: bpf: Add selinux check for eBPF
+	syscall operations
+In-Reply-To: <1507210095.27146.5.camel@tycho.nsa.gov>
+References: <20171004182932.140028-1-chenbofeng.kernel@gmail.com>
+	<20171004182932.140028-4-chenbofeng.kernel@gmail.com>
+	<1507210095.27146.5.camel@tycho.nsa.gov>
+Message-ID: <59D65A03.2000202@iogearbox.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Arnd Bergmann (arnd at arndb.de):
-> The recent rework introduced a possible randconfig build failure
-> when CONFIG_CRYPTO configured to only allow modules:
-> 
-> security/keys/big_key.o: In function `big_key_crypt':
-> big_key.c:(.text+0x29f): undefined reference to `crypto_aead_setkey'
-> security/keys/big_key.o: In function `big_key_init':
-> big_key.c:(.init.text+0x1a): undefined reference to `crypto_alloc_aead'
-> big_key.c:(.init.text+0x45): undefined reference to `crypto_aead_setauthsize'
-> big_key.c:(.init.text+0x77): undefined reference to `crypto_destroy_tfm'
-> crypto/gcm.o: In function `gcm_hash_crypt_remain_continue':
-> gcm.c:(.text+0x167): undefined reference to `crypto_ahash_finup'
-> crypto/gcm.o: In function `crypto_gcm_exit_tfm':
-> gcm.c:(.text+0x847): undefined reference to `crypto_destroy_tfm'
-> 
-> When we 'select CRYPTO' like the other users, we always get a
-> configuration that builds.
-> 
-> Fixes: 428490e38b2e ("security/keys: rewrite all of big_key crypto")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 10/05/2017 03:28 PM, Stephen Smalley wrote:
+[...]
+>> +static int selinux_bpf_prog(struct bpf_prog *prog)
+>> +{
+>> +	u32 sid = current_sid();
+>> +	struct bpf_security_struct *bpfsec;
+>> +
+>> +	bpfsec = prog->aux->security;
+>
+> I haven't looked closely at the bpf code, but is it guaranteed that
+> prog->aux cannot be NULL here?  What's the difference in lifecycle for
+> bpf_prog vs bpf_prog_aux?  Could the aux field be shared across progs
+> created by different processes?
 
-Seems sensible, thanks.
+prog->aux cannot be NULL here, its lifetime is 1:1 with prog,
+it holds slow-path auxiliary data unlike prog itself which is
+additionally set to read-only after initial setup until teardown;
+aux is also never shared across BPF progs, so always 1:1 relation
+to prog itself.
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
-> ---
->  security/keys/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-> index 91eafada3164..6462e6654ccf 100644
-> --- a/security/keys/Kconfig
-> +++ b/security/keys/Kconfig
-> @@ -45,6 +45,7 @@ config BIG_KEYS
->  	bool "Large payload keys"
->  	depends on KEYS
->  	depends on TMPFS
-> +	select CRYPTO
->  	select CRYPTO_AES
->  	select CRYPTO_GCM
->  	help
-> -- 
-> 2.9.0
+Things that can be shared across multiple BPF programs and user
+space processes are BPF maps themselves. From user space side
+they can be passed via fd or pinned/retrieved from bpf fs, so
+as currently implemented the void *security member you'd hold
+in struct bpf_map would refer to the initial creator process of
+the map here that doesn't strictly need to be alive anymore;
+similarly for prog itself, when its shared between multiple
+user space processes, *security ctx would point to the one that
+installed it into the kernel initially.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
