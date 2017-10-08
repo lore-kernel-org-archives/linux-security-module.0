@@ -1,65 +1,36 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Sat, 7 Oct 2017 10:18:56 -0700
-Subject: [PATCH] apparmor: Fix bool initialization/comparison
-In-Reply-To: <1507383097088-925464657-17-diffsplit-thomas@m3y3r.de>
-References: <1507383097081-778026979-0-diffsplit-thomas@m3y3r.de>
-	<1507383097088-925464657-17-diffsplit-thomas@m3y3r.de>
-Message-ID: <5ef8b802-a062-2721-b78b-fb7c80d4073a@canonical.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Sun, 08 Oct 2017 00:28:21 -0400
+Subject: [PATCH] vfs: fix mounting a filesystem with i_version
+Message-ID: <1507436901.5841.4.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 10/07/2017 07:02 AM, Thomas Meyer wrote:
-> Bool initializations should use true and false. Bool tests don't need
-> comparisons.
-> 
-> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+The mount i_version flag is not enabled in the new sb_flags.  This patch
+adds the missing SB_I_VERSION flag.
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+Fixes: e462ec5 "VFS: Differentiate mount flags (MS_*) from internal
+       superblock flags"
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ fs/namespace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I have pulled this into apparmor-next
-
-> ---
-> 
-> diff -u -p a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -761,7 +761,7 @@ module_param_call(audit, param_set_audit
->  /* Determines if audit header is included in audited messages.  This
->   * provides more context if the audit daemon is not running
->   */
-> -bool aa_g_audit_header = 1;
-> +bool aa_g_audit_header = true;
->  module_param_named(audit_header, aa_g_audit_header, aabool,
->  		   S_IRUSR | S_IWUSR);
->  
-> @@ -786,7 +786,7 @@ module_param_named(path_max, aa_g_path_m
->   * DEPRECATED: read only as strict checking of load is always done now
->   * that none root users (user namespaces) can load policy.
->   */
-> -bool aa_g_paranoid_load = 1;
-> +bool aa_g_paranoid_load = true;
->  module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
->  
->  /* Boot time disable flag */
-> @@ -1034,7 +1034,7 @@ static int __init apparmor_init(void)
->  
->  	if (!apparmor_enabled || !security_module_enable("apparmor")) {
->  		aa_info_message("AppArmor disabled by boot time parameter");
-> -		apparmor_enabled = 0;
-> +		apparmor_enabled = false;
->  		return 0;
->  	}
->  
-> @@ -1090,7 +1090,7 @@ alloc_out:
->  	aa_destroy_aafs();
->  	aa_teardown_dfa_engine();
->  
-> -	apparmor_enabled = 0;
-> +	apparmor_enabled = false;
->  	return error;
->  }
->  
-> 
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 3b601f115b6c..d18deb4c410b 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2825,7 +2825,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
+ 			    SB_MANDLOCK |
+ 			    SB_DIRSYNC |
+ 			    SB_SILENT |
+-			    SB_POSIXACL);
++			    SB_POSIXACL |
++			    SB_I_VERSION);
+ 
+ 	if (flags & MS_REMOUNT)
+ 		retval = do_remount(&path, flags, sb_flags, mnt_flags,
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
