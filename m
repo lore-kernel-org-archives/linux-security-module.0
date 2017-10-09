@@ -1,26 +1,17 @@
 From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon,  9 Oct 2017 12:51:27 -0700
-Subject: [PATCH v2 1/3] ecryptfs: fix dereference of NULL user_key_payload
-Message-ID: <20171009195129.68610-1-ebiggers3@gmail.com>
+Date: Mon,  9 Oct 2017 12:51:28 -0700
+Subject: [PATCH v2 2/3] ecryptfs: fix out-of-bounds read of key payload
+In-Reply-To: <20171009195129.68610-1-ebiggers3@gmail.com>
+References: <20171009195129.68610-1-ebiggers3@gmail.com>
+Message-ID: <20171009195129.68610-2-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-In eCryptfs, we failed to verify that the authentication token keys are
-not revoked before dereferencing their payloads, which is problematic
-because the payload of a revoked key is NULL.  request_key() *does* skip
-revoked keys, but there is still a window where the key can be revoked
-before we acquire the key semaphore.
-
-Fix it by updating ecryptfs_get_key_payload_data() to return
--EKEYREVOKED if the key payload is NULL.  For completeness we check this
-for "encrypted" keys as well as "user" keys, although encrypted keys
-cannot be revoked currently.
-
-Alternatively we could use key_validate(), but since we'll also need to
-fix ecryptfs_get_key_payload_data() to validate the payload length, it
-seems appropriate to just check the payload pointer.
+eCryptfs blindly casts the user-supplied key payload to a
+'struct ecryptfs_auth_tok' without validating that the payload does, in
+fact, have the size of a 'struct ecryptfs_auth_tok'.  Fix it.
 
 Fixes: 237fead61998 ("[PATCH] ecryptfs: fs/Makefile and fs/Kconfig")
 Reviewed-by: James Morris <james.l.morris@oracle.com>
@@ -32,83 +23,49 @@ Signed-off-by: Eric Biggers <ebiggers@google.com>
 Changed since v1: added Reviewed-by and resent in series with just the
 ecryptfs patches.  Can this please be taken through the ecryptfs tree?
 
- fs/ecryptfs/ecryptfs_kernel.h | 24 +++++++++++++++++-------
- fs/ecryptfs/keystore.c        |  9 ++++++++-
- 2 files changed, 25 insertions(+), 8 deletions(-)
+ fs/ecryptfs/ecryptfs_kernel.h | 6 ++++++
+ fs/ecryptfs/keystore.c        | 4 ++++
+ 2 files changed, 10 insertions(+)
 
 diff --git a/fs/ecryptfs/ecryptfs_kernel.h b/fs/ecryptfs/ecryptfs_kernel.h
-index 9c351bf757b2..3fbc0ff79699 100644
+index 3fbc0ff79699..945844d5f0ef 100644
 --- a/fs/ecryptfs/ecryptfs_kernel.h
 +++ b/fs/ecryptfs/ecryptfs_kernel.h
-@@ -84,11 +84,16 @@ struct ecryptfs_page_crypt_context {
- static inline struct ecryptfs_auth_tok *
- ecryptfs_get_encrypted_key_payload_data(struct key *key)
- {
--	if (key->type == &key_type_encrypted)
--		return (struct ecryptfs_auth_tok *)
--			(&((struct encrypted_key_payload *)key->payload.data[0])->payload_data);
--	else
-+	struct encrypted_key_payload *payload;
+@@ -93,6 +93,9 @@ ecryptfs_get_encrypted_key_payload_data(struct key *key)
+ 	if (!payload)
+ 		return ERR_PTR(-EKEYREVOKED);
+ 
++	if (payload->payload_datalen != sizeof(struct ecryptfs_auth_tok))
++		return ERR_PTR(-EINVAL);
 +
-+	if (key->type != &key_type_encrypted)
- 		return NULL;
-+
-+	payload = key->payload.data[0];
-+	if (!payload)
-+		return ERR_PTR(-EKEYREVOKED);
-+
-+	return (struct ecryptfs_auth_tok *)payload->payload_data;
+ 	return (struct ecryptfs_auth_tok *)payload->payload_data;
  }
  
- static inline struct key *ecryptfs_get_encrypted_key(char *sig)
-@@ -114,12 +119,17 @@ static inline struct ecryptfs_auth_tok *
- ecryptfs_get_key_payload_data(struct key *key)
- {
- 	struct ecryptfs_auth_tok *auth_tok;
-+	struct user_key_payload *ukp;
+@@ -129,6 +132,9 @@ ecryptfs_get_key_payload_data(struct key *key)
+ 	if (!ukp)
+ 		return ERR_PTR(-EKEYREVOKED);
  
- 	auth_tok = ecryptfs_get_encrypted_key_payload_data(key);
--	if (!auth_tok)
--		return (struct ecryptfs_auth_tok *)user_key_payload_locked(key)->data;
--	else
-+	if (auth_tok)
- 		return auth_tok;
++	if (ukp->datalen != sizeof(struct ecryptfs_auth_tok))
++		return ERR_PTR(-EINVAL);
 +
-+	ukp = user_key_payload_locked(key);
-+	if (!ukp)
-+		return ERR_PTR(-EKEYREVOKED);
-+
-+	return (struct ecryptfs_auth_tok *)ukp->data;
+ 	return (struct ecryptfs_auth_tok *)ukp->data;
  }
  
- #define ECRYPTFS_MAX_KEYSET_SIZE 1024
 diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
-index 3cf1546dca82..fa218cd64f74 100644
+index fa218cd64f74..95e20ab67df3 100644
 --- a/fs/ecryptfs/keystore.c
 +++ b/fs/ecryptfs/keystore.c
-@@ -459,7 +459,8 @@ static int ecryptfs_verify_version(u16 version)
-  * @auth_tok_key: key containing the authentication token
-  * @auth_tok: authentication token
-  *
-- * Returns zero on valid auth tok; -EINVAL otherwise
-+ * Returns zero on valid auth tok; -EINVAL if the payload is invalid; or
-+ * -EKEYREVOKED if the key was revoked before we acquired its semaphore.
-  */
- static int
- ecryptfs_verify_auth_tok_from_key(struct key *auth_tok_key,
-@@ -468,6 +469,12 @@ ecryptfs_verify_auth_tok_from_key(struct key *auth_tok_key,
- 	int rc = 0;
- 
+@@ -471,6 +471,10 @@ ecryptfs_verify_auth_tok_from_key(struct key *auth_tok_key,
  	(*auth_tok) = ecryptfs_get_key_payload_data(auth_tok_key);
-+	if (IS_ERR(*auth_tok)) {
-+		rc = PTR_ERR(*auth_tok);
-+		*auth_tok = NULL;
-+		goto out;
-+	}
-+
- 	if (ecryptfs_verify_version((*auth_tok)->version)) {
- 		printk(KERN_ERR "Data structure version mismatch. Userspace "
- 		       "tools must match eCryptfs kernel module with major "
+ 	if (IS_ERR(*auth_tok)) {
+ 		rc = PTR_ERR(*auth_tok);
++		if (rc == -EINVAL) {
++			ecryptfs_printk(KERN_ERR,
++					"Authentication token payload has wrong length\n");
++		}
+ 		*auth_tok = NULL;
+ 		goto out;
+ 	}
 -- 
 2.14.2.920.gcf0c67979c-goog
 
