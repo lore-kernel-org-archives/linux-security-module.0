@@ -1,47 +1,79 @@
-From: jmorris@namei.org (James Morris)
-Date: Mon, 9 Oct 2017 09:24:53 +1100 (AEDT)
-Subject: [PATCH] vfs: fix mounting a filesystem with i_version
-In-Reply-To: <1507436901.5841.4.camel@linux.vnet.ibm.com>
-References: <1507436901.5841.4.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1710090924410.3670@namei.org>
+From: lkundrak@v3.sk (Lubomir Rintel)
+Date: Mon, 09 Oct 2017 20:14:52 +0200
+Subject: [PATCH] selinux: check CAP_SETFCAP for a particular inode &
+	mapped user
+In-Reply-To: <20171005064826.GA11630@mail.hallyn.com>
+References: <20171005061611.6649-1-lkundrak@v3.sk>
+	<20171005064826.GA11630@mail.hallyn.com>
+Message-ID: <1507572892.23600.10.camel@v3.sk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-cc: Al Viro.
-
-
-On Sun, 8 Oct 2017, Mimi Zohar wrote:
-
-> The mount i_version flag is not enabled in the new sb_flags.  This patch
-> adds the missing SB_I_VERSION flag.
+On Thu, 2017-10-05 at 01:48 -0500, Serge E. Hallyn wrote:
+> On Thu, Oct 05, 2017 at 08:16:11AM +0200, Lubomir Rintel wrote:
+> > This allows setting "security.capability" xattr by a user that has
+> > CAP_SETFCAP in an userns with SELinux. Namespaced capabilities are
+> > supported, as of commit 8db6c34f1dbc ("Introduce v3 namespaced file
+> > capabilities").
+> > 
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > 
-> Fixes: e462ec5 "VFS: Differentiate mount flags (MS_*) from internal
->        superblock flags"
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> ---
->  fs/namespace.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 3b601f115b6c..d18deb4c410b 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2825,7 +2825,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
->  			    SB_MANDLOCK |
->  			    SB_DIRSYNC |
->  			    SB_SILENT |
-> -			    SB_POSIXACL);
-> +			    SB_POSIXACL |
-> +			    SB_I_VERSION);
->  
->  	if (flags & MS_REMOUNT)
->  		retval = do_remount(&path, flags, sb_flags, mnt_flags,
-> 
+> The fix is already on its way into the kernel - see the thread at
+> https://marc.info/?l=selinux&m=150713903925728&w=2
 
--- 
-James Morris
-<jmorris@namei.org>
+Thanks for the response. I'm wondering if there are chances this could
+go to 4.14, given the patch that got merged seems reasonably self-
+contained, quite useful, and the release is going to be a long-term
+one.
 
+If rc5 is too late for such changes, are there changes it could perhaps
+go to a subsequent -stable release?
+
+Thanks,
+Lubo
+
+> 
+> Thanks though :)
+> 
+> -serge
+> 
+> > ---
+> > A casual warning: Please not assume I know what I'm really doing. I
+> > can now 
+> > install iputils and /bin/ping in a LXC container, which is great,
+> > but I 
+> > typically wouldn't be allowed anywhere near anything security
+> > related.
+> > 
+> > Thank you!
+> > 
+> >  security/selinux/hooks.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index f5d304736852..7bc5f4ffb4e0 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -3127,11 +3127,12 @@ static int selinux_inode_getattr(const
+> > struct path *path)
+> >  static int selinux_inode_setotherxattr(struct dentry *dentry,
+> > const char *name)
+> >  {
+> >  	const struct cred *cred = current_cred();
+> > +	struct inode *inode = d_backing_inode(dentry);
+> >  
+> >  	if (!strncmp(name, XATTR_SECURITY_PREFIX,
+> >  		     sizeof XATTR_SECURITY_PREFIX - 1)) {
+> >  		if (!strcmp(name, XATTR_NAME_CAPS)) {
+> > -			if (!capable(CAP_SETFCAP))
+> > +			if (!capable_wrt_inode_uidgid(inode,
+> > CAP_SETFCAP))
+> >  				return -EPERM;
+> >  		} else if (!capable(CAP_SYS_ADMIN)) {
+> >  			/* A different attribute in the security
+> > namespace.
+> > -- 
+> > 2.13.6
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
