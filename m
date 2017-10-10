@@ -1,10 +1,10 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 10 Oct 2017 16:17:45 -0700
+Date: Tue, 10 Oct 2017 16:19:46 -0700
 Subject: [PATCH] selinux: Fix bool initialization/comparison
 In-Reply-To: <1507383097088-1068794175-19-diffsplit-thomas@m3y3r.de>
 References: <1507383097081-778026979-0-diffsplit-thomas@m3y3r.de>
 	<1507383097088-1068794175-19-diffsplit-thomas@m3y3r.de>
-Message-ID: <5d4bccdd-c1e9-f32a-2d3b-13fd13d2f5e6@schaufler-ca.com>
+Message-ID: <9b5f9458-ac5f-621b-ff0c-677de365c216@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -25,7 +25,7 @@ On 10/7/2017 7:02 AM, Thomas Meyer wrote:
 > -		if ((tclass == policydb.process_class) || (sock == true))
 > +		if ((tclass == policydb.process_class) || (sock))
 
-bool tests don't need parentheses, either.
+How about
 
 	+	if ((tclass == policydb.process_class) || sock)
 
@@ -42,7 +42,7 @@ bool tests don't need parentheses, either.
 > -		if ((tclass == policydb.process_class) || (sock == true))
 > +		if ((tclass == policydb.process_class) || (sock))
 
-Likewise
+Excessive ()
 
 >  			newcontext.role = scontext->role;
 >  		else
@@ -54,15 +54,11 @@ Likewise
 > -		if ((tclass == policydb.process_class) || (sock == true)) {
 > +		if ((tclass == policydb.process_class) || (sock)) {
 
-On more time.
+Excessive ()
 
 >  			/* Use the type of process. */
 >  			newcontext.type = scontext->type;
 >  		} else {
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
 
 --
