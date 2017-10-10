@@ -1,62 +1,71 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Wed, 11 Oct 2017 05:30:09 +0800
-Subject: [PATCH net-next v2 4/5] selinux: bpf: Add selinux check for eBPF
-	syscall operations
-In-Reply-To: <20171009222028.13096-5-chenbofeng.kernel@gmail.com>
-Message-ID: <201710110541.YJ9FcYLq%fengguang.wu@intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 10 Oct 2017 16:17:45 -0700
+Subject: [PATCH] selinux: Fix bool initialization/comparison
+In-Reply-To: <1507383097088-1068794175-19-diffsplit-thomas@m3y3r.de>
+References: <1507383097081-778026979-0-diffsplit-thomas@m3y3r.de>
+	<1507383097088-1068794175-19-diffsplit-thomas@m3y3r.de>
+Message-ID: <5d4bccdd-c1e9-f32a-2d3b-13fd13d2f5e6@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Chenbo,
+On 10/7/2017 7:02 AM, Thomas Meyer wrote:
+> Bool initializations should use true and false. Bool tests don't need
+> comparisons.
+>
+> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+> ---
+>
+> diff -u -p a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
+> --- a/security/selinux/ss/mls.c
+> +++ b/security/selinux/ss/mls.c
+> @@ -550,7 +550,7 @@ int mls_compute_sid(struct context *scon
+>  
+>  		/* Fallthrough */
+>  	case AVTAB_CHANGE:
+> -		if ((tclass == policydb.process_class) || (sock == true))
+> +		if ((tclass == policydb.process_class) || (sock))
 
-[auto build test WARNING on net-next/master]
+bool tests don't need parentheses, either.
 
-url:    https://github.com/0day-ci/linux/commits/Chenbo-Feng/bpf-security-New-file-mode-and-LSM-hooks-for-eBPF-object-permission-control/20171011-010349
-config: x86_64-randconfig-u0-10110310 (attached as .config)
-compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+	+	if ((tclass == policydb.process_class) || sock)
 
-All warnings (new ones prefixed by >>):
+>  			/* Use the process MLS attributes. */
+>  			return mls_context_cpy(newcontext, scontext);
+>  		else
+> diff -u -p a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -1656,7 +1656,7 @@ static int security_compute_sid(u32 ssid
+>  	} else if (cladatum && cladatum->default_role == DEFAULT_TARGET) {
+>  		newcontext.role = tcontext->role;
+>  	} else {
+> -		if ((tclass == policydb.process_class) || (sock == true))
+> +		if ((tclass == policydb.process_class) || (sock))
 
-   In file included from include/linux/init.h:4:0,
-                    from security/selinux/hooks.c:27:
-   security/selinux/hooks.c: In function 'bpf_map_fmode_to_av':
-   security/selinux/hooks.c:6284:6: error: 'f_mode' undeclared (first use in this function)
-     if (f_mode & FMODE_READ)
-         ^
-   include/linux/compiler.h:156:30: note: in definition of macro '__trace_if'
-     if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
-                                 ^~~~
->> security/selinux/hooks.c:6284:2: note: in expansion of macro 'if'
-     if (f_mode & FMODE_READ)
-     ^~
-   security/selinux/hooks.c:6284:6: note: each undeclared identifier is reported only once for each function it appears in
-     if (f_mode & FMODE_READ)
-         ^
-   include/linux/compiler.h:156:30: note: in definition of macro '__trace_if'
-     if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
-                                 ^~~~
->> security/selinux/hooks.c:6284:2: note: in expansion of macro 'if'
-     if (f_mode & FMODE_READ)
-     ^~
+Likewise
 
-vim +/if +6284 security/selinux/hooks.c
+>  			newcontext.role = scontext->role;
+>  		else
+>  			newcontext.role = OBJECT_R_VAL;
+> @@ -1668,7 +1668,7 @@ static int security_compute_sid(u32 ssid
+>  	} else if (cladatum && cladatum->default_type == DEFAULT_TARGET) {
+>  		newcontext.type = tcontext->type;
+>  	} else {
+> -		if ((tclass == policydb.process_class) || (sock == true)) {
+> +		if ((tclass == policydb.process_class) || (sock)) {
 
-  6279	
-  6280	static u32 bpf_map_fmode_to_av(fmode_t fmode)
-  6281	{
-  6282		u32 av = 0;
-  6283	
-> 6284		if (f_mode & FMODE_READ)
-  6285			av |= BPF_MAP__READ;
-  6286		if (f_mode & FMODE_WRITE)
-  6287			av |= BPF_MAP__WRITE;
-  6288		return av;
-  6289	}
-  6290	
+On more time.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>  			/* Use the type of process. */
+>  			newcontext.type = scontext->type;
+>  		} else {
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
