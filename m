@@ -1,81 +1,84 @@
 From: rgb@redhat.com (Richard Guy Briggs)
-Date: Wed, 11 Oct 2017 20:57:04 -0400
-Subject: [PATCH GHAK16 V5 00/10] capabilities: do not audit log BPRM_FCAPS on
-	set*id
-Message-ID: <cover.1507769413.git.rgb@redhat.com>
+Date: Wed, 11 Oct 2017 20:57:06 -0400
+Subject: [PATCH GHAK16 V5 02/10] capabilities: intuitive names for cap gain
+	status
+In-Reply-To: <cover.1507769413.git.rgb@redhat.com>
+References: <cover.1507769413.git.rgb@redhat.com>
+Message-ID: <c82c44abc10749b88d2ba8336de616cf7b572a91.1507769413.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
-application execution (SYSCALL execve). This is not expected as it was
-supposed to be limited to when the file system actually had capabilities
-in an extended attribute.  It lists all capabilities making the event
-really ugly to parse what is happening.  The PATH record correctly
-records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
-set*id.
+Introduce macros cap_gained, cap_grew, cap_full to make the use of the
+negation of is_subset() easier to read and analyse.
 
-See: https://github.com/linux-audit/audit-kernel/issues/16
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+Acked-by: James Morris <james.l.morris@oracle.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Okay-ished-by: Paul Moore <paul@paul-moore.com>
+---
+ security/commoncap.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-The first to eighth patches just massage the logic to make it easier to
-understand.  Some of them could be squashed together.
-
-The patch that resolves this issue is the ninth.  
-
-It would be possible to address the original issue with a change of
-	"!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
-to
-	"!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
-but it took me long enough to understand this logic that I don't think
-I'd be doing any favours by leaving it this difficult to understand.
-
-The final patch attempts to address all the conditions that need logging
-based on mailing list conversations, recoginizing there is probably some
-duplication in the logic.
-
-Passes: (ltp 20170516)
-	./runltp -f syscalls -s cap
-	./runltp -f securebits
-	./runltp -f cap_bounds
-	./runltp -f filecaps
-	make TARGETS=capabilities kselftest (when run locally, fails over nfs)
-
-Since this is mostly capabilities related rather than audit, could this go
-through the capabilites (Serge) or security (James) trees please?  Thanks!
-
-v5
-  rebase on linux-security/next 4.14-rc2
-  added comment block header to handle_privileged_root()
-  moved comment in handle_privileged_root()
-  moved root_privileged() check back into handle_privileged_root()
-
-v4
-  rebase on kees' 4.13 commoncap changes
-  minor local func renames
-
-v3
-  refactor into several sub-functions
-  convert most macros to inline funcs
-
-v2
-  use macros to clarify intent of calculations
-  fix original logic error
-  address additional audit logging conditions
-
-Richard Guy Briggs (10):
-  capabilities: factor out cap_bprm_set_creds privileged root
-  capabilities: intuitive names for cap gain status
-  capabilities: rename has_cap to has_fcap
-  capabilities: use root_priveleged inline to clarify logic
-  capabilities: use intuitive names for id changes
-  capabilities: move audit log decision to function
-  capabilities: remove a layer of conditional logic
-  capabilities: invert logic for clarity
-  capabilities: fix logic for effective root or real root
-  capabilities: audit log other surprising conditions
-
- security/commoncap.c | 193 ++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 128 insertions(+), 65 deletions(-)
-
+diff --git a/security/commoncap.c b/security/commoncap.c
+index be9bca5..4c9af6e 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -741,6 +741,12 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_cap,
+ 		*effective = true;
+ }
+ 
++#define __cap_gained(field, target, source) \
++	!cap_issubset(target->cap_##field, source->cap_##field)
++#define __cap_grew(target, source, cred) \
++	!cap_issubset(cred->cap_##target, cred->cap_##source)
++#define __cap_full(field, cred) \
++	cap_issubset(CAP_FULL_SET, cred->cap_##field)
+ /**
+  * cap_bprm_set_creds - Set up the proposed credentials for execve().
+  * @bprm: The execution parameters, including the proposed creds
+@@ -769,10 +775,9 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	handle_privileged_root(bprm, has_cap, &effective, root_uid);
+ 
+ 	/* if we have fs caps, clear dangerous personality flags */
+-	if (!cap_issubset(new->cap_permitted, old->cap_permitted))
++	if (__cap_gained(permitted, new, old))
+ 		bprm->per_clear |= PER_CLEAR_ON_SETID;
+ 
+-
+ 	/* Don't let someone trace a set[ug]id/setpcap binary with the revised
+ 	 * credentials unless they have the appropriate permit.
+ 	 *
+@@ -780,8 +785,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	 */
+ 	is_setid = !uid_eq(new->euid, old->uid) || !gid_eq(new->egid, old->gid);
+ 
+-	if ((is_setid ||
+-	     !cap_issubset(new->cap_permitted, old->cap_permitted)) &&
++	if ((is_setid || __cap_gained(permitted, new, old)) &&
+ 	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
+ 	     !ptracer_capable(current, new->user_ns))) {
+ 		/* downgrade; they get no more than they had, and maybe less */
+@@ -831,8 +835,8 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	 * Number 1 above might fail if you don't have a full bset, but I think
+ 	 * that is interesting information to audit.
+ 	 */
+-	if (!cap_issubset(new->cap_effective, new->cap_ambient)) {
+-		if (!cap_issubset(CAP_FULL_SET, new->cap_effective) ||
++	if (__cap_grew(effective, ambient, new)) {
++		if (!__cap_full(effective, new) ||
+ 		    !uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid) ||
+ 		    issecure(SECURE_NOROOT)) {
+ 			ret = audit_log_bprm_fcaps(bprm, new, old);
+@@ -852,7 +856,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 		bprm->cap_elevated = 1;
+ 	} else if (!uid_eq(new->uid, root_uid)) {
+ 		if (effective ||
+-		    !cap_issubset(new->cap_permitted, new->cap_ambient))
++		    __cap_grew(permitted, ambient, new))
+ 			bprm->cap_elevated = 1;
+ 	}
+ 
 -- 
 1.8.3.1
 
