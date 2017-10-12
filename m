@@ -1,39 +1,83 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Thu, 12 Oct 2017 11:31:34 +1100 (AEDT)
-Subject: [PATCH net-next 2/4] security: bpf: Add LSM hooks for bpf object
-	related syscall
-In-Reply-To: <20171004182932.140028-3-chenbofeng.kernel@gmail.com>
-References: <20171004182932.140028-1-chenbofeng.kernel@gmail.com>
-	<20171004182932.140028-3-chenbofeng.kernel@gmail.com>
-Message-ID: <alpine.LFD.2.20.1710121129510.17334@t440.gateway.2wire.net>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Wed, 11 Oct 2017 20:57:04 -0400
+Subject: [PATCH GHAK16 V5 00/10] capabilities: do not audit log BPRM_FCAPS on
+	set*id
+Message-ID: <cover.1507769413.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 4 Oct 2017, Chenbo Feng wrote:
+The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
+application execution (SYSCALL execve). This is not expected as it was
+supposed to be limited to when the file system actually had capabilities
+in an extended attribute.  It lists all capabilities making the event
+really ugly to parse what is happening.  The PATH record correctly
+records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
+set*id.
 
->  int bpf_map_new_fd(struct bpf_map *map, int flags)
->  {
-> +	if (security_bpf_map(map, OPEN_FMODE(flags)))
-> +		return -EPERM;
-> +
+See: https://github.com/linux-audit/audit-kernel/issues/16
 
-Don't hardcode -EPERM here, return the actual error from 
-security_bpf_map().
+The first to eighth patches just massage the logic to make it easier to
+understand.  Some of them could be squashed together.
 
-> +	if (security_bpf_prog(prog))
-> +		return -EPERM;
-> +
+The patch that resolves this issue is the ninth.  
 
-Same.
+It would be possible to address the original issue with a change of
+	"!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
+to
+	"!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
+but it took me long enough to understand this logic that I don't think
+I'd be doing any favours by leaving it this difficult to understand.
 
-> +	err = security_bpf(cmd, &attr, size);
-> +	if (err)
-> +		return -EPERM;
+The final patch attempts to address all the conditions that need logging
+based on mailing list conversations, recoginizing there is probably some
+duplication in the logic.
 
-Same.
+Passes: (ltp 20170516)
+	./runltp -f syscalls -s cap
+	./runltp -f securebits
+	./runltp -f cap_bounds
+	./runltp -f filecaps
+	make TARGETS=capabilities kselftest (when run locally, fails over nfs)
 
+Since this is mostly capabilities related rather than audit, could this go
+through the capabilites (Serge) or security (James) trees please?  Thanks!
 
-- James
+v5
+  rebase on linux-security/next 4.14-rc2
+  added comment block header to handle_privileged_root()
+  moved comment in handle_privileged_root()
+  moved root_privileged() check back into handle_privileged_root()
+
+v4
+  rebase on kees' 4.13 commoncap changes
+  minor local func renames
+
+v3
+  refactor into several sub-functions
+  convert most macros to inline funcs
+
+v2
+  use macros to clarify intent of calculations
+  fix original logic error
+  address additional audit logging conditions
+
+Richard Guy Briggs (10):
+  capabilities: factor out cap_bprm_set_creds privileged root
+  capabilities: intuitive names for cap gain status
+  capabilities: rename has_cap to has_fcap
+  capabilities: use root_priveleged inline to clarify logic
+  capabilities: use intuitive names for id changes
+  capabilities: move audit log decision to function
+  capabilities: remove a layer of conditional logic
+  capabilities: invert logic for clarity
+  capabilities: fix logic for effective root or real root
+  capabilities: audit log other surprising conditions
+
+ security/commoncap.c | 193 ++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 128 insertions(+), 65 deletions(-)
+
+-- 
+1.8.3.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
