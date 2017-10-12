@@ -1,135 +1,58 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Wed, 11 Oct 2017 20:57:05 -0400
-Subject: [PATCH GHAK16 V5 01/10] capabilities: factor out cap_bprm_set_creds
-	privileged root
-In-Reply-To: <cover.1507769413.git.rgb@redhat.com>
-References: <cover.1507769413.git.rgb@redhat.com>
-Message-ID: <97466101ce23bdecf0e3564bb5d3d0263935f8c8.1507769413.git.rgb@redhat.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 12 Oct 2017 14:17:26 +0300
+Subject: [PATCH v3 3/5] tpm: reduce polling delay in tpm_tis
+	wait_for_tpm_stat()
+In-Reply-To: <20171004102924.12355-4-nayna@linux.vnet.ibm.com>
+References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
+	<20171004102924.12355-4-nayna@linux.vnet.ibm.com>
+Message-ID: <20171012111726.7dhos7bfgywqytbz@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Factor out the case of privileged root from the function
-cap_bprm_set_creds() to make the latter easier to read and analyse.
+On Wed, Oct 04, 2017 at 06:29:22AM -0400, Nayna Jain wrote:
+> The existing wait_for_tpm_stat() polls for the chip status after
+> 5msec sleep. As per TCG ddwg input, it is expected that tpm might
+> return status in few usec. So, reducing the delay in polling to
+> 1msec.
+> 
+> After this change, performance on a TPM 1.2 with an 8 byte
+> burstcount for 1000 extends improved from ~14sec to ~10sec.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index 8da425e1783f..224842e06105 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -31,6 +31,8 @@
+>  #include "tpm.h"
+>  #include "tpm_tis_core.h"
+>  
+> +#define TPM_POLL_SLEEP	1
 
-Suggested-by: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-Acked-by: James Morris <james.l.morris@oracle.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Okay-ished-by: Paul Moore <paul@paul-moore.com>
----
- security/commoncap.c | 76 +++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 48 insertions(+), 28 deletions(-)
+Should have a comment above that explains the choice.
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index c25e0d2..be9bca5 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -695,6 +695,52 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_c
- 	return rc;
- }
- 
-+/*
-+ * handle_privileged_root - Handle case of privileged root
-+ * @bprm: The execution parameters, including the proposed creds
-+ * @has_fcap: Are any file capabilities set?
-+ * @effective: Do we have effective root privilege?
-+ * @root_uid: This namespace' root UID WRT initial USER namespace
-+ *
-+ * Handle the case where root is privileged and hasn't been neutered by
-+ * SECURE_NOROOT.  If file capabilities are set, they won't be combined with
-+ * set UID root and nothing is changed.  If we are root, cap_permitted is
-+ * updated.  If we have become set UID root, the effective bit is set.
-+ */
-+static void handle_privileged_root(struct linux_binprm *bprm, bool has_cap,
-+				   bool *effective, kuid_t root_uid)
-+{
-+	const struct cred *old = current_cred();
-+	struct cred *new = bprm->cred;
-+
-+	if (issecure(SECURE_NOROOT))
-+		return;
-+	/*
-+	 * If the legacy file capability is set, then don't set privs
-+	 * for a setuid root binary run by a non-root user.  Do set it
-+	 * for a root user just to cause least surprise to an admin.
-+	 */
-+	if (has_cap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
-+		warn_setuid_and_fcaps_mixed(bprm->filename);
-+		return;
-+	}
-+	/*
-+	 * To support inheritance of root-permissions and suid-root
-+	 * executables under compatibility mode, we override the
-+	 * capability sets for the file.
-+	 */
-+	if (uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid)) {
-+		/* pP' = (cap_bset & ~0) | (pI & ~0) */
-+		new->cap_permitted = cap_combine(old->cap_bset,
-+						 old->cap_inheritable);
-+	}
-+	/*
-+	 * If only the real uid is 0, we do not set the effective bit.
-+	 */
-+	if (uid_eq(new->euid, root_uid))
-+		*effective = true;
-+}
-+
- /**
-  * cap_bprm_set_creds - Set up the proposed credentials for execve().
-  * @bprm: The execution parameters, including the proposed creds
-@@ -707,46 +753,20 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- {
- 	const struct cred *old = current_cred();
- 	struct cred *new = bprm->cred;
--	bool effective, has_cap = false, is_setid;
-+	bool effective = false, has_cap = false, is_setid;
- 	int ret;
- 	kuid_t root_uid;
- 
- 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
- 		return -EPERM;
- 
--	effective = false;
- 	ret = get_file_caps(bprm, &effective, &has_cap);
- 	if (ret < 0)
- 		return ret;
- 
- 	root_uid = make_kuid(new->user_ns, 0);
- 
--	if (!issecure(SECURE_NOROOT)) {
--		/*
--		 * If the legacy file capability is set, then don't set privs
--		 * for a setuid root binary run by a non-root user.  Do set it
--		 * for a root user just to cause least surprise to an admin.
--		 */
--		if (has_cap && !uid_eq(new->uid, root_uid) && uid_eq(new->euid, root_uid)) {
--			warn_setuid_and_fcaps_mixed(bprm->filename);
--			goto skip;
--		}
--		/*
--		 * To support inheritance of root-permissions and suid-root
--		 * executables under compatibility mode, we override the
--		 * capability sets for the file.
--		 *
--		 * If only the real uid is 0, we do not set the effective bit.
--		 */
--		if (uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid)) {
--			/* pP' = (cap_bset & ~0) | (pI & ~0) */
--			new->cap_permitted = cap_combine(old->cap_bset,
--							 old->cap_inheritable);
--		}
--		if (uid_eq(new->euid, root_uid))
--			effective = true;
--	}
--skip:
-+	handle_privileged_root(bprm, has_cap, &effective, root_uid);
- 
- 	/* if we have fs caps, clear dangerous personality flags */
- 	if (!cap_issubset(new->cap_permitted, old->cap_permitted))
--- 
-1.8.3.1
+> +
+>  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+>  					bool check_cancel, bool *canceled)
+>  {
+> @@ -82,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+>  		}
+>  	} else {
+>  		do {
+> -			tpm_msleep(TPM_TIMEOUT);
+> +			tpm_msleep(TPM_POLL_SLEEP);
+>  			status = chip->ops->status(chip);
+>  			if ((status & mask) == mask)
+>  				return 0;
+> -- 
+> 2.13.3
+> 
 
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
