@@ -1,44 +1,51 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 12 Oct 2017 21:17:02 +0100
-Subject: [PATCH 09/15] KEYS: Fix the wrong index when checking the existence
-	of second id
+Date: Thu, 12 Oct 2017 21:16:55 +0100
+Subject: [PATCH 08/15] security/keys: BIG_KEY requires CONFIG_CRYPTO
 In-Reply-To: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
 References: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
-Message-ID: <150783942283.10956.5950640563358295848.stgit@warthog.procyon.org.uk>
+Message-ID: <150783941546.10956.15884531475572047421.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Lee, Chun-Yi <joeyli.kernel@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Fix the wrong index number when checking the existence of second
-id in function of finding asymmetric key. The id_1 is the second
-id that the index in array must be 1 but not 0.
+The recent rework introduced a possible randconfig build failure
+when CONFIG_CRYPTO configured to only allow modules:
 
-Fix: 9eb029893(KEYS: Generalise x509_request_asymmetric_key())
+security/keys/big_key.o: In function `big_key_crypt':
+big_key.c:(.text+0x29f): undefined reference to `crypto_aead_setkey'
+security/keys/big_key.o: In function `big_key_init':
+big_key.c:(.init.text+0x1a): undefined reference to `crypto_alloc_aead'
+big_key.c:(.init.text+0x45): undefined reference to `crypto_aead_setauthsize'
+big_key.c:(.init.text+0x77): undefined reference to `crypto_destroy_tfm'
+crypto/gcm.o: In function `gcm_hash_crypt_remain_continue':
+gcm.c:(.text+0x167): undefined reference to `crypto_ahash_finup'
+crypto/gcm.o: In function `crypto_gcm_exit_tfm':
+gcm.c:(.text+0x847): undefined reference to `crypto_destroy_tfm'
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+When we 'select CRYPTO' like the other users, we always get a
+configuration that builds.
+
+Fixes: 428490e38b2e ("security/keys: rewrite all of big_key crypto")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/asymmetric_type.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/keys/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index e4b0ed386bc8..a597f5c5a222 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -105,7 +105,7 @@ struct key *find_asymmetric_key(struct key *keyring,
- 	if (id_0 && id_1) {
- 		const struct asymmetric_key_ids *kids = asymmetric_key_ids(key);
- 
--		if (!kids->id[0]) {
-+		if (!kids->id[1]) {
- 			pr_debug("First ID matches, but second is missing\n");
- 			goto reject;
- 		}
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index 91eafada3164..6462e6654ccf 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -45,6 +45,7 @@ config BIG_KEYS
+ 	bool "Large payload keys"
+ 	depends on KEYS
+ 	depends on TMPFS
++	select CRYPTO
+ 	select CRYPTO_AES
+ 	select CRYPTO_GCM
+ 	help
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
