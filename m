@@ -1,58 +1,126 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 12 Oct 2017 21:17:33 +0100
-Subject: [PATCH 13/15] KEYS: load key flags and expiry time atomically in
-	key_validate()
+Date: Thu, 12 Oct 2017 21:17:26 +0100
+Subject: [PATCH 12/15] KEYS: don't let add_key() update an uninstantiated key
 In-Reply-To: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
 References: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
-Message-ID: <150783945342.10956.11064832686161197456.stgit@warthog.procyon.org.uk>
+Message-ID: <150783944599.10956.8018787633755011927.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Currently, when passed a key that already exists, add_key() will call the
+key's ->update() method if such exists.  But this is heavily broken in the
+case where the key is uninstantiated because it doesn't call
+__key_instantiate_and_link().  Consequently, it doesn't do most of the
+things that are supposed to happen when the key is instantiated, such as
+setting the instantiation state, clearing KEY_FLAG_USER_CONSTRUCT and
+awakening tasks waiting on it, and incrementing key->user->nikeys.
 
-In key_validate(), load the flags and expiry time once atomically, since
-these can change concurrently if key_validate() is called without the
-key semaphore held.  And we don't want to get inconsistent results if a
-variable is referenced multiple times.  For example, key->expiry was
-referenced in both 'if (key->expiry)' and in 'if (now.tv_sec >=
-key->expiry)', making it theoretically possible to see a spurious
-EKEYEXPIRED while the expiration time was being removed, i.e. set to 0.
+It also never takes key_construction_mutex, which means that
+->instantiate() can run concurrently with ->update() on the same key.  In
+the case of the "user" and "logon" key types this causes a memory leak, at
+best.  Maybe even worse, the ->update() methods of the "encrypted" and
+"trusted" key types actually just dereference a NULL pointer when passed an
+uninstantiated key.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Change key_create_or_update() to wait interruptibly for the key to finish
+construction before continuing.
+
+This patch only affects *uninstantiated* keys.  For now we still allow a
+negatively instantiated key to be updated (thereby positively
+instantiating it), although that's broken too (the next patch fixes it)
+and I'm not sure that anyone actually uses that functionality either.
+
+Here is a simple reproducer for the bug using the "encrypted" key type
+(requires CONFIG_ENCRYPTED_KEYS=y), though as noted above the bug
+pertained to more than just the "encrypted" key type:
+
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <keyutils.h>
+
+    int main(void)
+    {
+        int ringid = keyctl_join_session_keyring(NULL);
+
+        if (fork()) {
+            for (;;) {
+                const char payload[] = "update user:foo 32";
+
+                usleep(rand() % 10000);
+                add_key("encrypted", "desc", payload, sizeof(payload), ringid);
+                keyctl_clear(ringid);
+            }
+        } else {
+            for (;;)
+                request_key("encrypted", "desc", "callout_info", ringid);
+        }
+    }
+
+It causes:
+
+    BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+    IP: encrypted_update+0xb0/0x170
+    PGD 7a178067 P4D 7a178067 PUD 77269067 PMD 0
+    PREEMPT SMP
+    CPU: 0 PID: 340 Comm: reproduce Tainted: G      D         4.14.0-rc1-00025-g428490e38b2e #796
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+    task: ffff8a467a39a340 task.stack: ffffb15c40770000
+    RIP: 0010:encrypted_update+0xb0/0x170
+    RSP: 0018:ffffb15c40773de8 EFLAGS: 00010246
+    RAX: 0000000000000000 RBX: ffff8a467a275b00 RCX: 0000000000000000
+    RDX: 0000000000000005 RSI: ffff8a467a275b14 RDI: ffffffffb742f303
+    RBP: ffffb15c40773e20 R08: 0000000000000000 R09: ffff8a467a275b17
+    R10: 0000000000000020 R11: 0000000000000000 R12: 0000000000000000
+    R13: 0000000000000000 R14: ffff8a4677057180 R15: ffff8a467a275b0f
+    FS:  00007f5d7fb08700(0000) GS:ffff8a467f200000(0000) knlGS:0000000000000000
+    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    CR2: 0000000000000018 CR3: 0000000077262005 CR4: 00000000001606f0
+    Call Trace:
+     key_create_or_update+0x2bc/0x460
+     SyS_add_key+0x10c/0x1d0
+     entry_SYSCALL_64_fastpath+0x1f/0xbe
+    RIP: 0033:0x7f5d7f211259
+    RSP: 002b:00007ffed03904c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
+    RAX: ffffffffffffffda RBX: 000000003b2a7955 RCX: 00007f5d7f211259
+    RDX: 00000000004009e4 RSI: 00000000004009ff RDI: 0000000000400a04
+    RBP: 0000000068db8bad R08: 000000003b2a7955 R09: 0000000000000004
+    R10: 000000000000001a R11: 0000000000000246 R12: 0000000000400868
+    R13: 00007ffed03905d0 R14: 0000000000000000 R15: 0000000000000000
+    Code: 77 28 e8 64 34 1f 00 45 31 c0 31 c9 48 8d 55 c8 48 89 df 48 8d 75 d0 e8 ff f9 ff ff 85 c0 41 89 c4 0f 88 84 00 00 00 4c 8b 7d c8 <49> 8b 75 18 4c 89 ff e8 24 f8 ff ff 85 c0 41 89 c4 78 6d 49 8b
+    RIP: encrypted_update+0xb0/0x170 RSP: ffffb15c40773de8
+    CR2: 0000000000000018
+
+Cc: <stable@vger.kernel.org>    [v2.6.12+]
+Reported-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Eric Biggers <ebiggers@google.com>
 ---
 
- security/keys/permission.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ security/keys/key.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/security/keys/permission.c b/security/keys/permission.c
-index 732cc0beffdf..a72b4dd70c8a 100644
---- a/security/keys/permission.c
-+++ b/security/keys/permission.c
-@@ -88,7 +88,8 @@ EXPORT_SYMBOL(key_task_permission);
-  */
- int key_validate(const struct key *key)
- {
--	unsigned long flags = key->flags;
-+	unsigned long flags = READ_ONCE(key->flags);
-+	time_t expiry = READ_ONCE(key->expiry);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index de1b789ad29f..ef2a028bd554 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -942,6 +942,15 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 	 */
+ 	__key_link_end(keyring, &index_key, edit);
  
- 	if (flags & (1 << KEY_FLAG_INVALIDATED))
- 		return -ENOKEY;
-@@ -99,9 +100,9 @@ int key_validate(const struct key *key)
- 		return -EKEYREVOKED;
- 
- 	/* check it hasn't expired */
--	if (key->expiry) {
-+	if (expiry) {
- 		struct timespec now = current_kernel_time();
--		if (now.tv_sec >= key->expiry)
-+		if (now.tv_sec >= expiry)
- 			return -EKEYEXPIRED;
- 	}
- 
++	if (test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags)) {
++		ret = wait_for_key_construction(key_ref_to_ptr(key_ref), true);
++		if (ret < 0) {
++			key_ref_put(key_ref);
++			key_ref = ERR_PTR(ret);
++			goto error_free_prep;
++		}
++	}
++
+ 	key_ref = __key_update(key_ref, &prep);
+ 	goto error_free_prep;
+ }
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
