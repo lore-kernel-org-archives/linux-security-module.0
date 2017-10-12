@@ -1,42 +1,48 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 12 Oct 2017 21:17:10 +0100
-Subject: [PATCH 10/15] KEYS: checking the input id parameters before finding
-	asymmetric key
+Date: Thu, 12 Oct 2017 21:17:41 +0100
+Subject: [PATCH 14/15] KEYS: load key flags and expiry time atomically in
+	keyring_search_iterator()
 In-Reply-To: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
 References: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
-Message-ID: <150783943076.10956.7407914508155575420.stgit@warthog.procyon.org.uk>
+Message-ID: <150783946092.10956.10684012274871383502.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Lee, Chun-Yi <joeyli.kernel@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-For finding asymmetric key, the input id_0 and id_1 parameters can
-not be NULL at the same time. This patch adds the BUG_ON checking
-for id_0 and id_1.
+Similar to the case for key_validate(), we should load the key ->flags
+and ->expiry once atomically in keyring_search_iterator(), since they
+can be changed concurrently whenever the key semaphore isn't held.
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/asymmetric_type.c |    2 ++
- 1 file changed, 2 insertions(+)
+ security/keys/keyring.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index a597f5c5a222..39aecad286fe 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -57,6 +57,8 @@ struct key *find_asymmetric_key(struct key *keyring,
- 	char *req, *p;
- 	int len;
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 816948abff89..1ef5c7caf15c 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -566,6 +566,8 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
  
-+	BUG_ON(!id_0 && !id_1);
+ 	/* skip invalidated, revoked and expired keys */
+ 	if (ctx->flags & KEYRING_SEARCH_DO_STATE_CHECK) {
++		time_t expiry = READ_ONCE(key->expiry);
 +
- 	if (id_0) {
- 		lookup = id_0->data;
- 		len = id_0->len;
+ 		if (kflags & ((1 << KEY_FLAG_INVALIDATED) |
+ 			      (1 << KEY_FLAG_REVOKED))) {
+ 			ctx->result = ERR_PTR(-EKEYREVOKED);
+@@ -573,7 +575,7 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
+ 			goto skipped;
+ 		}
+ 
+-		if (key->expiry && ctx->now.tv_sec >= key->expiry) {
++		if (expiry && ctx->now.tv_sec >= expiry) {
+ 			if (!(ctx->flags & KEYRING_SEARCH_SKIP_EXPIRED))
+ 				ctx->result = ERR_PTR(-EKEYEXPIRED);
+ 			kleave(" = %d [expire]", ctx->skipped_ret);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
