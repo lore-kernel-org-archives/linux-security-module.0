@@ -1,49 +1,52 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 12 Oct 2017 14:18:35 +0300
-Subject: [PATCH v3 4/5] tpm: reduce tpm_msleep() time in get_burstcount()
-In-Reply-To: <20171004102924.12355-5-nayna@linux.vnet.ibm.com>
+Date: Thu, 12 Oct 2017 14:19:43 +0300
+Subject: [PATCH v3 5/5] tpm: use tpm_msleep() value as max delay
+In-Reply-To: <20171004102924.12355-6-nayna@linux.vnet.ibm.com>
 References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-	<20171004102924.12355-5-nayna@linux.vnet.ibm.com>
-Message-ID: <20171012111835.g7uulven4whnpf5d@linux.intel.com>
+	<20171004102924.12355-6-nayna@linux.vnet.ibm.com>
+Message-ID: <20171012111943.vy43q2mkiqmrbuvc@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Oct 04, 2017 at 06:29:23AM -0400, Nayna Jain wrote:
-> Currently, get_burstcount() function sleeps for 5msec in a loop
-> before retrying for next query to burstcount. However, if it takes
-> lesser time for TPM to return, this 5msec delay is longer
-> than necessary.
-> 
-> This patch replaces the tpm_msleep time from 5msec to 1msec.
+On Wed, Oct 04, 2017 at 06:29:24AM -0400, Nayna Jain wrote:
+> Currently, tpm_msleep() uses delay_msec as the minimum value in
+> usleep_range. However, that is the maximum time we want to wait.
+> The function is modified to use the delay_msec as the maximum
+> value, not the minimum value.
 > 
 > After this change, performance on a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~10sec to ~9sec.
+> burstcount for 1000 extends improved from ~9sec to ~8sec.
+> 
+> Fixes: 3b9af007869("tpm: replace msleep() with usleep_range() in TPM 1.2/
+> 2.0 generic drivers")
 > 
 > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 > Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > ---
->  drivers/char/tpm/tpm_tis_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/char/tpm/tpm.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 224842e06105..826a0b9c9201 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -226,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
->  		burstcnt = (value >> 8) & 0xFFFF;
->  		if (burstcnt)
->  			return burstcnt;
-> -		tpm_msleep(TPM_TIMEOUT);
-> +		tpm_msleep(TPM_POLL_SLEEP);
->  	} while (time_before(jiffies, stop));
->  	return -EBUSY;
->  }
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 4fc83ac7abeb..644de70de2cc 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -528,8 +528,8 @@ int tpm_pm_resume(struct device *dev);
+>  
+>  static inline void tpm_msleep(unsigned int delay_msec)
+>  {
+> -	usleep_range(delay_msec * 1000,
+> -		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
+> +	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
+> +		     delay_msec * 1000);
+>  };
+>  
+>  struct tpm_chip *tpm_chip_find_get(int chip_num);
 > -- 
 > 2.13.3
 > 
 
-Would it make sense to squash this to 3/5 and merge the commit
-messages?
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
 --
