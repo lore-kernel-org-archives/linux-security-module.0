@@ -1,51 +1,189 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 12 Oct 2017 21:16:55 +0100
-Subject: [PATCH 08/15] security/keys: BIG_KEY requires CONFIG_CRYPTO
+Date: Thu, 12 Oct 2017 21:16:48 +0100
+Subject: [PATCH 07/15] ecryptfs: move key payload accessor functions into
+	keystore.c
 In-Reply-To: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
 References: <150783935268.10956.14343227057986655899.stgit@warthog.procyon.org.uk>
-Message-ID: <150783941546.10956.15884531475572047421.stgit@warthog.procyon.org.uk>
+Message-ID: <150783940815.10956.5196007076247615090.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Eric Biggers <ebiggers@google.com>
 
-The recent rework introduced a possible randconfig build failure
-when CONFIG_CRYPTO configured to only allow modules:
+As experience has shown, accessing the 'struct key' payload is very
+error-prone, since we need to hold the key semaphore and properly
+validate everything.  Fortunately eCryptfs only does it from one place,
+in ecryptfs_verify_auth_tok_from_key() in keystore.c.  Therefore, move
+the payload accessor functions like ecryptfs_get_key_payload_data() out
+of ecryptfs_kernel.h and into keystore.c so that people might be less
+tempted to use them directly.
 
-security/keys/big_key.o: In function `big_key_crypt':
-big_key.c:(.text+0x29f): undefined reference to `crypto_aead_setkey'
-security/keys/big_key.o: In function `big_key_init':
-big_key.c:(.init.text+0x1a): undefined reference to `crypto_alloc_aead'
-big_key.c:(.init.text+0x45): undefined reference to `crypto_aead_setauthsize'
-big_key.c:(.init.text+0x77): undefined reference to `crypto_destroy_tfm'
-crypto/gcm.o: In function `gcm_hash_crypt_remain_continue':
-gcm.c:(.text+0x167): undefined reference to `crypto_ahash_finup'
-crypto/gcm.o: In function `crypto_gcm_exit_tfm':
-gcm.c:(.text+0x847): undefined reference to `crypto_destroy_tfm'
-
-When we 'select CRYPTO' like the other users, we always get a
-configuration that builds.
-
-Fixes: 428490e38b2e ("security/keys: rewrite all of big_key crypto")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
+Cc: Michael Halcrow <mhalcrow@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ecryptfs/ecryptfs_kernel.h |   60 -----------------------------------------
+ fs/ecryptfs/keystore.c        |   60 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 60 deletions(-)
 
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 91eafada3164..6462e6654ccf 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -45,6 +45,7 @@ config BIG_KEYS
- 	bool "Large payload keys"
- 	depends on KEYS
- 	depends on TMPFS
-+	select CRYPTO
- 	select CRYPTO_AES
- 	select CRYPTO_GCM
- 	help
+diff --git a/fs/ecryptfs/ecryptfs_kernel.h b/fs/ecryptfs/ecryptfs_kernel.h
+index 945844d5f0ef..f2e339a6f9e9 100644
+--- a/fs/ecryptfs/ecryptfs_kernel.h
++++ b/fs/ecryptfs/ecryptfs_kernel.h
+@@ -29,8 +29,6 @@
+ #define ECRYPTFS_KERNEL_H
+ 
+ #include <crypto/skcipher.h>
+-#include <keys/user-type.h>
+-#include <keys/encrypted-type.h>
+ #include <linux/fs.h>
+ #include <linux/fs_stack.h>
+ #include <linux/namei.h>
+@@ -80,64 +78,6 @@ struct ecryptfs_page_crypt_context {
+ 	} param;
+ };
+ 
+-#if defined(CONFIG_ENCRYPTED_KEYS) || defined(CONFIG_ENCRYPTED_KEYS_MODULE)
+-static inline struct ecryptfs_auth_tok *
+-ecryptfs_get_encrypted_key_payload_data(struct key *key)
+-{
+-	struct encrypted_key_payload *payload;
+-
+-	if (key->type != &key_type_encrypted)
+-		return NULL;
+-
+-	payload = key->payload.data[0];
+-	if (!payload)
+-		return ERR_PTR(-EKEYREVOKED);
+-
+-	if (payload->payload_datalen != sizeof(struct ecryptfs_auth_tok))
+-		return ERR_PTR(-EINVAL);
+-
+-	return (struct ecryptfs_auth_tok *)payload->payload_data;
+-}
+-
+-static inline struct key *ecryptfs_get_encrypted_key(char *sig)
+-{
+-	return request_key(&key_type_encrypted, sig, NULL);
+-}
+-
+-#else
+-static inline struct ecryptfs_auth_tok *
+-ecryptfs_get_encrypted_key_payload_data(struct key *key)
+-{
+-	return NULL;
+-}
+-
+-static inline struct key *ecryptfs_get_encrypted_key(char *sig)
+-{
+-	return ERR_PTR(-ENOKEY);
+-}
+-
+-#endif /* CONFIG_ENCRYPTED_KEYS */
+-
+-static inline struct ecryptfs_auth_tok *
+-ecryptfs_get_key_payload_data(struct key *key)
+-{
+-	struct ecryptfs_auth_tok *auth_tok;
+-	struct user_key_payload *ukp;
+-
+-	auth_tok = ecryptfs_get_encrypted_key_payload_data(key);
+-	if (auth_tok)
+-		return auth_tok;
+-
+-	ukp = user_key_payload_locked(key);
+-	if (!ukp)
+-		return ERR_PTR(-EKEYREVOKED);
+-
+-	if (ukp->datalen != sizeof(struct ecryptfs_auth_tok))
+-		return ERR_PTR(-EINVAL);
+-
+-	return (struct ecryptfs_auth_tok *)ukp->data;
+-}
+-
+ #define ECRYPTFS_MAX_KEYSET_SIZE 1024
+ #define ECRYPTFS_MAX_CIPHER_NAME_SIZE 31
+ #define ECRYPTFS_MAX_NUM_ENC_KEYS 64
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 95e20ab67df3..cb801bdcbae2 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -27,6 +27,8 @@
+ 
+ #include <crypto/hash.h>
+ #include <crypto/skcipher.h>
++#include <keys/user-type.h>
++#include <keys/encrypted-type.h>
+ #include <linux/string.h>
+ #include <linux/pagemap.h>
+ #include <linux/key.h>
+@@ -454,6 +456,64 @@ static int ecryptfs_verify_version(u16 version)
+ 	return rc;
+ }
+ 
++#if defined(CONFIG_ENCRYPTED_KEYS) || defined(CONFIG_ENCRYPTED_KEYS_MODULE)
++static inline struct ecryptfs_auth_tok *
++ecryptfs_get_encrypted_key_payload_data(struct key *key)
++{
++	struct encrypted_key_payload *payload;
++
++	if (key->type != &key_type_encrypted)
++		return NULL;
++
++	payload = key->payload.data[0];
++	if (!payload)
++		return ERR_PTR(-EKEYREVOKED);
++
++	if (payload->payload_datalen != sizeof(struct ecryptfs_auth_tok))
++		return ERR_PTR(-EINVAL);
++
++	return (struct ecryptfs_auth_tok *)payload->payload_data;
++}
++
++static inline struct key *ecryptfs_get_encrypted_key(char *sig)
++{
++	return request_key(&key_type_encrypted, sig, NULL);
++}
++
++#else
++static inline struct ecryptfs_auth_tok *
++ecryptfs_get_encrypted_key_payload_data(struct key *key)
++{
++	return NULL;
++}
++
++static inline struct key *ecryptfs_get_encrypted_key(char *sig)
++{
++	return ERR_PTR(-ENOKEY);
++}
++
++#endif /* CONFIG_ENCRYPTED_KEYS */
++
++static struct ecryptfs_auth_tok *
++ecryptfs_get_key_payload_data(struct key *key)
++{
++	struct ecryptfs_auth_tok *auth_tok;
++	struct user_key_payload *ukp;
++
++	auth_tok = ecryptfs_get_encrypted_key_payload_data(key);
++	if (auth_tok)
++		return auth_tok;
++
++	ukp = user_key_payload_locked(key);
++	if (!ukp)
++		return ERR_PTR(-EKEYREVOKED);
++
++	if (ukp->datalen != sizeof(struct ecryptfs_auth_tok))
++		return ERR_PTR(-EINVAL);
++
++	return (struct ecryptfs_auth_tok *)ukp->data;
++}
++
+ /**
+  * ecryptfs_verify_auth_tok_from_key
+  * @auth_tok_key: key containing the authentication token
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
