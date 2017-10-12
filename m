@@ -1,443 +1,172 @@
-From: fengc@google.com (Chenbo Feng)
-Date: Thu, 12 Oct 2017 11:28:13 -0700
-Subject: [PATCH net-next v3 5/5] selinux: bpf: Add addtional check for bpf
-	object file receive
-In-Reply-To: <1507811112.30307.2.camel@tycho.nsa.gov>
-References: <20171011000930.133308-1-chenbofeng.kernel@gmail.com>
-	<20171011000930.133308-6-chenbofeng.kernel@gmail.com>
-	<1507726470.15898.3.camel@tycho.nsa.gov>
-	<CAMOXUJktUZ=s35gv9ttp0UYj9xn8Oqe8YkYtkkuhBBY+4wgExA@mail.gmail.com>
-	<1507811112.30307.2.camel@tycho.nsa.gov>
-Message-ID: <CAMOXUJk0Xw=-x5=jB3CKb0oKXPpEcRsTEyTG8q_mcEzNpvJaNA@mail.gmail.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Thu, 12 Oct 2017 11:56:12 -0700
+Subject: [RFC][PATCH 00/15] KEYS: Fixes
+In-Reply-To: <150782504738.1655.12882942775980793687.stgit@warthog.procyon.org.uk>
+References: <150782504738.1655.12882942775980793687.stgit@warthog.procyon.org.uk>
+Message-ID: <20171012185612.GA11577@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Oct 12, 2017 at 5:25 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On Wed, 2017-10-11 at 13:43 -0700, Chenbo Feng via Selinux wrote:
->> On Wed, Oct 11, 2017 at 5:54 AM, Stephen Smalley <sds@tycho.nsa.gov>
->> wrote:
->> > On Tue, 2017-10-10 at 17:09 -0700, Chenbo Feng wrote:
->> > > From: Chenbo Feng <fengc@google.com>
->> > >
->> > > Introduce a bpf object related check when sending and receiving
->> > > files
->> > > through unix domain socket as well as binder. It checks if the
->> > > receiving
->> > > process have privilege to read/write the bpf map or use the bpf
->> > > program.
->> > > This check is necessary because the bpf maps and programs are
->> > > using a
->> > > anonymous inode as their shared inode so the normal way of
->> > > checking
->> > > the
->> > > files and sockets when passing between processes cannot work
->> > > properly
->> > > on
->> > > eBPF object. This check only works when the BPF_SYSCALL is
->> > > configured.
->> > > The information stored inside the file security struct is the
->> > > same as
->> > > the information in bpf object security struct.
->> > >
->> > > Signed-off-by: Chenbo Feng <fengc@google.com>
->> > > ---
->> > >  include/linux/lsm_hooks.h         | 17 ++++++++++
->> > >  include/linux/security.h          |  9 ++++++
->> > >  kernel/bpf/syscall.c              | 27 ++++++++++++++--
->> > >  security/security.c               |  8 +++++
->> > >  security/selinux/hooks.c          | 67
->> > > +++++++++++++++++++++++++++++++++++++++
->> > >  security/selinux/include/objsec.h |  9 ++++++
->> > >  6 files changed, 135 insertions(+), 2 deletions(-)
->> > >
->> > > diff --git a/include/linux/lsm_hooks.h
->> > > b/include/linux/lsm_hooks.h
->> > > index 7161d8e7ee79..517dea60b87b 100644
->> > > --- a/include/linux/lsm_hooks.h
->> > > +++ b/include/linux/lsm_hooks.h
->> > > @@ -1385,6 +1385,19 @@
->> > >   * @bpf_prog_free_security:
->> > >   *   Clean up the security information stored inside bpf prog.
->> > >   *
->> > > + * @bpf_map_file:
->> > > + *   When creating a bpf map fd, set up the file security
->> > > information with
->> > > + *   the bpf security information stored in the map struct. So
->> > > when the map
->> > > + *   fd is passed between processes, the security module can
->> > > directly read
->> > > + *   the security information from file security struct rather
->> > > than the bpf
->> > > + *   security struct.
->> > > + *
->> > > + * @bpf_prog_file:
->> > > + *   When creating a bpf prog fd, set up the file security
->> > > information with
->> > > + *   the bpf security information stored in the prog struct. So
->> > > when the prog
->> > > + *   fd is passed between processes, the security module can
->> > > directly read
->> > > + *   the security information from file security struct rather
->> > > than the bpf
->> > > + *   security struct.
->> > >   */
->> > >  union security_list_options {
->> > >       int (*binder_set_context_mgr)(struct task_struct *mgr);
->> > > @@ -1726,6 +1739,8 @@ union security_list_options {
->> > >       void (*bpf_map_free_security)(struct bpf_map *map);
->> > >       int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
->> > >       void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
->> > > +     void (*bpf_map_file)(struct bpf_map *map, struct file
->> > > *file);
->> > > +     void (*bpf_prog_file)(struct bpf_prog_aux *aux, struct file
->> > > *file);
->> > >  #endif /* CONFIG_BPF_SYSCALL */
->> > >  };
->> > >
->> > > @@ -1954,6 +1969,8 @@ struct security_hook_heads {
->> > >       struct list_head bpf_map_free_security;
->> > >       struct list_head bpf_prog_alloc_security;
->> > >       struct list_head bpf_prog_free_security;
->> > > +     struct list_head bpf_map_file;
->> > > +     struct list_head bpf_prog_file;
->> > >  #endif /* CONFIG_BPF_SYSCALL */
->> > >  } __randomize_layout;
->> > >
->> > > diff --git a/include/linux/security.h b/include/linux/security.h
->> > > index 18800b0911e5..57573b794e2d 100644
->> > > --- a/include/linux/security.h
->> > > +++ b/include/linux/security.h
->> > > @@ -1740,6 +1740,8 @@ extern int security_bpf_map_alloc(struct
->> > > bpf_map *map);
->> > >  extern void security_bpf_map_free(struct bpf_map *map);
->> > >  extern int security_bpf_prog_alloc(struct bpf_prog_aux *aux);
->> > >  extern void security_bpf_prog_free(struct bpf_prog_aux *aux);
->> > > +extern void security_bpf_map_file(struct bpf_map *map, struct
->> > > file
->> > > *file);
->> > > +extern void security_bpf_prog_file(struct bpf_prog_aux *aux,
->> > > struct
->> > > file *file);
->> > >  #else
->> > >  static inline int security_bpf(int cmd, union bpf_attr *attr,
->> > >                                            unsigned int size)
->> > > @@ -1772,6 +1774,13 @@ static inline int
->> > > security_bpf_prog_alloc(struct bpf_prog_aux *aux)
->> > >
->> > >  static inline void security_bpf_prog_free(struct bpf_prog_aux
->> > > *aux)
->> > >  { }
->> > > +
->> > > +static inline void security_bpf_map_file(struct bpf_map *map,
->> > > struct
->> > > file *file)
->> > > +{ }
->> > > +
->> > > +static inline void security_bpf_prog_file(struct bpf_prog_aux
->> > > *aux,
->> > > +                                       struct file *file)
->> > > +{ }
->> > >  #endif /* CONFIG_SECURITY */
->> > >  #endif /* CONFIG_BPF_SYSCALL */
->> > >
->> > > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
->> > > index 1cf31ddd7616..aee69e564c50 100644
->> > > --- a/kernel/bpf/syscall.c
->> > > +++ b/kernel/bpf/syscall.c
->> > > @@ -324,11 +324,22 @@ static const struct file_operations
->> > > bpf_map_fops = {
->> > >
->> > >  int bpf_map_new_fd(struct bpf_map *map, int flags)
->> > >  {
->> > > +     int fd;
->> > > +     struct fd f;
->> > >       if (security_bpf_map(map, OPEN_FMODE(flags)))
->> > >               return -EPERM;
->> > >
->> > > -     return anon_inode_getfd("bpf-map", &bpf_map_fops, map,
->> > > +     fd = anon_inode_getfd("bpf-map", &bpf_map_fops, map,
->> > >                               flags | O_CLOEXEC);
->> > > +     if (fd < 0)
->> > > +             return fd;
->> > > +
->> > > +     f = fdget(fd);
->> > > +     if (!f.file)
->> > > +             return -EBADF;
->> >
->> > This seems convoluted and unnecessarily inefficient, since
->> > anon_inode_getfd() has the struct file and could have directly
->> > returned
->> > it instead of having to go through fdget() on a fd we just
->> > installed.
->> > Also, couldn't the fd->file mapping have changed underneath us
->> > between
->> > fd_install() and fdget()?
->> > I would think it would be safer and more efficient to create an
->> > anon_inode_getfdandfile() or similar interface and use that, so
->> > that we
->> > can just pass the file it set up to the hook.  Obviously that would
->> > need to be reviewed by the vfs folks.
->> >
->>
->> Do you mean create a anonymous inode interface specifically for eBPF
->> object? Is it okay that we add the hooks inside anon_inode_getfd and
->> pass the file to the hook before fd install.
->
-> No, I meant to create a general helper, anon_inode_getfile(), that
-> returns the file and the fd to the caller, and then the BPF-specific
-> logic can stay in the BPF code.
->
-> However, if storing the bpf type in the file_security_struct is in fact
-> having a significant impact on per-file memory usage, then perhaps your
-> original approach of exporting and testing the fops was the right one,
-> albeit ugly.
->
+Hi David, a few comments:
 
-It seems to me adding a bpf_type field inside the file_security_struct
-have the same impact on selinux_file_security cache size as adding
-both bpf_type and bpf_sid. Both implementation will cause a
-significant increase on memory size. I am testing on a ARM 64bit
-device and it might be different on x86 devices. I will return to the
-original way to implement the bpf_ops check instead of adding new
-field.
+On Thu, Oct 12, 2017 at 05:17:27PM +0100, David Howells wrote:
+> ---
+> Arnd Bergmann (1):
+>       security/keys: BIG_KEY requires CONFIG_CRYPTO
 
->> > > +     security_bpf_map_file(map, f.file);
->> > > +     fdput(f);
->> > > +     return fd;
->> > >  }
->> > >
->> > >  int bpf_get_file_flag(int flags)
->> > > @@ -975,11 +986,23 @@ static const struct file_operations
->> > > bpf_prog_fops = {
->> > >
->> > >  int bpf_prog_new_fd(struct bpf_prog *prog)
->> > >  {
->> > > +     int fd;
->> > > +     struct fd f;
->> > > +
->> > >       if (security_bpf_prog(prog))
->> > >               return -EPERM;
->> > >
->> > > -     return anon_inode_getfd("bpf-prog", &bpf_prog_fops, prog,
->> > > +     fd =  anon_inode_getfd("bpf-prog", &bpf_prog_fops, prog,
->> > >                               O_RDWR | O_CLOEXEC);
->> > > +     if (fd < 0)
->> > > +             return fd;
->> > > +
->> > > +     f = fdget(fd);
->> > > +     if (!f.file)
->> > > +             return -EBADF;
->> > > +     security_bpf_prog_file(prog->aux, f.file);
->> > > +     fdput(f);
->> > > +     return fd;
->> > >  }
->> > >
->> > >  static struct bpf_prog *____bpf_prog_get(struct fd f)
->> > > diff --git a/security/security.c b/security/security.c
->> > > index 1cd8526cb0b7..dacf649b8cfa 100644
->> > > --- a/security/security.c
->> > > +++ b/security/security.c
->> > > @@ -1734,4 +1734,12 @@ void security_bpf_prog_free(struct
->> > > bpf_prog_aux *aux)
->> > >  {
->> > >       call_void_hook(bpf_prog_free_security, aux);
->> > >  }
->> > > +void security_bpf_map_file(struct bpf_map *map, struct file
->> > > *file)
->> > > +{
->> > > +     call_void_hook(bpf_map_file, map, file);
->> > > +}
->> > > +void security_bpf_prog_file(struct bpf_prog_aux *aux, struct
->> > > file
->> > > *file)
->> > > +{
->> > > +     call_void_hook(bpf_prog_file, aux, file);
->> > > +}
->> > >  #endif /* CONFIG_BPF_SYSCALL */
->> > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> > > index 94e473b9c884..0a6ef20513b0 100644
->> > > --- a/security/selinux/hooks.c
->> > > +++ b/security/selinux/hooks.c
->> > > @@ -1815,6 +1815,10 @@ static inline int file_path_has_perm(const
->> > > struct cred *cred,
->> > >       return inode_has_perm(cred, file_inode(file), av, &ad);
->> > >  }
->> > >
->> > > +#ifdef CONFIG_BPF_SYSCALL
->> > > +static int bpf_file_check(struct file *file, u32 sid);
->> > > +#endif
->> > > +
->> > >  /* Check whether a task can use an open file descriptor to
->> > >     access an inode in a given way.  Check access to the
->> > >     descriptor itself, and then use dentry_has_perm to
->> > > @@ -1845,6 +1849,14 @@ static int file_has_perm(const struct cred
->> > > *cred,
->> > >                       goto out;
->> > >       }
->> > >
->> > > +#ifdef CONFIG_BPF_SYSCALL
->> > > +     if (fsec->bpf_type) {
->> > > +             rc = bpf_file_check(file, cred_sid(cred));
->> > > +             if (rc)
->> > > +                     goto out;
->> > > +     }
->> > > +#endif
->> > > +
->> > >       /* av is zero if only checking access to the descriptor. */
->> > >       rc = 0;
->> > >       if (av)
->> > > @@ -2165,6 +2177,14 @@ static int
->> > > selinux_binder_transfer_file(struct
->> > > task_struct *from,
->> > >                       return rc;
->> > >       }
->> > >
->> > > +#ifdef CONFIG_BPF_SYSCALL
->> > > +     if (fsec->bpf_type) {
->> > > +             rc = bpf_file_check(file, sid);
->> > > +             if (rc)
->> > > +                     return rc;
->> > > +     }
->> > > +#endif
->> > > +
->> > >       if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->> > >               return 0;
->> > >
->> > > @@ -6288,6 +6308,33 @@ static u32 bpf_map_fmode_to_av(fmode_t
->> > > fmode)
->> > >       return av;
->> > >  }
->> > >
->> > > +/* This function will check the file pass through unix socket or
->> > > binder to see
->> > > + * if it is a bpf related object. And apply correspinding checks
->> > > on
->> > > the bpf
->> > > + * object based on the type. The bpf maps and programs, not like
->> > > other files and
->> > > + * socket, are using a shared anonymous inode inside the kernel
->> > > as
->> > > their inode.
->> > > + * So checking that inode cannot identify if the process have
->> > > privilege to
->> > > + * access the bpf object and that's why we have to add this
->> > > additional check in
->> > > + * selinux_file_receive and selinux_binder_transfer_files.
->> > > + */
->> > > +static int bpf_file_check(struct file *file, u32 sid)
->> > > +{
->> > > +     struct file_security_struct *fsec = file->f_security;
->> > > +     int ret;
->> > > +
->> > > +     if (fsec->bpf_type == BPF_MAP) {
->> > > +             ret = avc_has_perm(sid, fsec->bpf_sid,
->> > > SECCLASS_BPF,
->> > > +                                bpf_map_fmode_to_av(file-
->> > > > f_mode), NULL);
->> > >
->> > > +             if (ret)
->> > > +                     return ret;
->> > > +     } else if (fsec->bpf_type == BPF_PROG) {
->> > > +             ret = avc_has_perm(sid, fsec->bpf_sid,
->> > > SECCLASS_BPF,
->> > > +                                BPF__PROG_USE, NULL);
->> > > +             if (ret)
->> > > +                     return ret;
->> > > +     }
->> > > +     return 0;
->> > > +}
->> > > +
->> > >  static int selinux_bpf_map(struct bpf_map *map, fmode_t fmode)
->> > >  {
->> > >       u32 sid = current_sid();
->> > > @@ -6351,6 +6398,24 @@ static void selinux_bpf_prog_free(struct
->> > > bpf_prog_aux *aux)
->> > >       aux->security = NULL;
->> > >       kfree(bpfsec);
->> > >  }
->> > > +
->> > > +static void selinux_bpf_map_file(struct bpf_map *map, struct
->> > > file
->> > > *file)
->> > > +{
->> > > +     struct bpf_security_struct *bpfsec = map->security;
->> > > +     struct file_security_struct *fsec = file->f_security;
->> > > +
->> > > +     fsec->bpf_type = BPF_MAP;
->> > > +     fsec->bpf_sid = bpfsec->sid;
->> > > +}
->> > > +
->> > > +static void selinux_bpf_prog_file(struct bpf_prog_aux *aux,
->> > > struct
->> > > file *file)
->> > > +{
->> > > +     struct bpf_security_struct *bpfsec = aux->security;
->> > > +     struct file_security_struct *fsec = file->f_security;
->> > > +
->> > > +     fsec->bpf_type = BPF_PROG;
->> > > +     fsec->bpf_sid = bpfsec->sid;
->> > > +}
->> > >  #endif
->> > >
->> > >  static struct security_hook_list selinux_hooks[]
->> > > __lsm_ro_after_init
->> > > = {
->> > > @@ -6581,6 +6646,8 @@ static struct security_hook_list
->> > > selinux_hooks[] __lsm_ro_after_init = {
->> > >       LSM_HOOK_INIT(bpf_prog_alloc_security,
->> > > selinux_bpf_prog_alloc),
->> > >       LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
->> > >       LSM_HOOK_INIT(bpf_prog_free_security,
->> > > selinux_bpf_prog_free),
->> > > +     LSM_HOOK_INIT(bpf_map_file, selinux_bpf_map_file),
->> > > +     LSM_HOOK_INIT(bpf_prog_file, selinux_bpf_prog_file),
->> > >  #endif
->> > >  };
->> > >
->> > > diff --git a/security/selinux/include/objsec.h
->> > > b/security/selinux/include/objsec.h
->> > > index 3d54468ce334..0162648761f9 100644
->> > > --- a/security/selinux/include/objsec.h
->> > > +++ b/security/selinux/include/objsec.h
->> > > @@ -67,11 +67,20 @@ struct inode_security_struct {
->> > >       spinlock_t lock;
->> > >  };
->> > >
->> > > +enum bpf_obj_type {
->> > > +     BPF_MAP = 1,
->> > > +     BPF_PROG,
->> > > +};
->> > > +
->> > >  struct file_security_struct {
->> > >       u32 sid;                /* SID of open file description */
->> > >       u32 fown_sid;           /* SID of file owner (for
->> > > SIGIO) */
->> > >       u32 isid;               /* SID of inode at the time of file
->> > > open */
->> > >       u32 pseqno;             /* Policy seqno at the time of
->> > > file open */
->> > > +#ifdef CONFIG_BPF_SYSCALL
->> > > +     unsigned char bpf_type;
->> > > +     u32 bpf_sid;
->> > > +#endif
->> > >  };
->> >
->> > Can you check how this impacts the size of the file_security_cache
->> > objects, and thus the memory overhead imposed on all open files?
->> >
->> > If it is significant, do we need to cache the bpf_sid here or could
->> > we
->> > just store the bpf_type and then dereference the bpfsec if it is a
->> > map
->> > or prog?
->> >
->> > From proc/slabinfo I find the number of object and the object size
->>
->> grows a lot after adding this two field. I will try to dereference
->> the
->> bpfsec instead to see if it helps.
->> > >
->> > >  struct superblock_security_struct {
+Doesn't this need 'Cc: <stable@vger.kernel.org>	[v4.9+]',
+since the commit it fixes is there?
+
+> 
+> David Howells (2):
+>       KEYS: Fix race between updating and finding a negative key
+
+I guess the 'state' variable is fine, though it makes this patch (which will
+need to be backported) a tad larger.  I'd also prefer a bit more information in
+the commit message about the problem being solved.  But anyway, there are also
+some problems in how READ_ONCE() and memory barriers are used (or not used) in
+the new/changed code, and there is one other bug:
+
+>  static inline bool key_is_instantiated(const struct key *key)
+>  {
+> -       return test_bit(KEY_FLAG_INSTANTIATED, &key->flags) &&
+> -               !test_bit(KEY_FLAG_NEGATIVE, &key->flags);
+> +       return key->state == KEY_IS_INSTANTIATED;
+> +}
+
+This should use 'smp_load_acquire(&key->state) == KEY_IS_INSTANTIATED', since
+some ->describe() methods expect to access the payload after this.  Yes, it's no
+worse than before, but as long as the line of code is being replaced we might as
+well get it right...
+
+> diff --git a/security/keys/gc.c b/security/keys/gc.c
+> index 87cb260e4890..1578f671a213 100644
+> --- a/security/keys/gc.c
+> +++ b/security/keys/gc.c
+> @@ -129,14 +129,15 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
+>        while (!list_empty(keys)) {
+>                struct key *key =
+>                        list_entry(keys->next, struct key, graveyard_link);
+> +              short state = READ_ONCE(key->state);
+> +
+
+Here the key has no more references, so nothing can be changing the state.
+Thus, the READ_ONCE() isn't actually needed.
+
+> +/*
+> + * Change the key state to being instantiated.
+> + */
+> +static void mark_key_instantiated(struct key *key, int reject_error)
+> +{
+> +       smp_wmb(); /* Commit the payload before setting the state */
+> +       key->state = (reject_error < 0) ? reject_error : KEY_IS_INSTANTIATED;
+> +}
+> +
+
+smp_store_release() would make this simpler as well as guarantee that the write
+is atomic.
+
+> +       ret = key->state;
+> +       if (ret < 0)
+> +               goto error2; /* Negatively instantiated */
+
+Not too important in practice (as this is constantly gotten wrong all over the
+kernel, and compilers play nice enough to make it not a huge deal), but
+READ_ONCE(key->state) will guarantee that the read of 'key->state' is atomic and
+not e.g. done byte-by-byte.
+
+
+> -       if (key->type->describe)
+> +       if (key->type->describe) {
+> +               smp_rmb(); /* Order access to payload after state set. */
+>		  key->type->describe(key, m);
+> +       }
+
+This is the wrong place for this memory barrier.  The state is checked
+separately in ->describe() and it may have changed between when it was shown in
+proc_keys_show() vs. when it is checked in ->describe().  We can't actually make
+these two access to ->state consistent with respect to each other right now.
+The most we can do is use smp_load_acquire() in key_is_instantiated() so that at
+least ->describe() isn't broken by itself.  So the change here is pointless.
+
+> -       if (!(lflags & KEY_LOOKUP_PARTIAL) &&
+> -           !test_bit(KEY_FLAG_INSTANTIATED, &key->flags))
+> -               goto invalid_key;
+> +       if (!(lflags & KEY_LOOKUP_PARTIAL)) {
+> +               if (key->state != KEY_IS_INSTANTIATED)
+> +                       goto invalid_key;
+> +               smp_rmb(); /* Order access to payload after state set. */
+> +       }
+
+This should be simply:
+
+	if (!(lflags & KEY_LOOKUP_PARTIAL) && !key_is_instantiated(key))
+		goto invalid_key;
+
+> @@ -595,10 +595,9 @@ int wait_for_key_construction(struct key *key, bool intr)
+>                          intr ? TASK_INTERRUPTIBLE : TASK_UNINTERRUPTIBLE);
+>        if (ret)
+>                return -ERESTARTSYS;
+> -       if (test_bit(KEY_FLAG_NEGATIVE, &key->flags)) {
+> -               smp_rmb();
+> -               return key->reject_error;
+> -       }
+> +       ret = READ_ONCE(key->state);
+> +       if (ret < 0)
+> +               return ret;
+>        return key_validate(key);
+> }
+> EXPORT_SYMBOL(wait_for_key_construction);
+
+smp_load_acquire() rather than READ_ONCE(), in case the caller uses this as an
+indication that it is safe to access the payload.
+
+> diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
+> index 3d8c68eba516..9afa64817d4f 100644
+> --- a/security/keys/user_defined.c
+> +++ b/security/keys/user_defined.c
+> @@ -114,7 +114,7 @@ int user_update(struct key *key, struct key_preparsed_payload *prep)
+> 
+>        /* attach the new data, displacing the old */
+>        key->expiry = prep->expiry;
+>-       if (!test_bit(KEY_FLAG_NEGATIVE, &key->flags))
+>+       if (key->state < 0)
+>                zap = dereference_key_locked(key);
+>        rcu_assign_keypointer(key, prep->payload.data[0]);
+>        prep->payload.data[0] = NULL;
+
+This is backwards; it should be 'if (!key_is_negative(key))'.
+
+>       KEYS: don't let add_key() update an uninstantiated key
+> 
+
+>
+> +       if (test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags)) {
+> +               ret = wait_for_key_construction(key_ref_to_ptr(key_ref), true);
+> +               if (ret < 0) {
+> +                       key_ref_put(key_ref);
+> +                       key_ref = ERR_PTR(ret);
+> +                       goto error_free_prep;
+> +               }
+> +       }
+> +
+
+'key' is NULL here.  It should be 'key_ref_to_ptr(key_ref)'.
+
+
+>       KEYS: load key flags and expiry time atomically in keyring_search_iterator()
+
+The commit message refers to both flags and expiry time, but now it only
+actually updates how the expiry time is loaded, as the flags were already done
+by "KEYS: Fix race between updating and finding a negative key".
+
+>       KEYS: load key flags and expiry time atomically in proc_keys_show()
+
+The commit message refers to negative ('N') but not instantiated ('I') as the
+example, but that is no longer a valid example since this patch comes after
+"KEYS: Fix race between updating and finding a negative key".
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
