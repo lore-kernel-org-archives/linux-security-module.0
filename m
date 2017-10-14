@@ -1,43 +1,47 @@
 From: colin.king@canonical.com (Colin King)
-Date: Sat, 14 Oct 2017 13:14:38 +0100
-Subject: [PATCH] apparmor: remove unused redundant variable stop
-Message-ID: <20171014121438.31958-1-colin.king@canonical.com>
+Date: Sat, 14 Oct 2017 13:46:55 +0100
+Subject: [PATCH] selinux: remove redundant assignment to str
+Message-ID: <20171014124655.32438-1-colin.king@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The boolean variable 'stop' is being set but never read. This
-is a redundant variable and can be removed.
-
-Cleans up clang warning: Value stored to 'stop' is never read
+str is being assigned to an empty string but str is never being
+read after that, so the assignment is redundant and can be removed.
+Moving the declaration of str to a more localised block, cleans up
+clang warning: "Value stored to 'str' is never read"
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- security/apparmor/lib.c | 3 ---
- 1 file changed, 3 deletions(-)
+ security/selinux/hooks.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 8818621b5d95..d78da4e973d9 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -427,7 +427,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
- 		   void (*cb)(struct audit_buffer *, void *))
- {
- 	int type, error;
--	bool stop = false;
- 	u32 denied = request & (~perms->allow | perms->deny);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 07f35f3b4a13..3daf3369c3b4 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3177,18 +3177,17 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
+ 		if (!has_cap_mac_admin(true)) {
+ 			struct audit_buffer *ab;
+ 			size_t audit_size;
+-			const char *str;
  
- 	if (likely(!denied)) {
-@@ -448,8 +447,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
- 		else
- 			type = AUDIT_APPARMOR_DENIED;
- 
--		if (denied & perms->stop)
--			stop = true;
- 		if (denied == (denied & perms->hide))
- 			error = -ENOENT;
- 
+ 			/* We strip a nul only if it is at the end, otherwise the
+ 			 * context contains a nul and we should audit that */
+ 			if (value) {
+-				str = value;
++				const char *str = value;
++
+ 				if (str[size - 1] == '\0')
+ 					audit_size = size - 1;
+ 				else
+ 					audit_size = size;
+ 			} else {
+-				str = "";
+ 				audit_size = 0;
+ 			}
+ 			ab = audit_log_start(current->audit_context, GFP_ATOMIC, AUDIT_SELINUX_ERR);
 -- 
 2.14.1
 
