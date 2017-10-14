@@ -1,84 +1,46 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 13 Oct 2017 18:40:21 -0400
-Subject: [PATCH] selinux: Fix bool initialization/comparison
-In-Reply-To: <9b5f9458-ac5f-621b-ff0c-677de365c216@schaufler-ca.com>
-References: <1507383097081-778026979-0-diffsplit-thomas@m3y3r.de>
-	<1507383097088-1068794175-19-diffsplit-thomas@m3y3r.de>
-	<9b5f9458-ac5f-621b-ff0c-677de365c216@schaufler-ca.com>
-Message-ID: <CAHC9VhREW0Ez7g302J43qdxZwTxk87N-GmT59aUtEUjJu_ynJA@mail.gmail.com>
+From: colin.king@canonical.com (Colin King)
+Date: Sat, 14 Oct 2017 13:14:38 +0100
+Subject: [PATCH] apparmor: remove unused redundant variable stop
+Message-ID: <20171014121438.31958-1-colin.king@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 10, 2017 at 7:19 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 10/7/2017 7:02 AM, Thomas Meyer wrote:
->> Bool initializations should use true and false. Bool tests don't need
->> comparisons.
->>
->> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
->> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Thomas,
+The boolean variable 'stop' is being set but never read. This
+is a redundant variable and can be removed.
 
-Thank you for submitting this patch, but it really doesn't add any
-value to the SELinux code so I'm not going to merge it at this time.
-If you would like to contribute to SELinux there are a number of
-issues open on our GitHub page that you could look into resolving,
-those patches would be very welcome.
+Cleans up clang warning: Value stored to 'stop' is never read
 
-* https://github.com/SELinuxProject
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/apparmor/lib.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
--Paul
-
->> diff -u -p a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
->> --- a/security/selinux/ss/mls.c
->> +++ b/security/selinux/ss/mls.c
->> @@ -550,7 +550,7 @@ int mls_compute_sid(struct context *scon
->>
->>               /* Fallthrough */
->>       case AVTAB_CHANGE:
->> -             if ((tclass == policydb.process_class) || (sock == true))
->> +             if ((tclass == policydb.process_class) || (sock))
->
-> How about
->
->         +       if ((tclass == policydb.process_class) || sock)
->
->>                       /* Use the process MLS attributes. */
->>                       return mls_context_cpy(newcontext, scontext);
->>               else
->> diff -u -p a/security/selinux/ss/services.c b/security/selinux/ss/services.c
->> --- a/security/selinux/ss/services.c
->> +++ b/security/selinux/ss/services.c
->> @@ -1656,7 +1656,7 @@ static int security_compute_sid(u32 ssid
->>       } else if (cladatum && cladatum->default_role == DEFAULT_TARGET) {
->>               newcontext.role = tcontext->role;
->>       } else {
->> -             if ((tclass == policydb.process_class) || (sock == true))
->> +             if ((tclass == policydb.process_class) || (sock))
->
-> Excessive ()
->
->>                       newcontext.role = scontext->role;
->>               else
->>                       newcontext.role = OBJECT_R_VAL;
->> @@ -1668,7 +1668,7 @@ static int security_compute_sid(u32 ssid
->>       } else if (cladatum && cladatum->default_type == DEFAULT_TARGET) {
->>               newcontext.type = tcontext->type;
->>       } else {
->> -             if ((tclass == policydb.process_class) || (sock == true)) {
->> +             if ((tclass == policydb.process_class) || (sock)) {
->
-> Excessive ()
->
->>                       /* Use the type of process. */
->>                       newcontext.type = scontext->type;
->>               } else {
->>
->
-
+diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+index 8818621b5d95..d78da4e973d9 100644
+--- a/security/apparmor/lib.c
++++ b/security/apparmor/lib.c
+@@ -427,7 +427,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
+ 		   void (*cb)(struct audit_buffer *, void *))
+ {
+ 	int type, error;
+-	bool stop = false;
+ 	u32 denied = request & (~perms->allow | perms->deny);
+ 
+ 	if (likely(!denied)) {
+@@ -448,8 +447,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
+ 		else
+ 			type = AUDIT_APPARMOR_DENIED;
+ 
+-		if (denied & perms->stop)
+-			stop = true;
+ 		if (denied == (denied & perms->hide))
+ 			error = -ENOENT;
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.14.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
