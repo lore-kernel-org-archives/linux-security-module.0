@@ -1,73 +1,77 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Sun, 15 Oct 2017 10:19:47 +0100
-Subject: [PATCH v9 02/20] crypto: ccp: use -EAGAIN for transient busy
-	indication
+Date: Sun, 15 Oct 2017 10:19:46 +0100
+Subject: [PATCH v9 01/20] crypto: change transient busy return code to -EAGAIN
 In-Reply-To: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
 References: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1508059209-25529-3-git-send-email-gilad@benyossef.com>
+Message-ID: <1508059209-25529-2-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Replace -EBUSY with -EAGAIN when reporting transient busy
-indication in the absence of backlog.
+The crypto API was using the -EBUSY return value to indicate
+both a hard failure to submit a crypto operation into a
+transformation provider when the latter was busy and the backlog
+mechanism was not enabled as well as a notification that the
+operation was queued into the backlog when the backlog mechanism
+was enabled.
+
+Having the same return code indicate two very different conditions
+depending on a flag is both error prone and requires extra runtime
+check like the following to discern between the cases:
+
+	if (err == -EINPROGRESS ||
+	    (err == -EBUSY && (ahash_request_flags(req) &
+			       CRYPTO_TFM_REQ_MAY_BACKLOG)))
+
+This patch changes the return code used to indicate a crypto op
+failed due to the transformation provider being transiently busy
+to -EAGAIN.
 
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Reviewed-by: Gary R Hook <gary.hook@amd.com>
-
 ---
+ crypto/algapi.c | 6 ++++--
+ crypto/cryptd.c | 4 +---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Please squash this patch with the previous one when merging upstream.
-
- drivers/crypto/ccp/ccp-crypto-main.c | 8 +++-----
- drivers/crypto/ccp/ccp-dev.c         | 7 +++++--
- 2 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/crypto/ccp/ccp-crypto-main.c b/drivers/crypto/ccp/ccp-crypto-main.c
-index 35a9de7..403ff0a 100644
---- a/drivers/crypto/ccp/ccp-crypto-main.c
-+++ b/drivers/crypto/ccp/ccp-crypto-main.c
-@@ -222,9 +222,10 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index aa699ff..916bee3 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -897,9 +897,11 @@ int crypto_enqueue_request(struct crypto_queue *queue,
+ 	int err = -EINPROGRESS;
  
- 	/* Check if the cmd can/should be queued */
- 	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
--		ret = -EBUSY;
--		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
-+		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG)) {
-+			ret = -EAGAIN;
- 			goto e_lock;
+ 	if (unlikely(queue->qlen >= queue->max_qlen)) {
+-		err = -EBUSY;
+-		if (!(request->flags & CRYPTO_TFM_REQ_MAY_BACKLOG))
++		if (!(request->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)) {
++			err = -EAGAIN;
+ 			goto out;
 +		}
++		err = -EBUSY;
+ 		if (queue->backlog == &queue->list)
+ 			queue->backlog = &request->list;
  	}
+diff --git a/crypto/cryptd.c b/crypto/cryptd.c
+index 0508c48..d1dbdce 100644
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -137,16 +137,14 @@ static int cryptd_enqueue_request(struct cryptd_queue *queue,
+ 	int cpu, err;
+ 	struct cryptd_cpu_queue *cpu_queue;
+ 	atomic_t *refcnt;
+-	bool may_backlog;
  
- 	/* Look for an entry with the same tfm.  If there is a cmd
-@@ -243,9 +244,6 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
- 		ret = ccp_enqueue_cmd(crypto_cmd->cmd);
- 		if (!ccp_crypto_success(ret))
- 			goto e_lock;	/* Error, don't queue it */
--		if ((ret == -EBUSY) &&
--		    !(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
--			goto e_lock;	/* Not backlogging, don't queue it */
- 	}
+ 	cpu = get_cpu();
+ 	cpu_queue = this_cpu_ptr(queue->cpu_queue);
+ 	err = crypto_enqueue_request(&cpu_queue->queue, request);
  
- 	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
-diff --git a/drivers/crypto/ccp/ccp-dev.c b/drivers/crypto/ccp/ccp-dev.c
-index 4e029b1..3d637e3 100644
---- a/drivers/crypto/ccp/ccp-dev.c
-+++ b/drivers/crypto/ccp/ccp-dev.c
-@@ -292,9 +292,12 @@ int ccp_enqueue_cmd(struct ccp_cmd *cmd)
- 	i = ccp->cmd_q_count;
+ 	refcnt = crypto_tfm_ctx(request->tfm);
+-	may_backlog = request->flags & CRYPTO_TFM_REQ_MAY_BACKLOG;
  
- 	if (ccp->cmd_count >= MAX_CMD_QLEN) {
--		ret = -EBUSY;
--		if (cmd->flags & CCP_CMD_MAY_BACKLOG)
-+		if (cmd->flags & CCP_CMD_MAY_BACKLOG) {
-+			ret = -EBUSY;
- 			list_add_tail(&cmd->entry, &ccp->backlog);
-+		} else {
-+			ret = -EAGAIN;
-+		}
- 	} else {
- 		ret = -EINPROGRESS;
- 		ccp->cmd_count++;
+-	if (err == -EBUSY && !may_backlog)
++	if (err == -EAGAIN)
+ 		goto out_put_cpu;
+ 
+ 	queue_work_on(cpu, kcrypto_wq, &cpu_queue->work);
 -- 
 2.7.4
 
