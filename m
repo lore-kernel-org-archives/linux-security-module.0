@@ -1,40 +1,53 @@
-From: colin.king@canonical.com (Colin King)
-Date: Sat, 14 Oct 2017 16:38:56 +0100
-Subject: [PATCH][V2] selinux: remove extraneous initialization of slots_used
-	and max_chain_len
-Message-ID: <20171014153856.3539-1-colin.king@canonical.com>
+From: gilad@benyossef.com (Gilad Ben-Yossef)
+Date: Sun, 15 Oct 2017 10:19:50 +0100
+Subject: [PATCH v9 05/20] crypto: marvell/cesa: remove redundant backlog
+	checks on EBUSY
+In-Reply-To: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
+References: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
+Message-ID: <1508059209-25529-6-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Now that -EBUSY return code only indicates backlog queueing
+we can safely remove the now redundant check for the
+CRYPTO_TFM_REQ_MAY_BACKLOG flag when -EBUSY is returned.
 
-Variables slots_used and max_chain_len are being initialized to zero
-twice. Remove the second set of initializations in the for loop.
-Cleans up the clang warnings:
-
-Value stored to 'slots_used' is never read
-Value stored to 'max_chain_len' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- security/selinux/ss/hashtab.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/marvell/cesa.c | 3 +--
+ drivers/crypto/marvell/cesa.h | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
-index bef7577d1270..e0443f4afea5 100644
---- a/security/selinux/ss/hashtab.c
-+++ b/security/selinux/ss/hashtab.c
-@@ -150,7 +150,7 @@ void hashtab_stat(struct hashtab *h, struct hashtab_info *info)
+diff --git a/drivers/crypto/marvell/cesa.c b/drivers/crypto/marvell/cesa.c
+index b657e7c..ff73aa5 100644
+--- a/drivers/crypto/marvell/cesa.c
++++ b/drivers/crypto/marvell/cesa.c
+@@ -181,8 +181,7 @@ int mv_cesa_queue_req(struct crypto_async_request *req,
+ 	spin_lock_bh(&engine->lock);
+ 	ret = crypto_enqueue_request(&engine->queue, req);
+ 	if ((mv_cesa_req_get_type(creq) == CESA_DMA_REQ) &&
+-	    (ret == -EINPROGRESS ||
+-	    (ret == -EBUSY && req->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)))
++	    (ret == -EINPROGRESS || ret == -EBUSY))
+ 		mv_cesa_tdma_chain(engine, creq);
+ 	spin_unlock_bh(&engine->lock);
  
- 	slots_used = 0;
- 	max_chain_len = 0;
--	for (slots_used = max_chain_len = i = 0; i < h->size; i++) {
-+	for (i = 0; i < h->size; i++) {
- 		cur = h->htable[i];
- 		if (cur) {
- 			slots_used++;
+diff --git a/drivers/crypto/marvell/cesa.h b/drivers/crypto/marvell/cesa.h
+index b7872f6..63c8457 100644
+--- a/drivers/crypto/marvell/cesa.h
++++ b/drivers/crypto/marvell/cesa.h
+@@ -763,7 +763,7 @@ static inline int mv_cesa_req_needs_cleanup(struct crypto_async_request *req,
+ 	 * the backlog and will be processed later. There's no need to
+ 	 * clean it up.
+ 	 */
+-	if (ret == -EBUSY && req->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)
++	if (ret == -EBUSY)
+ 		return false;
+ 
+ 	/* Request wasn't queued, we need to clean it up */
 -- 
-2.14.1
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
