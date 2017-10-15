@@ -1,79 +1,73 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Sun, 15 Oct 2017 10:19:48 +0100
-Subject: [PATCH v9 03/20] net: use -EAGAIN for transient busy indication
+Date: Sun, 15 Oct 2017 10:19:47 +0100
+Subject: [PATCH v9 02/20] crypto: ccp: use -EAGAIN for transient busy
+	indication
 In-Reply-To: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
 References: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1508059209-25529-4-git-send-email-gilad@benyossef.com>
+Message-ID: <1508059209-25529-3-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Replace -EBUSY with -EAGAIN when handling transient busy
+Replace -EBUSY with -EAGAIN when reporting transient busy
 indication in the absence of backlog.
 
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Reviewed-by: Gary R Hook <gary.hook@amd.com>
 
 ---
 
 Please squash this patch with the previous one when merging upstream.
 
- net/ipv4/ah4.c  | 2 +-
- net/ipv4/esp4.c | 2 +-
- net/ipv6/ah6.c  | 2 +-
- net/ipv6/esp6.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/crypto/ccp/ccp-crypto-main.c | 8 +++-----
+ drivers/crypto/ccp/ccp-dev.c         | 7 +++++--
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/net/ipv4/ah4.c b/net/ipv4/ah4.c
-index 37db44f..049cb0a 100644
---- a/net/ipv4/ah4.c
-+++ b/net/ipv4/ah4.c
-@@ -240,7 +240,7 @@ static int ah_output(struct xfrm_state *x, struct sk_buff *skb)
- 		if (err == -EINPROGRESS)
- 			goto out;
+diff --git a/drivers/crypto/ccp/ccp-crypto-main.c b/drivers/crypto/ccp/ccp-crypto-main.c
+index 35a9de7..403ff0a 100644
+--- a/drivers/crypto/ccp/ccp-crypto-main.c
++++ b/drivers/crypto/ccp/ccp-crypto-main.c
+@@ -222,9 +222,10 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
  
--		if (err == -EBUSY)
-+		if (err == -EAGAIN)
- 			err = NET_XMIT_DROP;
- 		goto out_free;
+ 	/* Check if the cmd can/should be queued */
+ 	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
+-		ret = -EBUSY;
+-		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
++		if (!(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG)) {
++			ret = -EAGAIN;
+ 			goto e_lock;
++		}
  	}
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index b00e4a4..ff8e088 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -432,7 +432,7 @@ int esp_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
- 	case -EINPROGRESS:
- 		goto error;
  
--	case -EBUSY:
-+	case -EAGAIN:
- 		err = NET_XMIT_DROP;
- 		break;
- 
-diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
-index 7802b72..ba0c145 100644
---- a/net/ipv6/ah6.c
-+++ b/net/ipv6/ah6.c
-@@ -443,7 +443,7 @@ static int ah6_output(struct xfrm_state *x, struct sk_buff *skb)
- 		if (err == -EINPROGRESS)
- 			goto out;
- 
--		if (err == -EBUSY)
-+		if (err == -EAGAIN)
- 			err = NET_XMIT_DROP;
- 		goto out_free;
+ 	/* Look for an entry with the same tfm.  If there is a cmd
+@@ -243,9 +244,6 @@ static int ccp_crypto_enqueue_cmd(struct ccp_crypto_cmd *crypto_cmd)
+ 		ret = ccp_enqueue_cmd(crypto_cmd->cmd);
+ 		if (!ccp_crypto_success(ret))
+ 			goto e_lock;	/* Error, don't queue it */
+-		if ((ret == -EBUSY) &&
+-		    !(crypto_cmd->cmd->flags & CCP_CMD_MAY_BACKLOG))
+-			goto e_lock;	/* Not backlogging, don't queue it */
  	}
-diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
-index 89910e2..1a71ee5 100644
---- a/net/ipv6/esp6.c
-+++ b/net/ipv6/esp6.c
-@@ -396,7 +396,7 @@ int esp6_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info
- 	case -EINPROGRESS:
- 		goto error;
  
--	case -EBUSY:
-+	case -EAGAIN:
- 		err = NET_XMIT_DROP;
- 		break;
+ 	if (req_queue.cmd_count >= CCP_CRYPTO_MAX_QLEN) {
+diff --git a/drivers/crypto/ccp/ccp-dev.c b/drivers/crypto/ccp/ccp-dev.c
+index 4e029b1..3d637e3 100644
+--- a/drivers/crypto/ccp/ccp-dev.c
++++ b/drivers/crypto/ccp/ccp-dev.c
+@@ -292,9 +292,12 @@ int ccp_enqueue_cmd(struct ccp_cmd *cmd)
+ 	i = ccp->cmd_q_count;
  
+ 	if (ccp->cmd_count >= MAX_CMD_QLEN) {
+-		ret = -EBUSY;
+-		if (cmd->flags & CCP_CMD_MAY_BACKLOG)
++		if (cmd->flags & CCP_CMD_MAY_BACKLOG) {
++			ret = -EBUSY;
+ 			list_add_tail(&cmd->entry, &ccp->backlog);
++		} else {
++			ret = -EAGAIN;
++		}
+ 	} else {
+ 		ret = -EINPROGRESS;
+ 		ccp->cmd_count++;
 -- 
 2.7.4
 
