@@ -1,49 +1,29 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Mon, 16 Oct 2017 18:42:19 -0400
-Subject: [PATCH][V2] selinux: remove extraneous initialization of
-	slots_used and max_chain_len
-In-Reply-To: <20171014153856.3539-1-colin.king@canonical.com>
-References: <20171014153856.3539-1-colin.king@canonical.com>
-Message-ID: <CAHC9VhSzWMuYU4QbE_8rFGJFVaQhNVyQMKd1xcs5BrDj0NrmCQ@mail.gmail.com>
+From: daniel@iogearbox.net (Daniel Borkmann)
+Date: Tue, 17 Oct 2017 00:59:18 +0200
+Subject: [PATCH net-next v6 1/5] bpf: Add file mode configuration into
+	bpf maps
+In-Reply-To: <20171016191135.8046-2-chenbofeng.kernel@gmail.com>
+References: <20171016191135.8046-1-chenbofeng.kernel@gmail.com>
+	<20171016191135.8046-2-chenbofeng.kernel@gmail.com>
+Message-ID: <59E539C6.6050009@iogearbox.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Oct 14, 2017 at 11:38 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 10/16/2017 09:11 PM, Chenbo Feng wrote:
+> From: Chenbo Feng <fengc@google.com>
 >
-> Variables slots_used and max_chain_len are being initialized to zero
-> twice. Remove the second set of initializations in the for loop.
-> Cleans up the clang warnings:
+> Introduce the map read/write flags to the eBPF syscalls that returns the
+> map fd. The flags is used to set up the file mode when construct a new
+> file descriptor for bpf maps. To not break the backward capability, the
+> f_flags is set to O_RDWR if the flag passed by syscall is 0. Otherwise
+> it should be O_RDONLY or O_WRONLY. When the userspace want to modify or
+> read the map content, it will check the file mode to see if it is
+> allowed to make the change.
 >
-> Value stored to 'slots_used' is never read
-> Value stored to 'max_chain_len' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  security/selinux/ss/hashtab.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Chenbo Feng <fengc@google.com>
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
 
-Also merged, thanks.
-
-> diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
-> index bef7577d1270..e0443f4afea5 100644
-> --- a/security/selinux/ss/hashtab.c
-> +++ b/security/selinux/ss/hashtab.c
-> @@ -150,7 +150,7 @@ void hashtab_stat(struct hashtab *h, struct hashtab_info *info)
->
->         slots_used = 0;
->         max_chain_len = 0;
-> -       for (slots_used = max_chain_len = i = 0; i < h->size; i++) {
-> +       for (i = 0; i < h->size; i++) {
->                 cur = h->htable[i];
->                 if (cur) {
->                         slots_used++;
-> --
-> 2.14.1
-
--- 
-paul moore
-www.paul-moore.com
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
