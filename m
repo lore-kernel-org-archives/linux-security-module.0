@@ -1,114 +1,123 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 16 Oct 2017 11:31:41 -0700
-Subject: [RFC][PATCH 00/15] KEYS: Fixes
-In-Reply-To: <2176.1507909168@warthog.procyon.org.uk>
-References: <20171012185612.GA11577@gmail.com>
-	<150782504738.1655.12882942775980793687.stgit@warthog.procyon.org.uk>
-	<2176.1507909168@warthog.procyon.org.uk>
-Message-ID: <20171016183141.GD121701@gmail.com>
+From: chenbofeng.kernel@gmail.com (Chenbo Feng)
+Date: Mon, 16 Oct 2017 12:11:30 -0700
+Subject: [PATCH net-next v6 0/5] bpf: security: New file mode and LSM hooks
+	for eBPF object permission control
+Message-ID: <20171016191135.8046-1-chenbofeng.kernel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Oct 13, 2017 at 04:39:28PM +0100, David Howells wrote:
-> diff --git a/security/keys/gc.c b/security/keys/gc.c
-> index 87cb260e4890..e7aeecbf7f19 100644
-> --- a/security/keys/gc.c
-> +++ b/security/keys/gc.c
-> @@ -129,14 +129,15 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
->  	while (!list_empty(keys)) {
->  		struct key *key =
->  			list_entry(keys->next, struct key, graveyard_link);
-> +		short state = key->state;
-> +
->  		list_del(&key->graveyard_link);
->  
->  		kdebug("- %u", key->serial);
->  		key_check(key);
->  
->  		/* Throw away the key data if the key is instantiated */
-> -		if (test_bit(KEY_FLAG_INSTANTIATED, &key->flags) &&
-> -		    !test_bit(KEY_FLAG_NEGATIVE, &key->flags) &&
-> +		if (state == KEY_IS_INSTANTIATED &&
->  		    key->type->destroy)
->  			key->type->destroy(key);
+From: Chenbo Feng <fengc@google.com>
 
-Nit: put the two checks on the same line.
+Much like files and sockets, eBPF objects are accessed, controlled, and
+shared via a file descriptor (FD). Unlike files and sockets, the
+existing mechanism for eBPF object access control is very limited.
+Currently there are two options for granting accessing to eBPF
+operations: grant access to all processes, or only CAP_SYS_ADMIN
+processes. The CAP_SYS_ADMIN-only mode is not ideal because most users
+do not have this capability and granting a user CAP_SYS_ADMIN grants too
+many other security-sensitive permissions. It also unnecessarily allows
+all CAP_SYS_ADMIN processes access to eBPF functionality. Allowing all
+processes to access to eBPF objects is also undesirable since it has
+potential to allow unprivileged processes to consume kernel memory, and
+opens up attack surface to the kernel.
 
->  
-> @@ -151,7 +152,7 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
->  		}
->  
->  		atomic_dec(&key->user->nkeys);
-> -		if (test_bit(KEY_FLAG_INSTANTIATED, &key->flags))
-> +		if (state == KEY_IS_INSTANTIATED)
->  			atomic_dec(&key->user->nikeys);
+Adding LSM hooks maintains the status quo for systems which do not use
+an LSM, preserving compatibility with userspace, while allowing security
+modules to choose how best to handle permissions on eBPF objects. Here
+is a possible use case for the lsm hooks with selinux module:
 
-This changes the behavior.  Previously ->nikeys counted both negatively and
-positively instantiated keys, while this change implies that it now will only
-count positively instantiated keys.  I think you meant 'state !=
-KEY_IS_UNINSTANTIATED'?  Renaming KEY_IS_INSTANTIATED to KEY_IS_POSITIVE or
-KEY_IS_POSITIVELY_INSTANTIATED also might help reduce this confusion.
+The network-control daemon (netd) creates and loads an eBPF object for
+network packet filtering and analysis. It passes the object FD to an
+unprivileged network monitor app (netmonitor), which is not allowed to
+create, modify or load eBPF objects, but is allowed to read the traffic
+stats from the map.
 
-> @@ -901,7 +900,7 @@ long keyctl_chown_key(key_serial_t id, uid_t user, gid_t group)
->  		atomic_dec(&key->user->nkeys);
->  		atomic_inc(&newowner->nkeys);
->  
-> -		if (test_bit(KEY_FLAG_INSTANTIATED, &key->flags)) {
-> +		if (key->state == KEY_IS_INSTANTIATED) {
->  			atomic_dec(&key->user->nikeys);
->  			atomic_inc(&newowner->nikeys);
->  		}
+Selinux could use these hooks to grant the following permissions:
+allow netd self:bpf_map { create read write};
+allow netmonitor netd:fd use;
+allow netmonitor netd:bpf_map read;
 
-Same problem: ->nikeys was previously counting negatively instantiated keys too.
-Now it isn't.  Shouldn't it test 'key->state != KEY_IS_UNINSTANTIATED'?
+In this patch series, A file mode is added to bpf map to store the
+accessing mode. With this file mode flags, the map can be obtained read
+only, write only or read and write. With the help of this file mode,
+several security hooks can be added to the eBPF syscall implementations
+to do permissions checks. These LSM hooks are mainly focused on checking
+the process privileges before it obtains the fd for a specific bpf
+object. No matter from a file location or from a eBPF id. Besides that,
+a general check hook is also implemented at the start of bpf syscalls so
+that each security module can have their own implementation on the reset
+of bpf object related functionalities.
 
-> diff --git a/security/keys/proc.c b/security/keys/proc.c
-> index de834309d100..9510822c4d96 100644
-> --- a/security/keys/proc.c
-> +++ b/security/keys/proc.c
-> @@ -182,6 +182,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
->  	unsigned long timo;
->  	key_ref_t key_ref, skey_ref;
->  	char xbuf[16];
-> +	short state;
->  	int rc;
->  
->  	struct keyring_search_context ctx = {
-> @@ -236,17 +237,19 @@ static int proc_keys_show(struct seq_file *m, void *v)
->  			sprintf(xbuf, "%luw", timo / (60*60*24*7));
->  	}
->  
-> +	state = key_read_state(key);
-> +
->  #define showflag(KEY, LETTER, FLAG) \
->  	(test_bit(FLAG,	&(KEY)->flags) ? LETTER : '-')
->  
->  	seq_printf(m, "%08x %c%c%c%c%c%c%c %5d %4s %08x %5d %5d %-9.9s ",
->  		   key->serial,
-> -		   showflag(key, 'I', KEY_FLAG_INSTANTIATED),
-> +		   state == KEY_IS_INSTANTIATED ? 'I' : '-',
+In order to store the ownership and security information about eBPF
+maps, a security field pointer is added to the struct bpf_map. And the
+last two patch set are implementation of selinux check on these hooks
+introduced, plus an additional check when eBPF object is passed between
+processes using unix socket as well as binder IPC.
 
-Similar problem.  Previously 'I' was shown for negatively instantiated keys; now
-it's not.  Shouldn't it test 'state != KEY_IS_UNINSTANTIATED'?
+Change since V1:
 
-> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-> index 293d3598153b..5a8b985d1d5f 100644
-> --- a/security/keys/process_keys.c
-> +++ b/security/keys/process_keys.c
-> @@ -729,8 +729,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
->  	}
->  
->  	ret = -EIO;
-> -	if (!(lflags & KEY_LOOKUP_PARTIAL) &&
-> -	    !test_bit(KEY_FLAG_INSTANTIATED, &key->flags))
-> +	if (!(lflags & KEY_LOOKUP_PARTIAL) && !key_is_instantiated(key))
->  		goto invalid_key;
+ - Whitelist the new bpf flags in the map allocate check.
+ - Added bpf selftest for the new flags.
+ - Added two new security hooks for copying the security information from
+   the bpf object security struct to file security struct
+ - Simplified the checking action when bpf fd is passed between processes.
 
-Similar problem again.  Previously this allowed negatively instantiated keys
-through whereas now it only allows positively instantiated keys.  Is that
-intentional?
+ Change since V2:
 
-Eric
+ - Fixed the line break problem for map flags check
+ - Fixed the typo in selinux check of file mode.
+ - Merge bpf_map and bpf_prog into one selinux class
+ - Added bpf_type and bpf_sid into file security struct to store the
+   security information when generate fd.
+ - Add the hook to bpf_map_new_fd and bpf_prog_new_fd.
+
+ Change since V3:
+
+ - Return the actual error from security check instead of -EPERM
+ - Move the hooks into anon_inode_getfd() to avoid get file again after
+   bpf object file is installed with fd.
+ - Removed the bpf_sid field inside file_scerity_struct to reduce the
+   cache size.
+
+ Change since V4:
+
+ - Rename bpf av prog_use to prog_run to distinguish from fd_use.
+ - Remove the bpf_type field inside file_scerity_struct and use bpf fops
+   to indentify bpf object instead.
+
+ Change since v5:
+
+ - Fixed the incorrect selinux class name for SECCLASS_BPF
+
+Chenbo Feng (5):
+  bpf: Add file mode configuration into bpf maps
+  bpf: Add tests for eBPF file mode
+  security: bpf: Add LSM hooks for bpf object related syscall
+  selinux: bpf: Add selinux check for eBPF syscall operations
+  selinux: bpf: Add addtional check for bpf object file receive
+
+ include/linux/bpf.h                     |  15 ++-
+ include/linux/lsm_hooks.h               |  54 +++++++++++
+ include/linux/security.h                |  45 +++++++++
+ include/uapi/linux/bpf.h                |   6 ++
+ kernel/bpf/arraymap.c                   |   6 +-
+ kernel/bpf/devmap.c                     |   5 +-
+ kernel/bpf/hashtab.c                    |   5 +-
+ kernel/bpf/inode.c                      |  15 ++-
+ kernel/bpf/lpm_trie.c                   |   3 +-
+ kernel/bpf/sockmap.c                    |   5 +-
+ kernel/bpf/stackmap.c                   |   5 +-
+ kernel/bpf/syscall.c                    | 118 ++++++++++++++++++++---
+ security/security.c                     |  32 +++++++
+ security/selinux/hooks.c                | 160 ++++++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h     |   2 +
+ security/selinux/include/objsec.h       |   4 +
+ tools/testing/selftests/bpf/test_maps.c |  48 ++++++++++
+ 17 files changed, 502 insertions(+), 26 deletions(-)
+
+-- 
+2.15.0.rc0.271.g36b669edcc-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
