@@ -1,73 +1,108 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Tue, 17 Oct 2017 16:32:28 -0400
-Subject: [PATCH v4 0/4] additional TPM performance improvements 
-Message-ID: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+From: dhowells@redhat.com (David Howells)
+Date: Tue, 17 Oct 2017 23:57:33 +0100
+Subject: [GIT PULL] KEYS: Fixes
+Message-ID: <866.1508281053@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-After further discussions with the TCG Device Driver working group (ddwg),
-the following changes were made: 
+Hi James,
 
-* Check for burstcount at least once to confirm the TPM is ready to accept
-the data. Similarly, query for the TPM Expect status as sanity check at
-the end.
+Can you pull this collection of fixes for Linux keyrings and pass them along
+to Linus.  They include:
 
-* Make the sleep for status check in the loop less than 5msec.
+ (1) Fix a bunch of places where kernel drivers may access revoked user-type
+     keys and don't do it correctly.
 
-* Make the sleep in the loop while querying for burstcount less than
-5msec.
+ (2) Fix some ecryptfs bits.
 
-Below is the list of patches along with the performance improvements
-seen with a TPM 1.2 with an 8 byte burstcount for 1000 extends: 
+ (3) Fix big_key to require CONFIG_CRYPTO.
 
-Patch                                        |Improvement(time in sec)
+ (4) Fix a couple of bugs in the asymmetric key type.
 
-tpm: ignore burstcount to improve tpm_tis    | ~41 - ~14
-send() performance.
+ (5) Fix a race between updating and finding negative keys.
 
-tpm: reduce polling delay in tpm_tis_core    | ~14 - ~9 
+ (6) Prevent add_key() from updating uninstantiated keys.
 
-tpm: modify tpm_msleep() function to have    | ~9 - ~8
-max range
+ (7) Make loading of key flags and expiry time atomic when not holding locks.
 
-Changelog v4:
-* Include Jarkko's feedback on merging two patches reducing sleep
-time during polling to TPM.
-* Include Jarkko's feedback to clean up the burstcount change
-patch and add comment for new #define.
+The patches can be found here also:
 
-Changelog v3:
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-fixes
 
-* Include Jarkko's feedback to move wait_for_tpm_stat() from
-tpm-interface.c to respective driver files tpm_tis_core.c and
-xen-tpmfront.c.
-* Remove use of module parameter ignore_burst_count and is
-now alwaysed ignored in tpm tis send() operation.
-* Reduce sleep() time during polling in wait_for_tpm_stat() from
-5msec to 1msec for both recv() and send() operation. Version
-2 of the patches  had it only for send() operation.
+Tagged thusly:
 
-Changelog v2:
+	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+	keys-fixes-20171017
 
-* Add module parameter to handle ignoring of burst count during
-tpm tis send() operation.
-* Add improvements over sleep time to reduce delays.
+Thanks,
+David
+---
+The following changes since commit 9e66317d3c92ddaab330c125dfe9d06eee268aff:
 
-Nayna Jain (4):
-  tpm: move wait_for_tpm_stat() to respective driver files
-  tpm: ignore burstcount to improve tpm_tis send() performance
-  tpm: reduce tpm polling delay in tpm_tis_core
-  tpm: use tpm_msleep() value as max delay
+  Linux 4.14-rc3 (2017-10-01 14:54:54 -0700)
 
- drivers/char/tpm/tpm-interface.c |  60 ---------------------
- drivers/char/tpm/tpm.h           |   6 +--
- drivers/char/tpm/tpm_tis_core.c  | 110 +++++++++++++++++++++++++++++----------
- drivers/char/tpm/xen-tpmfront.c  |  60 +++++++++++++++++++++
- 4 files changed, 144 insertions(+), 92 deletions(-)
+are available in the git repository at:
 
--- 
-2.13.3
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-fixes-20171017
 
+for you to fetch changes up to 3580759723c16ec68e71fd1269909f56d2a4866a:
+
+  pkcs7: Prevent NULL pointer dereference, since sinfo is not always set. (2017-10-17 23:25:35 +0100)
+
+----------------------------------------------------------------
+Keyrings fixes
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      security/keys: BIG_KEY requires CONFIG_CRYPTO
+
+Chun-Yi Lee (2):
+      KEYS: Fix the wrong index when checking the existence of second id
+      KEYS: checking the input id parameters before finding asymmetric key
+
+David Howells (2):
+      KEYS: Fix race between updating and finding a negative key
+      KEYS: don't let add_key() update an uninstantiated key
+
+Eric Biggers (10):
+      KEYS: encrypted: fix dereference of NULL user_key_payload
+      FS-Cache: fix dereference of NULL user_key_payload
+      lib/digsig: fix dereference of NULL user_key_payload
+      fscrypt: fix dereference of NULL user_key_payload
+      ecryptfs: fix dereference of NULL user_key_payload
+      ecryptfs: fix out-of-bounds read of key payload
+      ecryptfs: move key payload accessor functions into keystore.c
+      KEYS: load key flags and expiry time atomically in key_validate()
+      KEYS: Load key expiry time atomically in keyring_search_iterator()
+      KEYS: load key flags and expiry time atomically in proc_keys_show()
+
+Eric Sesterhenn (1):
+      pkcs7: Prevent NULL pointer dereference, since sinfo is not always set.
+
+ crypto/asymmetric_keys/asymmetric_type.c |  4 +-
+ crypto/asymmetric_keys/pkcs7_parser.c    |  3 ++
+ fs/crypto/keyinfo.c                      |  5 +++
+ fs/ecryptfs/ecryptfs_kernel.h            | 44 -------------------
+ fs/ecryptfs/keystore.c                   | 73 +++++++++++++++++++++++++++++++-
+ fs/fscache/object-list.c                 |  7 +++
+ include/linux/key.h                      | 47 ++++++++++++--------
+ lib/digsig.c                             |  6 +++
+ net/dns_resolver/dns_key.c               |  2 +-
+ security/keys/Kconfig                    |  1 +
+ security/keys/big_key.c                  |  4 +-
+ security/keys/encrypted-keys/encrypted.c |  9 +++-
+ security/keys/gc.c                       |  8 ++--
+ security/keys/key.c                      | 41 +++++++++++++-----
+ security/keys/keyctl.c                   |  9 ++--
+ security/keys/keyring.c                  | 14 +++---
+ security/keys/permission.c               |  7 +--
+ security/keys/proc.c                     | 31 ++++++++------
+ security/keys/process_keys.c             |  2 +-
+ security/keys/request_key.c              |  7 ++-
+ security/keys/request_key_auth.c         |  2 +-
+ security/keys/trusted.c                  |  2 +-
+ security/keys/user_defined.c             |  4 +-
+ 23 files changed, 215 insertions(+), 117 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
