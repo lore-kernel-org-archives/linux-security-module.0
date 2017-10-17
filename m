@@ -1,23 +1,20 @@
-From: daniel@iogearbox.net (Daniel Borkmann)
-Date: Tue, 17 Oct 2017 01:00:09 +0200
-Subject: [PATCH net-next v6 2/5] bpf: Add tests for eBPF file mode
-In-Reply-To: <20171016191135.8046-3-chenbofeng.kernel@gmail.com>
-References: <20171016191135.8046-1-chenbofeng.kernel@gmail.com>
-	<20171016191135.8046-3-chenbofeng.kernel@gmail.com>
-Message-ID: <59E539F9.7080404@iogearbox.net>
+From: viro@ZenIV.linux.org.uk (Al Viro)
+Date: Tue, 17 Oct 2017 06:23:03 +0100
+Subject: [GIT PULL]  vfs i_version fix for Linus
+In-Reply-To: <1508187620.5464.13.camel@linux.vnet.ibm.com>
+References: <1508187620.5464.13.camel@linux.vnet.ibm.com>
+Message-ID: <20171017052303.GN21978@ZenIV.linux.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 10/16/2017 09:11 PM, Chenbo Feng wrote:
-> From: Chenbo Feng <fengc@google.com>
->
-> Two related tests are added into bpf selftest to test read only map and
-> write only map. The tests verified the read only and write only flags
-> are working on hash maps.
->
-> Signed-off-by: Chenbo Feng <fengc@google.com>
+On Mon, Oct 16, 2017 at 05:00:20PM -0400, Mimi Zohar wrote:
+> Hi Al,
+> 
+> This pull request contains a single patch that allows file systems to
+> be mounted with i_version. ?I would really appreciate your forwarding
+> this patch to Linus.
 
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Applied.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
