@@ -1,46 +1,64 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Tue, 17 Oct 2017 16:32:32 -0400
-Subject: [PATCH v4 4/4] tpm: use tpm_msleep() value as max delay
+Date: Tue, 17 Oct 2017 16:32:31 -0400
+Subject: [PATCH v4 3/4] tpm: reduce tpm polling delay in tpm_tis_core
 In-Reply-To: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
 References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20171017203232.2262-5-nayna@linux.vnet.ibm.com>
+Message-ID: <20171017203232.2262-4-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Currently, tpm_msleep() uses delay_msec as the minimum value in
-usleep_range. However, that is the maximum time we want to wait.
-The function is modified to use the delay_msec as the maximum
-value, not the minimum value.
+The existing wait_for_tpm_stat() polls for the chip status after
+5msec sleep. As per TCG ddwg input, it is expected that tpm might
+return status in few usec. So, reducing the delay in polling to
+1msec.
+Similarly, get_burstcount() function sleeps for 5msec before
+retrying for next query to burstcount in a loop. If it takes
+lesser time for TPM to return, this 5msec delay is longer than
+necessary.
 
 After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~9sec to ~8sec.
-
-Fixes: 3b9af007869("tpm: replace msleep() with usleep_range() in TPM 1.2/
-2.0 generic drivers")
+burstcount for 1000 extends improved from ~14sec to ~9sec.
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm_tis_core.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4fc83ac7abeb..644de70de2cc 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -528,8 +528,8 @@ int tpm_pm_resume(struct device *dev);
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 993328ae988c..8b55fdaa67f2 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -31,6 +31,12 @@
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
  
- static inline void tpm_msleep(unsigned int delay_msec)
++/* This is a polling delay to check for status and burstcount.
++ * As per ddwg input, expectation is that status check and burstcount
++ * check should return within few usecs.
++ */
++#define TPM_POLL_SLEEP	1  /* msec */
++
+ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+ 					bool check_cancel, bool *canceled)
  {
--	usleep_range(delay_msec * 1000,
--		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
-+	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
-+		     delay_msec * 1000);
- };
- 
- struct tpm_chip *tpm_chip_find_get(int chip_num);
+@@ -82,7 +88,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 		}
+ 	} else {
+ 		do {
+-			tpm_msleep(TPM_TIMEOUT);
++			tpm_msleep(TPM_POLL_SLEEP);
+ 			status = chip->ops->status(chip);
+ 			if ((status & mask) == mask)
+ 				return 0;
+@@ -224,7 +230,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 		burstcnt = (value >> 8) & 0xFFFF;
+ 		if (burstcnt)
+ 			return burstcnt;
+-		tpm_msleep(TPM_TIMEOUT);
++		tpm_msleep(TPM_POLL_SLEEP);
+ 	} while (time_before(jiffies, stop));
+ 	return -EBUSY;
+ }
 -- 
 2.13.3
 
