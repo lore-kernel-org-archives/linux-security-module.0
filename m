@@ -1,51 +1,75 @@
-From: linux@armlinux.org.uk (Russell King - ARM Linux)
-Date: Tue, 17 Oct 2017 15:06:29 +0100
-Subject: [PATCH v9 00/20] simplify crypto wait for async op
-In-Reply-To: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
-References: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
-Message-ID: <20171017140629.GO20805@n2100.armlinux.org.uk>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Tue, 17 Oct 2017 10:52:06 -0700
+Subject: [RFC][PATCH 00/15] KEYS: Fixes
+In-Reply-To: <27552.1508192842@warthog.procyon.org.uk>
+References: <20171016183141.GD121701@gmail.com>
+	<20171012185612.GA11577@gmail.com>
+	<150782504738.1655.12882942775980793687.stgit@warthog.procyon.org.uk>
+	<2176.1507909168@warthog.procyon.org.uk>
+	<27552.1508192842@warthog.procyon.org.uk>
+Message-ID: <20171017175206.GB555@zzz.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Oct 15, 2017 at 10:19:45AM +0100, Gilad Ben-Yossef wrote:
-> Many users of kernel async. crypto services have a pattern of
-> starting an async. crypto op and than using a completion
-> to wait for it to end.
+On Mon, Oct 16, 2017 at 11:27:22PM +0100, David Howells wrote:
+> Okay, I've fixed those issues, I think.  I've renamed the instantiation labels
+> to positive.
 > 
-> This patch set simplifies this common use case in two ways:
+> Thanks,
+> David
+> ---
+> commit f23f3bb0ba3be44e775ac74148157136b919e3b0
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Wed Oct 4 16:43:25 2017 +0100
 > 
-> First, by separating the return codes of the case where a
-> request is queued to a backlog due to the provider being
-> busy (-EBUSY) from the case the request has failed due
-> to the provider being busy and backlogging is not enabled
-> (-EAGAIN).
+>     KEYS: Fix race between updating and finding a negative key
+>     
+>     Consolidate KEY_FLAG_INSTANTIATED, KEY_FLAG_NEGATIVE and the rejection
+>     error into one field such that:
+>     
+>      (1) The instantiation state can be modified/read atomically.
+>     
+>      (2) The error can be accessed atomically with the state.
+>     
+>      (3) The error isn't stored unioned with the payload pointers.
+>     
+>     This deals with the problem that the state is spread over three different
+>     objects (two bits and a separate variable) and reading or updating them
+>     atomically isn't practical, given that not only can uninstantiated keys
+>     change into instantiated or rejected keys, but rejected keys can also turn
+>     into instantiated keys - and someone accessing the key might not be using
+>     any locking.
+>     
+>     The main side effect of this problem is that what was held in the payload
+>     may change, depending on the state.  For instance, you might observe the
+>     key to be in the rejected state.  You then read the cached error, but if
+>     the key semaphore wasn't locked, the key might've become instantiated
+>     between the two reads - and you might now have something in hand that isn't
+>     actually an error code.
+>     
+>     The state is now KEY_IS_UNINSTANTIATED, KEY_IS_POSITIVE or a negative error
+>     code if the key is negatively instantiated.  The key_is_instantiated()
+>     function is replaced with key_is_positive() to avoid confusion as negative
+>     keys are also 'instantiated'.
+>     
+>     Additionally, barriering is included:
+>     
+>      (1) Order payload-set before state-set during instantiation.
+>     
+>      (2) Order state-read before payload-read when using the key.
+>     
+>     Further separate barriering is necessary if RCU is being used to access the
+>     payload content after reading the payload pointers.
+>     
+>     Fixes: 146aa8b1453b ("KEYS: Merge the type-specific data with the payload data")
+>     Cc: stable at vger.kernel.org # v4.4+
+>     Reported-by: Eric Biggers <ebiggers@google.com>
+>     Signed-off-by: David Howells <dhowells@redhat.com>
 > 
-> Next, this change is than built on to create a generic API
-> to wait for a async. crypto operation to complete.
-> 
-> The end result is a smaller code base and an API that is
-> easier to use and more difficult to get wrong.
-> 
-> The patch set was boot tested on x86_64 and arm64 which
-> at the very least tests the crypto users via testmgr and
-> tcrypt but I do note that I do not have access to some
-> of the HW whose drivers are modified nor do I claim I was
-> able to test all of the corner cases.
-> 
-> The patch set is based upon linux-next release tagged
-> next-20171013.
 
-Has there been any performance impact analysis of these changes?  I
-ended up with patches for one of the crypto drivers which converted
-its interrupt handling to threaded interrupts being reverted because
-it caused a performance degredation.
+This looks good now; feel free to add
 
-Moving code to latest APIs to simplify it is not always beneficial.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+	Reviewed-by: Eric Biggers <ebiggers@google.com>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
