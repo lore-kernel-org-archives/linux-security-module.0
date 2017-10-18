@@ -1,105 +1,79 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 18 Oct 2017 18:25:26 +0300
-Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
-	performance
-In-Reply-To: <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
-Message-ID: <20171018152526.kxd6qv3ep7o4rtio@linux.intel.com>
+Date: Wed, 18 Oct 2017 18:48:24 +0300
+Subject: [GIT PULL] tpmdd updates for Linux 4.15
+Message-ID: <20171018154824.5mgrgr7jnlfwgujt@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 17, 2017 at 04:32:30PM -0400, Nayna Jain wrote:
-> The TPM burstcount status indicates the number of bytes that can
-> be sent to the TPM without causing bus wait states.  Effectively,
-> it is the number of empty bytes in the command FIFO.
-> 
-> This patch optimizes the tpm_tis_send_data() function by checking
-> the burstcount only once. And if the burstcount is valid, it writes
-> all the bytes at once, permitting wait state.
-> 
-> After this change, performance on a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~41sec to ~14sec.
-> 
-> Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-> conjunction with the TPM Device Driver work group.
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Hi
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Contains mostly minor fixes.
+
+Selected more essential changes:
+
+* Essential clean up for tpm_crb so that ARM64 and x86 versions do not
+  distract each other as much as before.
+* /dev/tpm0 rejects now too short writes (shorter buffer than specified in
+  the command header.
+* Use DMA-safe buffer in tpm_tis_spi.
 
 /Jarkko
 
-> ---
->  drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++--------------------------
->  1 file changed, 15 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index b33126a35694..993328ae988c 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
->  {
->  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->  	int rc, status, burstcnt;
-> -	size_t count = 0;
->  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
->  
->  	status = tpm_tis_status(chip);
-> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
->  		}
->  	}
->  
-> -	while (count < len - 1) {
-> -		burstcnt = get_burstcount(chip);
-> -		if (burstcnt < 0) {
-> -			dev_err(&chip->dev, "Unable to read burstcount\n");
-> -			rc = burstcnt;
-> -			goto out_err;
-> -		}
-> -		burstcnt = min_t(int, burstcnt, len - count - 1);
-> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-> -					 burstcnt, buf + count);
-> -		if (rc < 0)
-> -			goto out_err;
-> -
-> -		count += burstcnt;
-> -
-> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
-> -					&priv->int_queue, false) < 0) {
-> -			rc = -ETIME;
-> -			goto out_err;
-> -		}
-> -		status = tpm_tis_status(chip);
-> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
-> -			rc = -EIO;
-> -			goto out_err;
-> -		}
-> +	/*
-> +	 * Get the initial burstcount to ensure TPM is ready to
-> +	 * accept data.
-> +	 */
-> +	burstcnt = get_burstcount(chip);
-> +	if (burstcnt < 0) {
-> +		dev_err(&chip->dev, "Unable to read burstcount\n");
-> +		rc = burstcnt;
-> +		goto out_err;
->  	}
->  
-> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-> +			len - 1, buf);
-> +	if (rc < 0)
-> +		goto out_err;
-> +
->  	/* write last byte */
-> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
-> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-1]);
->  	if (rc < 0)
->  		goto out_err;
->  
-> -- 
-> 2.13.3
-> 
+The following changes since commit 25eabb13c7d67ae32298015c5e28d00f604f412c:
+
+  Merge tag 'v4.14-rc2' into next-general (2017-09-24 22:41:55 -0700)
+
+are available in the git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20171018
+
+for you to fetch changes up to 33957a104c86985f087b08a363590a948c9ff08c:
+
+  tpm, tpm_tis: use ARRAY_SIZE() to define TPM_HID_USR_IDX (2017-10-18 18:28:49 +0300)
+
+----------------------------------------------------------------
+tpmdd updates for Linux 4.15
+
+----------------------------------------------------------------
+Alexander Steffen (5):
+      tpm_tis_spi: Use DMA-safe memory for SPI transfers
+      tpm: Trigger only missing TPM 2.0 self tests
+      tpm: Use dynamic delay to wait for TPM 2.0 self test result
+      tpm: React correctly to RC_TESTING from TPM 2.0 self tests
+      tpm-dev-common: Reject too short writes
+
+Arnd Bergmann (1):
+      tpm: constify transmit data pointers
+
+Colin Ian King (1):
+      tpm_tis: make array cmd_getticks static const to shrink object code size
+
+Jarkko Sakkinen (4):
+      tpm: migrate pubek_show to struct tpm_buf
+      tpm: fix type of a local variable in tpm2_get_cc_attrs_tbl()
+      tpm: fix type of a local variable in tpm2_map_command()
+      tpm: fix type of a local variables in tpm_tis_spi.c
+
+Jiandi An (1):
+      tpm/tpm_crb: Use start method value from ACPI table directly
+
+J?r?my Lefaure (1):
+      tpm, tpm_tis: use ARRAY_SIZE() to define TPM_HID_USR_IDX
+
+Ruben Roy (1):
+      tpm: fix duplicate inline declaration specifier
+
+ drivers/char/tpm/tpm-dev-common.c |  6 +++
+ drivers/char/tpm/tpm-sysfs.c      | 87 +++++++++++++++++++++------------------
+ drivers/char/tpm/tpm.h            | 15 +------
+ drivers/char/tpm/tpm2-cmd.c       | 73 ++++++++++----------------------
+ drivers/char/tpm/tpm2-space.c     |  4 +-
+ drivers/char/tpm/tpm_crb.c        | 59 +++++++++++++-------------
+ drivers/char/tpm/tpm_tis.c        |  5 ++-
+ drivers/char/tpm/tpm_tis_core.c   |  6 +--
+ drivers/char/tpm/tpm_tis_core.h   |  4 +-
+ drivers/char/tpm/tpm_tis_spi.c    | 73 +++++++++++++++++++-------------
+ 10 files changed, 161 insertions(+), 171 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
