@@ -1,25 +1,29 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Wed, 18 Oct 2017 14:01:02 -0700
-Subject: [PATCH 1/2] security: Add a cred_getsecid hook
-In-Reply-To: <f438abf6-de2a-847d-40fa-0b139135b97f@schaufler-ca.com>
-References: <20171016203709.11199-1-mjg59@google.com>
-	<f438abf6-de2a-847d-40fa-0b139135b97f@schaufler-ca.com>
-Message-ID: <CACdnJuvjcYNVvLGkxcHzkZ719-rfN8yCvkzO0kdg1xiYKVAT9A@mail.gmail.com>
+From: daniel@iogearbox.net (Daniel Borkmann)
+Date: Wed, 18 Oct 2017 23:14:21 +0200
+Subject: [PATCH net-next v7 1/5] bpf: Add file mode configuration into
+	bpf maps
+In-Reply-To: <20171018200026.146093-2-chenbofeng.kernel@gmail.com>
+References: <20171018200026.146093-1-chenbofeng.kernel@gmail.com>
+	<20171018200026.146093-2-chenbofeng.kernel@gmail.com>
+Message-ID: <59E7C42D.1010402@iogearbox.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Oct 16, 2017 at 2:58 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 10/16/2017 1:37 PM, Matthew Garrett wrote:
->> For IMA purposes, we want to be able to obtain the prepared secid in the
->> bprm structure before the credentials are committed. Add a cred_getsecid
->> hook that makes this possible.
+On 10/18/2017 10:00 PM, Chenbo Feng wrote:
+> From: Chenbo Feng <fengc@google.com>
 >
-> Why do you want the secid? What are you planning to do with it?
+> Introduce the map read/write flags to the eBPF syscalls that returns the
+> map fd. The flags is used to set up the file mode when construct a new
+> file descriptor for bpf maps. To not break the backward capability, the
+> f_flags is set to O_RDWR if the flag passed by syscall is 0. Otherwise
+> it should be O_RDONLY or O_WRONLY. When the userspace want to modify or
+> read the map content, it will check the file mode to see if it is
+> allowed to make the change.
+>
+> Signed-off-by: Chenbo Feng <fengc@google.com>
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
 
-See the following patch - IMA policy allows the admin to restrict
-appraisal to executables running in specific security contexts.
-However, right now the check at application execution time ends up
-using the current task creds before the new creds are committed.
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
