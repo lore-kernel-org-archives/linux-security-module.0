@@ -1,99 +1,63 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 18 Oct 2017 09:23:12 +0100
-Subject: [GIT PULL] KEYS: Fixes
-Message-ID: <7111.1508314992@warthog.procyon.org.uk>
+From: davem@davemloft.net (David Miller)
+Date: Wed, 18 Oct 2017 13:47:29 +0100 (WEST)
+Subject: [PATCH net-next v6 0/5] bpf: security: New file mode and LSM
+	hooks for eBPF object permission control
+In-Reply-To: <20171016191135.8046-1-chenbofeng.kernel@gmail.com>
+References: <20171016191135.8046-1-chenbofeng.kernel@gmail.com>
+Message-ID: <20171018.134729.837318478487425125.davem@davemloft.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi James,
+From: Chenbo Feng <chenbofeng.kernel@gmail.com>
+Date: Mon, 16 Oct 2017 12:11:30 -0700
 
-Can you pull this collection of fixes for Linux keyrings and pass them along
-to Linus.  They include:
+> Much like files and sockets, eBPF objects are accessed, controlled, and
+> shared via a file descriptor (FD). Unlike files and sockets, the
+> existing mechanism for eBPF object access control is very limited.
+> Currently there are two options for granting accessing to eBPF
+> operations: grant access to all processes, or only CAP_SYS_ADMIN
+> processes. The CAP_SYS_ADMIN-only mode is not ideal because most users
+> do not have this capability and granting a user CAP_SYS_ADMIN grants too
+> many other security-sensitive permissions. It also unnecessarily allows
+> all CAP_SYS_ADMIN processes access to eBPF functionality. Allowing all
+> processes to access to eBPF objects is also undesirable since it has
+> potential to allow unprivileged processes to consume kernel memory, and
+> opens up attack surface to the kernel.
+> 
+> Adding LSM hooks maintains the status quo for systems which do not use
+> an LSM, preserving compatibility with userspace, while allowing security
+> modules to choose how best to handle permissions on eBPF objects. Here
+> is a possible use case for the lsm hooks with selinux module:
+> 
+> The network-control daemon (netd) creates and loads an eBPF object for
+> network packet filtering and analysis. It passes the object FD to an
+> unprivileged network monitor app (netmonitor), which is not allowed to
+> create, modify or load eBPF objects, but is allowed to read the traffic
+> stats from the map.
+> 
+> Selinux could use these hooks to grant the following permissions:
+> allow netd self:bpf_map { create read write};
+> allow netmonitor netd:fd use;
+> allow netmonitor netd:bpf_map read;
+> 
+> In this patch series, A file mode is added to bpf map to store the
+> accessing mode. With this file mode flags, the map can be obtained read
+> only, write only or read and write. With the help of this file mode,
+> several security hooks can be added to the eBPF syscall implementations
+> to do permissions checks. These LSM hooks are mainly focused on checking
+> the process privileges before it obtains the fd for a specific bpf
+> object. No matter from a file location or from a eBPF id. Besides that,
+> a general check hook is also implemented at the start of bpf syscalls so
+> that each security module can have their own implementation on the reset
+> of bpf object related functionalities.
+> 
+> In order to store the ownership and security information about eBPF
+> maps, a security field pointer is added to the struct bpf_map. And the
+> last two patch set are implementation of selinux check on these hooks
+> introduced, plus an additional check when eBPF object is passed between
+> processes using unix socket as well as binder IPC.
 
- (1) Fix a bunch of places where kernel drivers may access revoked user-type
-     keys and don't do it correctly.
-
- (2) Fix some ecryptfs bits.
-
- (3) Fix big_key to require CONFIG_CRYPTO.
-
- (4) Fix a couple of bugs in the asymmetric key type.
-
- (5) Fix a race between updating and finding negative keys.
-
- (6) Prevent add_key() from updating uninstantiated keys.
-
- (7) Make loading of key flags and expiry time atomic when not holding locks.
-
-Note that I've removed the two patches that Eric asked me to.
-
-Thanks,
-David
----
-The following changes since commit 9e66317d3c92ddaab330c125dfe9d06eee268aff:
-
-  Linux 4.14-rc3 (2017-10-01 14:54:54 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-fixes-20171018
-
-for you to fetch changes up to 68a1fdbbf8bd3378325e45c19e167a165f9ffc3a:
-
-  pkcs7: Prevent NULL pointer dereference, since sinfo is not always set. (2017-10-18 09:12:41 +0100)
-
-----------------------------------------------------------------
-Keyrings fixes
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      security/keys: BIG_KEY requires CONFIG_CRYPTO
-
-Chun-Yi Lee (2):
-      KEYS: Fix the wrong index when checking the existence of second id
-      KEYS: checking the input id parameters before finding asymmetric key
-
-David Howells (2):
-      KEYS: Fix race between updating and finding a negative key
-      KEYS: don't let add_key() update an uninstantiated key
-
-Eric Biggers (8):
-      KEYS: encrypted: fix dereference of NULL user_key_payload
-      FS-Cache: fix dereference of NULL user_key_payload
-      lib/digsig: fix dereference of NULL user_key_payload
-      fscrypt: fix dereference of NULL user_key_payload
-      ecryptfs: fix dereference of NULL user_key_payload
-      KEYS: load key flags and expiry time atomically in key_validate()
-      KEYS: Load key expiry time atomically in keyring_search_iterator()
-      KEYS: load key flags and expiry time atomically in proc_keys_show()
-
-Eric Sesterhenn (1):
-      pkcs7: Prevent NULL pointer dereference, since sinfo is not always set.
-
- crypto/asymmetric_keys/asymmetric_type.c |  4 ++-
- crypto/asymmetric_keys/pkcs7_parser.c    |  3 ++
- fs/crypto/keyinfo.c                      |  5 ++++
- fs/ecryptfs/ecryptfs_kernel.h            | 24 +++++++++++-----
- fs/ecryptfs/keystore.c                   |  9 +++++-
- fs/fscache/object-list.c                 |  7 +++++
- include/linux/key.h                      | 47 ++++++++++++++++++++------------
- lib/digsig.c                             |  6 ++++
- net/dns_resolver/dns_key.c               |  2 +-
- security/keys/Kconfig                    |  1 +
- security/keys/big_key.c                  |  4 +--
- security/keys/encrypted-keys/encrypted.c |  9 +++++-
- security/keys/gc.c                       |  8 +++---
- security/keys/key.c                      | 41 ++++++++++++++++++++--------
- security/keys/keyctl.c                   |  9 +++---
- security/keys/keyring.c                  | 14 ++++++----
- security/keys/permission.c               |  7 +++--
- security/keys/proc.c                     | 31 +++++++++++++--------
- security/keys/process_keys.c             |  2 +-
- security/keys/request_key.c              |  7 ++---
- security/keys/request_key_auth.c         |  2 +-
- security/keys/trusted.c                  |  2 +-
- security/keys/user_defined.c             |  4 +--
- 23 files changed, 168 insertions(+), 80 deletions(-)
+Series applied.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
