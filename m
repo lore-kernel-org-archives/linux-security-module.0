@@ -1,148 +1,99 @@
-From: mtk.manpages@gmail.com (Michael Kerrisk (man-pages))
-Date: Wed, 18 Oct 2017 10:21:35 +0200
-Subject: Draft manpage explaining kernel lockdown
-In-Reply-To: <7969.1507201224@warthog.procyon.org.uk>
-References: <7969.1507201224@warthog.procyon.org.uk>
-Message-ID: <95c53500-eae9-6c03-8bc5-f1ba62475711@gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 18 Oct 2017 09:23:12 +0100
+Subject: [GIT PULL] KEYS: Fixes
+Message-ID: <7111.1508314992@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi David,
+Hi James,
 
-On 10/05/2017 01:00 PM, David Howells wrote:
-> Hi Ard, Michael,
-> 
-> Attached is a draft for a manual page (kernel_lockdown.7) that I intend to
-> point at from messages emitted when the kernel prohibits something because the
-> kernel is in 'lockdown' mode, typically triggered by EFI secure boot.
-> 
-> Let me know what you think.
+Can you pull this collection of fixes for Linux keyrings and pass them along
+to Linus.  They include:
 
-Thanks for the page proposal. Several people sent feedback. Will you
-revise the draft?
+ (1) Fix a bunch of places where kernel drivers may access revoked user-type
+     keys and don't do it correctly.
+
+ (2) Fix some ecryptfs bits.
+
+ (3) Fix big_key to require CONFIG_CRYPTO.
+
+ (4) Fix a couple of bugs in the asymmetric key type.
+
+ (5) Fix a race between updating and finding negative keys.
+
+ (6) Prevent add_key() from updating uninstantiated keys.
+
+ (7) Make loading of key flags and expiry time atomic when not holding locks.
+
+Note that I've removed the two patches that Eric asked me to.
 
 Thanks,
+David
+---
+The following changes since commit 9e66317d3c92ddaab330c125dfe9d06eee268aff:
 
-Michael
+  Linux 4.14-rc3 (2017-10-01 14:54:54 -0700)
 
+are available in the git repository at:
 
-> David
-> ---
-> .\"
-> .\" Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-> .\" Written by David Howells (dhowells at redhat.com)
-> .\"
-> .\" %%%LICENSE_START(GPLv2+_SW_ONEPARA)
-> .\" This program is free software; you can redistribute it and/or
-> .\" modify it under the terms of the GNU General Public License
-> .\" as published by the Free Software Foundation; either version
-> .\" 2 of the License, or (at your option) any later version.
-> .\" %%%LICENSE_END
-> .\"
-> .TH "KERNEL LOCKDOWN" 7 2017-10-05 Linux "Linux Programmer's Manual"
-> .SH NAME
-> Kernel Lockdown \- Kernel image access prevention feature
-> .SH DESCRIPTION
-> The Kernel Lockdown feature is designed to prevent both direct and indirect
-> access to a running kernel image, attempting to protect against unauthorised
-> modification of the kernel image and to prevent access to security and
-> cryptographic data located in kernel memory, whilst still permitting driver
-> modules to be loaded.
-> .P
-> Lockdown is typically enabled during boot and may be terminated, if configured,
-> by typing a special key combination on a directly attached physical keyboard.
-> .P
-> If a prohibited or restricted feature is accessed or used, the kernel will emit
-> a message that looks like:
-> .P
-> .RS
-> 	Lockdown: X is restricted, see man kernel_lockdown(7)
-> .RE
-> .P
-> where X indicates what is restricted.
-> .P
-> On an EFI-enabled x86 or arm64 machine, lockdown will be automatically enabled
-> if the system boots in EFI Secure Boot mode.
-> .P
-> If the kernel is appropriately configured, lockdown may be lifted by typing the
-> appropriate sequence on a directly attached physical keyboard.  For x86
-> machines, this is
-> .IR SysRq+x .
-> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-> .SH COVERAGE
-> When lockdown is in effect, a number of things are disabled or restricted in
-> use.  This includes special device files and kernel services that allow direct
-> access of the kernel image:
-> .P
-> .RS
-> /dev/mem
-> .br
-> /dev/kmem
-> .br
-> /dev/kcore
-> .br
-> /dev/ioports
-> .br
-> BPF memory access functions
-> .RE
-> .P
-> and the ability to directly configure and control devices, so as to prevent the
-> use of a device to access or modify a kernel image:
-> .P
-> .RS
-> The use of module parameters that directly specify hardware parameters to
-> drivers through the kernel command line or when loading a module.
-> .P
-> The use of direct PCI BAR access.
-> .P
-> The use of the ioperm and iopl instructions on x86.
-> .P
-> The use of the KD*IO console ioctls.
-> .P
-> The use of the TIOCSSERIAL serial ioctl.
-> .P
-> The alteration of MSR registers on x86.
-> .P
-> The replacement of the PCMCIA CIS.
-> .P
-> The overriding of ACPI tables.
-> .P
-> The use of ACPI error injection.
-> .P
-> The specification of the ACPI RDSP address.
-> .P
-> The use of ACPI custom methods.
-> .RE
-> .P
-> The following facilities are restricted:
-> .P
-> .RS
-> Only validly signed modules may be loaded.
-> .P
-> Only validly signed binaries may be kexec'd.
-> .P
-> Only validly signed device firmware may be loaded.
-> .P
-> Only validly signed wifi databases may be use.
-> .P
-> Unencrypted hibernation/suspend to swap are disallowed as the kernel image is
-> saved to a medium that can then be accessed.
-> .P
-> Use of debugfs is not permitted as this allows a whole range of actions
-> including direct configuration of, access to and driving of hardware.
-> .RE
-> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-> .SH SEE ALSO
-> .ad l
-> .nh
-> 
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-fixes-20171018
 
+for you to fetch changes up to 68a1fdbbf8bd3378325e45c19e167a165f9ffc3a:
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+  pkcs7: Prevent NULL pointer dereference, since sinfo is not always set. (2017-10-18 09:12:41 +0100)
+
+----------------------------------------------------------------
+Keyrings fixes
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      security/keys: BIG_KEY requires CONFIG_CRYPTO
+
+Chun-Yi Lee (2):
+      KEYS: Fix the wrong index when checking the existence of second id
+      KEYS: checking the input id parameters before finding asymmetric key
+
+David Howells (2):
+      KEYS: Fix race between updating and finding a negative key
+      KEYS: don't let add_key() update an uninstantiated key
+
+Eric Biggers (8):
+      KEYS: encrypted: fix dereference of NULL user_key_payload
+      FS-Cache: fix dereference of NULL user_key_payload
+      lib/digsig: fix dereference of NULL user_key_payload
+      fscrypt: fix dereference of NULL user_key_payload
+      ecryptfs: fix dereference of NULL user_key_payload
+      KEYS: load key flags and expiry time atomically in key_validate()
+      KEYS: Load key expiry time atomically in keyring_search_iterator()
+      KEYS: load key flags and expiry time atomically in proc_keys_show()
+
+Eric Sesterhenn (1):
+      pkcs7: Prevent NULL pointer dereference, since sinfo is not always set.
+
+ crypto/asymmetric_keys/asymmetric_type.c |  4 ++-
+ crypto/asymmetric_keys/pkcs7_parser.c    |  3 ++
+ fs/crypto/keyinfo.c                      |  5 ++++
+ fs/ecryptfs/ecryptfs_kernel.h            | 24 +++++++++++-----
+ fs/ecryptfs/keystore.c                   |  9 +++++-
+ fs/fscache/object-list.c                 |  7 +++++
+ include/linux/key.h                      | 47 ++++++++++++++++++++------------
+ lib/digsig.c                             |  6 ++++
+ net/dns_resolver/dns_key.c               |  2 +-
+ security/keys/Kconfig                    |  1 +
+ security/keys/big_key.c                  |  4 +--
+ security/keys/encrypted-keys/encrypted.c |  9 +++++-
+ security/keys/gc.c                       |  8 +++---
+ security/keys/key.c                      | 41 ++++++++++++++++++++--------
+ security/keys/keyctl.c                   |  9 +++---
+ security/keys/keyring.c                  | 14 ++++++----
+ security/keys/permission.c               |  7 +++--
+ security/keys/proc.c                     | 31 +++++++++++++--------
+ security/keys/process_keys.c             |  2 +-
+ security/keys/request_key.c              |  7 ++---
+ security/keys/request_key_auth.c         |  2 +-
+ security/keys/trusted.c                  |  2 +-
+ security/keys/user_defined.c             |  4 +--
+ 23 files changed, 168 insertions(+), 80 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
