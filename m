@@ -1,78 +1,79 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Wed, 18 Oct 2017 08:00:35 +0100
-Subject: [PATCH v10 03/20] net: use -ENOSPC for transient busy indication
+Date: Wed, 18 Oct 2017 08:00:40 +0100
+Subject: [PATCH v10 08/20] crypto: move pub key to generic async completion
 In-Reply-To: <1508310057-25369-1-git-send-email-gilad@benyossef.com>
 References: <1508310057-25369-1-git-send-email-gilad@benyossef.com>
-Message-ID: <1508310057-25369-4-git-send-email-gilad@benyossef.com>
+Message-ID: <1508310057-25369-9-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Replace -EBUSY with -ENOSPC when handling transient busy
-indication in the absence of backlog.
+public_key_verify_signature() is starting an async crypto op and
+waiting for it to complete. Move it over to generic code doing
+the same.
 
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-
 ---
+ crypto/asymmetric_keys/public_key.c | 28 ++++------------------------
+ 1 file changed, 4 insertions(+), 24 deletions(-)
 
-Please squash this patch with the previous one when merging upstream.
-
- net/ipv4/ah4.c  | 2 +-
- net/ipv4/esp4.c | 2 +-
- net/ipv6/ah6.c  | 2 +-
- net/ipv6/esp6.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/net/ipv4/ah4.c b/net/ipv4/ah4.c
-index 37db44f..4dd95cd 100644
---- a/net/ipv4/ah4.c
-+++ b/net/ipv4/ah4.c
-@@ -240,7 +240,7 @@ static int ah_output(struct xfrm_state *x, struct sk_buff *skb)
- 		if (err == -EINPROGRESS)
- 			goto out;
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index 3cd6e12..d916235 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -57,29 +57,13 @@ static void public_key_destroy(void *payload0, void *payload3)
+ 	public_key_signature_free(payload3);
+ }
  
--		if (err == -EBUSY)
-+		if (err == -ENOSPC)
- 			err = NET_XMIT_DROP;
- 		goto out_free;
- 	}
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index b00e4a4..d57aa64 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -432,7 +432,7 @@ int esp_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
- 	case -EINPROGRESS:
- 		goto error;
+-struct public_key_completion {
+-	struct completion completion;
+-	int err;
+-};
+-
+-static void public_key_verify_done(struct crypto_async_request *req, int err)
+-{
+-	struct public_key_completion *compl = req->data;
+-
+-	if (err == -EINPROGRESS)
+-		return;
+-
+-	compl->err = err;
+-	complete(&compl->completion);
+-}
+-
+ /*
+  * Verify a signature using a public key.
+  */
+ int public_key_verify_signature(const struct public_key *pkey,
+ 				const struct public_key_signature *sig)
+ {
+-	struct public_key_completion compl;
++	struct crypto_wait cwait;
+ 	struct crypto_akcipher *tfm;
+ 	struct akcipher_request *req;
+ 	struct scatterlist sig_sg, digest_sg;
+@@ -131,20 +115,16 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	sg_init_one(&digest_sg, output, outlen);
+ 	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
+ 				   outlen);
+-	init_completion(&compl.completion);
++	crypto_init_wait(&cwait);
+ 	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
+ 				      CRYPTO_TFM_REQ_MAY_SLEEP,
+-				      public_key_verify_done, &compl);
++				      crypto_req_done, &cwait);
  
--	case -EBUSY:
-+	case -ENOSPC:
- 		err = NET_XMIT_DROP;
- 		break;
- 
-diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
-index 7802b72..3bd9d80 100644
---- a/net/ipv6/ah6.c
-+++ b/net/ipv6/ah6.c
-@@ -443,7 +443,7 @@ static int ah6_output(struct xfrm_state *x, struct sk_buff *skb)
- 		if (err == -EINPROGRESS)
- 			goto out;
- 
--		if (err == -EBUSY)
-+		if (err == -ENOSPC)
- 			err = NET_XMIT_DROP;
- 		goto out_free;
- 	}
-diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
-index 89910e2..c04d995 100644
---- a/net/ipv6/esp6.c
-+++ b/net/ipv6/esp6.c
-@@ -396,7 +396,7 @@ int esp6_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info
- 	case -EINPROGRESS:
- 		goto error;
- 
--	case -EBUSY:
-+	case -ENOSPC:
- 		err = NET_XMIT_DROP;
- 		break;
+ 	/* Perform the verification calculation.  This doesn't actually do the
+ 	 * verification, but rather calculates the hash expected by the
+ 	 * signature and returns that to us.
+ 	 */
+-	ret = crypto_akcipher_verify(req);
+-	if ((ret == -EINPROGRESS) || (ret == -EBUSY)) {
+-		wait_for_completion(&compl.completion);
+-		ret = compl.err;
+-	}
++	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+ 	if (ret < 0)
+ 		goto out_free_output;
  
 -- 
 2.7.4
@@ -80,4 +81,4 @@ index 89910e2..c04d995 100644
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
