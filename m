@@ -1,79 +1,131 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 18 Oct 2017 18:57:49 +0300
-Subject: [GIT PULL] tpmdd updates for Linux 4.15
-Message-ID: <20171018155749.q5sl6chmsr2cwu7n@linux.intel.com>
+From: chenbofeng.kernel@gmail.com (Chenbo Feng)
+Date: Wed, 18 Oct 2017 13:00:21 -0700
+Subject: [PATCH net-next v7 0/5] bpf: security: New file mode and LSM hooks
+	for eBPF object permission control
+Message-ID: <20171018200026.146093-1-chenbofeng.kernel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi
+From: Chenbo Feng <fengc@google.com>
 
-Contains mostly minor fixes.
+Much like files and sockets, eBPF objects are accessed, controlled, and
+shared via a file descriptor (FD). Unlike files and sockets, the
+existing mechanism for eBPF object access control is very limited.
+Currently there are two options for granting accessing to eBPF
+operations: grant access to all processes, or only CAP_SYS_ADMIN
+processes. The CAP_SYS_ADMIN-only mode is not ideal because most users
+do not have this capability and granting a user CAP_SYS_ADMIN grants too
+many other security-sensitive permissions. It also unnecessarily allows
+all CAP_SYS_ADMIN processes access to eBPF functionality. Allowing all
+processes to access to eBPF objects is also undesirable since it has
+potential to allow unprivileged processes to consume kernel memory, and
+opens up attack surface to the kernel.
 
-Selected more essential changes:
+Adding LSM hooks maintains the status quo for systems which do not use
+an LSM, preserving compatibility with userspace, while allowing security
+modules to choose how best to handle permissions on eBPF objects. Here
+is a possible use case for the lsm hooks with selinux module:
 
-* Essential clean up for tpm_crb so that ARM64 and x86 versions do not
-  distract each other as much as before.
-* /dev/tpm0 rejects now too short writes (shorter buffer than specified in
-  the command header.
-* Use DMA-safe buffer in tpm_tis_spi.
+The network-control daemon (netd) creates and loads an eBPF object for
+network packet filtering and analysis. It passes the object FD to an
+unprivileged network monitor app (netmonitor), which is not allowed to
+create, modify or load eBPF objects, but is allowed to read the traffic
+stats from the map.
 
-/Jarkko
+Selinux could use these hooks to grant the following permissions:
+allow netd self:bpf_map { create read write};
+allow netmonitor netd:fd use;
+allow netmonitor netd:bpf_map read;
 
-The following changes since commit 25eabb13c7d67ae32298015c5e28d00f604f412c:
+In this patch series, A file mode is added to bpf map to store the
+accessing mode. With this file mode flags, the map can be obtained read
+only, write only or read and write. With the help of this file mode,
+several security hooks can be added to the eBPF syscall implementations
+to do permissions checks. These LSM hooks are mainly focused on checking
+the process privileges before it obtains the fd for a specific bpf
+object. No matter from a file location or from a eBPF id. Besides that,
+a general check hook is also implemented at the start of bpf syscalls so
+that each security module can have their own implementation on the reset
+of bpf object related functionalities.
 
-  Merge tag 'v4.14-rc2' into next-general (2017-09-24 22:41:55 -0700)
+In order to store the ownership and security information about eBPF
+maps, a security field pointer is added to the struct bpf_map. And the
+last two patch set are implementation of selinux check on these hooks
+introduced, plus an additional check when eBPF object is passed between
+processes using unix socket as well as binder IPC.
 
-are available in the git repository at:
+Change since V1:
 
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20171018
+ - Whitelist the new bpf flags in the map allocate check.
+ - Added bpf selftest for the new flags.
+ - Added two new security hooks for copying the security information from
+   the bpf object security struct to file security struct
+ - Simplified the checking action when bpf fd is passed between processes.
 
-for you to fetch changes up to 33957a104c86985f087b08a363590a948c9ff08c:
+ Change since V2:
 
-  tpm, tpm_tis: use ARRAY_SIZE() to define TPM_HID_USR_IDX (2017-10-18 18:28:49 +0300)
+ - Fixed the line break problem for map flags check
+ - Fixed the typo in selinux check of file mode.
+ - Merge bpf_map and bpf_prog into one selinux class
+ - Added bpf_type and bpf_sid into file security struct to store the
+   security information when generate fd.
+ - Add the hook to bpf_map_new_fd and bpf_prog_new_fd.
 
-----------------------------------------------------------------
-tpmdd updates for Linux 4.15
+ Change since V3:
 
-----------------------------------------------------------------
-Alexander Steffen (5):
-      tpm_tis_spi: Use DMA-safe memory for SPI transfers
-      tpm: Trigger only missing TPM 2.0 self tests
-      tpm: Use dynamic delay to wait for TPM 2.0 self test result
-      tpm: React correctly to RC_TESTING from TPM 2.0 self tests
-      tpm-dev-common: Reject too short writes
+ - Return the actual error from security check instead of -EPERM
+ - Move the hooks into anon_inode_getfd() to avoid get file again after
+   bpf object file is installed with fd.
+ - Removed the bpf_sid field inside file_scerity_struct to reduce the
+   cache size.
 
-Arnd Bergmann (1):
-      tpm: constify transmit data pointers
+ Change since V4:
 
-Colin Ian King (1):
-      tpm_tis: make array cmd_getticks static const to shrink object code size
+ - Rename bpf av prog_use to prog_run to distinguish from fd_use.
+ - Remove the bpf_type field inside file_scerity_struct and use bpf fops
+   to indentify bpf object instead.
 
-Jarkko Sakkinen (4):
-      tpm: migrate pubek_show to struct tpm_buf
-      tpm: fix type of a local variable in tpm2_get_cc_attrs_tbl()
-      tpm: fix type of a local variable in tpm2_map_command()
-      tpm: fix type of a local variables in tpm_tis_spi.c
+ Change since v5:
 
-Jiandi An (1):
-      tpm/tpm_crb: Use start method value from ACPI table directly
+ - Fixed the incorrect selinux class name for SECCLASS_BPF
 
-J?r?my Lefaure (1):
-      tpm, tpm_tis: use ARRAY_SIZE() to define TPM_HID_USR_IDX
+ Change since v7:
 
-Ruben Roy (1):
-      tpm: fix duplicate inline declaration specifier
+ - Fixed the build error caused by xt_bpf module.
+ - Add flags check for bpf_obj_get() and bpf_map_get_fd_by_id() to make it
+   uapi-wise.
+ - Add the flags field to the bpf_obj_get_user function when BPF_SYSCALL
+   is not configured.
 
- drivers/char/tpm/tpm-dev-common.c |  6 +++
- drivers/char/tpm/tpm-sysfs.c      | 87 +++++++++++++++++++++------------------
- drivers/char/tpm/tpm.h            | 15 +------
- drivers/char/tpm/tpm2-cmd.c       | 73 ++++++++++----------------------
- drivers/char/tpm/tpm2-space.c     |  4 +-
- drivers/char/tpm/tpm_crb.c        | 59 +++++++++++++-------------
- drivers/char/tpm/tpm_tis.c        |  5 ++-
- drivers/char/tpm/tpm_tis_core.c   |  6 +--
- drivers/char/tpm/tpm_tis_core.h   |  4 +-
- drivers/char/tpm/tpm_tis_spi.c    | 73 +++++++++++++++++++-------------
- 10 files changed, 161 insertions(+), 171 deletions(-)
+Chenbo Feng (5):
+  bpf: Add file mode configuration into bpf maps
+  bpf: Add tests for eBPF file mode
+  security: bpf: Add LSM hooks for bpf object related syscall
+  selinux: bpf: Add selinux check for eBPF syscall operations
+  selinux: bpf: Add addtional check for bpf object file receive
+
+ include/linux/bpf.h                     |  15 ++-
+ include/linux/lsm_hooks.h               |  54 +++++++++++
+ include/linux/security.h                |  45 +++++++++
+ include/uapi/linux/bpf.h                |   6 ++
+ kernel/bpf/arraymap.c                   |   6 +-
+ kernel/bpf/devmap.c                     |   5 +-
+ kernel/bpf/hashtab.c                    |   5 +-
+ kernel/bpf/inode.c                      |  15 ++-
+ kernel/bpf/lpm_trie.c                   |   3 +-
+ kernel/bpf/sockmap.c                    |   5 +-
+ kernel/bpf/stackmap.c                   |   5 +-
+ kernel/bpf/syscall.c                    | 118 ++++++++++++++++++++---
+ security/security.c                     |  32 +++++++
+ security/selinux/hooks.c                | 160 ++++++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h     |   2 +
+ security/selinux/include/objsec.h       |   4 +
+ tools/testing/selftests/bpf/test_maps.c |  48 ++++++++++
+ 17 files changed, 502 insertions(+), 26 deletions(-)
+
+-- 
+2.15.0.rc0.271.g36b669edcc-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
