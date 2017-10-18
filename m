@@ -1,162 +1,148 @@
-From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Wed, 18 Oct 2017 08:00:32 +0100
-Subject: [PATCH v10 00/20] simplify crypto wait for async op
-Message-ID: <1508310057-25369-1-git-send-email-gilad@benyossef.com>
+From: mtk.manpages@gmail.com (Michael Kerrisk (man-pages))
+Date: Wed, 18 Oct 2017 10:21:35 +0200
+Subject: Draft manpage explaining kernel lockdown
+In-Reply-To: <7969.1507201224@warthog.procyon.org.uk>
+References: <7969.1507201224@warthog.procyon.org.uk>
+Message-ID: <95c53500-eae9-6c03-8bc5-f1ba62475711@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Many users of kernel async. crypto services have a pattern of
-starting an async. crypto op and than using a completion
-to wait for it to end.
+Hi David,
 
-This patch set simplifies this common use case in two ways:
+On 10/05/2017 01:00 PM, David Howells wrote:
+> Hi Ard, Michael,
+> 
+> Attached is a draft for a manual page (kernel_lockdown.7) that I intend to
+> point at from messages emitted when the kernel prohibits something because the
+> kernel is in 'lockdown' mode, typically triggered by EFI secure boot.
+> 
+> Let me know what you think.
 
-First, by separating the return codes of the case where a
-request is queued to a backlog due to the provider being
-busy (-EBUSY) from the case the request has failed due
-to the provider being busy and backlogging is not enabled
-(-ENOSPC).
+Thanks for the page proposal. Several people sent feedback. Will you
+revise the draft?
 
-Next, this change is than built on to create a generic API
-to wait for a async. crypto operation to complete.
+Thanks,
 
-The end result is a smaller code base and an API that is
-easier to use and more difficult to get wrong.
+Michael
 
-The patch set was boot tested on x86_64 and arm64 which
-at the very least tests the crypto users via testmgr and
-tcrypt but I do note that I do not have access to some
-of the HW whose drivers are modified nor do I claim I was
-able to test all of the corner cases.
 
-The patch set is based upon linux-next release tagged
-next-20171017.
+> David
+> ---
+> .\"
+> .\" Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
+> .\" Written by David Howells (dhowells at redhat.com)
+> .\"
+> .\" %%%LICENSE_START(GPLv2+_SW_ONEPARA)
+> .\" This program is free software; you can redistribute it and/or
+> .\" modify it under the terms of the GNU General Public License
+> .\" as published by the Free Software Foundation; either version
+> .\" 2 of the License, or (at your option) any later version.
+> .\" %%%LICENSE_END
+> .\"
+> .TH "KERNEL LOCKDOWN" 7 2017-10-05 Linux "Linux Programmer's Manual"
+> .SH NAME
+> Kernel Lockdown \- Kernel image access prevention feature
+> .SH DESCRIPTION
+> The Kernel Lockdown feature is designed to prevent both direct and indirect
+> access to a running kernel image, attempting to protect against unauthorised
+> modification of the kernel image and to prevent access to security and
+> cryptographic data located in kernel memory, whilst still permitting driver
+> modules to be loaded.
+> .P
+> Lockdown is typically enabled during boot and may be terminated, if configured,
+> by typing a special key combination on a directly attached physical keyboard.
+> .P
+> If a prohibited or restricted feature is accessed or used, the kernel will emit
+> a message that looks like:
+> .P
+> .RS
+> 	Lockdown: X is restricted, see man kernel_lockdown(7)
+> .RE
+> .P
+> where X indicates what is restricted.
+> .P
+> On an EFI-enabled x86 or arm64 machine, lockdown will be automatically enabled
+> if the system boots in EFI Secure Boot mode.
+> .P
+> If the kernel is appropriately configured, lockdown may be lifted by typing the
+> appropriate sequence on a directly attached physical keyboard.  For x86
+> machines, this is
+> .IR SysRq+x .
+> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> .SH COVERAGE
+> When lockdown is in effect, a number of things are disabled or restricted in
+> use.  This includes special device files and kernel services that allow direct
+> access of the kernel image:
+> .P
+> .RS
+> /dev/mem
+> .br
+> /dev/kmem
+> .br
+> /dev/kcore
+> .br
+> /dev/ioports
+> .br
+> BPF memory access functions
+> .RE
+> .P
+> and the ability to directly configure and control devices, so as to prevent the
+> use of a device to access or modify a kernel image:
+> .P
+> .RS
+> The use of module parameters that directly specify hardware parameters to
+> drivers through the kernel command line or when loading a module.
+> .P
+> The use of direct PCI BAR access.
+> .P
+> The use of the ioperm and iopl instructions on x86.
+> .P
+> The use of the KD*IO console ioctls.
+> .P
+> The use of the TIOCSSERIAL serial ioctl.
+> .P
+> The alteration of MSR registers on x86.
+> .P
+> The replacement of the PCMCIA CIS.
+> .P
+> The overriding of ACPI tables.
+> .P
+> The use of ACPI error injection.
+> .P
+> The specification of the ACPI RDSP address.
+> .P
+> The use of ACPI custom methods.
+> .RE
+> .P
+> The following facilities are restricted:
+> .P
+> .RS
+> Only validly signed modules may be loaded.
+> .P
+> Only validly signed binaries may be kexec'd.
+> .P
+> Only validly signed device firmware may be loaded.
+> .P
+> Only validly signed wifi databases may be use.
+> .P
+> Unencrypted hibernation/suspend to swap are disallowed as the kernel image is
+> saved to a medium that can then be accessed.
+> .P
+> Use of debugfs is not permitted as this allows a whole range of actions
+> including direct configuration of, access to and driving of hardware.
+> .RE
+> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> .SH SEE ALSO
+> .ad l
+> .nh
+> 
+> 
 
-Changes from v9:
-- s/EAGAIN/ENOSPC/g so as to not confuse networking
-  indication of a signal delivery with tfm provider
-  running out of processing resources.
-
-Changes from v8:
-- Remove the translation of EAGAIN return code to the
-  previous return code of EBUSY for the user space
-  interface of algif as no one seems to rely on it as
-  requested by Herbert Xu.
-
-Changes from v7:
-- Turn -EBUSY to -EAGAIN also in crypto using net
-  code which I missed before, as has been pointed
-  out by Harsh Jain.
-
-Changes from v6:
-- Fix brown paper bag compile error on marvell/cesa
-  code.
-
-Changes from v5:
-- Remove redundant new line as spotted by Jonathan
-  Cameron.
-- Reworded dm-verity change commit message to better
-  clarify potential issue averted by change as
-  pointed out by Mikulas Patocka.
-
-Changes from v4:
-- Rebase on top of latest algif changes from Stephan
-  Mueller.
-- Fix typo in ccp patch title.
-
-Changes from v3:
-- Instead of changing the return code to indicate
-  backlog queueing, change the return code to indicate
-  transient busy state, as suggested by Herbert Xu.
-
-Changes from v2:
-- Patch title changed from "introduce crypto wait for
-  async op" to better reflect the current state.
-- Rebase on top of latest linux-next.
-- Add a new return code of -EIOCBQUEUED for backlog
-  queueing, as suggested by Herbert Xu.
-- Transform more users to the new API.
-- Update the drbg change to account for new init as
-  indicated by Stephan Muller.
-
-Changes from v1:
-- Address review comments from Eric Biggers.
-- Separated out bug fixes of existing code and rebase
-  on top of that patch set.
-- Rename 'ecr' to 'wait' in fscrypto code.
-- Split patch introducing the new API from the change
-  moving over the algif code which it originated from
-  to the new API.
-- Inline crypto_wait_req().
-- Some code indentation fixes.
-
-Gilad Ben-Yossef (20):
-  crypto: change transient busy return code to -ENOSPC
-  crypto: ccp: use -ENOSPC for transient busy indication
-  net: use -ENOSPC for transient busy indication
-  crypto: remove redundant backlog checks on EBUSY
-  crypto: marvell/cesa: remove redundant backlog checks on EBUSY
-  crypto: introduce crypto wait for async op
-  crypto: move algif to generic async completion
-  crypto: move pub key to generic async completion
-  crypto: move drbg to generic async completion
-  crypto: move gcm to generic async completion
-  crypto: move testmgr to generic async completion
-  fscrypt: move to generic async completion
-  dm: move dm-verity to generic async completion
-  cifs: move to generic async completion
-  ima: move to generic async completion
-  crypto: tcrypt: move to generic async completion
-  crypto: talitos: move to generic async completion
-  crypto: qce: move to generic async completion
-  crypto: mediatek: move to generic async completion
-  crypto: adapt api sample to use async. op wait
-
- Documentation/crypto/api-samples.rst |  52 ++-------
- crypto/af_alg.c                      |  27 -----
- crypto/ahash.c                       |  12 +--
- crypto/algapi.c                      |   6 +-
- crypto/algif_aead.c                  |   8 +-
- crypto/algif_hash.c                  |  30 +++---
- crypto/algif_skcipher.c              |   9 +-
- crypto/api.c                         |  13 +++
- crypto/asymmetric_keys/public_key.c  |  28 +----
- crypto/cryptd.c                      |   4 +-
- crypto/cts.c                         |   6 +-
- crypto/drbg.c                        |  36 ++-----
- crypto/gcm.c                         |  32 ++----
- crypto/lrw.c                         |   8 +-
- crypto/rsa-pkcs1pad.c                |  16 +--
- crypto/tcrypt.c                      |  84 +++++----------
- crypto/testmgr.c                     | 204 ++++++++++++-----------------------
- crypto/xts.c                         |   8 +-
- drivers/crypto/ccp/ccp-crypto-main.c |   8 +-
- drivers/crypto/ccp/ccp-dev.c         |   7 +-
- drivers/crypto/marvell/cesa.c        |   3 +-
- drivers/crypto/marvell/cesa.h        |   2 +-
- drivers/crypto/mediatek/mtk-aes.c    |  31 +-----
- drivers/crypto/qce/sha.c             |  30 +-----
- drivers/crypto/talitos.c             |  38 +------
- drivers/md/dm-verity-target.c        |  81 ++++----------
- drivers/md/dm-verity.h               |   5 -
- fs/cifs/smb2ops.c                    |  30 +-----
- fs/crypto/crypto.c                   |  28 +----
- fs/crypto/fname.c                    |  36 ++-----
- fs/crypto/fscrypt_private.h          |  10 --
- fs/crypto/keyinfo.c                  |  21 +---
- include/crypto/drbg.h                |   3 +-
- include/crypto/if_alg.h              |  15 +--
- include/linux/crypto.h               |  40 +++++++
- net/ipv4/ah4.c                       |   2 +-
- net/ipv4/esp4.c                      |   2 +-
- net/ipv6/ah6.c                       |   2 +-
- net/ipv6/esp6.c                      |   2 +-
- security/integrity/ima/ima_crypto.c  |  56 +++-------
- 40 files changed, 297 insertions(+), 738 deletions(-)
 
 -- 
-2.7.4
-
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
