@@ -1,94 +1,30 @@
-From: chenbofeng.kernel@gmail.com (Chenbo Feng)
-Date: Wed, 18 Oct 2017 13:00:23 -0700
-Subject: [PATCH net-next v7 2/5] bpf: Add tests for eBPF file mode
-In-Reply-To: <20171018200026.146093-1-chenbofeng.kernel@gmail.com>
-References: <20171018200026.146093-1-chenbofeng.kernel@gmail.com>
-Message-ID: <20171018200026.146093-3-chenbofeng.kernel@gmail.com>
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 18 Oct 2017 13:59:53 -0700
+Subject: [PATCH 2/2] IMA: Support using new creds in appraisal policy
+In-Reply-To: <1508267223.4513.23.camel@linux.vnet.ibm.com>
+References: <20171016203709.11199-1-mjg59@google.com>
+	<20171016203709.11199-2-mjg59@google.com>
+	<1508267223.4513.23.camel@linux.vnet.ibm.com>
+Message-ID: <CACdnJutiK+NyD1gAT-muf74zjt7H8gqm3-xqWJYrDCQm8TPz0g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Chenbo Feng <fengc@google.com>
+On Tue, Oct 17, 2017 at 12:07 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Mon, 2017-10-16 at 13:37 -0700, Matthew Garrett wrote:
+>>               case LSM_SUBJ_TYPE:
+>> -                     security_task_getsecid(tsk, &sid);
+>> +                     security_cred_getsecid(cred, &sid);
+>>                       rc = security_filter_rule_match(sid,
+>>                                                       rule->lsm[i].type,
+>>                                                       Audit_equal,
+>
+> By replacing the call from security_task_getsec() to
+> security_cred_getsecid(), I assume you're expecting different results.
+>  Will this change break existing IMA policies?
 
-Two related tests are added into bpf selftest to test read only map and
-write only map. The tests verified the read only and write only flags
-are working on hash maps.
-
-Signed-off-by: Chenbo Feng <fengc@google.com>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
----
- tools/testing/selftests/bpf/test_maps.c | 48 +++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
-index fe3a443a1102..896f23cfe918 100644
---- a/tools/testing/selftests/bpf/test_maps.c
-+++ b/tools/testing/selftests/bpf/test_maps.c
-@@ -1033,6 +1033,51 @@ static void test_map_parallel(void)
- 	assert(bpf_map_get_next_key(fd, &key, &key) == -1 && errno == ENOENT);
- }
- 
-+static void test_map_rdonly(void)
-+{
-+	int i, fd, key = 0, value = 0;
-+
-+	fd = bpf_create_map(BPF_MAP_TYPE_HASH, sizeof(key), sizeof(value),
-+			    MAP_SIZE, map_flags | BPF_F_RDONLY);
-+	if (fd < 0) {
-+		printf("Failed to create map for read only test '%s'!\n",
-+		       strerror(errno));
-+		exit(1);
-+	}
-+
-+	key = 1;
-+	value = 1234;
-+	/* Insert key=1 element. */
-+	assert(bpf_map_update_elem(fd, &key, &value, BPF_ANY) == -1 &&
-+	       errno == EPERM);
-+
-+	/* Check that key=2 is not found. */
-+	assert(bpf_map_lookup_elem(fd, &key, &value) == -1 && errno == ENOENT);
-+	assert(bpf_map_get_next_key(fd, &key, &value) == -1 && errno == ENOENT);
-+}
-+
-+static void test_map_wronly(void)
-+{
-+	int i, fd, key = 0, value = 0;
-+
-+	fd = bpf_create_map(BPF_MAP_TYPE_HASH, sizeof(key), sizeof(value),
-+			    MAP_SIZE, map_flags | BPF_F_WRONLY);
-+	if (fd < 0) {
-+		printf("Failed to create map for read only test '%s'!\n",
-+		       strerror(errno));
-+		exit(1);
-+	}
-+
-+	key = 1;
-+	value = 1234;
-+	/* Insert key=1 element. */
-+	assert(bpf_map_update_elem(fd, &key, &value, BPF_ANY) == 0)
-+
-+	/* Check that key=2 is not found. */
-+	assert(bpf_map_lookup_elem(fd, &key, &value) == -1 && errno == EPERM);
-+	assert(bpf_map_get_next_key(fd, &key, &value) == -1 && errno == EPERM);
-+}
-+
- static void run_all_tests(void)
- {
- 	test_hashmap(0, NULL);
-@@ -1050,6 +1095,9 @@ static void run_all_tests(void)
- 	test_map_large();
- 	test_map_parallel();
- 	test_map_stress();
-+
-+	test_map_rdonly();
-+	test_map_wronly();
- }
- 
- int main(void)
--- 
-2.15.0.rc1.287.g2b38de12cc-goog
-
+No, for BPRM_CHECK they'll use the same creds that were previously
+checked. CREDS_CHECK will behave differently to BPRM_CHECK.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
