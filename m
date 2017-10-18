@@ -1,7 +1,7 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 18 Oct 2017 18:48:24 +0300
+Date: Wed, 18 Oct 2017 18:57:49 +0300
 Subject: [GIT PULL] tpmdd updates for Linux 4.15
-Message-ID: <20171018154824.5mgrgr7jnlfwgujt@linux.intel.com>
+Message-ID: <20171018155749.q5sl6chmsr2cwu7n@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
