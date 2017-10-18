@@ -1,106 +1,82 @@
 From: gilad@benyossef.com (Gilad Ben-Yossef)
-Date: Wed, 18 Oct 2017 08:44:31 +0300
-Subject: [PATCH v9 00/20] simplify crypto wait for async op
-In-Reply-To: <20171017140629.GO20805@n2100.armlinux.org.uk>
-References: <1508059209-25529-1-git-send-email-gilad@benyossef.com>
-	<20171017140629.GO20805@n2100.armlinux.org.uk>
-Message-ID: <CAOtvUMfOSo4KSBX3UKtYj1sgmReAdhmmi1MhZGq0aFk-vptahg@mail.gmail.com>
+Date: Wed, 18 Oct 2017 08:00:35 +0100
+Subject: [PATCH v10 03/20] net: use -ENOSPC for transient busy indication
+In-Reply-To: <1508310057-25369-1-git-send-email-gilad@benyossef.com>
+References: <1508310057-25369-1-git-send-email-gilad@benyossef.com>
+Message-ID: <1508310057-25369-4-git-send-email-gilad@benyossef.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 17, 2017 at 5:06 PM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> On Sun, Oct 15, 2017 at 10:19:45AM +0100, Gilad Ben-Yossef wrote:
->> Many users of kernel async. crypto services have a pattern of
->> starting an async. crypto op and than using a completion
->> to wait for it to end.
->>
->> This patch set simplifies this common use case in two ways:
->>
->> First, by separating the return codes of the case where a
->> request is queued to a backlog due to the provider being
->> busy (-EBUSY) from the case the request has failed due
->> to the provider being busy and backlogging is not enabled
->> (-EAGAIN).
->>
->> Next, this change is than built on to create a generic API
->> to wait for a async. crypto operation to complete.
->>
->> The end result is a smaller code base and an API that is
->> easier to use and more difficult to get wrong.
->>
->> The patch set was boot tested on x86_64 and arm64 which
->> at the very least tests the crypto users via testmgr and
->> tcrypt but I do note that I do not have access to some
->> of the HW whose drivers are modified nor do I claim I was
->> able to test all of the corner cases.
->>
->> The patch set is based upon linux-next release tagged
->> next-20171013.
->
-> Has there been any performance impact analysis of these changes?  I
-> ended up with patches for one of the crypto drivers which converted
-> its interrupt handling to threaded interrupts being reverted because
-> it caused a performance degredation.
->
-> Moving code to latest APIs to simplify it is not always beneficial.
+Replace -EBUSY with -ENOSPC when handling transient busy
+indication in the absence of backlog.
 
-I agree with the sentiment but I believe this one is justified.
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-This patch set basically does 3 things:
+---
 
-1.  Replace one immediate value (-EBUSY) by another (-EAGAIN). Mostly it's just
-s/EBUSY/EAGAIN/g. In very few places this resulted very trivial code
-changes. I don't
-foresee this having any effect on performance.
+Please squash this patch with the previous one when merging upstream.
 
-2. Removal of some conditions and/or conditional jumps that were used to discern
-between two different cases which are now now easily tested for by the
-different return
-value. If at all, this will be an increase in performance, although I
-don't expect it to be
-noticeable.
+ net/ipv4/ah4.c  | 2 +-
+ net/ipv4/esp4.c | 2 +-
+ net/ipv6/ah6.c  | 2 +-
+ net/ipv6/esp6.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-3. Replacing a whole bunch of open coded code and data structures
-which were pretty much
-cut and pasted from the Documentation and therefore identical, with a
-single copy thereof.
-
-Every place that I found that deviated slightly from the identical
-pattern, it turned out to be
-a bug of some sorts and patches for those were sent and accepted already.
-
-So, we might be losing a few inline optimization opportunities but
-we're gaining better
-cache utilization. Again, I don't expect any of this to have a
-noticeable effect to either
-direction.
-
-I did run the changed code as best I could and did not notice any
-performance changes and
-none of the testers and maintainers that ACKed mentioned any.
-
-Having said that, it's a big change that touches many places,
-sub-systems and drivers. I do
-not claim to have thoroughly tested for performance all the changes in
-person. In some cases,
-I don't even have access to the specialized hardware. I did get a
-reasonable amount of review
-and testers I believe - would always love to see more :-)
-
-Many thanks,
-Gilad
-
-
-
-
+diff --git a/net/ipv4/ah4.c b/net/ipv4/ah4.c
+index 37db44f..4dd95cd 100644
+--- a/net/ipv4/ah4.c
++++ b/net/ipv4/ah4.c
+@@ -240,7 +240,7 @@ static int ah_output(struct xfrm_state *x, struct sk_buff *skb)
+ 		if (err == -EINPROGRESS)
+ 			goto out;
+ 
+-		if (err == -EBUSY)
++		if (err == -ENOSPC)
+ 			err = NET_XMIT_DROP;
+ 		goto out_free;
+ 	}
+diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
+index b00e4a4..d57aa64 100644
+--- a/net/ipv4/esp4.c
++++ b/net/ipv4/esp4.c
+@@ -432,7 +432,7 @@ int esp_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
+ 	case -EINPROGRESS:
+ 		goto error;
+ 
+-	case -EBUSY:
++	case -ENOSPC:
+ 		err = NET_XMIT_DROP;
+ 		break;
+ 
+diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
+index 7802b72..3bd9d80 100644
+--- a/net/ipv6/ah6.c
++++ b/net/ipv6/ah6.c
+@@ -443,7 +443,7 @@ static int ah6_output(struct xfrm_state *x, struct sk_buff *skb)
+ 		if (err == -EINPROGRESS)
+ 			goto out;
+ 
+-		if (err == -EBUSY)
++		if (err == -ENOSPC)
+ 			err = NET_XMIT_DROP;
+ 		goto out_free;
+ 	}
+diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
+index 89910e2..c04d995 100644
+--- a/net/ipv6/esp6.c
++++ b/net/ipv6/esp6.c
+@@ -396,7 +396,7 @@ int esp6_output_tail(struct xfrm_state *x, struct sk_buff *skb, struct esp_info
+ 	case -EINPROGRESS:
+ 		goto error;
+ 
+-	case -EBUSY:
++	case -ENOSPC:
+ 		err = NET_XMIT_DROP;
+ 		break;
+ 
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+2.7.4
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
