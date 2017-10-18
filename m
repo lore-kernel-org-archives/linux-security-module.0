@@ -1,34 +1,111 @@
-From: ebiggers@google.com (Eric Biggers)
-Date: Tue, 17 Oct 2017 16:23:16 -0700
-Subject: [GIT PULL] KEYS: Fixes
-In-Reply-To: <866.1508281053@warthog.procyon.org.uk>
-References: <866.1508281053@warthog.procyon.org.uk>
-Message-ID: <20171017232316.GA29388@google.com>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Tue, 17 Oct 2017 22:53:19 -0200
+Subject: [PATCH v5 06/18] ima: Improvements in ima_appraise_measurement
+In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
+References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
+Message-ID: <20171018005331.2688-7-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-+Cc tyhicks at canonical.com
+Replace nested ifs in the EVM xattr verification logic with a switch
+statement, making the code easier to understand.
 
-Hi David,
+Also, add comments to the if statements in the out section.
 
-On Tue, Oct 17, 2017 at 11:57:33PM +0100, David Howells wrote:
-> 
->  (2) Fix some ecryptfs bits.
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima.h          |  5 +++++
+ security/integrity/ima/ima_appraise.c | 33 ++++++++++++++++++++-------------
+ 2 files changed, 25 insertions(+), 13 deletions(-)
 
-Sorry for the late notice, but just looking at it again I think the patch
-"ecryptfs: fix out-of-bounds read of key payload" is broken because the
-->private_key is of variable-length.  See
-ecryptfs_add_key_module_key_to_keyring() in ecryptfs-utils.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d52b487ad259..4e61d3189b72 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -155,6 +155,11 @@ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
+ 
++static inline bool is_ima_sig(const struct evm_ima_xattr_data *xattr_value)
++{
++	return xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG;
++}
++
+ /*
+  * used to protect h_table and sha_table
+  */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 58c6a60c7e83..2c069f47eeec 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -204,7 +204,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			     int xattr_len, int opened)
+ {
+ 	static const char op[] = "appraise_data";
+-	char *cause = "unknown";
++	const char *cause = "unknown";
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	enum integrity_status status = INTEGRITY_UNKNOWN;
+@@ -229,11 +229,16 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	}
+ 
+ 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+-	if (status != INTEGRITY_PASS && status != INTEGRITY_UNKNOWN) {
+-		if (status == INTEGRITY_NOLABEL || status == INTEGRITY_NOXATTRS)
+-			cause = "missing-HMAC";
+-		else if (status == INTEGRITY_FAIL)
+-			cause = "invalid-HMAC";
++	switch (status) {
++	case INTEGRITY_PASS:
++	case INTEGRITY_UNKNOWN:
++		break;
++	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
++	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
++		cause = "missing-HMAC";
++		goto out;
++	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
++		cause = "invalid-HMAC";
+ 		goto out;
+ 	}
+ 	switch (xattr_value->type) {
+@@ -287,17 +292,19 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 
+ out:
+ 	if (status != INTEGRITY_PASS) {
++		/* Fix mode, but don't replace file signatures. */
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+-		    (!xattr_value ||
+-		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
++		    !is_ima_sig(xattr_value)) {
+ 			if (!ima_fix_xattr(dentry, iint))
+ 				status = INTEGRITY_PASS;
+-		} else if (inode->i_size == 0 &&
+-			   (iint->flags & IMA_NEW_FILE) &&
+-			   xattr_value &&
+-			   xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
++		}
++
++		/* Permit new files with file signatures, but without data. */
++		if (inode->i_size == 0 && (iint->flags & IMA_NEW_FILE) &&
++		    is_ima_sig(xattr_value)) {
+ 			status = INTEGRITY_PASS;
+ 		}
++
+ 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else {
+@@ -404,7 +411,7 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		if (!xattr_value_len || xvalue->type >= IMA_XATTR_LAST)
+ 			return -EINVAL;
+ 		ima_reset_appraise_flags(d_backing_inode(dentry),
+-			xvalue->type == EVM_IMA_XATTR_DIGSIG);
++					 is_ima_sig(xvalue));
+ 		result = 0;
+ 	}
+ 	return result;
 
-So can you please drop the following two patches:
-
-	ecryptfs: fix out-of-bounds read of key payload
-	ecryptfs: move key payload accessor functions into keystore.c
-
-I'll fix them and try to get Tyler Hicks to take them through the ecryptfs tree
-later instead.
-
-Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
