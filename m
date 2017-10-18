@@ -1,23 +1,65 @@
-From: davem@davemloft.net (David Miller)
-Date: Wed, 18 Oct 2017 14:11:55 +0100 (WEST)
-Subject: [PATCH net-next v6 0/5] bpf: security: New file mode and LSM
-	hooks for eBPF object permission control
-In-Reply-To: <20171018.134729.837318478487425125.davem@davemloft.net>
+From: daniel@iogearbox.net (Daniel Borkmann)
+Date: Wed, 18 Oct 2017 15:52:24 +0200
+Subject: [PATCH net-next v6 1/5] bpf: Add file mode configuration into
+	bpf maps
+In-Reply-To: <20171016191135.8046-2-chenbofeng.kernel@gmail.com>
 References: <20171016191135.8046-1-chenbofeng.kernel@gmail.com>
-	<20171018.134729.837318478487425125.davem@davemloft.net>
-Message-ID: <20171018.141155.1830215730026401984.davem@davemloft.net>
+	<20171016191135.8046-2-chenbofeng.kernel@gmail.com>
+Message-ID: <59E75C98.5080603@iogearbox.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Oct 2017 13:47:29 +0100 (WEST)
+Hey Chenbo,
 
-> Series applied.
+there's still one thing I noticed later one; would have sent a
+follow-up, but as you need to respin anyway for the build issue,
+here's what is still missing uapi-wise:
 
-I had to revert as this breaks the build:
+On 10/16/2017 09:11 PM, Chenbo Feng wrote:
+[...]
+> +int bpf_get_file_flag(int flags)
+> +{
+> +	if ((flags & BPF_F_RDONLY) && (flags & BPF_F_WRONLY))
+> +		return -EINVAL;
+> +	if (flags & BPF_F_RDONLY)
+> +		return O_RDONLY;
+> +	if (flags & BPF_F_WRONLY)
+> +		return O_WRONLY;
+> +	return O_RDWR;
+>   }
+[...]
+> -#define BPF_OBJ_LAST_FIELD bpf_fd
+> +#define BPF_OBJ_LAST_FIELD file_flags
+>
+>   static int bpf_obj_pin(const union bpf_attr *attr)
+>   {
+> -	if (CHECK_ATTR(BPF_OBJ))
+> +	if (CHECK_ATTR(BPF_OBJ) || attr->file_flags != 0)
+>   		return -EINVAL;
+>
+>   	return bpf_obj_pin_user(attr->bpf_fd, u64_to_user_ptr(attr->pathname));
+> @@ -1126,7 +1184,8 @@ static int bpf_obj_get(const union bpf_attr *attr)
+>   	if (CHECK_ATTR(BPF_OBJ) || attr->bpf_fd != 0)
 
-net/netfilter/xt_bpf.c: In function ?__bpf_mt_check_path?:
-net/netfilter/xt_bpf.c:59:7: error: too few arguments to function ?bpf_obj_get_user?
-  fd = bpf_obj_get_user(path);
-       ^~~~~~~~~~~~~~~~
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+Here, we also need to check and bail out on ...
+
+attr->file_flags & ~(BPF_F_RDONLY | BPF_F_WRONLY)
+
+... otherwise we cannot extend it with more flags in future. Basically
+same principle for mask check you do on map creation, but not yet here.
+
+The same is needed in bpf_map_get_fd_by_id(), too.
+
+The bpf_prog_get_fd_by_id() is covered since BPF_PROG_GET_FD_BY_ID_LAST_FIELD
+still points to prog_id, so ok.
+
+>   		return -EINVAL;
+> -	return bpf_obj_get_user(u64_to_user_ptr(attr->pathname));
+> +	return bpf_obj_get_user(u64_to_user_ptr(attr->pathname),
+> +				attr->file_flags);
+>   }
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
