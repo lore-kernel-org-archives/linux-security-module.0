@@ -1,88 +1,42 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Oct 2017 15:53:19 +0100
-Subject: [PATCH 22/27] Lock down module params that specify hardware
-	parameters (eg. ioport)
+Date: Thu, 19 Oct 2017 15:53:12 +0100
+Subject: [PATCH 21/27] Lock down TIOCSSERIAL
 In-Reply-To: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
 References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-Message-ID: <150842479932.7923.8106830872069353117.stgit@warthog.procyon.org.uk>
+Message-ID: <150842479208.7923.3429065489239605709.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Provided an annotation for module parameters that specify hardware
-parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
-dma buffers and other types).
+Lock down TIOCSSERIAL as that can be used to change the ioport and irq
+settings on a serial port.  This only appears to be an issue for the serial
+drivers that use the core serial code.  All other drivers seem to either
+ignore attempts to change port/irq or give an error.
 
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jiri Slaby <jslaby@suse.com>
 ---
 
- kernel/params.c |   26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ drivers/tty/serial/serial_core.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/kernel/params.c b/kernel/params.c
-index 60b2d8101355..422979adb60a 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -108,13 +108,19 @@ bool parameq(const char *a, const char *b)
- 	return parameqn(a, b, strlen(a)+1);
- }
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 3a14cccbd7ff..41f0922ad842 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -842,6 +842,12 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
+ 	new_flags = (__force upf_t)new_info->flags;
+ 	old_custom_divisor = uport->custom_divisor;
  
--static void param_check_unsafe(const struct kernel_param *kp)
-+static bool param_check_unsafe(const struct kernel_param *kp,
-+			       const char *doing)
- {
- 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
- 		pr_warn("Setting dangerous option %s - tainting kernel\n",
- 			kp->name);
- 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
- 	}
++	if ((change_port || change_irq) &&
++	    kernel_is_locked_down("Using TIOCSSERIAL to change device addresses, irqs and dma channels")) {
++		retval = -EPERM;
++		goto exit;
++	}
 +
-+	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
-+	    kernel_is_locked_down("Command line-specified device addresses, irqs and dma channels"))
-+		return false;
-+	return true;
- }
- 
- static int parse_one(char *param,
-@@ -144,8 +150,10 @@ static int parse_one(char *param,
- 			pr_debug("handling %s with %p\n", param,
- 				params[i].ops->set);
- 			kernel_param_lock(params[i].mod);
--			param_check_unsafe(&params[i]);
--			err = params[i].ops->set(val, &params[i]);
-+			if (param_check_unsafe(&params[i], doing))
-+				err = params[i].ops->set(val, &params[i]);
-+			else
-+				err = -EPERM;
- 			kernel_param_unlock(params[i].mod);
- 			return err;
- 		}
-@@ -556,6 +564,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
- 	return count;
- }
- 
-+#ifdef CONFIG_MODULES
-+#define mod_name(mod) (mod)->name
-+#else
-+#define mod_name(mod) "unknown"
-+#endif
-+
- /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
- static ssize_t param_attr_store(struct module_attribute *mattr,
- 				struct module_kobject *mk,
-@@ -568,8 +582,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
- 		return -EPERM;
- 
- 	kernel_param_lock(mk->mod);
--	param_check_unsafe(attribute->param);
--	err = attribute->param->ops->set(buf, attribute->param);
-+	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
-+		err = attribute->param->ops->set(buf, attribute->param);
-+	else
-+		err = -EPERM;
- 	kernel_param_unlock(mk->mod);
- 	if (!err)
- 		return len;
+ 	if (!capable(CAP_SYS_ADMIN)) {
+ 		retval = -EPERM;
+ 		if (change_irq || change_port ||
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
