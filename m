@@ -1,53 +1,102 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 19 Oct 2017 17:22:07 +0300
-Subject: [PATCH v4 4/4] tpm: use tpm_msleep() value as max delay
-In-Reply-To: <20171017203232.2262-5-nayna@linux.vnet.ibm.com>
+Date: Thu, 19 Oct 2017 17:23:12 +0300
+Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+	performance
+In-Reply-To: <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
 References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-	<20171017203232.2262-5-nayna@linux.vnet.ibm.com>
-Message-ID: <20171019142207.fviqxmpfwsvmd3rw@linux.intel.com>
+	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+Message-ID: <20171019142312.tq4upw4paqom3jo5@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 17, 2017 at 04:32:32PM -0400, Nayna Jain wrote:
-> Currently, tpm_msleep() uses delay_msec as the minimum value in
-> usleep_range. However, that is the maximum time we want to wait.
-> The function is modified to use the delay_msec as the maximum
-> value, not the minimum value.
+On Tue, Oct 17, 2017 at 04:32:30PM -0400, Nayna Jain wrote:
+> The TPM burstcount status indicates the number of bytes that can
+> be sent to the TPM without causing bus wait states.  Effectively,
+> it is the number of empty bytes in the command FIFO.
+> 
+> This patch optimizes the tpm_tis_send_data() function by checking
+> the burstcount only once. And if the burstcount is valid, it writes
+> all the bytes at once, permitting wait state.
 > 
 > After this change, performance on a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~9sec to ~8sec.
+> burstcount for 1000 extends improved from ~41sec to ~14sec.
 > 
-> Fixes: 3b9af007869("tpm: replace msleep() with usleep_range() in TPM 1.2/
-> 2.0 generic drivers")
-> 
+> Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
+> conjunction with the TPM Device Driver work group.
 > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 > Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  drivers/char/tpm/tpm.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++--------------------------
+>  1 file changed, 15 insertions(+), 27 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 4fc83ac7abeb..644de70de2cc 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -528,8 +528,8 @@ int tpm_pm_resume(struct device *dev);
->  
->  static inline void tpm_msleep(unsigned int delay_msec)
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index b33126a35694..993328ae988c 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
 >  {
-> -	usleep_range(delay_msec * 1000,
-> -		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
-> +	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
-> +		     delay_msec * 1000);
->  };
+>  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>  	int rc, status, burstcnt;
+> -	size_t count = 0;
+>  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
 >  
->  struct tpm_chip *tpm_chip_find_get(int chip_num);
+>  	status = tpm_tis_status(chip);
+> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+>  		}
+>  	}
+>  
+> -	while (count < len - 1) {
+> -		burstcnt = get_burstcount(chip);
+> -		if (burstcnt < 0) {
+> -			dev_err(&chip->dev, "Unable to read burstcount\n");
+> -			rc = burstcnt;
+> -			goto out_err;
+> -		}
+> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> -					 burstcnt, buf + count);
+> -		if (rc < 0)
+> -			goto out_err;
+> -
+> -		count += burstcnt;
+> -
+> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+> -					&priv->int_queue, false) < 0) {
+> -			rc = -ETIME;
+> -			goto out_err;
+> -		}
+> -		status = tpm_tis_status(chip);
+> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
+> -			rc = -EIO;
+> -			goto out_err;
+> -		}
+> +	/*
+> +	 * Get the initial burstcount to ensure TPM is ready to
+> +	 * accept data.
+> +	 */
+> +	burstcnt = get_burstcount(chip);
+> +	if (burstcnt < 0) {
+> +		dev_err(&chip->dev, "Unable to read burstcount\n");
+> +		rc = burstcnt;
+> +		goto out_err;
+>  	}
+>  
+> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> +			len - 1, buf);
+> +	if (rc < 0)
+> +		goto out_err;
+> +
+>  	/* write last byte */
+> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
+> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-1]);
+>  	if (rc < 0)
+>  		goto out_err;
+>  
 > -- 
 > 2.13.3
 > 
 
-Tested-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
 --
