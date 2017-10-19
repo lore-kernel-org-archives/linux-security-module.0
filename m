@@ -1,67 +1,54 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Oct 2017 15:52:49 +0100
-Subject: [PATCH 18/27] bpf: Restrict kernel image access functions when the
-	kernel is locked down
+Date: Thu, 19 Oct 2017 15:52:41 +0100
+Subject: [PATCH 17/27] acpi: Disable APEI error injection if the kernel is
+	locked down
 In-Reply-To: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
 References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-Message-ID: <150842476953.7923.18174368926573855810.stgit@warthog.procyon.org.uk>
+Message-ID: <150842476188.7923.14340260837257633120.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Chun-Yi Lee <jlee@suse.com>
+From: Linn Crosetto <linn@hpe.com>
 
-There are some bpf functions can be used to read kernel memory:
-bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
-private keys in kernel memory (e.g. the hibernation image signing key) to
-be read by an eBPF program.  Prohibit those functions when the kernel is
-locked down.
+ACPI provides an error injection mechanism, EINJ, for debugging and testing
+the ACPI Platform Error Interface (APEI) and other RAS features.  If
+supported by the firmware, ACPI specification 5.0 and later provide for a
+way to specify a physical memory address to which to inject the error.
 
-Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+Injecting errors through EINJ can produce errors which to the platform are
+indistinguishable from real hardware errors.  This can have undesirable
+side-effects, such as causing the platform to mark hardware as needing
+replacement.
+
+While it does not provide a method to load unauthenticated privileged code,
+the effect of these errors may persist across reboots and affect trust in
+the underlying hardware, so disable error injection through EINJ if
+the kernel is locked down.
+
+Signed-off-by: Linn Crosetto <linn@hpe.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: netdev at vger.kernel.org
+cc: linux-acpi at vger.kernel.org
 ---
 
- kernel/trace/bpf_trace.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/acpi/apei/einj.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index dc498b605d5d..35e85a3fdb37 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -65,6 +65,11 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
- {
- 	int ret;
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index b38737c83a24..6d71e1e97b20 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -518,6 +518,9 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+ 	int rc;
+ 	u64 base_addr, size;
  
-+	if (kernel_is_locked_down("BPF")) {
-+		memset(dst, 0, size);
-+		return -EPERM;
-+	}
-+
- 	ret = probe_kernel_read(dst, unsafe_ptr, size);
- 	if (unlikely(ret < 0))
- 		memset(dst, 0, size);
-@@ -84,6 +89,9 @@ static const struct bpf_func_proto bpf_probe_read_proto = {
- BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
- 	   u32, size)
- {
-+	if (kernel_is_locked_down("BPF"))
++	if (kernel_is_locked_down("ACPI error injection"))
 +		return -EPERM;
 +
- 	/*
- 	 * Ensure we're in user context which is safe for the helper to
- 	 * run. This helper has no business in a kthread.
-@@ -143,6 +151,9 @@ BPF_CALL_5(bpf_trace_printk, char *, fmt, u32, fmt_size, u64, arg1,
- 	if (fmt[--fmt_size] != 0)
- 		return -EINVAL;
- 
-+	if (kernel_is_locked_down("BPF"))
-+		return __trace_printk(1, fmt, 0, 0, 0);
-+
- 	/* check format string for allowed specifiers */
- 	for (i = 0; i < fmt_size; i++) {
- 		if ((!isprint(fmt[i]) && !isspace(fmt[i])) || !isascii(fmt[i]))
+ 	/* If user manually set "flags", make sure it is legal */
+ 	if (flags && (flags &
+ 		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
