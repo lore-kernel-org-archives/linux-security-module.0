@@ -1,173 +1,282 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Oct 2017 15:50:40 +0100
-Subject: [PATCH 01/27] Add the ability to lock down access to the running
-	kernel image
-In-Reply-To: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-Message-ID: <150842463996.7923.6815305873334959305.stgit@warthog.procyon.org.uk>
+From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
+Date: Thu, 19 Oct 2017 17:00:29 +0000
+Subject: [PATCH v4 1/4] tpm: move wait_for_tpm_stat() to respective driver
+	files
+In-Reply-To: <20171019142141.jtzilibffx4fsgmw@linux.intel.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+	<20171017203232.2262-2-nayna@linux.vnet.ibm.com>
+	<20171019142141.jtzilibffx4fsgmw@linux.intel.com>
+Message-ID: <d2a4fca3aee340dcb5de88a69814bd90@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Provide a single call to allow kernel code to determine whether the system
-should be locked down, thereby disallowing various accesses that might
-allow the running kernel image to be changed including the loading of
-modules that aren't validly signed with a key we recognise, fiddling with
-MSR registers and disallowing hibernation,
+> On Tue, Oct 17, 2017 at 04:32:29PM -0400, Nayna Jain wrote:
+> > The function wait_for_tpm_stat() is currently defined in
+> > tpm-interface file. It is a hardware specific function used
+> > only by tpm_tis and xen-tpmfront, so it is removed from
+> > tpm-interface.c and defined in respective driver files.
+> >
+> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
+> >  drivers/char/tpm/tpm.h           |  2 --
+> >  drivers/char/tpm/tpm_tis_core.c  | 60
+> ++++++++++++++++++++++++++++++++++++++++
+> >  drivers/char/tpm/xen-tpmfront.c  | 60
+> ++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 120 insertions(+), 62 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> interface.c
+> > index 1d6729be4cd6..313f7618d569 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t
+> buflen)
+> >  }
+> >  EXPORT_SYMBOL_GPL(tpm_send);
+> >
+> > -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > -					bool check_cancel, bool *canceled)
+> > -{
+> > -	u8 status = chip->ops->status(chip);
+> > -
+> > -	*canceled = false;
+> > -	if ((status & mask) == mask)
+> > -		return true;
+> > -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > -		*canceled = true;
+> > -		return true;
+> > -	}
+> > -	return false;
+> > -}
+> > -
+> > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> timeout,
+> > -		      wait_queue_head_t *queue, bool check_cancel)
+> > -{
+> > -	unsigned long stop;
+> > -	long rc;
+> > -	u8 status;
+> > -	bool canceled = false;
+> > -
+> > -	/* check current status */
+> > -	status = chip->ops->status(chip);
+> > -	if ((status & mask) == mask)
+> > -		return 0;
+> > -
+> > -	stop = jiffies + timeout;
+> > -
+> > -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > -again:
+> > -		timeout = stop - jiffies;
+> > -		if ((long)timeout <= 0)
+> > -			return -ETIME;
+> > -		rc = wait_event_interruptible_timeout(*queue,
+> > -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > -					       &canceled),
+> > -			timeout);
+> > -		if (rc > 0) {
+> > -			if (canceled)
+> > -				return -ECANCELED;
+> > -			return 0;
+> > -		}
+> > -		if (rc == -ERESTARTSYS && freezing(current)) {
+> > -			clear_thread_flag(TIF_SIGPENDING);
+> > -			goto again;
+> > -		}
+> > -	} else {
+> > -		do {
+> > -			tpm_msleep(TPM_TIMEOUT);
+> > -			status = chip->ops->status(chip);
+> > -			if ((status & mask) == mask)
+> > -				return 0;
+> > -		} while (time_before(jiffies, stop));
+> > -	}
+> > -	return -ETIME;
+> > -}
+> > -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
+> > -
+> >  #define TPM_ORD_SAVESTATE 152
+> >  #define SAVESTATE_RESULT_SIZE 10
+> >
+> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > index 2d5466a72e40..4fc83ac7abeb 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
+> >  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32
+> ordinal);
+> >  int tpm_pm_suspend(struct device *dev);
+> >  int tpm_pm_resume(struct device *dev);
+> > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> timeout,
+> > -		      wait_queue_head_t *queue, bool check_cancel);
+> >
+> >  static inline void tpm_msleep(unsigned int delay_msec)
+> >  {
+> > diff --git a/drivers/char/tpm/tpm_tis_core.c
+> b/drivers/char/tpm/tpm_tis_core.c
+> > index 63bc6c3b949e..b33126a35694 100644
+> > --- a/drivers/char/tpm/tpm_tis_core.c
+> > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > @@ -31,6 +31,66 @@
+> >  #include "tpm.h"
+> >  #include "tpm_tis_core.h"
+> >
+> > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > +					bool check_cancel, bool *canceled)
+> > +{
+> > +	u8 status = chip->ops->status(chip);
+> > +
+> > +	*canceled = false;
+> > +	if ((status & mask) == mask)
+> > +		return true;
+> > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > +		*canceled = true;
+> > +		return true;
+> > +	}
+> > +	return false;
+> > +}
+> > +
+> > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > +		unsigned long timeout, wait_queue_head_t *queue,
+> > +		bool check_cancel)
+> > +{
+> > +	unsigned long stop;
+> > +	long rc;
+> > +	u8 status;
+> > +	bool canceled = false;
+> > +
+> > +	/* check current status */
+> > +	status = chip->ops->status(chip);
+> > +	if ((status & mask) == mask)
+> > +		return 0;
+> > +
+> > +	stop = jiffies + timeout;
+> > +
+> > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > +again:
+> > +		timeout = stop - jiffies;
+> > +		if ((long)timeout <= 0)
+> > +			return -ETIME;
+> > +		rc = wait_event_interruptible_timeout(*queue,
+> > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > +					       &canceled),
+> > +			timeout);
+> > +		if (rc > 0) {
+> > +			if (canceled)
+> > +				return -ECANCELED;
+> > +			return 0;
+> > +		}
+> > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > +			clear_thread_flag(TIF_SIGPENDING);
+> > +			goto again;
+> > +		}
+> > +	} else {
+> > +		do {
+> > +			tpm_msleep(TPM_TIMEOUT);
+> > +			status = chip->ops->status(chip);
+> > +			if ((status & mask) == mask)
+> > +				return 0;
+> > +		} while (time_before(jiffies, stop));
+> > +	}
+> > +	return -ETIME;
+> > +}
+> > +
+> >  /* Before we attempt to access the TPM we must see that the valid bit is
+> set.
+> >   * The specification says that this bit is 0 at reset and remains 0 until the
+> >   * 'TPM has gone through its self test and initialization and has established
+> > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-
+> tpmfront.c
+> > index 656e8af95d52..d20a0a9ded27 100644
+> > --- a/drivers/char/tpm/xen-tpmfront.c
+> > +++ b/drivers/char/tpm/xen-tpmfront.c
+> > @@ -39,6 +39,66 @@ enum status_bits {
+> >  	VTPM_STATUS_CANCELED = 0x8,
+> >  };
+> >
+> > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > +					bool check_cancel, bool *canceled)
+> > +{
+> > +	u8 status = chip->ops->status(chip);
+> > +
+> > +	*canceled = false;
+> > +	if ((status & mask) == mask)
+> > +		return true;
+> > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > +		*canceled = true;
+> > +		return true;
+> > +	}
+> > +	return false;
+> > +}
+> > +
+> > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > +		unsigned long timeout, wait_queue_head_t *queue,
+> > +		bool check_cancel)
+> > +{
+> > +	unsigned long stop;
+> > +	long rc;
+> > +	u8 status;
+> > +	bool canceled = false;
+> > +
+> > +	/* check current status */
+> > +	status = chip->ops->status(chip);
+> > +	if ((status & mask) == mask)
+> > +		return 0;
+> > +
+> > +	stop = jiffies + timeout;
+> > +
+> > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > +again:
+> > +		timeout = stop - jiffies;
+> > +		if ((long)timeout <= 0)
+> > +			return -ETIME;
+> > +		rc = wait_event_interruptible_timeout(*queue,
+> > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > +					       &canceled),
+> > +			timeout);
+> > +		if (rc > 0) {
+> > +			if (canceled)
+> > +				return -ECANCELED;
+> > +			return 0;
+> > +		}
+> > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > +			clear_thread_flag(TIF_SIGPENDING);
+> > +			goto again;
+> > +		}
+> > +	} else {
+> > +		do {
+> > +			tpm_msleep(TPM_TIMEOUT);
+> > +			status = chip->ops->status(chip);
+> > +			if ((status & mask) == mask)
+> > +				return 0;
+> > +		} while (time_before(jiffies, stop));
+> > +	}
+> > +	return -ETIME;
+> > +}
+> > +
+> >  static u8 vtpm_status(struct tpm_chip *chip)
+> >  {
+> >  	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
+> > --
+> > 2.13.3
+> >
+> 
+> This commit caused a compiler warning because freezer.h was not included
+> to xen-tpmfront.c. I manually fixed it.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Yep, and checkpatch.pl still complains about some stuff (mostly whitespace) in both patch 1/4 and 2/4. When fixed patches are available, I can run them again through my automation.
 
- include/linux/kernel.h   |   17 +++++++++++++
- include/linux/security.h |    8 ++++++
- security/Kconfig         |    8 ++++++
- security/Makefile        |    3 ++
- security/lock_down.c     |   60 ++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 96 insertions(+)
- create mode 100644 security/lock_down.c
+> Reviewed-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
+> Tested-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
+> 
+> /Jarkko
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 0ad4c3044cf9..362da2e4bf53 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -287,6 +287,23 @@ static inline void refcount_error_report(struct pt_regs *regs, const char *err)
- { }
- #endif
- 
-+#ifdef CONFIG_LOCK_DOWN_KERNEL
-+extern bool __kernel_is_locked_down(const char *what, bool first);
-+#else
-+static inline bool __kernel_is_locked_down(const char *what, bool first)
-+{
-+	return false;
-+}
-+#endif
-+
-+#define kernel_is_locked_down(what)					\
-+	({								\
-+		static bool message_given;				\
-+		bool locked_down = __kernel_is_locked_down(what, !message_given); \
-+		message_given = true;					\
-+		locked_down;						\
-+	})
-+
- /* Internal, do not use. */
- int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
- int __must_check _kstrtol(const char *s, unsigned int base, long *res);
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ce6265960d6c..f9a894b42d4c 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1753,5 +1753,13 @@ static inline void free_secdata(void *secdata)
- { }
- #endif /* CONFIG_SECURITY */
- 
-+#ifdef CONFIG_LOCK_DOWN_KERNEL
-+extern void __init init_lockdown(void);
-+#else
-+static inline void __init init_lockdown(void);
-+{
-+}
-+#endif
-+
- #endif /* ! __LINUX_SECURITY_H */
- 
-diff --git a/security/Kconfig b/security/Kconfig
-index e8e449444e65..8e01fd59ae7e 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -205,6 +205,14 @@ config STATIC_USERMODEHELPER_PATH
- 	  If you wish for all usermode helper programs to be disabled,
- 	  specify an empty string here (i.e. "").
- 
-+config LOCK_DOWN_KERNEL
-+	bool "Allow the kernel to be 'locked down'"
-+	help
-+	  Allow the kernel to be locked down under certain circumstances, for
-+	  instance if UEFI secure boot is enabled.  Locking down the kernel
-+	  turns off various features that might otherwise allow access to the
-+	  kernel image (eg. setting MSR registers).
-+
- source security/selinux/Kconfig
- source security/smack/Kconfig
- source security/tomoyo/Kconfig
-diff --git a/security/Makefile b/security/Makefile
-index f2d71cdb8e19..8c4a43e3d4e0 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -29,3 +29,6 @@ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
- # Object integrity file lists
- subdir-$(CONFIG_INTEGRITY)		+= integrity
- obj-$(CONFIG_INTEGRITY)			+= integrity/
-+
-+# Allow the kernel to be locked down
-+obj-$(CONFIG_LOCK_DOWN_KERNEL)		+= lock_down.o
-diff --git a/security/lock_down.c b/security/lock_down.c
-new file mode 100644
-index 000000000000..d8595c0e6673
---- /dev/null
-+++ b/security/lock_down.c
-@@ -0,0 +1,60 @@
-+/* Lock down the kernel
-+ *
-+ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#include <linux/security.h>
-+#include <linux/export.h>
-+
-+static __ro_after_init bool kernel_locked_down;
-+
-+/*
-+ * Put the kernel into lock-down mode.
-+ */
-+static void __init lock_kernel_down(const char *where)
-+{
-+	if (!kernel_locked_down) {
-+		kernel_locked_down = true;
-+		pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
-+			  where);
-+	}
-+}
-+
-+static int __init lockdown_param(char *ignored)
-+{
-+	lock_kernel_down("command line");
-+	return 0;
-+}
-+
-+early_param("lockdown", lockdown_param);
-+
-+/*
-+ * Lock the kernel down from very early in the arch setup.  This must happen
-+ * prior to things like ACPI being initialised.
-+ */
-+void __init init_lockdown(void)
-+{
-+#ifdef CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT
-+	if (efi_enabled(EFI_SECURE_BOOT))
-+		lock_kernel_down("EFI secure boot");
-+#endif
-+}
-+
-+/**
-+ * kernel_is_locked_down - Find out if the kernel is locked down
-+ * @what: Tag to use in notice generated if lockdown is in effect
-+ */
-+bool __kernel_is_locked_down(const char *what, bool first)
-+{
-+	if (what && first && kernel_locked_down)
-+		pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
-+			  what);
-+	return kernel_locked_down;
-+}
-+EXPORT_SYMBOL(__kernel_is_locked_down);
-
+Alexander
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
