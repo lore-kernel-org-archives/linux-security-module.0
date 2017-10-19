@@ -1,134 +1,106 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Thu, 19 Oct 2017 14:29:04 +0200
-Subject: [PATCH] [v2] tomoyo: fix timestamping for y2038
-Message-ID: <20171019122919.1263808-1-arnd@arndb.de>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Thu, 19 Oct 2017 09:08:10 -0400
+Subject: [PATCH GHAK16 V5 00/10] capabilities: do not audit log
+	BPRM_FCAPS on set*id
+In-Reply-To: <cover.1507769413.git.rgb@redhat.com>
+References: <cover.1507769413.git.rgb@redhat.com>
+Message-ID: <20171019130809.2farwdz3uav6vlp3@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Tomoyo uses an open-coded version of time_to_tm() to create a timestamp
-from the current time as read by get_seconds(). This will overflow and
-give wrong results on 32-bit systems in 2038.
+On 2017-10-11 20:57, Richard Guy Briggs wrote:
+> The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
+> application execution (SYSCALL execve). This is not expected as it was
+> supposed to be limited to when the file system actually had capabilities
+> in an extended attribute.  It lists all capabilities making the event
+> really ugly to parse what is happening.  The PATH record correctly
+> records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
+> set*id.
 
-To correct this, this changes the code to use ktime_get_real_seconds()
-and the generic time64_to_tm() function that are both y2038-safe.
-Using the library function avoids adding an expensive 64-bit division
-in this code and can benefit from any optimizations we do in common
-code.
+<crickets>
 
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: fix year calculation
----
- security/tomoyo/audit.c  |  2 +-
- security/tomoyo/common.c |  4 ++--
- security/tomoyo/common.h |  2 +-
- security/tomoyo/util.c   | 39 +++++++++------------------------------
- 4 files changed, 13 insertions(+), 34 deletions(-)
+Serge?  James?  Can one of you two take this via your trees since Paul
+has backed down citing (reasonably) that it is mostly capabilities
+patches rather than audit?
 
-diff --git a/security/tomoyo/audit.c b/security/tomoyo/audit.c
-index 3ffa4f5509d8..a51edfbe593b 100644
---- a/security/tomoyo/audit.c
-+++ b/security/tomoyo/audit.c
-@@ -156,7 +156,7 @@ static char *tomoyo_print_header(struct tomoyo_request_info *r)
- 	if (!buffer)
- 		return NULL;
- 
--	tomoyo_convert_time(get_seconds(), &stamp);
-+	tomoyo_convert_time(ktime_get_real_seconds(), &stamp);
- 
- 	pos = snprintf(buffer, tomoyo_buffer_len - 1,
- 		       "#%04u/%02u/%02u %02u:%02u:%02u# profile=%u mode=%s "
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index e0fb75052550..c19970db89c4 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -2256,7 +2256,7 @@ static const char * const tomoyo_memory_headers[TOMOYO_MAX_MEMORY_STAT] = {
- /* Timestamp counter for last updated. */
- static unsigned int tomoyo_stat_updated[TOMOYO_MAX_POLICY_STAT];
- /* Counter for number of updates. */
--static unsigned int tomoyo_stat_modified[TOMOYO_MAX_POLICY_STAT];
-+static time64_t tomoyo_stat_modified[TOMOYO_MAX_POLICY_STAT];
- 
- /**
-  * tomoyo_update_stat - Update statistic counters.
-@@ -2271,7 +2271,7 @@ void tomoyo_update_stat(const u8 index)
- 	 * I don't use atomic operations because race condition is not fatal.
- 	 */
- 	tomoyo_stat_updated[index]++;
--	tomoyo_stat_modified[index] = get_seconds();
-+	tomoyo_stat_modified[index] = ktime_get_real_seconds();
- }
- 
- /**
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 361e7a284699..d9628d1635b2 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -1036,7 +1036,7 @@ void tomoyo_check_acl(struct tomoyo_request_info *r,
- 		      bool (*check_entry) (struct tomoyo_request_info *,
- 					   const struct tomoyo_acl_info *));
- void tomoyo_check_profile(void);
--void tomoyo_convert_time(time_t time, struct tomoyo_time *stamp);
-+void tomoyo_convert_time(time64_t time, struct tomoyo_time *stamp);
- void tomoyo_del_condition(struct list_head *element);
- void tomoyo_fill_path_info(struct tomoyo_path_info *ptr);
- void tomoyo_get_attributes(struct tomoyo_obj_info *obj);
-diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-index 848317fea704..cac431d381d2 100644
---- a/security/tomoyo/util.c
-+++ b/security/tomoyo/util.c
-@@ -86,38 +86,17 @@ const u8 tomoyo_index2category[TOMOYO_MAX_MAC_INDEX] = {
-  * @stamp: Pointer to "struct tomoyo_time".
-  *
-  * Returns nothing.
-- *
-- * This function does not handle Y2038 problem.
-  */
--void tomoyo_convert_time(time_t time, struct tomoyo_time *stamp)
-+void tomoyo_convert_time(time64_t time64, struct tomoyo_time *stamp)
- {
--	static const u16 tomoyo_eom[2][12] = {
--		{ 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 },
--		{ 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 }
--	};
--	u16 y;
--	u8 m;
--	bool r;
--	stamp->sec = time % 60;
--	time /= 60;
--	stamp->min = time % 60;
--	time /= 60;
--	stamp->hour = time % 24;
--	time /= 24;
--	for (y = 1970; ; y++) {
--		const unsigned short days = (y & 3) ? 365 : 366;
--		if (time < days)
--			break;
--		time -= days;
--	}
--	r = (y & 3) == 0;
--	for (m = 0; m < 11 && time >= tomoyo_eom[r][m]; m++)
--		;
--	if (m)
--		time -= tomoyo_eom[r][m - 1];
--	stamp->year = y;
--	stamp->month = ++m;
--	stamp->day = ++time;
-+	struct tm tm;
-+	time64_to_tm(time64, 0, &tm);
-+	stamp->sec = tm.tm_sec;
-+	stamp->min = tm.tm_min;
-+	stamp->hour = tm.tm_hour;
-+	stamp->day = tm.tm_mday;
-+	stamp->month = tm.tm_mon + 1;
-+	stamp->year = tm.tm_year + 1900;
- }
- 
- /**
--- 
-2.9.0
+> See: https://github.com/linux-audit/audit-kernel/issues/16
+> 
+> The first to eighth patches just massage the logic to make it easier to
+> understand.  Some of them could be squashed together.
+> 
+> The patch that resolves this issue is the ninth.  
+> 
+> It would be possible to address the original issue with a change of
+> 	"!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
+> to
+> 	"!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
+> but it took me long enough to understand this logic that I don't think
+> I'd be doing any favours by leaving it this difficult to understand.
+> 
+> The final patch attempts to address all the conditions that need logging
+> based on mailing list conversations, recoginizing there is probably some
+> duplication in the logic.
+> 
+> Passes: (ltp 20170516)
+> 	./runltp -f syscalls -s cap
+> 	./runltp -f securebits
+> 	./runltp -f cap_bounds
+> 	./runltp -f filecaps
+> 	make TARGETS=capabilities kselftest (when run locally, fails over nfs)
+> 
+> Since this is mostly capabilities related rather than audit, could this go
+> through the capabilites (Serge) or security (James) trees please?  Thanks!
+> 
+> v5
+>   rebase on linux-security/next 4.14-rc2
+>   added comment block header to handle_privileged_root()
+>   moved comment in handle_privileged_root()
+>   moved root_privileged() check back into handle_privileged_root()
+> 
+> v4
+>   rebase on kees' 4.13 commoncap changes
+>   minor local func renames
+> 
+> v3
+>   refactor into several sub-functions
+>   convert most macros to inline funcs
+> 
+> v2
+>   use macros to clarify intent of calculations
+>   fix original logic error
+>   address additional audit logging conditions
+> 
+> Richard Guy Briggs (10):
+>   capabilities: factor out cap_bprm_set_creds privileged root
+>   capabilities: intuitive names for cap gain status
+>   capabilities: rename has_cap to has_fcap
+>   capabilities: use root_priveleged inline to clarify logic
+>   capabilities: use intuitive names for id changes
+>   capabilities: move audit log decision to function
+>   capabilities: remove a layer of conditional logic
+>   capabilities: invert logic for clarity
+>   capabilities: fix logic for effective root or real root
+>   capabilities: audit log other surprising conditions
+> 
+>  security/commoncap.c | 193 ++++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 128 insertions(+), 65 deletions(-)
+> 
+> -- 
+> 1.8.3.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
