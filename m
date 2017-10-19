@@ -1,37 +1,50 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Oct 2017 23:12:30 +0100
-Subject: [PATCH 02/27] Add a SysRq option to lift kernel lockdown
-In-Reply-To: <97659d0c-6992-3025-0f85-819d23e954cc@infradead.org>
-References: <97659d0c-6992-3025-0f85-819d23e954cc@infradead.org>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842464774.7923.7951986297563109339.stgit@warthog.procyon.org.uk>
-Message-ID: <10671.1508451150@warthog.procyon.org.uk>
+From: alexei.starovoitov@gmail.com (Alexei Starovoitov)
+Date: Thu, 19 Oct 2017 15:18:30 -0700
+Subject: [PATCH 18/27] bpf: Restrict kernel image access functions when
+	the kernel is locked down
+In-Reply-To: <150842476953.7923.18174368926573855810.stgit@warthog.procyon.org.uk>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842476953.7923.18174368926573855810.stgit@warthog.procyon.org.uk>
+Message-ID: <20171019221829.7m5nczg3ltqmhzom@ast-mbp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
-
-> > +config ALLOW_LOCKDOWN_LIFT
-> > +	bool
-> > +	help
-> > +	  Allow the lockdown on a kernel to be lifted, thereby restoring the
-> > +	  ability of userspace to access the kernel image (eg. by SysRq+x under
+On Thu, Oct 19, 2017 at 03:52:49PM +0100, David Howells wrote:
+> From: Chun-Yi Lee <jlee@suse.com>
 > 
-> how about:                                                                on
+> There are some bpf functions can be used to read kernel memory:
+> bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
+> private keys in kernel memory (e.g. the hibernation image signing key) to
+> be read by an eBPF program.  Prohibit those functions when the kernel is
+> locked down.
 > 
-> > +	  x86).
-
-I'll just get rid of this config option, I think - it doesn't make anything
-available outside of lock_down.c.
-
-> > +#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT_BY_KEY
+> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: netdev at vger.kernel.org
+> ---
 > 
-> is that the same as: CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ ?
-> tested?
+>  kernel/trace/bpf_trace.c |   11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index dc498b605d5d..35e85a3fdb37 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -65,6 +65,11 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
+>  {
+>  	int ret;
+>  
+> +	if (kernel_is_locked_down("BPF")) {
+> +		memset(dst, 0, size);
+> +		return -EPERM;
+> +	}
 
-My test machine doesn't have a physical keyboard attached, but you're right.
+That doesn't help the lockdown purpose.
+If you don't trust the root the only way to prevent bpf read
+memory is to disable the whole thing.
+Have a single check in sys_bpf() to disallow everything if kernel_is_locked_down()
+and don't add overhead to critical path like bpf_probe_read().
 
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
