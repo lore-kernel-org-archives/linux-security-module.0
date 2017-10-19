@@ -1,60 +1,88 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Oct 2017 15:53:33 +0100
-Subject: [PATCH 24/27] debugfs: Disallow use of debugfs files when the
-	kernel is locked down
+Date: Thu, 19 Oct 2017 15:53:19 +0100
+Subject: [PATCH 22/27] Lock down module params that specify hardware
+	parameters (eg. ioport)
 In-Reply-To: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
 References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-Message-ID: <150842481363.7923.13021827051686067882.stgit@warthog.procyon.org.uk>
+Message-ID: <150842479932.7923.8106830872069353117.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Disallow opening of debugfs files when the kernel is locked down as various
-drivers give raw access to hardware through debugfs.
+Provided an annotation for module parameters that specify hardware
+parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+dma buffers and other types).
 
-Accesses to tracefs should use /sys/kernel/tracing/ rather than
-/sys/kernel/debug/tracing/.  Possibly a symlink should be emplaced.
-
-Normal device interaction should be done through configfs or a miscdev, not
-debugfs.
-
-Note that this makes it unnecessary to specifically lock down show_dsts(),
-show_devs() and show_call() in the asus-wmi driver.
-
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-cc: acpi4asus-user at lists.sourceforge.net
-cc: platform-driver-x86 at vger.kernel.org
-cc: Matthew Garrett <matthew.garrett@nebula.com>
-cc: Thomas Gleixner <tglx@linutronix.de>
 ---
 
- fs/debugfs/file.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/params.c |   26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 6dabc4a10396..32b5168a7e91 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -103,6 +103,9 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
- 	const struct file_operations *real_fops = NULL;
- 	int srcu_idx, r;
+diff --git a/kernel/params.c b/kernel/params.c
+index 60b2d8101355..422979adb60a 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -108,13 +108,19 @@ bool parameq(const char *a, const char *b)
+ 	return parameqn(a, b, strlen(a)+1);
+ }
  
-+	if (kernel_is_locked_down("debugfs"))
-+		return -EPERM;
+-static void param_check_unsafe(const struct kernel_param *kp)
++static bool param_check_unsafe(const struct kernel_param *kp,
++			       const char *doing)
+ {
+ 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+ 		pr_warn("Setting dangerous option %s - tainting kernel\n",
+ 			kp->name);
+ 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
 +
- 	r = debugfs_use_file_start(dentry, &srcu_idx);
- 	if (r) {
- 		r = -ENOENT;
-@@ -232,6 +235,9 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
- 	struct file_operations *proxy_fops = NULL;
- 	int srcu_idx, r;
++	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
++	    kernel_is_locked_down("Command line-specified device addresses, irqs and dma channels"))
++		return false;
++	return true;
+ }
  
-+	if (kernel_is_locked_down("debugfs"))
-+		return -EPERM;
+ static int parse_one(char *param,
+@@ -144,8 +150,10 @@ static int parse_one(char *param,
+ 			pr_debug("handling %s with %p\n", param,
+ 				params[i].ops->set);
+ 			kernel_param_lock(params[i].mod);
+-			param_check_unsafe(&params[i]);
+-			err = params[i].ops->set(val, &params[i]);
++			if (param_check_unsafe(&params[i], doing))
++				err = params[i].ops->set(val, &params[i]);
++			else
++				err = -EPERM;
+ 			kernel_param_unlock(params[i].mod);
+ 			return err;
+ 		}
+@@ -556,6 +564,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_MODULES
++#define mod_name(mod) (mod)->name
++#else
++#define mod_name(mod) "unknown"
++#endif
 +
- 	r = debugfs_use_file_start(dentry, &srcu_idx);
- 	if (r) {
- 		r = -ENOENT;
+ /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 				struct module_kobject *mk,
+@@ -568,8 +582,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 		return -EPERM;
+ 
+ 	kernel_param_lock(mk->mod);
+-	param_check_unsafe(attribute->param);
+-	err = attribute->param->ops->set(buf, attribute->param);
++	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
++		err = attribute->param->ops->set(buf, attribute->param);
++	else
++		err = -EPERM;
+ 	kernel_param_unlock(mk->mod);
+ 	if (!err)
+ 		return len;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
