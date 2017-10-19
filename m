@@ -1,37 +1,52 @@
-From: davem@davemloft.net (David Miller)
-Date: Thu, 19 Oct 2017 12:00:37 +0100 (WEST)
-Subject: [PATCH net-next v6 0/5] bpf: security: New file mode and LSM
-	hooks for eBPF object permission control
-In-Reply-To: <alpine.LFD.2.20.1710191248100.1108@t440.gateway.2wire.net>
-References: <20171016191135.8046-1-chenbofeng.kernel@gmail.com>
-	<20171018.134729.837318478487425125.davem@davemloft.net>
-	<alpine.LFD.2.20.1710191248100.1108@t440.gateway.2wire.net>
-Message-ID: <20171019.120037.800835994706244516.davem@davemloft.net>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Thu, 19 Oct 2017 20:29:01 +0900
+Subject: [PATCH] tomoyo: fix timestamping for y2038
+In-Reply-To: <20171019095405.689783-1-arnd@arndb.de>
+References: <20171019095405.689783-1-arnd@arndb.de>
+Message-ID: <201710192029.BGI60474.SOOVtFOHMLQFJF@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: James Morris <james.l.morris@oracle.com>
-Date: Thu, 19 Oct 2017 12:49:59 +1100 (AEDT)
-
-> On Wed, 18 Oct 2017, David Miller wrote:
+Arnd Bergmann wrote:
+> Tomoyo uses an open-coded version of time_to_tm() to create a timestamp
+> from the current time as read by get_seconds(). This will overflow and
+> give wrong results on 32-bit systems in 2038.
 > 
->> Series applied.
+> To correct this, this changes the code to use ktime_get_real_seconds()
+> and the generic time64_to_tm() function that are both y2038-safe.
+> Using the library function avoids adding an expensive 64-bit division
+> in this code and can benefit from any optimizations we do in common
+> code.
 > 
-> I hadn't gotten to reviewing this patchset yet.
-> 
-> Please wait for more acks/reviews from LSM folk for things touching 
-> security/, next time.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  security/tomoyo/audit.c  |  2 +-
+>  security/tomoyo/common.c |  4 ++--
+>  security/tomoyo/common.h |  2 +-
+>  security/tomoyo/util.c   | 39 +++++++++------------------------------
+>  4 files changed, 13 insertions(+), 34 deletions(-)
 
-Well it got reverted and respun in order to deal with build failures.
-So you have some time.
+Thank you.
 
-However...
+Please fold below diff into your patch, for year calculation is wrong.
 
-Please review the changes more expediantly.  I don't like paches
-rotting in my backlog for more than a day or two, weekends not
-withstanding.  So if I don't see anything after two work week days,
-I'll use my best judgment and apply if I can't find a major flaw in
-the change(s).
+  #0047/10/19 20:08:17# profile=1 mode=learning granted=no (global-pid=1) task={ pid=1 ppid=0 uid=0 gid=0 euid=0 egid=0 suid=0 sgid=0 fsuid=0 fsgid=0 } path1={ uid=0 gid=0 ino=639202 major=8 minor=1 perm=0755 type=file } path1.parent={ uid=0 gid=0 ino=155 perm=0755 } exec={ realpath="/usr/lib/systemd/systemd" argc=5 envc=0 argv[]={ "/usr/lib/systemd/systemd" "--switched-root" "--system" "--deserialize" "21" } envp[]={ } }
+
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -96,7 +96,7 @@ void tomoyo_convert_time(time64_t time64, struct tomoyo_time *stamp)
+ 	stamp->hour = tm.tm_hour;
+ 	stamp->day = tm.tm_mday;
+ 	stamp->month = tm.tm_mon + 1;
+-	stamp->year = tm.tm_year - (1970 - 1900);
++	stamp->year = tm.tm_year + 1900;
+ }
+ 
+ /**
+
+Then, you can add
+
+Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
