@@ -1,106 +1,267 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Thu, 19 Oct 2017 09:08:10 -0400
-Subject: [PATCH GHAK16 V5 00/10] capabilities: do not audit log
-	BPRM_FCAPS on set*id
-In-Reply-To: <cover.1507769413.git.rgb@redhat.com>
-References: <cover.1507769413.git.rgb@redhat.com>
-Message-ID: <20171019130809.2farwdz3uav6vlp3@madcap2.tricolour.ca>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 19 Oct 2017 17:21:41 +0300
+Subject: [PATCH v4 1/4] tpm: move wait_for_tpm_stat() to respective
+	driver files
+In-Reply-To: <20171017203232.2262-2-nayna@linux.vnet.ibm.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+	<20171017203232.2262-2-nayna@linux.vnet.ibm.com>
+Message-ID: <20171019142141.jtzilibffx4fsgmw@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-10-11 20:57, Richard Guy Briggs wrote:
-> The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
-> application execution (SYSCALL execve). This is not expected as it was
-> supposed to be limited to when the file system actually had capabilities
-> in an extended attribute.  It lists all capabilities making the event
-> really ugly to parse what is happening.  The PATH record correctly
-> records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
-> set*id.
-
-<crickets>
-
-Serge?  James?  Can one of you two take this via your trees since Paul
-has backed down citing (reasonably) that it is mostly capabilities
-patches rather than audit?
-
-> See: https://github.com/linux-audit/audit-kernel/issues/16
+On Tue, Oct 17, 2017 at 04:32:29PM -0400, Nayna Jain wrote:
+> The function wait_for_tpm_stat() is currently defined in
+> tpm-interface file. It is a hardware specific function used
+> only by tpm_tis and xen-tpmfront, so it is removed from
+> tpm-interface.c and defined in respective driver files.
 > 
-> The first to eighth patches just massage the logic to make it easier to
-> understand.  Some of them could be squashed together.
+> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
+>  drivers/char/tpm/tpm.h           |  2 --
+>  drivers/char/tpm/tpm_tis_core.c  | 60 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/char/tpm/xen-tpmfront.c  | 60 ++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 120 insertions(+), 62 deletions(-)
 > 
-> The patch that resolves this issue is the ninth.  
-> 
-> It would be possible to address the original issue with a change of
-> 	"!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
-> to
-> 	"!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
-> but it took me long enough to understand this logic that I don't think
-> I'd be doing any favours by leaving it this difficult to understand.
-> 
-> The final patch attempts to address all the conditions that need logging
-> based on mailing list conversations, recoginizing there is probably some
-> duplication in the logic.
-> 
-> Passes: (ltp 20170516)
-> 	./runltp -f syscalls -s cap
-> 	./runltp -f securebits
-> 	./runltp -f cap_bounds
-> 	./runltp -f filecaps
-> 	make TARGETS=capabilities kselftest (when run locally, fails over nfs)
-> 
-> Since this is mostly capabilities related rather than audit, could this go
-> through the capabilites (Serge) or security (James) trees please?  Thanks!
-> 
-> v5
->   rebase on linux-security/next 4.14-rc2
->   added comment block header to handle_privileged_root()
->   moved comment in handle_privileged_root()
->   moved root_privileged() check back into handle_privileged_root()
-> 
-> v4
->   rebase on kees' 4.13 commoncap changes
->   minor local func renames
-> 
-> v3
->   refactor into several sub-functions
->   convert most macros to inline funcs
-> 
-> v2
->   use macros to clarify intent of calculations
->   fix original logic error
->   address additional audit logging conditions
-> 
-> Richard Guy Briggs (10):
->   capabilities: factor out cap_bprm_set_creds privileged root
->   capabilities: intuitive names for cap gain status
->   capabilities: rename has_cap to has_fcap
->   capabilities: use root_priveleged inline to clarify logic
->   capabilities: use intuitive names for id changes
->   capabilities: move audit log decision to function
->   capabilities: remove a layer of conditional logic
->   capabilities: invert logic for clarity
->   capabilities: fix logic for effective root or real root
->   capabilities: audit log other surprising conditions
-> 
->  security/commoncap.c | 193 ++++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 128 insertions(+), 65 deletions(-)
-> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1d6729be4cd6..313f7618d569 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t buflen)
+>  }
+>  EXPORT_SYMBOL_GPL(tpm_send);
+>  
+> -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> -					bool check_cancel, bool *canceled)
+> -{
+> -	u8 status = chip->ops->status(chip);
+> -
+> -	*canceled = false;
+> -	if ((status & mask) == mask)
+> -		return true;
+> -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> -		*canceled = true;
+> -		return true;
+> -	}
+> -	return false;
+> -}
+> -
+> -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
+> -		      wait_queue_head_t *queue, bool check_cancel)
+> -{
+> -	unsigned long stop;
+> -	long rc;
+> -	u8 status;
+> -	bool canceled = false;
+> -
+> -	/* check current status */
+> -	status = chip->ops->status(chip);
+> -	if ((status & mask) == mask)
+> -		return 0;
+> -
+> -	stop = jiffies + timeout;
+> -
+> -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> -again:
+> -		timeout = stop - jiffies;
+> -		if ((long)timeout <= 0)
+> -			return -ETIME;
+> -		rc = wait_event_interruptible_timeout(*queue,
+> -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> -					       &canceled),
+> -			timeout);
+> -		if (rc > 0) {
+> -			if (canceled)
+> -				return -ECANCELED;
+> -			return 0;
+> -		}
+> -		if (rc == -ERESTARTSYS && freezing(current)) {
+> -			clear_thread_flag(TIF_SIGPENDING);
+> -			goto again;
+> -		}
+> -	} else {
+> -		do {
+> -			tpm_msleep(TPM_TIMEOUT);
+> -			status = chip->ops->status(chip);
+> -			if ((status & mask) == mask)
+> -				return 0;
+> -		} while (time_before(jiffies, stop));
+> -	}
+> -	return -ETIME;
+> -}
+> -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
+> -
+>  #define TPM_ORD_SAVESTATE 152
+>  #define SAVESTATE_RESULT_SIZE 10
+>  
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 2d5466a72e40..4fc83ac7abeb 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
+>  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+>  int tpm_pm_suspend(struct device *dev);
+>  int tpm_pm_resume(struct device *dev);
+> -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
+> -		      wait_queue_head_t *queue, bool check_cancel);
+>  
+>  static inline void tpm_msleep(unsigned int delay_msec)
+>  {
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index 63bc6c3b949e..b33126a35694 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -31,6 +31,66 @@
+>  #include "tpm.h"
+>  #include "tpm_tis_core.h"
+>  
+> +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> +					bool check_cancel, bool *canceled)
+> +{
+> +	u8 status = chip->ops->status(chip);
+> +
+> +	*canceled = false;
+> +	if ((status & mask) == mask)
+> +		return true;
+> +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> +		*canceled = true;
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> +		unsigned long timeout, wait_queue_head_t *queue,
+> +		bool check_cancel)
+> +{
+> +	unsigned long stop;
+> +	long rc;
+> +	u8 status;
+> +	bool canceled = false;
+> +
+> +	/* check current status */
+> +	status = chip->ops->status(chip);
+> +	if ((status & mask) == mask)
+> +		return 0;
+> +
+> +	stop = jiffies + timeout;
+> +
+> +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> +again:
+> +		timeout = stop - jiffies;
+> +		if ((long)timeout <= 0)
+> +			return -ETIME;
+> +		rc = wait_event_interruptible_timeout(*queue,
+> +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> +					       &canceled),
+> +			timeout);
+> +		if (rc > 0) {
+> +			if (canceled)
+> +				return -ECANCELED;
+> +			return 0;
+> +		}
+> +		if (rc == -ERESTARTSYS && freezing(current)) {
+> +			clear_thread_flag(TIF_SIGPENDING);
+> +			goto again;
+> +		}
+> +	} else {
+> +		do {
+> +			tpm_msleep(TPM_TIMEOUT);
+> +			status = chip->ops->status(chip);
+> +			if ((status & mask) == mask)
+> +				return 0;
+> +		} while (time_before(jiffies, stop));
+> +	}
+> +	return -ETIME;
+> +}
+> +
+>  /* Before we attempt to access the TPM we must see that the valid bit is set.
+>   * The specification says that this bit is 0 at reset and remains 0 until the
+>   * 'TPM has gone through its self test and initialization and has established
+> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+> index 656e8af95d52..d20a0a9ded27 100644
+> --- a/drivers/char/tpm/xen-tpmfront.c
+> +++ b/drivers/char/tpm/xen-tpmfront.c
+> @@ -39,6 +39,66 @@ enum status_bits {
+>  	VTPM_STATUS_CANCELED = 0x8,
+>  };
+>  
+> +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> +					bool check_cancel, bool *canceled)
+> +{
+> +	u8 status = chip->ops->status(chip);
+> +
+> +	*canceled = false;
+> +	if ((status & mask) == mask)
+> +		return true;
+> +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> +		*canceled = true;
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> +		unsigned long timeout, wait_queue_head_t *queue,
+> +		bool check_cancel)
+> +{
+> +	unsigned long stop;
+> +	long rc;
+> +	u8 status;
+> +	bool canceled = false;
+> +
+> +	/* check current status */
+> +	status = chip->ops->status(chip);
+> +	if ((status & mask) == mask)
+> +		return 0;
+> +
+> +	stop = jiffies + timeout;
+> +
+> +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> +again:
+> +		timeout = stop - jiffies;
+> +		if ((long)timeout <= 0)
+> +			return -ETIME;
+> +		rc = wait_event_interruptible_timeout(*queue,
+> +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> +					       &canceled),
+> +			timeout);
+> +		if (rc > 0) {
+> +			if (canceled)
+> +				return -ECANCELED;
+> +			return 0;
+> +		}
+> +		if (rc == -ERESTARTSYS && freezing(current)) {
+> +			clear_thread_flag(TIF_SIGPENDING);
+> +			goto again;
+> +		}
+> +	} else {
+> +		do {
+> +			tpm_msleep(TPM_TIMEOUT);
+> +			status = chip->ops->status(chip);
+> +			if ((status & mask) == mask)
+> +				return 0;
+> +		} while (time_before(jiffies, stop));
+> +	}
+> +	return -ETIME;
+> +}
+> +
+>  static u8 vtpm_status(struct tpm_chip *chip)
+>  {
+>  	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
 > -- 
-> 1.8.3.1
+> 2.13.3
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-- RGB
+This commit caused a compiler warning because freezer.h was not included
+to xen-tpmfront.c. I manually fixed it.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Reviewed-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
