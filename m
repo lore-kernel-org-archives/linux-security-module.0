@@ -1,11 +1,11 @@
 From: james.l.morris@oracle.com (James Morris)
-Date: Sat, 21 Oct 2017 03:21:54 +0400 (+04)
-Subject: [PATCH 04/27] Restrict /dev/mem and /dev/kmem when the kernel
-	is locked down
-In-Reply-To: <150842466261.7923.14359746674406637357.stgit@warthog.procyon.org.uk>
+Date: Sat, 21 Oct 2017 03:22:41 +0400 (+04)
+Subject: [PATCH 05/27] kexec: Disable at runtime if the kernel is locked
+	down
+In-Reply-To: <150842466996.7923.17995994984545441369.stgit@warthog.procyon.org.uk>
 References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842466261.7923.14359746674406637357.stgit@warthog.procyon.org.uk>
-Message-ID: <alpine.LFD.2.20.1710210321440.9435@t440>
+	<150842466996.7923.17995994984545441369.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LFD.2.20.1710210322320.9435@t440>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -13,12 +13,17 @@ On Thu, 19 Oct 2017, David Howells wrote:
 
 > From: Matthew Garrett <matthew.garrett@nebula.com>
 > 
-> Allowing users to write to address space makes it possible for the kernel to
-> be subverted, avoiding module loading restrictions.  Prevent this when the
-> kernel has been locked down.
+> kexec permits the loading and execution of arbitrary code in ring 0, which
+> is something that lock-down is meant to prevent. It makes sense to disable
+> kexec in this situation.
+> 
+> This does not affect kexec_file_load() which can check for a signature on the
+> image to be booted.
 > 
 > Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
 > Signed-off-by: David Howells <dhowells@redhat.com>
+> Acked-by: Dave Young <dyoung@redhat.com>
+> cc: kexec at lists.infradead.org
 
 
 Reviewed-by: James Morris <james.l.morris@oracle.com>
