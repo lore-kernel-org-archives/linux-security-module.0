@@ -1,36 +1,61 @@
-From: jlee@suse.com (jlee at suse.com)
-Date: Sat, 21 Oct 2017 00:43:43 +0800
-Subject: [PATCH 18/27] bpf: Restrict kernel image access functions when
-	the kernel is locked down
-In-Reply-To: <19424.1508515402@warthog.procyon.org.uk>
-References: <20171020155748.kzrvg6565oxh6gmb@linux-rasp2>
-	<20171020024732.GJ3285@linux-l9pv.suse>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842476953.7923.18174368926573855810.stgit@warthog.procyon.org.uk>
-	<20171019221829.7m5nczg3ltqmhzom@ast-mbp>
-	<2582.1508486928@warthog.procyon.org.uk>
-	<19424.1508515402@warthog.procyon.org.uk>
-Message-ID: <20171020164343.e5mlq7ukskfjmlpp@linux-rasp2>
+From: kgold@linux.vnet.ibm.com (Ken Goldman)
+Date: Fri, 20 Oct 2017 14:02:33 -0400
+Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+	performance
+In-Reply-To: <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+	<5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+Message-ID: <7e0b3b9c-3daa-0f44-592a-8d40d0cb8cbf@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Oct 20, 2017 at 05:03:22PM +0100, David Howells wrote:
-> jlee at suse.com wrote:
+On 10/20/2017 10:42 AM, Alexander.Steffen at infineon.com wrote:
 > 
-> > I think that we don't need to lock down sys_bpf() now because
-> > we didn't lock down other interfaces for reading arbitrary
-> > address like /dev/mem and /dev/kmem.
-> 
-> Ummm...  See patch 4.  You even gave me a Reviewed-by for it ;-)
-> 
-> David
+> This seems to fail reliably with my SPI TPM 2.0. I get EIO when
+> trying to send large amounts of data, e.g. with TPM2_Hash, and
+> subsequent tests seem to take an unusual amount of time. More
+> analysis probably has to wait until November, since I am going to be
+> in Prague next week.
 
-hm... patch 4 only prevents write_mem() but not read_mem().
-Or I missed anything?
+I have a guess as to the cause of the failure.  Would it be possible for 
+you to test it?
 
-Thanks
-Joey Lee
+1 - My guess is that EIO is coming from here:
+
+static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+...
+	/* write last byte */
+	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
+	if (rc < 0)
+		goto out_err;
+
+	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+				&priv->int_queue, false) < 0) {
+		rc = -ETIME;
+		goto out_err;
+	}
+	status = tpm_tis_status(chip);
+	if (!itpm && (status & TPM_STS_DATA_EXPECT) != 0) {
+		rc = -EIO;
+		goto out_err;
+	}
+...
+
+Can you verify that this is the cause.
+
+2 - If that's the cause, I believe that there is a latent bug.  Expect 
+is not guaranteed to become false immediately.  It only occurs after the 
+TPM firmware has emptied the FIFO.  Thus, the tpm_tis_status() really 
+should be something like "wait_for_tpm_expect_false()", with a sleep loop.
+
+This missing wait has been in the code for a while.  If may just surface 
+now because the patch causes data to be written faster, and thus it 
+takes longer for the TPM to empty the FIFO and clear Expect.
+
+It also makes sense that it would occur more often on long commands.
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
