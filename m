@@ -1,46 +1,61 @@
 From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
-Date: Fri, 20 Oct 2017 17:19:14 -0200
-Subject: [PATCH 0/2] ima: change how MODULE_SIG_FORCE is checked on modules
-	checking policy
-Message-ID: <cover.1508524595.git.brdeoliv@redhat.com>
+Date: Fri, 20 Oct 2017 17:19:15 -0200
+Subject: [PATCH 1/2] module: export module signature enforcement status
+In-Reply-To: <cover.1508524595.git.brdeoliv@redhat.com>
+References: <cover.1508524595.git.brdeoliv@redhat.com>
+Message-ID: <5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patchset ensure that IMA's modules checking policy:
+A static variable sig_enforce is used as status var to indicate the real
+value of CONFIG_MODULE_SIG_FORCE, once this one is set the var will hold
+true, but if the CONFIG is not set the status var will hold whatever
+value is present in the module.sig_enforce kernel cmdline param: true
+when =1 and false when =0 or not present.
 
-    measure func=MODULE_CHECK uid=0
+Considering this cmdline param take place over the CONFIG value when
+it's not set, other places in the kernel could missbehave since they
+would have only the CONFIG_MODULE_SIG_FORCE value to rely on. Exporting
+this status var allows the kernel to rely in the effective value of
+module signature enforcement, being it from CONFIG value or cmdline
+param.
 
-rely on the correct value of CONFIG_MODULE_SIG_FORCE, since the way it
-is today the code completely ignores the module.sig_enforce cmdline
-param, which behaves in a OR logic with the CONFIG value
-(CONFIG_MODULE_SIG_FORCE || module.sig_enforce). That said, everytime a
-module would load, in the current checking code, when the kernel was not
-compiled with the CONFIG set the call to init_module syscall fails with
--EACCES:
+Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
+---
+ include/linux/module.h | 2 ++
+ kernel/module.c        | 8 ++++++++
+ 2 files changed, 10 insertions(+)
 
-# strace -f -v modprobe <any-module> | grep init_module
-init_module(0x55b9bcc9bba0, 17763, "") = -1 EACCES (Permission denied)
-
-With this patchset the result would rely on the module.sig_enforce
-cmdline as well. Once the CONFIG is not set, but the param is, the
-result would be 'success', as it should be:
-
-# strace -f -v modprobe <any-module> | grep init_module
-init_module(0x7f9602d6e010, 386646, "") = 0
-
-The patchset was tested in two different kernels: 4.13.6 (Fedora 27) and
-4.14.0-rc4 (integrity-next tree)
-
-Bruno E. O. Meneguele (2):
-  module: export module signature enforcement status
-  ima: check signature enforcement against cmdline param instead of
-    CONFIG
-
- include/linux/module.h            | 2 ++
- kernel/module.c                   | 8 ++++++++
- security/integrity/ima/ima_main.c | 6 +++---
- 3 files changed, 13 insertions(+), 3 deletions(-)
-
+diff --git a/include/linux/module.h b/include/linux/module.h
+index fe5aa3736707..ddfe17e3a85c 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -806,4 +806,6 @@ static inline bool module_sig_ok(struct module *module)
+ }
+ #endif	/* CONFIG_MODULE_SIG */
+ 
++bool is_module_sig_enforced(void);
++
+ #endif /* _LINUX_MODULE_H */
+diff --git a/kernel/module.c b/kernel/module.c
+index de66ec825992..b93c7ff44066 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -278,6 +278,14 @@ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+ module_param(sig_enforce, bool_enable_only, 0644);
+ #endif /* !CONFIG_MODULE_SIG_FORCE */
+ 
++/* Export sig_enforce kernel cmdline parameter to allow other subsystems rely
++ * on that instead of directly to CONFIG_MODULE_SIG_FORCE config. */
++bool is_module_sig_enforced(void)
++{
++	return sig_enforce;
++}
++EXPORT_SYMBOL(is_module_sig_enforced);
++
+ /* Block module loading/unloading? */
+ int modules_disabled = 0;
+ core_param(nomodule, modules_disabled, bint, 0);
 -- 
 2.13.6
 
