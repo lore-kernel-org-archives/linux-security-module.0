@@ -1,130 +1,72 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Thu, 19 Oct 2017 22:34:37 -0400
-Subject: [PATCH GHAK16 V5 00/10] capabilities: do not audit log
-	BPRM_FCAPS on set*id
-In-Reply-To: <alpine.LFD.2.20.1710201229350.11454@t440.gateway.2wire.net>
-References: <cover.1507769413.git.rgb@redhat.com>
-	<20171019130809.2farwdz3uav6vlp3@madcap2.tricolour.ca>
-	<alpine.LFD.2.20.1710201229350.11454@t440.gateway.2wire.net>
-Message-ID: <20171020023437.eani5puqd3a67lme@madcap2.tricolour.ca>
+From: jlee@suse.com (joeyli)
+Date: Fri, 20 Oct 2017 10:47:32 +0800
+Subject: [PATCH 18/27] bpf: Restrict kernel image access functions when
+	the kernel is locked down
+In-Reply-To: <20171019221829.7m5nczg3ltqmhzom@ast-mbp>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842476953.7923.18174368926573855810.stgit@warthog.procyon.org.uk>
+	<20171019221829.7m5nczg3ltqmhzom@ast-mbp>
+Message-ID: <20171020024732.GJ3285@linux-l9pv.suse>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-10-20 01:29, James Morris wrote:
-> On Thu, 19 Oct 2017, Richard Guy Briggs wrote:
-> 
-> > On 2017-10-11 20:57, Richard Guy Briggs wrote:
-> > > The audit subsystem is adding a BPRM_FCAPS record when auditing setuid
-> > > application execution (SYSCALL execve). This is not expected as it was
-> > > supposed to be limited to when the file system actually had capabilities
-> > > in an extended attribute.  It lists all capabilities making the event
-> > > really ugly to parse what is happening.  The PATH record correctly
-> > > records the setuid bit and owner.  Suppress the BPRM_FCAPS record on
-> > > set*id.
-> > 
-> > <crickets>
-> > 
-> > Serge?  James?  Can one of you two take this via your trees since Paul
-> > has backed down citing (reasonably) that it is mostly capabilities
-> > patches rather than audit?
-> 
-> Sure, I will take it.
+Hi Alexei,
 
-Thanks Jaume!
+Thanks for your review! 
 
-> > > See: https://github.com/linux-audit/audit-kernel/issues/16
-> > > 
-> > > The first to eighth patches just massage the logic to make it easier to
-> > > understand.  Some of them could be squashed together.
-> > > 
-> > > The patch that resolves this issue is the ninth.  
-> > > 
-> > > It would be possible to address the original issue with a change of
-> > > 	"!uid_eq(new->euid, root_uid) || !uid_eq(new->uid, root_uid)"
-> > > to
-> > > 	"!(uid_eq(new->euid, root_uid) || uid_eq(new->uid, root_uid))"
-> > > but it took me long enough to understand this logic that I don't think
-> > > I'd be doing any favours by leaving it this difficult to understand.
-> > > 
-> > > The final patch attempts to address all the conditions that need logging
-> > > based on mailing list conversations, recoginizing there is probably some
-> > > duplication in the logic.
-> > > 
-> > > Passes: (ltp 20170516)
-> > > 	./runltp -f syscalls -s cap
-> > > 	./runltp -f securebits
-> > > 	./runltp -f cap_bounds
-> > > 	./runltp -f filecaps
-> > > 	make TARGETS=capabilities kselftest (when run locally, fails over nfs)
-> > > 
-> > > Since this is mostly capabilities related rather than audit, could this go
-> > > through the capabilites (Serge) or security (James) trees please?  Thanks!
-> > > 
-> > > v5
-> > >   rebase on linux-security/next 4.14-rc2
-> > >   added comment block header to handle_privileged_root()
-> > >   moved comment in handle_privileged_root()
-> > >   moved root_privileged() check back into handle_privileged_root()
-> > > 
-> > > v4
-> > >   rebase on kees' 4.13 commoncap changes
-> > >   minor local func renames
-> > > 
-> > > v3
-> > >   refactor into several sub-functions
-> > >   convert most macros to inline funcs
-> > > 
-> > > v2
-> > >   use macros to clarify intent of calculations
-> > >   fix original logic error
-> > >   address additional audit logging conditions
-> > > 
-> > > Richard Guy Briggs (10):
-> > >   capabilities: factor out cap_bprm_set_creds privileged root
-> > >   capabilities: intuitive names for cap gain status
-> > >   capabilities: rename has_cap to has_fcap
-> > >   capabilities: use root_priveleged inline to clarify logic
-> > >   capabilities: use intuitive names for id changes
-> > >   capabilities: move audit log decision to function
-> > >   capabilities: remove a layer of conditional logic
-> > >   capabilities: invert logic for clarity
-> > >   capabilities: fix logic for effective root or real root
-> > >   capabilities: audit log other surprising conditions
-> > > 
-> > >  security/commoncap.c | 193 ++++++++++++++++++++++++++++++++++-----------------
-> > >  1 file changed, 128 insertions(+), 65 deletions(-)
-> > > 
-> > > -- 
-> > > 1.8.3.1
-> > > 
-> > > --
-> > > To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> > > the body of a message to majordomo at vger.kernel.org
-> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Thu, Oct 19, 2017 at 03:18:30PM -0700, Alexei Starovoitov wrote:
+> On Thu, Oct 19, 2017 at 03:52:49PM +0100, David Howells wrote:
+> > From: Chun-Yi Lee <jlee@suse.com>
 > > 
-> > - RGB
+> > There are some bpf functions can be used to read kernel memory:
+> > bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
+> > private keys in kernel memory (e.g. the hibernation image signing key) to
+> > be read by an eBPF program.  Prohibit those functions when the kernel is
+> > locked down.
 > > 
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
+> > Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: netdev at vger.kernel.org
+> > ---
 > > 
+> >  kernel/trace/bpf_trace.c |   11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > index dc498b605d5d..35e85a3fdb37 100644
+> > --- a/kernel/trace/bpf_trace.c
+> > +++ b/kernel/trace/bpf_trace.c
+> > @@ -65,6 +65,11 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
+> >  {
+> >  	int ret;
+> >  
+> > +	if (kernel_is_locked_down("BPF")) {
+> > +		memset(dst, 0, size);
+> > +		return -EPERM;
+> > +	}
 > 
-> -- 
-> James Morris
-> <james.l.morris@oracle.com>
-> 
+> That doesn't help the lockdown purpose.
+> If you don't trust the root the only way to prevent bpf read
+> memory is to disable the whole thing.
 
-- RGB
+Not totally untrust root, I don't want that root reads
+arbitrary memory address through bpf.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Is it not enough to lock down bpf_probe_read, bpf_probe_write_user
+and bpf_trace_printk?
+
+> Have a single check in sys_bpf() to disallow everything if kernel_is_locked_down()
+> and don't add overhead to critical path like bpf_probe_read().
+>
+
+Yes, it give overhead to bpf_probe_read but it prevents arbitrary
+memory read.
+
+Another idea is signing bpf bytecode then verifying signture when
+loading to kernel. 
+
+Thanks a lot!
+Joey Lee 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
