@@ -1,14 +1,31 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 20 Oct 2017 15:16:31 -0700
-Subject: Can we delete audit_log_secctx()?
-Message-ID: <1969680b-0239-e6fb-eebd-199467596306@schaufler-ca.com>
+From: james.l.morris@oracle.com (James Morris)
+Date: Sat, 21 Oct 2017 03:19:14 +0400 (+04)
+Subject: [PATCH 01/27] Add the ability to lock down access to the running
+	kernel image
+In-Reply-To: <150842463996.7923.6815305873334959305.stgit@warthog.procyon.org.uk>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842463996.7923.6815305873334959305.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LFD.2.20.1710210318410.9435@t440>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The function audit_log_secctx() is unused and cannot be
-made safe for the stacked/namespaced security module case.
-It, alas, shows up in the KAPI. Can this derelict code be
-removed? I'll provide a patch it it can go.
+On Thu, 19 Oct 2017, David Howells wrote:
+
+> Provide a single call to allow kernel code to determine whether the system
+> should be locked down, thereby disallowing various accesses that might
+> allow the running kernel image to be changed including the loading of
+> modules that aren't validly signed with a key we recognise, fiddling with
+> MSR registers and disallowing hibernation,
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+
+
+Acked-by: James Morris <james.l.morris@oracle.com>
+
+
+-- 
+James Morris
+<james.l.morris@oracle.com>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
