@@ -1,64 +1,31 @@
-From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
-Date: Fri, 20 Oct 2017 17:19:15 -0200
-Subject: [PATCH 1/2] module: export module signature enforcement status
-In-Reply-To: <cover.1508524595.git.brdeoliv@redhat.com>
-References: <cover.1508524595.git.brdeoliv@redhat.com>
-Message-ID: <5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
+From: dhowells@redhat.com (David Howells)
+Date: Fri, 20 Oct 2017 21:48:16 +0100
+Subject: [PATCH 12/27] x86/msr: Restrict MSR access when the kernel is
+	locked down
+In-Reply-To: <20171020190939.569cedd2@alans-desktop>
+References: <20171020190939.569cedd2@alans-desktop>
+	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842472452.7923.2592278090192179002.stgit@warthog.procyon.org.uk>
+Message-ID: <18499.1508532496@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-A static variable sig_enforce is used as status var to indicate the real
-value of CONFIG_MODULE_SIG_FORCE, once this one is set the var will hold
-true, but if the CONFIG is not set the status var will hold whatever
-value is present in the module.sig_enforce kernel cmdline param: true
-when =1 and false when =0 or not present.
+Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
 
-Considering this cmdline param take place over the CONFIG value when
-it's not set, other places in the kernel could missbehave since they
-would have only the CONFIG_MODULE_SIG_FORCE value to rely on. Exporting
-this status var allows the kernel to rely in the effective value of
-module signature enforcement, being it from CONFIG value or cmdline
-param.
+> There are a load of standard tools that use this so I think you are going
+> to need a whitelist. Can you at least log *which* MSR in the failing case
+> so a whitelist can be built over time ?
 
-Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
----
- include/linux/module.h | 2 ++
- kernel/module.c        | 8 ++++++++
- 2 files changed, 10 insertions(+)
+Probably.  Is it just the file position for msr_write()?  Should the register
+number increment with the copy loop?
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index fe5aa3736707..ddfe17e3a85c 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -806,4 +806,6 @@ static inline bool module_sig_ok(struct module *module)
- }
- #endif	/* CONFIG_MODULE_SIG */
- 
-+bool is_module_sig_enforced(void);
-+
- #endif /* _LINUX_MODULE_H */
-diff --git a/kernel/module.c b/kernel/module.c
-index de66ec825992..b93c7ff44066 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -278,6 +278,14 @@ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
- module_param(sig_enforce, bool_enable_only, 0644);
- #endif /* !CONFIG_MODULE_SIG_FORCE */
- 
-+/* Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-+ * on that instead of directly to CONFIG_MODULE_SIG_FORCE config. */
-+bool is_module_sig_enforced(void)
-+{
-+	return sig_enforce;
-+}
-+EXPORT_SYMBOL(is_module_sig_enforced);
-+
- /* Block module loading/unloading? */
- int modules_disabled = 0;
- core_param(nomodule, modules_disabled, bint, 0);
--- 
-2.13.6
+What about for the X86_IOC_WRMSR_REGS ioctl?  What's the reg number there?
 
+And do you know where wrmsr_safe_regs() might be found?  I can see things
+using it and exporting it, but no implementation, so I'm guessing it's
+macroised somewhere.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
