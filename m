@@ -1,35 +1,31 @@
-From: bill.c.roberts@gmail.com (William Roberts)
-Date: Fri, 20 Oct 2017 18:05:56 -0700
-Subject: Can we delete audit_log_secctx()?
-In-Reply-To: <1969680b-0239-e6fb-eebd-199467596306@schaufler-ca.com>
-References: <1969680b-0239-e6fb-eebd-199467596306@schaufler-ca.com>
-Message-ID: <CAFftDdq7ED6w=56mY3rcytMRWqSSN16H56nUW5cq8qdLvJEoEA@mail.gmail.com>
+From: james.l.morris@oracle.com (James Morris)
+Date: Sat, 21 Oct 2017 06:11:34 +0400 (+04)
+Subject: [PATCH 25/27] Lock down /proc/kcore
+In-Reply-To: <150842482228.7923.9630520914833154257.stgit@warthog.procyon.org.uk>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842482228.7923.9630520914833154257.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LFD.2.20.1710210609270.22771@t440>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Oct 20, 2017 at 3:16 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> The function audit_log_secctx() is unused and cannot be
-> made safe for the stacked/namespaced security module case.
-> It, alas, shows up in the KAPI. Can this derelict code be
-> removed? I'll provide a patch it it can go.
+On Thu, 19 Oct 2017, David Howells wrote:
 
-It seems to be unused...
+> Disallow access to /proc/kcore when the kernel is locked down to prevent
+> access to cryptographic data.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-http://elixir.free-electrons.com/linux/v4.14-rc5/ident/audit_log_secctx
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 
-
->
-> --
-> Linux-audit mailing list
-> Linux-audit at redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
-
+I have to wonder, though, after everything is locked down, how easy will 
+it be for new things to slip in which need to be included in the lockdown, 
+but are not.
 
 
 -- 
-Respectfully,
+James Morris
+<james.l.morris@oracle.com>
 
-William C Roberts
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
