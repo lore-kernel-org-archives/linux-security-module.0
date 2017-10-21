@@ -1,48 +1,65 @@
-From: jlee@suse.com (joeyli)
-Date: Sat, 21 Oct 2017 12:39:19 +0800
-Subject: [PATCH 12/27] x86/msr: Restrict MSR access when the kernel is
-	locked down
-In-Reply-To: <18499.1508532496@warthog.procyon.org.uk>
-References: <20171020190939.569cedd2@alans-desktop>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842472452.7923.2592278090192179002.stgit@warthog.procyon.org.uk>
-	<18499.1508532496@warthog.procyon.org.uk>
-Message-ID: <20171021043919.GF3285@linux-l9pv.suse>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sat, 21 Oct 2017 19:59:08 +0900
+Subject: [PATCH 0/8] CaitSith LSM module
+In-Reply-To: <201705211459.EGB48959.OFVFOSHtFJMLQO@I-love.SAKURA.ne.jp>
+References: <201611231531.DGH52135.QtFVOFJLOHFOSM@I-love.SAKURA.ne.jp>
+	<2908442d-90f1-7fa2-24ff-0833f6bd2d95@canonical.com>
+	<201705211359.BBE26079.LSJFOMHFOVQFOt@I-love.SAKURA.ne.jp>
+	<8c6da617-3325-d60d-805f-5e5c1fa322c6@canonical.com>
+	<201705211459.EGB48959.OFVFOSHtFJMLQO@I-love.SAKURA.ne.jp>
+Message-ID: <201710211959.CEC65165.SQJOLOFVOtFFHM@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Oct 20, 2017 at 09:48:16PM +0100, David Howells wrote:
-> Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+Tetsuo Handa wrote:
+> John Johansen wrote:
+> > On 05/20/2017 09:59 PM, Tetsuo Handa wrote:
+> > > John Johansen wrote:
+> > >> On 11/22/2016 10:31 PM, Tetsuo Handa wrote:
+> > >>> Tetsuo Handa wrote:
+> > >>>> John Johansen wrote:
+> > >>>>>> In order to minimize the burden of reviewing, this patchset implements
+> > >>>>>> only functionality of checking program execution requests (i.e. execve()
+> > >>>>>> system call) using pathnames. I'm planning to add other functionalities
+> > >>>>>> after this version got included into mainline. You can find how future
+> > >>>>>> versions of CaitSith will look like at http://caitsith.osdn.jp/ .
+> > >>>>>>
+> > >>>>> Thanks I've started working my way through this, but it is going to take
+> > >>>>> me a while.
+> > >>>>>
+> > >>>>
+> > >>>> Thank you for your time.
+> > >>>
+> > >>> May I hear the status? Is there something I can do other than waiting?
+> > >>>
+> > >> progressing very slowly, I have some time over the next few days as its a
+> > >> long weekend here in the US some hopefully I can finish this up
+> > >>
+> > > 
+> > > May I hear the status again?
+> > > 
+> > Yes, sorry. I just haven't had time too look at it recently. I am sorry that
+> > it has been so long. I am just going to have to book a day off and do it. I'll
+> > see if I can't get a day next week (getting late but I can try or the following)
 > 
-> > There are a load of standard tools that use this so I think you are going
-> > to need a whitelist. Can you at least log *which* MSR in the failing case
-> > so a whitelist can be built over time ?
+> No problem. ;-) I assume reviewing a new module takes at least one year.
+> Thank you for remembering.
 > 
-[...snip]
-> 
-> And do you know where wrmsr_safe_regs() might be found?  I can see things
-> using it and exporting it, but no implementation, so I'm guessing it's
-> macroised somewhere.
 
-Looks the definition is in 
+I'm still fighting with OOM killer related problems at MM subsystem. ;-)
 
-arch/x86/lib/msr-reg.S
+As one year elapsed since I proposed CaitSith for upstream, I'd like to
+hear the status again. I looked at
+http://schd.ws/hosted_files/lss2017/8b/201709-LinuxSecuritySummit-Stacking.pdf .
+How is ETA for Security Module Stacking? Is it a half year or so?
 
-#ifdef CONFIG_X86_64
-/*
- * int {rdmsr,wrmsr}_safe_regs(u32 gprs[8]);
- *
- * reg layout: u32 gprs[eax, ecx, edx, ebx, esp, ebp, esi, edi]
- *
- */
-.macro op_safe_regs op
-ENTRY(\op\()_safe_regs)
-        pushq %rbx
-        pushq %r12
-...
+If it is likely take longer, should I resume proposing CaitSith for now
+as one of "Minor modules" except security_module_enable() check added
+until Security Module Stacking work completes? Or should I wait for
+completion of stacking work? I want to know it, for recent proposals are
+rather staying silent.
 
-Regards
-Joey Lee
+Regards.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
