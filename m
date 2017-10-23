@@ -1,67 +1,72 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Mon, 23 Oct 2017 10:31:39 -0600
-Subject: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
-	in-kernel API
-In-Reply-To: <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
-	<cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
-Message-ID: <20171023163139.GA17394@obsidianresearch.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 23 Oct 2017 11:54:43 -0400
+Subject: [PATCH 07/27] kexec_file: Disable at runtime if securelevel has
+	been set
+In-Reply-To: <150842468754.7923.10037578333644594134.stgit@warthog.procyon.org.uk>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842468754.7923.10037578333644594134.stgit@warthog.procyon.org.uk>
+Message-ID: <1508774083.3639.124.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Oct 23, 2017 at 10:07:31AM -0400, Stefan Berger wrote:
-
-> >-int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
-> >+int tpm_pcr_extend(int pcr_idx, const u8 *hash)
-> >  {
+On Thu, 2017-10-19 at 15:51 +0100, David Howells wrote:
+> From: Chun-Yi Lee <joeyli.kernel@gmail.com>
 > 
+> When KEXEC_VERIFY_SIG is not enabled, kernel should not loads image
+> through kexec_file systemcall if securelevel has been set.
+
+The patch title and description needs to be updated to refer to
+lockdown, not securelevel.
+
+As previously mentioned the last time these patches were posted, this
+leaves out testing to see if the integrity subsystem is enabled.
+
+Commit 503ceaef8e2e "ima: define a set of appraisal rules requiring
+file signatures" was upstreamed. ?An additional patch could force
+these rules to be added to the custom policy, if lockdown is enabled.
+?This and other patches in this series could then check to see if
+is_ima_appraise_enabled() is true.
+
+Mimi
+
+
+> This code was showed in Matthew's patch but not in git:
+> https://lkml.org/lkml/2015/3/13/778
 > 
-> I think every kernel internal TPM driver API should be called with the
-> tpm_chip as a parameter. This is in foresight of namespacing of IMA where we
-> want to provide the flexibility of passing a dedicated vTPM to each
-> namespace and IMA would use the chip as a parameter to all of these
-> functions to talk to the right tpm_vtpm_proxy instance. From that
-> perspective this patch goes into the wrong direction.
+> Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: kexec at lists.infradead.org
+> ---
+> 
+>  kernel/kexec_file.c |    7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 9f48f4412297..ff6523f2dcc2 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -255,6 +255,13 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+>  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+>  		return -EPERM;
+> 
+> +	/* Don't permit images to be loaded into trusted kernels if we're not
+> +	 * going to verify the signature on them
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) &&
+> +	    kernel_is_locked_down("kexec of unsigned images"))
+> +		return -EPERM;
+> +
+>  	/* Make sure we have a legal set of flags */
+>  	if (flags != (flags & KEXEC_FILE_FLAGS))
+>  		return -EINVAL;
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-Yes, we should ultimately try and get to there.. Someday the
-tpm_chip_find_get() will need to become namespace aware.
-
-But this patch is along the right path, eliminating the chip_num is
-the right thing to do..
-
-> >-	tpm2 = tpm_is_tpm2(TPM_ANY_NUM);
-> >+	tpm2 = tpm_is_tpm2();
-> >  	if (tpm2 < 0)
-> >  		return tpm2;
-> >
-> >@@ -1008,7 +1007,7 @@ static int trusted_instantiate(struct key *key,
-> >  	switch (key_cmd) {
-> >  	case Opt_load:
-> >  		if (tpm2)
-> >-			ret = tpm_unseal_trusted(TPM_ANY_NUM, payload, options);
-> >+			ret = tpm_unseal_trusted(payload, options);
-
-Sequences like this are sketchy.
-
-It should be
-
-struct tpm_chip *tpm;
-
-tpm = tpm_chip_find_get()
-tpm2 = tpm_is_tpm2(tpm);
-
-[..]
-
-if (tpm2)
-     ret = tpm_unseal_trusted(tpm, payload, options);
-
-[..]
-
-tpm_put_chip(tpm);
-
-As hot plug could alter the 'tpm' between the two tpm calls.
-
-Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
