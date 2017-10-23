@@ -1,49 +1,46 @@
 From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
-Date: Mon, 23 Oct 2017 14:43:02 -0200
-Subject: [PATCH v2 2/2] ima: check signature enforcement against cmdline param
-	instead of CONFIG
-In-Reply-To: <cover.1508776704.git.brdeoliv@redhat.com>
-References: <cover.1508776704.git.brdeoliv@redhat.com>
-Message-ID: <9fee5f63971c31870a345b2619251f23b4f7462e.1508776704.git.brdeoliv@redhat.com>
+Date: Mon, 23 Oct 2017 14:43:00 -0200
+Subject: [PATCH v2 0/2] ima: change how MODULE_SIG_FORCE is checked on modules
+	checking policy
+Message-ID: <cover.1508776704.git.brdeoliv@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When the user requests MODULE_CHECK policy and its kernel is compiled
-with CONFIG_MODULE_SIG_FORCE not set, all modules would not load, just
-those loaded in initram time. One option the user would have would be
-set a kernel cmdline param (module.sig_enforce) to true, but the IMA
-module check code doesn't rely on this value, it checks just
-CONFIG_MODULE_SIG_FORCE.
+This patchset ensure that IMA's modules checking policy:
 
-This patch solves this problem checking for the exported value of
-module.sig_enforce cmdline param intead of CONFIG_MODULE_SIG_FORCE,
-which holds the effective value (CONFIG || param).
+    measure func=MODULE_CHECK uid=0
 
-Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
----
- security/integrity/ima/ima_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+rely on the correct value of CONFIG_MODULE_SIG_FORCE, since the way it
+is today the code completely ignores the module.sig_enforce cmdline
+param, which behaves in a OR logic with the CONFIG value
+(CONFIG_MODULE_SIG_FORCE || module.sig_enforce). That said, everytime a
+module would load, in the current checking code, when the kernel was not
+compiled with the CONFIG set the call to init_module syscall fails with
+-EACCES:
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index e4ab8ef8016e..d11a7fcc5c8b 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -356,12 +356,12 @@ void ima_post_path_mknod(struct dentry *dentry)
-  */
- int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- {
-+	bool sig_enforce = is_module_sig_enforced();
-+
- 	if (!file && read_id == READING_MODULE) {
--#ifndef CONFIG_MODULE_SIG_FORCE
--		if ((ima_appraise & IMA_APPRAISE_MODULES) &&
-+		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
- 		    (ima_appraise & IMA_APPRAISE_ENFORCE))
- 			return -EACCES;	/* INTEGRITY_UNKNOWN */
--#endif
- 		return 0;	/* We rely on module signature checking */
- 	}
- 	return 0;
+# strace -f -v modprobe <any-module> | grep init_module
+init_module(0x55b9bcc9bba0, 17763, "") = -1 EACCES (Permission denied)
+
+With this patchset the result would rely on the module.sig_enforce
+cmdline as well. Once the CONFIG is not set, but the param is, the
+result would be 'success', as it should be:
+
+# strace -f -v modprobe <any-module> | grep init_module
+init_module(0x7f9602d6e010, 386646, "") = 0
+
+The patchset was tested in two different kernels: 4.13.6 (Fedora 27) and
+4.14.0-rc4 (integrity-next tree)
+
+Bruno E. O. Meneguele (2):
+  module: export module signature enforcement status
+  ima: check signature enforcement against cmdline param instead of
+    CONFIG
+
+ include/linux/module.h            |  2 ++
+ kernel/module.c                   | 10 ++++++++++
+ security/integrity/ima/ima_main.c |  6 +++---
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
 -- 
 2.13.6
 
