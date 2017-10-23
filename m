@@ -1,74 +1,53 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 23 Oct 2017 08:56:55 -0400
-Subject: [PATCH 1/2] module: export module signature enforcement status
-In-Reply-To: <5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
+Date: Mon, 23 Oct 2017 08:57:15 -0400
+Subject: [PATCH 2/2] ima: check signature enforcement against cmdline
+	param instead of CONFIG
+In-Reply-To: <2530819c121999268c2c40ad9b907d1ca7726919.1508524595.git.brdeoliv@redhat.com>
 References: <cover.1508524595.git.brdeoliv@redhat.com>
-	<5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
-Message-ID: <1508763415.3639.91.camel@linux.vnet.ibm.com>
+	<2530819c121999268c2c40ad9b907d1ca7726919.1508524595.git.brdeoliv@redhat.com>
+Message-ID: <1508763435.3639.92.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Fri, 2017-10-20 at 17:19 -0200, Bruno E. O. Meneguele wrote:
-> A static variable sig_enforce is used as status var to indicate the real
-> value of CONFIG_MODULE_SIG_FORCE, once this one is set the var will hold
-> true, but if the CONFIG is not set the status var will hold whatever
-> value is present in the module.sig_enforce kernel cmdline param: true
-> when =1 and false when =0 or not present.
+> When the user requests MODULE_CHECK policy and its kernel is compiled
+> with CONFIG_MODULE_SIG_FORCE not set, all modules would not load, just
+> those loaded in initram time. One option the user would have would be
+> set a kernel cmdline param (module.sig_enforce) to true, but the IMA
+> module check code doesn't rely on this value, it checks just
+> CONFIG_MODULE_SIG_FORCE.
 > 
-> Considering this cmdline param take place over the CONFIG value when
-> it's not set, other places in the kernel could missbehave since they
-
-^misbehave
-
-> would have only the CONFIG_MODULE_SIG_FORCE value to rely on. Exporting
-> this status var allows the kernel to rely in the effective value of
-> module signature enforcement, being it from CONFIG value or cmdline
-> param.
-
-Thanks!  There's a minor checkpatch warning below.
-
+> This patch solves this problem checking for the exported value of
+> module.sig_enforce cmdline param intead of CONFIG_MODULE_SIG_FORCE,
+> which holds the effective value (CONFIG || param).
+> 
 > Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
+
+Thanks!
 > ---
->  include/linux/module.h | 2 ++
->  kernel/module.c        | 8 ++++++++
->  2 files changed, 10 insertions(+)
+>  security/integrity/ima/ima_main.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index fe5aa3736707..ddfe17e3a85c 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -806,4 +806,6 @@ static inline bool module_sig_ok(struct module *module)
->  }
->  #endif	/* CONFIG_MODULE_SIG */
-> 
-> +bool is_module_sig_enforced(void);
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index e4ab8ef8016e..d11a7fcc5c8b 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -356,12 +356,12 @@ void ima_post_path_mknod(struct dentry *dentry)
+>   */
+>  int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+>  {
+> +	bool sig_enforce = is_module_sig_enforced();
 > +
->  #endif /* _LINUX_MODULE_H */
-> diff --git a/kernel/module.c b/kernel/module.c
-> index de66ec825992..b93c7ff44066 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -278,6 +278,14 @@ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
->  module_param(sig_enforce, bool_enable_only, 0644);
->  #endif /* !CONFIG_MODULE_SIG_FORCE */
-> 
-> +/* Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> + * on that instead of directly to CONFIG_MODULE_SIG_FORCE config. */
-
-Checkpatch complains. ?Please use the normal format:
-/*
-?*
-?*/
-
-> +bool is_module_sig_enforced(void)
-> +{
-> +	return sig_enforce;
-> +}
-> +EXPORT_SYMBOL(is_module_sig_enforced);
-> +
->  /* Block module loading/unloading? */
->  int modules_disabled = 0;
->  core_param(nomodule, modules_disabled, bint, 0);
+>  	if (!file && read_id == READING_MODULE) {
+> -#ifndef CONFIG_MODULE_SIG_FORCE
+> -		if ((ima_appraise & IMA_APPRAISE_MODULES) &&
+> +		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
+>  		    (ima_appraise & IMA_APPRAISE_ENFORCE))
+>  			return -EACCES;	/* INTEGRITY_UNKNOWN */
+> -#endif
+>  		return 0;	/* We rely on module signature checking */
+>  	}
+>  	return 0;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
