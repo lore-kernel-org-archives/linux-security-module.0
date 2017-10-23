@@ -1,98 +1,67 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 23 Oct 2017 11:59:47 -0400
-Subject: [RFC PATCH] ima: require secure_boot rules in lockdown mode
-Message-ID: <1508774387.3639.128.camel@linux.vnet.ibm.com>
+From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
+Date: Mon, 23 Oct 2017 14:43:01 -0200
+Subject: [PATCH v2 1/2] module: export module signature enforcement status
+In-Reply-To: <cover.1508776704.git.brdeoliv@redhat.com>
+References: <cover.1508776704.git.brdeoliv@redhat.com>
+Message-ID: <52c9c671996c472db9112affbbecfabfab09bad8.1508776704.git.brdeoliv@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Require the "secure_boot" rules, whether or not it is specified
-on the boot command line, for both the builtin and custom policies
-in secure boot lockdown mode.
+A static variable sig_enforce is used as status var to indicate the real
+value of CONFIG_MODULE_SIG_FORCE, once this one is set the var will hold
+true, but if the CONFIG is not set the status var will hold whatever
+value is present in the module.sig_enforce kernel cmdline param: true
+when =1 and false when =0 or not present.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Considering this cmdline param take place over the CONFIG value when
+it's not set, other places in the kernel could misbehave since they
+would have only the CONFIG_MODULE_SIG_FORCE value to rely on. Exporting
+this status var allows the kernel to rely in the effective value of
+module signature enforcement, being it from CONFIG value or cmdline
+param.
+
+Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
 ---
- security/integrity/ima/ima_policy.c | 46 +++++++++++++++++++++++++++----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+ include/linux/module.h |  2 ++
+ kernel/module.c        | 10 ++++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 95209a5f8595..81a7496171d0 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -196,9 +196,9 @@ static int __init policy_setup(char *str)
- 		if ((strcmp(p, "tcb") == 0) && !ima_policy)
- 			ima_policy = DEFAULT_TCB;
- 		else if (strcmp(p, "appraise_tcb") == 0)
--			ima_use_appraise_tcb = 1;
-+			ima_use_appraise_tcb = TRUE;
- 		else if (strcmp(p, "secure_boot") == 0)
--			ima_use_secure_boot = 1;
-+			ima_use_secure_boot = TRUE;
- 	}
+diff --git a/include/linux/module.h b/include/linux/module.h
+index fe5aa3736707..ddfe17e3a85c 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -806,4 +806,6 @@ static inline bool module_sig_ok(struct module *module)
+ }
+ #endif	/* CONFIG_MODULE_SIG */
  
- 	return 1;
-@@ -427,14 +427,21 @@ void ima_update_policy_flag(void)
-  */
- void __init ima_init_policy(void)
- {
--	int i, measure_entries, appraise_entries, secure_boot_entries;
-+	int i;
-+	int measure_entries = 0;
-+	int appraise_entries = 0;
-+	int secure_boot_entries = 0;
-+	bool kernel_locked_down = kernel_is_locked_down();
- 
- 	/* if !ima_policy set entries = 0 so we load NO default rules */
--	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
--	appraise_entries = ima_use_appraise_tcb ?
--			 ARRAY_SIZE(default_appraise_rules) : 0;
--	secure_boot_entries = ima_use_secure_boot ?
--			ARRAY_SIZE(secure_boot_rules) : 0;
-+	if (ima_policy)
-+		measure_entries = ARRAY_SIZE(dont_measure_rules);
++bool is_module_sig_enforced(void);
 +
-+	if (ima_use_appraise_tcb)
-+		appraise_entries = ARRAY_SIZE(default_appraise_rules);
-+
-+	if (ima_use_secure_boot || kernel_locked_down)
-+		secure_boot_entries = ARRAY_SIZE(secure_boot_rules);
+ #endif /* _LINUX_MODULE_H */
+diff --git a/kernel/module.c b/kernel/module.c
+index de66ec825992..d1c194b057a2 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -278,6 +278,16 @@ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+ module_param(sig_enforce, bool_enable_only, 0644);
+ #endif /* !CONFIG_MODULE_SIG_FORCE */
  
- 	for (i = 0; i < measure_entries; i++)
- 		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
-@@ -455,11 +462,26 @@ void __init ima_init_policy(void)
- 
- 	/*
- 	 * Insert the appraise rules requiring file signatures, prior to
--	 * any other appraise rules.
-+	 * any other appraise rules.  In secure boot lock-down mode, also
-+	 * require these appraise rules for custom policies.
- 	 */
--	for (i = 0; i < secure_boot_entries; i++)
--		list_add_tail(&secure_boot_rules[i].list,
--			      &ima_default_rules);
-+	for (i = 0; i < secure_boot_entries; i++) {
-+		struct ima_rule_entry *entry;
++/*
++ * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
++ * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
++ */
++bool is_module_sig_enforced(void)
++{
++	return sig_enforce;
++}
++EXPORT_SYMBOL(is_module_sig_enforced);
 +
-+		/* Include for builtin policies */
-+		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
-+
-+		/* Include for custom policies */
-+		if (kernel_locked_down) {
-+			entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+			if (entry) {
-+				memcpy(entry, &secure_boot_rules[i],
-+				       sizeof(*entry));
-+				INIT_LIST_HEAD(&entry->list);
-+				list_add_tail(&entry->list, &ima_policy_rules);
-+			}
-+		}
-+	}
- 
- 	for (i = 0; i < appraise_entries; i++) {
- 		list_add_tail(&default_appraise_rules[i].list,
+ /* Block module loading/unloading? */
+ int modules_disabled = 0;
+ core_param(nomodule, modules_disabled, bint, 0);
 -- 
-2.7.4
+2.13.6
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
