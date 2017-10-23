@@ -1,71 +1,75 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Mon, 23 Oct 2017 08:57:39 -0400
-Subject: [RFC PATCH 1/2] security, capabilities: Add CAP_SYS_MOUNT
-In-Reply-To: <20171021134303.20685-1-nicolas@belouin.fr>
-References: <20171021134303.20685-1-nicolas@belouin.fr>
-Message-ID: <1508763459.24902.1.camel@tycho.nsa.gov>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 23 Oct 2017 08:56:55 -0400
+Subject: [PATCH 1/2] module: export module signature enforcement status
+In-Reply-To: <5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
+References: <cover.1508524595.git.brdeoliv@redhat.com>
+	<5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
+Message-ID: <1508763415.3639.91.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2017-10-21 at 15:43 +0200, Nicolas Belouin wrote:
-> With CAP_SYS_ADMIN being bloated and inapropriate for actions such
-> as mounting/unmounting filesystems, the creation of a new capability
-> is needed.
-> CAP_SYS_MOUNT is meant to give a process the ability to call for
-> mount,
-> umount and umount2 syscalls.
-
-If adding a new capability isn't deemed acceptable, then another option
-would be to introduce LSM hooks where there isn't already coverage and
-implement finer-grained permission checks there.  In some cases, that
-already occurs for mount and umount*.  That also offers the possibility
-of taking the object of the operation into account, unlike capabilities
-which are only subject/process-based.
-
-
+On Fri, 2017-10-20 at 17:19 -0200, Bruno E. O. Meneguele wrote:
+> A static variable sig_enforce is used as status var to indicate the real
+> value of CONFIG_MODULE_SIG_FORCE, once this one is set the var will hold
+> true, but if the CONFIG is not set the status var will hold whatever
+> value is present in the module.sig_enforce kernel cmdline param: true
+> when =1 and false when =0 or not present.
 > 
-> Signed-off-by: Nicolas Belouin <nicolas@belouin.fr>
+> Considering this cmdline param take place over the CONFIG value when
+> it's not set, other places in the kernel could missbehave since they
+
+^misbehave
+
+> would have only the CONFIG_MODULE_SIG_FORCE value to rely on. Exporting
+> this status var allows the kernel to rely in the effective value of
+> module signature enforcement, being it from CONFIG value or cmdline
+> param.
+
+Thanks!  There's a minor checkpatch warning below.
+
+> Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
 > ---
-> ?include/uapi/linux/capability.h?????| 5 ++++-
-> ?security/selinux/include/classmap.h | 4 ++--
-> ?2 files changed, 6 insertions(+), 3 deletions(-)
+>  include/linux/module.h | 2 ++
+>  kernel/module.c        | 8 ++++++++
+>  2 files changed, 10 insertions(+)
 > 
-> diff --git a/include/uapi/linux/capability.h
-> b/include/uapi/linux/capability.h
-> index 230e05d35191..ce230aa6d928 100644
-> --- a/include/uapi/linux/capability.h
-> +++ b/include/uapi/linux/capability.h
-> @@ -365,8 +365,11 @@ struct vfs_ns_cap_data {
-> ?
-> ?#define CAP_AUDIT_READ		37
-> ?
-> +/* Allow mounting, unmounting filesystems */
-> ?
-> -#define CAP_LAST_CAP?????????CAP_AUDIT_READ
-> +#define CAP_SYS_MOUNT		38
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index fe5aa3736707..ddfe17e3a85c 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -806,4 +806,6 @@ static inline bool module_sig_ok(struct module *module)
+>  }
+>  #endif	/* CONFIG_MODULE_SIG */
+> 
+> +bool is_module_sig_enforced(void);
 > +
-> +#define CAP_LAST_CAP?????????CAP_SYS_MOUNT
-> ?
-> ?#define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
-> ?
-> diff --git a/security/selinux/include/classmap.h
-> b/security/selinux/include/classmap.h
-> index 35ffb29a69cb..a873dce97fd5 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -24,9 +24,9 @@
-> ?	????"audit_control", "setfcap"
-> ?
-> ?#define COMMON_CAP2_PERMS??"mac_override", "mac_admin", "syslog", \
-> -		"wake_alarm", "block_suspend", "audit_read"
-> +		"wake_alarm", "block_suspend", "audit_read",
-> "sys_mount"
-> ?
-> -#if CAP_LAST_CAP > CAP_AUDIT_READ
-> +#if CAP_LAST_CAP > CAP_SYS_MOUNT
-> ?#error New capability defined, please update COMMON_CAP2_PERMS.
-> ?#endif
-> ?
+>  #endif /* _LINUX_MODULE_H */
+> diff --git a/kernel/module.c b/kernel/module.c
+> index de66ec825992..b93c7ff44066 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -278,6 +278,14 @@ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+>  module_param(sig_enforce, bool_enable_only, 0644);
+>  #endif /* !CONFIG_MODULE_SIG_FORCE */
+> 
+> +/* Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+> + * on that instead of directly to CONFIG_MODULE_SIG_FORCE config. */
+
+Checkpatch complains. ?Please use the normal format:
+/*
+?*
+?*/
+
+> +bool is_module_sig_enforced(void)
+> +{
+> +	return sig_enforce;
+> +}
+> +EXPORT_SYMBOL(is_module_sig_enforced);
+> +
+>  /* Block module loading/unloading? */
+>  int modules_disabled = 0;
+>  core_param(nomodule, modules_disabled, bint, 0);
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
