@@ -1,28 +1,22 @@
 From: dhowells@redhat.com (David Howells)
-Date: Mon, 23 Oct 2017 15:53:00 +0100
-Subject: [PATCH 18/27] bpf: Restrict kernel image access functions when
-	the kernel is locked down
-In-Reply-To: <20171020164343.e5mlq7ukskfjmlpp@linux-rasp2>
-References: <20171020164343.e5mlq7ukskfjmlpp@linux-rasp2>
-	<20171020155748.kzrvg6565oxh6gmb@linux-rasp2>
-	<20171020024732.GJ3285@linux-l9pv.suse>
+Date: Mon, 23 Oct 2017 15:56:57 +0100
+Subject: [PATCH 25/27] Lock down /proc/kcore
+In-Reply-To: <alpine.LFD.2.20.1710210609270.22771@t440>
+References: <alpine.LFD.2.20.1710210609270.22771@t440>
 	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842476953.7923.18174368926573855810.stgit@warthog.procyon.org.uk>
-	<20171019221829.7m5nczg3ltqmhzom@ast-mbp>
-	<2582.1508486928@warthog.procyon.org.uk>
-	<19424.1508515402@warthog.procyon.org.uk>
-Message-ID: <21530.1508770380@warthog.procyon.org.uk>
+	<150842482228.7923.9630520914833154257.stgit@warthog.procyon.org.uk>
+Message-ID: <22790.1508770617@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-jlee at suse.com wrote:
+James Morris <james.l.morris@oracle.com> wrote:
 
-> hm... patch 4 only prevents write_mem() but not read_mem().
-> Or I missed anything?
+> I have to wonder, though, after everything is locked down, how easy will 
+> it be for new things to slip in which need to be included in the lockdown, 
+> but are not.
 
-Actually, yes, as it happens, patch 11 prevents you from even opening /dev/mem
-and /dev/kmem by locking down open of /dev/port.  So I've moved this bit to
-patch 4, simplified and posted a new variant for patch 4.
+That's always a possibility, and short of reviewing every change, particularly
+in the drivers, I'm not sure how to prevent it.
 
 David
 --
