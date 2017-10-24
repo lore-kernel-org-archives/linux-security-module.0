@@ -1,67 +1,293 @@
-From: ethan.kernel@gmail.com (Ethan Zhao)
-Date: Tue, 24 Oct 2017 18:48:44 +0800
-Subject: [PATCH 04/27] Restrict /dev/mem and /dev/kmem when the kernel is
-	locked down
-In-Reply-To: <18778.1508769258@warthog.procyon.org.uk>
-References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842466261.7923.14359746674406637357.stgit@warthog.procyon.org.uk>
-	<18778.1508769258@warthog.procyon.org.uk>
-Message-ID: <CABawtvMWhHJHtog9BWNVJ3Xk-ipOhPp+TGSVNjjZD27QAfB+Nw@mail.gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 24 Oct 2017 15:45:56 +0200
+Subject: [PATCH v4 1/4] tpm: move wait_for_tpm_stat() to respective
+	driver files
+In-Reply-To: <67d5b797-17b6-6247-1f0d-c62c09967f87@linux.vnet.ibm.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+	<20171017203232.2262-2-nayna@linux.vnet.ibm.com>
+	<20171019142141.jtzilibffx4fsgmw@linux.intel.com>
+	<d2a4fca3aee340dcb5de88a69814bd90@infineon.com>
+	<20171020085645.q43e62d2vmspatm2@linux.intel.com>
+	<67d5b797-17b6-6247-1f0d-c62c09967f87@linux.vnet.ibm.com>
+Message-ID: <20171024134556.2gjh7nd3nfmaf4ct@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-David?
+On Mon, Oct 23, 2017 at 07:02:18PM +0530, Nayna Jain wrote:
+> 
+> 
+> On 10/20/2017 02:26 PM, Jarkko Sakkinen wrote:
+> > On Thu, Oct 19, 2017 at 05:00:29PM +0000, Alexander.Steffen at infineon.com wrote:
+> > > > On Tue, Oct 17, 2017 at 04:32:29PM -0400, Nayna Jain wrote:
+> > > > > The function wait_for_tpm_stat() is currently defined in
+> > > > > tpm-interface file. It is a hardware specific function used
+> > > > > only by tpm_tis and xen-tpmfront, so it is removed from
+> > > > > tpm-interface.c and defined in respective driver files.
+> > > > > 
+> > > > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > ---
+> > > > >   drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
+> > > > >   drivers/char/tpm/tpm.h           |  2 --
+> > > > >   drivers/char/tpm/tpm_tis_core.c  | 60
+> > > > ++++++++++++++++++++++++++++++++++++++++
+> > > > >   drivers/char/tpm/xen-tpmfront.c  | 60
+> > > > ++++++++++++++++++++++++++++++++++++++++
+> > > > >   4 files changed, 120 insertions(+), 62 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> > > > interface.c
+> > > > > index 1d6729be4cd6..313f7618d569 100644
+> > > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > > @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t
+> > > > buflen)
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(tpm_send);
+> > > > > 
+> > > > > -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > > > -					bool check_cancel, bool *canceled)
+> > > > > -{
+> > > > > -	u8 status = chip->ops->status(chip);
+> > > > > -
+> > > > > -	*canceled = false;
+> > > > > -	if ((status & mask) == mask)
+> > > > > -		return true;
+> > > > > -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > > > -		*canceled = true;
+> > > > > -		return true;
+> > > > > -	}
+> > > > > -	return false;
+> > > > > -}
+> > > > > -
+> > > > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> > > > timeout,
+> > > > > -		      wait_queue_head_t *queue, bool check_cancel)
+> > > > > -{
+> > > > > -	unsigned long stop;
+> > > > > -	long rc;
+> > > > > -	u8 status;
+> > > > > -	bool canceled = false;
+> > > > > -
+> > > > > -	/* check current status */
+> > > > > -	status = chip->ops->status(chip);
+> > > > > -	if ((status & mask) == mask)
+> > > > > -		return 0;
+> > > > > -
+> > > > > -	stop = jiffies + timeout;
+> > > > > -
+> > > > > -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > > > -again:
+> > > > > -		timeout = stop - jiffies;
+> > > > > -		if ((long)timeout <= 0)
+> > > > > -			return -ETIME;
+> > > > > -		rc = wait_event_interruptible_timeout(*queue,
+> > > > > -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > > > -					       &canceled),
+> > > > > -			timeout);
+> > > > > -		if (rc > 0) {
+> > > > > -			if (canceled)
+> > > > > -				return -ECANCELED;
+> > > > > -			return 0;
+> > > > > -		}
+> > > > > -		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > > > -			clear_thread_flag(TIF_SIGPENDING);
+> > > > > -			goto again;
+> > > > > -		}
+> > > > > -	} else {
+> > > > > -		do {
+> > > > > -			tpm_msleep(TPM_TIMEOUT);
+> > > > > -			status = chip->ops->status(chip);
+> > > > > -			if ((status & mask) == mask)
+> > > > > -				return 0;
+> > > > > -		} while (time_before(jiffies, stop));
+> > > > > -	}
+> > > > > -	return -ETIME;
+> > > > > -}
+> > > > > -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
+> > > > > -
+> > > > >   #define TPM_ORD_SAVESTATE 152
+> > > > >   #define SAVESTATE_RESULT_SIZE 10
+> > > > > 
+> > > > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > > > > index 2d5466a72e40..4fc83ac7abeb 100644
+> > > > > --- a/drivers/char/tpm/tpm.h
+> > > > > +++ b/drivers/char/tpm/tpm.h
+> > > > > @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
+> > > > >   unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32
+> > > > ordinal);
+> > > > >   int tpm_pm_suspend(struct device *dev);
+> > > > >   int tpm_pm_resume(struct device *dev);
+> > > > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> > > > timeout,
+> > > > > -		      wait_queue_head_t *queue, bool check_cancel);
+> > > > > 
+> > > > >   static inline void tpm_msleep(unsigned int delay_msec)
+> > > > >   {
+> > > > > diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > > > b/drivers/char/tpm/tpm_tis_core.c
+> > > > > index 63bc6c3b949e..b33126a35694 100644
+> > > > > --- a/drivers/char/tpm/tpm_tis_core.c
+> > > > > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > > > > @@ -31,6 +31,66 @@
+> > > > >   #include "tpm.h"
+> > > > >   #include "tpm_tis_core.h"
+> > > > > 
+> > > > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > > > +					bool check_cancel, bool *canceled)
+> > > > > +{
+> > > > > +	u8 status = chip->ops->status(chip);
+> > > > > +
+> > > > > +	*canceled = false;
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return true;
+> > > > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > > > +		*canceled = true;
+> > > > > +		return true;
+> > > > > +	}
+> > > > > +	return false;
+> > > > > +}
+> > > > > +
+> > > > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > > > > +		unsigned long timeout, wait_queue_head_t *queue,
+> > > > > +		bool check_cancel)
+> > > > > +{
+> > > > > +	unsigned long stop;
+> > > > > +	long rc;
+> > > > > +	u8 status;
+> > > > > +	bool canceled = false;
+> > > > > +
+> > > > > +	/* check current status */
+> > > > > +	status = chip->ops->status(chip);
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	stop = jiffies + timeout;
+> > > > > +
+> > > > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > > > +again:
+> > > > > +		timeout = stop - jiffies;
+> > > > > +		if ((long)timeout <= 0)
+> > > > > +			return -ETIME;
+> > > > > +		rc = wait_event_interruptible_timeout(*queue,
+> > > > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > > > +					       &canceled),
+> > > > > +			timeout);
+> > > > > +		if (rc > 0) {
+> > > > > +			if (canceled)
+> > > > > +				return -ECANCELED;
+> > > > > +			return 0;
+> > > > > +		}
+> > > > > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > > > +			clear_thread_flag(TIF_SIGPENDING);
+> > > > > +			goto again;
+> > > > > +		}
+> > > > > +	} else {
+> > > > > +		do {
+> > > > > +			tpm_msleep(TPM_TIMEOUT);
+> > > > > +			status = chip->ops->status(chip);
+> > > > > +			if ((status & mask) == mask)
+> > > > > +				return 0;
+> > > > > +		} while (time_before(jiffies, stop));
+> > > > > +	}
+> > > > > +	return -ETIME;
+> > > > > +}
+> > > > > +
+> > > > >   /* Before we attempt to access the TPM we must see that the valid bit is
+> > > > set.
+> > > > >    * The specification says that this bit is 0 at reset and remains 0 until the
+> > > > >    * 'TPM has gone through its self test and initialization and has established
+> > > > > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-
+> > > > tpmfront.c
+> > > > > index 656e8af95d52..d20a0a9ded27 100644
+> > > > > --- a/drivers/char/tpm/xen-tpmfront.c
+> > > > > +++ b/drivers/char/tpm/xen-tpmfront.c
+> > > > > @@ -39,6 +39,66 @@ enum status_bits {
+> > > > >   	VTPM_STATUS_CANCELED = 0x8,
+> > > > >   };
+> > > > > 
+> > > > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > > > +					bool check_cancel, bool *canceled)
+> > > > > +{
+> > > > > +	u8 status = chip->ops->status(chip);
+> > > > > +
+> > > > > +	*canceled = false;
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return true;
+> > > > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > > > +		*canceled = true;
+> > > > > +		return true;
+> > > > > +	}
+> > > > > +	return false;
+> > > > > +}
+> > > > > +
+> > > > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > > > > +		unsigned long timeout, wait_queue_head_t *queue,
+> > > > > +		bool check_cancel)
+> > > > > +{
+> > > > > +	unsigned long stop;
+> > > > > +	long rc;
+> > > > > +	u8 status;
+> > > > > +	bool canceled = false;
+> > > > > +
+> > > > > +	/* check current status */
+> > > > > +	status = chip->ops->status(chip);
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	stop = jiffies + timeout;
+> > > > > +
+> > > > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > > > +again:
+> > > > > +		timeout = stop - jiffies;
+> > > > > +		if ((long)timeout <= 0)
+> > > > > +			return -ETIME;
+> > > > > +		rc = wait_event_interruptible_timeout(*queue,
+> > > > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > > > +					       &canceled),
+> > > > > +			timeout);
+> > > > > +		if (rc > 0) {
+> > > > > +			if (canceled)
+> > > > > +				return -ECANCELED;
+> > > > > +			return 0;
+> > > > > +		}
+> > > > > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > > > +			clear_thread_flag(TIF_SIGPENDING);
+> > > > > +			goto again;
+> > > > > +		}
+> > > > > +	} else {
+> > > > > +		do {
+> > > > > +			tpm_msleep(TPM_TIMEOUT);
+> > > > > +			status = chip->ops->status(chip);
+> > > > > +			if ((status & mask) == mask)
+> > > > > +				return 0;
+> > > > > +		} while (time_before(jiffies, stop));
+> > > > > +	}
+> > > > > +	return -ETIME;
+> > > > > +}
+> > > > > +
+> > > > >   static u8 vtpm_status(struct tpm_chip *chip)
+> > > > >   {
+> > > > >   	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
+> > > > > --
+> > > > > 2.13.3
+> > > > > 
+> > > > This commit caused a compiler warning because freezer.h was not included
+> > > > to xen-tpmfront.c. I manually fixed it.
+> > > Yep, and checkpatch.pl still complains about some stuff (mostly
+> > > whitespace) in both patch 1/4 and 2/4. When fixed patches are
+> > > available, I can run them again through my automation.
+> > > Alexander
+> 
+> Sorry for delay in response.. I was on vacation for last few days.
+> Thanks for informing. I am wondering these didn't show up when I ran
+> checkpatch.pl.
 
-    May I ask a question here -- Is it intentionally enabling the
-read-only mode, so userspace
-tools like dmidecode could work with kernel_is_locked_down ?  while it
-was impossible to work
-with the attached patch applied. Is it a security policy change with
-secure boot ?
+I also did run checkpatch.pl. Haven't had time to recheck yet but I will
+do that since there's always chance for human error.
 
-Thanks,
-Ethan
-
-On Mon, Oct 23, 2017 at 10:34 PM, David Howells <dhowells@redhat.com> wrote:
-> I think I should replace this patch with the attached.  This will prevent
-> /dev/mem, /dev/kmem and /dev/port from being *opened*, and thereby preventing
-> read, write and ioctl.
->
-> David
-> ---
-> commit e68daa2256986932b9a7d6709cf9e24b30d93583
-> Author: Matthew Garrett <matthew.garrett@nebula.com>
-> Date:   Wed May 24 14:56:02 2017 +0100
->
->     Restrict /dev/{mem,kmem,port} when the kernel is locked down
->
->     Allowing users to read and write to core kernel memory makes it possible
->     for the kernel to be subverted, avoiding module loading restrictions, and
->     also to steal cryptographic information.
->
->     Disallow /dev/mem and /dev/kmem from being opened this when the kernel has
->     been locked down to prevent this.
->
->     Also disallow /dev/port from being opened to prevent raw ioport access and
->     thus DMA from being used to accomplish the same thing.
->
->     Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
->     Signed-off-by: David Howells <dhowells@redhat.com>
->     Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
->
-> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> index 593a8818aca9..0ce5ac0a5c6b 100644
-> --- a/drivers/char/mem.c
-> +++ b/drivers/char/mem.c
-> @@ -762,6 +762,8 @@ static loff_t memory_lseek(struct file *file, loff_t offset, int orig)
->
->  static int open_port(struct inode *inode, struct file *filp)
->  {
-> +       if (kernel_is_locked_down("/dev/mem,kmem,port"))
-> +               return -EPERM;
->         return capable(CAP_SYS_RAWIO) ? 0 : -EPERM;
->  }
->
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
