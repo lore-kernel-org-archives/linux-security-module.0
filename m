@@ -1,52 +1,43 @@
-From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
-Date: Tue, 24 Oct 2017 15:37:01 -0200
-Subject: [PATCH v3 2/2] ima: check signature enforcement against cmdline param
-	instead of CONFIG
-In-Reply-To: <cover.1508865786.git.brdeoliv@redhat.com>
-References: <cover.1508865786.git.brdeoliv@redhat.com>
-Message-ID: <b1bab0d1184f11c06ba0484883c22bc046ffb5a6.1508865786.git.brdeoliv@redhat.com>
+From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
+Date: Tue, 24 Oct 2017 11:37:57 -0600
+Subject: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
+	in-kernel API
+In-Reply-To: <CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
+References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
+	<cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
+	<20171023163139.GA17394@obsidianresearch.com>
+	<20171024154440.3jeupmus43jcgbbz@linux.intel.com>
+	<CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
+	<20171024155526.GA32250@obsidianresearch.com>
+	<CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
+	<20171024161118.GA348@obsidianresearch.com>
+	<CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
+Message-ID: <20171024173757.GA1806@obsidianresearch.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When the user requests MODULE_CHECK policy and its kernel is compiled
-with CONFIG_MODULE_SIG_FORCE not set, all modules would not load, just
-those loaded in initram time. One option the user would have would be
-set a kernel cmdline param (module.sig_enforce) to true, but the IMA
-module check code doesn't rely on this value, it checks just
-CONFIG_MODULE_SIG_FORCE.
+On Tue, Oct 24, 2017 at 10:02:00AM -0700, Dmitry Torokhov wrote:
+> tpm-rng is abomination that should be kicked out as soon as possible.
+> It wrecks havoc with the power management (TPM chip drivers may go
+> into suspend state, but tpm_rng does not do any power management and
+> happily forwards requests to suspended hardware) and may be available
+> when there is no TPM at all yet (the drivers have not been probed yet,
+> or have gotten a deferral, etc).
 
-This patch solves this problem checking for the exported value of
-module.sig_enforce cmdline param intead of CONFIG_MODULE_SIG_FORCE,
-which holds the effective value (CONFIG || param).
+Makes sense
 
-Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
----
- security/integrity/ima/ima_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> TPM core should register HWRNGs when chips are ready.
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index e4ab8ef8016e..d11a7fcc5c8b 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -356,12 +356,12 @@ void ima_post_path_mknod(struct dentry *dentry)
-  */
- int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- {
-+	bool sig_enforce = is_module_sig_enforced();
-+
- 	if (!file && read_id == READING_MODULE) {
--#ifndef CONFIG_MODULE_SIG_FORCE
--		if ((ima_appraise & IMA_APPRAISE_MODULES) &&
-+		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
- 		    (ima_appraise & IMA_APPRAISE_ENFORCE))
- 			return -EACCES;	/* INTEGRITY_UNKNOWN */
--#endif
- 		return 0;	/* We rely on module signature checking */
- 	}
- 	return 0;
--- 
-2.13.6
+The main thing I've wanted from the TPM RNG is
+'add_early_randomness'..
 
+We can certainly provide a TPM interface to hwrng, it seems
+reasonable.
+
+Excep that we already have a user api in /dev/tpm to access the
+tpm RNG, is the duplication a problem?
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
