@@ -1,42 +1,38 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 25 Oct 2017 00:21:48 +0200
-Subject: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
-Message-ID: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
+Date: Wed, 25 Oct 2017 00:27:41 +0200
+Subject: [PATCH] tpm: remove chip_num parameter from in-kernel API
+In-Reply-To: <20171024185208.GD1806@obsidianresearch.com>
+References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
+	<20171024185208.GD1806@obsidianresearch.com>
+Message-ID: <20171024222741.lqvgpdaosjazpvfd@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-I noticed when making slides for KS that the naming for event log stuff
-that the naming is so broken that it is hard to understand the code.
-Here it really would make sense to have a patch set just to clean up the
-cruft.
+On Tue, Oct 24, 2017 at 12:52:08PM -0600, Jason Gunthorpe wrote:
+> On Mon, Oct 23, 2017 at 02:38:14PM +0200, Jarkko Sakkinen wrote:
+> > The reasoning is simple and obvious. Since every call site passes the
+> > value TPM_ANY_NUM (0xFFFF) the parameter does not have right to exist.
+> > Refined the documentation of the corresponding functions.
+> 
+> I like this patch, but how about a slightly different take, make this
+> change instead:
+> 
+> -struct tpm_chip *tpm_chip_find_get(int chip_num)
+> +struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
+> 
+> Where chip == NULL means the default TPM.
+> 
+> And then at all call sites swap TPM_ANY_NUM to NULL and instead of
+> flowing an 'int chip_num' to tpm_chip_find_get, flow the 'struct
+> tpm_chip *' directly.
+> 
+> This gets us much closer to the desired API with about the same amount
+> of churn as this patch has.
+> 
+> Jason
 
-Random examples of more senseful naming:
-
-* tpm2_bios_measurements_start() should be rather something like
-  tpm_eventlog_seq_agile_start().
-* tpm_bios_measurements_start() should be rather something like
-  tpm_eventlog_seq_sha1_start().
-
-Corresponding structs would be tpm_eventlog_agile_seq_ops and
-tpm_eventlog_sha1_seq_ops.
-
-Finally, I would place the file operations, being so complicated, in
-separate files:
-
-* tpm_eventlog_seq_sha1.c
-* tpm_eventlog_seq_eventlog.c
-
-And move all the management code that is right now illogically located
-in tpm1_eventlog.c to tpm_eventlog.c that would be the entry point for
-the event log.
-
-The code is laid out so badly right now that I have really hard time
-understanding it if I haven't looked at it within last couple of weeks.
-It's really a trainwreck at the moment. We must clean up it up fast.
-
-Getting this done will help me to review patches to this area faster
-so it would be a benefit for everyone. The current structure makes every
-event log patch a pain to review.
+I can do that. I will rework this as a patch set that includes this
+proposal. Gives us more clean position to continue. Thank you.
 
 /Jarkko
 --
