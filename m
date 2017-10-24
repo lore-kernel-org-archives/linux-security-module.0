@@ -1,40 +1,51 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 25 Oct 2017 00:27:41 +0200
-Subject: [PATCH] tpm: remove chip_num parameter from in-kernel API
-In-Reply-To: <20171024185208.GD1806@obsidianresearch.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
-	<20171024185208.GD1806@obsidianresearch.com>
-Message-ID: <20171024222741.lqvgpdaosjazpvfd@linux.intel.com>
+Date: Wed, 25 Oct 2017 00:29:30 +0200
+Subject: [PATCH] tpm: Move Linux RNG connection to hwrng
+In-Reply-To: <20171024213449.GA21662@obsidianresearch.com>
+References: <20171024184235.GC1806@obsidianresearch.com>
+	<20171024213449.GA21662@obsidianresearch.com>
+Message-ID: <20171024222930.wdsmttgujgpwmizb@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 24, 2017 at 12:52:08PM -0600, Jason Gunthorpe wrote:
-> On Mon, Oct 23, 2017 at 02:38:14PM +0200, Jarkko Sakkinen wrote:
-> > The reasoning is simple and obvious. Since every call site passes the
-> > value TPM_ANY_NUM (0xFFFF) the parameter does not have right to exist.
-> > Refined the documentation of the corresponding functions.
+On Tue, Oct 24, 2017 at 03:34:49PM -0600, Jason Gunthorpe wrote:
+> On Tue, Oct 24, 2017 at 12:42:35PM -0600, Jason Gunthorpe wrote:
 > 
-> I like this patch, but how about a slightly different take, make this
-> change instead:
+> > This is compile tested only.
 > 
-> -struct tpm_chip *tpm_chip_find_get(int chip_num)
-> +struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
-> 
-> Where chip == NULL means the default TPM.
-> 
-> And then at all call sites swap TPM_ANY_NUM to NULL and instead of
-> flowing an 'int chip_num' to tpm_chip_find_get, flow the 'struct
-> tpm_chip *' directly.
-> 
-> This gets us much closer to the desired API with about the same amount
-> of churn as this patch has.
-> 
-> Jason
+> 0day says the kconfig has a problem when randomized, here is the fix I
+> will roll into a v2 in a few days:
 
-I can do that. I will rework this as a patch set that includes this
-proposal. Gives us more clean position to continue. Thank you.
+I will probably have to postpone the review to next week anyway so take
+your time :-)
 
 /Jarkko
+
+> 
+> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> index a95725fa77789e..ca89da3e4b2ae9 100644
+> --- a/drivers/char/tpm/Kconfig
+> +++ b/drivers/char/tpm/Kconfig
+> @@ -27,16 +27,13 @@ menuconfig TCG_TPM
+>  if TCG_TPM
+>  
+>  config HW_RANDOM_TPM
+> -       tristate "TPM HW Random Number Generator support"
+> -       depends on TCG_TPM && HW_RANDOM
+> -       default HW_RANDOM
+> +       bool "TPM HW Random Number Generator support"
+> +       depends on TCG_TPM && HW_RANDOM && !(TCG_TPM=y && HW_RANDOM=m)
+> +       default y
+>         ---help---
+>           This driver provides kernel-side support for the Random Number
+>           Generator in the Trusted Platform Module
+>  
+> -         To compile this driver as a module, choose M here: the
+> -         module will be called tpm-rng.
+> -
+>           If unsure, say Y.
+>  
+>  config TCG_TIS_CORE
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
