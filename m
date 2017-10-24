@@ -1,43 +1,44 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Tue, 24 Oct 2017 15:34:49 -0600
-Subject: [PATCH] tpm: Move Linux RNG connection to hwrng
-In-Reply-To: <20171024184235.GC1806@obsidianresearch.com>
-References: <20171024184235.GC1806@obsidianresearch.com>
-Message-ID: <20171024213449.GA21662@obsidianresearch.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 25 Oct 2017 00:21:48 +0200
+Subject: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
+Message-ID: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 24, 2017 at 12:42:35PM -0600, Jason Gunthorpe wrote:
+I noticed when making slides for KS that the naming for event log stuff
+that the naming is so broken that it is hard to understand the code.
+Here it really would make sense to have a patch set just to clean up the
+cruft.
 
-> This is compile tested only.
+Random examples of more senseful naming:
 
-0day says the kconfig has a problem when randomized, here is the fix I
-will roll into a v2 in a few days:
+* tpm2_bios_measurements_start() should be rather something like
+  tpm_eventlog_seq_agile_start().
+* tpm_bios_measurements_start() should be rather something like
+  tpm_eventlog_seq_sha1_start().
 
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index a95725fa77789e..ca89da3e4b2ae9 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -27,16 +27,13 @@ menuconfig TCG_TPM
- if TCG_TPM
- 
- config HW_RANDOM_TPM
--       tristate "TPM HW Random Number Generator support"
--       depends on TCG_TPM && HW_RANDOM
--       default HW_RANDOM
-+       bool "TPM HW Random Number Generator support"
-+       depends on TCG_TPM && HW_RANDOM && !(TCG_TPM=y && HW_RANDOM=m)
-+       default y
-        ---help---
-          This driver provides kernel-side support for the Random Number
-          Generator in the Trusted Platform Module
- 
--         To compile this driver as a module, choose M here: the
--         module will be called tpm-rng.
--
-          If unsure, say Y.
- 
- config TCG_TIS_CORE
+Corresponding structs would be tpm_eventlog_agile_seq_ops and
+tpm_eventlog_sha1_seq_ops.
+
+Finally, I would place the file operations, being so complicated, in
+separate files:
+
+* tpm_eventlog_seq_sha1.c
+* tpm_eventlog_seq_eventlog.c
+
+And move all the management code that is right now illogically located
+in tpm1_eventlog.c to tpm_eventlog.c that would be the entry point for
+the event log.
+
+The code is laid out so badly right now that I have really hard time
+understanding it if I haven't looked at it within last couple of weeks.
+It's really a trainwreck at the moment. We must clean up it up fast.
+
+Getting this done will help me to review patches to this area faster
+so it would be a benefit for everyone. The current structure makes every
+event log patch a pain to review.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
