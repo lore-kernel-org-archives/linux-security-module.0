@@ -1,338 +1,330 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Tue, 24 Oct 2017 12:42:35 -0600
-Subject: [PATCH] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171024184235.GC1806@obsidianresearch.com>
+From: richard_c_haines@btinternet.com (Richard Haines)
+Date: Tue, 24 Oct 2017 21:27:51 +0100
+Subject: [RFC PATCH 3/5] sctp: Add LSM hooks
+In-Reply-To: <CADvbK_cLGA4PH_c4FB0eSUAMoV0XgtyA++cTFsGDkb=nvtR68g@mail.gmail.com>
+References: <20171017135833.4292-1-richard_c_haines@btinternet.com>
+	<CADvbK_d+LKRQHZXn5LMy+4L0Nq+ZEkvHGk=zn3odUr7FrzvkBQ@mail.gmail.com>
+	<20171020111637.GA14713@neilslaptop.think-freely.org>
+	<1508501095.8370.7.camel@btinternet.com>
+	<CADvbK_cLGA4PH_c4FB0eSUAMoV0XgtyA++cTFsGDkb=nvtR68g@mail.gmail.com>
+Message-ID: <1508876871.26687.5.camel@btinternet.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The tpm-rng.c approach is completely inconsistent with how the kernel
-handles hotplug. Instead manage a hwrng device for each TPM. This will
-cause the kernel to read entropy from the TPM when it is plugged in,
-and allow access to the TPM rng via /dev/hwrng.
+On Fri, 2017-10-20 at 21:14 +0800, Xin Long wrote:
+> On Fri, Oct 20, 2017 at 8:04 PM, Richard Haines
+> <richard_c_haines@btinternet.com> wrote:
+> > On Fri, 2017-10-20 at 07:16 -0400, Neil Horman wrote:
+> > > On Wed, Oct 18, 2017 at 11:05:09PM +0800, Xin Long wrote:
+> > > > On Tue, Oct 17, 2017 at 9:58 PM, Richard Haines
+> > > > <richard_c_haines@btinternet.com> wrote:
+> > > > > Add security hooks to allow security modules to exercise
+> > > > > access
+> > > > > control
+> > > > > over SCTP.
+> > > > > 
+> > > > > Signed-off-by: Richard Haines <richard_c_haines@btinternet.co
+> > > > > m>
+> > > > > ---
+> > > > >  include/net/sctp/structs.h | 10 ++++++++
+> > > > >  include/uapi/linux/sctp.h  |  1 +
+> > > > >  net/sctp/sm_make_chunk.c   | 12 +++++++++
+> > > > >  net/sctp/sm_statefuns.c    | 14 ++++++++++-
+> > > > >  net/sctp/socket.c          | 61
+> > > > > +++++++++++++++++++++++++++++++++++++++++++++-
+> > > > >  5 files changed, 96 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/include/net/sctp/structs.h
+> > > > > b/include/net/sctp/structs.h
+> > > > > index 7767577..6e72e3e 100644
+> > > > > --- a/include/net/sctp/structs.h
+> > > > > +++ b/include/net/sctp/structs.h
+> > > > > @@ -1270,6 +1270,16 @@ struct sctp_endpoint {
+> > > > >               reconf_enable:1;
+> > > > > 
+> > > > >         __u8  strreset_enable;
+> > > > > +
+> > > > > +       /* Security identifiers from incoming (INIT). These
+> > > > > are
+> > > > > set by
+> > > > > +        * security_sctp_assoc_request(). These will only be
+> > > > > used
+> > > > > by
+> > > > > +        * SCTP TCP type sockets and peeled off connections
+> > > > > as
+> > > > > they
+> > > > > +        * cause a new socket to be generated.
+> > > > > security_sctp_sk_clone()
+> > > > > +        * will then plug these into the new socket.
+> > > > > +        */
+> > > > > +
+> > > > > +       u32 secid;
+> > > > > +       u32 peer_secid;
+> > > > >  };
+> > > > > 
+> > > > >  /* Recover the outter endpoint structure. */
+> > > > > diff --git a/include/uapi/linux/sctp.h
+> > > > > b/include/uapi/linux/sctp.h
+> > > > > index 6217ff8..c04812f 100644
+> > > > > --- a/include/uapi/linux/sctp.h
+> > > > > +++ b/include/uapi/linux/sctp.h
+> > > > > @@ -122,6 +122,7 @@ typedef __s32 sctp_assoc_t;
+> > > > >  #define SCTP_RESET_ASSOC       120
+> > > > >  #define SCTP_ADD_STREAMS       121
+> > > > >  #define SCTP_SOCKOPT_PEELOFF_FLAGS 122
+> > > > > +#define SCTP_SENDMSG_CONNECT   123
+> > > > > 
+> > > > >  /* PR-SCTP policies */
+> > > > >  #define SCTP_PR_SCTP_NONE      0x0000
+> > > > > diff --git a/net/sctp/sm_make_chunk.c
+> > > > > b/net/sctp/sm_make_chunk.c
+> > > > > index 6110447..ca4705b 100644
+> > > > > --- a/net/sctp/sm_make_chunk.c
+> > > > > +++ b/net/sctp/sm_make_chunk.c
+> > > > > @@ -3059,6 +3059,12 @@ static __be16
+> > > > > sctp_process_asconf_param(struct sctp_association *asoc,
+> > > > >                 if (af->is_any(&addr))
+> > > > >                         memcpy(&addr, &asconf->source,
+> > > > > sizeof(addr));
+> > > > > 
+> > > > > +               if (security_sctp_bind_connect(asoc->ep-
+> > > > > >base.sk,
+> > > > > +                                              SCTP_PARAM_ADD
+> > > > > _IP,
+> > > > > +                                              (struct
+> > > > > sockaddr
+> > > > > *)&addr,
+> > > > > +                                              af-
+> > > > > >sockaddr_len))
+> > > > > +                       return SCTP_ERROR_REQ_REFUSED;
+> > > > > +
+> > > > >                 /* ADDIP 4.3 D9) If an endpoint receives an
+> > > > > ADD
+> > > > > IP address
+> > > > >                  * request and does not have the local
+> > > > > resources
+> > > > > to add this
+> > > > >                  * new address to the association, it MUST
+> > > > > return
+> > > > > an Error
+> > > > > @@ -3125,6 +3131,12 @@ static __be16
+> > > > > sctp_process_asconf_param(struct sctp_association *asoc,
+> > > > >                 if (af->is_any(&addr))
+> > > > >                         memcpy(&addr.v4, sctp_source(asconf),
+> > > > > sizeof(addr));
+> > > > > 
+> > > > > +               if (security_sctp_bind_connect(asoc->ep-
+> > > > > >base.sk,
+> > > > > +                                              SCTP_PARAM_SET
+> > > > > _PRI
+> > > > > MARY,
+> > > > > +                                              (struct
+> > > > > sockaddr
+> > > > > *)&addr,
+> > > > > +                                              af-
+> > > > > >sockaddr_len))
+> > > > > +                       return SCTP_ERROR_REQ_REFUSED;
+> > > > > +
+> > > > >                 peer = sctp_assoc_lookup_paddr(asoc, &addr);
+> > > > >                 if (!peer)
+> > > > >                         return SCTP_ERROR_DNS_FAILED;
+> > > > > diff --git a/net/sctp/sm_statefuns.c
+> > > > > b/net/sctp/sm_statefuns.c
+> > > > > index b2a74c3..4ba5805 100644
+> > > > > --- a/net/sctp/sm_statefuns.c
+> > > > > +++ b/net/sctp/sm_statefuns.c
+> > > > > @@ -314,6 +314,11 @@ sctp_disposition_t
+> > > > > sctp_sf_do_5_1B_init(struct net *net,
+> > > > >         sctp_unrecognized_param_t *unk_param;
+> > > > >         int len;
+> > > > > 
+> > > > > +       /* Update socket peer label if first association. */
+> > > > > +       if (security_sctp_assoc_request((struct sctp_endpoint
+> > > > > *)ep,
+> > > > > +                                       chunk->skb,
+> > > > > SCTP_CID_INIT))
+> > > > > +               return sctp_sf_pdiscard(net, ep, asoc, type,
+> > > > > arg,
+> > > > > commands);
+> > > > > +
+> > > > >         /* 6.10 Bundling
+> > > > >          * An endpoint MUST NOT bundle INIT, INIT ACK or
+> > > > >          * SHUTDOWN COMPLETE with any other chunks.
+> > > > > @@ -446,7 +451,6 @@ sctp_disposition_t
+> > > > > sctp_sf_do_5_1B_init(struct net *net,
+> > > > >         }
+> > > > > 
+> > > > >         sctp_add_cmd_sf(commands, SCTP_CMD_NEW_ASOC,
+> > > > > SCTP_ASOC(new_asoc));
+> > > > > -
+> > > > >         sctp_add_cmd_sf(commands, SCTP_CMD_REPLY,
+> > > > > SCTP_CHUNK(repl));
+> > > > > 
+> > > > >         /*
+> > > > > @@ -507,6 +511,11 @@ sctp_disposition_t
+> > > > > sctp_sf_do_5_1C_ack(struct net *net,
+> > > > >         struct sctp_chunk *err_chunk;
+> > > > >         struct sctp_packet *packet;
+> > > > > 
+> > > > > +       /* Update socket peer label if first association. */
+> > > > > +       if (security_sctp_assoc_request((struct sctp_endpoint
+> > > > > *)ep,
+> > > > > +                                       chunk->skb,
+> > > > > SCTP_CID_INIT_ACK))
+> > > > > +               return sctp_sf_pdiscard(net, ep, asoc, type,
+> > > > > arg,
+> > > > > commands);
+> > > > > +
+> > > > 
+> > > > Just thinking security_sctp_assoc_request hook should also be
+> > > > in
+> > > > sctp_sf_do_unexpected_init() and sctp_sf_do_5_2_4_dupcook() ?
+> > > 
+> > > I agree, i think if this hook is gating on the creation of a new
+> > > association,
+> > > they should be in all the locations where that happens
+> > > Neil
+> > 
+> > Thanks for the comments. I've just added the hook as requested for
+> > my
+> > next update, however I have not managed to trigger these areas
+> > using
+> > the lksctp-tools tests. Can you suggest any suitable tools for
+> > testing
+> > these scenarios.
+> 
+> It's all a matter of timing:
+> 
+> sctp_sf_do_5_2_2_dupinit():
+> Case A:
+> 
+>   Endpoint A                           Endpoint B                ULP
+>   (CLOSED)                             (CLOSED)
+> 
+>   INIT          ----------------->
+> 
+>                 <-----------------      INIT-ACK
+> 
+>   COOKIE-ECHO   ----------------->
+> 
+>                 <-----------------      COOKIE-ACK
+>                                          Communication Up ---------->
+>   INIT          ----------------->
+>   (Different INIT-TAG)
+>                 <-----------------      INIT-ACK
+> 
+>   COOKIE-ECHO   ----------------->
+> 
+>                 <-----------------      COOKIE-ACK
+> 
+>   DATA          ----------------->
+> 
+>                 <-----------------      SACK
+> 
+> 
+> sctp_sf_do_5_2_1_siminit():
+>  Case B:
+> 
+>   Endpoint A                           Endpoint B                ULP
+>   (CLOSED)                             (CLOSED)
+> 
+>                                                    <--
+> ---    Associate
+>                 <-----------------      INIT
+> 
+>   INIT          ----------------->
+> 
+>                 <-----------------      INIT-ACK
+> 
+>   COOKIE-ECHO   ----------------->
+> 
+>                 <-----------------      COOKIE-ACK
+>                                          Communication Up ---------->
+> 
+> 
+> sctp_sf_do_5_2_4_dupcook():
+> Case D:
+> 
+>   Endpoint A                           Endpoint B                ULP
+>   (CLOSED)                             (CLOSED)
+> 
+>                                                    <--
+> ---    Associate
+>   INIT          ----------------->
+> 
+>                 <-----------------      INIT-ACK
+> 
+>   COOKIE-ECHO   ----------------->
+> 
+>                 <-----------------      COOKIE-ACK
+>                                          Communication Up ---------->
+>   COOKIE-ECHO   ----------------->
+> 
+>                 <-----------------      COOKIE-ACK
+> 
+> I think scapy could help with 4-shake stuff:
+> # iptables -A OUTPUT -p sctp -d 192.0.0.2 --chunk-type only abort -o
+> eth1 -j DROP
+> and
+> something like:
+>         def start_assoc(self, target, local):
+>                 target_host, target_port = target
+>                 local_host,  local_port  = local
+> 
+>                 # init snd
+>                 self._tsn = 2017
+>                 self._cnt = 15
+> 
+>                 SCTP_HEADER = (IP(dst=target_host, flags="DF") /
+> SCTP(sport=local_port, dport=target_port, tag=0))
+>                 INIT = (SCTP_HEADER / SCTPChunkInit(init_tag=1,
+> a_rwnd=106496, n_out_streams=self._cnt, n_in_streams=self._cnt,
+> init_tsn=self._tsn,
+> 
+> params=[SCTPParamSupport(types=[64])]))
+>                 INIT_ACK = sr1(INIT, timeout=3, verbose=0)
+>                 if INIT_ACK == None or not
+> INIT_ACK.haslayer(SCTPChunkInitAck):
+>                         return False
+> 
+>                 # cookie echo snd
+>                 SCTP_HEADER[SCTP].tag =
+> INIT_ACK[SCTPChunkInitAck].init_tag
+>                 COOKIE_ECHO = (SCTP_HEADER /
+> SCTPChunkCookieEcho(cookie=INIT_ACK[SCTPChunkParamStateCookie].cookie
+> ))
+>                 COOKIE_ACK = sr1(COOKIE_ECHO, timeout=3, verbose=0)
+>                 if COOKIE_ACK == None or not
+> COOKIE_ACK.haslayer(SCTPChunkCookieAck):
+>                         return False
 
-Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Reviewed-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
----
- drivers/char/hw_random/Kconfig   | 13 -----------
- drivers/char/hw_random/Makefile  |  1 -
- drivers/char/hw_random/tpm-rng.c | 50 ----------------------------------------
- drivers/char/tpm/Kconfig         | 13 +++++++++++
- drivers/char/tpm/tpm-chip.c      | 41 ++++++++++++++++++++++++++++----
- drivers/char/tpm/tpm-interface.c | 37 ++++++++++++++++-------------
- drivers/char/tpm/tpm.h           |  5 ++++
- 7 files changed, 76 insertions(+), 84 deletions(-)
- delete mode 100644 drivers/char/hw_random/tpm-rng.c
+That looks a bit complicated for me so I found some SCTP Conformance
+Test Tools at: https://github.com/nplab
 
-All,
+I added the required hooks as suggested above and then built and ran
+"ETSI-SCTP-Conformance-Testsuite" and "sctp-tests" with the following
+specific tests for the above scenarios according to RFC2960 sections
+5.2.2 and 5.2.4:
+sctp-dm-o-4-8
+sctp-as-o-1-9-1
+sctp-as-o-1-9-2
+sctp-dm-o-4-2-1
 
-It is such a good idea, I took PrasannaKumar's patch, reviewed and
-revised it to the level it could be merged.
+They all passed except when running:
+"sctp-tests" runsctptest sctp-as-o-1-9-2 - TIMEOUT
+This is because the SUT needs to reply with a new IP address that
+required a modified test server (I just used a simple sctp server),
+however the ETSI-SCTP-Conformance-Testsuite did pass as I guess that
+provided the required IP address.
 
-This is compile tested only.
+Are these tests okay ??
+Does anyone on the list use these conformance tools ???
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 95a031e9eced07..a20fed182cbcce 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -306,19 +306,6 @@ config HW_RANDOM_POWERNV
- 
- 	  If unsure, say Y.
- 
--config HW_RANDOM_TPM
--	tristate "TPM HW Random Number Generator support"
--	depends on TCG_TPM
--	default HW_RANDOM
--	---help---
--	  This driver provides kernel-side support for the Random Number
--	  Generator in the Trusted Platform Module
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called tpm-rng.
--
--	  If unsure, say Y.
--
- config HW_RANDOM_HISI
- 	tristate "Hisilicon Random Number Generator support"
- 	depends on HW_RANDOM && ARCH_HISI
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 39a67defac67cb..91cb8e8213e7c1 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -26,7 +26,6 @@ obj-$(CONFIG_HW_RANDOM_NOMADIK) += nomadik-rng.o
- obj-$(CONFIG_HW_RANDOM_PSERIES) += pseries-rng.o
- obj-$(CONFIG_HW_RANDOM_POWERNV) += powernv-rng.o
- obj-$(CONFIG_HW_RANDOM_HISI)	+= hisi-rng.o
--obj-$(CONFIG_HW_RANDOM_TPM) += tpm-rng.o
- obj-$(CONFIG_HW_RANDOM_BCM2835) += bcm2835-rng.o
- obj-$(CONFIG_HW_RANDOM_IPROC_RNG200) += iproc-rng200.o
- obj-$(CONFIG_HW_RANDOM_MSM) += msm-rng.o
-diff --git a/drivers/char/hw_random/tpm-rng.c b/drivers/char/hw_random/tpm-rng.c
-deleted file mode 100644
-index d6d448266f0752..00000000000000
---- a/drivers/char/hw_random/tpm-rng.c
-+++ /dev/null
-@@ -1,50 +0,0 @@
--/*
-- * Copyright (C) 2012 Kent Yoder IBM Corporation
-- *
-- * HWRNG interfaces to pull RNG data from a TPM
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- */
--
--#include <linux/module.h>
--#include <linux/hw_random.h>
--#include <linux/tpm.h>
--
--#define MODULE_NAME "tpm-rng"
--
--static int tpm_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
--{
--	return tpm_get_random(TPM_ANY_NUM, data, max);
--}
--
--static struct hwrng tpm_rng = {
--	.name = MODULE_NAME,
--	.read = tpm_rng_read,
--};
--
--static int __init rng_init(void)
--{
--	return hwrng_register(&tpm_rng);
--}
--module_init(rng_init);
--
--static void __exit rng_exit(void)
--{
--	hwrng_unregister(&tpm_rng);
--}
--module_exit(rng_exit);
--
--MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Kent Yoder <key@linux.vnet.ibm.com>");
--MODULE_DESCRIPTION("RNG driver for TPM devices");
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index a30352202f1fdc..a95725fa77789e 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -26,6 +26,19 @@ menuconfig TCG_TPM
- 
- if TCG_TPM
- 
-+config HW_RANDOM_TPM
-+	tristate "TPM HW Random Number Generator support"
-+	depends on TCG_TPM && HW_RANDOM
-+	default HW_RANDOM
-+	---help---
-+	  This driver provides kernel-side support for the Random Number
-+	  Generator in the Trusted Platform Module
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called tpm-rng.
-+
-+	  If unsure, say Y.
-+
- config TCG_TIS_CORE
- 	tristate
- 	---help---
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0eca20c5a80cf2..f3571406fb2995 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -26,6 +26,7 @@
- #include <linux/spinlock.h>
- #include <linux/freezer.h>
- #include <linux/major.h>
-+#include <linux/hw_random.h>
- #include "tpm.h"
- #include "tpm_eventlog.h"
- 
-@@ -387,6 +388,26 @@ static int tpm_add_legacy_sysfs(struct tpm_chip *chip)
- 
- 	return 0;
- }
-+
-+static int tpm_hwrng_read(struct hwrng *rng, void *data, size_t max, bool wait)
-+{
-+	struct tpm_chip *chip = container_of(rng, struct tpm_chip, tpm_hwrng);
-+
-+	return tpm_get_random_dev(chip, data, max);
-+}
-+
-+static int tpm_add_hwrng(struct tpm_chip *chip)
-+{
-+	if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-+		return 0;
-+
-+	snprintf(chip->tpm_hwrng_name, sizeof(chip->tpm_hwrng_name),
-+		 "tpm-rng-%d", chip->dev_num);
-+	chip->tpm_hwrng.name = chip->tpm_hwrng_name;
-+	chip->tpm_hwrng.read = tpm_hwrng_read;
-+	return hwrng_register(&chip->tpm_hwrng);
-+}
-+
- /*
-  * tpm_chip_register() - create a character device for the TPM chip
-  * @chip: TPM chip to use.
-@@ -419,11 +440,13 @@ int tpm_chip_register(struct tpm_chip *chip)
- 
- 	tpm_add_ppi(chip);
- 
-+	rc = tpm_add_hwrng(chip);
-+	if (rc)
-+		goto out_ppi;
-+
- 	rc = tpm_add_char_device(chip);
--	if (rc) {
--		tpm_bios_log_teardown(chip);
--		return rc;
--	}
-+	if (rc)
-+		goto out_hwrng;
- 
- 	rc = tpm_add_legacy_sysfs(chip);
- 	if (rc) {
-@@ -432,6 +455,14 @@ int tpm_chip_register(struct tpm_chip *chip)
- 	}
- 
- 	return 0;
-+
-+out_hwrng:
-+	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-+		hwrng_unregister(&chip->tpm_hwrng);
-+out_ppi:
-+	tpm_bios_log_teardown(chip);
-+
-+	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_chip_register);
- 
-@@ -451,6 +482,8 @@ EXPORT_SYMBOL_GPL(tpm_chip_register);
- void tpm_chip_unregister(struct tpm_chip *chip)
- {
- 	tpm_del_legacy_sysfs(chip);
-+	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-+		hwrng_unregister(&chip->tpm_hwrng);
- 	tpm_bios_log_teardown(chip);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		cdev_device_del(&chip->cdevs, &chip->devs);
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1d6729be4cd637..310de288549818 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -1194,9 +1194,8 @@ static const struct tpm_input_header tpm_getrandom_header = {
-  *
-  * Returns < 0 on error and the number of bytes read on success
-  */
--int tpm_get_random(u32 chip_num, u8 *out, size_t max)
-+int tpm_get_random_dev(struct tpm_chip *chip, u8 *out, size_t max)
- {
--	struct tpm_chip *chip;
- 	struct tpm_cmd_t tpm_cmd;
- 	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
- 	int err, total = 0, retries = 5;
-@@ -1205,15 +1204,8 @@ int tpm_get_random(u32 chip_num, u8 *out, size_t max)
- 	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
- 		return -EINVAL;
- 
--	chip = tpm_chip_find_get(chip_num);
--	if (chip == NULL)
--		return -ENODEV;
--
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		err = tpm2_get_random(chip, out, max);
--		tpm_put_ops(chip);
--		return err;
--	}
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		return tpm2_get_random(chip, out, max);
- 
- 	do {
- 		tpm_cmd.header.in = tpm_getrandom_header;
-@@ -1231,10 +1223,9 @@ int tpm_get_random(u32 chip_num, u8 *out, size_t max)
- 
- 		rlength = be32_to_cpu(tpm_cmd.header.out.length);
- 		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
--			      recd) {
--			total = -EFAULT;
--			break;
--		}
-+			      recd)
-+			return -EFAULT;
-+
- 		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
- 
- 		dest += recd;
-@@ -1242,9 +1233,23 @@ int tpm_get_random(u32 chip_num, u8 *out, size_t max)
- 		num_bytes -= recd;
- 	} while (retries-- && total < max);
- 
--	tpm_put_ops(chip);
- 	return total ? total : -EIO;
- }
-+
-+int tpm_get_random(u32 chip_num, u8 *out, size_t max)
-+{
-+	int rc;
-+	struct tpm_chip *chip;
-+
-+	chip = tpm_chip_find_get(chip_num);
-+	if (chip == NULL)
-+		return -ENODEV;
-+
-+	rc = tpm_get_random_dev(chip, out, max);
-+
-+	tpm_put_ops(chip);
-+	return rc;
-+}
- EXPORT_SYMBOL_GPL(tpm_get_random);
- 
- /**
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 2d5466a72e40f8..0e41e044d81be2 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -26,6 +26,7 @@
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/fs.h>
-+#include <linux/hw_random.h>
- #include <linux/mutex.h>
- #include <linux/sched.h>
- #include <linux/platform_device.h>
-@@ -210,6 +211,9 @@ struct tpm_chip {
- 	int dev_num;		/* /dev/tpm# */
- 	unsigned long is_open;	/* only one allowed */
- 
-+	char tpm_hwrng_name[64];
-+	struct hwrng tpm_hwrng;
-+
- 	struct mutex tpm_mutex;	/* tpm is processing */
- 
- 	unsigned long timeout_a; /* jiffies */
-@@ -548,6 +552,7 @@ void tpm_chip_unregister(struct tpm_chip *chip);
- void tpm_sysfs_add_device(struct tpm_chip *chip);
- 
- int tpm_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-+int tpm_get_random_dev(struct tpm_chip *chip, u8 *out, size_t max);
- 
- #ifdef CONFIG_ACPI
- extern void tpm_add_ppi(struct tpm_chip *chip);
--- 
-2.7.4
-
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-
+> security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
