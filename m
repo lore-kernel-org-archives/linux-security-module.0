@@ -1,51 +1,75 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 24 Oct 2017 15:56:41 +0100
-Subject: [PATCH 04/27] Restrict /dev/mem and /dev/kmem when the kernel is
-	locked down
-In-Reply-To: <CABawtvMWhHJHtog9BWNVJ3Xk-ipOhPp+TGSVNjjZD27QAfB+Nw@mail.gmail.com>
-References: <CABawtvMWhHJHtog9BWNVJ3Xk-ipOhPp+TGSVNjjZD27QAfB+Nw@mail.gmail.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842466261.7923.14359746674406637357.stgit@warthog.procyon.org.uk>
-	<18778.1508769258@warthog.procyon.org.uk>
-Message-ID: <21927.1508857001@warthog.procyon.org.uk>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 24 Oct 2017 17:44:40 +0200
+Subject: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
+	in-kernel API
+In-Reply-To: <20171023163139.GA17394@obsidianresearch.com>
+References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
+	<cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
+	<20171023163139.GA17394@obsidianresearch.com>
+Message-ID: <20171024154440.3jeupmus43jcgbbz@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Ethan Zhao <ethan.kernel@gmail.com> wrote:
+On Mon, Oct 23, 2017 at 10:31:39AM -0600, Jason Gunthorpe wrote:
+> On Mon, Oct 23, 2017 at 10:07:31AM -0400, Stefan Berger wrote:
+> 
+> > >-int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
+> > >+int tpm_pcr_extend(int pcr_idx, const u8 *hash)
+> > >  {
+> > 
+> > 
+> > I think every kernel internal TPM driver API should be called with the
+> > tpm_chip as a parameter. This is in foresight of namespacing of IMA where we
+> > want to provide the flexibility of passing a dedicated vTPM to each
+> > namespace and IMA would use the chip as a parameter to all of these
+> > functions to talk to the right tpm_vtpm_proxy instance. From that
+> > perspective this patch goes into the wrong direction.
+> 
+> Yes, we should ultimately try and get to there.. Someday the
+> tpm_chip_find_get() will need to become namespace aware.
+> 
+> But this patch is along the right path, eliminating the chip_num is
+> the right thing to do..
+> 
+> > >-	tpm2 = tpm_is_tpm2(TPM_ANY_NUM);
+> > >+	tpm2 = tpm_is_tpm2();
+> > >  	if (tpm2 < 0)
+> > >  		return tpm2;
+> > >
+> > >@@ -1008,7 +1007,7 @@ static int trusted_instantiate(struct key *key,
+> > >  	switch (key_cmd) {
+> > >  	case Opt_load:
+> > >  		if (tpm2)
+> > >-			ret = tpm_unseal_trusted(TPM_ANY_NUM, payload, options);
+> > >+			ret = tpm_unseal_trusted(payload, options);
+> 
+> Sequences like this are sketchy.
+> 
+> It should be
+> 
+> struct tpm_chip *tpm;
+> 
+> tpm = tpm_chip_find_get()
+> tpm2 = tpm_is_tpm2(tpm);
+> 
+> [..]
+> 
+> if (tpm2)
+>      ret = tpm_unseal_trusted(tpm, payload, options);
+> 
+> [..]
+> 
+> tpm_put_chip(tpm);
+> 
+> As hot plug could alter the 'tpm' between the two tpm calls.
+> 
+> Jason
 
->     May I ask a question here -- Is it intentionally enabling the
-> read-only mode, so userspace
-> tools like dmidecode could work with kernel_is_locked_down ?  while it
-> was impossible to work
-> with the attached patch applied. Is it a security policy change with
-> secure boot ?
+This patch just removes bunch of dead code. It does not change existing
+semantics. What you are saying should be done after the dead code has
+been removed. This commit is first step to that direction.
 
-I removed readability on /dev/mem, /dev/kmem and /proc/kcore so that userspace
-can't use this to gain access to cryptographic material in use by the kernel.
-
-Readability was removed on /dev/port because reading from an I/O port register
-might have a side effect or might allow you to snoop h/w interactions, such as
-keyboard input.
-
-I can provide an additional config option to allow /dev/mem and similar to
-remain readable - but it needs to be a temporary affair.
-
-I can also log accesses to these interfaces so that we can find out what
-breaks and fix it.
-
-Note that dmidecode doesn't necessarily use /dev/mem:
-
-	[root at andromeda ~]# strace -f -eopen dmidecode  >/dev/null
-	open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-	open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
-	open("/sys/firmware/dmi/tables/smbios_entry_point", O_RDONLY) = 3
-	open("/sys/firmware/dmi/tables/DMI", O_RDONLY) = 3
-	+++ exited with 0 +++
-
-Indeed, my Fedora 24 test system boots without a /dev/mem file being present
-(I'm not sure *why* /dev/mem isn't present, but I hadn't noticed till now).
-
-David
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
