@@ -1,55 +1,56 @@
-From: dmitry.torokhov@gmail.com (Dmitry Torokhov)
-Date: Tue, 24 Oct 2017 10:02:00 -0700
-Subject: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
-	in-kernel API
-In-Reply-To: <20171024161118.GA348@obsidianresearch.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
-	<cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
-	<20171023163139.GA17394@obsidianresearch.com>
-	<20171024154440.3jeupmus43jcgbbz@linux.intel.com>
-	<CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
-	<20171024155526.GA32250@obsidianresearch.com>
-	<CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
-	<20171024161118.GA348@obsidianresearch.com>
-Message-ID: <CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
+From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
+Date: Tue, 24 Oct 2017 15:36:59 -0200
+Subject: [PATCH v3 0/2] ima: change how MODULE_SIG_FORCE is checked on modules
+	checking policy
+Message-ID: <cover.1508865786.git.brdeoliv@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 24, 2017 at 9:11 AM, Jason Gunthorpe
-<jgunthorpe@obsidianresearch.com> wrote:
-> On Tue, Oct 24, 2017 at 09:37:33PM +0530, PrasannaKumar Muralidharan wrote:
->> Hi Jason,
->>
->> On 24 October 2017 at 21:25, Jason Gunthorpe
->> <jgunthorpe@obsidianresearch.com> wrote:
->> > On Tue, Oct 24, 2017 at 09:21:15PM +0530, PrasannaKumar Muralidharan wrote:
->> >
->> >> Please check the RFC [1]. It does use chip id. The rfc has issues and
->> >> has to be fixed but still there could be users of the API.
->> >>
->> >> 1. https://www.spinics.net/lists/linux-crypto/msg28282.html
->> >
->> > That patch isn't safe at all. You need to store a kref to th chip in
->> > the hwrng, not parse a string.
->>
->> The drivers/char/hw_random/tpm-rng.c module does not store the chip
->> reference so I guess the usage is safe.
->
-> It is using the default TPM, it is always safe to use the default tpm.
+This patchset ensure that IMA's modules checking policy:
 
-tpm-rng is abomination that should be kicked out as soon as possible.
-It wrecks havoc with the power management (TPM chip drivers may go
-into suspend state, but tpm_rng does not do any power management and
-happily forwards requests to suspended hardware) and may be available
-when there is no TPM at all yet (the drivers have not been probed yet,
-or have gotten a deferral, etc).
+    measure func=MODULE_CHECK uid=0
 
-TPM core should register HWRNGs when chips are ready.
+rely on the correct value of CONFIG_MODULE_SIG_FORCE, since the way it
+is today the code completely ignores the module.sig_enforce cmdline
+param, which behaves in a OR logic with the CONFIG value
+(CONFIG_MODULE_SIG_FORCE || module.sig_enforce). That said, everytime a
+module would load, in the current checking code, when the kernel was not
+compiled with the CONFIG set the call to init_module syscall fails with
+-EACCES:
 
-Thanks.
+# strace -f -v modprobe <any-module> | grep init_module
+init_module(0x55b9bcc9bba0, 17763, "") = -1 EACCES (Permission denied)
+
+With this patchset the result would rely on the module.sig_enforce
+cmdline as well. Once the CONFIG is not set, but the param is, the
+result would be 'success', as it should be:
+
+# strace -f -v modprobe <any-module> | grep init_module
+init_module(0x7f9602d6e010, 386646, "") = 0
+
+The patchset was tested in two different kernels: 4.13.6 (Fedora 27) and
+4.14.0-rc4 (integrity-next tree).
+
+Changes:
+    v3: 
+        1/2 - added dummy is_module_sig_enforced() function to the case
+        where CONFIG_MODULES is not set and IMA=y.
+    v2:
+        1/2 - code changes to correct checkpatch.pl warnings.
+
+Bruno E. O. Meneguele (2):
+  module: export module signature enforcement status
+  ima: check signature enforcement against cmdline param instead of
+    CONFIG
+
+ include/linux/module.h            |  7 +++++++
+ kernel/module.c                   | 10 ++++++++++
+ security/integrity/ima/ima_main.c |  6 +++---
+ 3 files changed, 20 insertions(+), 3 deletions(-)
 
 -- 
-Dmitry
+2.13.6
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
