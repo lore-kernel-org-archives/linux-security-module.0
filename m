@@ -1,8 +1,8 @@
-From: prasannatsmkumar@gmail.com (PrasannaKumar Muralidharan)
-Date: Tue, 24 Oct 2017 23:26:52 +0530
+From: dmitry.torokhov@gmail.com (Dmitry Torokhov)
+Date: Tue, 24 Oct 2017 11:04:44 -0700
 Subject: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
 	in-kernel API
-In-Reply-To: <20171024174637.GB1806@obsidianresearch.com>
+In-Reply-To: <20171024173757.GA1806@obsidianresearch.com>
 References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
 	<cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
 	<20171023163139.GA17394@obsidianresearch.com>
@@ -11,42 +11,47 @@ References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
 	<20171024155526.GA32250@obsidianresearch.com>
 	<CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
 	<20171024161118.GA348@obsidianresearch.com>
-	<CANc+2y4VYWUON2Uo5M7SyyxtrMPiyY1Ln0WEkFLzKsHJ0v_keA@mail.gmail.com>
-	<20171024174637.GB1806@obsidianresearch.com>
-Message-ID: <CANc+2y523PgF_-ynp2xuor_2RUGLFhnK14F-Wf5i5hwRDmk_Fw@mail.gmail.com>
+	<CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
+	<20171024173757.GA1806@obsidianresearch.com>
+Message-ID: <20171024180444.aewqwgglfmb46h22@dtor-ws>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Jason,
+On Tue, Oct 24, 2017 at 11:37:57AM -0600, Jason Gunthorpe wrote:
+> On Tue, Oct 24, 2017 at 10:02:00AM -0700, Dmitry Torokhov wrote:
+> > tpm-rng is abomination that should be kicked out as soon as possible.
+> > It wrecks havoc with the power management (TPM chip drivers may go
+> > into suspend state, but tpm_rng does not do any power management and
+> > happily forwards requests to suspended hardware) and may be available
+> > when there is no TPM at all yet (the drivers have not been probed yet,
+> > or have gotten a deferral, etc).
+> 
+> Makes sense
+> 
+> > TPM core should register HWRNGs when chips are ready.
+> 
+> The main thing I've wanted from the TPM RNG is
+> 'add_early_randomness'..
 
-On 24 October 2017 at 23:16, Jason Gunthorpe
-<jgunthorpe@obsidianresearch.com> wrote:
-> On Tue, Oct 24, 2017 at 09:44:30PM +0530, PrasannaKumar Muralidharan wrote:
->
->> I am wondering why it is wrong. Isn't the chip id valid till it is
->> unregistered? If so the rfc is correct. Please explain, may be I am
->> missing something.
->
-> The lifetime is a bit complicated, but the general rule in the kernel
-> for things like this it to use pointers, not ids, and certainly not
-> string ids.
->
-> For that patch it could just use container_of to get the chip..
->
-> Jason
+I see... However you can't add any randomness if hardware is not quite
+there yet.
 
-hwrng requires a unique name for every device. In that patch
-"tpm-rng-<chip_num>" is used. chip_num is nothing but dev->dev_num.
-This way more than 1 tpm chip can be used as rng provider.
-tpm_get_random uses chip_num as its parameter. This is why
-chip->dev_num was used.
+> 
+> We can certainly provide a TPM interface to hwrng, it seems
+> reasonable.
+> 
+> Excep that we already have a user api in /dev/tpm to access the
+> tpm RNG, is the duplication a problem?
 
-Is that reasoning correct?
+If we already have userspace API we have to maintain this, even if it is
+duplicate, there is no way around it. I'd expect most of the users will
+use unified random API, while some TPM-oriented users may still go via
+/dev/tpm to use the same API as all other their requests.
 
-Please feel free to correct me if I am wrong.
+Thanks.
 
-Thanks,
-PrasannaKumar
+-- 
+Dmitry
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
