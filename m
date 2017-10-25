@@ -1,61 +1,96 @@
-From: jsnitsel@redhat.com (Jerry Snitselaar)
-Date: Wed, 25 Oct 2017 13:22:21 -0700
-Subject: Fixing CVE-2017-15361
-In-Reply-To: <20171025185349.ocptudim3g35j6im@linux.intel.com>
-References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
-	<CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
-	<20171025185349.ocptudim3g35j6im@linux.intel.com>
-Message-ID: <20171025202221.gkgch7rjjqoblzpf@rhwork>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 25 Oct 2017 17:19:29 -0400
+Subject: [PATCH] Audit: remove unused audit_log_secctx function
+In-Reply-To: <7138b693-9f67-05b1-926a-f0b8ca4035d2@schaufler-ca.com>
+References: <7138b693-9f67-05b1-926a-f0b8ca4035d2@schaufler-ca.com>
+Message-ID: <CAHC9VhRNP1dp2_E2KM=RrYLonHZxdRTkLPBk0j7_g13HEOr_0A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed Oct 25 17, Jarkko Sakkinen wrote:
->On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
->> On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com> wrote:
->> > I'm implementing a fix for CVE-2017-15361 that simply blacklists
->> > vulnerable FW versions. I think this is the only responsible action from
->> > my side that I can do.
->>
->> I'm not sure this is ideal - do Infineon have any Linux tooling for
->> performing firmware updates, and if so will that continue working if
->> the device is blacklisted? It's also a poor user experience to have
->> systems using TPM-backed disk encryption keys suddenly rendered
->> unbootable, and making it as easy as possible for people to do an
->> upgrade and then re-seal secrets with new keys feels like the correct
->> approach.
+On Tue, Oct 24, 2017 at 9:52 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> The function audit_log_secctx() is unused in the upstream kernel.
+> All it does is wrap another function that doesn't need wrapping.
+> It claims to give you the SELinux context, but that is not true if
+> you are using a different security module.
 >
->I talked today with Alexander Steffen in the KS unconference and we
->concluded that this would be a terrible idea.
->
->Alexander stated the following things about FW updates (Alexander,
->please correct me if I state something incorrectly or if you have
->something to add):
->
->* FW update can be constructed either in a way that the keys in the
->  NVRAM are not cleared or in a way that they are cleared.
->* FW update cannot be directly applied to the TPM but must come as
->  part of the firmware update from the vendor.
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/audit.h |  8 --------
+>  kernel/audit.c        | 26 --------------------------
+>  2 files changed, 34 deletions(-)
 
-If that is the case, can the two of you get Intel to update the fw
-for the tpm in the nuc5i5myhe (slb9665) :) ? It has needed an update for a while, due
-to issues with context management. My understanding (quite likely I misunderstood)
-from a recent discussion with Peter was that it was possible to update the fw.
+Merged into audit/next, thanks!
 
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index cb708eb..9b275b6 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -149,12 +149,6 @@ extern void                    audit_log_key(struct audit_buffer *ab,
+>  extern void                audit_log_link_denied(const char *operation,
+>                                                   const struct path *link);
+>  extern void                audit_log_lost(const char *message);
+> -#ifdef CONFIG_SECURITY
+> -extern void                audit_log_secctx(struct audit_buffer *ab, u32 secid);
+> -#else
+> -static inline void         audit_log_secctx(struct audit_buffer *ab, u32 secid)
+> -{ }
+> -#endif
 >
->I proposed the following as an alternative:
+>  extern int audit_log_task_context(struct audit_buffer *ab);
+>  extern void audit_log_task_info(struct audit_buffer *ab,
+> @@ -203,8 +197,6 @@ static inline void audit_log_key(struct audit_buffer *ab, char *key)
+>  static inline void audit_log_link_denied(const char *string,
+>                                          const struct path *link)
+>  { }
+> -static inline void audit_log_secctx(struct audit_buffer *ab, u32 secid)
+> -{ }
+>  static inline int audit_log_task_context(struct audit_buffer *ab)
+>  {
+>         return 0;
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index be1c28f..4254fde 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2337,32 +2337,6 @@ void audit_log(struct audit_context *ctx, gfp_t gfp_mask, int type,
+>         }
+>  }
 >
->* Print a message to the klog (which log level would be appropriate?).
->* Possibly sleep for few seconds. Is this a good idea?
+> -#ifdef CONFIG_SECURITY
+> -/**
+> - * audit_log_secctx - Converts and logs SELinux context
+> - * @ab: audit_buffer
+> - * @secid: security number
+> - *
+> - * This is a helper function that calls security_secid_to_secctx to convert
+> - * secid to secctx and then adds the (converted) SELinux context to the audit
+> - * log by calling audit_log_format, thus also preventing leak of internal secid
+> - * to userspace. If secid cannot be converted audit_panic is called.
+> - */
+> -void audit_log_secctx(struct audit_buffer *ab, u32 secid)
+> -{
+> -       u32 len;
+> -       char *secctx;
+> -
+> -       if (security_secid_to_secctx(secid, &secctx, &len)) {
+> -               audit_panic("Cannot convert secid to context");
+> -       } else {
+> -               audit_log_format(ab, " obj=%s", secctx);
+> -               security_release_secctx(secctx, len);
+> -       }
+> -}
+> -EXPORT_SYMBOL(audit_log_secctx);
+> -#endif
+> -
+>  EXPORT_SYMBOL(audit_log_start);
+>  EXPORT_SYMBOL(audit_log_end);
+>  EXPORT_SYMBOL(audit_log_format);
 >
->While writing this email yet another alternative popped into my mind:
->what if we allow only in-kernel use but disallow the use of /dev/tpm0?
->You could still use trusted keys.
->
->Here are all the ideas that I have and I am open for better
->alternatives.
->
->/Jarkko
+
+
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
