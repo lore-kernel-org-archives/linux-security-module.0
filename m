@@ -1,74 +1,46 @@
-From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Wed, 25 Oct 2017 13:46:33 -0600
-Subject: [PATCH v2] tpm: use struct tpm_chip for tpm_chip_find_get()
-In-Reply-To: <20171025193452.d4qa4dhacfgqejk7@linux.intel.com>
-References: <20171025115508.5682-1-jarkko.sakkinen@linux.intel.com>
-	<CANc+2y46q85+G1=9cXKW0R8FpGBqCuzkLnJzvSYFQ1S=ztKGew@mail.gmail.com>
-	<20171025193452.d4qa4dhacfgqejk7@linux.intel.com>
-Message-ID: <20171025194633.GB998@obsidianresearch.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 25 Oct 2017 22:00:30 +0200
+Subject: [PATCH] tpm: Move Linux RNG connection to hwrng
+In-Reply-To: <20171025193707.GA998@obsidianresearch.com>
+References: <20171024184235.GC1806@obsidianresearch.com>
+	<CANc+2y5q78g1Ow1JQ7kO0SkPrgNtbRV=COkB4YLHbSraTQH7aQ@mail.gmail.com>
+	<20171025185817.hoalqzud3646yuy7@linux.intel.com>
+	<20171025193707.GA998@obsidianresearch.com>
+Message-ID: <20171025200030.ikygzc3lxnwex7sg@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> struct tpm_chip *tpm_chip_find_get(u64 id)
-> {
-> 	struct tpm_chup *chip;
-> 	struct tpm_chip *res = NULL;
-> 	int chip_num = 0;
-> 	int chip_prev;
+On Wed, Oct 25, 2017 at 01:37:07PM -0600, Jason Gunthorpe wrote:
+> On Wed, Oct 25, 2017 at 08:58:17PM +0200, Jarkko Sakkinen wrote:
+> > On Wed, Oct 25, 2017 at 08:15:09PM +0530, PrasannaKumar Muralidharan wrote:
+> > > > +       if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM))
+> > > > +               return 0;
+> > > 
+> > > Can #ifndef CONFIG_HW_RANDOM_TPM be used instead? That way an if
+> > > condition can be avoided.
+> > 
+> > Nope. There is no reason to avoid the if-condition. Compiler will take
+> > care of it. IS_ENABLED() macro is available just for the purpose Jason
+> > is using it.
+> > 
+> > > > +       char tpm_hwrng_name[64];
+> > > > +       struct hwrng tpm_hwrng;
+> > > > +
+> > > 
+> > > Can this also be put inside the #ifdef?
+> > 
+> > Yes. It should be inside #ifdef.
 > 
-> 	mutex_lock(&idr_lock);
+> Then we need #idefs in the .c code, IS_ENABLED is not enough :\ I
+> don't think the few bytes matters enough to bother.
 > 
-> 	do {
-> 		chip_prev = chip_num;
-> 
-> 		chip = idr_get_next(&dev_nums_idr, &chip_num);
-> 
-> 		if (chip && (!id || id == chip->id) && !tpm_try_get_ops(chip)) {
-> 			res = chip;
-> 			break;
-> 		}
-> 	} while (chip_prev != chip_num);
-> 
-> 	mutex_unlock(&idr_lock);
-> 
-> 	return res;
-> }
+> Jason
 
-?? The old version was correct, idr_find_slowpath is better than an
-idr_get_next serach if you already know id.
+I'll buy that!
 
-PrasannaKumar's solution seems right, if we already have chip, then we
-just need to lock it again:
+A minor tidbit: could the tpm_ prefix removed from those fields?
 
-struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
-{
-	struct tpm_chip *res = NULL;
-
-	mutex_lock(&idr_lock);
-
-	if (!chip) {
-		int chip_num = 0;
-		int chip_prev;
-
-		do {
-			chip_prev = chip_num;
-			chip = idr_get_next(&dev_nums_idr, &chip_num);
-			if (chip && !tpm_try_get_ops(chip)) {
-				res = chip;
-				break;
-			}
-		} while (chip_prev != chip_num);
-	} else {
-		if (!tpm_try_get_ops(chip))
-			res = chip;
-	}
-
-	mutex_unlock(&idr_lock);
-
-	return res;
-}
-
-Jason
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
