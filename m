@@ -1,26 +1,30 @@
 From: jgunthorpe@obsidianresearch.com (Jason Gunthorpe)
-Date: Wed, 25 Oct 2017 09:18:59 -0600
-Subject: [PATCH] tpm: Move Linux RNG connection to hwrng
-In-Reply-To: <CANc+2y5q78g1Ow1JQ7kO0SkPrgNtbRV=COkB4YLHbSraTQH7aQ@mail.gmail.com>
-References: <20171024184235.GC1806@obsidianresearch.com>
-	<CANc+2y5q78g1Ow1JQ7kO0SkPrgNtbRV=COkB4YLHbSraTQH7aQ@mail.gmail.com>
-Message-ID: <20171025151859.GB15557@obsidianresearch.com>
+Date: Wed, 25 Oct 2017 09:22:25 -0600
+Subject: [PATCH v2] tpm: use struct tpm_chip for tpm_chip_find_get()
+In-Reply-To: <20171025115508.5682-1-jarkko.sakkinen@linux.intel.com>
+References: <20171025115508.5682-1-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20171025152225.GC15557@obsidianresearch.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Oct 25, 2017 at 08:15:09PM +0530, PrasannaKumar Muralidharan
-wrote:
-
-> > +static int tpm_add_hwrng(struct tpm_chip *chip)
-> > +{
-> > +       if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-> > +               return 0;
+On Wed, Oct 25, 2017 at 01:55:04PM +0200, Jarkko Sakkinen wrote:
+> Device number (the character device index) is not a stable identifier
+> for a TPM chip. That is the reason why every call site passes
+> TPM_ANY_NUM to tpm_chip_find_get().
 > 
-> Can #ifndef CONFIG_HW_RANDOM_TPM be used instead? That way an if
-> condition can be avoided.
+> This commit changes the API in a way that instead a struct tpm_chip
+> instance is given and NULL means the default chip. In addition, this
+> commit refines the documentation to be up to date with the
+> implementation.
+> 
+> Suggested-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com> (@chip_num -> @chip)
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> v2:
+> * Further defined function documentation.
+> * Changed @chip_num to @chip instead of removing the parameter as suggested by
+>   Jason Gunthorpe.
 
-Generally speaking IS_ENABLED is prefered over #ifdef as it reduces the
-set of compilation combinations.
+Reviewed-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 
 Jason
 --
