@@ -1,44 +1,77 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 25 Oct 2017 21:11:23 +0200
-Subject: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
-	in-kernel API
-In-Reply-To: <CANc+2y4BtQGqtC8RJL1Srrz_kWwhyveV3HBpfO1kikFj+0mHaA@mail.gmail.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
-	<cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
-	<20171023163139.GA17394@obsidianresearch.com>
-	<20171024154440.3jeupmus43jcgbbz@linux.intel.com>
-	<CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
-	<20171024162359.tf5xulhlhokmuxh5@linux.intel.com>
-	<CANc+2y4vtr+kbhC_7Rv=rHA2LgEVBHLFEu+DYYK1UmpU63PCgQ@mail.gmail.com>
-	<20171024182235.d7b3oajc5zcjs57v@linux.intel.com>
-	<CANc+2y4BtQGqtC8RJL1Srrz_kWwhyveV3HBpfO1kikFj+0mHaA@mail.gmail.com>
-Message-ID: <20171025191123.4uqh6epwhak6hqp5@linux.intel.com>
+Date: Wed, 25 Oct 2017 21:34:52 +0200
+Subject: [PATCH v2] tpm: use struct tpm_chip for tpm_chip_find_get()
+In-Reply-To: <CANc+2y46q85+G1=9cXKW0R8FpGBqCuzkLnJzvSYFQ1S=ztKGew@mail.gmail.com>
+References: <20171025115508.5682-1-jarkko.sakkinen@linux.intel.com>
+	<CANc+2y46q85+G1=9cXKW0R8FpGBqCuzkLnJzvSYFQ1S=ztKGew@mail.gmail.com>
+Message-ID: <20171025193452.d4qa4dhacfgqejk7@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Oct 25, 2017 at 08:21:16PM +0530, PrasannaKumar Muralidharan wrote:
-> >> > 2. Moving struct tpm_rng to the TPM client is architecturally
-> >> >    uacceptable.
-> >>
-> >> As there was no response to the patch there is no way to know whether
-> >> it is acceptable or not.
+On Wed, Oct 25, 2017 at 08:40:26PM +0530, PrasannaKumar Muralidharan wrote:
+> > -struct tpm_chip *tpm_chip_find_get(int chip_num)
+> > +struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
+> >  {
+> > -       struct tpm_chip *chip, *res = NULL;
+> > +       struct tpm_chip *res = NULL;
+> > +       int chip_num = 0;
+> >         int chip_prev;
 > >
-> > I like the idea of removing the tpm rng driver as discussed in other
-> > emails in this thread.
+> >         mutex_lock(&idr_lock);
+> >
+> > -       if (chip_num == TPM_ANY_NUM) {
+> > -               chip_num = 0;
+> > +       if (!chip) {
+> >                 do {
+> >                         chip_prev = chip_num;
+> >                         chip = idr_get_next(&dev_nums_idr, &chip_num);
 > 
-> Thank you.
+> When chip is not NULL just do tpm_try_get_ops(chip). Current code does
+> more things which are not required.
 
-No, thank you.
+Your observation is right that there is something wrong but conclusions
+are incorrect.
 
-I didn't first understand the big idea and only looked at the code
-change per se. I apologize for that.
+It's actually a regression.
 
-The problem that you went to solve was real and it led to a properly
-implemented solution. You were not late from the party. Jason's code
-change is derivative work of your code change. That's why his code
-change has also your signed-off-by.
+If @chip has a value, the code does one iteration of what it is doing in
+the first branch of the condition. That is completely bogus semantics to
+say the least.
 
-Thanks for doing awesome work :-)
+To sort that out I'll introduce a new field to struct tpm_chip:
+
+  u64 id;
+
+This gets a value from a global count every time a chip is created.
+
+The function will become then:
+
+struct tpm_chip *tpm_chip_find_get(u64 id)
+{
+	struct tpm_chup *chip;
+	struct tpm_chip *res = NULL;
+	int chip_num = 0;
+	int chip_prev;
+
+	mutex_lock(&idr_lock);
+
+	do {
+		chip_prev = chip_num;
+
+		chip = idr_get_next(&dev_nums_idr, &chip_num);
+
+		if (chip && (!id || id == chip->id) && !tpm_try_get_ops(chip)) {
+			res = chip;
+			break;
+		}
+	} while (chip_prev != chip_num);
+
+	mutex_unlock(&idr_lock);
+
+	return res;
+}
+
+Thanks for spotting this out. I'll refine the patch.
 
 /Jarkko
 --
