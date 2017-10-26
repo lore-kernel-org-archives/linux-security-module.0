@@ -1,93 +1,161 @@
-From: jlee@suse.com (joeyli)
-Date: Thu, 26 Oct 2017 15:42:43 +0800
-Subject: [PATCH 07/27] kexec_file: Disable at runtime if securelevel has
-	been set
-In-Reply-To: <1508774083.3639.124.camel@linux.vnet.ibm.com>
-References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842468754.7923.10037578333644594134.stgit@warthog.procyon.org.uk>
-	<1508774083.3639.124.camel@linux.vnet.ibm.com>
-Message-ID: <20171026074243.GM8550@linux-l9pv.suse>
+From: mjg59@google.com (Matthew Garrett)
+Date: Thu, 26 Oct 2017 01:40:54 -0700
+Subject: [PATCH V3 1/2] security: Add a cred_getsecid hook
+Message-ID: <20171026084055.25482-1-mjg59@google.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Mimi,
+For IMA purposes, we want to be able to obtain the prepared secid in the
+bprm structure before the credentials are committed. Add a cred_getsecid
+hook that makes this possible.
 
-Thank you for reviewing.
-
-On Mon, Oct 23, 2017 at 11:54:43AM -0400, Mimi Zohar wrote:
-> On Thu, 2017-10-19 at 15:51 +0100, David Howells wrote:
-> > From: Chun-Yi Lee <joeyli.kernel@gmail.com>
-> > 
-> > When KEXEC_VERIFY_SIG is not enabled, kernel should not loads image
-> > through kexec_file systemcall if securelevel has been set.
-> 
-> The patch title and description needs to be updated to refer to
-> lockdown, not securelevel.
-> 
-> As previously mentioned the last time these patches were posted, this
-> leaves out testing to see if the integrity subsystem is enabled.
-> 
-> Commit 503ceaef8e2e "ima: define a set of appraisal rules requiring
-> file signatures" was upstreamed. ?An additional patch could force
-> these rules to be added to the custom policy, if lockdown is enabled.
-> ?This and other patches in this series could then check to see if
-> is_ima_appraise_enabled() is true.
-> 
-> Mimi
->
-
-I have updated the patch title and description, and I also added
-is_ima_appraise_enabled() as the following. Is it good to you?
-
-On the other hand, I am not good on IMA. I have traced the code path
-in kimage_file_prepare_segments(). Looks that the READING_KEXEC_IMAGE
-doesn't show in selinux_kernel_read_file(). Where is the exact code
-in IMA for checking the signature when loading crash kernel file? 
-
-Thanks a lot!
-Joey Lee
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: selinux at tycho.nsa.gov
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module at vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity at vger.kernel.org
 ---
+ V3: Fix smack_cred_getsecid()
 
->From 274a2125132ba5aff49e4ccd167f52982732361f Mon Sep 17 00:00:00 2001
-From: "Lee, Chun-Yi" <jlee@suse.com>
-Date: Thu, 26 Oct 2017 15:24:50 +0800
-Subject: [PATCH] kexec_file: The integrity must be checked when the kernel is
- locked down
+ include/linux/lsm_hooks.h  |  6 ++++++
+ include/linux/security.h   |  1 +
+ security/security.c        |  7 +++++++
+ security/selinux/hooks.c   |  8 ++++++++
+ security/smack/smack_lsm.c | 18 ++++++++++++++++++
+ 5 files changed, 40 insertions(+)
 
-When KEXEC_VERIFY_SIG and IMA appraise are not enabled, kernel should
-not allow that the image to be loaded by kexec_file systemcall when the
-kernel is locked down.
-
-The original code was showed in Matthew's patch but not in the later
-patch set:
-    https://lkml.org/lkml/2015/3/13/778
-
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
----
- kernel/kexec_file.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 9f48f44..b6dc218 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -255,6 +255,14 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
- 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
- 		return -EPERM;
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index c9258124e417..c28c6f8b65dc 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -554,6 +554,10 @@
+  *	@new points to the new credentials.
+  *	@old points to the original credentials.
+  *	Transfer data from original creds to new creds
++ * @cred_getsecid:
++ *	Retrieve the security identifier of the cred structure @c
++ *	@c contains the credentials, secid will be placed into @secid.
++ *	In case of failure, @secid will be set to zero.
+  * @kernel_act_as:
+  *	Set the credentials for a kernel service to act as (subjective context).
+  *	@new points to the credentials to be modified.
+@@ -1507,6 +1511,7 @@ union security_list_options {
+ 	int (*cred_prepare)(struct cred *new, const struct cred *old,
+ 				gfp_t gfp);
+ 	void (*cred_transfer)(struct cred *new, const struct cred *old);
++	void (*cred_getsecid)(const struct cred *c, u32 *secid);
+ 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+ 	int (*kernel_module_request)(char *kmod_name);
+@@ -1779,6 +1784,7 @@ struct security_hook_heads {
+ 	struct list_head cred_free;
+ 	struct list_head cred_prepare;
+ 	struct list_head cred_transfer;
++	struct list_head cred_getsecid;
+ 	struct list_head kernel_act_as;
+ 	struct list_head kernel_create_files_as;
+ 	struct list_head kernel_read_file;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index ce6265960d6c..14848fef8f62 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -324,6 +324,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+ void security_cred_free(struct cred *cred);
+ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
+ void security_transfer_creds(struct cred *new, const struct cred *old);
++void security_cred_getsecid(const struct cred *c, u32 *secid);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
+diff --git a/security/security.c b/security/security.c
+index 4bf0f571b4ef..02d217597400 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1004,6 +1004,13 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
+ 	call_void_hook(cred_transfer, new, old);
+ }
  
-+	/* Don't permit images to be loaded into trusted kernels if we're not
-+	 * going to check the integrity on them
-+	 */
-+	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) &&
-+	    !is_ima_appraise_enabled() &&
-+	    kernel_is_locked_down("kexec of unsigned images"))
-+		return -EPERM;
++void security_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	*secid = 0;
++	call_void_hook(cred_getsecid, c, secid);
++}
++EXPORT_SYMBOL(security_cred_getsecid);
 +
- 	/* Make sure we have a legal set of flags */
- 	if (flags != (flags & KEXEC_FILE_FLAGS))
- 		return -EINVAL;
+ int security_kernel_act_as(struct cred *new, u32 secid)
+ {
+ 	return call_int_hook(kernel_act_as, 0, new, secid);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f5d304736852..1d11679674a6 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3836,6 +3836,13 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
+ 	*tsec = *old_tsec;
+ }
+ 
++static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	rcu_read_lock();
++	*secid = cred_sid(c);
++	rcu_read_unlock();
++}
++
+ /*
+  * set the security data for a kernel service
+  * - all the creation contexts are set to unlabelled
+@@ -6338,6 +6345,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(cred_free, selinux_cred_free),
+ 	LSM_HOOK_INIT(cred_prepare, selinux_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, selinux_cred_transfer),
++	LSM_HOOK_INIT(cred_getsecid, selinux_cred_getsecid),
+ 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
+ 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 286171a16ed2..37c35aaa6955 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2049,6 +2049,23 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
+ 	/* cbs copy rule list */
+ }
+ 
++/**
++ * smack_cred_getsecid - get the secid corresponding to a creds structure
++ * @c: the object creds
++ * @secid: where to put the result
++ *
++ * Sets the secid to contain a u32 version of the smack label.
++ */
++static void smack_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	struct smack_known *skp;
++
++	rcu_read_lock();
++	skp = smk_of_task(c->security);
++	*secid = skp->smk_secid;
++	rcu_read_unlock();
++}
++
+ /**
+  * smack_kernel_act_as - Set the subjective context in a set of credentials
+  * @new: points to the set of credentials to be modified.
+@@ -4651,6 +4668,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(cred_free, smack_cred_free),
+ 	LSM_HOOK_INIT(cred_prepare, smack_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, smack_cred_transfer),
++	LSM_HOOK_INIT(cred_getsecid, smack_cred_getsecid),
+ 	LSM_HOOK_INIT(kernel_act_as, smack_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, smack_kernel_create_files_as),
+ 	LSM_HOOK_INIT(task_setpgid, smack_task_setpgid),
 -- 
-2.6.2
+2.15.0.rc2.357.g7e34df9404-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
