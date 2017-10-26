@@ -1,71 +1,90 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 26 Oct 2017 13:57:44 -0700
-Subject: [PATCH] KEYS: trusted: fix writing past end of buffer in
-	trusted_read()
-Message-ID: <20171026205744.105566-1-ebiggers3@gmail.com>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Thu, 26 Oct 2017 20:02:23 -0200
+Subject: [PATCH v5 18/18] ima: Write modsig to the measurement list
+In-Reply-To: <1509048454.5886.108.camel@linux.vnet.ibm.com>
+References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
+	<20171018005331.2688-19-bauerman@linux.vnet.ibm.com>
+	<1509048454.5886.108.camel@linux.vnet.ibm.com>
+Message-ID: <87r2tpwosw.fsf@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
 
-When calling keyctl_read() on a key of type "trusted", if the
-user-supplied buffer was too small, the kernel ignored the buffer length
-and just wrote past the end of the buffer, potentially corrupting
-userspace memory.  Fix it by instead returning the size required, as per
-the documentation for keyctl_read().
+Hello Mimi,
 
-We also don't even fill the buffer at all in this case, as this is
-slightly easier to implement than doing a short read, and either
-behavior appears to be permitted.  It also makes it match the behavior
-of the "encrypted" key type.
+Thanks for your review.
 
-Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
-Reported-by: Ben Hutchings <ben@decadent.org.uk>
-Cc: <stable@vger.kernel.org> # v2.6.38+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/keys/trusted.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index bd85315cbfeb..98aa89ff7bfd 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -1147,20 +1147,21 @@ static long trusted_read(const struct key *key, char __user *buffer,
- 	p = dereference_key_locked(key);
- 	if (!p)
- 		return -EINVAL;
--	if (!buffer || buflen <= 0)
--		return 2 * p->blob_len;
--	ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
--	if (!ascii_buf)
--		return -ENOMEM;
- 
--	bufp = ascii_buf;
--	for (i = 0; i < p->blob_len; i++)
--		bufp = hex_byte_pack(bufp, p->blob[i]);
--	if ((copy_to_user(buffer, ascii_buf, 2 * p->blob_len)) != 0) {
-+	if (buffer && buflen >= 2 * p->blob_len) {
-+		ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
-+		if (!ascii_buf)
-+			return -ENOMEM;
-+
-+		bufp = ascii_buf;
-+		for (i = 0; i < p->blob_len; i++)
-+			bufp = hex_byte_pack(bufp, p->blob[i]);
-+		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
-+			kzfree(ascii_buf);
-+			return -EFAULT;
-+		}
- 		kzfree(ascii_buf);
--		return -EFAULT;
- 	}
--	kzfree(ascii_buf);
- 	return 2 * p->blob_len;
- }
- 
+> On Tue, 2017-10-17 at 22:53 -0200, Thiago Jung Bauermann wrote:
+>
+>> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+>> index 6a2d960fbd92..0d3390de7432 100644
+>> --- a/security/integrity/ima/ima_main.c
+>> +++ b/security/integrity/ima/ima_main.c
+>> @@ -246,7 +246,35 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>>  		rc = ima_appraise_measurement(func, iint, file, buf, size,
+>>  					      pathname, &xattr_value,
+>>  					      &xattr_len, opened);
+>> -	if (action & IMA_MEASURE)
+>> +
+>> +	/*
+>> +	 * MODSIG has one corner case we need to deal with here:
+>> +	 *
+>> +	 * Suppose the policy has one measure rule for one hook and an appraise
+>> +	 * rule for a different hook. Suppose also that the template requires
+>> +	 * the signature to be stored in the measurement list.
+>> +	 *
+>> +	 * If a file containing a MODSIG is measured by the first hook before
+>> +	 * being appraised by the second one, the corresponding entry in the
+>> +	 * measurement list will not contain the MODSIG because we only fetch it
+>> +	 * for IMA_APPRAISAL. We don't fetch it earlier because if the file has
+>> +	 * both a DIGSIG and a MODSIG it's not possible to know which one will
+>> +	 * be valid without actually doing the appraisal.
+>> +	 *
+>> +	 * Therefore, after appraisal of a MODSIG signature we need to store the
+>> +	 * measurement again if the current template requires storing the
+>> +	 * signature.
+>
+> Yes, all true, but this long comment doesn't belong here in the middle
+> of process_measurement().
+>
+>> +	 * With the opposite ordering (the appraise rule triggering before the
+>> +	 * measurement rule) there is the same problem but it's not possible to
+>> +	 * do anything about it because at the time we are appraising the
+>> +	 * signature it's impossible to know whether a measurement will ever
+>> +	 * need to be stored for this file.
+>> +	 */
+>
+> With the template format "ima-sig", the verified file signature needs
+> to be included in the measurement list. Based on this file signature,
+> the attestation server can validate the signature.
+>
+> In this case, where the appraisal comes first followed by the
+> measurement, the appraised file signature is included in the
+> measurement list. I don't see the problem here.
+
+I think I forgot that during appraisal the modsig is copied into the
+iint cache and that it will be used when the measure rule is trigerred.
+I'll drop that last paragraph.
+
+>
+>> +	if ((action & IMA_MEASURE) || ((iint->flags & IMA_MEASURE) &&
+>> +				       xattr_value &&
+>> +				       xattr_value->type == IMA_MODSIG &&
+>> +				       ima_current_template_has_sig()))
+>
+> Like the clean up you did elsewhere, this new set of tests should be
+> made into a function. The comment could placed along with the new
+> function.
+
+Ok. I didn't create a function because these tests are only done here,
+but I agree that it will make the code clearer, and be a better place
+for the big comment as well. Will do in the next version.
+
 -- 
-2.15.0.rc2.357.g7e34df9404-goog
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
