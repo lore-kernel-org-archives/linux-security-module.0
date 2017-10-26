@@ -1,105 +1,34 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 26 Oct 2017 19:08:30 +0200
-Subject: Fixing CVE-2017-15361
-In-Reply-To: <9a87c2cbfac4474a93ecd83f42852a4c@infineon.com>
-References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
-	<CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
-	<20171025185349.ocptudim3g35j6im@linux.intel.com>
-	<F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
-	<20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
-	<9a87c2cbfac4474a93ecd83f42852a4c@infineon.com>
-Message-ID: <20171026170830.e2vy4wgayncq7shv@linux.intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 26 Oct 2017 14:22:22 -0400
+Subject: [GIT PULL] Kernel lockdown for secure boot
+In-Reply-To: <29447.1509035858@warthog.procyon.org.uk>
+References: <29447.1509035858@warthog.procyon.org.uk>
+Message-ID: <1509042142.5886.61.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Oct 26, 2017 at 03:46:26PM +0000, Alexander.Steffen at infineon.com wrote:
-> > On Thu, Oct 26, 2017 at 12:26:10AM +0200, Peter Huewe wrote:
-> > >
-> > >
-> > > Am 25. Oktober 2017 20:53:49 MESZ schrieb Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com>:
-> > > >On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
-> > > >> On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
-> > > >> <jarkko.sakkinen@linux.intel.com> wrote:
-> > > >> > I'm implementing a fix for CVE-2017-15361 that simply blacklists
-> > > >> > vulnerable FW versions. I think this is the only responsible action
-> > > >from
-> > > >> > my side that I can do.
-> > > >>
-> > > >> I'm not sure this is ideal - do Infineon have any Linux tooling for
-> > > >> performing firmware updates, and if so will that continue working if
-> > > >> the device is blacklisted? It's also a poor user experience to have
-> > > >> systems using TPM-backed disk encryption keys suddenly rendered
-> > > >> unbootable, and making it as easy as possible for people to do an
-> > > >> upgrade and then re-seal secrets with new keys feels like the correct
-> > > >> approach.
-> > > >
-> > > >I talked today with Alexander Steffen in the KS unconference and we
-> > > >concluded that this would be a terrible idea.
-> > > >
-> > > >Alexander stated the following things about FW updates (Alexander,
-> > > >please correct me if I state something incorrectly or if you have
-> > > >something to add):
-> > > >
-> > > >* FW update can be constructed either in a way that the keys in the
-> > > >  NVRAM are not cleared or in a way that they are cleared.
-> > > >* FW update cannot be directly applied to the TPM but must come as
-> > > >  part of the firmware update from the vendor.
-> > > >
-> > > >I proposed the following as an alternative:
-> > > >
-> > > >* Print a message to the klog (which log level would be appropriate?).
-> > > Info?
-> > > Maybe warn, definitely not err
-> > 
-> > Since the driver does not fail usually warn would make sense but since
-> > here even allowing to continue to use such TPM is questionable I would
-> > use error here.
-> > 
-> > People anyway ignore klog too easily so using warn would be a mistake in
-> > my opinion. It's like saying that nothing serious is happening here,
-> > move along.
-> > 
-> > Do you think so?
-> > 
-> > > >* Possibly sleep for few seconds. Is this a good idea?
-> > > Helps how?
-> > 
-> > Obviously to get it noticed that the system integrity is broken.
-> > 
-> > > >While writing this email yet another alternative popped into my mind:
-> > > >what if we allow only in-kernel use but disallow the use of /dev/tpm0?
-> > > >You could still use trusted keys.
-> > > >
-> > > No, same terrible idea since you block the upgrade path.
-> > > Upgrade tools work from userspace via the kernel driver.
-> > > So /dev/tpm0 is necessary.
-> > 
-> > Right! How stupid of me (my previous response to Jerry) :-) Of course you
-> > can have special commands and talk to the TPM to do the upgrade even if
-> > it is part of the platform and not connected to a standard bus.
-> > 
-> > I got understanding in the yesterdays unconfernce discussion that it
-> > should be part of the firmware upgrade.
+On Thu, 2017-10-26 at 17:37 +0100, David Howells wrote:
+> Hi James,
 > 
-> Yes, but it really depends on the way the vendor chooses to do the
-> upgrade. UEFI Capsules would be one standard way that does not involve
-> the Linux driver. But maybe you are on some embedded ARM platform
-> without UEFI, then you can also run the upgrade through /dev/tpm0, so
-> that you do not need to invent another way to talk to the TPM.
+> Can you pull this patchset into security/next please?
 > 
-> This second option does have the drawback of the Linux driver not
-> being aware of the upgrade happening. It does not know that while the
-> TPM is in the upgrade mode no other commands can be executed. Neither
-> does it know that after the upgrade the system needs to be rebooted
-> before the TPM can be used again (so that for example the PCRs have
-> the correct values again). I want to look into those issues in the
-> future.
+> It adds kernel lockdown support for EFI secure boot.  Note that it doesn't yet
+> cover:
+> 
+> 	bpf	- No agreement as to how
+> 	ftrace	- Recently suggested, query sent to maintainer
+> 	perf	- Not looked at yet.
+> 
+> and there are some changes recently proposed that make it work with IMA that
+> I'll pass on as a follow up when we've fully worked them out.
 
-This dilates me even more to the standpoint that user space is better
-place for sorting out this issue.
+There's a major difference between leaving out support and preventing
+properly signed code from working properly. ?We're already at -rc6.
+I'm just not sure how there will be time to include the patches, test,
+and send James a subsequent pull request before the next open window?
 
-/Jarkko
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
