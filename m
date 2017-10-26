@@ -1,94 +1,43 @@
-From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
-Date: Thu, 26 Oct 2017 15:46:26 +0000
-Subject: Fixing CVE-2017-15361
-In-Reply-To: <20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
-References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
-	<CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
-	<20171025185349.ocptudim3g35j6im@linux.intel.com>
-	<F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
-	<20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
-Message-ID: <9a87c2cbfac4474a93ecd83f42852a4c@infineon.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 26 Oct 2017 11:46:45 -0400
+Subject: [PATCH 07/27] kexec_file: Disable at runtime if securelevel has
+	been set
+In-Reply-To: <26694.1509030144@warthog.procyon.org.uk>
+References: <20171026074243.GM8550@linux-l9pv.suse>
+	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842468754.7923.10037578333644594134.stgit@warthog.procyon.org.uk>
+	<1508774083.3639.124.camel@linux.vnet.ibm.com>
+	<26694.1509030144@warthog.procyon.org.uk>
+Message-ID: <1509032805.5886.52.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> On Thu, Oct 26, 2017 at 12:26:10AM +0200, Peter Huewe wrote:
-> >
-> >
-> > Am 25. Oktober 2017 20:53:49 MESZ schrieb Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com>:
-> > >On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
-> > >> On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
-> > >> <jarkko.sakkinen@linux.intel.com> wrote:
-> > >> > I'm implementing a fix for CVE-2017-15361 that simply blacklists
-> > >> > vulnerable FW versions. I think this is the only responsible action
-> > >from
-> > >> > my side that I can do.
-> > >>
-> > >> I'm not sure this is ideal - do Infineon have any Linux tooling for
-> > >> performing firmware updates, and if so will that continue working if
-> > >> the device is blacklisted? It's also a poor user experience to have
-> > >> systems using TPM-backed disk encryption keys suddenly rendered
-> > >> unbootable, and making it as easy as possible for people to do an
-> > >> upgrade and then re-seal secrets with new keys feels like the correct
-> > >> approach.
-> > >
-> > >I talked today with Alexander Steffen in the KS unconference and we
-> > >concluded that this would be a terrible idea.
-> > >
-> > >Alexander stated the following things about FW updates (Alexander,
-> > >please correct me if I state something incorrectly or if you have
-> > >something to add):
-> > >
-> > >* FW update can be constructed either in a way that the keys in the
-> > >  NVRAM are not cleared or in a way that they are cleared.
-> > >* FW update cannot be directly applied to the TPM but must come as
-> > >  part of the firmware update from the vendor.
-> > >
-> > >I proposed the following as an alternative:
-> > >
-> > >* Print a message to the klog (which log level would be appropriate?).
-> > Info?
-> > Maybe warn, definitely not err
-> 
-> Since the driver does not fail usually warn would make sense but since
-> here even allowing to continue to use such TPM is questionable I would
-> use error here.
-> 
-> People anyway ignore klog too easily so using warn would be a mistake in
-> my opinion. It's like saying that nothing serious is happening here,
-> move along.
-> 
-> Do you think so?
-> 
-> > >* Possibly sleep for few seconds. Is this a good idea?
-> > Helps how?
-> 
-> Obviously to get it noticed that the system integrity is broken.
-> 
-> > >While writing this email yet another alternative popped into my mind:
-> > >what if we allow only in-kernel use but disallow the use of /dev/tpm0?
-> > >You could still use trusted keys.
-> > >
-> > No, same terrible idea since you block the upgrade path.
-> > Upgrade tools work from userspace via the kernel driver.
-> > So /dev/tpm0 is necessary.
-> 
-> Right! How stupid of me (my previous response to Jerry) :-) Of course you
-> can have special commands and talk to the TPM to do the upgrade even if
-> it is part of the platform and not connected to a standard bus.
-> 
-> I got understanding in the yesterdays unconfernce discussion that it
-> should be part of the firmware upgrade.
+[Cc'ing Matthew Garrett]
 
-Yes, but it really depends on the way the vendor chooses to do the upgrade. UEFI Capsules would be one standard way that does not involve the Linux driver. But maybe you are on some embedded ARM platform without UEFI, then you can also run the upgrade through /dev/tpm0, so that you do not need to invent another way to talk to the TPM.
-
-This second option does have the drawback of the Linux driver not being aware of the upgrade happening. It does not know that while the TPM is in the upgrade mode no other commands can be executed. Neither does it know that after the upgrade the system needs to be rebooted before the TPM can be used again (so that for example the PCRs have the correct values again). I want to look into those issues in the future.
-
-> How do you do the upgrade through /dev/tpm0?
+On Thu, 2017-10-26 at 16:02 +0100, David Howells wrote:
+> joeyli <jlee@suse.com> wrote:
 > 
-> /Jarkko
+> > +	if (!IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG) &&
+> > +	    !is_ima_appraise_enabled() &&
+> > +	    kernel_is_locked_down("kexec of unsigned images"))
+> 
+> This doesn't seem right.  It seems that you can then kexec unsigned images
+> into a locked-down kernel if IMA appraise is enabled.
 
-Alexander
+Huh?! ?With the "secure_boot" policy enabled on the boot command line,
+IMA-appraisal would verify the kexec kernel image, firmware, kernel
+modules, and custom IMA policy signatures. ?With the "ima: require
+secure_boot rules in lockdown mode" patch, the "lockdown" mode would
+enable IMA-appraisal's secure_boot policy, without requiring the boot
+command line option. ?It would also add the secure_boot rules to the
+custom policy, so that if the builtin policy is replaced with a custom
+policy, the "secure_boot" policy would still be enforced.
+
+Other patches in this patch series need to be updated as well to check
+if IMA-appraisal is enabled.
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
