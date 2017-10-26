@@ -1,186 +1,54 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 26 Oct 2017 16:12:57 -0400
-Subject: [PATCH v5 13/18] PKCS#7: Introduce pkcs7_get_message_sig and
-	verify_pkcs7_message_sig
-In-Reply-To: <20171018005331.2688-14-bauerman@linux.vnet.ibm.com>
+Date: Thu, 26 Oct 2017 16:53:04 -0400
+Subject: [PATCH v5 00/18] Appended signatures support for IMA appraisal
+In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
 References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-	<20171018005331.2688-14-bauerman@linux.vnet.ibm.com>
-Message-ID: <1509048777.5886.113.camel@linux.vnet.ibm.com>
+Message-ID: <1509051184.5886.139.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Tue, 2017-10-17 at 22:53 -0200, Thiago Jung Bauermann wrote:
-> IMA will need to access the digest used in the signature so that it can
-> verify files containing module-style appended signatures. For this purpose,
-> add function pkcs7_get_message_sig.
+> Hello,
 > 
-> It will also need to verify an already parsed PKCS#7 message. For this
-> purpose, add function verify_pkcs7_message_signature which takes a struct
-> pkcs7_message for verification instead of the raw bytes that
-> verify_pkcs7_signature takes.
+> The main highlight in this version is that it fixes a bug where the modsig
+> wasn't being included in the measurement list if the appraised file was
+> already measured by another rule. The fix is in the last patch.
 > 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+> Another change is that the last patch in the v4 series ("ima: Support
+> module-style appended signatures for appraisal") has been broken up into
+> smaller patches. I may have overdone it...
+> 
+> Finally, I have added some patches removing superfluous parentheses from
+> expressions. IMO these patches make it easier (and more pleasant) to read
+> the code, and thus easier to understand it. Since I'm not sure how welcome
+> the changes are, I split them in 3 "levels" in increasing potential for
+> conflict with patches from other people (they can be squashed together when
+> applied):
+> 
+> 1. patch 2 contains the bare minimum, changing only lines that are also
+>    touched by other patches in the series;
+> 
+> 2. patch 3 cleans up all the files that are touched by this patch series;
+> 
+> 3. patch 4 cleans up all other EVM and IMA files that weren't already fixed
+>    by the previous patches.
+> 
+> If unwanted, patches 3 and 4 can be simply skipped without affecting the
+> rest of the patches. I have already rebased them from v4.13-rc2 to
+> v4.14-rc3 and now to linux-integrity/next with very few easy to resolve
+> conflicts, so I think they are worth keeping.
+> 
+> These patches apply on top of today's linux-integrity/next.
 
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+This cover letter and the patch descriptions are well written,
+explaining what and why you're making this change. ?The problem is
+that I don't agree that fewer parentheses makes the code more
+readable. ?When you repost the patches (for other reasons), please
+don't include these changes.
 
-> ---
->  certs/system_keyring.c                | 60 +++++++++++++++++++++++++----------
->  crypto/asymmetric_keys/pkcs7_parser.c | 12 +++++++
->  include/crypto/pkcs7.h                |  2 ++
->  include/linux/verification.h          | 10 ++++++
->  4 files changed, 68 insertions(+), 16 deletions(-)
-> 
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 6251d1b27f0c..6a8684959780 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -190,33 +190,26 @@ late_initcall(load_system_certificate_list);
->  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> 
->  /**
-> - * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-> + * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
->   * @data: The data to be verified (NULL if expecting internal data).
->   * @len: Size of @data.
-> - * @raw_pkcs7: The PKCS#7 message that is the signature.
-> - * @pkcs7_len: The size of @raw_pkcs7.
-> + * @pkcs7: The PKCS#7 message that is the signature.
->   * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
->   *					(void *)1UL for all trusted keys).
->   * @usage: The use to which the key is being put.
->   * @view_content: Callback to gain access to content.
->   * @ctx: Context for callback.
->   */
-> -int verify_pkcs7_signature(const void *data, size_t len,
-> -			   const void *raw_pkcs7, size_t pkcs7_len,
-> -			   struct key *trusted_keys,
-> -			   enum key_being_used_for usage,
-> -			   int (*view_content)(void *ctx,
-> -					       const void *data, size_t len,
-> -					       size_t asn1hdrlen),
-> -			   void *ctx)
-> +int verify_pkcs7_message_sig(const void *data, size_t len,
-> +			     struct pkcs7_message *pkcs7,
-> +			     struct key *trusted_keys,
-> +			     enum key_being_used_for usage,
-> +			     int (*view_content)(void *ctx, const void *data,
-> +						 size_t len, size_t asn1hdrlen),
-> +			     void *ctx)
->  {
-> -	struct pkcs7_message *pkcs7;
->  	int ret;
-> 
-> -	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-> -	if (IS_ERR(pkcs7))
-> -		return PTR_ERR(pkcs7);
-> -
->  	/* The data should be detached - so we need to supply it. */
->  	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
->  		pr_err("PKCS#7 signature with non-detached data\n");
-> @@ -258,6 +251,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
->  	}
-> 
->  error:
-> +	pr_devel("<==%s() = %d\n", __func__, ret);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-> + * @data: The data to be verified (NULL if expecting internal data).
-> + * @len: Size of @data.
-> + * @raw_pkcs7: The PKCS#7 message that is the signature.
-> + * @pkcs7_len: The size of @raw_pkcs7.
-> + * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-> + *					(void *)1UL for all trusted keys).
-> + * @usage: The use to which the key is being put.
-> + * @view_content: Callback to gain access to content.
-> + * @ctx: Context for callback.
-> + */
-> +int verify_pkcs7_signature(const void *data, size_t len,
-> +			   const void *raw_pkcs7, size_t pkcs7_len,
-> +			   struct key *trusted_keys,
-> +			   enum key_being_used_for usage,
-> +			   int (*view_content)(void *ctx,
-> +					       const void *data, size_t len,
-> +					       size_t asn1hdrlen),
-> +			   void *ctx)
-> +{
-> +	struct pkcs7_message *pkcs7;
-> +	int ret;
-> +
-> +	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-> +	if (IS_ERR(pkcs7))
-> +		return PTR_ERR(pkcs7);
-> +
-> +	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
-> +				       view_content, ctx);
-> +
->  	pkcs7_free_message(pkcs7);
->  	pr_devel("<==%s() = %d\n", __func__, ret);
->  	return ret;
-> diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-> index af4cd8649117..e41beda297a8 100644
-> --- a/crypto/asymmetric_keys/pkcs7_parser.c
-> +++ b/crypto/asymmetric_keys/pkcs7_parser.c
-> @@ -673,3 +673,15 @@ int pkcs7_note_signed_info(void *context, size_t hdrlen,
->  		return -ENOMEM;
->  	return 0;
->  }
-> +
-> +/**
-> + * pkcs7_get_message_sig - get signature in @pkcs7
-> + *
-> + * This function doesn't meaningfully support messages with more than one
-> + * signature. It will always return the first signature.
-> + */
-> +const struct public_key_signature *pkcs7_get_message_sig(
-> +					const struct pkcs7_message *pkcs7)
-> +{
-> +	return pkcs7->signed_infos ? pkcs7->signed_infos->sig : NULL;
-> +}
-> diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-> index 583f199400a3..6f51d0cb6d12 100644
-> --- a/include/crypto/pkcs7.h
-> +++ b/include/crypto/pkcs7.h
-> @@ -28,6 +28,8 @@ extern void pkcs7_free_message(struct pkcs7_message *pkcs7);
->  extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
->  				  const void **_data, size_t *_datalen,
->  				  size_t *_headerlen);
-> +extern const struct public_key_signature *pkcs7_get_message_sig(
-> +					const struct pkcs7_message *pkcs7);
-> 
->  /*
->   * pkcs7_trust.c
-> diff --git a/include/linux/verification.h b/include/linux/verification.h
-> index a10549a6c7cd..f04dac2728ec 100644
-> --- a/include/linux/verification.h
-> +++ b/include/linux/verification.h
-> @@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
->  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> 
->  struct key;
-> +struct pkcs7_message;
-> 
->  extern int verify_pkcs7_signature(const void *data, size_t len,
->  				  const void *raw_pkcs7, size_t pkcs7_len,
-> @@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
->  						      const void *data, size_t len,
->  						      size_t asn1hdrlen),
->  				  void *ctx);
-> +extern int verify_pkcs7_message_sig(const void *data, size_t len,
-> +				    struct pkcs7_message *pkcs7,
-> +				    struct key *trusted_keys,
-> +				    enum key_being_used_for usage,
-> +				    int (*view_content)(void *ctx,
-> +							const void *data,
-> +							size_t len,
-> +							size_t asn1hdrlen),
-> +				    void *ctx);
-> 
->  #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
->  extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
-> 
+thanks,
+
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
