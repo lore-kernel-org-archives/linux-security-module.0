@@ -1,55 +1,35 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 26 Oct 2017 13:01:15 +0200
-Subject: Fixing CVE-2017-15361
-In-Reply-To: <20171025202221.gkgch7rjjqoblzpf@rhwork>
-References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
-	<CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
-	<20171025185349.ocptudim3g35j6im@linux.intel.com>
-	<20171025202221.gkgch7rjjqoblzpf@rhwork>
-Message-ID: <20171026110115.lyubl22zikwlulhi@linux.intel.com>
+Date: Thu, 26 Oct 2017 12:54:30 +0200
+Subject: [PATCH v2] tpm: use struct tpm_chip for tpm_chip_find_get()
+In-Reply-To: <20171025201744.GB2815@obsidianresearch.com>
+References: <20171025115508.5682-1-jarkko.sakkinen@linux.intel.com>
+	<CANc+2y46q85+G1=9cXKW0R8FpGBqCuzkLnJzvSYFQ1S=ztKGew@mail.gmail.com>
+	<20171025193452.d4qa4dhacfgqejk7@linux.intel.com>
+	<20171025194633.GB998@obsidianresearch.com>
+	<20171025200746.svsraubdotjyzt2i@linux.intel.com>
+	<20171025201744.GB2815@obsidianresearch.com>
+Message-ID: <20171026105430.t6khk6cekk3cyfrs@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Oct 25, 2017 at 01:22:21PM -0700, Jerry Snitselaar wrote:
-> On Wed Oct 25 17, Jarkko Sakkinen wrote:
-> > On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
-> > > On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > I'm implementing a fix for CVE-2017-15361 that simply blacklists
-> > > > vulnerable FW versions. I think this is the only responsible action from
-> > > > my side that I can do.
-> > > 
-> > > I'm not sure this is ideal - do Infineon have any Linux tooling for
-> > > performing firmware updates, and if so will that continue working if
-> > > the device is blacklisted? It's also a poor user experience to have
-> > > systems using TPM-backed disk encryption keys suddenly rendered
-> > > unbootable, and making it as easy as possible for people to do an
-> > > upgrade and then re-seal secrets with new keys feels like the correct
-> > > approach.
-> > 
-> > I talked today with Alexander Steffen in the KS unconference and we
-> > concluded that this would be a terrible idea.
-> > 
-> > Alexander stated the following things about FW updates (Alexander,
-> > please correct me if I state something incorrectly or if you have
-> > something to add):
-> > 
-> > * FW update can be constructed either in a way that the keys in the
-> >  NVRAM are not cleared or in a way that they are cleared.
-> > * FW update cannot be directly applied to the TPM but must come as
-> >  part of the firmware update from the vendor.
+On Wed, Oct 25, 2017 at 02:17:44PM -0600, Jason Gunthorpe wrote:
+> On Wed, Oct 25, 2017 at 10:07:46PM +0200, Jarkko Sakkinen wrote:
 > 
-> If that is the case, can the two of you get Intel to update the fw
-> for the tpm in the nuc5i5myhe (slb9665) :) ? It has needed an update for a while, due
-> to issues with context management. My understanding (quite likely I misunderstood)
-> from a recent discussion with Peter was that it was possible to update the fw.
+> > The id has a nice feature that it is unique for one boot cycle you can
+> > even try to get a chip that has been deleted. It has the most stable
+> > properties in the long run.
+> 
+> It isn't unique, we can re-use ids them via idr_alloc(). We should
+> never use index inside the kernel.
+> 
+> > Address is a reusable identifier in one boot cycle.
+> 
+> It is invalid to pass in a chip for which the caller does not hold a
+> kref, so address is the safest argument.
+> 
+> Jason
 
-I don't know but I can at least forward the complains to the mother ship
-:-)
-
-It is fairly intuitive why dTPM cannot be updated without full firmware
-update. It's part of the proprietary HW platform, not something
-connected through PCI, USB or any standard bus.
+I'll buy this too (sending update today).
 
 /Jarkko
 --
