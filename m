@@ -1,52 +1,103 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 26 Oct 2017 19:03:59 +0200
+Date: Thu, 26 Oct 2017 19:08:30 +0200
 Subject: Fixing CVE-2017-15361
-In-Reply-To: <20171026170237.6q43xsenbzrw6hi4@linux.intel.com>
+In-Reply-To: <9a87c2cbfac4474a93ecd83f42852a4c@infineon.com>
 References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
 	<CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
 	<20171025185349.ocptudim3g35j6im@linux.intel.com>
 	<F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
 	<20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
-	<20171026145902.2e7dbb06@kitsune.suse.cz>
-	<20171026140602.syifqbrgysvq7ciy@linux.intel.com>
-	<20171026165748.265e6dcf@kitsune.suse.cz>
-	<20171026170237.6q43xsenbzrw6hi4@linux.intel.com>
-Message-ID: <20171026170359.v3f7od6hagrt2pv7@linux.intel.com>
+	<9a87c2cbfac4474a93ecd83f42852a4c@infineon.com>
+Message-ID: <20171026170830.e2vy4wgayncq7shv@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Oct 26, 2017 at 07:02:37PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Oct 26, 2017 at 04:57:48PM +0200, Michal Such?nek wrote:
-> > On Thu, 26 Oct 2017 16:06:02 +0200
-> > Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+On Thu, Oct 26, 2017 at 03:46:26PM +0000, Alexander.Steffen at infineon.com wrote:
+> > On Thu, Oct 26, 2017 at 12:26:10AM +0200, Peter Huewe wrote:
+> > >
+> > >
+> > > Am 25. Oktober 2017 20:53:49 MESZ schrieb Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com>:
+> > > >On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
+> > > >> On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
+> > > >> <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >> > I'm implementing a fix for CVE-2017-15361 that simply blacklists
+> > > >> > vulnerable FW versions. I think this is the only responsible action
+> > > >from
+> > > >> > my side that I can do.
+> > > >>
+> > > >> I'm not sure this is ideal - do Infineon have any Linux tooling for
+> > > >> performing firmware updates, and if so will that continue working if
+> > > >> the device is blacklisted? It's also a poor user experience to have
+> > > >> systems using TPM-backed disk encryption keys suddenly rendered
+> > > >> unbootable, and making it as easy as possible for people to do an
+> > > >> upgrade and then re-seal secrets with new keys feels like the correct
+> > > >> approach.
+> > > >
+> > > >I talked today with Alexander Steffen in the KS unconference and we
+> > > >concluded that this would be a terrible idea.
+> > > >
+> > > >Alexander stated the following things about FW updates (Alexander,
+> > > >please correct me if I state something incorrectly or if you have
+> > > >something to add):
+> > > >
+> > > >* FW update can be constructed either in a way that the keys in the
+> > > >  NVRAM are not cleared or in a way that they are cleared.
+> > > >* FW update cannot be directly applied to the TPM but must come as
+> > > >  part of the firmware update from the vendor.
+> > > >
+> > > >I proposed the following as an alternative:
+> > > >
+> > > >* Print a message to the klog (which log level would be appropriate?).
+> > > Info?
+> > > Maybe warn, definitely not err
 > > 
-> > > On Thu, Oct 26, 2017 at 02:59:02PM +0200, Michal Such?nek wrote:
-> > > > It does not really matter. People ignore the messages unless looking
-> > > > for something specific as you already noticed. Warn seems adequate
-> > > > because the cipher is weaker than expected but not known to
-> > > > be compromised. People who care can look up the message. People who
-> > > > don't care will ignore it even if it's crit.  
-> > > 
-> > > Is it worth of trouble to do any driver changes then (open question to
-> > > everyone)? I'm not sure it is worth of trouble to add cruft to the
-> > > driver code for a warning that will likely be ignored anyway.
+> > Since the driver does not fail usually warn would make sense but since
+> > here even allowing to continue to use such TPM is questionable I would
+> > use error here.
 > > 
-> > If the kernel can reliably detect the affected TPMs it saves the
-> > user the work of figuring out where the firmware revision is accessible
-> > on the running machine and what firmware revisions are affected.
+> > People anyway ignore klog too easily so using warn would be a mistake in
+> > my opinion. It's like saying that nothing serious is happening here,
+> > move along.
 > > 
-> > Thanks
+> > Do you think so?
 > > 
-> > Michal
+> > > >* Possibly sleep for few seconds. Is this a good idea?
+> > > Helps how?
+> > 
+> > Obviously to get it noticed that the system integrity is broken.
+> > 
+> > > >While writing this email yet another alternative popped into my mind:
+> > > >what if we allow only in-kernel use but disallow the use of /dev/tpm0?
+> > > >You could still use trusted keys.
+> > > >
+> > > No, same terrible idea since you block the upgrade path.
+> > > Upgrade tools work from userspace via the kernel driver.
+> > > So /dev/tpm0 is necessary.
+> > 
+> > Right! How stupid of me (my previous response to Jerry) :-) Of course you
+> > can have special commands and talk to the TPM to do the upgrade even if
+> > it is part of the platform and not connected to a standard bus.
+> > 
+> > I got understanding in the yesterdays unconfernce discussion that it
+> > should be part of the firmware upgrade.
 > 
-> Just giving the warning does not require any kernel functionality. If
-> nothing proactive is required from the kernel I'd move the
-> responsibility to the user space. Nothing in the kernel is broken an
-> kernel cannot workaround the issue by ay means.
+> Yes, but it really depends on the way the vendor chooses to do the
+> upgrade. UEFI Capsules would be one standard way that does not involve
+> the Linux driver. But maybe you are on some embedded ARM platform
+> without UEFI, then you can also run the upgrade through /dev/tpm0, so
+> that you do not need to invent another way to talk to the TPM.
 > 
-> /Jarkko
+> This second option does have the drawback of the Linux driver not
+> being aware of the upgrade happening. It does not know that while the
+> TPM is in the upgrade mode no other commands can be executed. Neither
+> does it know that after the upgrade the system needs to be rebooted
+> before the TPM can be used again (so that for example the PCRs have
+> the correct values again). I want to look into those issues in the
+> future.
 
-I.e. I'm not going to fix a bug if there is no bug to fix.
+This dilates me even more to the standpoint that user space is better
+place for sorting out this issue.
 
 /Jarkko
 --
