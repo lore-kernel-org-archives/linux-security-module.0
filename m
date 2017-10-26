@@ -1,54 +1,71 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 26 Oct 2017 16:53:04 -0400
-Subject: [PATCH v5 00/18] Appended signatures support for IMA appraisal
-In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-Message-ID: <1509051184.5886.139.camel@linux.vnet.ibm.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Thu, 26 Oct 2017 13:57:44 -0700
+Subject: [PATCH] KEYS: trusted: fix writing past end of buffer in
+	trusted_read()
+Message-ID: <20171026205744.105566-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-10-17 at 22:53 -0200, Thiago Jung Bauermann wrote:
-> Hello,
-> 
-> The main highlight in this version is that it fixes a bug where the modsig
-> wasn't being included in the measurement list if the appraised file was
-> already measured by another rule. The fix is in the last patch.
-> 
-> Another change is that the last patch in the v4 series ("ima: Support
-> module-style appended signatures for appraisal") has been broken up into
-> smaller patches. I may have overdone it...
-> 
-> Finally, I have added some patches removing superfluous parentheses from
-> expressions. IMO these patches make it easier (and more pleasant) to read
-> the code, and thus easier to understand it. Since I'm not sure how welcome
-> the changes are, I split them in 3 "levels" in increasing potential for
-> conflict with patches from other people (they can be squashed together when
-> applied):
-> 
-> 1. patch 2 contains the bare minimum, changing only lines that are also
->    touched by other patches in the series;
-> 
-> 2. patch 3 cleans up all the files that are touched by this patch series;
-> 
-> 3. patch 4 cleans up all other EVM and IMA files that weren't already fixed
->    by the previous patches.
-> 
-> If unwanted, patches 3 and 4 can be simply skipped without affecting the
-> rest of the patches. I have already rebased them from v4.13-rc2 to
-> v4.14-rc3 and now to linux-integrity/next with very few easy to resolve
-> conflicts, so I think they are worth keeping.
-> 
-> These patches apply on top of today's linux-integrity/next.
+From: Eric Biggers <ebiggers@google.com>
 
-This cover letter and the patch descriptions are well written,
-explaining what and why you're making this change. ?The problem is
-that I don't agree that fewer parentheses makes the code more
-readable. ?When you repost the patches (for other reasons), please
-don't include these changes.
+When calling keyctl_read() on a key of type "trusted", if the
+user-supplied buffer was too small, the kernel ignored the buffer length
+and just wrote past the end of the buffer, potentially corrupting
+userspace memory.  Fix it by instead returning the size required, as per
+the documentation for keyctl_read().
 
-thanks,
+We also don't even fill the buffer at all in this case, as this is
+slightly easier to implement than doing a short read, and either
+behavior appears to be permitted.  It also makes it match the behavior
+of the "encrypted" key type.
 
-Mimi
+Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
+Reported-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: <stable@vger.kernel.org> # v2.6.38+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/trusted.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index bd85315cbfeb..98aa89ff7bfd 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1147,20 +1147,21 @@ static long trusted_read(const struct key *key, char __user *buffer,
+ 	p = dereference_key_locked(key);
+ 	if (!p)
+ 		return -EINVAL;
+-	if (!buffer || buflen <= 0)
+-		return 2 * p->blob_len;
+-	ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
+-	if (!ascii_buf)
+-		return -ENOMEM;
+ 
+-	bufp = ascii_buf;
+-	for (i = 0; i < p->blob_len; i++)
+-		bufp = hex_byte_pack(bufp, p->blob[i]);
+-	if ((copy_to_user(buffer, ascii_buf, 2 * p->blob_len)) != 0) {
++	if (buffer && buflen >= 2 * p->blob_len) {
++		ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
++		if (!ascii_buf)
++			return -ENOMEM;
++
++		bufp = ascii_buf;
++		for (i = 0; i < p->blob_len; i++)
++			bufp = hex_byte_pack(bufp, p->blob[i]);
++		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
++			kzfree(ascii_buf);
++			return -EFAULT;
++		}
+ 		kzfree(ascii_buf);
+-		return -EFAULT;
+ 	}
+-	kzfree(ascii_buf);
+ 	return 2 * p->blob_len;
+ }
+ 
+-- 
+2.15.0.rc2.357.g7e34df9404-goog
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
