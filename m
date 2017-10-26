@@ -1,111 +1,77 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 26 Oct 2017 19:13:30 -0400
-Subject: [PATCH v5 12/18] MODSIGN: Export module signature definitions
-In-Reply-To: <87po99wmpq.fsf@linux.vnet.ibm.com>
-References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-	<20171018005331.2688-13-bauerman@linux.vnet.ibm.com>
-	<1509048728.5886.112.camel@linux.vnet.ibm.com>
-	<87po99wmpq.fsf@linux.vnet.ibm.com>
-Message-ID: <1509059610.5886.145.camel@linux.vnet.ibm.com>
+Date: Thu, 26 Oct 2017 19:57:36 -0400
+Subject: [PATCH] KEYS: trusted: fix writing past end of buffer in
+	trusted_read()
+In-Reply-To: <20171026205744.105566-1-ebiggers3@gmail.com>
+References: <20171026205744.105566-1-ebiggers3@gmail.com>
+Message-ID: <1509062256.5886.147.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-10-26 at 20:47 -0200, Thiago Jung Bauermann wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Thu, 2017-10-26 at 13:57 -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> > On Tue, 2017-10-17 at 22:53 -0200, Thiago Jung Bauermann wrote:
-> >> IMA will use the module_signature format for append signatures, so export
-> >> the relevant definitions and factor out the code which verifies that the
-> >> appended signature trailer is valid.
-> >> 
-> >> Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
-> >> and be able to use validate_module_signature without having to depend on
-> >> CONFIG_MODULE_SIG.
-> >> 
-> >> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> >
-> > Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> >
-> > One minor comment below...
+> When calling keyctl_read() on a key of type "trusted", if the
+> user-supplied buffer was too small, the kernel ignored the buffer length
+> and just wrote past the end of the buffer, potentially corrupting
+> userspace memory.  Fix it by instead returning the size required, as per
+> the documentation for keyctl_read().
 > 
-> Thanks!
+> We also don't even fill the buffer at all in this case, as this is
+> slightly easier to implement than doing a short read, and either
+> behavior appears to be permitted.  It also makes it match the behavior
+> of the "encrypted" key type.
 > 
-> >> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-> >> index 937c844bee4a..204c60d4cc9f 100644
-> >> --- a/kernel/module_signing.c
-> >> +++ b/kernel/module_signing.c
-> >> @@ -11,36 +11,38 @@
-> >> 
-> >>  #include <linux/kernel.h>
-> >>  #include <linux/errno.h>
-> >> +#include <linux/module_signature.h>
-> >>  #include <linux/string.h>
-> >>  #include <linux/verification.h>
-> >>  #include <crypto/public_key.h>
-> >>  #include "module-internal.h"
-> >> 
-> >> -enum pkey_id_type {
-> >> -	PKEY_ID_PGP,		/* OpenPGP generated key ID */
-> >> -	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
-> >> -	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
-> >> -};
-> >> -
-> >> -/*
-> >> - * Module signature information block.
-> >> - *
-> >> - * The constituents of the signature section are, in order:
-> >> +/**
-> >> + * validate_module_sig - validate that the given signature is sane
-> >>   *
-> >> - *	- Signer's name
-> >> - *	- Key identifier
-> >> - *	- Signature data
-> >> - *	- Information block
-> >> + * @ms:		Signature to validate.
-> >> + * @file_len:	Size of the file to which @ms is appended.
-> >>   */
-> >> -struct module_signature {
-> >> -	u8	algo;		/* Public-key crypto algorithm [0] */
-> >> -	u8	hash;		/* Digest algorithm [0] */
-> >> -	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-> >> -	u8	signer_len;	/* Length of signer's name [0] */
-> >> -	u8	key_id_len;	/* Length of key identifier [0] */
-> >> -	u8	__pad[3];
-> >> -	__be32	sig_len;	/* Length of signature data */
-> >> -};
-> >> +int validate_module_sig(const struct module_signature *ms, size_t file_len)
-> >> +{
-> >> +	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
-> >> +		return -EBADMSG;
-> >> +	else if (ms->id_type != PKEY_ID_PKCS7) {
-> >> +		pr_err("Module is not signed with expected PKCS#7 message\n");
-> >> +		return -ENOPKG;
-> >> +	} else if (ms->algo != 0 ||
-> >> +		   ms->hash != 0 ||
-> >> +		   ms->signer_len != 0 ||
-> >> +		   ms->key_id_len != 0 ||
-> >> +		   ms->__pad[0] != 0 ||
-> >> +		   ms->__pad[1] != 0 ||
-> >> +		   ms->__pad[2] != 0) {
-> >> +		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
-> >> +		return -EBADMSG;
-> >> +	}
-> >> +
-> >
-> > When moving code from one place to another, it's easier to review when
-> > there aren't code changes as well. In this case, the original code
-> > doesn't have "else clauses".
-> 
-> Indeed. I changed the code back to using separate if clauses, making
-> only the changes that are required for the refactoring.
-> 
-> > Here some of the if/then/else clauses
-> > have braces others don't. There shouldn't be a mixture.
-> 
-> Does this still apply when the if clauses are separate as in the
-> original code? Should the first if still have braces?
+> Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
+> Reported-by: Ben Hutchings <ben@decadent.org.uk>
+> Cc: <stable@vger.kernel.org> # v2.6.38+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-No, the original code was fine. 
+Thanks!
+
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+
+> ---
+>  security/keys/trusted.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+> index bd85315cbfeb..98aa89ff7bfd 100644
+> --- a/security/keys/trusted.c
+> +++ b/security/keys/trusted.c
+> @@ -1147,20 +1147,21 @@ static long trusted_read(const struct key *key, char __user *buffer,
+>  	p = dereference_key_locked(key);
+>  	if (!p)
+>  		return -EINVAL;
+> -	if (!buffer || buflen <= 0)
+> -		return 2 * p->blob_len;
+> -	ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
+> -	if (!ascii_buf)
+> -		return -ENOMEM;
+> 
+> -	bufp = ascii_buf;
+> -	for (i = 0; i < p->blob_len; i++)
+> -		bufp = hex_byte_pack(bufp, p->blob[i]);
+> -	if ((copy_to_user(buffer, ascii_buf, 2 * p->blob_len)) != 0) {
+> +	if (buffer && buflen >= 2 * p->blob_len) {
+> +		ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
+> +		if (!ascii_buf)
+> +			return -ENOMEM;
+> +
+> +		bufp = ascii_buf;
+> +		for (i = 0; i < p->blob_len; i++)
+> +			bufp = hex_byte_pack(bufp, p->blob[i]);
+> +		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
+> +			kzfree(ascii_buf);
+> +			return -EFAULT;
+> +		}
+>  		kzfree(ascii_buf);
+> -		return -EFAULT;
+>  	}
+> -	kzfree(ascii_buf);
+>  	return 2 * p->blob_len;
+>  }
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
