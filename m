@@ -1,1541 +1,493 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 27 Oct 2017 14:45:08 -0700
-Subject: [PATCH 2/9] LSM: Manage credential security blobs
+Date: Fri, 27 Oct 2017 14:45:29 -0700
+Subject: [PATCH 8/9] LSM: Multiple security mount options
 In-Reply-To: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
 References: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
-Message-ID: <71b9e65d-bfaa-eeaf-a9f0-f6fe514ead7d@schaufler-ca.com>
+Message-ID: <7e2ad768-c2a6-25a0-7032-0247f23dd710@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH 2/9] LSM: Manage credential security blobs
+Subject: [PATCH 8/9] LSM: Multiple security mount options
 
-Move the management of credential security blobs from the
-individual security modules to the security infrastructure.
-The security modules using credential blobs have been updated
-accordingly. Modules are required to identify the space they
-require at module initialization. In some cases a module no
-longer needs to supply a blob management hook, in which case
-the hook has been removed.
+There needs to be separate data for each of the
+security modules that support mount options.
+Expand the security_mnt_opts structure to include
+an entry for each security module that uses them.
+
+It would be better to have a variable size blob,
+but there isn't a convenient place to hang such.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h           |  14 ++++
- kernel/cred.c                       |  13 ----
- security/Kconfig                    |  11 +++
- security/apparmor/context.c         |   2 -
- security/apparmor/include/context.h |   9 ++-
- security/apparmor/lsm.c             |  44 +++++-------
- security/security.c                 |  98 ++++++++++++++++++++++++++-
- security/selinux/hooks.c            | 113 ++++++++++++-------------------
- security/selinux/include/objsec.h   |   9 +++
- security/selinux/selinuxfs.c        |   1 +
- security/selinux/xfrm.c             |   4 +-
- security/smack/smack.h              |  15 ++++-
- security/smack/smack_access.c       |   2 +-
- security/smack/smack_lsm.c          | 130 +++++++++++++++---------------------
- security/smack/smackfs.c            |  18 ++---
- security/tomoyo/common.h            |  20 +++++-
- security/tomoyo/domain.c            |   4 +-
- security/tomoyo/securityfs_if.c     |  13 ++--
- security/tomoyo/tomoyo.c            |  49 +++++++++++---
- 19 files changed, 343 insertions(+), 226 deletions(-)
+ fs/btrfs/super.c           | 10 +++---
+ include/linux/security.h   | 53 ++++++++++++++++++++-------
+ security/security.c        | 15 ++++++--
+ security/selinux/hooks.c   | 90 +++++++++++++++++++++++-----------------------
+ security/smack/smack_lsm.c | 54 ++++++++++++++--------------
+ 5 files changed, 131 insertions(+), 91 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index c9258124e417..ee4fcc51fa91 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1915,6 +1915,13 @@ struct security_hook_list {
- } __randomize_layout;
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 35a128acfbd1..f8f828267d45 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -1512,15 +1512,15 @@ static int setup_security_options(struct btrfs_fs_info *fs_info,
+ 		return ret;
  
- /*
-+ * Security blob size or offset data.
-+ */
-+struct lsm_blob_sizes {
-+	int	lbs_cred;
-+};
-+
-+/*
-  * Initializing a security_hook_list structure takes
-  * up a lot of space in a source file. This macro takes
-  * care of the common case and reduces the amount of
-@@ -1926,6 +1933,7 @@ struct security_hook_list {
- extern struct security_hook_heads security_hook_heads;
- extern char *lsm_names;
- 
-+extern void security_add_blobs(struct lsm_blob_sizes *needed);
- extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 				char *lsm);
- 
-@@ -1972,4 +1980,10 @@ void __init loadpin_add_hooks(void);
- static inline void loadpin_add_hooks(void) { };
- #endif
- 
-+extern int lsm_cred_alloc(struct cred *cred, gfp_t gfp);
-+
-+#ifdef CONFIG_SECURITY
-+void lsm_early_cred(struct cred *cred);
-+#endif
-+
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/kernel/cred.c b/kernel/cred.c
-index ecf03657e71c..fa2061ee4955 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -704,19 +704,6 @@ bool creds_are_invalid(const struct cred *cred)
- {
- 	if (cred->magic != CRED_MAGIC)
- 		return true;
--#ifdef CONFIG_SECURITY_SELINUX
--	/*
--	 * cred->security == NULL if security_cred_alloc_blank() or
--	 * security_prepare_creds() returned an error.
--	 */
--	if (selinux_is_enabled() && cred->security) {
--		if ((unsigned long) cred->security < PAGE_SIZE)
--			return true;
--		if ((*(u32 *)cred->security & 0xffffff00) ==
--		    (POISON_FREE << 24 | POISON_FREE << 16 | POISON_FREE << 8))
--			return true;
--	}
--#endif
- 	return false;
- }
- EXPORT_SYMBOL(creds_are_invalid);
-diff --git a/security/Kconfig b/security/Kconfig
-index e8e449444e65..f3464fb5a8b0 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -36,6 +36,17 @@ config SECURITY_WRITABLE_HOOKS
- 	bool
- 	default n
- 
-+config SECURITY_LSM_DEBUG
-+	bool "Enable debugging of the LSM infrastructure"
-+	depends on SECURITY
-+	help
-+	  This allows you to choose debug messages related to
-+	  security modules configured into your kernel. These
-+	  messages may be helpful in determining how a security
-+	  module is using security blobs.
-+
-+	  If you are unsure how to answer this question, answer N.
-+
- config SECURITYFS
- 	bool "Enable the securityfs filesystem"
- 	help
-diff --git a/security/apparmor/context.c b/security/apparmor/context.c
-index c95f1ac6190b..db203ee24db8 100644
---- a/security/apparmor/context.c
-+++ b/security/apparmor/context.c
-@@ -50,8 +50,6 @@ void aa_free_task_context(struct aa_task_ctx *ctx)
- 		aa_put_label(ctx->label);
- 		aa_put_label(ctx->previous);
- 		aa_put_label(ctx->onexec);
--
--		kzfree(ctx);
+ #ifdef CONFIG_SECURITY
+-	if (!fs_info->security_opts.num_mnt_opts) {
++	if (fs_info->security_opts.selinux.num_mnt_opts != 0 ||
++	    fs_info->security_opts.smack.num_mnt_opts != 0) {
+ 		/* first time security setup, copy sec_opts to fs_info */
+ 		memcpy(&fs_info->security_opts, sec_opts, sizeof(*sec_opts));
+ 	} else {
+ 		/*
+-		 * Since SELinux (the only one supporting security_mnt_opts)
+-		 * does NOT support changing context during remount/mount of
+-		 * the same sb, this must be the same or part of the same
+-		 * security options, just free it.
++		 * Since no modules support changing context during
++		 * remount/mount of the same sb, this must be the same
++		 * or part of the same security options, just free it.
+ 		 */
+ 		security_free_mnt_opts(sec_opts);
  	}
- }
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 46ec92658ad3..3a70b23a7dcc 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -163,34 +163,63 @@ typedef int (*initxattrs) (struct inode *inode,
  
-diff --git a/security/apparmor/include/context.h b/security/apparmor/include/context.h
-index 6ae07e9aaa17..301ab3a0dd04 100644
---- a/security/apparmor/include/context.h
-+++ b/security/apparmor/include/context.h
-@@ -18,11 +18,12 @@
- #include <linux/cred.h>
- #include <linux/slab.h>
- #include <linux/sched.h>
-+#include <linux/lsm_hooks.h>
+ #ifdef CONFIG_SECURITY
  
- #include "label.h"
- #include "policy_ns.h"
- 
--#define cred_ctx(X) ((X)->security)
-+#define cred_ctx(X) apparmor_cred(X)
- #define current_ctx() cred_ctx(current_cred())
- 
- /**
-@@ -54,6 +55,10 @@ int aa_set_current_hat(struct aa_label *label, u64 token);
- int aa_restore_previous_label(u64 cookie);
- struct aa_label *aa_get_task_label(struct task_struct *task);
- 
-+static inline struct aa_task_ctx *apparmor_cred(const struct cred *cred)
-+{
-+	return cred->security;
-+}
- 
- /**
-  * aa_cred_raw_label - obtain cred's label
-@@ -65,7 +70,7 @@ struct aa_label *aa_get_task_label(struct task_struct *task);
-  */
- static inline struct aa_label *aa_cred_raw_label(const struct cred *cred)
- {
--	struct aa_task_ctx *ctx = cred_ctx(cred);
-+	struct aa_task_ctx *ctx = apparmor_cred(cred);
- 
- 	AA_BUG(!ctx || !ctx->label);
- 	return ctx->label;
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 72b915dfcaf7..d80293bde5bf 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -57,22 +57,6 @@ DEFINE_PER_CPU(struct aa_buffers, aa_buffers);
- static void apparmor_cred_free(struct cred *cred)
- {
- 	aa_free_task_context(cred_ctx(cred));
--	cred_ctx(cred) = NULL;
--}
--
--/*
-- * allocate the apparmor part of blank credentials
-- */
--static int apparmor_cred_alloc_blank(struct cred *cred, gfp_t gfp)
--{
--	/* freed by apparmor_cred_free */
--	struct aa_task_ctx *ctx = aa_alloc_task_context(gfp);
--
--	if (!ctx)
--		return -ENOMEM;
--
--	cred_ctx(cred) = ctx;
--	return 0;
- }
- 
- /*
-@@ -81,14 +65,7 @@ static int apparmor_cred_alloc_blank(struct cred *cred, gfp_t gfp)
- static int apparmor_cred_prepare(struct cred *new, const struct cred *old,
- 				 gfp_t gfp)
- {
--	/* freed by apparmor_cred_free */
--	struct aa_task_ctx *ctx = aa_alloc_task_context(gfp);
--
--	if (!ctx)
--		return -ENOMEM;
--
--	aa_dup_task_context(ctx, cred_ctx(old));
--	cred_ctx(new) = ctx;
-+	aa_dup_task_context(cred_ctx(new), cred_ctx(old));
- 	return 0;
- }
- 
-@@ -1099,6 +1076,10 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
- 		ctx->label = aa_get_current_label();
- }
- 
-+struct lsm_blob_sizes apparmor_blob_sizes = {
-+	.lbs_cred = sizeof(struct aa_task_ctx),
-+};
-+
- static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
- 	LSM_HOOK_INIT(ptrace_traceme, apparmor_ptrace_traceme),
-@@ -1157,7 +1138,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- 		      apparmor_socket_getpeersec_dgram),
- 	LSM_HOOK_INIT(sock_graft, apparmor_sock_graft),
- 
--	LSM_HOOK_INIT(cred_alloc_blank, apparmor_cred_alloc_blank),
- 	LSM_HOOK_INIT(cred_free, apparmor_cred_free),
- 	LSM_HOOK_INIT(cred_prepare, apparmor_cred_prepare),
- 	LSM_HOOK_INIT(cred_transfer, apparmor_cred_transfer),
-@@ -1413,12 +1393,10 @@ static int __init set_init_ctx(void)
- 	struct cred *cred = (struct cred *)current->real_cred;
- 	struct aa_task_ctx *ctx;
- 
--	ctx = aa_alloc_task_context(GFP_KERNEL);
--	if (!ctx)
--		return -ENOMEM;
-+	lsm_early_cred(cred);
-+	ctx = apparmor_cred(cred);
- 
- 	ctx->label = aa_get_label(ns_unconfined(root_ns));
--	cred_ctx(cred) = ctx;
- 
- 	return 0;
- }
-@@ -1502,8 +1480,16 @@ static inline int apparmor_init_sysctl(void)
- 
- static int __init apparmor_init(void)
- {
-+	static int finish;
- 	int error;
- 
-+	if (!finish) {
-+		if (apparmor_enabled && security_module_enable("apparmor"))
-+			security_add_blobs(&apparmor_blob_sizes);
-+		finish = 1;
-+		return 0;
-+	}
-+
- 	if (!apparmor_enabled || !security_module_enable("apparmor")) {
- 		aa_info_message("AppArmor disabled by boot time parameter");
- 		apparmor_enabled = 0;
-diff --git a/security/security.c b/security/security.c
-index 49a069bb76da..6fadc3860fb0 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -38,6 +38,8 @@ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
- static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
- 
- char *lsm_names;
-+static struct lsm_blob_sizes blob_sizes;
-+
- /* Boot-time LSM user choice */
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
- 	CONFIG_DEFAULT_SECURITY;
-@@ -75,10 +77,22 @@ int __init security_init(void)
- 	loadpin_add_hooks();
- 
- 	/*
--	 * Load all the remaining security modules.
-+	 * The first call to a module specific init function
-+	 * updates the blob size requirements.
-+	 */
-+	do_security_initcalls();
-+
-+	/*
-+	 * The second call to a module specific init function
-+	 * adds hooks to the hook lists and does any other early
-+	 * initializations required.
- 	 */
- 	do_security_initcalls();
- 
-+#ifdef CONFIG_SECURITY_LSM_DEBUG
-+	pr_info("LSM: cred blob size       = %d\n", blob_sizes.lbs_cred);
-+#endif
-+
- 	return 0;
- }
- 
-@@ -186,6 +200,75 @@ int unregister_lsm_notifier(struct notifier_block *nb)
- }
- EXPORT_SYMBOL(unregister_lsm_notifier);
- 
-+/**
-+ * lsm_cred_alloc - allocate a composite cred blob
-+ * @cred: the cred that needs a blob
-+ * @gfp: allocation type
-+ *
-+ * Allocate the cred blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
-+{
-+#ifdef CONFIG_SECURITY_LSM_DEBUG
-+	if (cred->security)
-+		pr_info("%s: Inbound cred blob is not NULL.\n", __func__);
-+#endif
-+	if (blob_sizes.lbs_cred == 0)
-+		return 0;
-+
-+	cred->security = kzalloc(blob_sizes.lbs_cred, gfp);
-+	if (cred->security == NULL)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+/**
-+ * lsm_early_cred - during initialization allocate a composite cred blob
-+ * @cred: the cred that needs a blob
-+ *
-+ * Allocate the cred blob for all the modules if it's not already there
-+ */
-+void lsm_early_cred(struct cred *cred)
-+{
-+	int rc;
-+
-+	if (cred == NULL)
-+		panic("%s: NULL cred.\n", __func__);
-+	if (cred->security != NULL)
-+		return;
-+	rc = lsm_cred_alloc(cred, GFP_KERNEL);
-+	if (rc)
-+		panic("%s: Early cred alloc failed.\n", __func__);
-+}
-+
-+static void __init lsm_set_size(int *need, int *lbs)
-+{
-+	int offset;
-+
-+	if (*need > 0) {
-+		offset = *lbs;
-+		*lbs += *need;
-+		*need = offset;
-+	}
-+}
-+
-+/**
-+ * security_add_blobs - Report blob sizes
-+ * @needed: the size of blobs needed by the module
-+ *
-+ * Each LSM has to register its blobs with the infrastructure.
-+ * The "needed" data tells the infrastructure how much memory
-+ * the module requires for each of its blobs. On return the
-+ * structure is filled with the offset that module should use
-+ * from the blob pointer.
-+ */
-+void __init security_add_blobs(struct lsm_blob_sizes *needed)
-+{
-+	lsm_set_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
-+}
-+
- /*
-  * Hook list operation macros.
-  *
-@@ -986,16 +1069,29 @@ void security_task_free(struct task_struct *task)
- 
- int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
- {
-+	int rc = lsm_cred_alloc(cred, gfp);
-+
-+	if (rc)
-+		return rc;
-+
- 	return call_int_hook(cred_alloc_blank, 0, cred, gfp);
- }
- 
- void security_cred_free(struct cred *cred)
- {
- 	call_void_hook(cred_free, cred);
-+
-+	kfree(cred->security);
-+	cred->security = NULL;
- }
- 
- int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp)
- {
-+	int rc = lsm_cred_alloc(new, gfp);
-+
-+	if (rc)
-+		return rc;
-+
- 	return call_int_hook(cred_prepare, 0, new, old, gfp);
- }
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f5d304736852..a4d1ec236d4e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -191,12 +191,9 @@ static void cred_init_security(void)
- 	struct cred *cred = (struct cred *) current->real_cred;
- 	struct task_security_struct *tsec;
- 
--	tsec = kzalloc(sizeof(struct task_security_struct), GFP_KERNEL);
--	if (!tsec)
--		panic("SELinux:  Failed to initialize initial task.\n");
--
-+	lsm_early_cred(cred);
-+	tsec = selinux_cred(cred);
- 	tsec->osid = tsec->sid = SECINITSID_KERNEL;
--	cred->security = tsec;
- }
- 
- /*
-@@ -206,7 +203,7 @@ static inline u32 cred_sid(const struct cred *cred)
- {
- 	const struct task_security_struct *tsec;
- 
--	tsec = cred->security;
-+	tsec = selinux_cred(cred);
- 	return tsec->sid;
- }
- 
-@@ -442,7 +439,7 @@ static int may_context_mount_sb_relabel(u32 sid,
- 			struct superblock_security_struct *sbsec,
- 			const struct cred *cred)
- {
--	const struct task_security_struct *tsec = cred->security;
-+	const struct task_security_struct *tsec = selinux_cred(cred);
- 	int rc;
- 
- 	rc = avc_has_perm(tsec->sid, sbsec->sid, SECCLASS_FILESYSTEM,
-@@ -459,7 +456,7 @@ static int may_context_mount_inode_relabel(u32 sid,
- 			struct superblock_security_struct *sbsec,
- 			const struct cred *cred)
- {
--	const struct task_security_struct *tsec = cred->security;
-+	const struct task_security_struct *tsec = selinux_cred(cred);
- 	int rc;
- 	rc = avc_has_perm(tsec->sid, sbsec->sid, SECCLASS_FILESYSTEM,
- 			  FILESYSTEM__RELABELFROM, NULL);
-@@ -1884,7 +1881,7 @@ static int may_create(struct inode *dir,
- 		      struct dentry *dentry,
- 		      u16 tclass)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct inode_security_struct *dsec;
- 	struct superblock_security_struct *sbsec;
- 	u32 sid, newsid;
-@@ -1905,7 +1902,7 @@ static int may_create(struct inode *dir,
- 	if (rc)
- 		return rc;
- 
--	rc = selinux_determine_inode_label(current_security(), dir,
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()), dir,
- 					   &dentry->d_name, tclass, &newsid);
- 	if (rc)
- 		return rc;
-@@ -2379,8 +2376,8 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
- 	if (bprm->called_set_creds)
- 		return 0;
- 
--	old_tsec = current_security();
--	new_tsec = bprm->cred->security;
-+	old_tsec = selinux_cred(current_cred());
-+	new_tsec = selinux_cred(bprm->cred);
- 	isec = inode_security(inode);
- 
- 	/* Default to the current task SID. */
-@@ -2538,7 +2535,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
- 	struct rlimit *rlim, *initrlim;
- 	int rc, i;
- 
--	new_tsec = bprm->cred->security;
-+	new_tsec = selinux_cred(bprm->cred);
- 	if (new_tsec->sid == new_tsec->osid)
- 		return;
- 
-@@ -2580,7 +2577,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
-  */
- static void selinux_bprm_committed_creds(struct linux_binprm *bprm)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct itimerval itimer;
- 	u32 osid, sid;
- 	int rc, i;
-@@ -2880,7 +2877,7 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
- 	u32 newsid;
- 	int rc;
- 
--	rc = selinux_determine_inode_label(current_security(),
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
- 					   d_inode(dentry->d_parent), name,
- 					   inode_mode_to_security_class(mode),
- 					   &newsid);
-@@ -2899,14 +2896,14 @@ static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
- 	int rc;
- 	struct task_security_struct *tsec;
- 
--	rc = selinux_determine_inode_label(old->security,
-+	rc = selinux_determine_inode_label(selinux_cred(old),
- 					   d_inode(dentry->d_parent), name,
- 					   inode_mode_to_security_class(mode),
- 					   &newsid);
- 	if (rc)
- 		return rc;
- 
--	tsec = new->security;
-+	tsec = selinux_cred(new);
- 	tsec->create_sid = newsid;
- 	return 0;
- }
-@@ -2916,7 +2913,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 				       const char **name,
- 				       void **value, size_t *len)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct superblock_security_struct *sbsec;
- 	u32 sid, newsid, clen;
- 	int rc;
-@@ -2927,7 +2924,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 	sid = tsec->sid;
- 	newsid = tsec->create_sid;
- 
--	rc = selinux_determine_inode_label(current_security(),
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
- 		dir, qstr,
- 		inode_mode_to_security_class(inode->i_mode),
- 		&newsid);
-@@ -3383,7 +3380,7 @@ static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
- 			return -ENOMEM;
- 	}
- 
--	tsec = new_creds->security;
-+	tsec = selinux_cred(new_creds);
- 	/* Get label from overlay inode and set it in create_sid */
- 	selinux_inode_getsecid(d_inode(src), &sid);
- 	tsec->create_sid = sid;
-@@ -3776,52 +3773,16 @@ static int selinux_task_alloc(struct task_struct *task,
- }
- 
- /*
-- * allocate the SELinux part of blank credentials
-- */
--static int selinux_cred_alloc_blank(struct cred *cred, gfp_t gfp)
--{
--	struct task_security_struct *tsec;
--
--	tsec = kzalloc(sizeof(struct task_security_struct), gfp);
--	if (!tsec)
--		return -ENOMEM;
--
--	cred->security = tsec;
--	return 0;
--}
--
--/*
-- * detach and free the LSM part of a set of credentials
-- */
--static void selinux_cred_free(struct cred *cred)
--{
--	struct task_security_struct *tsec = cred->security;
--
--	/*
--	 * cred->security == NULL if security_cred_alloc_blank() or
--	 * security_prepare_creds() returned an error.
--	 */
--	BUG_ON(cred->security && (unsigned long) cred->security < PAGE_SIZE);
--	cred->security = (void *) 0x7UL;
--	kfree(tsec);
--}
--
--/*
-  * prepare a new set of credentials for modification
-  */
- static int selinux_cred_prepare(struct cred *new, const struct cred *old,
- 				gfp_t gfp)
- {
--	const struct task_security_struct *old_tsec;
--	struct task_security_struct *tsec;
-+	const struct task_security_struct *old_tsec = selinux_cred(old);
-+	struct task_security_struct *tsec = selinux_cred(new);
- 
--	old_tsec = old->security;
--
--	tsec = kmemdup(old_tsec, sizeof(struct task_security_struct), gfp);
--	if (!tsec)
--		return -ENOMEM;
-+	*tsec = *old_tsec;
- 
--	new->security = tsec;
- 	return 0;
- }
- 
-@@ -3830,8 +3791,8 @@ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
-  */
- static void selinux_cred_transfer(struct cred *new, const struct cred *old)
- {
--	const struct task_security_struct *old_tsec = old->security;
--	struct task_security_struct *tsec = new->security;
-+	const struct task_security_struct *old_tsec = selinux_cred(old);
-+	struct task_security_struct *tsec = selinux_cred(new);
- 
- 	*tsec = *old_tsec;
- }
-@@ -3842,7 +3803,7 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
-  */
- static int selinux_kernel_act_as(struct cred *new, u32 secid)
- {
--	struct task_security_struct *tsec = new->security;
-+	struct task_security_struct *tsec = selinux_cred(new);
- 	u32 sid = current_sid();
- 	int ret;
- 
-@@ -3866,7 +3827,7 @@ static int selinux_kernel_act_as(struct cred *new, u32 secid)
- static int selinux_kernel_create_files_as(struct cred *new, struct inode *inode)
- {
- 	struct inode_security_struct *isec = inode_security(inode);
--	struct task_security_struct *tsec = new->security;
-+	struct task_security_struct *tsec = selinux_cred(new);
- 	u32 sid = current_sid();
- 	int ret;
- 
-@@ -4348,7 +4309,7 @@ static int sock_has_perm(struct sock *sk, u32 perms)
- static int selinux_socket_create(int family, int type,
- 				 int protocol, int kern)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	u32 newsid;
- 	u16 secclass;
- 	int rc;
-@@ -4367,7 +4328,7 @@ static int selinux_socket_create(int family, int type,
- static int selinux_socket_post_create(struct socket *sock, int family,
- 				      int type, int protocol, int kern)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct inode_security_struct *isec = inode_security_novalidate(SOCK_INODE(sock));
- 	struct sk_security_struct *sksec;
- 	u16 sclass = socket_type_to_security_class(family, type, protocol);
-@@ -4990,7 +4951,7 @@ static int selinux_secmark_relabel_packet(u32 sid)
- 	const struct task_security_struct *__tsec;
- 	u32 tsid;
- 
--	__tsec = current_security();
-+	__tsec = selinux_cred(current_cred());
- 	tsid = __tsec->sid;
- 
- 	return avc_has_perm(tsid, sid, SECCLASS_PACKET, PACKET__RELABELTO, NULL);
-@@ -5897,7 +5858,7 @@ static int selinux_getprocattr(struct task_struct *p,
- 	unsigned len;
- 
- 	rcu_read_lock();
--	__tsec = __task_cred(p)->security;
-+	__tsec = selinux_cred(__task_cred(p));
- 
- 	if (current != p) {
- 		error = avc_has_perm(current_sid(), __tsec->sid,
-@@ -6010,7 +5971,7 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 	   operation.  See selinux_bprm_set_creds for the execve
- 	   checks and may_create for the file creation checks. The
- 	   operation will then fail if the context is not permitted. */
--	tsec = new->security;
-+	tsec = selinux_cred(new);
- 	if (!strcmp(name, "exec")) {
- 		tsec->exec_sid = sid;
- 	} else if (!strcmp(name, "fscreate")) {
-@@ -6133,7 +6094,7 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
- 	if (!ksec)
- 		return -ENOMEM;
- 
--	tsec = cred->security;
-+	tsec = selinux_cred(cred);
- 	if (tsec->keycreate_sid)
- 		ksec->sid = tsec->keycreate_sid;
- 	else
-@@ -6252,6 +6213,10 @@ static void selinux_ib_free_security(void *ib_sec)
- }
- #endif
- 
-+struct lsm_blob_sizes selinux_blob_sizes = {
-+	.lbs_cred = sizeof(struct task_security_struct),
-+};
-+
- static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(binder_set_context_mgr, selinux_binder_set_context_mgr),
- 	LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
-@@ -6334,8 +6299,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(file_open, selinux_file_open),
- 
- 	LSM_HOOK_INIT(task_alloc, selinux_task_alloc),
--	LSM_HOOK_INIT(cred_alloc_blank, selinux_cred_alloc_blank),
--	LSM_HOOK_INIT(cred_free, selinux_cred_free),
- 	LSM_HOOK_INIT(cred_prepare, selinux_cred_prepare),
- 	LSM_HOOK_INIT(cred_transfer, selinux_cred_transfer),
- 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
-@@ -6475,11 +6438,19 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 
- static __init int selinux_init(void)
- {
-+	static int finish;
-+
- 	if (!security_module_enable("selinux")) {
- 		selinux_enabled = 0;
- 		return 0;
- 	}
- 
-+	if (!finish) {
-+		security_add_blobs(&selinux_blob_sizes);
-+		finish = 1;
-+		return 0;
-+	}
-+
- 	if (!selinux_enabled) {
- 		printk(KERN_INFO "SELinux:  Disabled at boot.\n");
- 		return 0;
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index 1649cd18eb0b..c0bdb7232f39 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -25,6 +25,9 @@
- #include <linux/binfmts.h>
- #include <linux/in.h>
- #include <linux/spinlock.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/msg.h>
-+#include <net/sock.h>
- #include <net/net_namespace.h>
- #include "flask.h"
- #include "avc.h"
-@@ -151,5 +154,11 @@ struct pkey_security_struct {
+-struct security_mnt_opts {
++struct lsm_mnt_opts {
+ 	char **mnt_opts;
+ 	int *mnt_opts_flags;
+ 	int num_mnt_opts;
  };
  
- extern unsigned int selinux_checkreqprot;
-+extern struct lsm_blob_sizes selinux_blob_sizes;
 +
-+static inline struct task_security_struct *selinux_cred(const struct cred *cred)
-+{
-+	return cred->security;
-+}
- 
- #endif /* _SELINUX_OBJSEC_H_ */
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 00eed842c491..855a13053a81 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -30,6 +30,7 @@
- #include <linux/uaccess.h>
- #include <linux/kobject.h>
- #include <linux/ctype.h>
-+#include <linux/lsm_hooks.h>
- 
- /* selinuxfs pseudo filesystem for exporting the security policy API.
-    Based on the proc code and the fs/nfsd/nfsctl.c code. */
-diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
-index 56e354fcdfc6..789d07bd900f 100644
---- a/security/selinux/xfrm.c
-+++ b/security/selinux/xfrm.c
-@@ -79,7 +79,7 @@ static int selinux_xfrm_alloc_user(struct xfrm_sec_ctx **ctxp,
- 				   gfp_t gfp)
- {
- 	int rc;
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct xfrm_sec_ctx *ctx = NULL;
- 	u32 str_len;
- 
-@@ -136,7 +136,7 @@ static void selinux_xfrm_free(struct xfrm_sec_ctx *ctx)
-  */
- static int selinux_xfrm_delete(struct xfrm_sec_ctx *ctx)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 
- 	if (!ctx)
- 		return 0;
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 6a71fc7831ab..ab1d217800e2 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -24,6 +24,7 @@
- #include <linux/list.h>
- #include <linux/rculist.h>
- #include <linux/lsm_audit.h>
-+#include <linux/msg.h>
- 
- /*
-  * Use IPv6 port labeling if IPv6 is enabled and secmarks
-@@ -355,6 +356,11 @@ extern struct list_head smack_onlycap_list;
- #define SMACK_HASH_SLOTS 16
- extern struct hlist_head smack_known_hash[SMACK_HASH_SLOTS];
- 
-+static inline struct task_smack *smack_cred(const struct cred *cred)
-+{
-+	return cred->security;
-+}
++struct security_mnt_opts {
++#ifdef CONFIG_SECURITY_STACKING
++	struct lsm_mnt_opts     selinux;
++	struct lsm_mnt_opts     smack;
++#else
++	union {
++		struct lsm_mnt_opts     selinux;
++		struct lsm_mnt_opts     smack;
++	};
++#endif
++};
 +
- /*
-  * Is the directory transmuting?
-  */
-@@ -381,13 +387,16 @@ static inline struct smack_known *smk_of_task(const struct task_smack *tsp)
- 	return tsp->smk_task;
- }
+ int call_lsm_notifier(enum lsm_event event, void *data);
+ int register_lsm_notifier(struct notifier_block *nb);
+ int unregister_lsm_notifier(struct notifier_block *nb);
  
--static inline struct smack_known *smk_of_task_struct(const struct task_struct *t)
-+static inline struct smack_known *smk_of_task_struct(
-+						const struct task_struct *t)
+ static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
  {
- 	struct smack_known *skp;
-+	const struct cred *cred;
- 
- 	rcu_read_lock();
--	skp = smk_of_task(__task_cred(t)->security);
-+	cred = __task_cred(t);
- 	rcu_read_unlock();
-+	skp = smk_of_task(smack_cred(cred));
- 	return skp;
+-	opts->mnt_opts = NULL;
+-	opts->mnt_opts_flags = NULL;
+-	opts->num_mnt_opts = 0;
++	opts->selinux.mnt_opts = NULL;
++	opts->selinux.mnt_opts_flags = NULL;
++	opts->selinux.num_mnt_opts = 0;
++#ifdef CONFIG_SECURITY_STACKING
++	opts->smack.mnt_opts = NULL;
++	opts->smack.mnt_opts_flags = NULL;
++	opts->smack.num_mnt_opts = 0;
++#endif
  }
  
-@@ -404,7 +413,7 @@ static inline struct smack_known *smk_of_forked(const struct task_smack *tsp)
-  */
- static inline struct smack_known *smk_of_current(void)
+ static inline void security_free_mnt_opts(struct security_mnt_opts *opts)
  {
--	return smk_of_task(current_security());
-+	return smk_of_task(smack_cred(current_cred()));
+ 	int i;
+-	if (opts->mnt_opts)
+-		for (i = 0; i < opts->num_mnt_opts; i++)
+-			kfree(opts->mnt_opts[i]);
+-	kfree(opts->mnt_opts);
+-	opts->mnt_opts = NULL;
+-	kfree(opts->mnt_opts_flags);
+-	opts->mnt_opts_flags = NULL;
+-	opts->num_mnt_opts = 0;
++	if (opts->selinux.mnt_opts)
++		for (i = 0; i < opts->selinux.num_mnt_opts; i++)
++			kfree(opts->selinux.mnt_opts[i]);
++	kfree(opts->selinux.mnt_opts);
++	opts->selinux.mnt_opts = NULL;
++	kfree(opts->selinux.mnt_opts_flags);
++	opts->selinux.mnt_opts_flags = NULL;
++	opts->selinux.num_mnt_opts = 0;
++
++#ifdef CONFIG_SECURITY_STACKING
++	if (opts->smack.mnt_opts)
++		for (i = 0; i < opts->smack.num_mnt_opts; i++)
++			kfree(opts->smack.mnt_opts[i]);
++	kfree(opts->smack.mnt_opts);
++	opts->smack.mnt_opts = NULL;
++	kfree(opts->smack.mnt_opts_flags);
++	opts->smack.mnt_opts_flags = NULL;
++	opts->smack.num_mnt_opts = 0;
++#endif
  }
  
- /*
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index 1a3004189447..e1d304c65fe3 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -275,7 +275,7 @@ int smk_tskacc(struct task_smack *tsp, struct smack_known *obj_known,
- int smk_curacc(struct smack_known *obj_known,
- 	       u32 mode, struct smk_audit_info *a)
+ /* prototypes */
+diff --git a/security/security.c b/security/security.c
+index 0269971b3b05..7a004006e761 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -771,9 +771,18 @@ int security_sb_set_mnt_opts(struct super_block *sb,
+ 				unsigned long kern_flags,
+ 				unsigned long *set_kern_flags)
  {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_tskacc(tsp, obj_known, mode, a);
+-	return call_int_hook(sb_set_mnt_opts,
+-				opts->num_mnt_opts ? -EOPNOTSUPP : 0, sb,
+-				opts, kern_flags, set_kern_flags);
++	int nobody = 0;
++
++#ifdef SECURITY_EXTREME_STACKING
++	if (opts->selinux.num_mnt_opts != 0 || opts->smack.num_mnt_opts != 0)
++		nobody = -EOPNOTSUPP;
++#else
++	if (opts->selinux.num_mnt_opts != 0)
++		nobody = -EOPNOTSUPP;
++#endif
++
++	return call_int_hook(sb_set_mnt_opts, nobody, sb, opts, kern_flags,
++				set_kern_flags);
  }
+ EXPORT_SYMBOL(security_sb_set_mnt_opts);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e6d6ab671493..395fbfa7bfac 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -545,21 +545,23 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
+ 	/* count the number of mount options for this sb */
+ 	for (i = 0; i < NUM_SEL_MNT_OPTS; i++) {
+ 		if (tmp & 0x01)
+-			opts->num_mnt_opts++;
++			opts->selinux.num_mnt_opts++;
+ 		tmp >>= 1;
+ 	}
+ 	/* Check if the Label support flag is set */
+ 	if (sbsec->flags & SBLABEL_MNT)
+-		opts->num_mnt_opts++;
++		opts->selinux.num_mnt_opts++;
+ 
+-	opts->mnt_opts = kcalloc(opts->num_mnt_opts, sizeof(char *), GFP_ATOMIC);
+-	if (!opts->mnt_opts) {
++	opts->selinux.mnt_opts = kcalloc(opts->selinux.num_mnt_opts,
++						sizeof(char *), GFP_ATOMIC);
++	if (!opts->selinux.mnt_opts) {
+ 		rc = -ENOMEM;
+ 		goto out_free;
+ 	}
+ 
+-	opts->mnt_opts_flags = kcalloc(opts->num_mnt_opts, sizeof(int), GFP_ATOMIC);
+-	if (!opts->mnt_opts_flags) {
++	opts->selinux.mnt_opts_flags = kcalloc(opts->selinux.num_mnt_opts,
++						sizeof(int), GFP_ATOMIC);
++	if (!opts->selinux.mnt_opts_flags) {
+ 		rc = -ENOMEM;
+ 		goto out_free;
+ 	}
+@@ -569,22 +571,22 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
+ 		rc = security_sid_to_context(sbsec->sid, &context, &len);
+ 		if (rc)
+ 			goto out_free;
+-		opts->mnt_opts[i] = context;
+-		opts->mnt_opts_flags[i++] = FSCONTEXT_MNT;
++		opts->selinux.mnt_opts[i] = context;
++		opts->selinux.mnt_opts_flags[i++] = FSCONTEXT_MNT;
+ 	}
+ 	if (sbsec->flags & CONTEXT_MNT) {
+ 		rc = security_sid_to_context(sbsec->mntpoint_sid, &context, &len);
+ 		if (rc)
+ 			goto out_free;
+-		opts->mnt_opts[i] = context;
+-		opts->mnt_opts_flags[i++] = CONTEXT_MNT;
++		opts->selinux.mnt_opts[i] = context;
++		opts->selinux.mnt_opts_flags[i++] = CONTEXT_MNT;
+ 	}
+ 	if (sbsec->flags & DEFCONTEXT_MNT) {
+ 		rc = security_sid_to_context(sbsec->def_sid, &context, &len);
+ 		if (rc)
+ 			goto out_free;
+-		opts->mnt_opts[i] = context;
+-		opts->mnt_opts_flags[i++] = DEFCONTEXT_MNT;
++		opts->selinux.mnt_opts[i] = context;
++		opts->selinux.mnt_opts_flags[i++] = DEFCONTEXT_MNT;
+ 	}
+ 	if (sbsec->flags & ROOTCONTEXT_MNT) {
+ 		struct dentry *root = sbsec->sb->s_root;
+@@ -594,15 +596,15 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
+ 		rc = security_sid_to_context(isec->sid, &context, &len);
+ 		if (rc)
+ 			goto out_free;
+-		opts->mnt_opts[i] = context;
+-		opts->mnt_opts_flags[i++] = ROOTCONTEXT_MNT;
++		opts->selinux.mnt_opts[i] = context;
++		opts->selinux.mnt_opts_flags[i++] = ROOTCONTEXT_MNT;
+ 	}
+ 	if (sbsec->flags & SBLABEL_MNT) {
+-		opts->mnt_opts[i] = NULL;
+-		opts->mnt_opts_flags[i++] = SBLABEL_MNT;
++		opts->selinux.mnt_opts[i] = NULL;
++		opts->selinux.mnt_opts_flags[i++] = SBLABEL_MNT;
+ 	}
+ 
+-	BUG_ON(i != opts->num_mnt_opts);
++	BUG_ON(i != opts->selinux.num_mnt_opts);
+ 
+ 	return 0;
+ 
+@@ -648,9 +650,9 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 	struct inode_security_struct *root_isec;
+ 	u32 fscontext_sid = 0, context_sid = 0, rootcontext_sid = 0;
+ 	u32 defcontext_sid = 0;
+-	char **mount_options = opts->mnt_opts;
+-	int *flags = opts->mnt_opts_flags;
+-	int num_opts = opts->num_mnt_opts;
++	char **mount_options = opts->selinux.mnt_opts;
++	int *flags = opts->selinux.mnt_opts_flags;
++	int num_opts = opts->selinux.num_mnt_opts;
+ 
+ 	mutex_lock(&sbsec->lock);
+ 
+@@ -1010,7 +1012,7 @@ static int selinux_parse_opts_str(char *options,
+ 	char *fscontext = NULL, *rootcontext = NULL;
+ 	int rc, num_mnt_opts = 0;
+ 
+-	opts->num_mnt_opts = 0;
++	opts->selinux.num_mnt_opts = 0;
+ 
+ 	/* Standard string-based options. */
+ 	while ((p = strsep(&options, "|")) != NULL) {
+@@ -1077,41 +1079,39 @@ static int selinux_parse_opts_str(char *options,
+ 		case Opt_labelsupport:
+ 			break;
+ 		default:
+-			rc = -EINVAL;
+ 			printk(KERN_WARNING "SELinux:  unknown mount option\n");
+-			goto out_err;
+-
++			break;
+ 		}
+ 	}
+ 
+ 	rc = -ENOMEM;
+-	opts->mnt_opts = kcalloc(NUM_SEL_MNT_OPTS, sizeof(char *), GFP_KERNEL);
+-	if (!opts->mnt_opts)
++	opts->selinux.mnt_opts = kcalloc(NUM_SEL_MNT_OPTS, sizeof(char *), GFP_KERNEL);
++	if (!opts->selinux.mnt_opts)
+ 		goto out_err;
+ 
+-	opts->mnt_opts_flags = kcalloc(NUM_SEL_MNT_OPTS, sizeof(int),
++	opts->selinux.mnt_opts_flags = kcalloc(NUM_SEL_MNT_OPTS, sizeof(int),
+ 				       GFP_KERNEL);
+-	if (!opts->mnt_opts_flags)
++	if (!opts->selinux.mnt_opts_flags)
+ 		goto out_err;
+ 
+ 	if (fscontext) {
+-		opts->mnt_opts[num_mnt_opts] = fscontext;
+-		opts->mnt_opts_flags[num_mnt_opts++] = FSCONTEXT_MNT;
++		opts->selinux.mnt_opts[num_mnt_opts] = fscontext;
++		opts->selinux.mnt_opts_flags[num_mnt_opts++] = FSCONTEXT_MNT;
+ 	}
+ 	if (context) {
+-		opts->mnt_opts[num_mnt_opts] = context;
+-		opts->mnt_opts_flags[num_mnt_opts++] = CONTEXT_MNT;
++		opts->selinux.mnt_opts[num_mnt_opts] = context;
++		opts->selinux.mnt_opts_flags[num_mnt_opts++] = CONTEXT_MNT;
+ 	}
+ 	if (rootcontext) {
+-		opts->mnt_opts[num_mnt_opts] = rootcontext;
+-		opts->mnt_opts_flags[num_mnt_opts++] = ROOTCONTEXT_MNT;
++		opts->selinux.mnt_opts[num_mnt_opts] = rootcontext;
++		opts->selinux.mnt_opts_flags[num_mnt_opts++] = ROOTCONTEXT_MNT;
+ 	}
+ 	if (defcontext) {
+-		opts->mnt_opts[num_mnt_opts] = defcontext;
+-		opts->mnt_opts_flags[num_mnt_opts++] = DEFCONTEXT_MNT;
++		opts->selinux.mnt_opts[num_mnt_opts] = defcontext;
++		opts->selinux.mnt_opts_flags[num_mnt_opts++] = DEFCONTEXT_MNT;
+ 	}
+ 
+-	opts->num_mnt_opts = num_mnt_opts;
++	opts->selinux.num_mnt_opts = num_mnt_opts;
+ 	return 0;
+ 
+ out_err:
+@@ -1156,15 +1156,15 @@ static void selinux_write_opts(struct seq_file *m,
+ 	int i;
+ 	char *prefix;
+ 
+-	for (i = 0; i < opts->num_mnt_opts; i++) {
++	for (i = 0; i < opts->selinux.num_mnt_opts; i++) {
+ 		char *has_comma;
+ 
+-		if (opts->mnt_opts[i])
+-			has_comma = strchr(opts->mnt_opts[i], ',');
++		if (opts->selinux.mnt_opts[i])
++			has_comma = strchr(opts->selinux.mnt_opts[i], ',');
+ 		else
+ 			has_comma = NULL;
+ 
+-		switch (opts->mnt_opts_flags[i]) {
++		switch (opts->selinux.mnt_opts_flags[i]) {
+ 		case CONTEXT_MNT:
+ 			prefix = CONTEXT_STR;
+ 			break;
+@@ -1190,7 +1190,7 @@ static void selinux_write_opts(struct seq_file *m,
+ 		seq_puts(m, prefix);
+ 		if (has_comma)
+ 			seq_putc(m, '\"');
+-		seq_escape(m, opts->mnt_opts[i], "\"\n\\");
++		seq_escape(m, opts->selinux.mnt_opts[i], "\"\n\\");
+ 		if (has_comma)
+ 			seq_putc(m, '\"');
+ 	}
+@@ -2705,10 +2705,10 @@ static int selinux_sb_remount(struct super_block *sb, void *data)
+ 	if (rc)
+ 		goto out_free_secdata;
+ 
+-	mount_options = opts.mnt_opts;
+-	flags = opts.mnt_opts_flags;
++	mount_options = opts.selinux.mnt_opts;
++	flags = opts.selinux.mnt_opts_flags;
+ 
+-	for (i = 0; i < opts.num_mnt_opts; i++) {
++	for (i = 0; i < opts.selinux.num_mnt_opts; i++) {
+ 		u32 sid;
+ 
+ 		if (flags[i] == SBLABEL_MNT)
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 319add31b4a4..ff4e5c632410 100644
+index 9031f2dc8bfb..9fb9148cf4b5 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -121,7 +121,7 @@ static int smk_bu_note(char *note, struct smack_known *sskp,
- static int smk_bu_current(char *note, struct smack_known *oskp,
- 			  int mode, int rc)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 	char acc[SMK_NUM_ACCESS_TYPE + 1];
+@@ -602,7 +602,7 @@ static int smack_parse_opts_str(char *options,
+ 	int num_mnt_opts = 0;
+ 	int token;
  
- 	if (rc <= 0)
-@@ -142,7 +142,7 @@ static int smk_bu_current(char *note, struct smack_known *oskp,
- #ifdef CONFIG_SECURITY_SMACK_BRINGUP
- static int smk_bu_task(struct task_struct *otp, int mode, int rc)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 	struct smack_known *smk_task = smk_of_task_struct(otp);
- 	char acc[SMK_NUM_ACCESS_TYPE + 1];
+-	opts->num_mnt_opts = 0;
++	opts->smack.num_mnt_opts = 0;
  
-@@ -164,7 +164,7 @@ static int smk_bu_task(struct task_struct *otp, int mode, int rc)
- #ifdef CONFIG_SECURITY_SMACK_BRINGUP
- static int smk_bu_inode(struct inode *inode, int mode, int rc)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 	struct inode_smack *isp = inode->i_security;
- 	char acc[SMK_NUM_ACCESS_TYPE + 1];
- 
-@@ -194,7 +194,7 @@ static int smk_bu_inode(struct inode *inode, int mode, int rc)
- #ifdef CONFIG_SECURITY_SMACK_BRINGUP
- static int smk_bu_file(struct file *file, int mode, int rc)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 	struct smack_known *sskp = tsp->smk_task;
- 	struct inode *inode = file_inode(file);
- 	struct inode_smack *isp = inode->i_security;
-@@ -224,7 +224,7 @@ static int smk_bu_file(struct file *file, int mode, int rc)
- static int smk_bu_credfile(const struct cred *cred, struct file *file,
- 				int mode, int rc)
- {
--	struct task_smack *tsp = cred->security;
-+	struct task_smack *tsp = smack_cred(cred);
- 	struct smack_known *sskp = tsp->smk_task;
- 	struct inode *inode = file_inode(file);
- 	struct inode_smack *isp = inode->i_security;
-@@ -308,29 +308,20 @@ static struct inode_smack *new_inode_smack(struct smack_known *skp)
- }
- 
- /**
-- * new_task_smack - allocate a task security blob
-+ * init_task_smack - initialize a task security blob
-+ * @tsp: blob to initialize
-  * @task: a pointer to the Smack label for the running task
-  * @forked: a pointer to the Smack label for the forked task
-- * @gfp: type of the memory for the allocation
-  *
-- * Returns the new blob or NULL if there's no memory available
-  */
--static struct task_smack *new_task_smack(struct smack_known *task,
--					struct smack_known *forked, gfp_t gfp)
-+static void init_task_smack(struct task_smack *tsp, struct smack_known *task,
-+					struct smack_known *forked)
- {
--	struct task_smack *tsp;
--
--	tsp = kzalloc(sizeof(struct task_smack), gfp);
--	if (tsp == NULL)
--		return NULL;
--
- 	tsp->smk_task = task;
- 	tsp->smk_forked = forked;
- 	INIT_LIST_HEAD(&tsp->smk_rules);
- 	INIT_LIST_HEAD(&tsp->smk_relabel);
- 	mutex_init(&tsp->smk_rules_lock);
--
--	return tsp;
- }
- 
- /**
-@@ -428,7 +419,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
+ 	if (!options)
+ 		return 0;
+@@ -652,43 +652,45 @@ static int smack_parse_opts_str(char *options,
+ 				goto out_err;
+ 			break;
+ 		default:
+-			rc = -EINVAL;
+ 			pr_warn("Smack:  unknown mount option\n");
+-			goto out_err;
++			break;
+ 		}
  	}
  
- 	rcu_read_lock();
--	tsp = __task_cred(tracer)->security;
-+	tsp = smack_cred(__task_cred(tracer));
- 	tracer_known = smk_of_task(tsp);
+-	opts->mnt_opts = kcalloc(NUM_SMK_MNT_OPTS, sizeof(char *), GFP_KERNEL);
+-	if (!opts->mnt_opts)
++	opts->smack.mnt_opts = kcalloc(NUM_SMK_MNT_OPTS, sizeof(char *),
++					GFP_KERNEL);
++	if (!opts->smack.mnt_opts)
+ 		goto out_err;
  
- 	if ((mode & PTRACE_MODE_ATTACH) &&
-@@ -495,7 +486,7 @@ static int smack_ptrace_traceme(struct task_struct *ptp)
- 	int rc;
- 	struct smack_known *skp;
+-	opts->mnt_opts_flags = kcalloc(NUM_SMK_MNT_OPTS, sizeof(int),
+-			GFP_KERNEL);
+-	if (!opts->mnt_opts_flags)
++	opts->smack.mnt_opts_flags = kcalloc(NUM_SMK_MNT_OPTS, sizeof(int),
++					GFP_KERNEL);
++	if (!opts->smack.mnt_opts_flags) {
++		kfree(opts->smack.mnt_opts);
+ 		goto out_err;
++	}
  
--	skp = smk_of_task(current_security());
-+	skp = smk_of_task(smack_cred(current_cred()));
+ 	if (fsdefault) {
+-		opts->mnt_opts[num_mnt_opts] = fsdefault;
+-		opts->mnt_opts_flags[num_mnt_opts++] = FSDEFAULT_MNT;
++		opts->smack.mnt_opts[num_mnt_opts] = fsdefault;
++		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSDEFAULT_MNT;
+ 	}
+ 	if (fsfloor) {
+-		opts->mnt_opts[num_mnt_opts] = fsfloor;
+-		opts->mnt_opts_flags[num_mnt_opts++] = FSFLOOR_MNT;
++		opts->smack.mnt_opts[num_mnt_opts] = fsfloor;
++		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSFLOOR_MNT;
+ 	}
+ 	if (fshat) {
+-		opts->mnt_opts[num_mnt_opts] = fshat;
+-		opts->mnt_opts_flags[num_mnt_opts++] = FSHAT_MNT;
++		opts->smack.mnt_opts[num_mnt_opts] = fshat;
++		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSHAT_MNT;
+ 	}
+ 	if (fsroot) {
+-		opts->mnt_opts[num_mnt_opts] = fsroot;
+-		opts->mnt_opts_flags[num_mnt_opts++] = FSROOT_MNT;
++		opts->smack.mnt_opts[num_mnt_opts] = fsroot;
++		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSROOT_MNT;
+ 	}
+ 	if (fstransmute) {
+-		opts->mnt_opts[num_mnt_opts] = fstransmute;
+-		opts->mnt_opts_flags[num_mnt_opts++] = FSTRANS_MNT;
++		opts->smack.mnt_opts[num_mnt_opts] = fstransmute;
++		opts->smack.mnt_opts_flags[num_mnt_opts++] = FSTRANS_MNT;
+ 	}
  
- 	rc = smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, __func__);
- 	return rc;
-@@ -912,7 +903,7 @@ static int smack_sb_statfs(struct dentry *dentry)
- static int smack_bprm_set_creds(struct linux_binprm *bprm)
- {
- 	struct inode *inode = file_inode(bprm->file);
--	struct task_smack *bsp = bprm->cred->security;
-+	struct task_smack *bsp = smack_cred(bprm->cred);
+-	opts->num_mnt_opts = num_mnt_opts;
++	opts->smack.num_mnt_opts = num_mnt_opts;
+ 	return 0;
+ 
+ out_opt_err:
+@@ -727,7 +729,7 @@ static int smack_set_mnt_opts(struct super_block *sb,
  	struct inode_smack *isp;
- 	struct superblock_smack *sbsp;
- 	int rc;
-@@ -1748,7 +1739,7 @@ static int smack_mmap_file(struct file *file,
- 		return -EACCES;
- 	mkp = isp->smk_mmap;
- 
--	tsp = current_security();
-+	tsp = smack_cred(current_cred());
- 	skp = smk_of_current();
- 	rc = 0;
- 
-@@ -1844,7 +1835,7 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
- 				     struct fown_struct *fown, int signum)
- {
  	struct smack_known *skp;
--	struct smack_known *tkp = smk_of_task(tsk->cred->security);
-+	struct smack_known *tkp = smk_of_task(smack_cred(tsk->cred));
- 	struct file *file;
- 	int rc;
- 	struct smk_audit_info ad;
-@@ -1892,7 +1883,7 @@ static int smack_file_receive(struct file *file)
- 	if (inode->i_sb->s_magic == SOCKFS_MAGIC) {
- 		sock = SOCKET_I(inode);
- 		ssp = sock->sk->sk_security;
--		tsp = current_security();
-+		tsp = smack_cred(current_cred());
- 		/*
- 		 * If the receiving process can't write to the
- 		 * passed socket or if the passed socket can't
-@@ -1934,7 +1925,7 @@ static int smack_file_receive(struct file *file)
-  */
- static int smack_file_open(struct file *file, const struct cred *cred)
- {
--	struct task_smack *tsp = cred->security;
-+	struct task_smack *tsp = smack_cred(cred);
- 	struct inode *inode = file_inode(file);
- 	struct smk_audit_info ad;
- 	int rc;
-@@ -1962,14 +1953,7 @@ static int smack_file_open(struct file *file, const struct cred *cred)
-  */
- static int smack_cred_alloc_blank(struct cred *cred, gfp_t gfp)
- {
--	struct task_smack *tsp;
--
--	tsp = new_task_smack(NULL, NULL, gfp);
--	if (tsp == NULL)
--		return -ENOMEM;
--
--	cred->security = tsp;
--
-+	init_task_smack(smack_cred(cred), NULL, NULL);
- 	return 0;
- }
+ 	int i;
+-	int num_opts = opts->num_mnt_opts;
++	int num_opts = opts->smack.num_mnt_opts;
+ 	int transmute = 0;
  
-@@ -1981,15 +1965,11 @@ static int smack_cred_alloc_blank(struct cred *cred, gfp_t gfp)
-  */
- static void smack_cred_free(struct cred *cred)
- {
--	struct task_smack *tsp = cred->security;
-+	struct task_smack *tsp = smack_cred(cred);
- 	struct smack_rule *rp;
- 	struct list_head *l;
- 	struct list_head *n;
+ 	if (sp->smk_flags & SMK_SB_INITIALIZED)
+@@ -761,33 +763,33 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ 	sp->smk_flags |= SMK_SB_INITIALIZED;
  
--	if (tsp == NULL)
--		return;
--	cred->security = NULL;
--
- 	smk_destroy_label_list(&tsp->smk_relabel);
- 
- 	list_for_each_safe(l, n, &tsp->smk_rules) {
-@@ -1997,7 +1977,6 @@ static void smack_cred_free(struct cred *cred)
- 		list_del(&rp->list);
- 		kfree(rp);
- 	}
--	kfree(tsp);
- }
- 
- /**
-@@ -2011,15 +1990,11 @@ static void smack_cred_free(struct cred *cred)
- static int smack_cred_prepare(struct cred *new, const struct cred *old,
- 			      gfp_t gfp)
- {
--	struct task_smack *old_tsp = old->security;
--	struct task_smack *new_tsp;
-+	struct task_smack *old_tsp = smack_cred(old);
-+	struct task_smack *new_tsp = smack_cred(new);
- 	int rc;
- 
--	new_tsp = new_task_smack(old_tsp->smk_task, old_tsp->smk_task, gfp);
--	if (new_tsp == NULL)
--		return -ENOMEM;
--
--	new->security = new_tsp;
-+	init_task_smack(new_tsp, old_tsp->smk_task, old_tsp->smk_task);
- 
- 	rc = smk_copy_rules(&new_tsp->smk_rules, &old_tsp->smk_rules, gfp);
- 	if (rc != 0)
-@@ -2027,10 +2002,7 @@ static int smack_cred_prepare(struct cred *new, const struct cred *old,
- 
- 	rc = smk_copy_relabel(&new_tsp->smk_relabel, &old_tsp->smk_relabel,
- 				gfp);
--	if (rc != 0)
--		return rc;
--
--	return 0;
-+	return rc;
- }
- 
- /**
-@@ -2042,15 +2014,14 @@ static int smack_cred_prepare(struct cred *new, const struct cred *old,
-  */
- static void smack_cred_transfer(struct cred *new, const struct cred *old)
- {
--	struct task_smack *old_tsp = old->security;
--	struct task_smack *new_tsp = new->security;
-+	struct task_smack *old_tsp = smack_cred(old);
-+	struct task_smack *new_tsp = smack_cred(new);
- 
- 	new_tsp->smk_task = old_tsp->smk_task;
- 	new_tsp->smk_forked = old_tsp->smk_task;
- 	mutex_init(&new_tsp->smk_rules_lock);
- 	INIT_LIST_HEAD(&new_tsp->smk_rules);
- 
--
- 	/* cbs copy rule list */
- }
- 
-@@ -2063,7 +2034,7 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
-  */
- static int smack_kernel_act_as(struct cred *new, u32 secid)
- {
--	struct task_smack *new_tsp = new->security;
-+	struct task_smack *new_tsp = smack_cred(new);
- 
- 	new_tsp->smk_task = smack_from_secid(secid);
- 	return 0;
-@@ -2081,7 +2052,7 @@ static int smack_kernel_create_files_as(struct cred *new,
- 					struct inode *inode)
- {
- 	struct inode_smack *isp = inode->i_security;
--	struct task_smack *tsp = new->security;
-+	struct task_smack *tsp = smack_cred(new);
- 
- 	tsp->smk_forked = isp->smk_inode;
- 	tsp->smk_task = tsp->smk_forked;
-@@ -3644,7 +3615,7 @@ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
-  */
- static int smack_setprocattr(const char *name, void *value, size_t size)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 	struct cred *new;
- 	struct smack_known *skp;
- 	struct smack_known_list_elem *sklep;
-@@ -3685,7 +3656,7 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
- 	if (new == NULL)
- 		return -ENOMEM;
- 
--	tsp = new->security;
-+	tsp = smack_cred(new);
- 	tsp->smk_task = skp;
- 	/*
- 	 * process can change its label only once
-@@ -4321,7 +4292,7 @@ static void smack_inet_csk_clone(struct sock *sk,
- static int smack_key_alloc(struct key *key, const struct cred *cred,
- 			   unsigned long flags)
- {
--	struct smack_known *skp = smk_of_task(cred->security);
-+	struct smack_known *skp = smk_of_task(smack_cred(cred));
- 
- 	key->security = skp;
- 	return 0;
-@@ -4352,7 +4323,7 @@ static int smack_key_permission(key_ref_t key_ref,
- {
- 	struct key *keyp;
- 	struct smk_audit_info ad;
--	struct smack_known *tkp = smk_of_task(cred->security);
-+	struct smack_known *tkp = smk_of_task(smack_cred(cred));
- 	int request = 0;
- 	int rc;
- 
-@@ -4605,6 +4576,10 @@ static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
- 	return 0;
- }
- 
-+struct lsm_blob_sizes smack_blob_sizes = {
-+	.lbs_cred = sizeof(struct task_smack),
-+};
-+
- static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_access_check, smack_ptrace_access_check),
- 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
-@@ -4778,23 +4753,35 @@ static __init void init_smack_known_list(void)
-  */
- static __init int smack_init(void)
- {
--	struct cred *cred;
-+	static int finish;
-+	struct cred *cred = (struct cred *) current->cred;
- 	struct task_smack *tsp;
- 
- 	if (!security_module_enable("smack"))
- 		return 0;
- 
-+	if (!finish) {
-+		security_add_blobs(&smack_blob_sizes);
-+		finish = 1;
-+		return 0;
-+	}
-+
- 	smack_inode_cache = KMEM_CACHE(inode_smack, 0);
- 	if (!smack_inode_cache)
- 		return -ENOMEM;
- 
--	tsp = new_task_smack(&smack_known_floor, &smack_known_floor,
--				GFP_KERNEL);
--	if (tsp == NULL) {
--		kmem_cache_destroy(smack_inode_cache);
--		return -ENOMEM;
--	}
-+	lsm_early_cred(cred);
- 
-+	/*
-+	 * Set the security state for the initial task.
-+	 */
-+	tsp = smack_cred(cred);
-+	init_task_smack(tsp, &smack_known_floor, &smack_known_floor);
-+
-+	/*
-+	 * Register with LSM
-+	 */
-+	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
- 	smack_enabled = 1;
- 
- 	pr_info("Smack:  Initializing.\n");
-@@ -4808,20 +4795,9 @@ static __init int smack_init(void)
- 	pr_info("Smack:  IPv6 Netfilter enabled.\n");
- #endif
- 
--	/*
--	 * Set the security state for the initial task.
--	 */
--	cred = (struct cred *) current->cred;
--	cred->security = tsp;
--
- 	/* initialize the smack_known_list */
- 	init_smack_known_list();
- 
--	/*
--	 * Register with LSM
--	 */
--	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
--
- 	return 0;
- }
- 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index f6482e53d55a..9d2dde608298 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -2208,14 +2208,14 @@ static const struct file_operations smk_logging_ops = {
- 
- static void *load_self_seq_start(struct seq_file *s, loff_t *pos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_seq_start(s, pos, &tsp->smk_rules);
- }
- 
- static void *load_self_seq_next(struct seq_file *s, void *v, loff_t *pos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_seq_next(s, v, pos, &tsp->smk_rules);
- }
-@@ -2262,7 +2262,7 @@ static int smk_open_load_self(struct inode *inode, struct file *file)
- static ssize_t smk_write_load_self(struct file *file, const char __user *buf,
- 			      size_t count, loff_t *ppos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_write_rules_list(file, buf, count, ppos, &tsp->smk_rules,
- 				    &tsp->smk_rules_lock, SMK_FIXED24_FMT);
-@@ -2414,14 +2414,14 @@ static const struct file_operations smk_load2_ops = {
- 
- static void *load_self2_seq_start(struct seq_file *s, loff_t *pos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_seq_start(s, pos, &tsp->smk_rules);
- }
- 
- static void *load_self2_seq_next(struct seq_file *s, void *v, loff_t *pos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_seq_next(s, v, pos, &tsp->smk_rules);
- }
-@@ -2467,7 +2467,7 @@ static int smk_open_load_self2(struct inode *inode, struct file *file)
- static ssize_t smk_write_load_self2(struct file *file, const char __user *buf,
- 			      size_t count, loff_t *ppos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_write_rules_list(file, buf, count, ppos, &tsp->smk_rules,
- 				    &tsp->smk_rules_lock, SMK_LONG_FMT);
-@@ -2681,14 +2681,14 @@ static const struct file_operations smk_syslog_ops = {
- 
- static void *relabel_self_seq_start(struct seq_file *s, loff_t *pos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_seq_start(s, pos, &tsp->smk_relabel);
- }
- 
- static void *relabel_self_seq_next(struct seq_file *s, void *v, loff_t *pos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 
- 	return smk_seq_next(s, v, pos, &tsp->smk_relabel);
- }
-@@ -2736,7 +2736,7 @@ static int smk_open_relabel_self(struct inode *inode, struct file *file)
- static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
- 				size_t count, loff_t *ppos)
- {
--	struct task_smack *tsp = current_security();
-+	struct task_smack *tsp = smack_cred(current_cred());
- 	char *data;
- 	int rc;
- 	LIST_HEAD(list_tmp);
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 361e7a284699..cbcfccc84784 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -28,6 +28,7 @@
- #include <linux/in.h>
- #include <linux/in6.h>
- #include <linux/un.h>
-+#include <linux/lsm_hooks.h>
- #include <net/sock.h>
- #include <net/af_unix.h>
- #include <net/ip.h>
-@@ -1196,13 +1197,26 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
- }
- 
- /**
-+ * tomoyo_cred - Get a pointer to the tomoyo cred security blob
-+ * @cred - the relevant cred
-+ *
-+ * Returns pointer to the tomoyo cred blob.
-+ */
-+static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
-+{
-+	return cred->security;
-+}
-+
-+/**
-  * tomoyo_domain - Get "struct tomoyo_domain_info" for current thread.
-  *
-  * Returns pointer to "struct tomoyo_domain_info" for current thread.
-  */
- static inline struct tomoyo_domain_info *tomoyo_domain(void)
- {
--	return current_cred()->security;
-+	struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
-+
-+	return *blob;
- }
- 
- /**
-@@ -1215,7 +1229,9 @@ static inline struct tomoyo_domain_info *tomoyo_domain(void)
- static inline struct tomoyo_domain_info *tomoyo_real_domain(struct task_struct
- 							    *task)
- {
--	return task_cred_xxx(task, security);
-+	struct tomoyo_domain_info **blob = tomoyo_cred(get_task_cred(task));
-+
-+	return *blob;
- }
- 
- /**
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index 00d223e9fb37..80ebb422c02b 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -677,6 +677,7 @@ static int tomoyo_environ(struct tomoyo_execve *ee)
-  */
- int tomoyo_find_next_domain(struct linux_binprm *bprm)
- {
-+	struct tomoyo_domain_info **blob;
- 	struct tomoyo_domain_info *old_domain = tomoyo_domain();
- 	struct tomoyo_domain_info *domain = NULL;
- 	const char *original_name = bprm->filename;
-@@ -842,7 +843,8 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
- 		domain = old_domain;
- 	/* Update reference count on "struct tomoyo_domain_info". */
- 	atomic_inc(&domain->users);
--	bprm->cred->security = domain;
-+	blob = tomoyo_cred(bprm->cred);
-+	*blob = domain;
- 	kfree(exename.name);
- 	if (!retval) {
- 		ee->r.domain = domain;
-diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
-index 06ab41b1ff28..9289f2a16036 100644
---- a/security/tomoyo/securityfs_if.c
-+++ b/security/tomoyo/securityfs_if.c
-@@ -70,9 +70,12 @@ static ssize_t tomoyo_write_self(struct file *file, const char __user *buf,
- 				if (!cred) {
- 					error = -ENOMEM;
- 				} else {
--					struct tomoyo_domain_info *old_domain =
--						cred->security;
--					cred->security = new_domain;
-+					struct tomoyo_domain_info **blob;
-+					struct tomoyo_domain_info *old_domain;
-+
-+					blob = tomoyo_cred(cred);
-+					old_domain = *blob;
-+					*blob = new_domain;
- 					atomic_inc(&new_domain->users);
- 					atomic_dec(&old_domain->users);
- 					commit_creds(cred);
-@@ -233,10 +236,12 @@ static void __init tomoyo_create_entry(const char *name, const umode_t mode,
-  */
- static int __init tomoyo_initerface_init(void)
- {
-+	struct tomoyo_domain_info *domain;
- 	struct dentry *tomoyo_dir;
- 
-+	domain = tomoyo_domain();
- 	/* Don't create securityfs entries unless registered. */
--	if (current_cred()->security != &tomoyo_kernel_domain)
-+	if (domain != &tomoyo_kernel_domain)
- 		return 0;
- 
- 	tomoyo_dir = securityfs_create_dir("tomoyo", NULL);
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index d25b705360e0..1224a59291fb 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -17,7 +17,9 @@
-  */
- static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
- {
--	new->security = NULL;
-+	struct tomoyo_domain_info **blob = tomoyo_cred(new);
-+
-+	*blob = NULL;
- 	return 0;
- }
- 
-@@ -33,8 +35,13 @@ static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
- static int tomoyo_cred_prepare(struct cred *new, const struct cred *old,
- 			       gfp_t gfp)
- {
--	struct tomoyo_domain_info *domain = old->security;
--	new->security = domain;
-+	struct tomoyo_domain_info **old_blob = tomoyo_cred(old);
-+	struct tomoyo_domain_info **new_blob = tomoyo_cred(new);
-+	struct tomoyo_domain_info *domain;
-+
-+	domain = *old_blob;
-+	*new_blob = domain;
-+
- 	if (domain)
- 		atomic_inc(&domain->users);
- 	return 0;
-@@ -58,7 +65,9 @@ static void tomoyo_cred_transfer(struct cred *new, const struct cred *old)
-  */
- static void tomoyo_cred_free(struct cred *cred)
- {
--	struct tomoyo_domain_info *domain = cred->security;
-+	struct tomoyo_domain_info **blob = tomoyo_cred(cred);
-+	struct tomoyo_domain_info *domain = *blob;
-+
- 	if (domain)
- 		atomic_dec(&domain->users);
- }
-@@ -72,6 +81,9 @@ static void tomoyo_cred_free(struct cred *cred)
-  */
- static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
- {
-+	struct tomoyo_domain_info **blob;
-+	struct tomoyo_domain_info *domain;
-+
- 	/*
- 	 * Do only if this function is called for the first time of an execve
- 	 * operation.
-@@ -92,13 +104,14 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
- 	 * stored inside "bprm->cred->security" will be acquired later inside
- 	 * tomoyo_find_next_domain().
- 	 */
--	atomic_dec(&((struct tomoyo_domain_info *)
--		     bprm->cred->security)->users);
-+	blob = tomoyo_cred(bprm->cred);
-+	domain = *blob;
-+	atomic_dec(&domain->users);
- 	/*
- 	 * Tell tomoyo_bprm_check_security() is called for the first time of an
- 	 * execve operation.
- 	 */
--	bprm->cred->security = NULL;
-+	*blob = NULL;
- 	return 0;
- }
- 
-@@ -111,8 +124,11 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
-  */
- static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
- {
--	struct tomoyo_domain_info *domain = bprm->cred->security;
-+	struct tomoyo_domain_info **blob;
-+	struct tomoyo_domain_info *domain;
- 
-+	blob = tomoyo_cred(bprm->cred);
-+	domain = *blob;
- 	/*
- 	 * Execute permission is checked against pathname passed to do_execve()
- 	 * using current domain.
-@@ -492,6 +508,10 @@ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
- 	return tomoyo_socket_sendmsg_permission(sock, msg, size);
- }
- 
-+struct lsm_blob_sizes tomoyo_blob_sizes = {
-+	.lbs_cred = sizeof(struct tomoyo_domain_info *),
-+};
-+
- /*
-  * tomoyo_security_ops is a "struct security_operations" which is used for
-  * registering TOMOYO.
-@@ -537,14 +557,25 @@ DEFINE_SRCU(tomoyo_ss);
-  */
- static int __init tomoyo_init(void)
- {
-+	static int finish;
- 	struct cred *cred = (struct cred *) current_cred();
-+	struct tomoyo_domain_info **blob;
- 
- 	if (!security_module_enable("tomoyo"))
- 		return 0;
-+
-+	if (!finish) {
-+		security_add_blobs(&tomoyo_blob_sizes);
-+		finish = 1;
-+		return 0;
-+	}
-+
- 	/* register ourselves with the security framework */
- 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
- 	printk(KERN_INFO "TOMOYO Linux initialized\n");
--	cred->security = &tomoyo_kernel_domain;
-+	lsm_early_cred(cred);
-+	blob = tomoyo_cred(cred);
-+	*blob = &tomoyo_kernel_domain;
- 	tomoyo_mm_init();
- 	return 0;
- }
+ 	for (i = 0; i < num_opts; i++) {
+-		switch (opts->mnt_opts_flags[i]) {
++		switch (opts->smack.mnt_opts_flags[i]) {
+ 		case FSDEFAULT_MNT:
+-			skp = smk_import_entry(opts->mnt_opts[i], 0);
++			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
+ 			if (IS_ERR(skp))
+ 				return PTR_ERR(skp);
+ 			sp->smk_default = skp;
+ 			break;
+ 		case FSFLOOR_MNT:
+-			skp = smk_import_entry(opts->mnt_opts[i], 0);
++			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
+ 			if (IS_ERR(skp))
+ 				return PTR_ERR(skp);
+ 			sp->smk_floor = skp;
+ 			break;
+ 		case FSHAT_MNT:
+-			skp = smk_import_entry(opts->mnt_opts[i], 0);
++			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
+ 			if (IS_ERR(skp))
+ 				return PTR_ERR(skp);
+ 			sp->smk_hat = skp;
+ 			break;
+ 		case FSROOT_MNT:
+-			skp = smk_import_entry(opts->mnt_opts[i], 0);
++			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
+ 			if (IS_ERR(skp))
+ 				return PTR_ERR(skp);
+ 			sp->smk_root = skp;
+ 			break;
+ 		case FSTRANS_MNT:
+-			skp = smk_import_entry(opts->mnt_opts[i], 0);
++			skp = smk_import_entry(opts->smack.mnt_opts[i], 0);
+ 			if (IS_ERR(skp))
+ 				return PTR_ERR(skp);
+ 			sp->smk_root = skp;
 -- 
 2.13.0
 
