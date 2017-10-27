@@ -1,260 +1,541 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 27 Oct 2017 14:45:03 -0700
-Subject: [PATCH 1/9] procfs: add smack subdir to attrs
+Date: Fri, 27 Oct 2017 14:45:22 -0700
+Subject: [PATCH 6/9] LSM: General stacking
 In-Reply-To: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
 References: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
-Message-ID: <0fe962c9-e300-6407-58f0-77b084e13ac2@schaufler-ca.com>
+Message-ID: <c546b1dc-a2e8-b988-4271-5fe4de2a6f1a@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH 1/9] procfs: add smack subdir to attrs
+Subject: [PATCH 6/9] LSM: General stacking
 
-Back in 2007 I made what turned out to be a rather serious
-mistake in the implementation of the Smack security module.
-The SELinux module used an interface in /proc to manipulate
-the security context on processes. Rather than use a similar
-interface, I used the same interface. The AppArmor team did
-likewise. Now /proc/.../attr/current will tell you the
-security "context" of the process, but it will be different
-depending on the security module you're using.
+Leverage the infrastructure management of the security blobs
+to allow stacking of security modules in all but the most
+extreme case. Security modules are informed of the location
+of their data within the blobs at module initialization.
 
-This patch provides a subdirectory in /proc/.../attr for
-Smack. Smack user space can use the "current" file in
-this subdirectory and never have to worry about getting
-SELinux attributes by mistake. Programs that use the
-old interface will continue to work (or fail, as the case
-may be) as before.
+Stacking is optional. If stacking is not configured the old
+limit of one "major" security module applies. If stacking is
+configured TOMOYO can be configured with an of the other
+modules. SELinux, Smack and AppArmor use (or in the AppArmor
+case, threaten to use) secids, which are not (yet) shareable.
 
-The original implementation is by Kees Cook.
+A subdirectory has been added to /proc/.../attr for each of
+SELinux and AppArmor (Smack introduced such a subdirectory earlier)
+to disambiguate what data is provided in the proc/.../attr
+interfaces.
+
+Unlike earlier versions of this patch, there is no "context"
+entry introduced. No mechanism is provided to get all of
+the process security data at the same time.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- Documentation/admin-guide/LSM/index.rst | 13 +++++--
- fs/proc/base.c                          | 63 ++++++++++++++++++++++++++++-----
- fs/proc/internal.h                      |  1 +
- include/linux/security.h                | 15 +++++---
- security/security.c                     | 24 ++++++++++---
- 5 files changed, 95 insertions(+), 21 deletions(-)
+ Documentation/admin-guide/LSM/index.rst | 14 ++++--
+ fs/proc/base.c                          | 29 +++++++++++
+ include/linux/lsm_hooks.h               |  2 +-
+ security/Kconfig                        | 86 +++++++++++++++++++++++++++++++++
+ security/apparmor/include/context.h     | 10 ++++
+ security/apparmor/lsm.c                 |  8 ++-
+ security/security.c                     | 30 +++++++++++-
+ security/selinux/hooks.c                |  3 +-
+ security/selinux/include/objsec.h       |  8 +++
+ security/smack/smack.h                  |  9 ++++
+ security/smack/smack_lsm.c              | 17 +++----
+ security/tomoyo/common.h                | 12 ++++-
+ security/tomoyo/tomoyo.c                |  3 +-
+ 13 files changed, 210 insertions(+), 21 deletions(-)
 
 diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index c980dfe9abf1..9842e21afd4a 100644
+index 9842e21afd4a..d3d8af174042 100644
 --- a/Documentation/admin-guide/LSM/index.rst
 +++ b/Documentation/admin-guide/LSM/index.rst
-@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
+@@ -17,10 +17,16 @@ MAC extensions, other extensions can be built using the LSM to provide
  specific changes to system operation when these tweaks are not available
  in the core functionality of Linux itself.
  
--Without a specific LSM built into the kernel, the default LSM will be the
--Linux capabilities system. Most LSMs choose to extend the capabilities
--system, building their checks on top of the defined capability hooks.
-+The Linux capabilities modules will always be included. This may be
-+followed by any number of "minor" modules and at most one "major" module.
- For more details on capabilities, see ``capabilities(7)`` in the Linux
- man-pages project.
- 
-@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
- be first, followed by any "minor" modules (e.g. Yama) and then
- the one "major" module (e.g. SELinux) if there is one configured.
- 
-+Process attributes associated with "major" security modules should
-+be accessed and maintained using the special files in ``/proc/.../attr``.
-+A security module may maintain a module specific subdirectory there,
-+named after the module. ``/proc/.../attr/smack`` is provided by the Smack
-+security module and contains all its special files. The files directly
-+in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
-+subdirectories.
+-The Linux capabilities modules will always be included. This may be
+-followed by any number of "minor" modules and at most one "major" module.
+-For more details on capabilities, see ``capabilities(7)`` in the Linux
+-man-pages project.
++The Linux capabilities modules will always be included. For more details
++on capabilities, see ``capabilities(7)`` in the Linux man-pages project.
 +
- .. toctree::
-    :maxdepth: 1
++Security modules that do not use the security data blobs maintained
++by the LSM infrastructure are considered "minor" modules. These may be
++included at compile time and stacked explicitly. Security modules that
++use the LSM maintained security blobs are considered "major" modules.
++These may only be stacked if the CONFIG_LSM_STACKED configuration
++option is used. If this is chosen all of the security modules selected
++will be used.
  
+ A list of the active security modules can be found by reading
+ ``/sys/kernel/security/lsm``. This is a comma separated list, and
 diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ad3b0762cc3e..a096e90fc12e 100644
+index a096e90fc12e..e6ee90483916 100644
 --- a/fs/proc/base.c
 +++ b/fs/proc/base.c
-@@ -139,9 +139,13 @@ struct pid_entry {
- #define REG(NAME, MODE, fops)				\
- 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
- #define ONE(NAME, MODE, show)				\
--	NOD(NAME, (S_IFREG|(MODE)), 			\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
- 		NULL, &proc_single_file_operations,	\
- 		{ .proc_show = show } )
-+#define ATTR(LSM, NAME, MODE)				\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
-+		NULL, &proc_pid_attr_operations,	\
-+		{ .lsm = LSM })
+@@ -2593,6 +2593,18 @@ static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
+ 	.setattr	= proc_setattr, \
+ }
  
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-@@ -2496,7 +2500,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
- 	if (!task)
- 		return -ESRCH;
- 
--	length = security_getprocattr(task,
-+	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
- 				      (char*)file->f_path.dentry->d_name.name,
- 				      &p);
- 	put_task_struct(task);
-@@ -2542,7 +2546,8 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	if (length < 0)
- 		goto out_free;
- 
--	length = security_setprocattr(file->f_path.dentry->d_name.name,
-+	length = security_setprocattr(PROC_I(inode)->op.lsm,
-+				      file->f_path.dentry->d_name.name,
- 				      page, count);
- 	mutex_unlock(&current->signal->cred_guard_mutex);
- out_free:
-@@ -2559,13 +2564,53 @@ static const struct file_operations proc_pid_attr_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+#define LSM_DIR_OPS(LSM) \
-+static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
-+			     struct dir_context *ctx) \
-+{ \
-+	return proc_pident_readdir(filp, ctx, \
-+				   LSM##_attr_dir_stuff, \
-+				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct file_operations proc_##LSM##_attr_dir_ops = { \
-+	.read		= generic_read_dir, \
-+	.iterate	= proc_##LSM##_attr_dir_iterate, \
-+	.llseek		= default_llseek, \
-+}; \
-+\
-+static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
-+				struct dentry *dentry, unsigned int flags) \
-+{ \
-+	return proc_pident_lookup(dir, dentry, \
-+				  LSM##_attr_dir_stuff, \
-+				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
-+	.lookup		= proc_##LSM##_attr_dir_lookup, \
-+	.getattr	= pid_getattr, \
-+	.setattr	= proc_setattr, \
-+}
-+
-+#ifdef CONFIG_SECURITY_SMACK
-+static const struct pid_entry smack_attr_dir_stuff[] = {
-+	ATTR("smack", "current",	0666),
++#ifdef CONFIG_SECURITY_SELINUX
++static const struct pid_entry selinux_attr_dir_stuff[] = {
++	ATTR("selinux", "current",	0666),
++	ATTR("selinux", "prev",		0444),
++	ATTR("selinux", "exec",		0666),
++	ATTR("selinux", "fscreate",	0666),
++	ATTR("selinux", "keycreate",	0666),
++	ATTR("selinux", "sockcreate",	0666),
 +};
-+LSM_DIR_OPS(smack);
++LSM_DIR_OPS(selinux);
++#endif
++
+ #ifdef CONFIG_SECURITY_SMACK
+ static const struct pid_entry smack_attr_dir_stuff[] = {
+ 	ATTR("smack", "current",	0666),
+@@ -2600,6 +2612,15 @@ static const struct pid_entry smack_attr_dir_stuff[] = {
+ LSM_DIR_OPS(smack);
+ #endif
+ 
++#ifdef CONFIG_SECURITY_APPARMOR
++static const struct pid_entry apparmor_attr_dir_stuff[] = {
++	ATTR("apparmor", "current",	0666),
++	ATTR("apparmor", "prev",	0444),
++	ATTR("apparmor", "exec",	0666),
++};
++LSM_DIR_OPS(apparmor);
 +#endif
 +
  static const struct pid_entry attr_dir_stuff[] = {
--	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
--	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
-+	ATTR(NULL, "current",		0666),
-+	ATTR(NULL, "prev",		0444),
-+	ATTR(NULL, "exec",		0666),
-+	ATTR(NULL, "fscreate",		0666),
-+	ATTR(NULL, "keycreate",		0666),
-+	ATTR(NULL, "sockcreate",	0666),
-+#ifdef CONFIG_SECURITY_SMACK
-+	DIR("smack",			0555,
-+	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
+ 	ATTR(NULL, "current",		0666),
+ 	ATTR(NULL, "prev",		0444),
+@@ -2607,10 +2628,18 @@ static const struct pid_entry attr_dir_stuff[] = {
+ 	ATTR(NULL, "fscreate",		0666),
+ 	ATTR(NULL, "keycreate",		0666),
+ 	ATTR(NULL, "sockcreate",	0666),
++#ifdef CONFIG_SECURITY_SELINUX
++	DIR("selinux",			0555,
++	    proc_selinux_attr_dir_inode_ops, proc_selinux_attr_dir_ops),
++#endif
+ #ifdef CONFIG_SECURITY_SMACK
+ 	DIR("smack",			0555,
+ 	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
+ #endif
++#ifdef CONFIG_SECURITY_APPARMOR
++	DIR("apparmor",			0555,
++	    proc_apparmor_attr_dir_inode_ops, proc_apparmor_attr_dir_ops),
 +#endif
  };
  
  static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index a34195e92b20..758e32874444 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -58,6 +58,7 @@ union proc_op {
- 	int (*proc_show)(struct seq_file *m,
- 		struct pid_namespace *ns, struct pid *pid,
- 		struct task_struct *task);
-+	const char *lsm;
- };
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index cae3f6591044..84643a3ae378 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1975,7 +1975,7 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
  
- struct proc_inode {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ce6265960d6c..46ec92658ad3 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -375,8 +375,10 @@ int security_sem_semctl(struct sem_array *sma, int cmd);
- int security_sem_semop(struct sem_array *sma, struct sembuf *sops,
- 			unsigned nsops, int alter);
- void security_d_instantiate(struct dentry *dentry, struct inode *inode);
--int security_getprocattr(struct task_struct *p, char *name, char **value);
--int security_setprocattr(const char *name, void *value, size_t size);
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+			 char **value);
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size);
- int security_netlink_send(struct sock *sk, struct sk_buff *skb);
- int security_ismaclabel(const char *name);
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
-@@ -1128,15 +1130,18 @@ static inline int security_sem_semop(struct sem_array *sma,
- 	return 0;
- }
+-extern int __init security_module_enable(const char *module);
++extern bool __init security_module_enable(const char *lsm, const bool stacked);
+ extern void __init capability_add_hooks(void);
+ #ifdef CONFIG_SECURITY_YAMA
+ extern void __init yama_add_hooks(void);
+diff --git a/security/Kconfig b/security/Kconfig
+index f3464fb5a8b0..a14d50b45b6c 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -36,6 +36,28 @@ config SECURITY_WRITABLE_HOOKS
+ 	bool
+ 	default n
  
--static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
-+static inline void security_d_instantiate(struct dentry *dentry,
-+					  struct inode *inode)
- { }
++config SECURITY_STACKING
++	bool "Security module stacking"
++	depends on SECURITY
++	help
++	  Allows multiple major security modules to be stacked.
++	  Modules are invoked in the order registered with a
++	  "bail on fail" policy, in which the infrastructure
++	  will stop processing once a denial is detected. Not
++	  all modules can be stacked. SELinux and Smack are
++	  known to be incompatible. User space components may
++	  have trouble identifying the security module providing
++	  data in some cases.
++
++	  If you select this option you will have to select which
++	  of the stackable modules you wish to be active. The
++	  "Default security module" will be ignored. The boot line
++	  "security=" option can be used to specify that one of
++	  the modules identifed for stacking should be used instead
++	  of the entire stack.
++
++	  If you are unsure how to answer this question, answer N.
++
+ config SECURITY_LSM_DEBUG
+ 	bool "Enable debugging of the LSM infrastructure"
+ 	depends on SECURITY
+@@ -225,6 +247,9 @@ source security/yama/Kconfig
  
--static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
-+static inline int security_getprocattr(struct task_struct *p, const char *lsm,
-+				       char *name, char **value)
+ source security/integrity/Kconfig
+ 
++menu "Security Module Selection"
++	visible if !SECURITY_STACKING
++
+ choice
+ 	prompt "Default security module"
+ 	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
+@@ -264,3 +289,64 @@ config DEFAULT_SECURITY
+ 
+ endmenu
+ 
++menu "Security Module Stack"
++	visible if SECURITY_STACKING
++
++choice
++	prompt "Stacked 'extreme' security module"
++	default SECURITY_SELINUX_STACKED if SECURITY_SELINUX
++	default SECURITY_SMACK_STACKED if SECURITY_SMACK
++	default SECURITY_APPARMOR_STACKED if SECURITY_APPARMOR
++
++	help
++	  Enable an extreme security module. These modules cannot
++	  be used at the same time.
++
++	config SECURITY_SELINUX_STACKED
++		bool "SELinux" if SECURITY_SELINUX=y
++	help
++	  This option instructs the system to use the SELinux checks.
++	  At this time the Smack security module is incompatible with this
++	  module.
++	  At this time the AppArmor security module is incompatible with this
++	  module.
++
++	config SECURITY_SMACK_STACKED
++		bool "Simplified Mandatory Access Control" if SECURITY_SMACK=y
++	help
++	  This option instructs the system to use the Smack checks.
++	  At this time the SELinux security module is incompatible with this
++	  module.
++	  At this time the AppArmor security module is incompatible with this
++	  module.
++
++	config SECURITY_APPARMOR_STACKED
++		bool "AppArmor" if SECURITY_APPARMOR=y
++	help
++	  This option instructs the system to use the AppArmor checks.
++	  At this time the SELinux security module is incompatible with this
++	  module.
++	  At this time the Smack security module is incompatible with this
++	  module.
++
++	config SECURITY_NOTHING_STACKED
++		bool "Use no 'extreme' security module"
++	help
++	  Use none of the SELinux, Smack or AppArmor security module.
++
++endchoice
++
++config SECURITY_TOMOYO_STACKED
++	bool "TOMOYO support is enabled by default"
++	depends on SECURITY_TOMOYO && SECURITY_STACKING
++	default n
++	help
++	  This option instructs the system to use the TOMOYO checks.
++	  If not selected the module will not be invoked.
++	  Stacked security modules may interact in unexpected ways.
++
++	  If you are unsure how to answer this question, answer N.
++
++endmenu
++
++endmenu
+diff --git a/security/apparmor/include/context.h b/security/apparmor/include/context.h
+index c6e106a533e8..c6d5dbbd18b0 100644
+--- a/security/apparmor/include/context.h
++++ b/security/apparmor/include/context.h
+@@ -55,9 +55,15 @@ int aa_set_current_hat(struct aa_label *label, u64 token);
+ int aa_restore_previous_label(u64 cookie);
+ struct aa_label *aa_get_task_label(struct task_struct *task);
+ 
++extern struct lsm_blob_sizes apparmor_blob_sizes;
++
+ static inline struct aa_task_ctx *apparmor_cred(const struct cred *cred)
  {
- 	return -EINVAL;
++#ifdef CONFIG_SECURITY_STACKING
++	return cred->security + apparmor_blob_sizes.lbs_cred;
++#else
+ 	return cred->security;
++#endif
  }
  
--static inline int security_setprocattr(char *name, void *value, size_t size)
-+static inline int security_setprocattr(const char *lsm, char *name,
-+				       void *value, size_t size)
+ /**
+@@ -89,7 +95,11 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
+ 
+ static inline struct aa_file_ctx *apparmor_file(const struct file *file)
  {
- 	return -EINVAL;
++#ifdef CONFIG_SECURITY_STACKING
++	return file->f_security + apparmor_blob_sizes.lbs_file;
++#else
+ 	return file->f_security;
++#endif
  }
+ 
+ /**
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 8edbf79062cd..b36d08f5ce1d 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1467,7 +1467,9 @@ static int __init apparmor_init(void)
+ 	int error;
+ 
+ 	if (!finish) {
+-		if (apparmor_enabled && security_module_enable("apparmor"))
++		if (apparmor_enabled &&
++		    security_module_enable("apparmor",
++				IS_ENABLED(CONFIG_SECURITY_APPARMOR_STACKED)))
+ 			security_add_blobs(&apparmor_blob_sizes);
+ 		else
+ 			apparmor_enabled = 0;
+@@ -1475,7 +1477,9 @@ static int __init apparmor_init(void)
+ 		return 0;
+ 	}
+ 
+-	if (!apparmor_enabled || !security_module_enable("apparmor")) {
++	if (!apparmor_enabled ||
++	    !security_module_enable("apparmor",
++				IS_ENABLED(CONFIG_SECURITY_APPARMOR_STACKED))) {
+ 		aa_info_message("AppArmor disabled by boot time parameter");
+ 		apparmor_enabled = 0;
+ 		return 0;
 diff --git a/security/security.c b/security/security.c
-index 4bf0f571b4ef..49a069bb76da 100644
+index 8439acd36160..a306a5447d43 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1253,14 +1253,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(security_d_instantiate);
+@@ -35,6 +35,7 @@
  
--int security_getprocattr(struct task_struct *p, char *name, char **value)
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+				char **value)
+ /* Maximum number of letters for an LSM name string */
+ #define SECURITY_NAME_MAX	10
++#define MODULE_STACK		"(stacking)"
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+@@ -47,7 +48,11 @@ static struct lsm_blob_sizes blob_sizes;
+ 
+ /* Boot-time LSM user choice */
+ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
++#ifdef CONFIG_SECURITY_STACKING
++	MODULE_STACK;
++#else
+ 	CONFIG_DEFAULT_SECURITY;
++#endif
+ 
+ static void __init do_security_initcalls(void)
  {
--	return call_int_hook(getprocattr, -EINVAL, p, name, value);
-+	struct security_hook_list *hp;
-+
-+	list_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.getprocattr(p, name, value);
-+	}
-+	return -EINVAL;
- }
- 
--int security_setprocattr(const char *name, void *value, size_t size)
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size)
+@@ -167,6 +172,7 @@ static int lsm_append(char *new, char **result)
+ /**
+  * security_module_enable - Load given security module on boot ?
+  * @module: the name of the module
++ * @stacked: indicates that the module wants to be stacked
+  *
+  * Each LSM must pass this method before registering its own operations
+  * to avoid security registration races. This method may also be used
+@@ -182,9 +188,29 @@ static int lsm_append(char *new, char **result)
+  *
+  * Otherwise, return false.
+  */
+-int __init security_module_enable(const char *module)
++bool __init security_module_enable(const char *lsm, const bool stacked)
  {
--	return call_int_hook(setprocattr, -EINVAL, name, value, size);
-+	struct security_hook_list *hp;
-+
-+	list_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.setprocattr(name, value, size);
+-	return !strcmp(module, chosen_lsm);
++#ifdef CONFIG_SECURITY_STACKING
++	/*
++	 * Module defined on the command line security=XXXX
++	 */
++	if (strcmp(chosen_lsm, MODULE_STACK)) {
++		if (!strcmp(lsm, chosen_lsm)) {
++			pr_info("Command line sets the %s security module.\n",
++				lsm);
++			return true;
++		}
++		return false;
 +	}
-+	return -EINVAL;
++	/*
++	 * Module configured as stacked.
++	 */
++	return stacked;
++#else
++	if (strcmp(lsm, chosen_lsm) == 0)
++		return true;
++	return false;
++#endif
  }
  
- int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+ /**
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index cfee70096f97..a3466517c55c 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6300,7 +6300,8 @@ static __init int selinux_init(void)
+ {
+ 	static int finish;
+ 
+-	if (!security_module_enable("selinux")) {
++	if (!security_module_enable("selinux",
++				IS_ENABLED(CONFIG_SECURITY_SELINUX_STACKED))) {
+ 		selinux_enabled = 0;
+ 		return 0;
+ 	}
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index f2f1e2d15eb8..7abb443c2ed2 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -155,12 +155,20 @@ extern struct lsm_blob_sizes selinux_blob_sizes;
+ 
+ static inline struct task_security_struct *selinux_cred(const struct cred *cred)
+ {
++#ifdef CONFIG_SECURITY_STACKING
++	return cred->security + selinux_blob_sizes.lbs_cred;
++#else
+ 	return cred->security;
++#endif
+ }
+ 
+ static inline struct file_security_struct *selinux_file(const struct file *file)
+ {
++#ifdef CONFIG_SECURITY_STACKING
++	return file->f_security + selinux_blob_sizes.lbs_file;
++#else
+ 	return file->f_security;
++#endif
+ }
+ 
+ static inline struct inode_security_struct *selinux_inode(
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 1b875c2f3d9d..e7611de071f1 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -336,6 +336,7 @@ extern struct smack_known *smack_syslog_label;
+ extern struct smack_known *smack_unconfined;
+ #endif
+ extern int smack_ptrace_rule;
++extern struct lsm_blob_sizes smack_blob_sizes;
+ 
+ extern struct smack_known smack_known_floor;
+ extern struct smack_known smack_known_hat;
+@@ -358,12 +359,20 @@ extern struct hlist_head smack_known_hash[SMACK_HASH_SLOTS];
+ 
+ static inline struct task_smack *smack_cred(const struct cred *cred)
+ {
++#ifdef CONFIG_SECURITY_STACKING
++	return cred->security + smack_blob_sizes.lbs_cred;
++#else
+ 	return cred->security;
++#endif
+ }
+ 
+ static inline struct smack_known **smack_file(const struct file *file)
+ {
++#ifdef CONFIG_SECURITY_STACKING
++	return file->f_security + smack_blob_sizes.lbs_file;
++#else
+ 	return file->f_security;
++#endif
+ }
+ 
+ static inline struct inode_smack *smack_inode(const struct inode *inode)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4588c48aab86..e3f32f4d322a 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3427,18 +3427,16 @@ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
+ {
+ 	struct smack_known *skp = smk_of_task_struct(p);
+ 	char *cp;
+-	int slen;
+ 
+-	if (strcmp(name, "current") != 0)
++	if (strcmp(name, "current") == 0) {
++		cp = kstrdup(skp->smk_known, GFP_KERNEL);
++		if (cp == NULL)
++			return -ENOMEM;
++	} else
+ 		return -EINVAL;
+ 
+-	cp = kstrdup(skp->smk_known, GFP_KERNEL);
+-	if (cp == NULL)
+-		return -ENOMEM;
+-
+-	slen = strlen(cp);
+ 	*value = cp;
+-	return slen;
++	return strlen(cp);
+ }
+ 
+ /**
+@@ -4594,7 +4592,8 @@ static __init int smack_init(void)
+ 	struct cred *cred = (struct cred *) current->cred;
+ 	struct task_smack *tsp;
+ 
+-	if (!security_module_enable("smack"))
++	if (!security_module_enable("smack",
++				IS_ENABLED(CONFIG_SECURITY_SMACK_STACKED)))
+ 		return 0;
+ 
+ 	if (!finish) {
+diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+index cbcfccc84784..2eed9d44eec1 100644
+--- a/security/tomoyo/common.h
++++ b/security/tomoyo/common.h
+@@ -1085,6 +1085,7 @@ extern struct tomoyo_domain_info tomoyo_kernel_domain;
+ extern struct tomoyo_policy_namespace tomoyo_kernel_namespace;
+ extern unsigned int tomoyo_memory_quota[TOMOYO_MAX_MEMORY_STAT];
+ extern unsigned int tomoyo_memory_used[TOMOYO_MAX_MEMORY_STAT];
++extern struct lsm_blob_sizes tomoyo_blob_sizes;
+ 
+ /********** Inlined functions. **********/
+ 
+@@ -1204,7 +1205,11 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
+  */
+ static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
+ {
++#ifdef CONFIG_SECURITY_STACKING
++	return cred->security + tomoyo_blob_sizes.lbs_cred;
++#else
+ 	return cred->security;
++#endif
+ }
+ 
+ /**
+@@ -1214,8 +1219,13 @@ static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
+  */
+ static inline struct tomoyo_domain_info *tomoyo_domain(void)
+ {
+-	struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
++	const struct cred *cred = current_cred();
++	struct tomoyo_domain_info **blob;
++
++	if (cred->security == NULL)
++		return NULL;
+ 
++	blob = tomoyo_cred(cred);
+ 	return *blob;
+ }
+ 
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 1224a59291fb..32173de284f8 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -561,7 +561,8 @@ static int __init tomoyo_init(void)
+ 	struct cred *cred = (struct cred *) current_cred();
+ 	struct tomoyo_domain_info **blob;
+ 
+-	if (!security_module_enable("tomoyo"))
++	if (!security_module_enable("tomoyo",
++				IS_ENABLED(CONFIG_SECURITY_TOMOYO_STACKED)))
+ 		return 0;
+ 
+ 	if (!finish) {
 -- 
 2.13.0
 
