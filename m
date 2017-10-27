@@ -1,77 +1,45 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 26 Oct 2017 19:57:36 -0400
-Subject: [PATCH] KEYS: trusted: fix writing past end of buffer in
-	trusted_read()
-In-Reply-To: <20171026205744.105566-1-ebiggers3@gmail.com>
-References: <20171026205744.105566-1-ebiggers3@gmail.com>
-Message-ID: <1509062256.5886.147.camel@linux.vnet.ibm.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Thu, 26 Oct 2017 20:12:07 -0700
+Subject: [PATCH] MAINTAINERS: remove David Safford as maintainer for
+	encrypted+trusted keys
+Message-ID: <20171027031207.6193-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-10-26 at 13:57 -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> When calling keyctl_read() on a key of type "trusted", if the
-> user-supplied buffer was too small, the kernel ignored the buffer length
-> and just wrote past the end of the buffer, potentially corrupting
-> userspace memory.  Fix it by instead returning the size required, as per
-> the documentation for keyctl_read().
-> 
-> We also don't even fill the buffer at all in this case, as this is
-> slightly easier to implement than doing a short read, and either
-> behavior appears to be permitted.  It also makes it match the behavior
-> of the "encrypted" key type.
-> 
-> Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
-> Reported-by: Ben Hutchings <ben@decadent.org.uk>
-> Cc: <stable@vger.kernel.org> # v2.6.38+
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+From: Eric Biggers <ebiggers@google.com>
 
-Thanks!
+Emails to David's listed email address bounce, and in the commit log
+there's no activity from him within the last 5 years.
 
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: David Safford <safford@us.ibm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
 
-> ---
->  security/keys/trusted.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index bd85315cbfeb..98aa89ff7bfd 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -1147,20 +1147,21 @@ static long trusted_read(const struct key *key, char __user *buffer,
->  	p = dereference_key_locked(key);
->  	if (!p)
->  		return -EINVAL;
-> -	if (!buffer || buflen <= 0)
-> -		return 2 * p->blob_len;
-> -	ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
-> -	if (!ascii_buf)
-> -		return -ENOMEM;
-> 
-> -	bufp = ascii_buf;
-> -	for (i = 0; i < p->blob_len; i++)
-> -		bufp = hex_byte_pack(bufp, p->blob[i]);
-> -	if ((copy_to_user(buffer, ascii_buf, 2 * p->blob_len)) != 0) {
-> +	if (buffer && buflen >= 2 * p->blob_len) {
-> +		ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
-> +		if (!ascii_buf)
-> +			return -ENOMEM;
-> +
-> +		bufp = ascii_buf;
-> +		for (i = 0; i < p->blob_len; i++)
-> +			bufp = hex_byte_pack(bufp, p->blob[i]);
-> +		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
-> +			kzfree(ascii_buf);
-> +			return -EFAULT;
-> +		}
->  		kzfree(ascii_buf);
-> -		return -EFAULT;
->  	}
-> -	kzfree(ascii_buf);
->  	return 2 * p->blob_len;
->  }
-> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d85c08956875..f0b69d1c2041 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7626,7 +7626,6 @@ F:	kernel/kexec*
+ 
+ KEYS-ENCRYPTED
+ M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
+-M:	David Safford <safford@us.ibm.com>
+ L:	linux-security-module at vger.kernel.org
+ L:	keyrings at vger.kernel.org
+ S:	Supported
+@@ -7635,7 +7634,6 @@ F:	include/keys/encrypted-type.h
+ F:	security/keys/encrypted-keys/
+ 
+ KEYS-TRUSTED
+-M:	David Safford <safford@us.ibm.com>
+ M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
+ L:	linux-security-module at vger.kernel.org
+ L:	keyrings at vger.kernel.org
+-- 
+2.14.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
