@@ -1,42 +1,42 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Fri, 27 Oct 2017 09:55:39 +0200 (CEST)
-Subject: [PATCH] KEYS: trusted: fix writing past end of buffer in
-	trusted_read()
-In-Reply-To: <20171026205744.105566-1-ebiggers3@gmail.com>
-References: <20171026205744.105566-1-ebiggers3@gmail.com>
-Message-ID: <alpine.LFD.2.20.1710270954210.2635@localhost>
+From: tweek@google.com (Thiebaud Weksteen)
+Date: Fri, 27 Oct 2017 11:13:32 +0200
+Subject: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
+In-Reply-To: <20171026141429.nnmc2ks4m2bm6yhx@linux.intel.com>
+References: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
+	<CA+zpnLft_o-c2cRxtUEoAPbYiiLzmLqAPYwrkFDdVoyk5t6Zfw@mail.gmail.com>
+	<20171025131848.3il7j5rw7nt7e2l6@linux.intel.com>
+	<20171026141429.nnmc2ks4m2bm6yhx@linux.intel.com>
+Message-ID: <CA+zpnLfr3bZK0EDEpFP3_UkQX2xe1B3W5b+0r72meJ20XVXUAg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 26 Oct 2017, Eric Biggers wrote:
+On Thu, Oct 26, 2017 at 4:14 PM, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Wed, Oct 25, 2017 at 03:18:48PM +0200, Jarkko Sakkinen wrote:
+>> > Since this may conflict with the last patch set I sent, are you happy
+>> > for me to base this new set on tpmdd/master?
+>>
+>> What about this: you do an updated version of your patch set that
+>> includes these clean ups?
+>>
+>> PS. Sorry for slowness with your patches. I've just had a lot of stuff
+>> going on lately. They are 2nd in my priority queue right after
+>> CVE-2017-15361.
+>
+> This is an awful idea as your patch is in great shape and we want to
+> land that feature ASAP. Lets land your patches first and then plan how
+> to do the clean up.
+>
+> I have some other suggestions for the clean up work that require even
+> more work. Mainly: I think it would make sense to have an eventlog
+> subdirectory for the eventlog as it's growing so complex.
+>
+> What do you think?
 
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> When calling keyctl_read() on a key of type "trusted", if the
-> user-supplied buffer was too small, the kernel ignored the buffer length
-> and just wrote past the end of the buffer, potentially corrupting
-> userspace memory.  Fix it by instead returning the size required, as per
-> the documentation for keyctl_read().
-> 
-> We also don't even fill the buffer at all in this case, as this is
-> slightly easier to implement than doing a short read, and either
-> behavior appears to be permitted.  It also makes it match the behavior
-> of the "encrypted" key type.
-> 
-> Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
-> Reported-by: Ben Hutchings <ben@decadent.org.uk>
-> Cc: <stable@vger.kernel.org> # v2.6.38+
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+Yes, I would prefer this option as well. Also, agreed on a subdirectory.
 
-
-Reviewed-by: James Morris <james.l.morris@oracle.com>
-
-
-
--- 
-James Morris
-<james.l.morris@oracle.com>
-
+>
+> /Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
