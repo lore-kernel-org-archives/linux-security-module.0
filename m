@@ -1,48 +1,47 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Fri, 27 Oct 2017 11:28:22 -0400
-Subject: [RFC PATCH] xfrm: fix regression introduced by xdst pcpu cache
-Message-ID: <20171027152822.16406-1-sds@tycho.nsa.gov>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 27 Oct 2017 14:48:15 -0400
+Subject: [PATCH 03/27] Enforce module signatures if the kernel is locked
+	down
+In-Reply-To: <150842465546.7923.6762214527898273559.stgit@warthog.procyon.org.uk>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842465546.7923.6762214527898273559.stgit@warthog.procyon.org.uk>
+Message-ID: <1509130095.3716.13.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-commit ec30d78c14a813db39a647b6a348b4286 ("xfrm: add xdst pcpu cache")
-introduced a regression in the use of labeled IPSEC.  The cache was only
-checking that the policies are the same, but did not validate that the
-policy, state, and flow matched with respect to security context labeling.
-As a result, the wrong SA could be used and the receiver could end up
-performing permission checking and providing SO_PEERSEC or SCM_SECURITY
-values for the wrong security context.  This was triggering failures in
-the selinux-testsuite.  The security_xfrm_state_pol_flow_match() hook
-exists for this purpose and is already called elsewhere from the xfrm
-state code for matching purposes.  Add a call to this hook when validating
-the cache entry.  With this change, the selinux-testsuite passes all tests
-again.
+On Thu, 2017-10-19 at 15:50 +0100, David Howells wrote:
+> If the kernel is locked down, require that all modules have valid
+> signatures that we can verify.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  kernel/module.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/module.c b/kernel/module.c
+> index de66ec825992..3d9a3270c179 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -2781,7 +2781,8 @@ static int module_sig_check(struct load_info *info, int flags)
+>  	}
+> 
+>  	/* Not having a signature is only an error if we're strict. */
+> -	if (err == -ENOKEY && !sig_enforce)
+> +	if (err == -ENOKEY && !sig_enforce &&
+> +	    !kernel_is_locked_down("Loading of unsigned modules"))
+?
+This kernel_is_locked_down() check is being called for both the
+original and new module_load syscalls. ?We need to be able
+differentiate them. ?This is fine for the original syscall, but for
+the new syscall we would need an additional IMA check -
+!is_ima_appraise_enabled().
 
-Fixes: ec30d78c14a813db39a647b6a348b4286ba4abf5 ("xfrm: add xdst pcpu cache")
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
----
-Sending this as an RFC to lsm and selinux for comments before sending it
-to netdev. See https://github.com/SELinuxProject/selinux-kernel/issues/36
-for earlier discussion about the bug.
-
- net/xfrm/xfrm_policy.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index f062539..e7ec47f 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1820,6 +1820,8 @@ xfrm_resolve_and_create_bundle(struct xfrm_policy **pols, int num_pols,
- 	    !xfrm_pol_dead(xdst) &&
- 	    memcmp(xdst->pols, pols,
- 		   sizeof(struct xfrm_policy *) * num_pols) == 0 &&
-+	    security_xfrm_state_pol_flow_match(xdst->u.dst.xfrm,
-+					       xdst->pols[0], fl) &&
- 	    xfrm_bundle_ok(xdst)) {
- 		dst_hold(&xdst->u.dst);
- 		return xdst;
--- 
-2.9.5
+Mimi
+?
+>  		err = 0;
+> 
+>  	return err;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
