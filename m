@@ -1,42 +1,49 @@
-From: tweek@google.com (Thiebaud Weksteen)
-Date: Fri, 27 Oct 2017 11:13:32 +0200
-Subject: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
-In-Reply-To: <20171026141429.nnmc2ks4m2bm6yhx@linux.intel.com>
-References: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
-	<CA+zpnLft_o-c2cRxtUEoAPbYiiLzmLqAPYwrkFDdVoyk5t6Zfw@mail.gmail.com>
-	<20171025131848.3il7j5rw7nt7e2l6@linux.intel.com>
-	<20171026141429.nnmc2ks4m2bm6yhx@linux.intel.com>
-Message-ID: <CA+zpnLfr3bZK0EDEpFP3_UkQX2xe1B3W5b+0r72meJ20XVXUAg@mail.gmail.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Fri, 27 Oct 2017 11:28:22 -0400
+Subject: [RFC PATCH] xfrm: fix regression introduced by xdst pcpu cache
+Message-ID: <20171027152822.16406-1-sds@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Oct 26, 2017 at 4:14 PM, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> On Wed, Oct 25, 2017 at 03:18:48PM +0200, Jarkko Sakkinen wrote:
->> > Since this may conflict with the last patch set I sent, are you happy
->> > for me to base this new set on tpmdd/master?
->>
->> What about this: you do an updated version of your patch set that
->> includes these clean ups?
->>
->> PS. Sorry for slowness with your patches. I've just had a lot of stuff
->> going on lately. They are 2nd in my priority queue right after
->> CVE-2017-15361.
->
-> This is an awful idea as your patch is in great shape and we want to
-> land that feature ASAP. Lets land your patches first and then plan how
-> to do the clean up.
->
-> I have some other suggestions for the clean up work that require even
-> more work. Mainly: I think it would make sense to have an eventlog
-> subdirectory for the eventlog as it's growing so complex.
->
-> What do you think?
+commit ec30d78c14a813db39a647b6a348b4286 ("xfrm: add xdst pcpu cache")
+introduced a regression in the use of labeled IPSEC.  The cache was only
+checking that the policies are the same, but did not validate that the
+policy, state, and flow matched with respect to security context labeling.
+As a result, the wrong SA could be used and the receiver could end up
+performing permission checking and providing SO_PEERSEC or SCM_SECURITY
+values for the wrong security context.  This was triggering failures in
+the selinux-testsuite.  The security_xfrm_state_pol_flow_match() hook
+exists for this purpose and is already called elsewhere from the xfrm
+state code for matching purposes.  Add a call to this hook when validating
+the cache entry.  With this change, the selinux-testsuite passes all tests
+again.
 
-Yes, I would prefer this option as well. Also, agreed on a subdirectory.
+Fixes: ec30d78c14a813db39a647b6a348b4286ba4abf5 ("xfrm: add xdst pcpu cache")
+Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+---
+Sending this as an RFC to lsm and selinux for comments before sending it
+to netdev. See https://github.com/SELinuxProject/selinux-kernel/issues/36
+for earlier discussion about the bug.
 
->
-> /Jarkko
+ net/xfrm/xfrm_policy.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index f062539..e7ec47f 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1820,6 +1820,8 @@ xfrm_resolve_and_create_bundle(struct xfrm_policy **pols, int num_pols,
+ 	    !xfrm_pol_dead(xdst) &&
+ 	    memcmp(xdst->pols, pols,
+ 		   sizeof(struct xfrm_policy *) * num_pols) == 0 &&
++	    security_xfrm_state_pol_flow_match(xdst->u.dst.xfrm,
++					       xdst->pols[0], fl) &&
+ 	    xfrm_bundle_ok(xdst)) {
+ 		dst_hold(&xdst->u.dst);
+ 		return xdst;
+-- 
+2.9.5
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
