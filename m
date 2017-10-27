@@ -1,47 +1,72 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 27 Oct 2017 14:48:15 -0400
-Subject: [PATCH 03/27] Enforce module signatures if the kernel is locked
-	down
-In-Reply-To: <150842465546.7923.6762214527898273559.stgit@warthog.procyon.org.uk>
+Date: Fri, 27 Oct 2017 15:32:26 -0400
+Subject: [PATCH 07/27] kexec_file: Disable at runtime if securelevel has
+	been set
+In-Reply-To: <1509027463.5886.26.camel@linux.vnet.ibm.com>
 References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842465546.7923.6762214527898273559.stgit@warthog.procyon.org.uk>
-Message-ID: <1509130095.3716.13.camel@linux.vnet.ibm.com>
+	<150842468754.7923.10037578333644594134.stgit@warthog.procyon.org.uk>
+	<1508774083.3639.124.camel@linux.vnet.ibm.com>
+	<20171026074243.GM8550@linux-l9pv.suse>
+	<1509027463.5886.26.camel@linux.vnet.ibm.com>
+Message-ID: <1509132746.3729.9.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-10-19 at 15:50 +0100, David Howells wrote:
-> If the kernel is locked down, require that all modules have valid
-> signatures that we can verify.
+On Thu, 2017-10-26 at 10:17 -0400, Mimi Zohar wrote:
+> On Thu, 2017-10-26 at 15:42 +0800, joeyli wrote:
+> > Hi Mimi,
+> > 
+> > Thank you for reviewing.
+> > 
+> > On Mon, Oct 23, 2017 at 11:54:43AM -0400, Mimi Zohar wrote:
+> > > On Thu, 2017-10-19 at 15:51 +0100, David Howells wrote:
+> > > > From: Chun-Yi Lee <joeyli.kernel@gmail.com>
+> > > > 
+> > > > When KEXEC_VERIFY_SIG is not enabled, kernel should not loads image
+> > > > through kexec_file systemcall if securelevel has been set.
+> > > 
+> > > The patch title and description needs to be updated to refer to
+> > > lockdown, not securelevel.
+> > > 
+> > > As previously mentioned the last time these patches were posted, this
+> > > leaves out testing to see if the integrity subsystem is enabled.
+> > > 
+> > > Commit 503ceaef8e2e "ima: define a set of appraisal rules requiring
+> > > file signatures" was upstreamed. ?An additional patch could force
+> > > these rules to be added to the custom policy, if lockdown is enabled.
+> > > ?This and other patches in this series could then check to see if
+> > > is_ima_appraise_enabled() is true.
+> > > 
+> > > Mimi
+> > >
+> > 
+> > I have updated the patch title and description, and I also added
+> > is_ima_appraise_enabled() as the following. Is it good to you?
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
+> Yes, that works. ?Thanks! ?Remember is_ima_appraise_enabled() is
+> dependent on the "ima: require secure_boot rules in lockdown mode"
+> patch -?http://kernsec.org/pipermail/linux-security-module-archive/201
+> 7-October/003910.html.
 > 
->  kernel/module.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> The IMA "secure_boot" policy can be specified on the boot command line
+> as ima_policy="secure_boot". ?It requires kernel modules, firmware,
+> kexec kernel image and the IMA custom policy to be signed. ?In
+> lockdown mode, these rules are enabled by default and added to the
+> custom policy.
 > 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index de66ec825992..3d9a3270c179 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -2781,7 +2781,8 @@ static int module_sig_check(struct load_info *info, int flags)
->  	}
+> > On the other hand, I am not good on IMA. I have traced the code path
+> > in kimage_file_prepare_segments(). Looks that the READING_KEXEC_IMAGE
+> > doesn't show in selinux_kernel_read_file(). Where is the exact code
+> > in IMA for checking the signature when loading crash kernel file?
 > 
->  	/* Not having a signature is only an error if we're strict. */
-> -	if (err == -ENOKEY && !sig_enforce)
-> +	if (err == -ENOKEY && !sig_enforce &&
-> +	    !kernel_is_locked_down("Loading of unsigned modules"))
-?
-This kernel_is_locked_down() check is being called for both the
-original and new module_load syscalls. ?We need to be able
-differentiate them. ?This is fine for the original syscall, but for
-the new syscall we would need an additional IMA check -
-!is_ima_appraise_enabled().
+> kernel_read_file_from_fd() calls the security_kernel_read_file() and
+> security_kernel_post_read_file() hooks, which call ima_read_file() and
+> ima_post_read_file() respectively.
 
-Mimi
-?
->  		err = 0;
-> 
->  	return err;
+Hm, with "lockdown" enabled on the boot command line, I'm now able to
+do the kexec load, but not the unload.  :/ ? After the kexec load with
+the "--reuse-cmdline" option, the system reboots, but isn't in
+"lockdown" mode.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
