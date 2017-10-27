@@ -1,10 +1,10 @@
 From: james.l.morris@oracle.com (James Morris)
-Date: Fri, 27 Oct 2017 09:47:59 +0200 (CEST)
-Subject: [PATCH] MAINTAINERS: remove David Safford as maintainer for
-	encrypted+trusted keys
-In-Reply-To: <20171027031207.6193-1-ebiggers3@gmail.com>
-References: <20171027031207.6193-1-ebiggers3@gmail.com>
-Message-ID: <alpine.LFD.2.20.1710270947500.2635@localhost>
+Date: Fri, 27 Oct 2017 09:55:39 +0200 (CEST)
+Subject: [PATCH] KEYS: trusted: fix writing past end of buffer in
+	trusted_read()
+In-Reply-To: <20171026205744.105566-1-ebiggers3@gmail.com>
+References: <20171026205744.105566-1-ebiggers3@gmail.com>
+Message-ID: <alpine.LFD.2.20.1710270954210.2635@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -12,16 +12,25 @@ On Thu, 26 Oct 2017, Eric Biggers wrote:
 
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Emails to David's listed email address bounce, and in the commit log
-> there's no activity from him within the last 5 years.
+> When calling keyctl_read() on a key of type "trusted", if the
+> user-supplied buffer was too small, the kernel ignored the buffer length
+> and just wrote past the end of the buffer, potentially corrupting
+> userspace memory.  Fix it by instead returning the size required, as per
+> the documentation for keyctl_read().
 > 
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: David Safford <safford@us.ibm.com>
+> We also don't even fill the buffer at all in this case, as this is
+> slightly easier to implement than doing a short read, and either
+> behavior appears to be permitted.  It also makes it match the behavior
+> of the "encrypted" key type.
+> 
+> Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
+> Reported-by: Ben Hutchings <ben@decadent.org.uk>
+> Cc: <stable@vger.kernel.org> # v2.6.38+
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Applied to:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+Reviewed-by: James Morris <james.l.morris@oracle.com>
+
 
 
 -- 
