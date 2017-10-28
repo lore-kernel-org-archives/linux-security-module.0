@@ -1,121 +1,98 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 27 Oct 2017 14:34:42 -0700
-Subject: [PATCH 0/9] LSM: Stacking for major security modules - Based on
-	4.14-rc2
-Message-ID: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
+From: jlee@suse.com (joeyli)
+Date: Sat, 28 Oct 2017 16:34:46 +0800
+Subject: [PATCH 07/27] kexec_file: Disable at runtime if securelevel has
+	been set
+In-Reply-To: <1509132746.3729.9.camel@linux.vnet.ibm.com>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842468754.7923.10037578333644594134.stgit@warthog.procyon.org.uk>
+	<1508774083.3639.124.camel@linux.vnet.ibm.com>
+	<20171026074243.GM8550@linux-l9pv.suse>
+	<1509027463.5886.26.camel@linux.vnet.ibm.com>
+	<1509132746.3729.9.camel@linux.vnet.ibm.com>
+Message-ID: <20171028083446.GG20348@linux-l9pv.suse>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Subject: [PATCH 0/9] LSM: Stacking for major security modules - Based on 4.14-rc2
+On Fri, Oct 27, 2017 at 03:32:26PM -0400, Mimi Zohar wrote:
+> On Thu, 2017-10-26 at 10:17 -0400, Mimi Zohar wrote:
+> > On Thu, 2017-10-26 at 15:42 +0800, joeyli wrote:
+> > > Hi Mimi,
+> > > 
+> > > Thank you for reviewing.
+> > > 
+> > > On Mon, Oct 23, 2017 at 11:54:43AM -0400, Mimi Zohar wrote:
+> > > > On Thu, 2017-10-19 at 15:51 +0100, David Howells wrote:
+> > > > > From: Chun-Yi Lee <joeyli.kernel@gmail.com>
+> > > > > 
+> > > > > When KEXEC_VERIFY_SIG is not enabled, kernel should not loads image
+> > > > > through kexec_file systemcall if securelevel has been set.
+> > > > 
+> > > > The patch title and description needs to be updated to refer to
+> > > > lockdown, not securelevel.
+> > > > 
+> > > > As previously mentioned the last time these patches were posted, this
+> > > > leaves out testing to see if the integrity subsystem is enabled.
+> > > > 
+> > > > Commit 503ceaef8e2e "ima: define a set of appraisal rules requiring
+> > > > file signatures" was upstreamed. ?An additional patch could force
+> > > > these rules to be added to the custom policy, if lockdown is enabled.
+> > > > ?This and other patches in this series could then check to see if
+> > > > is_ima_appraise_enabled() is true.
+> > > > 
+> > > > Mimi
+> > > >
+> > > 
+> > > I have updated the patch title and description, and I also added
+> > > is_ima_appraise_enabled() as the following. Is it good to you?
+> > 
+> > Yes, that works. ?Thanks! ?Remember is_ima_appraise_enabled() is
+> > dependent on the "ima: require secure_boot rules in lockdown mode"
+> > patch -?http://kernsec.org/pipermail/linux-security-module-archive/201
+> > 7-October/003910.html.
+> > 
+> > The IMA "secure_boot" policy can be specified on the boot command line
+> > as ima_policy="secure_boot". ?It requires kernel modules, firmware,
+> > kexec kernel image and the IMA custom policy to be signed. ?In
+> > lockdown mode, these rules are enabled by default and added to the
+> > custom policy.
+> > 
+> > > On the other hand, I am not good on IMA. I have traced the code path
+> > > in kimage_file_prepare_segments(). Looks that the READING_KEXEC_IMAGE
+> > > doesn't show in selinux_kernel_read_file(). Where is the exact code
+> > > in IMA for checking the signature when loading crash kernel file?
+> > 
+> > kernel_read_file_from_fd() calls the security_kernel_read_file() and
+> > security_kernel_post_read_file() hooks, which call ima_read_file() and
+> > ima_post_read_file() respectively.
+> 
+> Hm, with "lockdown" enabled on the boot command line, I'm now able to
+> do the kexec load, but not the unload.  :/ ? After the kexec load with
 
-This patch set implements stacking for "major" security modules.
-A major security module is any that uses security blobs.
-Management of security blobs is moved from the security modules
-and into the LSM infrastructure. This has been proposed in the
-past by Serge Hallyn and David Howells. This implementation owes
-much to their work.
+I have tried on Qemu with OVMF, I can load and unload second kernel by
+kexec tool (on openSUSE is in kexec-tools RPM):  
 
-The use of secids has been changed. Within a security module the
-meaning is the same as before. At the security module interface
-the module specific values are mapped into a "token", which is used
-outside the modules. The "tokens" are translated into individual
-secids for consumption by the security modules as required. The
-mechanism for mapping (in security/stacking.c) provided has known
-issues (To quote Stephen. "-ENOLOCKING") and any and all suggestions
-on how to do it correctly are solicited.
+# kexec -u -s
 
-Subdirectories in /proc/.../attr for each security module that uses
-the /proc/.../attr interface are provided. This will allow user-space
-to disambiguate the data coming from "current". Previous versions of
-this work included a "context" entry, but feedback on that interface
-is that it is unnecessary.
+I add -s for using kexec-load-file, and I signed kernel by pesign.
 
-A new sockopt, SO_LSMSEC, is introduced to allow an application to
-specify which security module data will be presented by SO_PEERSEC.
+> the "--reuse-cmdline" option, the system reboots, but isn't in
+> "lockdown" mode.
+>
 
-Some filesystems, including kernfs, use security context strings
-to represent the security attributes on a file. To accommodate
-multiple active modules a security "context" is defined to use
-a regular format:
+Either enabling secure boot in EFI firmware or using _lockdown_ kernel
+parameter, the second kernel can be locked down on my OVMF VM.
 
-	lsmname='lsmvalue'[,lsmname='lsmvalue']...
+I used following commands:
 
-This format is not exposed outside the kernel.
+# kexec -s -l /boot/vmlinuz-4.14.0-rc2-default+ --append="$(cat /proc/cmdline)" --initrd=/boot/initrd-4.14.0-rc2-default+
+# umount -a; mount -o remount,ro /
+# kexec -e
 
-I have tested these patches in various configurations of Ubuntu and
-Fedora. Smack and SELinux together pass test suites with some exceptions.
-There are conflicts with the way the modules treat network configurations.
-These conflicts are under investigation, and changes to Smack (and
-possibly SELinux) to reconcile the worst of the issues are in development.
+The kernel source is from David's linux-fs git with lockdown-20171026 tag.
+The kernel is also signed by pesign.
 
-An earlier version of parts of this set are being used in Ubuntu 17.10.
-Changes made there have not been incorporated here. That's a timing
-issue, not a judgement on those updates.
-
-This series can be found at:
-
-	git://github.com/cschaufler/smack-next#stacking-4.14-rc2
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- Documentation/admin-guide/LSM/index.rst |   23 +-
- arch/alpha/include/uapi/asm/socket.h    |    2 +
- arch/frv/include/uapi/asm/socket.h      |    2 +
- arch/ia64/include/uapi/asm/socket.h     |    2 +
- arch/m32r/include/uapi/asm/socket.h     |    2 +
- arch/mips/include/uapi/asm/socket.h     |    2 +
- arch/mn10300/include/uapi/asm/socket.h  |    2 +
- arch/parisc/include/uapi/asm/socket.h   |    2 +
- arch/s390/include/uapi/asm/socket.h     |    2 +
- arch/sparc/include/uapi/asm/socket.h    |    2 +
- arch/xtensa/include/uapi/asm/socket.h   |    2 +
- fs/btrfs/super.c                        |   10 +-
- fs/proc/base.c                          |   92 ++-
- fs/proc/internal.h                      |    1 +
- fs/xattr.c                              |    2 +-
- include/linux/lsm_hooks.h               |   69 +-
- include/linux/security.h                |  103 ++-
- include/net/request_sock.h              |    2 +
- include/net/scm.h                       |    3 +-
- include/uapi/asm-generic/socket.h       |    2 +
- kernel/audit.c                          |   16 +-
- kernel/auditsc.c                        |    4 +-
- kernel/cred.c                           |   15 +-
- net/core/sock.c                         |    4 +
- net/ipv4/ip_sockglue.c                  |    8 +-
- net/netfilter/nf_conntrack_netlink.c    |    9 +-
- net/netfilter/nf_conntrack_standalone.c |    2 +-
- net/netfilter/nfnetlink_queue.c         |    3 +-
- net/netfilter/xt_SECMARK.c              |    2 +-
- net/netlabel/netlabel_unlabeled.c       |   12 +-
- net/netlabel/netlabel_user.c            |    2 +-
- security/Kconfig                        |   67 ++
- security/Makefile                       |    1 +
- security/apparmor/context.c             |    2 -
- security/apparmor/include/context.h     |   24 +-
- security/apparmor/include/file.h        |    2 +-
- security/apparmor/include/net.h         |    6 +
- security/apparmor/lsm.c                 |   91 +--
- security/security.c                     | 1136 +++++++++++++++++++++++++++++--
- security/selinux/hooks.c                |  615 +++++++----------
- security/selinux/include/objsec.h       |   87 ++-
- security/selinux/include/xfrm.h         |    2 +-
- security/selinux/netlabel.c             |   15 +-
- security/selinux/selinuxfs.c            |    5 +-
- security/selinux/ss/services.c          |    3 +-
- security/selinux/xfrm.c                 |   10 +-
- security/smack/smack.h                  |  101 ++-
- security/smack/smack_access.c           |    2 +-
- security/smack/smack_lsm.c              |  608 ++++++-----------
- security/smack/smack_netfilter.c        |   14 +-
- security/smack/smackfs.c                |   18 +-
- security/stacking.c                     |  188 +++++
- security/tomoyo/common.h                |   30 +-
- security/tomoyo/domain.c                |    4 +-
- security/tomoyo/securityfs_if.c         |   13 +-
- security/tomoyo/tomoyo.c                |   52 +-
- 56 files changed, 2475 insertions(+), 1025 deletions(-)
-
+Regards
+Joey Lee 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
