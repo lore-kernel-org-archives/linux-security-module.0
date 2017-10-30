@@ -1,21 +1,26 @@
 From: mjg59@google.com (Matthew Garrett)
-Date: Mon, 30 Oct 2017 10:54:22 +0000
+Date: Mon, 30 Oct 2017 10:57:11 +0000
 Subject: [PATCH V3 1/2] security: Add a cred_getsecid hook
-In-Reply-To: <ac81cfb4-5cd3-64e5-5a08-4f167696a84d@schaufler-ca.com>
+In-Reply-To: <1509027658.25604.4.camel@tycho.nsa.gov>
 References: <20171026084055.25482-1-mjg59@google.com>
-	<ac81cfb4-5cd3-64e5-5a08-4f167696a84d@schaufler-ca.com>
-Message-ID: <CACdnJus0bb=LcbRjHVMMjHpi+NG3YV_DwF4UBT4uSoY=tHqyTQ@mail.gmail.com>
+	<1509027658.25604.4.camel@tycho.nsa.gov>
+Message-ID: <CACdnJuu8fvVoD+G50dWtauUUa3H1tUAbBgzusc_CKNBugrVmwQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Oct 26, 2017 at 2:21 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 10/26/2017 1:40 AM, Matthew Garrett wrote:
->>  V3: Fix smack_cred_getsecid()
+On Thu, Oct 26, 2017 at 3:20 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett via Selinux wrote:
+>> +static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
+>> +{
+>> +     rcu_read_lock();
+>> +     *secid = cred_sid(c);
+>> +     rcu_read_unlock();
 >
-> Much better. Have you tried this with Smack?
+> Is rcu_read_lock() necessary here? Seems like we use cred_sid() in many
+> places without it.
 
-I'm afraid not - I have zero expertise with Smack and no easy way to
-set it up. I can do so later in the week if you like?
+Ah, I thought it was based on task_sid(), but I guess that's actually
+protecting the __task_cred()?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
