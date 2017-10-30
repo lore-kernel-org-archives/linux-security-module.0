@@ -1,26 +1,41 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Mon, 30 Oct 2017 10:57:11 +0000
-Subject: [PATCH V3 1/2] security: Add a cred_getsecid hook
-In-Reply-To: <1509027658.25604.4.camel@tycho.nsa.gov>
-References: <20171026084055.25482-1-mjg59@google.com>
-	<1509027658.25604.4.camel@tycho.nsa.gov>
-Message-ID: <CACdnJuu8fvVoD+G50dWtauUUa3H1tUAbBgzusc_CKNBugrVmwQ@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 30 Oct 2017 08:01:40 -0400
+Subject: [PATCH 07/27] kexec_file: Disable at runtime if securelevel has
+	been set
+In-Reply-To: <17798.1509354029@warthog.procyon.org.uk>
+References: <1509027463.5886.26.camel@linux.vnet.ibm.com>
+	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842468754.7923.10037578333644594134.stgit@warthog.procyon.org.uk>
+	<1508774083.3639.124.camel@linux.vnet.ibm.com>
+	<20171026074243.GM8550@linux-l9pv.suse>
+	<17798.1509354029@warthog.procyon.org.uk>
+Message-ID: <1509364900.3583.54.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Oct 26, 2017 at 3:20 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett via Selinux wrote:
->> +static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
->> +{
->> +     rcu_read_lock();
->> +     *secid = cred_sid(c);
->> +     rcu_read_unlock();
->
-> Is rcu_read_lock() necessary here? Seems like we use cred_sid() in many
-> places without it.
+On Mon, 2017-10-30 at 09:00 +0000, David Howells wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> 
+> > Yes, that works. ?Thanks! ?Remember is_ima_appraise_enabled() is
+> > dependent on the "ima: require secure_boot rules in lockdown mode"
+> > patch -?http://kernsec.org/pipermail/linux-security-module-archive/201
+> > 7-October/003910.html.
+> 
+> What happens if the file in question is being accessed from a filesystem that
+> doesn't have xattrs and doesn't provide support for appraisal?  Is it rejected
+> outright or just permitted?
 
-Ah, I thought it was based on task_sid(), but I guess that's actually
-protecting the __task_cred()?
+IMA-appraisal returns -EACCES for any error, including lack of xattr
+support.
+
+Thiago Bauermann posted the "Appended signatures support for IMA
+appraisal" patch set. ?This patch set allows the current kernel module
+appended signature format to be used for verifying the kernel image.
+?Once that patch set is upstreamed, we'll be able to update the IMA
+"secure_boot" policy to permit appended signatures.
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
