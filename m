@@ -1,119 +1,134 @@
-From: azhar.shaikh@intel.com (Shaikh, Azhar)
-Date: Thu, 30 Nov 2017 18:37:23 +0000
-Subject: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
-In-Reply-To: <20171130163516.uazhkglg7yfzpuvo@linux.intel.com>
-References: <1511980791-125269-1-git-send-email-azhar.shaikh@intel.com>
-	<20171130163516.uazhkglg7yfzpuvo@linux.intel.com>
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582897061B@ORSMSX109.amr.corp.intel.com>
+From: fw@strlen.de (Florian Westphal)
+Date: Wed, 1 Nov 2017 00:08:09 +0100
+Subject: [RFC PATCH] xfrm: fix regression introduced by xdst pcpu cache
+In-Reply-To: <CAHC9VhT6b1DJ0E65syC7XoVxfSTs3RUq9-HNLuzt2H-vrj69RA@mail.gmail.com>
+References: <20171030145843.13496-1-sds@tycho.nsa.gov>
+	<CAHC9VhT6b1DJ0E65syC7XoVxfSTs3RUq9-HNLuzt2H-vrj69RA@mail.gmail.com>
+Message-ID: <20171031230809.GD7663@breakpoint.cc>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Oct 30, 2017 at 10:58 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > matching before (as in this patch) or after calling xfrm_bundle_ok()?
+> 
+> I would probably make the LSM call the last check, as you've done; but
+> I have to say that is just so it is consistent with the "LSM last"
+> philosophy and not because of any performance related argument.
+> 
+> > ... Also,
+> > do we need to test xfrm->sel.family before calling xfrm_selector_match
+> > (as in this patch) or not - xfrm_state_look_at() does so when the
+> > state is XFRM_STATE_VALID but not when it is _ERROR or _EXPIRED?
+> 
+> Speaking purely from a SELinux perspective, I'm not sure it matters:
+> as long as the labels match we are happy.  However, from a general
+> IPsec perspective it does seem like a reasonable thing.
+> 
+> Granted I'm probably missing something, but it seems a little odd that
+> the code isn't already checking that the selectors match (... what am
+> I missing?).  It does check the policies, maybe that is enough in the
+> normal IPsec case?
 
+The assumption was that identical policies would yield the same SAs,
+but thats not correct.
 
->-----Original Message-----
->From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
->Sent: Thursday, November 30, 2017 8:35 AM
->To: Shaikh, Azhar <azhar.shaikh@intel.com>
->Cc: jgunthorpe at obsidianresearch.com; peterhuewe at gmx.de; linux-security-
->module at vger.kernel.org; linux-kernel at vger.kernel.org; tpmdd-
->devel at lists.sourceforge.net
->Subject: Re: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
->
->On Wed, Nov 29, 2017 at 10:39:49AM -0800, Azhar Shaikh wrote:
->> Changes from v1:
->> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
->transmit_cmd()"
->>   - Add NULL checks before calling clk_toggle callback
->>   - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
->>   - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
->>     from tpm_tis_clkrun_toggle(). Make them static again.
->>
->> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->>   - This is a new patch in this series as per suggestion from Jason.
->>   - Is the current implementation ok or I should move the code in
->tpm_tis_pnp_remove()
->>     and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the
->unmapping
->>     can be done in one place, instead of 3 different places now. Also the
->unmapping
->>     in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
->>     tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
->>
->> Changes from v2:
->> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
->transmit_cmd()"
->>   - No changes
->>
->> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->>   - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within
->the function
->>     itself. Also removed the #ifdef CONFIG_X86 from all other places
->> around is_bsw()
->>
->> Changes from v3:
->> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
->transmit_cmd()"
->>   - Change function name from clk_toggle to clk_enable
->>   - Update the commit message.
->>
->> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->>   - No changes
->>
->> Changes from v4:
->> - The numbering of patches is now interchanged.
->>
->> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
->>   - Had to move ilb_base_addr to tpm_tis_data, from tpm_tis_tcg_phy.
->>     Since the ioremapping of ilb_base_addr had to be done before any TPM
->access,
->>     hence moved the variable to tpm_tis_data.
->>   - Also move the ioremapping of ilb_base_addr from tpm_tis_init() to
->>     tpm_tis_core_init() i.e. before any TPM access is done.
->>   - Rename marco LPC_CNTRL_REG_OFFSET to LPC_CNTRL_OFFSET
->>   - Update the commit message.
->>
->> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of
->transmit_cmd()"
->>   - Remove the functions tpm_platform_begin_xfer() and
->tpm_platform_end_xfer()
->>   - Move the code from these functions to tpm_tis_clkrun_enable().
->>
->> Changes from v5:
->> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
->>   - No changes
->>
->> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of
->transmit_cmd()"
->>   - Update the commit message.
->>
->> Azhar Shaikh (2):
->>   tpm_tis: Move ilb_base_addr to tpm_tis_data
->>   tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
->>
->>  drivers/char/tpm/tpm-interface.c |   6 ++
->>  drivers/char/tpm/tpm_tis.c       | 121 ++++++---------------------------------
->>  drivers/char/tpm/tpm_tis_core.c  | 111
->> +++++++++++++++++++++++++++++++++--
->>  drivers/char/tpm/tpm_tis_core.h  |  17 ++++++
->>  include/linux/tpm.h              |   1 +
->>  5 files changed, 147 insertions(+), 109 deletions(-)
->>
->> --
->> 1.9.1
->
->I'll go through this next week and test with SPI based TPM that it doesn't break
->anything.
->
+> > diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+> > index 2746b62..171818b 100644
+> > --- a/net/xfrm/xfrm_policy.c
+> > +++ b/net/xfrm/xfrm_policy.c
+> > @@ -1820,6 +1820,11 @@ xfrm_resolve_and_create_bundle(struct xfrm_policy **pols, int num_pols,
+> >             !xfrm_pol_dead(xdst) &&
+> >             memcmp(xdst->pols, pols,
+> >                    sizeof(struct xfrm_policy *) * num_pols) == 0 &&
+> > +           (!xdst->u.dst.xfrm->sel.family ||
+> > +            xfrm_selector_match(&xdst->u.dst.xfrm->sel, fl,
+> > +                                xdst->u.dst.xfrm->sel.family)) &&
+> > +           security_xfrm_state_pol_flow_match(xdst->u.dst.xfrm,
+> > +                                              xdst->pols[0], fl) &&
 
-Sure!
+... so this needs to walk the bundle and validate each selector.
 
-Thank you!
+Alternatively we could always do template resolution and then check
+that all states found match those of the old pcpu xdst:
 
->/Jarkko
-
-Regards,
-Azhar Shaikh
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1786,19 +1786,23 @@ void xfrm_policy_cache_flush(void)
+ 	put_online_cpus();
+ }
+ 
+-static bool xfrm_pol_dead(struct xfrm_dst *xdst)
++static bool xfrm_xdst_can_reuse(struct xfrm_dst *xdst,
++				struct xfrm_state * const xfrm[],
++				int num)
+ {
+-	unsigned int num_pols = xdst->num_pols;
+-	unsigned int pol_dead = 0, i;
++	const struct dst_entry *dst = &xdst->u.dst;
++	int i;
+ 
+-	for (i = 0; i < num_pols; i++)
+-		pol_dead |= xdst->pols[i]->walk.dead;
++	if (xdst->num_xfrms != num)
++		return false;
+ 
+-	/* Mark DST_OBSOLETE_DEAD to fail the next xfrm_dst_check() */
+-	if (pol_dead)
+-		xdst->u.dst.obsolete = DST_OBSOLETE_DEAD;
++	for (i = 0; i < num; i++) {
++		if (!dst || dst->xfrm != xfrm[i])
++			return false;
++		dst = dst->child;
++	}
+ 
+-	return pol_dead;
++	return xfrm_bundle_ok(xdst);
+ }
+ 
+ static struct xfrm_dst *
+@@ -1812,26 +1816,28 @@ xfrm_resolve_and_create_bundle(struct xfrm_policy **pols, int num_pols,
+ 	struct dst_entry *dst;
+ 	int err;
+ 
++	/* Try to instantiate a bundle */
++	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
++	if (err <= 0) {
++		if (err != 0 && err != -EAGAIN)
++			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
++		return ERR_PTR(err);
++	}
++
+ 	xdst = this_cpu_read(xfrm_last_dst);
+ 	if (xdst &&
+ 	    xdst->u.dst.dev == dst_orig->dev &&
+ 	    xdst->num_pols == num_pols &&
+-	    !xfrm_pol_dead(xdst) &&
+ 	    memcmp(xdst->pols, pols,
+ 		   sizeof(struct xfrm_policy *) * num_pols) == 0 &&
+-	    xfrm_bundle_ok(xdst)) {
++	    xfrm_xdst_can_reuse(xdst, xfrm, err)) {
+ 		dst_hold(&xdst->u.dst);
++		while (err > 0)
++			xfrm_state_put(xfrm[--err]);
+ 		return xdst;
+ 	}
+ 
+ 	old = xdst;
+-	/* Try to instantiate a bundle */
+-	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
+-	if (err <= 0) {
+-		if (err != 0 && err != -EAGAIN)
+-			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
+-		return ERR_PTR(err);
+-	}
+ 
+ 	dst = xfrm_bundle_create(pols[0], xfrm, err, fl, dst_orig);
+ 	if (IS_ERR(dst)) {
+-- 
+2.13.6
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
