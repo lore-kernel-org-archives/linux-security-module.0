@@ -1,157 +1,85 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 31 Oct 2017 09:31:35 -0400
-Subject: [PATCH v5 17/18] ima: Implement support for module-style
-	appended signatures
-In-Reply-To: <20171018005331.2688-18-bauerman@linux.vnet.ibm.com>
-References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-	<20171018005331.2688-18-bauerman@linux.vnet.ibm.com>
-Message-ID: <1509456695.3583.226.camel@linux.vnet.ibm.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 31 Oct 2017 09:43:40 -0400
+Subject: [RFC PATCH] xfrm: fix regression introduced by xdst pcpu cache
+In-Reply-To: <20171031111122.GB7663@breakpoint.cc>
+References: <20171030145843.13496-1-sds@tycho.nsa.gov>
+	<20171031111122.GB7663@breakpoint.cc>
+Message-ID: <1509457420.20694.4.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-10-17 at 22:53 -0200, Thiago Jung Bauermann wrote:
-
-Below are a few additional comments.
-
-> @@ -200,18 +239,28 @@ int ima_read_xattr(struct dentry *dentry,
->   */
->  int ima_appraise_measurement(enum ima_hooks func,
->  			     struct integrity_iint_cache *iint,
-> -			     struct file *file, const unsigned char *filename,
-> -			     struct evm_ima_xattr_data *xattr_value,
-> -			     int xattr_len, int opened)
-> +			     struct file *file, const void *buf, loff_t size,
-> +			     const unsigned char *filename,
-> +			     struct evm_ima_xattr_data **xattr_value_,
-> +			     int *xattr_len_, int opened)
->  {
->  	static const char op[] = "appraise_data";
->  	const char *cause = "unknown";
->  	struct dentry *dentry = file_dentry(file);
->  	struct inode *inode = d_backing_inode(dentry);
->  	enum integrity_status status = INTEGRITY_UNKNOWN;
-> -	int rc = xattr_len, hash_start = 0;
-> +	struct evm_ima_xattr_data *xattr_value = *xattr_value_;
-> +	int xattr_len = *xattr_len_, rc = xattr_len, hash_start = 0;
-> +	bool appraising_modsig = false;
-> +
-> +	if (iint->flags & IMA_MODSIG_ALLOWED &&
-> +	    !ima_read_modsig(func, buf, size, &xattr_value, &xattr_len)) {
-> +		appraising_modsig = true;
-> +		rc = xattr_len;
-> +	}
+On Tue, 2017-10-31 at 12:11 +0100, Florian Westphal wrote:
+> Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > Since 4.14-rc1, the selinux-testsuite has been encountering
+> > sporadic
+> > failures during testing of labeled IPSEC. git bisect pointed to
+> > commit ec30d78c14a813db39a647b6a348b4286 ("xfrm: add xdst pcpu
+> > cache").
+> > The xdst pcpu cache is only checking that the policies are the
+> > same,
+> > but does not validate that the policy, state, and flow match with
+> > respect
+> > to security context labeling.??As a result, the wrong SA could be
+> > used
+> > and the receiver could end up performing permission checking and
+> > providing SO_PEERSEC or SCM_SECURITY values for the wrong security
+> > context.
+> > security_xfrm_state_pol_flow_match() exists for this purpose and is
+> > already called from xfrm_state_look_at() for matching purposes.
+> > Further, xfrm_state_look_at() also performs a xfrm_selector_match()
+> > test,
+> > which is also missing from the xdst pcpu cache logic.??Add calls to
+> > both
+> > of these functions when validating the cache entry.??With these
+> > changes,
+> > the selinux-testsuite passes all tests again.
+> > 
+> > Fixes: ec30d78c14a813db39a647b6a348b4286ba4abf5 ("xfrm: add xdst
+> > pcpu cache")
+> > Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+> > ---
+> > This is an RFC because I am not entirely confident in the fix, e.g.
+> > is it
+> > sufficient to perform this matching only on the first xfrm or do
+> > they all
+> > need to be walked as in xfrm_bundle_ok()???Also, should we perform
+> > this
+> > matching before (as in this patch) or after calling
+> > xfrm_bundle_ok()? Also,
+> > do we need to test xfrm->sel.family before calling
+> > xfrm_selector_match
+> > (as in this patch) or not - xfrm_state_look_at() does so when the
+> > state is XFRM_STATE_VALID but not when it is _ERROR or _EXPIRED?
 > 
-> -	if (!(inode->i_opflags & IOP_XATTR))
-> +	/* If not appraising a modsig, we need an xattr. */
-> +	if (!appraising_modsig && !(inode->i_opflags & IOP_XATTR))
->  		return INTEGRITY_UNKNOWN;
+> No idea.
 > 
->  	if (rc <= 0) {
-> @@ -235,6 +284,9 @@ int ima_appraise_measurement(enum ima_hooks func,
->  	case INTEGRITY_UNKNOWN:
->  		break;
->  	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
-> +		/* It's fine not to have xattrs when using a modsig. */
-> +		if (appraising_modsig)
-> +			break;
->  	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
->  		cause = "missing-HMAC";
->  		goto out;
-> @@ -242,6 +294,8 @@ int ima_appraise_measurement(enum ima_hooks func,
->  		cause = "invalid-HMAC";
->  		goto out;
->  	}
-> +
-> + retry:
->  	switch (xattr_value->type) {
->  	case IMA_XATTR_DIGEST_NG:
->  		/* first byte contains algorithm id */
-> @@ -285,6 +339,61 @@ int ima_appraise_measurement(enum ima_hooks func,
->  			status = INTEGRITY_PASS;
->  		}
->  		break;
-> +	case IMA_MODSIG:
-> +		/*
-> +		 * To avoid being tricked into an infinite loop, we don't allow
-> +		 * a modsig stored in the xattr.
-> +		 */
-> +		if (!appraising_modsig) {
-> +			status = INTEGRITY_UNKNOWN;
-> +			cause = "unknown-ima-data";
-> +			break;
-> +		}
-> +		rc = appraise_modsig(iint, xattr_value, xattr_len);
-> +		if (!rc) {
-> +			kfree(*xattr_value_);
-> +			*xattr_value_ = xattr_value;
-> +			*xattr_len_ = xattr_len;
-> +
-> +			status = INTEGRITY_PASS;
-> +			break;
-> +		}
-> +
-> +		ima_free_xattr_data(xattr_value);
-> +
-> +		/*
-> +		 * The appended signature failed verification. If there's a
-> +		 * signature in the extended attribute, let's fall back to it.
-> +		 */
-> +		if (inode->i_opflags & IOP_XATTR && *xattr_len_ != 0 &&
-> +		    *xattr_len_ != -ENODATA) {
+> I looked at the old flow cache but i don't see any of these extra
+> checks there either.
+> 
+> However, old flow cache stored flowi struct as key, and that contains
+> a
+> flowi_secid,??populated by the decode_session hooks.
+> 
+> Was it enough to check for identical flowi_secid in the flowi structs
+> to
+> avoid this problem or am i missing something?
 
-At this point, there was an appended signature verification failure.
-?If there isn't an xattr, for whatever reason, shouldn't we be
-returning "invalid_signature" and "INTEGRITY_FAIL". ?If so, then the
-above test could be simplified to check whether there is any data,
-like this:
+I'm not sure, but security_xfrm_state_pol_flow_match() ->
+selinux_xfrm_state_pol_flow_match() does more than just compare flow
+secids.
 
-	if ((inode->i_opflags & IOP_XATTR) && (*xattr_len_ > 0)) {
+Also, there is the separate issue of the missing xfrm_selector_match()
+call, which can also cause the wrong SA to be used independent of
+anything LSM/SELinux-related.
 
-> +			const char *modsig_cause = rc == -EOPNOTSUPP ?
-> +				"unknown" : "invalid-signature";
-
-This can then be cleaned up as well.
-
-> +
-> +			/* First, log that the modsig verification failed. */
-> +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
-> +					    filename, op, modsig_cause, rc, 0);
-
-I'm not sure that we want to audit intermediary signature verification
-failures. ?Perhaps this audit message should be considered
-"additional", meaning it is only emitted if the "integrity_audit" boot
-command line option is enabled. ?Change the last field to 1 to
-indicate it is an "additional" audit message.
-
-> +
-> +			xattr_len = rc = *xattr_len_;
-> +			xattr_value = *xattr_value_;
-> +			appraising_modsig = false;
-> +
-> +			if (rc > 0)
-
-This test becomes redundant.
-
-> +				/* Process xattr contents. */
-> +				goto retry;
-> +
-> +			/* Unexpected error reading xattr. */
-> +			status = INTEGRITY_UNKNOWN;
-> +		} else {
-> +			if (rc == -EOPNOTSUPP)
-> +				status = INTEGRITY_UNKNOWN;
-> +			else {
-> +				cause = "invalid-signature";
-> +				status = INTEGRITY_FAIL;
-> +			}
-> +		}
-> +		break;
-
-I think the rest can be simplified to:
-	cause = "invalid-signature";
-	status = INTEGRITY_FAIL;
-
-Mimi
+It is a regression; the correct SA was being used prior to the xdst
+pcpu cache commit.  Reproducible using the selinux-testsuite, most
+easily run on a Fedora VM,
+git clone https://github.com/SELinuxProject/selinux-testsuite/
+sudo dnf install perl-Test perl-Test-Harness perl-Test-Simple selinux-policy-devel gcc libselinux-devel net-tools netlabel_tools iptables
+sudo make -C policy load
+cd tests/inet_socket
+while sudo ./test; do : ; done
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
