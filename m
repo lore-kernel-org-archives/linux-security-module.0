@@ -1,42 +1,60 @@
 From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
-Date: Tue, 31 Oct 2017 15:16:15 -0200
-Subject: [RFC PATCH 5/5] selinux: Add SCTP support
-In-Reply-To: <20171017135953.4419-1-richard_c_haines@btinternet.com>
-References: <20171017135953.4419-1-richard_c_haines@btinternet.com>
-Message-ID: <20171031171614.GE3675@localhost.localdomain>
+Date: Tue, 31 Oct 2017 15:26:44 -0200
+Subject: [RFC PATCH 0/5] Add SELinux SCTP protocol support
+In-Reply-To: <20171017135359.4010-1-richard_c_haines@btinternet.com>
+References: <20171017135359.4010-1-richard_c_haines@btinternet.com>
+Message-ID: <20171031172644.GF3675@localhost.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Oct 17, 2017 at 02:59:53PM +0100, Richard Haines wrote:
-> The SELinux SCTP implementation is explained in:
-> Documentation/security/SELinux-sctp.txt
+On Tue, Oct 17, 2017 at 02:53:59PM +0100, Richard Haines wrote:
+> This patch set adds SELinux support to SCTP and incorporates all the
+> comments received from my previous attemps (thanks to all who responded).
+> There are also other changes mainly supporting ip options so that CIPSO
+> and CALIPSO work over SCTP.
 > 
-> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-> ---
-...
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 33fd061..c3e9600 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-...
-> @@ -4521,7 +4565,14 @@ static int selinux_socket_connect(struct socket *sock, struct sockaddr *address,
->  		unsigned short snum;
->  		u32 sid, perm;
->  
-> -		if (sk->sk_family == PF_INET) {
-> +		/* sctp_connectx(3) calls via
-> +		 *selinux_sctp_bind_connect() that validates multiple
-> +		 * connect addresses. Because of this need to check
-> +		 * address->sa_family as it is possible to have
-> +		 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
-> +		 */
-> +		if (sk->sk_family == PF_INET ||
-> +					address->sa_family == AF_INET) {
+> The kernel patches have been built on Fedora 26 with kernel 4.13.4 plus the
+> following userspace patches to enable testing:
+> 
+> 1) Updates to libsepol 2.7 to support the sctp portcon statement.
+>    The patch is available from:
+>          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
+>          selinux-Add-support-for-the-SCTP-portcon-keyword.patch
+> 
+> 2) Updates to the SELinux Test Suite adding SCTP tests. Please read the
+>    selinux-testsuite/README.sctp for details. The patch is available from:
+>          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
+>          selinux-testsuite-Add-SCTP-test-support.patch
+> 
+> 3) Updates to lksctp-tools that show SELinux info in sctp_darn and
+>    sctp_test. It also contains a minor patch for test_1_to_1_connect.c
+>    as when CIPSO/CALIPSO configured, NetLabel returns a different error
+>    code for illegal addresses in test 5. The patch is available from:
+>          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
+>          lksctp-tools-Add-SELinux-support-to-sctp_test-and-sc.patch
+> 
+> All SCTP lksctp-tools/src/func_tests run correctly in enforcing mode.
+> 
+> All SCTP regression tests "./sctp-tests run" run correctly in enforcing
+> mode. These tests are obtained from: https://github.com/sctp/sctp-tests
+> 
+> The selinux-testsuite patch also adds remote tests (that need some manual
+> configuration). These are useful for testing CIPSO/CALIPSO over a network
+> with a number of categories to produce large ip option fields with various
+> message sizes forcing fragmentation etc..
+> 
+> 
+> Richard Haines (5):
+>   security: Add support for SCTP security hooks
+>   sctp: Add ip option support
+>   sctp: Add LSM hooks
+>   netlabel: Add SCTP support
+>   selinux: Add SCTP support
 
-Not sure which code style applies on this file but the if () above
-looks odd. At least, checkpatch.pl complained about it.
+Other than the notes I just sent, patchset LGTM.
 
-  Marcelo
+Thanks,
+Marcelo
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
