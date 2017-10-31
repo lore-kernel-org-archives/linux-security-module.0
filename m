@@ -1,250 +1,88 @@
-From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Tue, 31 Oct 2017 14:05:03 -0600
-Subject: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171031200503.GC18578@ziepe.ca>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 31 Oct 2017 16:39:23 -0400
+Subject: [RFC PATCH] xfrm: fix regression introduced by xdst pcpu cache
+In-Reply-To: <20171030145843.13496-1-sds@tycho.nsa.gov>
+References: <20171030145843.13496-1-sds@tycho.nsa.gov>
+Message-ID: <CAHC9VhT6b1DJ0E65syC7XoVxfSTs3RUq9-HNLuzt2H-vrj69RA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The tpm-rng.c approach is completely inconsistent with how the kernel
-handles hotplug. Instead manage a hwrng device for each TPM. This will
-cause the kernel to read entropy from the TPM when it is plugged in,
-and allow access to the TPM rng via /dev/hwrng.
+On Mon, Oct 30, 2017 at 10:58 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> Since 4.14-rc1, the selinux-testsuite has been encountering sporadic
+> failures during testing of labeled IPSEC. git bisect pointed to
+> commit ec30d78c14a813db39a647b6a348b4286 ("xfrm: add xdst pcpu cache").
+> The xdst pcpu cache is only checking that the policies are the same,
+> but does not validate that the policy, state, and flow match with respect
+> to security context labeling.  As a result, the wrong SA could be used
+> and the receiver could end up performing permission checking and
+> providing SO_PEERSEC or SCM_SECURITY values for the wrong security context.
+> security_xfrm_state_pol_flow_match() exists for this purpose and is
+> already called from xfrm_state_look_at() for matching purposes.
+> Further, xfrm_state_look_at() also performs a xfrm_selector_match() test,
+> which is also missing from the xdst pcpu cache logic.  Add calls to both
+> of these functions when validating the cache entry.  With these changes,
+> the selinux-testsuite passes all tests again.
+>
+> Fixes: ec30d78c14a813db39a647b6a348b4286ba4abf5 ("xfrm: add xdst pcpu cache")
+> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
----
- drivers/char/hw_random/Kconfig   | 13 -----------
- drivers/char/hw_random/Makefile  |  1 -
- drivers/char/hw_random/tpm-rng.c | 50 ----------------------------------------
- drivers/char/tpm/Kconfig         | 11 +++++++++
- drivers/char/tpm/tpm-chip.c      | 41 ++++++++++++++++++++++++++++----
- drivers/char/tpm/tpm.h           |  4 ++++
- 6 files changed, 52 insertions(+), 68 deletions(-)
- delete mode 100644 drivers/char/hw_random/tpm-rng.c
+Thanks for chasing this down while I was on vacation :)
 
-v2 applies against Jarkko's patch
-"tpm: use struct tpm_chip for tpm_chip_find_get()"
+> This is an RFC because I am not entirely confident in the fix, e.g. is it
+> sufficient to perform this matching only on the first xfrm or do they all
+> need to be walked as in xfrm_bundle_ok()?
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 95a031e9eced07..a20fed182cbcce 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -306,19 +306,6 @@ config HW_RANDOM_POWERNV
- 
- 	  If unsure, say Y.
- 
--config HW_RANDOM_TPM
--	tristate "TPM HW Random Number Generator support"
--	depends on TCG_TPM
--	default HW_RANDOM
--	---help---
--	  This driver provides kernel-side support for the Random Number
--	  Generator in the Trusted Platform Module
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called tpm-rng.
--
--	  If unsure, say Y.
--
- config HW_RANDOM_HISI
- 	tristate "Hisilicon Random Number Generator support"
- 	depends on HW_RANDOM && ARCH_HISI
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 39a67defac67cb..91cb8e8213e7c1 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -26,7 +26,6 @@ obj-$(CONFIG_HW_RANDOM_NOMADIK) += nomadik-rng.o
- obj-$(CONFIG_HW_RANDOM_PSERIES) += pseries-rng.o
- obj-$(CONFIG_HW_RANDOM_POWERNV) += powernv-rng.o
- obj-$(CONFIG_HW_RANDOM_HISI)	+= hisi-rng.o
--obj-$(CONFIG_HW_RANDOM_TPM) += tpm-rng.o
- obj-$(CONFIG_HW_RANDOM_BCM2835) += bcm2835-rng.o
- obj-$(CONFIG_HW_RANDOM_IPROC_RNG200) += iproc-rng200.o
- obj-$(CONFIG_HW_RANDOM_MSM) += msm-rng.o
-diff --git a/drivers/char/hw_random/tpm-rng.c b/drivers/char/hw_random/tpm-rng.c
-deleted file mode 100644
-index c5e363825af008..00000000000000
---- a/drivers/char/hw_random/tpm-rng.c
-+++ /dev/null
-@@ -1,50 +0,0 @@
--/*
-- * Copyright (C) 2012 Kent Yoder IBM Corporation
-- *
-- * HWRNG interfaces to pull RNG data from a TPM
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- */
--
--#include <linux/module.h>
--#include <linux/hw_random.h>
--#include <linux/tpm.h>
--
--#define MODULE_NAME "tpm-rng"
--
--static int tpm_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
--{
--	return tpm_get_random(NULL, data, max);
--}
--
--static struct hwrng tpm_rng = {
--	.name = MODULE_NAME,
--	.read = tpm_rng_read,
--};
--
--static int __init rng_init(void)
--{
--	return hwrng_register(&tpm_rng);
--}
--module_init(rng_init);
--
--static void __exit rng_exit(void)
--{
--	hwrng_unregister(&tpm_rng);
--}
--module_exit(rng_exit);
--
--MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Kent Yoder <key@linux.vnet.ibm.com>");
--MODULE_DESCRIPTION("RNG driver for TPM devices");
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index a30352202f1fdc..18c81cbe4704ca 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -26,6 +26,17 @@ menuconfig TCG_TPM
- 
- if TCG_TPM
- 
-+config HW_RANDOM_TPM
-+	bool "TPM HW Random Number Generator support"
-+	depends on TCG_TPM && HW_RANDOM && !(TCG_TPM=y && HW_RANDOM=m)
-+	default y
-+	---help---
-+	  This setting exposes the TPM's Random Number Generator as a hwrng
-+	  device. This allows the kernel to collect randomness from the TPM at
-+	  boot, and provides the TPM randomines in /dev/hwrng.
-+
-+	  If unsure, say Y.
-+
- config TCG_TIS_CORE
- 	tristate
- 	---help---
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 6faf4c3fa6dbbd..797ab962291333 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -26,6 +26,7 @@
- #include <linux/spinlock.h>
- #include <linux/freezer.h>
- #include <linux/major.h>
-+#include <linux/hw_random.h>
- #include "tpm.h"
- #include "tpm_eventlog.h"
- 
-@@ -391,6 +392,26 @@ static int tpm_add_legacy_sysfs(struct tpm_chip *chip)
- 
- 	return 0;
- }
-+
-+static int tpm_hwrng_read(struct hwrng *rng, void *data, size_t max, bool wait)
-+{
-+	struct tpm_chip *chip = container_of(rng, struct tpm_chip, hwrng);
-+
-+	return tpm_get_random(chip, data, max);
-+}
-+
-+static int tpm_add_hwrng(struct tpm_chip *chip)
-+{
-+	if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-+		return 0;
-+
-+	snprintf(chip->hwrng_name, sizeof(chip->hwrng_name),
-+		 "tpm-rng-%d", chip->dev_num);
-+	chip->hwrng.name = chip->hwrng_name;
-+	chip->hwrng.read = tpm_hwrng_read;
-+	return hwrng_register(&chip->hwrng);
-+}
-+
- /*
-  * tpm_chip_register() - create a character device for the TPM chip
-  * @chip: TPM chip to use.
-@@ -423,11 +444,13 @@ int tpm_chip_register(struct tpm_chip *chip)
- 
- 	tpm_add_ppi(chip);
- 
-+	rc = tpm_add_hwrng(chip);
-+	if (rc)
-+		goto out_ppi;
-+
- 	rc = tpm_add_char_device(chip);
--	if (rc) {
--		tpm_bios_log_teardown(chip);
--		return rc;
--	}
-+	if (rc)
-+		goto out_hwrng;
- 
- 	rc = tpm_add_legacy_sysfs(chip);
- 	if (rc) {
-@@ -436,6 +459,14 @@ int tpm_chip_register(struct tpm_chip *chip)
- 	}
- 
- 	return 0;
-+
-+out_hwrng:
-+	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-+		hwrng_unregister(&chip->hwrng);
-+out_ppi:
-+	tpm_bios_log_teardown(chip);
-+
-+	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_chip_register);
- 
-@@ -455,6 +486,8 @@ EXPORT_SYMBOL_GPL(tpm_chip_register);
- void tpm_chip_unregister(struct tpm_chip *chip)
- {
- 	tpm_del_legacy_sysfs(chip);
-+	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-+		hwrng_unregister(&chip->hwrng);
- 	tpm_bios_log_teardown(chip);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		cdev_device_del(&chip->cdevs, &chip->devs);
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 7424511241031a..efe8ad0d137f74 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -26,6 +26,7 @@
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/fs.h>
-+#include <linux/hw_random.h>
- #include <linux/mutex.h>
- #include <linux/sched.h>
- #include <linux/platform_device.h>
-@@ -210,6 +211,9 @@ struct tpm_chip {
- 	int dev_num;		/* /dev/tpm# */
- 	unsigned long is_open;	/* only one allowed */
- 
-+	char hwrng_name[64];
-+	struct hwrng hwrng;
-+
- 	struct mutex tpm_mutex;	/* tpm is processing */
- 
- 	unsigned long timeout_a; /* jiffies */
+If you look at how we handle outgoing labeled IPsec traffic, e.g.
+selinux_xfrm_skb_sid_egress(), you'll see that we only check the first
+xfrm because I don't believe it is ever possible for us to create a
+xfrm bundle with mis-matching SELinux labels.
+
+Inbound traffic is another story, we need to check the entire bundle.
+
+> ... Also, should we perform this
+> matching before (as in this patch) or after calling xfrm_bundle_ok()?
+
+I would probably make the LSM call the last check, as you've done; but
+I have to say that is just so it is consistent with the "LSM last"
+philosophy and not because of any performance related argument.
+
+> ... Also,
+> do we need to test xfrm->sel.family before calling xfrm_selector_match
+> (as in this patch) or not - xfrm_state_look_at() does so when the
+> state is XFRM_STATE_VALID but not when it is _ERROR or _EXPIRED?
+
+Speaking purely from a SELinux perspective, I'm not sure it matters:
+as long as the labels match we are happy.  However, from a general
+IPsec perspective it does seem like a reasonable thing.
+
+Granted I'm probably missing something, but it seems a little odd that
+the code isn't already checking that the selectors match (... what am
+I missing?).  It does check the policies, maybe that is enough in the
+normal IPsec case?
+
+> diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+> index 2746b62..171818b 100644
+> --- a/net/xfrm/xfrm_policy.c
+> +++ b/net/xfrm/xfrm_policy.c
+> @@ -1820,6 +1820,11 @@ xfrm_resolve_and_create_bundle(struct xfrm_policy **pols, int num_pols,
+>             !xfrm_pol_dead(xdst) &&
+>             memcmp(xdst->pols, pols,
+>                    sizeof(struct xfrm_policy *) * num_pols) == 0 &&
+> +           (!xdst->u.dst.xfrm->sel.family ||
+> +            xfrm_selector_match(&xdst->u.dst.xfrm->sel, fl,
+> +                                xdst->u.dst.xfrm->sel.family)) &&
+> +           security_xfrm_state_pol_flow_match(xdst->u.dst.xfrm,
+> +                                              xdst->pols[0], fl) &&
+>             xfrm_bundle_ok(xdst)) {
+>                 dst_hold(&xdst->u.dst);
+>                 return xdst;
+> --
+> 2.9.5
+>
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
