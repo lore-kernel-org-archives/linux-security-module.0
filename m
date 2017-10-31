@@ -1,93 +1,158 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Tue, 31 Oct 2017 09:00:42 -0400
-Subject: [RFC v0.1][PATCH] selinuxns: extend namespace support to
-	security.selinux xattrs
-In-Reply-To: <alpine.LFD.2.20.1710311357320.22021@localhost>
-References: <alpine.LFD.2.20.1710301859170.11614@localhost>
-	<1509390973.10174.9.camel@tycho.nsa.gov>
-	<alpine.LFD.2.20.1710311357320.22021@localhost>
-Message-ID: <1509454842.20694.1.camel@tycho.nsa.gov>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 31 Oct 2017 09:31:35 -0400
+Subject: [PATCH v5 17/18] ima: Implement support for module-style
+	appended signatures
+In-Reply-To: <20171018005331.2688-18-bauerman@linux.vnet.ibm.com>
+References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
+	<20171018005331.2688-18-bauerman@linux.vnet.ibm.com>
+Message-ID: <1509456695.3583.226.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-10-31 at 14:11 +1100, James Morris wrote:
-> On Mon, 30 Oct 2017, Stephen Smalley wrote:
-> 
-> > Thanks, interesting approach. One drawback is that it doesn't
-> > presently
-> > support any form of inheritance of labels from the parent
-> > namespace, so
-> > files that are shared read-only from the init namespace will show
-> > up as
-> > unlabeled in the child namespace until they are assigned the
-> > namespaced
-> > attributes.??This for example breaks running the selinux-testsuite
-> > with
-> > this patch applied (unless perhaps you run restorecon -R / after
-> > unsharing); otherwise just trying to invoke /usr/bin/runcon will
-> > fail
-> > since it is unlabeled in the child.??It seems like we should
-> > provide
-> > some form of inheritance from the parent when there is no xattr for
-> > the
-> > namespace itself.
-> 
-> I was assuming that practical use of this would involve doing a
-> filesystem?
-> relabel under the newly loaded policy, on first instantiation at
-> least.
+On Tue, 2017-10-17 at 22:53 -0200, Thiago Jung Bauermann wrote:
 
-I think that would be problematic, e.g. if you want to share /usr read-
-only to all of the containers or similar, then they cannot relabel it
-themselves and even if you provided a way to set the xattrs from the
-init namespace, in the case where you are using the same or very
-similar policies, it seems wasteful to set the same xattr values for N
-xattr names for N containers.  So I think inheritance support will be
-necessary.  This will be easier if we make the xattr names themselves
-hierarchical (e.g. if vm8 writes vm1 to /sys/fs/selinux/unshare, then
-the child xattr name would be security.selinux.ns.vm8.vm1, and we would
-inherit from either security.selinux.ns.vm8 or security.selinux if
-security.selinux.ns.vm8.vm1 is not set.)
+Below are a few additional comments.
 
+> @@ -200,18 +239,28 @@ int ima_read_xattr(struct dentry *dentry,
+>   */
+>  int ima_appraise_measurement(enum ima_hooks func,
+>  			     struct integrity_iint_cache *iint,
+> -			     struct file *file, const unsigned char *filename,
+> -			     struct evm_ima_xattr_data *xattr_value,
+> -			     int xattr_len, int opened)
+> +			     struct file *file, const void *buf, loff_t size,
+> +			     const unsigned char *filename,
+> +			     struct evm_ima_xattr_data **xattr_value_,
+> +			     int *xattr_len_, int opened)
+>  {
+>  	static const char op[] = "appraise_data";
+>  	const char *cause = "unknown";
+>  	struct dentry *dentry = file_dentry(file);
+>  	struct inode *inode = d_backing_inode(dentry);
+>  	enum integrity_status status = INTEGRITY_UNKNOWN;
+> -	int rc = xattr_len, hash_start = 0;
+> +	struct evm_ima_xattr_data *xattr_value = *xattr_value_;
+> +	int xattr_len = *xattr_len_, rc = xattr_len, hash_start = 0;
+> +	bool appraising_modsig = false;
+> +
+> +	if (iint->flags & IMA_MODSIG_ALLOWED &&
+> +	    !ima_read_modsig(func, buf, size, &xattr_value, &xattr_len)) {
+> +		appraising_modsig = true;
+> +		rc = xattr_len;
+> +	}
 > 
-> We could try adding an selinuxfs node to specify default handling of?
-> unlabeled files in a child namespace, and write to that after
-> mounting?
-> selinuxfs in that namespace.
+> -	if (!(inode->i_opflags & IOP_XATTR))
+> +	/* If not appraising a modsig, we need an xattr. */
+> +	if (!appraising_modsig && !(inode->i_opflags & IOP_XATTR))
+>  		return INTEGRITY_UNKNOWN;
 > 
-> e.g. echo inherit > /sys/fs/selinux/parent_ns_labels
-> 
-> or something.
-> 
-> 
-> > 
-> > Another potential concern is that files created in a non-init
-> > namespace
-> > are left completely unlabeled in the init namespace (or in any
-> > parent).
-> > ????As long as access to unlabeled is tightly controlled, this
-> > might
-> > not be a problem, but I'm not sure that's guaranteed by the
-> > refpolicy
-> > or Fedora/RHEL policies.??We might want to initialize an xattr at
-> > every
-> > level of the namespace hierarchy when a new file is created based
-> > on
-> > the process and parent directory labels and policy at that level.?
-> > Otherwise, we lose all provenance information for the file outside
-> > of
-> > the namespace.?
-> 
-> Ok.
-> 
-> 
-> > For example, suppose I want to leak information out of
-> > my category set; I unshare and create files with the information,
-> > and
-> > they appear in the init namespace with no categories.
-> 
-> Nice :)
-> 
+>  	if (rc <= 0) {
+> @@ -235,6 +284,9 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  	case INTEGRITY_UNKNOWN:
+>  		break;
+>  	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
+> +		/* It's fine not to have xattrs when using a modsig. */
+> +		if (appraising_modsig)
+> +			break;
+>  	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+>  		cause = "missing-HMAC";
+>  		goto out;
+> @@ -242,6 +294,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  		cause = "invalid-HMAC";
+>  		goto out;
+>  	}
+> +
+> + retry:
+>  	switch (xattr_value->type) {
+>  	case IMA_XATTR_DIGEST_NG:
+>  		/* first byte contains algorithm id */
+> @@ -285,6 +339,61 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  			status = INTEGRITY_PASS;
+>  		}
+>  		break;
+> +	case IMA_MODSIG:
+> +		/*
+> +		 * To avoid being tricked into an infinite loop, we don't allow
+> +		 * a modsig stored in the xattr.
+> +		 */
+> +		if (!appraising_modsig) {
+> +			status = INTEGRITY_UNKNOWN;
+> +			cause = "unknown-ima-data";
+> +			break;
+> +		}
+> +		rc = appraise_modsig(iint, xattr_value, xattr_len);
+> +		if (!rc) {
+> +			kfree(*xattr_value_);
+> +			*xattr_value_ = xattr_value;
+> +			*xattr_len_ = xattr_len;
+> +
+> +			status = INTEGRITY_PASS;
+> +			break;
+> +		}
+> +
+> +		ima_free_xattr_data(xattr_value);
+> +
+> +		/*
+> +		 * The appended signature failed verification. If there's a
+> +		 * signature in the extended attribute, let's fall back to it.
+> +		 */
+> +		if (inode->i_opflags & IOP_XATTR && *xattr_len_ != 0 &&
+> +		    *xattr_len_ != -ENODATA) {
+
+At this point, there was an appended signature verification failure.
+?If there isn't an xattr, for whatever reason, shouldn't we be
+returning "invalid_signature" and "INTEGRITY_FAIL". ?If so, then the
+above test could be simplified to check whether there is any data,
+like this:
+
+	if ((inode->i_opflags & IOP_XATTR) && (*xattr_len_ > 0)) {
+
+> +			const char *modsig_cause = rc == -EOPNOTSUPP ?
+> +				"unknown" : "invalid-signature";
+
+This can then be cleaned up as well.
+
+> +
+> +			/* First, log that the modsig verification failed. */
+> +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+> +					    filename, op, modsig_cause, rc, 0);
+
+I'm not sure that we want to audit intermediary signature verification
+failures. ?Perhaps this audit message should be considered
+"additional", meaning it is only emitted if the "integrity_audit" boot
+command line option is enabled. ?Change the last field to 1 to
+indicate it is an "additional" audit message.
+
+> +
+> +			xattr_len = rc = *xattr_len_;
+> +			xattr_value = *xattr_value_;
+> +			appraising_modsig = false;
+> +
+> +			if (rc > 0)
+
+This test becomes redundant.
+
+> +				/* Process xattr contents. */
+> +				goto retry;
+> +
+> +			/* Unexpected error reading xattr. */
+> +			status = INTEGRITY_UNKNOWN;
+> +		} else {
+> +			if (rc == -EOPNOTSUPP)
+> +				status = INTEGRITY_UNKNOWN;
+> +			else {
+> +				cause = "invalid-signature";
+> +				status = INTEGRITY_FAIL;
+> +			}
+> +		}
+> +		break;
+
+I think the rest can be simplified to:
+	cause = "invalid-signature";
+	status = INTEGRITY_FAIL;
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
