@@ -1,22 +1,28 @@
-From: tytso@mit.edu (Theodore Ts'o)
-Date: Tue, 31 Oct 2017 13:47:36 -0400
-Subject: [PATCH v2] fscrypt: fix dereference of NULL user_key_payload
-In-Reply-To: <20171029163246.GA566@zzz.localdomain>
-References: <20171009194618.67494-1-ebiggers3@gmail.com>
-	<20171029102305.4ifapjehlrgwsqmu@thunk.org>
-	<20171029163246.GA566@zzz.localdomain>
-Message-ID: <20171031174736.q5meeukzbrtcugp2@thunk.org>
+From: jgg@ziepe.ca (Jason Gunthorpe)
+Date: Tue, 31 Oct 2017 14:03:03 -0600
+Subject: [PATCH v3] tpm: use struct tpm_chip for tpm_chip_find_get()
+In-Reply-To: <20171026135453.24672-1-jarkko.sakkinen@linux.intel.com>
+References: <20171026135453.24672-1-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20171031200303.GB18578@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Oct 29, 2017 at 09:32:46AM -0700, Eric Biggers wrote:
+On Thu, Oct 26, 2017 at 03:54:50PM +0200, Jarkko Sakkinen wrote:
+> Device number (the character device index) is not a stable identifier
+> for a TPM chip. That is the reason why every call site passes
+> TPM_ANY_NUM to tpm_chip_find_get().
 > 
-> Hi Ted, you should drop this one, since it's already in mainline; David Howells
-> ended up taking the original series via the keyrings tree.
+> This commit changes the API in a way that instead a struct tpm_chip
+> instance is given and NULL means the default chip. In addition, this
+> commit refines the documentation to be up to date with the
+> implementation.
+> 
+> Suggested-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com> (@chip_num -> @chip)
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Ah, I see it landed in v4.14-rc6.  I'll drop it from the fscrypt tree.
+Reviewed-by: Jason Gunthorpe <jgg@ziepe.ca>
 
-      	     	       		   	     - Ted
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
