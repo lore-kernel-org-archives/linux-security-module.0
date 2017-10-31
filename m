@@ -1,64 +1,26 @@
 From: james.l.morris@oracle.com (James Morris)
-Date: Tue, 31 Oct 2017 14:11:48 +1100 (AEDT)
-Subject: [RFC v0.1][PATCH] selinuxns: extend namespace support to
-	security.selinux xattrs
-In-Reply-To: <1509390973.10174.9.camel@tycho.nsa.gov>
-References: <alpine.LFD.2.20.1710301859170.11614@localhost>
-	<1509390973.10174.9.camel@tycho.nsa.gov>
-Message-ID: <alpine.LFD.2.20.1710311357320.22021@localhost>
+Date: Tue, 31 Oct 2017 14:25:26 +1100 (AEDT)
+Subject: [RFC PATCH] ima: require secure_boot rules in lockdown mode
+In-Reply-To: <1509385178.3583.159.camel@linux.vnet.ibm.com>
+References: <1509382827.3583.143.camel@linux.vnet.ibm.com>
+	<1508774387.3639.128.camel@linux.vnet.ibm.com>
+	<750.1509378910@warthog.procyon.org.uk>
+	<3691.1509383138@warthog.procyon.org.uk>
+	<1509385178.3583.159.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LFD.2.20.1710311424310.22021@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 30 Oct 2017, Stephen Smalley wrote:
+On Mon, 30 Oct 2017, Mimi Zohar wrote:
 
-> Thanks, interesting approach. One drawback is that it doesn't presently
-> support any form of inheritance of labels from the parent namespace, so
-> files that are shared read-only from the init namespace will show up as
-> unlabeled in the child namespace until they are assigned the namespaced
-> attributes.  This for example breaks running the selinux-testsuite with
-> this patch applied (unless perhaps you run restorecon -R / after
-> unsharing); otherwise just trying to invoke /usr/bin/runcon will fail
-> since it is unlabeled in the child.  It seems like we should provide
-> some form of inheritance from the parent when there is no xattr for the
-> namespace itself.
+> James is staging the subsystem patches independently of each other, in
+> case of a similar problem, so that they can be pulled separately.
+> ?There's a new "next-general" branch.
 
-I was assuming that practical use of this would involve doing a filesystem 
-relabel under the newly loaded policy, on first instantiation at least.
+If you send me a pull request, I'm combining branches into next-testing, 
+too, which is pulled into -next.
 
-We could try adding an selinuxfs node to specify default handling of 
-unlabeled files in a child namespace, and write to that after mounting 
-selinuxfs in that namespace.
-
-e.g. echo inherit > /sys/fs/selinux/parent_ns_labels
-
-or something.
-
-
-> 
-> Another potential concern is that files created in a non-init namespace
-> are left completely unlabeled in the init namespace (or in any parent).
->     As long as access to unlabeled is tightly controlled, this might
-> not be a problem, but I'm not sure that's guaranteed by the refpolicy
-> or Fedora/RHEL policies.  We might want to initialize an xattr at every
-> level of the namespace hierarchy when a new file is created based on
-> the process and parent directory labels and policy at that level. 
-> Otherwise, we lose all provenance information for the file outside of
-> the namespace. 
-
-Ok.
-
-
-> For example, suppose I want to leak information out of
-> my category set; I unshare and create files with the information, and
-> they appear in the init namespace with no categories.
-
-Nice :)
 
 -- 
 James Morris
 <james.l.morris@oracle.com>
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
