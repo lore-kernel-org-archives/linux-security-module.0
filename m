@@ -1,29 +1,22 @@
 From: james.l.morris@oracle.com (James Morris)
-Date: Wed, 1 Nov 2017 17:40:00 +1100 (AEDT)
-Subject: [RFC v0.1][PATCH] selinuxns: extend namespace support to
-	security.selinux xattrs
-In-Reply-To: <1509458646.20694.10.camel@tycho.nsa.gov>
-References: <alpine.LFD.2.20.1710301859170.11614@localhost>
-	<1509390973.10174.9.camel@tycho.nsa.gov>
-	<alpine.LFD.2.20.1710311357320.22021@localhost>
-	<1509454842.20694.1.camel@tycho.nsa.gov>
-	<1509458646.20694.10.camel@tycho.nsa.gov>
-Message-ID: <alpine.LFD.2.20.1711011738110.6046@localhost>
+Date: Wed, 1 Nov 2017 17:55:15 +1100 (AEDT)
+Subject: [PATCH] KEYS: trusted: fix writing past end of buffer in
+	trusted_read()
+In-Reply-To: <20171026205744.105566-1-ebiggers3@gmail.com>
+References: <20171026205744.105566-1-ebiggers3@gmail.com>
+Message-ID: <alpine.LFD.2.20.1711011754050.6046@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 31 Oct 2017, Stephen Smalley wrote:
+On Thu, 26 Oct 2017, Eric Biggers wrote:
 
-> This btw would be a bit cleaner if we dropped the .ns. portion of the
-> name, such that we would have:
-> security.selinux # xattr name in the init namespace
-> security.selinux.vmN # xattr name in the vmN namespace
-> security.selinux.vmN.vmM # xattr name in the vmN.vmM namespace
+> From: Eric Biggers <ebiggers@google.com>
 
-I used 'ns' to diffetentiate against other potential extensions of the 
-xattr name.  If that's not a concern, then yes it will be cleaner.
 
-Do we limit the number of nestings?
+David, this needs to go to Linus.
+
+Are you planning on pushing out more fixes for this -rc or shuld I just 
+send it up via my tree?
 
 
 -- 
