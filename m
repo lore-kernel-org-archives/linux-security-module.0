@@ -1,44 +1,76 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Wed, 01 Nov 2017 11:22:05 -0400
-Subject: [RFC v0.1][PATCH] selinuxns: extend namespace support to
-	security.selinux xattrs
-In-Reply-To: <alpine.LFD.2.20.1711011738110.6046@localhost>
-References: <alpine.LFD.2.20.1710301859170.11614@localhost>
-	<1509390973.10174.9.camel@tycho.nsa.gov>
-	<alpine.LFD.2.20.1710311357320.22021@localhost>
-	<1509454842.20694.1.camel@tycho.nsa.gov>
-	<1509458646.20694.10.camel@tycho.nsa.gov>
-	<alpine.LFD.2.20.1711011738110.6046@localhost>
-Message-ID: <1509549725.24459.6.camel@tycho.nsa.gov>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Wed,  1 Nov 2017 12:10:22 -0700
+Subject: [PATCH] KEYS: fix out-of-bounds read during ASN.1 parsing
+Message-ID: <20171101191022.108942-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-11-01 at 17:40 +1100, James Morris wrote:
-> On Tue, 31 Oct 2017, Stephen Smalley wrote:
-> 
-> > This btw would be a bit cleaner if we dropped the .ns. portion of
-> > the
-> > name, such that we would have:
-> > security.selinux # xattr name in the init namespace
-> > security.selinux.vmN # xattr name in the vmN namespace
-> > security.selinux.vmN.vmM # xattr name in the vmN.vmM namespace
-> 
-> I used 'ns' to diffetentiate against other potential extensions of
-> the?
-> xattr name.??If that's not a concern, then yes it will be cleaner.
-> 
-> Do we limit the number of nestings?
+From: Eric Biggers <ebiggers@google.com>
 
-Not in the current code, but I think we will need to do so. That's
-mentioned in the list of known issues in the next-to-last commit:
+syzkaller with KASAN reported an out-of-bounds read in
+asn1_ber_decoder().  It can be reproduced by the following command,
+assuming CONFIG_X509_CERTIFICATE_PARSER=y and CONFIG_KASAN=y:
 
-????* There is no way currently to restrict or bound nesting of
-????namespaces; if you allow it to a domain in the init namespace,
-????then that domain can in turn unshare to arbitrary depths and can
-????grant the same to any domain in its own policy.??Related to this
-????is the fact that there is no way to control resource usage due to
-????selinux namespaces and they can be substantial (per-namespace
-????policydb, sidtab, AVC, etc).
+    keyctl add asymmetric desc $'\x30\x30' @s
+
+The bug is that the length of an ASN.1 data value isn't validated in the
+case where it is encoded using the short form, causing the decoder to
+read past the end of the input buffer.  Fix it by validating the length.
+
+The bug report was:
+
+    BUG: KASAN: slab-out-of-bounds in asn1_ber_decoder+0x10cb/0x1730 lib/asn1_decoder.c:233
+    Read of size 1 at addr ffff88003cccfa02 by task syz-executor0/6818
+
+    CPU: 1 PID: 6818 Comm: syz-executor0 Not tainted 4.14.0-rc7-00008-g5f479447d983 #2
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+    Call Trace:
+     __dump_stack lib/dump_stack.c:16 [inline]
+     dump_stack+0xb3/0x10b lib/dump_stack.c:52
+     print_address_description+0x79/0x2a0 mm/kasan/report.c:252
+     kasan_report_error mm/kasan/report.c:351 [inline]
+     kasan_report+0x236/0x340 mm/kasan/report.c:409
+     __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:427
+     asn1_ber_decoder+0x10cb/0x1730 lib/asn1_decoder.c:233
+     x509_cert_parse+0x1db/0x650 crypto/asymmetric_keys/x509_cert_parser.c:89
+     x509_key_preparse+0x64/0x7a0 crypto/asymmetric_keys/x509_public_key.c:174
+     asymmetric_key_preparse+0xcb/0x1a0 crypto/asymmetric_keys/asymmetric_type.c:388
+     key_create_or_update+0x347/0xb20 security/keys/key.c:855
+     SYSC_add_key security/keys/keyctl.c:122 [inline]
+     SyS_add_key+0x1cd/0x340 security/keys/keyctl.c:62
+     entry_SYSCALL_64_fastpath+0x1f/0xbe
+    RIP: 0033:0x447c89
+    RSP: 002b:00007fca7a5d3bd8 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
+    RAX: ffffffffffffffda RBX: 00007fca7a5d46cc RCX: 0000000000447c89
+    RDX: 0000000020006f4a RSI: 0000000020006000 RDI: 0000000020001ff5
+    RBP: 0000000000000046 R08: fffffffffffffffd R09: 0000000000000000
+    R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+    R13: 0000000000000000 R14: 00007fca7a5d49c0 R15: 00007fca7a5d4700
+
+Fixes: 42d5ec27f873 ("X.509: Add an ASN.1 decoder")
+Cc: <stable@vger.kernel.org> # v3.7+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ lib/asn1_decoder.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
+index 0bd8a611eb83..fef5d2e114be 100644
+--- a/lib/asn1_decoder.c
++++ b/lib/asn1_decoder.c
+@@ -284,6 +284,9 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
+ 				if (unlikely(len > datalen - dp))
+ 					goto data_overrun_error;
+ 			}
++		} else {
++			if (unlikely(len > datalen - dp))
++				goto data_overrun_error;
+ 		}
+ 
+ 		if (flags & FLAG_CONS) {
+-- 
+2.15.0.403.gc27cc4dac6-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
