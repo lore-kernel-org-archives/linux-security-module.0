@@ -1,53 +1,92 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 02 Nov 2017 18:18:43 -0400
-Subject: [PATCH 03/27] Enforce module signatures if the kernel is locked
-	down
-In-Reply-To: <14108.1509660067@warthog.procyon.org.uk>
-References: <1509658881.3416.10.camel@linux.vnet.ibm.com>
-	<1509650031.3507.20.camel@linux.vnet.ibm.com>
-	<1509130095.3716.13.camel@linux.vnet.ibm.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842465546.7923.6762214527898273559.stgit@warthog.procyon.org.uk>
-	<20240.1509643356@warthog.procyon.org.uk>
-	<12321.1509658211@warthog.procyon.org.uk>
-	<14108.1509660067@warthog.procyon.org.uk>
-Message-ID: <1509661123.3416.29.camel@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 2 Nov 2017 18:37:27 -0400
+Subject: [RFC PATCH] xfrm: fix regression introduced by xdst pcpu cache
+In-Reply-To: <1509627538.4623.1.camel@tycho.nsa.gov>
+References: <20171030145843.13496-1-sds@tycho.nsa.gov>
+	<CAHC9VhT6b1DJ0E65syC7XoVxfSTs3RUq9-HNLuzt2H-vrj69RA@mail.gmail.com>
+	<20171031230809.GD7663@breakpoint.cc>
+	<CAHC9VhT7FOeoJgX=KmMPr_ACKSgJ8V9DEHNM=cnfV9-sdrHC2g@mail.gmail.com>
+	<1509627538.4623.1.camel@tycho.nsa.gov>
+Message-ID: <CAHC9VhR9UMzh4euR87OaqcjfqodvEAr-KBLjGYa4C+Z7zVTZ9A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-11-02 at 22:01 +0000, David Howells wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> 
-> > Right, it would never get here if the IMA signature verification
-> > fails. ?If sig_enforce is not enabled, then it will also work. ?So the
-> > only case is if sig_enforced is enabled and there is no key.
-> > 
-> > eg.
-> > ? ? ? ? ?else if (can_do_ima_check && is_ima_appraise_enabled())
-> > ? ? ? ? ? ? ? ? err = 0;
-> 
-> I'm not sure where you want to put that, but I can't just do this:
-> 
-> 	/* Not having a signature is only an error if we're strict. */
-> 	if (err == -ENOKEY && !sig_enforce &&
-> 	    (!can_do_ima_check || !is_ima_appraise_enabled()) &&
+On Thu, Nov 2, 2017 at 8:58 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On Wed, 2017-11-01 at 17:39 -0400, Paul Moore wrote:
+>> On Tue, Oct 31, 2017 at 7:08 PM, Florian Westphal <fw@strlen.de>
+>> wrote:
+>> > Paul Moore <paul@paul-moore.com> wrote:
+>> > > On Mon, Oct 30, 2017 at 10:58 AM, Stephen Smalley <sds@tycho.nsa.
+>> > > gov> wrote:
+>> > > > matching before (as in this patch) or after calling
+>> > > > xfrm_bundle_ok()?
+>> > >
+>> > > I would probably make the LSM call the last check, as you've
+>> > > done; but
+>> > > I have to say that is just so it is consistent with the "LSM
+>> > > last"
+>> > > philosophy and not because of any performance related argument.
+>> > >
+>> > > > ... Also,
+>> > > > do we need to test xfrm->sel.family before calling
+>> > > > xfrm_selector_match
+>> > > > (as in this patch) or not - xfrm_state_look_at() does so when
+>> > > > the
+>> > > > state is XFRM_STATE_VALID but not when it is _ERROR or
+>> > > > _EXPIRED?
+>> > >
+>> > > Speaking purely from a SELinux perspective, I'm not sure it
+>> > > matters:
+>> > > as long as the labels match we are happy.  However, from a
+>> > > general
+>> > > IPsec perspective it does seem like a reasonable thing.
+>> > >
+>> > > Granted I'm probably missing something, but it seems a little odd
+>> > > that
+>> > > the code isn't already checking that the selectors match (...
+>> > > what am
+>> > > I missing?).  It does check the policies, maybe that is enough in
+>> > > the
+>> > > normal IPsec case?
+>> >
+>> > The assumption was that identical policies would yield the same
+>> > SAs,
+>> > but thats not correct.
+>>
+>> Well, to be fair, I think the assumption is valid for normal,
+>> unlabeled IPsec.  The problem comes when SELinux starts labeling SAs
+>> and now you have multiple SAs for a given policy, each differing only
+>> in the SELinux/LSM label.
+>
+> No, it is invalid for normal, unlabeled IPSEC too, in the case where
+> one has defined xfrm state selectors.  That's what my other testsuite
+> patch (which is presently only on the xfrmselectortest branch) is
+> exercising - matching of xfrm state selectors.  But in any event,
+> Florian's patch fixes both, so I'm fine with it.  I don't know though
+> how it compares performance-wise with walking the bundle and just
+> calling security_xfrm_state_pol_flow_match() and xfrm_selector_match()
+> on each one.
+>
+>> Considering that adding the SELinux/LSM label effectively adds an
+>> additional selector, I'm wondering if we should simply add the
+>> SELinux/LSM label matching to xfrm_selector_match()?  Looking quickly
+>> at the code it seems as though we always follow xfrm_selector_match()
+>> with a LSM check anyway, the one exception being in
+>> __xfrm_policy_check() ... which *might* be a valid exception, as we
+>> don't do our access checks for inbound traffic at that point in the
+>> stack.
+>
+> Possibly, but that should probably be a separate patch. We should just
+> fix this regression for 4.14, either via Florian's patch or by
+> augmenting my patch to perform the matching calls on all of the xfrms.
 
-The above IMA checks aren't needed here.
+I agree that v4.14 should get the smallest patch possible that fixes
+the problem.  I was just looking at the patches presented so far and
+thinking out loud.
 
-> 	    !kernel_is_locked_down("Loading of unsigned modules"))
-> 		err = 0;
-> 	else if (can_do_ima_check && is_ima_appraise_enabled())
-> 		err = 0;
-> 
-> because that'll print out a message in lockdown mode saying that you're not
-> allowed to do that and then maybe do it anyway.
-
-Then at least for now, document that even though kernel modules might
-be signed and verified by IMA-appraisal, that in lockdown mode they
-also require an appended signature.
-
-Mimi
-
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
