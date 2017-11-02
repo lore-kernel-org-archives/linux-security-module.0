@@ -1,30 +1,41 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 02 Nov 2017 21:43:39 +0000
-Subject: [RFC PATCH] ima: require secure_boot rules in lockdown mode
-In-Reply-To: <1509658253.3416.1.camel@linux.vnet.ibm.com>
-References: <1509658253.3416.1.camel@linux.vnet.ibm.com>
-	<1509382827.3583.143.camel@linux.vnet.ibm.com>
-	<1508774387.3639.128.camel@linux.vnet.ibm.com>
-	<750.1509378910@warthog.procyon.org.uk>
-	<22475.1509642717@warthog.procyon.org.uk>
-Message-ID: <13298.1509659019@warthog.procyon.org.uk>
+Date: Thu, 02 Nov 2017 22:01:07 +0000
+Subject: [PATCH 03/27] Enforce module signatures if the kernel is locked
+	down
+In-Reply-To: <1509658881.3416.10.camel@linux.vnet.ibm.com>
+References: <1509658881.3416.10.camel@linux.vnet.ibm.com>
+	<1509650031.3507.20.camel@linux.vnet.ibm.com>
+	<1509130095.3716.13.camel@linux.vnet.ibm.com>
+	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<150842465546.7923.6762214527898273559.stgit@warthog.procyon.org.uk>
+	<20240.1509643356@warthog.procyon.org.uk>
+	<12321.1509658211@warthog.procyon.org.uk>
+Message-ID: <14108.1509660067@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-> > +	bool kernel_locked_down = kernel_is_locked_down();
+> Right, it would never get here if the IMA signature verification
+> fails. ?If sig_enforce is not enabled, then it will also work. ?So the
+> only case is if sig_enforced is enabled and there is no key.
 > 
-> kernel_is_locked_down() requires a string.
+> eg.
+> ? ? ? ? ?else if (can_do_ima_check && is_ima_appraise_enabled())
+> ? ? ? ? ? ? ? ? err = 0;
 
-Hmmm...  Probably don't want to call kernel_is_locked_down() here as that'll
-get a message printed saying that you tried to do something that's disallowed.
+I'm not sure where you want to put that, but I can't just do this:
 
-Possibly:
+	/* Not having a signature is only an error if we're strict. */
+	if (err == -ENOKEY && !sig_enforce &&
+	    (!can_do_ima_check || !is_ima_appraise_enabled()) &&
+	    !kernel_is_locked_down("Loading of unsigned modules"))
+		err = 0;
+	else if (can_do_ima_check && is_ima_appraise_enabled())
+		err = 0;
 
-	... = __kernel_is_locked_down("", false);
-
-Though it might be better to provide a second vector.
+because that'll print out a message in lockdown mode saying that you're not
+allowed to do that and then maybe do it anyway.
 
 David
 --
