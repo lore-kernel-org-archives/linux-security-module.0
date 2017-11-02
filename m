@@ -1,43 +1,29 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 02 Nov 2017 22:01:07 +0000
-Subject: [PATCH 03/27] Enforce module signatures if the kernel is locked
-	down
-In-Reply-To: <1509658881.3416.10.camel@linux.vnet.ibm.com>
-References: <1509658881.3416.10.camel@linux.vnet.ibm.com>
-	<1509650031.3507.20.camel@linux.vnet.ibm.com>
-	<1509130095.3716.13.camel@linux.vnet.ibm.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842465546.7923.6762214527898273559.stgit@warthog.procyon.org.uk>
-	<20240.1509643356@warthog.procyon.org.uk>
-	<12321.1509658211@warthog.procyon.org.uk>
-Message-ID: <14108.1509660067@warthog.procyon.org.uk>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 02 Nov 2017 18:01:26 -0400
+Subject: [PATCH 00/27] security, efi: Add kernel lockdown
+In-Reply-To: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+Message-ID: <1509660086.3416.15.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+Hi David,
 
-> Right, it would never get here if the IMA signature verification
-> fails. ?If sig_enforce is not enabled, then it will also work. ?So the
-> only case is if sig_enforced is enabled and there is no key.
-> 
-> eg.
-> ? ? ? ? ?else if (can_do_ima_check && is_ima_appraise_enabled())
-> ? ? ? ? ? ? ? ? err = 0;
+>From the man page:
 
-I'm not sure where you want to put that, but I can't just do this:
+> Only validly signed modules may be loaded.
+> .P
+> Only validly signed binaries may be kexec'd.
+> .P
+> Only validly signed device firmware may be loaded.
 
-	/* Not having a signature is only an error if we're strict. */
-	if (err == -ENOKEY && !sig_enforce &&
-	    (!can_do_ima_check || !is_ima_appraise_enabled()) &&
-	    !kernel_is_locked_down("Loading of unsigned modules"))
-		err = 0;
-	else if (can_do_ima_check && is_ima_appraise_enabled())
-		err = 0;
+fw_get_filesystem_firmware() calls kernel_read_file_from_path() to
+read the firmware, which calls into the security hooks. Is there
+another place that validates the firmware signatures. ?I'm not seeing
+which patch requires firmware to be signed?
 
-because that'll print out a message in lockdown mode saying that you're not
-allowed to do that and then maybe do it anyway.
+Mimi
 
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
