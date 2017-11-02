@@ -1,77 +1,75 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  2 Nov 2017 00:47:19 +0000
-Subject: [PATCH 3/3] KEYS: fix out-of-bounds read during ASN.1 parsing
+Date: Thu,  2 Nov 2017 00:47:12 +0000
+Subject: [PATCH 2/3] KEYS: trusted: fix writing past end of buffer in
+	trusted_read()
 In-Reply-To: <150958362347.7093.12077889134222746769.stgit@warthog.procyon.org.uk>
 References: <150958362347.7093.12077889134222746769.stgit@warthog.procyon.org.uk>
-Message-ID: <150958363973.7093.17020904832437759281.stgit@warthog.procyon.org.uk>
+Message-ID: <150958363228.7093.5144341440148561040.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-syzkaller with KASAN reported an out-of-bounds read in
-asn1_ber_decoder().  It can be reproduced by the following command,
-assuming CONFIG_X509_CERTIFICATE_PARSER=y and CONFIG_KASAN=y:
+When calling keyctl_read() on a key of type "trusted", if the
+user-supplied buffer was too small, the kernel ignored the buffer length
+and just wrote past the end of the buffer, potentially corrupting
+userspace memory.  Fix it by instead returning the size required, as per
+the documentation for keyctl_read().
 
-    keyctl add asymmetric desc $'\x30\x30' @s
+We also don't even fill the buffer at all in this case, as this is
+slightly easier to implement than doing a short read, and either
+behavior appears to be permitted.  It also makes it match the behavior
+of the "encrypted" key type.
 
-The bug is that the length of an ASN.1 data value isn't validated in the
-case where it is encoded using the short form, causing the decoder to
-read past the end of the input buffer.  Fix it by validating the length.
-
-The bug report was:
-
-    BUG: KASAN: slab-out-of-bounds in asn1_ber_decoder+0x10cb/0x1730 lib/asn1_decoder.c:233
-    Read of size 1 at addr ffff88003cccfa02 by task syz-executor0/6818
-
-    CPU: 1 PID: 6818 Comm: syz-executor0 Not tainted 4.14.0-rc7-00008-g5f479447d983 #2
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-    Call Trace:
-     __dump_stack lib/dump_stack.c:16 [inline]
-     dump_stack+0xb3/0x10b lib/dump_stack.c:52
-     print_address_description+0x79/0x2a0 mm/kasan/report.c:252
-     kasan_report_error mm/kasan/report.c:351 [inline]
-     kasan_report+0x236/0x340 mm/kasan/report.c:409
-     __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:427
-     asn1_ber_decoder+0x10cb/0x1730 lib/asn1_decoder.c:233
-     x509_cert_parse+0x1db/0x650 crypto/asymmetric_keys/x509_cert_parser.c:89
-     x509_key_preparse+0x64/0x7a0 crypto/asymmetric_keys/x509_public_key.c:174
-     asymmetric_key_preparse+0xcb/0x1a0 crypto/asymmetric_keys/asymmetric_type.c:388
-     key_create_or_update+0x347/0xb20 security/keys/key.c:855
-     SYSC_add_key security/keys/keyctl.c:122 [inline]
-     SyS_add_key+0x1cd/0x340 security/keys/keyctl.c:62
-     entry_SYSCALL_64_fastpath+0x1f/0xbe
-    RIP: 0033:0x447c89
-    RSP: 002b:00007fca7a5d3bd8 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
-    RAX: ffffffffffffffda RBX: 00007fca7a5d46cc RCX: 0000000000447c89
-    RDX: 0000000020006f4a RSI: 0000000020006000 RDI: 0000000020001ff5
-    RBP: 0000000000000046 R08: fffffffffffffffd R09: 0000000000000000
-    R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-    R13: 0000000000000000 R14: 00007fca7a5d49c0 R15: 00007fca7a5d4700
-
-Fixes: 42d5ec27f873 ("X.509: Add an ASN.1 decoder")
-Cc: <stable@vger.kernel.org> # v3.7+
+Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
+Reported-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: <stable@vger.kernel.org> # v2.6.38+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 ---
 
- lib/asn1_decoder.c |    3 +++
- 1 file changed, 3 insertions(+)
+ security/keys/trusted.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
-index 0bd8a611eb83..fef5d2e114be 100644
---- a/lib/asn1_decoder.c
-+++ b/lib/asn1_decoder.c
-@@ -284,6 +284,9 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
- 				if (unlikely(len > datalen - dp))
- 					goto data_overrun_error;
- 			}
-+		} else {
-+			if (unlikely(len > datalen - dp))
-+				goto data_overrun_error;
- 		}
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index bd85315cbfeb..98aa89ff7bfd 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1147,20 +1147,21 @@ static long trusted_read(const struct key *key, char __user *buffer,
+ 	p = dereference_key_locked(key);
+ 	if (!p)
+ 		return -EINVAL;
+-	if (!buffer || buflen <= 0)
+-		return 2 * p->blob_len;
+-	ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
+-	if (!ascii_buf)
+-		return -ENOMEM;
  
- 		if (flags & FLAG_CONS) {
+-	bufp = ascii_buf;
+-	for (i = 0; i < p->blob_len; i++)
+-		bufp = hex_byte_pack(bufp, p->blob[i]);
+-	if ((copy_to_user(buffer, ascii_buf, 2 * p->blob_len)) != 0) {
++	if (buffer && buflen >= 2 * p->blob_len) {
++		ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
++		if (!ascii_buf)
++			return -ENOMEM;
++
++		bufp = ascii_buf;
++		for (i = 0; i < p->blob_len; i++)
++			bufp = hex_byte_pack(bufp, p->blob[i]);
++		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
++			kzfree(ascii_buf);
++			return -EFAULT;
++		}
+ 		kzfree(ascii_buf);
+-		return -EFAULT;
+ 	}
+-	kzfree(ascii_buf);
+ 	return 2 * p->blob_len;
+ }
+ 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
