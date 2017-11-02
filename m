@@ -1,95 +1,79 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  2 Nov 2017 00:47:03 +0000
-Subject: [PATCH 1/3] KEYS: return full count in keyring_read() if buffer is
-	too small
-Message-ID: <150958362347.7093.12077889134222746769.stgit@warthog.procyon.org.uk>
+Date: Thu,  2 Nov 2017 00:47:19 +0000
+Subject: [PATCH 3/3] KEYS: fix out-of-bounds read during ASN.1 parsing
+In-Reply-To: <150958362347.7093.12077889134222746769.stgit@warthog.procyon.org.uk>
+References: <150958362347.7093.12077889134222746769.stgit@warthog.procyon.org.uk>
+Message-ID: <150958363973.7093.17020904832437759281.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Commit e645016abc80 ("KEYS: fix writing past end of user-supplied buffer
-in keyring_read()") made keyring_read() stop corrupting userspace memory
-when the user-supplied buffer is too small.  However it also made the
-return value in that case be the short buffer size rather than the size
-required, yet keyctl_read() is actually documented to return the size
-required.  Therefore, switch it over to the documented behavior.
+syzkaller with KASAN reported an out-of-bounds read in
+asn1_ber_decoder().  It can be reproduced by the following command,
+assuming CONFIG_X509_CERTIFICATE_PARSER=y and CONFIG_KASAN=y:
 
-Note that for now we continue to have it fill the short buffer, since it
-did that before (pre-v3.13) and dump_key_tree_aux() in keyutils arguably
-relies on it.
+    keyctl add asymmetric desc $'\x30\x30' @s
 
-Fixes: e645016abc80 ("KEYS: fix writing past end of user-supplied buffer in keyring_read()")
-Reported-by: Ben Hutchings <ben@decadent.org.uk>
-Cc: <stable@vger.kernel.org> # v3.13+
+The bug is that the length of an ASN.1 data value isn't validated in the
+case where it is encoded using the short form, causing the decoder to
+read past the end of the input buffer.  Fix it by validating the length.
+
+The bug report was:
+
+    BUG: KASAN: slab-out-of-bounds in asn1_ber_decoder+0x10cb/0x1730 lib/asn1_decoder.c:233
+    Read of size 1 at addr ffff88003cccfa02 by task syz-executor0/6818
+
+    CPU: 1 PID: 6818 Comm: syz-executor0 Not tainted 4.14.0-rc7-00008-g5f479447d983 #2
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+    Call Trace:
+     __dump_stack lib/dump_stack.c:16 [inline]
+     dump_stack+0xb3/0x10b lib/dump_stack.c:52
+     print_address_description+0x79/0x2a0 mm/kasan/report.c:252
+     kasan_report_error mm/kasan/report.c:351 [inline]
+     kasan_report+0x236/0x340 mm/kasan/report.c:409
+     __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:427
+     asn1_ber_decoder+0x10cb/0x1730 lib/asn1_decoder.c:233
+     x509_cert_parse+0x1db/0x650 crypto/asymmetric_keys/x509_cert_parser.c:89
+     x509_key_preparse+0x64/0x7a0 crypto/asymmetric_keys/x509_public_key.c:174
+     asymmetric_key_preparse+0xcb/0x1a0 crypto/asymmetric_keys/asymmetric_type.c:388
+     key_create_or_update+0x347/0xb20 security/keys/key.c:855
+     SYSC_add_key security/keys/keyctl.c:122 [inline]
+     SyS_add_key+0x1cd/0x340 security/keys/keyctl.c:62
+     entry_SYSCALL_64_fastpath+0x1f/0xbe
+    RIP: 0033:0x447c89
+    RSP: 002b:00007fca7a5d3bd8 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
+    RAX: ffffffffffffffda RBX: 00007fca7a5d46cc RCX: 0000000000447c89
+    RDX: 0000000020006f4a RSI: 0000000020006000 RDI: 0000000020001ff5
+    RBP: 0000000000000046 R08: fffffffffffffffd R09: 0000000000000000
+    R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+    R13: 0000000000000000 R14: 00007fca7a5d49c0 R15: 00007fca7a5d4700
+
+Fixes: 42d5ec27f873 ("X.509: Add an ASN.1 decoder")
+Cc: <stable@vger.kernel.org> # v3.7+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
 ---
 
- security/keys/keyring.c |   39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ lib/asn1_decoder.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index a7e51f793867..36f842ec87f0 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -459,34 +459,33 @@ static long keyring_read(const struct key *keyring,
- 			 char __user *buffer, size_t buflen)
- {
- 	struct keyring_read_iterator_context ctx;
--	unsigned long nr_keys;
--	int ret;
-+	long ret;
+diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
+index 0bd8a611eb83..fef5d2e114be 100644
+--- a/lib/asn1_decoder.c
++++ b/lib/asn1_decoder.c
+@@ -284,6 +284,9 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
+ 				if (unlikely(len > datalen - dp))
+ 					goto data_overrun_error;
+ 			}
++		} else {
++			if (unlikely(len > datalen - dp))
++				goto data_overrun_error;
+ 		}
  
- 	kenter("{%d},,%zu", key_serial(keyring), buflen);
- 
- 	if (buflen & (sizeof(key_serial_t) - 1))
- 		return -EINVAL;
- 
--	nr_keys = keyring->keys.nr_leaves_on_tree;
--	if (nr_keys == 0)
--		return 0;
--
--	/* Calculate how much data we could return */
--	if (!buffer || !buflen)
--		return nr_keys * sizeof(key_serial_t);
--
--	/* Copy the IDs of the subscribed keys into the buffer */
--	ctx.buffer = (key_serial_t __user *)buffer;
--	ctx.buflen = buflen;
--	ctx.count = 0;
--	ret = assoc_array_iterate(&keyring->keys, keyring_read_iterator, &ctx);
--	if (ret < 0) {
--		kleave(" = %d [iterate]", ret);
--		return ret;
-+	/* Copy as many key IDs as fit into the buffer */
-+	if (buffer && buflen) {
-+		ctx.buffer = (key_serial_t __user *)buffer;
-+		ctx.buflen = buflen;
-+		ctx.count = 0;
-+		ret = assoc_array_iterate(&keyring->keys,
-+					  keyring_read_iterator, &ctx);
-+		if (ret < 0) {
-+			kleave(" = %ld [iterate]", ret);
-+			return ret;
-+		}
- 	}
- 
--	kleave(" = %zu [ok]", ctx.count);
--	return ctx.count;
-+	/* Return the size of the buffer needed */
-+	ret = keyring->keys.nr_leaves_on_tree * sizeof(key_serial_t);
-+	if (ret <= buflen)
-+		kleave("= %ld [ok]", ret);
-+	else
-+		kleave("= %ld [buffer too small]", ret);
-+	return ret;
- }
- 
- /*
+ 		if (flags & FLAG_CONS) {
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
