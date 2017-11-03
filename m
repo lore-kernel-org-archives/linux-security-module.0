@@ -1,74 +1,55 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 03 Nov 2017 11:08:36 -0400
-Subject: [PATCH] MAINTAINERS: update the IMA, EVM, trusted-keys,
-	encrypted-keys entries
-Message-ID: <1509721716.3416.51.camel@linux.vnet.ibm.com>
+From: peterhuewe@gmx.de (Peter Huewe)
+Date: Fri, 03 Nov 2017 17:05:49 +0100
+Subject: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
+In-Reply-To: <20171103142841.2nphkjojzamrdezm@linux.intel.com>
+References: <20171031202357.GA1030@ziepe.ca>
+	<20171103142841.2nphkjojzamrdezm@linux.intel.com>
+Message-ID: <0812DDC3-187D-4F29-BFB5-9A4F509CA376@gmx.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi James,
 
-With all the changes to MAINTAINERS there's a conflict with the patch
-in my next branch. ?Could you carry this patch?
 
-thanks,
+Am 3. November 2017 15:28:41 MEZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
+>On Tue, Oct 31, 2017 at 02:23:57PM -0600, Jason Gunthorpe wrote:
+>> My email address for open source work is moving to this new permanent
+>> personal address.
+>> 
+>> Signed-off-by: Jason Gunthorpe <jgunthorpe@ziepe.ca>
+>> ---
+>>  MAINTAINERS | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 6671f375f7fcdd..b79eb071475ffc 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -13588,7 +13588,7 @@ TPM DEVICE DRIVER
+>>  M:	Peter Huewe <peterhuewe@gmx.de>
+>>  M:	Marcel Selhorst <tpmdd@selhorst.net>
+>>  M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> -R:	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+>> +R:	Jason Gunthorpe <jgg@ziepe.ca>
+>>  W:	http://tpmdd.sourceforge.net
+>>  L:	tpmdd-devel at lists.sourceforge.net (moderated for non-subscribers)
+>>  Q:	https://patchwork.kernel.org/project/tpmdd-devel/list/
+>> -- 
+>> 2.7.4
+>> 
+>
+>Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+>Should these updates go to my tree? I posted previous update to
+>linux-kernel at vger.kernel.org.
+Which equals /dev/null for most cases.
 
-Mimi
----
+Why shouldn'tit go through your tree?
+It's a maintainers update for your subsystem - and you did it in the past when modifying the urls.
 
-Update the mailing list information.
+>/Jarkko
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- MAINTAINERS | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2c43cfabd438..1b41b99be98e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5213,8 +5213,7 @@ F:	fs/ext4/
- 
- Extended Verification Module (EVM)
- M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
--L:	linux-ima-devel at lists.sourceforge.net
--L:	linux-security-module at vger.kernel.org
-+L:	linux-integrity at vger.kernel.org
- S:	Supported
- F:	security/integrity/evm/
- 
-@@ -6840,9 +6839,7 @@ L:	linux-crypto at vger.kernel.org
- INTEGRITY MEASUREMENT ARCHITECTURE (IMA)
- M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
- M:	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
--L:	linux-ima-devel at lists.sourceforge.net
--L:	linux-ima-user at lists.sourceforge.net
--L:	linux-security-module at vger.kernel.org
-+L:	linux-integrity at vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
- S:	Supported
- F:	security/integrity/ima/
-@@ -7625,7 +7622,7 @@ F:	kernel/kexec*
- 
- KEYS-ENCRYPTED
- M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
--L:	linux-security-module at vger.kernel.org
-+L:	linux-integrity at vger.kernel.org
- L:	keyrings at vger.kernel.org
- S:	Supported
- F:	Documentation/security/keys/trusted-encrypted.rst
-@@ -7634,7 +7631,7 @@ F:	security/keys/encrypted-keys/
- 
- KEYS-TRUSTED
- M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
--L:	linux-security-module at vger.kernel.org
-+L:	linux-integrity at vger.kernel.org
- L:	keyrings at vger.kernel.org
- S:	Supported
- F:	Documentation/security/keys/trusted-encrypted.rst
 -- 
-2.7.4
-
+Sent from my mobile
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
