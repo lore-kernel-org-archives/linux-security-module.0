@@ -1,229 +1,129 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 7 Nov 2017 11:37:06 +0100
-Subject: [PATCH v2 11/15] ima: add policy action digest_list
+Date: Tue, 7 Nov 2017 11:37:08 +0100
+Subject: [PATCH v2 13/15] evm: add kernel command line option to select
+	protected xattrs
 In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
 References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-Message-ID: <20171107103710.10883-12-roberto.sassu@huawei.com>
+Message-ID: <20171107103710.10883-14-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The new policy action 'digest_list' has been added to selectively search a
-digest in the ima_digests_htable hash table only for specific rules.
+EVM protects all extended attributes defined by LSMs, if LSMs are enabled
+in the kernel configuration.
 
-The main use case would be to use digest lists to measure/appraise the TCB,
-so that the PCR 10 value is predictable, and to extend a different PCR if
-binaries and libraries are accessed by regular users. The policy should be:
+It is desirable to select a subset of extended attributes at run-time, so
+that setting remaining extended attributes is allowed if they should not be
+protected. At the moment, this option can be used to select security.ima
+and ignore other extended attributes.
 
-measure func=BPRM_CHECK uid=0 digest_list
-measure func=BPRM_CHECK pcr=11
-measure func=MMAP_CHECK uid=0 digest_list
-measure func=MMAP_CHECK pcr=11
-measure func=FILE_CHECK uid=0 digest_list mask=^MAY_READ
-
-appraise uid=0 digest_list
-
-Digest lookup is enabled if the digest_list policy action is not specified
-in the policy.
+Protecting only security.ima is useful when the IMA policy does not rely on
+the correctness of file metadata (e.g. when only rules based on subject
+criteria are specified).
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima.h          |  4 ++--
- security/integrity/ima/ima_api.c      |  7 +++++--
- security/integrity/ima/ima_appraise.c |  2 +-
- security/integrity/ima/ima_main.c     |  5 ++++-
- security/integrity/ima/ima_policy.c   | 17 ++++++++++++++---
- security/integrity/integrity.h        |  1 +
- 6 files changed, 27 insertions(+), 9 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  4 +++
+ include/linux/evm.h                             |  6 +++++
+ security/integrity/evm/evm_main.c               | 36 +++++++++++++++++++++++++
+ 3 files changed, 46 insertions(+)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 4b3b1ca5c09a..ddd0e1e7e99b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -215,7 +215,7 @@ enum ima_hooks {
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 05496622b4ef..ac292121bd90 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1149,6 +1149,10 @@
+ 			Permit 'security.evm' to be updated regardless of
+ 			current integrity status.
  
- /* LIM API function definitions */
- int ima_get_action(struct inode *inode, int mask,
--		   enum ima_hooks func, int *pcr);
-+		   enum ima_hooks func, int *pcr, int *digest_mask);
- int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
- int ima_collect_measurement(struct integrity_iint_cache *iint,
- 			    struct file *file, void *buf, loff_t size,
-@@ -236,7 +236,7 @@ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
- 
- /* IMA policy related functions */
- int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
--		     int flags, int *pcr);
-+		     int flags, int *pcr, int *digest_mask);
- void ima_init_policy(void);
- void ima_update_policy(void);
- void ima_update_policy_flag(void);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c7e8db0ea4c0..01dfab95b6ac 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -161,6 +161,8 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *        MAY_APPEND)
-  * @func: caller identifier
-  * @pcr: pointer filled in if matched measure policy sets pcr=
-+ * @digest_mask: pointer filled with actions for which digest lookup
-+ *               must be disabled
-  *
-  * The policy is defined in terms of keypairs:
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-@@ -172,13 +174,14 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  * Returns IMA_MEASURE, IMA_APPRAISE mask.
-  *
-  */
--int ima_get_action(struct inode *inode, int mask, enum ima_hooks func, int *pcr)
-+int ima_get_action(struct inode *inode, int mask, enum ima_hooks func, int *pcr,
-+		   int *digest_mask)
- {
- 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE;
- 
- 	flags &= ima_policy_flag;
- 
--	return ima_match_policy(inode, func, mask, flags, pcr);
-+	return ima_match_policy(inode, func, mask, flags, pcr, digest_mask);
- }
- 
- /*
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index ec7dfa02c051..285a53452fb5 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -53,7 +53,7 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
- 	if (!ima_appraise)
- 		return 0;
- 
--	return ima_match_policy(inode, func, mask, IMA_APPRAISE, NULL);
-+	return ima_match_policy(inode, func, mask, IMA_APPRAISE, NULL, NULL);
- }
- 
- static int ima_fix_xattr(struct dentry *dentry,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 840362734f91..d58199c8435c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -184,6 +184,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	int disable_mask = (func == DIGEST_LIST_CHECK) ?
- 			   IMA_DO_MASK & ~IMA_APPRAISE_SUBMASK :
- 			   IMA_DO_MASK & ~(IMA_APPRAISE | IMA_APPRAISE_SUBMASK);
-+	int disable_mask_policy = (ima_policy_flag & IMA_SEARCH_DIGEST_LIST) ?
-+				  IMA_DO_MASK & ~IMA_APPRAISE_SUBMASK : 0;
- 
- 	if ((func == DIGEST_LIST_METADATA_CHECK || func == DIGEST_LIST_CHECK) &&
- 	    !ima_policy_flag)
-@@ -196,7 +198,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	 * bitmask based on the appraise/audit/measurement policy.
- 	 * Included is the appraise submask.
- 	 */
--	action = ima_get_action(inode, mask, func, &pcr);
-+	action = ima_get_action(inode, mask, func, &pcr, &disable_mask_policy);
- 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
- 			   (ima_policy_flag & IMA_MEASURE));
- 	if (func == DIGEST_LIST_METADATA_CHECK || func == DIGEST_LIST_CHECK)
-@@ -260,6 +262,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 		goto out_digsig;
- 
- 	digest_lookup = action & ~ima_disable_digest_lookup;
-+	digest_lookup &= ~disable_mask_policy;
- 	if (digest_lookup) {
- 		found_digest = ima_lookup_loaded_digest(iint->ima_hash->digest);
- 		if (found_digest) {
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 2767f7901f94..b9d38a0d45a6 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -365,6 +365,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * @func: IMA hook identifier
-  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-  * @pcr: set the pcr to extend
-+ * @digest_mask: unset actions for which digest lookup should be enabled
-  *
-  * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
-  * conditions.
-@@ -374,7 +375,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * than writes so ima_match_policy() is classical RCU candidate.
-  */
- int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
--		     int flags, int *pcr)
-+		     int flags, int *pcr, int *digest_mask)
- {
- 	struct ima_rule_entry *entry;
- 	int action = 0, actmask = flags | (flags << 1);
-@@ -401,6 +402,8 @@ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
- 
- 		if ((pcr) && (entry->flags & IMA_PCR))
- 			*pcr = entry->pcr;
-+		if (digest_mask && (entry->flags & IMA_SEARCH_DIGEST_LIST))
-+			*digest_mask &= (~entry->action & IMA_DO_MASK);
- 
- 		if (!actmask)
- 			break;
-@@ -421,8 +424,10 @@ void ima_update_policy_flag(void)
- 	struct ima_rule_entry *entry;
- 
- 	list_for_each_entry(entry, ima_rules, list) {
-+		int digest_list = entry->flags & IMA_SEARCH_DIGEST_LIST;
++	evm_xattrs=	[EVM]
++			Format: { "security.ima" }
++			Protect only security.ima extended attribute.
 +
- 		if (entry->action & IMA_DO_MASK)
--			ima_policy_flag |= entry->action;
-+			ima_policy_flag |= (entry->action | digest_list);
- 	}
+ 	failslab=
+ 	fail_page_alloc=
+ 	fail_make_request=[KNL]
+diff --git a/include/linux/evm.h b/include/linux/evm.h
+index 35ed9a8a403a..d31c02fb2ac1 100644
+--- a/include/linux/evm.h
++++ b/include/linux/evm.h
+@@ -14,6 +14,7 @@
+ struct integrity_iint_cache;
  
- 	ima_appraise |= temp_ima_appraise;
-@@ -540,7 +545,7 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_permit_directio,
--	Opt_pcr
-+	Opt_pcr, Opt_digest_list
- };
+ #ifdef CONFIG_EVM
++extern int evm_set_includes_protected_xattrs(char **set, int count);
+ extern int evm_set_key(void *key, size_t keylen);
+ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
+ 					     const char *xattr_name,
+@@ -44,6 +45,11 @@ static inline int posix_xattr_acl(const char *xattrname)
+ #endif
+ #else
  
- static match_table_t policy_tokens = {
-@@ -571,6 +576,7 @@ static match_table_t policy_tokens = {
- 	{Opt_appraise_type, "appraise_type=%s"},
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
-+	{Opt_digest_list, "digest_list"},
- 	{Opt_err, NULL}
- };
++static inline int evm_set_includes_protected_xattrs(char **set, int count)
++{
++	return 1;
++}
++
+ static inline int evm_set_key(void *key, size_t keylen)
+ {
+ 	return -EOPNOTSUPP;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 9826c02e2db8..afd6ee027250 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -68,6 +68,18 @@ static int __init evm_set_fixmode(char *str)
+ }
+ __setup("evm=", evm_set_fixmode);
  
-@@ -889,6 +895,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->flags |= IMA_PCR;
++static int __init evm_select_xattrs(char *str)
++{
++#ifdef CONFIG_IMA_APPRAISE
++	if (strcmp(str, XATTR_NAME_IMA) == 0) {
++		evm_config_xattrnames[0] = XATTR_NAME_IMA;
++		evm_config_xattrnames[1] = NULL;
++	}
++#endif
++	return 0;
++}
++__setup("evm_xattrs=", evm_select_xattrs);
++
+ static void __init evm_init_config(void)
+ {
+ #ifdef CONFIG_EVM_ATTR_FSUUID
+@@ -221,6 +233,30 @@ static int evm_protected_xattr(const char *req_xattr_name)
+ }
  
- 			break;
-+		case Opt_digest_list:
-+			entry->flags |= IMA_SEARCH_DIGEST_LIST;
-+			break;
- 		case Opt_err:
- 			ima_log_string(ab, "UNKNOWN", p);
- 			result = -EINVAL;
-@@ -1158,6 +1167,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, "appraise_type=imasig ");
- 	if (entry->flags & IMA_PERMIT_DIRECTIO)
- 		seq_puts(m, "permit_directio ");
-+	if (entry->flags & IMA_SEARCH_DIGEST_LIST)
-+		seq_puts(m, "digest_list ");
- 	rcu_read_unlock();
- 	seq_puts(m, "\n");
- 	return 0;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index a5951879c15c..b46461a5f43f 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -33,6 +33,7 @@
- #define IMA_DIGSIG_REQUIRED	0x02000000
- #define IMA_PERMIT_DIRECTIO	0x04000000
- #define IMA_NEW_FILE		0x08000000
-+#define IMA_SEARCH_DIGEST_LIST	0x10000000
- 
- #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
- 				 IMA_APPRAISE_SUBMASK)
+ /**
++ * evm_set_includes_protected_xattrs - check if set includes protected xattrs
++ * @set: array of extended attribute names to check
++ * @count: size of array
++ *
++ * Check if the provided set includes all EVM protected extended attributes.
++ *
++ * Return: 1 if set includes all protected xattrs, 0 otherwise.
++ */
++int evm_set_includes_protected_xattrs(char **set, int count)
++{
++	char **xattr;
++	int i, found = 1;
++
++	for (xattr = evm_config_xattrnames; *xattr != NULL; xattr++) {
++		for (i = 0; i < count; i++)
++			if (strcmp(set[i], *xattr) == 0)
++				break;
++		if (i == count)
++			return 0;
++	}
++	return found;
++}
++
++/**
+  * evm_verifyxattr - verify the integrity of the requested xattr
+  * @dentry: object of the verify xattr
+  * @xattr_name: requested xattr
 -- 
 2.11.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
