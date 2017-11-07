@@ -1,121 +1,97 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Tue, 7 Nov 2017 23:59:10 +0530
-Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
-	performance
-In-Reply-To: <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
-	<5ef60315f2254b3b8bcc217a572280e5@infineon.com>
-Message-ID: <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
+From: david.safford@ge.com (Safford, David (GE Global Research, US))
+Date: Tue, 7 Nov 2017 18:03:44 +0000
+Subject: [PATCH v2 00/15] ima: digest list feature
+In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+Message-ID: <BCA04D5D9A3B764C9B7405BBA4D4A3C002317307@ALPMBAPA12.e2k.ad.ge.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+> -----Original Message-----
+> From: linux-integrity-owner at vger.kernel.org [mailto:linux-integrity-
+> owner at vger.kernel.org] On Behalf Of Roberto Sassu
+> Sent: Tuesday, November 07, 2017 5:37 AM
+> To: linux-integrity at vger.kernel.org
+> Cc: linux-security-module at vger.kernel.org; linux-fsdevel at vger.kernel.org;
+> linux-doc at vger.kernel.org; linux-kernel at vger.kernel.org;
+> silviu.vlasceanu at huawei.com; Roberto Sassu <roberto.sassu@huawei.com>
+> Subject: EXT: [PATCH v2 00/15] ima: digest list feature
+> 
+> IMA is a security module with the objective of reporting or enforcing the
+> integrity of a system, by measuring files accessed with the execve(),
+> mmap() and open() system calls. For reporting, it takes advantage of the
+> TPM and extends a PCR with the digest of an evaluated event. For enforcing,
+> it returns a value which is zero if the operation should be allowed, negative if
+> it should be denied.
+> 
+> Measuring files of an operating system introduces three main issues. First,
+> since the overhead introduced by the TPM is noticeable, the performance of
+> the system decreases linearly with the number of measurements taken. 
+> This can be seen especially at boot time.
 
+If you want the measurement chain of trust, every link must be extended in the TPM.
+This is inherent in the model. Doing local verification of TCB files is really no substitute.
+Not to mention that leaving out "known" hashes from attestation eliminates the 
+ability to do analytics on the patterns of usage of the good files. Local appraisal is a 
+good thing, but not a complete substitute for remote attestation.
 
-On 10/20/2017 08:12 PM, Alexander.Steffen at infineon.com wrote:
->> The TPM burstcount status indicates the number of bytes that can
->> be sent to the TPM without causing bus wait states.  Effectively,
->> it is the number of empty bytes in the command FIFO.
->>
->> This patch optimizes the tpm_tis_send_data() function by checking
->> the burstcount only once. And if the burstcount is valid, it writes
->> all the bytes at once, permitting wait state.
->>
->> After this change, performance on a TPM 1.2 with an 8 byte
->> burstcount for 1000 extends improved from ~41sec to ~14sec.
->>
->> Suggested-by: Ken Goldman<kgold@linux.vnet.ibm.com>  in
->> conjunction with the TPM Device Driver work group.
->> Signed-off-by: Nayna Jain<nayna@linux.vnet.ibm.com>
->> Acked-by: Mimi Zohar<zohar@linux.vnet.ibm.com>
->> ---
->>   drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++----------------------
->> ----
->>   1 file changed, 15 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm_tis_core.c
->> b/drivers/char/tpm/tpm_tis_core.c
->> index b33126a35694..993328ae988c 100644
->> --- a/drivers/char/tpm/tpm_tis_core.c
->> +++ b/drivers/char/tpm/tpm_tis_core.c
->> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
->> u8 *buf, size_t len)
->>   {
->>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->>   	int rc, status, burstcnt;
->> -	size_t count = 0;
->>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
->>
->>   	status = tpm_tis_status(chip);
->> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
->> u8 *buf, size_t len)
->>   		}
->>   	}
->>
->> -	while (count < len - 1) {
->> -		burstcnt = get_burstcount(chip);
->> -		if (burstcnt < 0) {
->> -			dev_err(&chip->dev, "Unable to read burstcount\n");
->> -			rc = burstcnt;
->> -			goto out_err;
->> -		}
->> -		burstcnt = min_t(int, burstcnt, len - count - 1);
->> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
->>> locality),
->> -					 burstcnt, buf + count);
->> -		if (rc < 0)
->> -			goto out_err;
->> -
->> -		count += burstcnt;
->> -
->> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
->>> timeout_c,
->> -					&priv->int_queue, false) < 0) {
->> -			rc = -ETIME;
->> -			goto out_err;
->> -		}
->> -		status = tpm_tis_status(chip);
->> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
->> -			rc = -EIO;
->> -			goto out_err;
->> -		}
->> +	/*
->> +	 * Get the initial burstcount to ensure TPM is ready to
->> +	 * accept data.
->> +	 */
->> +	burstcnt = get_burstcount(chip);
->> +	if (burstcnt < 0) {
->> +		dev_err(&chip->dev, "Unable to read burstcount\n");
->> +		rc = burstcnt;
->> +		goto out_err;
->>   	}
->>
->> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
->> +			len - 1, buf);
->> +	if (rc < 0)
->> +		goto out_err;
->> +
->>   	/* write last byte */
->> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
->> buf[count]);
->> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
->> 1]);
->>   	if (rc < 0)
->>   		goto out_err;
->>
->> --
->> 2.13.3
-> This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to send large amounts of data, e.g. with TPM2_Hash, and subsequent tests seem to take an unusual amount of time. More analysis probably has to wait until November, since I am going to be in Prague next week.
+> Second, managing large measurement
+> lists requires computation power and network bandwidth. 
 
-Thanks Alex for testing these.. Did you get the chance to do any further 
-analysis ?
+So 200 nodes with 5000 entries, 100bytes per entry average (that's a pretty large TCB, but OK):
+that's roughly .8 seconds total on a single Gb link.
 
-Thanks & Regards,
- ?????? - Nayna
+> Third, it is
+> necessary to obtain reference measurements (i.e. digests of software
+> known to be good) to evaluate/enforce the integrity of the system. If file
+> signatures are used to enforce access, Linux distribution vendors have to
+> modify their building systems in order to include signatures in their packages.
 
-> Alexander
->
+Or you can use the initial enrollment to transfer a reference manifest.
+Or you can use SWIDS. Or you can sign everything yourself. (That's what we do.)
 
+> Digest lists aim at mitigating these issues. A digest list is a list of digests that
+> are taken by IMA as reference measurements and loaded before files are
+> accessed. Then, IMA compares calculated digests of accessed files with
+> digests from loaded digest lists. If the digest is found, measurement,
+> appraisal and audit are not performed.
+
+So who manages the "good" hash lists? They have to go into the initramfs,
+and be updated with every package update. And Leaving out attestation of 
+good TCB files reduces the potential power of analytics.
+
+> Multiple digest lists can be loaded at the same time, by providing to IMA
+> metadata for each list: digest, signature and path. The digest is specified so
+> that loaded digest lists can be identified only with the measurement of
+> metadata. The signature is used for appraisal. If the verification succeeds,
+> IMA loads the digest list even if security.ima is missing.
+> 
+> Digest lists address the first issue because the TPM is used only if the digest
+> of a measured file is unknown. On a minimal system, 10 of 1400
+> measurements are unknown because of mutable files (e.g. log files).
+
+At 5ms per extend, you at most save 7 seconds at boot. But the savings are
+actually much less, as the extends run simultaneously with most of the
+other boot operations. I typically can't tell the difference without a 
+stopwatch.
+
+> Digest lists mitigate the second issue because, since digest lists do not
+> change, they don't have to be sent at every remote attestation. Sending
+> unknown measurements and a reference to digest lists would be sufficient.
+
+The .8 second isn't a problem, and even that can be pretty much eliminated by
+sending just the delta measurements.
+
+> Finally, digest lists address also the third issue because Linux distribution
+> vendors already provide the digests of files included in each RPM package.
+> The digest list is stored in the RPM header, signed by the vendor.
+
+But then tooling is needed to select the desired hashes and put them in
+the initramfs for loading.
+
+I guess I don't see the problem, and think the cure introduces issues of its own.
+
+dave
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
