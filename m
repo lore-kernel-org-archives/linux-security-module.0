@@ -1,49 +1,94 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Tue, 07 Nov 2017 15:39:06 -0200
-Subject: [PATCH 02/27] Add a SysRq option to lift kernel lockdown
-In-Reply-To: <150842464774.7923.7951986297563109339.stgit@warthog.procyon.org.uk>
-References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<150842464774.7923.7951986297563109339.stgit@warthog.procyon.org.uk>
-Message-ID: <877ev2rnt1.fsf@linux.vnet.ibm.com>
+From: ebiggers@google.com (Eric Biggers)
+Date: Tue, 7 Nov 2017 09:42:50 -0800
+Subject: [PATCH] KEYS: fix NULL pointer dereference during ASN.1 parsing
+In-Reply-To: <151006796722.16605.11845942372349233494.stgit@warthog.procyon.org.uk>
+References: <151006796722.16605.11845942372349233494.stgit@warthog.procyon.org.uk>
+Message-ID: <20171107174250.GA83529@google.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Tue, Nov 07, 2017 at 03:19:27PM +0000, David Howells wrote:
+> From: Eric Biggers <ebiggers3@gmail.com>
+> 
+> syzkaller reported a NULL pointer dereference in asn1_ber_decoder().  It
+> can be reproduced by the following command, assuming
+> CONFIG_PKCS7_TEST_KEY=y:
+> 
+>         keyctl add pkcs7_test desc '' @s
+> 
+> The bug is that if the data buffer is empty, an integer underflow occurs
+> in the following check:
+> 
+>         if (unlikely(dp >= datalen - 1))
+>                 goto data_overrun_error;
+> 
+> This results in the NULL data pointer being dereferenced.
+> 
+> Fix it by checking for 'datalen - dp < 2' instead.
+> 
+> Also fix the similar check for 'dp >= datalen - n' later in the same
+> function.  That one possibly could result in a buffer overread.
+> 
+> The NULL pointer dereference was reproducible using the "pkcs7_test" key
+> type but not the "asymmetric" key type because the "asymmetric" key type
+> checks for a 0-length payload before calling into the ASN.1 decoder but
+> the "pkcs7_test" key type does not.
+> 
+> The bug report was:
+> 
+>     BUG: unable to handle kernel NULL pointer dereference at           (null)
+>     IP: asn1_ber_decoder+0x17f/0xe60 lib/asn1_decoder.c:233
+>     PGD 7b708067 P4D 7b708067 PUD 7b6ee067 PMD 0
+>     Oops: 0000 [#1] SMP
+>     Modules linked in:
+>     CPU: 0 PID: 522 Comm: syz-executor1 Not tainted 4.14.0-rc8 #7
+>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.3-20171021_125229-anatol 04/01/2014
+>     task: ffff9b6b3798c040 task.stack: ffff9b6b37970000
+>     RIP: 0010:asn1_ber_decoder+0x17f/0xe60 lib/asn1_decoder.c:233
+>     RSP: 0018:ffff9b6b37973c78 EFLAGS: 00010216
+>     RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000000000021c
+>     RDX: ffffffff814a04ed RSI: ffffb1524066e000 RDI: ffffffff910759e0
+>     RBP: ffff9b6b37973d60 R08: 0000000000000001 R09: ffff9b6b3caa4180
+>     R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+>     R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>     FS:  00007f10ed1f2700(0000) GS:ffff9b6b3ea00000(0000) knlGS:0000000000000000
+>     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>     CR2: 0000000000000000 CR3: 000000007b6f3000 CR4: 00000000000006f0
+>     Call Trace:
+>      pkcs7_parse_message+0xee/0x240 crypto/asymmetric_keys/pkcs7_parser.c:139
+>      verify_pkcs7_signature+0x33/0x180 certs/system_keyring.c:216
+>      pkcs7_preparse+0x41/0x70 crypto/asymmetric_keys/pkcs7_key_type.c:63
+>      key_create_or_update+0x180/0x530 security/keys/key.c:855
+>      SYSC_add_key security/keys/keyctl.c:122 [inline]
+>      SyS_add_key+0xbf/0x250 security/keys/keyctl.c:62
+>      entry_SYSCALL_64_fastpath+0x1f/0xbe
+>     RIP: 0033:0x4585c9
+>     RSP: 002b:00007f10ed1f1bd8 EFLAGS: 00000216 ORIG_RAX: 00000000000000f8
+>     RAX: ffffffffffffffda RBX: 00007f10ed1f2700 RCX: 00000000004585c9
+>     RDX: 0000000020000000 RSI: 0000000020008ffb RDI: 0000000020008000
+>     RBP: 0000000000000000 R08: ffffffffffffffff R09: 0000000000000000
+>     R10: 0000000000000000 R11: 0000000000000216 R12: 00007fff1b2260ae
+>     R13: 00007fff1b2260af R14: 00007f10ed1f2700 R15: 0000000000000000
+>     Code: dd ca ff 48 8b 45 88 48 83 e8 01 4c 39 f0 0f 86 a8 07 00 00 e8 53 dd ca ff 49 8d 46 01 48 89 85 58 ff ff ff 48 8b 85 60 ff ff ff <42> 0f b6 0c 30 89 c8 88 8d 75 ff ff ff 83 e0 1f 89 8d 28 ff ff
+>     RIP: asn1_ber_decoder+0x17f/0xe60 lib/asn1_decoder.c:233 RSP: ffff9b6b37973c78
+>     CR2: 0000000000000000
+> 
+> Fixes: 42d5ec27f873 ("X.509: Add an ASN.1 decoder")
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Cc: <stable@vger.kernel.org> # v3.7+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-Hello David,
+If it's not too late can you fix the From: line to have my @google.com address
+to match the Signed-off-by?
 
-David Howells <dhowells@redhat.com> writes:
-> +static struct sysrq_key_op lockdown_lift_sysrq_op = {
-> +	.handler	= sysrq_handle_lockdown_lift,
-> +	.help_msg	= "unSB(x)",
-> +	.action_msg	= "Disabling Secure Boot restrictions",
-> +	.enable_mask	= SYSRQ_DISABLE_USERSPACE,
-> +};
-> +
-> +static int __init lockdown_lift_sysrq(void)
-> +{
-> +	if (kernel_locked_down) {
-> +		lockdown_lift_sysrq_op.help_msg[5] = LOCKDOWN_LIFT_KEY;
-> +		register_sysrq_key(LOCKDOWN_LIFT_KEY, &lockdown_lift_sysrq_op);
-> +	}
-> +	return 0;
-> +}
-> +
-> +late_initcall(lockdown_lift_sysrq);
-> +
-> +#endif /* CONFIG_ALLOW_LOCKDOWN_LIFT_BY_KEY */
+	From: Eric Biggers <ebiggers@google.com>
 
-On non-x86 platforms (tested on powerpc) this fails to build with:
+Also feel free to trim down the register dump like you asked.
 
-security/lock_down.c: In function ?lockdown_lift_sysrq?:
-security/lock_down.c:100:40: error: ?LOCKDOWN_LIFT_KEY? undeclared (first use in this function)
-   lockdown_lift_sysrq_op.help_msg[5] = LOCKDOWN_LIFT_KEY;
-                                        ^~~~~~~~~~~~~~~~~
-security/lock_down.c:100:40: note: each undeclared identifier is reported only once for each function it appears in
+Thanks!
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
