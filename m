@@ -1,129 +1,191 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 7 Nov 2017 11:37:08 +0100
-Subject: [PATCH v2 13/15] evm: add kernel command line option to select
-	protected xattrs
+Date: Tue, 7 Nov 2017 11:37:10 +0100
+Subject: [PATCH v2 15/15] ima: add Documentation/security/IMA-digest-lists.txt
 In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
 References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-Message-ID: <20171107103710.10883-14-roberto.sassu@huawei.com>
+Message-ID: <20171107103710.10883-16-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-EVM protects all extended attributes defined by LSMs, if LSMs are enabled
-in the kernel configuration.
-
-It is desirable to select a subset of extended attributes at run-time, so
-that setting remaining extended attributes is allowed if they should not be
-protected. At the moment, this option can be used to select security.ima
-and ignore other extended attributes.
-
-Protecting only security.ima is useful when the IMA policy does not rely on
-the correctness of file metadata (e.g. when only rules based on subject
-criteria are specified).
+This patch adds the documentation of digest lists.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  4 +++
- include/linux/evm.h                             |  6 +++++
- security/integrity/evm/evm_main.c               | 36 +++++++++++++++++++++++++
- 3 files changed, 46 insertions(+)
+ Documentation/security/IMA-digest-lists.txt | 161 ++++++++++++++++++++++++++++
+ 1 file changed, 161 insertions(+)
+ create mode 100644 Documentation/security/IMA-digest-lists.txt
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 05496622b4ef..ac292121bd90 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1149,6 +1149,10 @@
- 			Permit 'security.evm' to be updated regardless of
- 			current integrity status.
- 
-+	evm_xattrs=	[EVM]
-+			Format: { "security.ima" }
-+			Protect only security.ima extended attribute.
+diff --git a/Documentation/security/IMA-digest-lists.txt b/Documentation/security/IMA-digest-lists.txt
+new file mode 100644
+index 000000000000..afa860bbe53e
+--- /dev/null
++++ b/Documentation/security/IMA-digest-lists.txt
+@@ -0,0 +1,161 @@
++============
++Digest Lists
++============
 +
- 	failslab=
- 	fail_page_alloc=
- 	fail_make_request=[KNL]
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index 35ed9a8a403a..d31c02fb2ac1 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -14,6 +14,7 @@
- struct integrity_iint_cache;
- 
- #ifdef CONFIG_EVM
-+extern int evm_set_includes_protected_xattrs(char **set, int count);
- extern int evm_set_key(void *key, size_t keylen);
- extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
- 					     const char *xattr_name,
-@@ -44,6 +45,11 @@ static inline int posix_xattr_acl(const char *xattrname)
- #endif
- #else
- 
-+static inline int evm_set_includes_protected_xattrs(char **set, int count)
-+{
-+	return 1;
-+}
 +
- static inline int evm_set_key(void *key, size_t keylen)
- {
- 	return -EOPNOTSUPP;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 9826c02e2db8..afd6ee027250 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -68,6 +68,18 @@ static int __init evm_set_fixmode(char *str)
- }
- __setup("evm=", evm_set_fixmode);
- 
-+static int __init evm_select_xattrs(char *str)
-+{
-+#ifdef CONFIG_IMA_APPRAISE
-+	if (strcmp(str, XATTR_NAME_IMA) == 0) {
-+		evm_config_xattrnames[0] = XATTR_NAME_IMA;
-+		evm_config_xattrnames[1] = NULL;
-+	}
-+#endif
-+	return 0;
-+}
-+__setup("evm_xattrs=", evm_select_xattrs);
++INTRODUCTION
++============
 +
- static void __init evm_init_config(void)
- {
- #ifdef CONFIG_EVM_ATTR_FSUUID
-@@ -221,6 +233,30 @@ static int evm_protected_xattr(const char *req_xattr_name)
- }
- 
- /**
-+ * evm_set_includes_protected_xattrs - check if set includes protected xattrs
-+ * @set: array of extended attribute names to check
-+ * @count: size of array
-+ *
-+ * Check if the provided set includes all EVM protected extended attributes.
-+ *
-+ * Return: 1 if set includes all protected xattrs, 0 otherwise.
-+ */
-+int evm_set_includes_protected_xattrs(char **set, int count)
-+{
-+	char **xattr;
-+	int i, found = 1;
++IMA is a security module with the objective of reporting or enforcing the
++integrity of a system, by measuring files accessed with the execve(),
++mmap() and open() system calls. For reporting, it takes advantage of the
++TPM and extends a PCR with the digest of an evaluated event. For enforcing,
++it returns a value which is zero if the operation should be allowed,
++negative if it should be denied.
 +
-+	for (xattr = evm_config_xattrnames; *xattr != NULL; xattr++) {
-+		for (i = 0; i < count; i++)
-+			if (strcmp(set[i], *xattr) == 0)
-+				break;
-+		if (i == count)
-+			return 0;
-+	}
-+	return found;
-+}
++Measuring files of an operating system introduces three main issues. First,
++since the overhead introduced by the TPM is noticeable, the performance of
++the system decreases linearly with the number of measurements taken. This
++can be seen especially at boot time. Second, managing large measurement
++lists requires computation power and network bandwidth. Third, it is
++necessary to obtain reference measurements (i.e. digests of software known
++to be good) to evaluate/enforce the integrity of the system. If file
++signatures are used to enforce access, Linux distribution vendors have to
++modify their building systems in order to include signatures in their
++packages.
 +
-+/**
-  * evm_verifyxattr - verify the integrity of the requested xattr
-  * @dentry: object of the verify xattr
-  * @xattr_name: requested xattr
++Digest lists aim at mitigating these issues. A digest list is a list of
++digests that are taken by IMA as reference measurements and loaded before
++files are accessed. Then, IMA compares calculated digests of accessed files
++with digests from loaded digest lists. If the digest is found, measurement,
++appraisal and audit are not performed.
++
++Multiple digest lists can be loaded at the same time, by providing to IMA
++metadata for each list: digest, signature and path. The digest is specified
++so that loaded digest lists can be identified only with the measurement of
++metadata. The signature is used for appraisal. If the verification
++succeeds, IMA loads the digest list even if security.ima is missing.
++
++Digest lists address the first issue because the TPM is used only if the
++digest of a measured file is unknown. On a minimal system, 10 of 1400
++measurements are unknown because of mutable files (e.g. log files).
++
++Digest lists mitigate the second issue because, since digest lists do not
++change, they don't have to be sent at every remote attestation. Sending
++unknown measurements and a reference to digest lists would be sufficient.
++
++Finally, digest lists address also the third issue because Linux
++distribution vendors already provide the digests of files included in each
++RPM package. The digest list is stored in the RPM header, signed by the
++vendor.
++
++When using digest lists, a limitation must be considered. Since a
++measurement is not reported if the digest of an accessed file is found in a
++digest list, the measurement list does not show which files have been
++actually accessed, and in which sequence.
++
++A possible solution would be to load a list with digest of files which are
++usually accessed. Also, it is possible to selectively enable digest list
++lookup only for a subset of IMA policy rules. For example, a policy could
++enable digest lookup only for file accesses from the TCB and disable it
++for execve() and mmap() from regular users.
++
++
++
++SETUP
++=====
++
++Digest lists should be placed in the /etc/ima/digest_lists directory and
++metadata should be written to /etc/ima/digest_lists/metadata.
++
++If digest lists are included in the initial ram disk, IMA will load them
++early in the boot process. Otherwise, a patched systemd can check if the
++file with digest list metadata exists in the filesystem and, if yes, send
++the path to IMA through the 'digest_lists' securityfs interface. The main
++use case for the patched systemd is to load digest lists of newly installed
++packages, which are not included in the initial ram disk.
++
++
++
++FORMATS
++=======
++
++The format of digest list metadata is:
++
++algo[2]
++digest_len[4] digest[digest_len]
++signature_len[4] signature[signature_len]
++path_len[4] path[path_len]
++ref_id_len[4] ref_id[ref_id_len]
++list_type[2]
++
++algo and list_type are in little endian.
++
++algo values are defined in include/uapi/linux/hash_info.h. The algorithms
++in the list metadata must be the same of ima_hash_algo (algorithm used by
++IMA to calculate the file digest).
++
++list type values:
++
++0: compact digest list
++1: RPM package header
++
++
++The format of the compact digest list is:
++
++entry_id[2] count[4] data_len[4]
++data[data_len]
++[...]
++entry_id[2] count[4] data_len[4]
++data[data_len]
++
++entry_id, count and data_len are in little endian.
++
++entry_id can have values 0 or 1. If entry_id is 0, files with provided
++digests are immutable. If entry_id is 1, files are mutable. 'data' contains
++'count' digests concatenated together.
++
++For example, a compact digest list with 10 SHA256 digests will look like:
++
++0 10 320
++digest1..digest10
++
++
++
++MEASUREMENT LIST
++================
++
++If IMA loads the digest lists from the initial ram disk, the measurement
++list should look like:
++
++10 <template digest> ima-ng sha1:<digest> boot_aggregate
++10 <template digest> ima-ng sha1:<digest> /etc/ima/digest_lists/metadata
++
++For the integrity evaluation, metadata and digest lists must be provided to
++verifiers. The digest of digest lists must be compared with the digest
++included in the metadata, and the digest of metadata with the digest in the
++measurement list.
++
++
++
++APPRAISAL
++=========
++
++Appraisal verification consists on comparing the calculated digest of an
++accessed file with the value of the security.ima extended attribute. With
++digest lists, appraisal verification succeeds if the calculated digest is
++included in a list. Since the digital signature of each digest list is
++verified, it is not possible to allow access of unauthorized files.
++
++For mutable files, IMA writes the current digest to security.ima so that
++next file accesses are allowed even if the files have been modified. For
++immutable files, IMA writes security.ima only if also additional extended
++attributes should be protected by EVM. Otherwise, security.ima would be
++redundant, as digest lists provide reference values.
++
++When IMA writes security.ima, EVM calculates the HMAC based on the current
++value of protected extended attributes. Without file signatures, initial
++extended attribute values will not checked until digest lists include them.
++When extended attribute values are available, IMA will check them as the
++same as the digest, and will not write security.ima for immutable files if
++values are provided for all extended attributes protected by EVM.
 -- 
 2.11.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
