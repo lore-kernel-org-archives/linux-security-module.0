@@ -1,191 +1,204 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Tue, 7 Nov 2017 11:37:10 +0100
-Subject: [PATCH v2 15/15] ima: add Documentation/security/IMA-digest-lists.txt
+Date: Tue, 7 Nov 2017 11:37:09 +0100
+Subject: [PATCH v2 14/15] ima: add support for appraisal with digest lists
 In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
 References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-Message-ID: <20171107103710.10883-16-roberto.sassu@huawei.com>
+Message-ID: <20171107103710.10883-15-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch adds the documentation of digest lists.
+Appraisal verification consists on comparing the calculated digest of an
+accessed file with the value of the security.ima extended attribute. With
+digest lists, appraisal verification succeeds if the calculated digest is
+included in a list. Since the digital signature of each digest list is
+verified, it is not possible to allow access of unauthorized files.
+
+For mutable files, IMA writes the current digest to security.ima so that
+next file accesses are allowed even if the files have been modified. For
+immutable files, IMA writes security.ima only if also additional extended
+attributes should be protected by EVM. Otherwise, security.ima would be
+redundant, as digest lists provide reference values.
+
+When IMA writes security.ima, EVM calculates the HMAC based on the current
+value of protected extended attributes. Without file signatures, initial
+extended attribute values will not checked until digest lists include them.
+When extended attribute values are available, IMA will check them as the
+same as the digest, and will not write security.ima for immutable files if
+values are provided for all extended attributes protected by EVM.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/security/IMA-digest-lists.txt | 161 ++++++++++++++++++++++++++++
- 1 file changed, 161 insertions(+)
- create mode 100644 Documentation/security/IMA-digest-lists.txt
+ security/integrity/ima/ima.h          |  6 +++--
+ security/integrity/ima/ima_appraise.c | 47 +++++++++++++++++++++++++++++++----
+ security/integrity/ima/ima_main.c     |  6 +++--
+ security/integrity/integrity.h        |  2 ++
+ 4 files changed, 52 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/security/IMA-digest-lists.txt b/Documentation/security/IMA-digest-lists.txt
-new file mode 100644
-index 000000000000..afa860bbe53e
---- /dev/null
-+++ b/Documentation/security/IMA-digest-lists.txt
-@@ -0,0 +1,161 @@
-+============
-+Digest Lists
-+============
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index ddd0e1e7e99b..5f8e0740a33e 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -261,7 +261,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+ 			     struct file *file, const unsigned char *filename,
+ 			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened);
++			     int xattr_len, int opened,
++			     struct ima_digest *found_digest);
+ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func);
+ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
+ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
+@@ -277,7 +278,8 @@ static inline int ima_appraise_measurement(enum ima_hooks func,
+ 					   struct file *file,
+ 					   const unsigned char *filename,
+ 					   struct evm_ima_xattr_data *xattr_value,
+-					   int xattr_len, int opened)
++					   int xattr_len, int opened,
++					   struct ima_digest *found_digest)
+ {
+ 	return INTEGRITY_UNKNOWN;
+ }
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 1b2236e637ff..fd03a0278fba 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -201,17 +201,27 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+ 			     struct file *file, const unsigned char *filename,
+ 			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened)
++			     int xattr_len, int opened,
++			     struct ima_digest *found_digest)
+ {
+ 	static const char op[] = "appraise_data";
+ 	char *cause = "unknown";
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	enum integrity_status status = INTEGRITY_UNKNOWN;
+-	int rc = xattr_len, hash_start = 0;
++	struct evm_ima_xattr_data digest_list_value;
++	char *list_metadata = XATTR_NAME_IMA;
++	int rc = xattr_len, hash_start = 0, cache_flags_disabled = 0;
+ 
+ 	if (!(inode->i_opflags & IOP_XATTR))
+-		return INTEGRITY_UNKNOWN;
++		return found_digest ? INTEGRITY_PASS : INTEGRITY_UNKNOWN;
 +
++	if (found_digest && (!rc || rc == -ENODATA)) {
++		digest_list_value.type = found_digest->is_mutable ?
++			IMA_DIGEST_LIST_MUTABLE : IMA_DIGEST_LIST_IMMUTABLE;
++		xattr_value = &digest_list_value;
++		rc = sizeof(*xattr_value);
++	}
+ 
+ 	if (rc <= 0) {
+ 		if (rc && rc != -ENODATA)
+@@ -228,6 +238,9 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 		goto out;
+ 	}
+ 
++	if (xattr_value == &digest_list_value)
++		goto no_evm_check;
 +
-+INTRODUCTION
-+============
+ 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+ 	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
+ 		if ((status == INTEGRITY_NOLABEL)
+@@ -237,13 +250,17 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			cause = "invalid-HMAC";
+ 		goto out;
+ 	}
 +
-+IMA is a security module with the objective of reporting or enforcing the
-+integrity of a system, by measuring files accessed with the execve(),
-+mmap() and open() system calls. For reporting, it takes advantage of the
-+TPM and extends a PCR with the digest of an evaluated event. For enforcing,
-+it returns a value which is zero if the operation should be allowed,
-+negative if it should be denied.
++no_evm_check:
+ 	switch (xattr_value->type) {
+ 	case IMA_XATTR_DIGEST_NG:
+ 		/* first byte contains algorithm id */
+ 		hash_start = 1;
+ 		/* fall through */
+ 	case IMA_XATTR_DIGEST:
+-		if (iint->flags & IMA_DIGSIG_REQUIRED) {
++		if (found_digest && !found_digest->is_mutable)
++			iint->flags |= IMA_DIGSIG;
++		else if (iint->flags & IMA_DIGSIG_REQUIRED) {
+ 			cause = "IMA-signature-required";
+ 			status = INTEGRITY_FAIL;
+ 			break;
+@@ -280,6 +297,25 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			status = INTEGRITY_PASS;
+ 		}
+ 		break;
++	case IMA_DIGEST_LIST_MUTABLE:
++		if (iint->flags & IMA_DIGSIG_REQUIRED) {
++			cause = "IMA-signature-required";
++			status = INTEGRITY_FAIL;
++			break;
++		}
++		if (ima_fix_xattr(dentry, iint) == -EROFS)
++			cache_flags_disabled = 1;
 +
-+Measuring files of an operating system introduces three main issues. First,
-+since the overhead introduced by the TPM is noticeable, the performance of
-+the system decreases linearly with the number of measurements taken. This
-+can be seen especially at boot time. Second, managing large measurement
-+lists requires computation power and network bandwidth. Third, it is
-+necessary to obtain reference measurements (i.e. digests of software known
-+to be good) to evaluate/enforce the integrity of the system. If file
-+signatures are used to enforce access, Linux distribution vendors have to
-+modify their building systems in order to include signatures in their
-+packages.
++		status = INTEGRITY_PASS;
++		break;
++	case IMA_DIGEST_LIST_IMMUTABLE:
++		iint->flags |= IMA_DIGSIG;
++		if (!evm_set_includes_protected_xattrs(&list_metadata, 1))
++			if (ima_fix_xattr(dentry, iint) == -EROFS)
++				cache_flags_disabled = 1;
 +
-+Digest lists aim at mitigating these issues. A digest list is a list of
-+digests that are taken by IMA as reference measurements and loaded before
-+files are accessed. Then, IMA compares calculated digests of accessed files
-+with digests from loaded digest lists. If the digest is found, measurement,
-+appraisal and audit are not performed.
-+
-+Multiple digest lists can be loaded at the same time, by providing to IMA
-+metadata for each list: digest, signature and path. The digest is specified
-+so that loaded digest lists can be identified only with the measurement of
-+metadata. The signature is used for appraisal. If the verification
-+succeeds, IMA loads the digest list even if security.ima is missing.
-+
-+Digest lists address the first issue because the TPM is used only if the
-+digest of a measured file is unknown. On a minimal system, 10 of 1400
-+measurements are unknown because of mutable files (e.g. log files).
-+
-+Digest lists mitigate the second issue because, since digest lists do not
-+change, they don't have to be sent at every remote attestation. Sending
-+unknown measurements and a reference to digest lists would be sufficient.
-+
-+Finally, digest lists address also the third issue because Linux
-+distribution vendors already provide the digests of files included in each
-+RPM package. The digest list is stored in the RPM header, signed by the
-+vendor.
-+
-+When using digest lists, a limitation must be considered. Since a
-+measurement is not reported if the digest of an accessed file is found in a
-+digest list, the measurement list does not show which files have been
-+actually accessed, and in which sequence.
-+
-+A possible solution would be to load a list with digest of files which are
-+usually accessed. Also, it is possible to selectively enable digest list
-+lookup only for a subset of IMA policy rules. For example, a policy could
-+enable digest lookup only for file accesses from the TCB and disable it
-+for execve() and mmap() from regular users.
-+
-+
-+
-+SETUP
-+=====
-+
-+Digest lists should be placed in the /etc/ima/digest_lists directory and
-+metadata should be written to /etc/ima/digest_lists/metadata.
-+
-+If digest lists are included in the initial ram disk, IMA will load them
-+early in the boot process. Otherwise, a patched systemd can check if the
-+file with digest list metadata exists in the filesystem and, if yes, send
-+the path to IMA through the 'digest_lists' securityfs interface. The main
-+use case for the patched systemd is to load digest lists of newly installed
-+packages, which are not included in the initial ram disk.
-+
-+
-+
-+FORMATS
-+=======
-+
-+The format of digest list metadata is:
-+
-+algo[2]
-+digest_len[4] digest[digest_len]
-+signature_len[4] signature[signature_len]
-+path_len[4] path[path_len]
-+ref_id_len[4] ref_id[ref_id_len]
-+list_type[2]
-+
-+algo and list_type are in little endian.
-+
-+algo values are defined in include/uapi/linux/hash_info.h. The algorithms
-+in the list metadata must be the same of ima_hash_algo (algorithm used by
-+IMA to calculate the file digest).
-+
-+list type values:
-+
-+0: compact digest list
-+1: RPM package header
-+
-+
-+The format of the compact digest list is:
-+
-+entry_id[2] count[4] data_len[4]
-+data[data_len]
-+[...]
-+entry_id[2] count[4] data_len[4]
-+data[data_len]
-+
-+entry_id, count and data_len are in little endian.
-+
-+entry_id can have values 0 or 1. If entry_id is 0, files with provided
-+digests are immutable. If entry_id is 1, files are mutable. 'data' contains
-+'count' digests concatenated together.
-+
-+For example, a compact digest list with 10 SHA256 digests will look like:
-+
-+0 10 320
-+digest1..digest10
-+
-+
-+
-+MEASUREMENT LIST
-+================
-+
-+If IMA loads the digest lists from the initial ram disk, the measurement
-+list should look like:
-+
-+10 <template digest> ima-ng sha1:<digest> boot_aggregate
-+10 <template digest> ima-ng sha1:<digest> /etc/ima/digest_lists/metadata
-+
-+For the integrity evaluation, metadata and digest lists must be provided to
-+verifiers. The digest of digest lists must be compared with the digest
-+included in the metadata, and the digest of metadata with the digest in the
-+measurement list.
-+
-+
-+
-+APPRAISAL
-+=========
-+
-+Appraisal verification consists on comparing the calculated digest of an
-+accessed file with the value of the security.ima extended attribute. With
-+digest lists, appraisal verification succeeds if the calculated digest is
-+included in a list. Since the digital signature of each digest list is
-+verified, it is not possible to allow access of unauthorized files.
-+
-+For mutable files, IMA writes the current digest to security.ima so that
-+next file accesses are allowed even if the files have been modified. For
-+immutable files, IMA writes security.ima only if also additional extended
-+attributes should be protected by EVM. Otherwise, security.ima would be
-+redundant, as digest lists provide reference values.
-+
-+When IMA writes security.ima, EVM calculates the HMAC based on the current
-+value of protected extended attributes. Without file signatures, initial
-+extended attribute values will not checked until digest lists include them.
-+When extended attribute values are available, IMA will check them as the
-+same as the digest, and will not write security.ima for immutable files if
-+values are provided for all extended attributes protected by EVM.
++		status = INTEGRITY_PASS;
++		break;
+ 	default:
+ 		status = INTEGRITY_UNKNOWN;
+ 		cause = "unknown-ima-data";
+@@ -302,7 +338,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else {
+-		ima_cache_flags(iint, func);
++		if (!cache_flags_disabled)
++			ima_cache_flags(iint, func);
+ 	}
+ 	ima_set_cache_status(iint, func, status);
+ 	return status;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index d58199c8435c..a6cd414b46e3 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -270,7 +270,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 			action &= ~action_done;
+ 			iint->flags |= (action_done << 1);
+ 
+-			if (!(digest_lookup & IMA_APPRAISE))
++			if (!(digest_lookup & IMA_APPRAISE) ||
++			    opened & FILE_CREATED)
+ 				found_digest = NULL;
+ 			if (digest_lookup & IMA_MEASURE)
+ 				iint->measured_pcrs |= (0x1 << pcr);
+@@ -282,7 +283,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+-					      xattr_value, xattr_len, opened);
++					      xattr_value, xattr_len, opened,
++					      found_digest);
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index b46461a5f43f..f6b3c15dc57f 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -59,6 +59,8 @@ enum evm_ima_xattr_type {
+ 	EVM_XATTR_HMAC,
+ 	EVM_IMA_XATTR_DIGSIG,
+ 	IMA_XATTR_DIGEST_NG,
++	IMA_DIGEST_LIST_MUTABLE,
++	IMA_DIGEST_LIST_IMMUTABLE,
+ 	IMA_XATTR_LAST
+ };
+ 
 -- 
 2.11.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
