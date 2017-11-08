@@ -1,36 +1,57 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Thu, 9 Nov 2017 10:18:59 +1100 (AEDT)
-Subject: [GIT PULL] linux-integrity patches for 4.15-security-next-testing
-In-Reply-To: <1510178057.4484.64.camel@linux.vnet.ibm.com>
-References: <1510178057.4484.64.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LFD.2.20.1711091018260.19483@localhost>
+From: sfr@canb.auug.org.au (Stephen Rothwell)
+Date: Thu, 9 Nov 2017 10:26:35 +1100
+Subject: [RFC PATCH] ima: require secure_boot rules in lockdown mode
+In-Reply-To: <1510175047.4484.35.camel@linux.vnet.ibm.com>
+References: <1509382827.3583.143.camel@linux.vnet.ibm.com>
+	<1508774387.3639.128.camel@linux.vnet.ibm.com>
+	<750.1509378910@warthog.procyon.org.uk>
+	<3691.1509383138@warthog.procyon.org.uk>
+	<1509385178.3583.159.camel@linux.vnet.ibm.com>
+	<alpine.LFD.2.20.1710311424310.22021@localhost>
+	<1510173982.4484.30.camel@linux.vnet.ibm.com>
+	<20171109075334.1809f4cc@canb.auug.org.au>
+	<1510175047.4484.35.camel@linux.vnet.ibm.com>
+Message-ID: <20171109102635.7691281d@canb.auug.org.au>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 8 Nov 2017, Mimi Zohar wrote:
+Hi Mimi,
 
-> Hi James,
+On Wed, 08 Nov 2017 16:04:07 -0500 Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>
+> On Thu, 2017-11-09 at 07:53 +1100, Stephen Rothwell wrote:
+> > 
+> > On Wed, 08 Nov 2017 15:46:22 -0500 Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:  
+> > >
+> > > [Cc'ing Stephen Rothwell]
+> > > 
+> > > On Tue, 2017-10-31 at 14:25 +1100, James Morris wrote:  
+> > > > On Mon, 30 Oct 2017, Mimi Zohar wrote:
+> > > >     
+> > > > > James is staging the subsystem patches independently of each other, in
+> > > > > case of a similar problem, so that they can be pulled separately.
+> > > > > ?There's a new "next-general" branch.    
+> > > > 
+> > > > If you send me a pull request, I'm combining branches into next-testing, 
+> > > > too, which is pulled into -next.    
+> > > 
+> > > linux-next already has the IMA patches, which might be confusing.  
+> > 
+> > Not if they are the same *commits* i.e. if the tree/branch that James
+> > merges is the same as the one that I already merge of yours
+> > (git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity#next)  
 > 
-> These are the rebased EVM & IMA patches for the security/next-testing
-> branch. ?There is a mixture of bug fixes, code cleanup, preparatory
-> code for new functionality and new functionality.
-> 
-> Commit?26ddabfe96bb "evm: enable EVM when X509 certificate is loaded"
-> enabled EVM without loading a symmetric key, but was limited to
-> defining the x509 certificate pathname at build. ?Included in this set
-> of patches is the ability of enabling EVM, without loading the EVM
-> symmetric key, from userspace. ?New is the ability to prevent the
-> loading of an EVM symmetric key.
-> 
-> [A version of commit 917086ff231f "vfs: fix mounting a filesystem with
-> i_version" is included here, as it was upstreamed in -rc6.]
-> 
+> James' security tree is based on -rc3, while the integrity tree is
+> based on -rc4. ?The rebased integrity patches are now in my security-
+> next-integrity branch.
 
-Merged to next-testing and next-integrity in
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+So since those patches are now in James tree, you should drop them from
+the integrity tree.
 
-
-- James
 -- 
-James Morris
-<james.l.morris@oracle.com>
+Cheers,
+Stephen Rothwell
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
