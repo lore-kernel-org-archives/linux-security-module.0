@@ -1,123 +1,66 @@
-From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
-Date: Wed, 8 Nov 2017 11:32:40 +0000
-Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
-	performance
-In-Reply-To: <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
-	<5ef60315f2254b3b8bcc217a572280e5@infineon.com>
-	<e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
-Message-ID: <09fb75ce43fb4e50ac83df7ef9be57a4@infineon.com>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Wed, 8 Nov 2017 13:00:37 +0100
+Subject: [PATCH v2 00/15] ima: digest list feature
+In-Reply-To: <CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+	<CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
+	<899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
+	<CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+Message-ID: <e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> On 10/20/2017 08:12 PM, Alexander.Steffen at infineon.com wrote:
-> >> The TPM burstcount status indicates the number of bytes that can
-> >> be sent to the TPM without causing bus wait states.  Effectively,
-> >> it is the number of empty bytes in the command FIFO.
-> >>
-> >> This patch optimizes the tpm_tis_send_data() function by checking
-> >> the burstcount only once. And if the burstcount is valid, it writes
-> >> all the bytes at once, permitting wait state.
-> >>
-> >> After this change, performance on a TPM 1.2 with an 8 byte
-> >> burstcount for 1000 extends improved from ~41sec to ~14sec.
-> >>
-> >> Suggested-by: Ken Goldman<kgold@linux.vnet.ibm.com>  in
-> >> conjunction with the TPM Device Driver work group.
-> >> Signed-off-by: Nayna Jain<nayna@linux.vnet.ibm.com>
-> >> Acked-by: Mimi Zohar<zohar@linux.vnet.ibm.com>
-> >> ---
-> >>   drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++------------------
-> ----
-> >> ----
-> >>   1 file changed, 15 insertions(+), 27 deletions(-)
-> >>
-> >> diff --git a/drivers/char/tpm/tpm_tis_core.c
-> >> b/drivers/char/tpm/tpm_tis_core.c
-> >> index b33126a35694..993328ae988c 100644
-> >> --- a/drivers/char/tpm/tpm_tis_core.c
-> >> +++ b/drivers/char/tpm/tpm_tis_core.c
-> >> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip
-> *chip,
-> >> u8 *buf, size_t len)
-> >>   {
-> >>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-> >>   	int rc, status, burstcnt;
-> >> -	size_t count = 0;
-> >>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-> >>
-> >>   	status = tpm_tis_status(chip);
-> >> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip
-> *chip,
-> >> u8 *buf, size_t len)
-> >>   		}
-> >>   	}
-> >>
-> >> -	while (count < len - 1) {
-> >> -		burstcnt = get_burstcount(chip);
-> >> -		if (burstcnt < 0) {
-> >> -			dev_err(&chip->dev, "Unable to read burstcount\n");
-> >> -			rc = burstcnt;
-> >> -			goto out_err;
-> >> -		}
-> >> -		burstcnt = min_t(int, burstcnt, len - count - 1);
-> >> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
-> >>> locality),
-> >> -					 burstcnt, buf + count);
-> >> -		if (rc < 0)
-> >> -			goto out_err;
-> >> -
-> >> -		count += burstcnt;
-> >> -
-> >> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
-> >>> timeout_c,
-> >> -					&priv->int_queue, false) < 0) {
-> >> -			rc = -ETIME;
-> >> -			goto out_err;
-> >> -		}
-> >> -		status = tpm_tis_status(chip);
-> >> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
-> >> -			rc = -EIO;
-> >> -			goto out_err;
-> >> -		}
-> >> +	/*
-> >> +	 * Get the initial burstcount to ensure TPM is ready to
-> >> +	 * accept data.
-> >> +	 */
-> >> +	burstcnt = get_burstcount(chip);
-> >> +	if (burstcnt < 0) {
-> >> +		dev_err(&chip->dev, "Unable to read burstcount\n");
-> >> +		rc = burstcnt;
-> >> +		goto out_err;
-> >>   	}
-> >>
-> >> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-> >> +			len - 1, buf);
-> >> +	if (rc < 0)
-> >> +		goto out_err;
-> >> +
-> >>   	/* write last byte */
-> >> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
-> >> buf[count]);
-> >> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
-> >> 1]);
-> >>   	if (rc < 0)
-> >>   		goto out_err;
-> >>
-> >> --
-> >> 2.13.3
-> > This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to
-> send large amounts of data, e.g. with TPM2_Hash, and subsequent tests
-> seem to take an unusual amount of time. More analysis probably has to wait
-> until November, since I am going to be in Prague next week.
+On 11/7/2017 7:06 PM, Matthew Garrett wrote:
+> On Tue, Nov 7, 2017 at 12:53 PM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>> On 11/7/2017 3:49 PM, Matthew Garrett wrote:
+>>> RPM's hardly universal, and distributions are in the process of moving
+>>> away from using it for distributing non-core applications (Flatpak and
+>>> Snap are becoming increasingly popular here). I think this needs to be
+>>> a generic solution rather than having the kernel tied to a specific
+>>> package format.
+>>
+>>
+>> Support for new digest list formats can be easily added. Digest list
+>> metadata includes the digest list type, so that the appropriate parser
+>> is selected.
 > 
-> Thanks Alex for testing these.. Did you get the chance to do any further
-> analysis ?
+> But we're still left in a state where the kernel has to end up
+> supporting a number of very niche formats, and userland agility is
+> tied to the kernel. I think it makes significantly more sense to push
+> the problem out to userland.
 
-I am working on that now. Ken's suggestion seems reasonable, so I am going to test whether correctly waiting for the flags to change fixes the problem. If it does, I'll send the patches.
+At least for appraisal, digest lists must be parsed by the kernel. If
+the parser is moved to userspace, I don't know if we are able to provide
+the same guarantee, that the correct set of digests has been uploaded to
+IMA. A new measurement can be added, when IMA receives the digests, but
+a verifier has to verify the signature of the original file, perform
+format conversion, calculate the digest and compare it with that in the
+new IMA measurement. If digest lists are parsed directly by the kernel,
+then the signature can be verified directly.
 
-Alexander
+
+>> Digest lists should be parsed directly by the kernel, because processing
+>> the lists in userspace would increase the chances that a compromised
+>> tool does not upload to the kernel the expected digests. Also, digest
+>> lists must be processed before init, otherwise appraisal will deny the
+>> execution. Lastly, the mechanism of parsing files from the kernel is
+>> already used to parse the IMA policy.
+> 
+> Isn't failing to upload the expected digest list just a DoS? We
+> already expect to load keys from initramfs, so it seems fine to parse
+> stuff there - what's the problem with extracting information from
+> RPMs, translating them to the generic format and pushing that into the
+> kernel?
+
+The main problem is that the digest list measurement, performed when the
+parser accesses the file containing the RPM header, might not reflect
+what IMA uses for digest lookup.
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
