@@ -1,83 +1,77 @@
-From: takahiro.akashi@linaro.org (AKASHI, Takahiro)
-Date: Wed, 8 Nov 2017 15:15:54 +0900
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <20171107230700.GJ22894@wotan.suse.de>
-References: <1509660086.3416.15.camel@linux.vnet.ibm.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-Message-ID: <20171108061551.GD7859@linaro.org>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 8 Nov 2017 08:36:40 +0200
+Subject: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
+In-Reply-To: <20171107150356.uln3lks64zt5oxjv@linux.intel.com>
+References: <20171031202357.GA1030@ziepe.ca>
+	<20171103142841.2nphkjojzamrdezm@linux.intel.com>
+	<0812DDC3-187D-4F29-BFB5-9A4F509CA376@gmx.de>
+	<20171107150356.uln3lks64zt5oxjv@linux.intel.com>
+Message-ID: <20171108063640.kxwag6fzguetpjnf@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Luis,
-
-Thank you for this heads-up.
-
-On Wed, Nov 08, 2017 at 12:07:00AM +0100, Luis R. Rodriguez wrote:
-> On Thu, Nov 02, 2017 at 06:10:41PM -0400, Mimi Zohar wrote:
-> > On Thu, 2017-11-02 at 22:04 +0000, David Howells wrote:
-> > > Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > > 
-> > > > > Only validly signed device firmware may be loaded.
-> > > > 
-> > > > fw_get_filesystem_firmware() calls kernel_read_file_from_path() to
-> > > > read the firmware, which calls into the security hooks. Is there
-> > > > another place that validates the firmware signatures. ?I'm not seeing
-> > > > which patch requires firmware to be signed?
-> > > 
-> > > Luis has a set of patches for this.  However, I'm not sure if that's going
-> > > anywhere at the moment.  Possibly I should remove this from the manpage for
-> > > the moment.
+On Tue, Nov 07, 2017 at 05:03:56PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Nov 03, 2017 at 05:05:49PM +0100, Peter Huewe wrote:
+> > 
+> > 
+> > Am 3. November 2017 15:28:41 MEZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
+> > >On Tue, Oct 31, 2017 at 02:23:57PM -0600, Jason Gunthorpe wrote:
+> > >> My email address for open source work is moving to this new permanent
+> > >> personal address.
+> > >> 
+> > >> Signed-off-by: Jason Gunthorpe <jgunthorpe@ziepe.ca>
+> > >> ---
+> > >>  MAINTAINERS | 2 +-
+> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >> 
+> > >> diff --git a/MAINTAINERS b/MAINTAINERS
+> > >> index 6671f375f7fcdd..b79eb071475ffc 100644
+> > >> --- a/MAINTAINERS
+> > >> +++ b/MAINTAINERS
+> > >> @@ -13588,7 +13588,7 @@ TPM DEVICE DRIVER
+> > >>  M:	Peter Huewe <peterhuewe@gmx.de>
+> > >>  M:	Marcel Selhorst <tpmdd@selhorst.net>
+> > >>  M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > >> -R:	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+> > >> +R:	Jason Gunthorpe <jgg@ziepe.ca>
+> > >>  W:	http://tpmdd.sourceforge.net
+> > >>  L:	tpmdd-devel at lists.sourceforge.net (moderated for non-subscribers)
+> > >>  Q:	https://patchwork.kernel.org/project/tpmdd-devel/list/
+> > >> -- 
+> > >> 2.7.4
+> > >> 
+> > >
+> > >Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > >
+> > >Should these updates go to my tree? I posted previous update to
+> > >linux-kernel at vger.kernel.org.
+> > Which equals /dev/null for most cases.
+> > 
+> > Why shouldn'tit go through your tree?
+> > It's a maintainers update for your subsystem - and you did it in the past when modifying the urls.
+> > 
+> > >/Jarkko
+> > 
+> > -- 
+> > Sent from my mobile
 > 
-> Remove it for now. The state of of affairs for firmware signing is complex given
-> that we first wanted to address how to properly grow the API without making
-> the API worse. This in and of itself was an effort, and that effort also
-> evaluated two different development paradigms:
+> I applied two patches to my tree.
 > 
-> 	o functional API
-> 	o data driven API
-> 
-> I only recently was convinced that functional API should be used, even for
-> commonly used exported symbols,
+> /Jarkko
 
-Are you?
-I haven't answered Linus' question, but my concern about functional APIs,
-as far as firmware signing goes, is that we have no way to _enforce_
-firmware signing to existing (i.e. verification-unaware) drivers if we need
-an explicit call of a function, say, verify_firmware().
+NAK
 
-> and as such I've been going back and slowly
-> grooming the firmware API with small atomic changes to first clean up the
-> complex flag mess we have.
-> 
-> Since I'm busy with that Takahiro AKASHI has taken up firmware singing effort
-> but this will depend on the above small cleanup to be done first. I was busy
-> with addressing existing bugs on the firmware API for a while, then company
-> travel / conferences so was not able to address this, but I'm back now and
-> I believe I should be able to tackle the cleanup now.
+linux-kernel at vger.kernel.org is missing *completely*. It should be at
+minimum in the CC field.
 
-Good to hear.
+My previous update did not go through my tree. I misread your original
+response to say that I should put also URL update to my tree. I did.
+It resulted a merge conflict.
 
-> Only after this is merged can we expect a final respin of the firmware signing
-> effort.
-> 
-> > Or reflect that IMA-appraisal, if enabled, will enforce firmware being
-> > validly signed.
-> 
-> But FWICT lockdown is a built-in kernel thingy, unless lockdown implies IMA
-> it would not be the place to refer to it.
+Updating that file goes out of my territory other than acking the
+updates. Now that linux-kernel is missing this completely unacceptable.
 
-I think that the situation is the same as in module signing.
-
--Takahiro AKASHI
-
-> It seems the documentation was proposed to help users if an error was caught.
-> That error should cover only what is being addressed in code on the kernel.
-> 
->   Luis
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
