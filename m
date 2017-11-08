@@ -1,44 +1,33 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Wed, 8 Nov 2017 21:09:16 +0100
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <1510171269.4484.26.camel@linux.vnet.ibm.com>
-References: <1509660086.3416.15.camel@linux.vnet.ibm.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<1510171269.4484.26.camel@linux.vnet.ibm.com>
-Message-ID: <20171108200916.GF22894@wotan.suse.de>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 08 Nov 2017 15:46:22 -0500
+Subject: [RFC PATCH] ima: require secure_boot rules in lockdown mode
+In-Reply-To: <alpine.LFD.2.20.1710311424310.22021@localhost>
+References: <1509382827.3583.143.camel@linux.vnet.ibm.com>
+	<1508774387.3639.128.camel@linux.vnet.ibm.com>
+	<750.1509378910@warthog.procyon.org.uk>
+	<3691.1509383138@warthog.procyon.org.uk>
+	<1509385178.3583.159.camel@linux.vnet.ibm.com>
+	<alpine.LFD.2.20.1710311424310.22021@localhost>
+Message-ID: <1510173982.4484.30.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 08, 2017 at 03:01:09PM -0500, Mimi Zohar wrote:
-> 
-> > > Or reflect that IMA-appraisal, if enabled, will enforce firmware being
-> > > validly signed.
-> > 
-> > But FWICT lockdown is a built-in kernel thingy, unless lockdown implies IMA
-> > it would not be the place to refer to it.
-> > 
-> > It seems the documentation was proposed to help users if an error was caught.
-> > That error should cover only what is being addressed in code on the kernel.
-> 
-> Enabling "lockdown" needs to take into account IMA-appraisal to
-> prevent breaking systems with it enabled.
-> 
-> An IMA builtin "secure_boot" policy was already upstreamed (commit
-> 503ceaef8e2e "ima: define a set of appraisal rules requiring file
-> signatures"). ?An additional patch, automatically enables the
-> "secure_boot" policy in "lockdown" mode.
-> 
-> Refer to this discussion and patch:
-> http://kernsec.org/pipermail/linux-security-module-archive/2017-October/003913.html
-> http://kernsec.org/pipermail/linux-security-module-archive/2017-October/003910.html
+[Cc'ing Stephen Rothwell]
 
-Ah then yeah this makes sense to mesh into the lock down documentation.
+On Tue, 2017-10-31 at 14:25 +1100, James Morris wrote:
+> On Mon, 30 Oct 2017, Mimi Zohar wrote:
+> 
+> > James is staging the subsystem patches independently of each other, in
+> > case of a similar problem, so that they can be pulled separately.
+> > ?There's a new "next-general" branch.
+> 
+> If you send me a pull request, I'm combining branches into next-testing, 
+> too, which is pulled into -next.
 
- Luis
+linux-next already has the IMA patches, which might be confusing.
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
