@@ -1,41 +1,36 @@
-From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Wed, 8 Nov 2017 15:24:34 -0700
-Subject: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
-In-Reply-To: <E803B459-CB11-4E23-B3BC-4DEF2A0C40B6@gmx.de>
-References: <20171031202357.GA1030@ziepe.ca>
-	<20171103142841.2nphkjojzamrdezm@linux.intel.com>
-	<0812DDC3-187D-4F29-BFB5-9A4F509CA376@gmx.de>
-	<20171107150356.uln3lks64zt5oxjv@linux.intel.com>
-	<20171108063640.kxwag6fzguetpjnf@linux.intel.com>
-	<E803B459-CB11-4E23-B3BC-4DEF2A0C40B6@gmx.de>
-Message-ID: <20171108222434.GF7063@ziepe.ca>
+From: james.l.morris@oracle.com (James Morris)
+Date: Thu, 9 Nov 2017 10:18:59 +1100 (AEDT)
+Subject: [GIT PULL] linux-integrity patches for 4.15-security-next-testing
+In-Reply-To: <1510178057.4484.64.camel@linux.vnet.ibm.com>
+References: <1510178057.4484.64.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LFD.2.20.1711091018260.19483@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 08, 2017 at 10:27:37AM +0100, Peter Huewe wrote:
+On Wed, 8 Nov 2017, Mimi Zohar wrote:
 
-> >Updating that file goes out of my territory other than acking the
-> >updates. 
+> Hi James,
+> 
+> These are the rebased EVM & IMA patches for the security/next-testing
+> branch. ?There is a mixture of bug fixes, code cleanup, preparatory
+> code for new functionality and new functionality.
+> 
+> Commit?26ddabfe96bb "evm: enable EVM when X509 certificate is loaded"
+> enabled EVM without loading a symmetric key, but was limited to
+> defining the x509 certificate pathname at build. ?Included in this set
+> of patches is the ability of enabling EVM, without loading the EVM
+> symmetric key, from userspace. ?New is the ability to prevent the
+> loading of an EVM symmetric key.
+> 
+> [A version of commit 917086ff231f "vfs: fix mounting a filesystem with
+> i_version" is included here, as it was upstreamed in -rc6.]
+> 
 
-> Imho not really, since there is no MAINTAINERS maintainer.  If you
-> feel uncomfortable with adding the changes to MAINTAINERS via your
-> tree, please ask James to pull them up - just as Mimi did for her
-> linux-integrity update.
+Merged to next-testing and next-integrity in
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
 
-Agreed, if you are submitting pull requests then the MAINTAINERS
-update for TPM related things should go into your pull request. That
-is appropriate..
 
-It isn't necessary for everything to be cc'd everywhere, ultimately it
-is your responsibility as the TPM maintainer to accept/reject this
-change.
-
-If it was a larger change, like adding/removing a maintainer then a
-large audiance would be appropriate, but this is just changing
-spelling and the patch was PGP signed ..
-
-Jason
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+- James
+-- 
+James Morris
+<james.l.morris@oracle.com>
