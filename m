@@ -1,50 +1,42 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:32:45 +0000
-Subject: [PATCH 17/30] acpi: Disable ACPI table override if the kernel is
-	locked down
+Date: Thu,  9 Nov 2017 17:32:37 +0000
+Subject: [PATCH 16/30] acpi: Ignore acpi_rsdp kernel param when the kernel has
+	been locked down
 In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024876570.28329.13782951341910655442.stgit@warthog.procyon.org.uk>
+Message-ID: <151024875727.28329.10602033342875428842.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Linn Crosetto <linn@hpe.com>
+From: Josh Boyer <jwboyer@redhat.com>
 
->From the kernel documentation (initrd_table_override.txt):
+This option allows userspace to pass the RSDP address to the kernel, which
+makes it possible for a user to modify the workings of hardware .  Reject
+the option when the kernel is locked down.
 
-  If the ACPI_INITRD_TABLE_OVERRIDE compile option is true, it is possible
-  to override nearly any ACPI table provided by the BIOS with an
-  instrumented, modified one.
-
-When securelevel is set, the kernel should disallow any unauthenticated
-changes to kernel space.  ACPI tables contain code invoked by the kernel,
-so do not allow ACPI tables to be overridden if the kernel is locked down.
-
-Signed-off-by: Linn Crosetto <linn@hpe.com>
+Signed-off-by: Josh Boyer <jwboyer@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
+cc: Dave Young <dyoung@redhat.com>
 cc: linux-acpi at vger.kernel.org
 ---
 
- drivers/acpi/tables.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/acpi/osl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index 80ce2a7d224b..5cc13c42daf9 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -526,6 +526,11 @@ void __init acpi_table_upgrade(void)
- 	if (table_nr == 0)
- 		return;
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index db78d353bab1..36c6527c1b0a 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -192,7 +192,7 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
+ 	acpi_physical_address pa = 0;
  
-+	if (kernel_is_locked_down("ACPI table override")) {
-+		pr_notice("kernel is locked down, ignoring table override\n");
-+		return;
-+	}
-+
- 	acpi_tables_addr =
- 		memblock_find_in_range(0, ACPI_TABLE_UPGRADE_MAX_PHYS,
- 				       all_tables_size, PAGE_SIZE);
+ #ifdef CONFIG_KEXEC
+-	if (acpi_rsdp)
++	if (acpi_rsdp && !kernel_is_locked_down("ACPI RSDP specification"))
+ 		return acpi_rsdp;
+ #endif
+ 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
