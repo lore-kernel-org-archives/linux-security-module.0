@@ -1,50 +1,98 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:31:23 +0000
-Subject: [PATCH 06/30] kexec: Disable at runtime if the kernel is locked down
+Date: Thu,  9 Nov 2017 17:31:08 +0000
+Subject: [PATCH 04/30] Enforce module signatures if the kernel is locked down
 In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024868294.28329.2251122635906824695.stgit@warthog.procyon.org.uk>
+Message-ID: <151024866805.28329.10437019941463042267.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Matthew Garrett <matthew.garrett@nebula.com>
+If the kernel is locked down, require that all modules have valid
+signatures that we can verify or that IMA can validate the file.
 
-kexec permits the loading and execution of arbitrary code in ring 0, which
-is something that lock-down is meant to prevent. It makes sense to disable
-kexec in this situation.
-
-This does not affect kexec_file_load() which can check for a signature on the
-image to be booted.
-
-Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Dave Young <dyoung@redhat.com>
 Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
 Reviewed-by: James Morris <james.l.morris@oracle.com>
-cc: kexec at lists.infradead.org
 ---
 
- kernel/kexec.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/module.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index e62ec4dc6620..7dadfed9b676 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -202,6 +202,13 @@ SYSCALL_DEFINE4(kexec_load, unsigned long, entry, unsigned long, nr_segments,
- 		return -EPERM;
+diff --git a/kernel/module.c b/kernel/module.c
+index de66ec825992..0ce29c8aa75a 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -64,6 +64,7 @@
+ #include <linux/bsearch.h>
+ #include <linux/dynamic_debug.h>
+ #include <linux/audit.h>
++#include <linux/ima.h>
+ #include <uapi/linux/module.h>
+ #include "module-internal.h"
  
- 	/*
-+	 * kexec can be used to circumvent module loading restrictions, so
-+	 * prevent loading in that case
-+	 */
-+	if (kernel_is_locked_down("kexec of unsigned images"))
-+		return -EPERM;
-+
-+	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
- 	 */
+@@ -2757,7 +2758,8 @@ static inline void kmemleak_load_module(const struct module *mod,
+ #endif
+ 
+ #ifdef CONFIG_MODULE_SIG
+-static int module_sig_check(struct load_info *info, int flags)
++static int module_sig_check(struct load_info *info, int flags,
++			    bool can_do_ima_check)
+ {
+ 	int err = -ENOKEY;
+ 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
+@@ -2781,13 +2783,16 @@ static int module_sig_check(struct load_info *info, int flags)
+ 	}
+ 
+ 	/* Not having a signature is only an error if we're strict. */
+-	if (err == -ENOKEY && !sig_enforce)
++	if (err == -ENOKEY && !sig_enforce &&
++	    (!can_do_ima_check || !is_ima_appraise_enabled()) &&
++	    !kernel_is_locked_down("Loading of unsigned modules"))
+ 		err = 0;
+ 
+ 	return err;
+ }
+ #else /* !CONFIG_MODULE_SIG */
+-static int module_sig_check(struct load_info *info, int flags)
++static int module_sig_check(struct load_info *info, int flags,
++			    bool can_do_ima_check)
+ {
+ 	return 0;
+ }
+@@ -3630,13 +3635,13 @@ static int unknown_module_param_cb(char *param, char *val, const char *modname,
+ /* Allocate and load the module: note that size of section 0 is always
+    zero, and we rely on this for optional sections. */
+ static int load_module(struct load_info *info, const char __user *uargs,
+-		       int flags)
++		       int flags, bool can_do_ima_check)
+ {
+ 	struct module *mod;
+ 	long err;
+ 	char *after_dashes;
+ 
+-	err = module_sig_check(info, flags);
++	err = module_sig_check(info, flags, can_do_ima_check);
+ 	if (err)
+ 		goto free_copy;
+ 
+@@ -3830,7 +3835,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
+ 	if (err)
+ 		return err;
+ 
+-	return load_module(&info, uargs, 0);
++	return load_module(&info, uargs, 0, false);
+ }
+ 
+ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+@@ -3857,7 +3862,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+ 	info.hdr = hdr;
+ 	info.len = size;
+ 
+-	return load_module(&info, uargs, flags);
++	return load_module(&info, uargs, flags, true);
+ }
+ 
+ static inline int within(unsigned long addr, void *start, unsigned long size)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
