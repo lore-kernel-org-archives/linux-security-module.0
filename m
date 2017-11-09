@@ -1,49 +1,56 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu, 09 Nov 2017 16:44:42 +0000
-Subject: [RFC][PATCH] Lock down kprobes
-Message-ID: <11290.1510245882@warthog.procyon.org.uk>
+From: mjg59@google.com (Matthew Garrett)
+Date: Thu, 9 Nov 2017 11:46:22 -0500
+Subject: [PATCH v2 00/15] ima: digest list feature
+In-Reply-To: <738f2f11-02fe-a06a-b7f7-2059951b9f99@huawei.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+	<CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
+	<899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
+	<CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+	<e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
+	<CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+	<210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
+	<CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
+	<738f2f11-02fe-a06a-b7f7-2059951b9f99@huawei.com>
+Message-ID: <CACdnJuvLze4+Qx5xRoaHTkkD5vAzq7hGpm8VWM8WTL15UoWBqg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+On Thu, Nov 9, 2017 at 11:13 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> On 11/9/2017 3:47 PM, Matthew Garrett wrote:
+>> There's no need to have a policy that measures those files, because
+>> they're part of the already-measured initramfs. Just set the IMA
+>> policy after you've loaded the digest list.
+>
+>
+> The default IMA policy measures files accessed from the initial ram
+> disk. It is easier to verify individual files, rather than the whole
+> image.
 
-I need to lock down kprobes under secure boot conditions as part of the patch
-series that can be found here:
+That's a matter of implementation. You're not forced to use the default policy.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lock-down
+>> This seems very over-complicated, and it's unclear why the kernel
+>> needs to open the file itself. You *know* that all of userland is
+>
+>
+> You can have a look at ima_fs.c. If appraisal is in enforcing mode,
+> direct upload of a policy is not permitted. The kernel reads the policy,
+> calculates the digest, and verifies the signature.
 
-Can you tell me that if the attached patch is sufficient to the cause?
+Is there an expectation that you'll load additional digest lists at runtime?
 
-Thanks,
-David
----
-commit ffb3484d6e0f1d625f8e84a6a19c139a28a52499
-Author: David Howells <dhowells@redhat.com>
-Date:   Wed Nov 8 16:14:12 2017 +0000
+>> trustworthy at this point even in the absence of signatures. It seem >
+>> reasonable to provide a interface that allows userland to pass a
+>> digest list to the kernel, in the same way that userland can pass an
+>> IMA policy to the kernel. You can then restrict access to that
+>> interface via an LSM.
+>
+>
+> Then digest lists cannot be used alone, without an LSM. Also, verifiers
+> have to check the LSM policy to ensure that only the parser was able to
+> upload the digest lists.
 
-    Lock down kprobes
-    
-    Disallow the creation of kprobes when the kernel is locked down by
-    preventing their registration.  This prevents kprobes from being used to
-    access kernel memory, either to make modifications or to steal crypto data.
-    
-    Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index a1606a4224e1..f06023b0936c 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -1530,6 +1530,9 @@ int register_kprobe(struct kprobe *p)
- 	struct module *probed_mod;
- 	kprobe_opcode_t *addr;
- 
-+	if (kernel_is_locked_down("Use of kprobes"))
-+		return -EPERM;
-+
- 	/* Adjust probe address from symbol */
- 	addr = kprobe_addr(p);
- 	if (IS_ERR(addr))
+Only if you want to add additional digest lists at runtime, but yes,
+you really want to be verifying the LSM policy in any case.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
