@@ -1,87 +1,110 @@
-From: takahiro.akashi@linaro.org (AKASHI, Takahiro)
-Date: Thu, 9 Nov 2017 13:46:21 +0900
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <1510193857.4484.95.camel@linux.vnet.ibm.com>
-References: <1509660086.3416.15.camel@linux.vnet.ibm.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<20171108061551.GD7859@linaro.org>
-	<20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-Message-ID: <20171109044619.GG7859@linaro.org>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Thu, 9 Nov 2017 10:51:15 +0100
+Subject: [PATCH v2 00/15] ima: digest list feature
+In-Reply-To: <CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+	<CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
+	<899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
+	<CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+	<e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
+	<CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+Message-ID: <210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Mimi,
-
-On Wed, Nov 08, 2017 at 09:17:37PM -0500, Mimi Zohar wrote:
-> > > IMHO that should just fail then, ie, a "locked down" kernel should not want to
-> > > *pass* a firmware signature if such thing could not be done.
-> > > 
-> > > Its no different than trying to verify a signed module on a "locked down" for
-> > > which it has no signature.
-> > > 
-> > > But perhaps I'm not understanding the issue well, let me know.
-> > 
-> > My point is quite simple:
-> > my_deviceA_init() {
-> >         err = request_firmware(&fw, "deviceA"); <--- (a)
-> >         if (err)
-> >                 goto err_request;
-> > 
-> >         err = verify_firmware(fw);  <--- (b)
-> >         if (err)
-> >                 goto err_verify;
-> > 
-> >         load_fw_to_deviceA(fw);     <--- (c)
-> >         ...
-> > }
-> > 
-> > As legacy device drivers does not have (b), there is no chance to
-> > prevent loading a firmware at (c) for locked-down kernel.
-> > 
-> > If you allow me to bring in yet another function, say
-> > request_firmware_signable(), which should be used in place of (a)
-> > for all verification-aware drivers, that would be fine.
+On 11/8/2017 4:48 PM, Matthew Garrett wrote:
+> On Wed, Nov 8, 2017 at 7:00 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>> On 11/7/2017 7:06 PM, Matthew Garrett wrote:
+>>> But we're still left in a state where the kernel has to end up
+>>> supporting a number of very niche formats, and userland agility is
+>>> tied to the kernel. I think it makes significantly more sense to push
+>>> the problem out to userland.
+>>
+>>
+>> At least for appraisal, digest lists must be parsed by the kernel. If
+>> the parser is moved to userspace, I don't know if we are able to provide
+>> the same guarantee, that the correct set of digests has been uploaded to
+>> IMA. A new measurement can be added, when IMA receives the digests, but
+>> a verifier has to verify the signature of the original file, perform
+>> format conversion, calculate the digest and compare it with that in the
+>> new IMA measurement. If digest lists are parsed directly by the kernel,
+>> then the signature can be verified directly.
 > 
-> I really don't understand why you need a new function.??The
-> request_firmware() eventually calls kernel_read_file_from_path(),
-> which already calls the pre and post LSM hooks.
+> The code doing the parsing is in the initramfs, which has already been
+> measured at boot time. You can guarantee that it's being done by
+> trusted code.
 
-My assumption here is:
-1) there are some less important and so security-insensitive firmwares,
-   by which I mean that such firmwares won't be expected to be signed in
-   terms of vulnerability or integrity.
-   (I can't give you examples though.)
-2) firmware's signature will be presented separately from the firmware
-   blob itself. Say, "firmware.bin.p7s" for "firmware.bin"
-
-I don't think that the current security_kernel(_post)_read_file() scheme
-fit with this assumption very well.
-
-Thanks,
--Takahiro AKASHI
+The parser can be executed in the initial ram disk, but everything
+accessed before the parser is executed will be measured/appraised
+without digest lists. To do signature-based remote attestation, where
+the verification consists on checking the signature of digests of
+measured files, it would be necessary to sign systemd, libraries,
+everything accessed before the parser, and the parser. If RPM headers
+are parsed by the kernel, measurement/appraisal will be done directly
+with digest lists.
 
 
-> IMA-appraisal is already on these hooks verifying the requested
-> firmware's signature. ?For systems with "lockdown" enabled, but
-> without IMA-appraisal enabled, define a small, builtin LSM that sits
-> on these LSM hooks and denies the unsigned firmware requests.
+>>> Isn't failing to upload the expected digest list just a DoS? We
+>>> already expect to load keys from initramfs, so it seems fine to parse
+>>> stuff there - what's the problem with extracting information from
+>>> RPMs, translating them to the generic format and pushing that into the
+>>> kernel?
+>>
+>>
+>> The main problem is that the digest list measurement, performed when the
+>> parser accesses the file containing the RPM header, might not reflect
+>> what IMA uses for digest lookup.
 > 
-> Mimi
-> 
-> > In this case, all the invocation of request_firmware() in legacy code
-> > could be forced to fail in locked-down kernel.
-> > 
-> > But I think that "signable" should be allowed to be combined with other
-> > features of request_firmware variants like _(no)wait or _direct.
-> > 
-> > -Takahiro AKASHI
-> 
+> Why not?
+
+I assumed you wanted to measure digest lists only at the time they are
+read by the parser, and not when they are read by IMA. If instead digest
+lists are verified again after conversion, the new workflow should be:
+
+1) the kernel parses digest list metadata before systemd is executed
+2) the kernel verifies the signature of digest lists (RPM headers) and
+    add the digest of digest lists to the hash table, so that appraisal
+    succeeds
+3) systemd (with file signature) is executed
+4) the parser (with file signature) is executed
+5) the parser reads and converts the digest lists to the generic format,
+    and writes them to a tmpfs filesystem
+6) the parser generates a new digest list metadata file with the path of
+    converted digest lists and sends the path of the new metadata to IMA
+7) IMA reads the generic digest lists
+
+The measurement list should look like:
+
+10 <digest> ima-sig <digest> boot_aggregate
+10 <digest> ima-sig <digest> /etc/ima/digest_lists/metadata
+10 <digest> ima-sig <digest> /usr/lib/systemd/systemd <signature>
+...
+10 <digest> ima-sig <digest> <parser> <signature>
+10 <digest> ima-sig <digest> /tmp/metadata
+
+
+If parsing of RPM headers is done by the kernel, the measurement list
+will look like:
+
+10 <digest> ima-ng <digest> boot_aggregate
+10 <digest> ima-ng <digest> /etc/ima/digest_lists/metadata
+
+
+A built-in policy should enable appraisal of tmpfs. If not, patch 11/15
+disables digest lookup for appraisal. Since generic digest lists will
+have a security.ima extended attribute (they are mutable files),
+appraisal verification will succeed.
+
+With this solution, digital signatures cannot be required, because
+generic digest lists will have a HMAC. For appraisal, it becomes
+necessary to ensure that only digest lists written by the parser can be
+processed by IMA.
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
