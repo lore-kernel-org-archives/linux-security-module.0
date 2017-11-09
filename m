@@ -1,45 +1,37 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:34:11 +0000
-Subject: [PATCH 28/30] bpf: Restrict kernel image access functions when the
-	kernel is locked down
+Date: Thu,  9 Nov 2017 17:34:03 +0000
+Subject: [PATCH 27/30] Lock down kprobes
 In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024885109.28329.17425439521329322621.stgit@warthog.procyon.org.uk>
+Message-ID: <151024884369.28329.1118657718685892825.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-There are some bpf functions can be used to read kernel memory:
-bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
-private keys in kernel memory (e.g. the hibernation image signing key) to
-be read by an eBPF program and kernel memory to be altered without
-restriction.
+Disallow the creation of kprobes when the kernel is locked down by
+preventing their registration.  This prevents kprobes from being used to
+access kernel memory, either to make modifications or to steal crypto data.
 
-Completely prohibit the use of BPF when the kernel is locked down.
-
-Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: netdev at vger.kernel.org
-cc: Chun-Yi Lee <jlee@suse.com>
-cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
 ---
 
- kernel/bpf/syscall.c |    3 +++
+ kernel/kprobes.c |    3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 25d074920a00..fa58ad74cde6 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1458,6 +1458,9 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
- 	if (!capable(CAP_SYS_ADMIN) && sysctl_unprivileged_bpf_disabled)
- 		return -EPERM;
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index a1606a4224e1..f06023b0936c 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1530,6 +1530,9 @@ int register_kprobe(struct kprobe *p)
+ 	struct module *probed_mod;
+ 	kprobe_opcode_t *addr;
  
-+	if (kernel_is_locked_down("BPF"))
++	if (kernel_is_locked_down("Use of kprobes"))
 +		return -EPERM;
 +
- 	err = check_uarg_tail_zero(uattr, sizeof(attr), size);
- 	if (err)
- 		return err;
+ 	/* Adjust probe address from symbol */
+ 	addr = kprobe_addr(p);
+ 	if (IS_ERR(addr))
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
