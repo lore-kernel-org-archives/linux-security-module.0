@@ -1,153 +1,97 @@
-From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:30:36 +0000
-Subject: [PATCH 00/30] security, efi: Add kernel lockdown
-Message-ID: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+From: rostedt@goodmis.org (Steven Rostedt)
+Date: Thu, 9 Nov 2017 13:03:29 -0500
+Subject: [RFC][PATCH] Lock down ftrace
+In-Reply-To: <11100.1510245732@warthog.procyon.org.uk>
+References: <11100.1510245732@warthog.procyon.org.uk>
+Message-ID: <20171109130329.3de3f41a@gandalf.local.home>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Thu, 09 Nov 2017 16:42:12 +0000
+David Howells <dhowells@redhat.com> wrote:
 
-Here's a set of patches to institute a "locked-down mode" in the kernel and
-to trigger that mode if the kernel is booted in secure-boot mode or through
-the command line.
+> Hi,
+> 
+> I (may) need to lock down ftrace under secure boot conditions as part of the
+> patch series that can be found here:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lock-down
+> 
+> Can you tell me that if the attached patch is sufficient to the cause?
+> 
+> Thanks,
+> David
+> ---
+> commit 3fb4590c0ad0a751b2090c489df79193510e6aaa
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Wed Nov 8 15:41:02 2017 +0000
+> 
+>     Lock down ftrace
+>     
+>     Disallow the use of ftrace when the kernel is locked down.  This patch
+>     turns off ftrace_enabled late in the kernel boot so that the selftest can
+>     still be potentially be run.
+>     
+>     The sysctl that controls ftrace_enables is also disallowed when the kernel
+>     is locked down.  If the lockdown is lifted, then the sysctl can be used to
+>     reenable ftrace - if ftrace was compiled with CONFIG_DYNAMIC_FTRACE, that
+>     is; if it wasn't then it won't be possible to reenable it.
 
-Enabling CONFIG_LOCK_DOWN_KERNEL makes lockdown mode available.
+Actually, I see it being enabled with DYNAMIC_FTRACE not set. Calling
+into sysctl and enabling ftrace_enable, will allow the
+ftrace_trace_function to be set to something other than ftrace_stub
+again, allowing for static function tracing to run too.
 
-Enabling CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ will allow a SysRq combination
-to lift the lockdown.  On x86 this is SysRq+x.  The keys must be pressed on
-an attached keyboard.
+>     
+>     This prevents crypto data theft by analysis of execution patterns, and, if
+>     in future ftrace also logs the register contents at the time, will prevent
+>     data theft by that mechanism also.
+>     
+>     Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+>     Signed-off-by: David Howells <dhowells@redhat.com>
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 6abfafd7f173..9c7135963d80 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -6508,6 +6508,9 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
+>  {
+>  	int ret = -ENODEV;
+>  
+> +	if (kernel_is_locked_down("Use of ftrace"))
+> +		return -EPERM;
+> +
+>  	mutex_lock(&ftrace_lock);
+>  
+>  	if (unlikely(ftrace_disabled))
+> @@ -6896,3 +6899,22 @@ void ftrace_graph_exit_task(struct task_struct *t)
+>  	kfree(ret_stack);
+>  }
+>  #endif
+> +
+> +#ifdef CONFIG_LOCK_DOWN_KERNEL
+> +static int __init ftrace_lock_down(void)
+> +{
+> +	mutex_lock(&ftrace_lock);
+> +
+> +	if (!ftrace_disabled && ftrace_enabled &&
+> +	    kernel_is_locked_down("Use of ftrace")) {
+> +		ftrace_enabled = false;
+> +		last_ftrace_enabled = false;
+> +		ftrace_trace_function = ftrace_stub;
+> +		ftrace_shutdown_sysctl();
+> +	}
+> +
+> +	mutex_unlock(&ftrace_lock);
+> +	return 0;
+> +}
+> +late_initcall(ftrace_lock_down);
+> +#endif
 
-Enabling CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT will cause EFI secure boot to
-trigger kernel lockdown.
+Looks fine to me. We discussed this offline, and this appears to
+implement what we finally decided would be sufficient.
 
-Inside the kernel, kernel_is_locked_down() is used to check if the kernel
-is in lockdown mode.
-
-Note that the secure boot mode entry doesn't work if the kernel is booted
-from older versions of i386/x86_64 Grub as there's a bug in Grub whereby it
-doesn't initialise the boot_params correctly.  The incorrect initialisation
-causes sanitize_boot_params() to be triggered, thereby zapping the secure
-boot flag determined by the EFI boot wrapper.
-
-A manual page, kernel_lockdown.7, is proposed, to which people will be
-directed by messages in dmesg.  This lists the features that are restricted
-amongst other things.  [Note: I need to update this to mention IMA, so I'll
-reply with that later].
-
-Changes:
-
- (*) Made /dev/mem and /dev/kmem explicitly unopenable in lockdown mode,
-     rather than being unopenable as a side effect of /dev/port being made
-     unopenable.
-
- (*) Added lockdowns for ftrace and kprobes.
-
- (*) Made the bpf lockdown prohibit the use of sys_bpf entirely.
-
- (*) Made IMA require secure_boot rules in lockdown mode.
-
- (*) Made module signing and kexec allow unsigned images if IMA has been
-     used to validate the image.
-
-
-The patches can be found here also:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lock-down
-
-David
----
-Chun-Yi Lee (1):
-      kexec_file: Restrict at runtime if the kernel is locked down
-
-Dave Young (1):
-      Copy secure_boot flag in boot params across kexec reboot
-
-David Howells (14):
-      Add the ability to lock down access to the running kernel image
-      Enforce module signatures if the kernel is locked down
-      scsi: Lock down the eata driver
-      Prohibit PCMCIA CIS storage when the kernel is locked down
-      Lock down TIOCSSERIAL
-      Lock down module params that specify hardware parameters (eg. ioport)
-      x86/mmiotrace: Lock down the testmmiotrace module
-      debugfs: Disallow use of debugfs files when the kernel is locked down
-      Lock down /proc/kcore
-      Lock down ftrace
-      Lock down kprobes
-      bpf: Restrict kernel image access functions when the kernel is locked down
-      efi: Add an EFI_SECURE_BOOT flag to indicate secure boot mode
-      efi: Lock down the kernel if booted in secure boot mode
-
-Josh Boyer (2):
-      hibernate: Disable when the kernel is locked down
-      acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down
-
-Kyle McMartin (1):
-      Add a SysRq option to lift kernel lockdown
-
-Linn Crosetto (2):
-      acpi: Disable ACPI table override if the kernel is locked down
-      acpi: Disable APEI error injection if the kernel is locked down
-
-Matthew Garrett (8):
-      Restrict /dev/{mem,kmem,port} when the kernel is locked down
-      kexec: Disable at runtime if the kernel is locked down
-      uswsusp: Disable when the kernel is locked down
-      PCI: Lock down BAR access when the kernel is locked down
-      x86: Lock down IO port access when the kernel is locked down
-      x86/msr: Restrict MSR access when the kernel is locked down
-      asus-wmi: Restrict debugfs interface when the kernel is locked down
-      ACPI: Limit access to custom_method when the kernel is locked down
-
-Mimi Zohar (1):
-      ima: require secure_boot rules in lockdown mode
-
-
- arch/x86/include/asm/setup.h        |    2 +
- arch/x86/kernel/ioport.c            |    6 +-
- arch/x86/kernel/kexec-bzimage64.c   |    1 
- arch/x86/kernel/msr.c               |   10 +++
- arch/x86/kernel/setup.c             |   18 +-----
- arch/x86/mm/testmmiotrace.c         |    3 +
- drivers/acpi/apei/einj.c            |    3 +
- drivers/acpi/custom_method.c        |    3 +
- drivers/acpi/osl.c                  |    2 -
- drivers/acpi/tables.c               |    5 ++
- drivers/char/mem.c                  |    2 +
- drivers/firmware/efi/Makefile       |    1 
- drivers/firmware/efi/secureboot.c   |   38 ++++++++++++
- drivers/input/misc/uinput.c         |    1 
- drivers/pci/pci-sysfs.c             |    9 +++
- drivers/pci/proc.c                  |    9 +++
- drivers/pci/syscall.c               |    3 +
- drivers/pcmcia/cistpl.c             |    3 +
- drivers/platform/x86/asus-wmi.c     |    9 +++
- drivers/scsi/eata.c                 |    5 +-
- drivers/tty/serial/serial_core.c    |    6 ++
- drivers/tty/sysrq.c                 |   19 ++++--
- fs/debugfs/file.c                   |    6 ++
- fs/proc/kcore.c                     |    2 +
- include/linux/efi.h                 |   16 +++--
- include/linux/input.h               |    5 ++
- include/linux/kernel.h              |   17 ++++++
- include/linux/security.h            |    8 +++
- include/linux/sysrq.h               |    8 ++-
- kernel/bpf/syscall.c                |    3 +
- kernel/debug/kdb/kdb_main.c         |    2 -
- kernel/kexec.c                      |    7 ++
- kernel/kexec_file.c                 |    8 +++
- kernel/kprobes.c                    |    3 +
- kernel/module.c                     |   19 ++++--
- kernel/params.c                     |   26 +++++++-
- kernel/power/hibernate.c            |    2 -
- kernel/power/user.c                 |    3 +
- kernel/trace/ftrace.c               |   22 +++++++
- security/Kconfig                    |   32 ++++++++++
- security/Makefile                   |    3 +
- security/integrity/ima/ima_policy.c |   39 +++++++++----
- security/lock_down.c                |  108 +++++++++++++++++++++++++++++++++++
- 43 files changed, 440 insertions(+), 57 deletions(-)
- create mode 100644 drivers/firmware/efi/secureboot.c
- create mode 100644 security/lock_down.c
+-- Steve
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
