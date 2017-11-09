@@ -1,34 +1,87 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 08 Nov 2017 22:08:41 -0500
-Subject: [GIT PULL] linux-integrity patches for 4.15-security-next-testing
-In-Reply-To: <alpine.LFD.2.20.1711091221160.20834@localhost>
-References: <1510178057.4484.64.camel@linux.vnet.ibm.com>
-	<alpine.LFD.2.20.1711091018260.19483@localhost>
-	<1510184012.4484.69.camel@linux.vnet.ibm.com>
-	<alpine.LFD.2.20.1711091221160.20834@localhost>
-Message-ID: <1510196921.4484.122.camel@linux.vnet.ibm.com>
+From: takahiro.akashi@linaro.org (AKASHI, Takahiro)
+Date: Thu, 9 Nov 2017 13:46:21 +0900
+Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
+	lockdown
+In-Reply-To: <1510193857.4484.95.camel@linux.vnet.ibm.com>
+References: <1509660086.3416.15.camel@linux.vnet.ibm.com>
+	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<14219.1509660259@warthog.procyon.org.uk>
+	<1509660641.3416.24.camel@linux.vnet.ibm.com>
+	<20171107230700.GJ22894@wotan.suse.de>
+	<20171108061551.GD7859@linaro.org>
+	<20171108194626.GQ22894@wotan.suse.de>
+	<20171109014841.GF7859@linaro.org>
+	<1510193857.4484.95.camel@linux.vnet.ibm.com>
+Message-ID: <20171109044619.GG7859@linaro.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-11-09 at 12:23 +1100, James Morris wrote:
-> On Wed, 8 Nov 2017, Mimi Zohar wrote:
-> 
-> > > Merged to next-testing and next-integrity in
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+Mimi,
+
+On Wed, Nov 08, 2017 at 09:17:37PM -0500, Mimi Zohar wrote:
+> > > IMHO that should just fail then, ie, a "locked down" kernel should not want to
+> > > *pass* a firmware signature if such thing could not be done.
+> > > 
+> > > Its no different than trying to verify a signed module on a "locked down" for
+> > > which it has no signature.
+> > > 
+> > > But perhaps I'm not understanding the issue well, let me know.
 > > 
-> > Hm, does this mean that these patches will be included in your pull
-> > request? ?Based on Linus "comments" last time, is this such a good
-> > idea?
+> > My point is quite simple:
+> > my_deviceA_init() {
+> >         err = request_firmware(&fw, "deviceA"); <--- (a)
+> >         if (err)
+> >                 goto err_request;
+> > 
+> >         err = verify_firmware(fw);  <--- (b)
+> >         if (err)
+> >                 goto err_verify;
+> > 
+> >         load_fw_to_deviceA(fw);     <--- (c)
+> >         ...
+> > }
+> > 
+> > As legacy device drivers does not have (b), there is no chance to
+> > prevent loading a firmware at (c) for locked-down kernel.
+> > 
+> > If you allow me to bring in yet another function, say
+> > request_firmware_signable(), which should be used in place of (a)
+> > for all verification-aware drivers, that would be fine.
 > 
-> I may send him next-testing, with everything applied, and also links to 
-> the appropriate subsystem branches so he can pull them independently.  I 
-> haven't decided yet (vs. sending a bunch of separate pull requests).
+> I really don't understand why you need a new function.??The
+> request_firmware() eventually calls kernel_read_file_from_path(),
+> which already calls the pre and post LSM hooks.
 
-Sigh, I totally misunderstood the purpose of the next-testing branch.
-Got it.
+My assumption here is:
+1) there are some less important and so security-insensitive firmwares,
+   by which I mean that such firmwares won't be expected to be signed in
+   terms of vulnerability or integrity.
+   (I can't give you examples though.)
+2) firmware's signature will be presented separately from the firmware
+   blob itself. Say, "firmware.bin.p7s" for "firmware.bin"
 
-Mimi
+I don't think that the current security_kernel(_post)_read_file() scheme
+fit with this assumption very well.
 
+Thanks,
+-Takahiro AKASHI
+
+
+> IMA-appraisal is already on these hooks verifying the requested
+> firmware's signature. ?For systems with "lockdown" enabled, but
+> without IMA-appraisal enabled, define a small, builtin LSM that sits
+> on these LSM hooks and denies the unsigned firmware requests.
+> 
+> Mimi
+> 
+> > In this case, all the invocation of request_firmware() in legacy code
+> > could be forced to fail in locked-down kernel.
+> > 
+> > But I think that "signable" should be allowed to be combined with other
+> > features of request_firmware variants like _(no)wait or _direct.
+> > 
+> > -Takahiro AKASHI
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
