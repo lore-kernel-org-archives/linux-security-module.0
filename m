@@ -1,65 +1,96 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:32:22 +0000
-Subject: [PATCH 14/30] asus-wmi: Restrict debugfs interface when the kernel is
-	locked down
+Date: Thu,  9 Nov 2017 17:34:27 +0000
+Subject: [PATCH 30/30] efi: Lock down the kernel if booted in secure boot mode
 In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024874255.28329.17890010907112698997.stgit@warthog.procyon.org.uk>
+Message-ID: <151024886689.28329.1546645765141944290.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Matthew Garrett <matthew.garrett@nebula.com>
+UEFI Secure Boot provides a mechanism for ensuring that the firmware will
+only load signed bootloaders and kernels.  Certain use cases may also
+require that all kernel modules also be signed.  Add a configuration option
+that to lock down the kernel - which includes requiring validly signed
+modules - if the kernel is secure-booted.
 
-We have no way of validating what all of the Asus WMI methods do on a given
-machine - and there's a risk that some will allow hardware state to be
-manipulated in such a way that arbitrary code can be executed in the
-kernel, circumventing module loading restrictions.  Prevent that if the
-kernel is locked down.
-
-Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-cc: acpi4asus-user at lists.sourceforge.net
-cc: platform-driver-x86 at vger.kernel.org
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc: linux-efi at vger.kernel.org
 ---
 
- drivers/platform/x86/asus-wmi.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/kernel/setup.c |    6 ++++--
+ security/Kconfig        |   14 ++++++++++++++
+ security/lock_down.c    |    1 +
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 48e1541dc8d4..ef5587469337 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -1905,6 +1905,9 @@ static int show_dsts(struct seq_file *m, void *data)
- 	int err;
- 	u32 retval = -1;
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 7c2162f9e769..4e38327efb2e 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -64,6 +64,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/ctype.h>
+ #include <linux/uaccess.h>
++#include <linux/security.h>
  
-+	if (kernel_is_locked_down("Asus WMI"))
-+		return -EPERM;
+ #include <linux/percpu.h>
+ #include <linux/crash_dump.h>
+@@ -1039,6 +1040,9 @@ void __init setup_arch(char **cmdline_p)
+ 	if (efi_enabled(EFI_BOOT))
+ 		efi_init();
+ 
++	efi_set_secure_boot(boot_params.secure_boot);
++	init_lockdown();
 +
- 	err = asus_wmi_get_devstate(asus, asus->debug.dev_id, &retval);
+ 	dmi_scan_machine();
+ 	dmi_memdev_walk();
+ 	dmi_set_dump_stack_arch_desc();
+@@ -1197,8 +1201,6 @@ void __init setup_arch(char **cmdline_p)
+ 	/* Allocate bigger log buffer */
+ 	setup_log_buf(1);
  
- 	if (err < 0)
-@@ -1921,6 +1924,9 @@ static int show_devs(struct seq_file *m, void *data)
- 	int err;
- 	u32 retval = -1;
+-	efi_set_secure_boot(boot_params.secure_boot);
+-
+ 	reserve_initrd();
  
-+	if (kernel_is_locked_down("Asus WMI"))
-+		return -EPERM;
+ 	acpi_table_upgrade();
+diff --git a/security/Kconfig b/security/Kconfig
+index 1e997be94ba2..a4fa8b826039 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -222,6 +222,20 @@ config ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
+ 	  Allow the lockdown on a kernel to be lifted, by pressing a SysRq key
+ 	  combination on a wired keyboard.
+ 
++config LOCK_DOWN_IN_EFI_SECURE_BOOT
++	bool "Lock down the kernel in EFI Secure Boot mode"
++	default n
++	select LOCK_DOWN_KERNEL
++	depends on EFI
++	help
++	  UEFI Secure Boot provides a mechanism for ensuring that the firmware
++	  will only load signed bootloaders and kernels.  Secure boot mode may
++	  be determined from EFI variables provided by the system firmware if
++	  not indicated by the boot parameters.
 +
- 	err = asus_wmi_set_devstate(asus->debug.dev_id, asus->debug.ctrl_param,
- 				    &retval);
- 
-@@ -1945,6 +1951,9 @@ static int show_call(struct seq_file *m, void *data)
- 	union acpi_object *obj;
- 	acpi_status status;
- 
-+	if (kernel_is_locked_down("Asus WMI"))
-+		return -EPERM;
++	  Enabling this option turns on results in kernel lockdown being
++	  triggered if EFI Secure Boot is set.
 +
- 	status = wmi_evaluate_method(ASUS_WMI_MGMT_GUID,
- 				     0, asus->debug.method_id,
- 				     &input, &output);
+ 
+ source security/selinux/Kconfig
+ source security/smack/Kconfig
+diff --git a/security/lock_down.c b/security/lock_down.c
+index 2c6b00f0c229..527f7e51dc8d 100644
+--- a/security/lock_down.c
++++ b/security/lock_down.c
+@@ -12,6 +12,7 @@
+ #include <linux/security.h>
+ #include <linux/export.h>
+ #include <linux/sysrq.h>
++#include <linux/efi.h>
+ #include <asm/setup.h>
+ 
+ #ifdef CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
