@@ -1,294 +1,153 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:30:53 +0000
-Subject: [PATCH 02/30] Add a SysRq option to lift kernel lockdown
-In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024865310.28329.3030926961130452532.stgit@warthog.procyon.org.uk>
+Date: Thu,  9 Nov 2017 17:30:36 +0000
+Subject: [PATCH 00/30] security, efi: Add kernel lockdown
+Message-ID: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Kyle McMartin <kyle@redhat.com>
 
-Make an option to provide a sysrq key that will lift the kernel lockdown,
-thereby allowing the running kernel image to be accessed and modified.
+Here's a set of patches to institute a "locked-down mode" in the kernel and
+to trigger that mode if the kernel is booted in secure-boot mode or through
+the command line.
 
-On x86 this is triggered with SysRq+x, but this key may not be available on
-all arches, so it is set by setting LOCKDOWN_LIFT_KEY in asm/setup.h.
-Since this macro must be defined in an arch to be able to use this facility
-for that arch, the Kconfig option is restricted to arches that support it.
+Enabling CONFIG_LOCK_DOWN_KERNEL makes lockdown mode available.
 
-Signed-off-by: Kyle McMartin <kyle@redhat.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: x86 at kernel.org
+Enabling CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ will allow a SysRq combination
+to lift the lockdown.  On x86 this is SysRq+x.  The keys must be pressed on
+an attached keyboard.
+
+Enabling CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT will cause EFI secure boot to
+trigger kernel lockdown.
+
+Inside the kernel, kernel_is_locked_down() is used to check if the kernel
+is in lockdown mode.
+
+Note that the secure boot mode entry doesn't work if the kernel is booted
+from older versions of i386/x86_64 Grub as there's a bug in Grub whereby it
+doesn't initialise the boot_params correctly.  The incorrect initialisation
+causes sanitize_boot_params() to be triggered, thereby zapping the secure
+boot flag determined by the EFI boot wrapper.
+
+A manual page, kernel_lockdown.7, is proposed, to which people will be
+directed by messages in dmesg.  This lists the features that are restricted
+amongst other things.  [Note: I need to update this to mention IMA, so I'll
+reply with that later].
+
+Changes:
+
+ (*) Made /dev/mem and /dev/kmem explicitly unopenable in lockdown mode,
+     rather than being unopenable as a side effect of /dev/port being made
+     unopenable.
+
+ (*) Added lockdowns for ftrace and kprobes.
+
+ (*) Made the bpf lockdown prohibit the use of sys_bpf entirely.
+
+ (*) Made IMA require secure_boot rules in lockdown mode.
+
+ (*) Made module signing and kexec allow unsigned images if IMA has been
+     used to validate the image.
+
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lock-down
+
+David
 ---
+Chun-Yi Lee (1):
+      kexec_file: Restrict at runtime if the kernel is locked down
 
- arch/x86/include/asm/setup.h |    2 ++
- drivers/input/misc/uinput.c  |    1 +
- drivers/tty/sysrq.c          |   19 ++++++++++++-----
- include/linux/input.h        |    5 ++++
- include/linux/sysrq.h        |    8 ++++++-
- kernel/debug/kdb/kdb_main.c  |    2 +-
- security/Kconfig             |   10 +++++++++
- security/lock_down.c         |   47 ++++++++++++++++++++++++++++++++++++++++++
- 8 files changed, 86 insertions(+), 8 deletions(-)
+Dave Young (1):
+      Copy secure_boot flag in boot params across kexec reboot
 
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index a65cf544686a..863f77582c09 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -8,6 +8,8 @@
- #include <linux/linkage.h>
- #include <asm/page_types.h>
- 
-+#define LOCKDOWN_LIFT_KEY 'x'
-+
- #ifdef __i386__
- 
- #include <linux/pfn.h>
-diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
-index 443151de90c6..45a1f5460805 100644
---- a/drivers/input/misc/uinput.c
-+++ b/drivers/input/misc/uinput.c
-@@ -408,6 +408,7 @@ static int uinput_allocate_device(struct uinput_device *udev)
- 	if (!udev->dev)
- 		return -ENOMEM;
- 
-+	udev->dev->flags |= INPUTDEV_FLAGS_SYNTHETIC;
- 	udev->dev->event = uinput_dev_event;
- 	input_set_drvdata(udev->dev, udev);
- 
-diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-index 3ffc1ce29023..8b766dbad6dd 100644
---- a/drivers/tty/sysrq.c
-+++ b/drivers/tty/sysrq.c
-@@ -481,6 +481,7 @@ static struct sysrq_key_op *sysrq_key_table[36] = {
- 	/* x: May be registered on mips for TLB dump */
- 	/* x: May be registered on ppc/powerpc for xmon */
- 	/* x: May be registered on sparc64 for global PMU dump */
-+	/* x: May be registered on x86_64 for disabling secure boot */
- 	NULL,				/* x */
- 	/* y: May be registered on sparc64 for global register dump */
- 	NULL,				/* y */
-@@ -524,7 +525,7 @@ static void __sysrq_put_key_op(int key, struct sysrq_key_op *op_p)
-                 sysrq_key_table[i] = op_p;
- }
- 
--void __handle_sysrq(int key, bool check_mask)
-+void __handle_sysrq(int key, unsigned int from)
- {
- 	struct sysrq_key_op *op_p;
- 	int orig_log_level;
-@@ -544,11 +545,15 @@ void __handle_sysrq(int key, bool check_mask)
- 
-         op_p = __sysrq_get_key_op(key);
-         if (op_p) {
-+		/* Ban synthetic events from some sysrq functionality */
-+		if ((from == SYSRQ_FROM_PROC || from == SYSRQ_FROM_SYNTHETIC) &&
-+		    op_p->enable_mask & SYSRQ_DISABLE_USERSPACE)
-+			printk("This sysrq operation is disabled from userspace.\n");
- 		/*
- 		 * Should we check for enabled operations (/proc/sysrq-trigger
- 		 * should not) and is the invoked operation enabled?
- 		 */
--		if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
-+		if (from == SYSRQ_FROM_KERNEL || sysrq_on_mask(op_p->enable_mask)) {
- 			pr_cont("%s\n", op_p->action_msg);
- 			console_loglevel = orig_log_level;
- 			op_p->handler(key);
-@@ -580,7 +585,7 @@ void __handle_sysrq(int key, bool check_mask)
- void handle_sysrq(int key)
- {
- 	if (sysrq_on())
--		__handle_sysrq(key, true);
-+		__handle_sysrq(key, SYSRQ_FROM_KERNEL);
- }
- EXPORT_SYMBOL(handle_sysrq);
- 
-@@ -661,7 +666,7 @@ static void sysrq_do_reset(unsigned long _state)
- static void sysrq_handle_reset_request(struct sysrq_state *state)
- {
- 	if (state->reset_requested)
--		__handle_sysrq(sysrq_xlate[KEY_B], false);
-+		__handle_sysrq(sysrq_xlate[KEY_B], SYSRQ_FROM_KERNEL);
- 
- 	if (sysrq_reset_downtime_ms)
- 		mod_timer(&state->keyreset_timer,
-@@ -812,8 +817,10 @@ static bool sysrq_handle_keypress(struct sysrq_state *sysrq,
- 
- 	default:
- 		if (sysrq->active && value && value != 2) {
-+			int from = sysrq->handle.dev->flags & INPUTDEV_FLAGS_SYNTHETIC ?
-+					SYSRQ_FROM_SYNTHETIC : 0;
- 			sysrq->need_reinject = false;
--			__handle_sysrq(sysrq_xlate[code], true);
-+			__handle_sysrq(sysrq_xlate[code], from);
- 		}
- 		break;
- 	}
-@@ -1097,7 +1104,7 @@ static ssize_t write_sysrq_trigger(struct file *file, const char __user *buf,
- 
- 		if (get_user(c, buf))
- 			return -EFAULT;
--		__handle_sysrq(c, false);
-+		__handle_sysrq(c, SYSRQ_FROM_PROC);
- 	}
- 
- 	return count;
-diff --git a/include/linux/input.h b/include/linux/input.h
-index fb5e23c7ed98..9d2b45a21ade 100644
---- a/include/linux/input.h
-+++ b/include/linux/input.h
-@@ -42,6 +42,7 @@ struct input_value {
-  * @phys: physical path to the device in the system hierarchy
-  * @uniq: unique identification code for the device (if device has it)
-  * @id: id of the device (struct input_id)
-+ * @flags: input device flags (SYNTHETIC, etc.)
-  * @propbit: bitmap of device properties and quirks
-  * @evbit: bitmap of types of events supported by the device (EV_KEY,
-  *	EV_REL, etc.)
-@@ -124,6 +125,8 @@ struct input_dev {
- 	const char *uniq;
- 	struct input_id id;
- 
-+	unsigned int flags;
-+
- 	unsigned long propbit[BITS_TO_LONGS(INPUT_PROP_CNT)];
- 
- 	unsigned long evbit[BITS_TO_LONGS(EV_CNT)];
-@@ -190,6 +193,8 @@ struct input_dev {
- };
- #define to_input_dev(d) container_of(d, struct input_dev, dev)
- 
-+#define	INPUTDEV_FLAGS_SYNTHETIC	0x000000001
-+
- /*
-  * Verify that we are in sync with input_device_id mod_devicetable.h #defines
-  */
-diff --git a/include/linux/sysrq.h b/include/linux/sysrq.h
-index 387fa7d05c98..f7c52a9ea394 100644
---- a/include/linux/sysrq.h
-+++ b/include/linux/sysrq.h
-@@ -28,6 +28,8 @@
- #define SYSRQ_ENABLE_BOOT	0x0080
- #define SYSRQ_ENABLE_RTNICE	0x0100
- 
-+#define SYSRQ_DISABLE_USERSPACE	0x00010000
-+
- struct sysrq_key_op {
- 	void (*handler)(int);
- 	char *help_msg;
-@@ -42,8 +44,12 @@ struct sysrq_key_op {
-  * are available -- else NULL's).
-  */
- 
-+#define SYSRQ_FROM_KERNEL	0x0001
-+#define SYSRQ_FROM_PROC		0x0002
-+#define SYSRQ_FROM_SYNTHETIC	0x0004
-+
- void handle_sysrq(int key);
--void __handle_sysrq(int key, bool check_mask);
-+void __handle_sysrq(int key, unsigned int from);
- int register_sysrq_key(int key, struct sysrq_key_op *op);
- int unregister_sysrq_key(int key, struct sysrq_key_op *op);
- struct sysrq_key_op *__sysrq_get_key_op(int key);
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index c8146d53ca67..b480cadf9272 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1970,7 +1970,7 @@ static int kdb_sr(int argc, const char **argv)
- 		return KDB_ARGCOUNT;
- 
- 	kdb_trap_printk++;
--	__handle_sysrq(*argv[1], check_mask);
-+	__handle_sysrq(*argv[1], check_mask ? SYSRQ_FROM_KERNEL : 0);
- 	kdb_trap_printk--;
- 
- 	return 0;
-diff --git a/security/Kconfig b/security/Kconfig
-index 8e01fd59ae7e..1e997be94ba2 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -213,6 +213,16 @@ config LOCK_DOWN_KERNEL
- 	  turns off various features that might otherwise allow access to the
- 	  kernel image (eg. setting MSR registers).
- 
-+config ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
-+	bool "Allow the kernel lockdown to be lifted by SysRq"
-+	depends on LOCK_DOWN_KERNEL
-+	depends on MAGIC_SYSRQ
-+	depends on X86
-+	help
-+	  Allow the lockdown on a kernel to be lifted, by pressing a SysRq key
-+	  combination on a wired keyboard.
-+
-+
- source security/selinux/Kconfig
- source security/smack/Kconfig
- source security/tomoyo/Kconfig
-diff --git a/security/lock_down.c b/security/lock_down.c
-index d8595c0e6673..2c6b00f0c229 100644
---- a/security/lock_down.c
-+++ b/security/lock_down.c
-@@ -11,8 +11,14 @@
- 
- #include <linux/security.h>
- #include <linux/export.h>
-+#include <linux/sysrq.h>
-+#include <asm/setup.h>
- 
-+#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
-+static __read_mostly bool kernel_locked_down;
-+#else
- static __ro_after_init bool kernel_locked_down;
-+#endif
- 
- /*
-  * Put the kernel into lock-down mode.
-@@ -58,3 +64,44 @@ bool __kernel_is_locked_down(const char *what, bool first)
- 	return kernel_locked_down;
- }
- EXPORT_SYMBOL(__kernel_is_locked_down);
-+
-+#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
-+
-+/*
-+ * Take the kernel out of lockdown mode.
-+ */
-+static void lift_kernel_lockdown(void)
-+{
-+	pr_notice("Lifting lockdown\n");
-+	kernel_locked_down = false;
-+}
-+
-+/*
-+ * Allow lockdown to be lifted by pressing something like SysRq+x (and not by
-+ * echoing the appropriate letter into the sysrq-trigger file).
-+ */
-+static void sysrq_handle_lockdown_lift(int key)
-+{
-+	if (kernel_locked_down)
-+		lift_kernel_lockdown();
-+}
-+
-+static struct sysrq_key_op lockdown_lift_sysrq_op = {
-+	.handler	= sysrq_handle_lockdown_lift,
-+	.help_msg	= "unSB(x)",
-+	.action_msg	= "Disabling Secure Boot restrictions",
-+	.enable_mask	= SYSRQ_DISABLE_USERSPACE,
-+};
-+
-+static int __init lockdown_lift_sysrq(void)
-+{
-+	if (kernel_locked_down) {
-+		lockdown_lift_sysrq_op.help_msg[5] = LOCKDOWN_LIFT_KEY;
-+		register_sysrq_key(LOCKDOWN_LIFT_KEY, &lockdown_lift_sysrq_op);
-+	}
-+	return 0;
-+}
-+
-+late_initcall(lockdown_lift_sysrq);
-+
-+#endif /* CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ */
+David Howells (14):
+      Add the ability to lock down access to the running kernel image
+      Enforce module signatures if the kernel is locked down
+      scsi: Lock down the eata driver
+      Prohibit PCMCIA CIS storage when the kernel is locked down
+      Lock down TIOCSSERIAL
+      Lock down module params that specify hardware parameters (eg. ioport)
+      x86/mmiotrace: Lock down the testmmiotrace module
+      debugfs: Disallow use of debugfs files when the kernel is locked down
+      Lock down /proc/kcore
+      Lock down ftrace
+      Lock down kprobes
+      bpf: Restrict kernel image access functions when the kernel is locked down
+      efi: Add an EFI_SECURE_BOOT flag to indicate secure boot mode
+      efi: Lock down the kernel if booted in secure boot mode
+
+Josh Boyer (2):
+      hibernate: Disable when the kernel is locked down
+      acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down
+
+Kyle McMartin (1):
+      Add a SysRq option to lift kernel lockdown
+
+Linn Crosetto (2):
+      acpi: Disable ACPI table override if the kernel is locked down
+      acpi: Disable APEI error injection if the kernel is locked down
+
+Matthew Garrett (8):
+      Restrict /dev/{mem,kmem,port} when the kernel is locked down
+      kexec: Disable at runtime if the kernel is locked down
+      uswsusp: Disable when the kernel is locked down
+      PCI: Lock down BAR access when the kernel is locked down
+      x86: Lock down IO port access when the kernel is locked down
+      x86/msr: Restrict MSR access when the kernel is locked down
+      asus-wmi: Restrict debugfs interface when the kernel is locked down
+      ACPI: Limit access to custom_method when the kernel is locked down
+
+Mimi Zohar (1):
+      ima: require secure_boot rules in lockdown mode
+
+
+ arch/x86/include/asm/setup.h        |    2 +
+ arch/x86/kernel/ioport.c            |    6 +-
+ arch/x86/kernel/kexec-bzimage64.c   |    1 
+ arch/x86/kernel/msr.c               |   10 +++
+ arch/x86/kernel/setup.c             |   18 +-----
+ arch/x86/mm/testmmiotrace.c         |    3 +
+ drivers/acpi/apei/einj.c            |    3 +
+ drivers/acpi/custom_method.c        |    3 +
+ drivers/acpi/osl.c                  |    2 -
+ drivers/acpi/tables.c               |    5 ++
+ drivers/char/mem.c                  |    2 +
+ drivers/firmware/efi/Makefile       |    1 
+ drivers/firmware/efi/secureboot.c   |   38 ++++++++++++
+ drivers/input/misc/uinput.c         |    1 
+ drivers/pci/pci-sysfs.c             |    9 +++
+ drivers/pci/proc.c                  |    9 +++
+ drivers/pci/syscall.c               |    3 +
+ drivers/pcmcia/cistpl.c             |    3 +
+ drivers/platform/x86/asus-wmi.c     |    9 +++
+ drivers/scsi/eata.c                 |    5 +-
+ drivers/tty/serial/serial_core.c    |    6 ++
+ drivers/tty/sysrq.c                 |   19 ++++--
+ fs/debugfs/file.c                   |    6 ++
+ fs/proc/kcore.c                     |    2 +
+ include/linux/efi.h                 |   16 +++--
+ include/linux/input.h               |    5 ++
+ include/linux/kernel.h              |   17 ++++++
+ include/linux/security.h            |    8 +++
+ include/linux/sysrq.h               |    8 ++-
+ kernel/bpf/syscall.c                |    3 +
+ kernel/debug/kdb/kdb_main.c         |    2 -
+ kernel/kexec.c                      |    7 ++
+ kernel/kexec_file.c                 |    8 +++
+ kernel/kprobes.c                    |    3 +
+ kernel/module.c                     |   19 ++++--
+ kernel/params.c                     |   26 +++++++-
+ kernel/power/hibernate.c            |    2 -
+ kernel/power/user.c                 |    3 +
+ kernel/trace/ftrace.c               |   22 +++++++
+ security/Kconfig                    |   32 ++++++++++
+ security/Makefile                   |    3 +
+ security/integrity/ima/ima_policy.c |   39 +++++++++----
+ security/lock_down.c                |  108 +++++++++++++++++++++++++++++++++++
+ 43 files changed, 440 insertions(+), 57 deletions(-)
+ create mode 100644 drivers/firmware/efi/secureboot.c
+ create mode 100644 security/lock_down.c
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
