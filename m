@@ -1,118 +1,287 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Thu, 9 Nov 2017 17:13:01 +0100
-Subject: [PATCH v2 00/15] ima: digest list feature
-In-Reply-To: <CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
-References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-	<CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
-	<899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
-	<CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
-	<e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
-	<CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
-	<210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
-	<CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
-Message-ID: <738f2f11-02fe-a06a-b7f7-2059951b9f99@huawei.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Thu,  9 Nov 2017 17:14:05 +0100
+Subject: [PATCH RFC v3 6/7] proc: support new 'pids=all|ptraceable' mount
+	option
+In-Reply-To: <1510244046-3256-1-git-send-email-tixxdz@gmail.com>
+References: <1510244046-3256-1-git-send-email-tixxdz@gmail.com>
+Message-ID: <1510244046-3256-7-git-send-email-tixxdz@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 11/9/2017 3:47 PM, Matthew Garrett wrote:
-> On Thu, Nov 9, 2017 at 4:51 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
->> On 11/8/2017 4:48 PM, Matthew Garrett wrote:
->>> The code doing the parsing is in the initramfs, which has already been
->>> measured at boot time. You can guarantee that it's being done by
->>> trusted code.
->>
->>
->> The parser can be executed in the initial ram disk, but everything
->> accessed before the parser is executed will be measured/appraised
->> without digest lists. To do signature-based remote attestation, where
->> the verification consists on checking the signature of digests of
->> measured files, it would be necessary to sign systemd, libraries,
->> everything accessed before the parser, and the parser. If RPM headers
->> are parsed by the kernel, measurement/appraisal will be done directly
->> with digest lists.
-> 
-> There's no need to have a policy that measures those files, because
-> they're part of the already-measured initramfs. Just set the IMA
-> policy after you've loaded the digest list.
+This patch introduces the new 'pids' mount option, as it was discussed
+and suggested by Andy Lutomirski [1].
 
-The default IMA policy measures files accessed from the initial ram
-disk. It is easier to verify individual files, rather than the whole
-image.
+* If 'pids=' is passed without 'newinstance' then it has no effect.
 
+* If 'newinstance,pids=all' then all processes will be shown in proc.
 
->>>> The main problem is that the digest list measurement, performed when the
->>>> parser accesses the file containing the RPM header, might not reflect
->>>> what IMA uses for digest lookup.
->>>
->>>
->>> Why not?
->>
->>
->> I assumed you wanted to measure digest lists only at the time they are
->> read by the parser, and not when they are read by IMA. If instead digest
->> lists are verified again after conversion, the new workflow should be:
->>
->> 1) the kernel parses digest list metadata before systemd is executed
->> 2) the kernel verifies the signature of digest lists (RPM headers) and
->>     add the digest of digest lists to the hash table, so that appraisal
->>     succeeds
->> 3) systemd (with file signature) is executed
->> 4) the parser (with file signature) is executed
->> 5) the parser reads and converts the digest lists to the generic format,
->>     and writes them to a tmpfs filesystem
->> 6) the parser generates a new digest list metadata file with the path of
->>     converted digest lists and sends the path of the new metadata to IMA
->> 7) IMA reads the generic digest lists
->>
->> The measurement list should look like:
->>
->> 10 <digest> ima-sig <digest> boot_aggregate
->> 10 <digest> ima-sig <digest> /etc/ima/digest_lists/metadata
->> 10 <digest> ima-sig <digest> /usr/lib/systemd/systemd <signature>
->> ...
->> 10 <digest> ima-sig <digest> <parser> <signature>
->> 10 <digest> ima-sig <digest> /tmp/metadata
->>
->>
->> If parsing of RPM headers is done by the kernel, the measurement list
->> will look like:
->>
->> 10 <digest> ima-ng <digest> boot_aggregate
->> 10 <digest> ima-ng <digest> /etc/ima/digest_lists/metadata
->>
->>
->> A built-in policy should enable appraisal of tmpfs. If not, patch 11/15
->> disables digest lookup for appraisal. Since generic digest lists will
->> have a security.ima extended attribute (they are mutable files),
->> appraisal verification will succeed.
->>
->> With this solution, digital signatures cannot be required, because
->> generic digest lists will have a HMAC. For appraisal, it becomes
->> necessary to ensure that only digest lists written by the parser can be
->> processed by IMA.
-> 
-> This seems very over-complicated, and it's unclear why the kernel
-> needs to open the file itself. You *know* that all of userland is
+* If 'newinstance,pids=ptraceable' then only ptraceable processes will be
+shown.
 
-You can have a look at ima_fs.c. If appraisal is in enforcing mode,
-direct upload of a policy is not permitted. The kernel reads the policy,
-calculates the digest, and verifies the signature.
+* 'pids=' takes precendence over 'hidepid=' since 'hidepid=' can be
+  ignored if "gid=" was set and caller has the "gid=" set in its groups.
+  We want to guarantee that LSM have a security path there that can not
+  be disabled with "gid=".
 
+This allows to support lightweight sandboxes in Embedded Linux.
 
-> trustworthy at this point even in the absence of signatures. It seem > reasonable to provide a interface that allows userland to pass a
-> digest list to the kernel, in the same way that userland can pass an
-> IMA policy to the kernel. You can then restrict access to that
-> interface via an LSM.
+Later Yama LSM can be updated to check that processes are able only
+able to see their children inside /proc/, allowing to support more tight
+cases.
 
-Then digest lists cannot be used alone, without an LSM. Also, verifiers
-have to check the LSM policy to ensure that only the parser was able to
-upload the digest lists.
+[1] https://lkml.org/lkml/2017/4/26/646
 
-Roberto
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+---
+ fs/proc/base.c          | 36 +++++++++++++++++++++++++++++-------
+ fs/proc/inode.c         |  6 +++++-
+ fs/proc/root.c          | 20 ++++++++++++++++++--
+ include/linux/proc_fs.h | 30 ++++++++++++++++++++++++++++++
+ 4 files changed, 82 insertions(+), 10 deletions(-)
 
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 54b527c..88b92bc 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -686,13 +686,24 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
+ 				 struct task_struct *task,
+ 				 int hide_pid_min)
+ {
+-	int hide_pid = proc_fs_hide_pid(fs_info);
+-	kgid_t gid = proc_fs_pid_gid(fs_info);
++	int pids = proc_fs_pids(fs_info);
++
++	/*
++	 * If 'pids=all' or if it was not set then lets fallback
++	 * to 'hidepid' and 'gid', if those are not enforced too, then
++	 * ptrace checks are skipped. Otherwise ptrace permission is
++	 * required for all other cases.
++	 */
++	if (pids == PIDS_ALL) {
++		int hide_pid = proc_fs_hide_pid(fs_info);
++		kgid_t gid = proc_fs_pid_gid(fs_info);
++
++		if (hide_pid < hide_pid_min)
++			return true;
+ 
+-	if (hide_pid < hide_pid_min)
+-		return true;
+-	if (in_group_p(gid))
+-		return true;
++		if (in_group_p(gid))
++			return true;
++	}
+ 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
+ }
+ 
+@@ -701,6 +712,7 @@ static int proc_pid_permission(struct inode *inode, int mask)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
+ 	int hide_pid = proc_fs_hide_pid(fs_info);
++	int pids = proc_fs_pids(fs_info);
+ 	struct task_struct *task;
+ 	bool has_perms;
+ 
+@@ -711,7 +723,8 @@ static int proc_pid_permission(struct inode *inode, int mask)
+ 	put_task_struct(task);
+ 
+ 	if (!has_perms) {
+-		if (hide_pid == HIDEPID_INVISIBLE) {
++		if (pids == PIDS_PTRACEABLE ||
++		    hide_pid == HIDEPID_INVISIBLE) {
+ 			/*
+ 			 * Let's make getdents(), stat(), and open()
+ 			 * consistent with each other.  If a process
+@@ -3140,6 +3153,7 @@ struct dentry *proc_pid_lookup(struct inode *dir, struct dentry * dentry, unsign
+ 	unsigned tgid;
+ 	struct proc_fs_info *fs_info = proc_sb(dir->i_sb);
+ 	struct pid_namespace *ns = fs_info->pid_ns;
++	int pids = proc_fs_pids(fs_info);
+ 
+ 	tgid = name_to_int(&dentry->d_name);
+ 	if (tgid == ~0U)
+@@ -3153,7 +3167,15 @@ struct dentry *proc_pid_lookup(struct inode *dir, struct dentry * dentry, unsign
+ 	if (!task)
+ 		goto out;
+ 
++	/* Limit procfs to only ptraceable tasks */
++	if (pids != PIDS_ALL) {
++		cond_resched();
++		if (!has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS))
++			goto out_put_task;
++	}
++
+ 	result = proc_pid_instantiate(dir, dentry, task, NULL);
++out_put_task:
+ 	put_task_struct(task);
+ out:
+ 	return ERR_PTR(result);
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index faec32a..2707d5f 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -108,8 +108,12 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ 	int hide_pid = proc_fs_hide_pid(fs_info);
+ 	kgid_t pid_gid = proc_fs_pid_gid(fs_info);
+ 
+-	if (proc_fs_newinstance(fs_info))
++	if (proc_fs_newinstance(fs_info)) {
++		int pids = proc_fs_pids(fs_info);
++
+ 		seq_printf(seq, ",newinstance");
++		seq_printf(seq, ",pids=%s", pids == PIDS_ALL ? "all" : "ptraceable");
++	}
+ 
+ 	if (!gid_eq(pid_gid, GLOBAL_ROOT_GID))
+ 		seq_printf(seq, ",gid=%u", from_kgid_munged(current_user_ns(),pid_gid));
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 33ab965..5cdff69 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -28,13 +28,14 @@
+ #include "internal.h"
+ 
+ enum {
+-	Opt_gid, Opt_hidepid, Opt_newinstance, Opt_err,
++	Opt_gid, Opt_hidepid, Opt_newinstance, Opt_pids, Opt_err,
+ };
+ 
+ static const match_table_t tokens = {
+ 	{Opt_hidepid, "hidepid=%u"},
+ 	{Opt_gid, "gid=%u"},
+ 	{Opt_newinstance, "newinstance"},
++	{Opt_pids, "pids=%s"},
+ 	{Opt_err, NULL},
+ };
+ 
+@@ -67,6 +68,7 @@ int proc_parse_early_options(char *options, struct proc_fs_info *fs_info)
+ 			break;
+ 		case Opt_gid:
+ 		case Opt_hidepid:
++		case Opt_pids:
+ 			break;
+ 		default:
+ 			pr_err("proc: unrecognized mount option \"%s\" "
+@@ -83,7 +85,7 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ {
+ 	char *p;
+ 	substring_t args[MAX_OPT_ARGS];
+-	int option;
++	int option, ret = 0;
+ 	kgid_t gid;
+ 
+ 	if (!options)
+@@ -119,6 +121,19 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ 			break;
+ 		case Opt_newinstance:
+ 			break;
++		case Opt_pids:
++			if (strcmp(args[0].from, "all") == 0)
++				ret = proc_fs_set_pids(fs_info, PIDS_ALL);
++			else if (strcmp(args[0].from, "ptraceable") == 0)
++				ret = proc_fs_set_pids(fs_info, PIDS_PTRACEABLE);
++			else
++				ret = -EINVAL;
++
++			if (ret < 0) {
++				pr_err("proc: invalid 'pids' mount option.\n");
++				return 0;
++			}
++			break;
+ 		default:
+ 			pr_err("proc: unrecognized mount option \"%s\" "
+ 			       "or missing value\n", p);
+@@ -188,6 +203,7 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
+ 
+ 	/* Set it as early as possible */
+ 	proc_fs_set_newinstance(fs_info, false);
++	proc_fs_set_pids(fs_info, PIDS_ALL);
+ 
+ 	if (flags & SB_KERNMOUNT) {
+ 		ns = data;
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index c123e5ec..0730f52 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -18,6 +18,11 @@ enum { /* definitions for 'hidepid' mount option */
+ 	HIDEPID_INVISIBLE = 2,
+ };
+ 
++enum { /* definitions for 'pids' mount option */
++	PIDS_ALL	= 0,
++	PIDS_PTRACEABLE	= 1,
++};
++
+ struct proc_fs_info {
+ 	struct pid_namespace *pid_ns;
+ 	struct dentry *proc_self; /* For /proc/self/ */
+@@ -25,6 +30,7 @@ struct proc_fs_info {
+ 	bool newinstance; /* Flag for new separated instances */
+ 	kgid_t pid_gid;
+ 	int hide_pid;
++	int pids;
+ };
+ 
+ #ifdef CONFIG_PROC_FS
+@@ -49,6 +55,16 @@ static inline void proc_fs_set_newinstance(struct proc_fs_info *fs_info, bool va
+ 	fs_info->newinstance = value;
+ }
+ 
++static inline int proc_fs_set_pids(struct proc_fs_info *fs_info, int value)
++{
++	if (value != PIDS_ALL &&
++	    (value != PIDS_PTRACEABLE || !fs_info->newinstance))
++		return -EINVAL;
++
++	fs_info->pids = value;
++	return 0;
++}
++
+ static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
+ {
+ 	return fs_info->hide_pid;
+@@ -64,6 +80,11 @@ static inline bool proc_fs_newinstance(struct proc_fs_info *fs_info)
+ 	return fs_info->newinstance;
+ }
+ 
++static inline int proc_fs_pids(struct proc_fs_info *fs_info)
++{
++	return fs_info->pids;
++}
++
+ extern void proc_root_init(void);
+ extern void proc_flush_task(struct task_struct *);
+ 
+@@ -112,6 +133,10 @@ static inline void proc_fs_set_newinstance(struct proc_fs_info *fs_info, bool va
+ {
+ }
+ 
++static inline int proc_fs_set_pids(struct proc_fs_info *fs_info, int value)
++{
++}
++
+ static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
+ {
+ 	return 0;
+@@ -127,6 +152,11 @@ static inline bool proc_fs_newinstance(struct proc_fs_info *fs_info)
+ 	return false;
+ }
+ 
++static inline int proc_fs_pids(struct proc_fs_info *fs_info)
++{
++	return 0;
++}
++
+ extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
+ static inline struct proc_dir_entry *proc_symlink(const char *name,
+ 		struct proc_dir_entry *parent,const char *dest) { return NULL;}
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
