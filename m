@@ -1,62 +1,43 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:33:41 +0000
-Subject: [PATCH 24/30] debugfs: Disallow use of debugfs files when the kernel
-	is locked down
+Date: Thu,  9 Nov 2017 17:33:31 +0000
+Subject: [PATCH 23/30] x86/mmiotrace: Lock down the testmmiotrace module
 In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024882152.28329.13943595155704545862.stgit@warthog.procyon.org.uk>
+Message-ID: <151024881149.28329.5239146081874861406.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Disallow opening of debugfs files when the kernel is locked down as various
-drivers give raw access to hardware through debugfs.
+The testmmiotrace module shouldn't be permitted when the kernel is locked
+down as it can be used to arbitrarily read and write MMIO space.
 
-Accesses to tracefs should use /sys/kernel/tracing/ rather than
-/sys/kernel/debug/tracing/.  Possibly a symlink should be emplaced.
-
-Normal device interaction should be done through configfs or a miscdev, not
-debugfs.
-
-Note that this makes it unnecessary to specifically lock down show_dsts(),
-show_devs() and show_call() in the asus-wmi driver.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-cc: acpi4asus-user at lists.sourceforge.net
-cc: platform-driver-x86 at vger.kernel.org
-cc: Matthew Garrett <matthew.garrett@nebula.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Howells <dhowells at redhat.com
 cc: Thomas Gleixner <tglx@linutronix.de>
+cc: Steven Rostedt <rostedt@goodmis.org>
+cc: Ingo Molnar <mingo@kernel.org>
+cc: "H. Peter Anvin" <hpa@zytor.com>
+cc: x86 at kernel.org
 ---
 
- fs/debugfs/file.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/mm/testmmiotrace.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 6dabc4a10396..32b5168a7e91 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -103,6 +103,9 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
- 	const struct file_operations *real_fops = NULL;
- 	int srcu_idx, r;
+diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+index f6ae6830b341..bbaad357f5d7 100644
+--- a/arch/x86/mm/testmmiotrace.c
++++ b/arch/x86/mm/testmmiotrace.c
+@@ -115,6 +115,9 @@ static int __init init(void)
+ {
+ 	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
  
-+	if (kernel_is_locked_down("debugfs"))
++	if (kernel_is_locked_down("MMIO trace testing"))
 +		return -EPERM;
 +
- 	r = debugfs_use_file_start(dentry, &srcu_idx);
- 	if (r) {
- 		r = -ENOENT;
-@@ -232,6 +235,9 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
- 	struct file_operations *proxy_fops = NULL;
- 	int srcu_idx, r;
- 
-+	if (kernel_is_locked_down("debugfs"))
-+		return -EPERM;
-+
- 	r = debugfs_use_file_start(dentry, &srcu_idx);
- 	if (r) {
- 		r = -ENOENT;
+ 	if (mmio_address == 0) {
+ 		pr_err("you have to use the module argument mmio_address.\n");
+ 		pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
