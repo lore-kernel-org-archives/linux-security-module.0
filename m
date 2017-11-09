@@ -1,44 +1,63 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:32:29 +0000
-Subject: [PATCH 15/30] ACPI: Limit access to custom_method when the kernel is
-	locked down
+Date: Thu,  9 Nov 2017 17:32:15 +0000
+Subject: [PATCH 13/30] x86/msr: Restrict MSR access when the kernel is locked
+	down
 In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024874984.28329.11570631406635726091.stgit@warthog.procyon.org.uk>
+Message-ID: <151024873510.28329.5219612113295367113.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Matthew Garrett <matthew.garrett@nebula.com>
 
-custom_method effectively allows arbitrary access to system memory, making
-it possible for an attacker to circumvent restrictions on module loading.
-Disable it if the kernel is locked down.
+Writing to MSRs should not be allowed if the kernel is locked down, since
+it could lead to execution of arbitrary code in kernel mode.  Based on a
+patch by Kees Cook.
+
+MSR accesses are logged for the purposes of building up a whitelist as per
+Alan Cox's suggestion.
 
 Signed-off-by: Matthew Garrett <matthew.garrett@nebula.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-cc: linux-acpi at vger.kernel.org
+cc: x86 at kernel.org
 ---
 
- drivers/acpi/custom_method.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/msr.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
-index c68e72414a67..b33fba70ec51 100644
---- a/drivers/acpi/custom_method.c
-+++ b/drivers/acpi/custom_method.c
-@@ -29,6 +29,9 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
- 	struct acpi_table_header table;
- 	acpi_status status;
+diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
+index ef688804f80d..dfb61d358196 100644
+--- a/arch/x86/kernel/msr.c
++++ b/arch/x86/kernel/msr.c
+@@ -84,6 +84,11 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
+ 	int err = 0;
+ 	ssize_t bytes = 0;
  
-+	if (kernel_is_locked_down("ACPI custom methods"))
++	if (kernel_is_locked_down("Direct MSR access")) {
++		pr_info("Direct access to MSR %x\n", reg);
 +		return -EPERM;
++	}
 +
- 	if (!(*ppos)) {
- 		/* parse the table header to get the table length */
- 		if (count <= sizeof(struct acpi_table_header))
+ 	if (count % 8)
+ 		return -EINVAL;	/* Invalid chunk size */
+ 
+@@ -135,6 +140,11 @@ static long msr_ioctl(struct file *file, unsigned int ioc, unsigned long arg)
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if (kernel_is_locked_down("Direct MSR access")) {
++			pr_info("Direct access to MSR %x\n", regs[1]); /* Display %ecx */
++			err = -EPERM;
++			break;
++		}
+ 		err = wrmsr_safe_regs_on_cpu(cpu, regs);
+ 		if (err)
+ 			break;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
