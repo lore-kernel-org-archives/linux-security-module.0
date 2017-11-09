@@ -1,35 +1,28 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Fri, 10 Nov 2017 06:17:49 +1100 (AEDT)
-Subject: [RFC PATCH] ima: require secure_boot rules in lockdown mode
-In-Reply-To: <1510235213.4484.165.camel@linux.vnet.ibm.com>
-References: <1509382827.3583.143.camel@linux.vnet.ibm.com>
-	<1508774387.3639.128.camel@linux.vnet.ibm.com>
-	<750.1509378910@warthog.procyon.org.uk>
-	<3691.1509383138@warthog.procyon.org.uk>
-	<1509385178.3583.159.camel@linux.vnet.ibm.com>
-	<alpine.LFD.2.20.1710311424310.22021@localhost>
-	<1510173982.4484.30.camel@linux.vnet.ibm.com>
-	<20171109075334.1809f4cc@canb.auug.org.au>
-	<1510175047.4484.35.camel@linux.vnet.ibm.com>
-	<20171109102635.7691281d@canb.auug.org.au>
-	<1510196818.4484.120.camel@linux.vnet.ibm.com>
-	<alpine.LFD.2.20.1711100020240.514@localhost>
-	<1510235213.4484.165.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LFD.2.20.1711100617360.5638@localhost>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 09 Nov 2017 21:54:19 +0000
+Subject: [RFC][PATCH] Lock down ftrace
+In-Reply-To: <20171109130329.3de3f41a@gandalf.local.home>
+References: <20171109130329.3de3f41a@gandalf.local.home>
+	<11100.1510245732@warthog.procyon.org.uk>
+Message-ID: <2790.1510264459@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 9 Nov 2017, Mimi Zohar wrote:
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> Thank you for the clarification (and patience). ?There are a lot of
-> interactions between the integrity subsystem and the other security
-> subsystems, especially the TPM. ?Assuming it is acceptable, as you
-> said, I'd really prefer continuing to have the integrity subsystem
-> merged via the security tree.
+> Actually, I see it being enabled with DYNAMIC_FTRACE not set. Calling
+> into sysctl and enabling ftrace_enable, will allow the
+> ftrace_trace_function to be set to something other than ftrace_stub
+> again, allowing for static function tracing to run too.
 
-That's fine, whatever works for you.
+Hmmm...  Okay, I'm not sure what the sysctl achieves in non-dynamic mode.
+Some of the functions used by ftrace_enable_sysctl() are stubbed out in that
+case.  I was thinking that was stubbed out also, but apparently not.
 
+Anyway, ftrace_enable_sysctl() is also prohibited in lockdown mode.
 
--- 
-James Morris
-<james.l.morris@oracle.com>
+David
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
