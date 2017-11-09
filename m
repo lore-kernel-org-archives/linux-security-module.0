@@ -1,35 +1,60 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu,  9 Nov 2017 17:33:48 +0000
-Subject: [PATCH 25/30] Lock down /proc/kcore
+Date: Thu,  9 Nov 2017 17:33:41 +0000
+Subject: [PATCH 24/30] debugfs: Disallow use of debugfs files when the kernel
+	is locked down
 In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <151024882884.28329.15508297811888479774.stgit@warthog.procyon.org.uk>
+Message-ID: <151024882152.28329.13943595155704545862.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Disallow access to /proc/kcore when the kernel is locked down to prevent
-access to cryptographic data.
+Disallow opening of debugfs files when the kernel is locked down as various
+drivers give raw access to hardware through debugfs.
+
+Accesses to tracefs should use /sys/kernel/tracing/ rather than
+/sys/kernel/debug/tracing/.  Possibly a symlink should be emplaced.
+
+Normal device interaction should be done through configfs or a miscdev, not
+debugfs.
+
+Note that this makes it unnecessary to specifically lock down show_dsts(),
+show_devs() and show_call() in the asus-wmi driver.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
+cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+cc: acpi4asus-user at lists.sourceforge.net
+cc: platform-driver-x86 at vger.kernel.org
+cc: Matthew Garrett <matthew.garrett@nebula.com>
+cc: Thomas Gleixner <tglx@linutronix.de>
 ---
 
- fs/proc/kcore.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/debugfs/file.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index 45629f4b5402..176cf749e650 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -549,6 +549,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index 6dabc4a10396..32b5168a7e91 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -103,6 +103,9 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
+ 	const struct file_operations *real_fops = NULL;
+ 	int srcu_idx, r;
  
- static int open_kcore(struct inode *inode, struct file *filp)
- {
-+	if (kernel_is_locked_down("/proc/kcore"))
++	if (kernel_is_locked_down("debugfs"))
 +		return -EPERM;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
++
+ 	r = debugfs_use_file_start(dentry, &srcu_idx);
+ 	if (r) {
+ 		r = -ENOENT;
+@@ -232,6 +235,9 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
+ 	struct file_operations *proxy_fops = NULL;
+ 	int srcu_idx, r;
  
++	if (kernel_is_locked_down("debugfs"))
++		return -EPERM;
++
+ 	r = debugfs_use_file_start(dentry, &srcu_idx);
+ 	if (r) {
+ 		r = -ENOENT;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
