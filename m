@@ -1,256 +1,38 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Thu,  9 Nov 2017 17:14:02 +0100
-Subject: [PATCH RFC v3 3/7] proc: add helpers to set and get proc hidepid and
-	gid mount options
-In-Reply-To: <1510244046-3256-1-git-send-email-tixxdz@gmail.com>
-References: <1510244046-3256-1-git-send-email-tixxdz@gmail.com>
-Message-ID: <1510244046-3256-4-git-send-email-tixxdz@gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 09 Nov 2017 11:17:16 -0500
+Subject: [PATCH v2 00/15] ima: digest list feature
+In-Reply-To: <CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+	<CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
+	<899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
+	<CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+	<e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
+	<CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+	<210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
+	<CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
+Message-ID: <1510244236.4484.172.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This is a cleaning patch to add helpers to set and get proc mount
-options instead of a direct access. This allows later to easily track
-what's happening, how these fields are accessed, and in case we need
-to update them in the future.
+On Thu, 2017-11-09 at 09:47 -0500, Matthew Garrett wrote:
 
-Later we will move these mount options to proc_fs_info struct. First
-lets fix the access.
+> This seems very over-complicated, and it's unclear why the kernel
+> needs to open the file itself. You *know* that all of userland is
+> trustworthy at this point even in the absence of signatures.
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
----
- fs/proc/base.c          | 16 +++++++++-------
- fs/proc/inode.c         |  5 +++--
- fs/proc/internal.h      |  2 +-
- fs/proc/root.c          | 15 ++++++++++-----
- include/linux/proc_fs.h | 44 ++++++++++++++++++++++++++++++++++++++++++--
- 5 files changed, 65 insertions(+), 17 deletions(-)
+Assuming the initramfs is signed, then yes the rootfs files would be
+trusted. ?rootfs can still access files from real root, which is where
+policies are normally stored.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 0d9b4214..f324c49 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -682,13 +682,16 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
-  * May current process learn task's sched/cmdline info (for hide_pid_min=1)
-  * or euid/egid (for hide_pid_min=2)?
-  */
--static bool has_pid_permissions(struct pid_namespace *pid,
-+static bool has_pid_permissions(struct proc_fs_info *fs_info,
- 				 struct task_struct *task,
- 				 int hide_pid_min)
- {
--	if (pid->hide_pid < hide_pid_min)
-+	int hide_pid = proc_fs_hide_pid(fs_info);
-+	kgid_t gid = proc_fs_pid_gid(fs_info);
-+
-+	if (hide_pid < hide_pid_min)
- 		return true;
--	if (in_group_p(pid->pid_gid))
-+	if (in_group_p(gid))
- 		return true;
- 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
- }
-@@ -704,7 +707,7 @@ static int proc_pid_permission(struct inode *inode, int mask)
- 	task = get_proc_task(inode);
- 	if (!task)
- 		return -ESRCH;
--	has_perms = has_pid_permissions(pid, task, HIDEPID_NO_ACCESS);
-+	has_perms = has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS);
- 	put_task_struct(task);
- 
- 	if (!has_perms) {
-@@ -1778,7 +1781,6 @@ int pid_getattr(const struct path *path, struct kstat *stat,
- 	struct task_struct *task;
- 	struct inode *inode = d_inode(path->dentry);
- 	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
--	struct pid_namespace *pid = fs_info->pid_ns;
- 
- 	generic_fillattr(inode, stat);
- 
-@@ -1787,7 +1789,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
- 	stat->gid = GLOBAL_ROOT_GID;
- 	task = pid_task(proc_pid(inode), PIDTYPE_PID);
- 	if (task) {
--		if (!has_pid_permissions(pid, task, HIDEPID_INVISIBLE)) {
-+		if (!has_pid_permissions(fs_info, task, HIDEPID_INVISIBLE)) {
- 			rcu_read_unlock();
- 			/*
- 			 * This doesn't prevent learning whether PID exists,
-@@ -3234,7 +3236,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- 		int len;
- 
- 		cond_resched();
--		if (!has_pid_permissions(ns, iter.task, HIDEPID_INVISIBLE))
-+		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
- 			continue;
- 
- 		len = snprintf(name, sizeof(name), "%d", iter.tgid);
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 9abc370..bdd808d 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -476,11 +476,12 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
- int proc_fill_super(struct super_block *s, void *data, int silent)
- {
- 	struct proc_fs_info *fs_info = proc_sb(s);
--	struct pid_namespace *ns = get_pid_ns(fs_info->pid_ns);
- 	struct inode *root_inode;
- 	int ret;
- 
--	if (!proc_parse_options(data, ns))
-+	get_pid_ns(fs_info->pid_ns);
-+
-+	if (!proc_parse_options(data, fs_info))
- 		return -EINVAL;
- 
- 	/* User space would break if executables or devices appear on proc */
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 4a67188..10bc7be 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -240,7 +240,7 @@ static inline void proc_tty_init(void) {}
-  * root.c
-  */
- extern struct proc_dir_entry proc_root;
--extern int proc_parse_options(char *options, struct pid_namespace *pid);
-+extern int proc_parse_options(char *options, struct proc_fs_info *fs_info);
- 
- extern void proc_self_init(void);
- extern int proc_remount(struct super_block *, int *, char *);
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index b225ae5..48cc481 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -37,11 +37,12 @@ static const match_table_t tokens = {
- 	{Opt_err, NULL},
- };
- 
--int proc_parse_options(char *options, struct pid_namespace *pid)
-+int proc_parse_options(char *options, struct proc_fs_info *fs_info)
- {
- 	char *p;
- 	substring_t args[MAX_OPT_ARGS];
- 	int option;
-+	kgid_t gid;
- 
- 	if (!options)
- 		return 1;
-@@ -57,7 +58,12 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
- 		case Opt_gid:
- 			if (match_int(&args[0], &option))
- 				return 0;
--			pid->pid_gid = make_kgid(current_user_ns(), option);
-+			gid = make_kgid(current_user_ns(), option);
-+			if (!gid_valid(gid)) {
-+				pr_err("proc: invalid gid mount option.\n");
-+				return 0;
-+			}
-+			proc_fs_set_pid_gid(fs_info, gid);
- 			break;
- 		case Opt_hidepid:
- 			if (match_int(&args[0], &option))
-@@ -67,7 +73,7 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
- 				pr_err("proc: hidepid value must be between 0 and 2.\n");
- 				return 0;
- 			}
--			pid->hide_pid = option;
-+			proc_fs_set_hide_pid(fs_info, option);
- 			break;
- 		default:
- 			pr_err("proc: unrecognized mount option \"%s\" "
-@@ -82,10 +88,9 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
- int proc_remount(struct super_block *sb, int *flags, char *data)
- {
- 	struct proc_fs_info *fs_info = proc_sb(sb);
--	struct pid_namespace *pid = fs_info->pid_ns;
- 
- 	sync_filesystem(sb);
--	return !proc_parse_options(data, pid);
-+	return !proc_parse_options(data, fs_info);
- }
- 
- static int proc_test_super(struct super_block *s, void *data)
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 8f89069..047d0d0 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -7,6 +7,10 @@
- 
- #include <linux/types.h>
- #include <linux/fs.h>
-+#include <linux/pid_namespace.h>
-+
-+struct proc_dir_entry;
-+struct pid_namespace;
- 
- struct proc_fs_info {
- 	struct pid_namespace *pid_ns;
-@@ -14,8 +18,6 @@ struct proc_fs_info {
- 	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
- };
- 
--struct proc_dir_entry;
--
- #ifdef CONFIG_PROC_FS
- 
- static inline struct proc_fs_info *proc_sb(struct super_block *sb)
-@@ -23,6 +25,26 @@ static inline struct proc_fs_info *proc_sb(struct super_block *sb)
- 	return sb->s_fs_info;
- }
- 
-+static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
-+{
-+	fs_info->pid_ns->hide_pid = hide_pid;
-+}
-+
-+static inline void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid)
-+{
-+	fs_info->pid_ns->pid_gid = gid;
-+}
-+
-+static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
-+{
-+	return fs_info->pid_ns->hide_pid;
-+}
-+
-+static inline kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
-+{
-+	return fs_info->pid_ns->pid_gid;
-+}
-+
- extern void proc_root_init(void);
- extern void proc_flush_task(struct task_struct *);
- 
-@@ -59,6 +81,24 @@ static inline void proc_flush_task(struct task_struct *task)
- {
- }
- 
-+static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
-+{
-+}
-+
-+static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
-+{
-+}
-+
-+static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
-+{
-+	return 0;
-+}
-+
-+extern kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
-+{
-+	return GLOBAL_ROOT_GID;
-+}
-+
- extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
- static inline struct proc_dir_entry *proc_symlink(const char *name,
- 		struct proc_dir_entry *parent,const char *dest) { return NULL;}
--- 
-2.7.4
+> It seems
+> reasonable to provide a interface that allows userland to pass a
+> digest list to the kernel, in the same way that userland can pass an
+> IMA policy to the kernel. You can then restrict access to that
+> interface via an LSM.
+
+IMA can and should be configured to require signed policies.
+
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
