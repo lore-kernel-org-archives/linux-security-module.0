@@ -1,142 +1,143 @@
-From: julia.lawall@lip6.fr (Julia Lawall)
-Date: Fri, 10 Nov 2017 21:52:31 +0100 (CET)
-Subject: [PATCH 1/2] KEYS: trusted: Use common error handling code in
-	trusted_update()
-In-Reply-To: <658d88c1-b29b-cf8c-2ce0-8a2755ec9f33@users.sourceforge.net>
-References: <479805df-edaf-1e9a-57be-d7c4f38e9d31@users.sourceforge.net>
-	<658d88c1-b29b-cf8c-2ce0-8a2755ec9f33@users.sourceforge.net>
-Message-ID: <alpine.DEB.2.20.1711102142220.2708@hadrien>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 10 Nov 2017 16:02:55 -0500
+Subject: [RFC PATCH v1] fw_lockdown: new micro LSM module to prevent loading
+	unsigned firmware
+Message-ID: <1510347775.3549.2.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+If the kernel is locked down and IMA-appraisal is not enabled, prevent
+loading of unsigned firmware.
 
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
 
-On Fri, 10 Nov 2017, SF Markus Elfring wrote:
+Changelog v1:
+- Lots of minor changes Kconfig, Makefile, fw_lsm.c for such a small patch
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 10 Nov 2017 20:50:15 +0100
->
-> Adjust jump targets so that a bit of exception handling can be better
-> reused at the end of this function.
+ security/Kconfig              |  1 +
+ security/Makefile             |  2 ++
+ security/fw_lockdown/Kconfig  |  6 +++++
+ security/fw_lockdown/Makefile |  3 +++
+ security/fw_lockdown/fw_lsm.c | 51 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 63 insertions(+)
+ create mode 100644 security/fw_lockdown/Kconfig
+ create mode 100644 security/fw_lockdown/Makefile
+ create mode 100644 security/fw_lockdown/fw_lsm.c
 
-Unless there is a strong motivation for doing otherwise, the goal should
-be to make the code understandable and safe.  Understandable means that
-issues specific to the error that occurred should be up at the place where
-the error occurs, ie any prints or any setting of return code.  Safe means
-that cleanup code should appear once in a cascade at the end of the
-function, to minimize the chance that anything will be overlooked.
+diff --git a/security/Kconfig b/security/Kconfig
+index a4fa8b826039..6e7e5888f823 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -243,6 +243,7 @@ source security/tomoyo/Kconfig
+ source security/apparmor/Kconfig
+ source security/loadpin/Kconfig
+ source security/yama/Kconfig
++source security/fw_lockdown/Kconfig
+ 
+ source security/integrity/Kconfig
+ 
+diff --git a/security/Makefile b/security/Makefile
+index 8c4a43e3d4e0..58852dee5e22 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -9,6 +9,7 @@ subdir-$(CONFIG_SECURITY_TOMOYO)        += tomoyo
+ subdir-$(CONFIG_SECURITY_APPARMOR)	+= apparmor
+ subdir-$(CONFIG_SECURITY_YAMA)		+= yama
+ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
++subdir-$(CONFIG_SECURITY_FW_LOCKDOWN)	+= fw_lockdown
+ 
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -24,6 +25,7 @@ obj-$(CONFIG_SECURITY_TOMOYO)		+= tomoyo/
+ obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/
+ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
+ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
++obj-$(CONFIG_SECURITY_FW_LOCKDOWN)	+= fw_lockdown/
+ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+ 
+ # Object integrity file lists
+diff --git a/security/fw_lockdown/Kconfig b/security/fw_lockdown/Kconfig
+new file mode 100644
+index 000000000000..d6aef6ce8fee
+--- /dev/null
++++ b/security/fw_lockdown/Kconfig
+@@ -0,0 +1,6 @@
++config SECURITY_FW_LOCKDOWN
++	bool "Prevent loading unsigned firmware"
++	depends on LOCK_DOWN_KERNEL
++	default y
++	help
++	  Prevent loading unsigned firmware in lockdown mode,
+diff --git a/security/fw_lockdown/Makefile b/security/fw_lockdown/Makefile
+new file mode 100644
+index 000000000000..3a16757fd35d
+--- /dev/null
++++ b/security/fw_lockdown/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_SECURITY_FW_LOCKDOWN) += fw_lockdown.o
++
++fw_lockdown-y := fw_lsm.o
+diff --git a/security/fw_lockdown/fw_lsm.c b/security/fw_lockdown/fw_lsm.c
+new file mode 100644
+index 000000000000..cce03a5c5280
+--- /dev/null
++++ b/security/fw_lockdown/fw_lsm.c
+@@ -0,0 +1,51 @@
++/*
++ * fw_lockdown security module
++ *
++ * Copyright (C) 2017 IBM Corporation
++ *
++ * Authors:
++ * Mimi Zohar <zohar@linux.vnet.ibm.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#define pr_fmt(fmt) "fw_lockdown: " fmt
++
++#include <linux/module.h>
++#include <linux/ima.h>
++#include <linux/lsm_hooks.h>
++
++/**
++ * fw_lockdown_read_file - prevent loading of unsigned firmware
++ * @file: pointer to firmware
++ * @read_id: caller identifier
++ *
++ * Prevent loading of unsigned firmware in lockdown mode.
++ */
++static int fw_lockdown_read_file(struct file *file, enum kernel_read_file_id id)
++{
++	if (id == READING_FIRMWARE) {
++		if (!is_ima_appraise_enabled() &&
++		    !kernel_is_locked_down("Loading of unsigned firmware"))
++			return -EACCES;
++	}
++	return 0;
++}
++
++static struct security_hook_list fw_lockdown_hooks[] = {
++	LSM_HOOK_INIT(kernel_read_file, fw_lockdown_read_file)
++};
++
++static int __init init_fw_lockdown(void)
++{
++	security_add_hooks(fw_lockdown_hooks, ARRAY_SIZE(fw_lockdown_hooks),
++			   "fw_lockdown");
++	pr_info("initialized\n");
++	return 0;
++}
++
++late_initcall(init_fw_lockdown);
++MODULE_LICENSE("GPL");
+-- 
+2.7.4
 
-Moving the ret assignments to the end of the function and adding the
-backward jumps doesn't make the code more understandable.  A lot of mental
-effort is required to strace through the spaghetti code to find out what
-exactly will be the impact of a given failure.
-
-On the other hand, moving the kzalloc of new_p to the end of the function
-could be helpful, because it reduces the chance that new error handling
-code, if any turns out to be needed, will forget this operation.
-
-By why not just follow standard practice and free the structures in a
-cascade in the inverse of the order in which they are allocated at the end
-of the function?  There can be a descriptive label for each thing that
-needs to be freed.
-
-julia
-
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/keys/trusted.c | 44 ++++++++++++++++++++------------------------
->  1 file changed, 20 insertions(+), 24 deletions(-)
->
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index bd85315cbfeb..fd06d0c5323b 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -1078,30 +1078,18 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
->  	if (!datablob)
->  		return -ENOMEM;
->  	new_o = trusted_options_alloc();
-> -	if (!new_o) {
-> -		ret = -ENOMEM;
-> -		goto out;
-> -	}
-> +	if (!new_o)
-> +		goto e_nomem;
-> +
->  	new_p = trusted_payload_alloc(key);
-> -	if (!new_p) {
-> -		ret = -ENOMEM;
-> -		goto out;
-> -	}
-> +	if (!new_p)
-> +		goto e_nomem;
->
->  	memcpy(datablob, prep->data, datalen);
->  	datablob[datalen] = '\0';
->  	ret = datablob_parse(datablob, new_p, new_o);
-> -	if (ret != Opt_update) {
-> -		ret = -EINVAL;
-> -		kzfree(new_p);
-> -		goto out;
-> -	}
-> -
-> -	if (!new_o->keyhandle) {
-> -		ret = -EINVAL;
-> -		kzfree(new_p);
-> -		goto out;
-> -	}
-> +	if (ret != Opt_update || !new_o->keyhandle)
-> +		goto e_inval;
->
->  	/* copy old key values, and reseal with new pcrs */
->  	new_p->migratable = p->migratable;
-> @@ -1113,23 +1101,31 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
->  	ret = key_seal(new_p, new_o);
->  	if (ret < 0) {
->  		pr_info("trusted_key: key_seal failed (%d)\n", ret);
-> -		kzfree(new_p);
-> -		goto out;
-> +		goto free_payload;
->  	}
->  	if (new_o->pcrlock) {
->  		ret = pcrlock(new_o->pcrlock);
->  		if (ret < 0) {
->  			pr_info("trusted_key: pcrlock failed (%d)\n", ret);
-> -			kzfree(new_p);
-> -			goto out;
-> +			goto free_payload;
->  		}
->  	}
->  	rcu_assign_keypointer(key, new_p);
->  	call_rcu(&p->rcu, trusted_rcu_free);
-> -out:
-> +free_data:
->  	kzfree(datablob);
->  	kzfree(new_o);
->  	return ret;
-> +
-> +e_nomem:
-> +	ret = -ENOMEM;
-> +	goto free_data;
-> +
-> +e_inval:
-> +	ret = -EINVAL;
-> +free_payload:
-> +	kzfree(new_p);
-> +	goto free_data;
->  }
->
->  /*
-> --
-> 2.15.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
