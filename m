@@ -1,27 +1,69 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Fri, 10 Nov 2017 12:30:11 -0800
-Subject: [RFC PATCH] fw_lockdown: new micro LSM module to prevent loading
-	unsigned firmware
-In-Reply-To: <1510344812.3404.28.camel@linux.vnet.ibm.com>
-References: <1510336703.3404.17.camel@linux.vnet.ibm.com>
-	<1510344812.3404.28.camel@linux.vnet.ibm.com>
-Message-ID: <CAB=NE6XgC8079iMNh0AWN9iyw9e4tLBqGia3MEZYU_gLp1QqEA@mail.gmail.com>
+From: elfring@users.sourceforge.net (SF Markus Elfring)
+Date: Fri, 10 Nov 2017 21:30:25 +0100
+Subject: [PATCH 2/2] KEYS: trusted: Use common error handling code in
+	tpm_unseal()
+In-Reply-To: <479805df-edaf-1e9a-57be-d7c4f38e9d31@users.sourceforge.net>
+References: <479805df-edaf-1e9a-57be-d7c4f38e9d31@users.sourceforge.net>
+Message-ID: <3470e9c8-f7d8-247c-9e69-5301f71c3982@users.sourceforge.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Nov 10, 2017 at 12:13 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Fri, 2017-11-10 at 12:58 -0500, Mimi Zohar wrote:
->>
->> +
->> +static struct security_hook_list fw_lockdown_hooks[] = {
->> +     LSM_HOOK_INIT(fw_lockdown_file_check, fw_lockdown_bprm_check)
->
-> Sigh, that should have be:
->         LSM_HOOK_INIT(kernel_read_file, fw_lockdown_read_file)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 21:15:53 +0100
 
-Hah, I thought i was going crazy :) That makes much more sense now!
+* Add a jump target so that a specific error message is stored only once
+  at the end of this function implementation.
 
- Luis
+* Replace two calls of the macro "pr_info" by goto statements.
+
+* Adjust two condition checks.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/keys/trusted.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index fd06d0c5323b..a295eaae40ba 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -591,15 +591,12 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 
+ 	/* sessions for unsealing key and data */
+ 	ret = oiap(tb, &authhandle1, enonce1);
+-	if (ret < 0) {
+-		pr_info("trusted_key: oiap failed (%d)\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		goto report_failure;
++
+ 	ret = oiap(tb, &authhandle2, enonce2);
+-	if (ret < 0) {
+-		pr_info("trusted_key: oiap failed (%d)\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		goto report_failure;
+ 
+ 	ordinal = htonl(TPM_ORD_UNSEAL);
+ 	keyhndl = htonl(SRKHANDLE);
+@@ -654,6 +651,10 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 	}
+ 	memcpy(data, tb->data + TPM_DATA_OFFSET + sizeof(uint32_t), *datalen);
+ 	return 0;
++
++report_failure:
++	pr_info("trusted_key: oiap failed (%d)\n", ret);
++	return ret;
+ }
+ 
+ /*
+-- 
+2.15.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
