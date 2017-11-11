@@ -1,47 +1,60 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Sat, 11 Nov 2017 02:32:40 +0000
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <20171109044619.GG7859@linaro.org>
-References: <1509660086.3416.15.camel@linux.vnet.ibm.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<20171108061551.GD7859@linaro.org>
-	<20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-	<20171109044619.GG7859@linaro.org>
-Message-ID: <20171111023240.2398ca55@alans-desktop>
+From: elfring@users.sourceforge.net (SF Markus Elfring)
+Date: Sat, 11 Nov 2017 10:37:36 +0100
+Subject: KEYS: trusted: Use common error handling code in trusted_update()
+In-Reply-To: <alpine.DEB.2.20.1711102142220.2708@hadrien>
+References: <479805df-edaf-1e9a-57be-d7c4f38e9d31@users.sourceforge.net>
+	<658d88c1-b29b-cf8c-2ce0-8a2755ec9f33@users.sourceforge.net>
+	<alpine.DEB.2.20.1711102142220.2708@hadrien>
+Message-ID: <a4ee27ee-a893-70c6-d40b-b1831ce62634@users.sourceforge.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> My assumption here is:
-> 1) there are some less important and so security-insensitive firmwares,
->    by which I mean that such firmwares won't be expected to be signed in
->    terms of vulnerability or integrity.
->    (I can't give you examples though.)
-> 2) firmware's signature will be presented separately from the firmware
->    blob itself. Say, "firmware.bin.p7s" for "firmware.bin"
+> Safe means that cleanup code should appear once in a cascade at the end
+> of the function, to minimize the chance that anything will be overlooked.
 
-For x86 at least any firmware on any system modern enough to support
-'secure' boot should already be signed. The only major exception is
-likely to be for things like random USB widgets.
+I find that the control flow of this function implementation does not fit
+to the mentioned ideal so far.
 
-Even things like input controller firmware loaded over i2c or spi
-is usually signed because you could do fun things with input faking
-otherwise.
 
-The other usual exception is FPGAs, but since the point of an FPGA is
-usually the fact it *can* be reprogrammed it's not clear that signing
-FPGA firmware makes sense unless it is designed to be fixed function.
+> Moving the ret assignments to the end of the function and adding the
+> backward jumps doesn't make the code more understandable.
 
-You can't subvert the bus protocols on the x86 FPGA I am aware of as
-those bits are signed (or hard IP), but without IOMMU I am not sure FPGA
-and 'secure' boot is completely compatible.
+Is this structure required if you would like to achieve something
+in the shown software design direction?
 
-Alan
+
+> On the other hand, moving the kzalloc of new_p to the end of the function
+> could be helpful,
+
+Why do you think that the movement of this function call can finally work
+in the concrete software situation?
+
+
+> because it reduces the chance that new error handling code,
+> if any turns out to be needed, will forget this operation.
+
+Your expectation can be nice.
+
+
+> By why not just follow standard practice and free the structures in a
+> cascade in the inverse of the order in which they are allocated at the end
+> of the function?
+
+This is still happening here partly, isn't it?
+
+
+> There can be a descriptive label for each thing that needs to be freed.
+
+Which identifiers would you find more appropriate in comparison to
+my suggestion?
+
+* e_inval
+* e_nomem
+* free_data
+* free_payload
+
+Regards,
+Markus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
