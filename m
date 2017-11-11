@@ -1,51 +1,88 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Sat, 11 Nov 2017 12:18:36 -0800
-Subject: [PATCH 0/9] LSM: Stacking for major security modules - Based on
-	4.14-rc2
-In-Reply-To: <CAHC9VhQ+BBoxz7cTnTc46hQ88LnLM72fNA9zhDbWn8XUoVS1NQ@mail.gmail.com>
-References: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
-	<CAHC9VhQ+BBoxz7cTnTc46hQ88LnLM72fNA9zhDbWn8XUoVS1NQ@mail.gmail.com>
-Message-ID: <4748f521-2794-80b7-b9bc-20b50571f89c@schaufler-ca.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Sat, 11 Nov 2017 18:04:16 -0500
+Subject: [RFC PATCH v1] fw_lockdown: new micro LSM module to prevent
+	loading unsigned firmware
+In-Reply-To: <20171110223930.GT22894@wotan.suse.de>
+References: <1510347775.3549.2.camel@linux.vnet.ibm.com>
+	<20171110223930.GT22894@wotan.suse.de>
+Message-ID: <1510441456.3404.3.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 11/11/2017 7:48 AM, Paul Moore wrote:
-> On Fri, Oct 27, 2017 at 5:34 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Subject: [PATCH 0/9] LSM: Stacking for major security modules - Based on 4.14-rc2
->>
->> This patch set implements stacking for "major" security modules.
-> ..
->
->> I have tested these patches in various configurations of Ubuntu and
->> Fedora. Smack and SELinux together pass test suites with some exceptions.
->> There are conflicts with the way the modules treat network configurations.
->> These conflicts are under investigation, and changes to Smack (and
->> possibly SELinux) to reconcile the worst of the issues are in development.
-> This remains my big concern, especially the network support.  We've
-> talked about this a lot in person, but until I see the code which
-> deals with this I can't ack/nack this patchset.
+On Fri, 2017-11-10 at 23:39 +0100, Luis R. Rodriguez wrote:
+> On Fri, Nov 10, 2017 at 04:02:55PM -0500, Mimi Zohar wrote:
+> > If the kernel is locked down and IMA-appraisal is not enabled, prevent
+> > loading of unsigned firmware.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > ---
+> > 
+> > Changelog v1:
+> > - Lots of minor changes Kconfig, Makefile, fw_lsm.c for such a small patch
+> 
+> <-- snip -->
+> 
+> > diff --git a/security/fw_lockdown/fw_lsm.c b/security/fw_lockdown/fw_lsm.c
+> > new file mode 100644
+> > index 000000000000..cce03a5c5280
+> > --- /dev/null
+> > +++ b/security/fw_lockdown/fw_lsm.c
+> > @@ -0,0 +1,51 @@
+> > +/*
+> > + * fw_lockdown security module
+> > + *
+> > + * Copyright (C) 2017 IBM Corporation
+> > + *
+> > + * Authors:
+> > + * Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License as published by
+> > + * the Free Software Foundation; either version 2 of the License, or
+> > + * (at your option) any later version.
+> > + */
+> > +
+> > +#define pr_fmt(fmt) "fw_lockdown: " fmt
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/ima.h>
+> > +#include <linux/lsm_hooks.h>
+> > +
+> > +/**
+> > + * fw_lockdown_read_file - prevent loading of unsigned firmware
+> > + * @file: pointer to firmware
+> > + * @read_id: caller identifier
+> > + *
+> > + * Prevent loading of unsigned firmware in lockdown mode.
+> > + */
+> > +static int fw_lockdown_read_file(struct file *file, enum kernel_read_file_id id)
+> > +{
+> > +	if (id == READING_FIRMWARE) {
+> > +		if (!is_ima_appraise_enabled() &&
+> > +		    !kernel_is_locked_down("Loading of unsigned firmware"))
+> > +			return -EACCES;
+> 
+> I don't have kernel_is_locked_down() but I found it here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=keys-lockdown&id=0ff5adf1e81135c4ed914d0a8b70124caed04142
+> 
 
-That's well understood, and appreciated.
+> 1) I don't see it taking any arguments
 
-The LSM infrastructure is based on the system (e.g. vfs) code
-making calls to hooks when it is time to make a check. The netlabel
-system is based on the LSM making a call when it has information
-to present. The former makes coordination of multiple security
-modules relatively straight forward. The later requires holding on
-to data until such time as the end networking code needs it. Even
-if all the security modules made netlabel calls from exactly the
-same hooks (they don't) there's still no place to pull everything
-together. The solutions used to address the security_blah interfaces
-don't work with the networking implementation.
+David reposted the patches?https://lkml.org/lkml/2017/11/9/659?with
+the change. ?The latest version of the patches are in his?efi-lock-
+down branch.
 
-I'm on what I think is about my 5th approach to the netlabel problem.
-I have discovered all sorts of nasty little issues, some of which are
-artifacts of the IP stack, and some of which are the result of more
-general memory and object management.
+> 2) Don't we want:
+> 
+> 	if (!is_ima_appraise_enabled() && kernel_is_locked_down())
+> 		return -EACCES;
+> 
+> If, only if IMA appraisal is enabled would we enable kernel lockdown.
 
-I would be delighted if someone where inclined to point out an
-elegant way to approach the problem. Lacking that, I'll just keep
-plugging away with my 12 pound hammer and rusty crowbar.
+Yes, the kernel_is_locked_down() test needs to be inverted.
+
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
