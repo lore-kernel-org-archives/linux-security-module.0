@@ -1,34 +1,72 @@
-From: dhowells@redhat.com (David Howells)
-Date: Mon, 13 Nov 2017 21:44:47 +0000
-Subject: Firmware signing -- Re: [PATCH 00/27] security,
-	efi: Add kernel lockdown
-In-Reply-To: <20171113210848.4dc344bd@alans-desktop>
-References: <20171113210848.4dc344bd@alans-desktop>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<20171108061551.GD7859@linaro.org>
-	<20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-	<20171109044619.GG7859@linaro.org>
-	<20171111023240.2398ca55@alans-desktop>
-	<20171113174250.GA22894@wotan.suse.de>
-Message-ID: <454.1510609487@warthog.procyon.org.uk>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 13 Nov 2017 16:58:35 -0500
+Subject: [GIT PULL] SELinux patches for v4.15
+Message-ID: <CAHC9VhTHcp7DyX0n19F0ZS__ZwoL3KeouBsmsjc0UZ68fP9OXw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+Hi Linus,
 
-> So you don't actually need to sign a lot of PC class firmware because
-> it's already signed.
+Seven SELinux patches for v4.15, although five of the seven are small
+build fixes and cleanups.  Of the remaining two patches, the only one
+worth really calling out is Eric's fix for the SELinux filesystem
+xattr set/remove code; the other patch simply converts the SELinux
+hash table implementation to use kmem_cache.  Eric's
+setxattr/removexattr tweak converts SELinux back to calling the
+commoncap implementations when the xattr is not SELinux related.  The
+immediate win is to fixup filesystem capabilities in user namespaces,
+but it makes things a bit saner overall; more information in the
+commit description.
 
-Whilst that may be true, we either have to check signatures on every bit of
-firmware that the appropriate driver doesn't say is meant to be signed or not
-bother.
+Please merge for v4.15.
 
-David
+Thanks,
+-Paul
+
+---
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+
+ Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+  tags/selinux-pr-20171113
+
+for you to fetch changes up to 5794ed762ac2125299644494766704da94168ec0:
+
+ selinux: remove extraneous initialization of slots_used and max_chain_len
+  (2017-10-16 18:40:09 -0400)
+
+----------------------------------------------------------------
+selinux/stable-4.15 PR 20171113
+
+----------------------------------------------------------------
+Colin Ian King (3):
+     selinux: remove redundant assignment to str
+     selinux: remove redundant assignment to len
+     selinux: remove extraneous initialization of slots_used and max_chain_len
+
+Corentin LABBE (2):
+     selinux: fix build warning by removing the unused sid variable
+     selinux: fix build warning
+
+Eric W. Biederman (1):
+     selinux: Perform both commoncap and selinux xattr checks
+
+Kyeongdon Kim (1):
+     selinux: Use kmem_cache for hashtab_node
+
+security/selinux/hooks.c          | 55 ++++++++++++++---------------------
+security/selinux/ss/conditional.c |  1 -
+security/selinux/ss/hashtab.c     | 19 +++++++++++---
+security/selinux/ss/hashtab.h     |  4 +++
+security/selinux/ss/services.c    |  4 +++
+5 files changed, 47 insertions(+), 36 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
