@@ -1,89 +1,47 @@
 From: james.l.morris@oracle.com (James Morris)
-Date: Mon, 13 Nov 2017 09:05:13 +1100 (AEDT)
-Subject: [GIT PULL] Security subsystem: integrity updates for v4.15
-Message-ID: <alpine.LFD.2.20.1711130901380.28856@localhost>
+Date: Mon, 13 Nov 2017 17:45:24 +1100 (AEDT)
+Subject: [RFC v0.1][PATCH] selinuxns: extend namespace support to
+	security.selinux xattrs
+In-Reply-To: <1509458646.20694.10.camel@tycho.nsa.gov>
+References: <alpine.LFD.2.20.1710301859170.11614@localhost>
+	<1509390973.10174.9.camel@tycho.nsa.gov>
+	<alpine.LFD.2.20.1710311357320.22021@localhost>
+	<1509454842.20694.1.camel@tycho.nsa.gov>
+	<1509458646.20694.10.camel@tycho.nsa.gov>
+Message-ID: <alpine.LFD.2.20.1711131734230.32474@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
+On Tue, 31 Oct 2017, Stephen Smalley wrote:
 
-Please pull these fixes for the Integrity subsystem.
+> This btw would be a bit cleaner if we dropped the .ns. portion of the
+> name, such that we would have:
+> security.selinux # xattr name in the init namespace
+> security.selinux.vmN # xattr name in the vmN namespace
+> security.selinux.vmN.vmM # xattr name in the vmN.vmM namespace
 
-(From Mimi)
+Ok, just to clarify, the namespace name in the last example is "vmN.vmM", 
+not "vmM" ?
 
-"There is a mixture of bug fixes, code cleanup, preparatory code for new 
-functionality and new functionality.
+i.e. the namespaces are always hierarchical, and the security labels are 
+identified by that hierarchy.  If you enter vmM from the init namespace, 
+for example, the security labels for it are distinct from the labels under 
+vmN.  On disk, you would have both:
 
-Commit 26ddabfe96bb "evm: enable EVM when X509 certificate is loaded" 
-enabled EVM without loading a symmetric key, but was limited to defining 
-the x509 certificate pathname at build.  Included in this set of patches 
-is the ability of enabling EVM, without loading the EVM symmetric key, 
-from userspace.  New is the ability to prevent the loading of an EVM 
-symmetric key."
+security.selinux.vmM
+security.selinux.vmN.vmM
 
----
+which are independent.
 
-The following changes since commit 34d8751fd4ffa34e85ee7e85d34168b3f3f62b42:
+Each of these instances would potentially inherit different labels, and 
+have different provenance characteristics, so this seems necessary in any 
+case.
 
-  MAINTAINERS: update the IMA, EVM, trusted-keys, encrypted-keys entries (2017-11-06 02:21:44 +1100)
 
-are available in the git repository at:
+-- 
+James Morris
+<james.l.morris@oracle.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
-
-for you to fetch changes up to e5729f86a2987c9404f9b2fb494b9a6fc4412baf:
-
-  ima: Remove redundant conditional operator (2017-11-08 15:16:36 -0500)
-
-----------------------------------------------------------------
-Boshi Wang (1):
-      ima: fix hash algorithm initialization
-
-Bruno E. O. Meneguele (2):
-      module: export module signature enforcement status
-      ima: check signature enforcement against cmdline param instead of CONFIG
-
-Christoph Hellwig (1):
-      integrity: use kernel_read_file_from_path() to read x509 certs
-
-Matthew Garrett (3):
-      EVM: Include security.apparmor in EVM measurements
-      EVM: Allow userspace to signal an RSA key has been loaded
-      EVM: Only complain about a missing HMAC key once
-
-Mimi Zohar (4):
-      vfs: fix mounting a filesystem with i_version
-      ima: don't remove the securityfs policy file
-      ima: always measure and audit files in policy
-      ima: call ima_file_free() prior to calling fasync
-
-Thiago Jung Bauermann (1):
-      ima: Remove redundant conditional operator
-
-Thomas Meyer (1):
-      ima: Fix bool initialization/comparison
-
- Documentation/ABI/testing/evm         | 47 ++++++++++++++++--------
- fs/file_table.c                       |  2 +-
- fs/namespace.c                        |  3 +-
- include/linux/fs.h                    |  1 +
- include/linux/module.h                |  7 ++++
- include/uapi/linux/xattr.h            |  3 ++
- kernel/module.c                       | 10 ++++++
- security/integrity/digsig.c           | 14 +++++---
- security/integrity/evm/evm.h          |  3 ++
- security/integrity/evm/evm_crypto.c   |  2 +-
- security/integrity/evm/evm_main.c     |  3 ++
- security/integrity/evm/evm_secfs.c    | 29 ++++++++-------
- security/integrity/iint.c             | 49 -------------------------
- security/integrity/ima/ima_api.c      | 67 ++++++++++++++++++++++-------------
- security/integrity/ima/ima_appraise.c |  4 +--
- security/integrity/ima/ima_crypto.c   | 10 ++++++
- security/integrity/ima/ima_fs.c       |  6 ++--
- security/integrity/ima/ima_main.c     | 23 +++++++-----
- security/integrity/ima/ima_policy.c   |  6 ++--
- security/integrity/integrity.h        |  2 --
- 20 files changed, 165 insertions(+), 126 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
