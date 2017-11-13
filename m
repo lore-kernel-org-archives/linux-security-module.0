@@ -1,194 +1,52 @@
-From: richard_c_haines@btinternet.com (Richard Haines)
-Date: Mon, 13 Nov 2017 20:50:17 +0000
-Subject: [RFC PATCH 4/5] netlabel: Add SCTP support
-In-Reply-To: <CAHC9VhT1T+ZMreYNa33YVA-drHN=Tg6xQb4nmMWUuX+8OYO9fQ@mail.gmail.com>
-References: <20171017135854.4343-1-richard_c_haines@btinternet.com>
-	<CAHC9VhT1T+ZMreYNa33YVA-drHN=Tg6xQb4nmMWUuX+8OYO9fQ@mail.gmail.com>
-Message-ID: <1510606217.2636.4.camel@btinternet.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Mon, 13 Nov 2017 21:08:48 +0000
+Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
+	lockdown
+In-Reply-To: <20171113174250.GA22894@wotan.suse.de>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<14219.1509660259@warthog.procyon.org.uk>
+	<1509660641.3416.24.camel@linux.vnet.ibm.com>
+	<20171107230700.GJ22894@wotan.suse.de>
+	<20171108061551.GD7859@linaro.org>
+	<20171108194626.GQ22894@wotan.suse.de>
+	<20171109014841.GF7859@linaro.org>
+	<1510193857.4484.95.camel@linux.vnet.ibm.com>
+	<20171109044619.GG7859@linaro.org>
+	<20171111023240.2398ca55@alans-desktop>
+	<20171113174250.GA22894@wotan.suse.de>
+Message-ID: <20171113210848.4dc344bd@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2017-11-06 at 18:15 -0500, Paul Moore wrote:
-> On Tue, Oct 17, 2017 at 9:58 AM, Richard Haines
-> <richard_c_haines@btinternet.com> wrote:
-> > Add support to label SCTP associations and cater for a situation
-> > where
-> > family = PF_INET6 with an ip_hdr(skb)->version = 4.
+On Mon, 13 Nov 2017 18:42:50 +0100
+"Luis R. Rodriguez" <mcgrof@kernel.org> wrote:
+
+> On Sat, Nov 11, 2017 at 02:32:40AM +0000, Alan Cox wrote:
+> > > My assumption here is:
+> > > 1) there are some less important and so security-insensitive firmwares,
+> > >    by which I mean that such firmwares won't be expected to be signed in
+> > >    terms of vulnerability or integrity.
+> > >    (I can't give you examples though.)
+> > > 2) firmware's signature will be presented separately from the firmware
+> > >    blob itself. Say, "firmware.bin.p7s" for "firmware.bin"  
 > > 
-> > Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-> > ---
-> >  include/net/netlabel.h            |  3 ++
-> >  net/netlabel/netlabel_kapi.c      | 80
-> > +++++++++++++++++++++++++++++++++++++++
-> >  net/netlabel/netlabel_unlabeled.c | 10 +++++
-> >  3 files changed, 93 insertions(+)
-> > 
-> > diff --git a/include/net/netlabel.h b/include/net/netlabel.h
-> > index 72d6435..7348966 100644
-> > --- a/include/net/netlabel.h
-> > +++ b/include/net/netlabel.h
-> > @@ -494,6 +494,9 @@ int netlbl_conn_setattr(struct sock *sk,
-> >                         const struct netlbl_lsm_secattr *secattr);
-> >  int netlbl_req_setattr(struct request_sock *req,
-> >                        const struct netlbl_lsm_secattr *secattr);
-> > +int netlbl_sctp_setattr(struct sock *sk,
-> > +                       struct sk_buff *skb,
-> > +                       const struct netlbl_lsm_secattr *secattr);
-> >  void netlbl_req_delattr(struct request_sock *req);
-> >  int netlbl_skbuff_setattr(struct sk_buff *skb,
-> >                           u16 family,
-> > diff --git a/net/netlabel/netlabel_kapi.c
-> > b/net/netlabel/netlabel_kapi.c
-> > index ea7c670..1c82bbe 100644
-> > --- a/net/netlabel/netlabel_kapi.c
-> > +++ b/net/netlabel/netlabel_kapi.c
-> > @@ -1121,6 +1121,7 @@ int netlbl_conn_setattr(struct sock *sk,
-> >         switch (addr->sa_family) {
-> >         case AF_INET:
-> >                 addr4 = (struct sockaddr_in *)addr;
-> > +
+> > For x86 at least any firmware on any system modern enough to support
+> > 'secure' boot should already be signed. The only major exception is
+> > likely to be for things like random USB widgets.  
 > 
-> I'm guessing this bit of extra whitespace was an accident; but just
-> in
-> case, drop it from this patch please.
-Done
-> 
-> >                 entry = netlbl_domhsh_getentry_af4(secattr->domain,
-> >                                                    addr4-
-> > >sin_addr.s_addr);
-> >                 if (entry == NULL) {
-> > @@ -1177,6 +1178,85 @@ int netlbl_conn_setattr(struct sock *sk,
-> >  }
-> > 
-> >  /**
-> > + * netlbl_sctp_setattr - Label an incoming sctp association socket
-> > using
-> > + * the correct protocol
-> > + * @sk: the socket to label
-> > + * @skb: the packet
-> > + * @secattr: the security attributes
-> > + *
-> > + * Description:
-> > + * Attach the correct label to the given socket using the security
-> > attributes
-> > + * specified in @secattr.  Returns zero on success, negative
-> > values on failure.
-> > + *
-> > + */
-> > +int netlbl_sctp_setattr(struct sock *sk,
-> > +                       struct sk_buff *skb,
-> > +                       const struct netlbl_lsm_secattr *secattr)
-> > +{
-> > +       int ret_val = -EINVAL;
-> > +       struct netlbl_dommap_def *entry;
-> > +       struct iphdr *hdr4;
-> > +#if IS_ENABLED(CONFIG_IPV6)
-> > +       struct ipv6hdr *hdr6;
-> > +#endif
-> > +
-> > +       rcu_read_lock();
-> > +       switch (sk->sk_family) {
-> > +       case AF_INET:
-> > +               hdr4 = ip_hdr(skb);
-> > +
-> > +               entry = netlbl_domhsh_getentry_af4(secattr->domain,
-> > +                                                  hdr4->saddr);
-> > +               if (entry == NULL) {
-> > +                       ret_val = -ENOENT;
-> > +                       goto sctp_setattr_return;
-> > +               }
-> > +               switch (entry->type) {
-> > +               case NETLBL_NLTYPE_CIPSOV4:
-> > +                       ret_val = cipso_v4_sock_setattr(sk, entry-
-> > >cipso,
-> > +                                                       secattr);
-> > +                       break;
-> > +               case NETLBL_NLTYPE_UNLABELED:
-> > +                       netlbl_sock_delattr(sk);
-> > +                       ret_val = 0;
-> > +                       break;
-> > +               default:
-> > +                       ret_val = -ENOENT;
-> > +               }
-> > +               break;
-> > +#if IS_ENABLED(CONFIG_IPV6)
-> > +       case AF_INET6:
-> > +               hdr6 = ipv6_hdr(skb);
-> > +               entry = netlbl_domhsh_getentry_af6(secattr->domain,
-> > +                                                  &hdr6->saddr);
-> > +               if (entry == NULL) {
-> > +                       ret_val = -ENOENT;
-> > +                       goto sctp_setattr_return;
-> > +               }
-> > +               switch (entry->type) {
-> > +               case NETLBL_NLTYPE_CALIPSO:
-> > +                       ret_val = calipso_sock_setattr(sk, entry-
-> > >calipso,
-> > +                                                      secattr);
-> > +                       break;
-> > +               case NETLBL_NLTYPE_UNLABELED:
-> > +                       netlbl_sock_delattr(sk);
-> > +                       ret_val = 0;
-> > +                       break;
-> > +               default:
-> > +                       ret_val = -ENOENT;
-> > +               }
-> > +               break;
-> > +#endif /* IPv6 */
-> > +       default:
-> > +               ret_val = -EPROTONOSUPPORT;
-> > +       }
-> > +
-> > +sctp_setattr_return:
-> > +       rcu_read_unlock();
-> > +       return ret_val;
-> > +}
-> 
-> It seems like we should try to leverage the code in
-> netlbl_conn_setattr() a bit more.  I would suggest either tweaking
-> the
-> callers to use a sockaddr struct and netlbl_conn_setattr(), or
-> implement netlbl_sctp_setattr() as a simple wrapper around
-> netlbl_conn_setattr() ... the former seems a bit cleaner, but I
-> suspect patch 5/5 will make it clear which approach is better.
+> Alan, the firmware being considered here is /lib/firmware firmware, which
+> is not signed today. Its unclear to me how you mean that /lib/firmware files
+> are already signed or verified today
 
-I've now modified selinux_netlbl_sctp_assoc_request() to extract the ip
-address info from skb and add to a sockaddr struct, then call
-netlbl_conn_setattr(). This removes any specific SCTP code from
-netlabel_kapi.c
+By the hardware they get loaded onto. Pretty much all of the hardware on
+PC class systems at least is signed and checked by the platform or the
+device itself. For a 'secure' boot era PC that's pretty much everything
+except USB toys and FPGA.
 
-> 
-> > diff --git a/net/netlabel/netlabel_unlabeled.c
-> > b/net/netlabel/netlabel_unlabeled.c
-> > index 22dc1b9..c070dfc 100644
-> > --- a/net/netlabel/netlabel_unlabeled.c
-> > +++ b/net/netlabel/netlabel_unlabeled.c
-> > @@ -1472,6 +1472,16 @@ int netlbl_unlabel_getattr(const struct
-> > sk_buff *skb,
-> >                 iface = rcu_dereference(netlbl_unlhsh_def);
-> >         if (iface == NULL || !iface->valid)
-> >                 goto unlabel_getattr_nolabel;
-> > +
-> > +#if IS_ENABLED(CONFIG_IPV6)
-> > +       /* When resolving a fallback label, check the sk_buff
-> > version as
-> > +        * it is possible (e.g. SCTP) to have family = PF_INET6
-> > while
-> > +        * receiving ip_hdr(skb)->version = 4.
-> > +        */
-> > +       if (family == PF_INET6 && ip_hdr(skb)->version == 4)
-> > +               family = PF_INET;
-> > +#endif /* IPv6 */
-> > +
-> 
-> It seems like this should be pulled out into it's own patch as a fix
-> that extends beyond SCTP, what do you think?
+So you don't actually need to sign a lot of PC class firmware because
+it's already signed.
 
-I'll submit this as a separate NetLabel patch today.
-
-Thanks for all your comments on the patchset, will probably take a few
-weeks to respond to them all.
-> 
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
