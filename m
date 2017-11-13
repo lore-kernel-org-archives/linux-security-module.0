@@ -1,43 +1,173 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Mon, 13 Nov 2017 14:09:10 -0800
-Subject: Firmware signing -- Re: [PATCH 00/27] security,
-	efi: Add kernel lockdown
-In-Reply-To: <454.1510609487@warthog.procyon.org.uk>
-References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<20171108061551.GD7859@linaro.org>
-	<20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-	<20171109044619.GG7859@linaro.org>
-	<20171111023240.2398ca55@alans-desktop>
-	<20171113174250.GA22894@wotan.suse.de>
-	<20171113210848.4dc344bd@alans-desktop>
-	<454.1510609487@warthog.procyon.org.uk>
-Message-ID: <CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 13 Nov 2017 17:26:56 -0500
+Subject: [RFC PATCH 4/5] netlabel: Add SCTP support
+In-Reply-To: <1510606217.2636.4.camel@btinternet.com>
+References: <20171017135854.4343-1-richard_c_haines@btinternet.com>
+	<CAHC9VhT1T+ZMreYNa33YVA-drHN=Tg6xQb4nmMWUuX+8OYO9fQ@mail.gmail.com>
+	<1510606217.2636.4.camel@btinternet.com>
+Message-ID: <CAHC9VhTVY-dk1BO7EosaYS=7h-5UAva8NE_vv0p6e0g_TcaySQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Nov 13, 2017 at 1:44 PM, David Howells <dhowells@redhat.com> wrote:
+On Mon, Nov 13, 2017 at 3:50 PM, Richard Haines
+<richard_c_haines@btinternet.com> wrote:
+> On Mon, 2017-11-06 at 18:15 -0500, Paul Moore wrote:
+>> On Tue, Oct 17, 2017 at 9:58 AM, Richard Haines
+>> <richard_c_haines@btinternet.com> wrote:
+>> > Add support to label SCTP associations and cater for a situation
+>> > where
+>> > family = PF_INET6 with an ip_hdr(skb)->version = 4.
+>> >
+>> > Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+>> > ---
+>> >  include/net/netlabel.h            |  3 ++
+>> >  net/netlabel/netlabel_kapi.c      | 80
+>> > +++++++++++++++++++++++++++++++++++++++
+>> >  net/netlabel/netlabel_unlabeled.c | 10 +++++
+>> >  3 files changed, 93 insertions(+)
+
+>> >  /**
+>> > + * netlbl_sctp_setattr - Label an incoming sctp association socket
+>> > using
+>> > + * the correct protocol
+>> > + * @sk: the socket to label
+>> > + * @skb: the packet
+>> > + * @secattr: the security attributes
+>> > + *
+>> > + * Description:
+>> > + * Attach the correct label to the given socket using the security
+>> > attributes
+>> > + * specified in @secattr.  Returns zero on success, negative
+>> > values on failure.
+>> > + *
+>> > + */
+>> > +int netlbl_sctp_setattr(struct sock *sk,
+>> > +                       struct sk_buff *skb,
+>> > +                       const struct netlbl_lsm_secattr *secattr)
+>> > +{
+>> > +       int ret_val = -EINVAL;
+>> > +       struct netlbl_dommap_def *entry;
+>> > +       struct iphdr *hdr4;
+>> > +#if IS_ENABLED(CONFIG_IPV6)
+>> > +       struct ipv6hdr *hdr6;
+>> > +#endif
+>> > +
+>> > +       rcu_read_lock();
+>> > +       switch (sk->sk_family) {
+>> > +       case AF_INET:
+>> > +               hdr4 = ip_hdr(skb);
+>> > +
+>> > +               entry = netlbl_domhsh_getentry_af4(secattr->domain,
+>> > +                                                  hdr4->saddr);
+>> > +               if (entry == NULL) {
+>> > +                       ret_val = -ENOENT;
+>> > +                       goto sctp_setattr_return;
+>> > +               }
+>> > +               switch (entry->type) {
+>> > +               case NETLBL_NLTYPE_CIPSOV4:
+>> > +                       ret_val = cipso_v4_sock_setattr(sk, entry-
+>> > >cipso,
+>> > +                                                       secattr);
+>> > +                       break;
+>> > +               case NETLBL_NLTYPE_UNLABELED:
+>> > +                       netlbl_sock_delattr(sk);
+>> > +                       ret_val = 0;
+>> > +                       break;
+>> > +               default:
+>> > +                       ret_val = -ENOENT;
+>> > +               }
+>> > +               break;
+>> > +#if IS_ENABLED(CONFIG_IPV6)
+>> > +       case AF_INET6:
+>> > +               hdr6 = ipv6_hdr(skb);
+>> > +               entry = netlbl_domhsh_getentry_af6(secattr->domain,
+>> > +                                                  &hdr6->saddr);
+>> > +               if (entry == NULL) {
+>> > +                       ret_val = -ENOENT;
+>> > +                       goto sctp_setattr_return;
+>> > +               }
+>> > +               switch (entry->type) {
+>> > +               case NETLBL_NLTYPE_CALIPSO:
+>> > +                       ret_val = calipso_sock_setattr(sk, entry-
+>> > >calipso,
+>> > +                                                      secattr);
+>> > +                       break;
+>> > +               case NETLBL_NLTYPE_UNLABELED:
+>> > +                       netlbl_sock_delattr(sk);
+>> > +                       ret_val = 0;
+>> > +                       break;
+>> > +               default:
+>> > +                       ret_val = -ENOENT;
+>> > +               }
+>> > +               break;
+>> > +#endif /* IPv6 */
+>> > +       default:
+>> > +               ret_val = -EPROTONOSUPPORT;
+>> > +       }
+>> > +
+>> > +sctp_setattr_return:
+>> > +       rcu_read_unlock();
+>> > +       return ret_val;
+>> > +}
+>>
+>> It seems like we should try to leverage the code in
+>> netlbl_conn_setattr() a bit more.  I would suggest either tweaking
+>> the
+>> callers to use a sockaddr struct and netlbl_conn_setattr(), or
+>> implement netlbl_sctp_setattr() as a simple wrapper around
+>> netlbl_conn_setattr() ... the former seems a bit cleaner, but I
+>> suspect patch 5/5 will make it clear which approach is better.
 >
-> Whilst that may be true, we either have to check signatures on every bit of
-> firmware that the appropriate driver doesn't say is meant to be signed or not
-> bother.
+> I've now modified selinux_netlbl_sctp_assoc_request() to extract the ip
+> address info from skb and add to a sockaddr struct, then call
+> netlbl_conn_setattr(). This removes any specific SCTP code from
+> netlabel_kapi.c
 
-I vote for "not bother".
+Great, I think that's probably the best option.
 
-Seriously, if you have firmware in /lib/firmware, and you don't trust
-it, what the hell are you doing?
+>> > diff --git a/net/netlabel/netlabel_unlabeled.c
+>> > b/net/netlabel/netlabel_unlabeled.c
+>> > index 22dc1b9..c070dfc 100644
+>> > --- a/net/netlabel/netlabel_unlabeled.c
+>> > +++ b/net/netlabel/netlabel_unlabeled.c
+>> > @@ -1472,6 +1472,16 @@ int netlbl_unlabel_getattr(const struct
+>> > sk_buff *skb,
+>> >                 iface = rcu_dereference(netlbl_unlhsh_def);
+>> >         if (iface == NULL || !iface->valid)
+>> >                 goto unlabel_getattr_nolabel;
+>> > +
+>> > +#if IS_ENABLED(CONFIG_IPV6)
+>> > +       /* When resolving a fallback label, check the sk_buff
+>> > version as
+>> > +        * it is possible (e.g. SCTP) to have family = PF_INET6
+>> > while
+>> > +        * receiving ip_hdr(skb)->version = 4.
+>> > +        */
+>> > +       if (family == PF_INET6 && ip_hdr(skb)->version == 4)
+>> > +               family = PF_INET;
+>> > +#endif /* IPv6 */
+>> > +
+>>
+>> It seems like this should be pulled out into it's own patch as a fix
+>> that extends beyond SCTP, what do you think?
+>
+> I'll submit this as a separate NetLabel patch today.
 
-Oh, it's one of those "let's protect people from themselves, so that
-they can't possibly break Disney^W^W be terrorists - but but the
-children" things again, isn't it?
+Saw it and ACK'd it, thank you.
 
-Watch me care.
+> Thanks for all your comments on the patchset, will probably take a few
+> weeks to respond to them all.
 
-                  Linus
+No worries, we've waited some time for someone to implement proper
+SCTP support, a few more weeks isn't going to hurt anyone :)
+
+Also, apologies for some confusion on my part regarding SCTP in my
+latest comments; I've since learned I wasn't thinking about endpoints
+and associations correctly.
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
