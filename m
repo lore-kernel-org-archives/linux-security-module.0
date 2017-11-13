@@ -1,59 +1,47 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 13 Nov 2017 06:49:55 -0500
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <20171111023240.2398ca55@alans-desktop>
-References: <1509660086.3416.15.camel@linux.vnet.ibm.com>
-	<150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<20171108061551.GD7859@linaro.org>
-	<20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-	<20171109044619.GG7859@linaro.org>
-	<20171111023240.2398ca55@alans-desktop>
-Message-ID: <1510573795.3404.113.camel@linux.vnet.ibm.com>
+From: hassantara789@gmail.com (M,Shakour Rosarita)
+Date: Mon, 13 Nov 2017 12:08:18 +0000
+Subject: Hello Dear...
+Message-ID: <CAMyxZDE63FQAQ=JTZN_2Ks1T4PC7+RQ2oo6+S3vs4Q0Mp-K2iQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2017-11-11 at 02:32 +0000, Alan Cox wrote:
-> > My assumption here is:
-> > 1) there are some less important and so security-insensitive firmwares,
-> >    by which I mean that such firmwares won't be expected to be signed in
-> >    terms of vulnerability or integrity.
-> >    (I can't give you examples though.)
-> > 2) firmware's signature will be presented separately from the firmware
-> >    blob itself. Say, "firmware.bin.p7s" for "firmware.bin"
-> 
-> For x86 at least any firmware on any system modern enough to support
-> 'secure' boot should already be signed. The only major exception is
-> likely to be for things like random USB widgets.
+Hello Dear...
 
-Does this mean that the firmware signature is contained within the
-firmware? ?On Linux, is anything verifying this signature? ?Or is this
-the hw verifying the firmware's signature?
+I know that this message will come to you as a surprise. I hoped that
+you will not expose or betray this trust and confident that I am about
+to repose on you, my name is M, Shakour Rosarita. I am 19 years old
+Girl, female, from Tartu Syria, (never married) 61 kg, white in
+complexion, and I am currently living in the refugee camp here in
+Abidjan Ivory Coast, My late beloved father M,Shakour Hassin was a
+renowned businessman and owner of Natour Petrol Station in Syria, he
+was killed in a stampede riot in Tartu, Syria.
+When I got the news about my parents. I fled to a nearby country
+Jordan before I joined a ferry to Africa and came to Abidjan capital
+city Ivory Coast West Africa find safety here.
+I came in 2015 to Abidjan and I now live in refugee camps here as
+refugees are allowed freely to enter here without, My late father
+deposited (US$6.200.000.00m) My late father kept the money at the bank
+of Africa, I want you to help me transfer the money to your hand so
+that you will help me bring me into your country for my continue
+education.
 
-> Even things like input controller firmware loaded over i2c or spi
-> is usually signed because you could do fun things with input faking
-> otherwise.
-> 
-> The other usual exception is FPGAs, but since the point of an FPGA is
-> usually the fact it *can* be reprogrammed it's not clear that signing
-> FPGA firmware makes sense unless it is designed to be fixed function.
-> 
-> You can't subvert the bus protocols on the x86 FPGA I am aware of as
-> those bits are signed (or hard IP), but without IOMMU I am not sure FPGA
-> and 'secure' boot is completely compatible.
+I sent my pictures here for you to see. Who I am seriously looking for
+a good-person in my life, so I want to hear from you soon and learn
+more about you.
 
-Ok, but why differentiate between "fixed" and research/development
-FPGA functions? ?In both cases, the FPGA firmware would need to be
-signed locally. ?Wouldn't this be similar to kernel developers
-building their own kernels and signing the kernel modules?
-
-Mimi
-
+I am an open-minded and friendly girl to share a good time with you
+and have fun and enjoy on the go, bird watching, the rest of our
+lives. My Hobbies, tourism books, dance, music, soccer, tennis,
+swimming and cinema.
+I would just think about you, including your dose and doesn?t .I
+believe we will do well together, and live like one family.
+Thank you and God bless you, for you in your promise to help me here,
+looking forward to your reply by the grace of God and have a good day.
+I hope you send me your photos as well? I await your next reply in
+faith please reply through my private email at
+(mshakourrosarita22 at gmail.com):
+Thanks.
+Ms Rosarita
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
