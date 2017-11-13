@@ -1,47 +1,71 @@
-From: hassantara789@gmail.com (M,Shakour Rosarita)
-Date: Mon, 13 Nov 2017 12:08:18 +0000
-Subject: Hello Dear...
-Message-ID: <CAMyxZDE63FQAQ=JTZN_2Ks1T4PC7+RQ2oo6+S3vs4Q0Mp-K2iQ@mail.gmail.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Mon, 13 Nov 2017 09:18:36 -0500
+Subject: [RFC v0.1][PATCH] selinuxns: extend namespace support to
+	security.selinux xattrs
+In-Reply-To: <alpine.LFD.2.20.1711131734230.32474@localhost>
+References: <alpine.LFD.2.20.1710301859170.11614@localhost>
+	<1509390973.10174.9.camel@tycho.nsa.gov>
+	<alpine.LFD.2.20.1710311357320.22021@localhost>
+	<1509454842.20694.1.camel@tycho.nsa.gov>
+	<1509458646.20694.10.camel@tycho.nsa.gov>
+	<alpine.LFD.2.20.1711131734230.32474@localhost>
+Message-ID: <1510582716.30953.2.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hello Dear...
+On Mon, 2017-11-13 at 17:45 +1100, James Morris wrote:
+> On Tue, 31 Oct 2017, Stephen Smalley wrote:
+> 
+> > This btw would be a bit cleaner if we dropped the .ns. portion of
+> > the
+> > name, such that we would have:
+> > security.selinux # xattr name in the init namespace
+> > security.selinux.vmN # xattr name in the vmN namespace
+> > security.selinux.vmN.vmM # xattr name in the vmN.vmM namespace
+> 
+> Ok, just to clarify, the namespace name in the last example is
+> "vmN.vmM",?
+> not "vmM" ?
+> 
+> i.e. the namespaces are always hierarchical, and the security labels
+> are?
+> identified by that hierarchy.??If you enter vmM from the init
+> namespace,?
+> for example, the security labels for it are distinct from the labels
+> under?
+> vmN.??On disk, you would have both:
+> 
+> security.selinux.vmM
+> security.selinux.vmN.vmM
+> 
+> which are independent.
+> 
+> Each of these instances would potentially inherit different labels,
+> and?
+> have different provenance characteristics, so this seems necessary in
+> any?
+> case.
 
-I know that this message will come to you as a surprise. I hoped that
-you will not expose or betray this trust and confident that I am about
-to repose on you, my name is M, Shakour Rosarita. I am 19 years old
-Girl, female, from Tartu Syria, (never married) 61 kg, white in
-complexion, and I am currently living in the refugee camp here in
-Abidjan Ivory Coast, My late beloved father M,Shakour Hassin was a
-renowned businessman and owner of Natour Petrol Station in Syria, he
-was killed in a stampede riot in Tartu, Syria.
-When I got the news about my parents. I fled to a nearby country
-Jordan before I joined a ferry to Africa and came to Abidjan capital
-city Ivory Coast West Africa find safety here.
-I came in 2015 to Abidjan and I now live in refugee camps here as
-refugees are allowed freely to enter here without, My late father
-deposited (US$6.200.000.00m) My late father kept the money at the bank
-of Africa, I want you to help me transfer the money to your hand so
-that you will help me bring me into your country for my continue
-education.
+Yes, at least with respect to the absolute namespace name maintained
+within the kernel and used for xattr names. Not clear what should
+happen with respect to the names written to or read from
+/sys/fs/selinux/unshare; conceptually it seems cleaner if those are
+relative to the namespace of the caller, such that if a process that is
+already in "vmN" writes "vmM" to /sys/fs/selinux/unshare, then it ends
+up in "vmN.vmM" automatically. But if we applied the same principle to
+reading, then a subsequent read from /sys/fs/selinux/unshare would give
+back the empty string since the process is already in that namespace. 
+Was also wondering if the name read for the init namespace ought to
+just be the empty string instead of the magic "init" value to make it
+consistent with the fact that there is no xattr suffix.
 
-I sent my pictures here for you to see. Who I am seriously looking for
-a good-person in my life, so I want to hear from you soon and learn
-more about you.
+Then there is the question of what to do upon a collision, e.g. if a
+second process in "vmN" writes "vmM" to /sys/fs/selinux/unshare. We
+could either fail with EEXIST and require the caller to use a unique
+name relative to its current namespace or use this as a way to enter an
+already existing namespace ala setns(2) for other namespaces, i.e. look
+up the namespace named "vmN.vmM" and switch to it.
 
-I am an open-minded and friendly girl to share a good time with you
-and have fun and enjoy on the go, bird watching, the rest of our
-lives. My Hobbies, tourism books, dance, music, soccer, tennis,
-swimming and cinema.
-I would just think about you, including your dose and doesn?t .I
-believe we will do well together, and live like one family.
-Thank you and God bless you, for you in your promise to help me here,
-looking forward to your reply by the grace of God and have a good day.
-I hope you send me your photos as well? I await your next reply in
-faith please reply through my private email at
-(mshakourrosarita22 at gmail.com):
-Thanks.
-Ms Rosarita
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
