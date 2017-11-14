@@ -1,56 +1,228 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 14 Nov 2017 08:17:14 -0500
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <20171114123856.GA31142@kroah.com>
-References: <20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-	<20171109044619.GG7859@linaro.org>
-	<20171111023240.2398ca55@alans-desktop>
-	<20171113174250.GA22894@wotan.suse.de>
-	<20171113210848.4dc344bd@alans-desktop>
-	<454.1510609487@warthog.procyon.org.uk>
-	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
-	<1510662098.3711.139.camel@linux.vnet.ibm.com>
-	<20171114123856.GA31142@kroah.com>
-Message-ID: <1510665434.3711.158.camel@linux.vnet.ibm.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 14 Nov 2017 08:41:54 -0500
+Subject: [RFC PATCH 5/5] selinux: Add SCTP support
+In-Reply-To: <CAHC9VhRg9xS=ustdcORVPsb9H18nMEq6A99Y3KyOm2sm6Mo5xg@mail.gmail.com>
+References: <20171017135953.4419-1-richard_c_haines@btinternet.com>
+	<CAHC9VhShAjQiw-P5vvuULbEZJ7KYHch5ZsnRk=d9vP5kyDvYzQ@mail.gmail.com>
+	<1510610721.3652.8.camel@btinternet.com>
+	<CAHC9VhRg9xS=ustdcORVPsb9H18nMEq6A99Y3KyOm2sm6Mo5xg@mail.gmail.com>
+Message-ID: <1510666914.19398.2.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-11-14 at 13:38 +0100, Greg Kroah-Hartman wrote:
-> On Tue, Nov 14, 2017 at 07:21:38AM -0500, Mimi Zohar wrote:
-> > On Mon, 2017-11-13 at 14:09 -0800, Linus Torvalds wrote:
-> > > On Mon, Nov 13, 2017 at 1:44 PM, David Howells <dhowells@redhat.com> wrote:
-> > > >
-> > > > Whilst that may be true, we either have to check signatures on every bit of
-> > > > firmware that the appropriate driver doesn't say is meant to be signed or not
-> > > > bother.
-> > > 
-> > > I vote for "not bother".
-> > > 
-> > > Seriously, if you have firmware in /lib/firmware, and you don't trust
-> > > it, what the hell are you doing?
-> > 
-> > I might "trust" the files in /lib/firmware, but I also want to make
-> > sure that they haven't changed. ?File signatures provide file
-> > provenance and integrity guarantees.
+On Mon, 2017-11-13 at 17:40 -0500, Paul Moore wrote:
+> On Mon, Nov 13, 2017 at 5:05 PM, Richard Haines
+> <richard_c_haines@btinternet.com> wrote:
+> > On Mon, 2017-11-06 at 19:09 -0500, Paul Moore wrote:
+> > > On Tue, Oct 17, 2017 at 9:59 AM, Richard Haines
+> > > <richard_c_haines@btinternet.com> wrote:
+> > > > The SELinux SCTP implementation is explained in:
+> > > > Documentation/security/SELinux-sctp.txt
+> > > > 
+> > > > Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+> > > > ---
+> > > > ?Documentation/security/SELinux-sctp.txt | 108 +++++++++++++
+> > > > ?security/selinux/hooks.c????????????????| 268
+> > > > ++++++++++++++++++++++++++++++--
+> > > > ?security/selinux/include/classmap.h?????|???3 +-
+> > > > ?security/selinux/include/netlabel.h?????|???9 +-
+> > > > ?security/selinux/include/objsec.h???????|???5 +
+> > > > ?security/selinux/netlabel.c?????????????|??52 ++++++-
+> > > > ?6 files changed, 427 insertions(+), 18 deletions(-)
+> > > > ?create mode 100644 Documentation/security/SELinux-sctp.txt
 > 
-> Then "verify" them with signatures that you generate yourself.  Like
-> dm-verify does for the partition that you put the firmware on.
+> ...
+> 
+> > > > +Policy Statements
+> > > > +==================
+> > > > +The following class and permissions to support SCTP are
+> > > > available
+> > > > within the
+> > > > +kernel:
+> > > > +????class sctp_socket inherits socket { node_bind }
+> > > > +
+> > > > +whenever the following policy capability is enabled:
+> > > > +????policycap extended_socket_class;
+> > > > +
+> > > > +The SELinux SCTP support adds the additional permissions that
+> > > > are
+> > > > explained
+> > > > +in the sections below:
+> > > > +????association bindx connectx
+> > > 
+> > > Is the distinction between bind and bindx significant???The same
+> > > question applies to connect/connectx.??I think we can probably
+> > > just
+> > > reuse bind and connect in these cases.
+> > 
+> > This has been discussed before with Marcelo and keeping
+> > bindx/connectx
+> > is a useful distinction.
+> 
+> My apologies, I must have forgotten/missed that discussion.??Do you
+> have an archive pointer?
+> 
+> > > > +SCTP Peer Labeling
+> > > > +===================
+> > > > +An SCTP socket will only have one peer label assigned to it.
+> > > > This
+> > > > will be
+> > > > +assigned during the establishment of the first association.
+> > > > Once
+> > > > the peer
+> > > > +label has been assigned, any new associations will have the
+> > > > "association"
+> > > > +permission validated by checking the socket peer sid against
+> > > > the
+> > > > received
+> > > > +packets peer sid to determine whether the association should
+> > > > be
+> > > > allowed or
+> > > > +denied.
+> > > > +
+> > > > +NOTES:
+> > > > +???1) If peer labeling is not enabled, then the peer context
+> > > > will
+> > > > always be
+> > > > +??????SECINITSID_UNLABELED (unlabeled_t in Reference Policy).
+> > > > +
+> > > > +???2) As SCTP supports multiple endpoints with multi-homing on
+> > > > a
+> > > > single socket
+> > > > +??????it is recommended that peer labels are consistent.
+> > > 
+> > > My apologies if I'm confused, but I thought it was multiple
+> > > associations per-endpoint, with the associations providing the
+> > > multi-homing functionality, no?
+> > 
+> > I've reworded to:
+> > As SCTP can support more than one transport address per endpoint
+> > (multi-homing) on a single socket, it is possible to configure
+> > policy
+> > and NetLabel to provide different peer labels for each of these. As
+> > the
+> > socket peer label is determined by the first associations transport
+> > address, it is recommended that all peer labels are consistent.
+> 
+> I'm still not sure this makes complete sense to me, but since I'm
+> still not 100% confident in my understanding of SCTP I'm willing to
+> punt on this for the moment.
+> 
+> > > > +???3) getpeercon(3) may be used by userspace to retrieve the
+> > > > sockets peer
+> > > > +???????context.
+> > > > +
+> > > > +???4) If using NetLabel be aware that if a label is assigned
+> > > > to a
+> > > > specific
+> > > > +??????interface, and that interface 'goes down', then the
+> > > > NetLabel
+> > > > service
+> > > > +??????will remove the entry. Therefore ensure that the network
+> > > > startup scripts
+> > > > +??????call netlabelctl(8) to set the required label (see
+> > > > netlabel-
+> > > > config(8)
+> > > > +??????helper script for details).
+> > > 
+> > > Maybe this will be made clear as I work my way through this
+> > > patch,
+> > > but
+> > > how is point #4 SCTP specific?
+> > 
+> > It's not, I added this as a useful hint as I keep forgetting about
+> > it,
+> > I'll reword to: While not SCTP specific, be aware .....
+> 
+> Okay.??Better.
+> 
+> > > > +/* Called whenever SCTP receives an INIT or INIT_ACK chunk */
+> > > > +static int selinux_sctp_assoc_request(struct sctp_endpoint
+> > > > *ep,
+> > > > +?????????????????????????????????????struct sk_buff *skb,
+> > > > +?????????????????????????????????????int sctp_cid)
+> > > > +{
+> > > > +???????struct sk_security_struct *sksec = ep->base.sk-
+> > > > > sk_security;
+> > > > 
+> > > > +???????struct common_audit_data ad;
+> > > > +???????struct lsm_network_audit net = {0,};
+> > > > +???????u8 peerlbl_active;
+> > > > +???????u32 peer_sid = SECINITSID_UNLABELED;
+> > > > +???????u32 conn_sid;
+> > > > +???????int err;
+> > > > +
+> > > > +???????if (!selinux_policycap_extsockclass)
+> > > > +???????????????return 0;
+> > > 
+> > > We *may* need to protect a lot of the new SCTP code with a new
+> > > policy
+> > > capability, I think reusing extsockclass here could be
+> > > problematic.
+> > 
+> > I hope not. I will need some direction here as I've not had
+> > problems
+> > (yet).
+> 
+> It's actually not that bad, take a look at the NNP/nosuid patch from
+> Stephen, af63f4193f9f ("selinux: Generalize support for NNP/nosuid
+> SELinux domain transitions"), pay attention to the
+> "selinux_policycap_nnp_nosuid_transition" variable.
 
-The discussion, here, is in the context of the "lockdown" patch set,
-without IMA-appraisal configured. ?Kernel modules and the kexec kernel
-image require file signatures in lockdown mode. ?An equivalent method
-of requiring file signatures for firmware (without IMA-appraisal) does
-not exist.
+AFAICT, Fedora has not yet enabled extended_socket_class policy
+capability in their policy, not even in rawhide, so no breakage should
+occur in Fedora.  Upstream refpolicy did enable it in the 20170805
+release, so it could possibly be enabled in other distributions, but
+only if using the latest refpolicy + libsepol.  Android enabled it in
+the Android 8.0 policy, although few Android kernels are likely to
+include the support yet (Android common kernel appears to be <= 4.9),
+so it should presently be a no-op.
 
-I posted the patch [RFC PATCH v2] "fw_lockdown: new micro LSM module
-to prevent loading unsigned firmware". ?The patch and discussion can
-be found here - (https://lkml.org/lkml/2017/11/13/217).
-
-Mimi
-
+> 
+> > > > +???????????????if (err)
+> > > > +???????????????????????return err;
+> > > > +
+> > > > +???????????????if (peer_sid == SECSID_NULL)
+> > > > +???????????????????????peer_sid = SECINITSID_UNLABELED;
+> > > > +???????}
+> > > > +
+> > > > +???????if (sksec->sctp_assoc_state == SCTP_ASSOC_UNSET) {
+> > > > +???????????????sksec->sctp_assoc_state = SCTP_ASSOC_SET;
+> > > > +
+> > > > +???????????????/* Here as first association on socket. As the
+> > > > peer
+> > > > SID
+> > > > +????????????????* was allowed by peer recv (and the netif/node
+> > > > checks),
+> > > > +????????????????* then it is approved by policy and used as
+> > > > the
+> > > > primary
+> > > > +????????????????* peer SID for getpeercon(3).
+> > > > +????????????????*/
+> > > > +???????????????sksec->peer_sid = peer_sid;
+> > > > +???????} else if??(sksec->peer_sid != peer_sid) {
+> > > > +???????????????/* Other association peer SIDs are checked to
+> > > > enforce
+> > > > +????????????????* consistency among the peer SIDs.
+> > > > +????????????????*/
+> > > > +???????????????ad.type = LSM_AUDIT_DATA_NET;
+> > > > +???????????????ad.u.net = &net;
+> > > > +???????????????ad.u.net->sk = ep->base.sk;
+> > > > +???????????????err = avc_has_perm(sksec->peer_sid, peer_sid,
+> > > > sksec->sclass,
+> > > > +??????????????????????????????????SCTP_SOCKET__ASSOCIATION,
+> > > > &ad);
+> > > 
+> > > Can anyone think of any reason why we would ever want to allow an
+> > > association that doesn't have the same label as the existing
+> > > associations???Maybe I'm thinking about this wrong, but I can't
+> > > imagine this being a good idea ...
+> > 
+> > This has been discussed a number of times and evolved to this ...
+> 
+> Yes, I think my comment was the result of faulty SCTP understanding
+> on my part.
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
