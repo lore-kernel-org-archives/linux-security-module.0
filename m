@@ -1,8 +1,8 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 14 Nov 2017 12:35:11 -0800
+From: mjg59@google.com (Matthew Garrett)
+Date: Tue, 14 Nov 2017 15:37:43 -0500
 Subject: Firmware signing -- Re: [PATCH 00/27] security,
 	efi: Add kernel lockdown
-In-Reply-To: <CACdnJutiOr0RZEW-9Z4i__o-O2B69cFknqo14Nu2G0_JQaE+xw@mail.gmail.com>
+In-Reply-To: <CA+55aFwN+yaLg_-jPKiQ4xYBc2zz3ogcHCY9nxMHGiAJxoCU6w@mail.gmail.com>
 References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
 	<14219.1509660259@warthog.procyon.org.uk>
 	<1509660641.3416.24.camel@linux.vnet.ibm.com>
@@ -22,28 +22,31 @@ References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk
 	<CACdnJuvP=0AHGtfGJ5+cT+kHRy3fU4BLjwkvzP0rLO6q5ejAQQ@mail.gmail.com>
 	<CA+55aFxeLwgwxh2iJTf6Dz0T_a_TZfTdhBw5TkcSsCmjt2N5pw@mail.gmail.com>
 	<CACdnJutiOr0RZEW-9Z4i__o-O2B69cFknqo14Nu2G0_JQaE+xw@mail.gmail.com>
-Message-ID: <CA+55aFwN+yaLg_-jPKiQ4xYBc2zz3ogcHCY9nxMHGiAJxoCU6w@mail.gmail.com>
+	<CA+55aFwN+yaLg_-jPKiQ4xYBc2zz3ogcHCY9nxMHGiAJxoCU6w@mail.gmail.com>
+Message-ID: <CACdnJutfFa2CSf1jFvKtBdTtPWcu0aKdm8ZDdQmD+yTC4GQG6g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 14, 2017 at 12:31 PM, Matthew Garrett <mjg59@google.com> wrote:
+On Tue, Nov 14, 2017 at 3:35 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, Nov 14, 2017 at 12:31 PM, Matthew Garrett <mjg59@google.com> wrote:
+>>
+>>> This is all theoretical security masturbation. The _real_ attacks have
+>>> been elsewhere.
+>>
+>> People made the same argument about Secure Boot, and then we
+>> discovered that people *were* attacking the boot chain. As we secure
+>> other components, the attackers move elsewhere. This is an attempt to
+>> block off an avenue of attack before it's abused.
 >
->> This is all theoretical security masturbation. The _real_ attacks have
->> been elsewhere.
+> The thing is, if you have attested the system from boot, then you've
+> already attested the firmware before it even gets loaded.
 >
-> People made the same argument about Secure Boot, and then we
-> discovered that people *were* attacking the boot chain. As we secure
-> other components, the attackers move elsewhere. This is an attempt to
-> block off an avenue of attack before it's abused.
+> And if you haven't, then you can't trust anything else anyway.
 
-The thing is, if you have attested the system from boot, then you've
-already attested the firmware before it even gets loaded.
-
-And if you haven't, then you can't trust anything else anyway.
-
-So I really don't see your point.
-
-             Linus
+Sure you can. You don't need attestation to be able to assert that the
+system only booted signed code and that only you have control over
+that signing key.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
