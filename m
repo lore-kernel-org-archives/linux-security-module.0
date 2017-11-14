@@ -1,39 +1,64 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 14 Nov 2017 16:34:21 +0200
-Subject: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-In-Reply-To: <20171107160404.GG21466@ziepe.ca>
-References: <20171031200503.GC18578@ziepe.ca>
-	<20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
-	<20171106022704.GD26011@ziepe.ca>
-	<CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
-	<20171107160404.GG21466@ziepe.ca>
-Message-ID: <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Tue, 14 Nov 2017 08:39:53 -0600
+Subject: [PATCH] security: replace FSF address with web source in license
+	notices
+In-Reply-To: <20171114101053.29533-1-martink@posteo.de>
+References: <20171114101053.29533-1-martink@posteo.de>
+Message-ID: <20171114143953.GA16610@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 07, 2017 at 09:04:04AM -0700, Jason Gunthorpe wrote:
-> On Tue, Nov 07, 2017 at 08:50:44AM +0530, PrasannaKumar Muralidharan wrote:
+Quoting Martin Kepplinger (martink at posteo.de):
+> A few years ago the FSF moved and "59 Temple Place" is wrong. Having this
+> still in our source files feels old and unmaintained.
 > 
-> > I am assuming you are talking about the following patches - using
-> > struct tpm_chip instead of chip number and this patch.
+> Let's take the license statement serious and not confuse users.
 > 
-> yes
+> As https://www.gnu.org/licenses/gpl-howto.html suggests, we replace the
+> postal address with "<http://www.gnu.org/licenses/>" in the security
+> directory.
 > 
-> > I won't be able to test if struct tpm_chip usage as I don't have
-> > multiple tpm hw in one machine. In case of tpm rng changes I can test
-> > only the lifecycle of tpm rng device. Is that enough? I feel my test
-> > will be limited. Please provide your thoughts on this.
-> 
-> That is certainly better than no testing.
-> 
-> Jason
+> Signed-off-by: Martin Kepplinger <martink@posteo.de>
 
-WFM too.
+Seems legit.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-/Jarkko
+> ---
+>  security/selinux/include/netlabel.h | 3 +--
+>  security/selinux/netlabel.c         | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/selinux/include/netlabel.h b/security/selinux/include/netlabel.h
+> index 75686d53df07..e77a5e307955 100644
+> --- a/security/selinux/include/netlabel.h
+> +++ b/security/selinux/include/netlabel.h
+> @@ -19,8 +19,7 @@
+>   * the GNU General Public License for more details.
+>   *
+>   * You should have received a copy of the GNU General Public License
+> - * along with this program;  if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   *
+>   */
+>  
+> diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
+> index aaba6677ee2e..2c297b995b16 100644
+> --- a/security/selinux/netlabel.c
+> +++ b/security/selinux/netlabel.c
+> @@ -22,8 +22,7 @@
+>   * the GNU General Public License for more details.
+>   *
+>   * You should have received a copy of the GNU General Public License
+> - * along with this program;  if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   *
+>   */
+>  
+> -- 
+> 2.11.0
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
