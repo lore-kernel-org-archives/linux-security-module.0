@@ -1,48 +1,53 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 13 Nov 2017 14:56:09 -0800
-Subject: [PATCH] KEYS: remove CONFIG_KEYS_COMPAT
-In-Reply-To: <20171009202534.GA67463@gmail.com>
-References: <20170613060925.17121-1-ebiggers3@gmail.com>
-	<7704.1498555674@warthog.procyon.org.uk>
-	<20170816025244.GA1417@zzz.localdomain>
-	<20171009202534.GA67463@gmail.com>
-Message-ID: <20171113225609.GA138082@gmail.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Tue, 14 Nov 2017 00:20:47 +0000
+Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
+	lockdown
+In-Reply-To: <CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<14219.1509660259@warthog.procyon.org.uk>
+	<1509660641.3416.24.camel@linux.vnet.ibm.com>
+	<20171107230700.GJ22894@wotan.suse.de>
+	<20171108061551.GD7859@linaro.org>
+	<20171108194626.GQ22894@wotan.suse.de>
+	<20171109014841.GF7859@linaro.org>
+	<1510193857.4484.95.camel@linux.vnet.ibm.com>
+	<20171109044619.GG7859@linaro.org>
+	<20171111023240.2398ca55@alans-desktop>
+	<20171113174250.GA22894@wotan.suse.de>
+	<20171113210848.4dc344bd@alans-desktop>
+	<454.1510609487@warthog.procyon.org.uk>
+	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
+Message-ID: <20171114002047.5e3b94ad@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Oct 09, 2017 at 01:25:34PM -0700, Eric Biggers wrote:
-> On Tue, Aug 15, 2017 at 07:52:44PM -0700, Eric Biggers wrote:
-> > On Tue, Jun 27, 2017 at 10:27:54AM +0100, David Howells wrote:
-> > > Eric Biggers <ebiggers3@gmail.com> wrote:
-> > > 
-> > > > diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-> > > > index a7a23b5541f8..f5d96996baa6 100644
-> > > > --- a/security/keys/Kconfig
-> > > > +++ b/security/keys/Kconfig
-> > > > @@ -20,10 +20,6 @@ config KEYS
-> > > >  
-> > > >  	  If you are unsure as to whether this is required, answer N.
-> > > >  
-> > > > -config KEYS_COMPAT
-> > > > -	def_bool y
-> > > > -	depends on COMPAT && KEYS
-> > > > -
-> > > >  config PERSISTENT_KEYRINGS
-> > > >  	bool "Enable register of persistent per-UID keyrings"
-> > > >  	depends on KEYS
-> > > 
-> > > Hmmm...  This is in linus/master, but not in security/next.  I'll hold your
-> > > patch till later in the merge window or just after -rc1.
-> > > 
-> > > David
-> > 
-> > Hi David, are you still planning to apply this patch?
-> > 
-> > Eric
-> 
-> Ping.
+On Mon, 13 Nov 2017 14:09:10 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Ping.
+> On Mon, Nov 13, 2017 at 1:44 PM, David Howells <dhowells@redhat.com> wrote:
+> >
+> > Whilst that may be true, we either have to check signatures on every bit of
+> > firmware that the appropriate driver doesn't say is meant to be signed or not
+> > bother.  
+> 
+> I vote for "not bother".
+> 
+> Seriously, if you have firmware in /lib/firmware, and you don't trust
+> it, what the hell are you doing?
+
+Booting a computer 8) - does anyone trust firmware ???
+
+
+That aside if you can replace the firmware with your own, and your own
+firmware compromises the system then you have a privilege escalation from
+CAP_SYS_DAC to CAP_SYS_RAWIO just as you do with unsigned modules
+
+(you can't load modules without lots of rights but who cares because you
+can simply use cp to put them there with lesser rights and let the kernel
+do it).
+
+
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
