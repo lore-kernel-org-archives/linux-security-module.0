@@ -1,47 +1,50 @@
 From: mjg59@google.com (Matthew Garrett)
-Date: Tue, 14 Nov 2017 11:42:29 -0800
-Subject: [PATCH V3 1/2] security: Add a cred_getsecid hook
-In-Reply-To: <1509383027.10174.5.camel@tycho.nsa.gov>
-References: <20171026084055.25482-1-mjg59@google.com>
-	<1509027658.25604.4.camel@tycho.nsa.gov>
-	<CACdnJuu8fvVoD+G50dWtauUUa3H1tUAbBgzusc_CKNBugrVmwQ@mail.gmail.com>
-	<1509383027.10174.5.camel@tycho.nsa.gov>
-Message-ID: <CACdnJuvymPL4hiz2ZhdAxknVhGdnS9_XCkrk7mR_CDWXwgW5gg@mail.gmail.com>
+Date: Tue, 14 Nov 2017 11:58:20 -0800
+Subject: Firmware signing -- Re: [PATCH 00/27] security,
+	efi: Add kernel lockdown
+In-Reply-To: <CA+55aFzvuvqOfsJ9arzcc1QbTGs+U-TsNmsyem9UAVVQC8YkZQ@mail.gmail.com>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<14219.1509660259@warthog.procyon.org.uk>
+	<1509660641.3416.24.camel@linux.vnet.ibm.com>
+	<20171107230700.GJ22894@wotan.suse.de>
+	<20171108061551.GD7859@linaro.org>
+	<20171108194626.GQ22894@wotan.suse.de>
+	<20171109014841.GF7859@linaro.org>
+	<1510193857.4484.95.camel@linux.vnet.ibm.com>
+	<20171109044619.GG7859@linaro.org>
+	<20171111023240.2398ca55@alans-desktop>
+	<20171113174250.GA22894@wotan.suse.de>
+	<20171113210848.4dc344bd@alans-desktop>
+	<454.1510609487@warthog.procyon.org.uk>
+	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
+	<1510662098.3711.139.camel@linux.vnet.ibm.com>
+	<CA+55aFzvuvqOfsJ9arzcc1QbTGs+U-TsNmsyem9UAVVQC8YkZQ@mail.gmail.com>
+Message-ID: <CACdnJuvP=0AHGtfGJ5+cT+kHRy3fU4BLjwkvzP0rLO6q5ejAQQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Oct 30, 2017 at 10:03 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On Mon, 2017-10-30 at 10:57 +0000, Matthew Garrett via Selinux wrote:
->> On Thu, Oct 26, 2017 at 3:20 PM, Stephen Smalley <sds@tycho.nsa.gov>
->> wrote:
->> > On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett via Selinux
->> > wrote:
->> > > +static void selinux_cred_getsecid(const struct cred *c, u32
->> > > *secid)
->> > > +{
->> > > +     rcu_read_lock();
->> > > +     *secid = cred_sid(c);
->> > > +     rcu_read_unlock();
->> >
->> > Is rcu_read_lock() necessary here? Seems like we use cred_sid() in
->> > many
->> > places without it.
->>
->> Ah, I thought it was based on task_sid(), but I guess that's actually
->> protecting the __task_cred()?
->
-> It appears to me that in all other cases, we are either dealing with
-> the current cred, or something in the call chain of cred_sid() is
-> holding a reference to the cred, or something in the call chain of
-> cred_sid() has called rcu_read_lock() already.  I might have missed
-> something though, and I don't know how safe it is to assume that all
-> future callers will do this.  cc'd David for his thoughts.
+On Tue, Nov 14, 2017 at 9:34 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> It's this insane "firmware is special" that I disagree with. It's not
+> special at all.
 
-Hi David,
+Our ability to determine that userland hasn't been tampered with
+depends on the kernel being trustworthy. If userland can upload
+arbitrary firmware to DMA-capable devices then we can no longer trust
+the kernel. So yes, firmware is special.
 
-Any opinion on this?
-
-Thanks!
+Here's an example: we have a signed initramfs that's loaded by a
+signed bootloader. That initramfs sets up a trustworthy audit chain
+and loads an LSM policy that prevents the rest of userland from
+interfering with it. From that point on, we don't care about the rest
+of userland being signed - we know it can't interfere with us, but we
+can reliably inspect what it's doing. Even an offline attack can't do
+any damage, since the audit code is still signed. However, the
+LSM-imposed boundary depends on the kernel being trustworthy. If an
+attacker can replace the firmware that's uploaded to a device that can
+do arbitrary DMA then they can tamper with the supposedly trustworthy
+audit code and provide false information. Being able to tamper with
+the contents of /usr/bin/* doesn't give them that.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
