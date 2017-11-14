@@ -1,45 +1,47 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 14 Nov 2017 09:34:29 -0800
-Subject: Firmware signing -- Re: [PATCH 00/27] security,
-	efi: Add kernel lockdown
-In-Reply-To: <1510662098.3711.139.camel@linux.vnet.ibm.com>
-References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
-	<14219.1509660259@warthog.procyon.org.uk>
-	<1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<20171108061551.GD7859@linaro.org>
-	<20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-	<20171109044619.GG7859@linaro.org>
-	<20171111023240.2398ca55@alans-desktop>
-	<20171113174250.GA22894@wotan.suse.de>
-	<20171113210848.4dc344bd@alans-desktop>
-	<454.1510609487@warthog.procyon.org.uk>
-	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
-	<1510662098.3711.139.camel@linux.vnet.ibm.com>
-Message-ID: <CA+55aFzvuvqOfsJ9arzcc1QbTGs+U-TsNmsyem9UAVVQC8YkZQ@mail.gmail.com>
+From: mjg59@google.com (Matthew Garrett)
+Date: Tue, 14 Nov 2017 11:42:29 -0800
+Subject: [PATCH V3 1/2] security: Add a cred_getsecid hook
+In-Reply-To: <1509383027.10174.5.camel@tycho.nsa.gov>
+References: <20171026084055.25482-1-mjg59@google.com>
+	<1509027658.25604.4.camel@tycho.nsa.gov>
+	<CACdnJuu8fvVoD+G50dWtauUUa3H1tUAbBgzusc_CKNBugrVmwQ@mail.gmail.com>
+	<1509383027.10174.5.camel@tycho.nsa.gov>
+Message-ID: <CACdnJuvymPL4hiz2ZhdAxknVhGdnS9_XCkrk7mR_CDWXwgW5gg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 14, 2017 at 4:21 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Mon, 2017-11-13 at 14:09 -0800, Linus Torvalds wrote:
+On Mon, Oct 30, 2017 at 10:03 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On Mon, 2017-10-30 at 10:57 +0000, Matthew Garrett via Selinux wrote:
+>> On Thu, Oct 26, 2017 at 3:20 PM, Stephen Smalley <sds@tycho.nsa.gov>
+>> wrote:
+>> > On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett via Selinux
+>> > wrote:
+>> > > +static void selinux_cred_getsecid(const struct cred *c, u32
+>> > > *secid)
+>> > > +{
+>> > > +     rcu_read_lock();
+>> > > +     *secid = cred_sid(c);
+>> > > +     rcu_read_unlock();
+>> >
+>> > Is rcu_read_lock() necessary here? Seems like we use cred_sid() in
+>> > many
+>> > places without it.
 >>
->> Seriously, if you have firmware in /lib/firmware, and you don't trust
->> it, what the hell are you doing?
+>> Ah, I thought it was based on task_sid(), but I guess that's actually
+>> protecting the __task_cred()?
 >
-> I might "trust" the files in /lib/firmware, but I also want to make
-> sure that they haven't changed.  File signatures provide file
-> provenance and integrity guarantees.
+> It appears to me that in all other cases, we are either dealing with
+> the current cred, or something in the call chain of cred_sid() is
+> holding a reference to the cred, or something in the call chain of
+> cred_sid() has called rcu_read_lock() already.  I might have missed
+> something though, and I don't know how safe it is to assume that all
+> future callers will do this.  cc'd David for his thoughts.
 
-Sure. But that has absolutely nothing to do with "firmware".
+Hi David,
 
-It is equally true of /usr/bin/* and pretty much everything in the system.
+Any opinion on this?
 
-It's this insane "firmware is special" that I disagree with. It's not
-special at all.
-
-                Linus
+Thanks!
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
