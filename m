@@ -1,56 +1,43 @@
-From: martink@posteo.de (Martin Kepplinger)
-Date: Tue, 14 Nov 2017 11:10:53 +0100
-Subject: [PATCH] security: replace FSF address with web source in license
-	notices
-Message-ID: <20171114101053.29533-1-martink@posteo.de>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 14 Nov 2017 07:21:38 -0500
+Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
+	lockdown
+In-Reply-To: <CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
+References: <150842463163.7923.11081723749106843698.stgit@warthog.procyon.org.uk>
+	<14219.1509660259@warthog.procyon.org.uk>
+	<1509660641.3416.24.camel@linux.vnet.ibm.com>
+	<20171107230700.GJ22894@wotan.suse.de>
+	<20171108061551.GD7859@linaro.org>
+	<20171108194626.GQ22894@wotan.suse.de>
+	<20171109014841.GF7859@linaro.org>
+	<1510193857.4484.95.camel@linux.vnet.ibm.com>
+	<20171109044619.GG7859@linaro.org>
+	<20171111023240.2398ca55@alans-desktop>
+	<20171113174250.GA22894@wotan.suse.de>
+	<20171113210848.4dc344bd@alans-desktop>
+	<454.1510609487@warthog.procyon.org.uk>
+	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
+Message-ID: <1510662098.3711.139.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-A few years ago the FSF moved and "59 Temple Place" is wrong. Having this
-still in our source files feels old and unmaintained.
+On Mon, 2017-11-13 at 14:09 -0800, Linus Torvalds wrote:
+> On Mon, Nov 13, 2017 at 1:44 PM, David Howells <dhowells@redhat.com> wrote:
+> >
+> > Whilst that may be true, we either have to check signatures on every bit of
+> > firmware that the appropriate driver doesn't say is meant to be signed or not
+> > bother.
+> 
+> I vote for "not bother".
+> 
+> Seriously, if you have firmware in /lib/firmware, and you don't trust
+> it, what the hell are you doing?
 
-Let's take the license statement serious and not confuse users.
+I might "trust" the files in /lib/firmware, but I also want to make
+sure that they haven't changed. ?File signatures provide file
+provenance and integrity guarantees.
 
-As https://www.gnu.org/licenses/gpl-howto.html suggests, we replace the
-postal address with "<http://www.gnu.org/licenses/>" in the security
-directory.
-
-Signed-off-by: Martin Kepplinger <martink@posteo.de>
----
- security/selinux/include/netlabel.h | 3 +--
- security/selinux/netlabel.c         | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/security/selinux/include/netlabel.h b/security/selinux/include/netlabel.h
-index 75686d53df07..e77a5e307955 100644
---- a/security/selinux/include/netlabel.h
-+++ b/security/selinux/include/netlabel.h
-@@ -19,8 +19,7 @@
-  * the GNU General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-- * along with this program;  if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  *
-  */
- 
-diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
-index aaba6677ee2e..2c297b995b16 100644
---- a/security/selinux/netlabel.c
-+++ b/security/selinux/netlabel.c
-@@ -22,8 +22,7 @@
-  * the GNU General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-- * along with this program;  if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  *
-  */
- 
--- 
-2.11.0
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
