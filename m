@@ -1,44 +1,24 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 14 Nov 2017 16:27:06 +0200
-Subject: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
-In-Reply-To: <20171108222434.GF7063@ziepe.ca>
-References: <20171031202357.GA1030@ziepe.ca>
-	<20171103142841.2nphkjojzamrdezm@linux.intel.com>
-	<0812DDC3-187D-4F29-BFB5-9A4F509CA376@gmx.de>
-	<20171107150356.uln3lks64zt5oxjv@linux.intel.com>
-	<20171108063640.kxwag6fzguetpjnf@linux.intel.com>
-	<E803B459-CB11-4E23-B3BC-4DEF2A0C40B6@gmx.de>
-	<20171108222434.GF7063@ziepe.ca>
-Message-ID: <20171114142706.nqin45kx7rhbbkfb@linux.intel.com>
+Date: Tue, 14 Nov 2017 16:32:38 +0200
+Subject: [PATCH v3] tpm: use struct tpm_chip for tpm_chip_find_get()
+In-Reply-To: <CANc+2y4si3YW5FXWEdKz0UM5c76MBmHWu4RBF7d2dew9i-Ut+Q@mail.gmail.com>
+References: <20171026135453.24672-1-jarkko.sakkinen@linux.intel.com>
+	<20171031200303.GB18578@ziepe.ca>
+	<CANc+2y4si3YW5FXWEdKz0UM5c76MBmHWu4RBF7d2dew9i-Ut+Q@mail.gmail.com>
+Message-ID: <20171114143238.looouhjk4bp5ko4g@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 08, 2017 at 03:24:34PM -0700, Jason Gunthorpe wrote:
-> On Wed, Nov 08, 2017 at 10:27:37AM +0100, Peter Huewe wrote:
+On Sun, Nov 12, 2017 at 10:53:35AM +0530, PrasannaKumar Muralidharan wrote:
+> Did basic check on tpm rng patch, it works fine. As it depends on this
+> patch this should be working fine too.
 > 
-> > >Updating that file goes out of my territory other than acking the
-> > >updates. 
+> Tested-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 > 
-> > Imho not really, since there is no MAINTAINERS maintainer.  If you
-> > feel uncomfortable with adding the changes to MAINTAINERS via your
-> > tree, please ask James to pull them up - just as Mimi did for her
-> > linux-integrity update.
-> 
-> Agreed, if you are submitting pull requests then the MAINTAINERS
-> update for TPM related things should go into your pull request. That
-> is appropriate..
-> 
-> It isn't necessary for everything to be cc'd everywhere, ultimately it
-> is your responsibility as the TPM maintainer to accept/reject this
-> change.
-> 
-> If it was a larger change, like adding/removing a maintainer then a
-> large audiance would be appropriate, but this is just changing
-> spelling and the patch was PGP signed ..
-> 
-> Jason
+> Regards,
+> PrasannaKumar
 
-Agreed. I'll apply this after my previous change is available.
+Thank you.
 
 /Jarkko
 --
