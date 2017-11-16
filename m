@@ -1,87 +1,132 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 15 Nov 2017 19:05:01 -0500
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <20171115204651.GO729@wotan.suse.de>
-References: <454.1510609487@warthog.procyon.org.uk>
-	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
-	<1510662098.3711.139.camel@linux.vnet.ibm.com>
-	<CA+55aFzvuvqOfsJ9arzcc1QbTGs+U-TsNmsyem9UAVVQC8YkZQ@mail.gmail.com>
-	<CACdnJuvP=0AHGtfGJ5+cT+kHRy3fU4BLjwkvzP0rLO6q5ejAQQ@mail.gmail.com>
-	<CA+55aFxeLwgwxh2iJTf6Dz0T_a_TZfTdhBw5TkcSsCmjt2N5pw@mail.gmail.com>
-	<20171114205014.GJ729@wotan.suse.de>
-	<1510746597.3711.268.camel@linux.vnet.ibm.com>
-	<20171115175246.GN729@wotan.suse.de>
-	<1510775817.3711.315.camel@linux.vnet.ibm.com>
-	<20171115204651.GO729@wotan.suse.de>
-Message-ID: <1510790701.3711.359.camel@linux.vnet.ibm.com>
+From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
+Date: Thu, 16 Nov 2017 14:34:51 +0000
+Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+	performance
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+	<5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+	<e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
+Message-ID: <6f0bd36decb94820a211e5c9795cfec2@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2017-11-15 at 21:46 +0100, Luis R. Rodriguez wrote:
-> On Wed, Nov 15, 2017 at 02:56:57PM -0500, Mimi Zohar wrote:
-> > On Wed, 2017-11-15 at 18:52 +0100, Luis R. Rodriguez wrote:
-> > > On Wed, Nov 15, 2017 at 06:49:57AM -0500, Mimi Zohar wrote:
-> > > > On Tue, 2017-11-14 at 21:50 +0100, Luis R. Rodriguez wrote:
-> > > > 
-> > > > > Johannes made cfg80211 recently just use request_firmware() now via commit on
-> > > > > linux-next 90a53e4432 ("cfg80211: implement regdb signature checking") [0] as
-> > > > > he got tired of waiting firmware signing, but note he implemented a signature
-> > > > > checking on its own so he open codes verify_pkcs7_signature() after the
-> > > > > request_firmware() call. If we are happy to live with this, then so be it.
-> > > > > 
-> > > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=90a53e4432b12288316efaa5f308adafb8d304b0
-> > > > 
-> > > > Johannes was tired of waiting? ?Commit 5a9196d "ima: add support for
-> > > > measuring and appraising firmware" has been in the kernel since linux-
-> > > > 3.17.
-> > > > 
-> > > > The original firmware hook for verifying firmware signatures were
-> > > > replaced with the common LSM pre and post kernel_read_file() hooks
-> > > > in?linux-4.6.y.
-> > > > 
-> > > > Even if you wanted to support firmware signature verification without
-> > > > IMA-appraisal, it should be using the LSM hooks.
-> > > 
-> > > request_firmware() uses kernel_read_file_from_path() underneath the hood,
-> > > and so its used for both:
-> > > 
-> > > 	/lib/firmware/regulatory.db
-> > > 	/lib/firmware/regulatory.db.p7s
-> > 
-> > The firmware signature validation should occur as part of
-> > kernel_read_file_from_path(), not as a stand alone verification.
-> > 
-> > Why not extend kernel_read_file_from_path() to pass the detached signature?
-> >?Since the signature would only be used for the verification, there's no need
-> > to return the open file descriptor.
+> > On 10/20/2017 08:12 PM, Alexander.Steffen at infineon.com wrote:
+> > >> The TPM burstcount status indicates the number of bytes that can
+> > >> be sent to the TPM without causing bus wait states.  Effectively,
+> > >> it is the number of empty bytes in the command FIFO.
+> > >>
+> > >> This patch optimizes the tpm_tis_send_data() function by checking
+> > >> the burstcount only once. And if the burstcount is valid, it writes
+> > >> all the bytes at once, permitting wait state.
+> > >>
+> > >> After this change, performance on a TPM 1.2 with an 8 byte
+> > >> burstcount for 1000 extends improved from ~41sec to ~14sec.
+> > >>
+> > >> Suggested-by: Ken Goldman<kgold@linux.vnet.ibm.com>  in
+> > >> conjunction with the TPM Device Driver work group.
+> > >> Signed-off-by: Nayna Jain<nayna@linux.vnet.ibm.com>
+> > >> Acked-by: Mimi Zohar<zohar@linux.vnet.ibm.com>
+> > >> ---
+> > >>   drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++----------------
+> --
+> > ----
+> > >> ----
+> > >>   1 file changed, 15 insertions(+), 27 deletions(-)
+> > >>
+> > >> diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > >> b/drivers/char/tpm/tpm_tis_core.c
+> > >> index b33126a35694..993328ae988c 100644
+> > >> --- a/drivers/char/tpm/tpm_tis_core.c
+> > >> +++ b/drivers/char/tpm/tpm_tis_core.c
+> > >> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip
+> > *chip,
+> > >> u8 *buf, size_t len)
+> > >>   {
+> > >>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> > >>   	int rc, status, burstcnt;
+> > >> -	size_t count = 0;
+> > >>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+> > >>
+> > >>   	status = tpm_tis_status(chip);
+> > >> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip
+> > *chip,
+> > >> u8 *buf, size_t len)
+> > >>   		}
+> > >>   	}
+> > >>
+> > >> -	while (count < len - 1) {
+> > >> -		burstcnt = get_burstcount(chip);
+> > >> -		if (burstcnt < 0) {
+> > >> -			dev_err(&chip->dev, "Unable to read burstcount\n");
+> > >> -			rc = burstcnt;
+> > >> -			goto out_err;
+> > >> -		}
+> > >> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+> > >> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
+> > >>> locality),
+> > >> -					 burstcnt, buf + count);
+> > >> -		if (rc < 0)
+> > >> -			goto out_err;
+> > >> -
+> > >> -		count += burstcnt;
+> > >> -
+> > >> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
+> > >>> timeout_c,
+> > >> -					&priv->int_queue, false) < 0) {
+> > >> -			rc = -ETIME;
+> > >> -			goto out_err;
+> > >> -		}
+> > >> -		status = tpm_tis_status(chip);
+> > >> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
+> > >> -			rc = -EIO;
+> > >> -			goto out_err;
+> > >> -		}
+> > >> +	/*
+> > >> +	 * Get the initial burstcount to ensure TPM is ready to
+> > >> +	 * accept data.
+> > >> +	 */
+> > >> +	burstcnt = get_burstcount(chip);
+> > >> +	if (burstcnt < 0) {
+> > >> +		dev_err(&chip->dev, "Unable to read burstcount\n");
+> > >> +		rc = burstcnt;
+> > >> +		goto out_err;
+> > >>   	}
+> > >>
+> > >> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> > >> +			len - 1, buf);
+> > >> +	if (rc < 0)
+> > >> +		goto out_err;
+> > >> +
+> > >>   	/* write last byte */
+> > >> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
+> > >> buf[count]);
+> > >> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
+> > >> 1]);
+> > >>   	if (rc < 0)
+> > >>   		goto out_err;
+> > >>
+> > >> --
+> > >> 2.13.3
+> > > This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to
+> > send large amounts of data, e.g. with TPM2_Hash, and subsequent tests
+> > seem to take an unusual amount of time. More analysis probably has to
+> wait
+> > until November, since I am going to be in Prague next week.
+> >
+> > Thanks Alex for testing these.. Did you get the chance to do any further
+> > analysis ?
 > 
-> This goes along with the question if there were an other users who wanted it,
-> or more importantly -- if firmware signing was desirable for any reason, a
-> modified kernel_read_file_from_path_signed() could in turn be used, *or* an LSM
-> added to handle READING_FIRMWARE and READING_FIRMWARE_PREALLOC_BUFFER.  The
-> above use case was one example outside of the typical firmware use.  I've long
-> pointed out that we no longer use the firmware API for just firmware, and the
-> above is now a very good example of it. I've been suggesting uses of the
-> firmware API for non-firmware had already happened and that more uses were on
-> its way. Trusted boot has nothing to do with these uses as such the gains of
-> systems pegged with "trusted boot" have nothing to do validation of these files
-> through hardware.
+> I am working on that now. Ken's suggestion seems reasonable, so I am going
+> to test whether correctly waiting for the flags to change fixes the problem. If
+> it does, I'll send the patches.
 
-No, it has nothing to do with other users wanting it. ?It has to do
-with extending an API to support detach signatures.
+Sorry for the delay, I had to take care of some device tree changes in v4.14 that broke my ARM test machines.
 
-There's no reason to define a new function named
-kernel_read_file_from_path_signed(). ?To prevent code duplication, the
-existing functions would turn into wrappers. ?It's not like there are
-that many users. ?A quick search returned:
+I've implemented some patches that fix the issue that Ken pointed out and rebased your patch 2/4 ("ignore burstcount") on top. While doing this I noticed that your original patch does not, as the commit message says, write all the bytes at once, but still unnecessarily splits all commands into at least two transfers (as did the original code). I've fixed this as well in my patches, so that all bytes are indeed sent in a single call, without special handling for the last byte. This should speed up things further, especially for small commands and drivers like tpm_tis_spi, where writing a single byte translates into additional SPI transfers.
 
-kernel_read_file_from_fd: ?2
-kernel_read_file_from_path: 5
-LSMs: 3 loadpin, selinux, + ima
+Unfortunately, even with those changes the problem persists. But I've got more detailed logs now and will try to understand and hopefully fix the issue. I'll follow up with more details and/or patches once I know more.
 
-Mimi
-
+Alexander
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
