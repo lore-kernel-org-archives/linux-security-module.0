@@ -1,43 +1,21 @@
-From: devtimhansen@gmail.com (Tim Hansen)
-Date: Thu, 16 Nov 2017 12:03:34 -0500
-Subject: [PATCH] net/netlabel: Add list_next_rcu() in rcu_dereference().
-Message-ID: <20171116170334.GA141280@debian>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 16 Nov 2017 12:11:13 -0500
+Subject: [PATCH 0/4] treewide: Fix line continuation formats
+In-Reply-To: <cover.1510845910.git.joe@perches.com>
+References: <cover.1510845910.git.joe@perches.com>
+Message-ID: <1510852273.3711.448.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add list_next_rcu() for fetching next list in rcu_deference safely.
+On Thu, 2017-11-16 at 07:27 -0800, Joe Perches wrote:
+> Avoid using line continations in formats as that causes unexpected
+> output.
 
-Found with sparse in linux-next tree on tag next-20171116.
+Is having lines greater than 80 characters the preferred method?
+?Could you add quotes before the backlash and before the first word on
+the next line instead?
 
-Signed-off-by: Tim Hansen <devtimhansen@gmail.com>
----
- net/netlabel/netlabel_addrlist.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/netlabel/netlabel_addrlist.h b/net/netlabel/netlabel_addrlist.h
-index d0f38bc..ac709f0 100644
---- a/net/netlabel/netlabel_addrlist.h
-+++ b/net/netlabel/netlabel_addrlist.h
-@@ -87,7 +87,7 @@ static inline struct netlbl_af4list *__af4list_valid_rcu(struct list_head *s,
- 	struct list_head *i = s;
- 	struct netlbl_af4list *n = __af4list_entry(s);
- 	while (i != h && !n->valid) {
--		i = rcu_dereference(i->next);
-+		i = rcu_dereference(list_next_rcu(i));
- 		n = __af4list_entry(i);
- 	}
- 	return n;
-@@ -154,7 +154,7 @@ static inline struct netlbl_af6list *__af6list_valid_rcu(struct list_head *s,
- 	struct list_head *i = s;
- 	struct netlbl_af6list *n = __af6list_entry(s);
- 	while (i != h && !n->valid) {
--		i = rcu_dereference(i->next);
-+		i = rcu_dereference(list_next_rcu(i));
- 		n = __af6list_entry(i);
- 	}
- 	return n;
--- 
-2.1.4
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
