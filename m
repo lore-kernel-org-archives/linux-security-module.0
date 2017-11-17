@@ -1,37 +1,38 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 16 Nov 2017 14:35:22 -0500
-Subject: [PATCH 0/4] treewide: Fix line continuation formats
-In-Reply-To: <1510852649.31559.38.camel@perches.com>
-References: <cover.1510845910.git.joe@perches.com>
-	<1510852273.3711.448.camel@linux.vnet.ibm.com>
-	<1510852649.31559.38.camel@perches.com>
-Message-ID: <1510860922.3711.452.camel@linux.vnet.ibm.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Thu, 16 Nov 2017 17:08:57 -0800
+Subject: [PATCH v2 00/15] ima: digest list feature
+In-Reply-To: <aec4e72a-7f74-43e7-c226-f51077e7c619@huawei.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+	<1510061855.3425.113.camel@linux.vnet.ibm.com>
+	<aec4e72a-7f74-43e7-c226-f51077e7c619@huawei.com>
+Message-ID: <CAGXu5jKjXqn-1j881vYc1F0POPhPJOPZB1w=W_zfgdXTsiyX6A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-11-16 at 09:17 -0800, Joe Perches wrote:
-> On Thu, 2017-11-16 at 12:11 -0500, Mimi Zohar wrote:
-> > On Thu, 2017-11-16 at 07:27 -0800, Joe Perches wrote:
-> > > Avoid using line continations in formats as that causes unexpected
-> > > output.
-> > 
-> > Is having lines greater than 80 characters the preferred method?
-> 
-> yes.
-> 
-> >  Could you add quotes before the backlash and before the first word on
-> > the next line instead?
-> 
-> coalesced formats are preferred.
+On Tue, Nov 7, 2017 at 8:45 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> On 11/7/2017 2:37 PM, Mimi Zohar wrote:
+>> Normally, the protection of kernel memory is out of scope for IMA.
+>> This patch set introduces an in kernel white list, which would be a
+>> prime target for attackers looking for ways of by-passing IMA-
+>> measurement, IMA-appraisal and IMA-audit.  Others might disagree, but
+>> from my perspective, this risk is too high.
 
-In the future, please reference the commit 6f76b6fcaa60 "CodingStyle:
-Document the exception of not splitting user-visible strings, for
-grepping"
+BTW, which part of the series does the whitelist? I'd agree generally,
+though: we don't want to make things writable if they're normally
+read-only.
 
-thanks,
+> It would be much easier for an attacker to just set ima_policy_flag to
+> zero.
 
-Mimi
+That's a fair point. I wonder if ima_policy_flag could be marked
+__ro_after_init? Most of the writes are from __init sections, but I
+haven't looked closely at when ima_update_policy() gets called.
 
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
