@@ -1,33 +1,15 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Sat, 18 Nov 2017 08:27:48 -0500
-Subject: [PATCH] net/netlabel: Add list_next_rcu() in rcu_dereference().
-In-Reply-To: <20171118.103536.965800271330929492.davem@davemloft.net>
-References: <20171116170334.GA141280@debian>
-	<20171118.103536.965800271330929492.davem@davemloft.net>
-Message-ID: <CAHC9VhQfH+PNTxZynhSstTF-pQk7xwtLaZ6hXQEkDZfmpLU+aw@mail.gmail.com>
+From: samat.umirbekov@ponyexpress.kz (Herr Tom Crist)
+Date: Sun, 19 Nov 2017 01:45:16 +0600 (ALMT)
+Subject: Spende von 4.800.000,00 EUR
+Message-ID: <1065793094.3496813.1511034316972.JavaMail.root@ponyexpress.kz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Nov 17, 2017 at 8:35 PM, David Miller <davem@davemloft.net> wrote:
-> From: Tim Hansen <devtimhansen@gmail.com>
-> Date: Thu, 16 Nov 2017 12:03:34 -0500
->
->> Add list_next_rcu() for fetching next list in rcu_deference safely.
->>
->> Found with sparse in linux-next tree on tag next-20171116.
->>
->> Signed-off-by: Tim Hansen <devtimhansen@gmail.com>
->
-> Applied.
 
-Thanks guys.
 
-My apologies I wasn't able to ACK the patch sooner, I was traveling
-and had spotty network access.
 
--- 
-paul moore
-www.paul-moore.com
+Hallo, du hast eine Spende von 4.800.000,00 EUR, ich habe die America Lotterie im Wert von $ 40 Millionen gewonnen und ich spende einen Teil davon an f&uuml;nf Gl&uuml;ckliche und Wohlt&auml;tigkeitsorganisationen in Erinnerung an meine verstorbene Frau, die an Krebs starb. Kontaktieren Sie mich f&uuml;r weitere Details unter: cristtom48 at gmail.com
+Freundliche Gr&uuml;&szlig;eHerr Tom Crist
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
