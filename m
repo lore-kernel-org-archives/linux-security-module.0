@@ -1,22 +1,21 @@
-From: davem@davemloft.net (David Miller)
-Date: Sat, 18 Nov 2017 10:35:36 +0900 (KST)
-Subject: [PATCH] net/netlabel: Add list_next_rcu() in rcu_dereference().
-In-Reply-To: <20171116170334.GA141280@debian>
-References: <20171116170334.GA141280@debian>
-Message-ID: <20171118.103536.965800271330929492.davem@davemloft.net>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Fri, 17 Nov 2017 22:20:30 -0600
+Subject: [PATCH v2 06/15] ima: add parser of digest lists metadata
+In-Reply-To: <20171107103710.10883-7-roberto.sassu@huawei.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+	<20171107103710.10883-7-roberto.sassu@huawei.com>
+Message-ID: <20171118042030.GA13456@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Tim Hansen <devtimhansen@gmail.com>
-Date: Thu, 16 Nov 2017 12:03:34 -0500
+On Tue, Nov 07, 2017 at 11:37:01AM +0100, Roberto Sassu wrote:
+> from a predefined position (/etc/ima/digest_lists/metadata), when rootfs
+> becomes available. Digest lists must be loaded before IMA appraisal is in
+> enforcing mode.
 
-> Add list_next_rcu() for fetching next list in rcu_deference safely.
-> 
-> Found with sparse in linux-next tree on tag next-20171116.
-> 
-> Signed-off-by: Tim Hansen <devtimhansen@gmail.com>
-
-Applied.
+I'm sure there's a good reason for it, but this seems weird to me.
+Why read it from a file on disk instead of accepting it through say
+a securityfile write?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
