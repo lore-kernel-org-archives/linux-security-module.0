@@ -1,33 +1,36 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sat, 18 Nov 2017 18:23:30 -0500
-Subject: [PATCH v2 06/15] ima: add parser of digest lists metadata
-In-Reply-To: <20171118042030.GA13456@mail.hallyn.com>
-References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-	<20171107103710.10883-7-roberto.sassu@huawei.com>
-	<20171118042030.GA13456@mail.hallyn.com>
-Message-ID: <1511047410.5920.111.camel@linux.vnet.ibm.com>
+Date: Sat, 18 Nov 2017 22:26:58 -0500
+Subject: [GIT PULL] integrity: fixes
+Message-ID: <1511062018.6069.6.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Serge,
+Hi James,
 
-On Fri, 2017-11-17 at 22:20 -0600, Serge E. Hallyn wrote:
-> On Tue, Nov 07, 2017 at 11:37:01AM +0100, Roberto Sassu wrote:
-> > from a predefined position (/etc/ima/digest_lists/metadata), when rootfs
-> > becomes available. Digest lists must be loaded before IMA appraisal is in
-> > enforcing mode.
-> 
-> I'm sure there's a good reason for it, but this seems weird to me.
-> Why read it from a file on disk instead of accepting it through say
-> a securityfile write?
+Please forward this patch to Linus.
 
-Assuming that the concept of a white list is something we want to
-support, then at minimum the list needs to be signed and verified.
-Instead of defining a new Kconfig pathname option, a securityfs file
-could read it, like the IMA policy.
+Thanks,
 
 Mimi
 
+The following changes since commit e5729f86a2987c9404f9b2fb494b9a6fc4412baf:
+
+  ima: Remove redundant conditional operator (2017-11-08 15:16:36 -0500)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git security-next-integrity
+
+for you to fetch changes up to bb6d4c0a616d7277cf8ef08de95b632b3f6533b1:
+
+  ima: do not update security.ima if appraisal status is not INTEGRITY_PASS (2017-11-18 21:29:46 -0500)
+
+----------------------------------------------------------------
+Roberto Sassu (1):
+      ima: do not update security.ima if appraisal status is not INTEGRITY_PASS
+
+ security/integrity/ima/ima_appraise.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
