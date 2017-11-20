@@ -1,45 +1,71 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Mon, 20 Nov 2017 10:52:06 -0600
-Subject: [PATCH v2 06/15] ima: add parser of digest lists metadata
-In-Reply-To: <1511186020.4729.66.camel@linux.vnet.ibm.com>
-References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-	<20171107103710.10883-7-roberto.sassu@huawei.com>
-	<20171118042030.GA13456@mail.hallyn.com>
-	<1511047410.5920.111.camel@linux.vnet.ibm.com>
-	<175600e1-c472-69fc-2b4d-4255d8e827b5@huawei.com>
-	<1511186020.4729.66.camel@linux.vnet.ibm.com>
-Message-ID: <20171120165206.GA14752@mail.hallyn.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 20 Nov 2017 15:25:15 -0500
+Subject: [PATCH] security: replace FSF address with web source in license
+	notices
+In-Reply-To: <20171114101053.29533-1-martink@posteo.de>
+References: <20171114101053.29533-1-martink@posteo.de>
+Message-ID: <CAHC9VhSVX0xYjEGAnuWYpZER=gvnjSuPn4-w9p2Cb5OOXQ5Rhw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
-> On Mon, 2017-11-20 at 10:40 +0100, Roberto Sassu wrote:
-> > On 11/19/2017 12:23 AM, Mimi Zohar wrote:
-> > > Hi Serge,
-> > > 
-> > > On Fri, 2017-11-17 at 22:20 -0600, Serge E. Hallyn wrote:
-> > >> On Tue, Nov 07, 2017 at 11:37:01AM +0100, Roberto Sassu wrote:
-> > >>> from a predefined position (/etc/ima/digest_lists/metadata), when rootfs
-> > >>> becomes available. Digest lists must be loaded before IMA appraisal is in
-> > >>> enforcing mode.
-> > >>
-> > >> I'm sure there's a good reason for it, but this seems weird to me.
-> > >> Why read it from a file on disk instead of accepting it through say
-> > >> a securityfile write?
-> > 
-> > There are two reasons.
-> > 
-> > Digest lists must be loaded before any file is accessed, otherwise IMA
-> > will deny the operation if appraisal is in enforcing mode. With digest
-> > lists it is possible to appraise files in the initial ram disk without
-> > including extended attributes (the default policy excludes those files).
-> 
-> There are a number of people interested in extending CPIO to support
-> extended attributes, not just for IMA-appraisal. (Years ago I started
-> but unfortunately haven't had time to finish it.) ?Isn't the right
-> solution to add extended attribute support to CPIO?
+On Tue, Nov 14, 2017 at 5:10 AM, Martin Kepplinger <martink@posteo.de> wrote:
+> A few years ago the FSF moved and "59 Temple Place" is wrong. Having this
+> still in our source files feels old and unmaintained.
+>
+> Let's take the license statement serious and not confuse users.
+>
+> As https://www.gnu.org/licenses/gpl-howto.html suggests, we replace the
+> postal address with "<http://www.gnu.org/licenses/>" in the security
+> directory.
+>
+> Signed-off-by: Martin Kepplinger <martink@posteo.de>
+> ---
+>  security/selinux/include/netlabel.h | 3 +--
+>  security/selinux/netlabel.c         | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 
-(For the record) Yes, yes it is. 
+[NOTE: added the SELinux list to the CC line]
+
+Looks fine to me, I'll add it to the SELinux queue for after the merge
+window closes.
+
+> diff --git a/security/selinux/include/netlabel.h b/security/selinux/include/netlabel.h
+> index 75686d53df07..e77a5e307955 100644
+> --- a/security/selinux/include/netlabel.h
+> +++ b/security/selinux/include/netlabel.h
+> @@ -19,8 +19,7 @@
+>   * the GNU General Public License for more details.
+>   *
+>   * You should have received a copy of the GNU General Public License
+> - * along with this program;  if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   *
+>   */
+>
+> diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
+> index aaba6677ee2e..2c297b995b16 100644
+> --- a/security/selinux/netlabel.c
+> +++ b/security/selinux/netlabel.c
+> @@ -22,8 +22,7 @@
+>   * the GNU General Public License for more details.
+>   *
+>   * You should have received a copy of the GNU General Public License
+> - * along with this program;  if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   *
+>   */
+>
+> --
+> 2.11.0
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
