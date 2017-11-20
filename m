@@ -1,60 +1,72 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Mon, 20 Nov 2017 17:05:36 +0100
-Subject: [PATCH] apparmor: initialized returned struct aa_perms
-In-Reply-To: <4759b591-6603-7424-1758-fd0d23e6efed@canonical.com>
-References: <20170915195620.1561044-1-arnd@arndb.de>
-	<a94bac78-769a-e8bc-9a98-83a401534935@canonical.com>
-	<CAK8P3a2SFStvycD4CX+4xtogaoiDXWB0tpeCDKNsYfxD9nDQcw@mail.gmail.com>
-	<4759b591-6603-7424-1758-fd0d23e6efed@canonical.com>
-Message-ID: <CAK8P3a2=SBu6p_xZ61Sv2nnCz2f4Bzv_jpTmGm2F7GGTMkEiow@mail.gmail.com>
+From: patrick.ohly@intel.com (Patrick Ohly)
+Date: Mon, 20 Nov 2017 17:15:19 +0100
+Subject: IMA appraisal master plan?
+In-Reply-To: <1511189976.4729.110.camel@linux.vnet.ibm.com>
+References: <20171107151742.25122-1-mjg59@google.com>
+	<1510766803.5979.17.camel@intel.com>
+	<CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
+	<1510770065.5979.21.camel@intel.com>
+	<alpine.LFD.2.20.1711161101360.27132@localhost>
+	<CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
+	<1510798382.3711.389.camel@linux.vnet.ibm.com>
+	<8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
+	<1510837595.3711.420.camel@linux.vnet.ibm.com>
+	<a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
+	<alpine.LFD.2.20.1711200746120.25470@localhost>
+	<1511173252.5979.45.camel@intel.com>
+	<1511189976.4729.110.camel@linux.vnet.ibm.com>
+Message-ID: <1511194519.5979.48.camel@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Nov 20, 2017 at 4:47 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 11/20/2017 06:00 AM, Arnd Bergmann wrote:
->> On Mon, Sep 25, 2017 at 4:29 PM, John Johansen
->> <john.johansen@canonical.com> wrote:
->>> On 09/15/2017 03:55 PM, Arnd Bergmann wrote:
->>>> gcc-4.4 points out suspicious code in compute_mnt_perms, where
->>>> the aa_perms structure is only partially initialized before getting
->>>> returned:
->>>>
->>>> security/apparmor/mount.c: In function 'compute_mnt_perms':
->>>> security/apparmor/mount.c:227: error: 'perms.prompt' is used uninitialized in this function
->>>> security/apparmor/mount.c:227: error: 'perms.hide' is used uninitialized in this function
->>>> security/apparmor/mount.c:227: error: 'perms.cond' is used uninitialized in this function
->>>> security/apparmor/mount.c:227: error: 'perms.complain' is used uninitialized in this function
->>>> security/apparmor/mount.c:227: error: 'perms.stop' is used uninitialized in this function
->>>> security/apparmor/mount.c:227: error: 'perms.deny' is used uninitialized in this function
->>>>
->>>> Returning or assigning partially initialized structures is a bit tricky,
->>>> in particular it is explicitly allowed in c99 to assign a partially
->>>> intialized structure to another, as long as only members are read that
->>>> have been initialized earlier. Looking at what various compilers do here,
->>>> the version that produced the warning copied unintialized stack data,
->>>> while newer versions (and also clang) either set the other members to
->>>> zero or don't update the parts of the return buffer that are not modified
->>>> in the temporary structure, but they never warn about this.
->>>>
->>>> In case of apparmor, it seems better to be a little safer and always
->>>> initialize the aa_perms structure. Most users already do that, this
->>>> changes the remaining ones, including the one instance that I got the
->>>> warning for.
->>>>
->>>> Fixes: fa488437d0f9 ("apparmor: add mount mediation")
->>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>>
->>> I've pulled this into apparmor-next
->>
->> It apparently never made it into mainline. What happened?
->>
-> Its in apparmor-next and is going with today's pull request
+On Mon, 2017-11-20 at 09:59 -0500, Mimi Zohar wrote:
+> > When allowing local hashing, it's actually worse: during an offline
+> > attack, the attacker might not have access to the TPM and thus
+> > cannot
+> > easily update the EVM HMAC. During an online attack, the kernel
+> > will
+> > happily update that and the IMA hash for the attacker, resulting in
+> > a
+> > file that passes appraisal after a reboot.
+> 
+> The assumption is that most files in the TCB are not changing and are
+> signed. ?Custom policies should require file signatures for these
+> files.
+> 
+> Assuming that the private keys that are used to sign these files, as
+> well as the private key used for signing other keys added to the IMA
+> keyring, are stored off line, new files can not be signed.
+> 
+> The number of mutable files in the TCB should be very limited,
+> probably < 20 files. ?Their usage can be constrained by MAC.
 
-Ok, thanks for checking. I see it in linux-next now, but didn't see
-it a linux-next tree from early last week, or in mainline.
+I'm not sure what exactly "constrained by MAC" implies, but I suspect
+that these mutable files will be as important for the integrity of the
+TCB as everything else (<insert my systemd configuration file example
+again here>). Compromised is compromised, an installation cannot be
+"half compromised". So once the policy allows mutable files, a run-time 
+exploit that bypasses the MAC can compromise the TCB permanently.
 
-      Arnd
+> That said, IMA/IMA-appraisal is work in progress. ?There are still
+> measurement/appraisal gaps that need to be closed. ?One such example
+> are files read by interpreters and interpreted files. ?There have
+> been some initial proposals in this area.
+
+That's what brings us back to my initial question: are the current set
+of patches enough to make appraisal useful? Matthew seems to be
+optimistic that the answer is yes and I certainly don't want to
+discourage him especially as he's doing some actual work while I
+couldn't do that, but I remain a bit more skeptical.
+
+-- 
+Best Regards, Patrick Ohly
+
+The content of this message is my personal opinion only and although
+I am an employee of Intel, the statements I make here in no way
+represent Intel's position on the issue, nor am I authorized to speak
+on behalf of Intel on this matter.
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
