@@ -1,362 +1,186 @@
-From: richard_c_haines@btinternet.com (Richard Haines)
-Date: Tue, 21 Nov 2017 17:37:31 +0000
-Subject: [RFC PATCH 5/5] selinux: Add SCTP support
-In-Reply-To: <CAHC9VhT2g4FXkjzz+DnMhahFx_gHDUg6jTzK9qzVQdKmc7LHqg@mail.gmail.com>
-References: <20171017135953.4419-1-richard_c_haines@btinternet.com>
-	<CAHC9VhShAjQiw-P5vvuULbEZJ7KYHch5ZsnRk=d9vP5kyDvYzQ@mail.gmail.com>
-	<1510610721.3652.8.camel@btinternet.com>
-	<CAHC9VhRg9xS=ustdcORVPsb9H18nMEq6A99Y3KyOm2sm6Mo5xg@mail.gmail.com>
-	<1510696377.2564.24.camel@btinternet.com>
-	<CAHC9VhT2g4FXkjzz+DnMhahFx_gHDUg6jTzK9qzVQdKmc7LHqg@mail.gmail.com>
-Message-ID: <1511285851.7228.6.camel@btinternet.com>
+From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
+Date: Tue, 21 Nov 2017 19:26:02 +0100
+Subject: [RFC v4 00/10] S.A.R.A. a new stacked LSM
+Message-ID: <1511288772-19308-1-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2017-11-20 at 16:55 -0500, Paul Moore wrote:
-> On Tue, Nov 14, 2017 at 4:52 PM, Richard Haines
-> <richard_c_haines@btinternet.com> wrote:
-> > On Mon, 2017-11-13 at 17:40 -0500, Paul Moore wrote:
-> > > On Mon, Nov 13, 2017 at 5:05 PM, Richard Haines
-> > > <richard_c_haines@btinternet.com> wrote:
-> > > > On Mon, 2017-11-06 at 19:09 -0500, Paul Moore wrote:
-> > > > > On Tue, Oct 17, 2017 at 9:59 AM, Richard Haines
-> > > > > <richard_c_haines@btinternet.com> wrote:
-> > > > > > The SELinux SCTP implementation is explained in:
-> > > > > > Documentation/security/SELinux-sctp.txt
-> > > > > > 
-> > > > > > Signed-off-by: Richard Haines <richard_c_haines@btinternet.
-> > > > > > com>
-> > > > > > ---
-> > > > > >  Documentation/security/SELinux-sctp.txt | 108
-> > > > > > +++++++++++++
-> > > > > >  security/selinux/hooks.c                | 268
-> > > > > > ++++++++++++++++++++++++++++++--
-> > > > > >  security/selinux/include/classmap.h     |   3 +-
-> > > > > >  security/selinux/include/netlabel.h     |   9 +-
-> > > > > >  security/selinux/include/objsec.h       |   5 +
-> > > > > >  security/selinux/netlabel.c             |  52 ++++++-
-> > > > > >  6 files changed, 427 insertions(+), 18 deletions(-)
-> > > > > >  create mode 100644 Documentation/security/SELinux-sctp.txt
-> > > 
-> > > ...
-> > > 
-> > > > > > +Policy Statements
-> > > > > > +==================
-> > > > > > +The following class and permissions to support SCTP are
-> > > > > > available
-> > > > > > within the
-> > > > > > +kernel:
-> > > > > > +    class sctp_socket inherits socket { node_bind }
-> > > > > > +
-> > > > > > +whenever the following policy capability is enabled:
-> > > > > > +    policycap extended_socket_class;
-> > > > > > +
-> > > > > > +The SELinux SCTP support adds the additional permissions
-> > > > > > that
-> > > > > > are
-> > > > > > explained
-> > > > > > +in the sections below:
-> > > > > > +    association bindx connectx
-> > > > > 
-> > > > > Is the distinction between bind and bindx significant?  The
-> > > > > same
-> > > > > question applies to connect/connectx.  I think we can
-> > > > > probably
-> > > > > just
-> > > > > reuse bind and connect in these cases.
-> > > > 
-> > > > This has been discussed before with Marcelo and keeping
-> > > > bindx/connectx
-> > > > is a useful distinction.
-> > > 
-> > > My apologies, I must have forgotten/missed that discussion.  Do
-> > > you
-> > > have an archive pointer?
-> > 
-> > No this was off list, however I've copied the relevant bits:
-> > 
-> > > SCTP Socket Option Permissions
-> > > ===============================
-> > > Permissions that are validated on setsockopt(2) calls (note that
-> > > the
-> > > sctp_socket SETOPT permission must be allowed):
-> > > 
-> > > This option requires the BINDX_ADDR permission:
-> > > SCTP_SOCKOPT_BINDX_REM - Remove additional bind address.
-> > 
-> > Can't see an usage for this one.
-> > 
-> > > 
-> > > These options require the SET_PARAMS permission:
-> > > SCTP_PEER_ADDR_PARAMS  - Set heartbeats and address max
-> > > retransmissions.
-> > > SCTP_PEER_ADDR_THLDS  - Set thresholds.
-> > > SCTP_ASSOCINFO        - Set association / endpoint parameters.
-> > 
-> > Also for these, considering we are not willing to go as deep as to
-> > only
-> > allow these if within a given threshold. But still even then,
-> > sounds
-> > like too much.
-> > 
-> > > 
-> > > 
-> > > SCTP Bind, Connect and ASCONF Chunk Parameter Permission Checks
-> > > ==============================================================
-> > > The hook security_sctp_addr_list() is called by SCTP when
-> > > processing
-> > > various options (@optname) to check permissions required for the
-> > > list
-> > > of ipv4/ipv6 addresses (@address) as follows:
-> > > ---------------------------------------------------------------
-> > > -----
-> > > >                sctp_socket BIND type permission
-> > > > checks          |
-> > > >            (The socket must also have the BIND
-> > > > permission)      |
-> > > >      @optname            |
-> > > > Permission  |  @address              |
-> > > > --------------------------|-------------|--------------------
-> > > > -----|
-> > > > SCTP_SOCKOPT_BINDX_ADD    |BINDX_ADDRS  |One or more ipv4/ipv6
-> > > > adr|
-> > 
-> > This one can be useful, for that privilege-dropping case.
-> > 
-> > Paul note: I later changed BINDX_ADDRS to just BINDX
-> > 
-> > > > SCTP_PRIMARY_ADDR        |SET_PRI_ADDR |Single ipv4 or ipv6
-> > > > adr  |
-> > > > SCTP_SET_PEER_PRIMARY_ADDR|SET_PEER_ADDR|Single ipv4 or ipv6
-> > > > adr  |
-> > 
-> > But these, can't use an use-case.
-> > 
-> > > ---------------------------------------------------------------
-> > > -----
-> > > ---------------------------------------------------------------
-> > > -----
-> > > >                sctp_socket CONNECT type permission
-> > > > checks        |
-> > > >            (The socket must also have the CONNECT
-> > > > permission)    |
-> > > >      @optname            |
-> > > > Permission  |  @address              |
-> > > > --------------------------|-------------|--------------------
-> > > > -----|
-> > > > SCTP_SOCKOPT_CONNECTX    |CONNECTX    |One or more ipv4/ipv6
-> > > > adr|
-> > > > SCTP_PARAM_ADD_IP        |BINDX_ADDRS  |One or more ipv4/ipv6
-> > > > adr|
-> > 
-> > The 2 above, can be useful.
-> > 
-> > > > SCTP_PARAM_DEL_IP        |BINDX_ADDRS  |One or more ipv4/ipv6
-> > > > adr|
-> > > > SCTP_PARAM_SET_PRIMARY    |SET_PRI_ADDR |Single ipv4 or ipv6
-> > > > adr  |
-> > 
-> > But not these two..
-> > 
-> > > ---------------------------------------------------------------
-> > > -----
-> > > 
-> > > SCTP_SOCKOPT_BINDX_ADD - Allows additional bind addresses to be
-> > > associated after (optionally) calling
-> > > bind(3).
-> > > sctp_bindx(3) adds a set of bind
-> > > addresses on a socket.
-> > > 
-> > > SCTP_SOCKOPT_CONNECTX - Allows the allocation of multiple
-> > > addresses for reaching a peer
-> > > (multi-homed).
-> > > sctp_connectx(3) initiates a connection
-> > > on an SCTP socket using multiple
-> > > destination addresses.
-> > > 
-> > > SCTP_PRIMARY_ADDR    - Set local primary address.
-> > > 
-> > > SCTP_SET_PEER_PRIMARY_ADDR - Request peer sets address as
-> > > association primary.
-> > 
-> > No and no for the 2 above.
-> 
-> I still don't undetstand how, from a security perspective,
-> sctp_socket:bindx is different from sctp_socket:bind.  I understand
-> the distinction is important from a SCTP perspective, but from a
-> SELinux perspective isn't sctp_socket:bindx simply sctp_socket:bind?
-> How is bindx different from bind?
-> 
-> The same applies for connect/connectx.
+S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux
+Security Module that aims to collect heterogeneous security measures,
+providing a common interface to manage them.
+It can be useful to allow minor security features to use advanced
+management options, like user-space configuration files and tools, without
+too much overhead.
+Some submodules that use this framework are also introduced.
+The code is quite long, I apologize for this. Thank you in advance to
+anyone who will take the time to review this patchset.
 
-Okay I'll remove the bindx and connectx permissions.
+S.A.R.A. is meant to be stacked but it needs cred blobs and the procattr
+interface, so I temporarily implemented those parts in a way that won't
+be acceptable for upstream, but it works for now. I know that there
+is some ongoing work to make cred blobs and procattr stackable, as soon
+as the new interfaces will be available I'll reimplement the involved
+parts.
+At the moment I've been able to test it only on x86.
 
-> 
-> > > > > > +SCTP Peer Labeling
-> > > > > > +===================
-> > > > > > +An SCTP socket will only have one peer label assigned to
-> > > > > > it.
-> > > > > > This
-> > > > > > will be
-> > > > > > +assigned during the establishment of the first
-> > > > > > association.
-> > > > > > Once
-> > > > > > the peer
-> > > > > > +label has been assigned, any new associations will have
-> > > > > > the
-> > > > > > "association"
-> > > > > > +permission validated by checking the socket peer sid
-> > > > > > against
-> > > > > > the
-> > > > > > received
-> > > > > > +packets peer sid to determine whether the association
-> > > > > > should
-> > > > > > be
-> > > > > > allowed or
-> > > > > > +denied.
-> > > > > > +
-> > > > > > +NOTES:
-> > > > > > +   1) If peer labeling is not enabled, then the peer
-> > > > > > context
-> > > > > > will
-> > > > > > always be
-> > > > > > +      SECINITSID_UNLABELED (unlabeled_t in Reference
-> > > > > > Policy).
-> > > > > > +
-> > > > > > +   2) As SCTP supports multiple endpoints with multi-
-> > > > > > homing on
-> > > > > > a
-> > > > > > single socket
-> > > > > > +      it is recommended that peer labels are consistent.
-> > > > > 
-> > > > > My apologies if I'm confused, but I thought it was multiple
-> > > > > associations per-endpoint, with the associations providing
-> > > > > the
-> > > > > multi-homing functionality, no?
-> > > > 
-> > > > I've reworded to:
-> > > > As SCTP can support more than one transport address per
-> > > > endpoint
-> > > > (multi-homing) on a single socket, it is possible to configure
-> > > > policy
-> > > > and NetLabel to provide different peer labels for each of
-> > > > these. As
-> > > > the
-> > > > socket peer label is determined by the first associations
-> > > > transport
-> > > > address, it is recommended that all peer labels are consistent.
-> > > 
-> > > I'm still not sure this makes complete sense to me, but since I'm
-> > > still not 100% confident in my understanding of SCTP I'm willing
-> > > to
-> > > punt on this for the moment.
-> > 
-> > I would like you to be happy with this so I've added what I think
-> > is
-> > some clarification.
-> > 
-> > The code that handles this is the selinux_sctp_assoc_request() in
-> > hooks.c. If not the first association, then the other association
-> > peer
-> > SIDs are validated to enforce consistency among the peer SIDs.
-> > However
-> > what I recommend is that all peer labels should be the same. For
-> > example:
-> > 
-> > Don't configure this (although valid):
-> > netlabelctl unlbl add interface:lo address:127.0.0.0/8 \
-> >     label:system_u:object_r:netlabel_peer_lo_t:s0
-> > netlabelctl unlbl add interface:wlp12s0 address:192.168.1.0/24 \
-> >     label:system_u:object_r:netlabel_peer_wlan_t:s0
-> > netlabelctl unlbl add interface:enp9s0 address:193.168.1.0/24 \
-> >     label:system_u:object_r:netlabel_peer_eth_t:s0
-> > 
-> > As this is recommended:
-> > netlabelctl unlbl add interface:lo address:127.0.0.0/8 \
-> >     label:system_u:object_r:netlabel_peer_t:s0
-> > netlabelctl unlbl add interface:wlp12s0 address:192.168.1.0/24 \
-> >     label:system_u:object_r:netlabel_peer_t:s0
-> > netlabelctl unlbl add interface:enp9s0 address:193.168.1.0/24 \
-> >     label:system_u:object_r:netlabel_peer_t:s0
-> > 
-> > Would you prefer me to delete this section ?
-> 
-> Okay, I think I'm getting a better idea of this ... let me walk
-> through some of this, slowly.
-> 
-> On the send/egress side of things we don't really need to worry about
-> the remote peer label as we only do access control checks using the
-> sender's label (the local process/socket).  There is a slight
-> exception with respect to forwarded traffic, but I think we handle
-> that correctly for SCTP by substituting the traffic's label for the
-> local process/socket label (current behavior).
-> 
-> On the receive/ingress side we could receive traffic from any of the
-> associations, with the peer:recv permission checking the remote peer
-> label (aka the sending association's label) against the local
-> receiving socket.  This seems right to me.  As far as userspace is
-> concerned, *_getpeersec_dgram() should work correctly,
+The only submodule introduced in this patchset is WX Protection.
 
-I did get this working at one point as that's how I discovered IPv6 was
-not working, hence https://github.com/SELinuxProject/selinux-kernel/iss
-ues/24
+The kernel-space part is complemented by its user-space counterpart:
+saractl [1].
+A test suite for WX Protection, called sara-test [2], is also available.
 
->  but
-> *_getpeersec_stream() will only return the peer label we stored
-> during
-> the initial association setup, yes?
+WX Protection aims to improve user-space programs security by applying:
+- W^X enforcement: program can't have a page of memory that is marked, at
+		   the same time, writable and executable.
+- W!->X restriction: any page that could have been marked as writable in
+		     the past won't ever be allowed to be marked as
+		     executable.
+- Executable MMAP prevention: prevents the creation of new executable mmaps
+			      after the dynamic libraries have been loaded.
+All of the above features can be enabled or disabled both system wide
+or on a per executable basis through the use of configuration files managed
+by "saractl".
+It is important to note that some programs may have issues working with
+WX Protection. In particular:
+- W^X enforcement will cause problems to any programs that needs
+  memory pages mapped both as writable and executable at the same time e.g.
+  programs with executable stack markings in the PT_GNU_STACK segment.
+- W!->X restriction will cause problems to any program that
+  needs to generate executable code at run time or to modify executable
+  pages e.g. programs with a JIT compiler built-in or linked against a
+  non-PIC library.
+- Executable MMAP prevention can work only with programs that have at least
+  partial RELRO support. It's disabled automatically for programs that
+  lack this feature. It will cause problems to any program that uses dlopen
+  or tries to do an executable mmap. Unfortunately this feature is the one
+  that could create most problems and should be enabled only after careful
+  evaluation.
+To extend the scope of the above features, despite the issues that they may
+cause, they are complemented by:
+- procattr interface: can be used by a program to discover which WX
+		      Protection features are enabled and/or to tighten
+		      them.
+- Trampoline emulation: emulates the execution of well-known "trampolines"
+			even when they are placed in non-executable memory.
+Parts of WX Protection are inspired by some of the features available in
+PaX.
 
-Correct - Using this seemed reasonable as SCTP is 'connection
-orientated'
+Thanks to the addition of extended attributes support, it's now possible to
+use S.A.R.A. without being forced to rely on any special userspace tool.
 
->   This seems ... not the best.
-> Although I'm not sure how to solve this.
+More information can be found in the documentation introduced in the first
+patch and in the "commit message" of the following emails.
 
-I had thought of taking the initial associations peer label TE
-component (as now) and then setting the MLS component to that of the
-process as this reflects what the service can handle when using
-MLS/CIPSO/CALIPSO. Using the SCTP selinux-testsuite for example:
-Server process with CIPSO enabled using SOCK_SEQPACKET:
-unconfined_u:unconfined_r:test_sctp_server_t:s0:c714,c769,c782,c788,c80
-3,c842,c864
+Changes in v2:
+	- Removed USB filtering submodule and relative hook
+	- s/saralib/libsara/ typo
+	- STR macro renamed to avoid conflicts
+	- check_vmflags hook now returns an error code instead of just 1
+	  or 0. (suggested by Casey Schaufler)
+	- pr_wxp macro rewritten as function for readability
+	- Fixed i386 compilation warnings
+	- Documentation now states clearly that changes done via procattr
+	  interface only apply to current thread. (suggested by Jann Horn)
 
-First client process MLS component: s0:c769,c788,c803 requests an
-association that sets the servers peer context as:
-system_u:object_r:netlabel_peer_t:s0:c769,c788,c803
+Changes in v3:
+	- Documentation has been moved to match the new directory structure.
+	- Kernel cmdline arguments are now accessed via module_param interface
+	  (suggested by Kees Cook).
+	- Created "sara_warn_or_return" macro to make WX Protection code more
+	  readable (suggested by Kees Cook).
+	- Added more comments, in the most important places, to clarify my
+	  intentions (suggested by Kees Cook).
+	- The "pagefault_handler" hook has been rewritten in a more "arch
+	  agnostic" way. Though it only support x86 at the moment
+	  (suggested by Kees Cook).
 
-However as packets are accepted by the server as per peer:recv
-permission checking, then client 2 with an MLS component of
-s0:c782,c714,c842,c864 would also be able to request an
-association/send data. Therefore in these situations having the MLS
-component as part of the peer contexts seems best. RFC 5570 (CALIPSO -
-7.3.3. SCTP-Related Issues) has words of wisdom that I think I follow
-regarding this type of scenario !!!
+Changes in v4:
+	- Documentation improved and some mistakes have been fixed.
+	- Reduced dmesg verbosity.
+	- check_vmflags is now also used to decide whether to ignore 
+	  GNU executable stack markings or not.
+	- Added the check_vmflags hook in setup_arg_pages too.
+	- Added support for extended attributes.
+	- Moved trampoline emulation to arch/x86/ (suggested by Kees Cook).
+	- SARA_WXP_MMAP now depends on SARA_WXP_OTHER.
+	- MAC_ADMIN capability is now required also for config read.
+	- Some other minor fixes not worth mentionig here.
 
-> 
-> Is this why the requirement exists for each association to have an
-> equivalent label?
-> 
+[1] https://github.com/smeso/saractl
+[2] https://github.com/smeso/sara-test
 
-Yes I thought it was best to make this statement as it makes life
-easier. I could also force this by accepting the first association (and
-maybe set the MLS component as above), then do something like this in
-selinux_sctp_assoc_request():
+Salvatore Mesoraca (10):
+  S.A.R.A. Documentation
+  S.A.R.A. framework creation
+  Creation of "check_vmflags" LSM hook
+  S.A.R.A. cred blob management
+  S.A.R.A. WX Protection
+  Creation of "pagefault_handler" LSM hook
+  Trampoline emulation
+  Allowing for stacking procattr support in S.A.R.A.
+  S.A.R.A. WX Protection procattr interface
+  XATTRs support
 
-	} else if  (sksec->peer_sid != peer_sid) {
-		/* All associations MUST have the same  peer label. */
-		char *ctx1 = NULL, *ctx2 = NULL;
-		u32 len;
+ Documentation/admin-guide/LSM/SARA.rst          |  193 +++++
+ Documentation/admin-guide/LSM/index.rst         |    1 +
+ Documentation/admin-guide/kernel-parameters.txt |   40 +
+ arch/Kconfig                                    |    6 +
+ arch/x86/Kbuild                                 |    2 +
+ arch/x86/Kconfig                                |    1 +
+ arch/x86/mm/fault.c                             |    6 +
+ arch/x86/security/Makefile                      |    2 +
+ arch/x86/security/sara/Makefile                 |    1 +
+ arch/x86/security/sara/emutramp.c               |   55 ++
+ arch/x86/security/sara/trampolines32.h          |  122 +++
+ arch/x86/security/sara/trampolines64.h          |  148 ++++
+ fs/binfmt_elf.c                                 |    3 +-
+ fs/binfmt_elf_fdpic.c                           |    3 +-
+ fs/exec.c                                       |    4 +
+ fs/proc/base.c                                  |   38 +
+ include/linux/cred.h                            |    3 +
+ include/linux/lsm_hooks.h                       |   24 +
+ include/linux/security.h                        |   17 +
+ include/uapi/linux/xattr.h                      |    4 +
+ mm/mmap.c                                       |   13 +
+ security/Kconfig                                |    1 +
+ security/Makefile                               |    2 +
+ security/sara/Kconfig                           |  154 ++++
+ security/sara/Makefile                          |    4 +
+ security/sara/include/emutramp.h                |   33 +
+ security/sara/include/sara.h                    |   29 +
+ security/sara/include/sara_data.h               |   55 ++
+ security/sara/include/securityfs.h              |   59 ++
+ security/sara/include/utils.h                   |   80 ++
+ security/sara/include/wxprot.h                  |   27 +
+ security/sara/main.c                            |  117 +++
+ security/sara/sara_data.c                       |   79 ++
+ security/sara/securityfs.c                      |  563 +++++++++++++
+ security/sara/utils.c                           |  151 ++++
+ security/sara/wxprot.c                          | 1017 +++++++++++++++++++++++
+ security/security.c                             |   37 +-
+ 37 files changed, 3090 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/SARA.rst
+ create mode 100644 arch/x86/security/Makefile
+ create mode 100644 arch/x86/security/sara/Makefile
+ create mode 100644 arch/x86/security/sara/emutramp.c
+ create mode 100644 arch/x86/security/sara/trampolines32.h
+ create mode 100644 arch/x86/security/sara/trampolines64.h
+ create mode 100644 security/sara/Kconfig
+ create mode 100644 security/sara/Makefile
+ create mode 100644 security/sara/include/emutramp.h
+ create mode 100644 security/sara/include/sara.h
+ create mode 100644 security/sara/include/sara_data.h
+ create mode 100644 security/sara/include/securityfs.h
+ create mode 100644 security/sara/include/utils.h
+ create mode 100644 security/sara/include/wxprot.h
+ create mode 100644 security/sara/main.c
+ create mode 100644 security/sara/sara_data.c
+ create mode 100644 security/sara/securityfs.c
+ create mode 100644 security/sara/utils.c
+ create mode 100644 security/sara/wxprot.c
 
-		security_sid_to_context(peer_sid, &ctx1, &len);
-		security_sid_to_context(sksec->peer_sid, &ctx2, &len);
-
-		pr_err("%s: Invalid association peer context=%s
-current=%s\n",
-		       __func__, ctx1, ctx2);
-		kfree(ctx1);
-		kfree(ctx2);
-		err = -EINVAL;
-	}
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
