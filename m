@@ -1,224 +1,245 @@
 From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Tue, 21 Nov 2017 19:26:06 +0100
-Subject: [RFC v4 04/10] S.A.R.A. cred blob management
+Date: Tue, 21 Nov 2017 19:26:03 +0100
+Subject: [RFC v4 01/10] S.A.R.A. Documentation
 In-Reply-To: <1511288772-19308-1-git-send-email-s.mesoraca16@gmail.com>
 References: <1511288772-19308-1-git-send-email-s.mesoraca16@gmail.com>
-Message-ID: <1511288772-19308-5-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <1511288772-19308-2-git-send-email-s.mesoraca16@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Creation of the S.A.R.A. cred blob management "API".
-In order to allow S.A.R.A. to be stackable with other LSMs, it doesn't use
-the "security" field of struct cred, instead it uses an ad hoc field named
-security_sara.
-This solution is probably not acceptable for upstream, so this part will
-be modified as soon as the LSM stackable cred blob management will be
-available.
+Adding documentation for S.A.R.A. LSM.
 
 Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- include/linux/cred.h              |  3 ++
- security/sara/Makefile            |  2 +-
- security/sara/include/sara_data.h | 55 +++++++++++++++++++++++++++
- security/sara/main.c              |  6 +++
- security/sara/sara_data.c         | 79 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 144 insertions(+), 1 deletion(-)
- create mode 100644 security/sara/include/sara_data.h
- create mode 100644 security/sara/sara_data.c
+ Documentation/admin-guide/LSM/SARA.rst          | 173 ++++++++++++++++++++++++
+ Documentation/admin-guide/LSM/index.rst         |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |  24 ++++
+ 3 files changed, 198 insertions(+)
+ create mode 100644 Documentation/admin-guide/LSM/SARA.rst
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 099058e..b65b666 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -141,6 +141,9 @@ struct cred {
- #ifdef CONFIG_SECURITY
- 	void		*security;	/* subjective LSM security */
- #endif
-+#ifdef CONFIG_SECURITY_SARA
-+	void		*security_sara;
-+#endif
- 	struct user_struct *user;	/* real user ID subscription */
- 	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
- 	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
-diff --git a/security/sara/Makefile b/security/sara/Makefile
-index 8acd291..14bf7a8 100644
---- a/security/sara/Makefile
-+++ b/security/sara/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_SECURITY_SARA) := sara.o
- 
--sara-y := main.o securityfs.o utils.o
-+sara-y := main.o securityfs.o utils.o sara_data.o
-diff --git a/security/sara/include/sara_data.h b/security/sara/include/sara_data.h
+diff --git a/Documentation/admin-guide/LSM/SARA.rst b/Documentation/admin-guide/LSM/SARA.rst
 new file mode 100644
-index 0000000..248f57b
+index 0000000..de41b78
 --- /dev/null
-+++ b/security/sara/include/sara_data.h
-@@ -0,0 +1,55 @@
-+/*
-+ * S.A.R.A. Linux Security Module
-+ *
-+ * Copyright (C) 2017 Salvatore Mesoraca <s.mesoraca16@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation.
-+ *
-+ */
++++ b/Documentation/admin-guide/LSM/SARA.rst
+@@ -0,0 +1,173 @@
++========
++S.A.R.A.
++========
 +
-+#ifndef __SARA_DATA_H
-+#define __SARA_DATA_H
++S.A.R.A. (S.A.R.A. is Another Recursive Acronym) is a stacked Linux Security
++Module that aims to collect heterogeneous security measures, providing a common
++interface to manage them.
++As of today it consists of one submodule:
 +
-+#include <linux/init.h>
++- WX Protection
 +
-+int sara_data_init(void) __init;
 +
-+#ifdef CONFIG_SECURITY_SARA_WXPROT
++The kernel-space part is complemented by its user-space counterpart: `saractl`
++[2]_.
++A test suite for WX Protection, called `sara-test` [4]_, is also available.
++More information about where to find these tools and the full S.A.R.A.
++documentation are in the `External Links and Documentation`_ section.
 +
-+struct sara_data {
-+	unsigned long	relro_page;
-+	struct file	*relro_file;
-+	u16		wxp_flags;
-+	u16		execve_flags;
-+	bool		relro_page_found;
-+	bool		mmap_blocked;
-+};
++-------------------------------------------------------------------------------
 +
-+#define get_sara_data_leftvalue(X) ((X)->security_sara)
-+#define get_sara_data(X) ((struct sara_data *) (X)->security_sara)
-+#define get_current_sara_data() get_sara_data(current_cred())
++S.A.R.A.'s Submodules
++=====================
 +
-+#define get_sara_wxp_flags(X) (get_sara_data((X))->wxp_flags)
-+#define get_current_sara_wxp_flags() get_sara_wxp_flags(current_cred())
++WX Protection
++-------------
++WX Protection aims to improve user-space programs security by applying:
 +
-+#define get_sara_execve_flags(X) (get_sara_data((X))->execve_flags)
-+#define get_current_sara_execve_flags() get_sara_execve_flags(current_cred())
++- `W^X enforcement`_
++- `W!->X (once writable never executable) mprotect restriction`_
++- `Executable MMAP prevention`_
 +
-+#define get_sara_relro_page(X) (get_sara_data((X))->relro_page)
-+#define get_current_sara_relro_page() get_sara_relro_page(current_cred())
++All of the above features can be enabled or disabled both system wide
++or on a per executable basis through the use of configuration files managed by
++`saractl` [2]_.
 +
-+#define get_sara_relro_file(X) (get_sara_data((X))->relro_file)
-+#define get_current_sara_relro_file() get_sara_relro_file(current_cred())
++It is important to note that some programs may have issues working with
++WX Protection. In particular:
 +
-+#define get_sara_relro_page_found(X) (get_sara_data((X))->relro_page_found)
-+#define get_current_sara_relro_page_found() \
-+	get_sara_relro_page_found(current_cred())
++- **W^X enforcement** will cause problems to any programs that needs
++  memory pages mapped both as writable and executable at the same time e.g.
++  programs with executable stack markings in the *PT_GNU_STACK* segment.
++- **W!->X mprotect restriction** will cause problems to any program that
++  needs to generate executable code at run time or to modify executable
++  pages e.g. programs with a *JIT* compiler built-in or linked against a
++  *non-PIC* library.
++- **Executable MMAP prevention** can work only with programs that have at least
++  partial *RELRO* support. It's disabled automatically for programs that
++  lack this feature. It will cause problems to any program that uses *dlopen*
++  or tries to do an executable mmap. Unfortunately this feature is the one
++  that could create most problems and should be enabled only after careful
++  evaluation.
 +
-+#define get_sara_mmap_blocked(X) (get_sara_data((X))->mmap_blocked)
-+#define get_current_sara_mmap_blocked() get_sara_mmap_blocked(current_cred())
++To extend the scope of the above features, despite the issues that they may
++cause, they are complemented by **/proc/PID/attr/sara/wxprot** interface
++and **trampoline emulation**.
 +
-+#endif
++At the moment, WX Protection (unless specified otherwise) should work on
++any architecture supporting the NX bit, including, but not limited to:
++`x86_64`, `x86_32` (with PAE), `ARM` and `ARM64`.
 +
-+#endif /* __SARA_H */
-diff --git a/security/sara/main.c b/security/sara/main.c
-index aaddd32..0fc1761 100644
---- a/security/sara/main.c
-+++ b/security/sara/main.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
++Parts of WX Protection are inspired by some of the features available in PaX.
++
++For further information about configuration file format and user-space
++utilities please take a look at the full documentation [1]_.
++
++W^X enforcement
++^^^^^^^^^^^^^^^
++W^X means that a program can't have a page of memory that is marked, at the
++same time, writable and executable. This also allow to detect many bad
++behaviours that make life much more easy for attackers. Programs running with
++this feature enabled will be more difficult to exploit in the case they are
++affected by some vulnerabilities, because the attacker will be forced
++to make more steps in order to exploit them.
++
++W!->X (once writable never executable) mprotect restriction
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++"Once writable never executable" means that any page that could have been
++marked as writable in the past won't ever be allowed to be marked (e.g. via
++an mprotect syscall) as executable.
++This goes on the same track as W^X, but is much stricter and prevents
++the runtime creation of new executable code in memory.
++Obviously, this feature does not prevent a program from creating a new file and
++*mmapping* it as executable, however, it will be way more difficult for
++attackers to exploit vulnerabilities if this feature is enabled.
++
++Executable MMAP prevention
++^^^^^^^^^^^^^^^^^^^^^^^^^^
++This feature prevents the creation of new executable mmaps after the dynamic
++libraries have been loaded. When used in combination with **W!->X mprotect
++restriction** this feature will completely prevent the creation of new
++executable code from the current thread.
++Obviously, this feature does not prevent cases in which an attacker uses an
++*execve* to start a completely new program. This kind of restriction, if
++needed, can be applied using one of the other LSM that focuses on MAC.
++Please be aware that this feature can break many programs and so it should be
++enabled after careful evaluation.
++
++/proc/PID/attr/sara/wxprot interface
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++The `procattr` interface can be used by a thread to discover which
++WX Protection features are enabled and/or to tighten them: protection
++can't be softened via procattr.
++The interface is simple: it's a text file with an hexadecimal
++number in it representing enabled features (more information can be
++found in the `Flags values`_ section). Via this interface it is also
++possible to perform a complete memory scan to remove the write permission
++from pages that are both writable and executable, please note that this
++change will also affect other threads of the same process.
++
++Protections that prevent the runtime creation of executable code
++can be troublesome for all those programs that actually need to do it
++e.g. programs shipping with a JIT compiler built-in.
++This feature can be use to run the JIT compiler with few restrictions
++while enforcing full WX Protection in the rest of the program.
++
++The preferred way to access this interface is via `libsara` [3]_.
++If you don't want it as a dependency, you can just statically link it
++in your project or copy/paste parts of it.
++To make things simpler `libsara` is the only part of S.A.R.A. released under
++*CC0 - No Rights Reserved* license.
++
++Trampoline emulation
++^^^^^^^^^^^^^^^^^^^^
++Some programs need to generate part of their code at runtime. Luckily enough,
++in some cases they only generate well-known code sequences (the
++*trampolines*) that can be easily recognized and emulated by the kernel.
++This way WX Protection can still be active, so a potential attacker won't be
++able to generate arbitrary sequences of code, but just those that are
++explicitly allowed. This is not ideal, but it's still better than having WX
++Protection completely disabled.
++
++In particular S.A.R.A. is able to recognize trampolines used by GCC for nested
++C functions and libffi's trampolines.
++This feature is available only on `x86_32` and `x86_64`.
++
++Flags values
++^^^^^^^^^^^^
++Flags are represented as a 16 bit unsigned integer in which every bit indicates
++the status of a given feature:
++
+++------------------------------+----------+
++|           Feature            |  Value   |
+++==============================+==========+
++| W!->X Heap                   |  0x0001  |
+++------------------------------+----------+
++| W!->X Stack                  |  0x0002  |
+++------------------------------+----------+
++| W!->X Other memory           |  0x0004  |
+++------------------------------+----------+
++| W^X                          |  0x0008  |
+++------------------------------+----------+
++| Don't enforce, just complain |  0x0010  |
+++------------------------------+----------+
++| Be Verbose                   |  0x0020  |
+++------------------------------+----------+
++| Executable MMAP prevention   |  0x0040  |
+++------------------------------+----------+
++| Force W^X on setprocattr     |  0x0080  |
+++------------------------------+----------+
++| Trampoline emulation         |  0x0100  |
+++------------------------------+----------+
++| Children will inherit flags  |  0x0200  |
+++------------------------------+----------+
++
++-------------------------------------------------------------------------------
++
++External Links and Documentation
++================================
++
++.. [1] `Documentation	<https://sara.smeso.it>`_
++.. [2] `saractl		<https://github.com/smeso/saractl>`_
++.. [3] `libsara		<https://github.com/smeso/libsara>`_
++.. [4] `sara-test	<https://github.com/smeso/sara-test>`_
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index c980dfe..c0ae6bb3 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -39,3 +39,4 @@ the one "major" module (e.g. SELinux) if there is one configured.
+    Smack
+    tomoyo
+    Yama
++   SARA
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 62436bd..20c9114 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3817,6 +3817,30 @@
+ 			1 -- enable.
+ 			Default value is set via kernel config option.
  
- #include "include/sara.h"
-+#include "include/sara_data.h"
- #include "include/securityfs.h"
++	sara.enabled=	[SARA] Disable or enable S.A.R.A. at boot time.
++			If disabled this way S.A.R.A. can't be enabled
++			again.
++			Format: { "0" | "1" }
++			See security/sara/Kconfig help text
++			0 -- disable.
++			1 -- enable.
++			Default value is set via kernel config option.
++
++	sara.wxprot_enabled= [SARA]
++			Disable or enable S.A.R.A. WX Protection
++			at boot time.
++			Format: { "0" | "1" }
++			See security/sara/Kconfig help text
++			0 -- disable.
++			1 -- enable.
++			Default value is set via kernel config option.
++
++	sara.wxprot_default_flags= [SARA]
++			Set S.A.R.A. WX Protection default flags.
++			Format: <integer>
++			See S.A.R.A. documentation.
++			Default value is set via kernel config option.
++
+ 	serialnumber	[BUGS=X86-32]
  
- static const int sara_version = SARA_VERSION;
-@@ -90,6 +91,11 @@ void __init sara_init(void)
- 		goto error;
- 	}
- 
-+	if (sara_data_init()) {
-+		pr_crit("impossible to initialize creds.\n");
-+		goto error;
-+	}
-+
- 	pr_debug("initialized.\n");
- 
- 	if (sara_enabled)
-diff --git a/security/sara/sara_data.c b/security/sara/sara_data.c
-new file mode 100644
-index 0000000..8f11cd1
---- /dev/null
-+++ b/security/sara/sara_data.c
-@@ -0,0 +1,79 @@
-+/*
-+ * S.A.R.A. Linux Security Module
-+ *
-+ * Copyright (C) 2017 Salvatore Mesoraca <s.mesoraca16@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include "include/sara_data.h"
-+
-+#ifdef CONFIG_SECURITY_SARA_WXPROT
-+#include <linux/cred.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/mm.h>
-+
-+static int sara_cred_alloc_blank(struct cred *cred, gfp_t gfp)
-+{
-+	struct sara_data *d;
-+
-+	d = kzalloc(sizeof(*d), gfp);
-+	if (d == NULL)
-+		return -ENOMEM;
-+	get_sara_data_leftvalue(cred) = d;
-+	return 0;
-+}
-+
-+static void sara_cred_free(struct cred *cred)
-+{
-+	struct sara_data *d;
-+
-+	d = get_sara_data(cred);
-+	if (d != NULL) {
-+		kfree(d);
-+		get_sara_data_leftvalue(cred) = NULL;
-+	}
-+}
-+
-+static int sara_cred_prepare(struct cred *new, const struct cred *old,
-+			     gfp_t gfp)
-+{
-+	struct sara_data *d;
-+
-+	d = kmemdup(get_sara_data(old), sizeof(*d), gfp);
-+	if (d == NULL)
-+		return -ENOMEM;
-+	get_sara_data_leftvalue(new) = d;
-+	return 0;
-+}
-+
-+static void sara_cred_transfer(struct cred *new, const struct cred *old)
-+{
-+	*get_sara_data(new) = *get_sara_data(old);
-+}
-+
-+static struct security_hook_list data_hooks[] __ro_after_init = {
-+	LSM_HOOK_INIT(cred_alloc_blank, sara_cred_alloc_blank),
-+	LSM_HOOK_INIT(cred_free, sara_cred_free),
-+	LSM_HOOK_INIT(cred_prepare, sara_cred_prepare),
-+	LSM_HOOK_INIT(cred_transfer, sara_cred_transfer),
-+};
-+
-+int __init sara_data_init(void)
-+{
-+	security_add_hooks(data_hooks, ARRAY_SIZE(data_hooks), "sara");
-+	return sara_cred_alloc_blank((struct cred *) current->real_cred,
-+				     GFP_KERNEL);
-+}
-+
-+#else /* CONFIG_SECURITY_SARA_WXPROT */
-+
-+int __init sara_data_init(void)
-+{
-+	return 0;
-+}
-+
-+#endif
+ 	shapers=	[NET]
 -- 
 1.9.1
 
