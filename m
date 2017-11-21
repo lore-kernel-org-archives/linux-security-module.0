@@ -1,166 +1,77 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 20 Nov 2017 14:58:30 -0800
-Subject: [PATCH] KEYS: add missing permission check for request_key()
-	destination
-Message-ID: <20171120225830.96642-1-ebiggers3@gmail.com>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Tue, 21 Nov 2017 10:33:42 +0100
+Subject: IMA appraisal master plan?
+In-Reply-To: <1511173252.5979.45.camel@intel.com>
+References: <20171107151742.25122-1-mjg59@google.com>
+	<1510766803.5979.17.camel@intel.com>
+	<CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
+	<1510770065.5979.21.camel@intel.com>
+	<alpine.LFD.2.20.1711161101360.27132@localhost>
+	<CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
+	<1510798382.3711.389.camel@linux.vnet.ibm.com>
+	<8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
+	<1510837595.3711.420.camel@linux.vnet.ibm.com>
+	<a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
+	<alpine.LFD.2.20.1711200746120.25470@localhost>
+	<1511173252.5979.45.camel@intel.com>
+Message-ID: <fd3f5cd3-a6a8-a540-f634-4ac489a171e8@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On 11/20/2017 11:20 AM, Patrick Ohly wrote:
+> On Mon, 2017-11-20 at 07:47 +1100, James Morris wrote:
+>> On Fri, 17 Nov 2017, Roberto Sassu wrote:
+>>
+>>> LSMs are responsible to enforce a security policy at run-time,
+>>> while IMA/EVM protect data and metadata against offline attacks.
+>>
+>> In my view, IMA can also protect against making an online attack
+>> persistent across boots, and that would be the most compelling use of
+>> it?for many general purpose applications.
 
-When the request_key() syscall is not passed a destination keyring, it
-links the requested key (if constructed) into the "default" request-key
-keyring.  This should require Write permission to the keyring.  However,
-there is actually no permission check.
+It would be possible, if IMA knows when the system is in the expected
+state. For example, if the system is in the expected state after digest
+lists have been loaded, IMA could erase the EVM key, sealed to that
+state, when a file with unknown digest is measured. The system won't be
+able to produce valid HMACs, and files modified after the attack can be
+identified at the next boot, due to the invalid HMAC. Also accessing
+files with invalid HMAC will cause the EVM key to be zeroed.
 
-This can be abused to add keys to any keyring to which only Search
-permission is granted.  This is because Search permission allows joining
-the keyring.  keyctl_set_reqkey_keyring(KEY_REQKEY_DEFL_SESSION_KEYRING)
-then will set the default request-key keyring to the session keyring.
-Then, request_key() can be used to add keys to the keyring.
+Since IMA would erase the EVM key when a new measurement entry is
+created, digests of mutable files with valid HMAC should not be added to
+the measurement list (the initial digest must be provided with a digest
+list, or files must be signed). This requires that the integrity of
+mutable files is guaranteed by LSMs or by IMA, with the patch set 'ima:
+preserve integrity of dynamic data'.
 
-Both negatively and positively instantiated keys can be added using this
-method.  Adding negative keys is trivial.  Adding a positive key is a
-bit trickier.  It requires that either /sbin/request-key positively
-instantiates the key, or that another thread adds the key to the process
-keyring at just the right time, such that request_key() misses it
-initially but then finds it in construct_alloc_key().
 
-Fix this bug by checking for Write permission to the keyring in
-construct_get_dest_keyring() when the default keyring is being used.
+> I do not quite buy that interpretation. If the online attack succeeds
+> in bypassing the run-time checks, for example with a full root exploit,
+> then he has pretty much the same capabilities to make persistent file
+> changes as during an offline attack.
 
-We don't do the permission check for non-default keyrings because that
-was already done by the earlier call to lookup_user_key().  Also,
-request_key_and_link() is currently passed a 'struct key *' rather than
-a key_ref_t, so the "possessed" bit is unavailable.
+If the full root exploit modifies the current system state, persistent
+changes can be detected, as I explained above. The effectiveness of the
+solution depends on which checks are done by the system. For example, in
+addition to checking if the digest of measured files is in a digest
+list, IMA could check that a specific application is running (e.g.
+antivirus) and that the firewall has been started before network
+services. More checks increase the likelihood that the full root exploit
+causes a system state change.
 
-We also don't do the permission check for the "requestor keyring", to
-continue to support the use case described by commit 8bbf4976b59f
-("KEYS: Alter use of key instantiation link-to-keyring argument") where
-/sbin/request-key recursively calls request_key() to add keys to the
-original requestor's destination keyring.  (I don't know of any users
-who actually do that, though...)
+Roberto
 
-Fixes: 3e30148c3d52 ("[PATCH] Keys: Make request-key create an authorisation key")
-Cc: <stable@vger.kernel.org>	# v2.6.13+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/keys/request_key.c | 46 ++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 37 insertions(+), 9 deletions(-)
 
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index c6880af8b411..4557c1c368aa 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -251,11 +251,12 @@ static int construct_key(struct key *key, const void *callout_info,
-  * The keyring selected is returned with an extra reference upon it which the
-  * caller must release.
-  */
--static void construct_get_dest_keyring(struct key **_dest_keyring)
-+static int construct_get_dest_keyring(struct key **_dest_keyring)
- {
- 	struct request_key_auth *rka;
- 	const struct cred *cred = current_cred();
- 	struct key *dest_keyring = *_dest_keyring, *authkey;
-+	int ret;
- 
- 	kenter("%p", dest_keyring);
- 
-@@ -264,6 +265,8 @@ static void construct_get_dest_keyring(struct key **_dest_keyring)
- 		/* the caller supplied one */
- 		key_get(dest_keyring);
- 	} else {
-+		bool do_perm_check = true;
-+
- 		/* use a default keyring; falling through the cases until we
- 		 * find one that we actually have */
- 		switch (cred->jit_keyring) {
-@@ -278,8 +281,10 @@ static void construct_get_dest_keyring(struct key **_dest_keyring)
- 					dest_keyring =
- 						key_get(rka->dest_keyring);
- 				up_read(&authkey->sem);
--				if (dest_keyring)
-+				if (dest_keyring) {
-+					do_perm_check = false;
- 					break;
-+				}
- 			}
- 
- 		case KEY_REQKEY_DEFL_THREAD_KEYRING:
-@@ -314,11 +319,29 @@ static void construct_get_dest_keyring(struct key **_dest_keyring)
- 		default:
- 			BUG();
- 		}
-+
-+		/*
-+		 * Require Write permission on the keyring.  This is essential
-+		 * because the default keyring may be the session keyring, and
-+		 * joining a keyring only requires Search permission.
-+		 *
-+		 * However, this check is skipped for the "requestor keyring" so
-+		 * that /sbin/request-key can itself use request_key() to add
-+		 * keys to the original requestor's destination keyring.
-+		 */
-+		if (do_perm_check) {
-+			ret = key_permission(make_key_ref(dest_keyring, 1),
-+					     KEY_NEED_WRITE);
-+			if (ret) {
-+				key_put(dest_keyring);
-+				return ret;
-+			}
-+		}
- 	}
- 
- 	*_dest_keyring = dest_keyring;
- 	kleave(" [dk %d]", key_serial(dest_keyring));
--	return;
-+	return 0;
- }
- 
- /*
-@@ -444,11 +467,15 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
- 	if (ctx->index_key.type == &key_type_keyring)
- 		return ERR_PTR(-EPERM);
- 
--	user = key_user_lookup(current_fsuid());
--	if (!user)
--		return ERR_PTR(-ENOMEM);
-+	ret = construct_get_dest_keyring(&dest_keyring);
-+	if (ret)
-+		goto error;
- 
--	construct_get_dest_keyring(&dest_keyring);
-+	user = key_user_lookup(current_fsuid());
-+	if (!user) {
-+		ret = -ENOMEM;
-+		goto error_put_dest_keyring;
-+	}
- 
- 	ret = construct_alloc_key(ctx, dest_keyring, flags, user, &key);
- 	key_user_put(user);
-@@ -463,7 +490,7 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
- 	} else if (ret == -EINPROGRESS) {
- 		ret = 0;
- 	} else {
--		goto couldnt_alloc_key;
-+		goto error_put_dest_keyring;
- 	}
- 
- 	key_put(dest_keyring);
-@@ -473,8 +500,9 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
- construction_failed:
- 	key_negate_and_link(key, key_negative_timeout, NULL, NULL);
- 	key_put(key);
--couldnt_alloc_key:
-+error_put_dest_keyring:
- 	key_put(dest_keyring);
-+error:
- 	kleave(" = %d", ret);
- 	return ERR_PTR(ret);
- }
+> When allowing local hashing, it's actually worse: during an offline
+> attack, the attacker might not have access to the TPM and thus cannot
+> easily update the EVM HMAC. During an online attack, the kernel will
+> happily update that and the IMA hash for the attacker, resulting in a
+> file that passes appraisal after a reboot.
+> 
+
 -- 
-2.15.0.448.gf294e3d99a-goog
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
