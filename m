@@ -1,788 +1,299 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Wed, 22 Nov 2017 12:03:10 -0500
-Subject: [RFC][PATCH][v0.2] selinuxns: extend namespace support to
-	security.selinux xattrs
-In-Reply-To: <alpine.LFD.2.20.1711212009330.6297@localhost>
-References: <alpine.LFD.2.20.1711212009330.6297@localhost>
-Message-ID: <1511370190.28491.12.camel@tycho.nsa.gov>
+From: azhar.shaikh@intel.com (Shaikh, Azhar)
+Date: Wed, 22 Nov 2017 19:57:32 +0000
+Subject: [PATCH v4 1/2] tpm: Keep CLKRUN enabled throughout the duration
+	of transmit_cmd()
+In-Reply-To: <1511303964-56294-2-git-send-email-azhar.shaikh@intel.com>
+References: <1511303964-56294-1-git-send-email-azhar.shaikh@intel.com>
+	<1511303964-56294-2-git-send-email-azhar.shaikh@intel.com>
+Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582896F1F2@ORSMSX109.amr.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2017-11-21 at 20:49 +1100, James Morris wrote:
-> This is an updated version of the patch which I first posted here:
-> 
-> http://kernsec.org/pipermail/linux-security-module-archive/2017-Octob
-> er/004053.html
-> 
-> I've incorporated some of the feedback provided, as follows:
-> 
-> 1. The init namespace is now an empty string, rather than a hidden
-> "init".
-> 
-> 2. The ".ns." field for namespaced SELinux xattrs has been removed.
-> 
-> 3. Namespace names are now hierarchical, and always include parent?
-> ???namespace names preceding the current namespace.
-> 
-> As before, this works transparently for normal applications.
-> 
-> Some usage examples with this patch:
-> 
-> - Create a namespace "VM1":
-> 
-> # echo VM1 > /sys/fs/selinux/unshare
-> # unshare -m -n
-> # umount /sys/fs/selinux && mount -t selinuxfs none /sys/fs/selinux
-> && load_policy
-> # runcon unconfined_u:unconfined_r:unconfined_t:s0:c0.c1023 /bin/bash
-> # setenforce 1
-> # cat /sys/fs/selinux/unshare
-> VM1
-> 
-> 
-> - Note that the current directory appears unlabeled:
-> 
-> # ls -dZ
-> drwxr-xr-x. root root system_u:object_r:unlabeled_t:s0 .
-> 
-> 
-> - If you create a file, it will also thus be unlabeled:
-> 
-> # touch b
-> # ls -Z
-> -rw-r--r--. root root unconfined_u:object_r:unlabeled_t:s0 b
-> 
-> 
-> - With the current code, you need to manually label the current
-> directory?
-> if you want labeling to work correctly:
-> 
-> # restorecon -v .
-> restorecon reset /root/selinux/test context?
-> ? system_u:object_r:unlabeled_t:s0->system_u:object_r:admin_home_t:s0
-> 
-> # touch c
-> # ls -lZ
-> -rw-r--r--. root root unconfined_u:object_r:unlabeled_t:s0 b
-> -rw-r--r--. root root unconfined_u:object_r:admin_home_t:s0 c
-> 
-> 
-> - The on-disk label looks like this:
-> 
-> # getfattr -d -m . c
-> # file: c
-> security.selinux.VM1="unconfined_u:object_r:admin_home_t:s0"
-> 
-> 
-> - Now, create a nested namespace, "VM2":
-> 
-> # echo VM2 > /sys/fs/selinux/unshare
-> # unshare -m -n
-> #??umount /sys/fs/selinux && mount -t selinuxfs none /sys/fs/selinux
-> && load_policy
-> # runcon unconfined_u:unconfined_r:unconfined_t:s0:c0.c1023 /bin/bash
-> # setenforce 1
-> # cat /sys/fs/selinux/unshare?
-> VM1.VM2
-> 
-> - Label .:
-> 
-> # restorecon -v .
-> restorecon reset /root/selinux/test context?
-> ? system_u:object_r:unlabeled_t:s0->system_u:object_r:admin_home_t:s0
-> 
-> 
-> - Create a new file (note files from parent namespace are unlabled in
-> this?
-> ? one):
-> 
-> # touch d
-> # ls -Z
-> -rw-r--r--. root root system_u:object_r:unlabeled_t:s0 b
-> -rw-r--r--. root root system_u:object_r:unlabeled_t:s0 c
-> -rw-r--r--. root root unconfined_u:object_r:admin_home_t:s0 d
-> 
-> 
-> - Relabel the file:
-> 
-> # chcon -t etc_t d
-> # ls -Z d
-> -rw-r--r--. root root unconfined_u:object_r:etc_t:s0???d
-> 
-> 
-> - View the on-disk label:
-> 
-> # getfattr -d -m . d
-> # file: d
-> security.selinux.VM1.VM2="unconfined_u:object_r:etc_t:s0"
-> 
-> 
-> There's a lot more work to do but I figured it would be useful for
-> folk to?
-> see the hierarchical namespacing changes.??Feedback welcome!
+I found an issue with this patch. 
 
-Thanks, this looks good to me wrt the new naming scheme for namespaces
-and xattrs.
+In tpm_transmit() function after clk_enable is called with false, the assumption was whenever the next TPM transaction happens, the clock will be stopped in tpm_platform_end_xfer(). But in cases where after tpm_transmit is completed and there is no TPM transaction until  next TPM command is being sent, the clocks will be running till then.
 
-> 
-> Next TODO items:
-> 
-> - Perform labeling of files in ancestor namespaces upon creation in
-> a?
-> ? child namespace.
-> - Label inheritence & label sharing (both ro/rw).
-> 
-> 
-> ---
-> 
-> > From 91bcb0b9fe058d9b7b0de1d5a1c22e5e7303989a Mon Sep 17 00:00:00
-> > 2001
-> 
-> From: James Morris <james.l.morris@oracle.com>
-> Date: Tue, 21 Nov 2017 19:45:22 +1100
-> Subject: [PATCH] selinuxns: extend namespace support to
-> security.selinux
-> ?xattrs
-> 
-> RFC v0.2
-> 
-> Signed-off-by: James Morris <james.l.morris@oracle.com>
-> 
-> ---
-> 
-> ?fs/xattr.c????????????????????????????| 12 +++--
-> ?include/linux/lsm_hooks.h?????????????|??2 +
-> ?include/linux/security.h??????????????|??6 +++
-> ?include/linux/xattr.h?????????????????|??2 +-
-> ?security/integrity/evm/evm_crypto.c???|??2 +-
-> ?security/integrity/ima/ima_appraise.c |??2 +-
-> ?security/security.c???????????????????|??6 +++
-> ?security/selinux/hooks.c??????????????| 95
-> +++++++++++++++++++++++++++++++----
-> ?security/selinux/include/security.h???|??7 ++-
-> ?security/selinux/selinuxfs.c??????????| 63 ++++++++++++++---------
-> ?security/smack/smack_lsm.c????????????|??2 +-
-> ?11 files changed, 159 insertions(+), 40 deletions(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 4424f7f..d8107b7 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -157,6 +157,7 @@
-> ? *
-> ? *??@dentry - object to perform setxattr on
-> ? *??@name - xattr name to set
-> + *??@nsname - namespaced xattr name, use instead of @name if set
-> ? *??@value - value to set @name to
-> ? *??@size - size of @value
-> ? *??@flags - flags to pass into filesystem operations
-> @@ -168,7 +169,7 @@
-> ? *??permission checks.
-> ? */
-> ?int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
-> -		const void *value, size_t size, int flags)
-> +		const char *nsname, const void *value, size_t size,
-> int flags)
-> ?{
-> ?	struct inode *inode = dentry->d_inode;
-> ?	int error = -EAGAIN;
-> @@ -178,7 +179,8 @@ int __vfs_setxattr_noperm(struct dentry *dentry,
-> const char *name,
-> ?	if (issec)
-> ?		inode->i_flags &= ~S_NOSEC;
-> ?	if (inode->i_opflags & IOP_XATTR) {
-> -		error = __vfs_setxattr(dentry, inode, name, value,
-> size, flags);
-> +		error = __vfs_setxattr(dentry, inode, nsname?:name,
-> value,
-> +					size, flags);
-> ?		if (!error) {
-> ?			fsnotify_xattr(dentry);
-> ?			security_inode_post_setxattr(dentry, name,
-> value,
-> @@ -211,6 +213,7 @@ int __vfs_setxattr_noperm(struct dentry *dentry,
-> const char *name,
-> ?{
-> ?	struct inode *inode = dentry->d_inode;
-> ?	int error;
-> +	char *nsname = NULL;
-> ?
-> ?	error = xattr_permission(inode, name, MAY_WRITE);
-> ?	if (error)
-> @@ -221,8 +224,11 @@ int __vfs_setxattr_noperm(struct dentry *dentry,
-> const char *name,
-> ?	if (error)
-> ?		goto out;
-> ?
-> -	error = __vfs_setxattr_noperm(dentry, name, value, size,
-> flags);
-> +	error = security_inode_translate_xattr_to_ns(name, &nsname);
-> +	if (error)
-> +		goto out;
-> ?
-> +	error = __vfs_setxattr_noperm(dentry, name, nsname, value,
-> size, flags);
-> ?out:
-> ?	inode_unlock(inode);
-> ?	return error;
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index c925812..e4eb43e 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -1480,6 +1480,7 @@
-> ?	void (*inode_getsecid)(struct inode *inode, u32 *secid);
-> ?	int (*inode_copy_up)(struct dentry *src, struct cred **new);
-> ?	int (*inode_copy_up_xattr)(const char *name);
-> +	int (*inode_translate_xattr_to_ns)(const char *name, char
-> **tr);
-> ?
-> ?	int (*file_permission)(struct file *file, int mask);
-> ?	int (*file_alloc_security)(struct file *file);
-> @@ -1760,6 +1761,7 @@ struct security_hook_heads {
-> ?	struct list_head inode_getsecid;
-> ?	struct list_head inode_copy_up;
-> ?	struct list_head inode_copy_up_xattr;
-> +	struct list_head inode_translate_xattr_to_ns;
-> ?	struct list_head file_permission;
-> ?	struct list_head file_alloc_security;
-> ?	struct list_head file_free_security;
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index ce62659..64297e1 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -302,6 +302,7 @@ void security_inode_post_setxattr(struct dentry
-> *dentry, const char *name,
-> ?void security_inode_getsecid(struct inode *inode, u32 *secid);
-> ?int security_inode_copy_up(struct dentry *src, struct cred **new);
-> ?int security_inode_copy_up_xattr(const char *name);
-> +int security_inode_translate_xattr_to_ns(const char *name, char
-> **tr);
-> ?int security_file_permission(struct file *file, int mask);
-> ?int security_file_alloc(struct file *file);
-> ?void security_file_free(struct file *file);
-> @@ -808,6 +809,11 @@ static inline int
-> security_inode_copy_up_xattr(const char *name)
-> ?	return -EOPNOTSUPP;
-> ?}
-> ?
-> +static inline int security_inode_translate_xattr_to_ns(const char
-> *name, char **tr)
-> +{
-> +	return 0;
-> +}
-> +
-> ?static inline int security_file_permission(struct file *file, int
-> mask)
-> ?{
-> ?	return 0;
-> diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-> index e77605a..c25eb8a 100644
-> --- a/include/linux/xattr.h
-> +++ b/include/linux/xattr.h
-> @@ -50,7 +50,7 @@ struct xattr {
-> ?ssize_t vfs_getxattr(struct dentry *, const char *, void *, size_t);
-> ?ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
-> ?int __vfs_setxattr(struct dentry *, struct inode *, const char *,
-> const void *, size_t, int);
-> -int __vfs_setxattr_noperm(struct dentry *, const char *, const void
-> *, size_t, int);
-> +int __vfs_setxattr_noperm(struct dentry *, const char *, const char
-> *, const void *, size_t, int);
-> ?int vfs_setxattr(struct dentry *, const char *, const void *,
-> size_t, int);
-> ?int __vfs_removexattr(struct dentry *, const char *);
-> ?int vfs_removexattr(struct dentry *, const char *);
-> diff --git a/security/integrity/evm/evm_crypto.c
-> b/security/integrity/evm/evm_crypto.c
-> index 1d32cd2..2249186 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -260,7 +260,7 @@ int evm_update_evmxattr(struct dentry *dentry,
-> const char *xattr_name,
-> ?	if (rc == 0) {
-> ?		xattr_data.type = EVM_XATTR_HMAC;
-> ?		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
-> -					???&xattr_data,
-> +					???NULL, &xattr_data,
-> ?					???sizeof(xattr_data), 0);
-> ?	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR))
+Can we write a dummy byte after clk_enable is set to false? Is this possible/correct way?
+Or else as Jason suggested earlier, will get rid of tpm_platform_begin_xfer() and tpm_platform_end_xfer() and have those implemented in the clk_enable() function and have a high level action of enabling and disabling clocks.
+
+Regards,
+Azhar Shaikh
+ 
+
+>-----Original Message-----
+>From: Shaikh, Azhar
+>Sent: Tuesday, November 21, 2017 2:39 PM
+>To: jarkko.sakkinen at linux.intel.com; jgunthorpe at obsidianresearch.com;
+>peterhuewe at gmx.de
+>Cc: linux-security-module at vger.kernel.org; linux-kernel at vger.kernel.org;
+>tpmdd-devel at lists.sourceforge.net; Shaikh, Azhar <azhar.shaikh@intel.com>
+>Subject: [PATCH v4 1/2] tpm: Keep CLKRUN enabled throughout the duration
+>of transmit_cmd()
+>
+>Commit 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell
+>systems") disabled CLKRUN protocol during TPM transactions and re-enabled
+>once the transaction is completed. But there were still some corner cases
+>observed where, reading of TPM header failed for savestate command while
+>going to suspend, which resulted in suspend failure.
+>To fix this issue keep the CLKRUN protocol disabled for the entire duration of a
+>single TPM command and not disabling and re-enabling again for every TPM
+>transaction. For the other TPM accesses outside the flow of TPM command
+>processing, disable and re-enable CLKRUN protocol for every TPM access.
+>
+>Fixes: 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell
+>systems")
+>
+>Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+>Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>---
+> drivers/char/tpm/tpm-interface.c |  6 ++++++
+> drivers/char/tpm/tpm_tis.c       | 44 ++++++++++++++++++++++++----------------
+> drivers/char/tpm/tpm_tis_core.c  | 21 +++++++++++++++++++
+>drivers/char/tpm/tpm_tis_core.h  |  1 +
+> include/linux/tpm.h              |  1 +
+> 5 files changed, 55 insertions(+), 18 deletions(-)
+>
+>diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+>interface.c
+>index 1d6729be4cd6..4661a810eab7 100644
+>--- a/drivers/char/tpm/tpm-interface.c
+>+++ b/drivers/char/tpm/tpm-interface.c
+>@@ -413,6 +413,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
+>tpm_space *space,
+> 	if (chip->dev.parent)
+> 		pm_runtime_get_sync(chip->dev.parent);
+>
+>+	if (chip->ops->clk_enable != NULL)
+>+		chip->ops->clk_enable(chip, true);
+>+
+> 	/* Store the decision as chip->locality will be changed. */
+> 	need_locality = chip->locality == -1;
+>
+>@@ -489,6 +492,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
+>tpm_space *space,
+> 		chip->locality = -1;
+> 	}
+> out_no_locality:
+>+	if (chip->ops->clk_enable != NULL)
+>+		chip->ops->clk_enable(chip, false);
+>+
+> 	if (chip->dev.parent)
+> 		pm_runtime_put_sync(chip->dev.parent);
+>
+>diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c index
+>e2d1055fb814..76a7b64195c8 100644
+>--- a/drivers/char/tpm/tpm_tis.c
+>+++ b/drivers/char/tpm/tpm_tis.c
+>@@ -46,6 +46,7 @@ struct tpm_info {
+> struct tpm_tis_tcg_phy {
+> 	struct tpm_tis_data priv;
+> 	void __iomem *iobase;
+>+	bool begin_xfer_done;
+> };
+>
+> static inline struct tpm_tis_tcg_phy *to_tpm_tis_tcg_phy(struct tpm_tis_data
+>*data) @@ -148,12 +149,15 @@ static inline bool is_bsw(void)
+>
+> /**
+>  * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be
+>running
+>+ * @data:	struct tpm_tis_data instance
+>  */
+>-static void tpm_platform_begin_xfer(void)
+>+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
 > {
-> ?		rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
-> diff --git a/security/integrity/ima/ima_appraise.c
-> b/security/integrity/ima/ima_appraise.c
-> index 809ba70..914cf5f 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -71,7 +71,7 @@ static int ima_fix_xattr(struct dentry *dentry,
-> ?		iint->ima_hash->xattr.ng.algo = algo;
-> ?	}
-> ?	rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_IMA,
-> -				???&iint->ima_hash-
-> >xattr.data[offset],
-> +				???NULL, &iint->ima_hash-
-> >xattr.data[offset],
-> ?				???(sizeof(iint->ima_hash->xattr) -
-> offset) +
-> ?				???iint->ima_hash->length, 0);
-> ?	return rc;
-> diff --git a/security/security.c b/security/security.c
-> index 4bf0f57..7fce259 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -856,6 +856,12 @@ int security_inode_copy_up_xattr(const char
-> *name)
-> ?}
-> ?EXPORT_SYMBOL(security_inode_copy_up_xattr);
-> ?
-> +int security_inode_translate_xattr_to_ns(const char *name, char
-> **tr)
-> +{
-> +	return call_int_hook(inode_translate_xattr_to_ns, 0, name,
-> tr);
-> +}
-> +EXPORT_SYMBOL(security_inode_translate_xattr_to_ns);
-> +
-> ?int security_file_permission(struct file *file, int mask)
-> ?{
-> ?	int ret;
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 3daad14..e439ce2 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -646,6 +646,16 @@ static int selinux_is_sblabel_mnt(struct
-> super_block *sb)
-> ?		??!strcmp(sb->s_type->name, "cgroup2")));
-> ?}
-> ?
-> +static char *current_xattr_suffix(void)
-> +{
-> +	return current_selinux_ns->xattr_name +
-> XATTR_SECURITY_PREFIX_LEN;
-> +}
-> +
-> +static char *current_xattr_name(void)
-> +{
-> +	return current_selinux_ns->xattr_name;
-> +}
-> +
-> ?static int sb_finish_set_opts(struct super_block *sb)
-> ?{
-> ?	struct superblock_security_struct *sbsec =
-> superblock_security(sb);
-> @@ -654,6 +664,8 @@ static int sb_finish_set_opts(struct super_block
-> *sb)
-> ?	int rc = 0;
-> ?
-> ?	if (sbsec->behavior == SECURITY_FS_USE_XATTR) {
-> +		char *name;
-> +
-> ?		/* Make sure that the xattr handler exists and that
-> no
-> ?		???error other than -ENODATA is returned by getxattr
-> on
-> ?		???the root directory.??-ENODATA is ok, as this may
-> be
-> @@ -666,7 +678,9 @@ static int sb_finish_set_opts(struct super_block
-> *sb)
-> ?			goto out;
-> ?		}
-> ?
-> -		rc = __vfs_getxattr(root, root_inode,
-> XATTR_NAME_SELINUX, NULL, 0);
-> +		name = current_xattr_name();
-> +
-> +		rc = __vfs_getxattr(root, root_inode, name, NULL,
-> 0);
-> ?		if (rc < 0 && rc != -ENODATA) {
-> ?			if (rc == -EOPNOTSUPP)
-> ?				printk(KERN_WARNING "SELinux: (dev
-> %s, type "
-> @@ -1660,6 +1674,7 @@ static int inode_doinit_with_dentry(struct
-> inode *inode,
-> ?	char *context = NULL;
-> ?	unsigned len = 0;
-> ?	int rc = 0;
-> +	char *name;
-> ?
-> ?	if (isec->initialized == LABEL_INITIALIZED)
-> ?		return 0;
-> @@ -1729,12 +1744,14 @@ static int inode_doinit_with_dentry(struct
-> inode *inode,
-> ?			goto out;
-> ?		}
-> ?		context[len] = '\0';
-> -		rc = __vfs_getxattr(dentry, inode,
-> XATTR_NAME_SELINUX, context, len);
-> +
-> +		name = current_xattr_name();
-> +		rc = __vfs_getxattr(dentry, inode, name, context,
-> len);
-> ?		if (rc == -ERANGE) {
-> ?			kfree(context);
-> ?
-> ?			/* Need a larger buffer.??Query for the
-> right size. */
-> -			rc = __vfs_getxattr(dentry, inode,
-> XATTR_NAME_SELINUX, NULL, 0);
-> +			rc = __vfs_getxattr(dentry, inode, name,
-> NULL, 0);
-> ?			if (rc < 0) {
-> ?				dput(dentry);
-> ?				goto out;
-> @@ -1747,7 +1764,7 @@ static int inode_doinit_with_dentry(struct
-> inode *inode,
-> ?				goto out;
-> ?			}
-> ?			context[len] = '\0';
-> -			rc = __vfs_getxattr(dentry, inode,
-> XATTR_NAME_SELINUX, context, len);
-> +			rc = __vfs_getxattr(dentry, inode, name,
-> context, len);
-> ?		}
-> ?		dput(dentry);
-> ?		if (rc < 0) {
-> @@ -3167,7 +3184,7 @@ static int selinux_inode_init_security(struct
-> inode *inode, struct inode *dir,
-> ?		return -EOPNOTSUPP;
-> ?
-> ?	if (name)
-> -		*name = XATTR_SELINUX_SUFFIX;
-> +		*name = current_xattr_suffix();
-> ?
-> ?	if (value && len) {
-> ?		rc =
-> security_sid_to_context_force(current_selinux_ns, newsid,
-> @@ -3382,6 +3399,10 @@ static bool has_cap_mac_admin(bool audit)
-> ?	return true;
-> ?}
-> ?
-> +/* TODO:
-> + * - audit
-> + * - handle raw namespaced xattrs
-> + */
-> ?static int selinux_inode_setxattr(struct dentry *dentry, const char
-> *name,
-> ?				??const void *value, size_t size,
-> int flags)
-> ?{
-> @@ -3392,8 +3413,12 @@ static int selinux_inode_setxattr(struct
-> dentry *dentry, const char *name,
-> ?	u32 newsid, sid = current_sid();
-> ?	int rc = 0;
-> ?
-> -	if (strcmp(name, XATTR_NAME_SELINUX))
-> +	if (strcmp(name, XATTR_NAME_SELINUX)) {
-> +		/* No raw namespaced xattrs, yet */
-> +		if (!strncmp(name, XATTR_NAME_SELINUX,
-> strlen(XATTR_NAME_SELINUX)))
-> +			return -EACCES;
-> ?		return selinux_inode_setotherxattr(dentry, name);
-> +	}
-> ?
-> ?	sbsec = superblock_security(inode->i_sb);
-> ?	if (!(sbsec->flags & SBLABEL_MNT))
-> @@ -3640,6 +3665,13 @@ static int selinux_inode_copy_up_xattr(const
-> char *name)
-> ?	return -EOPNOTSUPP;
-> ?}
-> ?
-> +static int selinux_inode_translate_xattr_to_ns(const char *name,
-> char **tr)
-> +{
-> +	if(!strcmp(name, XATTR_NAME_SELINUX))
-> +		*tr = current_xattr_name();
-> +	return 0;
-> +}
-> +
-> ?/* file security operations */
-> ?
-> ?static int selinux_revalidate_file_permission(struct file *file, int
-> mask)
-> @@ -6430,10 +6462,11 @@ static int selinux_inode_notifysecctx(struct
-> inode *inode, void *ctx, u32 ctxlen
-> ?
-> ?/*
-> ? *	called with inode->i_mutex locked
-> + *	TODO: namespace translation
-> ? */
-> ?static int selinux_inode_setsecctx(struct dentry *dentry, void *ctx,
-> u32 ctxlen)
-> ?{
-> -	return __vfs_setxattr_noperm(dentry, XATTR_NAME_SELINUX,
-> ctx, ctxlen, 0);
-> +	return __vfs_setxattr_noperm(dentry, XATTR_NAME_SELINUX,
-> NULL, ctx, ctxlen, 0);
-> ?}
-> ?
-> ?static int selinux_inode_getsecctx(struct inode *inode, void **ctx,
-> u32 *ctxlen)
-> @@ -6647,6 +6680,7 @@ static void selinux_ib_free_security(void
-> *ib_sec)
-> ?	LSM_HOOK_INIT(inode_getsecid, selinux_inode_getsecid),
-> ?	LSM_HOOK_INIT(inode_copy_up, selinux_inode_copy_up),
-> ?	LSM_HOOK_INIT(inode_copy_up_xattr,
-> selinux_inode_copy_up_xattr),
-> +	LSM_HOOK_INIT(inode_translate_xattr_to_ns,
-> selinux_inode_translate_xattr_to_ns),
-> ?
-> ?	LSM_HOOK_INIT(file_permission, selinux_file_permission),
-> ?	LSM_HOOK_INIT(file_alloc_security,
-> selinux_file_alloc_security),
-> @@ -6805,7 +6839,37 @@ static void selinux_ib_free_security(void
-> *ib_sec)
-> ?
-> ?static void selinux_ns_free(struct work_struct *work);
-> ?
-> -int selinux_ns_create(struct selinux_ns *parent, struct selinux_ns
-> **ns)
-> +static int selinux_ns_create_name(struct selinux_ns *parent, struct
-> selinux_ns *newns, const char *name)
-> +{
-> +	int rc = 0;
-> +
-> +	if (parent && parent->parent)
-> +		newns->name = kasprintf(GFP_KERNEL, "%s.%s", parent-
-> >name, name);
-> +	else
-> +		newns->name = kstrdup(name, GFP_KERNEL);
-> +	
-> +	if (!newns->name)
-> +		rc = -ENOMEM;
-> +
-> +	return rc;
-> +}
-> +
-> +static int selinux_ns_create_xattr_name(struct selinux_ns *parent,
-> struct selinux_ns *newns)
-> +{
-> +	int rc = 0;
-> +
-> +	if (!parent)
-> +		newns->xattr_name = kstrdup(XATTR_NAME_SELINUX,
-> GFP_KERNEL);
-> +	else?
-> +		newns->xattr_name = kasprintf(GFP_KERNEL, "%s.%s",
-> XATTR_NAME_SELINUX, newns->name);
-> +
-> +	if (!newns->xattr_name)
-> +		rc = -ENOMEM;
-> +
-> +	return rc;
-> +}
-> +
-> +int selinux_ns_create(struct selinux_ns *parent, struct selinux_ns
-> **ns, const char *name)
-> ?{
-> ?	struct selinux_ns *newns;
-> ?	int rc;
-> @@ -6825,14 +6889,25 @@ int selinux_ns_create(struct selinux_ns
-> *parent, struct selinux_ns **ns)
-> ?	if (rc)
-> ?		goto err;
-> ?
-> +	rc = selinux_ns_create_name(parent, newns, name);
-> +	if (rc)
-> +		goto err_avc;
-> +
-> +	rc = selinux_ns_create_xattr_name(parent, newns);
-> +	if (rc)
-> +		goto err_avc;
-> +
-> ?	if (parent)
-> ?		newns->parent = get_selinux_ns(parent);
-> ?
-> ?	*ns = newns;
-> ?	return 0;
-> +err_avc:
-> +	selinux_avc_free(newns->avc);
-> ?err:
-> ?	selinux_ss_free(newns->ss);
-> ?	kfree(newns);
-> +	kfree(newns->name);
-> ?	return rc;
-> ?}
-> ?
-> @@ -6845,6 +6920,8 @@ static void selinux_ns_free(struct work_struct
-> *work)
-> ?		parent = ns->parent;
-> ?		selinux_ss_free(ns->ss);
-> ?		selinux_avc_free(ns->avc);
-> +		kfree(ns->name);
-> +		kfree(ns->xattr_name);
-> ?		kfree(ns);
-> ?		ns = parent;
-> ?	} while (ns && refcount_dec_and_test(&ns->count));
-> @@ -6869,7 +6946,7 @@ static __init int selinux_init(void)
-> ?
-> ?	printk(KERN_INFO "SELinux:??Initializing.\n");
-> ?
-> -	if (selinux_ns_create(NULL, &init_selinux_ns))
-> +	if (selinux_ns_create(NULL, &init_selinux_ns,
-> SELINUX_NS_INIT_NAME))
-> ?		panic("SELinux: Could not create initial
-> namespace\n");
-> ?
-> ?	set_ns_enforcing(init_selinux_ns, selinux_enforcing_boot);
-> diff --git a/security/selinux/include/security.h
-> b/security/selinux/include/security.h
-> index b80f9bd..300cc8a 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -92,6 +92,9 @@ enum {
-> ?/* limitation of boundary depth??*/
-> ?#define POLICYDB_BOUNDS_MAXDEPTH	4
-> ?
-> +/* Name of SELinux initial namespace */
-> +#define SELINUX_NS_INIT_NAME ""
-> +
-> ?struct selinux_avc;
-> ?struct selinux_ss;
-> ?
-> @@ -108,9 +111,11 @@ struct selinux_ns {
-> ?	struct selinux_avc *avc;
-> ?	struct selinux_ss *ss;
-> ?	struct selinux_ns *parent;
-> +	char *name;
-> +	char *xattr_name;
-> ?};
-> ?
-> -int selinux_ns_create(struct selinux_ns *parent, struct selinux_ns
-> **ns);
-> +int selinux_ns_create(struct selinux_ns *parent, struct selinux_ns
-> **ns, const char *name);
-> ?void __put_selinux_ns(struct selinux_ns *ns);
-> ?
-> ?int selinux_ss_create(struct selinux_ss **ss);
-> diff --git a/security/selinux/selinuxfs.c
-> b/security/selinux/selinuxfs.c
-> index 6c52d24..d190213 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -334,9 +334,10 @@ static ssize_t sel_write_unshare(struct file
-> *file, const char __user *buf,
-> ?{
-> ?	struct selinux_fs_info *fsi = file_inode(file)->i_sb-
-> >s_fs_info;
-> ?	struct selinux_ns *ns = fsi->ns;
-> +	struct cred *cred;
-> +	struct task_security_struct *tsec;
-> ?	char *page;
-> ?	ssize_t length;
-> -	bool set;
-> ?	int rc;
-> ?
-> ?	if (ns != current_selinux_ns)
-> @@ -359,30 +360,32 @@ static ssize_t sel_write_unshare(struct file
-> *file, const char __user *buf,
-> ?	if (IS_ERR(page))
-> ?		return PTR_ERR(page);
-> ?
-> -	length = -EINVAL;
-> -	if (kstrtobool(page, &set))
-> -		goto out;
-> +	/* strip any trailing newline */
-> +	if (page[strlen(page) - 1] == '\n')
-> +		page[strlen(page) - 1] = 0;
-> ?
-> -	if (set) {
-> -		struct cred *cred = prepare_creds();
-> -		struct task_security_struct *tsec;
-> +	/* TODO: check for uniqueness! */
-> +	if (!strcmp(SELINUX_NS_INIT_NAME, page)) {
-> +		length = -EINVAL;
-> +		goto out;
-> +	}
-> ?
-> -		if (!cred) {
-> -			length = -ENOMEM;
-> -			goto out;
-> -		}
-> -		tsec = cred->security;
-> -		if (selinux_ns_create(ns, &tsec->ns)) {
-> -			abort_creds(cred);
-> -			length = -ENOMEM;
-> -			goto out;
-> -		}
-> -		tsec->osid = tsec->sid = SECINITSID_KERNEL;
-> -		tsec->exec_sid = tsec->create_sid = tsec-
-> >keycreate_sid =
-> -			tsec->sockcreate_sid = SECSID_NULL;
-> -		tsec->parent_cred = get_current_cred();
-> -		commit_creds(cred);
-> +	cred = prepare_creds();
-> +	if (!cred) {
-> +		length = -ENOMEM;
-> +		goto out;
-> +	}
-> +	tsec = cred->security;
-> +	if (selinux_ns_create(ns, &tsec->ns, page)) {
-> +		abort_creds(cred);
-> +		length = -ENOMEM;
-> +		goto out;
-> ?	}
-> +	tsec->osid = tsec->sid = SECINITSID_KERNEL;
-> +	tsec->exec_sid = tsec->create_sid = tsec->keycreate_sid =
-> +		tsec->sockcreate_sid = SECSID_NULL;
-> +	tsec->parent_cred = get_current_cred();
-> +	commit_creds(cred);
-> ?
-> ?	length = count;
-> ?out:
-> @@ -390,8 +393,22 @@ static ssize_t sel_write_unshare(struct file
-> *file, const char __user *buf,
-> ?	return length;
-> ?}
-> ?
-> +static ssize_t sel_read_unshare(struct file *file, char __user *buf,
-> +				size_t count, loff_t *ppos)
-> +{
-> +	struct selinux_fs_info *fsi = file_inode(file)->i_sb-
-> >s_fs_info;
-> +	struct selinux_ns *ns = fsi->ns;
-> +	char *name = ns->name;
-> +
-> +	if (ns != current_selinux_ns)
-> +		return -EPERM;
-> +
-> +	return simple_read_from_buffer(buf, count, ppos, name,
-> strlen(name));
-> +}
-> +
-> ?static const struct file_operations sel_unshare_ops = {
-> ?	.write		= sel_write_unshare,
-> +	.read		= sel_read_unshare,
-> ?	.llseek		= generic_file_llseek,
-> ?};
-> ?
-> @@ -2021,7 +2038,7 @@ static int sel_fill_super(struct super_block
-> *sb, void *data, int silent)
-> ?		[SEL_POLICY] = {"policy", &sel_policy_ops, S_IRUGO},
-> ?		[SEL_VALIDATE_TRANS] = {"validatetrans",
-> &sel_transition_ops,
-> ?					S_IWUGO},
-> -		[SEL_UNSHARE] = {"unshare", &sel_unshare_ops, 0222},
-> +		[SEL_UNSHARE] = {"unshare", &sel_unshare_ops, 0666},
-> ?		/* last one */ {""}
-> ?	};
-> ?
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 319add3..5ea841f 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4591,7 +4591,7 @@ static int smack_inode_notifysecctx(struct
-> inode *inode, void *ctx, u32 ctxlen)
-> ?
-> ?static int smack_inode_setsecctx(struct dentry *dentry, void *ctx,
-> u32 ctxlen)
-> ?{
-> -	return __vfs_setxattr_noperm(dentry, XATTR_NAME_SMACK, ctx,
-> ctxlen, 0);
-> +	return __vfs_setxattr_noperm(dentry, XATTR_NAME_SMACK, NULL,
-> ctx, ctxlen, 0);
-> ?}
-> ?
-> ?static int smack_inode_getsecctx(struct inode *inode, void **ctx,
-> u32 *ctxlen)
+> 	u32 clkrun_val;
+>+	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+>
+>-	if (!is_bsw())
+>+	if (!is_bsw() || ((data->flags & TPM_TIS_CLK_ENABLE) &&
+>+					phy->begin_xfer_done))
+> 		return;
+>
+> 	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET); @@
+>-168,16 +172,21 @@ static void tpm_platform_begin_xfer(void)
+> 	 */
+> 	outb(0xCC, 0x80);
+>
+>+	if (!(data->flags & TPM_TIS_CLK_ENABLE))
+>+		phy->begin_xfer_done = false;
+>+	else
+>+		phy->begin_xfer_done = true;
+> }
+>
+> /**
+>  * tpm_platform_end_xfer() - set LPC CLKRUN_EN i.e. clocks can be turned off
+>+ * @data:	struct tpm_tis_data instance
+>  */
+>-static void tpm_platform_end_xfer(void)
+>+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+> {
+> 	u32 clkrun_val;
+>
+>-	if (!is_bsw())
+>+	if (!is_bsw() || (data->flags & TPM_TIS_CLK_ENABLE))
+> 		return;
+>
+> 	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET); @@
+>-193,17 +202,16 @@ static void tpm_platform_end_xfer(void)
+> 	outb(0xCC, 0x80);
+>
+> }
+>+
+> #else
+> static inline bool is_bsw(void)
+> {
+> 	return false;
+> }
+>-
+>-static void tpm_platform_begin_xfer(void)
+>+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+> {
+> }
+>-
+>-static void tpm_platform_end_xfer(void)
+>+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+> {
+> }
+> #endif
+>@@ -213,12 +221,12 @@ static int tpm_tcg_read_bytes(struct tpm_tis_data
+>*data, u32 addr, u16 len,  {
+> 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+>
+>-	tpm_platform_begin_xfer();
+>+	tpm_platform_begin_xfer(data);
+>
+> 	while (len--)
+> 		*result++ = ioread8(phy->iobase + addr);
+>
+>-	tpm_platform_end_xfer();
+>+	tpm_platform_end_xfer(data);
+>
+> 	return 0;
+> }
+>@@ -228,12 +236,12 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data
+>*data, u32 addr, u16 len,  {
+> 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+>
+>-	tpm_platform_begin_xfer();
+>+	tpm_platform_begin_xfer(data);
+>
+> 	while (len--)
+> 		iowrite8(*value++, phy->iobase + addr);
+>
+>-	tpm_platform_end_xfer();
+>+	tpm_platform_end_xfer(data);
+>
+> 	return 0;
+> }
+>@@ -242,11 +250,11 @@ static int tpm_tcg_read16(struct tpm_tis_data
+>*data, u32 addr, u16 *result)  {
+> 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+>
+>-	tpm_platform_begin_xfer();
+>+	tpm_platform_begin_xfer(data);
+>
+> 	*result = ioread16(phy->iobase + addr);
+>
+>-	tpm_platform_end_xfer();
+>+	tpm_platform_end_xfer(data);
+>
+> 	return 0;
+> }
+>@@ -255,11 +263,11 @@ static int tpm_tcg_read32(struct tpm_tis_data
+>*data, u32 addr, u32 *result)  {
+> 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+>
+>-	tpm_platform_begin_xfer();
+>+	tpm_platform_begin_xfer(data);
+>
+> 	*result = ioread32(phy->iobase + addr);
+>
+>-	tpm_platform_end_xfer();
+>+	tpm_platform_end_xfer(data);
+>
+> 	return 0;
+> }
+>@@ -268,11 +276,11 @@ static int tpm_tcg_write32(struct tpm_tis_data
+>*data, u32 addr, u32 value)  {
+> 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+>
+>-	tpm_platform_begin_xfer();
+>+	tpm_platform_begin_xfer(data);
+>
+> 	iowrite32(value, phy->iobase + addr);
+>
+>-	tpm_platform_end_xfer();
+>+	tpm_platform_end_xfer(data);
+>
+> 	return 0;
+> }
+>diff --git a/drivers/char/tpm/tpm_tis_core.c
+>b/drivers/char/tpm/tpm_tis_core.c index fdde971bc810..64f5b46f5bf2
+>100644
+>--- a/drivers/char/tpm/tpm_tis_core.c
+>+++ b/drivers/char/tpm/tpm_tis_core.c
+>@@ -661,6 +661,26 @@ void tpm_tis_remove(struct tpm_chip *chip)  }
+>EXPORT_SYMBOL_GPL(tpm_tis_remove);
+>
+>+/**
+>+ * tpm_tis_clkrun_enable() - Keep clkrun protocol disabled for entire
+>duration
+>+ *                           of a single TPM command
+>+ * @chip:	TPM chip to use
+>+ * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
+>+ *		0 - Enable CLKRUN protocol
+>+ */
+>+static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value) {
+>+	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
+>+
+>+	if (!IS_ENABLED(CONFIG_X86))
+>+		return;
+>+
+>+	if (value)
+>+		data->flags |= TPM_TIS_CLK_ENABLE;
+>+	else
+>+		data->flags &= ~TPM_TIS_CLK_ENABLE;
+>+}
+>+
+> static const struct tpm_class_ops tpm_tis = {
+> 	.flags = TPM_OPS_AUTO_STARTUP,
+> 	.status = tpm_tis_status,
+>@@ -673,6 +693,7 @@ void tpm_tis_remove(struct tpm_chip *chip)
+> 	.req_canceled = tpm_tis_req_canceled,
+> 	.request_locality = request_locality,
+> 	.relinquish_locality = release_locality,
+>+	.clk_enable = tpm_tis_clkrun_enable,
+> };
+>
+> int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq, diff
+>--git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+>index 6bbac319ff3b..281f744a1a44 100644
+>--- a/drivers/char/tpm/tpm_tis_core.h
+>+++ b/drivers/char/tpm/tpm_tis_core.h
+>@@ -81,6 +81,7 @@ enum tis_defaults {
+>
+> enum tpm_tis_flags {
+> 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
+>+	TPM_TIS_CLK_ENABLE		= BIT(1),
+> };
+>
+> struct tpm_tis_data {
+>diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
+>5a090f5ab335..881312d85574 100644
+>--- a/include/linux/tpm.h
+>+++ b/include/linux/tpm.h
+>@@ -50,6 +50,7 @@ struct tpm_class_ops {
+> 				unsigned long *timeout_cap);
+> 	int (*request_locality)(struct tpm_chip *chip, int loc);
+> 	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
+>+	void (*clk_enable)(struct tpm_chip *chip, bool value);
+> };
+>
+> #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+>--
+>1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
