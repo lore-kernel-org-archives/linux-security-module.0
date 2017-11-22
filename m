@@ -1,273 +1,155 @@
-From: azhar.shaikh@intel.com (Azhar Shaikh)
-Date: Tue, 21 Nov 2017 14:39:23 -0800
-Subject: [PATCH v4 1/2] tpm: Keep CLKRUN enabled throughout the duration of
-	transmit_cmd()
-In-Reply-To: <1511303964-56294-1-git-send-email-azhar.shaikh@intel.com>
-References: <1511303964-56294-1-git-send-email-azhar.shaikh@intel.com>
-Message-ID: <1511303964-56294-2-git-send-email-azhar.shaikh@intel.com>
+From: Alexander.Steffen@infineon.com (Alexander.Steffen at infineon.com)
+Date: Wed, 22 Nov 2017 06:52:03 +0000
+Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+	performance
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+	<5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+	<e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>  
+Message-ID: <3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Commit 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell
-systems") disabled CLKRUN protocol during TPM transactions and re-enabled
-once the transaction is completed. But there were still some corner cases
-observed where, reading of TPM header failed for savestate command
-while going to suspend, which resulted in suspend failure.
-To fix this issue keep the CLKRUN protocol disabled for the entire
-duration of a single TPM command and not disabling and re-enabling
-again for every TPM transaction. For the other TPM accesses outside
-the flow of TPM command processing, disable and re-enable CLKRUN protocol
-for every TPM access.
+> > > On 10/20/2017 08:12 PM, Alexander.Steffen at infineon.com wrote:
+> > > >> The TPM burstcount status indicates the number of bytes that can
+> > > >> be sent to the TPM without causing bus wait states.  Effectively,
+> > > >> it is the number of empty bytes in the command FIFO.
+> > > >>
+> > > >> This patch optimizes the tpm_tis_send_data() function by checking
+> > > >> the burstcount only once. And if the burstcount is valid, it writes
+> > > >> all the bytes at once, permitting wait state.
+> > > >>
+> > > >> After this change, performance on a TPM 1.2 with an 8 byte
+> > > >> burstcount for 1000 extends improved from ~41sec to ~14sec.
+> > > >>
+> > > >> Suggested-by: Ken Goldman<kgold@linux.vnet.ibm.com>  in
+> > > >> conjunction with the TPM Device Driver work group.
+> > > >> Signed-off-by: Nayna Jain<nayna@linux.vnet.ibm.com>
+> > > >> Acked-by: Mimi Zohar<zohar@linux.vnet.ibm.com>
+> > > >> ---
+> > > >>   drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++--------------
+> --
+> > --
+> > > ----
+> > > >> ----
+> > > >>   1 file changed, 15 insertions(+), 27 deletions(-)
+> > > >>
+> > > >> diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > > >> b/drivers/char/tpm/tpm_tis_core.c
+> > > >> index b33126a35694..993328ae988c 100644
+> > > >> --- a/drivers/char/tpm/tpm_tis_core.c
+> > > >> +++ b/drivers/char/tpm/tpm_tis_core.c
+> > > >> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip
+> > > *chip,
+> > > >> u8 *buf, size_t len)
+> > > >>   {
+> > > >>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> > > >>   	int rc, status, burstcnt;
+> > > >> -	size_t count = 0;
+> > > >>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+> > > >>
+> > > >>   	status = tpm_tis_status(chip);
+> > > >> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct
+> tpm_chip
+> > > *chip,
+> > > >> u8 *buf, size_t len)
+> > > >>   		}
+> > > >>   	}
+> > > >>
+> > > >> -	while (count < len - 1) {
+> > > >> -		burstcnt = get_burstcount(chip);
+> > > >> -		if (burstcnt < 0) {
+> > > >> -			dev_err(&chip->dev, "Unable to read
+> burstcount\n");
+> > > >> -			rc = burstcnt;
+> > > >> -			goto out_err;
+> > > >> -		}
+> > > >> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+> > > >> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
+> > > >>> locality),
+> > > >> -					 burstcnt, buf + count);
+> > > >> -		if (rc < 0)
+> > > >> -			goto out_err;
+> > > >> -
+> > > >> -		count += burstcnt;
+> > > >> -
+> > > >> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
+> > > >>> timeout_c,
+> > > >> -					&priv->int_queue, false) < 0) {
+> > > >> -			rc = -ETIME;
+> > > >> -			goto out_err;
+> > > >> -		}
+> > > >> -		status = tpm_tis_status(chip);
+> > > >> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0)
+> {
+> > > >> -			rc = -EIO;
+> > > >> -			goto out_err;
+> > > >> -		}
+> > > >> +	/*
+> > > >> +	 * Get the initial burstcount to ensure TPM is ready to
+> > > >> +	 * accept data.
+> > > >> +	 */
+> > > >> +	burstcnt = get_burstcount(chip);
+> > > >> +	if (burstcnt < 0) {
+> > > >> +		dev_err(&chip->dev, "Unable to read burstcount\n");
+> > > >> +		rc = burstcnt;
+> > > >> +		goto out_err;
+> > > >>   	}
+> > > >>
+> > > >> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
+> >locality),
+> > > >> +			len - 1, buf);
+> > > >> +	if (rc < 0)
+> > > >> +		goto out_err;
+> > > >> +
+> > > >>   	/* write last byte */
+> > > >> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
+> > > >> buf[count]);
+> > > >> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
+> buf[len-
+> > > >> 1]);
+> > > >>   	if (rc < 0)
+> > > >>   		goto out_err;
+> > > >>
+> > > >> --
+> > > >> 2.13.3
+> > > > This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to
+> > > send large amounts of data, e.g. with TPM2_Hash, and subsequent tests
+> > > seem to take an unusual amount of time. More analysis probably has to
+> > wait
+> > > until November, since I am going to be in Prague next week.
+> > >
+> > > Thanks Alex for testing these.. Did you get the chance to do any further
+> > > analysis ?
+> >
+> > I am working on that now. Ken's suggestion seems reasonable, so I am
+> going
+> > to test whether correctly waiting for the flags to change fixes the problem.
+> If
+> > it does, I'll send the patches.
+> 
+> Sorry for the delay, I had to take care of some device tree changes in v4.14
+> that broke my ARM test machines.
+> 
+> I've implemented some patches that fix the issue that Ken pointed out and
+> rebased your patch 2/4 ("ignore burstcount") on top. While doing this I
+> noticed that your original patch does not, as the commit message says, write
+> all the bytes at once, but still unnecessarily splits all commands into at least
+> two transfers (as did the original code). I've fixed this as well in my patches,
+> so that all bytes are indeed sent in a single call, without special handling for
+> the last byte. This should speed up things further, especially for small
+> commands and drivers like tpm_tis_spi, where writing a single byte
+> translates into additional SPI transfers.
+> 
+> Unfortunately, even with those changes the problem persists. But I've got
+> more detailed logs now and will try to understand and hopefully fix the issue.
+> I'll follow up with more details and/or patches once I know more.
 
-Fixes: 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell systems")
+Okay, so the problem seems to be that at some point the TPM starts inserting wait states for the FIFO access. The driver tries to handle this, but fails since even the 50 retries that are currently used do not seem to be enough. Adding small (millisecond) delays between the attempts did not help so far.
 
-Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-interface.c |  6 ++++++
- drivers/char/tpm/tpm_tis.c       | 44 ++++++++++++++++++++++++----------------
- drivers/char/tpm/tpm_tis_core.c  | 21 +++++++++++++++++++
- drivers/char/tpm/tpm_tis_core.h  |  1 +
- include/linux/tpm.h              |  1 +
- 5 files changed, 55 insertions(+), 18 deletions(-)
+Is there any limit in the specification for how many wait states the TPM may generate or for how long it may do so? I could not find anything, but we need to use something there to prevent a faulty TPM from blocking the kernel forever.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1d6729be4cd6..4661a810eab7 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -413,6 +413,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	if (chip->dev.parent)
- 		pm_runtime_get_sync(chip->dev.parent);
- 
-+	if (chip->ops->clk_enable != NULL)
-+		chip->ops->clk_enable(chip, true);
-+
- 	/* Store the decision as chip->locality will be changed. */
- 	need_locality = chip->locality == -1;
- 
-@@ -489,6 +492,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 		chip->locality = -1;
- 	}
- out_no_locality:
-+	if (chip->ops->clk_enable != NULL)
-+		chip->ops->clk_enable(chip, false);
-+
- 	if (chip->dev.parent)
- 		pm_runtime_put_sync(chip->dev.parent);
- 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index e2d1055fb814..76a7b64195c8 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -46,6 +46,7 @@ struct tpm_info {
- struct tpm_tis_tcg_phy {
- 	struct tpm_tis_data priv;
- 	void __iomem *iobase;
-+	bool begin_xfer_done;
- };
- 
- static inline struct tpm_tis_tcg_phy *to_tpm_tis_tcg_phy(struct tpm_tis_data *data)
-@@ -148,12 +149,15 @@ static inline bool is_bsw(void)
- 
- /**
-  * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be running
-+ * @data:	struct tpm_tis_data instance
-  */
--static void tpm_platform_begin_xfer(void)
-+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
- {
- 	u32 clkrun_val;
-+	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (!is_bsw())
-+	if (!is_bsw() || ((data->flags & TPM_TIS_CLK_ENABLE) &&
-+					phy->begin_xfer_done))
- 		return;
- 
- 	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-@@ -168,16 +172,21 @@ static void tpm_platform_begin_xfer(void)
- 	 */
- 	outb(0xCC, 0x80);
- 
-+	if (!(data->flags & TPM_TIS_CLK_ENABLE))
-+		phy->begin_xfer_done = false;
-+	else
-+		phy->begin_xfer_done = true;
- }
- 
- /**
-  * tpm_platform_end_xfer() - set LPC CLKRUN_EN i.e. clocks can be turned off
-+ * @data:	struct tpm_tis_data instance
-  */
--static void tpm_platform_end_xfer(void)
-+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
- {
- 	u32 clkrun_val;
- 
--	if (!is_bsw())
-+	if (!is_bsw() || (data->flags & TPM_TIS_CLK_ENABLE))
- 		return;
- 
- 	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-@@ -193,17 +202,16 @@ static void tpm_platform_end_xfer(void)
- 	outb(0xCC, 0x80);
- 
- }
-+
- #else
- static inline bool is_bsw(void)
- {
- 	return false;
- }
--
--static void tpm_platform_begin_xfer(void)
-+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
- {
- }
--
--static void tpm_platform_end_xfer(void)
-+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
- {
- }
- #endif
-@@ -213,12 +221,12 @@ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	while (len--)
- 		*result++ = ioread8(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -228,12 +236,12 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	while (len--)
- 		iowrite8(*value++, phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -242,11 +250,11 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	*result = ioread16(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -255,11 +263,11 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	*result = ioread32(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -268,11 +276,11 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	iowrite32(value, phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index fdde971bc810..64f5b46f5bf2 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -661,6 +661,26 @@ void tpm_tis_remove(struct tpm_chip *chip)
- }
- EXPORT_SYMBOL_GPL(tpm_tis_remove);
- 
-+/**
-+ * tpm_tis_clkrun_enable() - Keep clkrun protocol disabled for entire duration
-+ *                           of a single TPM command
-+ * @chip:	TPM chip to use
-+ * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
-+ *		0 - Enable CLKRUN protocol
-+ */
-+static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
-+{
-+	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
-+
-+	if (!IS_ENABLED(CONFIG_X86))
-+		return;
-+
-+	if (value)
-+		data->flags |= TPM_TIS_CLK_ENABLE;
-+	else
-+		data->flags &= ~TPM_TIS_CLK_ENABLE;
-+}
-+
- static const struct tpm_class_ops tpm_tis = {
- 	.flags = TPM_OPS_AUTO_STARTUP,
- 	.status = tpm_tis_status,
-@@ -673,6 +693,7 @@ void tpm_tis_remove(struct tpm_chip *chip)
- 	.req_canceled = tpm_tis_req_canceled,
- 	.request_locality = request_locality,
- 	.relinquish_locality = release_locality,
-+	.clk_enable = tpm_tis_clkrun_enable,
- };
- 
- int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index 6bbac319ff3b..281f744a1a44 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -81,6 +81,7 @@ enum tis_defaults {
- 
- enum tpm_tis_flags {
- 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
-+	TPM_TIS_CLK_ENABLE		= BIT(1),
- };
- 
- struct tpm_tis_data {
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 5a090f5ab335..881312d85574 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -50,6 +50,7 @@ struct tpm_class_ops {
- 				unsigned long *timeout_cap);
- 	int (*request_locality)(struct tpm_chip *chip, int loc);
- 	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
-+	void (*clk_enable)(struct tpm_chip *chip, bool value);
- };
- 
- #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
--- 
-1.9.1
-
+Alexander
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
