@@ -1,41 +1,59 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 26 Nov 2017 11:37:41 -0500
-Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
-	performance
-In-Reply-To: <20171126152218.c5fsr7uhs3ipwwha@linux.intel.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-	<20171017203232.2262-3-nayna@linux.vnet.ibm.com>
-	<5ef60315f2254b3b8bcc217a572280e5@infineon.com>
-	<e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
-	<3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
-	<20171123144742.GC8862@swastik>
-	<20171126152218.c5fsr7uhs3ipwwha@linux.intel.com>
-Message-ID: <1511714261.4361.13.camel@linux.vnet.ibm.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Sun, 26 Nov 2017 22:15:47 +0000
+Subject: [RFC 0/3] Safe, dynamically (un)loadable LSMs
+Message-ID: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-[Cc'ing Dave and Leendeert]
+This patchset introduces safe dynamic LSM support. It does this via
+SRCU-protected security hooks. It also EXPORT_SYMBOL_GPLs the symbols
+required to perform runtime loading, and unloading. The patchset is
+meant to introduce as little overhead as possible when not used.
+Additionally, the functionality is disabled by default.
 
-Hi Jarkko,
+The SRCU was made safe to call from an interrupt context in the patch
+"srcu: Allow use of Classic SRCU from both process and interrupt context"
+(1123a6041654e8f889014659593bad4168e542c2) by Paolo Bonzini. Therefore
+this mechanism is safe to use for traversal of the callback list,
+even when a hook is called from the interrupt context.
 
-> > It seems that the last byte was sent from the beginning (27084ef
-> > [PATCH] tpm: driver for next generation TPM chips,), does anyone
-> > remember the reason ?
-> 
-> Sent from the beginning?
+Currently, this maintains an entirely seperate mechanism to attach hooks
+because the hooks are behind managed static_keys to prevent overhead.
+This is also done so sealable memory support could be added at a later
+point. The callbacks currently include a percpu_counter, but that could
+sit outside of the struct itself. This may also have a benefit that these
+counters, could have __cacheline_aligned_in_smp. Although, in my testing
+I was unable to find much performance delta with percpu_counters that
+were not aligned.
 
-I went through the commit logs to see if any of the patch descriptions
-have an explanation for sending the last byte separately. Based on
-commit 27084efee0c3 "[PATCH] tpm: driver for next generation TPM
-chips", it seems it's been there since the beginning.
+It includes an example LSM that prevents specific time travel.
 
-Dave, Leendert, Do either of you remember the reason for
-tpm_tis_send_data() sending the last byte separately?
+Sargun Dhillon (3):
+  security: Add safe, dynamic (runtime-loadable) hook support
+  LSM: Add statistics about the invocation of dynamic hooks
+  LSM: Add an example sample dynamic LSM
 
-thanks,
+ include/linux/lsm_hooks.h | 254 +++++++++++++++++++++++++++++++++++++
+ samples/Kconfig           |   6 +
+ samples/Makefile          |   2 +-
+ samples/lsm/Makefile      |   4 +
+ samples/lsm/lsm_example.c |  46 +++++++
+ security/Kconfig          |  16 +++
+ security/Makefile         |   2 +
+ security/dynamic.c        | 316 ++++++++++++++++++++++++++++++++++++++++++++++
+ security/dynamic.h        |  33 +++++
+ security/dynamicfs.c      | 118 +++++++++++++++++
+ security/inode.c          |   2 +
+ security/security.c       |  66 +++++++++-
+ 12 files changed, 863 insertions(+), 2 deletions(-)
+ create mode 100644 samples/lsm/Makefile
+ create mode 100644 samples/lsm/lsm_example.c
+ create mode 100644 security/dynamic.c
+ create mode 100644 security/dynamic.h
+ create mode 100644 security/dynamicfs.c
 
-Mimi
-
+-- 
+2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
