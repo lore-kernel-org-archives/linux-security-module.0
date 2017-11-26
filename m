@@ -1,233 +1,119 @@
 From: sargun@sargun.me (Sargun Dhillon)
-Date: Sun, 26 Nov 2017 22:16:20 +0000
-Subject: [RFC 2/3] LSM: Add statistics about the invocation of dynamic hooks
-Message-ID: <20171126221619.GA13769@ircssh-2.c.rugged-nimbus-611.internal>
+Date: Sun, 26 Nov 2017 22:16:31 +0000
+Subject: [RFC 3/3] LSM: Add an example sample dynamic LSM
+Message-ID: <20171126221629.GA13778@ircssh-2.c.rugged-nimbus-611.internal>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch builds on the dynamic hooks patch. With dynamic hooks,
-/sys/kernel/security/lsm doesn't really make a lot of sense, because
-the administrator is more likely interested in the per-hook modules.
-There is now a /sys/kernel/security/dynamic_hooks/${HOOK_NAME} which
-has the currently attached LSMs for that given hook.
+This adds an example LSM that utilizes the features added by the
+dynamically loadable LSMs patch. Once the module is unloaded, the
+command is once again allowed. It prevents the user from running:
+date --set="October 21 2015 16:29:00 PDT
 
-Not only does it list which LSMs are hooked into each dynamic hook,
-but it also lists the global accept / deny count, as well as the
-per-hook accept / deny count. The earlier is useful to keep consistent
-statistics across the attachment, and unattachment of LSMs.
+The behaviour can be verified by looking at:
+/sys/kernel/security/dynamic_hooks/settime
 
 Signed-off-by: Sargun Dhillon <sargun@sargun.me>
 ---
- security/Kconfig     |   7 +++
- security/Makefile    |   1 +
- security/dynamic.h   |   9 ++++
- security/dynamicfs.c | 118 +++++++++++++++++++++++++++++++++++++++++++++++++++
- security/inode.c     |   2 +
- 5 files changed, 137 insertions(+)
- create mode 100644 security/dynamicfs.c
+ samples/Kconfig           |  6 ++++++
+ samples/Makefile          |  2 +-
+ samples/lsm/Makefile      |  4 ++++
+ samples/lsm/lsm_example.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 57 insertions(+), 1 deletion(-)
+ create mode 100644 samples/lsm/Makefile
+ create mode 100644 samples/lsm/lsm_example.c
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 77841bd..d6c579d 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -94,6 +94,13 @@ config SECURITY_DYNAMIC_HOOKS
- 	  They cannot circumvent the built-in LSMs.
- 	  If you are unsure how to answer this question, answer N.
+diff --git a/samples/Kconfig b/samples/Kconfig
+index c332a3b..283f442 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -117,4 +117,10 @@ config SAMPLE_STATX
+ 	help
+ 	  Build example userspace program to use the new extended-stat syscall.
  
-+config SECURITY_DYNAMIC_HOOKS_FS
-+	bool
-+	default y if SECURITY_DYNAMIC_HOOKS && SECURITYFS
-+	depends on SECURITY_DYNAMIC_HOOKS && SECURITYFS
++config SAMPLE_DYNAMIC_LSM
++	tristate "Build LSM examples -- loadable modules only"
++	depends on SECURITY_DYNAMIC_HOOKS_FS && m
 +	help
-+	  This option enables listing of dynamically loaded LSM hooks.
++	  This builds an example dynamic LSM
 +
- config INTEL_TXT
- 	bool "Enable Intel(R) Trusted Execution Technology (Intel(R) TXT)"
- 	depends on HAVE_INTEL_TXT
-diff --git a/security/Makefile b/security/Makefile
-index 59e695a..51cbec0 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_MMU)			+= min_addr.o
- obj-$(CONFIG_SECURITY)			+= security.o
- obj-$(CONFIG_SECURITYFS)		+= inode.o
- obj-$(CONFIG_SECURITY_DYNAMIC_HOOKS)	+= dynamic.o
-+obj-$(CONFIG_SECURITY_DYNAMIC_HOOKS_FS)	+= dynamicfs.o
- obj-$(CONFIG_SECURITY_SELINUX)		+= selinux/
- obj-$(CONFIG_SECURITY_SMACK)		+= smack/
- obj-$(CONFIG_AUDIT)			+= lsm_audit.o
-diff --git a/security/dynamic.h b/security/dynamic.h
-index 6823e38..1362b08 100644
---- a/security/dynamic.h
-+++ b/security/dynamic.h
-@@ -13,6 +13,9 @@ struct dynamic_hook {
- 	struct percpu_counter	invocation;
- 	struct percpu_counter	deny;
- 	const char		*name;
-+#ifdef CONFIG_SECURITY_DYNAMIC_HOOKS_FS
-+	struct dentry		*dentry;
-+#endif
- 	struct list_head	head;
- 	struct srcu_struct	srcu;
- };
-@@ -22,3 +25,9 @@ extern void security_init_dynamic_hooks(void);
- #else
- static void security_init_dynamic_hooks(void) {}
- #endif
-+
-+#ifdef CONFIG_SECURITY_DYNAMIC_HOOKS_FS
-+extern void securityfs_init_dynamic_hooks(void);
-+#else
-+static void securityfs_init_dynamic_hooks(void) {}
-+#endif
-diff --git a/security/dynamicfs.c b/security/dynamicfs.c
+ endif # SAMPLES
+diff --git a/samples/Makefile b/samples/Makefile
+index db54e76..9d23835 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -3,4 +3,4 @@
+ obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
+ 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ 			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
+-			   vfio-mdev/ statx/
++			   vfio-mdev/ statx/ lsm/
+diff --git a/samples/lsm/Makefile b/samples/lsm/Makefile
 new file mode 100644
-index 0000000..a9292e2
+index 0000000..d4ccb94
 --- /dev/null
-+++ b/security/dynamicfs.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/samples/lsm/Makefile
+@@ -0,0 +1,4 @@
++# builds the loadable LSM example kernel modules;
++# then to use one (as root):  insmod <module_name.ko>
++# and to unload: rmmod module_name
++obj-$(CONFIG_SAMPLE_DYNAMIC_LSM) += lsm_example.o
+diff --git a/samples/lsm/lsm_example.c b/samples/lsm/lsm_example.c
+new file mode 100644
+index 0000000..509ae43
+--- /dev/null
++++ b/samples/lsm/lsm_example.c
+@@ -0,0 +1,46 @@
++/*
++ * This sample hooks into the "path_chroot"
++ *
++ * Once you run it, the following will not be allowed:
++ * date --set="October 21 2015 16:29:00 PDT"
++ */
++
 +#include <linux/kernel.h>
-+#include <linux/init.h>
 +#include <linux/module.h>
-+#include <linux/fs.h>
-+#include <linux/srcu.h>
-+#include <linux/seq_file.h>
-+#include <linux/percpu_counter.h>
-+#include <linux/percpu.h>
++#include <linux/lsm_hooks.h>
 +
-+#include "dynamic.h"
++static const char lsm_name[] = "example";
 +
-+struct seq_private_data {
-+	struct dynamic_hook *dh;
-+	int srcu_lock_index;
-+};
-+
-+static void *dynamic_hooks_sop_start(struct seq_file *s, loff_t *pos)
++static int settime_cb(const struct timespec *ts, const struct timezone *tz)
 +{
-+	struct seq_private_data *pd = s->private;
-+
-+	pd->srcu_lock_index = srcu_read_lock(&pd->dh->srcu);
-+	return seq_list_start_head(&pd->dh->head, *pos);
-+}
-+
-+static void *dynamic_hooks_sop_next(struct seq_file *s, void *v, loff_t *pos)
-+{
-+	struct seq_private_data *pd = s->private;
-+
-+	return seq_list_next(v, &pd->dh->head, pos);
-+}
-+
-+static int dynamic_hooks_sop_show(struct seq_file *s, void *v)
-+{
-+	struct seq_private_data *pd = s->private;
-+	struct dynamic_security_hook *dsh;
-+
-+	if (v == (void *)&pd->dh->head) {
-+		seq_puts(s, "name\tinvocations\tdenies\n");
-+		seq_printf(s, "all\t%lld\t%lld\n",
-+			   percpu_counter_sum(&pd->dh->invocation),
-+			   percpu_counter_sum(&pd->dh->deny));
-+		return 0;
-+	}
-+
-+	dsh = list_entry(v, typeof(*dsh), list);
-+	seq_printf(s, "%s\t%lld\t%lld\n", dsh->lsm,
-+		   percpu_counter_sum(&dsh->invocation),
-+		   percpu_counter_sum(&dsh->deny));
++	/* We aren't allowed to travel to October 21 2015 16:29 PDT */
++	if (ts->tv_sec >= 1445470140 && ts->tv_sec < 1445470200)
++		return -EPERM;
 +
 +	return 0;
 +}
 +
-+static void dynamic_hooks_sop_stop(struct seq_file *s, void *v)
-+{
-+	struct seq_private_data *pd = s->private;
++DYNAMIC_SECURITY_HOOK(my_hook, lsm_name, settime, settime_cb);
 +
-+	srcu_read_unlock(&pd->dh->srcu, pd->srcu_lock_index);
++static int __init lsm_init(void)
++{
++	int ret;
++
++	ret = security_add_dynamic_hook(&my_hook);
++	if (!ret)
++		pr_info("Successfully installed example dynamic LSM\n");
++	else
++		pr_err("Unable to install dynamic LSM - %d\n", ret);
++
++	return ret;
 +}
 +
-+static const struct seq_operations dynamic_hooks_sops = {
-+	.start	= dynamic_hooks_sop_start,
-+	.next	= dynamic_hooks_sop_next,
-+	.show	= dynamic_hooks_sop_show,
-+	.stop	= dynamic_hooks_sop_stop,
-+};
-+
-+static int security_dynamic_hook_open(struct inode *inode, struct file *file)
++static void __exit lsm_exit(void)
 +{
-+	struct seq_private_data *pd;
-+
-+	pd = (struct seq_private_data *)__seq_open_private(file,
-+							   &dynamic_hooks_sops,
-+							   sizeof(*pd));
-+
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	pd->dh = inode->i_private;
-+
-+	return 0;
++	security_remove_dynamic_hook(&my_hook);
++	pr_info("Removed example dynamic LSM\n");
 +}
 +
-+static const struct file_operations dynamic_hooks_fops = {
-+	.open		= security_dynamic_hook_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= seq_release,
-+};
-+
-+static struct dentry *dynamic_hooks_dir;
-+void securityfs_init_dynamic_hooks(void)
-+{
-+	struct dynamic_hook *dh;
-+	int i;
-+
-+	dynamic_hooks_dir = securityfs_create_dir("dynamic_hooks", NULL);
-+	if (IS_ERR(dynamic_hooks_dir)) {
-+		pr_err("Unable to create dynamic hooks LSM directory - %ld\n",
-+			PTR_ERR(dynamic_hooks_dir));
-+		return;
-+	}
-+
-+	for (i = 0; i < __MAX_DYNAMIC_SECURITY_HOOK; i++) {
-+
-+		dh = &dynamic_hooks[i];
-+		dh->dentry = securityfs_create_file(dh->name, 0444,
-+						    dynamic_hooks_dir, dh,
-+						    &dynamic_hooks_fops);
-+		if (IS_ERR(dh->dentry))
-+			goto err;
-+	}
-+	return;
-+
-+err:
-+	pr_err("Unable to create dynamic hook directory - %s - %ld\n",
-+	       dh->name, PTR_ERR(dh->dentry));
-+}
-diff --git a/security/inode.c b/security/inode.c
-index 8dd9ca8..0862be1 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -22,6 +22,7 @@
- #include <linux/security.h>
- #include <linux/lsm_hooks.h>
- #include <linux/magic.h>
-+#include "dynamic.h"
- 
- static struct vfsmount *mount;
- static int mount_count;
-@@ -335,6 +336,7 @@ static int __init securityfs_init(void)
- 		sysfs_remove_mount_point(kernel_kobj, "security");
- 		return retval;
- 	}
-+	securityfs_init_dynamic_hooks();
- #ifdef CONFIG_SECURITY
- 	lsm_dentry = securityfs_create_file("lsm", 0444, NULL, NULL,
- 						&lsm_ops);
++module_init(lsm_init)
++module_exit(lsm_exit)
++MODULE_LICENSE("GPL");
 -- 
 2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
