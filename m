@@ -1,50 +1,36 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 28 Nov 2017 12:11:34 -0800
-Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <20171128191405.GO729@wotan.suse.de>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 28 Nov 2017 12:12:21 -0800
+Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
+	request_module_cap() to load 'netdev-%s' modules
+In-Reply-To: <CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
 References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-2-git-send-email-tixxdz@gmail.com>
-	<20171128191405.GO729@wotan.suse.de>
-Message-ID: <CAGXu5jKgHWNE4NH_xqcM084-BNBPy+HmEVPbTA+w_=K3S6gC=w@mail.gmail.com>
+	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
+	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
+	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
+	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
+	<1100603534.56586.1511871419952@ichabod.co-bxl>
+	<20171128193243.4fymnjk7fplqw62x@thunk.org>
+	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
+Message-ID: <CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 28, 2017 at 11:14 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> kmod is just a helper to poke userpsace to load a module, that's it.
+On Tue, Nov 28, 2017 at 12:08 PM, Kees Cook <keescook@chromium.org> wrote:
 >
-> The old init_module() and newer finit_module() do the real handy work or
-> module loading, and both currently only use may_init_module():
->
-> static int may_init_module(void)
-> {
->         if (!capable(CAP_SYS_MODULE) || modules_disabled)
->                 return -EPERM;
->
->         return 0;
-> }
->
-> This begs the question:
->
->   o If userspace just tries to just use raw finit_module() do we want similar
->     checks?
->
-> Otherwise, correct me if I'm wrong this all seems pointless.
+> Linus, are you okay with this series if the global sysctl gets dropped?
 
-Hm? That's direct-loading, not auto-loading. This series is only about
-auto-loading.
+So really, it's not the "global sysctl" as much as the "global
+request_module()" that annoys me.
 
-We already have a global sysctl for blocking direct-loading (modules_disabled).
+I'll happily take the request_module_cap() part and the thing that
+makes networking use that.
 
-> If we want something similar I think we might need to be processing aliases and
-> check for the aliases for their desired restrictions on finit_module(),
+But the flag that we have to default to off because it breaks every
+single box otherwise? No. It doesn't  matter if it's one single global
+or just a "global behavior for request_module() for this process" at
+that point, it's still a pointless security flag that is opt-in.
 
-We don't need to handle aliases.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+             Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
