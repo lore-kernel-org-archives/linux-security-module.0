@@ -1,46 +1,52 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 28 Nov 2017 14:18:18 -0800
-Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <20171128221237.GR729@wotan.suse.de>
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-2-git-send-email-tixxdz@gmail.com>
-	<20171128191405.GO729@wotan.suse.de>
-	<CAGXu5jKgHWNE4NH_xqcM084-BNBPy+HmEVPbTA+w_=K3S6gC=w@mail.gmail.com>
-	<20171128211659.GP729@wotan.suse.de>
-	<CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
-	<20171128221237.GR729@wotan.suse.de>
-Message-ID: <CAGXu5jKqMeBUB4iArqw9_iyKqm3NjpCrU_byy90kZrAHDb0c9w@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 28 Nov 2017 17:33:10 -0500
+Subject: [PATCH V3 2/2] IMA: Support using new creds in appraisal policy
+In-Reply-To: <CACdnJuvN6NxHLG=hS4iDRHBGWWdzFeUMfkF3ETRjXCbwiXpgnQ@mail.gmail.com>
+References: <20171026084055.25482-1-mjg59@google.com>
+	<20171026084055.25482-2-mjg59@google.com>
+	<1511902135.3473.5.camel@linux.vnet.ibm.com>
+	<CACdnJus2Wha_CjL-8g2BdY=evfNjFqHwKQorsxhUQa8Na_0kCg@mail.gmail.com>
+	<1511904917.3473.15.camel@linux.vnet.ibm.com>
+	<CACdnJuvN6NxHLG=hS4iDRHBGWWdzFeUMfkF3ETRjXCbwiXpgnQ@mail.gmail.com>
+Message-ID: <1511908390.3473.30.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 28, 2017 at 2:12 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> On Tue, Nov 28, 2017 at 01:39:58PM -0800, Kees Cook wrote:
->> On Tue, Nov 28, 2017 at 1:16 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->> > And *all* auto-loading uses aliases? What's the difference between auto-loading
->> > and direct-loading?
->>
->> The difference is the process privileges. Unprivilged autoloading
->> (e.g. int n_hdlc = N_HDLC; ioctl(fd,
->> TIOCSETD, &n_hdlc)), triggers a privileged call to finit_module()
->> under CAP_SYS_MODULE.
->
-> Ah, so system call implicated request_module() calls.
+On Tue, 2017-11-28 at 13:37 -0800, Matthew Garrett wrote:
+> On Tue, Nov 28, 2017 at 1:35 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Tue, 2017-11-28 at 13:22 -0800, Matthew Garrett wrote:
+> >> We need to check against the appropriate credentials structure, and
+> >> since we're doing this before commit_creds() has been called we can't
+> >> just do it against the one in the task structure.  For BPRM_CHECK
+> >> that'll be current_cred(), which means there's no change in
+> >> functionality, whereas for CREDS_CHECK it'll be the new credentials
+> >> structure.
+> >
+> > The existing code calls security_task_getsecid() with "current" not
+> > "current_cred".  Will replacing security_task_getsecid() with
+> > security_cred_getsecid() return the same info for the original
+> > BRPM_CHECK?
+> 
+> security_task_getsecid(current) will give the same results as
+> security_cred_getsecid(current_creds())
 
-Yup. Unprivileged user does something that ultimately hits a
-request_module() in the kernel. Then the kernel calls out with the
-usermode helper (which has CAP_SYS_MODULE) and calls finit_module().
+Unwinding security_task_getsecid(current) looks like it is using
+real_cred, while current_cred() is using cred.
 
-> OK and since CAP_SYS_MODULE is much more restrictive one could argue, what's the
-> point here?
+selinux_task_getsecid() -> task_sid() -> cred_sid(__task_cred())
 
-The goal is to block an unprivileged user from being able to trigger a
-module load without blocking root from loading modules directly.
+#define __task_cred(task)       \
+        rcu_dereference((task)->real_cred)
 
--Kees
+selinux_task_getsecid() -> cred_sid()
 
--- 
-Kees Cook
-Pixel Security
+#define current_cred() \
+        rcu_dereference_protected(current->cred, 1)
+
+Is the change intentional?
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
