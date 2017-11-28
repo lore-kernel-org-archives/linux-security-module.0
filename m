@@ -1,125 +1,54 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Tue, 28 Nov 2017 23:52:08 +0100
-Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <20171128221856.GS729@wotan.suse.de>
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-2-git-send-email-tixxdz@gmail.com>
-	<20171128191405.GO729@wotan.suse.de>
-	<CAGXu5jKgHWNE4NH_xqcM084-BNBPy+HmEVPbTA+w_=K3S6gC=w@mail.gmail.com>
-	<20171128211659.GP729@wotan.suse.de>
-	<CAEiveUf3Zdw=+MPTHRSRsNq3o9M0XOgnXBVszdsGAPvhyS5wLw@mail.gmail.com>
-	<20171128221856.GS729@wotan.suse.de>
-Message-ID: <CAEiveUewVp_+O5vKEB34ZHzHdh5mHzr_cOaaQHbVyiJhRz_c3Q@mail.gmail.com>
+From: tytso@mit.edu (Theodore Ts'o)
+Date: Tue, 28 Nov 2017 18:23:20 -0500
+Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
+	request_module_cap() to load 'netdev-%s' modules
+In-Reply-To: <CAGXu5j+V8+h6kdbz5Det=wsRKjt6Cm0-_n8soLCU2PZ=AvqpJQ@mail.gmail.com>
+References: <CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
+	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
+	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
+	<1100603534.56586.1511871419952@ichabod.co-bxl>
+	<20171128193243.4fymnjk7fplqw62x@thunk.org>
+	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
+	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
+	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
+	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
+	<CAGXu5j+V8+h6kdbz5Det=wsRKjt6Cm0-_n8soLCU2PZ=AvqpJQ@mail.gmail.com>
+Message-ID: <20171128232320.22zo324g5wvo2lce@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 28, 2017 at 11:18 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> On Tue, Nov 28, 2017 at 10:33:27PM +0100, Djalal Harouni wrote:
->> On Tue, Nov 28, 2017 at 10:16 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->> > On Tue, Nov 28, 2017 at 12:11:34PM -0800, Kees Cook wrote:
->> >> On Tue, Nov 28, 2017 at 11:14 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->> >> > kmod is just a helper to poke userpsace to load a module, that's it.
->> >> >
->> >> > The old init_module() and newer finit_module() do the real handy work or
->> >> > module loading, and both currently only use may_init_module():
->> >> >
->> >> > static int may_init_module(void)
->> >> > {
->> >> >         if (!capable(CAP_SYS_MODULE) || modules_disabled)
->> >> >                 return -EPERM;
->> >> >
->> >> >         return 0;
->> >> > }
->> >> >
->> >> > This begs the question:
->> >> >
->> >> >   o If userspace just tries to just use raw finit_module() do we want similar
->> >> >     checks?
->> >> >
->> >> > Otherwise, correct me if I'm wrong this all seems pointless.
->> >>
->> >> Hm? That's direct-loading, not auto-loading. This series is only about
->> >> auto-loading.
->> >
->> > And *all* auto-loading uses aliases? What's the difference between auto-loading
->> > and direct-loading?
->>
->> Not all auto-loading uses aliases, auto-loading is when kernel code
->> calls request_module() to loads the feature that was not present,
->
-> It seems the actual interest here is system call implicated request_module()
-> calls? Because there are uses of request_module() which may be module hacks,
-> and not implicated via system calls.
+On Tue, Nov 28, 2017 at 01:33:40PM -0800, Kees Cook wrote:
+> As I've said before, this isn't a theoretical attack surface. This
+> year alone there have been three known-exploitable flaws exposed by
+> autoloading:
+> 
+> The exploit for CVE-2017-2636 uses int n_hdlc = N_HDLC; ioctl(fd,
+> TIOCSETD, &n_hdlc) [1]. This is using the existing "tty-ldisc-"
+> prefix, and is intentionally unprivileged.
+> 
+> The exploit for CVE-2017-6074 uses socket(PF_INET6, SOCK_DCCP,
+> IPPROTO_IP) [2]. This is using the existing proto prefix, and is
+> intentionally unprivileged.
 
-Indeed.
+So in these two cases, if the kernel was built w/o modules, and HDLC
+and DCCP was built-in, you'd be screwed, then?
 
+Is the goal here to protect people using distro kernels which build
+the world as modules, including dodgy pieces of kernel code that are
+bug-ridden?
 
->> and direct-loading in this thread is the direct syscalls like
->> finit_module().
->
-> OK.
->
->> >> We already have a global sysctl for blocking direct-loading (modules_disabled).
->> >
->> > My point was that even if you have a CAP_NET_ADMIN check on request_module(),
->> > finit_module() will not check for it, so a crafty userspace could still try
->> > to just finit_module() directly, and completely then bypass the CAP_NET_ADMIN
->> > check.
->>
->> The finit_module() uses CAP_SYS_MODULE which should allow all modules
->> and in this context it should be more privileged than CAP_NET_ADMIN
->> which is only for "netdev-%s" (to not load arbitrary modules with it).
->>
->> finit_module() coming from request_module() always has the
->> CAP_NET_ADMIN, hence the check is done before.
->
-> But since CAP_SYS_MODULE is more restrictive, what's the point in checking
-> for CAP_NET_ADMIN?
+If so, then presumably 90% of the problem you've cited can be done by
+creating a script which takes a look of the modules that are normally
+in use once the machine is in production, and then deleting everything
+else?  Correct?
 
-For backward compatibility with 'netdev' modules since it is for those.
+And yes, this will potentially break some users, but the security
+folks who are advocating for the more aggressive version of this
+change seem to be OK with breaking users, so they can do this without
+making kernel changes.  Good luck getting Red Hat and SuSE to accept
+such a change, though....
 
-
->> > So unless I'm missing something, I see no point in adding extra checks for
->> > request_module() but nothing for the respective load_module().
->>
->> I see, request_module() is called from kernel context which runs in
->> init namespace will full capabilities, the spawned userspace modprobe
->> will get CAP_SYS_MODULE and all other caps, then after comes modprobe
->> and load_module().
->
-> Right, so defining the gains of adding this extra check is not very clear
-> yet. It would seem a benefit exists, what is it?
-
-it will able to filter if the request_module() should continue loading
-the module or deny it which prevents spawning the *privileged*
-usermode helper. This is all based on are we allowed to load new
-features or not, or IOW I don't want to allow new features or modules
-autoloading from now and on, as stated in the cover letter for various
-benefit including security, reduce the amount of kernel code running,
-but also do not allow new features for anyone like tunneling, etc.
-
-
->> Btw as suggested by Linus I will update with request_module_cap() and > I can
->> offer my help maintaining these bits too.
->
-> Can you start by extending lib/test_module.c and
-> tools/testing/selftests/kmod/kmod.sh with a proof of concept of the gains here,
-> as well as ensuring things work as expected ?
-
-Alright Luis, thanks for the hint, yes I will make sure to cover these.
-
-For gains, kees already answered in the other email, and please check
-the DCCP exploit and others linked in the cover letter.
-
-
-Thank you!
-
->   Luis
-
-
-
--- 
-tixxdz
+						- Ted
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
