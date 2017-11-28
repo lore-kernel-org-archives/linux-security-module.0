@@ -1,50 +1,83 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Tue, 28 Nov 2017 13:22:54 -0800
-Subject: [PATCH V3 2/2] IMA: Support using new creds in appraisal policy
-In-Reply-To: <1511902135.3473.5.camel@linux.vnet.ibm.com>
-References: <20171026084055.25482-1-mjg59@google.com>
-	<20171026084055.25482-2-mjg59@google.com>
-	<1511902135.3473.5.camel@linux.vnet.ibm.com>
-Message-ID: <CACdnJus2Wha_CjL-8g2BdY=evfNjFqHwKQorsxhUQa8Na_0kCg@mail.gmail.com>
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Tue, 28 Nov 2017 22:33:27 +0100
+Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
+In-Reply-To: <20171128211659.GP729@wotan.suse.de>
+References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
+	<1511803118-2552-2-git-send-email-tixxdz@gmail.com>
+	<20171128191405.GO729@wotan.suse.de>
+	<CAGXu5jKgHWNE4NH_xqcM084-BNBPy+HmEVPbTA+w_=K3S6gC=w@mail.gmail.com>
+	<20171128211659.GP729@wotan.suse.de>
+Message-ID: <CAEiveUf3Zdw=+MPTHRSRsNq3o9M0XOgnXBVszdsGAPvhyS5wLw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 28, 2017 at 12:48 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Hi Matthew,
+On Tue, Nov 28, 2017 at 10:16 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> On Tue, Nov 28, 2017 at 12:11:34PM -0800, Kees Cook wrote:
+>> On Tue, Nov 28, 2017 at 11:14 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+>> > kmod is just a helper to poke userpsace to load a module, that's it.
+>> >
+>> > The old init_module() and newer finit_module() do the real handy work or
+>> > module loading, and both currently only use may_init_module():
+>> >
+>> > static int may_init_module(void)
+>> > {
+>> >         if (!capable(CAP_SYS_MODULE) || modules_disabled)
+>> >                 return -EPERM;
+>> >
+>> >         return 0;
+>> > }
+>> >
+>> > This begs the question:
+>> >
+>> >   o If userspace just tries to just use raw finit_module() do we want similar
+>> >     checks?
+>> >
+>> > Otherwise, correct me if I'm wrong this all seems pointless.
+>>
+>> Hm? That's direct-loading, not auto-loading. This series is only about
+>> auto-loading.
 >
-> On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett wrote:
-> > The existing BPRM_CHECK functionality in IMA validates against the
-> > credentials of the existing process, not any new credentials that the
-> > child process may transition to. Add an additional CREDS_CHECK target
-> > and refactor IMA to pass the appropriate creds structure. In
-> > ima_bprm_check(), check with both the existing process credentials and
-> > the credentials that will be committed when the new process is started.
-> > This will not change behaviour unless the system policy is extended to
-> > include CREDS_CHECK targets - BPRM_CHECK will continue to check the same
-> > credentials that it did previously.
->
-> < snip >
->
-> > @@ -305,7 +304,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
-> >               case LSM_SUBJ_USER:
-> >               case LSM_SUBJ_ROLE:
-> >               case LSM_SUBJ_TYPE:
-> > -                     security_task_getsecid(tsk, &sid);
-> > +                     security_cred_getsecid(cred, &sid);
-> >                       rc = security_filter_rule_match(sid,
-> >                                                       rule->lsm[i].type,
-> >                                                       Audit_equal,
->
-> Based on the patch description, I wouldn't expect to see any changes
-> here, unless this is wrong to begin with.  In which case, it should be
-> a separate patch.
+> And *all* auto-loading uses aliases? What's the difference between auto-loading
+> and direct-loading?
 
-We need to check against the appropriate credentials structure, and
-since we're doing this before commit_creds() has been called we can't
-just do it against the one in the task structure. For BPRM_CHECK
-that'll be current_cred(), which means there's no change in
-functionality, whereas for CREDS_CHECK it'll be the new credentials
-structure.
+Not all auto-loading uses aliases, auto-loading is when kernel code
+calls request_module() to loads the feature that was not present, and
+direct-loading in this thread is the direct syscalls like
+finit_module().
+
+>> We already have a global sysctl for blocking direct-loading (modules_disabled).
+>
+> My point was that even if you have a CAP_NET_ADMIN check on request_module(),
+> finit_module() will not check for it, so a crafty userspace could still try
+> to just finit_module() directly, and completely then bypass the CAP_NET_ADMIN
+> check.
+
+The finit_module() uses CAP_SYS_MODULE which should allow all modules
+and in this context it should be more privileged than CAP_NET_ADMIN
+which is only for "netdev-%s" (to not load arbitrary modules with it).
+
+finit_module() coming from request_module() always has the
+CAP_NET_ADMIN, hence the check is done before.
+
+> So unless I'm missing something, I see no point in adding extra checks for
+> request_module() but nothing for the respective load_module().
+
+I see, request_module() is called from kernel context which runs in
+init namespace will full capabilities, the spawned userspace modprobe
+will get CAP_SYS_MODULE and all other caps, then after comes modprobe
+and load_module().
+
+Btw as suggested by Linus I will update with request_module_cap() and
+I can offer my help maintaining these bits too.
+
+
+>
+>   Luis
+
+
+
+-- 
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
