@@ -1,39 +1,70 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Tue, 28 Nov 2017 10:44:52 +1100 (AEDT)
-Subject: [PATCH v5 next 0/5] Improve Module autoloading infrastructure
-In-Reply-To: <CAGXu5j+YPMZk=TuioD216F5kiqfWTNZcNzpjwOiZRnAfbimhpg@mail.gmail.com>
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<CA+55aFwFEzEU9ci=mFZprjzrhG0P0XgXgqhBSWSv7vFWEAw6rQ@mail.gmail.com>
-	<20171128.041426.801732093971324601.davem@davemloft.net>
-	<alpine.LFD.2.20.1711280924350.11830@localhost>
-	<CAGXu5j+YPMZk=TuioD216F5kiqfWTNZcNzpjwOiZRnAfbimhpg@mail.gmail.com>
-Message-ID: <alpine.LFD.2.20.1711281041040.13133@localhost>
+From: azhar.shaikh@intel.com (Azhar Shaikh)
+Date: Mon, 27 Nov 2017 16:04:18 -0800
+Subject: [PATCH v5 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
+Message-ID: <1511827460-29941-1-git-send-email-azhar.shaikh@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 27 Nov 2017, Kees Cook wrote:
+Changes from v1:
+- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - Add NULL checks before calling clk_toggle callback
+  - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
+  - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+    from tpm_tis_clkrun_toggle(). Make them static again.
 
-> >         if (WARN_ON_ONCE(!capable(CAP_SYS_MODULE) ||
-> >                          !capable(CAP_SYS_ADMIN) ||
-> >                          !capable(CAP_NET_ADMIN) ||
-> >                          !unprivileged_autoload(module_name)))
+- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+  - This is a new patch in this series as per suggestion from Jason.
+  - Is the current implementation ok or I should move the code in tpm_tis_pnp_remove()
+    and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the unmapping
+    can be done in one place, instead of 3 different places now. Also the unmapping
+    in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
+    tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
 
-(Side note: the capable() calls would ideally come after the whitelist 
-check).
+Changes from v2:
+- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - No changes
 
-> We have some of this already with the module prefixes. Doing this
-> per-module would need to be exported to userspace, I think. It'd be
-> way too fragile sitting in the kernel.
+- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+  - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within the function
+    itself. Also removed the #ifdef CONFIG_X86 from all other places around is_bsw()
 
-What about writing a whitelist to /proc (per-task) or /sys/fs (global) ?
+Changes from v3:
+- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - Change function name from clk_toggle to clk_enable
+  - Update the commit message.
 
-The per-task whitelist is inherited from the global one by default, or 
-from a parent process if it's been modified in the parent.
+- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+  - No changes
 
+Changes from v4:
+- The numbering of patches is now interchanged.
+
+- Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+  - Had to move ilb_base_addr to tpm_tis_data, from tpm_tis_tcg_phy.
+    Since the ioremapping of ilb_base_addr had to be done before any TPM access,
+    hence moved the variable to tpm_tis_data.
+  - Also move the ioremapping of ilb_base_addr from tpm_tis_init() to
+    tpm_tis_core_init() i.e. before any TPM access is done.
+  - Rename marco LPC_CNTRL_REG_OFFSET to LPC_CNTRL_OFFSET
+  - Update the commit message.
+
+- Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - Remove the functions tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+  - Move the code from these functions to tpm_tis_clkrun_enable().
+
+Azhar Shaikh (2):
+  tpm_tis: Move ilb_base_addr to tpm_tis_data
+  tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+
+ drivers/char/tpm/tpm-interface.c |   6 ++
+ drivers/char/tpm/tpm_tis.c       | 121 ++++++---------------------------------
+ drivers/char/tpm/tpm_tis_core.c  | 111 +++++++++++++++++++++++++++++++++--
+ drivers/char/tpm/tpm_tis_core.h  |  17 ++++++
+ include/linux/tpm.h              |   1 +
+ 5 files changed, 147 insertions(+), 109 deletions(-)
 
 -- 
-James Morris
-<james.l.morris@oracle.com>
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
