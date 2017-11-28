@@ -1,169 +1,121 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Tue, 28 Nov 2017 11:10:37 -0800
-Subject: [PATCH v2] KEYS: add missing permission check for request_key()
-	destination
-Message-ID: <20171128191037.86213-1-ebiggers3@gmail.com>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Tue, 28 Nov 2017 20:14:05 +0100
+Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
+In-Reply-To: <1511803118-2552-2-git-send-email-tixxdz@gmail.com>
+References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
+	<1511803118-2552-2-git-send-email-tixxdz@gmail.com>
+Message-ID: <20171128191405.GO729@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, Nov 27, 2017 at 06:18:34PM +0100, Djalal Harouni wrote:
+...
 
-When the request_key() syscall is not passed a destination keyring, it
-links the requested key (if constructed) into the "default" request-key
-keyring.  This should require Write permission to the keyring.  However,
-there is actually no permission check.
+> After a discussion with Rusty Russell [1], the suggestion was to pass
+> the capability from request_module() to security_kernel_module_request()
+> for 'netdev-%s' modules that need CAP_NET_ADMIN, and after review from
+> Kees Cook [2] and experimenting with the code, the patch now does the
+> following:
+> 
+> * Adds the request_module_cap() function.
+> * Updates the __request_module() to take the "required_cap" argument
+>         with the "prefix".
 
-This can be abused to add keys to any keyring to which only Search
-permission is granted.  This is because Search permission allows joining
-the keyring.  keyctl_set_reqkey_keyring(KEY_REQKEY_DEFL_SESSION_KEYRING)
-then will set the default request-key keyring to the session keyring.
-Then, request_key() can be used to add keys to the keyring.
+...
 
-Both negatively and positively instantiated keys can be added using this
-method.  Adding negative keys is trivial.  Adding a positive key is a
-bit trickier.  It requires that either /sbin/request-key positively
-instantiates the key, or that another thread adds the key to the process
-keyring at just the right time, such that request_key() misses it
-initially but then finds it in construct_alloc_key().
+> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+> ---
+> diff --git a/kernel/kmod.c b/kernel/kmod.c
+> index bc6addd..679d401 100644
+> --- a/kernel/kmod.c
+> +++ b/kernel/kmod.c
+> @@ -139,13 +147,22 @@ int __request_module(bool wait, const char *fmt, ...)
+>  	if (!modprobe_path[0])
+>  		return 0;
+>  
+> +	/*
+> +	 * Lets attach the prefix to the module name
+> +	 */
+> +	if (prefix != NULL && *prefix != '\0') {
+> +		len += snprintf(module_name, MODULE_NAME_LEN, "%s-", prefix);
+> +		if (len >= MODULE_NAME_LEN)
+> +			return -ENAMETOOLONG;
+> +	}
+> +
+>  	va_start(args, fmt);
+> -	ret = vsnprintf(module_name, MODULE_NAME_LEN, fmt, args);
+> +	ret = vsnprintf(module_name + len, MODULE_NAME_LEN - len, fmt, args);
+>  	va_end(args);
+> -	if (ret >= MODULE_NAME_LEN)
+> +	if (ret >= MODULE_NAME_LEN - len)
+>  		return -ENAMETOOLONG;
+>  
+> -	ret = security_kernel_module_request(module_name);
+> +	ret = security_kernel_module_request(module_name, required_cap, prefix);
+>  	if (ret)
+>  		return ret;
+>  
 
-Fix this bug by checking for Write permission to the keyring in
-construct_get_dest_keyring() when the default keyring is being used.
+kmod is just a helper to poke userpsace to load a module, that's it.
 
-We don't do the permission check for non-default keyrings because that
-was already done by the earlier call to lookup_user_key().  Also,
-request_key_and_link() is currently passed a 'struct key *' rather than
-a key_ref_t, so the "possessed" bit is unavailable.
+The old init_module() and newer finit_module() do the real handy work or
+module loading, and both currently only use may_init_module():
 
-We also don't do the permission check for the "requestor keyring", to
-continue to support the use case described by commit 8bbf4976b59f
-("KEYS: Alter use of key instantiation link-to-keyring argument") where
-/sbin/request-key recursively calls request_key() to add keys to the
-original requestor's destination keyring.  (I don't know of any users
-who actually do that, though...)
+static int may_init_module(void)
+{
+	if (!capable(CAP_SYS_MODULE) || modules_disabled)
+		return -EPERM;                                                  
 
-Fixes: 3e30148c3d52 ("[PATCH] Keys: Make request-key create an authorisation key")
-Cc: <stable@vger.kernel.org>	# v2.6.13+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
+	return 0;
+}
 
-v2: also skip permission check if default dest_keyring is NULL
+This begs the question:
 
- security/keys/request_key.c | 46 ++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 37 insertions(+), 9 deletions(-)
+  o If userspace just tries to just use raw finit_module() do we want similar
+    checks?
 
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index e8036cd0ad54..7dc741382154 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -251,11 +251,12 @@ static int construct_key(struct key *key, const void *callout_info,
-  * The keyring selected is returned with an extra reference upon it which the
-  * caller must release.
-  */
--static void construct_get_dest_keyring(struct key **_dest_keyring)
-+static int construct_get_dest_keyring(struct key **_dest_keyring)
- {
- 	struct request_key_auth *rka;
- 	const struct cred *cred = current_cred();
- 	struct key *dest_keyring = *_dest_keyring, *authkey;
-+	int ret;
+Otherwise, correct me if I'm wrong this all seems pointless.
+
+If we want something similar I think we might need to be processing aliases and
+check for the aliases for their desired restrictions on finit_module(),
+otherwise userspace can skip through the checks if the module name does not
+match the alias prefix.
+
+To be clear, aliases are completely ignored today on load_module(), so loading
+'xfs' with finit_module() will just have the kernel know about 'xfs' not
+'fs-xfs'.
+
+So we currently do not process aliases in kernel.
+
+I have debugging patches to enable us to process them, but they are just for
+debugging and I've been meaning to send them in for review. I designed them
+only for debugging given last time someone suggested for aliases processing to
+be added, the only use case we found was a pre-optimizations we decided to avoid
+pursuing. Debugging is a good reason to have alias processing in-kernel though.
+
+The pre-optimization we decided to stay away from was to check if the requested
+module via request_module() was already loaded *and* also check if the name passed
+matches any of the existing module aliases for currently loaded modules. Today
+request_module() does not even check if a requested module is already loaded,
+its a stupid loader, it just goes to userspace, and lets userspace figure it
+out. Userspace in turn could check for aliases, but it could lie, or not be up
+to date to do that.
+
+The pre-optmization is a theoretical gain only then, and if userspace had
+proper alias checking it is arguable that it may perform just as equal.
+To help valuate these sorts of things we now have:
+
+tools/testing/selftests/kmod/kmod.sh
+
+So further patches can use and test impact with it.
+
+Anyway -- so aliasing is currently only a debugging consideration, but without
+processing aliases, all this work seems pointless to me as the real loader is
+in finit_module().
  
- 	kenter("%p", dest_keyring);
- 
-@@ -264,6 +265,8 @@ static void construct_get_dest_keyring(struct key **_dest_keyring)
- 		/* the caller supplied one */
- 		key_get(dest_keyring);
- 	} else {
-+		bool do_perm_check = true;
-+
- 		/* use a default keyring; falling through the cases until we
- 		 * find one that we actually have */
- 		switch (cred->jit_keyring) {
-@@ -278,8 +281,10 @@ static void construct_get_dest_keyring(struct key **_dest_keyring)
- 					dest_keyring =
- 						key_get(rka->dest_keyring);
- 				up_read(&authkey->sem);
--				if (dest_keyring)
-+				if (dest_keyring) {
-+					do_perm_check = false;
- 					break;
-+				}
- 			}
- 
- 		case KEY_REQKEY_DEFL_THREAD_KEYRING:
-@@ -314,11 +319,29 @@ static void construct_get_dest_keyring(struct key **_dest_keyring)
- 		default:
- 			BUG();
- 		}
-+
-+		/*
-+		 * Require Write permission on the keyring.  This is essential
-+		 * because the default keyring may be the session keyring, and
-+		 * joining a keyring only requires Search permission.
-+		 *
-+		 * However, this check is skipped for the "requestor keyring" so
-+		 * that /sbin/request-key can itself use request_key() to add
-+		 * keys to the original requestor's destination keyring.
-+		 */
-+		if (dest_keyring && do_perm_check) {
-+			ret = key_permission(make_key_ref(dest_keyring, 1),
-+					     KEY_NEED_WRITE);
-+			if (ret) {
-+				key_put(dest_keyring);
-+				return ret;
-+			}
-+		}
- 	}
- 
- 	*_dest_keyring = dest_keyring;
- 	kleave(" [dk %d]", key_serial(dest_keyring));
--	return;
-+	return 0;
- }
- 
- /*
-@@ -444,11 +467,15 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
- 	if (ctx->index_key.type == &key_type_keyring)
- 		return ERR_PTR(-EPERM);
- 
--	user = key_user_lookup(current_fsuid());
--	if (!user)
--		return ERR_PTR(-ENOMEM);
-+	ret = construct_get_dest_keyring(&dest_keyring);
-+	if (ret)
-+		goto error;
- 
--	construct_get_dest_keyring(&dest_keyring);
-+	user = key_user_lookup(current_fsuid());
-+	if (!user) {
-+		ret = -ENOMEM;
-+		goto error_put_dest_keyring;
-+	}
- 
- 	ret = construct_alloc_key(ctx, dest_keyring, flags, user, &key);
- 	key_user_put(user);
-@@ -463,7 +490,7 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
- 	} else if (ret == -EINPROGRESS) {
- 		ret = 0;
- 	} else {
--		goto couldnt_alloc_key;
-+		goto error_put_dest_keyring;
- 	}
- 
- 	key_put(dest_keyring);
-@@ -473,8 +500,9 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
- construction_failed:
- 	key_negate_and_link(key, key_negative_timeout, NULL, NULL);
- 	key_put(key);
--couldnt_alloc_key:
-+error_put_dest_keyring:
- 	key_put(dest_keyring);
-+error:
- 	kleave(" = %d", ret);
- 	return ERR_PTR(ret);
- }
--- 
-2.15.0.417.g466bffb3ac-goog
+kmod is just a stupid loader and uses the kernel usermode helper to do work.
 
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
