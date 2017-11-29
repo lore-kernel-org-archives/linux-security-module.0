@@ -1,317 +1,72 @@
-From: azhar.shaikh@intel.com (Azhar Shaikh)
-Date: Wed, 29 Nov 2017 10:39:50 -0800
-Subject: [PATCH v6 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
-In-Reply-To: <1511980791-125269-1-git-send-email-azhar.shaikh@intel.com>
-References: <1511980791-125269-1-git-send-email-azhar.shaikh@intel.com>
-Message-ID: <1511980791-125269-2-git-send-email-azhar.shaikh@intel.com>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Wed, 29 Nov 2017 10:46:38 -0800
+Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
+	request_module_cap() to load 'netdev-%s' modules
+In-Reply-To: <CAGXu5j+Tv4KHytjOtBvG9e53o-pG7h5DjZZkATXbado-HAbKHw@mail.gmail.com>
+References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
+	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
+	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
+	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
+	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
+	<1100603534.56586.1511871419952@ichabod.co-bxl>
+	<20171128193243.4fymnjk7fplqw62x@thunk.org>
+	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
+	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
+	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
+	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
+	<708003731.69563.1511905898471@ichabod.co-bxl>
+	<CA+55aFzxFQeyk6Mrk50=jzevHpZ78BXz_9nHcHabMWBdM6RC6A@mail.gmail.com>
+	<CA+55aFyybavkF8ccQKJsoVAF+MG=J5=e9PxXKU=J_hqCQRZnug@mail.gmail.com>
+	<CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
+	<CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
+	<CAGXu5j+Tv4KHytjOtBvG9e53o-pG7h5DjZZkATXbado-HAbKHw@mail.gmail.com>
+Message-ID: <CA+55aFxiDKfe6VCM+aV2OgnkzMpP+iz+rn2k25_Qa_QLex=pPQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Move static variable ilb_base_addr to tpm_tis_data.
+On Wed, Nov 29, 2017 at 10:30 AM, Kees Cook <keescook@chromium.org> wrote:
+> On Tue, Nov 28, 2017 at 4:50 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> Just thinking about the DCCP case, where networking people actually
+>> knew it was pretty deprecated and had no real maintainer, I think one
+>> thing to look at would be simply a per-module flag.
+>>   [ ... ]
+>> Does that sound reasonable?
+>
+> Yeah, I think I see the way forward here; thanks for the discussion!
 
-Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
----
- drivers/char/tpm/tpm_tis.c      | 75 +++++++++++++++--------------------------
- drivers/char/tpm/tpm_tis_core.c | 16 ++++++++-
- drivers/char/tpm/tpm_tis_core.h | 13 +++++++
- 3 files changed, 56 insertions(+), 48 deletions(-)
+Note: I don't want to really force that per-module flag if it ends up
+being painful, I was really just thinking that considering the DCCP
+case, it would be (I think) a really nice solution.
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index e2d1055fb814..923f8f2cbaca 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -134,33 +134,24 @@ static int check_acpi_tpm2(struct device *dev)
- #endif
- 
- #ifdef CONFIG_X86
--#define INTEL_LEGACY_BLK_BASE_ADDR      0xFED08000
--#define ILB_REMAP_SIZE			0x100
--#define LPC_CNTRL_REG_OFFSET            0x84
--#define LPC_CLKRUN_EN                   (1 << 2)
--
--static void __iomem *ilb_base_addr;
--
--static inline bool is_bsw(void)
--{
--	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
--}
-+#define LPC_CNTRL_OFFSET		0x84
-+#define LPC_CLKRUN_EN			(1 << 2)
- 
- /**
-  * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be running
-  */
--static void tpm_platform_begin_xfer(void)
-+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
- {
- 	u32 clkrun_val;
- 
- 	if (!is_bsw())
- 		return;
- 
--	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/* Disable LPC CLKRUN# */
- 	clkrun_val &= ~LPC_CLKRUN_EN;
--	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/*
- 	 * Write any random value on port 0x80 which is on LPC, to make
-@@ -173,18 +164,18 @@ static void tpm_platform_begin_xfer(void)
- /**
-  * tpm_platform_end_xfer() - set LPC CLKRUN_EN i.e. clocks can be turned off
-  */
--static void tpm_platform_end_xfer(void)
-+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
- {
- 	u32 clkrun_val;
- 
- 	if (!is_bsw())
- 		return;
- 
--	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/* Enable LPC CLKRUN# */
- 	clkrun_val |= LPC_CLKRUN_EN;
--	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/*
- 	 * Write any random value on port 0x80 which is on LPC, to make
-@@ -194,16 +185,11 @@ static void tpm_platform_end_xfer(void)
- 
- }
- #else
--static inline bool is_bsw(void)
--{
--	return false;
--}
--
--static void tpm_platform_begin_xfer(void)
-+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
- {
- }
- 
--static void tpm_platform_end_xfer(void)
-+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
- {
- }
- #endif
-@@ -213,12 +199,12 @@ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	while (len--)
- 		*result++ = ioread8(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -228,12 +214,12 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	while (len--)
- 		iowrite8(*value++, phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -242,11 +228,11 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	*result = ioread16(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -255,11 +241,11 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	*result = ioread32(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -268,11 +254,11 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	iowrite32(value, phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -351,9 +337,13 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
- static void tpm_tis_pnp_remove(struct pnp_dev *dev)
- {
- 	struct tpm_chip *chip = pnp_get_drvdata(dev);
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
-+	if (is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
- }
- 
- static struct pnp_driver tis_pnp_driver = {
-@@ -400,10 +390,14 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
- static int tpm_tis_plat_remove(struct platform_device *pdev)
- {
- 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
- 
-+	if (is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
- 	return 0;
- }
- 
-@@ -461,11 +455,6 @@ static int __init init_tis(void)
- 	if (rc)
- 		goto err_force;
- 
--#ifdef CONFIG_X86
--	if (is_bsw())
--		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
--					ILB_REMAP_SIZE);
--#endif
- 	rc = platform_driver_register(&tis_drv);
- 	if (rc)
- 		goto err_platform;
-@@ -484,10 +473,6 @@ static int __init init_tis(void)
- err_platform:
- 	if (force_pdev)
- 		platform_device_unregister(force_pdev);
--#ifdef CONFIG_X86
--	if (is_bsw())
--		iounmap(ilb_base_addr);
--#endif
- err_force:
- 	return rc;
- }
-@@ -497,10 +482,6 @@ static void __exit cleanup_tis(void)
- 	pnp_unregister_driver(&tis_pnp_driver);
- 	platform_driver_unregister(&tis_drv);
- 
--#ifdef CONFIG_X86
--	if (is_bsw())
--		iounmap(ilb_base_addr);
--#endif
- 	if (force_pdev)
- 		platform_device_unregister(force_pdev);
- }
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index ae905d17c248..bea151844692 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -754,6 +754,13 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 	priv->phy_ops = phy_ops;
- 	dev_set_drvdata(&chip->dev, priv);
- 
-+	if (is_bsw()) {
-+		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
-+					ILB_REMAP_SIZE);
-+		if (!priv->ilb_base_addr)
-+			return -ENOMEM;
-+	}
-+
- 	if (wait_startup(chip, 0) != 0) {
- 		rc = -ENODEV;
- 		goto out_err;
-@@ -844,9 +851,16 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		}
- 	}
- 
--	return tpm_chip_register(chip);
-+	rc = tpm_chip_register(chip);
-+	if (rc && is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
-+	return rc;
- out_err:
- 	tpm_tis_remove(chip);
-+	if (is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_tis_core_init);
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index 6bbac319ff3b..458847f72758 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -79,6 +79,9 @@ enum tis_defaults {
- #define	TPM_DID_VID(l)			(0x0F00 | ((l) << 12))
- #define	TPM_RID(l)			(0x0F04 | ((l) << 12))
- 
-+#define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
-+#define ILB_REMAP_SIZE			0x100
-+
- enum tpm_tis_flags {
- 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
- };
-@@ -89,6 +92,7 @@ struct tpm_tis_data {
- 	int irq;
- 	bool irq_tested;
- 	unsigned int flags;
-+	void __iomem *ilb_base_addr;
- 	wait_queue_head_t int_queue;
- 	wait_queue_head_t read_queue;
- 	const struct tpm_tis_phy_ops *phy_ops;
-@@ -144,6 +148,15 @@ static inline int tpm_tis_write32(struct tpm_tis_data *data, u32 addr,
- 	return data->phy_ops->write32(data, addr, value);
- }
- 
-+static inline bool is_bsw(void)
-+{
-+#ifdef CONFIG_X86
-+	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
-+#else
-+	return false;
-+#endif
-+}
-+
- void tpm_tis_remove(struct tpm_chip *chip);
- int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		      const struct tpm_tis_phy_ops *phy_ops,
--- 
-1.9.1
+In particular, request_module() ends up having that indirection
+through usermode-helper, which makes it potentially very inconvenient
+to store the "did the original caller have proper capabilities" and
+then check it at actual module load time.
 
+So the module flag is technically easy to add, and it's technically
+easy to read at module loading time, but I suspect that it's actually
+annoyingly hard to pass the original request_module() capability
+information around to where we actually read the module.
+
+That's why it might be _much_ easier to try to do it per call-site
+instead. It's not quite as fine-grained (because several call-sites do
+things like
+
+        request_module("net-pf-%d-proto-%d", PF_NETLINK, protocol);
+
+that can load a large number of different modules), but if we can get
+away with just saying "this particular callsite is ok, because it only
+loads the bluetooth module that we thing is trustworthy" or "this
+call-site is ok, because you already had to have access to the device
+node", that is going to be much simpler and more straightforward.
+
+In other words: I think there are at least two different models to go
+after, and there may be practical reasons to prefer one over the
+other.
+
+                    Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
