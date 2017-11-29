@@ -1,67 +1,30 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 28 Nov 2017 16:50:09 -0800
-Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
-	request_module_cap() to load 'netdev-%s' modules
-In-Reply-To: <CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
-	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
-	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
-	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
-	<1100603534.56586.1511871419952@ichabod.co-bxl>
-	<20171128193243.4fymnjk7fplqw62x@thunk.org>
-	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
-	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
-	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
-	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
-	<708003731.69563.1511905898471@ichabod.co-bxl>
-	<CA+55aFzxFQeyk6Mrk50=jzevHpZ78BXz_9nHcHabMWBdM6RC6A@mail.gmail.com>
-	<CA+55aFyybavkF8ccQKJsoVAF+MG=J5=e9PxXKU=J_hqCQRZnug@mail.gmail.com>
-	<CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
-Message-ID: <CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
+From: james.l.morris@oracle.com (James Morris)
+Date: Wed, 29 Nov 2017 12:55:25 +1100 (AEDT)
+Subject: [GIT PULL] seccomp updates for next
+In-Reply-To: <20171129003819.GA30686@beast>
+References: <20171129003819.GA30686@beast>
+Message-ID: <alpine.LFD.2.20.1711291254380.29347@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 28, 2017 at 4:26 PM, Kees Cook <keescook@chromium.org> wrote:
->
->> The model that I am a proponent of is to take a softer approach
->> initially: don't forbid module loading (because that breaks users),
->> but instead _warn_ about non-root module loading. And then we can
->> start fixing the cases that we find.
->
-> I am totally fine with this. The question I'm hoping to have answered
-> is, "then what?" We already have concrete examples of module
-> autoloading that will still be need to stay unprivileged and as-is in
-> the kernel (even if we remove others). What do you see as the way to
-> allow an admin to turn those off?
+On Tue, 28 Nov 2017, Kees Cook wrote:
 
-Just thinking about the DCCP case, where networking people actually
-knew it was pretty deprecated and had no real maintainer, I think one
-thing to look at would be simply a per-module flag.
+> Hi James,
+> 
+> Please pull these seccomp changes for next. This implements an interface
+> for examining seccomp filter metadata when using CRIU.
+> 
 
-That kind of thing should be fairly easy to implement, along the same
-lines as the module license - it just sets a flag in the ELF section
-headers.
+Applied to next-testing and next-seccomp at:
 
-With something like that, we literally could make the default be "no
-autoloading except for root", and then just mark the modules that we
-think are ok and well maintained.
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
 
-Sure, if you then do a lock-down mode that makes that flag parsing
-stricter, then that's a separate thing. But I suspect we definitely
-could be a lot stricter on a per-module basis, and do it in a way
-where a normal user wouldn't even notice that we've limited the
-autoloading.
 
-But the first step would be to just add some noise. And even with the
-per-module flag, at first it would only suppress the noise (ie we'd
-still _allow_ loading other modules, they'd just be noisy). Then, if
-nobody hollers, maybe the next kernel release we'll make it actually
-enforce the flag.
 
-Does that sound reasonable?
+-- 
+James Morris
+<james.l.morris@oracle.com>
 
-               Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
