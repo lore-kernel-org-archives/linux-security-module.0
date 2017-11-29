@@ -1,90 +1,48 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Tue, 28 Nov 2017 22:26:32 -0600
+From: tytso@mit.edu (Theodore Ts'o)
+Date: Wed, 29 Nov 2017 01:36:39 -0500
 Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
 	request_module_cap() to load 'netdev-%s' modules
-In-Reply-To: <CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
-	(Linus Torvalds's message of "Tue, 28 Nov 2017 16:50:09 -0800")
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
-	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
-	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
-	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
-	<1100603534.56586.1511871419952@ichabod.co-bxl>
-	<20171128193243.4fymnjk7fplqw62x@thunk.org>
+In-Reply-To: <CAGXu5j+kXxkctzH79YxOu=45xgamV-5qyR2zL7OiC4POL6EcyA@mail.gmail.com>
+References: <20171128193243.4fymnjk7fplqw62x@thunk.org>
 	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
 	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
 	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
 	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
-	<708003731.69563.1511905898471@ichabod.co-bxl>
-	<CA+55aFzxFQeyk6Mrk50=jzevHpZ78BXz_9nHcHabMWBdM6RC6A@mail.gmail.com>
-	<CA+55aFyybavkF8ccQKJsoVAF+MG=J5=e9PxXKU=J_hqCQRZnug@mail.gmail.com>
-	<CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
-	<CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
-Message-ID: <87o9nlk8w7.fsf@xmission.com>
+	<CAGXu5j+V8+h6kdbz5Det=wsRKjt6Cm0-_n8soLCU2PZ=AvqpJQ@mail.gmail.com>
+	<20171128232320.22zo324g5wvo2lce@thunk.org>
+	<CAGXu5j+c8AR+3KdXKO1J180ZYZOVqK=-_MGe20g8h+dgf2RWEQ@mail.gmail.com>
+	<20171128234920.awfwicihuudw5ogx@thunk.org>
+	<CAGXu5j+kXxkctzH79YxOu=45xgamV-5qyR2zL7OiC4POL6EcyA@mail.gmail.com>
+Message-ID: <20171129063639.tuacfa2op6fgj6he@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Tue, Nov 28, 2017 at 04:18:59PM -0800, Kees Cook wrote:
+> There's also a difference between immutable CONFIG options that cannot
+> be disabled at runtime, those that can, global sysctls, per-namespace
+> controls, etc etc. The kernel is all about providing admins with knobs
+> to tweak their performance and security. Suddenly being told that we
+> can't create optional improvements is very odd.
 
-> On Tue, Nov 28, 2017 at 4:26 PM, Kees Cook <keescook@chromium.org> wrote:
->>
->>> The model that I am a proponent of is to take a softer approach
->>> initially: don't forbid module loading (because that breaks users),
->>> but instead _warn_ about non-root module loading. And then we can
->>> start fixing the cases that we find.
->>
->> I am totally fine with this. The question I'm hoping to have answered
->> is, "then what?" We already have concrete examples of module
->> autoloading that will still be need to stay unprivileged and as-is in
->> the kernel (even if we remove others). What do you see as the way to
->> allow an admin to turn those off?
->
-> Just thinking about the DCCP case, where networking people actually
-> knew it was pretty deprecated and had no real maintainer, I think one
-> thing to look at would be simply a per-module flag.
->
-> That kind of thing should be fairly easy to implement, along the same
-> lines as the module license - it just sets a flag in the ELF section
-> headers.
->
-> With something like that, we literally could make the default be "no
-> autoloading except for root", and then just mark the modules that we
-> think are ok and well maintained.
->
-> Sure, if you then do a lock-down mode that makes that flag parsing
-> stricter, then that's a separate thing. But I suspect we definitely
-> could be a lot stricter on a per-module basis, and do it in a way
-> where a normal user wouldn't even notice that we've limited the
-> autoloading.
->
-> But the first step would be to just add some noise. And even with the
-> per-module flag, at first it would only suppress the noise (ie we'd
-> still _allow_ loading other modules, they'd just be noisy). Then, if
-> nobody hollers, maybe the next kernel release we'll make it actually
-> enforce the flag.
->
+I just think that tweakable knobs are mostly pointless.  From my
+experience the number of sysadmins that adjust knobs is ***tiny***[1].
+Put another way, the effort to determine whether tweaking a knob will
+result in breakages or will be safe is as much work as creating a
+white list of modules that are allowed to be loaded.
 
-On a slight tangent to all of this.
+[1] And I say that having providing a lot of knobs for ext4.  :-)
 
-The issue of reducing attack surface has also come up in another thread
-and it was suggested there that we make some ns_capable calls
-conditionally capable calls so certain pieces of code won't be available
-in user namespaces, when we know there is a bug but don't yet have a
-good fix rolled out yet.
+This is why some on the kernel-hardening list have argued for making
+the default to be opt-out, which means some users will be breaken (and
+their answer to that seems to be, "oh well --- gotta break some eggs
+to make an omlette".  Sucks if you're one of the eggs, though.)
 
-Which again brings us to attack surface reduction.
+And I don't see how systemd magically means no one will be broken.  If
+you have a non-root process trying to invoke a line discpline which
+has to be loaded as a module, if you flip the switch, that process
+will be broken.  How does using systemd make the problem go away?
 
-I was wondering if perhaps a better way to do some of that, might be to
-have places in the kernel where we could use something like ftrace to
-add a permission check at a well known functions boundaries and fail the
-functions when we want to reduce the attack surface.
-
-It is not as elegant as adding a maintenance status to a module and only
-allowing actively maintained modules to be auto-loaded.  But perhaps
-with a few more eyes the idea can be fleshed out to something generally useful.
-
-Eric
-
+					- Ted
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
