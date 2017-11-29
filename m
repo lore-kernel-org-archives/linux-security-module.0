@@ -1,61 +1,72 @@
-From: mkubecek@suse.cz (Michal Kubecek)
-Date: Wed, 29 Nov 2017 08:49:56 +0100
-Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <20171128224849.GT729@wotan.suse.de>
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-2-git-send-email-tixxdz@gmail.com>
-	<20171128191405.GO729@wotan.suse.de>
-	<CAGXu5jKgHWNE4NH_xqcM084-BNBPy+HmEVPbTA+w_=K3S6gC=w@mail.gmail.com>
-	<20171128211659.GP729@wotan.suse.de>
-	<CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
-	<20171128221237.GR729@wotan.suse.de>
-	<CAGXu5jKqMeBUB4iArqw9_iyKqm3NjpCrU_byy90kZrAHDb0c9w@mail.gmail.com>
-	<20171128224849.GT729@wotan.suse.de>
-Message-ID: <20171129074956.7xg4gcon3zxd4xck@unicorn.suse.cz>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Wed, 29 Nov 2017 20:21:33 +0900
+Subject: [PATCH 5/9] LSM: Manage remaining security blobs
+In-Reply-To: <d3bd7b64-020b-ac7c-8fef-eed6a1ad5185@schaufler-ca.com>
+References: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
+	<d3bd7b64-020b-ac7c-8fef-eed6a1ad5185@schaufler-ca.com>
+Message-ID: <201711292021.CIC57334.OSQMFHOtOJFVLF@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 28, 2017 at 11:48:49PM +0100, Luis R. Rodriguez wrote:
-> On Tue, Nov 28, 2017 at 02:18:18PM -0800, Kees Cook wrote:
-> > On Tue, Nov 28, 2017 at 2:12 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> > > On Tue, Nov 28, 2017 at 01:39:58PM -0800, Kees Cook wrote:
-> > >> On Tue, Nov 28, 2017 at 1:16 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> > >> > And *all* auto-loading uses aliases? What's the difference
-> > >> > between auto-loading and direct-loading?
-> > >>
-> > >> The difference is the process privileges. Unprivilged autoloading
-> > >> (e.g. int n_hdlc = N_HDLC; ioctl(fd,
-> > >> TIOCSETD, &n_hdlc)), triggers a privileged call to finit_module()
-> > >> under CAP_SYS_MODULE.
-> > >
-> > > Ah, so system call implicated request_module() calls.
-> > 
-> > Yup. Unprivileged user does something that ultimately hits a
-> > request_module() in the kernel. Then the kernel calls out with the
-> > usermode helper (which has CAP_SYS_MODULE) and calls finit_module().
-> 
-> Thanks, using this terminology is much better to understand than
-> auto-loading, given it does make it clear an unprivileged call was one
-> that initiated the request_module() call, there are many uses of
-> request_module() which *are* privileged.
-> 
-> > > OK and since CAP_SYS_MODULE is much more restrictive one could
-> > > argue, what's the point here?
-> > 
-> > The goal is to block an unprivileged user from being able to trigger a
-> > module load without blocking root from loading modules directly.
-> 
-> I see now. Do we have an audit of all system calls which implicate a
-> request_module() call? Networking is a good example for sure to start
-> off with but I was curious if we have a grasp of how wide spread this
-> could be.
+Hello.
 
-I'm not sure it makes sense to classify this by syscalls. In networking,
-request_module() can be triggered e.g. by a netlink message (genetlink
-family lookup is an example not needing any privileges) so that one of
-the syscalls would be sendmsg().
+I browsed https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1734686
+and found a problem with how security blob is initialized.
 
-Michal Kubecek
+Casey Schaufler wrote:
+> +/**
+> + * lsm_sock_alloc - allocate a composite sock blob
+> + * @sock: the sock that needs a blob
+> + * @priority: allocation mode
+> + *
+> + * Allocate the sock blob for all the modules
+> + *
+> + * Returns 0, or -ENOMEM if memory can't be allocated.
+> + */
+> +int lsm_sock_alloc(struct sock *sock, gfp_t priority)
+> +{
+> +#ifdef CONFIG_SECURITY_LSM_DEBUG
+> +	if (sock->sk_security)
+> +		pr_info("%s: Inbound sock blob is not NULL.\n", __func__);
+> +#endif
+
+If none of LSM modules use sock->sk_security, sock->sk_security is not
+initialized to NULL (and sk_prot_alloc() does not always use __GFP_ZERO).
+
+> +	if (blob_sizes.lbs_sock == 0)
+> +		return 0;
+> +
+> +	sock->sk_security = kzalloc(blob_sizes.lbs_sock, priority);
+> +	if (sock->sk_security == NULL)
+> +		return -ENOMEM;
+> +	return 0;
+> +}
+
+> @@ -1609,12 +1851,18 @@ EXPORT_SYMBOL(security_socket_getpeersec_dgram);
+>  
+>  int security_sk_alloc(struct sock *sk, int family, gfp_t priority)
+>  {
+> +	int rc = lsm_sock_alloc(sk, priority);
+> +
+> +	if (rc)
+> +		return rc;
+
+In that report, no major LSMs are active because apparmor=0 is passed at
+kernel command line. Thus, security_sk_alloc() does not initialize
+sk->sk_security field and
+
+>  	return call_int_hook(sk_alloc_security, 0, sk, family, priority);
+>  }
+>  
+>  void security_sk_free(struct sock *sk)
+>  {
+>  	call_void_hook(sk_free_security, sk);
+
+causes random oops at kfree().
+
+> +	kfree(sk->sk_security);
+> +	sk->sk_security = NULL;
+>  }
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
