@@ -1,31 +1,37 @@
-From: tytso@mit.edu (Theodore Ts'o)
-Date: Wed, 29 Nov 2017 11:29:45 -0500
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 29 Nov 2017 11:28:52 -0600
 Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <20171129.105816.1108278026315471171.davem@davemloft.net>
-References: <20171129134612.72ccb53d@alans-desktop>
+In-Reply-To: <20171129155406.i2lyclquj75lvtn4@thunk.org>
+References: <20171128211659.GP729@wotan.suse.de>
+	<CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
+	<20171129134612.72ccb53d@alans-desktop>
 	<20171129.095014.1909386937628805919.davem@davemloft.net>
 	<20171129155406.i2lyclquj75lvtn4@thunk.org>
-	<20171129.105816.1108278026315471171.davem@davemloft.net>
-Message-ID: <20171129162945.u2zjcoe4gsanhmkc@thunk.org>
+Message-ID: <20171129172852.GA14545@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 29, 2017 at 10:58:16AM -0500, David Miller wrote:
-> That's not what we're talking about.
+Quoting Theodore Ts'o (tytso at mit.edu):
+> Half the problem here is that with containers, people are changing the
+> security model, because they want to let untrusted users have "root",
+> without really having "root".  Part of the fundamental problem is that
+> there are some well-meaning, but fundamentally misguided people, who
+> have been asserting: "Containers are just as secure as VM's".
 > 
-> We're talking about making sure that loading "ppp.ko" really gets
-> ppp.ko rather than some_other_module.ko renamed to ppp.ko via some
-> other mechanism.
+> Well, they are not.  And the sooner people get past this, the better
+> off they'll be....
 
-Right, and the best solution to this problem is to include in the
-signature the name of the module.  (One way of doing this is adding
-the module name into the cryptographic checksum which is then
-digitally signed by the kernel module key; we would have to bump the
-version number of the signature format, obviously.)  This binds the
-name of the module into the digital signature so that it can't be
-renamed.
+Just to be clear, module loading requires - and must always continue to
+require - CAP_SYS_MODULE against the initial user namespace.  Containers
+in user namespaces do not have that.
 
-						- Ted
+I don't believe anyone has ever claimed that containers which are not in
+a user namespace are in any way secure.
+
+(And as for the other claim, I'd prefer to stick to "VMs are in most
+cases as insecure as properly configured containers" :)
+
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
