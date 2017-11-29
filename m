@@ -1,61 +1,77 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Thu, 30 Nov 2017 02:08:38 +0800
-Subject: [PATCH 4/4] selinux: Add SCTP support
-In-Reply-To: <20171127193217.2768-1-richard_c_haines@btinternet.com>
-References: <20171127193217.2768-1-richard_c_haines@btinternet.com>
-Message-ID: <201711300049.TRR2hqSQ%fengguang.wu@intel.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 29 Nov 2017 10:30:30 -0800
+Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
+	request_module_cap() to load 'netdev-%s' modules
+In-Reply-To: <CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
+References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
+	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
+	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
+	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
+	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
+	<1100603534.56586.1511871419952@ichabod.co-bxl>
+	<20171128193243.4fymnjk7fplqw62x@thunk.org>
+	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
+	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
+	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
+	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
+	<708003731.69563.1511905898471@ichabod.co-bxl>
+	<CA+55aFzxFQeyk6Mrk50=jzevHpZ78BXz_9nHcHabMWBdM6RC6A@mail.gmail.com>
+	<CA+55aFyybavkF8ccQKJsoVAF+MG=J5=e9PxXKU=J_hqCQRZnug@mail.gmail.com>
+	<CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
+	<CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
+Message-ID: <CAGXu5j+Tv4KHytjOtBvG9e53o-pG7h5DjZZkATXbado-HAbKHw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Richard,
+On Tue, Nov 28, 2017 at 4:50 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, Nov 28, 2017 at 4:26 PM, Kees Cook <keescook@chromium.org> wrote:
+>>
+>>> The model that I am a proponent of is to take a softer approach
+>>> initially: don't forbid module loading (because that breaks users),
+>>> but instead _warn_ about non-root module loading. And then we can
+>>> start fixing the cases that we find.
+>>
+>> I am totally fine with this. The question I'm hoping to have answered
+>> is, "then what?" We already have concrete examples of module
+>> autoloading that will still be need to stay unprivileged and as-is in
+>> the kernel (even if we remove others). What do you see as the way to
+>> allow an admin to turn those off?
+>
+> Just thinking about the DCCP case, where networking people actually
+> knew it was pretty deprecated and had no real maintainer, I think one
+> thing to look at would be simply a per-module flag.
+>
+> That kind of thing should be fairly easy to implement, along the same
+> lines as the module license - it just sets a flag in the ELF section
+> headers.
+>
+> With something like that, we literally could make the default be "no
+> autoloading except for root", and then just mark the modules that we
+> think are ok and well maintained.
+>
+> Sure, if you then do a lock-down mode that makes that flag parsing
+> stricter, then that's a separate thing. But I suspect we definitely
+> could be a lot stricter on a per-module basis, and do it in a way
+> where a normal user wouldn't even notice that we've limited the
+> autoloading.
+>
+> But the first step would be to just add some noise. And even with the
+> per-module flag, at first it would only suppress the noise (ie we'd
+> still _allow_ loading other modules, they'd just be noisy). Then, if
+> nobody hollers, maybe the next kernel release we'll make it actually
+> enforce the flag.
+>
+> Does that sound reasonable?
 
-Thank you for the patch! Yet something to improve:
+Yeah, I think I see the way forward here; thanks for the discussion!
 
-[auto build test ERROR on security/next]
-[cannot apply to net-next/master net/master v4.15-rc1 next-20171129]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+-Kees
 
-url:    https://github.com/0day-ci/linux/commits/Richard-Haines/Add-SELinux-SCTP-protocol-support/20171129-222900
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-config: x86_64-allyesdebian (attached as .config)
-compiler: gcc-7 (Debian 7.2.0-12) 7.2.1 20171025
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
-
-All errors (new ones prefixed by >>):
-
-   security/selinux/hooks.c: In function 'selinux_sctp_sk_clone':
->> security/selinux/hooks.c:5185:10: error: 'struct sk_security_struct' has no member named 'nlbl_state'
-     newsksec->nlbl_state = sksec->nlbl_state;
-             ^~
-   security/selinux/hooks.c:5185:30: error: 'struct sk_security_struct' has no member named 'nlbl_state'
-     newsksec->nlbl_state = sksec->nlbl_state;
-                                 ^~
-
-vim +5185 security/selinux/hooks.c
-
-  5168	
-  5169	/* Called whenever a new socket is created by accept(2) or sctp_peeloff(3). */
-  5170	static void selinux_sctp_sk_clone(struct sctp_endpoint *ep, struct sock *sk,
-  5171					  struct sock *newsk)
-  5172	{
-  5173		struct sk_security_struct *sksec = sk->sk_security;
-  5174		struct sk_security_struct *newsksec = newsk->sk_security;
-  5175	
-  5176		/* If policy does not support SECCLASS_SCTP_SOCKET then call
-  5177		 * the non-sctp clone version.
-  5178		 */
-  5179		if (!selinux_policycap_extsockclass)
-  5180			return selinux_sk_clone_security(sk, newsk);
-  5181	
-  5182		newsksec->sid = ep->secid;
-  5183		newsksec->peer_sid = ep->peer_secid;
-  5184		newsksec->sclass = sksec->sclass;
-> 5185		newsksec->nlbl_state = sksec->nlbl_state;
-  5186	}
-  5187	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Kees Cook
+Pixel Security
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
