@@ -1,72 +1,42 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Wed, 29 Nov 2017 20:21:33 +0900
-Subject: [PATCH 5/9] LSM: Manage remaining security blobs
-In-Reply-To: <d3bd7b64-020b-ac7c-8fef-eed6a1ad5185@schaufler-ca.com>
-References: <1473402e-a714-7ace-2698-b65d73e3f17e@schaufler-ca.com>
-	<d3bd7b64-020b-ac7c-8fef-eed6a1ad5185@schaufler-ca.com>
-Message-ID: <201711292021.CIC57334.OSQMFHOtOJFVLF@I-love.SAKURA.ne.jp>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Wed, 29 Nov 2017 13:46:12 +0000
+Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
+In-Reply-To: <CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
+References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
+	<1511803118-2552-2-git-send-email-tixxdz@gmail.com>
+	<20171128191405.GO729@wotan.suse.de>
+	<CAGXu5jKgHWNE4NH_xqcM084-BNBPy+HmEVPbTA+w_=K3S6gC=w@mail.gmail.com>
+	<20171128211659.GP729@wotan.suse.de>
+	<CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
+Message-ID: <20171129134612.72ccb53d@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hello.
+On Tue, 28 Nov 2017 13:39:58 -0800
+Kees Cook <keescook@chromium.org> wrote:
 
-I browsed https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1734686
-and found a problem with how security blob is initialized.
+> On Tue, Nov 28, 2017 at 1:16 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> > And *all* auto-loading uses aliases? What's the difference between auto-loading
+> > and direct-loading?  
+> 
+> The difference is the process privileges. Unprivilged autoloading
+> (e.g. int n_hdlc = N_HDLC; ioctl(fd,
+> TIOCSETD, &n_hdlc)), triggers a privileged call to finit_module()
+> under CAP_SYS_MODULE.
 
-Casey Schaufler wrote:
-> +/**
-> + * lsm_sock_alloc - allocate a composite sock blob
-> + * @sock: the sock that needs a blob
-> + * @priority: allocation mode
-> + *
-> + * Allocate the sock blob for all the modules
-> + *
-> + * Returns 0, or -ENOMEM if memory can't be allocated.
-> + */
-> +int lsm_sock_alloc(struct sock *sock, gfp_t priority)
-> +{
-> +#ifdef CONFIG_SECURITY_LSM_DEBUG
-> +	if (sock->sk_security)
-> +		pr_info("%s: Inbound sock blob is not NULL.\n", __func__);
-> +#endif
+If you have CAP_SYS_DAC you can rename any module to ppp.ko and ask the
+network manager (which has the right permissions) to init a ppp
+connection. Capabilities alone are simply not enough to do any kind of
+useful protection on a current system and the Linux capability model is
+broken architecturally and not fixable because fixing it would break lots
+of real systems.
 
-If none of LSM modules use sock->sk_security, sock->sk_security is not
-initialized to NULL (and sk_prot_alloc() does not always use __GFP_ZERO).
+I really don't care what the module loading rules end up with and whether
+we add CAP_SYS_YET_ANOTHER_MEANINGLESS_FLAG but what is actually needed
+is to properly incorporate it into securiy ruiles for whatever LSM you
+are using.
 
-> +	if (blob_sizes.lbs_sock == 0)
-> +		return 0;
-> +
-> +	sock->sk_security = kzalloc(blob_sizes.lbs_sock, priority);
-> +	if (sock->sk_security == NULL)
-> +		return -ENOMEM;
-> +	return 0;
-> +}
-
-> @@ -1609,12 +1851,18 @@ EXPORT_SYMBOL(security_socket_getpeersec_dgram);
->  
->  int security_sk_alloc(struct sock *sk, int family, gfp_t priority)
->  {
-> +	int rc = lsm_sock_alloc(sk, priority);
-> +
-> +	if (rc)
-> +		return rc;
-
-In that report, no major LSMs are active because apparmor=0 is passed at
-kernel command line. Thus, security_sk_alloc() does not initialize
-sk->sk_security field and
-
->  	return call_int_hook(sk_alloc_security, 0, sk, family, priority);
->  }
->  
->  void security_sk_free(struct sock *sk)
->  {
->  	call_void_hook(sk_free_security, sk);
-
-causes random oops at kfree().
-
-> +	kfree(sk->sk_security);
-> +	sk->sk_security = NULL;
->  }
+Alan
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
