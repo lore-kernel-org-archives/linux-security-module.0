@@ -1,37 +1,40 @@
 From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 29 Nov 2017 11:28:52 -0600
-Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <20171129155406.i2lyclquj75lvtn4@thunk.org>
-References: <20171128211659.GP729@wotan.suse.de>
-	<CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
-	<20171129134612.72ccb53d@alans-desktop>
-	<20171129.095014.1909386937628805919.davem@davemloft.net>
-	<20171129155406.i2lyclquj75lvtn4@thunk.org>
-Message-ID: <20171129172852.GA14545@mail.hallyn.com>
+Date: Wed, 29 Nov 2017 11:58:49 -0600
+Subject: Documentation patch for namespaced file capabilities
+In-Reply-To: <CAKgNAkiAeqbD=G6hnExh4cC84nA2mU6xdLzzS0F2x1wviEPgHg@mail.gmail.com>
+References: <CAKgNAkiAeqbD=G6hnExh4cC84nA2mU6xdLzzS0F2x1wviEPgHg@mail.gmail.com>
+Message-ID: <20171129175849.GC14545@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Theodore Ts'o (tytso at mit.edu):
-> Half the problem here is that with containers, people are changing the
-> security model, because they want to let untrusted users have "root",
-> without really having "root".  Part of the fundamental problem is that
-> there are some well-meaning, but fundamentally misguided people, who
-> have been asserting: "Containers are just as secure as VM's".
+Quoting Michael Kerrisk (man-pages) (mtk.manpages at gmail.com):
+> Hi Serge,
 > 
-> Well, they are not.  And the sooner people get past this, the better
-> off they'll be....
+> At the moment man-pages lacks documentation of the namespaced file
+> capability feature that you added with commit
+> 8db6c34f1dbc8e06aa016a9b829b06902c3e1340. Would you be able to send a
+> patch describing the feature?
 
-Just to be clear, module loading requires - and must always continue to
-require - CAP_SYS_MODULE against the initial user namespace.  Containers
-in user namespaces do not have that.
+Sorry.  I'm adding this to my todo list, so I should get to it soon.
 
-I don't believe anyone has ever claimed that containers which are not in
-a user namespace are in any way secure.
-
-(And as for the other claim, I'd prefer to stick to "VMs are in most
-cases as insecure as properly configured containers" :)
-
--serge
+> Presumably, the patch would be for the capabilities(7) page (or
+> perhaps for the user_namespaces(7) page, if that seems more
+> appropriate), As well as documenting the semantics, it would be good
+> to include an example or two of the notation that is used for the
+> xattr names.
+> 
+> Presumably also there will be some changes in userspace tools
+> (setcap/getcap?). Do you know anything about what's happening there?
+> 
+> Cheers,
+> 
+> Michael
+> 
+> 
+> -- 
+> Michael Kerrisk
+> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+> Linux/UNIX System Programming Training: http://man7.org/training/
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
