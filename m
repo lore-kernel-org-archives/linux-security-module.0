@@ -1,8 +1,8 @@
-From: danielmicay@gmail.com (Daniel Micay)
-Date: Thu, 30 Nov 2017 01:51:17 -0500
+From: tixxdz@gmail.com (Djalal Harouni)
+Date: Thu, 30 Nov 2017 09:50:27 +0100
 Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
 	request_module_cap() to load 'netdev-%s' modules
-In-Reply-To: <CA+55aFzi3Qj7zOrriRvrX5F4QDWMhkNQ7Qh-0FSCZsG4qk61zg@mail.gmail.com>
+In-Reply-To: <1512024677.1374.168.camel@gmail.com>
 References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
 	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
 	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
@@ -23,37 +23,63 @@ References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
 	<CA+55aFxiDKfe6VCM+aV2OgnkzMpP+iz+rn2k25_Qa_QLex=pPQ@mail.gmail.com>
 	<CAGXu5jJQnokKL2MdbQgOhBJ_RMHVvsw4u27Ds=4Jq3Ys=mjtRg@mail.gmail.com>
 	<CA+55aFzi3Qj7zOrriRvrX5F4QDWMhkNQ7Qh-0FSCZsG4qk61zg@mail.gmail.com>
-Message-ID: <1512024677.1374.168.camel@gmail.com>
+	<1512024677.1374.168.camel@gmail.com>
+Message-ID: <CAEiveUdgm_n-TUYGCtw_Zf24TJXrdrsFjcU8_S1M2qQUmHG+KA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> And once you disable it by default, and it becomes purely opt-in, that
-> means that nothing will change for most cases. Some embedded people
-> that do their own thing (ie Android) might change, but normal
-> distributions probably won't.
-> 
-> Yes, Android may be 99% of the users, and yes, the embedded world in
-> general needs to be secure, but I'd still like this to be something
-> that helps _everybody_.
+On Thu, Nov 30, 2017 at 7:51 AM, Daniel Micay <danielmicay@gmail.com> wrote:
+[...]
+> Lots of potential module attack surface also gets eliminated by default
+> via their SELinux whitelists for /dev, /sys, /proc, debugfs, ioctl
+> commands, etc. The global seccomp whitelist might be relevant in some
+> cases too.
 
-Android devices won't get much benefit since they ship a tiny set of
-modules chosen for the device. The kernels already get very stripped
-down to the bare minimum vs. enabling every feature and driver available
-and shipping it all by default on a traditional distribution.
+In embedded systems we can't maintain a SELinux policy, distro man
+power hardly manage. We have abstracted seccomp etc, but the kernel
+inherited the difficult multiplex things, plus all other paths that
+trigger this.
 
-Lots of potential module attack surface also gets eliminated by default
-via their SELinux whitelists for /dev, /sys, /proc, debugfs, ioctl
-commands, etc. The global seccomp whitelist might be relevant in some
-cases too.
 
-Android devices like to build everything into the kernel too, so even if
-they weren't using a module this feature wouldn't usually help them. It
-would need to work like this existing sysctl:
+> Android devices like to build everything into the kernel too, so even if
+> they weren't using a module this feature wouldn't usually help them. It
+> would need to work like this existing sysctl:
+>
+>     net.ipv4.tcp_available_congestion_control = cubic reno lp
+>
+> i.e. whitelists for functionality offered by the modules, not just
+> whether they can be loaded.
 
-    net.ipv4.tcp_available_congestion_control = cubic reno lp
+Yes, but it is hard to maintain a whitelist policy, the code is hardly
+maintained... if you include everything you should have an LSM policy
+or something like that, and compiling kernels is expert thing.
+Otherwise IMHO the kernel should provide default secure behaviour on
+how to load or add new functionality to the running one. From a user
+perspective, a switch "yes/no" that a privileged entity will
+*understand* and assume is what should be there, and the switch or
+flag as discussed here is local to processes, the sysctl will be
+removed. IMO it should come from userspace point of view, cause as an
+example the sysctl:
 
-i.e. whitelists for functionality offered by the modules, not just
-whether they can be loaded.
+net.ipv4.tcp_available_congestion_control = cubic reno lp
+
+Is kernel thing, too technical, userspace developers, admins or
+privileged entity will not understand what cubic or reno mean. Doing
+the same per functionality directly like this seems to much of a
+burden compared to the use case. The kernel maybe can do this to
+advance the art of the networking stack and for advanced cases, but in
+IMHO a sane default behaviour + an abstracted process/sandbox flag
+"yes/no" for most others, userspace developers and humans is what
+should be provided and we need the kernel to help here.
+
+It seems that Linus and kees agreed on this direction which allows me
+to follow up.
+
+Thanks!
+
+
+-- 
+tixxdz
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
