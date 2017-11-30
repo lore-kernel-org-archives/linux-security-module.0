@@ -1,45 +1,212 @@
-From: tytso@mit.edu (Theodore Ts'o)
-Date: Thu, 30 Nov 2017 09:16:36 -0500
-Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
-	request_module_cap() to load 'netdev-%s' modules
-In-Reply-To: <CAEiveUdgm_n-TUYGCtw_Zf24TJXrdrsFjcU8_S1M2qQUmHG+KA@mail.gmail.com>
-References: <CA+55aFzxFQeyk6Mrk50=jzevHpZ78BXz_9nHcHabMWBdM6RC6A@mail.gmail.com>
-	<CA+55aFyybavkF8ccQKJsoVAF+MG=J5=e9PxXKU=J_hqCQRZnug@mail.gmail.com>
-	<CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
-	<CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
-	<CAGXu5j+Tv4KHytjOtBvG9e53o-pG7h5DjZZkATXbado-HAbKHw@mail.gmail.com>
-	<CA+55aFxiDKfe6VCM+aV2OgnkzMpP+iz+rn2k25_Qa_QLex=pPQ@mail.gmail.com>
-	<CAGXu5jJQnokKL2MdbQgOhBJ_RMHVvsw4u27Ds=4Jq3Ys=mjtRg@mail.gmail.com>
-	<CA+55aFzi3Qj7zOrriRvrX5F4QDWMhkNQ7Qh-0FSCZsG4qk61zg@mail.gmail.com>
-	<1512024677.1374.168.camel@gmail.com>
-	<CAEiveUdgm_n-TUYGCtw_Zf24TJXrdrsFjcU8_S1M2qQUmHG+KA@mail.gmail.com>
-Message-ID: <20171130141636.k3oqybwosdogzfgg@thunk.org>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 30 Nov 2017 06:33:17 -0800
+Subject: [BUG] kernel stack corruption during/after Netlabel error
+In-Reply-To: <1512039044.19682.12.camel@gmail.com>
+References: <alpine.LFD.2.20.1711292113350.7808@localhost>
+	<4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
+	<alpine.LFD.2.20.1711301130330.17322@localhost>
+	<ae2e71e4-c366-5a1e-9fd6-4de944f4a158@schaufler-ca.com>
+	<1512039044.19682.12.camel@gmail.com>
+Message-ID: <ce871ca4-6269-2ae7-bb29-cd2091c6defb@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Nov 30, 2017 at 09:50:27AM +0100, Djalal Harouni wrote:
-> In embedded systems we can't maintain a SELinux policy, distro man
-> power hardly manage. We have abstracted seccomp etc, but the kernel
-> inherited the difficult multiplex things, plus all other paths that
-> trigger this.....
+On 11/30/2017 2:50 AM, Eric Dumazet wrote:
+> On Wed, 2017-11-29 at 19:16 -0800, Casey Schaufler wrote:
+>> On 11/29/2017 4:31 PM, James Morris wrote:
+>>> On Wed, 29 Nov 2017, Casey Schaufler wrote:
+>>>
+>>>> I see that there is a proposed fix later in the thread, but I
+>>>> don't see
+>>>> the patch. Could you send it to me, so I can try it on my
+>>>> problem?
+>>> Forwarded off-list.
+>> The patch does fix the problem I was seeing in Smack.
+> Can you guys test the following more complete patch ?
 
-> Yes, but it is hard to maintain a whitelist policy, the code is hardly
-> maintained...
+Building now. I should have results soon.
 
-So this is the part that scares me to death about IOT, and why I tell
-everyone to ***never*** trust an IOT device on their home network, and
-***never*** trust it with anything you don't mind splattered all over
-the front page of NY Times and RT / Sputnick news.
+>
+> It should cover IPv4 and IPv6, and also the corner cases.
+>
+> ( Note that I squashed ipv6 fix in https://patchwork.ozlabs.org/patch/8
+> 42844/ that I spotted while cooking this patch )
+>
+> diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+> index c6bc0c4d19c624888b0d0b5a4246c7183edf63f5..77ea45da0fe9c746907a312989658af3ad3b198d 100644
+> --- a/net/ipv4/tcp_ipv4.c
+> +++ b/net/ipv4/tcp_ipv4.c
+> @@ -1591,6 +1591,34 @@ int tcp_filter(struct sock *sk, struct sk_buff *skb)
+>  }
+>  EXPORT_SYMBOL(tcp_filter);
+>  
+> +static void tcp_v4_restore_cb(struct sk_buff *skb)
+> +{
+> +	memmove(IPCB(skb), &TCP_SKB_CB(skb)->header.h4,
+> +		sizeof(struct inet_skb_parm));
+> +}
+> +
+> +static void tcp_v4_fill_cb(struct sk_buff *skb, const struct iphdr *iph,
+> +			   const struct tcphdr *th)
+> +{
+> +	/* This is tricky : We move IPCB at its correct location into TCP_SKB_CB()
+> +	 * barrier() makes sure compiler wont play fool^Waliasing games.
+> +	 */
+> +	memmove(&TCP_SKB_CB(skb)->header.h4, IPCB(skb),
+> +		sizeof(struct inet_skb_parm));
+> +	barrier();
+> +
+> +	TCP_SKB_CB(skb)->seq = ntohl(th->seq);
+> +	TCP_SKB_CB(skb)->end_seq = (TCP_SKB_CB(skb)->seq + th->syn + th->fin +
+> +				    skb->len - th->doff * 4);
+> +	TCP_SKB_CB(skb)->ack_seq = ntohl(th->ack_seq);
+> +	TCP_SKB_CB(skb)->tcp_flags = tcp_flag_byte(th);
+> +	TCP_SKB_CB(skb)->tcp_tw_isn = 0;
+> +	TCP_SKB_CB(skb)->ip_dsfield = ipv4_get_dsfield(iph);
+> +	TCP_SKB_CB(skb)->sacked	 = 0;
+> +	TCP_SKB_CB(skb)->has_rxtstamp =
+> +			skb->tstamp || skb_hwtstamps(skb)->hwtstamp;
+> +}
+> +
+>  /*
+>   *	From tcp_input.c
+>   */
+> @@ -1631,24 +1659,6 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>  
+>  	th = (const struct tcphdr *)skb->data;
+>  	iph = ip_hdr(skb);
+> -	/* This is tricky : We move IPCB at its correct location into TCP_SKB_CB()
+> -	 * barrier() makes sure compiler wont play fool^Waliasing games.
+> -	 */
+> -	memmove(&TCP_SKB_CB(skb)->header.h4, IPCB(skb),
+> -		sizeof(struct inet_skb_parm));
+> -	barrier();
+> -
+> -	TCP_SKB_CB(skb)->seq = ntohl(th->seq);
+> -	TCP_SKB_CB(skb)->end_seq = (TCP_SKB_CB(skb)->seq + th->syn + th->fin +
+> -				    skb->len - th->doff * 4);
+> -	TCP_SKB_CB(skb)->ack_seq = ntohl(th->ack_seq);
+> -	TCP_SKB_CB(skb)->tcp_flags = tcp_flag_byte(th);
+> -	TCP_SKB_CB(skb)->tcp_tw_isn = 0;
+> -	TCP_SKB_CB(skb)->ip_dsfield = ipv4_get_dsfield(iph);
+> -	TCP_SKB_CB(skb)->sacked	 = 0;
+> -	TCP_SKB_CB(skb)->has_rxtstamp =
+> -			skb->tstamp || skb_hwtstamps(skb)->hwtstamp;
+> -
+>  lookup:
+>  	sk = __inet_lookup_skb(&tcp_hashinfo, skb, __tcp_hdrlen(th), th->source,
+>  			       th->dest, sdif, &refcounted);
+> @@ -1679,14 +1689,19 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>  		sock_hold(sk);
+>  		refcounted = true;
+>  		nsk = NULL;
+> -		if (!tcp_filter(sk, skb))
+> +		if (!tcp_filter(sk, skb)) {
+> +			th = (const struct tcphdr *)skb->data;
+> +			iph = ip_hdr(skb);
+> +			tcp_v4_fill_cb(skb, iph, th);
+>  			nsk = tcp_check_req(sk, skb, req, false);
+> +		}
+>  		if (!nsk) {
+>  			reqsk_put(req);
+>  			goto discard_and_relse;
+>  		}
+>  		if (nsk == sk) {
+>  			reqsk_put(req);
+> +			tcp_v4_restore_cb(skb);
+>  		} else if (tcp_child_process(sk, nsk, skb)) {
+>  			tcp_v4_send_reset(nsk, skb);
+>  			goto discard_and_relse;
+> @@ -1712,6 +1727,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>  		goto discard_and_relse;
+>  	th = (const struct tcphdr *)skb->data;
+>  	iph = ip_hdr(skb);
+> +	tcp_v4_fill_cb(skb, iph, th);
+>  
+>  	skb->dev = NULL;
+>  
+> @@ -1742,6 +1758,8 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>  	if (!xfrm4_policy_check(NULL, XFRM_POLICY_IN, skb))
+>  		goto discard_it;
+>  
+> +	tcp_v4_fill_cb(skb, iph, th);
+> +
+>  	if (tcp_checksum_complete(skb)) {
+>  csum_error:
+>  		__TCP_INC_STATS(net, TCP_MIB_CSUMERRORS);
+> @@ -1768,6 +1786,8 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>  		goto discard_it;
+>  	}
+>  
+> +	tcp_v4_fill_cb(skb, iph, th);
+> +
+>  	if (tcp_checksum_complete(skb)) {
+>  		inet_twsk_put(inet_twsk(sk));
+>  		goto csum_error;
+> @@ -1784,6 +1804,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>  		if (sk2) {
+>  			inet_twsk_deschedule_put(inet_twsk(sk));
+>  			sk = sk2;
+> +			tcp_v4_restore_cb(skb);
+>  			refcounted = false;
+>  			goto process;
+>  		}
+> diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+> index 6bb98c93edfe2ed2f16fe5229605f8108cfc7f9a..1f04ec0e4a7aa2c11b8ee27cbdd4067b5bcf32e5 100644
+> --- a/net/ipv6/tcp_ipv6.c
+> +++ b/net/ipv6/tcp_ipv6.c
+> @@ -1454,7 +1454,6 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>  		struct sock *nsk;
+>  
+>  		sk = req->rsk_listener;
+> -		tcp_v6_fill_cb(skb, hdr, th);
+>  		if (tcp_v6_inbound_md5_hash(sk, skb)) {
+>  			sk_drops_add(sk, skb);
+>  			reqsk_put(req);
+> @@ -1467,8 +1466,12 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>  		sock_hold(sk);
+>  		refcounted = true;
+>  		nsk = NULL;
+> -		if (!tcp_filter(sk, skb))
+> +		if (!tcp_filter(sk, skb)) {
+> +			th = (const struct tcphdr *)skb->data;
+> +			hdr = ipv6_hdr(skb);
+> +			tcp_v6_fill_cb(skb, hdr, th);
+>  			nsk = tcp_check_req(sk, skb, req, false);
+> +		}
+>  		if (!nsk) {
+>  			reqsk_put(req);
+>  			goto discard_and_relse;
+> @@ -1492,8 +1495,6 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>  	if (!xfrm6_policy_check(sk, XFRM_POLICY_IN, skb))
+>  		goto discard_and_relse;
+>  
+> -	tcp_v6_fill_cb(skb, hdr, th);
+> -
+>  	if (tcp_v6_inbound_md5_hash(sk, skb))
+>  		goto discard_and_relse;
+>  
+> @@ -1501,6 +1502,7 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>  		goto discard_and_relse;
+>  	th = (const struct tcphdr *)skb->data;
+>  	hdr = ipv6_hdr(skb);
+> +	tcp_v6_fill_cb(skb, hdr, th);
+>  
+>  	skb->dev = NULL;
+>  
+> @@ -1590,7 +1592,6 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>  		tcp_v6_timewait_ack(sk, skb);
+>  		break;
+>  	case TCP_TW_RST:
+> -		tcp_v6_restore_cb(skb);
+>  		tcp_v6_send_reset(sk, skb);
+>  		inet_twsk_deschedule_put(inet_twsk(sk));
+>  		goto discard_it;
+>
+>
+>
+>
 
-You're saying that you want to use modules (as opposed to compile
-everything tightly down to just what you need for the embedded
-system); that the code is "hardly maintained".  And yet we're supposed
-to consider it trustworthy?
-
-If that's the case, turning off implicit module loading sounds and
-thinking that this will somehow be a magic wand sounds.... crazy.
-
-	      	   		     - Ted
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
