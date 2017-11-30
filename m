@@ -1,51 +1,76 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Wed, 29 Nov 2017 18:08:34 -0800
-Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
-	request_module_cap() to load 'netdev-%s' modules
-In-Reply-To: <CAGXu5jLcpfyq0TrXcmkzzO4oFzX0cERVtPFxoAtRyD-HxnAJyg@mail.gmail.com>
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
-	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
-	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
-	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
-	<1100603534.56586.1511871419952@ichabod.co-bxl>
-	<20171128193243.4fymnjk7fplqw62x@thunk.org>
-	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
-	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
-	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
-	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
-	<708003731.69563.1511905898471@ichabod.co-bxl>
-	<CA+55aFzxFQeyk6Mrk50=jzevHpZ78BXz_9nHcHabMWBdM6RC6A@mail.gmail.com>
-	<CA+55aFyybavkF8ccQKJsoVAF+MG=J5=e9PxXKU=J_hqCQRZnug@mail.gmail.com>
-	<CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
-	<CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
-	<CAGXu5j+Tv4KHytjOtBvG9e53o-pG7h5DjZZkATXbado-HAbKHw@mail.gmail.com>
-	<CA+55aFxiDKfe6VCM+aV2OgnkzMpP+iz+rn2k25_Qa_QLex=pPQ@mail.gmail.com>
-	<CAGXu5jJQnokKL2MdbQgOhBJ_RMHVvsw4u27Ds=4Jq3Ys=mjtRg@mail.gmail.com>
-	<CA+55aFzi3Qj7zOrriRvrX5F4QDWMhkNQ7Qh-0FSCZsG4qk61zg@mail.gmail.com>
-	<CAGXu5jLcpfyq0TrXcmkzzO4oFzX0cERVtPFxoAtRyD-HxnAJyg@mail.gmail.com>
-Message-ID: <CA+55aFxWKKjpqHL9pq=4r8ZMjvDSzzwHK69FFg+Re4CfAAtmqA@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 29 Nov 2017 18:28:25 -0800
+Subject: [RFC 0/3] Safe, dynamically (un)loadable LSMs
+In-Reply-To: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
+Message-ID: <8c8dd781-d30a-7105-011d-127cf5188426@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 29, 2017 at 4:44 PM, Kees Cook <keescook@chromium.org> wrote:
+On 11/26/2017 2:15 PM, Sargun Dhillon wrote:
+> This patchset introduces safe dynamic LSM support. It does this via
+> SRCU-protected security hooks. It also EXPORT_SYMBOL_GPLs the symbols
+> required to perform runtime loading, and unloading. The patchset is
+> meant to introduce as little overhead as possible when not used.
+> Additionally, the functionality is disabled by default.
+
+Can you explain the value in being able to unload a security module?
+I can see having a throttle on an active module, but what do you gain
+by being able to unload it? Can it possibly be worth the inevitable
+memory leaks and almost certain dangling pointers? The restrictions on
+a security module that can work safely in this environment are significant.
+I don't see any point in unloading a module that could work with those
+restrictions. The overhead of making it unloadable is likely to exceed
+the overhead of running it.
+
 >
->> That mainly leaves the protocol ones we need to look out for, I suspect.
+> The SRCU was made safe to call from an interrupt context in the patch
+> "srcu: Allow use of Classic SRCU from both process and interrupt context"
+> (1123a6041654e8f889014659593bad4168e542c2) by Paolo Bonzini. Therefore
+> this mechanism is safe to use for traversal of the callback list,
+> even when a hook is called from the interrupt context.
 >
-> This is where a lot of the exposure really comes from. socket()
-> triggers a bunch of stuff, but doesn't have an obvious privilege
-> associated with it... while it already does the name templates, maybe
-> add request_module_socket() just to explicitly mark it?
+> Currently, this maintains an entirely seperate mechanism to attach hooks
+> because the hooks are behind managed static_keys to prevent overhead.
+> This is also done so sealable memory support could be added at a later
+> point. The callbacks currently include a percpu_counter, but that could
+> sit outside of the struct itself. This may also have a benefit that these
+> counters, could have __cacheline_aligned_in_smp. Although, in my testing
+> I was unable to find much performance delta with percpu_counters that
+> were not aligned.
+>
+> It includes an example LSM that prevents specific time travel.
 
-.. and this is where I'd expect that maybe we'd need some hackery.
+Time based controls (e.g. you can't execute files in /usr/games between
+8:00 and 17:00) would be cool. I suggested them in the 1980's, but
+no one has gotten around to implementing them. :)
 
-Even including some ad-hoc rules like "this module is actually
-maintained", possibly even with some /sys interface to extend/reduce
-that set.
+>
+> Sargun Dhillon (3):
+>   security: Add safe, dynamic (runtime-loadable) hook support
+>   LSM: Add statistics about the invocation of dynamic hooks
+>   LSM: Add an example sample dynamic LSM
+>
+>  include/linux/lsm_hooks.h | 254 +++++++++++++++++++++++++++++++++++++
+>  samples/Kconfig           |   6 +
+>  samples/Makefile          |   2 +-
+>  samples/lsm/Makefile      |   4 +
+>  samples/lsm/lsm_example.c |  46 +++++++
+>  security/Kconfig          |  16 +++
+>  security/Makefile         |   2 +
+>  security/dynamic.c        | 316 ++++++++++++++++++++++++++++++++++++++++++++++
+>  security/dynamic.h        |  33 +++++
+>  security/dynamicfs.c      | 118 +++++++++++++++++
+>  security/inode.c          |   2 +
+>  security/security.c       |  66 +++++++++-
+>  12 files changed, 863 insertions(+), 2 deletions(-)
+>  create mode 100644 samples/lsm/Makefile
+>  create mode 100644 samples/lsm/lsm_example.c
+>  create mode 100644 security/dynamic.c
+>  create mode 100644 security/dynamic.h
+>  create mode 100644 security/dynamicfs.c
+>
 
-But maybe it's not even that bad.
-
-                Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
