@@ -1,94 +1,219 @@
-From: tixxdz@gmail.com (Djalal Harouni)
-Date: Thu, 30 Nov 2017 13:22:05 +0100
-Subject: [PATCH v5 next 3/5] modules:capabilities: automatic module
-	loading restriction
-In-Reply-To: <20171130012324.GZ729@wotan.suse.de>
-References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
-	<1511803118-2552-4-git-send-email-tixxdz@gmail.com>
-	<20171130012324.GZ729@wotan.suse.de>
-Message-ID: <CAEiveUeK7UtxDdE52LOTH0cYKDOwb1hDORhSV_AWttU9VV3PfA@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 30 Nov 2017 07:47:27 -0500
+Subject: [BUG] kernel stack corruption during/after Netlabel error
+In-Reply-To: <1512039044.19682.12.camel@gmail.com>
+References: <alpine.LFD.2.20.1711292113350.7808@localhost>
+	<4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
+	<alpine.LFD.2.20.1711301130330.17322@localhost>
+	<ae2e71e4-c366-5a1e-9fd6-4de944f4a158@schaufler-ca.com>
+	<1512039044.19682.12.camel@gmail.com>
+Message-ID: <CAHC9VhT5WAwBz2bo8OQ6WYQ237=BH48XkAhta77n6HTnAq3fbA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Nov 30, 2017 at 2:23 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> On Mon, Nov 27, 2017 at 06:18:36PM +0100, Djalal Harouni wrote:
->> diff --git a/include/linux/module.h b/include/linux/module.h
->> index 5cbb239..c36aed8 100644
->> --- a/include/linux/module.h
->> +++ b/include/linux/module.h
->> @@ -261,7 +261,16 @@ struct notifier_block;
+On Thu, Nov 30, 2017 at 5:50 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> On Wed, 2017-11-29 at 19:16 -0800, Casey Schaufler wrote:
+>> On 11/29/2017 4:31 PM, James Morris wrote:
+>> > On Wed, 29 Nov 2017, Casey Schaufler wrote:
+>> >
+>> > > I see that there is a proposed fix later in the thread, but I
+>> > > don't see
+>> > > the patch. Could you send it to me, so I can try it on my
+>> > > problem?
+>> >
+>> > Forwarded off-list.
 >>
->>  #ifdef CONFIG_MODULES
->>
->> -extern int modules_disabled; /* for sysctl */
->> +enum {
->> +     MODULES_AUTOLOAD_ALLOWED        = 0,
->> +     MODULES_AUTOLOAD_PRIVILEGED     = 1,
->> +     MODULES_AUTOLOAD_DISABLED       = 2,
->> +};
->> +
+>> The patch does fix the problem I was seeing in Smack.
 >
-> Can you kdocify these and add a respective rst doc file?  Maybe stuff your
-> extensive docs which you are currently adding to
-> Documentation/sysctl/kernel.txt to this new file and in kernel.txt just refer
-> to it. This way this can be also nicely visibly documented on the web with the
-> new sphinx.
+> Can you guys test the following more complete patch ?
 >
-> This way you can take advantage of the kdocs you are already adding and refer
-> to them.
-
-Alright I'll do it in the next series next week, we'll change the
-semantics as requested by Linus and Kees here:
-http://www.openwall.com/lists/kernel-hardening/2017/11/29/38
-
-To block the privilege escalation through the usermod helper.
-
-
->> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->> index 2fb4e27..0b6f0c8 100644
->> --- a/kernel/sysctl.c
->> +++ b/kernel/sysctl.c
->> @@ -683,6 +688,15 @@ static struct ctl_table kern_table[] = {
->>               .extra1         = &one,
->>               .extra2         = &one,
->>       },
->> +     {
->> +             .procname       = "modules_autoload_mode",
->> +             .data           = &modules_autoload_mode,
->> +             .maxlen         = sizeof(int),
->> +             .mode           = 0644,
->> +             .proc_handler   = modules_autoload_dointvec_minmax,
+> It should cover IPv4 and IPv6, and also the corner cases.
 >
-> It would seem this is a unint ... so why not reflect that?
+> ( Note that I squashed ipv6 fix in https://patchwork.ozlabs.org/patch/8
+> 42844/ that I spotted while cooking this patch )
+
+Building a test kernel now, although it make take me a few hours to
+test it due to some commitments this morning.
+
+> diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+> index c6bc0c4d19c624888b0d0b5a4246c7183edf63f5..77ea45da0fe9c746907a312989658af3ad3b198d 100644
+> --- a/net/ipv4/tcp_ipv4.c
+> +++ b/net/ipv4/tcp_ipv4.c
+> @@ -1591,6 +1591,34 @@ int tcp_filter(struct sock *sk, struct sk_buff *skb)
+>  }
+>  EXPORT_SYMBOL(tcp_filter);
 >
->> @@ -2499,6 +2513,20 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
->>  }
->>  #endif
->>
->> +#ifdef CONFIG_MODULES
->> +static int modules_autoload_dointvec_minmax(struct ctl_table *table, int write,
->> +                             void __user *buffer, size_t *lenp, loff_t *ppos)
->> +{
->> +     /*
->> +      * Only CAP_SYS_MODULE in init user namespace are allowed to change this
->> +      */
->> +     if (write && !capable(CAP_SYS_MODULE))
->> +             return -EPERM;
->> +
->> +     return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
->> +}
->> +#endif
+> +static void tcp_v4_restore_cb(struct sk_buff *skb)
+> +{
+> +       memmove(IPCB(skb), &TCP_SKB_CB(skb)->header.h4,
+> +               sizeof(struct inet_skb_parm));
+> +}
+> +
+> +static void tcp_v4_fill_cb(struct sk_buff *skb, const struct iphdr *iph,
+> +                          const struct tcphdr *th)
+> +{
+> +       /* This is tricky : We move IPCB at its correct location into TCP_SKB_CB()
+> +        * barrier() makes sure compiler wont play fool^Waliasing games.
+> +        */
+> +       memmove(&TCP_SKB_CB(skb)->header.h4, IPCB(skb),
+> +               sizeof(struct inet_skb_parm));
+> +       barrier();
+> +
+> +       TCP_SKB_CB(skb)->seq = ntohl(th->seq);
+> +       TCP_SKB_CB(skb)->end_seq = (TCP_SKB_CB(skb)->seq + th->syn + th->fin +
+> +                                   skb->len - th->doff * 4);
+> +       TCP_SKB_CB(skb)->ack_seq = ntohl(th->ack_seq);
+> +       TCP_SKB_CB(skb)->tcp_flags = tcp_flag_byte(th);
+> +       TCP_SKB_CB(skb)->tcp_tw_isn = 0;
+> +       TCP_SKB_CB(skb)->ip_dsfield = ipv4_get_dsfield(iph);
+> +       TCP_SKB_CB(skb)->sacked  = 0;
+> +       TCP_SKB_CB(skb)->has_rxtstamp =
+> +                       skb->tstamp || skb_hwtstamps(skb)->hwtstamp;
+> +}
+> +
+>  /*
+>   *     From tcp_input.c
+>   */
+> @@ -1631,24 +1659,6 @@ int tcp_v4_rcv(struct sk_buff *skb)
 >
-> We now have proc_douintvec_minmax().
+>         th = (const struct tcphdr *)skb->data;
+>         iph = ip_hdr(skb);
+> -       /* This is tricky : We move IPCB at its correct location into TCP_SKB_CB()
+> -        * barrier() makes sure compiler wont play fool^Waliasing games.
+> -        */
+> -       memmove(&TCP_SKB_CB(skb)->header.h4, IPCB(skb),
+> -               sizeof(struct inet_skb_parm));
+> -       barrier();
+> -
+> -       TCP_SKB_CB(skb)->seq = ntohl(th->seq);
+> -       TCP_SKB_CB(skb)->end_seq = (TCP_SKB_CB(skb)->seq + th->syn + th->fin +
+> -                                   skb->len - th->doff * 4);
+> -       TCP_SKB_CB(skb)->ack_seq = ntohl(th->ack_seq);
+> -       TCP_SKB_CB(skb)->tcp_flags = tcp_flag_byte(th);
+> -       TCP_SKB_CB(skb)->tcp_tw_isn = 0;
+> -       TCP_SKB_CB(skb)->ip_dsfield = ipv4_get_dsfield(iph);
+> -       TCP_SKB_CB(skb)->sacked  = 0;
+> -       TCP_SKB_CB(skb)->has_rxtstamp =
+> -                       skb->tstamp || skb_hwtstamps(skb)->hwtstamp;
+> -
+>  lookup:
+>         sk = __inet_lookup_skb(&tcp_hashinfo, skb, __tcp_hdrlen(th), th->source,
+>                                th->dest, sdif, &refcounted);
+> @@ -1679,14 +1689,19 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>                 sock_hold(sk);
+>                 refcounted = true;
+>                 nsk = NULL;
+> -               if (!tcp_filter(sk, skb))
+> +               if (!tcp_filter(sk, skb)) {
+> +                       th = (const struct tcphdr *)skb->data;
+> +                       iph = ip_hdr(skb);
+> +                       tcp_v4_fill_cb(skb, iph, th);
+>                         nsk = tcp_check_req(sk, skb, req, false);
+> +               }
+>                 if (!nsk) {
+>                         reqsk_put(req);
+>                         goto discard_and_relse;
+>                 }
+>                 if (nsk == sk) {
+>                         reqsk_put(req);
+> +                       tcp_v4_restore_cb(skb);
+>                 } else if (tcp_child_process(sk, nsk, skb)) {
+>                         tcp_v4_send_reset(nsk, skb);
+>                         goto discard_and_relse;
+> @@ -1712,6 +1727,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>                 goto discard_and_relse;
+>         th = (const struct tcphdr *)skb->data;
+>         iph = ip_hdr(skb);
+> +       tcp_v4_fill_cb(skb, iph, th);
+>
+>         skb->dev = NULL;
+>
+> @@ -1742,6 +1758,8 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>         if (!xfrm4_policy_check(NULL, XFRM_POLICY_IN, skb))
+>                 goto discard_it;
+>
+> +       tcp_v4_fill_cb(skb, iph, th);
+> +
+>         if (tcp_checksum_complete(skb)) {
+>  csum_error:
+>                 __TCP_INC_STATS(net, TCP_MIB_CSUMERRORS);
+> @@ -1768,6 +1786,8 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>                 goto discard_it;
+>         }
+>
+> +       tcp_v4_fill_cb(skb, iph, th);
+> +
+>         if (tcp_checksum_complete(skb)) {
+>                 inet_twsk_put(inet_twsk(sk));
+>                 goto csum_error;
+> @@ -1784,6 +1804,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>                 if (sk2) {
+>                         inet_twsk_deschedule_put(inet_twsk(sk));
+>                         sk = sk2;
+> +                       tcp_v4_restore_cb(skb);
+>                         refcounted = false;
+>                         goto process;
+>                 }
+> diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+> index 6bb98c93edfe2ed2f16fe5229605f8108cfc7f9a..1f04ec0e4a7aa2c11b8ee27cbdd4067b5bcf32e5 100644
+> --- a/net/ipv6/tcp_ipv6.c
+> +++ b/net/ipv6/tcp_ipv6.c
+> @@ -1454,7 +1454,6 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>                 struct sock *nsk;
+>
+>                 sk = req->rsk_listener;
+> -               tcp_v6_fill_cb(skb, hdr, th);
+>                 if (tcp_v6_inbound_md5_hash(sk, skb)) {
+>                         sk_drops_add(sk, skb);
+>                         reqsk_put(req);
+> @@ -1467,8 +1466,12 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>                 sock_hold(sk);
+>                 refcounted = true;
+>                 nsk = NULL;
+> -               if (!tcp_filter(sk, skb))
+> +               if (!tcp_filter(sk, skb)) {
+> +                       th = (const struct tcphdr *)skb->data;
+> +                       hdr = ipv6_hdr(skb);
+> +                       tcp_v6_fill_cb(skb, hdr, th);
+>                         nsk = tcp_check_req(sk, skb, req, false);
+> +               }
+>                 if (!nsk) {
+>                         reqsk_put(req);
+>                         goto discard_and_relse;
+> @@ -1492,8 +1495,6 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>         if (!xfrm6_policy_check(sk, XFRM_POLICY_IN, skb))
+>                 goto discard_and_relse;
+>
+> -       tcp_v6_fill_cb(skb, hdr, th);
+> -
+>         if (tcp_v6_inbound_md5_hash(sk, skb))
+>                 goto discard_and_relse;
+>
+> @@ -1501,6 +1502,7 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>                 goto discard_and_relse;
+>         th = (const struct tcphdr *)skb->data;
+>         hdr = ipv6_hdr(skb);
+> +       tcp_v6_fill_cb(skb, hdr, th);
+>
+>         skb->dev = NULL;
+>
+> @@ -1590,7 +1592,6 @@ static int tcp_v6_rcv(struct sk_buff *skb)
+>                 tcp_v6_timewait_ack(sk, skb);
+>                 break;
+>         case TCP_TW_RST:
+> -               tcp_v6_restore_cb(skb);
+>                 tcp_v6_send_reset(sk, skb);
+>                 inet_twsk_deschedule_put(inet_twsk(sk));
+>                 goto discard_it;
+>
+>
 >
 
-Yes, however in that same response by Linus it was suggested to drop
-the sysctl completely, so next iterations will not have this code.
 
-Thank you for the review!
 
 -- 
-tixxdz
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
