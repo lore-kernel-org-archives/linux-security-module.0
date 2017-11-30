@@ -1,74 +1,27 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 29 Nov 2017 18:28:25 -0800
-Subject: [RFC 0/3] Safe, dynamically (un)loadable LSMs
-In-Reply-To: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
-Message-ID: <8c8dd781-d30a-7105-011d-127cf5188426@schaufler-ca.com>
+Date: Wed, 29 Nov 2017 19:16:17 -0800
+Subject: [BUG] kernel stack corruption during/after Netlabel error
+In-Reply-To: <alpine.LFD.2.20.1711301130330.17322@localhost>
+References: <alpine.LFD.2.20.1711292113350.7808@localhost>
+	<4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
+	<alpine.LFD.2.20.1711301130330.17322@localhost>
+Message-ID: <ae2e71e4-c366-5a1e-9fd6-4de944f4a158@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 11/26/2017 2:15 PM, Sargun Dhillon wrote:
-> This patchset introduces safe dynamic LSM support. It does this via
-> SRCU-protected security hooks. It also EXPORT_SYMBOL_GPLs the symbols
-> required to perform runtime loading, and unloading. The patchset is
-> meant to introduce as little overhead as possible when not used.
-> Additionally, the functionality is disabled by default.
 
-Can you explain the value in being able to unload a security module?
-I can see having a throttle on an active module, but what do you gain
-by being able to unload it? Can it possibly be worth the inevitable
-memory leaks and almost certain dangling pointers? The restrictions on
-a security module that can work safely in this environment are significant.
-I don't see any point in unloading a module that could work with those
-restrictions. The overhead of making it unloadable is likely to exceed
-the overhead of running it.
+On 11/29/2017 4:31 PM, James Morris wrote:
+> On Wed, 29 Nov 2017, Casey Schaufler wrote:
+>
+>> I see that there is a proposed fix later in the thread, but I don't see
+>> the patch. Could you send it to me, so I can try it on my problem?
+> Forwarded off-list.
+
+The patch does fix the problem I was seeing in Smack.
 
 >
-> The SRCU was made safe to call from an interrupt context in the patch
-> "srcu: Allow use of Classic SRCU from both process and interrupt context"
-> (1123a6041654e8f889014659593bad4168e542c2) by Paolo Bonzini. Therefore
-> this mechanism is safe to use for traversal of the callback list,
-> even when a hook is called from the interrupt context.
+> Interestingly, I didn't see the KASAN output email from Stephen here.
 >
-> Currently, this maintains an entirely seperate mechanism to attach hooks
-> because the hooks are behind managed static_keys to prevent overhead.
-> This is also done so sealable memory support could be added at a later
-> point. The callbacks currently include a percpu_counter, but that could
-> sit outside of the struct itself. This may also have a benefit that these
-> counters, could have __cacheline_aligned_in_smp. Although, in my testing
-> I was unable to find much performance delta with percpu_counters that
-> were not aligned.
->
-> It includes an example LSM that prevents specific time travel.
-
-Time based controls (e.g. you can't execute files in /usr/games between
-8:00 and 17:00) would be cool. I suggested them in the 1980's, but
-no one has gotten around to implementing them. :)
-
->
-> Sargun Dhillon (3):
->   security: Add safe, dynamic (runtime-loadable) hook support
->   LSM: Add statistics about the invocation of dynamic hooks
->   LSM: Add an example sample dynamic LSM
->
->  include/linux/lsm_hooks.h | 254 +++++++++++++++++++++++++++++++++++++
->  samples/Kconfig           |   6 +
->  samples/Makefile          |   2 +-
->  samples/lsm/Makefile      |   4 +
->  samples/lsm/lsm_example.c |  46 +++++++
->  security/Kconfig          |  16 +++
->  security/Makefile         |   2 +
->  security/dynamic.c        | 316 ++++++++++++++++++++++++++++++++++++++++++++++
->  security/dynamic.h        |  33 +++++
->  security/dynamicfs.c      | 118 +++++++++++++++++
->  security/inode.c          |   2 +
->  security/security.c       |  66 +++++++++-
->  12 files changed, 863 insertions(+), 2 deletions(-)
->  create mode 100644 samples/lsm/Makefile
->  create mode 100644 samples/lsm/lsm_example.c
->  create mode 100644 security/dynamic.c
->  create mode 100644 security/dynamic.h
->  create mode 100644 security/dynamicfs.c
 >
 
 --
