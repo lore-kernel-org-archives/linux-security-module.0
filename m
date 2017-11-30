@@ -1,27 +1,43 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Thu, 30 Nov 2017 11:31:21 +1100 (AEDT)
-Subject: [BUG] kernel stack corruption during/after Netlabel error
-In-Reply-To: <4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
-References: <alpine.LFD.2.20.1711292113350.7808@localhost>
-	<4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
-Message-ID: <alpine.LFD.2.20.1711301130330.17322@localhost>
+From: tytso@mit.edu (Theodore Ts'o)
+Date: Wed, 29 Nov 2017 19:35:31 -0500
+Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
+In-Reply-To: <20171129172852.GA14545@mail.hallyn.com>
+References: <20171128211659.GP729@wotan.suse.de>
+	<CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
+	<20171129134612.72ccb53d@alans-desktop>
+	<20171129.095014.1909386937628805919.davem@davemloft.net>
+	<20171129155406.i2lyclquj75lvtn4@thunk.org>
+	<20171129172852.GA14545@mail.hallyn.com>
+Message-ID: <20171130003531.gwpl22bxmweifjz2@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 29 Nov 2017, Casey Schaufler wrote:
+On Wed, Nov 29, 2017 at 11:28:52AM -0600, Serge E. Hallyn wrote:
+> 
+> Just to be clear, module loading requires - and must always continue to
+> require - CAP_SYS_MODULE against the initial user namespace.  Containers
+> in user namespaces do not have that.
+> 
+> I don't believe anyone has ever claimed that containers which are not in
+> a user namespace are in any way secure.
 
-> I see that there is a proposed fix later in the thread, but I don't see
-> the patch. Could you send it to me, so I can try it on my problem?
+Unless the container performs some action which causes the kernel to
+call request_module(), which then loads some kernel module,
+potentially containing cr*p unmaintained code which was included when
+the distro compiled the world, into the host kernel.
 
-Forwarded off-list.
+This is an attack vector that doesn't exist if you are using VM's.
+And in general, the attack surface of the entire Linux
+kernel<->userspace API is far larger than that which is exposed by the
+guest<->host interface.
 
-Interestingly, I didn't see the KASAN output email from Stephen here.
+For that reason, containers are *far* more insecure than VM's, since
+once the attacker gets root on the guest VM, they then have to attack
+the hypervisor interface.  And if you compare the attack surface of
+the two, it's pretty clear which is larger, and it's not the
+hypervisor interface.
 
-
--- 
-James Morris
-<james.l.morris@oracle.com>
-
+						- Ted
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
