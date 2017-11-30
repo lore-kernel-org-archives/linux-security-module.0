@@ -1,70 +1,61 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 29 Nov 2017 16:06:48 -0800
-Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <CA+55aFyobrT7SkFC+PVX0USvRicVt_UPH_nkc-G9Bi8yrCCgPw@mail.gmail.com>
-References: <20171129134612.72ccb53d@alans-desktop>
-	<20171129.095014.1909386937628805919.davem@davemloft.net>
-	<20171129155406.i2lyclquj75lvtn4@thunk.org>
-	<20171129.105816.1108278026315471171.davem@davemloft.net>
-	<CA+55aFyobrT7SkFC+PVX0USvRicVt_UPH_nkc-G9Bi8yrCCgPw@mail.gmail.com>
-Message-ID: <CAGXu5jL+qmekLedFxRC5O7jFdtZUh0NcnLSU7x7mC+zNORTCeg@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 29 Nov 2017 16:22:41 -0800
+Subject: [BUG] kernel stack corruption during/after Netlabel error
+In-Reply-To: <alpine.LFD.2.20.1711292113350.7808@localhost>
+References: <alpine.LFD.2.20.1711292113350.7808@localhost>
+Message-ID: <4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 29, 2017 at 2:45 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Wed, Nov 29, 2017 at 7:58 AM, David Miller <davem@davemloft.net> wrote:
->>
->> We're talking about making sure that loading "ppp.ko" really gets
->> ppp.ko rather than some_other_module.ko renamed to ppp.ko via some
->> other mechanism.
->>
->> Both modules have legitimate signatures so the kernel will happily
->> load both.
+On 11/29/2017 2:26 AM, James Morris wrote:
+> I'm seeing a kernel stack corruption bug (detected via gcc) when running 
+> the SELinux testsuite on a 4.15-rc1 kernel, in the 2nd inet_socket test:
 >
-> Yes. We could make the module name be part of the signing process, but
-> one problem with that is that at module loading time we don't actually
-> have the filename any more.
-
-FWIW, I added this (well, KBUILD_MODNAME) to the module info just recently:
-
-3e2e857f9c3a ("module: Add module name to modinfo")
-
-> User space opens the file and then just feeds the data to the kernel.
-> So if you fooled modprobe into feeding the wrong module, that's it.
+> https://github.com/SELinuxProject/selinux-testsuite/blob/master/tests/inet_socket/test
 >
-> And yes, we can obviously embed the module name into the ELF headers
-> (that is all part of the signed payload), but the module name doesn't
-> actually necessarily match what we originally asked for.
+>   # Verify that unauthorized client cannot communicate with the server.
+>   $result = system
+>   "runcon -t test_inet_bad_client_t -- $basedir/client stream 127.0.0.1 65535 2>&1";
 >
-> Why? Module aliases and module dependencies - which is why we have
-> that user mode side at all. When we do "request_module(XYZ)" we don't
-> necessarily know what the dependencies are, so we expect modprobe to
-> just load the right modules.
+> This correctlly causes an access control error in the Netlabel code, and 
+> the bug seems to be triggered during the ICMP send:
 >
-> So if modprobe then loads some other module (dccp or whatever), the
-> kernel has no real way to know "oh, that wasn't part of the dependency
-> chain for the module we aked for".
+> ...<SNIP>...
 >
-> Now, if modprobe is taught to check that the filename of the module
-> that it opens actually matches the metadata in the ELF sections, that
-> would solve it, but it's out of the kernels hands..
+> This is mostly reliable, and I'm only seeing it on bare metal (not in a 
+> virtualbox vm).
+>
+> The SELinux skb parse error at the start only sometimes appears, and 
+> looking at the code, I suspect some kind of memory corruption being the 
+> cause at that point (basic packet header checks).
+>
+> I bisected the bug down to the following change:
+>
+> commit bffa72cf7f9df842f0016ba03586039296b4caaf
+> Author: Eric Dumazet <edumazet@google.com>
+> Date:   Tue Sep 19 05:14:24 2017 -0700
+>
+>     net: sk_buff rbnode reorg
+>     ...
+>
+>
+> Anyone else able to reproduce this, or have any ideas on what's happening?
 
-Right, the aliases are why these kinds of renaming shenanigans don't
-mean anything: it's not distinguishable from whatever modprobe.conf
-ultimately tells modprobe to do.
+I have also bisected a problem to this change. I do not have a trace
+because the problem manifests as a hard system hang without a trace
+being presented. The issue arises when Smack attempts to relabel a TCP
+socket using netlbl_sock_setattr().
 
-If you can't trust your filesystem to hold your kernel modules
-correctly, you have much bigger problems. (And yes, capabilities are a
-problem here, since there are many paths to full root from individual
-capabilities, but that's a known issue that is much larger than
-tricking modprobe.)
+I see that there is a proposed fix later in the thread, but I don't see
+the patch. Could you send it to me, so I can try it on my problem?
 
--Kees
+Thank you.
 
--- 
-Kees Cook
-Pixel Security
+>
+>
+>
+> - James
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
