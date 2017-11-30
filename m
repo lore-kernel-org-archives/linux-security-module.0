@@ -1,126 +1,115 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Thu, 30 Nov 2017 11:56:05 +0100
-Subject: [RFC][PATCH v2 4/9] ima: introduce ima_mk_null_file()
+Date: Thu, 30 Nov 2017 11:56:06 +0100
+Subject: [RFC][PATCH v2 5/9] ima: measure/appraise/audit inherited file
+	descriptors
 In-Reply-To: <20171130105610.15761-1-roberto.sassu@huawei.com>
 References: <20171130105610.15761-1-roberto.sassu@huawei.com>
-Message-ID: <20171130105610.15761-5-roberto.sassu@huawei.com>
+Message-ID: <20171130105610.15761-6-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch introduces ima_mk_null_file(), which creates a file descriptor
-connected to the null device. File descriptors inherited by child processes
-will be replaced with the new file descriptor if the appraisal status is
-not valid and appraisal is in enforcing mode.
+IMA measures accessed files when the open() system call is executed. File
+descriptors inherited during fork() can be used by another application, if
+the child process invoked execve(). If credentials changed, it is possible
+that opened files need to be measured/appraised/audited.
+
+This patch introduces the function flush_unauthorized_files(), which
+calls process_measurement() for each inherited file descriptors, and passes
+to that function the new credentials of the process. If the appraisal
+status is not valid, IMA prevents the process from using the inherited file
+descriptor.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima.h    |  1 +
- security/integrity/ima/ima_fs.c | 57 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
+ security/integrity/ima/ima_main.c | 61 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 59 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 2bdf10417125..f2cdd528f8ff 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -57,6 +57,7 @@ extern int ima_initialized;
- extern int ima_used_chip;
- extern int ima_hash_algo;
- extern int ima_appraise;
-+extern struct path ima_null;
- 
- /* IMA event related data */
- struct ima_event_data {
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index fa540c0469da..15bde1042afd 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -23,6 +23,10 @@
- #include <linux/rcupdate.h>
- #include <linux/parser.h>
- #include <linux/vmalloc.h>
-+#include <linux/mount.h>
-+#include <linux/namei.h>
-+#include <uapi/linux/major.h>
-+#include <uapi/linux/magic.h>
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index fb144177a783..a12f8a148e5e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/xattr.h>
+ #include <linux/ima.h>
++#include <linux/fdtable.h>
  
  #include "ima.h"
  
-@@ -438,6 +442,52 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+@@ -279,6 +280,57 @@ static int process_measurement(struct file *file, const struct cred *cred,
  	return 0;
  }
  
-+/* taken from security/apparmor/apparmorfs.c */
-+#define NULL_FILE_NAME ".null"
-+struct path ima_null;
-+
-+static int ima_mk_null_file(struct dentry *parent)
++static int match_file(const void *p, struct file *file, unsigned int fd)
 +{
-+	struct vfsmount *mount = NULL;
-+	struct dentry *dentry;
-+	struct inode *inode;
-+	int count = 0;
-+	int error = simple_pin_fs(parent->d_sb->s_type, &mount, &count);
-+
-+	if (error)
-+		return error;
-+
-+	inode_lock(d_inode(parent));
-+	dentry = lookup_one_len(NULL_FILE_NAME, parent, strlen(NULL_FILE_NAME));
-+	if (IS_ERR(dentry)) {
-+		error = PTR_ERR(dentry);
-+		goto out;
-+	}
-+	inode = new_inode(parent->d_inode->i_sb);
-+	if (!inode) {
-+		error = -ENOMEM;
-+		goto out1;
-+	}
-+
-+	inode->i_ino = get_next_ino();
-+	inode->i_mode = S_IFCHR | S_IRUGO | S_IWUGO;
-+	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-+	init_special_inode(inode, S_IFCHR | S_IRUGO | S_IWUGO,
-+			   MKDEV(MEM_MAJOR, 3));
-+	d_instantiate(dentry, inode);
-+	ima_null.dentry = dget(dentry);
-+	ima_null.mnt = mntget(mount);
-+
-+	error = 0;
-+
-+out1:
-+	dput(dentry);
-+out:
-+	inode_unlock(d_inode(parent));
-+	simple_release_fs(&mount, &count);
-+	return error;
++	*((struct file **) p) = file;
++	return fd + 1;
 +}
 +
- static const struct file_operations ima_measure_policy_ops = {
- 	.open = ima_open_policy,
- 	.write = ima_write_policy,
-@@ -448,6 +498,8 @@ static const struct file_operations ima_measure_policy_ops = {
- 
- int __init ima_fs_init(void)
- {
-+	int error;
++static int file_mode_to_mask(struct file *file)
++{
++	int mask = 0;
 +
- 	ima_dir = securityfs_create_dir("ima", NULL);
- 	if (IS_ERR(ima_dir))
- 		return -1;
-@@ -485,8 +537,13 @@ int __init ima_fs_init(void)
- 	if (IS_ERR(ima_policy))
- 		goto out;
- 
-+	error = ima_mk_null_file(ima_dir);
-+	if (error)
-+		goto out;
++	if (file->f_mode & FMODE_READ)
++		mask |= MAY_READ;
++	if (file->f_mode & FMODE_WRITE)
++		mask |= MAY_WRITE;
++	if (file->f_mode & FMODE_EXEC)
++		mask |= MAY_EXEC;
 +
- 	return 0;
- out:
-+	securityfs_remove(ima_null.dentry);
- 	securityfs_remove(violations);
- 	securityfs_remove(runtime_measurements_count);
- 	securityfs_remove(ascii_runtime_measurements);
++	return mask;
++}
++
++/* derived from security/selinux/hooks.c */
++static inline void flush_unauthorized_files(const struct cred *cred,
++					    struct files_struct *files)
++{
++	struct file *devnull = NULL;
++	struct file *file;
++	int result, mask;
++
++	unsigned int n;
++
++	/* Revalidate access to inherited open files. */
++	n = iterate_fd(files, 0, match_file, &file);
++	if (!n) /* none found? */
++		return;
++
++	devnull = dentry_open(&ima_null, O_RDWR, cred);
++	if (IS_ERR(devnull))
++		devnull = NULL;
++	/* replace all the matching ones with this */
++	do {
++		mask = file_mode_to_mask(file);
++		result = process_measurement(file, cred, NULL, 0,
++				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
++				   MAY_APPEND), FILE_CHECK, 0);
++		if (result < 0)
++			replace_fd(n - 1, devnull, 0);
++	} while ((n = iterate_fd(files, n, match_file, &file)) != 0);
++	if (devnull)
++		fput(devnull);
++}
++
+ /**
+  * ima_file_mmap - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured (May be NULL)
+@@ -319,8 +371,13 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ 				  MAY_EXEC, BPRM_CHECK, 0);
+ 	if (ret)
+ 		return ret;
+-	return process_measurement(bprm->file, bprm->cred, NULL, 0,
+-				   MAY_EXEC, CREDS_CHECK, 0);
++	ret = process_measurement(bprm->file, bprm->cred, NULL, 0,
++				  MAY_EXEC, CREDS_CHECK, 0);
++	if (ret)
++		return ret;
++
++	flush_unauthorized_files(bprm->cred, current->files);
++	return 0;
+ }
+ 
+ /**
 -- 
 2.11.0
 
