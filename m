@@ -1,99 +1,118 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 30 Nov 2017 10:16:26 -0800
-Subject: [BUG] kernel stack corruption during/after Netlabel error
-In-Reply-To: <1512064629.19682.21.camel@gmail.com>
-References: <alpine.LFD.2.20.1711292113350.7808@localhost>
-	<4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
-	<alpine.LFD.2.20.1711301130330.17322@localhost>
-	<ae2e71e4-c366-5a1e-9fd6-4de944f4a158@schaufler-ca.com>
-	<1512039044.19682.12.camel@gmail.com>
-	<b92c6b3d-5c7e-9859-4bb2-b1a0aa64d86b@gmail.com>
-	<d29937fd-dd04-8568-f89c-505ff725761a@gmail.com>
-	<1512064629.19682.21.camel@gmail.com>
-Message-ID: <1ea449e7-cc37-621d-4c77-6936b567b8b4@schaufler-ca.com>
+From: azhar.shaikh@intel.com (Shaikh, Azhar)
+Date: Thu, 30 Nov 2017 18:37:23 +0000
+Subject: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
+In-Reply-To: <20171130163516.uazhkglg7yfzpuvo@linux.intel.com>
+References: <1511980791-125269-1-git-send-email-azhar.shaikh@intel.com>
+	<20171130163516.uazhkglg7yfzpuvo@linux.intel.com>
+Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582897061B@ORSMSX109.amr.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 11/30/2017 9:57 AM, Eric Dumazet wrote:
-> On Thu, 2017-11-30 at 10:30 -0700, David Ahern wrote:
->> On 11/30/17 8:44 AM, David Ahern wrote:
->>> On 11/30/17 3:50 AM, Eric Dumazet wrote:
->>>> @@ -1631,24 +1659,6 @@ int tcp_v4_rcv(struct sk_buff *skb)
->>>> ?
->>>> ?	th = (const struct tcphdr *)skb->data;
->>>> ?	iph = ip_hdr(skb);
->>>> -	/* This is tricky : We move IPCB at its correct location
->>>> into TCP_SKB_CB()
->>>> -	?* barrier() makes sure compiler wont play
->>>> fool^Waliasing games.
->>>> -	?*/
->>>> -	memmove(&TCP_SKB_CB(skb)->header.h4, IPCB(skb),
->>>> -		sizeof(struct inet_skb_parm));
->>>> -	barrier();
->>>> -
->>>> -	TCP_SKB_CB(skb)->seq = ntohl(th->seq);
->>>> -	TCP_SKB_CB(skb)->end_seq = (TCP_SKB_CB(skb)->seq + th-
->>>>> syn + th->fin +
->>>> -				????skb->len - th->doff * 4);
->>>> -	TCP_SKB_CB(skb)->ack_seq = ntohl(th->ack_seq);
->>>> -	TCP_SKB_CB(skb)->tcp_flags = tcp_flag_byte(th);
->>>> -	TCP_SKB_CB(skb)->tcp_tw_isn = 0;
->>>> -	TCP_SKB_CB(skb)->ip_dsfield = ipv4_get_dsfield(iph);
->>>> -	TCP_SKB_CB(skb)->sacked	?= 0;
->>>> -	TCP_SKB_CB(skb)->has_rxtstamp =
->>>> -			skb->tstamp || skb_hwtstamps(skb)-
->>>>> hwtstamp;
->>>> -
->>>> ?lookup:
->>>> ?	sk = __inet_lookup_skb(&tcp_hashinfo, skb,
->>>> __tcp_hdrlen(th), th->source,
->>>> ?			???????th->dest, sdif, &refcounted);
->>> I believe moving the above is going to affect lookups with VRF. Let
->>> me
->>> take a look before this gets committed.
->>>
->> Eric:
+
+
+>-----Original Message-----
+>From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
+>Sent: Thursday, November 30, 2017 8:35 AM
+>To: Shaikh, Azhar <azhar.shaikh@intel.com>
+>Cc: jgunthorpe at obsidianresearch.com; peterhuewe at gmx.de; linux-security-
+>module at vger.kernel.org; linux-kernel at vger.kernel.org; tpmdd-
+>devel at lists.sourceforge.net
+>Subject: Re: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
+>
+>On Wed, Nov 29, 2017 at 10:39:49AM -0800, Azhar Shaikh wrote:
+>> Changes from v1:
+>> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
+>transmit_cmd()"
+>>   - Add NULL checks before calling clk_toggle callback
+>>   - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
+>>   - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+>>     from tpm_tis_clkrun_toggle(). Make them static again.
 >>
->> Can you add this to the patch? Fixes socket lookups with VRF which
->> stashes a flag in the cb.
-
-I've done my testing and it works both ways for Smack.
-
-
+>> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>>   - This is a new patch in this series as per suggestion from Jason.
+>>   - Is the current implementation ok or I should move the code in
+>tpm_tis_pnp_remove()
+>>     and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the
+>unmapping
+>>     can be done in one place, instead of 3 different places now. Also the
+>unmapping
+>>     in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
+>>     tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
 >>
->> Thanks,
+>> Changes from v2:
+>> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
+>transmit_cmd()"
+>>   - No changes
 >>
->> diff --git a/include/net/tcp.h b/include/net/tcp.h
->> index 4e09398009c1..6c020015d556 100644
->> --- a/include/net/tcp.h
->> +++ b/include/net/tcp.h
->> @@ -849,7 +849,7 @@ static inline bool inet_exact_dif_match(struct
->> net
->> *net, struct sk_buff *skb)
->> ?{
->> ?#if IS_ENABLED(CONFIG_NET_L3_MASTER_DEV)
->> ????????if (!net->ipv4.sysctl_tcp_l3mdev_accept &&
->> -???????????skb && ipv4_l3mdev_skb(TCP_SKB_CB(skb)->header.h4.flags))
->> +???????????skb && ipv4_l3mdev_skb(IPCB(skb)->flags))
->> ????????????????return true;
->> ?#endif
->> ????????return false;
+>> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>>   - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within
+>the function
+>>     itself. Also removed the #ifdef CONFIG_X86 from all other places
+>> around is_bsw()
+>>
+>> Changes from v3:
+>> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
+>transmit_cmd()"
+>>   - Change function name from clk_toggle to clk_enable
+>>   - Update the commit message.
+>>
+>> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>>   - No changes
+>>
+>> Changes from v4:
+>> - The numbering of patches is now interchanged.
+>>
+>> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>>   - Had to move ilb_base_addr to tpm_tis_data, from tpm_tis_tcg_phy.
+>>     Since the ioremapping of ilb_base_addr had to be done before any TPM
+>access,
+>>     hence moved the variable to tpm_tis_data.
+>>   - Also move the ioremapping of ilb_base_addr from tpm_tis_init() to
+>>     tpm_tis_core_init() i.e. before any TPM access is done.
+>>   - Rename marco LPC_CNTRL_REG_OFFSET to LPC_CNTRL_OFFSET
+>>   - Update the commit message.
+>>
+>> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of
+>transmit_cmd()"
+>>   - Remove the functions tpm_platform_begin_xfer() and
+>tpm_platform_end_xfer()
+>>   - Move the code from these functions to tpm_tis_clkrun_enable().
+>>
+>> Changes from v5:
+>> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>>   - No changes
+>>
+>> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of
+>transmit_cmd()"
+>>   - Update the commit message.
+>>
+>> Azhar Shaikh (2):
+>>   tpm_tis: Move ilb_base_addr to tpm_tis_data
+>>   tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+>>
+>>  drivers/char/tpm/tpm-interface.c |   6 ++
+>>  drivers/char/tpm/tpm_tis.c       | 121 ++++++---------------------------------
+>>  drivers/char/tpm/tpm_tis_core.c  | 111
+>> +++++++++++++++++++++++++++++++++--
+>>  drivers/char/tpm/tpm_tis_core.h  |  17 ++++++
+>>  include/linux/tpm.h              |   1 +
+>>  5 files changed, 147 insertions(+), 109 deletions(-)
+>>
+>> --
+>> 1.9.1
 >
-> I wonder if this should not be in a separate patch ?
->
-> Bug was added in 971f10eca186cab238c49daa91f703c5a001b0b1 ("tcp: better
-> TCP_SKB_CB layout to reduce cache line misses")  in linux 3.18
->
-> While VRF was added later.
->
-> If you agree, I will prepare a patch series, with different Fixes tag
-> so that David can decide which path needs to be backported into each
-> stable version.
->
-> Thanks.
->
+>I'll go through this next week and test with SPI based TPM that it doesn't break
+>anything.
 >
 
+Sure!
+
+Thank you!
+
+>/Jarkko
+
+Regards,
+Azhar Shaikh
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
