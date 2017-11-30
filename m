@@ -1,62 +1,70 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Thu, 30 Nov 2017 11:17:51 -0600
-Subject: [PATCH v5 next 1/5] modules:capabilities: add request_module_cap()
-In-Reply-To: <20171130003531.gwpl22bxmweifjz2@thunk.org>
-References: <20171128211659.GP729@wotan.suse.de>
-	<CAGXu5j+JaFCo+pZKvet==Kh7GQgNXi30P50SMF4cpOGoUw-8ug@mail.gmail.com>
-	<20171129134612.72ccb53d@alans-desktop>
-	<20171129.095014.1909386937628805919.davem@davemloft.net>
-	<20171129155406.i2lyclquj75lvtn4@thunk.org>
-	<20171129172852.GA14545@mail.hallyn.com>
-	<20171130003531.gwpl22bxmweifjz2@thunk.org>
-Message-ID: <20171130171751.GA5521@mail.hallyn.com>
+From: dsahern@gmail.com (David Ahern)
+Date: Thu, 30 Nov 2017 10:30:51 -0700
+Subject: [BUG] kernel stack corruption during/after Netlabel error
+In-Reply-To: <b92c6b3d-5c7e-9859-4bb2-b1a0aa64d86b@gmail.com>
+References: <alpine.LFD.2.20.1711292113350.7808@localhost>
+	<4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
+	<alpine.LFD.2.20.1711301130330.17322@localhost>
+	<ae2e71e4-c366-5a1e-9fd6-4de944f4a158@schaufler-ca.com>
+	<1512039044.19682.12.camel@gmail.com>
+	<b92c6b3d-5c7e-9859-4bb2-b1a0aa64d86b@gmail.com>
+Message-ID: <d29937fd-dd04-8568-f89c-505ff725761a@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Nov 29, 2017 at 07:35:31PM -0500, Theodore Ts'o wrote:
-> On Wed, Nov 29, 2017 at 11:28:52AM -0600, Serge E. Hallyn wrote:
-> > 
-> > Just to be clear, module loading requires - and must always continue to
-> > require - CAP_SYS_MODULE against the initial user namespace.  Containers
-> > in user namespaces do not have that.
-> > 
-> > I don't believe anyone has ever claimed that containers which are not in
-> > a user namespace are in any way secure.
+On 11/30/17 8:44 AM, David Ahern wrote:
+> On 11/30/17 3:50 AM, Eric Dumazet wrote:
+>> @@ -1631,24 +1659,6 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>>  
+>>  	th = (const struct tcphdr *)skb->data;
+>>  	iph = ip_hdr(skb);
+>> -	/* This is tricky : We move IPCB at its correct location into TCP_SKB_CB()
+>> -	 * barrier() makes sure compiler wont play fool^Waliasing games.
+>> -	 */
+>> -	memmove(&TCP_SKB_CB(skb)->header.h4, IPCB(skb),
+>> -		sizeof(struct inet_skb_parm));
+>> -	barrier();
+>> -
+>> -	TCP_SKB_CB(skb)->seq = ntohl(th->seq);
+>> -	TCP_SKB_CB(skb)->end_seq = (TCP_SKB_CB(skb)->seq + th->syn + th->fin +
+>> -				    skb->len - th->doff * 4);
+>> -	TCP_SKB_CB(skb)->ack_seq = ntohl(th->ack_seq);
+>> -	TCP_SKB_CB(skb)->tcp_flags = tcp_flag_byte(th);
+>> -	TCP_SKB_CB(skb)->tcp_tw_isn = 0;
+>> -	TCP_SKB_CB(skb)->ip_dsfield = ipv4_get_dsfield(iph);
+>> -	TCP_SKB_CB(skb)->sacked	 = 0;
+>> -	TCP_SKB_CB(skb)->has_rxtstamp =
+>> -			skb->tstamp || skb_hwtstamps(skb)->hwtstamp;
+>> -
+>>  lookup:
+>>  	sk = __inet_lookup_skb(&tcp_hashinfo, skb, __tcp_hdrlen(th), th->source,
+>>  			       th->dest, sdif, &refcounted);
 > 
-> Unless the container performs some action which causes the kernel to
-> call request_module(), which then loads some kernel module,
-
-A local unprivileged user can do the same thing.  I reject the popular
-notion that linux is a single user operating system.  More interesting
-are the (very real) cases where root in a container can do something
-which a local unprivileged user could not do.  Since a local unprivileged
-user can always create a new namespace, *those* constitute a real and
-interesting problem.
-
-> potentially containing cr*p unmaintained code which was included when
-> the distro compiled the world, into the host kernel.
-
-> This is an attack vector that doesn't exist if you are using VM's.
-
-Until the vm tenant uses a trivial vm escape.
-
-> And in general, the attack surface of the entire Linux
-> kernel<->userspace API is far larger than that which is exposed by the
-> guest<->host interface.
+> I believe moving the above is going to affect lookups with VRF. Let me
+> take a look before this gets committed.
 > 
-> For that reason, containers are *far* more insecure than VM's, since
-> once the attacker gets root on the guest VM, they then have to attack
-> the hypervisor interface.  And if you compare the attack surface of
-> the two, it's pretty clear which is larger, and it's not the
-> hypervisor interface.
 
-Any time anyone spends a day looking at either the black hole that is
-the hardware emulators or the xen and kvm code itself they walk away
-with a set of cve's.  It *should* be more secure, it's not.  You're
-telling me your house is safe because you put up a no tresspassing
-sign.
+Eric:
 
--serge
+Can you add this to the patch? Fixes socket lookups with VRF which
+stashes a flag in the cb.
+
+Thanks,
+
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 4e09398009c1..6c020015d556 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -849,7 +849,7 @@ static inline bool inet_exact_dif_match(struct net
+*net, struct sk_buff *skb)
+ {
+ #if IS_ENABLED(CONFIG_NET_L3_MASTER_DEV)
+        if (!net->ipv4.sysctl_tcp_l3mdev_accept &&
+-           skb && ipv4_l3mdev_skb(TCP_SKB_CB(skb)->header.h4.flags))
++           skb && ipv4_l3mdev_skb(IPCB(skb)->flags))
+                return true;
+ #endif
+        return false;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
