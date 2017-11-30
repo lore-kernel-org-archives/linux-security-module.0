@@ -1,131 +1,128 @@
 From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Thu, 30 Nov 2017 11:56:08 +0100
-Subject: [RFC][PATCH v2 7/9] ima: enforce the Biba low watermark for objects
-	policy on appraised files
+Date: Thu, 30 Nov 2017 11:56:09 +0100
+Subject: [RFC][PATCH v2 8/9] ima: introduce policy action try_appraise
 In-Reply-To: <20171130105610.15761-1-roberto.sassu@huawei.com>
 References: <20171130105610.15761-1-roberto.sassu@huawei.com>
-Message-ID: <20171130105610.15761-8-roberto.sassu@huawei.com>
+Message-ID: <20171130105610.15761-9-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-With this patch, IMA enforces a less restrictive integrity policy on
-appraised files. Instead of preventing processes outside the TCB from
-writing appraised files, IMA removes security.ima and then allows the
-operation. TCB processes won't be able to access demoted files anymore.
+According to the Biba integrity models, TCB processes won't be corrupted by
+writing non-TCB objects.
 
-Removing security.ima allows attacks to TCB to be detected by remote
-verifiers even if appraisal is not in enforcing mode. If an integrity
-model is selected, only files with a valid appraisal status will be
-excluded from measurement.
+Introduce the new policy action try_appraise, so that TCB processes are
+allowed to write files regardless of the appraisal status. security.ima
+will not be updated. An IMA policy for open() that satisfies the
+requirements of the Biba integrity models could be:
+
+appraise uid=0 mask=^MAY_EXEC (check read up)
+appraise euid=0 mask=^MAY_EXEC (check read up)
+appraise uid=0 mask=^MAY_READ (check read up)
+appraise euid=0 mask=^MAY_READ (check read up)
+try_appraise uid=0 mask=^MAY_WRITE (update security.ima if possible)
+try_appraise euid=0 mask=^MAY_WRITE (update security.ima if possible)
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  2 +-
- security/integrity/ima/ima.h                    |  3 ++-
- security/integrity/ima/ima_appraise.c           | 29 ++++++++++++++++++++++---
- 3 files changed, 29 insertions(+), 5 deletions(-)
+ security/integrity/ima/ima_main.c   |  4 +++-
+ security/integrity/ima/ima_policy.c | 16 +++++++++++++---
+ security/integrity/integrity.h      |  1 +
+ 3 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 6d184a94ba20..491fc3b312e7 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1534,7 +1534,7 @@
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index ee9897c8d0cc..0f746b8bd965 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -178,6 +178,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	char *pathbuf = NULL;
+ 	char filename[NAME_MAX];
+ 	const char *pathname = NULL;
++	int try_appraise;
+ 	int rc = -ENOMEM, action, must_appraise;
+ 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+ 	struct evm_ima_xattr_data *xattr_value = NULL;
+@@ -199,6 +200,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 		return 0;
  
- 	ima_integrity_model=
- 			[IMA] Select an integrity model.
--			Models: { "biba-strict" }
-+			Models: { "biba-strict", "low-watermark-obj" }
+ 	must_appraise = action & IMA_APPRAISE;
++	try_appraise = action & IMA_TRY_APPRAISE;
  
- 	ima.ahash_minsize= [IMA] Minimum file size for asynchronous hash usage
- 			Format: <min_file_size>
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index b9fdf0264c9d..ad615051e51b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -36,7 +36,8 @@ enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
- 		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
- enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
- 
--enum integrity_models { BIBA_STRICT = 1, INTEGRITY_POLICY__LAST };
-+enum integrity_models { BIBA_STRICT = 1, BIBA_LOW_WATERMARK_OBJ,
-+			INTEGRITY_POLICY__LAST };
- 
- /* digest size for IMA, fits SHA1 or MD5 */
- #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 27bbf48596cb..302d7e3ade65 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -22,6 +22,7 @@ int ima_integrity_model;
- 
- static char *ima_integrity_models_str[INTEGRITY_POLICY__LAST] = {
- 	[BIBA_STRICT] = "biba-strict",
-+	[BIBA_LOW_WATERMARK_OBJ] = "low-watermark-obj",
+ 	/*  Is the appraise rule hook specific?  */
+ 	if (action & IMA_FILE_APPRAISE)
+@@ -286,7 +288,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	inode_unlock(inode);
+ 	if (((rc && must_appraise) ||
+ 	    (ima_integrity_model && model_violation)) &&
+-	    (ima_appraise & IMA_APPRAISE_ENFORCE))
++	    (ima_appraise & IMA_APPRAISE_ENFORCE) && !try_appraise)
+ 		return -EACCES;
+ 	return 0;
+ }
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index cd2289daacee..dd8e4c226089 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -532,7 +532,7 @@ enum {
+ 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+ 	Opt_appraise_type, Opt_permit_directio,
+-	Opt_pcr
++	Opt_pcr, Opt_try_appraise
  };
  
- static int __init default_appraise_setup(char *str)
-@@ -250,6 +251,7 @@ bool ima_inode_is_appraised(struct dentry *dentry, struct inode *inode)
-  *
-  * Integrity models:
-  * - biba-strict: write down, read up
-+ * - low-watermark-obj: read up
-  *
-  * Return: true if constraints are violated, false otherwise
-  */
-@@ -262,6 +264,8 @@ bool ima_appraise_integrity_check(struct file *file,
- 	fmode_t mode = file->f_mode;
- 	char *cause = "write_down_violation";
- 	int expected_writecount = (mode & FMODE_WRITE) ? 1 : 0;
-+	int expected_readcount = 0;
-+	int violation = true;
+ static match_table_t policy_tokens = {
+@@ -563,6 +563,7 @@ static match_table_t policy_tokens = {
+ 	{Opt_appraise_type, "appraise_type=%s"},
+ 	{Opt_permit_directio, "permit_directio"},
+ 	{Opt_pcr, "pcr=%s"},
++	{Opt_try_appraise, "try_appraise"},
+ 	{Opt_err, NULL}
+ };
  
- 	/* check write down violations */
- 	if (!must_appraise && (mode & FMODE_WRITE)) {
-@@ -269,9 +273,9 @@ bool ima_appraise_integrity_check(struct file *file,
- 			if (!iint)
- 				iint = integrity_iint_find(inode);
- 			if (iint->flags & IMA_APPRAISED)
--				goto out_violation;
-+				goto out_write_down_violation;
- 		} else if (ima_inode_is_appraised(file_dentry(file), inode)) {
--			goto out_violation;
-+			goto out_write_down_violation;
- 		}
- 	/* concurrent write to non-TCB object by non-TCB subjects */
- 	} else if (must_appraise && !(iint->flags & IMA_APPRAISED) &&
-@@ -290,12 +294,31 @@ bool ima_appraise_integrity_check(struct file *file,
- 	}
+@@ -652,11 +653,16 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			break;
+ 		case Opt_appraise:
+ 			ima_log_string(ab, "action", "appraise");
++		case Opt_try_appraise:
++			if (token == Opt_try_appraise)
++				ima_log_string(ab, "action", "try_appraise");
  
- 	return false;
-+out_write_down_violation:
-+	/* demote TCB object, if no concurrent access by TCB subjects */
-+	if (ima_integrity_model == BIBA_LOW_WATERMARK_OBJ) {
-+		cause = "demote_failed_open_readers";
-+		if (mode & (FMODE_READ | FMODE_WRITE) == FMODE_READ)
-+			expected_readcount = 1;
-+		if (atomic_read(&inode->i_readcount) == expected_readcount) {
-+			if (iint)
-+				iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
-+						 IMA_APPRAISE_SUBMASK |
-+						 IMA_APPRAISED_SUBMASK |
-+						 IMA_ACTION_RULE_FLAGS);
-+
-+			__vfs_removexattr(file->f_path.dentry, XATTR_NAME_IMA);
-+
-+			violation = false;
-+			cause = "demote_successful";
-+		}
+ 			if (entry->action != UNKNOWN)
+ 				result = -EINVAL;
+ 
+ 			entry->action = APPRAISE;
++			if (token == Opt_try_appraise)
++				entry->flags |= IMA_TRY_APPRAISE;
+ 			break;
+ 		case Opt_dont_appraise:
+ 			ima_log_string(ab, "action", "dont_appraise");
+@@ -1039,8 +1045,12 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, pt(Opt_measure));
+ 	if (entry->action & DONT_MEASURE)
+ 		seq_puts(m, pt(Opt_dont_measure));
+-	if (entry->action & APPRAISE)
+-		seq_puts(m, pt(Opt_appraise));
++	if (entry->action & APPRAISE) {
++		if (entry->flags & IMA_TRY_APPRAISE)
++			seq_puts(m, pt(Opt_try_appraise));
++		else
++			seq_puts(m, pt(Opt_appraise));
 +	}
- out_violation:
- 	*pathname = ima_d_path(&file->f_path, pathbuf, namebuf);
- 	integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, *pathname,
- 			    ima_integrity_models_str[ima_integrity_model],
- 			    cause, 0, 0);
--	return true;
-+	return violation;
- }
+ 	if (entry->action & DONT_APPRAISE)
+ 		seq_puts(m, pt(Opt_dont_appraise));
+ 	if (entry->action & AUDIT)
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index d70fd875d62f..86274385f9f4 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -33,6 +33,7 @@
+ #define IMA_DIGSIG_REQUIRED	0x02000000
+ #define IMA_PERMIT_DIRECTIO	0x04000000
+ #define IMA_NEW_FILE		0x08000000
++#define IMA_TRY_APPRAISE	0x10000000
  
- /*
+ #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
+ 				 IMA_APPRAISE_SUBMASK)
 -- 
 2.11.0
 
