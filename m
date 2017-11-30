@@ -1,29 +1,59 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 29 Nov 2017 19:16:17 -0800
-Subject: [BUG] kernel stack corruption during/after Netlabel error
-In-Reply-To: <alpine.LFD.2.20.1711301130330.17322@localhost>
-References: <alpine.LFD.2.20.1711292113350.7808@localhost>
-	<4d73f839-7a86-6edc-b44b-e296bd5947c2@schaufler-ca.com>
-	<alpine.LFD.2.20.1711301130330.17322@localhost>
-Message-ID: <ae2e71e4-c366-5a1e-9fd6-4de944f4a158@schaufler-ca.com>
+From: danielmicay@gmail.com (Daniel Micay)
+Date: Thu, 30 Nov 2017 01:51:17 -0500
+Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
+	request_module_cap() to load 'netdev-%s' modules
+In-Reply-To: <CA+55aFzi3Qj7zOrriRvrX5F4QDWMhkNQ7Qh-0FSCZsG4qk61zg@mail.gmail.com>
+References: <1511803118-2552-1-git-send-email-tixxdz@gmail.com>
+	<1511803118-2552-6-git-send-email-tixxdz@gmail.com>
+	<CA+55aFxfO1i1LS9dPTTCf50ovWPXcq6BE9mKiq_FxWSm4iE8Mg@mail.gmail.com>
+	<CAEiveUcvKbuJMB5801jdRosxYn+CZ4E=pfvXNrhuOrXXbw4ZBQ@mail.gmail.com>
+	<CA+55aFzx2eM+wVrjQEfkE-G8E9OVLcdo6vk0fDMwZNu2sh1oCQ@mail.gmail.com>
+	<1100603534.56586.1511871419952@ichabod.co-bxl>
+	<20171128193243.4fymnjk7fplqw62x@thunk.org>
+	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
+	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
+	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
+	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
+	<708003731.69563.1511905898471@ichabod.co-bxl>
+	<CA+55aFzxFQeyk6Mrk50=jzevHpZ78BXz_9nHcHabMWBdM6RC6A@mail.gmail.com>
+	<CA+55aFyybavkF8ccQKJsoVAF+MG=J5=e9PxXKU=J_hqCQRZnug@mail.gmail.com>
+	<CAGXu5jLU8LqTYM9SYQADeH9wm2npVu4AEuSqvYqi3S+qtjC-Qw@mail.gmail.com>
+	<CA+55aFwDfBnMVGfBVkrFFr26tp1y8CUpSf154AuXH+sWyeY5FA@mail.gmail.com>
+	<CAGXu5j+Tv4KHytjOtBvG9e53o-pG7h5DjZZkATXbado-HAbKHw@mail.gmail.com>
+	<CA+55aFxiDKfe6VCM+aV2OgnkzMpP+iz+rn2k25_Qa_QLex=pPQ@mail.gmail.com>
+	<CAGXu5jJQnokKL2MdbQgOhBJ_RMHVvsw4u27Ds=4Jq3Ys=mjtRg@mail.gmail.com>
+	<CA+55aFzi3Qj7zOrriRvrX5F4QDWMhkNQ7Qh-0FSCZsG4qk61zg@mail.gmail.com>
+Message-ID: <1512024677.1374.168.camel@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+> And once you disable it by default, and it becomes purely opt-in, that
+> means that nothing will change for most cases. Some embedded people
+> that do their own thing (ie Android) might change, but normal
+> distributions probably won't.
+> 
+> Yes, Android may be 99% of the users, and yes, the embedded world in
+> general needs to be secure, but I'd still like this to be something
+> that helps _everybody_.
 
-On 11/29/2017 4:31 PM, James Morris wrote:
-> On Wed, 29 Nov 2017, Casey Schaufler wrote:
->
->> I see that there is a proposed fix later in the thread, but I don't see
->> the patch. Could you send it to me, so I can try it on my problem?
-> Forwarded off-list.
+Android devices won't get much benefit since they ship a tiny set of
+modules chosen for the device. The kernels already get very stripped
+down to the bare minimum vs. enabling every feature and driver available
+and shipping it all by default on a traditional distribution.
 
-The patch does fix the problem I was seeing in Smack.
+Lots of potential module attack surface also gets eliminated by default
+via their SELinux whitelists for /dev, /sys, /proc, debugfs, ioctl
+commands, etc. The global seccomp whitelist might be relevant in some
+cases too.
 
->
-> Interestingly, I didn't see the KASAN output email from Stephen here.
->
->
+Android devices like to build everything into the kernel too, so even if
+they weren't using a module this feature wouldn't usually help them. It
+would need to work like this existing sysctl:
 
+    net.ipv4.tcp_available_congestion_control = cubic reno lp
+
+i.e. whitelists for functionality offered by the modules, not just
+whether they can be loaded.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
