@@ -1,44 +1,82 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Fri, 1 Dec 2017 13:17:57 +0200
-Subject: [RFC 0/3] Safe, dynamically (un)loadable LSMs
-In-Reply-To: <8c8dd781-d30a-7105-011d-127cf5188426@schaufler-ca.com>
-References: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
-	<8c8dd781-d30a-7105-011d-127cf5188426@schaufler-ca.com>
-Message-ID: <32d9ec9c-d664-3f1c-ebd9-90a726e3da4f@huawei.com>
+From: meissner@suse.de (Marcus Meissner)
+Date: Fri, 1 Dec 2017 16:22:00 +0100
+Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
+	request_module_cap() to load 'netdev-%s' modules
+In-Reply-To: <20171128234920.awfwicihuudw5ogx@thunk.org>
+References: <1100603534.56586.1511871419952@ichabod.co-bxl>
+	<20171128193243.4fymnjk7fplqw62x@thunk.org>
+	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
+	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
+	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
+	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
+	<CAGXu5j+V8+h6kdbz5Det=wsRKjt6Cm0-_n8soLCU2PZ=AvqpJQ@mail.gmail.com>
+	<20171128232320.22zo324g5wvo2lce@thunk.org>
+	<CAGXu5j+c8AR+3KdXKO1J180ZYZOVqK=-_MGe20g8h+dgf2RWEQ@mail.gmail.com>
+	<20171128234920.awfwicihuudw5ogx@thunk.org>
+Message-ID: <20171201152200.GP14681@suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 30/11/17 04:28, Casey Schaufler wrote:
-> On 11/26/2017 2:15 PM, Sargun Dhillon wrote:
->> This patchset introduces safe dynamic LSM support. It does this via
->> SRCU-protected security hooks. It also EXPORT_SYMBOL_GPLs the symbols
->> required to perform runtime loading, and unloading. The patchset is
->> meant to introduce as little overhead as possible when not used.
->> Additionally, the functionality is disabled by default.
+On Tue, Nov 28, 2017 at 06:49:20PM -0500, Theodore Ts'o wrote:
+> On Tue, Nov 28, 2017 at 03:29:01PM -0800, Kees Cook wrote:
+> > > So in these two cases, if the kernel was built w/o modules, and HDLC
+> > > and DCCP was built-in, you'd be screwed, then?
+> > 
+> > Sure, but that's not the common situation.
+> > 
+> > > Is the goal here to protect people using distro kernels which build
+> > > the world as modules, including dodgy pieces of kernel code that are
+> > > bug-ridden?
+> > 
+> > The bulk of the risk comes from distro kernels, yes. (Though "bug
+> > ridden" is a strong statement. There are and will be bugs, scattered
+> > across a wide portion of the kernel, it's just that modules tend to
+> > cover most of that attack surface.)
 > 
-> Can you explain the value in being able to unload a security module?
-> I can see having a throttle on an active module, but what do you gain
-> by being able to unload it? Can it possibly be worth the inevitable
-> memory leaks and almost certain dangling pointers? The restrictions on
-> a security module that can work safely in this environment are significant.
-> I don't see any point in unloading a module that could work with those
-> restrictions. The overhead of making it unloadable is likely to exceed
-> the overhead of running it.
+> OK, but if the goal is to protect users who are running distro
+> kernels, then a kernel config that breaks some percentage of users is
+> ****highly**** unlikely to be enabled by Red Hat and SuSE, right?  And
+> many of these users either can't (from a skills perspective) or won't
+> (because they lose all support from the enterprise distro's help desk)
+> recompile their kernel to enable an "might break 3% of all users ---
+> oh, well" config option.
 
-There is also another aspect: a readily available "unload" functionality
-means that if an attacker is capable of modifying some function pointer,
-the unload capability provides an easier way to get rid of the module,
-compared to having to poke into memory (like it typically happens when
-disabling SELinux, where the attacker flips one of the various state
-variables that allow to control how strict it is).
+Yes, breaking customers is not seen lightly.
 
-Unload capability might be useful during development, but I am not
-really sure it would be a good idea in a production system.
+I also (not related to this thread here, more to SLAB hardening et.al)
+have a hard time getting performance losses caused by hardening features approved.
+ 
+> Which argues for being extremely conservative about making something
+> that has an extremely low probability of breaking users, and it points
+> out why Geo Kozey's "who cares about breaking users; security is
+> IMPORTANT" argument is so wrong-headed.
+> 
+> If the goal is to protect distro kernels, but a sloppy approach
+> guarantees that distro kernels will never enable it, is it really
+> worth it?
+> 
+> 	   	       	       	    	  	 - Ted
+> 
+> P.S.  This is where it might be useful to get some input from the Red
+> Hat and SuSE support teams.  How many angry user calls to their help
+> desk are they willing to field before they'll just turn off the kernel
+> config option for their kernels?
 
---
-igor
+Speaking for SUSE ... If something that worked for people before and
+it breaks, we do get feedback. If no one used it however, we won't.
+
+For our last major product we went over the network module list and 
+disabled some for building. e.g. DCCP is no longer built. We did
+not receive any complaints about missing DCCP to my knowledge.
+
+We also seperate our modules into "regular supported" and "unsupported"
+in different RPMs. The "unsupported" module packages are not shipped on
+the Server product. They were shipped on the desktop as some of the WiFi
+drivers were requested by customers but were considered not supportable.
+
+We do review this supportable list between kernel version jumps.
+
+Ciao, Marcus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
