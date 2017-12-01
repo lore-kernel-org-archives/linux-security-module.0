@@ -1,82 +1,58 @@
-From: meissner@suse.de (Marcus Meissner)
-Date: Fri, 1 Dec 2017 16:22:00 +0100
-Subject: [kernel-hardening] Re: [PATCH v5 next 5/5] net: modules: use
-	request_module_cap() to load 'netdev-%s' modules
-In-Reply-To: <20171128234920.awfwicihuudw5ogx@thunk.org>
-References: <1100603534.56586.1511871419952@ichabod.co-bxl>
-	<20171128193243.4fymnjk7fplqw62x@thunk.org>
-	<CAGXu5jLtBjLSe5mbe5sYSao1o67ezkkQq_u3md9646rRfi3cCQ@mail.gmail.com>
-	<CA+55aFzvaFR1skBFKwT1QPnKqxaLqCuq33FCuYz8DP7MjKkgNg@mail.gmail.com>
-	<CAGXu5j+OzbUAcqVBuC8QoY-ZiA9Xw6Uf9kzfzpx9MQHQ1LtxVQ@mail.gmail.com>
-	<CA+55aFz0t7cCkePJQ1w44Kw_g5nns1tYJLUOL7f-c7vriqkFig@mail.gmail.com>
-	<CAGXu5j+V8+h6kdbz5Det=wsRKjt6Cm0-_n8soLCU2PZ=AvqpJQ@mail.gmail.com>
-	<20171128232320.22zo324g5wvo2lce@thunk.org>
-	<CAGXu5j+c8AR+3KdXKO1J180ZYZOVqK=-_MGe20g8h+dgf2RWEQ@mail.gmail.com>
-	<20171128234920.awfwicihuudw5ogx@thunk.org>
-Message-ID: <20171201152200.GP14681@suse.de>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 01 Dec 2017 11:31:04 -0500
+Subject: [RFC][PATCH v2 2/9] ima: preserve flags in
+	ima_inode_post_setattr() if file must be appraised
+In-Reply-To: <20171130105610.15761-3-roberto.sassu@huawei.com>
+References: <20171130105610.15761-1-roberto.sassu@huawei.com>
+	<20171130105610.15761-3-roberto.sassu@huawei.com>
+Message-ID: <1512145864.17800.43.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Nov 28, 2017 at 06:49:20PM -0500, Theodore Ts'o wrote:
-> On Tue, Nov 28, 2017 at 03:29:01PM -0800, Kees Cook wrote:
-> > > So in these two cases, if the kernel was built w/o modules, and HDLC
-> > > and DCCP was built-in, you'd be screwed, then?
-> > 
-> > Sure, but that's not the common situation.
-> > 
-> > > Is the goal here to protect people using distro kernels which build
-> > > the world as modules, including dodgy pieces of kernel code that are
-> > > bug-ridden?
-> > 
-> > The bulk of the risk comes from distro kernels, yes. (Though "bug
-> > ridden" is a strong statement. There are and will be bugs, scattered
-> > across a wide portion of the kernel, it's just that modules tend to
-> > cover most of that attack surface.)
+On Thu, 2017-11-30 at 11:56 +0100, Roberto Sassu wrote:
+> Before commit d79d72e02485 ("ima: per hook cache integrity appraisal
+> status"), ima_inode_post_setattr() clears the iint flags only if the file
+> does not match policy rules after attributes changed. After the commit
+> above, it clears the flags in any case. This patch restores the original
+> behavior.
 > 
-> OK, but if the goal is to protect users who are running distro
-> kernels, then a kernel config that breaks some percentage of users is
-> ****highly**** unlikely to be enabled by Red Hat and SuSE, right?  And
-> many of these users either can't (from a skills perspective) or won't
-> (because they lose all support from the enterprise distro's help desk)
-> recompile their kernel to enable an "might break 3% of all users ---
-> oh, well" config option.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Yes, breaking customers is not seen lightly.
+Prior to this commit, the file was either in/out of policy for all
+hooks. ?This commit introduced the concept of different hooks
+requiring different types of integrity appraisal (eg. hash,
+signature). ?An attribute change (eg. fowner) could require a
+different type of integrity appraisal. ?With this patch, knowing just
+that a file is in/out of policy isn't fine grained enough.
 
-I also (not related to this thread here, more to SLAB hardening et.al)
-have a hard time getting performance losses caused by hardening features approved.
- 
-> Which argues for being extremely conservative about making something
-> that has an extremely low probability of breaking users, and it points
-> out why Geo Kozey's "who cares about breaking users; security is
-> IMPORTANT" argument is so wrong-headed.
+Mimi
+
+> ---
+>  security/integrity/ima/ima_appraise.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> If the goal is to protect distro kernels, but a sloppy approach
-> guarantees that distro kernels will never enable it, is it really
-> worth it?
-> 
-> 	   	       	       	    	  	 - Ted
-> 
-> P.S.  This is where it might be useful to get some input from the Red
-> Hat and SuSE support teams.  How many angry user calls to their help
-> desk are they willing to field before they'll just turn off the kernel
-> config option for their kernels?
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 1b56ee949315..a54ad18affb1 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -360,11 +360,13 @@ void ima_inode_post_setattr(struct dentry *dentry)
+>  	must_appraise = ima_must_appraise(inode, MAY_ACCESS, POST_SETATTR);
+>  	iint = integrity_iint_find(inode);
+>  	if (iint) {
+> -		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
+> -				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+> -				 IMA_ACTION_RULE_FLAGS);
+>  		if (must_appraise)
+>  			iint->flags |= IMA_APPRAISE;
+> +		else
+> +			iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
+> +					 IMA_APPRAISE_SUBMASK |
+> +					 IMA_APPRAISED_SUBMASK |
+> +					 IMA_ACTION_RULE_FLAGS);
+>  	}
+>  	if (!must_appraise)
+>  		__vfs_removexattr(dentry, XATTR_NAME_IMA);
 
-Speaking for SUSE ... If something that worked for people before and
-it breaks, we do get feedback. If no one used it however, we won't.
-
-For our last major product we went over the network module list and 
-disabled some for building. e.g. DCCP is no longer built. We did
-not receive any complaints about missing DCCP to my knowledge.
-
-We also seperate our modules into "regular supported" and "unsupported"
-in different RPMs. The "unsupported" module packages are not shipped on
-the Server product. They were shipped on the desktop as some of the WiFi
-drivers were requested by customers but were considered not supportable.
-
-We do review this supportable list between kernel version jumps.
-
-Ciao, Marcus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
