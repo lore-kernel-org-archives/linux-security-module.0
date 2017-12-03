@@ -1,25 +1,18 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Mon, 4 Dec 2017 00:07:02 +0100
+From: joe@perches.com (Joe Perches)
+Date: Sun, 03 Dec 2017 15:20:10 -0800
 Subject: [PATCH] treewide: remove duplicate includes
 In-Reply-To: <1512337779-16842-1-git-send-email-pravin.shedge4linux@gmail.com>
 References: <1512337779-16842-1-git-send-email-pravin.shedge4linux@gmail.com>
-Message-ID: <20171203230702.GT729@wotan.suse.de>
+Message-ID: <1512343210.6321.39.camel@perches.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Dec 04, 2017 at 03:19:39AM +0530, Pravin Shedge wrote:
+On Mon, 2017-12-04 at 03:19 +0530, Pravin Shedge wrote:
 > These duplicate includes have been found with scripts/checkincludes.pl but
 > they have been removed manually to avoid removing false positives.
-> 
-> Unit Testing:
-> 
-> - build successful
-> - LTP testsuite passes.
-> - checkpatch.pl passes
 
-Can you get 0day to test it?
+Can you list the duplicates that were not removed as well please?
 
-  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
