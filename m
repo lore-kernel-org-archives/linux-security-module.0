@@ -1,91 +1,90 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Mon, 4 Dec 2017 14:42:12 +0100
-Subject: [PATCHv5 1/1] ima: re-introduce own integrity cache lock
-In-Reply-To: <1512389173.3977.26.camel@linux.vnet.ibm.com>
-References: <fe908aedea9e8a03789bfaace514b5b10f20b301.1512153609.git.dmitry.kasatkin@huawei.com>
-	<1512389173.3977.26.camel@linux.vnet.ibm.com>
-Message-ID: <37b6f8d7-69a8-8900-e7b6-a614b64f91dd@huawei.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Mon, 04 Dec 2017 08:43:45 -0500
+Subject: KASAN: slab-out-of-bounds Read in strcmp
+In-Reply-To: <97d6bab0-d278-9945-5d82-a0a76b8b78c5@I-love.SAKURA.ne.jp>
+References: <001a113f711a721c58055f052200@google.com>
+	<089e08259d282c063e055f4bddbd@google.com>
+	<97d6bab0-d278-9945-5d82-a0a76b8b78c5@I-love.SAKURA.ne.jp>
+Message-ID: <1512395025.20988.3.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 12/4/2017 1:06 PM, Mimi Zohar wrote:
-> Hi Dmitry,
+On Sun, 2017-12-03 at 20:33 +0900, Tetsuo Handa wrote:
+> On 2017/12/02 3:52, syzbot wrote:
+> > ==================================================================
+> > BUG: KASAN: slab-out-of-bounds in strcmp+0x96/0xb0 lib/string.c:328
+> > Read of size 1 at addr ffff8801cd99d2c1 by task
+> > syzkaller242593/3087
+> > 
+> > CPU: 0 PID: 3087 Comm: syzkaller242593 Not tainted 4.15.0-rc1-next-
+> > 20171201+ #57
+> > Hardware name: Google Google Compute Engine/Google Compute Engine,
+> > BIOS Google 01/01/2011
+> > Call Trace:
+> > ?__dump_stack lib/dump_stack.c:17 [inline]
+> > ?dump_stack+0x194/0x257 lib/dump_stack.c:53
+> > ?print_address_description+0x73/0x250 mm/kasan/report.c:252
+> > ?kasan_report_error mm/kasan/report.c:351 [inline]
+> > ?kasan_report+0x25b/0x340 mm/kasan/report.c:409
+> > ?__asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:427
+> > ?strcmp+0x96/0xb0 lib/string.c:328
 > 
-> On Fri, 2017-12-01 at 20:40 +0200, Dmitry Kasatkin wrote:
->> The original design was discussed 3+ years ago, but was never completed/upstreamed.
->> Based on the recent discussions with Linus
->> https://patchwork.kernel.org/patch/9975919, I've rebased this patch.
->>
->> Before IMA appraisal was introduced, IMA was using own integrity cache
->> lock along with i_mutex. process_measurement and ima_file_free took
->> the iint->mutex first and then the i_mutex, while setxattr, chmod and
->> chown took the locks in reverse order. To resolve the potential deadlock,
->> i_mutex was moved to protect entire IMA functionality and the redundant
->> iint->mutex was eliminated.
->>
->> Solution was based on the assumption that filesystem code does not take
->> i_mutex further. But when file is opened with O_DIRECT flag, direct-io
->> implementation takes i_mutex and produces deadlock. Furthermore, certain
->> other filesystem operations, such as llseek, also take i_mutex.
->>
->> More recently some filesystems have replaced their filesystem specific
->> lock with the global i_rwsem to read a file.  As a result, when IMA
->> attempts to calculate the file hash, reading the file attempts to take
->> the i_rwsem again.
->>
->> To resolve O_DIRECT related deadlock problem, this patch re-introduces
->> iint->mutex. But to eliminate the original chmod() related deadlock
->> problem, this patch eliminates the requirement for chmod hooks to take
->> the iint->mutex by introducing additional atomic iint->attr_flags to
->> indicate calling of the hooks. The allowed locking order is to take
->> the iint->mutex first and then the i_rwsem.
->>
->> Original flags were cleared in chmod(), setxattr() or removwxattr() hooks
->> and tested when file was closed or opened again. New atomic flags are set
->> or cleared in those hooks and tested to clear iint->flags on close or on open.
->>
->> Atomic flags are following:
->> * IMA_CHANGE_ATTR - indicates that chATTR() was called (chmod, chown, chgrp)
->>    and file attributes have changed. On file open, it causes IMA to clear
->>    iint->flags to re-evaluate policy and perform IMA functions again.
->> * IMA_CHANGE_XATTR - indicates that setxattr or removexattr was called and
->>    extended attributes have changed. On file open, it causes IMA to clear
->>    iint->flags IMA_DONE_MASK to re-appraise.
->> * IMA_UPDATE_XATTR - indicates that security.ima needs to be updated.
->>    It is cleared if file policy changes and no update is needed.
->> * IMA_DIGSIG - indicates that file security.ima has signature and file
->>    security.ima must not update to file has on file close.
+> This seems to be out of bound read for "scontext" at
 > 
-> Nice! ?I've been testing with this patch and all seems good. ?Before
-> queueing this patch to be upstreamed, I'd appreciate if others tested
-> using it as well. ?It applies cleanly to the next-queued branch.
+> 	for (i = 1; i < SECINITSID_NUM; i++) {
+> 		if (!strcmp(initial_sid_to_string[i], scontext)) {
+> 			*sid = i;
+> 			return 0;
+> 		}
+> 	}
+> 
+> because "initial_sid_to_string[i]" is "const char *".
+> 
+> > ?security_context_to_sid_core+0x437/0x620
+> > security/selinux/ss/services.c:1420
+> > ?security_context_to_sid+0x32/0x40
+> > security/selinux/ss/services.c:1479
+> > ?selinux_setprocattr+0x51c/0xb50 security/selinux/hooks.c:5986
+> > ?security_setprocattr+0x85/0xc0 security/security.c:1264
+> 
+> If "value" does not terminate with '\0' or '\n', "value" and
+> "size" are as-is passed to "scontext" and "scontext_len" above
+> 
+> 	/* Obtain a SID for the context, if one was specified. */
+> 	if (size && str[0] && str[0] != '\n') {
+> 		if (str[size-1] == '\n') {
+> 			str[size-1] = 0;
+> 			size--;
+> 		}
+> 		error = security_context_to_sid(value, size, &sid,
+> GFP_KERNEL);
+> 
+> which will allow strcmp() to trigger out of bound read when "size" is
+> larger than strlen(initial_sid_to_string[i]).
+> 
+> Thus, I guess the simplest fix is to use strncmp() instead of
+> strcmp().
 
-If the inode lock is released before the IMA_MEASURE flag is set, the
-ToMToU violation will not be detected when a writer accesses the same
-inode. This issue was fixed with commit f7a859ff7395c.
+Already fixed by
+https://www.spinics.net/lists/selinux/msg23589.html
 
-Roberto
-
-
-> A subsequent patch will remove the O_DIRECT check in
-> ima_calc_file_hash().
 > 
-> Fixes: Commit 6552321831dc "xfs: remove i_iolock and use i_rwsem in
-> the VFS inode instead"
-> 
-> thanks,
-> 
-> Mimi
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+> > ?proc_pid_attr_write+0x1e6/0x280 fs/proc/base.c:2574
+> > ?__vfs_write+0xef/0x970 fs/read_write.c:480
+> > ?__kernel_write+0xfe/0x350 fs/read_write.c:501
+> > ?write_pipe_buf+0x175/0x220 fs/splice.c:797
+> > ?splice_from_pipe_feed fs/splice.c:502 [inline]
+> > ?__splice_from_pipe+0x328/0x730 fs/splice.c:626
+> > ?splice_from_pipe+0x1e9/0x330 fs/splice.c:661
+> > ?default_file_splice_write+0x40/0x90 fs/splice.c:809
+> > ?do_splice_from fs/splice.c:851 [inline]
+> > ?direct_splice_actor+0x125/0x180 fs/splice.c:1018
+> > ?splice_direct_to_actor+0x2c1/0x820 fs/splice.c:973
+> > ?do_splice_direct+0x2a7/0x3d0 fs/splice.c:1061
+> > ?do_sendfile+0x5d5/0xe90 fs/read_write.c:1413
+> > ?SYSC_sendfile64 fs/read_write.c:1468 [inline]
+> > ?SyS_sendfile64+0xbd/0x160 fs/read_write.c:1460
+> > ?entry_SYSCALL_64_fastpath+0x1f/0x96
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
