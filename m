@@ -1,5 +1,5 @@
 From: dvyukov@google.com (Dmitry Vyukov)
-Date: Mon, 4 Dec 2017 17:29:49 +0100
+Date: Mon, 4 Dec 2017 17:39:46 +0100
 Subject: KASAN: slab-out-of-bounds Read in strcmp
 In-Reply-To: <CAGH-Kgv+Nj2fpR+3SjnKJk1KMBZqqm9CwD2UAMau539nxtpU4g@mail.gmail.com>
 References: <001a113f711a721c58055f052200@google.com>
@@ -8,11 +8,12 @@ References: <001a113f711a721c58055f052200@google.com>
 	<1512395025.20988.3.camel@tycho.nsa.gov>
 	<CACT4Y+Z50TGJj8PhJczMt4zF8aMyr5586GsJ7LAmS-Bf-QkXiw@mail.gmail.com>
 	<CAGH-Kgv+Nj2fpR+3SjnKJk1KMBZqqm9CwD2UAMau539nxtpU4g@mail.gmail.com>
-Message-ID: <CACT4Y+bKC5d135iFAP0qdU7EG+11n7HeCm2d54KwqNfCLMGrpA@mail.gmail.com>
+Message-ID: <CACT4Y+aWCOxe0xH+bPtchX8OyNE3yVkpHmdE4QQwG443_G4aMg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Mon, Dec 4, 2017 at 2:59 PM, Paul Moore <pmoore@redhat.com> wrote:
+>>>> On 2017/12/02 3:52, syzbot wrote:
 >>>> > ==================================================================
 >>>> > BUG: KASAN: slab-out-of-bounds in strcmp+0x96/0xb0 lib/string.c:328
 >>>> > Read of size 1 at addr ffff8801cd99d2c1 by task
@@ -84,53 +85,60 @@ On Mon, Dec 4, 2017 at 2:59 PM, Paul Moore <pmoore@redhat.com> wrote:
 > has been committed, but where?  My selinux/next branch?  Linus'
 > master?  Your docs and the end of the email needs to be more clear on
 > this.
-
-Hi Paul,
-
-We are just rolling in the process. Feedback is much appreciated!
-
-The idea is that we need to know the title as it will appear in Linus
-tree and in other tested trees. It's also possible to override the
-title later, if there is any mess with it. So sending "#syz fix" as
-soon as it is merged into any tree looks like the best option (to not
-require you to keep in mind that you also need to do that tiny bit in
-a month).
-
-Are the following changes look good to you?
-For email footer:
-
--Once a fix for this bug is committed, please reply to this email with:
-+Once a fix for this bug is merged into any tree, reply to this email with:
-#syz fix: exact-commit-title
-
-
-And for the https://github.com/google/syzkaller/blob/master/docs/syzbot.md page:
-
-to attach a fixing commit to the bug:
-#syz fix: exact-commit-title
-+It's enough that the commit is merged into any tree, in particular,
-+you don't need to wait for the commit to be merged into upstream tree.
-+syzbot only needs to know the title by which it will appear in tested trees.
-+In case of an error or a title change, you can override the commit simply
-+by sending another #syz fix command.
-
-
-
+>
 > For the record, I did see that part of the syzbot mail but I was
-
-Then sorry for pinging. We are trying to establish the process, and
-some developers don't notice that part, so I just wanted to make sure.
-
 > waiting until I merged that patch; v2 was posted late in the week and
 > I was giving it a few days in case someone saw something
 > objectionable.
+>
+> Also, while we are on the topic of syzbot, what SELinux policy (if
+> any) do you load on the system that is undergoing testing?  Based on
+> some of the recent reports it would appear that you are running a
+> SELinux enabled kernel but might not be loading a SELinux policy, is
+> that correct?
 
-In such case you can do either way. You can wait, or you can post
-commit title as soon as you have enough assurance that that's the
-title with which it will appear in trees. We don't want to put too
-much burden on developers. As I said, it's possible to override it
-later, or we will notice that there is a commit that bot is waiting
-for too long.
+
+This is good question. The problem is that we are testing almost all
+kernel subsystems, but are not experts in most of them. So frequently
+we doing some non-sense. And that's where we need you help.
+That's what we have for grep SECURITY .config:
+
+CONFIG_EXT4_FS_SECURITY=y
+# CONFIG_9P_FS_SECURITY is not set
+# CONFIG_SECURITY_DMESG_RESTRICT is not set
+CONFIG_SECURITY=y
+CONFIG_SECURITY_WRITABLE_HOOKS=y
+# CONFIG_SECURITYFS is not set
+CONFIG_SECURITY_NETWORK=y
+CONFIG_SECURITY_NETWORK_XFRM=y
+CONFIG_SECURITY_PATH=y
+CONFIG_SECURITY_SELINUX=y
+CONFIG_SECURITY_SELINUX_BOOTPARAM=y
+CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE=1
+CONFIG_SECURITY_SELINUX_DISABLE=y
+CONFIG_SECURITY_SELINUX_DEVELOP=y
+CONFIG_SECURITY_SELINUX_AVC_STATS=y
+CONFIG_SECURITY_SELINUX_CHECKREQPROT_VALUE=0
+# CONFIG_SECURITY_SMACK is not set
+# CONFIG_SECURITY_TOMOYO is not set
+# CONFIG_SECURITY_APPARMOR is not set
+# CONFIG_SECURITY_LOADPIN is not set
+# CONFIG_SECURITY_YAMA is not set
+CONFIG_DEFAULT_SECURITY_SELINUX=y
+# CONFIG_DEFAULT_SECURITY_DAC is not set
+CONFIG_DEFAULT_SECURITY="selinux"
+
+
+I don't think we do anything else besides that.
+To be fair I don't know what is SELinux policy nor how to load it. Can
+you suggest a policy that would be good for testing of kernel in
+general and SELinux in particular? Obviously, we don't want to
+prohibit access to any major parts of kernel APIs entirely (because
+then we won't test them). syzkaller also creates a local temp dir per
+test process, and the process mostly accesses files there (except for
+opening /dev/* and /proc/self/*). Is it possible to selectively
+prohibit something there, so that we test both positive and negative
+cases?
 
 Thanks
 --
