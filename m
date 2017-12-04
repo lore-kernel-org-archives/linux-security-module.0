@@ -1,7 +1,7 @@
-From: bmeneguele@gmail.com (Bruno E. O. Meneguele)
-Date: Mon,  4 Dec 2017 17:54:56 -0200
-Subject: [PATCH] ima: log message to module appraisal error
-Message-ID: <20171204195456.17193-1-bmeneguele@gmail.com>
+From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
+Date: Mon,  4 Dec 2017 18:23:47 -0200
+Subject: [PATCH v2] ima: log message to module appraisal error
+Message-ID: <20171204202347.16261-1-brdeoliv@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -9,7 +9,7 @@ Simple but useful message log to the user in case of module appraise is
 forced and fails due to the lack of file descriptor, that might be
 caused by kmod calls to compressed modules.
 
-Signed-off-by: Bruno E. O. Meneguele <bmeneguele@gmail.com>
+Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
 ---
  security/integrity/ima/ima_main.c | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
