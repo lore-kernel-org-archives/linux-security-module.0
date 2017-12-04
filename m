@@ -1,36 +1,37 @@
-From: colin.king@canonical.com (Colin King)
-Date: Mon,  4 Dec 2017 18:14:24 +0000
-Subject: [PATCH] security: keys: remove redundant assignment to key_ref
-Message-ID: <20171204181424.15808-1-colin.king@canonical.com>
+From: darrick.wong@oracle.com (Darrick J. Wong)
+Date: Mon, 4 Dec 2017 10:27:31 -0800
+Subject: [PATCH] treewide: remove duplicate includes
+In-Reply-To: <1512337779-16842-1-git-send-email-pravin.shedge4linux@gmail.com>
+References: <1512337779-16842-1-git-send-email-pravin.shedge4linux@gmail.com>
+Message-ID: <20171204182731.GA4903@magnolia>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Dec 04, 2017 at 03:19:39AM +0530, Pravin Shedge wrote:
+> These duplicate includes have been found with scripts/checkincludes.pl but
+> they have been removed manually to avoid removing false positives.
+> 
+> Unit Testing:
+> 
+> - build successful
+> - LTP testsuite passes.
+> - checkpatch.pl passes
+> 
+> Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
 
-Variable key_ref is being assigned a value that is never read;
-key_ref is being re-assigned a few statements later.  Hence this
-assignment is redundant and can be removed.
+<supersnip>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/keys/key.c | 1 -
- 1 file changed, 1 deletion(-)
+> diff --git a/fs/xfs/scrub/scrub.c b/fs/xfs/scrub/scrub.c
+> index 9c42c4e..ab3aef2 100644
+> --- a/fs/xfs/scrub/scrub.c
+> +++ b/fs/xfs/scrub/scrub.c
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 66049183ad89..d97c9394b5dd 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -833,7 +833,6 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 
- 	key_check(keyring);
- 
--	key_ref = ERR_PTR(-EPERM);
- 	if (!(flags & KEY_ALLOC_BYPASS_RESTRICTION))
- 		restrict_link = keyring->restrict_link;
- 
--- 
-2.14.1
+These look reasonable, but please send me (and linux-xfs) the three
+xfs changes separately so that I can add them to the xfs tree.
 
+(Also, thank you for cc'ing the xfs list for this treewide change...)
+
+--D
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
