@@ -1,41 +1,28 @@
 From: kgold@linux.vnet.ibm.com (Ken Goldman)
-Date: Tue, 5 Dec 2017 17:03:15 -0500
-Subject: [PATCH v2 00/15] ima: digest list feature
-In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
-References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-Message-ID: <5060980f-2b70-6b77-89f2-5ef66ff4cace@linux.vnet.ibm.com>
+Date: Tue, 5 Dec 2017 17:28:08 -0500
+Subject: [Linux-ima-devel] [PATCH 12/12] ima: added
+	Documentation/security/IMA-digest-lists.txt
+In-Reply-To: <20170725154423.24845-13-roberto.sassu@huawei.com>
+References: <20170725154423.24845-1-roberto.sassu@huawei.com>
+	<20170725154423.24845-13-roberto.sassu@huawei.com>
+Message-ID: <97fded2f-b494-b633-3bd7-e7dea8e230c0@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 11/7/2017 5:36 AM, Roberto Sassu wrote:
-> 
-> Digest lists aim at mitigating these issues. A digest list is a list of
-> digests that are taken by IMA as reference measurements and loaded before
-> files are accessed. Then, IMA compares calculated digests of accessed files
-> with digests from loaded digest lists. If the digest is found, measurement,
-> appraisal and audit are not performed.
+On 7/25/2017 11:44 AM, Roberto Sassu wrote:
+> +==== FORMAT ====
+> +
+> +The format of digest list metadata is:
+> +
+> +algo[2] digest_len[4] digest[digest_len]
+> +        signature_len[4] signature[signature_len]
+> +        path_len[4] path[path_len]
+> +        ref_id_len[4] ref_id[ref_id_len]
+> +        list_type_len[4] list_type[list_type_len]
+> +
 
-If you don't do measurements (the extends), then the remote appraiser
-can't determine what's running.  Doesn't that break the whole point of 
-remote attestation?
-
-> Digest lists address the first issue because the TPM is used only if the
-> digest of a measured file is unknown. On a minimal system, 10 of 1400
-> measurements are unknown because of mutable files (e.g. log files).
-> 
-> Digest lists mitigate the second issue because, since digest lists do not
-> change, they don't have to be sent at every remote attestation. Sending
-> unknown measurements and a reference to digest lists would be sufficient.
-
-Typically, one would not send the entire log at every attestation.  The
-algorithm I use is:
-
-- if it's the first quote after a reboot, send the entire log, else
-- if PCRs haven't changed, don't send anything, else
-- send a delta since the last attestation.
-
-Even without this obvious optimization, the transmit time is negligible 
-compared to the quote signature generation time.
+It's not obvious how this would handle the TPM 2.0 case where there are 
+multiple PCR banks with different hash algorithms
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
