@@ -1,191 +1,108 @@
-From: dvyukov@google.com (Dmitry Vyukov)
-Date: Tue, 5 Dec 2017 11:00:44 +0100
-Subject: KASAN: slab-out-of-bounds Read in strcmp
-In-Reply-To: <1512408782.20988.38.camel@tycho.nsa.gov>
-References: <001a113f711a721c58055f052200@google.com>
-	<089e08259d282c063e055f4bddbd@google.com>
-	<97d6bab0-d278-9945-5d82-a0a76b8b78c5@I-love.SAKURA.ne.jp>
-	<1512395025.20988.3.camel@tycho.nsa.gov>
-	<CACT4Y+Z50TGJj8PhJczMt4zF8aMyr5586GsJ7LAmS-Bf-QkXiw@mail.gmail.com>
-	<CAGH-Kgv+Nj2fpR+3SjnKJk1KMBZqqm9CwD2UAMau539nxtpU4g@mail.gmail.com>
-	<CACT4Y+aWCOxe0xH+bPtchX8OyNE3yVkpHmdE4QQwG443_G4aMg@mail.gmail.com>
-	<1512408782.20988.38.camel@tycho.nsa.gov>
-Message-ID: <CACT4Y+bEp5wsEWHCGuB=FDywynxzL2yqMuta5LsAjrHeHOMPeA@mail.gmail.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Tue, 5 Dec 2017 02:02:13 -0800
+Subject: [RFC 0/3] Safe, dynamically (un)loadable LSMs
+In-Reply-To: <8c8dd781-d30a-7105-011d-127cf5188426@schaufler-ca.com>
+References: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
+	<8c8dd781-d30a-7105-011d-127cf5188426@schaufler-ca.com>
+Message-ID: <CAMp4zn_=4r9_eH1pUOfzxmRuQL+nVk9megx325s=f1Myv_opZg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Dec 4, 2017 at 6:33 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On Mon, 2017-12-04 at 17:39 +0100, Dmitry Vyukov wrote:
->> On Mon, Dec 4, 2017 at 2:59 PM, Paul Moore <pmoore@redhat.com> wrote:
->> > > > > On 2017/12/02 3:52, syzbot wrote:
->> > > > > > ===========================================================
->> > > > > > =======
->> > > > > > BUG: KASAN: slab-out-of-bounds in strcmp+0x96/0xb0
->> > > > > > lib/string.c:328
->> > > > > > Read of size 1 at addr ffff8801cd99d2c1 by task
->> > > > > > syzkaller242593/3087
->> > > > > >
->> > > > > > CPU: 0 PID: 3087 Comm: syzkaller242593 Not tainted 4.15.0-
->> > > > > > rc1-next-
->> > > > > > 20171201+ #57
->> > > > > > Hardware name: Google Google Compute Engine/Google Compute
->> > > > > > Engine,
->> > > > > > BIOS Google 01/01/2011
->> > > > > > Call Trace:
->> > > > > >  __dump_stack lib/dump_stack.c:17 [inline]
->> > > > > >  dump_stack+0x194/0x257 lib/dump_stack.c:53
->> > > > > >  print_address_description+0x73/0x250 mm/kasan/report.c:252
->> > > > > >  kasan_report_error mm/kasan/report.c:351 [inline]
->> > > > > >  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->> > > > > >  __asan_report_load1_noabort+0x14/0x20
->> > > > > > mm/kasan/report.c:427
->> > > > > >  strcmp+0x96/0xb0 lib/string.c:328
->> > > > >
->> > > > > This seems to be out of bound read for "scontext" at
->> > > > >
->> > > > >       for (i = 1; i < SECINITSID_NUM; i++) {
->> > > > >               if (!strcmp(initial_sid_to_string[i],
->> > > > > scontext)) {
->> > > > >                       *sid = i;
->> > > > >                       return 0;
->> > > > >               }
->> > > > >       }
->> > > > >
->> > > > > because "initial_sid_to_string[i]" is "const char *".
->> > > > >
->> > > > > >  security_context_to_sid_core+0x437/0x620
->> > > > > > security/selinux/ss/services.c:1420
->> > > > > >  security_context_to_sid+0x32/0x40
->> > > > > > security/selinux/ss/services.c:1479
->> > > > > >  selinux_setprocattr+0x51c/0xb50
->> > > > > > security/selinux/hooks.c:5986
->> > > > > >  security_setprocattr+0x85/0xc0 security/security.c:1264
->> > > > >
->> > > > > If "value" does not terminate with '\0' or '\n', "value" and
->> > > > > "size" are as-is passed to "scontext" and "scontext_len"
->> > > > > above
->> > > > >
->> > > > >       /* Obtain a SID for the context, if one was specified.
->> > > > > */
->> > > > >       if (size && str[0] && str[0] != '\n') {
->> > > > >               if (str[size-1] == '\n') {
->> > > > >                       str[size-1] = 0;
->> > > > >                       size--;
->> > > > >               }
->> > > > >               error = security_context_to_sid(value, size,
->> > > > > &sid,
->> > > > > GFP_KERNEL);
->> > > > >
->> > > > > which will allow strcmp() to trigger out of bound read when
->> > > > > "size" is
->> > > > > larger than strlen(initial_sid_to_string[i]).
->> > > > >
->> > > > > Thus, I guess the simplest fix is to use strncmp() instead of
->> > > > > strcmp().
->> > > >
->> > > > Already fixed by
->> > > > https://www.spinics.net/lists/selinux/msg23589.html
->> > >
->> > >
->> > > Paul, please also follow this part:
->> > >
->> > > > syzbot will keep track of this bug report.
->> > > > Once a fix for this bug is committed, please reply to this
->> > > > email with:
->> > > > #syz fix: exact-commit-title
->> > > > Note: all commands must start from beginning of the line in the
->> > > > email body.
->> > >
->> > > This will greatly help to keep overall process running. Thanks.
->> >
->> > When is the right time to do this?  The text say to reply when a
->> > patch
->> > has been committed, but where?  My selinux/next branch?  Linus'
->> > master?  Your docs and the end of the email needs to be more clear
->> > on
->> > this.
->> >
->> > For the record, I did see that part of the syzbot mail but I was
->> > waiting until I merged that patch; v2 was posted late in the week
->> > and
->> > I was giving it a few days in case someone saw something
->> > objectionable.
->> >
->> > Also, while we are on the topic of syzbot, what SELinux policy (if
->> > any) do you load on the system that is undergoing testing?  Based
->> > on
->> > some of the recent reports it would appear that you are running a
->> > SELinux enabled kernel but might not be loading a SELinux policy,
->> > is
->> > that correct?
->>
->>
->> This is good question. The problem is that we are testing almost all
->> kernel subsystems, but are not experts in most of them. So frequently
->> we doing some non-sense. And that's where we need you help.
->> That's what we have for grep SECURITY .config:
->>
->> CONFIG_EXT4_FS_SECURITY=y
->> # CONFIG_9P_FS_SECURITY is not set
->> # CONFIG_SECURITY_DMESG_RESTRICT is not set
->> CONFIG_SECURITY=y
->> CONFIG_SECURITY_WRITABLE_HOOKS=y
->> # CONFIG_SECURITYFS is not set
->> CONFIG_SECURITY_NETWORK=y
->> CONFIG_SECURITY_NETWORK_XFRM=y
->> CONFIG_SECURITY_PATH=y
->> CONFIG_SECURITY_SELINUX=y
->> CONFIG_SECURITY_SELINUX_BOOTPARAM=y
->> CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE=1
->> CONFIG_SECURITY_SELINUX_DISABLE=y
->> CONFIG_SECURITY_SELINUX_DEVELOP=y
->> CONFIG_SECURITY_SELINUX_AVC_STATS=y
->> CONFIG_SECURITY_SELINUX_CHECKREQPROT_VALUE=0
->> # CONFIG_SECURITY_SMACK is not set
->> # CONFIG_SECURITY_TOMOYO is not set
->> # CONFIG_SECURITY_APPARMOR is not set
->> # CONFIG_SECURITY_LOADPIN is not set
->> # CONFIG_SECURITY_YAMA is not set
->> CONFIG_DEFAULT_SECURITY_SELINUX=y
->> # CONFIG_DEFAULT_SECURITY_DAC is not set
->> CONFIG_DEFAULT_SECURITY="selinux"
->>
->>
->> I don't think we do anything else besides that.
->> To be fair I don't know what is SELinux policy nor how to load it.
->> Can
->> you suggest a policy that would be good for testing of kernel in
->> general and SELinux in particular? Obviously, we don't want to
->> prohibit access to any major parts of kernel APIs entirely (because
->> then we won't test them). syzkaller also creates a local temp dir per
->> test process, and the process mostly accesses files there (except for
->> opening /dev/* and /proc/self/*). Is it possible to selectively
->> prohibit something there, so that we test both positive and negative
->> cases?
+On Wed, Nov 29, 2017 at 6:28 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 11/26/2017 2:15 PM, Sargun Dhillon wrote:
+>> This patchset introduces safe dynamic LSM support. It does this via
+>> SRCU-protected security hooks. It also EXPORT_SYMBOL_GPLs the symbols
+>> required to perform runtime loading, and unloading. The patchset is
+>> meant to introduce as little overhead as possible when not used.
+>> Additionally, the functionality is disabled by default.
 >
-> SELinux policy is loaded by userspace; the support is integrated into
-> the various init programs, but you need to have a policy installed.
+> Can you explain the value in being able to unload a security module?
+> I can see having a throttle on an active module, but what do you gain
+> by being able to unload it? Can it possibly be worth the inevitable
+> memory leaks and almost certain dangling pointers? The restrictions on
+> a security module that can work safely in this environment are significant.
+> I don't see any point in unloading a module that could work with those
+> restrictions. The overhead of making it unloadable is likely to exceed
+> the overhead of running it.
 >
-> Best way would just be to run the test on Fedora (or CentOS) with
-> selinux-policy-targeted installed.  Then you would be testing with a
-> real policy loaded.  You could run syzkaller from the unconfined_t
-> domain and it should be largely unimpeded, and it could transition to a
-> different domain if you want to test denials.  For reference, the
-> selinux testsuite itself is at
->  https://github.com/SELinuxProject/selinux-testsuite/
-> It includes a defconfig fragment that can be merged, although portions
-> of that are only required for particular test programs (see the
-> comments in it).
->
-> If that's not viable, then another approach would be to generate a
-> minimal allow-all policy from the kernel source tree, see
-> Documentation/admin-guide/LSM/SELinux.rst and scripts/selinux/*.
-> The downside of that approach is that SELinux developers and users
-> don't use that policy themselves for anything, and it won't exercise
-> any permission denial code paths.
+There are three things here:
+1) I wanted to replicate what in-kernel security hooks could do.
+security_delete_hooks exists today, and although I'm not sure how it
+can safely be used, even though it called as list_del_rcu, I'm not
+sure if there is any way to ensure safety around ensuring there are no
+more remaining references. I didn't dig into this too deeply.
+2) In the future, I want to extend this patch and add the idea of
+"immutable hooks" i.e. hooks which can only be loaded, but not
+unloaded. If we combine this with the sealable memory allocator, it
+provides some interesting security guarantees, especially if we
+incorporate some of the other patches around the sealable memory
+allocator.
+3) My personal reason for wanting this is actually tied to my use
+case. I have certain policies which are far easier to express by
+writing some C-code (a module), as opposed to writing a generic
+loader. Often times these modules are a few lines of code, and the
+rulesets are changed on the fly. Although this could be implemented be
+adding lots of hooks, the overhead starts to become unreasonable,
+especially when newer hooks obsolete older hooks. -- Think nftables or
+systemtap -- sometimes, the environment changes, and you need to
+reconfigure your system.
 
+I started going down the route of benchmarking these things, but
+unfortunately, with the machines I have access to, I can't see the
+performance counters, so I'm unable to see differences in performance
+other than wall-clock time. I can dig in a little bit more, but we can
+always gate module unloading behind a config flag if you think that's
+best. If it's disabled, there's no reason to do this whole SRCU thing
+at all.
 
-Thanks, I will see what we can do here. Still lots to learn for me.
+>>
+>> The SRCU was made safe to call from an interrupt context in the patch
+>> "srcu: Allow use of Classic SRCU from both process and interrupt context"
+>> (1123a6041654e8f889014659593bad4168e542c2) by Paolo Bonzini. Therefore
+>> this mechanism is safe to use for traversal of the callback list,
+>> even when a hook is called from the interrupt context.
+>>
+>> Currently, this maintains an entirely seperate mechanism to attach hooks
+>> because the hooks are behind managed static_keys to prevent overhead.
+>> This is also done so sealable memory support could be added at a later
+>> point. The callbacks currently include a percpu_counter, but that could
+>> sit outside of the struct itself. This may also have a benefit that these
+>> counters, could have __cacheline_aligned_in_smp. Although, in my testing
+>> I was unable to find much performance delta with percpu_counters that
+>> were not aligned.
+>>
+>> It includes an example LSM that prevents specific time travel.
+>
+> Time based controls (e.g. you can't execute files in /usr/games between
+> 8:00 and 17:00) would be cool. I suggested them in the 1980's, but
+> no one has gotten around to implementing them. :)
+>
+>>
+>> Sargun Dhillon (3):
+>>   security: Add safe, dynamic (runtime-loadable) hook support
+>>   LSM: Add statistics about the invocation of dynamic hooks
+>>   LSM: Add an example sample dynamic LSM
+>>
+>>  include/linux/lsm_hooks.h | 254 +++++++++++++++++++++++++++++++++++++
+>>  samples/Kconfig           |   6 +
+>>  samples/Makefile          |   2 +-
+>>  samples/lsm/Makefile      |   4 +
+>>  samples/lsm/lsm_example.c |  46 +++++++
+>>  security/Kconfig          |  16 +++
+>>  security/Makefile         |   2 +
+>>  security/dynamic.c        | 316 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  security/dynamic.h        |  33 +++++
+>>  security/dynamicfs.c      | 118 +++++++++++++++++
+>>  security/inode.c          |   2 +
+>>  security/security.c       |  66 +++++++++-
+>>  12 files changed, 863 insertions(+), 2 deletions(-)
+>>  create mode 100644 samples/lsm/Makefile
+>>  create mode 100644 samples/lsm/lsm_example.c
+>>  create mode 100644 security/dynamic.c
+>>  create mode 100644 security/dynamic.h
+>>  create mode 100644 security/dynamicfs.c
+>>
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
