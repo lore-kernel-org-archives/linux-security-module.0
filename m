@@ -1,24 +1,40 @@
-From: gregkh@linuxfoundation.org (Greg KH)
-Date: Tue, 5 Dec 2017 14:34:06 +0100
-Subject: [PATCH] security: Export few symbols referred by other modules
-In-Reply-To: <alpine.LFD.2.20.1712052259390.14735@localhost>
-References: <1512471537-23865-1-git-send-email-hareeshg@codeaurora.org>
-	<alpine.LFD.2.20.1712052259390.14735@localhost>
-Message-ID: <20171205133406.GD13746@kroah.com>
+From: brdeoliv@redhat.com (Bruno E. O. Meneguele)
+Date: Tue,  5 Dec 2017 11:35:16 -0200
+Subject: [PATCH v2] ima: log message to module appraisal error
+Message-ID: <20171205133516.23454-1-brdeoliv@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Dec 05, 2017 at 11:04:35PM +1100, James Morris wrote:
-> On Tue, 5 Dec 2017, Hareesh Gundu wrote:
-> 
-> > Export mmap_min_addr and security_mmap_addr() to allow
-> > kernel modules to use them.
+Simple but useful message log to the user in case of module appraise is
+forced and fails due to the lack of file descriptor, that might be
+caused by kmod calls to compressed modules.
 
-What in-tree kernel module needs these symbols?
+Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
+---
+ security/integrity/ima/ima_main.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-thanks,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 770654694efc..95ec39910058 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -366,8 +366,12 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 
+ 	if (!file && read_id == READING_MODULE) {
+ 		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
+-		    (ima_appraise & IMA_APPRAISE_ENFORCE))
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("impossible to appraise a module without a file \
++			       descriptor. sig_enforce kernel parameter might \
++			       help\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		}
+ 		return 0;	/* We rely on module signature checking */
+ 	}
+ 	return 0;
+-- 
+2.14.3
 
-greg k-h
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
