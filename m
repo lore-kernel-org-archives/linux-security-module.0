@@ -1,52 +1,37 @@
-From: julia.lawall@lip6.fr (Julia Lawall)
-Date: Wed, 6 Dec 2017 15:53:03 +0100 (CET)
-Subject: [PATCH] security: keys: remove redundant assignment to key_ref
-In-Reply-To: <15713.1512571817@warthog.procyon.org.uk>
-References: <alpine.LFD.2.20.1712051116130.21642@localhost>
-	<20171204181424.15808-1-colin.king@canonical.com>
-	<15713.1512571817@warthog.procyon.org.uk>
-Message-ID: <alpine.DEB.2.20.1712061551310.25998@hadrien>
+From: hareeshg@codeaurora.org (Hareesh Gundu)
+Date: Wed, 6 Dec 2017 20:45:01 +0530
+Subject: [PATCH] security: Export few symbols referred by other modules
+In-Reply-To: <201712052221.HDJ00044.tOOHVMFQFOJLSF@I-love.SAKURA.ne.jp>
+References: <1512471537-23865-1-git-send-email-hareeshg@codeaurora.org>
+	<alpine.LFD.2.20.1712052259390.14735@localhost>
+	<201712052221.HDJ00044.tOOHVMFQFOJLSF@I-love.SAKURA.ne.jp>
+Message-ID: <0322ddc2-f1a2-93f5-d34d-d57f6be734a3@codeaurora.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On Wed, 6 Dec 2017, David Howells wrote:
-
-> James Morris <james.l.morris@oracle.com> wrote:
+On 12/5/2017 6:51 PM, Tetsuo Handa wrote:
+> James Morris wrote:
+>> On Tue, 5 Dec 2017, Hareesh Gundu wrote:
+>>
+>>> Export mmap_min_addr and security_mmap_addr() to allow
+>>> kernel modules to use them.
+>>>
+>>> Signed-off-by: Hareesh Gundu <hareeshg@codeaurora.org>
+Can other folks comment whether this should be EXPORT_SYMBOL or 
+EXPORT_SYMBOL_GPL ?
+>> I'm not sure whether this should be EXPORT_SYMBOL or EXPORT_SYMBOL_GPL, as
+>> this hook was added in 2009, well after EXPORT_SYMBOL_GPL came into being.
+>>
+>> Most of the LSM hooks are marked EXPORT_SYMBOL because they were part of
+>> an existing interface when EXPORT_SYMBOL_GPL was introduced, IIRC.
+>>
+>> What do folks think?
+>>
+ ?That's right, This change is for outside kernel tree modules.
+> We don't export symbols not used by in-tree modules.
+> Which in-tree module needs to access these symbols?
 >
-> > I think a general cleanup in that function to make all of these follow the
-> > pattern:
-> >
-> > 	if (something) {
-> > 		key_ref = ERR_PTR(-error);
-> > 		goto error;
-> > 	}
-> >
-> > rather than unconditionally setting the error first, would be better, but
-> > this is a clear enough fix on its own.
->
-> There's a preference in Linux to use:
->
-> 	key_ref = ERR_PTR(-error);
->  	if (something)
->  		goto error;
->
-> instead because it uses less vertical space.  It might originally have been
-> promulgated by Linus, but I don't remember.  Though you do have a point - your
-> way makes error handling less subject breakage from code rearrangement.
 
-I have the impression that there are many examples of both approaches.
-
-julia
-
->
-> David
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
