@@ -1,44 +1,44 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 07 Dec 2017 09:35:47 -0500
-Subject: [PATCH] integrity: get rid of unneeded initializations in
-	integrity_iint_cache entries
-In-Reply-To: <1512648098.1350.6.camel@kernel.org>
-References: <20170706145421.13223-1-jlayton@kernel.org>
-	<20170706150424.GA21489@mail.hallyn.com>
-	<1499370226.3130.36.camel@linux.vnet.ibm.com>
-	<1512648098.1350.6.camel@kernel.org>
-Message-ID: <1512657347.3527.48.camel@linux.vnet.ibm.com>
+Date: Thu, 07 Dec 2017 09:35:59 -0500
+Subject: [RFC PATCH 2/4] ima: define new ima_sb_post_new_mount hook
+In-Reply-To: <1512649584.1350.14.camel@redhat.com>
+References: <1502904620-20075-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1502904620-20075-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<1512649584.1350.14.camel@redhat.com>
+Message-ID: <1512657359.3527.49.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2017-12-07 at 07:01 -0500, Jeff Layton wrote:
-> On Thu, 2017-07-06 at 15:43 -0400, Mimi Zohar wrote:
-> > On Thu, 2017-07-06 at 10:04 -0500, Serge E. Hallyn wrote:
-> > > Quoting Jeff Layton (jlayton at kernel.org):
-> > > > From: Jeff Layton <jlayton@redhat.com>
-> > > > 
-> > > > The init_once routine memsets the whole object to 0, and then
-> > > > explicitly sets some of the fields to 0 again. Just remove the explicit
-> > > > initializations.
-> > > > 
-> > > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> > > 
-> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > 
-> > Thanks, queued.
-> > 
-> > Mimi
-> > 
-> 
-> Hi Mimi,
-> 
-> I notice that this patch hasn't made the last couple of releases. Was it
-> dropped for some reason?
+Hi Jeff,
 
-Thanks for the reminder. ?I accidentally dropped it (and Sascha
-Hauer's patch). ?The subject line is too long. ?Assuming you don't
-object, I'll replace the "get rid of" with "removed" and queue the
-patch in the next-queued-testing branch.
+[The IMA/EVM and the TPM mailing lists have been combined as a single
+linux-integrity mailing list.]
+
+On Thu, 2017-12-07 at 07:26 -0500, Jeff Layton wrote:
+> Sorry for the late review. I just started dusting off my i_version
+> rework, and noticed that IMA still has unaddressed problems here.
+
+<snip>
+
+> Personally, I'm not a huge fan of this scheme. It seems quite invasive,
+> and doesn't really seem to address the stated problem well.
+
+A cleaned up version of this patch set was meant to follow the
+introduction of a new integrity_read method, but that patch set was
+rejected. ?At this point, I have no intentions of upstreaming a
+cleaned up version this patch set either.
+
+> The warning itself seems ok, but I don't really see what's wrong with
+> performing remeasurement when the mtime changes on filesystems that
+> don't have SB_I_VERSION set. Surely that's better than limiting it to an
+> initial measurement?
+> 
+> Maybe I just don't understand what you're really trying to achieve here.
+
+Based on discussions with Sascha Hauer, he convinced me the i_version
+test is basically just a performance improvement and posted a patch
+that checks the filesystem for i_version support, before relying on it
+- ?https://www.spinics.net/lists/linux-integrity/msg00033.html.
 
 Mimi
 
