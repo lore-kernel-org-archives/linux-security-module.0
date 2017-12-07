@@ -1,93 +1,111 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Fri, 8 Dec 2017 00:02:38 +0100
-Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
-	lockdown
-In-Reply-To: <20171205102757.GA12982@amd>
-References: <20171111023240.2398ca55@alans-desktop>
-	<20171113174250.GA22894@wotan.suse.de>
-	<20171113210848.4dc344bd@alans-desktop>
-	<454.1510609487@warthog.procyon.org.uk>
-	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
-	<1510662098.3711.139.camel@linux.vnet.ibm.com>
-	<CA+55aFzvuvqOfsJ9arzcc1QbTGs+U-TsNmsyem9UAVVQC8YkZQ@mail.gmail.com>
-	<CACdnJuvP=0AHGtfGJ5+cT+kHRy3fU4BLjwkvzP0rLO6q5ejAQQ@mail.gmail.com>
-	<CA+55aFxeLwgwxh2iJTf6Dz0T_a_TZfTdhBw5TkcSsCmjt2N5pw@mail.gmail.com>
-	<20171205102757.GA12982@amd>
-Message-ID: <20171207230238.GW729@wotan.suse.de>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 7 Dec 2017 18:37:16 -0500
+Subject: [PATCH V2] selinux: Add SCTP support
+In-Reply-To: <20171206101736.3217-1-richard_c_haines@btinternet.com>
+References: <20171206101736.3217-1-richard_c_haines@btinternet.com>
+Message-ID: <CAHC9VhSpDDEUOd2mBQ6DJMXeqW5O6xnxLJgXP-sb-bGu-TrwWw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Dec 05, 2017 at 11:27:58AM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > > Our ability to determine that userland hasn't been tampered with
-> > > depends on the kernel being trustworthy. If userland can upload
-> > > arbitrary firmware to DMA-capable devices then we can no longer trust
-> > > the kernel. So yes, firmware is special.
-> > 
-> > You're ignoring the whole "firmware is already signed by the hardware
-> > manufacturer and we don't even have access to it" part.
-> 
-> Well... I guess we'd prefer the firmware _not_ be signed, so we can
-> fix security holes in that after the vendor lost interest... Bugs in
-> the wifi stacks seemed patcheable that way.
-> 
-> There is GPLed firmware available for some USB wifi's. We really
-> should make sure firmware signing is not mandatory/encouraged for the hw vendors.
+On Wed, Dec 6, 2017 at 5:17 AM, Richard Haines
+<richard_c_haines@btinternet.com> wrote:
+> The SELinux SCTP implementation is explained in:
+> Documentation/security/SELinux-sctp.rst
+>
+> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+> ---
+> V2 Changes
+> Remove lock from selinux_sctp_assoc_request()
+> Fix selinux_sctp_sk_clone() kbuild test robot catch [1]
+>
+> [1] https://marc.info/?l=selinux&m=151198281817779&w=2
+>
+>  Documentation/security/SELinux-sctp.rst | 104 ++++++++++++
+>  security/selinux/hooks.c                | 270 +++++++++++++++++++++++++++++---
+>  security/selinux/include/classmap.h     |   2 +-
+>  security/selinux/include/netlabel.h     |  20 ++-
+>  security/selinux/include/objsec.h       |   4 +
+>  security/selinux/netlabel.c             | 144 +++++++++++++++--
+>  6 files changed, 512 insertions(+), 32 deletions(-)
+>  create mode 100644 Documentation/security/SELinux-sctp.rst
 
-I share this concern and interest, specially as more device drivers get purposely
-stupid and most of the technology and fun things shift to firmware. Its precisely
-for this same reason why most manufacturers won't be opening up more firmware, as
-they could argue tons of value-add is in firmware now.
+I just went through these patches again, and I think they look pretty
+good.  There is one small cosmetic nit (see below), but that should be
+a quick fix.
 
-One has to be realistic though, as one of the few folks who pushed to open
-source (and GPL) a few of the open source firmwares we have for WiFi, I realize
-we have no option but to accept the fate that most manufacturers *will*
-use and require signed firmware in the future.
+As Dave already said, let's give the SCTP folks some time to look
+things over before I merge anything.  If we haven't heard anything by
+next week, I'll ping Vlad to see if I can get him to take a look.
 
-If you're concerned about this you have only a few options.
+> +/**
+> + * selinux_netlbl_socket_connect - Label a client-side socket on connect
+> + * @sk: the socket to label
+> + * @addr: the destination address
+> + *
+> + * Description:
+> + * Attempt to label a connected socket with NetLabel using the given address.
+> + * Returns zero values on success, negative values on failure.
+> + *
+> + */
+> +int selinux_netlbl_socket_connect(struct sock *sk, struct sockaddr *addr)
+> +{
+> +       int rc;
+> +       struct sk_security_struct *sksec = sk->sk_security;
+> +
+> +       if (sksec->nlbl_state != NLBL_REQSKB &&
+> +           sksec->nlbl_state != NLBL_CONNLABELED)
+> +               return 0;
+> +
+> +       lock_sock(sk);
+> +       rc = selinux_netlbl_socket_connect_helper(sk, addr);
+>         release_sock(sk);
+> +
+> +       return rc;
+> +}
+> +
+> +/**
+> + * selinux_netlbl_sctp_socket_connect - Label an SCTP client-side socket on a
+> + * connect
+> + * @sk: the socket to label
+> + * @addr: the destination address
+> + *
+> + * Description:
+> + * Attempt to label a connected socket with NetLabel using the given address
+> + * when called by the SCTP protocol layer. The situations handled are:
+> + * sctp_connectx(3), sctp_sendmsg(3), sendmsg(2), whenever a new IP address
+> + * is added or when a new primary address is selected. Note that an SCTP
+> + * connect(2) call happens before the SCTP protocol layer and is handled via
+> + * selinux_netlbl_socket_connect()
+> + * Returns zero values on success, negative values on failure.
+> + *
+> + */
+> +int selinux_netlbl_sctp_socket_connect(struct sock *sk, struct sockaddr *addr)
+> +{
+> +       int rc;
+> +       struct sk_security_struct *sksec = sk->sk_security;
+> +
+> +       if (sksec->nlbl_state != NLBL_REQSKB &&
+> +           sksec->nlbl_state != NLBL_CONNLABELED)
+> +               return 0;
+> +
+> +       rc = selinux_netlbl_socket_connect_helper(sk, addr);
+> +
+>         return rc;
+>  }
 
-One is to get more and more folks reverse engineer firmware. This won't help
-if you can't deploy unsigned firmware though. But you have to also look at it
-from a practical point of view, in order to do development you *have* to have
-some sort of knobs to turn off fw signing verification, so it should be a
-matter of looking hard. And for devices where this is not obvious or almost
-impossible, hope for an exploit.
+My apologies, I should have noticed this sooner ... If the only
+difference between selinux_netlbl_socket_connect() and
+selinux_netlbl_sctp_socket_connect() is that the SCTP variant takes a
+lock, why not simply rename selinux_netlbl_sctp_socket_connect() to
+selinux_netlbl_socket_connect_locked()?  There is nothing really SCTP
+specific here, aside from the comment header, which should already be
+covered elsewhere.
 
-Another option is to argue for the engineering gain for having open firmware,
-and a viable sensible and responsible option to continue to do R&D and innovation
-with open firmware. We did this with WiFi long ago, see CFG80211_CERTIFICATION_ONUS
-and the slew of open firmware released. The fact that we have open firmware
-repositories and also a respective proprietary firmwares for the same device
-could be used to metrically show the gains that such development had over time,
-in a quantifiable form (features, bug fixes, security issues fixed). There's
-tons of data available which could enable a researcher to have a field with
-this.
+[NOTE TO MYSELF: pick shorter function names next time, oof.]
 
-And the last option is to just argue for a sensible opt-out knob to be documented
-as part of our rights or due to general long term community security interests.
-Just as with UEFI one can say one does not trust any key present already on the
-platform, one should also be able to do the same for peripheral devices and their
-own corresponding firmware -- a knob to disable firmware signing.
-
-Sadly *all* of these are lofty pie in the sky objectives.
-
-What the likely outcome will be is we sit and wait for the worst of the possible
-security shit issues to hit the fan for the large IoT universe, and then hope
-we can use this as leverage to require documenting such opt-out knobs just as
-with UEFI's opt-out mechanism.
-
-Although one would expect that such exploits already have happened, in practice
-not at the interface we're talking about here, which is for /lib/firmware/.
-For instance the Intel Management Engine does not use this interface, and
-neither do some of the storage driver and arrays I've been bluntly told have
-had tons of backdoors for years. Its precisely because of this lack of known
-issues with security for /lib/firmware exploits that I'm willing to put signing
-of /lib/firmware on the side for now.
-
-We just haven't had many known attacks come in through here.
-
-  Luis
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
