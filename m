@@ -1,26 +1,35 @@
-From: davem@davemloft.net (David Miller)
-Date: Wed, 06 Dec 2017 15:13:03 -0500 (EST)
-Subject: [PATCH V2] selinux: Add SCTP support
-In-Reply-To: <20171206101736.3217-1-richard_c_haines@btinternet.com>
-References: <20171206101736.3217-1-richard_c_haines@btinternet.com>
-Message-ID: <20171206.151303.1526119083235256934.davem@davemloft.net>
+From: james.l.morris@oracle.com (James Morris)
+Date: Thu, 7 Dec 2017 11:00:31 +1100 (AEDT)
+Subject: [RFC 0/3] Safe, dynamically (un)loadable LSMs
+In-Reply-To: <CAMp4zn_RCt3qVFwt_67xS1Nq-4VFpiUQqZ20GNzSo8xfy5Ledw@mail.gmail.com>
+References: <20171126221545.GA13751@ircssh-2.c.rugged-nimbus-611.internal>
+	<8c8dd781-d30a-7105-011d-127cf5188426@schaufler-ca.com>
+	<CAMp4zn_=4r9_eH1pUOfzxmRuQL+nVk9megx325s=f1Myv_opZg@mail.gmail.com>
+	<866f86cf-d28a-3da7-4a2d-cbc5a330bd4a@schaufler-ca.com>
+	<CAMp4zn_RCt3qVFwt_67xS1Nq-4VFpiUQqZ20GNzSo8xfy5Ledw@mail.gmail.com>
+Message-ID: <alpine.LFD.2.20.1712071053420.8348@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Richard Haines <richard_c_haines@btinternet.com>
-Date: Wed,  6 Dec 2017 10:17:36 +0000
+On Wed, 6 Dec 2017, Sargun Dhillon wrote:
 
-> The SELinux SCTP implementation is explained in:
-> Documentation/security/SELinux-sctp.rst
-> 
-> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+> Should I respin this patch sans module unloading? Still a set of dynamic 
+> hooks that are independent to allow for sealable memory support.
 
-No general objections from the networking side, so:
+Yes, please.
 
-Acked-by: David S. Miller <davem@davemloft.net>
+> I'm also wondering what people think of the fs change? I don't think 
+> that it makes a lot of sense just having one giant list. I was thinking 
+> it might make more sense using the module_name instead.
 
-from me.  But if I were you I'd wait for some review from the
-SCTP maintainers and experts. :-)
+I don't know how useful this will be in practice.  Who/what will be 
+looking at these entries and why?
+
+
+-- 
+James Morris
+<james.l.morris@oracle.com>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
