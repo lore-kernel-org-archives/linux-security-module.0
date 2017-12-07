@@ -1,37 +1,93 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Thu, 7 Dec 2017 15:32:09 +0000
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Fri, 8 Dec 2017 00:02:38 +0100
 Subject: Firmware signing -- Re: [PATCH 00/27] security, efi: Add kernel
 	lockdown
-In-Reply-To: <20171204195155.GU729@wotan.suse.de>
-References: <1509660641.3416.24.camel@linux.vnet.ibm.com>
-	<20171107230700.GJ22894@wotan.suse.de>
-	<20171108061551.GD7859@linaro.org>
-	<20171108194626.GQ22894@wotan.suse.de>
-	<20171109014841.GF7859@linaro.org>
-	<1510193857.4484.95.camel@linux.vnet.ibm.com>
-	<20171109044619.GG7859@linaro.org>
-	<20171111023240.2398ca55@alans-desktop>
+In-Reply-To: <20171205102757.GA12982@amd>
+References: <20171111023240.2398ca55@alans-desktop>
 	<20171113174250.GA22894@wotan.suse.de>
 	<20171113210848.4dc344bd@alans-desktop>
-	<20171204195155.GU729@wotan.suse.de>
-Message-ID: <20171207153209.5da771a9@alans-desktop>
+	<454.1510609487@warthog.procyon.org.uk>
+	<CA+55aFzrK29hbxoKs3GsvVUY4_uR7aBgZv2eeVyVq7MzfATY3w@mail.gmail.com>
+	<1510662098.3711.139.camel@linux.vnet.ibm.com>
+	<CA+55aFzvuvqOfsJ9arzcc1QbTGs+U-TsNmsyem9UAVVQC8YkZQ@mail.gmail.com>
+	<CACdnJuvP=0AHGtfGJ5+cT+kHRy3fU4BLjwkvzP0rLO6q5ejAQQ@mail.gmail.com>
+	<CA+55aFxeLwgwxh2iJTf6Dz0T_a_TZfTdhBw5TkcSsCmjt2N5pw@mail.gmail.com>
+	<20171205102757.GA12982@amd>
+Message-ID: <20171207230238.GW729@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> I am curious though, is the above notion of having hardware require signed
-> firmware an implication brought down by UEFI? If so do you have any pointers
-> to where this is stipulated? Or is it just a best practice we assume some
-> manufacturers are implementing?
+On Tue, Dec 05, 2017 at 11:27:58AM +0100, Pavel Machek wrote:
+> Hi!
+> 
+> > > Our ability to determine that userland hasn't been tampered with
+> > > depends on the kernel being trustworthy. If userland can upload
+> > > arbitrary firmware to DMA-capable devices then we can no longer trust
+> > > the kernel. So yes, firmware is special.
+> > 
+> > You're ignoring the whole "firmware is already signed by the hardware
+> > manufacturer and we don't even have access to it" part.
+> 
+> Well... I guess we'd prefer the firmware _not_ be signed, so we can
+> fix security holes in that after the vendor lost interest... Bugs in
+> the wifi stacks seemed patcheable that way.
+> 
+> There is GPLed firmware available for some USB wifi's. We really
+> should make sure firmware signing is not mandatory/encouraged for the hw vendors.
 
-It's a mix of best practice and meeting the so called 'secure boot'
-requirements. In the non Linux space exactly the same problems exist in
-terms of trusting devices and firmware, building a root of trust and even
-more so when producing 'hardened' platforms.
+I share this concern and interest, specially as more device drivers get purposely
+stupid and most of the technology and fun things shift to firmware. Its precisely
+for this same reason why most manufacturers won't be opening up more firmware, as
+they could argue tons of value-add is in firmware now.
 
-Some stuff isn't - USB devices for example don't get to pee on random
-memory so often isn't signed.
+One has to be realistic though, as one of the few folks who pushed to open
+source (and GPL) a few of the open source firmwares we have for WiFi, I realize
+we have no option but to accept the fate that most manufacturers *will*
+use and require signed firmware in the future.
 
-Alan
+If you're concerned about this you have only a few options.
+
+One is to get more and more folks reverse engineer firmware. This won't help
+if you can't deploy unsigned firmware though. But you have to also look at it
+from a practical point of view, in order to do development you *have* to have
+some sort of knobs to turn off fw signing verification, so it should be a
+matter of looking hard. And for devices where this is not obvious or almost
+impossible, hope for an exploit.
+
+Another option is to argue for the engineering gain for having open firmware,
+and a viable sensible and responsible option to continue to do R&D and innovation
+with open firmware. We did this with WiFi long ago, see CFG80211_CERTIFICATION_ONUS
+and the slew of open firmware released. The fact that we have open firmware
+repositories and also a respective proprietary firmwares for the same device
+could be used to metrically show the gains that such development had over time,
+in a quantifiable form (features, bug fixes, security issues fixed). There's
+tons of data available which could enable a researcher to have a field with
+this.
+
+And the last option is to just argue for a sensible opt-out knob to be documented
+as part of our rights or due to general long term community security interests.
+Just as with UEFI one can say one does not trust any key present already on the
+platform, one should also be able to do the same for peripheral devices and their
+own corresponding firmware -- a knob to disable firmware signing.
+
+Sadly *all* of these are lofty pie in the sky objectives.
+
+What the likely outcome will be is we sit and wait for the worst of the possible
+security shit issues to hit the fan for the large IoT universe, and then hope
+we can use this as leverage to require documenting such opt-out knobs just as
+with UEFI's opt-out mechanism.
+
+Although one would expect that such exploits already have happened, in practice
+not at the interface we're talking about here, which is for /lib/firmware/.
+For instance the Intel Management Engine does not use this interface, and
+neither do some of the storage driver and arrays I've been bluntly told have
+had tons of backdoors for years. Its precisely because of this lack of known
+issues with security for /lib/firmware exploits that I'm willing to put signing
+of /lib/firmware on the side for now.
+
+We just haven't had many known attacks come in through here.
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
