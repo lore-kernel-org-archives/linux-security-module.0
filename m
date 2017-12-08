@@ -1,200 +1,65 @@
-From: dvyukov@google.com (Dmitry Vyukov)
-Date: Fri, 8 Dec 2017 13:22:45 +0100
-Subject: KASAN: slab-out-of-bounds Read in strcmp
-In-Reply-To: <CACT4Y+bEp5wsEWHCGuB=FDywynxzL2yqMuta5LsAjrHeHOMPeA@mail.gmail.com>
-References: <001a113f711a721c58055f052200@google.com>
-	<089e08259d282c063e055f4bddbd@google.com>
-	<97d6bab0-d278-9945-5d82-a0a76b8b78c5@I-love.SAKURA.ne.jp>
-	<1512395025.20988.3.camel@tycho.nsa.gov>
-	<CACT4Y+Z50TGJj8PhJczMt4zF8aMyr5586GsJ7LAmS-Bf-QkXiw@mail.gmail.com>
-	<CAGH-Kgv+Nj2fpR+3SjnKJk1KMBZqqm9CwD2UAMau539nxtpU4g@mail.gmail.com>
-	<CACT4Y+aWCOxe0xH+bPtchX8OyNE3yVkpHmdE4QQwG443_G4aMg@mail.gmail.com>
-	<1512408782.20988.38.camel@tycho.nsa.gov>
-	<CACT4Y+bEp5wsEWHCGuB=FDywynxzL2yqMuta5LsAjrHeHOMPeA@mail.gmail.com>
-Message-ID: <CACT4Y+a=UZt+pGqRPN6mHZ4_hnRVPfVfn1pJymvX4QuOJ+i6Jw@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Fri, 08 Dec 2017 15:41:11 +0000
+Subject: [GIT PULL] KEYS, ASN.1, X.509, PKCS#7: Fixes
+Message-ID: <9594.1512747671@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Dec 5, 2017 at 11:00 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->>> > > > > > ===========================================================
->>> > > > > > =======
->>> > > > > > BUG: KASAN: slab-out-of-bounds in strcmp+0x96/0xb0
->>> > > > > > lib/string.c:328
->>> > > > > > Read of size 1 at addr ffff8801cd99d2c1 by task
->>> > > > > > syzkaller242593/3087
->>> > > > > >
->>> > > > > > CPU: 0 PID: 3087 Comm: syzkaller242593 Not tainted 4.15.0-
->>> > > > > > rc1-next-
->>> > > > > > 20171201+ #57
->>> > > > > > Hardware name: Google Google Compute Engine/Google Compute
->>> > > > > > Engine,
->>> > > > > > BIOS Google 01/01/2011
->>> > > > > > Call Trace:
->>> > > > > >  __dump_stack lib/dump_stack.c:17 [inline]
->>> > > > > >  dump_stack+0x194/0x257 lib/dump_stack.c:53
->>> > > > > >  print_address_description+0x73/0x250 mm/kasan/report.c:252
->>> > > > > >  kasan_report_error mm/kasan/report.c:351 [inline]
->>> > > > > >  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->>> > > > > >  __asan_report_load1_noabort+0x14/0x20
->>> > > > > > mm/kasan/report.c:427
->>> > > > > >  strcmp+0x96/0xb0 lib/string.c:328
->>> > > > >
->>> > > > > This seems to be out of bound read for "scontext" at
->>> > > > >
->>> > > > >       for (i = 1; i < SECINITSID_NUM; i++) {
->>> > > > >               if (!strcmp(initial_sid_to_string[i],
->>> > > > > scontext)) {
->>> > > > >                       *sid = i;
->>> > > > >                       return 0;
->>> > > > >               }
->>> > > > >       }
->>> > > > >
->>> > > > > because "initial_sid_to_string[i]" is "const char *".
->>> > > > >
->>> > > > > >  security_context_to_sid_core+0x437/0x620
->>> > > > > > security/selinux/ss/services.c:1420
->>> > > > > >  security_context_to_sid+0x32/0x40
->>> > > > > > security/selinux/ss/services.c:1479
->>> > > > > >  selinux_setprocattr+0x51c/0xb50
->>> > > > > > security/selinux/hooks.c:5986
->>> > > > > >  security_setprocattr+0x85/0xc0 security/security.c:1264
->>> > > > >
->>> > > > > If "value" does not terminate with '\0' or '\n', "value" and
->>> > > > > "size" are as-is passed to "scontext" and "scontext_len"
->>> > > > > above
->>> > > > >
->>> > > > >       /* Obtain a SID for the context, if one was specified.
->>> > > > > */
->>> > > > >       if (size && str[0] && str[0] != '\n') {
->>> > > > >               if (str[size-1] == '\n') {
->>> > > > >                       str[size-1] = 0;
->>> > > > >                       size--;
->>> > > > >               }
->>> > > > >               error = security_context_to_sid(value, size,
->>> > > > > &sid,
->>> > > > > GFP_KERNEL);
->>> > > > >
->>> > > > > which will allow strcmp() to trigger out of bound read when
->>> > > > > "size" is
->>> > > > > larger than strlen(initial_sid_to_string[i]).
->>> > > > >
->>> > > > > Thus, I guess the simplest fix is to use strncmp() instead of
->>> > > > > strcmp().
->>> > > >
->>> > > > Already fixed by
->>> > > > https://www.spinics.net/lists/selinux/msg23589.html
->>> > >
->>> > >
->>> > > Paul, please also follow this part:
->>> > >
->>> > > > syzbot will keep track of this bug report.
->>> > > > Once a fix for this bug is committed, please reply to this
->>> > > > email with:
->>> > > > #syz fix: exact-commit-title
->>> > > > Note: all commands must start from beginning of the line in the
->>> > > > email body.
->>> > >
->>> > > This will greatly help to keep overall process running. Thanks.
->>> >
->>> > When is the right time to do this?  The text say to reply when a
->>> > patch
->>> > has been committed, but where?  My selinux/next branch?  Linus'
->>> > master?  Your docs and the end of the email needs to be more clear
->>> > on
->>> > this.
->>> >
->>> > For the record, I did see that part of the syzbot mail but I was
->>> > waiting until I merged that patch; v2 was posted late in the week
->>> > and
->>> > I was giving it a few days in case someone saw something
->>> > objectionable.
->>> >
->>> > Also, while we are on the topic of syzbot, what SELinux policy (if
->>> > any) do you load on the system that is undergoing testing?  Based
->>> > on
->>> > some of the recent reports it would appear that you are running a
->>> > SELinux enabled kernel but might not be loading a SELinux policy,
->>> > is
->>> > that correct?
->>>
->>>
->>> This is good question. The problem is that we are testing almost all
->>> kernel subsystems, but are not experts in most of them. So frequently
->>> we doing some non-sense. And that's where we need you help.
->>> That's what we have for grep SECURITY .config:
->>>
->>> CONFIG_EXT4_FS_SECURITY=y
->>> # CONFIG_9P_FS_SECURITY is not set
->>> # CONFIG_SECURITY_DMESG_RESTRICT is not set
->>> CONFIG_SECURITY=y
->>> CONFIG_SECURITY_WRITABLE_HOOKS=y
->>> # CONFIG_SECURITYFS is not set
->>> CONFIG_SECURITY_NETWORK=y
->>> CONFIG_SECURITY_NETWORK_XFRM=y
->>> CONFIG_SECURITY_PATH=y
->>> CONFIG_SECURITY_SELINUX=y
->>> CONFIG_SECURITY_SELINUX_BOOTPARAM=y
->>> CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE=1
->>> CONFIG_SECURITY_SELINUX_DISABLE=y
->>> CONFIG_SECURITY_SELINUX_DEVELOP=y
->>> CONFIG_SECURITY_SELINUX_AVC_STATS=y
->>> CONFIG_SECURITY_SELINUX_CHECKREQPROT_VALUE=0
->>> # CONFIG_SECURITY_SMACK is not set
->>> # CONFIG_SECURITY_TOMOYO is not set
->>> # CONFIG_SECURITY_APPARMOR is not set
->>> # CONFIG_SECURITY_LOADPIN is not set
->>> # CONFIG_SECURITY_YAMA is not set
->>> CONFIG_DEFAULT_SECURITY_SELINUX=y
->>> # CONFIG_DEFAULT_SECURITY_DAC is not set
->>> CONFIG_DEFAULT_SECURITY="selinux"
->>>
->>>
->>> I don't think we do anything else besides that.
->>> To be fair I don't know what is SELinux policy nor how to load it.
->>> Can
->>> you suggest a policy that would be good for testing of kernel in
->>> general and SELinux in particular? Obviously, we don't want to
->>> prohibit access to any major parts of kernel APIs entirely (because
->>> then we won't test them). syzkaller also creates a local temp dir per
->>> test process, and the process mostly accesses files there (except for
->>> opening /dev/* and /proc/self/*). Is it possible to selectively
->>> prohibit something there, so that we test both positive and negative
->>> cases?
->>
->> SELinux policy is loaded by userspace; the support is integrated into
->> the various init programs, but you need to have a policy installed.
->>
->> Best way would just be to run the test on Fedora (or CentOS) with
->> selinux-policy-targeted installed.  Then you would be testing with a
->> real policy loaded.  You could run syzkaller from the unconfined_t
->> domain and it should be largely unimpeded, and it could transition to a
->> different domain if you want to test denials.  For reference, the
->> selinux testsuite itself is at
->>  https://github.com/SELinuxProject/selinux-testsuite/
->> It includes a defconfig fragment that can be merged, although portions
->> of that are only required for particular test programs (see the
->> comments in it).
->>
->> If that's not viable, then another approach would be to generate a
->> minimal allow-all policy from the kernel source tree, see
->> Documentation/admin-guide/LSM/SELinux.rst and scripts/selinux/*.
->> The downside of that approach is that SELinux developers and users
->> don't use that policy themselves for anything, and it won't exercise
->> any permission denial code paths.
->
->
-> Thanks, I will see what we can do here. Still lots to learn for me.
+Hi James,
 
+Can you pull these assorted fixes for keyrings, ASN.1, X.509 and PKCS#7 and
+pass them onto Linus please?
 
-I figured out why selinux wasn't initialized in our setup. The image
-missed selinux packages, so init could not initialize it. I've added
-these packages:
-https://github.com/google/syzkaller/commit/c0e5b8c81f054a301aeaaa16bf9c6220ba73d833
-and now sestatus says that selinux is initialized.
+Thanks,
+David
+---
+The following changes since commit fd6d2e506ce6f850d45342a15c896591291b77b5:
 
-I've also added some very basic description of selinux interface:
-https://github.com/google/syzkaller/commit/fadd10ac0525a437fc32e412327bdf11587f4946#diff-517fae0da2ea50677a86c092cf96781e
-Not enough to meaningfully test selinux, though.
+  Merge tag 'docs-4.15-fixes' of git://git.lwn.net/linux (2017-12-04 13:55:28 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-fixes-20171208
+
+for you to fetch changes up to 54c1fb39fe0495f846539ab765925b008f86801c:
+
+  X.509: fix comparisons of ->pkey_algo (2017-12-08 15:13:29 +0000)
+
+----------------------------------------------------------------
+Keyrings fixes
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      security: keys: remove redundant assignment to key_ref
+
+Eric Biggers (14):
+      KEYS: remove unnecessary get/put of explicit dest_keyring
+      KEYS: add missing permission check for request_key() destination
+      ASN.1: fix out-of-bounds read when parsing indefinite length item
+      ASN.1: check for error from ASN1_OP_END__ACT actions
+      X.509: reject invalid BIT STRING for subjectPublicKey
+      X.509: fix buffer overflow detection in sprint_oid()
+      509: fix printing uninitialized stack memory when OID is empty
+      pkcs7: return correct error code if pkcs7_check_authattrs() fails
+      pkcs7: fix check for self-signed certificate
+      pkcs7: use crypto_shash_digest()
+      KEYS: be careful with error codes in public_key_verify_signature()
+      X.509: use crypto_shash_digest()
+      KEYS: reject NULL restriction string when type is specified
+      X.509: fix comparisons of ->pkey_algo
+
+ crypto/asymmetric_keys/pkcs7_parser.c     |  4 ++-
+ crypto/asymmetric_keys/pkcs7_trust.c      |  2 +-
+ crypto/asymmetric_keys/pkcs7_verify.c     |  9 ++----
+ crypto/asymmetric_keys/public_key.c       |  7 +++--
+ crypto/asymmetric_keys/x509_cert_parser.c |  2 ++
+ crypto/asymmetric_keys/x509_public_key.c  |  8 ++---
+ lib/asn1_decoder.c                        | 49 ++++++++++++++++++-------------
+ lib/oid_registry.c                        | 16 ++++++----
+ security/keys/key.c                       |  1 -
+ security/keys/keyctl.c                    | 24 +++++++--------
+ security/keys/request_key.c               | 48 +++++++++++++++++++++++-------
+ 11 files changed, 101 insertions(+), 69 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
