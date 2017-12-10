@@ -1,23 +1,32 @@
 From: james.l.morris@oracle.com (James Morris)
-Date: Mon, 11 Dec 2017 09:28:20 +1100 (AEDT)
-Subject: [RFC v2 1/3] security: Add safe, dynamic (runtime-loadable) hook
-	support
-In-Reply-To: <5c089f6eb3bcec36e6021db7dcfcd4409be99111.1512704909.git.sargun@netflix.com>
+Date: Mon, 11 Dec 2017 09:21:28 +1100 (AEDT)
+Subject: [RFC v2 2/3] LSM: Add statistics about the invocation of dynamic
+	hooks
+In-Reply-To: <0d030add49ec1dfd2971e955ab7856cc536e37b1.1512704909.git.sargun@netflix.com>
 References: <cover.1512704909.git.sargun@netflix.com>
-	<5c089f6eb3bcec36e6021db7dcfcd4409be99111.1512704909.git.sargun@netflix.com>
-Message-ID: <alpine.LFD.2.20.1712110923210.19397@localhost>
+	<0d030add49ec1dfd2971e955ab7856cc536e37b1.1512704909.git.sargun@netflix.com>
+Message-ID: <alpine.LFD.2.20.1712110911170.19397@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Fri, 8 Dec 2017, Sargun Dhillon wrote:
 
-> The primary purpose of this patchset is to facilitate the development of
-> out-of-tree minor LSMs.
+> The purpose of this is similar to the purpose of something like
+> iptables -L -n. With the proliferation of LSMs, it's going to
+> be more important to have a way to understand what's going on.
 
-This is not a valid use-case for the mainline kernel: we don't add 
-features for out of tree code.
+The difference with iptables being that it's an application on top of the 
+netfilter hooks, with strongly defined behavioral semantics for matches 
+and targets, while their configuration is the security policy.
 
-Please reconsider your rationale :-)
+LSM is more like the raw netfilter layer, and I don't think you can make a 
+lot of sense from a list of just which hooks are active.  You need 
+semantic knowledge of how those hooks are configured, i.e. security 
+policy.
+
+I suggest dropping this part for now at least, and perhaps think about 
+building an API on top of this feature with strongly defined semantics 
+(e.g. something like iptables on top of netfilter). 
 
 
 - James
