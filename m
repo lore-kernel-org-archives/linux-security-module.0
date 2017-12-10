@@ -1,26 +1,26 @@
 From: james.l.morris@oracle.com (James Morris)
-Date: Mon, 11 Dec 2017 09:10:04 +1100 (AEDT)
+Date: Mon, 11 Dec 2017 09:28:20 +1100 (AEDT)
 Subject: [RFC v2 1/3] security: Add safe, dynamic (runtime-loadable) hook
 	support
-In-Reply-To: <0f07d85c-7434-a92b-0060-a31ad31ab962@schaufler-ca.com>
+In-Reply-To: <5c089f6eb3bcec36e6021db7dcfcd4409be99111.1512704909.git.sargun@netflix.com>
 References: <cover.1512704909.git.sargun@netflix.com>
 	<5c089f6eb3bcec36e6021db7dcfcd4409be99111.1512704909.git.sargun@netflix.com>
-	<0f07d85c-7434-a92b-0060-a31ad31ab962@schaufler-ca.com>
-Message-ID: <alpine.LFD.2.20.1712110909081.19397@localhost>
+Message-ID: <alpine.LFD.2.20.1712110923210.19397@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 8 Dec 2017, Casey Schaufler wrote:
+On Fri, 8 Dec 2017, Sargun Dhillon wrote:
 
-> Would it make sense to have lsm_dynamic.h ?
+> The primary purpose of this patchset is to facilitate the development of
+> out-of-tree minor LSMs.
 
-Yes.
+This is not a valid use-case for the mainline kernel: we don't add 
+features for out of tree code.
 
-> 
-> > +	DYNAMIC_SECURITY_HOOK_binder_set_context_mgr,
+Please reconsider your rationale :-)
 
-Please trim replies!
 
+- James
 -- 
 James Morris
 <james.l.morris@oracle.com>
