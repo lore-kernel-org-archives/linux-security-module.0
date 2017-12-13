@@ -1,62 +1,43 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 12 Dec 2017 17:24:46 -0500
-Subject: [PATCH 2/4] sctp: Add ip option support
-In-Reply-To: <20171212215638.GH3532@localhost.localdomain>
-References: <20171127193121.2666-1-richard_c_haines@btinternet.com>
-	<20171212160800.GE3532@localhost.localdomain>
-	<CAHC9VhR+WoO3UtdXLp+9mQ=c=avpEQ5-W8vTkEWfxXH1EkUS8A@mail.gmail.com>
-	<20171212215638.GH3532@localhost.localdomain>
-Message-ID: <CAHC9VhQ5iQsXum6NVkL-qdzu=bxVcaOscPjTSVufLzRbW_1_Pw@mail.gmail.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Wed, 13 Dec 2017 13:38:37 +0100
+Subject: [RFC v2 1/3] security: Add safe,
+	dynamic (runtime-loadable) hook support
+In-Reply-To: <alpine.LFD.2.20.1712110923210.19397@localhost>
+References: <cover.1512704909.git.sargun@netflix.com>
+	<5c089f6eb3bcec36e6021db7dcfcd4409be99111.1512704909.git.sargun@netflix.com>
+	<alpine.LFD.2.20.1712110923210.19397@localhost>
+Message-ID: <CAMp4zn89NoTKy9=Ek1FEsv22bGhZb0qCUwT11_+unY2LskBDPQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Dec 12, 2017 at 4:56 PM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Tue, Dec 12, 2017 at 04:33:03PM -0500, Paul Moore wrote:
->> On Tue, Dec 12, 2017 at 11:08 AM, Marcelo Ricardo Leitner
->> <marcelo.leitner@gmail.com> wrote:
->> > Hi Richard,
->> >
->> > On Mon, Nov 27, 2017 at 07:31:21PM +0000, Richard Haines wrote:
->> > ...
->> >> --- a/net/sctp/socket.c
->> >> +++ b/net/sctp/socket.c
->> >> @@ -3123,8 +3123,10 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
->> >>
->> >>       if (asoc) {
->> >>               if (val == 0) {
->> >> +                     struct sctp_af *af = sp->pf->af;
->> >>                       val = asoc->pathmtu;
->> >> -                     val -= sp->pf->af->net_header_len;
->> >> +                     val -= af->ip_options_len(asoc->base.sk);
->> >> +                     val -= af->net_header_len;
->> >>                       val -= sizeof(struct sctphdr) +
->> >>                                       sizeof(struct sctp_data_chunk);
->> >>               }
->> >
->> > Right below here there is a call to sctp_frag_point(). That function
->> > also needs this tweak.
->> >
->> > Yes, we should simplify all these calculations. I have a patch to use
->> > sctp_frag_point on where it is currently recalculating it on
->> > sctp_datamsg_from_user(), but probably should include other places as
->> > well.
->>
->> FYI: Richard let me know he is occupied with another project at the
->> moment and likely won't be able to do another respin until next week
->> at the earliest.
+On Sun, Dec 10, 2017 at 11:28 PM, James Morris
+<james.l.morris@oracle.com> wrote:
+> On Fri, 8 Dec 2017, Sargun Dhillon wrote:
 >
-> Okay, thanks. I can do a follow-up patch if it helps.
+>> The primary purpose of this patchset is to facilitate the development of
+>> out-of-tree minor LSMs.
+>
+> This is not a valid use-case for the mainline kernel: we don't add
+> features for out of tree code.
+>
+> Please reconsider your rationale :-)
+>
+>
+> - James
+> --
+> James Morris
+> <james.l.morris@oracle.com>
+>
+Even a la livepatch? One of our primary usecases is for a safer
+version of livepatch, with simpler consistency guarantees. The model
+is to be able to generate a module that targets a specific CVE, and
+roll it out via DKMS, or similar to a heterogenous fleet.
 
-I'll leave that up to you, I think your comments are pretty
-straightforward and should be easy for Richard to incorporate, and
-there is a lot to be said for including the fix in the original patch,
-but if you would prefer to send a separate patch I think that's fine
-too.
-
--- 
-paul moore
-www.paul-moore.com
+The other one is to be able to dynamically compile LSMs a la
+systemtap, using a DSL. One of the biggest problems we've seen is that
+the capability of LSMs is limited by the policy. Changing the policy
+requires in-kernel changes, whereas a compiler in userspace is
+significantly easier to modify.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
