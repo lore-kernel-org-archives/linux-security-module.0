@@ -1,39 +1,76 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Fri, 15 Dec 2017 11:28:26 -0500
-Subject: setcap/getcap limitations
-In-Reply-To: <20171215153742.GB2243@mail.hallyn.com>
-References: <20170511211146.GZ25861@madcap2.tricolour.ca>
-	<20170512033718.GA29494@mail.hallyn.com>
-	<20170820032017.GO29957@madcap2.tricolour.ca>
-	<20170831155637.GB12295@mail.hallyn.com>
-	<20170904120842.GC24692@madcap2.tricolour.ca>
-	<20171215153742.GB2243@mail.hallyn.com>
-Message-ID: <20171215162826.vayg76gxud56ee4l@madcap2.tricolour.ca>
+From: jlayton@kernel.org (Jeff Layton)
+Date: Fri, 15 Dec 2017 16:13:29 -0500
+Subject: [RFC PATCH 2/4] ima: define new ima_sb_post_new_mount hook
+In-Reply-To: <1512659378.1350.17.camel@redhat.com>
+References: <1502904620-20075-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1502904620-20075-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<1512649584.1350.14.camel@redhat.com>
+	<1512657359.3527.49.camel@linux.vnet.ibm.com>
+	<1512658216.1350.16.camel@redhat.com>
+	<1512659320.3527.53.camel@linux.vnet.ibm.com>
+	<1512659378.1350.17.camel@redhat.com>
+Message-ID: <1513372409.20336.30.camel@kernel.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2017-12-15 09:37, Serge E. Hallyn wrote:
-> Quoting Richard Guy Briggs (rgb at redhat.com):
-> > Tracking it would be helpful.  How much work would it be to convince
-> > Andrew to enable a bugtracker on that git repo?  I'd offer to enter them
-> > in the audit userspace git repo bugtracker, but that would
-> > pollute/dillute it.
+On Thu, 2017-12-07 at 10:09 -0500, Jeff Layton wrote:
+> On Thu, 2017-12-07 at 10:08 -0500, Mimi Zohar wrote:
+> > On Thu, 2017-12-07 at 09:50 -0500, Jeff Layton wrote:
+> > > On Thu, 2017-12-07 at 09:35 -0500, Mimi Zohar wrote:
+> > > > Hi Jeff,
+> > > > 
+> > > > [The IMA/EVM and the TPM mailing lists have been combined as a single
+> > > > linux-integrity mailing list.]
+> > > > 
+> > > > On Thu, 2017-12-07 at 07:26 -0500, Jeff Layton wrote:
+> > > > > Sorry for the late review. I just started dusting off my i_version
+> > > > > rework, and noticed that IMA still has unaddressed problems here.
+> > > > 
+> > > > <snip>
+> > > > 
+> > > > > Personally, I'm not a huge fan of this scheme. It seems quite invasive,
+> > > > > and doesn't really seem to address the stated problem well.
+> > > > 
+> > > > A cleaned up version of this patch set was meant to follow the
+> > > > introduction of a new integrity_read method, but that patch set was
+> > > > rejected.  At this point, I have no intentions of upstreaming a
+> > > > cleaned up version this patch set either.
+> > > > 
+> > > > > The warning itself seems ok, but I don't really see what's wrong with
+> > > > > performing remeasurement when the mtime changes on filesystems that
+> > > > > don't have SB_I_VERSION set. Surely that's better than limiting it to an
+> > > > > initial measurement?
+> > > > > 
+> > > > > Maybe I just don't understand what you're really trying to achieve here.
+> > > > 
+> > > > Based on discussions with Sascha Hauer, he convinced me the i_version
+> > > > test is basically just a performance improvement and posted a patch
+> > > > that checks the filesystem for i_version support, before relying on it
+> > > > -  https://www.spinics.net/lists/linux-integrity/msg00033.html.
+> > > > 
+> > > > Mimi
+> > > > 
+> > > 
+> > > Thanks for the link. That patch looks good to me. Any idea when and if
+> > > it will be merged?
+> > 
+> > Is that an Ack?  Barring any testing issues, I'll upstream it with
+> > yours in the next open window.
+> > 
+> > Mimi
+> > 
 > 
-> I've made a fork on github so we can use the issue tracker:
+> Sure, you can add:
 > 
-> https://github.com/hallyn/libcap
+> Reviewed-by: Jeff Layton <jlayton@redhat.com>
 
-Thank you sir!
+BTW, could you get this into linux-next sometime soon? I have a series
+of patches to overhaul i_version handling that I want to go in soon and
+there could be merge conflicts.
 
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
