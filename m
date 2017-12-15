@@ -1,49 +1,90 @@
-From: sergey.senozhatsky.work@gmail.com (Sergey Senozhatsky)
-Date: Fri, 15 Dec 2017 14:08:22 +0900
-Subject: [question] should 363b02dab09b3 be backported to stable 4.1+?
-In-Reply-To: <20171215035800.GA891@zzz.localdomain>
-References: <20171215024706.GB11199@jagdpanzerIV>
-	<20171215035800.GA891@zzz.localdomain>
-Message-ID: <20171215050822.GD11199@jagdpanzerIV>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 15 Dec 2017 09:02:04 -0500
+Subject: [PATCH 2/4] sctp: Add ip option support
+In-Reply-To: <20171214210422.GQ3532@localhost.localdomain>
+References: <20171127193121.2666-1-richard_c_haines@btinternet.com>
+	<20171212160800.GE3532@localhost.localdomain>
+	<CAHC9VhR+WoO3UtdXLp+9mQ=c=avpEQ5-W8vTkEWfxXH1EkUS8A@mail.gmail.com>
+	<20171212215638.GH3532@localhost.localdomain>
+	<CAHC9VhQ5iQsXum6NVkL-qdzu=bxVcaOscPjTSVufLzRbW_1_Pw@mail.gmail.com>
+	<20171214210422.GQ3532@localhost.localdomain>
+Message-ID: <1605a7b2cb0.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hello Eric,
+On December 14, 2017 4:04:28 PM Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
 
-On (12/14/17 19:58), Eric Biggers wrote:
-> Hi Sergey,
-> 
-> On Fri, Dec 15, 2017 at 11:47:06AM +0900, Sergey Senozhatsky wrote:
-> > Hello David, Eric,
-> > 
-> > please help me out.
-> > 
-> > I'm looking at 363b02dab09b ("KEYS: Fix race between updating and finding
-> > a negative key") right now. So, I see that it has been backported to stable
-> > 4.4+. My question is -- do we have those test_bit(KEY_FLAG_INSTANTIATED)
-> > and test_bit(KEY_FLAG_NEGATIVE) races in stable 4.1?
-> > 
-> 
-> Before 4.4 (146aa8b1453), ->reject_error was in union with ->type_data rather
-> than ->payload, and no key types that used ->type_data implemented ->update().
-> Therefore it was not possible to reproduce the crash.
-> 
-> I do see there was another possible race, only theoretically a problem on
-> architectures with weaker memory ordering than x86, where a key being negatively
-> instantiated could be momentarily observed to be positively instantiated.  But
-> even then I don't see where it could be a real problem.  (Note that most users
-> wait for KEY_FLAG_USER_CONSTRUCT rather than checking KEY_FLAG_INSTANTIATED
-> directly.)
+> On Tue, Dec 12, 2017 at 05:24:46PM -0500, Paul Moore wrote:
+>> On Tue, Dec 12, 2017 at 4:56 PM, Marcelo Ricardo Leitner
+>> <marcelo.leitner@gmail.com> wrote:
+>> > On Tue, Dec 12, 2017 at 04:33:03PM -0500, Paul Moore wrote:
+>> >> On Tue, Dec 12, 2017 at 11:08 AM, Marcelo Ricardo Leitner
+>> >> <marcelo.leitner@gmail.com> wrote:
+>> >> > Hi Richard,
+>> >> >
+>> >> > On Mon, Nov 27, 2017 at 07:31:21PM +0000, Richard Haines wrote:
+>> >> > ...
+>> >> >> --- a/net/sctp/socket.c
+>> >> >> +++ b/net/sctp/socket.c
+>> >> >> @@ -3123,8 +3123,10 @@ static int sctp_setsockopt_maxseg(struct sock
+>> *sk, char __user *optval, unsigned
+>> >> >>
+>> >> >>       if (asoc) {
+>> >> >>               if (val == 0) {
+>> >> >> +                     struct sctp_af *af = sp->pf->af;
+>> >> >>                       val = asoc->pathmtu;
+>> >> >> -                     val -= sp->pf->af->net_header_len;
+>> >> >> +                     val -= af->ip_options_len(asoc->base.sk);
+>> >> >> +                     val -= af->net_header_len;
+>> >> >>                       val -= sizeof(struct sctphdr) +
+>> >> >>                                       sizeof(struct sctp_data_chunk);
+>> >> >>               }
+>> >> >
+>> >> > Right below here there is a call to sctp_frag_point(). That function
+>> >> > also needs this tweak.
+>> >> >
+>> >> > Yes, we should simplify all these calculations. I have a patch to use
+>> >> > sctp_frag_point on where it is currently recalculating it on
+>> >> > sctp_datamsg_from_user(), but probably should include other places as
+>> >> > well.
+>> >>
+>> >> FYI: Richard let me know he is occupied with another project at the
+>> >> moment and likely won't be able to do another respin until next week
+>> >> at the earliest.
+>> >
+>> > Okay, thanks. I can do a follow-up patch if it helps.
+>>
+>> I'll leave that up to you, I think your comments are pretty
+>> straightforward and should be easy for Richard to incorporate, and
+>> there is a lot to be said for including the fix in the original patch,
+>> but if you would prefer to send a separate patch I think that's fine
+>> too.
+>
+> This patchset conflicts with the stream schedulers patchset (on
+> sctp.h) and will also conflict with the stream interleaving patchsets
+> from Xin (other files).
+>
+> I rebased the patchset upon current crypto tree but the last patchset
+> on stream interleaving is still to be accepted via net-next.
+>
+> I'm unsure on how to proceed here. Please advise.
+>
+> Thanks,
+> Marcelo
 
-thanks a ton. appreciate your help!
+I still believe the right course of action is to merge this via the SELinux
+tree (based on Linus' tree). Due to the nature of SELinux we often have to
+deal with conflicts like this; I haven't seen the conflicts your talking
+about (I'm currently traveling with limited access) but Linus should be
+able to handle the trivial fixes, if it is more complex we can provide
+guidance about how to resolve it.
 
-> You're free to backport the commit if you want to be absolutely sure, though I'd
-> personally be more worried about other backports that might have been missed,
-> and the bugs that haven't been found yet.
+--
+paul moore
+www.paul-moore.com
 
-agreed.
 
-	-ss
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
