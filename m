@@ -1,90 +1,25 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 15 Dec 2017 09:02:04 -0500
-Subject: [PATCH 2/4] sctp: Add ip option support
-In-Reply-To: <20171214210422.GQ3532@localhost.localdomain>
-References: <20171127193121.2666-1-richard_c_haines@btinternet.com>
-	<20171212160800.GE3532@localhost.localdomain>
-	<CAHC9VhR+WoO3UtdXLp+9mQ=c=avpEQ5-W8vTkEWfxXH1EkUS8A@mail.gmail.com>
-	<20171212215638.GH3532@localhost.localdomain>
-	<CAHC9VhQ5iQsXum6NVkL-qdzu=bxVcaOscPjTSVufLzRbW_1_Pw@mail.gmail.com>
-	<20171214210422.GQ3532@localhost.localdomain>
-Message-ID: <1605a7b2cb0.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Fri, 15 Dec 2017 09:37:42 -0600
+Subject: setcap/getcap limitations
+In-Reply-To: <20170904120842.GC24692@madcap2.tricolour.ca>
+References: <20170511211146.GZ25861@madcap2.tricolour.ca>
+	<20170512033718.GA29494@mail.hallyn.com>
+	<20170820032017.GO29957@madcap2.tricolour.ca>
+	<20170831155637.GB12295@mail.hallyn.com>
+	<20170904120842.GC24692@madcap2.tricolour.ca>
+Message-ID: <20171215153742.GB2243@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On December 14, 2017 4:04:28 PM Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
+Quoting Richard Guy Briggs (rgb at redhat.com):
+> Tracking it would be helpful.  How much work would it be to convince
+> Andrew to enable a bugtracker on that git repo?  I'd offer to enter them
+> in the audit userspace git repo bugtracker, but that would
+> pollute/dillute it.
 
-> On Tue, Dec 12, 2017 at 05:24:46PM -0500, Paul Moore wrote:
->> On Tue, Dec 12, 2017 at 4:56 PM, Marcelo Ricardo Leitner
->> <marcelo.leitner@gmail.com> wrote:
->> > On Tue, Dec 12, 2017 at 04:33:03PM -0500, Paul Moore wrote:
->> >> On Tue, Dec 12, 2017 at 11:08 AM, Marcelo Ricardo Leitner
->> >> <marcelo.leitner@gmail.com> wrote:
->> >> > Hi Richard,
->> >> >
->> >> > On Mon, Nov 27, 2017 at 07:31:21PM +0000, Richard Haines wrote:
->> >> > ...
->> >> >> --- a/net/sctp/socket.c
->> >> >> +++ b/net/sctp/socket.c
->> >> >> @@ -3123,8 +3123,10 @@ static int sctp_setsockopt_maxseg(struct sock
->> *sk, char __user *optval, unsigned
->> >> >>
->> >> >>       if (asoc) {
->> >> >>               if (val == 0) {
->> >> >> +                     struct sctp_af *af = sp->pf->af;
->> >> >>                       val = asoc->pathmtu;
->> >> >> -                     val -= sp->pf->af->net_header_len;
->> >> >> +                     val -= af->ip_options_len(asoc->base.sk);
->> >> >> +                     val -= af->net_header_len;
->> >> >>                       val -= sizeof(struct sctphdr) +
->> >> >>                                       sizeof(struct sctp_data_chunk);
->> >> >>               }
->> >> >
->> >> > Right below here there is a call to sctp_frag_point(). That function
->> >> > also needs this tweak.
->> >> >
->> >> > Yes, we should simplify all these calculations. I have a patch to use
->> >> > sctp_frag_point on where it is currently recalculating it on
->> >> > sctp_datamsg_from_user(), but probably should include other places as
->> >> > well.
->> >>
->> >> FYI: Richard let me know he is occupied with another project at the
->> >> moment and likely won't be able to do another respin until next week
->> >> at the earliest.
->> >
->> > Okay, thanks. I can do a follow-up patch if it helps.
->>
->> I'll leave that up to you, I think your comments are pretty
->> straightforward and should be easy for Richard to incorporate, and
->> there is a lot to be said for including the fix in the original patch,
->> but if you would prefer to send a separate patch I think that's fine
->> too.
->
-> This patchset conflicts with the stream schedulers patchset (on
-> sctp.h) and will also conflict with the stream interleaving patchsets
-> from Xin (other files).
->
-> I rebased the patchset upon current crypto tree but the last patchset
-> on stream interleaving is still to be accepted via net-next.
->
-> I'm unsure on how to proceed here. Please advise.
->
-> Thanks,
-> Marcelo
+I've made a fork on github so we can use the issue tracker:
 
-I still believe the right course of action is to merge this via the SELinux
-tree (based on Linus' tree). Due to the nature of SELinux we often have to
-deal with conflicts like this; I haven't seen the conflicts your talking
-about (I'm currently traveling with limited access) but Linus should be
-able to handle the trivial fixes, if it is more complex we can provide
-guidance about how to resolve it.
-
---
-paul moore
-www.paul-moore.com
-
-
+https://github.com/hallyn/libcap
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
