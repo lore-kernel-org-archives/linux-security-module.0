@@ -1,26 +1,46 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 18 Dec 2017 11:28:06 -0800
-Subject: Security subsystem tree merge to v4.15-rc3
-In-Reply-To: <alpine.LFD.2.20.1712111702560.20676@localhost>
-References: <alpine.LFD.2.20.1712111702560.20676@localhost>
-Message-ID: <fd51caa9-4281-daa1-3cef-98f791cddff4@schaufler-ca.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Mon, 18 Dec 2017 23:33:39 +0200
+Subject: [RFC PATCH 0/1] genalloc: track beginning of allocations
+Message-ID: <20171218213340.24325-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 12/10/2017 10:05 PM, James Morris wrote:
-> For developers working against the security subsystem tree,
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
->
-> this is now merged to Linus' v4.15-rc3.
+genalloc could be improved, to know how to separate the memory use by
+adjacent allocations
 
-I'm not clear on how you want the next-smack branch managed. Do you
-want me to merge in next-general, or keep it relative to 4.13?
+This patch is generated from the effort of introducing in the kernel an
+allocator for protectable memory (pmalloc).
 
->
->
->
-> - James
+However, it seems that the patch could have a value of its own.
+It can:
+- verify that the freeing of memory is consistent with previous allocations
+- relieve the user of the API from tracking the size of each allocation
+- enable use cases where generic code can free memory allocations received
+  through a pointer (provided that the reference pool is known)
+
+Details about the implementation are provided in the comment for the patch.
+
+I mentioned this idea few months ago, as part of the pmalloc discussion,
+but then I did not have time to follow-up immediately, as I had hoped.
+
+This is an implementation of what I had in mind.
+It seems to withstand several simple test cases i put together, but it
+definitely would need thorough review.
+
+
+I hope I have added as reviewer all the relevant people.
+If I missed someone, please include them to the recipients.
+
+
+Igor Stoppa (1):
+  genalloc: track beginning of allocations
+
+ include/linux/genalloc.h |   3 +-
+ lib/genalloc.c           | 417 ++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 289 insertions(+), 131 deletions(-)
+
+-- 
+2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
