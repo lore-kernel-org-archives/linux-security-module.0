@@ -1,57 +1,31 @@
-From: mtk.manpages@gmail.com (Michael Kerrisk (man-pages))
-Date: Tue, 19 Dec 2017 16:33:33 +0100
-Subject: Documentation patch for namespaced file capabilities
-In-Reply-To: <20171129175849.GC14545@mail.hallyn.com>
-References: <CAKgNAkiAeqbD=G6hnExh4cC84nA2mU6xdLzzS0F2x1wviEPgHg@mail.gmail.com>
-	<20171129175849.GC14545@mail.hallyn.com>
-Message-ID: <CAKgNAkgMAPZXUXX6eidP3nCws8x0xXBL9CGdNdERzHyhPt5QNQ@mail.gmail.com>
+From: james.l.morris@oracle.com (James Morris)
+Date: Wed, 20 Dec 2017 07:34:17 +1100 (AEDT)
+Subject: Security subsystem tree merge to v4.15-rc3
+In-Reply-To: <fd51caa9-4281-daa1-3cef-98f791cddff4@schaufler-ca.com>
+References: <alpine.LFD.2.20.1712111702560.20676@localhost>
+	<fd51caa9-4281-daa1-3cef-98f791cddff4@schaufler-ca.com>
+Message-ID: <alpine.LFD.2.20.1712200733540.15646@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Serge,
+On Mon, 18 Dec 2017, Casey Schaufler wrote:
 
-On 29 November 2017 at 18:58, Serge E. Hallyn <serge@hallyn.com> wrote:
-> Quoting Michael Kerrisk (man-pages) (mtk.manpages at gmail.com):
->> Hi Serge,
->>
->> At the moment man-pages lacks documentation of the namespaced file
->> capability feature that you added with commit
->> 8db6c34f1dbc8e06aa016a9b829b06902c3e1340. Would you be able to send a
->> patch describing the feature?
->
-> Sorry.  I'm adding this to my todo list, so I should get to it soon.
+> On 12/10/2017 10:05 PM, James Morris wrote:
+> > For developers working against the security subsystem tree,
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+> >
+> > this is now merged to Linus' v4.15-rc3.
+> 
+> I'm not clear on how you want the next-smack branch managed. Do you
+> want me to merge in next-general, or keep it relative to 4.13?
 
-A gentle ping...
-
-Cheers,
-
-Michael
-
->> Presumably, the patch would be for the capabilities(7) page (or
->> perhaps for the user_namespaces(7) page, if that seems more
->> appropriate), As well as documenting the semantics, it would be good
->> to include an example or two of the notation that is used for the
->> xattr names.
->>
->> Presumably also there will be some changes in userspace tools
->> (setcap/getcap?). Do you know anything about what's happening there?
->>
->> Cheers,
->>
->> Michael
->>
->>
->> --
->> Michael Kerrisk
->> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
->> Linux/UNIX System Programming Training: http://man7.org/training/
-
-
+Merge to next-general.
 
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+James Morris
+<james.l.morris@oracle.com>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
