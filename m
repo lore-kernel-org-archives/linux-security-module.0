@@ -1,32 +1,41 @@
 From: gomonovych@gmail.com (Vasyl Gomonovych)
-Date: Thu, 21 Dec 2017 16:55:53 +0100
-Subject: [PATCH] ima: Fix warn potential negative subtraction from max
-Message-ID: <1513871754-13943-1-git-send-email-gomonovych@gmail.com>
+Date: Thu, 21 Dec 2017 16:57:52 +0100
+Subject: [PATCH] Smack: fix dereferenced before check
+Message-ID: <1513871872-18759-1-git-send-email-gomonovych@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Found by smatch:
-security/integrity/ima/ima_queue.c:122 ima_add_digest_entry() warn:
-potential negative subtraction from max '(~0)- size'
+This patch fixes the warning reported by smatch:
+security/smack/smack_lsm.c:2872 smack_socket_connect() warn:
+variable dereferenced before check 'sock->sk' (see line 2869)
 
 Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
 ---
- security/integrity/ima/ima_queue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/smack/smack_lsm.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index a02a86d51102..446018478b81 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -116,7 +116,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 	}
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 14cc7940b36d..30f2c3d1c11c 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2866,12 +2866,16 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
+ #endif
+ #ifdef SMACK_IPV6_SECMARK_LABELING
+ 	struct smack_known *rsp;
+-	struct socket_smack *ssp = sock->sk->sk_security;
++	struct socket_smack *ssp;
+ #endif
  
- 	if (binary_runtime_size != ULONG_MAX) {
--		int size;
-+		unsigned int size;
+ 	if (sock->sk == NULL)
+ 		return 0;
  
- 		size = get_binary_runtime_size(entry);
- 		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
++#ifdef SMACK_IPV6_SECMARK_LABELING
++	ssp = sock->sk->sk_security;
++#endif
++
+ 	switch (sock->sk->sk_family) {
+ 	case PF_INET:
+ 		if (addrlen < sizeof(struct sockaddr_in))
 -- 
 1.9.1
 
