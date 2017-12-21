@@ -1,57 +1,36 @@
-From: gomonovych@gmail.com (Vasyl Gomonovych)
-Date: Thu, 21 Dec 2017 22:54:18 +0100
-Subject: [PATCH v2] ima: Fix warn potential negative subtraction from max
-In-Reply-To: <20171221180001.GC16008@mail.hallyn.com>
-References: <20171221180001.GC16008@mail.hallyn.com>
-Message-ID: <1513893258-28773-1-git-send-email-gomonovych@gmail.com>
+From: jgg@ziepe.ca (Jason Gunthorpe)
+Date: Thu, 21 Dec 2017 15:30:49 -0700
+Subject: [PATCH] tpm: Fix the driver cleanup code
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582898918B@ORSMSX109.amr.corp.intel.com>
+References: <1513887422-123222-1-git-send-email-azhar.shaikh@intel.com>
+	<20171221202652.GH20015@ziepe.ca>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF5828989144@ORSMSX109.amr.corp.intel.com>
+	<20171221203853.GI20015@ziepe.ca>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF582898918B@ORSMSX109.amr.corp.intel.com>
+Message-ID: <20171221223049.GJ20015@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Found by smatch:
-security/integrity/ima/ima_queue.c:122 ima_add_digest_entry() warn:
-potential negative subtraction from max '(~0)- size'
+On Thu, Dec 21, 2017 at 09:54:26PM +0000, Shaikh, Azhar wrote:
 
-Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
----
-This minor change remove smatch warning but 
-I don't think that before change it was vulnerable, 
-motivation for this patch was smatch report.
+> Yes, I checked this part. What I was referring to is any other
+> callback function similar to clk_enable if gets added in future and
+> then needs to Access ops even after it is set to NULL...
 
-Changelog:
- - v2: change get_binary_runtime_size return type
+You can't call callback functions after tpm_unregister_chip, it isn't
+allowed.
 
- security/integrity/ima/ima_queue.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This is a special case where we know the specific implementation of
+this specific callback is OK.
 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index a02a86d51102..3d5f981b8453 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -74,9 +74,9 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
-  * binary_runtime_measurement list entry, which contains a
-  * couple of variable length fields (e.g template name and data).
-  */
--static int get_binary_runtime_size(struct ima_template_entry *entry)
-+static unsigned int get_binary_runtime_size(struct ima_template_entry *entry)
- {
--	int size = 0;
-+	unsigned int size = 0;
- 
- 	size += sizeof(u32);	/* pcr */
- 	size += sizeof(entry->digest);
-@@ -116,7 +116,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 	}
- 
- 	if (binary_runtime_size != ULONG_MAX) {
--		int size;
-+		unsigned int size;
- 
- 		size = get_binary_runtime_size(entry);
- 		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
--- 
-1.9.1
+> But yes I get your point now.
+> 
+> So do you mean something like this?
 
+Yes
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
