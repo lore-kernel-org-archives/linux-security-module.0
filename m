@@ -1,51 +1,160 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 21 Dec 2017 10:06:35 -0800
-Subject: [PATCH] Smack: fix dereferenced before check
-In-Reply-To: <1513871872-18759-1-git-send-email-gomonovych@gmail.com>
-References: <1513871872-18759-1-git-send-email-gomonovych@gmail.com>
-Message-ID: <4da2b0f6-a2d9-ead0-d573-a75bc78938a7@schaufler-ca.com>
+From: azhar.shaikh@intel.com (Azhar Shaikh)
+Date: Thu, 21 Dec 2017 12:17:02 -0800
+Subject: [PATCH] tpm: Fix the driver cleanup code
+Message-ID: <1513887422-123222-1-git-send-email-azhar.shaikh@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 12/21/2017 7:57 AM, Vasyl Gomonovych wrote:
-> This patch fixes the warning reported by smatch:
-> security/smack/smack_lsm.c:2872 smack_socket_connect() warn:
-> variable dereferenced before check 'sock->sk' (see line 2869)
->
-> Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
+the duration of transmit_cmd()") added code which accessed
+chip->ops, even after it was set to NULL in tpm_del_char_device(),
+called from tpm_chip_unregister() in error / driver exit paths.
+So fix this code.
 
-I will take this into the Smack tree. Thank you.
+Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
+the duration of transmit_cmd()")
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
+Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+---
+ drivers/char/tpm/tpm-chip.c     |  5 +++++
+ drivers/char/tpm/tpm.h          |  1 +
+ drivers/char/tpm/tpm_tis.c      |  8 ++------
+ drivers/char/tpm/tpm_tis_core.c | 23 +++++++++++++++--------
+ drivers/char/tpm/tpm_tis_spi.c  |  1 +
+ 5 files changed, 24 insertions(+), 14 deletions(-)
 
-> ---
->  security/smack/smack_lsm.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 14cc7940b36d..30f2c3d1c11c 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -2866,12 +2866,16 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
->  #endif
->  #ifdef SMACK_IPV6_SECMARK_LABELING
->  	struct smack_known *rsp;
-> -	struct socket_smack *ssp = sock->sk->sk_security;
-> +	struct socket_smack *ssp;
->  #endif
->  
->  	if (sock->sk == NULL)
->  		return 0;
->  
-> +#ifdef SMACK_IPV6_SECMARK_LABELING
-> +	ssp = sock->sk->sk_security;
-> +#endif
-> +
->  	switch (sock->sk->sk_family) {
->  	case PF_INET:
->  		if (addrlen < sizeof(struct sockaddr_in))
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 0a62c19937b6..c88ec9a32a7e 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -346,6 +346,10 @@ static void tpm_del_char_device(struct tpm_chip *chip)
+ 	down_write(&chip->ops_sem);
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		tpm2_shutdown(chip, TPM2_SU_CLEAR);
++	if (chip->flags & TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS) {
++		up_write(&chip->ops_sem);
++		return;
++	}
+ 	chip->ops = NULL;
+ 	up_write(&chip->ops_sem);
+ }
+@@ -454,6 +458,7 @@ int tpm_chip_register(struct tpm_chip *chip)
+ 
+ 	rc = tpm_add_legacy_sysfs(chip);
+ 	if (rc) {
++		chip->flags |= TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS;
+ 		tpm_chip_unregister(chip);
+ 		return rc;
+ 	}
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f895fba4e20d..dc2a532649e0 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -183,6 +183,7 @@ enum tpm_chip_flags {
+ 	TPM_CHIP_FLAG_VIRTUAL		= BIT(3),
+ 	TPM_CHIP_FLAG_HAVE_TIMEOUTS	= BIT(4),
+ 	TPM_CHIP_FLAG_ALWAYS_POWERED	= BIT(5),
++	TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS	= BIT(6),
+ };
+ 
+ struct tpm_bios_log {
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index d29add49b033..a146ef4e499b 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -273,11 +273,9 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
+ 	struct tpm_chip *chip = pnp_get_drvdata(dev);
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
++	chip->flags |= TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS;
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
+-
+ }
+ 
+ static struct pnp_driver tis_pnp_driver = {
+@@ -326,12 +324,10 @@ static int tpm_tis_plat_remove(struct platform_device *pdev)
+ 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
++	chip->flags |= TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS;
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+ 
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index c2227983ed88..d9099281fc2e 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -727,6 +727,14 @@ void tpm_tis_remove(struct tpm_chip *chip)
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
++
++	if (chip->flags & TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS) {
++		down_write(&chip->ops_sem);
++		chip->ops = NULL;
++		up_write(&chip->ops_sem);
++	}
++	if (priv->ilb_base_addr)
++		iounmap(priv->ilb_base_addr);
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_remove);
+ 
+@@ -922,21 +930,20 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	}
+ 
+ 	rc = tpm_chip_register(chip);
+-	if (rc && is_bsw())
+-		iounmap(priv->ilb_base_addr);
++	if (rc)
++		goto out_err;
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	return rc;
+-out_err:
+-	tpm_tis_remove(chip);
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
++	return 0;
+ 
+-	if (chip->ops->clk_enable != NULL)
++out_err:
++	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
+ 		chip->ops->clk_enable(chip, false);
+ 
++	tpm_tis_remove(chip);
++
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_core_init);
+diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
+index 424ff2fde1f2..79c18cfc6519 100644
+--- a/drivers/char/tpm/tpm_tis_spi.c
++++ b/drivers/char/tpm/tpm_tis_spi.c
+@@ -221,6 +221,7 @@ static int tpm_tis_spi_remove(struct spi_device *dev)
+ {
+ 	struct tpm_chip *chip = spi_get_drvdata(dev);
+ 
++	chip->flags |= TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS;
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+ 	return 0;
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
