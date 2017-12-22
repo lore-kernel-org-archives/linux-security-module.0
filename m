@@ -1,309 +1,107 @@
-From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
-Date: Fri, 22 Dec 2017 11:05:17 -0200
-Subject: [PATCH v3 2/4] sctp: Add ip option support
-In-Reply-To: <cover.1513940757.git.marcelo.leitner@gmail.com>
-References: <cover.1513940757.git.marcelo.leitner@gmail.com>
-Message-ID: <10ed2bd9a3f6d7e56bd5e946c671a744251b23ae.1513940757.git.marcelo.leitner@gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 22 Dec 2017 09:03:02 -0500
+Subject: BUG: unable to handle kernel NULL pointer dereference in
+	sidtab_search_core
+In-Reply-To: <CACT4Y+ZkrWR9=s9qVUAiF6bEeGgdhLGE_W_wWwX7HsaVo1MLiQ@mail.gmail.com>
+References: <94eb2c0d010a8dcf040560c0cdf5@google.com>
+	<CAHC9VhT5qK4nUmWo5Pksq0rsxa6Wk7wBEa0Gn41pNx5oS_NDCQ@mail.gmail.com>
+	<CACT4Y+ZkrWR9=s9qVUAiF6bEeGgdhLGE_W_wWwX7HsaVo1MLiQ@mail.gmail.com>
+Message-ID: <CAHC9VhTjfaOiGm99w3OQMb5m7_zzZg92C_=vPpDhZ1uJBcRdLw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Richard Haines <richard_c_haines@btinternet.com>
+On Fri, Dec 22, 2017 at 4:14 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Thu, Dec 21, 2017 at 9:40 PM, Paul Moore <paul@paul-moore.com> wrote:
+>> On Wed, Dec 20, 2017 at 2:48 AM, syzbot
+>> <bot+904436b33e141b4f4c57c1ddc94199ffd2e34b9d@syzkaller.appspotmail.com>
+>> wrote:
+>>> Hello,
+>>>
+>>> syzkaller hit the following crash on
+>>> 6084b576dca2e898f5c101baef151f7bfdbb606d
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+>>> compiler: gcc (GCC) 7.1.1 20170620
+>>> .config is attached
+>>> Raw console output is attached.
+>>> C reproducer is attached
+>>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+>>> for information about syzkaller reproducers
+>>>
+>>>
+>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000001
+>>> IP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
+>>> PGD 0 P4D 0
+>>> Oops: 0000 [#1] SMP
+>>> Dumping ftrace buffer:
+>>>    (ftrace buffer empty)
+>>> Modules linked in:
+>>> CPU: 1 PID: 4252 Comm: kworker/u4:1 Not tainted 4.15.0-rc3-next-20171214+
+>>> #67
+>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>>> Google 01/01/2011
+>>> RIP: 0010:sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
+>>> RSP: 0018:ffffc900028abc18 EFLAGS: 00010293
+>>> RAX: ffff8802131a87c0 RBX: 0000000000000001 RCX: ffffffff8165d978
+>>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffff83fd17a0
+>>> RBP: ffffc900028abc40 R08: 0000000000000001 R09: 0000000000000001
+>>> R10: ffffc900028abbe0 R11: 0000000000000000 R12: 0000000000000001
+>>> R13: 0000000000000001 R14: 0000000000000000 R15: ffff880214d93800
+>>> FS:  0000000000000000(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
+>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> CR2: 0000000000000001 CR3: 0000000214e31000 CR4: 00000000001406e0
+>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>> Call Trace:
+>>>  sidtab_search+0x1f/0x30 security/selinux/ss/sidtab.c:111
+>>>  security_compute_sid.part.11+0xe2/0x710 security/selinux/ss/services.c:1618
+>>>  security_compute_sid+0x92/0xa0 security/selinux/ss/services.c:1598
+>>>  security_transition_sid+0x57/0x70 security/selinux/ss/services.c:1764
+>>>  selinux_bprm_set_creds+0x215/0x2f0 security/selinux/hooks.c:2423
+>>>  security_bprm_set_creds+0x41/0x60 security/security.c:332
+>>>  prepare_binprm+0xae/0x1f0 fs/exec.c:1561
+>>>  do_execveat_common.isra.30+0x6f7/0xb90 fs/exec.c:1784
+>>>  do_execve+0x31/0x40 fs/exec.c:1848
+>>>  call_usermodehelper_exec_async+0x104/0x190 kernel/umh.c:100
+>>>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
+>>> Code: 8b 5b 50 48 85 db 75 e5 e8 e6 c9 c5 ff 49 8b 5f 18 48 85 db 75 10 eb
+>>> 43 e8 d6 c9 c5 ff 48 8b 5b 50 48 85 db 74 35 e8 c8 c9 c5 ff <44> 8b 23 41 83
+>>> fc 02 76 e4 e8 ba c9 c5 ff 41 83 fc 03 75 1c 48
+>>> RIP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100 RSP:
+>>> ffffc900028abc18
+>>> CR2: 0000000000000001
+>>> ---[ end trace 571c0ea6c6959387 ]---
+>>> Kernel panic - not syncing: Fatal exception
+>>> Dumping ftrace buffer:
+>>>    (ftrace buffer empty)
+>>> Kernel Offset: disabled
+>>> Rebooting in 86400 seconds..
+>>
+>> Based on the reproducer and the stack trace, I'm guessing the system
+>> is attempting to load a kernel module for a a defined, but unloaded,
+>> protocol.  Looking quickly at the SELinux bprm and sidtab code,
+>> nothing obvious is jumping out at me.  Considering the number of false
+>> positives I've been seeing from syzbot lately, I'm assuming this is
+>> more of the same.
+>
+> Hi Paul,
+>
+> What are these false positives? Please elaborate.
+> There is no single false positive that I am aware of. All the ones
+> that were debugged are real kernel bugs.
 
-Add ip option support to allow LSM security modules to utilise CIPSO/IPv4
-and CALIPSO/IPv6 services.
+I've replied to several of the syzbot automated reports with the
+"invalid" response.  I haven't been keeping track, but it seems like
+approximately 50% of the SELinux related reports don't make sense upon
+inspection.
 
-Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
----
- include/net/sctp/sctp.h    |  4 +++-
- include/net/sctp/structs.h |  2 ++
- net/sctp/chunk.c           | 13 ++++++++-----
- net/sctp/ipv6.c            | 42 +++++++++++++++++++++++++++++++++++-------
- net/sctp/output.c          |  5 ++++-
- net/sctp/protocol.c        | 36 ++++++++++++++++++++++++++++++++++++
- net/sctp/socket.c          |  9 +++++++--
- 7 files changed, 95 insertions(+), 16 deletions(-)
-
-diff --git a/include/net/sctp/sctp.h b/include/net/sctp/sctp.h
-index d7d8cba014697602832fe20e414b632104c9f239..1b2f40a3a87875c10647fc768372cabea61fe3b8 100644
---- a/include/net/sctp/sctp.h
-+++ b/include/net/sctp/sctp.h
-@@ -436,9 +436,11 @@ static inline int sctp_list_single_entry(struct list_head *head)
- static inline int sctp_frag_point(const struct sctp_association *asoc, int pmtu)
- {
- 	struct sctp_sock *sp = sctp_sk(asoc->base.sk);
-+	struct sctp_af *af = sp->pf->af;
- 	int frag = pmtu;
- 
--	frag -= sp->pf->af->net_header_len;
-+	frag -= af->ip_options_len(asoc->base.sk);
-+	frag -= af->net_header_len;
- 	frag -= sizeof(struct sctphdr) + sizeof(struct sctp_data_chunk);
- 
- 	if (asoc->user_frag)
-diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
-index 0477945de1a3cf5c27348e99d9a30e02c491d1de..9942ed5159448c924f0f018abeea9bab93fc3437 100644
---- a/include/net/sctp/structs.h
-+++ b/include/net/sctp/structs.h
-@@ -461,6 +461,7 @@ struct sctp_af {
- 	void		(*ecn_capable)(struct sock *sk);
- 	__u16		net_header_len;
- 	int		sockaddr_len;
-+	int		(*ip_options_len)(struct sock *sk);
- 	sa_family_t	sa_family;
- 	struct list_head list;
- };
-@@ -485,6 +486,7 @@ struct sctp_pf {
- 	int (*addr_to_user)(struct sctp_sock *sk, union sctp_addr *addr);
- 	void (*to_sk_saddr)(union sctp_addr *, struct sock *sk);
- 	void (*to_sk_daddr)(union sctp_addr *, struct sock *sk);
-+	void (*copy_ip_options)(struct sock *sk, struct sock *newsk);
- 	struct sctp_af *af;
- };
- 
-diff --git a/net/sctp/chunk.c b/net/sctp/chunk.c
-index 3afac275ee82dbec825dd71378dffe69a53718a7..9d130f447f636c034e4232a9e6426ffce07007ca 100644
---- a/net/sctp/chunk.c
-+++ b/net/sctp/chunk.c
-@@ -153,7 +153,6 @@ static void sctp_datamsg_assign(struct sctp_datamsg *msg, struct sctp_chunk *chu
- 	chunk->msg = msg;
- }
- 
--
- /* A data chunk can have a maximum payload of (2^16 - 20).  Break
-  * down any such message into smaller chunks.  Opportunistically, fragment
-  * the chunks down to the current MTU constraints.  We may get refragmented
-@@ -170,6 +169,8 @@ struct sctp_datamsg *sctp_datamsg_from_user(struct sctp_association *asoc,
- 	struct list_head *pos, *temp;
- 	struct sctp_chunk *chunk;
- 	struct sctp_datamsg *msg;
-+	struct sctp_sock *sp;
-+	struct sctp_af *af;
- 	int err;
- 
- 	msg = sctp_datamsg_new(GFP_KERNEL);
-@@ -188,9 +189,12 @@ struct sctp_datamsg *sctp_datamsg_from_user(struct sctp_association *asoc,
- 	/* This is the biggest possible DATA chunk that can fit into
- 	 * the packet
- 	 */
--	max_data = asoc->pathmtu -
--		   sctp_sk(asoc->base.sk)->pf->af->net_header_len -
--		   sizeof(struct sctphdr) - sizeof(struct sctp_data_chunk);
-+	sp = sctp_sk(asoc->base.sk);
-+	af = sp->pf->af;
-+	max_data = asoc->pathmtu - af->net_header_len -
-+		   sizeof(struct sctphdr) - sizeof(struct sctp_data_chunk) -
-+		   af->ip_options_len(asoc->base.sk);
-+
- 	max_data = SCTP_TRUNC4(max_data);
- 
- 	/* If the the peer requested that we authenticate DATA chunks
-@@ -210,7 +214,6 @@ struct sctp_datamsg *sctp_datamsg_from_user(struct sctp_association *asoc,
- 
- 	/* Set first_len and then account for possible bundles on first frag */
- 	first_len = max_data;
--
- 	/* Check to see if we have a pending SACK and try to let it be bundled
- 	 * with this message.  Do this if we don't have any data queued already.
- 	 * To check that, look at out_qlen and retransmit list.
-diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
-index 51c4887695909d171285b98ce1be779a3adedbab..3baede99a06d17b3f7a0826df4874c9c5af77617 100644
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -423,6 +423,38 @@ static void sctp_v6_copy_addrlist(struct list_head *addrlist,
- 	rcu_read_unlock();
- }
- 
-+/* Copy over any ip options */
-+static void sctp_v6_copy_ip_options(struct sock *sk, struct sock *newsk)
-+{
-+	struct ipv6_pinfo *newnp, *np = inet6_sk(sk);
-+	struct ipv6_txoptions *opt;
-+
-+	newnp = inet6_sk(newsk);
-+
-+	rcu_read_lock();
-+	opt = rcu_dereference(np->opt);
-+	if (opt)
-+		opt = ipv6_dup_options(newsk, opt);
-+	RCU_INIT_POINTER(newnp->opt, opt);
-+	rcu_read_unlock();
-+}
-+
-+/* Account for the IP options */
-+static int sctp_v6_ip_options_len(struct sock *sk)
-+{
-+	struct ipv6_pinfo *np = inet6_sk(sk);
-+	struct ipv6_txoptions *opt;
-+	int len = 0;
-+
-+	rcu_read_lock();
-+	opt = rcu_dereference(np->opt);
-+	if (opt)
-+		len = opt->opt_flen + opt->opt_nflen;
-+
-+	rcu_read_unlock();
-+	return len;
-+}
-+
- /* Initialize a sockaddr_storage from in incoming skb. */
- static void sctp_v6_from_skb(union sctp_addr *addr, struct sk_buff *skb,
- 			     int is_saddr)
-@@ -662,7 +694,6 @@ static struct sock *sctp_v6_create_accept_sk(struct sock *sk,
- 	struct sock *newsk;
- 	struct ipv6_pinfo *newnp, *np = inet6_sk(sk);
- 	struct sctp6_sock *newsctp6sk;
--	struct ipv6_txoptions *opt;
- 
- 	newsk = sk_alloc(sock_net(sk), PF_INET6, GFP_KERNEL, sk->sk_prot, kern);
- 	if (!newsk)
-@@ -685,12 +716,7 @@ static struct sock *sctp_v6_create_accept_sk(struct sock *sk,
- 	newnp->ipv6_ac_list = NULL;
- 	newnp->ipv6_fl_list = NULL;
- 
--	rcu_read_lock();
--	opt = rcu_dereference(np->opt);
--	if (opt)
--		opt = ipv6_dup_options(newsk, opt);
--	RCU_INIT_POINTER(newnp->opt, opt);
--	rcu_read_unlock();
-+	sctp_v6_copy_ip_options(sk, newsk);
- 
- 	/* Initialize sk's sport, dport, rcv_saddr and daddr for getsockname()
- 	 * and getpeername().
-@@ -1033,6 +1059,7 @@ static struct sctp_af sctp_af_inet6 = {
- 	.ecn_capable	   = sctp_v6_ecn_capable,
- 	.net_header_len	   = sizeof(struct ipv6hdr),
- 	.sockaddr_len	   = sizeof(struct sockaddr_in6),
-+	.ip_options_len	   = sctp_v6_ip_options_len,
- #ifdef CONFIG_COMPAT
- 	.compat_setsockopt = compat_ipv6_setsockopt,
- 	.compat_getsockopt = compat_ipv6_getsockopt,
-@@ -1051,6 +1078,7 @@ static struct sctp_pf sctp_pf_inet6 = {
- 	.addr_to_user  = sctp_v6_addr_to_user,
- 	.to_sk_saddr   = sctp_v6_to_sk_saddr,
- 	.to_sk_daddr   = sctp_v6_to_sk_daddr,
-+	.copy_ip_options = sctp_v6_copy_ip_options,
- 	.af            = &sctp_af_inet6,
- };
- 
-diff --git a/net/sctp/output.c b/net/sctp/output.c
-index 4a865cd06d76cd5b2aa417de618da3203f7b53e4..2b39c704e1e5b99597a2cfdd35f75c78288d943b 100644
---- a/net/sctp/output.c
-+++ b/net/sctp/output.c
-@@ -151,7 +151,10 @@ void sctp_packet_init(struct sctp_packet *packet,
- 	INIT_LIST_HEAD(&packet->chunk_list);
- 	if (asoc) {
- 		struct sctp_sock *sp = sctp_sk(asoc->base.sk);
--		overhead = sp->pf->af->net_header_len;
-+		struct sctp_af *af = sp->pf->af;
-+
-+		overhead = af->net_header_len +
-+			   af->ip_options_len(asoc->base.sk);
- 	} else {
- 		overhead = sizeof(struct ipv6hdr);
- 	}
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index fcd80feb293f61bd734988f037aa8f210880fb1d..cde051a2ed84b4085447b30af5809e2507a69277 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -237,6 +237,38 @@ int sctp_copy_local_addr_list(struct net *net, struct sctp_bind_addr *bp,
- 	return error;
- }
- 
-+/* Copy over any ip options */
-+static void sctp_v4_copy_ip_options(struct sock *sk, struct sock *newsk)
-+{
-+	struct inet_sock *newinet, *inet = inet_sk(sk);
-+	struct ip_options_rcu *inet_opt, *newopt = NULL;
-+
-+	newinet = inet_sk(newsk);
-+
-+	rcu_read_lock();
-+	inet_opt = rcu_dereference(inet->inet_opt);
-+	if (inet_opt) {
-+		newopt = sock_kmalloc(newsk, sizeof(*inet_opt) +
-+				      inet_opt->opt.optlen, GFP_ATOMIC);
-+		if (newopt)
-+			memcpy(newopt, inet_opt, sizeof(*inet_opt) +
-+			       inet_opt->opt.optlen);
-+	}
-+	RCU_INIT_POINTER(newinet->inet_opt, newopt);
-+	rcu_read_unlock();
-+}
-+
-+/* Account for the IP options */
-+static int sctp_v4_ip_options_len(struct sock *sk)
-+{
-+	struct inet_sock *inet = inet_sk(sk);
-+
-+	if (inet->inet_opt)
-+		return inet->inet_opt->opt.optlen;
-+	else
-+		return 0;
-+}
-+
- /* Initialize a sctp_addr from in incoming skb.  */
- static void sctp_v4_from_skb(union sctp_addr *addr, struct sk_buff *skb,
- 			     int is_saddr)
-@@ -590,6 +622,8 @@ static struct sock *sctp_v4_create_accept_sk(struct sock *sk,
- 	sctp_copy_sock(newsk, sk, asoc);
- 	sock_reset_flag(newsk, SOCK_ZAPPED);
- 
-+	sctp_v4_copy_ip_options(sk, newsk);
-+
- 	newinet = inet_sk(newsk);
- 
- 	newinet->inet_daddr = asoc->peer.primary_addr.v4.sin_addr.s_addr;
-@@ -1008,6 +1042,7 @@ static struct sctp_pf sctp_pf_inet = {
- 	.addr_to_user  = sctp_v4_addr_to_user,
- 	.to_sk_saddr   = sctp_v4_to_sk_saddr,
- 	.to_sk_daddr   = sctp_v4_to_sk_daddr,
-+	.copy_ip_options = sctp_v4_copy_ip_options,
- 	.af            = &sctp_af_inet
- };
- 
-@@ -1092,6 +1127,7 @@ static struct sctp_af sctp_af_inet = {
- 	.ecn_capable	   = sctp_v4_ecn_capable,
- 	.net_header_len	   = sizeof(struct iphdr),
- 	.sockaddr_len	   = sizeof(struct sockaddr_in),
-+	.ip_options_len	   = sctp_v4_ip_options_len,
- #ifdef CONFIG_COMPAT
- 	.compat_setsockopt = compat_ip_setsockopt,
- 	.compat_getsockopt = compat_ip_getsockopt,
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index d4730ada7f3233367be7a0e3bb10e286a25602c8..274082cf49a8380fda06866c631cdc22dc4f157b 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -3125,8 +3125,11 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
- 
- 	if (asoc) {
- 		if (val == 0) {
-+			struct sctp_af *af = sp->pf->af;
-+
- 			val = asoc->pathmtu;
--			val -= sp->pf->af->net_header_len;
-+			val -= af->ip_options_len(asoc->base.sk);
-+			val -= af->net_header_len;
- 			val -= sizeof(struct sctphdr) +
- 					sizeof(struct sctp_data_chunk);
- 		}
-@@ -4929,9 +4932,11 @@ int sctp_do_peeloff(struct sock *sk, sctp_assoc_t id, struct socket **sockp)
- 	sctp_copy_sock(sock->sk, sk, asoc);
- 
- 	/* Make peeled-off sockets more like 1-1 accepted sockets.
--	 * Set the daddr and initialize id to something more random
-+	 * Set the daddr and initialize id to something more random and also
-+	 * copy over any ip options.
- 	 */
- 	sp->pf->to_sk_daddr(&asoc->peer.primary_addr, sk);
-+	sp->pf->copy_ip_options(sk, sock->sk);
- 
- 	/* Populate the fields of the newsk from the oldsk and migrate the
- 	 * asoc to the newsk.
 -- 
-2.14.3
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
