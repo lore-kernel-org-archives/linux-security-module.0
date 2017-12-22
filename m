@@ -1,24 +1,86 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 22 Dec 2017 12:01:24 -0800
-Subject: Differentiating audit rules in an LSM stack
-Message-ID: <a1f773ca-924d-1428-c8b3-0bf77f6cf796@schaufler-ca.com>
+From: azhar.shaikh@intel.com (Azhar Shaikh)
+Date: Fri, 22 Dec 2017 12:13:42 -0800
+Subject: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
+Message-ID: <1513973624-44226-1-git-send-email-azhar.shaikh@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The audit rule field types AUDIT_SUBJ_* and AUDIT_OBJ_* are
-defined generically and used by both SELinux and Smack to identify
-fields that are interesting to them. If SELinux and Smack are running
-concurrently both modules will identify audit rules as theirs if
-either has requested the field. Before I go off and create a clever
-solution I think it wise to ask if anyone has thought about or has
-strong opinions on how best to address this unfortunate situation.
+Changes from v1:
+- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - Add NULL checks before calling clk_toggle callback
+  - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
+  - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+    from tpm_tis_clkrun_toggle(). Make them static again.
 
-We know that SELinux and Smack together is not an especially
-interesting configuration. It is, however, a grand test case for
-generality of the solution. Any module that wanted to audit fields
-that are defined generically will have this sort of problem.
+- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+  - This is a new patch in this series as per suggestion from Jason.
+  - Is the current implementation ok or I should move the code in tpm_tis_pnp_remove()
+    and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the unmapping
+    can be done in one place, instead of 3 different places now. Also the unmapping
+    in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
+    tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
 
-Thanks
+Changes from v2:
+- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - No changes
+
+- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+  - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within the function
+    itself. Also removed the #ifdef CONFIG_X86 from all other places around is_bsw()
+
+Changes from v3:
+- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - Change function name from clk_toggle to clk_enable
+  - Update the commit message.
+
+- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+  - No changes
+
+Changes from v4:
+- The numbering of patches is now interchanged.
+
+- Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+  - Had to move ilb_base_addr to tpm_tis_data, from tpm_tis_tcg_phy.
+    Since the ioremapping of ilb_base_addr had to be done before any TPM access,
+    hence moved the variable to tpm_tis_data.
+  - Also move the ioremapping of ilb_base_addr from tpm_tis_init() to
+    tpm_tis_core_init() i.e. before any TPM access is done.
+  - Rename marco LPC_CNTRL_REG_OFFSET to LPC_CNTRL_OFFSET
+  - Update the commit message.
+
+- Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - Remove the functions tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+  - Move the code from these functions to tpm_tis_clkrun_enable().
+
+Changes from v5:
+- Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+  - No changes
+
+- Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - Update the commit message.
+
+Changes from v6:
+- - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+  - No changes
+
+- Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+  - chip->ops was set to NULL in tpm_del_char_device() called from tpm_chip_unregister() in
+    error/driver exit path. Fix this code. (Suggested by Javier Martinez Canillas and Jason Gunthorpe)
+  - Add a comment in tpm_tis_clkrun_enable() function.
+
+Azhar Shaikh (2):
+  tpm_tis: Move ilb_base_addr to tpm_tis_data
+  tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+
+ drivers/char/tpm/tpm-interface.c |   6 ++
+ drivers/char/tpm/tpm_tis.c       | 121 ++++++---------------------------------
+ drivers/char/tpm/tpm_tis_core.c  | 111 +++++++++++++++++++++++++++++++++--
+ drivers/char/tpm/tpm_tis_core.h  |  17 ++++++
+ include/linux/tpm.h              |   1 +
+ 5 files changed, 147 insertions(+), 109 deletions(-)
+
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
