@@ -1,134 +1,119 @@
-From: azhar.shaikh@intel.com (Azhar Shaikh)
-Date: Thu, 21 Dec 2017 15:13:39 -0800
-Subject: [PATCH v2] tpm: Fix the driver cleanup code
-Message-ID: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
+From: zenczykowski@gmail.com (=?UTF-8?Q?Maciej_=C5=BBenczykowski?=)
+Date: Fri, 22 Dec 2017 02:03:35 +0100
+Subject: [PATCH] userns: honour no_new_privs for cap_bset during user ns
+	creation/switch
+In-Reply-To: <87wp1foiwa.fsf@xmission.com>
+References: <20171221210605.181720-1-zenczykowski@gmail.com>
+	<87wp1foiwa.fsf@xmission.com>
+Message-ID: <CAHo-OoyrOr5jXwU-j4Z4qYdWo40+qAdAk0r+OpfMUZ6LgbS-RA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
-the duration of transmit_cmd()") added code which accessed
-chip->ops, even after it was set to NULL in tpm_del_char_device(),
-called from tpm_chip_unregister() in error / driver exit paths.
-So fix this code.
+On Thu, Dec 21, 2017 at 10:44 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> No.  This makes no logical sense.
+>
+> A task that enters a user namespace loses all capabilities to everything
+> outside of the user namespace.  Capabilities inside a user namespace are
+> only valid for objects created inside that user namespace.
+>
+> So limiting capabilities inside a user namespace when the capability
+> bounding set is already fully honored by not giving the processes any of
+> those capabilities makes no logical sense.
+>
+> If the concern is kernel attack surface versus logical permissions we
+> can look at ways to reduce the attack surface but that needs to be fully
+> discussed in the change log.
 
-Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
-the duration of transmit_cmd()")
+Here's an example of using user namespaces to read a file you
+shouldn't be able to.
 
-Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
----
-Changes in v2:
-- Remove TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS flag, instead call
-  tpm_tis_clkrun_enable() directly in tpm_tis_remove()
-- Add comment to tpm_tis_clkrun_enable()
+lpk19:~# uname -r
+4.15.0-smp-d1ce8ceb8ba8
 
- drivers/char/tpm/tpm_tis.c      |  6 ------
- drivers/char/tpm/tpm_tis_core.c | 29 +++++++++++++++++------------
- 2 files changed, 17 insertions(+), 18 deletions(-)
+(we start as true global root)
+lpk19:~# id
+uid=0(root) gid=0(root) groups=0(root)
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index d29add49b033..c847fc69a2fc 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -275,9 +275,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
--	if (is_bsw())
--		iounmap(priv->ilb_base_addr);
--
- }
- 
- static struct pnp_driver tis_pnp_driver = {
-@@ -329,9 +326,6 @@ static int tpm_tis_plat_remove(struct platform_device *pdev)
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
- 
--	if (is_bsw())
--		iounmap(priv->ilb_base_addr);
--
- 	return 0;
- }
- 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index c2227983ed88..519e4a78c8f8 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -37,6 +37,8 @@
-  */
- #define TPM_POLL_SLEEP	1  /* msec */
- 
-+static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
-+
- static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
- 					bool check_cancel, bool *canceled)
- {
-@@ -716,8 +718,7 @@ void tpm_tis_remove(struct tpm_chip *chip)
- 	u32 interrupt;
- 	int rc;
- 
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, true);
-+	tpm_tis_clkrun_enable(chip, true);
- 
- 	rc = tpm_tis_read32(priv, reg, &interrupt);
- 	if (rc < 0)
-@@ -725,8 +726,10 @@ void tpm_tis_remove(struct tpm_chip *chip)
- 
- 	tpm_tis_write32(priv, reg, ~TPM_GLOBAL_INT_ENABLE & interrupt);
- 
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, false);
-+	tpm_tis_clkrun_enable(chip, false);
-+
-+	if (priv->ilb_base_addr)
-+		iounmap(priv->ilb_base_addr);
- }
- EXPORT_SYMBOL_GPL(tpm_tis_remove);
- 
-@@ -736,6 +739,9 @@ void tpm_tis_remove(struct tpm_chip *chip)
-  * @chip:	TPM chip to use
-  * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
-  *		0 - Enable CLKRUN protocol
-+ *
-+ * Call this function directly in tpm_tis_remove() in error or driver removal
-+ * path, since the chip->ops is set to NULL in tpm_chip_unregister().
-  */
- static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
- {
-@@ -922,21 +928,20 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 	}
- 
- 	rc = tpm_chip_register(chip);
--	if (rc && is_bsw())
--		iounmap(priv->ilb_base_addr);
-+	if (rc)
-+		goto out_err;
- 
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, false);
- 
--	return rc;
--out_err:
--	tpm_tis_remove(chip);
--	if (is_bsw())
--		iounmap(priv->ilb_base_addr);
-+	return 0;
- 
--	if (chip->ops->clk_enable != NULL)
-+out_err:
-+	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
- 		chip->ops->clk_enable(chip, false);
- 
-+	tpm_tis_remove(chip);
-+
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_tis_core_init);
--- 
-1.9.1
+(cleanup after previous run)
+lpk19:~# cd /; chattr -i /immu; rm -f /immu/log; rmdir /immu
 
+(now we create an append only logfile owned by target user:group)
+lpk19:~# cd /; mkdir /immu; touch /immu/log; chown produser:prod
+/immu/log; chmod a-rwx,u+w /immu/log; chattr +a /immu/log
+
+(let's show what things look like)
+lpk19:~# chattr +i /immu; ls -ld / /immu /immu/log; lsattr -d / /immu /immu/log
+drwxr-xr-x 22 root root 4096 Dec 21 16:33 /
+drwxr-xr-x 2 root root 4096 Dec 21 16:23 /immu
+--w------- 1 produser prod 0 Dec 21 16:23 /immu/log
+-----------I--e---- /
+----i---------e---- /immu
+-----a--------e---- /immu/log
+
+(the immutable bit prevents us from changing permissions on the file)
+lpk19:/# chmod a+rwx /immu/log
+chmod: changing permissions of '/immu/log': Operation not permitted
+
+(the append only bit prevents us from simply overwriting the file)
+lpk19:/# echo log1 > /immu/log
+-bash: /immu/log: Operation not permitted
+
+(but we can append to it)
+lpk19:/# echo log1 >> /immu/log
+
+(we're global root with CAP_DAC_OVERRIDE, so we can *still* read it)
+lpk19:/# cat /immu/log
+log1
+
+(let's transition to target user)
+lpk19:/# su - produser
+
+produser at lpk19:~$ id
+uid=2080(produser) gid=620(prod) groups=620(prod)
+
+(we can't overwrite it)
+produser at lpk19:~$ echo log2 > /immu/log
+-su: /immu/log: Operation not permitted
+
+(but we can log to it: as intended)
+produser at lpk19:~$ echo log2 >> /immu/log
+
+(we can't change its permissions, cause it's in an immutable directory)
+produser at lpk19:~$ chmod u+r /immu/log
+chmod: changing permissions of '/immu/log': Operation not permitted
+
+(we can't dump the file, cause we don't have CAP_DAC_OVERRIDE)
+produser at lpk19:~$ cat /immu/log
+cat: /immu/log: Permission denied
+
+(or can we?)
+produser at lpk19:~$ unshare -U -r cat /immu/log
+log1
+log2
+
+----
+
+Now, of course, the above patch doesn't actually fix this on it's own,
+since 'su' doesn't (yet?) know to restrict bset or to set
+no_new_privs.
+
+But: it allows the sandbox equivalent of su to drop CAP_DAC_OVERRIDE
+from it's inh/eff/perm/ambient/bset, and set no_new_privs.
+Now the unshare won't gain CAP_DAC_OVERRIDE and won't be able to cat
+the non-readable append-only log file.
+
+IMHO the point of having a capability bounding set and/or no_new_privs
+is to never be able to regain capabilities.
+Note also that 'no_new_privs' isn't cleared across a
+unshare(CLONE_NEWUSER) [presumably also applies to setns()].
+
+We can of course argue the implementation details (for example instead
+of using the existing no_new_privs flag, add a new
+keep_bset_across_userns_transitions securebits flag)... but
+*something* has to be done.
+
+- Maciej
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
