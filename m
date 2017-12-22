@@ -1,107 +1,121 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 22 Dec 2017 09:03:02 -0500
-Subject: BUG: unable to handle kernel NULL pointer dereference in
-	sidtab_search_core
-In-Reply-To: <CACT4Y+ZkrWR9=s9qVUAiF6bEeGgdhLGE_W_wWwX7HsaVo1MLiQ@mail.gmail.com>
-References: <94eb2c0d010a8dcf040560c0cdf5@google.com>
-	<CAHC9VhT5qK4nUmWo5Pksq0rsxa6Wk7wBEa0Gn41pNx5oS_NDCQ@mail.gmail.com>
-	<CACT4Y+ZkrWR9=s9qVUAiF6bEeGgdhLGE_W_wWwX7HsaVo1MLiQ@mail.gmail.com>
-Message-ID: <CAHC9VhTjfaOiGm99w3OQMb5m7_zzZg92C_=vPpDhZ1uJBcRdLw@mail.gmail.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Fri, 22 Dec 2017 08:08:04 -0600
+Subject: [PATCH] userns: honour no_new_privs for cap_bset during user ns
+	creation/switch
+In-Reply-To: <CAHo-OoxoTEZuQ0ZXa9a2BnjAv83y0UWC0eqn-ok9hS31LkiiSA@mail.gmail.com>
+	("Maciej \=\?utf-8\?Q\?\=C5\=BBenczykowski\=22's\?\= message of "Fri,
+	22 Dec 2017 02:51:49 +0100")
+References: <20171221210605.181720-1-zenczykowski@gmail.com>
+	<87wp1foiwa.fsf@xmission.com>
+	<CAHo-OoyrOr5jXwU-j4Z4qYdWo40+qAdAk0r+OpfMUZ6LgbS-RA@mail.gmail.com>
+	<87fu83lfw5.fsf@xmission.com>
+	<CAHo-OoxoTEZuQ0ZXa9a2BnjAv83y0UWC0eqn-ok9hS31LkiiSA@mail.gmail.com>
+Message-ID: <87o9mqhn3v.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Dec 22, 2017 at 4:14 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Thu, Dec 21, 2017 at 9:40 PM, Paul Moore <paul@paul-moore.com> wrote:
->> On Wed, Dec 20, 2017 at 2:48 AM, syzbot
->> <bot+904436b33e141b4f4c57c1ddc94199ffd2e34b9d@syzkaller.appspotmail.com>
->> wrote:
->>> Hello,
->>>
->>> syzkaller hit the following crash on
->>> 6084b576dca2e898f5c101baef151f7bfdbb606d
->>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
->>> compiler: gcc (GCC) 7.1.1 20170620
->>> .config is attached
->>> Raw console output is attached.
->>> C reproducer is attached
->>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
->>> for information about syzkaller reproducers
->>>
->>>
->>> SELinux: security_compute_sid:  unrecognized SID 1
->>> SELinux: security_compute_sid:  unrecognized SID 1
->>> SELinux: security_compute_sid:  unrecognized SID 1
->>> SELinux: security_compute_sid:  unrecognized SID 1
->>> SELinux: security_compute_sid:  unrecognized SID 1
->>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000001
->>> IP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
->>> PGD 0 P4D 0
->>> Oops: 0000 [#1] SMP
->>> Dumping ftrace buffer:
->>>    (ftrace buffer empty)
->>> Modules linked in:
->>> CPU: 1 PID: 4252 Comm: kworker/u4:1 Not tainted 4.15.0-rc3-next-20171214+
->>> #67
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>> Google 01/01/2011
->>> RIP: 0010:sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
->>> RSP: 0018:ffffc900028abc18 EFLAGS: 00010293
->>> RAX: ffff8802131a87c0 RBX: 0000000000000001 RCX: ffffffff8165d978
->>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffff83fd17a0
->>> RBP: ffffc900028abc40 R08: 0000000000000001 R09: 0000000000000001
->>> R10: ffffc900028abbe0 R11: 0000000000000000 R12: 0000000000000001
->>> R13: 0000000000000001 R14: 0000000000000000 R15: ffff880214d93800
->>> FS:  0000000000000000(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 0000000000000001 CR3: 0000000214e31000 CR4: 00000000001406e0
->>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> Call Trace:
->>>  sidtab_search+0x1f/0x30 security/selinux/ss/sidtab.c:111
->>>  security_compute_sid.part.11+0xe2/0x710 security/selinux/ss/services.c:1618
->>>  security_compute_sid+0x92/0xa0 security/selinux/ss/services.c:1598
->>>  security_transition_sid+0x57/0x70 security/selinux/ss/services.c:1764
->>>  selinux_bprm_set_creds+0x215/0x2f0 security/selinux/hooks.c:2423
->>>  security_bprm_set_creds+0x41/0x60 security/security.c:332
->>>  prepare_binprm+0xae/0x1f0 fs/exec.c:1561
->>>  do_execveat_common.isra.30+0x6f7/0xb90 fs/exec.c:1784
->>>  do_execve+0x31/0x40 fs/exec.c:1848
->>>  call_usermodehelper_exec_async+0x104/0x190 kernel/umh.c:100
->>>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
->>> Code: 8b 5b 50 48 85 db 75 e5 e8 e6 c9 c5 ff 49 8b 5f 18 48 85 db 75 10 eb
->>> 43 e8 d6 c9 c5 ff 48 8b 5b 50 48 85 db 74 35 e8 c8 c9 c5 ff <44> 8b 23 41 83
->>> fc 02 76 e4 e8 ba c9 c5 ff 41 83 fc 03 75 1c 48
->>> RIP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100 RSP:
->>> ffffc900028abc18
->>> CR2: 0000000000000001
->>> ---[ end trace 571c0ea6c6959387 ]---
->>> Kernel panic - not syncing: Fatal exception
->>> Dumping ftrace buffer:
->>>    (ftrace buffer empty)
->>> Kernel Offset: disabled
->>> Rebooting in 86400 seconds..
+Maciej ?enczykowski <zenczykowski@gmail.com> writes:
+
+>> Good point about CAP_DAC_OVERRIDE on files you own.
 >>
->> Based on the reproducer and the stack trace, I'm guessing the system
->> is attempting to load a kernel module for a a defined, but unloaded,
->> protocol.  Looking quickly at the SELinux bprm and sidtab code,
->> nothing obvious is jumping out at me.  Considering the number of false
->> positives I've been seeing from syzbot lately, I'm assuming this is
->> more of the same.
+>> I think there is an argument that you are playing dangerous games with
+>> the permission system there, as it isn't effectively a file you own if
+>> you can't read it, and you can't change it's permissions.
 >
-> Hi Paul,
+> Append-only files are useful - particularly for logging.
+> It could also simply be a non-readable file on a R/O filesystem.
 >
-> What are these false positives? Please elaborate.
-> There is no single false positive that I am aware of. All the ones
-> that were debugged are real kernel bugs.
+>> Given little things like that I can completely see no_new_privs meaning
+>> you can't create a user namespace.  That seems consistent with the
+>> meaning and philosophy of no_new_privs.  So simple it is hard to get
+>> wrong.
+>
+> Yes, I could totally buy the argument that no_new_privs should prevent
+> creating a user ns.
+>
+> However, there's also setns() and that's a fair bit harder to reason about.
+> Entirely deny it?  But that actually seems potentially useful...
+> Allow it but cap it?  That's what this does...
+>
+>> We could do more clever things like plug this whole in user namespaces,
+>> and that would not hurt my feelings.
+>
+> Sure, this particular one wouldn't be all that easy I think... and how
+> many such holes are there?
+> I found this particular one *after* your first reply in this thread.
+>
+>> However unless that is our only
+>> choice to avoid badly breaking userspace I would have to have to depend
+>> on user namespaces being perfect for no_new_privs to be a proper jail.
+>
+> This stuff is ridiculously complex to get right from userspace. :-(
 
-I've replied to several of the syzbot automated reports with the
-"invalid" response.  I haven't been keeping track, but it seems like
-approximately 50% of the SELinux related reports don't make sense upon
-inspection.
+>> As a general rule user namespaces are where we tackle the subtle scary
+>> things that should work, and no_new_privs is where we implement a simple
+>> hard to get wrong jail.  Most of the time the effect is the same to an
+>> outside observer (bounded permissions), but there is a real difference
+>> in difficulty of implementation.
+>
+> So, where to now...
+>
+> Would you accept patches that:
+>
+> - make no_new_priv block user ns creation?
+>
+> - make no_new_priv block user ns transition?
 
--- 
-paul moore
-www.paul-moore.com
+Yes.
+
+The approach will need to be rethought if there is anything deliberately
+combining user namespaces and no_new_privs.  As regressions are a no-no.
+So we need wide spread testing, to avoid that.
+
+But as much as possible I want no_new_privs to be simple and doing it's
+job.
+
+I will also take and encourage patches that close this minor privilege
+escalation from the user namespace side.  As ideally creating a user
+namespace should be as safe as no_new_privs.
+
+
+> Or perhaps we can assume that lack of create privs is sufficient, and
+> if there's a pre-existing user ns for you to enter, then that's
+> acceptable...
+> Although this implies you probably always want to combine no_new_privs
+> with a leaf user ns, or no_new_privs isn't all that useful for root in
+> root ns...
+> This added complexity, probably means it should be blocked...
+
+Yes.
+
+> - inherits bset across user ns creation/transition based on X?
+> [this is the one we care about, because there are simply too many bugs
+> in the kernel wrt. certain caps]
+
+That was my suspicion, and attack surface reduction is a different
+discussion.  Would no_new_privs preventing a userns transition be enough
+for the cases you care about?
+
+Otherwise this is a different conversation because it is not about
+semantics but about making the code safer to use.  In general if code is
+simply not safe to user in a user namespace I would prefer to tighten
+the permission checks, and just not allow that code.
+
+Mostly what I have seen in previous conversations is simply concerns
+about code that is not used or needed, being a problem.
+
+> X could be:
+> - a new flag similar to no_new_priv
+> - a new securebit flag (w/lockbit)  [provided securebits survive a
+> userns transition, haven't checked]
+> - or perhaps a new capability
+> - something else?
+>
+> How do we make forward progress?
+
+We start by causing no_new_privs to block userns creation and entering.
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
