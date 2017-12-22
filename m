@@ -1,39 +1,93 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 22 Dec 2017 16:02:41 -0500
-Subject: Differentiating audit rules in an LSM stack
-In-Reply-To: <a1f773ca-924d-1428-c8b3-0bf77f6cf796@schaufler-ca.com>
-References: <a1f773ca-924d-1428-c8b3-0bf77f6cf796@schaufler-ca.com>
-Message-ID: <CAHC9VhTDepkZ=073kuP25Jz-XAh4aK94tBb8tNGjxdz6c-1EPA@mail.gmail.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Fri, 22 Dec 2017 16:14:39 -0600
+Subject: BUG: unable to handle kernel paging request in
+	security_compute_sid
+In-Reply-To: <001a113f9ae0812d650560f4a1d6@google.com>
+References: <001a113f9ae0812d650560f4a1d6@google.com>
+Message-ID: <20171222221439.GA28786@zzz.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Dec 22, 2017 at 3:01 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> The audit rule field types AUDIT_SUBJ_* and AUDIT_OBJ_* are
-> defined generically and used by both SELinux and Smack to identify
-> fields that are interesting to them. If SELinux and Smack are running
-> concurrently both modules will identify audit rules as theirs if
-> either has requested the field. Before I go off and create a clever
-> solution I think it wise to ask if anyone has thought about or has
-> strong opinions on how best to address this unfortunate situation.
->
-> We know that SELinux and Smack together is not an especially
-> interesting configuration. It is, however, a grand test case for
-> generality of the solution. Any module that wanted to audit fields
-> that are defined generically will have this sort of problem.
+On Fri, Dec 22, 2017 at 01:38:01PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> 6084b576dca2e898f5c101baef151f7bfdbb606d
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> C reproducer is attached
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+> 
+> 
+> BUG: unable to handle kernel paging request at 00000000830e2118
+> IP: security_compute_sid.part.11+0x418/0x710
+> security/selinux/ss/services.c:1640
+> PGD 0 P4D 0
+> Oops: 0000 [#1] SMP
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 3391 Comm: kworker/u4:0 Not tainted 4.15.0-rc3-next-20171214+
+> #67
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:security_compute_sid.part.11+0x418/0x710
+> security/selinux/ss/services.c:1640
+> RSP: 0018:ffffc90001993c70 EFLAGS: 00010293
+> RAX: ffff880216ba0800 RBX: 0000000000000002 RCX: ffffffff81667b88
+> RDX: 0000000000000000 RSI: 0000000000000005 RDI: ffffffff83fd17a0
+> RBP: ffffc90001993d20 R08: 0000000000000001 R09: 0000000000000001
+> R10: ffffc90001993be0 R11: 0000000000000000 R12: ffff88021694f188
+> R13: 0000000000000010 R14: ffff880216592388 R15: 00000000830e20e0
+> FS:  0000000000000000(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000830e2118 CR3: 000000000301e001 CR4: 00000000001606f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  security_compute_sid+0x92/0xa0 security/selinux/ss/services.c:1598
+>  security_transition_sid+0x57/0x70 security/selinux/ss/services.c:1764
+>  selinux_bprm_set_creds+0x215/0x2f0 security/selinux/hooks.c:2423
+>  security_bprm_set_creds+0x41/0x60 security/security.c:332
+>  prepare_binprm+0xae/0x1f0 fs/exec.c:1561
+>  do_execveat_common.isra.30+0x6f7/0xb90 fs/exec.c:1784
+>  do_execve+0x31/0x40 fs/exec.c:1848
+>  call_usermodehelper_exec_async+0x104/0x190 kernel/umh.c:100
+>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
+> Code: 40 74 15 41 83 fd 10 74 0f e8 d5 27 c5 ff 4d 85 ff 75 33 e9 6f 02 00
+> 00 e8 c6 27 c5 ff 4d 85 ff 0f 84 e6 02 00 00 e8 b8 27 c5 ff <41> 80 7f 38 02
+> 0f 84 5c 01 00 00 e8 a8 27 c5 ff 41 8b 06 89 45
+> RIP: security_compute_sid.part.11+0x418/0x710
+> security/selinux/ss/services.c:1640 RSP: ffffc90001993c70
+> CR2: 00000000830e2118
+> ---[ end trace fe59d8175af57ffc ]---
+> Kernel panic - not syncing: Fatal exception
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+> 
 
-I think the biggest concern here is going to be what Steve's audit
-userspace will tolerate.  I might suggest simply duplicating the
-fields for each LSM that is running, e.g. "subj=<selinux_label>
-subj=<smack_label> subj=<lsmX_label> ...", but I have no idea if
-Steve's userspace can handle multiple instances of the same field in a
-single record.
+This is yet another one where the reproducer is using AF_ALG and binding to the
+"pcrypt(gcm_base(ctr(aes-aesni),ghash-generic))" algorithm, so it's running into
+the pcrypt_free() bug which is causing slab cache corruption:
 
-My initial thinking is that adding LSM-specific subj/obj fields would
-be a mistake.
+https://groups.google.com/forum/#!topic/syzkaller-bugs/NKn_ivoPOpk
 
--- 
-paul moore
-www.paul-moore.com
+https://patchwork.kernel.org/patch/10126761/
+
+So let's mark it as a duplicate:
+
+#syz dup: KASAN: use-after-free Read in __list_del_entry_valid (2)
+
+I wonder if it would be of any help to disable slab cache merging, i.e. set
+CONFIG_SLAB_MERGE_DEFAULT=n?  That would reduce the number of duplicate reports,
+though perhaps at the risk of hiding bugs.
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
