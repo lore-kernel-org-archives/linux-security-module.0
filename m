@@ -1,320 +1,135 @@
-From: azhar.shaikh@intel.com (Azhar Shaikh)
-Date: Fri, 22 Dec 2017 12:13:43 -0800
-Subject: [PATCH v7 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
-In-Reply-To: <1513973624-44226-1-git-send-email-azhar.shaikh@intel.com>
-References: <1513973624-44226-1-git-send-email-azhar.shaikh@intel.com>
-Message-ID: <1513973624-44226-2-git-send-email-azhar.shaikh@intel.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 22 Dec 2017 15:56:34 -0500
+Subject: BUG: unable to handle kernel NULL pointer dereference in
+	sidtab_search_core
+In-Reply-To: <CACT4Y+YoyaP+qjLiE5sSzJNp5aOQiTXbBC8k-GinE8LoGNmStQ@mail.gmail.com>
+References: <94eb2c0d010a8dcf040560c0cdf5@google.com>
+	<CAHC9VhT5qK4nUmWo5Pksq0rsxa6Wk7wBEa0Gn41pNx5oS_NDCQ@mail.gmail.com>
+	<CACT4Y+ZkrWR9=s9qVUAiF6bEeGgdhLGE_W_wWwX7HsaVo1MLiQ@mail.gmail.com>
+	<CAHC9VhTjfaOiGm99w3OQMb5m7_zzZg92C_=vPpDhZ1uJBcRdLw@mail.gmail.com>
+	<CACT4Y+bq3DLE1Pv9cP5cM4+m8UO6aovRMbqZ-SdvLv7b=AFmyg@mail.gmail.com>
+	<CAHC9VhSB74i5Teczp-yMk7rWkOBGGFXPQM455iyLcFu33ar5iA@mail.gmail.com>
+	<CACT4Y+YoyaP+qjLiE5sSzJNp5aOQiTXbBC8k-GinE8LoGNmStQ@mail.gmail.com>
+Message-ID: <CAHC9VhQ-BS9doH6dCWLua17rSngVUsHsMU2JFTOWq0f_oX8Ujw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Move static variable ilb_base_addr to tpm_tis_data.
+On Fri, Dec 22, 2017 at 11:59 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Fri, Dec 22, 2017 at 5:03 PM, Paul Moore <paul@paul-moore.com> wrote:
+>>>>>> wrote:
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> syzkaller hit the following crash on
+>>>>>>> 6084b576dca2e898f5c101baef151f7bfdbb606d
+>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+>>>>>>> compiler: gcc (GCC) 7.1.1 20170620
+>>>>>>> .config is attached
+>>>>>>> Raw console output is attached.
+>>>>>>> C reproducer is attached
+>>>>>>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+>>>>>>> for information about syzkaller reproducers
+>>>>>>>
+>>>>>>>
+>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
+>>>>>>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000001
+>>>>>>> IP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
+>>>>>>> PGD 0 P4D 0
+>>>>>>> Oops: 0000 [#1] SMP
+>>>>>>> Dumping ftrace buffer:
+>>>>>>>    (ftrace buffer empty)
+>>>>>>> Modules linked in:
+>>>>>>> CPU: 1 PID: 4252 Comm: kworker/u4:1 Not tainted 4.15.0-rc3-next-20171214+
+>>>>>>> #67
+>>>>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>>>>>>> Google 01/01/2011
+>>>>>>> RIP: 0010:sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
+>>>>>>> RSP: 0018:ffffc900028abc18 EFLAGS: 00010293
+>>>>>>> RAX: ffff8802131a87c0 RBX: 0000000000000001 RCX: ffffffff8165d978
+>>>>>>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffff83fd17a0
+>>>>>>> RBP: ffffc900028abc40 R08: 0000000000000001 R09: 0000000000000001
+>>>>>>> R10: ffffc900028abbe0 R11: 0000000000000000 R12: 0000000000000001
+>>>>>>> R13: 0000000000000001 R14: 0000000000000000 R15: ffff880214d93800
+>>>>>>> FS:  0000000000000000(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
+>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>> CR2: 0000000000000001 CR3: 0000000214e31000 CR4: 00000000001406e0
+>>>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>>> Call Trace:
+>>>>>>>  sidtab_search+0x1f/0x30 security/selinux/ss/sidtab.c:111
+>>>>>>>  security_compute_sid.part.11+0xe2/0x710 security/selinux/ss/services.c:1618
+>>>>>>>  security_compute_sid+0x92/0xa0 security/selinux/ss/services.c:1598
+>>>>>>>  security_transition_sid+0x57/0x70 security/selinux/ss/services.c:1764
+>>>>>>>  selinux_bprm_set_creds+0x215/0x2f0 security/selinux/hooks.c:2423
+>>>>>>>  security_bprm_set_creds+0x41/0x60 security/security.c:332
+>>>>>>>  prepare_binprm+0xae/0x1f0 fs/exec.c:1561
+>>>>>>>  do_execveat_common.isra.30+0x6f7/0xb90 fs/exec.c:1784
+>>>>>>>  do_execve+0x31/0x40 fs/exec.c:1848
+>>>>>>>  call_usermodehelper_exec_async+0x104/0x190 kernel/umh.c:100
+>>>>>>>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
+>>>>>>> Code: 8b 5b 50 48 85 db 75 e5 e8 e6 c9 c5 ff 49 8b 5f 18 48 85 db 75 10 eb
+>>>>>>> 43 e8 d6 c9 c5 ff 48 8b 5b 50 48 85 db 74 35 e8 c8 c9 c5 ff <44> 8b 23 41 83
+>>>>>>> fc 02 76 e4 e8 ba c9 c5 ff 41 83 fc 03 75 1c 48
+>>>>>>> RIP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100 RSP:
+>>>>>>> ffffc900028abc18
+>>>>>>> CR2: 0000000000000001
+>>>>>>> ---[ end trace 571c0ea6c6959387 ]---
+>>>>>>> Kernel panic - not syncing: Fatal exception
+>>>>>>> Dumping ftrace buffer:
+>>>>>>>    (ftrace buffer empty)
+>>>>>>> Kernel Offset: disabled
+>>>>>>> Rebooting in 86400 seconds..
+>>>>>>
+>>>>>> Based on the reproducer and the stack trace, I'm guessing the system
+>>>>>> is attempting to load a kernel module for a a defined, but unloaded,
+>>>>>> protocol.  Looking quickly at the SELinux bprm and sidtab code,
+>>>>>> nothing obvious is jumping out at me.  Considering the number of false
+>>>>>> positives I've been seeing from syzbot lately, I'm assuming this is
+>>>>>> more of the same.
+>>>>>
+>>>>> Hi Paul,
+>>>>>
+>>>>> What are these false positives? Please elaborate.
+>>>>> There is no single false positive that I am aware of. All the ones
+>>>>> that were debugged are real kernel bugs.
+>>>>
+>>>> I've replied to several of the syzbot automated reports with the
+>>>> "invalid" response.  I haven't been keeping track, but it seems like
+>>>> approximately 50% of the SELinux related reports don't make sense upon
+>>>> inspection.
+>>>
+>>> Can you please point me to some of these bugs? I don't see anything
+>>> like this in my inbox, in google group nor in database.
+>>
+>> Not easily, no.  I don't keep track of these reports once I've
+>> responded to the syzbot mail.
+>
+> There must be traces of this in database and on mailing lists (even if
+> you drop syzkaller-bugs@ syzbot will re-add it). So far I did not find
+> any traces...
 
-Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-Reviewed-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm_tis.c      | 75 +++++++++++++++--------------------------
- drivers/char/tpm/tpm_tis_core.c | 16 ++++++++-
- drivers/char/tpm/tpm_tis_core.h | 13 +++++++
- 3 files changed, 56 insertions(+), 48 deletions(-)
+<sigh>
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index e2d1055fb814..923f8f2cbaca 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -134,33 +134,24 @@ static int check_acpi_tpm2(struct device *dev)
- #endif
- 
- #ifdef CONFIG_X86
--#define INTEL_LEGACY_BLK_BASE_ADDR      0xFED08000
--#define ILB_REMAP_SIZE			0x100
--#define LPC_CNTRL_REG_OFFSET            0x84
--#define LPC_CLKRUN_EN                   (1 << 2)
--
--static void __iomem *ilb_base_addr;
--
--static inline bool is_bsw(void)
--{
--	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
--}
-+#define LPC_CNTRL_OFFSET		0x84
-+#define LPC_CLKRUN_EN			(1 << 2)
- 
- /**
-  * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be running
-  */
--static void tpm_platform_begin_xfer(void)
-+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
- {
- 	u32 clkrun_val;
- 
- 	if (!is_bsw())
- 		return;
- 
--	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/* Disable LPC CLKRUN# */
- 	clkrun_val &= ~LPC_CLKRUN_EN;
--	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/*
- 	 * Write any random value on port 0x80 which is on LPC, to make
-@@ -173,18 +164,18 @@ static void tpm_platform_begin_xfer(void)
- /**
-  * tpm_platform_end_xfer() - set LPC CLKRUN_EN i.e. clocks can be turned off
-  */
--static void tpm_platform_end_xfer(void)
-+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
- {
- 	u32 clkrun_val;
- 
- 	if (!is_bsw())
- 		return;
- 
--	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/* Enable LPC CLKRUN# */
- 	clkrun_val |= LPC_CLKRUN_EN;
--	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
-+	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
- 
- 	/*
- 	 * Write any random value on port 0x80 which is on LPC, to make
-@@ -194,16 +185,11 @@ static void tpm_platform_end_xfer(void)
- 
- }
- #else
--static inline bool is_bsw(void)
--{
--	return false;
--}
--
--static void tpm_platform_begin_xfer(void)
-+static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
- {
- }
- 
--static void tpm_platform_end_xfer(void)
-+static void tpm_platform_end_xfer(struct tpm_tis_data *data)
- {
- }
- #endif
-@@ -213,12 +199,12 @@ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	while (len--)
- 		*result++ = ioread8(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -228,12 +214,12 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	while (len--)
- 		iowrite8(*value++, phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -242,11 +228,11 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	*result = ioread16(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -255,11 +241,11 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	*result = ioread32(phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -268,11 +254,11 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	tpm_platform_begin_xfer();
-+	tpm_platform_begin_xfer(data);
- 
- 	iowrite32(value, phy->iobase + addr);
- 
--	tpm_platform_end_xfer();
-+	tpm_platform_end_xfer(data);
- 
- 	return 0;
- }
-@@ -351,9 +337,13 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
- static void tpm_tis_pnp_remove(struct pnp_dev *dev)
- {
- 	struct tpm_chip *chip = pnp_get_drvdata(dev);
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
-+	if (is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
- }
- 
- static struct pnp_driver tis_pnp_driver = {
-@@ -400,10 +390,14 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
- static int tpm_tis_plat_remove(struct platform_device *pdev)
- {
- 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
- 
-+	if (is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
- 	return 0;
- }
- 
-@@ -461,11 +455,6 @@ static int __init init_tis(void)
- 	if (rc)
- 		goto err_force;
- 
--#ifdef CONFIG_X86
--	if (is_bsw())
--		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
--					ILB_REMAP_SIZE);
--#endif
- 	rc = platform_driver_register(&tis_drv);
- 	if (rc)
- 		goto err_platform;
-@@ -484,10 +473,6 @@ static int __init init_tis(void)
- err_platform:
- 	if (force_pdev)
- 		platform_device_unregister(force_pdev);
--#ifdef CONFIG_X86
--	if (is_bsw())
--		iounmap(ilb_base_addr);
--#endif
- err_force:
- 	return rc;
- }
-@@ -497,10 +482,6 @@ static void __exit cleanup_tis(void)
- 	pnp_unregister_driver(&tis_pnp_driver);
- 	platform_driver_unregister(&tis_drv);
- 
--#ifdef CONFIG_X86
--	if (is_bsw())
--		iounmap(ilb_base_addr);
--#endif
- 	if (force_pdev)
- 		platform_device_unregister(force_pdev);
- }
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index ae905d17c248..bea151844692 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -754,6 +754,13 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 	priv->phy_ops = phy_ops;
- 	dev_set_drvdata(&chip->dev, priv);
- 
-+	if (is_bsw()) {
-+		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
-+					ILB_REMAP_SIZE);
-+		if (!priv->ilb_base_addr)
-+			return -ENOMEM;
-+	}
-+
- 	if (wait_startup(chip, 0) != 0) {
- 		rc = -ENODEV;
- 		goto out_err;
-@@ -844,9 +851,16 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		}
- 	}
- 
--	return tpm_chip_register(chip);
-+	rc = tpm_chip_register(chip);
-+	if (rc && is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
-+	return rc;
- out_err:
- 	tpm_tis_remove(chip);
-+	if (is_bsw())
-+		iounmap(priv->ilb_base_addr);
-+
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_tis_core_init);
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index 6bbac319ff3b..458847f72758 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -79,6 +79,9 @@ enum tis_defaults {
- #define	TPM_DID_VID(l)			(0x0F00 | ((l) << 12))
- #define	TPM_RID(l)			(0x0F04 | ((l) << 12))
- 
-+#define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
-+#define ILB_REMAP_SIZE			0x100
-+
- enum tpm_tis_flags {
- 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
- };
-@@ -89,6 +92,7 @@ struct tpm_tis_data {
- 	int irq;
- 	bool irq_tested;
- 	unsigned int flags;
-+	void __iomem *ilb_base_addr;
- 	wait_queue_head_t int_queue;
- 	wait_queue_head_t read_queue;
- 	const struct tpm_tis_phy_ops *phy_ops;
-@@ -144,6 +148,15 @@ static inline int tpm_tis_write32(struct tpm_tis_data *data, u32 addr,
- 	return data->phy_ops->write32(data, addr, value);
- }
- 
-+static inline bool is_bsw(void)
-+{
-+#ifdef CONFIG_X86
-+	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
-+#else
-+	return false;
-+#endif
-+}
-+
- void tpm_tis_remove(struct tpm_chip *chip);
- int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		      const struct tpm_tis_phy_ops *phy_ops,
+Okay, so I dug through my mail and I found at least two instances (see
+below).  There may be more, but I'm getting tired of dealing with
+syzbot.  I'm a big fan of increased testing, especially automated
+testing, but right now syzbot seems to be costing me a
+disproportionate amount of time.
+
+* I sent an invalid reply to
+bot+c06fb26dfcd8220259619bf322a79eb0887147c8 on November 3rd, I don't
+see an acknowledgement from the robot but I may have deleted it.
+
+* I sent an invalid reply to
+bot+fcb30800d359ef1113a6edda069a77c2eebb9bf1 on December 6th, it was
+acknowledged by the robot.
+
 -- 
-1.9.1
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
