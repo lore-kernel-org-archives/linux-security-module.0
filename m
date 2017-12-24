@@ -1,46 +1,96 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 24 Dec 2017 00:56:01 -0500
-Subject: [PATCH 11/11] evm: Don't update hmacs in user ns mounts
-In-Reply-To: <1514092328.5221.116.camel@linux.vnet.ibm.com>
-References: <cover.1512741134.git.dongsu@kinvolk.io>
-	<1f2233a1a028f1eb1e9bea7d06efa6d34e69e752.1512041070.git.dongsu@kinvolk.io>
-	<20171223040348.GK6837@mail.hallyn.com>
-	<1514092328.5221.116.camel@linux.vnet.ibm.com>
-Message-ID: <1514094961.5221.132.camel@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sun, 24 Dec 2017 21:47:03 +0200
+Subject: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
+In-Reply-To: <1513973624-44226-1-git-send-email-azhar.shaikh@intel.com>
+References: <1513973624-44226-1-git-send-email-azhar.shaikh@intel.com>
+Message-ID: <20171224194703.zo75mrwqmruqe65f@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, 2017-12-24 at 00:12 -0500, Mimi Zohar wrote:
-> Hi Serge,
+On Fri, Dec 22, 2017 at 12:13:42PM -0800, Azhar Shaikh wrote:
+> Changes from v1:
+> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Add NULL checks before calling clk_toggle callback
+>   - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
+>   - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+>     from tpm_tis_clkrun_toggle(). Make them static again.
 > 
-> On Fri, 2017-12-22 at 22:03 -0600, Serge E. Hallyn wrote:
-> > On Fri, Dec 22, 2017 at 03:32:35PM +0100, Dongsu Park wrote:
-> > > From: Seth Forshee <seth.forshee@canonical.com>
-> > > 
-> > > The kernel should not calculate new hmacs for mounts done by
-> > > non-root users. Update evm_calc_hmac_or_hash() to refuse to
-> > > calculate new hmacs for mounts for non-init user namespaces.
-> > > 
-> > > Cc: linux-integrity at vger.kernel.org
-> > > Cc: linux-security-module at vger.kernel.org
-> > > Cc: linux-kernel at vger.kernel.org
-> > > Cc: James Morris <james.l.morris@oracle.com>
-> > > Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > 
-> > Hi Mimi,
-> > 
-> > does this change seem sufficient to you?
+> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>   - This is a new patch in this series as per suggestion from Jason.
+>   - Is the current implementation ok or I should move the code in tpm_tis_pnp_remove()
+>     and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the unmapping
+>     can be done in one place, instead of 3 different places now. Also the unmapping
+>     in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
+>     tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
 > 
-> I think this is the correct behavior in the context of fuse file
-> systems. ?This patch, the "ima: define a new policy option named
-> force" patch, and an updated IMA policy should be upstreamed together.
-> ?The cover letter should provide the motivation for these patches.
+> Changes from v2:
+> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - No changes
+> 
+> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>   - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within the function
+>     itself. Also removed the #ifdef CONFIG_X86 from all other places around is_bsw()
+> 
+> Changes from v3:
+> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Change function name from clk_toggle to clk_enable
+>   - Update the commit message.
+> 
+> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>   - No changes
+> 
+> Changes from v4:
+> - The numbering of patches is now interchanged.
+> 
+> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>   - Had to move ilb_base_addr to tpm_tis_data, from tpm_tis_tcg_phy.
+>     Since the ioremapping of ilb_base_addr had to be done before any TPM access,
+>     hence moved the variable to tpm_tis_data.
+>   - Also move the ioremapping of ilb_base_addr from tpm_tis_init() to
+>     tpm_tis_core_init() i.e. before any TPM access is done.
+>   - Rename marco LPC_CNTRL_REG_OFFSET to LPC_CNTRL_OFFSET
+>   - Update the commit message.
+> 
+> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Remove the functions tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+>   - Move the code from these functions to tpm_tis_clkrun_enable().
+> 
+> Changes from v5:
+> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>   - No changes
+> 
+> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Update the commit message.
+> 
+> Changes from v6:
+> - - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>   - No changes
+> 
+> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - chip->ops was set to NULL in tpm_del_char_device() called from tpm_chip_unregister() in
+>     error/driver exit path. Fix this code. (Suggested by Javier Martinez Canillas and Jason Gunthorpe)
+>   - Add a comment in tpm_tis_clkrun_enable() function.
+> 
+> Azhar Shaikh (2):
+>   tpm_tis: Move ilb_base_addr to tpm_tis_data
+>   tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+> 
+>  drivers/char/tpm/tpm-interface.c |   6 ++
+>  drivers/char/tpm/tpm_tis.c       | 121 ++++++---------------------------------
+>  drivers/char/tpm/tpm_tis_core.c  | 111 +++++++++++++++++++++++++++++++++--
+>  drivers/char/tpm/tpm_tis_core.h  |  17 ++++++
+>  include/linux/tpm.h              |   1 +
+>  5 files changed, 147 insertions(+), 109 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
 
-Ah, this patch is being upstreamed with the fuse mounts patches. ?I
-guess Seth is planning on posting the IMA policy changes for fuse
-separately.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com> (with SPI
+TPM on Sandybridge machine)
 
-Mimi
+/Jarkko
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
