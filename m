@@ -1,85 +1,49 @@
-From: matorola@gmail.com (Anatoly Pugachev)
-Date: Tue, 2 Jan 2018 16:56:29 +0300
-Subject: [sparc64] kernel unaligned access at TPC aa_dfa_unpack
-In-Reply-To: <20180101214245.GA9827@ravnborg.org>
-References: <CADxRZqwo8sL3RtEWRMcHkgkSAnWKeVibLRrtdXU2e8w2Q5KSTQ@mail.gmail.com>
-	<20180101214245.GA9827@ravnborg.org>
-Message-ID: <CADxRZqzXPMAjyh7_cr7nki=jG_LmT8xmjr-nfDtoheDA9ddt2A@mail.gmail.com>
+From: jgg@ziepe.ca (Jason Gunthorpe)
+Date: Tue, 2 Jan 2018 07:57:35 -0700
+Subject: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582898A05E@ORSMSX109.amr.corp.intel.com>
+References: <1514865944-95086-1-git-send-email-azhar.shaikh@intel.com>
+	<1514865944-95086-2-git-send-email-azhar.shaikh@intel.com>
+	<20180102044044.GA29208@ziepe.ca>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF582898A03C@ORSMSX109.amr.corp.intel.com>
+	<5FFFAD06ADE1CA4381B3F0F7C6AF582898A05E@ORSMSX109.amr.corp.intel.com>
+Message-ID: <20180102145735.GB29208@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jan 2, 2018 at 12:42 AM, Sam Ravnborg <sam@ravnborg.org> wrote:
-> Hi Anatoly.
->
-> On Tue, Jan 02, 2018 at 12:11:49AM +0300, Anatoly Pugachev wrote:
->> Hello!
->>
->> Using latest git kernel (4.15.0-rc6) , getting the following messages
->> on LDOM/kernel boot:
->>
->> [    7.693653] Kernel unaligned access at TPC[7496d8] aa_dfa_unpack+0x38/0x580
->> [    7.693735] Kernel unaligned access at TPC[7496f8] aa_dfa_unpack+0x58/0x580
->> [    7.693782] Kernel unaligned access at TPC[749708] aa_dfa_unpack+0x68/0x580
->> [    7.693829] Kernel unaligned access at TPC[74973c] aa_dfa_unpack+0x9c/0x580
->> [    7.693875] Kernel unaligned access at TPC[749758] aa_dfa_unpack+0xb8/0x580
->> [    7.697135] audit: type=1400 audit(1514840016.480:2):
->> apparmor="STATUS" operation="profile_load" profile="unconfined"
->> name="/usr/sbin/tcpdump" pid=507 comm="apparmor_parser"
->>
->>
->> Can someone please look, what could cause unaligned access at this
->> aa_dfa_unpack function/structure ?
->
-> A quick guess would be that you are using nulldfa.
-> And this variable may not be aligned.
->
-> Try to check the address of nulldfa_src.
->
-> You could also try to force the compiler to align the data
-> to 8 byte like this (security/apparmor/match.c):
->
-> static char nulldfa_src[] = {
->         #include "nulldfa.in"
-> } __aligned(8);                 <= see the added __aligned(8)
->
-> This is just from a quick look at things, but please try it to
-> see if this is the problematic spot.
+On Tue, Jan 02, 2018 at 05:31:30AM +0000, Shaikh, Azhar wrote:
+> >>On Mon, Jan 01, 2018 at 08:05:43PM -0800, Azhar Shaikh wrote:
+> >>
+> >>> -	return tpm_chip_register(chip);
+> >>> +	rc = tpm_chip_register(chip);
+> >>> +	if (rc && is_bsw())
+> >>> +		iounmap(priv->ilb_base_addr);
+> >>> +
+> >>> +	return rc;
+> >>>  out_err:
+> >>>  	tpm_tis_remove(chip);
+> >>> +	if (is_bsw())
+> >>> +		iounmap(priv->ilb_base_addr);
+> >>> +
+> >>>  	return rc;
+> >>>  }
+> >>
+> >>I thought you were resending this to fix the above, why is is it still wonky?
+> >>
+> >
+> >Oh! I fixed it in the second patch ("tpm: Keep CLKRUN enabled throughout
+> >the duration of transmit_cmd()"). Should have fixed in this patch instead. My
+> >bad, didn't see it was introduced in this patch. I thought it was part of second
+> >patch. Will fix this.
+> >
+> 
+> On checking, the ops->clk_enable is not still introduced yet. It is introduced in the second patch. The cleanup is done in the next patch.
+> So do you want me to still fix this here?
 
-Sam,
+Try hard to not edit your own patches in your series. No reason why
+iounmap cannot be put into tpm_tis_remove in the first place
 
-this doesn't work:
-
-$ make
-...
-  CC      security/apparmor/match.o
-In file included from ./include/linux/compiler_types.h:58:0,
-                 from ./include/linux/linkage.h:5,
-                 from ./include/linux/kernel.h:7,
-                 from security/apparmor/match.c:16:
-./include/linux/compiler-gcc.h:123:23: error: expected ?,? or ?;?
-before ?__attribute__?
- #define __aligned(x)  __attribute__((aligned(x)))
-                       ^
-security/apparmor/match.c:30:3: note: in expansion of macro ?__aligned?
- } __aligned(8);
-   ^~~~~~~~~
-scripts/Makefile.build:310: recipe for target 'security/apparmor/match.o' failed
-
-$ git diff
-diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-index 72c604350e80..8f42ab8fc365 100644
---- a/security/apparmor/match.c
-+++ b/security/apparmor/match.c
-@@ -27,7 +27,7 @@
-
- static char nulldfa_src[] = {
-        #include "nulldfa.in"
--};
-+} __aligned(8);
- struct aa_dfa *nulldfa;
-
- int aa_setup_dfa_engine(void)
-~/linux-2.6$
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
