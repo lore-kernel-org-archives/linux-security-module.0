@@ -1,64 +1,102 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Tue, 2 Jan 2018 11:00:43 -0600
-Subject: KASAN: slab-out-of-bounds Read in cap_convert_nscap
-In-Reply-To: <089e082658c46152990561c82268@google.com>
-References: <089e082658c46152990561c82268@google.com>
-Message-ID: <20180102170043.GA924@zzz.localdomain>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 2 Jan 2018 09:20:06 -0800
+Subject: Differentiating audit rules in an LSM stack
+In-Reply-To: <2471440.Usxef9eJXA@x2>
+References: <a1f773ca-924d-1428-c8b3-0bf77f6cf796@schaufler-ca.com>
+	<CAHC9VhTDepkZ=073kuP25Jz-XAh4aK94tBb8tNGjxdz6c-1EPA@mail.gmail.com>
+	<2471440.Usxef9eJXA@x2>
+Message-ID: <61e6408b-0a70-8944-4be1-6c2e65f484f8@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jan 02, 2018 at 01:58:01AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> 5aa90a84589282b87666f92b6c3c917c8080a9bf
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
-> 
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+7bf52949a1cf3a36b620 at syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> audit: type=1400 audit(1514639069.283:7): avc:  denied  { map } for
-> pid=3182 comm="syzkaller986771" path="/root/syzkaller986771207" dev="sda1"
-> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in cap_convert_nscap+0x501/0x610
-> security/commoncap.c:498
-> Read of size 4 at addr ffff8801c96ae080 by task syzkaller986771/3182
-> 
-> CPU: 1 PID: 3182 Comm: syzkaller986771 Not tainted 4.15.0-rc5+ #152
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  print_address_description+0x73/0x250 mm/kasan/report.c:252
->  kasan_report_error mm/kasan/report.c:351 [inline]
->  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:429
->  cap_convert_nscap+0x501/0x610 security/commoncap.c:498
->  setxattr+0x365/0x400 fs/xattr.c:446
->  SYSC_fsetxattr fs/xattr.c:508 [inline]
->  SyS_fsetxattr+0x130/0x190 fs/xattr.c:497
->  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
->  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
->  entry_SYSENTER_compat+0x54/0x63 arch/x86/entry/entry_64_compat.S:129
+Resending without HTML. Sorry 'bout that.
 
-Looks like the same bug I sent out a fix for yesterday.
+On 2/2/2018 7:48 AM, Steve Grubb wrote:
+> On Friday, December 22, 2017 4:02:41 PM EST Paul Moore wrote:
+> > On Fri, Dec 22, 2017 at 3:01 PM, Casey Schaufler <casey@schaufler-ca.com>
+> wrote:
+> > > The audit rule field types AUDIT_SUBJ_* and AUDIT_OBJ_* are
+> > > defined generically and used by both SELinux and Smack to identify
+> > > fields that are interesting to them. If SELinux and Smack are running
+> > > concurrently both modules will identify audit rules as theirs if
+> > > either has requested the field. Before I go off and create a clever
+> > > solution I think it wise to ask if anyone has thought about or has
+> > > strong opinions on how best to address this unfortunate situation.
+> > >
+> > > We know that SELinux and Smack together is not an especially
+> > > interesting configuration. It is, however, a grand test case for
+> > > generality of the solution. Any module that wanted to audit fields
+> > > that are defined generically will have this sort of problem.
+> >
+> > I think the biggest concern here is going to be what Steve's audit
+> > userspace will tolerate.  I might suggest simply duplicating the
+> > fields for each LSM that is running, e.g. "subj=<selinux_label>
+> > subj=<smack_label> subj=<lsmX_label> ...", but I have no idea if
+> > Steve's userspace can handle multiple instances of the same field in a
+> > single record.
+>
+>
+> That would be bad in general because we have a field dictionary
+> that defines the value side of the field=value. Another alternative
+> might be to prepend an lsm specific abbreviation? This keeps the
+> field dictionary correct.
+>
+>
+> I originally thought we were talking about AVC's and reusing the
+> same record type for the different LSM's. That would be simple to
+> fix by just adding a "lsm=x" field at the beginning.
+>
+>
+> But if we are talking about each and every syscall or path record,
+> I think this will make things ugly fast. I'd prefer prepending
+> an identifier to the field name so that we can do LSM specific
+> reporting. I have never seen or heard of a system that has a
+> subject or object with multiple labels. We don't even include
+> supplemental groups in syscall records and that is usually pretty
+> important information.
 
-#syz fix: capabilities: fix buffer overread on very short xattr
+If an action fails because it's denied by SELinux I want an
+audit record that includes the subject SELinux context and the
+object SELinux context. If the action id denied by Smack, I would
+like to see the Smack information. If the action requires a
+capability I may want the Smack information and the SELinux
+information. That could happen if the capability required is
+CAP_MAC_ADMIN, for example. It's also possible that I'd only
+want to see the information about the module that caused the
+failure in the CAP_MAC_ADMIN case.
 
-https://marc.info/?l=linux-kernel&m=151488700301705
+If I tell the audit system that I care about the MAC label
+Crackle it's important that it set the triggers for Smack,
+not SELinux. You can't auto-detect because SELinux contexts
+are syntactically valid Smack labels.
+
+If there's a DAC access failure do I need any MAC data in
+the audit record? Do I need all of it? I personally would
+want all the information all the time, but I can see how
+such a view might be unpopular.
+
+At the code level I'm struggling with the audit code that
+calls security_secid_to_secctx(), how how best to determine
+which, if any, of the available "contexts" to return. I am
+also looking at the code for setting triggers and pondering
+how it might be possible to look for a Smack label "Crackle"
+without getting an error from SELinux, which does not like
+that as a context.
+
+I'm sort of hoping y'all will point out the obvious solution.
+Short of that, I'd be happy with something that isn't obvious,
+but would do the job. Or parts of it.
+
+Thank you.
+
+> > My initial thinking is that adding LSM-specific subj/obj fields would
+> > be a mistake.
+>
+> How so? If someone wanted a selinux specific report, how else
+> would you detangle which representation is selinux's?
+>
+> -Steve
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
