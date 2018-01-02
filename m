@@ -1,146 +1,85 @@
-From: james.l.morris@oracle.com (James Morris)
-Date: Tue, 2 Jan 2018 20:56:29 +1100 (AEDT)
-Subject: [GIT PULL] capabilities: fix buffer overread on very short xattr
-Message-ID: <alpine.LFD.2.20.1801022055001.13103@localhost>
+From: matorola@gmail.com (Anatoly Pugachev)
+Date: Tue, 2 Jan 2018 16:56:29 +0300
+Subject: [sparc64] kernel unaligned access at TPC aa_dfa_unpack
+In-Reply-To: <20180101214245.GA9827@ravnborg.org>
+References: <CADxRZqwo8sL3RtEWRMcHkgkSAnWKeVibLRrtdXU2e8w2Q5KSTQ@mail.gmail.com>
+	<20180101214245.GA9827@ravnborg.org>
+Message-ID: <CADxRZqzXPMAjyh7_cr7nki=jG_LmT8xmjr-nfDtoheDA9ddt2A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
+On Tue, Jan 2, 2018 at 12:42 AM, Sam Ravnborg <sam@ravnborg.org> wrote:
+> Hi Anatoly.
+>
+> On Tue, Jan 02, 2018 at 12:11:49AM +0300, Anatoly Pugachev wrote:
+>> Hello!
+>>
+>> Using latest git kernel (4.15.0-rc6) , getting the following messages
+>> on LDOM/kernel boot:
+>>
+>> [    7.693653] Kernel unaligned access at TPC[7496d8] aa_dfa_unpack+0x38/0x580
+>> [    7.693735] Kernel unaligned access at TPC[7496f8] aa_dfa_unpack+0x58/0x580
+>> [    7.693782] Kernel unaligned access at TPC[749708] aa_dfa_unpack+0x68/0x580
+>> [    7.693829] Kernel unaligned access at TPC[74973c] aa_dfa_unpack+0x9c/0x580
+>> [    7.693875] Kernel unaligned access at TPC[749758] aa_dfa_unpack+0xb8/0x580
+>> [    7.697135] audit: type=1400 audit(1514840016.480:2):
+>> apparmor="STATUS" operation="profile_load" profile="unconfined"
+>> name="/usr/sbin/tcpdump" pid=507 comm="apparmor_parser"
+>>
+>>
+>> Can someone please look, what could cause unaligned access at this
+>> aa_dfa_unpack function/structure ?
+>
+> A quick guess would be that you are using nulldfa.
+> And this variable may not be aligned.
+>
+> Try to check the address of nulldfa_src.
+>
+> You could also try to force the compiler to align the data
+> to 8 byte like this (security/apparmor/match.c):
+>
+> static char nulldfa_src[] = {
+>         #include "nulldfa.in"
+> } __aligned(8);                 <= see the added __aligned(8)
+>
+> This is just from a quick look at things, but please try it to
+> see if this is the problematic spot.
 
-Please pull this capabilities fix for v4.15.
+Sam,
 
+this doesn't work:
 
-The following changes since commit 30a7acd573899fd8b8ac39236eff6468b195ac7d:
+$ make
+...
+  CC      security/apparmor/match.o
+In file included from ./include/linux/compiler_types.h:58:0,
+                 from ./include/linux/linkage.h:5,
+                 from ./include/linux/kernel.h:7,
+                 from security/apparmor/match.c:16:
+./include/linux/compiler-gcc.h:123:23: error: expected ?,? or ?;?
+before ?__attribute__?
+ #define __aligned(x)  __attribute__((aligned(x)))
+                       ^
+security/apparmor/match.c:30:3: note: in expansion of macro ?__aligned?
+ } __aligned(8);
+   ^~~~~~~~~
+scripts/Makefile.build:310: recipe for target 'security/apparmor/match.o' failed
 
-  Linux 4.15-rc6 (2017-12-31 14:47:43 -0800)
+$ git diff
+diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+index 72c604350e80..8f42ab8fc365 100644
+--- a/security/apparmor/match.c
++++ b/security/apparmor/match.c
+@@ -27,7 +27,7 @@
 
-are available in the git repository at:
+ static char nulldfa_src[] = {
+        #include "nulldfa.in"
+-};
++} __aligned(8);
+ struct aa_dfa *nulldfa;
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git for-linus
-
-for you to fetch changes up to dc32b5c3e6e2ef29cef76d9ce1b92d394446150e:
-
-  capabilities: fix buffer overread on very short xattr (2018-01-02 20:49:13 +1100)
-
-----------------------------------------------------------------
-Eric Biggers (1):
-      capabilities: fix buffer overread on very short xattr
-
- security/commoncap.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
-
----
-
-commit dc32b5c3e6e2ef29cef76d9ce1b92d394446150e
-Author: Eric Biggers <ebiggers@google.com>
-Date:   Mon Jan 1 09:28:31 2018 -0600
-
-    capabilities: fix buffer overread on very short xattr
-    
-    If userspace attempted to set a "security.capability" xattr shorter than
-    4 bytes (e.g. 'setfattr -n security.capability -v x file'), then
-    cap_convert_nscap() read past the end of the buffer containing the xattr
-    value because it accessed the ->magic_etc field without verifying that
-    the xattr value is long enough to contain that field.
-    
-    Fix it by validating the xattr value size first.
-    
-    This bug was found using syzkaller with KASAN.  The KASAN report was as
-    follows (cleaned up slightly):
-    
-        BUG: KASAN: slab-out-of-bounds in cap_convert_nscap+0x514/0x630 security/commoncap.c:498
-        Read of size 4 at addr ffff88002d8741c0 by task syz-executor1/2852
-    
-        CPU: 0 PID: 2852 Comm: syz-executor1 Not tainted 4.15.0-rc6-00200-gcc0aac99d977 #253
-        Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-        Call Trace:
-         __dump_stack lib/dump_stack.c:17 [inline]
-         dump_stack+0xe3/0x195 lib/dump_stack.c:53
-         print_address_description+0x73/0x260 mm/kasan/report.c:252
-         kasan_report_error mm/kasan/report.c:351 [inline]
-         kasan_report+0x235/0x350 mm/kasan/report.c:409
-         cap_convert_nscap+0x514/0x630 security/commoncap.c:498
-         setxattr+0x2bd/0x350 fs/xattr.c:446
-         path_setxattr+0x168/0x1b0 fs/xattr.c:472
-         SYSC_setxattr fs/xattr.c:487 [inline]
-         SyS_setxattr+0x36/0x50 fs/xattr.c:483
-         entry_SYSCALL_64_fastpath+0x18/0x85
-    
-    Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
-    Cc: <stable@vger.kernel.org> # v4.14+
-    Signed-off-by: Eric Biggers <ebiggers@google.com>
-    Reviewed-by: Serge Hallyn <serge@hallyn.com>
-    Signed-off-by: James Morris <james.l.morris@oracle.com>
-
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 4f8e093..48620c9 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -348,21 +348,18 @@ static __u32 sansflags(__u32 m)
- 	return m & ~VFS_CAP_FLAGS_EFFECTIVE;
- }
- 
--static bool is_v2header(size_t size, __le32 magic)
-+static bool is_v2header(size_t size, const struct vfs_cap_data *cap)
- {
--	__u32 m = le32_to_cpu(magic);
- 	if (size != XATTR_CAPS_SZ_2)
- 		return false;
--	return sansflags(m) == VFS_CAP_REVISION_2;
-+	return sansflags(le32_to_cpu(cap->magic_etc)) == VFS_CAP_REVISION_2;
- }
- 
--static bool is_v3header(size_t size, __le32 magic)
-+static bool is_v3header(size_t size, const struct vfs_cap_data *cap)
- {
--	__u32 m = le32_to_cpu(magic);
--
- 	if (size != XATTR_CAPS_SZ_3)
- 		return false;
--	return sansflags(m) == VFS_CAP_REVISION_3;
-+	return sansflags(le32_to_cpu(cap->magic_etc)) == VFS_CAP_REVISION_3;
- }
- 
- /*
-@@ -405,7 +402,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- 
- 	fs_ns = inode->i_sb->s_user_ns;
- 	cap = (struct vfs_cap_data *) tmpbuf;
--	if (is_v2header((size_t) ret, cap->magic_etc)) {
-+	if (is_v2header((size_t) ret, cap)) {
- 		/* If this is sizeof(vfs_cap_data) then we're ok with the
- 		 * on-disk value, so return that.  */
- 		if (alloc)
-@@ -413,7 +410,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- 		else
- 			kfree(tmpbuf);
- 		return ret;
--	} else if (!is_v3header((size_t) ret, cap->magic_etc)) {
-+	} else if (!is_v3header((size_t) ret, cap)) {
- 		kfree(tmpbuf);
- 		return -EINVAL;
- 	}
-@@ -470,9 +467,9 @@ static kuid_t rootid_from_xattr(const void *value, size_t size,
- 	return make_kuid(task_ns, rootid);
- }
- 
--static bool validheader(size_t size, __le32 magic)
-+static bool validheader(size_t size, const struct vfs_cap_data *cap)
- {
--	return is_v2header(size, magic) || is_v3header(size, magic);
-+	return is_v2header(size, cap) || is_v3header(size, cap);
- }
- 
- /*
-@@ -495,7 +492,7 @@ int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size)
- 
- 	if (!*ivalue)
- 		return -EINVAL;
--	if (!validheader(size, cap->magic_etc))
-+	if (!validheader(size, cap))
- 		return -EINVAL;
- 	if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
- 		return -EPERM;
+ int aa_setup_dfa_engine(void)
+~/linux-2.6$
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
