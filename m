@@ -1,70 +1,146 @@
-From: azhar.shaikh@intel.com (Shaikh, Azhar)
-Date: Tue, 2 Jan 2018 05:31:30 +0000
-Subject: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
-In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582898A03C@ORSMSX109.amr.corp.intel.com>
-References: <1514865944-95086-1-git-send-email-azhar.shaikh@intel.com>
-	<1514865944-95086-2-git-send-email-azhar.shaikh@intel.com>
-	<20180102044044.GA29208@ziepe.ca>
-	<5FFFAD06ADE1CA4381B3F0F7C6AF582898A03C@ORSMSX109.amr.corp.intel.com>
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582898A05E@ORSMSX109.amr.corp.intel.com>
+From: james.l.morris@oracle.com (James Morris)
+Date: Tue, 2 Jan 2018 20:56:29 +1100 (AEDT)
+Subject: [GIT PULL] capabilities: fix buffer overread on very short xattr
+Message-ID: <alpine.LFD.2.20.1801022055001.13103@localhost>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Hi Linus,
+
+Please pull this capabilities fix for v4.15.
 
 
->-----Original Message-----
-From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
->owner at vger.kernel.org] On Behalf Of Shaikh, Azhar
->Sent: Monday, January 1, 2018 9:02 PM
->To: Jason Gunthorpe <jgg@ziepe.ca>
->Cc: jarkko.sakkinen at linux.intel.com; peterhuewe at gmx.de; linux-security-
->module at vger.kernel.org; linux-integrity at vger.kernel.org; linux-
->kernel at vger.kernel.org
->Subject: RE: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
->
->
->
->>-----Original Message-----
->>From: Jason Gunthorpe [mailto:jgg at ziepe.ca]
->>Sent: Monday, January 1, 2018 8:41 PM
->>To: Shaikh, Azhar <azhar.shaikh@intel.com>
->>Cc: jarkko.sakkinen at linux.intel.com; peterhuewe at gmx.de; linux-security-
->>module at vger.kernel.org; linux-integrity at vger.kernel.org; linux-
->>kernel at vger.kernel.org
->>Subject: Re: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
->>
->>On Mon, Jan 01, 2018 at 08:05:43PM -0800, Azhar Shaikh wrote:
->>
->>> -	return tpm_chip_register(chip);
->>> +	rc = tpm_chip_register(chip);
->>> +	if (rc && is_bsw())
->>> +		iounmap(priv->ilb_base_addr);
->>> +
->>> +	return rc;
->>>  out_err:
->>>  	tpm_tis_remove(chip);
->>> +	if (is_bsw())
->>> +		iounmap(priv->ilb_base_addr);
->>> +
->>>  	return rc;
->>>  }
->>
->>I thought you were resending this to fix the above, why is is it still wonky?
->>
->
->Oh! I fixed it in the second patch ("tpm: Keep CLKRUN enabled throughout
->the duration of transmit_cmd()"). Should have fixed in this patch instead. My
->bad, didn't see it was introduced in this patch. I thought it was part of second
->patch. Will fix this.
->
+The following changes since commit 30a7acd573899fd8b8ac39236eff6468b195ac7d:
 
-On checking, the ops->clk_enable is not still introduced yet. It is introduced in the second patch. The cleanup is done in the next patch.
-So do you want me to still fix this here?
+  Linux 4.15-rc6 (2017-12-31 14:47:43 -0800)
 
->>Jason
+are available in the git repository at:
 
-Regards,
-Azhar Shaikh
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git for-linus
+
+for you to fetch changes up to dc32b5c3e6e2ef29cef76d9ce1b92d394446150e:
+
+  capabilities: fix buffer overread on very short xattr (2018-01-02 20:49:13 +1100)
+
+----------------------------------------------------------------
+Eric Biggers (1):
+      capabilities: fix buffer overread on very short xattr
+
+ security/commoncap.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
+
+---
+
+commit dc32b5c3e6e2ef29cef76d9ce1b92d394446150e
+Author: Eric Biggers <ebiggers@google.com>
+Date:   Mon Jan 1 09:28:31 2018 -0600
+
+    capabilities: fix buffer overread on very short xattr
+    
+    If userspace attempted to set a "security.capability" xattr shorter than
+    4 bytes (e.g. 'setfattr -n security.capability -v x file'), then
+    cap_convert_nscap() read past the end of the buffer containing the xattr
+    value because it accessed the ->magic_etc field without verifying that
+    the xattr value is long enough to contain that field.
+    
+    Fix it by validating the xattr value size first.
+    
+    This bug was found using syzkaller with KASAN.  The KASAN report was as
+    follows (cleaned up slightly):
+    
+        BUG: KASAN: slab-out-of-bounds in cap_convert_nscap+0x514/0x630 security/commoncap.c:498
+        Read of size 4 at addr ffff88002d8741c0 by task syz-executor1/2852
+    
+        CPU: 0 PID: 2852 Comm: syz-executor1 Not tainted 4.15.0-rc6-00200-gcc0aac99d977 #253
+        Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+        Call Trace:
+         __dump_stack lib/dump_stack.c:17 [inline]
+         dump_stack+0xe3/0x195 lib/dump_stack.c:53
+         print_address_description+0x73/0x260 mm/kasan/report.c:252
+         kasan_report_error mm/kasan/report.c:351 [inline]
+         kasan_report+0x235/0x350 mm/kasan/report.c:409
+         cap_convert_nscap+0x514/0x630 security/commoncap.c:498
+         setxattr+0x2bd/0x350 fs/xattr.c:446
+         path_setxattr+0x168/0x1b0 fs/xattr.c:472
+         SYSC_setxattr fs/xattr.c:487 [inline]
+         SyS_setxattr+0x36/0x50 fs/xattr.c:483
+         entry_SYSCALL_64_fastpath+0x18/0x85
+    
+    Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
+    Cc: <stable@vger.kernel.org> # v4.14+
+    Signed-off-by: Eric Biggers <ebiggers@google.com>
+    Reviewed-by: Serge Hallyn <serge@hallyn.com>
+    Signed-off-by: James Morris <james.l.morris@oracle.com>
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 4f8e093..48620c9 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -348,21 +348,18 @@ static __u32 sansflags(__u32 m)
+ 	return m & ~VFS_CAP_FLAGS_EFFECTIVE;
+ }
+ 
+-static bool is_v2header(size_t size, __le32 magic)
++static bool is_v2header(size_t size, const struct vfs_cap_data *cap)
+ {
+-	__u32 m = le32_to_cpu(magic);
+ 	if (size != XATTR_CAPS_SZ_2)
+ 		return false;
+-	return sansflags(m) == VFS_CAP_REVISION_2;
++	return sansflags(le32_to_cpu(cap->magic_etc)) == VFS_CAP_REVISION_2;
+ }
+ 
+-static bool is_v3header(size_t size, __le32 magic)
++static bool is_v3header(size_t size, const struct vfs_cap_data *cap)
+ {
+-	__u32 m = le32_to_cpu(magic);
+-
+ 	if (size != XATTR_CAPS_SZ_3)
+ 		return false;
+-	return sansflags(m) == VFS_CAP_REVISION_3;
++	return sansflags(le32_to_cpu(cap->magic_etc)) == VFS_CAP_REVISION_3;
+ }
+ 
+ /*
+@@ -405,7 +402,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+ 
+ 	fs_ns = inode->i_sb->s_user_ns;
+ 	cap = (struct vfs_cap_data *) tmpbuf;
+-	if (is_v2header((size_t) ret, cap->magic_etc)) {
++	if (is_v2header((size_t) ret, cap)) {
+ 		/* If this is sizeof(vfs_cap_data) then we're ok with the
+ 		 * on-disk value, so return that.  */
+ 		if (alloc)
+@@ -413,7 +410,7 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+ 		else
+ 			kfree(tmpbuf);
+ 		return ret;
+-	} else if (!is_v3header((size_t) ret, cap->magic_etc)) {
++	} else if (!is_v3header((size_t) ret, cap)) {
+ 		kfree(tmpbuf);
+ 		return -EINVAL;
+ 	}
+@@ -470,9 +467,9 @@ static kuid_t rootid_from_xattr(const void *value, size_t size,
+ 	return make_kuid(task_ns, rootid);
+ }
+ 
+-static bool validheader(size_t size, __le32 magic)
++static bool validheader(size_t size, const struct vfs_cap_data *cap)
+ {
+-	return is_v2header(size, magic) || is_v3header(size, magic);
++	return is_v2header(size, cap) || is_v3header(size, cap);
+ }
+ 
+ /*
+@@ -495,7 +492,7 @@ int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size)
+ 
+ 	if (!*ivalue)
+ 		return -EINVAL;
+-	if (!validheader(size, cap->magic_etc))
++	if (!validheader(size, cap))
+ 		return -EINVAL;
+ 	if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
+ 		return -EPERM;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
