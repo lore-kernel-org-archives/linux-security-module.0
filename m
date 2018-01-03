@@ -1,65 +1,86 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 3 Jan 2018 07:54:38 -0800
-Subject: [PATCH V4 2/3] IMA: Use consistent creds
-In-Reply-To: <20180103012017.7022-2-mjg59@google.com>
-References: <20180103012017.7022-1-mjg59@google.com>
-	<20180103012017.7022-2-mjg59@google.com>
-Message-ID: <cd89f3cf-b620-b098-a3db-c53f05d330bf@schaufler-ca.com>
+From: tipbot@zytor.com (tip-bot for Paul E. McKenney)
+Date: Wed, 3 Jan 2018 08:05:45 -0800
+Subject: [tip:core/rcu] keyring: Remove now-redundant
+	smp_read_barrier_depends()
+Message-ID: <tip-d963007c7210deebef48c5e57aa4ca4cf9c059cd@git.kernel.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 1/2/2018 5:20 PM, Matthew Garrett wrote:
-> Right now most of the IMA code is using current->creds, but the LSM
-> checks are using security_task_getsecid() which ends up looking at
-> real_creds. Switch to using security_cred_getsecid() in order to make
-> this consistent.
->
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Eric Paris <eparis@parisplace.org>
-> Cc: selinux at tycho.nsa.gov
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: linux-security-module at vger.kernel.org
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: linux-integrity at vger.kernel.org
-> ---
->  security/integrity/ima/ima_policy.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index ee4613fa5840..52951ac445ea 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -249,7 +249,6 @@ static void ima_lsm_update_rules(void)
->  static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  			    enum ima_hooks func, int mask)
->  {
-> -	struct task_struct *tsk = current;
->  	const struct cred *cred = current_cred();
->  	int i;
->  
-> @@ -305,7 +304,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  		case LSM_SUBJ_USER:
->  		case LSM_SUBJ_ROLE:
->  		case LSM_SUBJ_TYPE:
-> -			security_task_getsecid(tsk, &sid);
-> +			security_cred_getsecid(cred, &sid);
->  			rc = security_filter_rule_match(sid,
+Commit-ID:  d963007c7210deebef48c5e57aa4ca4cf9c059cd
+Gitweb:     https://git.kernel.org/tip/d963007c7210deebef48c5e57aa4ca4cf9c059cd
+Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+AuthorDate: Mon, 9 Oct 2017 12:19:27 -0700
+Committer:  Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+CommitDate: Mon, 4 Dec 2017 10:53:14 -0800
 
-security_filter_rule_match() is security_audit_rule_match() in
-sheep's clothing. Using the cred secid in this case, where the
-task secid is used elsewhere is going to lead to tears. It's
-going to make *me* cry as I work on untangling secids for
-stacking/namespaces. I can't predict how else it's going to
-bite us, but I'm betting on it.
+keyring: Remove now-redundant smp_read_barrier_depends()
 
+Now that the associative-array library properly heads dependency chains,
+the various smp_read_barrier_depends() calls in security/keys/keyring.c
+are no longer needed.  This commit therefore removes them.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: <keyrings@vger.kernel.org>
+Cc: <linux-security-module@vger.kernel.org>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
+---
+ security/keys/keyring.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index d0bcceb..41bcf57 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -713,7 +713,6 @@ descend_to_keyring:
+ 		 * doesn't contain any keyring pointers.
+ 		 */
+ 		shortcut = assoc_array_ptr_to_shortcut(ptr);
+-		smp_read_barrier_depends();
+ 		if ((shortcut->index_key[0] & ASSOC_ARRAY_FAN_MASK) != 0)
+ 			goto not_this_keyring;
  
-
->  							rule->lsm[i].type,
->  							Audit_equal,
-
+@@ -723,8 +722,6 @@ descend_to_keyring:
+ 	}
+ 
+ 	node = assoc_array_ptr_to_node(ptr);
+-	smp_read_barrier_depends();
+-
+ 	ptr = node->slots[0];
+ 	if (!assoc_array_ptr_is_meta(ptr))
+ 		goto begin_node;
+@@ -736,7 +733,6 @@ descend_to_node:
+ 	kdebug("descend");
+ 	if (assoc_array_ptr_is_shortcut(ptr)) {
+ 		shortcut = assoc_array_ptr_to_shortcut(ptr);
+-		smp_read_barrier_depends();
+ 		ptr = READ_ONCE(shortcut->next_node);
+ 		BUG_ON(!assoc_array_ptr_is_node(ptr));
+ 	}
+@@ -744,7 +740,6 @@ descend_to_node:
+ 
+ begin_node:
+ 	kdebug("begin_node");
+-	smp_read_barrier_depends();
+ 	slot = 0;
+ ascend_to_node:
+ 	/* Go through the slots in a node */
+@@ -792,14 +787,12 @@ ascend_to_node:
+ 
+ 	if (ptr && assoc_array_ptr_is_shortcut(ptr)) {
+ 		shortcut = assoc_array_ptr_to_shortcut(ptr);
+-		smp_read_barrier_depends();
+ 		ptr = READ_ONCE(shortcut->back_pointer);
+ 		slot = shortcut->parent_slot;
+ 	}
+ 	if (!ptr)
+ 		goto not_this_keyring;
+ 	node = assoc_array_ptr_to_node(ptr);
+-	smp_read_barrier_depends();
+ 	slot++;
+ 
+ 	/* If we've ascended to the root (zero backpointer), we must have just
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
