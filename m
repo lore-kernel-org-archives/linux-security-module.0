@@ -1,346 +1,417 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Tue,  2 Jan 2018 17:20:17 -0800
-Subject: [PATCH V4 3/3] IMA: Support using new creds in appraisal policy
-In-Reply-To: <20180103012017.7022-1-mjg59@google.com>
-References: <20180103012017.7022-1-mjg59@google.com>
-Message-ID: <20180103012017.7022-3-mjg59@google.com>
+From: darrick.wong@oracle.com (Darrick J. Wong)
+Date: Tue, 2 Jan 2018 17:40:48 -0800
+Subject: [PATCHv6 1/1] ima: re-introduce own integrity cache lock
+In-Reply-To: <CACE9dm-ws8TKEAzFbCoGdhdEuFLoLtz8dAuF8tor19wMx1pH=g@mail.gmail.com>
+References: <c73e7421902a60bd14c11e1201ba74470d7c782b.1512500794.git.dmitry.kasatkin@huawei.com>
+	<CACE9dm-ws8TKEAzFbCoGdhdEuFLoLtz8dAuF8tor19wMx1pH=g@mail.gmail.com>
+Message-ID: <20180103014048.GE5146@magnolia>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The existing BPRM_CHECK functionality in IMA validates against the
-credentials of the existing process, not any new credentials that the
-child process may transition to. Add an additional CREDS_CHECK target
-and refactor IMA to pass the appropriate creds structure. In
-ima_bprm_check(), check with both the existing process credentials and
-the credentials that will be committed when the new process is started.
-This will not change behaviour unless the system policy is extended to
-include CREDS_CHECK targets - BPRM_CHECK will continue to check the same
-credentials that it did previously.
+[might as well cc linux-xfs]
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: Eric Paris <eparis@parisplace.org>
-Cc: selinux at tycho.nsa.gov
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module at vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity at vger.kernel.org
----
- Documentation/ABI/testing/ima_policy  |  2 +-
- security/integrity/iint.c             |  1 +
- security/integrity/ima/ima.h          |  7 ++++---
- security/integrity/ima/ima_api.c      |  8 +++++---
- security/integrity/ima/ima_appraise.c | 10 +++++++++-
- security/integrity/ima/ima_main.c     | 26 +++++++++++++++++---------
- security/integrity/ima/ima_policy.c   | 16 +++++++++++-----
- security/integrity/integrity.h        |  9 +++++++--
- 8 files changed, 55 insertions(+), 24 deletions(-)
+On Thu, Dec 14, 2017 at 12:22:37AM +0200, Dmitry Kasatkin wrote:
+> Hi,
+> 
+> Could I ask FS maintainers to test IMA with this patch additionally
+> and provide ack/tested.
+> We tested but may be you have and some special testing.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index e76432b9954d..5dc9eed035fb 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -25,7 +25,7 @@ Description:
- 				 [obj_user=] [obj_role=] [obj_type=]]
- 			option:	[[appraise_type=]] [permit_directio]
- 
--		base: 	func:= [BPRM_CHECK][MMAP_CHECK][FILE_CHECK][MODULE_CHECK]
-+		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index c84e05866052..62846e331a8b 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -78,6 +78,7 @@ static void iint_free(struct integrity_iint_cache *iint)
- 	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
- 	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
- 	iint->ima_read_status = INTEGRITY_UNKNOWN;
-+	iint->ima_creds_status = INTEGRITY_UNKNOWN;
- 	iint->evm_status = INTEGRITY_UNKNOWN;
- 	iint->measured_pcrs = 0;
- 	kmem_cache_free(iint_cache, iint);
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d52b487ad259..0703a96072b5 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -177,6 +177,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(FILE_CHECK)		\
- 	hook(MMAP_CHECK)		\
- 	hook(BPRM_CHECK)		\
-+	hook(CREDS_CHECK)		\
- 	hook(POST_SETATTR)		\
- 	hook(MODULE_CHECK)		\
- 	hook(FIRMWARE_CHECK)		\
-@@ -191,7 +192,7 @@ enum ima_hooks {
- };
- 
- /* LIM API function definitions */
--int ima_get_action(struct inode *inode, int mask,
-+int ima_get_action(struct inode *inode, const struct cred *cred, int mask,
- 		   enum ima_hooks func, int *pcr);
- int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
- int ima_collect_measurement(struct integrity_iint_cache *iint,
-@@ -212,8 +213,8 @@ void ima_free_template_entry(struct ima_template_entry *entry);
- const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
- 
- /* IMA policy related functions */
--int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
--		     int flags, int *pcr);
-+int ima_match_policy(struct inode *inode, const struct cred *cred,
-+		     enum ima_hooks func, int mask, int flags, int *pcr);
- void ima_init_policy(void);
- void ima_update_policy(void);
- void ima_update_policy_flag(void);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c7e8db0ea4c0..42ccc2dd3c34 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -157,6 +157,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- /**
-  * ima_get_action - appraise & measure decision based on policy.
-  * @inode: pointer to inode to measure
-+ * @cred: pointer to credentials structure to validate
-  * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
-  *        MAY_APPEND)
-  * @func: caller identifier
-@@ -165,20 +166,21 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  * The policy is defined in terms of keypairs:
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-- *	func: FILE_CHECK | BPRM_CHECK | MMAP_CHECK | MODULE_CHECK
-+ *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-  * Returns IMA_MEASURE, IMA_APPRAISE mask.
-  *
-  */
--int ima_get_action(struct inode *inode, int mask, enum ima_hooks func, int *pcr)
-+int ima_get_action(struct inode *inode, const struct cred *cred, int mask,
-+		   enum ima_hooks func, int *pcr)
- {
- 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE;
- 
- 	flags &= ima_policy_flag;
- 
--	return ima_match_policy(inode, func, mask, flags, pcr);
-+	return ima_match_policy(inode, cred, func, mask, flags, pcr);
- }
- 
- /*
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 65fbcf3c32c7..1b56ee949315 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -53,7 +53,8 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
- 	if (!ima_appraise)
- 		return 0;
- 
--	return ima_match_policy(inode, func, mask, IMA_APPRAISE, NULL);
-+	return ima_match_policy(inode, current_cred(), func, mask,
-+				IMA_APPRAISE, NULL);
- }
- 
- static int ima_fix_xattr(struct dentry *dentry,
-@@ -86,6 +87,8 @@ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
- 		return iint->ima_mmap_status;
- 	case BPRM_CHECK:
- 		return iint->ima_bprm_status;
-+	case CREDS_CHECK:
-+		return iint->ima_creds_status;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		return iint->ima_file_status;
-@@ -106,6 +109,8 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
- 	case BPRM_CHECK:
- 		iint->ima_bprm_status = status;
- 		break;
-+	case CREDS_CHECK:
-+		iint->ima_creds_status = status;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		iint->ima_file_status = status;
-@@ -127,6 +132,9 @@ static void ima_cache_flags(struct integrity_iint_cache *iint,
- 	case BPRM_CHECK:
- 		iint->flags |= (IMA_BPRM_APPRAISED | IMA_APPRAISED);
- 		break;
-+	case CREDS_CHECK:
-+		iint->flags |= (IMA_CREDS_APPRAISED | IMA_APPRAISED);
-+		break;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		iint->flags |= (IMA_FILE_APPRAISED | IMA_APPRAISED);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 770654694efc..c7db078d6a19 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -159,8 +159,9 @@ void ima_file_free(struct file *file)
- 	ima_check_last_writer(iint, inode, file);
- }
- 
--static int process_measurement(struct file *file, char *buf, loff_t size,
--			       int mask, enum ima_hooks func, int opened)
-+static int process_measurement(struct file *file, const struct cred *cred,
-+			       char *buf, loff_t size, int mask,
-+			       enum ima_hooks func, int opened)
- {
- 	struct inode *inode = file_inode(file);
- 	struct integrity_iint_cache *iint = NULL;
-@@ -182,7 +183,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	 * bitmask based on the appraise/audit/measurement policy.
- 	 * Included is the appraise submask.
- 	 */
--	action = ima_get_action(inode, mask, func, &pcr);
-+	action = ima_get_action(inode, cred, mask, func, &pcr);
- 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
- 			   (ima_policy_flag & IMA_MEASURE));
- 	if (!action && !violation_check)
-@@ -285,8 +286,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- int ima_file_mmap(struct file *file, unsigned long prot)
- {
- 	if (file && (prot & PROT_EXEC))
--		return process_measurement(file, NULL, 0, MAY_EXEC,
--					   MMAP_CHECK, 0);
-+		return process_measurement(file, current_cred(), NULL, 0,
-+					   MAY_EXEC, MMAP_CHECK, 0);
- 	return 0;
- }
- 
-@@ -305,8 +306,14 @@ int ima_file_mmap(struct file *file, unsigned long prot)
-  */
- int ima_bprm_check(struct linux_binprm *bprm)
- {
--	return process_measurement(bprm->file, NULL, 0, MAY_EXEC,
--				   BPRM_CHECK, 0);
-+	int ret;
-+
-+	ret = process_measurement(bprm->file, current_cred(), NULL, 0,
-+				  MAY_EXEC, BPRM_CHECK, 0);
-+	if (ret)
-+		return ret;
-+	return process_measurement(bprm->file, bprm->cred, NULL, 0,
-+				   MAY_EXEC, CREDS_CHECK, 0);
- }
- 
- /**
-@@ -321,7 +328,7 @@ int ima_bprm_check(struct linux_binprm *bprm)
-  */
- int ima_file_check(struct file *file, int mask, int opened)
- {
--	return process_measurement(file, NULL, 0,
-+	return process_measurement(file, current_cred(), NULL, 0,
- 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
- 					   MAY_APPEND), FILE_CHECK, opened);
- }
-@@ -420,7 +427,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 	}
- 
- 	func = read_idmap[read_id] ?: FILE_CHECK;
--	return process_measurement(file, buf, size, MAY_READ, func, 0);
-+	return process_measurement(file, current_cred(), buf, size, MAY_READ,
-+				   func, 0);
- }
- 
- static int __init init_ima(void)
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 52951ac445ea..cd2289daacee 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -247,9 +247,9 @@ static void ima_lsm_update_rules(void)
-  * Returns true on rule match, false on failure.
-  */
- static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
--			    enum ima_hooks func, int mask)
-+			    const struct cred *cred, enum ima_hooks func,
-+			    int mask)
- {
--	const struct cred *cred = current_cred();
- 	int i;
- 
- 	if ((rule->flags & IMA_FUNC) &&
-@@ -338,6 +338,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
- 		return IMA_MMAP_APPRAISE;
- 	case BPRM_CHECK:
- 		return IMA_BPRM_APPRAISE;
-+	case CREDS_CHECK:
-+		return IMA_CREDS_APPRAISE;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		return IMA_FILE_APPRAISE;
-@@ -350,6 +352,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
- /**
-  * ima_match_policy - decision based on LSM and other conditions
-  * @inode: pointer to an inode for which the policy decision is being made
-+ * @cred: pointer to a credentials structure for which the policy decision is
-+ *        being made
-  * @func: IMA hook identifier
-  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-  * @pcr: set the pcr to extend
-@@ -361,8 +365,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * list when walking it.  Reads are many orders of magnitude more numerous
-  * than writes so ima_match_policy() is classical RCU candidate.
-  */
--int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
--		     int flags, int *pcr)
-+int ima_match_policy(struct inode *inode, const struct cred *cred,
-+		     enum ima_hooks func, int mask, int flags, int *pcr)
- {
- 	struct ima_rule_entry *entry;
- 	int action = 0, actmask = flags | (flags << 1);
-@@ -373,7 +377,7 @@ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
- 		if (!(entry->action & actmask))
- 			continue;
- 
--		if (!ima_match_rules(entry, inode, func, mask))
-+		if (!ima_match_rules(entry, inode, cred, func, mask))
- 			continue;
- 
- 		action |= entry->flags & IMA_ACTION_FLAGS;
-@@ -690,6 +694,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = MMAP_CHECK;
- 			else if (strcmp(args[0].from, "BPRM_CHECK") == 0)
- 				entry->func = BPRM_CHECK;
-+			else if (strcmp(args[0].from, "CREDS_CHECK") == 0)
-+				entry->func = CREDS_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_KERNEL_CHECK") ==
- 				 0)
- 				entry->func = KEXEC_KERNEL_CHECK;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index e1bf040fb110..d70fd875d62f 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -48,10 +48,14 @@
- #define IMA_BPRM_APPRAISED	0x00002000
- #define IMA_READ_APPRAISE	0x00004000
- #define IMA_READ_APPRAISED	0x00008000
-+#define IMA_CREDS_APPRAISE	0x00010000
-+#define IMA_CREDS_APPRAISED	0x00020000
- #define IMA_APPRAISE_SUBMASK	(IMA_FILE_APPRAISE | IMA_MMAP_APPRAISE | \
--				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE)
-+				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE | \
-+				 IMA_CREDS_APPRAISE)
- #define IMA_APPRAISED_SUBMASK	(IMA_FILE_APPRAISED | IMA_MMAP_APPRAISED | \
--				 IMA_BPRM_APPRAISED | IMA_READ_APPRAISED)
-+				 IMA_BPRM_APPRAISED | IMA_READ_APPRAISED | \
-+				 IMA_CREDS_APPRAISED)
- 
- enum evm_ima_xattr_type {
- 	IMA_XATTR_DIGEST = 0x01,
-@@ -108,6 +112,7 @@ struct integrity_iint_cache {
- 	enum integrity_status ima_mmap_status:4;
- 	enum integrity_status ima_bprm_status:4;
- 	enum integrity_status ima_read_status:4;
-+	enum integrity_status ima_creds_status:4;
- 	enum integrity_status evm_status:4;
- 	struct ima_digest_data *ima_hash;
- };
--- 
-2.15.1.620.gb9897f4670-goog
+Super-late to this party, but unless xfstests has automated tests to
+set up IMA on top of an existing filesystem then I most likely have no
+idea /how/ to test IMA.  I did a quick grep of xfstests git and I don't
+see anything IMA-related.
 
+--D
+
+> 
+> Thanks in advance,
+> Dmitry
+> 
+> On Tue, Dec 5, 2017 at 9:06 PM, Dmitry Kasatkin
+> <dmitry.kasatkin@gmail.com> wrote:
+> > The original design was discussed 3+ years ago, but was never completed/upstreamed.
+> > Based on the recent discussions with Linus
+> > https://patchwork.kernel.org/patch/9975919, I've rebased this patch.
+> >
+> > Before IMA appraisal was introduced, IMA was using own integrity cache
+> > lock along with i_mutex. process_measurement and ima_file_free took
+> > the iint->mutex first and then the i_mutex, while setxattr, chmod and
+> > chown took the locks in reverse order. To resolve the potential deadlock,
+> > i_mutex was moved to protect entire IMA functionality and the redundant
+> > iint->mutex was eliminated.
+> >
+> > Solution was based on the assumption that filesystem code does not take
+> > i_mutex further. But when file is opened with O_DIRECT flag, direct-io
+> > implementation takes i_mutex and produces deadlock. Furthermore, certain
+> > other filesystem operations, such as llseek, also take i_mutex.
+> >
+> > More recently some filesystems have replaced their filesystem specific
+> > lock with the global i_rwsem to read a file.  As a result, when IMA
+> > attempts to calculate the file hash, reading the file attempts to take
+> > the i_rwsem again.
+> >
+> > To resolve O_DIRECT related deadlock problem, this patch re-introduces
+> > iint->mutex. But to eliminate the original chmod() related deadlock
+> > problem, this patch eliminates the requirement for chmod hooks to take
+> > the iint->mutex by introducing additional atomic iint->attr_flags to
+> > indicate calling of the hooks. The allowed locking order is to take
+> > the iint->mutex first and then the i_rwsem.
+> >
+> > Original flags were cleared in chmod(), setxattr() or removwxattr() hooks
+> > and tested when file was closed or opened again. New atomic flags are set
+> > or cleared in those hooks and tested to clear iint->flags on close or on open.
+> >
+> > Atomic flags are following:
+> > * IMA_CHANGE_ATTR - indicates that chATTR() was called (chmod, chown, chgrp)
+> >   and file attributes have changed. On file open, it causes IMA to clear
+> >   iint->flags to re-evaluate policy and perform IMA functions again.
+> > * IMA_CHANGE_XATTR - indicates that setxattr or removexattr was called and
+> >   extended attributes have changed. On file open, it causes IMA to clear
+> >   iint->flags IMA_DONE_MASK to re-appraise.
+> > * IMA_UPDATE_XATTR - indicates that security.ima needs to be updated.
+> >   It is cleared if file policy changes and no update is needed.
+> > * IMA_DIGSIG - indicates that file security.ima has signature and file
+> >   security.ima must not update to file has on file close.
+> > * IMA_MUST_MEASURE - indicates the file is in the measurement policy.
+> >
+> > Changes in v6:
+> > * introduce the atomic flag IMA_MUST_MEASURE to indicate that a file is in
+> >   the measurement policy. It is used instead of the IMA_MEASURE (iint->flags)
+> >   to detect ToMToU violation and when iint->mutex is unlocked and behind inode
+> >   lock only (same as some other flags). Issue reported by Roberto Sassu.
+> >
+> > Changes in v5:
+> > * use of inode_lock() and inode_unlock()
+> >
+> > Changes in v4:
+> > * adoped to violation detection fixes
+> > * added IMA_UPDATE_XATTR flag to require xattr update on file close
+> >
+> > Changes in v3:
+> > * prevent signature removal with new locking
+> > * rename attr_flags to atomic_flags
+> >
+> > Changes in v2:
+> > * revert taking the i_mutex in integrity_inode_get() so that iint allocation
+> >   could be done with i_mutex taken
+> > * move taking the i_mutex from appraisal code to the process_measurement()
+> >
+> > Signed-off-by: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+> > ---
+> >  security/integrity/iint.c             |  2 +
+> >  security/integrity/ima/ima_appraise.c | 27 +++++++-------
+> >  security/integrity/ima/ima_main.c     | 70 ++++++++++++++++++++++++-----------
+> >  security/integrity/integrity.h        | 18 ++++++---
+> >  4 files changed, 77 insertions(+), 40 deletions(-)
+> >
+> > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> > index c84e058..d726ba23 100644
+> > --- a/security/integrity/iint.c
+> > +++ b/security/integrity/iint.c
+> > @@ -155,12 +155,14 @@ static void init_once(void *foo)
+> >         memset(iint, 0, sizeof(*iint));
+> >         iint->version = 0;
+> >         iint->flags = 0UL;
+> > +       iint->atomic_flags = 0;
+> >         iint->ima_file_status = INTEGRITY_UNKNOWN;
+> >         iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+> >         iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+> >         iint->ima_read_status = INTEGRITY_UNKNOWN;
+> >         iint->evm_status = INTEGRITY_UNKNOWN;
+> >         iint->measured_pcrs = 0;
+> > +       mutex_init(&iint->mutex);
+> >  }
+> >
+> >  static int __init integrity_iintcache_init(void)
+> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > index 9a54c77..3fc96dbd 100644
+> > --- a/security/integrity/ima/ima_appraise.c
+> > +++ b/security/integrity/ima/ima_appraise.c
+> > @@ -251,6 +251,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >                         status = INTEGRITY_FAIL;
+> >                         break;
+> >                 }
+> > +               clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+> >                 if (xattr_len - sizeof(xattr_value->type) - hash_start >=
+> >                                 iint->ima_hash->length)
+> >                         /* xattr length may be longer. md5 hash in previous
+> > @@ -269,7 +270,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >                 status = INTEGRITY_PASS;
+> >                 break;
+> >         case EVM_IMA_XATTR_DIGSIG:
+> > -               iint->flags |= IMA_DIGSIG;
+> > +               set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> >                 rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+> >                                              (const char *)xattr_value, rc,
+> >                                              iint->ima_hash->digest,
+> > @@ -320,14 +321,16 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
+> >         int rc = 0;
+> >
+> >         /* do not collect and update hash for digital signatures */
+> > -       if (iint->flags & IMA_DIGSIG)
+> > +       if (test_bit(IMA_DIGSIG, &iint->atomic_flags))
+> >                 return;
+> >
+> >         rc = ima_collect_measurement(iint, file, NULL, 0, ima_hash_algo);
+> >         if (rc < 0)
+> >                 return;
+> >
+> > +       inode_lock(file_inode(file));
+> >         ima_fix_xattr(dentry, iint);
+> > +       inode_unlock(file_inode(file));
+> >  }
+> >
+> >  /**
+> > @@ -350,16 +353,14 @@ void ima_inode_post_setattr(struct dentry *dentry)
+> >                 return;
+> >
+> >         must_appraise = ima_must_appraise(inode, MAY_ACCESS, POST_SETATTR);
+> > +       if (!must_appraise)
+> > +               __vfs_removexattr(dentry, XATTR_NAME_IMA);
+> >         iint = integrity_iint_find(inode);
+> >         if (iint) {
+> > -               iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
+> > -                                IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+> > -                                IMA_ACTION_RULE_FLAGS);
+> > -               if (must_appraise)
+> > -                       iint->flags |= IMA_APPRAISE;
+> > +               set_bit(IMA_CHANGE_ATTR, &iint->atomic_flags);
+> > +               if (!must_appraise)
+> > +                       clear_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+> >         }
+> > -       if (!must_appraise)
+> > -               __vfs_removexattr(dentry, XATTR_NAME_IMA);
+> >  }
+> >
+> >  /*
+> > @@ -388,12 +389,12 @@ static void ima_reset_appraise_flags(struct inode *inode, int digsig)
+> >         iint = integrity_iint_find(inode);
+> >         if (!iint)
+> >                 return;
+> > -
+> > -       iint->flags &= ~IMA_DONE_MASK;
+> >         iint->measured_pcrs = 0;
+> > +       set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
+> >         if (digsig)
+> > -               iint->flags |= IMA_DIGSIG;
+> > -       return;
+> > +               set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> > +       else
+> > +               clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+> >  }
+> >
+> >  int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 7706546..edf4e07 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -96,10 +96,13 @@ static void ima_rdwr_violation_check(struct file *file,
+> >                         if (!iint)
+> >                                 iint = integrity_iint_find(inode);
+> >                         /* IMA_MEASURE is set from reader side */
+> > -                       if (iint && (iint->flags & IMA_MEASURE))
+> > +                       if (iint && test_bit(IMA_MUST_MEASURE,
+> > +                                               &iint->atomic_flags))
+> >                                 send_tomtou = true;
+> >                 }
+> >         } else {
+> > +               if (must_measure)
+> > +                       set_bit(IMA_MUST_MEASURE, &iint->atomic_flags);
+> >                 if ((atomic_read(&inode->i_writecount) > 0) && must_measure)
+> >                         send_writers = true;
+> >         }
+> > @@ -121,21 +124,24 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+> >                                   struct inode *inode, struct file *file)
+> >  {
+> >         fmode_t mode = file->f_mode;
+> > +       bool update;
+> >
+> >         if (!(mode & FMODE_WRITE))
+> >                 return;
+> >
+> > -       inode_lock(inode);
+> > +       mutex_lock(&iint->mutex);
+> >         if (atomic_read(&inode->i_writecount) == 1) {
+> > +               update = test_and_clear_bit(IMA_UPDATE_XATTR,
+> > +                                           &iint->atomic_flags);
+> >                 if ((iint->version != inode->i_version) ||
+> >                     (iint->flags & IMA_NEW_FILE)) {
+> >                         iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> >                         iint->measured_pcrs = 0;
+> > -                       if (iint->flags & IMA_APPRAISE)
+> > +                       if (update)
+> >                                 ima_update_xattr(iint, file);
+> >                 }
+> >         }
+> > -       inode_unlock(inode);
+> > +       mutex_unlock(&iint->mutex);
+> >  }
+> >
+> >  /**
+> > @@ -168,7 +174,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >         char *pathbuf = NULL;
+> >         char filename[NAME_MAX];
+> >         const char *pathname = NULL;
+> > -       int rc = -ENOMEM, action, must_appraise;
+> > +       int rc = 0, action, must_appraise = 0;
+> >         int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+> >         struct evm_ima_xattr_data *xattr_value = NULL;
+> >         int xattr_len = 0;
+> > @@ -199,17 +205,31 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >         if (action) {
+> >                 iint = integrity_inode_get(inode);
+> >                 if (!iint)
+> > -                       goto out;
+> > +                       rc = -ENOMEM;
+> >         }
+> >
+> > -       if (violation_check) {
+> > +       if (!rc && violation_check)
+> >                 ima_rdwr_violation_check(file, iint, action & IMA_MEASURE,
+> >                                          &pathbuf, &pathname);
+> > -               if (!action) {
+> > -                       rc = 0;
+> > -                       goto out_free;
+> > -               }
+> > -       }
+> > +
+> > +       inode_unlock(inode);
+> > +
+> > +       if (rc)
+> > +               goto out;
+> > +       if (!action)
+> > +               goto out;
+> > +
+> > +       mutex_lock(&iint->mutex);
+> > +
+> > +       if (test_and_clear_bit(IMA_CHANGE_ATTR, &iint->atomic_flags))
+> > +               /* reset appraisal flags if ima_inode_post_setattr was called */
+> > +               iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
+> > +                                IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+> > +                                IMA_ACTION_FLAGS);
+> > +
+> > +       if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
+> > +               /* reset all flags if ima_inode_setxattr was called */
+> > +               iint->flags &= ~IMA_DONE_MASK;
+> >
+> >         /* Determine if already appraised/measured based on bitmask
+> >          * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
+> > @@ -227,7 +247,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >         if (!action) {
+> >                 if (must_appraise)
+> >                         rc = ima_get_cache_status(iint, func);
+> > -               goto out_digsig;
+> > +               goto out_locked;
+> >         }
+> >
+> >         template_desc = ima_template_desc_current();
+> > @@ -240,7 +260,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >
+> >         rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+> >         if (rc != 0 && rc != -EBADF && rc != -EINVAL)
+> > -               goto out_digsig;
+> > +               goto out_locked;
+> >
+> >         if (!pathbuf)   /* ima_rdwr_violation possibly pre-fetched */
+> >                 pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+> > @@ -248,26 +268,32 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >         if (action & IMA_MEASURE)
+> >                 ima_store_measurement(iint, file, pathname,
+> >                                       xattr_value, xattr_len, pcr);
+> > -       if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
+> > +       if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+> > +               inode_lock(inode);
+> >                 rc = ima_appraise_measurement(func, iint, file, pathname,
+> >                                               xattr_value, xattr_len, opened);
+> > +               inode_unlock(inode);
+> > +       }
+> >         if (action & IMA_AUDIT)
+> >                 ima_audit_measurement(iint, pathname);
+> >
+> >         if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
+> >                 rc = 0;
+> > -out_digsig:
+> > -       if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
+> > +out_locked:
+> > +       if ((mask & MAY_WRITE) && test_bit(IMA_DIGSIG, &iint->atomic_flags) &&
+> >              !(iint->flags & IMA_NEW_FILE))
+> >                 rc = -EACCES;
+> > +       mutex_unlock(&iint->mutex);
+> >         kfree(xattr_value);
+> > -out_free:
+> > +out:
+> >         if (pathbuf)
+> >                 __putname(pathbuf);
+> > -out:
+> > -       inode_unlock(inode);
+> > -       if ((rc && must_appraise) && (ima_appraise & IMA_APPRAISE_ENFORCE))
+> > -               return -EACCES;
+> > +       if (must_appraise) {
+> > +               if (rc && (ima_appraise & IMA_APPRAISE_ENFORCE))
+> > +                       return -EACCES;
+> > +               if (file->f_mode & FMODE_WRITE)
+> > +                       set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+> > +       }
+> >         return 0;
+> >  }
+> >
+> > diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> > index e324bf9..c64ea8f 100644
+> > --- a/security/integrity/integrity.h
+> > +++ b/security/integrity/integrity.h
+> > @@ -29,11 +29,10 @@
+> >  /* iint cache flags */
+> >  #define IMA_ACTION_FLAGS       0xff000000
+> >  #define IMA_ACTION_RULE_FLAGS  0x06000000
+> > -#define IMA_DIGSIG             0x01000000
+> > -#define IMA_DIGSIG_REQUIRED    0x02000000
+> > -#define IMA_PERMIT_DIRECTIO    0x04000000
+> > -#define IMA_NEW_FILE           0x08000000
+> > -#define EVM_IMMUTABLE_DIGSIG   0x10000000
+> > +#define IMA_DIGSIG_REQUIRED    0x01000000
+> > +#define IMA_PERMIT_DIRECTIO    0x02000000
+> > +#define IMA_NEW_FILE           0x04000000
+> > +#define EVM_IMMUTABLE_DIGSIG   0x08000000
+> >
+> >  #define IMA_DO_MASK            (IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
+> >                                  IMA_APPRAISE_SUBMASK)
+> > @@ -54,6 +53,13 @@
+> >  #define IMA_APPRAISED_SUBMASK  (IMA_FILE_APPRAISED | IMA_MMAP_APPRAISED | \
+> >                                  IMA_BPRM_APPRAISED | IMA_READ_APPRAISED)
+> >
+> > +/* iint cache atomic_flags */
+> > +#define IMA_CHANGE_XATTR       0
+> > +#define IMA_UPDATE_XATTR       1
+> > +#define IMA_CHANGE_ATTR                2
+> > +#define IMA_DIGSIG             3
+> > +#define IMA_MUST_MEASURE       4
+> > +
+> >  enum evm_ima_xattr_type {
+> >         IMA_XATTR_DIGEST = 0x01,
+> >         EVM_XATTR_HMAC,
+> > @@ -102,10 +108,12 @@ struct signature_v2_hdr {
+> >  /* integrity data associated with an inode */
+> >  struct integrity_iint_cache {
+> >         struct rb_node rb_node; /* rooted in integrity_iint_tree */
+> > +       struct mutex mutex;     /* protects: version, flags, digest */
+> >         struct inode *inode;    /* back pointer to inode in question */
+> >         u64 version;            /* track inode changes */
+> >         unsigned long flags;
+> >         unsigned long measured_pcrs;
+> > +       unsigned long atomic_flags;
+> >         enum integrity_status ima_file_status:4;
+> >         enum integrity_status ima_mmap_status:4;
+> >         enum integrity_status ima_bprm_status:4;
+> > --
+> > 2.7.4
+> >
+> 
+> 
+> 
+> -- 
+> Thanks,
+> Dmitry
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
