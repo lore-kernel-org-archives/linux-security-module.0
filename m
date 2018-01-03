@@ -1,101 +1,156 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 2 Jan 2018 09:20:06 -0800
-Subject: Differentiating audit rules in an LSM stack
-In-Reply-To: <2471440.Usxef9eJXA@x2>
-References: <a1f773ca-924d-1428-c8b3-0bf77f6cf796@schaufler-ca.com>
-	<CAHC9VhTDepkZ=073kuP25Jz-XAh4aK94tBb8tNGjxdz6c-1EPA@mail.gmail.com>
-	<2471440.Usxef9eJXA@x2>
-Message-ID: <61e6408b-0a70-8944-4be1-6c2e65f484f8@schaufler-ca.com>
+From: mjg59@google.com (Matthew Garrett)
+Date: Tue,  2 Jan 2018 17:20:15 -0800
+Subject: [PATCH V4 1/3] security: Add a cred_getsecid hook
+Message-ID: <20180103012017.7022-1-mjg59@google.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Resending without HTML. Sorry 'bout that.
+For IMA purposes, we want to be able to obtain the prepared secid in the
+bprm structure before the credentials are committed. Add a cred_getsecid
+hook that makes this possible.
 
-On 2/2/2018 7:48 AM, Steve Grubb wrote:
-> On Friday, December 22, 2017 4:02:41 PM EST Paul Moore wrote:
-> > On Fri, Dec 22, 2017 at 3:01 PM, Casey Schaufler <casey@schaufler-ca.com>
-> wrote:
-> > > The audit rule field types AUDIT_SUBJ_* and AUDIT_OBJ_* are
-> > > defined generically and used by both SELinux and Smack to identify
-> > > fields that are interesting to them. If SELinux and Smack are running
-> > > concurrently both modules will identify audit rules as theirs if
-> > > either has requested the field. Before I go off and create a clever
-> > > solution I think it wise to ask if anyone has thought about or has
-> > > strong opinions on how best to address this unfortunate situation.
-> > >
-> > > We know that SELinux and Smack together is not an especially
-> > > interesting configuration. It is, however, a grand test case for
-> > > generality of the solution. Any module that wanted to audit fields
-> > > that are defined generically will have this sort of problem.
-> >
-> > I think the biggest concern here is going to be what Steve's audit
-> > userspace will tolerate.  I might suggest simply duplicating the
-> > fields for each LSM that is running, e.g. "subj=<selinux_label>
-> > subj=<smack_label> subj=<lsmX_label> ...", but I have no idea if
-> > Steve's userspace can handle multiple instances of the same field in a
-> > single record.
->
->
-> That would be bad in general because we have a field dictionary
-> that defines the value side of the field=value. Another alternative
-> might be to prepend an lsm specific abbreviation? This keeps the
-> field dictionary correct.
->
->
-> I originally thought we were talking about AVC's and reusing the
-> same record type for the different LSM's. That would be simple to
-> fix by just adding a "lsm=x" field at the beginning.
->
->
-> But if we are talking about each and every syscall or path record,
-> I think this will make things ugly fast. I'd prefer prepending
-> an identifier to the field name so that we can do LSM specific
-> reporting. I have never seen or heard of a system that has a
-> subject or object with multiple labels. We don't even include
-> supplemental groups in syscall records and that is usually pretty
-> important information.
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: selinux at tycho.nsa.gov
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module at vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity at vger.kernel.org
+---
+ include/linux/lsm_hooks.h  |  6 ++++++
+ include/linux/security.h   |  1 +
+ security/security.c        |  7 +++++++
+ security/selinux/hooks.c   |  6 ++++++
+ security/smack/smack_lsm.c | 18 ++++++++++++++++++
+ 5 files changed, 38 insertions(+)
 
-If an action fails because it's denied by SELinux I want an
-audit record that includes the subject SELinux context and the
-object SELinux context. If the action id denied by Smack, I would
-like to see the Smack information. If the action requires a
-capability I may want the Smack information and the SELinux
-information. That could happen if the capability required is
-CAP_MAC_ADMIN, for example. It's also possible that I'd only
-want to see the information about the module that caused the
-failure in the CAP_MAC_ADMIN case.
-
-If I tell the audit system that I care about the MAC label
-Crackle it's important that it set the triggers for Smack,
-not SELinux. You can't auto-detect because SELinux contexts
-are syntactically valid Smack labels.
-
-If there's a DAC access failure do I need any MAC data in
-the audit record? Do I need all of it? I personally would
-want all the information all the time, but I can see how
-such a view might be unpopular.
-
-At the code level I'm struggling with the audit code that
-calls security_secid_to_secctx(), how how best to determine
-which, if any, of the available "contexts" to return. I am
-also looking at the code for setting triggers and pondering
-how it might be possible to look for a Smack label "Crackle"
-without getting an error from SELinux, which does not like
-that as a context.
-
-I'm sort of hoping y'all will point out the obvious solution.
-Short of that, I'd be happy with something that isn't obvious,
-but would do the job. Or parts of it.
-
-Thank you.
-
-> > My initial thinking is that adding LSM-specific subj/obj fields would
-> > be a mistake.
->
-> How so? If someone wanted a selinux specific report, how else
-> would you detangle which representation is selinux's?
->
-> -Steve
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 7161d8e7ee79..72932dabbaed 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -554,6 +554,10 @@
+  *	@new points to the new credentials.
+  *	@old points to the original credentials.
+  *	Transfer data from original creds to new creds
++ * @cred_getsecid:
++ *	Retrieve the security identifier of the cred structure @c
++ *	@c contains the credentials, secid will be placed into @secid.
++ *	In case of failure, @secid will be set to zero.
+  * @kernel_act_as:
+  *	Set the credentials for a kernel service to act as (subjective context).
+  *	@new points to the credentials to be modified.
+@@ -1541,6 +1545,7 @@ union security_list_options {
+ 	int (*cred_prepare)(struct cred *new, const struct cred *old,
+ 				gfp_t gfp);
+ 	void (*cred_transfer)(struct cred *new, const struct cred *old);
++	void (*cred_getsecid)(const struct cred *c, u32 *secid);
+ 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+ 	int (*kernel_module_request)(char *kmod_name);
+@@ -1824,6 +1829,7 @@ struct security_hook_heads {
+ 	struct list_head cred_free;
+ 	struct list_head cred_prepare;
+ 	struct list_head cred_transfer;
++	struct list_head cred_getsecid;
+ 	struct list_head kernel_act_as;
+ 	struct list_head kernel_create_files_as;
+ 	struct list_head kernel_read_file;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 73f1ef625d40..5cfff15ac378 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -324,6 +324,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+ void security_cred_free(struct cred *cred);
+ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
+ void security_transfer_creds(struct cred *new, const struct cred *old);
++void security_cred_getsecid(const struct cred *c, u32 *secid);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
+diff --git a/security/security.c b/security/security.c
+index 1cd8526cb0b7..35cbd75844c2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1005,6 +1005,13 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
+ 	call_void_hook(cred_transfer, new, old);
+ }
+ 
++void security_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	*secid = 0;
++	call_void_hook(cred_getsecid, c, secid);
++}
++EXPORT_SYMBOL(security_cred_getsecid);
++
+ int security_kernel_act_as(struct cred *new, u32 secid)
+ {
+ 	return call_int_hook(kernel_act_as, 0, new, secid);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 8644d864e3c1..d3009c027de8 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3844,6 +3844,11 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
+ 	*tsec = *old_tsec;
+ }
+ 
++static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	*secid = cred_sid(c);
++}
++
+ /*
+  * set the security data for a kernel service
+  * - all the creation contexts are set to unlabelled
+@@ -6479,6 +6484,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(cred_free, selinux_cred_free),
+ 	LSM_HOOK_INIT(cred_prepare, selinux_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, selinux_cred_transfer),
++	LSM_HOOK_INIT(cred_getsecid, selinux_cred_getsecid),
+ 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
+ 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 14cc7940b36d..b27327ebb031 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2049,6 +2049,23 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
+ 	/* cbs copy rule list */
+ }
+ 
++/**
++ * smack_cred_getsecid - get the secid corresponding to a creds structure
++ * @c: the object creds
++ * @secid: where to put the result
++ *
++ * Sets the secid to contain a u32 version of the smack label.
++ */
++static void smack_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	struct smack_known *skp;
++
++	rcu_read_lock();
++	skp = smk_of_task(c->security);
++	*secid = skp->smk_secid;
++	rcu_read_unlock();
++}
++
+ /**
+  * smack_kernel_act_as - Set the subjective context in a set of credentials
+  * @new: points to the set of credentials to be modified.
+@@ -4727,6 +4744,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(cred_free, smack_cred_free),
+ 	LSM_HOOK_INIT(cred_prepare, smack_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, smack_cred_transfer),
++	LSM_HOOK_INIT(cred_getsecid, smack_cred_getsecid),
+ 	LSM_HOOK_INIT(kernel_act_as, smack_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, smack_kernel_create_files_as),
+ 	LSM_HOOK_INIT(task_setpgid, smack_task_setpgid),
+-- 
+2.15.1.620.gb9897f4670-goog
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
