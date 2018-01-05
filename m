@@ -1,64 +1,104 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Thu, 4 Jan 2018 20:54:28 -0800
-Subject: KASAN: slab-out-of-bounds Read in cap_inode_getsecurity
-In-Reply-To: <001a1140bece222e180561f63cb7@google.com>
-References: <001a1140bece222e180561f63cb7@google.com>
-Message-ID: <20180105045428.GB614@zzz.localdomain>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 05 Jan 2018 08:43:36 -0500
+Subject: [GIT PULL] linux-integrity patches for 4.16-security-next-general
+Message-ID: <1515159816.4418.7.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jan 04, 2018 at 08:58:02AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> 71ee203389f7cb1c1927eab22b95baa01405791c
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
-> 
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+37db7b2a61b64a9abb81 at syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> audit: type=1400 audit(1514753657.623:7): avc:  denied  { map } for
-> pid=3504 comm="syzkaller926656" path="/root/syzkaller926656864" dev="sda1"
-> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in cap_inode_getsecurity+0x621/0x7d0
-> security/commoncap.c:408
-> Read of size 4 at addr ffff8801bea30b00 by task syzkaller926656/3504
-> 
-> CPU: 1 PID: 3504 Comm: syzkaller926656 Not tainted 4.15.0-rc5+ #244
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  print_address_description+0x73/0x250 mm/kasan/report.c:252
->  kasan_report_error mm/kasan/report.c:351 [inline]
->  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:429
->  cap_inode_getsecurity+0x621/0x7d0 security/commoncap.c:408
->  security_inode_getsecurity+0xcd/0x110 security/security.c:809
->  xattr_getsecurity+0xd3/0x1f0 fs/xattr.c:244
->  vfs_getxattr+0xc8/0x110 fs/xattr.c:333
->  getxattr+0x116/0x2a0 fs/xattr.c:540
->  path_getxattr+0xed/0x170 fs/xattr.c:568
->  SYSC_getxattr fs/xattr.c:580 [inline]
->  SyS_getxattr+0x33/0x40 fs/xattr.c:577
->  entry_SYSCALL_64_fastpath+0x23/0x9a
+Hi James,
 
-Already fixed in Linus's tree.
+This pull request contains a mixture of bug fixes, code cleanup, and
+new functionality.  Of note is the integrity cache locking fix, file
+change detection, and support for a new EVM portable and immutable
+signature type.
 
-#syz fix: capabilities: fix buffer overread on very short xattr
+The re-introduction of the integrity cache lock (iint) fixes the
+problem of attempting to take the i_rwsem shared a second time, when it
+was previously taken exclusively.  Defining atomic flags resolves the
+original iint/i_rwsem circular locking - accessing the file data vs.
+modifying the file metadata.  Although it fixes the O_DIRECT problem as
+well, a subsequent patch is needed to remove the explicit O_DIRECT
+prevention.
+
+For performance reasons, detecting when a file has changed and needs to
+be re-measured, re-appraised, and/or re-audited, was limited to after
+the last writer has closed, and only if the file data has changed.
+Detecting file change is based on i_version.  For filesystems that do
+not support i_version, remote filesystems, or userspace filesystems,
+the file was measured, appraised and/or audited once and never
+re-evaluated.  Now local filesystems, which do not support i_version or
+are not mounted with the i_version option, assume the file has changed
+and are required to re-evaluate the file.  This change does not address
+detecting file change on remote or userspace filesystems.
+
+Unlike file data signatures, which can be included and distributed in
+software packages (eg. rpm, deb), the existing EVM signature, which
+protects the file metadata, could not be included in software packages,
+as it includes file system specific information (eg. i_ino, possibly
+the UUID).  This pull request defines a new EVM portable and immutable
+file metadata signature format, which can be included in software
+packages.
+
+thanks,
+
+Mimi
+---
+
+The following changes since commit d21bd6898336a7892914d308d5e0868f0b863571:
+
+  Sync to v4.15-rc3 for security subsystem developers to work against. (2017-12-11 17:01:08 +1100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+for you to fetch changes up to a2a2c3c8580a9158bca61221648fd6d5c98c443a:
+
+  ima: Use i_version only when filesystem supports it (2017-12-18 09:43:49 -0500)
+
+----------------------------------------------------------------
+Bruno E. O. Meneguele (1):
+      ima: log message to module appraisal error
+
+Dmitry Kasatkin (1):
+      ima: re-introduce own integrity cache lock
+
+Jeff Layton (1):
+      integrity: remove unneeded initializations in integrity_iint_cache entries
+
+Joe Perches (1):
+      ima: Fix line continuation format
+
+Matthew Garrett (2):
+      EVM: Allow userland to permit modification of EVM-protected metadata
+      EVM: Add support for portable signature format
+
+Mimi Zohar (2):
+      ima: relax requiring a file signature for new files with zero length
+      ima: support new "hash" and "dont_hash" policy actions
+
+Roberto Sassu (1):
+      ima: pass filename to ima_rdwr_violation_check()
+
+Sascha Hauer (1):
+      ima: Use i_version only when filesystem supports it
+
+ Documentation/ABI/testing/evm         | 54 +++++++++++++-------
+ Documentation/ABI/testing/ima_policy  |  3 +-
+ include/linux/integrity.h             |  1 +
+ security/integrity/evm/evm.h          |  9 ++--
+ security/integrity/evm/evm_crypto.c   | 75 +++++++++++++++++++++++----
+ security/integrity/evm/evm_main.c     | 67 +++++++++++++++++-------
+ security/integrity/evm/evm_secfs.c    | 20 ++++++--
+ security/integrity/iint.c             |  4 +-
+ security/integrity/ima/ima_api.c      |  2 +-
+ security/integrity/ima/ima_appraise.c | 46 +++++++++--------
+ security/integrity/ima/ima_main.c     | 95 +++++++++++++++++++++++++----------
+ security/integrity/ima/ima_policy.c   | 30 ++++++++++-
+ security/integrity/ima/ima_template.c | 11 ++--
+ security/integrity/integrity.h        | 41 +++++++++------
+ 14 files changed, 333 insertions(+), 125 deletions(-)
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
