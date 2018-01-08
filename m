@@ -1,39 +1,118 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 08 Jan 2018 07:18:25 -0500
-Subject: [PATCH V5 2/2] IMA: Support using new creds in appraisal policy
-In-Reply-To: <20180105211536.11611-2-mjg59@google.com>
-References: <20180105211536.11611-1-mjg59@google.com>
-	<20180105211536.11611-2-mjg59@google.com>
-Message-ID: <1515413905.3460.40.camel@linux.vnet.ibm.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 8 Jan 2018 10:25:32 -0800
+Subject: Smack: Privilege check on key operations
+Message-ID: <5ca74818-5aca-b10c-3bf5-90b3efa29539@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-01-05 at 13:15 -0800, Matthew Garrett wrote:
-> The existing BPRM_CHECK functionality in IMA validates against the
-> credentials of the existing process, not any new credentials that the
-> child process may transition to. Add an additional CREDS_CHECK target
-> and refactor IMA to pass the appropriate creds structure. In
-> ima_bprm_check(), check with both the existing process credentials and
-> the credentials that will be committed when the new process is started.
-> This will not change behaviour unless the system policy is extended to
-> include CREDS_CHECK targets - BPRM_CHECK will continue to check the same
-> credentials that it did previously.
+Smack: Privilege check on key operations
 
-Refactoring IMA to pass the creds structure all the way down is a
-generic solution, but if the CREDS_CHECK rule is only being called
-from ima_bprm_check(), "container_of" the bprm->file returns a pointer
-to the bprm structure. ?Perhaps you could limit the amount of
-refactoring needed based on the func.
+Operations on key objects are subjected to Smack policy
+even if the process is privileged. This is inconsistent
+with the general behavior of Smack and may cause issues
+with authentication by privileged daemons. This patch
+allows processes with CAP_MAC_OVERRIDE to access keys
+even if the Smack rules indicate otherwise.
 
-I would prefer new arguments be added to process_measurement() only as
-a last resort.
+Reported-by: Jose Bollo <jobol@nonadev.net>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/smack/smack.h        |  1 +
+ security/smack/smack_access.c | 40 +++++++++++++++++++++++++++++-----------
+ security/smack/smack_lsm.c    |  4 ++++
+ 3 files changed, 34 insertions(+), 11 deletions(-)
 
-Could you include in the patch description a simple method for testing
-this change?
-
-thanks,
-
-Mimi
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 6a71fc7..f7db791 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -321,6 +321,7 @@ struct smack_known *smk_import_entry(const char *, int);
+ void smk_insert_entry(struct smack_known *skp);
+ struct smack_known *smk_find_entry(const char *);
+ bool smack_privileged(int cap);
++bool smack_privileged_cred(int cap, const struct cred *cred);
+ void smk_destroy_label_list(struct list_head *list);
+ 
+ /*
+diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+index 1a30041..141ffac 100644
+--- a/security/smack/smack_access.c
++++ b/security/smack/smack_access.c
+@@ -623,26 +623,24 @@ struct smack_known *smack_from_secid(const u32 secid)
+ LIST_HEAD(smack_onlycap_list);
+ DEFINE_MUTEX(smack_onlycap_lock);
+ 
+-/*
++/**
++ * smack_privileged_cred - are all privilege requirements met by cred
++ * @cap: The requested capability
++ * @cred: the credential to use
++ *
+  * Is the task privileged and allowed to be privileged
+  * by the onlycap rule.
+  *
+  * Returns true if the task is allowed to be privileged, false if it's not.
+  */
+-bool smack_privileged(int cap)
++bool smack_privileged_cred(int cap, const struct cred *cred)
+ {
+-	struct smack_known *skp = smk_of_current();
++	struct task_smack *tsp = cred->security;
++	struct smack_known *skp = tsp->smk_task;
+ 	struct smack_known_list_elem *sklep;
+ 	int rc;
+ 
+-	/*
+-	 * All kernel tasks are privileged
+-	 */
+-	if (unlikely(current->flags & PF_KTHREAD))
+-		return true;
+-
+-	rc = cap_capable(current_cred(), &init_user_ns, cap,
+-				SECURITY_CAP_AUDIT);
++	rc = cap_capable(cred, &init_user_ns, cap, SECURITY_CAP_AUDIT);
+ 	if (rc)
+ 		return false;
+ 
+@@ -662,3 +660,23 @@ bool smack_privileged(int cap)
+ 
+ 	return false;
+ }
++
++/**
++ * smack_privileged - are all privilege requirements met
++ * @cap: The requested capability
++ *
++ * Is the task privileged and allowed to be privileged
++ * by the onlycap rule.
++ *
++ * Returns true if the task is allowed to be privileged, false if it's not.
++ */
++bool smack_privileged(int cap)
++{
++	/*
++	 * All kernel tasks are privileged
++	 */
++	if (unlikely(current->flags & PF_KTHREAD))
++		return true;
++
++	return smack_privileged_cred(cap, current_cred());
++}
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 30f2c3d..03fdecb 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4369,6 +4369,10 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	 */
+ 	if (tkp == NULL)
+ 		return -EACCES;
++
++	if (smack_privileged_cred(CAP_MAC_OVERRIDE, cred))
++		return 0;
++
+ #ifdef CONFIG_AUDIT
+ 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_KEY);
+ 	ad.a.u.key_struct.key = keyp->serial;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
