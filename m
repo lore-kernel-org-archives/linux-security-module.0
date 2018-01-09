@@ -1,57 +1,84 @@
-From: Alexander.Steffen@infineon.com (Alexander Steffen)
-Date: Tue, 9 Jan 2018 10:59:07 +0100
-Subject: [GIT PULL] tpmdd updates for v4.16
-In-Reply-To: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
-References: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
-Message-ID: <1b81847f-123f-ea9e-f2e5-48c73174c8b2@infineon.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Tue, 9 Jan 2018 12:52:18 -0600
+Subject: [manpages PATCH] capabilities.7: describe namespaced file capabilities
+Message-ID: <20180109185218.GA21753@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08.01.2018 12:18, Jarkko Sakkinen wrote:
-> Hi James,
-> 
-> Sorry for a late PR.
-> 
-> Summary of the content:
-> 
-> * Reduced polling delays in tpm_tis.
-> * Support for retrieving TPM 2.0 Event Log through EFI before
->    ExitBootServices.
-> * Replaced tpm-rng.c with a hwrng device managed by the driver for each
->    TPM device.
-> * TPM resource manager synthesizes TPM_RC_COMMAND_CODE response instead
->    of returning -EINVAL for unknown TPM commands. This makes user space
->    more sound.
-> * CLKRUN fixes:
->    * Keep #CLKRUN disable through the entier TPM command/response flow.
->    * Check whether #CLKRUN is enabled before disabling and enabling it
->      again because enabling it breaks PS/2 devices on a system where it
->      is disabled.
+Update the capabilities(7)  manpage with a description of the
+new-ish namespaced file capability support.
 
-I just spent some time trying to run all that (tpmdd-next-20180108) 
-through my test system and hit a couple of non-TPM problems. In case you 
-see similar issues, this is what I found out:
+A note on userspace tools:  since the kernel will automatically
+convert between v2 and v3 xattrs, and translate nsroot between
+v3 xattrs, we can make do with the current getcap(8) and setcap(8)
+tools. I.e. a user on the host can create a transient user namespace
+with the appropriate mappings and run setcap(8) there.  The kernel
+will automatically write a v3 xattr with the transient namespace's
+root user as nsroot.
 
-1. rmmod for the TPM driver hangs indefinitely. The TPM driver now 
-registers itself as a hwrng, but in case it is the only hwrng in a 
-system, the call to hwrng_unregister never returns. Known bug, but still 
-not fixed in 4.15-rc7 (see 
-https://www.mail-archive.com/linux-crypto at vger.kernel.org/msg29884.html 
-for details).
+Signed-off-by: Serge Hallyn <shallyn@cisco.com>
+---
+ man7/capabilities.7 | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-2. Raspberry Pis (which I use to test tpm_tis_spi and tpm_i2c_infineon) 
-boot with that kernel, but have no USB or ethernet support. Also a known 
-problem 
-(http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/552280.html).
+diff --git a/man7/capabilities.7 b/man7/capabilities.7
+index 166eaaf..76e7e02 100644
+--- a/man7/capabilities.7
++++ b/man7/capabilities.7
+@@ -936,6 +936,50 @@ if we specify the effective flag as being enabled for any capability,
+ then the effective flag must also be specified as enabled
+ for all other capabilities for which the corresponding permitted or
+ inheritable flags is enabled.
++.PP
++Until 4.13, only VFS_CAP_REVISION_2 xattrs were supported.  These store only
++the capabilities to be applied to the file, with no record of the writer's
++credentials.  Therefore only privileged users can be trusted to write them, and
++.BR CAP_SETFCAP
++over the user namespace which mounted the filesystem (usually the initial user
++namespace) is required.  This makes it impossible to write file capabilities
++from a user namespaced container, which causes some package updates to fail.
++.PP
++In order to support setting file capabilities in containers, the
++kernel must be able to identify whether the task executing the
++file will be constrained to a subset of the resources over which
++the writer of the file capabilities has privilege.  To this end,
++since 4.13, VFS_CAP_REVISION_3 capabilities store the user ID
++of the root user in the writer's namespace ("nsroot").  Hence the writer only
++requires
++.IP 1.
++.BR CAP_SETFCAP
++over the file inode, meaning the writing task must have
++.BR CAP_SETFCAP
++over a user namespace into which the inode's owning user ID is mapped.
++.PP
++and
++.IP 2.
++.BR CAP_SETFCAP
++over the writer's own user namespace.
++.PP
++A VFS_CAP_REVISION_3 file capability will take effect only when run in a user namespace
++whose UID 0 maps to the saved "nsroot", or a descendant of such a namespace.
++.PP
++Users with the required privilege may use
++.BR setxattr(2)
++to request either a VFS_CAP_REVISION_2 or VFS_CAP_REVISION_3 write.
++The kernel will automatically convert a VFS_CAP_REVISION_2 to a
++VFS_CAP_REVISION_3 extended attribute with the "nsroot"
++set to the root user in the writer's user namespace, or, if a VFS_CAP_REVISION_3
++extended attribute is specified, then the kernel will map the
++specified root user ID (which must be a valid user ID mapped in the caller's
++user namespace) into the initial user namespace.  Likewise,
++.BR getxattr(2)
++results will be converted and simplified to show a VFS_CAP_REVISION_2
++extended attribute, if a VFS_CAP_REVISION_3 applies to the caller's
++namespace, or to map the VFS_CAP_REVISION_3 root user ID into the
++caller's namespace.
+ .\"
+ .SS Transformation of capabilities during execve()
+ .PP
+-- 
+1.9.1
 
-3. Device tree overlays with references to non-existent target-paths are 
-rejected now (whereas before the invalid parts were just ignored). I 
-guess this is an intentional change, but the error message does not 
-really point to the problem (applying the overlay just returns with EINVAL).
-
-With all that fixed in my environment, my tests now pass successfully.
-
-Alexander
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
