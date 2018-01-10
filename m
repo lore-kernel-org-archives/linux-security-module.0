@@ -1,15 +1,11 @@
 From: git@andred.net (=?UTF-8?q?Andr=C3=A9=20Draszik?=)
-Date: Wed, 10 Jan 2018 12:44:17 +0000
-Subject: [PATCH 2/3] fscrypt: add support for the encrypted key type
+Date: Wed, 10 Jan 2018 12:44:18 +0000
+Subject: [PATCH 3/3] encrypted-keys: document new fscrypt key format
 In-Reply-To: <20180110124418.24385-1-git@andred.net>
 References: <20180110124418.24385-1-git@andred.net>
-Message-ID: <20180110124418.24385-2-git@andred.net>
+Message-ID: <20180110124418.24385-3-git@andred.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
-
-We now try to acquire the key according to the
-encryption policy from both key types, 'logon'
-as well as 'encrypted'.
 
 Signed-off-by: Andr? Draszik <git@andred.net>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
@@ -18,121 +14,119 @@ Cc: James Morris <james.l.morris@oracle.com>
 Cc: "Serge E. Hallyn" <serge@hallyn.com>
 Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: linux-integrity at vger.kernel.org
 Cc: keyrings at vger.kernel.org
 Cc: linux-security-module at vger.kernel.org
 Cc: linux-fscrypt at vger.kernel.org
+Cc: linux-doc at vger.kernel.org
 ---
- fs/crypto/keyinfo.c | 58 +++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 38 insertions(+), 20 deletions(-)
+ Documentation/security/keys/fscrypt.rst           | 67 +++++++++++++++++++++++
+ Documentation/security/keys/trusted-encrypted.rst | 12 ++--
+ 2 files changed, 74 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/security/keys/fscrypt.rst
 
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 5e6e846f5a24..023fa19fec48 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <keys/user-type.h>
-+#include <keys/encrypted-type.h>
- #include <linux/scatterlist.h>
- #include <linux/ratelimit.h>
- #include <crypto/aes.h>
-@@ -66,14 +67,20 @@ static int derive_key_aes(u8 deriving_key[FS_AES_128_ECB_KEY_SIZE],
- 	return res;
- }
- 
--static int validate_user_key(struct fscrypt_info *crypt_info,
-+static inline struct key *fscrypt_get_encrypted_key(const char *sig)
-+{
-+	if (IS_ENABLED(CONFIG_ENCRYPTED_KEYS))
-+		return request_key(&key_type_encrypted, sig, NULL);
-+	return ERR_PTR(-ENOKEY);
-+}
+diff --git a/Documentation/security/keys/fscrypt.rst b/Documentation/security/keys/fscrypt.rst
+new file mode 100644
+index 000000000000..e4a29592513e
+--- /dev/null
++++ b/Documentation/security/keys/fscrypt.rst
+@@ -0,0 +1,67 @@
++========================================
++Encrypted keys for the fscrypt subsystem
++========================================
 +
-+static int validate_keyring_key(struct fscrypt_info *crypt_info,
- 			struct fscrypt_context *ctx, u8 *raw_key,
- 			const char *prefix, int min_keysize)
- {
- 	char *description;
- 	struct key *keyring_key;
- 	struct fscrypt_key *master_key;
--	const struct user_key_payload *ukp;
- 	int res;
- 
- 	description = kasprintf(GFP_NOFS, "%s%*phN", prefix,
-@@ -83,28 +90,39 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
- 		return -ENOMEM;
- 
- 	keyring_key = request_key(&key_type_logon, description, NULL);
-+	if (IS_ERR(keyring_key))
-+		keyring_key = fscrypt_get_encrypted_key(description);
- 	kfree(description);
- 	if (IS_ERR(keyring_key))
- 		return PTR_ERR(keyring_key);
- 	down_read(&keyring_key->sem);
- 
--	if (keyring_key->type != &key_type_logon) {
-+	if (keyring_key->type == &key_type_logon) {
-+		const struct user_key_payload *ukp;
++fscrypt allows file systems to implement transparent encryption and decryption
++of files, similar to eCryptfs, using keys derived from a master key descriptor.
 +
-+		ukp = user_key_payload_locked(keyring_key);
-+		if (!ukp) {
-+			/* key was revoked before we acquired its semaphore */
-+			res = -EKEYREVOKED;
-+			goto out;
-+		}
-+		if (ukp->datalen != sizeof(struct fscrypt_key)) {
-+			res = -EINVAL;
-+			goto out;
-+		}
-+		master_key = (struct fscrypt_key *)ukp->data;
-+	} else if (keyring_key->type == &key_type_encrypted) {
-+		const struct encrypted_key_payload *ekp;
++The data structure defined by fscrypt to contain information required for the
++master key descriptor is the fscrypt_key and, currently, can be stored in a
++kernel key of the 'user' type, inserted in the user's session specific keyring
++by the userspace utilities 'keyctl', 'fscryptctl', or 'e4crypt'.
 +
-+		ekp = keyring_key->payload.data[0];
-+		master_key = (struct fscrypt_key *)ekp->payload_data;
-+	} else {
- 		printk_once(KERN_WARNING
--				"%s: key type must be logon\n", __func__);
-+				"%s: key type must be logon or encrypted\n",
-+				__func__);
- 		res = -ENOKEY;
- 		goto out;
- 	}
--	ukp = user_key_payload_locked(keyring_key);
--	if (!ukp) {
--		/* key was revoked before we acquired its semaphore */
--		res = -EKEYREVOKED;
--		goto out;
--	}
--	if (ukp->datalen != sizeof(struct fscrypt_key)) {
--		res = -EINVAL;
--		goto out;
--	}
--	master_key = (struct fscrypt_key *)ukp->data;
- 	BUILD_BUG_ON(FS_AES_128_ECB_KEY_SIZE != FS_KEY_DERIVATION_NONCE_SIZE);
++The 'encrypted' key type has been extended with the introduction of the new
++format 'fscrypt' in order to be used in conjunction with the fscrypt
++subsystem.  Encrypted keys of the newly introduced format store an
++fscrypt_key in its payload with a master key descriptor randomly generated by
++the kernel and protected by the parent master key.
++
++In order to avoid known-plaintext attacks, the datablob obtained through
++commands 'keyctl print' or 'keyctl pipe' does not contain the overall
++fscrypt_key, the contents of which is well known, but only the master key
++descriptor itself in encrypted form.
++
++The fscrypt subsystem may really benefit from using encrypted keys in that the
++required key can be securely generated by an Administrator and provided at boot
++time after the unsealing of a 'trusted' key in order to perform the mount in a
++controlled environment.  Another advantage is that the key is not exposed to
++threats of malicious software, because it is available in clear form only at
++kernel level.
++
++Usage::
++
++   keyctl add encrypted fscrypt:policy "new fscrypt key-type:master-key-name keylen" ring
++   keyctl add encrypted fscrypt:policy "load hex_blob" ring
++   keyctl update keyid "update key-type:master-key-name"
++
++Where::
++
++	policy:= '<16 hexadecimal characters>'
++	key-type:= 'trusted' | 'user'
++	keylen:= 16 | 32 | 64
++
++
++Example of encrypted key usage with the fscrypt subsystem:
++
++Create an encrypted key "1234567890123456" of length 64 bytes with format
++'fscrypt' and save it using a previously loaded user key "test"::
++
++    $ keyctl add encrypted fscrypt:1234567890123456 "new fscrypt user:test 64" @u
++    1023935199
++
++    $ keyctl print 1023935199
++    fscrypt user:test 64 e5606689fdc25d78a787249f4069fb3b007e992f4b21d0eda60
++    c97986fc2e3326b5542e2b32216fc5007d9fd19cd3cb6668fa9850e954d2ba25e1b8a331
++    1b0c1f20666c
++
++    $ keyctl pipe 1023935199 > fscrypt.blob
++
++Set fscrypt policy on an (empty) encrypted directory /encrypted::
++
++    $ fscryptctl set_policy 1234567890123456 /encrypted
++
++The directory policy will remain across reboots, so after a reboot the key
++generated earlier will simply have to be loaded into the kernel keyring
++again::
++
++    $ keyctl add encrypted fscrypt:1234567890123456 "load $(cat fscrypt.blob)" @u
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 3bb24e09a332..d0250112bb4d 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -76,7 +76,7 @@ Usage::
  
- 	if (master_key->size < min_keysize || master_key->size > FS_MAX_KEY_SIZE
-@@ -302,12 +320,12 @@ int fscrypt_get_encryption_info(struct inode *inode)
- 	if (!raw_key)
- 		goto out;
+ Where::
  
--	res = validate_user_key(crypt_info, &ctx, raw_key, FS_KEY_DESC_PREFIX,
--				keysize);
-+	res = validate_keyring_key(crypt_info, &ctx, raw_key,
-+				   FS_KEY_DESC_PREFIX, keysize);
- 	if (res && inode->i_sb->s_cop->key_prefix) {
--		int res2 = validate_user_key(crypt_info, &ctx, raw_key,
--					     inode->i_sb->s_cop->key_prefix,
--					     keysize);
-+		int res2 = validate_keyring_key(crypt_info, &ctx, raw_key,
-+						inode->i_sb->s_cop->key_prefix,
-+						keysize);
- 		if (res2) {
- 			if (res2 == -ENOKEY)
- 				res = -ENOKEY;
+-	format:= 'default | ecryptfs'
++	format:= 'default | ecryptfs | fscrypt'
+ 	key-type:= 'trusted' | 'user'
+ 
+ 
+@@ -169,7 +169,9 @@ Load an encrypted key "evm" from saved blob::
+     24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
+ 
+ Other uses for trusted and encrypted keys, such as for disk and file encryption
+-are anticipated.  In particular the new format 'ecryptfs' has been defined in
+-in order to use encrypted keys to mount an eCryptfs filesystem.  More details
+-about the usage can be found in the file
+-``Documentation/security/keys/ecryptfs.rst``.
++are anticipated.  In particular the new formats 'ecryptfs' and 'fscrypt' have
++been defined in order to use encrypted keys to mount an eCryptfs or fscrypt
++filesystem, respectively. More details about the usage can be found in the
++files
++``Documentation/security/keys/ecryptfs.rst`` and
++``Documentation/security/keys/fscrypt.rst``.
 -- 
 2.15.1
 
