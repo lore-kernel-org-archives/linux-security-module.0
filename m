@@ -1,24 +1,15 @@
 From: git@andred.net (=?UTF-8?q?Andr=C3=A9=20Draszik?=)
-Date: Wed, 10 Jan 2018 12:44:16 +0000
-Subject: [PATCH 1/3] encrypted-keys: add fscrypt format support
-Message-ID: <20180110124418.24385-1-git@andred.net>
+Date: Wed, 10 Jan 2018 12:44:17 +0000
+Subject: [PATCH 2/3] fscrypt: add support for the encrypted key type
+In-Reply-To: <20180110124418.24385-1-git@andred.net>
+References: <20180110124418.24385-1-git@andred.net>
+Message-ID: <20180110124418.24385-2-git@andred.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This is heavily based on commit 79a73d188726
-("encrypted-keys: add ecryptfs format support").
-
-The 'encrypted' key type defines its own payload format which contains a
-symmetric key randomly generated that cannot be used directly by the
-fscrypt subsystem, because it instead expects an fscrypt_key structure.
-
-This patch introduces the new format 'fscrypt' that allows to store an
-fscrypt_key structure inside the encrypted key payload containing
-a randomly generated symmetric key, as the same for the format 'default'
-and 'ecryptfs'.
-
-More details about the usage of encrypted keys with the fscrypt
-subsystem can be found in the file 'Documentation/security/keys/fscrypt.rst'.
+We now try to acquire the key according to the
+encryption policy from both key types, 'logon'
+as well as 'encrypted'.
 
 Signed-off-by: Andr? Draszik <git@andred.net>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
@@ -33,213 +24,115 @@ Cc: keyrings at vger.kernel.org
 Cc: linux-security-module at vger.kernel.org
 Cc: linux-fscrypt at vger.kernel.org
 ---
- security/keys/encrypted-keys/Makefile         |  2 +-
- security/keys/encrypted-keys/encrypted.c      | 19 +++++++-
- security/keys/encrypted-keys/fscrypt_format.c | 70 +++++++++++++++++++++++++++
- security/keys/encrypted-keys/fscrypt_format.h | 20 ++++++++
- 4 files changed, 108 insertions(+), 3 deletions(-)
- create mode 100644 security/keys/encrypted-keys/fscrypt_format.c
- create mode 100644 security/keys/encrypted-keys/fscrypt_format.h
+ fs/crypto/keyinfo.c | 58 +++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 38 insertions(+), 20 deletions(-)
 
-diff --git a/security/keys/encrypted-keys/Makefile b/security/keys/encrypted-keys/Makefile
-index 7a44dce6f69d..586702ce9622 100644
---- a/security/keys/encrypted-keys/Makefile
-+++ b/security/keys/encrypted-keys/Makefile
-@@ -5,7 +5,7 @@
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index 5e6e846f5a24..023fa19fec48 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -10,6 +10,7 @@
+  */
  
- obj-$(CONFIG_ENCRYPTED_KEYS) += encrypted-keys.o
- 
--encrypted-keys-y := encrypted.o ecryptfs_format.o
-+encrypted-keys-y := encrypted.o ecryptfs_format.o fscrypt_format.o
- masterkey-$(CONFIG_TRUSTED_KEYS) := masterkey_trusted.o
- masterkey-$(CONFIG_TRUSTED_KEYS)-$(CONFIG_ENCRYPTED_KEYS) := masterkey_trusted.o
- encrypted-keys-y += $(masterkey-y) $(masterkey-m-m)
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index d92cbf9687c3..b570a930583a 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -37,6 +37,7 @@
- 
- #include "encrypted.h"
- #include "ecryptfs_format.h"
-+#include "fscrypt_format.h"
- 
- static const char KEY_TRUSTED_PREFIX[] = "trusted:";
- static const char KEY_USER_PREFIX[] = "user:";
-@@ -45,6 +46,7 @@ static const char hmac_alg[] = "hmac(sha256)";
- static const char blkcipher_alg[] = "cbc(aes)";
- static const char key_format_default[] = "default";
- static const char key_format_ecryptfs[] = "ecryptfs";
-+static const char key_format_fscrypt[] = "fscrypt";
- static unsigned int ivsize;
- static int blksize;
- 
-@@ -62,12 +64,13 @@ enum {
- };
- 
- enum {
--	Opt_error = -1, Opt_default, Opt_ecryptfs
-+	Opt_error = -1, Opt_default, Opt_ecryptfs, Opt_fscrypt
- };
- 
- static const match_table_t key_format_tokens = {
- 	{Opt_default, "default"},
- 	{Opt_ecryptfs, "ecryptfs"},
-+	{Opt_fscrypt, "fscrypt"},
- 	{Opt_error, NULL}
- };
- 
-@@ -185,7 +188,7 @@ static int datablob_parse(char *datablob, const char **format,
- 	}
- 	key_cmd = match_token(keyword, key_tokens, args);
- 
--	/* Get optional format: default | ecryptfs */
-+	/* Get optional format: default | ecryptfs | fscrypt */
- 	p = strsep(&datablob, " \t");
- 	if (!p) {
- 		pr_err("encrypted_key: insufficient parameters specified\n");
-@@ -194,6 +197,7 @@ static int datablob_parse(char *datablob, const char **format,
- 
- 	key_format = match_token(p, key_format_tokens, args);
- 	switch (key_format) {
-+	case Opt_fscrypt:
- 	case Opt_ecryptfs:
- 	case Opt_default:
- 		*format = p;
-@@ -634,6 +638,11 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
- 		}
- 		decrypted_datalen = ECRYPTFS_MAX_KEY_BYTES;
- 		payload_datalen = sizeof(struct ecryptfs_auth_tok);
-+	} else if (format && !strcmp(format, key_format_fscrypt)) {
-+		ret = fscrypt_encrypted_key_reserve_payload(decrypted_datalen,
-+							    &payload_datalen);
-+		if (ret < 0)
-+			return ERR_PTR(ret);
- 	}
- 
- 	encrypted_datalen = roundup(decrypted_datalen, blksize);
-@@ -734,6 +743,8 @@ static void __ekey_init(struct encrypted_key_payload *epayload,
- 		if (!strcmp(format, key_format_ecryptfs))
- 			epayload->decrypted_data =
- 				ecryptfs_get_auth_tok_key((struct ecryptfs_auth_tok *)epayload->payload_data);
-+		else if (!strcmp(format, key_format_fscrypt))
-+			fscrypt__ekey_init(epayload);
- 
- 		memcpy(epayload->format, format, format_len);
- 	}
-@@ -762,6 +773,10 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
- 
- 		ecryptfs_fill_auth_tok((struct ecryptfs_auth_tok *)epayload->payload_data,
- 				       key_desc);
-+	} else if (format && !strcmp(format, key_format_fscrypt)) {
-+		ret = fscrypt_valid_desc(key_desc);
-+		if (ret < 0)
-+			return ret;
- 	}
- 
- 	__ekey_init(epayload, format, master_desc, datalen);
-diff --git a/security/keys/encrypted-keys/fscrypt_format.c b/security/keys/encrypted-keys/fscrypt_format.c
-new file mode 100644
-index 000000000000..7620c0fa3ff9
---- /dev/null
-+++ b/security/keys/encrypted-keys/fscrypt_format.c
-@@ -0,0 +1,70 @@
-+/*
-+ * fscrypt_format.c: helper functions for the encrypted key type
-+ *
-+ * Copyright (C) 2006 International Business Machines Corp.
-+ * Copyright (C) 2010 Politecnico di Torino, Italy
-+ *                    TORSEC group -- http://security.polito.it
-+ *
-+ * Authors:
-+ * Andr? Draszik <git@andred.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, version 2 of the License.
-+ */
-+
-+#include <linux/ctype.h>
-+#define __FS_HAS_ENCRYPTION 0
-+#include <linux/fscrypt.h>
+ #include <keys/user-type.h>
 +#include <keys/encrypted-type.h>
-+#include <crypto/aes.h>
-+#include "fscrypt_format.h"
-+
-+
-+#define FS_KEY_DESCRIPTOR_HEX_SIZE (FS_KEY_DESCRIPTOR_SIZE*2)
-+
-+int fscrypt_encrypted_key_reserve_payload(unsigned short decrypted_datalen,
-+					  unsigned short *payload_datalen)
+ #include <linux/scatterlist.h>
+ #include <linux/ratelimit.h>
+ #include <crypto/aes.h>
+@@ -66,14 +67,20 @@ static int derive_key_aes(u8 deriving_key[FS_AES_128_ECB_KEY_SIZE],
+ 	return res;
+ }
+ 
+-static int validate_user_key(struct fscrypt_info *crypt_info,
++static inline struct key *fscrypt_get_encrypted_key(const char *sig)
 +{
-+	if (decrypted_datalen < AES_BLOCK_SIZE /* FS_AES_128_CBC_KEY_SIZE */
-+	    || decrypted_datalen > FS_MAX_KEY_SIZE
-+	    || decrypted_datalen % AES_BLOCK_SIZE != 0) {
-+		pr_err("encrypted_key: fscrypt keylen must be a multiple of %d up to %d bytes\n",
-+		       AES_BLOCK_SIZE, FS_MAX_KEY_SIZE);
-+		return -EINVAL;
-+	}
-+	*payload_datalen = sizeof(struct fscrypt_key);
-+	return 0;
++	if (IS_ENABLED(CONFIG_ENCRYPTED_KEYS))
++		return request_key(&key_type_encrypted, sig, NULL);
++	return ERR_PTR(-ENOKEY);
 +}
 +
-+void fscrypt__ekey_init(struct encrypted_key_payload *epayload)
-+{
-+	struct fscrypt_key *fk = (struct fscrypt_key *)epayload->payload_data;
++static int validate_keyring_key(struct fscrypt_info *crypt_info,
+ 			struct fscrypt_context *ctx, u8 *raw_key,
+ 			const char *prefix, int min_keysize)
+ {
+ 	char *description;
+ 	struct key *keyring_key;
+ 	struct fscrypt_key *master_key;
+-	const struct user_key_payload *ukp;
+ 	int res;
+ 
+ 	description = kasprintf(GFP_NOFS, "%s%*phN", prefix,
+@@ -83,28 +90,39 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
+ 		return -ENOMEM;
+ 
+ 	keyring_key = request_key(&key_type_logon, description, NULL);
++	if (IS_ERR(keyring_key))
++		keyring_key = fscrypt_get_encrypted_key(description);
+ 	kfree(description);
+ 	if (IS_ERR(keyring_key))
+ 		return PTR_ERR(keyring_key);
+ 	down_read(&keyring_key->sem);
+ 
+-	if (keyring_key->type != &key_type_logon) {
++	if (keyring_key->type == &key_type_logon) {
++		const struct user_key_payload *ukp;
 +
-+	epayload->decrypted_data = fk->raw;
++		ukp = user_key_payload_locked(keyring_key);
++		if (!ukp) {
++			/* key was revoked before we acquired its semaphore */
++			res = -EKEYREVOKED;
++			goto out;
++		}
++		if (ukp->datalen != sizeof(struct fscrypt_key)) {
++			res = -EINVAL;
++			goto out;
++		}
++		master_key = (struct fscrypt_key *)ukp->data;
++	} else if (keyring_key->type == &key_type_encrypted) {
++		const struct encrypted_key_payload *ekp;
 +
-+	fk->mode = 0;
-+	fk->size = epayload->decrypted_datalen;
-+}
-+
-+int fscrypt_valid_desc(const char *desc)
-+{
-+	int i;
-+
-+	if (strlen(desc) != (FS_KEY_DESC_PREFIX_SIZE
-+			     + FS_KEY_DESCRIPTOR_HEX_SIZE))
-+		goto error;
-+	if (memcmp(desc, FS_KEY_DESC_PREFIX, FS_KEY_DESC_PREFIX_SIZE))
-+		goto error;
-+	desc += FS_KEY_DESC_PREFIX_SIZE;
-+	for (i = 0; i < FS_KEY_DESCRIPTOR_HEX_SIZE; i++)
-+		if (!isxdigit(desc[i]))
-+			goto error;
-+
-+	return 0;
-+
-+error:
-+	pr_err("encrypted_key: key description must be 'fscrypt:<policy>'\n");
-+	return -EINVAL;
-+}
-+
-diff --git a/security/keys/encrypted-keys/fscrypt_format.h b/security/keys/encrypted-keys/fscrypt_format.h
-new file mode 100644
-index 000000000000..c6d7da1a2113
---- /dev/null
-+++ b/security/keys/encrypted-keys/fscrypt_format.h
-@@ -0,0 +1,20 @@
-+/*
-+ * fscrypt_format.h: helper functions for the encrypted key type
-+ *
-+ * Copyright (C) 2006 International Business Machines Corp.
-+ * Copyright (C) 2010 Politecnico di Torino, Italy
-+ *                    TORSEC group -- http://security.polito.it
-+ *
-+ * Authors:
-+ * Andr? Draszik <git@andred.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, version 2 of the License.
-+ */
-+#pragma once
-+
-+int fscrypt_encrypted_key_reserve_payload(unsigned short decrypted_datalen,
-+					  unsigned short *payload_datalen);
-+void fscrypt__ekey_init(struct encrypted_key_payload *epayload);
-+int fscrypt_valid_desc(const char *desc);
++		ekp = keyring_key->payload.data[0];
++		master_key = (struct fscrypt_key *)ekp->payload_data;
++	} else {
+ 		printk_once(KERN_WARNING
+-				"%s: key type must be logon\n", __func__);
++				"%s: key type must be logon or encrypted\n",
++				__func__);
+ 		res = -ENOKEY;
+ 		goto out;
+ 	}
+-	ukp = user_key_payload_locked(keyring_key);
+-	if (!ukp) {
+-		/* key was revoked before we acquired its semaphore */
+-		res = -EKEYREVOKED;
+-		goto out;
+-	}
+-	if (ukp->datalen != sizeof(struct fscrypt_key)) {
+-		res = -EINVAL;
+-		goto out;
+-	}
+-	master_key = (struct fscrypt_key *)ukp->data;
+ 	BUILD_BUG_ON(FS_AES_128_ECB_KEY_SIZE != FS_KEY_DERIVATION_NONCE_SIZE);
+ 
+ 	if (master_key->size < min_keysize || master_key->size > FS_MAX_KEY_SIZE
+@@ -302,12 +320,12 @@ int fscrypt_get_encryption_info(struct inode *inode)
+ 	if (!raw_key)
+ 		goto out;
+ 
+-	res = validate_user_key(crypt_info, &ctx, raw_key, FS_KEY_DESC_PREFIX,
+-				keysize);
++	res = validate_keyring_key(crypt_info, &ctx, raw_key,
++				   FS_KEY_DESC_PREFIX, keysize);
+ 	if (res && inode->i_sb->s_cop->key_prefix) {
+-		int res2 = validate_user_key(crypt_info, &ctx, raw_key,
+-					     inode->i_sb->s_cop->key_prefix,
+-					     keysize);
++		int res2 = validate_keyring_key(crypt_info, &ctx, raw_key,
++						inode->i_sb->s_cop->key_prefix,
++						keysize);
+ 		if (res2) {
+ 			if (res2 == -ENOKEY)
+ 				res = -ENOKEY;
 -- 
 2.15.1
 
