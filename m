@@ -1,46 +1,114 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 10 Jan 2018 18:18:30 +0200
-Subject: [GIT PULL] tpmdd updates for v4.16
-In-Reply-To: <alpine.LFD.2.20.1801091141410.17337@localhost>
-References: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
-	<alpine.LFD.2.20.1801091141410.17337@localhost>
-Message-ID: <20180110161830.kh5zlatbtiebzkbh@linux.intel.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 10 Jan 2018 11:37:50 -0500
+Subject: [PATCH V4 4/4] selinux: Add SCTP support
+In-Reply-To: <20171230172035.15837-1-richard_c_haines@btinternet.com>
+References: <20171230172035.15837-1-richard_c_haines@btinternet.com>
+Message-ID: <CAHC9VhR9AkU4nF8VjCiGERtTU5OEtSUQFcDDhJeyJe2gzM=1gQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jan 09, 2018 at 11:42:16AM +1100, James Morris wrote:
-> On Mon, 8 Jan 2018, Jarkko Sakkinen wrote:
-> 
-> > Hi James,
-> > 
-> > Sorry for a late PR.
-> > 
-> > Summary of the content:
-> > 
-> > * Reduced polling delays in tpm_tis.
-> > * Support for retrieving TPM 2.0 Event Log through EFI before
-> >   ExitBootServices.
-> > * Replaced tpm-rng.c with a hwrng device managed by the driver for each
-> >   TPM device.
-> > * TPM resource manager synthesizes TPM_RC_COMMAND_CODE response instead
-> >   of returning -EINVAL for unknown TPM commands. This makes user space
-> >   more sound.
-> > * CLKRUN fixes:
-> >   * Keep #CLKRUN disable through the entier TPM command/response flow.
-> >   * Check whether #CLKRUN is enabled before disabling and enabling it
-> >     again because enabling it breaks PS/2 devices on a system where it
-> >     is disabled.
-> > 
-> 
-> Thanks, merged to:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
-> 	next-tpm
-> 	next-testing
+On Sat, Dec 30, 2017 at 12:20 PM, Richard Haines
+<richard_c_haines@btinternet.com> wrote:
+> The SELinux SCTP implementation is explained in:
+> Documentation/security/SELinux-sctp.rst
+>
+> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+> ---
+>  Documentation/security/SELinux-sctp.rst | 157 ++++++++++++++++++
+>  security/selinux/hooks.c                | 280 +++++++++++++++++++++++++++++---
+>  security/selinux/include/classmap.h     |   2 +-
+>  security/selinux/include/netlabel.h     |  21 ++-
+>  security/selinux/include/objsec.h       |   4 +
+>  security/selinux/netlabel.c             | 138 ++++++++++++++--
+>  6 files changed, 570 insertions(+), 32 deletions(-)
+>  create mode 100644 Documentation/security/SELinux-sctp.rst
 
-Thank you. We'll follow the issues that Alexander described.
+...
 
-/Jarkko
+> +/**
+> + * selinux_netlbl_socket_connect - Label a client-side socket on connect
+> + * @sk: the socket to label
+> + * @addr: the destination address
+> + *
+> + * Description:
+> + * Attempt to label a connected socket with NetLabel using the given address.
+> + * Returns zero values on success, negative values on failure.
+> + *
+> + */
+> +int selinux_netlbl_socket_connect(struct sock *sk, struct sockaddr *addr)
+> +{
+> +       int rc;
+> +       struct sk_security_struct *sksec = sk->sk_security;
+> +
+> +       if (sksec->nlbl_state != NLBL_REQSKB &&
+> +           sksec->nlbl_state != NLBL_CONNLABELED)
+> +               return 0;
+> +
+> +       lock_sock(sk);
+> +       rc = selinux_netlbl_socket_connect_helper(sk, addr);
+>         release_sock(sk);
+> +
+>         return rc;
+>  }
+> +
+> +/**
+> + * selinux_netlbl_socket_connect_locked - Label a client-side socket on
+> + * connect
+> + * @sk: the socket to label
+> + * @addr: the destination address
+> + *
+> + * Description:
+> + * Attempt to label a connected socket that already has the socket locked
+> + * with NetLabel using the given address.
+> + * Returns zero values on success, negative values on failure.
+> + *
+> + */
+> +int selinux_netlbl_socket_connect_locked(struct sock *sk,
+> +                                        struct sockaddr *addr)
+> +{
+> +       struct sk_security_struct *sksec = sk->sk_security;
+> +
+> +       if (sksec->nlbl_state != NLBL_REQSKB &&
+> +           sksec->nlbl_state != NLBL_CONNLABELED)
+> +               return 0;
+> +
+> +       return selinux_netlbl_socket_connect_helper(sk, addr);
+> +}
+
+[Sorry for the review delay, the holidays and some associated travel
+made it hard to find some quiet time to look at the latest patches.]
+
+I probably should have been a bit more clear in my last comment, but
+what I had in mind was something like the following:
+
+int selinux_netlbl_socket_connect_locked(...)
+{
+    if (sksec->nlbl_state ...)
+        return 0;
+
+    return selinux_netlbl_socket_connect_helper();
+}
+
+int selinux_netlbl_socket_connect(...)
+{
+    int rc;
+
+    lock_sock();
+    rc = selinux_netlbl_socket_connect_locked();
+    release_sock();
+
+    return rc;
+}
+
+Yes, you do end up checking nlbl_state while the socket lock is held,
+but I believe the benefit of consolidating the code outweighs any
+additional overhead (I believe it would be "noise" anyway).
+
+Otherwise, this all looks good to me.
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
