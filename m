@@ -1,66 +1,77 @@
-From: jbohac@suse.cz (Jiri Bohac)
-Date: Thu, 11 Jan 2018 16:44:45 +0100
-Subject: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
-	locked down
-In-Reply-To: <13005.1515674877@warthog.procyon.org.uk>
-References: <12880.1515674600@warthog.procyon.org.uk>
-	<20180111115915.dejachty3l7fwpmf@dwarf.suse.cz>
-	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
-	<13005.1515674877@warthog.procyon.org.uk>
-Message-ID: <20180111154445.duootisvanetnr24@dwarf.suse.cz>
+From: Alexander.Steffen@infineon.com (Alexander Steffen)
+Date: Thu, 11 Jan 2018 18:29:16 +0100
+Subject: [GIT PULL] tpmdd updates for v4.16
+In-Reply-To: <20180110160823.4jco3foc4afxbtl2@linux.intel.com>
+References: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
+	<1b81847f-123f-ea9e-f2e5-48c73174c8b2@infineon.com>
+	<20180110160823.4jco3foc4afxbtl2@linux.intel.com>
+Message-ID: <0b10c696-529a-fc33-b0a3-5c7cb1838acb@infineon.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jan 11, 2018 at 12:47:57PM +0000, David Howells wrote:
-> > > I don't like the idea that the lockdown (which is a runtime
-> > > thing) requires a compile time option (KEXEC_VERIFY_SIG) that
-> > > forces the verification even when the kernel is then not locked
-> > > down at runtime.
-> > 
-> > It doesn't.  The EPERM only triggers if:
-> > 
-> >  (1) File signatures aren't mandatory (ie. CONFIG_KEXEC_VERIFY_SIG) is not
-> >      set, and
-> > 
-> >  (2) you're not using IMA appraisal to validate the file contents, and
-> > 
-> >  (3) lockdown mode is enabled.
-> > 
-> > If file signatures are mandatory or IMA appraisal is in use, then the lockdown
-> > state doesn't need to be checked.
+On 10.01.2018 17:08, Jarkko Sakkinen wrote:
+> On Tue, Jan 09, 2018 at 10:59:07AM +0100, Alexander Steffen wrote:
+>> On 08.01.2018 12:18, Jarkko Sakkinen wrote:
+>>> Hi James,
+>>>
+>>> Sorry for a late PR.
+>>>
+>>> Summary of the content:
+>>>
+>>> * Reduced polling delays in tpm_tis.
+>>> * Support for retrieving TPM 2.0 Event Log through EFI before
+>>>     ExitBootServices.
+>>> * Replaced tpm-rng.c with a hwrng device managed by the driver for each
+>>>     TPM device.
+>>> * TPM resource manager synthesizes TPM_RC_COMMAND_CODE response instead
+>>>     of returning -EINVAL for unknown TPM commands. This makes user space
+>>>     more sound.
+>>> * CLKRUN fixes:
+>>>     * Keep #CLKRUN disable through the entier TPM command/response flow.
+>>>     * Check whether #CLKRUN is enabled before disabling and enabling it
+>>>       again because enabling it breaks PS/2 devices on a system where it
+>>>       is disabled.
+>>
+>> I just spent some time trying to run all that (tpmdd-next-20180108) through
+>> my test system and hit a couple of non-TPM problems. In case you see similar
+>> issues, this is what I found out:
+>>
+>> 1. rmmod for the TPM driver hangs indefinitely. The TPM driver now registers
+>> itself as a hwrng, but in case it is the only hwrng in a system, the call to
+>> hwrng_unregister never returns. Known bug, but still not fixed in 4.15-rc7
+>> (see https://www.mail-archive.com/linux-crypto at vger.kernel.org/msg29884.html
+>> for details).
+>>
+>> 2. Raspberry Pis (which I use to test tpm_tis_spi and
+>> tpm_i2c_infineon) boot with that kernel, but have no USB or ethernet
+>> support. Also a known problem
+>> (http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/552280.html).
+>>
+>> 3. Device tree overlays with references to non-existent target-paths are
+>> rejected now (whereas before the invalid parts were just ignored). I guess
+>> this is an intentional change, but the error message does not really point
+>> to the problem (applying the overlay just returns with EINVAL).
 > 
-> Having said that, I do see your point, I think.  We should still let through
-> validly signed images, even if signatures aren't mandatory in lockdown mode.
+> Do we have these?
 
-yes, to be clear, the problem I'm trying to fix is:
-- without CONFIG_KEXEC_VERIFY_SIG kexec in a locked down kernel
-  will not work at all -> every distro that wants to support
-  secureboot will need to enable CONFIG_KEXEC_VERIFY_SIG;
+No, otherwise I would have sent a fix :)
 
-- once CONFIG_KEXEC_VERIFY_SIG is enabled, kexec images need to
-  be signed even if secureboot is not used
+It is just something that I used for my tests: I had an overlay that I 
+could use for both the mainline kernel and the RPi kernel. On the RPi 
+kernel it would deactivate the spidev entry, so that tpm_tis_spi was 
+able to use the device. On the mainline kernel, there is no spidev in 
+the device tree, so this part is not necessary and I simply removed it 
+now to fix the problem (I'm not using the RPi kernels anymore).
 
-The problem is that CONFIG_KEXEC_VERIFY_SIG enables both the
-implementation and the enforcement of the signature checking.
+Alexander
 
-What I'm proposing are new config options that allow a kernel to
-be compiled in such a way that:
-- kexec works even without signatures if secureboot is off
-- kexec works with secureboot but requires signed images
-
-The semantics should be the same as with signed modules, because
-requiring kexec signatures when you can load unsigned modules is
-futile. But with your original patchset, that's exactly what
-distro kernels will be doing when booted with secureboot off,
-MODULE_SIG_FORCE=n and KEXEC_VERIFY_SIG=y.
-
-Thanks,
-
--- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
-
+>> With all that fixed in my environment, my tests now pass successfully.
+>>
+>> Alexander
+> 
+> Thank you for reporting these issues.
+> 
+> /Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
