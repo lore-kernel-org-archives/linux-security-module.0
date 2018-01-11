@@ -1,77 +1,60 @@
-From: Alexander.Steffen@infineon.com (Alexander Steffen)
-Date: Thu, 11 Jan 2018 18:29:16 +0100
-Subject: [GIT PULL] tpmdd updates for v4.16
-In-Reply-To: <20180110160823.4jco3foc4afxbtl2@linux.intel.com>
-References: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
-	<1b81847f-123f-ea9e-f2e5-48c73174c8b2@infineon.com>
-	<20180110160823.4jco3foc4afxbtl2@linux.intel.com>
-Message-ID: <0b10c696-529a-fc33-b0a3-5c7cb1838acb@infineon.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Thu, 11 Jan 2018 21:17:45 +0200
+Subject: [RESEND PATCH v2 0/2] mm: genalloc - track beginning of allocations
+Message-ID: <20180111191747.2350-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 10.01.2018 17:08, Jarkko Sakkinen wrote:
-> On Tue, Jan 09, 2018 at 10:59:07AM +0100, Alexander Steffen wrote:
->> On 08.01.2018 12:18, Jarkko Sakkinen wrote:
->>> Hi James,
->>>
->>> Sorry for a late PR.
->>>
->>> Summary of the content:
->>>
->>> * Reduced polling delays in tpm_tis.
->>> * Support for retrieving TPM 2.0 Event Log through EFI before
->>>     ExitBootServices.
->>> * Replaced tpm-rng.c with a hwrng device managed by the driver for each
->>>     TPM device.
->>> * TPM resource manager synthesizes TPM_RC_COMMAND_CODE response instead
->>>     of returning -EINVAL for unknown TPM commands. This makes user space
->>>     more sound.
->>> * CLKRUN fixes:
->>>     * Keep #CLKRUN disable through the entier TPM command/response flow.
->>>     * Check whether #CLKRUN is enabled before disabling and enabling it
->>>       again because enabling it breaks PS/2 devices on a system where it
->>>       is disabled.
->>
->> I just spent some time trying to run all that (tpmdd-next-20180108) through
->> my test system and hit a couple of non-TPM problems. In case you see similar
->> issues, this is what I found out:
->>
->> 1. rmmod for the TPM driver hangs indefinitely. The TPM driver now registers
->> itself as a hwrng, but in case it is the only hwrng in a system, the call to
->> hwrng_unregister never returns. Known bug, but still not fixed in 4.15-rc7
->> (see https://www.mail-archive.com/linux-crypto at vger.kernel.org/msg29884.html
->> for details).
->>
->> 2. Raspberry Pis (which I use to test tpm_tis_spi and
->> tpm_i2c_infineon) boot with that kernel, but have no USB or ethernet
->> support. Also a known problem
->> (http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/552280.html).
->>
->> 3. Device tree overlays with references to non-existent target-paths are
->> rejected now (whereas before the invalid parts were just ignored). I guess
->> this is an intentional change, but the error message does not really point
->> to the problem (applying the overlay just returns with EINVAL).
-> 
-> Do we have these?
+This is a partial resend:
+- the primary functionality (PATCH 1/2) is unmodified
+- while waiting for review, I added selftest capability for genalloc (2/2)
 
-No, otherwise I would have sent a fix :)
 
-It is just something that I used for my tests: I had an overlay that I 
-could use for both the mainline kernel and the RPi kernel. On the RPi 
-kernel it would deactivate the spidev entry, so that tpm_tis_spi was 
-able to use the device. On the mainline kernel, there is no spidev in 
-the device tree, so this part is not necessary and I simply removed it 
-now to fix the problem (I'm not using the RPi kernels anymore).
+During the effort of introducing in the kernel an allocator for
+protectable memory (pmalloc), it was noticed that genalloc can be
+improved, to know how to separate the memory use by adjacent allocations
 
-Alexander
+However, it seems that the functionality could have a value of its own.
 
->> With all that fixed in my environment, my tests now pass successfully.
->>
->> Alexander
-> 
-> Thank you for reporting these issues.
-> 
-> /Jarkko
+It can:
+- verify that the freeing of memory is consistent with previous allocations
+- relieve the user of the API from tracking the size of each allocation
+- enable use cases where generic code can free memory allocations received
+  through a pointer (provided that the reference pool is known)
+
+Details about the implementation are provided in the comment for the patch.
+
+I mentioned this idea few months ago, as part of the pmalloc discussion,
+but then I did not have time to follow-up immediately, as I had hoped.
+
+This is an implementation of what I had in mind.
+It seems to withstand several test cases i put together, in the form of
+self-test, but it definitely would need thorough review.
+
+
+I hope I have added as reviewer all the relevant people.
+If I missed someone, please include them to the recipients.
+
+
+
+Igor Stoppa (2):
+  genalloc: track beginning of allocations
+  genalloc: selftest
+
+ include/linux/genalloc-selftest.h |  30 +++
+ include/linux/genalloc.h          |   3 +-
+ init/main.c                       |   2 +
+ lib/Kconfig                       |  14 ++
+ lib/Makefile                      |   1 +
+ lib/genalloc-selftest.c           | 402 ++++++++++++++++++++++++++++++++++++
+ lib/genalloc.c                    | 417 ++++++++++++++++++++++++++------------
+ 7 files changed, 738 insertions(+), 131 deletions(-)
+ create mode 100644 include/linux/genalloc-selftest.h
+ create mode 100644 lib/genalloc-selftest.c
+
+-- 
+2.9.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
