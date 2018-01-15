@@ -1,138 +1,126 @@
-From: dvyukov@google.com (Dmitry Vyukov)
-Date: Mon, 15 Jan 2018 14:50:54 +0100
-Subject: BUG: unable to handle kernel NULL pointer dereference in
-	sidtab_search_core
-In-Reply-To: <CAHC9VhQ-BS9doH6dCWLua17rSngVUsHsMU2JFTOWq0f_oX8Ujw@mail.gmail.com>
-References: <94eb2c0d010a8dcf040560c0cdf5@google.com>
-	<CAHC9VhT5qK4nUmWo5Pksq0rsxa6Wk7wBEa0Gn41pNx5oS_NDCQ@mail.gmail.com>
-	<CACT4Y+ZkrWR9=s9qVUAiF6bEeGgdhLGE_W_wWwX7HsaVo1MLiQ@mail.gmail.com>
-	<CAHC9VhTjfaOiGm99w3OQMb5m7_zzZg92C_=vPpDhZ1uJBcRdLw@mail.gmail.com>
-	<CACT4Y+bq3DLE1Pv9cP5cM4+m8UO6aovRMbqZ-SdvLv7b=AFmyg@mail.gmail.com>
-	<CAHC9VhSB74i5Teczp-yMk7rWkOBGGFXPQM455iyLcFu33ar5iA@mail.gmail.com>
-	<CACT4Y+YoyaP+qjLiE5sSzJNp5aOQiTXbBC8k-GinE8LoGNmStQ@mail.gmail.com>
-	<CAHC9VhQ-BS9doH6dCWLua17rSngVUsHsMU2JFTOWq0f_oX8Ujw@mail.gmail.com>
-Message-ID: <CACT4Y+Z55k+zmYOxh-0sE9sMJ3hc0cOH7TCB2XWf28L95BhXMw@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 15 Jan 2018 11:20:36 -0500
+Subject: [PATCH] ima: define new policy condition based on the filesystem name
+Message-ID: <1516033236.6607.6.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Dec 22, 2017 at 9:56 PM, Paul Moore <paul@paul-moore.com> wrote:
->>>>>>> wrote:
->>>>>>>> Hello,
->>>>>>>>
->>>>>>>> syzkaller hit the following crash on
->>>>>>>> 6084b576dca2e898f5c101baef151f7bfdbb606d
->>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
->>>>>>>> compiler: gcc (GCC) 7.1.1 20170620
->>>>>>>> .config is attached
->>>>>>>> Raw console output is attached.
->>>>>>>> C reproducer is attached
->>>>>>>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
->>>>>>>> for information about syzkaller reproducers
->>>>>>>>
->>>>>>>>
->>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
->>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
->>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
->>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
->>>>>>>> SELinux: security_compute_sid:  unrecognized SID 1
->>>>>>>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000001
->>>>>>>> IP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
->>>>>>>> PGD 0 P4D 0
->>>>>>>> Oops: 0000 [#1] SMP
->>>>>>>> Dumping ftrace buffer:
->>>>>>>>    (ftrace buffer empty)
->>>>>>>> Modules linked in:
->>>>>>>> CPU: 1 PID: 4252 Comm: kworker/u4:1 Not tainted 4.15.0-rc3-next-20171214+
->>>>>>>> #67
->>>>>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>>>>>>> Google 01/01/2011
->>>>>>>> RIP: 0010:sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100
->>>>>>>> RSP: 0018:ffffc900028abc18 EFLAGS: 00010293
->>>>>>>> RAX: ffff8802131a87c0 RBX: 0000000000000001 RCX: ffffffff8165d978
->>>>>>>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffff83fd17a0
->>>>>>>> RBP: ffffc900028abc40 R08: 0000000000000001 R09: 0000000000000001
->>>>>>>> R10: ffffc900028abbe0 R11: 0000000000000000 R12: 0000000000000001
->>>>>>>> R13: 0000000000000001 R14: 0000000000000000 R15: ffff880214d93800
->>>>>>>> FS:  0000000000000000(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
->>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>> CR2: 0000000000000001 CR3: 0000000214e31000 CR4: 00000000001406e0
->>>>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>>> Call Trace:
->>>>>>>>  sidtab_search+0x1f/0x30 security/selinux/ss/sidtab.c:111
->>>>>>>>  security_compute_sid.part.11+0xe2/0x710 security/selinux/ss/services.c:1618
->>>>>>>>  security_compute_sid+0x92/0xa0 security/selinux/ss/services.c:1598
->>>>>>>>  security_transition_sid+0x57/0x70 security/selinux/ss/services.c:1764
->>>>>>>>  selinux_bprm_set_creds+0x215/0x2f0 security/selinux/hooks.c:2423
->>>>>>>>  security_bprm_set_creds+0x41/0x60 security/security.c:332
->>>>>>>>  prepare_binprm+0xae/0x1f0 fs/exec.c:1561
->>>>>>>>  do_execveat_common.isra.30+0x6f7/0xb90 fs/exec.c:1784
->>>>>>>>  do_execve+0x31/0x40 fs/exec.c:1848
->>>>>>>>  call_usermodehelper_exec_async+0x104/0x190 kernel/umh.c:100
->>>>>>>>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
->>>>>>>> Code: 8b 5b 50 48 85 db 75 e5 e8 e6 c9 c5 ff 49 8b 5f 18 48 85 db 75 10 eb
->>>>>>>> 43 e8 d6 c9 c5 ff 48 8b 5b 50 48 85 db 74 35 e8 c8 c9 c5 ff <44> 8b 23 41 83
->>>>>>>> fc 02 76 e4 e8 ba c9 c5 ff 41 83 fc 03 75 1c 48
->>>>>>>> RIP: sidtab_search_core+0x88/0x110 security/selinux/ss/sidtab.c:100 RSP:
->>>>>>>> ffffc900028abc18
->>>>>>>> CR2: 0000000000000001
->>>>>>>> ---[ end trace 571c0ea6c6959387 ]---
->>>>>>>> Kernel panic - not syncing: Fatal exception
->>>>>>>> Dumping ftrace buffer:
->>>>>>>>    (ftrace buffer empty)
->>>>>>>> Kernel Offset: disabled
->>>>>>>> Rebooting in 86400 seconds..
->>>>>>>
->>>>>>> Based on the reproducer and the stack trace, I'm guessing the system
->>>>>>> is attempting to load a kernel module for a a defined, but unloaded,
->>>>>>> protocol.  Looking quickly at the SELinux bprm and sidtab code,
->>>>>>> nothing obvious is jumping out at me.  Considering the number of false
->>>>>>> positives I've been seeing from syzbot lately, I'm assuming this is
->>>>>>> more of the same.
->>>>>>
->>>>>> Hi Paul,
->>>>>>
->>>>>> What are these false positives? Please elaborate.
->>>>>> There is no single false positive that I am aware of. All the ones
->>>>>> that were debugged are real kernel bugs.
->>>>>
->>>>> I've replied to several of the syzbot automated reports with the
->>>>> "invalid" response.  I haven't been keeping track, but it seems like
->>>>> approximately 50% of the SELinux related reports don't make sense upon
->>>>> inspection.
->>>>
->>>> Can you please point me to some of these bugs? I don't see anything
->>>> like this in my inbox, in google group nor in database.
->>>
->>> Not easily, no.  I don't keep track of these reports once I've
->>> responded to the syzbot mail.
->>
->> There must be traces of this in database and on mailing lists (even if
->> you drop syzkaller-bugs@ syzbot will re-add it). So far I did not find
->> any traces...
->
-> <sigh>
->
-> Okay, so I dug through my mail and I found at least two instances (see
-> below).  There may be more, but I'm getting tired of dealing with
-> syzbot.  I'm a big fan of increased testing, especially automated
-> testing, but right now syzbot seems to be costing me a
-> disproportionate amount of time.
->
-> * I sent an invalid reply to
-> bot+c06fb26dfcd8220259619bf322a79eb0887147c8 on November 3rd, I don't
-> see an acknowledgement from the robot but I may have deleted it.
->
-> * I sent an invalid reply to
-> bot+fcb30800d359ef1113a6edda069a77c2eebb9bf1 on December 6th, it was
-> acknowledged by the robot.
+Some filesystems do not export the filesystem's magic number, as it is
+considered internal, private data.  In other cases, the policy rule
+needs to identify a specifically mounted filesystem (eg. rootfs).
 
-I see. I just thought that you mean something more recent. These were
-almost 2 months ago and were about the same kernel bug.
+This patch defines a new IMA policy condition named "fsname", based on
+the superblock's file_system_type (sb->s_type) name.
 
-"KASAN: use-after-free Read in selinux_netlbl_sk_security_free"
-stopped happening since them, so most likely that was due to another
-kernel bug that went unnoticed and is fixed by now.
+By defining a policy rule in terms of the filesystem magic number and
+the superblock filesystem name, files on the rootfs filesystem are only
+appraised, when rootfs is a tmpfs filesystem, which supports xattrs.
+
+Sample rules:
+measure func=FILE_CHECK fsname=xfs
+appraise fsmagic=0x01021994 fsname=rootfs
+
+Suggested-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ Documentation/ABI/testing/ima_policy |  2 +-
+ security/integrity/ima/ima_policy.c  | 25 ++++++++++++++++++++++++-
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index b0e8143c681f..281b88d17a37 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -21,7 +21,7 @@ Description:
+ 			audit | hash | dont_hash
+ 		condition:= base | lsm  [option]
+ 			base:	[[func=] [mask=] [fsmagic=] [fsuuid=] [uid=]
+-				[euid=] [fowner=]]
++				[euid=] [fowner=] [fsname=]]
+ 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
+ 				 [obj_user=] [obj_role=] [obj_type=]]
+ 			option:	[[appraise_type=]] [permit_directio] [force]
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 878ae1a06e1e..ceffb98d79ca 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -33,6 +33,7 @@
+ #define IMA_INMASK	0x0040
+ #define IMA_EUID	0x0080
+ #define IMA_PCR		0x0100
++#define IMA_FSNAME	0x0200
+ 
+ #define UNKNOWN		0
+ #define MEASURE		0x0001	/* same as IMA_MEASURE */
+@@ -74,6 +75,7 @@ struct ima_rule_entry {
+ 		void *args_p;	/* audit value */
+ 		int type;	/* audit type */
+ 	} lsm[MAX_LSM_RULES];
++	char *fsname;
+ };
+ 
+ /*
+@@ -267,6 +269,9 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 	if ((rule->flags & IMA_FSMAGIC)
+ 	    && rule->fsmagic != inode->i_sb->s_magic)
+ 		return false;
++	if ((rule->flags & IMA_FSNAME)
++	    && strcmp(rule->fsname, inode->i_sb->s_type->name))
++		return false;
+ 	if ((rule->flags & IMA_FSUUID) &&
+ 	    !uuid_equal(&rule->fsuuid, &inode->i_sb->s_uuid))
+ 		return false;
+@@ -528,7 +533,7 @@ enum {
+ 	Opt_audit, Opt_hash, Opt_dont_hash,
+ 	Opt_obj_user, Opt_obj_role, Opt_obj_type,
+ 	Opt_subj_user, Opt_subj_role, Opt_subj_type,
+-	Opt_func, Opt_mask, Opt_fsmagic,
++	Opt_func, Opt_mask, Opt_fsmagic, Opt_fsname,
+ 	Opt_fsuuid, Opt_uid_eq, Opt_euid_eq, Opt_fowner_eq,
+ 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+@@ -553,6 +558,7 @@ static match_table_t policy_tokens = {
+ 	{Opt_func, "func=%s"},
+ 	{Opt_mask, "mask=%s"},
+ 	{Opt_fsmagic, "fsmagic=%s"},
++	{Opt_fsname, "fsname=%s"},
+ 	{Opt_fsuuid, "fsuuid=%s"},
+ 	{Opt_uid_eq, "uid=%s"},
+ 	{Opt_euid_eq, "euid=%s"},
+@@ -763,6 +769,17 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			if (!result)
+ 				entry->flags |= IMA_FSMAGIC;
+ 			break;
++		case Opt_fsname:
++			ima_log_string(ab, "fsname", args[0].from);
++
++			entry->fsname = kstrdup(args[0].from, GFP_KERNEL);
++			if (!entry->fsname) {
++				result = -ENOMEM;
++				break;
++			}
++			result = 0;
++			entry->flags |= IMA_FSNAME;
++			break;
+ 		case Opt_fsuuid:
+ 			ima_log_string(ab, "fsuuid", args[0].from);
+ 
+@@ -1094,6 +1111,12 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, " ");
+ 	}
+ 
++	if (entry->flags & IMA_FSNAME) {
++		snprintf(tbuf, sizeof(tbuf), "%s", entry->fsname);
++		seq_printf(m, pt(Opt_fsname), tbuf);
++		seq_puts(m, " ");
++	}
++
+ 	if (entry->flags & IMA_PCR) {
+ 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
+ 		seq_printf(m, pt(Opt_pcr), tbuf);
+-- 
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
