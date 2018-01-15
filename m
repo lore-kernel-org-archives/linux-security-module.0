@@ -1,84 +1,121 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Mon, 15 Jan 2018 03:09:17 +0800
-Subject: [PATCH 2/2] ima: turn on force option for FUSE in builtin policies
-In-Reply-To: <7a89ce9a7b8264f83fa5d61e146c01571017cca0.1515682581.git.dongsu@kinvolk.io>
-References: <7a89ce9a7b8264f83fa5d61e146c01571017cca0.1515682581.git.dongsu@kinvolk.io>
-Message-ID: <201801150202.kLQoVeav%fengguang.wu@intel.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Sun, 14 Jan 2018 22:31:51 -0600
+Subject: [manpages PATCH] capabilities.7: describe namespaced file
+	capabilities
+In-Reply-To: <5e434a9c-8ea9-afb1-700a-65f08f6e88fe@gmail.com>
+References: <20180109185218.GA21753@mail.hallyn.com>
+	<5e434a9c-8ea9-afb1-700a-65f08f6e88fe@gmail.com>
+Message-ID: <20180115043151.GA15983@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Dongsu,
+Quoting Michael Kerrisk (man-pages) (mtk.manpages at gmail.com):
+> Hello Serge,
+> 
+> On 01/09/2018 07:52 PM, Serge E. Hallyn wrote:
+> > Update the capabilities(7)  manpage with a description of the
+> > new-ish namespaced file capability support.
+> 
+> Thanks for this patch. I'm trying to craft a modified version
+> based on your text, so no need to send a new version at this
+> stage, but I do have some questions below.
 
-Thank you for the patch! Yet something to improve:
+Awesome, thanks.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.15-rc7 next-20180112]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> > A note on userspace tools:  since the kernel will automatically
+> > convert between v2 and v3 xattrs, and translate nsroot between
+> > v3 xattrs, we can make do with the current getcap(8) and setcap(8)
+> > tools. I.e. a user on the host can create a transient user namespace
+> > with the appropriate mappings and run setcap(8) there.  The kernel
+> > will automatically write a v3 xattr with the transient namespace's
+> > root user as nsroot.
+> >
+> > Signed-off-by: Serge Hallyn <shallyn@cisco.com>
+> > ---
+> >  man7/capabilities.7 | 44 ++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> > 
+> > diff --git a/man7/capabilities.7 b/man7/capabilities.7
+> > index 166eaaf..76e7e02 100644
+> > --- a/man7/capabilities.7
+> > +++ b/man7/capabilities.7
+> > @@ -936,6 +936,50 @@ if we specify the effective flag as being enabled for any capability,
+> >  then the effective flag must also be specified as enabled
+> >  for all other capabilities for which the corresponding permitted or
+> >  inheritable flags is enabled.
+> > +.PP
+> > +Until 4.13, only VFS_CAP_REVISION_2 xattrs were supported.  These store only
+> > +the capabilities to be applied to the file, with no record of the writer's
+> > +credentials.  Therefore only privileged users can be trusted to write them, and
+> > +.BR CAP_SETFCAP
+> > +over the user namespace which mounted the filesystem (usually the initial user
+> > +namespace) is required.  This makes it impossible to write file capabilities
+> > +from a user namespaced container, which causes some package updates to fail.
+> > +.PP
+> > +In order to support setting file capabilities in containers, the
+> > +kernel must be able to identify whether the task executing the
+> > +file will be constrained to a subset of the resources over which
+> > +the writer of the file capabilities has privilege.  To this end,
+> > +since 4.13, VFS_CAP_REVISION_3 capabilities store the user ID
+> > +of the root user in the writer's namespace ("nsroot").
+> 
+> Here, "nsroot" means the UID 0 in the namespace as it would be mapped
+> into the initial userns, right?
 
-url:    https://github.com/0day-ci/linux/commits/Dongsu-Park/turn-on-force-option-for-FUSE-in-builtin-policies/20180115-015830
-config: xtensa-allmodconfig (attached as .config)
-compiler: xtensa-linux-gcc (GCC) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=xtensa 
+Right.  If we can come up with a better name that would be great.
 
-All errors (new ones prefixed by >>):
+> > Hence the writer only
+> > +requires
+> > +.IP 1.
+> > +.BR CAP_SETFCAP
+> > +over the file inode, meaning the writing task must have
+> > +.BR CAP_SETFCAP
+> > +over a user namespace into which the inode's owning user ID is mapped.
+> 
+> I don't understand the above line. Could you explain with an example?
 
->> security/integrity/ima/ima_policy.c:130:74: error: 'IMA_FORCE' undeclared here (not in a function); did you mean 'IMA_FUNC'?
-     {.action = MEASURE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
-                                                                             ^~~~~~~~~
-                                                                             IMA_FUNC
-   security/integrity/ima/ima_policy.c:158:73: error: invalid operands to binary | (have 'int' and 'struct ima_rule_entry *')
-     {.action = APPRAISE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
-                                                                            ^
-   security/integrity/ima/ima_policy.c:29:21: warning: initialization makes integer from pointer without a cast [-Wint-conversion]
-    #define IMA_FSMAGIC 0x0004
-                        ^
-   security/integrity/ima/ima_policy.c:158:61: note: in expansion of macro 'IMA_FSMAGIC'
-     {.action = APPRAISE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
-                                                                ^~~~~~~~~~~
-   security/integrity/ima/ima_policy.c:29:21: note: (near initialization for 'default_appraise_rules[14].flags')
-    #define IMA_FSMAGIC 0x0004
-                        ^
-   security/integrity/ima/ima_policy.c:158:61: note: in expansion of macro 'IMA_FSMAGIC'
-     {.action = APPRAISE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
-                                                                ^~~~~~~~~~~
-   security/integrity/ima/ima_policy.c:29:21: error: initializer element is not constant
-    #define IMA_FSMAGIC 0x0004
-                        ^
-   security/integrity/ima/ima_policy.c:158:61: note: in expansion of macro 'IMA_FSMAGIC'
-     {.action = APPRAISE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
-                                                                ^~~~~~~~~~~
-   security/integrity/ima/ima_policy.c:29:21: note: (near initialization for 'default_appraise_rules[14].flags')
-    #define IMA_FSMAGIC 0x0004
-                        ^
-   security/integrity/ima/ima_policy.c:158:61: note: in expansion of macro 'IMA_FSMAGIC'
-     {.action = APPRAISE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
-                                                                ^~~~~~~~~~~
+If the file is owned by uid 1000, then uid 1000 can create a new user
+ns in which 1000 is mapped to .  In this namespace, the new task has
+CAP_SETFCAP over the user ns, and 1000 is mapped into the userns (as
+0), so the write is allowed.
 
-vim +130 security/integrity/ima/ima_policy.c
+In the above example, if the xattr being written was v2, then the
+actual written xattr will be v3 with nsroot=1000
 
-   115	
-   116	static struct ima_rule_entry default_measurement_rules[] __ro_after_init = {
-   117		{.action = MEASURE, .func = MMAP_CHECK, .mask = MAY_EXEC,
-   118		 .flags = IMA_FUNC | IMA_MASK},
-   119		{.action = MEASURE, .func = BPRM_CHECK, .mask = MAY_EXEC,
-   120		 .flags = IMA_FUNC | IMA_MASK},
-   121		{.action = MEASURE, .func = FILE_CHECK, .mask = MAY_READ,
-   122		 .uid = GLOBAL_ROOT_UID, .uid_op = &uid_eq,
-   123		 .flags = IMA_FUNC | IMA_INMASK | IMA_EUID},
-   124		{.action = MEASURE, .func = FILE_CHECK, .mask = MAY_READ,
-   125		 .uid = GLOBAL_ROOT_UID, .uid_op = &uid_eq,
-   126		 .flags = IMA_FUNC | IMA_INMASK | IMA_UID},
-   127		{.action = MEASURE, .func = MODULE_CHECK, .flags = IMA_FUNC},
-   128		{.action = MEASURE, .func = FIRMWARE_CHECK, .flags = IMA_FUNC},
-   129		{.action = MEASURE, .func = POLICY_CHECK, .flags = IMA_FUNC},
- > 130		{.action = MEASURE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
-   131	};
-   132	
+If the xattr was v3, with nsroot=0, then nsroot=1000 will be written.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+If the xattr was v3, with nsroot=500, where 500 is not mapped from
+the userns, then the write will be forbidden.
+
+As another allowed case, if I'm uid 1000 and setting up a container
+where 100005 is mapped to uid 5;  I create a userns where hostuids
+100000-165535 map to namespace uids 0-65535, then as root in the
+namespace I have CAP_SETFCAP over the namespace, and 100005 is
+mapped in the namespace, so I can write to the file.
+
+As a final, nested example:  I'm uid 1000 and have uids 100000-300000
+as my delegated subuids.  I create a container with that full range,
+and am running as root there (100000).  Now I create a nested container
+where 100000-165535 (which are really 200000-265535 on the host) will
+be mapped to 0-65535.  In its rootfs I write /bin/ping with cap_net_raw=pe
+and just for fun make it owned by nested uid 5.
+
+So /bin/ping is owned by
+	hostuid 200005 = c1 uid 100005 = c2 uid 5
+As root in the container I have CAP_SETFCAP over a userns where c2 uid 5
+is mapped, so I'm allowed to write a filecap.
+If I write it as v2 xattr, then the actual written xattr will be v3 with
+nsroot=100000, if I simply write it as root in c1, or nsroot=200000 if
+I enter the nested container before writing it.
+There are several more options, but let's just pick one - and assume that
+as root in the first container (hostuid 100000) I request a v3 xattr
+with nsroot=100000.  The actual written xattr will ahve nsroot=200000.
+now when uid 1000 in the nested container runs /bin/ping, the kernel will
+see that that task's user namespace has uid 0 mapped to 200000, and so
+the fscap will be honored.
+
+-serge
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
