@@ -1,106 +1,66 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Tue, 16 Jan 2018 11:38:03 -0600
-Subject: [manpages PATCH] capabilities.7: describe namespaced file
-	capabilities
-In-Reply-To: <CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
-References: <20180109185218.GA21753@mail.hallyn.com>
-	<CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
-Message-ID: <20180116173803.GA15538@mail.hallyn.com>
+From: jbohac@suse.cz (Jiri Bohac)
+Date: Tue, 16 Jan 2018 20:39:36 +0100
+Subject: [PATCH 08a/30] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
+	and KEXEC_SIG_FORCE
+In-Reply-To: <4582.1516120311@warthog.procyon.org.uk>
+References: <20180111120157.23qceywzi6omvvkb@dwarf.suse.cz>
+	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
+	<20180111115915.dejachty3l7fwpmf@dwarf.suse.cz>
+	<4582.1516120311@warthog.procyon.org.uk>
+Message-ID: <20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Jann Horn (jannh at google.com):
-> On Tue, Jan 9, 2018 at 7:52 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> > Update the capabilities(7)  manpage with a description of the
-> > new-ish namespaced file capability support.
-> >
-> > A note on userspace tools:  since the kernel will automatically
-> > convert between v2 and v3 xattrs, and translate nsroot between
-> > v3 xattrs, we can make do with the current getcap(8) and setcap(8)
-> > tools. I.e. a user on the host can create a transient user namespace
-> > with the appropriate mappings and run setcap(8) there.  The kernel
-> > will automatically write a v3 xattr with the transient namespace's
-> > root user as nsroot.
-> >
-> > Signed-off-by: Serge Hallyn <shallyn@cisco.com>
-> > ---
-> >  man7/capabilities.7 | 44 ++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 44 insertions(+)
-> >
-> > diff --git a/man7/capabilities.7 b/man7/capabilities.7
-> > index 166eaaf..76e7e02 100644
-> > --- a/man7/capabilities.7
-> > +++ b/man7/capabilities.7
-> > @@ -936,6 +936,50 @@ if we specify the effective flag as being enabled for any capability,
-> >  then the effective flag must also be specified as enabled
-> >  for all other capabilities for which the corresponding permitted or
-> >  inheritable flags is enabled.
-> > +.PP
-> > +Until 4.13, only VFS_CAP_REVISION_2 xattrs were supported.  These store only
-> > +the capabilities to be applied to the file, with no record of the writer's
-> > +credentials.  Therefore only privileged users can be trusted to write them, and
-> > +.BR CAP_SETFCAP
-> > +over the user namespace which mounted the filesystem (usually the initial user
-> > +namespace) is required.  This makes it impossible to write file capabilities
-> > +from a user namespaced container, which causes some package updates to fail.
-> > +.PP
-> > +In order to support setting file capabilities in containers, the
-> > +kernel must be able to identify whether the task executing the
-> > +file will be constrained to a subset of the resources over which
-> > +the writer of the file capabilities has privilege.  To this end,
-> > +since 4.13, VFS_CAP_REVISION_3 capabilities store the user ID
-> > +of the root user in the writer's namespace ("nsroot").  Hence the writer only
-> > +requires
-> > +.IP 1.
-> > +.BR CAP_SETFCAP
-> > +over the file inode, meaning the writing task must have
-> > +.BR CAP_SETFCAP
-> > +over a user namespace into which the inode's owning user ID is mapped.
-> > +.PP
-> > +and
-> > +.IP 2.
-> > +.BR CAP_SETFCAP
-> > +over the writer's own user namespace.
+On Tue, Jan 16, 2018 at 04:31:51PM +0000, David Howells wrote:
+> I think that your code isn't quite right.  Looking at the patched code:
 > 
-> I think that the following would be clearer (but technically
-> equivalent): "Hence the writer only requires CAP_SETFCAP over the file
-> inode, meaning that the writing task must have CAP_SETFCAP in its own
-> user namespace and the UID and GID of the file inode must be mapped in
-> the writing task's user namespace.".
-
-Looks good to me.
-
-> > +A VFS_CAP_REVISION_3 file capability will take effect only when run in a user namespace
-> > +whose UID 0 maps to the saved "nsroot", or a descendant of such a namespace.
-> > +.PP
-> > +Users with the required privilege may use
-> > +.BR setxattr(2)
-> > +to request either a VFS_CAP_REVISION_2 or VFS_CAP_REVISION_3 write.
-> > +The kernel will automatically convert a VFS_CAP_REVISION_2 to a
-> > +VFS_CAP_REVISION_3 extended attribute with the "nsroot"
-> > +set to the root user in the writer's user namespace, or, if a VFS_CAP_REVISION_3
-> > +extended attribute is specified, then the kernel will map the
-> > +specified root user ID (which must be a valid user ID mapped in the caller's
-> > +user namespace) into the initial user namespace.
+>     #ifdef CONFIG_KEXEC_SIG
+> 	sig_err = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
+> 					   image->kernel_buf_len);
+> 	if (sig_err)
+> 		pr_debug("kernel signature verification failed.\n");
+> 	else
+> 		pr_debug("kernel signature verification successful.\n");
+>     #endif
 > 
-> Really, "into the initial user namespace"? That may be true for the
-> kernel-internal representation, but the on-disk representation is the
-> mapping into the user namespace that contains the mount namespace into
-> which the file system was mounted, right?
+> 	if (sig_err && IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
+> 		ret = sig_err;
+> 		goto out;
+> 	}
+> 
+> If the signature check fails because the signature is bad, but
+> CONFIG_KEXEC_SIG_FORCE=n then it now won't fail when it should.
+> 
+> If sig_err is -EKEYREJECTED, -EKEYEXPIRED or -EKEYREVOKED then it must fail,
+> even if the signature check isn't forced.
 
-Ah, yes, it is.
+It wasn't my intention to fail in these cases. What additional
+security does this bring? If simply stripping an invalid
+signature from the image before loading will make it pass, why
+should the image with an invalid signature be rejected?
 
->  This would become observable
-> when a file system is mounted in a different namespace than before, or
-> when working with FUSE in a namespace.
+Indeed, the module signing code, the semantics of which I wanted
+to mimic, also won't load modules with invalid signatures. It
+will load modules without any signatuire, it will load  modules
+with the MODULE_SIG_STRING modified and it will load modules with
+either of MODULE_INIT_IGNORE_MODVERSIONS or
+MODULE_INIT_IGNORE_VERMAGIC passed as flags to the finit_module
+syscall. In all these cases, it will taint the kernel, which
+might be something we want for kexec_file_load as well (?).
 
-Yes it would.
+But I don't see why it distinguishes between ENOKEY and other
+errors when it's so easy for the caller to strip the invalid
+signature. And why kexec_file_load should do the same.
 
-Michael, you said you were reworking it, do you mind working this into
-it as well?
+What am I missing?
 
-thanks Jann,
--serge
+Thanks,
+
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
