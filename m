@@ -1,40 +1,35 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 17 Jan 2018 16:34:24 +0000
-Subject: [PATCH 08a/30] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
-	and KEXEC_SIG_FORCE
-In-Reply-To: <20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz>
-References: <20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz>
-	<20180111120157.23qceywzi6omvvkb@dwarf.suse.cz>
-	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
-	<20180111115915.dejachty3l7fwpmf@dwarf.suse.cz>
-	<4582.1516120311@warthog.procyon.org.uk>
-Message-ID: <24618.1516206864@warthog.procyon.org.uk>
+From: tytso@mit.edu (Theodore Ts'o)
+Date: Wed, 17 Jan 2018 13:05:37 -0500
+Subject: [PATCH 3/3] encrypted-keys: document new fscrypt key format
+In-Reply-To: <1516199939.28972.101.camel@andred.net>
+References: <20180110124418.24385-1-git@andred.net>
+	<20180110124418.24385-3-git@andred.net>
+	<20180111044801.GB943@zzz.localdomain>
+	<1516199939.28972.101.camel@andred.net>
+Message-ID: <20180117180537.GB6948@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Jiri Bohac <jbohac@suse.cz> wrote:
-
-> > If sig_err is -EKEYREJECTED, -EKEYEXPIRED or -EKEYREVOKED then it must fail,
-> > even if the signature check isn't forced.
+On Wed, Jan 17, 2018 at 02:38:59PM +0000, Andr? Draszik wrote:
+> > > [...]
+> > 
+> > Please be very clear about exactly what security properties are achieved
+> > by
+> > using encrypted-keys.
 > 
-> It wasn't my intention to fail in these cases. What additional
-> security does this bring? If simply stripping an invalid
-> signature from the image before loading will make it pass, why
-> should the image with an invalid signature be rejected?
+> I've left out all of this in the updated documentation, as any such
+> information should probably be in Documentation/security/keys/trusted-
+> encrypted.rst in the first place.
 
-If there is a signature, then if we're checking signatures, in my opinion we
-should check it - and fail if the signature can't be parsed, is revoked, we
-have a key and the signature doesn't match - or even if we run out of memory.
+Where is this document going to be found / when will it be written?
+It seems really odd to be requesting a do code review when the
+specifications aren't available and/or haven't been written yet.  I
+prefer to review the *design* first, as opposed to trying to both
+review the code and try to guess at the design and review my guess of
+the design at the same time....
 
-The cases for which enforcement is required are when (a) there is no
-signature, (b) we don't support the algorithms used, or (c) we don't have a
-key.
-
-If we're going to completely discard the result, why do your patches even
-bother to check the signature at all?
-
-David
+					- Ted
+				
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
