@@ -1,35 +1,38 @@
-From: tytso@mit.edu (Theodore Ts'o)
-Date: Wed, 17 Jan 2018 13:05:37 -0500
-Subject: [PATCH 3/3] encrypted-keys: document new fscrypt key format
-In-Reply-To: <1516199939.28972.101.camel@andred.net>
-References: <20180110124418.24385-1-git@andred.net>
-	<20180110124418.24385-3-git@andred.net>
-	<20180111044801.GB943@zzz.localdomain>
-	<1516199939.28972.101.camel@andred.net>
-Message-ID: <20180117180537.GB6948@thunk.org>
+From: rppt@linux.vnet.ibm.com (Mike Rapoport)
+Date: Wed, 17 Jan 2018 20:27:11 +0200
+Subject: [PATCH] ima/policy: fix parsing of fsuuid
+Message-ID: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jan 17, 2018 at 02:38:59PM +0000, Andr? Draszik wrote:
-> > > [...]
-> > 
-> > Please be very clear about exactly what security properties are achieved
-> > by
-> > using encrypted-keys.
-> 
-> I've left out all of this in the updated documentation, as any such
-> information should probably be in Documentation/security/keys/trusted-
-> encrypted.rst in the first place.
+The switch to uuid_t invereted the logic of verfication that &entry->fsuuid
+is zero during parsing of "fsuuid=" rule. Instead of making sure the
+&entry->fsuuid field is not attempted to be overwriten, we bail out for
+perfectly correct rule.
 
-Where is this document going to be found / when will it be written?
-It seems really odd to be requesting a do code review when the
-specifications aren't available and/or haven't been written yet.  I
-prefer to review the *design* first, as opposed to trying to both
-review the code and try to guess at the design and review my guess of
-the design at the same time....
+Fixes: 787d8c530af7 ("ima/policy: switch to use uuid_t")
 
-					- Ted
-				
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima_policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index ee4613fa5840..f19f4841a97a 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -743,7 +743,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		case Opt_fsuuid:
+ 			ima_log_string(ab, "fsuuid", args[0].from);
+ 
+-			if (uuid_is_null(&entry->fsuuid)) {
++			if (!uuid_is_null(&entry->fsuuid)) {
+ 				result = -EINVAL;
+ 				break;
+ 			}
+-- 
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
