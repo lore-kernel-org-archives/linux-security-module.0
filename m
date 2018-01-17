@@ -1,37 +1,69 @@
-From: prasannatsmkumar@gmail.com (PrasannaKumar Muralidharan)
-Date: Wed, 17 Jan 2018 19:43:51 +0530
-Subject: [PATCH v3] tpm: use struct tpm_chip for tpm_chip_find_get()
-In-Reply-To: <20171114143238.looouhjk4bp5ko4g@linux.intel.com>
-References: <20171026135453.24672-1-jarkko.sakkinen@linux.intel.com>
-	<20171031200303.GB18578@ziepe.ca>
-	<CANc+2y4si3YW5FXWEdKz0UM5c76MBmHWu4RBF7d2dew9i-Ut+Q@mail.gmail.com>
-	<20171114143238.looouhjk4bp5ko4g@linux.intel.com>
-Message-ID: <CANc+2y4eGcqTpUPwCuYv1RdLXGhHdb3YAOjL-dnsnvQ-O7FVRQ@mail.gmail.com>
+From: git@andred.net (=?ISO-8859-1?Q?Andr=E9?= Draszik)
+Date: Wed, 17 Jan 2018 14:29:29 +0000
+Subject: [PATCH 1/3] encrypted-keys: add fscrypt format support
+In-Reply-To: <20180111040022.GA943@zzz.localdomain>
+References: <20180110124418.24385-1-git@andred.net>
+	<20180111040022.GA943@zzz.localdomain>
+Message-ID: <1516199369.28972.93.camel@andred.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Jarkko,
+Thanks Eric for the review!
 
-On 14 November 2017 at 20:02, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> On Sun, Nov 12, 2017 at 10:53:35AM +0530, PrasannaKumar Muralidharan wrote:
->> Did basic check on tpm rng patch, it works fine. As it depends on this
->> patch this should be working fine too.
->>
->> Tested-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
->>
->> Regards,
->> PrasannaKumar
->
-> Thank you.
->
-> /Jarkko
+On Wed, 2018-01-10 at 20:00 -0800, Eric Biggers wrote:
+> Hi Andr?,
+> 
+> On Wed, Jan 10, 2018 at 12:44:16PM +0000, Andr? Draszik wrote:
+> > This is heavily based on commit 79a73d188726
+> > ("encrypted-keys: add ecryptfs format support").
+> > 
+> > The 'encrypted' key type defines its own payload format which contains a
+> > symmetric key randomly generated that cannot be used directly by the
+> > fscrypt subsystem, because it instead expects an fscrypt_key structure.
+> > 
+> > This patch introduces the new format 'fscrypt' that allows to store an
+> > fscrypt_key structure inside the encrypted key payload containing
+> > a randomly generated symmetric key, as the same for the format 'default'
+> > and 'ecryptfs'.
+> > 
+> > More details about the usage of encrypted keys with the fscrypt
+> > subsystem can be found in the file
+> > 'Documentation/security/keys/fscrypt.rst'.
+> > 
+> 
+> I don't think a new encrypted-key format is needed.  fscrypt really only
+> needs
+> the raw key.
 
-Wondering what happened to this and tpm rng patch. Is there something
-more to do for this to get merged?
+This was actually my original approach, but I thought it might potentially
+be useful to have a new encrypted-key type to be able to do verification of
+parameters (e.g. key size) early.
+Additionally, because the type is then encoded in the blob stored in the
+file system (keyctl pipe), it'd be easy to spot incompatibilities in case
+fscrypt internal data structures change, whereas without one can only rely
+on the name of the key (key description), should such a change ever happen.
 
-Thanks,
-PrasannaKumar
+> Also I have proposed an fscrypt ioctl to add keys to a filesystem-level
+> keyring,
+> and it doesn't use 'struct fscrypt_key' at all:
+> https://marc.info/?l=linux-fsdevel&m=150879505206393
+> 
+> So I think you should just use the "default" encrypted-key format, where
+> the
+> payload is just the raw key.  fscrypt can very easily be updated to work
+> with
+> such keys.
+
+I've done that in v2 - I am generating the fscrypt_key temporarily on the
+fly but haven't gotten rid of fscrypt_key altogether... Is that what you had
+in mind?
+
+I also haven't based it on your work mentioned above, would that be
+preferred?
+
+Cheers,
+Andre'
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
