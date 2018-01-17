@@ -1,66 +1,37 @@
-From: jbohac@suse.cz (Jiri Bohac)
-Date: Tue, 16 Jan 2018 20:39:36 +0100
-Subject: [PATCH 08a/30] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
-	and KEXEC_SIG_FORCE
-In-Reply-To: <4582.1516120311@warthog.procyon.org.uk>
-References: <20180111120157.23qceywzi6omvvkb@dwarf.suse.cz>
-	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
-	<20180111115915.dejachty3l7fwpmf@dwarf.suse.cz>
-	<4582.1516120311@warthog.procyon.org.uk>
-Message-ID: <20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz>
+From: prasannatsmkumar@gmail.com (PrasannaKumar Muralidharan)
+Date: Wed, 17 Jan 2018 19:43:51 +0530
+Subject: [PATCH v3] tpm: use struct tpm_chip for tpm_chip_find_get()
+In-Reply-To: <20171114143238.looouhjk4bp5ko4g@linux.intel.com>
+References: <20171026135453.24672-1-jarkko.sakkinen@linux.intel.com>
+	<20171031200303.GB18578@ziepe.ca>
+	<CANc+2y4si3YW5FXWEdKz0UM5c76MBmHWu4RBF7d2dew9i-Ut+Q@mail.gmail.com>
+	<20171114143238.looouhjk4bp5ko4g@linux.intel.com>
+Message-ID: <CANc+2y4eGcqTpUPwCuYv1RdLXGhHdb3YAOjL-dnsnvQ-O7FVRQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jan 16, 2018 at 04:31:51PM +0000, David Howells wrote:
-> I think that your code isn't quite right.  Looking at the patched code:
-> 
->     #ifdef CONFIG_KEXEC_SIG
-> 	sig_err = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
-> 					   image->kernel_buf_len);
-> 	if (sig_err)
-> 		pr_debug("kernel signature verification failed.\n");
-> 	else
-> 		pr_debug("kernel signature verification successful.\n");
->     #endif
-> 
-> 	if (sig_err && IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
-> 		ret = sig_err;
-> 		goto out;
-> 	}
-> 
-> If the signature check fails because the signature is bad, but
-> CONFIG_KEXEC_SIG_FORCE=n then it now won't fail when it should.
-> 
-> If sig_err is -EKEYREJECTED, -EKEYEXPIRED or -EKEYREVOKED then it must fail,
-> even if the signature check isn't forced.
+Hi Jarkko,
 
-It wasn't my intention to fail in these cases. What additional
-security does this bring? If simply stripping an invalid
-signature from the image before loading will make it pass, why
-should the image with an invalid signature be rejected?
+On 14 November 2017 at 20:02, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Sun, Nov 12, 2017 at 10:53:35AM +0530, PrasannaKumar Muralidharan wrote:
+>> Did basic check on tpm rng patch, it works fine. As it depends on this
+>> patch this should be working fine too.
+>>
+>> Tested-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>>
+>> Regards,
+>> PrasannaKumar
+>
+> Thank you.
+>
+> /Jarkko
 
-Indeed, the module signing code, the semantics of which I wanted
-to mimic, also won't load modules with invalid signatures. It
-will load modules without any signatuire, it will load  modules
-with the MODULE_SIG_STRING modified and it will load modules with
-either of MODULE_INIT_IGNORE_MODVERSIONS or
-MODULE_INIT_IGNORE_VERMAGIC passed as flags to the finit_module
-syscall. In all these cases, it will taint the kernel, which
-might be something we want for kexec_file_load as well (?).
-
-But I don't see why it distinguishes between ENOKEY and other
-errors when it's so easy for the caller to strip the invalid
-signature. And why kexec_file_load should do the same.
-
-What am I missing?
+Wondering what happened to this and tpm rng patch. Is there something
+more to do for this to get merged?
 
 Thanks,
-
--- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
-
+PrasannaKumar
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
