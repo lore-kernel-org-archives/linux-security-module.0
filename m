@@ -1,41 +1,46 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 18 Jan 2018 16:11:00 -0500
-Subject: [PATCH] ima/policy: fix parsing of fsuuid
-In-Reply-To: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
-Message-ID: <1516309860.3772.0.camel@linux.vnet.ibm.com>
+Date: Thu, 18 Jan 2018 16:25:02 -0500
+Subject: [RFC PATCH v2] ima,fuse: introduce new fs flag FS_NO_IMA_CACHE
+In-Reply-To: <20180116151000.443-1-alban@kinvolk.io>
+References: <20180116151000.443-1-alban@kinvolk.io>
+Message-ID: <1516310702.3772.11.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-01-17 at 20:27 +0200, Mike Rapoport wrote:
-> The switch to uuid_t invereted the logic of verfication that &entry->fsuuid
-> is zero during parsing of "fsuuid=" rule. Instead of making sure the
-> &entry->fsuuid field is not attempted to be overwriten, we bail out for
-> perfectly correct rule.
+On Tue, 2018-01-16 at 16:10 +0100, Alban Crequy wrote:
+> From: Alban Crequy <alban@kinvolk.io>
 > 
-> Fixes: 787d8c530af7 ("ima/policy: switch to use uuid_t")
+> This patch forces files to be re-measured, re-appraised and re-audited
+> on file systems with the feature flag FS_NO_IMA_CACHE. In that way,
+> cached integrity results won't be used.
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> For now, this patch adds the new flag only FUSE filesystems. This is
+> needed because the userspace FUSE process can change the underlying
+> files at any time.
 
-Thanks, Mike.
+Thanks, it's working nicely. 
 
-> ---
->  security/integrity/ima/ima_policy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 511fbaabf624..2bd7e73ebc2a 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2075,6 +2075,7 @@ struct file_system_type {
+>  #define FS_BINARY_MOUNTDATA	2
+>  #define FS_HAS_SUBTYPE		4
+>  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+> +#define FS_NO_IMA_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
+>  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+>  	struct dentry *(*mount) (struct file_system_type *, int,
+>  		       const char *, void *);
 > 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index ee4613fa5840..f19f4841a97a 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -743,7 +743,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  		case Opt_fsuuid:
->  			ima_log_string(ab, "fsuuid", args[0].from);
-> 
-> -			if (uuid_is_null(&entry->fsuuid)) {
-> +			if (!uuid_is_null(&entry->fsuuid)) {
->  				result = -EINVAL;
->  				break;
->  			}
+
+Since IMA is going to need another flag, we probably should have a
+consistent prefix (eg. "FS_IMA"). ?Maybe rename this flag to
+FS_IMA_NO_CACHE. ?I'm also wondering if this change should be
+separated from the IMA change.
+
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
