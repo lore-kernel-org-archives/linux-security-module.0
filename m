@@ -1,43 +1,42 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 18 Jan 2018 18:20:13 +0200
-Subject: [PATCH v3] tpm: use struct tpm_chip for tpm_chip_find_get()
-In-Reply-To: <CANc+2y4eGcqTpUPwCuYv1RdLXGhHdb3YAOjL-dnsnvQ-O7FVRQ@mail.gmail.com>
-References: <20171026135453.24672-1-jarkko.sakkinen@linux.intel.com>
-	<20171031200303.GB18578@ziepe.ca>
-	<CANc+2y4si3YW5FXWEdKz0UM5c76MBmHWu4RBF7d2dew9i-Ut+Q@mail.gmail.com>
-	<20171114143238.looouhjk4bp5ko4g@linux.intel.com>
-	<CANc+2y4eGcqTpUPwCuYv1RdLXGhHdb3YAOjL-dnsnvQ-O7FVRQ@mail.gmail.com>
-Message-ID: <20180118162013.luz36mjsswaxaekq@linux.intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 18 Jan 2018 16:11:00 -0500
+Subject: [PATCH] ima/policy: fix parsing of fsuuid
+In-Reply-To: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
+Message-ID: <1516309860.3772.0.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jan 17, 2018 at 07:43:51PM +0530, PrasannaKumar Muralidharan wrote:
-> Hi Jarkko,
+On Wed, 2018-01-17 at 20:27 +0200, Mike Rapoport wrote:
+> The switch to uuid_t invereted the logic of verfication that &entry->fsuuid
+> is zero during parsing of "fsuuid=" rule. Instead of making sure the
+> &entry->fsuuid field is not attempted to be overwriten, we bail out for
+> perfectly correct rule.
 > 
-> On 14 November 2017 at 20:02, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > On Sun, Nov 12, 2017 at 10:53:35AM +0530, PrasannaKumar Muralidharan wrote:
-> >> Did basic check on tpm rng patch, it works fine. As it depends on this
-> >> patch this should be working fine too.
-> >>
-> >> Tested-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-> >>
-> >> Regards,
-> >> PrasannaKumar
-> >
-> > Thank you.
-> >
-> > /Jarkko
+> Fixes: 787d8c530af7 ("ima/policy: switch to use uuid_t")
 > 
-> Wondering what happened to this and tpm rng patch. Is there something
-> more to do for this to get merged?
-> 
-> Thanks,
-> PrasannaKumar
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-Was part of 4.6 PR.
+Thanks, Mike.
 
-/Jarkko
+> ---
+>  security/integrity/ima/ima_policy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index ee4613fa5840..f19f4841a97a 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -743,7 +743,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  		case Opt_fsuuid:
+>  			ima_log_string(ab, "fsuuid", args[0].from);
+> 
+> -			if (uuid_is_null(&entry->fsuuid)) {
+> +			if (!uuid_is_null(&entry->fsuuid)) {
+>  				result = -EINVAL;
+>  				break;
+>  			}
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
