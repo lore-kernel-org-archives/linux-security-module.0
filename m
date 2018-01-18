@@ -1,118 +1,98 @@
-From: mtk.manpages@gmail.com (Michael Kerrisk (man-pages))
-Date: Thu, 18 Jan 2018 00:44:17 +0100
-Subject: [manpages PATCH] capabilities.7: describe namespaced file
-	capabilities
-In-Reply-To: <20180116173803.GA15538@mail.hallyn.com>
-References: <20180109185218.GA21753@mail.hallyn.com>
-	<CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
-	<20180116173803.GA15538@mail.hallyn.com>
-Message-ID: <CAKgNAkhP4d8en-XDXkOqEzy1XpOhuXva6nGxD41URPkiAY0uKw@mail.gmail.com>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Wed, 17 Jan 2018 16:18:41 -0800
+Subject: [PATCH 1/3] encrypted-keys: add fscrypt format support
+In-Reply-To: <1516199369.28972.93.camel@andred.net>
+References: <20180110124418.24385-1-git@andred.net>
+	<20180111040022.GA943@zzz.localdomain>
+	<1516199369.28972.93.camel@andred.net>
+Message-ID: <20180118001841.ntui5j2nsszgy3aj@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 16 January 2018 at 18:38, Serge E. Hallyn <serge@hallyn.com> wrote:
-> Quoting Jann Horn (jannh at google.com):
->> On Tue, Jan 9, 2018 at 7:52 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
->> > Update the capabilities(7)  manpage with a description of the
->> > new-ish namespaced file capability support.
->> >
->> > A note on userspace tools:  since the kernel will automatically
->> > convert between v2 and v3 xattrs, and translate nsroot between
->> > v3 xattrs, we can make do with the current getcap(8) and setcap(8)
->> > tools. I.e. a user on the host can create a transient user namespace
->> > with the appropriate mappings and run setcap(8) there.  The kernel
->> > will automatically write a v3 xattr with the transient namespace's
->> > root user as nsroot.
->> >
->> > Signed-off-by: Serge Hallyn <shallyn@cisco.com>
->> > ---
->> >  man7/capabilities.7 | 44 ++++++++++++++++++++++++++++++++++++++++++++
->> >  1 file changed, 44 insertions(+)
->> >
->> > diff --git a/man7/capabilities.7 b/man7/capabilities.7
->> > index 166eaaf..76e7e02 100644
->> > --- a/man7/capabilities.7
->> > +++ b/man7/capabilities.7
->> > @@ -936,6 +936,50 @@ if we specify the effective flag as being enabled for any capability,
->> >  then the effective flag must also be specified as enabled
->> >  for all other capabilities for which the corresponding permitted or
->> >  inheritable flags is enabled.
->> > +.PP
->> > +Until 4.13, only VFS_CAP_REVISION_2 xattrs were supported.  These store only
->> > +the capabilities to be applied to the file, with no record of the writer's
->> > +credentials.  Therefore only privileged users can be trusted to write them, and
->> > +.BR CAP_SETFCAP
->> > +over the user namespace which mounted the filesystem (usually the initial user
->> > +namespace) is required.  This makes it impossible to write file capabilities
->> > +from a user namespaced container, which causes some package updates to fail.
->> > +.PP
->> > +In order to support setting file capabilities in containers, the
->> > +kernel must be able to identify whether the task executing the
->> > +file will be constrained to a subset of the resources over which
->> > +the writer of the file capabilities has privilege.  To this end,
->> > +since 4.13, VFS_CAP_REVISION_3 capabilities store the user ID
->> > +of the root user in the writer's namespace ("nsroot").  Hence the writer only
->> > +requires
->> > +.IP 1.
->> > +.BR CAP_SETFCAP
->> > +over the file inode, meaning the writing task must have
->> > +.BR CAP_SETFCAP
->> > +over a user namespace into which the inode's owning user ID is mapped.
->> > +.PP
->> > +and
->> > +.IP 2.
->> > +.BR CAP_SETFCAP
->> > +over the writer's own user namespace.
->>
->> I think that the following would be clearer (but technically
->> equivalent): "Hence the writer only requires CAP_SETFCAP over the file
->> inode, meaning that the writing task must have CAP_SETFCAP in its own
->> user namespace and the UID and GID of the file inode must be mapped in
->> the writing task's user namespace.".
->
-> Looks good to me.
->
->> > +A VFS_CAP_REVISION_3 file capability will take effect only when run in a user namespace
->> > +whose UID 0 maps to the saved "nsroot", or a descendant of such a namespace.
->> > +.PP
->> > +Users with the required privilege may use
->> > +.BR setxattr(2)
->> > +to request either a VFS_CAP_REVISION_2 or VFS_CAP_REVISION_3 write.
->> > +The kernel will automatically convert a VFS_CAP_REVISION_2 to a
->> > +VFS_CAP_REVISION_3 extended attribute with the "nsroot"
->> > +set to the root user in the writer's user namespace, or, if a VFS_CAP_REVISION_3
->> > +extended attribute is specified, then the kernel will map the
->> > +specified root user ID (which must be a valid user ID mapped in the caller's
->> > +user namespace) into the initial user namespace.
->>
->> Really, "into the initial user namespace"? That may be true for the
->> kernel-internal representation, but the on-disk representation is the
->> mapping into the user namespace that contains the mount namespace into
->> which the file system was mounted, right?
->
-> Ah, yes, it is.
->
->>  This would become observable
->> when a file system is mounted in a different namespace than before, or
->> when working with FUSE in a namespace.
->
-> Yes it would.
->
-> Michael, you said you were reworking it, do you mind working this into
-> it as well?
+Hi Andr?,
 
-Yes, I'll do that. It may be a couple of weeks before I get some more
-cycles for this, however.
+On Wed, Jan 17, 2018 at 02:29:29PM +0000, Andr? Draszik wrote:
+> Thanks Eric for the review!
+> 
+> On Wed, 2018-01-10 at 20:00 -0800, Eric Biggers wrote:
+> > Hi Andr?,
+> > 
+> > On Wed, Jan 10, 2018 at 12:44:16PM +0000, Andr? Draszik wrote:
+> > > This is heavily based on commit 79a73d188726
+> > > ("encrypted-keys: add ecryptfs format support").
+> > > 
+> > > The 'encrypted' key type defines its own payload format which contains a
+> > > symmetric key randomly generated that cannot be used directly by the
+> > > fscrypt subsystem, because it instead expects an fscrypt_key structure.
+> > > 
+> > > This patch introduces the new format 'fscrypt' that allows to store an
+> > > fscrypt_key structure inside the encrypted key payload containing
+> > > a randomly generated symmetric key, as the same for the format 'default'
+> > > and 'ecryptfs'.
+> > > 
+> > > More details about the usage of encrypted keys with the fscrypt
+> > > subsystem can be found in the file
+> > > 'Documentation/security/keys/fscrypt.rst'.
+> > > 
+> > 
+> > I don't think a new encrypted-key format is needed.  fscrypt really only
+> > needs
+> > the raw key.
+> 
+> This was actually my original approach, but I thought it might potentially
+> be useful to have a new encrypted-key type to be able to do verification of
+> parameters (e.g. key size) early.
+> Additionally, because the type is then encoded in the blob stored in the
+> file system (keyctl pipe), it'd be easy to spot incompatibilities in case
+> fscrypt internal data structures change, whereas without one can only rely
+> on the name of the key (key description), should such a change ever happen.
 
-Thanks,
+'struct fscrypt_key' isn't really useful because it doesn't have any reserved
+fields.  So if we wanted to change the format we'd have to change the key
+description anyway, by setting some flag in the fscrypt_policy and the
+fscrypt_context that indicates a different key description should be used.
 
-Michael
+And fscrypt does verify the key's size before it uses it already.  Sure, it
+might to nice to verify it at add_key() time, but I don't think it's necessary.
 
+> 
+> > Also I have proposed an fscrypt ioctl to add keys to a filesystem-level
+> > keyring,
+> > and it doesn't use 'struct fscrypt_key' at all:
+> > https://marc.info/?l=linux-fsdevel&m=150879505206393
+> > 
+> > So I think you should just use the "default" encrypted-key format, where
+> > the
+> > payload is just the raw key.  fscrypt can very easily be updated to work
+> > with
+> > such keys.
+> 
+> I've done that in v2 - I am generating the fscrypt_key temporarily on the
+> fly but haven't gotten rid of fscrypt_key altogether... Is that what you had
+> in mind?
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+That would work, but we don't actually need the fscrypt_key structure at all.
+Just declare 'const u8 *raw' and 'u32 size' local variables and set them
+appropriately, then pass those into derive_key_aes() (changing its prototype)
+rather than the fscrypt_key.
+
+> 
+> I also haven't based it on your work mentioned above, would that be
+> preferred?
+
+Not really, that patch series ("fscrypt: filesystem-level keyring and v2 policy
+support") is still in RFC status, so we don't know which would be merged first.
+I'm still looking for people with the interest and expertise to review it :-)
+
+That being said, we could choose to support the "encrypted" key type using only
+FS_IOC_ADD_ENCRYPTION_KEY, rather than the current mechanism of
+process-subscribed keyrings.  (With FS_IOC_ADD_ENCRYPTION_KEY, we'd need to use
+a flag in 'struct fscrypt_add_key_args' to indicate that the key should be found
+by searching the current process's keyrings for an "encrypted" key with the
+given description, rather than taking the key directly from the ioctl argument.)
+But it wouldn't be a huge deal to support it both ways.
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
