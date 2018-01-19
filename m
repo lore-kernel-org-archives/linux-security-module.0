@@ -1,82 +1,104 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 19 Jan 2018 11:56:10 -0500
-Subject: [RFC PATCH v2] ima,fuse: introduce new fs flag FS_NO_IMA_CACHE
-In-Reply-To: <CADZs7q4StoPLD4-CSXp5DkgPh29vrZWjayTAYkMAsrDychLOoQ@mail.gmail.com>
-References: <20180116151000.443-1-alban@kinvolk.io>
-	<1516310702.3772.11.camel@linux.vnet.ibm.com>
-	<CADZs7q4StoPLD4-CSXp5DkgPh29vrZWjayTAYkMAsrDychLOoQ@mail.gmail.com>
-Message-ID: <1516380970.3772.112.camel@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 19 Jan 2018 12:06:40 -0500
+Subject: [PATCH] general protection fault in sock_has_perm
+In-Reply-To: <1f185712-9136-be88-02c0-5613a7683619@android.com>
+References: <20180118215853.228182-1-salyzyn@android.com>
+	<CAHC9VhT=tgkKGiQ8CGSw4eBY+crc3iBdkxWGF4M6DoMT4VDGYg@mail.gmail.com>
+	<1f185712-9136-be88-02c0-5613a7683619@android.com>
+Message-ID: <CAHC9VhQ=ik+TGX-MfVe4a17sHCBHVQ88HM6ZV4qQAmy8u+5eRg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-01-19 at 11:35 +0100, Alban Crequy wrote:
-> On Thu, Jan 18, 2018 at 10:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > On Tue, 2018-01-16 at 16:10 +0100, Alban Crequy wrote:
-> >> From: Alban Crequy <alban@kinvolk.io>
-> >>
-> >> This patch forces files to be re-measured, re-appraised and re-audited
-> >> on file systems with the feature flag FS_NO_IMA_CACHE. In that way,
-> >> cached integrity results won't be used.
-> >>
-> >> For now, this patch adds the new flag only FUSE filesystems. This is
-> >> needed because the userspace FUSE process can change the underlying
-> >> files at any time.
-> >
-> > Thanks, it's working nicely.
-> >
-> >
-> >> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> >> index 511fbaabf624..2bd7e73ebc2a 100644
-> >> --- a/include/linux/fs.h
-> >> +++ b/include/linux/fs.h
-> >> @@ -2075,6 +2075,7 @@ struct file_system_type {
-> >>  #define FS_BINARY_MOUNTDATA  2
-> >>  #define FS_HAS_SUBTYPE               4
-> >>  #define FS_USERNS_MOUNT              8       /* Can be mounted by userns root */
-> >> +#define FS_NO_IMA_CACHE              16      /* Force IMA to re-measure, re-appraise, re-audit files */
-> >>  #define FS_RENAME_DOES_D_MOVE        32768   /* FS will handle d_move() during rename() internally. */
-> >>       struct dentry *(*mount) (struct file_system_type *, int,
-> >>                      const char *, void *);
-> >>
-> >
-> > Since IMA is going to need another flag, we probably should have a
-> > consistent prefix (eg. "FS_IMA").  Maybe rename this flag to
-> > FS_IMA_NO_CACHE.
-> 
-> Ok, I can rename it.
-> 
-> Is there a discussion about the other IMA flag?
+On Fri, Jan 19, 2018 at 10:49 AM, Mark Salyzyn <salyzyn@android.com> wrote:
+> On 01/18/2018 02:36 PM, Paul Moore wrote:
+>> On Thu, Jan 18, 2018 at 4:58 PM, Mark Salyzyn <salyzyn@android.com> wrote:
+>>> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+>>> CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b #28
+>>> . . .
+>>> [<ffffffff81b6a19d>] selinux_socket_setsockopt+0x4d/0x80
+>>> security/selinux/hooks.c:4338
+>>> [<ffffffff81b4873d>] security_socket_setsockopt+0x7d/0xb0
+>>> security/security.c:1257
+>>> [<ffffffff82df1ac8>] SYSC_setsockopt net/socket.c:1757 [inline]
+>>> [<ffffffff82df1ac8>] SyS_setsockopt+0xe8/0x250 net/socket.c:1746
+>>> [<ffffffff83776499>] entry_SYSCALL_64_fastpath+0x16/0x92
+>>> Code: c2 42 9b b6 81 be 01 00 00 00 48 c7 c7 a0 cb 2b 84 e8
+>>> f7 2f 6d ff 49 8d 7d 10 48 b8 00 00 00 00 00 fc ff df 48 89
+>>> fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 83 01 00
+>>> 00 41 8b 75 10 31
+>>> RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0
+>>> security/selinux/hooks.c:4069
+>>> RSP <ffff8800b5957ce0>
+>>> ---[ end trace 7b5aaf788fef6174 ]---
+>>>
+>>> In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
+>>> flag") and all the associated infrastructure changes to take advantage
+>>> of a RCU grace period before freeing, there is a heightened
+>>> possibility that a security check is performed while an ill-timed
+>>> setsockopt call races in from user space.  It then is prudent to null
+>>> check sk_security, and if the case, reject the permissions.
+>>>
+>>> This adjustment is orthogonal to infrastructure improvements that may
+>>> nullify the needed check, but should be added as good code hygiene.
+>>
+>> I'm skeptical that this is the full solution for systems that lack the
+>> SOCK_RCU_FREE protection.  Is this really limited to just
+>> setsockopt()?
+>
+> Maybe overstepped in my analysis and assumptions?
+>
+> This is a result of a fuzzer hitting an android 4.4 KASAN kernel. We (so
+> far) have _not_ seen this with an android 4.9 KASAN kernel (which has the
+> SOCK_RCU_FREE adjustments). There is no standalone duplication or PoC
+> _except_ via the fuzzer. The rest of the statements stands based on this
+> tidbit (statements of general good code hygiene, not 100% sure SOCK_RCU_FREE
+> usage is completely covered, KISS solution etc).
+>
+> To be honest, yes, this may be a layer in the onion (swat this NULL check
+> does not by itself solve the _problem_), I'd prefer kernel continuing on in
+> a rational manner rather than panic ... and I have a gut feeling this could
+> be a gratuitous NULL check if all the bugs in the network layer have been
+> solved <that may be sarcasm, I can not tell>. Programming to solve a problem
+> with one's gut is not a good practice, but hygiene is. This is 10
+> characters, and an estimated 1.2ns of added hygiene.
+>
+> No, I do not think this is limited to setsockopt, but would be willing to
+> believe a multithreaded attack of any socket functions or ioctl would drop
+> down to the check with sock_has_perm at possibly the wrong time in socket
+> teardown.
 
-There's not a single thread that I can point to, but more of an on
-going discussion as to what it means for a filesystem to support IMA
-and how that decision is made.
+I'm not necessarily opposed to adding additional safety checks, if
+warranted, but I am opposed to adding a single check and declaring
+mission accomplished when there is a suspicion that additional checks
+may be needed.
 
-- Initial measuring, verifying, auditing files
-- Safely detecting when a file changes
-- Not applicable/supported
+Perhaps in this particular case it really is only setsockopt(), but
+from what I can tell from your comments and the SOCK_RCU_FREE commit
+message it would appear that there is a race condition here between a
+socket's lifetime and its visibility to userspace.  Assuming this is
+the core problem you are trying to workaround with this patch, I
+suspect that more than just the SELinux/LSM hook for setsockopt() is
+affected; before merging this patch I would like to see a better
+investigation into all the socket related SELinux/LSM hooks to see if
+they suffer from the same problem.
 
-With Sascha Hauer's patch "ima: Use i_version only when filesystem
-supports it" and this patch, the second issue is addressed, but will
-cause files to be re-validated, perhaps unnecessarily, impacting
-performance.
+For example, if we stick with the setsockopt() syscall and the
+SELinux/LSM hook we can see that there are two functions which access
+the socket struct: sock_has_perm() and
+selinux_netlbl_socket_setsockopt().  While you did add the safety
+check to sock_has_perm() you neglected to add a check to
+selinux_netlbl_socket_setsockopt(), I'm guessing because the Android
+kernels probably do not enable CONFIG_NETLABEL.  Looking beyond
+setsockopt() into other socket related syscalls I see a number of
+hooks which should have similar protections.
 
-Some filesystems should not be evaluated, such as pseudo filesystems
-(eg. cgroups, sysfs, devpts, pstorefs, efivarfs, debugfs, selinux,
-smack). ?Instead of defining a flag indicating whether or not IMA is
-applicable/supported, we should define a new flag, indicating whether
-it is a pseudo filesystem. ?This would eliminate a large portion of at
-least the builtin IMA policy rules.
+When you see problems like this, please do the investigation to make
+sure you are fixing everything like it and not just the one instance
+that blew up.
 
-> > I'm also wondering if this change should be
-> > separated from the IMA change.
-> 
-> Do you mean one patch for adding the flag and the IMA change and
-> another patch for using the flag in FUSE?
-
-The flag and FUSE usage of the flag, separately from IMA.
-
-Mimi
-
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
