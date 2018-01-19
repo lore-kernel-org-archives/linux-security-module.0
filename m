@@ -1,74 +1,68 @@
-From: jbohac@suse.cz (Jiri Bohac)
-Date: Fri, 19 Jan 2018 13:54:25 +0100
-Subject: [PATCH 08a/30] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
-	and KEXEC_SIG_FORCE
-In-Reply-To: <24618.1516206864@warthog.procyon.org.uk>
-References: <20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz>
-	<20180111120157.23qceywzi6omvvkb@dwarf.suse.cz>
-	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
-	<20180111115915.dejachty3l7fwpmf@dwarf.suse.cz>
-	<4582.1516120311@warthog.procyon.org.uk>
-	<24618.1516206864@warthog.procyon.org.uk>
-Message-ID: <20180119125425.l72meyyc2qtrriwe@dwarf.suse.cz>
+From: salyzyn@android.com (Mark Salyzyn)
+Date: Fri, 19 Jan 2018 07:49:58 -0800
+Subject: [PATCH] general protection fault in sock_has_perm
+In-Reply-To: <CAHC9VhT=tgkKGiQ8CGSw4eBY+crc3iBdkxWGF4M6DoMT4VDGYg@mail.gmail.com>
+References: <20180118215853.228182-1-salyzyn@android.com>
+	<CAHC9VhT=tgkKGiQ8CGSw4eBY+crc3iBdkxWGF4M6DoMT4VDGYg@mail.gmail.com>
+Message-ID: <1f185712-9136-be88-02c0-5613a7683619@android.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jan 17, 2018 at 04:34:24PM +0000, David Howells wrote:
-> Jiri Bohac <jbohac@suse.cz> wrote:
-> 
-> > > If sig_err is -EKEYREJECTED, -EKEYEXPIRED or -EKEYREVOKED then it must fail,
-> > > even if the signature check isn't forced.
-> > 
-> > It wasn't my intention to fail in these cases. What additional
-> > security does this bring? If simply stripping an invalid
-> > signature from the image before loading will make it pass, why
-> > should the image with an invalid signature be rejected?
-> 
-> If there is a signature, then if we're checking signatures, in my opinion we
-> should check it - and fail if the signature can't be parsed, is revoked, we
-> have a key and the signature doesn't match - or even if we run out of memory.
+On 01/18/2018 02:36 PM, Paul Moore wrote:
+> On Thu, Jan 18, 2018 at 4:58 PM, Mark Salyzyn <salyzyn@android.com> wrote:
+>> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+>> CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b #28
+>> . . .
+>> [<ffffffff81b6a19d>] selinux_socket_setsockopt+0x4d/0x80 security/selinux/hooks.c:4338
+>> [<ffffffff81b4873d>] security_socket_setsockopt+0x7d/0xb0 security/security.c:1257
+>> [<ffffffff82df1ac8>] SYSC_setsockopt net/socket.c:1757 [inline]
+>> [<ffffffff82df1ac8>] SyS_setsockopt+0xe8/0x250 net/socket.c:1746
+>> [<ffffffff83776499>] entry_SYSCALL_64_fastpath+0x16/0x92
+>> Code: c2 42 9b b6 81 be 01 00 00 00 48 c7 c7 a0 cb 2b 84 e8
+>> f7 2f 6d ff 49 8d 7d 10 48 b8 00 00 00 00 00 fc ff df 48 89
+>> fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 83 01 00
+>> 00 41 8b 75 10 31
+>> RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
+>> RSP <ffff8800b5957ce0>
+>> ---[ end trace 7b5aaf788fef6174 ]---
+>>
+>> In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
+>> flag") and all the associated infrastructure changes to take advantage
+>> of a RCU grace period before freeing, there is a heightened
+>> possibility that a security check is performed while an ill-timed
+>> setsockopt call races in from user space.  It then is prudent to null
+>> check sk_security, and if the case, reject the permissions.
+>>
+>> This adjustment is orthogonal to infrastructure improvements that may
+>> nullify the needed check, but should be added as good code hygiene.
+> I'm skeptical that this is the full solution for systems that lack the
+> SOCK_RCU_FREE protection.  Is this really limited to just
+> setsockopt()?
+Maybe overstepped in my analysis and assumptions?
 
-Key verification may and will fail for lots of reasons which is
-just going to make a user's life harder. E.g. you want to kexec
-an old kernel with an expired key. Or your date is just wrong and
-you get -EKEYEXPIRED. And you don't care about the signing at
-all; it's just compiled in because your distro also needs to work
-with secureboot. As a user, you will have to debug what's wrong
-for no good reason. And an actual attacker will just strip the
-signature off the image and load it.
+This is a result of a fuzzer hitting an android 4.4 KASAN kernel. We (so 
+far) have _not_ seen this with an android 4.9 KASAN kernel (which has 
+the SOCK_RCU_FREE adjustments). There is no standalone duplication or 
+PoC _except_ via the fuzzer. The rest of the statements stands based on 
+this tidbit (statements of general good code hygiene, not 100% sure 
+SOCK_RCU_FREE usage is completely covered, KISS solution etc).
 
-This makes no sense.
- 
-> The cases for which enforcement is required are when (a) there is no
-> signature, (b) we don't support the algorithms used, or (c) we don't have a
-> key.
-> 
-> If we're going to completely discard the result, why do your patches even
-> bother to check the signature at all?
+To be honest, yes, this may be a layer in the onion (swat this NULL 
+check does not by itself solve the _problem_), I'd prefer kernel 
+continuing on in a rational manner rather than panic ... and I have a 
+gut feeling this could be a gratuitous NULL check if all the bugs in the 
+network layer have been solved <that may be sarcasm, I can not tell>. 
+Programming to solve a problem with one's gut is not a good practice, 
+but hygiene is. This is 10 characters, and an estimated 1.2ns of added 
+hygiene.
 
-I thought that the debug message might be useful. E.g. when
-you're testing a kernel and you see "kernel signature
-verification failed" in dmesg then you know this would fail on a
-system with secure boot. 
+No, I do not think this is limited to setsockopt, but would be willing 
+to believe a multithreaded attack of any socket functions or ioctl would 
+drop down to the check with sock_has_perm at possibly the wrong time in 
+socket teardown.
 
-But if ignoring the return code seems like too bad a thing, I would
-rather skip the signature checking if it's not going to be
-enforced with lockdown or CONFIG_KEXEC_SIG_FORCE.
+Sincerely -- Mark Salyzyn
 
-Also, only now I found that some of the error codes the crypto
-code returns yield really confusing messages (e.g.
-kexec_file_load of an unsigned kernel returns -ELIBBAD which
-makes kexec exit with "kexec_file_load failed: Accessing a
-corrupted shared library").
-Maybe the error code could be unified to -EKEYREJECTED for all
-sorts of key verification failures?
-
-Thanks,
-
--- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
