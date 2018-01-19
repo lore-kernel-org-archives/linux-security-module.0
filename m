@@ -1,108 +1,62 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Fri, 19 Jan 2018 12:19:46 -0500
+From: salyzyn@android.com (Mark Salyzyn)
+Date: Fri, 19 Jan 2018 09:34:36 -0800
 Subject: [PATCH] general protection fault in sock_has_perm
-In-Reply-To: <20180118215853.228182-1-salyzyn@android.com>
+In-Reply-To: <1516382386.2560.11.camel@tycho.nsa.gov>
 References: <20180118215853.228182-1-salyzyn@android.com>
-Message-ID: <1516382386.2560.11.camel@tycho.nsa.gov>
+	<1516382386.2560.11.camel@tycho.nsa.gov>
+Message-ID: <fe1be13d-3242-8f60-aa53-71e2548b7858@android.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2018-01-18 at 13:58 -0800, Mark Salyzyn wrote:
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b
-> #28
-> task: ffff8801d1095f00 task.stack: ffff8800b5950000
-> RIP: 0010:[<ffffffff81b69b7e>]  [<ffffffff81b69b7e>]
-> sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
-> RSP: 0018:ffff8800b5957ce0  EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: 1ffff10016b2af9f RCX: ffffffff81b69b51
-> RDX: 0000000000000002 RSI: 0000000000000000 RDI: 0000000000000010
-> RBP: ffff8800b5957de0 R08: 0000000000000001 R09: 0000000000000001
-> R10: 0000000000000000 R11: 1ffff10016b2af68 R12: ffff8800b5957db8
-> R13: 0000000000000000 R14: ffff8800b7259f40 R15: 00000000000000d7
-> FS:  00007f72f5ae2700(0000) GS:ffff8801db300000(0000)
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000a2fa38 CR3: 00000001d7980000 CR4: 0000000000160670
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Stack:
->  ffffffff81b69a1f ffff8800b5957d58 00008000b5957d30 0000000041b58ab3
->  ffffffff83fc82f2 ffffffff81b69980 0000000000000246 ffff8801d1096770
->  ffff8801d3165668 ffffffff8157844b ffff8801d1095f00
->  ffff880000000001
-> Call Trace:
-> [<ffffffff81b6a19d>] selinux_socket_setsockopt+0x4d/0x80
-> security/selinux/hooks.c:4338
-> [<ffffffff81b4873d>] security_socket_setsockopt+0x7d/0xb0
-> security/security.c:1257
-> [<ffffffff82df1ac8>] SYSC_setsockopt net/socket.c:1757 [inline]
-> [<ffffffff82df1ac8>] SyS_setsockopt+0xe8/0x250 net/socket.c:1746
-> [<ffffffff83776499>] entry_SYSCALL_64_fastpath+0x16/0x92
-> Code: c2 42 9b b6 81 be 01 00 00 00 48 c7 c7 a0 cb 2b 84 e8
-> f7 2f 6d ff 49 8d 7d 10 48 b8 00 00 00 00 00 fc ff df 48 89
-> fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 83 01 00
-> 00 41 8b 75 10 31
-> RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0
-> security/selinux/hooks.c:4069
-> RSP <ffff8800b5957ce0>
-> ---[ end trace 7b5aaf788fef6174 ]---
-> 
-> In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
-> flag") and all the associated infrastructure changes to take
-> advantage
-> of a RCU grace period before freeing, there is a heightened
-> possibility that a security check is performed while an ill-timed
-> setsockopt call races in from user space.  It then is prudent to null
-> check sk_security, and if the case, reject the permissions.
-> 
-> This adjustment is orthogonal to infrastructure improvements that may
-> nullify the needed check, but should be added as good code hygiene.
-> 
-> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Eric Paris <eparis@parisplace.org>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: selinux at tycho.nsa.gov
-> Cc: linux-security-module at vger.kernel.org
-> Cc: linux-kernel at vger.kernel.org
-> Cc: stable at vger.kernel.org
-> ---
-> This patch should be applied to all stable trees (author wants
-> minimum of 3.18, 4.4, 4.9 and 4.14)
-> 
->  security/selinux/hooks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 8644d864e3c1..95d7c8143373 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4342,7 +4342,7 @@ static int sock_has_perm(struct sock *sk, u32
-> perms)
->  	struct common_audit_data ad;
->  	struct lsm_network_audit net = {0,};
->  
-> -	if (sksec->sid == SECINITSID_KERNEL)
-> +	if (!sksec || sksec->sid == SECINITSID_KERNEL)
->  		return 0;
+On 01/19/2018 09:19 AM, Stephen Smalley wrote:
+> On Thu, 2018-01-18 at 13:58 -0800, Mark Salyzyn wrote:
+>> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+>> . . .
+>>
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index 8644d864e3c1..95d7c8143373 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -4342,7 +4342,7 @@ static int sock_has_perm(struct sock *sk, u32
+>> perms)
+>>   	struct common_audit_data ad;
+>>   	struct lsm_network_audit net = {0,};
+>>   
+>> -	if (sksec->sid == SECINITSID_KERNEL)
+>> +	if (!sksec || sksec->sid == SECINITSID_KERNEL)
+>>   		return 0;
+> The patch description says "null check the sk_security, and if the
+> case, reject the permissions."  The patch code instead has it return
+> 0/success, i.e. permission granted.  Which one is correct?
+<oops> -EACCESS would be advised, yes. THANKS.
 
-The patch description says "null check the sk_security, and if the
-case, reject the permissions."  The patch code instead has it return
-0/success, i.e. permission granted.  Which one is correct?  If we
-return -EACCES, then we might break userspace; if we return 0, we might
-be allowing an operation that should have been denied.  Both seem like
-losing propositions.
+<please remove my mistake from my permanent record ;-} >
+> If we
+> return -EACCES, then we might break userspace; if we return 0, we might
+> be allowing an operation that should have been denied.  Both seem like
+> losing propositions.
+if the sk_security is NULL, it is in-effect a form of UAF, so kernel 
+_and_ user space is already 'sick'. I think it is a significantly larger 
+losing proposition to panic the kernel? Reporting -EACCESS (as was 
+proper) is a error propagation way to let user space deal with the 
+erroneous condition.
 
-Could we instead have selinux_sk_free_security() defer freeing of the
-sock security blob to a call_rcu(), like we did for
-inode_free_security, or change the caller of it to not free it until
-the sock is truly freed?
+>
+> Could we instead have selinux_sk_free_security() defer freeing of the
+> sock security blob to a call_rcu(), like we did for
+> inode_free_security, or change the caller of it to not free it until
+> the sock is truly freed?
 
->  
->  	ad.type = LSM_AUDIT_DATA_NET;
+AFAIK the upper issue is the premature closing on an RCU protected 
+object, and the _right_ answer is that its call should have been 
+properly deferred to a synchronization or grace period. Having 
+sk_free_security be deferred by the grace period runs the risk that it 
+is in a race with the proper deletion of a languishing read object in an 
+RCU. It is a bug in the upper layers. My proposal in this KISS stability 
+patch is to make security deal with those bugs gracefully until all 
+those issues are fixed (in ToT).
+
+-- Mark
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
