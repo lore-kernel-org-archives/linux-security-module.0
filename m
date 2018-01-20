@@ -1,99 +1,55 @@
-From: salyzyn@android.com (Mark Salyzyn)
-Date: Fri, 19 Jan 2018 09:46:55 -0800
-Subject: [PATCH] general protection fault in sock_has_perm
-In-Reply-To: <CAHC9VhQ=ik+TGX-MfVe4a17sHCBHVQ88HM6ZV4qQAmy8u+5eRg@mail.gmail.com>
-References: <20180118215853.228182-1-salyzyn@android.com>
-	<CAHC9VhT=tgkKGiQ8CGSw4eBY+crc3iBdkxWGF4M6DoMT4VDGYg@mail.gmail.com>
-	<1f185712-9136-be88-02c0-5613a7683619@android.com>
-	<CAHC9VhQ=ik+TGX-MfVe4a17sHCBHVQ88HM6ZV4qQAmy8u+5eRg@mail.gmail.com>
-Message-ID: <0cab9b55-b21e-48b6-82f3-3750f470ea5b@android.com>
+From: prasannatsmkumar@gmail.com (PrasannaKumar Muralidharan)
+Date: Sat, 20 Jan 2018 13:30:12 +0530
+Subject: [PATCH v3] tpm: use struct tpm_chip for tpm_chip_find_get()
+In-Reply-To: <20180118162013.luz36mjsswaxaekq@linux.intel.com>
+References: <20171026135453.24672-1-jarkko.sakkinen@linux.intel.com>
+	<20171031200303.GB18578@ziepe.ca>
+	<CANc+2y4si3YW5FXWEdKz0UM5c76MBmHWu4RBF7d2dew9i-Ut+Q@mail.gmail.com>
+	<20171114143238.looouhjk4bp5ko4g@linux.intel.com>
+	<CANc+2y4eGcqTpUPwCuYv1RdLXGhHdb3YAOjL-dnsnvQ-O7FVRQ@mail.gmail.com>
+	<20180118162013.luz36mjsswaxaekq@linux.intel.com>
+Message-ID: <CANc+2y4XFEYP+5_NpDMY_nOFE+tzgZ1F8H6a6L5apZ+=_G+Wcg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 01/19/2018 09:06 AM, Paul Moore wrote:
-> On Fri, Jan 19, 2018 at 10:49 AM, Mark Salyzyn <salyzyn@android.com> wrote:
->> On 01/18/2018 02:36 PM, Paul Moore wrote:
->>> On Thu, Jan 18, 2018 at 4:58 PM, Mark Salyzyn <salyzyn@android.com> wrote:
->>>> general protection fault: 0000 [#1] PREEMPT SMP KASAN
->>>> CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b #28
->>>> . . .
->>>> [<ffffffff81b6a19d>] selinux_socket_setsockopt+0x4d/0x80
->>>> security/selinux/hooks.c:4338
->>>> [<ffffffff81b4873d>] security_socket_setsockopt+0x7d/0xb0
->>>> security/security.c:1257
->>>> [<ffffffff82df1ac8>] SYSC_setsockopt net/socket.c:1757 [inline]
->>>> [<ffffffff82df1ac8>] SyS_setsockopt+0xe8/0x250 net/socket.c:1746
->>>> [<ffffffff83776499>] entry_SYSCALL_64_fastpath+0x16/0x92
->>>> Code: c2 42 9b b6 81 be 01 00 00 00 48 c7 c7 a0 cb 2b 84 e8
->>>> f7 2f 6d ff 49 8d 7d 10 48 b8 00 00 00 00 00 fc ff df 48 89
->>>> fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 83 01 00
->>>> 00 41 8b 75 10 31
->>>> RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0
->>>> security/selinux/hooks.c:4069
->>>> RSP <ffff8800b5957ce0>
->>>> ---[ end trace 7b5aaf788fef6174 ]---
->>>>
->>>> In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
->>>> flag") and all the associated infrastructure changes to take advantage
->>>> of a RCU grace period before freeing, there is a heightened
->>>> possibility that a security check is performed while an ill-timed
->>>> setsockopt call races in from user space.  It then is prudent to null
->>>> check sk_security, and if the case, reject the permissions.
->>>>
->>>> This adjustment is orthogonal to infrastructure improvements that may
->>>> nullify the needed check, but should be added as good code hygiene.
->>> I'm skeptical that this is the full solution for systems that lack the
->>> SOCK_RCU_FREE protection.  Is this really limited to just
->>> setsockopt()?
->> Maybe overstepped in my analysis and assumptions?
+Hi Jarkko,
+
+On 18 January 2018 at 21:50, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Wed, Jan 17, 2018 at 07:43:51PM +0530, PrasannaKumar Muralidharan wrote:
+>> Hi Jarkko,
 >>
->> This is a result of a fuzzer hitting an android 4.4 KASAN kernel. We (so
->> far) have _not_ seen this with an android 4.9 KASAN kernel (which has the
->> SOCK_RCU_FREE adjustments). There is no standalone duplication or PoC
->> _except_ via the fuzzer. The rest of the statements stands based on this
->> tidbit (statements of general good code hygiene, not 100% sure SOCK_RCU_FREE
->> usage is completely covered, KISS solution etc).
+>> On 14 November 2017 at 20:02, Jarkko Sakkinen
+>> <jarkko.sakkinen@linux.intel.com> wrote:
+>> > On Sun, Nov 12, 2017 at 10:53:35AM +0530, PrasannaKumar Muralidharan wrote:
+>> >> Did basic check on tpm rng patch, it works fine. As it depends on this
+>> >> patch this should be working fine too.
+>> >>
+>> >> Tested-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>> >>
+>> >> Regards,
+>> >> PrasannaKumar
+>> >
+>> > Thank you.
+>> >
+>> > /Jarkko
 >>
->> To be honest, yes, this may be a layer in the onion (swat this NULL check
->> does not by itself solve the _problem_), I'd prefer kernel continuing on in
->> a rational manner rather than panic ... and I have a gut feeling this could
->> be a gratuitous NULL check if all the bugs in the network layer have been
->> solved <that may be sarcasm, I can not tell>. Programming to solve a problem
->> with one's gut is not a good practice, but hygiene is. This is 10
->> characters, and an estimated 1.2ns of added hygiene.
+>> Wondering what happened to this and tpm rng patch. Is there something
+>> more to do for this to get merged?
 >>
->> No, I do not think this is limited to setsockopt, but would be willing to
->> believe a multithreaded attack of any socket functions or ioctl would drop
->> down to the check with sock_has_perm at possibly the wrong time in socket
->> teardown.
-> I'm not necessarily opposed to adding additional safety checks, if
-> warranted, but I am opposed to adding a single check and declaring
-> mission accomplished when there is a suspicion that additional checks
-> may be needed.
+>> Thanks,
+>> PrasannaKumar
 >
-> Perhaps in this particular case it really is only setsockopt(), but
-> from what I can tell from your comments and the SOCK_RCU_FREE commit
-> message it would appear that there is a race condition here between a
-> socket's lifetime and its visibility to userspace.
+> Was part of 4.6 PR.
+>
+> /Jarkko
 
-I will need to fix my comments to be clearer ... (besides, I got the 
-error return wrong, so I will have to respin it anyways).
+Ah, I see.
 
-In later kernels SOCK_RCU_FREE _appears_ to fix the race condition. In 
-earlier kernels there is _no_ SOCK_RCU_FREE infrastructure, and thus the 
-race condition exists. That race conditions _should_ have been solved in 
-ToT. I have evaluated that porting all the SOCK_RCU_FREE refactoring may 
-be too risky an endeavor for stable kernels though (maybe I am wrong 
-about that? The author of those fixes edumazet at google.com has been 
-notified, have yet to receive a response).
+PS: I think you meant 4.16.
 
-Because I can not confirm that SOCK_RCU_FREE solves the problem, I am 
-making a case for this to land in 4.9+ to ToT kernels as good hygiene. 
-But maybe this should only go in 4.4- stable ...
-
--- Mark
-
-
+Thanks,
+PrasannaKumar
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
