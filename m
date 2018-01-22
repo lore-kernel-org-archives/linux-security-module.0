@@ -1,20 +1,86 @@
 From: alban.crequy@gmail.com (Alban Crequy)
-Date: Mon, 22 Jan 2018 17:24:51 +0100
-Subject: [RFC PATCH v3 1/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+Date: Mon, 22 Jan 2018 17:24:52 +0100
+Subject: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with
+	FS_IMA_NO_CACHE
 In-Reply-To: <20180122162452.8756-1-alban@kinvolk.io>
 References: <20180122162452.8756-1-alban@kinvolk.io>
-Message-ID: <20180122162452.8756-2-alban@kinvolk.io>
+Message-ID: <20180122162452.8756-3-alban@kinvolk.io>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Alban Crequy <alban@kinvolk.io>
 
-This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
-re-appraised and re-audited each time. Cached integrity results should
-not be used.
+This patch forces files to be re-measured, re-appraised and re-audited
+on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
+cached integrity results won't be used.
 
-It is useful in FUSE because the userspace FUSE process can change the
-underlying files at any time without notifying the kernel.
+How to test this:
+
+The test I did was using a patched version of the memfs FUSE driver
+[1][2] and two very simple "hello-world" programs [4] (prog1 prints
+"hello world: 1" and prog2 prints "hello world: 2").
+
+I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
+check the sha1 hash in
+"/sys/kernel/security/ima/ascii_runtime_measurements".
+
+My patch on the memfs FUSE driver added a backdoor command to serve
+prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
+exec prog1 and get it to print "hello world: 2" without ever replacing
+the file via the VFS, so the kernel is not aware of the change.
+
+The test was done using the branch "alban/fuse-flag-ima-nocache-v3" [3].
+
+Step by step test procedure:
+
+1. Mount the memfs FUSE using [2]:
+rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
+
+2. Copy prog1 and prog2 using [4]
+cp prog1 /mnt/memfs/prog1
+cp prog2 /mnt/memfs/prog2
+
+3. Lookup the files and let the FUSE driver to keep the handles open:
+dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
+dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
+
+4. Check the 2 programs work correctly:
+$ /mnt/memfs/prog1
+hello world: 1
+$ /mnt/memfs/prog2
+hello world: 2
+
+5. Check the measurements for prog1 and prog2:
+$ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
+                | grep /mnt/memfs/prog
+10 [...] ima-ng sha1:ac14c9268cd2[...] /mnt/memfs/prog1
+10 [...] ima-ng sha1:799cb5d1e06d[...] /mnt/memfs/prog2
+
+6. Use the backdoor command in my patched memfs to redirect file
+operations on file handle 3 to file handle 2:
+rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
+
+7. Check how the FUSE driver serves different content for the files:
+$ /mnt/memfs/prog1
+hello world: 2
+$ /mnt/memfs/prog2
+hello world: 2
+
+8. Check the measurements:
+sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
+                | grep /mnt/memfs/prog
+
+Without the patch, there are no new measurements, despite the FUSE
+driver having served different executables.
+
+With the patch, I can see additional measurements for prog1 and prog2
+with the hashes reversed when the FUSE driver served the alternative
+content.
+
+[1] https://github.com/bbengfort/memfs
+[2] https://github.com/kinvolk/memfs/commits/alban/switch-files
+[3] https://github.com/kinvolk/linux/commits/alban/fuse-flag-ima-nocache-v3
+[4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
 
 Cc: linux-kernel at vger.kernel.org
 Cc: linux-integrity at vger.kernel.org
@@ -31,35 +97,52 @@ Cc: Christoph Hellwig <hch@infradead.org>
 Tested-by: Dongsu Park <dongsu@kinvolk.io>
 Signed-off-by: Alban Crequy <alban@kinvolk.io>
 ---
- fs/fuse/inode.c    | 2 +-
- include/linux/fs.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_main.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 624f18bbfd2b..0a9e516461d5 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
- static struct file_system_type fuse_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "fuse",
--	.fs_flags	= FS_HAS_SUBTYPE,
-+	.fs_flags	= FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
- 	.mount		= fuse_mount,
- 	.kill_sb	= fuse_kill_sb_anon,
- };
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 511fbaabf624..ced841ba6701 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2075,6 +2075,7 @@ struct file_system_type {
- #define FS_BINARY_MOUNTDATA	2
- #define FS_HAS_SUBTYPE		4
- #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-+#define FS_IMA_NO_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
- 	struct dentry *(*mount) (struct file_system_type *, int,
- 		       const char *, void *);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 6d78cb26784d..8870a7bbe9b9 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/xattr.h>
+ #include <linux/ima.h>
++#include <linux/fs.h>
+ 
+ #include "ima.h"
+ 
+@@ -228,9 +229,28 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+ 				 IMA_ACTION_FLAGS);
+ 
+-	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
+-		/* reset all flags if ima_inode_setxattr was called */
++	/*
++	 * Reset the measure, appraise and audit cached flags either if:
++	 * - ima_inode_setxattr was called, or
++	 * - based on filesystem feature flag
++	 * forcing the file to be re-evaluated.
++	 */
++	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
+ 		iint->flags &= ~IMA_DONE_MASK;
++	} else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
++		if (action & IMA_MEASURE) {
++			iint->measured_pcrs = 0;
++			iint->flags &=
++			    ~(IMA_COLLECTED | IMA_MEASURE | IMA_MEASURED);
++		}
++		if (action & IMA_APPRAISE)
++			iint->flags &=
++			    ~(IMA_COLLECTED | IMA_APPRAISE | IMA_APPRAISED |
++			      IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK);
++		if (action & IMA_AUDIT)
++			iint->flags &=
++			    ~(IMA_COLLECTED | IMA_AUDIT | IMA_AUDITED);
++	}
+ 
+ 	/* Determine if already appraised/measured based on bitmask
+ 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
 -- 
 2.13.6
 
