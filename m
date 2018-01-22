@@ -1,26 +1,88 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Sun, 21 Jan 2018 22:14:36 -0800
-Subject: [PATCH V6 1/2] security: Add a cred_getsecid hook
-In-Reply-To: <CACdnJuutxPpzr4DPaJLuffHCcMWQN_22dA6wzxMQq3XR2R6+Gg@mail.gmail.com>
-References: <20180108213620.170042-1-mjg59@google.com>
-	<CACdnJuutxPpzr4DPaJLuffHCcMWQN_22dA6wzxMQq3XR2R6+Gg@mail.gmail.com>
-Message-ID: <8b7f9729-af09-a59e-0cd0-8db58d82ea56@schaufler-ca.com>
+From: alban@kinvolk.io (Alban Crequy)
+Date: Mon, 22 Jan 2018 10:16:07 +0100
+Subject: [RFC PATCH v2] ima,fuse: introduce new fs flag FS_NO_IMA_CACHE
+In-Reply-To: <1516380970.3772.112.camel@linux.vnet.ibm.com>
+References: <20180116151000.443-1-alban@kinvolk.io>
+	<1516310702.3772.11.camel@linux.vnet.ibm.com>
+	<CADZs7q4StoPLD4-CSXp5DkgPh29vrZWjayTAYkMAsrDychLOoQ@mail.gmail.com>
+	<1516380970.3772.112.camel@linux.vnet.ibm.com>
+Message-ID: <CADZs7q68zORejnVBfQ38K6PtUTj_5OqkYjMvTa=Fi+UEyPp+FQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 1/21/2018 9:27 PM, Matthew Garrett wrote:
-> On Tue, Jan 9, 2018 at 8:36 AM, Matthew Garrett <mjg59@google.com> wrote:
->> For IMA purposes, we want to be able to obtain the prepared secid in the
->> bprm structure before the credentials are committed. Add a cred_getsecid
->> hook that makes this possible.
-> Any feedback on this version of the set?
+On Fri, Jan 19, 2018 at 5:56 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Fri, 2018-01-19 at 11:35 +0100, Alban Crequy wrote:
+>> On Thu, Jan 18, 2018 at 10:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>> > On Tue, 2018-01-16 at 16:10 +0100, Alban Crequy wrote:
+>> >> From: Alban Crequy <alban@kinvolk.io>
+>> >>
+>> >> This patch forces files to be re-measured, re-appraised and re-audited
+>> >> on file systems with the feature flag FS_NO_IMA_CACHE. In that way,
+>> >> cached integrity results won't be used.
+>> >>
+>> >> For now, this patch adds the new flag only FUSE filesystems. This is
+>> >> needed because the userspace FUSE process can change the underlying
+>> >> files at any time.
+>> >
+>> > Thanks, it's working nicely.
+>> >
+>> >
+>> >> diff --git a/include/linux/fs.h b/include/linux/fs.h
+>> >> index 511fbaabf624..2bd7e73ebc2a 100644
+>> >> --- a/include/linux/fs.h
+>> >> +++ b/include/linux/fs.h
+>> >> @@ -2075,6 +2075,7 @@ struct file_system_type {
+>> >>  #define FS_BINARY_MOUNTDATA  2
+>> >>  #define FS_HAS_SUBTYPE               4
+>> >>  #define FS_USERNS_MOUNT              8       /* Can be mounted by userns root */
+>> >> +#define FS_NO_IMA_CACHE              16      /* Force IMA to re-measure, re-appraise, re-audit files */
+>> >>  #define FS_RENAME_DOES_D_MOVE        32768   /* FS will handle d_move() during rename() internally. */
+>> >>       struct dentry *(*mount) (struct file_system_type *, int,
+>> >>                      const char *, void *);
+>> >>
+>> >
+>> > Since IMA is going to need another flag, we probably should have a
+>> > consistent prefix (eg. "FS_IMA").  Maybe rename this flag to
+>> > FS_IMA_NO_CACHE.
+>>
+>> Ok, I can rename it.
+>>
+>> Is there a discussion about the other IMA flag?
+>
+> There's not a single thread that I can point to, but more of an on
+> going discussion as to what it means for a filesystem to support IMA
+> and how that decision is made.
+>
+> - Initial measuring, verifying, auditing files
+> - Safely detecting when a file changes
+> - Not applicable/supported
+>
+> With Sascha Hauer's patch "ima: Use i_version only when filesystem
+> supports it" and this patch, the second issue is addressed, but will
+> cause files to be re-validated, perhaps unnecessarily, impacting
+> performance.
+>
+> Some filesystems should not be evaluated, such as pseudo filesystems
+> (eg. cgroups, sysfs, devpts, pstorefs, efivarfs, debugfs, selinux,
+> smack).  Instead of defining a flag indicating whether or not IMA is
+> applicable/supported, we should define a new flag, indicating whether
+> it is a pseudo filesystem.  This would eliminate a large portion of at
+> least the builtin IMA policy rules.
 
+Thanks for the explanation. If that other flag is about whether it is
+a pseudo filesystem, it might not have "IMA" in the name though.
 
-Sorry for the delay. I'm having a mindset crisis on secids just
-now, and I'm not completely sure if I have any issue with this
-particular hook. Don't wait for me. If everyone else is OK with
-it, go ahead.
+>> > I'm also wondering if this change should be
+>> > separated from the IMA change.
+>>
+>> Do you mean one patch for adding the flag and the IMA change and
+>> another patch for using the flag in FUSE?
+>
+> The flag and FUSE usage of the flag, separately from IMA.
 
+Ok, I will send a v3 with the 2 changes.
+
+Alban
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
