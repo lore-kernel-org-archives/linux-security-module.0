@@ -1,161 +1,270 @@
-From: seth.forshee@canonical.com (Seth Forshee)
-Date: Mon, 22 Jan 2018 16:24:22 -0600
-Subject: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with
-	FS_IMA_NO_CACHE
-In-Reply-To: <20180122162452.8756-3-alban@kinvolk.io>
-References: <20180122162452.8756-1-alban@kinvolk.io>
-	<20180122162452.8756-3-alban@kinvolk.io>
-Message-ID: <20180122222422.GB18882@ubuntu-xps13>
+From: tomas.winkler@intel.com (Tomas Winkler)
+Date: Tue, 23 Jan 2018 13:27:29 +0200
+Subject: [PATCH 1/3] tpm: cmd_ready command can be issued only after granting
+	locality
+Message-ID: <20180123112731.3687-1-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Jan 22, 2018 at 05:24:52PM +0100, Alban Crequy wrote:
-> From: Alban Crequy <alban@kinvolk.io>
-> 
-> This patch forces files to be re-measured, re-appraised and re-audited
-> on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
-> cached integrity results won't be used.
-> 
-> How to test this:
-> 
-> The test I did was using a patched version of the memfs FUSE driver
-> [1][2] and two very simple "hello-world" programs [4] (prog1 prints
-> "hello world: 1" and prog2 prints "hello world: 2").
-> 
-> I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
-> check the sha1 hash in
-> "/sys/kernel/security/ima/ascii_runtime_measurements".
-> 
-> My patch on the memfs FUSE driver added a backdoor command to serve
-> prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
-> exec prog1 and get it to print "hello world: 2" without ever replacing
-> the file via the VFS, so the kernel is not aware of the change.
-> 
-> The test was done using the branch "alban/fuse-flag-ima-nocache-v3" [3].
-> 
-> Step by step test procedure:
-> 
-> 1. Mount the memfs FUSE using [2]:
-> rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
-> 
-> 2. Copy prog1 and prog2 using [4]
-> cp prog1 /mnt/memfs/prog1
-> cp prog2 /mnt/memfs/prog2
-> 
-> 3. Lookup the files and let the FUSE driver to keep the handles open:
-> dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
-> dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
-> 
-> 4. Check the 2 programs work correctly:
-> $ /mnt/memfs/prog1
-> hello world: 1
-> $ /mnt/memfs/prog2
-> hello world: 2
-> 
-> 5. Check the measurements for prog1 and prog2:
-> $ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
->                 | grep /mnt/memfs/prog
-> 10 [...] ima-ng sha1:ac14c9268cd2[...] /mnt/memfs/prog1
-> 10 [...] ima-ng sha1:799cb5d1e06d[...] /mnt/memfs/prog2
-> 
-> 6. Use the backdoor command in my patched memfs to redirect file
-> operations on file handle 3 to file handle 2:
-> rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
-> 
-> 7. Check how the FUSE driver serves different content for the files:
-> $ /mnt/memfs/prog1
-> hello world: 2
-> $ /mnt/memfs/prog2
-> hello world: 2
-> 
-> 8. Check the measurements:
-> sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
->                 | grep /mnt/memfs/prog
-> 
-> Without the patch, there are no new measurements, despite the FUSE
-> driver having served different executables.
-> 
-> With the patch, I can see additional measurements for prog1 and prog2
-> with the hashes reversed when the FUSE driver served the alternative
-> content.
-> 
-> [1] https://github.com/bbengfort/memfs
-> [2] https://github.com/kinvolk/memfs/commits/alban/switch-files
-> [3] https://github.com/kinvolk/linux/commits/alban/fuse-flag-ima-nocache-v3
-> [4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
-> 
-> Cc: linux-kernel at vger.kernel.org
-> Cc: linux-integrity at vger.kernel.org
-> Cc: linux-security-module at vger.kernel.org
-> Cc: linux-fsdevel at vger.kernel.org
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Seth Forshee <seth.forshee@canonical.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Tested-by: Dongsu Park <dongsu@kinvolk.io>
-> Signed-off-by: Alban Crequy <alban@kinvolk.io>
+The correct sequence is to first request locality and only after
+that perform cmd_ready  handshake, otherwise the hardware will drop
+the subsequent message as from the device point of view the cmd_ready
+handshake wasn't performed. Symmetrically locality has to be relinquished
+only after going idle handshake has completed, this requires that
+go_idle has to poll for the completion.
 
-I like this approach as it doesn't require any IMA policy changes to be
-effective. I'm not sure about the flag name (in my mind it would
-describe the fs property and not be specifically giving instructions to
-IMA), but if others are happy with it I won't complain.
+The issue is only visible on devices that support multiple localities.
 
-Acked-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/char/tpm/tpm-interface.c | 12 ++---
+ drivers/char/tpm/tpm_crb.c       | 95 ++++++++++++++++++++++++++--------------
+ 2 files changed, 70 insertions(+), 37 deletions(-)
 
-> ---
->  security/integrity/ima/ima_main.c | 24 ++++++++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 6d78cb26784d..8870a7bbe9b9 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -24,6 +24,7 @@
->  #include <linux/slab.h>
->  #include <linux/xattr.h>
->  #include <linux/ima.h>
-> +#include <linux/fs.h>
->  
->  #include "ima.h"
->  
-> @@ -228,9 +229,28 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->  				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
->  				 IMA_ACTION_FLAGS);
->  
-> -	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
-> -		/* reset all flags if ima_inode_setxattr was called */
-> +	/*
-> +	 * Reset the measure, appraise and audit cached flags either if:
-> +	 * - ima_inode_setxattr was called, or
-> +	 * - based on filesystem feature flag
-> +	 * forcing the file to be re-evaluated.
-> +	 */
-> +	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
->  		iint->flags &= ~IMA_DONE_MASK;
-> +	} else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
-> +		if (action & IMA_MEASURE) {
-> +			iint->measured_pcrs = 0;
-> +			iint->flags &=
-> +			    ~(IMA_COLLECTED | IMA_MEASURE | IMA_MEASURED);
-> +		}
-> +		if (action & IMA_APPRAISE)
-> +			iint->flags &=
-> +			    ~(IMA_COLLECTED | IMA_APPRAISE | IMA_APPRAISED |
-> +			      IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK);
-> +		if (action & IMA_AUDIT)
-> +			iint->flags &=
-> +			    ~(IMA_COLLECTED | IMA_AUDIT | IMA_AUDITED);
-> +	}
->  
->  	/* Determine if already appraised/measured based on bitmask
->  	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
-> -- 
-> 2.13.6
-> 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 76df4fbcf089..197fda39aab5 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_lock(&chip->tpm_mutex);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, true);
+@@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		chip->locality = rc;
+ 	}
+ 
++	if (chip->dev.parent)
++		pm_runtime_get_sync(chip->dev.parent);
++
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+ 		goto out;
+@@ -499,17 +500,18 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
++	if (chip->dev.parent)
++		pm_runtime_put_sync(chip->dev.parent);
++
+ 	if (need_locality && chip->ops->relinquish_locality) {
+ 		chip->ops->relinquish_locality(chip, chip->locality);
+ 		chip->locality = -1;
+ 	}
++
+ out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
+-
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_unlock(&chip->tpm_mutex);
+ 	return rc ? rc : len;
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7b3c2a8aa9de..d174919c446d 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -112,6 +112,25 @@ struct tpm2_crb_smc {
+ 	u32 smc_func_id;
+ };
+ 
++static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
++				unsigned long timeout)
++{
++	ktime_t start;
++	ktime_t stop;
++
++	start = ktime_get();
++	stop = ktime_add(start, ms_to_ktime(timeout));
++
++	do {
++		if ((ioread32(reg) & mask) == value)
++			return true;
++
++		usleep_range(50, 100);
++	} while (ktime_before(ktime_get(), stop));
++
++	return ((ioread32(reg) & mask) == value);
++}
++
+ /**
+  * crb_go_idle - request tpm crb device to go the idle state
+  *
+@@ -128,7 +147,7 @@ struct tpm2_crb_smc {
+  *
+  * Return: 0 always
+  */
+-static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 		return 0;
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+-	/* we don't really care when this settles */
+ 
++	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
++				 CRB_CTRL_REQ_GO_IDLE/* mask */,
++				 0, /* value */
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "goIdle timed out\n");
++		return -ETIME;
++	}
+ 	return 0;
+ }
+ 
+-static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+-				unsigned long timeout)
+-{
+-	ktime_t start;
+-	ktime_t stop;
+-
+-	start = ktime_get();
+-	stop = ktime_add(start, ms_to_ktime(timeout));
+-
+-	do {
+-		if ((ioread32(reg) & mask) == value)
+-			return true;
+-
+-		usleep_range(50, 100);
+-	} while (ktime_before(ktime_get(), stop));
+-
+-	return false;
+-}
+-
+ /**
+  * crb_cmd_ready - request tpm crb device to enter ready state
+  *
+@@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int __maybe_unused crb_cmd_ready(struct device *dev,
+-					struct crb_priv *priv)
++static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
+ 	return 0;
+ }
+ 
+-static int crb_request_locality(struct tpm_chip *chip, int loc)
++static int __crb_request_locality(struct device *dev,
++				  struct crb_priv *priv, int loc)
+ {
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
+-		CRB_LOC_STATE_TPM_REG_VALID_STS;
++		    CRB_LOC_STATE_TPM_REG_VALID_STS;
+ 
+ 	if (!priv->regs_h)
+ 		return 0;
+@@ -207,23 +212,36 @@ static int crb_request_locality(struct tpm_chip *chip, int loc)
+ 	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
+ 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
+ 				 TPM2_TIMEOUT_C)) {
+-		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
+ 		return -ETIME;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
++static int crb_request_locality(struct tpm_chip *chip, int loc)
+ {
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 
++	return __crb_request_locality(&chip->dev, priv, loc);
++}
++
++static void __crb_relinquish_locality(struct device *dev,
++				      struct crb_priv *priv, int loc)
++{
+ 	if (!priv->regs_h)
+ 		return;
+ 
+ 	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
+ }
+ 
++static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
++{
++	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
++
++	__crb_relinquish_locality(&chip->dev, priv, loc);
++}
++
+ static u8 crb_status(struct tpm_chip *chip)
+ {
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+@@ -475,6 +493,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
+ 	}
+ 
++	ret = __crb_request_locality(dev, priv, 0);
++	if (ret)
++		return ret;
++
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+ 	if (IS_ERR(priv->regs_t))
+@@ -531,6 +553,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	crb_go_idle(dev, priv);
+ 
++	__crb_relinquish_locality(dev, priv, 0);
++
+ 	return ret;
+ }
+ 
+@@ -588,10 +612,14 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	chip->acpi_dev_handle = device->handle;
+ 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+-	rc  = crb_cmd_ready(dev, priv);
++	rc = __crb_request_locality(dev, priv, 0);
+ 	if (rc)
+ 		return rc;
+ 
++	rc  = crb_cmd_ready(dev, priv);
++	if (rc)
++		goto out;
++
+ 	pm_runtime_get_noresume(dev);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+@@ -601,12 +629,15 @@ static int crb_acpi_add(struct acpi_device *device)
+ 		crb_go_idle(dev, priv);
+ 		pm_runtime_put_noidle(dev);
+ 		pm_runtime_disable(dev);
+-		return rc;
++		goto out;
+ 	}
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_sync(dev);
+ 
+-	return 0;
++out:
++	__crb_relinquish_locality(dev, priv, 0);
++
++	return rc;
+ }
+ 
+ static int crb_acpi_remove(struct acpi_device *device)
+-- 
+2.14.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
