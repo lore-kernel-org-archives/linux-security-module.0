@@ -1,183 +1,306 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Wed, 24 Jan 2018 19:56:31 +0200
-Subject: [PATCH 6/6] Pmalloc: self-test
-In-Reply-To: <20180124175631.22925-1-igor.stoppa@huawei.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-Message-ID: <20180124175631.22925-7-igor.stoppa@huawei.com>
+From: tomas.winkler@intel.com (Winkler, Tomas)
+Date: Wed, 24 Jan 2018 18:33:53 +0000
+Subject: [PATCH 1/3] tpm: cmd_ready command can be issued only after
+	granting locality
+In-Reply-To: <20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
+References: <20180123112731.3687-1-tomas.winkler@intel.com>
+	<20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94203771@hasmsx108.ger.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add basic self-test functionality for pmalloc.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
----
- mm/Kconfig            |  7 ++++++
- mm/Makefile           |  1 +
- mm/pmalloc-selftest.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++
- mm/pmalloc-selftest.h | 30 ++++++++++++++++++++++++
- mm/pmalloc.c          |  3 +++
- 5 files changed, 106 insertions(+)
- create mode 100644 mm/pmalloc-selftest.c
- create mode 100644 mm/pmalloc-selftest.h
+> > The correct sequence is to first request locality and only after that
+> > perform cmd_ready  handshake, otherwise the hardware will drop the
+> > subsequent message as from the device point of view the cmd_ready
+> > handshake wasn't performed. Symmetrically locality has to be
+> > relinquished only after going idle handshake has completed, this
+> > requires that go_idle has to poll for the completion.
+> >
+> > The issue is only visible on devices that support multiple localities.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> 
+> Thank you!
+> 
+> > ---
+> >  drivers/char/tpm/tpm-interface.c | 12 ++---
+> >  drivers/char/tpm/tpm_crb.c       | 95 ++++++++++++++++++++++++++---------
+> -----
+> >  2 files changed, 70 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/tpm-interface.c
+> > b/drivers/char/tpm/tpm-interface.c
+> > index 76df4fbcf089..197fda39aab5 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
+> tpm_space *space,
+> >  	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+> >  		mutex_lock(&chip->tpm_mutex);
+> >
+> > -	if (chip->dev.parent)
+> > -		pm_runtime_get_sync(chip->dev.parent);
+> >
+> >  	if (chip->ops->clk_enable != NULL)
+> >  		chip->ops->clk_enable(chip, true);
+> > @@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
+> tpm_space *space,
+> >  		chip->locality = rc;
+> >  	}
+> >
+> > +	if (chip->dev.parent)
+> > +		pm_runtime_get_sync(chip->dev.parent);
+> > +
+> >  	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+> >  	if (rc)
+> >  		goto out;
+> > @@ -499,17 +500,18 @@ ssize_t tpm_transmit(struct tpm_chip *chip,
+> struct tpm_space *space,
+> >  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> >
+> >  out:
+> > +	if (chip->dev.parent)
+> > +		pm_runtime_put_sync(chip->dev.parent);
+> > +
+> >  	if (need_locality && chip->ops->relinquish_locality) {
+> >  		chip->ops->relinquish_locality(chip, chip->locality);
+> >  		chip->locality = -1;
+> >  	}
+> > +
+> >  out_no_locality:
+> >  	if (chip->ops->clk_enable != NULL)
+> >  		chip->ops->clk_enable(chip, false);
+> >
+> > -	if (chip->dev.parent)
+> > -		pm_runtime_put_sync(chip->dev.parent);
+> > -
+> >  	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+> >  		mutex_unlock(&chip->tpm_mutex);
+> >  	return rc ? rc : len;
+> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> > index 7b3c2a8aa9de..d174919c446d 100644
+> > --- a/drivers/char/tpm/tpm_crb.c
+> > +++ b/drivers/char/tpm/tpm_crb.c
+> > @@ -112,6 +112,25 @@ struct tpm2_crb_smc {
+> >  	u32 smc_func_id;
+> >  };
+> >
+> > +static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+> > +				unsigned long timeout)
+> > +{
+> > +	ktime_t start;
+> > +	ktime_t stop;
+> > +
+> > +	start = ktime_get();
+> > +	stop = ktime_add(start, ms_to_ktime(timeout));
+> > +
+> > +	do {
+> > +		if ((ioread32(reg) & mask) == value)
+> > +			return true;
+> > +
+> > +		usleep_range(50, 100);
+> > +	} while (ktime_before(ktime_get(), stop));
+> > +
+> > +	return ((ioread32(reg) & mask) == value);
+> 
+> Not sure about the change of return statement. Is this worth of doing?
+The sleep statement is followed directly by loop time comparison. It should take care
+for case when the change in the value happens in that time windows on the edge of the timeout.
+When I look at the traces I think we should maybe make that sleep  little longer to reduce number of 
+register access, but some more tests need to be done on multiple platforms. 
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index c782e8f..1de6ea6 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -760,3 +760,10 @@ config GUP_BENCHMARK
- 	  performance of get_user_pages_fast().
+
+> 
+> > +}
+> > +
+> >  /**
+> >   * crb_go_idle - request tpm crb device to go the idle state
+> >   *
+> > @@ -128,7 +147,7 @@ struct tpm2_crb_smc {
+> >   *
+> >   * Return: 0 always
+> >   */
+> > -static int __maybe_unused crb_go_idle(struct device *dev, struct
+> > crb_priv *priv)
+> > +static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+> >  {
+> >  	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+> >  	    (priv->sm ==
+> ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) || @@
+> > -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device
+> *dev, struct crb_priv *priv)
+> >  		return 0;
+> >
+> >  	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+> > -	/* we don't really care when this settles */
+> >
+> > +	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
+> > +				 CRB_CTRL_REQ_GO_IDLE/* mask */,
+> > +				 0, /* value */
+> > +				 TPM2_TIMEOUT_C)) {
+> > +		dev_warn(dev, "goIdle timed out\n");
+> > +		return -ETIME;
+> > +	}
+> >  	return 0;
+> >  }
+> >
+> > -static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+> > -				unsigned long timeout)
+> > -{
+> > -	ktime_t start;
+> > -	ktime_t stop;
+> > -
+> > -	start = ktime_get();
+> > -	stop = ktime_add(start, ms_to_ktime(timeout));
+> > -
+> > -	do {
+> > -		if ((ioread32(reg) & mask) == value)
+> > -			return true;
+> > -
+> > -		usleep_range(50, 100);
+> > -	} while (ktime_before(ktime_get(), stop));
+> > -
+> > -	return false;
+> > -}
+> > -
+> >  /**
+> >   * crb_cmd_ready - request tpm crb device to enter ready state
+> >   *
+> > @@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg,
+> u32 mask, u32 value,
+> >   *
+> >   * Return: 0 on success -ETIME on timeout;
+> >   */
+> > -static int __maybe_unused crb_cmd_ready(struct device *dev,
+> > -					struct crb_priv *priv)
+> > +static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+> >  {
+> >  	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+> >  	    (priv->sm ==
+> ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) || @@
+> > -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct
+> device *dev,
+> >  	return 0;
+> >  }
+> >
+> > -static int crb_request_locality(struct tpm_chip *chip, int loc)
+> > +static int __crb_request_locality(struct device *dev,
+> > +				  struct crb_priv *priv, int loc)
+> >  {
+> > -	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+> >  	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
+> > -		CRB_LOC_STATE_TPM_REG_VALID_STS;
+> > +		    CRB_LOC_STATE_TPM_REG_VALID_STS;
+> >
+> >  	if (!priv->regs_h)
+> >  		return 0;
+> > @@ -207,23 +212,36 @@ static int crb_request_locality(struct tpm_chip
+> *chip, int loc)
+> >  	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h-
+> >loc_ctrl);
+> >  	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
+> >  				 TPM2_TIMEOUT_C)) {
+> > -		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess
+> timed out\n");
+> > +		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed
+> out\n");
+> >  		return -ETIME;
+> >  	}
+> >
+> >  	return 0;
+> >  }
+> >
+> > -static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
+> > +static int crb_request_locality(struct tpm_chip *chip, int loc)
+> >  {
+> >  	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+> >
+> > +	return __crb_request_locality(&chip->dev, priv, loc); }
+> > +
+> > +static void __crb_relinquish_locality(struct device *dev,
+> > +				      struct crb_priv *priv, int loc) {
+> >  	if (!priv->regs_h)
+> >  		return;
+> >
+> >  	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);  }
+> >
+> > +static void crb_relinquish_locality(struct tpm_chip *chip, int loc) {
+> > +	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+> > +
+> > +	__crb_relinquish_locality(&chip->dev, priv, loc); }
+> > +
+> >  static u8 crb_status(struct tpm_chip *chip)  {
+> >  	struct crb_priv *priv = dev_get_drvdata(&chip->dev); @@ -475,6
+> > +493,10 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+> >  			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
+> >  	}
+> >
+> > +	ret = __crb_request_locality(dev, priv, 0);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+> >  				   sizeof(struct crb_regs_tail));
+> >  	if (IS_ERR(priv->regs_t))
+> > @@ -531,6 +553,8 @@ static int crb_map_io(struct acpi_device *device,
+> > struct crb_priv *priv,
+> >
+> >  	crb_go_idle(dev, priv);
+> >
+> > +	__crb_relinquish_locality(dev, priv, 0);
+> > +
+> >  	return ret;
+> >  }
+> >
+> > @@ -588,10 +612,14 @@ static int crb_acpi_add(struct acpi_device
+> *device)
+> >  	chip->acpi_dev_handle = device->handle;
+> >  	chip->flags = TPM_CHIP_FLAG_TPM2;
+> >
+> > -	rc  = crb_cmd_ready(dev, priv);
+> > +	rc = __crb_request_locality(dev, priv, 0);
+> >  	if (rc)
+> >  		return rc;
+> >
+> > +	rc  = crb_cmd_ready(dev, priv);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> >  	pm_runtime_get_noresume(dev);
+> >  	pm_runtime_set_active(dev);
+> >  	pm_runtime_enable(dev);
+> > @@ -601,12 +629,15 @@ static int crb_acpi_add(struct acpi_device
+> *device)
+> >  		crb_go_idle(dev, priv);
+> >  		pm_runtime_put_noidle(dev);
+> >  		pm_runtime_disable(dev);
+> > -		return rc;
+> > +		goto out;
+> >  	}
+> >
+> > -	pm_runtime_put(dev);
+> > +	pm_runtime_put_sync(dev);
+> 
+> Change to put_sync is needed so that the idle handshake gets completed?
+
+Right.
  
- 	  See tools/testing/selftests/vm/gup_benchmark.c
-+
-+config PROTECTABLE_MEMORY_SELFTEST
-+	bool "Run self test for pmalloc memory allocator"
-+	default n
-+	help
-+	  Tries to verify that pmalloc works correctly and that the memory
-+	  is effectively protected.
-diff --git a/mm/Makefile b/mm/Makefile
-index a6a47e1..1e76a9b 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
- obj-$(CONFIG_SLOB) += slob.o
- obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
- obj-$(CONFIG_ARCH_HAS_SET_MEMORY) += pmalloc.o
-+obj-$(CONFIG_PROTECTABLE_MEMORY_SELFTEST) += pmalloc-selftest.o
- obj-$(CONFIG_KSM) += ksm.o
- obj-$(CONFIG_PAGE_POISONING) += page_poison.o
- obj-$(CONFIG_SLAB) += slab.o
-diff --git a/mm/pmalloc-selftest.c b/mm/pmalloc-selftest.c
-new file mode 100644
-index 0000000..1c025f3
---- /dev/null
-+++ b/mm/pmalloc-selftest.c
-@@ -0,0 +1,65 @@
-+/*
-+ * pmalloc-selftest.c
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; version 2
-+ * of the License.
-+ */
-+
-+#include <linux/pmalloc.h>
-+#include <linux/mm.h>
-+
-+
-+#define SIZE_1 (PAGE_SIZE * 3)
-+#define SIZE_2 1000
-+
-+#define validate_alloc(expected, variable, size)	\
-+	pr_notice("must be " expected ": %s",		\
-+		  is_pmalloc_object(variable, size) > 0 ? "ok" : "no")
-+
-+#define is_alloc_ok(variable, size)	\
-+	validate_alloc("ok", variable, size)
-+
-+#define is_alloc_no(variable, size)	\
-+	validate_alloc("no", variable, size)
-+
-+void pmalloc_selftest(void)
-+{
-+	struct gen_pool *pool_unprot;
-+	struct gen_pool *pool_prot;
-+	void *var_prot, *var_unprot, *var_vmall;
-+
-+	pr_notice("pmalloc self-test");
-+	pool_unprot = pmalloc_create_pool("unprotected", 0);
-+	pool_prot = pmalloc_create_pool("protected", 0);
-+	BUG_ON(!(pool_unprot && pool_prot));
-+
-+	var_unprot = pmalloc(pool_unprot,  SIZE_1 - 1, GFP_KERNEL);
-+	var_prot = pmalloc(pool_prot,  SIZE_1, GFP_KERNEL);
-+	var_vmall = vmalloc(SIZE_2);
-+	is_alloc_ok(var_unprot, 10);
-+	is_alloc_ok(var_unprot, SIZE_1);
-+	is_alloc_ok(var_unprot, PAGE_SIZE);
-+	is_alloc_no(var_unprot, SIZE_1 + 1);
-+	is_alloc_no(var_vmall, 10);
-+
-+
-+	pfree(pool_unprot, var_unprot);
-+	vfree(var_vmall);
-+
-+	pmalloc_protect_pool(pool_prot);
-+
-+	/* This will intentionally trigger a WARN because the pool being
-+	 * destroyed is not protected, which is unusual and should happen
-+	 * on error paths only, where probably other warnings are already
-+	 * displayed.
-+	 */
-+	pmalloc_destroy_pool(pool_unprot);
-+
-+	/* This must not cause WARNings */
-+	pmalloc_destroy_pool(pool_prot);
-+}
-diff --git a/mm/pmalloc-selftest.h b/mm/pmalloc-selftest.h
-new file mode 100644
-index 0000000..3673d23
---- /dev/null
-+++ b/mm/pmalloc-selftest.h
-@@ -0,0 +1,30 @@
-+/*
-+ * pmalloc-selftest.h
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; version 2
-+ * of the License.
-+ */
-+
-+
-+#ifndef __PMALLOC_SELFTEST_H__
-+#define __PMALLOC_SELFTEST_H__
-+
-+
-+#ifdef CONFIG_PROTECTABLE_MEMORY_SELFTEST
-+
-+#include <linux/pmalloc.h>
-+
-+void pmalloc_selftest(void);
-+
-+#else
-+
-+static inline void pmalloc_selftest(void){};
-+
-+#endif
-+
-+#endif
-diff --git a/mm/pmalloc.c b/mm/pmalloc.c
-index a64ac49..a722d7b 100644
---- a/mm/pmalloc.c
-+++ b/mm/pmalloc.c
-@@ -25,6 +25,8 @@
- #include <asm/cacheflush.h>
- #include <asm/page.h>
- 
-+#include "pmalloc-selftest.h"
-+
- /**
-  * pmalloc_data contains the data specific to a pmalloc pool,
-  * in a format compatible with the design of gen_alloc.
-@@ -508,6 +510,7 @@ static int __init pmalloc_late_init(void)
- 		}
- 	}
- 	mutex_unlock(&pmalloc_mutex);
-+	pmalloc_selftest();
- 	return 0;
- }
- late_initcall(pmalloc_late_init);
--- 
-2.9.3
-
+> >
+> > -	return 0;
+> > +out:
+> > +	__crb_relinquish_locality(dev, priv, 0);
+> > +
+> > +	return rc;
+> >  }
+> >
+> >  static int crb_acpi_remove(struct acpi_device *device)
+> > --
+> > 2.14.3
+> >
+> 
+> /Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
