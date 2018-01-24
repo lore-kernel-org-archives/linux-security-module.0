@@ -1,113 +1,98 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 24 Jan 2018 11:53:14 -0600
-Subject: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with
-	FS_IMA_NO_CACHE
-In-Reply-To: <20180122222422.GB18882@ubuntu-xps13>
-References: <20180122162452.8756-1-alban@kinvolk.io>
-	<20180122162452.8756-3-alban@kinvolk.io>
-	<20180122222422.GB18882@ubuntu-xps13>
-Message-ID: <20180124175314.GB29811@mail.hallyn.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 24 Jan 2018 19:56:25 +0200
+Subject: [RFC PATCH v11 0/6] mm: security: ro protection for dynamic data
+Message-ID: <20180124175631.22925-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Seth Forshee (seth.forshee at canonical.com):
-> On Mon, Jan 22, 2018 at 05:24:52PM +0100, Alban Crequy wrote:
-> > From: Alban Crequy <alban@kinvolk.io>
-> > 
-> > This patch forces files to be re-measured, re-appraised and re-audited
-> > on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
-> > cached integrity results won't be used.
-> > 
-> > How to test this:
-> > 
-> > The test I did was using a patched version of the memfs FUSE driver
-> > [1][2] and two very simple "hello-world" programs [4] (prog1 prints
-> > "hello world: 1" and prog2 prints "hello world: 2").
-> > 
-> > I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
-> > check the sha1 hash in
-> > "/sys/kernel/security/ima/ascii_runtime_measurements".
-> > 
-> > My patch on the memfs FUSE driver added a backdoor command to serve
-> > prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
-> > exec prog1 and get it to print "hello world: 2" without ever replacing
-> > the file via the VFS, so the kernel is not aware of the change.
-> > 
-> > The test was done using the branch "alban/fuse-flag-ima-nocache-v3" [3].
-> > 
-> > Step by step test procedure:
-> > 
-> > 1. Mount the memfs FUSE using [2]:
-> > rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
-> > 
-> > 2. Copy prog1 and prog2 using [4]
-> > cp prog1 /mnt/memfs/prog1
-> > cp prog2 /mnt/memfs/prog2
-> > 
-> > 3. Lookup the files and let the FUSE driver to keep the handles open:
-> > dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
-> > dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
-> > 
-> > 4. Check the 2 programs work correctly:
-> > $ /mnt/memfs/prog1
-> > hello world: 1
-> > $ /mnt/memfs/prog2
-> > hello world: 2
-> > 
-> > 5. Check the measurements for prog1 and prog2:
-> > $ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
-> >                 | grep /mnt/memfs/prog
-> > 10 [...] ima-ng sha1:ac14c9268cd2[...] /mnt/memfs/prog1
-> > 10 [...] ima-ng sha1:799cb5d1e06d[...] /mnt/memfs/prog2
-> > 
-> > 6. Use the backdoor command in my patched memfs to redirect file
-> > operations on file handle 3 to file handle 2:
-> > rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
-> > 
-> > 7. Check how the FUSE driver serves different content for the files:
-> > $ /mnt/memfs/prog1
-> > hello world: 2
-> > $ /mnt/memfs/prog2
-> > hello world: 2
-> > 
-> > 8. Check the measurements:
-> > sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
-> >                 | grep /mnt/memfs/prog
-> > 
-> > Without the patch, there are no new measurements, despite the FUSE
-> > driver having served different executables.
-> > 
-> > With the patch, I can see additional measurements for prog1 and prog2
-> > with the hashes reversed when the FUSE driver served the alternative
-> > content.
-> > 
-> > [1] https://github.com/bbengfort/memfs
-> > [2] https://github.com/kinvolk/memfs/commits/alban/switch-files
-> > [3] https://github.com/kinvolk/linux/commits/alban/fuse-flag-ima-nocache-v3
-> > [4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
-> > 
-> > Cc: linux-kernel at vger.kernel.org
-> > Cc: linux-integrity at vger.kernel.org
-> > Cc: linux-security-module at vger.kernel.org
-> > Cc: linux-fsdevel at vger.kernel.org
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> > Cc: James Morris <james.l.morris@oracle.com>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > Cc: Seth Forshee <seth.forshee@canonical.com>
-> > Cc: Christoph Hellwig <hch@infradead.org>
-> > Tested-by: Dongsu Park <dongsu@kinvolk.io>
-> > Signed-off-by: Alban Crequy <alban@kinvolk.io>
-> 
-> I like this approach as it doesn't require any IMA policy changes to be
-> effective. I'm not sure about the flag name (in my mind it would
-> describe the fs property and not be specifically giving instructions to
-> IMA), but if others are happy with it I won't complain.
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-Purely internal name at least, so if we come up with a better name
-we can trivially change it.
+The memory is managed in pools: when a memory pool is turned into R/O,
+all the memory that is part of it, will become R/O.
+
+A R/O pool can be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
+
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
+
+However the data might need to be released, for example as part of module
+unloading.
+To do this, the memory must first be freed, then the pool can be destroyed.
+
+An example is provided, in the form of self-testing.
+
+Changes since the v10 version:
+
+Initially I tried to provide support for hardening the LSM hooks, but the
+LSM code was too much in a flux to have some chance to be merged.
+
+Several drop-in replacement for kmalloc based functions, for example
+kzalloc.
+
+>From this perspective I have also modified genalloc, to make its free
+functionality follow more closely the kfree, which doesn't need to be told
+the size of the allocation being released. This was sent out for review
+twice, but it has not received any feedback, so far.
+
+Also genalloc now comes with self-testing.
+
+The latest can be found also here:
+
+https://www.spinics.net/lists/kernel/msg2696152.html
+
+The need to integrate with hardened user copy has driven an optimization
+in the management of vmap_areas, where each struct page in a vmalloc area
+has a reference to it, saving the search through the various areas.
+
+I was planning - and can still do it - to provide hardening for some IMA
+data, but in the meanwhile it seems that the XFS developers might be
+interested in htis functionality:
+
+http://www.openwall.com/lists/kernel-hardening/2018/01/24/1
+
+So I'm sending it out as preview.
+
+
+Igor Stoppa (6):
+  genalloc: track beginning of allocations
+  genalloc: selftest
+  struct page: add field for vm_struct
+  Protectable Memory
+  Documentation for Pmalloc
+  Pmalloc: self-test
+
+ Documentation/core-api/pmalloc.txt | 104 ++++++++
+ include/linux/genalloc-selftest.h  |  30 +++
+ include/linux/genalloc.h           |   6 +-
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 215 ++++++++++++++++
+ include/linux/vmalloc.h            |   1 +
+ init/main.c                        |   2 +
+ lib/Kconfig                        |  15 ++
+ lib/Makefile                       |   1 +
+ lib/genalloc-selftest.c            | 402 +++++++++++++++++++++++++++++
+ lib/genalloc.c                     | 444 +++++++++++++++++++++----------
+ mm/Kconfig                         |   7 +
+ mm/Makefile                        |   2 +
+ mm/pmalloc-selftest.c              |  65 +++++
+ mm/pmalloc-selftest.h              |  30 +++
+ mm/pmalloc.c                       | 516 +++++++++++++++++++++++++++++++++++++
+ mm/usercopy.c                      |  25 +-
+ mm/vmalloc.c                       |  18 +-
+ 18 files changed, 1744 insertions(+), 140 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.txt
+ create mode 100644 include/linux/genalloc-selftest.h
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 lib/genalloc-selftest.c
+ create mode 100644 mm/pmalloc-selftest.c
+ create mode 100644 mm/pmalloc-selftest.h
+ create mode 100644 mm/pmalloc.c
+
+-- 
+2.9.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
