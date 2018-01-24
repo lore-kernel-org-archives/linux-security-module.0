@@ -1,306 +1,84 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Wed, 24 Jan 2018 18:33:53 +0000
-Subject: [PATCH 1/3] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
-References: <20180123112731.3687-1-tomas.winkler@intel.com>
-	<20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94203771@hasmsx108.ger.corp.intel.com>
+From: jannh@google.com (Jann Horn)
+Date: Wed, 24 Jan 2018 20:10:53 +0100
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <20180124175631.22925-5-igor.stoppa@huawei.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+Message-ID: <CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, Jan 24, 2018 at 6:56 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> The MMU available in many systems running Linux can often provide R/O
+> protection to the memory pages it handles.
+>
+> However, the MMU-based protection works efficiently only when said pages
+> contain exclusively data that will not need further modifications.
+>
+> Statically allocated variables can be segregated into a dedicated
+> section, but this does not sit very well with dynamically allocated
+> ones.
+>
+> Dynamic allocation does not provide, currently, any means for grouping
+> variables in memory pages that would contain exclusively data suitable
+> for conversion to read only access mode.
+>
+> The allocator here provided (pmalloc - protectable memory allocator)
+> introduces the concept of pools of protectable memory.
+>
+> A module can request a pool and then refer any allocation request to the
+> pool handler it has received.
+>
+> Once all the chunks of memory associated to a specific pool are
+> initialized, the pool can be protected.
 
-> > The correct sequence is to first request locality and only after that
-> > perform cmd_ready  handshake, otherwise the hardware will drop the
-> > subsequent message as from the device point of view the cmd_ready
-> > handshake wasn't performed. Symmetrically locality has to be
-> > relinquished only after going idle handshake has completed, this
-> > requires that go_idle has to poll for the completion.
-> >
-> > The issue is only visible on devices that support multiple localities.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> Thank you!
-> 
-> > ---
-> >  drivers/char/tpm/tpm-interface.c | 12 ++---
-> >  drivers/char/tpm/tpm_crb.c       | 95 ++++++++++++++++++++++++++---------
-> -----
-> >  2 files changed, 70 insertions(+), 37 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index 76df4fbcf089..197fda39aab5 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
-> tpm_space *space,
-> >  	if (!(flags & TPM_TRANSMIT_UNLOCKED))
-> >  		mutex_lock(&chip->tpm_mutex);
-> >
-> > -	if (chip->dev.parent)
-> > -		pm_runtime_get_sync(chip->dev.parent);
-> >
-> >  	if (chip->ops->clk_enable != NULL)
-> >  		chip->ops->clk_enable(chip, true);
-> > @@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
-> tpm_space *space,
-> >  		chip->locality = rc;
-> >  	}
-> >
-> > +	if (chip->dev.parent)
-> > +		pm_runtime_get_sync(chip->dev.parent);
-> > +
-> >  	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-> >  	if (rc)
-> >  		goto out;
-> > @@ -499,17 +500,18 @@ ssize_t tpm_transmit(struct tpm_chip *chip,
-> struct tpm_space *space,
-> >  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> >
-> >  out:
-> > +	if (chip->dev.parent)
-> > +		pm_runtime_put_sync(chip->dev.parent);
-> > +
-> >  	if (need_locality && chip->ops->relinquish_locality) {
-> >  		chip->ops->relinquish_locality(chip, chip->locality);
-> >  		chip->locality = -1;
-> >  	}
-> > +
-> >  out_no_locality:
-> >  	if (chip->ops->clk_enable != NULL)
-> >  		chip->ops->clk_enable(chip, false);
-> >
-> > -	if (chip->dev.parent)
-> > -		pm_runtime_put_sync(chip->dev.parent);
-> > -
-> >  	if (!(flags & TPM_TRANSMIT_UNLOCKED))
-> >  		mutex_unlock(&chip->tpm_mutex);
-> >  	return rc ? rc : len;
-> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> > index 7b3c2a8aa9de..d174919c446d 100644
-> > --- a/drivers/char/tpm/tpm_crb.c
-> > +++ b/drivers/char/tpm/tpm_crb.c
-> > @@ -112,6 +112,25 @@ struct tpm2_crb_smc {
-> >  	u32 smc_func_id;
-> >  };
-> >
-> > +static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
-> > +				unsigned long timeout)
-> > +{
-> > +	ktime_t start;
-> > +	ktime_t stop;
-> > +
-> > +	start = ktime_get();
-> > +	stop = ktime_add(start, ms_to_ktime(timeout));
-> > +
-> > +	do {
-> > +		if ((ioread32(reg) & mask) == value)
-> > +			return true;
-> > +
-> > +		usleep_range(50, 100);
-> > +	} while (ktime_before(ktime_get(), stop));
-> > +
-> > +	return ((ioread32(reg) & mask) == value);
-> 
-> Not sure about the change of return statement. Is this worth of doing?
-The sleep statement is followed directly by loop time comparison. It should take care
-for case when the change in the value happens in that time windows on the edge of the timeout.
-When I look at the traces I think we should maybe make that sleep  little longer to reduce number of 
-register access, but some more tests need to be done on multiple platforms. 
+I'm not entirely convinced by the approach of marking small parts of
+kernel memory as readonly for hardening.
+Comments on some details are inline.
+
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index 1e5d8c3..116d280 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -20,6 +20,7 @@ struct notifier_block;                /* in notifier.h */
+>  #define VM_UNINITIALIZED       0x00000020      /* vm_struct is not fully initialized */
+>  #define VM_NO_GUARD            0x00000040      /* don't add guard page */
+>  #define VM_KASAN               0x00000080      /* has allocated kasan shadow memory */
+> +#define VM_PMALLOC             0x00000100      /* pmalloc area - see docs */
+
+Is "see docs" specific enough to actually guide the reader to the
+right documentation?
 
 
-> 
-> > +}
-> > +
-> >  /**
-> >   * crb_go_idle - request tpm crb device to go the idle state
-> >   *
-> > @@ -128,7 +147,7 @@ struct tpm2_crb_smc {
-> >   *
-> >   * Return: 0 always
-> >   */
-> > -static int __maybe_unused crb_go_idle(struct device *dev, struct
-> > crb_priv *priv)
-> > +static int crb_go_idle(struct device *dev, struct crb_priv *priv)
-> >  {
-> >  	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
-> >  	    (priv->sm ==
-> ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) || @@
-> > -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device
-> *dev, struct crb_priv *priv)
-> >  		return 0;
-> >
-> >  	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
-> > -	/* we don't really care when this settles */
-> >
-> > +	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
-> > +				 CRB_CTRL_REQ_GO_IDLE/* mask */,
-> > +				 0, /* value */
-> > +				 TPM2_TIMEOUT_C)) {
-> > +		dev_warn(dev, "goIdle timed out\n");
-> > +		return -ETIME;
-> > +	}
-> >  	return 0;
-> >  }
-> >
-> > -static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
-> > -				unsigned long timeout)
-> > -{
-> > -	ktime_t start;
-> > -	ktime_t stop;
-> > -
-> > -	start = ktime_get();
-> > -	stop = ktime_add(start, ms_to_ktime(timeout));
-> > -
-> > -	do {
-> > -		if ((ioread32(reg) & mask) == value)
-> > -			return true;
-> > -
-> > -		usleep_range(50, 100);
-> > -	} while (ktime_before(ktime_get(), stop));
-> > -
-> > -	return false;
-> > -}
-> > -
-> >  /**
-> >   * crb_cmd_ready - request tpm crb device to enter ready state
-> >   *
-> > @@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg,
-> u32 mask, u32 value,
-> >   *
-> >   * Return: 0 on success -ETIME on timeout;
-> >   */
-> > -static int __maybe_unused crb_cmd_ready(struct device *dev,
-> > -					struct crb_priv *priv)
-> > +static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
-> >  {
-> >  	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
-> >  	    (priv->sm ==
-> ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) || @@
-> > -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct
-> device *dev,
-> >  	return 0;
-> >  }
-> >
-> > -static int crb_request_locality(struct tpm_chip *chip, int loc)
-> > +static int __crb_request_locality(struct device *dev,
-> > +				  struct crb_priv *priv, int loc)
-> >  {
-> > -	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-> >  	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
-> > -		CRB_LOC_STATE_TPM_REG_VALID_STS;
-> > +		    CRB_LOC_STATE_TPM_REG_VALID_STS;
-> >
-> >  	if (!priv->regs_h)
-> >  		return 0;
-> > @@ -207,23 +212,36 @@ static int crb_request_locality(struct tpm_chip
-> *chip, int loc)
-> >  	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h-
-> >loc_ctrl);
-> >  	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
-> >  				 TPM2_TIMEOUT_C)) {
-> > -		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess
-> timed out\n");
-> > +		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed
-> out\n");
-> >  		return -ETIME;
-> >  	}
-> >
-> >  	return 0;
-> >  }
-> >
-> > -static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
-> > +static int crb_request_locality(struct tpm_chip *chip, int loc)
-> >  {
-> >  	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-> >
-> > +	return __crb_request_locality(&chip->dev, priv, loc); }
-> > +
-> > +static void __crb_relinquish_locality(struct device *dev,
-> > +				      struct crb_priv *priv, int loc) {
-> >  	if (!priv->regs_h)
-> >  		return;
-> >
-> >  	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);  }
-> >
-> > +static void crb_relinquish_locality(struct tpm_chip *chip, int loc) {
-> > +	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-> > +
-> > +	__crb_relinquish_locality(&chip->dev, priv, loc); }
-> > +
-> >  static u8 crb_status(struct tpm_chip *chip)  {
-> >  	struct crb_priv *priv = dev_get_drvdata(&chip->dev); @@ -475,6
-> > +493,10 @@ static int crb_map_io(struct acpi_device *device, struct
-> crb_priv *priv,
-> >  			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
-> >  	}
-> >
-> > +	ret = __crb_request_locality(dev, priv, 0);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
-> >  				   sizeof(struct crb_regs_tail));
-> >  	if (IS_ERR(priv->regs_t))
-> > @@ -531,6 +553,8 @@ static int crb_map_io(struct acpi_device *device,
-> > struct crb_priv *priv,
-> >
-> >  	crb_go_idle(dev, priv);
-> >
-> > +	__crb_relinquish_locality(dev, priv, 0);
-> > +
-> >  	return ret;
-> >  }
-> >
-> > @@ -588,10 +612,14 @@ static int crb_acpi_add(struct acpi_device
-> *device)
-> >  	chip->acpi_dev_handle = device->handle;
-> >  	chip->flags = TPM_CHIP_FLAG_TPM2;
-> >
-> > -	rc  = crb_cmd_ready(dev, priv);
-> > +	rc = __crb_request_locality(dev, priv, 0);
-> >  	if (rc)
-> >  		return rc;
-> >
-> > +	rc  = crb_cmd_ready(dev, priv);
-> > +	if (rc)
-> > +		goto out;
-> > +
-> >  	pm_runtime_get_noresume(dev);
-> >  	pm_runtime_set_active(dev);
-> >  	pm_runtime_enable(dev);
-> > @@ -601,12 +629,15 @@ static int crb_acpi_add(struct acpi_device
-> *device)
-> >  		crb_go_idle(dev, priv);
-> >  		pm_runtime_put_noidle(dev);
-> >  		pm_runtime_disable(dev);
-> > -		return rc;
-> > +		goto out;
-> >  	}
-> >
-> > -	pm_runtime_put(dev);
-> > +	pm_runtime_put_sync(dev);
-> 
-> Change to put_sync is needed so that the idle handshake gets completed?
+> +#define pmalloc_attr_init(data, attr_name) \
+> +do { \
+> +       sysfs_attr_init(&data->attr_##attr_name.attr); \
+> +       data->attr_##attr_name.attr.name = #attr_name; \
+> +       data->attr_##attr_name.attr.mode = VERIFY_OCTAL_PERMISSIONS(0444); \
+> +       data->attr_##attr_name.show = pmalloc_pool_show_##attr_name; \
+> +} while (0)
 
-Right.
- 
-> >
-> > -	return 0;
-> > +out:
-> > +	__crb_relinquish_locality(dev, priv, 0);
-> > +
-> > +	return rc;
-> >  }
-> >
-> >  static int crb_acpi_remove(struct acpi_device *device)
-> > --
-> > 2.14.3
-> >
-> 
-> /Jarkko
+Is there a good reason for making all these files mode 0444 (as
+opposed to setting them to 0400 and then allowing userspace to make
+them accessible if desired)? /proc/slabinfo contains vaguely similar
+data and is mode 0400 (or mode 0600, depending on the kernel config)
+AFAICS.
+
+
+> +void *pmalloc(struct gen_pool *pool, size_t size, gfp_t gfp)
+> +{
+[...]
+> +       /* Expand pool */
+> +       chunk_size = roundup(size, PAGE_SIZE);
+> +       chunk = vmalloc(chunk_size);
+
+You're allocating with vmalloc(), which, as far as I know, establishes
+a second mapping in the vmalloc area for pages that are already mapped
+as RW through the physmap. AFAICS, later, when you're trying to make
+pages readonly, you're only changing the protections on the second
+mapping in the vmalloc area, therefore leaving the memory writable
+through the physmap. Is that correct? If so, please either document
+the reasoning why this is okay or change it.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
