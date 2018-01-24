@@ -1,47 +1,45 @@
-From: jmorris@namei.org (James Morris)
-Date: Thu, 25 Jan 2018 08:08:06 +1100 (AEDT)
-Subject: [GIT PULL] MAINTAINERS: update email address for James Morris
-Message-ID: <alpine.LRH.2.21.1801250806280.12387@namei.org>
+From: tomas.winkler@intel.com (Winkler, Tomas)
+Date: Wed, 24 Jan 2018 21:29:19 +0000
+Subject: [PATCH 3/3] tpm: add longer timeouts for creation commands.
+In-Reply-To: <20180123131203.bdhlqdqabhtwnipi@linux.intel.com>
+References: <20180123112731.3687-1-tomas.winkler@intel.com>
+	<20180123112731.3687-3-tomas.winkler@intel.com>
+	<20180123131203.bdhlqdqabhtwnipi@linux.intel.com>
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94203937@hasmsx108.ger.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
-
-Please pull.
 
 
-The following changes since commit 03fae44b41062419aedcf2ae4ad68034f440f862:
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
+> Sent: Tuesday, January 23, 2018 15:12
+> To: Winkler, Tomas <tomas.winkler@intel.com>
+> Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>; Usyskin,
+> Alexander <alexander.usyskin@intel.com>; tpmdd-
+> devel at lists.sourceforge.net; linux-integrity at vger.kernel.org; linux-security-
+> module at vger.kernel.org; linux-kernel at vger.kernel.org
+> Subject: Re: [PATCH 3/3] tpm: add longer timeouts for creation commands.
+> 
+> On Tue, Jan 23, 2018 at 01:27:31PM +0200, Tomas Winkler wrote:
+> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
+> > generation of crypto keys which can be a computationally intensive task.
+> > The timeout is set to 3min.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> 
+> From where are these numbers are derived from?
 
-  Merge tag 'trace-v4.15-rc9' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace (2018-01-24 10:08:16 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git for-linus
-
-for you to fetch changes up to 3eab2ad9162e7467c988b91f50395eac51a1e650:
-
-  MAINTAINERS: update email address for James Morris (2018-01-25 07:53:57 +1100)
-
-----------------------------------------------------------------
-James Morris (1):
-      MAINTAINERS: update email address for James Morris
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fec88c5..810d5d9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12241,7 +12241,7 @@ M:	Security Officers <security@kernel.org>
- S:	Supported
+An Intel SW architect.
  
- SECURITY SUBSYSTEM
--M:	James Morris <james.l.morris@oracle.com>
-+M:	James Morris <jmorris@namei.org>
- M:	"Serge E. Hallyn" <serge@hallyn.com>
- L:	linux-security-module at vger.kernel.org (suggested Cc:)
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+> 
+> Can you send 1/3 and 2/3 as a separate patch set with a cover letter (with
+> explanation) and this as a separate patch? This is unrelated to first two
+> changes albeit might make sense.
+
+Will do, though the patches were born to  address the initialization issues we've encountered.
+Thanks
+Tomas
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
