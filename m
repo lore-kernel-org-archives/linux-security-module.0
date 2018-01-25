@@ -1,211 +1,165 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Thu, 25 Jan 2018 03:27:42 +0000
-Subject: [PATCH v2 02/15] initramfs: replace states with function pointers
-In-Reply-To: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-Message-ID: <1516850875-25066-3-git-send-email-takondra@cisco.com>
+Date: Thu, 25 Jan 2018 03:27:40 +0000
+Subject: [PATCH v2 00/15] extend initramfs archive format to support xattrs
+Message-ID: <1516850875-25066-1-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Currently the FSM states are mapped directly to function pointers. Extra
-level of intirection is not needed and makes navigation over the code
-harder. One can't jump between states directly when browsing code (e.g.
-with cscope). Need to go through actions[] array each time.
+Many of the Linux security/integrity features are dependent on file
+metadata, stored as extended attributes (xattrs), for making decisions.
+These features need to be initialized during initcall and enabled as
+early as possible for complete security coverage. 
 
-Replace states with their action function pointers. No behaviour change.
+Initramfs (tmpfs) supports xattrs, but newc CPIO archive format does not
+support including them into the archive.
 
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
----
- init/initramfs.c | 73 +++++++++++++++++++++++++-------------------------------
- 1 file changed, 32 insertions(+), 41 deletions(-)
+There are several ways to include xattrs for initramfs:
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 7e99a0038942..49cd2681a26f 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -187,16 +187,17 @@ static void __init parse_header(char *s)
- 
- /* FSM */
- 
--static __initdata enum state {
--	Start,
--	Collect,
--	GotHeader,
--	SkipIt,
--	GotName,
--	CopyFile,
--	GotSymlink,
--	Reset
--} state, next_state;
-+static int __init do_start(void);
-+static int __init do_collect(void);
-+static int __init do_header(void);
-+static int __init do_skip(void);
-+static int __init do_name(void);
-+static int __init do_copy(void);
-+static int __init do_symlink(void);
-+static int __init do_reset(void);
-+
-+typedef int (*fsm_state_t)(void);
-+static __initdata fsm_state_t state, next_state;
- 
- static __initdata char *victim;
- static unsigned long byte_count __initdata;
-@@ -214,7 +215,7 @@ static __initdata char *collected;
- static long remains __initdata;
- static __initdata char *collect;
- 
--static void __init read_into(char *buf, unsigned size, enum state next)
-+static void __init read_into(char *buf, unsigned size, fsm_state_t next)
- {
- 	if (byte_count >= size) {
- 		collected = victim;
-@@ -224,7 +225,7 @@ static void __init read_into(char *buf, unsigned size, enum state next)
- 		collect = collected = buf;
- 		remains = size;
- 		next_state = next;
--		state = Collect;
-+		state = do_collect;
- 	}
- }
- 
-@@ -232,7 +233,7 @@ static __initdata char *header_buf, *symlink_buf, *name_buf;
- 
- static int __init do_start(void)
- {
--	read_into(header_buf, 110, GotHeader);
-+	read_into(header_buf, 110, do_header);
- 	return 0;
- }
- 
-@@ -263,7 +264,7 @@ static int __init do_header(void)
- 	parse_header(collected);
- 	next_header = this_header + N_ALIGN(name_len) + body_len;
- 	next_header = (next_header + 3) & ~3;
--	state = SkipIt;
-+	state = do_skip;
- 	if (name_len <= 0 || name_len > PATH_MAX)
- 		return 0;
- 	if (S_ISLNK(mode)) {
-@@ -271,12 +272,12 @@ static int __init do_header(void)
- 			return 0;
- 		collect = collected = symlink_buf;
- 		remains = N_ALIGN(name_len) + body_len;
--		next_state = GotSymlink;
--		state = Collect;
-+		next_state = do_symlink;
-+		state = do_collect;
- 		return 0;
- 	}
- 	if (S_ISREG(mode) || !body_len)
--		read_into(name_buf, N_ALIGN(name_len), GotName);
-+		read_into(name_buf, N_ALIGN(name_len), do_name);
- 	return 0;
- }
- 
-@@ -327,8 +328,8 @@ static __initdata int wfd;
- 
- static int __init do_name(void)
- {
--	state = SkipIt;
--	next_state = Reset;
-+	state = do_skip;
-+	next_state = do_reset;
- 	if (strcmp(collected, "TRAILER!!!") == 0) {
- 		free_hash();
- 		return 0;
-@@ -348,7 +349,7 @@ static int __init do_name(void)
- 				if (body_len)
- 					sys_ftruncate(wfd, body_len);
- 				vcollected = kstrdup(collected, GFP_KERNEL);
--				state = CopyFile;
-+				state = do_copy;
- 			}
- 		}
- 	} else if (S_ISDIR(mode)) {
-@@ -377,7 +378,7 @@ static int __init do_copy(void)
- 		do_utime(vcollected, mtime);
- 		kfree(vcollected);
- 		eat(body_len);
--		state = SkipIt;
-+		state = do_skip;
- 		return 0;
- 	} else {
- 		if (xwrite(wfd, victim, byte_count) != byte_count)
-@@ -395,29 +396,19 @@ static int __init do_symlink(void)
- 	sys_symlink(collected + N_ALIGN(name_len), collected);
- 	sys_lchown(collected, uid, gid);
- 	do_utime(collected, mtime);
--	state = SkipIt;
--	next_state = Reset;
-+	state = do_skip;
-+	next_state = do_reset;
- 	return 0;
- }
- 
--static __initdata int (*actions[])(void) = {
--	[Start]		= do_start,
--	[Collect]	= do_collect,
--	[GotHeader]	= do_header,
--	[SkipIt]	= do_skip,
--	[GotName]	= do_name,
--	[CopyFile]	= do_copy,
--	[GotSymlink]	= do_symlink,
--	[Reset]		= do_reset,
--};
--
- static long __init write_buffer(char *buf, unsigned long len)
- {
- 	byte_count = len;
- 	victim = buf;
- 
--	while (!actions[state]())
--		;
-+	do
-+		pr_debug("state: %pf\n", state);
-+	while (!state());
- 	return len - byte_count;
- }
- 
-@@ -433,11 +424,11 @@ static long __init flush_buffer(void *bufv, unsigned long len)
- 		if (c == '0') {
- 			buf += written;
- 			len -= written;
--			state = Start;
-+			state = do_start;
- 		} else if (c == 0) {
- 			buf += written;
- 			len -= written;
--			state = Reset;
-+			state = do_reset;
- 		} else
- 			error("junk in compressed archive");
- 	}
-@@ -462,13 +453,13 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 	if (!header_buf || !symlink_buf || !name_buf)
- 		panic("can't allocate buffers");
- 
--	state = Start;
-+	state = do_start;
- 	this_header = 0;
- 	message = NULL;
- 	while (!message && len) {
- 		loff_t saved_offset = this_header;
- 		if (*buf == '0' && !(this_header & 3)) {
--			state = Start;
-+			state = do_start;
- 			written = write_buffer(buf, len);
- 			buf += written;
- 			len -= written;
-@@ -497,7 +488,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 			}
- 		} else
- 			error("junk in compressed archive");
--		if (state != Reset)
-+		if (state != do_reset)
- 			error("junk in compressed archive");
- 		this_header = saved_offset + my_inptr;
- 		buf += my_inptr;
+- Add TAR support. Complicated format and big headers looks like too
+  much overhead.
+
+- Include a file manifest containing the xattrs in the CPIO. Should be
+  easy for initramfs because we can set xattrs at the end when all files
+  are extracted, but extracting such archive in userspace will be more
+  complicated. For example it may be necessary to set SELinux labels for
+  directories before extracting files into them, so manifest has to be
+  extracted first and then searched during each file extraction.
+
+- Extend CPIO header to support xattrs. This seem to be the most
+  straight forward way. It also allows to do other useful changes
+  to CPIO format at the same time. E.g. increase filesize field to
+  support files >4GB.
+
+This patch set extends the existing newc CPIO archive format to include
+xattrs in the initramfs.
+
+The series is based on v4.15-rc8. cpio_xattr branch is available here:
+https://github.com/kontar/linux/commits/cpio_xattr
+
+=== Patch summary ===
+
+Documentation:
+[PATCH 01/15] Documentation: add newcx initramfs format description
+
+Refactoring to simplify adding the new format:
+[PATCH 02/15] initramfs: replace states with function pointers
+[PATCH 03/15] initramfs: store file name in name_buf
+[PATCH 04/15] initramfs: remove unnecessary symlinks processing shortcut
+[PATCH 05/15] initramfs: move files creation into separate state
+[PATCH 06/15] initramfs: separate reading cpio method from header
+[PATCH 07/15] initramfs: split header layout information from parsing
+function
+
+Parse newxc format:
+[PATCH 08/15] initramfs: add newcx format
+[PATCH 09/15] initramfs: set extended attributes
+
+Generate newcx cpio archive:
+[PATCH 10/15] gen_init_cpio: move header formatting into function
+[PATCH 11/15] gen_init_cpio: add newcx format
+[PATCH 12/15] gen_init_cpio: set extended attributes for newcx
+[PATCH 13/15] gen_initramfs_list.sh: add -x option to enable newcx
+
+SELinux patches used for testing. They will be sent to SELinux
+maintainers separately.
+[PATCH 14/15] selinux: allow setxattr on rootfs so initramfs code can
+set them
+[PATCH 15/15] selinux: delay sid population for rootfs till init is
+complete
+
+=== Testing ===
+
+gen_initramfs_list.sh can be used to generate newcx CPIO archive: if
+CONFIG_INITRAMFS_NEWCX is enabled CONFIG_INITRAMFS_SOURCE will be packed
+into newcx archive. It is enough for basic testing, but it is not
+convenient for more complex setup.
+
+Victor have prepared a test setup with SELinux-labeled initramfs based
+on Poky(Yocto) with meta-selinux layer.
+
+Repo manifest and build instructions:
+https://github.com/victorkamensky/initramfs-xattrs-manifest
+
+Reference cpio utility patch to support newcx format could be
+found as part of poky/meta-selinux testing environment at
+
+https://raw.githubusercontent.com/victorkamensky/initramfs-xattrs-poky/rocko/meta/recipes-extended/cpio/cpio-2.12/cpio-xattrs.patch
+
+=== History ===
+
+The patch set is based on Mimi's series from Jan 2015:
+https://www.mail-archive.com/initramfs at vger.kernel.org/msg03971.html
+Latest discussion I was able to find is from Dec 2015:
+https://www.mail-archive.com/initramfs at vger.kernel.org/msg04198.html
+
+Format changes:
+- increased size of filesize to 64 bits to support files >4GB.
+- increased mtime field size to 64 bits to get usec precision
+  and more than 32 bits of seconds. Rob mentioned nsec, but that
+  will leave only 34 bits for seconds. If nsec precision is needed
+  then we can add a separate 32 bit nsec field (it will match statx).
+- Checksum field is replased by xattrs_size field.
+
+Other fields are left unchanged. See patch format description in the
+patch #1.
+
+James suggested to add many other changes, but that will bloat header
+and make this new format very similar to tar. To keep format simple no
+other fields were added.
+
+v2 changes:
+- added documentation
+- made format more consistent. In previous version a sequence of fields
+  in newcx header was different for symlinks and regular files (for
+  symlinks data field was before xattrs). It was caused by a flow
+  shortcut during symlink entry parsing.
+- removed unused checksum field in newcx header
+- removed redundant xattrcount at the beginning of xattr section
+  (xattrs_size is enough to determine the end of section).
+- size of xattr entry in xattr section includes both name and value.
+  This makes format more consistent and allows to jump over an entry
+  without scanning for the end of name string first.
+- streamlined the state machine to address the previous issue and make
+  it easier to add the new format
+- made header parsing data-driven to remove magic numbers and make it
+  easier to add the new format
+- eliminated unnecessary buffer allocation for every file name
+- pass xattrs to gen_init_cpio via cpio_list file instead of reading
+  them from files during packaging. This allows to set xattrs in CPIO
+  even if they can't be set on a build machine.
+- incorporated several bug fixes from Victor Kamensky for v1 series
+
+Mimi Zohar (3):
+  initramfs: separate reading cpio method from header
+  initramfs: set extended attributes
+  gen_initramfs_list.sh: add -x option to enable newcx format
+
+Taras Kondratiuk (10):
+  Documentation: add newcx initramfs format description
+  initramfs: replace states with function pointers
+  initramfs: store file name in name_buf
+  initramfs: remove unnecessary symlinks processing shortcut
+  initramfs: move files creation into separate state
+  initramfs: split header layout information from parsing function
+  initramfs: add newcx format
+  gen_init_cpio: move header formatting into function
+  gen_init_cpio: add newcx format
+  gen_init_cpio: set extended attributes for newcx format
+
+Victor Kamensky (2):
+  selinux: allow setxattr on rootfs so initramfs code can set them
+  selinux: delay sid population for rootfs till init is complete
+
+ Documentation/early-userspace/buffer-format.txt |  46 ++-
+ init/initramfs.c                                | 401 ++++++++++++++++++------
+ scripts/gen_initramfs_list.sh                   |  13 +-
+ security/selinux/hooks.c                        |  19 ++
+ security/selinux/include/security.h             |   1 +
+ usr/Kconfig                                     |  11 +
+ usr/Makefile                                    |   3 +-
+ usr/gen_init_cpio.c                             | 364 ++++++++++++++-------
+ 8 files changed, 626 insertions(+), 232 deletions(-)
+
 -- 
 2.10.3.dirty
 
