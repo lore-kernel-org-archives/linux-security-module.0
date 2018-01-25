@@ -1,88 +1,73 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Thu, 25 Jan 2018 03:27:46 +0000
-Subject: [PATCH v2 06/15] initramfs: separate reading cpio method from header
+Date: Thu, 25 Jan 2018 03:27:43 +0000
+Subject: [PATCH v2 03/15] initramfs: store file name in name_buf
 In-Reply-To: <1516850875-25066-1-git-send-email-takondra@cisco.com>
 References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-Message-ID: <1516850875-25066-7-git-send-email-takondra@cisco.com>
+Message-ID: <1516850875-25066-4-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+There is already name_buf buffer pre-allocated for a file name. No need
+to allocate vcollected for every file. More over a name can be already
+stored in name_buf by read_info() function.
 
-In preparation for adding xattr support, read the CPIO method
-separately from the rest of the header.
+Add memcpy_optional() function to handle such case.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 ---
- init/initramfs.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ init/initramfs.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/init/initramfs.c b/init/initramfs.c
-index 2d5920c094e0..b3d39c8793be 100644
+index 49cd2681a26f..b6ee675e5cdb 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -168,7 +168,7 @@ static void __init parse_header(char *s)
- 	int i;
- 
- 	buf[8] = '\0';
--	for (i = 0, s += 6; i < 12; i++, s += 8) {
-+	for (i = 0; i < 12; i++, s += 8) {
- 		memcpy(buf, s, 8);
- 		parsed[i] = simple_strtoul(buf, NULL, 16);
- 	}
-@@ -189,6 +189,7 @@ static void __init parse_header(char *s)
- 
- static int __init do_start(void);
- static int __init do_collect(void);
-+static int __init do_format(void);
- static int __init do_header(void);
- static int __init do_skip(void);
- static int __init do_name(void);
-@@ -233,7 +234,7 @@ static __initdata char *header_buf, *symlink_buf, *name_buf;
- 
- static int __init do_start(void)
- {
--	read_into(header_buf, 110, do_header);
-+	read_into(header_buf, 6, do_format);
- 	return 0;
+@@ -210,7 +210,6 @@ static inline void __init eat(unsigned n)
+ 	byte_count -= n;
  }
  
-@@ -251,7 +252,7 @@ static int __init do_collect(void)
- 	return 0;
+-static __initdata char *vcollected;
+ static __initdata char *collected;
+ static long remains __initdata;
+ static __initdata char *collect;
+@@ -324,6 +323,13 @@ static void __init clean_path(char *path, umode_t fmode)
+ 	}
  }
  
--static int __init do_header(void)
-+static int __init do_format(void)
- {
- 	if (memcmp(collected, "070707", 6)==0) {
- 		error("incorrect cpio method used: use -H newc option");
-@@ -261,6 +262,12 @@ static int __init do_header(void)
- 		error("no cpio magic");
- 		return 1;
- 	}
-+	read_into(header_buf, 104, do_header);
-+	return 0;
++static void *memcpy_optional(void *dest, const void *src, size_t n)
++{
++	if (dest != src)
++		return memcpy(dest, src, n);
++	return dest;
 +}
 +
-+static int __init do_header(void)
-+{
- 	parse_header(collected);
- 	next_header = this_header + N_ALIGN(name_len) + body_len;
- 	next_header = (next_header + 3) & ~3;
-@@ -457,7 +464,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 	const char *compress_name;
- 	static __initdata char msg_buf[64];
+ static __initdata int wfd;
  
--	header_buf = kmalloc(110, GFP_KERNEL);
-+	header_buf = kmalloc(104, GFP_KERNEL);
- 	symlink_buf = kmalloc(PATH_MAX + 1, GFP_KERNEL);
- 	name_buf = kmalloc(N_ALIGN(PATH_MAX), GFP_KERNEL);
- 
+ static int __init do_name(void)
+@@ -348,7 +354,8 @@ static int __init do_name(void)
+ 				sys_fchmod(wfd, mode);
+ 				if (body_len)
+ 					sys_ftruncate(wfd, body_len);
+-				vcollected = kstrdup(collected, GFP_KERNEL);
++				memcpy_optional(name_buf, collected,
++						N_ALIGN(name_len));
+ 				state = do_copy;
+ 			}
+ 		}
+@@ -375,8 +382,7 @@ static int __init do_copy(void)
+ 		if (xwrite(wfd, victim, body_len) != body_len)
+ 			error("write error");
+ 		sys_close(wfd);
+-		do_utime(vcollected, mtime);
+-		kfree(vcollected);
++		do_utime(name_buf, mtime);
+ 		eat(body_len);
+ 		state = do_skip;
+ 		return 0;
 -- 
 2.10.3.dirty
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
