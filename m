@@ -1,58 +1,53 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Thu, 25 Jan 2018 10:29:12 +0100
-Subject: [PATCH v2 01/15] Documentation: add newcx initramfs format
-	description
-In-Reply-To: <1516850875-25066-2-git-send-email-takondra@cisco.com>
-References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-	<1516850875-25066-2-git-send-email-takondra@cisco.com>
-Message-ID: <CAK8P3a2FqEcq44-sRQrsgJ=_DOanC-qgJ3yFr=J6UrOKO0_3uw@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 25 Jan 2018 06:56:41 -0500
+Subject: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with
+	FS_IMA_NO_CACHE
+In-Reply-To: <20180124175234.GA29811@mail.hallyn.com>
+References: <20180122162452.8756-1-alban@kinvolk.io>
+	<20180122162452.8756-3-alban@kinvolk.io>
+	<20180124175234.GA29811@mail.hallyn.com>
+Message-ID: <1516881401.3751.37.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jan 25, 2018 at 4:27 AM, Taras Kondratiuk <takondra@cisco.com> wrote:
-> Many of the Linux security/integrity features are dependent on file
-> metadata, stored as extended attributes (xattrs), for making decisions.
-> These features need to be initialized during initcall and enabled as
-> early as possible for complete security coverage.
->
-> Initramfs (tmpfs) supports xattrs, but newc CPIO archive format does not
-> support including them into the archive.
->
-> This patch describes "extended" newc format (newcx) that is based on
-> newc and has following changes:
-> - extended attributes support
-> - increased size of filesize to support files >4GB.
-> - increased mtime field size to have usec precision and more than
->   32-bit of seconds.
-> - removed unused checksum field.
->
-> Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 
-Ah nice, I like the extension of the time handling, that certainly
-addresses one of the issues with y2038 that we have previously
-hacked around in an ugly way (interpreting the 32-bit
-number as unsigned).
+> > @@ -228,9 +229,28 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >  				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+> >  				 IMA_ACTION_FLAGS);
+> >  
+> > -	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
+> > -		/* reset all flags if ima_inode_setxattr was called */
+> > +	/*
+> > +	 * Reset the measure, appraise and audit cached flags either if:
+> > +	 * - ima_inode_setxattr was called, or
+> > +	 * - based on filesystem feature flag
+> > +	 * forcing the file to be re-evaluated.
+> > +	 */
+> > +	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
+> >  		iint->flags &= ~IMA_DONE_MASK;
+> > +	} else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
+> > +		if (action & IMA_MEASURE) {
+> > +			iint->measured_pcrs = 0;
+> > +			iint->flags &=
+> > +			    ~(IMA_COLLECTED | IMA_MEASURE | IMA_MEASURED);
+> > +		}
+> > +		if (action & IMA_APPRAISE)
+> > +			iint->flags &=
+> > +			    ~(IMA_COLLECTED | IMA_APPRAISE | IMA_APPRAISED |
+> > +			      IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK);
+> > +		if (action & IMA_AUDIT)
+> > +			iint->flags &=
+> > +			    ~(IMA_COLLECTED | IMA_AUDIT | IMA_AUDITED);
+> > +	}
+> > 
 
-However, if this is to become a generally supported format
-for cpio files, could we make it use nanosecond resolution
-instead? The issue that I see with microseconds is that
-storing a file in an archive and extracting it again would
-otherwise keep the mtime stamp /almost/ identical on file
-systems that have nanosecond resolution, but most of
-the time a comparison would indicate that the files are
-not the same.
+Alban, I don't know what I was thinking, but this can be simplified
+like for the IMA_CHANGE_XATTR case. ?Except in the IMA_CHANGE_XATTR
+case, "measured_pcrs" was already reset, whereas in this case
+"measured_pcrs" needs to be reset.
 
-Unfortunately, the range of a 64-bit nanoseconds counter
-is still a bit limited (584 years, or half of that if we make it
-signed). While this is clearly enough for the uses in
-initramfs, it still has a similar problem: someone creating
-a fake timestamp a long time in the past or future on
-a file system would lose information after going though
-cpio.
+Mimi
 
-         Arnd
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
