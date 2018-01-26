@@ -1,34 +1,45 @@
-From: femi.ageuh@gmail.com (Peter Schuster)
-Date: Fri, 26 Jan 2018 08:22:47 +0100
-Subject: =?UTF-8?Q?Darlehen_Geld_f=C3=BCr_Einzelpersonen_und_Fachleute_in_w?=
-	=?UTF-8?Q?eniger_als_72_Stunden?=
-Message-ID: <CACKcKZ-YTVoO8xO=VcRR-F_91T=fQ=MZa2wBTk_EaRT7GRz52Q@mail.gmail.com>
+From: arnd@arndb.de (Arnd Bergmann)
+Date: Fri, 26 Jan 2018 10:04:43 +0100
+Subject: [PATCH v2 01/15] Documentation: add newcx initramfs format
+	description
+In-Reply-To: <0725a45f-45ee-7346-12ee-c3cc4b862654@landley.net>
+References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
+	<1516850875-25066-2-git-send-email-takondra@cisco.com>
+	<CAK8P3a2FqEcq44-sRQrsgJ=_DOanC-qgJ3yFr=J6UrOKO0_3uw@mail.gmail.com>
+	<0725a45f-45ee-7346-12ee-c3cc4b862654@landley.net>
+Message-ID: <CAK8P3a0B0XK8g4H+4grEru2GKRG91_qKxZ=y8AxaQi9pcPwKRQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hallo,
+On Fri, Jan 26, 2018 at 3:39 AM, Rob Landley <rob@landley.net> wrote:
 
-Sind Sie in einer schwierigen Situation, f?r die Sie sich f?r ein
-Darlehen suchen? Ben?tigen Sie eine Finanzierung, um eine Schuld zu
-begleichen oder eine Aktivit?t zu finanzieren? Haben Sie einen
-Verbraucherkredit, eine Hypothek, einen pers?nlichen Kredit, eine
-Hypothek, Investition Darlehen, Schuldenkonsolidierung Darlehen oder
-andere braucht?
+> The problem with 1 second timestamps was you honestly could confuse
+> "make" about which file was newer once an exec() could complete in the
+> same second having done real work. That was the motivating issue causing
+> the change, going to nanoseconds was just the big hammer of "this is
+> large enough it won't matter again in our lifetimes". But nanosecond
+> time stamps are recording more jitter than useful information, and that
+> seems unlikely to change this century?
 
-Ich bin ein einzelner Investor. I zur Verf?gung stellen die Kredit
-kurz-, mittel- und langfristige. Ihr Finanzierungsbedingungen sind
-sehr einfach und meine Zinssatz betr?gt 3% pro Jahr.
+Sure, the only thing we really need the nanosecond timestamp for is
+to keep them identical. E.g. if you use cpio to make an exact copy
+of a file system, using microseconds timestamps will round all mtime
+values. If you then use 'rsync' to compare/update the two copies
+without passing a --modify-window= or --size-only, it will have
+to read all files in rather then skipping those with identical size and
+mtime.
 
-F?r alle Anfragen, bleibe ich zur Verf?gung, um Ihre Fragen zu beantworten.
+Side note: the default behavior for file systems is actually to only use
+the coarse timestamps of the last timer tick, so you actually do get
+identical timestamps in practice, plus six digits of nonsense:
 
-Danke, dass Sie mir per E-Mail an Sie von  :   klaus.peterschuster at outlook.de
+(on tmpfs)
+ $ for i in {000..999} ; do > $i ; done; stat --format="%y" *  | uniq -c
+     86 2018-01-26 10:01:48.811135084 +0100
+    469 2018-01-26 10:01:48.815135143 +0100
+    445 2018-01-26 10:01:48.819135201 +0100
 
-Mit freundlichen Gr??en.
-
-Peter Schuster
-
-Financial Bank
-https://firstfinancialsa.com/de
+         Arnd
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
