@@ -1,42 +1,108 @@
-From: hmh@hmh.eng.br (Henrique de Moraes Holschuh)
-Date: Fri, 26 Jan 2018 08:31:32 -0200
-Subject: [PATCH v2 01/15] Documentation: add newcx initramfs format
-	description
-In-Reply-To: <0725a45f-45ee-7346-12ee-c3cc4b862654@landley.net>
-References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-	<1516850875-25066-2-git-send-email-takondra@cisco.com>
-	<CAK8P3a2FqEcq44-sRQrsgJ=_DOanC-qgJ3yFr=J6UrOKO0_3uw@mail.gmail.com>
-	<0725a45f-45ee-7346-12ee-c3cc4b862654@landley.net>
-Message-ID: <20180126103132.7szs5lj5ppm7eyy6@khazad-dum.debian.net>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Fri, 26 Jan 2018 13:46:55 +0200
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <20180126053542.GA30189@bombadil.infradead.org>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+Message-ID: <4788245d-c8e1-3587-c1e0-09c18245fe9a@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 25 Jan 2018, Rob Landley wrote:
-> That said, I don't think -h newcx should emit (or recognize) the
-> "TRAILER!!!1!" entry. That's kinda silly in-band signaling for 2018:
-> files have a length, pipes provide EOF, and each cpiox entry starts with
-> 6 bytes of c_magic anyway. (I stopped toybox from producing the TRAILER
-> entry back in june, toybox commit 32550751997d, and the kernel consumes
-> the resulting cpio just fine. All the trailer does is prevent you from
-> concatenating cpio files, which is a feature multiple people asked me for.)
+On 26/01/18 07:35, Matthew Wilcox wrote:
+> On Wed, Jan 24, 2018 at 08:10:53PM +0100, Jann Horn wrote:
+>> I'm not entirely convinced by the approach of marking small parts of
+>> kernel memory as readonly for hardening.
+> 
+> It depends how significant the data stored in there are.  For example,
+> storing function pointers in read-only memory provides significant
+> hardening.
+> 
+>> You're allocating with vmalloc(), which, as far as I know, establishes
+>> a second mapping in the vmalloc area for pages that are already mapped
+>> as RW through the physmap. AFAICS, later, when you're trying to make
+>> pages readonly, you're only changing the protections on the second
+>> mapping in the vmalloc area, therefore leaving the memory writable
+>> through the physmap. Is that correct? If so, please either document
+>> the reasoning why this is okay or change it.
+> 
+> Yes, this is still vulnerable to attacks through the physmap.  That's also
+> true for marking structs as const.  We should probably fix that at some
+> point, but at least they're not vulnerable to heap overruns by small
+> amounts ... you have to be able to overrun some other array by terabytes.
 
-Not in the kernel.  What TRAILER does in the kernel is to act as a
-barrier for the hardlink creation state, which IS a good thing.  You
-could just specify it as such for "newcx".
+Actually, I think there is something to say in favor of using a vmalloc
+based approach, precisely because of the physmap :-P
 
-The kernel will continue reading for more entries after TRAILER, so
-concatenation is not broken by TRAILER.  It is also insensitive to
-NUL-padding length (as long as it is 4-byte aligned), which is another
-nice feature you could specify for "newcx".
+If I understood correctly, the physmap is primarily meant to speed up
+access to physical memory through the TLB. In particular, for kmalloc
+based allocations.
 
-Also, the kernel does something nothing in userspace ever tried to,
-AFAIK: it detects compression signatures along with the CPIO header
-signatures, and thus it can take several compressed and uncompressed
-archives concatenater together (and the compressor doesn't need to be
-the same, either).
+Which means that, to perform a physmap-based attack to a kmalloced
+allocation, one needs to know:
 
--- 
-  Henrique Holschuh
+- the address of the target variable in the kmalloc range
+- the randomized offset of the kernel
+- the location of the physmap
+
+But, for a vmalloc based allocation, there is one extra hoop: since the
+mapping is really per page, now the attacker has actually to walk the
+page table, to figure out where to poke in the physmap.
+
+
+One more thought about physmap: does it map also code?
+Because, if it does, and one wants to use it for an attack, isn't it
+easier to look for some security test and replace a bne with be or
+equivalent?
+
+
+> It's worth having a discussion about whether we want the pmalloc API
+> or whether we want a slab-based API.
+
+pmalloc is meant to be useful where the attack surface is made up of
+lots of small allocations - my first use case was the SE Linux policy
+DB, where there is a variety of elements being allocated, in large
+amount. To the point where having ready made caches would be wasteful.
+
+
+Then there is the issue I already mentioned about arm/arm64 which would
+require to break down large mappings, which seems to be against current
+policy, as described in my previous mail:
+
+http://www.openwall.com/lists/kernel-hardening/2018/01/24/11
+
+
+I do not know exactly what you have in mind wrt slab, but my impression
+is that it will most likely gravitate toward the pmalloc implementation.
+It will need:
+
+- "pools" or anyway some means to lock only a certain group of pages,
+related to a specific kernel user
+
+- (mostly) lockless allocation
+
+- a way to manage granularity (or order of allocation)
+
+Most of this is already provided by genalloc, which is what I ended up
+almost re-implementing, before being pointed to it :-)
+
+I only had to add the tracking of end of allocations, which is what the
+patch 1/6 does - as side note, is anybody maintaining it?
+I could not find an entry in MAINTAINERS
+
+As I mentioned above, using vmalloc adds even an extra layer of protection.
+
+The major downside is the increased TLB use, however this is not so
+relevant for the volumes of data that I had to deal with so far:
+only few 4K pages.
+
+But you might have in mind something else.
+I'd be interested to know what and what would be an obstacle in using
+pmalloc. Maybe it can be solved.
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
