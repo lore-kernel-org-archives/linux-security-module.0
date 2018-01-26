@@ -1,64 +1,55 @@
-From: blukashev@sempervictus.com (Boris Lukashev)
-Date: Fri, 26 Jan 2018 11:36:30 -0500
-Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
-In-Reply-To: <8eb12a75-4957-d5eb-9a14-387788728b8a@huawei.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-	<20180124175631.22925-5-igor.stoppa@huawei.com>
-	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
-	<6c6a3f47-fc5b-0365-4663-6908ad1fc4a7@huawei.com>
-	<CAFUG7CfP_UyEH=1dmX=wsBz73+fQ0syDAy8ArKT0d4nMyf9n-g@mail.gmail.com>
-	<20180125153839.GA3542@redhat.com>
-	<8eb12a75-4957-d5eb-9a14-387788728b8a@huawei.com>
-Message-ID: <CAFUG7CeAfymvCC5jpBSM88X=8nSu-ktE0h81Ws1dAO0KrZk=9w@mail.gmail.com>
+From: hmh@hmh.eng.br (Henrique de Moraes Holschuh)
+Date: Fri, 26 Jan 2018 16:15:13 -0200
+Subject: [PATCH v2 01/15] Documentation: add newcx initramfs format
+	description
+In-Reply-To: <alpine.LRH.2.00.1801260739120.8259@sjc-ads-6991.cisco.com>
+References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
+	<1516850875-25066-2-git-send-email-takondra@cisco.com>
+	<CAK8P3a2FqEcq44-sRQrsgJ=_DOanC-qgJ3yFr=J6UrOKO0_3uw@mail.gmail.com>
+	<0725a45f-45ee-7346-12ee-c3cc4b862654@landley.net>
+	<20180126103132.7szs5lj5ppm7eyy6@khazad-dum.debian.net>
+	<alpine.LRH.2.00.1801260739120.8259@sjc-ads-6991.cisco.com>
+Message-ID: <20180126181512.hnotac2lpxkj4ruv@khazad-dum.debian.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jan 26, 2018 at 7:28 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
-> On 25/01/18 17:38, Jerome Glisse wrote:
->> On Thu, Jan 25, 2018 at 10:14:28AM -0500, Boris Lukashev wrote:
->>> On Thu, Jan 25, 2018 at 6:59 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
->>
->> [...]
->>
->>> DMA/physmap access coupled with a knowledge of which virtual mappings
->>> are in the physical space should be enough for an attacker to bypass
->>> the gating mechanism this work imposes. Not trivial, but not
->>> impossible. Since there's no way to prevent that sort of access in
->>> current hardware (especially something like a NIC or GPU working
->>> independently of the CPU altogether)
->
-> [...]
->
->> I am not saying that this can not happen but that we are trying our best
->> to avoid it.
->
-> How about an opt-in verification, similar to what proposed by Boris
-> Lukashev?
->
-> When reading back the data, one could access the pointer directly and
-> bypass the verification, or could use a function that explicitly checks
-> the integrity of the data.
->
-> Starting from an unprotected kmalloc allocation, even just turning the
-> data into R/O is an improvement, but if one can afford the overhead of
-> performing the verification, why not?
->
 
-I like the idea of making the verification call optional for consumers
-allowing for fast/slow+hard paths depending on their needs.
-Cant see any additional vectors for abuse (other than the original
-ones effecting out-of-band modification) introduced by having
-verify/normal callers, but i've not had enough coffee yet. Any access
-races or things like that come to mind for anyone? Shouldn't happen
-with a write-once allocation, but again, lacking coffee.
+On Fri, 26 Jan 2018, Victor Kamensky wrote:
+> On Fri, 26 Jan 2018, Henrique de Moraes Holschuh wrote:
+> > On Thu, 25 Jan 2018, Rob Landley wrote:
+> > > That said, I don't think -h newcx should emit (or recognize) the
+> > > "TRAILER!!!1!" entry. That's kinda silly in-band signaling for 2018:
+> > > files have a length, pipes provide EOF, and each cpiox entry starts with
+> > > 6 bytes of c_magic anyway.
+> 
+> My understanding that TRAILER is really used on tape devices,
+> there is no notion of file end in this case, it is just a stream of bytes
+> from char device.
 
-> It would still be better if the service was provided by the library,
-> instead than implemented by individual users, I think.
->
-> --
-> igor
+TRAILER is really used anywhere you can have several cpio archives
+concatenated, which is the exact case of a Linux initramfs, not just
+tape.
 
--Boris
+The initramfs format takes *one or more* cpio archives, concatenated.
+Each archive may be independently compressed (using whatever supported
+compression method), or uncompressed[1].  EOF or size information can
+only tell you where the entire concatenated archive ends, not where each
+"segment" (independent cpio archive that was concatenated into the
+whole) ends.
+
+TRAILER is the only decent way to know the concatenation points.
+Knowing where these points are is necessary for the kernel, due to the
+way hardlink encoding is done on cpio archives: one has to reset the
+state of the hardlink-tracking table between cpio archives that were
+concatenated, for safety (and sysadmin sanity) reasons.
+
+[1] for the special case when one includes an "early initramfs" section
+for firmware (microcode, etc) updates, the archive(s) containing the
+firmware data must be uncompressed, and these archives must come before
+compressed archives in the concatenation.
+
+-- 
+  Henrique Holschuh
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
