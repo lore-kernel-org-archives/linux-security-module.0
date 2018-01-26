@@ -1,56 +1,64 @@
-From: kamensky@cisco.com (Victor Kamensky)
-Date: Fri, 26 Jan 2018 07:51:21 -0800 (PST)
-Subject: [PATCH v2 01/15] Documentation: add newcx initramfs format
-	description
-In-Reply-To: <20180126103132.7szs5lj5ppm7eyy6@khazad-dum.debian.net>
-References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-	<1516850875-25066-2-git-send-email-takondra@cisco.com>
-	<CAK8P3a2FqEcq44-sRQrsgJ=_DOanC-qgJ3yFr=J6UrOKO0_3uw@mail.gmail.com>
-	<0725a45f-45ee-7346-12ee-c3cc4b862654@landley.net>
-	<20180126103132.7szs5lj5ppm7eyy6@khazad-dum.debian.net>
-Message-ID: <alpine.LRH.2.00.1801260739120.8259@sjc-ads-6991.cisco.com>
+From: blukashev@sempervictus.com (Boris Lukashev)
+Date: Fri, 26 Jan 2018 11:36:30 -0500
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <8eb12a75-4957-d5eb-9a14-387788728b8a@huawei.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<6c6a3f47-fc5b-0365-4663-6908ad1fc4a7@huawei.com>
+	<CAFUG7CfP_UyEH=1dmX=wsBz73+fQ0syDAy8ArKT0d4nMyf9n-g@mail.gmail.com>
+	<20180125153839.GA3542@redhat.com>
+	<8eb12a75-4957-d5eb-9a14-387788728b8a@huawei.com>
+Message-ID: <CAFUG7CeAfymvCC5jpBSM88X=8nSu-ktE0h81Ws1dAO0KrZk=9w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On Fri, 26 Jan 2018, Henrique de Moraes Holschuh wrote:
-
-> On Thu, 25 Jan 2018, Rob Landley wrote:
->> That said, I don't think -h newcx should emit (or recognize) the
->> "TRAILER!!!1!" entry. That's kinda silly in-band signaling for 2018:
->> files have a length, pipes provide EOF, and each cpiox entry starts with
->> 6 bytes of c_magic anyway.
-
-My understanding that TRAILER is really used on tape devices,
-there is no notion of file end in this case, it is just a stream of bytes
-from char device.
-
-Thanks,
-Victor
-
->> (I stopped toybox from producing the TRAILER
->> entry back in june, toybox commit 32550751997d, and the kernel consumes
->> the resulting cpio just fine. All the trailer does is prevent you from
->> concatenating cpio files, which is a feature multiple people asked me for.)
+On Fri, Jan 26, 2018 at 7:28 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> On 25/01/18 17:38, Jerome Glisse wrote:
+>> On Thu, Jan 25, 2018 at 10:14:28AM -0500, Boris Lukashev wrote:
+>>> On Thu, Jan 25, 2018 at 6:59 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+>>
+>> [...]
+>>
+>>> DMA/physmap access coupled with a knowledge of which virtual mappings
+>>> are in the physical space should be enough for an attacker to bypass
+>>> the gating mechanism this work imposes. Not trivial, but not
+>>> impossible. Since there's no way to prevent that sort of access in
+>>> current hardware (especially something like a NIC or GPU working
+>>> independently of the CPU altogether)
 >
-> Not in the kernel.  What TRAILER does in the kernel is to act as a
-> barrier for the hardlink creation state, which IS a good thing.  You
-> could just specify it as such for "newcx".
+> [...]
 >
-> The kernel will continue reading for more entries after TRAILER, so
-> concatenation is not broken by TRAILER.  It is also insensitive to
-> NUL-padding length (as long as it is 4-byte aligned), which is another
-> nice feature you could specify for "newcx".
+>> I am not saying that this can not happen but that we are trying our best
+>> to avoid it.
 >
-> Also, the kernel does something nothing in userspace ever tried to,
-> AFAIK: it detects compression signatures along with the CPIO header
-> signatures, and thus it can take several compressed and uncompressed
-> archives concatenater together (and the compressor doesn't need to be
-> the same, either).
+> How about an opt-in verification, similar to what proposed by Boris
+> Lukashev?
+>
+> When reading back the data, one could access the pointer directly and
+> bypass the verification, or could use a function that explicitly checks
+> the integrity of the data.
+>
+> Starting from an unprotected kmalloc allocation, even just turning the
+> data into R/O is an improvement, but if one can afford the overhead of
+> performing the verification, why not?
+>
+
+I like the idea of making the verification call optional for consumers
+allowing for fast/slow+hard paths depending on their needs.
+Cant see any additional vectors for abuse (other than the original
+ones effecting out-of-band modification) introduced by having
+verify/normal callers, but i've not had enough coffee yet. Any access
+races or things like that come to mind for anyone? Shouldn't happen
+with a write-once allocation, but again, lacking coffee.
+
+> It would still be better if the service was provided by the library,
+> instead than implemented by individual users, I think.
+>
 > --
->  Henrique Holschuh
->
+> igor
+
+-Boris
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
