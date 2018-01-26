@@ -1,41 +1,45 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 26 Jan 2018 12:37:14 -0800
-Subject: [PATCH v2 11/15] gen_init_cpio: add newcx format
-In-Reply-To: <b3451193-0666-d929-01f3-29d3872bd5d4@landley.net>
+Date: Fri, 26 Jan 2018 13:02:52 -0800
+Subject: [PATCH v2 01/15] Documentation: add newcx initramfs format
+	description
+In-Reply-To: <da9b623c-dd0c-9aff-8eaa-43afa4714b34@landley.net>
 References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-	<1516850875-25066-12-git-send-email-takondra@cisco.com>
-	<b3451193-0666-d929-01f3-29d3872bd5d4@landley.net>
-Message-ID: <151699903485.21956.15795523878472133751@takondra-t460s>
+	<1516850875-25066-2-git-send-email-takondra@cisco.com>
+	<da9b623c-dd0c-9aff-8eaa-43afa4714b34@landley.net>
+Message-ID: <151700057225.21956.4502484965110175077@takondra-t460s>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Rob Landley (2018-01-25 18:40:25)
+Quoting Rob Landley (2018-01-25 18:40:54)
 > On 01/24/2018 09:27 PM, Taras Kondratiuk wrote:
-> > diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-> > index 7a2a6d85345d..78a47a5bdcb1 100644
-> > --- a/usr/gen_init_cpio.c
-> > +++ b/usr/gen_init_cpio.c
-> > @@ -10,6 +10,7 @@
-> >  #include <errno.h>
-> >  #include <ctype.h>
-> >  #include <limits.h>
-> > +#include <assert.h>
+> > diff --git a/Documentation/early-userspace/buffer-format.txt b/Documentation/early-userspace/buffer-format.txt
+> > index e1fd7f9dad16..d818df4f72dc 100644
+> > --- a/Documentation/early-userspace/buffer-format.txt
+> > +++ b/Documentation/early-userspace/buffer-format.txt
 > 
-> You're adding an assert? Really?
+> > +compressed and/or uncompressed cpio archives; arbitrary amounts
+> > +zero bytes (for padding) can be added between members.
 > 
-> >       fputs(s, stdout);
-> > -     offset += 110;
-> > +     assert((offset & 3) == 0);
-> > +     offset += cpio_hdr_size;
+> Missing "of" between amounts and zero. (Yeah it was in the original, but
+> if you're touching it anyway...)
 > 
-> Why?
+> > +c_xattrs_size  8 bytes                Size of xattrs field
+> > +
+> > +Most of the fields match cpio_newc_header except c_mtime that contains
+> > +microseconds. c_chksum field is dropped.
+> > +
+> > +xattr_size is a total size of xattr_entry including 8 bytes of
+> > +xattr_size. xattr_size has the same hexadecimal ASCII encoding as other
+> > +fields of cpio header.
+> 
+> xattrs_size or xattr_size?
+> 
+> Total nitpicks, I know. :)
 
-Current code assumes that previous file entry in cpio is padded to 4
-byte boundary. The assert just captures this assumption. It should be
-true unless there is a bug in the code and some padding is missing.
+xattr_size here refers to size of each xattr_entry:
+xattr_entry := xattr_size[8] + xattr_name + "\0" + xattr_value
 
-Actually this assert should be a part of the next patch (#12) that
-modifies padding code.
+I'll move this paragraph closer to that line.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
