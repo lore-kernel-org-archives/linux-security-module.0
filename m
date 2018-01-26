@@ -1,38 +1,34 @@
-From: willy@infradead.org (Matthew Wilcox)
-Date: Thu, 25 Jan 2018 21:35:42 -0800
-Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
-In-Reply-To: <CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-	<20180124175631.22925-5-igor.stoppa@huawei.com>
-	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
-Message-ID: <20180126053542.GA30189@bombadil.infradead.org>
+From: femi.ageuh@gmail.com (Peter Schuster)
+Date: Fri, 26 Jan 2018 08:22:47 +0100
+Subject: =?UTF-8?Q?Darlehen_Geld_f=C3=BCr_Einzelpersonen_und_Fachleute_in_w?=
+	=?UTF-8?Q?eniger_als_72_Stunden?=
+Message-ID: <CACKcKZ-YTVoO8xO=VcRR-F_91T=fQ=MZa2wBTk_EaRT7GRz52Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jan 24, 2018 at 08:10:53PM +0100, Jann Horn wrote:
-> I'm not entirely convinced by the approach of marking small parts of
-> kernel memory as readonly for hardening.
+Hallo,
 
-It depends how significant the data stored in there are.  For example,
-storing function pointers in read-only memory provides significant
-hardening.
+Sind Sie in einer schwierigen Situation, f?r die Sie sich f?r ein
+Darlehen suchen? Ben?tigen Sie eine Finanzierung, um eine Schuld zu
+begleichen oder eine Aktivit?t zu finanzieren? Haben Sie einen
+Verbraucherkredit, eine Hypothek, einen pers?nlichen Kredit, eine
+Hypothek, Investition Darlehen, Schuldenkonsolidierung Darlehen oder
+andere braucht?
 
-> You're allocating with vmalloc(), which, as far as I know, establishes
-> a second mapping in the vmalloc area for pages that are already mapped
-> as RW through the physmap. AFAICS, later, when you're trying to make
-> pages readonly, you're only changing the protections on the second
-> mapping in the vmalloc area, therefore leaving the memory writable
-> through the physmap. Is that correct? If so, please either document
-> the reasoning why this is okay or change it.
+Ich bin ein einzelner Investor. I zur Verf?gung stellen die Kredit
+kurz-, mittel- und langfristige. Ihr Finanzierungsbedingungen sind
+sehr einfach und meine Zinssatz betr?gt 3% pro Jahr.
 
-Yes, this is still vulnerable to attacks through the physmap.  That's also
-true for marking structs as const.  We should probably fix that at some
-point, but at least they're not vulnerable to heap overruns by small
-amounts ... you have to be able to overrun some other array by terabytes.
+F?r alle Anfragen, bleibe ich zur Verf?gung, um Ihre Fragen zu beantworten.
 
-It's worth having a discussion about whether we want the pmalloc API
-or whether we want a slab-based API.  We can have a separate discussion
-about an API to remove pages from the physmap.
+Danke, dass Sie mir per E-Mail an Sie von  :   klaus.peterschuster at outlook.de
+
+Mit freundlichen Gr??en.
+
+Peter Schuster
+
+Financial Bank
+https://firstfinancialsa.com/de
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
