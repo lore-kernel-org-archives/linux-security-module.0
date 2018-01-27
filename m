@@ -1,45 +1,35 @@
-From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 26 Jan 2018 13:02:52 -0800
-Subject: [PATCH v2 01/15] Documentation: add newcx initramfs format
-	description
-In-Reply-To: <da9b623c-dd0c-9aff-8eaa-43afa4714b34@landley.net>
-References: <1516850875-25066-1-git-send-email-takondra@cisco.com>
-	<1516850875-25066-2-git-send-email-takondra@cisco.com>
-	<da9b623c-dd0c-9aff-8eaa-43afa4714b34@landley.net>
-Message-ID: <151700057225.21956.4502484965110175077@takondra-t460s>
+From: prasannatsmkumar@gmail.com (PrasannaKumar Muralidharan)
+Date: Sat, 27 Jan 2018 12:20:18 +0530
+Subject: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+In-Reply-To: <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+References: <20171031200503.GC18578@ziepe.ca>
+	<20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+	<20171106022704.GD26011@ziepe.ca>
+	<CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+	<20171107160404.GG21466@ziepe.ca>
+	<20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+	<20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
+	<20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+Message-ID: <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Rob Landley (2018-01-25 18:40:54)
-> On 01/24/2018 09:27 PM, Taras Kondratiuk wrote:
-> > diff --git a/Documentation/early-userspace/buffer-format.txt b/Documentation/early-userspace/buffer-format.txt
-> > index e1fd7f9dad16..d818df4f72dc 100644
-> > --- a/Documentation/early-userspace/buffer-format.txt
-> > +++ b/Documentation/early-userspace/buffer-format.txt
-> 
-> > +compressed and/or uncompressed cpio archives; arbitrary amounts
-> > +zero bytes (for padding) can be added between members.
-> 
-> Missing "of" between amounts and zero. (Yeah it was in the original, but
-> if you're touching it anyway...)
-> 
-> > +c_xattrs_size  8 bytes                Size of xattrs field
-> > +
-> > +Most of the fields match cpio_newc_header except c_mtime that contains
-> > +microseconds. c_chksum field is dropped.
-> > +
-> > +xattr_size is a total size of xattr_entry including 8 bytes of
-> > +xattr_size. xattr_size has the same hexadecimal ASCII encoding as other
-> > +fields of cpio header.
-> 
-> xattrs_size or xattr_size?
-> 
-> Total nitpicks, I know. :)
+Hi Jarkko,
 
-xattr_size here refers to size of each xattr_entry:
-xattr_entry := xattr_size[8] + xattr_name + "\0" + xattr_value
+On 17 November 2017 at 19:27, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
+>
+> At least signed-off-by from PrassanaKumar is missing from the 2nd
+> commit. I'll add it.
 
-I'll move this paragraph closer to that line.
+I had the impression that my signed-off-by will be present in this
+change. But it is missing in [1]. Is it supposed to be that way?
+
+1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
+
+Thanks,
+PrasannaKumar
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
