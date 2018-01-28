@@ -1,35 +1,34 @@
-From: prasannatsmkumar@gmail.com (PrasannaKumar Muralidharan)
-Date: Sat, 27 Jan 2018 12:20:18 +0530
-Subject: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-In-Reply-To: <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
-References: <20171031200503.GC18578@ziepe.ca>
-	<20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
-	<20171106022704.GD26011@ziepe.ca>
-	<CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
-	<20171107160404.GG21466@ziepe.ca>
-	<20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
-	<20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
-	<20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
-Message-ID: <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+From: tomas.winkler@intel.com (Tomas Winkler)
+Date: Sun, 28 Jan 2018 09:50:59 +0200
+Subject: [PATCH 0/2] tpm: fix locality and power saving handling
+Message-ID: <20180128075101.6883-1-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Jarkko,
+Devices that support locality has failed to transmit due to
+reserved order of locality request and cmdReady/goIdle handshake.
+The cmdReady/goIdle should be performed on the requested locality.
 
-On 17 November 2017 at 19:27, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
->
-> At least signed-off-by from PrassanaKumar is missing from the 2nd
-> commit. I'll add it.
+The first patch corrects the locality and power-save order,
+adds required polling for completion of goIdle and locality relinquish.
 
-I had the impression that my signed-off-by will be present in this
-change. But it is missing in [1]. Is it supposed to be that way?
+The second patch removes cmdRead/goIdle handshake from runtime_pm as it's
+rather a part of TPM2 protocol  then true device power management,
+and on device it's no longer optional.
 
-1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
+Tomas Winkler (2):
+  tpm: cmd_ready command can be issued only after granting locality
+  tpm: separate cmd_ready/go_idle from runtime_pm
 
-Thanks,
-PrasannaKumar
+ drivers/char/tpm/tpm-interface.c |  21 ++++--
+ drivers/char/tpm/tpm_crb.c       | 157 +++++++++++++++++++++++----------------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   4 +-
+ 4 files changed, 115 insertions(+), 71 deletions(-)
+
+-- 
+2.14.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
