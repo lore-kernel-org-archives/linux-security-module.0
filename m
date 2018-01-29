@@ -1,29 +1,58 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 29 Jan 2018 10:44:41 +0200
-Subject: [PATCH 1/3] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94203771@hasmsx108.ger.corp.intel.com>
-References: <20180123112731.3687-1-tomas.winkler@intel.com>
-	<20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94203771@hasmsx108.ger.corp.intel.com>
-Message-ID: <20180129084441.6oc4m4jgbqzsfq3v@linux.intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 29 Jan 2018 11:33:05 -0500
+Subject: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with
+	FS_IMA_NO_CACHE
+In-Reply-To: <1516881401.3751.37.camel@linux.vnet.ibm.com>
+References: <20180122162452.8756-1-alban@kinvolk.io>
+	<20180122162452.8756-3-alban@kinvolk.io>
+	<20180124175234.GA29811@mail.hallyn.com>
+	<1516881401.3751.37.camel@linux.vnet.ibm.com>
+Message-ID: <1517243585.29187.546.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jan 24, 2018 at 06:33:53PM +0000, Winkler, Tomas wrote:
-> > > -	pm_runtime_put(dev);
-> > > +	pm_runtime_put_sync(dev);
-> > 
-> > Change to put_sync is needed so that the idle handshake gets completed?
+Hi Alban,
+
+On Thu, 2018-01-25 at 06:56 -0500, Mimi Zohar wrote:
+> > > @@ -228,9 +229,28 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> > >  				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+> > >  				 IMA_ACTION_FLAGS);
+> > >  
+> > > -	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
+> > > -		/* reset all flags if ima_inode_setxattr was called */
+> > > +	/*
+> > > +	 * Reset the measure, appraise and audit cached flags either if:
+> > > +	 * - ima_inode_setxattr was called, or
+> > > +	 * - based on filesystem feature flag
+> > > +	 * forcing the file to be re-evaluated.
+> > > +	 */
+> > > +	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
+> > >  		iint->flags &= ~IMA_DONE_MASK;
+> > > +	} else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
+> > > +		if (action & IMA_MEASURE) {
+> > > +			iint->measured_pcrs = 0;
+> > > +			iint->flags &=
+> > > +			    ~(IMA_COLLECTED | IMA_MEASURE | IMA_MEASURED);
+> > > +		}
+> > > +		if (action & IMA_APPRAISE)
+> > > +			iint->flags &=
+> > > +			    ~(IMA_COLLECTED | IMA_APPRAISE | IMA_APPRAISED |
+> > > +			      IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK);
+> > > +		if (action & IMA_AUDIT)
+> > > +			iint->flags &=
+> > > +			    ~(IMA_COLLECTED | IMA_AUDIT | IMA_AUDITED);
+> > > +	}
+> > > 
 > 
-> Right.
+> Alban, I don't know what I was thinking, but this can be simplified
+> like for the IMA_CHANGE_XATTR case. ?Except in the IMA_CHANGE_XATTR
+> case, "measured_pcrs" was already reset, whereas in this case
+> "measured_pcrs" needs to be reset.
 
-Since we seem to agree that your change to get rid of the use of PM
-runtime should that be actually the first change in the patch set?
+Did you get a chance to make the change and test it?
 
-Or are you looking forward to get these backported to stable kernels?
+Mimi
 
-/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
