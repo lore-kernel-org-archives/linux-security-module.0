@@ -1,58 +1,43 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Mon, 29 Jan 2018 19:40:14 +0000
-Subject: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <20180129175720.GB23714@ziepe.ca>
-References: <20180128075101.6883-1-tomas.winkler@intel.com>
-	<20180128075101.6883-2-tomas.winkler@intel.com>
-	<20180128201559.GG23869@ziepe.ca>
-	<5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
-	<20180129175720.GB23714@ziepe.ca>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9420FBB5@hasmsx108.ger.corp.intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 30 Jan 2018 00:06:12 +0200
+Subject: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+In-Reply-To: <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+References: <20171031200503.GC18578@ziepe.ca>
+	<20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+	<20171106022704.GD26011@ziepe.ca>
+	<CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+	<20171107160404.GG21466@ziepe.ca>
+	<20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+	<20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
+	<20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+	<CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+Message-ID: <20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-> On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
+On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
+> Hi Jarkko,
 > 
-> > > I think if a driver can fail reliquish then it needs some kind of
-> > > strategy to recover.
-> 
-> > Maybe some driver can and some not, but if it doesn't succeed it
-> > should return an error.
-> 
-> But you can't just leave the driver in some inconsistent state..
-> 
-> Every time I've audited something to do with 'add error codes to
-> destroy/free/release' I find driver design issues..
-
-I'm sure of it, but from this particular point the driver itself is stateless, 
-it's just reading HW state via registers. It's not going through driver state changes.
-
-> > > Suggest trying the reliquish again on every next request until
-> > > success, otherwise fail request locality, potentially permanently.
+> On 17 November 2017 at 19:27, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
 > >
-> > This is something I rather prevent because it leaves the HW in kind of
-> > undefined state ( and we should probably work on that a bit more later).
-> > As far as I've debugged the flow now, the driver just fails, and the
-> > error goes up user space caller or the internal flow is stopped.
+> > At least signed-off-by from PrassanaKumar is missing from the 2nd
+> > commit. I'll add it.
 > 
-> But tranmist_command will be called again - then what does the driver do?
-> The driver needs an answer for that..
-It will just fail again
+> I had the impression that my signed-off-by will be present in this
+> change. But it is missing in [1]. Is it supposed to be that way?
 > 
-> If you don't want to retry then I'd rather see request_locality permanently
-> fail then adding a return code to release.
+> 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
+> 
+> Thanks,
+> PrasannaKumar
 
-What do you mean exactly mean by permanently fail,  
-My current assumption is that  it will fail permanently because the HW is not responsive
-Or indicate error on any subsequent command, unless the hw recover somehow. 
-Currently I'm not aware of any possibility to reset the device except rebooting the system.
+Yes, it would be senseful.
 
+James, would it still be possible to amend this tag to security tree?
 
-Thanks
-Tomas
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
