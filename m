@@ -1,55 +1,56 @@
-From: dongsu@kinvolk.io (Dongsu Park)
-Date: Tue, 30 Jan 2018 19:13:05 +0100
-Subject: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with
-	FS_IMA_NO_CACHE
-In-Reply-To: <CANxcAMs_1r0xz=D4bZ9C0k+gdkfrP=DJR0r97G1hG=nUKzKrcw@mail.gmail.com>
-References: <20180122162452.8756-1-alban@kinvolk.io>
-	<20180122162452.8756-3-alban@kinvolk.io>
-	<20180124175234.GA29811@mail.hallyn.com>
-	<1516881401.3751.37.camel@linux.vnet.ibm.com>
-	<1517243585.29187.546.camel@linux.vnet.ibm.com>
-	<CANxcAMs_1r0xz=D4bZ9C0k+gdkfrP=DJR0r97G1hG=nUKzKrcw@mail.gmail.com>
-Message-ID: <CANxcAMs1A_s-i=vDRfcYqi_149hkS47V3iaJzxdMNgzUyRS7GA@mail.gmail.com>
+From: salyzyn@android.com (Mark Salyzyn)
+Date: Tue, 30 Jan 2018 11:00:04 -0800
+Subject: [PATCH] general protection fault in sock_has_perm
+In-Reply-To: <1516383672.2560.23.camel@tycho.nsa.gov>
+References: <20180118215853.228182-1-salyzyn@android.com>
+	<1516382386.2560.11.camel@tycho.nsa.gov>
+	<1516383672.2560.23.camel@tycho.nsa.gov>
+Message-ID: <99c11fa6-ad9a-830c-467e-6a56e78aecf8@android.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+On 01/19/2018 09:41 AM, Stephen Smalley wrote:
+> If we can't safely dereference the sock in these hooks, then that seems
+> to point back to the approach used in my original code, where in
+> ancient history I had sock_has_perm() take the socket and use its inode
+> i_security field instead of the sock.  commit
+> 253bfae6e0ad97554799affa0266052968a45808 switched them to use the sock
+> instead.
 
-On Mon, Jan 29, 2018 at 6:40 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
-> On Mon, Jan 29, 2018 at 5:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->> On Thu, 2018-01-25 at 06:56 -0500, Mimi Zohar wrote:
-...
->> Did you get a chance to make the change and test it?
->
-> Alban has been on holidays, so he will be back on Wednesday or so.
-> So I'll try to understand what you meant in the last email.
->
-> As IMA_DONE_MASK contains all other bitmasks, it's possible to
-> optimize the code like this:
->
->         if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
->                 iint->flags &= ~IMA_DONE_MASK;
->         } else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
->                 iint->flags &= ~IMA_DONE_MASK;
->                 if (action & IMA_MEASURE)
->                         iint->measured_pcrs = 0;
->         }
->
-> Is that what you want to see? Please let me know if it's not.
-> Tomorrow I will try to test with a new patch.
+Because of the nature of this problem (hard to duplicate, no clear 
+path), I am understandably not comfortable reverting and submitting for 
+testing in order to prove this point. It is disruptive because it 
+changes several subroutine call signatures.
 
-Today I created a new patch, and tested it. It worked fine.
-So I've just sent a new patchset v4. Please see:
-https://www.mail-archive.com/linux-kernel at vger.kernel.org/msg1598387.html
+AFAIK this looks like a user request racing in without reference 
+counting or RCU grace period in the callers (could be viewed as not an 
+issue with security code). Effectively fixed in 4.9-stable, but broken 
+in 4.4-stable.
 
-Thanks,
-Dongsu
+hygiene, KISS and small, is all I do feel comfortable to submit to 
+4.4-stable without pulling in all the infrastructure improvements.
 
-> Thanks,
-> Dongsu
->
->> Mimi
->>
+-- Mark
+
+---
+ ?security/selinux/hooks.c | 2 ++
+ ?1 file changed, 2 insertions(+)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 34427384605d..be68992a28cb 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4066,6 +4066,8 @@ static int sock_has_perm(struct task_struct *task, 
+struct sock *sk, u32 perms)
+ ???? struct lsm_network_audit net = {0,};
+ ???? u32 tsid = task_sid(task);
+
++??? if (!sksec)
++??? ??? return -EFAULT;
+ ???? if (sksec->sid == SECINITSID_KERNEL)
+ ???? ??? return 0;
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
