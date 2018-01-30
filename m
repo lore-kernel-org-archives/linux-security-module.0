@@ -1,224 +1,51 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Tue, 30 Jan 2018 17:14:46 +0200
-Subject: [PATCH 6/6] Pmalloc: self-test
-In-Reply-To: <20180130151446.24698-1-igor.stoppa@huawei.com>
-References: <20180130151446.24698-1-igor.stoppa@huawei.com>
-Message-ID: <20180130151446.24698-7-igor.stoppa@huawei.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 30 Jan 2018 17:28:08 +0200
+Subject: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+In-Reply-To: <alpine.LRH.2.21.1801302252020.20741@namei.org>
+References: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+	<20171106022704.GD26011@ziepe.ca>
+	<CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+	<20171107160404.GG21466@ziepe.ca>
+	<20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+	<20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
+	<20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+	<CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+	<20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
+	<alpine.LRH.2.21.1801302252020.20741@namei.org>
+Message-ID: <20180130152808.2egxs2ki657eyxe3@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add basic self-test functionality for pmalloc.
+On Tue, Jan 30, 2018 at 10:52:13PM +1100, James Morris wrote:
+> On Tue, 30 Jan 2018, Jarkko Sakkinen wrote:
+> 
+> > On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
+> > > Hi Jarkko,
+> > > 
+> > > On 17 November 2017 at 19:27, Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
+> > > >
+> > > > At least signed-off-by from PrassanaKumar is missing from the 2nd
+> > > > commit. I'll add it.
+> > > 
+> > > I had the impression that my signed-off-by will be present in this
+> > > change. But it is missing in [1]. Is it supposed to be that way?
+> > > 
+> > > 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
+> > > 
+> > > Thanks,
+> > > PrasannaKumar
+> > 
+> > Yes, it would be senseful.
+> > 
+> > James, would it still be possible to amend this tag to security tree?
+> 
+> Nope, it's been pushed to Linus.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
----
- lib/genalloc.c        |  2 +-
- mm/Kconfig            |  7 ++++++
- mm/Makefile           |  1 +
- mm/pmalloc-selftest.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++
- mm/pmalloc-selftest.h | 30 ++++++++++++++++++++++++
- mm/pmalloc.c          |  9 ++++---
- 6 files changed, 110 insertions(+), 4 deletions(-)
- create mode 100644 mm/pmalloc-selftest.c
- create mode 100644 mm/pmalloc-selftest.h
+Damn. Well, good that Tested-by is there. I'm sorry about this.
 
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index 62f69b3..7ba2ec9 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -542,7 +542,7 @@ void gen_pool_flush_chunk(struct gen_pool *pool,
- 	memset(chunk->entries, 0,
- 	       DIV_ROUND_UP(size >> pool->min_alloc_order * BITS_PER_ENTRY,
- 			    BITS_PER_BYTE));
--	atomic_set(&chunk->avail, size);
-+	atomic_long_set(&chunk->avail, size);
- }
- 
- 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 03ff770..f0c960e 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -765,3 +765,10 @@ config GUP_BENCHMARK
- 	  performance of get_user_pages_fast().
- 
- 	  See tools/testing/selftests/vm/gup_benchmark.c
-+
-+config PROTECTABLE_MEMORY_SELFTEST
-+	bool "Run self test for pmalloc memory allocator"
-+	default n
-+	help
-+	  Tries to verify that pmalloc works correctly and that the memory
-+	  is effectively protected.
-diff --git a/mm/Makefile b/mm/Makefile
-index a6a47e1..1e76a9b 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
- obj-$(CONFIG_SLOB) += slob.o
- obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
- obj-$(CONFIG_ARCH_HAS_SET_MEMORY) += pmalloc.o
-+obj-$(CONFIG_PROTECTABLE_MEMORY_SELFTEST) += pmalloc-selftest.o
- obj-$(CONFIG_KSM) += ksm.o
- obj-$(CONFIG_PAGE_POISONING) += page_poison.o
- obj-$(CONFIG_SLAB) += slab.o
-diff --git a/mm/pmalloc-selftest.c b/mm/pmalloc-selftest.c
-new file mode 100644
-index 0000000..1c025f3
---- /dev/null
-+++ b/mm/pmalloc-selftest.c
-@@ -0,0 +1,65 @@
-+/*
-+ * pmalloc-selftest.c
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; version 2
-+ * of the License.
-+ */
-+
-+#include <linux/pmalloc.h>
-+#include <linux/mm.h>
-+
-+
-+#define SIZE_1 (PAGE_SIZE * 3)
-+#define SIZE_2 1000
-+
-+#define validate_alloc(expected, variable, size)	\
-+	pr_notice("must be " expected ": %s",		\
-+		  is_pmalloc_object(variable, size) > 0 ? "ok" : "no")
-+
-+#define is_alloc_ok(variable, size)	\
-+	validate_alloc("ok", variable, size)
-+
-+#define is_alloc_no(variable, size)	\
-+	validate_alloc("no", variable, size)
-+
-+void pmalloc_selftest(void)
-+{
-+	struct gen_pool *pool_unprot;
-+	struct gen_pool *pool_prot;
-+	void *var_prot, *var_unprot, *var_vmall;
-+
-+	pr_notice("pmalloc self-test");
-+	pool_unprot = pmalloc_create_pool("unprotected", 0);
-+	pool_prot = pmalloc_create_pool("protected", 0);
-+	BUG_ON(!(pool_unprot && pool_prot));
-+
-+	var_unprot = pmalloc(pool_unprot,  SIZE_1 - 1, GFP_KERNEL);
-+	var_prot = pmalloc(pool_prot,  SIZE_1, GFP_KERNEL);
-+	var_vmall = vmalloc(SIZE_2);
-+	is_alloc_ok(var_unprot, 10);
-+	is_alloc_ok(var_unprot, SIZE_1);
-+	is_alloc_ok(var_unprot, PAGE_SIZE);
-+	is_alloc_no(var_unprot, SIZE_1 + 1);
-+	is_alloc_no(var_vmall, 10);
-+
-+
-+	pfree(pool_unprot, var_unprot);
-+	vfree(var_vmall);
-+
-+	pmalloc_protect_pool(pool_prot);
-+
-+	/* This will intentionally trigger a WARN because the pool being
-+	 * destroyed is not protected, which is unusual and should happen
-+	 * on error paths only, where probably other warnings are already
-+	 * displayed.
-+	 */
-+	pmalloc_destroy_pool(pool_unprot);
-+
-+	/* This must not cause WARNings */
-+	pmalloc_destroy_pool(pool_prot);
-+}
-diff --git a/mm/pmalloc-selftest.h b/mm/pmalloc-selftest.h
-new file mode 100644
-index 0000000..3673d23
---- /dev/null
-+++ b/mm/pmalloc-selftest.h
-@@ -0,0 +1,30 @@
-+/*
-+ * pmalloc-selftest.h
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; version 2
-+ * of the License.
-+ */
-+
-+
-+#ifndef __PMALLOC_SELFTEST_H__
-+#define __PMALLOC_SELFTEST_H__
-+
-+
-+#ifdef CONFIG_PROTECTABLE_MEMORY_SELFTEST
-+
-+#include <linux/pmalloc.h>
-+
-+void pmalloc_selftest(void);
-+
-+#else
-+
-+static inline void pmalloc_selftest(void){};
-+
-+#endif
-+
-+#endif
-diff --git a/mm/pmalloc.c b/mm/pmalloc.c
-index a64ac49..73387d7 100644
---- a/mm/pmalloc.c
-+++ b/mm/pmalloc.c
-@@ -25,6 +25,8 @@
- #include <asm/cacheflush.h>
- #include <asm/page.h>
- 
-+#include "pmalloc-selftest.h"
-+
- /**
-  * pmalloc_data contains the data specific to a pmalloc pool,
-  * in a format compatible with the design of gen_alloc.
-@@ -152,7 +154,7 @@ static void pmalloc_disconnect(struct pmalloc_data *data,
- do { \
- 	sysfs_attr_init(&data->attr_##attr_name.attr); \
- 	data->attr_##attr_name.attr.name = #attr_name; \
--	data->attr_##attr_name.attr.mode = VERIFY_OCTAL_PERMISSIONS(0444); \
-+	data->attr_##attr_name.attr.mode = VERIFY_OCTAL_PERMISSIONS(0400); \
- 	data->attr_##attr_name.show = pmalloc_pool_show_##attr_name; \
- } while (0)
- 
-@@ -335,7 +337,7 @@ bool pmalloc_prealloc(struct gen_pool *pool, size_t size)
- 
- 	return true;
- abort:
--	vfree(chunk);
-+	vfree_atomic(chunk);
- 	return false;
- 
- }
-@@ -401,7 +403,7 @@ void *pmalloc(struct gen_pool *pool, size_t size, gfp_t gfp)
- abort:
- 	untag_chunk(chunk);
- free:
--	vfree(chunk);
-+	vfree_atomic(chunk);
- 	return NULL;
- }
- 
-@@ -508,6 +510,7 @@ static int __init pmalloc_late_init(void)
- 		}
- 	}
- 	mutex_unlock(&pmalloc_mutex);
-+	pmalloc_selftest();
- 	return 0;
- }
- late_initcall(pmalloc_late_init);
--- 
-2.9.3
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
