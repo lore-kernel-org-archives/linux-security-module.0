@@ -1,67 +1,56 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Tue, 30 Jan 2018 08:37:38 -0500
-Subject: [PATCH v2 0/5] selinux:Significant reduce of preempt_disable holds
-In-Reply-To: <20180126143241.23108-1-peter.enderborg@sony.com>
-References: <20180126143241.23108-1-peter.enderborg@sony.com>
-Message-ID: <1517319458.14420.1.camel@tycho.nsa.gov>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Tue, 30 Jan 2018 15:46:37 +0200
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <CAFUG7CeAfymvCC5jpBSM88X=8nSu-ktE0h81Ws1dAO0KrZk=9w@mail.gmail.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<6c6a3f47-fc5b-0365-4663-6908ad1fc4a7@huawei.com>
+	<CAFUG7CfP_UyEH=1dmX=wsBz73+fQ0syDAy8ArKT0d4nMyf9n-g@mail.gmail.com>
+	<20180125153839.GA3542@redhat.com>
+	<8eb12a75-4957-d5eb-9a14-387788728b8a@huawei.com>
+	<CAFUG7CeAfymvCC5jpBSM88X=8nSu-ktE0h81Ws1dAO0KrZk=9w@mail.gmail.com>
+Message-ID: <5782e30f-76b3-cf6f-e865-666aa958685e@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-01-26 at 15:32 +0100, peter.enderborg at sony.com wrote:
-> Holding the preempt_disable is very bad for low latency tasks
-> as audio and therefore we need to break out the rule-set dependent
-> part from this disable. By using a RCU instead of rwlock we
-> have an efficient locking and less preemption interference.
+On 26/01/18 18:36, Boris Lukashev wrote:
+> I like the idea of making the verification call optional for consumers
+> allowing for fast/slow+hard paths depending on their needs.
+> Cant see any additional vectors for abuse (other than the original
+> ones effecting out-of-band modification) introduced by having
+> verify/normal callers, but i've not had enough coffee yet. Any access
+> races or things like that come to mind for anyone?
 
-NB: rcu_read_lock() may disable preemption as well if
-CONFIG_PREEMPT_COUNT=y.  I assume you aren't concerned with that
-configuration?
+Well, the devil is in the details.
+In this case, the question is how to perform the verification in a way
+that is sufficiently robust against races.
 
-> 
-> Selinux uses a lot of read_locks. This patch replaces the rwlock
-> with RCY that does not hold preempt_disable.
-> 
-> Intel Xeon W3520 2.67 Ghz running FC27 with 4.15.0-rc9git
-> (+measurement)
-> I get preempt_disable in worst case for 1.2ms in
-> security_compute_av().
-> With the patch I get 960us as the longest security_compute_av()
-> without preempt disabeld. It very much noise in the measurement
-> but it is not likely a degrade.
-> 
-> And the preempt_disable times is also very dependent on the selinux
-> rule-set.
-> 
-> In security_get_user_sids() we have two nested for-loops and the
-> inner part calls sittab_context_to_sid() that calls
-> sidtab_search_context() that has a for loop() over a while() where
-> the loops is dependent on the rules.
-> 
-> On the test system the average lookup time is 60us and does
-> not change with the RCU usage.
-> 
-> To use RCU the structure of policydb has to be accesses through a
-> pointer.
-> We need 4 patches to get there.
-> 
->   [PATCH v2 1/5] selinux:Remove direct references to policydb.
->   We remove direct references and pass it through function arguments.
-> 
->   [PATCH v2 2/5] selinux: Move policydb to pointer structure
->   Move the policydb to dynamic allocated structure.
-> 
->   [PATCH v2 3/5] selinux: Move sidtab to pointer structure
->   Same as for policydb but for sidtab. They are closly related
->   and should be switched at the same time.
->   
->   [PATCH v2 4/5] selinux: Use pointer to switch policydb and sidtab
->   Now we can switch rules by switching pointers.
-> 
->   [PATCH v2 5/5] selinux: Switch locking to RCU.
->   We are now ready to use RCU.
->   
-> History: V1 rwsem
-> 
+After thinking about it for a while, I doubt it can be done reliably.
+It might work for some small data types, but the typical use case I have
+found myself dealing with, is protecting data structures.
+
+That also brings up a separate problem: what would be the size of data
+to hash? At one extreme there is a page, but it's probably too much, so
+what is the correct size? it cannot be smaller than a specific
+allocation, however that would imply looking for the hash related to the
+data being accessed, with extra overhead.
+
+And the data being accessed might be a field in a struct, for which we
+would not have any hash.
+There would be a hash only for the containing struct that was allocated ...
+
+
+Overall, it seems a good idea in theory, but when I think about its
+implementation, it seems like the overhead is so big that it would
+discourage its use for almost any practical purpose.
+
+If one really wants to be paranoid could, otoh have redundancy in a
+different pool.
+
+--
+igor
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
