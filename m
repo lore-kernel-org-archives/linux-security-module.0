@@ -1,51 +1,154 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 30 Jan 2018 17:28:08 +0200
-Subject: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-In-Reply-To: <alpine.LRH.2.21.1801302252020.20741@namei.org>
-References: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
-	<20171106022704.GD26011@ziepe.ca>
-	<CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
-	<20171107160404.GG21466@ziepe.ca>
-	<20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
-	<20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
-	<20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
-	<CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
-	<20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
-	<alpine.LRH.2.21.1801302252020.20741@namei.org>
-Message-ID: <20180130152808.2egxs2ki657eyxe3@linux.intel.com>
+From: corbet@lwn.net (Jonathan Corbet)
+Date: Tue, 30 Jan 2018 10:08:52 -0700
+Subject: [PATCH 5/6] Documentation for Pmalloc
+In-Reply-To: <20180130151446.24698-6-igor.stoppa@huawei.com>
+References: <20180130151446.24698-1-igor.stoppa@huawei.com>
+	<20180130151446.24698-6-igor.stoppa@huawei.com>
+Message-ID: <20180130100852.2213b94d@lwn.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:52:13PM +1100, James Morris wrote:
-> On Tue, 30 Jan 2018, Jarkko Sakkinen wrote:
-> 
-> > On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
-> > > Hi Jarkko,
-> > > 
-> > > On 17 November 2017 at 19:27, Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
-> > > >
-> > > > At least signed-off-by from PrassanaKumar is missing from the 2nd
-> > > > commit. I'll add it.
-> > > 
-> > > I had the impression that my signed-off-by will be present in this
-> > > change. But it is missing in [1]. Is it supposed to be that way?
-> > > 
-> > > 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
-> > > 
-> > > Thanks,
-> > > PrasannaKumar
-> > 
-> > Yes, it would be senseful.
-> > 
-> > James, would it still be possible to amend this tag to security tree?
-> 
-> Nope, it's been pushed to Linus.
+On Tue, 30 Jan 2018 17:14:45 +0200
+Igor Stoppa <igor.stoppa@huawei.com> wrote:
 
-Damn. Well, good that Tested-by is there. I'm sorry about this.
+> Detailed documentation about the protectable memory allocator.
+> 
+> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> ---
+>  Documentation/core-api/pmalloc.txt | 104 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+>  create mode 100644 Documentation/core-api/pmalloc.txt
 
-/Jarkko
+Please don't put plain-text files into core-api - that's a directory full
+of RST documents.  Your document is 99.9% RST already, better to just
+finish the job and tie it into the rest of the kernel docs.
+
+> diff --git a/Documentation/core-api/pmalloc.txt b/Documentation/core-api/pmalloc.txt
+> new file mode 100644
+> index 0000000..934d356
+> --- /dev/null
+> +++ b/Documentation/core-api/pmalloc.txt
+> @@ -0,0 +1,104 @@
+
+We might as well put the SPDX tag here, it's a new file.
+
+> +============================
+> +Protectable memory allocator
+> +============================
+> +
+> +Introduction
+> +------------
+> +
+> +When trying to perform an attack toward a system, the attacker typically
+> +wants to alter the execution flow, in a way that allows actions which
+> +would otherwise be forbidden.
+> +
+> +In recent years there has been lots of effort in preventing the execution
+> +of arbitrary code, so the attacker is progressively pushed to look for
+> +alternatives.
+> +
+> +If code changes are either detected or even prevented, what is left is to
+> +alter kernel data.
+> +
+> +As countermeasure, constant data is collected in a section which is then
+> +marked as readonly.
+> +To expand on this, also statically allocated variables which are tagged
+> +as __ro_after_init will receive a similar treatment.
+> +The difference from constant data is that such variables can be still
+> +altered freely during the kernel init phase.
+> +
+> +However, such solution does not address those variables which could be
+> +treated essentially as read-only, but whose size is not known at compile
+> +time or cannot be fully initialized during the init phase.
+
+This is all good information, but I'd suggest it belongs more in the 0/n
+patch posting than here.  The introduction of *this* document should say
+what it actually covers.
+
+> +
+> +Design
+> +------
+> +
+> +pmalloc builds on top of genalloc, using the same concept of memory pools
+> +A pool is a handle to a group of chunks of memory of various sizes.
+> +When created, a pool is empty. It will be populated by allocating chunks
+> +of memory, either when the first memory allocation request is received, or
+> +when a pre-allocation is performed.
+> +
+> +Either way, one or more memory pages will be obtained from vmalloc and
+> +registered in the pool as chunk. Subsequent requests will be satisfied by
+> +either using any available free space from the current chunks, or by
+> +allocating more vmalloc pages, should the current free space not suffice.
+> +
+> +This is the key point of pmalloc: it groups data that must be protected
+> +into a set of pages. The protection is performed through the mmu, which
+> +is a prerequisite and has a minimum granularity of one page.
+> +
+> +If the relevant variables were not grouped, there would be a problem of
+> +allowing writes to other variables that might happen to share the same
+> +page, but require further alterations over time.
+> +
+> +A pool is a group of pages that are write protected at the same time.
+> +Ideally, they have some high level correlation (ex: they belong to the
+> +same module), which justifies write protecting them all together.
+> +
+> +To keep it to a minimum, locking is left to the user of the API, in
+> +those cases where it's not strictly needed.
+
+This seems like a relevant and important aspect of the API that shouldn't
+be buried in the middle of a section talking about random things.
+
+> +Ideally, no further locking is required, since each module can have own
+> +pool (or pools), which should, for example, avoid the need for cross
+> +module or cross thread synchronization about write protecting a pool.
+> +
+> +The overhead of creating an additional pool is minimal: a handful of bytes
+> +from kmalloc space for the metadata and then what is left unused from the
+> +page(s) registered as chunks.
+> +
+> +Compared to plain use of vmalloc, genalloc has the advantage of tightly
+> +packing the allocations, reducing the number of pages used and therefore
+> +the pressure on the TLB. The slight overhead in execution time of the
+> +allocation should be mostly irrelevant, because pmalloc memory is not
+> +meant to be allocated/freed in tight loops. Rather it ought to be taken
+> +in use, initialized and write protected. Possibly destroyed.
+> +
+> +Considering that not much data is supposed to be dynamically allocated
+> +and then marked as read-only, it shouldn't be an issue that the address
+> +range for pmalloc is limited, on 32-bit systems.
+> +
+> +Regarding SMP systems, the allocations are expected to happen mostly
+> +during an initial transient, after which there should be no more need to
+> +perform cross-processor synchronizations of page tables.
+> +
+> +
+> +Use
+> +---
+> +
+> +The typical sequence, when using pmalloc, is:
+> +
+> +1. create a pool
+> +2. [optional] pre-allocate some memory in the pool
+> +3. issue one or more allocation requests to the pool
+> +4. initialize the memory obtained
+> +   - iterate over points 3 & 4 as needed -
+> +5. write protect the pool
+> +6. use in read-only mode the handlers obtained through the allocations
+> +7. [optional] destroy the pool
+
+So one gets this far, but has no actual idea of how to do these things.
+Which leads me to wonder: what is this document for?  Who are you expecting
+to read it?
+
+You could improve things a lot by (once again) going to RST and using
+directives to bring in the kerneldoc comments from the source (which, I
+note, do exist).  But I'd suggest rethinking this document and its
+audience.  Most of the people reading it are likely wanting to learn how to
+*use* this API; I think it would be best to not leave them frustrated.
+
+Thanks,
+
+jon
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
