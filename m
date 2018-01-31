@@ -1,95 +1,63 @@
-From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Wed, 28 Feb 2018 13:25:40 -0700
-Subject: [PATCH 2/5] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-In-Reply-To: <20180228195819.22231-3-jarkko.sakkinen@linux.intel.com>
-References: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
-	<20180228195819.22231-3-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20180228202540.GA19007@ziepe.ca>
+From: jmorris@namei.org (James Morris)
+Date: Thu, 1 Feb 2018 08:37:37 +1100 (AEDT)
+Subject: [GIT PULL] Security subsystem updates for v4.16
+In-Reply-To: <CA+55aFw1vWWmv5Ebq9yWVDFm4SQUG_fNd3f5yoYkWRTfUNaL_Q@mail.gmail.com>
+References: <alpine.LRH.2.21.1801291040280.29680@namei.org>
+	<CA+55aFw1vWWmv5Ebq9yWVDFm4SQUG_fNd3f5yoYkWRTfUNaL_Q@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1802010836080.13723@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Feb 28, 2018 at 09:58:15PM +0200, Jarkko Sakkinen wrote:
-> In order to make struct tpm_buf the first class object for constructing TPM
-> commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-> entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-> prints an error message.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->  drivers/char/tpm/tpm2-cmd.c | 41 +++++++++++++----------------------------
->  1 file changed, 13 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 6eeff3a60003..5f92141b1e16 100644
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -27,10 +27,6 @@ enum tpm2_session_attributes {
->  	TPM2_SA_CONTINUE_SESSION	= BIT(0),
->  };
->  
-> -struct tpm2_startup_in {
-> -	__be16	startup_type;
-> -} __packed;
-> -
->  struct tpm2_get_tpm_pt_in {
->  	__be32	cap_id;
->  	__be32	property_id;
-> @@ -55,7 +51,6 @@ struct tpm2_get_random_out {
->  } __packed;
->  
->  union tpm2_cmd_params {
-> -	struct	tpm2_startup_in		startup_in;
->  	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
->  	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
->  	struct	tpm2_get_random_in	getrandom_in;
-> @@ -760,40 +755,30 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
->  }
->  EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
->  
-> -#define TPM2_SHUTDOWN_IN_SIZE \
-> -	(sizeof(struct tpm_input_header) + \
-> -	 sizeof(struct tpm2_startup_in))
-> -
-> -static const struct tpm_input_header tpm2_shutdown_header = {
-> -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
-> -	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
-> -	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
-> -};
-> -
->  /**
->   * tpm2_shutdown() - send shutdown command to the TPM chip
->   *
-> + * In places where shutdown command is sent there's no much we can do except
-> + * print the error code on a system failure.
-> + *
->   * @chip:		TPM chip to use.
->   * @shutdown_type:	shutdown type. The value is either
->   *			TPM_SU_CLEAR or TPM_SU_STATE.
->   */
->  void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
->  {
-> -	struct tpm2_cmd cmd;
-> +	struct tpm_buf buf;
->  	int rc;
->  
-> -	cmd.header.in = tpm2_shutdown_header;
-> -	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
-> -
-> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
-> -			      "stopping the TPM");
-> -
-> -	/* In places where shutdown command is sent there's no much we can do
-> -	 * except print the error code on a system failure.
-> -	 */
-> -	if (rc < 0 && rc != -EPIPE)
-> -		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
-> -			 rc);
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
-> +	if (rc) {
-> +		dev_err(&chip->dev, "%s: out of memory", __func__);
+On Wed, 31 Jan 2018, Linus Torvalds wrote:
 
-Don't print for out of memory. The kernel already makes lots of
-prints for you. Same comment everywhere.
+> On Sun, Jan 28, 2018 at 3:41 PM, James Morris <jmorris@namei.org> wrote:
+> >
+> > Note that individual trees may also be pulled via:
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+> >         next-integrity
+> >         next-smack
+> >         next-tpm
+> 
+> So I did that, because it makes it easier and more controlled for me.
+> But then when double-checking that the end result is identical to your
+> full pull request, I end up missing the seccomp tree.
 
-Jason
+Ok, I'll send you separate pull requests for each branch from now on.
+
+> 
+> I can pull that separately too, but it was missing explanations and a
+> real pull request, so I left it alone.
+> 
+
+Please pull:
+
+The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+
+  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
+
+for you to fetch changes up to 26025bf58b9fe3806ce4f92600e96a2c214c0d9c:
+
+  Merge tag 'seccomp-next' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2017-11-29 12:48:48 +1100)
+
+----------------------------------------------------------------
+James Morris (2):
+      Merge tag 'v4.15-rc1' into next-seccomp
+      Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
+
+Tycho Andersen (2):
+      seccomp: hoist out filter resolving logic
+      ptrace, seccomp: add support for retrieving seccomp metadata
+
+ include/linux/seccomp.h     |   8 ++++
+ include/uapi/linux/ptrace.h |   6 +++
+ kernel/ptrace.c             |   4 ++
+ kernel/seccomp.c            | 106 +++++++++++++++++++++++++++++++-------------
+ 4 files changed, 94 insertions(+), 30 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
