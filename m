@@ -1,79 +1,75 @@
-From: rob@landley.net (Rob Landley)
-Date: Wed, 31 Jan 2018 17:48:20 -0600
-Subject: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
-In-Reply-To: <1517436423.3469.237.camel@linux.vnet.ibm.com>
-References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
-	<1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
-	<1517436423.3469.237.camel@linux.vnet.ibm.com>
-Message-ID: <a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Thu, 1 Feb 2018 09:18:11 +0100
+Subject: [PATCH] general protection fault in sock_has_perm
+In-Reply-To: <CAHC9VhTitwf5NLthRMxLdb=QrS+i7fDgVXq3qXkNmAt8ck8V3A@mail.gmail.com>
+References: <20180118215853.228182-1-salyzyn@android.com>
+	<1516382386.2560.11.camel@tycho.nsa.gov>
+	<1516383672.2560.23.camel@tycho.nsa.gov>
+	<99c11fa6-ad9a-830c-467e-6a56e78aecf8@android.com>
+	<20180130224614.GA13647@kroah.com>
+	<CAHC9VhTitwf5NLthRMxLdb=QrS+i7fDgVXq3qXkNmAt8ck8V3A@mail.gmail.com>
+Message-ID: <20180201081811.GF15896@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 01/31/2018 04:07 PM, Mimi Zohar wrote:
-> On Wed, 2018-01-31 at 13:32 -0600, Rob Landley wrote:>> (The old "I configured in tmpfs and am using rootfs but I want that
-rootfs
->> to be ramfs, not tmpfs" code doesn't seem to be a real-world concern, does
->> it?)
+On Wed, Jan 31, 2018 at 04:06:37AM -0500, Paul Moore wrote:
+> On Tue, Jan 30, 2018 at 5:46 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > On Tue, Jan 30, 2018 at 11:00:04AM -0800, Mark Salyzyn wrote:
+> >> On 01/19/2018 09:41 AM, Stephen Smalley wrote:
+> >> > If we can't safely dereference the sock in these hooks, then that seems
+> >> > to point back to the approach used in my original code, where in
+> >> > ancient history I had sock_has_perm() take the socket and use its inode
+> >> > i_security field instead of the sock.  commit
+> >> > 253bfae6e0ad97554799affa0266052968a45808 switched them to use the sock
+> >> > instead.
+> >>
+> >> Because of the nature of this problem (hard to duplicate, no clear path), I
+> >> am understandably not comfortable reverting and submitting for testing in
+> >> order to prove this point. It is disruptive because it changes several
+> >> subroutine call signatures.
+> >>
+> >> AFAIK this looks like a user request racing in without reference counting or
+> >> RCU grace period in the callers (could be viewed as not an issue with
+> >> security code). Effectively fixed in 4.9-stable, but broken in 4.4-stable.
+> >>
+> >> hygiene, KISS and small, is all I do feel comfortable to submit to
+> >> 4.4-stable without pulling in all the infrastructure improvements.
+> >>
+> >> -- Mark
+> >>
+> >> ---
+> >>  security/selinux/hooks.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >> index 34427384605d..be68992a28cb 100644
+> >> --- a/security/selinux/hooks.c
+> >> +++ b/security/selinux/hooks.c
+> >> @@ -4066,6 +4066,8 @@ static int sock_has_perm(struct task_struct *task,
+> >> struct sock *sk, u32 perms)
+> >>      struct lsm_network_audit net = {0,};
+> >>      u32 tsid = task_sid(task);
+> >>
+> >> +    if (!sksec)
+> >> +        return -EFAULT;
+> >>      if (sksec->sid == SECINITSID_KERNEL)
+> >>          return 0;
+> >>
+> >
+> > This looks sane to me as a simple 4.4-only fix.  If the SELinux
+> > maintainer acks it, I can easily queue this up.
 > 
-> I must be missing something. ?Which systems don't specify "root=" on
-> the boot command line.
+> This revision addresses my concerns with Mark's previous patch.
+> 
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
-Any system using initrd or initramfs?
+Wonderful!
 
-I have one at https://github.com/landley/mkroot that doesn't, for
-example. It's 600 lines of bash that builds simple Linux systems for a
-bunch of different architectures, each with a qemu wrapper to boot it to
-a shell prompt. And yes, it's using tmpfs for its initramfs, you can
-tell because "grep rootfs /proc/mounts" gives a size. That's also where
-I tested the patch I sent you.
+Mark, can you resend this in a format I can apply it in?
 
-The root= option specifies the filesystem to mount OVER rootfs. I.E.
-it's the fallback root filesystem to mount when initramfs doesn't
-contain an executable /init that can become PID 1. If you DO have an
-/init in rootfs which the kernel manages to launch as PID 1, the kernel
-code never reaches the part that uses the root= argument.
+thanks,
 
-(Look for the call to prepare_namespace() in init/main.c, notice how
-it's only called if it can't _already_ find "/init".)
-
-That's why the test I added for initramfs vs initmpfs was "did they
-specify root=", because if they did it means they're telling the kernel
-what to mount over rootfs, so they're not staying in rootfs. That's what
-that argument MEANS. They're telling init/main.c what fallback
-filesystem to mount over rootfs _after_ failing to find /init in rootfs,
-therefore they're not keeping rootfs as their root filesystem for userspace.
-
-That said, a lot of people don't understand how this works, and they set
-root= to things like /dev/ram when using initrd because "we must set
-this knob to something, this is something, therefore we must set this
-knob to it". The fact setting root=/dev/random would have the exact same
-effect doesn't seem to bother them, they had Done It and It Worked,
-therefore it was the Right Thing To Do. QED.
-
-The patch last message was me going "alright, if people can't NOT
-twiddle the knob, even when doing it breaks things in an immediate and
-obvious way, and a big DO NOT TOUCH sign won't dissuade them, just give
-the knob an explicit 'off' setting that literally does the same thing as
-not touching it at all would".
-
-Your solution was to add a safety catch for the knob, which is edging
-into Rube Goldberg territory if you ask me.
-
-> If we want to include and restore xattrs,
-> there needs to be a way of using tmpfs.
-
-Yes, using tmpfs for initramfs is useful, that's why I submitted patches
-to hook it up back in 2013.
-
-(Personally I find "cat /dev/zero > /filename" _not_ hard locking your
-system instantly the most compelling feature. Although I believe what
-motivated my initmpfs patches way back when was somebody wanting to
-install an rpm into intramfs and the installer failing because ramfs
-hasn't got a size so "df" always returns zero.)
-
-> Mimi
-
-Rob
+greg k-h
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
