@@ -1,38 +1,68 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Thu, 1 Feb 2018 22:08:19 +0000
-Subject: [PATCH 1/3] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <20180129084441.6oc4m4jgbqzsfq3v@linux.intel.com>
-References: <20180123112731.3687-1-tomas.winkler@intel.com>
-	<20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94203771@hasmsx108.ger.corp.intel.com>
-	<20180129084441.6oc4m4jgbqzsfq3v@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94214CFE@hasmsx108.ger.corp.intel.com>
+From: takondra@cisco.com (Taras Kondratiuk)
+Date: Thu, 01 Feb 2018 14:41:26 -0800
+Subject: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+In-Reply-To: <1517521912.3619.0.camel@linux.vnet.ibm.com>
+References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+	<1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+	<1517436423.3469.237.camel@linux.vnet.ibm.com>
+	<a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+	<20180201020331.GA3774@rani.riverdale>
+	<1517458921.3329.2.camel@linux.vnet.ibm.com>
+	<f9112881-772c-2568-ebfa-d2ca807124e9@landley.net>
+	<1517500500.3974.45.camel@linux.vnet.ibm.com>
+	<875e5d2d-9ffe-14ab-090a-4a9632af0f35@landley.net>
+	<1517521912.3619.0.camel@linux.vnet.ibm.com>
+Message-ID: <151752488608.10051.146219644323454814@takondra-t460s>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
+Quoting Mimi Zohar (2018-02-01 13:51:52)
+> On Thu, 2018-02-01 at 11:09 -0600, Rob Landley wrote:
+> > On 02/01/2018 09:55 AM, Mimi Zohar wrote:
+> > > On Thu, 2018-02-01 at 09:20 -0600, Rob Landley wrote:
+> > > 
+> > >>> With your patch and specifying "root=tmpfs", dracut is complaining:
+> > >>>
+> > >>> dracut: FATAL: Don't know how to handle 'root=tmpfs'
+> > >>> dracut: refusing to continue
+> > >>
+> > >> [googles]... I do not understand why this package exists.
+> > >>
+> > >> If you're switching to another root filesystem, using a tool that
+> > >> wikipedia[citation needed] says has no purpose but to switch to another
+> > >> root filesystem, (so let's reproduce the kernel infrastructure in
+> > >> userspace while leaving it the kernel too)... why do you need initramfs
+> > >> to be tmpfs? You're using it for half a second, then discarding it,
+> > >> what's the point of it being tmpfs?
+> > > 
+> > > Unlike the kernel image which is signed by the distros, the initramfs
+> > > doesn't come signed, because it is built on the target system. ?Even
+> > > if the initramfs did come signed, it is beneficial to measure and
+> > > appraise the individual files in the initramfs.
+> > 
+> > You can still shoot yourself in the foot with tmpfs. People mount a /run
+> > and a /tmp and then as a normal user you can go
+> > https://twitter.com/landley/status/959103235305951233 and maybe the
+> > default should be a little more clever there...
+> > 
+> > I'll throw it on the todo heap. :)
+> > 
+> > >> Sigh. If people are ok with having rootfs just be tmpfs whenever tmpfs
+> > >> is configured in, even when you're then going to overmount it with
+> > >> something else like you're doing, let's just _remove_ the test. If it
+> > >> can be tmpfs, have it be tmpfs.
+> > > 
+> > > Very much appreciated!
+> > 
+> > Not yet tested, but something like the attached? (Sorry for the
+> > half-finished doc changes in there, I'm at work and have a 5 minute
+> > break. I can test properly this evening if you don't get to it...)
 > 
-> On Wed, Jan 24, 2018 at 06:33:53PM +0000, Winkler, Tomas wrote:
-> > > > -	pm_runtime_put(dev);
-> > > > +	pm_runtime_put_sync(dev);
-> > >
-> > > Change to put_sync is needed so that the idle handshake gets
-> completed?
-> >
-> > Right.
-> 
-> Since we seem to agree that your change to get rid of the use of PM runtime
-> should that be actually the first change in the patch set?
-> 
-> Or are you looking forward to get these backported to stable kernels?
+> Yes, rootfs is being mounted as tmpfs.
 
-Yes, that was one of the reason behind for splitting this into two patches. 
-So this first patch is the actual fix and second is the rather non user visible fix 
-as runtime_pm should be enabled by default.  But .. maybe both need to be backported.
-
-Thanks
-Tomas
+I don't think you can unconditionally replace ramfs with initramfs by
+default. Their behavior is different in some cases (e.g. pivot_root vs
+switch_root) and it can break many systems that expect ramfs by default.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
