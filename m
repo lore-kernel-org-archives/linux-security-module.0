@@ -1,48 +1,34 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 01 Feb 2018 13:38:02 -0500
-Subject: [GIT PULL] IMA bug fixes for 4.16
-Message-ID: <1517510282.6675.13.camel@linux.vnet.ibm.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Fri, 2 Feb 2018 08:11:15 +1100
+Subject: [PATCH 3/6] struct page: add field for vm_struct
+In-Reply-To: <48fde114-d063-cfbf-e1b6-262411fcd963@huawei.com>
+References: <20180130151446.24698-1-igor.stoppa@huawei.com>
+	<20180130151446.24698-4-igor.stoppa@huawei.com>
+	<alpine.DEB.2.20.1801311758340.21272@nuc-kabylake>
+	<48fde114-d063-cfbf-e1b6-262411fcd963@huawei.com>
+Message-ID: <CAGXu5jKKeJL13dcaY=fDJ8AiOXDP5MhQTqDYDOt3a374CFA1HQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi James,
+On Thu, Feb 1, 2018 at 11:42 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> On 01/02/18 02:00, Christopher Lameter wrote:
+>> Would it not be better to use compound page allocations here?
+>> page_head(whatever) gets you the head page where you can store all sorts
+>> of information about the chunk of memory.
+>
+> Can you please point me to this function/macro? I don't seem to be able
+> to find it, at least not in 4.15
 
-Included in this pull request are three bug fixes, assuming the 2 FUSE
-patches are considered bugs and not new features, and a maintainer update.
-I'd appreciate your sending them to Linus for 4.16.
+IIUC, he means PageHead(), which is also hard to grep for, since it is
+a constructed name, via Page##uname in include/linux/page-flags.h:
 
-thanks,
+__PAGEFLAG(Head, head, PF_ANY) CLEARPAGEFLAG(Head, head, PF_ANY)
 
-Mimi
+-Kees
 
-The following changes since commit 36447456e1cca853188505f2a964dbbeacfc7a7a:
-
-  ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-
-for you to fetch changes up to d56f30ac85c067d0d3a6c4f293f655dc298cb5ce:
-
-  ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE (2018-02-01 12:38:31 -0500)
-
-----------------------------------------------------------------
-Alban Crequy (2):
-      fuse: introduce new fs_type flag FS_IMA_NO_CACHE
-      ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-
-Mimi Zohar (2):
-      ima: re-initialize iint->atomic_flags
-      maintainers: update trusted keys
-
- MAINTAINERS                       |  1 +
- fs/fuse/inode.c                   |  2 +-
- include/linux/fs.h                |  1 +
- security/integrity/iint.c         |  1 +
- security/integrity/ima/ima_main.c | 15 +++++++++++++--
- 5 files changed, 17 insertions(+), 3 deletions(-)
-
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
