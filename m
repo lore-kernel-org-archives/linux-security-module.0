@@ -1,32 +1,30 @@
-From: cl@linux.com (Christopher Lameter)
-Date: Wed, 31 Jan 2018 18:00:36 -0600 (CST)
-Subject: [PATCH 3/6] struct page: add field for vm_struct
-In-Reply-To: <20180130151446.24698-4-igor.stoppa@huawei.com>
-References: <20180130151446.24698-1-igor.stoppa@huawei.com>
-	<20180130151446.24698-4-igor.stoppa@huawei.com>
-Message-ID: <alpine.DEB.2.20.1801311758340.21272@nuc-kabylake>
+From: nivedita@alum.mit.edu (Arvind Sankar)
+Date: Wed, 31 Jan 2018 21:03:32 -0500
+Subject: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+In-Reply-To: <a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+	<1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+	<1517436423.3469.237.camel@linux.vnet.ibm.com>
+	<a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+Message-ID: <20180201020331.GA3774@rani.riverdale>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 30 Jan 2018, Igor Stoppa wrote:
+On Wed, Jan 31, 2018 at 05:48:20PM -0600, Rob Landley wrote:
+> On 01/31/2018 04:07 PM, Mimi Zohar wrote:
+> > On Wed, 2018-01-31 at 13:32 -0600, Rob Landley wrote:>> (The old "I configured in tmpfs and am using rootfs but I want that
+> rootfs
+> >> to be ramfs, not tmpfs" code doesn't seem to be a real-world concern, does
+> >> it?)
+> > 
+> > I must be missing something. ?Which systems don't specify "root=" on
+> > the boot command line.
+> 
+> Any system using initrd or initramfs?
+> 
 
-> @@ -1769,6 +1774,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
->
->  	kmemleak_vmalloc(area, size, gfp_mask);
->
-> +	for (page_counter = 0; page_counter < area->nr_pages; page_counter++)
-> +		area->pages[page_counter]->area = area;
-> +
->  	return addr;
-
-Well this introduces significant overhead for large sized allocation. Does
-this not matter because the areas are small?
-
-Would it not be better to use compound page allocations here?
-page_head(whatever) gets you the head page where you can store all sorts
-of information about the chunk of memory.
-
-
+Don't a lot of initramfs setups use root= to tell the initramfs which
+actual root file system to switch to after early boot?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
