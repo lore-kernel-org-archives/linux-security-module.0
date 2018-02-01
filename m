@@ -1,91 +1,21 @@
-From: salyzyn@android.com (Mark Salyzyn)
-Date: Thu, 1 Feb 2018 09:23:10 -0800
-Subject: [PATCH v2] general protection fault in sock_has_perm
-In-Reply-To: <1517504530.1750.55.camel@tycho.nsa.gov>
-References: <20180201153708.63506-1-salyzyn@android.com>
-	<CAHC9VhSdR9UGpYhod5xhA76EbSKHzTW5rEiYWMovC0t6gfowig@mail.gmail.com>
-	<5fb5622d-e58b-c174-3d5c-bfe55569b88e@android.com>
-	<1517504530.1750.55.camel@tycho.nsa.gov>
-Message-ID: <1445a6b4-1c4e-b684-62f6-1a6ff4af3fed@android.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 01 Feb 2018 13:36:53 -0500
+Subject: [RFC PATCH v4 0/2] ima,fuse: introduce new fs flag FS_IMA_NO_CACHE
+In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
+Message-ID: <1517510213.6675.12.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 02/01/2018 09:02 AM, Stephen Smalley wrote:
-> On Thu, 2018-02-01 at 08:20 -0800, Mark Salyzyn wrote:
->> On 02/01/2018 08:00 AM, Paul Moore wrote:
->>> On Thu, Feb 1, 2018 at 10:37 AM, Mark Salyzyn <salyzyn@android.com>
->>> wrote:
->>>> In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE
->>>> socket
->>>> flag") and all the associated infrastructure changes to take
->>>> advantage
->>>> of a RCU grace period before freeing, there is a heightened
->>>> possibility that a security check is performed while an ill-timed
->>>> setsockopt call races in from user space.  It then is prudent to
->>>> null
->>>> check sk_security, and if the case, reject the permissions.
->>>>
->>>> . . .
->>>> ---[ end trace 7b5aaf788fef6174 ]---
->>>>
->>>> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
->>>> Signed-off-by: Paul Moore <paul@linuxfoundation.org>
->>> No, in the previous thread I gave my ack, not my sign-off; please
->>> be
->>> more careful in the future.  It may seem silly, especially in this
->>> particular case, but it is an important distinction when things
->>> like
->>> the DCO are concerned.
->>>
->>> Anyway, here is my ack again.
->>>
->>> Acked-by: Paul Moore <paul@paul-moore.com>
->>>
->> Ok, both Greg KH and yours should be considered Acked-By. Been
->> overstepping this boundary for _years_. AFAIK Signed-off-by is still
->> pending from Stephen Smalley <sds@tycho.nsa.gov> before this can roll
->> in.
->>
->> Lesson lurned
-> No, Paul's Acked-by is sufficient, and at most, I would only add
-> another Acked-by or Reviewed-by, not a Signed-off-by.  Signed-off-by is
-> only needed when one had something to do with the writing of the patch
-> or was in the path by which it was merged.
->
-> I don't object to this patch but I have a hard time adding another ack
-> because I don't truly understand the root cause or how this fixes it.
-> Let's say sk_prot_free() calls security_sk_free() calls
-> selinux_sk_free_security() which sets sk->sk_security to NULL, and then
-> we proceed to free the sksec and then sk_prot_free() frees the sk
-> itself.  Now another sock is allocated (or perhaps a different object
-> altogether), reuses that memory, and whatever sk->sk_security happens
-> to contain is set to non-NULL.  We'll just blithely proceed past your
-> check and who knows what will happen from that point onward.
->
-The way I read this is this is part of an RCU operation. Multiple 
-readers are holding on to the object, but as soon as a new writer comes 
-in it _immediately_ frees the sk_security of the 'old' reader copies in 
-order to make the 'new' writer copy. Any pending readers continue 
-operations until they get tripped on the too aggressively released NULL 
-sk_security reference.
+On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
+> This patchset v4 introduces a new fs flag FS_IMA_NO_CACHE and uses it in
+> FUSE. This forces files to be re-measured, re-appraised and re-audited
+> on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
+> cached integrity results won't be used.
 
-Commits came in between 4.4 and 4.9 (edumazet at google.com) to restructure 
-and fix this and add the appropriate RCU grace period to the 'old' 
-reader copies for the sk_security resource so that it would be freed 
-after all the readers had exited. Problem goes away.
+Thanks!
 
-My proposal will break any 'old' readers by blocking their access during 
-the transition rather than panic the kernel. New readers coming in after 
-the writer will progress fine.
-
-This is not a 'bug' in the security layer, this is a bandaid to the 
-security layer regarding the bad behavior of the callers.
-
-I have not analyzed the code enough to 100% prove my assertion above, in 
-part because I can not duplicate the problem w/o kasan+fuzzing, so still 
-treat this as a hunch.
-
--- Mark
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
