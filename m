@@ -1,110 +1,38 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Fri, 2 Feb 2018 17:56:29 +0200
-Subject: [PATCH 5/6] Documentation for Pmalloc
-In-Reply-To: <20180130100852.2213b94d@lwn.net>
-References: <20180130151446.24698-1-igor.stoppa@huawei.com>
-	<20180130151446.24698-6-igor.stoppa@huawei.com>
-	<20180130100852.2213b94d@lwn.net>
-Message-ID: <56eb3e0d-d74d-737a-9f85-fead2c40c17c@huawei.com>
+From: miklos@szeredi.hu (Miklos Szeredi)
+Date: Fri, 2 Feb 2018 17:10:24 +0100
+Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
+	FS_IMA_NO_CACHE
+In-Reply-To: <1517585624.3171.64.camel@linux.vnet.ibm.com>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
+	<86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+	<1517584816.3171.61.camel@linux.vnet.ibm.com>
+	<1517585624.3171.64.camel@linux.vnet.ibm.com>
+Message-ID: <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Thanks for the review and apologies for the delay.
-Replies inlined below.
+On Fri, Feb 2, 2018 at 4:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Fri, 2018-02-02 at 10:20 -0500, Mimi Zohar wrote:
+>> Hi Miklos,
+>>
+>> On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
+>> > From: Alban Crequy <alban@kinvolk.io>
+>> >
+>> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+>> > re-appraised and re-audited each time. Cached integrity results should
+>> > not be used.
+>> >
+>> > It is useful in FUSE because the userspace FUSE process can change the
+>> > underlying files at any time without notifying the kernel.
 
-On 30/01/18 19:08, Jonathan Corbet wrote:
-> On Tue, 30 Jan 2018 17:14:45 +0200
-> Igor Stoppa <igor.stoppa@huawei.com> wrote:
+I don't really have an understanding what IMA is doing, I think the
+same thing applies to any network filesystem (i.e. ones with
+d_revalidate).
 
-[...]
+Isn't that the case?
 
-> Please don't put plain-text files into core-api - that's a directory full
-
-ok
-
->> diff --git a/Documentation/core-api/pmalloc.txt b/Documentation/core-api/pmalloc.txt
->> new file mode 100644
->> index 0000000..934d356
->> --- /dev/null
->> +++ b/Documentation/core-api/pmalloc.txt
->> @@ -0,0 +1,104 @@
-> 
-> We might as well put the SPDX tag here, it's a new file.
-
-ok, this is all new stuff to me ... I suppose I should do it also for
-all the other new files I create
-
-But what is the license for the documentation? It's not code, so GPL
-seems wrong. Creative commons?
-
-I just noticed a patch for checkpatch.pl about SPDX and asked the same
-question there.
-
-https://lkml.org/lkml/2018/2/2/365
-
->> +============================
->> +Protectable memory allocator
->> +============================
->> +
->> +Introduction
->> +------------
-
-[...]
-
-> This is all good information, but I'd suggest it belongs more in the 0/n
-> patch posting than here.  The introduction of *this* document should say
-> what it actually covers.
-
-ok
-
-> 
->> +
->> +Design
->> +------
-
-[...]
-
->> +To keep it to a minimum, locking is left to the user of the API, in
->> +those cases where it's not strictly needed.
-> 
-> This seems like a relevant and important aspect of the API that shouldn't
-> be buried in the middle of a section talking about random things.
-
-I'll move it to the Use section.
-
-[...]
-
->> +Use
->> +---
->> +
->> +The typical sequence, when using pmalloc, is:
->> +
->> +1. create a pool
->> +2. [optional] pre-allocate some memory in the pool
->> +3. issue one or more allocation requests to the pool
->> +4. initialize the memory obtained
->> +   - iterate over points 3 & 4 as needed -
->> +5. write protect the pool
->> +6. use in read-only mode the handlers obtained through the allocations
->> +7. [optional] destroy the pool
-> 
-> So one gets this far, but has no actual idea of how to do these things.
-> Which leads me to wonder: what is this document for?  Who are you expecting
-> to read it?
-
-I will add a reference to the selftest file.
-In practice it can also work as example.
-
-> You could improve things a lot by (once again) going to RST and using
-> directives to bring in the kerneldoc comments from the source (which, I
-> note, do exist).  But I'd suggest rethinking this document and its
-> audience.  Most of the people reading it are likely wanting to learn how to
-> *use* this API; I think it would be best to not leave them frustrated.
-
-ok, the example route should be more explicative.
-
---
-thanks again for the review, igor
+Thanks,
+Miklos
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
