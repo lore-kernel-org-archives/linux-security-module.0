@@ -1,38 +1,30 @@
-From: miklos@szeredi.hu (Miklos Szeredi)
-Date: Fri, 2 Feb 2018 17:10:24 +0100
-Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
-	FS_IMA_NO_CACHE
-In-Reply-To: <1517585624.3171.64.camel@linux.vnet.ibm.com>
-References: <cover.1517314847.git.dongsu@kinvolk.io>
-	<86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
-	<1517584816.3171.61.camel@linux.vnet.ibm.com>
-	<1517585624.3171.64.camel@linux.vnet.ibm.com>
-Message-ID: <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Fri, 2 Feb 2018 18:01:27 +0200
+Subject: [PATCH 3/6] struct page: add field for vm_struct
+In-Reply-To: <CAGXu5jKKeJL13dcaY=fDJ8AiOXDP5MhQTqDYDOt3a374CFA1HQ@mail.gmail.com>
+References: <20180130151446.24698-1-igor.stoppa@huawei.com>
+	<20180130151446.24698-4-igor.stoppa@huawei.com>
+	<alpine.DEB.2.20.1801311758340.21272@nuc-kabylake>
+	<48fde114-d063-cfbf-e1b6-262411fcd963@huawei.com>
+	<CAGXu5jKKeJL13dcaY=fDJ8AiOXDP5MhQTqDYDOt3a374CFA1HQ@mail.gmail.com>
+Message-ID: <938d71a3-323a-1af3-3815-cd5e1b9813c9@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Feb 2, 2018 at 4:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Fri, 2018-02-02 at 10:20 -0500, Mimi Zohar wrote:
->> Hi Miklos,
->>
->> On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
->> > From: Alban Crequy <alban@kinvolk.io>
->> >
->> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
->> > re-appraised and re-audited each time. Cached integrity results should
->> > not be used.
->> >
->> > It is useful in FUSE because the userspace FUSE process can change the
->> > underlying files at any time without notifying the kernel.
 
-I don't really have an understanding what IMA is doing, I think the
-same thing applies to any network filesystem (i.e. ones with
-d_revalidate).
 
-Isn't that the case?
+On 01/02/18 23:11, Kees Cook wrote:
 
-Thanks,
-Miklos
+> IIUC, he means PageHead(), which is also hard to grep for, since it is
+> a constructed name, via Page##uname in include/linux/page-flags.h:
+> 
+> __PAGEFLAG(Head, head, PF_ANY) CLEARPAGEFLAG(Head, head, PF_ANY)
+
+Thank you, I'll try to provide a meaningful reply soon, but I'll be AFK
+during most of next 2 weeks, so it might be delayed :-(
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
