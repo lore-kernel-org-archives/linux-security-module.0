@@ -1,44 +1,60 @@
-From: peter.enderborg@sony.com (Peter Enderborg)
-Date: Fri, 2 Feb 2018 09:05:54 +0100
-Subject: [PATCH-selinuxns] selinux: Annotate lockdep for services locks
-Message-ID: <20180202080554.9689-1-peter.enderborg@sony.com>
+From: jmorris@namei.org (James Morris)
+Date: Fri, 2 Feb 2018 21:07:37 +1100 (AEDT)
+Subject: [GIT PULL] IMA bug fixes for 4.16
+In-Reply-To: <1517510282.6675.13.camel@linux.vnet.ibm.com>
+References: <1517510282.6675.13.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1802022106130.2739@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The locks are moved to dynamic allocation, we need to
-help the lockdep system to classify the locks.
-This adds to lockdep annotation for the page mutex and
-for the ss lock.
----
- security/selinux/ss/services.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On Thu, 1 Feb 2018, Mimi Zohar wrote:
 
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index abc5383..ba463c0 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -70,6 +70,9 @@
- #include "ebitmap.h"
- #include "audit.h"
- 
-+static struct lock_class_key selinux_ss_class_key;
-+static struct lock_class_key selinux_status_class_key;
-+
- /* Policy capability names */
- char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
- 	"network_peer_controls",
-@@ -88,7 +91,9 @@ int selinux_ss_create(struct selinux_ss **ss)
- 	if (!newss)
- 		return -ENOMEM;
- 	rwlock_init(&newss->policy_rwlock);
-+	lockdep_set_class(&newss->policy_rwlock, &selinux_ss_class_key);
- 	mutex_init(&newss->status_lock);
-+	lockdep_set_class(&newss->status_lock, &selinux_status_class_key);
- 	*ss = newss;
- 	return 0;
- }
+> Hi James,
+> 
+> Included in this pull request are three bug fixes, assuming the 2 FUSE
+> patches are considered bugs and not new features, and a maintainer update.
+> I'd appreciate your sending them to Linus for 4.16.
+
+I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
+(cc'd), on the FUSE patches.
+
+
+
+> 
+> Mimi
+> 
+> The following changes since commit 36447456e1cca853188505f2a964dbbeacfc7a7a:
+> 
+>   ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+> 
+> for you to fetch changes up to d56f30ac85c067d0d3a6c4f293f655dc298cb5ce:
+> 
+>   ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE (2018-02-01 12:38:31 -0500)
+> 
+> ----------------------------------------------------------------
+> Alban Crequy (2):
+>       fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+>       ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
+> 
+> Mimi Zohar (2):
+>       ima: re-initialize iint->atomic_flags
+>       maintainers: update trusted keys
+> 
+>  MAINTAINERS                       |  1 +
+>  fs/fuse/inode.c                   |  2 +-
+>  include/linux/fs.h                |  1 +
+>  security/integrity/iint.c         |  1 +
+>  security/integrity/ima/ima_main.c | 15 +++++++++++++--
+>  5 files changed, 17 insertions(+), 3 deletions(-)
+> 
+
 -- 
-2.7.4
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
