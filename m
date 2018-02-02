@@ -1,99 +1,47 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Fri, 02 Feb 2018 11:49:50 -0500
-Subject: [PATCH-selinuxns] selinux: Annotate lockdep for services locks
-In-Reply-To: <52754014-7f0f-bd9a-483f-b12fb90cb044@sony.com>
-References: <20180202080554.9689-1-peter.enderborg@sony.com>
-	<1517580659.28460.9.camel@tycho.nsa.gov>
-	<52754014-7f0f-bd9a-483f-b12fb90cb044@sony.com>
-Message-ID: <1517590190.28460.22.camel@tycho.nsa.gov>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 02 Feb 2018 11:59:04 -0500
+Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
+	FS_IMA_NO_CACHE
+In-Reply-To: <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
+	<86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+	<1517584816.3171.61.camel@linux.vnet.ibm.com>
+	<1517585624.3171.64.camel@linux.vnet.ibm.com>
+	<CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
+Message-ID: <1517590744.3171.89.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-02-02 at 15:40 +0100, peter enderborg wrote:
-> Resent with sign-off.
-> If you pick the patches that use the dynamic allocation of locks you
-> can pick it.
-> The patches for the annotation does not apply for the selinux-next at
-> the moment
-> so have to be for selinuxns.
-> I will send the patches to pauls next tree. Im abit confused on when
-> that is
-> appropriate. Obviously there will be collisions with the namespace,
-> but
-> the patches also solves few of my prerequisite topics.
+On Fri, 2018-02-02 at 17:10 +0100, Miklos Szeredi wrote:
+> On Fri, Feb 2, 2018 at 4:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Fri, 2018-02-02 at 10:20 -0500, Mimi Zohar wrote:
+> >> Hi Miklos,
+> >>
+> >> On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
+> >> > From: Alban Crequy <alban@kinvolk.io>
+> >> >
+> >> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+> >> > re-appraised and re-audited each time. Cached integrity results should
+> >> > not be used.
+> >> >
+> >> > It is useful in FUSE because the userspace FUSE process can change the
+> >> > underlying files at any time without notifying the kernel.
+> 
+> I don't really have an understanding what IMA is doing, I think the
+> same thing applies to any network filesystem (i.e. ones with
+> d_revalidate).
+> 
+> Isn't that the case?
 
-FWIW, I created a selinuxns-base branch with just my first three
-commits and your commit (immediately after my first one, since it
-doesn't depend on the other ones), based on current selinux/next.  My
-first three commits are the ones that are purely restructuring and do
-not have any effect on SELinux behavior or APIs (userspace or LSM
-hooks, obviously SELinux-internal interfaces do change).  My fourth
-commit on the selinuxns branch ("netns,selinux: create the selinux
-netlink socket per network namespace") could perhaps also be added but
-that one might be more controversial since it does change existing
-SELinux behavior (although arguably the current behavior is wrong) and
-in any event I don't think it has any impact on your patches. You can
-probably base your work on top of selinuxns-base until those are either
-flushed to selinux/next or definitively rejected, although obviously
-they may have to change in response to review comments.  That branch
-will however get re-based when selinux/next is re-based (to something
-4.15 based).
+IMA is calculating the file hash, for inclusion in the measurement
+list, verifying the file signature stored in the xattr, or both. ?For
+the remote filesystem case, re-calculating the file hash would be
+limited to inclusion in the measurement list. ?For FUSE, the kernel
+has access to the xattr, so re-calculating the file hash could also be
+used to re-verify the file signature.
 
-> 
-> 
-> On 02/02/2018 03:10 PM, Stephen Smalley wrote:
-> > On Fri, 2018-02-02 at 09:05 +0100, Peter Enderborg wrote:
-> > > The locks are moved to dynamic allocation, we need to
-> > > help the lockdep system to classify the locks.
-> > > This adds to lockdep annotation for the page mutex and
-> > > for the ss lock.
-> > 
-> > Thanks, but missing a Signed-off-by: line.  Also, just to be clear,
-> > you
-> > shouldn't re-base your work on top of the entire selinuxns branch,
-> > since I only expect the first few patches to be mergeable in the
-> > near
-> > term.
-> > 
-> > I also will need to re-base again when the selinux next branch
-> > moves to
-> > something 4.15-based, including fixing up the bpf hooks that were
-> > introduced there.
-> > 
-> > > ---
-> > >  security/selinux/ss/services.c | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/security/selinux/ss/services.c
-> > > b/security/selinux/ss/services.c
-> > > index abc5383..ba463c0 100644
-> > > --- a/security/selinux/ss/services.c
-> > > +++ b/security/selinux/ss/services.c
-> > > @@ -70,6 +70,9 @@
-> > >  #include "ebitmap.h"
-> > >  #include "audit.h"
-> > >  
-> > > +static struct lock_class_key selinux_ss_class_key;
-> > > +static struct lock_class_key selinux_status_class_key;
-> > > +
-> > >  /* Policy capability names */
-> > >  char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
-> > >  	"network_peer_controls",
-> > > @@ -88,7 +91,9 @@ int selinux_ss_create(struct selinux_ss **ss)
-> > >  	if (!newss)
-> > >  		return -ENOMEM;
-> > >  	rwlock_init(&newss->policy_rwlock);
-> > > +	lockdep_set_class(&newss->policy_rwlock,
-> > > &selinux_ss_class_key);
-> > >  	mutex_init(&newss->status_lock);
-> > > +	lockdep_set_class(&newss->status_lock,
-> > > &selinux_status_class_key);
-> > >  	*ss = newss;
-> > >  	return 0;
-> > >  }
-> 
-> 
-> 
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
