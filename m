@@ -1,39 +1,37 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 2 Feb 2018 15:19:36 -0500
-Subject: [PATCH-selinuxns] selinux: Annotate lockdep for services locks
-In-Reply-To: <52754014-7f0f-bd9a-483f-b12fb90cb044@sony.com>
-References: <20180202080554.9689-1-peter.enderborg@sony.com>
-	<1517580659.28460.9.camel@tycho.nsa.gov>
-	<52754014-7f0f-bd9a-483f-b12fb90cb044@sony.com>
-Message-ID: <CAHC9VhT=HcWyej=e-Ji1nEoz_q=Hwm-e332RemwfpW4s-dE60w@mail.gmail.com>
+From: jmorris@namei.org (James Morris)
+Date: Sat, 3 Feb 2018 08:31:06 +1100 (AEDT)
+Subject: [GIT PULL] IMA bug fixes for 4.16
+In-Reply-To: <1517582979.3171.46.camel@linux.vnet.ibm.com>
+References: <1517510282.6675.13.camel@linux.vnet.ibm.com>
+	<alpine.LRH.2.21.1802022106130.2739@namei.org>
+	<1517582979.3171.46.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1802030831010.10919@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Feb 2, 2018 at 9:40 AM, peter enderborg
-<peter.enderborg@sony.com> wrote:
-> I will send the patches to pauls next tree. Im abit confused on when that is
-> appropriate. Obviously there will be collisions with the namespace, but
-> the patches also solves few of my prerequisite topics.
+On Fri, 2 Feb 2018, Mimi Zohar wrote:
 
-In an effort to clear up any confusion, here is the tentative plan ...
-While I generally try to avoid rebasing the selinux/next branch, there
-are a few things that we probably want to pull in from Linus' tree, so
-after the merge window closes (I expect that to happen next weekend)
-I'll rebase selinux/next to v4.16-rc1.  I always send a note to the
-list when I rebase the selinux/next branch.
+> On Fri, 2018-02-02 at 21:07 +1100, James Morris wrote:
+> > On Thu, 1 Feb 2018, Mimi Zohar wrote:
+> > 
+> > > Hi James,
+> > > 
+> > > Included in this pull request are three bug fixes, assuming the 2 FUSE
+> > > patches are considered bugs and not new features, and a maintainer update.
+> > > I'd appreciate your sending them to Linus for 4.16.
+> > 
+> > I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
+> > (cc'd), on the FUSE patches.
+> 
+> Ok.  For now, can you take the first two patches?
 
->From there, it's a matter of sorting out the merging logistics; I
-suspect Stephen will probably just rebase his own selinuxns patches
-(and presumably incorporate any feedback), but I tend to be a bit more
-forgiving about manual fixups when merging patches after a rebase.
-After Stephen's patches are merged we can merge the other bits that
-rely on them.
+Sure.
 
-Does that make sense?
 
 -- 
-paul moore
-www.paul-moore.com
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
