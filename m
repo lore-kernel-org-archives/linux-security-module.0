@@ -1,61 +1,78 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 2 Feb 2018 21:07:37 +1100 (AEDT)
-Subject: [GIT PULL] IMA bug fixes for 4.16
-In-Reply-To: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-References: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1802022106130.2739@namei.org>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Fri, 2 Feb 2018 11:27:21 +0100
+Subject: [PATCH v2] general protection fault in sock_has_perm
+In-Reply-To: <20180201153708.63506-1-salyzyn@android.com>
+References: <20180201153708.63506-1-salyzyn@android.com>
+Message-ID: <20180202102721.GB22855@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 1 Feb 2018, Mimi Zohar wrote:
+On Thu, Feb 01, 2018 at 07:37:04AM -0800, Mark Salyzyn wrote:
+> In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
+> flag") and all the associated infrastructure changes to take advantage
+> of a RCU grace period before freeing, there is a heightened
+> possibility that a security check is performed while an ill-timed
+> setsockopt call races in from user space.  It then is prudent to null
+> check sk_security, and if the case, reject the permissions.
+> 
+> Because of the nature of this problem, hard to duplicate, no clear
+> path, this patch is a simplified band-aid for stable trees lacking the
+> infrastructure for the series of commits leading up to providing a
+> suitable RCU grace period.  This adjustment is orthogonal to
+> infrastructure improvements that may nullify the needed check, but
+> could be added as good code hygiene in all trees.
+> 
+> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b #28
+> task: ffff8801d1095f00 task.stack: ffff8800b5950000
+> RIP: 0010:[<ffffffff81b69b7e>]  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
+> RSP: 0018:ffff8800b5957ce0  EFLAGS: 00010202
+> RAX: dffffc0000000000 RBX: 1ffff10016b2af9f RCX: ffffffff81b69b51
+> RDX: 0000000000000002 RSI: 0000000000000000 RDI: 0000000000000010
+> RBP: ffff8800b5957de0 R08: 0000000000000001 R09: 0000000000000001
+> R10: 0000000000000000 R11: 1ffff10016b2af68 R12: ffff8800b5957db8
+> R13: 0000000000000000 R14: ffff8800b7259f40 R15: 00000000000000d7
+> FS:  00007f72f5ae2700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000a2fa38 CR3: 00000001d7980000 CR4: 0000000000160670
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Stack:
+>  ffffffff81b69a1f ffff8800b5957d58 00008000b5957d30 0000000041b58ab3
+>  ffffffff83fc82f2 ffffffff81b69980 0000000000000246 ffff8801d1096770
+>  ffff8801d3165668 ffffffff8157844b ffff8801d1095f00
+>  ffff880000000001
+> Call Trace:
+> [<ffffffff81b6a19d>] selinux_socket_setsockopt+0x4d/0x80 security/selinux/hooks.c:4338
+> [<ffffffff81b4873d>] security_socket_setsockopt+0x7d/0xb0 security/security.c:1257
+> [<ffffffff82df1ac8>] SYSC_setsockopt net/socket.c:1757 [inline]
+> [<ffffffff82df1ac8>] SyS_setsockopt+0xe8/0x250 net/socket.c:1746
+> [<ffffffff83776499>] entry_SYSCALL_64_fastpath+0x16/0x92
+> Code: c2 42 9b b6 81 be 01 00 00 00 48 c7 c7 a0 cb 2b 84 e8
+> f7 2f 6d ff 49 8d 7d 10 48 b8 00 00 00 00 00 fc ff df 48 89
+> fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 83 01 00
+> 00 41 8b 75 10 31
+> RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
+> RSP <ffff8800b5957ce0>
+> ---[ end trace 7b5aaf788fef6174 ]---
+> 
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Signed-off-by: Paul Moore <paul@linuxfoundation.org>
+> Signed-off-by: Greg KH <gregkh@linuxfoundation.org>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> Cc: selinux at tycho.nsa.gov
+> Cc: linux-security-module at vger.kernel.org
+> Cc: Eric Paris <eparis@parisplace.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: stable <stable@vger.kernel.org> # 3.18, 4.4
+> Cc: linux-kernel at vger.kernel.org
+> ---
+> v2: return -EFAULT for null sk_security instead of 0
 
-> Hi James,
-> 
-> Included in this pull request are three bug fixes, assuming the 2 FUSE
-> patches are considered bugs and not new features, and a maintainer update.
-> I'd appreciate your sending them to Linus for 4.16.
+Now queued up, thanks.
 
-I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
-(cc'd), on the FUSE patches.
-
-
-
-> 
-> Mimi
-> 
-> The following changes since commit 36447456e1cca853188505f2a964dbbeacfc7a7a:
-> 
->   ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-> 
-> for you to fetch changes up to d56f30ac85c067d0d3a6c4f293f655dc298cb5ce:
-> 
->   ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE (2018-02-01 12:38:31 -0500)
-> 
-> ----------------------------------------------------------------
-> Alban Crequy (2):
->       fuse: introduce new fs_type flag FS_IMA_NO_CACHE
->       ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-> 
-> Mimi Zohar (2):
->       ima: re-initialize iint->atomic_flags
->       maintainers: update trusted keys
-> 
->  MAINTAINERS                       |  1 +
->  fs/fuse/inode.c                   |  2 +-
->  include/linux/fs.h                |  1 +
->  security/integrity/iint.c         |  1 +
->  security/integrity/ima/ima_main.c | 15 +++++++++++++--
->  5 files changed, 17 insertions(+), 3 deletions(-)
-> 
-
--- 
-James Morris
-<jmorris@namei.org>
-
+greg k-h
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
