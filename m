@@ -1,38 +1,39 @@
-From: cl@linux.com (Christopher Lameter)
-Date: Fri, 2 Feb 2018 12:43:25 -0600 (CST)
-Subject: [PATCH 3/6] struct page: add field for vm_struct
-In-Reply-To: <48fde114-d063-cfbf-e1b6-262411fcd963@huawei.com>
-References: <20180130151446.24698-1-igor.stoppa@huawei.com>
-	<20180130151446.24698-4-igor.stoppa@huawei.com>
-	<alpine.DEB.2.20.1801311758340.21272@nuc-kabylake>
-	<48fde114-d063-cfbf-e1b6-262411fcd963@huawei.com>
-Message-ID: <alpine.DEB.2.20.1802021240370.31548@nuc-kabylake>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 2 Feb 2018 15:19:36 -0500
+Subject: [PATCH-selinuxns] selinux: Annotate lockdep for services locks
+In-Reply-To: <52754014-7f0f-bd9a-483f-b12fb90cb044@sony.com>
+References: <20180202080554.9689-1-peter.enderborg@sony.com>
+	<1517580659.28460.9.camel@tycho.nsa.gov>
+	<52754014-7f0f-bd9a-483f-b12fb90cb044@sony.com>
+Message-ID: <CAHC9VhT=HcWyej=e-Ji1nEoz_q=Hwm-e332RemwfpW4s-dE60w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 1 Feb 2018, Igor Stoppa wrote:
+On Fri, Feb 2, 2018 at 9:40 AM, peter enderborg
+<peter.enderborg@sony.com> wrote:
+> I will send the patches to pauls next tree. Im abit confused on when that is
+> appropriate. Obviously there will be collisions with the namespace, but
+> the patches also solves few of my prerequisite topics.
 
-> > Would it not be better to use compound page allocations here?
-> > page_head(whatever) gets you the head page where you can store all sorts
-> > of information about the chunk of memory.
->
-> Can you please point me to this function/macro? I don't seem to be able
-> to find it, at least not in 4.15
+In an effort to clear up any confusion, here is the tentative plan ...
+While I generally try to avoid rebasing the selinux/next branch, there
+are a few things that we probably want to pull in from Linus' tree, so
+after the merge window closes (I expect that to happen next weekend)
+I'll rebase selinux/next to v4.16-rc1.  I always send a note to the
+list when I rebase the selinux/next branch.
 
-Ok its compound_head(). See also the use in the SLAB and SLUB allocator.
+>From there, it's a matter of sorting out the merging logistics; I
+suspect Stephen will probably just rebase his own selinuxns patches
+(and presumably incorporate any feedback), but I tend to be a bit more
+forgiving about manual fixups when merging patches after a rebase.
+After Stephen's patches are merged we can merge the other bits that
+rely on them.
 
-> During hardened user copy permission check, I need to confirm if the
-> memory range that would be exposed to userspace is a legitimate
-> sub-range of a pmalloc allocation.
+Does that make sense?
 
-If you save the size in the head page struct then you could do that pretty
-fast.
-
-> I cannot comment on your proposal because I do not know where to find
-> the reference you made, or maybe I do not understand what you mean :-(
-
-compund pages are higher order pages that are handled as a single page by
-the VM. See https://lwn.net/Articles/619514/
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
