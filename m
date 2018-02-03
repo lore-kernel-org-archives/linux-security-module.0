@@ -1,37 +1,64 @@
 From: jmorris@namei.org (James Morris)
-Date: Sat, 3 Feb 2018 08:31:06 +1100 (AEDT)
-Subject: [GIT PULL] IMA bug fixes for 4.16
-In-Reply-To: <1517582979.3171.46.camel@linux.vnet.ibm.com>
-References: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-	<alpine.LRH.2.21.1802022106130.2739@namei.org>
-	<1517582979.3171.46.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1802030831010.10919@namei.org>
+Date: Sat, 3 Feb 2018 12:21:57 +1100 (AEDT)
+Subject: [GIT PULL] integrity fixes for v4.16-rc1
+Message-ID: <alpine.LRH.2.21.1802031219230.13612@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2 Feb 2018, Mimi Zohar wrote:
+Please pull these updates:
 
-> On Fri, 2018-02-02 at 21:07 +1100, James Morris wrote:
-> > On Thu, 1 Feb 2018, Mimi Zohar wrote:
-> > 
-> > > Hi James,
-> > > 
-> > > Included in this pull request are three bug fixes, assuming the 2 FUSE
-> > > patches are considered bugs and not new features, and a maintainer update.
-> > > I'd appreciate your sending them to Linus for 4.16.
-> > 
-> > I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
-> > (cc'd), on the FUSE patches.
-> 
-> Ok.  For now, can you take the first two patches?
+- Add James Bottommley as a Trusted Keys maintainer.
 
-Sure.
+- IMA: re-initialize iint->atomic_flags on iint_free(), from Mimi.
 
 
--- 
-James Morris
-<jmorris@namei.org>
+The following changes since commit 4bf772b14675411a69b3c807f73006de0fe4b649:
 
+  Merge tag 'drm-for-v4.16' of git://people.freedesktop.org/~airlied/linux (2018-02-01 17:48:47 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.16-rc1
+
+for you to fetch changes up to e2598077dc6a26c9644393e5c21f22a90dbdccdb:
+
+  ima: re-initialize iint->atomic_flags (2018-02-02 21:03:08 +1100)
+
+----------------------------------------------------------------
+Mimi Zohar (2):
+      maintainers: update trusted keys
+      ima: re-initialize iint->atomic_flags
+
+ MAINTAINERS               | 1 +
+ security/integrity/iint.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+---
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4c104db..10ba368 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7792,6 +7792,7 @@ F:	include/keys/encrypted-type.h
+ F:	security/keys/encrypted-keys/
+ 
+ KEYS-TRUSTED
++M:	James Bottomley <jejb@linux.vnet.ibm.com>
+ M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
+ L:	linux-integrity at vger.kernel.org
+ L:	keyrings at vger.kernel.org
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index fc38ca0..9700e96 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -74,6 +74,7 @@ static void iint_free(struct integrity_iint_cache *iint)
+ 	iint->ima_hash = NULL;
+ 	iint->version = 0;
+ 	iint->flags = 0UL;
++	iint->atomic_flags = 0UL;
+ 	iint->ima_file_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
