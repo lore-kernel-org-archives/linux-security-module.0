@@ -1,64 +1,143 @@
-From: jmorris@namei.org (James Morris)
-Date: Sat, 3 Feb 2018 12:21:57 +1100 (AEDT)
-Subject: [GIT PULL] integrity fixes for v4.16-rc1
-Message-ID: <alpine.LRH.2.21.1802031219230.13612@namei.org>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Sat, 3 Feb 2018 17:38:11 +0200
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+Message-ID: <f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Please pull these updates:
++Boris Lukashev
 
-- Add James Bottommley as a Trusted Keys maintainer.
+On 02/02/18 20:39, Christopher Lameter wrote:
+> On Thu, 25 Jan 2018, Matthew Wilcox wrote:
+> 
+>> It's worth having a discussion about whether we want the pmalloc API
+>> or whether we want a slab-based API.  We can have a separate discussion
+>> about an API to remove pages from the physmap.
+> 
+> We could even do this in a more thorough way. Can we use a ring 1 / 2
+> distinction to create a hardened OS core that policies the rest of
+> the ever expanding kernel with all its modules and this and that feature?
 
-- IMA: re-initialize iint->atomic_flags on iint_free(), from Mimi.
+What would be the differentiating criteria? Furthermore, what are the
+chances
+of invalidating the entire concept, because there is already an
+hypervisor using
+the higher level features?
+That is what you are proposing, if I understand correctly.
+
+But more on this below ...
 
 
-The following changes since commit 4bf772b14675411a69b3c807f73006de0fe4b649:
+> I think that will long term be a better approach and allow more than the
+> current hardening approaches can get you. It seems that we are willing to
+> tolerate significant performance regressions now. So lets use the
+> protection mechanisms that the hardware offers.
 
-  Merge tag 'drm-for-v4.16' of git://people.freedesktop.org/~airlied/linux (2018-02-01 17:48:47 -0800)
+I would rather *not* propose significant performance regression :-P
 
-are available in the git repository at:
+There might be some one-off case or anyway rare event which is
+penalized, but my preference goes to not introducing any significant
+performance penalty, during regular use.
+After all, the lower the penalty, the wider the (potential) adoption.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.16-rc1
+More in detail: there are 2 major cases for wanting some form of
+read-only protection.
 
-for you to fetch changes up to e2598077dc6a26c9644393e5c21f22a90dbdccdb:
+1) extra ward against accidental corruption
+The kernel provides many debugging tools and they can detect lots of
+errors during development, but they require time and knowledge to use
+them, which are not always available.
+Furthermore, it is objectively true that not all the code has the same
+level of maturity, especially when non-upstream code is used in some
+custom product. It's not my main goal, but it would be nice if that case
+too could be addressed by the protection.
+Corruption *can* happen.
+Having live guards against it, will definitely help spotting bugs or, at
+the very least, crash/reboot a device before it can cause permanent data
+corruption.
+Protection against accidental corruption should be used as widely as
+possible, therefore it cannot have an high price tag, in terms of lost
+performance. Otherwise, there's the risk that it will be just a debug
+feature, more like lockdep or ubsan.
 
-  ima: re-initialize iint->atomic_flags (2018-02-02 21:03:08 +1100)
+2) protection against malicious attacks
+This is harder, of course, but what is realistically to be expected?
 
-----------------------------------------------------------------
-Mimi Zohar (2):
-      maintainers: update trusted keys
-      ima: re-initialize iint->atomic_flags
+If an attacker can gain full control of the kernel, the only way to do
+damage control is to have HW and/or higher privilege SW that can somehow
+limit the reach of the attacker.
+To make it work for real, it should be mandated that either these extra
+HW/SW means can tell apart legitimate kernel activity from rogue
+actions, or they operate so independently from the kernel that a
+compromise kernel cannot use any API to influence them.
 
- MAINTAINERS               | 1 +
- security/integrity/iint.c | 1 +
- 2 files changed, 2 insertions(+)
+The consensus seems to be to put aside (for now) this concern and
+instead focus on what is a typical scenario:
+- some bug is found that allows to read/write kernel memory
+- some other bug is found, which leaks the address of a well known
+variable, effectively revealing the randomized offset of each symbol
+placed in linear memory, once their relative location is known.
 
----
+What is described above is a toolkit that effectively can allow - with
+patience - to attack anything that is writable by the kernel.
+Including page tables and permissions.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4c104db..10ba368 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7792,6 +7792,7 @@ F:	include/keys/encrypted-type.h
- F:	security/keys/encrypted-keys/
- 
- KEYS-TRUSTED
-+M:	James Bottomley <jejb@linux.vnet.ibm.com>
- M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
- L:	linux-integrity at vger.kernel.org
- L:	keyrings at vger.kernel.org
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index fc38ca0..9700e96 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -74,6 +74,7 @@ static void iint_free(struct integrity_iint_cache *iint)
- 	iint->ima_hash = NULL;
- 	iint->version = 0;
- 	iint->flags = 0UL;
-+	iint->atomic_flags = 0UL;
- 	iint->ima_file_status = INTEGRITY_UNKNOWN;
- 	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
- 	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+However the typical attack is more like: "let's flip some bit(s)".
+Which is where __ro_after_init has its purpose to exist.
+
+My proposal is to extend the same sort of protection also to variables
+allocated dynamically.
+
+* make the pages read only, once the data is initialized
+* use vmalloc to prevent that exfiltrating the address of an unrelated
+variable can easily give away the location of the real target, because
+of the individual page mapping vs linear mapping.
+
+Boris Lukashev proposed additional hardening, when accessing a certain
+variable, in the form of hash/checksum, but I could not come up with an
+implementation that did not have too much overhead.
+
+Re-considering this, one option would be to have a function
+"pool_validate()" - probably expensive - that could be invoked by a
+piece of code before using the data from the pool.
+
+Not perfect, because it would not be atomic, but it could be used once,
+at the beginning of a function, without adding overhead to each access
+to the pool that the function would perform.
+
+An attacker would have to time the attack so that the corruption of the
+data wold happen after the pool is validated and before the data is read
+from it.
+Possible, but way tricker than the current unprotected situation.
+
+What I am trying to say, is that even after having multi-ring
+implementation (which would be more dependent on HW features), there
+would be still the problem of validating the legitimacy of the use of
+the API that such implementation would expose.
+
+I'd rather try to preserve performance and still provide a defense
+against the more trivial attacks, since other types of attacks are much
+harder to perform in the wild.
+
+Of course, I'm interested in alternatives (I'll comment separately on
+the compound pages)
+
+
+The way pmalloc is designed is to take advantage of any page provider.
+So far, vmalloc seems to me the best option, but something else might
+emerge that works better.
+
+Yet the pmalloc API is, I think, what would be still needed, to let the
+rest of the kernel take advantage of this feature.
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
