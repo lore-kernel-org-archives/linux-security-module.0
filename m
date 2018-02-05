@@ -1,93 +1,77 @@
-From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
-Date: Mon,  5 Feb 2018 10:24:02 -0800
-Subject: [PATCH 3.18 34/36] selinux: general protection fault in sock_has_perm
-In-Reply-To: <20180205182351.774761393@linuxfoundation.org>
-References: <20180205182351.774761393@linuxfoundation.org>
-Message-ID: <20180205182353.178669604@linuxfoundation.org>
+From: jinqian@android.com (Jin Qian)
+Date: Mon,  5 Feb 2018 12:02:46 -0800
+Subject: [PATCH 1/1] KEYS: encrypted: fix buffer overread in
+	valid_master_desc()
+Message-ID: <20180205200246.12253-1-jinqian@android.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+From: Eric Biggers <ebiggers@google.com>
 
-------------------
+commit 794b4bc292f5d31739d89c0202c54e7dc9bc3add upstream
 
-From: Mark Salyzyn <salyzyn@android.com>
+With the 'encrypted' key type it was possible for userspace to provide a
+data blob ending with a master key description shorter than expected,
+e.g. 'keyctl add encrypted desc "new x" @s'.  When validating such a
+master key description, validate_master_desc() could read beyond the end
+of the buffer.  Fix this by using strncmp() instead of memcmp().  [Also
+clean up the code to deduplicate some logic.]
 
-In the absence of commit a4298e4522d6 ("net: add SOCK_RCU_FREE socket
-flag") and all the associated infrastructure changes to take advantage
-of a RCU grace period before freeing, there is a heightened
-possibility that a security check is performed while an ill-timed
-setsockopt call races in from user space.  It then is prudent to null
-check sk_security, and if the case, reject the permissions.
-
-Because of the nature of this problem, hard to duplicate, no clear
-path, this patch is a simplified band-aid for stable trees lacking the
-infrastructure for the series of commits leading up to providing a
-suitable RCU grace period.  This adjustment is orthogonal to
-infrastructure improvements that may nullify the needed check, but
-could be added as good code hygiene in all trees.
-
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 14233 Comm: syz-executor2 Not tainted 4.4.112-g5f6325b #28
-task: ffff8801d1095f00 task.stack: ffff8800b5950000
-RIP: 0010:[<ffffffff81b69b7e>]  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
-RSP: 0018:ffff8800b5957ce0  EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff10016b2af9f RCX: ffffffff81b69b51
-RDX: 0000000000000002 RSI: 0000000000000000 RDI: 0000000000000010
-RBP: ffff8800b5957de0 R08: 0000000000000001 R09: 0000000000000001
-R10: 0000000000000000 R11: 1ffff10016b2af68 R12: ffff8800b5957db8
-R13: 0000000000000000 R14: ffff8800b7259f40 R15: 00000000000000d7
-FS:  00007f72f5ae2700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000a2fa38 CR3: 00000001d7980000 CR4: 0000000000160670
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Stack:
- ffffffff81b69a1f ffff8800b5957d58 00008000b5957d30 0000000041b58ab3
- ffffffff83fc82f2 ffffffff81b69980 0000000000000246 ffff8801d1096770
- ffff8801d3165668 ffffffff8157844b ffff8801d1095f00
- ffff880000000001
-Call Trace:
-[<ffffffff81b6a19d>] selinux_socket_setsockopt+0x4d/0x80 security/selinux/hooks.c:4338
-[<ffffffff81b4873d>] security_socket_setsockopt+0x7d/0xb0 security/security.c:1257
-[<ffffffff82df1ac8>] SYSC_setsockopt net/socket.c:1757 [inline]
-[<ffffffff82df1ac8>] SyS_setsockopt+0xe8/0x250 net/socket.c:1746
-[<ffffffff83776499>] entry_SYSCALL_64_fastpath+0x16/0x92
-Code: c2 42 9b b6 81 be 01 00 00 00 48 c7 c7 a0 cb 2b 84 e8
-f7 2f 6d ff 49 8d 7d 10 48 b8 00 00 00 00 00 fc ff df 48 89
-fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 83 01 00
-00 41 8b 75 10 31
-RIP  [<ffffffff81b69b7e>] sock_has_perm+0x1fe/0x3e0 security/selinux/hooks.c:4069
-RSP <ffff8800b5957ce0>
----[ end trace 7b5aaf788fef6174 ]---
-
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: selinux at tycho.nsa.gov
-Cc: linux-security-module at vger.kernel.org
-Cc: Eric Paris <eparis@parisplace.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: linux-kernel at vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable at vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
+Signed-off-by: Jin Qian <jinqian@android.com>
 ---
- security/selinux/hooks.c |    2 ++
- 1 file changed, 2 insertions(+)
+ security/keys/encrypted-keys/encrypted.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3969,6 +3969,8 @@ static int sock_has_perm(struct task_str
- 	struct lsm_network_audit net = {0,};
- 	u32 tsid = task_sid(task);
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index a871159bf03c..ead2fd60244d 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -141,23 +141,22 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
+  */
+ static int valid_master_desc(const char *new_desc, const char *orig_desc)
+ {
+-	if (!memcmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_TRUSTED_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_TRUSTED_PREFIX_LEN))
+-				goto out;
+-	} else if (!memcmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_USER_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_USER_PREFIX_LEN))
+-				goto out;
+-	} else
+-		goto out;
++	int prefix_len;
++
++	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
++		prefix_len = KEY_TRUSTED_PREFIX_LEN;
++	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
++		prefix_len = KEY_USER_PREFIX_LEN;
++	else
++		return -EINVAL;
++
++	if (!new_desc[prefix_len])
++		return -EINVAL;
++
++	if (orig_desc && strncmp(new_desc, orig_desc, prefix_len))
++		return -EINVAL;
++
+ 	return 0;
+-out:
+-	return -EINVAL;
+ }
  
-+	if (!sksec)
-+		return -EFAULT;
- 	if (sksec->sid == SECINITSID_KERNEL)
- 		return 0;
- 
-
+ /*
+-- 
+2.16.0.rc1.238.g530d649a79-goog
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
