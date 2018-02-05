@@ -1,48 +1,35 @@
-From: cl@linux.com (Christopher Lameter)
-Date: Mon, 5 Feb 2018 09:40:04 -0600 (CST)
-Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
-In-Reply-To: <f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-	<20180124175631.22925-5-igor.stoppa@huawei.com>
-	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
-	<20180126053542.GA30189@bombadil.infradead.org>
-	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
-	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
-Message-ID: <alpine.DEB.2.20.1802050935300.10705@nuc-kabylake>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Mon, 05 Feb 2018 15:50:58 +0000
+Subject: [RFC PATCH] ima: force the re-evaluation of files on untrusted
+	file systems
+In-Reply-To: <1517838054.3736.49.camel@linux.vnet.ibm.com>
+References: <1517838054.3736.49.camel@linux.vnet.ibm.com>
+Message-ID: <1517845858.3050.13.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 3 Feb 2018, Igor Stoppa wrote:
+On Mon, 2018-02-05 at 08:40 -0500, Mimi Zohar wrote:
+> On filesystems, such as fuse or remote filesystems, that we can not
+> detect or rely on the filesystem to tell us when a file has changed,
+> always re-measure, re-appraise, and/or re-audit the file.
 
-> > We could even do this in a more thorough way. Can we use a ring 1 / 2
-> > distinction to create a hardened OS core that policies the rest of
-> > the ever expanding kernel with all its modules and this and that feature?
->
-> What would be the differentiating criteria? Furthermore, what are the
-> chances
-> of invalidating the entire concept, because there is already an
-> hypervisor using
-> the higher level features?
-> That is what you are proposing, if I understand correctly.
+Using the presence or absence of d_revalidate isn't definitive for
+uncacheable appraisals: all stacked filesystems have to implement
+d_revalidate just in case the underlying has it, but it doesn't mean
+their appraisals can't be cached if they're fully built on top of
+traditional filesystems (like they are in the Docker/OCI use case). ?I
+think the original flag approach is better. ?The only thing stackable
+filesystems argues for is that for them it should probably be a
+superblock flag so it can be per-mount point (depending on overlay
+composition).
 
-Were there not 4 rings as well as methods by the processor vendors to
-virtualize them as well?
+d_revalidate() also strikes me as wrong from the semantic point of
+view: it's about whether the path name to inode cache needs re-
+evaluating not whether the underlying inode could change arbitrarily.
+?These are definitely related but not necessarily equivalent concepts.
 
-> > I think that will long term be a better approach and allow more than the
-> > current hardening approaches can get you. It seems that we are willing to
-> > tolerate significant performance regressions now. So lets use the
-> > protection mechanisms that the hardware offers.
->
-> I would rather *not* propose significant performance regression :-P
+James
 
-But we already have implemented significant kernel hardening which causes
-performance regressions. Using hardware capabilities allows the processor
-vendor to further optimize these mechanisms whereas the software
-preventative measures are eating up more and more performance as the pile
-them on. Plus these are methods that can be worked around. Restrictions
-implemented in a higher ring can be enforced and are much better than
-just "hardening" (which is making life difficult for the hackers and
-throwing away performannce for the average user).
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
