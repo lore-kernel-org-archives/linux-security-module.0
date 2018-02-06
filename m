@@ -1,8 +1,8 @@
 From: jinqian@android.com (Jin Qian)
-Date: Tue,  6 Feb 2018 13:22:15 -0800
-Subject: [PATCH 1/1] KEYS: encrypted: fix buffer overread in
+Date: Tue,  6 Feb 2018 13:24:08 -0800
+Subject: [PATCHv2 1/1] KEYS: encrypted: fix buffer overread in
 	valid_master_desc()
-Message-ID: <20180206212216.4845-1-jinqian@android.com>
+Message-ID: <20180206212408.5455-1-jinqian@android.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -17,7 +17,7 @@ master key description, validate_master_desc() could read beyond the end
 of the buffer.  Fix this by using strncmp() instead of memcmp().  [Also
 clean up the code to deduplicate some logic.]
 
-Cc: linux-stable <stable@vger.kernel.org> # 4.4.y
+Cc: linux-stable <stable@vger.kernel.org> # 4.9.y
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
@@ -29,7 +29,7 @@ Signed-off-by: Jin Qian <jinqian@android.com>
  1 file changed, 15 insertions(+), 16 deletions(-)
 
 diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index ce295c0c1da0..e44e844c8ec4 100644
+index a871159bf03c..ead2fd60244d 100644
 --- a/security/keys/encrypted-keys/encrypted.c
 +++ b/security/keys/encrypted-keys/encrypted.c
 @@ -141,23 +141,22 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
