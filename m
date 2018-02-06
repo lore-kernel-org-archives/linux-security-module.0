@@ -1,26 +1,21 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 6 Feb 2018 22:04:41 +0200
-Subject: [PATCH 2/2 v2] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180128075101.6883-3-tomas.winkler@intel.com>
-References: <20180128075101.6883-1-tomas.winkler@intel.com>
-	<20180128075101.6883-3-tomas.winkler@intel.com>
-Message-ID: <20180206200441.c2fnehekqbk3jcsg@linux.intel.com>
+Date: Tue, 6 Feb 2018 22:06:50 +0200
+Subject: [PATCH v2] tpm: add longer timeouts for creation commands.
+In-Reply-To: <20180128081739.8066-1-tomas.winkler@intel.com>
+References: <20180128081739.8066-1-tomas.winkler@intel.com>
+Message-ID: <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jan 28, 2018 at 09:51:01AM +0200, Tomas Winkler wrote:
-> We cannot use go_idle cmd_ready commands via runtime_pm handles
-> as with the introduction of localities this is no longer an optional
-> feature, while runtime pm can be not enabled.
-> Though cmd_ready/go_idle provides power saving feature, it's also part of
-> TPM2 protocol and should be called explicitly.
-> This patch exposes cmd_read/go_idle via tpm class ops and removes
-> runtime pm support as it is not used by any driver.
+On Sun, Jan 28, 2018 at 10:17:39AM +0200, Tomas Winkler wrote:
+> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
+> of crypto keys which can be a computationally intensive task.
+> The timeout is set to 3min.
 > 
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Makes sense so that only 1/2 woud need to be backported to stable
-(1/2 should probably have cc for stable).
+This is still NAK because we need some kind of reference for the new
+value. Is that also right value for ARM64/TrustZone based TPMs?
 
 /Jarkko
 --
