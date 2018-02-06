@@ -1,33 +1,77 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Tue, 6 Feb 2018 20:51:48 +0000
-Subject: [PATCH v2] tpm: add longer timeouts for creation commands.
-In-Reply-To: <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
-References: <20180128081739.8066-1-tomas.winkler@intel.com>
-	<20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421881D@hasmsx108.ger.corp.intel.com>
+From: jinqian@android.com (Jin Qian)
+Date: Tue,  6 Feb 2018 13:19:00 -0800
+Subject: [PATCH 1/1] KEYS: encrypted: fix buffer overread in
+	valid_master_desc()
+Message-ID: <20180206211900.3565-1-jinqian@android.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> 
-> On Sun, Jan 28, 2018 at 10:17:39AM +0200, Tomas Winkler wrote:
-> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
-> > generation of crypto keys which can be a computationally intensive task.
-> > The timeout is set to 3min.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> This is still NAK because we need some kind of reference for the new value.
-> Is that also right value for ARM64/TrustZone based TPMs?
+From: Eric Biggers <ebiggers@google.com>
 
-The SPEC itself, doesn't define the timeout,  except for specific commands, 
-also the current 'undefined' number is born in air, I wonder if you  can provide the reference as well.
-If I would suggest to shorten the number that would maybe a problem for other implementation, 
-but I don't see how the increase in timeout is adverse another implementations.
-Key generation is computational intensive task because of generation of a prime number, so this is really 
-dependent on device capabilities, so there is no better source of definition that HW itself.
+commit 794b4bc292f5d31739d89c0202c54e7dc9bc3add upstream
 
-Thanks
-Tomas
+With the 'encrypted' key type it was possible for userspace to provide a
+data blob ending with a master key description shorter than expected,
+e.g. 'keyctl add encrypted desc "new x" @s'.  When validating such a
+master key description, validate_master_desc() could read beyond the end
+of the buffer.  Fix this by using strncmp() instead of memcmp().  [Also
+clean up the code to deduplicate some logic.]
+
+Cc: linux-stable <stable@vger.kernel.org> # 3.18.y
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
+Signed-off-by: Jin Qian <jinqian@google.com>
+---
+ security/keys/encrypted-keys/encrypted.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
+
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 89d5695c51cd..20251ee5c491 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -141,23 +141,22 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
+  */
+ static int valid_master_desc(const char *new_desc, const char *orig_desc)
+ {
+-	if (!memcmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_TRUSTED_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_TRUSTED_PREFIX_LEN))
+-				goto out;
+-	} else if (!memcmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_USER_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_USER_PREFIX_LEN))
+-				goto out;
+-	} else
+-		goto out;
++	int prefix_len;
++
++	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
++		prefix_len = KEY_TRUSTED_PREFIX_LEN;
++	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
++		prefix_len = KEY_USER_PREFIX_LEN;
++	else
++		return -EINVAL;
++
++	if (!new_desc[prefix_len])
++		return -EINVAL;
++
++	if (orig_desc && strncmp(new_desc, orig_desc, prefix_len))
++		return -EINVAL;
++
+ 	return 0;
+-out:
+-	return -EINVAL;
+ }
+ 
+ /*
+-- 
+2.16.0.rc1.238.g530d649a79-goog
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
