@@ -1,79 +1,54 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 07 Feb 2018 08:05:21 -0500
-Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
-	FS_IMA_NO_CACHE
-In-Reply-To: <CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
-References: <cover.1517314847.git.dongsu@kinvolk.io>
-	<86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
-	<CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
-Message-ID: <1518008721.13312.44.camel@linux.vnet.ibm.com>
+From: dongsu@kinvolk.io (Dongsu Park)
+Date: Wed,  7 Feb 2018 16:45:11 +0100
+Subject: [RFC PATCH v5 0/2] ima,fuse: introduce new fs flag FS_IMA_NO_CACHE
+Message-ID: <cover.1517999503.git.dongsu@kinvolk.io>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-02-07 at 10:21 +0100, Miklos Szeredi wrote:
-> On Tue, Jan 30, 2018 at 7:06 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
-> > From: Alban Crequy <alban@kinvolk.io>
-> >
-> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
-> > re-appraised and re-audited each time. Cached integrity results should
-> > not be used.
-> >
-> > It is useful in FUSE because the userspace FUSE process can change the
-> > underlying files at any time without notifying the kernel.
-> >
-> > Cc: linux-kernel at vger.kernel.org
-> > Cc: linux-integrity at vger.kernel.org
-> > Cc: linux-security-module at vger.kernel.org
-> > Cc: linux-fsdevel at vger.kernel.org
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: Christoph Hellwig <hch@infradead.org>
-> > Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
-> > Acked-by: Seth Forshee <seth.forshee@canonical.com>
-> > Tested-by: Dongsu Park <dongsu@kinvolk.io>
-> > Signed-off-by: Alban Crequy <alban@kinvolk.io>
-> > ---
-> >  fs/fuse/inode.c    | 2 +-
-> >  include/linux/fs.h | 1 +
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index 624f18bb..0a9e5164 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
-> >  static struct file_system_type fuse_fs_type = {
-> >         .owner          = THIS_MODULE,
-> >         .name           = "fuse",
-> > -       .fs_flags       = FS_HAS_SUBTYPE,
-> > +       .fs_flags       = FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
-> >         .mount          = fuse_mount,
-> >         .kill_sb        = fuse_kill_sb_anon,
-> >  };
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 511fbaab..ced841ba 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2075,6 +2075,7 @@ struct file_system_type {
-> >  #define FS_BINARY_MOUNTDATA    2
-> >  #define FS_HAS_SUBTYPE         4
-> >  #define FS_USERNS_MOUNT                8       /* Can be mounted by userns root */
-> > +#define FS_IMA_NO_CACHE                16      /* Force IMA to re-measure, re-appraise, re-audit files */
-> 
-> I think it would be more logical to change the order of the patches
-> (i.e. first patch adds this constant and the code handling it, and
-> second patch just adds it to fuse's .fs_flags).
-> 
-> Otherwise
-> 
-> Acked-by:   Miklos Szeredi <mszeredi@redhat.com>
+This patchset v5 introduces a new fs flag FS_IMA_NO_CACHE and uses it in
+FUSE. This forces files to be re-measured, re-appraised and re-audited
+on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
+cached integrity results won't be used.
 
-Sure, thank you!
+There was a previous attempt (unmerged) with a IMA option named "force" and using
+that option for FUSE filesystems. These patches use a different approach
+so that the IMA subsystem does not need to know about FUSE.
+- https://www.spinics.net/lists/linux-integrity/msg00948.html
+- https://www.mail-archive.com/linux-kernel at vger.kernel.org/msg1584131.html
 
-Mimi 
+Changes since v1: https://www.mail-archive.com/linux-kernel at vger.kernel.org/msg1587390.html
+- include linux-fsdevel mailing list in cc
+- mark patch as RFC
+- based on next-integrity, without other unmerged FUSE / IMA patches
+
+Changes since v2: https://www.mail-archive.com/linux-kernel at vger.kernel.org/msg1587678.html
+- rename flag to FS_IMA_NO_CACHE
+- split patch into 2
+
+Changes since v3: https://www.mail-archive.com/linux-kernel at vger.kernel.org/msg1592393.html
+- make the code simpler by resetting IMA_DONE_MASK
+
+Changes since v4: https://www.mail-archive.com/linux-kernel at vger.kernel.org/msg1598387.html
+- add Acked-by from Miklos
+- change ordering of patches as suggested by Miklos
+- improve commit messages
+- code diff since v4 is empty: only commit messages, ordering were changed
+
+The patchset is also available in our github repo:
+  https://github.com/kinvolk/linux/tree/dongsu/fuse-flag-ima-nocache-v5
+
+
+Alban Crequy (2):
+  ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
+  fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+
+ fs/fuse/inode.c                   |  2 +-
+ include/linux/fs.h                |  1 +
+ security/integrity/ima/ima_main.c | 15 +++++++++++++--
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
+-- 
+2.13.6
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
