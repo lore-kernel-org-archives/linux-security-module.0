@@ -1,54 +1,84 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Tue, 6 Feb 2018 21:26:15 +0000
-Subject: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <20180206200255.ib7hblberqj6anh5@linux.intel.com>
-References: <20180128075101.6883-1-tomas.winkler@intel.com>
-	<20180128075101.6883-2-tomas.winkler@intel.com>
-	<20180128201559.GG23869@ziepe.ca>
-	<5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
-	<20180206200255.ib7hblberqj6anh5@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
+From: miklos@szeredi.hu (Miklos Szeredi)
+Date: Wed, 7 Feb 2018 10:21:29 +0100
+Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
+	FS_IMA_NO_CACHE
+In-Reply-To: <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
+	<86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+Message-ID: <CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> 
-> On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
-> >
-> > >
-> > > On Sun, Jan 28, 2018 at 09:51:00AM +0200, Tomas Winkler wrote:
-> > >
-> > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
-> > > > bcdd3790e94d..06639fb6ab85 100644
-> > > > +++ b/include/linux/tpm.h
-> > > > @@ -44,7 +44,7 @@ struct tpm_class_ops {
-> > > >  	bool (*update_timeouts)(struct tpm_chip *chip,
-> > > >  				unsigned long *timeout_cap);
-> > > >  	int (*request_locality)(struct tpm_chip *chip, int loc);
-> > > > -	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > > > +	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > >
-> > > This seems wrong.. What is the core code supposed to do if relinquish
-> fails?
-> >
-> > Not much just propage the error to the caller and leave the policy
-> > decision to it.
-> 
-> Your patch set must either cover this or keep it as void.
+On Tue, Jan 30, 2018 at 7:06 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
+> From: Alban Crequy <alban@kinvolk.io>
+>
+> This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+> re-appraised and re-audited each time. Cached integrity results should
+> not be used.
+>
+> It is useful in FUSE because the userspace FUSE process can change the
+> underlying files at any time without notifying the kernel.
+>
+> Cc: linux-kernel at vger.kernel.org
+> Cc: linux-integrity at vger.kernel.org
+> Cc: linux-security-module at vger.kernel.org
+> Cc: linux-fsdevel at vger.kernel.org
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
+> Acked-by: Seth Forshee <seth.forshee@canonical.com>
+> Tested-by: Dongsu Park <dongsu@kinvolk.io>
+> Signed-off-by: Alban Crequy <alban@kinvolk.io>
+> ---
+>  fs/fuse/inode.c    | 2 +-
+>  include/linux/fs.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 624f18bb..0a9e5164 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+>  static struct file_system_type fuse_fs_type = {
+>         .owner          = THIS_MODULE,
+>         .name           = "fuse",
+> -       .fs_flags       = FS_HAS_SUBTYPE,
+> +       .fs_flags       = FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
+>         .mount          = fuse_mount,
+>         .kill_sb        = fuse_kill_sb_anon,
+>  };
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 511fbaab..ced841ba 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2075,6 +2075,7 @@ struct file_system_type {
+>  #define FS_BINARY_MOUNTDATA    2
+>  #define FS_HAS_SUBTYPE         4
+>  #define FS_USERNS_MOUNT                8       /* Can be mounted by userns root */
+> +#define FS_IMA_NO_CACHE                16      /* Force IMA to re-measure, re-appraise, re-audit files */
+
+I think it would be more logical to change the order of the patches
+(i.e. first patch adds this constant and the code handling it, and
+second patch just adds it to fuse's .fs_flags).
+
+Otherwise
+
+Acked-by:   Miklos Szeredi <mszeredi@redhat.com>
+
+Thanks,
+Miklos
 
 
-How the code is covering other failures in the transmit functions,  
-how is this one different from for example request_locality failure?
-Why we should not propage this error up?
-
-> 
-> A better idea is to print an error to klog.
-We can do that in addition.
-
-
-Thanks
-Tomas
-
+>  #define FS_RENAME_DOES_D_MOVE  32768   /* FS will handle d_move() during rename() internally. */
+>         struct dentry *(*mount) (struct file_system_type *, int,
+>                        const char *, void *);
+> --
+> 2.13.6
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
