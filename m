@@ -1,45 +1,81 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Wed, 7 Feb 2018 18:03:39 +0800
-Subject: [PATCH 4/6] Protectable Memory
-In-Reply-To: <20180204164732.28241-5-igor.stoppa@huawei.com>
-References: <20180204164732.28241-5-igor.stoppa@huawei.com>
-Message-ID: <201802071736.PLMzjgWI%fengguang.wu@intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 07 Feb 2018 08:05:21 -0500
+Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
+	FS_IMA_NO_CACHE
+In-Reply-To: <CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
+References: <cover.1517314847.git.dongsu@kinvolk.io>
+	<86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+	<CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
+Message-ID: <1518008721.13312.44.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Igor,
+On Wed, 2018-02-07 at 10:21 +0100, Miklos Szeredi wrote:
+> On Tue, Jan 30, 2018 at 7:06 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
+> > From: Alban Crequy <alban@kinvolk.io>
+> >
+> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+> > re-appraised and re-audited each time. Cached integrity results should
+> > not be used.
+> >
+> > It is useful in FUSE because the userspace FUSE process can change the
+> > underlying files at any time without notifying the kernel.
+> >
+> > Cc: linux-kernel at vger.kernel.org
+> > Cc: linux-integrity at vger.kernel.org
+> > Cc: linux-security-module at vger.kernel.org
+> > Cc: linux-fsdevel at vger.kernel.org
+> > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Christoph Hellwig <hch@infradead.org>
+> > Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
+> > Acked-by: Seth Forshee <seth.forshee@canonical.com>
+> > Tested-by: Dongsu Park <dongsu@kinvolk.io>
+> > Signed-off-by: Alban Crequy <alban@kinvolk.io>
+> > ---
+> >  fs/fuse/inode.c    | 2 +-
+> >  include/linux/fs.h | 1 +
+> >  2 files changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 624f18bb..0a9e5164 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+> >  static struct file_system_type fuse_fs_type = {
+> >         .owner          = THIS_MODULE,
+> >         .name           = "fuse",
+> > -       .fs_flags       = FS_HAS_SUBTYPE,
+> > +       .fs_flags       = FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
+> >         .mount          = fuse_mount,
+> >         .kill_sb        = fuse_kill_sb_anon,
+> >  };
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 511fbaab..ced841ba 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2075,6 +2075,7 @@ struct file_system_type {
+> >  #define FS_BINARY_MOUNTDATA    2
+> >  #define FS_HAS_SUBTYPE         4
+> >  #define FS_USERNS_MOUNT                8       /* Can be mounted by userns root */
+> > +#define FS_IMA_NO_CACHE                16      /* Force IMA to re-measure, re-appraise, re-audit files */
+> 
+> I think it would be more logical to change the order of the patches
+> (i.e. first patch adds this constant and the code handling it, and
+> second patch just adds it to fuse's .fs_flags).
+> 
+> Otherwise
+> 
+> Acked-by:   Miklos Szeredi <mszeredi@redhat.com>
 
-Thank you for the patch! Yet something to improve:
+Sure, thank you!
 
-[auto build test ERROR on kees/for-next/pstore]
-[also build test ERROR on v4.15]
-[cannot apply to linus/master mmotm/master next-20180206]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Mimi 
 
-url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/mm-security-ro-protection-for-dynamic-data/20180207-171252
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-Note: the linux-review/Igor-Stoppa/mm-security-ro-protection-for-dynamic-data/20180207-171252 HEAD 99d0cb7905216da7595ef08a781a9be16a8ce687 builds fine.
-      It only hurts bisectibility.
-
-All errors (new ones prefixed by >>):
-
->> mm/pmalloc.c:24:10: fatal error: pmalloc-selftest.h: No such file or directory
-    #include "pmalloc-selftest.h"
-             ^~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-
-vim +24 mm/pmalloc.c
-
-    23	
-  > 24	#include "pmalloc-selftest.h"
-    25	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
