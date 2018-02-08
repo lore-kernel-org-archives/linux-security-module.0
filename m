@@ -1,84 +1,57 @@
-From: peter.enderborg@sony.com (peter enderborg)
-Date: Thu, 8 Feb 2018 08:16:56 +0100
-Subject: [PATCH v2 4/5] selinux: Use pointer to switch policydb and sidtab
-In-Reply-To: <1517323047.14420.14.camel@tycho.nsa.gov>
-References: <20180126143241.23108-1-peter.enderborg@sony.com>
-	<20180126143241.23108-5-peter.enderborg@sony.com>
-	<1517323047.14420.14.camel@tycho.nsa.gov>
-Message-ID: <44f6385f-b2a5-2dbe-7034-851e5d06e42d@sony.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 8 Feb 2018 14:44:31 +0200
+Subject: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
+	granting locality
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
+References: <20180128075101.6883-1-tomas.winkler@intel.com>
+	<20180128075101.6883-2-tomas.winkler@intel.com>
+	<20180128201559.GG23869@ziepe.ca>
+	<5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
+	<20180206200255.ib7hblberqj6anh5@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
+Message-ID: <20180208124431.26f43gj66c36gugz@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 01/30/2018 03:37 PM, Stephen Smalley wrote:
-> On Fri, 2018-01-26 at 15:32 +0100, peter.enderborg at sony.com wrote:
-> goto err;
->  
-> -	rc = security_preserve_bools(newpolicydb);
-> +	rc = security_preserve_bools(&next_rcu->policydb);
->  	if (rc) {
->  		printk(KERN_ERR "SELinux:  unable to preserve
-> booleans\n");
->  		goto err;
-> Most of this shouldn't need to be under the read lock.
->
->> @@ -2189,7 +2194,7 @@ int security_load_policy(void *data, size_t
->> len)
->>  	 * in the new SID table.
->>  	 */
->>  	args.oldp = &crm->policydb;
->> -	args.newp = newpolicydb;
->> +	args.newp = &next_rcu->policydb;
->>  	rc = sidtab_map(&newsidtab, convert_context, &args);
->>  	if (rc) {
->>  		printk(KERN_ERR "SELinux:  unable to convert the
->> internal"
->> @@ -2204,8 +2209,9 @@ int security_load_policy(void *data, size_t
->> len)
->>  
->>  	/* Install the new policydb and SID table. */
->>  	/* next */
->> +	security_load_policycaps(&next_rcu->policydb);
-> This cannot be done outside of the write lock; it has to be atomic with
-> the policy switch.
-Can you please elaborate, does some else write the policydb without a lock?
-Is there any other data that is shared? I see this as a private until we switch the pointer.
->> +	read_unlock(&policy_rwlock);
->>  	write_lock_irq(&policy_rwlock);
->> -	memcpy(&next_rcu->policydb, newpolicydb, sizeof(struct
->> policydb));
->>  	sidtab_set(&next_rcu->sidtab, &newsidtab);
->>  	security_load_policycaps(&next_rcu->policydb);
->>  	oldmap = crm->current_mapping;
->> @@ -2213,8 +2219,9 @@ int security_load_policy(void *data, size_t
->> len)
->>  	next_rcu->current_mapping_size = map_size;
->>  
->>  	seqno = ++latest_granting;
->> -	write_unlock_irq(&policy_rwlock);
->> +	old_rcu = crm;
->>  	crm = next_rcu;
->> +	write_unlock_irq(&policy_rwlock);
->>  
->>  	/* Free the old policydb and SID table. */
->>  	policydb_destroy(oldpolicydb);
->> @@ -2226,17 +2233,16 @@ int security_load_policy(void *data, size_t
->> len)
->>  	selinux_status_update_policyload(seqno);
->>  	selinux_netlbl_cache_invalidate();
->>  	selinux_xfrm_notify_policyload();
->> +	kfree(oldpolicydb);
->> +	kfree(old_rcu);
->>  
->>  	rc = 0;
->>  	goto out;
->> -
->>  err:
->>  	kfree(map);
->>  	sidtab_destroy(&newsidtab);
->> -	policydb_destroy(newpolicydb);
->> -
->> +	
+On Tue, Feb 06, 2018 at 09:26:15PM +0000, Winkler, Tomas wrote:
+> > 
+> > On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
+> > >
+> > > >
+> > > > On Sun, Jan 28, 2018 at 09:51:00AM +0200, Tomas Winkler wrote:
+> > > >
+> > > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
+> > > > > bcdd3790e94d..06639fb6ab85 100644
+> > > > > +++ b/include/linux/tpm.h
+> > > > > @@ -44,7 +44,7 @@ struct tpm_class_ops {
+> > > > >  	bool (*update_timeouts)(struct tpm_chip *chip,
+> > > > >  				unsigned long *timeout_cap);
+> > > > >  	int (*request_locality)(struct tpm_chip *chip, int loc);
+> > > > > -	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
+> > > > > +	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+> > > >
+> > > > This seems wrong.. What is the core code supposed to do if relinquish
+> > fails?
+> > >
+> > > Not much just propage the error to the caller and leave the policy
+> > > decision to it.
+> > 
+> > Your patch set must either cover this or keep it as void.
+> 
+> 
+> How the code is covering other failures in the transmit functions,  
+> how is this one different from for example request_locality failure?
+> Why we should not propage this error up?
+> 
+> > 
+> > A better idea is to print an error to klog.
+> We can do that in addition.
 
+I guess you are right. This can be propagated to the user space so that
+it knows that there is problem. To make the root more visible the klog
+message would make sense.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
