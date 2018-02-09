@@ -1,37 +1,33 @@
-From: rdunlap@infradead.org (Randy Dunlap)
-Date: Fri, 9 Feb 2018 09:15:00 -0800
-Subject: [PATCH 1/6] genalloc: track beginning of allocations
-In-Reply-To: <947ea9c3-b045-17d3-51e5-df80b4fb27e6@huawei.com>
-References: <20180204164732.28241-1-igor.stoppa@huawei.com>
-	<20180204164732.28241-2-igor.stoppa@huawei.com>
-	<60e66c5a-c1de-246f-4be8-b02cb0275da6@infradead.org>
-	<947ea9c3-b045-17d3-51e5-df80b4fb27e6@huawei.com>
-Message-ID: <8b02744c-d527-f000-78c0-90142052b4ae@infradead.org>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Fri, 9 Feb 2018 15:01:55 -0800
+Subject: [GIT PULL] apparmor updates for v4.16
+In-Reply-To: <8b079d9c-f436-eb11-0060-9cad1525aa62@canonical.com>
+References: <8b079d9c-f436-eb11-0060-9cad1525aa62@canonical.com>
+Message-ID: <CA+55aFx7fnnV+ECGKxtQB5wwmzS8kqO=UrO1VdwvXMsT=+4nSA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 02/09/2018 08:18 AM, Igor Stoppa wrote:
-> 
-> 
-> On 05/02/18 00:34, Randy Dunlap wrote:
->> On 02/04/2018 08:47 AM, Igor Stoppa wrote:
-> 
-> [...]
-> 
->> It would be good for a lot of this to be in a source file or the
->> pmalloc.rst documentation file instead of living only in the git repository.
-> 
-> This is actually about genalloc. The genalloc documentation is high
-> level and mostly about the API, while this talks about the guts of the
-> library. The part modified by the patch. This text doesn't seem to
-> belong to the generic genalloc documentation.
-> I will move it to the .c file, but isn't it too much text in a source file?
+On Fri, Feb 9, 2018 at 12:19 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+>
+> Please pull these apparmor changes for v4.16
 
-No, that will be fine.
+No.
 
-thanks,
--- 
-~Randy
+You had an extra two weeks because 4.15 was delayed.
+
+Yet you send me a series of patches that have been committed today, on
+a Friday before the weekend when the merge window closes.
+
+And none of this appears to have been in linux-next, at least not as
+of February 1st, when the merge window opened.
+
+No no no.
+
+This can all wait for 4.17. And if the same problem persists, it can
+wait longer.
+
+               Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
