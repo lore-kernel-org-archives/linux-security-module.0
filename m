@@ -1,42 +1,42 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Sat, 10 Feb 2018 12:44:50 -0800
-Subject: [GIT PULL] Integrity: IMA FUSE fixes
-In-Reply-To: <alpine.LRH.2.21.1802101718330.4382@namei.org>
-References: <alpine.LRH.2.21.1802101718330.4382@namei.org>
-Message-ID: <CA+55aFzX+=WRaVi51gaqCdnrxwXC3kqxk8LZyXQY=yn5XigE4Q@mail.gmail.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Sun, 11 Feb 2018 00:59:58 +0200
+Subject: [PATCH 2/6] genalloc: selftest
+In-Reply-To: <e05598c1-3c7c-15c6-7278-ed52ceff0acf@infradead.org>
+References: <20180204164732.28241-1-igor.stoppa@huawei.com>
+	<20180204164732.28241-3-igor.stoppa@huawei.com>
+	<e05598c1-3c7c-15c6-7278-ed52ceff0acf@infradead.org>
+Message-ID: <0183b04c-1fde-4840-2977-c9eea77e0c99@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Feb 9, 2018 at 10:26 PM, James Morris <jmorris@namei.org> wrote:
-> These patches ensure that IMA works correctly on FUSE filesystems, so that
-> cached integrity data is not used.  FUSE filesystems can change this data
-> at any time without notifying the kernel and we now verify it for each
-> use.
->
-> This work is late in the kernel cycle, but they have had good review,
-> testing, and acks.  They only impact FUSE and IMA.
+On 05/02/18 00:19, Randy Dunlap wrote:
+> On 02/04/2018 08:47 AM, Igor Stoppa wrote:
 
-This seems entirely insane.
+[...]
 
-You simply cannot use IMA on a fuse filesystem, because the data can
-change dynamically any time.
+> Please use kernel multi-line comment style.
 
-But that doesn't mean that you can't cache the measurements - it means
-that the measurements are pointless. Those are two completely
-different things.
+ok for all of them
 
-This patch seems to disable caching, but still _use_ the measurement.
+[...]
 
-Which seems *worse* than what we do now, in that it wastes time and
-effort on re-creating those pointless measurements because it disables
-the caching of them.
+>> +	BUG_ON(!locations[action->location]);
+>> +	print_first_chunk_bitmap(pool);
+>> +	BUG_ON(compare_bitmaps(pool, action->pattern));
+> 
+> BUG_ON() seems harsh to me, but some of the other self-tests also do that.
 
-So honestly, the only sane thing seems to be to disable IMA on fuse,
-not to force it to do even _more_ pointless work.
+I would expect that the test never fails, if one is not modifying
+anything related to genalloc.
 
-What am I missing?
+But if an error slips in during development of genalloc or anything
+related (like the functions used to scan the bitmaps), I think it's
+better to pull the handbrake immediately, because failure in tracking
+correctly the memory allocation is likely to cause corruption and every
+sort of mysterious weird errors.
 
-                   Linus
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
