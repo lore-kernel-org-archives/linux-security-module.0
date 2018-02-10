@@ -1,27 +1,42 @@
-From: matorola@gmail.com (Anatoly Pugachev)
-Date: Sat, 10 Feb 2018 11:10:11 +0300
-Subject: [sparc64] kernel unaligned access at TPC aa_dfa_unpack
-In-Reply-To: <CADxRZqyTE5xFm+Fs-iR2Xjb4JHiVdGma+iyKwtBoU-RtBFf0qg@mail.gmail.com>
-References: <CADxRZqwo8sL3RtEWRMcHkgkSAnWKeVibLRrtdXU2e8w2Q5KSTQ@mail.gmail.com>
-	<CADxRZqyTE5xFm+Fs-iR2Xjb4JHiVdGma+iyKwtBoU-RtBFf0qg@mail.gmail.com>
-Message-ID: <CADxRZqySeF_3ZK7vJjJ9XW1buiRd6sesOGBF-Skj6qV8xevZ_A@mail.gmail.com>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Sat, 10 Feb 2018 12:44:50 -0800
+Subject: [GIT PULL] Integrity: IMA FUSE fixes
+In-Reply-To: <alpine.LRH.2.21.1802101718330.4382@namei.org>
+References: <alpine.LRH.2.21.1802101718330.4382@namei.org>
+Message-ID: <CA+55aFzX+=WRaVi51gaqCdnrxwXC3kqxk8LZyXQY=yn5XigE4Q@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jan 21, 2018 at 10:41 PM, Anatoly Pugachev <matorola@gmail.com> wrote:
-> On Tue, Jan 2, 2018 at 12:11 AM, Anatoly Pugachev <matorola@gmail.com> wrote:
->> Hello!
->>
->> Using latest git kernel (4.15.0-rc6) , getting the following messages
->> on LDOM/kernel boot:
->>
->> [    7.693653] Kernel unaligned access at TPC[7496d8] aa_dfa_unpack+0x38/0x580
->> [    7.693735] Kernel unaligned access at TPC[7496f8] aa_dfa_unpack+0x58/0x580
->> [    7.693782] Kernel unaligned access at TPC[749708] aa_dfa_unpack+0x68/0x580
->> [    7.693829] Kernel unaligned access at TPC[74973c] aa_dfa_unpack+0x9c/0x580
->> [    7.693875] Kernel unaligned access at TPC[749758] aa_dfa_unpack+0xb8/0x580
+On Fri, Feb 9, 2018 at 10:26 PM, James Morris <jmorris@namei.org> wrote:
+> These patches ensure that IMA works correctly on FUSE filesystems, so that
+> cached integrity data is not used.  FUSE filesystems can change this data
+> at any time without notifying the kernel and we now verify it for each
+> use.
+>
+> This work is late in the kernel cycle, but they have had good review,
+> testing, and acks.  They only impact FUSE and IMA.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=198743
+This seems entirely insane.
+
+You simply cannot use IMA on a fuse filesystem, because the data can
+change dynamically any time.
+
+But that doesn't mean that you can't cache the measurements - it means
+that the measurements are pointless. Those are two completely
+different things.
+
+This patch seems to disable caching, but still _use_ the measurement.
+
+Which seems *worse* than what we do now, in that it wastes time and
+effort on re-creating those pointless measurements because it disables
+the caching of them.
+
+So honestly, the only sane thing seems to be to disable IMA on fuse,
+not to force it to do even _more_ pointless work.
+
+What am I missing?
+
+                   Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
