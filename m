@@ -1,72 +1,92 @@
 From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Mon, 12 Feb 2018 18:52:55 +0200
-Subject: [RFC PATCH v16 0/6] mm: security: ro protection for dynamic data
-Message-ID: <20180212165301.17933-1-igor.stoppa@huawei.com>
+Date: Mon, 12 Feb 2018 18:52:58 +0200
+Subject: [PATCH 3/6] struct page: add field for vm_struct
+In-Reply-To: <20180212165301.17933-1-igor.stoppa@huawei.com>
+References: <20180212165301.17933-1-igor.stoppa@huawei.com>
+Message-ID: <20180212165301.17933-4-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch-set introduces the possibility of protecting memory that has
-been allocated dynamically.
+When a page is used for virtual memory, it is often necessary to obtian
+a handler to the corresponding vm_struct, which refers to the virtually
+continuous area generated when invoking vmalloc.
 
-The memory is managed in pools: when a memory pool is turned into R/O,
-all the memory that is part of it, will become R/O.
+The struct page has a "mapping" field, which can be re-used, to store a
+pointer to the parent area. This will avoid more expensive searches.
 
-A R/O pool can be destroyed, to recover its memory, but it cannot be
-turned back into R/W mode.
+As example, the function find_vm_area is reimplemented, to take advantage
+of the newly introduced field.
 
-This is intentional. This feature is meant for data that doesn't need
-further modifications after initialization.
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ include/linux/mm_types.h |  1 +
+ mm/vmalloc.c             | 18 +++++++++++++-----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-However the data might need to be released, for example as part of module
-unloading.
-To do this, the memory must first be freed, then the pool can be destroyed.
-
-An example is provided, in the form of self-testing.
-
-Changes since v15:
-[http://www.openwall.com/lists/kernel-hardening/2018/02/11/4]
-
-- Fixed remaining broken comments
-- Fixed remaining broken "Returns" instead of "Return:" in kernel-doc
-- Converted "Return:" values to lists
-- Fixed SPDX license statements
-
-Igor Stoppa (6):
-  genalloc: track beginning of allocations
-  genalloc: selftest
-  struct page: add field for vm_struct
-  Protectable Memory
-  Pmalloc: self-test
-  Documentation for Pmalloc
-
- Documentation/core-api/index.rst   |   1 +
- Documentation/core-api/pmalloc.rst | 114 +++++++
- include/linux/genalloc-selftest.h  |  26 ++
- include/linux/genalloc.h           |   7 +-
- include/linux/mm_types.h           |   1 +
- include/linux/pmalloc.h            | 242 ++++++++++++++
- include/linux/vmalloc.h            |   1 +
- init/main.c                        |   2 +
- lib/Kconfig                        |  15 +
- lib/Makefile                       |   1 +
- lib/genalloc-selftest.c            | 400 ++++++++++++++++++++++
- lib/genalloc.c                     | 658 +++++++++++++++++++++++++++----------
- mm/Kconfig                         |  15 +
- mm/Makefile                        |   2 +
- mm/pmalloc-selftest.c              |  64 ++++
- mm/pmalloc-selftest.h              |  24 ++
- mm/pmalloc.c                       | 501 ++++++++++++++++++++++++++++
- mm/usercopy.c                      |  33 ++
- mm/vmalloc.c                       |  18 +-
- 19 files changed, 1950 insertions(+), 175 deletions(-)
- create mode 100644 Documentation/core-api/pmalloc.rst
- create mode 100644 include/linux/genalloc-selftest.h
- create mode 100644 include/linux/pmalloc.h
- create mode 100644 lib/genalloc-selftest.c
- create mode 100644 mm/pmalloc-selftest.c
- create mode 100644 mm/pmalloc-selftest.h
- create mode 100644 mm/pmalloc.c
-
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index fd1af6b9591d..c3a4825e10c0 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -84,6 +84,7 @@ struct page {
+ 		void *s_mem;			/* slab first object */
+ 		atomic_t compound_mapcount;	/* first tail page */
+ 		/* page_deferred_list().next	 -- second tail page */
++		struct vm_struct *area;
+ 	};
+ 
+ 	/* Second double word */
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 673942094328..9404ffd0ee98 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1466,13 +1466,16 @@ struct vm_struct *get_vm_area_caller(unsigned long size, unsigned long flags,
+  */
+ struct vm_struct *find_vm_area(const void *addr)
+ {
+-	struct vmap_area *va;
++	struct page *page;
+ 
+-	va = find_vmap_area((unsigned long)addr);
+-	if (va && va->flags & VM_VM_AREA)
+-		return va->vm;
++	if (unlikely(!is_vmalloc_addr(addr)))
++		return NULL;
+ 
+-	return NULL;
++	page = vmalloc_to_page(addr);
++	if (unlikely(!page))
++		return NULL;
++
++	return page->area;
+ }
+ 
+ /**
+@@ -1536,6 +1539,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			struct page *page = area->pages[i];
+ 
+ 			BUG_ON(!page);
++			page->area = NULL;
+ 			__free_pages(page, 0);
+ 		}
+ 
+@@ -1744,6 +1748,7 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 			const void *caller)
+ {
+ 	struct vm_struct *area;
++	unsigned int i;
+ 	void *addr;
+ 	unsigned long real_size = size;
+ 
+@@ -1769,6 +1774,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 
+ 	kmemleak_vmalloc(area, size, gfp_mask);
+ 
++	for (i = 0; i < area->nr_pages; i++)
++		area->pages[i]->area = area;
++
+ 	return addr;
+ 
+ fail:
 -- 
 2.14.1
 
