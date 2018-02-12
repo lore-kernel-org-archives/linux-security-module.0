@@ -1,53 +1,55 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 12 Feb 2018 14:11:27 -0500
-Subject: [GIT PULL] Integrity: IMA FUSE fixes
-In-Reply-To: <CA+55aFxoLQ=FW7BkpyTHTQ6HJMW3a7fW-Ew0zrprRqwk-xwLTg@mail.gmail.com>
-References: <alpine.LRH.2.21.1802101718330.4382@namei.org>
-	<CA+55aFzX+=WRaVi51gaqCdnrxwXC3kqxk8LZyXQY=yn5XigE4Q@mail.gmail.com>
-	<1518324116.5491.132.camel@linux.vnet.ibm.com>
-	<CA+55aFxoLQ=FW7BkpyTHTQ6HJMW3a7fW-Ew0zrprRqwk-xwLTg@mail.gmail.com>
-Message-ID: <1518462687.5491.310.camel@linux.vnet.ibm.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 12 Feb 2018 15:27:19 -0800
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
+	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
+	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
+	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
+	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
+	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
+Message-ID: <CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2018-02-10 at 20:50 -0800, Linus Torvalds wrote:
-> On Sat, Feb 10, 2018 at 8:41 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> >>
-> >> What am I missing?
-> >
-> > No, you're right.  The file could change at any time, making the
-> > measurement(s) and by extension signature verification meaningless.
-> > Custom policy rules could be defined to disable measurement,
-> > appraisal, and audit for files on fuse.  However, I don't think we
-> > want to automatically disable measurement, even meaningless
-> > measurements.  Some indication needs to be included for remote
-> > attestation, security analytics, or forensics.  For systems with
-> > policies that require file signatures even on fuse, the safest thing
-> > would seem to be to fail the signature verification.
-> 
-> Failing seems like a sane model, although I also suspect it would just
-> break a lot of cases that currently work fine because *in*practice*
-> fuse works fine as a normal filesystem (think fuse "exfat" module
-> etc).
-> 
-> So yes, the failing behavior is sane, but I agree with you that it
-> should be something that requires a specific policy ("fail on
-> untrusted filesystems like fuse").
+On Sun, Feb 4, 2018 at 7:05 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> On 04/02/18 00:29, Boris Lukashev wrote:
+>> On Sat, Feb 3, 2018 at 3:32 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+>
+> [...]
+>
+>>> What you are suggesting, if I have understood it correctly, is that,
+>>> when the pool is protected, the addresses already given out, will become
+>>> traps that get resolved through a lookup table that is built based on
+>>> the content of each allocation.
+>>>
+>>> That seems to generate a lot of overhead, not to mention the fact that
+>>> it might not play very well with the MMU.
+>>
+>> That is effectively what i'm suggesting - as a form of protection for
+>> consumers against direct reads of data which may have been corrupted
+>> by some irrelevant means. In the context of pmalloc, it would probably
+>> be a separate type of ro+verified pool
+> ok, that seems more like an extension though.
+>
+> ATM I am having problems gaining traction to get even the basic merged :-)
+>
+> I would consider this as a possibility for future work, unless it is
+> said that it's necessary for pmalloc to be accepted ...
 
-Could we differentiate between untrusted from unprivileged and
-untrusted fuse? ?The existing fuse would continue to work, but on
-systems with IMA-appraisal enabled the new, unprivileged fuse would
-fail.
+I would agree: let's get basic functionality in first. Both
+verification and the physmap part can be done separately, IMO.
 
-> But regardless, disabling caching just seems broken in all situations
-> and never right, so I really don't want to pull that tree unless
-> somebody can point out where it makes sense.
+-Kees
 
-Agreed. ?Re-measuring/appraising the file would only detect well
-behaved malicious fuse.
-
-Mimi
-
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
