@@ -1,29 +1,36 @@
 From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Mon, 12 Feb 2018 17:41:52 +0200
-Subject: [PATCH 4/6] Protectable Memory
-In-Reply-To: <20180212153156.GF20737@rapoport-lnx>
+Date: Mon, 12 Feb 2018 18:24:20 +0200
+Subject: [PATCH 3/6] struct page: add field for vm_struct
+In-Reply-To: <20180211211646.GC4680@bombadil.infradead.org>
 References: <20180211031920.3424-1-igor.stoppa@huawei.com>
-	<20180211031920.3424-5-igor.stoppa@huawei.com>
-	<20180211123743.GC13931@rapoport-lnx>
-	<e7ea02b4-3d43-9543-3d14-61c27e155042@huawei.com>
-	<20180212114310.GD20737@rapoport-lnx>
-	<20180212125347.GE20737@rapoport-lnx>
-	<68edadf0-2b23-eaeb-17de-884032f0b906@huawei.com>
-	<20180212153156.GF20737@rapoport-lnx>
-Message-ID: <f5c08b12-a274-f2db-5cf2-8b774489c425@huawei.com>
+	<20180211031920.3424-4-igor.stoppa@huawei.com>
+	<20180211211646.GC4680@bombadil.infradead.org>
+Message-ID: <cef01110-dc23-4442-f277-88d1d3662e00@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 12/02/18 17:31, Mike Rapoport wrote:
 
-[...]
 
-> Seems that kernel-doc does not consider () as a valid match for the
-> identifier :)
->  
-> Can you please check with the below patch?
+On 11/02/18 23:16, Matthew Wilcox wrote:
+> On Sun, Feb 11, 2018 at 05:19:17AM +0200, Igor Stoppa wrote:
+>> The struct page has a "mapping" field, which can be re-used, to store a
+>> pointer to the parent area. This will avoid more expensive searches.
+>>
+>> As example, the function find_vm_area is reimplemented, to take advantage
+>> of the newly introduced field.
+> 
+> Umm.  Is it more efficient?  You're replacing an rb-tree search with a
+> page-table walk.  You eliminate a spinlock, which is great, but is the
+> page-table walk more efficient?  I suppose it'll depend on the depth of
+> the rb-tree, and (at least on x86), the page tables should already be
+> in cache.
 
-yes, it works now, than you!
+I thought the tradeoff favorable. How to verify it?
+
+> Unrelated to this patch, I'm working on a patch to give us page_type,
+> and I think I'll allocate a bit to mark pages which are vmalloced.
+
+pmalloced too?
 
 --
 igor
