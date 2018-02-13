@@ -1,38 +1,96 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Tue, 13 Feb 2018 10:43:27 +0800
-Subject: [PATCH 5/6] Pmalloc: self-test
-In-Reply-To: <20180211031920.3424-6-igor.stoppa@huawei.com>
-References: <20180211031920.3424-6-igor.stoppa@huawei.com>
-Message-ID: <201802131011.XACTqdLh%fengguang.wu@intel.com>
+From: jannh@google.com (Jann Horn)
+Date: Tue, 13 Feb 2018 04:39:38 +0100
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
+	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
+	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
+	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
+	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
+	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
+	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
+	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+	<CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
+Message-ID: <CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Igor,
+On Tue, Feb 13, 2018 at 2:25 AM, Kees Cook <keescook@chromium.org> wrote:
+> On Mon, Feb 12, 2018 at 4:40 PM, Laura Abbott <labbott@redhat.com> wrote:
+>> On 02/12/2018 03:27 PM, Kees Cook wrote:
+>>>
+>>> On Sun, Feb 4, 2018 at 7:05 AM, Igor Stoppa <igor.stoppa@huawei.com>
+>>> wrote:
+>>>>
+>>>> On 04/02/18 00:29, Boris Lukashev wrote:
+>>>>>
+>>>>> On Sat, Feb 3, 2018 at 3:32 PM, Igor Stoppa <igor.stoppa@huawei.com>
+>>>>> wrote:
+>>>>
+>>>>
+>>>> [...]
+>>>>
+>>>>>> What you are suggesting, if I have understood it correctly, is that,
+>>>>>> when the pool is protected, the addresses already given out, will
+>>>>>> become
+>>>>>> traps that get resolved through a lookup table that is built based on
+>>>>>> the content of each allocation.
+>>>>>>
+>>>>>> That seems to generate a lot of overhead, not to mention the fact that
+>>>>>> it might not play very well with the MMU.
+>>>>>
+>>>>>
+>>>>> That is effectively what i'm suggesting - as a form of protection for
+>>>>> consumers against direct reads of data which may have been corrupted
+>>>>> by some irrelevant means. In the context of pmalloc, it would probably
+>>>>> be a separate type of ro+verified pool
+>>>>
+>>>> ok, that seems more like an extension though.
+>>>>
+>>>> ATM I am having problems gaining traction to get even the basic merged
+>>>> :-)
+>>>>
+>>>> I would consider this as a possibility for future work, unless it is
+>>>> said that it's necessary for pmalloc to be accepted ...
+>>>
+>>>
+>>> I would agree: let's get basic functionality in first. Both
+>>> verification and the physmap part can be done separately, IMO.
+>>
+>>
+>> Skipping over physmap leaves a pretty big area of exposure that could
+>> be difficult to solve later. I appreciate this might block basic
+>> functionality but I don't think we should just gloss over it without
+>> at least some idea of what we would do.
+>
+> What's our exposure on physmap for other regions? e.g. things that are
+> executable, or made read-only later (like __ro_after_init)?
 
-Thank you for the patch! Yet something to improve:
+I just checked on a system with a 4.9 kernel, and there seems to be no
+physical memory that is mapped as writable in the init PGD and
+executable elsewhere.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.16-rc1 next-20180212]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Ah, I think I missed something. At least on X86, set_memory_ro,
+set_memory_rw, set_memory_nx and set_memory_x all use
+change_page_attr_clear/change_page_attr_set, which use
+change_page_attr_set_clr, which calls __change_page_attr_set_clr()
+with a second parameter "checkalias" that is set to 1 unless the bit
+being changed is the NX bit, and that parameter causes the invocation
+of cpa_process_alias(), which will, for mapped ranges, also change the
+attributes of physmap ranges. set_memory_ro() and so on are also used
+by the module loading code.
 
-url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/genalloc-track-beginning-of-allocations/20180212-192839
-config: arm-allnoconfig (attached as .config)
-compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=arm 
-
-All errors (new ones prefixed by >>):
-
-   mm/pmalloc.o: In function `pmalloc_prealloc':
->> pmalloc.c:(.text+0x268): undefined reference to `vfree_atomic'
-   mm/pmalloc.o: In function `pmalloc':
-   pmalloc.c:(.text+0x2ac): undefined reference to `vfree_atomic'
-   mm/pmalloc.o: In function `pmalloc_chunk_free':
-   pmalloc.c:(.text+0x86): undefined reference to `vfree_atomic'
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+But in the ARM64 code, I don't see anything similar. Does anyone with
+a better understanding of ARM64 want to check whether I missed
+something? Or maybe, with a recent kernel, check whether executable
+module pages show up with a second writable mapping in the
+"kernel_page_tables" file in debugfs?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
