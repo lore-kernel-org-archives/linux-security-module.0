@@ -1,37 +1,80 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Tue, 13 Feb 2018 08:43:20 +0800
-Subject: [PATCH 1/6] genalloc: track beginning of allocations
-In-Reply-To: <20180211031920.3424-2-igor.stoppa@huawei.com>
-References: <20180211031920.3424-2-igor.stoppa@huawei.com>
-Message-ID: <201802130849.K85nqOtM%fengguang.wu@intel.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 12 Feb 2018 17:25:25 -0800
+Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
+In-Reply-To: <414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
+	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
+	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
+	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
+	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
+	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
+	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
+	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+Message-ID: <CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Igor,
+On Mon, Feb 12, 2018 at 4:40 PM, Laura Abbott <labbott@redhat.com> wrote:
+> On 02/12/2018 03:27 PM, Kees Cook wrote:
+>>
+>> On Sun, Feb 4, 2018 at 7:05 AM, Igor Stoppa <igor.stoppa@huawei.com>
+>> wrote:
+>>>
+>>> On 04/02/18 00:29, Boris Lukashev wrote:
+>>>>
+>>>> On Sat, Feb 3, 2018 at 3:32 PM, Igor Stoppa <igor.stoppa@huawei.com>
+>>>> wrote:
+>>>
+>>>
+>>> [...]
+>>>
+>>>>> What you are suggesting, if I have understood it correctly, is that,
+>>>>> when the pool is protected, the addresses already given out, will
+>>>>> become
+>>>>> traps that get resolved through a lookup table that is built based on
+>>>>> the content of each allocation.
+>>>>>
+>>>>> That seems to generate a lot of overhead, not to mention the fact that
+>>>>> it might not play very well with the MMU.
+>>>>
+>>>>
+>>>> That is effectively what i'm suggesting - as a form of protection for
+>>>> consumers against direct reads of data which may have been corrupted
+>>>> by some irrelevant means. In the context of pmalloc, it would probably
+>>>> be a separate type of ro+verified pool
+>>>
+>>> ok, that seems more like an extension though.
+>>>
+>>> ATM I am having problems gaining traction to get even the basic merged
+>>> :-)
+>>>
+>>> I would consider this as a possibility for future work, unless it is
+>>> said that it's necessary for pmalloc to be accepted ...
+>>
+>>
+>> I would agree: let's get basic functionality in first. Both
+>> verification and the physmap part can be done separately, IMO.
+>
+>
+> Skipping over physmap leaves a pretty big area of exposure that could
+> be difficult to solve later. I appreciate this might block basic
+> functionality but I don't think we should just gloss over it without
+> at least some idea of what we would do.
 
-Thank you for the patch! Yet something to improve:
+What's our exposure on physmap for other regions? e.g. things that are
+executable, or made read-only later (like __ro_after_init)?
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.16-rc1 next-20180212]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+-Kees
 
-url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/genalloc-track-beginning-of-allocations/20180212-192839
-config: openrisc-allmodconfig (attached as .config)
-compiler: or1k-linux-gcc (GCC) 6.0.0 20160327 (experimental)
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=openrisc 
-
-All errors (new ones prefixed by >>):
-
-   WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/mtk-vcodec/mtk-vcodec-common.o
-   see include/linux/module.h for more information
-   WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/tegra-cec/tegra_cec.o
-   see include/linux/module.h for more information
->> ERROR: "gen_pool_best_fit" [drivers/tee/tee.ko] undefined!
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Kees Cook
+Pixel Security
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
