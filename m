@@ -1,94 +1,54 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 14 Feb 2018 09:54:21 -0600
-Subject: [RFC PATCH 2/4] ima: fail signature verification on unprivileged
-	& untrusted filesystems
-In-Reply-To: <1518623386.5667.30.camel@linux.vnet.ibm.com>
-References: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<20180214144903.GA1953@mail.hallyn.com>
-	<1518620899.5667.10.camel@linux.vnet.ibm.com>
-	<20180214151637.GA2671@mail.hallyn.com>
-	<1518622569.5667.26.camel@linux.vnet.ibm.com>
-	<20180214154255.GA3087@mail.hallyn.com>
-	<1518623386.5667.30.camel@linux.vnet.ibm.com>
-Message-ID: <20180214155421.GC3206@mail.hallyn.com>
+From: labbott@redhat.com (Laura Abbott)
+Date: Wed, 14 Feb 2018 11:06:06 -0800
+Subject: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable
+	Memory)
+In-Reply-To: <CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
+	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
+	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
+	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
+	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
+	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
+	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
+	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+	<CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
+	<CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
+	<f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
+	<CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
+Message-ID: <2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
-> On Wed, 2018-02-14 at 09:42 -0600, Serge E. Hallyn wrote:
-> > Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
-> > > On Wed, 2018-02-14 at 09:16 -0600, Serge E. Hallyn wrote:
-> > > > Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
-> > > > > On Wed, 2018-02-14 at 08:49 -0600, Serge E. Hallyn wrote:
-> > > > > > Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
-> > > > > > > Files on untrusted filesystems, such as fuse, can change at any time,
-> > > > > > > making the measurement(s) and by extension signature verification
-> > > > > > > meaningless.
-> > > > > > > 
-> > > > > > > FUSE can be mounted by unprivileged users either today with fusermount
-> > > > > > > installed with setuid, or soon with the upcoming patches to allow FUSE
-> > > > > > > mounts in a non-init user namespace.
-> > > > > > > 
-> > > > > > > This patch always fails the file signature verification on unprivileged
-> > > > > > > and untrusted filesystems.  To also fail file signature verification on
-> > > > > > 
-> > > > > > Why only untrusted?  Fuse could cause the same issue if it just
-> > > > > > messes up when mounted from init userns right?
-> > > > > 
-> > > > > Right, whether it is an unprivileged mount or not, fuse can return
-> > > > > whatever it wants, whenever it wants. ?IMA can calculate the file hash
-> > > > > based based on what it reads, but fuse can return whatever it wants on
-> > > > > subsequent reads.
-> > > > 
-> > > > Ok but your patch seems to let privileged fuse mounts slide?  (see below)
-> > > 
-> > > Unprivileged fuse mounts hasn't been upstreamed yet, so we wouldn't be
-> > > breaking existing userspace.
-> > 
-> > I don't think I'm being clear.
-> > 
-> > In your patch it looks like you mark unprivileged FUSE mounts as
-> > INTEGRITY_FAIL.  I agree you should do that.  But you skip the
-> > FS_UNTRUSTED check for privileged FUSE mounts.  I'm asking why
-> > that's ok.
-> > 
-> > > > > Refer to the discussion with Linus -?http://kernsec.org/pipermail/linu
-> > > > > x-security-module-archive/2018-February/005200.html
-> > > > > 
-> > > > > > > privileged, untrusted filesystems requires a custom policy.
-> > > > > > 
-> > > > > > (I'm not saying you shouldn't do this, but) does this mean that
-> > > > > > a container whose rootfs is fuse-mounted by the unprivileged user
-> > > > > > cannot possibly use IMA?
-> > > > > 
-> > > > > How would you suggest to differentiate between your unprivileged fuse
-> > > > > mounts from unintended, unintended malicious ones?
-> > > > 
-> > > > I wouldn't.
-> > > 
-> > > What happened to the requirement that systems should be "fail-safe"?
-> > 
-> > My point was - I was asking whether there was any way to have IMA be
-> > meaningful with such containers, not saying I had any ideas, and
-> > certainly not saying that just because you can't detect it means you
-> > should allow it in all cases.  It's too bad that it has this effect,
-> > but I agree with your patch.
-> > 
-> > I only didn't ack it because you're skipping the check for privileged
-> > mounts which seems wrong.
+On 02/13/2018 01:43 PM, Kees Cook wrote:
+> On Tue, Feb 13, 2018 at 8:09 AM, Laura Abbott <labbott@redhat.com> wrote:
+>> No, arm64 doesn't fixup the aliases, mostly because arm64 uses larger
+>> page sizes which can't be broken down at runtime. CONFIG_PAGE_POISONING
+>> does use 4K pages which could be adjusted at runtime. So yes, you are
+>> right we would have physmap exposure on arm64 as well.
 > 
-> Oh!  That is based on Linus' "request" not to break userspace.
+> Errr, so that means even modules and kernel code are writable via the
+> arm64 physmap? That seems extraordinarily bad. :(
+> 
+> -Kees
+> 
 
-Oh, yeah, I guess that would do it :)  It seems so wrong that it's
-probably worth putting a comment above that exception.
+(adding linux-arm-kernel and changing the subject)
 
-So probably not worth much but
+Kernel code should be fine, if it isn't that is a bug that should be
+fixed. Modules yes are not fully protected. The conclusion from past
+experience has been that we cannot safely break down larger page sizes
+at runtime like x86 does. We could theoretically
+add support for fixing up the alias if PAGE_POISONING is enabled but
+I don't know who would actually use that in production. Performance
+is very poor at that point.
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
-thanks,
--serge
+Thanks,
+Laura
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
