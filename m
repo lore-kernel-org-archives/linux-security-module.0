@@ -1,41 +1,83 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 13 Feb 2018 13:43:49 -0800
-Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
-In-Reply-To: <f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-	<20180124175631.22925-5-igor.stoppa@huawei.com>
-	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
-	<20180126053542.GA30189@bombadil.infradead.org>
-	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
-	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
-	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
-	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
-	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
-	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
-	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
-	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
-	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
-	<CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
-	<CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
-	<f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
-Message-ID: <CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 14 Feb 2018 08:35:13 -0500
+Subject: [RFC PATCH 2/4] ima: fail signature verification on unprivileged &
+	untrusted filesystems
+In-Reply-To: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Feb 13, 2018 at 8:09 AM, Laura Abbott <labbott@redhat.com> wrote:
-> No, arm64 doesn't fixup the aliases, mostly because arm64 uses larger
-> page sizes which can't be broken down at runtime. CONFIG_PAGE_POISONING
-> does use 4K pages which could be adjusted at runtime. So yes, you are
-> right we would have physmap exposure on arm64 as well.
+Files on untrusted filesystems, such as fuse, can change at any time,
+making the measurement(s) and by extension signature verification
+meaningless.
 
-Errr, so that means even modules and kernel code are writable via the
-arm64 physmap? That seems extraordinarily bad. :(
+FUSE can be mounted by unprivileged users either today with fusermount
+installed with setuid, or soon with the upcoming patches to allow FUSE
+mounts in a non-init user namespace.
 
--Kees
+This patch always fails the file signature verification on unprivileged
+and untrusted filesystems.  To also fail file signature verification on
+privileged, untrusted filesystems requires a custom policy.
 
+(This patch is based on Alban Crequy's use of fs_flags and patch
+ description.)
+
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Seth Forshee <seth.forshee@canonical.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Dongsu Park <dongsu@kinvolk.io>
+Cc: Alban Crequy <alban@kinvolk.io>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+---
+ include/linux/fs.h                    |  1 +
+ security/integrity/ima/ima_appraise.c | 10 +++++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2a815560fda0..faffe4aab43d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2069,6 +2069,7 @@ struct file_system_type {
+ #define FS_BINARY_MOUNTDATA	2
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
++#define FS_UNTRUSTED		16	/* Defined filesystem as untrusted */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	struct dentry *(*mount) (struct file_system_type *, int,
+ 		       const char *, void *);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index f2803a40ff82..af8add31fe26 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -292,7 +292,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	}
+ 
+ out:
+-	if (status != INTEGRITY_PASS) {
++	/* Fail untrusted and unpriviliged filesystems (eg FUSE) */
++	if ((inode->i_sb->s_type->fs_flags & FS_UNTRUSTED) &&
++	    (inode->i_sb->s_user_ns != &init_user_ns)) {
++		status = INTEGRITY_FAIL;
++		cause = "untrusted-filesystem";
++		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++				    op, cause, rc, 0);
++	} else if (status != INTEGRITY_PASS) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+ 		    (!xattr_value ||
+ 		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+@@ -309,6 +316,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	} else {
+ 		ima_cache_flags(iint, func);
+ 	}
++
+ 	ima_set_cache_status(iint, func, status);
+ 	return status;
+ }
 -- 
-Kees Cook
-Pixel Security
+2.7.5
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
