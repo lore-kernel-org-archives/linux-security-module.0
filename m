@@ -1,110 +1,68 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 14 Feb 2018 14:19:03 -0500
-Subject: [PATCH V6 0/4] Add SELinux SCTP protocol support
-In-Reply-To: <20180213205252.4447-1-richard_c_haines@btinternet.com>
-References: <20180213205252.4447-1-richard_c_haines@btinternet.com>
-Message-ID: <CAHC9VhRG8AYpy3O1eLNCg6LP_i8Hk_U4zEGy3_frE2TMzZnG6w@mail.gmail.com>
+From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
+Date: Wed, 14 Feb 2018 19:28:42 +0000
+Subject: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable
+	Memory)
+In-Reply-To: <2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180124175631.22925-5-igor.stoppa@huawei.com>
+	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
+	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
+	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
+	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
+	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
+	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
+	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
+	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+	<CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
+	<CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
+	<f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
+	<CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
+	<2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
+Message-ID: <CAKv+Gu8CNGFKLhX2XRuesn3n3k5P2bYS8qKWTTNXGFnr7SUVUA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Feb 13, 2018 at 3:52 PM, Richard Haines
-<richard_c_haines@btinternet.com> wrote:
-> These patches have been built on Fedora 27 with kernel-4.16.0-0.rc1 plus
-> the following userspace patches to enable testing:
+On 14 February 2018 at 19:06, Laura Abbott <labbott@redhat.com> wrote:
+> On 02/13/2018 01:43 PM, Kees Cook wrote:
+>>
+>> On Tue, Feb 13, 2018 at 8:09 AM, Laura Abbott <labbott@redhat.com> wrote:
+>>>
+>>> No, arm64 doesn't fixup the aliases, mostly because arm64 uses larger
+>>> page sizes which can't be broken down at runtime. CONFIG_PAGE_POISONING
+>>> does use 4K pages which could be adjusted at runtime. So yes, you are
+>>> right we would have physmap exposure on arm64 as well.
+>>
+>>
+>> Errr, so that means even modules and kernel code are writable via the
+>> arm64 physmap? That seems extraordinarily bad. :(
+>>
+>> -Kees
+>>
 >
-> 1) Updates to libsepol 2.7 to support the sctp portcon statement.
->    The patch is available from:
->          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
->          selinux-Add-support-for-the-SCTP-portcon-keyword.patch
+> (adding linux-arm-kernel and changing the subject)
 >
-> 2) Updates to the SELinux Test Suite adding SCTP tests. Please read the
->    selinux-testsuite/README.sctp for details. The patch is available from:
->          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
->          selinux-testsuite-Add-SCTP-test-support.patch
->
-> 3) Updates to lksctp-tools that show SELinux info in sctp_darn and
->    sctp_test. It also contains a minor patch for test_1_to_1_connect.c
->    as when CIPSO/CALIPSO configured, NetLabel returns a different error
->    code for illegal addresses in test 5. The patch is available from:
->          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
->          lksctp-tools-Add-SELinux-support-to-sctp_test-and-sc.patch
->
-> All SCTP lksctp-tools/src/func_tests run correctly in enforcing mode.
->
-> All SCTP regression tests "./sctp-tests run" run correctly in enforcing
-> mode. These tests are obtained from: https://github.com/sctp/sctp-tests
->
-> The selinux-testsuite patch also adds remote tests (that need some manual
-> configuration). These are useful for testing CIPSO/CALIPSO over a network
-> with a number of categories to produce large ip option fields with various
-> message sizes forcing fragmentation etc..
->
-> Changes since RFC Patch:
-> Removed the NetLabel patch (was [RFC PATCH 4/5] netlabel: Add SCTP support)
-> as re-engineered. However this patchset will require the NetLabel
-> patch at [1] to fully run the SCTP selinux-testsuite.
->
-> V1 Changes:
-> PATCH 1/4
-> Remove unused parameter from security_sctp_assoc_request().
-> Reformat and update LSM-sctp.rst documentation.
-> PATCH 2/4
-> Add variables and RCU locks as requested in [2] to support IP options.
-> PATCH 3/4
-> Added security_sctp_assoc_request() hook to sctp_sf_do_unexpected_init()
-> and sctp_sf_do_5_2_4_dupcook().
-> Removed security_sctp_assoc_request() hook from sctp_sf_do_5_1C_ack() as
-> no longer required.
-> PATCH 4/4
-> Reformat and update SELinux-sctp.rst documentation.
-> Remove bindx and connectx permissions.
-> Rework selinux_socket_connect() and selinux_netlbl_socket_connect() to
-> utilise helpers for code reuse.
-> Add spinlock to selinux_sctp_assoc_request().
-> Remove unused parameter from security_sctp_assoc_request().
-> Use address->sa_family == AF_INET in *_bind and *_connect to ensure
-> correct address type.
-> Minor cleanups.
->
-> V2 Changes:
-> PATCH 4/4 - Remove spin lock from selinux_sctp_assoc_request()
-> PATCH 4/4 - Fix selinux_sctp_sk_clone() kbuild test robot catch [3]
->
-> V3 Changes:
-> PATCH 2/4 - Account for IP options length in sctp.h sctp_frag_point() by
-> Marcelo
->
-> V4 Changes:
-> PATCH 1/4 - Move specific SELinux descriptions from LSM-sctp.rst and
-> lsm_hooks.h to SELinux-sctp.rst in PATCH 4/4
-> PATCH 4/4 - Rename selinux_netlbl_sctp_socket_connect() to
-> selinux_netlbl_socket_connect_locked() and move description comments to
-> selinux_sctp_bind_connect()
->
-> V5 Change: Rework selinux_netlbl_socket_connect() and
-> selinux_netlbl_socket_connect_locked as requested by Paul.
->
-> V6 Changes:
-> Rework SCTP patches 2/4 and 3/4 as there have been major SCTP updates since
-> kernel 4.14.
->
-> [1] https://marc.info/?l=selinux&m=151061619115945&w=2
-> [2] https://marc.info/?l=selinux&m=150962470215797&w=2
-> [3] https://marc.info/?l=selinux&m=151198281817779&w=2
->
-> Richard Haines (4):
->   security: Add support for SCTP security hooks
->   sctp: Add ip option support
->   sctp: Add LSM hooks
->   selinux: Add SCTP support
+> Kernel code should be fine, if it isn't that is a bug that should be
+> fixed.
 
-Marcelo, or any other SCTP folks, do the SCTP changes still look okay
-to you?  I'd like to merge these into the selinux/next tree by the end
-of the week ...
+We take care to ensure that the linear alias of the core kernel's
+.text and .rodata segments are mapped read-only. When we first moved
+the kernel out of the linear region, we did not map it there at all
+anymore, but that broke hibernation so we had to put something back.
 
--- 
-paul moore
-www.paul-moore.com
+> Modules yes are not fully protected. The conclusion from past
+> experience has been that we cannot safely break down larger page sizes
+> at runtime like x86 does. We could theoretically
+> add support for fixing up the alias if PAGE_POISONING is enabled but
+> I don't know who would actually use that in production. Performance
+> is very poor at that point.
+>
+
+As long as the linear alias of the module is mapped down to pages, we
+should be able to tweak the permissions. I take it that PAGE_POISONING
+does more than just that?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
