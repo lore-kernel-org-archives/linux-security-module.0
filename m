@@ -1,8 +1,8 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Wed, 14 Feb 2018 11:35:54 -0800
+Date: Wed, 14 Feb 2018 11:48:38 -0800
 Subject: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable
 	Memory)
-In-Reply-To: <CAGXu5j+RRiZtYfO-4Peh=FAHmUS4FThKHp-djoFgY80rebKTxQ@mail.gmail.com>
+In-Reply-To: <2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
 References: <20180124175631.22925-1-igor.stoppa@huawei.com>
 	<20180124175631.22925-5-igor.stoppa@huawei.com>
 	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
@@ -21,21 +21,29 @@ References: <20180124175631.22925-1-igor.stoppa@huawei.com>
 	<f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
 	<CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
 	<2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
-	<CAGXu5j+RRiZtYfO-4Peh=FAHmUS4FThKHp-djoFgY80rebKTxQ@mail.gmail.com>
-Message-ID: <CAGXu5jJ2XRt3RqPPXp+CN5fhT93BpCCNUHk88aSQUWS_NJ5oxw@mail.gmail.com>
+Message-ID: <CAGXu5j+zkFx+1Dn908iqaTV-yP7Wk_rMXZRvXN32h+i_oAcy6w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Feb 14, 2018 at 11:29 AM, Kees Cook <keescook@chromium.org> wrote:
-> Why does using finer granularity on the physmap degrade performance? I
-> assume TLB pressure, but what is heavily using that area? (I must not
-> be understanding what physmap actually gets used for -- I thought it
-> was just a convenience to have a 1:1 virt/phys map for some lookups?)
+On Wed, Feb 14, 2018 at 11:06 AM, Laura Abbott <labbott@redhat.com> wrote:
+> fixed. Modules yes are not fully protected. The conclusion from past
+> experience has been that we cannot safely break down larger page sizes
+> at runtime like x86 does. We could theoretically
+> add support for fixing up the alias if PAGE_POISONING is enabled but
+> I don't know who would actually use that in production. Performance
+> is very poor at that point.
 
-Jann has sorted me out: it's that physmap isn't an _alias_ for the
-buddy allocator memory areas; it's used directly.
+XPFO forces 4K pages on the physmap[1] for similar reasons. I have no
+doubt about performance changes, but I'd be curious to see real
+numbers. Did anyone do benchmarks on just the huge/4K change? (Without
+also the XPFO overhead?)
+
+If this, XPFO, and PAGE_POISONING all need it, I think we have to
+start a closer investigation. :)
 
 -Kees
+
+[1] http://www.openwall.com/lists/kernel-hardening/2017/09/07/13
 
 -- 
 Kees Cook
