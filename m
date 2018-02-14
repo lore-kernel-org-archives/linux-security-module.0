@@ -1,125 +1,257 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 14 Feb 2018 08:35:12 -0500
-Subject: [RFC PATCH 1/4] ima: define a new policy condition based on the
-	filesystem name
-Message-ID: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
+From: tomas.winkler@intel.com (Tomas Winkler)
+Date: Wed, 14 Feb 2018 15:43:19 +0200
+Subject: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
+In-Reply-To: <20180214134319.4400-1-tomas.winkler@intel.com>
+References: <20180214134319.4400-1-tomas.winkler@intel.com>
+Message-ID: <20180214134319.4400-3-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Some filesystems, like fuse, don't export the filesystem magic number.
+We cannot use go_idle cmd_ready commands via runtime_pm handles
+as with the introduction of localities this is no longer an optional
+feature, while runtime pm can be not enabled.
+Though cmd_ready/go_idle provides power saving feature, it's also part of
+TPM2 protocol and should be called explicitly.
+This patch exposes cmd_read/go_idle via tpm class ops and removes
+runtime pm support as it is not used by any driver.
 
-In addition, when files in the initramfs will be properly labeled with
-file signatures, we will need the ablity to differentiate between
-rootfs that require file signatures from those don't.
-
-This patch defines a new IMA policy condition named "fsname", based on
-the superblock's file_system_type (sb->s_type) name. This allows policy
-rules to be expressed in terms of the filesystem name.
-
-Example rules:
-measure func=FILE_CHECK fsname=fuse
-appraise func=BPRM_CHECK fsname=rootfs
-appraise func=FILE_MMAP fsname=rootfs
-
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- Documentation/ABI/testing/ima_policy |  2 +-
- security/integrity/ima/ima_policy.c  | 25 ++++++++++++++++++++++++-
- 2 files changed, 25 insertions(+), 2 deletions(-)
+V2: resent
+V3: resent
+ drivers/char/tpm/tpm-interface.c | 15 ++++++---
+ drivers/char/tpm/tpm_crb.c       | 69 +++++++++++++++++-----------------------
+ include/linux/tpm.h              |  2 ++
+ 3 files changed, 42 insertions(+), 44 deletions(-)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 2028f2d093b2..aeb5c6326b9b 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -21,7 +21,7 @@ Description:
- 			audit | hash | dont_hash
- 		condition:= base | lsm  [option]
- 			base:	[[func=] [mask=] [fsmagic=] [fsuuid=] [uid=]
--				[euid=] [fowner=]]
-+				[euid=] [fowner=] [fsname=]]
- 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
- 				 [obj_user=] [obj_role=] [obj_type=]]
- 			option:	[[appraise_type=]] [permit_directio]
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 915f5572c6ff..54847e08e6c8 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -33,6 +33,7 @@
- #define IMA_INMASK	0x0040
- #define IMA_EUID	0x0080
- #define IMA_PCR		0x0100
-+#define IMA_FSNAME	0x0200
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index f47b29c1a963..0b6c9641df56 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -29,7 +29,6 @@
+ #include <linux/mutex.h>
+ #include <linux/spinlock.h>
+ #include <linux/freezer.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/tpm_eventlog.h>
  
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -74,6 +75,7 @@ struct ima_rule_entry {
- 		void *args_p;	/* audit value */
- 		int type;	/* audit type */
- 	} lsm[MAX_LSM_RULES];
-+	char *fsname;
- };
- 
- /*
-@@ -267,6 +269,9 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 	if ((rule->flags & IMA_FSMAGIC)
- 	    && rule->fsmagic != inode->i_sb->s_magic)
- 		return false;
-+	if ((rule->flags & IMA_FSNAME)
-+	    && strcmp(rule->fsname, inode->i_sb->s_type->name))
-+		return false;
- 	if ((rule->flags & IMA_FSUUID) &&
- 	    !uuid_equal(&rule->fsuuid, &inode->i_sb->s_uuid))
- 		return false;
-@@ -528,7 +533,7 @@ enum {
- 	Opt_audit, Opt_hash, Opt_dont_hash,
- 	Opt_obj_user, Opt_obj_role, Opt_obj_type,
- 	Opt_subj_user, Opt_subj_role, Opt_subj_type,
--	Opt_func, Opt_mask, Opt_fsmagic,
-+	Opt_func, Opt_mask, Opt_fsmagic, Opt_fsname,
- 	Opt_fsuuid, Opt_uid_eq, Opt_euid_eq, Opt_fowner_eq,
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
-@@ -553,6 +558,7 @@ static match_table_t policy_tokens = {
- 	{Opt_func, "func=%s"},
- 	{Opt_mask, "mask=%s"},
- 	{Opt_fsmagic, "fsmagic=%s"},
-+	{Opt_fsname, "fsname=%s"},
- 	{Opt_fsuuid, "fsuuid=%s"},
- 	{Opt_uid_eq, "uid=%s"},
- 	{Opt_euid_eq, "euid=%s"},
-@@ -762,6 +768,17 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			if (!result)
- 				entry->flags |= IMA_FSMAGIC;
- 			break;
-+		case Opt_fsname:
-+			ima_log_string(ab, "fsname", args[0].from);
-+
-+			entry->fsname = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->fsname) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_FSNAME;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1090,6 +1107,12 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
+ #include "tpm.h"
+@@ -437,8 +436,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		chip->locality = rc;
  	}
  
-+	if (entry->flags & IMA_FSNAME) {
-+		snprintf(tbuf, sizeof(tbuf), "%s", entry->fsname);
-+		seq_printf(m, pt(Opt_fsname), tbuf);
-+		seq_puts(m, " ");
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
++	if (chip->ops->cmd_ready) {
++		rc = chip->ops->cmd_ready(chip);
++		if (rc)
++			goto out;
 +	}
+ 
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+@@ -500,8 +502,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
++	if (chip->ops->go_idle) {
++		rc = chip->ops->go_idle(chip);
++		if (rc)
++			goto out;
++	}
+ 
+ 	if (need_locality && chip->ops->relinquish_locality) {
+ 		/* this coud be on error path, don't override error code */
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 497edd9848cd..acfcdc6f31af 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -132,7 +132,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+ }
+ 
+ /**
+- * crb_go_idle - request tpm crb device to go the idle state
++ * __crb_go_idle - request tpm crb device to go the idle state
+  *
+  * @dev:  crb device
+  * @priv: crb private data
+@@ -147,7 +147,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 always
+  */
+-static int crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -166,8 +166,16 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 	return 0;
+ }
+ 
++static int crb_go_idle(struct tpm_chip *chip)
++{
++	struct device *dev = &chip->dev;
++	struct crb_priv *priv = dev_get_drvdata(dev);
 +
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
++	return __crb_go_idle(dev, priv);
++}
++
+ /**
+- * crb_cmd_ready - request tpm crb device to enter ready state
++ * __crb_cmd_ready - request tpm crb device to enter ready state
+  *
+  * @dev:  crb device
+  * @priv: crb private data
+@@ -181,7 +189,7 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
++static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -200,6 +208,14 @@ static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ 	return 0;
+ }
+ 
++static int crb_cmd_ready(struct tpm_chip *chip)
++{
++	struct device *dev = &chip->dev;
++	struct crb_priv *priv = dev_get_drvdata(dev);
++
++	return __crb_cmd_ready(dev, priv);
++}
++
+ static int __crb_request_locality(struct device *dev,
+ 				  struct crb_priv *priv, int loc)
+ {
+@@ -401,6 +417,8 @@ static const struct tpm_class_ops tpm_crb = {
+ 	.send = crb_send,
+ 	.cancel = crb_cancel,
+ 	.req_canceled = crb_req_canceled,
++	.go_idle  = crb_go_idle,
++	.cmd_ready = crb_cmd_ready,
+ 	.request_locality = crb_request_locality,
+ 	.relinquish_locality = crb_relinquish_locality,
+ 	.req_complete_mask = CRB_DRV_STS_COMPLETE,
+@@ -517,7 +535,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 * PTT HW bug w/a: wake up the device to access
+ 	 * possibly not retained registers.
+ 	 */
+-	ret = crb_cmd_ready(dev, priv);
++	ret = __crb_cmd_ready(dev, priv);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -562,7 +580,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	if (!ret)
+ 		priv->cmd_size = cmd_size;
+ 
+-	crb_go_idle(dev, priv);
++	__crb_go_idle(dev, priv);
+ 
+ 	__crb_relinquish_locality(dev, priv, 0);
+ 
+@@ -627,23 +645,13 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	if (rc)
+ 		return rc;
+ 
+-	rc  = crb_cmd_ready(dev, priv);
++	rc  = __crb_cmd_ready(dev, priv);
+ 	if (rc)
+ 		goto out;
+ 
+-	pm_runtime_get_noresume(dev);
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-
+ 	rc = tpm_chip_register(chip);
+-	if (rc) {
+-		crb_go_idle(dev, priv);
+-		pm_runtime_put_noidle(dev);
+-		pm_runtime_disable(dev);
+-		goto out;
+-	}
+ 
+-	pm_runtime_put_sync(dev);
++	__crb_go_idle(dev, priv);
+ 
+ out:
+ 	__crb_relinquish_locality(dev, priv, 0);
+@@ -658,43 +666,27 @@ static int crb_acpi_remove(struct acpi_device *device)
+ 
+ 	tpm_chip_unregister(chip);
+ 
+-	pm_runtime_disable(dev);
+-
+ 	return 0;
+ }
+ 
+-static int __maybe_unused crb_pm_runtime_suspend(struct device *dev)
+-{
+-	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+-
+-	return crb_go_idle(dev, priv);
+-}
+-
+-static int __maybe_unused crb_pm_runtime_resume(struct device *dev)
+-{
+-	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+-
+-	return crb_cmd_ready(dev, priv);
+-}
+-
+ static int __maybe_unused crb_pm_suspend(struct device *dev)
+ {
++	struct tpm_chip *chip = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	ret = tpm_pm_suspend(dev);
+ 	if (ret)
+ 		return ret;
+ 
+-	return crb_pm_runtime_suspend(dev);
++	return crb_go_idle(chip);
+ }
+ 
+ static int __maybe_unused crb_pm_resume(struct device *dev)
+ {
++	struct tpm_chip *chip = dev_get_drvdata(dev);
+ 	int ret;
+ 
+-	ret = crb_pm_runtime_resume(dev);
++	ret = crb_cmd_ready(chip);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -703,7 +695,6 @@ static int __maybe_unused crb_pm_resume(struct device *dev)
+ 
+ static const struct dev_pm_ops crb_pm = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(crb_pm_suspend, crb_pm_resume)
+-	SET_RUNTIME_PM_OPS(crb_pm_runtime_suspend, crb_pm_runtime_resume, NULL)
+ };
+ 
+ static const struct acpi_device_id crb_device_ids[] = {
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 06639fb6ab85..8eb5e5ebe136 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -43,6 +43,8 @@ struct tpm_class_ops {
+ 	u8 (*status) (struct tpm_chip *chip);
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
++	int (*go_idle)(struct tpm_chip *chip);
++	int (*cmd_ready)(struct tpm_chip *chip);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+ 	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
 -- 
-2.7.5
+2.14.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
