@@ -1,86 +1,115 @@
 From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
-Date: Wed, 14 Feb 2018 18:30:46 -0200
-Subject: [PATCH V6 2/4] sctp: Add ip option support
-In-Reply-To: <20180213205444.4559-1-richard_c_haines@btinternet.com>
-References: <20180213205444.4559-1-richard_c_haines@btinternet.com>
-Message-ID: <20180214203046.GB4625@localhost.localdomain>
+Date: Wed, 14 Feb 2018 19:16:39 -0200
+Subject: [PATCH V6 0/4] Add SELinux SCTP protocol support
+In-Reply-To: <CAHC9VhRG8AYpy3O1eLNCg6LP_i8Hk_U4zEGy3_frE2TMzZnG6w@mail.gmail.com>
+References: <20180213205252.4447-1-richard_c_haines@btinternet.com>
+	<CAHC9VhRG8AYpy3O1eLNCg6LP_i8Hk_U4zEGy3_frE2TMzZnG6w@mail.gmail.com>
+Message-ID: <20180214211639.GA4718@localhost.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
-
-On Tue, Feb 13, 2018 at 08:54:44PM +0000, Richard Haines wrote:
-...
-> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> index bf271f8..8307968 100644
-> --- a/net/sctp/socket.c
-> +++ b/net/sctp/socket.c
-> @@ -3138,6 +3138,7 @@ static int sctp_setsockopt_mappedv4(struct sock *sk, char __user *optval, unsign
->  static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned int optlen)
->  {
->  	struct sctp_sock *sp = sctp_sk(sk);
-> +	struct sctp_af *af = sp->pf->af;
->  	struct sctp_assoc_value params;
->  	struct sctp_association *asoc;
->  	int val;
-> @@ -3159,10 +3160,13 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
->  		return -EINVAL;
->  	}
->  
-> +	asoc = sctp_id2assoc(sk, params.assoc_id);
-> +
->  	if (val) {
->  		int min_len, max_len;
->  
-> -		min_len = SCTP_DEFAULT_MINSEGMENT - sp->pf->af->net_header_len;
-> +		min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
-> +		min_len -= af->ip_options_len(asoc->base.sk);
-
-We have an issue here. asoc may be NULL, in case the user supplied
-asoc id is invalid. Then if it also specified the maxseg 'val', it
-would trigger a NULL deref here.
-
-You don't need to find the asoc, to then get to the socket. You can
-use the sk function parameter, it's the same value here. Then you
-don't need to move the sctp_id2assoc() call.
-
->  		min_len -= sizeof(struct sctphdr) +
->  			   sizeof(struct sctp_data_chunk);
->  
-> @@ -3172,10 +3176,10 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
->  			return -EINVAL;
->  	}
->  
-> -	asoc = sctp_id2assoc(sk, params.assoc_id);
->  	if (asoc) {
->  		if (val == 0) {
-> -			val = asoc->pathmtu - sp->pf->af->net_header_len;
-> +			val = asoc->pathmtu - af->net_header_len;
-> +			val -= af->ip_options_len(asoc->base.sk);
-
-You may use sk directly here too.
-
-Other than these, LGTM.
-
->  			val -= sizeof(struct sctphdr) +
->  			       sctp_datachk_len(&asoc->stream);
->  		}
-> @@ -5087,9 +5091,11 @@ int sctp_do_peeloff(struct sock *sk, sctp_assoc_t id, struct socket **sockp)
->  	sctp_copy_sock(sock->sk, sk, asoc);
->  
->  	/* Make peeled-off sockets more like 1-1 accepted sockets.
-> -	 * Set the daddr and initialize id to something more random
-> +	 * Set the daddr and initialize id to something more random and also
-> +	 * copy over any ip options.
->  	 */
->  	sp->pf->to_sk_daddr(&asoc->peer.primary_addr, sk);
-> +	sp->pf->copy_ip_options(sk, sock->sk);
->  
->  	/* Populate the fields of the newsk from the oldsk and migrate the
->  	 * asoc to the newsk.
-> -- 
-> 2.14.3
+On Wed, Feb 14, 2018 at 02:19:03PM -0500, Paul Moore wrote:
+> On Tue, Feb 13, 2018 at 3:52 PM, Richard Haines
+> <richard_c_haines@btinternet.com> wrote:
+> > These patches have been built on Fedora 27 with kernel-4.16.0-0.rc1 plus
+> > the following userspace patches to enable testing:
+> >
+> > 1) Updates to libsepol 2.7 to support the sctp portcon statement.
+> >    The patch is available from:
+> >          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
+> >          selinux-Add-support-for-the-SCTP-portcon-keyword.patch
+> >
+> > 2) Updates to the SELinux Test Suite adding SCTP tests. Please read the
+> >    selinux-testsuite/README.sctp for details. The patch is available from:
+> >          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
+> >          selinux-testsuite-Add-SCTP-test-support.patch
+> >
+> > 3) Updates to lksctp-tools that show SELinux info in sctp_darn and
+> >    sctp_test. It also contains a minor patch for test_1_to_1_connect.c
+> >    as when CIPSO/CALIPSO configured, NetLabel returns a different error
+> >    code for illegal addresses in test 5. The patch is available from:
+> >          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
+> >          lksctp-tools-Add-SELinux-support-to-sctp_test-and-sc.patch
+> >
+> > All SCTP lksctp-tools/src/func_tests run correctly in enforcing mode.
+> >
+> > All SCTP regression tests "./sctp-tests run" run correctly in enforcing
+> > mode. These tests are obtained from: https://github.com/sctp/sctp-tests
+> >
+> > The selinux-testsuite patch also adds remote tests (that need some manual
+> > configuration). These are useful for testing CIPSO/CALIPSO over a network
+> > with a number of categories to produce large ip option fields with various
+> > message sizes forcing fragmentation etc..
+> >
+> > Changes since RFC Patch:
+> > Removed the NetLabel patch (was [RFC PATCH 4/5] netlabel: Add SCTP support)
+> > as re-engineered. However this patchset will require the NetLabel
+> > patch at [1] to fully run the SCTP selinux-testsuite.
+> >
+> > V1 Changes:
+> > PATCH 1/4
+> > Remove unused parameter from security_sctp_assoc_request().
+> > Reformat and update LSM-sctp.rst documentation.
+> > PATCH 2/4
+> > Add variables and RCU locks as requested in [2] to support IP options.
+> > PATCH 3/4
+> > Added security_sctp_assoc_request() hook to sctp_sf_do_unexpected_init()
+> > and sctp_sf_do_5_2_4_dupcook().
+> > Removed security_sctp_assoc_request() hook from sctp_sf_do_5_1C_ack() as
+> > no longer required.
+> > PATCH 4/4
+> > Reformat and update SELinux-sctp.rst documentation.
+> > Remove bindx and connectx permissions.
+> > Rework selinux_socket_connect() and selinux_netlbl_socket_connect() to
+> > utilise helpers for code reuse.
+> > Add spinlock to selinux_sctp_assoc_request().
+> > Remove unused parameter from security_sctp_assoc_request().
+> > Use address->sa_family == AF_INET in *_bind and *_connect to ensure
+> > correct address type.
+> > Minor cleanups.
+> >
+> > V2 Changes:
+> > PATCH 4/4 - Remove spin lock from selinux_sctp_assoc_request()
+> > PATCH 4/4 - Fix selinux_sctp_sk_clone() kbuild test robot catch [3]
+> >
+> > V3 Changes:
+> > PATCH 2/4 - Account for IP options length in sctp.h sctp_frag_point() by
+> > Marcelo
+> >
+> > V4 Changes:
+> > PATCH 1/4 - Move specific SELinux descriptions from LSM-sctp.rst and
+> > lsm_hooks.h to SELinux-sctp.rst in PATCH 4/4
+> > PATCH 4/4 - Rename selinux_netlbl_sctp_socket_connect() to
+> > selinux_netlbl_socket_connect_locked() and move description comments to
+> > selinux_sctp_bind_connect()
+> >
+> > V5 Change: Rework selinux_netlbl_socket_connect() and
+> > selinux_netlbl_socket_connect_locked as requested by Paul.
+> >
+> > V6 Changes:
+> > Rework SCTP patches 2/4 and 3/4 as there have been major SCTP updates since
+> > kernel 4.14.
+> >
+> > [1] https://marc.info/?l=selinux&m=151061619115945&w=2
+> > [2] https://marc.info/?l=selinux&m=150962470215797&w=2
+> > [3] https://marc.info/?l=selinux&m=151198281817779&w=2
+> >
+> > Richard Haines (4):
+> >   security: Add support for SCTP security hooks
+> >   sctp: Add ip option support
+> >   sctp: Add LSM hooks
+> >   selinux: Add SCTP support
 > 
+> Marcelo, or any other SCTP folks, do the SCTP changes still look okay
+> to you?  I'd like to merge these into the selinux/next tree by the end
+> of the week ...
+
+Other than the issue on patch 2/4, patchset LGTM yes.
+(Not really happy with the casts to remove the const attribute on
+patch 3, but I don't see other way out)
+
+Thanks,
+Marcelo
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
