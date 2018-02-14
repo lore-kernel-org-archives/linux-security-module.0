@@ -1,79 +1,86 @@
-From: labbott@redhat.com (Laura Abbott)
-Date: Wed, 14 Feb 2018 12:13:36 -0800
-Subject: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable
-	Memory)
-In-Reply-To: <CAKv+Gu8CNGFKLhX2XRuesn3n3k5P2bYS8qKWTTNXGFnr7SUVUA@mail.gmail.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-	<20180126053542.GA30189@bombadil.infradead.org>
-	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
-	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
-	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
-	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
-	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
-	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
-	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
-	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
-	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
-	<CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
-	<CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
-	<f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
-	<CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
-	<2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
-	<CAKv+Gu8CNGFKLhX2XRuesn3n3k5P2bYS8qKWTTNXGFnr7SUVUA@mail.gmail.com>
-Message-ID: <213effab-f0d0-cfc5-8feb-c72eed8ae0aa@redhat.com>
+From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
+Date: Wed, 14 Feb 2018 18:30:46 -0200
+Subject: [PATCH V6 2/4] sctp: Add ip option support
+In-Reply-To: <20180213205444.4559-1-richard_c_haines@btinternet.com>
+References: <20180213205444.4559-1-richard_c_haines@btinternet.com>
+Message-ID: <20180214203046.GB4625@localhost.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 02/14/2018 11:28 AM, Ard Biesheuvel wrote:
-> On 14 February 2018 at 19:06, Laura Abbott <labbott@redhat.com> wrote:
->> On 02/13/2018 01:43 PM, Kees Cook wrote:
->>>
->>> On Tue, Feb 13, 2018 at 8:09 AM, Laura Abbott <labbott@redhat.com> wrote:
->>>>
->>>> No, arm64 doesn't fixup the aliases, mostly because arm64 uses larger
->>>> page sizes which can't be broken down at runtime. CONFIG_PAGE_POISONING
->>>> does use 4K pages which could be adjusted at runtime. So yes, you are
->>>> right we would have physmap exposure on arm64 as well.
->>>
->>>
->>> Errr, so that means even modules and kernel code are writable via the
->>> arm64 physmap? That seems extraordinarily bad. :(
->>>
->>> -Kees
->>>
->>
->> (adding linux-arm-kernel and changing the subject)
->>
->> Kernel code should be fine, if it isn't that is a bug that should be
->> fixed.
-> 
-> We take care to ensure that the linear alias of the core kernel's
-> .text and .rodata segments are mapped read-only. When we first moved
-> the kernel out of the linear region, we did not map it there at all
-> anymore, but that broke hibernation so we had to put something back.
-> 
->> Modules yes are not fully protected. The conclusion from past
->> experience has been that we cannot safely break down larger page sizes
->> at runtime like x86 does. We could theoretically
->> add support for fixing up the alias if PAGE_POISONING is enabled but
->> I don't know who would actually use that in production. Performance
->> is very poor at that point.
->>
-> 
-> As long as the linear alias of the module is mapped down to pages, we
-> should be able to tweak the permissions. I take it that PAGE_POISONING
-> does more than just that?
-> 
+Hi,
 
-Page poisoning does exactly that. The argument I was trying to make
-was that if nobody really uses page poisoning except for debugging
-it might not be worth it to fix up the alias. Thinking a bit more,
-this is a terrible argument for many reasons so yes I agree that
-we can just fix up the alias if PAGE_POISONING (or other features)
-are enabled.
+On Tue, Feb 13, 2018 at 08:54:44PM +0000, Richard Haines wrote:
+...
+> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> index bf271f8..8307968 100644
+> --- a/net/sctp/socket.c
+> +++ b/net/sctp/socket.c
+> @@ -3138,6 +3138,7 @@ static int sctp_setsockopt_mappedv4(struct sock *sk, char __user *optval, unsign
+>  static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned int optlen)
+>  {
+>  	struct sctp_sock *sp = sctp_sk(sk);
+> +	struct sctp_af *af = sp->pf->af;
+>  	struct sctp_assoc_value params;
+>  	struct sctp_association *asoc;
+>  	int val;
+> @@ -3159,10 +3160,13 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
+>  		return -EINVAL;
+>  	}
+>  
+> +	asoc = sctp_id2assoc(sk, params.assoc_id);
+> +
+>  	if (val) {
+>  		int min_len, max_len;
+>  
+> -		min_len = SCTP_DEFAULT_MINSEGMENT - sp->pf->af->net_header_len;
+> +		min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
+> +		min_len -= af->ip_options_len(asoc->base.sk);
 
-Thanks,
-Laura
+We have an issue here. asoc may be NULL, in case the user supplied
+asoc id is invalid. Then if it also specified the maxseg 'val', it
+would trigger a NULL deref here.
+
+You don't need to find the asoc, to then get to the socket. You can
+use the sk function parameter, it's the same value here. Then you
+don't need to move the sctp_id2assoc() call.
+
+>  		min_len -= sizeof(struct sctphdr) +
+>  			   sizeof(struct sctp_data_chunk);
+>  
+> @@ -3172,10 +3176,10 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
+>  			return -EINVAL;
+>  	}
+>  
+> -	asoc = sctp_id2assoc(sk, params.assoc_id);
+>  	if (asoc) {
+>  		if (val == 0) {
+> -			val = asoc->pathmtu - sp->pf->af->net_header_len;
+> +			val = asoc->pathmtu - af->net_header_len;
+> +			val -= af->ip_options_len(asoc->base.sk);
+
+You may use sk directly here too.
+
+Other than these, LGTM.
+
+>  			val -= sizeof(struct sctphdr) +
+>  			       sctp_datachk_len(&asoc->stream);
+>  		}
+> @@ -5087,9 +5091,11 @@ int sctp_do_peeloff(struct sock *sk, sctp_assoc_t id, struct socket **sockp)
+>  	sctp_copy_sock(sock->sk, sk, asoc);
+>  
+>  	/* Make peeled-off sockets more like 1-1 accepted sockets.
+> -	 * Set the daddr and initialize id to something more random
+> +	 * Set the daddr and initialize id to something more random and also
+> +	 * copy over any ip options.
+>  	 */
+>  	sp->pf->to_sk_daddr(&asoc->peer.primary_addr, sk);
+> +	sp->pf->copy_ip_options(sk, sock->sk);
+>  
+>  	/* Populate the fields of the newsk from the oldsk and migrate the
+>  	 * asoc to the newsk.
+> -- 
+> 2.14.3
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
