@@ -1,11 +1,9 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 14 Feb 2018 11:48:38 -0800
+From: labbott@redhat.com (Laura Abbott)
+Date: Wed, 14 Feb 2018 12:13:36 -0800
 Subject: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable
 	Memory)
-In-Reply-To: <2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
+In-Reply-To: <CAKv+Gu8CNGFKLhX2XRuesn3n3k5P2bYS8qKWTTNXGFnr7SUVUA@mail.gmail.com>
 References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-	<20180124175631.22925-5-igor.stoppa@huawei.com>
-	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
 	<20180126053542.GA30189@bombadil.infradead.org>
 	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
 	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
@@ -21,33 +19,61 @@ References: <20180124175631.22925-1-igor.stoppa@huawei.com>
 	<f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
 	<CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
 	<2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
-Message-ID: <CAGXu5j+zkFx+1Dn908iqaTV-yP7Wk_rMXZRvXN32h+i_oAcy6w@mail.gmail.com>
+	<CAKv+Gu8CNGFKLhX2XRuesn3n3k5P2bYS8qKWTTNXGFnr7SUVUA@mail.gmail.com>
+Message-ID: <213effab-f0d0-cfc5-8feb-c72eed8ae0aa@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Feb 14, 2018 at 11:06 AM, Laura Abbott <labbott@redhat.com> wrote:
-> fixed. Modules yes are not fully protected. The conclusion from past
-> experience has been that we cannot safely break down larger page sizes
-> at runtime like x86 does. We could theoretically
-> add support for fixing up the alias if PAGE_POISONING is enabled but
-> I don't know who would actually use that in production. Performance
-> is very poor at that point.
+On 02/14/2018 11:28 AM, Ard Biesheuvel wrote:
+> On 14 February 2018 at 19:06, Laura Abbott <labbott@redhat.com> wrote:
+>> On 02/13/2018 01:43 PM, Kees Cook wrote:
+>>>
+>>> On Tue, Feb 13, 2018 at 8:09 AM, Laura Abbott <labbott@redhat.com> wrote:
+>>>>
+>>>> No, arm64 doesn't fixup the aliases, mostly because arm64 uses larger
+>>>> page sizes which can't be broken down at runtime. CONFIG_PAGE_POISONING
+>>>> does use 4K pages which could be adjusted at runtime. So yes, you are
+>>>> right we would have physmap exposure on arm64 as well.
+>>>
+>>>
+>>> Errr, so that means even modules and kernel code are writable via the
+>>> arm64 physmap? That seems extraordinarily bad. :(
+>>>
+>>> -Kees
+>>>
+>>
+>> (adding linux-arm-kernel and changing the subject)
+>>
+>> Kernel code should be fine, if it isn't that is a bug that should be
+>> fixed.
+> 
+> We take care to ensure that the linear alias of the core kernel's
+> .text and .rodata segments are mapped read-only. When we first moved
+> the kernel out of the linear region, we did not map it there at all
+> anymore, but that broke hibernation so we had to put something back.
+> 
+>> Modules yes are not fully protected. The conclusion from past
+>> experience has been that we cannot safely break down larger page sizes
+>> at runtime like x86 does. We could theoretically
+>> add support for fixing up the alias if PAGE_POISONING is enabled but
+>> I don't know who would actually use that in production. Performance
+>> is very poor at that point.
+>>
+> 
+> As long as the linear alias of the module is mapped down to pages, we
+> should be able to tweak the permissions. I take it that PAGE_POISONING
+> does more than just that?
+> 
 
-XPFO forces 4K pages on the physmap[1] for similar reasons. I have no
-doubt about performance changes, but I'd be curious to see real
-numbers. Did anyone do benchmarks on just the huge/4K change? (Without
-also the XPFO overhead?)
+Page poisoning does exactly that. The argument I was trying to make
+was that if nobody really uses page poisoning except for debugging
+it might not be worth it to fix up the alias. Thinking a bit more,
+this is a terrible argument for many reasons so yes I agree that
+we can just fix up the alias if PAGE_POISONING (or other features)
+are enabled.
 
-If this, XPFO, and PAGE_POISONING all need it, I think we have to
-start a closer investigation. :)
-
--Kees
-
-[1] http://www.openwall.com/lists/kernel-hardening/2017/09/07/13
-
--- 
-Kees Cook
-Pixel Security
+Thanks,
+Laura
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
