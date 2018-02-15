@@ -1,120 +1,91 @@
-From: nhorman@tuxdriver.com (Neil Horman)
-Date: Thu, 15 Feb 2018 09:21:09 -0500
-Subject: [PATCH V6 0/4] Add SELinux SCTP protocol support
-In-Reply-To: <CAHC9VhRG8AYpy3O1eLNCg6LP_i8Hk_U4zEGy3_frE2TMzZnG6w@mail.gmail.com>
-References: <20180213205252.4447-1-richard_c_haines@btinternet.com>
-	<CAHC9VhRG8AYpy3O1eLNCg6LP_i8Hk_U4zEGy3_frE2TMzZnG6w@mail.gmail.com>
-Message-ID: <20180215142109.GB21419@hmswarspite.think-freely.org>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Thu, 15 Feb 2018 10:47:06 -0600
+Subject: [RFC PATCH 2/4] ima: fail signature verification on unprivileged
+	& untrusted filesystems
+In-Reply-To: <1518698285.5667.87.camel@linux.vnet.ibm.com> (Mimi Zohar's
+	message of "Thu, 15 Feb 2018 07:38:05 -0500")
+References: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
+	<87po57yvix.fsf@xmission.com>
+	<1518698285.5667.87.camel@linux.vnet.ibm.com>
+Message-ID: <87a7wayzcl.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Feb 14, 2018 at 02:19:03PM -0500, Paul Moore wrote:
-> On Tue, Feb 13, 2018 at 3:52 PM, Richard Haines
-> <richard_c_haines@btinternet.com> wrote:
-> > These patches have been built on Fedora 27 with kernel-4.16.0-0.rc1 plus
-> > the following userspace patches to enable testing:
-> >
-> > 1) Updates to libsepol 2.7 to support the sctp portcon statement.
-> >    The patch is available from:
-> >          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
-> >          selinux-Add-support-for-the-SCTP-portcon-keyword.patch
-> >
-> > 2) Updates to the SELinux Test Suite adding SCTP tests. Please read the
-> >    selinux-testsuite/README.sctp for details. The patch is available from:
-> >          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
-> >          selinux-testsuite-Add-SCTP-test-support.patch
-> >
-> > 3) Updates to lksctp-tools that show SELinux info in sctp_darn and
-> >    sctp_test. It also contains a minor patch for test_1_to_1_connect.c
-> >    as when CIPSO/CALIPSO configured, NetLabel returns a different error
-> >    code for illegal addresses in test 5. The patch is available from:
-> >          http://arctic.selinuxproject.org/~rhaines/selinux-sctp/
-> >          lksctp-tools-Add-SELinux-support-to-sctp_test-and-sc.patch
-> >
-> > All SCTP lksctp-tools/src/func_tests run correctly in enforcing mode.
-> >
-> > All SCTP regression tests "./sctp-tests run" run correctly in enforcing
-> > mode. These tests are obtained from: https://github.com/sctp/sctp-tests
-> >
-> > The selinux-testsuite patch also adds remote tests (that need some manual
-> > configuration). These are useful for testing CIPSO/CALIPSO over a network
-> > with a number of categories to produce large ip option fields with various
-> > message sizes forcing fragmentation etc..
-> >
-> > Changes since RFC Patch:
-> > Removed the NetLabel patch (was [RFC PATCH 4/5] netlabel: Add SCTP support)
-> > as re-engineered. However this patchset will require the NetLabel
-> > patch at [1] to fully run the SCTP selinux-testsuite.
-> >
-> > V1 Changes:
-> > PATCH 1/4
-> > Remove unused parameter from security_sctp_assoc_request().
-> > Reformat and update LSM-sctp.rst documentation.
-> > PATCH 2/4
-> > Add variables and RCU locks as requested in [2] to support IP options.
-> > PATCH 3/4
-> > Added security_sctp_assoc_request() hook to sctp_sf_do_unexpected_init()
-> > and sctp_sf_do_5_2_4_dupcook().
-> > Removed security_sctp_assoc_request() hook from sctp_sf_do_5_1C_ack() as
-> > no longer required.
-> > PATCH 4/4
-> > Reformat and update SELinux-sctp.rst documentation.
-> > Remove bindx and connectx permissions.
-> > Rework selinux_socket_connect() and selinux_netlbl_socket_connect() to
-> > utilise helpers for code reuse.
-> > Add spinlock to selinux_sctp_assoc_request().
-> > Remove unused parameter from security_sctp_assoc_request().
-> > Use address->sa_family == AF_INET in *_bind and *_connect to ensure
-> > correct address type.
-> > Minor cleanups.
-> >
-> > V2 Changes:
-> > PATCH 4/4 - Remove spin lock from selinux_sctp_assoc_request()
-> > PATCH 4/4 - Fix selinux_sctp_sk_clone() kbuild test robot catch [3]
-> >
-> > V3 Changes:
-> > PATCH 2/4 - Account for IP options length in sctp.h sctp_frag_point() by
-> > Marcelo
-> >
-> > V4 Changes:
-> > PATCH 1/4 - Move specific SELinux descriptions from LSM-sctp.rst and
-> > lsm_hooks.h to SELinux-sctp.rst in PATCH 4/4
-> > PATCH 4/4 - Rename selinux_netlbl_sctp_socket_connect() to
-> > selinux_netlbl_socket_connect_locked() and move description comments to
-> > selinux_sctp_bind_connect()
-> >
-> > V5 Change: Rework selinux_netlbl_socket_connect() and
-> > selinux_netlbl_socket_connect_locked as requested by Paul.
-> >
-> > V6 Changes:
-> > Rework SCTP patches 2/4 and 3/4 as there have been major SCTP updates since
-> > kernel 4.14.
-> >
-> > [1] https://marc.info/?l=selinux&m=151061619115945&w=2
-> > [2] https://marc.info/?l=selinux&m=150962470215797&w=2
-> > [3] https://marc.info/?l=selinux&m=151198281817779&w=2
-> >
-> > Richard Haines (4):
-> >   security: Add support for SCTP security hooks
-> >   sctp: Add ip option support
-> >   sctp: Add LSM hooks
-> >   selinux: Add SCTP support
-> 
-> Marcelo, or any other SCTP folks, do the SCTP changes still look okay
-> to you?  I'd like to merge these into the selinux/next tree by the end
-> of the week ...
-> 
-I had a few comments that I just posted.
-Neil
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-> -- 
-> paul moore
-> www.paul-moore.com
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> On Wed, 2018-02-14 at 17:57 -0600, Eric W. Biederman wrote:
+>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> 
+>> > Files on untrusted filesystems, such as fuse, can change at any time,
+>> > making the measurement(s) and by extension signature verification
+>> > meaningless.
+>> >
+>> > FUSE can be mounted by unprivileged users either today with fusermount
+>> > installed with setuid, or soon with the upcoming patches to allow FUSE
+>> > mounts in a non-init user namespace.
+>> >
+>> > This patch always fails the file signature verification on unprivileged
+>> > and untrusted filesystems.  To also fail file signature verification on
+>> > privileged, untrusted filesystems requires a custom policy.
+>> >
+>> > (This patch is based on Alban Crequy's use of fs_flags and patch
+>> >  description.)
+>> 
+>> This would be much better done based on a flag in s_iflags and then the
+>> mounts that need this can set this.  That new flag can perhaps be called
+>> SB_I_IMA_FAIL.
+>> 
+>> Among other things that should allow the policy of when to set this to
+>> be set in fuse where it is obvious rather than in an magic location in
+>> IMA.
+>
+> Using s_iflags instead of fs_flags is fine, but I'm not sure how this
+> affects the IMA policy. ?This patch set assumes only unprivileged,
+> untrusted filesytems can automatically fail file signature
+> verification (2nd patch), as that hasn't yet been upstreamed and won't
+> break userspace.
+>
+> Based on policy, IMA should additionally be able to fail the signature
+> verification for files on privileged, untrusted filesystems.
+
+Apologies ima has a very specific meaning of policy, as in the loaded
+ima policy.  I was meaning the hard coded policy of which filesystems
+we simply would not trust by default.
+
+In code terms what I was thinking would look something like:
+
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -292,7 +292,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	}
+  
+ out:
+-	if (status != INTEGRITY_PASS) {
++	/* Fail if we can't trust the fs enough to support ima xattrs (FUSE) */
++	if (inode->i_sb->s_iflags & SB_I_NOIMA) {
++		status = INTEGRITY_FAIL;
++		cause = "untrusted-filesystem";
++		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++				    op, cause, rc, 0);
++	} else if (status != INTEGRITY_PASS) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+ 		    (!xattr_value ||
+  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+
+And somewhere in the fuse mount code it would say:
+
+	if (sb->s_user_ns != &init_user_ns)
+        	sb->s_iflags |= SB_I_NOIMA);
+
+The point being that the logic for setting the flag can live in fuse or
+a simpler filesystem and all ima proper needs to do is deal with the flag being
+set.  That should be easier to maintainer and simpler to code all
+around.
+
+Eric
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
