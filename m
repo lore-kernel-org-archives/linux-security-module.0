@@ -1,115 +1,211 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 16 Feb 2018 20:33:37 +0000
-Subject: [PATCH v3 01/15] Documentation: add newcx initramfs format description
+Date: Fri, 16 Feb 2018 20:33:38 +0000
+Subject: [PATCH v3 02/15] initramfs: replace states with function pointers
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-Message-ID: <1518813234-5874-2-git-send-email-takondra@cisco.com>
+Message-ID: <1518813234-5874-3-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Many of the Linux security/integrity features are dependent on file
-metadata, stored as extended attributes (xattrs), for making decisions.
-These features need to be initialized during initcall and enabled as
-early as possible for complete security coverage.
+Currently the FSM states are mapped directly to function pointers. Extra
+level of intirection is not needed and makes navigation over the code
+harder. One can't jump between states directly when browsing code (e.g.
+with cscope). Need to go through actions[] array each time.
 
-Initramfs (tmpfs) supports xattrs, but newc CPIO archive format does not
-support including them into the archive.
-
-This patch describes "extended" newc format (newcx) that is based on
-newc and has following changes:
-- extended attributes support
-- increased size of filesize to support files >4GB
-- increased mtime field size to have 64 bits of seconds and added a
-  field for nanoseconds
-- removed unused checksum field
+Replace states with their action function pointers. No behaviour change.
 
 Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 ---
- Documentation/early-userspace/buffer-format.txt | 46 ++++++++++++++++++++++---
- 1 file changed, 41 insertions(+), 5 deletions(-)
+ init/initramfs.c | 73 +++++++++++++++++++++++++-------------------------------
+ 1 file changed, 32 insertions(+), 41 deletions(-)
 
-diff --git a/Documentation/early-userspace/buffer-format.txt b/Documentation/early-userspace/buffer-format.txt
-index e1fd7f9dad16..8349b2f28b4b 100644
---- a/Documentation/early-userspace/buffer-format.txt
-+++ b/Documentation/early-userspace/buffer-format.txt
-@@ -24,6 +24,7 @@ grammar, where:
- 	+	indicates concatenation
- 	GZIP()	indicates the gzip(1) of the operand
- 	ALGN(n)	means padding with null bytes to an n-byte boundary
-+	[n]	means size of field is n bytes
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 7e99a0038942..49cd2681a26f 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -187,16 +187,17 @@ static void __init parse_header(char *s)
  
- 	initramfs  := ("\0" | cpio_archive | cpio_gzip_archive)*
+ /* FSM */
  
-@@ -31,20 +32,33 @@ grammar, where:
- 
- 	cpio_archive := cpio_file* + (<nothing> | cpio_trailer)
- 
--	cpio_file := ALGN(4) + cpio_header + filename + "\0" + ALGN(4) + data
-+	cpio_file := (cpio_newc_file | cpio_newcx_file)
+-static __initdata enum state {
+-	Start,
+-	Collect,
+-	GotHeader,
+-	SkipIt,
+-	GotName,
+-	CopyFile,
+-	GotSymlink,
+-	Reset
+-} state, next_state;
++static int __init do_start(void);
++static int __init do_collect(void);
++static int __init do_header(void);
++static int __init do_skip(void);
++static int __init do_name(void);
++static int __init do_copy(void);
++static int __init do_symlink(void);
++static int __init do_reset(void);
 +
-+	cpio_newc_file := ALGN(4) + cpio_newc_header + filename + "\0" + \
-+			  ALGN(4) + data
-+
-+	cpio_newcx_file := ALGN(4) + cpio_newcx_header + filename + "\0" + \
-+			   ALGN(4) + xattrs + ALGN(4) + data
-+
-+	xattrs := xattr_entry*
-+
-+	xattr_entry := xattr_size[8] + xattr_name + "\0" + xattr_value
++typedef int (*fsm_state_t)(void);
++static __initdata fsm_state_t state, next_state;
  
- 	cpio_trailer := ALGN(4) + cpio_header + "TRAILER!!!\0" + ALGN(4)
+ static __initdata char *victim;
+ static unsigned long byte_count __initdata;
+@@ -214,7 +215,7 @@ static __initdata char *collected;
+ static long remains __initdata;
+ static __initdata char *collect;
  
+-static void __init read_into(char *buf, unsigned size, enum state next)
++static void __init read_into(char *buf, unsigned size, fsm_state_t next)
+ {
+ 	if (byte_count >= size) {
+ 		collected = victim;
+@@ -224,7 +225,7 @@ static void __init read_into(char *buf, unsigned size, enum state next)
+ 		collect = collected = buf;
+ 		remains = size;
+ 		next_state = next;
+-		state = Collect;
++		state = do_collect;
+ 	}
+ }
  
- In human terms, the initramfs buffer contains a collection of
--compressed and/or uncompressed cpio archives (in the "newc" or "crc"
--formats); arbitrary amounts zero bytes (for padding) can be added
--between members.
-+compressed and/or uncompressed cpio archives; arbitrary amounts
-+zero bytes (for padding) can be added between members.
+@@ -232,7 +233,7 @@ static __initdata char *header_buf, *symlink_buf, *name_buf;
  
- The cpio "TRAILER!!!" entry (cpio end-of-archive) is optional, but is
- not ignored; see "handling of hard links" below.
+ static int __init do_start(void)
+ {
+-	read_into(header_buf, 110, GotHeader);
++	read_into(header_buf, 110, do_header);
+ 	return 0;
+ }
  
--The structure of the cpio_header is as follows (all fields contain
-+xattr_size is a total size of xattr_entry including 8 bytes of
-+xattr_size. xattr_size has the same hexadecimal ASCII encoding as other
-+fields of cpio header (see below).
-+
-+The structure of the cpio_newc_header is as follows (all fields contain
- hexadecimal ASCII numbers fully padded with '0' on the left to the
- full width of the field, for example, the integer 4780 is represented
- by the ASCII string "000012ac"):
-@@ -81,6 +95,28 @@ algorithm used.
- If the filename is "TRAILER!!!" this is actually an end-of-archive
- marker; the c_filesize for an end-of-archive marker must be zero.
+@@ -263,7 +264,7 @@ static int __init do_header(void)
+ 	parse_header(collected);
+ 	next_header = this_header + N_ALIGN(name_len) + body_len;
+ 	next_header = (next_header + 3) & ~3;
+-	state = SkipIt;
++	state = do_skip;
+ 	if (name_len <= 0 || name_len > PATH_MAX)
+ 		return 0;
+ 	if (S_ISLNK(mode)) {
+@@ -271,12 +272,12 @@ static int __init do_header(void)
+ 			return 0;
+ 		collect = collected = symlink_buf;
+ 		remains = N_ALIGN(name_len) + body_len;
+-		next_state = GotSymlink;
+-		state = Collect;
++		next_state = do_symlink;
++		state = do_collect;
+ 		return 0;
+ 	}
+ 	if (S_ISREG(mode) || !body_len)
+-		read_into(name_buf, N_ALIGN(name_len), GotName);
++		read_into(name_buf, N_ALIGN(name_len), do_name);
+ 	return 0;
+ }
  
-+"Extended" newc format (newcx)
-+"newcx" cpio format extends "newc" by increasing size of some fields
-+and adding extended attributes support. cpio_newcx_header structure:
-+
-+Field name    Field size	 Meaning
-+c_magic	       6 bytes		 The string "070703"
-+c_ino	       8 bytes		 File inode number
-+c_mode	       8 bytes		 File mode and permissions
-+c_uid	       8 bytes		 File uid
-+c_gid	       8 bytes		 File gid
-+c_nlink	       8 bytes		 Number of links
-+c_mtime	      16 bytes		 Modification time (seconds)
-+c_mtime_nsec   8 bytes		 Modification time (nanoseconds)
-+c_filesize    16 bytes		 Size of data field
-+c_maj	       8 bytes		 Major part of file device number
-+c_min	       8 bytes		 Minor part of file device number
-+c_rmaj	       8 bytes		 Major part of device node reference
-+c_rmin	       8 bytes		 Minor part of device node reference
-+c_namesize     8 bytes		 Length of filename, including final \0
-+c_xattrs_size  8 bytes		 Size of xattrs field
-+
-+Most of the fields match cpio_newc_header. c_chksum field is dropped.
+@@ -327,8 +328,8 @@ static __initdata int wfd;
  
- *** Handling of hard links
+ static int __init do_name(void)
+ {
+-	state = SkipIt;
+-	next_state = Reset;
++	state = do_skip;
++	next_state = do_reset;
+ 	if (strcmp(collected, "TRAILER!!!") == 0) {
+ 		free_hash();
+ 		return 0;
+@@ -348,7 +349,7 @@ static int __init do_name(void)
+ 				if (body_len)
+ 					sys_ftruncate(wfd, body_len);
+ 				vcollected = kstrdup(collected, GFP_KERNEL);
+-				state = CopyFile;
++				state = do_copy;
+ 			}
+ 		}
+ 	} else if (S_ISDIR(mode)) {
+@@ -377,7 +378,7 @@ static int __init do_copy(void)
+ 		do_utime(vcollected, mtime);
+ 		kfree(vcollected);
+ 		eat(body_len);
+-		state = SkipIt;
++		state = do_skip;
+ 		return 0;
+ 	} else {
+ 		if (xwrite(wfd, victim, byte_count) != byte_count)
+@@ -395,29 +396,19 @@ static int __init do_symlink(void)
+ 	sys_symlink(collected + N_ALIGN(name_len), collected);
+ 	sys_lchown(collected, uid, gid);
+ 	do_utime(collected, mtime);
+-	state = SkipIt;
+-	next_state = Reset;
++	state = do_skip;
++	next_state = do_reset;
+ 	return 0;
+ }
  
+-static __initdata int (*actions[])(void) = {
+-	[Start]		= do_start,
+-	[Collect]	= do_collect,
+-	[GotHeader]	= do_header,
+-	[SkipIt]	= do_skip,
+-	[GotName]	= do_name,
+-	[CopyFile]	= do_copy,
+-	[GotSymlink]	= do_symlink,
+-	[Reset]		= do_reset,
+-};
+-
+ static long __init write_buffer(char *buf, unsigned long len)
+ {
+ 	byte_count = len;
+ 	victim = buf;
+ 
+-	while (!actions[state]())
+-		;
++	do
++		pr_debug("state: %pf\n", state);
++	while (!state());
+ 	return len - byte_count;
+ }
+ 
+@@ -433,11 +424,11 @@ static long __init flush_buffer(void *bufv, unsigned long len)
+ 		if (c == '0') {
+ 			buf += written;
+ 			len -= written;
+-			state = Start;
++			state = do_start;
+ 		} else if (c == 0) {
+ 			buf += written;
+ 			len -= written;
+-			state = Reset;
++			state = do_reset;
+ 		} else
+ 			error("junk in compressed archive");
+ 	}
+@@ -462,13 +453,13 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	if (!header_buf || !symlink_buf || !name_buf)
+ 		panic("can't allocate buffers");
+ 
+-	state = Start;
++	state = do_start;
+ 	this_header = 0;
+ 	message = NULL;
+ 	while (!message && len) {
+ 		loff_t saved_offset = this_header;
+ 		if (*buf == '0' && !(this_header & 3)) {
+-			state = Start;
++			state = do_start;
+ 			written = write_buffer(buf, len);
+ 			buf += written;
+ 			len -= written;
+@@ -497,7 +488,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 			}
+ 		} else
+ 			error("junk in compressed archive");
+-		if (state != Reset)
++		if (state != do_reset)
+ 			error("junk in compressed archive");
+ 		this_header = saved_offset + my_inptr;
+ 		buf += my_inptr;
 -- 
 2.10.3.dirty
 
