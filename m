@@ -1,69 +1,51 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 16 Feb 2018 20:33:39 +0000
-Subject: [PATCH v3 03/15] initramfs: store file name in name_buf
+Date: Fri, 16 Feb 2018 20:33:51 +0000
+Subject: [PATCH v3 13/14] selinux: allow setxattr on rootfs so initramfs code
+	can set them
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-Message-ID: <1518813234-5874-4-git-send-email-takondra@cisco.com>
+Message-ID: <1518813234-5874-16-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-There is already name_buf buffer pre-allocated for a file name. No need
-to allocate vcollected for every file. More over a name can be already
-stored in name_buf by read_info() function.
+From: Victor Kamensky <kamensky@cisco.com>
 
-Add memcpy_optional() function to handle such case.
+initramfs code supporting extended cpio format have ability to
+fill extended attributes from cpio archive, but if SELinux enabled
+and security server is not initialized yet, selinux callback would
+refuse setxattr made by initramfs code.
 
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
+Solution enable SBLABEL_MNT on rootfs even if secrurity server is
+not initialized yet.
+
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 ---
- init/initramfs.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ security/selinux/hooks.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 49cd2681a26f..b6ee675e5cdb 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -210,7 +210,6 @@ static inline void __init eat(unsigned n)
- 	byte_count -= n;
- }
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 8644d864e3c1..f3fe65589f02 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -706,6 +706,18 @@ static int selinux_set_mnt_opts(struct super_block *sb,
  
--static __initdata char *vcollected;
- static __initdata char *collected;
- static long remains __initdata;
- static __initdata char *collect;
-@@ -324,6 +323,13 @@ static void __init clean_path(char *path, umode_t fmode)
- 	}
- }
- 
-+static void *memcpy_optional(void *dest, const void *src, size_t n)
-+{
-+	if (dest != src)
-+		return memcpy(dest, src, n);
-+	return dest;
-+}
+ 	if (!ss_initialized) {
+ 		if (!num_opts) {
++			/*
++			 * Special handling for rootfs. Is genfs but supports
++			 * setting SELinux context on in-core inodes.
++			 *
++			 * Chicken and egg problem: policy may reside in rootfs
++			 * but for initramfs code to fill in attributes, it
++			 * needs selinux to allow that.
++			 */
++			if (!strncmp(sb->s_type->name, "rootfs",
++				     sizeof("rootfs")))
++				sbsec->flags |= SBLABEL_MNT;
 +
- static __initdata int wfd;
- 
- static int __init do_name(void)
-@@ -348,7 +354,8 @@ static int __init do_name(void)
- 				sys_fchmod(wfd, mode);
- 				if (body_len)
- 					sys_ftruncate(wfd, body_len);
--				vcollected = kstrdup(collected, GFP_KERNEL);
-+				memcpy_optional(name_buf, collected,
-+						N_ALIGN(name_len));
- 				state = do_copy;
- 			}
- 		}
-@@ -375,8 +382,7 @@ static int __init do_copy(void)
- 		if (xwrite(wfd, victim, body_len) != body_len)
- 			error("write error");
- 		sys_close(wfd);
--		do_utime(vcollected, mtime);
--		kfree(vcollected);
-+		do_utime(name_buf, mtime);
- 		eat(body_len);
- 		state = do_skip;
- 		return 0;
+ 			/* Defer initialization until selinux_complete_init,
+ 			   after the initial policy is loaded and the security
+ 			   server is ready to handle calls. */
 -- 
 2.10.3.dirty
 
