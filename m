@@ -1,10 +1,10 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 16 Feb 2018 20:33:49 +0000
-Subject: [PATCH v3 12/14] gen_initramfs_list.sh: add -x option to enable newcx
+Date: Fri, 16 Feb 2018 20:33:50 +0000
+Subject: [PATCH v3 13/15] gen_initramfs_list.sh: add -x option to enable newcx
 	format
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-Message-ID: <1518813234-5874-14-git-send-email-takondra@cisco.com>
+Message-ID: <1518813234-5874-15-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
