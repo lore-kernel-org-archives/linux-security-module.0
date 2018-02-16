@@ -1,10 +1,10 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 16 Feb 2018 20:33:54 +0000
-Subject: [PATCH v3 15/15] selinux: delay sid population for rootfs till init
+Date: Fri, 16 Feb 2018 20:33:53 +0000
+Subject: [PATCH v3 14/14] selinux: delay sid population for rootfs till init
 	is complete
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-Message-ID: <1518813234-5874-19-git-send-email-takondra@cisco.com>
+Message-ID: <1518813234-5874-18-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
