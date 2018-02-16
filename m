@@ -1,288 +1,321 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 16 Feb 2018 20:33:48 +0000
-Subject: [PATCH v3 12/15] gen_init_cpio: set extended attributes for newcx
-	format
+Date: Fri, 16 Feb 2018 20:33:44 +0000
+Subject: [PATCH v3 08/15] initramfs: add newcx format
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-Message-ID: <1518813234-5874-13-git-send-email-takondra@cisco.com>
+Message-ID: <1518813234-5874-9-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-gen_init_cpio creates CPIO archive according to cpio_list manifest file
-that contains list of archive entries (one per line). To be able to
-store extended attributes in newcx CPIO format we need to pass them via
-cpio_list file.
+Add 'newcx' format that adds extended attributes and increased size of
+c_mtime and c_filesize fields.
 
-One way of doing it would be to append xattrs to each entry line, but
-"file" lines have a variable number of elements because of hardlinks. It
-is not obvious how to mark end of hardlinks and start of xattrs in this
-case.
-
-This patch introduces a new entry type: "xattr". Each "xattr" line
-specify one name=value pair. xattr values are applied to the next
-non-xattr line. There can be multiple "xattr" lines before non-xattr
-line.
-
-It may be more logical to have xattr lines after corresponding
-file entry, but it makes parsing a bit more complex and needs more
-intrusive changes.
-
-Xattr value is hex-encoded (see getfattr(1)). Plain string variant would
-be easier to read, but special symbols have to be escaped. Hex encoding
-is much simpler.
+Refer to Documentation/early-userspace/buffer-format.txt for detailed
+format description.
 
 Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 ---
- usr/gen_init_cpio.c | 144 +++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 121 insertions(+), 23 deletions(-)
+ init/initramfs.c | 121 +++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 96 insertions(+), 25 deletions(-)
 
-diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-index 25afd5b4af77..964f300620ca 100644
---- a/usr/gen_init_cpio.c
-+++ b/usr/gen_init_cpio.c
-@@ -10,6 +10,8 @@
- #include <errno.h>
- #include <ctype.h>
- #include <limits.h>
-+#include <sys/xattr.h>
-+#include <assert.h>
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 7f0bbfde94e3..0407e199352e 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -54,6 +54,7 @@ static void __init error(char *x)
+ /* link hash */
  
- /*
-  * Original work by Jeff Garzik
-@@ -49,21 +51,10 @@ static void push_pad (void)
+ #define N_ALIGN(len) ((((len) + 1) & ~3) + 2)
++#define X_ALIGN(len) ((len + 3) & ~3)
+ 
+ static __initdata struct hash {
+ 	int ino, minor, major;
+@@ -109,14 +110,11 @@ static void __init free_hash(void)
  	}
  }
  
--static void push_rest(const char *name)
-+static void push_string_padded(const char *name)
+-static long __init do_utime(char *filename, time64_t mtime)
++static long __init do_utime(char *filename, struct timespec64 *mtime)
  {
--	unsigned int name_len = strlen(name) + 1;
--	unsigned int tmp_ofs;
--
--	fputs(name, stdout);
--	putchar(0);
--	offset += name_len;
--
--	tmp_ofs = name_len + cpio_hdr_size;
--	while (tmp_ofs & 3) {
--		putchar(0);
--		offset++;
--		tmp_ofs++;
--	}
-+	push_string(name);
-+	push_pad();
+ 	struct timespec64 t[2];
+ 
+-	t[0].tv_sec = mtime;
+-	t[0].tv_nsec = 0;
+-	t[1].tv_sec = mtime;
+-	t[1].tv_nsec = 0;
++	t[0] = t[1] = *mtime;
+ 
+ 	return do_utimes(AT_FDCWD, filename, t, AT_SYMLINK_NOFOLLOW);
+ }
+@@ -125,17 +123,17 @@ static __initdata LIST_HEAD(dir_list);
+ struct dir_entry {
+ 	struct list_head list;
+ 	char *name;
+-	time64_t mtime;
++	struct timespec64 mtime;
+ };
+ 
+-static void __init dir_add(const char *name, time64_t mtime)
++static void __init dir_add(const char *name, struct timespec64 *mtime)
+ {
+ 	struct dir_entry *de = kmalloc(sizeof(struct dir_entry), GFP_KERNEL);
+ 	if (!de)
+ 		panic("can't allocate dir_entry buffer");
+ 	INIT_LIST_HEAD(&de->list);
+ 	de->name = kstrdup(name, GFP_KERNEL);
+-	de->mtime = mtime;
++	de->mtime = *mtime;
+ 	list_add(&de->list, &dir_list);
  }
  
- struct cpio_header {
-@@ -124,6 +115,7 @@ static void push_hdr(const struct cpio_header *hdr)
- 			hdr->check);
+@@ -144,17 +142,18 @@ static void __init dir_utime(void)
+ 	struct dir_entry *de, *tmp;
+ 	list_for_each_entry_safe(de, tmp, &dir_list, list) {
+ 		list_del(&de->list);
+-		do_utime(de->name, de->mtime);
++		do_utime(de->name, &de->mtime);
+ 		kfree(de->name);
+ 		kfree(de);
  	}
- 	fputs(s, stdout);
-+	assert((offset & 3) == 0);
- 	offset += cpio_hdr_size;
  }
  
-@@ -136,7 +128,7 @@ static void cpio_trailer(void)
- 	};
+ /* cpio header parsing */
+-static __initdata time64_t mtime;
++static __initdata struct timespec64 mtime;
+ static __initdata u32 ino, major, minor, nlink, rmajor, rminor;
+ static __initdata umode_t mode;
+-static __initdata u32 body_len, name_len;
++static __initdata u32 name_len, xattr_len;
++static __initdata u64 body_len;
+ static __initdata uid_t uid;
+ static __initdata gid_t gid;
+ static __initdata u32 mode_u32;
+@@ -167,6 +166,12 @@ struct cpio_hdr_field {
+ 	const char *name;
+ };
  
- 	push_hdr(&hdr);
--	push_rest(name);
-+	push_string_padded(name);
++static __initdata enum cpio_format {
++	CPIO_NO_MAGIC,
++	CPIO_NEWC,
++	CPIO_NEWCX,
++} cpio_format;
++
+ #define HDR_FIELD(type, field, variable) \
+ 	{ .offset = offsetof(type, field) + \
+ 	  BUILD_BUG_ON_ZERO(sizeof(*(variable))*2 < FIELD_SIZEOF(type, field)),\
+@@ -177,9 +182,11 @@ struct cpio_hdr_field {
  
- 	while (offset % 512) {
- 		putchar(0);
-@@ -144,6 +136,96 @@ static void cpio_trailer(void)
- 	}
- }
+ #define NEWC_FIELD(field, variable) \
+ 		HDR_FIELD(struct cpio_newc_header, field, variable)
++#define NEWCX_FIELD(field, variable) \
++		HDR_FIELD(struct cpio_newcx_header, field, variable)
  
-+struct xattr_hdr {
-+	char c_size[8]; /* total size including c_size field */
-+	char c_data[];
+-#define CPIO_MAX_HEADER_SIZE sizeof(struct cpio_newc_header)
+-#define CPIO_MAX_FIELD_SIZE 8
++#define CPIO_MAX_HEADER_SIZE sizeof(struct cpio_newcx_header)
++#define CPIO_MAX_FIELD_SIZE 16
+ #define CPIO_MAGIC_SIZE 6
+ 
+ struct cpio_newc_header {
+@@ -204,7 +211,7 @@ static struct cpio_hdr_field cpio_newc_header_info[] __initdata = {
+ 	NEWC_FIELD(c_uid, &uid),
+ 	NEWC_FIELD(c_gid, &gid),
+ 	NEWC_FIELD(c_nlink, &nlink),
+-	NEWC_FIELD(c_mtime, &mtime),
++	NEWC_FIELD(c_mtime, &mtime.tv_sec),
+ 	NEWC_FIELD(c_filesize, &body_len),
+ 	NEWC_FIELD(c_devmajor, &major),
+ 	NEWC_FIELD(c_devminor, &minor),
+@@ -214,10 +221,46 @@ static struct cpio_hdr_field cpio_newc_header_info[] __initdata = {
+ 	{ 0 },
+ };
+ 
++struct cpio_newcx_header {
++	char    c_ino[8];
++	char    c_mode[8];
++	char    c_uid[8];
++	char    c_gid[8];
++	char    c_nlink[8];
++	char    c_mtime[16];
++	char    c_mtime_nsec[8];
++	char    c_filesize[16];
++	char    c_devmajor[8];
++	char    c_devminor[8];
++	char    c_rdevmajor[8];
++	char    c_rdevminor[8];
++	char    c_namesize[8];
++	char    c_xattrsize[8];
 +};
-+static unsigned int xattr_buflen;
-+static char xattr_buf[4096];
 +
-+static void push_xattrs(void)
++static struct cpio_hdr_field cpio_newcx_header_info[] __initdata = {
++	NEWCX_FIELD(c_ino, &ino),
++	NEWCX_FIELD(c_mode, &mode_u32),
++	NEWCX_FIELD(c_uid, &uid),
++	NEWCX_FIELD(c_gid, &gid),
++	NEWCX_FIELD(c_nlink, &nlink),
++	NEWCX_FIELD(c_mtime, &mtime.tv_sec),
++	NEWCX_FIELD(c_mtime_nsec, &mtime.tv_nsec),
++	NEWCX_FIELD(c_filesize, &body_len),
++	NEWCX_FIELD(c_devmajor, &major),
++	NEWCX_FIELD(c_devminor, &minor),
++	NEWCX_FIELD(c_rdevmajor, &rmajor),
++	NEWCX_FIELD(c_rdevminor, &rminor),
++	NEWCX_FIELD(c_namesize, &name_len),
++	NEWCX_FIELD(c_xattrsize, &xattr_len),
++	{ 0 },
++};
++
+ static void __init parse_header(char *s)
+ {
+ 	char buf[CPIO_MAX_FIELD_SIZE + 1];
+-	struct cpio_hdr_field *field = cpio_newc_header_info;
++	struct cpio_hdr_field *field = (cpio_format == CPIO_NEWC) ?
++		cpio_newc_header_info : cpio_newcx_header_info;
+ 
+ 	while (field->size) {
+ 		int ret = 0;
+@@ -243,7 +286,12 @@ static void __init parse_header(char *s)
+ 			pr_err("invalid cpio header field (%d)", ret);
+ 		field++;
+ 	}
++
+ 	mode = mode_u32;
++	if (cpio_format != CPIO_NEWCX) {
++		xattr_len = 0;
++		mtime.tv_nsec = 0;
++	}
+ }
+ 
+ /* FSM */
+@@ -254,6 +302,7 @@ static int __init do_format(void);
+ static int __init do_header(void);
+ static int __init do_skip(void);
+ static int __init do_name(void);
++static int __init do_xattrs(void);
+ static int __init do_create(void);
+ static int __init do_copy(void);
+ static int __init do_symlink(void);
+@@ -291,7 +340,7 @@ static void __init read_into(char *buf, unsigned size, fsm_state_t next)
+ 	}
+ }
+ 
+-static __initdata char *header_buf, *symlink_buf, *name_buf;
++static __initdata char *header_buf, *symlink_buf, *name_buf, *xattr_buf;
+ 
+ static int __init do_start(void)
+ {
+@@ -315,22 +364,34 @@ static int __init do_collect(void)
+ 
+ static int __init do_format(void)
+ {
+-	if (memcmp(collected, "070707", CPIO_MAGIC_SIZE) == 0) {
++	int header_size = 0;
++
++	cpio_format = CPIO_NO_MAGIC;
++
++	if (!memcmp(collected, "070707", CPIO_MAGIC_SIZE)) {
+ 		error("incorrect cpio method used: use -H newc option");
+ 		return 1;
++	} else if (!memcmp(collected, "070701", CPIO_MAGIC_SIZE)) {
++		cpio_format = CPIO_NEWC;
++		header_size = sizeof(struct cpio_newc_header);
++	} else if (!memcmp(collected, "070703", CPIO_MAGIC_SIZE)) {
++		cpio_format = CPIO_NEWCX;
++		header_size = sizeof(struct cpio_newcx_header);
+ 	}
+-	if (memcmp(collected, "070701", CPIO_MAGIC_SIZE)) {
++
++	if (cpio_format == CPIO_NO_MAGIC) {
+ 		error("no cpio magic");
+ 		return 1;
+ 	}
+-	read_into(header_buf, sizeof(struct cpio_newc_header), do_header);
++	read_into(header_buf, header_size, do_header);
+ 	return 0;
+ }
+ 
+ static int __init do_header(void)
+ {
+ 	parse_header(collected);
+-	next_header = this_header + N_ALIGN(name_len) + body_len;
++	next_header = this_header + N_ALIGN(name_len) + X_ALIGN(xattr_len) +
++		      body_len;
+ 	next_header = (next_header + 3) & ~3;
+ 	state = do_skip;
+ 	if (name_len <= 0 || name_len > PATH_MAX)
+@@ -400,9 +461,17 @@ static int __init do_name(void)
+ 	}
+ 	memcpy_optional(name_buf, collected, N_ALIGN(name_len));
+ 	state = do_create;
++	if (xattr_len > 0)
++		read_into(xattr_buf, X_ALIGN(xattr_len), do_xattrs);
+ 	return 0;
+ }
+ 
++static int __init do_xattrs(void)
 +{
-+	if (!newcx || !xattr_buflen)
-+		return;
-+
-+	if (fwrite(xattr_buf, xattr_buflen, 1, stdout) != 1)
-+		fprintf(stderr, "writing xattrs failed\n");
-+	offset += xattr_buflen;
-+	xattr_buflen = 0;
-+
-+	push_pad();
-+}
-+
-+static int convert_hex_string(const char *hex_str, char *out, size_t out_size)
-+{
-+	char buf[3];
-+	size_t str_len = strlen(hex_str);
-+
-+	if (str_len % 2 != 0 || str_len / 2 > out_size)
-+		return 0;
-+
-+	buf[2] = '\0';
-+	while (*hex_str != '\0') {
-+		buf[0] = *hex_str++;
-+		buf[1] = *hex_str++;
-+		*out++ = (char)strtol(buf, NULL, 16);
-+	}
-+
-+	return str_len / 2;
-+}
-+
-+static int collect_xattr(const char *line)
-+{
-+	const char *name, *value;
-+	size_t name_len, value_len;
-+	char *buf = xattr_buf + xattr_buflen;
-+	struct xattr_hdr *hdr = (struct xattr_hdr *)buf;
-+	char *bufend = xattr_buf + sizeof(xattr_buf);
-+	char *value_buf;
-+	size_t xattr_entry_size;
-+	char size_str[sizeof(hdr->c_size) + 1];
-+
-+	if (!newcx)
-+		return 0;
-+
-+	name = line;
-+	value = strchr(line, '=');
-+	if (!value) {
-+		fprintf(stderr, "Unrecognized xattr format '%s'", line);
-+		return -1;
-+	}
-+	name_len = value - name;
-+	value++;
-+
-+	/*
-+	 * For now we support only hex encoded values.
-+	 * String or base64 can be added later.
-+	 */
-+	if (strncmp(value, "0x", 2)) {
-+		fprintf(stderr,
-+			"Only hex encoded xattr value is supported '%s'",
-+			value);
-+		return -1;
-+	}
-+
-+	value += 2;
-+	value_buf = buf + sizeof(struct xattr_hdr) + name_len + 1;
-+	value_len = convert_hex_string(value, value_buf, bufend - value_buf);
-+	if (value_len == 0) {
-+		fprintf(stderr, "Failed to parse xattr value '%s'", line);
-+		return -1;
-+	}
-+	xattr_entry_size = sizeof(struct xattr_hdr) + name_len + 1 + value_len;
-+
-+	sprintf(size_str, "%08X", (unsigned int)xattr_entry_size);
-+	memcpy(hdr->c_size, size_str, sizeof(hdr->c_size));
-+	memcpy(hdr->c_data, name, name_len);
-+	hdr->c_data[name_len] = '\0';
-+	xattr_buflen += xattr_entry_size;
-+
++	/* Do nothing for now */
++	state = do_create;
 +	return 0;
 +}
-+
- static int cpio_mkslink(const char *name, const char *target,
- 			 unsigned int mode, uid_t uid, gid_t gid)
- {
-@@ -160,12 +242,12 @@ static int cpio_mkslink(const char *name, const char *target,
- 		.devmajor = 3,
- 		.devminor = 1,
- 		.namesize = strlen(name)+1,
-+		.xattrsize = xattr_buflen,
- 	};
- 	push_hdr(&hdr);
--	push_string(name);
--	push_pad();
--	push_string(target);
--	push_pad();
-+	push_string_padded(name);
-+	push_xattrs();
-+	push_string_padded(target);
+ 
+ static __initdata int wfd;
+ 
+@@ -431,7 +500,7 @@ static int __init do_create(void)
+ 		sys_mkdir(name_buf, mode);
+ 		sys_chown(name_buf, uid, gid);
+ 		sys_chmod(name_buf, mode);
+-		dir_add(name_buf, mtime);
++		dir_add(name_buf, &mtime);
+ 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
+ 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
+ 		if (maybe_link(name_buf) == 0) {
+@@ -439,7 +508,7 @@ static int __init do_create(void)
+ 			sys_mknod(name_buf, mode, rdev);
+ 			sys_chown(name_buf, uid, gid);
+ 			sys_chmod(name_buf, mode);
+-			do_utime(name_buf, mtime);
++			do_utime(name_buf, &mtime);
+ 		}
+ 	} else if (S_ISLNK(mode)) {
+ 		if (body_len > PATH_MAX)
+@@ -455,7 +524,7 @@ static int __init do_copy(void)
+ 		if (xwrite(wfd, victim, body_len) != body_len)
+ 			error("write error");
+ 		sys_close(wfd);
+-		do_utime(name_buf, mtime);
++		do_utime(name_buf, &mtime);
+ 		eat(body_len);
+ 		state = do_skip;
+ 		return 0;
+@@ -475,7 +544,7 @@ static int __init do_symlink(void)
+ 	clean_path(name_buf, 0);
+ 	sys_symlink(symlink_buf, name_buf);
+ 	sys_lchown(name_buf, uid, gid);
+-	do_utime(name_buf, mtime);
++	do_utime(name_buf, &mtime);
+ 	state = do_skip;
+ 	next_state = do_reset;
  	return 0;
- }
+@@ -529,8 +598,9 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	header_buf = kmalloc(CPIO_MAX_HEADER_SIZE, GFP_KERNEL);
+ 	symlink_buf = kmalloc(PATH_MAX + 1, GFP_KERNEL);
+ 	name_buf = kmalloc(N_ALIGN(PATH_MAX), GFP_KERNEL);
++	xattr_buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
  
-@@ -202,9 +284,11 @@ static int cpio_mkgeneric(const char *name, unsigned int mode,
- 		.devmajor = 3,
- 		.devminor = 1,
- 		.namesize = strlen(name)+1,
-+		.xattrsize = xattr_buflen,
- 	};
- 	push_hdr(&hdr);
--	push_rest(name);
-+	push_string_padded(name);
-+	push_xattrs();
- 	return 0;
- }
+-	if (!header_buf || !symlink_buf || !name_buf)
++	if (!header_buf || !symlink_buf || !name_buf || !xattr_buf)
+ 		panic("can't allocate buffers");
  
-@@ -291,9 +375,11 @@ static int cpio_mknod(const char *name, unsigned int mode,
- 		.rdevmajor = maj,
- 		.rdevminor = min,
- 		.namesize = strlen(name)+1,
-+		.xattrsize = xattr_buflen,
- 	};
- 	push_hdr(&hdr);
--	push_rest(name);
-+	push_string_padded(name);
-+	push_xattrs();
- 	return 0;
- }
- 
-@@ -376,10 +462,13 @@ static int cpio_mkfile(const char *name, const char *location,
- 			.devmajor = 3,
- 			.devminor = 1,
- 			.namesize = namesize,
-+			/* xattrs go on last link */
-+			.xattrsize = (i == nlinks) ? xattr_buflen : 0,
- 		};
- 		push_hdr(&hdr);
--		push_string(name);
--		push_pad();
-+		push_string_padded(name);
-+		if (hdr.xattrsize)
-+			push_xattrs();
- 
- 		if (size) {
- 			if (fwrite(filebuf, size, 1, stdout) != 1) {
-@@ -485,6 +574,8 @@ static void usage(const char *prog)
- 		"slink <name> <target> <mode> <uid> <gid>\n"
- 		"pipe <name> <mode> <uid> <gid>\n"
- 		"sock <name> <mode> <uid> <gid>\n"
-+		"# xattr line is applied to the next non-xattr entry\n"
-+		"xattr <xattr_name>=<xattr_val>\n"
- 		"\n"
- 		"<name>       name of the file/dir/nod/etc in the archive\n"
- 		"<location>   location of the file in the current filesystem\n"
-@@ -497,12 +588,16 @@ static void usage(const char *prog)
- 		"<maj>        major number of nod\n"
- 		"<min>        minor number of nod\n"
- 		"<hard links> space separated list of other links to file\n"
-+		"<xattr_name> extended attribute name\n"
-+		"<xattr_val>  hex-encoded extended attribute value\n"
- 		"\n"
- 		"example:\n"
- 		"# A simple initramfs\n"
- 		"dir /dev 0755 0 0\n"
- 		"nod /dev/console 0600 0 0 c 5 1\n"
- 		"dir /root 0700 0 0\n"
-+		"# set SELinux label 'system_u:object_r:bin_t:s0' for /sbin directory\n"
-+		"xattr security.selinux=0x73797374656d5f753a6f626a6563745f723a62696e5f743a733000\n"
- 		"dir /sbin 0755 0 0\n"
- 		"file /sbin/kinit /usr/src/klibc/kinit/kinit 0755 0 0\n"
- 		"\n"
-@@ -532,6 +627,9 @@ struct file_handler file_handler_table[] = {
- 		.type    = "sock",
- 		.handler = cpio_mksock_line,
- 	}, {
-+		.type    = "xattr",
-+		.handler = collect_xattr,
-+	}, {
- 		.type    = NULL,
- 		.handler = NULL,
+ 	state = do_start;
+@@ -575,6 +645,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 		len -= my_inptr;
  	}
+ 	dir_utime();
++	kfree(xattr_buf);
+ 	kfree(name_buf);
+ 	kfree(symlink_buf);
+ 	kfree(header_buf);
 -- 
 2.10.3.dirty
 
