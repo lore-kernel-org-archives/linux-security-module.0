@@ -1,134 +1,199 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 16 Feb 2018 20:33:45 +0000
-Subject: [PATCH v3 09/15] initramfs: set extended attributes
+Date: Fri, 16 Feb 2018 20:33:43 +0000
+Subject: [PATCH v3 07/15] initramfs: split header layout information from
+	parsing function
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-Message-ID: <1518813234-5874-10-git-send-email-takondra@cisco.com>
+Message-ID: <1518813234-5874-8-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Header parsing has hardcoded assumption about header field size and
+layout. It is hard to modify the function to parse a new format.
 
-This patch writes out the extended attributes included in the cpio file.
-As the "security.ima" xattr needs to be written after the file data.
-this patch separates extracting and setting the xattrs by defining new
-do_setxattrs state.
+Move information about size and layout into a data structure to
+make parsing code more generic and simplify adding a new format.
+This also removes some magic numbers.
 
-[kamensky: fixed restoring of xattrs for symbolic links by using
-           sys_lsetxattr() instead of sys_setxattr()]
-
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 ---
- init/initramfs.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 52 insertions(+), 5 deletions(-)
+ init/initramfs.c | 122 +++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 92 insertions(+), 30 deletions(-)
 
 diff --git a/init/initramfs.c b/init/initramfs.c
-index 0407e199352e..ac636097aee5 100644
+index b3d39c8793be..7f0bbfde94e3 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -306,6 +306,7 @@ static int __init do_xattrs(void);
- static int __init do_create(void);
- static int __init do_copy(void);
- static int __init do_symlink(void);
-+static int __init do_setxattrs(void);
- static int __init do_reset(void);
- 
- typedef int (*fsm_state_t)(void);
-@@ -468,7 +469,7 @@ static int __init do_name(void)
- 
- static int __init do_xattrs(void)
- {
--	/* Do nothing for now */
-+	memcpy_optional(xattr_buf, collected, xattr_len);
- 	state = do_create;
- 	return 0;
- }
-@@ -477,8 +478,7 @@ static __initdata int wfd;
- 
- static int __init do_create(void)
- {
--	state = do_skip;
--	next_state = do_reset;
-+	state = do_setxattrs;
- 	clean_path(name_buf, mode);
- 	if (S_ISREG(mode)) {
- 		int ml = maybe_link(name_buf);
-@@ -511,8 +511,11 @@ static int __init do_create(void)
- 			do_utime(name_buf, &mtime);
- 		}
- 	} else if (S_ISLNK(mode)) {
--		if (body_len > PATH_MAX)
-+		if (body_len > PATH_MAX) {
-+			state = do_skip;
-+			next_state = do_reset;
- 			return 0;
-+		}
- 		read_into(symlink_buf, body_len, do_symlink);
+@@ -150,39 +150,100 @@ static void __init dir_utime(void)
  	}
- 	return 0;
-@@ -526,7 +529,7 @@ static int __init do_copy(void)
- 		sys_close(wfd);
- 		do_utime(name_buf, &mtime);
- 		eat(body_len);
--		state = do_skip;
-+		state = do_setxattrs;
- 		return 0;
- 	} else {
- 		if (xwrite(wfd, victim, byte_count) != byte_count)
-@@ -545,8 +548,52 @@ static int __init do_symlink(void)
- 	sys_symlink(symlink_buf, name_buf);
- 	sys_lchown(name_buf, uid, gid);
- 	do_utime(name_buf, &mtime);
-+	state = do_setxattrs;
-+	return 0;
-+}
+ }
+ 
+-static __initdata time64_t mtime;
+-
+ /* cpio header parsing */
+-
+-static __initdata unsigned long ino, major, minor, nlink;
++static __initdata time64_t mtime;
++static __initdata u32 ino, major, minor, nlink, rmajor, rminor;
+ static __initdata umode_t mode;
+-static __initdata unsigned long body_len, name_len;
++static __initdata u32 body_len, name_len;
+ static __initdata uid_t uid;
+ static __initdata gid_t gid;
+-static __initdata unsigned rdev;
++static __initdata u32 mode_u32;
 +
-+struct xattr_hdr {
-+	char c_size[8]; /* total size including c_size field */
-+	char c_data[];  /* <name>\0<value> */
++struct cpio_hdr_field {
++	size_t offset;
++	size_t size;
++	void *out;
++	size_t out_size;
++	const char *name;
 +};
 +
-+static int __init do_setxattrs(void)
-+{
-+	char *buf = xattr_buf;
-+	char *bufend = buf + xattr_len;
-+	struct xattr_hdr *hdr;
-+	char str[sizeof(hdr->c_size) + 1];
++#define HDR_FIELD(type, field, variable) \
++	{ .offset = offsetof(type, field) + \
++	  BUILD_BUG_ON_ZERO(sizeof(*(variable))*2 < FIELD_SIZEOF(type, field)),\
++	  .size = FIELD_SIZEOF(type, field), \
++	  .out = variable, \
++	  .out_size = sizeof(*(variable)), \
++	  .name = #field }
 +
- 	state = do_skip;
- 	next_state = do_reset;
-+	if (!xattr_len)
-+		return 0;
++#define NEWC_FIELD(field, variable) \
++		HDR_FIELD(struct cpio_newc_header, field, variable)
 +
-+	str[sizeof(hdr->c_size)] = 0;
++#define CPIO_MAX_HEADER_SIZE sizeof(struct cpio_newc_header)
++#define CPIO_MAX_FIELD_SIZE 8
++#define CPIO_MAGIC_SIZE 6
 +
-+	while (buf < bufend) {
-+		char *xattr_name, *xattr_value;
-+		unsigned long xattr_entry_size, xattr_value_size;
-+		int ret;
++struct cpio_newc_header {
++	char    c_ino[8];
++	char    c_mode[8];
++	char    c_uid[8];
++	char    c_gid[8];
++	char    c_nlink[8];
++	char    c_mtime[8];
++	char    c_filesize[8];
++	char    c_devmajor[8];
++	char    c_devminor[8];
++	char    c_rdevmajor[8];
++	char    c_rdevminor[8];
++	char    c_namesize[8];
++	char    c_check[8];
++};
 +
-+		hdr = (struct xattr_hdr *)buf;
-+		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-+		ret = kstrtoul(str, 16, &xattr_entry_size);
-+		buf += xattr_entry_size;
-+		if (ret || buf > bufend) {
-+			error("malformed xattrs");
++static struct cpio_hdr_field cpio_newc_header_info[] __initdata = {
++	NEWC_FIELD(c_ino, &ino),
++	NEWC_FIELD(c_mode, &mode_u32),
++	NEWC_FIELD(c_uid, &uid),
++	NEWC_FIELD(c_gid, &gid),
++	NEWC_FIELD(c_nlink, &nlink),
++	NEWC_FIELD(c_mtime, &mtime),
++	NEWC_FIELD(c_filesize, &body_len),
++	NEWC_FIELD(c_devmajor, &major),
++	NEWC_FIELD(c_devminor, &minor),
++	NEWC_FIELD(c_rdevmajor, &rmajor),
++	NEWC_FIELD(c_rdevminor, &rminor),
++	NEWC_FIELD(c_namesize, &name_len),
++	{ 0 },
++};
+ 
+ static void __init parse_header(char *s)
+ {
+-	unsigned long parsed[12];
+-	char buf[9];
+-	int i;
+-
+-	buf[8] = '\0';
+-	for (i = 0; i < 12; i++, s += 8) {
+-		memcpy(buf, s, 8);
+-		parsed[i] = simple_strtoul(buf, NULL, 16);
++	char buf[CPIO_MAX_FIELD_SIZE + 1];
++	struct cpio_hdr_field *field = cpio_newc_header_info;
++
++	while (field->size) {
++		int ret = 0;
++
++		memcpy(buf, s + field->offset, field->size);
++		buf[field->size] = '\0';
++		switch (field->out_size) {
++		case sizeof(u32):
++			ret = kstrtou32(buf, 16, field->out);
++			pr_debug("cpio field %s: %u, buf: %s\n",
++				 field->name, *(u32 *)field->out, buf);
 +			break;
++		case sizeof(u64):
++			ret = kstrtou64(buf, 16, field->out);
++			pr_debug("cpio field %s: %llu, buf: %s\n",
++				 field->name, *(u64 *)field->out, buf);
++			break;
++		default:
++			BUG_ON(1);
 +		}
 +
-+		xattr_name = hdr->c_data;
-+		xattr_value = xattr_name + strlen(xattr_name) + 1;
-+		xattr_value_size = buf - xattr_value;
-+
-+		ret = sys_lsetxattr(name_buf, xattr_name, xattr_value,
-+				xattr_value_size, 0);
-+		pr_debug("%s: %s size: %lu val: %s (ret: %d)\n", name_buf,
-+				xattr_name, xattr_value_size, xattr_value, ret);
-+	}
++		if (ret)
++			pr_err("invalid cpio header field (%d)", ret);
++		field++;
+ 	}
+-	ino = parsed[0];
+-	mode = parsed[1];
+-	uid = parsed[2];
+-	gid = parsed[3];
+-	nlink = parsed[4];
+-	mtime = parsed[5]; /* breaks in y2106 */
+-	body_len = parsed[6];
+-	major = parsed[7];
+-	minor = parsed[8];
+-	rdev = new_encode_dev(MKDEV(parsed[9], parsed[10]));
+-	name_len = parsed[11];
++	mode = mode_u32;
+ }
+ 
+ /* FSM */
+@@ -234,7 +295,7 @@ static __initdata char *header_buf, *symlink_buf, *name_buf;
+ 
+ static int __init do_start(void)
+ {
+-	read_into(header_buf, 6, do_format);
++	read_into(header_buf, CPIO_MAGIC_SIZE, do_format);
  	return 0;
  }
+ 
+@@ -254,15 +315,15 @@ static int __init do_collect(void)
+ 
+ static int __init do_format(void)
+ {
+-	if (memcmp(collected, "070707", 6)==0) {
++	if (memcmp(collected, "070707", CPIO_MAGIC_SIZE) == 0) {
+ 		error("incorrect cpio method used: use -H newc option");
+ 		return 1;
+ 	}
+-	if (memcmp(collected, "070701", 6)) {
++	if (memcmp(collected, "070701", CPIO_MAGIC_SIZE)) {
+ 		error("no cpio magic");
+ 		return 1;
+ 	}
+-	read_into(header_buf, 104, do_header);
++	read_into(header_buf, sizeof(struct cpio_newc_header), do_header);
+ 	return 0;
+ }
+ 
+@@ -374,6 +435,7 @@ static int __init do_create(void)
+ 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
+ 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
+ 		if (maybe_link(name_buf) == 0) {
++			u32 rdev = new_encode_dev(MKDEV(rmajor, rminor));
+ 			sys_mknod(name_buf, mode, rdev);
+ 			sys_chown(name_buf, uid, gid);
+ 			sys_chmod(name_buf, mode);
+@@ -464,7 +526,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	const char *compress_name;
+ 	static __initdata char msg_buf[64];
+ 
+-	header_buf = kmalloc(104, GFP_KERNEL);
++	header_buf = kmalloc(CPIO_MAX_HEADER_SIZE, GFP_KERNEL);
+ 	symlink_buf = kmalloc(PATH_MAX + 1, GFP_KERNEL);
+ 	name_buf = kmalloc(N_ALIGN(PATH_MAX), GFP_KERNEL);
  
 -- 
 2.10.3.dirty
