@@ -1,128 +1,87 @@
 From: takondra@cisco.com (Taras Kondratiuk)
-Date: Fri, 16 Feb 2018 20:33:41 +0000
-Subject: [PATCH v3 05/15] initramfs: move files creation into separate state
+Date: Fri, 16 Feb 2018 20:33:40 +0000
+Subject: [PATCH v3 04/15] initramfs: remove unnecessary symlinks processing
+	shortcut
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-Message-ID: <1518813234-5874-6-git-send-email-takondra@cisco.com>
+Message-ID: <1518813234-5874-5-git-send-email-takondra@cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Move most of the file creation logic into a separate state. This splits
-collection of data stage from data processing and makes it easier to add
-additional states for a new archive format.
+Special handling of symlinks in do_header() assumes that name and body
+entries are sequential and reads them together. This shortcut has no
+real performance benefits, but it complicates changes to the state
+machine.
+
+Make handling of symlinks more similar to a regular files. Store name
+in name_buf and destination in symlink_buf.
 
 Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 ---
- init/initramfs.c | 52 ++++++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 22 deletions(-)
+ init/initramfs.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
 diff --git a/init/initramfs.c b/init/initramfs.c
-index d0ab7ad6ac05..2d5920c094e0 100644
+index b6ee675e5cdb..d0ab7ad6ac05 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -192,6 +192,7 @@ static int __init do_collect(void);
- static int __init do_header(void);
- static int __init do_skip(void);
- static int __init do_name(void);
-+static int __init do_create(void);
- static int __init do_copy(void);
- static int __init do_symlink(void);
- static int __init do_reset(void);
-@@ -292,12 +293,12 @@ static int __init do_reset(void)
- 	return 1;
- }
- 
--static int __init maybe_link(void)
-+static int __init maybe_link(char *name)
- {
- 	if (nlink >= 2) {
--		char *old = find_link(major, minor, ino, mode, collected);
-+		char *old = find_link(major, minor, ino, mode, name);
- 		if (old)
--			return (sys_link(old, collected) < 0) ? -1 : 1;
-+			return (sys_link(old, name) < 0) ? -1 : 1;
- 	}
- 	return 0;
- }
-@@ -321,52 +322,59 @@ static void *memcpy_optional(void *dest, const void *src, size_t n)
- 	return dest;
- }
- 
--static __initdata int wfd;
--
- static int __init do_name(void)
- {
--	state = do_skip;
--	next_state = do_reset;
- 	if (strcmp(collected, "TRAILER!!!") == 0) {
-+		state = do_skip;
-+		next_state = do_reset;
- 		free_hash();
+@@ -266,16 +266,7 @@ static int __init do_header(void)
+ 	state = do_skip;
+ 	if (name_len <= 0 || name_len > PATH_MAX)
  		return 0;
- 	}
--	clean_path(collected, mode);
-+	memcpy_optional(name_buf, collected, N_ALIGN(name_len));
-+	state = do_create;
-+	return 0;
-+}
-+
-+
-+static __initdata int wfd;
-+
-+static int __init do_create(void)
-+{
-+	state = do_skip;
-+	next_state = do_reset;
-+	clean_path(name_buf, mode);
- 	if (S_ISREG(mode)) {
--		int ml = maybe_link();
-+		int ml = maybe_link(name_buf);
- 		if (ml >= 0) {
- 			int openflags = O_WRONLY|O_CREAT;
- 			if (ml != 1)
- 				openflags |= O_TRUNC;
--			wfd = sys_open(collected, openflags, mode);
-+			wfd = sys_open(name_buf, openflags, mode);
- 
- 			if (wfd >= 0) {
- 				sys_fchown(wfd, uid, gid);
- 				sys_fchmod(wfd, mode);
- 				if (body_len)
- 					sys_ftruncate(wfd, body_len);
--				memcpy_optional(name_buf, collected,
--						N_ALIGN(name_len));
- 				state = do_copy;
- 			}
+-	if (S_ISLNK(mode)) {
+-		if (body_len > PATH_MAX)
+-			return 0;
+-		collect = collected = symlink_buf;
+-		remains = N_ALIGN(name_len) + body_len;
+-		next_state = do_symlink;
+-		state = do_collect;
+-		return 0;
+-	}
+-	if (S_ISREG(mode) || !body_len)
++	if (S_ISREG(mode) || S_ISLNK(mode) || !body_len)
+ 		read_into(name_buf, N_ALIGN(name_len), do_name);
+ 	return 0;
+ }
+@@ -372,6 +363,11 @@ static int __init do_name(void)
+ 			sys_chmod(collected, mode);
+ 			do_utime(collected, mtime);
  		}
- 	} else if (S_ISDIR(mode)) {
--		sys_mkdir(collected, mode);
--		sys_chown(collected, uid, gid);
--		sys_chmod(collected, mode);
--		dir_add(collected, mtime);
-+		sys_mkdir(name_buf, mode);
-+		sys_chown(name_buf, uid, gid);
-+		sys_chmod(name_buf, mode);
-+		dir_add(name_buf, mtime);
- 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
- 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
--		if (maybe_link() == 0) {
--			sys_mknod(collected, mode, rdev);
--			sys_chown(collected, uid, gid);
--			sys_chmod(collected, mode);
--			do_utime(collected, mtime);
-+		if (maybe_link(name_buf) == 0) {
-+			sys_mknod(name_buf, mode, rdev);
-+			sys_chown(name_buf, uid, gid);
-+			sys_chmod(name_buf, mode);
-+			do_utime(name_buf, mtime);
- 		}
- 	} else if (S_ISLNK(mode)) {
- 		if (body_len > PATH_MAX)
- 			return 0;
--		memcpy_optional(name_buf, collected, N_ALIGN(name_len));
- 		read_into(symlink_buf, body_len, do_symlink);
++	} else if (S_ISLNK(mode)) {
++		if (body_len > PATH_MAX)
++			return 0;
++		memcpy_optional(name_buf, collected, N_ALIGN(name_len));
++		read_into(symlink_buf, body_len, do_symlink);
  	}
  	return 0;
+ }
+@@ -397,11 +393,12 @@ static int __init do_copy(void)
+ 
+ static int __init do_symlink(void)
+ {
+-	collected[N_ALIGN(name_len) + body_len] = '\0';
+-	clean_path(collected, 0);
+-	sys_symlink(collected + N_ALIGN(name_len), collected);
+-	sys_lchown(collected, uid, gid);
+-	do_utime(collected, mtime);
++	memcpy_optional(symlink_buf, collected, body_len);
++	symlink_buf[body_len] = '\0';
++	clean_path(name_buf, 0);
++	sys_symlink(symlink_buf, name_buf);
++	sys_lchown(name_buf, uid, gid);
++	do_utime(name_buf, mtime);
+ 	state = do_skip;
+ 	next_state = do_reset;
+ 	return 0;
+@@ -453,7 +450,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	static __initdata char msg_buf[64];
+ 
+ 	header_buf = kmalloc(110, GFP_KERNEL);
+-	symlink_buf = kmalloc(PATH_MAX + N_ALIGN(PATH_MAX) + 1, GFP_KERNEL);
++	symlink_buf = kmalloc(PATH_MAX + 1, GFP_KERNEL);
+ 	name_buf = kmalloc(N_ALIGN(PATH_MAX), GFP_KERNEL);
+ 
+ 	if (!header_buf || !symlink_buf || !name_buf)
 -- 
 2.10.3.dirty
 
