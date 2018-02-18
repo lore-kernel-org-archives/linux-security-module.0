@@ -1,5 +1,5 @@
 From: hpa@zytor.com (hpa at zytor.com)
-Date: Sat, 17 Feb 2018 16:24:40 -0800
+Date: Sat, 17 Feb 2018 16:26:45 -0800
 Subject: [PATCH v3 01/15] Documentation: add newcx initramfs format
 	description
 In-Reply-To: <1518912912.5667.277.camel@linux.vnet.ibm.com>
@@ -7,7 +7,7 @@ References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 	<1518813234-5874-2-git-send-email-takondra@cisco.com>
 	<d69f329c-8365-bb0e-69ee-774cbea141b2@zytor.com>
 	<1518912912.5667.277.camel@linux.vnet.ibm.com>
-Message-ID: <80AFCC79-14B2-4CF2-A601-89B18764C9BC@zytor.com>
+Message-ID: <117FCFDB-EA4C-4C0C-A01E-7C6C86693E6F@zytor.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -87,9 +87,7 @@ On February 17, 2018 4:15:12 PM PST, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote
 >
 >Mimi
 
-I'm not trying to derail anything, but I do want to see it done well if it is going to be done.  I have several ideas already, but I may not have a chance to write them down properly until after the weekend due to family obligations.
-
-The assessment of pax/tar is useful; it should be added to the patch documentation in a future set.
+Do you have a description of the gaps you have identified?
 -- 
 Sent from my Android device with K-9 Mail. Please excuse my brevity.
 --
