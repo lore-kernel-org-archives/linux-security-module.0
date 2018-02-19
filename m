@@ -1,62 +1,33 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Mon, 19 Feb 2018 11:43:19 +0000
-Subject: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 19 Feb 2018 13:52:21 +0200
+Subject: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
+In-Reply-To: <20180214134319.4400-3-tomas.winkler@intel.com>
 References: <20180214134319.4400-1-tomas.winkler@intel.com>
-	<20180214134319.4400-2-tomas.winkler@intel.com>
-	<20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
+	<20180214134319.4400-3-tomas.winkler@intel.com>
+Message-ID: <20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, Feb 14, 2018 at 03:43:19PM +0200, Tomas Winkler wrote:
+> We cannot use go_idle cmd_ready commands via runtime_pm handles
+> as with the introduction of localities this is no longer an optional
+> feature, while runtime pm can be not enabled.
+> Though cmd_ready/go_idle provides power saving feature, it's also part of
+> TPM2 protocol and should be called explicitly.
+> This patch exposes cmd_read/go_idle via tpm class ops and removes
+> runtime pm support as it is not used by any driver.
 > 
-> On Wed, Feb 14, 2018 at 03:43:18PM +0200, Tomas Winkler wrote:
-> >  	if (need_locality && chip->ops->relinquish_locality) {
-> > -		chip->ops->relinquish_locality(chip, chip->locality);
-> > +		/* this coud be on error path, don't override error code */
-> > +		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
-> 
-> All local variable declarations must be in the beginning of the function.
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+> V2: resent
+> V3: resent
 
-Who says?
+Only the cover letter needs a backlog but the code change looks
+good to me.
 
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> 
-> > +
-> > +		if (l_rc) {
-> > +			dev_err(&chip->dev, "%s: relinquish_locality: error
-> %d\n",
-> > +				__func__, l_rc);
-> > +			rc = l_rc;
-> > +		}
-> 
-> Your comment about not overriding error code is incorrect. 
-
-Please explain? 
-
-> The value of 'rc' should be never overridden, which kind of supports to "just
-> print" behavior that we had for a locality error.
-
-You are not consistent, you've agreed with propagating it to user space. 
-The error will  be propagated in case of an error in locality relinquish
-the device is pretty much in non functional state and provious errors do not matter much,
-but rc value won't be modified if locality_reliquish succeeds.
-
-> Is your fix somehow dependent on changing relinquish_locality() behavior? If
-> not, please remove this change. If you want to contribute such behavioral
-> change, you should make a separate patch of it.
-
-The issue is structural, this is required just because the relinquish locality  is inside the error path handling.
-
-> Now it's like a trojan horse bundled inside a bug fix.
-
-Not sure I understand your methaphore. 
-Please review again.
-
-Thanks
-Tomas
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
