@@ -1,33 +1,50 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 19 Feb 2018 13:52:21 +0200
-Subject: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180214134319.4400-3-tomas.winkler@intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-	<20180214134319.4400-3-tomas.winkler@intel.com>
-Message-ID: <20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
+From: peter.enderborg@sony.com (Peter Enderborg)
+Date: Mon, 19 Feb 2018 16:18:00 +0100
+Subject: [PATCH selinux-next] selinux: Annotate lockdep for services locks
+Message-ID: <20180219151800.14442-1-peter.enderborg@sony.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Feb 14, 2018 at 03:43:19PM +0200, Tomas Winkler wrote:
-> We cannot use go_idle cmd_ready commands via runtime_pm handles
-> as with the introduction of localities this is no longer an optional
-> feature, while runtime pm can be not enabled.
-> Though cmd_ready/go_idle provides power saving feature, it's also part of
-> TPM2 protocol and should be called explicitly.
-> This patch exposes cmd_read/go_idle via tpm class ops and removes
-> runtime pm support as it is not used by any driver.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> ---
-> V2: resent
-> V3: resent
+From: Peter <peter.enderborg@sony.com>
 
-Only the cover letter needs a backlog but the code change looks
-good to me.
+The locks are moved to dynamic allocation, we need to
+help the lockdep system to classify the locks.
+This adds to lockdep annotation for the page mutex and
+for the ss lock.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+---
+This is the rebase of suggested patches from selinuxns tree
+and are intended to be applyed on top of:
+selinux: wrap global selinux state
+from Stephen Smalley
 
-/Jarkko
+ security/selinux/ss/services.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 3698352213d7..a741552e22b5 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -81,11 +81,15 @@ char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
+ };
+ 
+ static struct selinux_ss selinux_ss;
++static struct lock_class_key selinux_ss_class_key;
++static struct lock_class_key selinux_status_class_key;
+ 
+ void selinux_ss_init(struct selinux_ss **ss)
+ {
+ 	rwlock_init(&selinux_ss.policy_rwlock);
++	lockdep_set_class(&selinux_ss.policy_rwlock, &selinux_ss_class_key);
+ 	mutex_init(&selinux_ss.status_lock);
++	lockdep_set_class(&selinux_ss.status_lock, &selinux_status_class_key);
+ 	*ss = &selinux_ss;
+ }
+ 
+-- 
+2.14.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
