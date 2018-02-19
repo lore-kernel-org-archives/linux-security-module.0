@@ -1,10 +1,10 @@
 From: lkp@intel.com (kbuild test robot)
-Date: Tue, 20 Feb 2018 06:50:34 +0800
+Date: Tue, 20 Feb 2018 07:36:30 +0800
 Subject: [PATCH v1 1/2] ima: fail signature verification on untrusted
 	filesystems
 In-Reply-To: <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <201802200637.f8w7cht0%fengguang.wu@intel.com>
+Message-ID: <201802200726.dwtJaW4L%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -18,19 +18,19 @@ I love your patch! Perhaps something to improve:
 [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
 url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/ima-untrusted-filesystems/20180220-040517
-config: i386-randconfig-s1-201807 (attached as .config)
-compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
+config: x86_64-rhel (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
 reproduce:
         # save the attached .config to linux build tree
-        make ARCH=i386 
+        make ARCH=x86_64 
 
 All warnings (new ones prefixed by >>):
 
->> WARNING: vmlinux.o(.text+0x2afe73): Section mismatch in reference from the function ima_match_policy() to the variable .init.data:ima_fail_untrusted_fs
+>> WARNING: vmlinux.o(.text+0x3b320a): Section mismatch in reference from the function ima_match_policy() to the variable .init.data:init_keyring
    The function ima_match_policy() references
-   the variable __initdata ima_fail_untrusted_fs.
+   the variable __initdata init_keyring.
    This is often because ima_match_policy lacks a __initdata
-   annotation or the annotation of ima_fail_untrusted_fs is wrong.
+   annotation or the annotation of init_keyring is wrong.
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
