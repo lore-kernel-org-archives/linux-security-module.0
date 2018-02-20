@@ -1,37 +1,55 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Tue, 20 Feb 2018 07:36:30 +0800
+From: jmorris@namei.org (James Morris)
+Date: Tue, 20 Feb 2018 11:52:42 +1100 (AEDT)
 Subject: [PATCH v1 1/2] ima: fail signature verification on untrusted
 	filesystems
-In-Reply-To: <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <201802200726.dwtJaW4L%fengguang.wu@intel.com>
+In-Reply-To: <87zi44mz26.fsf@xmission.com>
+References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
+	<87zi44mz26.fsf@xmission.com>
+Message-ID: <alpine.LRH.2.21.1802201152240.883@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Mimi,
+On Mon, 19 Feb 2018, Eric W. Biederman wrote:
 
-I love your patch! Perhaps something to improve:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> 
+> > Files on untrusted filesystems, such as fuse, can change at any time,
+> > making the measurement(s) and by extension signature verification
+> > meaningless.
+> 
+> Filesystems with servers?
+> Remote filesystems?
+> Perhaps unexpected changes.
+> 
+> Untrusted sounds a bit harsh, and I am not certain it quite captures
+> what you are looking to avoid.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.16-rc2 next-20180219]
-[cannot apply to integrity/next]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Right -- I think whether you trust a filesystem or not depends on how much 
+assurance you have in your specific configuration, rather than whether you 
+think the filesystem can be manipulated or not.
 
-url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/ima-untrusted-filesystems/20180220-040517
-config: x86_64-rhel (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+There is a difference between:
 
-All warnings (new ones prefixed by >>):
+  - This fs has no way to communicate a change to IMA, and;
 
->> WARNING: vmlinux.o(.text+0x3b320a): Section mismatch in reference from the function ima_match_policy() to the variable .init.data:init_keyring
-   The function ima_match_policy() references
-   the variable __initdata init_keyring.
-   This is often because ima_match_policy lacks a __initdata
-   annotation or the annotation of init_keyring is wrong.
+  - This fs could be malicious.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+In the latter case, I suggest that any fs could be malicious if the 
+overall security policy / settings are inadequate for the threat model, or 
+if there are vulnerabilities which allow such security to be bypassed.
+
+Whether a user trusts FUSE on their particular system should be a policy 
+decision on the part of the user.  The kernel should not be deciding what 
+is trusted or not trusted here.
+
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
