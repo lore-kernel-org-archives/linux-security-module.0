@@ -1,105 +1,63 @@
-From: sargun@sargun.me (Sargun Dhillon)
-Date: Tue, 20 Feb 2018 02:14:38 +0000
-Subject: [RFC PATCH v3 3/3] security: Add an example sample dynamic LSM
-In-Reply-To: <cover.1519092378.git.sargun@sargun.me>
-References: <cover.1519092378.git.sargun@sargun.me>
-Message-ID: <f8a4c9c114da9f8472728d31e68244425fe060b1.1519092378.git.sargun@sargun.me>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 20 Feb 2018 08:59:02 -0500
+Subject: [PATCH selinux-next] selinux: Annotate lockdep for services locks
+In-Reply-To: <20180219151800.14442-1-peter.enderborg@sony.com>
+References: <20180219151800.14442-1-peter.enderborg@sony.com>
+Message-ID: <1519135142.10331.12.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This adds an example LSM that utilizes the features added by the
-dynamically loadable LSMs patch. Once the module is unloaded, the
-command is once again allowed. It prevents the user from running:
-date --set="October 21 2015 16:29:00 PDT"
+On Mon, 2018-02-19 at 16:18 +0100, Peter Enderborg wrote:
+> From: Peter <peter.enderborg@sony.com>
+> 
+> The locks are moved to dynamic allocation, we need to
+> help the lockdep system to classify the locks.
+> This adds to lockdep annotation for the page mutex and
+> for the ss lock.
+> 
+> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+> ---
+> This is the rebase of suggested patches from selinuxns tree
+> and are intended to be applyed on top of:
+> selinux: wrap global selinux state
+> from Stephen Smalley
+> 
+>  security/selinux/ss/services.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/security/selinux/ss/services.c
+> b/security/selinux/ss/services.c
+> index 3698352213d7..a741552e22b5 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -81,11 +81,15 @@ char
+> *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
+>  };
+>  
+>  static struct selinux_ss selinux_ss;
+> +static struct lock_class_key selinux_ss_class_key;
+> +static struct lock_class_key selinux_status_class_key;
+>  
+>  void selinux_ss_init(struct selinux_ss **ss)
+>  {
+>  	rwlock_init(&selinux_ss.policy_rwlock);
+> +	lockdep_set_class(&selinux_ss.policy_rwlock,
+> &selinux_ss_class_key);
+>  	mutex_init(&selinux_ss.status_lock);
+> +	lockdep_set_class(&selinux_ss.status_lock,
+> &selinux_status_class_key);
+>  	*ss = &selinux_ss;
+>  }
 
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
----
- samples/Kconfig           |  6 ++++++
- samples/Makefile          |  2 +-
- samples/lsm/Makefile      |  4 ++++
- samples/lsm/lsm_example.c | 33 +++++++++++++++++++++++++++++++++
- 4 files changed, 44 insertions(+), 1 deletion(-)
- create mode 100644 samples/lsm/Makefile
- create mode 100644 samples/lsm/lsm_example.c
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index c332a3b9de05..022242c0b50b 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -117,4 +117,10 @@ config SAMPLE_STATX
- 	help
- 	  Build example userspace program to use the new extended-stat syscall.
- 
-+config SAMPLE_DYNAMIC_LSM
-+	tristate "Build LSM examples -- loadable modules only"
-+	depends on SECURITY_DYNAMIC_HOOKS && m
-+	help
-+	  This builds an example dynamic LSM
-+
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index db54e766ddb1..9d23835d6e6d 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,4 +3,4 @@
- obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
- 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
- 			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
--			   vfio-mdev/ statx/
-+			   vfio-mdev/ statx/ lsm/
-diff --git a/samples/lsm/Makefile b/samples/lsm/Makefile
-new file mode 100644
-index 000000000000..d4ccb940f18b
---- /dev/null
-+++ b/samples/lsm/Makefile
-@@ -0,0 +1,4 @@
-+# builds the loadable LSM example kernel modules;
-+# then to use one (as root):  insmod <module_name.ko>
-+# and to unload: rmmod module_name
-+obj-$(CONFIG_SAMPLE_DYNAMIC_LSM) += lsm_example.o
-diff --git a/samples/lsm/lsm_example.c b/samples/lsm/lsm_example.c
-new file mode 100644
-index 000000000000..f29fddb7cae0
---- /dev/null
-+++ b/samples/lsm/lsm_example.c
-@@ -0,0 +1,33 @@
-+/*
-+ * This sample hooks into the "path_chroot"
-+ *
-+ * Once you run it, the following will not be allowed:
-+ * date --set="October 21 2015 16:29:00 PDT"
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/lsm_hooks.h>
-+
-+static int settime_cb(const struct timespec *ts, const struct timezone *tz)
-+{
-+	/* We aren't allowed to travel to October 21 2015 16:29 PDT */
-+	if (ts->tv_sec >= 1445470140 && ts->tv_sec < 1445470200)
-+		return -EPERM;
-+
-+	return 0;
-+}
-+
-+static struct security_hook_list sample_hooks[] = {
-+	LSM_HOOK_INIT(settime, settime_cb),
-+};
-+
-+static int __init lsm_init(void)
-+{
-+	security_add_dynamic_hooks(sample_hooks, ARRAY_SIZE(sample_hooks),
-+				   "sample");
-+	return 0;
-+}
-+
-+module_init(lsm_init)
-+MODULE_LICENSE("GPL");
--- 
-2.14.1
+Pardon my ignorance, but can you explain why we need an explicit call
+to lockdep_set_class() here?  I see it used for e.g. the inode i_lock,
+but there the class is per-file_system_type.  It doesn't seem to be
+always be used for all locks when they are dynamically initialized or
+allocated, e.g. get_empty_filp does not call lockdep_set_class() for
+struct file's f_owner.lock or f_lock even though they are dynamically
+allocated and initialized.  What makes this case different?
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
