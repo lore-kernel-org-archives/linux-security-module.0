@@ -1,84 +1,59 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 21 Feb 2018 01:03:01 +0200
-Subject: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-	<20180214134319.4400-2-tomas.winkler@intel.com>
-	<20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
-	<1519138649.26293.1.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
-Message-ID: <20180220230301.fdvczohdtp635kav@linux.intel.com>
+From: willy@infradead.org (Matthew Wilcox)
+Date: Tue, 20 Feb 2018 15:56:00 -0800
+Subject: [RFC PATCH v16 0/6] mm: security: ro protection for dynamic data
+In-Reply-To: <20180220213604.GD3728@rh>
+References: <20180212165301.17933-1-igor.stoppa@huawei.com>
+	<CAGXu5j+ZNFX17Vxd37rPnkahFepFn77Fi9zEy+OL8nNd_2bjqQ@mail.gmail.com>
+	<20180220012111.GC3728@rh>
+	<24e65dec-f452-a444-4382-d1f88fbb334c@huawei.com>
+	<20180220213604.GD3728@rh>
+Message-ID: <20180220235600.GA3706@bombadil.infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Feb 20, 2018 at 08:26:45PM +0000, Winkler, Tomas wrote:
-> > 
-> > On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
-> > > > All local variable declarations must be in the beginning of the
-> > > > function.
-> > >
-> > > Who says?
-> > 
-> > It is coherent how we have everything else.
->  I will have to care about its value out of the scope where the variable existence is not relevant.
+On Wed, Feb 21, 2018 at 08:36:04AM +1100, Dave Chinner wrote:
+> FWIW, I'm not wanting to use it to replace static variables. All the
+> structures are dynamically allocated right now, and get assigned to
+> other dynamically allocated pointers. I'd likely split the current
+> structures into a "ro after init" structure and rw structure, so
+> how does the "__ro_after_init" attribute work in that case? Is it
+> something like this?
 > 
-> > It is much easier to see the stack allocation this way when the allocation is
-> > only done in the beginning of each function. If you really need to do such
-> > pattern, then it would be a better idea to consider an additional helper
-> > function.
-> The code block decides whether to modify 'rc'. I'm not sure if additional function will make
->  the code cleaner, on the opposite.
-> > 
-> > > > Your comment about not overriding error code is incorrect.
-> > >
-> > > Please explain?
-> > 
-> > 'l_rc' overrides 'rc' in the case when both are non-zero.
-> 
-> Yes, that's been the intention, we cannot return more than one value. 
-> l_rc if set it has hire priority. 
-> 
-> > 
-> > > > The value of 'rc' should be never overridden, which kind of supports
-> > > > to "just print" behavior that we had for a locality error.
-> > >
-> > > You are not consistent, you've agreed with propagating it to user
-> > > space.  The error will  be propagated in case of an error in locality
-> > > relinquish the device is pretty much in non functional state and
-> > > provious errors do not matter much, but rc value won't be modified if
-> > > locality_reliquish succeeds.
-> > 
-> > Well, sometimes you fail to notice things and I failed to notice the collision
-> > above. The commit message does not describe why 'l_rc'
-> > overrides 'rc' in the case when both are non-zero. What was the reasoning,
-> > which made you end up with this priority order?  Why is 'l_rc' more
-> > important than 'rc'?
-> 
-> Because, it's fatal. I'm not sure it's matter much what the previous error was, it cannot be recovered
-> That's my understanding of this flow.
-> 
->  
-> > My take is that does it really make sense have this change as part of a high
-> > priority bug fix that should be as localized as possible?
-> > Seems like a non-trivial problem by itself.
-> 
-> Yes, the issue here is that also an error path can fail. Now what is the correct return value.. 
-> 
-> In any case, in order to resolve this dispute, I will post a version when the error is just prints out,
-> Once, however fatal the error is, it's very unlikely that it will happen.
-> Second the driver will find the device not responding in a subsequent command.
-> 
-> Not perfect, but at least we will have functional driver.
-> 
-> Thanks
-> Tomas
-> 
+> struct xfs_mount {
+> 	struct xfs_mount_ro{
+> 		.......
+> 	} *ro __ro_after_init;
+> 	......
 
-Please add my tested by to next version. Thanks.
+No, you'd do:
 
-/Jarkko
+struct xfs_mount_ro {
+	[...]
+};
+
+struct xfs_mount {
+	const struct xfs_mount_ro *ro;
+	[...]
+};
+
+We can't do protection on less than a page boundary, so you can't embed
+a ro struct inside a rw struct.
+
+> Also, what compile time checks are in place to catch writes to
+> ro structure members? Is sparse going to be able to check this sort
+> of thing, like is does with endian-specific variables?
+
+Just labelling the pointer const should be enough for the compiler to
+catch unintended writes.
+
+> > I'd be interested to have your review of the pmalloc API, if you think
+> > something is missing, once I send out the next revision.
+> 
+> I'll look at it in more depth when it comes past again. :P
+
+I think the key question is whether you want a slab-style interface
+or whether you want a kmalloc-style interface.  I'd been assuming
+the former, but Igor has implemented the latter already.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
