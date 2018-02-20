@@ -1,72 +1,77 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Tue, 20 Feb 2018 10:58:33 -0500
-Subject: [PATCH selinux-next] selinux: Annotate lockdep for services locks
-In-Reply-To: <1519135142.10331.12.camel@tycho.nsa.gov>
-References: <20180219151800.14442-1-peter.enderborg@sony.com>
-	<1519135142.10331.12.camel@tycho.nsa.gov>
-Message-ID: <1519142313.14218.3.camel@tycho.nsa.gov>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Tue, 20 Feb 2018 18:28:17 +0200
+Subject: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable
+	Memory)
+In-Reply-To: <CAGXu5j+RRiZtYfO-4Peh=FAHmUS4FThKHp-djoFgY80rebKTxQ@mail.gmail.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+	<20180126053542.GA30189@bombadil.infradead.org>
+	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
+	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
+	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
+	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
+	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
+	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
+	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
+	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+	<CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
+	<CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
+	<f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
+	<CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
+	<2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
+	<CAGXu5j+RRiZtYfO-4Peh=FAHmUS4FThKHp-djoFgY80rebKTxQ@mail.gmail.com>
+Message-ID: <b67209f5-4aa7-ffc0-99e6-3ab05e281ce5@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-02-20 at 08:59 -0500, Stephen Smalley wrote:
-> On Mon, 2018-02-19 at 16:18 +0100, Peter Enderborg wrote:
-> > From: Peter <peter.enderborg@sony.com>
-> > 
-> > The locks are moved to dynamic allocation, we need to
-> > help the lockdep system to classify the locks.
-> > This adds to lockdep annotation for the page mutex and
-> > for the ss lock.
-> > 
-> > Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
-> > ---
-> > This is the rebase of suggested patches from selinuxns tree
-> > and are intended to be applyed on top of:
-> > selinux: wrap global selinux state
-> > from Stephen Smalley
-> > 
-> >  security/selinux/ss/services.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/security/selinux/ss/services.c
-> > b/security/selinux/ss/services.c
-> > index 3698352213d7..a741552e22b5 100644
-> > --- a/security/selinux/ss/services.c
-> > +++ b/security/selinux/ss/services.c
-> > @@ -81,11 +81,15 @@ char
-> > *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
-> >  };
-> >  
-> >  static struct selinux_ss selinux_ss;
-> > +static struct lock_class_key selinux_ss_class_key;
-> > +static struct lock_class_key selinux_status_class_key;
-> >  
-> >  void selinux_ss_init(struct selinux_ss **ss)
-> >  {
-> >  	rwlock_init(&selinux_ss.policy_rwlock);
-> > +	lockdep_set_class(&selinux_ss.policy_rwlock,
-> > &selinux_ss_class_key);
-> >  	mutex_init(&selinux_ss.status_lock);
-> > +	lockdep_set_class(&selinux_ss.status_lock,
-> > &selinux_status_class_key);
-> >  	*ss = &selinux_ss;
-> >  }
+
+
+On 14/02/18 21:29, Kees Cook wrote:
+> On Wed, Feb 14, 2018 at 11:06 AM, Laura Abbott <labbott@redhat.com> wrote:
+
+[...]
+
+>> Kernel code should be fine, if it isn't that is a bug that should be
+>> fixed. Modules yes are not fully protected. The conclusion from past
 > 
-> Pardon my ignorance, but can you explain why we need an explicit call
-> to lockdep_set_class() here?  I see it used for e.g. the inode
-> i_lock,
-> but there the class is per-file_system_type.  It doesn't seem to be
-> always be used for all locks when they are dynamically initialized or
-> allocated, e.g. get_empty_filp does not call lockdep_set_class() for
-> struct file's f_owner.lock or f_lock even though they are dynamically
-> allocated and initialized.  What makes this case different?
+> I think that's a pretty serious problem: we can't have aliases with
+> mismatched permissions; this degrades a deterministic protection
+> (read-only) to a probabilistic protection (knowing where the alias of
+> a target is mapped). Having an attack be "needs some info leaks"
+> instead of "need execution control to change perms" is a much lower
+> bar, IMO.
 
-Also, your explanation in the patch description was because the locks
-are moved to dynamic allocation.  That was true of the original selinux
-namespace patch.  But it isn't true for the wrap global selinux state
-patch; selinux_ss is statically allocated and there is only one
-instance of it in this patch.  So do we need this lockdep annotation
-yet?
+Why "need execution control to change permission"?
+Or, iow, what does it mean exactly?
+ROP/JOP? Data-oriented control flow hijack?
 
+Unless I misunderstand the meaning of "need execution control", I think
+that "need write capability to arbitrary data address" should be
+sufficient, albeit uncomfortable to use.
+
+OTOH, "need read/write capability from/to arbitrary data address" would
+be enough, I think, assuming that one knows the offset where to write to
+- but that information could be inferred, for example, by scanning the
+memory for known patterns.
+
+IMHO the attack surface is so vast that it's not unreasonable to expect
+that it will be possible to fish out means to perform arbitrary R/W into
+kernel address space. Ex: some more recent/less tested driver.
+
+One can argue that this sort of R/W activity probably does require some
+form of execution control, but AFAIK, the only way to to prevent it, is
+to have CFI - btw, is there any standardization in that sense?
+
+So, from my (pessimistic?) perspective, the best that can be hoped for,
+is to make it much harder to figure out where the data is located.
+
+Virtual mapping has this side effect, compared to linear mapping.
+
+But, once easier attack targets are removed, I suspect the page mapping
+will become the next target.
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
