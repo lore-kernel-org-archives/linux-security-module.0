@@ -1,91 +1,103 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Tue, 20 Feb 2018 20:03:49 +0200
-Subject: [RFC PATCH v16 0/6] mm: security: ro protection for dynamic data
-In-Reply-To: <20180220012111.GC3728@rh>
-References: <20180212165301.17933-1-igor.stoppa@huawei.com>
-	<CAGXu5j+ZNFX17Vxd37rPnkahFepFn77Fi9zEy+OL8nNd_2bjqQ@mail.gmail.com>
-	<20180220012111.GC3728@rh>
-Message-ID: <24e65dec-f452-a444-4382-d1f88fbb334c@huawei.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 20 Feb 2018 13:56:34 -0500
+Subject: [PATCH v3 15/15] selinux: delay sid population for rootfs till
+	init is complete
+In-Reply-To: <1518813234-5874-19-git-send-email-takondra@cisco.com>
+References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
+	<1518813234-5874-19-git-send-email-takondra@cisco.com>
+Message-ID: <1519152994.14218.15.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 20/02/18 03:21, Dave Chinner wrote:
-> On Mon, Feb 12, 2018 at 03:32:36PM -0800, Kees Cook wrote:
->> On Mon, Feb 12, 2018 at 8:52 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
->>> This patch-set introduces the possibility of protecting memory that has
->>> been allocated dynamically.
->>>
->>> The memory is managed in pools: when a memory pool is turned into R/O,
->>> all the memory that is part of it, will become R/O.
->>>
->>> A R/O pool can be destroyed, to recover its memory, but it cannot be
->>> turned back into R/W mode.
->>>
->>> This is intentional. This feature is meant for data that doesn't need
->>> further modifications after initialization.
->>
->> This series came up in discussions with Dave Chinner (and Matthew
->> Wilcox, already part of the discussion, and others) at LCA. I wonder
->> if XFS would make a good initial user of this, as it could allocate
->> all the function pointers and other const information about a
->> superblock in pmalloc(), keeping it separate from the R/W portions?
->> Could other filesystems do similar things?
+On Fri, 2018-02-16 at 20:33 +0000, Taras Kondratiuk wrote:
+> From: Victor Kamensky <kamensky@cisco.com>
 > 
-> I wasn't cc'd on this patchset, (please use david at fromorbit.com for
-> future postings) 
+> With initramfs cpio format that supports extended attributes
+> we need to skip sid population on sys_lsetxattr call from
+> initramfs for rootfs if security server is not initialized yet.
+> 
+> Otherwise callback in selinux_inode_post_setxattr will try to
+> translate give security.selinux label into sid context and since
+> security server is not available yet inode will receive default
+> sid (typically kernel_t). Note that in the same time proper
+> label will be stored in inode xattrs. Later, since inode sid
+> would be already populated system will never look back at
+> actual xattrs. But if we skip sid population for rootfs and
+> we have policy that direct use of xattrs for rootfs, proper
+> sid will be filled in from extended attributes one node is
+> accessed and server is initialized.
+> 
+> Note new DELAYAFTERINIT_MNT super block flag is introduced
+> to only mark rootfs for such behavior. For other types of
+> tmpfs original logic is still used.
 
-Apologies, somehow I didn't realize that I should have put you too in
-CC. It will be fixed at the next iteration.
+(cc selinux maintainers)
 
-> so I can't really say anything about it right
-> now. My interest for XFS was that we have a fair amount of static
-> data in XFS that we set up at mount time and it never gets modified
-> after that.
+Wondering if we shouldn't just do this always, for all filesystem
+types.  Also, I think this should likely also be done in
+selinux_inode_setsecurity() for consistency.
 
-This is the typical use case I had in mind, although it requires a
-conversion.
-Ex:
-
-before:
-
-static int a;
-
-
-void set_a(void)
-{
-	a = 4;
-}
-
-
-
-after:
-
-static int *a __ro_after_init;
-struct gen_pool *pool;
-
-void init_a(void)
-{
-	pool = pmalloc_create_pool("pool", 0);
-	a = (int *)pmalloc(pool, sizeof(int), GFP_KERNEL);
-}
-
-void set_a(void)
-{
-	*a = 4;
-	pmalloc_protect_pool(pool);
-}
-
-> I'm not so worried about VFS level objects (that's a
-> much more complex issue) but there is a lot of low hanging fruit in
-> the XFS structures we could convert to write-once structures.
-
-I'd be interested to have your review of the pmalloc API, if you think
-something is missing, once I send out the next revision.
-
---
-igor
+> 
+> Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+> ---
+>  security/selinux/hooks.c            | 9 ++++++++-
+>  security/selinux/include/security.h | 1 +
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index f3fe65589f02..bb25268f734e 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -716,7 +716,7 @@ static int selinux_set_mnt_opts(struct
+> super_block *sb,
+>  			 */
+>  			if (!strncmp(sb->s_type->name, "rootfs",
+>  				     sizeof("rootfs")))
+> -				sbsec->flags |= SBLABEL_MNT;
+> +				sbsec->flags |=
+> SBLABEL_MNT|DELAYAFTERINIT_MNT;
+>  
+>  			/* Defer initialization until
+> selinux_complete_init,
+>  			   after the initial policy is loaded and
+> the security
+> @@ -3253,6 +3253,7 @@ static void selinux_inode_post_setxattr(struct
+> dentry *dentry, const char *name,
+>  {
+>  	struct inode *inode = d_backing_inode(dentry);
+>  	struct inode_security_struct *isec;
+> +	struct superblock_security_struct *sbsec;
+>  	u32 newsid;
+>  	int rc;
+>  
+> @@ -3261,6 +3262,12 @@ static void selinux_inode_post_setxattr(struct
+> dentry *dentry, const char *name,
+>  		return;
+>  	}
+>  
+> +	if (!ss_initialized) {
+> +		sbsec = inode->i_sb->s_security;
+> +		if (sbsec->flags & DELAYAFTERINIT_MNT)
+> +			return;
+> +	}
+> +
+>  	rc = security_context_to_sid_force(value, size, &newsid);
+>  	if (rc) {
+>  		printk(KERN_ERR "SELinux:  unable to map context to
+> SID"
+> diff --git a/security/selinux/include/security.h
+> b/security/selinux/include/security.h
+> index 02f0412d42f2..585acfd6cbcf 100644
+> --- a/security/selinux/include/security.h
+> +++ b/security/selinux/include/security.h
+> @@ -52,6 +52,7 @@
+>  #define ROOTCONTEXT_MNT	0x04
+>  #define DEFCONTEXT_MNT	0x08
+>  #define SBLABEL_MNT	0x10
+> +#define DELAYAFTERINIT_MNT 0x20
+>  /* Non-mount related flags */
+>  #define SE_SBINITIALIZED	0x0100
+>  #define SE_SBPROC		0x0200
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
