@@ -1,54 +1,48 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 20 Feb 2018 11:52:42 +1100 (AEDT)
-Subject: [PATCH v1 1/2] ima: fail signature verification on untrusted
-	filesystems
-In-Reply-To: <87zi44mz26.fsf@xmission.com>
-References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<87zi44mz26.fsf@xmission.com>
-Message-ID: <alpine.LRH.2.21.1802201152240.883@namei.org>
+From: dchinner@redhat.com (Dave Chinner)
+Date: Tue, 20 Feb 2018 12:21:11 +1100
+Subject: [RFC PATCH v16 0/6] mm: security: ro protection for dynamic data
+In-Reply-To: <CAGXu5j+ZNFX17Vxd37rPnkahFepFn77Fi9zEy+OL8nNd_2bjqQ@mail.gmail.com>
+References: <20180212165301.17933-1-igor.stoppa@huawei.com>
+	<CAGXu5j+ZNFX17Vxd37rPnkahFepFn77Fi9zEy+OL8nNd_2bjqQ@mail.gmail.com>
+Message-ID: <20180220012111.GC3728@rh>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 19 Feb 2018, Eric W. Biederman wrote:
-
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Mon, Feb 12, 2018 at 03:32:36PM -0800, Kees Cook wrote:
+> On Mon, Feb 12, 2018 at 8:52 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> > This patch-set introduces the possibility of protecting memory that has
+> > been allocated dynamically.
+> >
+> > The memory is managed in pools: when a memory pool is turned into R/O,
+> > all the memory that is part of it, will become R/O.
+> >
+> > A R/O pool can be destroyed, to recover its memory, but it cannot be
+> > turned back into R/W mode.
+> >
+> > This is intentional. This feature is meant for data that doesn't need
+> > further modifications after initialization.
 > 
-> > Files on untrusted filesystems, such as fuse, can change at any time,
-> > making the measurement(s) and by extension signature verification
-> > meaningless.
-> 
-> Filesystems with servers?
-> Remote filesystems?
-> Perhaps unexpected changes.
-> 
-> Untrusted sounds a bit harsh, and I am not certain it quite captures
-> what you are looking to avoid.
+> This series came up in discussions with Dave Chinner (and Matthew
+> Wilcox, already part of the discussion, and others) at LCA. I wonder
+> if XFS would make a good initial user of this, as it could allocate
+> all the function pointers and other const information about a
+> superblock in pmalloc(), keeping it separate from the R/W portions?
+> Could other filesystems do similar things?
 
-Right -- I think whether you trust a filesystem or not depends on how much 
-assurance you have in your specific configuration, rather than whether you 
-think the filesystem can be manipulated or not.
+I wasn't cc'd on this patchset, (please use david at fromorbit.com for
+future postings) so I can't really say anything about it right
+now. My interest for XFS was that we have a fair amount of static
+data in XFS that we set up at mount time and it never gets modified
+after that. I'm not so worried about VFS level objects (that's a
+much more complex issue) but there is a lot of low hanging fruit in
+the XFS structures we could convert to write-once structures.
 
-There is a difference between:
+Cheers,
 
-  - This fs has no way to communicate a change to IMA, and;
-
-  - This fs could be malicious.
-
-In the latter case, I suggest that any fs could be malicious if the 
-overall security policy / settings are inadequate for the threat model, or 
-if there are vulnerabilities which allow such security to be bypassed.
-
-Whether a user trusts FUSE on their particular system should be a policy 
-decision on the part of the user.  The kernel should not be deciding what 
-is trusted or not trusted here.
-
-
-
+Dave.
 -- 
-James Morris
-<jmorris@namei.org>
-
+Dave Chinner
+dchinner at redhat.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
