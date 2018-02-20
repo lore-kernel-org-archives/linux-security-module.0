@@ -1,37 +1,54 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 20 Feb 2018 16:13:30 +0200
-Subject: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
+Date: Tue, 20 Feb 2018 16:57:29 +0200
+Subject: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
+	granting locality
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
 References: <20180214134319.4400-1-tomas.winkler@intel.com>
-	<20180214134319.4400-3-tomas.winkler@intel.com>
-	<20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
-Message-ID: <1519136010.4113.10.camel@linux.intel.com>
+	<20180214134319.4400-2-tomas.winkler@intel.com>
+	<20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
+Message-ID: <1519138649.26293.1.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-02-19 at 13:52 +0200, Jarkko Sakkinen wrote:
-> On Wed, Feb 14, 2018 at 03:43:19PM +0200, Tomas Winkler wrote:
-> > We cannot use go_idle cmd_ready commands via runtime_pm handles
-> > as with the introduction of localities this is no longer an
-> > optional
-> > feature, while runtime pm can be not enabled.
-> > Though cmd_ready/go_idle provides power saving feature, it's also
-> > part of
-> > TPM2 protocol and should be called explicitly.
-> > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > runtime pm support as it is not used by any driver.
-> > 
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > ---
-> > V2: resent
-> > V3: resent
-> 
-> Only the cover letter needs a backlog but the code change looks
-> good to me.
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
+> > All local variable declarations must be in the beginning of the
+> > function.
+>
+> Who says?
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+It is coherent how we have everything else.
+
+It is much easier to see the stack allocation this way when the
+allocation is only done in the beginning of each function. If
+you really need to do such pattern, then it would be a better
+idea to consider an additional helper function.
+
+> > Your comment about not overriding error code is incorrect.
+>
+> Please explain?
+
+'l_rc' overrides 'rc' in the case when both are non-zero.
+
+> > The value of 'rc' should be never overridden, which kind of
+> > supports to "just
+> > print" behavior that we had for a locality error.
+>
+> You are not consistent, you've agreed with propagating it to user
+> space.  The error will  be propagated in case of an error in
+> locality relinquish the device is pretty much in non functional
+> state and provious errors do not matter much, but rc value won't
+> be modified if locality_reliquish succeeds.
+
+Well, sometimes you fail to notice things and I failed to notice the
+collision above. The commit message does not describe why 'l_rc'
+overrides 'rc' in the case when both are non-zero. What was the
+reasoning, which made you end up with this priority order?  Why is
+'l_rc' more important than 'rc'?
+
+My take is that does it really make sense have this change as part
+of a high priority bug fix that should be as localized as possible?
+Seems like a non-trivial problem by itself.
 
 /Jarkko
 --
