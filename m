@@ -1,56 +1,72 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 20 Feb 2018 16:57:29 +0200
-Subject: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
-	granting locality
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-	<20180214134319.4400-2-tomas.winkler@intel.com>
-	<20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
-Message-ID: <1519138649.26293.1.camel@linux.intel.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 20 Feb 2018 10:58:33 -0500
+Subject: [PATCH selinux-next] selinux: Annotate lockdep for services locks
+In-Reply-To: <1519135142.10331.12.camel@tycho.nsa.gov>
+References: <20180219151800.14442-1-peter.enderborg@sony.com>
+	<1519135142.10331.12.camel@tycho.nsa.gov>
+Message-ID: <1519142313.14218.3.camel@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
-> > All local variable declarations must be in the beginning of the
-> > function.
->
-> Who says?
+On Tue, 2018-02-20 at 08:59 -0500, Stephen Smalley wrote:
+> On Mon, 2018-02-19 at 16:18 +0100, Peter Enderborg wrote:
+> > From: Peter <peter.enderborg@sony.com>
+> > 
+> > The locks are moved to dynamic allocation, we need to
+> > help the lockdep system to classify the locks.
+> > This adds to lockdep annotation for the page mutex and
+> > for the ss lock.
+> > 
+> > Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+> > ---
+> > This is the rebase of suggested patches from selinuxns tree
+> > and are intended to be applyed on top of:
+> > selinux: wrap global selinux state
+> > from Stephen Smalley
+> > 
+> >  security/selinux/ss/services.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/security/selinux/ss/services.c
+> > b/security/selinux/ss/services.c
+> > index 3698352213d7..a741552e22b5 100644
+> > --- a/security/selinux/ss/services.c
+> > +++ b/security/selinux/ss/services.c
+> > @@ -81,11 +81,15 @@ char
+> > *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
+> >  };
+> >  
+> >  static struct selinux_ss selinux_ss;
+> > +static struct lock_class_key selinux_ss_class_key;
+> > +static struct lock_class_key selinux_status_class_key;
+> >  
+> >  void selinux_ss_init(struct selinux_ss **ss)
+> >  {
+> >  	rwlock_init(&selinux_ss.policy_rwlock);
+> > +	lockdep_set_class(&selinux_ss.policy_rwlock,
+> > &selinux_ss_class_key);
+> >  	mutex_init(&selinux_ss.status_lock);
+> > +	lockdep_set_class(&selinux_ss.status_lock,
+> > &selinux_status_class_key);
+> >  	*ss = &selinux_ss;
+> >  }
+> 
+> Pardon my ignorance, but can you explain why we need an explicit call
+> to lockdep_set_class() here?  I see it used for e.g. the inode
+> i_lock,
+> but there the class is per-file_system_type.  It doesn't seem to be
+> always be used for all locks when they are dynamically initialized or
+> allocated, e.g. get_empty_filp does not call lockdep_set_class() for
+> struct file's f_owner.lock or f_lock even though they are dynamically
+> allocated and initialized.  What makes this case different?
 
-It is coherent how we have everything else.
+Also, your explanation in the patch description was because the locks
+are moved to dynamic allocation.  That was true of the original selinux
+namespace patch.  But it isn't true for the wrap global selinux state
+patch; selinux_ss is statically allocated and there is only one
+instance of it in this patch.  So do we need this lockdep annotation
+yet?
 
-It is much easier to see the stack allocation this way when the
-allocation is only done in the beginning of each function. If
-you really need to do such pattern, then it would be a better
-idea to consider an additional helper function.
-
-> > Your comment about not overriding error code is incorrect.
->
-> Please explain?
-
-'l_rc' overrides 'rc' in the case when both are non-zero.
-
-> > The value of 'rc' should be never overridden, which kind of
-> > supports to "just
-> > print" behavior that we had for a locality error.
->
-> You are not consistent, you've agreed with propagating it to user
-> space.  The error will  be propagated in case of an error in
-> locality relinquish the device is pretty much in non functional
-> state and provious errors do not matter much, but rc value won't
-> be modified if locality_reliquish succeeds.
-
-Well, sometimes you fail to notice things and I failed to notice the
-collision above. The commit message does not describe why 'l_rc'
-overrides 'rc' in the case when both are non-zero. What was the
-reasoning, which made you end up with this priority order?  Why is
-'l_rc' more important than 'rc'?
-
-My take is that does it really make sense have this change as part
-of a high priority bug fix that should be as localized as possible?
-Seems like a non-trivial problem by itself.
-
-/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
