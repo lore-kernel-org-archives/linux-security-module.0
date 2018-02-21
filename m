@@ -1,61 +1,52 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 21 Feb 2018 09:46:19 -0500
-Subject: [PATCH v1 1/2] ima: fail signature verification on untrusted
-	filesystems
-In-Reply-To: <20180220201636.GA1565@mail.hallyn.com>
-References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<87zi44mz26.fsf@xmission.com>
-	<alpine.LRH.2.21.1802201152240.883@namei.org>
-	<87tvucifji.fsf@xmission.com>
-	<1519135329.3736.88.camel@linux.vnet.ibm.com>
-	<20180220201636.GA1565@mail.hallyn.com>
-Message-ID: <1519224379.3736.154.camel@linux.vnet.ibm.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 21 Feb 2018 16:20:51 +0000
+Subject: [PATCH 08a/30] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
+	and KEXEC_SIG_FORCE
+In-Reply-To: <20180119125425.l72meyyc2qtrriwe@dwarf.suse.cz>
+References: <20180119125425.l72meyyc2qtrriwe@dwarf.suse.cz>
+	<20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz>
+	<20180111120157.23qceywzi6omvvkb@dwarf.suse.cz>
+	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
+	<20180111115915.dejachty3l7fwpmf@dwarf.suse.cz>
+	<4582.1516120311@warthog.procyon.org.uk>
+	<24618.1516206864@warthog.procyon.org.uk>
+Message-ID: <23576.1519230051@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> > > On the flip side when it really is a trusted mounter, and it is in a
-> > > configuration that IMA has a reasonable expectation of seeing all of
-> > > the changes it would be nice if we can say please trust this mount.
-> > 
-> > IMA has no way of detecting file change. ?This was one of the reasons
-> > for the original patch set's not using the cached IMA results.
-> > 
-> > Even in the case of a trusted mounter and not using IMA cached
-> > results, there are no guarantees that the data read to calculate the
-> > file hash, will be the same as what is subsequently read. ?In some
-> > environments this might be an acceptable risk, while in others not.
-> 
-> So for the cases where it's not, there should be an IMA option or policy
-> to say any SB_I_IMA_UNVERIFIABLE_SIGNATURES mounts should be not
-> trusted, with the default being both SB_I_IMA_UNVERIFIABLE_SIGNATURES and
-> SB_I_UNTRUSTED_MOUNTER must be true to not trust, right?
+Jiri Bohac <jbohac@suse.cz> wrote:
 
-Right. ?To summarize, we've identified 3 scenarios:
-1. Fail signature verification on unprivileged non-init root mounted
-file systems.
+> Key verification may and will fail for lots of reasons which is
+> just going to make a user's life harder. E.g. you want to kexec
+> an old kernel with an expired key. Or your date is just wrong and
+> you get -EKEYEXPIRED.
 
-flags: SB_I_IMA_UNVERIFIABLE_SIGNATURES and SB_I_UNTRUSTED_MOUNTER
-(always enabled)
+Note that we can't check for expired keys as we can't trust the system clock
+to be correct at this point.
 
-2. Permit signature verification on privileged file system mounts in a
-secure system environment. ?Willing to accept the risk. ?Does not rely
-on cached integrity results, but forces re-evaluation.
+> Also, only now I found that some of the error codes the crypto
+> code returns yield really confusing messages (e.g.
+> kexec_file_load of an unsigned kernel returns -ELIBBAD which
+> makes kexec exit with "kexec_file_load failed: Accessing a
+> corrupted shared library").
 
-flags: SB_I_IMA_UNVERIFIABLE_SIGNATURES, not SB_I_UNTRUSTED_MOUNTER or
-IMA_FAIL_UNVERIFICABLE_SIGNATURES (default behavior)
+Yeah, that should be fixed.
 
-3. Fail signature verification also on privileged file system mounts.
-Fail safe, unwilling to accept the risk.
+> Maybe the error code could be unified to -EKEYREJECTED for all
+> sorts of key verification failures?
 
-flags:
-SB_I_IMA_UNVERIFIABLE_SIGNATURES and IMA_FAIL_UNVERIFIABLE_SIGNATURES
+Things like ENOMEM and EINTR definitely need to stay separate (not that I
+allow interruption at the moment).
 
-Enabled by specifying "ima_policy=unverifiable_sigs" on the boot
-command line.
+ENOKEY (couldn't find matching key), EINVAL (didn't recognise identifier),
+ENOPKG (couldn't find a crypto algo) and EBADMSG (couldn't parse signature)
+are arguable.  I think there's a valid case for treating ENOKEY, EINVAL and
+ENOPKG differently to EKEYREJECTED - more so for ENOKEY.  In my opinion,
+ENOKEY, EINVAL and ENOPKG are not fatal errors if we're not enforcing
+signature checking, but EKEYREJECTED and EBADMSG are.
 
-Mimi
-
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
