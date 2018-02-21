@@ -1,51 +1,76 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 21 Feb 2018 09:31:32 +0200
-Subject: [PATCH v4] tpm: Trigger only missing TPM 2.0 self tests
-In-Reply-To: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
-References: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20180221073132.vrznvdp5oh7w6n53@linux.intel.com>
+From: peter.enderborg@sony.com (peter enderborg)
+Date: Wed, 21 Feb 2018 10:31:06 +0100
+Subject: [PATCH selinux-next] selinux: Annotate lockdep for services locks
+In-Reply-To: <1519142313.14218.3.camel@tycho.nsa.gov>
+References: <20180219151800.14442-1-peter.enderborg@sony.com>
+	<1519135142.10331.12.camel@tycho.nsa.gov>
+	<1519142313.14218.3.camel@tycho.nsa.gov>
+Message-ID: <41daec9a-5be2-0c9f-6e1f-574c23707f0d@sony.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Feb 21, 2018 at 12:53:47AM +0200, Jarkko Sakkinen wrote:
-> From: Alexander Steffen <Alexander.Steffen@infineon.com>
-> 
-> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
-> (necessitating a reboot). The problem seems to be that the TPM gets into a
-> state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
-> all tests have run to completion), but instead returns TPM_RC_TESTING
-> (meaning some tests are still running in the background).  There are
-> various theories that resending the self-test command actually causes the
-> tests to restart and thus triggers more TPM_RC_TESTING returns until the
-> timeout is exceeded.
-> 
-> There are several issues here: firstly being we shouldn't slow down the
-> boot sequence waiting for the self test to complete once the TPM
-> backgrounds them.  It will actually make available all functions that have
-> passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
-> command.  So the fix is to kick off self tests once and if they return
-> TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
-> order to prevent other tpm users from seeing any TPM_RC_TESTING returns
-> (which it might if they send a command that needs a TPM subsystem which is
-> still under test), we loop in tpm_transmit_cmd until either a timeout or we
-> don't get a TPM_RC_TESTING return.
-> 
-> Finally, there have been observations of strange returns from a partial
-> test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
-> any unexpected return from a partial self test as an indication we need to
-> run a full self test.
-> 
-> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
-> Fixes: 2482b1bba5122b1d5516c909832bdd282015b8e9
+On 02/20/2018 04:58 PM, Stephen Smalley wrote:
+> On Tue, 2018-02-20 at 08:59 -0500, Stephen Smalley wrote:
+>> On Mon, 2018-02-19 at 16:18 +0100, Peter Enderborg wrote:
+>>> From: Peter <peter.enderborg@sony.com>
+>>>
+>>> The locks are moved to dynamic allocation, we need to
+>>> help the lockdep system to classify the locks.
+>>> This adds to lockdep annotation for the page mutex and
+>>> for the ss lock.
+>>>
+>>> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+>>> ---
+>>> This is the rebase of suggested patches from selinuxns tree
+>>> and are intended to be applyed on top of:
+>>> selinux: wrap global selinux state
+>>> from Stephen Smalley
+>>>
+>>>  security/selinux/ss/services.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/security/selinux/ss/services.c
+>>> b/security/selinux/ss/services.c
+>>> index 3698352213d7..a741552e22b5 100644
+>>> --- a/security/selinux/ss/services.c
+>>> +++ b/security/selinux/ss/services.c
+>>> @@ -81,11 +81,15 @@ char
+>>> *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
+>>>  };
+>>>  
+>>>  static struct selinux_ss selinux_ss;
+>>> +static struct lock_class_key selinux_ss_class_key;
+>>> +static struct lock_class_key selinux_status_class_key;
+>>>  
+>>>  void selinux_ss_init(struct selinux_ss **ss)
+>>>  {
+>>>  	rwlock_init(&selinux_ss.policy_rwlock);
+>>> +	lockdep_set_class(&selinux_ss.policy_rwlock,
+>>> &selinux_ss_class_key);
+>>>  	mutex_init(&selinux_ss.status_lock);
+>>> +	lockdep_set_class(&selinux_ss.status_lock,
+>>> &selinux_status_class_key);
+>>>  	*ss = &selinux_ss;
+>>>  }
+>> Pardon my ignorance, but can you explain why we need an explicit call
+>> to lockdep_set_class() here?  I see it used for e.g. the inode
+>> i_lock,
+>> but there the class is per-file_system_type.  It doesn't seem to be
+>> always be used for all locks when they are dynamically initialized or
+>> allocated, e.g. get_empty_filp does not call lockdep_set_class() for
+>> struct file's f_owner.lock or f_lock even though they are dynamically
+>> allocated and initialized.  What makes this case different?
+> Also, your explanation in the patch description was because the locks
+> are moved to dynamic allocation.  That was true of the original selinux
+> namespace patch.  But it isn't true for the wrap global selinux state
+> patch; selinux_ss is statically allocated and there is only one
+> instance of it in this patch.  So do we need this lockdep annotation
+> yet?
+>
+>
+I think you are right. I dont get any warnings whey trying to use them, and lockdep
+get a useful name for them.
 
-Fixes tag is in wrong format. Should be 12 characters of the hash and
-short summary in parentheses:
-
-Fixes: 2482b1bba512 ("tpm: Trigger only missing TPM 2.0 self tests")
-
-/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
