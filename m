@@ -1,139 +1,43 @@
 From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Wed, 21 Feb 2018 11:56:22 +0200
-Subject: [RFC PATCH v16 0/6] mm: security: ro protection for dynamic data
-In-Reply-To: <20180221013636.GE3728@rh>
-References: <20180212165301.17933-1-igor.stoppa@huawei.com>
-	<CAGXu5j+ZNFX17Vxd37rPnkahFepFn77Fi9zEy+OL8nNd_2bjqQ@mail.gmail.com>
-	<20180220012111.GC3728@rh>
-	<24e65dec-f452-a444-4382-d1f88fbb334c@huawei.com>
-	<20180220213604.GD3728@rh>
-	<20180220235600.GA3706@bombadil.infradead.org>
-	<20180221013636.GE3728@rh>
-Message-ID: <46a9610a-182b-4765-9d83-cab6297377f3@huawei.com>
+Date: Wed, 21 Feb 2018 14:01:20 +0200
+Subject: [PATCH 3/6] struct page: add field for vm_struct
+In-Reply-To: <20180220205442.GA15973@bombadil.infradead.org>
+References: <20180211031920.3424-1-igor.stoppa@huawei.com>
+	<20180211031920.3424-4-igor.stoppa@huawei.com>
+	<20180211211646.GC4680@bombadil.infradead.org>
+	<cef01110-dc23-4442-f277-88d1d3662e00@huawei.com>
+	<b59546a4-5a5b-ca48-3b51-09440b6a5493@huawei.com>
+	<20180220205442.GA15973@bombadil.infradead.org>
+Message-ID: <c4c805ed-5869-81c2-4c05-cf53bfbef168@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 21/02/18 03:36, Dave Chinner wrote:
-> On Tue, Feb 20, 2018 at 03:56:00PM -0800, Matthew Wilcox wrote:
->> On Wed, Feb 21, 2018 at 08:36:04AM +1100, Dave Chinner wrote:
->>> FWIW, I'm not wanting to use it to replace static variables. All the
->>> structures are dynamically allocated right now, and get assigned to
->>> other dynamically allocated pointers. I'd likely split the current
->>> structures into a "ro after init" 
 
-I would prefer to use a different terminology, because, if I have
-understood the use case, this is not exactly the same as __ro_after_init
 
-So, this is my understanding:
+On 20/02/18 22:54, Matthew Wilcox wrote:
+> On Tue, Feb 20, 2018 at 09:53:30PM +0200, Igor Stoppa wrote:
 
-* "const" needs to be known at link time - there might be some
-adjustments later on, ex: patching of "const" pointers, after relocation
-has taken place - I am assuming we are not planning to patch const data
-The compiler can perform whatever optimization it feels like and it is
-allowed to do, on this.
+[...]
 
-* __ro_after_init is almost the same as a const, from a r/w perspective,
-but it will become effectively read_only after the completion of the
-init phase. The compiler cannot use it in any way to detect errors,
-AFAIK. The system will just generate a runtime error is someone tries to
-alter some __ro_after_init data, when it's read-only.
-The only trick available is to use, after the protection, a different
-type of handle, const.
-
-* pmalloc pools can be protected (hence the "p") at any time, but they
-start as r/w. Also, they cannot be declared statically.
-
-* data which is either const or __ro_after_init is placed into specific
-sections (on arm64 it's actually the same) and its pages are then marked
-as read-only.
-
->>> structure and rw structure, so
->>> how does the "__ro_after_init" attribute work in that case? Is it
->>> something like this?
->>>
->>> struct xfs_mount {
->>> 	struct xfs_mount_ro{
->>> 		.......
->>> 	} *ro __ro_after_init;
->        ^^^^^^^^
+>> It was found while testing on a configuration with framebuffer.
 > 
-> pointer, not embedded structure....
+> ... ah.  You tried to use vmalloc_to_page() on something which wasn't
+> backed by a struct page.  That's *supposed* to return NULL, but my
+> guess is that after this patch it returned garbage.
 
-I doubt this would work, because I think it's not possible to put a
-field of a structure into a separate section, afaik.
+it seems to return garbage also without this patch, but I need to clean
+up the code, try it again and possibly come up with a demo patch for
+triggering the problem.
 
-__ro_after_init would refer to the ro field, not to the memory it refers to.
-
->>> 	......
->>
->> No, you'd do:
->>
->> struct xfs_mount_ro {
->> 	[...]
->> };
-
-is this something that is readonly from the beginning and then shared
-among mount points or is it specific to each mount point?
-
->> struct xfs_mount {
->> 	const struct xfs_mount_ro *ro;
->> 	[...]
->> };
-> 
-> .... so that's pretty much the same thing :P
-
-The "const" modifier is a nice way to catch errors through the compiler,
-iff the ro data will not be initialized through this handle, when it's
-still writable.
-
->>> Also, what compile time checks are in place to catch writes to
->>> ro structure members? Is sparse going to be able to check this sort
->>> of thing, like is does with endian-specific variables?
->>
->> Just labelling the pointer const should be enough for the compiler to
->> catch unintended writes.
-> 
-> Ok.
-
-yes, anyway the first one trying to alter it at run time, is in for some
-surprise.
-
->>>> I'd be interested to have your review of the pmalloc API, if you think
->>>> something is missing, once I send out the next revision.
->>>
->>> I'll look at it in more depth when it comes past again. :P
->>
->> I think the key question is whether you want a slab-style interface
->> or whether you want a kmalloc-style interface.  I'd been assuming
->> the former, but Igor has implemented the latter already.
-> 
-> Slabs are rally only useful when you have lots of a specific type of
-> object. I'm concerned mostly about one-off per-mount point
-> structures, of which there are relatively few. A heap-like pool per
-> mount is fine for this.
-
-That was my same sentiment.
-
-Actually it would be even possible to simulate caches with pools: each
-pool supports a granularity parameter, during creation. One could have
-multiple pools, each with different granularity, but it would probably
-lead to a proliferation of pools.
-
-Instead, I preferred to have pmalloc as a drop-in replacement for the
-variants of k/v/kv malloc.
-
-The only real issue was the - previous - inability of tracking the size
-of an allocation, given its address, but that is taken care of by the
-patch for the genalloc bitmap.
-
-If I could have a pointer to a good candidate for the pmalloc treatment,
-I could come up with a patch, to show how it could be done.
-
-Then it might be easier to discuss if the API needs to be modified
-and/or extended somehow.
+I'll investigate it more. However it doesn't seem to be related to the
+functionality I need. So I plan to treat it as separate issue and leave
+find_vm_area untouched, at least in pmalloc scope.
 
 --
 igor
+
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
