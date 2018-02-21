@@ -1,80 +1,88 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 21 Feb 2018 14:37:11 -0800
-Subject: [kernel-hardening] [PATCH 4/6] Protectable Memory
-In-Reply-To: <7972cf4d-dfb2-6682-b1cb-e514a41196a6@huawei.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
-	<20180124175631.22925-5-igor.stoppa@huawei.com>
-	<CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
-	<20180126053542.GA30189@bombadil.infradead.org>
-	<alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
-	<f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
-	<b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
-	<CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
-	<8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
-	<CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
-	<17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
-	<CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
-	<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
-	<5a83024c.64369d0a.a1e94.cdd6SMTPIN_ADDED_BROKEN@mx.google.com>
-	<13a50f85-bbd8-5d78-915a-a29c4a9f0c32@redhat.com>
-	<7972cf4d-dfb2-6682-b1cb-e514a41196a6@huawei.com>
-Message-ID: <CAGXu5j+9yKyUG-4YqK5Vo4kvV7P3vNAr_B4XkXuoishGEyY_Ag@mail.gmail.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Wed, 21 Feb 2018 16:46:33 -0600
+Subject: [PATCH v1 1/2] ima: fail signature verification on untrusted
+	filesystems
+In-Reply-To: <1519224379.3736.154.camel@linux.vnet.ibm.com> (Mimi Zohar's
+	message of "Wed, 21 Feb 2018 09:46:19 -0500")
+References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
+	<87zi44mz26.fsf@xmission.com>
+	<alpine.LRH.2.21.1802201152240.883@namei.org>
+	<87tvucifji.fsf@xmission.com>
+	<1519135329.3736.88.camel@linux.vnet.ibm.com>
+	<20180220201636.GA1565@mail.hallyn.com>
+	<1519224379.3736.154.camel@linux.vnet.ibm.com>
+Message-ID: <87mv02c65y.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Feb 20, 2018 at 9:16 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
->
->
-> On 13/02/18 20:10, Laura Abbott wrote:
->> On 02/13/2018 07:20 AM, Igor Stoppa wrote:
->>> Why alterations of page properties are not considered a risk and the physmap is?
->>> And how would it be easier (i suppose) to attack the latter?
->>
->> Alterations are certainly a risk but with the physmap the
->> mapping is already there. Find the address and you have
->> access vs. needing to actually modify the properties
->> then do the access. I could also be complete off base
->> on my threat model here so please correct me if I'm
->> wrong.
->
-> It's difficult for me to comment on this without knowing *how* the
-> attack would be performed, in your model.
->
-> Ex: my expectation is that the attacked has R/W access to kernel data
-> and has knowledge of the location of static variables.
->
-> This is not just a guess, but a real-life scenario, found in attacks
-> that, among other things, are capable of disabling SELinux, to proceed
-> toward gaining full root capability.
->
-> At that point, I think that variables which are allocated dynamically,
-> in vmalloc address space, are harder to locate, because of the virtual
-> mapping and the randomness of the address chosen (this I have not
-> confirmed yet, but I suppose there is some randomness in picking the
-> address to assign to a certain allocation request to vmalloc, otherwise,
-> it could be added).
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-Machine-to-machine runtime variation certainly affects the mapping
-location, but for early boot allocations, these become surprisingly
-deterministic, especially across similar hardware/memory layouts (both
-the virtmap and physmap locations). However, using
-CONFIG_RANDOMIZE_MEMORY makes it MUCH more difficult. (Note that
-RANDOMIZE_BASE on arm64 effectively includes RANDOMIZE_MEMORY, as it
-uses the entropy for multiple base offsets, including the physmap,
-IIRC.)
-
->> I think your other summaries are good points though
->> and should go in the cover letter.
+>> > > On the flip side when it really is a trusted mounter, and it is in a
+>> > > configuration that IMA has a reasonable expectation of seeing all of
+>> > > the changes it would be nice if we can say please trust this mount.
+>> > 
+>> > IMA has no way of detecting file change. ?This was one of the reasons
+>> > for the original patch set's not using the cached IMA results.
+>> > 
+>> > Even in the case of a trusted mounter and not using IMA cached
+>> > results, there are no guarantees that the data read to calculate the
+>> > file hash, will be the same as what is subsequently read. ?In some
+>> > environments this might be an acceptable risk, while in others not.
+>> 
+>> So for the cases where it's not, there should be an IMA option or policy
+>> to say any SB_I_IMA_UNVERIFIABLE_SIGNATURES mounts should be not
+>> trusted, with the default being both SB_I_IMA_UNVERIFIABLE_SIGNATURES and
+>> SB_I_UNTRUSTED_MOUNTER must be true to not trust, right?
 >
-> Ok, I'm just afraid it risks becoming a lengthy dissertation :-)
+> Right. ?To summarize, we've identified 3 scenarios:
+> 1. Fail signature verification on unprivileged non-init root mounted
+> file systems.
+>
+> flags: SB_I_IMA_UNVERIFIABLE_SIGNATURES and SB_I_UNTRUSTED_MOUNTER
+> (always enabled)
+>
+> 2. Permit signature verification on privileged file system mounts in a
+> secure system environment. ?Willing to accept the risk. ?Does not rely
+> on cached integrity results, but forces re-evaluation.
+>
+> flags: SB_I_IMA_UNVERIFIABLE_SIGNATURES, not SB_I_UNTRUSTED_MOUNTER or
+> IMA_FAIL_UNVERIFICABLE_SIGNATURES (default behavior)
+>
+> 3. Fail signature verification also on privileged file system mounts.
+> Fail safe, unwilling to accept the risk.
+>
+> flags:
+> SB_I_IMA_UNVERIFIABLE_SIGNATURES and IMA_FAIL_UNVERIFIABLE_SIGNATURES
+>
+> Enabled by specifying "ima_policy=unverifiable_sigs" on the boot
+> command line.
 
-It's rare to have anyone say "your commit log is too long". :)
+There is another scenaro.
+4. Permit signature verification on out of kernel but otherwise fully
+   capable and trusted filesystems.
 
--Kees
+Fuse has a mode where it appears to be cache coherent, and guaranteed to
+be local. AKA when fuse block is used and FUSE_WRITEBACK_CACHE is set.
+That configuratioin plus the the allow_other mount option appear to
+signal a fuse mount that can be reasonably be trusted as much as an
+in-kernel block based filesystem.
 
--- 
-Kees Cook
-Pixel Security
+That is a mode someone might use to mount exFat or ntfs-3g.
+
+As all writes come from the kernel, and it is safe to have a write-back
+cache I believe ima can reasonably verify signatures.  There may be
+something technical like the need to verify i_version in this case,
+but for purposes of argument let's say fuse has implemented all of the
+necessary technical details.
+
+In that case we have a case where it is reasonable to say that
+SB_I_IMA_UNVERIFIABLE_SIGNATURES would be incorrect to set on a fuse
+filesystem.
+
+Mimi do you agree or am I missing something?
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
