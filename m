@@ -1,62 +1,48 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 22 Feb 2018 14:21:53 +0000
-Subject: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
-	locked down
-In-Reply-To: <8846.1519309243@warthog.procyon.org.uk>
-References: <8846.1519309243@warthog.procyon.org.uk>
-	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
-	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <8887.1519309313@warthog.procyon.org.uk>
+Date: Thu, 22 Feb 2018 16:17:54 +0000
+Subject: [RFC][PATCH 0/6] KEYS: Fixes
+Message-ID: <151931627456.27289.17918204393283127682.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
 
-> I'm intending on inserting the attached patch before this one.
+Hi James,
 
-And replacing this patch with the attached.
+Here's a collection of fixes for Linux keyrings, mostly thanks to Eric
+Biggers, if you could pass them along to Linus.  They include:
+
+ (1) Fix some PKCS#7 verification issues.
+
+ (2) Fix handling of unsupported crypto in X.509.
+
+ (3) Fix too-large allocation in big_key.
+
+The patches can be found here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/tag/?h=keys-fixes-20180222
+
+And also on the keys-fixes branch.
 
 David
 ---
-commit ed0424c531d7dd25adebdec0ee6a78a5784f207a
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Feb 22 14:01:49 2018 +0000
+David Howells (1):
+      KEYS: Use individual pages in big_key for crypto buffers
 
-    kexec_file: Restrict at runtime if the kernel is locked down
-    
-    When KEXEC_VERIFY_SIG is not enabled, kernel should not load images through
-    kexec_file systemcall if the kernel is locked down unless IMA can be used
-    to validate the image.
-    
-    [Modified by David Howells to fit with modifications to the previous patch
-     and to return -EPERM if the kernel is locked down for consistency with
-     other lockdowns]
-    
-    Signed-off-by: Jiri Bohac <jbohac@suse.cz>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-    cc: Chun-Yi Lee <jlee@suse.com>
-    cc: kexec at lists.infradead.org
+Eric Biggers (5):
+      PKCS#7: fix certificate chain verification
+      PKCS#7: fix certificate blacklisting
+      PKCS#7: fix direct verification of SignerInfo signature
+      X.509: fix BUG_ON() when hash algorithm is unsupported
+      X.509: fix NULL dereference when restricting key with unsupported_sig
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index d5931e392050..c47c4de604cd 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -167,6 +167,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 		}
- 
- 		ret = 0;
-+		if (is_ima_appraise_enabled())
-+			break;
-+
-+		if (kernel_is_locked_down(reason)) {
-+			ret = -EPERM;
-+			goto out;
-+		}
-+
- 		break;
- 
- 		/* All other errors are fatal, including nomem, unparseable
+
+ crypto/asymmetric_keys/pkcs7_trust.c  |    1 
+ crypto/asymmetric_keys/pkcs7_verify.c |   12 ++--
+ crypto/asymmetric_keys/public_key.c   |    4 +
+ crypto/asymmetric_keys/restrict.c     |   21 ++++--
+ security/keys/big_key.c               |  110 ++++++++++++++++++++++++++-------
+ 5 files changed, 111 insertions(+), 37 deletions(-)
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
