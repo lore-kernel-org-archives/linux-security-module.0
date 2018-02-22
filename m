@@ -1,63 +1,64 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 22 Feb 2018 16:20:41 +0000
-Subject: [PATCH 2/6] PKCS#7: fix certificate blacklisting
+Date: Thu, 22 Feb 2018 16:20:34 +0000
+Subject: [PATCH 1/6] PKCS#7: fix certificate chain verification
 In-Reply-To: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
 References: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
-Message-ID: <151931644086.27713.11709941422438272479.stgit@warthog.procyon.org.uk>
+Message-ID: <151931643415.27713.4671836834877309737.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-If there is a blacklisted certificate in a SignerInfo's certificate
-chain, then pkcs7_verify_sig_chain() sets sinfo->blacklisted and returns
-0.  But, pkcs7_verify() fails to handle this case appropriately, as it
-actually continues on to the line 'actual_ret = 0;', indicating that the
-SignerInfo has passed verification.  Consequently, PKCS#7 signature
-verification ignores the certificate blacklist.
+When pkcs7_verify_sig_chain() is building the certificate chain for a
+SignerInfo using the certificates in the PKCS#7 message, it is passing
+the wrong arguments to public_key_verify_signature().  Consequently,
+when the next certificate is supposed to be used to verify the previous
+certificate, the next certificate is actually used to verify itself.
 
-Fix this by not considering blacklisted SignerInfos to have passed
-verification.
+An attacker can use this bug to create a bogus certificate chain that
+has no cryptographic relationship between the beginning and end.
 
-Also fix the function comment with regards to when 0 is returned.
+Fortunately I couldn't quite find a way to use this to bypass the
+overall signature verification, though it comes very close.  Here's the
+reasoning: due to the bug, every certificate in the chain beyond the
+first actually has to be self-signed (where "self-signed" here refers to
+the actual key and signature; an attacker might still manipulate the
+certificate fields such that the self_signed flag doesn't actually get
+set, and thus the chain doesn't end immediately).  But to pass trust
+validation (pkcs7_validate_trust()), either the SignerInfo or one of the
+certificates has to actually be signed by a trusted key.  Since only
+self-signed certificates can be added to the chain, the only way for an
+attacker to introduce a trusted signature is to include a self-signed
+trusted certificate.
 
-Fixes: 03bb79315ddc ("PKCS#7: Handle blacklisted certificates")
-Cc: <stable@vger.kernel.org> # v4.12+
+But, when pkcs7_validate_trust_one() reaches that certificate, instead
+of trying to verify the signature on that certificate, it will actually
+look up the corresponding trusted key, which will succeed, and then try
+to verify the *previous* certificate, which will fail.  Thus, disaster
+is narrowly averted (as far as I could tell).
+
+Fixes: 6c2dc5ae4ab7 ("X.509: Extract signature digest and make self-signed cert checks earlier")
+Cc: <stable@vger.kernel.org> # v4.7+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/pkcs7_verify.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ crypto/asymmetric_keys/pkcs7_verify.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index 2f6a768b91d7..97c77f66b20d 100644
+index 39e6de0c2761..2f6a768b91d7 100644
 --- a/crypto/asymmetric_keys/pkcs7_verify.c
 +++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -366,8 +366,7 @@ static int pkcs7_verify_one(struct pkcs7_message *pkcs7,
-  *
-  *  (*) -EBADMSG if some part of the message was invalid, or:
-  *
-- *  (*) 0 if no signature chains were found to be blacklisted or to contain
-- *	unsupported crypto, or:
-+ *  (*) 0 if a signature chain passed verification, or:
-  *
-  *  (*) -EKEYREJECTED if a blacklisted key was encountered, or:
-  *
-@@ -423,8 +422,11 @@ int pkcs7_verify(struct pkcs7_message *pkcs7,
- 
- 	for (sinfo = pkcs7->signed_infos; sinfo; sinfo = sinfo->next) {
- 		ret = pkcs7_verify_one(pkcs7, sinfo);
--		if (sinfo->blacklisted && actual_ret == -ENOPKG)
--			actual_ret = -EKEYREJECTED;
-+		if (sinfo->blacklisted) {
-+			if (actual_ret == -ENOPKG)
-+				actual_ret = -EKEYREJECTED;
-+			continue;
-+		}
- 		if (ret < 0) {
- 			if (ret == -ENOPKG) {
- 				sinfo->unsupported_crypto = true;
+@@ -270,7 +270,7 @@ static int pkcs7_verify_sig_chain(struct pkcs7_message *pkcs7,
+ 				sinfo->index);
+ 			return 0;
+ 		}
+-		ret = public_key_verify_signature(p->pub, p->sig);
++		ret = public_key_verify_signature(p->pub, x509->sig);
+ 		if (ret < 0)
+ 			return ret;
+ 		x509->signer = p;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
