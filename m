@@ -1,39 +1,29 @@
 From: jbohac@suse.cz (Jiri Bohac)
-Date: Thu, 22 Feb 2018 19:44:28 +0100
-Subject: [PATCH 04/30] Enforce module signatures if the kernel is locked
-	down
-In-Reply-To: <30284.1519304877@warthog.procyon.org.uk>
-References: <151024866805.28329.10437019941463042267.stgit@warthog.procyon.org.uk>
+Date: Thu, 22 Feb 2018 20:08:14 +0100
+Subject: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
+	locked down
+In-Reply-To: <8846.1519309243@warthog.procyon.org.uk>
+References: <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
 	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-	<30284.1519304877@warthog.procyon.org.uk>
-Message-ID: <20180222184428.yby6usf4b5pd6nrw@dwarf.suse.cz>
+	<8846.1519309243@warthog.procyon.org.uk>
+Message-ID: <20180222190814.a5mavnqvii5i6ptf@dwarf.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Feb 22, 2018 at 01:07:57PM +0000, David Howells wrote:
-> I'm considering folding the attached changes into this patch.
+On Thu, Feb 22, 2018 at 02:20:43PM +0000, David Howells wrote:
+> commit 87a39b258eca2e15884ee90c3fcd5758d6057b17
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Thu Feb 22 13:42:04 2018 +0000
 > 
-> It adjusts the errors generated:
-> 
->  (1) If there's no signature (ENODATA) or we can't check it (ENOPKG, ENOKEY),
->      then:
-> 
->      (a) If signatures are enforced then EKEYREJECTED is returned.
-> 
->      (b) If IMA will have validated the image, return 0 (okay).
-> 
->      (c) If there's no signature or we can't check it, but the kernel is
-> 	 locked down then EPERM is returned (this is then consistent with
-> 	 other lockdown cases).
-> 
->  (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
->      the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we return
->      the error we got.
-> 
-> Note that the X.509 code doesn't check for key expiry as the RTC might not be
-> valid or might not have been transferred to the kernel's clock yet.
+>     kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+>     
+>     This is a preparatory patch for kexec_file_load() lockdown.  A locked down
+>     kernel needs to prevent unsigned kernel images to be loaded with
 
-Looks good. 
+s/to be loaded/from being loaded/
+(my own mistake :-))
+
+Otherwise looks good. Thanks for improving my idea.
 
 Reviewed-by: Jiri Bohac <jbohac@suse.cz>
 
