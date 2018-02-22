@@ -1,57 +1,90 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 22 Feb 2018 16:33:00 -0500
-Subject: [PATCH v2 0/4] ima: unverifiable file signatures
-Message-ID: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Thu, 22 Feb 2018 16:33:01 -0500
+Subject: [PATCH v2 1/4] ima: fail file signature verification on non-init
+	mounted filesystems
+In-Reply-To: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1519335184-17808-2-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-For local filesystems, the kernel prevents files being executed from
-being modified.  With IMA-measurement enabled, the kernel also emits
-audit "time of measure, time of use" messages for files opened for
-read, and subsequently opened for write.
+FUSE can be mounted by unprivileged users either today with fusermount
+installed with setuid, or soon with the upcoming patches to allow FUSE
+mounts in a non-init user namespace.
 
-Files on fuse are initially measured, appraised, and audited.  Although
-the file data can change dynamically any time, making re-measuring,
-re-appraising, or re-auditing pointless, this patch set attempts to
-differentiate between unprivileged non-init root and privileged
-mounted fuse filesystems.
+This patch addresses the new unprivileged non-init mounted filesystems,
+which are untrusted, by failing the signature verification.
 
-This patch set addresses three different scenarios:
-- Unprivileged non-init root mounted fuse filesystems are untrusted.
-  Signature verification should always fail and re-measuring,
-  re-appraising, re-auditing files makes no sense.
+This patch defines two new flags SB_I_IMA_UNVERIFIABLE_SIGNATURE and
+SB_I_UNTRUSTED_MOUNTER.
 
-  Always enabled.
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Seth Forshee <seth.forshee@canonical.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Dongsu Park <dongsu@kinvolk.io>
+Cc: Alban Crequy <alban@kinvolk.io>
+Cc: Serge E. Hallyn <serge@hallyn.com>
 
-- For privileged mounted filesystems in a "secure" environment, with a
-  correctly enforced security policy, which is willing to assume the
-  inherent risk of specific fuse filesystems, it is reasonable to
-  re-measure, re-appraise, and re-audit files.
+Changelog v2:
+- Limit patch to non-init mounted filesystems.
+- Define 2 sb->s_iflags
 
-  Enabled by default to prevent breaking existing systems.
+Changelog v1:
+- Merged the unprivileged and privileged patches.
+- Dropped IMA fsname support.
+- Introduced a new IMA builtin policy named "untrusted_fs".
+- Replaced fs_type flag with sb->s_iflags flag.
+---
+ include/linux/fs.h                    |  2 ++
+ security/integrity/ima/ima_appraise.c | 14 +++++++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-- Privileged mounted filesystems unwilling to assume the risks and
-  prefers to fail safe.
-
-  Enabled based on policy.
-
-Mimi
-
-Mimi Zohar (4):
-  ima: fail file signature verification on non-init mounted filesystems
-  ima: re-evaluate files on privileged mounted filesystems
-  ima: fail signature verification based on policy
-  fuse: define the filesystem as untrusted
-
- Documentation/admin-guide/kernel-parameters.txt |  8 +++++++-
- fs/fuse/inode.c                                 |  3 +++
- include/linux/fs.h                              |  2 ++
- security/integrity/ima/ima_appraise.c           | 16 +++++++++++++++-
- security/integrity/ima/ima_main.c               | 14 ++++++++++++--
- security/integrity/ima/ima_policy.c             |  5 +++++
- security/integrity/integrity.h                  |  1 +
- 7 files changed, 45 insertions(+), 4 deletions(-)
-
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2a815560fda0..4e1c76af7b68 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1320,6 +1320,8 @@ extern int send_sigurg(struct fown_struct *fown);
+ 
+ /* sb->s_iflags to limit user namespace mounts */
+ #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
++#define SB_I_IMA_UNVERIFIABLE_SIGNATURE	0x00000020
++#define SB_I_UNTRUSTED_MOUNTER		0x00000040
+ 
+ /* Possible states of 'frozen' field */
+ enum {
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 1b177461f20e..f34901069e78 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -302,7 +302,18 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	}
+ 
+ out:
+-	if (status != INTEGRITY_PASS) {
++	/*
++	 * File signatures on some filesystems can not be properly verified.
++	 * On these filesytems, that are mounted by an untrusted mounter,
++	 * fail the file signature verification.
++	 */
++	if (inode->i_sb->s_iflags &
++	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) {
++		status = INTEGRITY_FAIL;
++		cause = "unverifiable-signature";
++		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++				    op, cause, rc, 0);
++	} else if (status != INTEGRITY_PASS) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+ 		    (!xattr_value ||
+ 		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+@@ -319,6 +330,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	} else {
+ 		ima_cache_flags(iint, func);
+ 	}
++
+ 	ima_set_cache_status(iint, func, status);
+ 	return status;
+ }
 -- 
 2.7.5
 
