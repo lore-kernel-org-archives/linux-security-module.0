@@ -1,104 +1,235 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 22 Feb 2018 13:07:57 +0000
-Subject: [PATCH 04/30] Enforce module signatures if the kernel is locked
-	down
-In-Reply-To: <151024866805.28329.10437019941463042267.stgit@warthog.procyon.org.uk>
-References: <151024866805.28329.10437019941463042267.stgit@warthog.procyon.org.uk>
+Date: Thu, 22 Feb 2018 14:20:43 +0000
+Subject: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
+	locked down
+In-Reply-To: <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
+References: <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
 	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-Message-ID: <30284.1519304877@warthog.procyon.org.uk>
+Message-ID: <8846.1519309243@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-I'm considering folding the attached changes into this patch.
-
-It adjusts the errors generated:
-
- (1) If there's no signature (ENODATA) or we can't check it (ENOPKG, ENOKEY),
-     then:
-
-     (a) If signatures are enforced then EKEYREJECTED is returned.
-
-     (b) If IMA will have validated the image, return 0 (okay).
-
-     (c) If there's no signature or we can't check it, but the kernel is
-	 locked down then EPERM is returned (this is then consistent with
-	 other lockdown cases).
-
- (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
-     the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we return
-     the error we got.
-
-Note that the X.509 code doesn't check for key expiry as the RTC might not be
-valid or might not have been transferred to the kernel's clock yet.
+I'm intending on inserting the attached patch before this one.
 
 David
 ---
-diff --git a/kernel/module.c b/kernel/module.c
-index 1eb06a0ccbfb..62419cf48ef6 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2769,8 +2769,9 @@ static inline void kmemleak_load_module(const struct module *mod,
- static int module_sig_check(struct load_info *info, int flags,
- 			    bool can_do_ima_check)
- {
--	int err = -ENOKEY;
-+	int err = -ENODATA;
- 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
-+	const char *reason;
- 	const void *mod = info->hdr;
+commit 87a39b258eca2e15884ee90c3fcd5758d6057b17
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Feb 22 13:42:04 2018 +0000
+
+    kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+    
+    This is a preparatory patch for kexec_file_load() lockdown.  A locked down
+    kernel needs to prevent unsigned kernel images to be loaded with
+    kexec_file_load().  Currently, the only way to force the signature
+    verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
+    usigned images even when the kernel is not locked down at runtime.
+    
+    This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
+    Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
+    turns on the signature verification but allows unsigned images to be
+    loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
+    
+    [Modified by David Howells such that:
+    
+     (1) verify_pefile_signature() differentiates between no-signature and
+         sig-didn't-match in its returned errors.
+    
+     (2) kexec fails with EKEYREJECTED and logs an appropriate message if
+         signature checking is enforced and an signature is not found, uses
+         unsupported crypto or has no matching key.
+    
+     (3) kexec fails with EKEYREJECTED if there is a signature for which we
+         have a key, but signature doesn't match - even if in non-forcing mode.
+    
+     (4) kexec fails with EBADMSG or some other error if there is a signature
+         which cannot be parsed - even if in non-forcing mode.
+    
+     (5) kexec fails with ELIBBAD if the PE file cannot be parsed to extract
+         the signature - even if in non-forcing mode.
+    
+    ]
+    
+    Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: Matthew Garrett <mjg59@srcf.ucam.org>
+    cc: Chun-Yi Lee <jlee@suse.com>
+    cc: kexec at lists.infradead.org
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c1236b187824..cb6e67b7442d 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2019,20 +2019,30 @@ config KEXEC_FILE
+ 	  for kernel and initramfs as opposed to list of segments as
+ 	  accepted by previous system call.
  
- 	/*
-@@ -2785,18 +2786,42 @@ static int module_sig_check(struct load_info *info, int flags,
- 		err = mod_verify_sig(mod, &info->len);
+-config KEXEC_VERIFY_SIG
++config KEXEC_SIG
+ 	bool "Verify kernel signature during kexec_file_load() syscall"
+ 	depends on KEXEC_FILE
+ 	---help---
+-	  This option makes kernel signature verification mandatory for
+-	  the kexec_file_load() syscall.
+ 
+-	  In addition to that option, you need to enable signature
++	  This option makes the kexec_file_load() syscall check for a valid
++	  signature of the kernel image.  The image can still be loaded without
++	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
++	  there's a signature that we can check, then it must be valid.
++
++	  In addition to this option, you need to enable signature
+ 	  verification for the corresponding kernel image type being
+ 	  loaded in order for this to work.
+ 
++config KEXEC_SIG_FORCE
++	bool "Require a valid signature in kexec_file_load() syscall"
++	depends on KEXEC_SIG
++	---help---
++	  This option makes kernel signature verification mandatory for
++	  the kexec_file_load() syscall.
++
+ config KEXEC_BZIMAGE_VERIFY_SIG
+ 	bool "Enable bzImage signature verification support"
+-	depends on KEXEC_VERIFY_SIG
++	depends on KEXEC_SIG
+ 	depends on SIGNED_PE_FILE_VERIFICATION
+ 	select SYSTEM_TRUSTED_KEYRING
+ 	---help---
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 1f790cf9d38f..3fbe35b923ef 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -406,7 +406,7 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
+ 	return image->fops->cleanup(image->image_loader_data);
+ }
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ int arch_kexec_kernel_verify_sig(struct kimage *image, void *kernel,
+ 				 unsigned long kernel_len)
+ {
+diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+index d178650fd524..4473cea1e877 100644
+--- a/crypto/asymmetric_keys/verify_pefile.c
++++ b/crypto/asymmetric_keys/verify_pefile.c
+@@ -100,7 +100,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 
+ 	if (!ddir->certs.virtual_address || !ddir->certs.size) {
+ 		pr_debug("Unsigned PE binary\n");
+-		return -EKEYREJECTED;
++		return -ENODATA;
  	}
  
--	if (!err) {
-+	switch (err) {
-+	case 0:
- 		info->sig_ok = true;
- 		return 0;
--	}
+ 	chkaddr(ctx->header_size, ddir->certs.virtual_address,
+@@ -408,6 +408,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
+  *  (*) 0 if at least one signature chain intersects with the keys in the trust
+  *	keyring, or:
+  *
++ *  (*) -ENODATA if there is no signature present.
++ *
+  *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
+  *	chain.
+  *
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index f16f6ceb3875..19652372f3ee 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -121,7 +121,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
+ 			     unsigned long cmdline_len);
+ typedef int (kexec_cleanup_t)(void *loader_data);
  
--	/* Not having a signature is only an error if we're strict. */
--	if (err == -ENOKEY && !sig_enforce &&
--	    (!can_do_ima_check || !is_ima_appraise_enabled()) &&
--	    !kernel_is_locked_down("Loading of unsigned modules"))
--		err = 0;
-+		/* We don't permit modules to be loaded into trusted kernels
-+		 * without a valid signature on them, but if we're not
-+		 * enforcing, certain errors are non-fatal.
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ typedef int (kexec_verify_sig_t)(const char *kernel_buf,
+ 				 unsigned long kernel_len);
+ #endif
+@@ -130,7 +130,7 @@ struct kexec_file_ops {
+ 	kexec_probe_t *probe;
+ 	kexec_load_t *load;
+ 	kexec_cleanup_t *cleanup;
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ 	kexec_verify_sig_t *verify_sig;
+ #endif
+ };
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index e5bcd94c1efb..d5931e392050 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -45,7 +45,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
+ 	return -EINVAL;
+ }
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ int __weak arch_kexec_kernel_verify_sig(struct kimage *image, void *buf,
+ 					unsigned long buf_len)
+ {
+@@ -116,7 +116,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 			     const char __user *cmdline_ptr,
+ 			     unsigned long cmdline_len, unsigned flags)
+ {
+-	int ret = 0;
++	const char *reason;
++	int ret;
+ 	void *ldata;
+ 	loff_t size;
+ 
+@@ -135,15 +136,48 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 	if (ret)
+ 		goto out;
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ 	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
+ 					   image->kernel_buf_len);
+-	if (ret) {
+-		pr_debug("kernel signature verification failed.\n");
++#else
++	ret = -ENODATA;
++#endif
++
++	switch (ret) {
++	case 0:
++		break;
++
++		/* Certain verification errors are non-fatal if we're not
++		 * checking errors, provided we aren't mandating that there
++		 * must be a valid signature.
 +		 */
 +	case -ENODATA:
-+		reason = "Loading of unsigned module";
++		reason = "kexec of unsigned image";
 +		goto decide;
 +	case -ENOPKG:
-+		reason = "Loading of module with unsupported crypto";
++		reason = "kexec of image with unsupported crypto";
 +		goto decide;
 +	case -ENOKEY:
-+		reason = "Loading of module with unavailable key";
++		reason = "kexec of image with unavailable key";
 +	decide:
-+		if (sig_enforce) {
-+			pr_notice("%s is rejected\n", reason);
-+			return -EKEYREJECTED;
++		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
++			pr_notice("%s rejected\n", reason);
++			ret = -EKEYREJECTED;
++			goto out;
 +		}
- 
--	return err;
-+		if (can_do_ima_check && is_ima_appraise_enabled())
-+			return 0;
-+		if (kernel_is_locked_down(reason))
-+			return -EPERM;
-+		return 0;
++
++		ret = 0;
++		break;
 +
 +		/* All other errors are fatal, including nomem, unparseable
 +		 * signatures and signature check failures - even if signatures
 +		 * aren't required.
 +		 */
 +	default:
-+		return err;
-+	}
- }
- #else /* !CONFIG_MODULE_SIG */
- static int module_sig_check(struct load_info *info, int flags,
++		pr_notice("kernel signature verification failed (%d).\n", ret);
+ 		goto out;
+ 	}
+-	pr_debug("kernel signature verification successful.\n");
+-#endif
++
+ 	/* It is possible that there no initramfs is being loaded */
+ 	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
+ 		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
