@@ -1,29 +1,29 @@
 From: jbohac@suse.cz (Jiri Bohac)
-Date: Thu, 22 Feb 2018 20:08:14 +0100
+Date: Thu, 22 Feb 2018 20:14:28 +0100
 Subject: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
 	locked down
-In-Reply-To: <8846.1519309243@warthog.procyon.org.uk>
-References: <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
+In-Reply-To: <8887.1519309313@warthog.procyon.org.uk>
+References: <8846.1519309243@warthog.procyon.org.uk>
+	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
 	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-	<8846.1519309243@warthog.procyon.org.uk>
-Message-ID: <20180222190814.a5mavnqvii5i6ptf@dwarf.suse.cz>
+	<8887.1519309313@warthog.procyon.org.uk>
+Message-ID: <20180222191428.mam3w3n3flc63jn2@dwarf.suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:20:43PM +0000, David Howells wrote:
-> commit 87a39b258eca2e15884ee90c3fcd5758d6057b17
+On Thu, Feb 22, 2018 at 02:21:53PM +0000, David Howells wrote:
+> commit ed0424c531d7dd25adebdec0ee6a78a5784f207a
 > Author: David Howells <dhowells@redhat.com>
-> Date:   Thu Feb 22 13:42:04 2018 +0000
+> Date:   Thu Feb 22 14:01:49 2018 +0000
 > 
->     kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+>     kexec_file: Restrict at runtime if the kernel is locked down
 >     
->     This is a preparatory patch for kexec_file_load() lockdown.  A locked down
->     kernel needs to prevent unsigned kernel images to be loaded with
+>     When KEXEC_VERIFY_SIG is not enabled, kernel should not load images through
 
-s/to be loaded/from being loaded/
-(my own mistake :-))
+s/KEXEC_VERIFY_SIG/KEXEC_SIG/
+Again, my mistake :/
 
-Otherwise looks good. Thanks for improving my idea.
+Other than that, looks OK. Much cleaner than my version. Thanks!
 
 Reviewed-by: Jiri Bohac <jbohac@suse.cz>
 
