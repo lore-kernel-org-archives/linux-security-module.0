@@ -1,52 +1,39 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 22 Feb 2018 16:33:04 -0500
-Subject: [PATCH v2 4/4] fuse: define the filesystem as untrusted
-In-Reply-To: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1519335184-17808-5-git-send-email-zohar@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 22 Feb 2018 18:08:05 -0500
+Subject: [PATCH V7 2/4] sctp: Add ip option support
+In-Reply-To: <161ba1d60d8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+References: <20180220191527.14307-1-richard_c_haines@btinternet.com>
+	<20180221143345.GA3888@localhost.localdomain>
+	<161ba1d60d8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+Message-ID: <CAHC9VhSnPku5SYnNkyUqvi46OpzPZKbJf+fxeCR0y3ym0zcMYA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Files on FUSE can change at any point in time without IMA being able
-to detect it.  The file data read for the file signature verification
-could be totally different from what is subsequently read, making the
-signature verification useless.
+On Wed, Feb 21, 2018 at 3:45 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On February 21, 2018 9:33:51 AM Marcelo Ricardo Leitner <marcelo.leitner@gmail.com> wrote:
+>> On Tue, Feb 20, 2018 at 07:15:27PM +0000, Richard Haines wrote:
+>>> Add ip option support to allow LSM security modules to utilise CIPSO/IPv4
+>>> and CALIPSO/IPv6 services.
+>>>
+>>> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+>>
+>> LGTM too, thanks!
+>>
+>> Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+>
+> I agree, thanks everyone for all the work, review, and patience behind this patchset!  I'll work on merging this into selinux/next and I'll send a note when it's done.
 
-FUSE can be mounted by unprivileged users either today with fusermount
-installed with setuid, or soon with the upcoming patches to allow FUSE
-mounts in a non-init user namespace.
+I just merged the four patches (1,3,4 from the v6 patchset, 2 from the
+v7 patchset) in selinux/next and did a quick sanity test on the kernel
+(booted, no basic SELinux regressions).  Additional testing help is
+always appreciated ...
 
-This patch sets the SB_I_IMA_UNVERIFIABLE_SIGNATURE flag and when
-appropriate sets the SB_I_UNTRUSTED_MOUNTER flag.
+* git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+* https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Seth Forshee <seth.forshee@canonical.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Dongsu Park <dongsu@kinvolk.io>
-Cc: Alban Crequy <alban@kinvolk.io>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
----
- fs/fuse/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 624f18bbfd2b..ef309958e060 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1080,6 +1080,9 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
- 	sb->s_time_gran = 1;
- 	sb->s_export_op = &fuse_export_operations;
-+	sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
-+	if (sb->s_user_ns != &init_user_ns)
-+		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
- 
- 	file = fget(d.fd);
- 	err = -EINVAL;
 -- 
-2.7.5
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
