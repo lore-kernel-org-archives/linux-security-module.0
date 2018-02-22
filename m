@@ -1,19 +1,17 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 22 Feb 2018 23:42:15 +0000
-Subject: [PATCH 6/6] KEYS: Use individual pages in big_key for crypto
-	buffers
-In-Reply-To: <151931646922.27713.5363631712174136041.stgit@warthog.procyon.org.uk>
-References: <151931646922.27713.5363631712174136041.stgit@warthog.procyon.org.uk>
-	<151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
-Message-ID: <29838.1519342935@warthog.procyon.org.uk>
+Date: Thu, 22 Feb 2018 23:44:41 +0000
+Subject: [RFC][PATCH 0/6] KEYS: Fixes
+In-Reply-To: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
+References: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
+Message-ID: <29946.1519343081@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+I've posted an update that converts the min() to a min_t() and tagged it:
 
-> +		l = min(len, PAGE_SIZE);
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/tag/?h=keys-fixes-20180222-2
 
-Sigh.  This needs to be a min_t().
+Do you want me to repost the patches?
 
 David
 --
