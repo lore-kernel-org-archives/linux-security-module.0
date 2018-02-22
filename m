@@ -1,35 +1,59 @@
-From: jbohac@suse.cz (Jiri Bohac)
-Date: Thu, 22 Feb 2018 20:14:28 +0100
-Subject: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
-	locked down
-In-Reply-To: <8887.1519309313@warthog.procyon.org.uk>
-References: <8846.1519309243@warthog.procyon.org.uk>
-	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
-	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
-	<8887.1519309313@warthog.procyon.org.uk>
-Message-ID: <20180222191428.mam3w3n3flc63jn2@dwarf.suse.cz>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 22 Feb 2018 16:33:00 -0500
+Subject: [PATCH v2 0/4] ima: unverifiable file signatures
+Message-ID: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:21:53PM +0000, David Howells wrote:
-> commit ed0424c531d7dd25adebdec0ee6a78a5784f207a
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Thu Feb 22 14:01:49 2018 +0000
-> 
->     kexec_file: Restrict at runtime if the kernel is locked down
->     
->     When KEXEC_VERIFY_SIG is not enabled, kernel should not load images through
+For local filesystems, the kernel prevents files being executed from
+being modified.  With IMA-measurement enabled, the kernel also emits
+audit "time of measure, time of use" messages for files opened for
+read, and subsequently opened for write.
 
-s/KEXEC_VERIFY_SIG/KEXEC_SIG/
-Again, my mistake :/
+Files on fuse are initially measured, appraised, and audited.  Although
+the file data can change dynamically any time, making re-measuring,
+re-appraising, or re-auditing pointless, this patch set attempts to
+differentiate between unprivileged non-init root and privileged
+mounted fuse filesystems.
 
-Other than that, looks OK. Much cleaner than my version. Thanks!
+This patch set addresses three different scenarios:
+- Unprivileged non-init root mounted fuse filesystems are untrusted.
+  Signature verification should always fail and re-measuring,
+  re-appraising, re-auditing files makes no sense.
 
-Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+  Always enabled.
+
+- For privileged mounted filesystems in a "secure" environment, with a
+  correctly enforced security policy, which is willing to assume the
+  inherent risk of specific fuse filesystems, it is reasonable to
+  re-measure, re-appraise, and re-audit files.
+
+  Enabled by default to prevent breaking existing systems.
+
+- Privileged mounted filesystems unwilling to assume the risks and
+  prefers to fail safe.
+
+  Enabled based on policy.
+
+Mimi
+
+Mimi Zohar (4):
+  ima: fail file signature verification on non-init mounted filesystems
+  ima: re-evaluate files on privileged mounted filesystems
+  ima: fail signature verification based on policy
+  fuse: define the filesystem as untrusted
+
+ Documentation/admin-guide/kernel-parameters.txt |  8 +++++++-
+ fs/fuse/inode.c                                 |  3 +++
+ include/linux/fs.h                              |  2 ++
+ security/integrity/ima/ima_appraise.c           | 16 +++++++++++++++-
+ security/integrity/ima/ima_main.c               | 14 ++++++++++++--
+ security/integrity/ima/ima_policy.c             |  5 +++++
+ security/integrity/integrity.h                  |  1 +
+ 7 files changed, 45 insertions(+), 4 deletions(-)
 
 -- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
+2.7.5
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
