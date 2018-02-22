@@ -1,35 +1,62 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Thu, 22 Feb 2018 16:20:23 +0200
-Subject: [PATCH 3/6] struct page: add field for vm_struct
-In-Reply-To: <c4c805ed-5869-81c2-4c05-cf53bfbef168@huawei.com>
-References: <20180211031920.3424-1-igor.stoppa@huawei.com>
-	<20180211031920.3424-4-igor.stoppa@huawei.com>
-	<20180211211646.GC4680@bombadil.infradead.org>
-	<cef01110-dc23-4442-f277-88d1d3662e00@huawei.com>
-	<b59546a4-5a5b-ca48-3b51-09440b6a5493@huawei.com>
-	<20180220205442.GA15973@bombadil.infradead.org>
-	<c4c805ed-5869-81c2-4c05-cf53bfbef168@huawei.com>
-Message-ID: <bc62d1e7-96ec-d8c5-3149-9dd1922555e4@huawei.com>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 22 Feb 2018 14:21:53 +0000
+Subject: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
+	locked down
+In-Reply-To: <8846.1519309243@warthog.procyon.org.uk>
+References: <8846.1519309243@warthog.procyon.org.uk>
+	<151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
+	<151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+Message-ID: <8887.1519309313@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 21/02/18 14:01, Igor Stoppa wrote:
+David Howells <dhowells@redhat.com> wrote:
 
-> it seems to return garbage also without this patch, but I need to clean
-> up the code, try it again and possibly come up with a demo patch for
-> triggering the problem.
-> 
-> I'll investigate it more. However it doesn't seem to be related to the
-> functionality I need. So I plan to treat it as separate issue and leave
-> find_vm_area untouched, at least in pmalloc scope.
+> I'm intending on inserting the attached patch before this one.
 
+And replacing this patch with the attached.
 
-Follow-up:
+David
+---
+commit ed0424c531d7dd25adebdec0ee6a78a5784f207a
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Feb 22 14:01:49 2018 +0000
 
-https://lkml.org/lkml/2018/2/22/427
+    kexec_file: Restrict at runtime if the kernel is locked down
+    
+    When KEXEC_VERIFY_SIG is not enabled, kernel should not load images through
+    kexec_file systemcall if the kernel is locked down unless IMA can be used
+    to validate the image.
+    
+    [Modified by David Howells to fit with modifications to the previous patch
+     and to return -EPERM if the kernel is locked down for consistency with
+     other lockdowns]
+    
+    Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+    cc: Chun-Yi Lee <jlee@suse.com>
+    cc: kexec at lists.infradead.org
 
---
-igor
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index d5931e392050..c47c4de604cd 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -167,6 +167,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 		}
+ 
+ 		ret = 0;
++		if (is_ima_appraise_enabled())
++			break;
++
++		if (kernel_is_locked_down(reason)) {
++			ret = -EPERM;
++			goto out;
++		}
++
+ 		break;
+ 
+ 		/* All other errors are fatal, including nomem, unparseable
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
