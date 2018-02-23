@@ -1,56 +1,79 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 23 Feb 2018 11:11:50 -0500
-Subject: [PATCH V7 2/4] sctp: Add ip option support
-In-Reply-To: <20180223024010.GE4375@localhost.localdomain>
-References: <20180220191527.14307-1-richard_c_haines@btinternet.com>
-	<20180221143345.GA3888@localhost.localdomain>
-	<161ba1d60d8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-	<CAHC9VhSnPku5SYnNkyUqvi46OpzPZKbJf+fxeCR0y3ym0zcMYA@mail.gmail.com>
-	<20180223024010.GE4375@localhost.localdomain>
-Message-ID: <CAHC9VhT_1GQJPoOBN0ambF=F1+ZXhoYB3mMc8kzgCFOep+hsCg@mail.gmail.com>
+From: jmorris@namei.org (James Morris)
+Date: Sat, 24 Feb 2018 06:10:23 +1100 (AEDT)
+Subject: [GIT PULL] Security subsystem fixes for v4.16-rc3
+Message-ID: <alpine.LRH.2.21.1802240605510.3023@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Feb 22, 2018 at 9:40 PM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Thu, Feb 22, 2018 at 06:08:05PM -0500, Paul Moore wrote:
->> On Wed, Feb 21, 2018 at 3:45 PM, Paul Moore <paul@paul-moore.com> wrote:
->> > On February 21, 2018 9:33:51 AM Marcelo Ricardo Leitner <marcelo.leitner@gmail.com> wrote:
->> >> On Tue, Feb 20, 2018 at 07:15:27PM +0000, Richard Haines wrote:
->> >>> Add ip option support to allow LSM security modules to utilise CIPSO/IPv4
->> >>> and CALIPSO/IPv6 services.
->> >>>
->> >>> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
->> >>
->> >> LGTM too, thanks!
->> >>
->> >> Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
->> >
->> > I agree, thanks everyone for all the work, review, and patience behind this patchset!  I'll work on merging this into selinux/next and I'll send a note when it's done.
->>
->> I just merged the four patches (1,3,4 from the v6 patchset, 2 from the
->> v7 patchset) in selinux/next and did a quick sanity test on the kernel
->> (booted, no basic SELinux regressions).  Additional testing help is
->> always appreciated ...
->
-> I'll try it early next week.
->
-> Any ideas on when this is going to appear on Dave's net-next tree?
-> We have a lot of SCTP changes to be posted on this cycle and would be
-> nice if we could avoid merge conflicts.
+Please pull these updates, which include:
 
-It's merged into the SELinux tree, next branch; see the links below.
-Last I checked DaveM doesn't pull the selinux/next into his net-next
-tree (that would be a little funny for historical reasons).
+- Keys fixes via David Howells:
 
-Any idea on how bad the merge conflicts are?
+  "Here's a collection of fixes for Linux keyrings, mostly thanks to Eric
+   Biggers, if you could pass them along to Linus.  They include:
 
->> * git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
->> * https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   (1) Fix some PKCS#7 verification issues.
 
--- 
-paul moore
-www.paul-moore.com
+   (2) Fix handling of unsupported crypto in X.509.
+
+   (3) Fix too-large allocation in big_key."
+
+- Seccomp updates via Kees Cook:
+
+  "Please pull these seccomp changes for v4.16-rc3. These are fixes for 
+   the get_metadata interface that landed during -rc1. While the new 
+   selftest is strictly not a bug fix, I think it's in the same spirit of 
+   avoiding bugs."
+
+And also an IMA build fix from Randy Dunlap.
+
+---
+
+The following changes since commit af3e79d29555b97dd096e2f8e36a0f50213808a8:
+
+  Merge tag 'leds_for-4.16-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds (2018-02-20 10:05:02 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.16-rc3
+
+for you to fetch changes up to 120f3b11ef88fc38ce1d0ff9c9a4b37860ad3140:
+
+  integrity/security: fix digsig.c build error with header file (2018-02-22 20:09:08 -0800)
+
+----------------------------------------------------------------
+David Howells (1):
+      KEYS: Use individual pages in big_key for crypto buffers
+
+Eric Biggers (5):
+      PKCS#7: fix certificate chain verification
+      PKCS#7: fix certificate blacklisting
+      PKCS#7: fix direct verification of SignerInfo signature
+      X.509: fix BUG_ON() when hash algorithm is unsupported
+      X.509: fix NULL dereference when restricting key with unsupported_sig
+
+James Morris (2):
+      Merge tag 'seccomp-v4.16-rc3' of https://git.kernel.org/.../kees/linux into fixes-v4.16-rc3
+      Merge tag 'keys-fixes-20180222-2' of https://git.kernel.org/.../dhowells/linux-fs into fixes-v4.16-rc3
+
+Randy Dunlap (1):
+      integrity/security: fix digsig.c build error with header file
+
+Tycho Andersen (3):
+      seccomp, ptrace: switch get_metadata types to arch independent
+      ptrace, seccomp: tweak get_metadata behavior slightly
+      seccomp: add a selftest for get_metadata
+
+ crypto/asymmetric_keys/pkcs7_trust.c          |   1 +
+ crypto/asymmetric_keys/pkcs7_verify.c         |  12 +--
+ crypto/asymmetric_keys/public_key.c           |   4 +-
+ crypto/asymmetric_keys/restrict.c             |  21 +++--
+ include/uapi/linux/ptrace.h                   |   4 +-
+ kernel/seccomp.c                              |   6 +-
+ security/integrity/digsig.c                   |   1 +
+ security/keys/big_key.c                       | 110 ++++++++++++++++++++------
+ tools/testing/selftests/seccomp/seccomp_bpf.c |  61 ++++++++++++++
+ 9 files changed, 179 insertions(+), 41 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
