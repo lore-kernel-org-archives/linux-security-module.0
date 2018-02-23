@@ -1,50 +1,82 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 23 Feb 2018 15:00:23 +1100 (AEDT)
-Subject: [PATCH v2 0/4] ima: unverifiable file signatures
-In-Reply-To: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1802231500070.3442@namei.org>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Fri, 23 Feb 2018 16:48:00 +0200
+Subject: [RFC PATCH v17 0/7] mm: security: ro protection for dynamic data
+Message-ID: <20180223144807.1180-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 22 Feb 2018, Mimi Zohar wrote:
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-> For local filesystems, the kernel prevents files being executed from
-> being modified.  With IMA-measurement enabled, the kernel also emits
-> audit "time of measure, time of use" messages for files opened for
-> read, and subsequently opened for write.
-> 
-> Files on fuse are initially measured, appraised, and audited.  Although
-> the file data can change dynamically any time, making re-measuring,
-> re-appraising, or re-auditing pointless, this patch set attempts to
-> differentiate between unprivileged non-init root and privileged
-> mounted fuse filesystems.
-> 
-> This patch set addresses three different scenarios:
-> - Unprivileged non-init root mounted fuse filesystems are untrusted.
->   Signature verification should always fail and re-measuring,
->   re-appraising, re-auditing files makes no sense.
-> 
->   Always enabled.
-> 
-> - For privileged mounted filesystems in a "secure" environment, with a
->   correctly enforced security policy, which is willing to assume the
->   inherent risk of specific fuse filesystems, it is reasonable to
->   re-measure, re-appraise, and re-audit files.
-> 
->   Enabled by default to prevent breaking existing systems.
-> 
-> - Privileged mounted filesystems unwilling to assume the risks and
->   prefers to fail safe.
-> 
->   Enabled based on policy.
+The memory is managed in pools: when a memory pool is turned into R/O,
+all the memory that is part of it, will become R/O.
 
-I like this approach.
+A R/O pool can be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
+
+However the data might need to be released, for example as part of module
+unloading.
+To do this, the memory must first be freed, then the pool can be destroyed.
+
+An example is provided, in the form of self-testing.
+
+Changes since v16:
+[http://www.openwall.com/lists/kernel-hardening/2018/02/12/13]
+
+* introduced lkdtm test for write protection of a variable
+* added comments with rationale for use of BUG_ON() when running selftest
+* converted self-tests to kernel naming patter "test_xxx.c"
+* moved triggering of pmalloc self-testing to early phase of main.c
+* improved summaries of genalloc and vmalloc patches
+* removed example of optimization of find_vm_area because of possible bug
+  in vmalloc_to_page:
+[https://www.mail-archive.com/linux-kernel at vger.kernel.org/msg1617030.html]
+
+Igor Stoppa (7):
+  genalloc: track beginning of allocations
+  genalloc: selftest
+  struct page: add field for vm_struct
+  Protectable Memory
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+  Documentation for Pmalloc
+
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 114 +++++++
+ drivers/misc/lkdtm.h               |   1 +
+ drivers/misc/lkdtm_core.c          |   3 +
+ drivers/misc/lkdtm_perms.c         |  28 ++
+ include/linux/genalloc.h           |   7 +-
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 242 ++++++++++++++
+ include/linux/test_genalloc.h      |  26 ++
+ include/linux/test_pmalloc.h       |  24 ++
+ include/linux/vmalloc.h            |   1 +
+ init/main.c                        |   4 +
+ lib/Kconfig                        |  15 +
+ lib/Makefile                       |   1 +
+ lib/genalloc.c                     | 658 +++++++++++++++++++++++++++----------
+ lib/test_genalloc.c                | 410 +++++++++++++++++++++++
+ mm/Kconfig                         |  15 +
+ mm/Makefile                        |   2 +
+ mm/pmalloc.c                       | 499 ++++++++++++++++++++++++++++
+ mm/test_pmalloc.c                  |  79 +++++
+ mm/usercopy.c                      |  33 ++
+ mm/vmalloc.c                       |   5 +
+ 22 files changed, 1999 insertions(+), 170 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 include/linux/test_genalloc.h
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 lib/test_genalloc.c
+ create mode 100644 mm/pmalloc.c
+ create mode 100644 mm/test_pmalloc.c
 
 -- 
-James Morris
-<jmorris@namei.org>
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
