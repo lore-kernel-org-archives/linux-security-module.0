@@ -1,156 +1,56 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Fri, 23 Feb 2018 16:48:07 +0200
-Subject: [PATCH 7/7] Documentation for Pmalloc
-In-Reply-To: <20180223144807.1180-1-igor.stoppa@huawei.com>
-References: <20180223144807.1180-1-igor.stoppa@huawei.com>
-Message-ID: <20180223144807.1180-8-igor.stoppa@huawei.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 23 Feb 2018 11:11:50 -0500
+Subject: [PATCH V7 2/4] sctp: Add ip option support
+In-Reply-To: <20180223024010.GE4375@localhost.localdomain>
+References: <20180220191527.14307-1-richard_c_haines@btinternet.com>
+	<20180221143345.GA3888@localhost.localdomain>
+	<161ba1d60d8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+	<CAHC9VhSnPku5SYnNkyUqvi46OpzPZKbJf+fxeCR0y3ym0zcMYA@mail.gmail.com>
+	<20180223024010.GE4375@localhost.localdomain>
+Message-ID: <CAHC9VhT_1GQJPoOBN0ambF=F1+ZXhoYB3mMc8kzgCFOep+hsCg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Detailed documentation about the protectable memory allocator.
+On Thu, Feb 22, 2018 at 9:40 PM, Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+> On Thu, Feb 22, 2018 at 06:08:05PM -0500, Paul Moore wrote:
+>> On Wed, Feb 21, 2018 at 3:45 PM, Paul Moore <paul@paul-moore.com> wrote:
+>> > On February 21, 2018 9:33:51 AM Marcelo Ricardo Leitner <marcelo.leitner@gmail.com> wrote:
+>> >> On Tue, Feb 20, 2018 at 07:15:27PM +0000, Richard Haines wrote:
+>> >>> Add ip option support to allow LSM security modules to utilise CIPSO/IPv4
+>> >>> and CALIPSO/IPv6 services.
+>> >>>
+>> >>> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+>> >>
+>> >> LGTM too, thanks!
+>> >>
+>> >> Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+>> >
+>> > I agree, thanks everyone for all the work, review, and patience behind this patchset!  I'll work on merging this into selinux/next and I'll send a note when it's done.
+>>
+>> I just merged the four patches (1,3,4 from the v6 patchset, 2 from the
+>> v7 patchset) in selinux/next and did a quick sanity test on the kernel
+>> (booted, no basic SELinux regressions).  Additional testing help is
+>> always appreciated ...
+>
+> I'll try it early next week.
+>
+> Any ideas on when this is going to appear on Dave's net-next tree?
+> We have a lot of SCTP changes to be posted on this cycle and would be
+> nice if we could avoid merge conflicts.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
----
- Documentation/core-api/index.rst   |   1 +
- Documentation/core-api/pmalloc.rst | 114 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 115 insertions(+)
- create mode 100644 Documentation/core-api/pmalloc.rst
+It's merged into the SELinux tree, next branch; see the links below.
+Last I checked DaveM doesn't pull the selinux/next into his net-next
+tree (that would be a little funny for historical reasons).
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index c670a8031786..8f5de42d6571 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -25,6 +25,7 @@ Core utilities
-    genalloc
-    errseq
-    printk-formats
-+   pmalloc
- 
- Interfaces for kernel debugging
- ===============================
-diff --git a/Documentation/core-api/pmalloc.rst b/Documentation/core-api/pmalloc.rst
-new file mode 100644
-index 000000000000..d9725870444e
---- /dev/null
-+++ b/Documentation/core-api/pmalloc.rst
-@@ -0,0 +1,114 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Protectable memory allocator
-+============================
-+
-+Purpose
-+-------
-+
-+The pmalloc library is meant to provide R/O status to data that, for some
-+reason, could neither be declared as constant, nor could it take advantage
-+of the qualifier __ro_after_init, but is write-once and read-only in spirit.
-+It protects data from both accidental and malicious overwrites.
-+
-+Example: A policy that is loaded from userspace.
-+
-+
-+Concept
-+-------
-+
-+pmalloc builds on top of genalloc, using the same concept of memory pools.
-+
-+The value added by pmalloc is that now the memory contained in a pool can
-+become R/O, for the rest of the life of the pool.
-+
-+Different kernel drivers and threads can use different pools, for finer
-+control of what becomes R/O and when. And for improved lockless concurrency.
-+
-+
-+Caveats
-+-------
-+
-+- Memory freed while a pool is not yet protected will be reused.
-+
-+- Once a pool is protected, it's not possible to allocate any more memory
-+  from it.
-+
-+- Memory "freed" from a protected pool indicates that such memory is not
-+  in use anymore by the requester; however, it will not become available
-+  for further use, until the pool is destroyed.
-+
-+- Before destroying a pool, all the memory allocated from it must be
-+  released.
-+
-+- pmalloc does not provide locking support with respect to allocating vs
-+  protecting an individual pool, for performance reasons.
-+  It is recommended not to share the same pool between unrelated functions.
-+  Should sharing be a necessity, the user of the shared pool is expected
-+  to implement locking for that pool.
-+
-+- pmalloc uses genalloc to optimize the use of the space it allocates
-+  through vmalloc. Some more TLB entries will be used, however less than
-+  in the case of using vmalloc directly. The exact number depends on the
-+  size of each allocation request and possible slack.
-+
-+- Considering that not much data is supposed to be dynamically allocated
-+  and then marked as read-only, it shouldn't be an issue that the address
-+  range for pmalloc is limited, on 32-bit systems.
-+
-+- Regarding SMP systems, the allocations are expected to happen mostly
-+  during an initial transient, after which there should be no more need to
-+  perform cross-processor synchronizations of page tables.
-+
-+- To facilitate the conversion of existing code to pmalloc pools, several
-+  helper functions are provided, mirroring their kmalloc counterparts.
-+
-+
-+Use
-+---
-+
-+The typical sequence, when using pmalloc, is:
-+
-+1. create a pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_create_pool
-+
-+2. [optional] pre-allocate some memory in the pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_prealloc
-+
-+3. issue one or more allocation requests to the pool with locking as needed
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pzalloc
-+
-+4. initialize the memory obtained with desired values
-+
-+5. [optional] iterate over points 3 & 4 as needed
-+
-+6. write-protect the pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_protect_pool
-+
-+7. use in read-only mode the handles obtained through the allocations
-+
-+8. [optional] release all the memory allocated
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pfree
-+
-+9. [optional, but depends on point 8] destroy the pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_destroy_pool
-+
-+API
-+---
-+
-+.. kernel-doc:: include/linux/pmalloc.h
+Any idea on how bad the merge conflicts are?
+
+>> * git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+>> * https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+
 -- 
-2.14.1
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
