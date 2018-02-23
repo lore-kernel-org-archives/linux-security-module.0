@@ -1,48 +1,51 @@
-From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
-Date: Thu, 22 Feb 2018 23:40:10 -0300
-Subject: [PATCH V7 2/4] sctp: Add ip option support
-In-Reply-To: <CAHC9VhSnPku5SYnNkyUqvi46OpzPZKbJf+fxeCR0y3ym0zcMYA@mail.gmail.com>
-References: <20180220191527.14307-1-richard_c_haines@btinternet.com>
-	<20180221143345.GA3888@localhost.localdomain>
-	<161ba1d60d8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-	<CAHC9VhSnPku5SYnNkyUqvi46OpzPZKbJf+fxeCR0y3ym0zcMYA@mail.gmail.com>
-Message-ID: <20180223024010.GE4375@localhost.localdomain>
+From: jmorris@namei.org (James Morris)
+Date: Fri, 23 Feb 2018 15:00:23 +1100 (AEDT)
+Subject: [PATCH v2 0/4] ima: unverifiable file signatures
+In-Reply-To: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1802231500070.3442@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Feb 22, 2018 at 06:08:05PM -0500, Paul Moore wrote:
-> On Wed, Feb 21, 2018 at 3:45 PM, Paul Moore <paul@paul-moore.com> wrote:
-> > On February 21, 2018 9:33:51 AM Marcelo Ricardo Leitner <marcelo.leitner@gmail.com> wrote:
-> >> On Tue, Feb 20, 2018 at 07:15:27PM +0000, Richard Haines wrote:
-> >>> Add ip option support to allow LSM security modules to utilise CIPSO/IPv4
-> >>> and CALIPSO/IPv6 services.
-> >>>
-> >>> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-> >>
-> >> LGTM too, thanks!
-> >>
-> >> Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-> >
-> > I agree, thanks everyone for all the work, review, and patience behind this patchset!  I'll work on merging this into selinux/next and I'll send a note when it's done.
-> 
-> I just merged the four patches (1,3,4 from the v6 patchset, 2 from the
-> v7 patchset) in selinux/next and did a quick sanity test on the kernel
-> (booted, no basic SELinux regressions).  Additional testing help is
-> always appreciated ...
+On Thu, 22 Feb 2018, Mimi Zohar wrote:
 
-I'll try it early next week.
-
-Any ideas on when this is going to appear on Dave's net-next tree?
-We have a lot of SCTP changes to be posted on this cycle and would be
-nice if we could avoid merge conflicts.
-
+> For local filesystems, the kernel prevents files being executed from
+> being modified.  With IMA-measurement enabled, the kernel also emits
+> audit "time of measure, time of use" messages for files opened for
+> read, and subsequently opened for write.
 > 
-> * git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> * https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+> Files on fuse are initially measured, appraised, and audited.  Although
+> the file data can change dynamically any time, making re-measuring,
+> re-appraising, or re-auditing pointless, this patch set attempts to
+> differentiate between unprivileged non-init root and privileged
+> mounted fuse filesystems.
 > 
-> -- 
-> paul moore
-> www.paul-moore.com
+> This patch set addresses three different scenarios:
+> - Unprivileged non-init root mounted fuse filesystems are untrusted.
+>   Signature verification should always fail and re-measuring,
+>   re-appraising, re-auditing files makes no sense.
+> 
+>   Always enabled.
+> 
+> - For privileged mounted filesystems in a "secure" environment, with a
+>   correctly enforced security policy, which is willing to assume the
+>   inherent risk of specific fuse filesystems, it is reasonable to
+>   re-measure, re-appraise, and re-audit files.
+> 
+>   Enabled by default to prevent breaking existing systems.
+> 
+> - Privileged mounted filesystems unwilling to assume the risks and
+>   prefers to fail safe.
+> 
+>   Enabled based on policy.
+
+I like this approach.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
