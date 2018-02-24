@@ -1,73 +1,331 @@
-From: richard_c_haines@btinternet.com (Richard Haines)
-Date: Sat, 24 Feb 2018 10:29:42 +0000
-Subject: [PATCH] selinux: fix typo in selinux_netlbl_sctp_sk_clone
-	declaration
-In-Reply-To: <CAHC9VhTVaogfgf-R=so5mtrh9i1Vy9bnNm5CENgKKDKnSeWjZw@mail.gmail.com>
-References: <20180223211235.2402024-1-arnd@arndb.de>
-	<CAHC9VhTVaogfgf-R=so5mtrh9i1Vy9bnNm5CENgKKDKnSeWjZw@mail.gmail.com>
-Message-ID: <1519468182.2469.7.camel@btinternet.com>
+From: tomas.winkler@intel.com (Tomas Winkler)
+Date: Sat, 24 Feb 2018 17:43:16 +0200
+Subject: [PATCH 1/2 v4] tpm: cmd_ready command can be issued only after
+	granting locality
+Message-ID: <20180224154316.26607-1-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-02-23 at 16:25 -0500, Paul Moore wrote:
-> On Fri, Feb 23, 2018 at 4:12 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > A missing 'struct' keyword caused a build error when
-> > CONFIG_NETLABEL
-> > is disabled:
-> > 
-> > In file included from security/selinux/hooks.c:99:
-> > security/selinux/include/netlabel.h:135:66: error: unknown type
-> > name 'sock'
-> >  static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk,
-> > sock *newsk)
-> >                                                                   ^
-> > ~~~
-> > security/selinux/hooks.c: In function 'selinux_sctp_sk_clone':
-> > security/selinux/hooks.c:5188:2: error: implicit declaration of
-> > function 'selinux_netlbl_sctp_sk_clone'; did you mean
-> > 'selinux_netlbl_inet_csk_clone'? [-Werror=implicit-function-
-> > declaration]
-> > 
-> > Fixes: db97c9f9d312 ("selinux: Add SCTP support")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  security/selinux/include/netlabel.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> Thanks, merged and pushed to selinux/next.
-> 
-> Richard was going to submit a patch for that, but I don't think he
-> would mind you beating him :)
+The correct sequence is to first request locality and only after
+that perform cmd_ready handshake, otherwise the hardware will drop
+the subsequent message as from the device point of view the cmd_ready
+handshake wasn't performed. Symmetrically locality has to be relinquished
+only after going idle handshake has completed, this requires that
+go_idle has to poll for the completion and as well locality
+relinquish has to poll for completion so it is not overridden
+in back to back commands flow.
 
-Don't mind at all. What I will do then is fix the problem highlighted
-by [1] that affects "[PATCH V7 2/4] sctp: Add ip option support", I'll
-issue a V8 asap.
+The issue is only visible on devices that support multiple localities.
 
-[1] https://lists.01.org/pipermail/kbuild-all/2018-February/043695.html
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+V2: poll for locality relinquish completion
+V3: 1. Print error message upon locality relinquish failure
+    2. Don't override rc code on error path with locality relinquish
+V4: 3. Don't capture locality relinquish error code in rc, just print
+	the error message.
 
-> 
-> > diff --git a/security/selinux/include/netlabel.h
-> > b/security/selinux/include/netlabel.h
-> > index 6ef4953431dc..8671de09c363 100644
-> > --- a/security/selinux/include/netlabel.h
-> > +++ b/security/selinux/include/netlabel.h
-> > @@ -132,7 +132,8 @@ static inline void
-> > selinux_netlbl_inet_csk_clone(struct sock *sk, u16 family)
-> >  {
-> >         return;
-> >  }
-> > -static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk,
-> > sock *newsk)
-> > +static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk,
-> > +                                               struct sock *newsk)
-> >  {
-> >         return;
-> >  }
-> > --
-> > 2.9.0
-> > 
-> 
-> 
+       return value.
+ drivers/char/tpm/tpm-interface.c |  20 +++++---
+ drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++++++++++++------------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   2 +-
+ 4 files changed, 93 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e80a953d693..4d74bacca5a1 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_lock(&chip->tpm_mutex);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, true);
+@@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		chip->locality = rc;
+ 	}
+ 
++	if (chip->dev.parent)
++		pm_runtime_get_sync(chip->dev.parent);
++
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+ 		goto out;
+@@ -499,17 +500,24 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
++	if (chip->dev.parent)
++		pm_runtime_put_sync(chip->dev.parent);
++
+ 	if (need_locality && chip->ops->relinquish_locality) {
+-		chip->ops->relinquish_locality(chip, chip->locality);
++		/* this coud be on error path, don't override error code */
++		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
++
++		if (l_rc) {
++			dev_err(&chip->dev, "%s: relinquish_locality: error %d\n",
++				__func__, l_rc);
++		}
+ 		chip->locality = -1;
+ 	}
++
+ out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
+-
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_unlock(&chip->tpm_mutex);
+ 	return rc ? rc : len;
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7b3c2a8aa9de..497edd9848cd 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -112,6 +112,25 @@ struct tpm2_crb_smc {
+ 	u32 smc_func_id;
+ };
+ 
++static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
++				unsigned long timeout)
++{
++	ktime_t start;
++	ktime_t stop;
++
++	start = ktime_get();
++	stop = ktime_add(start, ms_to_ktime(timeout));
++
++	do {
++		if ((ioread32(reg) & mask) == value)
++			return true;
++
++		usleep_range(50, 100);
++	} while (ktime_before(ktime_get(), stop));
++
++	return ((ioread32(reg) & mask) == value);
++}
++
+ /**
+  * crb_go_idle - request tpm crb device to go the idle state
+  *
+@@ -128,7 +147,7 @@ struct tpm2_crb_smc {
+  *
+  * Return: 0 always
+  */
+-static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 		return 0;
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+-	/* we don't really care when this settles */
+ 
++	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
++				 CRB_CTRL_REQ_GO_IDLE/* mask */,
++				 0, /* value */
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "goIdle timed out\n");
++		return -ETIME;
++	}
+ 	return 0;
+ }
+ 
+-static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+-				unsigned long timeout)
+-{
+-	ktime_t start;
+-	ktime_t stop;
+-
+-	start = ktime_get();
+-	stop = ktime_add(start, ms_to_ktime(timeout));
+-
+-	do {
+-		if ((ioread32(reg) & mask) == value)
+-			return true;
+-
+-		usleep_range(50, 100);
+-	} while (ktime_before(ktime_get(), stop));
+-
+-	return false;
+-}
+-
+ /**
+  * crb_cmd_ready - request tpm crb device to enter ready state
+  *
+@@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int __maybe_unused crb_cmd_ready(struct device *dev,
+-					struct crb_priv *priv)
++static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
+ 	return 0;
+ }
+ 
+-static int crb_request_locality(struct tpm_chip *chip, int loc)
++static int __crb_request_locality(struct device *dev,
++				  struct crb_priv *priv, int loc)
+ {
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
+-		CRB_LOC_STATE_TPM_REG_VALID_STS;
++		    CRB_LOC_STATE_TPM_REG_VALID_STS;
+ 
+ 	if (!priv->regs_h)
+ 		return 0;
+@@ -207,21 +212,45 @@ static int crb_request_locality(struct tpm_chip *chip, int loc)
+ 	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
+ 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
+ 				 TPM2_TIMEOUT_C)) {
+-		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
+ 		return -ETIME;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
++static int crb_request_locality(struct tpm_chip *chip, int loc)
+ {
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 
++	return __crb_request_locality(&chip->dev, priv, loc);
++}
++
++static int __crb_relinquish_locality(struct device *dev,
++				     struct crb_priv *priv, int loc)
++{
++	u32 mask = CRB_LOC_STATE_LOC_ASSIGNED |
++		   CRB_LOC_STATE_TPM_REG_VALID_STS;
++	u32 value = CRB_LOC_STATE_TPM_REG_VALID_STS;
++
+ 	if (!priv->regs_h)
+-		return;
++		return 0;
+ 
+ 	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
++	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, mask, value,
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		return -ETIME;
++	}
++
++	return 0;
++}
++
++static int crb_relinquish_locality(struct tpm_chip *chip, int loc)
++{
++	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
++
++	return __crb_relinquish_locality(&chip->dev, priv, loc);
+ }
+ 
+ static u8 crb_status(struct tpm_chip *chip)
+@@ -475,6 +504,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
+ 	}
+ 
++	ret = __crb_request_locality(dev, priv, 0);
++	if (ret)
++		return ret;
++
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+ 	if (IS_ERR(priv->regs_t))
+@@ -531,6 +564,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	crb_go_idle(dev, priv);
+ 
++	__crb_relinquish_locality(dev, priv, 0);
++
+ 	return ret;
+ }
+ 
+@@ -588,10 +623,14 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	chip->acpi_dev_handle = device->handle;
+ 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+-	rc  = crb_cmd_ready(dev, priv);
++	rc = __crb_request_locality(dev, priv, 0);
+ 	if (rc)
+ 		return rc;
+ 
++	rc  = crb_cmd_ready(dev, priv);
++	if (rc)
++		goto out;
++
+ 	pm_runtime_get_noresume(dev);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+@@ -601,12 +640,15 @@ static int crb_acpi_add(struct acpi_device *device)
+ 		crb_go_idle(dev, priv);
+ 		pm_runtime_put_noidle(dev);
+ 		pm_runtime_disable(dev);
+-		return rc;
++		goto out;
+ 	}
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_sync(dev);
+ 
+-	return 0;
++out:
++	__crb_relinquish_locality(dev, priv, 0);
++
++	return rc;
+ }
+ 
+ static int crb_acpi_remove(struct acpi_device *device)
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 183a5f54d875..a22b12adbdfd 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -143,11 +143,13 @@ static bool check_locality(struct tpm_chip *chip, int l)
+ 	return false;
+ }
+ 
+-static void release_locality(struct tpm_chip *chip, int l)
++static int release_locality(struct tpm_chip *chip, int l)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
+ 	tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
++
++	return 0;
+ }
+ 
+ static int request_locality(struct tpm_chip *chip, int l)
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index bcdd3790e94d..06639fb6ab85 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -44,7 +44,7 @@ struct tpm_class_ops {
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+-	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
++	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+ };
+ 
+-- 
+2.14.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
