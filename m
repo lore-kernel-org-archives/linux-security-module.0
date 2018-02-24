@@ -1,328 +1,398 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat, 24 Feb 2018 17:43:16 +0200
-Subject: [PATCH 1/2 v4] tpm: cmd_ready command can be issued only after
-	granting locality
-Message-ID: <20180224154316.26607-1-tomas.winkler@intel.com>
+From: richard_c_haines@btinternet.com (Richard Haines)
+Date: Sat, 24 Feb 2018 16:18:51 +0000
+Subject: [PATCH V8 2/4] sctp: Add ip option support
+Message-ID: <20180224161851.29712-1-richard_c_haines@btinternet.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The correct sequence is to first request locality and only after
-that perform cmd_ready handshake, otherwise the hardware will drop
-the subsequent message as from the device point of view the cmd_ready
-handshake wasn't performed. Symmetrically locality has to be relinquished
-only after going idle handshake has completed, this requires that
-go_idle has to poll for the completion and as well locality
-relinquish has to poll for completion so it is not overridden
-in back to back commands flow.
+Add ip option support to allow LSM security modules to utilise CIPSO/IPv4
+and CALIPSO/IPv6 services.
 
-The issue is only visible on devices that support multiple localities.
-
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
 ---
-V2: poll for locality relinquish completion
-V3: 1. Print error message upon locality relinquish failure
-    2. Don't override rc code on error path with locality relinquish
-V4: 3. Don't capture locality relinquish error code in rc, just print
-	the error message.
+All SCTP lksctp-tools/src/func_tests run correctly in enforcing mode.
+All "./sctp-tests run" obtained from: https://github.com/sctp/sctp-tests
+pass.
 
-       return value.
- drivers/char/tpm/tpm-interface.c |  20 +++++---
- drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++++++++++++------------
- drivers/char/tpm/tpm_tis_core.c  |   4 +-
- include/linux/tpm.h              |   2 +-
- 4 files changed, 93 insertions(+), 41 deletions(-)
+V7 Changes:
+1) Log when copy ip options fail for IPv4 and IPv6
+2) Correct sctp_setsockopt_maxseg() function. Note that the lksctp-tools
+func_tests do not test with struct sctp_assoc_value. Just used simple test
+and okay.
+3) Move calculation of overheads to sctp_packet_config().
+NOTE: Initially in sctp_packet_reset() I set packet->size and
+packet->overhead to zero (as it is a reset). This was okay for all the
+lksctp-tools function tests, however when running "sctp-tests" ndatshched
+tests it causes these to fail with an st_s.log entry of:
+	sid: 3, expected: 3
+	sid: 3, expected: 3
+	unexpected sid packet !!!
+	sid: 1, expected: 3
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 9e80a953d693..4d74bacca5a1 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
- 		mutex_lock(&chip->tpm_mutex);
+I then found sctp_packet_transmit() relies on setting
+"packet->size = packet->overhead;" to reset size to the current overhead
+after sending packets, hence the comment in sctp_packet_reset()
+
+V8 Change:
+Fix sparse warning:
+net/sctp/protocol.c:269:28: sparse: dereference of noderef expression
+highlighted in [1] for sctp_v4_ip_options_len() function.
+
+[1] https://lists.01.org/pipermail/kbuild-all/2018-February/043695.html
+
+ include/net/sctp/sctp.h    |  4 +++-
+ include/net/sctp/structs.h |  2 ++
+ net/sctp/chunk.c           | 10 +++++++---
+ net/sctp/ipv6.c            | 45 ++++++++++++++++++++++++++++++++++++++-------
+ net/sctp/output.c          | 34 +++++++++++++++++++++-------------
+ net/sctp/protocol.c        | 43 +++++++++++++++++++++++++++++++++++++++++++
+ net/sctp/socket.c          | 11 ++++++++---
+ 7 files changed, 122 insertions(+), 27 deletions(-)
+
+diff --git a/include/net/sctp/sctp.h b/include/net/sctp/sctp.h
+index f7ae6b0..25c5c87 100644
+--- a/include/net/sctp/sctp.h
++++ b/include/net/sctp/sctp.h
+@@ -441,9 +441,11 @@ static inline int sctp_list_single_entry(struct list_head *head)
+ static inline int sctp_frag_point(const struct sctp_association *asoc, int pmtu)
+ {
+ 	struct sctp_sock *sp = sctp_sk(asoc->base.sk);
++	struct sctp_af *af = sp->pf->af;
+ 	int frag = pmtu;
  
--	if (chip->dev.parent)
--		pm_runtime_get_sync(chip->dev.parent);
+-	frag -= sp->pf->af->net_header_len;
++	frag -= af->ip_options_len(asoc->base.sk);
++	frag -= af->net_header_len;
+ 	frag -= sizeof(struct sctphdr) + sctp_datachk_len(&asoc->stream);
  
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, true);
-@@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 		chip->locality = rc;
- 	}
- 
-+	if (chip->dev.parent)
-+		pm_runtime_get_sync(chip->dev.parent);
-+
- 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
- 	if (rc)
- 		goto out;
-@@ -499,17 +500,24 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
- 
- out:
-+	if (chip->dev.parent)
-+		pm_runtime_put_sync(chip->dev.parent);
-+
- 	if (need_locality && chip->ops->relinquish_locality) {
--		chip->ops->relinquish_locality(chip, chip->locality);
-+		/* this coud be on error path, don't override error code */
-+		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
-+
-+		if (l_rc) {
-+			dev_err(&chip->dev, "%s: relinquish_locality: error %d\n",
-+				__func__, l_rc);
-+		}
- 		chip->locality = -1;
- 	}
-+
- out_no_locality:
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, false);
- 
--	if (chip->dev.parent)
--		pm_runtime_put_sync(chip->dev.parent);
--
- 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
- 		mutex_unlock(&chip->tpm_mutex);
- 	return rc ? rc : len;
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 7b3c2a8aa9de..497edd9848cd 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -112,6 +112,25 @@ struct tpm2_crb_smc {
- 	u32 smc_func_id;
+ 	if (asoc->user_frag)
+diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
+index 03e92dd..ead5fce 100644
+--- a/include/net/sctp/structs.h
++++ b/include/net/sctp/structs.h
+@@ -491,6 +491,7 @@ struct sctp_af {
+ 	void		(*ecn_capable)(struct sock *sk);
+ 	__u16		net_header_len;
+ 	int		sockaddr_len;
++	int		(*ip_options_len)(struct sock *sk);
+ 	sa_family_t	sa_family;
+ 	struct list_head list;
+ };
+@@ -515,6 +516,7 @@ struct sctp_pf {
+ 	int (*addr_to_user)(struct sctp_sock *sk, union sctp_addr *addr);
+ 	void (*to_sk_saddr)(union sctp_addr *, struct sock *sk);
+ 	void (*to_sk_daddr)(union sctp_addr *, struct sock *sk);
++	void (*copy_ip_options)(struct sock *sk, struct sock *newsk);
+ 	struct sctp_af *af;
  };
  
-+static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
-+				unsigned long timeout)
+diff --git a/net/sctp/chunk.c b/net/sctp/chunk.c
+index 991a530..d726d21 100644
+--- a/net/sctp/chunk.c
++++ b/net/sctp/chunk.c
+@@ -171,6 +171,8 @@ struct sctp_datamsg *sctp_datamsg_from_user(struct sctp_association *asoc,
+ 	struct list_head *pos, *temp;
+ 	struct sctp_chunk *chunk;
+ 	struct sctp_datamsg *msg;
++	struct sctp_sock *sp;
++	struct sctp_af *af;
+ 	int err;
+ 
+ 	msg = sctp_datamsg_new(GFP_KERNEL);
+@@ -189,9 +191,11 @@ struct sctp_datamsg *sctp_datamsg_from_user(struct sctp_association *asoc,
+ 	/* This is the biggest possible DATA chunk that can fit into
+ 	 * the packet
+ 	 */
+-	max_data = asoc->pathmtu -
+-		   sctp_sk(asoc->base.sk)->pf->af->net_header_len -
+-		   sizeof(struct sctphdr) - sctp_datachk_len(&asoc->stream);
++	sp = sctp_sk(asoc->base.sk);
++	af = sp->pf->af;
++	max_data = asoc->pathmtu - af->net_header_len -
++		   sizeof(struct sctphdr) - sctp_datachk_len(&asoc->stream) -
++		   af->ip_options_len(asoc->base.sk);
+ 	max_data = SCTP_TRUNC4(max_data);
+ 
+ 	/* If the the peer requested that we authenticate DATA chunks
+diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
+index e35d4f7..30a05a8 100644
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -427,6 +427,41 @@ static void sctp_v6_copy_addrlist(struct list_head *addrlist,
+ 	rcu_read_unlock();
+ }
+ 
++/* Copy over any ip options */
++static void sctp_v6_copy_ip_options(struct sock *sk, struct sock *newsk)
 +{
-+	ktime_t start;
-+	ktime_t stop;
++	struct ipv6_pinfo *newnp, *np = inet6_sk(sk);
++	struct ipv6_txoptions *opt;
 +
-+	start = ktime_get();
-+	stop = ktime_add(start, ms_to_ktime(timeout));
++	newnp = inet6_sk(newsk);
 +
-+	do {
-+		if ((ioread32(reg) & mask) == value)
-+			return true;
-+
-+		usleep_range(50, 100);
-+	} while (ktime_before(ktime_get(), stop));
-+
-+	return ((ioread32(reg) & mask) == value);
-+}
-+
- /**
-  * crb_go_idle - request tpm crb device to go the idle state
-  *
-@@ -128,7 +147,7 @@ struct tpm2_crb_smc {
-  *
-  * Return: 0 always
-  */
--static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
-+static int crb_go_idle(struct device *dev, struct crb_priv *priv)
- {
- 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
- 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
-@@ -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
- 		return 0;
- 
- 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
--	/* we don't really care when this settles */
- 
-+	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
-+				 CRB_CTRL_REQ_GO_IDLE/* mask */,
-+				 0, /* value */
-+				 TPM2_TIMEOUT_C)) {
-+		dev_warn(dev, "goIdle timed out\n");
-+		return -ETIME;
++	rcu_read_lock();
++	opt = rcu_dereference(np->opt);
++	if (opt) {
++		opt = ipv6_dup_options(newsk, opt);
++		if (!opt)
++			pr_err("%s: Failed to copy ip options\n", __func__);
 +	}
- 	return 0;
- }
- 
--static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
--				unsigned long timeout)
--{
--	ktime_t start;
--	ktime_t stop;
--
--	start = ktime_get();
--	stop = ktime_add(start, ms_to_ktime(timeout));
--
--	do {
--		if ((ioread32(reg) & mask) == value)
--			return true;
--
--		usleep_range(50, 100);
--	} while (ktime_before(ktime_get(), stop));
--
--	return false;
--}
--
- /**
-  * crb_cmd_ready - request tpm crb device to enter ready state
-  *
-@@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
-  *
-  * Return: 0 on success -ETIME on timeout;
-  */
--static int __maybe_unused crb_cmd_ready(struct device *dev,
--					struct crb_priv *priv)
-+static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
- {
- 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
- 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
-@@ -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
- 	return 0;
- }
- 
--static int crb_request_locality(struct tpm_chip *chip, int loc)
-+static int __crb_request_locality(struct device *dev,
-+				  struct crb_priv *priv, int loc)
- {
--	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
- 	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
--		CRB_LOC_STATE_TPM_REG_VALID_STS;
-+		    CRB_LOC_STATE_TPM_REG_VALID_STS;
- 
- 	if (!priv->regs_h)
- 		return 0;
-@@ -207,21 +212,45 @@ static int crb_request_locality(struct tpm_chip *chip, int loc)
- 	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
- 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
- 				 TPM2_TIMEOUT_C)) {
--		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
-+		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
- 		return -ETIME;
- 	}
- 
- 	return 0;
- }
- 
--static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
-+static int crb_request_locality(struct tpm_chip *chip, int loc)
- {
- 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
- 
-+	return __crb_request_locality(&chip->dev, priv, loc);
++	RCU_INIT_POINTER(newnp->opt, opt);
++	rcu_read_unlock();
 +}
 +
-+static int __crb_relinquish_locality(struct device *dev,
-+				     struct crb_priv *priv, int loc)
++/* Account for the IP options */
++static int sctp_v6_ip_options_len(struct sock *sk)
 +{
-+	u32 mask = CRB_LOC_STATE_LOC_ASSIGNED |
-+		   CRB_LOC_STATE_TPM_REG_VALID_STS;
-+	u32 value = CRB_LOC_STATE_TPM_REG_VALID_STS;
++	struct ipv6_pinfo *np = inet6_sk(sk);
++	struct ipv6_txoptions *opt;
++	int len = 0;
 +
- 	if (!priv->regs_h)
--		return;
-+		return 0;
- 
- 	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
-+	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, mask, value,
-+				 TPM2_TIMEOUT_C)) {
-+		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
-+		return -ETIME;
-+	}
++	rcu_read_lock();
++	opt = rcu_dereference(np->opt);
++	if (opt)
++		len = opt->opt_flen + opt->opt_nflen;
 +
-+	return 0;
++	rcu_read_unlock();
++	return len;
 +}
 +
-+static int crb_relinquish_locality(struct tpm_chip *chip, int loc)
-+{
-+	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-+
-+	return __crb_relinquish_locality(&chip->dev, priv, loc);
- }
+ /* Initialize a sockaddr_storage from in incoming skb. */
+ static void sctp_v6_from_skb(union sctp_addr *addr, struct sk_buff *skb,
+ 			     int is_saddr)
+@@ -666,7 +701,6 @@ static struct sock *sctp_v6_create_accept_sk(struct sock *sk,
+ 	struct sock *newsk;
+ 	struct ipv6_pinfo *newnp, *np = inet6_sk(sk);
+ 	struct sctp6_sock *newsctp6sk;
+-	struct ipv6_txoptions *opt;
  
- static u8 crb_status(struct tpm_chip *chip)
-@@ -475,6 +504,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
- 	}
+ 	newsk = sk_alloc(sock_net(sk), PF_INET6, GFP_KERNEL, sk->sk_prot, kern);
+ 	if (!newsk)
+@@ -689,12 +723,7 @@ static struct sock *sctp_v6_create_accept_sk(struct sock *sk,
+ 	newnp->ipv6_ac_list = NULL;
+ 	newnp->ipv6_fl_list = NULL;
  
-+	ret = __crb_request_locality(dev, priv, 0);
-+	if (ret)
-+		return ret;
-+
- 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
- 				   sizeof(struct crb_regs_tail));
- 	if (IS_ERR(priv->regs_t))
-@@ -531,6 +564,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+-	rcu_read_lock();
+-	opt = rcu_dereference(np->opt);
+-	if (opt)
+-		opt = ipv6_dup_options(newsk, opt);
+-	RCU_INIT_POINTER(newnp->opt, opt);
+-	rcu_read_unlock();
++	sctp_v6_copy_ip_options(sk, newsk);
  
- 	crb_go_idle(dev, priv);
- 
-+	__crb_relinquish_locality(dev, priv, 0);
-+
- 	return ret;
- }
- 
-@@ -588,10 +623,14 @@ static int crb_acpi_add(struct acpi_device *device)
- 	chip->acpi_dev_handle = device->handle;
- 	chip->flags = TPM_CHIP_FLAG_TPM2;
- 
--	rc  = crb_cmd_ready(dev, priv);
-+	rc = __crb_request_locality(dev, priv, 0);
- 	if (rc)
- 		return rc;
- 
-+	rc  = crb_cmd_ready(dev, priv);
-+	if (rc)
-+		goto out;
-+
- 	pm_runtime_get_noresume(dev);
- 	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
-@@ -601,12 +640,15 @@ static int crb_acpi_add(struct acpi_device *device)
- 		crb_go_idle(dev, priv);
- 		pm_runtime_put_noidle(dev);
- 		pm_runtime_disable(dev);
--		return rc;
-+		goto out;
- 	}
- 
--	pm_runtime_put(dev);
-+	pm_runtime_put_sync(dev);
- 
--	return 0;
-+out:
-+	__crb_relinquish_locality(dev, priv, 0);
-+
-+	return rc;
- }
- 
- static int crb_acpi_remove(struct acpi_device *device)
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 183a5f54d875..a22b12adbdfd 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -143,11 +143,13 @@ static bool check_locality(struct tpm_chip *chip, int l)
- 	return false;
- }
- 
--static void release_locality(struct tpm_chip *chip, int l)
-+static int release_locality(struct tpm_chip *chip, int l)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
-+
-+	return 0;
- }
- 
- static int request_locality(struct tpm_chip *chip, int l)
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index bcdd3790e94d..06639fb6ab85 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -44,7 +44,7 @@ struct tpm_class_ops {
- 	bool (*update_timeouts)(struct tpm_chip *chip,
- 				unsigned long *timeout_cap);
- 	int (*request_locality)(struct tpm_chip *chip, int loc);
--	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
-+	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
- 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+ 	/* Initialize sk's sport, dport, rcv_saddr and daddr for getsockname()
+ 	 * and getpeername().
+@@ -1041,6 +1070,7 @@ static struct sctp_af sctp_af_inet6 = {
+ 	.ecn_capable	   = sctp_v6_ecn_capable,
+ 	.net_header_len	   = sizeof(struct ipv6hdr),
+ 	.sockaddr_len	   = sizeof(struct sockaddr_in6),
++	.ip_options_len	   = sctp_v6_ip_options_len,
+ #ifdef CONFIG_COMPAT
+ 	.compat_setsockopt = compat_ipv6_setsockopt,
+ 	.compat_getsockopt = compat_ipv6_getsockopt,
+@@ -1059,6 +1089,7 @@ static struct sctp_pf sctp_pf_inet6 = {
+ 	.addr_to_user  = sctp_v6_addr_to_user,
+ 	.to_sk_saddr   = sctp_v6_to_sk_saddr,
+ 	.to_sk_daddr   = sctp_v6_to_sk_daddr,
++	.copy_ip_options = sctp_v6_copy_ip_options,
+ 	.af            = &sctp_af_inet6,
  };
  
+diff --git a/net/sctp/output.c b/net/sctp/output.c
+index 01a26ee..a58d13c 100644
+--- a/net/sctp/output.c
++++ b/net/sctp/output.c
+@@ -69,7 +69,11 @@ static enum sctp_xmit sctp_packet_will_fit(struct sctp_packet *packet,
+ 
+ static void sctp_packet_reset(struct sctp_packet *packet)
+ {
++	/* sctp_packet_transmit() relies on this to reset size to the
++	 * current overhead after sending packets.
++	 */
+ 	packet->size = packet->overhead;
++
+ 	packet->has_cookie_echo = 0;
+ 	packet->has_sack = 0;
+ 	packet->has_data = 0;
+@@ -87,6 +91,7 @@ void sctp_packet_config(struct sctp_packet *packet, __u32 vtag,
+ 	struct sctp_transport *tp = packet->transport;
+ 	struct sctp_association *asoc = tp->asoc;
+ 	struct sock *sk;
++	size_t overhead = sizeof(struct ipv6hdr) + sizeof(struct sctphdr);
+ 
+ 	pr_debug("%s: packet:%p vtag:0x%x\n", __func__, packet, vtag);
+ 	packet->vtag = vtag;
+@@ -95,10 +100,22 @@ void sctp_packet_config(struct sctp_packet *packet, __u32 vtag,
+ 	if (!sctp_packet_empty(packet))
+ 		return;
+ 
+-	/* set packet max_size with pathmtu */
++	/* set packet max_size with pathmtu, then calculate overhead */
+ 	packet->max_size = tp->pathmtu;
+-	if (!asoc)
++	if (asoc) {
++		struct sctp_sock *sp = sctp_sk(asoc->base.sk);
++		struct sctp_af *af = sp->pf->af;
++
++		overhead = af->net_header_len +
++			   af->ip_options_len(asoc->base.sk);
++		overhead += sizeof(struct sctphdr);
++		packet->overhead = overhead;
++		packet->size = overhead;
++	} else {
++		packet->overhead = overhead;
++		packet->size = overhead;
+ 		return;
++	}
+ 
+ 	/* update dst or transport pathmtu if in need */
+ 	sk = asoc->base.sk;
+@@ -140,23 +157,14 @@ void sctp_packet_init(struct sctp_packet *packet,
+ 		      struct sctp_transport *transport,
+ 		      __u16 sport, __u16 dport)
+ {
+-	struct sctp_association *asoc = transport->asoc;
+-	size_t overhead;
+-
+ 	pr_debug("%s: packet:%p transport:%p\n", __func__, packet, transport);
+ 
+ 	packet->transport = transport;
+ 	packet->source_port = sport;
+ 	packet->destination_port = dport;
+ 	INIT_LIST_HEAD(&packet->chunk_list);
+-	if (asoc) {
+-		struct sctp_sock *sp = sctp_sk(asoc->base.sk);
+-		overhead = sp->pf->af->net_header_len;
+-	} else {
+-		overhead = sizeof(struct ipv6hdr);
+-	}
+-	overhead += sizeof(struct sctphdr);
+-	packet->overhead = overhead;
++	/* The overhead will be calculated by sctp_packet_config() */
++	packet->overhead = 0;
+ 	sctp_packet_reset(packet);
+ 	packet->vtag = 0;
+ }
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index 91813e6..02f23ad 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -237,6 +237,45 @@ int sctp_copy_local_addr_list(struct net *net, struct sctp_bind_addr *bp,
+ 	return error;
+ }
+ 
++/* Copy over any ip options */
++static void sctp_v4_copy_ip_options(struct sock *sk, struct sock *newsk)
++{
++	struct inet_sock *newinet, *inet = inet_sk(sk);
++	struct ip_options_rcu *inet_opt, *newopt = NULL;
++
++	newinet = inet_sk(newsk);
++
++	rcu_read_lock();
++	inet_opt = rcu_dereference(inet->inet_opt);
++	if (inet_opt) {
++		newopt = sock_kmalloc(newsk, sizeof(*inet_opt) +
++				      inet_opt->opt.optlen, GFP_ATOMIC);
++		if (newopt)
++			memcpy(newopt, inet_opt, sizeof(*inet_opt) +
++			       inet_opt->opt.optlen);
++		else
++			pr_err("%s: Failed to copy ip options\n", __func__);
++	}
++	RCU_INIT_POINTER(newinet->inet_opt, newopt);
++	rcu_read_unlock();
++}
++
++/* Account for the IP options */
++static int sctp_v4_ip_options_len(struct sock *sk)
++{
++	struct inet_sock *inet = inet_sk(sk);
++	struct ip_options_rcu *inet_opt;
++	int len = 0;
++
++	rcu_read_lock();
++	inet_opt = rcu_dereference(inet->inet_opt);
++	if (inet_opt)
++		len = inet_opt->opt.optlen;
++
++	rcu_read_unlock();
++	return len;
++}
++
+ /* Initialize a sctp_addr from in incoming skb.  */
+ static void sctp_v4_from_skb(union sctp_addr *addr, struct sk_buff *skb,
+ 			     int is_saddr)
+@@ -588,6 +627,8 @@ static struct sock *sctp_v4_create_accept_sk(struct sock *sk,
+ 	sctp_copy_sock(newsk, sk, asoc);
+ 	sock_reset_flag(newsk, SOCK_ZAPPED);
+ 
++	sctp_v4_copy_ip_options(sk, newsk);
++
+ 	newinet = inet_sk(newsk);
+ 
+ 	newinet->inet_daddr = asoc->peer.primary_addr.v4.sin_addr.s_addr;
+@@ -1006,6 +1047,7 @@ static struct sctp_pf sctp_pf_inet = {
+ 	.addr_to_user  = sctp_v4_addr_to_user,
+ 	.to_sk_saddr   = sctp_v4_to_sk_saddr,
+ 	.to_sk_daddr   = sctp_v4_to_sk_daddr,
++	.copy_ip_options = sctp_v4_copy_ip_options,
+ 	.af            = &sctp_af_inet
+ };
+ 
+@@ -1090,6 +1132,7 @@ static struct sctp_af sctp_af_inet = {
+ 	.ecn_capable	   = sctp_v4_ecn_capable,
+ 	.net_header_len	   = sizeof(struct iphdr),
+ 	.sockaddr_len	   = sizeof(struct sockaddr_in),
++	.ip_options_len	   = sctp_v4_ip_options_len,
+ #ifdef CONFIG_COMPAT
+ 	.compat_setsockopt = compat_ip_setsockopt,
+ 	.compat_getsockopt = compat_ip_getsockopt,
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index bf271f8..eb55c63 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -3138,6 +3138,7 @@ static int sctp_setsockopt_mappedv4(struct sock *sk, char __user *optval, unsign
+ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned int optlen)
+ {
+ 	struct sctp_sock *sp = sctp_sk(sk);
++	struct sctp_af *af = sp->pf->af;
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+ 	int val;
+@@ -3162,7 +3163,8 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
+ 	if (val) {
+ 		int min_len, max_len;
+ 
+-		min_len = SCTP_DEFAULT_MINSEGMENT - sp->pf->af->net_header_len;
++		min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
++		min_len -= af->ip_options_len(sk);
+ 		min_len -= sizeof(struct sctphdr) +
+ 			   sizeof(struct sctp_data_chunk);
+ 
+@@ -3175,7 +3177,8 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
+ 	asoc = sctp_id2assoc(sk, params.assoc_id);
+ 	if (asoc) {
+ 		if (val == 0) {
+-			val = asoc->pathmtu - sp->pf->af->net_header_len;
++			val = asoc->pathmtu - af->net_header_len;
++			val -= af->ip_options_len(sk);
+ 			val -= sizeof(struct sctphdr) +
+ 			       sctp_datachk_len(&asoc->stream);
+ 		}
+@@ -5087,9 +5090,11 @@ int sctp_do_peeloff(struct sock *sk, sctp_assoc_t id, struct socket **sockp)
+ 	sctp_copy_sock(sock->sk, sk, asoc);
+ 
+ 	/* Make peeled-off sockets more like 1-1 accepted sockets.
+-	 * Set the daddr and initialize id to something more random
++	 * Set the daddr and initialize id to something more random and also
++	 * copy over any ip options.
+ 	 */
+ 	sp->pf->to_sk_daddr(&asoc->peer.primary_addr, sk);
++	sp->pf->copy_ip_options(sk, sock->sk);
+ 
+ 	/* Populate the fields of the newsk from the oldsk and migrate the
+ 	 * asoc to the newsk.
 -- 
 2.14.3
 
