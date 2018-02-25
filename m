@@ -1,35 +1,102 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Sun, 25 Feb 2018 11:46:35 +0800
-Subject: [PATCH 6/7] lkdtm: crash on overwriting protected pmalloc var
-In-Reply-To: <20180223144807.1180-7-igor.stoppa@huawei.com>
-References: <20180223144807.1180-7-igor.stoppa@huawei.com>
-Message-ID: <201802251124.dMLMGcJG%fengguang.wu@intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sun, 25 Feb 2018 11:40:45 +0200
+Subject: [PATCH 1/2 v4] tpm: cmd_ready command can be issued only after
+	granting locality
+In-Reply-To: <20180224154316.26607-1-tomas.winkler@intel.com>
+References: <20180224154316.26607-1-tomas.winkler@intel.com>
+Message-ID: <20180225094045.4zkqbrt5yi3ao562@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Igor,
+On Sat, Feb 24, 2018 at 05:43:16PM +0200, Tomas Winkler wrote:
+> The correct sequence is to first request locality and only after
+> that perform cmd_ready handshake, otherwise the hardware will drop
+> the subsequent message as from the device point of view the cmd_ready
+> handshake wasn't performed. Symmetrically locality has to be relinquished
+> only after going idle handshake has completed, this requires that
+> go_idle has to poll for the completion and as well locality
+> relinquish has to poll for completion so it is not overridden
+> in back to back commands flow.
+> 
+> The issue is only visible on devices that support multiple localities.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> V2: poll for locality relinquish completion
+> V3: 1. Print error message upon locality relinquish failure
+>     2. Don't override rc code on error path with locality relinquish
+> V4: 3. Don't capture locality relinquish error code in rc, just print
+> 	the error message.
+> 
+>        return value.
+>  drivers/char/tpm/tpm-interface.c |  20 +++++---
+>  drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++++++++++++------------
+>  drivers/char/tpm/tpm_tis_core.c  |   4 +-
+>  include/linux/tpm.h              |   2 +-
+>  4 files changed, 93 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 9e80a953d693..4d74bacca5a1 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+>  		mutex_lock(&chip->tpm_mutex);
+>  
+> -	if (chip->dev.parent)
+> -		pm_runtime_get_sync(chip->dev.parent);
+>  
+>  	if (chip->ops->clk_enable != NULL)
+>  		chip->ops->clk_enable(chip, true);
+> @@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  		chip->locality = rc;
+>  	}
+>  
+> +	if (chip->dev.parent)
+> +		pm_runtime_get_sync(chip->dev.parent);
+> +
+>  	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+>  	if (rc)
+>  		goto out;
+> @@ -499,17 +500,24 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+>  
+>  out:
+> +	if (chip->dev.parent)
+> +		pm_runtime_put_sync(chip->dev.parent);
+> +
+>  	if (need_locality && chip->ops->relinquish_locality) {
+> -		chip->ops->relinquish_locality(chip, chip->locality);
+> +		/* this coud be on error path, don't override error code */
+> +		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
 
-Thank you for the patch! Yet something to improve:
+Declaration should be in the beginning of the function.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.16-rc2]
-[cannot apply to next-20180223]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> +
+> +		if (l_rc) {
+> +			dev_err(&chip->dev, "%s: relinquish_locality: error %d\n",
+> +				__func__, l_rc);
+> +		}
 
-url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/genalloc-track-beginning-of-allocations/20180225-081601
-config: x86_64-rhel (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+In kernel coding style, this should be w/o curly braces.
 
-All errors (new ones prefixed by >>):
+I can fix these cosmetic issues
 
->> ERROR: "pmalloc" [drivers/misc/lkdtm.ko] undefined!
->> ERROR: "pmalloc_create_pool" [drivers/misc/lkdtm.ko] undefined!
->> ERROR: "pmalloc_destroy_pool" [drivers/misc/lkdtm.ko] undefined!
->> ERROR: "pmalloc_protect_pool" [drivers/misc/lkdtm.ko] undefined!
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Doesn't this need
+
+Fixes: 877c57d0d0ca ("tpm_crb: request and relinquish locality 0")
+
+And shouldn't this also have
+
+Cc: stable at vger.kernel.org
+
+?
+
+/Jarkko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
