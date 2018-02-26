@@ -1,69 +1,34 @@
-From: marcelo.leitner@gmail.com (Marcelo Ricardo Leitner)
-Date: Mon, 26 Feb 2018 19:57:44 -0300
-Subject: [PATCH V8 2/4] sctp: Add ip option support
-In-Reply-To: <CAHC9VhQrNjdtujiazYyM9n535ov1QHZ_b7=u4f-kiYCJE-=YVw@mail.gmail.com>
-References: <20180224161851.29712-1-richard_c_haines@btinternet.com>
-	<CAHC9VhQrNjdtujiazYyM9n535ov1QHZ_b7=u4f-kiYCJE-=YVw@mail.gmail.com>
-Message-ID: <20180226225744.GK4375@localhost.localdomain>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 27 Feb 2018 10:33:37 +1100 (AEDT)
+Subject: [GIT PULL] tpmdd fixes for 4.16
+In-Reply-To: <1519674546.3941.2.camel@HansenPartnership.com>
+References: <20180226124144.GA8675@linux.intel.com>
+	<alpine.LRH.2.21.1802270552260.29062@namei.org>
+	<1519674546.3941.2.camel@HansenPartnership.com>
+Message-ID: <alpine.LRH.2.21.1802271033190.9747@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Feb 26, 2018 at 05:48:48PM -0500, Paul Moore wrote:
-> On Sat, Feb 24, 2018 at 11:18 AM, Richard Haines
-> <richard_c_haines@btinternet.com> wrote:
-> > Add ip option support to allow LSM security modules to utilise CIPSO/IPv4
-> > and CALIPSO/IPv6 services.
-> >
-> > Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-> > ---
-> > All SCTP lksctp-tools/src/func_tests run correctly in enforcing mode.
-> > All "./sctp-tests run" obtained from: https://github.com/sctp/sctp-tests
-> > pass.
-> >
-> > V7 Changes:
-> > 1) Log when copy ip options fail for IPv4 and IPv6
-> > 2) Correct sctp_setsockopt_maxseg() function. Note that the lksctp-tools
-> > func_tests do not test with struct sctp_assoc_value. Just used simple test
-> > and okay.
-> > 3) Move calculation of overheads to sctp_packet_config().
-> > NOTE: Initially in sctp_packet_reset() I set packet->size and
-> > packet->overhead to zero (as it is a reset). This was okay for all the
-> > lksctp-tools function tests, however when running "sctp-tests" ndatshched
-> > tests it causes these to fail with an st_s.log entry of:
-> >         sid: 3, expected: 3
-> >         sid: 3, expected: 3
-> >         unexpected sid packet !!!
-> >         sid: 1, expected: 3
-> >
-> > I then found sctp_packet_transmit() relies on setting
-> > "packet->size = packet->overhead;" to reset size to the current overhead
-> > after sending packets, hence the comment in sctp_packet_reset()
-> >
-> > V8 Change:
-> > Fix sparse warning:
-> > net/sctp/protocol.c:269:28: sparse: dereference of noderef expression
-> > highlighted in [1] for sctp_v4_ip_options_len() function.
-> >
-> > [1] https://lists.01.org/pipermail/kbuild-all/2018-February/043695.html
-> >
-> >  include/net/sctp/sctp.h    |  4 +++-
-> >  include/net/sctp/structs.h |  2 ++
-> >  net/sctp/chunk.c           | 10 +++++++---
-> >  net/sctp/ipv6.c            | 45 ++++++++++++++++++++++++++++++++++++++-------
-> >  net/sctp/output.c          | 34 +++++++++++++++++++++-------------
-> >  net/sctp/protocol.c        | 43 +++++++++++++++++++++++++++++++++++++++++++
-> >  net/sctp/socket.c          | 11 ++++++++---
-> >  7 files changed, 122 insertions(+), 27 deletions(-)
-> 
-> Thanks Richard.
-> 
-> Neil and Marcelo, I transfered your acked-by to this patch, if you've
-> got any objections to that please let me know.
+On Mon, 26 Feb 2018, James Bottomley wrote:
 
-That's fine by me. Thanks
+> On Tue, 2018-02-27 at 05:52 +1100, James Morris wrote:
+> > On Mon, 26 Feb 2018, Jarkko Sakkinen wrote:
+> > 
+> > > 
+> > > Hi
+> > > 
+> > > Here is a batch of critical fixes for 4.16.
+> > > 
+> > 
+> > Do you have CVEs for these???If so, please include them in the commit
+> > messages.
+> 
+> Heh, well, I suppose from this everyone now knows they're fixes for
+> vulnerabilities. ?The CVE doesn't usually show up until after the
+> embargo is released, so we don't have one yet.
 
-  Marcelo
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Anyone with half a brain can read Linus' -rc commits and work it out.
+
+-- 
+James Morris
+<jmorris@namei.org>
