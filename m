@@ -1,178 +1,27 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Mon, 26 Feb 2018 20:44:32 +0200
-Subject: [PATCH 1/7] genalloc: track beginning of allocations
-In-Reply-To: <14be8222-766f-50e6-83ec-bcbefa04ba44@gmail.com>
-References: <20180223144807.1180-1-igor.stoppa@huawei.com>
-	<20180223144807.1180-2-igor.stoppa@huawei.com>
-	<0897d235-db55-3d3c-12be-34a97debb921@gmail.com>
-	<4f77b269-c2eb-a8d2-1326-900d00229268@huawei.com>
-	<14be8222-766f-50e6-83ec-bcbefa04ba44@gmail.com>
-Message-ID: <9f242f90-0d6b-4647-1a9e-242e03674079@huawei.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 27 Feb 2018 05:52:32 +1100 (AEDT)
+Subject: [GIT PULL] tpmdd fixes for 4.16
+In-Reply-To: <20180226124144.GA8675@linux.intel.com>
+References: <20180226124144.GA8675@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1802270552260.29062@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Mon, 26 Feb 2018, Jarkko Sakkinen wrote:
 
-
-On 26/02/18 19:32, J Freyensee wrote:
-> My replies also inlined.
+> Hi
 > 
-> On 2/26/18 4:09 AM, Igor Stoppa wrote:
-
-[...]
-
-> But some of the code looks API'like to me, partly because of 
-> all the function header documentation, which thank you for that, but I 
-> wasn't sure where you drew your "API line" where the checks would be.
-
-static and, even more, inlined static functions are not API, if found in
-the .c file.
-
-
->> Is it assuming too much that the function will be used correctly, inside
->> the module it belongs to?
->>
->> And even at API level, I'd tend to say that if there are chances that
->> the data received is corrupted, then it should be sanitized, but otherwise,
->> why adding overhead?
+> Here is a batch of critical fixes for 4.16.
 > 
-> It's good secure coding practice to check your parameters, you are 
-> adding code to a security module after all ;-).
 
-genalloc is not a security module :-P
-
-it seems to be used in various places and for different purposes, also
-depending on the architecture
-
-For this reason I'm reluctant to add overhead.
-
-> If it's brand-new code entering the kernel, it's better to err on the 
-> side of having the extra checks and have a maintainer tell you to remove 
-> it than the other way around- especially since this code is part of the 
-> LSM solution.? What's worse- a tad bit of overhead catching a 
-> corner-case scenario that can be more easily fixed or something not 
-> caught that makes the kernel unstable?
-
-ok, fair enough
-
-[...]
-
->> If I really have to pick a place where to do the test, it's at API
->> level,
-> 
-> I agree, and if that is the case, I'm fine.
-
-so I'll make sue that the API does sanitation
-
->> where the user of the API might fail to notice that the creation
->> of a pool failed and try to get memory from a non-existing pool.
->> That is the only scenario I can think of, where bogus data would be
->> received.
->>
->>>>    	return chunk->end_addr - chunk->start_addr + 1;
->>>>    }
->>>>    
->>>> -static int set_bits_ll(unsigned long *addr, unsigned long mask_to_set)
->>>> +
->>>> +/**
->>>> + * set_bits_ll() - based on value and mask, sets bits at address
->>>> + * @addr: where to write
->>>> + * @mask: filter to apply for the bits to alter
->>>> + * @value: actual configuration of bits to store
->>>> + *
->>>> + * Return:
->>>> + * * 0		- success
->>>> + * * -EBUSY	- otherwise
->>>> + */
->>>> +static int set_bits_ll(unsigned long *addr,
->>>> +		       unsigned long mask, unsigned long value)
->>>>    {
->>>> -	unsigned long val, nval;
->>>> +	unsigned long nval;
->>>> +	unsigned long present;
->>>> +	unsigned long target;
->>>>    
->>>>    	nval = *addr;
->>> Same issue here with addr.
->> Again, I am more leaning toward believing that the user of the API might
->> forget to check for errors,
-> 
-> Same in agreement, so if that is the case, I'm ok.? It was a little hard 
-> to tell what is exactly your API is.? I'm used to reviewing kernel code 
-> where important API-like functions were heavily documented, and inner 
-> routines were not...so seeing the function documentation (which is a 
-> good thing :-)) made me think this was some sort of new API code I was 
-> looking at.
-it's static, therefore no API
-
-> 
->> and pass a NULL pointer as pool, than to
->> believe something like this would happen.
->>
->> This is an address obtained from data managed automatically by the library.
->>
->> Can you please explain why you think it would be NULL?
-> 
-> Why would it be NULL?? I don't know, I'm not intimately familiar with 
-> the code; but I default to implementing code defensively.? But I'll turn 
-> the question around on you- why would it NOT be NULL?? Are you sure this 
-> will never be NULL?? Are you going to trust the library that it always 
-> provides a good address?? You should add to your function header 
-> documentation why addr will NOT be NULL.
-
-ok, I can add the explanation
-which is: the corresponding memory is allocated when a pool is created.
-should the allocation fail, the pool creation will fail consequently
-
-The only cases which can cause this to be NULL within a pool are:
-* accidental corruption
-* attacker tampering with kernel memory
-
-However they are both quite unlikely:
-* accidental corruption should not happen so easily and, in case it
-happens, it's likely to plow also some surrounding memory.
-* this is just metadata, supposed to be useful mostly before the pool is
-write-protected. If an attacker is capable of altering arbitrary kernel
-data memory, there are far better targets.
-
-[...]
-
->>>> +	/*
->>>> +	 * Prepare for writing the initial part of the allocation, from
->>>> +	 * starting entry, to the end of the UL bitmap element which
->>>> +	 * contains it. It might be larger than the actual allocation.
->>>> +	 */
->>>> +	start_bit = ENTRIES_TO_BITS(start_entry);
->>>> +	end_bit = ENTRIES_TO_BITS(start_entry + nentries);
->>>> +	nbits = ENTRIES_TO_BITS(nentries);
->>> these statements won't make any sense if start_entry and nentries are
->>> negative values, which is possible based on the function definition
->>> alter_bitmap_ll().? Am I missing something that it's ok for these
->>> parameters to be negative?
->> This patch is extending the handling of the bitmap, it's not trying to
->> rewrite genalloc, thus it tries to not alter parts which are unrelated.
->> Like the type of parameters passed.
->>
->> What you are suggesting is a further cleanup of genalloc.
->> I'm not against it, but it's unrelated to this patchset.
-> 
-> OK, very reasonable.? Then I would think this would be a case to add a 
-> check for negative values in the function parameters start_entry and 
-> nentries as it's possible (though maybe not realistic) to have negative 
-> values supplied, especially if there is currently no active maintainer 
-> for genalloc().? Since you are fitting new code to genalloc's behavior 
-> and this is a security module, I'll err on the side of checking the 
-> parameters for bad values, or document in your function header comments 
-> why it is expected for these parameters to never have negative values.
-
-I'll figure out which alternative I dislike the least :-)
-
-Probably just fix the data types in a separate patch.
-This patch for genalloc has generated various comments which are
-actually more about the original implementation than what I'm adding.
+Do you have CVEs for these?  If so, please include them in the commit 
+messages.
 
 
---
-igor
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
