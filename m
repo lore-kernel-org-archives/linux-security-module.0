@@ -1,60 +1,96 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 27 Feb 2018 10:33:57 -0500
-Subject: [PATCH v2 1/4] ima: fail file signature verification on
-	non-init mounted filesystems
-In-Reply-To: <87bmgbyzhx.fsf@xmission.com>
+Date: Tue, 27 Feb 2018 11:17:58 -0500
+Subject: [PATCH v2 0/4] ima: unverifiable file signatures
+In-Reply-To: <87k1uzw5e6.fsf@xmission.com>
 References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1519335184-17808-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<87bmgbyzhx.fsf@xmission.com>
-Message-ID: <1519745637.3562.364.camel@linux.vnet.ibm.com>
+	<87k1uzw5e6.fsf@xmission.com>
+Message-ID: <1519748278.3562.394.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-02-26 at 19:47 -0600, Eric W. Biederman wrote:
-
-> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> > index 1b177461f20e..f34901069e78 100644
-> > --- a/security/integrity/ima/ima_appraise.c
-> > +++ b/security/integrity/ima/ima_appraise.c
-> > @@ -302,7 +302,18 @@ int ima_appraise_measurement(enum ima_hooks func,
-> >  	}
-> >  
-> >  out:
-> > -	if (status != INTEGRITY_PASS) {
-> > +	/*
-> > +	 * File signatures on some filesystems can not be properly verified.
-> > +	 * On these filesytems, that are mounted by an untrusted mounter,
-> > +	 * fail the file signature verification.
-> > +	 */
-> > +	if (inode->i_sb->s_iflags &
-> > +	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER))
-> > {
+On Mon, 2018-02-26 at 20:08 -0600, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 > 
-> I like this test.
+> > For local filesystems, the kernel prevents files being executed from
+> > being modified.  With IMA-measurement enabled, the kernel also emits
+> > audit "time of measure, time of use" messages for files opened for
+> > read, and subsequently opened for write.
+> >
+> > Files on fuse are initially measured, appraised, and audited.  Although
+> > the file data can change dynamically any time, making re-measuring,
+> > re-appraising, or re-auditing pointless, this patch set attempts to
+> > differentiate between unprivileged non-init root and privileged
+> > mounted fuse filesystems.
+> >
+> > This patch set addresses three different scenarios:
+> > - Unprivileged non-init root mounted fuse filesystems are untrusted.
+> >   Signature verification should always fail and re-measuring,
+> >   re-appraising, re-auditing files makes no sense.
+> >
+> >   Always enabled.
+> >
+> > - For privileged mounted filesystems in a "secure" environment, with a
+> >   correctly enforced security policy, which is willing to assume the
+> >   inherent risk of specific fuse filesystems, it is reasonable to
+> >   re-measure, re-appraise, and re-audit files.
+> >
+> >   Enabled by default to prevent breaking existing systems.
+> >
+> > - Privileged mounted filesystems unwilling to assume the risks and
+> >   prefers to fail safe.
+> >
+> >   Enabled based on policy.
 > 
-> This test does not match your comments.  This test returns true if
-> either SB_I_IMA_UNVERIFIABLE_SIGNATURE or SB_I_UNTRUSTED_MOUNTER.
+> I really like the way the flags work in this patchset.
+> 
+> There is a lot of other nit-picking and bike-shedding I would like to
+> do.  However those are details specific to IMA.  So my opion really
+> doesn't count.
+> 
+> Those two flags set as you have them in the last patch make it possible
+> to slightly alter details of when they get set, that are in the perview
+> of filesystems without having too big a debate over them.
+> 
+> The changes I imagine most easily are:
+> In fuse_fill_super:
+> 	if (!fc->allow_other)
+> 		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
 
-Thanks, you're right. ?The test should have been:
+Right, as described, above, as the 2nd senario.
 
-        if ((inode->i_sb->s_iflags &
-            (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) ==
-            (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) {
+> 
+> In sget_user_ns:
+> 	if (sb->s_user_ns != &init_user_ns)
+>         	sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
+
+The filesystems would then only set SB_I_IMA_UNVERIFIABLE_SIGNATURE.
+
+> 
+> My biggest nitpick is I would be inclined to flip the sense of the
+> unverifiable_sigs policy.  By default not trust and trust only if
+> a special command line option was given.   But I realize this could
+> run into backwards compatibility concerns.  And it is IMA specific so
+> not really my call.
+
+The boot command line policy option forces the system to fail safe.
+Reversing the default to fail unverifiable_sigs and only allow them
+based on policy, would not be a simple command line option, but would
+require a per filesystem rule.
+
+I agree with you, but as we're not breaking existing userspace, our
+only option is to audit/log the concern, as suggested by Linus in
+other threads. ?It would be nice if we could audit/log it once per
+each mount.
+
+> 
+> But the important part is what winds up in the core of ima.  Baring
+> typo's I think you have something we can all live with.
+> 
+> So double check yourself and let's start getting this merged.
+
+Sure.
 
 Mimi
-
-> 
-> > +		status = INTEGRITY_FAIL;
-> > +		cause = "unverifiable-signature";
-> > +		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> > +				    op, cause, rc, 0);
-> > +	} else if (status != INTEGRITY_PASS) {
-> >  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
-> >  		    (!xattr_value ||
-> >  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-> 
-> Eric
-> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
