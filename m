@@ -1,97 +1,229 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 27 Feb 2018 11:17:58 -0500
-Subject: [PATCH v2 0/4] ima: unverifiable file signatures
-In-Reply-To: <87k1uzw5e6.fsf@xmission.com>
-References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<87k1uzw5e6.fsf@xmission.com>
-Message-ID: <1519748278.3562.394.camel@linux.vnet.ibm.com>
+From: luto@kernel.org (Andy Lutomirski)
+Date: Tue, 27 Feb 2018 16:39:50 +0000
+Subject: [PATCH bpf-next v8 05/11] seccomp,landlock: Enforce Landlock
+	programs per process hierarchy
+In-Reply-To: <20180227053255.a7ua24kjd6tvei2a@ast-mbp>
+References: <20180227004121.3633-1-mic@digikod.net>
+	<20180227004121.3633-6-mic@digikod.net>
+	<20180227020856.teq4hobw3zwussu2@ast-mbp>
+	<CALCETrVKRYnGJ9XNW-x7eHdMt+eGP90j7cAed-KTzp1KT_kMeQ@mail.gmail.com>
+	<20180227045458.wjrbbsxf3po656du@ast-mbp>
+	<CALCETrXZ=xJEd53RhA67_VDoAKBWgUeyBi9XN7ibrE7V6nzk5Q@mail.gmail.com>
+	<20180227053255.a7ua24kjd6tvei2a@ast-mbp>
+Message-ID: <CALCETrUqc0wbig4ntQe9KNS-fOgYOpD+MPodXYruCRyJ7bhagA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-02-26 at 20:08 -0600, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
-> > For local filesystems, the kernel prevents files being executed from
-> > being modified.  With IMA-measurement enabled, the kernel also emits
-> > audit "time of measure, time of use" messages for files opened for
-> > read, and subsequently opened for write.
-> >
-> > Files on fuse are initially measured, appraised, and audited.  Although
-> > the file data can change dynamically any time, making re-measuring,
-> > re-appraising, or re-auditing pointless, this patch set attempts to
-> > differentiate between unprivileged non-init root and privileged
-> > mounted fuse filesystems.
-> >
-> > This patch set addresses three different scenarios:
-> > - Unprivileged non-init root mounted fuse filesystems are untrusted.
-> >   Signature verification should always fail and re-measuring,
-> >   re-appraising, re-auditing files makes no sense.
-> >
-> >   Always enabled.
-> >
-> > - For privileged mounted filesystems in a "secure" environment, with a
-> >   correctly enforced security policy, which is willing to assume the
-> >   inherent risk of specific fuse filesystems, it is reasonable to
-> >   re-measure, re-appraise, and re-audit files.
-> >
-> >   Enabled by default to prevent breaking existing systems.
-> >
-> > - Privileged mounted filesystems unwilling to assume the risks and
-> >   prefers to fail safe.
-> >
-> >   Enabled based on policy.
-> 
-> I really like the way the flags work in this patchset.
-> 
-> There is a lot of other nit-picking and bike-shedding I would like to
-> do.  However those are details specific to IMA.  So my opion really
-> doesn't count.
-> 
-> Those two flags set as you have them in the last patch make it possible
-> to slightly alter details of when they get set, that are in the perview
-> of filesystems without having too big a debate over them.
-> 
-> The changes I imagine most easily are:
-> In fuse_fill_super:
-> 	if (!fc->allow_other)
-> 		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
+On Tue, Feb 27, 2018 at 5:32 AM, Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Tue, Feb 27, 2018 at 05:20:55AM +0000, Andy Lutomirski wrote:
+>> On Tue, Feb 27, 2018 at 4:54 AM, Alexei Starovoitov
+>> <alexei.starovoitov@gmail.com> wrote:
+>> > On Tue, Feb 27, 2018 at 04:40:34AM +0000, Andy Lutomirski wrote:
+>> >> On Tue, Feb 27, 2018 at 2:08 AM, Alexei Starovoitov
+>> >> <alexei.starovoitov@gmail.com> wrote:
+>> >> > On Tue, Feb 27, 2018 at 01:41:15AM +0100, Micka?l Sala?n wrote:
+>> >> >> The seccomp(2) syscall can be used by a task to apply a Landlock program
+>> >> >> to itself. As a seccomp filter, a Landlock program is enforced for the
+>> >> >> current task and all its future children. A program is immutable and a
+>> >> >> task can only add new restricting programs to itself, forming a list of
+>> >> >> programss.
+>> >> >>
+>> >> >> A Landlock program is tied to a Landlock hook. If the action on a kernel
+>> >> >> object is allowed by the other Linux security mechanisms (e.g. DAC,
+>> >> >> capabilities, other LSM), then a Landlock hook related to this kind of
+>> >> >> object is triggered. The list of programs for this hook is then
+>> >> >> evaluated. Each program return a 32-bit value which can deny the action
+>> >> >> on a kernel object with a non-zero value. If every programs of the list
+>> >> >> return zero, then the action on the object is allowed.
+>> >> >>
+>> >> >> Multiple Landlock programs can be chained to share a 64-bits value for a
+>> >> >> call chain (e.g. evaluating multiple elements of a file path).  This
+>> >> >> chaining is restricted when a process construct this chain by loading a
+>> >> >> program, but additional checks are performed when it requests to apply
+>> >> >> this chain of programs to itself.  The restrictions ensure that it is
+>> >> >> not possible to call multiple programs in a way that would imply to
+>> >> >> handle multiple shared values (i.e. cookies) for one chain.  For now,
+>> >> >> only a fs_pick program can be chained to the same type of program,
+>> >> >> because it may make sense if they have different triggers (cf. next
+>> >> >> commits).  This restrictions still allows to reuse Landlock programs in
+>> >> >> a safe way (e.g. use the same loaded fs_walk program with multiple
+>> >> >> chains of fs_pick programs).
+>> >> >>
+>> >> >> Signed-off-by: Micka?l Sala?n <mic@digikod.net>
+>> >> >
+>> >> > ...
+>> >> >
+>> >> >> +struct landlock_prog_set *landlock_prepend_prog(
+>> >> >> +             struct landlock_prog_set *current_prog_set,
+>> >> >> +             struct bpf_prog *prog)
+>> >> >> +{
+>> >> >> +     struct landlock_prog_set *new_prog_set = current_prog_set;
+>> >> >> +     unsigned long pages;
+>> >> >> +     int err;
+>> >> >> +     size_t i;
+>> >> >> +     struct landlock_prog_set tmp_prog_set = {};
+>> >> >> +
+>> >> >> +     if (prog->type != BPF_PROG_TYPE_LANDLOCK_HOOK)
+>> >> >> +             return ERR_PTR(-EINVAL);
+>> >> >> +
+>> >> >> +     /* validate memory size allocation */
+>> >> >> +     pages = prog->pages;
+>> >> >> +     if (current_prog_set) {
+>> >> >> +             size_t i;
+>> >> >> +
+>> >> >> +             for (i = 0; i < ARRAY_SIZE(current_prog_set->programs); i++) {
+>> >> >> +                     struct landlock_prog_list *walker_p;
+>> >> >> +
+>> >> >> +                     for (walker_p = current_prog_set->programs[i];
+>> >> >> +                                     walker_p; walker_p = walker_p->prev)
+>> >> >> +                             pages += walker_p->prog->pages;
+>> >> >> +             }
+>> >> >> +             /* count a struct landlock_prog_set if we need to allocate one */
+>> >> >> +             if (refcount_read(&current_prog_set->usage) != 1)
+>> >> >> +                     pages += round_up(sizeof(*current_prog_set), PAGE_SIZE)
+>> >> >> +                             / PAGE_SIZE;
+>> >> >> +     }
+>> >> >> +     if (pages > LANDLOCK_PROGRAMS_MAX_PAGES)
+>> >> >> +             return ERR_PTR(-E2BIG);
+>> >> >> +
+>> >> >> +     /* ensure early that we can allocate enough memory for the new
+>> >> >> +      * prog_lists */
+>> >> >> +     err = store_landlock_prog(&tmp_prog_set, current_prog_set, prog);
+>> >> >> +     if (err)
+>> >> >> +             return ERR_PTR(err);
+>> >> >> +
+>> >> >> +     /*
+>> >> >> +      * Each task_struct points to an array of prog list pointers.  These
+>> >> >> +      * tables are duplicated when additions are made (which means each
+>> >> >> +      * table needs to be refcounted for the processes using it). When a new
+>> >> >> +      * table is created, all the refcounters on the prog_list are bumped (to
+>> >> >> +      * track each table that references the prog). When a new prog is
+>> >> >> +      * added, it's just prepended to the list for the new table to point
+>> >> >> +      * at.
+>> >> >> +      *
+>> >> >> +      * Manage all the possible errors before this step to not uselessly
+>> >> >> +      * duplicate current_prog_set and avoid a rollback.
+>> >> >> +      */
+>> >> >> +     if (!new_prog_set) {
+>> >> >> +             /*
+>> >> >> +              * If there is no Landlock program set used by the current task,
+>> >> >> +              * then create a new one.
+>> >> >> +              */
+>> >> >> +             new_prog_set = new_landlock_prog_set();
+>> >> >> +             if (IS_ERR(new_prog_set))
+>> >> >> +                     goto put_tmp_lists;
+>> >> >> +     } else if (refcount_read(&current_prog_set->usage) > 1) {
+>> >> >> +             /*
+>> >> >> +              * If the current task is not the sole user of its Landlock
+>> >> >> +              * program set, then duplicate them.
+>> >> >> +              */
+>> >> >> +             new_prog_set = new_landlock_prog_set();
+>> >> >> +             if (IS_ERR(new_prog_set))
+>> >> >> +                     goto put_tmp_lists;
+>> >> >> +             for (i = 0; i < ARRAY_SIZE(new_prog_set->programs); i++) {
+>> >> >> +                     new_prog_set->programs[i] =
+>> >> >> +                             READ_ONCE(current_prog_set->programs[i]);
+>> >> >> +                     if (new_prog_set->programs[i])
+>> >> >> +                             refcount_inc(&new_prog_set->programs[i]->usage);
+>> >> >> +             }
+>> >> >> +
+>> >> >> +             /*
+>> >> >> +              * Landlock program set from the current task will not be freed
+>> >> >> +              * here because the usage is strictly greater than 1. It is
+>> >> >> +              * only prevented to be freed by another task thanks to the
+>> >> >> +              * caller of landlock_prepend_prog() which should be locked if
+>> >> >> +              * needed.
+>> >> >> +              */
+>> >> >> +             landlock_put_prog_set(current_prog_set);
+>> >> >> +     }
+>> >> >> +
+>> >> >> +     /* prepend tmp_prog_set to new_prog_set */
+>> >> >> +     for (i = 0; i < ARRAY_SIZE(tmp_prog_set.programs); i++) {
+>> >> >> +             /* get the last new list */
+>> >> >> +             struct landlock_prog_list *last_list =
+>> >> >> +                     tmp_prog_set.programs[i];
+>> >> >> +
+>> >> >> +             if (last_list) {
+>> >> >> +                     while (last_list->prev)
+>> >> >> +                             last_list = last_list->prev;
+>> >> >> +                     /* no need to increment usage (pointer replacement) */
+>> >> >> +                     last_list->prev = new_prog_set->programs[i];
+>> >> >> +                     new_prog_set->programs[i] = tmp_prog_set.programs[i];
+>> >> >> +             }
+>> >> >> +     }
+>> >> >> +     new_prog_set->chain_last = tmp_prog_set.chain_last;
+>> >> >> +     return new_prog_set;
+>> >> >> +
+>> >> >> +put_tmp_lists:
+>> >> >> +     for (i = 0; i < ARRAY_SIZE(tmp_prog_set.programs); i++)
+>> >> >> +             put_landlock_prog_list(tmp_prog_set.programs[i]);
+>> >> >> +     return new_prog_set;
+>> >> >> +}
+>> >> >
+>> >> > Nack on the chaining concept.
+>> >> > Please do not reinvent the wheel.
+>> >> > There is an existing mechanism for attaching/detaching/quering multiple
+>> >> > programs attached to cgroup and tracing hooks that are also
+>> >> > efficiently executed via BPF_PROG_RUN_ARRAY.
+>> >> > Please use that instead.
+>> >> >
+>> >>
+>> >> I don't see how that would help.  Suppose you add a filter, then
+>> >> fork(), and then the child adds another filter.  Do you want to
+>> >> duplicate the entire array?  You certainly can't *modify* the array
+>> >> because you'll affect processes that shouldn't be affected.
+>> >>
+>> >> In contrast, doing this through seccomp like the earlier patches
+>> >> seemed just fine to me, and seccomp already had the right logic.
+>> >
+>> > it doesn't look to me that existing seccomp side of managing fork
+>> > situation can be reused. Here there is an attempt to add 'chaining'
+>> > concept which sort of an extension of existing seccomp style,
+>> > but somehow heavily done on bpf side and contradicts cgroup/tracing.
+>> >
+>>
+>> I don't see why the seccomp way can't be used.  I agree with you that
+>> the seccomp *style* shouldn't be used in bpf code like this, but I
+>> think that Landlock programs can and should just live in the existing
+>> seccomp chain.  If the existing seccomp code needs some modification
+>> to make this work, then so be it.
+>
+> +1
+> if that was the case...
+> but that's not my reading of the patch set.
 
-Right, as described, above, as the 2nd senario.
+An earlier version of the patch set used the seccomp filter chain.
+Micka?l, what exactly was wrong with that approach other than that the
+seccomp() syscall was awkward for you to use?  You could add a
+seccomp_add_landlock_rule() syscall if you needed to.
 
-> 
-> In sget_user_ns:
-> 	if (sb->s_user_ns != &init_user_ns)
->         	sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
+As a side comment, why is this an LSM at all, let alone a non-stacking
+LSM?  It would make a lot more sense to me to make Landlock depend on
+having LSMs configured in but to call the landlock hooks directly from
+the security_xyz() hooks.
 
-The filesystems would then only set SB_I_IMA_UNVERIFIABLE_SIGNATURE.
+>
+>> In other words, the kernel already has two kinds of chaining:
+>> seccomp's and bpf's.  bpf's doesn't work right for this type of usage
+>> across fork(), whereas seccomp's already handles that case correctly.
+>> (In contrast, seccomp's is totally wrong for cgroup-attached filters.)
+>>  So IMO Landlock should use the seccomp core code and call into bpf
+>> for the actual filtering.
+>
+> +1
+> in cgroup we had to invent this new BPF_PROG_RUN_ARRAY mechanism,
+> since cgroup hierarchy can be complicated with bpf progs attached
+> at different levels with different override/multiprog properties,
+> so walking link list and checking all flags at run-time would have
+> been too slow. That's why we added compute_effective_progs().
 
-> 
-> My biggest nitpick is I would be inclined to flip the sense of the
-> unverifiable_sigs policy.  By default not trust and trust only if
-> a special command line option was given.   But I realize this could
-> run into backwards compatibility concerns.  And it is IMA specific so
-> not really my call.
-
-The boot command line policy option forces the system to fail safe.
-Reversing the default to fail unverifiable_sigs and only allow them
-based on policy, would not be a simple command line option, but would
-require a per filesystem rule.
-
-I agree with you, but as we're not breaking existing userspace, our
-only option is to audit/log the concern, as suggested by Linus in
-other threads. ?It would be nice if we could audit/log it once per
-each mount.
-
-> 
-> But the important part is what winds up in the core of ima.  Baring
-> typo's I think you have something we can all live with.
-> 
-> So double check yourself and let's start getting this merged.
-
-Sure.
-
-Mimi
-
+If we start adding override flags to Landlock, I think we're doing it
+wrong.   With cgroup bpf programs, the whole mess is set up by the
+administrator.  With seccomp, and with Landlock if done correctly, it
+*won't* be set up by the administrator, so the chance that everyone
+gets all the flags right is about zero.  All attached filters should
+run unconditionally.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
