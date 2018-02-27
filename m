@@ -1,152 +1,174 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Tue, 27 Feb 2018 16:35:45 -0600
-Subject: [PATCH v2 3/4] ima: fail signature verification based on policy
-In-Reply-To: <1519335184-17808-4-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1519335184-17808-4-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20180227223545.GB18767@mail.hallyn.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 27 Feb 2018 14:50:14 -0800
+Subject: [PATCH] security: mark kmem caches as __ro_after_init
+In-Reply-To: <20180226203747.GB6886@avx2>
+References: <20180226203747.GB6886@avx2>
+Message-ID: <ab3bfefd-7fcf-a807-3e00-d103c9aa9cf1@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
-> This patch addresses the fuse privileged mounted filesystems in
-> environments which are unwilling to accept the risk of trusting the
-> signature verification and want to always fail safe, but are for
-> example using a pre-built kernel.
-> 
-> This patch defines a new builtin policy "unverifiable_sigs", which can
-
-How about recalc_unverifiable_sigs?  It's long, but unverifiable_sigs
-is  not clear about whether the intent is to accept or recalculate them.
-
-(or fail_unverifiable_sigs like the flag)
-
-> be specified on the boot command line as an argument to "ima_policy=".
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Seth Forshee <seth.forshee@canonical.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Dongsu Park <dongsu@kinvolk.io>
-> Cc: Alban Crequy <alban@kinvolk.io>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> 
-> Changelog v2:
-> - address the fail safe environement
+On 2/26/2018 12:37 PM, Alexey Dobriyan wrote:
+> Kmem caches are never reallocated once set up.
+>
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt |  8 +++++++-
->  security/integrity/ima/ima_appraise.c           | 10 ++++++----
->  security/integrity/ima/ima_main.c               |  3 ++-
->  security/integrity/ima/ima_policy.c             |  5 +++++
->  security/integrity/integrity.h                  |  1 +
->  5 files changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1d1d53f85ddd..c655cd8dbaa0 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1525,7 +1525,8 @@
+>
+>  security/integrity/iint.c     |    3 ++-
+>  security/selinux/avc.c        |    9 +++++----
+>  security/selinux/hooks.c      |    5 +++--
+>  security/selinux/ss/avtab.c   |    5 +++--
+>  security/selinux/ss/ebitmap.c |    3 ++-
+>  security/selinux/ss/hashtab.c |    3 ++-
+>  security/smack/smack_lsm.c    |    3 ++-
+>  7 files changed, 19 insertions(+), 12 deletions(-)
+>
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -15,6 +15,7 @@
+>   *	- cache integrity information associated with an inode
+>   *	  using a rbtree tree.
+>   */
+> +#include <linux/cache.h>
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+>  #include <linux/spinlock.h>
+> @@ -25,7 +26,7 @@
 >  
->  	ima_policy=	[IMA]
->  			The builtin policies to load during IMA setup.
-> -			Format: "tcb | appraise_tcb | secure_boot"
-> +			Format: "tcb | appraise_tcb | secure_boot |
-> +				 unverifiable_sigs"
+>  static struct rb_root integrity_iint_tree = RB_ROOT;
+>  static DEFINE_RWLOCK(integrity_iint_lock);
+> -static struct kmem_cache *iint_cache __read_mostly;
+> +static struct kmem_cache *iint_cache __ro_after_init;
 >  
->  			The "tcb" policy measures all programs exec'd, files
->  			mmap'd for exec, and all files opened with the read
-> @@ -1540,6 +1541,11 @@
->  			of files (eg. kexec kernel image, kernel modules,
->  			firmware, policy, etc) based on file signatures.
+>  /*
+>   * __integrity_iint_find - return the iint associated with an inode
+> --- a/security/selinux/avc.c
+> +++ b/security/selinux/avc.c
+> @@ -13,6 +13,7 @@
+>   *	it under the terms of the GNU General Public License version 2,
+>   *	as published by the Free Software Foundation.
+>   */
+> +#include <linux/cache.h>
+>  #include <linux/types.h>
+>  #include <linux/stddef.h>
+>  #include <linux/kernel.h>
+> @@ -91,10 +92,10 @@ DEFINE_PER_CPU(struct avc_cache_stats, avc_cache_stats) = { 0 };
 >  
-> +			The "unverifiable_sigs" policy forces file signature
-> +			verification failure on privileged mounted
-> +			filesystems with the SB_I_UNVERIFIABLE_SIGNATURE
-> +			flag.
-> +
->  	ima_tcb		[IMA] Deprecated.  Use ima_policy= instead.
->  			Load a policy which meets the needs of the Trusted
->  			Computing Base.  This means IMA will measure all
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index f34901069e78..3034935e1eb3 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -304,11 +304,13 @@ int ima_appraise_measurement(enum ima_hooks func,
->  out:
->  	/*
->  	 * File signatures on some filesystems can not be properly verified.
-> -	 * On these filesytems, that are mounted by an untrusted mounter,
-> -	 * fail the file signature verification.
-> +	 * On these filesytems, that are mounted by an untrusted mounter or
-> +	 * for systems not willing to accept the risk, fail the file signature
-> +	 * verification.
->  	 */
-> -	if (inode->i_sb->s_iflags &
-> -	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) {
-> +	if ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
-> +	    ((inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) ||
-> +	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
->  		status = INTEGRITY_FAIL;
->  		cause = "unverifiable-signature";
->  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index f550f25294a3..5d122daf5c8a 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -238,7 +238,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
->  	 */
->  	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags) ||
->  	    ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
-> -	     !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER))) {
-> +	     !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) &&
-> +	     !(action & IMA_FAIL_UNVERIFIABLE_SIGS))) {
->  		iint->flags &= ~IMA_DONE_MASK;
->  		iint->measured_pcrs = 0;
->  	}
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index e3da29af2c16..ead3f7fe6998 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -188,6 +188,7 @@ __setup("ima_tcb", default_measure_policy_setup);
+>  static struct avc_cache avc_cache;
+>  static struct avc_callback_node *avc_callbacks;
+> -static struct kmem_cache *avc_node_cachep;
+> -static struct kmem_cache *avc_xperms_data_cachep;
+> -static struct kmem_cache *avc_xperms_decision_cachep;
+> -static struct kmem_cache *avc_xperms_cachep;
+> +static struct kmem_cache *avc_node_cachep __ro_after_init;
+> +static struct kmem_cache *avc_xperms_data_cachep __ro_after_init;
+> +static struct kmem_cache *avc_xperms_decision_cachep __ro_after_init;
+> +static struct kmem_cache *avc_xperms_cachep __ro_after_init;
 >  
->  static bool ima_use_appraise_tcb __initdata;
->  static bool ima_use_secure_boot __initdata;
-> +static bool ima_fail_unverifiable_sigs __ro_after_init;
->  static int __init policy_setup(char *str)
+>  static inline int avc_hash(u32 ssid, u32 tsid, u16 tclass)
 >  {
->  	char *p;
-> @@ -201,6 +202,8 @@ static int __init policy_setup(char *str)
->  			ima_use_appraise_tcb = true;
->  		else if (strcmp(p, "secure_boot") == 0)
->  			ima_use_secure_boot = true;
-> +		else if (strcmp(p, "unverifiable_sigs") == 0)
-> +			ima_fail_unverifiable_sigs = true;
->  	}
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -24,6 +24,7 @@
+>   *	as published by the Free Software Foundation.
+>   */
 >  
->  	return 1;
-> @@ -390,6 +393,8 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
->  		if (entry->action & IMA_APPRAISE) {
->  			action |= get_subaction(entry, func);
->  			action ^= IMA_HASH;
-> +			if (ima_fail_unverifiable_sigs)
-> +				action |= IMA_FAIL_UNVERIFIABLE_SIGS;
->  		}
+> +#include <linux/cache.h>
+>  #include <linux/init.h>
+>  #include <linux/kd.h>
+>  #include <linux/kernel.h>
+> @@ -129,8 +130,8 @@ __setup("selinux=", selinux_enabled_setup);
+>  int selinux_enabled = 1;
+>  #endif
 >  
->  		if (entry->action & IMA_DO_MASK)
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> index 843ae23ba0ac..8224880935e0 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -35,6 +35,7 @@
->  #define IMA_PERMIT_DIRECTIO	0x02000000
->  #define IMA_NEW_FILE		0x04000000
->  #define EVM_IMMUTABLE_DIGSIG	0x08000000
-> +#define IMA_FAIL_UNVERIFIABLE_SIGS	0x10000000
+> -static struct kmem_cache *sel_inode_cache;
+> -static struct kmem_cache *file_security_cache;
+> +static struct kmem_cache *sel_inode_cache __ro_after_init;
+> +static struct kmem_cache *file_security_cache __ro_after_init;
 >  
->  #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
->  				 IMA_HASH | IMA_APPRAISE_SUBMASK)
-> -- 
-> 2.7.5
+>  /**
+>   * selinux_secmark_enabled - Check to see if SECMARK is currently enabled
+> --- a/security/selinux/ss/avtab.c
+> +++ b/security/selinux/ss/avtab.c
+> @@ -17,14 +17,15 @@
+>   *	Tuned number of hash slots for avtab to reduce memory usage
+>   */
+>  
+> +#include <linux/cache.h>
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+>  #include <linux/errno.h>
+>  #include "avtab.h"
+>  #include "policydb.h"
+>  
+> -static struct kmem_cache *avtab_node_cachep;
+> -static struct kmem_cache *avtab_xperms_cachep;
+> +static struct kmem_cache *avtab_node_cachep __ro_after_init;
+> +static struct kmem_cache *avtab_xperms_cachep __ro_after_init;
+>  
+>  /* Based on MurmurHash3, written by Austin Appleby and placed in the
+>   * public domain.
+> --- a/security/selinux/ss/ebitmap.c
+> +++ b/security/selinux/ss/ebitmap.c
+> @@ -16,6 +16,7 @@
+>   *      Applied standard bit operations to improve bitmap scanning.
+>   */
+>  
+> +#include <linux/cache.h>
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+>  #include <linux/errno.h>
+> @@ -25,7 +26,7 @@
+>  
+>  #define BITS_PER_U64	(sizeof(u64) * 8)
+>  
+> -static struct kmem_cache *ebitmap_node_cachep;
+> +static struct kmem_cache *ebitmap_node_cachep __ro_after_init;
+>  
+>  int ebitmap_cmp(struct ebitmap *e1, struct ebitmap *e2)
+>  {
+> --- a/security/selinux/ss/hashtab.c
+> +++ b/security/selinux/ss/hashtab.c
+> @@ -4,13 +4,14 @@
+>   *
+>   * Author : Stephen Smalley, <sds@tycho.nsa.gov>
+>   */
+> +#include <linux/cache.h>
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+>  #include <linux/errno.h>
+>  #include <linux/sched.h>
+>  #include "hashtab.h"
+>  
+> -static struct kmem_cache *hashtab_node_cachep;
+> +static struct kmem_cache *hashtab_node_cachep __ro_after_init;
+>  
+>  struct hashtab *hashtab_create(u32 (*hash_value)(struct hashtab *h, const void *key),
+>  			       int (*keycmp)(struct hashtab *h, const void *key1, const void *key2),
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -18,6 +18,7 @@
+>   *      as published by the Free Software Foundation.
+>   */
+>  
+> +#include <linux/cache.h>
+>  #include <linux/xattr.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/mount.h>
+> @@ -55,7 +56,7 @@
+>  DEFINE_MUTEX(smack_ipv6_lock);
+>  static LIST_HEAD(smk_ipv6_port_list);
+>  #endif
+> -static struct kmem_cache *smack_inode_cache;
+> +static struct kmem_cache *smack_inode_cache __ro_after_init;
+
+Have you tried this to see if it works?
+
+
+>  int smack_enabled;
+>  
+>  static const match_table_t smk_mount_tokens = {
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
