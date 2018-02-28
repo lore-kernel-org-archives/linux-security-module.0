@@ -1,40 +1,69 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed, 28 Feb 2018 14:18:27 -0500
-Subject: [PATCH 2/3] tpm: reduce poll sleep time between send() and recv() in
-	tpm_transmit()
-In-Reply-To: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
-References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
+Date: Wed, 28 Feb 2018 14:18:26 -0500
+Subject: [PATCH 1/3] tpm: move TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h
+Message-ID: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In tpm_transmit, after send(), the code checks for status in a loop
-with polling every 5msec. It is expected that the tpm might return
-earlier than 5msec, so it might be adding to unnecessary delay.
-
-This patch reduces the polling sleep time from 5msec to 1msec.
-
-After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~14sec to ~10.7sec.
+This patch moves TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h, renaming
+it to TPM_TIMEOUT_POLL, to follow the existing enum naming
+conventions.
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm-interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/tpm/tpm.h          |  3 ++-
+ drivers/char/tpm/tpm_tis_core.c | 10 ++--------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 76df4fbcf089..2d22f981f0c9 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -470,7 +470,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 			goto out;
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f895fba4e20d..7e797377e1eb 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -53,7 +53,8 @@ enum tpm_const {
+ enum tpm_timeout {
+ 	TPM_TIMEOUT = 5,	/* msecs */
+ 	TPM_TIMEOUT_RETRY = 100, /* msecs */
+-	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
++	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
++	TPM_TIMEOUT_POLL = 1	/* msecs */
+ };
+ 
+ /* TPM addresses */
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 183a5f54d875..dc474e7244a6 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -31,12 +31,6 @@
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
+ 
+-/* This is a polling delay to check for status and burstcount.
+- * As per ddwg input, expectation is that status check and burstcount
+- * check should return within few usecs.
+- */
+-#define TPM_POLL_SLEEP	1  /* msec */
+-
+ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
+ 
+ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+@@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
  		}
- 
--		tpm_msleep(TPM_TIMEOUT);
+ 	} else {
+ 		do {
+-			tpm_msleep(TPM_POLL_SLEEP);
++			tpm_msleep(TPM_TIMEOUT_POLL);
+ 			status = chip->ops->status(chip);
+ 			if ((status & mask) == mask)
+ 				return 0;
+@@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 		burstcnt = (value >> 8) & 0xFFFF;
+ 		if (burstcnt)
+ 			return burstcnt;
+-		tpm_msleep(TPM_POLL_SLEEP);
 +		tpm_msleep(TPM_TIMEOUT_POLL);
- 		rmb();
  	} while (time_before(jiffies, stop));
- 
+ 	return -EBUSY;
+ }
 -- 
 2.13.3
 
