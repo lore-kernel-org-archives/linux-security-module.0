@@ -1,43 +1,40 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed, 28 Feb 2018 14:18:28 -0500
-Subject: [RFC PATCH 3/3] tpm: tpm_msleep() with finer granularity improves
-	performance
+Date: Wed, 28 Feb 2018 14:18:27 -0500
+Subject: [PATCH 2/3] tpm: reduce poll sleep time between send() and recv() in
+	tpm_transmit()
 In-Reply-To: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
 References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20180228191828.20056-3-nayna@linux.vnet.ibm.com>
+Message-ID: <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When 'commit 9f3fc7bcddcb ("tpm: replace msleep() with  usleep_range()
-in TPM 1.2/2.0 generic drivers")' was upstreamed, it replaced the
-msleep() calls with usleep_range(), but did not change the
-granularity of the calls. They're still defined in terms of msec.
-Test results show that refining the granularity further improves
-the performance. We're posting this patch as an RFC to show that there
-needs to be another function which allows finer granularity.
+In tpm_transmit, after send(), the code checks for status in a loop
+with polling every 5msec. It is expected that the tpm might return
+earlier than 5msec, so it might be adding to unnecessary delay.
+
+This patch reduces the polling sleep time from 5msec to 1msec.
 
 After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~10.7sec to ~6.9sec.
+burstcount for 1000 extends improved from ~14sec to ~10.7sec.
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 7e797377e1eb..8cad6bfc5f46 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -522,8 +522,7 @@ int tpm_pm_resume(struct device *dev);
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 76df4fbcf089..2d22f981f0c9 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -470,7 +470,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 			goto out;
+ 		}
  
- static inline void tpm_msleep(unsigned int delay_msec)
- {
--	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
--		     delay_msec * 1000);
-+	usleep_range((delay_msec * 1000) / 10, (delay_msec * 1000) / 2);
- };
+-		tpm_msleep(TPM_TIMEOUT);
++		tpm_msleep(TPM_TIMEOUT_POLL);
+ 		rmb();
+ 	} while (time_before(jiffies, stop));
  
- struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
 -- 
 2.13.3
 
