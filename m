@@ -1,72 +1,26 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed, 28 Feb 2018 14:18:26 -0500
-Subject: [PATCH 1/3] tpm: move TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h
-Message-ID: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+From: adobriyan@gmail.com (Alexey Dobriyan)
+Date: Wed, 28 Feb 2018 22:35:35 +0300
+Subject: [PATCH] security: mark kmem caches as __ro_after_init
+In-Reply-To: <050858c8-2a7d-d53d-d50a-a3218364d140@tycho.nsa.gov>
+References: <20180226203747.GB6886@avx2>
+	<CAHC9VhSx4--OpFNv_NXb9LYrKTqRG6jR1WKuyWhVHO=YSjK3kA@mail.gmail.com>
+	<050858c8-2a7d-d53d-d50a-a3218364d140@tycho.nsa.gov>
+Message-ID: <20180228193535.GA2083@avx2>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch moves TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h, renaming
-it to TPM_TIMEOUT_POLL, to follow the existing enum naming
-conventions.
+On Wed, Feb 28, 2018 at 09:34:07AM -0500, Stephen Smalley wrote:
+> On 02/27/2018 05:19 PM, Paul Moore wrote:
+> > This is why we don't mark avtab_cache_init() with the __init macro.
+> 
+> NB My "selinux: wrap global selinux state" patch moves this
+> initialization to selinux_init(), at which point we can in fact mark
+> these caches this way.  I think that is more correct anyway, but it was
+> specifically motivated by the fact that we only want to perform this
+> initialization once and first policy load becomes a per-state/namespace
+> operation.
 
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm.h          |  3 ++-
- drivers/char/tpm/tpm_tis_core.c | 10 ++--------
- 2 files changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f895fba4e20d..7e797377e1eb 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -53,7 +53,8 @@ enum tpm_const {
- enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
- 	TPM_TIMEOUT_RETRY = 100, /* msecs */
--	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
-+	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
-+	TPM_TIMEOUT_POLL = 1	/* msecs */
- };
- 
- /* TPM addresses */
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 183a5f54d875..dc474e7244a6 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -31,12 +31,6 @@
- #include "tpm.h"
- #include "tpm_tis_core.h"
- 
--/* This is a polling delay to check for status and burstcount.
-- * As per ddwg input, expectation is that status check and burstcount
-- * check should return within few usecs.
-- */
--#define TPM_POLL_SLEEP	1  /* msec */
--
- static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
- 
- static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-@@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 		}
- 	} else {
- 		do {
--			tpm_msleep(TPM_POLL_SLEEP);
-+			tpm_msleep(TPM_TIMEOUT_POLL);
- 			status = chip->ops->status(chip);
- 			if ((status & mask) == mask)
- 				return 0;
-@@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
- 		burstcnt = (value >> 8) & 0xFFFF;
- 		if (burstcnt)
- 			return burstcnt;
--		tpm_msleep(TPM_POLL_SLEEP);
-+		tpm_msleep(TPM_TIMEOUT_POLL);
- 	} while (time_before(jiffies, stop));
- 	return -EBUSY;
- }
--- 
-2.13.3
-
+I got confused by SLAB_PANIC markings.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
