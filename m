@@ -1,153 +1,95 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Wed, 28 Feb 2018 22:06:20 +0200
-Subject: [PATCH 7/7] Documentation for Pmalloc
-In-Reply-To: <20180228200620.30026-1-igor.stoppa@huawei.com>
-References: <20180228200620.30026-1-igor.stoppa@huawei.com>
-Message-ID: <20180228200620.30026-8-igor.stoppa@huawei.com>
+From: jgg@ziepe.ca (Jason Gunthorpe)
+Date: Wed, 28 Feb 2018 13:25:40 -0700
+Subject: [PATCH 2/5] tpm: migrate tpm2_shutdown() to use struct tpm_buf
+In-Reply-To: <20180228195819.22231-3-jarkko.sakkinen@linux.intel.com>
+References: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
+	<20180228195819.22231-3-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20180228202540.GA19007@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Detailed documentation about the protectable memory allocator.
+On Wed, Feb 28, 2018 at 09:58:15PM +0200, Jarkko Sakkinen wrote:
+> In order to make struct tpm_buf the first class object for constructing TPM
+> commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
+> entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
+> prints an error message.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>  drivers/char/tpm/tpm2-cmd.c | 41 +++++++++++++----------------------------
+>  1 file changed, 13 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 6eeff3a60003..5f92141b1e16 100644
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -27,10 +27,6 @@ enum tpm2_session_attributes {
+>  	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+>  };
+>  
+> -struct tpm2_startup_in {
+> -	__be16	startup_type;
+> -} __packed;
+> -
+>  struct tpm2_get_tpm_pt_in {
+>  	__be32	cap_id;
+>  	__be32	property_id;
+> @@ -55,7 +51,6 @@ struct tpm2_get_random_out {
+>  } __packed;
+>  
+>  union tpm2_cmd_params {
+> -	struct	tpm2_startup_in		startup_in;
+>  	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
+>  	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
+>  	struct	tpm2_get_random_in	getrandom_in;
+> @@ -760,40 +755,30 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+>  }
+>  EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+>  
+> -#define TPM2_SHUTDOWN_IN_SIZE \
+> -	(sizeof(struct tpm_input_header) + \
+> -	 sizeof(struct tpm2_startup_in))
+> -
+> -static const struct tpm_input_header tpm2_shutdown_header = {
+> -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+> -	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
+> -	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
+> -};
+> -
+>  /**
+>   * tpm2_shutdown() - send shutdown command to the TPM chip
+>   *
+> + * In places where shutdown command is sent there's no much we can do except
+> + * print the error code on a system failure.
+> + *
+>   * @chip:		TPM chip to use.
+>   * @shutdown_type:	shutdown type. The value is either
+>   *			TPM_SU_CLEAR or TPM_SU_STATE.
+>   */
+>  void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+>  {
+> -	struct tpm2_cmd cmd;
+> +	struct tpm_buf buf;
+>  	int rc;
+>  
+> -	cmd.header.in = tpm2_shutdown_header;
+> -	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
+> -
+> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
+> -			      "stopping the TPM");
+> -
+> -	/* In places where shutdown command is sent there's no much we can do
+> -	 * except print the error code on a system failure.
+> -	 */
+> -	if (rc < 0 && rc != -EPIPE)
+> -		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
+> -			 rc);
+> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
+> +	if (rc) {
+> +		dev_err(&chip->dev, "%s: out of memory", __func__);
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
----
- Documentation/core-api/index.rst   |   1 +
- Documentation/core-api/pmalloc.rst | 111 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 112 insertions(+)
- create mode 100644 Documentation/core-api/pmalloc.rst
+Don't print for out of memory. The kernel already makes lots of
+prints for you. Same comment everywhere.
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index c670a8031786..8f5de42d6571 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -25,6 +25,7 @@ Core utilities
-    genalloc
-    errseq
-    printk-formats
-+   pmalloc
- 
- Interfaces for kernel debugging
- ===============================
-diff --git a/Documentation/core-api/pmalloc.rst b/Documentation/core-api/pmalloc.rst
-new file mode 100644
-index 000000000000..8fb9c9d3171b
---- /dev/null
-+++ b/Documentation/core-api/pmalloc.rst
-@@ -0,0 +1,111 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Protectable memory allocator
-+============================
-+
-+Purpose
-+-------
-+
-+The pmalloc library is meant to provide R/O status to data that, for some
-+reason, could neither be declared as constant, nor could it take advantage
-+of the qualifier __ro_after_init, but is write-once and read-only in spirit.
-+It protects data from both accidental and malicious overwrites.
-+
-+Example: A policy that is loaded from userspace.
-+
-+
-+Concept
-+-------
-+
-+pmalloc builds on top of genalloc, using the same concept of memory pools.
-+
-+The value added by pmalloc is that now the memory contained in a pool can
-+become R/O, for the rest of the life of the pool.
-+
-+Different kernel drivers and threads can use different pools, for finer
-+control of what becomes R/O and when. And for improved lockless concurrency.
-+
-+
-+Caveats
-+-------
-+
-+- Memory freed while a pool is not yet protected will be reused.
-+
-+- Once a pool is protected, it's not possible to allocate any more memory
-+  from it.
-+
-+- Memory "freed" from a protected pool indicates that such memory is not
-+  in use anymore by the requester; however, it will not become available
-+  for further use, until the pool is destroyed.
-+
-+- pmalloc does not provide locking support with respect to allocating vs
-+  protecting an individual pool, for performance reasons.
-+  It is recommended not to share the same pool between unrelated functions.
-+  Should sharing be a necessity, the user of the shared pool is expected
-+  to implement locking for that pool.
-+
-+- pmalloc uses genalloc to optimize the use of the space it allocates
-+  through vmalloc. Some more TLB entries will be used, however less than
-+  in the case of using vmalloc directly. The exact number depends on the
-+  size of each allocation request and possible slack.
-+
-+- Considering that not much data is supposed to be dynamically allocated
-+  and then marked as read-only, it shouldn't be an issue that the address
-+  range for pmalloc is limited, on 32-bit systems.
-+
-+- Regarding SMP systems, the allocations are expected to happen mostly
-+  during an initial transient, after which there should be no more need to
-+  perform cross-processor synchronizations of page tables.
-+
-+- To facilitate the conversion of existing code to pmalloc pools, several
-+  helper functions are provided, mirroring their kmalloc counterparts.
-+
-+
-+Use
-+---
-+
-+The typical sequence, when using pmalloc, is:
-+
-+1. create a pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_create_pool
-+
-+2. [optional] pre-allocate some memory in the pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_prealloc
-+
-+3. issue one or more allocation requests to the pool with locking as needed
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pzalloc
-+
-+4. initialize the memory obtained with desired values
-+
-+5. [optional] iterate over points 3 & 4 as needed
-+
-+6. write-protect the pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_protect_pool
-+
-+7. use in read-only mode the handles obtained through the allocations
-+
-+8. [optional] release all the memory allocated
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pfree
-+
-+9. [optional, but depends on point 8] destroy the pool
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+   :functions: pmalloc_destroy_pool
-+
-+API
-+---
-+
-+.. kernel-doc:: include/linux/pmalloc.h
--- 
-2.14.1
-
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
