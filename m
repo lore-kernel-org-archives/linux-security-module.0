@@ -1,10 +1,10 @@
 From: lkp@intel.com (kbuild test robot)
-Date: Thu, 1 Mar 2018 00:27:33 +0800
+Date: Thu, 1 Mar 2018 00:58:42 +0800
 Subject: [PATCH bpf-next v8 01/11] fs,security: Add a security blob to
 	nameidata
 In-Reply-To: <20180227004121.3633-2-mic@digikod.net>
 References: <20180227004121.3633-2-mic@digikod.net>
-Message-ID: <201803010059.epnyXU90%fengguang.wu@intel.com>
+Message-ID: <201803010052.yZlY06o7%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -16,18 +16,40 @@ Thank you for the patch! Perhaps something to improve:
 
 url:    https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-LSM-Toward-unprivileged-sandboxing/20180228-233659
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-config: x86_64-randconfig-x017-201808 (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+config: i386-randconfig-a1-201808 (attached as .config)
+compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
 reproduce:
         # save the attached .config to linux build tree
-        make ARCH=x86_64 
+        make ARCH=i386 
 
 All warnings (new ones prefixed by >>):
 
-   In file included from fs//quota/dquot.c:74:0:
->> include/linux/security.h:815:10: warning: 'struct nameidata_lookup' declared inside parameter list will not be visible outside of this definition or declaration
+   In file included from init/main.c:37:0:
+>> include/linux/security.h:815:43: warning: 'struct nameidata_lookup' declared inside parameter list
       struct nameidata_lookup *lookup, struct inode *inode)
-             ^~~~~~~~~~~~~~~~
+                                              ^
+>> include/linux/security.h:815:43: warning: its scope is only this definition or declaration, which is probably not what you want
+--
+   In file included from fs/namei.c:27:0:
+>> include/linux/security.h:815:43: warning: 'struct nameidata_lookup' declared inside parameter list
+      struct nameidata_lookup *lookup, struct inode *inode)
+                                              ^
+>> include/linux/security.h:815:43: warning: its scope is only this definition or declaration, which is probably not what you want
+   fs/namei.c: In function 'restore_nameidata':
+   fs/namei.c:531:36: error: 'struct nameidata' has no member named 'lookup'
+     security_nameidata_put_lookup(&now->lookup, now->inode);
+                                       ^
+--
+   In file included from include/linux/lsm_hooks.h:28:0,
+                    from security/commoncap.c:15:
+>> include/linux/security.h:815:43: warning: 'struct nameidata_lookup' declared inside parameter list
+      struct nameidata_lookup *lookup, struct inode *inode)
+                                              ^
+>> include/linux/security.h:815:43: warning: its scope is only this definition or declaration, which is probably not what you want
+   In file included from security/commoncap.c:15:0:
+>> include/linux/lsm_hooks.h:1522:13: warning: 'struct nameidata_lookup' declared inside parameter list
+         struct inode *inode);
+                ^
 
 vim +815 include/linux/security.h
 
