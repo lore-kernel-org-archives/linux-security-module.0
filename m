@@ -1,153 +1,88 @@
-From: masanobu2.koike@toshiba.co.jp (Masanobu Koike)
-Date: Thu,  1 Mar 2018 16:37:42 +0900
-Subject: [RFC v2 0/2] WhiteEgret LSM module
-Message-ID: <20180301073742.2501-1-masanobu2.koike@toshiba.co.jp>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 1 Mar 2018 10:37:40 +0200
+Subject: [PATCH 1/3] tpm: move TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h
+In-Reply-To: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+Message-ID: <20180301083740.GB29420@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-WhiteEgret is an LSM to simply provide a whitelisting-type
-execution control.
+Hi
 
-An execution-whitelist, simply called whitelist, is a list
-of executable components (e.g., applications, libraries)
-that are approved to run on a host. The whitelist is used
-to decide whether executable components are permitted to
-execute or not. This mechanism can stop an execution of
-unknown software, so it helps stop the execution of
-malicious code and other unauthorized software.
+On Wed, Feb 28, 2018 at 02:18:26PM -0500, Nayna Jain wrote:
+> This patch moves TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h, renaming
+> it to TPM_TIMEOUT_POLL, to follow the existing enum naming
+> conventions.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 
-It is important to maintain a whitelist properly according to
-the execution environments. Managing whitelists for information
-systems is a difficult task because their environments are
-changed frequently. On the other hand, for such devices that
-continue to do the same tasks for a certain period of time,
-we can use the same whitelist for the period once the whitelist
-is established. Thus the whitelisting-type execution control
-works best in such execution environments. Examples of the above
-execution environments include control devices in industrial
-control systems.
+The cover letter is missing. Are this meant to be a patch set or
+individual patches? I'll check these anyway.
 
-Although the number of changing whitelists is not so large,
-it is necessary to change them according to a system life cycle
-or each phase of system operations. There is a requirement to
-change whitelists with the system operations continued because
-they often cannot easily be stopped. For example, such cases
-include temporarily allowing maintenance programs for maintenance
-or troubleshooting purposes while running the systems.
+> ---
+>  drivers/char/tpm/tpm.h          |  3 ++-
+>  drivers/char/tpm/tpm_tis_core.c | 10 ++--------
+>  2 files changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f895fba4e20d..7e797377e1eb 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -53,7 +53,8 @@ enum tpm_const {
+>  enum tpm_timeout {
+>  	TPM_TIMEOUT = 5,	/* msecs */
+>  	TPM_TIMEOUT_RETRY = 100, /* msecs */
+> -	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
+> +	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
 
-WhiteEgret is aiming at satisfying the above requirement.
-WhiteEgret adopts a model that a whitelist is managed in user space.
-Namely, WhiteEgret assumes that a privileged user manages a whitelist
-in user space. This makes it possible to change the whitelist while
-running the systems. 
+What is happening here?
 
-Mechanism of WhiteEgret
+> +	TPM_TIMEOUT_POLL = 1	/* msecs */
+>  };
+>  
+>  /* TPM addresses */
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index 183a5f54d875..dc474e7244a6 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -31,12 +31,6 @@
+>  #include "tpm.h"
+>  #include "tpm_tis_core.h"
+>  
+> -/* This is a polling delay to check for status and burstcount.
+> - * As per ddwg input, expectation is that status check and burstcount
+> - * check should return within few usecs.
+> - */
+> -#define TPM_POLL_SLEEP	1  /* msec */
+> -
+>  static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
+>  
+>  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> @@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+>  		}
+>  	} else {
+>  		do {
+> -			tpm_msleep(TPM_POLL_SLEEP);
+> +			tpm_msleep(TPM_TIMEOUT_POLL);
+>  			status = chip->ops->status(chip);
+>  			if ((status & mask) == mask)
+>  				return 0;
+> @@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
+>  		burstcnt = (value >> 8) & 0xFFFF;
+>  		if (burstcnt)
+>  			return burstcnt;
+> -		tpm_msleep(TPM_POLL_SLEEP);
+> +		tpm_msleep(TPM_TIMEOUT_POLL);
+>  	} while (time_before(jiffies, stop));
+>  	return -EBUSY;
+>  }
+> -- 
+> 2.13.3
+> 
 
-WhiteEgret requires a user application called WhiteEgret User
-Application (WEUA, for short). WhiteEgret utilizes the
-bprm_check_security hook and the mmap_file hook.
-WhiteEgret asks WEUA whether an executable component hooked
-by the above hooks is permitted to execute or not.
-If the response from the WEUA is "permit", then WhiteEgret
-continues to process the executable component. If the response
-is "not permit", then WhiteEgret returns an error and blocks
-the execution of the executable component.
-The bprm_check_security hook is triggered by execve system
-call, so execution by almost all executable components are
-hooked by the hook. However, because shared objects do not
-invoke execve system call, WhiteEgret utilizes the mmap_file
-hook to hook the memory mapping by a shared object.
-Thus WhiteEgret ignores the mmap_file hook caused by
-non-executable and by executable which calls execve system call.
+Otherwise, looks fine.
 
-To ask the permission to a WEUA, WhiteEgret sends the
-absolute path, the inode number and the device number of the
-executable component to the WEUA.
-Then the WEUA is expected to work as follows.
-The WEUA sees if the tuple of the absolute path and/or the inode
-number and/or the device number is contained in the whitelist.
-If it exists, the WEUA compares a hash value of the executable
-component indicated by the absolute path (and/or the inode number
-and/or device number) with that in the whitelist to see whether
-the executable component is changed or not after the whitelist is
-made. The WEUA returns "permit" if both tests are passed,
-otherwise returns "not permit".
-
-To use WhiteEgret
-
-Users have to prepare a whitelist and a WEUA to use WhiteEgret.
-A sample WEUA is involved in samples/whiteegret/.
-
-To enable WhiteEgret, you are required to build the kernel using
-normal procedures with CONFIG_SECURITY_WHITEEGRET=y and
-CONFIG_DEFAULT_SECURITY_WHITEEGRET=y (or pass
-"security=whiteegret" on kernel's command line).
-
-Assumptions and ToDos
-
-At this stage, WhiteEgret assumes the following.
-Relaxing these assumptions are future works.
-- Root is not compromised. And using a whitelist and a WEUA
-requires root privilege.
-- WEUA is reliable.
-- It is allowed for scripting languages, e.g., Perl or Python,
-to read arbitrary scripts and to execute them. 
-
-
-Changes in v2:
-- Change communication method between kernel space and user space
-from netlink to device driver, and device driver utilizes not LKM
-but securityfs.
-- Add inode number and device number to information of executable
-component sent from kernel space to user space.
-- Fix bugs regarding to locks during kernel space and user space
-communication.
-- Change return value from -EPERM to -EACCES when the execution of
-an executable component is denied.
-
-
-Masanobu Koike (2):
-  WhiteEgret: Add WhiteEgret core functions.
-  WhiteEgret: Add an example of user application.
-
- samples/Kconfig                    |   6 +
- samples/Makefile                   |   2 +-
- samples/whiteegret/Makefile        |  14 ++
- samples/whiteegret/checkwl.c       |  57 ++++++++
- samples/whiteegret/checkwl.h       |  26 ++++
- samples/whiteegret/main.c          |  86 ++++++++++++
- security/Kconfig                   |   6 +
- security/Makefile                  |   2 +
- security/whiteegret/Kconfig        |  11 ++
- security/whiteegret/Makefile       |   2 +
- security/whiteegret/init.c         |  75 ++++++++++
- security/whiteegret/main.c         | 251 +++++++++++++++++++++++++++++++++
- security/whiteegret/request.c      | 151 ++++++++++++++++++++
- security/whiteegret/request.h      |  52 +++++++
- security/whiteegret/we.h           |  66 +++++++++
- security/whiteegret/we_fs.c        | 280 +++++++++++++++++++++++++++++++++++++
- security/whiteegret/we_fs.h        |  23 +++
- security/whiteegret/we_fs_common.h |  36 +++++
- 18 files changed, 1145 insertions(+), 1 deletion(-)
- create mode 100644 samples/whiteegret/Makefile
- create mode 100644 samples/whiteegret/checkwl.c
- create mode 100644 samples/whiteegret/checkwl.h
- create mode 100644 samples/whiteegret/main.c
- create mode 100644 security/whiteegret/Kconfig
- create mode 100644 security/whiteegret/Makefile
- create mode 100644 security/whiteegret/init.c
- create mode 100644 security/whiteegret/main.c
- create mode 100644 security/whiteegret/request.c
- create mode 100644 security/whiteegret/request.h
- create mode 100644 security/whiteegret/we.h
- create mode 100644 security/whiteegret/we_fs.c
- create mode 100644 security/whiteegret/we_fs.h
- create mode 100644 security/whiteegret/we_fs_common.h
-
--- 
-2.14.1
-
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
