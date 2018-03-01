@@ -1,290 +1,149 @@
 From: masanobu2.koike@toshiba.co.jp (Masanobu Koike)
-Date: Thu,  1 Mar 2018 16:38:56 +0900
-Subject: [RFC v2 2/2] WhiteEgret: Add an example of user application.
-Message-ID: <20180301073856.2601-1-masanobu2.koike@toshiba.co.jp>
+Date: Thu,  1 Mar 2018 16:37:42 +0900
+Subject: [RFC v2 0/2] WhiteEgret LSM module
+Message-ID: <20180301073742.2501-1-masanobu2.koike@toshiba.co.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-A user application is required to use WhiteEgret.
-This RFC provides a sample user application program.
+WhiteEgret is an LSM to simply provide a whitelisting-type
+execution control.
 
-Usage
-  sample-we-user <exe>
+An execution-whitelist, simply called whitelist, is a list
+of executable components (e.g., applications, libraries)
+that are approved to run on a host. The whitelist is used
+to decide whether executable components are permitted to
+execute or not. This mechanism can stop an execution of
+unknown software, so it helps stop the execution of
+malicious code and other unauthorized software.
 
-This sample user application always returns "not permit"
-for the executable specified by the argument <exe>,
-otherwise always returns "permit". Set the absolute path
-of an executable to be blocked for <exe>.
+It is important to maintain a whitelist properly according to
+the execution environments. Managing whitelists for information
+systems is a difficult task because their environments are
+changed frequently. On the other hand, for such devices that
+continue to do the same tasks for a certain period of time,
+we can use the same whitelist for the period once the whitelist
+is established. Thus the whitelisting-type execution control
+works best in such execution environments. Examples of the above
+execution environments include control devices in industrial
+control systems.
 
-Example
-  sample-we-user /bin/df
+Although the number of changing whitelists is not so large,
+it is necessary to change them according to a system life cycle
+or each phase of system operations. There is a requirement to
+change whitelists with the system operations continued because
+they often cannot easily be stopped. For example, such cases
+include temporarily allowing maintenance programs for maintenance
+or troubleshooting purposes while running the systems.
 
-Then every executions of /bin/df are blocked.
-The other commands can be issued normally.
+WhiteEgret is aiming at satisfying the above requirement.
+WhiteEgret adopts a model that a whitelist is managed in user space.
+Namely, WhiteEgret assumes that a privileged user manages a whitelist
+in user space. This makes it possible to change the whitelist while
+running the systems. 
 
-How to build
-To build this sample user application, set option
-CONFIG_SAMPLE_WHITEEGRET=y.
+Mechanism of WhiteEgret
 
-Remark
-This sample user application does not use a whitelist.
-It simply returns "not permit" only when WhiteEgret sends
-the absolute path of argv[1] to the application.
-The reason why this sample user application adopts
-blacklist-like approach is to avoid a host to become
-uncontrollable. Namely, if this sample provides a sample
-whitelist and it misses indispensable executable components
-for a host, the host cannot run or stop normally.
-Because indispensable executable components depend on
-each environment, we decide not to provide a whitelisting-type
-sample user application.
+WhiteEgret requires a user application called WhiteEgret User
+Application (WEUA, for short). WhiteEgret utilizes the
+bprm_check_security hook and the mmap_file hook.
+WhiteEgret asks WEUA whether an executable component hooked
+by the above hooks is permitted to execute or not.
+If the response from the WEUA is "permit", then WhiteEgret
+continues to process the executable component. If the response
+is "not permit", then WhiteEgret returns an error and blocks
+the execution of the executable component.
+The bprm_check_security hook is triggered by execve system
+call, so execution by almost all executable components are
+hooked by the hook. However, because shared objects do not
+invoke execve system call, WhiteEgret utilizes the mmap_file
+hook to hook the memory mapping by a shared object.
+Thus WhiteEgret ignores the mmap_file hook caused by
+non-executable and by executable which calls execve system call.
 
-Signed-off-by: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
----
- samples/Kconfig              |  6 ++++
- samples/Makefile             |  2 +-
- samples/whiteegret/Makefile  | 14 ++++++++
- samples/whiteegret/checkwl.c | 57 +++++++++++++++++++++++++++++
- samples/whiteegret/checkwl.h | 26 ++++++++++++++
- samples/whiteegret/main.c    | 86 ++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 190 insertions(+), 1 deletion(-)
+To ask the permission to a WEUA, WhiteEgret sends the
+absolute path, the inode number and the device number of the
+executable component to the WEUA.
+Then the WEUA is expected to work as follows.
+The WEUA sees if the tuple of the absolute path and/or the inode
+number and/or the device number is contained in the whitelist.
+If it exists, the WEUA compares a hash value of the executable
+component indicated by the absolute path (and/or the inode number
+and/or device number) with that in the whitelist to see whether
+the executable component is changed or not after the whitelist is
+made. The WEUA returns "permit" if both tests are passed,
+otherwise returns "not permit".
+
+To use WhiteEgret
+
+Users have to prepare a whitelist and a WEUA to use WhiteEgret.
+A sample WEUA is involved in samples/whiteegret/.
+
+To enable WhiteEgret, you are required to build the kernel using
+normal procedures with CONFIG_SECURITY_WHITEEGRET=y and
+CONFIG_DEFAULT_SECURITY_WHITEEGRET=y (or pass
+"security=whiteegret" on kernel's command line).
+
+Assumptions and ToDos
+
+At this stage, WhiteEgret assumes the following.
+Relaxing these assumptions are future works.
+- Root is not compromised. And using a whitelist and a WEUA
+requires root privilege.
+- WEUA is reliable.
+- It is allowed for scripting languages, e.g., Perl or Python,
+to read arbitrary scripts and to execute them. 
+
+
+Changes in v2:
+- Change communication method between kernel space and user space
+from netlink to device driver, and device driver utilizes not LKM
+but securityfs.
+- Add inode number and device number to information of executable
+component sent from kernel space to user space.
+- Fix bugs regarding to locks during kernel space and user space
+communication.
+- Change return value from -EPERM to -EACCES when the execution of
+an executable component is denied.
+
+
+Masanobu Koike (2):
+  WhiteEgret: Add WhiteEgret core functions.
+  WhiteEgret: Add an example of user application.
+
+ samples/Kconfig                    |   6 +
+ samples/Makefile                   |   2 +-
+ samples/whiteegret/Makefile        |  14 ++
+ samples/whiteegret/checkwl.c       |  57 ++++++++
+ samples/whiteegret/checkwl.h       |  26 ++++
+ samples/whiteegret/main.c          |  86 ++++++++++++
+ security/Kconfig                   |   6 +
+ security/Makefile                  |   2 +
+ security/whiteegret/Kconfig        |  11 ++
+ security/whiteegret/Makefile       |   2 +
+ security/whiteegret/init.c         |  75 ++++++++++
+ security/whiteegret/main.c         | 251 +++++++++++++++++++++++++++++++++
+ security/whiteegret/request.c      | 151 ++++++++++++++++++++
+ security/whiteegret/request.h      |  52 +++++++
+ security/whiteegret/we.h           |  66 +++++++++
+ security/whiteegret/we_fs.c        | 280 +++++++++++++++++++++++++++++++++++++
+ security/whiteegret/we_fs.h        |  23 +++
+ security/whiteegret/we_fs_common.h |  36 +++++
+ 18 files changed, 1145 insertions(+), 1 deletion(-)
  create mode 100644 samples/whiteegret/Makefile
  create mode 100644 samples/whiteegret/checkwl.c
  create mode 100644 samples/whiteegret/checkwl.h
  create mode 100644 samples/whiteegret/main.c
+ create mode 100644 security/whiteegret/Kconfig
+ create mode 100644 security/whiteegret/Makefile
+ create mode 100644 security/whiteegret/init.c
+ create mode 100644 security/whiteegret/main.c
+ create mode 100644 security/whiteegret/request.c
+ create mode 100644 security/whiteegret/request.h
+ create mode 100644 security/whiteegret/we.h
+ create mode 100644 security/whiteegret/we_fs.c
+ create mode 100644 security/whiteegret/we_fs.h
+ create mode 100644 security/whiteegret/we_fs_common.h
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index c332a3b9de05..be6b03a70f23 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -117,4 +117,10 @@ config SAMPLE_STATX
- 	help
- 	  Build example userspace program to use the new extended-stat syscall.
- 
-+config SAMPLE_WHITEEGRET
-+	bool "Build WhiteEgret sample user application"
-+	depends on SECURITY_WHITEEGRET
-+	help
-+	  Build sample userspace application for WhiteEgret LSM module.
-+
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index db54e766ddb1..00bcba542e46 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,4 +3,4 @@
- obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
- 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
- 			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
--			   vfio-mdev/ statx/
-+			   vfio-mdev/ statx/ whiteegret/
-diff --git a/samples/whiteegret/Makefile b/samples/whiteegret/Makefile
-new file mode 100644
-index 000000000000..77a01643c45d
---- /dev/null
-+++ b/samples/whiteegret/Makefile
-@@ -0,0 +1,14 @@
-+# kbuild trick to avoid linker error. Can be omitted if a module is built.
-+obj- := dummy.o
-+
-+# List of programs to build
-+hostprogs-$(CONFIG_SAMPLE_WHITEEGRET) := sample-we-user
-+
-+sample-we-user-objs := main.o checkwl.o
-+
-+HOSTCFLAGS += -Wall
-+HOSTCFLAGS += -I/usr/local/include
-+HOSTCFLAGS += -I$(srctree)/security/whiteegret
-+
-+# Tell kbuild to always build the programs
-+always := $(hostprogs-y)
-diff --git a/samples/whiteegret/checkwl.c b/samples/whiteegret/checkwl.c
-new file mode 100644
-index 000000000000..f19eb1054208
---- /dev/null
-+++ b/samples/whiteegret/checkwl.c
-@@ -0,0 +1,57 @@
-+/*
-+ * WhiteEgret Linux Security Module
-+ *
-+ * Sample program of user's whitelisting application
-+ *
-+ * Copyright (C) 2017-2018 Toshiba Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation, version 2.
-+ */
-+
-+#include <errno.h>
-+#include <string.h>
-+#include "checkwl.h"
-+
-+/*
-+ * The function check_whitelist() returns -EACCES
-+ * only when path to be examined equals to @a not_permit_exe.
-+ */
-+char not_permit_exe[NOTPERMITEXENAMELENGTH];
-+
-+/**
-+ * check_whitelist - Examine whether the executable input to this function
-+ *                   is included in whitelist or not.
-+ *
-+ * @result: Result of the examination.
-+ *            0       if the executble is included in whitelist
-+ *            -EACCES otherwise ("not included")
-+ *
-+ * Returns 0 for success, -1 otherwise.
-+ */
-+int check_whitelist(int *result, struct we_req_user *user)
-+{
-+	char *path;
-+
-+	if (result == NULL)
-+		return -1;
-+
-+	*result = 0;
-+
-+	if (user == NULL)
-+		return -1;
-+
-+	path = user->path;
-+
-+	/*
-+	 * Referring a whitelist is expected at this location.
-+	 * However, this sample uses not whitelist but blacklist
-+	 * because of avoiding a host to become uncontrollable.
-+	 * (not_permit_exe is a blacklist containing only one item.)
-+	 */
-+	if (strncmp(not_permit_exe, path, NOTPERMITEXENAMELENGTH) == 0)
-+		*result = -EACCES;
-+
-+	return 0;
-+}
-diff --git a/samples/whiteegret/checkwl.h b/samples/whiteegret/checkwl.h
-new file mode 100644
-index 000000000000..732959bbcf16
---- /dev/null
-+++ b/samples/whiteegret/checkwl.h
-@@ -0,0 +1,26 @@
-+/*
-+ * WhiteEgret Linux Security Module
-+ *
-+ * Sample program of user's whitelisting application
-+ *
-+ * Copyright (C) 2017-2018 Toshiba Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation, version 2.
-+ */
-+
-+#ifndef _CHECKWL_H
-+#define _CHECKWL_H
-+
-+#include <sys/types.h>
-+#include "we_fs_common.h"
-+
-+/* byte length of absolute path of file not to permit execution */
-+#define NOTPERMITEXENAMELENGTH 1024
-+
-+extern char not_permit_exe[NOTPERMITEXENAMELENGTH];
-+
-+int check_whitelist(int *result, struct we_req_user *user);
-+
-+#endif
-diff --git a/samples/whiteegret/main.c b/samples/whiteegret/main.c
-new file mode 100644
-index 000000000000..949d188885de
---- /dev/null
-+++ b/samples/whiteegret/main.c
-@@ -0,0 +1,86 @@
-+/*
-+ * WhiteEgret Linux Security Module
-+ *
-+ * Sample program of user's whitelisting application
-+ *
-+ * Copyright (C) 2017-2018 Toshiba Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation, version 2.
-+ */
-+
-+#include <stdio.h>
-+#include <string.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <unistd.h>
-+#include <sys/epoll.h>
-+#include <sys/socket.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include "checkwl.h"
-+
-+#include <stdlib.h>
-+#include "we_fs_common.h"
-+
-+#define MAXWAITFROMKER 10
-+
-+static void sigint_catch(int sig)
-+{
-+}
-+
-+static void print_usage(void)
-+{
-+	fprintf(stderr, "Usage: sample-we-user [file_name]\n");
-+	fprintf(stderr, "file_name: absolute path of executable");
-+	fprintf(stderr, "not to permit execution.\n");
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int fd;
-+	struct we_req_user *user;
-+	struct we_ack ack;
-+	char buf[1024];
-+	int ret;
-+
-+	if (argc < 2) {
-+		print_usage();
-+		return -1;
-+	}
-+
-+	snprintf(not_permit_exe, NOTPERMITEXENAMELENGTH, "%s", argv[1]);
-+
-+	signal(SIGINT, sigint_catch);
-+
-+	if (daemon(0, 0) < 0) {
-+		perror("daemon");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	fd = open(WE_DEV_PATH, O_RDWR, 0);
-+	if (fd < 0) {
-+		perror(WE_DEV_PATH);
-+		exit(EXIT_FAILURE);
-+	}
-+	user = (struct we_req_user *)((void *)buf);
-+
-+	while (1) {
-+		ret = read(fd, (char *)user, 1024);
-+		if (ret < 0) {
-+			perror("read");
-+			continue;
-+		}
-+
-+		ack.pid = user->pid;
-+		check_whitelist(&ack.permit, user);
-+
-+		ret = write(fd, (char *)&ack, sizeof(ack));
-+	}
-+
-+	close(fd);
-+
-+	return 0;
-+}
 -- 
 2.14.1
 
