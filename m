@@ -1,29 +1,29 @@
 From: lkp@intel.com (kbuild test robot)
-Date: Sat, 3 Mar 2018 00:37:13 +0800
+Date: Sat, 3 Mar 2018 00:47:07 +0800
 Subject: [PATCH 1/7] genalloc: track beginning of allocations
 In-Reply-To: <20180228200620.30026-2-igor.stoppa@huawei.com>
 References: <20180228200620.30026-2-igor.stoppa@huawei.com>
-Message-ID: <201803030004.MYDwBx4i%fengguang.wu@intel.com>
+Message-ID: <201803030033.qwnGJuxP%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 Hi Igor,
 
-Thank you for the patch! Yet something to improve:
+Thank you for the patch! Perhaps something to improve:
 
-[auto build test ERROR on next-20180223]
-[also build test ERROR on v4.16-rc3]
+[auto build test WARNING on next-20180223]
+[also build test WARNING on v4.16-rc3]
 [cannot apply to linus/master mmotm/master char-misc/char-misc-testing v4.16-rc3 v4.16-rc2 v4.16-rc1]
 [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
 url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/mm-security-ro-protection-for-dynamic-data/20180302-232215
-config: i386-randconfig-x004-201808 (attached as .config)
+config: i386-randconfig-x007-201808 (attached as .config)
 compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
 reproduce:
         # save the attached .config to linux build tree
         make ARCH=i386 
 
-All error/warnings (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
    In file included from arch/x86/include/asm/bug.h:83:0,
                     from include/linux/bug.h:5,
@@ -32,13 +32,13 @@ All error/warnings (new ones prefixed by >>):
                     from include/linux/slab.h:15,
                     from lib/genalloc.c:99:
    lib/genalloc.c: In function 'gen_pool_free':
->> lib/genalloc.c:616:10: warning: format '%s' expects argument of type 'char *', but argument 2 has type 'struct gen_pool *' [-Wformat=]
+   lib/genalloc.c:616:10: warning: format '%s' expects argument of type 'char *', but argument 2 has type 'struct gen_pool *' [-Wformat=]
              "Trying to free unallocated memory"
              ^
    include/asm-generic/bug.h:98:50: note: in definition of macro '__WARN_printf'
     #define __WARN_printf(arg...) do { __warn_printk(arg); __WARN(); } while (0)
                                                      ^~~
->> lib/genalloc.c:615:5: note: in expansion of macro 'WARN'
+   lib/genalloc.c:615:5: note: in expansion of macro 'WARN'
         WARN(true,
         ^~~~
    lib/genalloc.c:617:23: note: format string is defined here
@@ -51,12 +51,21 @@ All error/warnings (new ones prefixed by >>):
                     from include/linux/gfp.h:5,
                     from include/linux/slab.h:15,
                     from lib/genalloc.c:99:
->> lib/genalloc.c:624:17: error: implicit declaration of function 'exit_test'; did you mean 'exit_sem'? [-Werror=implicit-function-declaration]
+   lib/genalloc.c:624:17: error: implicit declaration of function 'exit_test'; did you mean 'exit_sem'? [-Werror=implicit-function-declaration]
        if (unlikely(exit_test(boundary < 0))) {
                     ^
-   include/linux/compiler.h:77:42: note: in definition of macro 'unlikely'
-    # define unlikely(x) __builtin_expect(!!(x), 0)
-                                             ^
+   include/linux/compiler.h:58:30: note: in definition of macro '__trace_if'
+     if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+                                 ^~~~
+>> lib/genalloc.c:624:4: note: in expansion of macro 'if'
+       if (unlikely(exit_test(boundary < 0))) {
+       ^~
+   include/linux/compiler.h:48:24: note: in expansion of macro '__branch_check__'
+    #  define unlikely(x) (__branch_check__(x, 0, __builtin_constant_p(x)))
+                           ^~~~~~~~~~~~~~~~
+>> lib/genalloc.c:624:8: note: in expansion of macro 'unlikely'
+       if (unlikely(exit_test(boundary < 0))) {
+           ^~~~~~~~
    In file included from arch/x86/include/asm/bug.h:83:0,
                     from include/linux/bug.h:5,
                     from include/linux/mmdebug.h:5,
@@ -104,7 +113,7 @@ All error/warnings (new ones prefixed by >>):
                                       ~^
    cc1: some warnings being treated as errors
 
-vim +624 lib/genalloc.c
+vim +/if +624 lib/genalloc.c
 
    609	
    610		rcu_read_lock();
@@ -112,8 +121,8 @@ vim +624 lib/genalloc.c
    612			if (addr >= chunk->start_addr && addr <= chunk->end_addr) {
    613				if (unlikely(addr + size - 1 > chunk->end_addr)) {
    614					rcu_read_unlock();
- > 615					WARN(true,
- > 616					     "Trying to free unallocated memory"
+   615					WARN(true,
+   616					     "Trying to free unallocated memory"
    617					     " from pool %s", pool);
    618					return;
    619				}
