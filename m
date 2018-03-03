@@ -1,122 +1,55 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 2 Mar 2018 16:25:00 -0500
-Subject: [PATCH] selinux: Fix ltp test connect-syscall failure
-In-Reply-To: <20180302195434.15435-1-richard_c_haines@btinternet.com>
-References: <20180302195434.15435-1-richard_c_haines@btinternet.com>
-Message-ID: <CAHC9VhQ33or9su_jw6XT=n=0NfO_6o++xGo7KyQ9XNBBn1jitw@mail.gmail.com>
+From: akpm@linux-foundation.org (Andrew Morton)
+Date: Fri, 2 Mar 2018 17:18:01 -0800
+Subject: [PATCH 00/30] security, efi: Add kernel lockdown
+In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+Message-ID: <20180302171801.6ed00ef19e0b970d90094556@linux-foundation.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Mar 2, 2018 at 2:54 PM, Richard Haines
-<richard_c_haines@btinternet.com> wrote:
-> Fix the following error when running regression tests using LTP as follows:
-> cd /opt/ltp/
-> cat runtest/syscalls |grep connect01>runtest/connect-syscall
-> ./runltp -pq -f connect-syscall
->
-> Running tests.......
-> connect01    1  TPASS  :  bad file descriptor successful
-> connect01    2  TPASS  :  invalid socket buffer successful
-> connect01    3  TPASS  :  invalid salen successful
-> connect01    4  TPASS  :  invalid socket successful
-> connect01    5  TPASS  :  already connected successful
-> connect01    6  TPASS  :  connection refused successful
-> connect01    7  TFAIL  :  connect01.c:146: invalid address family ;
-> returned -1 (expected -1), errno 22 (expected 97)
-> INFO: ltp-pan reported some tests FAIL
-> LTP Version: 20180118
->
-> Reported-by: Anders Roxell <anders.roxell@linaro.org>
-> Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-> ---
->  security/selinux/hooks.c | 42 ++++++++++++++++++++++++++++++------------
->  1 file changed, 30 insertions(+), 12 deletions(-)
+On Thu,  9 Nov 2017 17:30:36 +0000 David Howells <dhowells@redhat.com> wrote:
 
-Merged, thanks guys.
+> Here's a set of patches to institute a "locked-down mode" in the kernel and
+> to trigger that mode if the kernel is booted in secure-boot mode or through
+> the command line.
+> 
+> Enabling CONFIG_LOCK_DOWN_KERNEL makes lockdown mode available.
+> 
+> Enabling CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ will allow a SysRq combination
+> to lift the lockdown.  On x86 this is SysRq+x.  The keys must be pressed on
+> an attached keyboard.
+> 
+> Enabling CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT will cause EFI secure boot to
+> trigger kernel lockdown.
+> 
+> Inside the kernel, kernel_is_locked_down() is used to check if the kernel
+> is in lockdown mode.
+> 
+> Note that the secure boot mode entry doesn't work if the kernel is booted
+> from older versions of i386/x86_64 Grub as there's a bug in Grub whereby it
+> doesn't initialise the boot_params correctly.  The incorrect initialisation
+> causes sanitize_boot_params() to be triggered, thereby zapping the secure
+> boot flag determined by the EFI boot wrapper.
+> 
+> A manual page, kernel_lockdown.7, is proposed, to which people will be
+> directed by messages in dmesg.  This lists the features that are restricted
+> amongst other things.  [Note: I need to update this to mention IMA, so I'll
+> reply with that later].
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 28a5c4e..d614df1 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4470,22 +4470,29 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->                  * need to check address->sa_family as it is possible to have
->                  * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
->                  */
-> -               if (address->sa_family == AF_INET) {
-> -                       if (addrlen < sizeof(struct sockaddr_in)) {
-> -                               err = -EINVAL;
-> -                               goto out;
-> -                       }
-> +               switch (address->sa_family) {
-> +               case AF_INET:
-> +                       if (addrlen < sizeof(struct sockaddr_in))
-> +                               return -EINVAL;
->                         addr4 = (struct sockaddr_in *)address;
->                         snum = ntohs(addr4->sin_port);
->                         addrp = (char *)&addr4->sin_addr.s_addr;
-> -               } else {
-> -                       if (addrlen < SIN6_LEN_RFC2133) {
-> -                               err = -EINVAL;
-> -                               goto out;
-> -                       }
-> +                       break;
-> +               case AF_INET6:
-> +                       if (addrlen < SIN6_LEN_RFC2133)
-> +                               return -EINVAL;
->                         addr6 = (struct sockaddr_in6 *)address;
->                         snum = ntohs(addr6->sin6_port);
->                         addrp = (char *)&addr6->sin6_addr.s6_addr;
-> +                       break;
-> +               default:
-> +                       /* Note that SCTP services expect -EINVAL, whereas
-> +                        * others expect -EAFNOSUPPORT.
-> +                        */
-> +                       if (sksec->sclass == SECCLASS_SCTP_SOCKET)
-> +                               return -EINVAL;
-> +                       else
-> +                               return -EAFNOSUPPORT;
->                 }
->
->                 if (snum) {
-> @@ -4589,16 +4596,27 @@ static int selinux_socket_connect_helper(struct socket *sock,
->                  * need to check address->sa_family as it is possible to have
->                  * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
->                  */
-> -               if (address->sa_family == AF_INET) {
-> +               switch (address->sa_family) {
-> +               case AF_INET:
->                         addr4 = (struct sockaddr_in *)address;
->                         if (addrlen < sizeof(struct sockaddr_in))
->                                 return -EINVAL;
->                         snum = ntohs(addr4->sin_port);
-> -               } else {
-> +                       break;
-> +               case AF_INET6:
->                         addr6 = (struct sockaddr_in6 *)address;
->                         if (addrlen < SIN6_LEN_RFC2133)
->                                 return -EINVAL;
->                         snum = ntohs(addr6->sin6_port);
-> +                       break;
-> +               default:
-> +                       /* Note that SCTP services expect -EINVAL, whereas
-> +                        * others expect -EAFNOSUPPORT.
-> +                        */
-> +                       if (sksec->sclass == SECCLASS_SCTP_SOCKET)
-> +                               return -EINVAL;
-> +                       else
-> +                               return -EAFNOSUPPORT;
->                 }
->
->                 err = sel_netport_sid(sk->sk_protocol, snum, &sid);
-> --
-> 2.14.3
->
+I saw all this pop up in linux-next and got curious.
 
+This changelog didn't uncurious me at all.  The
+LOCK_DOWN_IN_EFI_SECURE_BOOT Kconfig help is unilluminating.  A bit of
+googling led me to kernel_lockdown.7 (https://lwn.net/Articles/735564/)
+which kinda helped.
 
+But still.  This is a big, straggly feature and presumably is still
+missing things and presumably will require ongoing maintenance as we
+add new kernel capabilities.  What do we get in return for all of this?
+What are the usecases for this feature and why would anyone want one? 
+What's the value to our users?
 
--- 
-paul moore
-www.paul-moore.com
+Thanks.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
