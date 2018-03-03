@@ -1,58 +1,82 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Sat, 3 Mar 2018 17:22:05 +0900
-Subject: [RFC v2 1/2] WhiteEgret: Add WhiteEgret core functions.
-In-Reply-To: <TYXPR01MB18540A7EDCE6F5BE8CFE130EF1C50@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-References: <20180301073830.2551-1-masanobu2.koike@toshiba.co.jp>
-	<458a466a-78bc-80d4-4d52-64b92d39f416@schaufler-ca.com>
-	<TYXPR01MB18540A7EDCE6F5BE8CFE130EF1C50@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-Message-ID: <201803031722.EDF21804.QHMOtFJOFFOLSV@I-love.SAKURA.ne.jp>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Sat, 03 Mar 2018 12:11:59 -0800
+Subject: [PATCH 1/5] tpm: Trigger only missing TPM 2.0 self tests
+In-Reply-To: <20180228195819.22231-2-jarkko.sakkinen@linux.intel.com>
+References: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
+	<20180228195819.22231-2-jarkko.sakkinen@linux.intel.com>
+Message-ID: <1520107919.3105.9.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Masanobu Koike wrote:
-> On Friday, March 02, 2018 12:43 AM, Casey Schaufler wrote:
-> > On 2/28/2018 11:38 PM, Masanobu Koike wrote:
-> > > @@ -264,6 +266,9 @@ choice
-> > >  	config DEFAULT_SECURITY_APPARMOR
-> > >  		bool "AppArmor" if SECURITY_APPARMOR=y
-> > >
-> > > +	config DEFAULT_SECURITY_WHITEEGRET
-> > > +		bool "WhiteEgret" if SECURITY_WHITEEGRET=y
-> > > +
-> > 
-> > I don't see this module using any security blobs. Is there
-> > a reason you're not making this a minor (like yama) module
-> > instead of a major (like AppArmor) module?
+On Wed, 2018-02-28 at 21:58 +0200, Jarkko Sakkinen wrote:
+> From: Alexander Steffen <Alexander.Steffen@infineon.com>
 > 
-> Thank you for your suggestion.
-> We are now developing WhiteEgret on the environment
-> it works certainly.
+> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to
+> work (necessitating a reboot). The problem seems to be that the TPM
+> gets into a state where the partial self-test doesn't return
+> TPM_RC_SUCCESS (meaning all tests have run to completion), but
+> instead returns TPM_RC_TESTING (meaning some tests are still running
+> in the background).??There are various theories that resending the
+> self-test command actually causes the tests to restart and thus
+> triggers more TPM_RC_TESTING returns until the timeout is exceeded.
 > 
+> There are several issues here: firstly being we shouldn't slow down
+> the boot sequence waiting for the self test to complete once the TPM
+> backgrounds them.??It will actually make available all functions that
+> have passed and if it gets a failure return TPM_RC_FAILURE to every
+> subsequent command.??So the fix is to kick off self tests once and if
+> they return TPM_RC_TESTING log that as a backgrounded self test
 
-??? What Casey suggested is effectively
+I still think removing all logging traces is a mistake for something
+that can consume a significant amount of time in the boot sequence.
+?It's going to cause lost of people doing boot timings to waste lots of
+effort.
 
-----------
---- a/security/whiteegret/init.c
-+++ b/security/whiteegret/init.c
-@@ -48,9 +48,6 @@ static int __init we_init(void)
- {
- 	int rc;
- 
--	if (!security_module_enable("whiteegret"))
--		return 0;
--
- 	security_add_hooks(we_hooks, ARRAY_SIZE(we_hooks), "whiteegret");
- 
- 	rc = we_specific_init();
-----------
+However, removing the log messages makes the above statement a lie, so
+one of the two needs fixing.
 
-, isn't it? Unlike Yama, adding whiteegret_add_hooks() to security_init()
-is not useful, for security_init() is called too early to create securityfs
-entries for WhiteEgret.
+[...]
+> @@ -852,27 +837,24 @@ static const struct tpm_input_header
+> tpm2_selftest_header = {
+> ? */
+> ?static int tpm2_do_selftest(struct tpm_chip *chip)
+> ?{
+> +	struct tpm_buf buf;
+> +	int full;
+> ?	int rc;
+> -	unsigned int delay_msec = 10;
+> -	long duration;
+> -	struct tpm2_cmd cmd;
+> ?
+> -	duration = jiffies_to_msecs(
+> -		tpm2_calc_ordinal_duration(chip,
+> TPM2_CC_SELF_TEST));
+> -
+> -	while (1) {
+> -		cmd.header.in = tpm2_selftest_header;
+> -		cmd.params.selftest_in.full_test = 0;
+> -
+> -		rc = tpm_transmit_cmd(chip, NULL, &cmd,
+> TPM2_SELF_TEST_IN_SIZE,
+> -				??????0, 0, "continue selftest");
+> +	for (full = 0; full < 2; full++) {
+> +		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS,
+> TPM2_CC_SELF_TEST);
+> +		if (rc)
+> +			return rc;
+> ?
+> -		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
+> -			break;
+> +		tpm_buf_append_u8(&buf, full);
+> +		rc = tpm_transmit_cmd(chip, NULL, buf.data,
+> PAGE_SIZE, 0, 0,
+> +				??????"attempting the self test\n");
 
-Current version uses security= parameter as a switch for enabling/disabling
-WhiteEgret, doesn't it? If WhiteEgret does not use security= as a switch,
-is some other switch (e.g. __setup()) expected?
+There shouldn't be a \n in the string: the failure message already
+appends one.
+
+James
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
