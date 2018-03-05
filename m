@@ -1,84 +1,80 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 5 Mar 2018 20:12:49 +0200
-Subject: [PATCH 2/2] tpm: fix buffer type in tpm_transimt/_cmd
-In-Reply-To: <20180305124826.5160-2-tomas.winkler@intel.com>
-References: <20180305124826.5160-1-tomas.winkler@intel.com>
-	<20180305124826.5160-2-tomas.winkler@intel.com>
-Message-ID: <20180305181249.GE6220@linux.intel.com>
+From: why2jjj.linux@gmail.com (J Freyensee)
+Date: Mon, 5 Mar 2018 11:00:08 -0800
+Subject: [PATCH 1/7] genalloc: track beginning of allocations
+In-Reply-To: <20180228200620.30026-2-igor.stoppa@huawei.com>
+References: <20180228200620.30026-1-igor.stoppa@huawei.com>
+	<20180228200620.30026-2-igor.stoppa@huawei.com>
+Message-ID: <6a31164a-af3f-91ea-d385-7c6d1888b28c@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 05, 2018 at 02:48:26PM +0200, Tomas Winkler wrote:
-> 1. The buffer cannot be const as it is used both for send and receive.
-> 2. Drop useless casting to u8 *, as this is already a
-> type of 'buf' parameter, it has just masked the 'const' issue.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 8 ++++----
->  drivers/char/tpm/tpm.h           | 2 +-
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index cafec634181a..4afd95c83612 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -475,7 +475,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  	if (rc)
->  		goto out;
->  
-> -	rc = chip->ops->send(chip, (u8 *) buf, count);
-> +	rc = chip->ops->send(chip, buf, count);
->  	if (rc < 0) {
->  		if (rc != -EPIPE)
->  			dev_err(&chip->dev,
-> @@ -512,7 +512,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  	goto out;
->  
->  out_recv:
-> -	len = chip->ops->recv(chip, (u8 *) buf, bufsiz);
-> +	len = chip->ops->recv(chip, buf, bufsiz);
->  	if (len < 0) {
->  		rc = len;
->  		dev_err(&chip->dev,
-> @@ -567,7 +567,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   *     A positive number for a TPM error.
->   */
->  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
-> -			 const void *buf, size_t bufsiz,
-> +			 void *buf, size_t bufsiz,
->  			 size_t min_rsp_body_length, unsigned int flags,
->  			 const char *desc)
->  {
-> @@ -575,7 +575,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
->  	int err;
->  	ssize_t len;
->  
-> -	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
-> +	len = tpm_transmit(chip, space, buf, bufsiz, flags);
->  	if (len <  0)
->  		return len;
->  
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index b82b924d763c..50dcbf3b60aa 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -520,7 +520,7 @@ enum tpm_transmit_flags {
->  ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  		     u8 *buf, size_t bufsiz, unsigned int flags);
->  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
-> -			 const void *buf, size_t bufsiz,
-> +			 void *buf, size_t bufsiz,
->  			 size_t min_rsp_body_length, unsigned int flags,
->  			 const char *desc);
->  int tpm_startup(struct tpm_chip *chip);
-> -- 
-> 2.14.3
-> 
+.
+.
 
-Thanks, these changes have applied.
 
-/Jarkko
+On 2/28/18 12:06 PM, Igor Stoppa wrote:
+> +
+> +/**
+> + * gen_pool_dma_alloc() - allocate special memory from the pool for DMA usage
+> + * @pool: pool to allocate from
+> + * @size: number of bytes to allocate from the pool
+> + * @dma: dma-view physical address return value.  Use NULL if unneeded.
+> + *
+> + * Allocate the requested number of bytes from the specified pool.
+> + * Uses the pool allocation function (with first-fit algorithm by default).
+> + * Can not be used in NMI handler on architectures without
+> + * NMI-safe cmpxchg implementation.
+> + *
+> + * Return:
+> + * * address of the memory allocated	- success
+> + * * NULL				- error
+> + */
+> +void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma);
+> +
+
+OK, so gen_pool_dma_alloc() is defined here, which believe is the API 
+line being drawn for this series.
+
+so,
+.
+.
+.
+>
+>   
+>   /**
+> - * gen_pool_dma_alloc - allocate special memory from the pool for DMA usage
+> + * gen_pool_dma_alloc() - allocate special memory from the pool for DMA usage
+>    * @pool: pool to allocate from
+>    * @size: number of bytes to allocate from the pool
+>    * @dma: dma-view physical address return value.  Use NULL if unneeded.
+> @@ -342,14 +566,15 @@ EXPORT_SYMBOL(gen_pool_alloc_algo);
+>    * Uses the pool allocation function (with first-fit algorithm by default).
+>    * Can not be used in NMI handler on architectures without
+>    * NMI-safe cmpxchg implementation.
+> + *
+> + * Return:
+> + * * address of the memory allocated	- success
+> + * * NULL				- error
+>    */
+>   void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
+>   {
+>   	unsigned long vaddr;
+>   
+> -	if (!pool)
+> -		return NULL;
+> -
+why is this being removed?? I don't believe this code was getting 
+removed from your v17 series patches.
+>   	vaddr = gen_pool_alloc(pool, size);
+>   	if (!vaddr)
+>   		return NULL;
+> @@ -362,10 +587,10 @@ void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
+>   EXPORT_SYMBOL(gen_pool_dma_alloc);
+>   
+>
+Otherwise, looks good,
+
+Reviewed-by: Jay Freyensee <why2jjj.linux@gmail.com>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
