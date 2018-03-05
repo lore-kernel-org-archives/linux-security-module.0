@@ -1,80 +1,62 @@
-From: why2jjj.linux@gmail.com (J Freyensee)
-Date: Mon, 5 Mar 2018 11:00:08 -0800
-Subject: [PATCH 1/7] genalloc: track beginning of allocations
-In-Reply-To: <20180228200620.30026-2-igor.stoppa@huawei.com>
-References: <20180228200620.30026-1-igor.stoppa@huawei.com>
-	<20180228200620.30026-2-igor.stoppa@huawei.com>
-Message-ID: <6a31164a-af3f-91ea-d385-7c6d1888b28c@gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 05 Mar 2018 14:07:32 -0500
+Subject: [PATCH 2/3] tpm: reduce poll sleep time between send() and
+	recv() in tpm_transmit()
+In-Reply-To: <20180305180144.GE5791@linux.intel.com>
+References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+	<20180228191828.20056-2-nayna@linux.vnet.ibm.com>
+	<20180301092222.GC29420@linux.intel.com>
+	<6ef601be-5627-6746-bd4a-4f391aba8b04@linux.vnet.ibm.com>
+	<20180305105633.GE25377@linux.intel.com>
+	<20180305180144.GE5791@linux.intel.com>
+Message-ID: <1520276852.10396.351.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-.
-.
+On Mon, 2018-03-05 at 20:01 +0200, Jarkko Sakkinen wrote:
+> On Mon, Mar 05, 2018 at 12:56:33PM +0200, Jarkko Sakkinen wrote:
+> > On Fri, Mar 02, 2018 at 12:26:35AM +0530, Nayna Jain wrote:
+> > > 
+> > > 
+> > > On 03/01/2018 02:52 PM, Jarkko Sakkinen wrote:
+> > > > On Wed, Feb 28, 2018 at 02:18:27PM -0500, Nayna Jain wrote:
+> > > > > In tpm_transmit, after send(), the code checks for status in a loop
+> > > > Maybe cutting hairs now but please just use the actual function name
+> > > > instead of send(). Just makes the commit log more useful asset.
+> > > Sure, will do.
+> > > > 
+> > > > > -		tpm_msleep(TPM_TIMEOUT);
+> > > > > +		tpm_msleep(TPM_TIMEOUT_POLL);
+> > > > What about just calling schedule()?
+> > > I'm not sure what you mean by "schedule()".? Are you suggesting instead of
+> > > using usleep_range(),? using something with an even finer grain construct?
+> > > 
+> > > Thanks & Regards,
+> > > ???? - Nayna
+> > 
+> > kernel/sched/core.c
+> 
+> The question I'm trying ask to is: is it better to sleep such a short
+> time or just ask scheduler to schedule something else after each
+> iteration?
 
+I still don't understand why scheduling some work would be an
+improvement. ?We still need to loop, testing for the TPM command to
+complete.
 
-On 2/28/18 12:06 PM, Igor Stoppa wrote:
-> +
-> +/**
-> + * gen_pool_dma_alloc() - allocate special memory from the pool for DMA usage
-> + * @pool: pool to allocate from
-> + * @size: number of bytes to allocate from the pool
-> + * @dma: dma-view physical address return value.  Use NULL if unneeded.
-> + *
-> + * Allocate the requested number of bytes from the specified pool.
-> + * Uses the pool allocation function (with first-fit algorithm by default).
-> + * Can not be used in NMI handler on architectures without
-> + * NMI-safe cmpxchg implementation.
-> + *
-> + * Return:
-> + * * address of the memory allocated	- success
-> + * * NULL				- error
-> + */
-> +void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma);
-> +
+According to the schedule_hrtimeout_range() function comment,
+schedule_hrtimeout_range() is both power and performance friendly.
+?What we didn't realize is that the hrtimer *uses* the maximum range
+to calculate the sleep time, but *may* return earlier based on the
+minimum time.
 
-OK, so gen_pool_dma_alloc() is defined here, which believe is the API 
-line being drawn for this series.
+This patch minimizes the tpm_msleep(). ?The subsequent patch in this
+patch set shows that 1 msec isn't fine enough granularity. ?I still
+think calling usleep_range() is the right solution, but it needs to be
+at a finer granularity than tpm_msleep() provides.
 
-so,
-.
-.
-.
->
->   
->   /**
-> - * gen_pool_dma_alloc - allocate special memory from the pool for DMA usage
-> + * gen_pool_dma_alloc() - allocate special memory from the pool for DMA usage
->    * @pool: pool to allocate from
->    * @size: number of bytes to allocate from the pool
->    * @dma: dma-view physical address return value.  Use NULL if unneeded.
-> @@ -342,14 +566,15 @@ EXPORT_SYMBOL(gen_pool_alloc_algo);
->    * Uses the pool allocation function (with first-fit algorithm by default).
->    * Can not be used in NMI handler on architectures without
->    * NMI-safe cmpxchg implementation.
-> + *
-> + * Return:
-> + * * address of the memory allocated	- success
-> + * * NULL				- error
->    */
->   void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
->   {
->   	unsigned long vaddr;
->   
-> -	if (!pool)
-> -		return NULL;
-> -
-why is this being removed?? I don't believe this code was getting 
-removed from your v17 series patches.
->   	vaddr = gen_pool_alloc(pool, size);
->   	if (!vaddr)
->   		return NULL;
-> @@ -362,10 +587,10 @@ void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
->   EXPORT_SYMBOL(gen_pool_dma_alloc);
->   
->
-Otherwise, looks good,
+Mimi
 
-Reviewed-by: Jay Freyensee <why2jjj.linux@gmail.com>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
