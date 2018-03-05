@@ -1,50 +1,86 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Mon,  5 Mar 2018 14:48:25 +0200
-Subject: [PATCH 1/2] tpm: tpm-interface: fix tpm_transmit/_cmd  kdoc
-Message-ID: <20180305124826.5160-1-tomas.winkler@intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 5 Mar 2018 14:56:42 +0200
+Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
+In-Reply-To: <20180304121205.16934-1-tomas.winkler@intel.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+Message-ID: <20180305125642.GA3425@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Fix tmp_ -> tpm_ typo and add reference to 'space' parameter
-in kdoc for tpm_transmit and tpm_transmit_cmd functions.
+On Sun, Mar 04, 2018 at 02:12:03PM +0200, Tomas Winkler wrote:
+> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
+> of crypto keys which can be a computationally intensive task.
+> The timeout is set to 3min.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm-interface.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Where is the cover letter? Please send separate patches if they are
+unrelated *or* add a cover letter that describes what they do as a
+whole.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 64dbec078c1b..cafec634181a 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -399,9 +399,10 @@ static void tpm_relinquish_locality(struct tpm_chip *chip)
- }
- 
- /**
-- * tmp_transmit - Internal kernel interface to transmit TPM commands.
-+ * tpm_transmit - Internal kernel interface to transmit TPM commands.
-  *
-  * @chip: TPM chip to use
-+ * @space: tpm space
-  * @buf: TPM command buffer
-  * @bufsiz: length of the TPM command buffer
-  * @flags: tpm transmit flags - bitmap
-@@ -549,10 +550,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- }
- 
- /**
-- * tmp_transmit_cmd - send a tpm command to the device
-+ * tpm_transmit_cmd - send a tpm command to the device
-  *    The function extracts tpm out header return code
-  *
-  * @chip: TPM chip to use
-+ * @space: tpm space
-  * @buf: TPM command buffer
-  * @bufsiz: length of the buffer
-  * @min_rsp_body_length: minimum expected length of response body
--- 
-2.14.3
+I will not review the next version if it does not have cover letter
+describing the high level change and containing the change log.
 
+> ---
+>  drivers/char/tpm/tpm-interface.c |  4 ++++
+>  drivers/char/tpm/tpm.h           | 27 ++++++++++++++++-----------
+>  drivers/char/tpm/tpm2-cmd.c      |  8 +++++---
+>  3 files changed, 25 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 85bdfa8c3348..c0aa9d11ec7a 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -699,6 +699,10 @@ int tpm_get_timeouts(struct tpm_chip *chip)
+>  		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
+>  		chip->duration[TPM_LONG] =
+>  		    msecs_to_jiffies(TPM2_DURATION_LONG);
+> +		chip->duration[TPM_LONG_LONG] =
+> +		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+> +		chip->duration[TPM_UNDEFINED] =
+> +		    msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+>  
+>  		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+>  		return 0;
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f895fba4e20d..192ba68b39c2 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -67,7 +67,9 @@ enum tpm_duration {
+>  	TPM_SHORT = 0,
+>  	TPM_MEDIUM = 1,
+>  	TPM_LONG = 2,
+> -	TPM_UNDEFINED,
+> +	TPM_LONG_LONG = 3,
+> +	TPM_UNDEFINED = 4,
+> +	TPM_DURATION_MAX,
+
+This is starting to rotten to become unmaintainable.
+
+Here is what I suggest to move forward:
+
+* Have essentially two duration types:
+  1. Default
+  2. Long
+  'default' is the old long duration i.e. two seconds. 'long' is a
+
+We should probably have two durations:
+
+enum tpm_duration {
+	TPM_DURATION_DEFAULT = 2000,
+	TPM_DURATION_LONG = 300000,
+};
+
+These would be both for TPM 1.2 and TPM 2.0. Instead of having
+table for every ordinal there should be a small tables describing
+commands that require long timeout.
+
+> -		duration = 2 * 60 * HZ;
+> +		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+
+NAK for this change.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
