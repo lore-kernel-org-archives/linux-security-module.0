@@ -1,22 +1,25 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 5 Mar 2018 15:02:15 +0200
-Subject: [PATCH 2/3] tpm: add new tpm2 commands according to TCG 1.36
-In-Reply-To: <20180304121205.16934-2-tomas.winkler@intel.com>
+Date: Mon, 5 Mar 2018 15:03:20 +0200
+Subject: [PATCH 3/3] tpm_crb: use __le64 annotated variable for response
+	buffer address
+In-Reply-To: <20180304121205.16934-3-tomas.winkler@intel.com>
 References: <20180304121205.16934-1-tomas.winkler@intel.com>
-	<20180304121205.16934-2-tomas.winkler@intel.com>
-Message-ID: <20180305130136.GB3425@linux.intel.com>
+	<20180304121205.16934-3-tomas.winkler@intel.com>
+Message-ID: <20180305130320.GC3425@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Mar 04, 2018 at 02:12:04PM +0200, Tomas Winkler wrote:
-> 1. TPM2_CC_LAST has moved from 182 to 193
-> 2. Convert tpm2_ordinal_duration from an array into a switch statement,
->    as there are not so many commands that require special duration
->    relative to a number of commands.
+On Sun, Mar 04, 2018 at 02:12:05PM +0200, Tomas Winkler wrote:
+> This suppresses sparse warning
+> drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
 > 
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+>  drivers/char/tpm/tpm_crb.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-My previous suggestion applies here.
+The guideline is that you should describe what is wrong rather than
+copy-paste the sparse message.
 
 /Jarkko
 --
