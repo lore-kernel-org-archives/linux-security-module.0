@@ -1,49 +1,63 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Mon,  5 Mar 2018 22:20:12 +0200
-Subject: [PATCH 1/6] tpm: sort objects in the Makefile
-In-Reply-To: <20180305202017.24008-1-tomas.winkler@intel.com>
-References: <20180305202017.24008-1-tomas.winkler@intel.com>
-Message-ID: <20180305202017.24008-2-tomas.winkler@intel.com>
+From: why2jjj.linux@gmail.com (J Freyensee)
+Date: Mon, 5 Mar 2018 12:31:14 -0800
+Subject: [PATCH 3/7] struct page: add field for vm_struct
+In-Reply-To: <20180228200620.30026-4-igor.stoppa@huawei.com>
+References: <20180228200620.30026-1-igor.stoppa@huawei.com>
+	<20180228200620.30026-4-igor.stoppa@huawei.com>
+Message-ID: <2985e90a-5937-9432-c53e-f594b27e7afa@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Make the tpm Makefile a bit more in order by putting
-objects in one column and group together tpm2 modules
+Reviewed-by: Jay Freyensee <why2jjj.linux@gmail.com>
 
-Prefer tpm-objs += instead of tpm-y += notation.
-
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/Makefile | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index acd758381c58..2fc0e9a73cd6 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -3,9 +3,17 @@
- # Makefile for the kernel tpm device drivers.
- #
- obj-$(CONFIG_TCG_TPM) += tpm.o
--tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
--	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o \
--         tpm2-space.o
-+tpm-objs := tpm-interface.o
-+tpm-objs += tpm-dev.o
-+tpm-objs += tpm-chip.o
-+tpm-objs += tpm-dev-common.o
-+tpm-objs += tpmrm-dev.o
-+tpm-objs += tpm-sysfs.o
-+tpm-objs += tpm1_eventlog.o
-+tpm-objs += tpm2-cmd.o
-+tpm-objs += tpm2-space.o
-+tpm-objs += tpm2_eventlog.o
-+
- tpm-$(CONFIG_ACPI) += tpm_ppi.o tpm_eventlog_acpi.o
- tpm-$(CONFIG_EFI) += tpm_eventlog_efi.o
- tpm-$(CONFIG_OF) += tpm_eventlog_of.o
--- 
-2.14.3
+On 2/28/18 12:06 PM, Igor Stoppa wrote:
+> When a page is used for virtual memory, it is often necessary to obtain
+> a handler to the corresponding vm_struct, which refers to the virtually
+> continuous area generated when invoking vmalloc.
+>
+> The struct page has a "mapping" field, which can be re-used, to store a
+> pointer to the parent area.
+>
+> This will avoid more expensive searches, later on.
+>
+> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> ---
+>   include/linux/mm_types.h | 1 +
+>   mm/vmalloc.c             | 2 ++
+>   2 files changed, 3 insertions(+)
+>
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index fd1af6b9591d..c3a4825e10c0 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -84,6 +84,7 @@ struct page {
+>   		void *s_mem;			/* slab first object */
+>   		atomic_t compound_mapcount;	/* first tail page */
+>   		/* page_deferred_list().next	 -- second tail page */
+> +		struct vm_struct *area;
+>   	};
+>   
+>   	/* Second double word */
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index ebff729cc956..61a1ca22b0f6 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1536,6 +1536,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+>   			struct page *page = area->pages[i];
+>   
+>   			BUG_ON(!page);
+> +			page->area = NULL;
+>   			__free_pages(page, 0);
+>   		}
+>   
+> @@ -1705,6 +1706,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>   			area->nr_pages = i;
+>   			goto fail;
+>   		}
+> +		page->area = area;
+>   		area->pages[i] = page;
+>   		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
+>   			cond_resched();
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
