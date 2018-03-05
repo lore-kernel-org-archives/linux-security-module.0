@@ -1,116 +1,112 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Mon, 5 Mar 2018 13:09:09 +0000
-Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
-In-Reply-To: <20180305125642.GA3425@linux.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-	<20180305125642.GA3425@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon,  5 Mar 2018 16:39:00 +0200
+Subject: [PATCH v2 2/5] tpm: migrate tpm2_shutdown() to use struct tpm_buf
+In-Reply-To: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
+References: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20180305143904.7477-3-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+In order to make struct tpm_buf the first class object for constructing TPM
+commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
+entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
+prints an error message.
 
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
+ 1 file changed, 12 insertions(+), 32 deletions(-)
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen at linux.intel.com]
-> Sent: Monday, March 05, 2018 14:57
-> To: Winkler, Tomas <tomas.winkler@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Usyskin, Alexander
-> <alexander.usyskin@intel.com>; linux-integrity at vger.kernel.org; linux-
-> security-module at vger.kernel.org; linux-kernel at vger.kernel.org
-> Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
-> commands.
-> 
-> On Sun, Mar 04, 2018 at 02:12:03PM +0200, Tomas Winkler wrote:
-> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
-> > generation of crypto keys which can be a computationally intensive task.
-> > The timeout is set to 3min.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> Where is the cover letter? Please send separate patches if they are unrelated
-> *or* add a cover letter that describes what they do as a whole.
->
-Why you need cover letter?  What are u missing in the patch description
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 89a5397b18d2..abe6ef4a7a0b 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -27,10 +27,6 @@ enum tpm2_session_attributes {
+ 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+ };
  
-> I will not review the next version if it does not have cover letter describing
-> the high level change and containing the change log.
-
-Don't follow.
-
-> 
-> > ---
-> >  drivers/char/tpm/tpm-interface.c |  4 ++++
-> >  drivers/char/tpm/tpm.h           | 27 ++++++++++++++++-----------
-> >  drivers/char/tpm/tpm2-cmd.c      |  8 +++++---
-> >  3 files changed, 25 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index 85bdfa8c3348..c0aa9d11ec7a 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -699,6 +699,10 @@ int tpm_get_timeouts(struct tpm_chip *chip)
-> >  		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
-> >  		chip->duration[TPM_LONG] =
-> >  		    msecs_to_jiffies(TPM2_DURATION_LONG);
-> > +		chip->duration[TPM_LONG_LONG] =
-> > +		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-> > +		chip->duration[TPM_UNDEFINED] =
-> > +		    msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> >
-> >  		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-> >  		return 0;
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > f895fba4e20d..192ba68b39c2 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -67,7 +67,9 @@ enum tpm_duration {
-> >  	TPM_SHORT = 0,
-> >  	TPM_MEDIUM = 1,
-> >  	TPM_LONG = 2,
-> > -	TPM_UNDEFINED,
-> > +	TPM_LONG_LONG = 3,
-> > +	TPM_UNDEFINED = 4,
-> > +	TPM_DURATION_MAX,
-> 
-> This is starting to rotten to become unmaintainable.
-
-> Here is what I suggest to move forward:
-
-I fixed that in next patch, but this also moves the code to new spec,  so I didn't want to make too much noise in this one. 
+-struct tpm2_startup_in {
+-	__be16	startup_type;
+-} __packed;
+-
+ struct tpm2_get_tpm_pt_in {
+ 	__be32	cap_id;
+ 	__be32	property_id;
+@@ -55,7 +51,6 @@ struct tpm2_get_random_out {
+ } __packed;
  
-> * Have essentially two duration types:
->   1. Default
->   2. Long
->   'default' is the old long duration i.e. two seconds. 'long' is a
-
-> 
-> We should probably have two durations:
-> 
-> enum tpm_duration {
-> 	TPM_DURATION_DEFAULT = 2000,
-> 	TPM_DURATION_LONG = 300000,
-> };
-> 
-How is this aligned with the spec PTP spec?
-
-> These would be both for TPM 1.2 and TPM 2.0. Instead of having table for
-> every ordinal there should be a small tables describing commands that
-> require long timeout.
-
-Yeah I didn't cover the 1.2. 
-> 
-> > -		duration = 2 * 60 * HZ;
-> > +		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> 
-> NAK for this change.
-
-
-You should explain your NAKs, .... in general, doesn't look good.
-
-
-Thanks
-Tomas
+ union tpm2_cmd_params {
+-	struct	tpm2_startup_in		startup_in;
+ 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
+ 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
+ 	struct	tpm2_get_random_in	getrandom_in;
+@@ -410,11 +405,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 	int rc;
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
+-	if (rc) {
+-		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
+-			 handle);
++	if (rc)
+ 		return;
+-	}
+ 
+ 	tpm_buf_append_u32(&buf, handle);
+ 
+@@ -760,40 +752,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+ }
+ EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+ 
+-#define TPM2_SHUTDOWN_IN_SIZE \
+-	(sizeof(struct tpm_input_header) + \
+-	 sizeof(struct tpm2_startup_in))
+-
+-static const struct tpm_input_header tpm2_shutdown_header = {
+-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+-	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
+-};
+-
+ /**
+  * tpm2_shutdown() - send shutdown command to the TPM chip
+  *
++ * In places where shutdown command is sent there's no much we can do except
++ * print the error code on a system failure.
++ *
+  * @chip:		TPM chip to use.
+  * @shutdown_type:	shutdown type. The value is either
+  *			TPM_SU_CLEAR or TPM_SU_STATE.
+  */
+ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+ {
+-	struct tpm2_cmd cmd;
++	struct tpm_buf buf;
+ 	int rc;
+ 
+-	cmd.header.in = tpm2_shutdown_header;
+-	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
+-
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
+-			      "stopping the TPM");
+-
+-	/* In places where shutdown command is sent there's no much we can do
+-	 * except print the error code on a system failure.
+-	 */
+-	if (rc < 0 && rc != -EPIPE)
+-		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
+-			 rc);
++	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
++	if (rc)
++		return;
++	tpm_buf_append_u16(&buf, shutdown_type);
++	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
++			 "stopping the TPM");
++	tpm_buf_destroy(&buf);
+ }
+ 
+ /*
+-- 
+2.15.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
