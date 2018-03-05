@@ -1,10 +1,10 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 5 Mar 2018 20:10:34 +0200
+Date: Mon, 5 Mar 2018 20:12:49 +0200
 Subject: [PATCH 2/2] tpm: fix buffer type in tpm_transimt/_cmd
 In-Reply-To: <20180305124826.5160-2-tomas.winkler@intel.com>
 References: <20180305124826.5160-1-tomas.winkler@intel.com>
 	<20180305124826.5160-2-tomas.winkler@intel.com>
-Message-ID: <20180305181034.GD6220@linux.intel.com>
+Message-ID: <20180305181249.GE6220@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -76,7 +76,7 @@ On Mon, Mar 05, 2018 at 02:48:26PM +0200, Tomas Winkler wrote:
 > 2.14.3
 > 
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Thanks, these changes have applied.
 
 /Jarkko
 --
