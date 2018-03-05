@@ -1,114 +1,241 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon,  5 Mar 2018 16:39:00 +0200
-Subject: [PATCH v2 2/5] tpm: migrate tpm2_shutdown() to use struct tpm_buf
+Date: Mon,  5 Mar 2018 16:39:03 +0200
+Subject: [PATCH v2 5/5] tpm: migrate tpm2_get_random() to use struct tpm_buf
 In-Reply-To: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
 References: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20180305143904.7477-3-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20180305143904.7477-6-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In order to make struct tpm_buf the first class object for constructing TPM
-commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-prints an error message.
+In order to make struct tpm_buf the first class object for constructing
+TPM commands, migrate tpm2_get_random() to use it. In addition, removed
+remaining references to struct tpm2_cmd. All of them use it to acquire
+the length of the response, which can be achieved by using
+tpm_buf_length().
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
- 1 file changed, 12 insertions(+), 32 deletions(-)
+ drivers/char/tpm/tpm.h      | 19 ++++-----
+ drivers/char/tpm/tpm2-cmd.c | 93 +++++++++++++++++----------------------------
+ 2 files changed, 45 insertions(+), 67 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index cccd5994a0e1..29c0717437bc 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -412,23 +412,24 @@ struct tpm_buf {
+ 	u8 *data;
+ };
+ 
+-static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
++static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+ {
+ 	struct tpm_input_header *head;
++	head = (struct tpm_input_header *)buf->data;
++	head->tag = cpu_to_be16(tag);
++	head->length = cpu_to_be32(sizeof(*head));
++	head->ordinal = cpu_to_be32(ordinal);
++}
+ 
++static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
++{
+ 	buf->data_page = alloc_page(GFP_HIGHUSER);
+ 	if (!buf->data_page)
+ 		return -ENOMEM;
+ 
+ 	buf->flags = 0;
+ 	buf->data = kmap(buf->data_page);
+-
+-	head = (struct tpm_input_header *) buf->data;
+-
+-	head->tag = cpu_to_be16(tag);
+-	head->length = cpu_to_be32(sizeof(*head));
+-	head->ordinal = cpu_to_be32(ordinal);
+-
++	tpm_buf_reset(buf, tag, ordinal);
+ 	return 0;
+ }
+ 
+@@ -557,7 +558,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+ 		    struct tpm2_digest *digests);
+-int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max);
++int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
+ int tpm2_seal_trusted(struct tpm_chip *chip,
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 89a5397b18d2..abe6ef4a7a0b 100644
+index e02f7d46e9ac..36a58af6f5c7 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -27,10 +27,6 @@ enum tpm2_session_attributes {
+@@ -27,25 +27,6 @@ enum tpm2_session_attributes {
  	TPM2_SA_CONTINUE_SESSION	= BIT(0),
  };
  
--struct tpm2_startup_in {
--	__be16	startup_type;
+-struct tpm2_get_random_in {
+-	__be16	size;
 -} __packed;
 -
- struct tpm2_get_tpm_pt_in {
- 	__be32	cap_id;
- 	__be32	property_id;
-@@ -55,7 +51,6 @@ struct tpm2_get_random_out {
- } __packed;
- 
- union tpm2_cmd_params {
--	struct	tpm2_startup_in		startup_in;
- 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
- 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
- 	struct	tpm2_get_random_in	getrandom_in;
-@@ -410,11 +405,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 	int rc;
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
--	if (rc) {
--		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
--			 handle);
-+	if (rc)
- 		return;
--	}
- 
- 	tpm_buf_append_u32(&buf, handle);
- 
-@@ -760,40 +752,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
- }
- EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
- 
--#define TPM2_SHUTDOWN_IN_SIZE \
--	(sizeof(struct tpm_input_header) + \
--	 sizeof(struct tpm2_startup_in))
+-struct tpm2_get_random_out {
+-	__be16	size;
+-	u8	buffer[TPM_MAX_RNG_DATA];
+-} __packed;
 -
--static const struct tpm_input_header tpm2_shutdown_header = {
--	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
--	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
--	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
+-union tpm2_cmd_params {
+-	struct	tpm2_get_random_in	getrandom_in;
+-	struct	tpm2_get_random_out	getrandom_out;
 -};
 -
- /**
-  * tpm2_shutdown() - send shutdown command to the TPM chip
-  *
-+ * In places where shutdown command is sent there's no much we can do except
-+ * print the error code on a system failure.
-+ *
-  * @chip:		TPM chip to use.
-  * @shutdown_type:	shutdown type. The value is either
-  *			TPM_SU_CLEAR or TPM_SU_STATE.
-  */
- void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
- {
--	struct tpm2_cmd cmd;
-+	struct tpm_buf buf;
- 	int rc;
- 
--	cmd.header.in = tpm2_shutdown_header;
--	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
+-struct tpm2_cmd {
+-	tpm_cmd_header		header;
+-	union tpm2_cmd_params	params;
+-} __packed;
 -
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
--			      "stopping the TPM");
--
--	/* In places where shutdown command is sent there's no much we can do
--	 * except print the error code on a system failure.
--	 */
--	if (rc < 0 && rc != -EPIPE)
--		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
--			 rc);
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
-+	if (rc)
-+		return;
-+	tpm_buf_append_u16(&buf, shutdown_type);
-+	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			 "stopping the TPM");
-+	tpm_buf_destroy(&buf);
+ struct tpm2_hash {
+ 	unsigned int crypto_id;
+ 	unsigned int tpm_id;
+@@ -298,66 +279,66 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
  }
  
- /*
+ 
+-#define TPM2_GETRANDOM_IN_SIZE \
+-	(sizeof(struct tpm_input_header) + \
+-	 sizeof(struct tpm2_get_random_in))
+-
+-static const struct tpm_input_header tpm2_getrandom_header = {
+-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+-	.length = cpu_to_be32(TPM2_GETRANDOM_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_GET_RANDOM)
+-};
++struct tpm2_get_random_out {
++	__be16 size;
++	u8 buffer[TPM_MAX_RNG_DATA];
++} __packed;
+ 
+ /**
+  * tpm2_get_random() - get random bytes from the TPM RNG
+  *
+  * @chip: TPM chip to use
+- * @out: destination buffer for the random bytes
++ * @dest: destination buffer for the random bytes
+  * @max: the max number of bytes to write to @out
+  *
+  * Return:
+- *    Size of the output buffer, or -EIO on error.
++ * size of the output buffer when the operation is successful.
++ * A negative number for system errors (errno).
+  */
+-int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
++int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ {
+-	struct tpm2_cmd cmd;
+-	u32 recd, rlength;
+-	u32 num_bytes;
++	struct tpm2_get_random_out *out;
++	struct tpm_buf buf;
++	u32 recd;
++	u32 num_bytes = max;
+ 	int err;
+ 	int total = 0;
+ 	int retries = 5;
+-	u8 *dest = out;
++	u8 *dest_ptr = dest;
+ 
+-	num_bytes = min_t(u32, max, sizeof(cmd.params.getrandom_out.buffer));
+-
+-	if (!out || !num_bytes ||
+-	    max > sizeof(cmd.params.getrandom_out.buffer))
++	if (!num_bytes || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+-	do {
+-		cmd.header.in = tpm2_getrandom_header;
+-		cmd.params.getrandom_in.size = cpu_to_be16(num_bytes);
++	err = tpm_buf_init(&buf, 0, 0);
++	if (err)
++		return err;
+ 
+-		err = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
++	do {
++		tpm_buf_reset(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_RANDOM);
++		tpm_buf_append_u16(&buf, num_bytes);
++		err = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+ 				       offsetof(struct tpm2_get_random_out,
+ 						buffer),
+ 				       0, "attempting get random");
+ 		if (err)
+ 			break;
+ 
+-		recd = min_t(u32, be16_to_cpu(cmd.params.getrandom_out.size),
+-			     num_bytes);
+-		rlength = be32_to_cpu(cmd.header.out.length);
+-		if (rlength < offsetof(struct tpm2_get_random_out, buffer) +
+-			      recd)
+-			return -EFAULT;
+-		memcpy(dest, cmd.params.getrandom_out.buffer, recd);
++		out = (struct tpm2_get_random_out *)
++			&buf.data[TPM_HEADER_SIZE];
++		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
++		if (tpm_buf_length(&buf) <
++		    offsetof(struct tpm2_get_random_out, buffer) + recd) {
++			err = -EFAULT;
++			break;
++		}
++		memcpy(dest_ptr, out->buffer, recd);
+ 
+-		dest += recd;
++		dest_ptr += recd;
+ 		total += recd;
+ 		num_bytes -= recd;
+ 	} while (retries-- && total < max);
+ 
++	tpm_buf_destroy(&buf);
+ 	return total ? total : -EIO;
+ }
+ 
+@@ -432,7 +413,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ {
+ 	unsigned int blob_len;
+ 	struct tpm_buf buf;
+-	u32 hash, rlength;
++	u32 hash;
+ 	int i;
+ 	int rc;
+ 
+@@ -507,8 +488,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		rc = -E2BIG;
+ 		goto out;
+ 	}
+-	rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)->header.out.length);
+-	if (rlength < TPM_HEADER_SIZE + 4 + blob_len) {
++	if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
+ 		rc = -EFAULT;
+ 		goto out;
+ 	}
+@@ -618,7 +598,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 	u16 data_len;
+ 	u8 *data;
+ 	int rc;
+-	u32 rlength;
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
+ 	if (rc)
+@@ -646,9 +625,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 			goto out;
+ 		}
+ 
+-		rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)
+-					->header.out.length);
+-		if (rlength < TPM_HEADER_SIZE + 6 + data_len) {
++		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 6 + data_len) {
+ 			rc = -EFAULT;
+ 			goto out;
+ 		}
 -- 
 2.15.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
