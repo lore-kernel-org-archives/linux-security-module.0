@@ -1,43 +1,63 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Mon,  5 Mar 2018 22:20:11 +0200
-Subject: [PATCH 0/6] tpm: timeouts revamp
-Message-ID: <20180305202017.24008-1-tomas.winkler@intel.com>
+Date: Mon,  5 Mar 2018 22:20:17 +0200
+Subject: [PATCH 6/6] tpm: tpm-interface: drop unused tpm_input_header headers.
+In-Reply-To: <20180305202017.24008-1-tomas.winkler@intel.com>
+References: <20180305202017.24008-1-tomas.winkler@intel.com>
+Message-ID: <20180305202017.24008-7-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This series cleans up tpm timeouts setting and handling.
+PRC extend and get capability were reimplemented using
+tpm_buf_ interface and the dangling tpm_input_headers can be dropped.
+together with now unused constants.
 
-First motivation was to fix failures coming from too short timeouts
-for commands that creates keys.
-Key generation may take significant time depending on the underlying
-hardware. Rather than increasing default timeout a new constant is
-added, to not stall too long on regular commands failures.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/char/tpm/tpm-interface.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
 
-Second is to define timeouts for new tpm2 commands
-defined in TCG 1.36 spec.
-
-Last, is to factor out tpm1.2 commands out of tpm-interface.c
-
-Tomas Winkler (6):
-  tpm: sort objects in the Makefile
-  tpm: factor out tpm 1.2 duration calculation to tpm1-cmd.c
-  tpm2: add longer timeouts for creation commands.
-  tpm2: add new tpm2 commands according to TCG 1.36
-  tmp: factor out tpm_get_timeouts
-  tpm: tpm-interface: drop unused tpm_input_header headers.
-
- drivers/char/tpm/Makefile            |  15 +-
- drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
- drivers/char/tpm/tpm-interface.c     | 424 +----------------------------------
- drivers/char/tpm/tpm.h               |  74 +++---
- drivers/char/tpm/tpm1-cmd.c          | 416 ++++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c          | 220 ++++++++----------
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
- drivers/char/tpm/tpm_tis_core.c      |   2 +-
- drivers/char/tpm/xen-tpmfront.c      |   2 +-
- 9 files changed, 582 insertions(+), 583 deletions(-)
- create mode 100644 drivers/char/tpm/tpm1-cmd.c
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 7f6968b750c8..ebf52b48d727 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -355,16 +355,7 @@ int tpm_startup(struct tpm_chip *chip)
+ }
+ 
+ #define TPM_DIGEST_SIZE 20
+-#define TPM_RET_CODE_IDX 6
+-#define TPM_INTERNAL_RESULT_SIZE 200
+ #define TPM_ORD_GET_CAP 101
+-#define TPM_ORD_GET_RANDOM 70
+-
+-static const struct tpm_input_header tpm_getcap_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(22),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_CAP)
+-};
+ 
+ ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		   const char *desc, size_t min_cap_length)
+@@ -517,12 +508,6 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+ #define TPM_ORD_PCR_EXTEND 20
+ #define EXTEND_PCR_RESULT_SIZE 34
+ #define EXTEND_PCR_RESULT_BODY_SIZE 20
+-static const struct tpm_input_header pcrextend_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(34),
+-	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
+-};
+-
+ static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 			   char *log_msg)
+ {
+@@ -782,6 +767,7 @@ int tpm_pm_resume(struct device *dev)
+ EXPORT_SYMBOL_GPL(tpm_pm_resume);
+ 
+ #define TPM_GETRANDOM_RESULT_SIZE	18
++#define TPM_ORD_GET_RANDOM 70
+ static const struct tpm_input_header tpm_getrandom_header = {
+ 	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+ 	.length = cpu_to_be32(14),
 -- 
 2.14.3
 
