@@ -1,9 +1,21 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon,  5 Mar 2018 16:38:58 +0200
-Subject: [PATCH v2 0/5] Migrate all TPM 2.0 commands to use struct tpm_buf
-Message-ID: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
+Date: Mon,  5 Mar 2018 18:56:09 +0200
+Subject: [PATCH v3 0/5] Migrate all TPM 2.0 commands to use struct tpm_buf
+Message-ID: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
+
+In order to make struct tpm_buf the first class object for constructing TPM
+commands, this patch set migrates all TPM 2.0 commands to use it. The next
+step after this is to migrate TPM 1.2 commands in a subsequent patch set.
+Finally, tpm_transmit_cmd() can take simply struct tpm_buf as its argument
+and this interface can be exported to be used by the kernel keyring.
+
+The ultimate goal of this work is to make constructing TPM commands inside
+the kernel simple and robust.
+
+v3:
+* Fixed error handling in tpm2_get_random()
 
 v2:
 * Fixed author information in the commit that fixes the self-test issue,
@@ -25,8 +37,8 @@ Jarkko Sakkinen (4):
 
  drivers/char/tpm/tpm-interface.c |  20 ++-
  drivers/char/tpm/tpm.h           |  20 +--
- drivers/char/tpm/tpm2-cmd.c      | 281 ++++++++++++++-------------------------
- 3 files changed, 128 insertions(+), 193 deletions(-)
+ drivers/char/tpm/tpm2-cmd.c      | 286 ++++++++++++++-------------------------
+ 3 files changed, 132 insertions(+), 194 deletions(-)
 
 -- 
 2.15.1
