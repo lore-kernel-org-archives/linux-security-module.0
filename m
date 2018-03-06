@@ -1,50 +1,45 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 6 Mar 2018 16:02:56 +0200
-Subject: [PATCH 0/5 V2] tpm: timeouts revamp
-In-Reply-To: <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
-References: <20180306092503.11568-1-tomas.winkler@intel.com>
-	<1520338622.3779.1.camel@linux.intel.com>
-	<031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
-Message-ID: <20180306140256.GC5700@linux.intel.com>
+From: jslaby@suse.cz (Jiri Slaby)
+Date: Tue, 6 Mar 2018 15:05:50 +0100
+Subject: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
+In-Reply-To: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
+References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
+Message-ID: <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 06, 2018 at 01:39:49PM +0100, Javier Martinez Canillas wrote:
-> On 03/06/2018 01:17 PM, Jarkko Sakkinen wrote:
-> > On Tue, 2018-03-06 at 11:24 +0200, Tomas Winkler wrote:
-> >> This series cleans up tpm timeouts setting and handling.
-> >>
-> >> First motivation was to fix failures coming from too short timeouts
-> >> for commands that creates keys.
-> >> Key generation may take significant time depending on the underlying
-> >> hardware. Rather than increasing default timeout a new constant is
-> >> added, to not stall too long on regular commands failures.
-> >>
-> >> Second is to define timeouts for new tpm2 commands
-> >> defined in TCG 1.36 spec.
-> >
+On 11/16/2016, 07:10 PM, David Howells wrote:
+> Here are two sets of patches.  Firstly, the first three patches provide a
+> blacklist, making the following changes:
+...
+> Secondly, the remaining patches allow the UEFI database to be used to load
+> the system keyrings:
+...
+> Dave Howells (2):
+>       efi: Add EFI signature data types
+>       efi: Add an EFI signature blob parser
 > 
-> Probably a typo, since the latest TCG spec version is the 1.38 [0].
->  
-> > Where can we get that specification? I don't have that new
-> > version and couldn't find it from the public internet.
-> > 
-> > /Jarkko
-> > 
+> David Howells (5):
+>       KEYS: Add a system blacklist keyring
+>       X.509: Allow X.509 certs to be blacklisted
+>       PKCS#7: Handle blacklisted certificates
+>       KEYS: Allow unrestricted boot-time addition of keys to secondary keyring
+>       efi: Add SHIM and image security database GUID definitions
 > 
-> [0]: https://trustedcomputinggroup.org/tpm-library-specification/
+> Josh Boyer (2):
+>       MODSIGN: Import certificates from UEFI Secure Boot
+>       MODSIGN: Allow the "db" UEFI variable to be suppressed
 
-I already have that version of the specifications but I thought that we
-were speaking about PC Client Platform spefication, which is at version
-1.30. TCG spec is an ambiguous term so that is where the confusion
-started from.
+Hi,
 
-The only spec I've seen some timeouts is the PC Client Specification but
-I guess I've then missed the list in TPM 2.0 spefication. Where are they
-listed? I worked with Will Arthur durations based on PC Client Specification
-when TPM 2.0 support was first implemented.
+what's the status of this please? Distributors (I checked SUSE, RedHat
+and Ubuntu) have to carry these patches and every of them have to
+forward-port the patches to new kernels. So are you going to resend the
+PR to have this merged?
 
-/Jarkko
+thanks,
+-- 
+js
+suse labs
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
