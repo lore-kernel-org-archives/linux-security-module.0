@@ -1,51 +1,83 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 7 Mar 2018 09:10:10 +1100 (AEDT)
-Subject: [PATCH] usb,signal,security: only pass the cred, not the secid,
-	to kill_pid_info_as_cred and security_task_kill
-In-Reply-To: <8b1ea069-2389-5298-c187-647202762d72@schaufler-ca.com>
-References: <20170908164001.21138-1-sds@tycho.nsa.gov>
-	<CAHC9VhSga+mg8VTtVoafdbpQ2K62PEBGrWidB8SUwWtRO+hahA@mail.gmail.com>
-	<alpine.LRH.2.21.1709090808200.15026@namei.org>
-	<CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
-	<8b1ea069-2389-5298-c187-647202762d72@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1803070909310.14366@namei.org>
+From: pmoore@redhat.com (Paul Moore)
+Date: Tue, 06 Mar 2018 17:27:44 -0500
+Subject: [PATCH] net: don't unnecessarily load kernel modules in dev_ioctl()
+Message-ID: <152037526427.18953.14013300464173153064.stgit@chester>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 6 Mar 2018, Casey Schaufler wrote:
+From: Paul Moore <paul@paul-moore.com>
 
-> On 3/6/2018 11:01 AM, Paul Moore wrote:
-> > On Fri, Sep 8, 2017 at 6:09 PM, James Morris <jmorris@namei.org> wrote:
-> >> On Fri, 8 Sep 2017, Paul Moore wrote:
-> >>> Looks fine to me from a SELinux perspective.  If Casey and John are
-> >>> happy with this I can volunteer to pull it into the selinux/next tree
-> >>> (once the merge window closes), otherwise if someone else wants to
-> >>> merge this my ack is below.
-> >> As this impacts multiple LSMs, I'd prefer to take it via my tree.
-> > What happened to this James?  As best I can tell there were never any
-> > objections, and plenty of ACKs, but I don't see it in Linus' tree.
-> > I'll extend my offer to merge it, but I know you expressed a desire to
-> > pull this via your tree.
-> 
-> I was also surprised that it had not been included.
-> 
-> >
-> > * http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003156.html
-> >
+Starting with v4.16-rc1 we've been seeing a higher than usual number
+of requests for the kernel to load networking modules, even on events
+which shouldn't trigger a module load (e.g. ioctl(TCGETS)).  Stephen
+Smalley suggested the problem may lie in commit 44c02a2c3dc5
+("dev_ioctl(): move copyin/copyout to callers") which moves changes
+the network dev_ioctl() function to always call dev_load(),
+regardless of the requested ioctl.
 
-Oops,
+This patch moves the dev_load() calls back into the individual ioctls
+while preserving the rest of the original patch.
 
-Now applied to:
+Reported-by: Dominick Grift <dac.override@gmail.com>
+Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ net/core/dev_ioctl.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-and next-testing
-
-
-
-
--- 
-James Morris
-<jmorris@namei.org>
+diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
+index 0ab1af04296c..a04e1e88bf3a 100644
+--- a/net/core/dev_ioctl.c
++++ b/net/core/dev_ioctl.c
+@@ -402,8 +402,6 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+ 	if (colon)
+ 		*colon = 0;
+ 
+-	dev_load(net, ifr->ifr_name);
+-
+ 	/*
+ 	 *	See which interface the caller is talking about.
+ 	 */
+@@ -423,6 +421,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+ 	case SIOCGIFMAP:
+ 	case SIOCGIFINDEX:
+ 	case SIOCGIFTXQLEN:
++		dev_load(net, ifr->ifr_name);
+ 		rcu_read_lock();
+ 		ret = dev_ifsioc_locked(net, ifr, cmd);
+ 		rcu_read_unlock();
+@@ -431,6 +430,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+ 		return ret;
+ 
+ 	case SIOCETHTOOL:
++		dev_load(net, ifr->ifr_name);
+ 		rtnl_lock();
+ 		ret = dev_ethtool(net, ifr);
+ 		rtnl_unlock();
+@@ -447,6 +447,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+ 	case SIOCGMIIPHY:
+ 	case SIOCGMIIREG:
+ 	case SIOCSIFNAME:
++		dev_load(net, ifr->ifr_name);
+ 		if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
+ 			return -EPERM;
+ 		rtnl_lock();
+@@ -494,6 +495,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+ 		/* fall through */
+ 	case SIOCBONDSLAVEINFOQUERY:
+ 	case SIOCBONDINFOQUERY:
++		dev_load(net, ifr->ifr_name);
+ 		rtnl_lock();
+ 		ret = dev_ifsioc(net, ifr, cmd);
+ 		rtnl_unlock();
+@@ -518,6 +520,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+ 		    cmd == SIOCGHWTSTAMP ||
+ 		    (cmd >= SIOCDEVPRIVATE &&
+ 		     cmd <= SIOCDEVPRIVATE + 15)) {
++			dev_load(net, ifr->ifr_name);
+ 			rtnl_lock();
+ 			ret = dev_ifsioc(net, ifr, cmd);
+ 			rtnl_unlock();
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
