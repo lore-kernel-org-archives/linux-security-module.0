@@ -1,45 +1,52 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Tue,  6 Mar 2018 11:24:58 +0200
-Subject: [PATCH 0/5 V2] tpm: timeouts revamp
-Message-ID: <20180306092503.11568-1-tomas.winkler@intel.com>
+Date: Tue,  6 Mar 2018 11:24:59 +0200
+Subject: [PATCH 1/5 V2] tpm: sort objects in the Makefile
+In-Reply-To: <20180306092503.11568-1-tomas.winkler@intel.com>
+References: <20180306092503.11568-1-tomas.winkler@intel.com>
+Message-ID: <20180306092503.11568-2-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This series cleans up tpm timeouts setting and handling.
+Make the tpm Makefile a bit more in order by putting
+objects in one column and group together tpm2 modules
 
-First motivation was to fix failures coming from too short timeouts
-for commands that creates keys.
-Key generation may take significant time depending on the underlying
-hardware. Rather than increasing default timeout a new constant is
-added, to not stall too long on regular commands failures.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+V2: 1. back to tpm-y notation
+    2. Partially sort files alphanumerically.
 
-Second is to define timeouts for new tpm2 commands
-defined in TCG 1.36 spec.
+ drivers/char/tpm/Makefile | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Tomas Winkler (5):
-  tpm: sort objects in the Makefile
-  tpm: factor out tpm 1.2 duration calculation to tpm1-cmd.c
-  tpm2: add longer timeouts for creation commands.
-  tpm2: add new tpm2 commands according to TCG 1.36
-  tmp: factor out tpm_get_timeouts
-
-V2: 1. Makefile go back tpm-y construct.
-    2. Add more info to longer timouts patch
-    3. Rebase other patches
-    4. Remove patch not connected to timouts from the series.
-
- drivers/char/tpm/Makefile            |  16 +-
- drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
- drivers/char/tpm/tpm-interface.c     | 408 +---------------------------------
- drivers/char/tpm/tpm.h               |  74 ++++---
- drivers/char/tpm/tpm1-cmd.c          | 416 +++++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c          | 220 ++++++++----------
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
- drivers/char/tpm/tpm_tis_core.c      |   2 +-
- drivers/char/tpm/xen-tpmfront.c      |   2 +-
- 9 files changed, 582 insertions(+), 568 deletions(-)
- create mode 100644 drivers/char/tpm/tpm1-cmd.c
-
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index acd758381c58..b2d6ca9e62e4 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -3,12 +3,21 @@
+ # Makefile for the kernel tpm device drivers.
+ #
+ obj-$(CONFIG_TCG_TPM) += tpm.o
+-tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+-	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o \
+-         tpm2-space.o
++tpm-y := tpm-chip.o
++tpm-y += tpm-dev.o
++tpm-y += tpm-dev-common.o
++tpm-y += tpm-interface.o
++tpm-y += tpmrm-dev.o
++tpm-y += tpm-sysfs.o
++tpm-y += tpm1_eventlog.o
++tpm-y += tpm2-cmd.o
++tpm-y += tpm2_eventlog.o
++tpm-y += tpm2-space.o
++
+ tpm-$(CONFIG_ACPI) += tpm_ppi.o tpm_eventlog_acpi.o
+ tpm-$(CONFIG_EFI) += tpm_eventlog_efi.o
+ tpm-$(CONFIG_OF) += tpm_eventlog_of.o
++
+ obj-$(CONFIG_TCG_TIS_CORE) += tpm_tis_core.o
+ obj-$(CONFIG_TCG_TIS) += tpm_tis.o
+ obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
 -- 
 2.14.3
 
