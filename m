@@ -1,105 +1,44 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Tue, 6 Mar 2018 19:39:41 +0200
-Subject: [PATCH 1/7] genalloc: track beginning of allocations
-In-Reply-To: <6a31164a-af3f-91ea-d385-7c6d1888b28c@gmail.com>
-References: <20180228200620.30026-1-igor.stoppa@huawei.com>
-	<20180228200620.30026-2-igor.stoppa@huawei.com>
-	<6a31164a-af3f-91ea-d385-7c6d1888b28c@gmail.com>
-Message-ID: <05bde73d-6c0a-8309-4150-7225862c28e0@huawei.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 06 Mar 2018 13:36:36 -0500
+Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
+In-Reply-To: <1520353933.5393.21.camel@HansenPartnership.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+	<20180305125642.GA3425@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+	<20180306074932.GB3624@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+	<1520353933.5393.21.camel@HansenPartnership.com>
+Message-ID: <1520361396.10396.396.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 05/03/2018 21:00, J Freyensee wrote:
-> .
-> .
+On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
+> On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
+> > > 
+> > > 
+> > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > > 
+> > > > Why you need cover letter???What are u missing in the patch
+> > > > description
+> > > 
+> > > If you submit a *patch set* I *require* a cover letter, yes.
+> > 
+> > It's good but it is not must, you are inventing your own rules.
 > 
+> As long as the Maintainer is the gatekeeper, you're not going to get
+> very far with this argument. ?The fact is that a lot of subsystems have
+> varying rules; often undocumented, some of which are even in conflict,
+> like alphabetic vs reverse christmas tree format for includes.
 > 
-> On 2/28/18 12:06 PM, Igor Stoppa wrote:
->> +
->> +/**
->> + * gen_pool_dma_alloc() - allocate special memory from the pool for DMA usage
->> + * @pool: pool to allocate from
->> + * @size: number of bytes to allocate from the pool
->> + * @dma: dma-view physical address return value.  Use NULL if unneeded.
->> + *
->> + * Allocate the requested number of bytes from the specified pool.
->> + * Uses the pool allocation function (with first-fit algorithm by default).
->> + * Can not be used in NMI handler on architectures without
->> + * NMI-safe cmpxchg implementation.
->> + *
->> + * Return:
->> + * * address of the memory allocated	- success
->> + * * NULL				- error
->> + */
->> +void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma);
->> +
-> 
-> OK, so gen_pool_dma_alloc() is defined here, which believe is the API 
-> line being drawn for this series.
-> 
-> so,
-> .
-> .
-> .
->>
->>   
->>   /**
->> - * gen_pool_dma_alloc - allocate special memory from the pool for DMA usage
->> + * gen_pool_dma_alloc() - allocate special memory from the pool for DMA usage
->>    * @pool: pool to allocate from
->>    * @size: number of bytes to allocate from the pool
->>    * @dma: dma-view physical address return value.  Use NULL if unneeded.
->> @@ -342,14 +566,15 @@ EXPORT_SYMBOL(gen_pool_alloc_algo);
->>    * Uses the pool allocation function (with first-fit algorithm by default).
->>    * Can not be used in NMI handler on architectures without
->>    * NMI-safe cmpxchg implementation.
->> + *
->> + * Return:
->> + * * address of the memory allocated	- success
->> + * * NULL				- error
->>    */
->>   void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
->>   {
->>   	unsigned long vaddr;
->>   
->> -	if (!pool)
->> -		return NULL;
->> -
-> why is this being removed?? I don't believe this code was getting 
-> removed from your v17 series patches.
+> A cover letter is actually one of the more uniform rules. ?It's
+> referred to in submitting patches, but not actually documented there.
 
-Because, as Matthew Wilcox pointed out [1] (well, that's how I
-understood it) de-referencing a NULL pointer will cause the kernel to
-complain loudly.
+I've heard that some maintainers are moving away from cover letters,
+since they are not include in the git repo and are lost. ?I've seen
+Andrew Morton cut and paste the cover letter in the first patch
+description of the patch set.
 
-Where is the NULL pointer coming from?
-
-a) from a bug in the user of the API - in that case it will be noticed,
-reported and fixed, that is how also other in-kernel APIs work
-
-b) from an attacker - it will still trigger an error from the kernel,
-but it cannot really do much else, besides crashing repeatedly and
-causing a DOS. However, there are so many other places that could be
-under similar attack, that it doesn't seem to make a difference having a
-check here only.
-
-If the value was coming from userspace, that would be a completely
-different case and some sort of sanitation would be mandatory.
-
-> Otherwise, looks good,
-> 
-> Reviewed-by: Jay Freyensee <why2jjj.linux@gmail.com>
-
-thanks
-
-
-[1] http://www.openwall.com/lists/kernel-hardening/2018/02/26/16
-
-
---
-igor
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
