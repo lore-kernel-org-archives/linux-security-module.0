@@ -1,52 +1,28 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Tue,  6 Mar 2018 11:24:59 +0200
-Subject: [PATCH 1/5 V2] tpm: sort objects in the Makefile
-In-Reply-To: <20180306092503.11568-1-tomas.winkler@intel.com>
-References: <20180306092503.11568-1-tomas.winkler@intel.com>
-Message-ID: <20180306092503.11568-2-tomas.winkler@intel.com>
+Date: Tue,  6 Mar 2018 11:30:37 +0200
+Subject: [PATCH 0/4] tpm: factor out tpm1 code into tpm1-cmd.c
+Message-ID: <20180306093041.11996-1-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Make the tpm Makefile a bit more in order by putting
-objects in one column and group together tpm2 modules
+Move tpm 1.x implementation to tpm1-cmd.c similarly to tpm2-cmd.c
+This is work in progress of possible dropping compiling out
+one tpm 1.x or tpm 2.x in case not needed on a target platform.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
-V2: 1. back to tpm-y notation
-    2. Partially sort files alphanumerically.
+Tomas Winkler (4):
+  tmp: move tpm1_pcr_extend to tpm1-cmd.c
+  tmp: move tpm_getcap to tpm1-cmd.c
+  tmp: factor out tpm1_get_random into tpm1-cmd.c
+  tpm: move tpm1 selftest code from tpm-interface tpm1-cmd.c
 
- drivers/char/tpm/Makefile | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-interface.c     | 273 +----------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |  50 +++----
+ drivers/char/tpm/tpm.h               |  12 +-
+ drivers/char/tpm/tpm1-cmd.c          | 267 +++++++++++++++++++++++++++++++++-
+ drivers/char/tpm/tpm_tis_core.c      |   4 +-
+ 6 files changed, 303 insertions(+), 305 deletions(-)
 
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index acd758381c58..b2d6ca9e62e4 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -3,12 +3,21 @@
- # Makefile for the kernel tpm device drivers.
- #
- obj-$(CONFIG_TCG_TPM) += tpm.o
--tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
--	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o \
--         tpm2-space.o
-+tpm-y := tpm-chip.o
-+tpm-y += tpm-dev.o
-+tpm-y += tpm-dev-common.o
-+tpm-y += tpm-interface.o
-+tpm-y += tpmrm-dev.o
-+tpm-y += tpm-sysfs.o
-+tpm-y += tpm1_eventlog.o
-+tpm-y += tpm2-cmd.o
-+tpm-y += tpm2_eventlog.o
-+tpm-y += tpm2-space.o
-+
- tpm-$(CONFIG_ACPI) += tpm_ppi.o tpm_eventlog_acpi.o
- tpm-$(CONFIG_EFI) += tpm_eventlog_efi.o
- tpm-$(CONFIG_OF) += tpm_eventlog_of.o
-+
- obj-$(CONFIG_TCG_TIS_CORE) += tpm_tis_core.o
- obj-$(CONFIG_TCG_TIS) += tpm_tis.o
- obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
 -- 
 2.14.3
 
