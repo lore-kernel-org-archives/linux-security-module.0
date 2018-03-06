@@ -1,101 +1,86 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 6 Mar 2018 17:32:47 -0500
-Subject: [PATCH] net: don't unnecessarily load kernel modules in
-	dev_ioctl()
-In-Reply-To: <152037526427.18953.14013300464173153064.stgit@chester>
-References: <152037526427.18953.14013300464173153064.stgit@chester>
-Message-ID: <CAHC9VhR4FzwsAEO9O9Pnpkm2jOBajwZUkn_i0FqOMR_4ycag2g@mail.gmail.com>
+From: luto@amacapital.net (Andy Lutomirski)
+Date: Tue, 6 Mar 2018 22:33:17 +0000
+Subject: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged
+	sandboxing
+In-Reply-To: <a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
+References: <20180227004121.3633-1-mic@digikod.net>
+	<CALCETrV3OZb70o83uOG437PubwBwaUJ6SKQucq_7g1BuBOmxzg@mail.gmail.com>
+	<2e06621c-08e9-dc12-9b6e-9c09d5d8f458@digikod.net>
+	<CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
+	<a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
+Message-ID: <CALCETrUQYp0ta4tLgUWJ79pZVwp3WRY7cp-XaPcn1WyTc=wZyg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 6, 2018 at 5:27 PM, Paul Moore <pmoore@redhat.com> wrote:
-> From: Paul Moore <paul@paul-moore.com>
+On Tue, Mar 6, 2018 at 10:25 PM, Micka?l Sala?n <mic@digikod.net> wrote:
 >
-> Starting with v4.16-rc1 we've been seeing a higher than usual number
-> of requests for the kernel to load networking modules, even on events
-> which shouldn't trigger a module load (e.g. ioctl(TCGETS)).  Stephen
-> Smalley suggested the problem may lie in commit 44c02a2c3dc5
-> ("dev_ioctl(): move copyin/copyout to callers") which moves changes
-> the network dev_ioctl() function to always call dev_load(),
-> regardless of the requested ioctl.
 >
-> This patch moves the dev_load() calls back into the individual ioctls
-> while preserving the rest of the original patch.
+> On 28/02/2018 00:09, Andy Lutomirski wrote:
+>> On Tue, Feb 27, 2018 at 10:03 PM, Micka?l Sala?n <mic@digikod.net> wrote:
+>>>
+>>> On 27/02/2018 05:36, Andy Lutomirski wrote:
+>>>> On Tue, Feb 27, 2018 at 12:41 AM, Micka?l Sala?n <mic@digikod.net> wrote:
+>>>>> Hi,
+>>>>>
+>>
+>>>>>
+>>>>> ## Why use the seccomp(2) syscall?
+>>>>>
+>>>>> Landlock use the same semantic as seccomp to apply access rule
+>>>>> restrictions. It add a new layer of security for the current process
+>>>>> which is inherited by its children. It makes sense to use an unique
+>>>>> access-restricting syscall (that should be allowed by seccomp filters)
+>>>>> which can only drop privileges. Moreover, a Landlock rule could come
+>>>>> from outside a process (e.g.  passed through a UNIX socket). It is then
+>>>>> useful to differentiate the creation/load of Landlock eBPF programs via
+>>>>> bpf(2), from rule enforcement via seccomp(2).
+>>>>
+>>>> This seems like a weak argument to me.  Sure, this is a bit different
+>>>> from seccomp(), and maybe shoving it into the seccomp() multiplexer is
+>>>> awkward, but surely the bpf() multiplexer is even less applicable.
+>>>
+>>> I think using the seccomp syscall is fine, and everyone agreed on it.
+>>>
+>>
+>> Ah, sorry, I completely misread what you wrote.  My apologies.  You
+>> can disregard most of my email.
+>>
+>>>
+>>>>
+>>>> Also, looking forward, I think you're going to want a bunch of the
+>>>> stuff that's under consideration as new seccomp features.  Tycho is
+>>>> working on a "user notifier" feature for seccomp where, in addition to
+>>>> accepting, rejecting, or kicking to ptrace, you can send a message to
+>>>> the creator of the filter and wait for a reply.  I think that Landlock
+>>>> will want exactly the same feature.
+>>>
+>>> I don't think why this may be useful at all her. Landlock does not
+>>> filter at the syscall level but handles kernel object and actions as
+>>> does an LSM. That is the whole purpose of Landlock.
+>>
+>> Suppose I'm writing a container manager.  I want to run "mount" in the
+>> container, but I don't want to allow moun() in general and I want to
+>> emulate certain mount() actions.  I can write a filter that catches
+>> mount using seccomp and calls out to the container manager for help.
+>> This isn't theoretical -- Tycho wants *exactly* this use case to be
+>> supported.
 >
-> Reported-by: Dominick Grift <dac.override@gmail.com>
-> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  net/core/dev_ioctl.c |    7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> Well, I think this use case should be handled with something like
+> LD_PRELOAD and a helper library. FYI, I did something like this:
+> https://github.com/stemjail/stemshim
 
-In the interest of full disclosure, I've compiled this code but I
-haven't booted it yet (test kernel building now).  I just wanted to
-post this sooner rather than later in case the networking folks, or
-Al, had a different solution they would prefer.
+I doubt that will work for containers.  Containers that use user
+namespaces and, for example, setuid programs aren't going to honor
+LD_PRELOAD.
 
-> diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
-> index 0ab1af04296c..a04e1e88bf3a 100644
-> --- a/net/core/dev_ioctl.c
-> +++ b/net/core/dev_ioctl.c
-> @@ -402,8 +402,6 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->         if (colon)
->                 *colon = 0;
 >
-> -       dev_load(net, ifr->ifr_name);
-> -
->         /*
->          *      See which interface the caller is talking about.
->          */
-> @@ -423,6 +421,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->         case SIOCGIFMAP:
->         case SIOCGIFINDEX:
->         case SIOCGIFTXQLEN:
-> +               dev_load(net, ifr->ifr_name);
->                 rcu_read_lock();
->                 ret = dev_ifsioc_locked(net, ifr, cmd);
->                 rcu_read_unlock();
-> @@ -431,6 +430,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->                 return ret;
->
->         case SIOCETHTOOL:
-> +               dev_load(net, ifr->ifr_name);
->                 rtnl_lock();
->                 ret = dev_ethtool(net, ifr);
->                 rtnl_unlock();
-> @@ -447,6 +447,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->         case SIOCGMIIPHY:
->         case SIOCGMIIREG:
->         case SIOCSIFNAME:
-> +               dev_load(net, ifr->ifr_name);
->                 if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
->                         return -EPERM;
->                 rtnl_lock();
-> @@ -494,6 +495,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->                 /* fall through */
->         case SIOCBONDSLAVEINFOQUERY:
->         case SIOCBONDINFOQUERY:
-> +               dev_load(net, ifr->ifr_name);
->                 rtnl_lock();
->                 ret = dev_ifsioc(net, ifr, cmd);
->                 rtnl_unlock();
-> @@ -518,6 +520,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->                     cmd == SIOCGHWTSTAMP ||
->                     (cmd >= SIOCDEVPRIVATE &&
->                      cmd <= SIOCDEVPRIVATE + 15)) {
-> +                       dev_load(net, ifr->ifr_name);
->                         rtnl_lock();
->                         ret = dev_ifsioc(net, ifr, cmd);
->                         rtnl_unlock();
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Otherwise, we should think about enabling a process to (dynamically)
+> extend/patch the vDSO (similar to LD_PRELOAD but at the syscall level
+> and works with static binaries) for a subset of processes (the same way
+> seccomp filters are inherited). It may be more powerful and flexible
+> than extending the kernel/seccomp to patch (buggy?) userland.
 
--- 
-paul moore
-www.paul-moore.com
+Egads!
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
