@@ -1,46 +1,25 @@
 From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Tue, 6 Mar 2018 08:39:36 -0700
-Subject: [PATCH 3/3] tpm_crb: use __le64 annotated variable for response
-	buffer address
-In-Reply-To: <20180306082821.GB5705@linux.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-	<20180304121205.16934-3-tomas.winkler@intel.com>
-	<20180305130320.GC3425@linux.intel.com>
-	<20180306082821.GB5705@linux.intel.com>
-Message-ID: <20180306153936.GA13395@ziepe.ca>
+Date: Tue, 6 Mar 2018 08:44:01 -0700
+Subject: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
+In-Reply-To: <1520336251.7549.13.camel@linux.intel.com>
+References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
+	<20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
+	<1520336251.7549.13.camel@linux.intel.com>
+Message-ID: <20180306154401.GB13395@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 06, 2018 at 10:28:21AM +0200, Jarkko Sakkinen wrote:
-> On Mon, Mar 05, 2018 at 03:03:20PM +0200, Jarkko Sakkinen wrote:
-> > On Sun, Mar 04, 2018 at 02:12:05PM +0200, Tomas Winkler wrote:
-> > > This suppresses sparse warning
-> > > drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
-> > > 
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > >  drivers/char/tpm/tpm_crb.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
+On Tue, Mar 06, 2018 at 01:37:31PM +0200, Jarkko Sakkinen wrote:
+> On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
+> > In order to make struct tpm_buf the first class object for constructing TPM
+> > commands, migrate tpm2_probe() to use it.
 > > 
-> > The guideline is that you should describe what is wrong rather than
-> > copy-paste the sparse message.
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > 
-> Jason, didn't yo give the feedback to some patch 1-2 years ago that
-> instead of copy-pasting parse error one should write a clear commit
-> msg or is this OK?
+> Jason, is this now OK? I removed the error klog.
 
-The standard is to give some explaination why the tool complaint is
-valid and then if suitable include the tool complaint itself.
-
-Eg bad:
-
-Fix sparse warning on resp
-
-Good:
-
-use __le64 annotated variable for response buffer address
-
-IMHO, the subject line sufficiently describes the patch, and it is
-generally OK to clip the tool warning into the body..
+Sure the log message is gone - but I haven't been auditing your tpm_buf
+work..
 
 Jason
 --
