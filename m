@@ -1,35 +1,54 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 6 Mar 2018 11:28:34 -0800
-Subject: [PATCH] usb,signal,security: only pass the cred, not the secid,
-	to kill_pid_info_as_cred and security_task_kill
-In-Reply-To: <CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
-References: <20170908164001.21138-1-sds@tycho.nsa.gov>
-	<CAHC9VhSga+mg8VTtVoafdbpQ2K62PEBGrWidB8SUwWtRO+hahA@mail.gmail.com>
-	<alpine.LRH.2.21.1709090808200.15026@namei.org>
-	<CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
-Message-ID: <8b1ea069-2389-5298-c187-647202762d72@schaufler-ca.com>
+From: jgg@ziepe.ca (Jason Gunthorpe)
+Date: Tue, 6 Mar 2018 14:59:04 -0700
+Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
+In-Reply-To: <1520361396.10396.396.camel@linux.vnet.ibm.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+	<20180305125642.GA3425@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+	<20180306074932.GB3624@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+	<1520353933.5393.21.camel@HansenPartnership.com>
+	<1520361396.10396.396.camel@linux.vnet.ibm.com>
+Message-ID: <20180306215904.GA32097@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/6/2018 11:01 AM, Paul Moore wrote:
-> On Fri, Sep 8, 2017 at 6:09 PM, James Morris <jmorris@namei.org> wrote:
->> On Fri, 8 Sep 2017, Paul Moore wrote:
->>> Looks fine to me from a SELinux perspective.  If Casey and John are
->>> happy with this I can volunteer to pull it into the selinux/next tree
->>> (once the merge window closes), otherwise if someone else wants to
->>> merge this my ack is below.
->> As this impacts multiple LSMs, I'd prefer to take it via my tree.
-> What happened to this James?  As best I can tell there were never any
-> objections, and plenty of ACKs, but I don't see it in Linus' tree.
-> I'll extend my offer to merge it, but I know you expressed a desire to
-> pull this via your tree.
+On Tue, Mar 06, 2018 at 01:36:36PM -0500, Mimi Zohar wrote:
+> On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
+> > On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
+> > > > 
+> > > > 
+> > > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > > > 
+> > > > > Why you need cover letter???What are u missing in the patch
+> > > > > description
+> > > > 
+> > > > If you submit a *patch set* I *require* a cover letter, yes.
+> > > 
+> > > It's good but it is not must, you are inventing your own rules.
+> > 
+> > As long as the Maintainer is the gatekeeper, you're not going to get
+> > very far with this argument. ?The fact is that a lot of subsystems have
+> > varying rules; often undocumented, some of which are even in conflict,
+> > like alphabetic vs reverse christmas tree format for includes.
+> > 
+> > A cover letter is actually one of the more uniform rules. ?It's
+> > referred to in submitting patches, but not actually documented there.
+> 
+> I've heard that some maintainers are moving away from cover letters,
+> since they are not include in the git repo and are lost. ?I've seen
+> Andrew Morton cut and paste the cover letter in the first patch
+> description of the patch set.
 
-I was also surprised that it had not been included.
+Andrew has a workflow unlike any other I've seen..
 
->
-> * http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003156.html
->
+In my view the cover letter should explain why the maintainer should
+apply the series, and give any guidance to the review process.
 
+Not duplicate information that belongs in the patch comments. It
+shouldn't explain how/why the patch(es) works, etc.
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
