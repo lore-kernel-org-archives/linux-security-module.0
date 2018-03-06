@@ -1,52 +1,97 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 6 Mar 2018 17:31:11 -0500
-Subject: Linux 4.16 cap_sys_module
-In-Reply-To: <a85fef8d-09ee-e62f-1a28-1736c450ae77@tycho.nsa.gov>
-References: <20180228092708.GA28719@julius.enp8s0.d30>
-	<20180228095317.GB28719@julius.enp8s0.d30>
-	<2b189acf-1ee4-d6d4-0188-1333582127be@tycho.nsa.gov>
-	<a85fef8d-09ee-e62f-1a28-1736c450ae77@tycho.nsa.gov>
-Message-ID: <CAHC9VhRLxcnNf=Rpvos7eiUV0RhXPjZqWPxM_ahwq8KrTgp1xg@mail.gmail.com>
+Date: Tue, 6 Mar 2018 17:32:47 -0500
+Subject: [PATCH] net: don't unnecessarily load kernel modules in
+	dev_ioctl()
+In-Reply-To: <152037526427.18953.14013300464173153064.stgit@chester>
+References: <152037526427.18953.14013300464173153064.stgit@chester>
+Message-ID: <CAHC9VhR4FzwsAEO9O9Pnpkm2jOBajwZUkn_i0FqOMR_4ycag2g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Feb 28, 2018 at 9:18 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 02/28/2018 08:53 AM, Stephen Smalley wrote:
->> On 02/28/2018 04:53 AM, Dominick Grift wrote:
->>> On Wed, Feb 28, 2018 at 10:27:08AM +0100, Dominick Grift wrote:
->>>> Since Linux 4.16 (to atleast RC2) user space started to excessively trigger cap_sys_module
->>>>
->>>> Here is one example of such and event:
->>>>
->>>> type=SYSCALL msg=audit(02/27/2018 08:06:40.017:74) : arch=x86_64 syscall=ioctl success=no exit=ENOTTY(Inappropriate ioctl for device) a0=0x2 a1=TCGETS a2=0x7fff2d89f8f0 a3=0x55ba203a9010 items=0 ppid=1 pid=423 auid=unset uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=(none) ses=unset comm=systemd-user-se exe=/usr/lib/systemd/systemd-user-sessions subj=sys.id:sys.role:user_sessions.subj:s0 key=(null)
->>>> type=AVC msg=audit(02/27/2018 08:06:40.017:74) : avc:  denied  { sys_module } for  pid=423 comm=systemd-user-se capability=sys_module  scontext=sys.id:sys.role:user_sessions.subj:s0 tcontext=sys.id:sys.role:user_sessions.subj:s0 tclass=capability permissive=1
->>>> type=AVC msg=audit(02/27/2018 08:06:40.017:74) : avc:  denied  { module_request } for  pid=423 comm=systemd-user-se kmod=6E65746465762D80E72A05257F scontext=sys.id:sys.role:user_sessions.subj:s0 tcontext=sys.id:sys.role:sys.isid:s0 tclass=system permissive=1
->>>>
->>>> Any idea what causes this and how to fix it?
->>>
->>> For reference: https://github.com/fedora-selinux/selinux-policy/commit/2c13be1fb543c51935785e7a43b798a9f35f5aa0#comments
->>
->> Looks like this might be caused by:
->>
->> commit 44c02a2c3dc55835e9f0d8ef73966406cd805001
->> Author: Al Viro <viro@zeniv.linux.org.uk>
->> Date:   Thu Oct 5 12:59:44 2017 -0400
->>
->>     dev_ioctl(): move copyin/copyout to callers
->>
->>     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
->>
->>
->> It moves the dev_load() call out of the switch statement, which was only
->> conditionally called in the default case if the cmd had certain values,
->> and unconditionally calls it.  So we trigger module load denials on
->> simple TCGETS (isatty) probes on a socket.  We need it moved back.
+On Tue, Mar 6, 2018 at 5:27 PM, Paul Moore <pmoore@redhat.com> wrote:
+> From: Paul Moore <paul@paul-moore.com>
 >
-> (expanded cc list since this affects more than just SELinux)
+> Starting with v4.16-rc1 we've been seeing a higher than usual number
+> of requests for the kernel to load networking modules, even on events
+> which shouldn't trigger a module load (e.g. ioctl(TCGETS)).  Stephen
+> Smalley suggested the problem may lie in commit 44c02a2c3dc5
+> ("dev_ioctl(): move copyin/copyout to callers") which moves changes
+> the network dev_ioctl() function to always call dev_load(),
+> regardless of the requested ioctl.
+>
+> This patch moves the dev_load() calls back into the individual ioctls
+> while preserving the rest of the original patch.
+>
+> Reported-by: Dominick Grift <dac.override@gmail.com>
+> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  net/core/dev_ioctl.c |    7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Just in case any of you on the To/CC line missed the patch:
+In the interest of full disclosure, I've compiled this code but I
+haven't booted it yet (test kernel building now).  I just wanted to
+post this sooner rather than later in case the networking folks, or
+Al, had a different solution they would prefer.
 
-* https://marc.info/?l=linux-netdev&m=152037526927844&w=2
+> diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
+> index 0ab1af04296c..a04e1e88bf3a 100644
+> --- a/net/core/dev_ioctl.c
+> +++ b/net/core/dev_ioctl.c
+> @@ -402,8 +402,6 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+>         if (colon)
+>                 *colon = 0;
+>
+> -       dev_load(net, ifr->ifr_name);
+> -
+>         /*
+>          *      See which interface the caller is talking about.
+>          */
+> @@ -423,6 +421,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+>         case SIOCGIFMAP:
+>         case SIOCGIFINDEX:
+>         case SIOCGIFTXQLEN:
+> +               dev_load(net, ifr->ifr_name);
+>                 rcu_read_lock();
+>                 ret = dev_ifsioc_locked(net, ifr, cmd);
+>                 rcu_read_unlock();
+> @@ -431,6 +430,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+>                 return ret;
+>
+>         case SIOCETHTOOL:
+> +               dev_load(net, ifr->ifr_name);
+>                 rtnl_lock();
+>                 ret = dev_ethtool(net, ifr);
+>                 rtnl_unlock();
+> @@ -447,6 +447,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+>         case SIOCGMIIPHY:
+>         case SIOCGMIIREG:
+>         case SIOCSIFNAME:
+> +               dev_load(net, ifr->ifr_name);
+>                 if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
+>                         return -EPERM;
+>                 rtnl_lock();
+> @@ -494,6 +495,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+>                 /* fall through */
+>         case SIOCBONDSLAVEINFOQUERY:
+>         case SIOCBONDINFOQUERY:
+> +               dev_load(net, ifr->ifr_name);
+>                 rtnl_lock();
+>                 ret = dev_ifsioc(net, ifr, cmd);
+>                 rtnl_unlock();
+> @@ -518,6 +520,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
+>                     cmd == SIOCGHWTSTAMP ||
+>                     (cmd >= SIOCDEVPRIVATE &&
+>                      cmd <= SIOCDEVPRIVATE + 15)) {
+> +                       dev_load(net, ifr->ifr_name);
+>                         rtnl_lock();
+>                         ret = dev_ifsioc(net, ifr, cmd);
+>                         rtnl_unlock();
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
 paul moore
