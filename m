@@ -1,34 +1,35 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 6 Mar 2018 14:01:01 -0500
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 6 Mar 2018 11:28:34 -0800
 Subject: [PATCH] usb,signal,security: only pass the cred, not the secid,
 	to kill_pid_info_as_cred and security_task_kill
-In-Reply-To: <alpine.LRH.2.21.1709090808200.15026@namei.org>
+In-Reply-To: <CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
 References: <20170908164001.21138-1-sds@tycho.nsa.gov>
 	<CAHC9VhSga+mg8VTtVoafdbpQ2K62PEBGrWidB8SUwWtRO+hahA@mail.gmail.com>
 	<alpine.LRH.2.21.1709090808200.15026@namei.org>
-Message-ID: <CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
+	<CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
+Message-ID: <8b1ea069-2389-5298-c187-647202762d72@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 8, 2017 at 6:09 PM, James Morris <jmorris@namei.org> wrote:
-> On Fri, 8 Sep 2017, Paul Moore wrote:
->> Looks fine to me from a SELinux perspective.  If Casey and John are
->> happy with this I can volunteer to pull it into the selinux/next tree
->> (once the merge window closes), otherwise if someone else wants to
->> merge this my ack is below.
+On 3/6/2018 11:01 AM, Paul Moore wrote:
+> On Fri, Sep 8, 2017 at 6:09 PM, James Morris <jmorris@namei.org> wrote:
+>> On Fri, 8 Sep 2017, Paul Moore wrote:
+>>> Looks fine to me from a SELinux perspective.  If Casey and John are
+>>> happy with this I can volunteer to pull it into the selinux/next tree
+>>> (once the merge window closes), otherwise if someone else wants to
+>>> merge this my ack is below.
+>> As this impacts multiple LSMs, I'd prefer to take it via my tree.
+> What happened to this James?  As best I can tell there were never any
+> objections, and plenty of ACKs, but I don't see it in Linus' tree.
+> I'll extend my offer to merge it, but I know you expressed a desire to
+> pull this via your tree.
+
+I was also surprised that it had not been included.
+
 >
-> As this impacts multiple LSMs, I'd prefer to take it via my tree.
+> * http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003156.html
+>
 
-What happened to this James?  As best I can tell there were never any
-objections, and plenty of ACKs, but I don't see it in Linus' tree.
-I'll extend my offer to merge it, but I know you expressed a desire to
-pull this via your tree.
-
-* http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003156.html
-
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
