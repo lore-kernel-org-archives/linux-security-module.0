@@ -1,23 +1,23 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 06 Mar 2018 13:32:17 +0200
-Subject: [PATCH 4/4] tpm: move tpm1 selftest code from tpm-interface
-	tpm1-cmd.c
-In-Reply-To: <20180306093041.11996-5-tomas.winkler@intel.com>
-References: <20180306093041.11996-1-tomas.winkler@intel.com>
-	<20180306093041.11996-5-tomas.winkler@intel.com>
-Message-ID: <1520335937.7549.10.camel@linux.intel.com>
+Date: Tue, 06 Mar 2018 13:32:51 +0200
+Subject: [PATCH V2] tpm_crb: use __le64 annotated variable for response
+	buffer address
+In-Reply-To: <20180306093415.12356-1-tomas.winkler@intel.com>
+References: <20180306093415.12356-1-tomas.winkler@intel.com>
+Message-ID: <1520335971.7549.11.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-03-06 at 11:30 +0200, Tomas Winkler wrote:
-> Move the tmp1 selftest code functions to tpm1-cmd.c
-> tpm_pcr_read_dev to tpm1_pcr_read_dev
-> tpm_continue_selftest to tpm1_continue_selftest
-> tpm_do_selftest to tpm1_do_selftest
+On Tue, 2018-03-06 at 11:34 +0200, Tomas Winkler wrote:
+> use __le64 annotated variable for response buffer address as this is
+> read in little endian format form the register.
+> 
+> This suppresses sparse warning
+> drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
 > 
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-The same remark about tpm_buf as for tpm_get_random().
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
 --
