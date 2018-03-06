@@ -1,45 +1,80 @@
-From: jslaby@suse.cz (Jiri Slaby)
-Date: Tue, 6 Mar 2018 15:05:50 +0100
-Subject: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
-In-Reply-To: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
-References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
-Message-ID: <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
+From: willy@infradead.org (Matthew Wilcox)
+Date: Tue, 6 Mar 2018 06:10:47 -0800
+Subject: [PATCH 1/7] genalloc: track beginning of allocations
+In-Reply-To: <20180228200620.30026-2-igor.stoppa@huawei.com>
+References: <20180228200620.30026-1-igor.stoppa@huawei.com>
+	<20180228200620.30026-2-igor.stoppa@huawei.com>
+Message-ID: <20180306141047.GB13722@bombadil.infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 11/16/2016, 07:10 PM, David Howells wrote:
-> Here are two sets of patches.  Firstly, the first three patches provide a
-> blacklist, making the following changes:
-...
-> Secondly, the remaining patches allow the UEFI database to be used to load
-> the system keyrings:
-...
-> Dave Howells (2):
->       efi: Add EFI signature data types
->       efi: Add an EFI signature blob parser
-> 
-> David Howells (5):
->       KEYS: Add a system blacklist keyring
->       X.509: Allow X.509 certs to be blacklisted
->       PKCS#7: Handle blacklisted certificates
->       KEYS: Allow unrestricted boot-time addition of keys to secondary keyring
->       efi: Add SHIM and image security database GUID definitions
-> 
-> Josh Boyer (2):
->       MODSIGN: Import certificates from UEFI Secure Boot
->       MODSIGN: Allow the "db" UEFI variable to be suppressed
+On Wed, Feb 28, 2018 at 10:06:14PM +0200, Igor Stoppa wrote:
+> + * Encoding of the bitmap tracking the allocations
+> + * -----------------------------------------------
+> + *
+> + * The bitmap is composed of units of allocations.
+> + *
+> + * Each unit of allocation is represented using 2 consecutive bits.
+> + *
+> + * This makes it possible to encode, for each unit of allocation,
+> + * information about:
+> + *  - allocation status (busy/free)
+> + *  - beginning of a sequennce of allocation units (first / successive)
+> + *
+> + *
+> + * Dictionary of allocation units (msb to the left, lsb to the right):
+> + *
+> + * 11: first allocation unit in the allocation
+> + * 10: any subsequent allocation unit (if any) in the allocation
+> + * 00: available allocation unit
+> + * 01: invalid
+> + *
+> + * Example, using the same notation as above - MSb.......LSb:
+> + *
+> + *  ...000010111100000010101011   <-- Read in this direction.
+> + *     \__|\__|\|\____|\______|
+> + *        |   | |     |       \___ 4 used allocation units
+> + *        |   | |     \___________ 3 empty allocation units
+> + *        |   | \_________________ 1 used allocation unit
+> + *        |   \___________________ 2 used allocation units
+> + *        \_______________________ 2 empty allocation units
+> + *
+> + * The encoding allows for lockless operations, such as:
+> + * - search for a sufficiently large range of allocation units
+> + * - reservation of a selected range of allocation units
+> + * - release of a specific allocation
+> + *
+> + * The alignment at which to perform the research for sequence of empty
+> + * allocation units (marked as zeros in the bitmap) is 2^1.
+> + *
+> + * This means that an allocation can start only at even places
+> + * (bit 0, bit 2, etc.) in the bitmap.
+> + *
+> + * Therefore, the number of zeroes to look for must be twice the number
+> + * of desired allocation units.
+> + *
+> + * When it's time to free the memory associated to an allocation request,
+> + * it's a matter of checking if the corresponding allocation unit is
+> + * really the beginning of an allocation (both bits are set to 1).
+> + *
+> + * Looking for the ending can also be performed locklessly.
+> + * It's sufficient to identify the first mapped allocation unit
+> + * that is represented either as free (00) or busy (11).
+> + * Even if the allocation status should change in the meanwhile, it
+> + * doesn't matter, since it can only transition between free (00) and
+> + * first-allocated (11).
 
-Hi,
+This seems unnecessarily complicated.  Why not handle it like this:
 
-what's the status of this please? Distributors (I checked SUSE, RedHat
-and Ubuntu) have to carry these patches and every of them have to
-forward-port the patches to new kernels. So are you going to resend the
-PR to have this merged?
+ - Double the bitmap in size (as you have done) but
+ - The first half of the bits are unchanged from the existing implementation
+ - The second half of the bits are used for determining the length
 
-thanks,
--- 
-js
-suse labs
+On allocation, you look for a sufficiently-large string of 0 bits in
+the first-half.  When you find it, you set all of them to 1, and set one
+bit in the second-half to indicate where the tail of the allocation is
+(you might actually want to use an rbtree or something to handle this ...
+using all these bits seems pretty inefficient).
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
