@@ -1,45 +1,30 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Wed, 7 Mar 2018 17:46:53 +0200
-Subject: [PATCH 1/7] genalloc: track beginning of allocations
-In-Reply-To: <54e95716-9d61-51a3-9ae8-196e60625b76@huawei.com>
-References: <20180228200620.30026-1-igor.stoppa@huawei.com>
-	<20180228200620.30026-2-igor.stoppa@huawei.com>
-	<20180306131856.GD19349@rapoport-lnx>
-	<54e95716-9d61-51a3-9ae8-196e60625b76@huawei.com>
-Message-ID: <98df3380-a142-871e-5a18-b356088e33ea@huawei.com>
+From: corbet@lwn.net (Jonathan Corbet)
+Date: Wed, 7 Mar 2018 08:54:54 -0700
+Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
+In-Reply-To: <1520361396.10396.396.camel@linux.vnet.ibm.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+	<20180305125642.GA3425@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+	<20180306074932.GB3624@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+	<1520353933.5393.21.camel@HansenPartnership.com>
+	<1520361396.10396.396.camel@linux.vnet.ibm.com>
+Message-ID: <20180307085454.2c820a13@lwn.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Tue, 06 Mar 2018 13:36:36 -0500
+Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
+> I've heard that some maintainers are moving away from cover letters,
+> since they are not include in the git repo and are lost.
 
-On 07/03/18 16:48, Igor Stoppa wrote:
-> 
-> 
-> On 06/03/18 15:19, Mike Rapoport wrote:
->> On Wed, Feb 28, 2018 at 10:06:14PM +0200, Igor Stoppa wrote:
+If I get a patch series with a cover letter that should be preserved, I
+apply the series in a branch then do a no-ff merge; the cover letter can
+then go into the merge commit.  There's no reason why cover letters need to
+be lost.
 
-[...]
-
->>> + * get_boundary() - verifies address, then measure length.
->>
->> There's some lack of consistency between the name and implementation and
->> the description.
->> It seems that it would be simpler to actually make it get_length() and
->> return the length of the allocation or nentries if the latter is smaller.
->> Then in gen_pool_free() there will be no need to recalculate nentries
->> again.
-> 
-> There is an error in the documentation. I'll explain below.
-
-Argh, I do not know why I came out with that.
-
-Yes, your comment is correct. I've modified the function accordingly and
-it is simpler.
-
-I will post it in the next revision.
-
---
-igor
+jon
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
