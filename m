@@ -1,57 +1,63 @@
-From: sargun@sargun.me (Sargun Dhillon)
-Date: Wed, 7 Mar 2018 14:22:14 -0800
-Subject: [PATCH v4 1/3] security: Refactor LSM hooks into an array and enum
-In-Reply-To: <6326ecfe-83f9-13d8-d59a-58d567726b07@schaufler-ca.com>
-References: <cover.1520407240.git.sargun@sargun.me>
-	<3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
-	<ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
-	<CAMp4zn8gtb7G28F8D_=npc6a7wwp3QMyvXrNKL0LA=EeFxRiKw@mail.gmail.com>
-	<6326ecfe-83f9-13d8-d59a-58d567726b07@schaufler-ca.com>
-Message-ID: <CAMp4zn-4Gkk=sopA52CBFBZvLQLweDOhZ9fvnyQYiE0g0Y3tsg@mail.gmail.com>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Wed, 07 Mar 2018 15:29:34 -0800
+Subject: [RFC 0/5] add integrity and security to TPM2 transactions
+Message-ID: <1520465374.4894.12.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Mar 7, 2018 at 12:23 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 3/7/2018 11:18 AM, Sargun Dhillon wrote:
->> On Wed, Mar 7, 2018 at 9:45 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 3/6/2018 11:23 PM, Sargun Dhillon wrote:
->>>> This commit should have no functional change. It changes the security hook
->>>> list heads struct into an array. Additionally, it exposes all of the hooks
->>>> via an enum. This loses memory layout randomization as the enum is not
->>>> randomized.
->>> Please explain why you want to do this. I still dislike it.
->>>
->> Do you dislike it because of the loss of randomization, or some other reason?
->
-> I dislike a huge array of untyped function pointers.
-> I dislike the loss of type checking in security.c
->
-Ok, I can go back to that. My previous approach was using two
-list_heads, but people suggested otherwise. Would you be okay with the
+By now, everybody knows we have a problem with the TPM2_RS_PW easy
+button on TPM2 in that transactions on the TPM bus can be intercepted
+and altered. ?The way to fix this is to use real sessions for HMAC
+capabilities to ensure integrity and to use parameter and response
+encryption to ensure confidentiality of the data flowing over the TPM
+bus.
 
->> The reason for not just having a second list_heads is that it's
->> somewhat ugly having to replicate that structure twice -- once for
->> dynamic hooks, and once for 'static' hooks.
->
-> There was discussion about this some time ago. In the case
-> where you don't allow dynamic hooks, you mark the lists ro_after_init
-> whereas in the case with them you don't, but use the locking.
->
->
-Why expose the compiled-in hooks to being RW? To me, having two
-list_heads seems better, because you have the built-in ones be read
-only, and the ones at load time be read/write. In fact, we could
-protect the r/w with pmalloc?
+This RFC is about adding a simple API which can ensure the above
+properties as a layered addition to the existing TPM handling code.
+?Eventually we can add this to the random number generator, the PCR
+extensions and the trusted key handling, but this all depends on the
+conversion to tpm_buf which is not yet upstream, so I've constructed a
+second patch which demonstrates the new API in a test module for those
+who wish to play with it.
 
->> Instead, we have one enum that LSMs can use and two arrays of heads
->> rather than an entire unrolled set of list_heads.
->
-> But how is this better? What is the advantage?
->
->>
->> If we had a way to randomize this, would it make you comfortable?
->>
->
+This series is also dependent on additions to the crypto subsystem to
+fix problems in the elliptic curve key handling and add the Cipher
+FeedBack encryption scheme:
+
+https://marc.info/?l=linux-crypto-vger&m=151994371015475
+
+In the second version, I added security HMAC to our PCR extend and
+encryption to the returned random number generators and also extracted
+the parsing and tpm2b construction API into a new file.
+
+James
+
+---
+
+James Bottomley (5):
+  tpm-buf: create new functions for handling TPM buffers
+  tpm2-sessions: Add full HMAC and encrypt/decrypt session handling
+  tpm2: add hmac checks to tpm2_pcr_extend()
+  tpm2: add session encryption protection to tpm2_get_random()
+  tpm2-sessions: NOT FOR COMMITTING add sessions testing
+
+ drivers/char/tpm/Kconfig              |    3 +
+ drivers/char/tpm/Makefile             |    3 +-
+ drivers/char/tpm/tpm-buf.c            |  184 ++++++
+ drivers/char/tpm/tpm-chip.c           |    1 +
+ drivers/char/tpm/tpm.h                |  116 ++--
+ drivers/char/tpm/tpm2-cmd.c           |  129 ++---
+ drivers/char/tpm/tpm2-sessions-test.c |  177 ++++++
+ drivers/char/tpm/tpm2-sessions.c      | 1030 +++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-sessions.h      |   56 ++
+ 9 files changed, 1548 insertions(+), 151 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm-buf.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions-test.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions.h
+
+-- 
+2.12.3
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
