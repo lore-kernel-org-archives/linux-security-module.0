@@ -1,47 +1,47 @@
-From: davem@davemloft.net (David Miller)
-Date: Wed, 07 Mar 2018 15:13:32 -0500 (EST)
-Subject: [PATCH] net: don't unnecessarily load kernel modules in
-	dev_ioctl()
-In-Reply-To: <CAHC9VhR4FzwsAEO9O9Pnpkm2jOBajwZUkn_i0FqOMR_4ycag2g@mail.gmail.com>
-References: <152037526427.18953.14013300464173153064.stgit@chester>
-	<CAHC9VhR4FzwsAEO9O9Pnpkm2jOBajwZUkn_i0FqOMR_4ycag2g@mail.gmail.com>
-Message-ID: <20180307.151332.565301474495395127.davem@davemloft.net>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 7 Mar 2018 12:23:47 -0800
+Subject: [PATCH v4 1/3] security: Refactor LSM hooks into an array and enum
+In-Reply-To: <CAMp4zn8gtb7G28F8D_=npc6a7wwp3QMyvXrNKL0LA=EeFxRiKw@mail.gmail.com>
+References: <cover.1520407240.git.sargun@sargun.me>
+	<3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
+	<ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
+	<CAMp4zn8gtb7G28F8D_=npc6a7wwp3QMyvXrNKL0LA=EeFxRiKw@mail.gmail.com>
+Message-ID: <6326ecfe-83f9-13d8-d59a-58d567726b07@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 6 Mar 2018 17:32:47 -0500
-
-> On Tue, Mar 6, 2018 at 5:27 PM, Paul Moore <pmoore@redhat.com> wrote:
->> From: Paul Moore <paul@paul-moore.com>
+On 3/7/2018 11:18 AM, Sargun Dhillon wrote:
+> On Wed, Mar 7, 2018 at 9:45 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 3/6/2018 11:23 PM, Sargun Dhillon wrote:
+>>> This commit should have no functional change. It changes the security hook
+>>> list heads struct into an array. Additionally, it exposes all of the hooks
+>>> via an enum. This loses memory layout randomization as the enum is not
+>>> randomized.
+>> Please explain why you want to do this. I still dislike it.
 >>
->> Starting with v4.16-rc1 we've been seeing a higher than usual number
->> of requests for the kernel to load networking modules, even on events
->> which shouldn't trigger a module load (e.g. ioctl(TCGETS)).  Stephen
->> Smalley suggested the problem may lie in commit 44c02a2c3dc5
->> ("dev_ioctl(): move copyin/copyout to callers") which moves changes
->> the network dev_ioctl() function to always call dev_load(),
->> regardless of the requested ioctl.
->>
->> This patch moves the dev_load() calls back into the individual ioctls
->> while preserving the rest of the original patch.
->>
->> Reported-by: Dominick Grift <dac.override@gmail.com>
->> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
->> Signed-off-by: Paul Moore <paul@paul-moore.com>
->> ---
->>  net/core/dev_ioctl.c |    7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> In the interest of full disclosure, I've compiled this code but I
-> haven't booted it yet (test kernel building now).  I just wanted to
-> post this sooner rather than later in case the networking folks, or
-> Al, had a different solution they would prefer.
+> Do you dislike it because of the loss of randomization, or some other reason?
 
-This is definitely the right fix, so patch applied.
+I dislike a huge array of untyped function pointers.
+I dislike the loss of type checking in security.c
 
-Taking the dev_load() out of that switch statement definitely has
-side effects.
+> The reason for not just having a second list_heads is that it's
+> somewhat ugly having to replicate that structure twice -- once for
+> dynamic hooks, and once for 'static' hooks.
+
+There was discussion about this some time ago. In the case
+where you don't allow dynamic hooks, you mark the lists ro_after_init
+whereas in the case with them you don't, but use the locking.
+
+
+> Instead, we have one enum that LSMs can use and two arrays of heads
+> rather than an entire unrolled set of list_heads.
+
+But how is this better? What is the advantage?
+
+>
+> If we had a way to randomize this, would it make you comfortable?
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
