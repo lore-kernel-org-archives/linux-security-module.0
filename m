@@ -1,65 +1,65 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 7 Mar 2018 08:46:23 -0500
-Subject: [PATCH] net: don't unnecessarily load kernel modules in
-	dev_ioctl()
-In-Reply-To: <20180306155920.7b6379ac@xeon-e3>
-References: <152037526427.18953.14013300464173153064.stgit@chester>
-	<20180306155920.7b6379ac@xeon-e3>
-Message-ID: <CAHC9VhSp=ijxe6PmfnRdg5WVG59p8d17GYQkzo0jw1B7H8b2Rw@mail.gmail.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 7 Mar 2018 16:07:42 +0200
+Subject: [PATCH 4/7] Protectable Memory
+In-Reply-To: <1b0aff92-bc6c-c815-f129-95720ec80778@gmail.com>
+References: <20180228200620.30026-1-igor.stoppa@huawei.com>
+	<20180228200620.30026-5-igor.stoppa@huawei.com>
+	<1b0aff92-bc6c-c815-f129-95720ec80778@gmail.com>
+Message-ID: <a21118be-a066-6ad7-4188-f50585a6f06d@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 6, 2018 at 6:59 PM, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
-> On Tue, 06 Mar 2018 17:27:44 -0500
-> Paul Moore <pmoore@redhat.com> wrote:
->> From: Paul Moore <paul@paul-moore.com>
->>
->> Starting with v4.16-rc1 we've been seeing a higher than usual number
->> of requests for the kernel to load networking modules, even on events
->> which shouldn't trigger a module load (e.g. ioctl(TCGETS)).  Stephen
->> Smalley suggested the problem may lie in commit 44c02a2c3dc5
->> ("dev_ioctl(): move copyin/copyout to callers") which moves changes
->> the network dev_ioctl() function to always call dev_load(),
->> regardless of the requested ioctl.
->>
->> This patch moves the dev_load() calls back into the individual ioctls
->> while preserving the rest of the original patch.
->>
->> Reported-by: Dominick Grift <dac.override@gmail.com>
->> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
->> Signed-off-by: Paul Moore <paul@paul-moore.com>
->> ---
->>  net/core/dev_ioctl.c |    7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
->> index 0ab1af04296c..a04e1e88bf3a 100644
->> --- a/net/core/dev_ioctl.c
->> +++ b/net/core/dev_ioctl.c
->> @@ -402,8 +402,6 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->>       if (colon)
->>               *colon = 0;
->>
->> -     dev_load(net, ifr->ifr_name);
->
-> Actually dev_load by ethernet name is really a legacy thing that should just die,
->
-> It was kept around so that some very tunnel configuration using special names.
->
->         # ifconfig sit0
->
-> which probably several web pages still tell users to do...
-> We have much better control now with ip commands so that this is just
-> baggage.
+On 06/03/18 05:59, J Freyensee wrote:
 
-In an effort to get this regression fixed quickly, and not get tangled
-up in a user education issue, can we at least restore the old ioctl()
-behavior and worry about removing dev_load() later?
+[...]
 
--- 
-paul moore
-www.paul-moore.com
+>> +config PROTECTABLE_MEMORY
+>> +    bool
+>> +    depends on MMU
+> 
+> 
+> Curious, would you also want to depend on "SECURITY" as well, as this is 
+> being advertised as a compliment to __read_only_after_init, per the file 
+> header comments, as I'm assuming ro_after_init would be disabled if the 
+> SECURITY Kconfig selection is *NOT* selected?
+
+__ro_after_init is configured like this:
+
+#if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX)
+bool rodata_enabled __ro_after_init = true;
+
+But even if __ro_after_init and pmalloc are conceptually similar, in
+practice they have - potentially - different constraints.
+
+1) the __ro_after_init segment belongs to linear kernel memory
+2) the pmalloc pools belong to vmalloc memory
+
+There is one extra layer of indirection in pmalloc.
+I am not an expert of MMUs but I suppose there might be types where it
+is possible to mark pages as RO but it's not possible to have virtual
+memory.
+
+If (and this is a big "if") such MMUs exist and are supported by linux,
+then __ro_after_init would be possible, while pmalloc would not be.
+
+So it seemed more correct to focus specifically on hte enablers required
+by pmalloc to perform correctly.
+
+Open Question:
+
+Is it ok that the API disappears in case the enablers are missing?
+Or should it fall back to something else?
+
+Dealing with lack of ReadOnly support would be pretty simple, it would
+be enough to make the write-Protection conditional.
+
+But what to do if virtual mapping is not supported?
+
+kmalloc might not have the ability to support large requests made toward
+pmalloc and this would possibly cause runtime failures.
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
