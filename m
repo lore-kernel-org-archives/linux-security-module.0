@@ -1,42 +1,64 @@
-From: anjiandi@codeaurora.org (Jiandi An)
-Date: Tue,  6 Mar 2018 23:26:26 -0600
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-Message-ID: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Wed, 7 Mar 2018 07:22:55 +0000
+Subject: [PATCH v4 0/3] Safe, dynamically loadable LSM hooks
+Message-ID: <cover.1520407240.git.sargun@sargun.me>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-TPM_CRB driver is the TPM support for ARM64.  If it
-is built as module, TPM chip is registered after IMA
-init.  tpm_pcr_read() in IMA driver would fail and
-display the following message even though eventually
-there is TPM chip on the system:
+This patchset introduces safe dynamic LSM support. These are currently
+not unloadable, until we figure out a use case that needs that. Adding
+an unload hook is trivial given the way the patch is written.
 
-ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+This exposes a second mechanism of loading hooks which are in modules.
+These hooks are behind static keys, so they should come at low performance
+overhead. The built-in hook heads are read-only, whereas the dynamic hooks
+are mutable.
 
-Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-built in kernel and initializes before IMA driver.
+Not all hooks can be loaded into. Some hooks are blacklisted, and therefore
+trying to load a module which plugs into those hooks will fail.
 
-Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
----
- security/integrity/ima/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+One of the big benefits with loadable security modules is to help with
+"unknown unknowns". Although, livepatch is excellent, sometimes, a
+surgical LSM is simpler.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 35ef693..6a8f677 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -10,6 +10,7 @@ config IMA
- 	select CRYPTO_HASH_INFO
- 	select TCG_TPM if HAS_IOMEM && !UML
- 	select TCG_TIS if TCG_TPM && X86
-+	select TCG_CRB if TCG_TPM && ACPI
- 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
- 	help
- 	  The Trusted Computing Group(TCG) runtime Integrity
+It includes an example LSM that prevents specific time travel.
+
+Changes since v3:
+  * readded hook blacklisted
+  * return error, rather than panic if unable to allocate memory
+
+Changes since v2:
+  * inode get/set security is readded
+  * xfrm singleton hook readded
+  * Security hooks are turned into an array
+  * Security hooks and dynamic hooks enum is collapsed
+
+Changes since v1:
+  * It no longer allows unloading of modules
+  * prctl is fixed
+  * inode get/set security is removed
+  * xfrm singleton hook removed
+
+
+Sargun Dhillon (3):
+  security: Refactor LSM hooks into an array and enum
+  security: Expose a mechanism to load lsm hooks dynamically at runtime
+  security: Add an example sample dynamic LSM
+
+ include/linux/lsm_hooks.h | 459 ++++++++++++++++++++++++----------------------
+ samples/Kconfig           |   6 +
+ samples/Makefile          |   2 +-
+ samples/lsm/Makefile      |   4 +
+ samples/lsm/lsm_example.c |  33 ++++
+ security/Kconfig          |   9 +
+ security/inode.c          |  13 +-
+ security/security.c       | 222 ++++++++++++++++++++--
+ 8 files changed, 508 insertions(+), 240 deletions(-)
+ create mode 100644 samples/lsm/Makefile
+ create mode 100644 samples/lsm/lsm_example.c
+
 -- 
-Jiandi An
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
