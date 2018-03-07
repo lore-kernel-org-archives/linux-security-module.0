@@ -1,69 +1,61 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 07 Mar 2018 08:18:02 -0500
-Subject: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
-In-Reply-To: <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
-References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
-	<6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
-Message-ID: <1520428682.10396.445.camel@linux.vnet.ibm.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 7 Mar 2018 15:18:16 +0200
+Subject: [PATCH 6/7] lkdtm: crash on overwriting protected pmalloc var
+In-Reply-To: <1723ee8d-c89e-0704-c2c3-254eda39dc8b@gmail.com>
+References: <20180228200620.30026-1-igor.stoppa@huawei.com>
+	<20180228200620.30026-7-igor.stoppa@huawei.com>
+	<1723ee8d-c89e-0704-c2c3-254eda39dc8b@gmail.com>
+Message-ID: <6378e63e-174f-642e-d319-1d121b74d3d7@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
-> On 11/16/2016, 07:10 PM, David Howells wrote:
-> > Here are two sets of patches.  Firstly, the first three patches provide a
-> > blacklist, making the following changes:
-> ...
-> > Secondly, the remaining patches allow the UEFI database to be used to load
-> > the system keyrings:
-> ...
-> > Dave Howells (2):
-> >       efi: Add EFI signature data types
-> >       efi: Add an EFI signature blob parser
-> > 
-> > David Howells (5):
-> >       KEYS: Add a system blacklist keyring
-> >       X.509: Allow X.509 certs to be blacklisted
-> >       PKCS#7: Handle blacklisted certificates
-> >       KEYS: Allow unrestricted boot-time addition of keys to secondary keyring
-> >       efi: Add SHIM and image security database GUID definitions
-> > 
-> > Josh Boyer (2):
-> >       MODSIGN: Import certificates from UEFI Secure Boot
-> >       MODSIGN: Allow the "db" UEFI variable to be suppressed
+
+
+On 06/03/18 19:20, J Freyensee wrote:
+
+> On 2/28/18 12:06 PM, Igor Stoppa wrote:
+
+[...]
+
+>>   void __init lkdtm_perms_init(void);
+>>   void lkdtm_WRITE_RO(void);
+>>   void lkdtm_WRITE_RO_AFTER_INIT(void);
+>> +void lkdtm_WRITE_RO_PMALLOC(void);
 > 
-> Hi,
+> Does this need some sort of #ifdef too?
+
+Not strictly. It's just a function declaration.
+As long as it is not used, the linker will not complain.
+The #ifdef placed around the use and definition is sufficient, from a
+correctness perspective.
+
+But it's a different question if there is any standard in linux about
+hiding also the declaration.
+
+I am not very fond of #ifdefs, so when I can I try to avoid them.
+
+>> +	pr_info("attempting bad pmalloc write at %p\n", i);
+>> +	*i = 0;
 > 
-> what's the status of this please? Distributors (I checked SUSE, RedHat
-> and Ubuntu) have to carry these patches and every of them have to
-> forward-port the patches to new kernels. So are you going to resend the
-> PR to have this merged?
+> OK, now I'm on the right version of this patch series, same comment 
+> applies.? I don't get the local *i assignment at the end of the 
+> function, but seems harmless.
 
-With secure boot enabled, we establish a signature chain of trust,
-rooted in HW, up to the kernel and then transition from those keys to
-a new set of keys builtin the kernel and loaded onto the
-builtin_trusted_keys (builtin).
 
-Enabling the secondary_builtin_keys (secondary) allows keys signed by
-a key on the builtin keyring to be added to the secondary keyring.
-?Any key, signed by a key on either the builtin or secondary keyring,
-can be added to the IMA trusted keyring.
+Because that's the whole point of the function: prove that pmalloc
+protection works (see the message in the pr_info one line above).
 
-The "KEYS: Allow unrestricted boot-time addition of keys to secondary
-keyring" patch loads the platform keys directly onto the secondary
-keyring, without requiring them to be signed by a key on the builtin
-or secondary keyring. ?With this change, any key signed by a platfrom
-key on the secondary, can be loaded onto the .ima trusted keyring.
+The function is supposed to do:
 
-Just because I trust the platform keys prior to booting the kernel,
-doesn't mean that I *want* to trust those keys once booted. ?There
-are, however, places where we need access to those keys to verify a
-signature (eg. kexec kernel image).
+* create a pool
+* allocate memory from it
+* protect it
+* try to alter it (and crash)
 
-Nayna Jain's "certs: define a trusted platform keyring" patch set
-introduces a new, separate keyring for these platform keys.
+*i = 0; performs the last step
 
-Mimi
-
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
