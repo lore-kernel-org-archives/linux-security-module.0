@@ -1,78 +1,47 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 07 Mar 2018 14:21:35 -0500
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1520449719.5558.28.camel@HansenPartnership.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-	<1520449719.5558.28.camel@HansenPartnership.com>
-Message-ID: <1520450495.10396.587.camel@linux.vnet.ibm.com>
+From: davem@davemloft.net (David Miller)
+Date: Wed, 07 Mar 2018 15:13:32 -0500 (EST)
+Subject: [PATCH] net: don't unnecessarily load kernel modules in
+	dev_ioctl()
+In-Reply-To: <CAHC9VhR4FzwsAEO9O9Pnpkm2jOBajwZUkn_i0FqOMR_4ycag2g@mail.gmail.com>
+References: <152037526427.18953.14013300464173153064.stgit@chester>
+	<CAHC9VhR4FzwsAEO9O9Pnpkm2jOBajwZUkn_i0FqOMR_4ycag2g@mail.gmail.com>
+Message-ID: <20180307.151332.565301474495395127.davem@davemloft.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-03-07 at 11:08 -0800, James Bottomley wrote:
-> On Wed, 2018-03-07 at 13:55 -0500, Mimi Zohar wrote:
-> > On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
-> > > 
-> > > On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
-> > > > 
-> > > > TPM_CRB driver is the TPM support for ARM64.??If it
-> > > > is built as module, TPM chip is registered after IMA
-> > > > init.??tpm_pcr_read() in IMA driver would fail and
-> > > > display the following message even though eventually
-> > > > there is TPM chip on the system:
-> > > > 
-> > > > ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-> > > > 
-> > > > Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-> > > > built in kernel and initializes before IMA driver.
-> > > > 
-> > > > Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
-> > > > ?security/integrity/ima/Kconfig | 1 +
-> > > > ?1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/security/integrity/ima/Kconfig
-> > > > b/security/integrity/ima/Kconfig
-> > > > index 35ef693..6a8f677 100644
-> > > > +++ b/security/integrity/ima/Kconfig
-> > > > @@ -10,6 +10,7 @@ config IMA
-> > > > ?	select CRYPTO_HASH_INFO
-> > > > ?	select TCG_TPM if HAS_IOMEM && !UML
-> > > > ?	select TCG_TIS if TCG_TPM && X86
-> 
-> Well, this explains why IMA doesn't work on one of my X86 systems: it's
-> got a non i2c infineon TPM.
-> 
-> > > > +	select TCG_CRB if TCG_TPM && ACPI
-> > > > ?	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
-> > > > ?	help
-> > > > ?	??The Trusted Computing Group(TCG) runtime Integrity
-> > > 
-> > > This seems really weird, why are any specific TPM drivers linked to
-> > > IMA config, we have lots of drivers..
-> > > 
-> > > I don't think I've ever seen this pattern in Kconfig before?
-> > 
-> > As you've seen by the current discussions, the TPM driver needs to be
-> > initialized prior to IMA. ?Otherwise IMA goes into TPM-bypass mode.
-> > ?That implies that the TPM must be builtin to the kernel, and not as
-> > a kernel module.
-> 
-> Actually, that's not necessarily true: ?If we don't begin appraisal
-> until after the initrd phase, then the initrd can load TPM modules
-> before IMA starts.
-> 
-> This would involve a bit of code rejigging to not require a TPM until
-> IMA wants to write its first measurement, but it looks doable and would
-> get us out of having to second guess TPM selections.
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 6 Mar 2018 17:32:47 -0500
 
-The question is about measurement, not appraisal. ?Although the
-initramfs might be measured, the initramfs can access files on the
-real root filesystem. ?Those files need to be measured, before they
-are used/accessed.
+> On Tue, Mar 6, 2018 at 5:27 PM, Paul Moore <pmoore@redhat.com> wrote:
+>> From: Paul Moore <paul@paul-moore.com>
+>>
+>> Starting with v4.16-rc1 we've been seeing a higher than usual number
+>> of requests for the kernel to load networking modules, even on events
+>> which shouldn't trigger a module load (e.g. ioctl(TCGETS)).  Stephen
+>> Smalley suggested the problem may lie in commit 44c02a2c3dc5
+>> ("dev_ioctl(): move copyin/copyout to callers") which moves changes
+>> the network dev_ioctl() function to always call dev_load(),
+>> regardless of the requested ioctl.
+>>
+>> This patch moves the dev_load() calls back into the individual ioctls
+>> while preserving the rest of the original patch.
+>>
+>> Reported-by: Dominick Grift <dac.override@gmail.com>
+>> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
+>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>> ---
+>>  net/core/dev_ioctl.c |    7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> In the interest of full disclosure, I've compiled this code but I
+> haven't booted it yet (test kernel building now).  I just wanted to
+> post this sooner rather than later in case the networking folks, or
+> Al, had a different solution they would prefer.
 
-Mimi
+This is definitely the right fix, so patch applied.
 
+Taking the dev_load() out of that switch statement definitely has
+side effects.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
