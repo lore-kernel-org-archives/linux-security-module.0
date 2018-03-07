@@ -1,71 +1,31 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Wed, 07 Mar 2018 11:08:39 -0800
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1520448953.10396.565.camel@linux.vnet.ibm.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-Message-ID: <1520449719.5558.28.camel@HansenPartnership.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Wed, 7 Mar 2018 11:18:17 -0800
+Subject: [PATCH v4 1/3] security: Refactor LSM hooks into an array and enum
+In-Reply-To: <ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
+References: <cover.1520407240.git.sargun@sargun.me>
+	<3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
+	<ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
+Message-ID: <CAMp4zn8gtb7G28F8D_=npc6a7wwp3QMyvXrNKL0LA=EeFxRiKw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-03-07 at 13:55 -0500, Mimi Zohar wrote:
-> On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
-> > 
-> > On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
-> > > 
-> > > TPM_CRB driver is the TPM support for ARM64.??If it
-> > > is built as module, TPM chip is registered after IMA
-> > > init.??tpm_pcr_read() in IMA driver would fail and
-> > > display the following message even though eventually
-> > > there is TPM chip on the system:
-> > > 
-> > > ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-> > > 
-> > > Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-> > > built in kernel and initializes before IMA driver.
-> > > 
-> > > Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
-> > > ?security/integrity/ima/Kconfig | 1 +
-> > > ?1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/security/integrity/ima/Kconfig
-> > > b/security/integrity/ima/Kconfig
-> > > index 35ef693..6a8f677 100644
-> > > +++ b/security/integrity/ima/Kconfig
-> > > @@ -10,6 +10,7 @@ config IMA
-> > > ?	select CRYPTO_HASH_INFO
-> > > ?	select TCG_TPM if HAS_IOMEM && !UML
-> > > ?	select TCG_TIS if TCG_TPM && X86
+On Wed, Mar 7, 2018 at 9:45 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 3/6/2018 11:23 PM, Sargun Dhillon wrote:
+>> This commit should have no functional change. It changes the security hook
+>> list heads struct into an array. Additionally, it exposes all of the hooks
+>> via an enum. This loses memory layout randomization as the enum is not
+>> randomized.
+>
+> Please explain why you want to do this. I still dislike it.
+>
+Do you dislike it because of the loss of randomization, or some other reason?
+The reason for not just having a second list_heads is that it's
+somewhat ugly having to replicate that structure twice -- once for
+dynamic hooks, and once for 'static' hooks.
+Instead, we have one enum that LSMs can use and two arrays of heads
+rather than an entire unrolled set of list_heads.
 
-Well, this explains why IMA doesn't work on one of my X86 systems: it's
-got a non i2c infineon TPM.
-
-> > > +	select TCG_CRB if TCG_TPM && ACPI
-> > > ?	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
-> > > ?	help
-> > > ?	??The Trusted Computing Group(TCG) runtime Integrity
-> > 
-> > This seems really weird, why are any specific TPM drivers linked to
-> > IMA config, we have lots of drivers..
-> > 
-> > I don't think I've ever seen this pattern in Kconfig before?
-> 
-> As you've seen by the current discussions, the TPM driver needs to be
-> initialized prior to IMA. ?Otherwise IMA goes into TPM-bypass mode.
-> ?That implies that the TPM must be builtin to the kernel, and not as
-> a kernel module.
-
-Actually, that's not necessarily true: ?If we don't begin appraisal
-until after the initrd phase, then the initrd can load TPM modules
-before IMA starts.
-
-This would involve a bit of code rejigging to not require a TPM until
-IMA wants to write its first measurement, but it looks doable and would
-get us out of having to second guess TPM selections.
-
-James
-
+If we had a way to randomize this, would it make you comfortable?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
