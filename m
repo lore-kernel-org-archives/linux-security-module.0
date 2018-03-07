@@ -1,64 +1,43 @@
-From: luto@amacapital.net (Andy Lutomirski)
-Date: Wed, 7 Mar 2018 01:21:11 +0000
-Subject: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged
-	sandboxing
-In-Reply-To: <7082be04-d6af-b853-4bb7-f331836662e2@digikod.net>
-References: <20180227004121.3633-1-mic@digikod.net>
-	<CALCETrV3OZb70o83uOG437PubwBwaUJ6SKQucq_7g1BuBOmxzg@mail.gmail.com>
-	<2e06621c-08e9-dc12-9b6e-9c09d5d8f458@digikod.net>
-	<CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
-	<a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
-	<CALCETrUQYp0ta4tLgUWJ79pZVwp3WRY7cp-XaPcn1WyTc=wZyg@mail.gmail.com>
-	<20180306224636.wf5z3kujtc7r5qyh@cisco>
-	<7082be04-d6af-b853-4bb7-f331836662e2@digikod.net>
-Message-ID: <CALCETrXT8JUXVwDNKGVRG7=aenthDRePD+T+YiDY6cceaazDeA@mail.gmail.com>
+From: anjiandi@codeaurora.org (Jiandi An)
+Date: Tue,  6 Mar 2018 23:26:26 -0600
+Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+Message-ID: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 6, 2018 at 11:06 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->
-> On 06/03/2018 23:46, Tycho Andersen wrote:
->> On Tue, Mar 06, 2018 at 10:33:17PM +0000, Andy Lutomirski wrote:
->>>>> Suppose I'm writing a container manager.  I want to run "mount" in the
->>>>> container, but I don't want to allow moun() in general and I want to
->>>>> emulate certain mount() actions.  I can write a filter that catches
->>>>> mount using seccomp and calls out to the container manager for help.
->>>>> This isn't theoretical -- Tycho wants *exactly* this use case to be
->>>>> supported.
->>>>
->>>> Well, I think this use case should be handled with something like
->>>> LD_PRELOAD and a helper library. FYI, I did something like this:
->>>> https://github.com/stemjail/stemshim
->>>
->>> I doubt that will work for containers.  Containers that use user
->>> namespaces and, for example, setuid programs aren't going to honor
->>> LD_PRELOAD.
->>
->> Or anything that calls syscalls directly, like go programs.
->
-> That's why the vDSO-like approach. Enforcing an access control is not
-> the issue here, patching a buggy userland (without patching its code) is
-> the issue isn't it?
->
-> As far as I remember, the main problem is to handle file descriptors
-> while "emulating" the kernel behavior. This can be done with a "shim"
-> code mapped in every processes. Chrome used something like this (in a
-> previous sandbox mechanism) as a kind of emulation (with the current
-> seccomp-bpf ). I think it should be doable to replace the (userland)
-> emulation code with an IPC wrapper receiving file descriptors through
-> UNIX socket.
->
+TPM_CRB driver is the TPM support for ARM64.  If it
+is built as module, TPM chip is registered after IMA
+init.  tpm_pcr_read() in IMA driver would fail and
+display the following message even though eventually
+there is TPM chip on the system:
 
-Can you explain exactly what you mean by "vDSO-like"?
+ima: No TPM chip found, activating TPM-bypass! (rc=-19)
 
-When a 64-bit program does a syscall, it just executes the SYSCALL
-instruction.  The vDSO isn't involved at all.  32-bit programs usually
-go through the vDSO, but not always.
+Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+built in kernel and initializes before IMA driver.
 
-It could be possible to force-load a DSO into an entire container and
-rig up seccomp to intercept all SYSCALLs not originating from the DSO
-such that they merely redirect control to the DSO, but that seems
-quite messy.
+Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+---
+ security/integrity/ima/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 35ef693..6a8f677 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -10,6 +10,7 @@ config IMA
+ 	select CRYPTO_HASH_INFO
+ 	select TCG_TPM if HAS_IOMEM && !UML
+ 	select TCG_TIS if TCG_TPM && X86
++	select TCG_CRB if TCG_TPM && ACPI
+ 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+ 	help
+ 	  The Trusted Computing Group(TCG) runtime Integrity
+-- 
+Jiandi An
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
