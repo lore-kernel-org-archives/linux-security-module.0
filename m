@@ -1,55 +1,64 @@
-From: stephen@networkplumber.org (Stephen Hemminger)
-Date: Tue, 6 Mar 2018 15:59:20 -0800
-Subject: [PATCH] net: don't unnecessarily load kernel modules in
-	dev_ioctl()
-In-Reply-To: <152037526427.18953.14013300464173153064.stgit@chester>
-References: <152037526427.18953.14013300464173153064.stgit@chester>
-Message-ID: <20180306155920.7b6379ac@xeon-e3>
+From: luto@amacapital.net (Andy Lutomirski)
+Date: Wed, 7 Mar 2018 01:21:11 +0000
+Subject: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged
+	sandboxing
+In-Reply-To: <7082be04-d6af-b853-4bb7-f331836662e2@digikod.net>
+References: <20180227004121.3633-1-mic@digikod.net>
+	<CALCETrV3OZb70o83uOG437PubwBwaUJ6SKQucq_7g1BuBOmxzg@mail.gmail.com>
+	<2e06621c-08e9-dc12-9b6e-9c09d5d8f458@digikod.net>
+	<CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
+	<a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
+	<CALCETrUQYp0ta4tLgUWJ79pZVwp3WRY7cp-XaPcn1WyTc=wZyg@mail.gmail.com>
+	<20180306224636.wf5z3kujtc7r5qyh@cisco>
+	<7082be04-d6af-b853-4bb7-f331836662e2@digikod.net>
+Message-ID: <CALCETrXT8JUXVwDNKGVRG7=aenthDRePD+T+YiDY6cceaazDeA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 06 Mar 2018 17:27:44 -0500
-Paul Moore <pmoore@redhat.com> wrote:
+On Tue, Mar 6, 2018 at 11:06 PM, Micka?l Sala?n <mic@digikod.net> wrote:
+>
+> On 06/03/2018 23:46, Tycho Andersen wrote:
+>> On Tue, Mar 06, 2018 at 10:33:17PM +0000, Andy Lutomirski wrote:
+>>>>> Suppose I'm writing a container manager.  I want to run "mount" in the
+>>>>> container, but I don't want to allow moun() in general and I want to
+>>>>> emulate certain mount() actions.  I can write a filter that catches
+>>>>> mount using seccomp and calls out to the container manager for help.
+>>>>> This isn't theoretical -- Tycho wants *exactly* this use case to be
+>>>>> supported.
+>>>>
+>>>> Well, I think this use case should be handled with something like
+>>>> LD_PRELOAD and a helper library. FYI, I did something like this:
+>>>> https://github.com/stemjail/stemshim
+>>>
+>>> I doubt that will work for containers.  Containers that use user
+>>> namespaces and, for example, setuid programs aren't going to honor
+>>> LD_PRELOAD.
+>>
+>> Or anything that calls syscalls directly, like go programs.
+>
+> That's why the vDSO-like approach. Enforcing an access control is not
+> the issue here, patching a buggy userland (without patching its code) is
+> the issue isn't it?
+>
+> As far as I remember, the main problem is to handle file descriptors
+> while "emulating" the kernel behavior. This can be done with a "shim"
+> code mapped in every processes. Chrome used something like this (in a
+> previous sandbox mechanism) as a kind of emulation (with the current
+> seccomp-bpf ). I think it should be doable to replace the (userland)
+> emulation code with an IPC wrapper receiving file descriptors through
+> UNIX socket.
+>
 
-> From: Paul Moore <paul@paul-moore.com>
-> 
-> Starting with v4.16-rc1 we've been seeing a higher than usual number
-> of requests for the kernel to load networking modules, even on events
-> which shouldn't trigger a module load (e.g. ioctl(TCGETS)).  Stephen
-> Smalley suggested the problem may lie in commit 44c02a2c3dc5
-> ("dev_ioctl(): move copyin/copyout to callers") which moves changes
-> the network dev_ioctl() function to always call dev_load(),
-> regardless of the requested ioctl.
-> 
-> This patch moves the dev_load() calls back into the individual ioctls
-> while preserving the rest of the original patch.
-> 
-> Reported-by: Dominick Grift <dac.override@gmail.com>
-> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  net/core/dev_ioctl.c |    7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
-> index 0ab1af04296c..a04e1e88bf3a 100644
-> --- a/net/core/dev_ioctl.c
-> +++ b/net/core/dev_ioctl.c
-> @@ -402,8 +402,6 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr, bool *need_c
->  	if (colon)
->  		*colon = 0;
->  
-> -	dev_load(net, ifr->ifr_name);
+Can you explain exactly what you mean by "vDSO-like"?
 
-Actually dev_load by ethernet name is really a legacy thing that should just die,
+When a 64-bit program does a syscall, it just executes the SYSCALL
+instruction.  The vDSO isn't involved at all.  32-bit programs usually
+go through the vDSO, but not always.
 
-It was kept around so that some very tunnel configuration using special names.
-
-	# ifconfig sit0
-
-which probably several web pages still tell users to do...
-We have much better control now with ip commands so that this is just
-baggage.
+It could be possible to force-load a DSO into an entire container and
+rig up seccomp to intercept all SYSCALLs not originating from the DSO
+such that they merely redirect control to the DSO, but that seems
+quite messy.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
