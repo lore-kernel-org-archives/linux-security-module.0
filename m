@@ -1,20 +1,41 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 7 Mar 2018 09:45:40 -0800
-Subject: [PATCH v4 1/3] security: Refactor LSM hooks into an array and enum
-In-Reply-To: <3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
-References: <cover.1520407240.git.sargun@sargun.me>
-	<3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
-Message-ID: <ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Wed, 7 Mar 2018 23:17:46 +0530
+Subject: [PATCH 1/3] certs: define a trusted platform keyring
+In-Reply-To: <31489.1520438598@warthog.procyon.org.uk>
+References: <20180228175521.10287-1-nayna@linux.vnet.ibm.com>
+	<31489.1520438598@warthog.procyon.org.uk>
+Message-ID: <8873df7f-490f-28e0-249e-34bb3b133015@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/6/2018 11:23 PM, Sargun Dhillon wrote:
-> This commit should have no functional change. It changes the security hook
-> list heads struct into an array. Additionally, it exposes all of the hooks
-> via an enum. This loses memory layout randomization as the enum is not
-> randomized.
 
-Please explain why you want to do this. I still dislike it.
+
+On 03/07/2018 09:33 PM, David Howells wrote:
+> Nayna Jain <nayna@linux.vnet.ibm.com> wrote:
+>
+>> +		key = key_create_or_update(make_key_ref(keyring, 1),
+>> +				"asymmetric",
+>> +				NULL,
+>> +				p,
+>> +				plen,
+>> +				((KEY_POS_ALL & ~KEY_POS_SETATTR) |
+>> +				 KEY_USR_VIEW | KEY_USR_READ),
+>> +				KEY_ALLOC_NOT_IN_QUOTA |
+>> +				KEY_ALLOC_BUILT_IN |
+>> +				KEY_ALLOC_BYPASS_RESTRICTION);
+> There's no need to reindent here.  Please line up all the arguments: either
+> push the first argument over onto the next line if you need to or line them
+> all up with the char after the opening bracket.
+
+Thanks David for the feedback. I will post the v2 version with this fix. 
+Are there any other changes ?
+
+Thanks & Regards,
+ ?? - Nayna
+
+>
+> David
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
