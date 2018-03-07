@@ -1,110 +1,71 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Wed, 7 Mar 2018 16:48:25 +0200
-Subject: [PATCH 1/7] genalloc: track beginning of allocations
-In-Reply-To: <20180306131856.GD19349@rapoport-lnx>
-References: <20180228200620.30026-1-igor.stoppa@huawei.com>
-	<20180228200620.30026-2-igor.stoppa@huawei.com>
-	<20180306131856.GD19349@rapoport-lnx>
-Message-ID: <54e95716-9d61-51a3-9ae8-196e60625b76@huawei.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 07 Mar 2018 10:22:49 -0500
+Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
+In-Reply-To: <20180306215904.GA32097@ziepe.ca>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+	<20180305125642.GA3425@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+	<20180306074932.GB3624@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+	<1520353933.5393.21.camel@HansenPartnership.com>
+	<1520361396.10396.396.camel@linux.vnet.ibm.com>
+	<20180306215904.GA32097@ziepe.ca>
+Message-ID: <1520436169.10396.516.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 06/03/18 15:19, Mike Rapoport wrote:
-> On Wed, Feb 28, 2018 at 10:06:14PM +0200, Igor Stoppa wrote:
-
-[...]
-
-> If I'm not mistaken, several kernel-doc descriptions are duplicated now.
-> Can you please keep a single copy? ;-)
-
-What's the preferred approach?
-Document the functions that are API in the .h file and leave in the .c
-those which are not API?
-
-[...]
-
->> + * The alignment at which to perform the research for sequence of empty
+On Tue, 2018-03-06 at 14:59 -0700, Jason Gunthorpe wrote:
+> On Tue, Mar 06, 2018 at 01:36:36PM -0500, Mimi Zohar wrote:
+> > On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
+> > > On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
+> > > > > 
+> > > > > 
+> > > > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > > > > 
+> > > > > > Why you need cover letter???What are u missing in the patch
+> > > > > > description
+> > > > > 
+> > > > > If you submit a *patch set* I *require* a cover letter, yes.
+> > > > 
+> > > > It's good but it is not must, you are inventing your own rules.
+> > > 
+> > > As long as the Maintainer is the gatekeeper, you're not going to get
+> > > very far with this argument. ?The fact is that a lot of subsystems have
+> > > varying rules; often undocumented, some of which are even in conflict,
+> > > like alphabetic vs reverse christmas tree format for includes.
+> > > 
+> > > A cover letter is actually one of the more uniform rules. ?It's
+> > > referred to in submitting patches, but not actually documented there.
+> > 
+> > I've heard that some maintainers are moving away from cover letters,
+> > since they are not include in the git repo and are lost. ?I've seen
+> > Andrew Morton cut and paste the cover letter in the first patch
+> > description of the patch set.
 > 
->                                            ^ search?
+> Andrew has a workflow unlike any other I've seen..
 
-yes
+Andrew is the only one that actually cut and pasted the cover letter
+in the first patch description, but I've heard this from others.
 
->> + * get_boundary() - verifies address, then measure length.
-> 
-> There's some lack of consistency between the name and implementation and
-> the description.
-> It seems that it would be simpler to actually make it get_length() and
-> return the length of the allocation or nentries if the latter is smaller.
-> Then in gen_pool_free() there will be no need to recalculate nentries
-> again.
+> In my view the cover letter should explain why the maintainer should
+> apply the series, and give any guidance to the review process.
 
-There is an error in the documentation. I'll explain below.
+> Not duplicate information that belongs in the patch comments. It
+> shouldn't explain how/why the patch(es) works, etc.
 
-> 
->>   * @map: pointer to a bitmap
->> - * @start: a bit position in @map
->> - * @nr: number of bits to set
->> + * @start_entry: the index of the first entry in the bitmap
->> + * @nentries: number of entries to alter
-> 
-> Maybe: "maximal number of entries to check"?
+Patch descriptions should never explain how/why a particular patch
+works. ?If it is that difficult to understand, then something is wrong
+with the patch. ?The individual patch descriptions should provide the
+current status, the motivation for the change, and short summary of
+the change (eg. new features, configs, etc).
 
-No, it's actually the total number of entries in the chunk.
+The cover letter is needed for (larger) patch sets in order to explain
+the overall motivation, instead of having to guess where the patch set
+is going. ?I wouldn't expect to see a cover letter for a single bug
+fix or two.
 
-[...]
+Mimi
 
->> +	return nentries - start_entry;
-> 
-> Shouldn't it be "nentries + start_entry"?
-
-And in the light of the correct comment, also what I am doing should be
-now more clear:
-
-* start_entry is the index of the initial entry
-* nentries is the number of entries in the chunk
-
-If I iterate over the rest of the chunk:
-
-(i = start_entry + 1; i < nentries; i++)
-
-without finding either another HEAD or an empty slot, then it means I
-was measuring the length of the last allocation in the chunk, which was
-taking up all the space, to the end.
-
-Simple example:
-
-- chunk with 7 entries -> nentries is 7
-- start_entry is 2, meaning that the last allocation starts from the 3rd
-element, iow it occupies indexes from 2 to 6, for a total of 5 entries
-- so the length is (nentries - start_entry) = (7 - 2) = 5
-
-
-But yeah, the kerneldoc was wrong.
-
-[...]
-
->> - * gen_pool_alloc_algo - allocate special memory from the pool
->> + * gen_pool_alloc_algo() - allocate special memory from the pool
-> 
-> + using specified algorithm
-
-ok
-
-> 
->>   * @pool: pool to allocate from
->>   * @size: number of bytes to allocate from the pool
->>   * @algo: algorithm passed from caller
->> @@ -285,14 +502,18 @@ EXPORT_SYMBOL(gen_pool_alloc);
->>   * Uses the pool allocation function (with first-fit algorithm by default).
-> 
-> "uses the provided @algo function to find room for the allocation"
-
-ok
-
---
-igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
