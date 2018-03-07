@@ -1,40 +1,76 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Wed, 07 Mar 2018 07:28:37 -0800
-Subject: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
-In-Reply-To: <1520428682.10396.445.camel@linux.vnet.ibm.com>
-References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
-	<6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
-	<1520428682.10396.445.camel@linux.vnet.ibm.com>
-Message-ID: <1520436517.5558.2.camel@HansenPartnership.com>
+From: tomas.winkler@intel.com (Winkler, Tomas)
+Date: Wed, 7 Mar 2018 15:41:35 +0000
+Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
+In-Reply-To: <1520436169.10396.516.camel@linux.vnet.ibm.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+	<20180305125642.GA3425@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+	<20180306074932.GB3624@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+	<1520353933.5393.21.camel@HansenPartnership.com>
+	<1520361396.10396.396.camel@linux.vnet.ibm.com>
+	<20180306215904.GA32097@ziepe.ca>
+	<1520436169.10396.516.camel@linux.vnet.ibm.com>
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9423012A@hasmsx108.ger.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-03-07 at 08:18 -0500, Mimi Zohar wrote:
-> On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
-> > what's the status of this please? Distributors (I checked SUSE,
-> > RedHat and Ubuntu) have to carry these patches and every of them
-> > have to forward-port the patches to new kernels. So are you going
-> > to resend the PR to have this merged?
-[...]
-> Just because I trust the platform keys prior to booting the kernel,
-> doesn't mean that I *want* to trust those keys once booted. ?There
-> are, however, places where we need access to those keys to verify a
-> signature (eg. kexec kernel image).
 
-Which is essentially the reason I always give when these patches come
-back
+> 
+> On Tue, 2018-03-06 at 14:59 -0700, Jason Gunthorpe wrote:
+> > On Tue, Mar 06, 2018 at 01:36:36PM -0500, Mimi Zohar wrote:
+> > > On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
+> > > > On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
+> > > > > >
+> > > > > >
+> > > > > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > > > > >
+> > > > > > > Why you need cover letter?????What are u missing in the patch
+> > > > > > > description
+> > > > > >
+> > > > > > If you submit a *patch set* I *require* a cover letter, yes.
+> > > > >
+> > > > > It's good but it is not must, you are inventing your own rules.
+> > > >
+> > > > As long as the Maintainer is the gatekeeper, you're not going to
+> > > > get very far with this argument. ??The fact is that a lot of
+> > > > subsystems have varying rules; often undocumented, some of which
+> > > > are even in conflict, like alphabetic vs reverse christmas tree format for
+> includes.
+> > > >
+> > > > A cover letter is actually one of the more uniform rules. ??It's
+> > > > referred to in submitting patches, but not actually documented there.
+> > >
+> > > I've heard that some maintainers are moving away from cover letters,
+> > > since they are not include in the git repo and are lost. ??I've seen
+> > > Andrew Morton cut and paste the cover letter in the first patch
+> > > description of the patch set.
+> >
+> > Andrew has a workflow unlike any other I've seen..
+> 
+> Andrew is the only one that actually cut and pasted the cover letter in the
+> first patch description, but I've heard this from others.
+> 
+> > In my view the cover letter should explain why the maintainer should
+> > apply the series, and give any guidance to the review process.
+> 
+> > Not duplicate information that belongs in the patch comments. It
+> > shouldn't explain how/why the patch(es) works, etc.
+> 
+> Patch descriptions should never explain how/why a particular patch
+> works. ??If it is that difficult to understand, then something is wrong with the
+> patch. ??The individual patch descriptions should provide the current status,
+> the motivation for the change, and short summary of the change (eg. new
+> features, configs, etc).
+> 
+> The cover letter is needed for (larger) patch sets in order to explain the
+> overall motivation, instead of having to guess where the patch set is going. ??I
+> wouldn't expect to see a cover letter for a single bug fix or two.
+> 
+> Mimi
 
-> Nayna Jain's "certs: define a trusted platform keyring" patch set
-> introduces a new, separate keyring for these platform keys.
+I second that.
 
-Perhaps, to break the deadlock, we should ask Ji?? what the reason is
-the distros want these keys to be trusted. ?Apart from the Microsoft
-key, it will also give you an OEM key in your trusted keyring. ?Is it
-something to do with OEM supplied modules?
+Tomas.
 
-James
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
