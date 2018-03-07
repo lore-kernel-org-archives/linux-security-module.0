@@ -1,76 +1,46 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Wed, 7 Mar 2018 15:41:35 +0000
-Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
-In-Reply-To: <1520436169.10396.516.camel@linux.vnet.ibm.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-	<20180305125642.GA3425@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-	<20180306074932.GB3624@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-	<1520353933.5393.21.camel@HansenPartnership.com>
-	<1520361396.10396.396.camel@linux.vnet.ibm.com>
-	<20180306215904.GA32097@ziepe.ca>
-	<1520436169.10396.516.camel@linux.vnet.ibm.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9423012A@hasmsx108.ger.corp.intel.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 7 Mar 2018 17:46:53 +0200
+Subject: [PATCH 1/7] genalloc: track beginning of allocations
+In-Reply-To: <54e95716-9d61-51a3-9ae8-196e60625b76@huawei.com>
+References: <20180228200620.30026-1-igor.stoppa@huawei.com>
+	<20180228200620.30026-2-igor.stoppa@huawei.com>
+	<20180306131856.GD19349@rapoport-lnx>
+	<54e95716-9d61-51a3-9ae8-196e60625b76@huawei.com>
+Message-ID: <98df3380-a142-871e-5a18-b356088e33ea@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 
-> 
-> On Tue, 2018-03-06 at 14:59 -0700, Jason Gunthorpe wrote:
-> > On Tue, Mar 06, 2018 at 01:36:36PM -0500, Mimi Zohar wrote:
-> > > On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
-> > > > On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
-> > > > > >
-> > > > > >
-> > > > > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> > > > > > >
-> > > > > > > Why you need cover letter?????What are u missing in the patch
-> > > > > > > description
-> > > > > >
-> > > > > > If you submit a *patch set* I *require* a cover letter, yes.
-> > > > >
-> > > > > It's good but it is not must, you are inventing your own rules.
-> > > >
-> > > > As long as the Maintainer is the gatekeeper, you're not going to
-> > > > get very far with this argument. ??The fact is that a lot of
-> > > > subsystems have varying rules; often undocumented, some of which
-> > > > are even in conflict, like alphabetic vs reverse christmas tree format for
-> includes.
-> > > >
-> > > > A cover letter is actually one of the more uniform rules. ??It's
-> > > > referred to in submitting patches, but not actually documented there.
-> > >
-> > > I've heard that some maintainers are moving away from cover letters,
-> > > since they are not include in the git repo and are lost. ??I've seen
-> > > Andrew Morton cut and paste the cover letter in the first patch
-> > > description of the patch set.
-> >
-> > Andrew has a workflow unlike any other I've seen..
-> 
-> Andrew is the only one that actually cut and pasted the cover letter in the
-> first patch description, but I've heard this from others.
-> 
-> > In my view the cover letter should explain why the maintainer should
-> > apply the series, and give any guidance to the review process.
-> 
-> > Not duplicate information that belongs in the patch comments. It
-> > shouldn't explain how/why the patch(es) works, etc.
-> 
-> Patch descriptions should never explain how/why a particular patch
-> works. ??If it is that difficult to understand, then something is wrong with the
-> patch. ??The individual patch descriptions should provide the current status,
-> the motivation for the change, and short summary of the change (eg. new
-> features, configs, etc).
-> 
-> The cover letter is needed for (larger) patch sets in order to explain the
-> overall motivation, instead of having to guess where the patch set is going. ??I
-> wouldn't expect to see a cover letter for a single bug fix or two.
-> 
-> Mimi
 
-I second that.
+On 07/03/18 16:48, Igor Stoppa wrote:
+> 
+> 
+> On 06/03/18 15:19, Mike Rapoport wrote:
+>> On Wed, Feb 28, 2018 at 10:06:14PM +0200, Igor Stoppa wrote:
 
-Tomas.
+[...]
 
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+>>> + * get_boundary() - verifies address, then measure length.
+>>
+>> There's some lack of consistency between the name and implementation and
+>> the description.
+>> It seems that it would be simpler to actually make it get_length() and
+>> return the length of the allocation or nentries if the latter is smaller.
+>> Then in gen_pool_free() there will be no need to recalculate nentries
+>> again.
+> 
+> There is an error in the documentation. I'll explain below.
+
+Argh, I do not know why I came out with that.
+
+Yes, your comment is correct. I've modified the function accordingly and
+it is simpler.
+
+I will post it in the next revision.
+
+--
+igor
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
