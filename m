@@ -1,32 +1,148 @@
-From: davem@davemloft.net (David Miller)
-Date: Thu, 08 Mar 2018 13:11:15 -0500 (EST)
-Subject: [PATCH] net: don't unnecessarily load kernel modules in
-	dev_ioctl()
-In-Reply-To: <c2d378b6-80b3-d9e1-7087-95f143875067@gmail.com>
-References: <20180306155920.7b6379ac@xeon-e3>
-	<20180308.123440.2224695014753871221.davem@davemloft.net>
-	<c2d378b6-80b3-d9e1-7087-95f143875067@gmail.com>
-Message-ID: <20180308.131115.611191617522587758.davem@davemloft.net>
+From: anjiandi@codeaurora.org (Jiandi An)
+Date: Thu, 8 Mar 2018 12:42:13 -0600
+Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+In-Reply-To: <1520461156.10396.654.camel@linux.vnet.ibm.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+	<20180307185132.GA30102@ziepe.ca>
+	<1520448953.10396.565.camel@linux.vnet.ibm.com>
+	<1520449719.5558.28.camel@HansenPartnership.com>
+	<1520450495.10396.587.camel@linux.vnet.ibm.com>
+	<1520451662.24314.5.camel@HansenPartnership.com>
+	<1520461156.10396.654.camel@linux.vnet.ibm.com>
+Message-ID: <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Thu, 8 Mar 2018 10:05:12 -0800
 
-> Another problematic legacy behavior is the automatic creation of
-> fallback tunnels, which hurts netns creation/deletion.
+
+On 03/07/2018 04:19 PM, Mimi Zohar wrote:
+> On Wed, 2018-03-07 at 11:41 -0800, James Bottomley wrote:
+>> On Wed, 2018-03-07 at 14:21 -0500, Mimi Zohar wrote:
+>>> On Wed, 2018-03-07 at 11:08 -0800, James Bottomley wrote:
+>>>>
+>>>> On Wed, 2018-03-07 at 13:55 -0500, Mimi Zohar wrote:
+>>>>>
+>>>>> On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
+>>>>>>
+>>>>>>
+>>>>>> On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> TPM_CRB driver is the TPM support for ARM64.??If it
+>>>>>>> is built as module, TPM chip is registered after IMA
+>>>>>>> init.??tpm_pcr_read() in IMA driver would fail and
+>>>>>>> display the following message even though eventually
+>>>>>>> there is TPM chip on the system:
+>>>>>>>
+>>>>>>> ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+>>>>>>>
+>>>>>>> Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+>>>>>>> built in kernel and initializes before IMA driver.
+>>>>>>>
+>>>>>>> Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+>>>>>>>  ?security/integrity/ima/Kconfig | 1 +
+>>>>>>>  ?1 file changed, 1 insertion(+)
+>>>>>>>
+>>>>>>> diff --git a/security/integrity/ima/Kconfig
+>>>>>>> b/security/integrity/ima/Kconfig
+>>>>>>> index 35ef693..6a8f677 100644
+>>>>>>> +++ b/security/integrity/ima/Kconfig
+>>>>>>> @@ -10,6 +10,7 @@ config IMA
+>>>>>>>  ?	select CRYPTO_HASH_INFO
+>>>>>>>  ?	select TCG_TPM if HAS_IOMEM && !UML
+>>>>>>>  ?	select TCG_TIS if TCG_TPM && X86
+>>>>
+>>>> Well, this explains why IMA doesn't work on one of my X86 systems:
+>>>> it's got a non i2c infineon TPM.
+>>>>
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> +	select TCG_CRB if TCG_TPM && ACPI
+>>>>>>>  ?	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+>>>>>>>  ?	help
+>>>>>>>  ?	??The Trusted Computing Group(TCG) runtime Integrity
+>>>>>>
+>>>>>> This seems really weird, why are any specific TPM drivers
+>>>>>> linked to IMA config, we have lots of drivers..
+>>>>>>
+>>>>>> I don't think I've ever seen this pattern in Kconfig before?
+>>>>>
+>>>>> As you've seen by the current discussions, the TPM driver needs
+>>>>> to be initialized prior to IMA. ?Otherwise IMA goes into TPM-
+>>>>> bypass mode. ?That implies that the TPM must be builtin to the
+>>>>> kernel, and not as a kernel module.
+>>>>
+>>>> Actually, that's not necessarily true: ?If we don't begin appraisal
+>>>> until after the initrd phase, then the initrd can load TPM modules
+>>>> before IMA starts.
+>>>>
+>>>> This would involve a bit of code rejigging to not require a TPM
+>>>> until IMA wants to write its first measurement, but it looks doable
+>>>> and would get us out of having to second guess TPM selections.
+>>>
+>>> The question is about measurement, not appraisal. ?Although the
+>>> initramfs might be measured, the initramfs can access files on the
+>>> real root filesystem. ?Those files need to be measured, before they
+>>> are used/accessed.
+>>
+>> Isn't it a question of threat model? ?Because the initrd is measured,
+>> you know it's the one you specified and you should know its security
+>> properties, so measurement doesn't really need to begin until the root
+>> pivots.
 > 
-> Some environments want to create a netns for every job/task, and they
-> do not care if the init netns has these tunnels or not.
+> Perhaps in the case where the initramfs is signed and the signature is
+> verified, I would agree that I know the security properties of the
+> initramfs. ?That still doesn't negate the fact that the initramfs
+> could access files on real root, without first measuring them.
 > 
-> We have a local patch adding yet another knob to control this, since
-> it saves a lot of cpu cycles (about 10ms per netns create/delete pair
-> here)
+>> At that point you pick up the boot aggregate so the log now is
+>> tied to the initrd measurement. ?Conversely, I can't really see a
+>> threat model where you could trick a correctly measured initrd into
+>> subverting IMA, especially because listening network daemons aren't
+>> usually active at this stage.
+> 
+> Linux based boot loaders can be configured to download remote kernel
+> images and initramfs files - network boot.
+> 
+>> I'm not saying there isn't a use case for wanting your TPM built in,
+>> I'm just saying I don't think it needs to be required for everyone who
+>> uses IMA.
+> 
+> If the TPM module is not builtin, there are no guarantees when it was
+> loaded. ?There could be a disconnect between the IMA measurement list
+> and the TPM PCRs.
+> 
+> If someone has a special use case, then I agree with you, that we
+> could theoretically support it, but I don't think we want to confuse
+> distros or anyone else. ?The TPM should be builtin, so that IMA
+> measurements can begin before accessing real root.
+> 
+> Mimi
+> 
 
-Yeah, understood.  At small scale the current behavior maybe made
-sense, but these days it really doesn't.
+So from the discussion, I hear James suggests to overhaul the current
+IMA driver to not do measurement (calling tpm_pcr_read(), etc) until
+after initrd phase so TPM drivers can be built as modules.
 
-No objections to the knob if you want to submit it.
+I hear Mimi insists TPM drivers should be built-in when IMA driver is
+enabled and set to Y in Kconfig.
+
+Do we have a consensus on which way we should go?
+
+I'm no expert on IMA and its driver.  James, will you be kind enough
+to look into overhauling the IMA driver to not measure until after 
+initrd phase if that's the consensus on resolving this?
+
+Thanks
+-Jiandi
+
+-- 
+Jiandi An
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
