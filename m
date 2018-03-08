@@ -1,71 +1,54 @@
-From: masanobu2.koike@toshiba.co.jp (masanobu2.koike at toshiba.co.jp)
-Date: Thu, 8 Mar 2018 06:23:31 +0000
-Subject: [RFC v2 1/2] WhiteEgret: Add WhiteEgret core functions.
-In-Reply-To: <201803031722.EDF21804.QHMOtFJOFFOLSV@I-love.SAKURA.ne.jp>
-References: <20180301073830.2551-1-masanobu2.koike@toshiba.co.jp>
-	<458a466a-78bc-80d4-4d52-64b92d39f416@schaufler-ca.com>
-	<TYXPR01MB18540A7EDCE6F5BE8CFE130EF1C50@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-	<201803031722.EDF21804.QHMOtFJOFFOLSV@I-love.SAKURA.ne.jp>
-Message-ID: <TYXPR01MB18549C3215C503A8E1ACE459F1DF0@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+From: zenithinfodesk@gmail.com (James Williams)
+Date: Thu, 8 Mar 2018 08:03:58 +0100
+Subject: ,Your urgent confirmation
+Message-ID: <CALCw2Bq=K=qCEKWrGs+zC-uFxGMY+NBey-TH=HmSoRequ9i_-w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Attn: Beneficiary,
 
-On Saturday, March 03, 2018 5:22 PM, Tetsuo Handa wrote:
-> Masanobu Koike wrote:
-> > On Friday, March 02, 2018 12:43 AM, Casey Schaufler wrote:
-> > > On 2/28/2018 11:38 PM, Masanobu Koike wrote:
-> > > > @@ -264,6 +266,9 @@ choice
-> > > >  	config DEFAULT_SECURITY_APPARMOR
-> > > >  		bool "AppArmor" if SECURITY_APPARMOR=y
-> > > >
-> > > > +	config DEFAULT_SECURITY_WHITEEGRET
-> > > > +		bool "WhiteEgret" if SECURITY_WHITEEGRET=y
-> > > > +
-> > >
-> > > I don't see this module using any security blobs. Is there
-> > > a reason you're not making this a minor (like yama) module
-> > > instead of a major (like AppArmor) module?
-> >
-> > Thank you for your suggestion.
-> > We are now developing WhiteEgret on the environment
-> > it works certainly.
-> >
-> 
-> ??? What Casey suggested is effectively
-> 
-> ----------
-> --- a/security/whiteegret/init.c
-> +++ b/security/whiteegret/init.c
-> @@ -48,9 +48,6 @@ static int __init we_init(void)
->  {
->  	int rc;
-> 
-> -	if (!security_module_enable("whiteegret"))
-> -		return 0;
-> -
->  	security_add_hooks(we_hooks, ARRAY_SIZE(we_hooks),
-> "whiteegret");
-> 
->  	rc = we_specific_init();
-> ----------
-> 
-> , isn't it? Unlike Yama, adding whiteegret_add_hooks() to security_init()
-> is not useful, for security_init() is called too early to create securityfs
-> entries for WhiteEgret.
-> 
-> Current version uses security= parameter as a switch for enabling/disabling
-> WhiteEgret, doesn't it? If WhiteEgret does not use security= as a switch,
-> is some other switch (e.g. __setup()) expected?
+We have contacted the Federal Ministry of Finance on your Behalf and
+they have brought a solution to your problem by coordinating your
+payment in total (10,000,000.00) Ten Million Dollars in an atm card
+which you can use to withdraw money from any ATM MACHINE CENTER
+anywhere in the world with a maximum of 10000 Dollars daily. You now
+have the lawful right to claim your fund in an atm card. Since the
+Federal Bureau of Investigation is involved in this transaction, you
+have to be rest assured for this is 100% risk free it is our duty to
+protect the American Citizens, European Citizens, Asian Citizen. All I
+want you to do is to contact the atm card CENTER Via email or call the
+office telephone number one of the Consultant will assist you for
+their requirements to proceed and procure your Approval Slip on your
+behalf.
 
-Sorry for the delay.
-Thank you for your comment and suggestion.
-I'll make this module a minor one in the
-next version.
-
-Masanobu Koike
+CONTACT INFORMATION
+NAME: James  Williams
+EMAIL: paymasterofficedesk at gmail.com
 
 
+Do contact us with your details:
+
+Full name//
+Address// Age//
+ Telephone Numbers//
+Occupation//
+ Your Country//
+Bank Details//
+
+So your files would be updated after which the Delivery of your
+atm card will be affected to your designated home Address without any
+further delay and the bank will transfer your funds in total
+(10,000,000.00) Ten Million Dollars to your Bank account. We
+will reply you with the secret code (1600 atm card). We advice you get
+back to the payment office after you have contacted the ATM SWIFT CARD
+CENTER and we do await your response so we can move on with our
+Investigation and make sure your ATM SWIFT CARD gets to you.
+
+
+Best Regards
+James Williams
+Paymaster General
+Federal Republic Of Nigeri
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
