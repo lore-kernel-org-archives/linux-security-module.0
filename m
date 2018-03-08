@@ -1,21 +1,23 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu,  8 Mar 2018 15:24:08 -0500
-Subject: [PATCH v3 2/4] ima: re-evaluate files on privileged mounted
-	filesystems
+Date: Thu,  8 Mar 2018 15:24:10 -0500
+Subject: [PATCH v3 4/4] fuse: define the filesystem as untrusted
 In-Reply-To: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1520540650-7451-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch addresses the fuse privileged mounted filesystems in a "secure"
-environment, with a correctly enforced security policy, which is willing
-to assume the inherent risk of specific fuse filesystems that are well
-defined and properly implemented.
+Files on FUSE can change at any point in time without IMA being able
+to detect it.  The file data read for the file signature verification
+could be totally different from what is subsequently read, making the
+signature verification useless.
 
-As there is no way for the kernel to detect file changes, the kernel
-ignores the cached file integrity results and re-measures, re-appraises,
-and re-audits the file.
+FUSE can be mounted by unprivileged users either today with fusermount
+installed with setuid, or soon with the upcoming patches to allow FUSE
+mounts in a non-init user namespace.
+
+This patch sets the SB_I_IMA_UNVERIFIABLE_SIGNATURE flag and when
+appropriate sets the SB_I_UNTRUSTED_MOUNTER flag.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
@@ -23,43 +25,25 @@ Cc: Seth Forshee <seth.forshee@canonical.com>
 Cc: Eric W. Biederman <ebiederm@xmission.com>
 Cc: Dongsu Park <dongsu@kinvolk.io>
 Cc: Alban Crequy <alban@kinvolk.io>
-Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
 ---
- security/integrity/ima/ima_main.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ fs/fuse/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index a5d225ffc388..f550f25294a3 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -25,6 +25,7 @@
- #include <linux/xattr.h>
- #include <linux/ima.h>
- #include <linux/iversion.h>
-+#include <linux/fs.h>
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 624f18bbfd2b..ef309958e060 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1080,6 +1080,9 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_maxbytes = MAX_LFS_FILESIZE;
+ 	sb->s_time_gran = 1;
+ 	sb->s_export_op = &fuse_export_operations;
++	sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
++	if (sb->s_user_ns != &init_user_ns)
++		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
  
- #include "ima.h"
- 
-@@ -230,9 +231,17 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
- 				 IMA_ACTION_FLAGS);
- 
--	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
--		/* reset all flags if ima_inode_setxattr was called */
-+	/*
-+	 * Re-evaulate the file if either the xattr has changed or the
-+	 * kernel has no way of detecting file change on the filesystem.
-+	 * (Limited to privileged mounted filesystems.)
-+	 */
-+	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags) ||
-+	    ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
-+	     !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER))) {
- 		iint->flags &= ~IMA_DONE_MASK;
-+		iint->measured_pcrs = 0;
-+	}
- 
- 	/* Determine if already appraised/measured based on bitmask
- 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
+ 	file = fget(d.fd);
+ 	err = -EINVAL;
 -- 
 2.7.5
 
