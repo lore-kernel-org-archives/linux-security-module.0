@@ -1,226 +1,239 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Fri, 9 Mar 2018 08:52:42 -0500
-Subject: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
-In-Reply-To: <20180309025942.GA15295@mail.hallyn.com>
-References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
-	<20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
-	<20170725175317.GA727@mail.hallyn.com>
-	<1501008554.3689.30.camel@HansenPartnership.com>
-	<20170725190406.GA1883@mail.hallyn.com>
-	<1501009739.3689.33.camel@HansenPartnership.com>
-	<1501012082.27413.17.camel@linux.vnet.ibm.com>
-	<645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com>
-	<20170725204622.GA4969@mail.hallyn.com>
-	<97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
-	<20180309025942.GA15295@mail.hallyn.com>
-Message-ID: <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Fri,  9 Mar 2018 21:08:01 +0530
+Subject: [PATCH v2 1/3] certs: define a trusted platform keyring
+Message-ID: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 03/08/2018 09:59 PM, Serge E. Hallyn wrote:
-> On Thu, Mar 08, 2018 at 09:04:52AM -0500, Stefan Berger wrote:
->> On 07/25/2017 04:46 PM, Serge E. Hallyn wrote:
->>> On Tue, Jul 25, 2017 at 04:11:29PM -0400, Stefan Berger wrote:
->>>> On 07/25/2017 03:48 PM, Mimi Zohar wrote:
->>>>> On Tue, 2017-07-25 at 12:08 -0700, James Bottomley wrote:
->>>>>> On Tue, 2017-07-25 at 14:04 -0500, Serge E. Hallyn wrote:
->>>>>>> On Tue, Jul 25, 2017 at 11:49:14AM -0700, James Bottomley wrote:
->>>>>>>> On Tue, 2017-07-25 at 12:53 -0500, Serge E. Hallyn wrote:
->>>>>>>>> On Thu, Jul 20, 2017 at 06:50:29PM -0400, Mehmet Kayaalp wrote:
->>>>>>>>>> From: Yuqiong Sun <suny@us.ibm.com>
->>>>>>>>>>
->>>>>>>>>> Add new CONFIG_IMA_NS config option.  Let clone() create a new
->>>>>>>>>> IMA namespace upon CLONE_NEWNS flag. Add ima_ns data structure
->>>>>>>>>> in nsproxy. ima_ns is allocated and freed upon IMA namespace
->>>>>>>>>> creation and exit. Currently, the ima_ns contains no useful IMA
->>>>>>>>>> data but only a dummy interface. This patch creates the
->>>>>>>>>> framework for namespacing the different aspects of IMA (eg.
->>>>>>>>>> IMA-audit, IMA-measurement, IMA-appraisal).
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Yuqiong Sun <suny@us.ibm.com>
->>>>>>>>>>
->>>>>>>>>> Changelog:
->>>>>>>>>> * Use CLONE_NEWNS instead of a new CLONE_NEWIMA flag
->>>>>>>>> Hi,
->>>>>>>>>
->>>>>>>>> So this means that every mount namespace clone will clone a new
->>>>>>>>> IMA namespace.  Is that really ok?
->>>>>>>> Based on what: space concerns (struct ima_ns is reasonably small)?
->>>>>>>> or whether tying it to the mount namespace is the correct thing to
->>>>>>>> do.  On
->>>>>>> Mostly the latter.  The other would be not so much space concerns as
->>>>>>> time concerns.  Many things use new mounts namespaces, and we
->>>>>>> wouldn't want multiple IMA calls on all file accesses by all of
->>>>>>> those.
->>>>>>>
->>>>>>>> the latter, it does seem that this should be a property of either
->>>>>>>> the mount or user ns rather than its own separate ns.  I could see
->>>>>>>> a use where even a container might want multiple ima keyrings
->>>>>>>> within the container (say containerised apache service with
->>>>>>>> multiple tenants), so instinct tells me that mount ns is the
->>>>>>>> correct granularity for this.
->>>>>>> I wonder whether we could use echo 1 > /sys/kernel/security/ima/newns
->>>>>>> as the trigger for requesting a new ima ns on the next
->>>>>>> clone(CLONE_NEWNS).
->>>>>> I could go with that, but what about the trigger being installing or
->>>>>> updating the keyring?  That's the only operation that needs namespace
->>>>>> separation, so on mount ns clone, you get a pointer to the old ima_ns
->>>>>> until you do something that requires a new key, which then triggers the
->>>>>> copy of the namespace and installing it?
->>>>> It isn't just the keyrings that need to be namespaced, but the
->>>>> measurement list and policy as well.
->>>>>
->>>>> IMA-measurement, IMA-appraisal and IMA-audit are all policy based.
->>>>>
->>>>> As soon as the namespace starts, measurements should be added to the
->>>>> namespace specific measurement list, not it's parent.
->>> Shouldn't it be both?
->>>
->>> If not, then it seems to me this must be tied to user namespace.
->>>
->>>> IMA is about measuring things, logging what was executed, and
->>>> finally someone looking at the measurement log and detecting
->>>> 'things'. So at least one attack that needs to be prevented is a
->>>> malicious person opening an IMA namespace, executing something
->>>> malicious, and not leaving any trace on the host because all the
->>>> logs went into the measurement list of the IMA namespace, which
->>>> disappeared. That said, I am wondering whether there has to be a
->>>> minimum set of  namespaces (PID, UTS) providing enough 'isolation'
->>>> that someone  may actually open an IMA namespace and run their code.
->>>> To avoid leaving no traces one could argue to implement recursive
->>>> logging, so something that is logged inside the namespace will be
->>>> detected in all parent containers up to the init_ima_ns (host)
->>>> because it's logged (and TPM extended) there as well. The challenge
->>>> with that is that logging costs memory and that can be abused as
->>>> well until the machine needs a reboot... I guess the solution could
->>>> be requesting an IMA namespace in one way or another but requiring
->>>> several other namespace flags in the clone() to actually 'get' it.
->>>> Jumping namespaces with setns() may have to be restricted as well
->>>> once there is an IMA namespace.
->>> Wait.  So if I create a new IMA namespace, the things I run in
->>> that namespace are not subject to the parent namespace policy?
->> We'll let an IMA namespace set its own policy and rules in that
->> policy will decide whether the child namespaces' measurements will
->> also be logged. This is to avoid a potentially huge log on the host.
->> However, the activities of root in namespaces may need to be logged
->> independently of what the policy rules say so that root's activities
->> in the TCB will always be tracked also if he operates in a temporary
->> mount/IMA namespace pair (and sharing the rest of the namespaces
->> with the host).
-> Thanks, Stefan.  Is there a particular paper where I can get a good
-> idea of what is and is not part of the goals and threat model here?
-Yuqiong is publishing a paper in this area. I believe the conference is 
-only later this year.
+The kernel can be supplied in SEEPROM or lockable flash memory in embedded
+devices. Some devices may not support secure boot, but the kernel is
+trusted because the image is stored in protected memory. That kernel may
+need to kexec additional kernels, it may be used as a bootloader, for
+example, or it may need to kexec a crashdump kernel. In such cases, it may
+want to verify the signature of the next kernel.
 
-Our goals are to enable IMA measurements, appraisal, and auditing inside 
-a container using namespaces. IMA measurements are about logging files 
-that were read or executables that were started on a machine, appraisal 
-is about locking down the machine and only allowing files to be accessed 
-that have been properly signed. We certainly want to prevent the abuse 
-of namespaces by users to do things that go undetected. A primary 
-concern are activities of root in the TCB.
+The kernel, however, cannot directly verify platform keys, and an
+administrator may therefore not want to trust them for arbitrary usage.
+In order to differentiate platform keys from other keys and provide the
+necessary separation of trust, the kernel needs an additional keyring to
+store platform keys.
 
-Support for IMA in namespaces should enable the following:
+This patch implements a built-in list of certificates that are loaded onto
+the trusted platform keyring named ".platform_keys" to facilitate signature
+verification during kexec. Because the platform keyring are builtin, it
+cannot be updated from userspace.
 
-- IMA policy for container (similar to the host):
-   - there should be an initial default policy for every IMA namespace 
-that measures activities inside the container
-   - the policy can be overwritten once with a user-defined policy that 
-may activate appraisal
+This keyring can be enabled by setting CONFIG_PLATFORM_KEYRING. The
+platform certificate can be provided using CONFIG_PLATFORM_TRUSTED_KEYS.
 
-- IMA policy extensions due to namespacing:
-   - an IMA policy should allow rules that define whether activities in 
-(all) child namespaces is to be measured (prevents huge logs on the host)
-   - to prevent root from spawning new IMA namespaces and doing things 
-undetected in the TCB, all activities of root are (recursively) measured 
-in all IMA namespaces independent of whether the policy enables logging 
-in child namespaces
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+---
+Changelog:
 
-- IMA appraisal and keys:
-   - each IMA namespace should have its own keyring so that each 
-container can have its files signed with different keys
-   - it should be possible to enforce that only certified keys are 
-loaded onto a keyring, similar to .ima on the host
+v2:
 
-- IMA auditing:
-   - auditing should report activity in namespaces following the IMA 
-policy; root's activities in containers should be audited
+* Include David Howell's feedback:
+ * Fix the indentation
+* Fix the patch description per line length as suggested by Mimi
 
-- TPM and measurements:
-   - The IMA namespace that holds the logs should be configurable to 
-extend PCRs; since the single TPM of the host cannot be shared by 
-containers, each IMA namespace would have to be associated with its own 
-TPM instance (vTPM); measurement on the initial IMA namespace are 
-extended into the hardware TPM asdone today
+ certs/Kconfig               | 17 ++++++++++++++
+ certs/Makefile              | 13 +++++++++++
+ certs/system_certificates.S | 20 +++++++++++++++++
+ certs/system_keyring.c      | 55 ++++++++++++++++++++++++++++++++++++++-------
+ 4 files changed, 97 insertions(+), 8 deletions(-)
 
-
-A concrete 'ab-use' case that we are trying to avoid is the following:
-- a user creating a privileged container that shares the host's mount 
-namespace: it would be unexpected if there is an IMA policy active on 
-the host that enforces file appraisal but in this case the IMA policy is 
-not enforced since a (hypothetical) IMA namespace of the host was not 
-joined since only the mount namespace of the host was joined. Now we 
-have two choices here: We tie the mount and IMA namespaces together via 
-sinlge clone flag, as proposed, and joining the mount namespace 
-automatically joins the associated IMA namespace (single setns()). Or we 
-make user space responsible for it and say if a mount namespace is 
-joined, find the associated IMA namespace (how to do that?), and join 
-both of them (2 setns() calls). Well, I think the former would preferred 
-over the latter.
-
-Let's assume we tie MNT and IMA together, then there are other scenarios 
-with switching through the other namespaces (UTS, PID, IPC, NET, USER, 
-CGROUP). I am not sure what is supposed to happen other than logging the 
-activity active in the current IMA namespace:
-
-What should happen with IMA logging, appraisal, and auditing if we 
-setns() through all available
-- PID namespaces and send signals: log, appraise, and audit file 
-activity following IMA policy
-- IPC namespaces and send messages via IPC: same as for PID
-- UTS namespaces and setting hostname:  same as for PID
-- NET namespaces and sending network traffic: same as for PID?
-- CGROUP namespaces and configuring cgroups: same as for PID?
-- USER: should now the keys of this USER namespace be active or the keys 
-of the original user namespace used during the clone()? other than that, 
-same as for PID?
-
-
->
-> My impression was that you are measuring things that are executed in an
-> effort to make sure that anything that can affect resource $x will
-> be at some point detectable.  But if you allow containers (not in
-> user namespace) to evade the ima measurements that seems to undermine
-> that, so that must not be your goal.  And even if you insist on a
-
-Yes, we want to prevent 'abuse', especially by root. See above.
-
-> user namespace, if some resource is owned by $uid, then $uid can create
-> a new namespace, evade the detection, and run malicious code to affect
-> the resource.
->
-> Unless you're counting on the container runtime to set a proper new
-> ima policy?  But if that's the case then you can't have every CLONE_NEWNS
-> start a new ima ns.
-
-The container runtime will be able to overwrite a default IMA policy 
-that is active upon spawning an IMA namespace. This policy has to be 
-useful in so far that it must enable a gapless measurement chain and for 
-example show keys that were loaded into keyrings or the IMA policy that 
-was loaded.
-
-    Stefan
-
->
-> So I think I need to start from scratch.
->
-> thanks,
-> -serge
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/certs/Kconfig b/certs/Kconfig
+index 5f7663df6e8e..608a4358a25e 100644
+--- a/certs/Kconfig
++++ b/certs/Kconfig
+@@ -83,4 +83,21 @@ config SYSTEM_BLACKLIST_HASH_LIST
+ 	  wrapper to incorporate the list into the kernel.  Each <hash> should
+ 	  be a string of hex digits.
+ 
++config PLATFORM_KEYRING
++        bool "Provide keyring for platform trusted keys"
++        depends on KEYS
++        depends on ASYMMETRIC_KEY_TYPE
++        help
++	  Provide a separate, distinct keyring for platform trusted keys, which
++	  the kernel automatically populates during initialization from values
++	  embedded during build, used for verifying the kexec'ed kernel image
++	  and, possibly, the initramfs signature.
++
++config PLATFORM_TRUSTED_KEYS
++	string "Platform/Firmware trusted X.509 certs."
++	depends on PLATFORM_KEYRING
++	help
++	  Provide the filename of a PEM-formatted file containing the platform
++	  trusted X.509 certificates to be loaded in the platform keyring.
++
+ endmenu
+diff --git a/certs/Makefile b/certs/Makefile
+index 5d0999b9e21b..680903725031 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -104,3 +104,16 @@ targets += signing_key.x509
+ $(obj)/signing_key.x509: scripts/extract-cert $(X509_DEP) FORCE
+ 	$(call if_changed,extract_certs,$(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY))
+ endif # CONFIG_MODULE_SIG
++
++
++ifeq ($(CONFIG_PLATFORM_KEYRING),y)
++
++$(eval $(call config_filename,PLATFORM_TRUSTED_KEYS))
++
++# GCC doesn't include .incbin files in -MD generated dependencies (PR#66871)
++$(obj)/system_certificates.o: $(obj)/platform_certificate_list
++
++targets += platform_certificate_list
++$(obj)/platform_certificate_list: scripts/extract-cert $(PLATFORM_TRUSTED_KEYS_FILENAME) FORCE
++	$(call if_changed,extract_certs,$(CONFIG_PLATFORM_TRUSTED_KEYS))
++endif # CONFIG_PLATFORM_KEYRING
+diff --git a/certs/system_certificates.S b/certs/system_certificates.S
+index 3918ff7235ed..b0eb448ee617 100644
+--- a/certs/system_certificates.S
++++ b/certs/system_certificates.S
+@@ -14,6 +14,15 @@ __cert_list_start:
+ 	.incbin "certs/x509_certificate_list"
+ __cert_list_end:
+ 
++#ifdef CONFIG_PLATFORM_KEYRING
++	.align 8
++	.globl VMLINUX_SYMBOL(platform_certificate_list)
++VMLINUX_SYMBOL(platform_certificate_list):
++__platform_cert_list_start:
++	.incbin "certs/platform_certificate_list"
++__platform_cert_list_end:
++#endif /* CONFIG_PLATFORM_KEYRING */
++
+ #ifdef CONFIG_SYSTEM_EXTRA_CERTIFICATE
+ 	.globl VMLINUX_SYMBOL(system_extra_cert)
+ 	.size system_extra_cert, CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE
+@@ -35,3 +44,14 @@ VMLINUX_SYMBOL(system_certificate_list_size):
+ #else
+ 	.long __cert_list_end - __cert_list_start
+ #endif
++
++#ifdef CONFIG_PLATFORM_KEYRING
++	.align 8
++	.globl VMLINUX_SYMBOL(platform_certificate_list_size)
++VMLINUX_SYMBOL(platform_certificate_list_size):
++#ifdef CONFIG_64BIT
++	.quad __platform_cert_list_end - __platform_cert_list_start
++#else
++	.long __platform_cert_list_end - __platform_cert_list_start
++#endif
++#endif /* CONFIG_PLATFORM_KEYRING */
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b27f0c..594b4986a081 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -19,14 +19,22 @@
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+ 
++#define BUILTIN_TRUSTED_KEYRING	0
++#define PLATFORM_KEYRING	1
++
+ static struct key *builtin_trusted_keys;
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+ static struct key *secondary_trusted_keys;
+ #endif
++#ifdef CONFIG_PLATFORM_KEYRING
++static struct key *platform_keys __ro_after_init;
++#endif
+ 
+ extern __initconst const u8 system_certificate_list[];
+ extern __initconst const unsigned long system_certificate_list_size;
+ 
++extern __initconst const u8 platform_certificate_list[];
++extern __initconst const unsigned long platform_certificate_list_size;
+ /**
+  * restrict_link_to_builtin_trusted - Restrict keyring addition by built in CA
+  *
+@@ -123,6 +131,18 @@ static __init int system_trusted_keyring_init(void)
+ 		panic("Can't link trusted keyrings\n");
+ #endif
+ 
++#ifdef CONFIG_PLATFORM_KEYRING
++	platform_keys =
++		keyring_alloc(".platform_keys",
++			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
++			      ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
++			      KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH),
++			      KEY_ALLOC_NOT_IN_QUOTA,
++			      NULL, NULL);
++	if (IS_ERR(platform_keys))
++		panic("Can't allocate platform keyring\n");
++#endif
++
+ 	return 0;
+ }
+ 
+@@ -132,18 +152,19 @@ static __init int system_trusted_keyring_init(void)
+ device_initcall(system_trusted_keyring_init);
+ 
+ /*
+- * Load the compiled-in list of X.509 certificates.
++ * Load the certificates to the keyring.
+  */
+-static __init int load_system_certificate_list(void)
++static __init int load_certificate_list(const u8 *p, unsigned long size,
++		struct key *keyring)
+ {
+ 	key_ref_t key;
+-	const u8 *p, *end;
++	const u8 *end;
+ 	size_t plen;
+ 
+-	pr_notice("Loading compiled-in X.509 certificates\n");
++	pr_notice("Loading compiled-in X.509 certificates to %s\n",
++			keyring->description);
+ 
+-	p = system_certificate_list;
+-	end = p + system_certificate_list_size;
++	end = p + size;
+ 	while (p < end) {
+ 		/* Each cert begins with an ASN.1 SEQUENCE tag and must be more
+ 		 * than 256 bytes in size.
+@@ -158,7 +179,7 @@ static __init int load_system_certificate_list(void)
+ 		if (plen > end - p)
+ 			goto dodgy_cert;
+ 
+-		key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
++		key = key_create_or_update(make_key_ref(keyring, 1),
+ 					   "asymmetric",
+ 					   NULL,
+ 					   p,
+@@ -185,7 +206,25 @@ static __init int load_system_certificate_list(void)
+ 	pr_err("Problem parsing in-kernel X.509 certificate list\n");
+ 	return 0;
+ }
+-late_initcall(load_system_certificate_list);
++
++/*
++ * Load the compiled-in list of system and platform X.509 certificates.
++ */
++static __init int load_compiled_certificate_list(void)
++{
++	/* Loading certs in builtin keyring */
++	load_certificate_list(system_certificate_list,
++			system_certificate_list_size, builtin_trusted_keys);
++
++#ifdef CONFIG_PLATFORM_KEYRING
++	/* Loading certs in platform keyring */
++	load_certificate_list(platform_certificate_list,
++			platform_certificate_list_size, platform_keys);
++#endif
++
++	return 0;
++}
++late_initcall(load_compiled_certificate_list);
+ 
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+ 
+-- 
+2.13.6
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
