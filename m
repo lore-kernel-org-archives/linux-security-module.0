@@ -1,88 +1,132 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Thu, 8 Mar 2018 23:53:52 +0000
-Subject: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged
-	sandboxing
-In-Reply-To: <cd811155-9e0d-283a-9291-4adfcec848e6@digikod.net>
-References: <20180227004121.3633-1-mic@digikod.net>
-	<CALCETrV3OZb70o83uOG437PubwBwaUJ6SKQucq_7g1BuBOmxzg@mail.gmail.com>
-	<2e06621c-08e9-dc12-9b6e-9c09d5d8f458@digikod.net>
-	<CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
-	<a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
-	<CALCETrUQYp0ta4tLgUWJ79pZVwp3WRY7cp-XaPcn1WyTc=wZyg@mail.gmail.com>
-	<20180306224636.wf5z3kujtc7r5qyh@cisco>
-	<7082be04-d6af-b853-4bb7-f331836662e2@digikod.net>
-	<CALCETrXT8JUXVwDNKGVRG7=aenthDRePD+T+YiDY6cceaazDeA@mail.gmail.com>
-	<cd811155-9e0d-283a-9291-4adfcec848e6@digikod.net>
-Message-ID: <CALCETrUwkV4_65y7UjSgrq5WHOcZZ=+znKArehvhb1xEGG9HXw@mail.gmail.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 8 Mar 2018 20:59:42 -0600
+Subject: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
+In-Reply-To: <97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
+References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
+	<20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+	<20170725175317.GA727@mail.hallyn.com>
+	<1501008554.3689.30.camel@HansenPartnership.com>
+	<20170725190406.GA1883@mail.hallyn.com>
+	<1501009739.3689.33.camel@HansenPartnership.com>
+	<1501012082.27413.17.camel@linux.vnet.ibm.com>
+	<645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com>
+	<20170725204622.GA4969@mail.hallyn.com>
+	<97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
+Message-ID: <20180309025942.GA15295@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 8, 2018 at 11:51 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->
-> On 07/03/2018 02:21, Andy Lutomirski wrote:
->> On Tue, Mar 6, 2018 at 11:06 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->>>
->>> On 06/03/2018 23:46, Tycho Andersen wrote:
->>>> On Tue, Mar 06, 2018 at 10:33:17PM +0000, Andy Lutomirski wrote:
->>>>>>> Suppose I'm writing a container manager.  I want to run "mount" in the
->>>>>>> container, but I don't want to allow moun() in general and I want to
->>>>>>> emulate certain mount() actions.  I can write a filter that catches
->>>>>>> mount using seccomp and calls out to the container manager for help.
->>>>>>> This isn't theoretical -- Tycho wants *exactly* this use case to be
->>>>>>> supported.
->>>>>>
->>>>>> Well, I think this use case should be handled with something like
->>>>>> LD_PRELOAD and a helper library. FYI, I did something like this:
->>>>>> https://github.com/stemjail/stemshim
->>>>>
->>>>> I doubt that will work for containers.  Containers that use user
->>>>> namespaces and, for example, setuid programs aren't going to honor
->>>>> LD_PRELOAD.
->>>>
->>>> Or anything that calls syscalls directly, like go programs.
->>>
->>> That's why the vDSO-like approach. Enforcing an access control is not
->>> the issue here, patching a buggy userland (without patching its code) is
->>> the issue isn't it?
->>>
->>> As far as I remember, the main problem is to handle file descriptors
->>> while "emulating" the kernel behavior. This can be done with a "shim"
->>> code mapped in every processes. Chrome used something like this (in a
->>> previous sandbox mechanism) as a kind of emulation (with the current
->>> seccomp-bpf ). I think it should be doable to replace the (userland)
->>> emulation code with an IPC wrapper receiving file descriptors through
->>> UNIX socket.
->>>
->>
->> Can you explain exactly what you mean by "vDSO-like"?
->>
->> When a 64-bit program does a syscall, it just executes the SYSCALL
->> instruction.  The vDSO isn't involved at all.  32-bit programs usually
->> go through the vDSO, but not always.
->>
->> It could be possible to force-load a DSO into an entire container and
->> rig up seccomp to intercept all SYSCALLs not originating from the DSO
->> such that they merely redirect control to the DSO, but that seems
->> quite messy.
->
-> vDSO is a code mapped for all processes. As you said, these processes
-> may use it or not. What I was thinking about is to use the same concept,
-> i.e. map a "shim" code into each processes pertaining to a particular
-> hierarchy (the same way seccomp filters are inherited across processes).
-> With a seccomp filter matching some syscall (e.g. mount, open), it is
-> possible to jump back to the shim code thanks to SECCOMP_RET_TRAP. This
-> shim code should then be able to emulate/patch what is needed, even
-> faking a file opening by receiving a file descriptor through a UNIX
-> socket. As did the Chrome sandbox, the seccomp filter may look at the
-> calling address to allow the shim code to call syscalls without being
-> catched, if needed. However, relying on SIGSYS may not fit with
-> arbitrary code. Using a new SECCOMP_RET_EMULATE (?) may be used to jump
-> to a specific process address, to emulate the syscall in an easier way
-> than only relying on a {c,e}BPF program.
->
+On Thu, Mar 08, 2018 at 09:04:52AM -0500, Stefan Berger wrote:
+> On 07/25/2017 04:46 PM, Serge E. Hallyn wrote:
+> >On Tue, Jul 25, 2017 at 04:11:29PM -0400, Stefan Berger wrote:
+> >>On 07/25/2017 03:48 PM, Mimi Zohar wrote:
+> >>>On Tue, 2017-07-25 at 12:08 -0700, James Bottomley wrote:
+> >>>>On Tue, 2017-07-25 at 14:04 -0500, Serge E. Hallyn wrote:
+> >>>>>On Tue, Jul 25, 2017 at 11:49:14AM -0700, James Bottomley wrote:
+> >>>>>>On Tue, 2017-07-25 at 12:53 -0500, Serge E. Hallyn wrote:
+> >>>>>>>On Thu, Jul 20, 2017 at 06:50:29PM -0400, Mehmet Kayaalp wrote:
+> >>>>>>>>From: Yuqiong Sun <suny@us.ibm.com>
+> >>>>>>>>
+> >>>>>>>>Add new CONFIG_IMA_NS config option.  Let clone() create a new
+> >>>>>>>>IMA namespace upon CLONE_NEWNS flag. Add ima_ns data structure
+> >>>>>>>>in nsproxy. ima_ns is allocated and freed upon IMA namespace
+> >>>>>>>>creation and exit. Currently, the ima_ns contains no useful IMA
+> >>>>>>>>data but only a dummy interface. This patch creates the
+> >>>>>>>>framework for namespacing the different aspects of IMA (eg.
+> >>>>>>>>IMA-audit, IMA-measurement, IMA-appraisal).
+> >>>>>>>>
+> >>>>>>>>Signed-off-by: Yuqiong Sun <suny@us.ibm.com>
+> >>>>>>>>
+> >>>>>>>>Changelog:
+> >>>>>>>>* Use CLONE_NEWNS instead of a new CLONE_NEWIMA flag
+> >>>>>>>Hi,
+> >>>>>>>
+> >>>>>>>So this means that every mount namespace clone will clone a new
+> >>>>>>>IMA namespace.  Is that really ok?
+> >>>>>>Based on what: space concerns (struct ima_ns is reasonably small)?
+> >>>>>>or whether tying it to the mount namespace is the correct thing to
+> >>>>>>do.  On
+> >>>>>Mostly the latter.  The other would be not so much space concerns as
+> >>>>>time concerns.  Many things use new mounts namespaces, and we
+> >>>>>wouldn't want multiple IMA calls on all file accesses by all of
+> >>>>>those.
+> >>>>>
+> >>>>>>the latter, it does seem that this should be a property of either
+> >>>>>>the mount or user ns rather than its own separate ns.  I could see
+> >>>>>>a use where even a container might want multiple ima keyrings
+> >>>>>>within the container (say containerised apache service with
+> >>>>>>multiple tenants), so instinct tells me that mount ns is the
+> >>>>>>correct granularity for this.
+> >>>>>I wonder whether we could use echo 1 > /sys/kernel/security/ima/newns
+> >>>>>as the trigger for requesting a new ima ns on the next
+> >>>>>clone(CLONE_NEWNS).
+> >>>>I could go with that, but what about the trigger being installing or
+> >>>>updating the keyring?  That's the only operation that needs namespace
+> >>>>separation, so on mount ns clone, you get a pointer to the old ima_ns
+> >>>>until you do something that requires a new key, which then triggers the
+> >>>>copy of the namespace and installing it?
+> >>>It isn't just the keyrings that need to be namespaced, but the
+> >>>measurement list and policy as well.
+> >>>
+> >>>IMA-measurement, IMA-appraisal and IMA-audit are all policy based.
+> >>>
+> >>>As soon as the namespace starts, measurements should be added to the
+> >>>namespace specific measurement list, not it's parent.
+> >Shouldn't it be both?
+> >
+> >If not, then it seems to me this must be tied to user namespace.
+> >
+> >>IMA is about measuring things, logging what was executed, and
+> >>finally someone looking at the measurement log and detecting
+> >>'things'. So at least one attack that needs to be prevented is a
+> >>malicious person opening an IMA namespace, executing something
+> >>malicious, and not leaving any trace on the host because all the
+> >>logs went into the measurement list of the IMA namespace, which
+> >>disappeared. That said, I am wondering whether there has to be a
+> >>minimum set of  namespaces (PID, UTS) providing enough 'isolation'
+> >>that someone  may actually open an IMA namespace and run their code.
+> >>To avoid leaving no traces one could argue to implement recursive
+> >>logging, so something that is logged inside the namespace will be
+> >>detected in all parent containers up to the init_ima_ns (host)
+> >>because it's logged (and TPM extended) there as well. The challenge
+> >>with that is that logging costs memory and that can be abused as
+> >>well until the machine needs a reboot... I guess the solution could
+> >>be requesting an IMA namespace in one way or another but requiring
+> >>several other namespace flags in the clone() to actually 'get' it.
+> >>Jumping namespaces with setns() may have to be restricted as well
+> >>once there is an IMA namespace.
+> >Wait.  So if I create a new IMA namespace, the things I run in
+> >that namespace are not subject to the parent namespace policy?
+> 
+> We'll let an IMA namespace set its own policy and rules in that
+> policy will decide whether the child namespaces' measurements will
+> also be logged. This is to avoid a potentially huge log on the host.
+> However, the activities of root in namespaces may need to be logged
+> independently of what the policy rules say so that root's activities
+> in the TCB will always be tracked also if he operates in a temporary
+> mount/IMA namespace pair (and sharing the rest of the namespaces
+> with the host).
 
-This could indeed be done, but I think that Tycho's approach is much
-cleaner and probably faster.
+Thanks, Stefan.  Is there a particular paper where I can get a good
+idea of what is and is not part of the goals and threat model here?
+
+My impression was that you are measuring things that are executed in an
+effort to make sure that anything that can affect resource $x will
+be at some point detectable.  But if you allow containers (not in a
+user namespace) to evade the ima measurements that seems to undermine
+that, so that must not be your goal.  And even if you insist on a
+user namespace, if some resource is owned by $uid, then $uid can create
+a new namespace, evade the detection, and run malicious code to affect
+the resource.
+
+Unless you're counting on the container runtime to set a proper new
+ima policy?  But if that's the case then you can't have every CLONE_NEWNS
+start a new ima ns.
+
+So I think I need to start from scratch.
+
+thanks,
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
