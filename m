@@ -1,34 +1,195 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Fri, 09 Mar 2018 09:11:01 -0800
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-	<1520449719.5558.28.camel@HansenPartnership.com>
-	<1520450495.10396.587.camel@linux.vnet.ibm.com>
-	<1520451662.24314.5.camel@HansenPartnership.com>
-	<1520461156.10396.654.camel@linux.vnet.ibm.com>
-	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-Message-ID: <1520615461.12216.6.camel@HansenPartnership.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 9 Mar 2018 09:17:15 -0800
+Subject: [PATCH 0/8] LSM: Security module stacking
+In-Reply-To: <201803092029.JHB78680.HJOVFFSOtMQFLO@I-love.SAKURA.ne.jp>
+References: <d2c25c38-e19d-1e08-8c49-4726a34e72bb@schaufler-ca.com>
+	<201803092029.JHB78680.HJOVFFSOtMQFLO@I-love.SAKURA.ne.jp>
+Message-ID: <bd21dd72-2dba-d8f4-4a84-65ca66cbc778@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2018-03-08 at 12:42 -0600, Jiandi An wrote:
-[...]
-> I'm no expert on IMA and its driver.??James, will you be kind enough
-> to look into overhauling the IMA driver to not measure until after?
-> initrd phase if that's the consensus on resolving this?
+On 3/9/2018 3:29 AM, Tetsuo Handa wrote:
+> Casey Schaufler wrote:
+>> 1/8: Add the smack subdirectory to /proc/.../attr
+>> 2/8: Move management of cred security blobs to the LSM infrastructure
+>> 3/8: Move management of file security blobs to the LSM infrastructure
+>> 4/8: Move management of task security blobs to the LSM infrastructure
+>> 5/8: Move management of the remaining security blobs to the LSM infrastructure
+>> 6/8: Change the configuration controls for security stacking
+>> 7/8: Allow multiple modules to provide mount options
+>> 8/8: Maintain and use compound secids instead of a single integer
+>>
+>> Also available git://github.com/cschaufler/lsm_stacking.git#stacking-4.17
+> s/lsm_stacking/lsm-stacking/
 
-I'll add it to my todo list.
+Thanks for the correction. I mess that up way to often.
 
-Since my TPM 2.0 test environment is a VM with a tpm that has a network
-connection to an emulator on my host, it's impossible to set it up so
-that it's built in (because you need the network config before you init
-the TPM) so I might accelerate if I suddenly need to debug IMA issues
-in this configuration.
+> Is there any objection regarding "LSM: Security module stacking" itself?
 
-James
+Paul Moore has taken a strong position that he wants to see the
+complete solution, including the networking bits, before he will
+consider it seriously. There is merit to this position, which is
+why I haven't been pushing to get incremental portions upstream
+so far. With this patch set I believe I have provided that
+coverage, and expect the real feedback can begin.
+
+> If no objections, can we use step-by-step changes?
+
+I would expect that with the ultimate direction nailed down
+it should be possible to move forward in chunks, with the
+infrastructure blob management first, the multiple secids
+and mount next, and the networking wrapping it up.
+
+> We are so easily
+> overlooking error handler paths because this series is trying to change
+> all-at-once.
+
+With the new development complete(ish) I should be able to spend
+more time on clean-up. If we can get a general approval on the direction
+I expect a flurry of helpful suggestions regarding issues like you
+point out below.
+
+> For example, security_inode_alloc() will cause an oops if SELinux is not
+> the first module linked to the inode_alloc_security list and an error
+> occurred inside the first module, for security_inode_alloc() will call
+> selinux_inode_free_security() even if selinux_inode_alloc_security() was
+> not called while "struct inode_security_struct" is initialized only when
+> selinux_inode_alloc_security() is called. And I don't like fixing it in
+> this series or next series, for we will likely overlook somewhere else.
+
+You're right. All the free hooks need additional attention.
+There are without a doubt other edge cases lurking out there as well.
+
+>
+> ----------------------------------------
+> static int inode_alloc_security(struct inode *inode)
+> {
+> 	struct inode_security_struct *isec = selinux_inode(inode);
+> 	u32 sid = current_sid();
+>
+> 	spin_lock_init(&isec->lock);
+> 	INIT_LIST_HEAD(&isec->list);
+> 	isec->inode = inode;
+> 	isec->sid = SECINITSID_UNLABELED;
+> 	isec->sclass = SECCLASS_FILE;
+> 	isec->task_sid = sid;
+> 	isec->initialized = LABEL_INVALID;
+>
+> 	return 0;
+> }
+>
+> static int selinux_inode_alloc_security(struct inode *inode)
+> {
+> 	return inode_alloc_security(inode);
+> }
+>
+> static void inode_free_security(struct inode *inode)
+> {
+> 	struct inode_security_struct *isec = selinux_inode(inode);
+> 	struct superblock_security_struct *sbsec =
+> 					selinux_superblock(inode->i_sb);
+>
+> 	/*
+> 	 * As not all inode security structures are in a list, we check for
+> 	 * empty list outside of the lock to make sure that we won't waste
+> 	 * time taking a lock doing nothing.
+> 	 *
+> 	 * The list_del_init() function can be safely called more than once.
+> 	 * It should not be possible for this function to be called with
+> 	 * concurrent list_add(), but for better safety against future changes
+> 	 * in the code, we use list_empty_careful() here.
+> 	 */
+> 	if (!list_empty_careful(&isec->list)) {
+> 		spin_lock(&sbsec->isec_lock);
+> 		list_del_init(&isec->list);
+> 		spin_unlock(&sbsec->isec_lock);
+> 	}
+> }
+>
+> static void selinux_inode_free_security(struct inode *inode)
+> {
+> 	inode_free_security(inode);
+> }
+>
+> int security_inode_alloc(struct inode *inode)
+> {
+> 	int rc = lsm_inode_alloc(inode);
+>
+> 	if (unlikely(rc))
+> 		return rc;
+> 	rc = call_int_hook(inode_alloc_security, 0, inode);
+> 	if (unlikely(rc))
+> 		security_inode_free(inode);
+> 	return rc;
+> }
+>
+> void security_inode_free(struct inode *inode)
+> {
+> 	integrity_inode_free(inode);
+> 	call_void_hook(inode_free_security, inode);
+> 	/*
+> 	 * The inode may still be referenced in a path walk and
+> 	 * a call to security_inode_permission() can be made
+> 	 * after inode_free_security() is called. Ideally, the VFS
+> 	 * wouldn't do this, but fixing that is a much harder
+> 	 * job. For now, simply free the i_security via RCU, and
+> 	 * leave the current inode->i_security pointer intact.
+> 	 * The inode will be freed after the RCU grace period too.
+> 	 */
+> 	if (inode->i_security)
+> 		call_rcu((struct rcu_head *)inode->i_security,
+> 				inode_free_by_rcu);
+> }
+> ----------------------------------------
+>
+> What I prefer is to split this series into patches which involve functional
+> changes and patches which do not involve functional changes. For example,
+> we can apply
+>
+> -	const struct task_security_struct *tsec = cred->security;
+> +	const struct task_security_struct *tsec = selinux_cred(cred);
+>
+> by using a stub
+>
+> +#define selinux_cred(cred) ((cred)->security)
+>
+> and apply
+>
+>  int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+>  {
+> -	return call_int_hook(cred_alloc_blank, 0, cred, gfp);
+> +	int rc = lsm_cred_alloc(cred, gfp);
+> +
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = call_int_hook(cred_alloc_blank, 0, cred, gfp);
+> +	if (rc)
+> +		lsm_cred_free(cred);
+> +	return rc;
+>  }
+>
+> by using a stub
+>
+> +#define lsm_cred_alloc(cred, gfp) 0
+> +#define lsm_cred_free(cred, gfp) do { } while(0)
+>
+> before making other changes. Such stubs will allow each module to asynchronously
+> make changes towards the final shape without introducing any runtime overhead
+> until a patch which actually enables stacking is applied, reduce overall size of
+> subsequent series in order to reduce possibility of overlooking, and make the
+> review easier.
+
+That's a lot of overhead. The smaller the patches, the more work
+required to make the patch set. You're right that the current patches
+are too big. Moving forward I will be providing smaller, easier to
+deal with patches. The sheer overhead of rebaseing a large patch set
+has slowed down the development considerably. Minions. What I need are
+minions.
+
+Oh, and the upcoming SELinux namespace changes are going to be lots
+of fun!
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
