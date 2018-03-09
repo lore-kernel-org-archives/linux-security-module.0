@@ -1,54 +1,62 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Fri,  9 Mar 2018 15:14:18 -0500
-Subject: [RFC PATCH v2 0/3] ima: namespacing IMA
-Message-ID: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 09 Mar 2018 16:54:27 -0500
+Subject: [PATCH v2] exec: Set file unwritable before LSM check
+In-Reply-To: <CAGXu5j++Ju0Jg0O3gXPGD7Nzy8uE3NZo_dCF-L0hontG_P+5yw@mail.gmail.com>
+References: <20180309193020.GA5149@beast>
+	<CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
+	<CAGXu5j++Ju0Jg0O3gXPGD7Nzy8uE3NZo_dCF-L0hontG_P+5yw@mail.gmail.com>
+Message-ID: <1520632467.3911.49.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patch set implements an IMA namespace data structure that gets
-created alongside a mount namespace with CLONE_NEWNS, and lays down the
-foundation for namespacing the different aspects of IMA (eg. IMA-audit,
-IMA-measurement, IMA-appraisal).
+On Fri, 2018-03-09 at 11:54 -0800, Kees Cook wrote:
+> On Fri, Mar 9, 2018 at 11:47 AM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > On Fri, Mar 9, 2018 at 11:30 AM, Kees Cook <keescook@chromium.org> wrote:
+> >> The LSM check should happen after the file has been confirmed to be
+> >> unchanging. Without this, we could have a race between the Time of Check
+> >> (the call to security_kernel_read_file() which could read the file and
+> >> make access policy decisions) and the Time of Use (starting with
+> >> kernel_read_file()'s reading of the file contents). In theory, file
+> >> contents could change between the two.
 
-The original PoC patches [1] created a new CLONE_NEWIMA flag to
-explicitly control when a new IMA namespace should be created. Based on
-comments, we elected to hang the IMA namepace off of existing namespaces,
-and the mount namespace made the most sense. In this version of the patches
-we are adding a pointer to the mnt_namespace pointing to the ima_namespace.
-Both are now tied together and joining the mnt_namespace with setns()
-also joins the ima_namespace that was created along with it.
+For files opened by userspace, IMA refers to the problem as "Time of
+Measure, Time of Use" (ToMToU) and emits an audit message.
 
-The first patch creates the ima_namespace data, while the second patch
-puts the iint->flags in the namespace. The third patch uses these flags
-for namespacing the IMA-audit messages, enabling the same file to be
-audited each time it is accessed in a new namespace.
+security_kernel_read_file() is being called by the kernel to read the
+kexec kernel image and initramfs, kernel modules (new syscall),
+ima_policy, EVM x509 certificate, and firmware.
 
-Mehmet Kayaalp (2):
-  ima: Add ns_status for storing namespaced iint data
-  ima: mamespace audit status flags
+If these files are signed, like they should be, then IMA prevents them
+from being opened for write. ?Modifying the file via the filesystem
+should not be possible. ?Other sorts of attacks, would probably be
+possible.
 
-Yuqiong Sun (1):
-  ima: extend clone() with IMA namespace support
+If these files aren't signed, then in terms of IMA-measurement the
+file measured, might not be the file used. ?The ToMToU audit message
+is not being generated for these files.
 
- fs/mount.h                               |  14 --
- fs/namespace.c                           |  29 +++-
- include/linux/ima.h                      |  70 ++++++++++
- include/linux/mount.h                    |  20 ++-
- init/Kconfig                             |  10 ++
- kernel/nsproxy.c                         |   1 +
- security/integrity/ima/Makefile          |   3 +-
- security/integrity/ima/ima.h             |  47 ++++++-
- security/integrity/ima/ima_api.c         |   8 +-
- security/integrity/ima/ima_init.c        |   4 +
- security/integrity/ima/ima_init_ima_ns.c |  44 ++++++
- security/integrity/ima/ima_main.c        |  15 +-
- security/integrity/ima/ima_ns.c          | 230 +++++++++++++++++++++++++++++++
- 13 files changed, 469 insertions(+), 26 deletions(-)
- create mode 100644 security/integrity/ima/ima_init_ima_ns.c
- create mode 100644 security/integrity/ima/ima_ns.c
+> > I'm going to assume I get this for 4.17 from the security tree.
+> >
+> > Because I'm guessing there are actually no existing users that care?
+> > selinux seems to just look at file state, not actually at contents or
+> > anything that write access denial would care about.
+> >
+> > And the only other security module that even registers this is
+> > loadpin, and again it just seems to check things like "on the right
+> > filesystem" that aren't actually impacted by write access (in fact,
+> > the documented reason is to check that it's a read-only filesystem so
+> > that write access is simply _irrelevant_).
+> >
+> > So this issue seems to be mainly a cleanliness thing, not an actual bug.
+> 
+> That is my assumption too (I left off the Cc: stable as a result). I'm
+> much less familiar with IMA, though, but it's a caller of
+> kernel_read_file(), not hooking it, etc.
 
--- 
-2.13.6
+Please add my reviewed-by.
+
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
