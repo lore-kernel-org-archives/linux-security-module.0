@@ -1,58 +1,35 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Fri, 9 Mar 2018 11:30:20 -0800
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Fri, 9 Mar 2018 11:47:43 -0800
 Subject: [PATCH v2] exec: Set file unwritable before LSM check
-Message-ID: <20180309193020.GA5149@beast>
+In-Reply-To: <20180309193020.GA5149@beast>
+References: <20180309193020.GA5149@beast>
+Message-ID: <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The LSM check should happen after the file has been confirmed to be
-unchanging. Without this, we could have a race between the Time of Check
-(the call to security_kernel_read_file() which could read the file and
-make access policy decisions) and the Time of Use (starting with
-kernel_read_file()'s reading of the file contents). In theory, file
-contents could change between the two.
+On Fri, Mar 9, 2018 at 11:30 AM, Kees Cook <keescook@chromium.org> wrote:
+> The LSM check should happen after the file has been confirmed to be
+> unchanging. Without this, we could have a race between the Time of Check
+> (the call to security_kernel_read_file() which could read the file and
+> make access policy decisions) and the Time of Use (starting with
+> kernel_read_file()'s reading of the file contents). In theory, file
+> contents could change between the two.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v2: Clarify the ToC/ToU race (Linus)
+I'm going to assume I get this for 4.17 from the security tree.
 
-Only loadpin and SELinux currently implement this hook. From what
-I can see, this won't change anything for either of them. IMA calls
-kernel_read_file(), but looking there it seems those callers won't be
-negatively impacted either. Can folks double-check this and send an
-Ack please?
----
- fs/exec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Because I'm guessing there are actually no existing users that care?
+selinux seems to just look at file state, not actually at contents or
+anything that write access denial would care about.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 7eb8d21bcab9..a919a827d181 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -895,13 +895,13 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
- 		return -EINVAL;
- 
--	ret = security_kernel_read_file(file, id);
-+	ret = deny_write_access(file);
- 	if (ret)
- 		return ret;
- 
--	ret = deny_write_access(file);
-+	ret = security_kernel_read_file(file, id);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	i_size = i_size_read(file_inode(file));
- 	if (max_size > 0 && i_size > max_size) {
--- 
-2.7.4
+And the only other security module that even registers this is
+loadpin, and again it just seems to check things like "on the right
+filesystem" that aren't actually impacted by write access (in fact,
+the documented reason is to check that it's a read-only filesystem so
+that write access is simply _irrelevant_).
 
+So this issue seems to be mainly a cleanliness thing, not an actual bug.
 
--- 
-Kees Cook
-Pixel Security
+             Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
