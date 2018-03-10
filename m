@@ -1,25 +1,38 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 10 Mar 2018 18:01:52 +0200
-Subject: [PATCH V2] tpm_crb: use __le64 annotated variable for response
-	buffer address
-In-Reply-To: <20180306093415.12356-1-tomas.winkler@intel.com>
-References: <20180306093415.12356-1-tomas.winkler@intel.com>
-Message-ID: <c440c1eeedc9640d8355606f4935048279bf5b1e.camel@linux.intel.com>
+Date: Sat, 10 Mar 2018 18:16:37 +0200
+Subject: [PATCH] tpm: allow TCPA log area to be empty
+Message-ID: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-03-06 at 11:34 +0200, Tomas Winkler wrote:
-> use __le64 annotated variable for response buffer address as this is
-> read in little endian format form the register.
-> 
-> This suppresses sparse warning
-> drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+TCPA log are can be empty when the TPM is disabled. This commit changes the
+behavior of tpm_read_log_acpi() to return successfully in this case.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: stable at vger.kernel.org
+Fixes: 55a82ab3181b ("[PATCH] tpm: add bios measurement log")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm_eventlog_acpi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-/Jarkko
+diff --git a/drivers/char/tpm/tpm_eventlog_acpi.c b/drivers/char/tpm/tpm_eventlog_acpi.c
+index 66f19e93c216..f5f66dcd6f30 100644
+--- a/drivers/char/tpm/tpm_eventlog_acpi.c
++++ b/drivers/char/tpm/tpm_eventlog_acpi.c
+@@ -84,8 +84,8 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+ 		break;
+ 	}
+ 	if (!len) {
+-		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
+-		return -EIO;
++		dev_info(&chip->dev, "TCPA log area is empty\n");
++		return 0;
+ 	}
+ 
+ 	/* malloc EventLog space */
+-- 
+2.15.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
