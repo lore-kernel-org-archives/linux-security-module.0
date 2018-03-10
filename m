@@ -1,211 +1,180 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat, 10 Mar 2018 10:24:26 +0200
-Subject: [PATCH v2 6/8] tpm: factor out tpm_startup function
+Date: Sat, 10 Mar 2018 10:24:25 +0200
+Subject: [PATCH v2 5/8] tpm: factor out tpm1 pm suspend flow into tpm1-cmd.c
 In-Reply-To: <20180310082428.31519-1-tomas.winkler@intel.com>
 References: <20180310082428.31519-1-tomas.winkler@intel.com>
-Message-ID: <20180310082428.31519-7-tomas.winkler@intel.com>
+Message-ID: <20180310082428.31519-6-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-tpm manual startup is used only from within tpm1 or tpm2
-code, hence remove tpm_startup function from tpm-interface.c
-and add two static functions implementations tpm1_startup
-and tpm2_startup into to tpm1-cmd.c and tpm2-cmd.c respectively.
+Factor out tpm1 suspend flow from tpm-interface.c into a new function
+tpm1_pm_suspend in tpm1-cmd.c
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- drivers/char/tpm/tpm-interface.c | 41 ----------------------------------------
- drivers/char/tpm/tpm.h           |  1 -
- drivers/char/tpm/tpm1-cmd.c      | 37 +++++++++++++++++++++++++++++++++++-
- drivers/char/tpm/tpm2-cmd.c      | 34 +++++++++++++++++++++++++++++++--
- 4 files changed, 68 insertions(+), 45 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 55 ++++------------------------------------
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm1-cmd.c      | 54 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 50 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 11899ef32457..90e14462500a 100644
+index a7dfe286b343..11899ef32457 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -313,47 +313,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+@@ -485,15 +485,6 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
  }
- EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
+ EXPORT_SYMBOL_GPL(tpm_send);
  
--#define TPM_ORD_STARTUP 153
--#define TPM_ST_CLEAR 1
+-#define TPM_ORD_SAVESTATE 152
+-#define SAVESTATE_RESULT_SIZE 10
 -
--/**
-- * tpm_startup - turn on the TPM
-- * @chip: TPM chip to use
-- *
-- * Normally the firmware should start the TPM. This function is provided as a
-- * workaround if this does not happen. A legal case for this could be for
-- * example when a TPM emulator is used.
-- *
-- * Return: same as tpm_transmit_cmd()
-- */
--int tpm_startup(struct tpm_chip *chip)
--{
--	struct tpm_buf buf;
--	int rc;
+-static const struct tpm_input_header savestate_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(10),
+-	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+-};
 -
--	dev_info(&chip->dev, "starting up the TPM manually\n");
+ /*
+  * We are about to suspend. Save the TPM state
+  * so that it can be restored.
+@@ -501,54 +492,18 @@ static const struct tpm_input_header savestate_header = {
+ int tpm_pm_suspend(struct device *dev)
+ {
+ 	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct tpm_cmd_t cmd;
+-	int rc, try;
++	int rc = 0;
+ 
+-	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
 -
+-	if (chip == NULL)
++	if (!chip)
+ 		return -ENODEV;
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+ 		return 0;
+ 
 -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
--		if (rc < 0)
--			return rc;
--
--		tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
--	} else {
--		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
--		if (rc < 0)
--			return rc;
--
--		tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		tpm2_shutdown(chip, TPM2_SU_STATE);
+-		return 0;
 -	}
 -
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
--			      "attempting to start the TPM");
+-	/* for buggy tpm, flush pcrs with extend to selected dummy */
+-	if (tpm_suspend_pcr)
+-		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+-				     "extending dummy pcr before suspend");
 -
--	tpm_buf_destroy(&buf);
--	return rc;
--}
+-	/* now do the actual savestate */
+-	for (try = 0; try < TPM_RETRY; try++) {
+-		cmd.header.in = savestate_header;
+-		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
+-				      0, 0, NULL);
 -
- int tpm_get_timeouts(struct tpm_chip *chip)
- {
- 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
+-		/*
+-		 * If the TPM indicates that it is too busy to respond to
+-		 * this command then retry before giving up.  It can take
+-		 * several seconds for this TPM to be ready.
+-		 *
+-		 * This can happen if the TPM has already been sent the
+-		 * SaveState command before the driver has loaded.  TCG 1.2
+-		 * specification states that any communication after SaveState
+-		 * may cause the TPM to invalidate previously saved state.
+-		 */
+-		if (rc != TPM_WARN_RETRY)
+-			break;
+-		tpm_msleep(TPM_TIMEOUT_RETRY);
+-	}
+-
+-	if (rc)
+-		dev_err(&chip->dev,
+-			"Error (%d) sending savestate before suspend\n", rc);
+-	else if (try > 0)
+-		dev_warn(&chip->dev, "TPM savestate took %dms\n",
+-			 try * TPM_TIMEOUT_RETRY);
++	else
++		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
+ 
+ 	return rc;
+ }
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 1bed9b5441c5..434f11c23e3e 100644
+index 6922fdfc4274..1bed9b5441c5 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -526,7 +526,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 			 void *buf, size_t bufsiz,
- 			 size_t min_rsp_body_length, unsigned int flags,
- 			 const char *desc);
--int tpm_startup(struct tpm_chip *chip);
+@@ -529,6 +529,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ int tpm_startup(struct tpm_chip *chip);
  int tpm_get_timeouts(struct tpm_chip *);
  
- int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
++int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+ int tpm1_do_selftest(struct tpm_chip *chip);
+ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm1_get_timeouts(struct tpm_chip *chip);
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index e2c9f609fe64..85dd0fcbd4cc 100644
+index 6dde18c46820..e2c9f609fe64 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -307,6 +307,40 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm1_calc_ordinal_duration);
- 
-+#define TPM_ORD_STARTUP 153
-+#define TPM_ST_CLEAR 1
-+
-+/**
-+ * tpm_startup - turn on the TPM
-+ * @chip: TPM chip to use
-+ *
-+ * Normally the firmware should start the TPM. This function is provided as a
-+ * workaround if this does not happen. A legal case for this could be for
-+ * example when a TPM emulator is used.
-+ *
-+ * Return: same as tpm_transmit_cmd()
-+ */
-+static int tpm1_startup(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	dev_info(&chip->dev, "starting up the TPM manually\n");
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
-+	if (rc < 0)
-+		return rc;
-+
-+	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			      "attempting to start the TPM");
-+
-+	tpm_buf_destroy(&buf);
-+
-+	return rc;
-+}
-+
- int tpm1_get_timeouts(struct tpm_chip *chip)
- {
- 	cap_t cap;
-@@ -316,7 +350,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
- 			 sizeof(cap.timeout));
- 	if (rc == TPM_ERR_INVALID_POSTINIT) {
--		if (tpm_startup(chip))
-+		if (tpm1_startup(chip))
- 			return rc;
- 
- 		rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
-@@ -719,3 +753,4 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
- 
+@@ -665,3 +665,57 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+ 		rc = -ENODEV;
  	return rc;
  }
 +
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 8114fd59e2c5..07636aa6f1a9 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -1006,6 +1006,36 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
- 	return rc;
- }
- 
-+/**
-+ * tpm2_startup - turn on the TPM
-+ * @chip: TPM chip to use
-+ *
-+ * Normally the firmware should start the TPM. This function is provided as a
-+ * workaround if this does not happen. A legal case for this could be for
-+ * example when a TPM emulator is used.
-+ *
-+ * Return: same as tpm_transmit_cmd()
++#define TPM_ORD_SAVESTATE 152
++#define SAVESTATE_RESULT_SIZE 10
++static const struct tpm_input_header savestate_header = {
++	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
++	.length = cpu_to_be32(10),
++	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
++};
++
++/*
++ * We are about to suspend. Save the TPM state
++ * so that it can be restored.
 + */
-+
-+static int tpm2_startup(struct tpm_chip *chip)
++int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
 +{
-+	struct tpm_buf buf;
-+	int rc;
++	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
++	struct tpm_cmd_t cmd;
++	int rc, try;
 +
-+	dev_info(&chip->dev, "starting up the TPM manually\n");
++	/* for buggy tpm, flush pcrs with extend to selected dummy */
++	if (tpm_suspend_pcr)
++		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
++				     "extending dummy pcr before suspend");
 +
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
-+	if (rc < 0)
-+		return rc;
++	/* now do the actual savestate */
++	for (try = 0; try < TPM_RETRY; try++) {
++		cmd.header.in = savestate_header;
++		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
++				      0, 0, NULL);
 +
-+	tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			      "attempting to start the TPM");
-+	tpm_buf_destroy(&buf);
++		/*
++		 * If the TPM indicates that it is too busy to respond to
++		 * this command then retry before giving up.  It can take
++		 * several seconds for this TPM to be ready.
++		 *
++		 * This can happen if the TPM has already been sent the
++		 * SaveState command before the driver has loaded.  TCG 1.2
++		 * specification states that any communication after SaveState
++		 * may cause the TPM to invalidate previously saved state.
++		 */
++		if (rc != TPM_WARN_RETRY)
++			break;
++		tpm_msleep(TPM_TIMEOUT_RETRY);
++	}
++
++	if (rc)
++		dev_err(&chip->dev,
++			"Error (%d) sending savestate before suspend\n", rc);
++	else if (try > 0)
++		dev_warn(&chip->dev, "TPM savestate took %dms\n",
++			 try * TPM_TIMEOUT_RETRY);
 +
 +	return rc;
 +}
-+
- /**
-  * tpm2_auto_startup - Perform the standard automatic TPM initialization
-  *                     sequence
-@@ -1017,7 +1047,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- {
- 	int rc;
- 
--	rc = tpm_get_timeouts(chip);
-+	rc = tpm2_get_timeouts(chip);
- 	if (rc)
- 		goto out;
- 
-@@ -1028,7 +1058,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- 	}
- 
- 	if (rc == TPM2_RC_INITIALIZE) {
--		rc = tpm_startup(chip);
-+		rc = tpm2_startup(chip);
- 		if (rc)
- 			goto out;
- 
 -- 
 2.14.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
