@@ -1,7 +1,7 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 10 Mar 2018 14:44:01 +0200
+Date: Sat, 10 Mar 2018 14:46:55 +0200
 Subject: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation commands.
-In-Reply-To: <20180307085454.2c820a13@lwn.net>
+In-Reply-To: <1520440503.10396.534.camel@linux.vnet.ibm.com>
 References: <20180304121205.16934-1-tomas.winkler@intel.com>
 	<20180305125642.GA3425@linux.intel.com>
 	<5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
@@ -10,23 +10,35 @@ References: <20180304121205.16934-1-tomas.winkler@intel.com>
 	<1520353933.5393.21.camel@HansenPartnership.com>
 	<1520361396.10396.396.camel@linux.vnet.ibm.com>
 	<20180307085454.2c820a13@lwn.net>
-Message-ID: <3922f20fc01b7c5f555b92db5a128ee3a2d5cc12.camel@linux.intel.com>
+	<1520440503.10396.534.camel@linux.vnet.ibm.com>
+Message-ID: <d4c32cca021456c61e5c6e3c29b6928426541305.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-03-07 at 08:54 -0700, Jonathan Corbet wrote:
-> On Tue, 06 Mar 2018 13:36:36 -0500
-> Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+On Wed, 2018-03-07 at 11:35 -0500, Mimi Zohar wrote:
+> On Wed, 2018-03-07 at 08:54 -0700, Jonathan Corbet wrote:
+> > On Tue, 06 Mar 2018 13:36:36 -0500
+> > Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > 
+> > > I've heard that some maintainers are moving away from cover letters,
+> > > since they are not include in the git repo and are lost.
+> > 
+> > If I get a patch series with a cover letter that should be preserved, I
+> > apply the series in a branch then do a no-ff merge; the cover letter can
+> > then go into the merge commit.  There's no reason why cover letters need to
+> > be lost.
 > 
-> > I've heard that some maintainers are moving away from cover letters,
-> > since they are not include in the git repo and are lost.
+> Thanks, Jon.  That sounds like a really, good idea.
 > 
-> If I get a patch series with a cover letter that should be preserved, I
-> apply the series in a branch then do a no-ff merge; the cover letter can
-> then go into the merge commit.  There's no reason why cover letters need to
-> be lost.
+> Some maintainers are saying to put the Changelog after the "---" so
+> that it isn't included in the patch description.
+> 
+> One of the reasons for including the Changelog in the patch
+> description, is to credit people with bug fixes, important rework of
+> the patch, etc.
 
-That is an awesome idea. I'll start using this approach. Thank you.
+This is a really good point. By adding the cover letter to the
+GIT history helps to better track people who to thank or blame :-)
 
 /Jarkko
 --
