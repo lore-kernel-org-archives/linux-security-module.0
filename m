@@ -1,134 +1,122 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat, 10 Mar 2018 10:24:28 +0200
-Subject: [PATCH v2 8/8] tpm: move tpm2 code validation to tpm2-space.c
+Date: Sat, 10 Mar 2018 10:24:27 +0200
+Subject: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
 In-Reply-To: <20180310082428.31519-1-tomas.winkler@intel.com>
 References: <20180310082428.31519-1-tomas.winkler@intel.com>
-Message-ID: <20180310082428.31519-9-tomas.winkler@intel.com>
+Message-ID: <20180310082428.31519-8-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add new function tpm2_validate_command to tpm2-space.c
-that wraps up open coded functionality from tpm_validate_command.
+Add tpm2_pcr_extend function to tpm2-cmd.c with signature required
+by tpm-interface.c. It wraps the original open code
+implementation. The original original tpm2_pcr_extend function
+is renamed and made static, called only from new tpm2_pcr_extend.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- drivers/char/tpm/tpm-interface.c | 31 ++-----------------------------
- drivers/char/tpm/tpm.h           |  1 +
- drivers/char/tpm/tpm2-cmd.c      |  1 +
- drivers/char/tpm/tpm2-space.c    | 32 ++++++++++++++++++++++++++++++++
- 4 files changed, 36 insertions(+), 29 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 25 +++++--------------------
+ drivers/char/tpm/tpm.h           |  3 +--
+ drivers/char/tpm/tpm2-cmd.c      | 25 +++++++++++++++++++++++--
+ 3 files changed, 29 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index d347ad8325c6..93f7c12d4c4d 100644
+index 90e14462500a..d347ad8325c6 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -52,40 +52,13 @@ static int tpm_validate_command(struct tpm_chip *chip,
- 				 const u8 *cmd,
- 				 size_t len)
+@@ -391,31 +391,16 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
  {
--	const struct tpm_input_header *header = (const void *)cmd;
+ 	int rc;
+-	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+-	u32 count = 0;
 -	int i;
--	u32 cc;
--	u32 attrs;
--	unsigned int nr_handles;
--
- 	if (len < TPM_HEADER_SIZE)
- 		return -EINVAL;
  
--	if (!space)
--		return 0;
+ 	chip = tpm_chip_find_get(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		memset(digest_list, 0, sizeof(digest_list));
 -
--	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
--		cc = be32_to_cpu(header->ordinal);
--
--		i = tpm2_find_cc(chip, cc);
--		if (i < 0) {
--			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
--				cc);
--			return -EOPNOTSUPP;
+-		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+-			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+-			digest_list[i].alg_id = chip->active_banks[i];
+-			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+-			count++;
 -		}
 -
--		attrs = chip->cc_attrs_tbl[i];
--		nr_handles =
--			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
--		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
--			goto err_len;
+-		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+-		tpm_put_ops(chip);
+-		return rc;
 -	}
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2 && space)
-+		return tpm2_validate_command(chip, cmd, len);
- 
- 	return 0;
--err_len:
--	dev_dbg(&chip->dev,
--		"%s: insufficient command length %zu", __func__, len);
--	return -EINVAL;
+-
+-	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
+-			     "attempting extend a PCR value");
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_pcr_extend(chip, pcr_idx, hash);
++	else
++		rc = tpm1_pcr_extend(chip, pcr_idx, hash,
++				     "attempting extend a PCR value");
+ 	tpm_put_ops(chip);
+ 	return rc;
  }
- 
- static int tpm_request_locality(struct tpm_chip *chip)
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 2b88aadc4743..15453a78a0d0 100644
+index 434f11c23e3e..2b88aadc4743 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -602,6 +602,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
- 		       u8 *cmd);
- int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 		      u32 cc, u8 *buf, size_t *bufsiz);
-+int tpm2_validate_command(struct tpm_chip *chip, const u8 *cmd, size_t len);
+@@ -578,8 +578,7 @@ static inline u32 tpm2_rc_value(u32 rc)
  
- extern const struct seq_operations tpm2_binary_b_measurements_seqops;
- 
+ int tpm2_get_timeouts(struct tpm_chip *chip);
+ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+-		    struct tpm2_digest *digests);
++int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 80eb4bb5feef..6db13cf801b4 100644
+index 07636aa6f1a9..80eb4bb5feef 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -1112,3 +1112,4 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc)
- 
- 	return -1;
+@@ -223,8 +223,8 @@ struct tpm2_null_auth_area {
+  *
+  * Return: Same as with tpm_transmit_cmd.
+  */
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+-		    struct tpm2_digest *digests)
++static int __tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
++			     struct tpm2_digest *digests)
+ {
+ 	struct tpm_buf buf;
+ 	struct tpm2_null_auth_area auth_area;
+@@ -270,6 +270,27 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+ 	return rc;
  }
-+
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 4e4014eabdb9..ed9eff948c05 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -263,6 +263,38 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
- 	return 0;
- }
  
-+int tpm2_validate_command(struct tpm_chip *chip, const u8 *cmd, size_t len)
++int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
 +{
++	int rc;
++	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
++	u32 count = 0;
 +	int i;
-+	u32 cc;
-+	u32 attrs;
-+	unsigned int nr_handles;
 +
-+	if (len < TPM_HEADER_SIZE)
-+		return -EINVAL;
++	memset(digest_list, 0, sizeof(digest_list));
 +
-+	if (!chip->nr_commands)
-+		return 0;
-+
-+	cc =  be32_to_cpup((__be32 *)(cmd + 6));
-+
-+	i = tpm2_find_cc(chip, cc);
-+	if (i < 0) {
-+		dev_dbg(&chip->dev, "0x%04X is an invalid command\n", cc);
-+		return -EOPNOTSUPP;
++	for (i = 0; i < ARRAY_SIZE(chip->active_banks); i++) {
++		if (chip->active_banks[i] == TPM2_ALG_ERROR)
++			break;
++		digest_list[i].alg_id = chip->active_banks[i];
++		memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
++		count++;
 +	}
 +
-+	attrs = chip->cc_attrs_tbl[i];
-+	nr_handles = 4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
-+	if (len < TPM_HEADER_SIZE + 4 * nr_handles) {
-+		dev_dbg(&chip->dev,
-+			"%s: insufficient command length %zu", __func__, len);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
++	rc = __tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
++	return rc;
 +}
 +
- int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
- 		       u8 *cmd)
- {
+ 
+ #define TPM2_GETRANDOM_IN_SIZE \
+ 	(sizeof(struct tpm_input_header) + \
 -- 
 2.14.3
 
