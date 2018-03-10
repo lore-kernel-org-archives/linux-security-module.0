@@ -1,108 +1,50 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat, 10 Mar 2018 10:24:21 +0200
-Subject: [PATCH v2 1/8] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-In-Reply-To: <20180310082428.31519-1-tomas.winkler@intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
-Message-ID: <20180310082428.31519-2-tomas.winkler@intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 10 Mar 2018 13:21:16 +0200
+Subject: [PATCH 3/5 V2] tpm2: add longer timeouts for creation commands.
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
+References: <20180306092503.11568-1-tomas.winkler@intel.com>
+	<20180306092503.11568-4-tomas.winkler@intel.com>
+	<1520339005.3779.3.camel@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
+Message-ID: <d00187b102355c74b5efc2f7923c441785a6390c.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Move tpm1_pcr_extend to tpm1-cmd.c and remove
-unused pcrextend_header structure.
+On Tue, 2018-03-06 at 15:19 +0000, Winkler, Tomas wrote:
+> > On Tue, 2018-03-06 at 11:25 +0200, Tomas Winkler wrote:
+> > > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
+> > > generation of crypto keys which can be a computationally intensive task.
+> > > The timeout is set to 3min.
+> > > Rather than increasing default timeout a new constant is added, to not
+> > > stall for too long on regular commands failures.
+> > > 
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > 
+> > Why are you radically chaging the default timeout? The commit message
+> > does not tell anything about that change.
+> > 
+> 
+> Let me, recheck but it should be same value just converted to msecs.
+>  
+> > Why couldn't we just have two timeouts: one default and one long that
+> > would be at least as long as the longest timeout defined in the spec?
+> 
+> I've tried to explain it in the commit message but apparently has failed. 
+> 
+> We have a default or undefined which should be the same as it was unless I did
+> some silly mistake in conversion to msecs (will check), ass all others are in
+> msecs.
+> It was 2 min = 2 * 60 * HZ (in jiffies) which would be msecs_to_jiffies(2 * 60
+> * 1000 = 120000) 
+> TPM2_DURATION_DEFAULT   = 120000
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm-interface.c | 28 ----------------------------
- drivers/char/tpm/tpm.h           |  2 ++
- drivers/char/tpm/tpm1-cmd.c      | 23 +++++++++++++++++++++++
- 3 files changed, 25 insertions(+), 28 deletions(-)
+Aah, of course :-) The problem was that I had somehow a blid spot with
+seeing the msec_to_jiffies() conversion.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 7f6968b750c8..83eeefb2a4af 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -514,34 +514,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- }
- EXPORT_SYMBOL_GPL(tpm_pcr_read);
- 
--#define TPM_ORD_PCR_EXTEND 20
--#define EXTEND_PCR_RESULT_SIZE 34
--#define EXTEND_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrextend_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(34),
--	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
--};
--
--static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
--			   char *log_msg)
--{
--	struct tpm_buf buf;
--	int rc;
--
--	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, pcr_idx);
--	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
--			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
- /**
-  * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 48706f091856..4306c878f1d9 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -535,6 +535,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
- int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
- 
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 14dfb2b9a067..6a0d8717fdf6 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -414,3 +414,26 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
- 	return 0;
- }
-+
-+#define TPM_ORD_PCR_EXTEND 20
-+#define EXTEND_PCR_RESULT_SIZE 34
-+#define EXTEND_PCR_RESULT_BODY_SIZE 20
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, pcr_idx);
-+	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
-+			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
--- 
-2.14.3
+TPM_NUM_DURATIONS would a better name than TPM_DURATION_MAX because
+TPM_DURATION_MAX is easy to confuse with TPM_DURATION_* constants.
 
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
