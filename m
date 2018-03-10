@@ -1,304 +1,453 @@
 From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Sat, 10 Mar 2018 14:19:20 -0800
-Subject: [PATCH v3 5/6] trusted keys: Add session encryption protection to
-	the seal/unseal path
+Date: Sat, 10 Mar 2018 14:20:19 -0800
+Subject: [PATCH v3 6/6] tpm2-sessions: NOT FOR COMMITTING add sessions testing
 In-Reply-To: <1520720026.4495.11.camel@HansenPartnership.com>
 References: <1520720026.4495.11.camel@HansenPartnership.com>
-Message-ID: <1520720360.4495.18.camel@HansenPartnership.com>
+Message-ID: <1520720419.4495.20.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-If some entity is snooping the TPM bus, the can see the data going in
-to be sealed and the data coming out as it is unsealed.  Add parameter
-and response encryption to these cases to ensure that no secrets are
-leaked even if the bus is snooped.
-
-As part of doing this conversion it was discovered that policy
-sessions can't work with HMAC protected authority because of missing
-pieces (the tpm Nonce).  I've added code to work the same way as
-before, which will result in potential authority exposure (while still
-adding security for the command and the returned blob), and a fixme to
-redo the API to get rid of this security hole.
+This runs through a preset sequence using sessions to demonstrate that
+the session handling code functions.  It does both HMAC, encryption
+and decryption by testing an encrypted sealing operation with
+authority and proving that the same sealed data comes back again via
+an HMAC and response encryption.  It also does policy unsealing which
+mimics the more complex of the trusted key scenarios.
 
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- drivers/char/tpm/tpm2-cmd.c | 156 ++++++++++++++++++++++++++++----------------
- 1 file changed, 98 insertions(+), 58 deletions(-)
 
+---
+v3: add policy unseal testing with two sessions
+---
+ drivers/char/tpm/Makefile             |   1 +
+ drivers/char/tpm/tpm-chip.c           |   1 +
+ drivers/char/tpm/tpm.h                |   1 +
+ drivers/char/tpm/tpm2-cmd.c           |   2 +
+ drivers/char/tpm/tpm2-sessions-test.c | 359 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 364 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm2-sessions-test.c
+
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index b83737ccaa81..1ac7a4046630 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_TCG_TPM) += tpm.o
+ tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+ 	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o \
+          tpm2-space.o tpm-buf.o tpm2-sessions.o
++obj-m +=  tpm2-sessions-test.o
+ tpm-$(CONFIG_ACPI) += tpm_ppi.o tpm_eventlog_acpi.o
+ tpm-$(CONFIG_EFI) += tpm_eventlog_efi.o
+ tpm-$(CONFIG_OF) += tpm_eventlog_of.o
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 0a62c19937b6..ca174ee1e670 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -118,6 +118,7 @@ struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
+ 
+ 	return res;
+ }
++EXPORT_SYMBOL(tpm_chip_find_get);
+ 
+ /**
+  * tpm_dev_release() - free chip memory and the device number
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index b1eee56cbbb5..8a652d36939d 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -146,6 +146,7 @@ enum tpm2_command_codes {
+ 	TPM2_CC_CONTEXT_LOAD	= 0x0161,
+ 	TPM2_CC_CONTEXT_SAVE	= 0x0162,
+ 	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
++	TPM2_CC_POLICY_COMMAND_CODE = 0x16c,
+ 	TPM2_CC_READ_PUBLIC	= 0x0173,
+ 	TPM2_CC_START_AUTH_SESS	= 0x0176,
+ 	TPM2_CC_GET_CAPABILITY	= 0x017A,
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 47395c455ae1..8b164b7347de 100644
+index 8b164b7347de..3f47d8b3d361 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -463,8 +463,9 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		      struct trusted_key_options *options)
- {
- 	unsigned int blob_len;
--	struct tpm_buf buf;
-+	struct tpm_buf buf, t2b;
- 	u32 hash, rlength;
-+	struct tpm2_auth *auth;
- 	int i;
- 	int rc;
+@@ -418,6 +418,7 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
  
-@@ -478,45 +479,56 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 	if (i == ARRAY_SIZE(tpm2_hash_map))
- 		return -EINVAL;
- 
--	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
-+	rc = tpm2_start_auth_session(chip, &auth);
- 	if (rc)
- 		return rc;
- 
--	tpm_buf_append_u32(&buf, options->keyhandle);
--	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
--			     NULL /* nonce */, 0,
--			     0 /* session_attributes */,
--			     options->keyauth /* hmac */,
--			     TPM_DIGEST_SIZE);
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
-+	if (rc) {
-+		tpm2_end_auth_session(auth);
-+		return rc;
-+	}
- 
-+	rc = tpm_buf_init_2b(&t2b);
-+	if (rc) {
-+		tpm_buf_destroy(&buf);
-+		tpm2_end_auth_session(auth);
-+		return rc;
-+	}
-+
-+	tpm_buf_append_name(&buf, auth, options->keyhandle, NULL);
-+	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_DECRYPT,
-+				    options->keyauth, TPM_DIGEST_SIZE);
- 	/* sensitive */
--	tpm_buf_append_u16(&buf, 4 + TPM_DIGEST_SIZE + payload->key_len + 1);
-+	tpm_buf_append_u16(&t2b, TPM_DIGEST_SIZE);
-+	tpm_buf_append(&t2b, options->blobauth, TPM_DIGEST_SIZE);
-+	tpm_buf_append_u16(&t2b, payload->key_len + 1);
-+	tpm_buf_append(&t2b, payload->key, payload->key_len);
-+	tpm_buf_append_u8(&t2b, payload->migratable);
- 
--	tpm_buf_append_u16(&buf, TPM_DIGEST_SIZE);
--	tpm_buf_append(&buf, options->blobauth, TPM_DIGEST_SIZE);
--	tpm_buf_append_u16(&buf, payload->key_len + 1);
--	tpm_buf_append(&buf, payload->key, payload->key_len);
--	tpm_buf_append_u8(&buf, payload->migratable);
-+	tpm_buf_append_2b(&buf, &t2b);
- 
- 	/* public */
--	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
--	tpm_buf_append_u16(&buf, TPM2_ALG_KEYEDHASH);
--	tpm_buf_append_u16(&buf, hash);
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_KEYEDHASH);
-+	tpm_buf_append_u16(&t2b, hash);
- 
- 	/* policy */
- 	if (options->policydigest_len) {
--		tpm_buf_append_u32(&buf, 0);
--		tpm_buf_append_u16(&buf, options->policydigest_len);
--		tpm_buf_append(&buf, options->policydigest,
-+		tpm_buf_append_u32(&t2b, 0);
-+		tpm_buf_append_u16(&t2b, options->policydigest_len);
-+		tpm_buf_append(&t2b, options->policydigest,
- 			       options->policydigest_len);
- 	} else {
--		tpm_buf_append_u32(&buf, TPM2_OA_USER_WITH_AUTH);
--		tpm_buf_append_u16(&buf, 0);
-+		tpm_buf_append_u32(&t2b, TPM2_OA_USER_WITH_AUTH);
-+		tpm_buf_append_u16(&t2b, 0);
- 	}
- 
- 	/* public parameters */
--	tpm_buf_append_u16(&buf, TPM2_ALG_NULL);
--	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_NULL);
-+	/* unique (zero) */
-+	tpm_buf_append_u16(&t2b, 0);
-+
-+	tpm_buf_append_2b(&buf, &t2b);
- 
- 	/* outside info */
- 	tpm_buf_append_u16(&buf, 0);
-@@ -529,8 +541,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		goto out;
- 	}
- 
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 4, 0,
--			      "sealing data");
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data,
-+			      PAGE_SIZE, 4, 0, "sealing data");
-+	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
- 	if (rc)
- 		goto out;
- 
-@@ -549,6 +564,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 	payload->blob_len = blob_len;
- 
- out:
-+	tpm_buf_destroy(&t2b);
  	tpm_buf_destroy(&buf);
- 
- 	if (rc > 0) {
-@@ -568,7 +584,6 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-  * @payload: the key data in clear and encrypted form
-  * @options: authentication values and other options
-  * @blob_handle: returned blob handle
-- * @flags: tpm transmit flags
-  *
-  * Return: 0 on success.
-  *        -E2BIG on wrong payload size.
-@@ -578,9 +593,10 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- static int tpm2_load_cmd(struct tpm_chip *chip,
- 			 struct trusted_key_payload *payload,
- 			 struct trusted_key_options *options,
--			 u32 *blob_handle, unsigned int flags)
-+			 u32 *blob_handle)
- {
- 	struct tpm_buf buf;
-+	struct tpm2_auth *auth;
- 	unsigned int private_len;
- 	unsigned int public_len;
- 	unsigned int blob_len;
-@@ -595,17 +611,18 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 	if (blob_len > payload->blob_len)
- 		return -E2BIG;
- 
--	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	rc = tpm2_start_auth_session(chip, &auth);
- 	if (rc)
- 		return rc;
- 
--	tpm_buf_append_u32(&buf, options->keyhandle);
--	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
--			     NULL /* nonce */, 0,
--			     0 /* session_attributes */,
--			     options->keyauth /* hmac */,
--			     TPM_DIGEST_SIZE);
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	if (rc) {
-+		tpm2_end_auth_session(auth);
-+		return rc;
-+	}
- 
-+	tpm_buf_append_name(&buf, auth, options->keyhandle, NULL);
-+	tpm_buf_append_hmac_session(&buf, auth, 0, options->keyauth, TPM_DIGEST_SIZE);
- 	tpm_buf_append(&buf, payload->blob, blob_len);
- 
- 	if (buf.flags & TPM_BUF_OVERFLOW) {
-@@ -613,8 +630,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		goto out;
- 	}
- 
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 4, flags,
--			      "loading blob");
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      4, 0, "loading blob");
-+	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
- 	if (!rc)
- 		*blob_handle = be32_to_cpup(
- 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
-@@ -635,7 +654,6 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-  * @payload: the key data in clear and encrypted form
-  * @options: authentication values and other options
-  * @blob_handle: blob handle
-- * @flags: tpm_transmit_cmd flags
-  *
-  * Return: 0 on success
-  *         -EPERM on tpm error status
-@@ -644,29 +662,55 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			   struct trusted_key_payload *payload,
- 			   struct trusted_key_options *options,
--			   u32 blob_handle, unsigned int flags)
-+			   u32 blob_handle)
- {
- 	struct tpm_buf buf;
-+	struct tpm2_auth *auth;
- 	u16 data_len;
- 	u8 *data;
- 	int rc;
- 	u32 rlength;
- 
--	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
-+	rc = tpm2_start_auth_session(chip, &auth);
- 	if (rc)
- 		return rc;
- 
--	tpm_buf_append_u32(&buf, blob_handle);
--	tpm2_buf_append_auth(&buf,
--			     options->policyhandle ?
--			     options->policyhandle : TPM2_RS_PW,
--			     NULL /* nonce */, 0,
--			     TPM2_SA_CONTINUE_SESSION,
--			     options->blobauth /* hmac */,
--			     TPM_DIGEST_SIZE);
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 6, flags,
--			      "unsealing");
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
-+	if (rc) {
-+		tpm2_end_auth_session(auth);
-+		return rc;
-+	}
-+
-+	tpm_buf_append_name(&buf, auth, blob_handle, NULL);
-+
-+	if (!options->policyhandle) {
-+		tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
-+					    options->blobauth, TPM_DIGEST_SIZE);
-+	} else {
-+		/*
-+		 * FIXME: the policy can't be used for HMAC protection
-+		 * of the authorization because it must be generated
-+		 * with the initial nonces which isn't passed in, so
-+		 * append a second encryption session to at least HMAC
-+		 * protect the command and encrypt the sealed blob on
-+		 * return so the only thing the attacker can get is
-+		 * the password.
-+		 *
-+		 * We also consume the policy session otherwise it
-+		 * would be absorbed into the kernel space.
-+		 */
-+		tpm2_buf_append_auth(&buf, options->policyhandle,
-+				     NULL /* nonce */, 0, 0,
-+				     options->blobauth /* hmac */,
-+				     TPM_DIGEST_SIZE);
-+		tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
-+					    NULL, 0);
-+	}
-+
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      6, 0, "unsealing");
-+	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
- 	if (rc > 0)
- 		rc = -EPERM;
- 
-@@ -712,17 +756,13 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 	u32 blob_handle;
- 	int rc;
- 
--	mutex_lock(&chip->tpm_mutex);
--	rc = tpm2_load_cmd(chip, payload, options, &blob_handle,
--			   TPM_TRANSMIT_UNLOCKED);
-+	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
- 	if (rc)
- 		goto out;
- 
--	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle,
--			     TPM_TRANSMIT_UNLOCKED);
--	tpm2_flush_context_cmd(chip, blob_handle, TPM_TRANSMIT_UNLOCKED);
-+	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
-+	tpm2_flush_context_cmd(chip, blob_handle, 0);
- out:
--	mutex_unlock(&chip->tpm_mutex);
- 	return rc;
  }
++EXPORT_SYMBOL_GPL(tpm2_flush_context_cmd);
  
+ /**
+  * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+@@ -448,6 +449,7 @@ void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
+ 	if (hmac && hmac_len)
+ 		tpm_buf_append(buf, hmac, hmac_len);
+ }
++EXPORT_SYMBOL_GPL(tpm2_buf_append_auth);
+ 
+ /**
+  * tpm2_seal_trusted() - seal the payload of a trusted key
+diff --git a/drivers/char/tpm/tpm2-sessions-test.c b/drivers/char/tpm/tpm2-sessions-test.c
+new file mode 100644
+index 000000000000..4559e1a5f4d8
+--- /dev/null
++++ b/drivers/char/tpm/tpm2-sessions-test.c
+@@ -0,0 +1,359 @@
++/* run a set of tests of the sessions code */
++#include "tpm.h"
++#include "tpm2-sessions.h"
++
++#include <linux/random.h>
++
++#include <asm/unaligned.h>
++
++/* simple policy: command code must be TPM2_CC_UNSEAL */
++static u8 policy[] = {
++	0xe6, 0x13, 0x13, 0x70, 0x76, 0x52, 0x4b, 0xde,
++	0x48, 0x75, 0x33, 0x86, 0x58, 0x84, 0xe9, 0x73,
++	0x2e, 0xbe, 0xe3, 0xaa, 0xcb, 0x09, 0x5d, 0x94,
++	0xa6, 0xde, 0x49, 0x2e, 0xc0, 0x6c, 0x46, 0xfa,
++};
++
++static u32 get_policy(struct tpm_chip *chip)
++{
++	struct tpm_buf buf;
++	u8 nonce[SHA256_DIGEST_SIZE];
++	u32 h;
++	int rc;
++
++	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_START_AUTH_SESS);
++	if (rc)
++		return 0;
++
++	/* salt key */
++	tpm_buf_append_u32(&buf, TPM2_RH_NULL);
++	/* bind key */
++	tpm_buf_append_u32(&buf, TPM2_RH_NULL);
++	/* zero nonce */
++	memset(nonce, 0, sizeof(nonce));
++	tpm_buf_append_u16(&buf, sizeof(nonce));
++	tpm_buf_append(&buf, nonce, sizeof(nonce));
++	/* encrypted salt (empty) */
++	tpm_buf_append_u16(&buf, 0);
++	/* session type (HMAC, audit or policy) */
++	tpm_buf_append_u8(&buf, TPM2_SE_POLICY);
++	/* symmetric encryption parameters */
++	/* symmetric algorithm */
++	tpm_buf_append_u16(&buf, TPM2_ALG_NULL);
++
++	/* hash algorithm for session */
++	tpm_buf_append_u16(&buf, TPM2_ALG_SHA256);
++
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
++			      0, 0, "start policy session");
++
++	h = get_unaligned_be32(&buf.data[TPM_HEADER_SIZE]);
++
++	tpm_buf_reset_cmd(&buf, TPM2_ST_NO_SESSIONS,
++			  TPM2_CC_POLICY_COMMAND_CODE);
++	tpm_buf_append_u32(&buf, h);
++	tpm_buf_append_u32(&buf, TPM2_CC_UNSEAL);
++
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
++			      0, 0, "start policy session");
++
++	return h;
++}
++
++int tpm2_sessions_test(void)
++{
++	struct tpm2_auth *auth;
++	struct tpm_buf buf, b1;
++	struct tpm_buf t2b;
++	struct tpm_chip *chip;
++	int rc;
++	char payload[29];
++	char *password = "Passw0Rd";
++	const u8 *p;
++	u32 h, ps;
++	u8 name[34];
++	u16 len;
++	int ret = -EINVAL;
++
++	chip = tpm_chip_find_get(NULL);
++	if (!chip)
++		return -ENODEV;
++
++	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
++		return -ENODEV;
++
++	get_random_bytes(payload, sizeof(payload));
++
++	/* precursor: get a session */
++	rc = tpm2_start_auth_session(chip, &auth);
++	dev_info(&chip->dev, "TPM: start auth session returned %d\n", rc);
++	if (rc)
++		goto out;
++
++	/* first test: get random bytes from TPM */
++	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_GET_RANDOM);
++	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT
++				    | TPM2_SA_CONTINUE_SESSION, NULL, 0);
++	tpm_buf_append_u16(&buf, 29);
++	tpm_buf_fill_hmac_session(&buf, auth);
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
++			      0, 0, "get random");
++	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
++	dev_info(&chip->dev, "TPM: check hmac response returned %d\n", rc);
++	tpm_buf_destroy(&buf);
++
++	/*
++	 * second test, seal random data protecting sensitive by
++	 * encryption and also doing response encryption (not
++	 * necessary) The encrypted payload has two components: an
++	 * authorization password which must be presented on useal and
++	 * the actual data (the random payload)
++	 */
++	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
++	tpm_buf_append_name(&buf, auth, chip->tpmkey, chip->tpmkeyname);
++	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_DECRYPT
++				    | TPM2_SA_ENCRYPT
++				    | TPM2_SA_CONTINUE_SESSION, NULL, 0);
++	/* sensitive */
++	tpm_buf_init_2b(&t2b);
++	/* the authorization */
++	tpm_buf_append_u16(&t2b, strlen(password));
++	tpm_buf_append(&t2b, password, strlen(password));
++	/* the payload */
++	tpm_buf_append_u16(&t2b, sizeof(payload));
++	tpm_buf_append(&t2b, payload, sizeof(payload));
++	tpm_buf_append_2b(&buf, &t2b);
++	/* the public */
++	/* type */
++	tpm_buf_append_u16(&t2b, TPM2_ALG_KEYEDHASH);
++	/* name hash */
++	tpm_buf_append_u16(&t2b, TPM2_ALG_SHA256);
++	/* object properties */
++	tpm_buf_append_u32(&t2b, TPM2_OA_USER_WITH_AUTH | TPM2_OA_NO_DA);
++	/* auth policy (empty) */
++	tpm_buf_append_u16(&t2b, 0);
++	/* keyed hash parameters (we're null for a non-HMAC data blob) */
++	tpm_buf_append_u16(&t2b, TPM2_ALG_NULL);
++	/* unique */
++	tpm_buf_append_u16(&t2b, 0);
++	tpm_buf_append_2b(&buf, &t2b);
++	/* outside info (also empty) */
++	tpm_buf_append_u16(&buf, 0);
++	/* creation PCR (empty) */
++	tpm_buf_append_u32(&buf, 0);
++	tpm_buf_fill_hmac_session(&buf, auth);
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
++			      4, 0, "sealing data");
++	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
++	dev_info(&chip->dev, "TPM: sealing response returned %d\n", rc);
++	if (rc)
++		goto out;
++
++	/*
++	 * now load the sealed object (we need the pub and priv parts
++	 * returned from prior command
++	 */
++	tpm_buf_init(&b1, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
++	/* parent */
++	tpm_buf_append_name(&b1, auth, chip->tpmkey, chip->tpmkeyname);
++	tpm_buf_append_hmac_session(&b1, auth, TPM2_SA_CONTINUE_SESSION,
++				    NULL, 0);
++	p = &buf.data[TPM_HEADER_SIZE+4];
++	/* private */
++	len = tpm_get_inc_u16(&p);
++	tpm_buf_append_u16(&b1, len);
++	tpm_buf_append(&b1, p, len);
++	p += len;
++	/* public */
++	len = tpm_get_inc_u16(&p);
++	tpm_buf_append_u16(&b1, len);
++	tpm_buf_append(&b1, p, len);
++	tpm_buf_fill_hmac_session(&b1, auth);
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, b1.data, PAGE_SIZE,
++			      4, 0, "loading seal");
++	rc = tpm_buf_check_hmac_response(&b1, auth, rc);
++	dev_info(&chip->dev, "TPM: load response returned %d\n", rc);
++	if (rc)
++		goto out;
++	p = &b1.data[TPM_HEADER_SIZE];
++	h = tpm_get_inc_u32(&p);
++	dev_info(&chip->dev, "sealed data loaded at %08x\n", h);
++	/* skip over parameter size */
++	p += 4;
++	len = tpm_get_inc_u16(&p);
++	if (len != sizeof(name)) {
++		dev_err(&chip->dev, "Wrong name size %d\n", len);
++		goto out;
++	}
++	memcpy(name, p, len);
++	tpm_buf_destroy(&b1);
++	tpm_buf_destroy(&buf);
++
++	/*
++	 * now unseal the data using the authority in a HMAC and
++	 * protecting the returned unseal by encryption
++	 */
++	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
++	tpm_buf_append_name(&buf, auth, h, name);
++	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
++				    password, strlen(password));
++	tpm_buf_fill_hmac_session(&buf, auth);
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
++			      4, 0, "unseal");
++	tpm_buf_check_hmac_response(&buf, auth, rc);
++	tpm2_flush_context_cmd(chip, h, 0);
++	dev_info(&chip->dev, "unseal returns %d\n", rc);
++	if (rc)
++		goto out;
++	p = &buf.data[TPM_HEADER_SIZE + 4];
++	len = tpm_get_inc_u16(&p);
++	if (len != sizeof(payload)) {
++		dev_err(&chip->dev, "wrong unseal payload size %d != %ld",
++			len, sizeof(payload));
++		goto out;
++	}
++	if (memcmp(payload, p, len) != 0) {
++		dev_err(&chip->dev, "Payload DID NOT compare correctly\n");
++		goto out;
++	}
++
++	/*
++	 * third test, seal random data protecting sensitive by
++	 * encryption and also doing response encryption (not
++	 * necessary) The encrypted payload has two components: an
++	 * authorization password which must be presented on useal and
++	 * the actual data (the random payload)
++	 *
++	 * For this test use a policy to release the data testing that
++	 * we can have two sessions
++	 */
++	get_random_bytes(payload, sizeof(payload));
++	/* auth session should be closed, so get a new one */
++	rc = tpm2_start_auth_session(chip, &auth);
++	if (rc) {
++		dev_err(&chip->dev, "new auth session failed: %d\n", rc);
++		goto out;
++	}
++
++	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
++	tpm_buf_append_name(&buf, auth, chip->tpmkey, chip->tpmkeyname);
++	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_DECRYPT
++				    | TPM2_SA_ENCRYPT
++				    | TPM2_SA_CONTINUE_SESSION, NULL, 0);
++	/* sensitive */
++	tpm_buf_init_2b(&t2b);
++	/* the authorization */
++	tpm_buf_append_u16(&t2b, 0);
++	/* the payload */
++	tpm_buf_append_u16(&t2b, sizeof(payload));
++	tpm_buf_append(&t2b, payload, sizeof(payload));
++	tpm_buf_append_2b(&buf, &t2b);
++	/* the public */
++	/* type */
++	tpm_buf_append_u16(&t2b, TPM2_ALG_KEYEDHASH);
++	/* name hash */
++	tpm_buf_append_u16(&t2b, TPM2_ALG_SHA256);
++	/* object properties */
++	tpm_buf_append_u32(&t2b, TPM2_OA_USER_WITH_AUTH | TPM2_OA_NO_DA);
++	/* auth policy (specific to command code) */
++	tpm_buf_append_u16(&t2b, sizeof(policy));
++	tpm_buf_append(&t2b, policy, sizeof(policy));
++	/* keyed hash parameters (we're null for a non-HMAC data blob) */
++	tpm_buf_append_u16(&t2b, TPM2_ALG_NULL);
++	/* unique */
++	tpm_buf_append_u16(&t2b, 0);
++	tpm_buf_append_2b(&buf, &t2b);
++	/* outside info (also empty) */
++	tpm_buf_append_u16(&buf, 0);
++	/* creation PCR (empty) */
++	tpm_buf_append_u32(&buf, 0);
++	tpm_buf_fill_hmac_session(&buf, auth);
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
++			      4, 0, "sealing data");
++	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
++	dev_info(&chip->dev, "policy sealing response returned %d\n", rc);
++	if (rc)
++		goto out;
++
++	/*
++	 * now load the sealed object (we need the pub and priv parts
++	 * returned from prior command
++	 */
++	tpm_buf_init(&b1, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
++	/* parent */
++	tpm_buf_append_name(&b1, auth, chip->tpmkey, chip->tpmkeyname);
++	tpm_buf_append_hmac_session(&b1, auth, TPM2_SA_CONTINUE_SESSION,
++				    NULL, 0);
++	p = &buf.data[TPM_HEADER_SIZE+4];
++	/* private */
++	len = tpm_get_inc_u16(&p);
++	tpm_buf_append_u16(&b1, len);
++	tpm_buf_append(&b1, p, len);
++	p += len;
++	/* public */
++	len = tpm_get_inc_u16(&p);
++	tpm_buf_append_u16(&b1, len);
++	tpm_buf_append(&b1, p, len);
++	tpm_buf_fill_hmac_session(&b1, auth);
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, b1.data, PAGE_SIZE,
++			      4, 0, "loading seal");
++	rc = tpm_buf_check_hmac_response(&b1, auth, rc);
++	dev_info(&chip->dev, "TPM: load response returned %d\n", rc);
++	if (rc)
++		goto out;
++	p = &b1.data[TPM_HEADER_SIZE];
++	h = tpm_get_inc_u32(&p);
++	dev_info(&chip->dev, "sealed data loaded at %08x\n", h);
++	/* skip over parameter size */
++	p += 4;
++	len = tpm_get_inc_u16(&p);
++	if (len != sizeof(name)) {
++		dev_err(&chip->dev, "Wrong name size %d\n", len);
++		goto out;
++	}
++	memcpy(name, p, len);
++	tpm_buf_destroy(&b1);
++	tpm_buf_destroy(&buf);
++
++	/* now get a policy session */
++	ps = get_policy(chip);
++	/*
++	 * now unseal the data using the authority in a HMAC and
++	 * protecting the returned unseal by encryption
++	 */
++	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
++	tpm_buf_append_name(&buf, auth, h, name);
++	tpm2_buf_append_auth(&buf, ps, NULL, 0, 0, NULL, 0);
++	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
++				    NULL, 0);
++	tpm_buf_fill_hmac_session(&buf, auth);
++	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
++			      4, 0, "unseal");
++	tpm_buf_check_hmac_response(&buf, auth, rc);
++	dev_info(&chip->dev, "unseal returns %d\n", rc);
++	if (rc)
++		goto out;
++	p = &buf.data[TPM_HEADER_SIZE + 4];
++	len = tpm_get_inc_u16(&p);
++	if (len != sizeof(payload)) {
++		dev_err(&chip->dev, "wrong unseal payload size %d != %ld",
++			len, sizeof(payload));
++		goto out;
++	}
++	if (memcmp(payload, p, len) != 0) {
++		dev_err(&chip->dev, "Payload DID NOT compare correctly\n");
++		goto out;
++	}
++
++	dev_info(&chip->dev, "All tests passed\n");
++	ret = 0;
++
++ out:
++	tpm_put_ops(chip);
++
++	return ret;
++}
++
++module_init(tpm2_sessions_test);
++
++MODULE_LICENSE("GPL");
 -- 
 2.12.3
 --
