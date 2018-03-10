@@ -1,69 +1,70 @@
 From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Sat, 10 Mar 2018 10:29:40 -0800
-Subject: [RFC 0/5] add integrity and security to TPM2 transactions
-In-Reply-To: <18e2f4debbbc05ed4169d3eb263479df91941aa0.camel@linux.intel.com>
-References: <1520465374.4894.12.camel@HansenPartnership.com>
-	<18e2f4debbbc05ed4169d3eb263479df91941aa0.camel@linux.intel.com>
-Message-ID: <1520706580.4495.4.camel@HansenPartnership.com>
+Date: Sat, 10 Mar 2018 14:13:46 -0800
+Subject: [PATCH v3 0/6] add integrity and security to TPM2 transactions
+Message-ID: <1520720026.4495.11.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2018-03-10 at 14:49 +0200, Jarkko Sakkinen wrote:
-> On Wed, 2018-03-07 at 15:29 -0800, James Bottomley wrote:
-> > 
-> > By now, everybody knows we have a problem with the TPM2_RS_PW easy
-> > button on TPM2 in that transactions on the TPM bus can be
-> > intercepted
-> > and altered.??The way to fix this is to use real sessions for HMAC
-> > capabilities to ensure integrity and to use parameter and response
-> > encryption to ensure confidentiality of the data flowing over the
-> > TPM
-> > bus.
-> > 
-> > This RFC is about adding a simple API which can ensure the above
-> > properties as a layered addition to the existing TPM handling code.
-> > ?Eventually we can add this to the random number generator, the PCR
-> > extensions and the trusted key handling, but this all depends on
-> > the
-> > conversion to tpm_buf which is not yet upstream, so I've
-> > constructed a
-> > second patch which demonstrates the new API in a test module for
-> > those
-> > who wish to play with it.
-> > 
-> > This series is also dependent on additions to the crypto subsystem
-> > to
-> > fix problems in the elliptic curve key handling and add the Cipher
-> > FeedBack encryption scheme:
-> > 
-> > https://marc.info/?l=linux-crypto-vger&m=151994371015475
-> > 
-> > In the second version, I added security HMAC to our PCR extend and
-> > encryption to the returned random number generators and also
-> > extracted
-> > the parsing and tpm2b construction API into a new file.
-> > 
-> > James
-> 
-> Might take up until end of next week before I have time to try this
-> out.Anyway, I'll see if I get this running on my systems before at
-> the code that much.
+By now, everybody knows we have a problem with the TPM2_RS_PW easy
+button on TPM2 in that transactions on the TPM bus can be intercepted
+and altered. ?The way to fix this is to use real sessions for HMAC
+capabilities to ensure integrity and to use parameter and response
+encryption to ensure confidentiality of the data flowing over the TPM
+bus.
 
-OK, you might want to wait for v3 then. ?I've got it working with
-sealed (trusted) keys, well except for a problem with the trusted keys
-API that means we can't protect the password for policy based keys. ?I
-think the API is finally complete, so I'll send v3 as a PATCH not an
-RFC.
+This patch series is about adding a simple API which can ensure the
+above properties as a layered addition to the existing TPM handling
+code. ?This series now includes protections for PCR extend, getting
+random numbers from the TPM and data sealing and unsealing. ?It
+therefore eliminates all uses of TPM2_RS_PW in the kernel and adds
+encryption protection to sensitive data flowing into and out of the
+TPM.
 
-The point of the last patch is to show the test rig for this I'm
-running in a VM using an instrumented tpm2 emulator to prove we're
-getting all the correct data in and out (and that the encryption and
-hmac are working); more physical TPM testing would be useful ..
+This series is also dependent on additions to the crypto subsystem to
+fix problems in the elliptic curve key handling and add the Cipher
+FeedBack encryption scheme:
 
-Thanks,
+https://marc.info/?l=linux-crypto-vger&m=151994371015475
+
+In the third version I've added data sealing and unsealing protection,
+apart from one API based problem which means that the way trusted keys
+were protected it's not currently possible to HMAC protect an authority
+that comes with a policy, so the API will have to be extended to fix
+that case
+
+I've verified this using the test suite in the last patch on a VM
+connected to a tpm2 emulator. ?I also instrumented the emulator to make
+sure the sensitive data was properly encrypted.
 
 James
 
+---
+
+James Bottomley (6):
+  tpm-buf: create new functions for handling TPM buffers
+  tpm2-sessions: Add full HMAC and encrypt/decrypt session handling
+  tpm2: add hmac checks to tpm2_pcr_extend()
+  tpm2: add session encryption protection to tpm2_get_random()
+  trusted keys: Add session encryption protection to the seal/unseal path
+  tpm2-sessions: NOT FOR COMMITTING add sessions testing
+
+ drivers/char/tpm/Kconfig              |    3 +
+ drivers/char/tpm/Makefile             |    3 +-
+ drivers/char/tpm/tpm-buf.c            |  191 ++++++
+ drivers/char/tpm/tpm-chip.c           |    1 +
+ drivers/char/tpm/tpm.h                |  123 ++--
+ drivers/char/tpm/tpm2-cmd.c           |  298 +++++----
+ drivers/char/tpm/tpm2-sessions-test.c |  359 ++++++++++
+ drivers/char/tpm/tpm2-sessions.c      | 1166 +++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-sessions.h      |   57 ++
+ 9 files changed, 1993 insertions(+), 208 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm-buf.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions-test.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions.h
+
+-- 
+2.12.3
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
