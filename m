@@ -1,175 +1,75 @@
-From: kamensky@cisco.com (Victor Kamensky)
-Date: Sat, 10 Mar 2018 19:08:13 -0800 (PST)
-Subject: [PATCH v3 15/15] selinux: delay sid population for rootfs till
-	init is complete
-In-Reply-To: <1519152994.14218.15.camel@tycho.nsa.gov>
-References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-	<1518813234-5874-19-git-send-email-takondra@cisco.com>
-	<1519152994.14218.15.camel@tycho.nsa.gov>
-Message-ID: <alpine.LRH.2.00.1803101900250.24419@sjc-ads-6991.cisco.com>
+From: jlee@suse.com (joeyli)
+Date: Sun, 11 Mar 2018 11:20:22 +0800
+Subject: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
+In-Reply-To: <1520436517.5558.2.camel@HansenPartnership.com>
+References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
+	<6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
+	<1520428682.10396.445.camel@linux.vnet.ibm.com>
+	<1520436517.5558.2.camel@HansenPartnership.com>
+Message-ID: <20180311032022.GA31059@linux-l9pv.suse>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On Tue, 20 Feb 2018, Stephen Smalley wrote:
-
-> On Fri, 2018-02-16 at 20:33 +0000, Taras Kondratiuk wrote:
->> From: Victor Kamensky <kamensky@cisco.com>
->>
->> With initramfs cpio format that supports extended attributes
->> we need to skip sid population on sys_lsetxattr call from
->> initramfs for rootfs if security server is not initialized yet.
->>
->> Otherwise callback in selinux_inode_post_setxattr will try to
->> translate give security.selinux label into sid context and since
->> security server is not available yet inode will receive default
->> sid (typically kernel_t). Note that in the same time proper
->> label will be stored in inode xattrs. Later, since inode sid
->> would be already populated system will never look back at
->> actual xattrs. But if we skip sid population for rootfs and
->> we have policy that direct use of xattrs for rootfs, proper
->> sid will be filled in from extended attributes one node is
->> accessed and server is initialized.
->>
->> Note new DELAYAFTERINIT_MNT super block flag is introduced
->> to only mark rootfs for such behavior. For other types of
->> tmpfs original logic is still used.
+On Wed, Mar 07, 2018 at 07:28:37AM -0800, James Bottomley wrote:
+> On Wed, 2018-03-07 at 08:18 -0500, Mimi Zohar wrote:
+> > On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
+> > > what's the status of this please? Distributors (I checked SUSE,
+> > > RedHat and Ubuntu) have to carry these patches and every of them
+> > > have to forward-port the patches to new kernels. So are you going
+> > > to resend the PR to have this merged?
+> [...]
+> > Just because I trust the platform keys prior to booting the kernel,
+> > doesn't mean that I *want* to trust those keys once booted. ?There
+> > are, however, places where we need access to those keys to verify a
+> > signature (eg. kexec kernel image).
+> 
+> Which is essentially the reason I always give when these patches come
+> back
 >
-> (cc selinux maintainers)
+
+Josh Boyer's "MODSIGN: Allow the "db" UEFI variable to be suppressed"
+patch checks MokIgnoreDB variable to ignore db:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=keys-uefi&id=7c395b30a33a617c5cc2cdd419300af71277b79a
+
+I think that we can consider to use MokAllowDB. Which means that kernel
+ignores DB by default.
+
+> > Nayna Jain's "certs: define a trusted platform keyring" patch set
+> > introduces a new, separate keyring for these platform keys.
+> 
+> Perhaps, to break the deadlock, we should ask Ji?? what the reason is
+> the distros want these keys to be trusted. ?Apart from the Microsoft
+> key, it will also give you an OEM key in your trusted keyring. ?Is it
+> something to do with OEM supplied modules?
 >
-> Wondering if we shouldn't just do this always, for all filesystem
-> types.
 
-Ok, I think it makes sense. The one that do not support xattrs
-will not reach selinux_inode_post_setxattr anyway. And try
-to cache sid while !ss_initialized is not good idea for any
-filesystem types.
+As I remember that some manufacturers uses certificate in db to
+sign their kernel module. We need to discuss with them for switching
+to mok. Currently I do not know all use cases for using db.
 
-> Also, I think this should likely also be done in
-> selinux_inode_setsecurity() for consistency.
+There have some benefits for using db:
 
-I am not sure that I follow selinux_inode_setsecurity suggestion.
-selinux_inode_setsecurity is about permission check. And
-selinux_inode_post_setxattr deals with processing and setting
-side effects if xattr was "security.selinux", it does not
-matter what happens in selinux_inode_setsecurity if it
-returns access_ok, LSM will still call selinux_inode_post_setxattr
-and we would need to check and not produce any sid caching
-side effects if !ss_initialized.
+ - User does not need to deal with shim-mokmanager to enroll mok.
+   Target machine doesn't need to reboot and user doesn't need to
+   face to mokmanager UI.  
 
-Sitll keeping logic in selinux_inode_post_setxattr, checked
-that the following with much simple code works too:
+ - The db is a authenticated variable, it's still secure when secure
+   boot is disabled.
+   The db is a authenticated variable that it can only be modified
+   by manufacturer's key. Kernel can trust it when secure boot
+   is disabled. It's useful for we do not need to taint kernel
+   for loading a manufacturer's kernel module even secure boot is
+   disabled.
 
->From bfc54e4805f3059671417ff2cda1266bc68e18f9 Mon Sep 17 00:00:00 2001
-From: Victor Kamensky <kamensky@cisco.com>
-Date: Fri, 9 Mar 2018 23:06:08 -0800
-Subject: [PATCH 2/2] selinux: delay sid population in setxattr till policy
-  loaded
+ - Do not need to worry about the space of NVRAM and the EFI firmware
+   implementation for writing a boot time variable.
+  
+But I also agree that we should not trust all keys (like Microsoft key)
+in db by default.
 
-With initramfs cpio format that supports extended attributes
-we need to skip sid population on sys_lsetxattr call from
-initramfs for rootfs if security server is not initialized yet.
-
-Otherwise callback in selinux_inode_post_setxattr will try to
-translate give security.selinux label into sid context and since
-security server is not available yet inode will receive default
-sid (typically kernel_t). Note that in the same time proper
-label will be stored in inode xattrs. Later, since inode sid
-would be already populated system will never look back at
-actual xattrs. But if we skip sid population for rootfs and
-we have policy that direct use of xattrs for rootfs, proper
-sid will be filled in from extended attributes one node is
-accessed and server is initialized.
-
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
----
-  security/selinux/hooks.c | 4 ++++
-  1 file changed, 4 insertions(+)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 31303ed..4c13759 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3197,6 +3197,10 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
-  		return;
-  	}
-
-+        if (!ss_initialized) {
-+                return;
-+        }
-+
-  	rc = security_context_to_sid_force(value, size, &newsid);
-  	if (rc) {
-  		printk(KERN_ERR "SELinux:  unable to map context to SID"
--- 
-2.7.4
-
-Thanks,
-Victor
-
->>
->> Signed-off-by: Victor Kamensky <kamensky@cisco.com>
->> ---
->>  security/selinux/hooks.c            | 9 ++++++++-
->>  security/selinux/include/security.h | 1 +
->>  2 files changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index f3fe65589f02..bb25268f734e 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -716,7 +716,7 @@ static int selinux_set_mnt_opts(struct
->> super_block *sb,
->>  			 */
->>  			if (!strncmp(sb->s_type->name, "rootfs",
->>  				     sizeof("rootfs")))
->> -				sbsec->flags |= SBLABEL_MNT;
->> +				sbsec->flags |=
->> SBLABEL_MNT|DELAYAFTERINIT_MNT;
->>
->>  			/* Defer initialization until
->> selinux_complete_init,
->>  			   after the initial policy is loaded and
->> the security
->> @@ -3253,6 +3253,7 @@ static void selinux_inode_post_setxattr(struct
->> dentry *dentry, const char *name,
->>  {
->>  	struct inode *inode = d_backing_inode(dentry);
->>  	struct inode_security_struct *isec;
->> +	struct superblock_security_struct *sbsec;
->>  	u32 newsid;
->>  	int rc;
->>
->> @@ -3261,6 +3262,12 @@ static void selinux_inode_post_setxattr(struct
->> dentry *dentry, const char *name,
->>  		return;
->>  	}
->>
->> +	if (!ss_initialized) {
->> +		sbsec = inode->i_sb->s_security;
->> +		if (sbsec->flags & DELAYAFTERINIT_MNT)
->> +			return;
->> +	}
->> +
->>  	rc = security_context_to_sid_force(value, size, &newsid);
->>  	if (rc) {
->>  		printk(KERN_ERR "SELinux:  unable to map context to
->> SID"
->> diff --git a/security/selinux/include/security.h
->> b/security/selinux/include/security.h
->> index 02f0412d42f2..585acfd6cbcf 100644
->> --- a/security/selinux/include/security.h
->> +++ b/security/selinux/include/security.h
->> @@ -52,6 +52,7 @@
->>  #define ROOTCONTEXT_MNT	0x04
->>  #define DEFCONTEXT_MNT	0x08
->>  #define SBLABEL_MNT	0x10
->> +#define DELAYAFTERINIT_MNT 0x20
->>  /* Non-mount related flags */
->>  #define SE_SBINITIALIZED	0x0100
->>  #define SE_SBPROC		0x0200
->
+Thanks a lot!
+Joey Lee
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
