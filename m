@@ -1,455 +1,172 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Sat, 10 Mar 2018 14:20:19 -0800
-Subject: [PATCH v3 6/6] tpm2-sessions: NOT FOR COMMITTING add sessions testing
-In-Reply-To: <1520720026.4495.11.camel@HansenPartnership.com>
-References: <1520720026.4495.11.camel@HansenPartnership.com>
-Message-ID: <1520720419.4495.20.camel@HansenPartnership.com>
+From: kamensky@cisco.com (Victor Kamensky)
+Date: Sat, 10 Mar 2018 19:07:18 -0800 (PST)
+Subject: [PATCH v3 14/15] selinux: allow setxattr on rootfs so initramfs
+	code can set them
+In-Reply-To: <1519153284.14218.18.camel@tycho.nsa.gov>
+References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
+	<1518813234-5874-17-git-send-email-takondra@cisco.com>
+	<1519153284.14218.18.camel@tycho.nsa.gov>
+Message-ID: <alpine.LRH.2.00.1803101848580.24419@sjc-ads-6991.cisco.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This runs through a preset sequence using sessions to demonstrate that
-the session handling code functions.  It does both HMAC, encryption
-and decryption by testing an encrypted sealing operation with
-authority and proving that the same sealed data comes back again via
-an HMAC and response encryption.  It also does policy unsealing which
-mimics the more complex of the trusted key scenarios.
 
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
+On Tue, 20 Feb 2018, Stephen Smalley wrote:
+
+> On Fri, 2018-02-16 at 20:33 +0000, Taras Kondratiuk wrote:
+>> From: Victor Kamensky <kamensky@cisco.com>
+>>
+>> initramfs code supporting extended cpio format have ability to
+>> fill extended attributes from cpio archive, but if SELinux enabled
+>> and security server is not initialized yet, selinux callback would
+>> refuse setxattr made by initramfs code.
+>>
+>> Solution enable SBLABEL_MNT on rootfs even if secrurity server is
+>> not initialized yet.
+>
+> What if we were to instead skip the SBLABEL_MNT check in
+> selinux_inode_setxattr() if !ss_initialized?  Not dependent on
+> filesystem type.
+
+Stephen, thank you for looking into this. Sorry, for dealyed reponse -
+I needed to find time to require context about these changes.
+
+As you suggested I've tried this and it works:
+
+>From 6bf35bd055fdb12e94f3d5188eccfdbaa30dbcf4 Mon Sep 17 00:00:00 2001
+From: Victor Kamensky <kamensky@cisco.com>
+Date: Fri, 9 Mar 2018 23:01:20 -0800
+Subject: [PATCH 1/2] selinux: allow setxattr on file systems if policy is not
+  loaded
+
+initramfs code supporting extended cpio format have ability to
+fill extended attributes from cpio archive, but if SELinux enabled
+and security server is not initialized yet, selinux callback would
+refuse setxattr made by initramfs code because file system is not
+yet marked as one that support labeling (SBLABEL_MNT flag).
+
+Solution do not refuse setxattr even if SBLABEL_MNT is not set
+for file systems when policy is not loaded yet.
+
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 ---
-v3: add policy unseal testing with two sessions
----
- drivers/char/tpm/Makefile             |   1 +
- drivers/char/tpm/tpm-chip.c           |   1 +
- drivers/char/tpm/tpm.h                |   1 +
- drivers/char/tpm/tpm2-cmd.c           |   2 +
- drivers/char/tpm/tpm2-sessions-test.c | 359 ++++++++++++++++++++++++++++++++++
- 5 files changed, 364 insertions(+)
- create mode 100644 drivers/char/tpm/tpm2-sessions-test.c
+  security/selinux/hooks.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index b83737ccaa81..1ac7a4046630 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_TCG_TPM) += tpm.o
- tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
- 	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o \
-          tpm2-space.o tpm-buf.o tpm2-sessions.o
-+obj-m +=  tpm2-sessions-test.o
- tpm-$(CONFIG_ACPI) += tpm_ppi.o tpm_eventlog_acpi.o
- tpm-$(CONFIG_EFI) += tpm_eventlog_efi.o
- tpm-$(CONFIG_OF) += tpm_eventlog_of.o
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0a62c19937b6..ca174ee1e670 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -118,6 +118,7 @@ struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
- 
- 	return res;
- }
-+EXPORT_SYMBOL(tpm_chip_find_get);
- 
- /**
-  * tpm_dev_release() - free chip memory and the device number
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index b1eee56cbbb5..8a652d36939d 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -146,6 +146,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_CONTEXT_LOAD	= 0x0161,
- 	TPM2_CC_CONTEXT_SAVE	= 0x0162,
- 	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
-+	TPM2_CC_POLICY_COMMAND_CODE = 0x16c,
- 	TPM2_CC_READ_PUBLIC	= 0x0173,
- 	TPM2_CC_START_AUTH_SESS	= 0x0176,
- 	TPM2_CC_GET_CAPABILITY	= 0x017A,
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 8b164b7347de..3f47d8b3d361 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -418,6 +418,7 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 
- 	tpm_buf_destroy(&buf);
- }
-+EXPORT_SYMBOL_GPL(tpm2_flush_context_cmd);
- 
- /**
-  * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
-@@ -448,6 +449,7 @@ void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
- 	if (hmac && hmac_len)
- 		tpm_buf_append(buf, hmac, hmac_len);
- }
-+EXPORT_SYMBOL_GPL(tpm2_buf_append_auth);
- 
- /**
-  * tpm2_seal_trusted() - seal the payload of a trusted key
-diff --git a/drivers/char/tpm/tpm2-sessions-test.c b/drivers/char/tpm/tpm2-sessions-test.c
-new file mode 100644
-index 000000000000..4559e1a5f4d8
---- /dev/null
-+++ b/drivers/char/tpm/tpm2-sessions-test.c
-@@ -0,0 +1,359 @@
-+/* run a set of tests of the sessions code */
-+#include "tpm.h"
-+#include "tpm2-sessions.h"
-+
-+#include <linux/random.h>
-+
-+#include <asm/unaligned.h>
-+
-+/* simple policy: command code must be TPM2_CC_UNSEAL */
-+static u8 policy[] = {
-+	0xe6, 0x13, 0x13, 0x70, 0x76, 0x52, 0x4b, 0xde,
-+	0x48, 0x75, 0x33, 0x86, 0x58, 0x84, 0xe9, 0x73,
-+	0x2e, 0xbe, 0xe3, 0xaa, 0xcb, 0x09, 0x5d, 0x94,
-+	0xa6, 0xde, 0x49, 0x2e, 0xc0, 0x6c, 0x46, 0xfa,
-+};
-+
-+static u32 get_policy(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	u8 nonce[SHA256_DIGEST_SIZE];
-+	u32 h;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_START_AUTH_SESS);
-+	if (rc)
-+		return 0;
-+
-+	/* salt key */
-+	tpm_buf_append_u32(&buf, TPM2_RH_NULL);
-+	/* bind key */
-+	tpm_buf_append_u32(&buf, TPM2_RH_NULL);
-+	/* zero nonce */
-+	memset(nonce, 0, sizeof(nonce));
-+	tpm_buf_append_u16(&buf, sizeof(nonce));
-+	tpm_buf_append(&buf, nonce, sizeof(nonce));
-+	/* encrypted salt (empty) */
-+	tpm_buf_append_u16(&buf, 0);
-+	/* session type (HMAC, audit or policy) */
-+	tpm_buf_append_u8(&buf, TPM2_SE_POLICY);
-+	/* symmetric encryption parameters */
-+	/* symmetric algorithm */
-+	tpm_buf_append_u16(&buf, TPM2_ALG_NULL);
-+
-+	/* hash algorithm for session */
-+	tpm_buf_append_u16(&buf, TPM2_ALG_SHA256);
-+
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      0, 0, "start policy session");
-+
-+	h = get_unaligned_be32(&buf.data[TPM_HEADER_SIZE]);
-+
-+	tpm_buf_reset_cmd(&buf, TPM2_ST_NO_SESSIONS,
-+			  TPM2_CC_POLICY_COMMAND_CODE);
-+	tpm_buf_append_u32(&buf, h);
-+	tpm_buf_append_u32(&buf, TPM2_CC_UNSEAL);
-+
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      0, 0, "start policy session");
-+
-+	return h;
-+}
-+
-+int tpm2_sessions_test(void)
-+{
-+	struct tpm2_auth *auth;
-+	struct tpm_buf buf, b1;
-+	struct tpm_buf t2b;
-+	struct tpm_chip *chip;
-+	int rc;
-+	char payload[29];
-+	char *password = "Passw0Rd";
-+	const u8 *p;
-+	u32 h, ps;
-+	u8 name[34];
-+	u16 len;
-+	int ret = -EINVAL;
-+
-+	chip = tpm_chip_find_get(NULL);
-+	if (!chip)
-+		return -ENODEV;
-+
-+	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
-+		return -ENODEV;
-+
-+	get_random_bytes(payload, sizeof(payload));
-+
-+	/* precursor: get a session */
-+	rc = tpm2_start_auth_session(chip, &auth);
-+	dev_info(&chip->dev, "TPM: start auth session returned %d\n", rc);
-+	if (rc)
-+		goto out;
-+
-+	/* first test: get random bytes from TPM */
-+	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_GET_RANDOM);
-+	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT
-+				    | TPM2_SA_CONTINUE_SESSION, NULL, 0);
-+	tpm_buf_append_u16(&buf, 29);
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      0, 0, "get random");
-+	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
-+	dev_info(&chip->dev, "TPM: check hmac response returned %d\n", rc);
-+	tpm_buf_destroy(&buf);
-+
-+	/*
-+	 * second test, seal random data protecting sensitive by
-+	 * encryption and also doing response encryption (not
-+	 * necessary) The encrypted payload has two components: an
-+	 * authorization password which must be presented on useal and
-+	 * the actual data (the random payload)
-+	 */
-+	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
-+	tpm_buf_append_name(&buf, auth, chip->tpmkey, chip->tpmkeyname);
-+	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_DECRYPT
-+				    | TPM2_SA_ENCRYPT
-+				    | TPM2_SA_CONTINUE_SESSION, NULL, 0);
-+	/* sensitive */
-+	tpm_buf_init_2b(&t2b);
-+	/* the authorization */
-+	tpm_buf_append_u16(&t2b, strlen(password));
-+	tpm_buf_append(&t2b, password, strlen(password));
-+	/* the payload */
-+	tpm_buf_append_u16(&t2b, sizeof(payload));
-+	tpm_buf_append(&t2b, payload, sizeof(payload));
-+	tpm_buf_append_2b(&buf, &t2b);
-+	/* the public */
-+	/* type */
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_KEYEDHASH);
-+	/* name hash */
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_SHA256);
-+	/* object properties */
-+	tpm_buf_append_u32(&t2b, TPM2_OA_USER_WITH_AUTH | TPM2_OA_NO_DA);
-+	/* auth policy (empty) */
-+	tpm_buf_append_u16(&t2b, 0);
-+	/* keyed hash parameters (we're null for a non-HMAC data blob) */
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_NULL);
-+	/* unique */
-+	tpm_buf_append_u16(&t2b, 0);
-+	tpm_buf_append_2b(&buf, &t2b);
-+	/* outside info (also empty) */
-+	tpm_buf_append_u16(&buf, 0);
-+	/* creation PCR (empty) */
-+	tpm_buf_append_u32(&buf, 0);
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      4, 0, "sealing data");
-+	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
-+	dev_info(&chip->dev, "TPM: sealing response returned %d\n", rc);
-+	if (rc)
-+		goto out;
-+
-+	/*
-+	 * now load the sealed object (we need the pub and priv parts
-+	 * returned from prior command
-+	 */
-+	tpm_buf_init(&b1, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	/* parent */
-+	tpm_buf_append_name(&b1, auth, chip->tpmkey, chip->tpmkeyname);
-+	tpm_buf_append_hmac_session(&b1, auth, TPM2_SA_CONTINUE_SESSION,
-+				    NULL, 0);
-+	p = &buf.data[TPM_HEADER_SIZE+4];
-+	/* private */
-+	len = tpm_get_inc_u16(&p);
-+	tpm_buf_append_u16(&b1, len);
-+	tpm_buf_append(&b1, p, len);
-+	p += len;
-+	/* public */
-+	len = tpm_get_inc_u16(&p);
-+	tpm_buf_append_u16(&b1, len);
-+	tpm_buf_append(&b1, p, len);
-+	tpm_buf_fill_hmac_session(&b1, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, b1.data, PAGE_SIZE,
-+			      4, 0, "loading seal");
-+	rc = tpm_buf_check_hmac_response(&b1, auth, rc);
-+	dev_info(&chip->dev, "TPM: load response returned %d\n", rc);
-+	if (rc)
-+		goto out;
-+	p = &b1.data[TPM_HEADER_SIZE];
-+	h = tpm_get_inc_u32(&p);
-+	dev_info(&chip->dev, "sealed data loaded at %08x\n", h);
-+	/* skip over parameter size */
-+	p += 4;
-+	len = tpm_get_inc_u16(&p);
-+	if (len != sizeof(name)) {
-+		dev_err(&chip->dev, "Wrong name size %d\n", len);
-+		goto out;
-+	}
-+	memcpy(name, p, len);
-+	tpm_buf_destroy(&b1);
-+	tpm_buf_destroy(&buf);
-+
-+	/*
-+	 * now unseal the data using the authority in a HMAC and
-+	 * protecting the returned unseal by encryption
-+	 */
-+	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
-+	tpm_buf_append_name(&buf, auth, h, name);
-+	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
-+				    password, strlen(password));
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      4, 0, "unseal");
-+	tpm_buf_check_hmac_response(&buf, auth, rc);
-+	tpm2_flush_context_cmd(chip, h, 0);
-+	dev_info(&chip->dev, "unseal returns %d\n", rc);
-+	if (rc)
-+		goto out;
-+	p = &buf.data[TPM_HEADER_SIZE + 4];
-+	len = tpm_get_inc_u16(&p);
-+	if (len != sizeof(payload)) {
-+		dev_err(&chip->dev, "wrong unseal payload size %d != %ld",
-+			len, sizeof(payload));
-+		goto out;
-+	}
-+	if (memcmp(payload, p, len) != 0) {
-+		dev_err(&chip->dev, "Payload DID NOT compare correctly\n");
-+		goto out;
-+	}
-+
-+	/*
-+	 * third test, seal random data protecting sensitive by
-+	 * encryption and also doing response encryption (not
-+	 * necessary) The encrypted payload has two components: an
-+	 * authorization password which must be presented on useal and
-+	 * the actual data (the random payload)
-+	 *
-+	 * For this test use a policy to release the data testing that
-+	 * we can have two sessions
-+	 */
-+	get_random_bytes(payload, sizeof(payload));
-+	/* auth session should be closed, so get a new one */
-+	rc = tpm2_start_auth_session(chip, &auth);
-+	if (rc) {
-+		dev_err(&chip->dev, "new auth session failed: %d\n", rc);
-+		goto out;
-+	}
-+
-+	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
-+	tpm_buf_append_name(&buf, auth, chip->tpmkey, chip->tpmkeyname);
-+	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_DECRYPT
-+				    | TPM2_SA_ENCRYPT
-+				    | TPM2_SA_CONTINUE_SESSION, NULL, 0);
-+	/* sensitive */
-+	tpm_buf_init_2b(&t2b);
-+	/* the authorization */
-+	tpm_buf_append_u16(&t2b, 0);
-+	/* the payload */
-+	tpm_buf_append_u16(&t2b, sizeof(payload));
-+	tpm_buf_append(&t2b, payload, sizeof(payload));
-+	tpm_buf_append_2b(&buf, &t2b);
-+	/* the public */
-+	/* type */
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_KEYEDHASH);
-+	/* name hash */
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_SHA256);
-+	/* object properties */
-+	tpm_buf_append_u32(&t2b, TPM2_OA_USER_WITH_AUTH | TPM2_OA_NO_DA);
-+	/* auth policy (specific to command code) */
-+	tpm_buf_append_u16(&t2b, sizeof(policy));
-+	tpm_buf_append(&t2b, policy, sizeof(policy));
-+	/* keyed hash parameters (we're null for a non-HMAC data blob) */
-+	tpm_buf_append_u16(&t2b, TPM2_ALG_NULL);
-+	/* unique */
-+	tpm_buf_append_u16(&t2b, 0);
-+	tpm_buf_append_2b(&buf, &t2b);
-+	/* outside info (also empty) */
-+	tpm_buf_append_u16(&buf, 0);
-+	/* creation PCR (empty) */
-+	tpm_buf_append_u32(&buf, 0);
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      4, 0, "sealing data");
-+	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
-+	dev_info(&chip->dev, "policy sealing response returned %d\n", rc);
-+	if (rc)
-+		goto out;
-+
-+	/*
-+	 * now load the sealed object (we need the pub and priv parts
-+	 * returned from prior command
-+	 */
-+	tpm_buf_init(&b1, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	/* parent */
-+	tpm_buf_append_name(&b1, auth, chip->tpmkey, chip->tpmkeyname);
-+	tpm_buf_append_hmac_session(&b1, auth, TPM2_SA_CONTINUE_SESSION,
-+				    NULL, 0);
-+	p = &buf.data[TPM_HEADER_SIZE+4];
-+	/* private */
-+	len = tpm_get_inc_u16(&p);
-+	tpm_buf_append_u16(&b1, len);
-+	tpm_buf_append(&b1, p, len);
-+	p += len;
-+	/* public */
-+	len = tpm_get_inc_u16(&p);
-+	tpm_buf_append_u16(&b1, len);
-+	tpm_buf_append(&b1, p, len);
-+	tpm_buf_fill_hmac_session(&b1, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, b1.data, PAGE_SIZE,
-+			      4, 0, "loading seal");
-+	rc = tpm_buf_check_hmac_response(&b1, auth, rc);
-+	dev_info(&chip->dev, "TPM: load response returned %d\n", rc);
-+	if (rc)
-+		goto out;
-+	p = &b1.data[TPM_HEADER_SIZE];
-+	h = tpm_get_inc_u32(&p);
-+	dev_info(&chip->dev, "sealed data loaded at %08x\n", h);
-+	/* skip over parameter size */
-+	p += 4;
-+	len = tpm_get_inc_u16(&p);
-+	if (len != sizeof(name)) {
-+		dev_err(&chip->dev, "Wrong name size %d\n", len);
-+		goto out;
-+	}
-+	memcpy(name, p, len);
-+	tpm_buf_destroy(&b1);
-+	tpm_buf_destroy(&buf);
-+
-+	/* now get a policy session */
-+	ps = get_policy(chip);
-+	/*
-+	 * now unseal the data using the authority in a HMAC and
-+	 * protecting the returned unseal by encryption
-+	 */
-+	tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
-+	tpm_buf_append_name(&buf, auth, h, name);
-+	tpm2_buf_append_auth(&buf, ps, NULL, 0, 0, NULL, 0);
-+	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
-+				    NULL, 0);
-+	tpm_buf_fill_hmac_session(&buf, auth);
-+	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
-+			      4, 0, "unseal");
-+	tpm_buf_check_hmac_response(&buf, auth, rc);
-+	dev_info(&chip->dev, "unseal returns %d\n", rc);
-+	if (rc)
-+		goto out;
-+	p = &buf.data[TPM_HEADER_SIZE + 4];
-+	len = tpm_get_inc_u16(&p);
-+	if (len != sizeof(payload)) {
-+		dev_err(&chip->dev, "wrong unseal payload size %d != %ld",
-+			len, sizeof(payload));
-+		goto out;
-+	}
-+	if (memcmp(payload, p, len) != 0) {
-+		dev_err(&chip->dev, "Payload DID NOT compare correctly\n");
-+		goto out;
-+	}
-+
-+	dev_info(&chip->dev, "All tests passed\n");
-+	ret = 0;
-+
-+ out:
-+	tpm_put_ops(chip);
-+
-+	return ret;
-+}
-+
-+module_init(tpm2_sessions_test);
-+
-+MODULE_LICENSE("GPL");
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 819fd68..31303ed 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3120,7 +3120,7 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
+  		return selinux_inode_setotherxattr(dentry, name);
+
+  	sbsec = inode->i_sb->s_security;
+-	if (!(sbsec->flags & SBLABEL_MNT))
++	if (!(sbsec->flags & SBLABEL_MNT) && ss_initialized)
+  		return -EOPNOTSUPP;
+
+  	if (!inode_owner_or_capable(inode))
 -- 
-2.12.3
+2.7.4
+
+But with this change it would mean for that filesystem types, that
+never are supposed to get SBLABEL_MNT flag, code may go through
+if !ss_initialized. I have hard time evaluating impication of this,
+but it is not existing case or not a big deal.
+
+Generally I agree with your concern that the issue is not "rootfs"
+specific. Other thought that it could be solved with use of
+selinux_is_sblabel_mnt instead of "rootfs" specific check inside
+of selinux_set_mnt_opts, in addition to similar code
+in sb_finish_set_opts function. I.e something like this:
+
+>From a94548b5ecde43ccc9c2b02b29becc086b4343a3 Mon Sep 17 00:00:00 2001
+From: Victor Kamensky <kamensky@cisco.com>
+Date: Fri, 9 Mar 2018 23:01:20 -0800
+Subject: [PATCH 1/2] selinux: allow setxattr on rootfs so initramfs code can
+  set them
+
+initramfs code supporting extended cpio format have ability to
+fill extended attributes from cpio archive, but if SELinux enabled
+and security server is not initialized yet, selinux callback would
+refuse setxattr made by initramfs code.
+
+Solution enable set SBLABEL_MNT on file systems for which we can
+figure out that they support securit labels even if secrurity
+server is not initialized yet.
+
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+---
+  security/selinux/hooks.c | 12 ++++++++++++
+  1 file changed, 12 insertions(+)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 819fd68..326aca9 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -701,6 +701,18 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+
+  	if (!ss_initialized) {
+  		if (!num_opts) {
++                        /*
++                         * For some of file systems we can mark them as
++                         * supporting security labels even before policy
++                         * loaded. It may be used by code that may want
++                         * to do setxatts before polict load.
++                         *
++                         * Note after policy loaded this check and marking
++                         * happens again.
++                         */
++                        if (selinux_is_sblabel_mnt(sb))
++                                sbsec->flags |= SBLABEL_MNT;
++
+  			/* Defer initialization until selinux_complete_init,
+  			   after the initial policy is loaded and the security
+  			   server is ready to handle calls. */
+-- 
+2.7.4
+
+Thanks,
+Victor
+
+>>
+>> Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+>> ---
+>>  security/selinux/hooks.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index 8644d864e3c1..f3fe65589f02 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -706,6 +706,18 @@ static int selinux_set_mnt_opts(struct
+>> super_block *sb,
+>>
+>>  	if (!ss_initialized) {
+>>  		if (!num_opts) {
+>> +			/*
+>> +			 * Special handling for rootfs. Is genfs but
+>> supports
+>> +			 * setting SELinux context on in-core
+>> inodes.
+>> +			 *
+>> +			 * Chicken and egg problem: policy may
+>> reside in rootfs
+>> +			 * but for initramfs code to fill in
+>> attributes, it
+>> +			 * needs selinux to allow that.
+>> +			 */
+>> +			if (!strncmp(sb->s_type->name, "rootfs",
+>> +				     sizeof("rootfs")))
+>> +				sbsec->flags |= SBLABEL_MNT;
+>> +
+>>  			/* Defer initialization until
+>> selinux_complete_init,
+>>  			   after the initial policy is loaded and
+>> the security
+>>  			   server is ready to handle calls. */
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
