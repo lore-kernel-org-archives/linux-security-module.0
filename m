@@ -1,46 +1,44 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Sun, 11 Mar 2018 18:06:41 -0400
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-Message-ID: <1520806001.3547.10.camel@linux.vnet.ibm.com>
+From: jmorris@namei.org (James Morris)
+Date: Mon, 12 Mar 2018 09:58:02 +1100 (AEDT)
+Subject: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
+In-Reply-To: <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
+References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
+	<20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+	<20170725175317.GA727@mail.hallyn.com>
+	<1501008554.3689.30.camel@HansenPartnership.com>
+	<20170725190406.GA1883@mail.hallyn.com>
+	<1501009739.3689.33.camel@HansenPartnership.com>
+	<1501012082.27413.17.camel@linux.vnet.ibm.com>
+	<645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com>
+	<20170725204622.GA4969@mail.hallyn.com>
+	<97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
+	<20180309025942.GA15295@mail.hallyn.com>
+	<ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1803120953310.26512@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-03-06 at 23:26 -0600, Jiandi An wrote:
-> TPM_CRB driver is the TPM support for ARM64.  If it
-> is built as module, TPM chip is registered after IMA
-> init.  tpm_pcr_read() in IMA driver would fail and
-> display the following message even though eventually
-> there is TPM chip on the system:
-> 
-> ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-> 
-> Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-> built in kernel and initializes before IMA driver.
-> 
-> Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+On Fri, 9 Mar 2018, Stefan Berger wrote:
 
-Thanks, this patch has been applied.
-
-Mimi
-
-> ---
->  security/integrity/ima/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+> Yuqiong is publishing a paper in this area. I believe the conference is only
+> later this year.
 > 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index 35ef693..6a8f677 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -10,6 +10,7 @@ config IMA
->  	select CRYPTO_HASH_INFO
->  	select TCG_TPM if HAS_IOMEM && !UML
->  	select TCG_TIS if TCG_TPM && X86
-> +	select TCG_CRB if TCG_TPM && ACPI
->  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
->  	help
->  	  The Trusted Computing Group(TCG) runtime Integrity
+> Our goals are to enable IMA measurements, appraisal, and auditing inside a
+> container using namespaces. 
+
+This is excellent to have -- can you include this requirements analysis as 
+a file Documentation/security on the next posting?
+
+Also, if you need a public space for managing these kinds of documents, 
+consider utilizing 
+http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
+
+
+
+- James
+-- 
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
