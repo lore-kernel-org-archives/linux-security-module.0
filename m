@@ -1,88 +1,83 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Mon, 12 Mar 2018 23:25:54 +0200
-Subject: [PATCH 4/7] Protectable Memory
-In-Reply-To: <20180312191314.GA29191@bombadil.infradead.org>
-References: <20180228200620.30026-1-igor.stoppa@huawei.com>
-	<20180228200620.30026-5-igor.stoppa@huawei.com>
-	<20180312191314.GA29191@bombadil.infradead.org>
-Message-ID: <b481f817-dad4-6bed-15bb-1bda4396b6b6@huawei.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 12 Mar 2018 17:53:18 -0400
+Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+In-Reply-To: <1520615461.12216.6.camel@HansenPartnership.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+	<20180307185132.GA30102@ziepe.ca>
+	<1520448953.10396.565.camel@linux.vnet.ibm.com>
+	<1520449719.5558.28.camel@HansenPartnership.com>
+	<1520450495.10396.587.camel@linux.vnet.ibm.com>
+	<1520451662.24314.5.camel@HansenPartnership.com>
+	<1520461156.10396.654.camel@linux.vnet.ibm.com>
+	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
+	<1520615461.12216.6.camel@HansenPartnership.com>
+Message-ID: <1520891598.3547.190.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 12/03/18 21:13, Matthew Wilcox wrote:
-> On Wed, Feb 28, 2018 at 10:06:17PM +0200, Igor Stoppa wrote:
->> struct gen_pool *pmalloc_create_pool(const char *name,
->> 					 int min_alloc_order);
->> int is_pmalloc_object(const void *ptr, const unsigned long n);
->> bool pmalloc_prealloc(struct gen_pool *pool, size_t size);
->> void *pmalloc(struct gen_pool *pool, size_t size, gfp_t gfp);
->> static inline void *pzalloc(struct gen_pool *pool, size_t size, gfp_t gfp)
->> static inline void *pmalloc_array(struct gen_pool *pool, size_t n,
->> 				  size_t size, gfp_t flags)
->> static inline void *pcalloc(struct gen_pool *pool, size_t n,
->> 			    size_t size, gfp_t flags)
->> static inline char *pstrdup(struct gen_pool *pool, const char *s, gfp_t gfp)
->> int pmalloc_protect_pool(struct gen_pool *pool);
->> static inline void pfree(struct gen_pool *pool, const void *addr)
->> int pmalloc_destroy_pool(struct gen_pool *pool);
+On Fri, 2018-03-09 at 09:11 -0800, James Bottomley wrote:
+> On Thu, 2018-03-08 at 12:42 -0600, Jiandi An wrote:
+> [...]
+> > I'm no expert on IMA and its driver.??James, will you be kind enough
+> > to look into overhauling the IMA driver to not measure until after?
+> > initrd phase if that's the consensus on resolving this?
 > 
-> Do you have users for all these functions?  I'm particularly sceptical of
-> pfree().
-
-The typical case is when rolling back allocations, on an error path.
-For example, with SELinux, the userspace provides the policy, which gets
-processed and converted into a policyDB, where every policy maps to
-several structures allocated dynamically.
-
-The allocation is not transactional. In case a policy turns out to be
-bad/broken, while being interpreted, those structures that were
-initially allocated for that policy, must be freed.
-
-Since pmalloc is meant to be a drop in replacement for k/vmalloc, it
-needs to provide also pfree.
-
->  To my mind, a user wants to:
+> I'll add it to my todo list.
 > 
-> pmalloc_create();
-> pmalloc(); * N
-> pmalloc_protect();
-> ...
-> pmalloc_destroy();
+> Since my TPM 2.0 test environment is a VM with a tpm that has a network
+> connection to an emulator on my host, it's impossible to set it up so
+> that it's built in (because you need the network config before you init
+> the TPM) so I might accelerate if I suddenly need to debug IMA issues
+> in this configuration.
 
-This is the simplest case, but also the error path must be supported.
+There are a number of different issues being discussed.
 
-> I don't mind the pstrdup, pcalloc, pmalloc_array, pzalloc variations, but
+- When IMA is enabled, unlike some other TPM device drivers, the TPM
+2.0 is not forced to be builtin.
 
-All those functions turned out to be necessary when converting SELinux
-to pmalloc.
-Yes, I haven't published this code yet, but I was hoping to first be
-done with pmalloc and then move on to SELinux, which I suspect will be
-harder to chew :-/
+This is addressed by Jiandi's patch.
 
-> I don't know why you need is_pmalloc_object().
+- Jason's comment questioning having Kconfig force the TPM to be
+builtin.
 
-Because of hardened usercopy [1]:
+Using Kconfig to force the TPM to be builtin is not required, but
+helpful. ?Users interested in IMA-measurement could configure the TPM
+as builtin themselves. ?Without the TPM builtin, IMA goes into TPM-
+bypass mode.
 
+Extending a TPM with IMA measurements, which was not builtin, but
+loaded at some unspecified point in time, changes the existing meaning
+of the IMA-measurement list.
 
-On 23/05/17 00:38, Kees Cook wrote:
+- This use case, when the TPM is not builtin and unavailable before
+IMA is initialized.
 
-[...]
+I would classify this use case as an IMA testing/debugging
+environment, when it cannot, for whatever reason, be builtin the
+kernel or initialized before IMA.
 
-> I'd like hardened usercopy to grow knowledge of these
-> allocations so we can bounds-check objects. Right now, mm/usercopy.c
-> just looks at PageSlab(page) to decide if it should do slab checks. I
-> think adding a check for this type of object would be very important
-> there.
+>From Dave Safford:
+    For the TCG chain of trust to have any meaning, all files have to
+    be measured and extended into the TPM before they are accessed. If
+    the TPM driver is loaded after any unmeasured file, the chain is
+    broken, and IMA is useless for any use case or any threat model.
 
+    While the initramfs may be measured by the bootloader, there are
+    two problems:
+    1.?IMA has no way of knowing if the kernel or initramfs has
+    accessed any unmeasured files before TPM driver loading and IMA
+    initialization.
+    2. Even if we can somehow guarantee that nothing outside the
+    initramfs has been accessed prior to IMA initialization, it is
+    difficult if not impossible for the attestation server to know what
+    a good initramfs measurement should be, as the initramfs is built
+    on the suspect device in the first place. ?We can sort of trust the
+    initramfs measurement in the reference manifest, but after that,
+    the attestation server has no way to trust a reported initramfs
+    measurement.
 
+Mimi
 
-[1] http://www.openwall.com/lists/kernel-hardening/2017/05/23/17
-
-
---
-igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
