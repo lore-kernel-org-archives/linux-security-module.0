@@ -1,144 +1,89 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Mon, 12 Mar 2018 22:50:07 +0200
-Subject: [PATCH] tpm: add tpm_calc_ordinal_duration wrapper
-Message-ID: <20180312205007.29461-1-tomas.winkler@intel.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Mon, 12 Mar 2018 23:25:54 +0200
+Subject: [PATCH 4/7] Protectable Memory
+In-Reply-To: <20180312191314.GA29191@bombadil.infradead.org>
+References: <20180228200620.30026-1-igor.stoppa@huawei.com>
+	<20180228200620.30026-5-igor.stoppa@huawei.com>
+	<20180312191314.GA29191@bombadil.infradead.org>
+Message-ID: <b481f817-dad4-6bed-15bb-1bda4396b6b6@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add convenient wrapper for ordinal duration computation
-to remove boiler plate if else statement over TPM2.
 
-if (chip->flags & TPM_CHIP_FLAG_TPM2)
-	tpm2_calc_ordinal_duration(chip, ordinal);
-else
-	tpm1_calc_ordinal_duration(chip, ordinal);
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
- drivers/char/tpm/tpm-interface.c     | 14 ++++++++++----
- drivers/char/tpm/tpm.h               |  1 +
- drivers/char/tpm/tpm1-cmd.c          |  1 -
- drivers/char/tpm/tpm2-cmd.c          |  1 -
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
- drivers/char/tpm/tpm_tis_core.c      |  6 +-----
- 7 files changed, 14 insertions(+), 13 deletions(-)
+On 12/03/18 21:13, Matthew Wilcox wrote:
+> On Wed, Feb 28, 2018 at 10:06:17PM +0200, Igor Stoppa wrote:
+>> struct gen_pool *pmalloc_create_pool(const char *name,
+>> 					 int min_alloc_order);
+>> int is_pmalloc_object(const void *ptr, const unsigned long n);
+>> bool pmalloc_prealloc(struct gen_pool *pool, size_t size);
+>> void *pmalloc(struct gen_pool *pool, size_t size, gfp_t gfp);
+>> static inline void *pzalloc(struct gen_pool *pool, size_t size, gfp_t gfp)
+>> static inline void *pmalloc_array(struct gen_pool *pool, size_t n,
+>> 				  size_t size, gfp_t flags)
+>> static inline void *pcalloc(struct gen_pool *pool, size_t n,
+>> 			    size_t size, gfp_t flags)
+>> static inline char *pstrdup(struct gen_pool *pool, const char *s, gfp_t gfp)
+>> int pmalloc_protect_pool(struct gen_pool *pool);
+>> static inline void pfree(struct gen_pool *pool, const void *addr)
+>> int pmalloc_destroy_pool(struct gen_pool *pool);
+> 
+> Do you have users for all these functions?  I'm particularly sceptical of
+> pfree().
 
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index 575b7c2eab25..dad7b9d4e90d 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -432,7 +432,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
- 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
- 
- 		ret = wait_for_stat(chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID,
--				tpm1_calc_ordinal_duration(chip, ordinal),
-+				tpm_calc_ordinal_duration(chip, ordinal),
- 				&tpm_dev->read_queue, false);
- 		if (ret < 0)
- 			goto out_err;
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 93f7c12d4c4d..a5536d6888fa 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -91,6 +91,15 @@ static void tpm_relinquish_locality(struct tpm_chip *chip)
- 	chip->locality = -1;
- }
- 
-+unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
-+{
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		return tpm2_calc_ordinal_duration(chip, ordinal);
-+	else
-+		return tpm1_calc_ordinal_duration(chip, ordinal);
-+}
-+EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
-+
- /**
-  * tpm_transmit - Internal kernel interface to transmit TPM commands.
-  *
-@@ -179,10 +188,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	if (chip->flags & TPM_CHIP_FLAG_IRQ)
- 		goto out_recv;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2)
--		stop = jiffies + tpm2_calc_ordinal_duration(chip, ordinal);
--	else
--		stop = jiffies + tpm1_calc_ordinal_duration(chip, ordinal);
-+	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
- 	do {
- 		u8 status = chip->ops->status(chip);
- 		if ((status & chip->ops->req_complete_mask) ==
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 730ee50f93fa..be58c1936729 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -549,6 +549,7 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 		     delay_msec * 1000);
- };
- 
-+unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 85dd0fcbd4cc..f232238dd418 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -305,7 +305,6 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- 	else
- 		return duration;
- }
--EXPORT_SYMBOL_GPL(tpm1_calc_ordinal_duration);
- 
- #define TPM_ORD_STARTUP 153
- #define TPM_ST_CLEAR 1
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 6db13cf801b4..fc39545b121a 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -810,7 +810,6 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- 	else
- 		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
- }
--EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
- 
- #define TPM2_SELF_TEST_IN_SIZE \
- 	(sizeof(struct tpm_input_header) + \
-diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-index 5d20e98b844f..4146f822fba9 100644
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -456,7 +456,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 		return rc;
- 	}
- 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
--	duration = tpm1_calc_ordinal_duration(chip, ordinal);
-+	duration = tpm_calc_ordinal_duration(chip, ordinal);
- 	rc = i2c_nuvoton_wait_for_data_avail(chip, duration, &priv->read_queue);
- 	if (rc) {
- 		dev_err(dev, "%s() timeout command duration %ld\n",
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 87f63c500956..a64548807af2 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -433,11 +433,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- 	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
- 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
- 
--		if (chip->flags & TPM_CHIP_FLAG_TPM2)
--			dur = tpm2_calc_ordinal_duration(chip, ordinal);
--		else
--			dur = tpm1_calc_ordinal_duration(chip, ordinal);
--
-+		dur = tpm_calc_ordinal_duration(chip, ordinal);
- 		if (wait_for_tpm_stat
- 		    (chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID, dur,
- 		     &priv->read_queue, false) < 0) {
--- 
-2.14.3
+The typical case is when rolling back allocations, on an error path.
+For example, with SELinux, the userspace provides the policy, which gets
+processed and converted into a policyDB, where every policy maps to
+several structures allocated dynamically.
 
+The allocation is not transactional. In case a policy turns out to be
+bad/broken, while being interpreted, those structures that were
+initially allocated for that policy, must be freed.
+
+Since pmalloc is meant to be a drop in replacement for k/vmalloc, it
+needs to provide also pfree.
+
+>  To my mind, a user wants to:
+> 
+> pmalloc_create();
+> pmalloc(); * N
+> pmalloc_protect();
+> ...
+> pmalloc_destroy();
+
+This is the simplest case, but also the error path must be supported.
+
+> I don't mind the pstrdup, pcalloc, pmalloc_array, pzalloc variations, but
+
+All those functions turned out to be necessary when converting SELinux
+to pmalloc.
+Yes, I haven't published this code yet, but I was hoping to first be
+done with pmalloc and then move on to SELinux, which I suspect will be
+harder to chew :-/
+
+> I don't know why you need is_pmalloc_object().
+
+Because of hardened usercopy [1]:
+
+
+On 23/05/17 00:38, Kees Cook wrote:
+
+[...]
+
+> I'd like hardened usercopy to grow knowledge of these
+> allocations so we can bounds-check objects. Right now, mm/usercopy.c
+> just looks at PageSlab(page) to decide if it should do slab checks. I
+> think adding a check for this type of object would be very important
+> there.
+
+
+
+[1] http://www.openwall.com/lists/kernel-hardening/2017/05/23/17
+
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
