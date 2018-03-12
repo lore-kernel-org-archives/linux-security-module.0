@@ -1,82 +1,50 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 12 Mar 2018 17:53:18 -0400
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1520615461.12216.6.camel@HansenPartnership.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-	<1520449719.5558.28.camel@HansenPartnership.com>
-	<1520450495.10396.587.camel@linux.vnet.ibm.com>
-	<1520451662.24314.5.camel@HansenPartnership.com>
-	<1520461156.10396.654.camel@linux.vnet.ibm.com>
-	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-	<1520615461.12216.6.camel@HansenPartnership.com>
-Message-ID: <1520891598.3547.190.camel@linux.vnet.ibm.com>
+From: jejb@linux.vnet.ibm.com (James Bottomley)
+Date: Mon, 12 Mar 2018 14:55:35 -0700
+Subject: [tpmdd-devel] in-kernel user of ecdsa
+In-Reply-To: <31045526.HZb3ddfbbg@tauon.chronox.de>
+References: <0f698592-8ade-14d4-7891-1c35501c6285@microchip.com>
+	<1520878158.4522.31.camel@linux.vnet.ibm.com>
+	<31045526.HZb3ddfbbg@tauon.chronox.de>
+Message-ID: <1520891735.4522.45.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-03-09 at 09:11 -0800, James Bottomley wrote:
-> On Thu, 2018-03-08 at 12:42 -0600, Jiandi An wrote:
-> [...]
-> > I'm no expert on IMA and its driver.??James, will you be kind enough
-> > to look into overhauling the IMA driver to not measure until after?
-> > initrd phase if that's the consensus on resolving this?
+On Mon, 2018-03-12 at 20:56 +0100, Stephan Mueller wrote:
+> Am Montag, 12. M?rz 2018, 19:09:18 CET schrieb James Bottomley:
 > 
-> I'll add it to my todo list.
+> Hi James,
 > 
-> Since my TPM 2.0 test environment is a VM with a tpm that has a network
-> connection to an emulator on my host, it's impossible to set it up so
-> that it's built in (because you need the network config before you init
-> the TPM) so I might accelerate if I suddenly need to debug IMA issues
-> in this configuration.
+> > 
+> > On Mon, 2018-03-12 at 19:07 +0200, Tudor Ambarus wrote:
+> > > 
+> > > Hi,
+> > > 
+> > > Would you consider using ECDSA in the kernel module signing
+> > > facility? When compared with RSA, ECDSA has shorter keys, the key
+> > > generation process is faster, the sign operation is faster, but
+> > > the verify operation is slower than with RSA.
+> > 
+> > You missed the keyrings list, which is where the module signing
+> > utility is discussed.
+> > 
+> > First question is, have you actually tried???It looks like sign-
+> > file doesn't do anything RSA specific so if you give it an EC X.509
+> > certificate it will produce an ECDSA signature.
+> > 
+> > I think our kernel internal x509 parsers don't have the EC OIDs, so
+> > signature verification will fail; but, especially since we have the
+> > rest of the EC machinery in the crypto subsystem, that looks to be
+> > simply fixable.
+> 
+> ECDSA is not implemented currently in the kernel crypto API.
 
-There are a number of different issues being discussed.
+an ECDSA signature is produced as a ECDH operation using the DSA
+algorithm instead of KDFe, so it's trivial with what we have; signature
+verification involves a separate point addition but we have all the
+primitives for this in crypto/ecc.c so adding it isn't really
+difficult, is it?
 
-- When IMA is enabled, unlike some other TPM device drivers, the TPM
-2.0 is not forced to be builtin.
-
-This is addressed by Jiandi's patch.
-
-- Jason's comment questioning having Kconfig force the TPM to be
-builtin.
-
-Using Kconfig to force the TPM to be builtin is not required, but
-helpful. ?Users interested in IMA-measurement could configure the TPM
-as builtin themselves. ?Without the TPM builtin, IMA goes into TPM-
-bypass mode.
-
-Extending a TPM with IMA measurements, which was not builtin, but
-loaded at some unspecified point in time, changes the existing meaning
-of the IMA-measurement list.
-
-- This use case, when the TPM is not builtin and unavailable before
-IMA is initialized.
-
-I would classify this use case as an IMA testing/debugging
-environment, when it cannot, for whatever reason, be builtin the
-kernel or initialized before IMA.
-
->From Dave Safford:
-    For the TCG chain of trust to have any meaning, all files have to
-    be measured and extended into the TPM before they are accessed. If
-    the TPM driver is loaded after any unmeasured file, the chain is
-    broken, and IMA is useless for any use case or any threat model.
-
-    While the initramfs may be measured by the bootloader, there are
-    two problems:
-    1.?IMA has no way of knowing if the kernel or initramfs has
-    accessed any unmeasured files before TPM driver loading and IMA
-    initialization.
-    2. Even if we can somehow guarantee that nothing outside the
-    initramfs has been accessed prior to IMA initialization, it is
-    difficult if not impossible for the attestation server to know what
-    a good initramfs measurement should be, as the initramfs is built
-    on the suspect device in the first place. ?We can sort of trust the
-    initramfs measurement in the reference manifest, but after that,
-    the attestation server has no way to trust a reported initramfs
-    measurement.
-
-Mimi
+James
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
