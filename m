@@ -1,34 +1,44 @@
-From: smueller@chronox.de (Stephan Mueller)
-Date: Mon, 12 Mar 2018 22:57:28 +0100
-Subject: [tpmdd-devel] in-kernel user of ecdsa
-In-Reply-To: <1520891735.4522.45.camel@linux.vnet.ibm.com>
-References: <0f698592-8ade-14d4-7891-1c35501c6285@microchip.com>
-	<31045526.HZb3ddfbbg@tauon.chronox.de>
-	<1520891735.4522.45.camel@linux.vnet.ibm.com>
-Message-ID: <4913167.EB42K91l1O@tauon.chronox.de>
+From: jgg@ziepe.ca (Jason Gunthorpe)
+Date: Mon, 12 Mar 2018 15:59:57 -0600
+Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+In-Reply-To: <1520891598.3547.190.camel@linux.vnet.ibm.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+	<20180307185132.GA30102@ziepe.ca>
+	<1520448953.10396.565.camel@linux.vnet.ibm.com>
+	<1520449719.5558.28.camel@HansenPartnership.com>
+	<1520450495.10396.587.camel@linux.vnet.ibm.com>
+	<1520451662.24314.5.camel@HansenPartnership.com>
+	<1520461156.10396.654.camel@linux.vnet.ibm.com>
+	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
+	<1520615461.12216.6.camel@HansenPartnership.com>
+	<1520891598.3547.190.camel@linux.vnet.ibm.com>
+Message-ID: <20180312215957.GI24717@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Am Montag, 12. M?rz 2018, 22:55:35 CET schrieb James Bottomley:
+On Mon, Mar 12, 2018 at 05:53:18PM -0400, Mimi Zohar wrote:
 
-Hi James,
+> Using Kconfig to force the TPM to be builtin is not required, but
+> helpful. ?Users interested in IMA-measurement could configure the TPM
+> as builtin themselves. ?Without the TPM builtin, IMA goes into TPM-
+> bypass mode.
 
-> > ECDSA is not implemented currently in the kernel crypto API.
-> 
-> an ECDSA signature is produced as a ECDH operation using the DSA
-> algorithm instead of KDFe, so it's trivial with what we have; signature
-> verification involves a separate point addition but we have all the
-> primitives for this in crypto/ecc.c so adding it isn't really
-> difficult, is it?
+This issues, broadly speaking, we have lots of TPM drivers, selecting
+only some to actually support IMA shows we have some kind of problem
+here.
 
-No, it is not. There even was a patch posted about a year ago to add ECDSA. 
-But it was rejected due to missing in-kernel users. I guess that patch could 
-be reactivated.
+eg a distro on ARM should not have some TPM hardware work with IMA and
+some fail just because of this kconfig.
 
-Ciao
-Stephan
+IMHO if we want to do this, then IMA should completely disable modular
+TPM drivers across the board.
 
+Or, IMA folks need to figure out how to safely load TPM modules under
+their constraints.
 
+But this current kconfig approach is pretty weird..
+
+Jason
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
