@@ -1,32 +1,31 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Mon, 12 Mar 2018 10:59:13 -0700
-Subject: [PATCH v3 1/6] tpm-buf: create new functions for handling TPM
-	buffers
-In-Reply-To: <277bd8a1-9e7f-f6e8-bede-5208f0456adf@gmail.com>
-References: <1520720026.4495.11.camel@HansenPartnership.com>
-	<1520720090.4495.12.camel@HansenPartnership.com>
-	<277bd8a1-9e7f-f6e8-bede-5208f0456adf@gmail.com>
-Message-ID: <1520877553.4522.25.camel@HansenPartnership.com>
+From: jejb@linux.vnet.ibm.com (James Bottomley)
+Date: Mon, 12 Mar 2018 11:09:18 -0700
+Subject: [tpmdd-devel] in-kernel user of ecdsa
+In-Reply-To: <0f698592-8ade-14d4-7891-1c35501c6285@microchip.com>
+References: <0f698592-8ade-14d4-7891-1c35501c6285@microchip.com>
+Message-ID: <1520878158.4522.31.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-03-12 at 09:00 -0700, J Freyensee wrote:
-> > 
-> > +int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
-> > +{
-> > +	int rc;
-> > +
-> > +	rc = __tpm_buf_init(buf);
+On Mon, 2018-03-12 at 19:07 +0200, Tudor Ambarus wrote:
+> Hi,
 > 
-> 
-> Assuming that functions like tpm_buf_init() are the top-level API
-> being defined in this patch, shouldn't it check if buf is valid
-> before passing into the internal functions like __tpm_buf_init(buf)
-> (maybe WARN()/BUG_ON()?).? Or does __tpm_buf_init(buf) do this check?
+> Would you consider using ECDSA in the kernel module signing facility?
+> When compared with RSA, ECDSA has shorter keys, the key generation
+> process is faster, the sign operation is faster, but the verify
+> operation is slower than with RSA.
 
-These are kernel internal APIs designed for on stack struct tpm_buf
-usage, so I can't think of a viable threat model that would require
-this type of checking ... do you have one?
+You missed the keyrings list, which is where the module signing utility
+is discussed.
+
+First question is, have you actually tried? ?It looks like sign-file
+doesn't do anything RSA specific so if you give it an EC X.509
+certificate it will produce an ECDSA signature.
+
+I think our kernel internal x509 parsers don't have the EC OIDs, so
+signature verification will fail; but, especially since we have the
+rest of the EC machinery in the crypto subsystem, that looks to be
+simply fixable.
 
 James
 
