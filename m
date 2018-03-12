@@ -1,7 +1,7 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Mon, 12 Mar 2018 15:30:47 -0700
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 12 Mar 2018 18:58:45 -0400
 Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1520891598.3547.190.camel@linux.vnet.ibm.com>
+In-Reply-To: <20180312215957.GI24717@ziepe.ca>
 References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 	<20180307185132.GA30102@ziepe.ca>
 	<1520448953.10396.565.camel@linux.vnet.ibm.com>
@@ -12,112 +12,30 @@ References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
 	<1520615461.12216.6.camel@HansenPartnership.com>
 	<1520891598.3547.190.camel@linux.vnet.ibm.com>
-Message-ID: <1520893847.4522.62.camel@HansenPartnership.com>
+	<20180312215957.GI24717@ziepe.ca>
+Message-ID: <1520895525.3547.226.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-03-12 at 17:53 -0400, Mimi Zohar wrote:
-> On Fri, 2018-03-09 at 09:11 -0800, James Bottomley wrote:
-> > 
-> > On Thu, 2018-03-08 at 12:42 -0600, Jiandi An wrote:
-> > [...]
-> > > 
-> > > I'm no expert on IMA and its driver.??James, will you be kind
-> > > enough to look into overhauling the IMA driver to not measure
-> > > until after initrd phase if that's the consensus on resolving
-> > > this?
-> > 
-> > I'll add it to my todo list.
-> > 
-> > Since my TPM 2.0 test environment is a VM with a tpm that has a
-> > network connection to an emulator on my host, it's impossible to
-> > set it up so that it's built in (because you need the network
-> > config before you init the TPM) so I might accelerate if I suddenly
-> > need to debug IMA issues in this configuration.
+On Mon, 2018-03-12 at 15:59 -0600, Jason Gunthorpe wrote:
+> On Mon, Mar 12, 2018 at 05:53:18PM -0400, Mimi Zohar wrote:
 > 
-> There are a number of different issues being discussed.
+> > Using Kconfig to force the TPM to be builtin is not required, but
+> > helpful. ?Users interested in IMA-measurement could configure the TPM
+> > as builtin themselves. ?Without the TPM builtin, IMA goes into TPM-
+> > bypass mode.
 > 
-> - When IMA is enabled, unlike some other TPM device drivers, the TPM
-> 2.0 is not forced to be builtin.
-> 
-> This is addressed by Jiandi's patch.
-> 
-> - Jason's comment questioning having Kconfig force the TPM to be
-> builtin.
-> 
-> Using Kconfig to force the TPM to be builtin is not required, but
-> helpful. ?Users interested in IMA-measurement could configure the TPM
-> as builtin themselves. ?Without the TPM builtin, IMA goes into TPM-
-> bypass mode.
-> 
-> Extending a TPM with IMA measurements, which was not builtin, but
-> loaded at some unspecified point in time, changes the existing
-> meaning of the IMA-measurement list.
-> 
-> - This use case, when the TPM is not builtin and unavailable before
-> IMA is initialized.
-> 
-> I would classify this use case as an IMA testing/debugging
-> environment, when it cannot, for whatever reason, be builtin the
-> kernel or initialized before IMA.
-> 
-> From Dave Safford:
-> ????For the TCG chain of trust to have any meaning, all files have to
-> ????be measured and extended into the TPM before they are accessed.
-> If
-> ????the TPM driver is loaded after any unmeasured file, the chain is
-> ????broken, and IMA is useless for any use case or any threat model.
+> This issues, broadly speaking, we have lots of TPM drivers, selecting
+> only some to actually support IMA shows we have some kind of problem
+> here.
 
-I don't think this is quite the correct characterisation. ?In principle
-the kernel could also touch the files before IMA is loaded. ?However,
-we know from the way the kernel operates that it doesn't. ?We basically
-trust that the kernel measurement tells us this. ?The same thing can be
-made to apply to the initrd.
+True, IMA is not selecting the older TPM vendor specific modules, but
+only the newer TPM_TIS and now TPM_CRB modules. ?That doesn't imply
+that IMA only supports some TPMs. ?It means that by default, these
+TPMs are builtin. ?Anyone building a kernel, can select the vendor
+specific TPM to be builtin.
 
-The key question is not whether the component could theoretically
-access the files but whether it actually does so.
-
-> ????While the initramfs may be measured by the bootloader, there are
-> ????two problems:
-> ????1.?IMA has no way of knowing if the kernel or initramfs has
-> ????accessed any unmeasured files before TPM driver loading and IMA
-> ????initialization.
-> ????2. Even if we can somehow guarantee that nothing outside the
-> ????initramfs has been accessed prior to IMA initialization, it is
-> ????difficult if not impossible for the attestation server to know
-> what
-> ????a good initramfs measurement should be, as the initramfs is built
-> ????on the suspect device in the first place. ?We can sort of trust
-> the
-> ????initramfs measurement in the reference manifest,
-
-If I don't trust the initrd then I also can't really make much of IMA
-measurements because the chain of custody is broken. ?The assertion
-that the initrd has to be part of the chain of custody is really a
-statement of the current position. ?Therefore if the initrd is part of
-that chain, then we don't have to start IMA at kernel init, we can
-start it at initrd pivot_root. ?(or to put it in simple terms: IMA
-measurements of the root filesystem, even if they begin at kernel init,
-cannot make up for a malicious initrd because the damage will already
-have been done before we pivot to the real root).
-
-In theory the build device shouldn't be suspect because it was measured and appraised before I built my initrd on it.
-
->  but after that,
-> ????the attestation server has no way to trust a reported initramfs
-> ????measurement.
-
-This is more a reflection of problems in the current attestation
-architecture and measurement gaps we have. ?We certainly know what the
-initrd measurement should be when we create it, so the expected value
-can be communicated to the attestation server when the initrd is built.
-
-Conversely, if the attestation server doesn't measure the initrd this
-is a current gap in the attestation of the custody chain because any
-problem with the initrd would go undetected.
-
-James
-
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
