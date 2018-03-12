@@ -1,98 +1,95 @@
 From: serge@hallyn.com (Serge E. Hallyn)
-Date: Mon, 12 Mar 2018 14:26:52 -0500
-Subject: [PATCH v3 1/4] ima: fail file signature verification on non-init
-	mounted filesystems
-In-Reply-To: <20180312191745.GA29878@mail.hallyn.com>
+Date: Mon, 12 Mar 2018 14:28:06 -0500
+Subject: [PATCH v3 3/4] ima: fail signature verification based on policy
+In-Reply-To: <1520540650-7451-4-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1520540650-7451-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<20180312191745.GA29878@mail.hallyn.com>
-Message-ID: <20180312192652.GC29878@mail.hallyn.com>
+	<1520540650-7451-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20180312192806.GD29878@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Serge E. Hallyn (serge at hallyn.com):
-> Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
-> > FUSE can be mounted by unprivileged users either today with fusermount
-> > installed with setuid, or soon with the upcoming patches to allow FUSE
-> > mounts in a non-init user namespace.
-> > 
-> > This patch addresses the new unprivileged non-init mounted filesystems,
-> > which are untrusted, by failing the signature verification.
-> > 
-> > This patch defines two new flags SB_I_IMA_UNVERIFIABLE_SIGNATURE and
-> > SB_I_UNTRUSTED_MOUNTER.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Seth Forshee <seth.forshee@canonical.com>
-> > Cc: Eric W. Biederman <ebiederm@xmission.com>
-> > Cc: Dongsu Park <dongsu@kinvolk.io>
-> > Cc: Alban Crequy <alban@kinvolk.io>
-> > Cc: Serge E. Hallyn <serge@hallyn.com>
+Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
+> This patch addresses the fuse privileged mounted filesystems in
+> environments which are unwilling to accept the risk of trusting the
+> signature verification and want to always fail safe, but are for example
+> using a pre-built kernel.
 > 
-> Acked-by: Serge Hallyn <serge@hallyn.com>
+> This patch defines a new builtin policy named "fail_securely", which can
+> be specified on the boot command line as an argument to "ima_policy=".
 > 
-> One comment below though,
-> 
-> > 
-> > ---
-> > Changelog v3:
-> > - Fix SB_IMA_UNVERIFIABLE_SIGNATURE & SB_I_UNTRUSTED_MOUNTER test.
-> > 
-> > Changelog v2:
-> > - Limit patch to non-init mounted filesystems.
-> > - Define 2 sb->s_iflags
-> > 
-> > Changelog v1:
-> > - Merged the unprivileged and privileged patches.
-> > - Dropped IMA fsname support.
-> > - Introduced a new IMA builtin policy named "untrusted_fs".
-> > - Replaced fs_type flag with sb->s_iflags flag.
-> > 
-> >  include/linux/fs.h                    |  2 ++
-> >  security/integrity/ima/ima_appraise.c | 15 ++++++++++++++-
-> >  2 files changed, 16 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 2a815560fda0..4e1c76af7b68 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1320,6 +1320,8 @@ extern int send_sigurg(struct fown_struct *fown);
-> >  
-> >  /* sb->s_iflags to limit user namespace mounts */
-> >  #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
-> > +#define SB_I_IMA_UNVERIFIABLE_SIGNATURE	0x00000020
-> > +#define SB_I_UNTRUSTED_MOUNTER		0x00000040
-> >  
-> >  /* Possible states of 'frozen' field */
-> >  enum {
-> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> > index 1b177461f20e..4bafb397ee91 100644
-> > --- a/security/integrity/ima/ima_appraise.c
-> > +++ b/security/integrity/ima/ima_appraise.c
-> > @@ -302,7 +302,19 @@ int ima_appraise_measurement(enum ima_hooks func,
-> >  	}
-> >  
-> >  out:
-> > -	if (status != INTEGRITY_PASS) {
-> > +	/*
-> > +	 * File signatures on some filesystems can not be properly verified.
-> > +	 * On these filesytems, that are mounted by an untrusted mounter,
-> > +	 * fail the file signature verification.
-> > +	 */
-> > +	if ((inode->i_sb->s_iflags &
-> > +	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) ==
-> > +	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) {
-> 
-> Heh, this is misleading combination of parentheses and indentation :)
-> I would recommend using a temporary variable like:
-> 
-> 	cmpflags = SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER;
-> 	if ((inode->i_sb->s_iflags & cmpflags) == cmpflags) {
-> 
-> or maybe a helper function.
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Seth Forshee <seth.forshee@canonical.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Dongsu Park <dongsu@kinvolk.io>
+> Cc: Alban Crequy <alban@kinvolk.io>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
 
-Never mind, I see it's going away two patches later :)
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
+but,
+
+> 
+> ---
+> Changelog v3:
+> - Rename the builtin policy name
+> 
+> Changelog v2:
+> - address the fail safe environement
+> 
+>  Documentation/admin-guide/kernel-parameters.txt |  8 +++++++-
+>  security/integrity/ima/ima_appraise.c           | 11 ++++++-----
+>  security/integrity/ima/ima_main.c               |  3 ++-
+>  security/integrity/ima/ima_policy.c             |  5 +++++
+>  security/integrity/integrity.h                  |  1 +
+>  5 files changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 1d1d53f85ddd..2cc17dc7ab84 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1525,7 +1525,8 @@
+>  
+>  	ima_policy=	[IMA]
+>  			The builtin policies to load during IMA setup.
+> -			Format: "tcb | appraise_tcb | secure_boot"
+> +			Format: "tcb | appraise_tcb | secure_boot |
+> +				 fail_securely"
+>  
+>  			The "tcb" policy measures all programs exec'd, files
+>  			mmap'd for exec, and all files opened with the read
+> @@ -1540,6 +1541,11 @@
+>  			of files (eg. kexec kernel image, kernel modules,
+>  			firmware, policy, etc) based on file signatures.
+>  
+> +			The "fail_securely" policy forces file signature
+> +			verification failure also on privileged mounted
+> +			filesystems with the SB_I_UNVERIFIABLE_SIGNATURE
+> +			flag.
+> +
+>  	ima_tcb		[IMA] Deprecated.  Use ima_policy= instead.
+>  			Load a policy which meets the needs of the Trusted
+>  			Computing Base.  This means IMA will measure all
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 4bafb397ee91..3034935e1eb3 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -304,12 +304,13 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  out:
+>  	/*
+>  	 * File signatures on some filesystems can not be properly verified.
+> -	 * On these filesytems, that are mounted by an untrusted mounter,
+> -	 * fail the file signature verification.
+> +	 * On these filesytems, that are mounted by an untrusted mounter or
+
+How about "When such filesystems are mounted by an untrusted mounter or
+on a system not willing to accept such a risk, ..." ?
+
+(also filesytems is misspelled :)
+
+> +	 * for systems not willing to accept the risk, fail the file signature
+> +	 * verification.
+>  	 */
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
