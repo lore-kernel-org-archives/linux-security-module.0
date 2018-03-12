@@ -1,28 +1,24 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 12 Mar 2018 13:00:26 +0200
-Subject: [RFC 0/5] add integrity and security to TPM2 transactions
-In-Reply-To: <1520706580.4495.4.camel@HansenPartnership.com>
-References: <1520465374.4894.12.camel@HansenPartnership.com>
-	<18e2f4debbbc05ed4169d3eb263479df91941aa0.camel@linux.intel.com>
-	<1520706580.4495.4.camel@HansenPartnership.com>
-Message-ID: <5546fb07e9f45b0d501cfe9b6ee62712153ef32f.camel@linux.intel.com>
+Date: Mon, 12 Mar 2018 13:09:07 +0200
+Subject: [PATCH] tpm: allow TCPA log area to be empty
+In-Reply-To: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20180312110907.GA7448@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2018-03-10 at 10:29 -0800, James Bottomley wrote:
-> OK, you might want to wait for v3 then.  I've got it working with
-> sealed (trusted) keys, well except for a problem with the trusted keys
-> API that means we can't protect the password for policy based keys.  I
-> think the API is finally complete, so I'll send v3 as a PATCH not an
-> RFC.
+On Sat, Mar 10, 2018 at 06:16:37PM +0200, Jarkko Sakkinen wrote:
+> TCPA log are can be empty when the TPM is disabled. This commit changes the
+> behavior of tpm_read_log_acpi() to return successfully in this case.
 > 
-> The point of the last patch is to show the test rig for this I'm
-> running in a VM using an instrumented tpm2 emulator to prove we're
-> getting all the correct data in and out (and that the encryption and
-> hmac are working); more physical TPM testing would be useful ..
+> Cc: stable at vger.kernel.org
+> Fixes: 55a82ab3181b ("[PATCH] tpm: add bios measurement log")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Sorry, I did not notice this email in my inbox before I responded
-to you v3 cover letter :-) Thank you.
+Already applied to my master (bleeding edge) branch in order to
+facilitate testing:
+
+git://git.infradead.org/users/jjs/linux-tpmdd.git
 
 /Jarkko
 --
