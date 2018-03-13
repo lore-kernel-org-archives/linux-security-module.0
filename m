@@ -1,91 +1,66 @@
-From: tycho@tycho.ws (Tycho Andersen)
-Date: Mon, 12 Mar 2018 22:29:07 -0600
-Subject: [PATCH 2/2] dh key: get rid of stack array allocation
-In-Reply-To: <20180313042907.29598-1-tycho@tycho.ws>
-References: <20180313042907.29598-1-tycho@tycho.ws>
-Message-ID: <20180313042907.29598-2-tycho@tycho.ws>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 13 Mar 2018 16:16:04 +1100 (AEDT)
+Subject: [PATCH v2] exec: Set file unwritable before LSM check
+In-Reply-To: <20180309193020.GA5149@beast>
+References: <20180309193020.GA5149@beast>
+Message-ID: <alpine.LRH.2.21.1803131615390.21929@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Similarly to the previous patch, we would like to get rid of stack
-allocated arrays: https://lkml.org/lkml/2018/3/7/621
+On Fri, 9 Mar 2018, Kees Cook wrote:
 
-In this case, we can also use a malloc style approach to free the temporary
-buffer, being careful to also use kzfree to free them (indeed, at least one
-of these has a memzero_explicit, but it seems like maybe they both
-should?).
+> The LSM check should happen after the file has been confirmed to be
+> unchanging. Without this, we could have a race between the Time of Check
+> (the call to security_kernel_read_file() which could read the file and
+> make access policy decisions) and the Time of Use (starting with
+> kernel_read_file()'s reading of the file contents). In theory, file
+> contents could change between the two.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> v2: Clarify the ToC/ToU race (Linus)
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-CC: David Howells <dhowells@redhat.com>
-CC: James Morris <jmorris@namei.org>
-CC: "Serge E. Hallyn" <serge@hallyn.com>
----
- security/keys/dh.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index d1ea9f325f94..f02261b24759 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -162,19 +162,27 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
- 			goto err;
- 
- 		if (zlen && h) {
--			u8 tmpbuffer[h];
-+			u8 *tmpbuffer;
- 			size_t chunk = min_t(size_t, zlen, h);
--			memset(tmpbuffer, 0, chunk);
-+
-+			err = -ENOMEM;
-+			tmpbuffer = kzalloc(chunk, GFP_KERNEL);
-+			if (!tmpbuffer)
-+				goto err;
- 
- 			do {
- 				err = crypto_shash_update(desc, tmpbuffer,
- 							  chunk);
--				if (err)
-+				if (err) {
-+					kzfree(tmpbuffer);
- 					goto err;
-+				}
- 
- 				zlen -= chunk;
- 				chunk = min_t(size_t, zlen, h);
- 			} while (zlen);
-+
-+			kzfree(tmpbuffer);
- 		}
- 
- 		if (src && slen) {
-@@ -184,13 +192,20 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
- 		}
- 
- 		if (dlen < h) {
--			u8 tmpbuffer[h];
-+			u8 *tmpbuffer;
-+
-+			err = -ENOMEM;
-+			tmpbuffer = kzalloc(h, GFP_KERNEL);
-+			if (!tmpbuffer)
-+				goto err;
- 
- 			err = crypto_shash_final(desc, tmpbuffer);
--			if (err)
-+			if (err) {
-+				kzfree(tmpbuffer);
- 				goto err;
-+			}
- 			memcpy(dst, tmpbuffer, dlen);
--			memzero_explicit(tmpbuffer, h);
-+			kzfree(tmpbuffer);
- 			return 0;
- 		} else {
- 			err = crypto_shash_final(desc, dst);
+I'll merge this unless Al objects (cc'd).
+
+> 
+> Only loadpin and SELinux currently implement this hook. From what
+> I can see, this won't change anything for either of them. IMA calls
+> kernel_read_file(), but looking there it seems those callers won't be
+> negatively impacted either. Can folks double-check this and send an
+> Ack please?
+> ---
+>  fs/exec.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 7eb8d21bcab9..a919a827d181 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -895,13 +895,13 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>  	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+>  		return -EINVAL;
+>  
+> -	ret = security_kernel_read_file(file, id);
+> +	ret = deny_write_access(file);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = deny_write_access(file);
+> +	ret = security_kernel_read_file(file, id);
+>  	if (ret)
+> -		return ret;
+> +		goto out;
+>  
+>  	i_size = i_size_read(file_inode(file));
+>  	if (max_size > 0 && i_size > max_size) {
+> 
+
 -- 
-2.15.1
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
