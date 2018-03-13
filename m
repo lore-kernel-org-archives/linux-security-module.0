@@ -1,7 +1,7 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 12 Mar 2018 19:30:00 -0400
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Mon, 12 Mar 2018 17:06:45 -0700
 Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1520893847.4522.62.camel@HansenPartnership.com>
+In-Reply-To: <1520897400.3547.253.camel@linux.vnet.ibm.com>
 References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 	<20180307185132.GA30102@ziepe.ca>
 	<1520448953.10396.565.camel@linux.vnet.ibm.com>
@@ -13,46 +13,61 @@ References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 	<1520615461.12216.6.camel@HansenPartnership.com>
 	<1520891598.3547.190.camel@linux.vnet.ibm.com>
 	<1520893847.4522.62.camel@HansenPartnership.com>
-Message-ID: <1520897400.3547.253.camel@linux.vnet.ibm.com>
+	<1520897400.3547.253.camel@linux.vnet.ibm.com>
+Message-ID: <1520899605.4522.67.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-03-12 at 15:30 -0700, James Bottomley wrote:
-> On Mon, 2018-03-12 at 17:53 -0400, Mimi Zohar wrote:
-[...]
-> > - This use case, when the TPM is not builtin and unavailable before
-> > IMA is initialized.
+On Mon, 2018-03-12 at 19:30 -0400, Mimi Zohar wrote:
+> On Mon, 2018-03-12 at 15:30 -0700, James Bottomley wrote:
 > > 
-> > I would classify this use case as an IMA testing/debugging
-> > environment, when it cannot, for whatever reason, be builtin the
-> > kernel or initialized before IMA.
+> > On Mon, 2018-03-12 at 17:53 -0400, Mimi Zohar wrote:
+> [...]
 > > 
-> > From Dave Safford:
-> > ????For the TCG chain of trust to have any meaning, all files have to
-> > ????be measured and extended into the TPM before they are accessed.
-> > If
-> > ????the TPM driver is loaded after any unmeasured file, the chain is
-> > ????broken, and IMA is useless for any use case or any threat model.
+> > > 
+> > > - This use case, when the TPM is not builtin and unavailable
+> > > before
+> > > IMA is initialized.
+> > > 
+> > > I would classify this use case as an IMA testing/debugging
+> > > environment, when it cannot, for whatever reason, be builtin the
+> > > kernel or initialized before IMA.
+> > > 
+> > > From Dave Safford:
+> > > ????For the TCG chain of trust to have any meaning, all files
+> > > have to
+> > > ????be measured and extended into the TPM before they are
+> > > accessed.
+> > > If
+> > > ????the TPM driver is loaded after any unmeasured file, the chain
+> > > is
+> > > ????broken, and IMA is useless for any use case or any threat
+> > > model.
+> > 
+> > I don't think this is quite the correct characterisation. ?In
+> > principle the kernel could also touch the files before IMA is
+> > loaded. ?However, we know from the way the kernel operates that it
+> > doesn't. ?We basically trust that the kernel measurement tells us
+> > this. ?The same thing can be made to apply to the initrd.
 > 
-> I don't think this is quite the correct characterisation. ?In principle
-> the kernel could also touch the files before IMA is loaded. ?However,
-> we know from the way the kernel operates that it doesn't. ?We basically
-> trust that the kernel measurement tells us this. ?The same thing can be
-> made to apply to the initrd.
+> With the builtin "tcb" policy, IMA-measurement is enabled from the
+> very beginning. ?Afterwards, the system can transition to a custom
+> policy based on finer grain LSM labels, which aren't available on
+> boot.
+> 
+> > 
+> > The key question is not whether the component could theoretically
+> > access the files but whether it actually does so.
+> 
+> As much as you might think you know what is included in the
+> initramfs, IMA-measurement is your safety net, including everything
+> accessed in the TCB.
 
-With the builtin "tcb" policy, IMA-measurement is enabled from the
-very beginning. ?Afterwards, the system can transition to a custom
-policy based on finer grain LSM labels, which aren't available on
-boot.
+The initrd *is* part of the Trusted Computing Base because it's part of
+the boot custody chain. ?That's really my point. ?If I don't know
+what's in my initrd, I've broken the chain there and IMA can't fix it.
 
-> The key question is not whether the component could theoretically
-> access the files but whether it actually does so.
-
-As much as you might think you know what is included in the initramfs,
-IMA-measurement is your safety net, including everything accessed in
-the TCB.
-
-Mimi
+James
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
