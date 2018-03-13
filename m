@@ -1,73 +1,65 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Mon, 12 Mar 2018 17:06:45 -0700
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1520897400.3547.253.camel@linux.vnet.ibm.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-	<1520449719.5558.28.camel@HansenPartnership.com>
-	<1520450495.10396.587.camel@linux.vnet.ibm.com>
-	<1520451662.24314.5.camel@HansenPartnership.com>
-	<1520461156.10396.654.camel@linux.vnet.ibm.com>
-	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-	<1520615461.12216.6.camel@HansenPartnership.com>
-	<1520891598.3547.190.camel@linux.vnet.ibm.com>
-	<1520893847.4522.62.camel@HansenPartnership.com>
-	<1520897400.3547.253.camel@linux.vnet.ibm.com>
-Message-ID: <1520899605.4522.67.camel@HansenPartnership.com>
+From: tycho@tycho.ws (Tycho Andersen)
+Date: Mon, 12 Mar 2018 22:29:06 -0600
+Subject: [PATCH 1/2] big key: get rid of stack array allocation
+Message-ID: <20180313042907.29598-1-tycho@tycho.ws>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-03-12 at 19:30 -0400, Mimi Zohar wrote:
-> On Mon, 2018-03-12 at 15:30 -0700, James Bottomley wrote:
-> > 
-> > On Mon, 2018-03-12 at 17:53 -0400, Mimi Zohar wrote:
-> [...]
-> > 
-> > > 
-> > > - This use case, when the TPM is not builtin and unavailable
-> > > before
-> > > IMA is initialized.
-> > > 
-> > > I would classify this use case as an IMA testing/debugging
-> > > environment, when it cannot, for whatever reason, be builtin the
-> > > kernel or initialized before IMA.
-> > > 
-> > > From Dave Safford:
-> > > ????For the TCG chain of trust to have any meaning, all files
-> > > have to
-> > > ????be measured and extended into the TPM before they are
-> > > accessed.
-> > > If
-> > > ????the TPM driver is loaded after any unmeasured file, the chain
-> > > is
-> > > ????broken, and IMA is useless for any use case or any threat
-> > > model.
-> > 
-> > I don't think this is quite the correct characterisation. ?In
-> > principle the kernel could also touch the files before IMA is
-> > loaded. ?However, we know from the way the kernel operates that it
-> > doesn't. ?We basically trust that the kernel measurement tells us
-> > this. ?The same thing can be made to apply to the initrd.
-> 
-> With the builtin "tcb" policy, IMA-measurement is enabled from the
-> very beginning. ?Afterwards, the system can transition to a custom
-> policy based on finer grain LSM labels, which aren't available on
-> boot.
-> 
-> > 
-> > The key question is not whether the component could theoretically
-> > access the files but whether it actually does so.
-> 
-> As much as you might think you know what is included in the
-> initramfs, IMA-measurement is your safety net, including everything
-> accessed in the TCB.
+We're interested in getting rid of all of the stack allocated arrays in the
+kernel [1]. This patch removes one in keys by switching to malloc/free.
+Note that we use kzalloc, to avoid leaking the nonce. I'm not sure this is
+really necessary, but extra paranoia seems prudent.
 
-The initrd *is* part of the Trusted Computing Base because it's part of
-the boot custody chain. ?That's really my point. ?If I don't know
-what's in my initrd, I've broken the chain there and IMA can't fix it.
+Manually tested using the program from the add_key man page to trigger
+big_key.
 
-James
+[1]: https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+CC: David Howells <dhowells@redhat.com>
+CC: James Morris <jmorris@namei.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ security/keys/big_key.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+index fa728f662a6f..70f9f785c59d 100644
+--- a/security/keys/big_key.c
++++ b/security/keys/big_key.c
+@@ -108,13 +108,18 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+ 	 * an .update function, so there's no chance we'll wind up reusing the
+ 	 * key to encrypt updated data. Simply put: one key, one encryption.
+ 	 */
+-	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
++	u8 *zero_nonce;
++
++	zero_nonce = kzalloc(crypto_aead_ivsize(big_key_aead), GFP_KERNEL);
++	if (!zero_nonce)
++		return -ENOMEM;
+ 
+ 	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
+-	if (!aead_req)
++	if (!aead_req) {
++		kfree(zero_nonce);
+ 		return -ENOMEM;
++	}
+ 
+-	memset(zero_nonce, 0, sizeof(zero_nonce));
+ 	aead_request_set_crypt(aead_req, buf->sg, buf->sg, datalen, zero_nonce);
+ 	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
+ 	aead_request_set_ad(aead_req, 0);
+@@ -131,6 +136,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+ error:
+ 	mutex_unlock(&big_key_aead_lock);
+ 	aead_request_free(aead_req);
++	kzfree(zero_nonce);
+ 	return ret;
+ }
+ 
+-- 
+2.15.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
