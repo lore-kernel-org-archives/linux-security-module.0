@@ -1,64 +1,67 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 13 Mar 2018 16:16:04 +1100 (AEDT)
-Subject: [PATCH v2] exec: Set file unwritable before LSM check
-In-Reply-To: <20180309193020.GA5149@beast>
-References: <20180309193020.GA5149@beast>
-Message-ID: <alpine.LRH.2.21.1803131615390.21929@namei.org>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Tue, 13 Mar 2018 10:46:04 -0400
+Subject: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+In-Reply-To: <20180312192950.GE29878@mail.hallyn.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+	<20180312192950.GE29878@mail.hallyn.com>
+Message-ID: <1fd04e0e-37ab-329c-c75d-d349a3b2f136@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 9 Mar 2018, Kees Cook wrote:
+On 03/12/2018 03:29 PM, Serge E. Hallyn wrote:
+> Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
+>> Files on FUSE can change at any point in time without IMA being able
+>> to detect it.  The file data read for the file signature verification
+>> could be totally different from what is subsequently read, making the
+>> signature verification useless.
+>>
+>> FUSE can be mounted by unprivileged users either today with fusermount
+>> installed with setuid, or soon with the upcoming patches to allow FUSE
+>> mounts in a non-init user namespace.
+>>
+>> This patch sets the SB_I_IMA_UNVERIFIABLE_SIGNATURE flag and when
+>> appropriate sets the SB_I_UNTRUSTED_MOUNTER flag.
+>>
+>> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+>> Cc: Miklos Szeredi <miklos@szeredi.hu>
+>> Cc: Seth Forshee <seth.forshee@canonical.com>
+>> Cc: Eric W. Biederman <ebiederm@xmission.com>
+>> Cc: Dongsu Park <dongsu@kinvolk.io>
+>> Cc: Alban Crequy <alban@kinvolk.io>
+>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+>
+> Of course when IMA namespacing hits, you'll want to compare the
+> sb->s_user_ns to the (~handwaving~) user_ns owning the ima ns
+> right?
 
-> The LSM check should happen after the file has been confirmed to be
-> unchanging. Without this, we could have a race between the Time of Check
-> (the call to security_kernel_read_file() which could read the file and
-> make access policy decisions) and the Time of Use (starting with
-> kernel_read_file()'s reading of the file contents). In theory, file
-> contents could change between the two.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> v2: Clarify the ToC/ToU race (Linus)
+I suppose this would be the only way to enable 'trusted mounters' within 
+IMA namespaces. Maybe there could be an additional capability gate that 
+would allow one to be a 'trusted mounter' then?
 
+>
+>> ---
+>>   fs/fuse/inode.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>> index 624f18bbfd2b..ef309958e060 100644
+>> --- a/fs/fuse/inode.c
+>> +++ b/fs/fuse/inode.c
+>> @@ -1080,6 +1080,9 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+>>   	sb->s_maxbytes = MAX_LFS_FILESIZE;
+>>   	sb->s_time_gran = 1;
+>>   	sb->s_export_op = &fuse_export_operations;
+>> +	sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
+>> +	if (sb->s_user_ns != &init_user_ns)
+>> +		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
+>>   
+>>   	file = fget(d.fd);
+>>   	err = -EINVAL;
+>> -- 
+>> 2.7.5
 
-I'll merge this unless Al objects (cc'd).
-
-> 
-> Only loadpin and SELinux currently implement this hook. From what
-> I can see, this won't change anything for either of them. IMA calls
-> kernel_read_file(), but looking there it seems those callers won't be
-> negatively impacted either. Can folks double-check this and send an
-> Ack please?
-> ---
->  fs/exec.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 7eb8d21bcab9..a919a827d181 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -895,13 +895,13 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
->  	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
->  		return -EINVAL;
->  
-> -	ret = security_kernel_read_file(file, id);
-> +	ret = deny_write_access(file);
->  	if (ret)
->  		return ret;
->  
-> -	ret = deny_write_access(file);
-> +	ret = security_kernel_read_file(file, id);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	i_size = i_size_read(file_inode(file));
->  	if (max_size > 0 && i_size > max_size) {
-> 
-
--- 
-James Morris
-<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
