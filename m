@@ -1,47 +1,38 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue, 13 Mar 2018 14:02:02 -0400
-Subject: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
-In-Reply-To: <alpine.LRH.2.21.1803120953310.26512@namei.org>
-References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
-	<20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
-	<20170725175317.GA727@mail.hallyn.com>
-	<1501008554.3689.30.camel@HansenPartnership.com>
-	<20170725190406.GA1883@mail.hallyn.com>
-	<1501009739.3689.33.camel@HansenPartnership.com>
-	<1501012082.27413.17.camel@linux.vnet.ibm.com>
-	<645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com>
-	<20170725204622.GA4969@mail.hallyn.com>
-	<97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
-	<20180309025942.GA15295@mail.hallyn.com>
-	<ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
-	<alpine.LRH.2.21.1803120953310.26512@namei.org>
-Message-ID: <c39350db-046f-ea70-15e4-210884548b1e@linux.vnet.ibm.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 13 Mar 2018 14:16:42 -0400
+Subject: [RFC PATCH linux-next] evm: evm_hmac can be static
+In-Reply-To: <20180313174224.GA28779@intel17>
+References: <201803140150.bfjQDiL5%fengguang.wu@intel.com>
+	<20180313174224.GA28779@intel17>
+Message-ID: <1520965002.3547.342.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 03/11/2018 06:58 PM, James Morris wrote:
-> On Fri, 9 Mar 2018, Stefan Berger wrote:
->
->> Yuqiong is publishing a paper in this area. I believe the conference is only
->> later this year.
->>
->> Our goals are to enable IMA measurements, appraisal, and auditing inside a
->> container using namespaces.
-> This is excellent to have -- can you include this requirements analysis as
-> a file Documentation/security on the next posting?
->
-> Also, if you need a public space for managing these kinds of documents,
-> consider utilizing
-> http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
+On Wed, 2018-03-14 at 01:42 +0800, kbuild test robot wrote:
+> Fixes: c49fc264be98 ("evm: Move evm_hmac and evm_hash from evm_main.c to evm_crypto.c")
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 
-Thanks for the pointer. I tried creating an account, but the interface 
-wouldn't let me. Who is managing it?
+Thanks!
 
-    Stefan
-
->
->
-> - James
+> ---
+>  evm_crypto.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index fdde9cb..a46fba3 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -37,8 +37,8 @@ static DEFINE_MUTEX(mutex);
+> 
+>  static unsigned long evm_set_key_flags;
+> 
+> -char * const evm_hmac = "hmac(sha1)";
+> -char * const evm_hash = "sha1";
+> +static char * const evm_hmac = "hmac(sha1)";
+> +static char * const evm_hash = "sha1";
+> 
+>  /**
+>   * evm_set_key() - set EVM HMAC key from the kernel
 
 
 --
