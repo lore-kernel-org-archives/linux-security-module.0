@@ -1,48 +1,96 @@
-From: why2jjj.linux@gmail.com (J Freyensee)
-Date: Tue, 13 Mar 2018 09:00:48 -0700
-Subject: [PATCH v3 1/6] tpm-buf: create new functions for handling TPM
-	buffers
-In-Reply-To: <1520877553.4522.25.camel@HansenPartnership.com>
-References: <1520720026.4495.11.camel@HansenPartnership.com>
-	<1520720090.4495.12.camel@HansenPartnership.com>
-	<277bd8a1-9e7f-f6e8-bede-5208f0456adf@gmail.com>
-	<1520877553.4522.25.camel@HansenPartnership.com>
-Message-ID: <87c7bc38-2f43-9bb0-ac76-ebbc08ce4977@gmail.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Tue, 13 Mar 2018 12:39:03 -0500
+Subject: [PATCH 2/2] dh key: get rid of stack array allocation
+In-Reply-To: <20180313042907.29598-2-tycho@tycho.ws>
+References: <20180313042907.29598-1-tycho@tycho.ws>
+	<20180313042907.29598-2-tycho@tycho.ws>
+Message-ID: <20180313173903.GA19174@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Quoting Tycho Andersen (tycho at tycho.ws):
+> Similarly to the previous patch, we would like to get rid of stack
+> allocated arrays: https://lkml.org/lkml/2018/3/7/621
+> 
+> In this case, we can also use a malloc style approach to free the temporary
+> buffer, being careful to also use kzfree to free them (indeed, at least one
+> of these has a memzero_explicit, but it seems like maybe they both
+> should?).
+> 
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: David Howells <dhowells@redhat.com>
+> CC: James Morris <jmorris@namei.org>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
 
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-On 3/12/18 10:59 AM, James Bottomley wrote:
-> On Mon, 2018-03-12 at 09:00 -0700, J Freyensee wrote:
->>> +int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
->>> +{
->>> +	int rc;
->>> +
->>> +	rc = __tpm_buf_init(buf);
->>
->> Assuming that functions like tpm_buf_init() are the top-level API
->> being defined in this patch, shouldn't it check if buf is valid
->> before passing into the internal functions like __tpm_buf_init(buf)
->> (maybe WARN()/BUG_ON()?).? Or does __tpm_buf_init(buf) do this check?
-> These are kernel internal APIs designed for on stack struct tpm_buf
-> usage,
+for both, thanks.
 
-ok.
-
-> so I can't think of a viable threat model that would require
-> this type of checking ... do you have one?
-
-no, nothing particular in mind.? I just get a little nervous when I see 
-variables being passed unchecked into internal functions starting with '__'.
-
-Regards,
-Jay
-
->
-> James
->
-
+> ---
+>  security/keys/dh.c | 27 +++++++++++++++++++++------
+>  1 file changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/keys/dh.c b/security/keys/dh.c
+> index d1ea9f325f94..f02261b24759 100644
+> --- a/security/keys/dh.c
+> +++ b/security/keys/dh.c
+> @@ -162,19 +162,27 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
+>  			goto err;
+>  
+>  		if (zlen && h) {
+> -			u8 tmpbuffer[h];
+> +			u8 *tmpbuffer;
+>  			size_t chunk = min_t(size_t, zlen, h);
+> -			memset(tmpbuffer, 0, chunk);
+> +
+> +			err = -ENOMEM;
+> +			tmpbuffer = kzalloc(chunk, GFP_KERNEL);
+> +			if (!tmpbuffer)
+> +				goto err;
+>  
+>  			do {
+>  				err = crypto_shash_update(desc, tmpbuffer,
+>  							  chunk);
+> -				if (err)
+> +				if (err) {
+> +					kzfree(tmpbuffer);
+>  					goto err;
+> +				}
+>  
+>  				zlen -= chunk;
+>  				chunk = min_t(size_t, zlen, h);
+>  			} while (zlen);
+> +
+> +			kzfree(tmpbuffer);
+>  		}
+>  
+>  		if (src && slen) {
+> @@ -184,13 +192,20 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
+>  		}
+>  
+>  		if (dlen < h) {
+> -			u8 tmpbuffer[h];
+> +			u8 *tmpbuffer;
+> +
+> +			err = -ENOMEM;
+> +			tmpbuffer = kzalloc(h, GFP_KERNEL);
+> +			if (!tmpbuffer)
+> +				goto err;
+>  
+>  			err = crypto_shash_final(desc, tmpbuffer);
+> -			if (err)
+> +			if (err) {
+> +				kzfree(tmpbuffer);
+>  				goto err;
+> +			}
+>  			memcpy(dst, tmpbuffer, dlen);
+> -			memzero_explicit(tmpbuffer, h);
+> +			kzfree(tmpbuffer);
+>  			return 0;
+>  		} else {
+>  			err = crypto_shash_final(desc, dst);
+> -- 
+> 2.15.1
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
