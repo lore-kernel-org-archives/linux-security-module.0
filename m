@@ -1,37 +1,58 @@
-From: why2jjj.linux@gmail.com (J Freyensee)
-Date: Wed, 14 Mar 2018 10:43:37 -0700
-Subject: [PATCH 4/8] struct page: add field for vm_struct
-In-Reply-To: <20180313220040.GA15791@bombadil.infradead.org>
-References: <20180313214554.28521-1-igor.stoppa@huawei.com>
-	<20180313214554.28521-5-igor.stoppa@huawei.com>
-	<20180313220040.GA15791@bombadil.infradead.org>
-Message-ID: <7b18521c-539b-2ba1-823e-e83be071c13f@gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 14 Mar 2018 13:50:41 -0400
+Subject: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+In-Reply-To: <877eqer5r6.fsf@xmission.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+	<CANXojczCU3UC4xsPYzAYqFW3_WR9Z7QO_exd4dB6eyQR2STuUg@mail.gmail.com>
+	<1521032461.3547.404.camel@linux.vnet.ibm.com>
+	<877eqer5r6.fsf@xmission.com>
+Message-ID: <1521049841.3547.500.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, 2018-03-14 at 11:17 -0500, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> 
+> > On Wed, 2018-03-14 at 08:52 +0100, Stef Bon wrote:
+> >> I do not have any comments about the patches but a question.
+> >> I completely agree that the files can change without the VFS knowing
+> >> about it, but isn't that in general the case with filesystems with a
+> >> backend shared with others (network fs's?).
+> >
+> > Right, the problem is not limited to fuse, but needs to be addressed
+> > before unprivileged fuse mounts are upstreamed.
+> >
+> > Alban's response to this question:
+> > https://marc.info/?l=linux-kernel&m=151784020321045&w=2
+> 
+> Which goes to why it is a flag that get's set.
+> 
+> All of this just needs a follow-up patch to update every filesystem
+> that does not meet ima's requirements.
 
+Currently files on remote filesystems are measured/appraised/audited
+once. ?With the new flags, our options would be to either fail the
+signature verification or constantly re-measure/re-appraise files on
+remote file systems. ?Neither option seems like the right solution.
 
-On 3/13/18 3:00 PM, Matthew Wilcox wrote:
-> On Tue, Mar 13, 2018 at 11:45:50PM +0200, Igor Stoppa wrote:
->> When a page is used for virtual memory, it is often necessary to obtain
->> a handler to the corresponding vm_struct, which refers to the virtually
->> continuous area generated when invoking vmalloc.
->>
->> The struct page has a "mapping" field, which can be re-used, to store a
->> pointer to the parent area.
->>
->> This will avoid more expensive searches, later on.
->>
->> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+There's some very initial discussions on how to support file integrity
+on remote filesystems. ?Chuck Lever has some thoughts on piggy-backing 
+on the fs-verity work being done. ?From a very, very high level, IMA-
+appraisal would verify the file signature, but leave the integrity
+enforcement to the vfs/fs layer. ?By integrating fs-verity or similar
+proposal with IMA, measurements would be included in the measurement
+list and keys used for file signature verification would use the same
+existing IMA-appraisal infrastructure.
 
-Igor, do you mind sticking these tags on the files that have spent some 
-time reviewing a revision of your patchset (like the Reviewed-by: tags I 
-provided last revision?)
+> Mimi I believe you said that the requirement is that all file changes
+> can be detected through the final __fput of a file that calls
+> ima_file_free.
 
-Thanks,
-Jay
+Right, like for fuse, I don't believe this existing hook works for
+remote filesystems.
 
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
