@@ -1,34 +1,54 @@
-From: willy@infradead.org (Matthew Wilcox)
-Date: Wed, 14 Mar 2018 06:04:18 -0700
-Subject: [RFC PATCH v19 0/8] mm: security: ro protection for dynamic data
-In-Reply-To: <8623382b-cdbe-8862-8c2f-fa5bc6a1213a@huawei.com>
-References: <20180313214554.28521-1-igor.stoppa@huawei.com>
-	<a9bfc57f-1591-21b6-1676-b60341a2fadd@huawei.com>
-	<20180314115653.GD29631@bombadil.infradead.org>
-	<8623382b-cdbe-8862-8c2f-fa5bc6a1213a@huawei.com>
-Message-ID: <20180314130418.GG29631@bombadil.infradead.org>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 14 Mar 2018 09:27:01 -0500
+Subject: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+In-Reply-To: <1fd04e0e-37ab-329c-c75d-d349a3b2f136@linux.vnet.ibm.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+	<20180312192950.GE29878@mail.hallyn.com>
+	<1fd04e0e-37ab-329c-c75d-d349a3b2f136@linux.vnet.ibm.com>
+Message-ID: <20180314142701.GA6497@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Mar 14, 2018 at 02:55:10PM +0200, Igor Stoppa wrote:
-> >  The page_frag allocator seems like a much better place to
-> > start than genalloc.  It has a significantly lower overhead and is
-> > much more suited to the kind of probably-identical-lifespan that the
-> > pmalloc API is going to persuade its users to have.
+Quoting Stefan Berger (stefanb at linux.vnet.ibm.com):
+> On 03/12/2018 03:29 PM, Serge E. Hallyn wrote:
+> >Quoting Mimi Zohar (zohar at linux.vnet.ibm.com):
+> >>Files on FUSE can change at any point in time without IMA being able
+> >>to detect it.  The file data read for the file signature verification
+> >>could be totally different from what is subsequently read, making the
+> >>signature verification useless.
+> >>
+> >>FUSE can be mounted by unprivileged users either today with fusermount
+> >>installed with setuid, or soon with the upcoming patches to allow FUSE
+> >>mounts in a non-init user namespace.
+> >>
+> >>This patch sets the SB_I_IMA_UNVERIFIABLE_SIGNATURE flag and when
+> >>appropriate sets the SB_I_UNTRUSTED_MOUNTER flag.
+> >>
+> >>Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> >>Cc: Miklos Szeredi <miklos@szeredi.hu>
+> >>Cc: Seth Forshee <seth.forshee@canonical.com>
+> >>Cc: Eric W. Biederman <ebiederm@xmission.com>
+> >>Cc: Dongsu Park <dongsu@kinvolk.io>
+> >>Cc: Alban Crequy <alban@kinvolk.io>
+> >>Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> >Acked-by: Serge Hallyn <serge@hallyn.com>
+> >
+> >Of course when IMA namespacing hits, you'll want to compare the
+> >sb->s_user_ns to the (~handwaving~) user_ns owning the ima ns
+> >right?
 > 
-> Could you please provide me a pointer?
-> I did a quick search on 4.16-rc5 and found the definition of page_frag
-> and sk_page_frag(). Is this what you are referring to?
+> I suppose this would be the only way to enable 'trusted mounters'
+> within IMA namespaces. Maybe there could be an additional capability
+> gate that would allow one to be a 'trusted mounter' then?
 
-It's a blink-and-you'll-miss-it allocator buried deep in mm/page_alloc.c:
-void *page_frag_alloc(struct page_frag_cache *nc,
-                      unsigned int fragsz, gfp_t gfp_mask)
-void page_frag_free(void *addr)
+Wouldn't CAP_SYS_ADMIN to the ima_ns->user_ns suffice?
 
-I don't necessarily think you should use it as-is, but the principle it uses
-seems like a better match to me than the rather complex genalloc.  Just
-allocate some pages and track the offset within those pages that is the
-current allocation point.  It's less than 100 lines of code!
+I personally think CAP_INTEGRITY would make sense, but right
+now CAP_SYS_ADMIN seems to suffice so it wouldn't make sense to
+raise the bar there unless we raise it for all of IMA configuration.
+
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
