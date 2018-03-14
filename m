@@ -1,39 +1,37 @@
 From: why2jjj.linux@gmail.com (J Freyensee)
-Date: Wed, 14 Mar 2018 10:40:34 -0700
-Subject: [PATCH 5/8] Protectable Memory
-In-Reply-To: <eb9bc944-b1de-48d9-652f-9f898ec4fcec@huawei.com>
+Date: Wed, 14 Mar 2018 10:43:37 -0700
+Subject: [PATCH 4/8] struct page: add field for vm_struct
+In-Reply-To: <20180313220040.GA15791@bombadil.infradead.org>
 References: <20180313214554.28521-1-igor.stoppa@huawei.com>
-	<20180313214554.28521-6-igor.stoppa@huawei.com>
-	<20180314121547.GE29631@bombadil.infradead.org>
-	<eb9bc944-b1de-48d9-652f-9f898ec4fcec@huawei.com>
-Message-ID: <c528d92e-644b-ba2c-4494-b82cc35a26b5@gmail.com>
+	<20180313214554.28521-5-igor.stoppa@huawei.com>
+	<20180313220040.GA15791@bombadil.infradead.org>
+Message-ID: <7b18521c-539b-2ba1-823e-e83be071c13f@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 
 
->>> +struct pmalloc_data {
->>> +	struct gen_pool *pool;  /* Link back to the associated pool. */
->>> +	bool protected;     /* Status of the pool: RO or RW. */
->>> +	struct kobj_attribute attr_protected; /* Sysfs attribute. */
->>> +	struct kobj_attribute attr_avail;     /* Sysfs attribute. */
->>> +	struct kobj_attribute attr_size;      /* Sysfs attribute. */
->>> +	struct kobj_attribute attr_chunks;    /* Sysfs attribute. */
->>> +	struct kobject *pool_kobject;
->>> +	struct list_head node; /* list of pools */
->>> +};
->> sysfs attributes aren't free, you know.  I appreciate you want something
->> to help debug / analyse, but having one file for the whole subsystem or
->> at least one per pool would be a better idea.
-> Which means that it should not be normal sysfs, but rather debugfs, if I
-> understand correctly, since in sysfs 1 value -> 1 file.
+On 3/13/18 3:00 PM, Matthew Wilcox wrote:
+> On Tue, Mar 13, 2018 at 11:45:50PM +0200, Igor Stoppa wrote:
+>> When a page is used for virtual memory, it is often necessary to obtain
+>> a handler to the corresponding vm_struct, which refers to the virtually
+>> continuous area generated when invoking vmalloc.
+>>
+>> The struct page has a "mapping" field, which can be re-used, to store a
+>> pointer to the parent area.
+>>
+>> This will avoid more expensive searches, later on.
+>>
+>> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-Yes, that is a good idea, to use debugfs so you still have a means to 
-debug/analyze but can be also turned off for normal system execution.? 
-Sorry I didn't think about that earlier to save a revision, that's one 
-of my favorite things I like to use for diagnosis.
+Igor, do you mind sticking these tags on the files that have spent some 
+time reviewing a revision of your patchset (like the Reviewed-by: tags I 
+provided last revision?)
 
+Thanks,
 Jay
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
