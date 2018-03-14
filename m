@@ -1,98 +1,112 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Wed, 14 Mar 2018 10:25:06 -0700
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1521047286.3547.470.camel@linux.vnet.ibm.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-	<1520449719.5558.28.camel@HansenPartnership.com>
-	<1520450495.10396.587.camel@linux.vnet.ibm.com>
-	<1520451662.24314.5.camel@HansenPartnership.com>
-	<1520461156.10396.654.camel@linux.vnet.ibm.com>
-	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-	<1520615461.12216.6.camel@HansenPartnership.com>
-	<1520891598.3547.190.camel@linux.vnet.ibm.com>
-	<1520893847.4522.62.camel@HansenPartnership.com>
-	<1520897400.3547.253.camel@linux.vnet.ibm.com>
-	<1520899605.4522.67.camel@HansenPartnership.com>
-	<BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
-	<1521038471.4508.25.camel@HansenPartnership.com>
-	<1521047286.3547.470.camel@linux.vnet.ibm.com>
-Message-ID: <1521048306.4508.56.camel@HansenPartnership.com>
+From: willy@infradead.org (Matthew Wilcox)
+Date: Wed, 14 Mar 2018 10:33:43 -0700
+Subject: [RFC PATCH v19 0/8] mm: security: ro protection for dynamic data
+In-Reply-To: <9623b0d1-4ace-b3e7-b861-edba03b8a8cd@huawei.com>
+References: <20180313214554.28521-1-igor.stoppa@huawei.com>
+	<a9bfc57f-1591-21b6-1676-b60341a2fadd@huawei.com>
+	<20180314115653.GD29631@bombadil.infradead.org>
+	<8623382b-cdbe-8862-8c2f-fa5bc6a1213a@huawei.com>
+	<20180314130418.GG29631@bombadil.infradead.org>
+	<9623b0d1-4ace-b3e7-b861-edba03b8a8cd@huawei.com>
+Message-ID: <20180314173343.GJ29631@bombadil.infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-03-14 at 13:08 -0400, Mimi Zohar wrote:
-> On Wed, 2018-03-14 at 07:41 -0700, James Bottomley wrote:
-[...]
-> > What about a compromise: we
-> > already get the boot loader to do measurements and PCR extensions
-> > using the BIOS TPM driver, there's no reason why we can't do the
-> > same in the early kernel until a real TPM driver is found.
+On Wed, Mar 14, 2018 at 06:11:22PM +0200, Igor Stoppa wrote:
+> On 14/03/18 15:04, Matthew Wilcox wrote:
+> > but the principle it uses
+> > seems like a better match to me than the rather complex genalloc.
 > 
-> Your proposal requires changes to the existing boot loaders, not all
-> of which are X86 based.
+> It uses meta data in a different way than genalloc.
+> There is probably a tipping point where one implementation becomes more
+> space-efficient than the other.
 
-I don't believe it does, see below.
+Certainly there are always tradeoffs in writing a memory allocator.
 
->  ?Grub, to the best of my knowledge, is not interested in having
-> anything to do with TPM based measurements. ?Many attempts have been
-> made to upstream trusted boot patches, but none have been accepted. 
+> Probably page_frag does well with relatively large allocations, while
+> genalloc seems to be better for small (few allocation units) allocations.
 
-Just for the sake of accuracy, even though it has nothing to do with
-the current proposal, grub does actually measure the booting
-components. ?It does this via a shim protocol trick, so when grub
-passes the kernel to shim to verify the signature, shim also stores its
-measurement in the TPM boot log.
+I don't understand why you would think that.  If you allocate 4096 1-byte
+elements, page_frag will just use up a page.  Doing the same thing with
+genalloc requires allocating two bits per byte (1kB of bitmap), plus
+other overheads.
 
-> ?Any support would need to piggyback on the callback hooks introduced
-> for secure boot and then be carried by the distros.
+> Also, in case of high variance in the size of the allocations, genalloc
+> requires the allocation unit to be small enough to fit the smallest
+> request (otherwise one must accept some slack), while page_frag doesn't
+> care if the allocation is small or large.
 
-Right, that's how it does actually work today.
+Right; internal versus external fragmentation.  The bane of memory
+allocators ;-)
 
-This is more or less what made me think of the compromise: the way shim
-does measurements is using the EFI TPM protocol. ?Although this is
-technically a boot time UEFI driver, we can make it serve us until
-we're ready to load the real TPM driver, so we could write measurements
-to a PCR without any kernel drivers loaded.
+> page_frag otoh, seems to not support the reuse of space that was freed,
+> since there is only
 
-> As for Linux based boot loaders, the driver needs to be builtin for
-> these measurements. ?So this wouldn't help you.
+To a certain extent it does.  If you free everything on a page, and that
+page is still in the page_frag_cache, it will get reused.
+
+> But could you please explain to what you are referring to, when you say
+> that page_frag has "significantly lower overhead" ?
+
+Less CPU time taken per allocation, less metadata stored per object.
+
+> Ex: if the pfree is called only on error paths, is it ok to not claim
+> back the memory released, if it's less than one page?
+
+Yes, I think that's a great example.
+
+> To be clear: I do not want to hold to genalloc just because I have
+> already implemented it. I can at least sketch a version with page_frag,
+> but I would like to understand why its trade-offs are better :-)
 > 
-> > 
-> > That way IMA would have no dependency on any built in TPM driver
-> > ... is that an acceptable compromise to everyone?
+> > Just allocate some pages and track the offset within those pages that 
 > 
-> Adding additional support for post IMA-initialization for TPM's built
-> as kernel modules is clearly not optimal for all of the reasons
-> provided to now and will be confusing, but could be supported. ?This
-> delayed loading of the TPM needs to be clearly indicated in both the
-> audit log and in IMA's measurement list.
-
-Why if the measurement chain isn't broken? ?The way I'm thinking of
-implementing it, IMA wouldn't even know. ?What would happen is that a
-NULL tpm chip in tpm_pcr_read/tpm_pcr_extend would trigger the usual
-search for the first TPM but if none were found and we'd booted on an
-EFI system, we'd just use the EFI driver to do perform the operation.
-
-There's probably a bit of additional subtlety making the kernel and EFI
-agree which TPM they're using in a multi-TPM situation.
-
-The EFI driver isn't full featured: it only does measurement and
-logging, but it looks like that's all IMA needs.
-
-James
-
-> In terms of attestation, if a measurement policy is enabled before
-> the TPM is loaded, any records up to the delayed TPM entry in the IMA
-> measurement list would need to be ignored.
+> > is the current allocation point.
 > 
-> In addition, your changes should not in any way change the existing
-> IMA-measurement initialization.
 > 
-> Mimi
+> > It's less than 100 lines of code!
 > 
+> Strictly speaking it is true, but it all relies on other functions,
+> which must be rewritten, because they use linear address, while this
+> must work with virtual (vmalloc) addresses.
 
+No, that's basically the whole thing.  I think an implementation of
+pmalloc which used a page_frag-style allocator would be larger than
+100 lines, but I don't think it would have to be significantly larger
+than that.
+
+> Also, I see that the code relies a lot on order of allocation.
+> I think we had similar discussion wrt compound pages.
+> 
+> It seems to me wasteful, if I have a request of, say, 5 pages, and I end
+> up allocating 8.
+
+Yes, but the other three pages are available for use by the pmalloc pool.
+Now, at pmalloc_protect() time, you might well want to release the unused
+pages by calling make_alloc_exact() and hand those three pages back to the
+page allocator.
+
+> I do not recall anyone giving a justification like:
+> "yeah, it uses extra pages, but it's preferable, for reasons X, Y and Z,
+> so it's a good trade-off"
+
+Sometimes it is, sometimes it isn't.
+
+> Could it be that it's normal RAM is considered less precious than the
+> special memory genalloc is written for, so normal RAM is not really
+> proactively reused, while special memory is treated as a more valuable
+> resource that should not be wasted?
+
+We're certainly at the point where normal RAM is pretty cheap.  A 16GB
+DIMM is $200, so that's $12.50 per gigabyte.  We have more of a problem
+with fragmentation than we do with squeezing every last byte out of
+the system.
+
+Of course, Linux still runs on tiny systems, and we don't want to
+unnecessarily bloat the kernel.  And cachelines are also a precious
+resource; the fewer we touch, the faster the system runs.  The bitmap
+in genalloc can easily occupy several cachelines; the page_frag allocator
+touches a single cacheline for most allocations.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
