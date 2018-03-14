@@ -1,90 +1,92 @@
-From: James.Bottomley@HansenPartnership.com (James Bottomley)
-Date: Wed, 14 Mar 2018 07:41:11 -0700
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-	<1520449719.5558.28.camel@HansenPartnership.com>
-	<1520450495.10396.587.camel@linux.vnet.ibm.com>
-	<1520451662.24314.5.camel@HansenPartnership.com>
-	<1520461156.10396.654.camel@linux.vnet.ibm.com>
-	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-	<1520615461.12216.6.camel@HansenPartnership.com>
-	<1520891598.3547.190.camel@linux.vnet.ibm.com>
-	<1520893847.4522.62.camel@HansenPartnership.com>
-	<1520897400.3547.253.camel@linux.vnet.ibm.com>
-	<1520899605.4522.67.camel@HansenPartnership.com>
-	<BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
-Message-ID: <1521038471.4508.25.camel@HansenPartnership.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Wed, 14 Mar 2018 18:11:22 +0200
+Subject: [RFC PATCH v19 0/8] mm: security: ro protection for dynamic data
+In-Reply-To: <20180314130418.GG29631@bombadil.infradead.org>
+References: <20180313214554.28521-1-igor.stoppa@huawei.com>
+	<a9bfc57f-1591-21b6-1676-b60341a2fadd@huawei.com>
+	<20180314115653.GD29631@bombadil.infradead.org>
+	<8623382b-cdbe-8862-8c2f-fa5bc6a1213a@huawei.com>
+	<20180314130418.GG29631@bombadil.infradead.org>
+Message-ID: <9623b0d1-4ace-b3e7-b861-edba03b8a8cd@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-03-13 at 12:57 +0000, Safford, David (GE Global Research,
-US) wrote:
-> > 
-> > -----Original Message-----
-> > From: James Bottomley [mailto:James.Bottomley at HansenPartnership.com
-> > ]
-> > Sent: Monday, March 12, 2018 8:07 PM
-> > To: Mimi Zohar <zohar@linux.vnet.ibm.com>; Jiandi An
-[...]
-> > > > The key question is not whether the component could
-> > > > theoretically
-> > > > access the files but whether it actually does so.
-> > > 
-> > > As much as you might think you know what is included in the
-> > > initramfs, IMA-measurement is your safety net, including
-> > > everything accessed in the TCB.
-> > 
-> > The initrd *is* part of the Trusted Computing Base because it's
-> > part of the boot custody chain. ?That's really my point. ?If I
-> > don't know what's in my initrd, I've broken the chain there and IMA
-> > can't fix it.
-> > 
-> > James
-> 
-> That's exactly the point - how do you know what's in your initrd?
-> The initrd is normally built on the possibly compromised system in
-> question.
 
-The point of deploying security measures is to make sure my system
-isn't compromised. ?I realise the institutional view is "we didn't
-build the initrd" and my individual view is well, I built my own kernel
-as well, so what's the difference? ?But the initrd in both models is
-still part of the chain.
 
-> It's not signed as a whole by someone trusted. How can the
-> attestation server say a given hash of the initrd as a whole is good?
+On 14/03/18 15:04, Matthew Wilcox wrote:
 
-I trust myself. ?I can get the hash at build time. ?In the same way as
-I sign my own kernel at build time for secure boot.
+> I don't necessarily think you should use it as-is,
 
-> If IMA is running from the very start, it can at least measure (and
-> eventually appraise) every individual file in the initrd. Given this
-> more detailed measurement list, the attestation server can verify all
-> the components in the initrd, even when it is assembled on the
-> untrusted system.
-> 
-> On many embedded systems, there is no initrd, and IMA has to start
-> measuring and appraising immediately, anyway.
-> 
-> Perhaps there is a use case where there is a known set of initrd
-> images, and so the bootloader's measurement of the initrd is
-> sufficient for verification. I've not run into that situation yet. If
-> you want an option for this use case, ?that's fine, (I'm all for
-> choice) but it should not be the default for IMA.
+I think I simply cannot use it as-is, because it seems to use linear
+memory, while I need virtual. This reason alone would require a rewrite
+of several parts.
 
-Actually, we seem to have wandered away from the main concern which was
-trying to select built in TPM drivers. ?What about a compromise: we
-already get the boot loader to do measurements and PCR extensions using
-the BIOS TPM driver, there's no reason why we can't do the same in the
-early kernel until a real TPM driver is found. ?That way IMA would have
-no dependency on any built in TPM driver ... is that an acceptable
-compromise to everyone?
+> but the principle it uses
+> seems like a better match to me than the rather complex genalloc.
 
-James
+It uses meta data in a different way than genalloc.
+There is probably a tipping point where one implementation becomes more
+space-efficient than the other.
 
+Probably page_frag does well with relatively large allocations, while
+genalloc seems to be better for small (few allocation units) allocations.
+
+Also, in case of high variance in the size of the allocations, genalloc
+requires the allocation unit to be small enough to fit the smallest
+request (otherwise one must accept some slack), while page_frag doesn't
+care if the allocation is small or large.
+
+page_frag otoh, seems to not support the reuse of space that was freed,
+since there is only
+
+But could you please explain to what you are referring to, when you say
+that page_frag has "significantly lower overhead" ?
+
+Is it because it doesn't try to reclaim space that was freed, until the
+whole page is empty?
+
+I see different trade-offs, but I am probably either missing or
+underestimating the main reason why you think this is better.
+
+And probably I am missing the capability of judging what is acceptable
+in certain cases.
+
+Ex: if the pfree is called only on error paths, is it ok to not claim
+back the memory released, if it's less than one page?
+
+To be clear: I do not want to hold to genalloc just because I have
+already implemented it. I can at least sketch a version with page_frag,
+but I would like to understand why its trade-offs are better :-)
+
+> Just allocate some pages and track the offset within those pages that 
+
+> is the current allocation point.
+
+
+> It's less than 100 lines of code!
+
+Strictly speaking it is true, but it all relies on other functions,
+which must be rewritten, because they use linear address, while this
+must work with virtual (vmalloc) addresses.
+
+Also, I see that the code relies a lot on order of allocation.
+I think we had similar discussion wrt compound pages.
+
+It seems to me wasteful, if I have a request of, say, 5 pages, and I end
+up allocating 8.
+
+I do not recall anyone giving a justification like:
+"yeah, it uses extra pages, but it's preferable, for reasons X, Y and Z,
+so it's a good trade-off"
+
+Could it be that it's normal RAM is considered less precious than the
+special memory genalloc is written for, so normal RAM is not really
+proactively reused, while special memory is treated as a more valuable
+resource that should not be wasted?
+
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
