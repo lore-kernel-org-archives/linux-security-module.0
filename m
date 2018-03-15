@@ -1,98 +1,75 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Wed, 14 Mar 2018 21:03:36 -0300
-Subject: [PATCH 3/4] ima: Improvements in ima_appraise_measurement()
-In-Reply-To: <20180314214045.GC14289@mail.hallyn.com>
-References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
-	<20180314202020.3794-4-bauerman@linux.vnet.ibm.com>
-	<20180314214045.GC14289@mail.hallyn.com>
-Message-ID: <87efkmjjc7.fsf@morokweng.localdomain>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Wed, 14 Mar 2018 18:51:39 -0700
+Subject: [PATCH 1/2] big key: get rid of stack array allocation
+In-Reply-To: <20180313042907.29598-1-tycho@tycho.ws>
+References: <20180313042907.29598-1-tycho@tycho.ws>
+Message-ID: <20180315015139.GA641@zzz.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Mon, Mar 12, 2018 at 10:29:06PM -0600, Tycho Andersen wrote:
+> We're interested in getting rid of all of the stack allocated arrays in the
+> kernel [1]. This patch removes one in keys by switching to malloc/free.
+> Note that we use kzalloc, to avoid leaking the nonce. I'm not sure this is
+> really necessary, but extra paranoia seems prudent.
+> 
+> Manually tested using the program from the add_key man page to trigger
+> big_key.
+> 
+> [1]: https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: David Howells <dhowells@redhat.com>
+> CC: James Morris <jmorris@namei.org>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  security/keys/big_key.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+> index fa728f662a6f..70f9f785c59d 100644
+> --- a/security/keys/big_key.c
+> +++ b/security/keys/big_key.c
+> @@ -108,13 +108,18 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+>  	 * an .update function, so there's no chance we'll wind up reusing the
+>  	 * key to encrypt updated data. Simply put: one key, one encryption.
+>  	 */
+> -	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
+> +	u8 *zero_nonce;
+> +
+> +	zero_nonce = kzalloc(crypto_aead_ivsize(big_key_aead), GFP_KERNEL);
+> +	if (!zero_nonce)
+> +		return -ENOMEM;
+>  
+>  	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
+> -	if (!aead_req)
+> +	if (!aead_req) {
+> +		kfree(zero_nonce);
+>  		return -ENOMEM;
+> +	}
+>  
+> -	memset(zero_nonce, 0, sizeof(zero_nonce));
+>  	aead_request_set_crypt(aead_req, buf->sg, buf->sg, datalen, zero_nonce);
+>  	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
+>  	aead_request_set_ad(aead_req, 0);
+> @@ -131,6 +136,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+>  error:
+>  	mutex_unlock(&big_key_aead_lock);
+>  	aead_request_free(aead_req);
+> +	kzfree(zero_nonce);
+>  	return ret;
 
-Hello Serge,
+A dynamic allocation here doesn't make sense -- the algorithm is hard-coded to
+AES-GCM, so the IV size is fixed.  You should just include <crypto/gcm.h> and
+use GCM_AES_IV_LEN.  As a sanity check you can add
+'BUG_ON(crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_LEN' to big_key_init().
 
-Thanks for quickly reviewing these patches!
+kzfree() also doesn't make sense since the nonce is not secret information.
 
-Serge E. Hallyn <serge@hallyn.com> writes:
+Thanks,
 
-> Quoting Thiago Jung Bauermann (bauerman at linux.vnet.ibm.com):
->> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> @@ -241,16 +241,20 @@ int ima_appraise_measurement(enum ima_hooks func,
->>  	}
->>  
->>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
->> -	if ((status != INTEGRITY_PASS) &&
->> -	    (status != INTEGRITY_PASS_IMMUTABLE) &&
->> -	    (status != INTEGRITY_UNKNOWN)) {
->> -		if ((status == INTEGRITY_NOLABEL)
->> -		    || (status == INTEGRITY_NOXATTRS))
->> -			cause = "missing-HMAC";
->> -		else if (status == INTEGRITY_FAIL)
->> -			cause = "invalid-HMAC";
->> +	switch (status) {
->> +	case INTEGRITY_PASS:
->> +	case INTEGRITY_PASS_IMMUTABLE:
->> +	case INTEGRITY_UNKNOWN:
->
-> Wouldn't it be more future-proof to replace this with a 'default', or
-> to at least add a "default: BUG()" to catch new status values?
-
-I agree. I like the "default: BUG()" option.
-
->> +		break;
->> +	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
->> +	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
->> +		cause = "missing-HMAC";
->> +		goto out;
->> +	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
->> +		cause = "invalid-HMAC";
->>  		goto out;
->>  	}
->> +
->>  	switch (xattr_value->type) {
->>  	case IMA_XATTR_DIGEST_NG:
->>  		/* first byte contains algorithm id */
->> @@ -316,17 +320,20 @@ int ima_appraise_measurement(enum ima_hooks func,
->>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
->>  				    op, cause, rc, 0);
->>  	} else if (status != INTEGRITY_PASS) {
->> +		/* Fix mode, but don't replace file signatures. */
->>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
->>  		    (!xattr_value ||
->>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
->>  			if (!ima_fix_xattr(dentry, iint))
->>  				status = INTEGRITY_PASS;
->> -		} else if ((inode->i_size == 0) &&
->> -			   (iint->flags & IMA_NEW_FILE) &&
->> -			   (xattr_value &&
->> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
->> +		}
->> +
->> +		/* Permit new files with file signatures, but without data. */
->> +		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
->
-> This may be correct, but it's not identical to what you're replacing.
-> Since in either case you're setting status to INTEGRITY_PASS the final
-> result is the same, but with a few extra possible steps.  Not sure
-> whether that matters.
-
-Good point. I'll have to defer this one to Mimi though.
-
->
->> +		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
->>  			status = INTEGRITY_PASS;
->>  		}
->> +
->>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
->>  				    op, cause, rc, 0);
->>  	} else {
-
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
