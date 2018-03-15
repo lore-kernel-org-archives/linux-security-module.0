@@ -1,21 +1,26 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 15 Mar 2018 18:29:48 +0200
-Subject: [PATCH v2 2/8] tpm: move tpm_getcap to tpm1-cmd.c
-In-Reply-To: <20180310082428.31519-3-tomas.winkler@intel.com>
+Date: Thu, 15 Mar 2018 18:32:44 +0200
+Subject: [PATCH v2 3/8] tpm: factor out tpm1_get_random into tpm1-cmd.c
+In-Reply-To: <20180310082428.31519-4-tomas.winkler@intel.com>
 References: <20180310082428.31519-1-tomas.winkler@intel.com>
-	<20180310082428.31519-3-tomas.winkler@intel.com>
-Message-ID: <3f6082da29c0f779faed7a14f068b601c87d92c6.camel@linux.intel.com>
+	<20180310082428.31519-4-tomas.winkler@intel.com>
+Message-ID: <9c096454a78283ee3871b5dd47ed0bf664d26b7e.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> 1. Move tpm_getcap to tpm1-cmd. Rename the function to tpm1_getcap.
-> 2. Remove unused tpm_getcap_header with unused constant
-> as this functionality is already implemented using tpm_buf construct.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> +		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+> +		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
+> +			      recd) {
+> +			total = -EFAULT;
+> +			break;
+> +		}
+> +		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+This rlength stuff can be handled with tpm_buf_length() as I do
+in my pendig-for-review patch set:
+
+https://patchwork.kernel.org/patch/10259331/
 
 /Jarkko
 --
