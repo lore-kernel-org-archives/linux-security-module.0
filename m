@@ -1,41 +1,146 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 16 Mar 2018 16:08:50 +0200
-Subject: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
-	<20180310082428.31519-8-tomas.winkler@intel.com>
-	<62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
-Message-ID: <20180316140850.GC9616@linux.intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 16 Mar 2018 08:52:36 -0700
+Subject: Problem mounting pseudo filesystems with SMACK and IMA enabled.
+In-Reply-To: <1521211762.3503.46.camel@linux.vnet.ibm.com>
+References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
+	<1521206743.3503.29.camel@linux.vnet.ibm.com>
+	<CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
+	<1521211762.3503.46.camel@linux.vnet.ibm.com>
+Message-ID: <77f5ac13-dd79-abf7-13b2-336bf799a25c@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 15, 2018 at 11:28:55PM +0000, Winkler, Tomas wrote:
-> > 
-> > On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> > > Add tpm2_pcr_extend function to tpm2-cmd.c with signature required by
-> > > tpm-interface.c. It wraps the original open code implementation. The
-> > > original original tpm2_pcr_extend function is renamed and made static,
-> > > called only from new tpm2_pcr_extend.
-> > >
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > 
-> > This might concern some of the earlier patches too but please use exact
-> > names for functions in the short and long summary i.e.
-> > 
-> >   tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
-> > 
-> > Check this also for your long descriptions and previous that I gave reviewed-
-> > by (I think they were otherwise fine). And you refer to a function in text use
-> > parentheses after the name. I don't like hastily written commit messages.
-> 
-> 
-> Yeah,  got little tired of describing the obvious. but you are right.
-> Tomas
+On 3/16/2018 7:49 AM, Mimi Zohar wrote:
+> On Fri, 2018-03-16 at 14:34 +0000, Martin Townsend wrote:
+>> Hi Mimi,
+>>
+>> On Fri, Mar 16, 2018 at 1:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>>> On Fri, 2018-03-16 at 09:32 +0000, Martin Townsend wrote:
+>>>> [Resending to new integrity mailing list]
+>>>>
+>>>> Hi,
+>>>>
+>>>> I have a system with a pre-signed UBI root filesystem image with both
+>>>> IMA/EVM signatures on all files.  The Root CA Cert is compiled into
+>>>> the kernel and the public keys is in the rootfs.  All SMACK labels
+>>>> have also been applied although at this early stage there aren't many
+>>>> (just a few application specific ones) so it's mainly the defaults.
 
-Might sound nit picking but a solid git log is useful tool.
+If you can apply a label to all of the files on the filesystem
+( find $FSROOT -exec chsmack -a "_" {} \; ) and then set the
+specific file labels you want you will ensure that you won't
+go through the label defaulting mechanism. I don't think that
+is your problem, but it's worth a try.
 
-/Jarkko
+>>>> This image is then flashed to the on board NAND.
+>>>>
+>>>> The kernel bootargs for IMA are
+>>>>
+>>>> "ima_audit=1 ima_template=ima-ng ima_hash=sha1 ima_tcb
+>>>> ima_appraise_tcb rootflags=i_version"
+>>>>
+>>>> and I'm enabling SMACK by using the kernel bootarg
+>>>>
+>>>> "security=smack"
+>>>>
+>>>> now if I boot without the "security=smack" it boots fine and I can
+>>>> check the IMA/EVM signatures and can see that measurements are being
+>>>> taken, but if I enable SMACK using the above kernel bootarg it fails
+>>>> to boot and it looks like some problem early in systemd where it
+>>>> mounts the required filesystems in mount-setup.c (log provided below).
+>>>> Now if I flash an image that hasn't been signed and enable SMACK it
+>>>> boots fine and I can use SMACK to enforce access control.  So there
+>>>> seems to some interaction between the two when mounting the early
+>>>> filesystems.
+>>>>
+>>>> Before I delve into this I would appreciate any pointers to where to
+>>>> start looking, any printk's to put in SMACK/IMA/mount code to help
+>>>> diagnose this would be really appreciated.
+>>>>
+>>>> The Kernel is 4.9 LTSI, systemd is v229
+
+Are you using a base distribution? Fedora, Ubuntu, Debian, Alpine?
+That information may make the issue easier to reproduce.
+
+>>>>
+>>>> Apologies if I have the wrong mailing list for SMACK, I couldn't find
+>>>> one on vger.kernel.org.
+
+SMACK-discuss at lists.01.org is the most Smack directed list.
+linux-security-module at vger.kernel.org is the "official" place.
+casey at schaufler-ca.com is me directly.
+
+>>>>
+>>>>
+>>>> Boot log.
+>>>> ...
+>>>> Security Framework initialized
+>>>> Smack:  Initializing.
+>>>> Smack:  IPv6 port labeling enabled.
+>>>> Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
+>>>> Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
+>>>> CPU: Testing write buffer coherency: ok
+>>>> Setting up static identity map for 0x80100000 - 0x80100058
+>>>> devtmpfs: initialized
+>>>> evm: security.SMACK64
+>>>> evm: security.SMACK64EXEC
+>>>> evm: security.SMACK64TRANSMUTE
+>>>> evm: security.SMACK64MMAP
+>>>> evm: security.ima
+>>>> evm: security.capability
+>>>> ...
+>>>> Loading compiled-in X.509 certificates
+>>>> Loaded X.509 cert 'IMA-EVM Root CA: cc972d25acf7c1efaa5329a48104efa303f0833a'
+>>>> ...
+>>>> UBIFS (ubi0:0): FS size: 201764864 bytes (192 MiB, 1589 LEBs), journal
+>>>> size 9023488 bytes (8 MiB, 72 LEBs)
+>>>> UBIFS (ubi0:0): reserved for root: 0 bytes (0 KiB)
+>>>> UBIFS (ubi0:0): media format: w4/r0 (latest is w4/r0), UUID
+>>>> F6EA70A5-1931-4049-89CB-93B82F37F6A4, small LPT model
+>>>> VFS: Mounted root (ubifs filesystem) readonly on device 0:16.
+>>>> devtmpfs: mounted
+>>>> integrity: Loaded X.509 cert 'IMA Certificate Authority:
+>>>> e2c191a6e31fd02d6beba0c7c7847720a35fd9c6': /etc/keys/ima-x509.der
+>>>> Freeing unused kernel memory: 1024K
+>>>> systemd[1]: Successfully loaded Smack policies.
+
+Is your list of Smack rules large? What is it based on?
+
+>>>> systemd[1]: Successfully loaded Smack/CIPSO policies.
+>>>> systemd[1]: System time before build time, advancing clock.
+>>>> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
+>>>> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
+>>>> systemd[1]: Failed to mount cgroup at /sys/fs/cgroup/systemd: No such
+>>>> file or directory
+
+This is where the audit trail could be very helpful. It can tell us
+what action failed.
+
+>>>> [!!!!!!] Failed to mount API filesystems, freezing.
+>>>> systemd[1]: Freezing execution.
+>>> [Cc'ing Sascha]
+>>>
+>>> Are there any additional messages in /var/log/audit/audit.log?
+>>>
+>>> Mimi
+>>>
+>> Sadly I can't see this file, I don't even think the relevant
+>> filesystems have been mounted as this point. I tried the emergency
+>> shell but no joy. Is there a way of patching the kernel to show audit
+>> messages to the console?  If you point me at the relevant code I'll
+>> hack something in.  I'm currently putting printk's everywhere I can
+>> think of to see what's going on.   If you can think of anywhere in the
+>> IMA that would be good to see a debug print let me know, currently I
+>> have something in process_measurements and a few other places in
+>> ima_main.c.
+> I would think the audit messages would go to the console. ?With
+> dracut, I use a couple of boot command line options for debugging (eg.
+> rd.debug rd.break=pre-mount, rd.shell).
+>
+> Mimi
+>
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
