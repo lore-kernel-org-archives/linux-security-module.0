@@ -1,36 +1,32 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Thu, 15 Mar 2018 23:28:55 +0000
-Subject: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
-In-Reply-To: <62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
-	<20180310082428.31519-8-tomas.winkler@intel.com>
-	<62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 16 Mar 2018 13:58:08 +0200
+Subject: [PATCH v3 1/6] tpm-buf: create new functions for handling TPM
+	buffers
+In-Reply-To: <1520720090.4495.12.camel@HansenPartnership.com>
+References: <1520720026.4495.11.camel@HansenPartnership.com>
+	<1520720090.4495.12.camel@HansenPartnership.com>
+Message-ID: <6da309e727bec176fed7253ba5276f47f784d759.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> 
-> On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> > Add tpm2_pcr_extend function to tpm2-cmd.c with signature required by
-> > tpm-interface.c. It wraps the original open code implementation. The
-> > original original tpm2_pcr_extend function is renamed and made static,
-> > called only from new tpm2_pcr_extend.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> This might concern some of the earlier patches too but please use exact
-> names for functions in the short and long summary i.e.
-> 
->   tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
-> 
-> Check this also for your long descriptions and previous that I gave reviewed-
-> by (I think they were otherwise fine). And you refer to a function in text use
-> parentheses after the name. I don't like hastily written commit messages.
+On Sat, 2018-03-10 at 14:14 -0800, James Bottomley wrote:
+>  	TPM_BUF_OVERFLOW	= BIT(0),
+> +	TPM_BUF_2B		= BIT(1),
 
+Instead of re-using this I would prefer to have another enum for
+buffer type. tpm_buf_init() could have the signature:
 
-Yeah,  got little tired of describing the obvious. but you are right.
-Tomas
+int tpm_buf_init(unsigned int type);
 
+For commands there should be a function:
 
+void tpm_buf_set_command_header(struct tpm_buf *buf, u16 tag, u32 ordinal);
 
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+And tpm_buf_append_2b() should not exist at all. It should be
+maintained automatically by other append commands.
+
+/Jarkko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
