@@ -1,35 +1,29 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 16 Mar 2018 14:02:26 +0200
-Subject: [PATCH v3 1/6] tpm-buf: create new functions for handling TPM
-	buffers
-In-Reply-To: <6da309e727bec176fed7253ba5276f47f784d759.camel@linux.intel.com>
-References: <1520720026.4495.11.camel@HansenPartnership.com>
-	<1520720090.4495.12.camel@HansenPartnership.com>
-	<6da309e727bec176fed7253ba5276f47f784d759.camel@linux.intel.com>
-Message-ID: <f1521f6afa2e89ce666503148d6fad425cb5b813.camel@linux.intel.com>
+Date: Fri, 16 Mar 2018 14:21:29 +0200
+Subject: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
+In-Reply-To: <1520290344.10396.357.camel@linux.vnet.ibm.com>
+References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
+	<20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
+	<1520290344.10396.357.camel@linux.vnet.ibm.com>
+Message-ID: <20180316122129.GA2458@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-03-16 at 13:58 +0200, Jarkko Sakkinen wrote:
-> On Sat, 2018-03-10 at 14:14 -0800, James Bottomley wrote:
-> >  	TPM_BUF_OVERFLOW	= BIT(0),
-> > +	TPM_BUF_2B		= BIT(1),
+On Mon, Mar 05, 2018 at 05:52:24PM -0500, Mimi Zohar wrote:
+> Hi Jarrko,
 > 
-> Instead of re-using this I would prefer to have another enum for
-> buffer type. tpm_buf_init() could have the signature:
+> On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
+> > In order to make struct tpm_buf the first class object for constructing TPM
+> > commands, migrate tpm2_probe() to use it.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > 
-> int tpm_buf_init(unsigned int type);
+> With this patch, the Pi doesn't find the TPM. ?I'm seeing the
+> following line in dmesg.
 > 
-> For commands there should be a function:
-> 
-> void tpm_buf_set_command_header(struct tpm_buf *buf, u16 tag, u32 ordinal);
-> 
-> And tpm_buf_append_2b() should not exist at all. It should be
-> maintained automatically by other append commands.
+> [????1.087414] tpm_tis_spi: probe of spi0.0 failed with error 256
 
-Can you send the next version this patch as a separate entity? Once
-I can land this we have kind of stable ground for the following
-patches. After that it is easier test and review them.
+Thank you for reporting this Mimi. Does it have TPM1/TPM2?
 
 /Jarkko
 --
