@@ -1,145 +1,62 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 16 Mar 2018 08:52:36 -0700
-Subject: Problem mounting pseudo filesystems with SMACK and IMA enabled.
-In-Reply-To: <1521211762.3503.46.camel@linux.vnet.ibm.com>
-References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
-	<1521206743.3503.29.camel@linux.vnet.ibm.com>
-	<CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
-	<1521211762.3503.46.camel@linux.vnet.ibm.com>
-Message-ID: <77f5ac13-dd79-abf7-13b2-336bf799a25c@schaufler-ca.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 16 Mar 2018 12:51:46 -0400
+Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+In-Reply-To: <1521134981.5348.62.camel@HansenPartnership.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+	<20180307185132.GA30102@ziepe.ca>
+	<1520448953.10396.565.camel@linux.vnet.ibm.com>
+	<1520449719.5558.28.camel@HansenPartnership.com>
+	<1520450495.10396.587.camel@linux.vnet.ibm.com>
+	<1520451662.24314.5.camel@HansenPartnership.com>
+	<1520461156.10396.654.camel@linux.vnet.ibm.com>
+	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
+	<1520615461.12216.6.camel@HansenPartnership.com>
+	<1520891598.3547.190.camel@linux.vnet.ibm.com>
+	<1520893847.4522.62.camel@HansenPartnership.com>
+	<1520897400.3547.253.camel@linux.vnet.ibm.com>
+	<1520899605.4522.67.camel@HansenPartnership.com>
+	<BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
+	<1521038471.4508.25.camel@HansenPartnership.com>
+	<1521047286.3547.470.camel@linux.vnet.ibm.com>
+	<1521048306.4508.56.camel@HansenPartnership.com>
+	<1521130749.3547.608.camel@linux.vnet.ibm.com>
+	<1521133728.5348.51.camel@HansenPartnership.com>
+	<1521134074.3547.629.camel@linux.vnet.ibm.com>
+	<1521134981.5348.62.camel@HansenPartnership.com>
+Message-ID: <1521219106.3503.54.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/16/2018 7:49 AM, Mimi Zohar wrote:
-> On Fri, 2018-03-16 at 14:34 +0000, Martin Townsend wrote:
->> Hi Mimi,
->>
->> On Fri, Mar 16, 2018 at 1:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->>> On Fri, 2018-03-16 at 09:32 +0000, Martin Townsend wrote:
->>>> [Resending to new integrity mailing list]
->>>>
->>>> Hi,
->>>>
->>>> I have a system with a pre-signed UBI root filesystem image with both
->>>> IMA/EVM signatures on all files.  The Root CA Cert is compiled into
->>>> the kernel and the public keys is in the rootfs.  All SMACK labels
->>>> have also been applied although at this early stage there aren't many
->>>> (just a few application specific ones) so it's mainly the defaults.
+On Thu, 2018-03-15 at 10:29 -0700, James Bottomley wrote:
+> On Thu, 2018-03-15 at 13:14 -0400, Mimi Zohar wrote:
+> > On Thu, 2018-03-15 at 10:08 -0700, James Bottomley wrote:
+> > > 
+> > > On Thu, 2018-03-15 at 12:19 -0400, Mimi Zohar wrote:
+> > 
+> > > 
+> > > > 
+> > > > If EFI is extending the TPM, will the events be added to the TPM
+> > > > event log or to the IMA measurement list?
+> > > 
+> > > I'm not proposing any changes to the tpm_pcr_extend API. ?At the
+> > > moment it does an extend without logging, so that's what it will do
+> > > in the EFI driver case as well. ?That means logging is still the
+> > > responsibility of the caller.
+> > 
+> > Does EFI support extending multiple TPM banks?
+> 
+> The specs are here:
+> 
+> https://trustedcomputinggroup.org/tcg-efi-protocol-specification/
+> 
+> As I said, I'm not planning to change the tpm_pcr_.. API. ?At the
+> moment for a TPM2 we extend all banks in the tpm_pcr_extend() API, so
+> that's what we'll continue to do ... including extending the sha256
+> banks with the sha1 hash, which seems to be our current practice.
 
-If you can apply a label to all of the files on the filesystem
-( find $FSROOT -exec chsmack -a "_" {} \; ) and then set the
-specific file labels you want you will ensure that you won't
-go through the label defaulting mechanism. I don't think that
-is your problem, but it's worth a try.
+Thanks, what you're planning on doing is a lot clearer now.
 
->>>> This image is then flashed to the on board NAND.
->>>>
->>>> The kernel bootargs for IMA are
->>>>
->>>> "ima_audit=1 ima_template=ima-ng ima_hash=sha1 ima_tcb
->>>> ima_appraise_tcb rootflags=i_version"
->>>>
->>>> and I'm enabling SMACK by using the kernel bootarg
->>>>
->>>> "security=smack"
->>>>
->>>> now if I boot without the "security=smack" it boots fine and I can
->>>> check the IMA/EVM signatures and can see that measurements are being
->>>> taken, but if I enable SMACK using the above kernel bootarg it fails
->>>> to boot and it looks like some problem early in systemd where it
->>>> mounts the required filesystems in mount-setup.c (log provided below).
->>>> Now if I flash an image that hasn't been signed and enable SMACK it
->>>> boots fine and I can use SMACK to enforce access control.  So there
->>>> seems to some interaction between the two when mounting the early
->>>> filesystems.
->>>>
->>>> Before I delve into this I would appreciate any pointers to where to
->>>> start looking, any printk's to put in SMACK/IMA/mount code to help
->>>> diagnose this would be really appreciated.
->>>>
->>>> The Kernel is 4.9 LTSI, systemd is v229
-
-Are you using a base distribution? Fedora, Ubuntu, Debian, Alpine?
-That information may make the issue easier to reproduce.
-
->>>>
->>>> Apologies if I have the wrong mailing list for SMACK, I couldn't find
->>>> one on vger.kernel.org.
-
-SMACK-discuss at lists.01.org is the most Smack directed list.
-linux-security-module at vger.kernel.org is the "official" place.
-casey at schaufler-ca.com is me directly.
-
->>>>
->>>>
->>>> Boot log.
->>>> ...
->>>> Security Framework initialized
->>>> Smack:  Initializing.
->>>> Smack:  IPv6 port labeling enabled.
->>>> Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
->>>> Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
->>>> CPU: Testing write buffer coherency: ok
->>>> Setting up static identity map for 0x80100000 - 0x80100058
->>>> devtmpfs: initialized
->>>> evm: security.SMACK64
->>>> evm: security.SMACK64EXEC
->>>> evm: security.SMACK64TRANSMUTE
->>>> evm: security.SMACK64MMAP
->>>> evm: security.ima
->>>> evm: security.capability
->>>> ...
->>>> Loading compiled-in X.509 certificates
->>>> Loaded X.509 cert 'IMA-EVM Root CA: cc972d25acf7c1efaa5329a48104efa303f0833a'
->>>> ...
->>>> UBIFS (ubi0:0): FS size: 201764864 bytes (192 MiB, 1589 LEBs), journal
->>>> size 9023488 bytes (8 MiB, 72 LEBs)
->>>> UBIFS (ubi0:0): reserved for root: 0 bytes (0 KiB)
->>>> UBIFS (ubi0:0): media format: w4/r0 (latest is w4/r0), UUID
->>>> F6EA70A5-1931-4049-89CB-93B82F37F6A4, small LPT model
->>>> VFS: Mounted root (ubifs filesystem) readonly on device 0:16.
->>>> devtmpfs: mounted
->>>> integrity: Loaded X.509 cert 'IMA Certificate Authority:
->>>> e2c191a6e31fd02d6beba0c7c7847720a35fd9c6': /etc/keys/ima-x509.der
->>>> Freeing unused kernel memory: 1024K
->>>> systemd[1]: Successfully loaded Smack policies.
-
-Is your list of Smack rules large? What is it based on?
-
->>>> systemd[1]: Successfully loaded Smack/CIPSO policies.
->>>> systemd[1]: System time before build time, advancing clock.
->>>> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
->>>> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
->>>> systemd[1]: Failed to mount cgroup at /sys/fs/cgroup/systemd: No such
->>>> file or directory
-
-This is where the audit trail could be very helpful. It can tell us
-what action failed.
-
->>>> [!!!!!!] Failed to mount API filesystems, freezing.
->>>> systemd[1]: Freezing execution.
->>> [Cc'ing Sascha]
->>>
->>> Are there any additional messages in /var/log/audit/audit.log?
->>>
->>> Mimi
->>>
->> Sadly I can't see this file, I don't even think the relevant
->> filesystems have been mounted as this point. I tried the emergency
->> shell but no joy. Is there a way of patching the kernel to show audit
->> messages to the console?  If you point me at the relevant code I'll
->> hack something in.  I'm currently putting printk's everywhere I can
->> think of to see what's going on.   If you can think of anywhere in the
->> IMA that would be good to see a debug print let me know, currently I
->> have something in process_measurements and a few other places in
->> ima_main.c.
-> I would think the audit messages would go to the console. ?With
-> dracut, I use a couple of boot command line options for debugging (eg.
-> rd.debug rd.break=pre-mount, rd.shell).
->
-> Mimi
->
->
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
