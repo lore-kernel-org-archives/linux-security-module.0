@@ -1,65 +1,102 @@
 From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Fri, 16 Mar 2018 17:38:33 -0300
-Subject: [PATCH v6 08/12] ima: Export func_tokens
+Date: Fri, 16 Mar 2018 17:38:30 -0300
+Subject: [PATCH v6 05/12] integrity: Introduce integrity_keyring_from_id()
 In-Reply-To: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
 References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-Message-ID: <20180316203837.10174-9-bauerman@linux.vnet.ibm.com>
+Message-ID: <20180316203837.10174-6-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-ima_read_modsig() will need it so that it can show an error message.
+IMA will need to obtain the keyring used to verify file signatures so that
+it can verify the module-style signature appended to files.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima.h        |  2 ++
- security/integrity/ima/ima_policy.c | 12 ++++++------
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ security/integrity/digsig.c    | 28 +++++++++++++++++++++-------
+ security/integrity/integrity.h |  6 ++++++
+ 2 files changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 4bafa6a97967..99f2bab15009 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -196,6 +196,8 @@ enum ima_hooks {
- 	__ima_hooks(__ima_hook_enumify)
- };
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 6f9e4ce568cd..e641a67b9fc7 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -48,11 +48,10 @@ static bool init_keyring __initdata;
+ #define restrict_link_to_ima restrict_link_by_builtin_trusted
+ #endif
  
-+extern const char *const func_tokens[];
-+
- /* LIM API function definitions */
- int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
- 		   int mask, enum ima_hooks func, int *pcr);
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 51a4cd999a49..833da24c7009 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -992,6 +992,12 @@ void ima_delete_rules(void)
- 	}
- }
- 
-+#define __ima_hook_stringify(str)	(#str),
-+
-+const char *const func_tokens[] = {
-+	__ima_hooks(__ima_hook_stringify)
-+};
-+
- #ifdef	CONFIG_IMA_READ_POLICY
- enum {
- 	mask_exec = 0, mask_write, mask_read, mask_append
-@@ -1004,12 +1010,6 @@ static const char *const mask_tokens[] = {
- 	"MAY_APPEND"
- };
- 
--#define __ima_hook_stringify(str)	(#str),
--
--static const char *const func_tokens[] = {
--	__ima_hooks(__ima_hook_stringify)
--};
--
- void *ima_policy_start(struct seq_file *m, loff_t *pos)
+-int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+-			    const char *digest, int digestlen)
++struct key *integrity_keyring_from_id(const unsigned int id)
  {
- 	loff_t l = *pos;
+-	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
+-		return -EINVAL;
++	if (id >= INTEGRITY_KEYRING_MAX)
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (!keyring[id]) {
+ 		keyring[id] =
+@@ -61,17 +60,32 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			int err = PTR_ERR(keyring[id]);
+ 			pr_err("no %s keyring: %d\n", keyring_name[id], err);
+ 			keyring[id] = NULL;
+-			return err;
++			return ERR_PTR(err);
+ 		}
+ 	}
+ 
++	return keyring[id];
++}
++
++int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
++			    const char *digest, int digestlen)
++{
++	struct key *keyring;
++
++	if (siglen < 2)
++		return -EINVAL;
++
++	keyring = integrity_keyring_from_id(id);
++	if (IS_ERR(keyring))
++		return PTR_ERR(keyring);
++
+ 	switch (sig[1]) {
+ 	case 1:
+ 		/* v1 API expect signature without xattr type */
+-		return digsig_verify(keyring[id], sig + 1, siglen - 1,
++		return digsig_verify(keyring, sig + 1, siglen - 1,
+ 				     digest, digestlen);
+ 	case 2:
+-		return asymmetric_verify(keyring[id], sig, siglen,
++		return asymmetric_verify(keyring, sig, siglen,
+ 					 digest, digestlen);
+ 	}
+ 
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 79799a0d9195..2d245f44ca26 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -150,6 +150,7 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+ 
+ #ifdef CONFIG_INTEGRITY_SIGNATURE
+ 
++struct key *integrity_keyring_from_id(const unsigned int id);
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			    const char *digest, int digestlen);
+ 
+@@ -157,6 +158,11 @@ int __init integrity_init_keyring(const unsigned int id);
+ int __init integrity_load_x509(const unsigned int id, const char *path);
+ #else
+ 
++static inline struct key *integrity_keyring_from_id(const unsigned int id)
++{
++	return ERR_PTR(-EINVAL);
++}
++
+ static inline int integrity_digsig_verify(const unsigned int id,
+ 					  const char *sig, int siglen,
+ 					  const char *digest, int digestlen)
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
