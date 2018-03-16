@@ -1,86 +1,122 @@
 From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Fri, 16 Mar 2018 17:38:28 -0300
-Subject: [PATCH v6 03/12] PKCS#7: Introduce pkcs7_get_digest()
+Date: Fri, 16 Mar 2018 17:38:31 -0300
+Subject: [PATCH v6 06/12] integrity: Introduce asymmetric_sig_has_known_key()
 In-Reply-To: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
 References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-Message-ID: <20180316203837.10174-4-bauerman@linux.vnet.ibm.com>
+Message-ID: <20180316203837.10174-7-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-IMA will need to access the digest of the PKCS7 message (as calculated by
-the kernel) before the signature is verified, so introduce
-pkcs7_get_digest() for that purpose.
+IMA will only look for a modsig if the xattr sig references a key which is
+not in the expected kernel keyring. To that end, introduce
+asymmetric_sig_has_known_key().
 
-Also, modify pkcs7_digest() to detect when the digest was already
-calculated so that it doesn't have to do redundant work. Verifying that
-sinfo->sig->digest isn't NULL is sufficient because both places which
-allocate sinfo->sig (pkcs7_parse_message() and pkcs7_note_signed_info())
-use kzalloc() so sig->digest is always initialized to zero.
+The logic of extracting the key used in the xattr sig is factored out from
+asymmetric_verify() so that it can be used by the new function.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
 ---
- crypto/asymmetric_keys/pkcs7_verify.c | 25 +++++++++++++++++++++++++
- include/crypto/pkcs7.h                |  3 +++
- 2 files changed, 28 insertions(+)
+ security/integrity/digsig_asymmetric.c | 44 +++++++++++++++++++++++++---------
+ security/integrity/integrity.h         |  8 +++++++
+ 2 files changed, 41 insertions(+), 11 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index 39e6de0c2761..bd02360f8be5 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -33,6 +33,10 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 
- 	kenter(",%u,%s", sinfo->index, sinfo->sig->hash_algo);
- 
-+	/* The digest was calculated already. */
-+	if (sig->digest)
-+		return 0;
-+
- 	if (!sinfo->sig->hash_algo)
- 		return -ENOPKG;
- 
-@@ -122,6 +126,27 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 	return ret;
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index ab6a029062a1..241647970c19 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -79,26 +79,48 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+ 	return key;
  }
  
-+int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf, u8 *len)
-+{
-+	struct pkcs7_signed_info *sinfo = pkcs7->signed_infos;
-+	int ret;
+-int asymmetric_verify(struct key *keyring, const char *sig,
+-		      int siglen, const char *data, int datalen)
++static struct key *asymmetric_key_from_sig(struct key *keyring, const char *sig,
++					   int siglen)
+ {
+-	struct public_key_signature pks;
+-	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
+-	struct key *key;
+-	int ret = -ENOMEM;
++	const struct signature_v2_hdr *hdr = (struct signature_v2_hdr *) sig;
+ 
+ 	if (siglen <= sizeof(*hdr))
+-		return -EBADMSG;
++		return ERR_PTR(-EBADMSG);
+ 
+ 	siglen -= sizeof(*hdr);
+ 
+ 	if (siglen != be16_to_cpu(hdr->sig_size))
+-		return -EBADMSG;
++		return ERR_PTR(-EBADMSG);
+ 
+ 	if (hdr->hash_algo >= HASH_ALGO__LAST)
+-		return -ENOPKG;
++		return ERR_PTR(-ENOPKG);
 +
-+	/*
-+	 * This function doesn't support messages with more than one signature.
-+	 */
-+	if (sinfo == NULL || sinfo->next != NULL)
-+		return -EBADMSG;
-+
-+	ret = pkcs7_digest(pkcs7, sinfo);
-+	if (ret)
-+		return ret;
-+
-+	*buf = sinfo->sig->digest;
-+	*len = sinfo->sig->digest_size;
-+
-+	return 0;
++	return request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
 +}
 +
- /*
-  * Find the key (X.509 certificate) to use to verify a PKCS#7 message.  PKCS#7
-  * uses the issuer's name and the issuing certificate serial number for
-diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-index 6f51d0cb6d12..cfaea9c37f4a 100644
---- a/include/crypto/pkcs7.h
-+++ b/include/crypto/pkcs7.h
-@@ -46,4 +46,7 @@ extern int pkcs7_verify(struct pkcs7_message *pkcs7,
- extern int pkcs7_supply_detached_data(struct pkcs7_message *pkcs7,
- 				      const void *data, size_t datalen);
- 
-+extern int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf,
-+			    u8 *len);
++bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
++				  int siglen)
++{
++	struct key *key;
 +
- #endif /* _CRYPTO_PKCS7_H */
++	key = asymmetric_key_from_sig(keyring, sig, siglen);
++	if (IS_ERR_OR_NULL(key))
++		return false;
++
++	key_put(key);
++
++	return true;
++}
++
++int asymmetric_verify(struct key *keyring, const char *sig,
++		      int siglen, const char *data, int datalen)
++{
++	struct public_key_signature pks;
++	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
++	struct key *key;
++	int ret = -ENOMEM;
+ 
+-	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
++	key = asymmetric_key_from_sig(keyring, sig, siglen);
+ 	if (IS_ERR(key))
+ 		return PTR_ERR(key);
+ 
+@@ -109,7 +131,7 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 	pks.digest = (u8 *)data;
+ 	pks.digest_size = datalen;
+ 	pks.s = hdr->sig;
+-	pks.s_size = siglen;
++	pks.s_size = siglen - sizeof(*hdr);
+ 	ret = verify_signature(key, &pks);
+ 	key_put(key);
+ 	pr_debug("%s() = %d\n", __func__, ret);
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 2d245f44ca26..4c381b992e11 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -179,12 +179,20 @@ static inline int integrity_init_keyring(const unsigned int id)
+ #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+ int asymmetric_verify(struct key *keyring, const char *sig,
+ 		      int siglen, const char *data, int datalen);
++bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
++				  int siglen);
+ #else
+ static inline int asymmetric_verify(struct key *keyring, const char *sig,
+ 				    int siglen, const char *data, int datalen)
+ {
+ 	return -EOPNOTSUPP;
+ }
++
++static inline bool asymmetric_sig_has_known_key(struct key *keyring,
++						const char *sig, int siglen)
++{
++	return false;
++}
+ #endif
+ 
+ #ifdef CONFIG_IMA_LOAD_X509
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
