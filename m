@@ -1,62 +1,75 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 16 Mar 2018 12:51:46 -0400
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-In-Reply-To: <1521134981.5348.62.camel@HansenPartnership.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-	<20180307185132.GA30102@ziepe.ca>
-	<1520448953.10396.565.camel@linux.vnet.ibm.com>
-	<1520449719.5558.28.camel@HansenPartnership.com>
-	<1520450495.10396.587.camel@linux.vnet.ibm.com>
-	<1520451662.24314.5.camel@HansenPartnership.com>
-	<1520461156.10396.654.camel@linux.vnet.ibm.com>
-	<191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-	<1520615461.12216.6.camel@HansenPartnership.com>
-	<1520891598.3547.190.camel@linux.vnet.ibm.com>
-	<1520893847.4522.62.camel@HansenPartnership.com>
-	<1520897400.3547.253.camel@linux.vnet.ibm.com>
-	<1520899605.4522.67.camel@HansenPartnership.com>
-	<BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
-	<1521038471.4508.25.camel@HansenPartnership.com>
-	<1521047286.3547.470.camel@linux.vnet.ibm.com>
-	<1521048306.4508.56.camel@HansenPartnership.com>
-	<1521130749.3547.608.camel@linux.vnet.ibm.com>
-	<1521133728.5348.51.camel@HansenPartnership.com>
-	<1521134074.3547.629.camel@linux.vnet.ibm.com>
-	<1521134981.5348.62.camel@HansenPartnership.com>
-Message-ID: <1521219106.3503.54.camel@linux.vnet.ibm.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Fri, 16 Mar 2018 13:04:16 -0400
+Subject: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace support
+In-Reply-To: <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+	<20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
+	<87vadxfwqj.fsf@xmission.com>
+	<c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+	<1521135192.5348.64.camel@HansenPartnership.com>
+	<2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
+	<1521139535.5348.89.camel@HansenPartnership.com>
+	<0dc5b856-8dc6-7b5a-eeac-febd19f6498c@linux.vnet.ibm.com>
+	<1521140467.5348.94.camel@HansenPartnership.com>
+	<056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
+Message-ID: <7e015d3c-4fab-3d69-711b-2ebbad07018f@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 2018-03-15 at 10:29 -0700, James Bottomley wrote:
-> On Thu, 2018-03-15 at 13:14 -0400, Mimi Zohar wrote:
-> > On Thu, 2018-03-15 at 10:08 -0700, James Bottomley wrote:
-> > > 
-> > > On Thu, 2018-03-15 at 12:19 -0400, Mimi Zohar wrote:
-> > 
-> > > 
-> > > > 
-> > > > If EFI is extending the TPM, will the events be added to the TPM
-> > > > event log or to the IMA measurement list?
-> > > 
-> > > I'm not proposing any changes to the tpm_pcr_extend API. ?At the
-> > > moment it does an extend without logging, so that's what it will do
-> > > in the EFI driver case as well. ?That means logging is still the
-> > > responsibility of the caller.
-> > 
-> > Does EFI support extending multiple TPM banks?
-> 
-> The specs are here:
-> 
-> https://trustedcomputinggroup.org/tcg-efi-protocol-specification/
-> 
-> As I said, I'm not planning to change the tpm_pcr_.. API. ?At the
-> moment for a TPM2 we extend all banks in the tpm_pcr_extend() API, so
-> that's what we'll continue to do ... including extending the sha256
-> banks with the sha1 hash, which seems to be our current practice.
+On 03/15/2018 03:15 PM, Stefan Berger wrote:
+> On 03/15/2018 03:01 PM, James Bottomley wrote:
+>> On Thu, 2018-03-15 at 14:51 -0400, Stefan Berger wrote:
+>>> On 03/15/2018 02:45 PM, James Bottomley wrote:
+>> [...]
+>>>>>> going to need some type of keyring namespace and there's
+>>>>>> already
+>>>>>> one hanging off the user_ns:
+>>>>>>
+>>>>>> commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
+>>>>>> Author: David Howells <dhowells@redhat.com>
+>>>>>> Date:   Tue Sep 24 10:35:19 2013 +0100
+>>>>>>
+>>>>>>        KEYS: Add per-user_namespace registers for persistent
+>>>>>> per-UID
+>>>>>> kerberos caches
+>>>>> The benefit for IMA would be that this would then tie the keys
+>>>>> needed for appraising to the IMA namespace's policy.
+>>>>> However, if you have an appraise policy in your IMA namespace,
+>>>>> which is now hooked to the user namespace, and you join that user
+>>>>> namespace but your files don't have signatures, nothing will
+>>>>> execute anymore. That's now a side effect of joining this user
+>>>>> namespace unless we have a magic  exception. My feeling is,
+>>>>> people may not like that...
+>>>> Agree, but I think the magic might be to populate the ima keyring
+>>>> with the parent on user_ns creation.  That way the user_ns owner
+>>>> can delete the parent keys if they don't like them, but by default
+>>>> the parent appraisal policy should just work.
+>>> That may add keys to your keyring but doesn't get you signatures on
+>>> your  files.
+>> But it doesn't need to.  The only way we'd get a failure is if the file
+>> is already being appraised and we lose access to the key.  If the
+>
+> Well, the configuration I talked about above was assuming that we have 
+> an appraisal policy active in the IMA namespace, which is now tied to 
+> the user namespace that was just joined.
+>
+> If we are fine with the side effects of an IMA policy active as part 
+> of a user namespace then let's go with it. The side effects in case of 
+> an active IMA appraisal may then be that files cannot be 
+> read/accessed, or file measurements or IMA auditing may occur.
+>
+> The alternative is we have an independent IMA namespace. If one joins 
+> the USER namespace and there are no IMA-related side effects. If one 
+> joins the IMA namespace its IMA policy should start being enforced. If 
+> the current active USER namespace has the keys that go with the 
+> signatures of the filesystem, then we're fine from the appraisal 
+> perspective. If not, then IMA namespace joining may prevent file 
+> accesses.
 
-Thanks, what you're planning on doing is a lot clearer now.
+With these differences pointed out, which path do we want to go now ? 
+Eric ? James ?
 
-Mimi
+    Stefan
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
