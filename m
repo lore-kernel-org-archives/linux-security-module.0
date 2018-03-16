@@ -1,102 +1,87 @@
 From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Fri, 16 Mar 2018 17:38:30 -0300
-Subject: [PATCH v6 05/12] integrity: Introduce integrity_keyring_from_id()
+Date: Fri, 16 Mar 2018 17:38:29 -0300
+Subject: [PATCH v6 04/12] ima: Introduce is_ima_sig()
 In-Reply-To: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
 References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-Message-ID: <20180316203837.10174-6-bauerman@linux.vnet.ibm.com>
+Message-ID: <20180316203837.10174-5-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-IMA will need to obtain the keyring used to verify file signatures so that
-it can verify the module-style signature appended to files.
+With the introduction of another IMA signature type (modsig), some places
+will need to check for both of them. It is cleaner to do that if there's a
+helper function to tell whether an xattr_value represents an IMA
+signature.
 
+Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/digsig.c    | 28 +++++++++++++++++++++-------
- security/integrity/integrity.h |  6 ++++++
- 2 files changed, 27 insertions(+), 7 deletions(-)
+ security/integrity/ima/ima.h              | 5 +++++
+ security/integrity/ima/ima_appraise.c     | 7 +++----
+ security/integrity/ima/ima_template_lib.c | 2 +-
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 6f9e4ce568cd..e641a67b9fc7 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -48,11 +48,10 @@ static bool init_keyring __initdata;
- #define restrict_link_to_ima restrict_link_by_builtin_trusted
- #endif
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 35fe91aa1fc9..4bafa6a97967 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -155,6 +155,11 @@ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
  
--int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
--			    const char *digest, int digestlen)
-+struct key *integrity_keyring_from_id(const unsigned int id)
- {
--	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
--		return -EINVAL;
-+	if (id >= INTEGRITY_KEYRING_MAX)
-+		return ERR_PTR(-EINVAL);
- 
- 	if (!keyring[id]) {
- 		keyring[id] =
-@@ -61,17 +60,32 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 			int err = PTR_ERR(keyring[id]);
- 			pr_err("no %s keyring: %d\n", keyring_name[id], err);
- 			keyring[id] = NULL;
--			return err;
-+			return ERR_PTR(err);
++static inline bool is_ima_sig(const struct evm_ima_xattr_data *xattr_value)
++{
++	return xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG;
++}
++
+ /*
+  * used to protect h_table and sha_table
+  */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index a6b2995b7d0b..01172eab297b 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -325,15 +325,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	} else if (status != INTEGRITY_PASS) {
+ 		/* Fix mode, but don't replace file signatures. */
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+-		    (!xattr_value ||
+-		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
++		    !is_ima_sig(xattr_value)) {
+ 			if (!ima_fix_xattr(dentry, iint))
+ 				status = INTEGRITY_PASS;
  		}
+ 
+ 		/* Permit new files with file signatures, but without data. */
+ 		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+-		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
++		    is_ima_sig(xattr_value)) {
+ 			status = INTEGRITY_PASS;
+ 		}
+ 
+@@ -448,7 +447,7 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+ 			return -EINVAL;
+ 		ima_reset_appraise_flags(d_backing_inode(dentry),
+-			xvalue->type == EVM_IMA_XATTR_DIGSIG);
++					 is_ima_sig(xvalue));
+ 		result = 0;
  	}
+ 	return result;
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 5afaa53decc5..afb52a90e532 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -380,7 +380,7 @@ int ima_eventsig_init(struct ima_event_data *event_data,
+ {
+ 	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
  
-+	return keyring[id];
-+}
-+
-+int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
-+			    const char *digest, int digestlen)
-+{
-+	struct key *keyring;
-+
-+	if (siglen < 2)
-+		return -EINVAL;
-+
-+	keyring = integrity_keyring_from_id(id);
-+	if (IS_ERR(keyring))
-+		return PTR_ERR(keyring);
-+
- 	switch (sig[1]) {
- 	case 1:
- 		/* v1 API expect signature without xattr type */
--		return digsig_verify(keyring[id], sig + 1, siglen - 1,
-+		return digsig_verify(keyring, sig + 1, siglen - 1,
- 				     digest, digestlen);
- 	case 2:
--		return asymmetric_verify(keyring[id], sig, siglen,
-+		return asymmetric_verify(keyring, sig, siglen,
- 					 digest, digestlen);
- 	}
+-	if ((!xattr_value) || (xattr_value->type != EVM_IMA_XATTR_DIGSIG))
++	if (!is_ima_sig(xattr_value))
+ 		return 0;
  
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 79799a0d9195..2d245f44ca26 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -150,6 +150,7 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- 
- #ifdef CONFIG_INTEGRITY_SIGNATURE
- 
-+struct key *integrity_keyring_from_id(const unsigned int id);
- int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 			    const char *digest, int digestlen);
- 
-@@ -157,6 +158,11 @@ int __init integrity_init_keyring(const unsigned int id);
- int __init integrity_load_x509(const unsigned int id, const char *path);
- #else
- 
-+static inline struct key *integrity_keyring_from_id(const unsigned int id)
-+{
-+	return ERR_PTR(-EINVAL);
-+}
-+
- static inline int integrity_digsig_verify(const unsigned int id,
- 					  const char *sig, int siglen,
- 					  const char *digest, int digestlen)
+ 	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
