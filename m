@@ -1,75 +1,139 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Fri, 16 Mar 2018 13:04:16 -0400
-Subject: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace support
-In-Reply-To: <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
-References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
-	<20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
-	<87vadxfwqj.fsf@xmission.com>
-	<c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
-	<1521135192.5348.64.camel@HansenPartnership.com>
-	<2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
-	<1521139535.5348.89.camel@HansenPartnership.com>
-	<0dc5b856-8dc6-7b5a-eeac-febd19f6498c@linux.vnet.ibm.com>
-	<1521140467.5348.94.camel@HansenPartnership.com>
-	<056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
-Message-ID: <7e015d3c-4fab-3d69-711b-2ebbad07018f@linux.vnet.ibm.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Fri, 16 Mar 2018 23:15:28 +0530
+Subject: [PATCH] tpm: TPM 2.0 selftest performance improvement
+Message-ID: <20180316174528.21018-1-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 03/15/2018 03:15 PM, Stefan Berger wrote:
-> On 03/15/2018 03:01 PM, James Bottomley wrote:
->> On Thu, 2018-03-15 at 14:51 -0400, Stefan Berger wrote:
->>> On 03/15/2018 02:45 PM, James Bottomley wrote:
->> [...]
->>>>>> going to need some type of keyring namespace and there's
->>>>>> already
->>>>>> one hanging off the user_ns:
->>>>>>
->>>>>> commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
->>>>>> Author: David Howells <dhowells@redhat.com>
->>>>>> Date:   Tue Sep 24 10:35:19 2013 +0100
->>>>>>
->>>>>>        KEYS: Add per-user_namespace registers for persistent
->>>>>> per-UID
->>>>>> kerberos caches
->>>>> The benefit for IMA would be that this would then tie the keys
->>>>> needed for appraising to the IMA namespace's policy.
->>>>> However, if you have an appraise policy in your IMA namespace,
->>>>> which is now hooked to the user namespace, and you join that user
->>>>> namespace but your files don't have signatures, nothing will
->>>>> execute anymore. That's now a side effect of joining this user
->>>>> namespace unless we have a magic  exception. My feeling is,
->>>>> people may not like that...
->>>> Agree, but I think the magic might be to populate the ima keyring
->>>> with the parent on user_ns creation.  That way the user_ns owner
->>>> can delete the parent keys if they don't like them, but by default
->>>> the parent appraisal policy should just work.
->>> That may add keys to your keyring but doesn't get you signatures on
->>> your  files.
->> But it doesn't need to.  The only way we'd get a failure is if the file
->> is already being appraised and we lose access to the key.  If the
->
-> Well, the configuration I talked about above was assuming that we have 
-> an appraisal policy active in the IMA namespace, which is now tied to 
-> the user namespace that was just joined.
->
-> If we are fine with the side effects of an IMA policy active as part 
-> of a user namespace then let's go with it. The side effects in case of 
-> an active IMA appraisal may then be that files cannot be 
-> read/accessed, or file measurements or IMA auditing may occur.
->
-> The alternative is we have an independent IMA namespace. If one joins 
-> the USER namespace and there are no IMA-related side effects. If one 
-> joins the IMA namespace its IMA policy should start being enforced. If 
-> the current active USER namespace has the keys that go with the 
-> signatures of the filesystem, then we're fine from the appraisal 
-> perspective. If not, then IMA namespace joining may prevent file 
-> accesses.
+For selftest being run in the background, the TCG 2.0 Specification
+provides the command TPM2_GetTestResult to check the status of selftest
+completion.
 
-With these differences pointed out, which path do we want to go now ? 
-Eric ? James ?
+When the partial selftest command is sent just after TPM initialization,
+it is observed that it returns RC_COMMAND_CODE error, which as per TPM 2.0
+Specification, indicates "the response code that is returned if the TPM is
+unmarshalling a value that it expects to be a TPM_CC and the input value is
+not in the table." This doesn't indicate the exact status of selftest
+command on TPM. But, it can be verified by sending the TPM2_GetTestResult.
 
-    Stefan
+This patch implements the TPM2_GetTestResult command and uses it to check
+the selftest status, before sending the full selftest command after partial
+selftest returns RC_COMMAND_CODE.
+
+With this change, dmesg shows the TPM selftest completed at 1.243864
+compared with the previous 1.939667 time.
+
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ drivers/char/tpm/tpm.h      |  2 ++
+ drivers/char/tpm/tpm2-cmd.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 82ae7b722161..d95eeb7c002a 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -107,6 +107,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_FAILURE		= 0x0101,
+ 	TPM2_RC_DISABLED	= 0x0120,
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
++	TPM2_RC_NEEDS_TEST      = 0x0153,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
+ };
+@@ -135,6 +136,7 @@ enum tpm2_command_codes {
+ 	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+ 	TPM2_CC_GET_CAPABILITY	= 0x017A,
+ 	TPM2_CC_GET_RANDOM	= 0x017B,
++	TPM2_CC_GET_TEST_RESULT = 0x017C,
+ 	TPM2_CC_PCR_READ	= 0x017E,
+ 	TPM2_CC_PCR_EXTEND	= 0x0182,
+ 	TPM2_CC_LAST		= 0x018F,
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 89a5397b18d2..494f6dfbc65d 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -823,6 +823,50 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+ 
+ /**
++ * tpm2_get_selftest_result() - get the status of self tests
++ *
++ * @chip: TPM chip to use
++ *
++ * Return: If error return rc, else return the result of the self tests.
++ * TPM_RC_NEEDS_TESTING: No self tests are done. Needs testing.
++ * TPM_RC_TESTING: Self tests are in progress.
++ * TPM_RC_SUCCESS: Self tests completed successfully.
++ * TPM_RC_FAILURE: Self tests completed failure.
++ *
++ * This function can be used to check the status of self tests on the TPM.
++ */
++static int tpm2_get_selftest_result(struct tpm_chip *chip)
++{
++	struct tpm_buf buf;
++	int rc;
++	int test_result;
++	uint16_t data_size;
++	int len;
++	const struct tpm_output_header *header;
++
++	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
++	if (rc)
++		return rc;
++
++	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
++	if (len <  0)
++		return len;
++
++	header = (struct tpm_output_header *)buf.data;
++
++	rc = be32_to_cpu(header->return_code);
++	if (rc)
++		return rc;
++
++	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
++
++	test_result = be32_to_cpup((__be32 *)
++			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
++
++	return test_result;
++}
++
++/**
+  * tpm2_do_selftest() - ensure that all self tests have passed
+  *
+  * @chip: TPM chip to use
+@@ -851,10 +895,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+ 				      "attempting the self test");
+ 		tpm_buf_destroy(&buf);
+ 
++		dev_dbg(&chip->dev, "tpm selftest command returned %04x\n", rc);
+ 		if (rc == TPM2_RC_TESTING)
+ 			rc = TPM2_RC_SUCCESS;
+ 		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
+ 			return rc;
++
++		if (rc == TPM2_RC_COMMAND_CODE) {
++
++			dev_info(&chip->dev, "Check TPM Test Results\n");
++			rc = tpm2_get_selftest_result(chip);
++
++			dev_info(&chip->dev, "tpm self test result is %04x\n",
++					rc);
++			if (rc == TPM2_RC_TESTING)
++				rc = TPM2_RC_SUCCESS;
++			if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS
++					|| TPM2_RC_FAILURE)
++				return rc;
++		}
+ 	}
+ 
+ 	return rc;
+-- 
+2.13.6
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
