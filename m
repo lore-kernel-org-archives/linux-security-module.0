@@ -1,139 +1,260 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Fri, 16 Mar 2018 23:15:28 +0530
-Subject: [PATCH] tpm: TPM 2.0 selftest performance improvement
-Message-ID: <20180316174528.21018-1-nayna@linux.vnet.ibm.com>
+From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
+Date: Fri, 16 Mar 2018 17:38:25 -0300
+Subject: [PATCH v6 00/12] Appended signatures support for IMA appraisal
+Message-ID: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-For selftest being run in the background, the TCG 2.0 Specification
-provides the command TPM2_GetTestResult to check the status of selftest
-completion.
+Hello,
 
-When the partial selftest command is sent just after TPM initialization,
-it is observed that it returns RC_COMMAND_CODE error, which as per TPM 2.0
-Specification, indicates "the response code that is returned if the TPM is
-unmarshalling a value that it expects to be a TPM_CC and the input value is
-not in the table." This doesn't indicate the exact status of selftest
-command on TPM. But, it can be verified by sending the TPM2_GetTestResult.
+The main highlight in this version is that it's not necessary to appraise
+the file before storing its measurement anymore. This is possible due to a
+new approach that Mimi suggested: we decide whether the modsig should be
+used or not at the time it is read from the file, while before we would
+only make that decision when trying to verify its signature (i.e., at
+appraisal time).
 
-This patch implements the TPM2_GetTestResult command and uses it to check
-the selftest status, before sending the full selftest command after partial
-selftest returns RC_COMMAND_CODE.
+Now the modsig is only ignored if it references a signature that is not
+present in IMA's keyring (or if there's a parsing error, obviously). If the
+signature verification fails, then appraisal fails and the xattr signature
+(if there is one) is not used as a fallback. With this change, we already
+know which signature will be used for appraisal at the time the measurement
+is stored in the measurement list.
 
-With this change, dmesg shows the TPM selftest completed at 1.243864
-compared with the previous 1.939667 time.
+Also, now IMA first tries to use the xattr signature and only if it doesn't
+exist or uses a key which isn't in IMA's keyring it will look for a modsig.
+This is because an xattr sig was most likely placed there by the system
+admin, while the modsig most likely came from the OS vendor and thus the
+former should be given preference. Also, since modsig is only allowed in
+hooks which aren't in any hotpath, there's no practical gain in speed by
+avoiding to read the xattr.
 
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm.h      |  2 ++
- drivers/char/tpm/tpm2-cmd.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+There's also a new template field called 'd-sig' which will store the
+digest used for verification of the modsig in the measurement list.
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 82ae7b722161..d95eeb7c002a 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -107,6 +107,7 @@ enum tpm2_return_codes {
- 	TPM2_RC_FAILURE		= 0x0101,
- 	TPM2_RC_DISABLED	= 0x0120,
- 	TPM2_RC_COMMAND_CODE    = 0x0143,
-+	TPM2_RC_NEEDS_TEST      = 0x0153,
- 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
- };
-@@ -135,6 +136,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
- 	TPM2_CC_GET_CAPABILITY	= 0x017A,
- 	TPM2_CC_GET_RANDOM	= 0x017B,
-+	TPM2_CC_GET_TEST_RESULT = 0x017C,
- 	TPM2_CC_PCR_READ	= 0x017E,
- 	TPM2_CC_PCR_EXTEND	= 0x0182,
- 	TPM2_CC_LAST		= 0x018F,
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 89a5397b18d2..494f6dfbc65d 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -823,6 +823,50 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
- 
- /**
-+ * tpm2_get_selftest_result() - get the status of self tests
-+ *
-+ * @chip: TPM chip to use
-+ *
-+ * Return: If error return rc, else return the result of the self tests.
-+ * TPM_RC_NEEDS_TESTING: No self tests are done. Needs testing.
-+ * TPM_RC_TESTING: Self tests are in progress.
-+ * TPM_RC_SUCCESS: Self tests completed successfully.
-+ * TPM_RC_FAILURE: Self tests completed failure.
-+ *
-+ * This function can be used to check the status of self tests on the TPM.
-+ */
-+static int tpm2_get_selftest_result(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+	int test_result;
-+	uint16_t data_size;
-+	int len;
-+	const struct tpm_output_header *header;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
-+	if (rc)
-+		return rc;
-+
-+	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
-+	if (len <  0)
-+		return len;
-+
-+	header = (struct tpm_output_header *)buf.data;
-+
-+	rc = be32_to_cpu(header->return_code);
-+	if (rc)
-+		return rc;
-+
-+	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
-+
-+	test_result = be32_to_cpup((__be32 *)
-+			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
-+
-+	return test_result;
-+}
-+
-+/**
-  * tpm2_do_selftest() - ensure that all self tests have passed
-  *
-  * @chip: TPM chip to use
-@@ -851,10 +895,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 				      "attempting the self test");
- 		tpm_buf_destroy(&buf);
- 
-+		dev_dbg(&chip->dev, "tpm selftest command returned %04x\n", rc);
- 		if (rc == TPM2_RC_TESTING)
- 			rc = TPM2_RC_SUCCESS;
- 		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
- 			return rc;
-+
-+		if (rc == TPM2_RC_COMMAND_CODE) {
-+
-+			dev_info(&chip->dev, "Check TPM Test Results\n");
-+			rc = tpm2_get_selftest_result(chip);
-+
-+			dev_info(&chip->dev, "tpm self test result is %04x\n",
-+					rc);
-+			if (rc == TPM2_RC_TESTING)
-+				rc = TPM2_RC_SUCCESS;
-+			if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS
-+					|| TPM2_RC_FAILURE)
-+				return rc;
-+		}
- 	}
- 
- 	return rc;
--- 
-2.13.6
+Finally, I dropped the patches removing superfluous parentheses from
+expressions, since they add a lot of churn and whether they're an actual
+improvement or not is subjective.
+
+These patches apply on top of today's linux-integrity/next-integrity.
+
+They also require patch 4/4 from my cleanups series I posted a few days
+ago, which isn't in next-integrity yet:
+
+https://lkml.org/lkml/2018/3/14/1029
+
+For convenience, I pushed these patches to the following branch:
+
+https://github.com/bauermann/linux.git ima-modsig
+
+Original cover letter:
+
+On the OpenPOWER platform, secure boot and trusted boot are being
+implemented using IMA for taking measurements and verifying signatures.
+Since the kernel image on Power servers is an ELF binary, kernels are
+signed using the scripts/sign-file tool and thus use the same signature
+format as signed kernel modules.
+
+This patch series adds support in IMA for verifying those signatures.
+It adds flexibility to OpenPOWER secure boot, because it allows it to boot
+kernels with the signature appended to them as well as kernels where the
+signature is stored in the IMA extended attribute.
+
+Changes since v5:
+- Patch "ima: Remove some superfluous parentheses"
+  - Dropped.
+
+- Patch "evm, ima: Remove superfluous parentheses"
+  - Dropped.
+
+- Patch "evm, ima: Remove more superfluous parentheses"
+  - Dropped.
+
+- Patch "ima: Don't pass xattr value to EVM xattr verification."
+  - Dropped.
+
+- Patch "ima: Store measurement after appraisal"
+  - Dropped.
+
+- Patch "MODSIGN: Export module signature definitions"
+  - Reduced changes to the code that was moved into validate_module_sig()
+    to the minimum necessary (suggested by Mimi Zohar).
+  - Added SPDX license identifier.
+
+- Patch "PKCS#7: Introduce pkcs7_get_message_sig() and verify_pkcs7_message_sig()"
+  - In the hypothetical case that there's more than one sinfo, changed
+    pkcs7_get_message_sig() to return NULL instead of the first sinfo's sig.
+  - Dropped Mimi's Reviewed-by because of the code change above.
+
+- Patch "PKCS#7: Introduce pkcs7_get_digest()"
+  - New patch.
+
+- Patch "integrity: Introduce integrity_keyring_from_id"
+  - Add stub in case CONFIG_INTEGRITY_SIGNATURE isn't set.
+
+- Patch "integrity: Introduce asymmetric_sig_has_known_key()"
+  - New patch.
+
+- Patch "ima: Introduce is_ima_sig"
+  - New patch, with code from "ima: Improvements in ima_appraise_measurement"
+
+- Patch "ima: Add modsig appraise_type option for module-style appended signatures"
+  - Changed appraise_type to accept "imasig|modsig" instead of
+    "modsig|imasig" to reflect the fact that now IMA only looks for
+    the modsig after failing to find a suitable imasig stored in the xattr.
+  - Added SPDX license identifier.
+
+- Patch "ima: Add functions to read and verify a modsig signature"
+  - Changed ima_read_modsig() to abort loading the modsig if it uses a key
+    which isn't known to IMA.
+  - Changed ima_get_modsig_hash() to use pkcs7_get_digest().
+
+- Patch "ima: Implement support for module-style appended signatures"
+  - Added ima_xattr_sig_known_key() auxiliary function.
+  - Call ima_read_modsig() directly from process_measurement() instead of
+    from ima_appraise_measurement(), and only if there's no xattr signature
+    or if the xattr signature uses a key which isn't known to IMA.
+  - hash_algo in process_measurement() is always obtained from the xattr
+    signature, never from the modsig.
+  - Changes to ima_appraise_measurement() are a lot simpler now, and don't
+    involve going back to the main switch statement a second time.
+  - Pass xattr_value to evm_verifyxattr() unless xattr_value is a modsig.
+
+- Patch "ima: Write modsig to the measurement list"
+  - Since now we determine whether we'll use an xattr sig or a modsig
+    at the time they are read, there's no need to store a measurement
+    again in the modsig case. Thus, this patch doesn't need to change
+    ima_store_measurement() nor process_measurement() anymore.
+  - Define new "d-sig" template field which holds the digest that is
+    expected to match the one contained in the modsig.
+  - Moved addition of ima_modsig_serialize_data() to patch "ima: Add
+    functions to read and verify a modsig signature".
+  - Increase MAX_TEMPLATE_NAME_LEN to 24.
+
+Changes since v4:
+- Patch "ima: Remove redundant conditional operator"
+  - New patch.
+
+- Patch "ima: Remove some superfluous parentheses"
+  - New patch.
+
+- Patch "evm, ima: Remove superfluous parentheses"
+  - New patch.
+
+- Patch "evm, ima: Remove more superfluous parentheses"
+  - New patch.
+
+- Patch "ima: Simplify ima_eventsig_init"
+  - New patch.
+
+- Patch "ima: Improvements in ima_appraise_measurement"
+  - New patch.
+
+- Patch "ima: Don't pass xattr value to EVM xattr verification."
+  - New patch.
+
+- Patch "ima: Export func_tokens"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+
+- Patch "ima: Add modsig appraise_type option for module-style appended
+         signatures"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+  - Mention modsig option in Documentation/ABI/testing/ima_policy
+    (suggested by Mimi Zohar).
+
+- Patch "ima: Add functions to read and verify a modsig signature"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+
+- Patch "ima: Implement support for module-style appended signatures"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+  - In ima_appraise_measurement, change the logic of dealing with xattr
+    errors in case the modsig verification fails. With this,
+    process_xattr_error isn't needed anymore.
+
+- Patch "ima: Write modsig to the measurement list"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+  - Added ima_current_template_has_sig function.
+  - Removed hdr parameter from ima_modsig_serialize_data.
+  - In ima_store_measurement, continue processing even if the given PCR
+    is already measured if it's for a modsig.
+  - In process_measurement, add exception to store measurement even if
+    IMA_MEASURE is not set when appraising a modsig (suggested by
+    Mimi Zohar).
+  - Call is_ima_sig in ima_eventsig_init.
+
+Changes since v3:
+- Patch "integrity: Introduce struct evm_hmac_xattr"
+  - Renamed new struct to evm_xattr.
+  - Define struct evm_xattr using struct evm_ima_xattr_data, and moved it
+    from evm.h to integrity.h (suggested by Mimi Zohar).
+- Patch "PKCS#7: Introduce verify_pkcs7_message_sig"
+  - Also introduce pkcs7_get_message_sig.
+- Patch "ima: Support appended signatures for appraisal"
+  - Moved check for buffer presence and size from ima_appraise_measurement
+    to ima_read_modsig (suggested by Mimi Zohar).
+  - Factored out handling of ima_read_xattr return value into
+    process_xattr_error in ima_appraise_measurement so that it can be used
+    if the modsig verification fails.
+  - Pass NULL xattr_value to evm_verifyxattr even in the case of xattr
+    signature in ima_appraise_measurement (suggested by Mimi Zohar).
+  - Use switch statement provided by Mimi Zohar to check result of
+    evm_verifyxattr.
+  - If the modsig verification succeeds, copy the hash calculated during
+    the verification to the iint cache (suggested by Mimi Zohar).
+  - Substitute recursion in ima_appraise_measurement by a goto statement
+    back to the main switch statement (suggested by Mimi Zohar).
+
+Thiago Jung Bauermann (12):
+  MODSIGN: Export module signature definitions
+  PKCS#7: Introduce pkcs7_get_message_sig() and
+    verify_pkcs7_message_sig()
+  PKCS#7: Introduce pkcs7_get_digest()
+  ima: Introduce is_ima_sig()
+  integrity: Introduce integrity_keyring_from_id()
+  integrity: Introduce asymmetric_sig_has_known_key()
+  integrity: Select CONFIG_KEYS instead of depending on it
+  ima: Export func_tokens
+  ima: Add modsig appraise_type option for module-style appended
+    signatures
+  ima: Add functions to read and verify a modsig signature
+  ima: Implement support for module-style appended signatures
+  ima: Write modsig to the measurement list
+
+ Documentation/ABI/testing/ima_policy      |   6 +-
+ Documentation/security/IMA-templates.rst  |   5 +
+ certs/system_keyring.c                    |  61 ++++++---
+ crypto/asymmetric_keys/pkcs7_parser.c     |  16 +++
+ crypto/asymmetric_keys/pkcs7_verify.c     |  25 ++++
+ include/crypto/pkcs7.h                    |   5 +
+ include/linux/module.h                    |   3 -
+ include/linux/module_signature.h          |  44 +++++++
+ include/linux/verification.h              |  10 ++
+ init/Kconfig                              |   6 +-
+ kernel/Makefile                           |   2 +-
+ kernel/module.c                           |   1 +
+ kernel/module_signing.c                   |  77 +++++------
+ security/integrity/Kconfig                |   2 +-
+ security/integrity/digsig.c               |  28 +++-
+ security/integrity/digsig_asymmetric.c    |  44 +++++--
+ security/integrity/ima/Kconfig            |  13 ++
+ security/integrity/ima/Makefile           |   1 +
+ security/integrity/ima/ima.h              |  66 ++++++++++
+ security/integrity/ima/ima_appraise.c     |  60 +++++++--
+ security/integrity/ima/ima_main.c         |  21 ++-
+ security/integrity/ima/ima_modsig.c       | 212 ++++++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  24 ++--
+ security/integrity/ima/ima_template.c     |   4 +-
+ security/integrity/ima/ima_template_lib.c |  49 ++++++-
+ security/integrity/ima/ima_template_lib.h |   2 +
+ security/integrity/integrity.h            |  16 +++
+ 27 files changed, 693 insertions(+), 110 deletions(-)
+ create mode 100644 include/linux/module_signature.h
+ create mode 100644 security/integrity/ima/ima_modsig.c
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
