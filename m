@@ -1,26 +1,57 @@
-From: bauerman@linux.vnet.ibm.com (Thiago Jung Bauermann)
-Date: Fri, 16 Mar 2018 18:38:38 -0300
-Subject: [PATCH v6 00/12] Appended signatures support for IMA appraisal
-In-Reply-To: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-Message-ID: <87zi37og4h.fsf@morokweng.localdomain>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Fri, 16 Mar 2018 18:20:31 -0700
+Subject: [PATCH v3 1/5] tpm: fix intermittent failure with self tests
+In-Reply-To: <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
+References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
+	<20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
+Message-ID: <1521249631.12827.5.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
+> index 9e80a953d693..1adb976a2e37 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -537,14 +537,26 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip,
+> struct tpm_space *space,
+> ?			?const char *desc)
+> ?{
+> ?	const struct tpm_output_header *header = buf;
+> +	unsigned int delay_msec = TPM2_DURATION_SHORT;
+> ?	int err;
+> ?	ssize_t len;
+> ?
+> -	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
+> -	if (len <??0)
+> -		return len;
+> +	for (;;) {
+> +		len = tpm_transmit(chip, space, (u8 *)buf, bufsiz,
+> flags);
+> +		if (len <??0)
+> +			return len;
+> +		err = be32_to_cpu(header->return_code);
+> +		if (err != TPM2_RC_TESTING)
+> +			break;
+> +
+> +		delay_msec *= 2;
+> +		if (delay_msec > TPM2_DURATION_LONG) {
+> +			dev_err(&chip->dev, "the self test is still
+> running\n");
+> +			break;
+> +		}
+> +		tpm_msleep(delay_msec);
+> +	}
 
-Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> writes:
+It turns out this bit is wrong ... I just discovered it testing the
+RC_RETRY code. ?You can't feed the buf back to tpm_transmit because the
+header has already been changed to give you back the return code. ?To
+make this work, you have to save the header and handle area and restore
+it before the command is resent.
 
-> Now the modsig is only ignored if it references a signature that is not
-> present in IMA's keyring (or if there's a parsing error, obviously). If the
+I think the best solution for this hunk of code is to merge it with the
+retry code.
 
-The above should read "Now the modsig is only ignored if it references a
-*key* that is not present in IMA's keyring".
-
-Sorry, I only noticed the mistake after sending the emails.
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+James
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
