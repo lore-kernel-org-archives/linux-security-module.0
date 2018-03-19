@@ -1,31 +1,43 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 19 Mar 2018 23:06:21 +0200
-Subject: [PATCH v3 1/5] tpm: fix intermittent failure with self tests
-In-Reply-To: <1521249631.12827.5.camel@HansenPartnership.com>
-References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
-	<20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
-	<1521249631.12827.5.camel@HansenPartnership.com>
-Message-ID: <20180319210620.GB14364@linux.intel.com>
+Date: Mon, 19 Mar 2018 23:24:36 +0200
+Subject: [PATCH] tpm: allow TCPA log area to be empty
+In-Reply-To: <20180319021323.GD27186@ziepe.ca>
+References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+	<20180312150231.GA24717@ziepe.ca>
+	<20180316125525.GB5035@linux.intel.com>
+	<20180319021323.GD27186@ziepe.ca>
+Message-ID: <20180319212436.GD14364@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Mar 16, 2018 at 06:20:31PM -0700, James Bottomley wrote:
-> It turns out this bit is wrong ... I just discovered it testing the
-> RC_RETRY code. ?You can't feed the buf back to tpm_transmit because the
-> header has already been changed to give you back the return code. ?To
-> make this work, you have to save the header and handle area and restore
-> it before the command is resent.
+On Sun, Mar 18, 2018 at 08:13:23PM -0600, Jason Gunthorpe wrote:
+> On Fri, Mar 16, 2018 at 02:55:25PM +0200, Jarkko Sakkinen wrote:
+> > On Mon, Mar 12, 2018 at 09:02:32AM -0600, Jason Gunthorpe wrote:
+> > > On Sat, Mar 10, 2018 at 06:16:37PM +0200, Jarkko Sakkinen wrote:
+> > > > TCPA log are can be empty when the TPM is disabled. This commit changes the
+> > > > behavior of tpm_read_log_acpi() to return successfully in this case.
+> > > 
+> > > The commit should explain why we'd want this..
+> > > 
+> > > eg Why does it matter to create the extra sysfs files to report an empty
+> > > log?
+> > > 
+> > > Jason
+> > 
+> > The initialization of the driver will fail otherwise. Not sure if I
+> > understand your question.
 > 
-> I think the best solution for this hunk of code is to merge it with the
-> retry code.
+> Well, I mean in the sense of what is broken and why is this the right
+> fix. Why not return -ENODEV?
 
-Yeah, right, so it is embarrasingly so :-) I wonder how I missed ths
-during the review. Thanks for spotting this one out. Are you saying
-that I should merge the patches into a single one? Perhaps you could
-send me the merged patch if so?
+Well, because then the device initialization would fail.
 
-If you agree, please send only that patch. I'll send v4 of my patch
-set after 4.17 pull request.
+Just noticed that this is missing:
+
+Reported-by: Sahil Rihan <srihan@fb.com>
+
+Sahil, would you care to try if this fixes the issue that you are
+having or not?
 
 /Jarkko
 --
