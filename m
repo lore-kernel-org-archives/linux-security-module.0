@@ -1,63 +1,73 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 19 Mar 2018 11:47:40 -0400
-Subject: Problem mounting pseudo filesystems with SMACK and IMA enabled.
-In-Reply-To: <CABatt_zM0Uu2fEwyORKTLYMC2_KeqSkcye1toBxhyjkgOUr62Q@mail.gmail.com>
-References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
-	<1521206743.3503.29.camel@linux.vnet.ibm.com>
-	<CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
-	<1521211762.3503.46.camel@linux.vnet.ibm.com>
-	<77f5ac13-dd79-abf7-13b2-336bf799a25c@schaufler-ca.com>
-	<CABatt_yk_73BsgaD7UsHOL9wse0FxR=i1YXneUfx6aUiBra_JQ@mail.gmail.com>
-	<CABatt_zM0Uu2fEwyORKTLYMC2_KeqSkcye1toBxhyjkgOUr62Q@mail.gmail.com>
-Message-ID: <1521474460.3503.191.camel@linux.vnet.ibm.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Mon, 19 Mar 2018 20:04:35 +0200
+Subject: [RFC PATCH v19 0/8] mm: security: ro protection for dynamic data
+In-Reply-To: <20180314173343.GJ29631@bombadil.infradead.org>
+References: <20180313214554.28521-1-igor.stoppa@huawei.com>
+	<a9bfc57f-1591-21b6-1676-b60341a2fadd@huawei.com>
+	<20180314115653.GD29631@bombadil.infradead.org>
+	<8623382b-cdbe-8862-8c2f-fa5bc6a1213a@huawei.com>
+	<20180314130418.GG29631@bombadil.infradead.org>
+	<9623b0d1-4ace-b3e7-b861-edba03b8a8cd@huawei.com>
+	<20180314173343.GJ29631@bombadil.infradead.org>
+Message-ID: <242fd8a2-2b80-3aa3-4b11-27f49c021a1d@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-03-19 at 14:37 +0000, Martin Townsend wrote:
-[...]
-> The problem was because systemd couldn't create directories for the
-> mounts /dev/shm and /sys/fs/cgroup/systemd, it was returning -ENOKEY.
+On 14/03/18 19:33, Matthew Wilcox wrote:
+> I think an implementation of
+> pmalloc which used a page_frag-style allocator would be larger than
+> 100 lines, but I don't think it would have to be significantly larger
+> than that.
 
-There's a disconnect between what ima-evm-utils supports and the
-kernel. ?This sounds like the kernel you're using has directory
-support, which has not been upstreamed.
-??
-> After investigating it looks like I need to set a key for HMAC to stop
-> the mkdir failing which I didn't appreciate I needed with a pre-signed
-> image.
+I have some doubt about what is the best way to implement it using
+vmalloced memory.
 
-> I have a question on this, looking at the IMA code it will try and
-> replace my signatures with the HMAC unless the immutable attribute is
-> set, is this correct?
+1. Since I can allocate an arbitrary number of pages, I think allocating
+a rounded up amount of memory, so that it's multiple of PAGE_SIZE should
+be enough.
 
-EVM will replace the file signature with an HMAC, unless the
-filesystem is mounted r/o, is immutable, or is signed with the new EVM
-portable and immutable signature.
+But maybe I could do better than that:
+a) support pre-allocation of x pages
 
->  In the evmctl utility there's mention of an evm
-> immutable flag but I see nothing in the kernel code that supports
-> this. Is this a feature that never made it into the kernel? or is it
-> there but I've missed it?
+b) define, as pool parameter, the minimum number of pages to allocate
+every time there is a refill
 
-The portable and immutable EVM signature is being added only in this
-release (linux-4.16).
+c) both a and b
 
-> Second question, I have no TPM module so do I need to add a key for
-> HMAC or is there another way? It's not a problem if I have to add a
-> key I just want to make 100% sure I have to before patching systemd or
-> creating my own init process that adds the key before handing over to
-> systemd.
 
-systemd already has support for loading an EVM key.
+----
 
-The EVM encrypted key could be based on either a TPM trusted key or a
-user key, without the HW guarantees of the private key not being
-exposed in the clear. ?If you don't need an EVM key, then without a
-TPM, you're probably better off backporting the new portable and
-immutable EVM key.
 
-Mimi
+2. the flavor of page_frag from page_alloc relies on page->_refcount,
+however neither vmap_area, nor vm_struct seem to have anything like
+that. (My reasoning is that I should do the accounting not on page
+level, but based on the virtual area that I get when I allocate new
+memory) What would be the best way to do refcounting for the area?
 
+a) use the the page->_refcount from the first page that belongs to the area
+
+b) add the _refcount to either vm_struct or vmap_area (I am not really
+sure of why these two structures exist as separate entities, rather than
+a single one - cache optimization?)
+
+
+----
+
+3. I will have to add a list of chunks (in genalloc lingo, or areas, if
+we refer to the new implementation), because I will still need to
+iterate over all the memory that belongs to a pool, for either write
+protecting it or for destroying the pool. I have two options:
+
+a) handle the chunks within the pmalloc pool
+
+b) create an intermediate type of pool (vfrag_pool?) and then include it
+in the pmalloc pool structure.
+
+I'd lean toward option a, but I thought I might as well ask for advice
+before I implement the less desirable option (whatever it might be).
+
+--
+thanks, igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
