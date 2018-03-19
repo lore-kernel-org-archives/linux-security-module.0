@@ -1,34 +1,34 @@
-From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Sun, 18 Mar 2018 20:13:23 -0600
-Subject: [PATCH] tpm: allow TCPA log area to be empty
-In-Reply-To: <20180316125525.GB5035@linux.intel.com>
-References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
-	<20180312150231.GA24717@ziepe.ca>
-	<20180316125525.GB5035@linux.intel.com>
-Message-ID: <20180319021323.GD27186@ziepe.ca>
+From: jmorris@namei.org (James Morris)
+Date: Mon, 19 Mar 2018 15:52:18 +1100 (AEDT)
+Subject: [PATCH v2] exec: Set file unwritable before LSM check
+In-Reply-To: <20180309193020.GA5149@beast>
+References: <20180309193020.GA5149@beast>
+Message-ID: <alpine.LRH.2.21.1803191551580.5791@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Mar 16, 2018 at 02:55:25PM +0200, Jarkko Sakkinen wrote:
-> On Mon, Mar 12, 2018 at 09:02:32AM -0600, Jason Gunthorpe wrote:
-> > On Sat, Mar 10, 2018 at 06:16:37PM +0200, Jarkko Sakkinen wrote:
-> > > TCPA log are can be empty when the TPM is disabled. This commit changes the
-> > > behavior of tpm_read_log_acpi() to return successfully in this case.
-> > 
-> > The commit should explain why we'd want this..
-> > 
-> > eg Why does it matter to create the extra sysfs files to report an empty
-> > log?
-> > 
-> > Jason
+On Fri, 9 Mar 2018, Kees Cook wrote:
+
+> The LSM check should happen after the file has been confirmed to be
+> unchanging. Without this, we could have a race between the Time of Check
+> (the call to security_kernel_read_file() which could read the file and
+> make access policy decisions) and the Time of Use (starting with
+> kernel_read_file()'s reading of the file contents). In theory, file
+> contents could change between the two.
 > 
-> The initialization of the driver will fail otherwise. Not sure if I
-> understand your question.
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> v2: Clarify the ToC/ToU race (Linus)
 
-Well, I mean in the sense of what is broken and why is this the right
-fix. Why not return -ENODEV?
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+and next-testing
 
-Jason
+
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
