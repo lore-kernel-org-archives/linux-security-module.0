@@ -1,34 +1,30 @@
-From: jmorris@namei.org (James Morris)
-Date: Mon, 19 Mar 2018 15:52:18 +1100 (AEDT)
-Subject: [PATCH v2] exec: Set file unwritable before LSM check
-In-Reply-To: <20180309193020.GA5149@beast>
-References: <20180309193020.GA5149@beast>
-Message-ID: <alpine.LRH.2.21.1803191551580.5791@namei.org>
+From: dan.carpenter@oracle.com (Dan Carpenter)
+Date: Mon, 19 Mar 2018 12:12:31 +0300
+Subject: [PATCH] apparmor: Fix an error code in verify_table_headers()
+Message-ID: <20180319091231.GA7409@mwanda>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 9 Mar 2018, Kees Cook wrote:
+We accidentally return a positive EPROTO instead of a negative -EPROTO.
+Since 71 is not an error pointer, that means it eventually results in an
+Oops in the caller.
 
-> The LSM check should happen after the file has been confirmed to be
-> unchanging. Without this, we could have a race between the Time of Check
-> (the call to security_kernel_read_file() which could read the file and
-> make access policy decisions) and the Time of Use (starting with
-> kernel_read_file()'s reading of the file contents). In theory, file
-> contents could change between the two.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> v2: Clarify the ToC/ToU race (Linus)
+Fixes: d901d6a298dc ("apparmor: dfa split verification of table headers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-and next-testing
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+index dd4c995c5e25..280eba082c7b 100644
+--- a/security/apparmor/match.c
++++ b/security/apparmor/match.c
+@@ -198,7 +198,7 @@ static int verify_table_headers(struct table_header **tables, int flags)
+ static int verify_dfa(struct aa_dfa *dfa)
+ {
+ 	size_t i, state_count, trans_count;
+-	int error = EPROTO;
++	int error = -EPROTO;
+ 
+ 	state_count = dfa->tables[YYTD_ID_BASE]->td_lolen;
+ 	trans_count = dfa->tables[YYTD_ID_NXT]->td_lolen;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
