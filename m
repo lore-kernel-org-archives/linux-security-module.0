@@ -1,30 +1,29 @@
-From: dan.carpenter@oracle.com (Dan Carpenter)
-Date: Mon, 19 Mar 2018 12:12:31 +0300
-Subject: [PATCH] apparmor: Fix an error code in verify_table_headers()
-Message-ID: <20180319091231.GA7409@mwanda>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 19 Mar 2018 11:37:35 +0200
+Subject: [PATCH 3/5 V3] tpm2: add longer timeouts for creation commands.
+In-Reply-To: <20180310151545.22237-1-tomas.winkler@intel.com>
+References: <20180310151545.22237-1-tomas.winkler@intel.com>
+Message-ID: <20180319093735.GA4587@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-We accidentally return a positive EPROTO instead of a negative -EPROTO.
-Since 71 is not an error pointer, that means it eventually results in an
-Oops in the caller.
+On Sat, Mar 10, 2018 at 05:15:45PM +0200, Tomas Winkler wrote:
+> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
+> of crypto keys which can be a computationally intensive task.
+> The timeout is set to 3min.
+> Rather than increasing default timeout a new constant is
+> added, to not stall for too long on regular commands failures.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Fixes: d901d6a298dc ("apparmor: dfa split verification of table headers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-index dd4c995c5e25..280eba082c7b 100644
---- a/security/apparmor/match.c
-+++ b/security/apparmor/match.c
-@@ -198,7 +198,7 @@ static int verify_table_headers(struct table_header **tables, int flags)
- static int verify_dfa(struct aa_dfa *dfa)
- {
- 	size_t i, state_count, trans_count;
--	int error = EPROTO;
-+	int error = -EPROTO;
- 
- 	state_count = dfa->tables[YYTD_ID_BASE]->td_lolen;
- 	trans_count = dfa->tables[YYTD_ID_NXT]->td_lolen;
+PS. Please format the long description properly. Now the lines cut from
+weird places. I use gq command in Vim to get that done. The description
+itself is nice and concise.
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
