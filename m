@@ -1,29 +1,29 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 19 Mar 2018 11:37:35 +0200
-Subject: [PATCH 3/5 V3] tpm2: add longer timeouts for creation commands.
-In-Reply-To: <20180310151545.22237-1-tomas.winkler@intel.com>
-References: <20180310151545.22237-1-tomas.winkler@intel.com>
-Message-ID: <20180319093735.GA4587@linux.intel.com>
+From: dan.carpenter@oracle.com (Dan Carpenter)
+Date: Mon, 19 Mar 2018 13:34:44 +0300
+Subject: [PATCH] apparmor: signedness bug in aa_xattrs_match()
+Message-ID: <20180319103444.GC8543@mwanda>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Mar 10, 2018 at 05:15:45PM +0200, Tomas Winkler wrote:
-> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
-> of crypto keys which can be a computationally intensive task.
-> The timeout is set to 3min.
-> Rather than increasing default timeout a new constant is
-> added, to not stall for too long on regular commands failures.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+The "size" variable needs to be signed ssize_t so that the error
+handling works correctly.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-PS. Please format the long description properly. Now the lines cut from
-weird places. I use gq command in Vim to get that done. The description
-itself is nice and concise.
-
-/Jarkko
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 57cc892e05a2..590b7e8cd21c 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+ 			   struct aa_profile *profile, unsigned int state)
+ {
+ 	int i;
+-	size_t size;
++	ssize_t size;
+ 	struct dentry *d;
+ 	char *value = NULL;
+ 	int value_size = 0, ret = profile->xattr_count;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
