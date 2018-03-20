@@ -1,39 +1,116 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 20 Mar 2018 09:14:54 -0700
-Subject: Problem mounting pseudo filesystems with SMACK and IMA enabled.
-In-Reply-To: <1521562269.22230.40.camel@linux.vnet.ibm.com>
-References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
-	<1521206743.3503.29.camel@linux.vnet.ibm.com>
-	<CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
-	<1521211762.3503.46.camel@linux.vnet.ibm.com>
-	<77f5ac13-dd79-abf7-13b2-336bf799a25c@schaufler-ca.com>
-	<CABatt_yk_73BsgaD7UsHOL9wse0FxR=i1YXneUfx6aUiBra_JQ@mail.gmail.com>
-	<CABatt_zM0Uu2fEwyORKTLYMC2_KeqSkcye1toBxhyjkgOUr62Q@mail.gmail.com>
-	<1521474460.3503.191.camel@linux.vnet.ibm.com>
-	<CABatt_wfwRqJRie=eoaaXnfxd7EUBhDL-jPjPbBHbwcnpMWj7g@mail.gmail.com>
-	<1521552744.22230.25.camel@linux.vnet.ibm.com>
-	<CABatt_yk+pgwxHVv+RY08xFDOfzxb4w6ELW7RxhW6gWQ=5Hvnw@mail.gmail.com>
-	<1521562269.22230.40.camel@linux.vnet.ibm.com>
-Message-ID: <942c9bb2-d6ed-0859-3b48-5aabe775b673@schaufler-ca.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 20 Mar 2018 12:30:55 -0400
+Subject: [Non-DoD Source] Re: [PATCH v3 15/15] selinux: delay sid
+	population for rootfs till init is complete
+In-Reply-To: <alpine.LRH.2.00.1803101900250.24419@sjc-ads-6991.cisco.com>
+References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
+	<1518813234-5874-19-git-send-email-takondra@cisco.com>
+	<1519152994.14218.15.camel@tycho.nsa.gov>
+	<alpine.LRH.2.00.1803101900250.24419@sjc-ads-6991.cisco.com>
+Message-ID: <fe13077c-b528-b42d-6fde-8637043f37bb@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/20/2018 9:11 AM, Mimi Zohar wrote:
-> On Tue, 2018-03-20 at 15:01 +0000, Martin Townsend wrote:
->> Not sure why SMACK is not already there, do you want me to submit this
->> patch formally or is there a good reason for the omission?
-> At some point, we should introduce a flag indicating a pseudo
-> fileesystem, but for now including SMACK in the list of pseudo
-> filesystems not measured sounds right.
+On 03/10/2018 10:08 PM, Victor Kamensky wrote:
+> 
+> 
+> On Tue, 20 Feb 2018, Stephen Smalley wrote:
+> 
+>> On Fri, 2018-02-16 at 20:33 +0000, Taras Kondratiuk wrote:
+>>> From: Victor Kamensky <kamensky@cisco.com>
+>>>
+>>> With initramfs cpio format that supports extended attributes
+>>> we need to skip sid population on sys_lsetxattr call from
+>>> initramfs for rootfs if security server is not initialized yet.
+>>>
+>>> Otherwise callback in selinux_inode_post_setxattr will try to
+>>> translate give security.selinux label into sid context and since
+>>> security server is not available yet inode will receive default
+>>> sid (typically kernel_t). Note that in the same time proper
+>>> label will be stored in inode xattrs. Later, since inode sid
+>>> would be already populated system will never look back at
+>>> actual xattrs. But if we skip sid population for rootfs and
+>>> we have policy that direct use of xattrs for rootfs, proper
+>>> sid will be filled in from extended attributes one node is
+>>> accessed and server is initialized.
+>>>
+>>> Note new DELAYAFTERINIT_MNT super block flag is introduced
+>>> to only mark rootfs for such behavior. For other types of
+>>> tmpfs original logic is still used.
+>>
+>> (cc selinux maintainers)
+>>
+>> Wondering if we shouldn't just do this always, for all filesystem
+>> types.
+> 
+> Ok, I think it makes sense. The one that do not support xattrs
+> will not reach selinux_inode_post_setxattr anyway. And try
+> to cache sid while !ss_initialized is not good idea for any
+> filesystem types.
+> 
+>> Also, I think this should likely also be done in
+>> selinux_inode_setsecurity() for consistency.
+> 
+> I am not sure that I follow selinux_inode_setsecurity suggestion.
+> selinux_inode_setsecurity is about permission check. And
+> selinux_inode_post_setxattr deals with processing and setting
+> side effects if xattr was "security.selinux", it does not
+> matter what happens in selinux_inode_setsecurity if it
+> returns access_ok, LSM will still call selinux_inode_post_setxattr
+> and we would need to check and not produce any sid caching
+> side effects if !ss_initialized.
 
-I am also good with that.
+selinux_inode_setsecurity is the vfs fallback for setting security
+attributes when the filesystem/inode does not support setxattr itself,
+and is also used by kernfs. 
+So you need to update both selinux_inode_post_setxattr and selinux_inode_setsecurity
+in the same way.
 
->
-> thanks,
->
-> Mimi
->
->
+> 
+> Sitll keeping logic in selinux_inode_post_setxattr, checked
+> that the following with much simple code works too:
+> 
+>> From bfc54e4805f3059671417ff2cda1266bc68e18f9 Mon Sep 17 00:00:00 2001
+> From: Victor Kamensky <kamensky@cisco.com>
+> Date: Fri, 9 Mar 2018 23:06:08 -0800
+> Subject: [PATCH 2/2] selinux: delay sid population in setxattr till policy
+> ?loaded
+> 
+> With initramfs cpio format that supports extended attributes
+> we need to skip sid population on sys_lsetxattr call from
+> initramfs for rootfs if security server is not initialized yet.
+> 
+> Otherwise callback in selinux_inode_post_setxattr will try to
+> translate give security.selinux label into sid context and since
+> security server is not available yet inode will receive default
+> sid (typically kernel_t). Note that in the same time proper
+> label will be stored in inode xattrs. Later, since inode sid
+> would be already populated system will never look back at
+> actual xattrs. But if we skip sid population for rootfs and
+> we have policy that direct use of xattrs for rootfs, proper
+> sid will be filled in from extended attributes one node is
+> accessed and server is initialized.
+> 
+> Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+> ---
+> ?security/selinux/hooks.c | 4 ++++
+> ?1 file changed, 4 insertions(+)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 31303ed..4c13759 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -3197,6 +3197,10 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
+> ???????? return;
+> ???? }
+> 
+> +??????? if (!ss_initialized) {
+> +??????????????? return;
+> +??????? }
+> +
+> ???? rc = security_context_to_sid_force(value, size, &newsid);
+> ???? if (rc) {
+> ???????? printk(KERN_ERR "SELinux:? unable to map context to SID"
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
