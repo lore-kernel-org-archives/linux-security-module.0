@@ -1,7 +1,7 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 20 Mar 2018 12:11:09 -0400
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 20 Mar 2018 09:14:54 -0700
 Subject: Problem mounting pseudo filesystems with SMACK and IMA enabled.
-In-Reply-To: <CABatt_yk+pgwxHVv+RY08xFDOfzxb4w6ELW7RxhW6gWQ=5Hvnw@mail.gmail.com>
+In-Reply-To: <1521562269.22230.40.camel@linux.vnet.ibm.com>
 References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
 	<1521206743.3503.29.camel@linux.vnet.ibm.com>
 	<CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
@@ -13,22 +13,27 @@ References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
 	<CABatt_wfwRqJRie=eoaaXnfxd7EUBhDL-jPjPbBHbwcnpMWj7g@mail.gmail.com>
 	<1521552744.22230.25.camel@linux.vnet.ibm.com>
 	<CABatt_yk+pgwxHVv+RY08xFDOfzxb4w6ELW7RxhW6gWQ=5Hvnw@mail.gmail.com>
-Message-ID: <1521562269.22230.40.camel@linux.vnet.ibm.com>
+	<1521562269.22230.40.camel@linux.vnet.ibm.com>
+Message-ID: <942c9bb2-d6ed-0859-3b48-5aabe775b673@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-03-20 at 15:01 +0000, Martin Townsend wrote:
-> 
-> Not sure why SMACK is not already there, do you want me to submit this
-> patch formally or is there a good reason for the omission?
+On 3/20/2018 9:11 AM, Mimi Zohar wrote:
+> On Tue, 2018-03-20 at 15:01 +0000, Martin Townsend wrote:
+>> Not sure why SMACK is not already there, do you want me to submit this
+>> patch formally or is there a good reason for the omission?
+> At some point, we should introduce a flag indicating a pseudo
+> fileesystem, but for now including SMACK in the list of pseudo
+> filesystems not measured sounds right.
 
-At some point, we should introduce a flag indicating a pseudo
-fileesystem, but for now including SMACK in the list of pseudo
-filesystems not measured sounds right.?
+I am also good with that.
 
-thanks,
-
-Mimi
+>
+> thanks,
+>
+> Mimi
+>
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
