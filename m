@@ -1,41 +1,33 @@
-From: mtownsend1973@gmail.com (Martin Townsend)
-Date: Thu, 22 Mar 2018 13:46:01 +0000
-Subject: [PATCH] ima: Add smackfs to the default appraise/measure list
-Message-ID: <1521726361-29916-1-git-send-email-mtownsend1973@gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Thu, 22 Mar 2018 16:20:06 +0200
+Subject: [PATCH] tpm: allow TCPA log area to be empty
+In-Reply-To: <A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
+References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+	<20180312150231.GA24717@ziepe.ca>
+	<20180316125525.GB5035@linux.intel.com>
+	<20180319021323.GD27186@ziepe.ca>
+	<20180319212436.GD14364@linux.intel.com>
+	<A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
+Message-ID: <edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This is required to use SMACK and IMA/EVM together. Add it to the
-default nomeasure/noappraise list like other pseudo filesystems.
+On Tue, 2018-03-20 at 22:29 +0000, Sahil Rihan wrote:
+> > On 3/19/18, 2:25 PM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+> > wrote:
+> >     
+> >    Sahil, would you care to try if this fixes the issue that you are
+> >    having or not?
+> 
+> Yes, we can test this out. Might take a day or two.
 
-Signed-off-by: Martin Townsend <mtownsend1973@gmail.com>
----
- security/integrity/ima/ima_policy.c | 2 ++
- 1 file changed, 2 insertions(+)
+Awesome, thank you. I'll add
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 915f557..d89ed15 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -96,6 +96,7 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
- 	{.action = DONT_MEASURE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
-+	{.action = DONT_MEASURE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = CGROUP_SUPER_MAGIC,
- 	 .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
-@@ -141,6 +142,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- 	{.action = DONT_APPRAISE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
-+	{.action = DONT_APPRAISE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
--- 
-2.7.4
+Reported-by: Sahil Rihan <srihan@fb.com>
 
+if that is OK for you?
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
