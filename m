@@ -1,43 +1,40 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 21 Mar 2018 19:18:47 -0400
-Subject: [PATCH v6 07/12] integrity: Select CONFIG_KEYS instead of
-	depending on it
-In-Reply-To: <20180316203837.10174-8-bauerman@linux.vnet.ibm.com>
-References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-	<20180316203837.10174-8-bauerman@linux.vnet.ibm.com>
-Message-ID: <1521674327.3848.221.camel@linux.vnet.ibm.com>
+From: mtownsend1973@gmail.com (Martin Townsend)
+Date: Thu, 22 Mar 2018 13:46:01 +0000
+Subject: [PATCH] ima: Add smackfs to the default appraise/measure list
+Message-ID: <1521726361-29916-1-git-send-email-mtownsend1973@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
-> This avoids a dependency cycle in CONFIG_IMA_APPRAISE_MODSIG (introduced by
-> a later patch in this series): it will select CONFIG_MODULE_SIG_FORMAT
-> which in turn selects CONFIG_KEYS. Kconfig then complains that
-> CONFIG_INTEGRITY_SIGNATURE depends on CONFIG_KEYS.
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+This is required to use SMACK and IMA/EVM together. Add it to the
+default nomeasure/noappraise list like other pseudo filesystems.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Martin Townsend <mtownsend1973@gmail.com>
+---
+ security/integrity/ima/ima_policy.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  security/integrity/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
-> index da9565891738..0d642e0317c7 100644
-> --- a/security/integrity/Kconfig
-> +++ b/security/integrity/Kconfig
-> @@ -17,8 +17,8 @@ if INTEGRITY
-> 
->  config INTEGRITY_SIGNATURE
->  	bool "Digital signature verification using multiple keyrings"
-> -	depends on KEYS
->  	default n
-> +	select KEYS
->  	select SIGNATURE
->  	help
->  	  This option enables digital signature verification support
-> 
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 915f557..d89ed15 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -96,6 +96,7 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
+ 	{.action = DONT_MEASURE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
++	{.action = DONT_MEASURE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = CGROUP_SUPER_MAGIC,
+ 	 .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
+@@ -141,6 +142,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ 	{.action = DONT_APPRAISE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
++	{.action = DONT_APPRAISE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+-- 
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
