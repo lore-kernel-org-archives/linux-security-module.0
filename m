@@ -1,106 +1,56 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 23 Mar 2018 10:12:10 +0200
-Subject: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180305180831.GB6220@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-	<20180214134319.4400-3-tomas.winkler@intel.com>
-	<20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
-	<1519136010.4113.10.camel@linux.intel.com>
-	<20180305180831.GB6220@linux.intel.com>
-Message-ID: <20180323081210.GA28857@linux.intel.com>
+Date: Fri, 23 Mar 2018 11:33:12 +0200
+Subject: [GIT PULL] tpmdd updates for Linux 4.17
+Message-ID: <20180323093312.GA21411@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Mar 05, 2018 at 08:08:31PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Feb 20, 2018 at 04:13:30PM +0200, Jarkko Sakkinen wrote:
-> > On Mon, 2018-02-19 at 13:52 +0200, Jarkko Sakkinen wrote:
-> > > On Wed, Feb 14, 2018 at 03:43:19PM +0200, Tomas Winkler wrote:
-> > > > We cannot use go_idle cmd_ready commands via runtime_pm handles
-> > > > as with the introduction of localities this is no longer an
-> > > > optional
-> > > > feature, while runtime pm can be not enabled.
-> > > > Though cmd_ready/go_idle provides power saving feature, it's also
-> > > > part of
-> > > > TPM2 protocol and should be called explicitly.
-> > > > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > > > runtime pm support as it is not used by any driver.
-> > > > 
-> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > ---
-> > > > V2: resent
-> > > > V3: resent
-> > > 
-> > > Only the cover letter needs a backlog but the code change looks
-> > > good to me.
-> > > 
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > /Jarkko
-> 
-> Applied.
-> 
-> /Jarkko
+Hi James
 
-This commit breaks my smoke tests on Kabylake [1] so I need to drop it.
-The bug fix for locality works without any issues.
-
-[1]
-$ python -m unittest -v tpm2_smoke
-test_seal_with_auth (tpm2_smoke.SmokeTest) ... ok
-test_seal_with_policy (tpm2_smoke.SmokeTest) ... ok
-test_seal_with_too_long_auth (tpm2_smoke.SmokeTest) ... ok
-test_too_short_cmd (tpm2_smoke.SmokeTest) ... ok
-test_unseal_with_wrong_auth (tpm2_smoke.SmokeTest) ... ok
-test_unseal_with_wrong_policy (tpm2_smoke.SmokeTest) ... ok
-test_flush_context (tpm2_smoke.SpaceTest) ... ERROR
-test_get_handles (tpm2_smoke.SpaceTest) ... ERROR
-test_invalid_cc (tpm2_smoke.SpaceTest) ... ok
-test_make_two_spaces (tpm2_smoke.SpaceTest) ... ERROR
-
-======================================================================
-ERROR: test_flush_context (tpm2_smoke.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_smoke.py", line 185, in test_flush_context
-    space1.flush_context(root1)
-  File "tpm2.py", line 517, in flush_context
-    self.send_cmd(cmd)
-  File "tpm2.py", line 378, in send_cmd
-    raise ProtocolError(cc, rc)
-ProtocolError: TPM_RC_UNKNOWN: cc=0x00000165, rc=0x00000165
-
-======================================================================
-ERROR: test_get_handles (tpm2_smoke.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_smoke.py", line 195, in test_get_handles
-    space2.create_root_key()
-  File "tpm2.py", line 562, in create_root_key
-    return struct.unpack('>I', self.send_cmd(cmd)[10:14])[0]
-  File "tpm2.py", line 378, in send_cmd
-    raise ProtocolError(cc, rc)
-ProtocolError: TPM_RC_UNBALANCED: cc=0x00000131, rc=0x00000131
-
-======================================================================
-ERROR: test_make_two_spaces (tpm2_smoke.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_smoke.py", line 171, in test_make_two_spaces
-    root3 = space2.create_root_key()
-  File "tpm2.py", line 562, in create_root_key
-    return struct.unpack('>I', self.send_cmd(cmd)[10:14])[0]
-  File "tpm2.py", line 378, in send_cmd
-    raise ProtocolError(cc, rc)
-ProtocolError: TPM_RC_UNBALANCED: cc=0x00000131, rc=0x00000131
-
-----------------------------------------------------------------------
-Ran 10 tests in 44.545s
-
-FAILED (errors=3)
+This release contains only bug fixes. There are no new major features
+added.
 
 /Jarkko
+
+The following changes since commit 5893ed18a26d1f56b97c0290b0cbbc2d49d6de28:
+
+  Merge tag 'v4.16-rc6' into next-general (2018-03-23 08:26:16 +1100)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180323
+
+for you to fetch changes up to 2be8ffed093b91536d52b5cd2c99b52f605c9ba6:
+
+  tpm: fix intermittent failure with self tests (2018-03-23 10:25:09 +0200)
+
+----------------------------------------------------------------
+tpmdd updates for Linux 4.17
+
+----------------------------------------------------------------
+Chris Chiu (1):
+      tpm: self test failure should not cause suspend to fail
+
+James Bottomley (2):
+      tpm: add retry logic
+      tpm: fix intermittent failure with self tests
+
+Tomas Winkler (3):
+      tpm: cmd_ready command can be issued only after granting locality
+      tpm_crb: use __le64 annotated variable for response buffer address
+      tpm2: add longer timeouts for creation commands.
+
+Winkler, Tomas (2):
+      tpm: tpm-interface: fix tpm_transmit/_cmd kdoc
+      tpm: fix buffer type in tpm_transmit_cmd
+
+ drivers/char/tpm/tpm-interface.c | 158 +++++++++++++++++++++++++++++++--------
+ drivers/char/tpm/tpm.h           |  32 +++++---
+ drivers/char/tpm/tpm2-cmd.c      |  62 ++++++---------
+ drivers/char/tpm/tpm_crb.c       | 113 +++++++++++++++++++---------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   2 +-
+ 6 files changed, 250 insertions(+), 121 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
