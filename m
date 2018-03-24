@@ -1,475 +1,269 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Sat, 24 Mar 2018 00:42:01 -0500
-Subject: [REVIEW][PATCH 13/11] ipc/smack: Tidy up from the change in type of
-	the ipc security hooks
-In-Reply-To: <87vadmobdw.fsf_-_@xmission.com> (Eric W. Biederman's message of
-	"Fri, 23 Mar 2018 14:11:23 -0500")
-References: <1520875093-18174-1-git-send-email-nagarathnam.muthusamy@oracle.com>
-	<87vadzqqq6.fsf@xmission.com>
-	<990e88fa-ab50-9645-b031-14e1afbf7ccc@oracle.com>
-	<877eqejowd.fsf@xmission.com>
-	<3a46a03d-e4dd-59b6-e25f-0020be1b1dc9@oracle.com>
-	<87a7v2z2qa.fsf@xmission.com> <87vadmobdw.fsf_-_@xmission.com>
-Message-ID: <87y3iikp1y.fsf_-_@xmission.com>
+From: tomas.winkler@intel.com (Tomas Winkler)
+Date: Sat, 24 Mar 2018 21:39:35 +0300
+Subject: [PATCH V4] tpm: separate cmd_ready/go_idle from runtime_pm
+Message-ID: <20180324183935.20784-1-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
 
-Rename the variables shp, sma, msq to isp. As that is how the code already
-refers to those variables.
+We cannot use go_idle cmd_ready commands via runtime_pm handles
+as with the introduction of localities this is no longer an optional
+feature, while runtime pm can be not enabled.
+Though cmd_ready/go_idle provides power saving feature, it's also part of
+TPM2 protocol and should be called explicitly.
+This patch exposes cmd_read/go_idle via tpm class ops and removes
+runtime pm support as it is not used by any driver.
 
-Collapse smack_of_shm, smack_of_sem, and smack_of_msq into smack_of_ipc,
-as the three functions had become completely identical.
+tpm_crb no longer needs own power saving functions and can drop using
+tpm_pm_suspend/resume.
 
-Collapse smack_shm_alloc_security, smack_sem_alloc_security and
-smack_msg_queue_alloc_security into smack_ipc_alloc_security as the
-three functions had become identical.
-
-Collapse smack_shm_free_security, smack_sem_free_security and
-smack_msg_queue_free_security into smack_ipc_free_security as the three
-functions had become identical.
-
-Requested-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- security/smack/smack_lsm.c | 197 +++++++++++++--------------------------------
- 1 file changed, 58 insertions(+), 139 deletions(-)
+V2-3:resent
+V4: 1. Use tpm_pm_suspend/resume in tpm_crb
+    2. Drop cmd_ready/go_idle around tpm_chip_register, as there is no
+       usage counter like in runtime_pm.
+    
+ drivers/char/tpm/tpm-interface.c |  15 ++++--
+ drivers/char/tpm/tpm_crb.c       | 100 ++++++++++-----------------------------
+ include/linux/tpm.h              |   2 +
+ 3 files changed, 38 insertions(+), 79 deletions(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index d960c2ea8d79..0735b8db158b 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2945,25 +2945,24 @@ static void smack_msg_msg_free_security(struct msg_msg *msg)
- }
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c43a9e28995e..1dc4961c42c6 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -29,7 +29,6 @@
+ #include <linux/mutex.h>
+ #include <linux/spinlock.h>
+ #include <linux/freezer.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/tpm_eventlog.h>
  
- /**
-- * smack_of_shm - the smack pointer for the shm
-- * @shp: the object
-+ * smack_of_ipc - the smack pointer for the ipc
-+ * @isp: the object
-  *
-  * Returns a pointer to the smack value
-  */
--static struct smack_known *smack_of_shm(struct kern_ipc_perm *shp)
-+static struct smack_known *smack_of_ipc(struct kern_ipc_perm *isp)
- {
--	return (struct smack_known *)shp->security;
-+	return (struct smack_known *)isp->security;
- }
- 
- /**
-- * smack_shm_alloc_security - Set the security blob for shm
-- * @shp: the object
-+ * smack_ipc_alloc_security - Set the security blob for ipc
-+ * @isp: the object
-  *
-  * Returns 0
-  */
--static int smack_shm_alloc_security(struct kern_ipc_perm *shp)
-+static int smack_ipc_alloc_security(struct kern_ipc_perm *isp)
- {
--	struct kern_ipc_perm *isp = shp;
- 	struct smack_known *skp = smk_of_current();
- 
- 	isp->security = skp;
-@@ -2971,34 +2970,32 @@ static int smack_shm_alloc_security(struct kern_ipc_perm *shp)
- }
- 
- /**
-- * smack_shm_free_security - Clear the security blob for shm
-- * @shp: the object
-+ * smack_ipc_free_security - Clear the security blob for ipc
-+ * @isp: the object
-  *
-  * Clears the blob pointer
-  */
--static void smack_shm_free_security(struct kern_ipc_perm *shp)
-+static void smack_ipc_free_security(struct kern_ipc_perm *isp)
- {
--	struct kern_ipc_perm *isp = shp;
--
- 	isp->security = NULL;
- }
- 
- /**
-  * smk_curacc_shm : check if current has access on shm
-- * @shp : the object
-+ * @isp : the object
-  * @access : access requested
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smk_curacc_shm(struct kern_ipc_perm *shp, int access)
-+static int smk_curacc_shm(struct kern_ipc_perm *isp, int access)
- {
--	struct smack_known *ssp = smack_of_shm(shp);
-+	struct smack_known *ssp = smack_of_ipc(isp);
- 	struct smk_audit_info ad;
- 	int rc;
- 
- #ifdef CONFIG_AUDIT
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
--	ad.a.u.ipc_id = shp->id;
-+	ad.a.u.ipc_id = isp->id;
- #endif
- 	rc = smk_curacc(ssp, access, &ad);
- 	rc = smk_bu_current("shm", ssp, access, rc);
-@@ -3007,27 +3004,27 @@ static int smk_curacc_shm(struct kern_ipc_perm *shp, int access)
- 
- /**
-  * smack_shm_associate - Smack access check for shm
-- * @shp: the object
-+ * @isp: the object
-  * @shmflg: access requested
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_shm_associate(struct kern_ipc_perm *shp, int shmflg)
-+static int smack_shm_associate(struct kern_ipc_perm *isp, int shmflg)
- {
- 	int may;
- 
- 	may = smack_flags_to_may(shmflg);
--	return smk_curacc_shm(shp, may);
-+	return smk_curacc_shm(isp, may);
- }
- 
- /**
-  * smack_shm_shmctl - Smack access check for shm
-- * @shp: the object
-+ * @isp: the object
-  * @cmd: what it wants to do
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_shm_shmctl(struct kern_ipc_perm *shp, int cmd)
-+static int smack_shm_shmctl(struct kern_ipc_perm *isp, int cmd)
- {
- 	int may;
- 
-@@ -3051,81 +3048,42 @@ static int smack_shm_shmctl(struct kern_ipc_perm *shp, int cmd)
- 	default:
- 		return -EINVAL;
- 	}
--	return smk_curacc_shm(shp, may);
-+	return smk_curacc_shm(isp, may);
- }
- 
- /**
-  * smack_shm_shmat - Smack access for shmat
-- * @shp: the object
-+ * @isp: the object
-  * @shmaddr: unused
-  * @shmflg: access requested
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_shm_shmat(struct kern_ipc_perm *shp, char __user *shmaddr,
-+static int smack_shm_shmat(struct kern_ipc_perm *ipc, char __user *shmaddr,
- 			   int shmflg)
- {
- 	int may;
- 
- 	may = smack_flags_to_may(shmflg);
--	return smk_curacc_shm(shp, may);
--}
--
--/**
-- * smack_of_sem - the smack pointer for the sem
-- * @sma: the object
-- *
-- * Returns a pointer to the smack value
-- */
--static struct smack_known *smack_of_sem(struct kern_ipc_perm *sma)
--{
--	return (struct smack_known *)sma->security;
--}
--
--/**
-- * smack_sem_alloc_security - Set the security blob for sem
-- * @sma: the object
-- *
-- * Returns 0
-- */
--static int smack_sem_alloc_security(struct kern_ipc_perm *sma)
--{
--	struct kern_ipc_perm *isp = sma;
--	struct smack_known *skp = smk_of_current();
--
--	isp->security = skp;
--	return 0;
--}
--
--/**
-- * smack_sem_free_security - Clear the security blob for sem
-- * @sma: the object
-- *
-- * Clears the blob pointer
-- */
--static void smack_sem_free_security(struct kern_ipc_perm *sma)
--{
--	struct kern_ipc_perm *isp = sma;
--
--	isp->security = NULL;
-+	return smk_curacc_shm(ipc, may);
- }
- 
- /**
-  * smk_curacc_sem : check if current has access on sem
-- * @sma : the object
-+ * @isp : the object
-  * @access : access requested
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smk_curacc_sem(struct kern_ipc_perm *sma, int access)
-+static int smk_curacc_sem(struct kern_ipc_perm *isp, int access)
- {
--	struct smack_known *ssp = smack_of_sem(sma);
-+	struct smack_known *ssp = smack_of_ipc(isp);
- 	struct smk_audit_info ad;
- 	int rc;
- 
- #ifdef CONFIG_AUDIT
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
--	ad.a.u.ipc_id = sma->id;
-+	ad.a.u.ipc_id = isp->id;
- #endif
- 	rc = smk_curacc(ssp, access, &ad);
- 	rc = smk_bu_current("sem", ssp, access, rc);
-@@ -3134,27 +3092,27 @@ static int smk_curacc_sem(struct kern_ipc_perm *sma, int access)
- 
- /**
-  * smack_sem_associate - Smack access check for sem
-- * @sma: the object
-+ * @isp: the object
-  * @semflg: access requested
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_sem_associate(struct kern_ipc_perm *sma, int semflg)
-+static int smack_sem_associate(struct kern_ipc_perm *isp, int semflg)
- {
- 	int may;
- 
- 	may = smack_flags_to_may(semflg);
--	return smk_curacc_sem(sma, may);
-+	return smk_curacc_sem(isp, may);
- }
- 
- /**
-  * smack_sem_shmctl - Smack access check for sem
-- * @sma: the object
-+ * @isp: the object
-  * @cmd: what it wants to do
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_sem_semctl(struct kern_ipc_perm *sma, int cmd)
-+static int smack_sem_semctl(struct kern_ipc_perm *isp, int cmd)
- {
- 	int may;
- 
-@@ -3184,12 +3142,12 @@ static int smack_sem_semctl(struct kern_ipc_perm *sma, int cmd)
- 		return -EINVAL;
+ #include "tpm.h"
+@@ -455,8 +454,11 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 			goto out_no_locality;
  	}
  
--	return smk_curacc_sem(sma, may);
-+	return smk_curacc_sem(isp, may);
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
++	if (chip->ops->cmd_ready) {
++		rc = chip->ops->cmd_ready(chip);
++		if (rc)
++			goto out;
++	}
+ 
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+@@ -518,8 +520,11 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
++	if (chip->ops->go_idle) {
++		rc = chip->ops->go_idle(chip);
++		if (rc)
++			goto out;
++	}
+ 
+ 	if (need_locality)
+ 		tpm_relinquish_locality(chip);
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7f78482cd157..1b11c9b8908f 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -132,7 +132,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
  }
  
  /**
-  * smack_sem_semop - Smack checks of semaphore operations
-- * @sma: the object
-+ * @isp: the object
-  * @sops: unused
-  * @nsops: unused
-  * @alter: unused
-@@ -3198,67 +3156,28 @@ static int smack_sem_semctl(struct kern_ipc_perm *sma, int cmd)
+- * crb_go_idle - request tpm crb device to go the idle state
++ * __crb_go_idle - request tpm crb device to go the idle state
   *
-  * Returns 0 if access is allowed, error code otherwise
+  * @dev:  crb device
+  * @priv: crb private data
+@@ -147,7 +147,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 always
   */
--static int smack_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
-+static int smack_sem_semop(struct kern_ipc_perm *isp, struct sembuf *sops,
- 			   unsigned nsops, int alter)
+-static int crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
  {
--	return smk_curacc_sem(sma, MAY_READWRITE);
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -166,8 +166,16 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 	return 0;
+ }
+ 
++static int crb_go_idle(struct tpm_chip *chip)
++{
++	struct device *dev = &chip->dev;
++	struct crb_priv *priv = dev_get_drvdata(dev);
++
++	return __crb_go_idle(dev, priv);
++}
++
+ /**
+- * crb_cmd_ready - request tpm crb device to enter ready state
++ * __crb_cmd_ready - request tpm crb device to enter ready state
+  *
+  * @dev:  crb device
+  * @priv: crb private data
+@@ -181,7 +189,7 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
++static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -200,6 +208,14 @@ static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ 	return 0;
+ }
+ 
++static int crb_cmd_ready(struct tpm_chip *chip)
++{
++	struct device *dev = &chip->dev;
++	struct crb_priv *priv = dev_get_drvdata(dev);
++
++	return __crb_cmd_ready(dev, priv);
++}
++
+ static int __crb_request_locality(struct device *dev,
+ 				  struct crb_priv *priv, int loc)
+ {
+@@ -401,6 +417,8 @@ static const struct tpm_class_ops tpm_crb = {
+ 	.send = crb_send,
+ 	.cancel = crb_cancel,
+ 	.req_canceled = crb_req_canceled,
++	.go_idle  = crb_go_idle,
++	.cmd_ready = crb_cmd_ready,
+ 	.request_locality = crb_request_locality,
+ 	.relinquish_locality = crb_relinquish_locality,
+ 	.req_complete_mask = CRB_DRV_STS_COMPLETE,
+@@ -518,7 +536,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 * PTT HW bug w/a: wake up the device to access
+ 	 * possibly not retained registers.
+ 	 */
+-	ret = crb_cmd_ready(dev, priv);
++	ret = __crb_cmd_ready(dev, priv);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -563,7 +581,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	if (!ret)
+ 		priv->cmd_size = cmd_size;
+ 
+-	crb_go_idle(dev, priv);
++	__crb_go_idle(dev, priv);
+ 
+ 	__crb_relinquish_locality(dev, priv, 0);
+ 
+@@ -624,32 +642,7 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	chip->acpi_dev_handle = device->handle;
+ 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+-	rc = __crb_request_locality(dev, priv, 0);
+-	if (rc)
+-		return rc;
+-
+-	rc  = crb_cmd_ready(dev, priv);
+-	if (rc)
+-		goto out;
+-
+-	pm_runtime_get_noresume(dev);
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-
+-	rc = tpm_chip_register(chip);
+-	if (rc) {
+-		crb_go_idle(dev, priv);
+-		pm_runtime_put_noidle(dev);
+-		pm_runtime_disable(dev);
+-		goto out;
+-	}
+-
+-	pm_runtime_put_sync(dev);
+-
+-out:
+-	__crb_relinquish_locality(dev, priv, 0);
+-
+-	return rc;
++	return tpm_chip_register(chip);
+ }
+ 
+ static int crb_acpi_remove(struct acpi_device *device)
+@@ -659,52 +652,11 @@ static int crb_acpi_remove(struct acpi_device *device)
+ 
+ 	tpm_chip_unregister(chip);
+ 
+-	pm_runtime_disable(dev);
+-
+ 	return 0;
+ }
+ 
+-static int __maybe_unused crb_pm_runtime_suspend(struct device *dev)
+-{
+-	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+-
+-	return crb_go_idle(dev, priv);
 -}
 -
--/**
-- * smack_msg_alloc_security - Set the security blob for msg
-- * @msq: the object
-- *
-- * Returns 0
-- */
--static int smack_msg_queue_alloc_security(struct kern_ipc_perm *msq)
+-static int __maybe_unused crb_pm_runtime_resume(struct device *dev)
 -{
--	struct kern_ipc_perm *kisp = msq;
--	struct smack_known *skp = smk_of_current();
+-	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
 -
--	kisp->security = skp;
--	return 0;
+-	return crb_cmd_ready(dev, priv);
 -}
 -
--/**
-- * smack_msg_free_security - Clear the security blob for msg
-- * @msq: the object
-- *
-- * Clears the blob pointer
-- */
--static void smack_msg_queue_free_security(struct kern_ipc_perm *msq)
+-static int __maybe_unused crb_pm_suspend(struct device *dev)
 -{
--	struct kern_ipc_perm *kisp = msq;
+-	int ret;
 -
--	kisp->security = NULL;
+-	ret = tpm_pm_suspend(dev);
+-	if (ret)
+-		return ret;
+-
+-	return crb_pm_runtime_suspend(dev);
 -}
 -
--/**
-- * smack_of_msq - the smack pointer for the msq
-- * @msq: the object
-- *
-- * Returns a pointer to the smack label entry
-- */
--static struct smack_known *smack_of_msq(struct kern_ipc_perm *msq)
+-static int __maybe_unused crb_pm_resume(struct device *dev)
 -{
--	return (struct smack_known *)msq->security;
-+	return smk_curacc_sem(isp, MAY_READWRITE);
- }
+-	int ret;
+-
+-	ret = crb_pm_runtime_resume(dev);
+-	if (ret)
+-		return ret;
+-
+-	return tpm_pm_resume(dev);
+-}
+-
+ static const struct dev_pm_ops crb_pm = {
+-	SET_SYSTEM_SLEEP_PM_OPS(crb_pm_suspend, crb_pm_resume)
+-	SET_RUNTIME_PM_OPS(crb_pm_runtime_suspend, crb_pm_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(tpm_pm_suspend, tpm_pm_resume)
+ };
  
- /**
-  * smk_curacc_msq : helper to check if current has access on msq
-- * @msq : the msq
-+ * @isp : the msq
-  * @access : access requested
-  *
-  * return 0 if current has access, error otherwise
-  */
--static int smk_curacc_msq(struct kern_ipc_perm *msq, int access)
-+static int smk_curacc_msq(struct kern_ipc_perm *isp, int access)
- {
--	struct smack_known *msp = smack_of_msq(msq);
-+	struct smack_known *msp = smack_of_ipc(isp);
- 	struct smk_audit_info ad;
- 	int rc;
- 
- #ifdef CONFIG_AUDIT
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
--	ad.a.u.ipc_id = msq->id;
-+	ad.a.u.ipc_id = isp->id;
- #endif
- 	rc = smk_curacc(msp, access, &ad);
- 	rc = smk_bu_current("msq", msp, access, rc);
-@@ -3267,27 +3186,27 @@ static int smk_curacc_msq(struct kern_ipc_perm *msq, int access)
- 
- /**
-  * smack_msg_queue_associate - Smack access check for msg_queue
-- * @msq: the object
-+ * @isp: the object
-  * @msqflg: access requested
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_msg_queue_associate(struct kern_ipc_perm *msq, int msqflg)
-+static int smack_msg_queue_associate(struct kern_ipc_perm *isp, int msqflg)
- {
- 	int may;
- 
- 	may = smack_flags_to_may(msqflg);
--	return smk_curacc_msq(msq, may);
-+	return smk_curacc_msq(isp, may);
- }
- 
- /**
-  * smack_msg_queue_msgctl - Smack access check for msg_queue
-- * @msq: the object
-+ * @isp: the object
-  * @cmd: what it wants to do
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_msg_queue_msgctl(struct kern_ipc_perm *msq, int cmd)
-+static int smack_msg_queue_msgctl(struct kern_ipc_perm *isp, int cmd)
- {
- 	int may;
- 
-@@ -3310,29 +3229,29 @@ static int smack_msg_queue_msgctl(struct kern_ipc_perm *msq, int cmd)
- 		return -EINVAL;
- 	}
- 
--	return smk_curacc_msq(msq, may);
-+	return smk_curacc_msq(isp, may);
- }
- 
- /**
-  * smack_msg_queue_msgsnd - Smack access check for msg_queue
-- * @msq: the object
-+ * @isp: the object
-  * @msg: unused
-  * @msqflg: access requested
-  *
-  * Returns 0 if current has the requested access, error code otherwise
-  */
--static int smack_msg_queue_msgsnd(struct kern_ipc_perm *msq, struct msg_msg *msg,
-+static int smack_msg_queue_msgsnd(struct kern_ipc_perm *isp, struct msg_msg *msg,
- 				  int msqflg)
- {
- 	int may;
- 
- 	may = smack_flags_to_may(msqflg);
--	return smk_curacc_msq(msq, may);
-+	return smk_curacc_msq(isp, may);
- }
- 
- /**
-  * smack_msg_queue_msgsnd - Smack access check for msg_queue
-- * @msq: the object
-+ * @isp: the object
-  * @msg: unused
-  * @target: unused
-  * @type: unused
-@@ -3340,10 +3259,10 @@ static int smack_msg_queue_msgsnd(struct kern_ipc_perm *msq, struct msg_msg *msg
-  *
-  * Returns 0 if current has read and write access, error code otherwise
-  */
--static int smack_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *msg,
-+static int smack_msg_queue_msgrcv(struct kern_ipc_perm *isp, struct msg_msg *msg,
- 			struct task_struct *target, long type, int mode)
- {
--	return smk_curacc_msq(msq, MAY_READWRITE);
-+	return smk_curacc_msq(isp, MAY_READWRITE);
- }
- 
- /**
-@@ -4756,21 +4675,21 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(msg_msg_alloc_security, smack_msg_msg_alloc_security),
- 	LSM_HOOK_INIT(msg_msg_free_security, smack_msg_msg_free_security),
- 
--	LSM_HOOK_INIT(msg_queue_alloc_security, smack_msg_queue_alloc_security),
--	LSM_HOOK_INIT(msg_queue_free_security, smack_msg_queue_free_security),
-+	LSM_HOOK_INIT(msg_queue_alloc_security, smack_ipc_alloc_security),
-+	LSM_HOOK_INIT(msg_queue_free_security, smack_ipc_free_security),
- 	LSM_HOOK_INIT(msg_queue_associate, smack_msg_queue_associate),
- 	LSM_HOOK_INIT(msg_queue_msgctl, smack_msg_queue_msgctl),
- 	LSM_HOOK_INIT(msg_queue_msgsnd, smack_msg_queue_msgsnd),
- 	LSM_HOOK_INIT(msg_queue_msgrcv, smack_msg_queue_msgrcv),
- 
--	LSM_HOOK_INIT(shm_alloc_security, smack_shm_alloc_security),
--	LSM_HOOK_INIT(shm_free_security, smack_shm_free_security),
-+	LSM_HOOK_INIT(shm_alloc_security, smack_ipc_alloc_security),
-+	LSM_HOOK_INIT(shm_free_security, smack_ipc_free_security),
- 	LSM_HOOK_INIT(shm_associate, smack_shm_associate),
- 	LSM_HOOK_INIT(shm_shmctl, smack_shm_shmctl),
- 	LSM_HOOK_INIT(shm_shmat, smack_shm_shmat),
- 
--	LSM_HOOK_INIT(sem_alloc_security, smack_sem_alloc_security),
--	LSM_HOOK_INIT(sem_free_security, smack_sem_free_security),
-+	LSM_HOOK_INIT(sem_alloc_security, smack_ipc_alloc_security),
-+	LSM_HOOK_INIT(sem_free_security, smack_ipc_free_security),
- 	LSM_HOOK_INIT(sem_associate, smack_sem_associate),
- 	LSM_HOOK_INIT(sem_semctl, smack_sem_semctl),
- 	LSM_HOOK_INIT(sem_semop, smack_sem_semop),
+ static const struct acpi_device_id crb_device_ids[] = {
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 06639fb6ab85..8eb5e5ebe136 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -43,6 +43,8 @@ struct tpm_class_ops {
+ 	u8 (*status) (struct tpm_chip *chip);
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
++	int (*go_idle)(struct tpm_chip *chip);
++	int (*cmd_ready)(struct tpm_chip *chip);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+ 	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
 -- 
-2.14.1
+2.14.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
