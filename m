@@ -1,45 +1,37 @@
 From: john.johansen@canonical.com (John Johansen)
-Date: Fri, 23 Mar 2018 17:23:14 -0700
-Subject: [PATCH][next] apparmor: fix error returns checks by making size a
-	ssize_t
-In-Reply-To: <20180323233422.7856-1-colin.king@canonical.com>
-References: <20180323233422.7856-1-colin.king@canonical.com>
-Message-ID: <e0117644-3bed-5374-6697-3fa2734b379d@canonical.com>
+Date: Fri, 23 Mar 2018 17:27:07 -0700
+Subject: [PATCH] apparmor: Fix an error code in verify_table_headers()
+In-Reply-To: <20180319091231.GA7409@mwanda>
+References: <20180319091231.GA7409@mwanda>
+Message-ID: <41f7677e-dd86-927e-0909-dfda2ef2cb7b@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 03/23/2018 04:34 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 03/19/2018 02:12 AM, Dan Carpenter wrote:
+> We accidentally return a positive EPROTO instead of a negative -EPROTO.
+> Since 71 is not an error pointer, that means it eventually results in an
+> Oops in the caller.
 > 
-> Currently variable size is a unsigned size_t, hence comparisons to
-> see if it is less than zero (for error checking) will always be
-> false.  Fix this by making size a ssize_t
+> Fixes: d901d6a298dc ("apparmor: dfa split verification of table headers")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Detected by CoverityScan, CID#1466080 ("Unsigned compared against 0")
-> 
-> Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+ouch, and pulled into apparmor-next
+
 Acked-by: John Johansen <john.johansen@canonical.com>
 
-and pulled into apparmor-next
-
-> ---
->  security/apparmor/domain.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 57cc892e05a2..590b7e8cd21c 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
->  			   struct aa_profile *profile, unsigned int state)
+> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+> index dd4c995c5e25..280eba082c7b 100644
+> --- a/security/apparmor/match.c
+> +++ b/security/apparmor/match.c
+> @@ -198,7 +198,7 @@ static int verify_table_headers(struct table_header **tables, int flags)
+>  static int verify_dfa(struct aa_dfa *dfa)
 >  {
->  	int i;
-> -	size_t size;
-> +	ssize_t size;
->  	struct dentry *d;
->  	char *value = NULL;
->  	int value_size = 0, ret = profile->xattr_count;
+>  	size_t i, state_count, trans_count;
+> -	int error = EPROTO;
+> +	int error = -EPROTO;
+>  
+>  	state_count = dfa->tables[YYTD_ID_BASE]->td_lolen;
+>  	trans_count = dfa->tables[YYTD_ID_NXT]->td_lolen;
 > 
 
 --
