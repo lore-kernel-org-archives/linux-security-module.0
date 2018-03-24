@@ -1,37 +1,34 @@
 From: john.johansen@canonical.com (John Johansen)
-Date: Fri, 23 Mar 2018 17:27:07 -0700
-Subject: [PATCH] apparmor: Fix an error code in verify_table_headers()
-In-Reply-To: <20180319091231.GA7409@mwanda>
-References: <20180319091231.GA7409@mwanda>
-Message-ID: <41f7677e-dd86-927e-0909-dfda2ef2cb7b@canonical.com>
+Date: Fri, 23 Mar 2018 17:42:08 -0700
+Subject: [PATCH] apparmor: signedness bug in aa_xattrs_match()
+In-Reply-To: <20180319103444.GC8543@mwanda>
+References: <20180319103444.GC8543@mwanda>
+Message-ID: <b642be4a-6717-9c42-1cd9-588144503347@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 03/19/2018 02:12 AM, Dan Carpenter wrote:
-> We accidentally return a positive EPROTO instead of a negative -EPROTO.
-> Since 71 is not an error pointer, that means it eventually results in an
-> Oops in the caller.
+On 03/19/2018 03:34 AM, Dan Carpenter wrote:
+> The "size" variable needs to be signed ssize_t so that the error
+> handling works correctly.
 > 
-> Fixes: d901d6a298dc ("apparmor: dfa split verification of table headers")
+> Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-ouch, and pulled into apparmor-next
+yep thanks I have pulled this in to apparmor-next
 
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> index dd4c995c5e25..280eba082c7b 100644
-> --- a/security/apparmor/match.c
-> +++ b/security/apparmor/match.c
-> @@ -198,7 +198,7 @@ static int verify_table_headers(struct table_header **tables, int flags)
->  static int verify_dfa(struct aa_dfa *dfa)
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 57cc892e05a2..590b7e8cd21c 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+>  			   struct aa_profile *profile, unsigned int state)
 >  {
->  	size_t i, state_count, trans_count;
-> -	int error = EPROTO;
-> +	int error = -EPROTO;
->  
->  	state_count = dfa->tables[YYTD_ID_BASE]->td_lolen;
->  	trans_count = dfa->tables[YYTD_ID_NXT]->td_lolen;
+>  	int i;
+> -	size_t size;
+> +	ssize_t size;
+>  	struct dentry *d;
+>  	char *value = NULL;
+>  	int value_size = 0, ret = profile->xattr_count;
 > 
 
 --
