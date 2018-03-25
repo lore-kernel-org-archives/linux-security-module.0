@@ -1,24 +1,19 @@
 From: jmorris@namei.org (James Morris)
-Date: Mon, 26 Mar 2018 08:19:24 +1100 (AEDT)
-Subject: [GIT PULL] linux-integrity patches for Linux 4.17
-In-Reply-To: <1521999985.3541.32.camel@linux.vnet.ibm.com>
-References: <1521999985.3541.32.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1803260818400.324@namei.org>
+Date: Mon, 26 Mar 2018 08:25:34 +1100 (AEDT)
+Subject: [PATCH] security: convert security hooks to use hlist
+In-Reply-To: <6f9d93bdf8122230ea53823a07a9d79f0c3fdafe.1521972503.git.sargun@sargun.me>
+References: <6f9d93bdf8122230ea53823a07a9d79f0c3fdafe.1521972503.git.sargun@sargun.me>
+Message-ID: <alpine.LRH.2.21.1803260824560.324@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, 25 Mar 2018, Mimi Zohar wrote:
+On Sun, 25 Mar 2018, Sargun Dhillon wrote:
 
-> Hi James,
-> 
-> This pull request contains a mixture of bug fixes, code cleanup, and
-> continues to close IMA-measurement, IMA-appraisal, and IMA-audit gaps.
-> 
+> This changes security_hook_heads to use hlist_heads instead of
+> the circular doubly-linked list heads. This should cut down
+> the size of the struct by about half.
 
-Thanks, merged to:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
-and next-testing
+Can you please measure it?
 
 
 -- 
