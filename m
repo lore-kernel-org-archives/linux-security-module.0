@@ -1,53 +1,85 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Mon, 26 Mar 2018 12:18:24 +0300
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Mon, 26 Mar 2018 20:07:48 +0900
 Subject: [PATCH] security: convert security hooks to use hlist
-In-Reply-To: <CAMp4zn8vB8zzh9cc7h2-=t6OyCzOfgGOrQz4y+FuC0Mmnp7ksw@mail.gmail.com>
+In-Reply-To: <39e2dfa9-8063-1aa5-cd69-5a57d4b8a231@schaufler-ca.com>
 References: <6f9d93bdf8122230ea53823a07a9d79f0c3fdafe.1521972503.git.sargun@sargun.me>
 	<39e2dfa9-8063-1aa5-cd69-5a57d4b8a231@schaufler-ca.com>
-	<CAMp4zn8vB8zzh9cc7h2-=t6OyCzOfgGOrQz4y+FuC0Mmnp7ksw@mail.gmail.com>
-Message-ID: <288b8438-3931-616c-2955-0d06b3a23517@huawei.com>
+Message-ID: <201803262007.BDF21886.OJOFLVMHFQSFOt@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 25/03/18 23:02, Sargun Dhillon wrote:
+Casey Schaufler wrote:
+> On 3/25/2018 3:08 AM, Sargun Dhillon wrote:
+> > This changes security_hook_heads to use hlist_heads instead of
+> > the circular doubly-linked list heads. This should cut down
+> > the size of the struct by about half.
+> 
+> My only concern is with the possibility of making
+> security modules dynamically loadable and unloadable.
+> I know that Tetsuo is still hoping to have that, and
+> I have worked to make sure that we don't do anything
+> to preclude it. If he has no objection, I don't either.
+> 
+
+Changing from "struct list_head" to "struct hlist_head" does not affect LKM-based LSMs.
+If Sargun makes that change, please fold below changes because
+
+  for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head); i++) INIT_HLIST_HEAD(&list[i]);
+
+is equivalent to
+
+  memset(&security_hook_heads, 0, sizeof(security_hook_heads));
+
+which is not required because security_hook_heads is automatically initialized with 0,
+and we can also revert commit fd466e068e5adef5 ("randstruct: Whitelist struct
+security_hook_heads cast").
+---
+ scripts/gcc-plugins/randomize_layout_plugin.c | 2 --
+ security/security.c                           | 6 ------
+ 2 files changed, 8 deletions(-)
+
+diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
+index c4a345c..d941389 100644
+--- a/scripts/gcc-plugins/randomize_layout_plugin.c
++++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+@@ -52,8 +52,6 @@ struct whitelist_entry {
+ 	{ "net/unix/af_unix.c", "unix_skb_parms", "char" },
+ 	/* big_key payload.data struct splashing */
+ 	{ "security/keys/big_key.c", "path", "void *" },
+-	/* walk struct security_hook_heads as an array of struct list_head */
+-	{ "security/security.c", "list_head", "security_hook_heads" },
+ 	{ }
+ };
+ 
+diff --git a/security/security.c b/security/security.c
+index 3cafff6..90d53c5 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -60,12 +60,6 @@ static void __init do_security_initcalls(void)
+  */
+ int __init security_init(void)
+ {
+-	int i;
+-	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
+-
+-	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+-	     i++)
+-		INIT_HLIST_HEAD(&list[i]);
+ 	pr_info("Security Framework initialized\n");
+ 
+ 	/*
+-- 
+1.8.3.1
+
+> >
+> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> > ---
+> >  include/linux/lsm_hooks.h | 428 +++++++++++++++++++++++-----------------------
+> >  security/security.c       |  22 +--
+> >  2 files changed, 225 insertions(+), 225 deletions(-)
 > 
 > 
-> On Sun, Mar 25, 2018 at 10:12 AM, Casey Schaufler
-> <casey at schaufler-ca.com <mailto:casey@schaufler-ca.com>> wrote:
 > 
->     On 3/25/2018 3:08 AM, Sargun Dhillon wrote:
->     > This changes security_hook_heads to use hlist_heads instead of
->     > the circular doubly-linked list heads. This should cut down
->     > the size of the struct by about half.
-> 
->     My only concern is with the possibility of making
->     security modules dynamically loadable and unloadable.
->     I know that Tetsuo is still hoping to have that, and
->     I have worked to make sure that we don't do anything
->     to preclude it. If he has no objection, I don't either.
-
-I couldn't really object, even if I wanted to :-)
-I'm still working to try to get pmalloc accepted, but assuming that it
-eventually succeedes, what would be the approach to make the unloading
-possible?
-
-The idea of pmalloc vs hooks was to write protect the hooks, to avoid
-sidestepping any security module, by wiping away its registered handle.
-
-If the hook is write protected, how does the unloading work?
-
-Is it going to be mutually exclusive? Like: write protect for increased
-robustness or allow unloading for other cases (ex: development).
-
-Initially I understood that there was an interest in loading *in a later
-phase* additional modules, for example as result of modification to the
-command line or maybe as result of modprobe from userspace, and then
-protecting the whole thing.
-
-But that seems to me very different from unloading.
-
---
-igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
