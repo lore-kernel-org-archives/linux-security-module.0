@@ -1,85 +1,49 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Mon, 26 Mar 2018 20:07:48 +0900
-Subject: [PATCH] security: convert security hooks to use hlist
-In-Reply-To: <39e2dfa9-8063-1aa5-cd69-5a57d4b8a231@schaufler-ca.com>
-References: <6f9d93bdf8122230ea53823a07a9d79f0c3fdafe.1521972503.git.sargun@sargun.me>
-	<39e2dfa9-8063-1aa5-cd69-5a57d4b8a231@schaufler-ca.com>
-Message-ID: <201803262007.BDF21886.OJOFLVMHFQSFOt@I-love.SAKURA.ne.jp>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 26 Mar 2018 15:14:02 +0300
+Subject: [PATCH v4 0/4] Migrate all TPM 2.0 commands to use struct tpm_buf
+Message-ID: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler wrote:
-> On 3/25/2018 3:08 AM, Sargun Dhillon wrote:
-> > This changes security_hook_heads to use hlist_heads instead of
-> > the circular doubly-linked list heads. This should cut down
-> > the size of the struct by about half.
-> 
-> My only concern is with the possibility of making
-> security modules dynamically loadable and unloadable.
-> I know that Tetsuo is still hoping to have that, and
-> I have worked to make sure that we don't do anything
-> to preclude it. If he has no objection, I don't either.
-> 
+In order to make struct tpm_buf the first class object for constructing TPM
+commands, this patch set migrates all TPM 2.0 commands to use it. Eventually,
+tpm_transmit_cmd() can take simply struct tpm_buf as its argument and this
+interface can be exported to be used by the kernel keyring and potentially
+other subsystems.
 
-Changing from "struct list_head" to "struct hlist_head" does not affect LKM-based LSMs.
-If Sargun makes that change, please fold below changes because
+The ultimate goal of this work is to make constructing TPM commands inside
+the kernel simple and robust.
 
-  for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head); i++) INIT_HLIST_HEAD(&list[i]);
+v4:
+* Fixed invalid return value from tpm2_probe(). TPM return codes are
+  ignored on purpose as we only care about the tag.
+* Removed James' fix for the self test as it was separately applied.
 
-is equivalent to
+v3:
+* Fixed error handling in tpm2_get_random()
 
-  memset(&security_hook_heads, 0, sizeof(security_hook_heads));
+v2:
+* Fixed author information in the commit that fixes the self-test issue,
+  removed '\n' from the log message and added the missing tested-by.
+  (James: sincere apologies about this)
+* Removed the redundant "out of memory" log message from tpm2_shutdown().
+* tpm_buf_destroy() was called before using the response data in
+  tpm2_probe().
+* Added missing tpm_buf_destroy() to tpm2_get_random().
 
-which is not required because security_hook_heads is automatically initialized with 0,
-and we can also revert commit fd466e068e5adef5 ("randstruct: Whitelist struct
-security_hook_heads cast").
----
- scripts/gcc-plugins/randomize_layout_plugin.c | 2 --
- security/security.c                           | 6 ------
- 2 files changed, 8 deletions(-)
+Jarkko Sakkinen (4):
+  tpm: migrate tpm2_shutdown() to use struct tpm_buf
+  tpm: migrate tpm2_probe() to use struct tpm_buf
+  tpm: migrate tpm2_get_tpm_pt() to use struct tpm_buf
+  tpm: migrate tpm2_get_random() to use struct tpm_buf
 
-diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-index c4a345c..d941389 100644
---- a/scripts/gcc-plugins/randomize_layout_plugin.c
-+++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-@@ -52,8 +52,6 @@ struct whitelist_entry {
- 	{ "net/unix/af_unix.c", "unix_skb_parms", "char" },
- 	/* big_key payload.data struct splashing */
- 	{ "security/keys/big_key.c", "path", "void *" },
--	/* walk struct security_hook_heads as an array of struct list_head */
--	{ "security/security.c", "list_head", "security_hook_heads" },
- 	{ }
- };
- 
-diff --git a/security/security.c b/security/security.c
-index 3cafff6..90d53c5 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -60,12 +60,6 @@ static void __init do_security_initcalls(void)
-  */
- int __init security_init(void)
- {
--	int i;
--	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
--
--	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
--	     i++)
--		INIT_HLIST_HEAD(&list[i]);
- 	pr_info("Security Framework initialized\n");
- 
- 	/*
+ drivers/char/tpm/tpm.h      |  19 ++--
+ drivers/char/tpm/tpm2-cmd.c | 242 +++++++++++++++++---------------------------
+ 2 files changed, 105 insertions(+), 156 deletions(-)
+
 -- 
-1.8.3.1
+2.15.1
 
-> >
-> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > ---
-> >  include/linux/lsm_hooks.h | 428 +++++++++++++++++++++++-----------------------
-> >  security/security.c       |  22 +--
-> >  2 files changed, 225 insertions(+), 225 deletions(-)
-> 
-> 
-> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
