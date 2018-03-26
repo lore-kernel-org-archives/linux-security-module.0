@@ -1,112 +1,159 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 26 Mar 2018 15:14:03 +0300
-Subject: [PATCH v4 1/4] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-In-Reply-To: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
-References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 26 Mar 2018 08:29:37 -0400
+Subject: [PATCH v6 12/12] ima: Write modsig to the measurement list
+In-Reply-To: <20180316203837.10174-13-bauerman@linux.vnet.ibm.com>
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+	<20180316203837.10174-13-bauerman@linux.vnet.ibm.com>
+Message-ID: <1522067377.3541.47.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In order to make struct tpm_buf the first class object for constructing TPM
-commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-prints an error message.
+On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
+> Define new "d-sig" template field which holds the digest that is expected
+> to match the one contained in the modsig.
+> 
+> Also add modsig support to the "sig" template field, allowing the the
+> contents of the modsig to be included in the measurement list.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
- 1 file changed, 12 insertions(+), 32 deletions(-)
+Although including the appended signature in the template data doesn't
+make sense on its own, as the file digest (without the appended
+signature) is needed to validate the appended signature, defining a
+new template field and its usage should be independent of other
+changes.
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 96c77c8e7f40..7665661d9230 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -27,10 +27,6 @@ enum tpm2_session_attributes {
- 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
- };
- 
--struct tpm2_startup_in {
--	__be16	startup_type;
--} __packed;
--
- struct tpm2_get_tpm_pt_in {
- 	__be32	cap_id;
- 	__be32	property_id;
-@@ -55,7 +51,6 @@ struct tpm2_get_random_out {
- } __packed;
- 
- union tpm2_cmd_params {
--	struct	tpm2_startup_in		startup_in;
- 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
- 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
- 	struct	tpm2_get_random_in	getrandom_in;
-@@ -412,11 +407,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 	int rc;
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
--	if (rc) {
--		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
--			 handle);
-+	if (rc)
- 		return;
--	}
- 
- 	tpm_buf_append_u32(&buf, handle);
- 
-@@ -762,40 +754,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
- }
- EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
- 
--#define TPM2_SHUTDOWN_IN_SIZE \
--	(sizeof(struct tpm_input_header) + \
--	 sizeof(struct tpm2_startup_in))
--
--static const struct tpm_input_header tpm2_shutdown_header = {
--	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
--	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
--	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
--};
--
- /**
-  * tpm2_shutdown() - send shutdown command to the TPM chip
-  *
-+ * In places where shutdown command is sent there's no much we can do except
-+ * print the error code on a system failure.
-+ *
-  * @chip:		TPM chip to use.
-  * @shutdown_type:	shutdown type. The value is either
-  *			TPM_SU_CLEAR or TPM_SU_STATE.
-  */
- void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
- {
--	struct tpm2_cmd cmd;
-+	struct tpm_buf buf;
- 	int rc;
- 
--	cmd.header.in = tpm2_shutdown_header;
--	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
--
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
--			      "stopping the TPM");
--
--	/* In places where shutdown command is sent there's no much we can do
--	 * except print the error code on a system failure.
--	 */
--	if (rc < 0 && rc != -EPIPE)
--		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
--			 rc);
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
-+	if (rc)
-+		return;
-+	tpm_buf_append_u16(&buf, shutdown_type);
-+	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			 "stopping the TPM");
-+	tpm_buf_destroy(&buf);
- }
- 
- /*
--- 
-2.15.1
+Mimi
+
+> 
+> Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+> ---
+>  Documentation/security/IMA-templates.rst  |  5 ++++
+>  security/integrity/ima/ima_template.c     |  4 ++-
+>  security/integrity/ima/ima_template_lib.c | 47 +++++++++++++++++++++++++++++--
+>  security/integrity/ima/ima_template_lib.h |  2 ++
+>  4 files changed, 55 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
+> index 2cd0e273cc9a..f2a0f4225857 100644
+> --- a/Documentation/security/IMA-templates.rst
+> +++ b/Documentation/security/IMA-templates.rst
+> @@ -68,6 +68,11 @@ descriptors by adding their identifier to the format string
+>   - 'd-ng': the digest of the event, calculated with an arbitrary hash
+>     algorithm (field format: [<hash algo>:]digest, where the digest
+>     prefix is shown only if the hash algorithm is not SHA1 or MD5);
+> + - 'd-sig': the digest of the event for files that have an appended modsig. This
+> +   field is calculated without including the modsig and thus will differ from
+> +   the total digest of the file, but it is what should match the digest
+> +   contained in the modsig (if it doesn't, the signature is invalid). It is
+> +   shown in the same format as 'd-ng';
+>   - 'n-ng': the name of the event, without size limitations;
+>   - 'sig': the file signature.
+> 
+> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+> index 30db39b23804..36fc32f538b5 100644
+> --- a/security/integrity/ima/ima_template.c
+> +++ b/security/integrity/ima/ima_template.c
+> @@ -43,8 +43,10 @@ static struct ima_template_field supported_fields[] = {
+>  	 .field_show = ima_show_template_string},
+>  	{.field_id = "sig", .field_init = ima_eventsig_init,
+>  	 .field_show = ima_show_template_sig},
+> +	{.field_id = "d-sig", .field_init = ima_eventdigest_sig_init,
+> +	 .field_show = ima_show_template_digest_ng},
+>  };
+> -#define MAX_TEMPLATE_NAME_LEN 15
+> +#define MAX_TEMPLATE_NAME_LEN 24
+> 
+>  static struct ima_template_desc *ima_template;
+>  static struct ima_template_desc *lookup_template_desc(const char *name);
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> index afb52a90e532..1dca082cce43 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -220,7 +220,8 @@ int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
+>  	return 0;
+>  }
+> 
+> -static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
+> +static int ima_eventdigest_init_common(const u8 *digest, u32 digestsize,
+> +				       u8 hash_algo,
+>  				       struct ima_field_data *field_data)
+>  {
+>  	/*
+> @@ -323,6 +324,35 @@ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+>  					   hash_algo, field_data);
+>  }
+> 
+> +/*
+> + * This function writes the digest of the file which is expected to match the
+> + * digest contained in the file's embedded signature.
+> + */
+> +int ima_eventdigest_sig_init(struct ima_event_data *event_data,
+> +			     struct ima_field_data *field_data)
+> +{
+> +	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
+> +	enum hash_algo hash_algo = HASH_ALGO_SHA1;
+> +	const u8 *cur_digest = NULL;
+> +	u8 cur_digestsize = 0;
+> +	int ret;
+> +
+> +	if (!xattr_value || xattr_value->type != IMA_MODSIG)
+> +		return 0;
+> +
+> +	if (event_data->violation)	/* recording a violation. */
+> +		goto out;
+> +
+> +	ret = ima_get_modsig_hash(xattr_value, &hash_algo, &cur_digest,
+> +				  &cur_digestsize);
+> +	if (ret)
+> +		return ret;
+> +
+> + out:
+> +	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
+> +					   hash_algo, field_data);
+> +}
+> +
+>  static int ima_eventname_init_common(struct ima_event_data *event_data,
+>  				     struct ima_field_data *field_data,
+>  				     bool size_limit)
+> @@ -379,10 +409,23 @@ int ima_eventsig_init(struct ima_event_data *event_data,
+>  		      struct ima_field_data *field_data)
+>  {
+>  	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
+> +	int xattr_len = event_data->xattr_len;
+> 
+>  	if (!is_ima_sig(xattr_value))
+>  		return 0;
+> 
+> -	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
+> +	/*
+> +	 * The xattr_value for IMA_MODSIG is a runtime structure containing
+> +	 * pointers. Get its raw data instead.
+> +	 */
+> +	if (xattr_value->type == IMA_MODSIG) {
+> +		int rc;
+> +
+> +		rc = ima_modsig_serialize_data(&xattr_value, &xattr_len);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return ima_write_template_field_data(xattr_value, xattr_len,
+>  					     DATA_FMT_HEX, field_data);
+>  }
+> diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+> index 6a3d8b831deb..3cd353e83f73 100644
+> --- a/security/integrity/ima/ima_template_lib.h
+> +++ b/security/integrity/ima/ima_template_lib.h
+> @@ -38,6 +38,8 @@ int ima_eventname_init(struct ima_event_data *event_data,
+>  		       struct ima_field_data *field_data);
+>  int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+>  			    struct ima_field_data *field_data);
+> +int ima_eventdigest_sig_init(struct ima_event_data *event_data,
+> +			     struct ima_field_data *field_data);
+>  int ima_eventname_ng_init(struct ima_event_data *event_data,
+>  			  struct ima_field_data *field_data);
+>  int ima_eventsig_init(struct ima_event_data *event_data,
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
