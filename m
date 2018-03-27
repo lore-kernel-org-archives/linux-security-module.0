@@ -1,74 +1,70 @@
 From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Tue, 27 Mar 2018 18:37:38 +0300
-Subject: [PATCH 2/6] vmalloc: rename llist field in vmap_area
-In-Reply-To: <20180327153742.17328-1-igor.stoppa@huawei.com>
-References: <20180327153742.17328-1-igor.stoppa@huawei.com>
-Message-ID: <20180327153742.17328-3-igor.stoppa@huawei.com>
+Date: Tue, 27 Mar 2018 18:37:36 +0300
+Subject: [RFC PATCH v21 0/6] mm: security: ro protection for dynamic data
+Message-ID: <20180327153742.17328-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The vmap_area structure has a field of type struct llist_node, named
-purge_list and is used when performing lazy purge of the area.
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-Such field is left unused during the actual utilization of the
-structure.
+The memory is managed in pools: when a memory pool is protected, all the
+memory that is currently part of it, will become R/O.
 
-This patch renames the field to a more generic "area_list", to allow for
-utilization outside of the purging phase.
+A R/O pool can be expanded (adding more protectable memory).
+It can also be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
-Since the purging happens after the vmap_area is dismissed, its use is
-mutually exclusive with any use performed while the area is allocated.
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
----
- include/linux/vmalloc.h | 2 +-
- mm/vmalloc.c            | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+However the data might need to be released, for example as part of module
+unloading. The pool, therefore, can be destroyed.
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 1e5d8c392f15..2d07dfef3cfd 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -47,7 +47,7 @@ struct vmap_area {
- 	unsigned long flags;
- 	struct rb_node rb_node;         /* address sorted rbtree */
- 	struct list_head list;          /* address sorted list */
--	struct llist_node purge_list;    /* "lazy purge" list */
-+	struct llist_node area_list;    /* generic list of areas */
- 	struct vm_struct *vm;
- 	struct rcu_head rcu_head;
- };
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 61a1ca22b0f6..1bb2233bb262 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -682,7 +682,7 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 	lockdep_assert_held(&vmap_purge_lock);
- 
- 	valist = llist_del_all(&vmap_purge_list);
--	llist_for_each_entry(va, valist, purge_list) {
-+	llist_for_each_entry(va, valist, area_list) {
- 		if (va->va_start < start)
- 			start = va->va_start;
- 		if (va->va_end > end)
-@@ -696,7 +696,7 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 	flush_tlb_kernel_range(start, end);
- 
- 	spin_lock(&vmap_area_lock);
--	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
-+	llist_for_each_entry_safe(va, n_va, valist, area_list) {
- 		int nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
- 
- 		__free_vmap_area(va);
-@@ -743,7 +743,7 @@ static void free_vmap_area_noflush(struct vmap_area *va)
- 				    &vmap_lazy_nr);
- 
- 	/* After this point, we may free va at any time */
--	llist_add(&va->purge_list, &vmap_purge_list);
-+	llist_add(&va->area_list, &vmap_purge_list);
- 
- 	if (unlikely(nr_lazy > lazy_max_pages()))
- 		try_purge_vmap_area_lazy();
+An example is provided, in the form of self-testing.
+
+Changes since v20:
+
+[http://www.openwall.com/lists/kernel-hardening/2018/03/27/2]
+
+* removed the align_order parameter from allocation functions
+* improved documentation with more explanation
+* fixed lkdt test
+* reworked the destroy function, removing a possible race with
+  use-after-free code.
+
+
+Igor Stoppa (6):
+  struct page: add field for vm_struct
+  vmalloc: rename llist field in vmap_area
+  Protectable Memory
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+  Documentation for Pmalloc
+
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 107 +++++++++++++++
+ drivers/misc/lkdtm.h               |   1 +
+ drivers/misc/lkdtm_core.c          |   3 +
+ drivers/misc/lkdtm_perms.c         |  25 ++++
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 166 +++++++++++++++++++++++
+ include/linux/test_pmalloc.h       |  24 ++++
+ include/linux/vmalloc.h            |   5 +-
+ init/main.c                        |   2 +
+ mm/Kconfig                         |  16 +++
+ mm/Makefile                        |   2 +
+ mm/pmalloc.c                       | 264 +++++++++++++++++++++++++++++++++++++
+ mm/test_pmalloc.c                  | 136 +++++++++++++++++++
+ mm/usercopy.c                      |  33 +++++
+ mm/vmalloc.c                       |  10 +-
+ 16 files changed, 791 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 mm/pmalloc.c
+ create mode 100644 mm/test_pmalloc.c
+
 -- 
 2.14.1
 
