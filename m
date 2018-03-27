@@ -1,44 +1,80 @@
-From: srihan@fb.com (Sahil Rihan)
-Date: Tue, 27 Mar 2018 00:07:14 +0000
-Subject: [PATCH] tpm: allow TCPA log area to be empty
-In-Reply-To: <edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
-References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
-	<20180312150231.GA24717@ziepe.ca>
-	<20180316125525.GB5035@linux.intel.com>
-	<20180319021323.GD27186@ziepe.ca>
-	<20180319212436.GD14364@linux.intel.com>
-	<A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
-	<edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
-Message-ID: <49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Tue, 27 Mar 2018 04:55:18 +0300
+Subject: [RFC PATCH v20 0/6] mm: security: ro protection for dynamic data
+Message-ID: <20180327015524.14318-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> On 3/22/18, 7:20 AM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com> wrote:
->
->   On Tue, 2018-03-20 at 22:29 +0000, Sahil Rihan wrote:
->   > > On 3/19/18, 2:25 PM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
->   > > wrote:
->   > >     
->   > >    Sahil, would you care to try if this fixes the issue that you are
->   > >    having or not?
->   > 
->   > Yes, we can test this out. Might take a day or two.
->    
->   Awesome, thank you. I'll add
->    
->   Reported-by: Sahil Rihan <srihan@fb.com>
->    
->   if that is OK for you?
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-Jarkko, 
+The memory is managed in pools: when a memory pool is protected, all the
+memory that is currently part of it, will become R/O.
 
-We applied your patch to a 4.11 kernel (unfortunately not the latest upstream) and were able to confirm that the char device is now being created correctly. The sysfs enabled node is also present.
+A R/O pool can be expanded (adding more protectable memory).
+It can also be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
-And yes, please add the "Reported-by" line.
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
 
-Thanks,
-Sahil
- 
+However the data might need to be released, for example as part of module
+unloading. The pool, therefore, can be destroyed.
 
+An example is provided, in the form of self-testing.
 
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+Changes since v19:
+
+[http://www.openwall.com/lists/kernel-hardening/2018/03/13/68]
+
+* dropped genalloc as allocator
+* first attempt at rewriting pmalloc, as discussed with Matthew Wilcox:
+  [http://www.openwall.com/lists/kernel-hardening/2018/03/14/20]
+* removed free function from the API
+* removed distinction between protected and unprotected pools: a pool can
+  contain both protectec and unprotected areas.
+* removed gpf parameter, as it didn't seem too useful (or not?)
+* added option to specify alignment of allocations
+* added parameter for specifying size of a refill
+* removed option to pre-allocate memory for a pool (is it a bad idea?)
+* changed vmap_area to allow chaining them, for tracking them in a pool
+* made public the previously private find_vmap_area function
+
+Igor Stoppa (6):
+  struct page: add field for vm_struct
+  vmalloc: rename llist field in vmap_area
+  Protectable Memory
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+  Documentation for Pmalloc
+
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 101 ++++++++++++
+ drivers/misc/lkdtm.h               |   1 +
+ drivers/misc/lkdtm_core.c          |   3 +
+ drivers/misc/lkdtm_perms.c         |  28 ++++
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 281 ++++++++++++++++++++++++++++++++
+ include/linux/test_pmalloc.h       |  24 +++
+ include/linux/vmalloc.h            |   5 +-
+ init/main.c                        |   2 +
+ mm/Kconfig                         |  16 ++
+ mm/Makefile                        |   2 +
+ mm/pmalloc.c                       | 321 +++++++++++++++++++++++++++++++++++++
+ mm/test_pmalloc.c                  | 136 ++++++++++++++++
+ mm/usercopy.c                      |  33 ++++
+ mm/vmalloc.c                       |  10 +-
+ 16 files changed, 960 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 mm/pmalloc.c
+ create mode 100644 mm/test_pmalloc.c
+
+-- 
+2.14.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
