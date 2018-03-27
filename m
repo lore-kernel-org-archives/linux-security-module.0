@@ -1,40 +1,43 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 27 Mar 2018 07:52:31 -0400
-Subject: [RFC PATCH 2/2] security: Add mechanism to (un)load LSMs after
-	boot time
-In-Reply-To: <alpine.LRH.2.21.1803271902590.9495@namei.org>
-References: <cover.1522091329.git.sargun@sargun.me>
-	<af077529868a212caeb822ae79d72a1ac40f17ba.1522091329.git.sargun@sargun.me>
-	<fbe62489-42a7-6418-351a-5661de7deee3@huawei.com>
-	<CAMp4zn-NK4gre0cwaBnYrujVXEpA97OGzcbxqrySz=X91Lu+kQ@mail.gmail.com>
-	<alpine.LRH.2.21.1803271902590.9495@namei.org>
-Message-ID: <CAHC9VhTr414ZvW45kP97u2CjHqffT5JsAh=GS3Eujj_P1YcJ0w@mail.gmail.com>
+From: colin.king@canonical.com (Colin King)
+Date: Tue, 27 Mar 2018 14:35:58 +0100
+Subject: [PATCH][next] apparmor: fix memory leak on buffer on error exit path
+Message-ID: <20180327133558.13072-1-colin.king@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 27, 2018 at 4:08 AM, James Morris <jmorris@namei.org> wrote:
-> On Mon, 26 Mar 2018, Sargun Dhillon wrote:
->> Today, the only "mutable" module we have is SELinux. It has a kernel
->> config flag which determines if it is unloadable (mutable) or not. If
->> you look at the patchset, it, in fact, sets mutability based on that
->> config flag:
->>
->>
->> -       security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
->> +       security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux",
->> +                               IS_ENABLED(CONFIG_SECURITY_SELINUX_DISABLE));
->
-> There has been discussion about removing the ability to unload SELinux --
-> not sure what the current status of that is.
+From: Colin Ian King <colin.king@canonical.com>
 
-It is something I would still like to do, but there is some work that
-needs to be done to allow a smooth transition for those people who are
-currently disabling/unloading SELinux at runtime.
+Currently on the error exit path the allocated buffer is not free'd
+causing a memory leak. Fix this by kfree'ing it.
 
+Detected by CoverityScan, CID#1466876 ("Resource leaks")
+
+Fixes: 1180b4c757aa ("apparmor: fix dangling symlinks to policy rawdata after replacement")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/apparmor/apparmorfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 96bb6b73af65..949dd8a48164 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -1497,8 +1497,10 @@ static char *gen_symlink_name(int depth, const char *dirname, const char *fname)
+ 	}
+ 
+ 	error = snprintf(s, size, "raw_data/%s/%s", dirname, fname);
+-	if (error >= size || error < 0)
++	if (error >= size || error < 0) {
++		kfree(buffer);
+ 		return ERR_PTR(-ENAMETOOLONG);
++	}
+ 
+ 	return buffer;
+ }
 -- 
-paul moore
-www.paul-moore.com
+2.15.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
