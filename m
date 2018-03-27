@@ -1,39 +1,44 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 27 Mar 2018 09:18:06 +1100 (AEDT)
-Subject: [PULL] Smack: Changes for 4.17
-In-Reply-To: <54904a33-26b5-7fbb-a307-35806ee92cf1@schaufler-ca.com>
-References: <54904a33-26b5-7fbb-a307-35806ee92cf1@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1803270917400.7839@namei.org>
+From: srihan@fb.com (Sahil Rihan)
+Date: Tue, 27 Mar 2018 00:07:14 +0000
+Subject: [PATCH] tpm: allow TCPA log area to be empty
+In-Reply-To: <edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
+References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+	<20180312150231.GA24717@ziepe.ca>
+	<20180316125525.GB5035@linux.intel.com>
+	<20180319021323.GD27186@ziepe.ca>
+	<20180319212436.GD14364@linux.intel.com>
+	<A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
+	<edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
+Message-ID: <49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 26 Mar 2018, Casey Schaufler wrote:
+> On 3/22/18, 7:20 AM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com> wrote:
+>
+>   On Tue, 2018-03-20 at 22:29 +0000, Sahil Rihan wrote:
+>   > > On 3/19/18, 2:25 PM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+>   > > wrote:
+>   > >     
+>   > >    Sahil, would you care to try if this fixes the issue that you are
+>   > >    having or not?
+>   > 
+>   > Yes, we can test this out. Might take a day or two.
+>    
+>   Awesome, thank you. I'll add
+>    
+>   Reported-by: Sahil Rihan <srihan@fb.com>
+>    
+>   if that is OK for you?
 
-> Please pull for 4.17. One small change for Automotive Grade Linux.
-> 
-> The following changes since commit a02633e9b13dcb9b1a656b08f81bc8ba2d4d2294:
-> 
->   Merge tag 'v4.16-rc2' into next-general (2018-02-21 08:21:41 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://github.com/cschaufler/next-smack smack-for-4.17
-> 
-> for you to fetch changes up to 58c442f34c77ad80941e3da85cc0738e8e21d4f3:
-> 
->   Smack: Handle CGROUP2 in the same way that CGROUP (2018-02-28 09:27:12 -0800)
-> 
+Jarkko, 
 
-Thanks, merged to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
-and next-testing
+We applied your patch to a 4.11 kernel (unfortunately not the latest upstream) and were able to confirm that the char device is now being created correctly. The sysfs enabled node is also present.
+
+And yes, please add the "Reported-by" line.
+
+Thanks,
+Sahil
+ 
 
 
--- 
-James Morris
-<jmorris@namei.org>
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
