@@ -1,27 +1,65 @@
-From: srihan@fb.com (Sahil Rihan)
-Date: Tue, 27 Mar 2018 15:37:14 +0000
-Subject: [PATCH] tpm: allow TCPA log area to be empty
-In-Reply-To: <20180327080502.GA11855@linux.intel.com>
-References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
-	<20180312150231.GA24717@ziepe.ca>
-	<20180316125525.GB5035@linux.intel.com>
-	<20180319021323.GD27186@ziepe.ca>
-	<20180319212436.GD14364@linux.intel.com>
-	<A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
-	<edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
-	<49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
-	<20180327080502.GA11855@linux.intel.com>
-Message-ID: <AD861794-362E-47F4-A38F-A9F65E7F66E4@fb.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Tue, 27 Mar 2018 18:37:37 +0300
+Subject: [PATCH 1/6] struct page: add field for vm_struct
+In-Reply-To: <20180327153742.17328-1-igor.stoppa@huawei.com>
+References: <20180327153742.17328-1-igor.stoppa@huawei.com>
+Message-ID: <20180327153742.17328-2-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> And also
->
-> Tested-by: Sahil Rihan <srihan@fb.com>
+When a page is used for virtual memory, it is often necessary to obtain
+a handler to the corresponding vm_struct, which refers to the virtually
+continuous area generated when invoking vmalloc.
 
-Sure!
+The struct page has a "mapping" field, which can be re-used, to store a
+pointer to the parent area.
 
-   
+This will avoid more expensive searches, later on.
 
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Reviewed-by: Jay Freyensee <why2jjj.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ include/linux/mm_types.h | 1 +
+ mm/vmalloc.c             | 2 ++
+ 2 files changed, 3 insertions(+)
 
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index fd1af6b9591d..c3a4825e10c0 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -84,6 +84,7 @@ struct page {
+ 		void *s_mem;			/* slab first object */
+ 		atomic_t compound_mapcount;	/* first tail page */
+ 		/* page_deferred_list().next	 -- second tail page */
++		struct vm_struct *area;
+ 	};
+ 
+ 	/* Second double word */
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index ebff729cc956..61a1ca22b0f6 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1536,6 +1536,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			struct page *page = area->pages[i];
+ 
+ 			BUG_ON(!page);
++			page->area = NULL;
+ 			__free_pages(page, 0);
+ 		}
+ 
+@@ -1705,6 +1706,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 			area->nr_pages = i;
+ 			goto fail;
+ 		}
++		page->area = area;
+ 		area->pages[i] = page;
+ 		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
+ 			cond_resched();
+-- 
+2.14.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
