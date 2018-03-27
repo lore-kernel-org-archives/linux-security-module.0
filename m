@@ -1,53 +1,46 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 27 Mar 2018 11:05:02 +0300
-Subject: [PATCH] tpm: allow TCPA log area to be empty
-In-Reply-To: <49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
-References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
-	<20180312150231.GA24717@ziepe.ca>
-	<20180316125525.GB5035@linux.intel.com>
-	<20180319021323.GD27186@ziepe.ca>
-	<20180319212436.GD14364@linux.intel.com>
-	<A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
-	<edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
-	<49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
-Message-ID: <20180327080502.GA11855@linux.intel.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 27 Mar 2018 19:08:08 +1100 (AEDT)
+Subject: [RFC PATCH 2/2] security: Add mechanism to (un)load LSMs after
+	boot time
+In-Reply-To: <CAMp4zn-NK4gre0cwaBnYrujVXEpA97OGzcbxqrySz=X91Lu+kQ@mail.gmail.com>
+References: <cover.1522091329.git.sargun@sargun.me>
+	<af077529868a212caeb822ae79d72a1ac40f17ba.1522091329.git.sargun@sargun.me>
+	<fbe62489-42a7-6418-351a-5661de7deee3@huawei.com>
+	<CAMp4zn-NK4gre0cwaBnYrujVXEpA97OGzcbxqrySz=X91Lu+kQ@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1803271902590.9495@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 27, 2018 at 12:07:14AM +0000, Sahil Rihan wrote:
-> > On 3/22/18, 7:20 AM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> >   On Tue, 2018-03-20 at 22:29 +0000, Sahil Rihan wrote:
-> >   > > On 3/19/18, 2:25 PM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
-> >   > > wrote:
-> >   > >     
-> >   > >    Sahil, would you care to try if this fixes the issue that you are
-> >   > >    having or not?
-> >   > 
-> >   > Yes, we can test this out. Might take a day or two.
-> >    
-> >   Awesome, thank you. I'll add
-> >    
-> >   Reported-by: Sahil Rihan <srihan@fb.com>
-> >    
-> >   if that is OK for you?
-> 
-> Jarkko, 
-> 
-> We applied your patch to a 4.11 kernel (unfortunately not the latest upstream) and were able to confirm that the char device is now being created correctly. The sysfs enabled node is also present.
-> 
-> And yes, please add the "Reported-by" line.
-> 
-> Thanks,
-> Sahil
+On Mon, 26 Mar 2018, Sargun Dhillon wrote:
 
-And also
+> Today, the only "mutable" module we have is SELinux. It has a kernel
+> config flag which determines if it is unloadable (mutable) or not. If
+> you look at the patchset, it, in fact, sets mutability based on that
+> config flag:
+> 
+> 
+> -       security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
+> +       security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux",
+> +                               IS_ENABLED(CONFIG_SECURITY_SELINUX_DISABLE));
+> 
 
-Tested-by: Sahil Rihan <srihan@fb.com>
+There has been discussion about removing the ability to unload SELinux -- 
+not sure what the current status of that is.
 
-?
+Regardless, it's a special case for historical reasons and should not be 
+thought of as an example for future use.
 
-/Jarkko
+> Similarly, modules can change this behaviour based on their own
+> choices, whether that be config flags, boot parameters, or similar. In
+> my opinion, most LSMs should never be unloadable. 
+
+All, probably.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
