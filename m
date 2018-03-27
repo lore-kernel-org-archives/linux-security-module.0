@@ -1,26 +1,16 @@
-From: corbet@lwn.net (Jonathan Corbet)
-Date: Tue, 27 Mar 2018 10:55:09 -0600
-Subject: [RFC PATCH v21 0/6] mm: security: ro protection for dynamic data
-In-Reply-To: <20180327153742.17328-1-igor.stoppa@huawei.com>
-References: <20180327153742.17328-1-igor.stoppa@huawei.com>
-Message-ID: <20180327105509.62ec0d4d@lwn.net>
+From: janiceharvey225@gmail.com (Lucy Boston)
+Date: Tue, 27 Mar 2018 20:37:31 +0000
+Subject: HI
+Message-ID: <CAOhfqoe6Q=V18zzQBSQuMcbWyOQTfCoQ=nVM4qKZzWEjF0W3=A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 27 Mar 2018 18:37:36 +0300
-Igor Stoppa <igor.stoppa@huawei.com> wrote:
+-- 
+Greeting, once again is me Lucy Boston this is twice am contacting you
+please is very urgent respond to me for more details through my.
+Email:
 
-> This patch-set introduces the possibility of protecting memory that has
-> been allocated dynamically.
-
-One thing that jumps out at me as I look at the patch set is: you do not
-include any users of this functionality.  Where do you expect this
-allocator to be used?  Actually seeing the API in action would be a useful
-addition, I think.
-
-Thanks,
-
-jon
+dr.lucyboston at gmail.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
