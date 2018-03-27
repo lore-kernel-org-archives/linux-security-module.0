@@ -1,53 +1,53 @@
-From: willy@infradead.org (Matthew Wilcox)
-Date: Mon, 26 Mar 2018 19:31:10 -0700
-Subject: [PATCH 3/6] Protectable Memory
-In-Reply-To: <20180327015524.14318-4-igor.stoppa@huawei.com>
-References: <20180327015524.14318-1-igor.stoppa@huawei.com>
-	<20180327015524.14318-4-igor.stoppa@huawei.com>
-Message-ID: <20180327023110.GD10054@bombadil.infradead.org>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 27 Mar 2018 11:05:02 +0300
+Subject: [PATCH] tpm: allow TCPA log area to be empty
+In-Reply-To: <49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
+References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+	<20180312150231.GA24717@ziepe.ca>
+	<20180316125525.GB5035@linux.intel.com>
+	<20180319021323.GD27186@ziepe.ca>
+	<20180319212436.GD14364@linux.intel.com>
+	<A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
+	<edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
+	<49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
+Message-ID: <20180327080502.GA11855@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Mar 27, 2018 at 04:55:21AM +0300, Igor Stoppa wrote:
-> +static inline void *pmalloc_array_align(struct pmalloc_pool *pool,
-> +					size_t n, size_t size,
-> +					short int align_order)
-> +{
+On Tue, Mar 27, 2018 at 12:07:14AM +0000, Sahil Rihan wrote:
+> > On 3/22/18, 7:20 AM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> >   On Tue, 2018-03-20 at 22:29 +0000, Sahil Rihan wrote:
+> >   > > On 3/19/18, 2:25 PM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+> >   > > wrote:
+> >   > >     
+> >   > >    Sahil, would you care to try if this fixes the issue that you are
+> >   > >    having or not?
+> >   > 
+> >   > Yes, we can test this out. Might take a day or two.
+> >    
+> >   Awesome, thank you. I'll add
+> >    
+> >   Reported-by: Sahil Rihan <srihan@fb.com>
+> >    
+> >   if that is OK for you?
+> 
+> Jarkko, 
+> 
+> We applied your patch to a 4.11 kernel (unfortunately not the latest upstream) and were able to confirm that the char device is now being created correctly. The sysfs enabled node is also present.
+> 
+> And yes, please add the "Reported-by" line.
+> 
+> Thanks,
+> Sahil
 
-You're missing:
+And also
 
-        if (size != 0 && n > SIZE_MAX / size)
-                return NULL;
+Tested-by: Sahil Rihan <srihan@fb.com>
 
-> +	return pmalloc_align(pool, n * size, align_order);
-> +}
+?
 
-> +static inline void *pcalloc_align(struct pmalloc_pool *pool, size_t n,
-> +				  size_t size, short int align_order)
-> +{
-> +	return pzalloc_align(pool, n * size, align_order);
-> +}
-
-Ditto.
-
-> +static inline void *pcalloc(struct pmalloc_pool *pool, size_t n,
-> +			    size_t size)
-> +{
-> +	return pzalloc_align(pool, n * size, PMALLOC_ALIGN_DEFAULT);
-> +}
-
-If you make this one:
-
-	return pcalloc_align(pool, n, size, PMALLOC_ALIGN_DEFAULT)
-
-then you don't need the check in this function.
-
-Also, do we really need 'align' as a parameter to the allocator functions
-rather than to the pool?
-
-I'd just reuse ARCH_KMALLOC_MINALIGN from slab.h as the alignment, and
-then add the special alignment options when we have a real user for them.
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
