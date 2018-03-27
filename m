@@ -1,74 +1,39 @@
-From: igor.stoppa@huawei.com (Igor Stoppa)
-Date: Tue, 27 Mar 2018 14:43:19 +0300
-Subject: [PATCH 3/6] Protectable Memory
-In-Reply-To: <20180327023110.GD10054@bombadil.infradead.org>
-References: <20180327015524.14318-1-igor.stoppa@huawei.com>
-	<20180327015524.14318-4-igor.stoppa@huawei.com>
-	<20180327023110.GD10054@bombadil.infradead.org>
-Message-ID: <4bafdb91-307b-ff4c-5432-cf5a39dfbb8b@huawei.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 27 Mar 2018 07:52:31 -0400
+Subject: [RFC PATCH 2/2] security: Add mechanism to (un)load LSMs after
+	boot time
+In-Reply-To: <alpine.LRH.2.21.1803271902590.9495@namei.org>
+References: <cover.1522091329.git.sargun@sargun.me>
+	<af077529868a212caeb822ae79d72a1ac40f17ba.1522091329.git.sargun@sargun.me>
+	<fbe62489-42a7-6418-351a-5661de7deee3@huawei.com>
+	<CAMp4zn-NK4gre0cwaBnYrujVXEpA97OGzcbxqrySz=X91Lu+kQ@mail.gmail.com>
+	<alpine.LRH.2.21.1803271902590.9495@namei.org>
+Message-ID: <CAHC9VhTr414ZvW45kP97u2CjHqffT5JsAh=GS3Eujj_P1YcJ0w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Tue, Mar 27, 2018 at 4:08 AM, James Morris <jmorris@namei.org> wrote:
+> On Mon, 26 Mar 2018, Sargun Dhillon wrote:
+>> Today, the only "mutable" module we have is SELinux. It has a kernel
+>> config flag which determines if it is unloadable (mutable) or not. If
+>> you look at the patchset, it, in fact, sets mutability based on that
+>> config flag:
+>>
+>>
+>> -       security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
+>> +       security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux",
+>> +                               IS_ENABLED(CONFIG_SECURITY_SELINUX_DISABLE));
+>
+> There has been discussion about removing the ability to unload SELinux --
+> not sure what the current status of that is.
 
+It is something I would still like to do, but there is some work that
+needs to be done to allow a smooth transition for those people who are
+currently disabling/unloading SELinux at runtime.
 
-On 27/03/18 05:31, Matthew Wilcox wrote:
-> On Tue, Mar 27, 2018 at 04:55:21AM +0300, Igor Stoppa wrote:
->> +static inline void *pmalloc_array_align(struct pmalloc_pool *pool,
->> +					size_t n, size_t size,
->> +					short int align_order)
->> +{
-> 
-> You're missing:
-> 
->         if (size != 0 && n > SIZE_MAX / size)
->                 return NULL;
-
-
-ACK
-
->> +	return pmalloc_align(pool, n * size, align_order);
->> +}
-> 
->> +static inline void *pcalloc_align(struct pmalloc_pool *pool, size_t n,
->> +				  size_t size, short int align_order)
->> +{
->> +	return pzalloc_align(pool, n * size, align_order);
->> +}
-> 
-> Ditto.
-
-ok
-
->> +static inline void *pcalloc(struct pmalloc_pool *pool, size_t n,
->> +			    size_t size)
->> +{
->> +	return pzalloc_align(pool, n * size, PMALLOC_ALIGN_DEFAULT);
->> +}
-> 
-> If you make this one:
-> 
-> 	return pcalloc_align(pool, n, size, PMALLOC_ALIGN_DEFAULT)
-
-ok
-
-> then you don't need the check in this function.
-> 
-> Also, do we really need 'align' as a parameter to the allocator functions
-> rather than to the pool?
-
-I actually wrote it first without, but then I wondered how to deal if
-one needs to allocate both small fry structures and then something
-larger that is page aligned.
-
-However it's just speculation, I do not have any real example.
-
-> I'd just reuse ARCH_KMALLOC_MINALIGN from slab.h as the alignment, and
-> then add the special alignment options when we have a real user for them.
-
-ok
-
---
-thanks, igor
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
