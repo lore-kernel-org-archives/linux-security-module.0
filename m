@@ -1,583 +1,618 @@
 From: sargun@sargun.me (Sargun Dhillon)
-Date: Wed, 28 Mar 2018 01:30:16 +0000
-Subject: [PATCH v2 1/2] security: convert security hooks to use hlist
+Date: Wed, 28 Mar 2018 01:30:26 +0000
+Subject: [PATCH v2 2/2] security: Add mechanism to safely (un)load LSMs after
+	boot time
 In-Reply-To: <cover.1522185596.git.sargun@sargun.me>
 References: <cover.1522185596.git.sargun@sargun.me>
-Message-ID: <0eef34ac71c3768eb58f6c909e5839f2ffee540a.1522185596.git.sargun@sargun.me>
+Message-ID: <19f85393f334f87ff097b3112b55a15caa3faf8d.1522185596.git.sargun@sargun.me>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This changes security_hook_heads to use hlist_heads instead of
-the circular doubly-linked list heads. This should cut down
-the size of the struct by about half.
+This patch introduces a mechanism to add mutable hooks and immutable
+hooks to the callback chain. It adds an intermediary item to the
+chain which separates mutable and immutable hooks. Immutable hooks
+are then marked as read-only, as well as the hook heads. This does
+not preclude some hooks being able to be mutated (removed).
 
-In addition, it allows mutation of the hooks at the tail of the
-callback list without having to modify the head. The longer-term
-purpose of this is to enable making the heads read only.
+It also wraps the hook unloading, and execution with an SRCU. One
+SRCU is used across all hooks, as the SRCU struct can be memory
+intensive, and hook execution time in general should be relatively
+short.
 
 Signed-off-by: Sargun Dhillon <sargun@sargun.me>
 ---
- include/linux/lsm_hooks.h | 428 +++++++++++++++++++++++-----------------------
- security/security.c       |  22 +--
- 2 files changed, 225 insertions(+), 225 deletions(-)
+ include/linux/lsm_hooks.h  |  23 ++--
+ security/Kconfig           |   2 +-
+ security/apparmor/lsm.c    |   2 +-
+ security/commoncap.c       |   2 +-
+ security/security.c        | 270 ++++++++++++++++++++++++++++++++++++++++++---
+ security/selinux/hooks.c   |   5 +-
+ security/smack/smack_lsm.c |   3 +-
+ security/tomoyo/tomoyo.c   |   3 +-
+ security/yama/yama_lsm.c   |   2 +-
+ 9 files changed, 273 insertions(+), 39 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 7161d8e7ee79..09bc60fb35f1 100644
+index 09bc60fb35f1..689e5e72fb38 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -1730,230 +1730,230 @@ union security_list_options {
- };
+@@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
+ extern char *lsm_names;
  
- struct security_hook_heads {
--	struct list_head binder_set_context_mgr;
--	struct list_head binder_transaction;
--	struct list_head binder_transfer_binder;
--	struct list_head binder_transfer_file;
--	struct list_head ptrace_access_check;
--	struct list_head ptrace_traceme;
--	struct list_head capget;
--	struct list_head capset;
--	struct list_head capable;
--	struct list_head quotactl;
--	struct list_head quota_on;
--	struct list_head syslog;
--	struct list_head settime;
--	struct list_head vm_enough_memory;
--	struct list_head bprm_set_creds;
--	struct list_head bprm_check_security;
--	struct list_head bprm_committing_creds;
--	struct list_head bprm_committed_creds;
--	struct list_head sb_alloc_security;
--	struct list_head sb_free_security;
--	struct list_head sb_copy_data;
--	struct list_head sb_remount;
--	struct list_head sb_kern_mount;
--	struct list_head sb_show_options;
--	struct list_head sb_statfs;
--	struct list_head sb_mount;
--	struct list_head sb_umount;
--	struct list_head sb_pivotroot;
--	struct list_head sb_set_mnt_opts;
--	struct list_head sb_clone_mnt_opts;
--	struct list_head sb_parse_opts_str;
--	struct list_head dentry_init_security;
--	struct list_head dentry_create_files_as;
-+	struct hlist_head binder_set_context_mgr;
-+	struct hlist_head binder_transaction;
-+	struct hlist_head binder_transfer_binder;
-+	struct hlist_head binder_transfer_file;
-+	struct hlist_head ptrace_access_check;
-+	struct hlist_head ptrace_traceme;
-+	struct hlist_head capget;
-+	struct hlist_head capset;
-+	struct hlist_head capable;
-+	struct hlist_head quotactl;
-+	struct hlist_head quota_on;
-+	struct hlist_head syslog;
-+	struct hlist_head settime;
-+	struct hlist_head vm_enough_memory;
-+	struct hlist_head bprm_set_creds;
-+	struct hlist_head bprm_check_security;
-+	struct hlist_head bprm_committing_creds;
-+	struct hlist_head bprm_committed_creds;
-+	struct hlist_head sb_alloc_security;
-+	struct hlist_head sb_free_security;
-+	struct hlist_head sb_copy_data;
-+	struct hlist_head sb_remount;
-+	struct hlist_head sb_kern_mount;
-+	struct hlist_head sb_show_options;
-+	struct hlist_head sb_statfs;
-+	struct hlist_head sb_mount;
-+	struct hlist_head sb_umount;
-+	struct hlist_head sb_pivotroot;
-+	struct hlist_head sb_set_mnt_opts;
-+	struct hlist_head sb_clone_mnt_opts;
-+	struct hlist_head sb_parse_opts_str;
-+	struct hlist_head dentry_init_security;
-+	struct hlist_head dentry_create_files_as;
- #ifdef CONFIG_SECURITY_PATH
--	struct list_head path_unlink;
--	struct list_head path_mkdir;
--	struct list_head path_rmdir;
--	struct list_head path_mknod;
--	struct list_head path_truncate;
--	struct list_head path_symlink;
--	struct list_head path_link;
--	struct list_head path_rename;
--	struct list_head path_chmod;
--	struct list_head path_chown;
--	struct list_head path_chroot;
-+	struct hlist_head path_unlink;
-+	struct hlist_head path_mkdir;
-+	struct hlist_head path_rmdir;
-+	struct hlist_head path_mknod;
-+	struct hlist_head path_truncate;
-+	struct hlist_head path_symlink;
-+	struct hlist_head path_link;
-+	struct hlist_head path_rename;
-+	struct hlist_head path_chmod;
-+	struct hlist_head path_chown;
-+	struct hlist_head path_chroot;
- #endif
--	struct list_head inode_alloc_security;
--	struct list_head inode_free_security;
--	struct list_head inode_init_security;
--	struct list_head inode_create;
--	struct list_head inode_link;
--	struct list_head inode_unlink;
--	struct list_head inode_symlink;
--	struct list_head inode_mkdir;
--	struct list_head inode_rmdir;
--	struct list_head inode_mknod;
--	struct list_head inode_rename;
--	struct list_head inode_readlink;
--	struct list_head inode_follow_link;
--	struct list_head inode_permission;
--	struct list_head inode_setattr;
--	struct list_head inode_getattr;
--	struct list_head inode_setxattr;
--	struct list_head inode_post_setxattr;
--	struct list_head inode_getxattr;
--	struct list_head inode_listxattr;
--	struct list_head inode_removexattr;
--	struct list_head inode_need_killpriv;
--	struct list_head inode_killpriv;
--	struct list_head inode_getsecurity;
--	struct list_head inode_setsecurity;
--	struct list_head inode_listsecurity;
--	struct list_head inode_getsecid;
--	struct list_head inode_copy_up;
--	struct list_head inode_copy_up_xattr;
--	struct list_head file_permission;
--	struct list_head file_alloc_security;
--	struct list_head file_free_security;
--	struct list_head file_ioctl;
--	struct list_head mmap_addr;
--	struct list_head mmap_file;
--	struct list_head file_mprotect;
--	struct list_head file_lock;
--	struct list_head file_fcntl;
--	struct list_head file_set_fowner;
--	struct list_head file_send_sigiotask;
--	struct list_head file_receive;
--	struct list_head file_open;
--	struct list_head task_alloc;
--	struct list_head task_free;
--	struct list_head cred_alloc_blank;
--	struct list_head cred_free;
--	struct list_head cred_prepare;
--	struct list_head cred_transfer;
--	struct list_head kernel_act_as;
--	struct list_head kernel_create_files_as;
--	struct list_head kernel_read_file;
--	struct list_head kernel_post_read_file;
--	struct list_head kernel_module_request;
--	struct list_head task_fix_setuid;
--	struct list_head task_setpgid;
--	struct list_head task_getpgid;
--	struct list_head task_getsid;
--	struct list_head task_getsecid;
--	struct list_head task_setnice;
--	struct list_head task_setioprio;
--	struct list_head task_getioprio;
--	struct list_head task_prlimit;
--	struct list_head task_setrlimit;
--	struct list_head task_setscheduler;
--	struct list_head task_getscheduler;
--	struct list_head task_movememory;
--	struct list_head task_kill;
--	struct list_head task_prctl;
--	struct list_head task_to_inode;
--	struct list_head ipc_permission;
--	struct list_head ipc_getsecid;
--	struct list_head msg_msg_alloc_security;
--	struct list_head msg_msg_free_security;
--	struct list_head msg_queue_alloc_security;
--	struct list_head msg_queue_free_security;
--	struct list_head msg_queue_associate;
--	struct list_head msg_queue_msgctl;
--	struct list_head msg_queue_msgsnd;
--	struct list_head msg_queue_msgrcv;
--	struct list_head shm_alloc_security;
--	struct list_head shm_free_security;
--	struct list_head shm_associate;
--	struct list_head shm_shmctl;
--	struct list_head shm_shmat;
--	struct list_head sem_alloc_security;
--	struct list_head sem_free_security;
--	struct list_head sem_associate;
--	struct list_head sem_semctl;
--	struct list_head sem_semop;
--	struct list_head netlink_send;
--	struct list_head d_instantiate;
--	struct list_head getprocattr;
--	struct list_head setprocattr;
--	struct list_head ismaclabel;
--	struct list_head secid_to_secctx;
--	struct list_head secctx_to_secid;
--	struct list_head release_secctx;
--	struct list_head inode_invalidate_secctx;
--	struct list_head inode_notifysecctx;
--	struct list_head inode_setsecctx;
--	struct list_head inode_getsecctx;
-+	struct hlist_head inode_alloc_security;
-+	struct hlist_head inode_free_security;
-+	struct hlist_head inode_init_security;
-+	struct hlist_head inode_create;
-+	struct hlist_head inode_link;
-+	struct hlist_head inode_unlink;
-+	struct hlist_head inode_symlink;
-+	struct hlist_head inode_mkdir;
-+	struct hlist_head inode_rmdir;
-+	struct hlist_head inode_mknod;
-+	struct hlist_head inode_rename;
-+	struct hlist_head inode_readlink;
-+	struct hlist_head inode_follow_link;
-+	struct hlist_head inode_permission;
-+	struct hlist_head inode_setattr;
-+	struct hlist_head inode_getattr;
-+	struct hlist_head inode_setxattr;
-+	struct hlist_head inode_post_setxattr;
-+	struct hlist_head inode_getxattr;
-+	struct hlist_head inode_listxattr;
-+	struct hlist_head inode_removexattr;
-+	struct hlist_head inode_need_killpriv;
-+	struct hlist_head inode_killpriv;
-+	struct hlist_head inode_getsecurity;
-+	struct hlist_head inode_setsecurity;
-+	struct hlist_head inode_listsecurity;
-+	struct hlist_head inode_getsecid;
-+	struct hlist_head inode_copy_up;
-+	struct hlist_head inode_copy_up_xattr;
-+	struct hlist_head file_permission;
-+	struct hlist_head file_alloc_security;
-+	struct hlist_head file_free_security;
-+	struct hlist_head file_ioctl;
-+	struct hlist_head mmap_addr;
-+	struct hlist_head mmap_file;
-+	struct hlist_head file_mprotect;
-+	struct hlist_head file_lock;
-+	struct hlist_head file_fcntl;
-+	struct hlist_head file_set_fowner;
-+	struct hlist_head file_send_sigiotask;
-+	struct hlist_head file_receive;
-+	struct hlist_head file_open;
-+	struct hlist_head task_alloc;
-+	struct hlist_head task_free;
-+	struct hlist_head cred_alloc_blank;
-+	struct hlist_head cred_free;
-+	struct hlist_head cred_prepare;
-+	struct hlist_head cred_transfer;
-+	struct hlist_head kernel_act_as;
-+	struct hlist_head kernel_create_files_as;
-+	struct hlist_head kernel_read_file;
-+	struct hlist_head kernel_post_read_file;
-+	struct hlist_head kernel_module_request;
-+	struct hlist_head task_fix_setuid;
-+	struct hlist_head task_setpgid;
-+	struct hlist_head task_getpgid;
-+	struct hlist_head task_getsid;
-+	struct hlist_head task_getsecid;
-+	struct hlist_head task_setnice;
-+	struct hlist_head task_setioprio;
-+	struct hlist_head task_getioprio;
-+	struct hlist_head task_prlimit;
-+	struct hlist_head task_setrlimit;
-+	struct hlist_head task_setscheduler;
-+	struct hlist_head task_getscheduler;
-+	struct hlist_head task_movememory;
-+	struct hlist_head task_kill;
-+	struct hlist_head task_prctl;
-+	struct hlist_head task_to_inode;
-+	struct hlist_head ipc_permission;
-+	struct hlist_head ipc_getsecid;
-+	struct hlist_head msg_msg_alloc_security;
-+	struct hlist_head msg_msg_free_security;
-+	struct hlist_head msg_queue_alloc_security;
-+	struct hlist_head msg_queue_free_security;
-+	struct hlist_head msg_queue_associate;
-+	struct hlist_head msg_queue_msgctl;
-+	struct hlist_head msg_queue_msgsnd;
-+	struct hlist_head msg_queue_msgrcv;
-+	struct hlist_head shm_alloc_security;
-+	struct hlist_head shm_free_security;
-+	struct hlist_head shm_associate;
-+	struct hlist_head shm_shmctl;
-+	struct hlist_head shm_shmat;
-+	struct hlist_head sem_alloc_security;
-+	struct hlist_head sem_free_security;
-+	struct hlist_head sem_associate;
-+	struct hlist_head sem_semctl;
-+	struct hlist_head sem_semop;
-+	struct hlist_head netlink_send;
-+	struct hlist_head d_instantiate;
-+	struct hlist_head getprocattr;
-+	struct hlist_head setprocattr;
-+	struct hlist_head ismaclabel;
-+	struct hlist_head secid_to_secctx;
-+	struct hlist_head secctx_to_secid;
-+	struct hlist_head release_secctx;
-+	struct hlist_head inode_invalidate_secctx;
-+	struct hlist_head inode_notifysecctx;
-+	struct hlist_head inode_setsecctx;
-+	struct hlist_head inode_getsecctx;
- #ifdef CONFIG_SECURITY_NETWORK
--	struct list_head unix_stream_connect;
--	struct list_head unix_may_send;
--	struct list_head socket_create;
--	struct list_head socket_post_create;
--	struct list_head socket_bind;
--	struct list_head socket_connect;
--	struct list_head socket_listen;
--	struct list_head socket_accept;
--	struct list_head socket_sendmsg;
--	struct list_head socket_recvmsg;
--	struct list_head socket_getsockname;
--	struct list_head socket_getpeername;
--	struct list_head socket_getsockopt;
--	struct list_head socket_setsockopt;
--	struct list_head socket_shutdown;
--	struct list_head socket_sock_rcv_skb;
--	struct list_head socket_getpeersec_stream;
--	struct list_head socket_getpeersec_dgram;
--	struct list_head sk_alloc_security;
--	struct list_head sk_free_security;
--	struct list_head sk_clone_security;
--	struct list_head sk_getsecid;
--	struct list_head sock_graft;
--	struct list_head inet_conn_request;
--	struct list_head inet_csk_clone;
--	struct list_head inet_conn_established;
--	struct list_head secmark_relabel_packet;
--	struct list_head secmark_refcount_inc;
--	struct list_head secmark_refcount_dec;
--	struct list_head req_classify_flow;
--	struct list_head tun_dev_alloc_security;
--	struct list_head tun_dev_free_security;
--	struct list_head tun_dev_create;
--	struct list_head tun_dev_attach_queue;
--	struct list_head tun_dev_attach;
--	struct list_head tun_dev_open;
-+	struct hlist_head unix_stream_connect;
-+	struct hlist_head unix_may_send;
-+	struct hlist_head socket_create;
-+	struct hlist_head socket_post_create;
-+	struct hlist_head socket_bind;
-+	struct hlist_head socket_connect;
-+	struct hlist_head socket_listen;
-+	struct hlist_head socket_accept;
-+	struct hlist_head socket_sendmsg;
-+	struct hlist_head socket_recvmsg;
-+	struct hlist_head socket_getsockname;
-+	struct hlist_head socket_getpeername;
-+	struct hlist_head socket_getsockopt;
-+	struct hlist_head socket_setsockopt;
-+	struct hlist_head socket_shutdown;
-+	struct hlist_head socket_sock_rcv_skb;
-+	struct hlist_head socket_getpeersec_stream;
-+	struct hlist_head socket_getpeersec_dgram;
-+	struct hlist_head sk_alloc_security;
-+	struct hlist_head sk_free_security;
-+	struct hlist_head sk_clone_security;
-+	struct hlist_head sk_getsecid;
-+	struct hlist_head sock_graft;
-+	struct hlist_head inet_conn_request;
-+	struct hlist_head inet_csk_clone;
-+	struct hlist_head inet_conn_established;
-+	struct hlist_head secmark_relabel_packet;
-+	struct hlist_head secmark_refcount_inc;
-+	struct hlist_head secmark_refcount_dec;
-+	struct hlist_head req_classify_flow;
-+	struct hlist_head tun_dev_alloc_security;
-+	struct hlist_head tun_dev_free_security;
-+	struct hlist_head tun_dev_create;
-+	struct hlist_head tun_dev_attach_queue;
-+	struct hlist_head tun_dev_attach;
-+	struct hlist_head tun_dev_open;
- #endif	/* CONFIG_SECURITY_NETWORK */
- #ifdef CONFIG_SECURITY_INFINIBAND
--	struct list_head ib_pkey_access;
--	struct list_head ib_endport_manage_subnet;
--	struct list_head ib_alloc_security;
--	struct list_head ib_free_security;
-+	struct hlist_head ib_pkey_access;
-+	struct hlist_head ib_endport_manage_subnet;
-+	struct hlist_head ib_alloc_security;
-+	struct hlist_head ib_free_security;
- #endif	/* CONFIG_SECURITY_INFINIBAND */
- #ifdef CONFIG_SECURITY_NETWORK_XFRM
--	struct list_head xfrm_policy_alloc_security;
--	struct list_head xfrm_policy_clone_security;
--	struct list_head xfrm_policy_free_security;
--	struct list_head xfrm_policy_delete_security;
--	struct list_head xfrm_state_alloc;
--	struct list_head xfrm_state_alloc_acquire;
--	struct list_head xfrm_state_free_security;
--	struct list_head xfrm_state_delete_security;
--	struct list_head xfrm_policy_lookup;
--	struct list_head xfrm_state_pol_flow_match;
--	struct list_head xfrm_decode_session;
-+	struct hlist_head xfrm_policy_alloc_security;
-+	struct hlist_head xfrm_policy_clone_security;
-+	struct hlist_head xfrm_policy_free_security;
-+	struct hlist_head xfrm_policy_delete_security;
-+	struct hlist_head xfrm_state_alloc;
-+	struct hlist_head xfrm_state_alloc_acquire;
-+	struct hlist_head xfrm_state_free_security;
-+	struct hlist_head xfrm_state_delete_security;
-+	struct hlist_head xfrm_policy_lookup;
-+	struct hlist_head xfrm_state_pol_flow_match;
-+	struct hlist_head xfrm_decode_session;
- #endif	/* CONFIG_SECURITY_NETWORK_XFRM */
- #ifdef CONFIG_KEYS
--	struct list_head key_alloc;
--	struct list_head key_free;
--	struct list_head key_permission;
--	struct list_head key_getsecurity;
-+	struct hlist_head key_alloc;
-+	struct hlist_head key_free;
-+	struct hlist_head key_permission;
-+	struct hlist_head key_getsecurity;
- #endif	/* CONFIG_KEYS */
- #ifdef CONFIG_AUDIT
--	struct list_head audit_rule_init;
--	struct list_head audit_rule_known;
--	struct list_head audit_rule_match;
--	struct list_head audit_rule_free;
-+	struct hlist_head audit_rule_init;
-+	struct hlist_head audit_rule_known;
-+	struct hlist_head audit_rule_match;
-+	struct hlist_head audit_rule_free;
- #endif /* CONFIG_AUDIT */
- #ifdef CONFIG_BPF_SYSCALL
--	struct list_head bpf;
--	struct list_head bpf_map;
--	struct list_head bpf_prog;
--	struct list_head bpf_map_alloc_security;
--	struct list_head bpf_map_free_security;
--	struct list_head bpf_prog_alloc_security;
--	struct list_head bpf_prog_free_security;
-+	struct hlist_head bpf;
-+	struct hlist_head bpf_map;
-+	struct hlist_head bpf_prog;
-+	struct hlist_head bpf_map_alloc_security;
-+	struct hlist_head bpf_map_free_security;
-+	struct hlist_head bpf_prog_alloc_security;
-+	struct hlist_head bpf_prog_free_security;
- #endif /* CONFIG_BPF_SYSCALL */
- } __randomize_layout;
+ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+-				char *lsm);
++				char *lsm, bool is_mutable);
  
-@@ -1962,8 +1962,8 @@ struct security_hook_heads {
-  * For use with generic list macros for common operations.
+-#ifdef CONFIG_SECURITY_SELINUX_DISABLE
++#define __lsm_ro_after_init	__ro_after_init
++/* Currently required to handle SELinux runtime hook disable. */
++#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
++#define __lsm_mutable_after_init
+ /*
+  * Assuring the safety of deleting a security module is up to
+  * the security module involved. This may entail ordering the
+@@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+  * disabling their module is a good idea needs to be at least as
+  * careful as the SELinux team.
   */
- struct security_hook_list {
--	struct list_head		list;
--	struct list_head		*head;
-+	struct hlist_node		list;
-+	struct hlist_head		*head;
- 	union security_list_options	hook;
- 	char				*lsm;
- } __randomize_layout;
-@@ -2002,7 +2002,7 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- 	int i;
+-static inline void security_delete_hooks(struct security_hook_list *hooks,
+-						int count)
+-{
+-	int i;
+-
+-	for (i = 0; i < count; i++)
+-		hlist_del_rcu(&hooks[i].list);
+-}
+-#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+-
+-/* Currently required to handle SELinux runtime hook disable. */
+-#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+-#define __lsm_ro_after_init
++extern void security_delete_hooks(struct security_hook_list *hooks, int count);
+ #else
+-#define __lsm_ro_after_init	__ro_after_init
++#define __lsm_mutable_after_init __ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
  
- 	for (i = 0; i < count; i++)
--		list_del_rcu(&hooks[i].list);
-+		hlist_del_rcu(&hooks[i].list);
+ extern int __init security_module_enable(const char *module);
+diff --git a/security/Kconfig b/security/Kconfig
+index c4302067a3ad..a3b8b1142e6f 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -32,7 +32,7 @@ config SECURITY
+ 	  If you are unsure how to answer this question, answer N.
+ 
+ config SECURITY_WRITABLE_HOOKS
+-	depends on SECURITY
++	depends on SECURITY && SRCU
+ 	bool
+ 	default n
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 9a65eeaf7dfa..d6cca8169df0 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
+ 		goto buffers_out;
+ 	}
+ 	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
+-				"apparmor");
++				"apparmor", false);
+ 
+ 	/* Report that AppArmor successfully initialized */
+ 	apparmor_initialized = 1;
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 48620c93d697..fe4b0d9d44ce 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+ void __init capability_add_hooks(void)
+ {
+ 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+-				"capability");
++				"capability", false);
  }
- #endif /* CONFIG_SECURITY_SELINUX_DISABLE */
  
+ #endif /* CONFIG_SECURITY */
 diff --git a/security/security.c b/security/security.c
-index 1cd8526cb0b7..3cafff61b049 100644
+index 3cafff61b049..c5e770e96616 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -61,11 +61,11 @@ static void __init do_security_initcalls(void)
- int __init security_init(void)
- {
- 	int i;
--	struct list_head *list = (struct list_head *) &security_hook_heads;
-+	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
+@@ -29,6 +29,11 @@
+ #include <linux/backing-dev.h>
+ #include <linux/string.h>
+ #include <net/flow.h>
++#include <linux/srcu.h>
++#include <linux/mutex.h>
++
++#define SECURITY_HOOK_COUNT \
++	(sizeof(security_hook_heads) / sizeof(struct hlist_head))
  
--	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct list_head);
-+	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
- 	     i++)
--		INIT_LIST_HEAD(&list[i]);
-+		INIT_HLIST_HEAD(&list[i]);
+ #define MAX_LSM_EVM_XATTR	2
+ 
+@@ -36,7 +41,10 @@
+ #define SECURITY_NAME_MAX	10
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
++EXPORT_SYMBOL_GPL(security_hook_heads);
++
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
++static DEFINE_MUTEX(security_hook_mutex);
+ 
+ char *lsm_names;
+ /* Boot-time LSM user choice */
+@@ -53,6 +61,81 @@ static void __init do_security_initcalls(void)
+ 	}
+ }
+ 
++#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
++static struct srcu_struct security_hook_srcu;
++
++static void security_add_hook(struct security_hook_list *hook, bool is_mutable)
++{
++	struct security_hook_list *mutable_hook;
++	union {
++		void *cb_ptr;
++		union security_list_options slo;
++	} hook_options;
++
++	hlist_for_each_entry(mutable_hook, hook->head, list) {
++		hook_options.slo = mutable_hook->hook;
++		if (hook_options.cb_ptr)
++			continue;
++
++		if (is_mutable)
++			hlist_add_behind_rcu(&hook->list, &mutable_hook->list);
++		else
++			hlist_add_before_rcu(&hook->list, &mutable_hook->list);
++		return;
++	}
++
++	panic("Unable to install hook, cannot find mutable hook\n");
++}
++
++static void __init add_mutable_hooks(void)
++{
++	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
++	struct security_hook_list *shl;
++	int i;
++
++	for (i = 0; i < SECURITY_HOOK_COUNT; i++) {
++		shl = kzalloc(sizeof(*shl), GFP_KERNEL);
++		if (!shl)
++			panic("Unable to allocate memory for mutable hooks\n");
++		shl->head = &list[i];
++		hlist_add_head_rcu(&shl->list, shl->head);
++	}
++}
++
++static void __init setup_mutable_hooks(void)
++{
++	int ret;
++
++	ret = init_srcu_struct(&security_hook_srcu);
++	if (ret)
++		panic("Could not initialize srcu: %d\n", ret);
++	add_mutable_hooks();
++}
++
++void security_delete_hooks(struct security_hook_list *hooks, int count)
++{
++	int i;
++
++	mutex_lock(&security_hook_mutex);
++	for (i = 0; i < count; i++)
++		hlist_del_rcu(&hooks[i].list);
++	mutex_unlock(&security_hook_mutex);
++
++	synchronize_srcu(&security_hook_srcu);
++}
++EXPORT_SYMBOL_GPL(security_delete_hooks);
++
++#else
++static void security_add_hook(struct security_hook_list *hook, bool is_mutable)
++{
++	WARN_ONCE(is_mutable,
++			"Mutable hook loaded with writable hooks disabled");
++	hlist_add_tail_rcu(&hook->list, hook->head);
++}
++
++static void __init setup_mutable_hooks(void) {}
++#endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
++
+ /**
+  * security_init - initializes the security framework
+  *
+@@ -63,11 +146,11 @@ int __init security_init(void)
+ 	int i;
+ 	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
+ 
+-	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+-	     i++)
++	for (i = 0; i < SECURITY_HOOK_COUNT; i++)
+ 		INIT_HLIST_HEAD(&list[i]);
  	pr_info("Security Framework initialized\n");
  
++	setup_mutable_hooks();
  	/*
-@@ -163,7 +163,7 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 	 * Load minor LSMs, with the capability module always first.
+ 	 */
+@@ -153,21 +236,26 @@ int __init security_module_enable(const char *module)
+  * @hooks: the hooks to add
+  * @count: the number of hooks to add
+  * @lsm: the name of the security module
++ * @is_mutable: is this hook mutable after kernel init
+  *
+  * Each LSM has to register its hooks with the infrastructure.
+  */
+-void __init security_add_hooks(struct security_hook_list *hooks, int count,
+-				char *lsm)
++void security_add_hooks(struct security_hook_list *hooks, int count,
++				char *lsm, bool is_mutable)
+ {
+ 	int i;
  
++	mutex_lock(&security_hook_mutex);
  	for (i = 0; i < count; i++) {
  		hooks[i].lsm = lsm;
--		list_add_tail_rcu(&hooks[i].list, hooks[i].head);
-+		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
+-		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
++		security_add_hook(&hooks[i], is_mutable);
  	}
++	mutex_unlock(&security_hook_mutex);
++
  	if (lsm_append(lsm, &lsm_names) < 0)
  		panic("%s - Cannot get early memory.\n", __func__);
-@@ -201,7 +201,7 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
- 	do {							\
- 		struct security_hook_list *P;			\
- 								\
--		list_for_each_entry(P, &security_hook_heads.FUNC, list)	\
-+		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
- 			P->hook.FUNC(__VA_ARGS__);		\
- 	} while (0)
+ }
++EXPORT_SYMBOL_GPL(security_add_hooks);
  
-@@ -210,7 +210,7 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
+ int call_lsm_notifier(enum lsm_event event, void *data)
+ {
+@@ -197,6 +285,38 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
+  *	This is a hook that returns a value.
+  */
+ 
++#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
++#define call_void_hook(FUNC, ...)					\
++	do {								\
++		struct security_hook_list *P;				\
++		int srcu_idx;						\
++									\
++		srcu_idx = srcu_read_lock(&security_hook_srcu);		\
++		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
++			if (P->hook.FUNC)				\
++				P->hook.FUNC(__VA_ARGS__);		\
++		srcu_read_unlock(&security_hook_srcu, srcu_idx);	\
++	} while (0)
++
++#define call_int_hook(FUNC, IRC, ...) ({			\
++	int srcu_idx, RC = IRC;					\
++								\
++	srcu_idx = srcu_read_lock(&security_hook_srcu);		\
++	do {							\
++		struct security_hook_list *P;			\
++								\
++		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
++			if (P->hook.FUNC) {			\
++				RC = P->hook.FUNC(__VA_ARGS__);	\
++				if (RC != 0)			\
++					break;			\
++			}					\
++		}						\
++	} while (0);						\
++	srcu_read_unlock(&security_hook_srcu, srcu_idx);	\
++	RC;							\
++})
++#else
+ #define call_void_hook(FUNC, ...)				\
  	do {							\
  		struct security_hook_list *P;			\
- 								\
--		list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
-+		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
- 			RC = P->hook.FUNC(__VA_ARGS__);		\
- 			if (RC != 0)				\
- 				break;				\
-@@ -317,7 +317,7 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 	 * agree that it should be set it will. If any module
+@@ -218,6 +338,7 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
+ 	} while (0);						\
+ 	RC;							\
+ })
++#endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+ 
+ /* Security operations */
+ 
+@@ -304,7 +425,7 @@ int security_settime64(const struct timespec64 *ts, const struct timezone *tz)
+ 	return call_int_hook(settime, 0, ts, tz);
+ }
+ 
+-int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
++static int __security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+ {
+ 	struct security_hook_list *hp;
+ 	int cap_sys_admin = 1;
+@@ -318,6 +439,8 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
  	 * thinks it should not be set it won't.
  	 */
--	list_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
-+	hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
+ 	hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
++		if (!hp->hook.vm_enough_memory)
++			continue;
  		rc = hp->hook.vm_enough_memory(mm, pages);
  		if (rc <= 0) {
  			cap_sys_admin = 0;
-@@ -805,7 +805,7 @@ int security_inode_getsecurity(struct inode *inode, const char *name, void **buf
- 	/*
+@@ -327,6 +450,24 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+ 	return __vm_enough_memory(mm, pages, cap_sys_admin);
+ }
+ 
++#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
++int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
++{
++	int srcu_idx, ret;
++
++	srcu_idx = srcu_read_lock(&security_hook_srcu);
++	ret = __security_vm_enough_memory_mm(mm, pages);
++	srcu_read_unlock(&security_hook_srcu, srcu_idx);
++
++	return ret;
++}
++#else
++int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
++{
++	return __security_vm_enough_memory_mm(mm, pages);
++}
++#endif
++
+ int security_bprm_set_creds(struct linux_binprm *bprm)
+ {
+ 	return call_int_hook(bprm_set_creds, 0, bprm);
+@@ -795,7 +936,8 @@ int security_inode_killpriv(struct dentry *dentry)
+ 	return call_int_hook(inode_killpriv, 0, dentry);
+ }
+ 
+-int security_inode_getsecurity(struct inode *inode, const char *name, void **buffer, bool alloc)
++static int __security_inode_getsecurity(struct inode *inode, const char *name,
++					void **buffer, bool alloc)
+ {
+ 	struct security_hook_list *hp;
+ 	int rc;
+@@ -806,14 +948,19 @@ int security_inode_getsecurity(struct inode *inode, const char *name, void **buf
  	 * Only one module will provide an attribute with a given name.
  	 */
--	list_for_each_entry(hp, &security_hook_heads.inode_getsecurity, list) {
-+	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecurity, list) {
+ 	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecurity, list) {
++		if (!hp->hook.inode_getsecurity)
++			continue;
  		rc = hp->hook.inode_getsecurity(inode, name, buffer, alloc);
  		if (rc != -EOPNOTSUPP)
  			return rc;
-@@ -823,7 +823,7 @@ int security_inode_setsecurity(struct inode *inode, const char *name, const void
- 	/*
+ 	}
++
+ 	return -EOPNOTSUPP;
+ }
+ 
+-int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags)
++static int __security_inode_setsecurity(struct inode *inode, const char *name,
++					const void *value, size_t size,
++					int flags)
+ {
+ 	struct security_hook_list *hp;
+ 	int rc;
+@@ -824,14 +971,58 @@ int security_inode_setsecurity(struct inode *inode, const char *name, const void
  	 * Only one module will provide an attribute with a given name.
  	 */
--	list_for_each_entry(hp, &security_hook_heads.inode_setsecurity, list) {
-+	hlist_for_each_entry(hp, &security_hook_heads.inode_setsecurity, list) {
+ 	hlist_for_each_entry(hp, &security_hook_heads.inode_setsecurity, list) {
++		if (!hp->hook.inode_setsecurity)
++			continue;
  		rc = hp->hook.inode_setsecurity(inode, name, value, size,
- 								flags);
+-								flags);
++						flags);
  		if (rc != -EOPNOTSUPP)
-@@ -1126,7 +1126,7 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			return rc;
+ 	}
++
+ 	return -EOPNOTSUPP;
+ }
+ 
++
++#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
++int security_inode_getsecurity(struct inode *inode, const char *name,
++				void **buffer, bool alloc)
++{
++	int srcu_idx, ret;
++
++	srcu_idx = srcu_read_lock(&security_hook_srcu);
++	ret = __security_inode_getsecurity(inode, name, buffer, alloc);
++	srcu_read_unlock(&security_hook_srcu, srcu_idx);
++
++	return ret;
++
++}
++
++int security_inode_setsecurity(struct inode *inode, const char *name,
++				const void *value, size_t size, int flags)
++{
++	int srcu_idx, ret;
++
++	srcu_idx = srcu_read_lock(&security_hook_srcu);
++	ret = __security_inode_setsecurity(inode, name, value, size, flags);
++	srcu_read_unlock(&security_hook_srcu, srcu_idx);
++
++	return ret;
++}
++#else
++int security_inode_getsecurity(struct inode *inode, const char *name,
++				void **buffer, bool alloc)
++{
++	return __security_inode_getsecurity(inode, name, buffer, alloc);
++}
++
++int security_inode_setsecurity(struct inode *inode, const char *name,
++				const void *value, size_t size, int flags)
++{
++	return __security_inode_setsecurity(inode, name, value, size, flags);
++}
++#endif
++
++
+ int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
+ {
+ 	if (unlikely(IS_PRIVATE(inode)))
+@@ -1119,14 +1310,17 @@ int security_task_kill(struct task_struct *p, struct siginfo *info,
+ 	return call_int_hook(task_kill, 0, p, info, sig, secid);
+ }
+ 
+-int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+-			 unsigned long arg4, unsigned long arg5)
++static int __security_task_prctl(int option, unsigned long arg2,
++				 unsigned long arg3, unsigned long arg4,
++				 unsigned long arg5)
+ {
+ 	int thisrc;
  	int rc = -ENOSYS;
  	struct security_hook_list *hp;
  
--	list_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
-+	hlist_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
+ 	hlist_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
++		if (!hp->hook.task_prctl)
++			continue;
  		thisrc = hp->hook.task_prctl(option, arg2, arg3, arg4, arg5);
  		if (thisrc != -ENOSYS) {
  			rc = thisrc;
-@@ -1629,7 +1629,7 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+@@ -1137,6 +1331,26 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 	return rc;
+ }
+ 
++#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
++int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
++			 unsigned long arg4, unsigned long arg5)
++{
++	int srcu_idx, ret;
++
++	srcu_idx = srcu_read_lock(&security_hook_srcu);
++	ret = __security_task_prctl(option, arg2, arg3, arg4, arg5);
++	srcu_read_unlock(&security_hook_srcu, srcu_idx);
++
++	return ret;
++}
++#else
++int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
++			 unsigned long arg4, unsigned long arg5)
++{
++	return __security_task_prctl(option, arg2, arg3, arg4, arg5);
++}
++#endif
++
+ void security_task_to_inode(struct task_struct *p, struct inode *inode)
+ {
+ 	call_void_hook(task_to_inode, p, inode);
+@@ -1613,9 +1827,9 @@ int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
+ 	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid, dir);
+ }
+ 
+-int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+-				       struct xfrm_policy *xp,
+-				       const struct flowi *fl)
++static int __security_xfrm_state_pol_flow_match(struct xfrm_state *x,
++						struct xfrm_policy *xp,
++						const struct flowi *fl)
+ {
+ 	struct security_hook_list *hp;
+ 	int rc = 1;
+@@ -1629,14 +1843,40 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
  	 * For speed optimization, we explicitly break the loop rather than
  	 * using the macro
  	 */
--	list_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
-+	hlist_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
+-	hlist_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
++	hlist_for_each_entry(hp,
++				&security_hook_heads.xfrm_state_pol_flow_match,
  				list) {
++		if (!hp->hook.xfrm_state_pol_flow_match)
++			continue;
  		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, fl);
  		break;
+ 	}
++
+ 	return rc;
+ }
+ 
++#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
++int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
++				       struct xfrm_policy *xp,
++				       const struct flowi *fl)
++{
++	int srcu_idx, ret;
++
++	srcu_idx = srcu_read_lock(&security_hook_srcu);
++	ret = __security_xfrm_state_pol_flow_match(x, xp, fl);
++	srcu_read_unlock(&security_hook_srcu, srcu_idx);
++
++	return ret;
++}
++#else
++int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
++				       struct xfrm_policy *xp,
++				       const struct flowi *fl)
++{
++	return __security_xfrm_state_pol_flow_match(x, xp, fl);
++}
++#endif
++
+ int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid)
+ {
+ 	return call_int_hook(xfrm_decode_session, 0, skb, secid, 1);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 8644d864e3c1..f05184a3a7a6 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6393,7 +6393,7 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
+ }
+ #endif
+ 
+-static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
++static struct security_hook_list selinux_hooks[] __lsm_mutable_after_init = {
+ 	LSM_HOOK_INIT(binder_set_context_mgr, selinux_binder_set_context_mgr),
+ 	LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
+ 	LSM_HOOK_INIT(binder_transfer_binder, selinux_binder_transfer_binder),
+@@ -6651,7 +6651,8 @@ static __init int selinux_init(void)
+ 					    0, SLAB_PANIC, NULL);
+ 	avc_init();
+ 
+-	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
++	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux",
++				IS_ENABLED(CONFIG_SECURITY_SELINUX_DISABLE));
+ 
+ 	if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
+ 		panic("SELinux: Unable to register AVC netcache callback\n");
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 03fdecba93bb..7a9f1bb06c8e 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4902,7 +4902,8 @@ static __init int smack_init(void)
+ 	/*
+ 	 * Register with LSM
+ 	 */
+-	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
++	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack",
++				false);
+ 
+ 	return 0;
+ }
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 213b8c593668..ba74fab0e9a5 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -543,7 +543,8 @@ static int __init tomoyo_init(void)
+ 	if (!security_module_enable("tomoyo"))
+ 		return 0;
+ 	/* register ourselves with the security framework */
+-	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
++	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo",
++				false);
+ 	printk(KERN_INFO "TOMOYO Linux initialized\n");
+ 	cred->security = &tomoyo_kernel_domain;
+ 	tomoyo_mm_init();
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index ffda91a4a1aa..04c9aed9e951 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -480,6 +480,6 @@ static inline void yama_init_sysctl(void) { }
+ void __init yama_add_hooks(void)
+ {
+ 	pr_info("Yama: becoming mindful.\n");
+-	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
++	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama", false);
+ 	yama_init_sysctl();
+ }
 -- 
 2.14.1
 
