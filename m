@@ -1,453 +1,473 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Wed, 28 Mar 2018 19:27:04 +0900
-Subject: [PATCH v2 2/2] security: Add mechanism to safely (un)load LSMs
-	after boot time
-In-Reply-To: <19f85393f334f87ff097b3112b55a15caa3faf8d.1522185596.git.sargun@sargun.me>
-References: <cover.1522185596.git.sargun@sargun.me>
-	<19f85393f334f87ff097b3112b55a15caa3faf8d.1522185596.git.sargun@sargun.me>
-Message-ID: <201803281927.GIH12442.FMQJVOSFLFtOHO@I-love.SAKURA.ne.jp>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Wed, 28 Mar 2018 07:10:12 -0400
+Subject: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
+In-Reply-To: <87sh8lcecn.fsf@xmission.com>
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<87sh8lcecn.fsf@xmission.com>
+Message-ID: <bc03161e-394b-bf4d-48c4-858dcf05458a@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Sargun Dhillon wrote:
-> This patch introduces a mechanism to add mutable hooks and immutable
-> hooks to the callback chain. It adds an intermediary item to the
-> chain which separates mutable and immutable hooks. Immutable hooks
-> are then marked as read-only, as well as the hook heads. This does
-> not preclude some hooks being able to be mutated (removed).
-> 
-> It also wraps the hook unloading, and execution with an SRCU. One
-> SRCU is used across all hooks, as the SRCU struct can be memory
-> intensive, and hook execution time in general should be relatively
-> short.
+On 03/27/2018 07:01 PM, Eric W. Biederman wrote:
+> Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+>
+>> From: Yuqiong Sun <suny@us.ibm.com>
+>>
+>> Add new CONFIG_IMA_NS config option.  Let clone() create a new IMA
+>> namespace upon CLONE_NEWUSER flag. Attach the ima_ns data structure
+>> to user_namespace. ima_ns is allocated and freed upon IMA namespace
+>> creation and exit, which is tied to USER namespace creation and exit.
+>> Currently, the ima_ns contains no useful IMA data but only a dummy
+>> interface. This patch creates the framework for namespacing the different
+>> aspects of IMA (eg. IMA-audit, IMA-measurement, IMA-appraisal).
+> Tying IMA to the user namespace is far better than tying IMA
+> to the mount namespace.  It may even be the proper answer.
+>
+>
+> You had asked what it would take to unstick this so you won't have
+> problems next time you post and I did not get as far as answering.
+>
+> I had a conversation a while back with Mimi and I believe what was
+> agreed was that IMA to start doing it's thing early needs a write
+> to securityfs/imafs.
 
-Please fold below change into patch 1/2, for patch 1/2 is causing build warning.
+Above you say 'proper answer' for user namespace. Now this sounds like 
+making it independent.
 
-  CC      security/security.o
-security/security.c: In function ?security_init?:
-security/security.c:64:21: note: randstruct: casting between randomized structure pointer types (op0): ?struct hlist_head? and ?struct security_hook_heads?
+>
+> As such I expect the best way to create the ima namespace is by simply
+> writing to securityfs/imafs.  Possibly before the user namespace is
+> even unshared.  That would allow IMA to keep track of things from
+> before a container is created.
 
-  struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
-                     ^~~~
+So you are saying to not tie it to user namespace but make it an 
+independent namespace and to not use a clone flag (0x1000) but use the 
+filesystem to spawn a new namespace. Should that be an IMA specific file 
+or a file that can be shared with other subsystems?
 
-----------------------------------------
- randomize_layout_plugin.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+    Stefan
 
-diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-index c4a345c..6d5bbd3 100644
---- a/scripts/gcc-plugins/randomize_layout_plugin.c
-+++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-@@ -52,8 +52,8 @@ struct whitelist_entry {
- 	{ "net/unix/af_unix.c", "unix_skb_parms", "char" },
- 	/* big_key payload.data struct splashing */
- 	{ "security/keys/big_key.c", "path", "void *" },
--	/* walk struct security_hook_heads as an array of struct list_head */
--	{ "security/security.c", "list_head", "security_hook_heads" },
-+	/* walk struct security_hook_heads as an array of struct hlist_head */
-+	{ "security/security.c", "hlist_head", "security_hook_heads" },
- 	{ }
- };
- 
-----------------------------------------
+>
+> Eric
+>
+>> Changelog:
+>> v3:
+>> * Use CLONE_NEWUSER instead of CLONE_NEWNW flag
+>>
+>> v2:
+>> * Moved ima_init_ns and related functions into own file that is
+>>    always compiled; init_ima_ns will always be there
+>> * Fixed putting of imans->parent
+>> * Move IMA namespace creation from nsproxy into mount namespace
+>>    code; get rid of procfs operations for IMA namespace
+>>
+>> v1:
+>> * Use CLONE_NEWNS instead of a new CLONE_NEWIMA flag
+>> * Use existing ima.h headers
+>> * Move the ima_namespace.c to security/integrity/ima/ima_ns.c
+>> * Fix typo INFO->INO
+>> * Each namespace free's itself, removed recursively free'ing
+>>    until init_ima_ns from free_ima_ns()
+>>
+>> Signed-off-by: Yuqiong Sun <suny@us.ibm.com>
+>> Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> ---
+>>   include/linux/ima.h                      | 64 ++++++++++++++++++++++++
+>>   include/linux/user_namespace.h           |  4 ++
+>>   init/Kconfig                             |  8 +++
+>>   kernel/user.c                            |  7 +++
+>>   kernel/user_namespace.c                  | 18 +++++++
+>>   security/integrity/ima/Makefile          |  3 +-
+>>   security/integrity/ima/ima.h             |  4 ++
+>>   security/integrity/ima/ima_init.c        |  4 ++
+>>   security/integrity/ima/ima_init_ima_ns.c | 37 ++++++++++++++
+>>   security/integrity/ima/ima_ns.c          | 86 ++++++++++++++++++++++++++++++++
+>>   10 files changed, 234 insertions(+), 1 deletion(-)
+>>   create mode 100644 security/integrity/ima/ima_init_ima_ns.c
+>>   create mode 100644 security/integrity/ima/ima_ns.c
+>>
+>> diff --git a/include/linux/ima.h b/include/linux/ima.h
+>> index 0e4647e0eb60..8bca67df0ad3 100644
+>> --- a/include/linux/ima.h
+>> +++ b/include/linux/ima.h
+>> @@ -12,6 +12,7 @@
+>>   
+>>   #include <linux/fs.h>
+>>   #include <linux/kexec.h>
+>> +#include <linux/user_namespace.h>
+>>   struct linux_binprm;
+>>   
+>>   #ifdef CONFIG_IMA
+>> @@ -105,4 +106,67 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+>>   	return 0;
+>>   }
+>>   #endif /* CONFIG_IMA_APPRAISE */
+>> +
+>> +struct ima_namespace {
+>> +	struct kref kref;
+>> +	struct ima_namespace *parent;
+>> +};
+>> +
+>> +extern struct ima_namespace init_ima_ns;
+>> +
+>> +void imans_install(struct ns_common *new);
+>> +
+>> +static inline struct ima_namespace *to_ima_ns(struct ns_common *ns)
+>> +{
+>> +	return container_of(ns, struct user_namespace, ns)->ima_ns;
+>> +}
+>> +
+>> +#ifdef CONFIG_IMA_NS
+>> +
+>> +void free_ima_ns(struct kref *kref);
+>> +
+>> +static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
+>> +{
+>> +	BUG_ON(!ns);
+>> +	if (ns)
+>> +		kref_get(&ns->kref);
+>> +	return ns;
+>> +}
+>> +
+>> +static inline void put_ima_ns(struct ima_namespace *ns)
+>> +{
+>> +	BUG_ON(!ns);
+>> +	if (ns)
+>> +		kref_put(&ns->kref, free_ima_ns);
+>> +}
+>> +
+>> +struct ima_namespace *copy_ima(struct ima_namespace *old_ns);
+>> +
+>> +static inline struct ima_namespace *get_current_ns(void)
+>> +{
+>> +	return current_user_ns()->ima_ns;
+>> +}
+>> +
+>> +#else
+>> +
+>> +static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
+>> +{
+>> +	return ns;
+>> +}
+>> +
+>> +static inline void put_ima_ns(struct ima_namespace *ns)
+>> +{
+>> +	return;
+>> +}
+>> +
+>> +static inline struct ima_namespace *copy_ima(struct ima_namespace *old_ns)
+>> +{
+>> +	return old_ns;
+>> +}
+>> +
+>> +static inline struct ima_namespace *get_current_ns(void)
+>> +{
+>> +	return NULL;
+>> +}
+>> +#endif /* CONFIG_IMA_NS */
+>>   #endif /* _LINUX_IMA_H */
+>> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+>> index d6b74b91096b..8884b22d991c 100644
+>> --- a/include/linux/user_namespace.h
+>> +++ b/include/linux/user_namespace.h
+>> @@ -36,6 +36,7 @@ struct uid_gid_map { /* 64 bytes -- 1 cache line */
+>>   #define USERNS_INIT_FLAGS USERNS_SETGROUPS_ALLOWED
+>>   
+>>   struct ucounts;
+>> +struct ima_namespace;
+>>   
+>>   enum ucount_type {
+>>   	UCOUNT_USER_NAMESPACES,
+>> @@ -76,6 +77,9 @@ struct user_namespace {
+>>   #endif
+>>   	struct ucounts		*ucounts;
+>>   	int ucount_max[UCOUNT_COUNTS];
+>> +#ifdef CONFIG_IMA
+>> +	struct ima_namespace	*ima_ns;
+>> +#endif
+>>   } __randomize_layout;
+>>   
+>>   struct ucounts {
+>> diff --git a/init/Kconfig b/init/Kconfig
+>> index a9a2e2c86671..a1ad5384e081 100644
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -931,6 +931,14 @@ config NET_NS
+>>   	help
+>>   	  Allow user space to create what appear to be multiple instances
+>>   	  of the network stack.
+>> +config IMA_NS
+>> +	bool "IMA namespace"
+>> +	depends on IMA
+>> +	default y
+>> +	help
+>> +	  Allow the creation of IMA namespaces for each mount namespace.
+>> +	  Namespaced IMA data enables having IMA features work separately
+>> +	  for each mount namespace.
+>>   
+>>   endif # NAMESPACES
+>>   
+>> diff --git a/kernel/user.c b/kernel/user.c
+>> index 9a20acce460d..31c946f3adce 100644
+>> --- a/kernel/user.c
+>> +++ b/kernel/user.c
+>> @@ -19,6 +19,10 @@
+>>   #include <linux/user_namespace.h>
+>>   #include <linux/proc_ns.h>
+>>   
+>> +#ifdef CONFIG_IMA
+>> +extern struct ima_namespace init_ima_ns;
+>> +#endif
+>> +
+>>   /*
+>>    * userns count is 1 for root user, 1 for init_uts_ns,
+>>    * and 1 for... ?
+>> @@ -66,6 +70,9 @@ struct user_namespace init_user_ns = {
+>>   	.persistent_keyring_register_sem =
+>>   	__RWSEM_INITIALIZER(init_user_ns.persistent_keyring_register_sem),
+>>   #endif
+>> +#ifdef CONFIG_IMA
+>> +	.ima_ns = &init_ima_ns,
+>> +#endif
+>>   };
+>>   EXPORT_SYMBOL_GPL(init_user_ns);
+>>   
+>> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+>> index 246d4d4ce5c7..7d6e7d6e6a34 100644
+>> --- a/kernel/user_namespace.c
+>> +++ b/kernel/user_namespace.c
+>> @@ -25,6 +25,7 @@
+>>   #include <linux/fs_struct.h>
+>>   #include <linux/bsearch.h>
+>>   #include <linux/sort.h>
+>> +#include <linux/ima.h>
+>>   
+>>   static struct kmem_cache *user_ns_cachep __read_mostly;
+>>   static DEFINE_MUTEX(userns_state_mutex);
+>> @@ -140,8 +141,20 @@ int create_user_ns(struct cred *new)
+>>   	if (!setup_userns_sysctls(ns))
+>>   		goto fail_keyring;
+> Having the functions be #ifdef'd rather than the code would
+> be preferabble.
+>>   
+>> +#if CONFIG_IMA
+>> +	ns->ima_ns = copy_ima(parent_ns->ima_ns);
+>> +	if (IS_ERR(ns->ima_ns)) {
+>> +		ret = PTR_ERR(ns->ima_ns);
+>> +		goto fail_userns_sysctls;
+>> +	}
+>> +#endif
+>> +
+>>   	set_cred_user_ns(new, ns);
+>>   	return 0;
+>> +#if CONFIG_IMA
+>> +fail_userns_sysctls:
+>> +	retire_userns_sysctls(ns);
+>> +#endif
+>>   fail_keyring:
+>>   #ifdef CONFIG_PERSISTENT_KEYRINGS
+>>   	key_put(ns->persistent_keyring_register);
+>> @@ -195,6 +208,9 @@ static void free_user_ns(struct work_struct *work)
+>>   			kfree(ns->projid_map.forward);
+>>   			kfree(ns->projid_map.reverse);
+>>   		}
+>> +#ifdef CONFIG_IMA
+>> +		put_ima_ns(ns->ima_ns);
+>> +#endif
+>>   		retire_userns_sysctls(ns);
+>>   #ifdef CONFIG_PERSISTENT_KEYRINGS
+>>   		key_put(ns->persistent_keyring_register);
+>> @@ -1285,6 +1301,8 @@ static int userns_install(struct nsproxy *nsproxy, struct ns_common *ns)
+>>   	put_user_ns(cred->user_ns);
+>>   	set_cred_user_ns(cred, get_user_ns(user_ns));
+>>   
+>> +	imans_install(ns);
+>> +
+>>   	return commit_creds(cred);
+>>   }
+>>   
+>> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+>> index d921dc4f9eb0..cc60f726e651 100644
+>> --- a/security/integrity/ima/Makefile
+>> +++ b/security/integrity/ima/Makefile
+>> @@ -7,7 +7,8 @@
+>>   obj-$(CONFIG_IMA) += ima.o
+>>   
+>>   ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+>> -	 ima_policy.o ima_template.o ima_template_lib.o
+>> +	 ima_policy.o ima_template.o ima_template_lib.o ima_init_ima_ns.o
+>>   ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+>> +ima-$(CONFIG_IMA_NS) += ima_ns.o
+>>   ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+>>   obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index d52b487ad259..e98c11c7cf75 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -291,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
+>>   
+>>   #endif /* CONFIG_IMA_APPRAISE */
+>>   
+>> +int ima_ns_init(void);
+>> +struct ima_namespace;
+>> +int ima_init_namespace(struct ima_namespace *ns);
+>> +
+>>   /* LSM based policy rules require audit */
+>>   #ifdef CONFIG_IMA_LSM_RULES
+>>   
+>> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+>> index 2967d497a665..7f884a71fa1c 100644
+>> --- a/security/integrity/ima/ima_init.c
+>> +++ b/security/integrity/ima/ima_init.c
+>> @@ -137,5 +137,9 @@ int __init ima_init(void)
+>>   
+>>   	ima_init_policy();
+>>   
+>> +	rc = ima_ns_init();
+>> +	if (rc != 0)
+>> +		return rc;
+>> +
+>>   	return ima_fs_init();
+>>   }
+>> diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+>> new file mode 100644
+>> index 000000000000..52cb94b1d392
+>> --- /dev/null
+>> +++ b/security/integrity/ima/ima_init_ima_ns.c
+>> @@ -0,0 +1,37 @@
+>> +/*
+>> + * Copyright (C) 2016-2018 IBM Corporation
+>> + * Author:
+>> + *   Yuqiong Sun <suny@us.ibm.com>
+>> + *   Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation, version 2 of the License.
+>> + */
+>> +
+>> +#include <linux/export.h>
+>> +#include <linux/user_namespace.h>
+>> +#include <linux/ima.h>
+>> +
+>> +int ima_init_namespace(struct ima_namespace *ns)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +int __init ima_ns_init(void)
+>> +{
+>> +	return ima_init_namespace(&init_ima_ns);
+>> +}
+>> +
+>> +struct ima_namespace init_ima_ns = {
+>> +	.kref = KREF_INIT(1),
+>> +	.parent = NULL,
+>> +};
+>> +EXPORT_SYMBOL(init_ima_ns);
+>> +
+>> +void imans_install(struct ns_common *new)
+>> +{
+>> +	struct ima_namespace *ns = to_ima_ns(new);
+>> +
+>> +	get_ima_ns(ns);
+>> +}
+>> diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
+>> new file mode 100644
+>> index 000000000000..62148908015a
+>> --- /dev/null
+>> +++ b/security/integrity/ima/ima_ns.c
+>> @@ -0,0 +1,86 @@
+>> +/*
+>> + * Copyright (C) 2016-2018 IBM Corporation
+>> + * Author:
+>> + *  Yuqiong Sun <suny@us.ibm.com>
+>> + *  Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation, version 2 of the License.
+>> + */
+>> +
+>> +#include <linux/kref.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/ima.h>
+>> +#include <linux/mount.h>
+>> +
+>> +#include "ima.h"
+>> +
+>> +static struct ima_namespace *create_ima_ns(void)
+>> +{
+>> +	struct ima_namespace *ima_ns;
+>> +
+>> +	ima_ns = kmalloc(sizeof(*ima_ns), GFP_KERNEL);
+>> +	if (ima_ns)
+>> +		kref_init(&ima_ns->kref);
+>> +
+>> +	return ima_ns;
+>> +}
+>> +
+>> +/**
+>> + * Clone a new ns copying an original ima namespace, setting refcount to 1
+>> + *
+>> + * @old_ns: old ima namespace to clone
+>> + * Return ERR_PTR(-ENOMEM) on error (failure to kmalloc), new ns otherwise
+>> + */
+>> +static struct ima_namespace *clone_ima_ns(struct ima_namespace *old_ns)
+>> +{
+>> +	struct ima_namespace *ns;
+>> +
+>> +	ns = create_ima_ns();
+>> +	if (!ns)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	get_ima_ns(old_ns);
+>> +	ns->parent = old_ns;
+>> +
+>> +	ima_init_namespace(ns);
+>> +
+>> +	return ns;
+>> +}
+>> +
+>> +/**
+>> + * Copy task's ima namespace, or clone it if flags specifies CLONE_NEWNS.
+>> + *
+>> + * @flags: flags used in the clone syscall
+>> + * @old_ns: old ima namespace to clone
+>> + */
+>> +
+>> +struct ima_namespace *copy_ima(struct ima_namespace *old_ns)
+>> +{
+>> +	struct ima_namespace *new_ns;
+>> +
+>> +	BUG_ON(!old_ns);
+>> +	get_ima_ns(old_ns);
+>> +
+>> +	new_ns = clone_ima_ns(old_ns);
+>> +	put_ima_ns(old_ns);
+>> +
+>> +	return new_ns;
+>> +}
+>> +
+>> +static void destroy_ima_ns(struct ima_namespace *ns)
+>> +{
+>> +	put_ima_ns(ns->parent);
+>> +	kfree(ns);
+>> +}
+>> +
+>> +void free_ima_ns(struct kref *kref)
+>> +{
+>> +	struct ima_namespace *ns;
+>> +
+>> +	ns = container_of(kref, struct ima_namespace, kref);
+>> +	BUG_ON(ns == &init_ima_ns);
+>> +
+>> +	destroy_ima_ns(ns);
+>> +}
 
-You can fold below change into patch 2/2.
 
-init_srcu_struct() is not needed for initializing statically allocated
-security_hook_srcu lock.
-
-kmalloc(GFP_KERNEL) from __init functions in vmlinux cannot fail, for panic()
-will be called from out_of_memory() if out of memory.
-
-----------------------------------------
- security.c |  192 +++++++++++--------------------------------------------------
- 1 file changed, 37 insertions(+), 155 deletions(-)
-
-diff --git a/security/security.c b/security/security.c
-index c5e770e..f5989eb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -62,7 +62,10 @@ static void __init do_security_initcalls(void)
- }
- 
- #ifdef CONFIG_SECURITY_WRITABLE_HOOKS
--static struct srcu_struct security_hook_srcu;
-+DEFINE_STATIC_SRCU(security_hook_srcu);
-+#define lock_lsm() srcu_read_lock(&security_hook_srcu)
-+#define unlock_lsm(idx) srcu_read_unlock(&security_hook_srcu, (idx))
-+static struct security_hook_list null_hooks[SECURITY_HOOK_COUNT];
- 
- static void security_add_hook(struct security_hook_list *hook, bool is_mutable)
- {
-@@ -94,9 +97,7 @@ static void __init add_mutable_hooks(void)
- 	int i;
- 
- 	for (i = 0; i < SECURITY_HOOK_COUNT; i++) {
--		shl = kzalloc(sizeof(*shl), GFP_KERNEL);
--		if (!shl)
--			panic("Unable to allocate memory for mutable hooks\n");
-+		shl = &null_hooks[i];
- 		shl->head = &list[i];
- 		hlist_add_head_rcu(&shl->list, shl->head);
- 	}
-@@ -104,11 +105,6 @@ static void __init add_mutable_hooks(void)
- 
- static void __init setup_mutable_hooks(void)
- {
--	int ret;
--
--	ret = init_srcu_struct(&security_hook_srcu);
--	if (ret)
--		panic("Could not initialize srcu: %d\n", ret);
- 	add_mutable_hooks();
- }
- 
-@@ -126,6 +122,8 @@ void security_delete_hooks(struct security_hook_list *hooks, int count)
- EXPORT_SYMBOL_GPL(security_delete_hooks);
- 
- #else
-+#define lock_lsm() 0
-+#define unlock_lsm(idx) do { } while (0)
- static void security_add_hook(struct security_hook_list *hook, bool is_mutable)
- {
- 	WARN_ONCE(is_mutable,
-@@ -143,11 +141,6 @@ static void __init setup_mutable_hooks(void) {}
-  */
- int __init security_init(void)
- {
--	int i;
--	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
--
--	for (i = 0; i < SECURITY_HOOK_COUNT; i++)
--		INIT_HLIST_HEAD(&list[i]);
- 	pr_info("Security Framework initialized\n");
- 
- 	setup_mutable_hooks();
-@@ -285,23 +278,22 @@ int unregister_lsm_notifier(struct notifier_block *nb)
-  *	This is a hook that returns a value.
-  */
- 
--#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
- #define call_void_hook(FUNC, ...)					\
- 	do {								\
- 		struct security_hook_list *P;				\
- 		int srcu_idx;						\
- 									\
--		srcu_idx = srcu_read_lock(&security_hook_srcu);		\
-+		srcu_idx = lock_lsm();					\
- 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
- 			if (P->hook.FUNC)				\
- 				P->hook.FUNC(__VA_ARGS__);		\
--		srcu_read_unlock(&security_hook_srcu, srcu_idx);	\
-+		unlock_lsm(srcu_idx);					\
- 	} while (0)
- 
- #define call_int_hook(FUNC, IRC, ...) ({			\
- 	int srcu_idx, RC = IRC;					\
- 								\
--	srcu_idx = srcu_read_lock(&security_hook_srcu);		\
-+	srcu_idx = lock_lsm();					\
- 	do {							\
- 		struct security_hook_list *P;			\
- 								\
-@@ -313,32 +305,9 @@ int unregister_lsm_notifier(struct notifier_block *nb)
- 			}					\
- 		}						\
- 	} while (0);						\
--	srcu_read_unlock(&security_hook_srcu, srcu_idx);	\
--	RC;							\
--})
--#else
--#define call_void_hook(FUNC, ...)				\
--	do {							\
--		struct security_hook_list *P;			\
--								\
--		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
--			P->hook.FUNC(__VA_ARGS__);		\
--	} while (0)
--
--#define call_int_hook(FUNC, IRC, ...) ({			\
--	int RC = IRC;						\
--	do {							\
--		struct security_hook_list *P;			\
--								\
--		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
--			RC = P->hook.FUNC(__VA_ARGS__);		\
--			if (RC != 0)				\
--				break;				\
--		}						\
--	} while (0);						\
-+	unlock_lsm(srcu_idx);					\
- 	RC;							\
- })
--#endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
- 
- /* Security operations */
- 
-@@ -425,11 +394,12 @@ int security_settime64(const struct timespec64 *ts, const struct timezone *tz)
- 	return call_int_hook(settime, 0, ts, tz);
- }
- 
--static int __security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
-+int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- {
- 	struct security_hook_list *hp;
- 	int cap_sys_admin = 1;
- 	int rc;
-+	int srcu_idx;
- 
- 	/*
- 	 * The module will respond with a positive value if
-@@ -438,6 +408,7 @@ static int __security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 	 * agree that it should be set it will. If any module
- 	 * thinks it should not be set it won't.
- 	 */
-+	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
- 		if (!hp->hook.vm_enough_memory)
- 			continue;
-@@ -447,27 +418,10 @@ static int __security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 			break;
- 		}
- 	}
-+	unlock_lsm(srcu_idx);
- 	return __vm_enough_memory(mm, pages, cap_sys_admin);
- }
- 
--#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
--int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
--{
--	int srcu_idx, ret;
--
--	srcu_idx = srcu_read_lock(&security_hook_srcu);
--	ret = __security_vm_enough_memory_mm(mm, pages);
--	srcu_read_unlock(&security_hook_srcu, srcu_idx);
--
--	return ret;
--}
--#else
--int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
--{
--	return __security_vm_enough_memory_mm(mm, pages);
--}
--#endif
--
- int security_bprm_set_creds(struct linux_binprm *bprm)
- {
- 	return call_int_hook(bprm_set_creds, 0, bprm);
-@@ -936,91 +890,56 @@ int security_inode_killpriv(struct dentry *dentry)
- 	return call_int_hook(inode_killpriv, 0, dentry);
- }
- 
--static int __security_inode_getsecurity(struct inode *inode, const char *name,
-+int security_inode_getsecurity(struct inode *inode, const char *name,
- 					void **buffer, bool alloc)
- {
- 	struct security_hook_list *hp;
--	int rc;
-+	int rc = -EOPNOTSUPP;
-+	int srcu_idx;
- 
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return -EOPNOTSUPP;
- 	/*
- 	 * Only one module will provide an attribute with a given name.
- 	 */
-+	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecurity, list) {
- 		if (!hp->hook.inode_getsecurity)
- 			continue;
- 		rc = hp->hook.inode_getsecurity(inode, name, buffer, alloc);
- 		if (rc != -EOPNOTSUPP)
--			return rc;
-+			break;
- 	}
--
--	return -EOPNOTSUPP;
-+	unlock_lsm(srcu_idx);
-+	return rc;
- }
- 
--static int __security_inode_setsecurity(struct inode *inode, const char *name,
-+int security_inode_setsecurity(struct inode *inode, const char *name,
- 					const void *value, size_t size,
- 					int flags)
- {
- 	struct security_hook_list *hp;
--	int rc;
-+	int rc = -EOPNOTSUPP;
-+	int srcu_idx;
- 
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return -EOPNOTSUPP;
- 	/*
- 	 * Only one module will provide an attribute with a given name.
- 	 */
-+	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.inode_setsecurity, list) {
- 		if (!hp->hook.inode_setsecurity)
- 			continue;
- 		rc = hp->hook.inode_setsecurity(inode, name, value, size,
- 						flags);
- 		if (rc != -EOPNOTSUPP)
--			return rc;
-+			break;
- 	}
--
--	return -EOPNOTSUPP;
--}
--
--
--#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
--int security_inode_getsecurity(struct inode *inode, const char *name,
--				void **buffer, bool alloc)
--{
--	int srcu_idx, ret;
--
--	srcu_idx = srcu_read_lock(&security_hook_srcu);
--	ret = __security_inode_getsecurity(inode, name, buffer, alloc);
--	srcu_read_unlock(&security_hook_srcu, srcu_idx);
--
--	return ret;
--
--}
--
--int security_inode_setsecurity(struct inode *inode, const char *name,
--				const void *value, size_t size, int flags)
--{
--	int srcu_idx, ret;
--
--	srcu_idx = srcu_read_lock(&security_hook_srcu);
--	ret = __security_inode_setsecurity(inode, name, value, size, flags);
--	srcu_read_unlock(&security_hook_srcu, srcu_idx);
--
--	return ret;
--}
--#else
--int security_inode_getsecurity(struct inode *inode, const char *name,
--				void **buffer, bool alloc)
--{
--	return __security_inode_getsecurity(inode, name, buffer, alloc);
-+	unlock_lsm(srcu_idx);
-+	return rc;
- }
- 
--int security_inode_setsecurity(struct inode *inode, const char *name,
--				const void *value, size_t size, int flags)
--{
--	return __security_inode_setsecurity(inode, name, value, size, flags);
--}
--#endif
- 
- 
- int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
-@@ -1310,14 +1229,16 @@ int security_task_kill(struct task_struct *p, struct siginfo *info,
- 	return call_int_hook(task_kill, 0, p, info, sig, secid);
- }
- 
--static int __security_task_prctl(int option, unsigned long arg2,
-+int security_task_prctl(int option, unsigned long arg2,
- 				 unsigned long arg3, unsigned long arg4,
- 				 unsigned long arg5)
- {
- 	int thisrc;
- 	int rc = -ENOSYS;
- 	struct security_hook_list *hp;
-+	int srcu_idx;
- 
-+	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
- 		if (!hp->hook.task_prctl)
- 			continue;
-@@ -1328,29 +1249,10 @@ static int __security_task_prctl(int option, unsigned long arg2,
- 				break;
- 		}
- 	}
-+	unlock_lsm(srcu_idx);
- 	return rc;
- }
- 
--#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
--int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
--			 unsigned long arg4, unsigned long arg5)
--{
--	int srcu_idx, ret;
--
--	srcu_idx = srcu_read_lock(&security_hook_srcu);
--	ret = __security_task_prctl(option, arg2, arg3, arg4, arg5);
--	srcu_read_unlock(&security_hook_srcu, srcu_idx);
--
--	return ret;
--}
--#else
--int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
--			 unsigned long arg4, unsigned long arg5)
--{
--	return __security_task_prctl(option, arg2, arg3, arg4, arg5);
--}
--#endif
--
- void security_task_to_inode(struct task_struct *p, struct inode *inode)
- {
- 	call_void_hook(task_to_inode, p, inode);
-@@ -1827,12 +1729,13 @@ int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
- 	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid, dir);
- }
- 
--static int __security_xfrm_state_pol_flow_match(struct xfrm_state *x,
-+int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 						struct xfrm_policy *xp,
- 						const struct flowi *fl)
- {
- 	struct security_hook_list *hp;
- 	int rc = 1;
-+	int srcu_idx;
- 
- 	/*
- 	 * Since this function is expected to return 0 or 1, the judgment
-@@ -1843,6 +1746,7 @@ static int __security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 	 * For speed optimization, we explicitly break the loop rather than
- 	 * using the macro
- 	 */
-+	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp,
- 				&security_hook_heads.xfrm_state_pol_flow_match,
- 				list) {
-@@ -1851,32 +1755,10 @@ static int __security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, fl);
- 		break;
- 	}
--
-+	unlock_lsm(srcu_idx);
- 	return rc;
- }
- 
--#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
--int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
--				       struct xfrm_policy *xp,
--				       const struct flowi *fl)
--{
--	int srcu_idx, ret;
--
--	srcu_idx = srcu_read_lock(&security_hook_srcu);
--	ret = __security_xfrm_state_pol_flow_match(x, xp, fl);
--	srcu_read_unlock(&security_hook_srcu, srcu_idx);
--
--	return ret;
--}
--#else
--int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
--				       struct xfrm_policy *xp,
--				       const struct flowi *fl)
--{
--	return __security_xfrm_state_pol_flow_match(x, xp, fl);
--}
--#endif
--
- int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid)
- {
- 	return call_int_hook(xfrm_decode_session, 0, skb, secid, 1);
-----------------------------------------
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
