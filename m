@@ -1,62 +1,61 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 29 Mar 2018 13:42:00 -0500
-Subject: [REVIEW][PATCH 00/11] ipc: Fixing the pid namespace support
-In-Reply-To: <20180329011241.v5kgiwbbayz425hk@linux-n805> (Davidlohr Bueso's
-	message of "Wed, 28 Mar 2018 18:12:41 -0700")
-References: <1520875093-18174-1-git-send-email-nagarathnam.muthusamy@oracle.com>
-	<87vadzqqq6.fsf@xmission.com>
-	<990e88fa-ab50-9645-b031-14e1afbf7ccc@oracle.com>
-	<877eqejowd.fsf@xmission.com>
-	<3a46a03d-e4dd-59b6-e25f-0020be1b1dc9@oracle.com>
-	<87a7v2z2qa.fsf@xmission.com> <87vadmobdw.fsf_-_@xmission.com>
-	<20180329011241.v5kgiwbbayz425hk@linux-n805>
-Message-ID: <874lky911j.fsf@xmission.com>
+From: igor.stoppa@gmail.com (Igor Stoppa)
+Date: Fri, 30 Mar 2018 00:25:22 +0400
+Subject: [RFC PATCH v21 0/6] mm: security: ro protection for dynamic data
+In-Reply-To: <20180327105509.62ec0d4d@lwn.net>
+References: <20180327153742.17328-1-igor.stoppa@huawei.com>
+	<20180327105509.62ec0d4d@lwn.net>
+Message-ID: <5b2a6d5d-5e33-614b-c362-c02a99509def@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Davidlohr Bueso <dave@stgolabs.net> writes:
+On 27/03/18 20:55, Jonathan Corbet wrote:
+> On Tue, 27 Mar 2018 18:37:36 +0300
+> Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> 
+>> This patch-set introduces the possibility of protecting memory that has
+>> been allocated dynamically.
+> 
+> One thing that jumps out at me as I look at the patch set is: you do not
+> include any users of this functionality.  Where do you expect this
+> allocator to be used?  Actually seeing the API in action would be a useful
+> addition, I think.
 
-> On Fri, 23 Mar 2018, Eric W. Biederman wrote:
->
->>Still I would like to see this fixed and I plan on merging this code.
+Yes, this is very true.
+Initially I had in mind to use LSM hooks as easy example, but sadly they 
+seem to be in an almost constant flux.
 
-The code is merged into my for-next tree now.
+My real use case is to secure both those and the SELinux policy DB.
+I have said this few times, but it didn't seem to be worth mentioning in 
+the cover letter.
 
-> Yes, it needs fixed, but 1) there are pending issues (such as the
-> extra atomics)
+I was hoping to get this merged and then attack both LSM and SELinux, 
+but it didn't fly, so few months ago i decided to try it all together 
+and put on hold my efforts to get pmalloc merged.
 
-Concerns not issues.  I documented them but I don't see any serious
-reason to be concerned.  The data structures are sufficiently different
-from AF_UNIX as well as the usage patterns that I have no reasonable
-expectation that there will be problems.
+However, in January, happened this:
+http://www.openwall.com/lists/kernel-hardening/2018/01/24/1
 
-There is no reasonable alternate implementation for correcting this bug.
-Because of my concerns I looked at several other possibilities and they
-all showed incorrect behavior, in different circumstances.
+which rekindled my hopes to get pmalloc in first, as it would make my 
+life easier in proposing the changes to SELinux, if they ar ebased on a 
+nAPI that is already merged.
 
-The implementations are simple enough there are no deep subtle issues.
+So I hope that, once both API and implementation for pmalloc are in good 
+shape, xfs could be the first customer.
 
-I have tested the code.
+If that doesn't happen, I'll go back to the initial plan. Or look for 
+some other easier target.
 
-If a regression happens the code is carefully split up so things can be
-bisected easily and reverted if necessary.
+Also the IMA policy could benefit from pmalloc protection, I think, I 
+spent about a week hacking on it and it seems feasible.
+But it's not exactly small either.
 
-> and 2) its late in the -rc cycle. Plus this issue has existed for 11 years without
-> the world ending, so I'm sure we can hold on until at least one more
-> release.
+I do not know if I should have followed some other path, but I'm having 
+a bit of a hard time, since the API is objectively touching core 
+functionality, and the change I'd like to use as example affects such a 
+large component a SELinux.
 
-People really are starting to seriously look at accessing a single ipc
-namespace from multiple pid namespaces.  The work arounds I saw posted
-for the current brokenness were too nasty to live.
-
-Better to fix things before there is code that actually starts depending
-on the current brokenness.
-
-I am the namespace maintianer and this is my area of responsibility.
-
-The code is ready and I see no reason or benefit in delay.
-
-Eric
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
