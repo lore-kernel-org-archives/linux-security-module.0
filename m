@@ -1,49 +1,43 @@
 From: ktkhai@virtuozzo.com (Kirill Tkhai)
-Date: Thu, 29 Mar 2018 19:20:23 +0300
-Subject: [PATCH net-next 0/5] Introduce net_rwsem to protect net_namespace_list
-Message-ID: <152234005959.19153.17907173734141707348.stgit@localhost.localdomain>
+Date: Thu, 29 Mar 2018 19:21:20 +0300
+Subject: [PATCH net-next 5/5] net: Remove rtnl_lock() in
+	nf_ct_iterate_destroy()
+In-Reply-To: <152234005959.19153.17907173734141707348.stgit@localhost.localdomain>
+References: <152234005959.19153.17907173734141707348.stgit@localhost.localdomain>
+Message-ID: <152234048028.19153.843006403471156320.stgit@localhost.localdomain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The series introduces fine grained rw_semaphore, which will be used
-instead of rtnl_lock() to protect net_namespace_list.
-
-This improves scalability and allows to do non-exclusive sleepable
-iteration for_each_net(), which is enough for most cases.
-
-scripts/get_maintainer.pl gives enormous list of people, and I add
-all to CC.
-
-Note, that this patch is independent of "Close race between
-{un, }register_netdevice_notifier and pernet_operations":
-https://patchwork.ozlabs.org/project/netdev/list/?series=36495
+rtnl_lock() doesn't protect net::ct::count,
+and it's not needed for__nf_ct_unconfirmed_destroy()
+and for nf_queue_nf_hook_drop().
 
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
+ net/netfilter/nf_conntrack_core.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-Kirill Tkhai (5):
-      net: Introduce net_rwsem to protect net_namespace_list
-      net: Don't take rtnl_lock() in wireless_nlevent_flush()
-      security: Remove rtnl_lock() in selinux_xfrm_notify_policyload()
-      ovs: Remove rtnl_lock() from ovs_exit_net()
-      net: Remove rtnl_lock() in nf_ct_iterate_destroy()
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index 370f9b7f051b..41ff04ee2554 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -1763,7 +1763,6 @@ nf_ct_iterate_destroy(int (*iter)(struct nf_conn *i, void *data), void *data)
+ {
+ 	struct net *net;
+ 
+-	rtnl_lock();
+ 	down_read(&net_rwsem);
+ 	for_each_net(net) {
+ 		if (atomic_read(&net->ct.count) == 0)
+@@ -1772,7 +1771,6 @@ nf_ct_iterate_destroy(int (*iter)(struct nf_conn *i, void *data), void *data)
+ 		nf_queue_nf_hook_drop(net);
+ 	}
+ 	up_read(&net_rwsem);
+-	rtnl_unlock();
+ 
+ 	/* Need to wait for netns cleanup worker to finish, if its
+ 	 * running -- it might have deleted a net namespace from
 
-
- drivers/infiniband/core/roce_gid_mgmt.c |    2 ++
- include/linux/rtnetlink.h               |    1 +
- include/net/net_namespace.h             |    1 +
- net/core/dev.c                          |    5 +++++
- net/core/fib_notifier.c                 |    2 ++
- net/core/net_namespace.c                |   18 +++++++++++++-----
- net/core/rtnetlink.c                    |    5 +++++
- net/netfilter/nf_conntrack_core.c       |    4 ++--
- net/openvswitch/datapath.c              |    4 ++--
- net/wireless/wext-core.c                |    6 ++----
- security/selinux/include/xfrm.h         |    4 ++--
- 11 files changed, 37 insertions(+), 15 deletions(-)
-
---
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
