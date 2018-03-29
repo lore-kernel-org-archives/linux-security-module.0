@@ -1,46 +1,71 @@
-From: corbet@lwn.net (Jonathan Corbet)
-Date: Thu, 29 Mar 2018 14:50:36 -0600
-Subject: [RFC PATCH v21 0/6] mm: security: ro protection for dynamic data
-In-Reply-To: <5b2a6d5d-5e33-614b-c362-c02a99509def@gmail.com>
-References: <20180327153742.17328-1-igor.stoppa@huawei.com>
-	<20180327105509.62ec0d4d@lwn.net>
-	<5b2a6d5d-5e33-614b-c362-c02a99509def@gmail.com>
-Message-ID: <20180329145036.00155b1e@lwn.net>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Thu, 29 Mar 2018 21:14:13 +0000
+Subject: [PATCH v3 0/1] Safe LSM (un)loading, and immutable hooks
+Message-ID: <cover.1522357211.git.sargun@sargun.me>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 30 Mar 2018 00:25:22 +0400
-Igor Stoppa <igor.stoppa@gmail.com> wrote:
+The biggest security benefit of this patchset is the introduction of
+read-only hooks. Currently, if you have any LSMs with mutable hooks
+it will render all heads, and list nodes mutable. This is a prime
+place to attack, because being able to manipulate those hooks is a
+way to bypass all LSMs easily.
 
-> On 27/03/18 20:55, Jonathan Corbet wrote:
-> > On Tue, 27 Mar 2018 18:37:36 +0300
-> > Igor Stoppa <igor.stoppa@huawei.com> wrote:
-> >   
-> >> This patch-set introduces the possibility of protecting memory that has
-> >> been allocated dynamically.  
-> > 
-> > One thing that jumps out at me as I look at the patch set is: you do not
-> > include any users of this functionality.  Where do you expect this
-> > allocator to be used?  Actually seeing the API in action would be a useful
-> > addition, I think.  
-> 
-> Yes, this is very true.
-> Initially I had in mind to use LSM hooks as easy example, but sadly they 
-> seem to be in an almost constant flux.
-> 
-> My real use case is to secure both those and the SELinux policy DB.
-> I have said this few times, but it didn't seem to be worth mentioning in 
-> the cover letter.
+By moving to hlist_head, it keeps a singly-linked, non-circular list.
+This can always be marked as read only because we add a mutable "null"
+hook. All immutable LSMs should be installed as immutable hooks and
+sit before the null hook.
 
-In general, it is quite hard to merge a new API without users to go along
-with it.  Among other things, that's how reviewers can see how well the
-API works in real-world use.  I am certainly not the one who will make the
-decision on whether this goes in, but I suspect that whoever *does* make
-that decision would prefer to see some users.
++------+   +-----------+   +-----------+   +-----------+   +------------------+
+|      |   |           |   |           |   |           |   |                  |
+| HEAD +---> Immutable +---> Immutable +---> Null hook +--->   Mutable Hook   |
+|      |   |  Hook 1   |   |  Hook 2   |   |           |   |                  |
++------+   +-----------+   +-----------+   +-----------+   +------------------+
+                 |               |                                  |
+                 v               v                                  v
+             Callback        Callback                           Callback
 
-Thanks,
+If LSMs have a model to be unloaded, or are compled as modules,
+they should mark themselves mutable at runtime.
 
-jon
+In order to provide safe code-unloading, there is a shared SRCU between
+all security hooks. This SRCU is very cheap for runtime overhead on
+reads, but there is synchronization around it for unloads. There is
+only a cost to pay at unload time, which is based on the execution time
+of longest chain of callbacks after synchronization begins.
+
+Because of all of this, we can now load LSMs at runtime, so those APIs
+are exposed. It is up to the module author to check if
+CONFIG_SECURITY_WRITABLE_HOOKS is enabled prior to trying to load.
+
+
+Changes since:
+v2:
+	* Split out hlist_head patch
+	* Apply Tetsuo's changes to clean up functions which are not
+	  covered by call_int_hook / call_void_hook
+	* Disable NULL hook checking when uneeded
+v1:
+	* Add SRCU to allow for code-unloading
+	* Add concurrency control around hook mutation
+
+Sargun Dhillon (1):
+  security: Add mechanism to safely (un)load LSMs after boot time
+
+ include/linux/lsm_hooks.h  |  23 ++---
+ security/Kconfig           |   2 +-
+ security/apparmor/lsm.c    |   2 +-
+ security/commoncap.c       |   2 +-
+ security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
+ security/selinux/hooks.c   |   5 +-
+ security/smack/smack_lsm.c |   3 +-
+ security/tomoyo/tomoyo.c   |   3 +-
+ security/yama/yama_lsm.c   |   2 +-
+ 9 files changed, 196 insertions(+), 56 deletions(-)
+
+-- 
+2.14.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
