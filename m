@@ -1,229 +1,245 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 30 Mar 2018 14:39:49 -0700
-Subject: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
-	after boot time
-In-Reply-To: <20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
-References: <cover.1522357211.git.sargun@sargun.me>
-	<5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
-	<3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
-	<20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
-Message-ID: <8b015e9e-dccb-aefd-f5b2-c66eed3c6815@schaufler-ca.com>
+From: dhowells@redhat.com (David Howells)
+Date: Sat, 31 Mar 2018 00:29:44 +0100
+Subject: [GIT PULL] Kernel lockdown for secure boot
+Message-ID: <4136.1522452584@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/29/2018 7:33 PM, Sargun Dhillon wrote:
-> On Thu, Mar 29, 2018 at 02:37:10PM -0700, Casey Schaufler wrote:
->> On 3/29/2018 2:14 PM, Sargun Dhillon wrote:
->>> This patch introduces a mechanism to add mutable hooks and immutable
->>> hooks to the callback chain. It adds an intermediary item to the
->>> chain which separates mutable and immutable hooks. Immutable hooks
->>> are then marked as read-only, as well as the hook heads. This does
->>> not preclude some hooks being able to be mutated (removed).
->>>
->>> It also wraps the hook unloading, and execution with an SRCU. One
->>> SRCU is used across all hooks, as the SRCU struct can be memory
->>> intensive, and hook execution time in general should be relatively
->>> short.
->>>
->>> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
->>> Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
->>> ---
->>>  include/linux/lsm_hooks.h  |  23 ++---
->>>  security/Kconfig           |   2 +-
->>>  security/apparmor/lsm.c    |   2 +-
->>>  security/commoncap.c       |   2 +-
->>>  security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
->>>  security/selinux/hooks.c   |   5 +-
->>>  security/smack/smack_lsm.c |   3 +-
->>>  security/tomoyo/tomoyo.c   |   3 +-
->>>  security/yama/yama_lsm.c   |   2 +-
->>>  9 files changed, 196 insertions(+), 56 deletions(-)
->>>
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index 09bc60fb35f1..689e5e72fb38 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
->>>  extern char *lsm_names;
->>>  
->>>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
->>> -				char *lsm);
->>> +				char *lsm, bool is_mutable);
->>>  
->>> -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
->>> +#define __lsm_ro_after_init	__ro_after_init
->>> +/* Currently required to handle SELinux runtime hook disable. */
->>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
->>> +#define __lsm_mutable_after_init
->>>  /*
->>>   * Assuring the safety of deleting a security module is up to
->>>   * the security module involved. This may entail ordering the
->>> @@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
->>>   * disabling their module is a good idea needs to be at least as
->>>   * careful as the SELinux team.
->>>   */
->>> -static inline void security_delete_hooks(struct security_hook_list *hooks,
->>> -						int count)
->>> -{
->>> -	int i;
->>> -
->>> -	for (i = 0; i < count; i++)
->>> -		hlist_del_rcu(&hooks[i].list);
->>> -}
->>> -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
->>> -
->>> -/* Currently required to handle SELinux runtime hook disable. */
->>> -#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
->>> -#define __lsm_ro_after_init
->>> +extern void security_delete_hooks(struct security_hook_list *hooks, int count);
->>>  #else
->>> -#define __lsm_ro_after_init	__ro_after_init
->>> +#define __lsm_mutable_after_init __ro_after_init
->>>  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
->>>  
->>>  extern int __init security_module_enable(const char *module);
->>> diff --git a/security/Kconfig b/security/Kconfig
->>> index c4302067a3ad..a3b8b1142e6f 100644
->>> --- a/security/Kconfig
->>> +++ b/security/Kconfig
->>> @@ -32,7 +32,7 @@ config SECURITY
->>>  	  If you are unsure how to answer this question, answer N.
->>>  
->>>  config SECURITY_WRITABLE_HOOKS
->>> -	depends on SECURITY
->>> +	depends on SECURITY && SRCU
->>>  	bool
->>>  	default n
->>>  
->>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>> index 9a65eeaf7dfa..d6cca8169df0 100644
->>> --- a/security/apparmor/lsm.c
->>> +++ b/security/apparmor/lsm.c
->>> @@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
->>>  		goto buffers_out;
->>>  	}
->>>  	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
->>> -				"apparmor");
->>> +				"apparmor", false);
->>>  
->>>  	/* Report that AppArmor successfully initialized */
->>>  	apparmor_initialized = 1;
->>> diff --git a/security/commoncap.c b/security/commoncap.c
->>> index 48620c93d697..fe4b0d9d44ce 100644
->>> --- a/security/commoncap.c
->>> +++ b/security/commoncap.c
->>> @@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
->>>  void __init capability_add_hooks(void)
->>>  {
->>>  	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
->>> -				"capability");
->>> +				"capability", false);
->>>  }
->>>  
->>>  #endif /* CONFIG_SECURITY */
->>> diff --git a/security/security.c b/security/security.c
->>> index 3cafff61b049..2ddb64864e3e 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -29,6 +29,11 @@
->>>  #include <linux/backing-dev.h>
->>>  #include <linux/string.h>
->>>  #include <net/flow.h>
->>> +#include <linux/srcu.h>
->>> +#include <linux/mutex.h>
->>> +
->>> +#define SECURITY_HOOK_COUNT \
->>> +	(sizeof(security_hook_heads) / sizeof(struct hlist_head))
->>>  
->>>  #define MAX_LSM_EVM_XATTR	2
->>>  
->>> @@ -36,7 +41,10 @@
->>>  #define SECURITY_NAME_MAX	10
->>>  
->>>  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
->>> +EXPORT_SYMBOL_GPL(security_hook_heads);
->>> +
->>>  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
->>> +static DEFINE_MUTEX(security_hook_mutex);
->>>  
->>>  char *lsm_names;
->>>  /* Boot-time LSM user choice */
->>> @@ -53,6 +61,103 @@ static void __init do_security_initcalls(void)
->>>  	}
->>>  }
->>>  
->>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
->>> +DEFINE_STATIC_SRCU(security_hook_srcu);
->>> +static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
->>> +#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
->> The HAS_FUNC() macro will work, but it's awkward outside of the
->> call_..._hook() macros. I think you should document how to use it
->> properly somewhere in here. There are enough cases where the
->> call_..._hook() macros aren't used that someone could have trouble
->> figuring out how to use it.
->>
->>
-> What about something like:
->
->  security/security.c | 58 ++++++++++++++++++++++++++++++++++++++---------------
->  1 file changed, 42 insertions(+), 16 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index 2ddb64864e3e..bc14125cfc78 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -62,9 +62,37 @@ static void __init do_security_initcalls(void)
->  }
->  
->  #ifdef CONFIG_SECURITY_WRITABLE_HOOKS
-> -DEFINE_STATIC_SRCU(security_hook_srcu);
-> +/*
-> + * With writable hooks, we setup a structure like this:
-> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
-> + * |      |   |           |   |           |   |           |   |              |
-> + * | HEAD +---> Immutable +---> Immutable +---> Null hook +---> Mutable Hook |
-> + * |      |   |  Hook 1   |   |  Hook 2   |   |           |   |              |
-> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
-> + *                  |               |                                |
-> + *                  v               v                                v
-> + *              Callback        Callback                         Callback
-> + *
-> + * The hooks before to null hook are marked only after kernel initialization.
-> + * The null hook, as well as the hooks succeeding it are not marked read only,
-> + * therefore allowing them be (un)loaded after initialization time.
-> + *
-> + * Since the null hook doesn't have a callback, we need to check if a hook
-> + * is the null hook prior to invoking it.
-> + */
+Date: Thu, 26 Oct 2017 17:37:38 +0100
 
-I think a comment like this is helpful.
+Hi James,
 
-Why not have two hook list heads, one for regular hooks and
-one for mutable hooks? You can dispense with the "null hook"
-handling.
+Can you pull this patchset into security/next please?  It has been in
+linux-next since the beginning of March.
 
->  static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
-> -#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
-> +DEFINE_STATIC_SRCU(security_hook_srcu);
-> +
-> +static inline bool is_null_hook(struct security_hook_list *shl)
-> +{
-> +	union {
-> +		void *cb_ptr;
-> +		union security_list_options slo;
-> +	} hook_options;
-> +
-> +	hook_options.slo = shl->hook;
-> +	return !hook_options.cb_ptr;
-> +}
+It adds kernel lockdown support for EFI secure boot.
 
-I like the HAS_FUNC() approach better.
+There's a manual page (kernel_lockdown.7) associated with this:
 
-What I think would work best is to have a separate list head
-for the mutable hooks. 
+.\"
+.\" Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
+.\" Written by David Howells (dhowells at redhat.com)
+.\"
+.\" %%%LICENSE_START(GPLv2+_SW_ONEPARA)
+.\" This program is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License
+.\" as published by the Free Software Foundation; either version
+.\" 2 of the License, or (at your option) any later version.
+.\" %%%LICENSE_END
+.\"
+.TH "KERNEL LOCKDOWN" 7 2017-10-05 Linux "Linux Programmer's Manual"
+.SH NAME
+Kernel Lockdown \- Kernel image access prevention feature
+.SH DESCRIPTION
+The Kernel Lockdown feature is designed to prevent both direct and indirect
+access to a running kernel image, attempting to protect against unauthorised
+modification of the kernel image and to prevent access to security and
+cryptographic data located in kernel memory, whilst still permitting driver
+modules to be loaded.
+.P
+Lockdown is typically enabled during boot and may be terminated, if configured,
+by typing a special key combination on a directly attached physical keyboard.
+.P
+If a prohibited or restricted feature is accessed or used, the kernel will emit
+a message that looks like:
+.P
+.RS
+	Lockdown: X: Y is restricted, see man kernel_lockdown.7
+.RE
+.P
+where X indicates the process name and Y indicates what is restricted.
+.P
+On an EFI-enabled x86 or arm64 machine, lockdown will be automatically enabled
+if the system boots in EFI Secure Boot mode.
+.P
+If the kernel is appropriately configured, lockdown may be lifted by typing the
+appropriate sequence on a directly attached physical keyboard.  For x86
+machines, this is
+.IR SysRq+x .
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.SH COVERAGE
+When lockdown is in effect, a number of features are disabled or have their use
+restricted.  This includes special device files and kernel services that allow
+direct access of the kernel image:
+.P
+.RS
+/dev/mem
+.br
+/dev/kmem
+.br
+/dev/kcore
+.br
+/dev/ioports
+.br
+BPF
+.br
+kprobes
+.RE
+.P
+and the ability to directly configure and control devices, so as to prevent the
+use of a device to access or modify a kernel image:
+.P
+.RS
+The use of module parameters that directly specify hardware parameters to
+drivers through the kernel command line or when loading a module.
+.P
+The use of direct PCI BAR access.
+.P
+The use of the ioperm and iopl instructions on x86.
+.P
+The use of the KD*IO console ioctls.
+.P
+The use of the TIOCSSERIAL serial ioctl.
+.P
+The alteration of MSR registers on x86.
+.P
+The replacement of the PCMCIA CIS.
+.P
+The overriding of ACPI tables.
+.P
+The use of ACPI error injection.
+.P
+The specification of the ACPI RDSP address.
+.P
+The use of ACPI custom methods.
+.RE
+.P
+Certain facilities are restricted:
+.P
+.RS
+Only validly signed modules may be loaded (waived if the module file being
+loaded is vouched for by IMA appraisal).
+.P
+Only validly signed binaries may be kexec'd (waived if the binary image file to
+be executed is vouched for by IMA appraisal).
+.P
+Unencrypted hibernation/suspend to swap are disallowed as the kernel image is
+saved to a medium that can then be accessed.
+.P
+Use of debugfs is not permitted as this allows a whole range of actions
+including direct configuration of, access to and driving of hardware.
+.P
+IMA requires the addition of the "secure_boot" rules to the policy, whether or
+not they are specified on the command line, for both the builtin and custom
+policies in secure boot lockdown mode.
+.RE
 
 
+David
+---
+The following changes since commit 6f70eb2b00eb416146247c65003d31f4df983ce0:
 
+  Merge branch 'idr-2018-02-06' of git://git.infradead.org/users/willy/linux-dax (2018-02-26 13:22:45 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/lockdown-20180330
+
+for you to fetch changes up to 89bcd5b02f125335f74289c5f4ae03e9b893ab7f:
+
+  lockdown: Print current->comm in restriction messages (2018-02-28 14:43:03 +0000)
+
+----------------------------------------------------------------
+Kernel lockdown
+
+----------------------------------------------------------------
+Dave Young (1):
+      Copy secure_boot flag in boot params across kexec reboot
+
+David Howells (15):
+      Add the ability to lock down access to the running kernel image
+      Enforce module signatures if the kernel is locked down
+      scsi: Lock down the eata driver
+      Prohibit PCMCIA CIS storage when the kernel is locked down
+      Lock down TIOCSSERIAL
+      Lock down module params that specify hardware parameters (eg. ioport)
+      x86/mmiotrace: Lock down the testmmiotrace module
+      Lock down /proc/kcore
+      Lock down kprobes
+      bpf: Restrict kernel image access functions when the kernel is locked down
+      Lock down perf
+      debugfs: Restrict debugfs when the kernel is locked down
+      efi: Add an EFI_SECURE_BOOT flag to indicate secure boot mode
+      efi: Lock down the kernel if booted in secure boot mode
+      lockdown: Print current->comm in restriction messages
+
+Jiri Bohac (2):
+      kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+      kexec_file: Restrict at runtime if the kernel is locked down
+
+Josh Boyer (2):
+      hibernate: Disable when the kernel is locked down
+      acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down
+
+Kyle McMartin (1):
+      Add a SysRq option to lift kernel lockdown
+
+Linn Crosetto (2):
+      acpi: Disable ACPI table override if the kernel is locked down
+      acpi: Disable APEI error injection if the kernel is locked down
+
+Matthew Garrett (7):
+      Restrict /dev/{mem,kmem,port} when the kernel is locked down
+      kexec_load: Disable at runtime if the kernel is locked down
+      uswsusp: Disable when the kernel is locked down
+      PCI: Lock down BAR access when the kernel is locked down
+      x86: Lock down IO port access when the kernel is locked down
+      x86/msr: Restrict MSR access when the kernel is locked down
+      ACPI: Limit access to custom_method when the kernel is locked down
+
+Mimi Zohar (1):
+      ima: require secure_boot rules in lockdown mode
+
+ arch/x86/Kconfig                       |  20 ++++--
+ arch/x86/include/asm/setup.h           |   2 +
+ arch/x86/kernel/ioport.c               |   6 +-
+ arch/x86/kernel/kexec-bzimage64.c      |   1 +
+ arch/x86/kernel/machine_kexec_64.c     |   2 +-
+ arch/x86/kernel/msr.c                  |  10 +++
+ arch/x86/kernel/setup.c                |  18 ++----
+ arch/x86/mm/testmmiotrace.c            |   3 +
+ crypto/asymmetric_keys/verify_pefile.c |   4 +-
+ drivers/acpi/apei/einj.c               |   3 +
+ drivers/acpi/custom_method.c           |   3 +
+ drivers/acpi/osl.c                     |   2 +-
+ drivers/acpi/tables.c                  |   5 ++
+ drivers/char/mem.c                     |   2 +
+ drivers/firmware/efi/Makefile          |   1 +
+ drivers/firmware/efi/secureboot.c      |  38 ++++++++++++
+ drivers/input/misc/uinput.c            |   1 +
+ drivers/pci/pci-sysfs.c                |   9 +++
+ drivers/pci/proc.c                     |   9 ++-
+ drivers/pci/syscall.c                  |   3 +-
+ drivers/pcmcia/cistpl.c                |   3 +
+ drivers/scsi/eata.c                    |   5 +-
+ drivers/tty/serial/serial_core.c       |   6 ++
+ drivers/tty/sysrq.c                    |  19 ++++--
+ fs/debugfs/file.c                      |  28 +++++++++
+ fs/debugfs/inode.c                     |  30 ++++++++-
+ fs/proc/kcore.c                        |   2 +
+ include/linux/efi.h                    |  16 +++--
+ include/linux/input.h                  |   5 ++
+ include/linux/kernel.h                 |  17 ++++++
+ include/linux/kexec.h                  |   4 +-
+ include/linux/security.h               |   8 +++
+ include/linux/sysrq.h                  |   8 ++-
+ kernel/bpf/syscall.c                   |   3 +
+ kernel/debug/kdb/kdb_main.c            |   2 +-
+ kernel/events/core.c                   |   5 ++
+ kernel/kexec.c                         |   7 +++
+ kernel/kexec_file.c                    |  56 ++++++++++++++---
+ kernel/kprobes.c                       |   3 +
+ kernel/module.c                        |  56 +++++++++++++----
+ kernel/params.c                        |  26 ++++++--
+ kernel/power/hibernate.c               |   2 +-
+ kernel/power/user.c                    |   3 +
+ security/Kconfig                       |  32 ++++++++++
+ security/Makefile                      |   3 +
+ security/integrity/ima/ima_policy.c    |  39 +++++++++---
+ security/lock_down.c                   | 108 +++++++++++++++++++++++++++++++++
+ 47 files changed, 557 insertions(+), 81 deletions(-)
+ create mode 100644 drivers/firmware/efi/secureboot.c
+ create mode 100644 security/lock_down.c
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
