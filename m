@@ -1,87 +1,229 @@
-From: dave@stgolabs.net (Davidlohr Bueso)
-Date: Fri, 30 Mar 2018 13:45:57 -0700
-Subject: [REVIEW][PATCH 11/11] ipc/sem: Fix semctl(..., GETPID, ...)
-	between pid namespaces
-In-Reply-To: <87y3i91fxh.fsf@xmission.com>
-References: <87vadmobdw.fsf_-_@xmission.com>
-	<20180323191614.32489-11-ebiederm@xmission.com>
-	<20180329005209.fnzr3hzvyr4oy3wi@linux-n805>
-	<20180330190951.nfcdwuzp42bl2lfy@linux-n805>
-	<87y3i91fxh.fsf@xmission.com>
-Message-ID: <20180330204557.5cgyipyqawfte3ml@linux-n805>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 30 Mar 2018 14:39:49 -0700
+Subject: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
+	after boot time
+In-Reply-To: <20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
+References: <cover.1522357211.git.sargun@sargun.me>
+	<5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
+	<3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
+	<20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
+Message-ID: <8b015e9e-dccb-aefd-f5b2-c66eed3c6815@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 30 Mar 2018, Eric W. Biederman wrote:
-
->Davidlohr Bueso <dave@stgolabs.net> writes:
+On 3/29/2018 7:33 PM, Sargun Dhillon wrote:
+> On Thu, Mar 29, 2018 at 02:37:10PM -0700, Casey Schaufler wrote:
+>> On 3/29/2018 2:14 PM, Sargun Dhillon wrote:
+>>> This patch introduces a mechanism to add mutable hooks and immutable
+>>> hooks to the callback chain. It adds an intermediary item to the
+>>> chain which separates mutable and immutable hooks. Immutable hooks
+>>> are then marked as read-only, as well as the hook heads. This does
+>>> not preclude some hooks being able to be mutated (removed).
+>>>
+>>> It also wraps the hook unloading, and execution with an SRCU. One
+>>> SRCU is used across all hooks, as the SRCU struct can be memory
+>>> intensive, and hook execution time in general should be relatively
+>>> short.
+>>>
+>>> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+>>> Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+>>> ---
+>>>  include/linux/lsm_hooks.h  |  23 ++---
+>>>  security/Kconfig           |   2 +-
+>>>  security/apparmor/lsm.c    |   2 +-
+>>>  security/commoncap.c       |   2 +-
+>>>  security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
+>>>  security/selinux/hooks.c   |   5 +-
+>>>  security/smack/smack_lsm.c |   3 +-
+>>>  security/tomoyo/tomoyo.c   |   3 +-
+>>>  security/yama/yama_lsm.c   |   2 +-
+>>>  9 files changed, 196 insertions(+), 56 deletions(-)
+>>>
+>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>> index 09bc60fb35f1..689e5e72fb38 100644
+>>> --- a/include/linux/lsm_hooks.h
+>>> +++ b/include/linux/lsm_hooks.h
+>>> @@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
+>>>  extern char *lsm_names;
+>>>  
+>>>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>>> -				char *lsm);
+>>> +				char *lsm, bool is_mutable);
+>>>  
+>>> -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
+>>> +#define __lsm_ro_after_init	__ro_after_init
+>>> +/* Currently required to handle SELinux runtime hook disable. */
+>>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+>>> +#define __lsm_mutable_after_init
+>>>  /*
+>>>   * Assuring the safety of deleting a security module is up to
+>>>   * the security module involved. This may entail ordering the
+>>> @@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>>>   * disabling their module is a good idea needs to be at least as
+>>>   * careful as the SELinux team.
+>>>   */
+>>> -static inline void security_delete_hooks(struct security_hook_list *hooks,
+>>> -						int count)
+>>> -{
+>>> -	int i;
+>>> -
+>>> -	for (i = 0; i < count; i++)
+>>> -		hlist_del_rcu(&hooks[i].list);
+>>> -}
+>>> -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+>>> -
+>>> -/* Currently required to handle SELinux runtime hook disable. */
+>>> -#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+>>> -#define __lsm_ro_after_init
+>>> +extern void security_delete_hooks(struct security_hook_list *hooks, int count);
+>>>  #else
+>>> -#define __lsm_ro_after_init	__ro_after_init
+>>> +#define __lsm_mutable_after_init __ro_after_init
+>>>  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+>>>  
+>>>  extern int __init security_module_enable(const char *module);
+>>> diff --git a/security/Kconfig b/security/Kconfig
+>>> index c4302067a3ad..a3b8b1142e6f 100644
+>>> --- a/security/Kconfig
+>>> +++ b/security/Kconfig
+>>> @@ -32,7 +32,7 @@ config SECURITY
+>>>  	  If you are unsure how to answer this question, answer N.
+>>>  
+>>>  config SECURITY_WRITABLE_HOOKS
+>>> -	depends on SECURITY
+>>> +	depends on SECURITY && SRCU
+>>>  	bool
+>>>  	default n
+>>>  
+>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>>> index 9a65eeaf7dfa..d6cca8169df0 100644
+>>> --- a/security/apparmor/lsm.c
+>>> +++ b/security/apparmor/lsm.c
+>>> @@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
+>>>  		goto buffers_out;
+>>>  	}
+>>>  	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
+>>> -				"apparmor");
+>>> +				"apparmor", false);
+>>>  
+>>>  	/* Report that AppArmor successfully initialized */
+>>>  	apparmor_initialized = 1;
+>>> diff --git a/security/commoncap.c b/security/commoncap.c
+>>> index 48620c93d697..fe4b0d9d44ce 100644
+>>> --- a/security/commoncap.c
+>>> +++ b/security/commoncap.c
+>>> @@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+>>>  void __init capability_add_hooks(void)
+>>>  {
+>>>  	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+>>> -				"capability");
+>>> +				"capability", false);
+>>>  }
+>>>  
+>>>  #endif /* CONFIG_SECURITY */
+>>> diff --git a/security/security.c b/security/security.c
+>>> index 3cafff61b049..2ddb64864e3e 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -29,6 +29,11 @@
+>>>  #include <linux/backing-dev.h>
+>>>  #include <linux/string.h>
+>>>  #include <net/flow.h>
+>>> +#include <linux/srcu.h>
+>>> +#include <linux/mutex.h>
+>>> +
+>>> +#define SECURITY_HOOK_COUNT \
+>>> +	(sizeof(security_hook_heads) / sizeof(struct hlist_head))
+>>>  
+>>>  #define MAX_LSM_EVM_XATTR	2
+>>>  
+>>> @@ -36,7 +41,10 @@
+>>>  #define SECURITY_NAME_MAX	10
+>>>  
+>>>  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+>>> +EXPORT_SYMBOL_GPL(security_hook_heads);
+>>> +
+>>>  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+>>> +static DEFINE_MUTEX(security_hook_mutex);
+>>>  
+>>>  char *lsm_names;
+>>>  /* Boot-time LSM user choice */
+>>> @@ -53,6 +61,103 @@ static void __init do_security_initcalls(void)
+>>>  	}
+>>>  }
+>>>  
+>>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+>>> +DEFINE_STATIC_SRCU(security_hook_srcu);
+>>> +static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
+>>> +#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
+>> The HAS_FUNC() macro will work, but it's awkward outside of the
+>> call_..._hook() macros. I think you should document how to use it
+>> properly somewhere in here. There are enough cases where the
+>> call_..._hook() macros aren't used that someone could have trouble
+>> figuring out how to use it.
+>>
+>>
+> What about something like:
 >
->> I ran this on a 40-core (no ht) Westmere with two benchmarks. The first
->> is Manfred's sysvsem lockunlock[1] program which uses _processes_ to,
->> well, lock and unlock the semaphore. The options are a little
->> unconventional, to keep the "critical region small" and the lock+unlock
->> frequency high I added busy_in=busy_out=10. Similarly, to get the
->> worst case scenario and have everyone update the same semaphore, a single
->> one is used. Here are the results (pretty low stddev from run to run)
->> for doing 100,000 lock+unlock.
->>
->> - 1 proc:
->>   * vanilla
->> 	total execution time: 0.110638 seconds for 100000 loops
->>   * dirty
->> 	total execution time: 0.120144 seconds for 100000 loops
->>
->> - 2 proc:
->>   * vanilla
->> 	total execution time: 0.379756 seconds for 100000 loops
->>   * dirty
->> 	total execution time: 0.477778 seconds for 100000 loops
->>
->> - 4 proc:
->>   * vanilla
->> 	total execution time: 6.749710 seconds for 100000 loops
->>   * dirty
->> 	total execution time: 4.651872 seconds for 100000 loops
->>
->> - 8 proc:
->>   * vanilla
->>        total execution time: 5.558404 seconds for 100000 loops
->>   * dirty
->> 	total execution time: 7.143329 seconds for 100000 loops
->>
->> - 16 proc:
->>   * vanilla
->> 	total execution time: 9.016398 seconds for 100000 loops
->>   * dirty
->> 	total execution time: 9.412055 seconds for 100000 loops
->>
->> - 32 proc:
->>   * vanilla
->> 	total execution time: 9.694451 seconds for 100000 loops
->>   * dirty
->> 	total execution time: 9.990451 seconds for 100000 loops
->>
->> - 64 proc:
->>   * vanilla
->> 	total execution time: 9.844984 seconds for 100032 loops
->>   * dirty
->> 	total execution time: 10.016464 seconds for 100032 loops
->>
->> Lower task counts show pretty massive performance hits of ~9%, ~25%
->> and ~30% for single, two and four/eight processes. As more are added
->> I guess the overhead tends to disappear as for one you have a lot
->> more locking contention going on.
+>  security/security.c | 58 ++++++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 42 insertions(+), 16 deletions(-)
 >
->Can you check your notes on the 4 process case?  As I read the 4 process
->case above it is ~30% improvement.  Either that is a typo or there is the
->potential for quite a bit of noise in the test case.
+> diff --git a/security/security.c b/security/security.c
+> index 2ddb64864e3e..bc14125cfc78 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -62,9 +62,37 @@ static void __init do_security_initcalls(void)
+>  }
+>  
+>  #ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+> -DEFINE_STATIC_SRCU(security_hook_srcu);
+> +/*
+> + * With writable hooks, we setup a structure like this:
+> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
+> + * |      |   |           |   |           |   |           |   |              |
+> + * | HEAD +---> Immutable +---> Immutable +---> Null hook +---> Mutable Hook |
+> + * |      |   |  Hook 1   |   |  Hook 2   |   |           |   |              |
+> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
+> + *                  |               |                                |
+> + *                  v               v                                v
+> + *              Callback        Callback                         Callback
+> + *
+> + * The hooks before to null hook are marked only after kernel initialization.
+> + * The null hook, as well as the hooks succeeding it are not marked read only,
+> + * therefore allowing them be (un)loaded after initialization time.
+> + *
+> + * Since the null hook doesn't have a callback, we need to check if a hook
+> + * is the null hook prior to invoking it.
+> + */
 
-Yeah, sorry that was a typo. Unlike the second benchmark I didn't have
-this one automated but it's always the vanilla kernel that outperforms
-the dirty.
+I think a comment like this is helpful.
 
-Thanks,
-Davidlohr
+Why not have two hook list heads, one for regular hooks and
+one for mutable hooks? You can dispense with the "null hook"
+handling.
+
+>  static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
+> -#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
+> +DEFINE_STATIC_SRCU(security_hook_srcu);
+> +
+> +static inline bool is_null_hook(struct security_hook_list *shl)
+> +{
+> +	union {
+> +		void *cb_ptr;
+> +		union security_list_options slo;
+> +	} hook_options;
+> +
+> +	hook_options.slo = shl->hook;
+> +	return !hook_options.cb_ptr;
+> +}
+
+I like the HAS_FUNC() approach better.
+
+What I think would work best is to have a separate list head
+for the mutable hooks. 
+
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
