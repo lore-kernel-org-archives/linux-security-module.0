@@ -1,307 +1,156 @@
-From: sargun@sargun.me (Sargun Dhillon)
-Date: Fri, 30 Mar 2018 02:33:33 +0000
-Subject: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
-	after boot time
-In-Reply-To: <3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
-References: <cover.1522357211.git.sargun@sargun.me>
-	<5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
-	<3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
-Message-ID: <20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
+From: masanobu2.koike@toshiba.co.jp (Masanobu Koike)
+Date: Fri, 30 Mar 2018 17:30:31 +0900
+Subject: [RFC v3 0/2] WhiteEgret LSM module
+Message-ID: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Mar 29, 2018 at 02:37:10PM -0700, Casey Schaufler wrote:
-> On 3/29/2018 2:14 PM, Sargun Dhillon wrote:
-> > This patch introduces a mechanism to add mutable hooks and immutable
-> > hooks to the callback chain. It adds an intermediary item to the
-> > chain which separates mutable and immutable hooks. Immutable hooks
-> > are then marked as read-only, as well as the hook heads. This does
-> > not preclude some hooks being able to be mutated (removed).
-> >
-> > It also wraps the hook unloading, and execution with an SRCU. One
-> > SRCU is used across all hooks, as the SRCU struct can be memory
-> > intensive, and hook execution time in general should be relatively
-> > short.
-> >
-> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> > ---
-> >  include/linux/lsm_hooks.h  |  23 ++---
-> >  security/Kconfig           |   2 +-
-> >  security/apparmor/lsm.c    |   2 +-
-> >  security/commoncap.c       |   2 +-
-> >  security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
-> >  security/selinux/hooks.c   |   5 +-
-> >  security/smack/smack_lsm.c |   3 +-
-> >  security/tomoyo/tomoyo.c   |   3 +-
-> >  security/yama/yama_lsm.c   |   2 +-
-> >  9 files changed, 196 insertions(+), 56 deletions(-)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index 09bc60fb35f1..689e5e72fb38 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
-> >  extern char *lsm_names;
-> >  
-> >  extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> > -				char *lsm);
-> > +				char *lsm, bool is_mutable);
-> >  
-> > -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
-> > +#define __lsm_ro_after_init	__ro_after_init
-> > +/* Currently required to handle SELinux runtime hook disable. */
-> > +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
-> > +#define __lsm_mutable_after_init
-> >  /*
-> >   * Assuring the safety of deleting a security module is up to
-> >   * the security module involved. This may entail ordering the
-> > @@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> >   * disabling their module is a good idea needs to be at least as
-> >   * careful as the SELinux team.
-> >   */
-> > -static inline void security_delete_hooks(struct security_hook_list *hooks,
-> > -						int count)
-> > -{
-> > -	int i;
-> > -
-> > -	for (i = 0; i < count; i++)
-> > -		hlist_del_rcu(&hooks[i].list);
-> > -}
-> > -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
-> > -
-> > -/* Currently required to handle SELinux runtime hook disable. */
-> > -#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
-> > -#define __lsm_ro_after_init
-> > +extern void security_delete_hooks(struct security_hook_list *hooks, int count);
-> >  #else
-> > -#define __lsm_ro_after_init	__ro_after_init
-> > +#define __lsm_mutable_after_init __ro_after_init
-> >  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
-> >  
-> >  extern int __init security_module_enable(const char *module);
-> > diff --git a/security/Kconfig b/security/Kconfig
-> > index c4302067a3ad..a3b8b1142e6f 100644
-> > --- a/security/Kconfig
-> > +++ b/security/Kconfig
-> > @@ -32,7 +32,7 @@ config SECURITY
-> >  	  If you are unsure how to answer this question, answer N.
-> >  
-> >  config SECURITY_WRITABLE_HOOKS
-> > -	depends on SECURITY
-> > +	depends on SECURITY && SRCU
-> >  	bool
-> >  	default n
-> >  
-> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> > index 9a65eeaf7dfa..d6cca8169df0 100644
-> > --- a/security/apparmor/lsm.c
-> > +++ b/security/apparmor/lsm.c
-> > @@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
-> >  		goto buffers_out;
-> >  	}
-> >  	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
-> > -				"apparmor");
-> > +				"apparmor", false);
-> >  
-> >  	/* Report that AppArmor successfully initialized */
-> >  	apparmor_initialized = 1;
-> > diff --git a/security/commoncap.c b/security/commoncap.c
-> > index 48620c93d697..fe4b0d9d44ce 100644
-> > --- a/security/commoncap.c
-> > +++ b/security/commoncap.c
-> > @@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
-> >  void __init capability_add_hooks(void)
-> >  {
-> >  	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
-> > -				"capability");
-> > +				"capability", false);
-> >  }
-> >  
-> >  #endif /* CONFIG_SECURITY */
-> > diff --git a/security/security.c b/security/security.c
-> > index 3cafff61b049..2ddb64864e3e 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -29,6 +29,11 @@
-> >  #include <linux/backing-dev.h>
-> >  #include <linux/string.h>
-> >  #include <net/flow.h>
-> > +#include <linux/srcu.h>
-> > +#include <linux/mutex.h>
-> > +
-> > +#define SECURITY_HOOK_COUNT \
-> > +	(sizeof(security_hook_heads) / sizeof(struct hlist_head))
-> >  
-> >  #define MAX_LSM_EVM_XATTR	2
-> >  
-> > @@ -36,7 +41,10 @@
-> >  #define SECURITY_NAME_MAX	10
-> >  
-> >  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
-> > +EXPORT_SYMBOL_GPL(security_hook_heads);
-> > +
-> >  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
-> > +static DEFINE_MUTEX(security_hook_mutex);
-> >  
-> >  char *lsm_names;
-> >  /* Boot-time LSM user choice */
-> > @@ -53,6 +61,103 @@ static void __init do_security_initcalls(void)
-> >  	}
-> >  }
-> >  
-> > +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
-> > +DEFINE_STATIC_SRCU(security_hook_srcu);
-> > +static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
-> > +#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
-> 
-> The HAS_FUNC() macro will work, but it's awkward outside of the
-> call_..._hook() macros. I think you should document how to use it
-> properly somewhere in here. There are enough cases where the
-> call_..._hook() macros aren't used that someone could have trouble
-> figuring out how to use it.
-> 
-> 
-What about something like:
+WhiteEgret is an LSM to simply provide a whitelisting-type
+execution control.
 
- security/security.c | 58 ++++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 42 insertions(+), 16 deletions(-)
+An execution-whitelist, simply called whitelist, is a list
+of executable components (e.g., applications, libraries)
+that are approved to run on a host. The whitelist is used
+to decide whether executable components are permitted to
+execute or not. This mechanism can stop an execution of
+unknown software, so it helps stop the execution of
+malicious code and other unauthorized software.
 
-diff --git a/security/security.c b/security/security.c
-index 2ddb64864e3e..bc14125cfc78 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -62,9 +62,37 @@ static void __init do_security_initcalls(void)
- }
- 
- #ifdef CONFIG_SECURITY_WRITABLE_HOOKS
--DEFINE_STATIC_SRCU(security_hook_srcu);
-+/*
-+ * With writable hooks, we setup a structure like this:
-+ * +------+   +-----------+   +-----------+   +-----------+   +--------------+
-+ * |      |   |           |   |           |   |           |   |              |
-+ * | HEAD +---> Immutable +---> Immutable +---> Null hook +---> Mutable Hook |
-+ * |      |   |  Hook 1   |   |  Hook 2   |   |           |   |              |
-+ * +------+   +-----------+   +-----------+   +-----------+   +--------------+
-+ *                  |               |                                |
-+ *                  v               v                                v
-+ *              Callback        Callback                         Callback
-+ *
-+ * The hooks before to null hook are marked only after kernel initialization.
-+ * The null hook, as well as the hooks succeeding it are not marked read only,
-+ * therefore allowing them be (un)loaded after initialization time.
-+ *
-+ * Since the null hook doesn't have a callback, we need to check if a hook
-+ * is the null hook prior to invoking it.
-+ */
- static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
--#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
-+DEFINE_STATIC_SRCU(security_hook_srcu);
-+
-+static inline bool is_null_hook(struct security_hook_list *shl)
-+{
-+	union {
-+		void *cb_ptr;
-+		union security_list_options slo;
-+	} hook_options;
-+
-+	hook_options.slo = shl->hook;
-+	return !hook_options.cb_ptr;
-+}
- 
- static inline int lock_lsm(void)
- {
-@@ -88,14 +116,9 @@ static inline void unlock_lsm(int idx)
- static void security_add_hook(struct security_hook_list *hook, bool is_mutable)
- {
- 	struct security_hook_list *mutable_hook;
--	union {
--		void *cb_ptr;
--		union security_list_options slo;
--	} hook_options;
- 
- 	hlist_for_each_entry(mutable_hook, hook->head, list) {
--		hook_options.slo = mutable_hook->hook;
--		if (hook_options.cb_ptr)
-+		if (!is_null_hook(mutable_hook))
- 			continue;
- 
- 		if (is_mutable)
-@@ -139,7 +162,10 @@ void security_delete_hooks(struct security_hook_list *hooks, int count)
- EXPORT_SYMBOL_GPL(security_delete_hooks);
- 
- #else
--#define HAS_FUNC(SHL, FUNC)	true
-+static inline bool is_null_hook(struct security_hook_list *shl)
-+{
-+	return false;
-+}
- 
- static inline int lock_lsm(void)
- {
-@@ -309,7 +335,7 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
- 									\
- 		srcu_idx = lock_lsm();					\
- 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
--			if (HAS_FUNC(P, FUNC))				\
-+			if (!is_null_hook(P))			\
- 				P->hook.FUNC(__VA_ARGS__);		\
- 		unlock_lsm(srcu_idx);					\
- 	} while (0)
-@@ -322,7 +348,7 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
- 		struct security_hook_list *P;			\
- 								\
- 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
--			if (HAS_FUNC(P, FUNC)) {		\
-+			if (!is_null_hook(P)) {			\
- 				RC = P->hook.FUNC(__VA_ARGS__);	\
- 				if (RC != 0)			\
- 					break;			\
-@@ -434,7 +460,7 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 	 */
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
--		if (!HAS_FUNC(hp, vm_enough_memory))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.vm_enough_memory(mm, pages);
- 		if (rc <= 0) {
-@@ -928,7 +954,7 @@ int security_inode_getsecurity(struct inode *inode, const char *name,
- 	 */
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecurity, list) {
--		if (!HAS_FUNC(hp, inode_getsecurity))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.inode_getsecurity(inode, name, buffer, alloc);
- 		if (rc != -EOPNOTSUPP)
-@@ -953,7 +979,7 @@ int security_inode_setsecurity(struct inode *inode, const char *name,
- 	 */
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.inode_setsecurity, list) {
--		if (!HAS_FUNC(hp, inode_setsecurity))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.inode_setsecurity(inode, name, value, size,
- 						flags);
-@@ -1264,7 +1290,7 @@ int security_task_prctl(int option, unsigned long arg2,
- 
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
--		if (!HAS_FUNC(hp, task_prctl))
-+		if (is_null_hook(hp))
- 			continue;
- 		thisrc = hp->hook.task_prctl(option, arg2, arg3, arg4, arg5);
- 		if (thisrc != -ENOSYS) {
-@@ -1774,7 +1800,7 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 	hlist_for_each_entry(hp,
- 				&security_hook_heads.xfrm_state_pol_flow_match,
- 				list) {
--		if (!HAS_FUNC(hp, xfrm_state_pol_flow_match))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, fl);
- 		break;
+It is important to maintain a whitelist properly according to
+the execution environments. Managing whitelists for information
+systems is a difficult task because their environments are
+changed frequently. On the other hand, for such devices that
+continue to do the same tasks for a certain period of time,
+we can use the same whitelist for the period once the whitelist
+is established. Thus the whitelisting-type execution control
+works best in such execution environments. Examples of the above
+execution environments include control devices in industrial
+control systems.
+
+Although the number of changing whitelists is not so large,
+it is necessary to change them according to a system life cycle
+or each phase of system operations. There is a requirement to
+change whitelists with the system operations continued because
+they often cannot easily be stopped. For example, such cases
+include temporarily allowing maintenance programs for maintenance
+or troubleshooting purposes while running the systems.
+
+WhiteEgret is aiming at satisfying the above requirement.
+WhiteEgret adopts a model that a whitelist is managed in user space.
+Namely, WhiteEgret assumes that a privileged user manages a whitelist
+in user space. This makes it possible to change the whitelist while
+running the systems. 
+
+Mechanism of WhiteEgret
+
+WhiteEgret requires a user application called WhiteEgret User
+Application (WEUA, for short). WhiteEgret utilizes the
+bprm_check_security hook and the mmap_file hook.
+WhiteEgret asks WEUA whether an executable component hooked
+by the above hooks is permitted to execute or not.
+If the response from the WEUA is "permit", then WhiteEgret
+continues to process the executable component. If the response
+is "not permit", then WhiteEgret returns an error and blocks
+the execution of the executable component.
+The bprm_check_security hook is triggered by execve system
+call, so execution by almost all executable components are
+hooked by the hook. However, because shared objects do not
+invoke execve system call, WhiteEgret utilizes the mmap_file
+hook to hook the memory mapping by a shared object.
+Thus WhiteEgret ignores the mmap_file hook caused by
+non-executable and by executable which calls execve system call.
+
+To ask the permission to a WEUA, WhiteEgret sends the
+absolute path, the inode number and the device number of the
+executable component to the WEUA.
+Then the WEUA is expected to work as follows.
+The WEUA sees if the tuple of the absolute path and/or the inode
+number and/or the device number is contained in the whitelist.
+If it exists, the WEUA compares a hash value of the executable
+component indicated by the absolute path (and/or the inode number
+and/or device number) with that in the whitelist to see whether
+the executable component is changed or not after the whitelist is
+made. The WEUA returns "permit" if both tests are passed,
+otherwise returns "not permit".
+
+To use WhiteEgret
+
+Users have to prepare a whitelist and a WEUA to use WhiteEgret.
+A sample WEUA is involved in samples/whiteegret/.
+
+To enable WhiteEgret, you are required to build the kernel using
+normal procedures with CONFIG_SECURITY_WHITEEGRET=y.
+
+Assumptions and ToDos
+
+At this stage, WhiteEgret assumes the following.
+Relaxing these assumptions are future works.
+- Root is not compromised. And using a whitelist and a WEUA
+requires root privilege.
+- WEUA is reliable.
+- It is allowed for scripting languages, e.g., Perl or Python,
+to read arbitrary scripts and to execute them.
+
+
+The patchset is also available in our github repo:
+  https://github.com/whiteegret/whiteegret
+
+---
+Changes in v3:
+- Change to a minor LSM module.
+
+Changes in v2:
+- Change communication method between kernel space and user space
+from netlink to device driver, and device driver utilizes not LKM
+but securityfs.
+- Add inode number and device number to information of executable
+component sent from kernel space to user space.
+- Fix bugs regarding to locks during kernel space and user space
+communication.
+- Change return value from -EPERM to -EACCES when the execution of
+an executable component is denied.
+
+Masanobu Koike (2):
+  WhiteEgret: Add WhiteEgret core functions.
+  WhiteEgret: Add an example of user application.
+
+ samples/Kconfig                    |   6 +
+ samples/Makefile                   |   2 +-
+ samples/whiteegret/Makefile        |  14 ++
+ samples/whiteegret/checkwl.c       |  57 ++++++++
+ samples/whiteegret/checkwl.h       |  26 ++++
+ samples/whiteegret/main.c          |  86 +++++++++++
+ security/Kconfig                   |   1 +
+ security/Makefile                  |   2 +
+ security/whiteegret/Kconfig        |  11 ++
+ security/whiteegret/Makefile       |   2 +
+ security/whiteegret/init.c         |  72 ++++++++++
+ security/whiteegret/main.c         | 255 +++++++++++++++++++++++++++++++++
+ security/whiteegret/request.c      | 151 ++++++++++++++++++++
+ security/whiteegret/request.h      |  52 +++++++
+ security/whiteegret/we.h           |  66 +++++++++
+ security/whiteegret/we_fs.c        | 284 +++++++++++++++++++++++++++++++++++++
+ security/whiteegret/we_fs.h        |  23 +++
+ security/whiteegret/we_fs_common.h |  36 +++++
+ 18 files changed, 1145 insertions(+), 1 deletion(-)
+ create mode 100644 samples/whiteegret/Makefile
+ create mode 100644 samples/whiteegret/checkwl.c
+ create mode 100644 samples/whiteegret/checkwl.h
+ create mode 100644 samples/whiteegret/main.c
+ create mode 100644 security/whiteegret/Kconfig
+ create mode 100644 security/whiteegret/Makefile
+ create mode 100644 security/whiteegret/init.c
+ create mode 100644 security/whiteegret/main.c
+ create mode 100644 security/whiteegret/request.c
+ create mode 100644 security/whiteegret/request.h
+ create mode 100644 security/whiteegret/we.h
+ create mode 100644 security/whiteegret/we_fs.c
+ create mode 100644 security/whiteegret/we_fs.h
+ create mode 100644 security/whiteegret/we_fs_common.h
+
+-- 
+2.14.1
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
