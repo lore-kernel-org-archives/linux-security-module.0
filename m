@@ -1,36 +1,49 @@
-From: jmorris@namei.org (James Morris)
-Date: Sat, 31 Mar 2018 13:30:20 +1100 (AEDT)
-Subject: [PATCH v3] security: convert security hooks to use hlist
-In-Reply-To: <20180329012820.GA7901@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20180329012820.GA7901@ircssh-2.c.rugged-nimbus-611.internal>
-Message-ID: <alpine.LRH.2.21.1803311329370.27572@namei.org>
+From: john.johansen@canonical.com (John Johansen)
+Date: Fri, 30 Mar 2018 21:12:30 -0700
+Subject: [PATCH][next] apparmor: fix memory leak on buffer on error exit
+	path
+In-Reply-To: <20180327133558.13072-1-colin.king@canonical.com>
+References: <20180327133558.13072-1-colin.king@canonical.com>
+Message-ID: <5ddbfd4d-12f3-1cde-c080-8fde508c664f@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 29 Mar 2018, Sargun Dhillon wrote:
-
-> This changes security_hook_heads to use hlist_heads instead of
-> the circular doubly-linked list heads. This should cut down
-> the size of the struct by about half.
+On 03/27/2018 06:35 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> In addition, it allows mutation of the hooks at the tail of the
-> callback list without having to modify the head. The longer-term
-> purpose of this is to enable making the heads read only.
+> Currently on the error exit path the allocated buffer is not free'd
+> causing a memory leak. Fix this by kfree'ing it.
 > 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Reviewed-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> Detected by CoverityScan, CID#1466876 ("Resource leaks")
+> 
+> Fixes: 1180b4c757aa ("apparmor: fix dangling symlinks to policy rawdata after replacement")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Thanks.
+thanks Colin
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-and next-testing
+I've pulled it into apparmor-next
 
-
--- 
-James Morris
-<jmorris@namei.org>
+> ---
+>  security/apparmor/apparmorfs.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 96bb6b73af65..949dd8a48164 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -1497,8 +1497,10 @@ static char *gen_symlink_name(int depth, const char *dirname, const char *fname)
+>  	}
+>  
+>  	error = snprintf(s, size, "raw_data/%s/%s", dirname, fname);
+> -	if (error >= size || error < 0)
+> +	if (error >= size || error < 0) {
+> +		kfree(buffer);
+>  		return ERR_PTR(-ENAMETOOLONG);
+> +	}
+>  
+>  	return buffer;
+>  }
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
