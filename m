@@ -1,29 +1,31 @@
 From: jmorris@namei.org (James Morris)
-Date: Sat, 31 Mar 2018 11:46:10 +1100 (AEDT)
-Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <4136.1522452584@warthog.procyon.org.uk>
-References: <4136.1522452584@warthog.procyon.org.uk>
-Message-ID: <alpine.LRH.2.21.1803311145180.7769@namei.org>
+Date: Sat, 31 Mar 2018 13:13:22 +1100 (AEDT)
+Subject: [REVIEW][PATCH 12/11] ipc: Directly call the security hook in
+	ipc_ops.associate
+In-Reply-To: <877eq2m3or.fsf_-_@xmission.com>
+References: <1520875093-18174-1-git-send-email-nagarathnam.muthusamy@oracle.com>
+	<87vadzqqq6.fsf@xmission.com>
+	<990e88fa-ab50-9645-b031-14e1afbf7ccc@oracle.com>
+	<877eqejowd.fsf@xmission.com>
+	<3a46a03d-e4dd-59b6-e25f-0020be1b1dc9@oracle.com>
+	<87a7v2z2qa.fsf@xmission.com> <87vadmobdw.fsf_-_@xmission.com>
+	<877eq2m3or.fsf_-_@xmission.com>
+Message-ID: <alpine.LRH.2.21.1803311313010.7769@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 31 Mar 2018, David Howells wrote:
+On Sat, 24 Mar 2018, Eric W. Biederman wrote:
 
-> Date: Thu, 26 Oct 2017 17:37:38 +0100
 > 
-> Hi James,
+> After the last round of cleanups the shm, sem, and msg associate
+> operations just became trivial wrappers around the appropriate security
+> method.  Simplify things further by just calling the security method
+> directly.
 > 
-> Can you pull this patchset into security/next please?  It has been in
-> linux-next since the beginning of March.
-> 
-> It adds kernel lockdown support for EFI secure boot.
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git 
-next-lockdown and next-testing
 
-Are there any known coverage gaps now?
-
+Reviewed-by: James Morris <james.morris@microsoft.com>
 
 
 -- 
