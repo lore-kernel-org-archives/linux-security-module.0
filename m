@@ -1,270 +1,384 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Sat, 31 Mar 2018 14:34:52 -0700
-Subject: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
-	after boot time
-In-Reply-To: <CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
-References: <cover.1522357211.git.sargun@sargun.me>
-	<5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
-	<3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
-	<20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
-	<8b015e9e-dccb-aefd-f5b2-c66eed3c6815@schaufler-ca.com>
-	<CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
-Message-ID: <6e9cf9f5-dec9-3e8f-6439-418be708da67@schaufler-ca.com>
+From: fengguang.wu@intel.com (kbuild test robot)
+Date: Sat, 31 Mar 2018 15:41:31 +0800
+Subject: [security:next-testing 16/17] include/linux/list.h:377:18: error:
+	'struct hlist_head' has no member named 'next'
+Message-ID: <201803311519.CBdbidaz%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 3/30/2018 11:16 PM, Sargun Dhillon wrote:
-> On Fri, Mar 30, 2018 at 2:39 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 3/29/2018 7:33 PM, Sargun Dhillon wrote:
->>> On Thu, Mar 29, 2018 at 02:37:10PM -0700, Casey Schaufler wrote:
->>>> On 3/29/2018 2:14 PM, Sargun Dhillon wrote:
->>>>> This patch introduces a mechanism to add mutable hooks and immutable
->>>>> hooks to the callback chain. It adds an intermediary item to the
->>>>> chain which separates mutable and immutable hooks. Immutable hooks
->>>>> are then marked as read-only, as well as the hook heads. This does
->>>>> not preclude some hooks being able to be mutated (removed).
->>>>>
->>>>> It also wraps the hook unloading, and execution with an SRCU. One
->>>>> SRCU is used across all hooks, as the SRCU struct can be memory
->>>>> intensive, and hook execution time in general should be relatively
->>>>> short.
->>>>>
->>>>> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
->>>>> Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
->>>>> ---
->>>>>  include/linux/lsm_hooks.h  |  23 ++---
->>>>>  security/Kconfig           |   2 +-
->>>>>  security/apparmor/lsm.c    |   2 +-
->>>>>  security/commoncap.c       |   2 +-
->>>>>  security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
->>>>>  security/selinux/hooks.c   |   5 +-
->>>>>  security/smack/smack_lsm.c |   3 +-
->>>>>  security/tomoyo/tomoyo.c   |   3 +-
->>>>>  security/yama/yama_lsm.c   |   2 +-
->>>>>  9 files changed, 196 insertions(+), 56 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>>>> index 09bc60fb35f1..689e5e72fb38 100644
->>>>> --- a/include/linux/lsm_hooks.h
->>>>> +++ b/include/linux/lsm_hooks.h
->>>>> @@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
->>>>>  extern char *lsm_names;
->>>>>
->>>>>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
->>>>> -                           char *lsm);
->>>>> +                           char *lsm, bool is_mutable);
->>>>>
->>>>> -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
->>>>> +#define __lsm_ro_after_init        __ro_after_init
->>>>> +/* Currently required to handle SELinux runtime hook disable. */
->>>>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
->>>>> +#define __lsm_mutable_after_init
->>>>>  /*
->>>>>   * Assuring the safety of deleting a security module is up to
->>>>>   * the security module involved. This may entail ordering the
->>>>> @@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
->>>>>   * disabling their module is a good idea needs to be at least as
->>>>>   * careful as the SELinux team.
->>>>>   */
->>>>> -static inline void security_delete_hooks(struct security_hook_list *hooks,
->>>>> -                                           int count)
->>>>> -{
->>>>> -   int i;
->>>>> -
->>>>> -   for (i = 0; i < count; i++)
->>>>> -           hlist_del_rcu(&hooks[i].list);
->>>>> -}
->>>>> -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
->>>>> -
->>>>> -/* Currently required to handle SELinux runtime hook disable. */
->>>>> -#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
->>>>> -#define __lsm_ro_after_init
->>>>> +extern void security_delete_hooks(struct security_hook_list *hooks, int count);
->>>>>  #else
->>>>> -#define __lsm_ro_after_init        __ro_after_init
->>>>> +#define __lsm_mutable_after_init __ro_after_init
->>>>>  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
->>>>>
->>>>>  extern int __init security_module_enable(const char *module);
->>>>> diff --git a/security/Kconfig b/security/Kconfig
->>>>> index c4302067a3ad..a3b8b1142e6f 100644
->>>>> --- a/security/Kconfig
->>>>> +++ b/security/Kconfig
->>>>> @@ -32,7 +32,7 @@ config SECURITY
->>>>>       If you are unsure how to answer this question, answer N.
->>>>>
->>>>>  config SECURITY_WRITABLE_HOOKS
->>>>> -   depends on SECURITY
->>>>> +   depends on SECURITY && SRCU
->>>>>     bool
->>>>>     default n
->>>>>
->>>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>>>> index 9a65eeaf7dfa..d6cca8169df0 100644
->>>>> --- a/security/apparmor/lsm.c
->>>>> +++ b/security/apparmor/lsm.c
->>>>> @@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
->>>>>             goto buffers_out;
->>>>>     }
->>>>>     security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
->>>>> -                           "apparmor");
->>>>> +                           "apparmor", false);
->>>>>
->>>>>     /* Report that AppArmor successfully initialized */
->>>>>     apparmor_initialized = 1;
->>>>> diff --git a/security/commoncap.c b/security/commoncap.c
->>>>> index 48620c93d697..fe4b0d9d44ce 100644
->>>>> --- a/security/commoncap.c
->>>>> +++ b/security/commoncap.c
->>>>> @@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
->>>>>  void __init capability_add_hooks(void)
->>>>>  {
->>>>>     security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
->>>>> -                           "capability");
->>>>> +                           "capability", false);
->>>>>  }
->>>>>
->>>>>  #endif /* CONFIG_SECURITY */
->>>>> diff --git a/security/security.c b/security/security.c
->>>>> index 3cafff61b049..2ddb64864e3e 100644
->>>>> --- a/security/security.c
->>>>> +++ b/security/security.c
->>>>> @@ -29,6 +29,11 @@
->>>>>  #include <linux/backing-dev.h>
->>>>>  #include <linux/string.h>
->>>>>  #include <net/flow.h>
->>>>> +#include <linux/srcu.h>
->>>>> +#include <linux/mutex.h>
->>>>> +
->>>>> +#define SECURITY_HOOK_COUNT \
->>>>> +   (sizeof(security_hook_heads) / sizeof(struct hlist_head))
->>>>>
->>>>>  #define MAX_LSM_EVM_XATTR  2
->>>>>
->>>>> @@ -36,7 +41,10 @@
->>>>>  #define SECURITY_NAME_MAX  10
->>>>>
->>>>>  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
->>>>> +EXPORT_SYMBOL_GPL(security_hook_heads);
->>>>> +
->>>>>  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
->>>>> +static DEFINE_MUTEX(security_hook_mutex);
->>>>>
->>>>>  char *lsm_names;
->>>>>  /* Boot-time LSM user choice */
->>>>> @@ -53,6 +61,103 @@ static void __init do_security_initcalls(void)
->>>>>     }
->>>>>  }
->>>>>
->>>>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
->>>>> +DEFINE_STATIC_SRCU(security_hook_srcu);
->>>>> +static struct security_hook_list   null_hooks[SECURITY_HOOK_COUNT];
->>>>> +#define HAS_FUNC(SHL, FUNC)        (SHL->hook.FUNC)
->>>> The HAS_FUNC() macro will work, but it's awkward outside of the
->>>> call_..._hook() macros. I think you should document how to use it
->>>> properly somewhere in here. There are enough cases where the
->>>> call_..._hook() macros aren't used that someone could have trouble
->>>> figuring out how to use it.
->>>>
->>>>
->>> What about something like:
->>>
->>>  security/security.c | 58 ++++++++++++++++++++++++++++++++++++++---------------
->>>  1 file changed, 42 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/security/security.c b/security/security.c
->>> index 2ddb64864e3e..bc14125cfc78 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -62,9 +62,37 @@ static void __init do_security_initcalls(void)
->>>  }
->>>
->>>  #ifdef CONFIG_SECURITY_WRITABLE_HOOKS
->>> -DEFINE_STATIC_SRCU(security_hook_srcu);
->>> +/*
->>> + * With writable hooks, we setup a structure like this:
->>> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
->>> + * |      |   |           |   |           |   |           |   |              |
->>> + * | HEAD +---> Immutable +---> Immutable +---> Null hook +---> Mutable Hook |
->>> + * |      |   |  Hook 1   |   |  Hook 2   |   |           |   |              |
->>> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
->>> + *                  |               |                                |
->>> + *                  v               v                                v
->>> + *              Callback        Callback                         Callback
->>> + *
->>> + * The hooks before to null hook are marked only after kernel initialization.
->>> + * The null hook, as well as the hooks succeeding it are not marked read only,
->>> + * therefore allowing them be (un)loaded after initialization time.
->>> + *
->>> + * Since the null hook doesn't have a callback, we need to check if a hook
->>> + * is the null hook prior to invoking it.
->>> + */
->> I think a comment like this is helpful.
->>
->> Why not have two hook list heads, one for regular hooks and
->> one for mutable hooks? You can dispense with the "null hook"
->> handling.
->>
-> The iterations gets really messy. The patch earlier had a lot of
-> awkward gunk in it. The issue primarily came with deciding to iterate
-> over the second set of hooks iff the first set of hooks failed. With
-> the way the calls are setup, it's messy.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-testing
+head:   3f3122c1b84c8f60a89184f2b0d854ffd89c7534
+commit: 22402b0b736d513caf74fce1bbeb579268530599 [16/17] security: convert security hooks to use hlist
+config: sh-allmodconfig (attached as .config)
+compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git checkout 22402b0b736d513caf74fce1bbeb579268530599
+        # save the attached .config to linux build tree
+        make.cross ARCH=sh 
 
-Hang on. I would think you'd only call the 2nd list if the first list
-was completed successfully. And of course the void hooks always get
-called regardless. 
+Note: the security/next-testing HEAD 3f3122c1b84c8f60a89184f2b0d854ffd89c7534 builds fine.
+      It only hurts bisectibility.
 
-> What's your primary issue with the "null hooks"? If it's the null hook
-> checks, I think I can actually remove those.
+All error/warnings (new ones prefixed by >>):
 
-In the common case of one LSM and no mutable modules you
-are making a check on every hook that will always have the
-same answer. Performance impact *of any amount* that does
-not add value in the common case has to be avoided.
+   security/security.c: In function 'security_add_hooks':
+>> security/security.c:166:21: error: passing argument 1 of 'list_add_tail_rcu' from incompatible pointer type [-Werror=incompatible-pointer-types]
+      list_add_tail_rcu(&hooks[i].list, hooks[i].head);
+                        ^
+   In file included from include/linux/dcache.h:7:0,
+                    from security/security.c:17:
+   include/linux/rculist.h:98:20: note: expected 'struct list_head *' but argument is of type 'struct hlist_node *'
+    static inline void list_add_tail_rcu(struct list_head *new,
+                       ^~~~~~~~~~~~~~~~~
+   security/security.c:166:37: error: passing argument 2 of 'list_add_tail_rcu' from incompatible pointer type [-Werror=incompatible-pointer-types]
+      list_add_tail_rcu(&hooks[i].list, hooks[i].head);
+                                        ^~~~~
+   In file included from include/linux/dcache.h:7:0,
+                    from security/security.c:17:
+   include/linux/rculist.h:98:20: note: expected 'struct list_head *' but argument is of type 'struct hlist_head *'
+    static inline void list_add_tail_rcu(struct list_head *new,
+                       ^~~~~~~~~~~~~~~~~
+   In file included from include/linux/list.h:9:0,
+                    from include/linux/timer.h:5,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+   security/security.c: In function 'security_binder_set_context_mgr':
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/kernel.h:947:26: note: in definition of macro 'container_of'
+     void *__mptr = (void *)(ptr);     \
+                             ^~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:226:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_set_context_mgr, 0, mgr);
+            ^~~~~~~~~~~~~
+   In file included from include/linux/kernel.h:10:0,
+                    from include/linux/list.h:9,
+                    from include/linux/timer.h:5,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/compiler.h:316:19: note: in definition of macro '__compiletime_assert'
+      bool __cond = !(condition);    \
+                      ^~~~~~~~~
+   include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+     ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+    #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+     ^~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:20: note: in expansion of macro '__same_type'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+                       ^~~~~~~~~~~
+   include/linux/list.h:366:2: note: in expansion of macro 'container_of'
+     container_of(ptr, type, member)
+     ^~~~~~~~~~~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:226:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_set_context_mgr, 0, mgr);
+            ^~~~~~~~~~~~~
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/compiler.h:316:19: note: in definition of macro '__compiletime_assert'
+      bool __cond = !(condition);    \
+                      ^~~~~~~~~
+   include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+     ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+    #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+     ^~~~~~~~~~~~~~~~
+   include/linux/kernel.h:949:6: note: in expansion of macro '__same_type'
+        !__same_type(*(ptr), void),   \
+         ^~~~~~~~~~~
+   include/linux/list.h:366:2: note: in expansion of macro 'container_of'
+     container_of(ptr, type, member)
+     ^~~~~~~~~~~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:226:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_set_context_mgr, 0, mgr);
+            ^~~~~~~~~~~~~
+   In file included from include/linux/timer.h:5:0,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+   include/linux/list.h:465:20: warning: comparison of distinct pointer types lacks a cast
+          &pos->member != (head);     \
+                       ^
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:226:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_set_context_mgr, 0, mgr);
+            ^~~~~~~~~~~~~
+   In file included from include/linux/list.h:9:0,
+                    from include/linux/timer.h:5,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+   security/security.c: In function 'security_binder_transaction':
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/kernel.h:947:26: note: in definition of macro 'container_of'
+     void *__mptr = (void *)(ptr);     \
+                             ^~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:232:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_transaction, 0, from, to);
+            ^~~~~~~~~~~~~
+   In file included from include/linux/kernel.h:10:0,
+                    from include/linux/list.h:9,
+                    from include/linux/timer.h:5,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/compiler.h:316:19: note: in definition of macro '__compiletime_assert'
+      bool __cond = !(condition);    \
+                      ^~~~~~~~~
+   include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+     ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+    #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+     ^~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:20: note: in expansion of macro '__same_type'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+                       ^~~~~~~~~~~
+   include/linux/list.h:366:2: note: in expansion of macro 'container_of'
+     container_of(ptr, type, member)
+     ^~~~~~~~~~~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:232:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_transaction, 0, from, to);
+            ^~~~~~~~~~~~~
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/compiler.h:316:19: note: in definition of macro '__compiletime_assert'
+      bool __cond = !(condition);    \
+                      ^~~~~~~~~
+   include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+     ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+    #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+     ^~~~~~~~~~~~~~~~
+   include/linux/kernel.h:949:6: note: in expansion of macro '__same_type'
+        !__same_type(*(ptr), void),   \
+         ^~~~~~~~~~~
+   include/linux/list.h:366:2: note: in expansion of macro 'container_of'
+     container_of(ptr, type, member)
+     ^~~~~~~~~~~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:232:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_transaction, 0, from, to);
+            ^~~~~~~~~~~~~
+   In file included from include/linux/timer.h:5:0,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+   include/linux/list.h:465:20: warning: comparison of distinct pointer types lacks a cast
+          &pos->member != (head);     \
+                       ^
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:232:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_transaction, 0, from, to);
+            ^~~~~~~~~~~~~
+   In file included from include/linux/list.h:9:0,
+                    from include/linux/timer.h:5,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+   security/security.c: In function 'security_binder_transfer_binder':
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/kernel.h:947:26: note: in definition of macro 'container_of'
+     void *__mptr = (void *)(ptr);     \
+                             ^~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:238:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_transfer_binder, 0, from, to);
+            ^~~~~~~~~~~~~
+   In file included from include/linux/kernel.h:10:0,
+                    from include/linux/list.h:9,
+                    from include/linux/timer.h:5,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/bpf.h:12,
+                    from security/security.c:15:
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/compiler.h:316:19: note: in definition of macro '__compiletime_assert'
+      bool __cond = !(condition);    \
+                      ^~~~~~~~~
+   include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+     ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+    #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+     ^~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:20: note: in expansion of macro '__same_type'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+                       ^~~~~~~~~~~
+   include/linux/list.h:366:2: note: in expansion of macro 'container_of'
+     container_of(ptr, type, member)
+     ^~~~~~~~~~~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
+>> security/security.c:213:3: note: in expansion of macro 'list_for_each_entry'
+      list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+      ^~~~~~~~~~~~~~~~~~~
+   security/security.c:238:9: note: in expansion of macro 'call_int_hook'
+     return call_int_hook(binder_transfer_binder, 0, from, to);
+            ^~~~~~~~~~~~~
+>> include/linux/list.h:377:18: error: 'struct hlist_head' has no member named 'next'
+     list_entry((ptr)->next, type, member)
+                     ^
+   include/linux/compiler.h:316:19: note: in definition of macro '__compiletime_assert'
+      bool __cond = !(condition);    \
+                      ^~~~~~~~~
+   include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+     ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+    #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/kernel.h:948:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+     ^~~~~~~~~~~~~~~~
+   include/linux/kernel.h:949:6: note: in expansion of macro '__same_type'
+        !__same_type(*(ptr), void),   \
+         ^~~~~~~~~~~
+   include/linux/list.h:366:2: note: in expansion of macro 'container_of'
+     container_of(ptr, type, member)
+     ^~~~~~~~~~~~
+   include/linux/list.h:377:2: note: in expansion of macro 'list_entry'
+     list_entry((ptr)->next, type, member)
+     ^~~~~~~~~~
+   include/linux/list.h:464:13: note: in expansion of macro 'list_first_entry'
+     for (pos = list_first_entry(head, typeof(*pos), member); \
+                ^~~~~~~~~~~~~~~~
 
-This is a clever implementation. But it does not generalize.
-If I wanted to add a third kind of hooks the mechanism would
-not support it. If you add a 2nd list it's obvious what you'd
-want to do to add a 3rd.
+vim +377 include/linux/list.h
 
->
->>>  static struct security_hook_list     null_hooks[SECURITY_HOOK_COUNT];
->>> -#define HAS_FUNC(SHL, FUNC)  (SHL->hook.FUNC)
->>> +DEFINE_STATIC_SRCU(security_hook_srcu);
->>> +
->>> +static inline bool is_null_hook(struct security_hook_list *shl)
->>> +{
->>> +     union {
->>> +             void *cb_ptr;
->>> +             union security_list_options slo;
->>> +     } hook_options;
->>> +
->>> +     hook_options.slo = shl->hook;
->>> +     return !hook_options.cb_ptr;
->>> +}
->> I like the HAS_FUNC() approach better.
->  Just curious, why? I personally prefer small static inline functions
-> over macros, if possible.
+^1da177e Linus Torvalds  2005-04-16  358  
+^1da177e Linus Torvalds  2005-04-16  359  /**
+^1da177e Linus Torvalds  2005-04-16  360   * list_entry - get the struct for this entry
+^1da177e Linus Torvalds  2005-04-16  361   * @ptr:	the &struct list_head pointer.
+^1da177e Linus Torvalds  2005-04-16  362   * @type:	the type of the struct this is embedded in.
+3943f42c Andrey Utkin    2014-11-14  363   * @member:	the name of the list_head within the struct.
+^1da177e Linus Torvalds  2005-04-16  364   */
+^1da177e Linus Torvalds  2005-04-16  365  #define list_entry(ptr, type, member) \
+^1da177e Linus Torvalds  2005-04-16  366  	container_of(ptr, type, member)
+^1da177e Linus Torvalds  2005-04-16  367  
+^1da177e Linus Torvalds  2005-04-16  368  /**
+b5e61818 Pavel Emelianov 2007-05-08  369   * list_first_entry - get the first element from a list
+b5e61818 Pavel Emelianov 2007-05-08  370   * @ptr:	the list head to take the element from.
+b5e61818 Pavel Emelianov 2007-05-08  371   * @type:	the type of the struct this is embedded in.
+3943f42c Andrey Utkin    2014-11-14  372   * @member:	the name of the list_head within the struct.
+b5e61818 Pavel Emelianov 2007-05-08  373   *
+b5e61818 Pavel Emelianov 2007-05-08  374   * Note, that list is expected to be not empty.
+b5e61818 Pavel Emelianov 2007-05-08  375   */
+b5e61818 Pavel Emelianov 2007-05-08  376  #define list_first_entry(ptr, type, member) \
+b5e61818 Pavel Emelianov 2007-05-08 @377  	list_entry((ptr)->next, type, member)
+b5e61818 Pavel Emelianov 2007-05-08  378  
 
-Minimize the complexity, even inside a macro/function. Your
-is_null_hook() function is massively more complicated than the
-HAS_FUNC() macro. I'm still not 100% sure I understand why you
-have the wacky union, and how you can know that it will get you
-the right result on all architectures.
+:::::: The code at line 377 was first introduced by commit
+:::::: b5e618181a927210f8be1d3d2249d31904ba358d Introduce a handy list_first_entry macro
 
->
->> What I think would work best is to have a separate list head
->> for the mutable hooks.
->>
->>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+:::::: TO: Pavel Emelianov <xemul@sw.ru>
+:::::: CC: Linus Torvalds <torvalds@woody.linux-foundation.org>
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
