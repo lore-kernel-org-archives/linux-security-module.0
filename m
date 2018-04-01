@@ -1,63 +1,46 @@
-From: jmorris@namei.org (James Morris)
-Date: Thu, 1 Feb 2018 08:37:37 +1100 (AEDT)
-Subject: [GIT PULL] Security subsystem updates for v4.16
-In-Reply-To: <CA+55aFw1vWWmv5Ebq9yWVDFm4SQUG_fNd3f5yoYkWRTfUNaL_Q@mail.gmail.com>
-References: <alpine.LRH.2.21.1801291040280.29680@namei.org>
-	<CA+55aFw1vWWmv5Ebq9yWVDFm4SQUG_fNd3f5yoYkWRTfUNaL_Q@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1802010836080.13723@namei.org>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Sat, 31 Mar 2018 22:15:39 -0700
+Subject: [PATCH] security: Split out hook definitions into lsm_hook_types.h
+In-Reply-To: <20180401024015.GA13870@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20180401024015.GA13870@ircssh-2.c.rugged-nimbus-611.internal>
+Message-ID: <CAMp4zn8EkqQZDc1UW9ux0za+99DHpKAXVx72CMzuwApVFZ_=SQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 31 Jan 2018, Linus Torvalds wrote:
+On Sat, Mar 31, 2018 at 7:40 PM, Sargun Dhillon <sargun@sargun.me> wrote:
+> This moves all of the LSM hooks type information into a separate file,
+> lsm_hook_types.h. This enables us to use this file, along with macros
+> to generate the security_hook_heads struct, as well as the security
+> hooks union without having to duplicate definitions.
+>
+> Since the fall-back hooks still require some logic (dispatching
+> to commoncap, nulling out some buffer, etc..), they still must
+> be created manually.
+>
+> This will be useful for further datastructures which want to use
+> the set of security hooks in a completely unrolled way, along
+> with the type information there within.
+>
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> ---
+>  include/linux/lsm_hook_types.h | 1695 ++++++++++++++++++++++++++++++++++
+>  include/linux/lsm_hooks.h      | 1946 +---------------------------------------
+>  include/linux/security.h       |  416 ++-------
+>  kernel/time/time.c             |    6 +-
+>  security/security.c            |    2 +-
+>  5 files changed, 1783 insertions(+), 2282 deletions(-)
+>  create mode 100644 include/linux/lsm_hook_types.h
+>
+>
+Upon further thought, this patch is somewhat unwieldy. I intent to
+split it up. I plan to split it into the following:
+1. Fixing the settimeofday64 weirdness
+2. 1:1 move from lsm_hooks.h to lsm_hook_types.h of the hook
+definitions (union + comments)
+3. Rewiring lsm_hooks.h to use macros only
+4. Rewiring security.h to use macros only
 
-> On Sun, Jan 28, 2018 at 3:41 PM, James Morris <jmorris@namei.org> wrote:
-> >
-> > Note that individual trees may also be pulled via:
-> >
-> > git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
-> >         next-integrity
-> >         next-smack
-> >         next-tpm
-> 
-> So I did that, because it makes it easier and more controlled for me.
-> But then when double-checking that the end result is identical to your
-> full pull request, I end up missing the seccomp tree.
-
-Ok, I'll send you separate pull requests for each branch from now on.
-
-> 
-> I can pull that separately too, but it was missing explanations and a
-> real pull request, so I left it alone.
-> 
-
-Please pull:
-
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
-
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
-
-for you to fetch changes up to 26025bf58b9fe3806ce4f92600e96a2c214c0d9c:
-
-  Merge tag 'seccomp-next' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2017-11-29 12:48:48 +1100)
-
-----------------------------------------------------------------
-James Morris (2):
-      Merge tag 'v4.15-rc1' into next-seccomp
-      Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
-
-Tycho Andersen (2):
-      seccomp: hoist out filter resolving logic
-      ptrace, seccomp: add support for retrieving seccomp metadata
-
- include/linux/seccomp.h     |   8 ++++
- include/uapi/linux/ptrace.h |   6 +++
- kernel/ptrace.c             |   4 ++
- kernel/seccomp.c            | 106 +++++++++++++++++++++++++++++++-------------
- 4 files changed, 94 insertions(+), 30 deletions(-)
+Does that sound reasonable?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
