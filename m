@@ -1,67 +1,211 @@
-From: jmorris@namei.org (James Morris)
-Date: Mon, 2 Apr 2018 21:20:30 +1000 (AEST)
-Subject: [GIT PULL][SECURITY] general changes for v4.17
-Message-ID: <alpine.LRH.2.21.1804022107260.30102@namei.org>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Mon, 2 Apr 2018 07:20:54 -0400
+Subject: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
+In-Reply-To: <201803291744.w2THiZoV005866@wind.enjellic.com>
+References: <201803291744.w2THiZoV005866@wind.enjellic.com>
+Message-ID: <d7e1b214-6565-6c0b-9cdc-2b3dec361161@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Please pull these changes for the security subsystem.
+On 03/29/2018 01:44 PM, Dr. Greg Wettstein wrote:
+> On Mar 28,  8:44am, Stefan Berger wrote:
+> } Subject: Re: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace sup
+>
+> Good morning, I hope the week is going well for everyone.
+>
+>> On 03/28/2018 08:14 AM, Dr. Greg Wettstein wrote:
+>>> On Wed, Mar 28, 2018 at 07:10:12AM -0400, Stefan Berger wrote:
+>>>
+>>> Good morning, I hope the day is starting out well for everyone.
+>>>
+>>>> On 03/27/2018 07:01 PM, Eric W. Biederman wrote:
+>>>>> Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+>>>>>
+>>>>>> From: Yuqiong Sun <suny@us.ibm.com>
+>>>>>>
+>>>>>> Add new CONFIG_IMA_NS config option.  Let clone() create a new IMA
+>>>>>> namespace upon CLONE_NEWUSER flag. Attach the ima_ns data structure
+>>>>>> to user_namespace. ima_ns is allocated and freed upon IMA namespace
+>>>>>> creation and exit, which is tied to USER namespace creation and exit.
+>>>>>> Currently, the ima_ns contains no useful IMA data but only a dummy
+>>>>>> interface. This patch creates the framework for namespacing the different
+>>>>>> aspects of IMA (eg. IMA-audit, IMA-measurement, IMA-appraisal).
+>>>>> Tying IMA to the user namespace is far better than tying IMA
+>>>>> to the mount namespace.  It may even be the proper answer.
+>>>>>
+>>>>> You had asked what it would take to unstick this so you won't have
+>>>>> problems next time you post and I did not get as far as answering.
+>>>>>
+>>>>> I had a conversation a while back with Mimi and I believe what was
+>>>>> agreed was that IMA to start doing it's thing early needs a write
+>>>>> to securityfs/imafs.
+>>>> Above you say 'proper answer' for user namespace. Now this sounds like
+>>>> making it independent.
+>>>>
+>>>>> As such I expect the best way to create the ima namespace is by simply
+>>>>> writing to securityfs/imafs.  Possibly before the user namespace is
+>>>>> even unshared.  That would allow IMA to keep track of things from
+>>>>> before a container is created.
+>>>> So you are saying to not tie it to user namespace but make it an
+>>>> independent namespace and to not use a clone flag (0x1000) but use
+>>>> the filesystem to spawn a new namespace. Should that be an IMA
+>>>> specific file or a file that can be shared with other subsystems?
+>>> We've been platforming solutions for about 18 months now on top of a
+>>> namespaced IMA implementation that we developed and carry against the
+>>> 4.4.x kernel.  Technically its not an IMA namespace, but rather a
+>>> behavioral namespace, since we implement information exchange event
+>>> modeling, conceptually though its all the same and its origins were
+>>> IMA.
+>> Are you intending to make this publicly available and/or contribute
+>> it ?
+> An interesting question and one that will be the subject of a meeting
+> this afternoon.
 
-In this patchset:
+What is the outcome of this meeting ?
 
-- Convert security hooks from list to hlist, a nice cleanup, saving about 
-50% of space, from Sargun Dhillon.
+>
+> The namespace implementation is probably of limited value but the
+> modeling engine would arguably be utility in open-source form.  We
+> built the ima/behavior namespace implementation since it is a very
+> practical requirement for a deterministically modeled os/application
+> stack.
 
-- Only pass the cred, not the secid, to kill_pid_info_as_cred and 
-security_task_kill (as the secid can be determined from the cred), from 
-Stephen Smalley.
+It's hard to figure out from what you are saying to determine what you 
+doing in user space and what is done in the kernel.
 
-- Close a potential race in kernel_read_file(), by making the file 
-unwritable before calling the LSM check (vs after), from Kees Cook.
+>
+> The current namespace work will satisfy a very broad constituency but
+> we needed an implementation 18 months ago.  Consensus and expediency
+> are always conflicting goals.  We are only trying to offer some
+> insight from practical experience if the community ever wants to
+> consider a vision larger then file integrity.
 
-Once this is merged, I'll send separate pull requests for TPM, Integrity, 
-Smack, and the new kernel lockdown feature.  All of these have been in 
-linux-next and tested by the SELinux testsuite.
+I think you may have to become a bit more concrete for others to see 
+what you are doing.
+
+>
+>>> In some configurations we run unmodified Docker containers inside the
+>>> behavioral/IMA namespace.  So if experience is a useful metric the
+>>> 'integrity' namespace needs to be a first class entity and not
+>>> subordinate or tied to any other resource namespaces.  We would also
+>>> recommend, again based on our experiences, the use of a clone flag.
+>> We have been using a clone flag in the first implementation, the
+>> mount flag afterwards.We treat containers independent of the host,
+>> meaning that it has its own policy, independent of the host, and
+>> allows for signed files inside containers to enable
+>> IMA-appraisal. It does require modifications to user space
+>> applications like Docker that have to pick up the file signatures.
+> Our opinion is worth what it is printed on of course, but we would
+> strongly advocate that a clone flag be used with no dependencies in
+> whatever becomes the final implementation.  I think it is important to
+> stress that integrity is but one aspect of platform behavior, which is
+> ultimately what needs to be modeled from a security perspective.
+
+Either clone flag or some pseudo file that spawns a new namespace upon 
+wirte() may be able do it.
+
+> Our modeling engine is process chain specific, ie. host independent,
+> as well.  We do export the hardware aggregate measurement so the
+> namespace specific behavior measurement can be linked to a hardware
+> trust root if that is desired.
+
+Do you tie it to a TPM? Do you log and measure?
+
+>
+> We had originally modified runc to clone the behavior/integrity
+> namespace but a lot of experience led us to wrap the entire container
+> invocation into its own integrity envelope.  Adding a clone flag to
+> the orchestration utility is straight forward, adding support for
+
+Yes.
+
+> running the modeling/integrity engine in a TEE is a bit more of a
+> lift.  Getting tooling and infrastructure upstream is always a
+> challenge as everyone knows, particularly as these ecosystems grow.
+
+I am not sure what exactly that means.
 
 
-The following changes since commit c698ca5278934c0ae32297a8725ced2e27585d7f:
+>
+>>> FWIW, at this point we have hoisted a lot of the integrity
+>>> functionality out of the kernel and up into userspace so it can be run
+>>> in a trusted execution environment.  There are always the issues with
+>>> kernel<->userspace communication, particularly of the symmetric
+>>> variety, but userspace seems to be a much better place for a lot of
+>>> this functionality.  If the ELF module discussion is any indication it
+>> Like what functionality? Are you supporting IMA-appraisal? Are you
+>> doing IMA-measurements? What about IMA-audit? Following our intended
+>> IMA namespacing, all of this would be done in the kernel following
+>> an IMA policy parsed by the kernel.
+> As I commented before, we started with IMA and that effort morphed
+> into platform behavior modeling, which simplistically, is an integrity
 
-  Linux 4.16-rc6 (2018-03-18 17:48:42 -0700)
+I am not sure what integrity has to do with platform behavior. To me 
+integrity is more a state of the system. Behavior goes more into the 
+area of what software does, like whether it behaves unexpected and 
+attempts to steal data, which would be something like malware. Though 
+IMA does not address behavior. If you are doing all this in user space, 
+I'd be curious to see what and how you are doing this.
 
-are available in the git repository at:
+> measurement that is the linear extension sum of the information
+> exchange events mediated by the operating system.  That leads to a
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+What are 'information exchange events' in your system?
 
-for you to fetch changes up to df0ce17331e2501dbffc060041dfc6c5f85227b5:
+> model that is mechanistically simpler implements a superset of the
+> guarantees one gets with IMA-*.  Most importantly it allows almost a
+> complete userspace implementation, which is important if one envisions
+> the notion of a cloud wide integrity orchestration environment.
 
-  security: convert security hooks to use hlist (2018-03-31 13:18:27 +1100)
+When you model 'platform behavior' for a cloud environment, how do you 
+know what software a cloud tenant is attempting to run on the system? Do 
+you differentiate between 'good' and 'bad' behavior of software and how 
+do you do that?
 
-----------------------------------------------------------------
-James Morris (2):
-      Merge tag 'v4.16-rc2' into next-general
-      Merge tag 'v4.16-rc6' into next-general
+>
+> The Holy Grail in all of this, of course, is the notion of defining a
+> metric for per process trust.  We link all off this to a per-process
+> security module (LSM) we wrote that reacts to the output of the
+> modeling engine.  Alan, Linus and others had previously discussed the
 
-Kees Cook (1):
-      exec: Set file unwritable before LSM check
+Do you have a more in-depth description of your modeling engine and what 
+it does?
 
-Sargun Dhillon (1):
-      security: convert security hooks to use hlist
+> importance of defining what a 'trusted process' is in the context of
+> how to make a decision on what criteria should be used for turning off
+> KPTI.
+>
+> It is a decidedly different way of looking at the problem, which of
+> course, has its own inherent challenges... :-)
 
-Stephen Smalley (1):
-      usb, signal, security: only pass the cred, not the secid, to kill_pid_info_as_cred and security_task_kill
+Thanks for your descriptions. I find them a bit too vague to build upon 
+at this point ... :-)
 
- drivers/usb/core/devio.c                      |  10 +-
- fs/exec.c                                     |   6 +-
- include/linux/lsm_hooks.h                     | 433 +++++++++++++-------------
- include/linux/sched/signal.h                  |   2 +-
- include/linux/security.h                      |   4 +-
- kernel/signal.c                               |   6 +-
- scripts/gcc-plugins/randomize_layout_plugin.c |   4 +-
- security/apparmor/lsm.c                       |  17 +-
- security/security.c                           |  26 +-
- security/selinux/hooks.c                      |   7 +-
- security/smack/smack_lsm.c                    |  12 +-
- 11 files changed, 265 insertions(+), 262 deletions(-)
+>
+>> Stefan
+> Have a good weekend.
+
+Thanks.
+
+   Stefan
+
+>
+> Dr. Greg
+>
+> }-- End of excerpt from Stefan Berger
+>
+> As always,
+> Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+> 4206 N. 19th Ave.           Specializing in information infra-structure
+> Fargo, ND  58102            development.
+> PH: 701-281-1686
+> FAX: 701-281-3949           EMAIL: greg at enjellic.com
+> ------------------------------------------------------------------------------
+> "The real question is not whether machines think but whether men do."
+>                                  -- B. F. Skinner
+>                                     _Contingencies of Reinforcement_
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
