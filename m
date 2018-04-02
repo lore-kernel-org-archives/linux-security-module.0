@@ -1,72 +1,105 @@
-From: tycho@tycho.ws (Tycho Andersen)
-Date: Sun, 1 Apr 2018 18:39:47 -0600
-Subject: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged
-	sandboxing
-In-Reply-To: <0f355079-7ee2-c06a-2d47-a7a2fa6d98fe@digikod.net>
-References: <2e06621c-08e9-dc12-9b6e-9c09d5d8f458@digikod.net>
-	<CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
-	<a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
-	<CALCETrUQYp0ta4tLgUWJ79pZVwp3WRY7cp-XaPcn1WyTc=wZyg@mail.gmail.com>
-	<20180306224636.wf5z3kujtc7r5qyh@cisco>
-	<7082be04-d6af-b853-4bb7-f331836662e2@digikod.net>
-	<CALCETrXT8JUXVwDNKGVRG7=aenthDRePD+T+YiDY6cceaazDeA@mail.gmail.com>
-	<cd811155-9e0d-283a-9291-4adfcec848e6@digikod.net>
-	<CALCETrUwkV4_65y7UjSgrq5WHOcZZ=+znKArehvhb1xEGG9HXw@mail.gmail.com>
-	<0f355079-7ee2-c06a-2d47-a7a2fa6d98fe@digikod.net>
-Message-ID: <20180402003947.GE5586@cisco>
+From: manfred@colorfullife.com (Manfred Spraul)
+Date: Mon, 2 Apr 2018 13:11:54 +0200
+Subject: [REVIEW][PATCH 11/11] ipc/sem: Fix semctl(..., GETPID, ...)
+	between pid namespaces
+In-Reply-To: <20180330190951.nfcdwuzp42bl2lfy@linux-n805>
+References: <87vadmobdw.fsf_-_@xmission.com>
+	<20180323191614.32489-11-ebiederm@xmission.com>
+	<20180329005209.fnzr3hzvyr4oy3wi@linux-n805>
+	<20180330190951.nfcdwuzp42bl2lfy@linux-n805>
+Message-ID: <334d0390-88e9-b950-b07e-ad69c0516e5b@colorfullife.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Micka?l,
+Hi,
 
-On Mon, Apr 02, 2018 at 12:04:36AM +0200, Micka?l Sala?n wrote:
-> >> vDSO is a code mapped for all processes. As you said, these processes
-> >> may use it or not. What I was thinking about is to use the same concept,
-> >> i.e. map a "shim" code into each processes pertaining to a particular
-> >> hierarchy (the same way seccomp filters are inherited across processes).
-> >> With a seccomp filter matching some syscall (e.g. mount, open), it is
-> >> possible to jump back to the shim code thanks to SECCOMP_RET_TRAP. This
-> >> shim code should then be able to emulate/patch what is needed, even
-> >> faking a file opening by receiving a file descriptor through a UNIX
-> >> socket. As did the Chrome sandbox, the seccomp filter may look at the
-> >> calling address to allow the shim code to call syscalls without being
-> >> catched, if needed. However, relying on SIGSYS may not fit with
-> >> arbitrary code. Using a new SECCOMP_RET_EMULATE (?) may be used to jump
-> >> to a specific process address, to emulate the syscall in an easier way
-> >> than only relying on a {c,e}BPF program.
-> >>
-> > 
-> > This could indeed be done, but I think that Tycho's approach is much
-> > cleaner and probably faster.
-> > 
-> 
-> I like it too but how does this handle file descriptors?
+On 03/30/2018 09:09 PM, Davidlohr Bueso wrote:
+> On Wed, 28 Mar 2018, Davidlohr Bueso wrote:
+>
+>> On Fri, 23 Mar 2018, Eric W. Biederman wrote:
+>>
+>>> Today the last process to update a semaphore is remembered and
+>>> reported in the pid namespace of that process.? If there are processes
+>>> in any other pid namespace querying that process id with GETPID the
+>>> result will be unusable nonsense as it does not make any
+>>> sense in your own pid namespace.
+>>
+>> Yeah that sounds pretty wrong.
+>>
+>>>
+>>> Due to ipc_update_pid I don't think you will be able to get System V
+>>> ipc semaphores into a troublesome cache line ping-pong.? Using struct
+>>> pids from separate process are not a problem because they do not share
+>>> a cache line.? Using struct pid from different threads of the same
+>>> process are unlikely to be a problem as the reference count update
+>>> can be avoided.
+>>>
+>>> Further linux futexes are a much better tool for the job of mutual
+>>> exclusion between processes than System V semaphores.? So I expect
+>>> programs that? are performance limited by their interprocess mutual
+>>> exclusion primitive will be using futexes.
+>>
+The performance of sysv sem and futexes for the contended case is more 
+or less identical, it depends on the CONFIG_ options what is faster.
 
-I think it could be done fairly simply, the most complicated part is
-probably designing an API that doesn't suck. But the basic idea would
-be:
+And this is obvious, both primitives must do the same tasks:
+sleep:
+- lookup a kernel pointer from a user space reference
+- acquire a lock, do some housekeeping, unlock and sleep
+wakeup:
+- lookup a kernel pointer from a user space reference
+- acquire a lock, do some housekeeping, especially unlink the to be 
+woken up task, unlock and wakeup
 
-struct seccomp_notif_resp {
-    __u64 id;
-    __s32 error;
-    __s64 val;
-    __s32 fd;
-};
+The woken up task has nothing to do, it returns immediately to user space.
 
-if the handler responds with fd >= 0, we grab the tracer's fd,
-duplicate it, and install it somewhere in the tracee's fd table. Since
-things like socket() will want to return the fd number as its
-installed and the handler doesn't know that, we'll probably want some
-way to indicate that the kernel should return this value. We could
-either mandate that if fd >= 0, that's the value that will be returned
-from the syscall, or add another flag that says "no, install the fd,
-but really return what's in val instead).
+IIRC for the uncontended case, sysvsem was at ~300 cpu cycles, but that 
+number is a few years old, and I don't know what is the impact of spectre.
+The futex code is obviously faster.
+But I don't know which real-world applications do their own 
+optimizations for the uncontended case before using sysvsem.
 
-I guess we can't mandate that we return fd, because e.g. netlink
-sockets can sometimes return fds as part of the netlink messages, and
-not as the return value from the syscall.
+Thus the only "real" challenge is to minimize cache line trashing.
 
-Tycho
+>> You would be wrong. There are plenty of real workloads out there
+>> that do not use futexes and are care about performance; in the end
+>> futexes are only good for the uncontended cases, it can also
+>> destroy numa boxes if you consider the global hash table. Experience
+>> as shown me that sysvipc sems are quite still used.
+>>
+>>>
+>>> So while it is possible that enhancing the storage of the last
+>>> rocess of a System V semaphore from an integer to a struct pid
+>>> will cause a performance regression because of the effect
+>>> of frequently updating the pid reference count.? I don't expect
+>>> that to happen in practice.
+>>
+>> How's that? Now thanks to ipc_update_pid() for each semop the user
+>> passes, perform_atomic_semop() will do two atomic updates for the
+>> cases where there are multiple processes updating the sem. This is
+>> not uncommon.
+>>
+>> Could you please provide some numbers.
+>
+[...]
+> So at least for a large box this patch hurts the cases where there is low
+> to medium cpu usage (no more than ~8 processes on a 40 core box) in a non
+> trivial way. For more processes it doesn't matter. We can confirm that 
+> the
+> case for threads is irrelevant. While I'm not happy about the 30% 
+> regression
+> I guess we can live with this.
+>
+> Manfred, any thoughts?
+>
+Bugfixing has always first priority, and a 30% regression in one 
+microbenchmark doesn't seem to be that bad.
+
+Thus I would propose that we fix SEMPID first, and _if_ someone notices 
+a noticeable regression, then we must improve the code.
+
+--
+ ??? Manfred
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
