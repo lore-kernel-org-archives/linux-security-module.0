@@ -1,105 +1,67 @@
-From: manfred@colorfullife.com (Manfred Spraul)
-Date: Mon, 2 Apr 2018 13:11:54 +0200
-Subject: [REVIEW][PATCH 11/11] ipc/sem: Fix semctl(..., GETPID, ...)
-	between pid namespaces
-In-Reply-To: <20180330190951.nfcdwuzp42bl2lfy@linux-n805>
-References: <87vadmobdw.fsf_-_@xmission.com>
-	<20180323191614.32489-11-ebiederm@xmission.com>
-	<20180329005209.fnzr3hzvyr4oy3wi@linux-n805>
-	<20180330190951.nfcdwuzp42bl2lfy@linux-n805>
-Message-ID: <334d0390-88e9-b950-b07e-ad69c0516e5b@colorfullife.com>
+From: jmorris@namei.org (James Morris)
+Date: Mon, 2 Apr 2018 21:20:30 +1000 (AEST)
+Subject: [GIT PULL][SECURITY] general changes for v4.17
+Message-ID: <alpine.LRH.2.21.1804022107260.30102@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+Please pull these changes for the security subsystem.
 
-On 03/30/2018 09:09 PM, Davidlohr Bueso wrote:
-> On Wed, 28 Mar 2018, Davidlohr Bueso wrote:
->
->> On Fri, 23 Mar 2018, Eric W. Biederman wrote:
->>
->>> Today the last process to update a semaphore is remembered and
->>> reported in the pid namespace of that process.? If there are processes
->>> in any other pid namespace querying that process id with GETPID the
->>> result will be unusable nonsense as it does not make any
->>> sense in your own pid namespace.
->>
->> Yeah that sounds pretty wrong.
->>
->>>
->>> Due to ipc_update_pid I don't think you will be able to get System V
->>> ipc semaphores into a troublesome cache line ping-pong.? Using struct
->>> pids from separate process are not a problem because they do not share
->>> a cache line.? Using struct pid from different threads of the same
->>> process are unlikely to be a problem as the reference count update
->>> can be avoided.
->>>
->>> Further linux futexes are a much better tool for the job of mutual
->>> exclusion between processes than System V semaphores.? So I expect
->>> programs that? are performance limited by their interprocess mutual
->>> exclusion primitive will be using futexes.
->>
-The performance of sysv sem and futexes for the contended case is more 
-or less identical, it depends on the CONFIG_ options what is faster.
+In this patchset:
 
-And this is obvious, both primitives must do the same tasks:
-sleep:
-- lookup a kernel pointer from a user space reference
-- acquire a lock, do some housekeeping, unlock and sleep
-wakeup:
-- lookup a kernel pointer from a user space reference
-- acquire a lock, do some housekeeping, especially unlink the to be 
-woken up task, unlock and wakeup
+- Convert security hooks from list to hlist, a nice cleanup, saving about 
+50% of space, from Sargun Dhillon.
 
-The woken up task has nothing to do, it returns immediately to user space.
+- Only pass the cred, not the secid, to kill_pid_info_as_cred and 
+security_task_kill (as the secid can be determined from the cred), from 
+Stephen Smalley.
 
-IIRC for the uncontended case, sysvsem was at ~300 cpu cycles, but that 
-number is a few years old, and I don't know what is the impact of spectre.
-The futex code is obviously faster.
-But I don't know which real-world applications do their own 
-optimizations for the uncontended case before using sysvsem.
+- Close a potential race in kernel_read_file(), by making the file 
+unwritable before calling the LSM check (vs after), from Kees Cook.
 
-Thus the only "real" challenge is to minimize cache line trashing.
+Once this is merged, I'll send separate pull requests for TPM, Integrity, 
+Smack, and the new kernel lockdown feature.  All of these have been in 
+linux-next and tested by the SELinux testsuite.
 
->> You would be wrong. There are plenty of real workloads out there
->> that do not use futexes and are care about performance; in the end
->> futexes are only good for the uncontended cases, it can also
->> destroy numa boxes if you consider the global hash table. Experience
->> as shown me that sysvipc sems are quite still used.
->>
->>>
->>> So while it is possible that enhancing the storage of the last
->>> rocess of a System V semaphore from an integer to a struct pid
->>> will cause a performance regression because of the effect
->>> of frequently updating the pid reference count.? I don't expect
->>> that to happen in practice.
->>
->> How's that? Now thanks to ipc_update_pid() for each semop the user
->> passes, perform_atomic_semop() will do two atomic updates for the
->> cases where there are multiple processes updating the sem. This is
->> not uncommon.
->>
->> Could you please provide some numbers.
->
-[...]
-> So at least for a large box this patch hurts the cases where there is low
-> to medium cpu usage (no more than ~8 processes on a 40 core box) in a non
-> trivial way. For more processes it doesn't matter. We can confirm that 
-> the
-> case for threads is irrelevant. While I'm not happy about the 30% 
-> regression
-> I guess we can live with this.
->
-> Manfred, any thoughts?
->
-Bugfixing has always first priority, and a 30% regression in one 
-microbenchmark doesn't seem to be that bad.
 
-Thus I would propose that we fix SEMPID first, and _if_ someone notices 
-a noticeable regression, then we must improve the code.
+The following changes since commit c698ca5278934c0ae32297a8725ced2e27585d7f:
 
---
- ??? Manfred
+  Linux 4.16-rc6 (2018-03-18 17:48:42 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+
+for you to fetch changes up to df0ce17331e2501dbffc060041dfc6c5f85227b5:
+
+  security: convert security hooks to use hlist (2018-03-31 13:18:27 +1100)
+
+----------------------------------------------------------------
+James Morris (2):
+      Merge tag 'v4.16-rc2' into next-general
+      Merge tag 'v4.16-rc6' into next-general
+
+Kees Cook (1):
+      exec: Set file unwritable before LSM check
+
+Sargun Dhillon (1):
+      security: convert security hooks to use hlist
+
+Stephen Smalley (1):
+      usb, signal, security: only pass the cred, not the secid, to kill_pid_info_as_cred and security_task_kill
+
+ drivers/usb/core/devio.c                      |  10 +-
+ fs/exec.c                                     |   6 +-
+ include/linux/lsm_hooks.h                     | 433 +++++++++++++-------------
+ include/linux/sched/signal.h                  |   2 +-
+ include/linux/security.h                      |   4 +-
+ kernel/signal.c                               |   6 +-
+ scripts/gcc-plugins/randomize_layout_plugin.c |   4 +-
+ security/apparmor/lsm.c                       |  17 +-
+ security/security.c                           |  26 +-
+ security/selinux/hooks.c                      |   7 +-
+ security/smack/smack_lsm.c                    |  12 +-
+ 11 files changed, 265 insertions(+), 262 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
