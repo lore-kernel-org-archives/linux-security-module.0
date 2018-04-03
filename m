@@ -1,7 +1,7 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Tue, 03 Apr 2018 22:51:11 +0000
+From: luto@kernel.org (Andy Lutomirski)
+Date: Tue, 3 Apr 2018 15:53:04 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
+In-Reply-To: <CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -16,34 +16,43 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<9349.1522794769@warthog.procyon.org.uk>
 	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
 	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
-Message-ID: <CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
+	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
+Message-ID: <CALCETrXC-mL07YvGrvqaUQrbv+3fv2G9rGuQoMohaxG=QUQn2g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 3:46 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
+On Tue, Apr 3, 2018 at 3:51 PM, Matthew Garrett <mjg59@google.com> wrote:
+> On Tue, Apr 3, 2018 at 3:46 PM Linus Torvalds
+> <torvalds@linux-foundation.org>
+> wrote:
+>
+>> For example, I love signed kernel modules. The fact that I love them
+>> has absolutely zero to do with secure boot, though. There is
+>> absolutely no linkage between the two issues: I use (self-)signed
+>> kernel modules simply because I think it's a good thing in general.
+>
+>> The same thing is true of some lockdown patch. Maybe it's a good thing
+>> in general. But whether it's a good thing is _entirely_ independent of
+>> any secure boot issue. I can see using secure boot without it, but I
+>> can very much also see using lockdown without secure boot.
+>
+>> The two things are simply entirely orthogonal. They have _zero_
+>> overlap. I'm not seeing why they'd be linked at all in any way.
+>
+> Lockdown is clearly useful without Secure Boot (and I intend to deploy it
+> that way for various things), but I still don't understand why you feel
+> that the common case of booting a kernel from a boot chain that's widely
+> trusted derives no benefit from it being harder to subvert that kernel into
+> subverting that boot chain. For cases where you're self-signing and feel
+> happy about that, you just set CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT to n and
+> everyone's happy?
 
-> For example, I love signed kernel modules. The fact that I love them
-> has absolutely zero to do with secure boot, though. There is
-> absolutely no linkage between the two issues: I use (self-)signed
-> kernel modules simply because I think it's a good thing in general.
+I would like to see distros that want Secure Boot to annoy users by
+enabling Lockdown be honest about the fact that it's an annoyance and
+adds very little value by having to carry a patch that was rejected by
+the upstream kernel.
 
-> The same thing is true of some lockdown patch. Maybe it's a good thing
-> in general. But whether it's a good thing is _entirely_ independent of
-> any secure boot issue. I can see using secure boot without it, but I
-> can very much also see using lockdown without secure boot.
-
-> The two things are simply entirely orthogonal. They have _zero_
-> overlap. I'm not seeing why they'd be linked at all in any way.
-
-Lockdown is clearly useful without Secure Boot (and I intend to deploy it
-that way for various things), but I still don't understand why you feel
-that the common case of booting a kernel from a boot chain that's widely
-trusted derives no benefit from it being harder to subvert that kernel into
-subverting that boot chain. For cases where you're self-signing and feel
-happy about that, you just set CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT to n and
-everyone's happy?
+-Andy
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
