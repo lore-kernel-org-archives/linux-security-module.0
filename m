@@ -1,8 +1,9 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 3 Apr 2018 16:27:28 -0700
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 04 Apr 2018 00:39:05 +0100
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <10232.1522797179@warthog.procyon.org.uk>
-References: <4136.1522452584@warthog.procyon.org.uk>
+In-Reply-To: <CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
+References: <CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
+	<4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
 	<30459.1522739219@warthog.procyon.org.uk>
@@ -15,30 +16,64 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com>
 	<9349.1522794769@warthog.procyon.org.uk>
 	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
-	<10232.1522797179@warthog.procyon.org.uk>
-Message-ID: <CA+55aFwJd_AqrnrKfiCX++pWqrTuoduKUKhEwxvx=wVhMaQH3g@mail.gmail.com>
+Message-ID: <10718.1522798745@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 4:12 PM, David Howells <dhowells@redhat.com> wrote:
->
-> What use is secure boot if processes run as root can subvert your kernel?
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Stop this idiocy.
+> The same thing is true of some lockdown patch. Maybe it's a good thing
+> in general. But whether it's a good thing is _entirely_ independent of
+> any secure boot issue. I can see using secure boot without it, but I
+> can very much also see using lockdown without secure boot.
+> 
+> The two things are simply entirely orthogonal. They have _zero_
+> overlap. I'm not seeing why they'd be linked at all in any way.
 
-The above has now been answered multiple times, several different ways.
+I'm not sure I agree.  Here's my reasoning:
 
-The "point" of secure boot may be that you had no choice, or there was
-no point at all, it just came that way.
+ (1) Lockdown mode really needs to activated during kernel boot, before
+     userspace has a chance to run, otherwise there's a window of opportunity
+     in which the kernel *isn't* locked down.
 
-Or the "point" of secure boot may be that you don't trust anybody else
-than yourself, but once you've booted you do trust what you booted.
+ (2) If the kernel isn't booted in secure boot mode, then there's the
+     opportunity to tamper before the kernel even starts booting.
 
-But the *real* point is that this has nothing what-so-ever to do with
-secure boot. You may want (or not want) lockdown independently of it.
-Don't tie magic boot issues with kernel runtime behavior.
+ (3) There doesn't seem any point in booting in secure boot mode if you don't
+     protect the running kernel image against tampering.  What does it mean to
+     be in "secure boot mode" in that case?  If the kernel can be tampered
+     with, it would seem to be, by definition, insecure.
 
-                    Linus
+ (4) You can't validly promise the next OS you kexec that *it* is started in
+     secure boot mode if you don't stop your image from being tampered with.
+     Note that this doesn't prevent a compromised kernel from lying to the
+     next OS.
+
+ (5) Tampering with a running kernel can be achieved in a variety of ways:
+     loading of arbitrary modules, loading of modified firmware, direct access
+     to devices that can effect DMA, writing to /dev/mem, ...
+
+ (6) We need to be able to load modules and firmware, but these can be signed,
+     hashed or measured so we have some idea of their provenance - but signing
+     can be worked around if, say, /dev/mem is writable.
+
+ (7) If you told the BIOS[*] that you want to be in secure boot mode, then the
+     kernel should honour that and try to prevent tampering with the image.
+
+ (8) Turning lockdown mode on if the kernel is booted in secure boot seems to
+     be the way to achieve this.
+
+ (9) BIOS vendors can blacklist any of the components - say the SHIM - to
+     prevent an insecure kernel from being used to compromise and kexec
+     another OS.
+
+Note that I've provided a kernel command line parameter that will turn
+lockdown mode on arbitrarily - but that can be turned off by editing the
+parameters in grub.cfg, say.
+
+David
+
+[*] Yeah, I know, this is an x86-centric view.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
