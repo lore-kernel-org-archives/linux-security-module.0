@@ -1,43 +1,28 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Tue, 03 Apr 2018 21:37:28 +0000
+From: jmorris@namei.org (James Morris)
+Date: Wed, 4 Apr 2018 07:48:53 +1000 (AEST)
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <20180403212102.GL30522@ZenIV.linux.org.uk>
+In-Reply-To: <CAKv+Gu9Na0j=T4syinQhPNZTnbhvnpDXR+Za73EmH3FFXV6KHA@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
-	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
-	<30459.1522739219@warthog.procyon.org.uk>
-	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
-	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
-	<CA+55aFy5EPxAyqyGGaYUUyakuLbjXHiseWCkz-oNdo=Y-878tg@mail.gmail.com>
-	<CACdnJuuXOP5T-BRAwMvc7XF8S49wyvp4ZYgcU=EZkaGNgPAQig@mail.gmail.com>
-	<CA+55aFzGFZT68ih446DeQbB69Fyk_wT6b7PGq0iz-gctUGQq_A@mail.gmail.com>
-	<CACdnJuvheCbuvTLyDWMQWcUytc4EvuSUaEKywfEX8Kp6qYL9dg@mail.gmail.com>
-	<20180403212102.GL30522@ZenIV.linux.org.uk>
-Message-ID: <CACdnJuvfDugkqZeW-0Y=vH-Gr+SpnnH7boRD5WygMff+rYXMug@mail.gmail.com>
+	<17792.1522491600@warthog.procyon.org.uk>
+	<CAKv+Gu9Na0j=T4syinQhPNZTnbhvnpDXR+Za73EmH3FFXV6KHA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1804040748450.31856@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 2:21 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Tue, 3 Apr 2018, Ard Biesheuvel wrote:
 
-> On Tue, Apr 03, 2018 at 09:08:54PM +0000, Matthew Garrett wrote:
-> > If you don't want Secure Boot, turn it off. If you want Secure Boot,
-use a
-> > kernel that behaves in a way that actually increases your security.
+>  [snip]
 
-> That assumes you *can* turn that shit off.  On the hardware where
-manufacturer
-> has installed firmware that doesn't allow that SB is a misfeature that has
-> to be worked around.  Making that harder might improve the value of SB to
-> said manufacturers, but what's the benefit for everybody else?
+Thanks for the input -- there are obviously still issues to be resolved.
 
-This is why Shim has support for its own key database, as well as allowing
-you to disable further signature validation. If the hardware supports third
-party code at all, you can just use Shim to sidestep any unreasonable
-restrictions the vendor has imposed.
+I'll now not be pushing these to Linus for v4.17.
 
-(This doesn't help with systems that don't support third party code at all,
-but this patchset does nothing to make that worse - that hardware wouldn't
-boot your own kernel before this patchset, and it won't afterwards either)
+
+-- 
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
