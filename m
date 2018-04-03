@@ -1,7 +1,7 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Tue, 03 Apr 2018 23:47:53 +0000
+From: luto@kernel.org (Andy Lutomirski)
+Date: Tue, 3 Apr 2018 16:48:31 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFx9u-O81MwSq8zpb+MKaWYjYvtEcFu1NLP1_s63ED6_3Q@mail.gmail.com>
+In-Reply-To: <10718.1522798745@warthog.procyon.org.uk>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -16,31 +16,32 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<9349.1522794769@warthog.procyon.org.uk>
 	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
 	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
-	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
-	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
-	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
-	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
-	<CA+55aFx9u-O81MwSq8zpb+MKaWYjYvtEcFu1NLP1_s63ED6_3Q@mail.gmail.com>
-Message-ID: <CACdnJutkO9dgz=HZpPRR9PZC=+cHh97dRUiGB+D3gruZr6U9Kg@mail.gmail.com>
+	<10718.1522798745@warthog.procyon.org.uk>
+Message-ID: <CALCETrWDtRQ1M=JGuB-6E6aBgO9S3+43AFKCq2AyftDutYcuNQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 4:39 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
+On Tue, Apr 3, 2018 at 4:39 PM, David Howells <dhowells@redhat.com> wrote:
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+>> The same thing is true of some lockdown patch. Maybe it's a good thing
+>> in general. But whether it's a good thing is _entirely_ independent of
+>> any secure boot issue. I can see using secure boot without it, but I
+>> can very much also see using lockdown without secure boot.
+>>
+>> The two things are simply entirely orthogonal. They have _zero_
+>> overlap. I'm not seeing why they'd be linked at all in any way.
+>
+> I'm not sure I agree.  Here's my reasoning:
+>
+>  (1) Lockdown mode really needs to activated during kernel boot, before
+>      userspace has a chance to run, otherwise there's a window of opportunity
+>      in which the kernel *isn't* locked down.
 
-> On Tue, Apr 3, 2018 at 4:26 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Magically changing kernel behavior depending on some subtle and often
-> > unintentional bootup behavior detail is completely idiotic.
-
-> Another way of looking at this: if lockdown is a good idea to enable
-> when you booted using secure boot, then why isn't it a good idea when
-> you *didn't* boot using secure boot?
-
-Because it's then trivial to circumvent and the restrictions aren't worth
-the benefit.
+That's simply not true.  A sensible verified boot chain (a la Chrome
+OS) is likely to load, as one verified chunk, a kernel and initramfs.
+Then initramfs can flip on lockdown all by itself before it enables
+networking or any other attack vectors.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
