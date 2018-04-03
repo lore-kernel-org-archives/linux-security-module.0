@@ -1,49 +1,99 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Mon, 2 Apr 2018 17:42:22 -0700
-Subject: [RFC PATCH v1] fw_lockdown: new micro LSM module to prevent
-	loading unsigned firmware
-In-Reply-To: <1510347775.3549.2.camel@linux.vnet.ibm.com>
-References: <1510347775.3549.2.camel@linux.vnet.ibm.com>
-Message-ID: <21dd4b88-f6e7-f6bb-e34d-ba8ef3755622@kernel.org>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 2 Apr 2018 17:59:10 -0700
+Subject: [GIT PULL] Kernel lockdown for secure boot
+In-Reply-To: <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
+References: <4136.1522452584@warthog.procyon.org.uk>
+	<alpine.LRH.2.21.1803311145180.7769@namei.org>
+	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
+Message-ID: <CAGXu5j+UWQWDacMvvRCke3xUOb7uTkxn=WaHzG4kJTKWh-6tAA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 11/10/2017 01:02 PM, Mimi Zohar wrote:
-> If the kernel is locked down and IMA-appraisal is not enabled, prevent
-> loading of unsigned firmware.
+On Mon, Apr 2, 2018 at 5:37 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> On 03/30/2018 05:46 PM, James Morris wrote:
+>>
+>> On Sat, 31 Mar 2018, David Howells wrote:
+>>
+>>> Date: Thu, 26 Oct 2017 17:37:38 +0100
+>>>
+>>> Hi James,
+>>>
+>>> Can you pull this patchset into security/next please?  It has been in
+>>> linux-next since the beginning of March.
+>>>
+>>> It adds kernel lockdown support for EFI secure boot.
+>>
+>>
+>> Applied to
+>> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+>> next-lockdown and next-testing
+>>
+>> Are there any known coverage gaps now?
+>>
+>>
+>>
+>
+> This is an attempt at a review.  I'm replying here because I can't find the
+> actual relevant patch emails.
+>
+> Cover letter:
+>
+>> Here's a set of patches to institute a "locked-down mode" in the
+>> kernel and to trigger that mode if the kernel is booted in secure-boot >
+>> mode or through the command line.
+>
+> I think this is seriously problematic in that it's not well defined.  It
+> sounds like "locked-down mode" means "make me feel good about something".
 
-> diff --git a/security/fw_lockdown/Kconfig b/security/fw_lockdown/Kconfig
-> new file mode 100644
-> index 000000000000..d6aef6ce8fee
-> --- /dev/null
-> +++ b/security/fw_lockdown/Kconfig
-> @@ -0,0 +1,6 @@
-> +config SECURITY_FW_LOCKDOWN
-> +	bool "Prevent loading unsigned firmware"
-> +	depends on LOCK_DOWN_KERNEL
-> +	default y
-> +	help
-> +	  Prevent loading unsigned firmware in lockdown mode,
+Naming of this feature has been multi-year bikeshedding, so if we
+could just leave the name, that'd be nice.
 
-Please be honest about what this does.  This option makes your system 
-useless if you don't use IMA-Appraisal and it offers a particular 
-security benefit if you do you IMA-Appraisal.  How about making it 
-depend on IMA-Appraisal?  Change the name to 
-SECURITY_ONLY_LOAD_IMA_APPRAISED_FIRMWARE and adjust the text 
-accordingly, please.
+> For the rest of this review, I'm going to pretend that you actually want two
+> features: "try-prevent-root-from-corrupting-the-kernel" and
+> "try-to-prevent-root-from-reading-kernel-memory".
 
-> +/**
-> + * fw_lockdown_read_file - prevent loading of unsigned firmware
-> + * @file: pointer to firmware
-> + * @read_id: caller identifier
-> + *
-> + * Prevent loading of unsigned firmware in lockdown mode.
+That is how I view it, yes. It's about creating a bright line between
+uid-0 and ring-0. The most powerful of these distinctions was made
+long ago with signed modules. It hasn't been enough, though, since
+there have been many ways for uid-0 to read or write kernel memory. My
+expectation for this was to reasonably fill all the remaining gaps.
 
-That comment gives a highly misleading impression of what this function 
-does.
+> Also, there should be a justification that allows normal people (i.e. those
+> who are not involved in the UEFI signing process) to understand *why* this
+> should have anything to do with UEFI.  I can very easily see why it would
+> make sense for a UEFI authenticated variable to tell the kernel to enable
+> one or both of these modes or for there to be an authenticated mechanism for
+> the bootloader to tell the kernel to enable it.  I do *not* see why the mere
+> act of using Secure Boot should have this effect.
+>
+> In particular, UEFI Secure Boot should *not* enable
+> "try-to-prevent-root-from-reading-kernel-memory", which means that, unless
+> you actually implement the split, you should drop a bunch of the patches.
+>
+> In fact, I think the kernel should try to get away from the idea that UEFI
+> Secure Boot should imply annoying restrictions.  It's really annoying and
+> it's never been clear to me that it has a benefit.
 
-> + */
-> +static int fw_lockdown_read_file(struct file *file, enum kernel_read_file_id id)
+FWIW, I've never been a fan of this being UEFI-centric: more than
+Secure Boot needs this. For example, Chrome OS's static root of trust
+and boot firmware isn't UEFI, but it wants this feature enabled.
+Chrome OS would set it on the command line, since the command line is
+part of the signed boot image along with the kernel, etc.
+
+> "Restrict /dev/{mem,kmem,port} when the kernel is locked down": this should
+> probably split into one restriction for read and one for write.
+
+I think splitting read and write is only useful if there is a use-case
+for only blocking one of them. I struggle to imagine allowing write
+and blocking read, so really it's the case of wanting to allow read
+and disallow write. Is there actually a use-case for this? In all the
+"locked down" cases I've seen, both are desired.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
