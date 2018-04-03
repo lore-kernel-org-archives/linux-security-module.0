@@ -1,5 +1,5 @@
-From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Tue, 3 Apr 2018 22:21:02 +0100
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 14:26:48 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
 In-Reply-To: <CACdnJuvheCbuvTLyDWMQWcUytc4EvuSUaEKywfEX8Kp6qYL9dg@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
@@ -12,31 +12,43 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CACdnJuuXOP5T-BRAwMvc7XF8S49wyvp4ZYgcU=EZkaGNgPAQig@mail.gmail.com>
 	<CA+55aFzGFZT68ih446DeQbB69Fyk_wT6b7PGq0iz-gctUGQq_A@mail.gmail.com>
 	<CACdnJuvheCbuvTLyDWMQWcUytc4EvuSUaEKywfEX8Kp6qYL9dg@mail.gmail.com>
-Message-ID: <20180403212102.GL30522@ZenIV.linux.org.uk>
+Message-ID: <CA+55aFy4ZVaar3sf7bSVYtU5sRkv18x9W8HMEwF9O9beQK4wbw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 03, 2018 at 09:08:54PM +0000, Matthew Garrett wrote:
-
-> > The fact is, some hardware pushes secure boot pretty hard. That has
-> > *nothing* to do with some "lockdown" mode.
-> 
+On Tue, Apr 3, 2018 at 2:08 PM, Matthew Garrett <mjg59@google.com> wrote:
+>
 > Secure Boot ensures that the firmware will only load signed bootloaders. If
 > a signed bootloader loads a kernel that's effectively an unsigned
-> bootloader, there's no point in using Secure Boot - you should just turn it
-> off instead, because it's not giving you any meaningful security. Andy's
-> example gives a scenario where by constraining your *userland* sufficiently
-> you can get close to having the same guarantees, but that involves you
-> having a read-only filesystem and takes you even further away from having a
-> general purpose computer.
-> 
-> If you don't want Secure Boot, turn it off. If you want Secure Boot, use a
-> kernel that behaves in a way that actually increases your security.
+> bootloader, there's no point in using Secure Boot
 
-That assumes you *can* turn that shit off.  On the hardware where manufacturer
-has installed firmware that doesn't allow that SB is a misfeature that has
-to be worked around.  Making that harder might improve the value of SB to
-said manufacturers, but what's the benefit for everybody else?
+Bullshit.
+
+I may want to know that I'm running *my* kernel, but once that is the
+case, I trust it.
+
+In fact, I tend to trust it more than some random vendor key. You should too.
+
+Your whole argument is FUNDAMENTALLY garbage. It's the Disney kind of
+garbage. It was garbage back then, and it's garbage now.
+
+It is also garbage for a simple technical reason: secure boot can be
+hard to turn off. Sometimes "turn off" means "you just have to add
+your own keys".
+
+Yes, on x86 hardware at least at some point MS actually had the rule
+that it has to be something you can turn off. That rule is apparently
+not true on ARM, though.
+
+Seriously. You sound like you're parroting some party line, not like
+you are answering the actual question.
+
+So again: why do you conflate the two issues?
+
+If you want lockdown, fine, enable it. But what the F*CK does that
+have to do with whether you had secure boot or not?
+
+            Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
