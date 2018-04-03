@@ -1,28 +1,66 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 03 Apr 2018 18:16:03 +0100
+From: keescook@chromium.org (Kees Cook)
+Date: Tue, 3 Apr 2018 11:45:52 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
 In-Reply-To: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-References: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-	<4136.1522452584@warthog.procyon.org.uk>
+References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
 	<30459.1522739219@warthog.procyon.org.uk>
 	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
 	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
-Message-ID: <9758.1522775763@warthog.procyon.org.uk>
+	<CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+Message-ID: <CAGXu5j+CyVXEvsMarJjBwaNh7poVZtmit5PGmQM9rKKqZPqVXg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Andy Lutomirski <luto@kernel.org> wrote:
+On Tue, Apr 3, 2018 at 9:45 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Tue, Apr 3, 2018 at 9:29 AM, Matthew Garrett <mjg59@google.com> wrote:
+>> On Tue, Apr 3, 2018 at 8:11 AM Andy Lutomirski <luto@kernel.org> wrote:
+>>> Can you explain that much more clearly?  I'm asking why booting via
+>>> UEFI Secure Boot should enable lockdown, and I don't see what this has
+>>> to do with kexec.  And "someone blacklist[ing] your key in the
+>>> bootloader" sounds like a political issue, not a technical issue.
+>>
+>> A kernel that allows users arbitrary access to ring 0 is just an
+>> overfeatured bootloader. Why would you want secure boot in that case?
+>
+> To get a chain of trust.  I can provision a system with some public
+> keys, stored in UEFI authenticated variables, such that the system
+> will only boot a signed image.  That signed image, can, in turn, load
+> a signed (or hashed or otherwise verfified) kernel and a verified
+> initramfs.  The initramfs can run a full system from a verified (using
+> dm-verity or similar) filesystem, for example.  Now it's very hard to
+> persistently attack this system.  Chromium OS does something very much
+> like this, except that it doesn't use UEFI as far as I know.  So does
+> iOS, and so do some Android versions.
 
-> > A kernel that allows users arbitrary access to ring 0 is just an
-> > overfeatured bootloader. Why would you want secure boot in that case?
-> 
-> To get a chain of trust.
+Correct, Chrome OS does not use UEFI, and we still want this patch
+series, as it plugs all the known "intentional" escalation paths from
+uid-0 to ring-0. Happily, that means all the politics around the UEFI
+and Secure Boot case can be ignored, because those issues are specific
+to Secure Boot, not the lockdown series. (They are _related_, sure,
+but lockdown isn't only about Secure Boot -- it's just that SB is one
+of the widely deployed implementations of this kind of
+trust-chain-booting-thing. Chrome OS and Android's Verified Boot do
+similar things and have the same expectations about the uid-0/ring-0
+separation.)
 
-You don't have a chain of trust that you can trust in that case.
+The goal for that bright line on Chrome OS and Android is to stop
+attack persistence. We want to know that a reboot onto a new kernel
+and OS image will actually result in getting the desired system state,
+and that any attack on persistent system data (even for things running
+with full root privileges) can't result in using kernel interfaces to
+gain kernel control. This isn't expected to be _perfect_, since
+nothing is. But it creates a place to work from. The idea that uid-0
+is NOT ring-0 is still relatively new, so the existing designs in the
+kernel aren't well suited to building that distinction. I view this
+series as a solid first step to getting there, though.
 
-David
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
