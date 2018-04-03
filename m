@@ -1,7 +1,7 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Tue, 03 Apr 2018 23:09:27 +0000
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 16:10:55 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CALCETrXC-mL07YvGrvqaUQrbv+3fv2G9rGuQoMohaxG=QUQn2g@mail.gmail.com>
+In-Reply-To: <CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -17,32 +17,26 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
 	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
 	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
-	<CALCETrXC-mL07YvGrvqaUQrbv+3fv2G9rGuQoMohaxG=QUQn2g@mail.gmail.com>
-Message-ID: <CACdnJuvfsZN_8yATpR+Zas69Yz0trZONACqV07A7-Ua0O5j3Kg@mail.gmail.com>
+	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
+Message-ID: <CA+55aFyrDUPj_VscC2T+erHeUHZws_ixuRiU4HDWmoeOSZO1QQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 3:53 PM Andy Lutomirski <luto@kernel.org> wrote:
-> On Tue, Apr 3, 2018 at 3:51 PM, Matthew Garrett <mjg59@google.com> wrote:
-> > Lockdown is clearly useful without Secure Boot (and I intend to deploy
-it
-> > that way for various things), but I still don't understand why you feel
-> > that the common case of booting a kernel from a boot chain that's widely
-> > trusted derives no benefit from it being harder to subvert that kernel
-into
-> > subverting that boot chain. For cases where you're self-signing and feel
-> > happy about that, you just set CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT to n
-and
-> > everyone's happy?
+On Tue, Apr 3, 2018 at 4:08 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> This discussion is over until you give an actual honest-to-goodness
+> reason for why you tied the two features together. No more "Why not?"
+> crap.
 
-> I would like to see distros that want Secure Boot to annoy users by
-> enabling Lockdown be honest about the fact that it's an annoyance and
-> adds very little value by having to carry a patch that was rejected by
-> the upstream kernel.
+Side note: I suspect the reason is something along the lines of "there
+are political reasons".
 
-I disagree with the assertion that it adds very little value, but if you
-want to reject a technically useful patch for political reasons then I'm
-well beyond the point of caring.
+But dammit, if that's the case, those should be documented and
+explained, not answered with "why not" when people ask why something
+is the case.
+
+                   Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
