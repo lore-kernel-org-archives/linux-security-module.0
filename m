@@ -1,7 +1,7 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Tue, 03 Apr 2018 23:17:29 +0000
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 16:26:36 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
+In-Reply-To: <CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -18,37 +18,77 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
 	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
 	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
-Message-ID: <CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
+	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
+Message-ID: <CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 4:08 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
+On Tue, Apr 3, 2018 at 4:17 PM, Matthew Garrett <mjg59@google.com> wrote:
+>
+> 1) Secure Boot is intended to permit the construction of a boot chain that
+> only runs ring 0 code that the user considers trustworthy
 
-> That's not the right approach to begin with, Matthew.  The onus is on
-> *you* to explain why you tied them together, not on others to explain
-> to you - over and over - that they have nothing to do with each other.
+No.
 
-1) Secure Boot is intended to permit the construction of a boot chain that
-only runs ring 0 code that the user considers trustworthy
-2) Allowing arbitrary user code to run in ring 0 without affirmative
-consent on the part of the user is therefore incompatible with the goals of
-Secure Boot
-3) This patchset provides a mechanism to alter the behaviour of the kernel
-such that it is significantly more difficult for arbitrary user code to run
-in ring 0 without affirmative user consent
-4) Providing a mechanism for automatically enabling this behaviour when
-running in a context that is intended to restrict access to ring 0 is a
-rational thing to do, because otherwise it is difficult to achieve the
-objective in (1)
+That may be *one* intention, for some people.
 
-Alternative approaches to achieve (1) rely on severely constraining
-userland - ChromeOS, for instance, doesn't impose these restrictions at
-present but also doesn't allow users to run arbitrary applications (you're
-stuck inside either the Chrome or Android sandbox). So, if the goal is to
-achieve (1) when the platform is in this state, what's a more reasonable
-alternative?
+It's not an a-priori one for the actual user.
+
+> 2) Allowing arbitrary user code to run in ring 0 without affirmative
+> consent on the part of the user is therefore incompatible with the goals of
+> Secure Boot
+
+Again, that has absolutely zero relevance.
+
+Those goals are not the *users* goals.
+
+Be honest now. It wasn't generally users who clamored for it.
+
+If the user actually wanted it, and is asking for it, he can enable
+it. Independently of secure boot, which the user generally has little
+control over.
+
+> 3) This patchset provides a mechanism to alter the behaviour of the kernel
+> such that it is significantly more difficult for arbitrary user code to run
+> in ring 0 without affirmative user consent
+
+That difficulty already exists, the new thing isn't somehow related to
+that at all.
+
+Look at our "uyou can only load modules if you're root" rules. Or the
+"you can only load modules if they are signed".
+
+See a pattern there? They don't magically enable themselves (or
+disable themselves) depending on whether you booted with secure boot
+or not.
+
+Yet they are a HELL OF A LOT MORE IMPORTANT than this new patch series.
+
+> 4) Providing a mechanism for automatically enabling this behaviour when
+> running in a context that is intended to restrict access to ring 0 is a
+> rational thing to do, because otherwise it is difficult to achieve the
+> objective in (1)
+
+No. See why it's *NOT* rational, as explained already several times.
+
+Magically changing kernel behavior depending on some subtle and often
+unintentional bootup behavior detail is completely idiotic.
+
+It would be idiotic if it was that "check kernel module signatures"
+check. This is no less idiotic.
+
+Seriously, listen to your own arguments. If they don't make sense for
+checking kernel module signatures, why the hell would they make sense
+for something like lockdown.
+
+THE TWO THINGS ARE ENTIRELY INDEPENDENT.
+
+I'm done with you. You're not listening, and you're repeating bogus
+arguments that make no sense.
+
+No way in hell will I merge anything like this.
+
+                Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
