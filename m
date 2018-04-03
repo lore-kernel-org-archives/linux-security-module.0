@@ -1,7 +1,7 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Tue, 3 Apr 2018 16:48:31 -0700
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 16:55:47 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <10718.1522798745@warthog.procyon.org.uk>
+In-Reply-To: <CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -16,32 +16,86 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<9349.1522794769@warthog.procyon.org.uk>
 	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
 	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
-	<10718.1522798745@warthog.procyon.org.uk>
-Message-ID: <CALCETrWDtRQ1M=JGuB-6E6aBgO9S3+43AFKCq2AyftDutYcuNQ@mail.gmail.com>
+	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
+	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
+	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
+	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
+	<CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
+Message-ID: <CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 4:39 PM, David Howells <dhowells@redhat.com> wrote:
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Apr 3, 2018 at 4:45 PM, Matthew Garrett <mjg59@google.com> wrote:
+>> Be honest now. It wasn't generally users who clamored for it.
 >
->> The same thing is true of some lockdown patch. Maybe it's a good thing
->> in general. But whether it's a good thing is _entirely_ independent of
->> any secure boot issue. I can see using secure boot without it, but I
->> can very much also see using lockdown without secure boot.
->>
->> The two things are simply entirely orthogonal. They have _zero_
->> overlap. I'm not seeing why they'd be linked at all in any way.
->
-> I'm not sure I agree.  Here's my reasoning:
->
->  (1) Lockdown mode really needs to activated during kernel boot, before
->      userspace has a chance to run, otherwise there's a window of opportunity
->      in which the kernel *isn't* locked down.
+> If you ask a user whether they want a system that lets an attacker replace
+> their kernel or one that doesn't, what do you think their answer is likely
+> to be?
 
-That's simply not true.  A sensible verified boot chain (a la Chrome
-OS) is likely to load, as one verified chunk, a kernel and initramfs.
-Then initramfs can flip on lockdown all by itself before it enables
-networking or any other attack vectors.
+Goddamnit.
+
+We both know what the answer will be.
+
+And it will have *nothing* to do with secure boot.
+
+So *you* be honest now.
+
+Because you clearly aren't.
+
+Seriously. Go ask that question to a random person:
+
+ "Do you want a system that lets an attacker replace their kernel or
+one that doesn't?"
+
+and don't ask anything else.
+
+Do you really think they'll answer "no, I don't want an attacker to
+replace my kernel, but only if I booted with secure boot"?
+
+Honestly, now.
+
+> Again, what is your proposed mechanism for ensuring that off the shelf
+> systems can be configured in a way that makes this possible?
+
+If you think lockdown is a good idea, and you enabled it, then IT IS ENABLED.
+
+No idiotic "secure boot or not" garbage.
+
+Because secure boot or not isn't *relevant*.
+
+Christ, we already have things like
+
+ - CONFIG_STRICT_KERNEL_RWX
+
+ - CONFIG_STRICT_DEVMEM
+
+ - CONFIG_HARDENED_USERCOPY
+
+ - CONFIG_MODULE_SIG_ALL (and friends)
+
+and absolutely *NONE* of them depend on whether the kernel was booted
+with secure boot or not.
+
+And I claim that it would be completely idiotic and broken if they did.
+
+And - not entirely unrelated - I claim that it is COMPLETELY IDIOTIC
+AND BROKEN to make some new "lockdown" option depend on it.
+
+Comprende?
+
+Really. Your arguments make no sense. They are all fundamentally
+broken for the simple reason that all your "but secure boot implies
+XYZ" are pure and utter bullshit, because all your arguments are valid
+whether secure boot happened or not.
+
+See? Secure boot has *NOTHING* do to with anything.  It has nothing to
+do with loading only signed kernel modules. It has nothing to do with
+your lockdown patches.
+
+Either lockdown is good or not. It's that simple. But the goodness has
+nothing to do with secure boot.
+
+              Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
