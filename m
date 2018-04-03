@@ -1,27 +1,28 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Tue, 3 Apr 2018 10:06:10 -0700
-Subject: [RFC PATCH v1] fw_lockdown: new micro LSM module to prevent
-	loading unsigned firmware
-In-Reply-To: <20180403165627.GW30543@wotan.suse.de>
-References: <1510347775.3549.2.camel@linux.vnet.ibm.com>
-	<21dd4b88-f6e7-f6bb-e34d-ba8ef3755622@kernel.org>
-	<20180403165627.GW30543@wotan.suse.de>
-Message-ID: <CAB=NE6UZbBWn1WCfM5in1w32ZXNaV25_uz+=TVyu4Y-35Rv72A@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Tue, 03 Apr 2018 18:16:03 +0100
+Subject: [GIT PULL] Kernel lockdown for secure boot
+In-Reply-To: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+References: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+	<4136.1522452584@warthog.procyon.org.uk>
+	<alpine.LRH.2.21.1803311145180.7769@namei.org>
+	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
+	<30459.1522739219@warthog.procyon.org.uk>
+	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
+	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+Message-ID: <9758.1522775763@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 9:56 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> The biggest thing which has changed since then is that we decided to *not*
-> support or streamline generic firmware signing (non-IMA) for now for a few
-> reasons [0] [1] which are important to re-iterate as these are easy to forget,
-> and AFAICT not documented anywhere.
+Andy Lutomirski <luto@kernel.org> wrote:
 
-And the URLs...
+> > A kernel that allows users arbitrary access to ring 0 is just an
+> > overfeatured bootloader. Why would you want secure boot in that case?
+> 
+> To get a chain of trust.
 
-[0] https://lkml.kernel.org/r/20171204195155.GU729 at wotan.suse.de
-[1] https://lkml.kernel.org/r/20171207153209.5da771a9 at alans-desktop
+You don't have a chain of trust that you can trust in that case.
 
-  Luis
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
