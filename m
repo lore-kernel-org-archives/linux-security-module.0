@@ -1,9 +1,8 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 04 Apr 2018 00:56:02 +0100
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 16:58:55 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
-References: <CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
-	<4136.1522452584@warthog.procyon.org.uk>
+In-Reply-To: <11444.1522799762@warthog.procyon.org.uk>
+References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
 	<30459.1522739219@warthog.procyon.org.uk>
@@ -18,26 +17,40 @@ References: <CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
 	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
 	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
 	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
-	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gma
-	il.com>
 	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
-Message-ID: <11444.1522799762@warthog.procyon.org.uk>
+	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
+	<11444.1522799762@warthog.procyon.org.uk>
+Message-ID: <CA+55aFx8hQRdBp-7Jv=62Acy9vU53shsd09gFXiE-OYN+ynHEA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Apr 3, 2018 at 4:56 PM, David Howells <dhowells@redhat.com> wrote:
+=>
+> Most users haven't even given this a moment's thought, aren't even aware of
+> the issues, don't even know to ask and, for them, it makes no difference.
+> They trust their distribution to deal with stuff they don't know about.
 
-> Be honest now. It wasn't generally users who clamored for it.
-> ...
-> If the user actually wanted it, and is asking for it, he can enable it.
+Right.
 
->From the distributions' point of view, this is a rubbish argument.
+Like perhaps trusting the distribution to just enable all those
+security measures _regaredless_ of whether they booted in using secure
+boot or not?
 
-Most users haven't even given this a moment's thought, aren't even aware of
-the issues, don't even know to ask and, for them, it makes no difference.
-They trust their distribution to deal with stuff they don't know about.
+See?
 
-David
+If lockdown breaks something, the distro would need to fix it
+regardless of secure boot.
+
+So why is the enablement dependent on it again?
+
+I'm not arguing "lockdown shouldn't be on".
+
+I'm arguing "lockdown being on or off has _nothing_ to do with whether
+the machine was booted in EFI mode with secure boot or not".
+
+You don't seem to get it.
+
+                Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
