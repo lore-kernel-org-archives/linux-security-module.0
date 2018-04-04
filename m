@@ -1,7 +1,7 @@
 From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 3 Apr 2018 17:25:20 -0700
+Date: Tue, 3 Apr 2018 17:33:20 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
+In-Reply-To: <CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -27,34 +27,29 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
 	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
-Message-ID: <CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
+	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
+Message-ID: <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:16 PM, Matthew Garrett <mjg59@google.com> wrote:
+On Tue, Apr 3, 2018 at 5:25 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> I ignored it because it's not a viable option. Part of the patchset
-> disables various kernel command line options. If there's a kernel command
-> line option that disables the patchset then it's pointless.
+> Honestly, I don't think the patchset is viable at all in that case.
 
-Honestly, I don't think the patchset is viable at all in that case.
+.. or rather, it's probably viable only for distributions that already
+have reasons to only care about controlled hardware environments, ie
+Chromebooks etc.
 
-No way will any sane distribution take it, potentially breaking a lot
-of machines, and have no way to unbreak them except for "oh, btw, you
-have to disable secure boot to get things to work again".
+But a chome OS install wouldn't care about the whole "secure boot or
+not" issue anyway, because they'd also control that side, an they
+might as well just enable it unconditionally.
 
-That would be insane.
+In contrast, the generic distros can't enable it anyway if it breaks
+random hardware.  And it wouldn't be about secure boot or not, but
+about the random hardware choice.
 
-So you'd better allow some command line options.
-
-One reasonable option may be to just disable lockdown by default (to
-make machines work reliably), and then have a "if you're anal about
-security, add 'lockdown' to the kernel command line".
-
-People who care about this already need to check the secure boot
-status, so this would be just one more thing they'd check.
-
-                Linus
+             Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
