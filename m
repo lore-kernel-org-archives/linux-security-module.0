@@ -1,7 +1,7 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Wed, 04 Apr 2018 00:16:46 +0000
+From: jannh@google.com (Jann Horn)
+Date: Wed, 4 Apr 2018 02:17:55 +0200
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+In-Reply-To: <CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -24,32 +24,39 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
 	<CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
 	<CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
-	<CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
-	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
-Message-ID: <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
+Message-ID: <CAG48ez1MRsDGoea5MwGTXK6R0LJy9u0mX-1VrSSskwnV98kEjQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:15 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
-> On Tue, Apr 3, 2018 at 5:10 PM, Matthew Garrett <mjg59@google.com> wrote:
-> >
-> >> Exactly like EVERY OTHER KERNEL CONFIG OPTION.
-> >
-> > So your argument is that we should make the user experience worse?
-Without
-> > some sort of verified boot mechanism, lockdown is just security theater.
-> > There's no good reason to enable it unless you have some mechanism for
-> > verifying that you booted something you trust.
+On Wed, Apr 4, 2018 at 2:06 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, Apr 3, 2018 at 4:59 PM, Matthew Garrett <mjg59@google.com> wrote:
+>>
+>> Ok. So we can build distribution kernels that *always* have this on, and to
+>> turn it off you have to disable Secure Boot and install a different kernel.
+>
+> Bingo.
+>
+> Exactly like EVERY OTHER KERNEL CONFIG OPTION.
+>
+> Just like all the ones that I've mentioned several times.
+>
+> Or, like a lot of other kernel options, maybe have a way to just
+> disable it on the kernel command line, and let the user know about it.
+>
+> That would still be better than disabling secure boot entirely in your
+> world view, so it's (a) more convenient and (b) better.
+>
+> Again, in no case does it make sense to tie it into "how did we boot".
+> Because that's just inconvenient for everybody.
 
-> Wow. Way to snip the rest of the email where I told you what the
-> solution was. Let me repeat it here, since you so conveniently missed
-> it and deleted it:
-
-I ignored it because it's not a viable option. Part of the patchset
-disables various kernel command line options. If there's a kernel command
-line option that disables the patchset then it's pointless.
+Without taking a stance regarding whether I think that kernel lockdown
+makes sense, I think Matthew's point is this:
+If you don't have lockdown, secure boot doesn't provide a benefit,
+since an attacker could just modify the init binary instead of messing
+with your kernel.
+If you have secure boot, you want lockdown to prevent chainloading
+into a backdoored version of the real OS.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
