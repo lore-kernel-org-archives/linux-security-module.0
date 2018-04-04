@@ -1,7 +1,7 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 3 Apr 2018 17:02:46 -0700
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 04 Apr 2018 00:04:51 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJutkO9dgz=HZpPRR9PZC=+cHh97dRUiGB+D3gruZr6U9Kg@mail.gmail.com>
+In-Reply-To: <CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -22,35 +22,34 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
 	<CA+55aFx9u-O81MwSq8zpb+MKaWYjYvtEcFu1NLP1_s63ED6_3Q@mail.gmail.com>
 	<CACdnJutkO9dgz=HZpPRR9PZC=+cHh97dRUiGB+D3gruZr6U9Kg@mail.gmail.com>
-Message-ID: <CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
+	<CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
+Message-ID: <CACdnJutOAPTmPm6dmHiw4+8rj=M7B1SiCkPaRZLmi9-CCuRyNg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 4:47 PM, Matthew Garrett <mjg59@google.com> wrote:
->> Another way of looking at this: if lockdown is a good idea to enable
->> when you booted using secure boot, then why isn't it a good idea when
->> you *didn't* boot using secure boot?
->
-> Because it's then trivial to circumvent and the restrictions aren't worth
-> the benefit.
+On Tue, Apr 3, 2018 at 5:02 PM Linus Torvalds
+<torvalds@linux-foundation.org>
+wrote:
 
-Bullshit.
+> On Tue, Apr 3, 2018 at 4:47 PM, Matthew Garrett <mjg59@google.com> wrote:
+> >> Another way of looking at this: if lockdown is a good idea to enable
+> >> when you booted using secure boot, then why isn't it a good idea when
+> >> you *didn't* boot using secure boot?
+> >
+> > Because it's then trivial to circumvent and the restrictions aren't
+worth
+> > the benefit.
 
-If there those restrictions cause problems, they need to be fixed regardless.
+> Bullshit.
 
-In fact, from a debuggability standpoint, you want to find the
-problems early, on those kernel development machines that had secure
-boot explicitly turned off because it's such a pain.
+> If there those restrictions cause problems, they need to be fixed
+regardless.
 
-And if they can't be fixed, then the user is going to disable lockdown
-regardless of how he booted the machine.
-
-In no situation is "depending on how you booted" a good choice.
-
-Either you can enable it or you can't. If you can, good. And if you
-can't, it has nothing to do with secure boot.
-
-            Linus
+How? When there are random DMA-capable PCI devices that are driven by
+userland tools that are mmap()ing the BARs out of sysfs, how do we
+simultaneously avoid breaking those devices while also preventing the
+majority of users from being vulnerable to an attacker just DMAing over the
+kernel?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
