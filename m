@@ -1,7 +1,7 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 3 Apr 2018 17:33:20 -0700
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 04 Apr 2018 00:46:00 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
+In-Reply-To: <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -28,28 +28,20 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
 	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
-Message-ID: <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
+	<CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
+Message-ID: <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:25 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Honestly, I don't think the patchset is viable at all in that case.
+On Tue, Apr 3, 2018 at 5:33 PM Linus Torvalds
+<torvalds@linux-foundation.org>
+wrote:
 
-.. or rather, it's probably viable only for distributions that already
-have reasons to only care about controlled hardware environments, ie
-Chromebooks etc.
+> In contrast, the generic distros can't enable it anyway if it breaks
+> random hardware.  And it wouldn't be about secure boot or not, but
+> about the random hardware choice.
 
-But a chome OS install wouldn't care about the whole "secure boot or
-not" issue anyway, because they'd also control that side, an they
-might as well just enable it unconditionally.
-
-In contrast, the generic distros can't enable it anyway if it breaks
-random hardware.  And it wouldn't be about secure boot or not, but
-about the random hardware choice.
-
-             Linus
+The generic distros have been shipping this policy for the past 5 years.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
