@@ -1,9 +1,8 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 04 Apr 2018 01:22:27 +0100
+From: luto@kernel.org (Andy Lutomirski)
+Date: Tue, 3 Apr 2018 17:23:38 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFzH6doC2F1xBitPRwTZtbiCO_mX+QVcJ8HQCdsdD3Vmpg@mail.gmail.com>
-References: <CA+55aFzH6doC2F1xBitPRwTZtbiCO_mX+QVcJ8HQCdsdD3Vmpg@mail.gmail.com>
-	<4136.1522452584@warthog.procyon.org.uk>
+In-Reply-To: <CAG48ez1MRsDGoea5MwGTXK6R0LJy9u0mX-1VrSSskwnV98kEjQ@mail.gmail.com>
+References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
 	<30459.1522739219@warthog.procyon.org.uk>
@@ -18,34 +17,70 @@ References: <CA+55aFzH6doC2F1xBitPRwTZtbiCO_mX+QVcJ8HQCdsdD3Vmpg@mail.gmail.com>
 	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
 	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
 	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
-	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gma
-	il.com>
+	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
 	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
 	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
-	<CA+55aFx9u-O81MwSq8zpb+MKaWYjYvtEcFu1NLP1_s63ED6_3Q@mail.gmail.com>
-	<CACdnJutkO9dgz=HZpPRR9PZC=+cHh97dRUiGB+D3gruZr6U9Kg@mail.gmail.com>
-	<CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
-	<CACdnJutOAPTmPm6dmHiw4+8rj=M7B1SiCkPaRZLmi9-CCuRyNg@mail.gmail.com>
-Message-ID: <11962.1522801347@warthog.procyon.org.uk>
+	<CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
+	<CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
+	<CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
+	<CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
+	<CAG48ez1MRsDGoea5MwGTXK6R0LJy9u0mX-1VrSSskwnV98kEjQ@mail.gmail.com>
+Message-ID: <CALCETrXZWU1MC8LbLCg7VTVHMqKpXh51amnTjKePRCJ31jRiwg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Apr 3, 2018 at 5:17 PM, Jann Horn <jannh@google.com> wrote:
+> On Wed, Apr 4, 2018 at 2:06 AM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> On Tue, Apr 3, 2018 at 4:59 PM, Matthew Garrett <mjg59@google.com> wrote:
+>>>
+>>> Ok. So we can build distribution kernels that *always* have this on, and to
+>>> turn it off you have to disable Secure Boot and install a different kernel.
+>>
+>> Bingo.
+>>
+>> Exactly like EVERY OTHER KERNEL CONFIG OPTION.
+>>
+>> Just like all the ones that I've mentioned several times.
+>>
+>> Or, like a lot of other kernel options, maybe have a way to just
+>> disable it on the kernel command line, and let the user know about it.
+>>
+>> That would still be better than disabling secure boot entirely in your
+>> world view, so it's (a) more convenient and (b) better.
+>>
+>> Again, in no case does it make sense to tie it into "how did we boot".
+>> Because that's just inconvenient for everybody.
+>
+> Without taking a stance regarding whether I think that kernel lockdown
+> makes sense, I think Matthew's point is this:
+> If you don't have lockdown, secure boot doesn't provide a benefit,
+> since an attacker could just modify the init binary instead of messing
+> with your kernel.
+> If you have secure boot, you want lockdown to prevent chainloading
+> into a backdoored version of the real OS.
 
-> ...  use the kernel command line to disable things.
+I don't think that's the argument here.  Secure boot can be used to
+protect initramfs, since initramfs comes from the secure boot-verified
+bootloader.  That verified initramfs can protect the init binary.
 
-An attacker could then modify grub.cfg, say, and cause a reboot (or wait for
-the next reboot) to disable lockdown:-/
+As far as I can tell, what's really going on here is that there's a
+significant contingent here that wants to prevent Linux from
+chainloading something that isn't Linux.  (There doesn't seem to be a
+real benefit to preventing Linux from chainloading Linux, since the
+chainloaded Linux is unlikely to let the attacker do much that the
+original rooted Linux kernel wouldn't have allowed.)  In particular,
+Microsoft, which de facto controls most of the secure boot key
+ecosystem, doesn't want Windows to be chainloaded without having its
+signature verified.
 
-And whilst we could also distribute a non-locked-down variant of the kernel as
-an alternative, the attacker could install and boot that instead since we
-can't lock package installation down very easily since it doesn't impinge
-directly on the running kernel.
-
-Unfortunately, it's hard to come up with a disablement mechanism in the kernel
-that an attacker can't also make use of:-/
-
-David
+I admit I'm not quite sure why Microsoft considers this important.
+They already require a TPM for all new systems, and any important
+secrets can be sealed by the TPM such that a maliciously chainloaded
+Windows kernel couldn't access those secrets.  But secure boot
+predates the WHQL TPM requirement if I remember correctly, and I
+suspect that we're seeing leftover requirements from
+secure-boot-but-no-TPM era.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
