@@ -1,35 +1,29 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Wed, 04 Apr 2018 20:18:38 +0000
-Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <alpine.DEB.2.21.1804042148480.1492@nanos.tec.linutronix.de>
-References: <4136.1522452584@warthog.procyon.org.uk>
-	<alpine.LRH.2.21.1803311145180.7769@namei.org>
-	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
-	<30459.1522739219@warthog.procyon.org.uk>
-	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
-	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
-	<CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-	<CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
-	<CALCETrVR_EcbKv5-4AR6Zm02XHhJQQGNDeO8FGkMbYozmuDTJw@mail.gmail.com>
-	<20180404184255.exdrtpqnxlqme7tl@redhat.com>
-	<alpine.DEB.2.21.1804042148480.1492@nanos.tec.linutronix.de>
-Message-ID: <CACdnJuunSCaOHKuwDXkzV8N8V-EeaoBhfg+EkL9VPvX7Dkycdg@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 04 Apr 2018 23:19:27 +0100
+Subject: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure
+	boot)
+In-Reply-To: <CAG48ez3edmZo1iFXqpvzOKNY0jLzcqa18KuoRrBaPyfp=7huZQ@mail.gmail.com>
+References: <CAG48ez3edmZo1iFXqpvzOKNY0jLzcqa18KuoRrBaPyfp=7huZQ@mail.gmail.com>
+	<CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
+	<1119.1522858644@warthog.procyon.org.uk>
+Message-ID: <15406.1522880367@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 4, 2018 at 1:01 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> Now where the disagreement lies is the way how the uid/ring0 aspect is
-tied
-> to secure boot, which makes it impossible to be useful independent of
-> Secure Boot.
+Jann Horn <jannh@google.com> wrote:
 
-It doesn't - you can pass a command line parameter that enables it, or your
-bootloader can set the bootparams flag. I don't see a fundamental problem
-with offering the opportunity to change it at runtime, other than that some
-stuff that was previously initialised may have to be torn down. The reason
-for having the UEFI boot stub *optionally* check the secure boot state
-itself and make a policy decision (rather than having the signed bootloader
-do so) is because the kernel can be launched directly by the firmware.
+> > Uh, no.  bpf, for example, can be used to modify kernel memory.
+> 
+> I'm pretty sure bpf isn't supposed to be able to modify arbitrary
+> kernel memory. AFAIU if you can use BPF to write to arbitrary kernel
+> memory, that's a bug; with CAP_SYS_ADMIN, you can read from userspace,
+> write to userspace, and read from kernelspace, but you shouldn't be
+> able to write to kernelspace.
+
+Ah - you may be right.  I seem to have misremembered what Joey Lee wrote in
+his patch description.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
