@@ -1,7 +1,7 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Wed, 04 Apr 2018 00:46:00 +0000
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 17:56:43 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
+In-Reply-To: <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -29,19 +29,32 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
 	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
 	<CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
-Message-ID: <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
+	<CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
+Message-ID: <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:33 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
+On Tue, Apr 3, 2018 at 5:46 PM, Matthew Garrett <mjg59@google.com> wrote:
+>
+> The generic distros have been shipping this policy for the past 5 years.
 
-> In contrast, the generic distros can't enable it anyway if it breaks
-> random hardware.  And it wouldn't be about secure boot or not, but
-> about the random hardware choice.
+.. so apparently it doesn't actually break things? Why not enable it
+by default then?
 
-The generic distros have been shipping this policy for the past 5 years.
+And if "turn off secure boot" really is the accepted - and actuially
+used - workaround for the breakage, then
+
+   WHY THE HELL DIDN'T YOU START OFF BY EXPLAINING THAT IN THE FIRST
+PLACE WHEN PEOPLE ASKED WHY THE TIE-IN EXISTED?
+
+Sorry for shouting, but really. We have a thread of just *how* many
+email messages that asked for the explanation for this? All we got was
+incomprehensible and illogical crap explanations.
+
+If there actually was a good explanation for the tie-in, it should
+have been front-and-center and explained as such.
+
+                Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
