@@ -1,7 +1,7 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 3 Apr 2018 17:15:09 -0700
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 04 Apr 2018 00:16:46 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
+In-Reply-To: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -25,38 +25,31 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
 	<CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
 	<CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
-Message-ID: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+Message-ID: <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:10 PM, Matthew Garrett <mjg59@google.com> wrote:
->
->> Exactly like EVERY OTHER KERNEL CONFIG OPTION.
->
-> So your argument is that we should make the user experience worse? Without
-> some sort of verified boot mechanism, lockdown is just security theater.
-> There's no good reason to enable it unless you have some mechanism for
-> verifying that you booted something you trust.
+On Tue, Apr 3, 2018 at 5:15 PM Linus Torvalds
+<torvalds@linux-foundation.org>
+wrote:
+> On Tue, Apr 3, 2018 at 5:10 PM, Matthew Garrett <mjg59@google.com> wrote:
+> >
+> >> Exactly like EVERY OTHER KERNEL CONFIG OPTION.
+> >
+> > So your argument is that we should make the user experience worse?
+Without
+> > some sort of verified boot mechanism, lockdown is just security theater.
+> > There's no good reason to enable it unless you have some mechanism for
+> > verifying that you booted something you trust.
 
-Wow. Way to snip the rest of the email where I told you what the
-solution was. Let me repeat it here, since you so conveniently missed
-it and deleted it:
+> Wow. Way to snip the rest of the email where I told you what the
+> solution was. Let me repeat it here, since you so conveniently missed
+> it and deleted it:
 
->> Or, like a lot of other kernel options, maybe have a way to just
->> disable it on the kernel command line, and let the user know about it.
->>
->> That would still be better than disabling secure boot entirely in your
->> world view, so it's (a) more convenient and (b) better.
-
-Matthew, it's simply not worth continuing talking with you.
-
-I'll just not pull this crap, and vendors that you convince to do
-stupid things have only themselves to blame.
-
-You clearly have an agenda, and are not willing to look at arguments
-against your idiotic choices.
-
-                 Linus
+I ignored it because it's not a viable option. Part of the patchset
+disables various kernel command line options. If there's a kernel command
+line option that disables the patchset then it's pointless.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
