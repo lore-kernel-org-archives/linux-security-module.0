@@ -1,7 +1,7 @@
-From: mjg59@google.com (Matthew Garrett)
-Date: Wed, 04 Apr 2018 00:04:51 +0000
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 17:06:13 -0700
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
+In-Reply-To: <CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -20,36 +20,34 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
 	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
 	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
-	<CA+55aFx9u-O81MwSq8zpb+MKaWYjYvtEcFu1NLP1_s63ED6_3Q@mail.gmail.com>
-	<CACdnJutkO9dgz=HZpPRR9PZC=+cHh97dRUiGB+D3gruZr6U9Kg@mail.gmail.com>
-	<CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
-Message-ID: <CACdnJutOAPTmPm6dmHiw4+8rj=M7B1SiCkPaRZLmi9-CCuRyNg@mail.gmail.com>
+	<CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
+	<CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
+	<CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
+Message-ID: <CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:02 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
+On Tue, Apr 3, 2018 at 4:59 PM, Matthew Garrett <mjg59@google.com> wrote:
+>
+> Ok. So we can build distribution kernels that *always* have this on, and to
+> turn it off you have to disable Secure Boot and install a different kernel.
 
-> On Tue, Apr 3, 2018 at 4:47 PM, Matthew Garrett <mjg59@google.com> wrote:
-> >> Another way of looking at this: if lockdown is a good idea to enable
-> >> when you booted using secure boot, then why isn't it a good idea when
-> >> you *didn't* boot using secure boot?
-> >
-> > Because it's then trivial to circumvent and the restrictions aren't
-worth
-> > the benefit.
+Bingo.
 
-> Bullshit.
+Exactly like EVERY OTHER KERNEL CONFIG OPTION.
 
-> If there those restrictions cause problems, they need to be fixed
-regardless.
+Just like all the ones that I've mentioned several times.
 
-How? When there are random DMA-capable PCI devices that are driven by
-userland tools that are mmap()ing the BARs out of sysfs, how do we
-simultaneously avoid breaking those devices while also preventing the
-majority of users from being vulnerable to an attacker just DMAing over the
-kernel?
+Or, like a lot of other kernel options, maybe have a way to just
+disable it on the kernel command line, and let the user know about it.
+
+That would still be better than disabling secure boot entirely in your
+world view, so it's (a) more convenient and (b) better.
+
+Again, in no case does it make sense to tie it into "how did we boot".
+Because that's just inconvenient for everybody.
+
+                Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
