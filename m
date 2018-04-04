@@ -1,146 +1,136 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 3 Apr 2018 21:37:11 -0400
-Subject: [GIT PULL] SELinux patches for v4.17
-Message-ID: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Tue, 3 Apr 2018 18:43:04 -0700
+Subject: [GIT PULL] Kernel lockdown for secure boot
+In-Reply-To: <CACdnJuuek-sS3esmomNOkjBMV_6VPL2NFCzRd+UGxbZrMe=4nw@mail.gmail.com>
+References: <4136.1522452584@warthog.procyon.org.uk>
+	<alpine.LRH.2.21.1803311145180.7769@namei.org>
+	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
+	<30459.1522739219@warthog.procyon.org.uk>
+	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
+	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+	<CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+	<9758.1522775763@warthog.procyon.org.uk>
+	<CALCETrWHS9p1My=j07=V=OP7v4SwQkW-kJ3JOx6EbPU8fb_XEQ@mail.gmail.com>
+	<13189.1522784944@warthog.procyon.org.uk>
+	<CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com>
+	<9349.1522794769@warthog.procyon.org.uk>
+	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
+	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
+	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
+	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
+	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
+	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
+	<CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
+	<CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
+	<CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
+	<CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
+	<CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
+	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
+	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
+	<CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
+	<CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
+	<CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
+	<CACdnJuuek-sS3esmomNOkjBMV_6VPL2NFCzRd+UGxbZrMe=4nw@mail.gmail.com>
+Message-ID: <CA+55aFxgrh5eeG9MRSEsJtyL5yTe0TehZ=BS2josGJaLxoMMBQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
+On Tue, Apr 3, 2018 at 6:13 PM, Matthew Garrett <mjg59@google.com> wrote:
+>
+> There are four cases:
 
-A bigger than usual pull request for SELinux, 13 patches (lucky!)
-along with a scary looking diffstat.  Although if you look a bit
-closer, excluding the usual minor tweaks/fixes, there are really only
-two significant changes in this pull request: the addition of proper
-SELinux access controls for SCTP and the encapsulation of a lot of
-internal SELinux state.  The SCTP changes are the result of a
-multi-month effort (maybe even a year or longer?) between the SELinux
-folks and the SCTP folks to add proper SELinux controls.  A special
-thanks go to Richard for seeing this through and keeping the effort
-moving forward.  The state encapsulation work is a bit of janitorial
-work that came out of some early work on SELinux namespacing.  The
-question of namespacing is still an open one, but I believe there is
-some real value in the encapsulation work so we've split that out and
-are now sending that up to you.
+No.
 
-Everything passes the selinux-testsuite, but there are a few known
-merge conflicts.  The first is with the netdev tree and is in
-net/sctp/socket.c.  Unfortunately it is a bit ugly, thankfully Stephen
-Rothwell has already done the heavy lifting in resolving the merge for
-you, and the SCTP folks have given his merge patch a thumbs-up.  Link
-below:
+Matthew., stop with the agenda already.
 
-* https://marc.info/?l=linux-netdev&m=152047486123499&w=2
+This shit is what I'm talking about:
 
-There are also two conflicts with James' security tree, both rather
-easy.  The first is in security/selinux/hooks.c and is quite trivial,
-but since I've got the linux-next archive handy, here is a link to the
-merge fixup:
+> Verified Boot off, lockdown on: Perception of security improvement that's
+> trivially circumvented (and so bad)
 
-* https://marc.info/?l=linux-next&m=152160312324537&w=2
+You're doing some serious value judgement that is simply bogus.
 
-The second security/SELinux conflict is in include/linux/lsm_hooks.h
-and while the size of the fixup is scary at first, it is really just
-the three new LSM/SCTP hooks and isn't that bad at all:
+If lockdown actually helps avoid CPL0 execution attacks, then it helps
+even if secure more is off.
 
-* https://marc.info/?l=linux-next&m=152273068901460&w=2
+Sure, you can do things like try to install kernels and reboot, but
+honestly, that's not "trivially circumvented". It can be quite hard to
+hide even if you don't have secure boot. Things like disk encryption
+(common for a lot of people) for example means that you simply won't
+be booting that machine without the user noticing.
 
-In the past I know you have preferred to handle your own merge
-conflict resolution, but the above is a bit more than usual, at least
-for the SELinux tree.  If you would prefer that I handle the merge
-conflicts and send you a new PR (or something else), let me know.
+Or think of virtual machines - which people often use on purpose for
+security things. Again, they very much are _not_ going to have secure
+boot, but it's not necessarily even possible to "replace the kernel
+and reboot" at all, because the kernel came from outside the virtual
+machine entirely, and rebooting might just kill the VM rather than
+restart anything.
 
-Thanks,
--Paul
+So I really think you're pushing this whole "not secure boot" means
+"trivial circumvention" much much too hard.
 
---
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+To the point of it being an outright lie.
 
- Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+I think the kind of people who run stuff in virtual machines could
+easily want to also enable lockdown measures, simply to reduce the
+attack window within that VM. Wouldn't you agree? Those are often
+security-conscious people.
 
-are available in the Git repository at:
+This is what I mean by having an agenda.  We all know you are a big
+proponent of secure boot. But it seems to cloud your arguments, by
+turning your assumptions and your agenda into an "argument" that is
+simply not even TRUE.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux
--pr-20180403
+See what I'm unhappy about?
 
-for you to fetch changes up to 6b6bc6205d98796361962ee282a063f18ba8dc57:
+> Verified Boot on, lockdown off: Perception of security improvement that's
+> trivially circumvented (and so bad), status quo in mainline kernels
 
- selinux: wrap AVC state (2018-03-20 16:58:17 -0400)
+I think this is entirely false too. Again, the "trivial circumvention"
+shows a bias and agenda that isn't really all that true.
 
-----------------------------------------------------------------
-selinux/stable-4.17 PR 20180403
+> Of these four options, only two make sense.
 
-----------------------------------------------------------------
-Arnd Bergmann (1):
-     selinux: fix typo in selinux_netlbl_sctp_sk_clone declaration
+No.
 
-Paul Moore (1):
-     selinux: rename the {is,set}_enforcing() functions
+You say that, because you have that bias and that agenda.
 
-Richard Haines (7):
-     netlabel: If PF_INET6, check sk_buff ip header version
-     security: Add support for SCTP security hooks
-     sctp: Add ip option support
-     sctp: Add LSM hooks
-     selinux: Add SCTP support
-     selinux: Fix ltp test connect-syscall failure
-     selinux: Update SELinux SCTP documentation
+But that simply doesn't make it true.
 
-Stephen Smalley (4):
-     selinux: wrap global selinux state
-     selinux: fix handling of uninitialized selinux state in get_bools/classes
-     selinux: wrap selinuxfs state
-     selinux: wrap AVC state
+Now, what actually seems to be a real and valid argument is *this* part:
 
-Documentation/security/LSM-sctp.rst     |  175 +++++
-Documentation/security/SELinux-sctp.rst |  158 +++++
-include/linux/lsm_hooks.h               |   36 +
-include/linux/security.h                |   25 +
-include/net/sctp/sctp.h                 |    4 +-
-include/net/sctp/structs.h              |   12 +
-include/uapi/linux/sctp.h               |    1 +
-net/netlabel/netlabel_unlabeled.c       |   10 +
-net/sctp/chunk.c                        |   10 +-
-net/sctp/ipv6.c                         |   45 +-
-net/sctp/output.c                       |   34 +-
-net/sctp/protocol.c                     |   43 ++
-net/sctp/sm_make_chunk.c                |   12 +
-net/sctp/sm_statefuns.c                 |   18 +
-net/sctp/socket.c                       |   73 +-
-security/security.c                     |   22 +
-security/selinux/avc.c                  |  282 ++++----
-security/selinux/hooks.c                |  922 +++++++++++++++++++-------
-security/selinux/ibpkey.c               |    3 +-
-security/selinux/include/avc.h          |   38 +-
-security/selinux/include/avc_ss.h       |    9 +-
-security/selinux/include/classmap.h     |    2 +-
-security/selinux/include/conditional.h  |   11 +-
-security/selinux/include/netlabel.h     |   22 +-
-security/selinux/include/objsec.h       |    6 +-
-security/selinux/include/security.h     |  231 +++++--
-security/selinux/netif.c                |    2 +-
-security/selinux/netlabel.c             |  148 ++++-
-security/selinux/netnode.c              |    4 +-
-security/selinux/netport.c              |    2 +-
-security/selinux/selinuxfs.c            |  493 ++++++++------
-security/selinux/ss/avtab.c             |    9 +-
-security/selinux/ss/avtab.h             |    3 -
-security/selinux/ss/ebitmap.c           |    7 +-
-security/selinux/ss/ebitmap.h           |    3 -
-security/selinux/ss/hashtab.c           |    8 +-
-security/selinux/ss/hashtab.h           |    4 -
-security/selinux/ss/mls.c               |   72 +-
-security/selinux/ss/mls.h               |   38 +-
-security/selinux/ss/services.c          | 1100 ++++++++++++++++++-------------
-security/selinux/ss/services.h          |   24 +-
-security/selinux/ss/status.c            |   47 +-
-security/selinux/xfrm.c                 |   23 +-
-43 files changed, 2939 insertions(+), 1252 deletions(-)
-create mode 100644 Documentation/security/LSM-sctp.rst
-create mode 100644 Documentation/security/SELinux-sctp.rst
+> This makes it easy for a user to switch
+> between the two states that make sense by running a single command and then
+> following some prompts on the next reboot. The alternative would be to
+> provide a signed kernel that always enabled lockdown and an unsigned kernel
+> that didn't, which would (a) increase load on distributions and (b) force
+> users to both run mokutil --disable-validation and also install a different
+> kernel.
 
--- 
-paul moore
-www.paul-moore.com
+THAT is an actual argument. Admittedly I think it's a horrible hack,
+but it's a hack that can be explained without outright lying. And it
+may be a hack that is "the best we can reasonably do"
+
+See what I'm saying?
+
+One argument is based on your value judgments that not everybody else
+believes in.
+
+The other argument is based purely on cold hard particular facts.
+
+Guess which argument is better for people who aren't Matthew Garrett?
+
+That said, wouldn't it be equally good to just make the whole thing be
+a protected EFI variable instead? Once you have physical access to the
+EFI shell (to turn off secure boot) you have access to that too.
+
+Which would allow the "switch off/on" case even if there are other
+reasons why changing secure boot isn't a great option (possibly
+because secure boot isn't an option to begin with due to being so
+invonvenient).
+
+              Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
