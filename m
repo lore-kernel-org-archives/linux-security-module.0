@@ -1,9 +1,8 @@
-From: tytso@mit.edu (Theodore Y. Ts'o)
-Date: Wed, 4 Apr 2018 08:57:43 -0400
+From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
+Date: Wed, 4 Apr 2018 15:02:33 +0200
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJutuBaE3RaDx0KM5vDF9Sinrp=3tG9csrS-H3eU-J7-Utw@mail.gmail.com>
-References: <CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
-	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+In-Reply-To: <20180404125743.GB16242@thunk.org>
+References: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
 	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
 	<CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
@@ -12,33 +11,26 @@ References: <CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
 	<CACdnJuuek-sS3esmomNOkjBMV_6VPL2NFCzRd+UGxbZrMe=4nw@mail.gmail.com>
 	<CA+55aFxgrh5eeG9MRSEsJtyL5yTe0TehZ=BS2josGJaLxoMMBQ@mail.gmail.com>
 	<CACdnJutuBaE3RaDx0KM5vDF9Sinrp=3tG9csrS-H3eU-J7-Utw@mail.gmail.com>
-Message-ID: <20180404125743.GB16242@thunk.org>
+	<20180404125743.GB16242@thunk.org>
+Message-ID: <20180404130233.GA24008@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 04, 2018 at 04:30:18AM +0000, Matthew Garrett wrote:
-> What I'm afraid of is this turning into a "security" feature that ends up
-> being circumvented in most scenarios where it's currently deployed - eg,
-> module signatures are mostly worthless in the non-lockdown case because you
-> can just grab the sig_enforce symbol address and then kexec a preamble that
-> flips it back to N regardless of the kernel config.
+On Wed, Apr 04, 2018 at 08:57:43AM -0400, Theodore Y. Ts'o wrote:
+> On Wed, Apr 04, 2018 at 04:30:18AM +0000, Matthew Garrett wrote:
+> > What I'm afraid of is this turning into a "security" feature that ends up
+> > being circumvented in most scenarios where it's currently deployed - eg,
+> > module signatures are mostly worthless in the non-lockdown case because you
+> > can just grab the sig_enforce symbol address and then kexec a preamble that
+> > flips it back to N regardless of the kernel config.
+> 
+> Whoa.  Why doesn't lockdown prevent kexec?  Put another away, why
+> isn't this a problem for people who are fearful that Linux could be
+> used as part of a Windows boot virus in a Secure UEFI context?
 
-Whoa.  Why doesn't lockdown prevent kexec?  Put another away, why
-isn't this a problem for people who are fearful that Linux could be
-used as part of a Windows boot virus in a Secure UEFI context?
+Because no one is afraid of that :)
 
-If lockdown simply included a requirement for a signed kernel for
-kexec --- and if kernel signing aren't available, to simply not alow
-kexec, wouldn't that take care of this case?
-
-This wouldn't even be all that much of a burden for non-distro users
-with lockdown enabled, since in my experience outside of enterprise
-and data center use cases, kexec isn't used --- and in fact, very
-often kexec doesn't even work outside of a very carefully selected and
-bug-fixed set of device drivers.  (It often doesn't work in non-distro
-kernels because very few upstream developers really care about kexec.)
-
-					- Ted
+greg k-h
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
