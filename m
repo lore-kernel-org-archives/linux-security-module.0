@@ -1,7 +1,7 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Tue, 3 Apr 2018 17:18:09 -0700
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 04 Apr 2018 00:19:35 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
+In-Reply-To: <CALCETrVF2vSvoz0sBCrfMKcbJ4hmi=1QJZbUxdvurkimVXr0nA@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -27,34 +27,18 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
 	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
-Message-ID: <CALCETrVF2vSvoz0sBCrfMKcbJ4hmi=1QJZbUxdvurkimVXr0nA@mail.gmail.com>
+	<CALCETrVF2vSvoz0sBCrfMKcbJ4hmi=1QJZbUxdvurkimVXr0nA@mail.gmail.com>
+Message-ID: <CACdnJutmTU4U0nMik0oqGHDEd-xd4Vhi06t3RsZ5tpUgugfNbQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:16 PM, Matthew Garrett <mjg59@google.com> wrote:
-> On Tue, Apr 3, 2018 at 5:15 PM Linus Torvalds
-> <torvalds@linux-foundation.org>
-> wrote:
->> On Tue, Apr 3, 2018 at 5:10 PM, Matthew Garrett <mjg59@google.com> wrote:
->> >
->> >> Exactly like EVERY OTHER KERNEL CONFIG OPTION.
->> >
->> > So your argument is that we should make the user experience worse?
-> Without
->> > some sort of verified boot mechanism, lockdown is just security theater.
->> > There's no good reason to enable it unless you have some mechanism for
->> > verifying that you booted something you trust.
->
->> Wow. Way to snip the rest of the email where I told you what the
->> solution was. Let me repeat it here, since you so conveniently missed
->> it and deleted it:
->
-> I ignored it because it's not a viable option. Part of the patchset
-> disables various kernel command line options. If there's a kernel command
-> line option that disables the patchset then it's pointless.
+On Tue, Apr 3, 2018 at 5:18 PM Andy Lutomirski <luto@kernel.org> wrote:
 
-if your secure boot-enabled bootloader can't prevent a bad guy from
-using malicious kernel command line parameters, then fix it.
+> if your secure boot-enabled bootloader can't prevent a bad guy from
+> using malicious kernel command line parameters, then fix it.
+
+How is a bootloader supposed to know what the set of malicious kernel
+command line parameters is?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
