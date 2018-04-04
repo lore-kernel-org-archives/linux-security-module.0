@@ -1,7 +1,7 @@
-From: torvalds@linux-foundation.org (Linus Torvalds)
-Date: Tue, 3 Apr 2018 17:08:30 -0700
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 04 Apr 2018 00:10:47 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJutOAPTmPm6dmHiw4+8rj=M7B1SiCkPaRZLmi9-CCuRyNg@mail.gmail.com>
+In-Reply-To: <CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<alpine.LRH.2.21.1803311145180.7769@namei.org>
 	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
@@ -20,33 +20,33 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
 	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
 	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
-	<CA+55aFx9u-O81MwSq8zpb+MKaWYjYvtEcFu1NLP1_s63ED6_3Q@mail.gmail.com>
-	<CACdnJutkO9dgz=HZpPRR9PZC=+cHh97dRUiGB+D3gruZr6U9Kg@mail.gmail.com>
-	<CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
-	<CACdnJutOAPTmPm6dmHiw4+8rj=M7B1SiCkPaRZLmi9-CCuRyNg@mail.gmail.com>
-Message-ID: <CA+55aFzH6doC2F1xBitPRwTZtbiCO_mX+QVcJ8HQCdsdD3Vmpg@mail.gmail.com>
+	<CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
+	<CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
+	<CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
+	<CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
+Message-ID: <CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:04 PM, Matthew Garrett <mjg59@google.com> wrote:
->
-> How? When there are random DMA-capable PCI devices that are driven by
-> userland tools that are mmap()ing the BARs out of sysfs, how do we
-> simultaneously avoid breaking those devices while also preventing the
-> majority of users from being vulnerable to an attacker just DMAing over the
-> kernel?
+On Tue, Apr 3, 2018 at 5:06 PM Linus Torvalds
+<torvalds@linux-foundation.org>
+wrote:
 
-.. if that ends up being a real problem, then you print a warning and
-tell people to use the kernel command line to disable things.
+> On Tue, Apr 3, 2018 at 4:59 PM, Matthew Garrett <mjg59@google.com> wrote:
+> >
+> > Ok. So we can build distribution kernels that *always* have this on,
+and to
+> > turn it off you have to disable Secure Boot and install a different
+kernel.
 
-And if it's a big and common problem, then the answer may be that
-lockdown has to be entirely OFF by default, and you instead just tell
-people to enable it manually with a kernel command line option.
+> Bingo.
 
-Still better than telling them to disable/enable secure boot, which
-they may or may not even be able to to.
+> Exactly like EVERY OTHER KERNEL CONFIG OPTION.
 
-                 Linus
+So your argument is that we should make the user experience worse? Without
+some sort of verified boot mechanism, lockdown is just security theater.
+There's no good reason to enable it unless you have some mechanism for
+verifying that you booted something you trust.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
