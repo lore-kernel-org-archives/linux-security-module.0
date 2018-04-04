@@ -1,91 +1,146 @@
-From: jforbes@redhat.com (Justin Forbes)
-Date: Tue, 3 Apr 2018 20:36:42 -0500
-Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
-References: <4136.1522452584@warthog.procyon.org.uk>
-	<alpine.LRH.2.21.1803311145180.7769@namei.org>
-	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
-	<30459.1522739219@warthog.procyon.org.uk>
-	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
-	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
-	<CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-	<9758.1522775763@warthog.procyon.org.uk>
-	<CALCETrWHS9p1My=j07=V=OP7v4SwQkW-kJ3JOx6EbPU8fb_XEQ@mail.gmail.com>
-	<13189.1522784944@warthog.procyon.org.uk>
-	<CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com>
-	<9349.1522794769@warthog.procyon.org.uk>
-	<CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
-	<CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
-	<CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com>
-	<CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
-	<CACdnJuv_=ihPut=5OvCYEphdBOn7+JrKacBbNa0n3wv_JvFMzg@mail.gmail.com>
-	<CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
-	<CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
-	<CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
-	<CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
-	<CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
-	<CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
-	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
-	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
-	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
-	<CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
-	<CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
-	<CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
-Message-ID: <CAFbkSA1YTN3DVNBQzYuJpu-Y4cWb6iwR_VeWyZjtZ2Ejd8w6DA@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 3 Apr 2018 21:37:11 -0400
+Subject: [GIT PULL] SELinux patches for v4.17
+Message-ID: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 7:56 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, Apr 3, 2018 at 5:46 PM, Matthew Garrett <mjg59@google.com> wrote:
->>
->> The generic distros have been shipping this policy for the past 5 years.
->
-> .. so apparently it doesn't actually break things? Why not enable it
-> by default then?
->
-> And if "turn off secure boot" really is the accepted - and actuially
-> used - workaround for the breakage, then
->
+Hi Linus,
 
-While there is very little breakage in the *years* we have been
-shipping this in distro kernels, the accepted and used workaround has
-always been "turn off secure boot" or sign/import your own keys,
-depending on the problems encountered.
+A bigger than usual pull request for SELinux, 13 patches (lucky!)
+along with a scary looking diffstat.  Although if you look a bit
+closer, excluding the usual minor tweaks/fixes, there are really only
+two significant changes in this pull request: the addition of proper
+SELinux access controls for SCTP and the encapsulation of a lot of
+internal SELinux state.  The SCTP changes are the result of a
+multi-month effort (maybe even a year or longer?) between the SELinux
+folks and the SCTP folks to add proper SELinux controls.  A special
+thanks go to Richard for seeing this through and keeping the effort
+moving forward.  The state encapsulation work is a bit of janitorial
+work that came out of some early work on SELinux namespacing.  The
+question of namespacing is still an open one, but I believe there is
+some real value in the encapsulation work so we've split that out and
+are now sending that up to you.
 
->    WHY THE HELL DIDN'T YOU START OFF BY EXPLAINING THAT IN THE FIRST
-> PLACE WHEN PEOPLE ASKED WHY THE TIE-IN EXISTED?
->
-> Sorry for shouting, but really. We have a thread of just *how* many
-> email messages that asked for the explanation for this? All we got was
-> incomprehensible and illogical crap explanations.
->
-> If there actually was a good explanation for the tie-in, it should
-> have been front-and-center and explained as such.
->
+Everything passes the selinux-testsuite, but there are a few known
+merge conflicts.  The first is with the netdev tree and is in
+net/sctp/socket.c.  Unfortunately it is a bit ugly, thankfully Stephen
+Rothwell has already done the heavy lifting in resolving the merge for
+you, and the SCTP folks have given his merge patch a thumbs-up.  Link
+below:
 
-Honestly, yes, the major distros have been shipping this patch set for
-years now, and every time it comes to upstream, the same damn
-arguments emerge.  I do not disagree that there are uses for lockdown
-outside of secure boot, provided you have some other mechanism to
-verify your chain, I believe chrome OS does. But the tie to secure
-boot is because that is the use case that users have been using for
-years, it was discussed at kernel summit quite a while ago, plans went
-forward there seemed to be agreement, and when it comes time for a
-pull request, people come out of the woodwork with an expectation that
-it solves every problem or it doesn't need to exist. What is here is a
-good starting point. I would expect that if it were merged, others
-would build upon that and use much of the code already in place to
-extend it. It is tied to secure boot because that is what has been
-using this for years as it never seems to get upstream.  I am sure
-that once it does finally land, it can and will be extended to other
-things, but I don't think I would want to spend a lot of time trying
-to leverage another external patch set that has been delayed upstream
-so many times until it actually did land.
-As for the ties to MS that come up every time, and have here as well,
-there is no requirement on the MS signature. You can import your own
-keys if you don't want them involved, I keep a "test key" imported for
-actually running what I build locally.
+* https://marc.info/?l=linux-netdev&m=152047486123499&w=2
+
+There are also two conflicts with James' security tree, both rather
+easy.  The first is in security/selinux/hooks.c and is quite trivial,
+but since I've got the linux-next archive handy, here is a link to the
+merge fixup:
+
+* https://marc.info/?l=linux-next&m=152160312324537&w=2
+
+The second security/SELinux conflict is in include/linux/lsm_hooks.h
+and while the size of the fixup is scary at first, it is really just
+the three new LSM/SCTP hooks and isn't that bad at all:
+
+* https://marc.info/?l=linux-next&m=152273068901460&w=2
+
+In the past I know you have preferred to handle your own merge
+conflict resolution, but the above is a bit more than usual, at least
+for the SELinux tree.  If you would prefer that I handle the merge
+conflicts and send you a new PR (or something else), let me know.
+
+Thanks,
+-Paul
+
+--
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+ Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux
+-pr-20180403
+
+for you to fetch changes up to 6b6bc6205d98796361962ee282a063f18ba8dc57:
+
+ selinux: wrap AVC state (2018-03-20 16:58:17 -0400)
+
+----------------------------------------------------------------
+selinux/stable-4.17 PR 20180403
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+     selinux: fix typo in selinux_netlbl_sctp_sk_clone declaration
+
+Paul Moore (1):
+     selinux: rename the {is,set}_enforcing() functions
+
+Richard Haines (7):
+     netlabel: If PF_INET6, check sk_buff ip header version
+     security: Add support for SCTP security hooks
+     sctp: Add ip option support
+     sctp: Add LSM hooks
+     selinux: Add SCTP support
+     selinux: Fix ltp test connect-syscall failure
+     selinux: Update SELinux SCTP documentation
+
+Stephen Smalley (4):
+     selinux: wrap global selinux state
+     selinux: fix handling of uninitialized selinux state in get_bools/classes
+     selinux: wrap selinuxfs state
+     selinux: wrap AVC state
+
+Documentation/security/LSM-sctp.rst     |  175 +++++
+Documentation/security/SELinux-sctp.rst |  158 +++++
+include/linux/lsm_hooks.h               |   36 +
+include/linux/security.h                |   25 +
+include/net/sctp/sctp.h                 |    4 +-
+include/net/sctp/structs.h              |   12 +
+include/uapi/linux/sctp.h               |    1 +
+net/netlabel/netlabel_unlabeled.c       |   10 +
+net/sctp/chunk.c                        |   10 +-
+net/sctp/ipv6.c                         |   45 +-
+net/sctp/output.c                       |   34 +-
+net/sctp/protocol.c                     |   43 ++
+net/sctp/sm_make_chunk.c                |   12 +
+net/sctp/sm_statefuns.c                 |   18 +
+net/sctp/socket.c                       |   73 +-
+security/security.c                     |   22 +
+security/selinux/avc.c                  |  282 ++++----
+security/selinux/hooks.c                |  922 +++++++++++++++++++-------
+security/selinux/ibpkey.c               |    3 +-
+security/selinux/include/avc.h          |   38 +-
+security/selinux/include/avc_ss.h       |    9 +-
+security/selinux/include/classmap.h     |    2 +-
+security/selinux/include/conditional.h  |   11 +-
+security/selinux/include/netlabel.h     |   22 +-
+security/selinux/include/objsec.h       |    6 +-
+security/selinux/include/security.h     |  231 +++++--
+security/selinux/netif.c                |    2 +-
+security/selinux/netlabel.c             |  148 ++++-
+security/selinux/netnode.c              |    4 +-
+security/selinux/netport.c              |    2 +-
+security/selinux/selinuxfs.c            |  493 ++++++++------
+security/selinux/ss/avtab.c             |    9 +-
+security/selinux/ss/avtab.h             |    3 -
+security/selinux/ss/ebitmap.c           |    7 +-
+security/selinux/ss/ebitmap.h           |    3 -
+security/selinux/ss/hashtab.c           |    8 +-
+security/selinux/ss/hashtab.h           |    4 -
+security/selinux/ss/mls.c               |   72 +-
+security/selinux/ss/mls.h               |   38 +-
+security/selinux/ss/services.c          | 1100 ++++++++++++++++++-------------
+security/selinux/ss/services.h          |   24 +-
+security/selinux/ss/status.c            |   47 +-
+security/selinux/xfrm.c                 |   23 +-
+43 files changed, 2939 insertions(+), 1252 deletions(-)
+create mode 100644 Documentation/security/LSM-sctp.rst
+create mode 100644 Documentation/security/SELinux-sctp.rst
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
