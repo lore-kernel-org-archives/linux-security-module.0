@@ -1,7 +1,7 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Wed, 4 Apr 2018 09:39:08 -0700
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 04 Apr 2018 16:42:20 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJuuGRRUt-a3i89o906ka3RDOhs+_7tz_G8LTG8Jc0DXAyQ@mail.gmail.com>
+In-Reply-To: <CALCETrXwp1faWnqRJ5iLeo6bOOrRS_-L74_xnRAN1Md1YZW8Tg@mail.gmail.com>
 References: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
 	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
@@ -14,46 +14,36 @@ References: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<24353.1522848817@warthog.procyon.org.uk>
 	<20180404135251.GD16242@thunk.org>
 	<CACdnJuuGRRUt-a3i89o906ka3RDOhs+_7tz_G8LTG8Jc0DXAyQ@mail.gmail.com>
-Message-ID: <CALCETrXwp1faWnqRJ5iLeo6bOOrRS_-L74_xnRAN1Md1YZW8Tg@mail.gmail.com>
+	<CALCETrXwp1faWnqRJ5iLeo6bOOrRS_-L74_xnRAN1Md1YZW8Tg@mail.gmail.com>
+Message-ID: <CACdnJutctrxMUKfXxOXv6Z6mrjeZh8xFmg0Yhid56G2YCWGHVA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 4, 2018 at 9:22 AM, Matthew Garrett <mjg59@google.com> wrote:
-> On Wed, Apr 4, 2018 at 6:52 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
->> On Wed, Apr 04, 2018 at 02:33:37PM +0100, David Howells wrote:
->> > Theodore Y. Ts'o <tytso@mit.edu> wrote:
->> >
->> > > Whoa.  Why doesn't lockdown prevent kexec?  Put another away, why
->> > > isn't this a problem for people who are fearful that Linux could be
->> > > used as part of a Windows boot virus in a Secure UEFI context?
->> >
->> > Lockdown mode restricts kexec to booting an authorised image (where the
->> > authorisation may be by signature or by IMA).
->
->> If that's true, then Matthew's assertion that lockdown w/o secure boot
->> is insecure goes away, no?
->
-> If you don't have secure boot then an attacker with root can modify your
-> bootloader or kernel, and on next boot lockdown can be silently disabled.
+On Wed, Apr 4, 2018 at 9:39 AM Andy Lutomirski <luto@kernel.org> wrote:
+> On Wed, Apr 4, 2018 at 9:22 AM, Matthew Garrett <mjg59@google.com> wrote:
+> > If you don't have secure boot then an attacker with root can modify your
+> > bootloader or kernel, and on next boot lockdown can be silently
+disabled.
 
-This has been rebutted over and over and over.  Secure boot is not the
-only verified boot mechanism in the world.  Other, better, much more
-auditable, and much simpler mechanisms have been around for a long,
-long time.
+> This has been rebutted over and over and over.  Secure boot is not the
+> only verified boot mechanism in the world.  Other, better, much more
+> auditable, and much simpler mechanisms have been around for a long,
+> long time.
 
->> The fact that this Verified Boot on, lockdown off causes trouble
->> points to a clear problem.   User owns the hardware they should have
->> the right to defeat secureboot if they wish to.
->
-> Which is why Shim allows you to disable validation if you prove physical
-> user presence.
+Right and if you *know* that you're in that situation then you either turn
+it on in bootparams from the verified bootloader (which we can't do in UEFI
+because the *firmware* can be the bootloader thanks to the EFI boot stub)
+or you enable it from userland later (I can't remember if this version of
+the patchset provides that functionality, but a previous one did).
 
-And that's a giant hack.  The actual feature should be that a user
-proves physical presence and thus disables lockdown *without*
-disabling verification.
+> > Which is why Shim allows you to disable validation if you prove physical
+> > user presence.
 
---Andy
+> And that's a giant hack.  The actual feature should be that a user
+> proves physical presence and thus disables lockdown *without*
+> disabling verification.
+
+That's a completely reasonable feature request.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
