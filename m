@@ -1,8 +1,9 @@
-From: tytso@mit.edu (Theodore Y. Ts'o)
-Date: Wed, 4 Apr 2018 09:52:51 -0400
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 04 Apr 2018 14:57:15 +0100
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <24353.1522848817@warthog.procyon.org.uk>
-References: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+In-Reply-To: <20180404135251.GD16242@thunk.org>
+References: <20180404135251.GD16242@thunk.org>
+	<CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
 	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
 	<CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
@@ -12,24 +13,31 @@ References: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CA+55aFxgrh5eeG9MRSEsJtyL5yTe0TehZ=BS2josGJaLxoMMBQ@mail.gmail.com>
 	<CACdnJutuBaE3RaDx0KM5vDF9Sinrp=3tG9csrS-H3eU-J7-Utw@mail.gmail.com>
 	<24353.1522848817@warthog.procyon.org.uk>
-Message-ID: <20180404135251.GD16242@thunk.org>
+Message-ID: <27481.1522850235@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 04, 2018 at 02:33:37PM +0100, David Howells wrote:
-> Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> 
-> > Whoa.  Why doesn't lockdown prevent kexec?  Put another away, why
-> > isn't this a problem for people who are fearful that Linux could be
-> > used as part of a Windows boot virus in a Secure UEFI context?
-> 
-> Lockdown mode restricts kexec to booting an authorised image (where the
-> authorisation may be by signature or by IMA).
+Theodore Y. Ts'o <tytso@mit.edu> wrote:
 
-If that's true, then Matthew's assertion that lockdown w/o secure boot
-is insecure goes away, no?
+> > Lockdown mode restricts kexec to booting an authorised image (where the
+> > authorisation may be by signature or by IMA).
+> 
+> If that's true, then Matthew's assertion that lockdown w/o secure boot
+> is insecure goes away, no?
 
-							- Ted
+No.
+
+Lockdown prevents the running kernel from being modified (or, at least, that's
+the hope).
+
+But it doesn't do anything to prevent the kernel being modified before
+lockdown is engaged.
+
+We are trying to use secureboot to protect the system to the point that
+lockdown can take over.
+
+David
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
