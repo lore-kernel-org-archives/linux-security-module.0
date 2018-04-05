@@ -1,34 +1,53 @@
 From: jlee@suse.com (joeyli)
-Date: Thu, 5 Apr 2018 09:48:20 +0800
+Date: Thu, 5 Apr 2018 10:16:50 +0800
 Subject: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure
 	boot)
-In-Reply-To: <15406.1522880367@warthog.procyon.org.uk>
-References: <CAG48ez3edmZo1iFXqpvzOKNY0jLzcqa18KuoRrBaPyfp=7huZQ@mail.gmail.com>
-	<CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
+In-Reply-To: <1119.1522858644@warthog.procyon.org.uk>
+References: <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
 	<1119.1522858644@warthog.procyon.org.uk>
-	<15406.1522880367@warthog.procyon.org.uk>
-Message-ID: <20180405014820.GB7362@linux-l9pv.suse>
+Message-ID: <20180405021650.GC7362@linux-l9pv.suse>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 04, 2018 at 11:19:27PM +0100, David Howells wrote:
-> Jann Horn <jannh@google.com> wrote:
+Hi David, 
+
+On Wed, Apr 04, 2018 at 05:17:24PM +0100, David Howells wrote:
+> Andy Lutomirski <luto@kernel.org> wrote:
 > 
-> > > Uh, no.  bpf, for example, can be used to modify kernel memory.
+> > Since this thread has devolved horribly, I'm going to propose a solution.
 > > 
-> > I'm pretty sure bpf isn't supposed to be able to modify arbitrary
-> > kernel memory. AFAIU if you can use BPF to write to arbitrary kernel
-> > memory, that's a bug; with CAP_SYS_ADMIN, you can read from userspace,
-> > write to userspace, and read from kernelspace, but you shouldn't be
-> > able to write to kernelspace.
+> > 1. Split the "lockdown" state into three levels:  (please don't
+> > bikeshed about the names right now.)
+> > 
+> > LOCKDOWN_NONE: normal behavior
+> > 
+> > LOCKDOWN_PROTECT_INTEGREITY: kernel tries to keep root from writing to
+> > kernel memory
+> > 
+> > LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY: kernel tries to keep root from
+> > reading or writing kernel memory.
 > 
-> Ah - you may be right.  I seem to have misremembered what Joey Lee wrote in
-> his patch description.
+> In theory, it's good idea, but in practice it's not as easy to implement as I
+> think you think.
+> 
+> Let me list here the things that currently get restricted by lockdown:
+> 
+[...snip]
+>  (5) Kexec.
 >
 
-Sorry for it's my fault to misunderstood the behavoir of bpf with
-CAP_SYS_ADMIN.
+About IMA with kernel module signing and kexec(not on x86_64 yet)...
 
+Because IMA can be used to verify the integrity of kernel module or even
+the image for kexec. I think that the
+IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY must be enabled at runtime
+when kernel is locked-down.
+
+Because the root can enroll master key to keyring then IMA trusts the ima key
+derived from master key. It causes that the arbitrary signed module can be loaded
+when the root compromised.
+
+Thanks
 Joey Lee
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
