@@ -1,84 +1,64 @@
-From: oiaohm@gmail.com (Peter Dolding)
-Date: Thu, 5 Apr 2018 20:31:21 +1000
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Thu, 5 Apr 2018 14:34:10 +0300
 Subject: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+In-Reply-To: <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
 References: <cover.1522560550.git.sargun@sargun.me>
 	<911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
-Message-ID: <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
+	<CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
+Message-ID: <63eaa2d5-3662-2240-15fb-ab2227b6903a@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
-> On 01/04/18 08:41, Sargun Dhillon wrote:
->> The biggest security benefit of this patchset is the introduction of
->> read-only hooks, even if some security modules have mutable hooks.
->> Currently, if you have any LSMs with mutable hooks it will render all heads, and
->> list nodes mutable. These are a prime place to attack, because being able to
->> manipulate those hooks is a way to bypass all LSMs easily, and to create a
->> persistent, covert channel to intercept nearly all calls.
+
+
+On 05/04/18 13:31, Peter Dolding wrote:
+> On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+
+[...]
+
+>> A) hooks that are either const or marked as RO after init
 >>
+>> B) hooks that are writable for a short time, long enough to load
+>> additional, non built-in modules, but then get locked down
+>> I provided an example some time ago [1]
 >>
->> If LSMs have a model to be unloaded, or are compled as modules, they should mark
->> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
->> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
->> chain.
->
->
-> I'd rather consider these types of hooks:
->
-> A) hooks that are either const or marked as RO after init
->
-> B) hooks that are writable for a short time, long enough to load
-> additional, non built-in modules, but then get locked down
-> I provided an example some time ago [1]
->
-> C) hooks that are unloadable (and therefore always attackable?)
->
-> Maybe type-A could be dropped and used only as type-B, if it's
-> acceptable that type-A hooks are vulnerable before lock-down of type-B
-> hooks.
->
-> I have some doubts about the usefulness of type-C, though.
-> The benefit I see htat it brings is that it avoids having to reboot when
-> a mutable LSM is changed, at the price of leaving it attackable.
->
-> Do you have any specific case in mind where this trade-off would be
-> acceptable?
->
+>> C) hooks that are unloadable (and therefore always attackable?)
 
-A useful case for loadable/unloadable LSM is development automate QA.
+[...]
 
-So you have built a new program and you you want to test it against a
-list of different LSM configurations without having to reboot the
-system.  So a run testsuite with LSM off  then enabled LSM1 run
-testsuite again disable LSM1 enable LSM2. run testsuite disable
-LSM2... Basically repeating process.
+>> Do you have any specific case in mind where this trade-off would be
+>> acceptable?
+>>
+> 
+> A useful case for loadable/unloadable LSM is development automate QA.
 
-I would say normal production machines being able to swap LSM like
-this does not have much use.
+I did not consider this case, but I see the point.
 
-Sometimes for productivity it makes sense to be able to breach
-security.   The fact you need to test with LSM disabled to know if any
-of the defects you are seeing is LSM configuration related that
-instance is already in the camp of non secure anyhow..
+[...]
 
-There is a shade of grey between something being a security hazard and
-something being a useful feature.
+> I would say normal production machines being able to swap LSM like
+> this does not have much use.
 
-If development people are not testing that LSM configuration are clean
-because they don't really have enough machined to boot up individual
-instances with each LSM and this results in broken LSM configuration
-being shipped resulting in end users turning LSM off completely.
-Then a little security risk from providing unload-able LSM hooks when
-particularly requested is not that high really.
+yes, this is what I had in mind
 
-With all the different LSM options how do application/distribution
-makers validate all the different LSM configurations effectively is a
-question that does need to be answered.  In answering this question
-allowing this form of compromised security as a option might be quite
-a valid move.
+[...]
 
-Peter Dolding
+> There is a shade of grey between something being a security hazard and
+> something being a useful feature.
+
+Maybe the problem I see is only in the naming: if what right now is
+addressed as "mutable" were to be called in some other way that does not
+imply that it's impossible to lock it down, then I think there wouldn't
+be much of a problem anymore.
+
+How about s/mutable/protectable/g ?
+
+Then it could be a boot time parameter to decide if the "extra" hooks
+should be protected or stay writable, for example for performing more
+extensive testing.
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
