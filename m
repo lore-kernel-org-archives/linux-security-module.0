@@ -1,54 +1,50 @@
-From: jlee@suse.com (joeyli)
-Date: Thu, 5 Apr 2018 10:16:50 +0800
-Subject: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure
-	boot)
-In-Reply-To: <1119.1522858644@warthog.procyon.org.uk>
-References: <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
-	<1119.1522858644@warthog.procyon.org.uk>
-Message-ID: <20180405021650.GC7362@linux-l9pv.suse>
+From: shinya1.takumi@toshiba.co.jp (shinya1.takumi at toshiba.co.jp)
+Date: Thu, 5 Apr 2018 06:40:36 +0000
+Subject: [RFC v3 0/2] WhiteEgret LSM module
+In-Reply-To: <20180401200827.GA28101@mail.hallyn.com>
+References: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
+	<20180401200827.GA28101@mail.hallyn.com>
+Message-ID: <OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi David, 
+I am one of developers of WhiteEgret.
 
-On Wed, Apr 04, 2018 at 05:17:24PM +0100, David Howells wrote:
-> Andy Lutomirski <luto@kernel.org> wrote:
+> regardling the last one, do you have a plan for handling it?
+Yes, we have a plan to release WhiteEgret v4 patch with a WEUA sample of access control for script programs.
+
+The latest WhiteEgret cannot control script programs since script files read by an interpreter are not hooked by the execve system call.
+We consider that script programs can be controlled by controlling the files inputted by interpreters, accordingly. 
+We consider that the control can be realized using the read system call hooking.
+
+Now, we are developing WhiteEgret with the read system call hooking and WEUA which controls the script files to be read to interpreters using information from the read system call hooking and white list.
+
+-----Original Message-----
+From: owner-linux-security-module@vger.kernel.org [mailto:owner-linux-security-module at vger.kernel.org] On Behalf Of Serge E. Hallyn
+Sent: Monday, April 2, 2018 5:08 AM
+To: koike masanobu(?? ?? ???? ????????????) <masanobu2.koike@toshiba.co.jp>
+Cc: jmorris at namei.org; serge at hallyn.com; linux-security-module at vger.kernel.org; linux-kernel at vger.kernel.org
+Subject: Re: [RFC v3 0/2] WhiteEgret LSM module
+
+Quoting Masanobu Koike (masanobu2.koike at toshiba.co.jp):
+...
+> Assumptions and ToDos
 > 
-> > Since this thread has devolved horribly, I'm going to propose a solution.
-> > 
-> > 1. Split the "lockdown" state into three levels:  (please don't
-> > bikeshed about the names right now.)
-> > 
-> > LOCKDOWN_NONE: normal behavior
-> > 
-> > LOCKDOWN_PROTECT_INTEGREITY: kernel tries to keep root from writing to
-> > kernel memory
-> > 
-> > LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY: kernel tries to keep root from
-> > reading or writing kernel memory.
-> 
-> In theory, it's good idea, but in practice it's not as easy to implement as I
-> think you think.
-> 
-> Let me list here the things that currently get restricted by lockdown:
-> 
-[...snip]
->  (5) Kexec.
->
+> At this stage, WhiteEgret assumes the following.
+> Relaxing these assumptions are future works.
+> - Root is not compromised. And using a whitelist and a WEUA requires 
+> root privilege.
+> - WEUA is reliable.
+> - It is allowed for scripting languages, e.g., Perl or Python, to read 
+> arbitrary scripts and to execute them.
 
-About IMA with kernel module signing and kexec(not on x86_64 yet)...
+Hi,
 
-Because IMA can be used to verify the integrity of kernel module or even
-the image for kexec. I think that the
-IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY must be enabled at runtime
-when kernel is locked-down.
+regardling the last one, do you have a plan for handling it?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in the body of a message to majordomo at vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Because the root can enroll master key to keyring then IMA trusts the ima key
-derived from master key. It causes that the arbitrary signed module can be loaded
-when the root compromised.
 
-Thanks
-Joey Lee
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
