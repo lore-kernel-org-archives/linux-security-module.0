@@ -1,60 +1,84 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 5 Apr 2018 13:12:10 +0300
-Subject: [PATCH] tpm: moves the delay_msec increment after sleep in
-	tpm_transmit()
-In-Reply-To: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
-References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20180405101210.GA21636@linux.intel.com>
+From: oiaohm@gmail.com (Peter Dolding)
+Date: Thu, 5 Apr 2018 20:31:21 +1000
+Subject: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
+In-Reply-To: <911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+References: <cover.1522560550.git.sargun@sargun.me>
+	<911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+Message-ID: <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
-> Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
-> handle the TPM2_RC_RETRY error. The loop retries the command after
-> sleeping for the specified time, which is incremented exponentially in
-> every iteration. This patch fixes the initial sleep to be the default
-> sleep time.
+On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> On 01/04/18 08:41, Sargun Dhillon wrote:
+>> The biggest security benefit of this patchset is the introduction of
+>> read-only hooks, even if some security modules have mutable hooks.
+>> Currently, if you have any LSMs with mutable hooks it will render all heads, and
+>> list nodes mutable. These are a prime place to attack, because being able to
+>> manipulate those hooks is a way to bypass all LSMs easily, and to create a
+>> persistent, covert channel to intercept nearly all calls.
+>>
+>>
+>> If LSMs have a model to be unloaded, or are compled as modules, they should mark
+>> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+>> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
+>> chain.
+>
+>
+> I'd rather consider these types of hooks:
+>
+> A) hooks that are either const or marked as RO after init
+>
+> B) hooks that are writable for a short time, long enough to load
+> additional, non built-in modules, but then get locked down
+> I provided an example some time ago [1]
+>
+> C) hooks that are unloadable (and therefore always attackable?)
+>
+> Maybe type-A could be dropped and used only as type-B, if it's
+> acceptable that type-A hooks are vulnerable before lock-down of type-B
+> hooks.
+>
+> I have some doubts about the usefulness of type-C, though.
+> The benefit I see htat it brings is that it avoids having to reboot when
+> a mutable LSM is changed, at the price of leaving it attackable.
+>
+> Do you have any specific case in mind where this trade-off would be
+> acceptable?
+>
 
-I think I understand the code change but do not understand what the
-long description.
+A useful case for loadable/unloadable LSM is development automate QA.
 
-> 
-> Fixes: commit e2fb992d82c6 ("tpm: add retry logic")
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index c43a9e28995e..6201aab374e6 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -587,7 +587,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  		 */
->  		if (rc == TPM2_RC_TESTING && cc == TPM2_CC_SELF_TEST)
->  			break;
-> -		delay_msec *= 2;
-> +
+So you have built a new program and you you want to test it against a
+list of different LSM configurations without having to reboot the
+system.  So a run testsuite with LSM off  then enabled LSM1 run
+testsuite again disable LSM1 enable LSM2. run testsuite disable
+LSM2... Basically repeating process.
 
-Extra whitespace
+I would say normal production machines being able to swap LSM like
+this does not have much use.
 
->  		if (delay_msec > TPM2_DURATION_LONG) {
->  			if (rc == TPM2_RC_RETRY)
->  				dev_err(&chip->dev, "in retry loop\n");
-> @@ -597,6 +597,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  			break;
->  		}
->  		tpm_msleep(delay_msec);
-> +		delay_msec *= 2;
->  		memcpy(buf, save, save_size);
->  	}
->  	return ret;
-> -- 
-> 2.13.6
-> 
+Sometimes for productivity it makes sense to be able to breach
+security.   The fact you need to test with LSM disabled to know if any
+of the defects you are seeing is LSM configuration related that
+instance is already in the camp of non secure anyhow..
 
-/Jarkko
+There is a shade of grey between something being a security hazard and
+something being a useful feature.
+
+If development people are not testing that LSM configuration are clean
+because they don't really have enough machined to boot up individual
+instances with each LSM and this results in broken LSM configuration
+being shipped resulting in end users turning LSM off completely.
+Then a little security risk from providing unload-able LSM hooks when
+particularly requested is not that high really.
+
+With all the different LSM options how do application/distribution
+makers validate all the different LSM configurations effectively is a
+question that does need to be answered.  In answering this question
+allowing this form of compromised security as a option might be quite
+a valid move.
+
+Peter Dolding
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
