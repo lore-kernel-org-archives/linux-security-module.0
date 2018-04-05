@@ -1,80 +1,76 @@
-From: jlee@suse.com (jlee at suse.com)
-Date: Fri, 6 Apr 2018 00:11:24 +0800
-Subject: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure
-	boot)
-In-Reply-To: <1522936869.16421.63.camel@linux.vnet.ibm.com>
-References: <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
-	<1119.1522858644@warthog.procyon.org.uk>
-	<20180405021650.GC7362@linux-l9pv.suse>
-	<1522936869.16421.63.camel@linux.vnet.ibm.com>
-Message-ID: <20180405161124.y5jfe76lfqog7iiv@linux-rasp2>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 5 Apr 2018 09:29:12 -0700
+Subject: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
+In-Reply-To: <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
+References: <cover.1522560550.git.sargun@sargun.me>
+	<911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+	<CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
+Message-ID: <130851a6-1801-1917-b3df-5af89d2c421b@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Mimi,
-
-On Thu, Apr 05, 2018 at 10:01:09AM -0400, Mimi Zohar wrote:
-> On Thu, 2018-04-05 at 10:16 +0800, joeyli wrote:
-> > Hi David, 
-> > 
-> > On Wed, Apr 04, 2018 at 05:17:24PM +0100, David Howells wrote:
-> > > Andy Lutomirski <luto@kernel.org> wrote:
-> > > 
-> > > > Since this thread has devolved horribly, I'm going to propose a solution.
-> > > > 
-> > > > 1. Split the "lockdown" state into three levels:  (please don't
-> > > > bikeshed about the names right now.)
-> > > > 
-> > > > LOCKDOWN_NONE: normal behavior
-> > > > 
-> > > > LOCKDOWN_PROTECT_INTEGREITY: kernel tries to keep root from writing to
-> > > > kernel memory
-> > > > 
-> > > > LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY: kernel tries to keep root from
-> > > > reading or writing kernel memory.
-> > > 
-> > > In theory, it's good idea, but in practice it's not as easy to implement as I
-> > > think you think.
-> > > 
-> > > Let me list here the things that currently get restricted by lockdown:
-> > > 
-> > [...snip]
-> > >  (5) Kexec.
-> > >
-> > 
-> > About IMA with kernel module signing and kexec(not on x86_64 yet)...
-> 
-> Only carrying the measurement list across kexec is architecture
-> specific, but everything else should work. ?
-> 
-> > Because IMA can be used to verify the integrity of kernel module or even
-> > the image for kexec. I think that the
-> > IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY must be enabled at runtime
-> > when kernel is locked-down.
-> 
-> I think we need to understand the problem a bit better. ?Is the
-> problem that you're using the secondary keyring and loading the UEFI
-> keys onto the secondary keyring?
+On 4/5/2018 3:31 AM, Peter Dolding wrote:
+> On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+>> On 01/04/18 08:41, Sargun Dhillon wrote:
+>>> The biggest security benefit of this patchset is the introduction of
+>>> read-only hooks, even if some security modules have mutable hooks.
+>>> Currently, if you have any LSMs with mutable hooks it will render all heads, and
+>>> list nodes mutable. These are a prime place to attack, because being able to
+>>> manipulate those hooks is a way to bypass all LSMs easily, and to create a
+>>> persistent, covert channel to intercept nearly all calls.
+>>>
+>>>
+>>> If LSMs have a model to be unloaded, or are compled as modules, they should mark
+>>> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+>>> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
+>>> chain.
+>>
+>> I'd rather consider these types of hooks:
+>>
+>> A) hooks that are either const or marked as RO after init
+>>
+>> B) hooks that are writable for a short time, long enough to load
+>> additional, non built-in modules, but then get locked down
+>> I provided an example some time ago [1]
+>>
+>> C) hooks that are unloadable (and therefore always attackable?)
+>>
+>> Maybe type-A could be dropped and used only as type-B, if it's
+>> acceptable that type-A hooks are vulnerable before lock-down of type-B
+>> hooks.
+>>
+>> I have some doubts about the usefulness of type-C, though.
+>> The benefit I see htat it brings is that it avoids having to reboot when
+>> a mutable LSM is changed, at the price of leaving it attackable.
+>>
+>> Do you have any specific case in mind where this trade-off would be
+>> acceptable?
+>>
+> A useful case for loadable/unloadable LSM is development automate QA.
 >
+> So you have built a new program and you you want to test it against a
+> list of different LSM configurations without having to reboot the
+> system.  So a run testsuite with LSM off  then enabled LSM1 run
+> testsuite again disable LSM1 enable LSM2. run testsuite disable
+> LSM2... Basically repeating process.
+>
+> I would say normal production machines being able to swap LSM like
+> this does not have much use.
+>
+> Sometimes for productivity it makes sense to be able to breach
+> security.   The fact you need to test with LSM disabled to know if any
+> of the defects you are seeing is LSM configuration related that
+> instance is already in the camp of non secure anyhow..
+>
+> There is a shade of grey between something being a security hazard and
+> something being a useful feature.
 
-Sorry for my mistake. I want to write INTEGRITY_TRUSTED_KEYRING in
-above but not IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY.
+If the only value of a feature is development I strongly
+advocate against it. The number of times I've seen things
+completely messed up because it makes development easier
+is astonishing. If you have to enable something dangerous
+just for testing you have to wonder about the testing.
 
-My brain is not clear when writing the mail.
- 
-> > Because the root can enroll master key to keyring then IMA trusts the ima key
-> > derived from master key. It causes that the arbitrary signed module can be loaded
-> > when the root compromised.
-> 
-> With only the builtin keyring, only keys signed by a builtin key can
-> be added to the IMA keyring.
-> 
-
-Thanks for your description. I saw that the IMA_LOAD_X509 already depends
-on IMA_TRUSTED_KEYRING (INTEGRITY_TRUSTED_KEYRING). Please ignore my concern.
-
-Thanks a lot!
-Joey Lee
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
