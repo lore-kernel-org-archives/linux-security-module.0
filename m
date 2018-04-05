@@ -1,50 +1,53 @@
-From: shinya1.takumi@toshiba.co.jp (shinya1.takumi at toshiba.co.jp)
-Date: Thu, 5 Apr 2018 06:40:36 +0000
-Subject: [RFC v3 0/2] WhiteEgret LSM module
-In-Reply-To: <20180401200827.GA28101@mail.hallyn.com>
-References: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
-	<20180401200827.GA28101@mail.hallyn.com>
-Message-ID: <OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
+From: igor.stoppa@huawei.com (Igor Stoppa)
+Date: Thu, 5 Apr 2018 12:55:33 +0300
+Subject: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
+In-Reply-To: <cover.1522560550.git.sargun@sargun.me>
+References: <cover.1522560550.git.sargun@sargun.me>
+Message-ID: <911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-I am one of developers of WhiteEgret.
-
-> regardling the last one, do you have a plan for handling it?
-Yes, we have a plan to release WhiteEgret v4 patch with a WEUA sample of access control for script programs.
-
-The latest WhiteEgret cannot control script programs since script files read by an interpreter are not hooked by the execve system call.
-We consider that script programs can be controlled by controlling the files inputted by interpreters, accordingly. 
-We consider that the control can be realized using the read system call hooking.
-
-Now, we are developing WhiteEgret with the read system call hooking and WEUA which controls the script files to be read to interpreters using information from the read system call hooking and white list.
-
------Original Message-----
-From: owner-linux-security-module@vger.kernel.org [mailto:owner-linux-security-module at vger.kernel.org] On Behalf Of Serge E. Hallyn
-Sent: Monday, April 2, 2018 5:08 AM
-To: koike masanobu(?? ?? ???? ????????????) <masanobu2.koike@toshiba.co.jp>
-Cc: jmorris at namei.org; serge at hallyn.com; linux-security-module at vger.kernel.org; linux-kernel at vger.kernel.org
-Subject: Re: [RFC v3 0/2] WhiteEgret LSM module
-
-Quoting Masanobu Koike (masanobu2.koike at toshiba.co.jp):
-...
-> Assumptions and ToDos
+On 01/04/18 08:41, Sargun Dhillon wrote:
+> The biggest security benefit of this patchset is the introduction of
+> read-only hooks, even if some security modules have mutable hooks.
+> Currently, if you have any LSMs with mutable hooks it will render all heads, and
+> list nodes mutable. These are a prime place to attack, because being able to
+> manipulate those hooks is a way to bypass all LSMs easily, and to create a
+> persistent, covert channel to intercept nearly all calls.
 > 
-> At this stage, WhiteEgret assumes the following.
-> Relaxing these assumptions are future works.
-> - Root is not compromised. And using a whitelist and a WEUA requires 
-> root privilege.
-> - WEUA is reliable.
-> - It is allowed for scripting languages, e.g., Perl or Python, to read 
-> arbitrary scripts and to execute them.
+> 
+> If LSMs have a model to be unloaded, or are compled as modules, they should mark
+> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
+> chain.
 
-Hi,
 
-regardling the last one, do you have a plan for handling it?
+I'd rather consider these types of hooks:
+
+A) hooks that are either const or marked as RO after init
+
+B) hooks that are writable for a short time, long enough to load
+additional, non built-in modules, but then get locked down
+I provided an example some time ago [1]
+
+C) hooks that are unloadable (and therefore always attackable?)
+
+Maybe type-A could be dropped and used only as type-B, if it's
+acceptable that type-A hooks are vulnerable before lock-down of type-B
+hooks.
+
+I have some doubts about the usefulness of type-C, though.
+The benefit I see htat it brings is that it avoids having to reboot when
+a mutable LSM is changed, at the price of leaving it attackable.
+
+Do you have any specific case in mind where this trade-off would be
+acceptable?
+
+
+[1] https://lkml.org/lkml/2017/7/10/403
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in the body of a message to majordomo at vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
