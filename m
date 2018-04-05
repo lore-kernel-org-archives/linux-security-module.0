@@ -1,7 +1,7 @@
-From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
-Date: Thu, 5 Apr 2018 18:59:49 +0100
+From: mjg59@google.com (Matthew Garrett)
+Date: Thu, 05 Apr 2018 18:03:37 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJutOAPTmPm6dmHiw4+8rj=M7B1SiCkPaRZLmi9-CCuRyNg@mail.gmail.com>
+In-Reply-To: <20180405185949.309216bb@alans-desktop>
 References: <4136.1522452584@warthog.procyon.org.uk>
 	<CALCETrWHS9p1My=j07=V=OP7v4SwQkW-kJ3JOx6EbPU8fb_XEQ@mail.gmail.com>
 	<13189.1522784944@warthog.procyon.org.uk>
@@ -17,18 +17,18 @@ References: <4136.1522452584@warthog.procyon.org.uk>
 	<CACdnJutkO9dgz=HZpPRR9PZC=+cHh97dRUiGB+D3gruZr6U9Kg@mail.gmail.com>
 	<CA+55aFxZN_p_cU94z7QN8=HnPanRrpRHH7UUkOBaFDSjfrivnQ@mail.gmail.com>
 	<CACdnJutOAPTmPm6dmHiw4+8rj=M7B1SiCkPaRZLmi9-CCuRyNg@mail.gmail.com>
-Message-ID: <20180405185949.309216bb@alans-desktop>
+	<20180405185949.309216bb@alans-desktop>
+Message-ID: <CACdnJuuXexHPCkK5GW-XH2bjjXiRRg+9TFWfzeZt63-q4=Je0w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Thu, Apr 5, 2018 at 10:59 AM Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+> VT-D
 
-> How? When there are random DMA-capable PCI devices that are driven by
-> userland tools that are mmap()ing the BARs out of sysfs, how do we
-> simultaneously avoid breaking those devices while also preventing the
-> majority of users from being vulnerable to an attacker just DMAing over the
-> kernel?
-
-VT-D
+Once Intel provide that on all hardware and actually make it work reliably
+with their graphics chipsets it's certainly a solution for the PCI DMA
+problem, but right now it's still effectively undeployable for a lot of
+real world cases.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
