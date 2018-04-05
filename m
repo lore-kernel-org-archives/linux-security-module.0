@@ -1,7 +1,7 @@
-From: oiaohm@gmail.com (Peter Dolding)
-Date: Thu, 5 Apr 2018 10:05:45 +1000
+From: mjg59@google.com (Matthew Garrett)
+Date: Thu, 05 Apr 2018 00:20:36 +0000
 Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <CACdnJuuGRRUt-a3i89o906ka3RDOhs+_7tz_G8LTG8Jc0DXAyQ@mail.gmail.com>
+In-Reply-To: <CANA3KFWLCfe=KYPBhKj+g698=frt4E-u-Hq2--5jFkHnkNoBnA@mail.gmail.com>
 References: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
 	<CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
@@ -14,65 +14,23 @@ References: <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
 	<24353.1522848817@warthog.procyon.org.uk>
 	<20180404135251.GD16242@thunk.org>
 	<CACdnJuuGRRUt-a3i89o906ka3RDOhs+_7tz_G8LTG8Jc0DXAyQ@mail.gmail.com>
-Message-ID: <CANA3KFWLCfe=KYPBhKj+g698=frt4E-u-Hq2--5jFkHnkNoBnA@mail.gmail.com>
+	<CANA3KFWLCfe=KYPBhKj+g698=frt4E-u-Hq2--5jFkHnkNoBnA@mail.gmail.com>
+Message-ID: <CACdnJut330=gdaSOR8VdLJeNEiL7uupUMZYqVYy5YoE1J-w2vQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> If you don't have secure boot then an attacker with root can modify your
-> bootloader or kernel, and on next boot lockdown can be silently disabled.
+On Wed, Apr 4, 2018 at 5:05 PM Peter Dolding <oiaohm@gmail.com> wrote:
 
-Stop being narrow minded you don't need secure boot to protect
-bootloader or kernel the classic is only boot from read only media.
+> > If you don't have secure boot then an attacker with root can modify your
+> > bootloader or kernel, and on next boot lockdown can be silently
+disabled.
 
-Another is network boot using https can coreboot firmware.   This
-checks the certificate  of the https server against selected CA before
-downloading anything and as long as the firmware is set read only in
-hardware the attack has absolutely nothing to work on.
+> Stop being narrow minded you don't need secure boot to protect
+> bootloader or kernel the classic is only boot from read only media.
 
-In fact the network boot form https server is more secure than UEFI
-secureboot due to highly limited parties who can alter/provide the
-approved boot loader/kernel image.
-
-Having root user rights does not override physical security.    The
-fact there are other ways of doing bootloader and kernel security
-other than UEFI secureboot that are in lots of cases more secure than
-UEFI secureboot due to using more limited keys is the absolute reason
-why lockdown is required without UEFI secureboot.
-
-It would make sense to extend kexec to support UEFI secureboot
-verification  and also kexec to have frameworks to support other
-security options like https server storage of all kernel images.
-Please note kexec supporting UEFI secureboot verification should also
-support booting non UEFI secureboot but verified by some other method
-and having own PK/KEK set for kexec and this would be when the Linux
-kernel is placed in firmware and used instead of EFI firmware..
-
-Please note there are many UEFI firmwares that with secureboot off
-allow setting up secure https bootting where you are not in fact
-validating the boot loader or kernel but validating the source you get
-them from.
-
-There are three different ways to achieve a protected boot process.
-1) validate the boot files.(this is like UEFI secure boot and many
-other methods)
-2) validate source the boot files.  Yes this can be apply key check to
-image if image is not signed don't boot from it and the image contain
-boot loader and kernel then not bother validating the boot loader and
-kernel image/parts individually same with https.
-3) make boot files read only.
-
-All three achieve the same level of security.   If you are using any
-of the three lockdown option may provide some benefit.
-
-Yes https network boot effectively does 2 and 3 so making having a
-very limit threat against the boot process.
-
-Remember there is more 1 way to skin a cat just like there is more
-than 1 way to make a secure system.   Currently being too narrow in
-methods for doing protected booting.
-
-
-Peter Dolding.
+And if you use another protected path you can set the appropriate bootparam
+flag or pass the appropriate kernel command line argument and gain the same
+functionality.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
