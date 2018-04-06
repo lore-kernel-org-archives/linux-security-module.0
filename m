@@ -1,56 +1,53 @@
-From: rdunlap@infradead.org (Randy Dunlap)
-Date: Fri, 6 Apr 2018 11:58:25 -0700
-Subject: [PATCH] uapi/linux/keyctl.h: don't use C++ reserved keyword as a
-	struct member name
-Message-ID: <1735b3a4-2792-0ce4-3bf4-94fee5b50ff6@infradead.org>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Fri, 6 Apr 2018 16:07:02 -0700
+Subject: [GIT PULL] SELinux patches for v4.17
+In-Reply-To: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+Message-ID: <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Tue, Apr 3, 2018 at 6:37 PM, Paul Moore <paul@paul-moore.com> wrote:
+>
+> Everything passes the selinux-testsuite, but there are a few known
+> merge conflicts.  The first is with the netdev tree and is in
+> net/sctp/socket.c.  Unfortunately it is a bit ugly, thankfully Stephen
+> Rothwell has already done the heavy lifting in resolving the merge for
+> you, and the SCTP folks have given his merge patch a thumbs-up.
 
-Since this header is in "include/uapi/linux/", apparently people
-want to use it in userspace programs -- even in C++ ones.
-However, the header uses a C++ reserved keyword ("private"),
-so change that to "dh_private" instead to allow the header file
-to be used in C++ userspace.
+I ended up re-doing the merge, and it looks like some more sctp
+changes happened after Stephen's merge anyway, so mine didn't end up
+quite like his.
 
-Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=191051
+Adding Xin Long to see if he can verify it again, but it all *looks* sane.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: keyrings at vger.kernel.org
-Cc: linux-security-module at vger.kernel.org
----
- include/uapi/linux/keyctl.h |    2 +-
- security/keys/dh.c          |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+While looking at it, it struck me that the new security hooks don't
+seem to hook into __sctp_connect(), which also does that
 
---- lnx-416.orig/include/uapi/linux/keyctl.h
-+++ lnx-416/include/uapi/linux/keyctl.h
-@@ -65,7 +65,7 @@
- 
- /* keyctl structures */
- struct keyctl_dh_params {
--	__s32 private;
-+	__s32 dh_private;
- 	__s32 prime;
- 	__s32 base;
- };
---- lnx-416.orig/security/keys/dh.c
-+++ lnx-416/security/keys/dh.c
-@@ -307,7 +307,7 @@ long __keyctl_dh_compute(struct keyctl_d
- 	}
- 	dh_inputs.g_size = dlen;
- 
--	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
-+	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
- 	if (dlen < 0) {
- 		ret = dlen;
- 		goto out2;
+                        scope = sctp_scope(&to);
+                        asoc = sctp_association_new(ep, sk, scope, GFP_KERNEL);
 
+thing. Is that intentional? The sendmsg case does that
+security_sctp_bind_connect, the actual __sctp_connect() does not.
+
+This is not because I screwed up the merge - it's that way in the
+SELinux tree too. And I obviously _left_ it that way, but while doing
+the merge and trying to understand what was going on, this struck me.
+
+I'm probably missing something really obvious why the connect case
+doesn't want to do it thgere.
+
+NOTE! I do see it being done in __sctp_setsockopt_connectx(). But
+__sctp_connect() has another caller (in sctp_connect()) which doesn't
+have that security_sctp_bind_connect() call.
+
+So please check my resolution, but also somebody should tell me
+"Linus, you're a cretin, sctp_connect() doesn't want that
+security_sctp_bind_connect() at all because it was already done by
+XYZ"
+
+                 Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
