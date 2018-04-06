@@ -1,186 +1,113 @@
 From: oiaohm@gmail.com (Peter Dolding)
-Date: Fri, 6 Apr 2018 14:12:23 +1000
-Subject: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <CAMp4zn95V1BLg5n0MT6F1qGdu=aHxC7_kZr36tZ=pqYB80aQ7g@mail.gmail.com>
-References: <cover.1522560550.git.sargun@sargun.me>
-	<911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
-	<CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
-	<130851a6-1801-1917-b3df-5af89d2c421b@schaufler-ca.com>
-	<CAMp4zn95V1BLg5n0MT6F1qGdu=aHxC7_kZr36tZ=pqYB80aQ7g@mail.gmail.com>
-Message-ID: <CANA3KFUkk7pAuECF7H6MnGRYguSFDP3jo1xNMUJCg88NuHdBHA@mail.gmail.com>
+Date: Fri, 6 Apr 2018 14:42:53 +1000
+Subject: [GIT PULL] Kernel lockdown for secure boot
+In-Reply-To: <20180404184255.exdrtpqnxlqme7tl@redhat.com>
+References: <4136.1522452584@warthog.procyon.org.uk>
+	<alpine.LRH.2.21.1803311145180.7769@namei.org>
+	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
+	<30459.1522739219@warthog.procyon.org.uk>
+	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
+	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+	<CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+	<CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
+	<CALCETrVR_EcbKv5-4AR6Zm02XHhJQQGNDeO8FGkMbYozmuDTJw@mail.gmail.com>
+	<20180404184255.exdrtpqnxlqme7tl@redhat.com>
+Message-ID: <CANA3KFW_7VVm6=Sg=gu8eE0b2+NO_4MYhmxRg_UYOOYeDj83Fg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Apr 6, 2018 at 11:31 AM, Sargun Dhillon <sargun@sargun.me> wrote:
 >
+> There's no inherent difference, in terms of the trust chain, between
+> compromising it to use the machine as a toaster or to run a botnet - the
+> trust chain is compromised either way.  But you're much more likely to
+> notice if your desktop starts producing bread products than if it hides
+> some malware and keeps on booting, and the second one is much more
+
+> That is to say, as a result of the way malware has been written, our way
+> of thinking about it is often that it's a way to build a boot loader for
+> a malicious kernel, so that's how we wind up talking about it.  Are we
+> concerned with malware stealing your data?  Yes, but Secure Boot is only
+> indirectly about that.  It's primarily about denying the malware easy
+> mechanisms to build a persistence mechanism.  The uid-0 != ring-0 aspect
+> is useful independent of Secure Boot, but Secure Boot without it falls
+> way short of accomplishing its goal.
 >
-> On Thu, Apr 5, 2018 at 9:29 AM, Casey Schaufler <casey@schaufler-ca.com>
-> wrote:
->>
->> On 4/5/2018 3:31 AM, Peter Dolding wrote:
->> > On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com>
->> > wrote:
->> >> On 01/04/18 08:41, Sargun Dhillon wrote:
->> >>> The biggest security benefit of this patchset is the introduction of
->> >>> read-only hooks, even if some security modules have mutable hooks.
->> >>> Currently, if you have any LSMs with mutable hooks it will render all
->> >>> heads, and
->> >>> list nodes mutable. These are a prime place to attack, because being
->> >>> able to
->> >>> manipulate those hooks is a way to bypass all LSMs easily, and to
->> >>> create a
->> >>> persistent, covert channel to intercept nearly all calls.
->> >>>
->> >>>
->> >>> If LSMs have a model to be unloaded, or are compled as modules, they
->> >>> should mark
->> >>> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE
->> >>> macro
->> >>> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
->> >>> chain.
->> >>
->> >> I'd rather consider these types of hooks:
->> >>
->> >> A) hooks that are either const or marked as RO after init
->> >>
->> >> B) hooks that are writable for a short time, long enough to load
->> >> additional, non built-in modules, but then get locked down
->> >> I provided an example some time ago [1]
->> >>
->> >> C) hooks that are unloadable (and therefore always attackable?)
->> >>
->> >> Maybe type-A could be dropped and used only as type-B, if it's
->> >> acceptable that type-A hooks are vulnerable before lock-down of type-B
->> >> hooks.
->> >>
->> >> I have some doubts about the usefulness of type-C, though.
->> >> The benefit I see htat it brings is that it avoids having to reboot
->> >> when
->> >> a mutable LSM is changed, at the price of leaving it attackable.
->> >>
->> >> Do you have any specific case in mind where this trade-off would be
->> >> acceptable?
->> >>
->> > A useful case for loadable/unloadable LSM is development automate QA.
->> >
->> > So you have built a new program and you you want to test it against a
->> > list of different LSM configurations without having to reboot the
->> > system.  So a run testsuite with LSM off  then enabled LSM1 run
->> > testsuite again disable LSM1 enable LSM2. run testsuite disable
->> > LSM2... Basically repeating process.
->> >
->> > I would say normal production machines being able to swap LSM like
->> > this does not have much use.
->> >
->> > Sometimes for productivity it makes sense to be able to breach
->> > security.   The fact you need to test with LSM disabled to know if any
->> > of the defects you are seeing is LSM configuration related that
->> > instance is already in the camp of non secure anyhow..
->> >
->> > There is a shade of grey between something being a security hazard and
->> > something being a useful feature.
->>
->> If the only value of a feature is development I strongly
->> advocate against it. The number of times I've seen things
->> completely messed up because it makes development easier
->> is astonishing. If you have to enable something dangerous
->> just for testing you have to wonder about the testing.
->>
-Casey Schaufler we have had different points of view before.   I will
-point out some serous issues here.  If you look a PPA and many other
-locations you will find no LSM configuration files.
+> --
+I am sorry the issue here this is really expanding Secure Boot to
+breaking point.
 
-Majority of QA servers around the place run with LSM off.   There is a
-practical annoying reason.   No point running application with new
-code with LSM on at first you run with LSM off to make sure program
-works.   If program works and you have the resources then transfer to
-another machine/reboot to test with LSM this creates a broken
-workflow.   When customer gets untested LSM configuration files and
-they don't work what do support straight up recommend turning the LSM
-off.
+Yes a person wants a secure system having the boot parts verified by
+some means and using a lockdown is advantage.
 
-Reality enabling LSM module loading and unloading on the fly on QA
-servers will not change their security 1 bit because they are most
-running without LSM at all.   Making it simple to implement LSM
-configuration testing on QA servers will reduce the number of times
-end users at told to turn LSM off on their machines that will effect
-over all security.
+Problem comes in with the idea that UEFI Secure Boot and lockdown are linked.
 
-So we need to make the process of testing LSM configurations against
-applications on the QA servers way smoother.
+If I am running windows and linux on the same machine Secure Boot need
+to be on so windows run happy.
 
-> So, first, this gives us a security benefit for LSMs which do not have
-> unloadable hooks. For those, they will always be able to load at boot-time,
-> and get protected hooks. Given that we can't really remove
-> security_delete_hooks until this SELinux removes their dependency on it, I'm
-> not sure we that this happy accident of safe (un)loading should be
-> sacrificed.
->
-> I think having LSMs that are loadable after boot is extremely valuable. In
-> our specific use case, we've wanted to implement specific security policies
-> which are not capable of being implemented on the traditional LSMs. We have
-> the capability of deploying a Linux Kernel Module throughout our fleet.
-> Recent examples include issues with specific networking address families,
-> IPTables (over netlink API). It's not easy to block out RDS across the
-> system while it's running, even if seccomp can do it.
->
-> We have other use cases -- like being able to run systemd in unprivileged
-> user namespaces. This comes at the cost of giving the container
-> CAP_SYS_ADMIN. We want to be able to give PID 1 in the user namespace
-> CAP_SYS_ADMIN, but we want to revoke these capbilities across execve,
-> without having to control the user's installation of systemd in their
-> container.
->
-> Other times, it's about performance. There is a measureable overhead with
-> seccomp, and apparmor. LSMs fit better for doing some of the filtering we're
-> forced to do in seccomp, or apparmor for containers. The performance gain by
-> implementing purpose-built policies in custom LSMs is significant.
->
-> My suggestion is to change security_delete_hooks() to return -EPERM by
-> default. Hook unloading can then be disabled by a Kconfig feature. If we
-> need to get "more secure", we can disable unloading via cmdline, or proc /
-> securityfs at boot time.
+Remember its my machine.  If I wish to compromise security on my
+machine because it make sense I should be allowed to,
 
-Yes this is a different usage case there is a peer review issue to it..
+A proper lockdown would prevent you from messing with ACPI tables it a
+very creative hack have kernel load a DSDT and have it from ring zero
+turn bits in the kernel off.
 
-https://elixir.bootlin.com/linux/latest/source/include/linux/lsm_hooks.h#L1999
+The reality here is we need to be able to operate without lockdown due
+to how badly broken some hardware it to configure system.
 
-Selinux is the only one that allows you to load and unload it on fly.
- It also one of the reasons why you have a few applications that ship
-with dependable Selinux profiles because they are turning selinux on
-and off on the QA servers.   If you look at security_delete_hooks()
-design if you can or cannot unload a LSM module is purely left to the
-security module.
+Yes the need to include option to push button to disable secure boot
+is required due to how badly broken this stuff is.   Of course this
+does not address the issue that if I am working on a system from
+remote or embedded where I don't  have the push button to turn off as
+a option this is still a problem.
 
-First step make if LSM can be unloaded or not generic including what
-LSM set to block unloading.
-Second step provide some generic way that can be integrated into test
-suites to test LSM configurations.
 
-Sargun Dhillon issue would also partly link to the fact applications
-are not tested with more LSM options.   So if lets say selinux fits
-technically fits use case better and all vendor is providing is
-apparmour profiles they are going to be tempted to reinvent the wheel
-so it is important to improve testing process.
+Effective lockdown has to protect linux kernel boot parameters,
+initramfs and other bits from being modified as well.   This lead us
+to problem with the broken hardware in a machine we cannot turn secure
+boot off we still need to perform all these alterations.
 
-Even implement a custom hard coded LSM will gain from ability to build
-load test unload and be able to repeat cycle in development stage.
 
-We don't have a LSM that takes like apparmour/selinux/seccomp
-configuration builds that into a single optimised kernel module.
-Most LSM are design around the idea that they need configuration files
-when you look at deployed systems you see something.    The  LSM
-configuration files don't get touched for years at time in production
-systems.  Maybe LSM having to read configuration files is completely
-wrong.   Maybe the right answer is that configuration files for LSM
-should basically be source code to build a module being processed once
-run many this would allow a lot more optimisation.   Its not like
-apparmour/selinux forbid reloading configuration.
+We do not live in a world of perfect computer hardware so at this
+stage proper unattackable secureboot cannot be done.
 
-With LSM loading and unloading formally allowed there is option to
-move to where a LSM can safely hand over control to another LSM
-without leaving a unhooked time this would be useful for hard coded
-LSM for updating configuration..
+
+We would be better off putting effort into improve means with UEFI of
+adding own KEK.   This is so that only boot loaders and kernels from
+the vendors user has approved in fact to work.  There could also be a
+configuration KEK that gets disabled after all the required operating
+systems are installed.    So Microsoft non OS KEK makes sense to be
+the configuration rule breaking KEK but the current deployments of
+UEFI don't have a off switch option on it.
+
+
+One KEK for everyone who is not Microsoft to boot with is highly insecure.
+
+
+UEFI secureboot falls way short in the validation department currently
+because too much is validated under one KEK key.
+
+UEFI also fall short due to failing to provide a system to protect
+boot parameters that can alter OS behaviour and make a secure kernel
+insecure this include kernels with this lockdown patches,
+
+
+Really you need to compare UEFI secureboot vs boot loader and /boot on
+a read only media.   Every where you can change something in the UEFI
+secureboot without is being signed that you cannot in the read only
+media of the boot loader and /boot is a defect in the UEFI secureboot
+design and implementation.
+
+If boot parameters were properly secured there would be no need for
+lockdown query if UEFI was in secureboot mode or not.
+
+Also lockdown being on and kernel and boot loader not running secured
+still would provide extra item attacker has to get past.
+
+So fairly much remove the EFI interrogation patches and work with UEFI
+to fix it properly.   Hacking around these UEFI defects means we will
+end up being stuck with them and the system still not being properly
+secured.
+
 
 Peter Dolding
 --
