@@ -1,84 +1,114 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Thu, 5 Apr 2018 11:47:52 -0700
-Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <20180404184255.exdrtpqnxlqme7tl@redhat.com>
-References: <4136.1522452584@warthog.procyon.org.uk>
-	<alpine.LRH.2.21.1803311145180.7769@namei.org>
-	<186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
-	<30459.1522739219@warthog.procyon.org.uk>
-	<CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
-	<CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
-	<CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-	<CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
-	<CALCETrVR_EcbKv5-4AR6Zm02XHhJQQGNDeO8FGkMbYozmuDTJw@mail.gmail.com>
-	<20180404184255.exdrtpqnxlqme7tl@redhat.com>
-Message-ID: <CALCETrU_4PywXj78pzfuCYCfXxQNvi_K-KfuyZKHu-upfesdPw@mail.gmail.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Thu, 5 Apr 2018 18:50:14 -0700
+Subject: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
+In-Reply-To: <130851a6-1801-1917-b3df-5af89d2c421b@schaufler-ca.com>
+References: <cover.1522560550.git.sargun@sargun.me>
+	<911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+	<CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
+	<130851a6-1801-1917-b3df-5af89d2c421b@schaufler-ca.com>
+Message-ID: <CAMp4zn9W1-28tnEC-SH0wH2y5HLNWmb8TB7kBAy75JGHhH1=bA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 4, 2018 at 11:42 AM, Peter Jones <pjones@redhat.com> wrote:
-> On Tue, Apr 03, 2018 at 02:51:23PM -0700, Andy Lutomirski wrote:
->> On Tue, Apr 3, 2018 at 12:29 PM, Matthew Garrett <mjg59@google.com> wrote:
->> Can someone please explain why the UEFI crowd cares so much about "as
->> a bootloader"?  Once I'm able to install an OS (Linux kernel +
->> bootloader, Windows embedded doodad, OpenBSD, whatever) on your
->> machine, I can use your peripherals, read your data, write your data,
->> see your keystrokes, use your network connection, re-flash your BIOS
->> (at least as well as any OS can), run VMs, and generally own your
->> system.  Somehow you all seem fine with all of this, except that the
->> fact that I can chainload something else gives UEFI people the
->> willies.
->>
->> Can someone explain why?
+On Thu, Apr 5, 2018 at 9:29 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> There's no inherent difference, in terms of the trust chain, between
-> compromising it to use the machine as a toaster or to run a botnet - the
-> trust chain is compromised either way.  But you're much more likely to
-> notice if your desktop starts producing bread products than if it hides
-> some malware and keeps on booting, and the second one is much more
-> attractive to attackers anyway.
+> On 4/5/2018 3:31 AM, Peter Dolding wrote:
+> > On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> >> On 01/04/18 08:41, Sargun Dhillon wrote:
+> >>> The biggest security benefit of this patchset is the introduction of
+> >>> read-only hooks, even if some security modules have mutable hooks.
+> >>> Currently, if you have any LSMs with mutable hooks it will render all heads, and
+> >>> list nodes mutable. These are a prime place to attack, because being able to
+> >>> manipulate those hooks is a way to bypass all LSMs easily, and to create a
+> >>> persistent, covert channel to intercept nearly all calls.
+> >>>
+> >>>
+> >>> If LSMs have a model to be unloaded, or are compled as modules, they should mark
+> >>> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+> >>> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
+> >>> chain.
+> >>
+> >> I'd rather consider these types of hooks:
+> >>
+> >> A) hooks that are either const or marked as RO after init
+> >>
+> >> B) hooks that are writable for a short time, long enough to load
+> >> additional, non built-in modules, but then get locked down
+> >> I provided an example some time ago [1]
+> >>
+> >> C) hooks that are unloadable (and therefore always attackable?)
+> >>
+> >> Maybe type-A could be dropped and used only as type-B, if it's
+> >> acceptable that type-A hooks are vulnerable before lock-down of type-B
+> >> hooks.
+> >>
+> >> I have some doubts about the usefulness of type-C, though.
+> >> The benefit I see htat it brings is that it avoids having to reboot when
+> >> a mutable LSM is changed, at the price of leaving it attackable.
+> >>
+> >> Do you have any specific case in mind where this trade-off would be
+> >> acceptable?
+> >>
+> > A useful case for loadable/unloadable LSM is development automate QA.
+> >
+> > So you have built a new program and you you want to test it against a
+> > list of different LSM configurations without having to reboot the
+> > system.  So a run testsuite with LSM off  then enabled LSM1 run
+> > testsuite again disable LSM1 enable LSM2. run testsuite disable
+> > LSM2... Basically repeating process.
+> >
+> > I would say normal production machines being able to swap LSM like
+> > this does not have much use.
+> >
+> > Sometimes for productivity it makes sense to be able to breach
+> > security.   The fact you need to test with LSM disabled to know if any
+> > of the defects you are seeing is LSM configuration related that
+> > instance is already in the camp of non secure anyhow..
+> >
+> > There is a shade of grey between something being a security hazard and
+> > something being a useful feature.
 >
-> The reason we talk about it as a bootloader is because of the model
-> employed by malware.  I'm sure you know that one kind of malware that
-> exists in the wild, a so-called "boot kit", operates by modifying a
-> kernel during load (or on disk before loading) so that it has some
-> malicious payload, like exfiltrating user data or allowing a way to
-> install software that the kernel hides or *whatever*, and incorporating
-> some way to achieve relative persistence on the system - for example
-> hiding the real boot settings and loading a kernel with a different than
-> normal initramfs that loads an exploit before continuing with a normal
-> looking boot.
+> If the only value of a feature is development I strongly
+> advocate against it. The number of times I've seen things
+> completely messed up because it makes development easier
+> is astonishing. If you have to enable something dangerous
+> just for testing you have to wonder about the testing.
+>
+>
+[Sorry for the double post]
+So, first, this gives us a security benefit for LSMs which do not have
+unloadable hooks. For those, they will always be able to load at
+boot-time, and get protected hooks. Given that we can't really remove
+security_delete_hooks until this SELinux removes their dependency on
+it, I'm not sure we that this happy accident of safe (un)loading
+should be sacrificed.
 
-This is a fair point, but I wonder how much it matters in practice.
-If I'm writing a bootkit, I can think of at least four ways to do it.
+I think having LSMs that are loadable after boot is extremely
+valuable. In our specific use case, we've wanted to implement specific
+security policies which are not capable of being implemented on the
+traditional LSMs. We have the capability of deploying a Linux Kernel
+Module throughout our fleet. Recent examples include issues with
+specific networking address families, IPTables (over netlink API).
+It's not easy to block out RDS across the system while it's running,
+even if seccomp can do it.
 
-1. The easy way.  Write a malicious bootloader that modifies the
-kernel image to insert malicious code.  Stock secure boot makes this
-awkward because you need a signed bootloader.  It's worth noting that
-a non-locked-down signed Linux kernel is actually a rather awkward way
-to do this because it will add several seconds to the boot and may
-show a splash screen unless you're rather careful.
+We have other use cases -- like being able to run systemd in
+unprivileged user namespaces. This comes at the cost of giving the
+container CAP_SYS_ADMIN. We want to be able to give PID 1 in the user
+namespace CAP_SYS_ADMIN, but we want to revoke these capbilities
+across execve, without having to control the user's installation of
+systemd in their container.
 
-2. The CPL3 way.  Write a malicious initramfs that inserts the
-malicious code in PID 1 instead.  This might be easier to get working
-across a variety of Linux kernels, but it's more awkward to hide well
-from userspace.  Conventional secure boot (with the stock MS keys)
-doesn't help at all.
+Other times, it's about performance. There is a measureable overhead
+with seccomp, and apparmor. LSMs fit better for doing some of the
+filtering we're forced to do in seccomp, or apparmor for containers.
+The performance gain by implementing purpose-built policies in custom
+LSMs is significant.
 
-3. The nasty way.  Find a known exploitable kernel or bootloader, and
-use it to do your evil deeds.  This is very, very hard to protect
-against with normal secure boot.
-
-4. The VM-kit way.  Use a signed, locked down, perfectly secure kernel
-and run your pwned system as a VM guest.  Secure boot doesn't help one
-whit.
-
-*All* of these variants are avoided by a real, working verified boot
-approach that chains all the way down to the running system image, and
-*that* solution doesn't need cpl0 and cpl3 to be separated.
-
-So I find myself wondering whether the bootkit argument is actually
-very compelling.
+My suggestion is to change security_delete_hooks() to return -EPERM by
+default. Hook unloading can then be disabled by a Kconfig feature. If
+we need to get "more secure", we can disable unloading via cmdline, or
+proc / securityfs at boot time.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
