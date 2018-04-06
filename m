@@ -1,71 +1,37 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Fri, 6 Apr 2018 14:03:37 +0530
-Subject: [PATCH] tpm: moves the delay_msec increment after sleep in
-	tpm_transmit()
-In-Reply-To: <20180405101210.GA21636@linux.intel.com>
-References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
-	<20180405101210.GA21636@linux.intel.com>
-Message-ID: <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 6 Apr 2018 13:31:01 +0300
+Subject: [PATCH v4 0/4] Migrate all TPM 2.0 commands to use struct tpm_buf
+In-Reply-To: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
+References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
+Message-ID: <20180406103101.GA14379@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Mon, Mar 26, 2018 at 03:14:02PM +0300, Jarkko Sakkinen wrote:
+> In order to make struct tpm_buf the first class object for constructing TPM
+> commands, this patch set migrates all TPM 2.0 commands to use it. Eventually,
+> tpm_transmit_cmd() can take simply struct tpm_buf as its argument and this
+> interface can be exported to be used by the kernel keyring and potentially
+> other subsystems.
+> 
+> The ultimate goal of this work is to make constructing TPM commands inside
+> the kernel simple and robust.
 
+I pushed these commits to the master branch. Please report if you have
+any issues. If the master branch continues working for you, as you test
+it maybe for other reasons, I'm happy to get tested-by's for them. At
+worst they have regressions. I seriously don't think that the code
+changes have any major structural issues.
 
-On 04/05/2018 03:42 PM, Jarkko Sakkinen wrote:
-> On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
->> Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
->> handle the TPM2_RC_RETRY error. The loop retries the command after
->> sleeping for the specified time, which is incremented exponentially in
->> every iteration. This patch fixes the initial sleep to be the default
->> sleep time.
-> I think I understand the code change but do not understand what the
-> long description.
+I would guess that Tomas' similar changes for TPM 1.x will follow at
+some point. I'm looking forward to change the existing tpm_send()
+as one that takes tpm_buf in. That will allow to remove a lot of
+cruft code from keyring.
 
-It tells that the first sleep is delay_msec * 2 and not delay_msec.
+I take no rush to merge these to 'next' but I think it is fine to
+have these in the bleeding edge.
 
->
->> Fixes: commit e2fb992d82c6 ("tpm: add retry logic")
->> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
->> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> ---
->>   drivers/char/tpm/tpm-interface.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->> index c43a9e28995e..6201aab374e6 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -587,7 +587,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->>   		 */
->>   		if (rc == TPM2_RC_TESTING && cc == TPM2_CC_SELF_TEST)
->>   			break;
->> -		delay_msec *= 2;
->> +
-> Extra whitespace
-
-I left just for clarity, but if not needed then I can remove it.
-
-Thanks & Regards,
- ?? - Nayna
-
->
->>   		if (delay_msec > TPM2_DURATION_LONG) {
->>   			if (rc == TPM2_RC_RETRY)
->>   				dev_err(&chip->dev, "in retry loop\n");
->> @@ -597,6 +597,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->>   			break;
->>   		}
->>   		tpm_msleep(delay_msec);
->> +		delay_msec *= 2;
->>   		memcpy(buf, save, save_size);
->>   	}
->>   	return ret;
->> -- 
->> 2.13.6
->>
-> /Jarkko
->
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
