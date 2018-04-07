@@ -1,59 +1,89 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat,  7 Apr 2018 19:12:36 +0300
-Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Message-ID: <20180407161236.22969-1-tomas.winkler@intel.com>
+From: richard_c_haines@btinternet.com (Richard Haines)
+Date: Sat, 07 Apr 2018 17:54:15 +0100
+Subject: [GIT PULL] SELinux patches for v4.17
+In-Reply-To: <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
+References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+	<CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
+Message-ID: <1523120055.31267.13.camel@btinternet.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In crb_map_io() function, __crb_request_locality() is called prior
-to crb_cmd_ready(), but if one of the consecutive function fails
-the flow bails out instead of trying to relinquish locality.
-This patch adds goto jump to __crb_relinquish_locality() on the error path.
+On Fri, 2018-04-06 at 16:07 -0700, Linus Torvalds wrote:
+> On Tue, Apr 3, 2018 at 6:37 PM, Paul Moore <paul@paul-moore.com>
+> wrote:
+> > 
+> > Everything passes the selinux-testsuite, but there are a few known
+> > merge conflicts.  The first is with the netdev tree and is in
+> > net/sctp/socket.c.  Unfortunately it is a bit ugly, thankfully
+> > Stephen
+> > Rothwell has already done the heavy lifting in resolving the merge
+> > for
+> > you, and the SCTP folks have given his merge patch a thumbs-up.
+> 
+> I ended up re-doing the merge, and it looks like some more sctp
+> changes happened after Stephen's merge anyway, so mine didn't end up
+> quite like his.
+> 
+> Adding Xin Long to see if he can verify it again, but it all *looks*
+> sane.
+> 
+> While looking at it, it struck me that the new security hooks don't
+> seem to hook into __sctp_connect(), which also does that
+> 
+>                         scope = sctp_scope(&to);
+>                         asoc = sctp_association_new(ep, sk, scope,
+> GFP_KERNEL);
+> 
+> thing. Is that intentional? The sendmsg case does that
+> security_sctp_bind_connect, the actual __sctp_connect() does not.
+> 
+> This is not because I screwed up the merge - it's that way in the
+> SELinux tree too. And I obviously _left_ it that way, but while doing
+> the merge and trying to understand what was going on, this struck me.
+> 
+> I'm probably missing something really obvious why the connect case
+> doesn't want to do it thgere.
+> 
+> NOTE! I do see it being done in __sctp_setsockopt_connectx(). But
+> __sctp_connect() has another caller (in sctp_connect()) which doesn't
+> have that security_sctp_bind_connect() call.
+> 
+> So please check my resolution, but also somebody should tell me
+> "Linus, you're a cretin, sctp_connect() doesn't want that
+> security_sctp_bind_connect() at all because it was already done by
+> XYZ"
+> 
+>                  Linus
 
-Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm_crb.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Thought I would answer the questions as I wrote the SELinux/SCTP
+patches.
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 7f78482cd157..34fbc6cb097b 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 
- 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
- 				   sizeof(struct crb_regs_tail));
--	if (IS_ERR(priv->regs_t))
--		return PTR_ERR(priv->regs_t);
-+	if (IS_ERR(priv->regs_t)) {
-+		ret = PTR_ERR(priv->regs_t);
-+		goto out_relinquish_locality;
-+	}
- 
- 	/*
- 	 * PTT HW bug w/a: wake up the device to access
-@@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 	 */
- 	ret = crb_cmd_ready(dev, priv);
- 	if (ret)
--		return ret;
-+		goto out_relinquish_locality;
- 
- 	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
- 	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-@@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 
- 	crb_go_idle(dev, priv);
- 
-+out_relinquish_locality:
-+
- 	__crb_relinquish_locality(dev, priv, 0);
- 
- 	return ret;
--- 
-2.14.3
+sctp_connect() or __sctp_connect() do not need to call
+security_sctp_bind_connect(). This is because the connect(2) call will
+handle the checks required via security_socket_connect():
 
+       connect(2)
+          |
+ SYSCALL_DEFINE3(connect, ....)
+          |
+   security_socket_connect()
+          |
+     sctp_connect()
+
+SCTP uses security_sctp_bind_connect() as this can handle one or more
+addresses for either sctp_connectx(3) or sctp_bindx(3). It is also used
+for handling the sendmsg(2) and sctp_sendmsg(3) calls in SCTP for a new
+association (that is effectively a "connect").
+
+Hope this helps
+
+Richard
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-
+> security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
