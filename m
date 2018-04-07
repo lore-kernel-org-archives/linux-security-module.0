@@ -1,33 +1,59 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 7 Apr 2018 13:36:10 +0300
-Subject: [PATCH] tpm: moves the delay_msec increment after sleep in
-	tpm_transmit()
-In-Reply-To: <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
-References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
-	<20180405101210.GA21636@linux.intel.com>
-	<95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
-Message-ID: <20180407103610.GA22542@linux.intel.com>
+From: tomas.winkler@intel.com (Tomas Winkler)
+Date: Sat,  7 Apr 2018 19:12:36 +0300
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Message-ID: <20180407161236.22969-1-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Apr 06, 2018 at 02:03:37PM +0530, Nayna Jain wrote:
-> On 04/05/2018 03:42 PM, Jarkko Sakkinen wrote:
-> > On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
-> > > Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
-> > > handle the TPM2_RC_RETRY error. The loop retries the command after
-> > > sleeping for the specified time, which is incremented exponentially in
-> > > every iteration. This patch fixes the initial sleep to be the default
-> > > sleep time.
-> > I think I understand the code change but do not understand what the
-> > long description.
-> 
-> It tells that the first sleep is delay_msec * 2 and not delay_msec.
+In crb_map_io() function, __crb_request_locality() is called prior
+to crb_cmd_ready(), but if one of the consecutive function fails
+the flow bails out instead of trying to relinquish locality.
+This patch adds goto jump to __crb_relinquish_locality() on the error path.
 
-So the problem is that the loop doubles the time before sleeping
-for the first time. This is missing from the description. Please
-refine it in some way.
+Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/char/tpm/tpm_crb.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-/Jarkko
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7f78482cd157..34fbc6cb097b 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+-	if (IS_ERR(priv->regs_t))
+-		return PTR_ERR(priv->regs_t);
++	if (IS_ERR(priv->regs_t)) {
++		ret = PTR_ERR(priv->regs_t);
++		goto out_relinquish_locality;
++	}
+ 
+ 	/*
+ 	 * PTT HW bug w/a: wake up the device to access
+@@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 */
+ 	ret = crb_cmd_ready(dev, priv);
+ 	if (ret)
+-		return ret;
++		goto out_relinquish_locality;
+ 
+ 	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+ 	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+@@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	crb_go_idle(dev, priv);
+ 
++out_relinquish_locality:
++
+ 	__crb_relinquish_locality(dev, priv, 0);
+ 
+ 	return ret;
+-- 
+2.14.3
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
