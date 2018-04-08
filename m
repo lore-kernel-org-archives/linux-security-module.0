@@ -1,99 +1,59 @@
-From: jmorris@namei.org (James Morris)
-Date: Sun, 8 Apr 2018 09:47:21 +1000 (AEST)
-Subject: [GIT PULL][SECURITY] Integrity updates for v4.17
-Message-ID: <alpine.LRH.2.21.1804080937550.1486@namei.org>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Sat, 7 Apr 2018 20:36:21 -0700
+Subject: [PATCH] security: remove security_settime
+In-Reply-To: <20180401084205.GA14512@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20180401084205.GA14512@ircssh-2.c.rugged-nimbus-611.internal>
+Message-ID: <CAMp4zn8wn01iM5HdMZFn_HkyoNORz8npUhrh4kOsJqjK52w-rg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Please pull these updates for the Integrity subsystem, via Mimi:
-
-    a mixture of bug fixes, code cleanup, and continues to close 
-    IMA-measurement, IMA-appraisal, and IMA-audit gaps.
-
-Also note the addition of a new cred_getsecid LSM hook by Matthew Garrett:
-
-    For IMA purposes, we want to be able to obtain the prepared secid in 
-    the bprm structure before the credentials are committed. Add a 
-    cred_getsecid hook that makes this possible.
-
-which is used by a new CREDS_CHECK target in IMA:
-
-    In ima_bprm_check(), check with both the existing process credentials 
-    and the credentials that will be committed when the new process is 
-    started. This will not change behaviour unless the system policy is 
-    extended to include CREDS_CHECK targets - BPRM_CHECK will continue to 
-    check the same credentials that it did previously.
-
-
-
-The following changes since commit 5893ed18a26d1f56b97c0290b0cbbc2d49d6de28:
-
-  Merge tag 'v4.16-rc6' into next-general (2018-03-23 08:26:16 +1100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
-
-for you to fetch changes up to ab60368ab6a452466885ef4edf0cefd089465132:
-
-  ima: Fallback to the builtin hash algorithm (2018-03-25 07:26:32 -0400)
-
-----------------------------------------------------------------
-Hern?n Gonzalez (2):
-      evm: Move evm_hmac and evm_hash from evm_main.c to evm_crypto.c
-      evm: Constify *integrity_status_msg[]
-
-Jiandi An (1):
-      ima: Fix Kconfig to select TPM 2.0 CRB interface
-
-Martin Townsend (1):
-      ima: Add smackfs to the default appraise/measure list
-
-Matthew Garrett (2):
-      security: Add a cred_getsecid hook
-      IMA: Support using new creds in appraisal policy
-
-Mimi Zohar (5):
-      ima: fail file signature verification on non-init mounted filesystems
-      ima: re-evaluate files on privileged mounted filesystems
-      ima: clear IMA_HASH
-      ima: fail signature verification based on policy
-      fuse: define the filesystem as untrusted
-
-Petr Vorel (1):
-      ima: Fallback to the builtin hash algorithm
-
-Sascha Hauer (1):
-      evm: check for remount ro in progress before writing
-
-Thiago Jung Bauermann (3):
-      integrity: Remove unused macro IMA_ACTION_RULE_FLAGS
-      ima: Simplify ima_eventsig_init()
-      ima: Improvements in ima_appraise_measurement()
-
-Tycho Andersen (1):
-      ima: drop vla in ima_audit_measurement()
-
- Documentation/ABI/testing/ima_policy            |  2 +-
- Documentation/admin-guide/kernel-parameters.txt |  8 ++-
- fs/fuse/inode.c                                 |  3 ++
- include/linux/fs.h                              |  2 +
- include/linux/lsm_hooks.h                       |  6 +++
- include/linux/security.h                        |  1 +
- security/integrity/evm/evm.h                    |  2 -
- security/integrity/evm/evm_crypto.c             |  3 ++
- security/integrity/evm/evm_main.c               | 12 +++--
- security/integrity/iint.c                       |  2 +
- security/integrity/ima/Kconfig                  |  1 +
- security/integrity/ima/ima.h                    |  9 ++--
- security/integrity/ima/ima_api.c                | 25 +++++----
- security/integrity/ima/ima_appraise.c           | 65 +++++++++++++++++------
- security/integrity/ima/ima_crypto.c             |  2 +
- security/integrity/ima/ima_main.c               | 69 ++++++++++++++++++++-----
- security/integrity/ima/ima_policy.c             | 32 ++++++++----
- security/integrity/ima/ima_template_lib.c       | 11 ++--
- security/integrity/integrity.h                  | 11 ++--
- security/security.c                             |  7 +++
- security/selinux/hooks.c                        |  6 +++
- security/smack/smack_lsm.c                      | 18 +++++++
- 22 files changed, 227 insertions(+), 70 deletions(-)
+On Sun, Apr 1, 2018 at 1:42 AM, Sargun Dhillon <sargun@sargun.me> wrote:
+> security_settime was a wrapper around security_settime64. There are no more
+> users of it. Therefore it can be removed. It was removed in:
+> commit 4eb1bca17933 ("time: Use do_settimeofday64() internally")
+>
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> ---
+>  include/linux/security.h | 14 --------------
+>  1 file changed, 14 deletions(-)
+>
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 3f5fd988ee87..5111fe8159ce 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -222,12 +222,6 @@ int security_quotactl(int cmds, int type, int id, struct super_block *sb);
+>  int security_quota_on(struct dentry *dentry);
+>  int security_syslog(int type);
+>  int security_settime64(const struct timespec64 *ts, const struct timezone *tz);
+> -static inline int security_settime(const struct timespec *ts, const struct timezone *tz)
+> -{
+> -       struct timespec64 ts64 = timespec_to_timespec64(*ts);
+> -
+> -       return security_settime64(&ts64, tz);
+> -}
+>  int security_vm_enough_memory_mm(struct mm_struct *mm, long pages);
+>  int security_bprm_set_creds(struct linux_binprm *bprm);
+>  int security_bprm_check(struct linux_binprm *bprm);
+> @@ -509,14 +503,6 @@ static inline int security_settime64(const struct timespec64 *ts,
+>         return cap_settime(ts, tz);
+>  }
+>
+> -static inline int security_settime(const struct timespec *ts,
+> -                                  const struct timezone *tz)
+> -{
+> -       struct timespec64 ts64 = timespec_to_timespec64(*ts);
+> -
+> -       return cap_settime(&ts64, tz);
+> -}
+> -
+>  static inline int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+>  {
+>         return __vm_enough_memory(mm, pages, cap_vm_enough_memory(mm, pages));
+> --
+> 2.14.1
+>
+Did anybody get a chance to look at this?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
