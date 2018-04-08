@@ -1,58 +1,36 @@
-From: sargun@sargun.me (Sargun Dhillon)
-Date: Sat, 7 Apr 2018 20:36:21 -0700
-Subject: [PATCH] security: remove security_settime
-In-Reply-To: <20180401084205.GA14512@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20180401084205.GA14512@ircssh-2.c.rugged-nimbus-611.internal>
-Message-ID: <CAMp4zn8wn01iM5HdMZFn_HkyoNORz8npUhrh4kOsJqjK52w-rg@mail.gmail.com>
+From: lucien.xin@gmail.com (Xin Long)
+Date: Sun, 8 Apr 2018 14:13:49 +0800
+Subject: [GIT PULL] SELinux patches for v4.17
+In-Reply-To: <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
+References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+	<CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
+Message-ID: <CADvbK_dCWw5D572zB8Ohvv1+xcrTJNjmjjfqmjQAsfHZGRSFyg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Apr 1, 2018 at 1:42 AM, Sargun Dhillon <sargun@sargun.me> wrote:
-> security_settime was a wrapper around security_settime64. There are no more
-> users of it. Therefore it can be removed. It was removed in:
-> commit 4eb1bca17933 ("time: Use do_settimeofday64() internally")
+On Sat, Apr 7, 2018 at 7:07 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, Apr 3, 2018 at 6:37 PM, Paul Moore <paul@paul-moore.com> wrote:
+>>
+>> Everything passes the selinux-testsuite, but there are a few known
+>> merge conflicts.  The first is with the netdev tree and is in
+>> net/sctp/socket.c.  Unfortunately it is a bit ugly, thankfully Stephen
+>> Rothwell has already done the heavy lifting in resolving the merge for
+>> you, and the SCTP folks have given his merge patch a thumbs-up.
 >
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> ---
->  include/linux/security.h | 14 --------------
->  1 file changed, 14 deletions(-)
+> I ended up re-doing the merge, and it looks like some more sctp
+> changes happened after Stephen's merge anyway, so mine didn't end up
+ > quite like his.
 >
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 3f5fd988ee87..5111fe8159ce 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -222,12 +222,6 @@ int security_quotactl(int cmds, int type, int id, struct super_block *sb);
->  int security_quota_on(struct dentry *dentry);
->  int security_syslog(int type);
->  int security_settime64(const struct timespec64 *ts, const struct timezone *tz);
-> -static inline int security_settime(const struct timespec *ts, const struct timezone *tz)
-> -{
-> -       struct timespec64 ts64 = timespec_to_timespec64(*ts);
-> -
-> -       return security_settime64(&ts64, tz);
-> -}
->  int security_vm_enough_memory_mm(struct mm_struct *mm, long pages);
->  int security_bprm_set_creds(struct linux_binprm *bprm);
->  int security_bprm_check(struct linux_binprm *bprm);
-> @@ -509,14 +503,6 @@ static inline int security_settime64(const struct timespec64 *ts,
->         return cap_settime(ts, tz);
->  }
->
-> -static inline int security_settime(const struct timespec *ts,
-> -                                  const struct timezone *tz)
-> -{
-> -       struct timespec64 ts64 = timespec_to_timespec64(*ts);
-> -
-> -       return cap_settime(&ts64, tz);
-> -}
-> -
->  static inline int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
->  {
->         return __vm_enough_memory(mm, pages, cap_vm_enough_memory(mm, pages));
-> --
-> 2.14.1
->
-Did anybody get a chance to look at this?
+You're right, a sctp fix went into net-next after Stephen's that merge.
+https://patchwork.ozlabs.org/patch/884469/ (v1)
+https://patchwork.ozlabs.org/patch/884971/ (v2)
+
+Which caused the resolution to have changed again.
+
+I've checked the new resolution on your tree, the SCTP part is all good.
+
+Thanks.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
