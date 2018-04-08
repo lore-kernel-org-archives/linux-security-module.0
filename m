@@ -1,36 +1,69 @@
-From: lucien.xin@gmail.com (Xin Long)
-Date: Sun, 8 Apr 2018 14:13:49 +0800
-Subject: [GIT PULL] SELinux patches for v4.17
-In-Reply-To: <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
-References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
-	<CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
-Message-ID: <CADvbK_dCWw5D572zB8Ohvv1+xcrTJNjmjjfqmjQAsfHZGRSFyg@mail.gmail.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Sun, 8 Apr 2018 06:59:05 +0000
+Subject: [PATCH v5 0/1] Safe LSM (un)loading, and immutable hooks
+Message-ID: <20180408065902.GA2823@ircssh-2.c.rugged-nimbus-611.internal>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Apr 7, 2018 at 7:07 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, Apr 3, 2018 at 6:37 PM, Paul Moore <paul@paul-moore.com> wrote:
->>
->> Everything passes the selinux-testsuite, but there are a few known
->> merge conflicts.  The first is with the netdev tree and is in
->> net/sctp/socket.c.  Unfortunately it is a bit ugly, thankfully Stephen
->> Rothwell has already done the heavy lifting in resolving the merge for
->> you, and the SCTP folks have given his merge patch a thumbs-up.
->
-> I ended up re-doing the merge, and it looks like some more sctp
-> changes happened after Stephen's merge anyway, so mine didn't end up
- > quite like his.
->
-You're right, a sctp fix went into net-next after Stephen's that merge.
-https://patchwork.ozlabs.org/patch/884469/ (v1)
-https://patchwork.ozlabs.org/patch/884971/ (v2)
+The primary security benefit of this patchset is the introduction of read-only
+hooks, even if some security modules have mutable hooks. Currently, if you have
+any LSMs with mutable hooks it will render all heads, and list nodes mutable.
+These are a prime place to attack because being able to manipulate those hooks
+is a way to bypass all LSMs easily and to create a persistent, covert channel to
+intercept nearly all calls.
 
-Which caused the resolution to have changed again.
+If LSMs have a model to be unloaded or are compiled as modules, they should mark
+themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable chain.
 
-I've checked the new resolution on your tree, the SCTP part is all good.
+There is a shares SRCU between all security hooks to facilitate safe LSM-
+unloading. This SRCU is very cheap for runtime overhead on reads, but there is
+synchronization around it for unloads. There is only a cost to pay at unload
+time, which is based on the execution time of longest chain of callbacks after
+synchronization begins.
 
-Thanks.
+Because of all of this, we can now load LSMs at runtime, so those APIs are
+exposed. It is up to the module author to check if
+CONFIG_SECURITY_WRITABLE_HOOKS is enabled before trying to load. Even if this
+flag is set to true at compile time, to unload modules, the
+CONFIG_SECURITY_UNLOADABLE_MODULES flag must be enabled as well. This behaviour
+of allowing modules to unload at runtime can be can be disabled either at boot
+time or runtime by changing the security.allow_unload_hooks kernel parameter.
+Once module unloading is disabled, no longer will users be able to call
+delete_module on their LSM's LKM. It still allows LSMs themselves to trigger
+unloading, as to not break the existing (SELinux-utilized) API.
+
+Changes since:
+v4:
+	* Introduce the configuration flag "CONFIG_SECURITY_UNLOADABLE_MODULES"
+	  to disable module unloading
+	* Introduce the kernel parameter security.allow_unload_hooks
+v3:
+	* Instead of taking the approach of a "null hook", using the approach of
+	  a second set of hooks -- this was mostly done through the
+	  FOR_EACH_SECURITY_HOOK_MUTABLE macro, which gets compiled out if
+	  CONFIG_SECURITY_WRITABLE_HOOKS is disabled.
+v2:
+	* Split out hlist_head patch
+	* Apply Tetsuo's changes to clean up functions which are not
+      covered by call_int_hook / call_void_hook
+	* Disable NULL hook checking when uneeded
+v1:
+	* Add SRCU to allow for code-unloading
+	* Add concurrency control around hook mutation
+
+Sargun Dhillon (1):
+  security: Add mechanism to safely (un)load LSMs after boot time
+
+ include/linux/lsm_hooks.h |  36 ++--
+ security/Kconfig          |  13 +-
+ security/security.c       | 280 ++++++++++++++++++++++++++---
+ security/selinux/hooks.c  | 448 ++++++++++++++++++++++++----------------------
+ 4 files changed, 518 insertions(+), 259 deletions(-)
+
+-- 
+2.14.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
