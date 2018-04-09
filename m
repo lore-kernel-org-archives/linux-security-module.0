@@ -1,69 +1,67 @@
-From: daniel@iogearbox.net (Daniel Borkmann)
-Date: Mon, 9 Apr 2018 10:14:15 +0200
-Subject: [GIT PULL] Kernel lockdown for secure boot
-In-Reply-To: <20180409034008.dyte7k5kgkbjh5is@ast-mbp.dhcp.thefacebook.com>
-References: <CAADnVQLu5EZLJ1C9-dd4=K+sed6+38oy047+nqCMfuPFB=wttw@mail.gmail.com>
-	<20180408080742.GE7362@linux-l9pv.suse>
-	<20180409034008.dyte7k5kgkbjh5is@ast-mbp.dhcp.thefacebook.com>
-Message-ID: <9040da29-2803-5c00-d47c-ae676a86b65c@iogearbox.net>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 09 Apr 2018 14:13:20 +0300
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+In-Reply-To: <20180407161236.22969-1-tomas.winkler@intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+Message-ID: <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/09/2018 05:40 AM, Alexei Starovoitov wrote:
-> On Sun, Apr 08, 2018 at 04:07:42PM +0800, joeyli wrote:
-[...]
->>> If the only thing that folks are paranoid about is reading
->>> arbitrary kernel memory with bpf_probe_read() helper
->>> then preferred patch would be to disable it during verification
->>> when in lockdown mode
->>
->> Sorry for I didn't fully understand your idea...
->> Do you mean that using bpf verifier to filter out bpf program that
->> uses bpf_probe_read()?
+On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> In crb_map_io() function, __crb_request_locality() is called prior
+> to crb_cmd_ready(), but if one of the consecutive function fails
+> the flow bails out instead of trying to relinquish locality.
+> This patch adds goto jump to __crb_relinquish_locality() on the error path.
 > 
-> Take a look bpf_get_trace_printk_proto().
-> Similarly we can add bpf_get_probe_read_proto() that
-> will return NULL if lockdown is on.
-> Then programs with bpf_probe_read() will be rejected by the verifier.
+> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> locality)
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+>  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> index 7f78482cd157..34fbc6cb097b 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  
+>  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+>  				   sizeof(struct crb_regs_tail));
+> -	if (IS_ERR(priv->regs_t))
+> -		return PTR_ERR(priv->regs_t);
+> +	if (IS_ERR(priv->regs_t)) {
+> +		ret = PTR_ERR(priv->regs_t);
+> +		goto out_relinquish_locality;
+> +	}
+>  
+>  	/*
+>  	 * PTT HW bug w/a: wake up the device to access
+> @@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  	 */
+>  	ret = crb_cmd_ready(dev, priv);
+>  	if (ret)
+> -		return ret;
+> +		goto out_relinquish_locality;
+>  
+>  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+>  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  
+>  	crb_go_idle(dev, priv);
+>  
+> +out_relinquish_locality:
+> +
+>  	__crb_relinquish_locality(dev, priv, 0);
+>  
+>  	return ret;
 
-Fully agree with the above. For the two helpers, something like the below
-would be sufficient to reject progs at verification time.
+Thanks, please just call it before returning in the error path.
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index d88e96d..51a6c2e 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -117,6 +117,11 @@ static const struct bpf_func_proto bpf_probe_read_proto = {
- 	.arg3_type	= ARG_ANYTHING,
- };
-
-+static const struct bpf_func_proto *bpf_get_probe_read_proto(void)
-+{
-+	return kernel_is_locked_down("BPF") ? NULL : &bpf_probe_read_proto;
-+}
-+
- BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
- 	   u32, size)
- {
-@@ -282,6 +287,9 @@ static const struct bpf_func_proto bpf_trace_printk_proto = {
-
- const struct bpf_func_proto *bpf_get_trace_printk_proto(void)
- {
-+	if (kernel_is_locked_down("BPF"))
-+		return NULL;
-+
- 	/*
- 	 * this program might be calling bpf_trace_printk,
- 	 * so allocate per-cpu printk buffers
-@@ -535,7 +543,7 @@ tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_map_delete_elem:
- 		return &bpf_map_delete_elem_proto;
- 	case BPF_FUNC_probe_read:
--		return &bpf_probe_read_proto;
-+		return bpf_get_probe_read_proto();
- 	case BPF_FUNC_ktime_get_ns:
- 		return &bpf_ktime_get_ns_proto;
- 	case BPF_FUNC_tail_call:
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
