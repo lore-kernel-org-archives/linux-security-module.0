@@ -1,110 +1,72 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 10 Apr 2018 09:14:19 +1000 (AEST)
-Subject: [ANNOUNCE] Linux Security Summit North America 2018 - CFP
-Message-ID: <alpine.LRH.2.21.1804100911160.11121@namei.org>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Mon,  9 Apr 2018 19:34:22 -0400
+Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+Message-ID: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-==============================================================================
-		   ANNOUNCEMENT AND CALL FOR PARTICIPATION
+There were two formats of the audit MAC_STATUS record, one of which was more
+standard than the other.  One listed enforcing status changes and the
+other listed enabled status changes with a non-standard label.  In
+addition, the record was missing information about which LSM was
+responsible and the operation's completion status.  While this record is
+only issued on success, the parser expects the res= field to be present.
 
-		   LINUX SECURITY SUMMIT NORTH AMERICA 2018
-                             
-			         27-28 August
-			       VANCOUVER, CANADA
-==============================================================================
+old enforcing/permissive:
+type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+old enable/disable:
+type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
 
+List both sets of status and old values and add the lsm= field and the
+res= field.
 
-DESCRIPTION
+Here is the new format:
+type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
 
-  The Linux Security Summit (LSS) is a technical forum for collaboration
-  between Linux developers, researchers, and end users. Its primary aim is to
-  foster community efforts in analyzing and solving Linux security challenges.
+This record already accompanied a SYSCALL record.
 
-  LSS will be held this year as two separate events, one in North America
-  (LSS-NA), and one in Europe (LSS-EU), to facilitate broader participation in
-  Linux Security development. Note that this CFP is for LSS-NA; a separate CFP
-  will be announced for LSS-EU in May. We encourage everyone to attend both
-  events.
+See: https://github.com/linux-audit/audit-kernel/issues/46
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ security/selinux/selinuxfs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-  The program committee currently seeks proposals for:
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 00eed84..00b21b2 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+ 		if (length)
+ 			goto out;
+ 		audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+-			"enforcing=%d old_enforcing=%d auid=%u ses=%u",
++			"enforcing=%d old_enforcing=%d auid=%u ses=%u"
++			" enabled=%d old-enabled=%d lsm=selinux res=1",
+ 			new_value, selinux_enforcing,
+ 			from_kuid(&init_user_ns, audit_get_loginuid(current)),
+-			audit_get_sessionid(current));
++			audit_get_sessionid(current), selinux_enabled, selinux_enabled);
+ 		selinux_enforcing = new_value;
+ 		if (selinux_enforcing)
+ 			avc_ss_reset(0);
+@@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+ 		if (length)
+ 			goto out;
+ 		audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+-			"selinux=0 auid=%u ses=%u",
++			"enforcing=%d old_enforcing=%d auid=%u ses=%u"
++			" enabled=%d old-enabled=%d lsm=selinux res=1",
++			selinux_enforcing, selinux_enforcing,
+ 			from_kuid(&init_user_ns, audit_get_loginuid(current)),
+-			audit_get_sessionid(current));
++			audit_get_sessionid(current), 0, 1);
+ 	}
+ 
+ 	length = count;
+-- 
+1.8.3.1
 
-    * Refereed Presentations:
-      45 minutes in length.
-
-    * Panel Discussion Topics:
-      45 minutes in length.
-
-    * Short Topics:
-      30 minutes in total, including at least 10 minutes discussion.
-
-    * BoF Sessions.
-
-  Topic areas include, but are not limited to:
-
-    * Kernel self-protection
-    * Access control
-    * Cryptography and key management
-    * Integrity control
-    * Hardware Security
-    * Iot and embedded security
-    * Virtualization and containers
-    * System-specific system hardening
-    * Case studies
-    * Security tools
-    * Security UX
-    * Emerging technologies, threats & techniques 
-
-  Proposals should be submitted via:
-    https://events.linuxfoundation.org/events/linux-security-summit-north-america-2018/program/cfp/
-
-
-DATES
-
-  * CFP Close: June 3, 2018
-  * CFP Notifications: June 11, 2018
-  * Schedule Announced: June 25, 2018
-  * Event: August 27-28, 2018
-
-
-WHO SHOULD ATTEND
-
-  We're seeking a diverse range of attendees, and welcome participation by
-  people involved in Linux security development, operations, and research.
-
-  The LSS is a unique global event which provides the opportunity to present
-  and discuss your work or research with key Linux security community members
-  and maintainers. It?s also useful for those who wish to keep up with the
-  latest in Linux security development, and to provide input to the
-  development process.
-
-
-WEB SITE
-
-  https://events.linuxfoundation.org/events/linux-security-summit-north-america-2018/
-
-
-TWITTER
-
-  For event updates and announcements, follow:
-
-    https://twitter.com/LinuxSecSummit
-  
-
-PROGRAM COMMITTEE
-
-  The program committee for LSS 2018 is:
-
-    * James Morris, Microsoft
-    * Serge Hallyn, Cisco
-    * Paul Moore, Red Hat
-    * Stephen Smalley, NSA
-    * Elena Reshetova, Intel
-    * John Johansen, Canonical
-    * Kees Cook, Google
-    * Casey Schaufler, Intel
-    * Mimi Zohar, IBM
-    * David A. Wheeler, Institute for Defense Analyses
-
-  The program committee may be contacted as a group via email:
-    lss-pc () lists.linuxfoundation.org
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
