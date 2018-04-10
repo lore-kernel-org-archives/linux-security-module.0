@@ -1,38 +1,64 @@
-From: Alexander.Levin@microsoft.com (Sasha Levin)
-Date: Tue, 10 Apr 2018 13:50:49 +0000
-Subject: [PATCH] uapi/linux/keyctl.h: don't use C++ reserved keyword as a
-	struct member name
-In-Reply-To: <1735b3a4-2792-0ce4-3bf4-94fee5b50ff6@infradead.org>
-References: <1735b3a4-2792-0ce4-3bf4-94fee5b50ff6@infradead.org>
-Message-ID: <DM5PR2101MB1032FCB3C25A4F8B7F778073FBBE0@DM5PR2101MB1032.namprd21.prod.outlook.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Tue, 10 Apr 2018 09:42:50 -0500
+Subject: KASAN: null-ptr-deref Read in xattr_getsecurity
+In-Reply-To: <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
+	(Tetsuo Handa's message of "Tue, 10 Apr 2018 19:13:23 +0900")
+References: <0000000000008d2e0d05697a693d@google.com>
+	<9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
+Message-ID: <87o9irw2ad.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
 
-[This is an automated email]
+> From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Tue, 10 Apr 2018 15:15:16 +0900
+> Subject: [PATCH] commoncap: Handle memory allocation failure.
+>
+> syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
+> for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
+> memory allocation failed. Return -ENOMEM if memory allocation failed.
+>
+> [1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
 
-This commit has been processed because it contains a "Fixes:" tag,
-fixing commit: .
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-The bot has also determined it's probably a bug fixing patch. (score: 15.7018)
+Tetsuo I can pick this up, or do you have preferred path for getting
+this change merged?
 
-The bot has tested the following trees: v4.16.1, v4.15.16, v4.14.33, v4.9.93, v4.4.127.
+Serge does this fix look ok to you?  I am a bit worried that
+might be a bit brittler but I don't see any issues with this change.
 
-v4.16.1: Build OK!
-v4.15.16: Build OK!
-v4.14.33: Build OK!
-v4.9.93: Failed to apply! Possible dependencies:
-    7cbe0932c2f2 ("KEYS: Convert KEYCTL_DH_COMPUTE to use the crypto KPP API")
-
-v4.4.127: Failed to apply! Possible dependencies:
-    7cbe0932c2f2 ("KEYS: Convert KEYCTL_DH_COMPUTE to use the crypto KPP API")
-    ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
+Eric
 
 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
+> Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
+> Cc: stable <stable@vger.kernel.org> # 4.14+
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> ---
+>  security/commoncap.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 48620c9..1ce701f 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>  				magic |= VFS_CAP_FLAGS_EFFECTIVE;
+>  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+>  			cap->magic_etc = cpu_to_le32(magic);
+> +		} else {
+> +			size = -ENOMEM;
+>  		}
+>  	}
+>  	kfree(tmpbuf);
+> --
+> 1.8.3.1
 --
-Thanks,
-Sasha--
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
