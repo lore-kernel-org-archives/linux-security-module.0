@@ -1,76 +1,48 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Tue, 10 Apr 2018 09:00:32 +0000
-Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-In-Reply-To: <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
-	<c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 10 Apr 2018 15:31:09 +0300
+Subject: [PATCH] tpm: moves the delay_msec increment after sleep in
+	tpm_transmit()
+In-Reply-To: <1523284198.16421.196.camel@linux.vnet.ibm.com>
+References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
+	<20180405101210.GA21636@linux.intel.com>
+	<95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
+	<20180407103610.GA22542@linux.intel.com>
+	<1523284198.16421.196.camel@linux.vnet.ibm.com>
+Message-ID: <d7989ecd5e2d6463636ba291128b525b89cb2521.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Mon, 2018-04-09 at 10:29 -0400, Mimi Zohar wrote:
+> On Sat, 2018-04-07 at 13:36 +0300, Jarkko Sakkinen wrote:
+> > On Fri, Apr 06, 2018 at 02:03:37PM +0530, Nayna Jain wrote:
+> > > On 04/05/2018 03:42 PM, Jarkko Sakkinen wrote:
+> > > > On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
+> > > > > Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
+> > > > > handle the TPM2_RC_RETRY error. The loop retries the command after
+> > > > > sleeping for the specified time, which is incremented exponentially in
+> > > > > every iteration. This patch fixes the initial sleep to be the default
+> > > > > sleep time.
+> > > > 
+> > > > I think I understand the code change but do not understand what the
+> > > > long description.
+> > > 
+> > > It tells that the first sleep is delay_msec * 2 and not delay_msec.
+> > 
+> > So the problem is that the loop doubles the time before sleeping
+> > for the first time. This is missing from the description. Please
+> > refine it in some way.
 > 
-> On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > In crb_map_io() function, __crb_request_locality() is called prior to
-> > crb_cmd_ready(), but if one of the consecutive function fails the flow
-> > bails out instead of trying to relinquish locality.
-> > This patch adds goto jump to __crb_relinquish_locality() on the error path.
-> >
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > granting
-> > locality)
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > ---
-> >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> > index 7f78482cd157..34fbc6cb097b 100644
-> > --- a/drivers/char/tpm/tpm_crb.c
-> > +++ b/drivers/char/tpm/tpm_crb.c
-> > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device,
-> > struct crb_priv *priv,
-> >
-> >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
-> >  				   sizeof(struct crb_regs_tail));
-> > -	if (IS_ERR(priv->regs_t))
-> > -		return PTR_ERR(priv->regs_t);
-> > +	if (IS_ERR(priv->regs_t)) {
-> > +		ret = PTR_ERR(priv->regs_t);
-> > +		goto out_relinquish_locality;
-> > +	}
-> >
-> >  	/*
-> >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7 +522,7
-> @@
-> > static int crb_map_io(struct acpi_device *device, struct crb_priv
-> > *priv,
-> >  	 */
-> >  	ret = crb_cmd_ready(dev, priv);
-> >  	if (ret)
-> > -		return ret;
-> > +		goto out_relinquish_locality;
-> >
-> >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device,
-> > struct crb_priv *priv,
-> >
-> >  	crb_go_idle(dev, priv);
-> >
-> > +out_relinquish_locality:
-> > +
-> >  	__crb_relinquish_locality(dev, priv, 0);
-> >
-> >  	return ret;
+> Sure, how about replacing the last line of the patch description with:
+>     Unfortunately, the loop doubles the time before sleeping, causing the
+>     initial sleep to be doubled.  This patch fixes the initial sleep time.
 > 
-> Thanks, please just call it before returning in the error path.
+> If this change is acceptable, do you want to make the change or should Nayna
+> repost the patch?
 
-Can you please elaborate why, isn't the centralized exiting of functions preferred kernel coding style? 
-https://www.kernel.org/doc/html/v4.11/process/coding-style.html#centralized-exiting-of-functions 
+No need. I'll move on to testing.
 
-Thanks
-Tomas
-
-> 
-> /Jarkko
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+/Jarkko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
