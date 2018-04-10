@@ -1,72 +1,88 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Tue, 10 Apr 2018 09:48:12 -0500
-Subject: KASAN: null-ptr-deref Read in xattr_getsecurity
-In-Reply-To: <87o9irw2ad.fsf@xmission.com>
-References: <0000000000008d2e0d05697a693d@google.com>
-	<9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
-	<87o9irw2ad.fsf@xmission.com>
-Message-ID: <20180410144812.GB13386@mail.hallyn.com>
+From: tomas.winkler@intel.com (Winkler, Tomas)
+Date: Tue, 10 Apr 2018 20:25:26 +0000
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+In-Reply-To: <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+	<c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+	<4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 10, 2018 at 09:42:50AM -0500, Eric W. Biederman wrote:
-> Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
 > 
-> > From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
-> > From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Date: Tue, 10 Apr 2018 15:15:16 +0900
-> > Subject: [PATCH] commoncap: Handle memory allocation failure.
+> On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > >
+> > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > In crb_map_io() function, __crb_request_locality() is called prior
+> > > > to crb_cmd_ready(), but if one of the consecutive function fails
+> > > > the flow bails out instead of trying to relinquish locality.
+> > > > This patch adds goto jump to __crb_relinquish_locality() on the
+> > > > error path.
+> > > >
+> > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
+> > > > after granting
+> > > > locality)
+> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > ---
+> > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
+> > > > 100644
+> > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
+> > > > *device, struct crb_priv *priv,
+> > > >
+> > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > >control_address,
+> > > >  				   sizeof(struct crb_regs_tail));
+> > > > -	if (IS_ERR(priv->regs_t))
+> > > > -		return PTR_ERR(priv->regs_t);
+> > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > +		goto out_relinquish_locality;
+> > > > +	}
+> > > >
+> > > >  	/*
+> > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7 +522,7
+> > >
+> > > @@
+> > > > static int crb_map_io(struct acpi_device *device, struct crb_priv
+> > > > *priv,
+> > > >  	 */
+> > > >  	ret = crb_cmd_ready(dev, priv);
+> > > >  	if (ret)
+> > > > -		return ret;
+> > > > +		goto out_relinquish_locality;
+> > > >
+> > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
+> > > > *device, struct crb_priv *priv,
+> > > >
+> > > >  	crb_go_idle(dev, priv);
+> > > >
+> > > > +out_relinquish_locality:
+> > > > +
+> > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > >
+> > > >  	return ret;
+> > >
+> > > Thanks, please just call it before returning in the error path.
 > >
-> > syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
-> > for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
-> > memory allocation failed. Return -ENOMEM if memory allocation failed.
-> >
-> > [1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
+> > Can you please elaborate why, isn't the centralized exiting of
+> > functions preferred kernel coding style?
+> > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#centra
+> > lized-ex
+> > iting-of-functions
 > 
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> Tetsuo I can pick this up, or do you have preferred path for getting
-> this change merged?
-> 
-> Serge does this fix look ok to you?  I am a bit worried that
+> You exit only from one location (not multiple) and not from a nested
+> context. Here you just add more complexity by doing this.
 
-yup, looks good to me.  would have replied an hour or two ago but lacked
-an lkml-acceptable mailer :)
+Where is the complexitity ? I see it as a standard way of undoing on exit.
+Tomas 
 
-thanks,
-serge
-
-> might be a bit brittler but I don't see any issues with this change.
-> 
-> Eric
-> 
-> 
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
-> > Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
-> > Cc: stable <stable@vger.kernel.org> # 4.14+
-> > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > Cc: Eric W. Biederman <ebiederm@xmission.com>
-> > ---
-> >  security/commoncap.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/security/commoncap.c b/security/commoncap.c
-> > index 48620c9..1ce701f 100644
-> > --- a/security/commoncap.c
-> > +++ b/security/commoncap.c
-> > @@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
-> >  				magic |= VFS_CAP_FLAGS_EFFECTIVE;
-> >  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
-> >  			cap->magic_etc = cpu_to_le32(magic);
-> > +		} else {
-> > +			size = -ENOMEM;
-> >  		}
-> >  	}
-> >  	kfree(tmpbuf);
-> > --
-> > 1.8.3.1
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
