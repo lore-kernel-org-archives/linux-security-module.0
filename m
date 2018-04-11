@@ -1,41 +1,25 @@
-From: gregkh@linuxfoundation.org (Greg KH)
-Date: Wed, 11 Apr 2018 21:56:15 +0200
-Subject: [PATCH 01/24] Add the ability to lock down access to the running
-	kernel image
-In-Reply-To: <CANiq72n=b3ghgHzknhY=fNP9=f8fi8OuW7OPQHXQGJH_aWrT-w@mail.gmail.com>
-References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-	<152346388583.4030.15146667041427303547.stgit@warthog.procyon.org.uk>
-	<6a37b428-d9fb-12d5-8d36-8a032984af8c@infradead.org>
-	<CANiq72n=b3ghgHzknhY=fNP9=f8fi8OuW7OPQHXQGJH_aWrT-w@mail.gmail.com>
-Message-ID: <20180411195615.GA6979@kroah.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 11 Apr 2018 21:05:56 +0100
+Subject: [PATCH 06/24] kexec_load: Disable at runtime if the kernel is
+	locked down
+In-Reply-To: <87po35k1q6.fsf@xmission.com>
+References: <87po35k1q6.fsf@xmission.com>
+	<152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
+	<152346391877.4030.6270466586590461223.stgit@warthog.procyon.org.uk>
+Message-ID: <12601.1523477156@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 11, 2018 at 08:50:00PM +0200, Miguel Ojeda wrote:
-> On Wed, Apr 11, 2018 at 7:37 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> > On 04/11/2018 09:24 AM, David Howells wrote:
-> >
-> >> diff --git a/security/lock_down.c b/security/lock_down.c
-> >> new file mode 100644
-> >> index 000000000000..f35ffdd096ad
-> >> --- /dev/null
-> >> +++ b/security/lock_down.c
-> >> @@ -0,0 +1,65 @@
-> >> +/* Lock down the kernel
-> >> + *
-> >> + * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
-> >> + * Written by David Howells (dhowells at redhat.com)
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or
-> >> + * modify it under the terms of the GNU General Public Licence
-> >> + * as published by the Free Software Foundation; either version
-> >> + * 2 of the Licence, or (at your option) any later version.
-> >
-> > fsf.org spells that Licence word as License. :)
-> 
-> Given this is a new file, simply use the SPF identifier on top.
+Eric W. Biederman <ebiederm@xmission.com> wrote:
 
-checkpatch.pl should now check for this as well.
+> Maybing I am missing it but I am not seeing anything that would require
+> kexec_file_load be configured such that it checks the loaded kernel.
+> 
+> Without that I don't see the point of disabling kexec_load.
+
+I meant to remove this patch too.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
