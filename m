@@ -1,51 +1,46 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 11 Apr 2018 17:25:18 +0100
-Subject: [PATCH 06/24] kexec_load: Disable at runtime if the kernel is
-	locked down
+Date: Wed, 11 Apr 2018 17:25:12 +0100
+Subject: [PATCH 05/24] Restrict /dev/{mem, kmem,
+	port} when the kernel is locked down
 In-Reply-To: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
 References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-Message-ID: <152346391877.4030.6270466586590461223.stgit@warthog.procyon.org.uk>
+Message-ID: <152346391203.4030.2594045084649898168.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-The kexec_load() syscall permits the loading and execution of arbitrary
-code in ring 0, which is something that lock-down is meant to prevent. It
-makes sense to disable kexec_load() in this situation.
+Allowing users to read and write to core kernel memory makes it possible
+for the kernel to be subverted, avoiding module loading restrictions, and
+also to steal cryptographic information.
 
-This does not affect kexec_file_load() syscall which can check for a
-signature on the image to be booted.
+Disallow /dev/mem and /dev/kmem from being opened this when the kernel has
+been locked down to prevent this.
+
+Also disallow /dev/port from being opened to prevent raw ioport access and
+thus DMA from being used to accomplish the same thing.
 
 Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Dave Young <dyoung@redhat.com>
 Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
-cc: kexec at lists.infradead.org
 ---
 
- kernel/kexec.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/char/mem.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index aed8fb2564b3..1553ac765e73 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -199,6 +199,13 @@ static inline int kexec_load_check(unsigned long nr_segments,
- 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
- 		return -EPERM;
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index ffeb60d3434c..b2fca26e5765 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -784,6 +784,8 @@ static loff_t memory_lseek(struct file *file, loff_t offset, int orig)
  
-+	/*
-+	 * kexec can be used to circumvent module loading restrictions, so
-+	 * prevent loading in that case
-+	 */
-+	if (kernel_is_locked_down("kexec of unsigned images"))
+ static int open_port(struct inode *inode, struct file *filp)
+ {
++	if (kernel_is_locked_down("/dev/mem,kmem,port"))
 +		return -EPERM;
-+
- 	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
+ 	return capable(CAP_SYS_RAWIO) ? 0 : -EPERM;
+ }
+ 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
