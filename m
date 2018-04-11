@@ -1,56 +1,72 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 11 Apr 2018 17:11:44 -0400
-Subject: [PATCH ghak47 V1] audit: normalize MAC_POLICY_LOAD record
-In-Reply-To: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
-References: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
-Message-ID: <CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
+Date: Wed, 11 Apr 2018 17:36:41 -0400
+Subject: [PATCH v5 1/1] security: Add mechanism to safely (un)load LSMs
+	after boot time
+In-Reply-To: <9cacbdfa-d224-189b-1e79-155a81f3dcdf@tycho.nsa.gov>
+References: <201804090338.w393crfv005435@www262.sakura.ne.jp>
+	<CAMp4zn8GOFk9EKCS9JaEsKayDZ+pLFORWBRHPaCCsN--EyvFVg@mail.gmail.com>
+	<201804090525.w395P1qS044316@www262.sakura.ne.jp>
+	<CAMp4zn9uc-Z4NOn_0YQ-8qgdDdJxdNA56GCWGhjEbYQBzp_pOg@mail.gmail.com>
+	<9cacbdfa-d224-189b-1e79-155a81f3dcdf@tycho.nsa.gov>
+Message-ID: <CAHC9VhTCh5N_hKgiAnv0ZqTrn-+79bcPbXMbOUyyNNRv2LEfdg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 9, 2018 at 7:36 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> The audit MAC_POLICY_LOAD record had redundant dangling keywords and was
-> missing information about which LSM was responsible and its completion
-> status.  While this record is only issued on success, the parser expects
-> the res= field to be present.
+On Wed, Apr 11, 2018 at 10:17 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 04/10/2018 05:24 PM, Sargun Dhillon wrote:
+>> On Sun, Apr 8, 2018 at 10:25 PM, Tetsuo Handa
+>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>> Sargun Dhillon wrote:
+>>>>>   Remove SECURITY_HOOK_COUNT and "struct security_hook_list"->owner and
+>>>>>   the exception in randomize_layout_plugin.c because preventing module
+>>>>>   unloading won't work as expected.
+>>>>>
+>>>>
+>>>> Rather than completely removing the unloading code, might it make
+>>>> sense to add a BUG_ON or WARN_ON, in security_delete_hooks if
+>>>> allow_unload_module is false, and owner is not NULL?
+>>>
+>>> Do we need to check ->owner != NULL? Although it will be true that
+>>> SELinux's ->owner == NULL and LKM-based LSM module's ->owner != NULL,
+>>> I think we unregister SELinux before setting allow_unload_module to false.
+>>> Thus, rejecting delete_security_hooks() if allow_unload_module == false will
+>>> be sufficient. SELinux might want to call panic() if delete_security_hooks()
+>>> did not unregister due to allow_unload_module == false. Also,
+>>> allow_unload_module would be renamed to allow_unregister_module.
+>>>
+>>> By the way, please don't use BUG_ON() or WARN_ON() because syzbot would hit
+>>> and call panic() because syzbot runs tests with panic_on_warn == true.
+>>
+>> I think my primary question is for the SELinux folks -- what do you
+>> think the behaviour should be? If allow_unload_modules /
+>> allow_unregister_module is set, do you want to be able to call
+>> security_delete_hooks? What do you think the right
+>> action should be if it fails?
 >
-> Old record:
-> type=MAC_POLICY_LOAD msg=audit(1479299795.404:43): policy loaded auid=0 ses=1
+> The one that avoids breakage for existing users ;)
 >
-> Delete the redundant dangling keywords, add the lsm= field and the res=
-> field.
->
-> New record:
-> type=MAC_POLICY_LOAD msg=audit(1523293846.204:894): auid=0 ses=1 lsm=selinux res=1
->
-> See: https://github.com/linux-audit/audit-kernel/issues/47
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  security/selinux/selinuxfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 00b21b2..496915a 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -531,7 +531,7 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
->
->  out1:
->         audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
-> -               "policy loaded auid=%u ses=%u",
-> +               "auid=%u ses=%u lsm=selinux res=1",
+> I personally am in favor of killing SELinux support for runtime disable aka
+> CONFIG_SECURITY_SELINUX_DISABLE; the only reason it exists is that Red Hat
+> originally insisted that bootloader configuration is too painful to modify/update on
+> certain platforms and therefore the selinux=0 boot parameter is insufficient
+> as a mechanism for disabling SELinux.
 
-This is another case of NACK on principle, but I think we can make an
-exception in this particular case.
+I too would like to remove the SELinux runtime disable code, and we
+have looked at it briefly but there are a number of
+userspace/bootloader upgrade concerns that need to be addressed first
+(some of the issues have been captured in the BZ linked below).
+Unfortunately it isn't as trivial a chance as it would initially
+appear.
 
-Also like the other patch, this will need to wait for the merge window
-to close before I can merge it.
+* https://bugzilla.redhat.com/show_bug.cgi?id=1430944
 
->                 from_kuid(&init_user_ns, audit_get_loginuid(current)),
->                 audit_get_sessionid(current));
->  out:
-> --
-> 1.8.3.1
+> However, we can't break existing users.  Userspace should still attempt to proceed
+> even if runtime disable fails, just with SELinux left in permissive mode and no
+> policy loaded.  That generally should work, but does retain the performance overhead
+> of the SELinux hook function processing, unlike a real disable.
 >
+> I don't think we particularly care about allow_unload_modules / allow_unregister_module
+> since there is no existing userspace or configurations relying on it.
 
 -- 
 paul moore
