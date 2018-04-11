@@ -1,28 +1,62 @@
-From: jannh@google.com (Jann Horn)
-Date: Wed, 11 Apr 2018 19:05:56 +0200
-Subject: [PATCH 02/24] Add a SysRq option to lift kernel lockdown
-In-Reply-To: <152346389240.4030.11187964053014260180.stgit@warthog.procyon.org.uk>
+From: rdunlap@infradead.org (Randy Dunlap)
+Date: Wed, 11 Apr 2018 10:22:46 -0700
+Subject: [PATCH 18/24] Lock down module params that specify hardware
+	parameters (eg. ioport)
+In-Reply-To: <152346399627.4030.8043878470312297727.stgit@warthog.procyon.org.uk>
 References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-	<152346389240.4030.11187964053014260180.stgit@warthog.procyon.org.uk>
-Message-ID: <CAG48ez2TN_fLgyiOZn5aTpKp9UTbJShO4iM=jHo3SJ7s6CW4Xg@mail.gmail.com>
+	<152346399627.4030.8043878470312297727.stgit@warthog.procyon.org.uk>
+Message-ID: <17b6d3ad-367c-be6f-40d8-a9f60c7edae3@infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 11, 2018 at 6:24 PM, David Howells <dhowells@redhat.com> wrote:
-> From: Kyle McMartin <kyle@redhat.com>
->
-> Make an option to provide a sysrq key that will lift the kernel lockdown,
-> thereby allowing the running kernel image to be accessed and modified.
->
-> On x86 this is triggered with SysRq+x, but this key may not be available on
-> all arches, so it is set by setting LOCKDOWN_LIFT_KEY in asm/setup.h.
-> Since this macro must be defined in an arch to be able to use this facility
-> for that arch, the Kconfig option is restricted to arches that support it.
+On 04/11/2018 09:26 AM, David Howells wrote:
+> Provided an annotation for module parameters that specify hardware
+> parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+> dma buffers and other types).
+> 
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  kernel/params.c |   26 +++++++++++++++++++++-----
+>  1 file changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/params.c b/kernel/params.c
+> index cc9108c2a1fd..2c08c4aa376b 100644
+> --- a/kernel/params.c
+> +++ b/kernel/params.c
+> @@ -108,13 +108,19 @@ bool parameq(const char *a, const char *b)
+>  	return parameqn(a, b, strlen(a)+1);
+>  }
+>  
+> -static void param_check_unsafe(const struct kernel_param *kp)
+> +static bool param_check_unsafe(const struct kernel_param *kp,
+> +			       const char *doing)
+>  {
+>  	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+>  		pr_warn("Setting dangerous option %s - tainting kernel\n",
+>  			kp->name);
+>  		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+>  	}
+> +
+> +	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
+> +	    kernel_is_locked_down("Command line-specified device addresses, irqs and dma channels"))
 
-In the current form, this is probably incompatible with USB/IP (which
-Debian seems to be shipping as a module by default), right? And
-perhaps also with dummy_hcd (if I understand correctly what it's
-doing)?
+s/dma/DMA/
+
+Other patches use PCI instead of pci, CIS instead of cis, MMIO instead of mmio,
+BPF instead of bpf, MSR instead of msr, etc...
+
+
+> +		return false;
+> +	return true;
+>  }
+>  
+>  static int parse_one(char *param,
+
+
+-- 
+~Randy
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
