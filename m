@@ -1,41 +1,51 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 11 Apr 2018 17:25:25 +0100
-Subject: [PATCH 07/24] hibernate: Disable when the kernel is locked down
+Date: Wed, 11 Apr 2018 17:25:18 +0100
+Subject: [PATCH 06/24] kexec_load: Disable at runtime if the kernel is
+	locked down
 In-Reply-To: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
 References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-Message-ID: <152346392521.4030.5108539377959227838.stgit@warthog.procyon.org.uk>
+Message-ID: <152346391877.4030.6270466586590461223.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Josh Boyer <jwboyer@fedoraproject.org>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-There is currently no way to verify the resume image when returning
-from hibernate.  This might compromise the signed modules trust model,
-so until we can work with signed hibernate images we disable it when the
-kernel is locked down.
+The kexec_load() syscall permits the loading and execution of arbitrary
+code in ring 0, which is something that lock-down is meant to prevent. It
+makes sense to disable kexec_load() in this situation.
 
-Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
+This does not affect kexec_file_load() syscall which can check for a
+signature on the image to be booted.
+
+Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Dave Young <dyoung@redhat.com>
 Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-cc: linux-pm at vger.kernel.org
+Reviewed-by: James Morris <james.l.morris@oracle.com>
+cc: kexec at lists.infradead.org
 ---
 
- kernel/power/hibernate.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/kexec.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index 5454cc639a8d..629f158f5a0c 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -70,7 +70,7 @@ static const struct platform_hibernation_ops *hibernation_ops;
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index aed8fb2564b3..1553ac765e73 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -199,6 +199,13 @@ static inline int kexec_load_check(unsigned long nr_segments,
+ 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+ 		return -EPERM;
  
- bool hibernation_available(void)
- {
--	return (nohibernate == 0);
-+	return nohibernate == 0 && !kernel_is_locked_down("Hibernation");
- }
- 
- /**
++	/*
++	 * kexec can be used to circumvent module loading restrictions, so
++	 * prevent loading in that case
++	 */
++	if (kernel_is_locked_down("kexec of unsigned images"))
++		return -EPERM;
++
+ 	/*
+ 	 * Verify we have a legal set of flags
+ 	 * This leaves us room for future extensions.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
