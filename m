@@ -1,80 +1,92 @@
-From: Golden_Miller83@protonmail.ch (Jordan Glover)
-Date: Wed, 11 Apr 2018 17:05:04 -0400
-Subject: [PATCH 01/24] Add the ability to lock down access to the running
-	kernel image
-In-Reply-To: <CA+55aFzPo-dip8dgyo0U+g5qai9SAJU+D1c+AFJ0zV9_PBAB8Q@mail.gmail.com>
-References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-	<152346388583.4030.15146667041427303547.stgit@warthog.procyon.org.uk>
-	<CA+55aFzPo-dip8dgyo0U+g5qai9SAJU+D1c+AFJ0zV9_PBAB8Q@mail.gmail.com>
-Message-ID: <8z0aRQyD-6Krqntk8UD9WQjK5JSqEai2Pt5oeFU2EplgxoWiHlX5nlJXwCDHQ1WcS1oIprXimgz7UvwHCWDB9Z3dYFrEmZmtkEJSqaYMel8=@protonmail.ch>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 11 Apr 2018 17:08:34 -0400
+Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+In-Reply-To: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+Message-ID: <CAHC9VhQzt4-f5zYkh18NWcp0HALXNR3iB+jeGOPkxdZZx8SdLQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On April 11, 2018 8:09 PM, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Mon, Apr 9, 2018 at 7:34 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> There were two formats of the audit MAC_STATUS record, one of which was more
+> standard than the other.  One listed enforcing status changes and the
+> other listed enabled status changes with a non-standard label.  In
+> addition, the record was missing information about which LSM was
+> responsible and the operation's completion status.  While this record is
+> only issued on success, the parser expects the res= field to be present.
+>
+> old enforcing/permissive:
+> type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+> old enable/disable:
+> type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
+>
+> List both sets of status and old values and add the lsm= field and the
+> res= field.
+>
+> Here is the new format:
+> type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+>
+> This record already accompanied a SYSCALL record.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/46
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  security/selinux/selinuxfs.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 00eed84..00b21b2 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+>                 if (length)
+>                         goto out;
+>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
+> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+>                         new_value, selinux_enforcing,
+>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> -                       audit_get_sessionid(current));
+> +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
 
-> On Wed, Apr 11, 2018 at 9:24 AM, David Howells dhowells at redhat.com wrote:
-> 
-> > Provide a single call to allow kernel code to determine whether the system
-> > 
-> > should be locked down, thereby disallowing various accesses that might
-> > 
-> > allow the running kernel image to be changed, including:
-> > 
-> > -   /dev/mem and similar
-> > -   Loading of unauthorised modules
-> > -   Fiddling with MSR registers
-> > -   Suspend to disk managed by the kernel
-> > -   Use of device DMA
-> 
-> So what I stlll absolutely detest about this series is that I think
-> 
-> many of these things should simply be done as separate config options.
-> 
-> For example, if the distro is sure that it doesn't need /dev/mem, then
-> 
-> why the hell is this tied to "lockdown" that then may have to be
-> 
-> disabled because other changes may not be acceptable (eg people may
-> 
-> need that device DMA, or whatever).
-> 
-> If that /dev/mem access prevention was just instead done as an even
-> 
-> stricter mode of the existing CONFIG_STRICT_DEVMEM, it could just be
-> 
-> enabled unconditionally.
+This looks fine.
 
-CONFIG_DEVMEM=n
+>                 selinux_enforcing = new_value;
+>                 if (selinux_enforcing)
+>                         avc_ss_reset(0);
+> @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+>                 if (length)
+>                         goto out;
+>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> -                       "selinux=0 auid=%u ses=%u",
+> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+> +                       selinux_enforcing, selinux_enforcing,
+>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> -                       audit_get_sessionid(current));
+> +                       audit_get_sessionid(current), 0, 1);
 
-> 
-> So none of these patches raise my hackles per se. But what continues
-> 
-> to makes me very very uncomfortable is how this is all tied together.
-> 
-> Why is this one magical mode that then - because it has such a big
-> 
-> impact - has to be enabled/disabled as a single magical mode and with
-> 
-> very odd rules?
-> 
-> I think a lot of people would be happier if this wasn't so incestuous
-> 
-> and mixing together independent things under one name, and one flag.
-> 
-> I think a lot of the secure boot problems were exacerbated by that mixup.
-> 
-> So I would seriously ask that the distros that have been using these
-> 
-> patches look at which parts of lockdown they could make unconditional
-> 
-> (because it doesn't break machines), and which ones need that escape
-> 
-> clause.
-> 
-> Linus
-> 
+It needs to be said again that I'm opposed to changes like this:
+inserting new fields, removing fields, or otherwise changing the
+format in ways that aren't strictly the addition of new fields to the
+end of a record is a Bad Thing.  However, there are exceptions (there
+are *always* exceptions), and this seems like a reasonable change that
+shouldn't negatively affect anyone.
 
-?Jordan
+I'll merge this once the merge window comes to a close (we are going
+to need to base selinux/next on v4.17-rc1).
+
+>         }
+>
+>         length = count;
+> --
+> 1.8.3.1
+>
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
