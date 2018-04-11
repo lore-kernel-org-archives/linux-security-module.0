@@ -1,44 +1,35 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 11 Apr 2018 17:27:03 +0100
-Subject: [PATCH 22/24] bpf: Restrict kernel image access functions when the
-	kernel is locked down
+Date: Wed, 11 Apr 2018 17:26:49 +0100
+Subject: [PATCH 20/24] Lock down /proc/kcore
 In-Reply-To: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
 References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-Message-ID: <152346402306.4030.13915529680179697046.stgit@warthog.procyon.org.uk>
+Message-ID: <152346400916.4030.1623673477529314083.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-There are some bpf functions can be used to read kernel memory:
-bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
-private keys in kernel memory (e.g. the hibernation image signing key) to
-be read by an eBPF program.
+Disallow access to /proc/kcore when the kernel is locked down to prevent
+access to cryptographic data.
 
-Completely prohibit the use of BPF when the kernel is locked down.
-
-Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: netdev at vger.kernel.org
-cc: Chun-Yi Lee <jlee@suse.com>
-cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 ---
 
- kernel/bpf/syscall.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/proc/kcore.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 0244973ee544..7457f2676c6d 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2031,6 +2031,9 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
- 	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index d1e82761de81..cdebdee81719 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -546,6 +546,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 
+ static int open_kcore(struct inode *inode, struct file *filp)
+ {
++	if (kernel_is_locked_down("/proc/kcore"))
++		return -EPERM;
+ 	if (!capable(CAP_SYS_RAWIO))
  		return -EPERM;
  
-+	if (kernel_is_locked_down("BPF"))
-+		return -EPERM;
-+
- 	err = check_uarg_tail_zero(uattr, sizeof(attr), size);
- 	if (err)
- 		return err;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
