@@ -1,85 +1,53 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 11 Apr 2018 17:08:34 -0400
-Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
-In-Reply-To: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
-References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
-Message-ID: <CAHC9VhQzt4-f5zYkh18NWcp0HALXNR3iB+jeGOPkxdZZx8SdLQ@mail.gmail.com>
+Date: Wed, 11 Apr 2018 17:11:44 -0400
+Subject: [PATCH ghak47 V1] audit: normalize MAC_POLICY_LOAD record
+In-Reply-To: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
+References: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
+Message-ID: <CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 9, 2018 at 7:34 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> There were two formats of the audit MAC_STATUS record, one of which was more
-> standard than the other.  One listed enforcing status changes and the
-> other listed enabled status changes with a non-standard label.  In
-> addition, the record was missing information about which LSM was
-> responsible and the operation's completion status.  While this record is
-> only issued on success, the parser expects the res= field to be present.
+On Mon, Apr 9, 2018 at 7:36 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> The audit MAC_POLICY_LOAD record had redundant dangling keywords and was
+> missing information about which LSM was responsible and its completion
+> status.  While this record is only issued on success, the parser expects
+> the res= field to be present.
 >
-> old enforcing/permissive:
-> type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
-> old enable/disable:
-> type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
+> Old record:
+> type=MAC_POLICY_LOAD msg=audit(1479299795.404:43): policy loaded auid=0 ses=1
 >
-> List both sets of status and old values and add the lsm= field and the
-> res= field.
+> Delete the redundant dangling keywords, add the lsm= field and the res=
+> field.
 >
-> Here is the new format:
-> type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+> New record:
+> type=MAC_POLICY_LOAD msg=audit(1523293846.204:894): auid=0 ses=1 lsm=selinux res=1
 >
-> This record already accompanied a SYSCALL record.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/46
+> See: https://github.com/linux-audit/audit-kernel/issues/47
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  security/selinux/selinuxfs.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
+>  security/selinux/selinuxfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 00eed84..00b21b2 100644
+> index 00b21b2..496915a 100644
 > --- a/security/selinux/selinuxfs.c
 > +++ b/security/selinux/selinuxfs.c
-> @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
->                 if (length)
->                         goto out;
->                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
-> -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
-> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
-> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
->                         new_value, selinux_enforcing,
->                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
-> -                       audit_get_sessionid(current));
-> +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
-
-This looks fine.
-
->                 selinux_enforcing = new_value;
->                 if (selinux_enforcing)
->                         avc_ss_reset(0);
-> @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
->                 if (length)
->                         goto out;
->                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
-> -                       "selinux=0 auid=%u ses=%u",
-> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
-> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
-> +                       selinux_enforcing, selinux_enforcing,
->                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
-> -                       audit_get_sessionid(current));
-> +                       audit_get_sessionid(current), 0, 1);
-
-It needs to be said again that I'm opposed to changes like this:
-inserting new fields, removing fields, or otherwise changing the
-format in ways that aren't strictly the addition of new fields to the
-end of a record is a Bad Thing.  However, there are exceptions (there
-are *always* exceptions), and this seems like a reasonable change that
-shouldn't negatively affect anyone.
-
-I'll merge this once the merge window comes to a close (we are going
-to need to base selinux/next on v4.17-rc1).
-
->         }
+> @@ -531,7 +531,7 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
 >
->         length = count;
+>  out1:
+>         audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
+> -               "policy loaded auid=%u ses=%u",
+> +               "auid=%u ses=%u lsm=selinux res=1",
+
+This is another case of NACK on principle, but I think we can make an
+exception in this particular case.
+
+Also like the other patch, this will need to wait for the merge window
+to close before I can merge it.
+
+>                 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>                 audit_get_sessionid(current));
+>  out:
 > --
 > 1.8.3.1
 >
