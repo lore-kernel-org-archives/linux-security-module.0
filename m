@@ -1,44 +1,38 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 12 Apr 2018 08:29:08 -0700
-Subject: [PATCH] security: Remove unused field from security_hook_list
-In-Reply-To: <201804122318.GEE52615.HOJOFFQVLFOSMt@I-love.SAKURA.ne.jp>
-References: <20180412022536.GA8919@ircssh-2.c.rugged-nimbus-611.internal>
-	<201804122318.GEE52615.HOJOFFQVLFOSMt@I-love.SAKURA.ne.jp>
-Message-ID: <34a6f2aa-f977-a060-3959-004b33939a0a@schaufler-ca.com>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Thu, 12 Apr 2018 09:52:54 -0700
+Subject: [PATCH 01/24] Add the ability to lock down access to the running
+	kernel image
+In-Reply-To: <CAFxkdAr5c_bKEKqV2t-PKAo3iSvEkpqO1p+RPg9t-sW4yEUOnw@mail.gmail.com>
+References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
+	<152346388583.4030.15146667041427303547.stgit@warthog.procyon.org.uk>
+	<CA+55aFzPo-dip8dgyo0U+g5qai9SAJU+D1c+AFJ0zV9_PBAB8Q@mail.gmail.com>
+	<8z0aRQyD-6Krqntk8UD9WQjK5JSqEai2Pt5oeFU2EplgxoWiHlX5nlJXwCDHQ1WcS1oIprXimgz7UvwHCWDB9Z3dYFrEmZmtkEJSqaYMel8=@protonmail.ch>
+	<CA+55aFzvnf=4OeBy5vQQ6HQoCsgCkAJw1LhSBOTkDWm3ck1pZA@mail.gmail.com>
+	<CAFxkdAr5c_bKEKqV2t-PKAo3iSvEkpqO1p+RPg9t-sW4yEUOnw@mail.gmail.com>
+Message-ID: <CA+55aFyEaNGLoSL2SJZkcvApPJQFo1mK9KW6g-_FdAm1KSqGEw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 4/12/2018 7:18 AM, Tetsuo Handa wrote:
-> Sargun Dhillon wrote:
->> It appears like char * lsm on struct security_hook_list is unused. Even
->> since its inception: https://patchwork.kernel.org/patch/9525051/
->> it hasn't been read, only written to. This removes that.
-
-tl;dr - I hope to use it in 4.18
-
-I have been trying to get my patch for Smack that creates a
-subdirectory in /proc/.../attr/ in for some time. That
-patch uses the lsm field in security_hook_list. While the
-Smack directory is very important for stacking, I want it
-regardless as reusing the SELinux attribute files was a mistake.
-
-> It was preserved based on an assumption that complete stacking is accepted in
-> near future, but still not available. Maybe we can delete this field for now?
-
-Yes, we can. There would be a merge conflict should I get my way
-on the Smack subdirectory.
-
-James, I *still* want /proc/.../attr/smack regardless of the rest
-of stacking. I want to start fixing the Smack user space. This is
-required, by stacking, but strongly desired in any case.
-
-> http://kernsec.org/pipermail/linux-security-module-archive/2017-March/000104.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Thu, Apr 12, 2018 at 6:09 AM, Justin Forbes <jmforbes@linuxtx.org> wrote:
+> On Wed, Apr 11, 2018, 5:38 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> So it's really the whole claim that distributions have been running
+>> for this for the last five years that I wonder about, and how often
+>> people end up being told: "just disable secure boot":.
 >
+> Very rarely in my experience.
 
+Good. Do you have a handle on the reasons?
+
+Because I'm assuming it's not /dev/{mem,kmem,port}? Because I'd really
+be happier if we just say "those are legacy, don't enable them at all
+for modern distros".
+
+That way they'd _stay_ disabled even if somebody cannot handle the
+other limitations, like DMA etc.
+
+                 Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
