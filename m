@@ -1,49 +1,89 @@
-From: shinya1.takumi@toshiba.co.jp (shinya1.takumi at toshiba.co.jp)
-Date: Fri, 13 Apr 2018 04:30:30 +0000
-Subject: [RFC v3 0/2] WhiteEgret LSM module
-In-Reply-To: <20180408155114.GE9715@mail.hallyn.com>
-References: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
-	<20180401200827.GA28101@mail.hallyn.com>
-	<OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
-	<20180408155114.GE9715@mail.hallyn.com>
-Message-ID: <OSBPR01MB2184E8C11A5DEDA145A3B40E92B30@OSBPR01MB2184.jpnprd01.prod.outlook.com>
+From: igor.stoppa@gmail.com (Igor Stoppa)
+Date: Fri, 13 Apr 2018 17:41:25 +0400
+Subject: [RFC PATCH v22 0/6] mm: security: ro protection for dynamic data
+Message-ID: <20180413134131.4651-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> Do you have a target date for posting that?
-Yes, we have the target date. We will submit WhiteEgret v4 by September.
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-> So you have a design for being able to differentiate the interpreters 
-> reading versus reading with the intent to execute?
-> With or without their help?
-We will provide WEUA sample to be able to control a script program with WhiteEgret v4.
-Our WEUA sample does not identify whether to read or to read with the intent to execute. 
-The sample has some restrictions.
+The memory is managed in pools: when a memory pool is protected, all the
+memory that is currently part of it, will become R/O.
 
-We consider that the restrictions can be resolved by implementing additional functions for WEUA.
-It is an implementation-dependent matter.
+A R/O pool can be expanded (adding more protectable memory).
+It can also be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
-Howerver, we are sure that the restrictions are acceptable for many applications.
-We would like to discuss about them with WhiteEgret v4 patch!
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
 
------Original Message-----
-> I am one of developers of WhiteEgret.
-> 
-> > regardling the last one, do you have a plan for handling it?
-> Yes, we have a plan to release WhiteEgret v4 patch with a WEUA sample of access control for script programs.
+However the data might need to be released, for example as part of module
+unloading. The pool, therefore, can be destroyed.
 
-Do you have a target date for posting that?
+An example is provided, in the form of self-testing.
 
-> The latest WhiteEgret cannot control script programs since script files read by an interpreter are not hooked by the execve system call.
-> We consider that script programs can be controlled by controlling the files inputted by interpreters, accordingly. 
-> We consider that the control can be realized using the read system call hooking.
+Since it was advised to give an example of protecting real kernel data
+[1],
+a well known vulnerability has been used to demo an effective use of
+pmalloc.
 
-So you have a design for being able to differentiate the interpreters reading versus reading with the intent to execute?  With or without their help?
+[1] http://www.openwall.com/lists/kernel-hardening/2018/03/29/7
 
-> Now, we are developing WhiteEgret with the read system call hooking and WEUA which controls the script files to be read to interpreters using information from the read system call hooking and white list.
+However it turned out to be almost an how-to for attacking the kernel, so
+it was sent first to security at kernel.org, for obtaining clearance about
+the
+publication.
 
--serge
+Changes since v21:
 
+[http://www.openwall.com/lists/kernel-hardening/2018/03/27/23]
+
+* fixed type mismatch error in use of max(), detected by gcc 7.3
+* converted internal types into size_t
+* fixed leak of vmalloc memory in the self-test code
+
+Igor Stoppa (6):
+  struct page: add field for vm_struct
+  vmalloc: rename llist field in vmap_area
+  Protectable Memory
+  Documentation for Pmalloc
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+
+Igor Stoppa (6):
+  struct page: add field for vm_struct
+  vmalloc: rename llist field in vmap_area
+  Protectable Memory
+  Documentation for Pmalloc
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 107 +++++++++++++++
+ drivers/misc/lkdtm/core.c          |   3 +
+ drivers/misc/lkdtm/lkdtm.h         |   1 +
+ drivers/misc/lkdtm/perms.c         |  25 ++++
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 166 +++++++++++++++++++++++
+ include/linux/test_pmalloc.h       |  24 ++++
+ include/linux/vmalloc.h            |   5 +-
+ init/main.c                        |   2 +
+ mm/Kconfig                         |  16 +++
+ mm/Makefile                        |   2 +
+ mm/pmalloc.c                       | 265 +++++++++++++++++++++++++++++++++++++
+ mm/test_pmalloc.c                  | 137 +++++++++++++++++++
+ mm/usercopy.c                      |  33 +++++
+ mm/vmalloc.c                       |  10 +-
+ 16 files changed, 793 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 mm/pmalloc.c
+ create mode 100644 mm/test_pmalloc.c
+
+-- 
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
