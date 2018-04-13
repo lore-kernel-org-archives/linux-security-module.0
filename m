@@ -1,71 +1,33 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 13 Apr 2018 11:27:52 -0400
-Subject: [PATCH] lockdown: fix coordination of kernel module signature
-	verification
-Message-ID: <1523633272.3272.30.camel@linux.vnet.ibm.com>
+Date: Fri, 13 Apr 2018 12:25:02 -0400
+Subject: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
+In-Reply-To: <87sh8lcecn.fsf@xmission.com>
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<87sh8lcecn.fsf@xmission.com>
+Message-ID: <1523636702.3272.63.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-If both IMA-appraisal and sig_enforce are enabled, then both signatures
-are currently required.  If the IMA-appraisal signature verification
-fails, it could rely on the appended signature verification; but with the
-lockdown patch set, the appended signature verification assumes that if
-IMA-appraisal is enabled, it has verified the signature.  Basically each
-signature verification method would be relying on the other to verify the
-kernel module signature.
+[Cc'ing John Johansen]
 
-This patch addresses the problem of requiring both kernel module signature
-verification methods, when both are enabled, by verifying just the
-appended signature.
+On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
+[...]
+> As such I expect the best way to create the ima namespace is by simply
+> writing to securityfs/imafs.  Possibly before the user namespace is
+> even unshared.  That would allow IMA to keep track of things from
+> before a container is created.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- kernel/module.c                   | 4 +---
- security/integrity/ima/ima_main.c | 7 ++++++-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+My initial thought was to stage IMA namespacing with just IMA-audit
+first, followed by either IMA-measurement or IMA-appraisal. ?This
+would allow us to get the basic IMA namespacing framework working and
+defer dealing with the securityfs related namespacing of the IMA
+policy and measurement list issues to later.
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 9c1709a05037..60861eb7bc4d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2803,9 +2803,7 @@ static int module_sig_check(struct load_info *info, int flags,
- 		if (sig_enforce) {
- 			pr_notice("%s is rejected\n", reason);
- 			return -EKEYREJECTED;
--		}
--
--		if (can_do_ima_check && is_ima_appraise_enabled())
-+		} else if (can_do_ima_check && is_ima_appraise_enabled())
- 			return 0;
- 		if (kernel_is_locked_down(reason))
- 			return -EPERM;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 754ece08e1c6..2155b1f316a4 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -480,6 +480,7 @@ static int read_idmap[READING_MAX_ID] = {
- int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 		       enum kernel_read_file_id read_id)
- {
-+	bool sig_enforce = is_module_sig_enforced();
- 	enum ima_hooks func;
- 	u32 secid;
- 
-@@ -490,7 +491,11 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 		return 0;
- 	}
- 
--	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
-+	/*
-+	 * If both IMA-appraisal and appended signature verification are
-+	 * enabled, rely on the appended signature verification.
-+	 */
-+	if (sig_enforce && read_id == READING_MODULE)
- 		return 0;
- 
- 	/* permit signed certs */
--- 
-2.7.5
+By tying IMA namespacing to a securityfs ima/unshare file, we would
+need to address the securityfs issues first.
+
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
