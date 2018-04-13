@@ -1,60 +1,51 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 12 Apr 2018 18:41:50 -0400
-Subject: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
-In-Reply-To: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
+From: shinya1.takumi@toshiba.co.jp (shinya1.takumi at toshiba.co.jp)
+Date: Fri, 13 Apr 2018 04:30:30 +0000
+Subject: [RFC v3 0/2] WhiteEgret LSM module
+In-Reply-To: <20180408155114.GE9715@mail.hallyn.com>
+References: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
+	<20180401200827.GA28101@mail.hallyn.com>
+	<OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
+	<20180408155114.GE9715@mail.hallyn.com>
+Message-ID: <OSBPR01MB2184E8C11A5DEDA145A3B40E92B30@OSBPR01MB2184.jpnprd01.prod.outlook.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Allow LSMs and IMA to differentiate between the kexec_load and
-kexec_file_load syscalls by adding an "unnecessary" call to
-security_kernel_read_file() in kexec_load.  This would be similar to the
-existing init_module syscall calling security_kernel_read_file().
+> Do you have a target date for posting that?
+Yes, we have the target date. We will submit WhiteEgret v4 by September.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- kernel/kexec.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> So you have a design for being able to differentiate the interpreters 
+> reading versus reading with the intent to execute?
+> With or without their help?
+We will provide WEUA sample to be able to control a script program with WhiteEgret v4.
+Our WEUA sample does not identify whether to read or to read with the intent to execute. 
+The sample has some restrictions.
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index aed8fb2564b3..d1386cfc6796 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -11,6 +11,7 @@
- #include <linux/capability.h>
- #include <linux/mm.h>
- #include <linux/file.h>
-+#include <linux/security.h>
- #include <linux/kexec.h>
- #include <linux/mutex.h>
- #include <linux/list.h>
-@@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
- static inline int kexec_load_check(unsigned long nr_segments,
- 				   unsigned long flags)
- {
-+	int result;
-+
- 	/* We only trust the superuser with rebooting the system. */
- 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
- 		return -EPERM;
- 
- 	/*
-+	 * Allow LSMs and IMA to differentiate between kexec_load and
-+	 * kexec_file_load syscalls.
-+	 */
-+	result = security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
-+	if (result < 0)
-+		return result;
-+
-+	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
- 	 */
--- 
-2.7.5
+We consider that the restrictions can be resolved by implementing additional functions for WEUA.
+It is an implementation-dependent matter.
+
+Howerver, we are sure that the restrictions are acceptable for many applications.
+We would like to discuss about them with WhiteEgret v4 patch!
+
+-----Original Message-----
+> I am one of developers of WhiteEgret.
+> 
+> > regardling the last one, do you have a plan for handling it?
+> Yes, we have a plan to release WhiteEgret v4 patch with a WEUA sample of access control for script programs.
+
+Do you have a target date for posting that?
+
+> The latest WhiteEgret cannot control script programs since script files read by an interpreter are not hooked by the execve system call.
+> We consider that script programs can be controlled by controlling the files inputted by interpreters, accordingly. 
+> We consider that the control can be realized using the read system call hooking.
+
+So you have a design for being able to differentiate the interpreters reading versus reading with the intent to execute?  With or without their help?
+
+> Now, we are developing WhiteEgret with the read system call hooking and WEUA which controls the script files to be read to interpreters using information from the read system call hooking and white list.
+
+-serge
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
