@@ -1,146 +1,74 @@
 From: igor.stoppa@gmail.com (Igor Stoppa)
-Date: Fri, 13 Apr 2018 17:41:29 +0400
-Subject: [PATCH 4/6] Documentation for Pmalloc
+Date: Fri, 13 Apr 2018 17:41:27 +0400
+Subject: [PATCH 2/6] vmalloc: rename llist field in vmap_area
 In-Reply-To: <20180413134131.4651-1-igor.stoppa@huawei.com>
 References: <20180413134131.4651-1-igor.stoppa@huawei.com>
-Message-ID: <20180413134131.4651-5-igor.stoppa@huawei.com>
+Message-ID: <20180413134131.4651-3-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Detailed documentation about the protectable memory allocator.
+The vmap_area structure has a field of type struct llist_node, named
+purge_list and is used when performing lazy purge of the area.
+
+Such field is left unused during the actual utilization of the
+structure.
+
+This patch renames the field to a more generic "area_list", to allow for
+utilization outside of the purging phase.
+
+Since the purging happens after the vmap_area is dismissed, its use is
+mutually exclusive with any use performed while the area is allocated.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 ---
- Documentation/core-api/index.rst   |   1 +
- Documentation/core-api/pmalloc.rst | 107 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 108 insertions(+)
- create mode 100644 Documentation/core-api/pmalloc.rst
+ include/linux/vmalloc.h | 2 +-
+ mm/vmalloc.c            | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index c670a8031786..8f5de42d6571 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -25,6 +25,7 @@ Core utilities
-    genalloc
-    errseq
-    printk-formats
-+   pmalloc
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 1e5d8c392f15..2d07dfef3cfd 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -47,7 +47,7 @@ struct vmap_area {
+ 	unsigned long flags;
+ 	struct rb_node rb_node;         /* address sorted rbtree */
+ 	struct list_head list;          /* address sorted list */
+-	struct llist_node purge_list;    /* "lazy purge" list */
++	struct llist_node area_list;    /* generic list of areas */
+ 	struct vm_struct *vm;
+ 	struct rcu_head rcu_head;
+ };
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 61a1ca22b0f6..1bb2233bb262 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -682,7 +682,7 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+ 	lockdep_assert_held(&vmap_purge_lock);
  
- Interfaces for kernel debugging
- ===============================
-diff --git a/Documentation/core-api/pmalloc.rst b/Documentation/core-api/pmalloc.rst
-new file mode 100644
-index 000000000000..c14907485137
---- /dev/null
-+++ b/Documentation/core-api/pmalloc.rst
-@@ -0,0 +1,107 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. _pmalloc:
-+
-+Protectable memory allocator
-+============================
-+
-+Purpose
-+-------
-+
-+The pmalloc library is meant to provide read-only status to data that,
-+for some reason, could neither be declared as constant, nor could it take
-+advantage of the qualifier __ro_after_init, but is write-once and
-+read-only in spirit. At least as long as it doesn't get teared down.
-+It protects data from both accidental and malicious overwrites.
-+
-+Example: A policy that is loaded from userspace.
-+
-+
-+Concept
-+-------
-+
-+The MMU available in the system can be used to write protect memory pages.
-+Unfortunately this feature cannot be used as-it-is, to protect sensitive
-+data, because this potentially read-only data is typically interleaved
-+with other data, which must stay writeable.
-+
-+pmalloc introduces the concept of protectable memory pools.
-+A pool contains a list of areas of virtually contiguous pages of
-+memory. An area is the minimum amount of memory that pmalloc allows to
-+protect, because the user might have allocated a memory range that
-+crosses the boundary between pages.
-+
-+When an allocation is performed, if there is not enough memory already
-+available in the pool, a new area of suitable size is grabbed.
-+The size chosen is the largest between the roundup (to PAGE_SIZE) of
-+the request from pmalloc and friends and the refill parameter specified
-+when creating the pool.
-+
-+When a pool is created, it is possible to specify two parameters:
-+- refill size: the minimum size of the memory area to allocate when needed
-+- align_order: the default alignment to use when reserving memory
-+
-+To facilitate the conversion of existing code to pmalloc pools, several
-+helper functions are provided, mirroring their k/vmalloc counterparts.
-+However one is missing. There is no pfree() because the memory protected
-+by a pool will be released exclusively when the pool is destroyed.
-+
-+
-+
-+Caveats
-+-------
-+
-+- When a pool is protected, whatever memory would be still available in
-+  the current vmap_area (from which allocations are performed) is
-+  relinquished.
-+
-+- As already explained, freeing of memory is not supported. Pages will be
-+  returned to the system upon destruction of the memory pool that they
-+  belong to.
-+
-+- The address range available for vmalloc (and thus for pmalloc too) is
-+  limited, on 32-bit systems. However it shouldn't be an issue, since not
-+  much data is expected tobe dynamically allocated and turned into
-+  read-only.
-+
-+- Regarding SMP systems, the allocations are expected to happen mostly
-+  during an initial transient, after which there should be no more need
-+  to perform cross-processor synchronizations of page tables.
-+  Loading of kernel modules is an exception to this, but it's not expected
-+  to happen with such high frequency to become a problem.
-+
-+
-+Use
-+---
-+
-+The typical sequence, when using pmalloc, is:
-+
-+#. create a pool
-+
-+   :c:func:`pmalloc_create_pool`
-+
-+#. issue one or more allocation requests to the pool
-+
-+   :c:func:`pmalloc`
-+
-+   or
-+
-+   :c:func:`pzalloc`
-+
-+#. initialize the memory obtained, with the desired values
-+
-+#. write-protect the memory so far allocated
-+
-+   :c::func:`pmalloc_protect_pool`
-+
-+#. iterate over the last 3 points as needed
-+
-+#. [optional] destroy the pool
-+
-+   :c:func:`pmalloc_destroy_pool`
-+
-+API
-+---
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+.. kernel-doc:: mm/pmalloc.c
+ 	valist = llist_del_all(&vmap_purge_list);
+-	llist_for_each_entry(va, valist, purge_list) {
++	llist_for_each_entry(va, valist, area_list) {
+ 		if (va->va_start < start)
+ 			start = va->va_start;
+ 		if (va->va_end > end)
+@@ -696,7 +696,7 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+ 	flush_tlb_kernel_range(start, end);
+ 
+ 	spin_lock(&vmap_area_lock);
+-	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
++	llist_for_each_entry_safe(va, n_va, valist, area_list) {
+ 		int nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
+ 
+ 		__free_vmap_area(va);
+@@ -743,7 +743,7 @@ static void free_vmap_area_noflush(struct vmap_area *va)
+ 				    &vmap_lazy_nr);
+ 
+ 	/* After this point, we may free va at any time */
+-	llist_add(&va->purge_list, &vmap_purge_list);
++	llist_add(&va->area_list, &vmap_purge_list);
+ 
+ 	if (unlikely(nr_lazy > lazy_max_pages()))
+ 		try_purge_vmap_area_lazy();
 -- 
 2.14.1
 
