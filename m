@@ -1,113 +1,100 @@
-From: omosnace@redhat.com (Ondrej Mosnacek)
-Date: Mon, 16 Apr 2018 16:25:19 +0200
-Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
-In-Reply-To: <20180416141101.zcovkknupxcgiwf2@madcap2.tricolour.ca>
-References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
-	<CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com>
-	<20180416141101.zcovkknupxcgiwf2@madcap2.tricolour.ca>
-Message-ID: <CAFqZXNsiTU7nqcuttjtjpDnU6Ua_+Ff8HcUCSuBHqT9DFCLx8w@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 16 Apr 2018 11:46:05 -0400
+Subject: [RFC PATCH] rootfs: force mounting rootfs as tmpfs
+In-Reply-To: <8d6b1fcc-1a21-1707-dd8e-43529e1d644c@landley.net>
+References: <1517348777.3469.5.camel@linux.vnet.ibm.com>
+	<1814af5c-170d-39c0-58fd-02eb7216e008@landley.net>
+	<1517436423.3469.237.camel@linux.vnet.ibm.com>
+	<a538e55c-81ca-6d59-20cf-21b47387c3e2@landley.net>
+	<20180201020331.GA3774@rani.riverdale>
+	<1517458921.3329.2.camel@linux.vnet.ibm.com>
+	<f9112881-772c-2568-ebfa-d2ca807124e9@landley.net>
+	<1517500500.3974.45.camel@linux.vnet.ibm.com>
+	<875e5d2d-9ffe-14ab-090a-4a9632af0f35@landley.net>
+	<1517521912.3619.0.camel@linux.vnet.ibm.com>
+	<151752488608.10051.146219644323454814@takondra-t460s>
+	<8d6b1fcc-1a21-1707-dd8e-43529e1d644c@landley.net>
+Message-ID: <1523893565.3272.191.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2018-04-16 16:11 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
-> On 2018-04-16 09:26, Ondrej Mosnacek wrote:
->> 2018-04-10 1:34 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
->> > There were two formats of the audit MAC_STATUS record, one of which was more
->> > standard than the other.  One listed enforcing status changes and the
->> > other listed enabled status changes with a non-standard label.  In
->> > addition, the record was missing information about which LSM was
->> > responsible and the operation's completion status.  While this record is
->> > only issued on success, the parser expects the res= field to be present.
->> >
->> > old enforcing/permissive:
->> > type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
->> > old enable/disable:
->> > type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
->> >
->> > List both sets of status and old values and add the lsm= field and the
->> > res= field.
->> >
->> > Here is the new format:
->> > type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
->> >
->> > This record already accompanied a SYSCALL record.
->> >
->> > See: https://github.com/linux-audit/audit-kernel/issues/46
->> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->> > ---
->> >  security/selinux/selinuxfs.c | 11 +++++++----
->> >  1 file changed, 7 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
->> > index 00eed84..00b21b2 100644
->> > --- a/security/selinux/selinuxfs.c
->> > +++ b/security/selinux/selinuxfs.c
->> > @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
->> >                 if (length)
->> >                         goto out;
->> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> > -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
->> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
->>
->> This is just a tiny nit but why does "old_enforcing" use an underscore
->> and "old-enabled" a dash? Shouldn't the style be consistent across
->> fields?
->
-> Yes, but my understanding is a preference for underscore, and not to
-> change existing field names.
+Hi Rob,
 
-Ah, I just noticed that the field is already used elsewhere in the
-code, so it makes sense to keep it the same. I thought at first that
-it is just a typo.
+On Thu, 2018-02-01 at 17:34 -0600, Rob Landley wrote:
+> 
+> On 02/01/2018 04:41 PM, Taras Kondratiuk wrote:
+> > Quoting Mimi Zohar (2018-02-01 13:51:52)
+> >> On Thu, 2018-02-01 at 11:09 -0600, Rob Landley wrote:
+> >>> On 02/01/2018 09:55 AM, Mimi Zohar wrote:
+> >>>> On Thu, 2018-02-01 at 09:20 -0600, Rob Landley wrote:
+> >>>>
+> >>>>>> With your patch and specifying "root=tmpfs", dracut is complaining:
+> >>>>>>
+> >>>>>> dracut: FATAL: Don't know how to handle 'root=tmpfs'
+> >>>>>> dracut: refusing to continue
+> >>>>>
+> >>>>> [googles]... I do not understand why this package exists.
+> >>>>>
+> >>>>> If you're switching to another root filesystem, using a tool that
+> >>>>> wikipedia[citation needed] says has no purpose but to switch to another
+> >>>>> root filesystem, (so let's reproduce the kernel infrastructure in
+> >>>>> userspace while leaving it the kernel too)... why do you need initramfs
+> >>>>> to be tmpfs? You're using it for half a second, then discarding it,
+> >>>>> what's the point of it being tmpfs?
+> >>>>
+> >>>> Unlike the kernel image which is signed by the distros, the initramfs
+> >>>> doesn't come signed, because it is built on the target system. ?Even
+> >>>> if the initramfs did come signed, it is beneficial to measure and
+> >>>> appraise the individual files in the initramfs.
+> >>>
+> >>> You can still shoot yourself in the foot with tmpfs. People mount a /run
+> >>> and a /tmp and then as a normal user you can go
+> >>> https://twitter.com/landley/status/959103235305951233 and maybe the
+> >>> default should be a little more clever there...
+> >>>
+> >>> I'll throw it on the todo heap. :)
+> >>>
+> >>>>> Sigh. If people are ok with having rootfs just be tmpfs whenever tmpfs
+> >>>>> is configured in, even when you're then going to overmount it with
+> >>>>> something else like you're doing, let's just _remove_ the test. If it
+> >>>>> can be tmpfs, have it be tmpfs.
+> >>>>
+> >>>> Very much appreciated!
+> >>>
+> >>> Not yet tested, but something like the attached? (Sorry for the
+> >>> half-finished doc changes in there, I'm at work and have a 5 minute
+> >>> break. I can test properly this evening if you don't get to it...)
+> >>
+> >> Yes, rootfs is being mounted as tmpfs.
+> > 
+> > I don't think you can unconditionally replace ramfs with initramfs by
+> > default. Their behavior is different in some cases (e.g. pivot_root vs
+> > switch_root)
+> 
+> Both are switch_root, you can't pivot_root off of either one. (Yes, I
+> hit that bug and reported it, and they fixed it, back in the day...
+> http://lists.busybox.net/pipermail/busybox/2006-March/053529.html )
+> 
+> > and it can break many systems that expect ramfs by default.
+> 
+> The use case I told Mimi about off-list (since they stopped cc:ing the
+> list in one of their replies but the conversation continued) was the guy
+> who was extracting an initramfs bigger than 50% of system memory, which
+> worked with initramfs but failed with initmpfs. A quick google didn't
+> find the original message but it resulted in this blog entry from the
+> affected party:
+> 
+> http://www.lightofdawn.org/blog/?viewDetailed=00128
+> 
+> I.E. yeah, I know, I need to redo these patches tonight.
 
->
-> Steve?
->
->> Just my two cents...
->
-> These details are worth noticing, thank you.
->
->> >                         new_value, selinux_enforcing,
->> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
->> > -                       audit_get_sessionid(current));
->> > +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
->> >                 selinux_enforcing = new_value;
->> >                 if (selinux_enforcing)
->> >                         avc_ss_reset(0);
->> > @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
->> >                 if (length)
->> >                         goto out;
->> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> > -                       "selinux=0 auid=%u ses=%u",
->> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
->> > +                       selinux_enforcing, selinux_enforcing,
->>
->> ^ also here
->>
->> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
->> > -                       audit_get_sessionid(current));
->> > +                       audit_get_sessionid(current), 0, 1);
->> >         }
->> >
->> >         length = count;
->>
->> Ondrej Mosnacek <omosnace@redhat dot com>
->
-> - RGB
->
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
+I'd really like to be able to have rootfs be a tmpfs filesystem. ?Any
+time estimate on this patch?
 
--- 
-Ondrej Mosnacek <omosnace@redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+thanks!
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
