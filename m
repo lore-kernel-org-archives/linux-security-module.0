@@ -1,101 +1,101 @@
-From: jannh@google.com (Jann Horn)
-Date: Mon, 16 Apr 2018 16:10:38 +0200
-Subject: [manpages PATCH] capabilities.7: describe namespaced file
-	capabilities
-In-Reply-To: <06189756-dbc5-ebd0-ccdd-d937d6198530@gmail.com>
-References: <20180109185218.GA21753@mail.hallyn.com>
-	<CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
-	<06189756-dbc5-ebd0-ccdd-d937d6198530@gmail.com>
-Message-ID: <CAG48ez2zb2XgKKRpg=mrhG8_C0p+3gKaNeXyRR_ru5=FLB5pNg@mail.gmail.com>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Mon, 16 Apr 2018 10:11:01 -0400
+Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+In-Reply-To: <CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com>
+References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+	<CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com>
+Message-ID: <20180416141101.zcovkknupxcgiwf2@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Apr 13, 2018 at 9:26 PM, Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
-> Hello Serge, Jann,
->
-> On 01/16/2018 06:26 PM, Jann Horn wrote:
->> On Tue, Jan 9, 2018 at 7:52 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-[...]
->        Starting  with  Linux  4.14,  a  security.capability   extended
->        attribute  is automatically created as (or converted to) a ver?
->        sion 3 (VFS_CAP_REVISION_3) attribute if both of the  following
->        are true:
->
->        (1) The  thread  writing  the attribute resides in a noninitial
->            namespace.
+On 2018-04-16 09:26, Ondrej Mosnacek wrote:
+> 2018-04-10 1:34 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
+> > There were two formats of the audit MAC_STATUS record, one of which was more
+> > standard than the other.  One listed enforcing status changes and the
+> > other listed enabled status changes with a non-standard label.  In
+> > addition, the record was missing information about which LSM was
+> > responsible and the operation's completion status.  While this record is
+> > only issued on success, the parser expects the res= field to be present.
+> >
+> > old enforcing/permissive:
+> > type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+> > old enable/disable:
+> > type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
+> >
+> > List both sets of status and old values and add the lsm= field and the
+> > res= field.
+> >
+> > Here is the new format:
+> > type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+> >
+> > This record already accompanied a SYSCALL record.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/46
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  security/selinux/selinuxfs.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> > index 00eed84..00b21b2 100644
+> > --- a/security/selinux/selinuxfs.c
+> > +++ b/security/selinux/selinuxfs.c
+> > @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+> >                 if (length)
+> >                         goto out;
+> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> > -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
+> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+> 
+> This is just a tiny nit but why does "old_enforcing" use an underscore
+> and "old-enabled" a dash? Shouldn't the style be consistent across
+> fields?
 
-I'm not entirely happy with this - while under most circumstances
-(especially nowadays) correct, isn't this going to confuse readers who
-want to understand the actual rules?
+Yes, but my understanding is a preference for underscore, and not to
+change existing field names.
 
->            (More precisely: the thread resides in  a  user
->            namespace  other  than  the  one  from which the underlying
->            filesystem was mounted.)
+Steve?
 
-I think if you're in a parent namespace of the user namespace that
-mounted the filesystem, you actually can write a VFS_CAP_REVISION_2
-attribute?
+> Just my two cents...
 
->        (2) The thread has the CAP_SETFCAP  capability  over  the  file
->            inode,  meaning  that  (a)  the  thread has the CAP_SETFCAP
->            capability in its own user namespace; and (b) the  UID  and
->            GID  of  the  file inode have mappings in the writer's user
->            namespace.
+These details are worth noticing, thank you.
 
+> >                         new_value, selinux_enforcing,
+> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> > -                       audit_get_sessionid(current));
+> > +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
+> >                 selinux_enforcing = new_value;
+> >                 if (selinux_enforcing)
+> >                         avc_ss_reset(0);
+> > @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+> >                 if (length)
+> >                         goto out;
+> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> > -                       "selinux=0 auid=%u ses=%u",
+> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+> > +                       selinux_enforcing, selinux_enforcing,
+> 
+> ^ also here
+> 
+> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> > -                       audit_get_sessionid(current));
+> > +                       audit_get_sessionid(current), 0, 1);
+> >         }
+> >
+> >         length = count;
+> 
+> Ondrej Mosnacek <omosnace@redhat dot com>
 
->            ???????????????????????????????????????????????????????
->            ?FIXME                                                ?
->            ???????????????????????????????????????????????????????
->            ?Does there also need to be some kind  of  credential ?
->            ?match  between  the  file  and the namespace creator ?
->            ?UID?                                                 ?
->            ???????????????????????????????????????????????????????
+- RGB
 
-The namespace creator UID (iow, the namespace owner) is irrelevant
-here; the capability model is somewhat inconsistent here. Normal
-capability checks that go down to cap_capable() (like ns_capable())
-grant all privileges to processes in parent namespaces that have an
-EUID that matches the owner UID of one of the intermediate namespaces,
-including the target namespace. But capable_wrt_inode_uidgid() always
-requires the caller to have the specified capability in its own
-namespace because, when operating on an inode, the concept of an
-implicit "target namespace" doesn't really exist. (For a properly
-consistent model, you'd probably need to let the caller explicity
-specify the target namespace, but then that would somewhat break the
-transparency of namespaces.) cap_convert_nscap() starts by checking
-for capable_wrt_inode_uidgid().
-
-[...]
->        As with a binary that has VFS_CAP_REVISION_2 file capabilities,
->        a  binary  with  VFS_CAP_REVISION_3  file  capabilities confers
->        capabilities to a process during execve().  However,  capabili?
->        ties  are conferred only if the binary is executed by a process
->        that resides in a user namespace whose UID 0 maps to  the  root
->        user  ID  that is saved in the extended attribute, or when exe?
->        cuted by a process that resides in descendant of such a  names?
-
-Nit: "in a descendant"?
-
-[...]
->>> Likewise,
->>> +.BR getxattr(2)
->>> +results will be converted and simplified to show a VFS_CAP_REVISION_2
->>> +extended attribute, if a VFS_CAP_REVISION_3 applies to the caller's
->>> +namespace, or to map the VFS_CAP_REVISION_3 root user ID into the
->>> +caller's namespace.
->
-> I haven't captured that last paragraph in my text. I'm not sure I
-> understand the idea being presented. Serge, could you elaborate?
-
-Summary: When you read a capability attribute with getxattr(), the
-kernel will rewrite the returned value such that it looks the way it
-would have to look if the filesystem was mounted in your user
-namespace; just like how, when the attribute is written, the caller
-provides an attribute value written as if the filesystem was mounted
-in the caller's user namespace.
-Conceptually, this is mostly the same as the UID conversions applied
-by chown() and stat().
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
