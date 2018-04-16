@@ -1,67 +1,93 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Sun, 15 Apr 2018 14:22:06 -0500
-Subject: [manpages PATCH] capabilities.7: describe namespaced file
-	capabilities
-In-Reply-To: <770ed948-c807-36d8-b946-ce6f60ffbf67@gmail.com>
-References: <20180109185218.GA21753@mail.hallyn.com>
-	<CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
-	<20180116173803.GA15538@mail.hallyn.com>
-	<770ed948-c807-36d8-b946-ce6f60ffbf67@gmail.com>
-Message-ID: <20180415192206.GA26419@mail.hallyn.com>
+From: omosnace@redhat.com (Ondrej Mosnacek)
+Date: Mon, 16 Apr 2018 09:26:23 +0200
+Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+In-Reply-To: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+Message-ID: <CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Michael Kerrisk (man-pages) (mtk.manpages at gmail.com):
-> On 01/16/2018 06:38 PM, Serge E. Hallyn wrote:
-> > Quoting Jann Horn (jannh at google.com):
-> >> On Tue, Jan 9, 2018 at 7:52 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> 
-> [...]
-> 
-> >>> +A VFS_CAP_REVISION_3 file capability will take effect only when run in a user namespace
-> >>> +whose UID 0 maps to the saved "nsroot", or a descendant of such a namespace.
-> >>> +.PP
-> >>> +Users with the required privilege may use
-> >>> +.BR setxattr(2)
-> >>> +to request either a VFS_CAP_REVISION_2 or VFS_CAP_REVISION_3 write.
-> >>> +The kernel will automatically convert a VFS_CAP_REVISION_2 to a
-> >>> +VFS_CAP_REVISION_3 extended attribute with the "nsroot"
-> >>> +set to the root user in the writer's user namespace, or, if a VFS_CAP_REVISION_3
-> >>> +extended attribute is specified, then the kernel will map the
-> >>> +specified root user ID (which must be a valid user ID mapped in the caller's
-> >>> +user namespace) into the initial user namespace.
-> >>
-> >> Really, "into the initial user namespace"? That may be true for the
-> >> kernel-internal representation, but the on-disk representation is the
-> >> mapping into the user namespace that contains the mount namespace into
-> >> which the file system was mounted, right?
-> > 
-> > Ah, yes, it is.
-> > 
-> >>  This would become observable
-> >> when a file system is mounted in a different namespace than before, or
-> >> when working with FUSE in a namespace.
-> > 
-> > Yes it would.
-> > 
-> > Michael, you said you were reworking it, do you mind working this into
-> > it as well?
-> 
-> So, I must confess that I don't really understand this piece of the
-> conversation--neither Jann's comments nor Serge's response (Serge, are
-> you saying Jann is right or wrong in his comments?). Perhaps this can
+2018-04-10 1:34 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
+> There were two formats of the audit MAC_STATUS record, one of which was more
+> standard than the other.  One listed enforcing status changes and the
+> other listed enabled status changes with a non-standard label.  In
+> addition, the record was missing information about which LSM was
+> responsible and the operation's completion status.  While this record is
+> only issued on success, the parser expects the res= field to be present.
+>
+> old enforcing/permissive:
+> type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+> old enable/disable:
+> type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
+>
+> List both sets of status and old values and add the lsm= field and the
+> res= field.
+>
+> Here is the new format:
+> type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+>
+> This record already accompanied a SYSCALL record.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/46
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  security/selinux/selinuxfs.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 00eed84..00b21b2 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+>                 if (length)
+>                         goto out;
+>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
+> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
 
-He's right.  The point is that if a filesystem is mounted by a user in
-a non-init user namespace, then the kernel will map the specified root user ID
-into sb->sb_user_ns, not &init_user_ns.
+This is just a tiny nit but why does "old_enforcing" use an underscore
+and "old-enabled" a dash? Shouldn't the style be consistent across
+fields?
 
-> be clarified as a response to the man page text in the other mail I
-> just sent?
+Just my two cents...
 
-Yes, I'll try to do that.
+>                         new_value, selinux_enforcing,
+>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> -                       audit_get_sessionid(current));
+> +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
+>                 selinux_enforcing = new_value;
+>                 if (selinux_enforcing)
+>                         avc_ss_reset(0);
+> @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+>                 if (length)
+>                         goto out;
+>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> -                       "selinux=0 auid=%u ses=%u",
+> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+> +                       selinux_enforcing, selinux_enforcing,
 
-thanks,
-Serge
+^ also here
+
+>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> -                       audit_get_sessionid(current));
+> +                       audit_get_sessionid(current), 0, 1);
+>         }
+>
+>         length = count;
+> --
+> 1.8.3.1
+>
+> --
+> Linux-audit mailing list
+> Linux-audit at redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
+
+-- 
+Ondrej Mosnacek <omosnace@redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
