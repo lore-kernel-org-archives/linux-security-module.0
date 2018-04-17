@@ -1,48 +1,57 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Tue, 17 Apr 2018 09:12:44 -0400
-Subject: [PATCH v2 0/2] tpm: improving granularity in poll sleep times 
-Message-ID: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
+From: mail@maciej.szmigiero.name (Maciej S. Szmigiero)
+Date: Tue, 17 Apr 2018 15:39:33 +0200
+Subject: [PATCH v2] X.509: unpack RSA signatureValue field from BIT STRING
+Message-ID: <6f5cdb8a-809e-6651-0e32-711d415a8b38@maciej.szmigiero.name>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The existing TPM polling code sleeps in each loop iteration for time in
-msecs ranging from 1 msecs to 5 msecs. However, many of the TPM commands
-complete much faster, resulting in unnecessary delays.
+The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+For RSA signatures this BIT STRING is of so-called primitive subtype, which
+contains a u8 prefix indicating a count of unused bits in the encoding.
 
-This set of patches identifies such iterations and optimizes the sleep
-time. The first patch replaces TPM_POLL_SLEEP with TPM_TIMEOUT_POLL and
-moves it from tpm_tis_core.c to tpm.h as an enum with value 1 msecs. The
-second patch further reduces the TPM poll sleep time in get_burstcount()
-and wait_for_tpm_stat() in tpm_tis_core.c by calling usleep_range()
-directly.
+We have to strip this prefix from signature data, just as we already do for
+key data in x509_extract_key_data() function.
 
-The change is only in the polling time, and the maximum timeout is still
-maintained the same. Thus, it should not affect the overall existing
-behavior. 
+This wasn't noticed earlier because this prefix byte is zero for RSA key
+sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+prefixes has no bearing on its value.
 
-Changelog:
+The signature length, however was incorrect, which is a problem for RSA
+implementations that need it to be exactly correct (like AMD CCP).
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
+Cc: stable at vger.kernel.org
+---
+This is a resend of a patch that was previously submitted in one series
+with CCP driver changes since this particular patch should go through
+the security (rather than crypto) tree.
+
+Changes from v1: Change '!' to '== 0'.
+
+ crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index 7d81e6bb461a..b6cabac4b62b 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -249,6 +249,15 @@ int x509_note_signature(void *context, size_t hdrlen,
+ 		return -EINVAL;
+ 	}
  
-v2:
-
-tpm: reduce poll sleep time in tpm_transmit()
-* merged previously defined two patches into this. 
-* updated patch description as per Jarkko's feedback
-
-tpm: reduce polling time to usecs for even finer granularity
-* directly use usleep_range with finer granularity less than 1msec
-
-Nayna Jain (2):
-  tpm: reduce poll sleep time in tpm_transmit()
-  tpm: reduce polling time to usecs for even finer granularity
-
- drivers/char/tpm/tpm-interface.c |  2 +-
- drivers/char/tpm/tpm.h           |  5 ++++-
- drivers/char/tpm/tpm_tis_core.c  | 11 +++--------
- 3 files changed, 8 insertions(+), 10 deletions(-)
-
--- 
-2.13.3
-
++	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
++		/* Discard the BIT STRING metadata */
++		if (vlen < 1 || *(const u8 *)value != 0)
++			return -EBADMSG;
++
++		value++;
++		vlen--;
++	}
++
+ 	ctx->cert->raw_sig = value;
+ 	ctx->cert->raw_sig_size = vlen;
+ 	return 0;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
