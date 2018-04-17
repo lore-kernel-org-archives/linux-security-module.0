@@ -1,20 +1,27 @@
-From: berengere@glvt-cnrs.fr (MS Zeliha Omer Faruk)
-Date: Mon, 16 Apr 2018 23:16:23 +0200
-Subject: Proposal
-Message-ID: <ebaee65acbff086fafd2a5a487e81e1c.squirrel@www.glvt-cnrs.fr>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 17 Apr 2018 15:24:41 +1000 (AEST)
+Subject: [PATCH] security: remove security_settime
+In-Reply-To: <20180401084205.GA14512@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20180401084205.GA14512@ircssh-2.c.rugged-nimbus-611.internal>
+Message-ID: <alpine.LRH.2.21.1804171524190.5681@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Sun, 1 Apr 2018, Sargun Dhillon wrote:
 
+> security_settime was a wrapper around security_settime64. There are no more
+> users of it. Therefore it can be removed. It was removed in:
+> commit 4eb1bca17933 ("time: Use do_settimeofday64() internally")
+> 
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
 
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+and next-testing
 
-Hello
-
-Greeetings to you please did you get my previous email regarding my
-investment proposal last week friday ?
-
-MS.Zeliha ?mer faruk
-zeliha.omer.faruk at gmail.com
+-- 
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
