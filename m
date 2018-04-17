@@ -1,42 +1,63 @@
-From: mail@maciej.szmigiero.name (Maciej S. Szmigiero)
-Date: Tue, 17 Apr 2018 17:11:54 +0200
-Subject: [PATCH v2] X.509: unpack RSA signatureValue field from BIT STRING
-In-Reply-To: <f29df54e-48e1-12e0-f2d2-fd8353cc445f@partner.samsung.com>
-References: <CGME20180417134032epcas3p21dbb2d3a6d8650cd64e147d2ce89e6ea@epcas3p2.samsung.com>
-	<6f5cdb8a-809e-6651-0e32-711d415a8b38@maciej.szmigiero.name>
-	<f29df54e-48e1-12e0-f2d2-fd8353cc445f@partner.samsung.com>
-Message-ID: <7497a6f6-b9fc-a249-a6c8-42ff2723aa4a@maciej.szmigiero.name>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 17 Apr 2018 17:55:40 -0400
+Subject: [PATCH ghak47 V1] audit: normalize MAC_POLICY_LOAD record
+In-Reply-To: <CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
+References: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
+	<CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
+Message-ID: <CAHC9VhQ5513TWiUc5vCo6j=ksiVDThXaA6_XTTt-T2OvfrEOTw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 17.04.2018 17:07, Kamil Konieczny wrote:
-> 
-> 
-> On 17.04.2018 15:39, Maciej S. Szmigiero wrote:
->> The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
->> For RSA signatures this BIT STRING is of so-called primitive subtype, which
->> contains a u8 prefix indicating a count of unused bits in the encoding.
+On Wed, Apr 11, 2018 at 5:11 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Apr 9, 2018 at 7:36 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> The audit MAC_POLICY_LOAD record had redundant dangling keywords and was
+>> missing information about which LSM was responsible and its completion
+>> status.  While this record is only issued on success, the parser expects
+>> the res= field to be present.
 >>
->> We have to strip this prefix from signature data, just as we already do for
->> key data in x509_extract_key_data() function.
+>> Old record:
+>> type=MAC_POLICY_LOAD msg=audit(1479299795.404:43): policy loaded auid=0 ses=1
 >>
->> This wasn't noticed earlier because this prefix byte is zero for RSA key
->> sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
->> prefixes has no bearing on its value.
+>> Delete the redundant dangling keywords, add the lsm= field and the res=
+>> field.
 >>
->> The signature length, however was incorrect, which is a problem for RSA
->> implementations that need it to be exactly correct (like AMD CCP).
+>> New record:
+>> type=MAC_POLICY_LOAD msg=audit(1523293846.204:894): auid=0 ses=1 lsm=selinux res=1
 >>
->> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> 
-> your e-mail address looks incorrect
-> 
-> [...]
-> 
+>> See: https://github.com/linux-audit/audit-kernel/issues/47
+>> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> ---
+>>  security/selinux/selinuxfs.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+>> index 00b21b2..496915a 100644
+>> --- a/security/selinux/selinuxfs.c
+>> +++ b/security/selinux/selinuxfs.c
+>> @@ -531,7 +531,7 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
+>>
+>>  out1:
+>>         audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
+>> -               "policy loaded auid=%u ses=%u",
+>> +               "auid=%u ses=%u lsm=selinux res=1",
+>
+> This is another case of NACK on principle, but I think we can make an
+> exception in this particular case.
+>
+> Also like the other patch, this will need to wait for the merge window
+> to close before I can merge it.
 
-What's wrong with it?
+Merged into selinux/next.
 
-Maciej
+>>                 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>>                 audit_get_sessionid(current));
+>>  out:
+>> --
+>> 1.8.3.1
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
