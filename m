@@ -1,94 +1,55 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 18 Apr 2018 11:02:12 -0400
-Subject: [PATCH v2 2/2] tpm: reduce polling time to usecs for even finer
-	granularity
-In-Reply-To: <20180417131246.434-3-nayna@linux.vnet.ibm.com>
-References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
-	<20180417131246.434-3-nayna@linux.vnet.ibm.com>
-Message-ID: <1524063732.3272.302.camel@linux.vnet.ibm.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Wed, 18 Apr 2018 08:59:01 -0700
+Subject: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
+In-Reply-To: <bc03161e-394b-bf4d-48c4-858dcf05458a@linux.vnet.ibm.com>
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<87sh8lcecn.fsf@xmission.com>
+	<bc03161e-394b-bf4d-48c4-858dcf05458a@linux.vnet.ibm.com>
+Message-ID: <cdb2a5b2-f0e8-e7ba-7b76-bd295dc654ad@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-04-17 at 09:12 -0400, Nayna Jain wrote:
-> The TPM burstcount and status commands are supposed to return very
-> quickly [1][2]. This patch further reduces the TPM poll sleep time to usecs
-> in get_burstcount() and wait_for_tpm_stat() by calling usleep_range()
-> directly.
+On 03/28/2018 04:10 AM, Stefan Berger wrote:
+> On 03/27/2018 07:01 PM, Eric W. Biederman wrote:
+>> Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+>>
+>>> From: Yuqiong Sun <suny@us.ibm.com>
+>>>
+>>> Add new CONFIG_IMA_NS config option.? Let clone() create a new IMA
+>>> namespace upon CLONE_NEWUSER flag. Attach the ima_ns data structure
+>>> to user_namespace. ima_ns is allocated and freed upon IMA namespace
+>>> creation and exit, which is tied to USER namespace creation and exit.
+>>> Currently, the ima_ns contains no useful IMA data but only a dummy
+>>> interface. This patch creates the framework for namespacing the different
+>>> aspects of IMA (eg. IMA-audit, IMA-measurement, IMA-appraisal).
+>> Tying IMA to the user namespace is far better than tying IMA
+>> to the mount namespace.? It may even be the proper answer.
+>>
+>>
+>> You had asked what it would take to unstick this so you won't have
+>> problems next time you post and I did not get as far as answering.
+>>
+>> I had a conversation a while back with Mimi and I believe what was
+>> agreed was that IMA to start doing it's thing early needs a write
+>> to securityfs/imafs.
 > 
-> After this change, performance on a TPM 1.2 with an 8 byte burstcount for
-> 1000 extends improved from ~10.7 sec to ~7 sec.
+> Above you say 'proper answer' for user namespace. Now this sounds like making it independent.
 > 
-> [1] From TCG Specification "TCG PC Client Specific TPM Interface
-> Specification (TIS), Family 1.2":
-> 
-> "NOTE : It takes roughly 330 ns per byte transfer on LPC. 256 bytes would
-> take 84 us, which is a long time to stall the CPU. Chipsets may not be
-> designed to post this much data to LPC; therefore, the CPU itself is
-> stalled for much of this time. Sending 1 kB would take 350 ?s. Therefore,
-> even if the TPM_STS_x.burstCount field is a high value, software SHOULD
-> be interruptible during this period."
-> 
-> [2] From TCG Specification 2.0, "TCG PC Client Platform TPM Profile
-> (PTP) Specification":
-> 
-> "It takes roughly 330 ns per byte transfer on LPC. 256 bytes would take
-> 84 us. Chipsets may not be designed to post this much data to LPC;
-> therefore, the CPU itself is stalled for much of this time. Sending 1 kB
-> would take 350 us. Therefore, even if the TPM_STS_x.burstCount field is a
-> high value, software should be interruptible during this period. For SPI,
-> assuming 20MHz clock and 64-byte transfers, it would take about 120 usec
-> to move 256B of data. Sending 1kB would take about 500 usec. If the
-> transactions are done using 4 bytes at a time, then it would take about
-> 1 msec. to transfer 1kB of data."
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+Agreed, and if we want to broaden out to LSMs implementing namespacing keeping them independent is the correct solution
 
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-
-
-> ---
->  drivers/char/tpm/tpm.h          | 4 +++-
->  drivers/char/tpm/tpm_tis_core.c | 5 +++--
->  2 files changed, 6 insertions(+), 3 deletions(-)
+>>
+>> As such I expect the best way to create the ima namespace is by simply
+>> writing to securityfs/imafs.? Possibly before the user namespace is
+>> even unshared.? That would allow IMA to keep track of things from
+>> before a container is created.
 > 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 7e797377e1eb..f0e4d290c347 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -54,7 +54,9 @@ enum tpm_timeout {
->  	TPM_TIMEOUT = 5,	/* msecs */
->  	TPM_TIMEOUT_RETRY = 100, /* msecs */
->  	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
-> -	TPM_TIMEOUT_POLL = 1	/* msecs */
-> +	TPM_TIMEOUT_POLL = 1,	/* msecs */
-> +	TPM_TIMEOUT_USECS_MIN = 100,      /* usecs */
-> +	TPM_TIMEOUT_USECS_MAX = 500      /* usecs */
->  };
+> So you are saying to not tie it to user namespace but make it an independent namespace and to not use a clone flag (0x1000) but use the filesystem to spawn a new namespace. Should that be an IMA specific file or a file that can be shared with other subsystems?
 > 
->  /* TPM addresses */
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 021e6b68f2db..5bba5c662423 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -84,7 +84,8 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
->  		}
->  	} else {
->  		do {
-> -			tpm_msleep(TPM_TIMEOUT_POLL);
-> +			usleep_range(TPM_TIMEOUT_USECS_MIN,
-> +					TPM_TIMEOUT_USECS_MAX);
->  			status = chip->ops->status(chip);
->  			if ((status & mask) == mask)
->  				return 0;
-> @@ -226,7 +227,7 @@ static int get_burstcount(struct tpm_chip *chip)
->  		burstcnt = (value >> 8) & 0xFFFF;
->  		if (burstcnt)
->  			return burstcnt;
-> -		tpm_msleep(TPM_TIMEOUT_POLL);
-> +		usleep_range(TPM_TIMEOUT_USECS_MIN, TPM_TIMEOUT_USECS_MAX);
->  	} while (time_before(jiffies, stop));
->  	return -EBUSY;
->  }
+
+A clone flag could work for IMA, but I don't see it working for all the LSMs looking at or doing namespacing, especially if the stacking work ever lands.
+
+As for using an IMA specific file vs shared with the other subsystems, I think subsystem specific makes sense, that or we are going to have to design something that can be shared if LSM stacking ever lands.
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
