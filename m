@@ -1,64 +1,70 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Wed, 18 Apr 2018 15:12:45 -0500
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 18 Apr 2018 16:27:08 -0400
 Subject: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
-In-Reply-To: <1524081472.3272.319.camel@linux.vnet.ibm.com> (Mimi Zohar's
-	message of "Wed, 18 Apr 2018 15:57:52 -0400")
+In-Reply-To: <87wox4s282.fsf@xmission.com>
 References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
 	<1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
 	<87sh8lcecn.fsf@xmission.com>
 	<1523636702.3272.63.camel@linux.vnet.ibm.com>
 	<d8c30d7d-c679-9323-7a25-d3148e9b96c6@canonical.com>
 	<1524081472.3272.319.camel@linux.vnet.ibm.com>
-Message-ID: <87wox4s282.fsf@xmission.com>
+	<87wox4s282.fsf@xmission.com>
+Message-ID: <1524083228.3272.331.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Wed, 2018-04-18 at 15:12 -0500, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> 
+> > On Wed, 2018-04-18 at 09:09 -0700, John Johansen wrote:
+> >> On 04/13/2018 09:25 AM, Mimi Zohar wrote:
+> >> > [Cc'ing John Johansen]
+> >> > 
+> >> > On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
+> >> > [...]
+> >> >> As such I expect the best way to create the ima namespace is by simply
+> >> >> writing to securityfs/imafs.  Possibly before the user namespace is
+> >> >> even unshared.  That would allow IMA to keep track of things from
+> >> >> before a container is created.
+> >> > 
+> >> 
+> >> I do think this is generally the right approach for LSMs when looking
+> >> forward to LSM stacking and more LSMs.
+> >> 
+> >> 
+> >> > My initial thought was to stage IMA namespacing with just IMA-audit
+> >> > first, followed by either IMA-measurement or IMA-appraisal. ?This
+> >> > would allow us to get the basic IMA namespacing framework working and
+> >> > defer dealing with the securityfs related namespacing of the IMA
+> >> > policy and measurement list issues to later.
+> >> > 
+> >> > By tying IMA namespacing to a securityfs ima/unshare file, we would
+> >> > need to address the securityfs issues first.
+> >> > 
+> >> 
+> >> well it depends on what you want to do. It would be possible to have
+> >> a simple file (not a jump link) within securityfs that IMA could use
+> >> without having to deal with all the securityfs issues first. However it
+> >> does require that securityfs (not necessarily imafs) be visible within
+> >> the mount namespace of the task doing the setup.
+> >
+> > Eric, would you be OK with that?
+> 
+> Roughly.  My understanding is that you have to have a write to some
+> filesystem to set the ima policy.
+> 
+> I was expecting having to write an "create ima namespace" value
+> to the filesystem would not be any special effort.
+> 
+> Now it sounds like providing the "create an ima namespace" is going to
+> be a special case, and that does not sound correct.
 
-> On Wed, 2018-04-18 at 09:09 -0700, John Johansen wrote:
->> On 04/13/2018 09:25 AM, Mimi Zohar wrote:
->> > [Cc'ing John Johansen]
->> > 
->> > On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
->> > [...]
->> >> As such I expect the best way to create the ima namespace is by simply
->> >> writing to securityfs/imafs.  Possibly before the user namespace is
->> >> even unshared.  That would allow IMA to keep track of things from
->> >> before a container is created.
->> > 
->> 
->> I do think this is generally the right approach for LSMs when looking
->> forward to LSM stacking and more LSMs.
->> 
->> 
->> > My initial thought was to stage IMA namespacing with just IMA-audit
->> > first, followed by either IMA-measurement or IMA-appraisal. ?This
->> > would allow us to get the basic IMA namespacing framework working and
->> > defer dealing with the securityfs related namespacing of the IMA
->> > policy and measurement list issues to later.
->> > 
->> > By tying IMA namespacing to a securityfs ima/unshare file, we would
->> > need to address the securityfs issues first.
->> > 
->> 
->> well it depends on what you want to do. It would be possible to have
->> a simple file (not a jump link) within securityfs that IMA could use
->> without having to deal with all the securityfs issues first. However it
->> does require that securityfs (not necessarily imafs) be visible within
->> the mount namespace of the task doing the setup.
->
-> Eric, would you be OK with that?
+This is not any different than any of the other security/ima/ files
+(eg. policy, ascii_runtime_measurements, ...). ?The next IMA
+namespacing stage would add support for these files.
 
-Roughly.  My understanding is that you have to have a write to some
-filesystem to set the ima policy.
+Mimi
 
-I was expecting having to write an "create ima namespace" value
-to the filesystem would not be any special effort.
-
-Now it sounds like providing the "create an ima namespace" is going to
-be a special case, and that does not sound correct.
-
-Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
