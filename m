@@ -1,103 +1,98 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 17 Apr 2018 21:51:27 -0400
-Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
-In-Reply-To: <20180417220947.vyq4dd3ah2mvwgjf@madcap2.tricolour.ca>
-References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
-	<CAHC9VhQzt4-f5zYkh18NWcp0HALXNR3iB+jeGOPkxdZZx8SdLQ@mail.gmail.com>
-	<CAHC9VhTJN0bR73ZUrPY8=wSHBYdrszQXaxBNUfxweuMDGevgcA@mail.gmail.com>
-	<20180417220947.vyq4dd3ah2mvwgjf@madcap2.tricolour.ca>
-Message-ID: <CAHC9VhQZdSeD7AfpLzk683Z9SPMezs5Xo_a+WJY-FPVqpWasQg@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 18 Apr 2018 11:01:48 -0400
+Subject: [PATCH v2 1/2] tpm: reduce poll sleep time in tpm_transmit()
+In-Reply-To: <20180417131246.434-2-nayna@linux.vnet.ibm.com>
+References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
+	<20180417131246.434-2-nayna@linux.vnet.ibm.com>
+Message-ID: <1524063708.3272.301.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 17, 2018 at 6:09 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-04-17 17:59, Paul Moore wrote:
->> On Wed, Apr 11, 2018 at 5:08 PM, Paul Moore <paul@paul-moore.com> wrote:
->> > On Mon, Apr 9, 2018 at 7:34 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> >> There were two formats of the audit MAC_STATUS record, one of which was more
->> >> standard than the other.  One listed enforcing status changes and the
->> >> other listed enabled status changes with a non-standard label.  In
->> >> addition, the record was missing information about which LSM was
->> >> responsible and the operation's completion status.  While this record is
->> >> only issued on success, the parser expects the res= field to be present.
->> >>
->> >> old enforcing/permissive:
->> >> type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
->> >> old enable/disable:
->> >> type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
->> >>
->> >> List both sets of status and old values and add the lsm= field and the
->> >> res= field.
->> >>
->> >> Here is the new format:
->> >> type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
->> >>
->> >> This record already accompanied a SYSCALL record.
->> >>
->> >> See: https://github.com/linux-audit/audit-kernel/issues/46
->> >> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->> >> ---
->> >>  security/selinux/selinuxfs.c | 11 +++++++----
->> >>  1 file changed, 7 insertions(+), 4 deletions(-)
->> >>
->> >> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
->> >> index 00eed84..00b21b2 100644
->> >> --- a/security/selinux/selinuxfs.c
->> >> +++ b/security/selinux/selinuxfs.c
->> >> @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
->> >>                 if (length)
->> >>                         goto out;
->> >>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> >> -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
->> >> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->> >> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
->> >>                         new_value, selinux_enforcing,
->> >>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
->> >> -                       audit_get_sessionid(current));
->> >> +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
->> >
->> > This looks fine.
->> >
->> >>                 selinux_enforcing = new_value;
->> >>                 if (selinux_enforcing)
->> >>                         avc_ss_reset(0);
->> >> @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
->> >>                 if (length)
->> >>                         goto out;
->> >>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> >> -                       "selinux=0 auid=%u ses=%u",
->> >> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->> >> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
->> >> +                       selinux_enforcing, selinux_enforcing,
->> >>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
->> >> -                       audit_get_sessionid(current));
->> >> +                       audit_get_sessionid(current), 0, 1);
->> >
->> > It needs to be said again that I'm opposed to changes like this:
->> > inserting new fields, removing fields, or otherwise changing the
->> > format in ways that aren't strictly the addition of new fields to the
->> > end of a record is a Bad Thing.  However, there are exceptions (there
->> > are *always* exceptions), and this seems like a reasonable change that
->> > shouldn't negatively affect anyone.
->> >
->> > I'll merge this once the merge window comes to a close (we are going
->> > to need to base selinux/next on v4.17-rc1).
->>
->> Merged into selinux/next, although I should mention that there were
->> some actual code changes because of the SELinux state consolidation
->> patches that went into v4.17.  The changes were small but please take
->> a look and make sure everything still looks okay to you.
->
-> Ok, that was a bit disruptive, but looks ok to me.
+On Tue, 2018-04-17 at 09:12 -0400, Nayna Jain wrote:
+> The TPM polling code in tpm_transmit sleeps in each loop iteration for
+> 5 msecs. However, the TPM might return earlier, and thus waiting for
+> 5 msecs adds an unnecessary delay. This patch reduces the polling sleep
+> time in tpm_transmit() from 5 msecs to 1 msecs.
+> 
+> Additionally, this patch renames TPM_POLL_SLEEP and moves it to tpm.h as
+> an enum value.
+> 
+> After this change, performance on a TPM 1.2 with an 8 byte burstcount
+> for 1000 extends improved from ~14 sec to ~10.7 sec.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 
-Yes, it was a pretty big change, but it sets the stage for a few
-things we are trying to do with SELinux.
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Regardless, thanks for giving the merge a quick look.
+> ---
+>  drivers/char/tpm/tpm-interface.c |  2 +-
+>  drivers/char/tpm/tpm.h           |  3 ++-
+>  drivers/char/tpm/tpm_tis_core.c  | 10 ++--------
+>  3 files changed, 5 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 9e80a953d693..a676d8ad5992 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -470,7 +470,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  			goto out;
+>  		}
+> 
+> -		tpm_msleep(TPM_TIMEOUT);
+> +		tpm_msleep(TPM_TIMEOUT_POLL);
+>  		rmb();
+>  	} while (time_before(jiffies, stop));
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f895fba4e20d..7e797377e1eb 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -53,7 +53,8 @@ enum tpm_const {
+>  enum tpm_timeout {
+>  	TPM_TIMEOUT = 5,	/* msecs */
+>  	TPM_TIMEOUT_RETRY = 100, /* msecs */
+> -	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
+> +	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
+> +	TPM_TIMEOUT_POLL = 1	/* msecs */
+>  };
+> 
+>  /* TPM addresses */
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index da074e3db19b..021e6b68f2db 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -31,12 +31,6 @@
+>  #include "tpm.h"
+>  #include "tpm_tis_core.h"
+> 
+> -/* This is a polling delay to check for status and burstcount.
+> - * As per ddwg input, expectation is that status check and burstcount
+> - * check should return within few usecs.
+> - */
+> -#define TPM_POLL_SLEEP	1  /* msec */
+> -
+>  static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
+> 
+>  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> @@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+>  		}
+>  	} else {
+>  		do {
+> -			tpm_msleep(TPM_POLL_SLEEP);
+> +			tpm_msleep(TPM_TIMEOUT_POLL);
+>  			status = chip->ops->status(chip);
+>  			if ((status & mask) == mask)
+>  				return 0;
+> @@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
+>  		burstcnt = (value >> 8) & 0xFFFF;
+>  		if (burstcnt)
+>  			return burstcnt;
+> -		tpm_msleep(TPM_POLL_SLEEP);
+> +		tpm_msleep(TPM_TIMEOUT_POLL);
+>  	} while (time_before(jiffies, stop));
+>  	return -EBUSY;
+>  }
 
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
