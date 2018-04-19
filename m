@@ -1,57 +1,29 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Apr 2018 15:35:47 +0100
-Subject: [PATCH 24/24] debugfs: Restrict debugfs when the kernel is locked
-	down
-In-Reply-To: <20180413202241.GB4484@amd>
-References: <20180413202241.GB4484@amd>
+Date: Thu, 19 Apr 2018 15:38:53 +0100
+Subject: [PATCH 07/24] hibernate: Disable when the kernel is locked down
+In-Reply-To: <20180413202234.GA4484@amd>
+References: <20180413202234.GA4484@amd>
 	<152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-	<152346403637.4030.15247096217928429102.stgit@warthog.procyon.org.uk>
-Message-ID: <27818.1524148547@warthog.procyon.org.uk>
+	<152346392521.4030.5108539377959227838.stgit@warthog.procyon.org.uk>
+Message-ID: <27926.1524148733@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 Pavel Machek <pavel@ucw.cz> wrote:
 
-> >  (1) chmod and chown are disallowed on debugfs objects (though the root dir
-> >      can be modified by mount and remount, but I'm not worried about that).
+> > There is currently no way to verify the resume image when returning
+> > from hibernate.  This might compromise the signed modules trust model,
+> > so until we can work with signed hibernate images we disable it when the
+> > kernel is locked down.
 > 
-> This has nothing to do with the lockdown goals, right? I find chown of
-> such files quite nice, to allow debugging without doing sudo all the time.
+> I'd rather see hibernation fixed than disabled like this.
 
-It allows someone to give everyone access to files that should perhaps only be
-accessible by root.  Besides, if you disable lockdown then you can do this if
-you want.
+The problem is that you have to store the hibernated kernel image encrypted,
+but you can't store the decryption key on disk unencrypted or you've just
+wasted the effort.
 
-> >  (2) When the kernel is locked down, only files with the following criteria
-> >      are permitted to be opened:
-> > 
-> > 	- The file must have mode 00444
-> > 	- The file must not have ioctl methods
-> > 	- The file must not have mmap
-> 
-> Dunno. Would not it be nicer to go through the debugfs files and split
-> them into safe/unsafe varieties?
-
-Whilst that is a laudable idea, there are at least a couple of thousand files
-to analyse, some of them doing weird stuff in drivers that aren't easy to
-understand, and some of them with lists of files, some of which might be safe
-and some of which aren't safe.  Even some reads that look like they ought to
-be safe have side effects (such as read-and-reset counters).
-
-Besides, define 'safe'.  Is reading a particular reg on a device and returning
-the value through a debugfs read safe, for example?  What about files where
-reading is harmless, but writing needs to be disallowed?
-
-I did try initially passing in a flag to say whether something was safe or
-not, abusing an inode flag to store it since debugfs uses a plain inode
-struct, but then I realised just how many ways there are to create debugfs
-files and it started to get out of hand.  My initial idea also included
-locking everything down by default and marking things unlocked on an as-needed
-basis.
-
-If you have the time to audit all these files, then that would be great.
-
-I lean more towards the lock debugfs down entirely side.
+So the firmware has to unlock the image, asking the user for a password to
+unlock the key.
 
 David
 --
