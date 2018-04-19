@@ -1,614 +1,698 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Apr 2018 14:33:51 +0100
-Subject: [PATCH 23/24] afs: Implement namespacing [ver #7]
+Date: Thu, 19 Apr 2018 14:33:42 +0100
+Subject: [PATCH 22/24] afs: Add fs_context support [ver #7]
 In-Reply-To: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
 References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-Message-ID: <152414483136.23902.14446781798566249159.stgit@warthog.procyon.org.uk>
+Message-ID: <152414482204.23902.6333006978830726557.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Implement namespacing within AFS, but don't yet let mounts occur outside
-the init namespace.  An additional patch will be required propagate the
-network namespace across automounts.
+Add fs_context support to the AFS filesystem, converting the parameter
+parsing to store options there.
+
+This will form the basis for namespace propagation over mountpoints within
+the AFS model, thereby allowing AFS to be used in containers more easily.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/cell.c     |    4 +-
- fs/afs/internal.h |   36 ++++++++++++---------
- fs/afs/main.c     |   33 ++++++++++++++++----
- fs/afs/proc.c     |   89 +++++++++++++++++++++++++++++++++++------------------
- fs/afs/super.c    |   58 +++++++++++++++++++++++++----------
- 5 files changed, 149 insertions(+), 71 deletions(-)
+ fs/afs/internal.h |    9 +
+ fs/afs/super.c    |  426 +++++++++++++++++++++++++++++------------------------
+ fs/afs/volume.c   |    4 
+ 3 files changed, 242 insertions(+), 197 deletions(-)
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index fdf4c36cff79..a98a8a3d5544 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -528,7 +528,7 @@ static int afs_activate_cell(struct afs_net *net, struct afs_cell *cell)
- 					     NULL, 0,
- 					     cell, 0, true);
- #endif
--	ret = afs_proc_cell_setup(net, cell);
-+	ret = afs_proc_cell_setup(cell);
- 	if (ret < 0)
- 		return ret;
- 	spin_lock(&net->proc_cells_lock);
-@@ -544,7 +544,7 @@ static void afs_deactivate_cell(struct afs_net *net, struct afs_cell *cell)
- {
- 	_enter("%s", cell->name);
- 
--	afs_proc_cell_remove(net, cell);
-+	afs_proc_cell_remove(cell);
- 
- 	spin_lock(&net->proc_cells_lock);
- 	list_del_init(&cell->proc_link);
 diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 0266730b3ad7..a5161c0ae3ab 100644
+index f8086ec95e24..0266730b3ad7 100644
 --- a/fs/afs/internal.h
 +++ b/fs/afs/internal.h
-@@ -22,6 +22,8 @@
- #include <linux/backing-dev.h>
- #include <linux/uuid.h>
- #include <net/net_namespace.h>
-+#include <net/netns/generic.h>
-+#include <net/sock.h>
- #include <net/af_rxrpc.h>
+@@ -32,13 +32,16 @@
+ struct pagevec;
+ struct afs_call;
  
- #include "afs.h"
-@@ -192,7 +194,7 @@ struct afs_read {
-  * - there's one superblock per volume
-  */
- struct afs_super_info {
--	struct afs_net		*net;		/* Network namespace */
-+	struct net		*net_ns;	/* Network namespace */
- 	struct afs_cell		*cell;		/* The cell in which the volume resides */
- 	struct afs_volume	*volume;	/* volume record */
- 	bool			dyn_root;	/* True if dynamic root */
-@@ -221,6 +223,7 @@ struct afs_sysnames {
-  * AFS network namespace record.
-  */
- struct afs_net {
-+	struct net		*net;		/* Backpointer to the owning net namespace */
- 	struct afs_uuid		uuid;
- 	bool			live;		/* F if this namespace is being removed */
- 
-@@ -283,7 +286,6 @@ struct afs_net {
- };
- 
- extern const char afs_init_sysname[];
--extern struct afs_net __afs_net;// Dummy AFS network namespace; TODO: replace with real netns
- 
- enum afs_cell_state {
- 	AFS_CELL_UNSET,
-@@ -790,34 +792,36 @@ extern int afs_drop_inode(struct inode *);
-  * main.c
-  */
- extern struct workqueue_struct *afs_wq;
-+extern int afs_net_id;
- 
--static inline struct afs_net *afs_d2net(struct dentry *dentry)
-+static inline struct afs_net *afs_net(struct net *net)
- {
--	return &__afs_net;
-+	return net_generic(net, afs_net_id);
+-struct afs_mount_params {
++struct afs_fs_context {
++	struct fs_context	fc;
++	struct afs_super_info	*as;
+ 	bool			rwpath;		/* T if the parent should be considered R/W */
+ 	bool			force;		/* T to force cell type */
+ 	bool			autocell;	/* T if set auto mount operation */
+ 	bool			dyn_root;	/* T if dynamic root */
++	bool			no_cell;	/* T if the source is "none" (for dynroot) */
+ 	afs_voltype_t		type;		/* type of volume requested */
+-	int			volnamesz;	/* size of volume name */
++	unsigned int		volnamesz;	/* size of volume name */
+ 	const char		*volname;	/* name of volume to mount */
+ 	struct afs_net		*net;		/* Network namespace in effect */
+ 	struct afs_cell		*cell;		/* cell in which to find volume */
+@@ -1007,7 +1010,7 @@ static inline struct afs_volume *__afs_get_volume(struct afs_volume *volume)
+ 	return volume;
  }
  
--static inline struct afs_net *afs_i2net(struct inode *inode)
-+static inline struct afs_net *afs_sb2net(struct super_block *sb)
- {
--	return &__afs_net;
-+	return afs_net(AFS_FS_S(sb)->net_ns);
- }
- 
--static inline struct afs_net *afs_v2net(struct afs_vnode *vnode)
-+static inline struct afs_net *afs_d2net(struct dentry *dentry)
- {
--	return &__afs_net;
-+	return afs_sb2net(dentry->d_sb);
- }
- 
--static inline struct afs_net *afs_sock2net(struct sock *sk)
-+static inline struct afs_net *afs_i2net(struct inode *inode)
- {
--	return &__afs_net;
-+	return afs_sb2net(inode->i_sb);
- }
- 
--static inline struct afs_net *afs_get_net(struct afs_net *net)
-+static inline struct afs_net *afs_v2net(struct afs_vnode *vnode)
- {
--	return net;
-+	return afs_i2net(&vnode->vfs_inode);
- }
- 
--static inline void afs_put_net(struct afs_net *net)
-+static inline struct afs_net *afs_sock2net(struct sock *sk)
- {
-+	return net_generic(sock_net(sk), afs_net_id);
- }
- 
- static inline void __afs_stat(atomic_t *s)
-@@ -852,8 +856,8 @@ extern int afs_get_ipv4_interfaces(struct afs_interface *, size_t, bool);
-  */
- extern int __net_init afs_proc_init(struct afs_net *);
- extern void __net_exit afs_proc_cleanup(struct afs_net *);
--extern int afs_proc_cell_setup(struct afs_net *, struct afs_cell *);
--extern void afs_proc_cell_remove(struct afs_net *, struct afs_cell *);
-+extern int afs_proc_cell_setup(struct afs_cell *);
-+extern void afs_proc_cell_remove(struct afs_cell *);
- extern void afs_put_sysnames(struct afs_sysnames *);
- 
- /*
-@@ -986,7 +990,7 @@ extern bool afs_annotate_server_list(struct afs_server_list *, struct afs_server
-  * super.c
-  */
- extern int __init afs_fs_init(void);
--extern void __exit afs_fs_exit(void);
-+extern void afs_fs_exit(void);
- 
- /*
-  * vlclient.c
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index d7560168b3bf..7d2c1354e2ca 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -15,6 +15,7 @@
- #include <linux/completion.h>
- #include <linux/sched.h>
- #include <linux/random.h>
-+#include <linux/proc_fs.h>
- #define CREATE_TRACE_POINTS
- #include "internal.h"
- 
-@@ -32,7 +33,7 @@ module_param(rootcell, charp, 0);
- MODULE_PARM_DESC(rootcell, "root AFS cell name and VL server IP addr list");
- 
- struct workqueue_struct *afs_wq;
--struct afs_net __afs_net;
-+static struct proc_dir_entry *afs_proc_symlink;
- 
- #if defined(CONFIG_ALPHA)
- const char afs_init_sysname[] = "alpha_linux26";
-@@ -67,11 +68,13 @@ const char afs_init_sysname[] = "unknown_linux26";
- /*
-  * Initialise an AFS network namespace record.
-  */
--static int __net_init afs_net_init(struct afs_net *net)
-+static int __net_init afs_net_init(struct net *net_ns)
- {
- 	struct afs_sysnames *sysnames;
-+	struct afs_net *net = afs_net(net_ns);
- 	int ret;
- 
-+	net->net = net_ns;
- 	net->live = true;
- 	generate_random_uuid((unsigned char *)&net->uuid);
- 
-@@ -142,8 +145,10 @@ static int __net_init afs_net_init(struct afs_net *net)
- /*
-  * Clean up and destroy an AFS network namespace record.
-  */
--static void __net_exit afs_net_exit(struct afs_net *net)
-+static void __net_exit afs_net_exit(struct net *net_ns)
- {
-+	struct afs_net *net = afs_net(net_ns);
-+
- 	net->live = false;
- 	afs_cell_purge(net);
- 	afs_purge_servers(net);
-@@ -152,6 +157,13 @@ static void __net_exit afs_net_exit(struct afs_net *net)
- 	afs_put_sysnames(net->sysnames);
- }
- 
-+static struct pernet_operations afs_net_ops = {
-+	.init	= afs_net_init,
-+	.exit	= afs_net_exit,
-+	.id	= &afs_net_id,
-+	.size	= sizeof(struct afs_net),
-+};
-+
- /*
-  * initialise the AFS client FS module
-  */
-@@ -178,7 +190,7 @@ static int __init afs_init(void)
- 		goto error_cache;
- #endif
- 
--	ret = afs_net_init(&__afs_net);
-+	ret = register_pernet_subsys(&afs_net_ops);
- 	if (ret < 0)
- 		goto error_net;
- 
-@@ -187,10 +199,18 @@ static int __init afs_init(void)
- 	if (ret < 0)
- 		goto error_fs;
- 
-+	afs_proc_symlink = proc_symlink("fs/afs", NULL, "../self/net/afs");
-+	if (IS_ERR(afs_proc_symlink)) {
-+		ret = PTR_ERR(afs_proc_symlink);
-+		goto error_proc;
-+	}
-+
- 	return ret;
- 
-+error_proc:
-+	afs_fs_exit();
- error_fs:
--	afs_net_exit(&__afs_net);
-+	unregister_pernet_subsys(&afs_net_ops);
- error_net:
- #ifdef CONFIG_AFS_FSCACHE
- 	fscache_unregister_netfs(&afs_cache_netfs);
-@@ -219,8 +239,9 @@ static void __exit afs_exit(void)
- {
- 	printk(KERN_INFO "kAFS: Red Hat AFS client v0.1 unregistering.\n");
- 
-+	proc_remove(afs_proc_symlink);
- 	afs_fs_exit();
--	afs_net_exit(&__afs_net);
-+	unregister_pernet_subsys(&afs_net_ops);
- #ifdef CONFIG_AFS_FSCACHE
- 	fscache_unregister_netfs(&afs_cache_netfs);
- #endif
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 839a22280606..cc7c48a5b743 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -17,14 +17,16 @@
- #include <linux/uaccess.h>
- #include "internal.h"
- 
--static inline struct afs_net *afs_proc2net(struct file *f)
-+static inline struct afs_net *afs_proc2net_get(struct file *f)
- {
--	return &__afs_net;
-+	struct net *net_ns = get_proc_net(file_inode(f));
-+
-+	return net_ns ? afs_net(net_ns) : NULL;
- }
- 
- static inline struct afs_net *afs_seq2net(struct seq_file *m)
- {
--	return &__afs_net; // TODO: use seq_file_net(m)
-+	return afs_net(seq_file_net(m));
- }
- 
- static int afs_proc_cells_open(struct inode *inode, struct file *file);
-@@ -161,7 +163,7 @@ int afs_proc_init(struct afs_net *net)
- {
- 	_enter("");
- 
--	net->proc_afs = proc_mkdir("fs/afs", NULL);
-+	net->proc_afs = proc_net_mkdir(net->net, "afs", net->net->proc_net);
- 	if (!net->proc_afs)
- 		goto error_dir;
- 
-@@ -196,16 +198,8 @@ void afs_proc_cleanup(struct afs_net *net)
-  */
- static int afs_proc_cells_open(struct inode *inode, struct file *file)
- {
--	struct seq_file *m;
--	int ret;
--
--	ret = seq_open(file, &afs_proc_cells_ops);
--	if (ret < 0)
--		return ret;
--
--	m = file->private_data;
--	m->private = PDE_DATA(inode);
--	return 0;
-+	return seq_open_net(inode, file, &afs_proc_cells_ops,
-+			    sizeof(struct seq_net_private));
- }
- 
- /*
-@@ -266,7 +260,8 @@ static int afs_proc_cells_show(struct seq_file *m, void *v)
- static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- 				    size_t size, loff_t *_pos)
- {
--	struct afs_net *net = afs_proc2net(file);
-+	struct afs_net *net;
-+	struct net *net_ns = NULL;
- 	char *kbuf, *name, *args;
- 	int ret;
- 
-@@ -305,6 +300,12 @@ static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- 	/* determine command to perform */
- 	_debug("cmd=%s name=%s args=%s", kbuf, name, args);
- 
-+	ret = -ESTALE;
-+	net_ns = get_proc_net(file_inode(file));
-+	if (!net_ns)
-+		goto done;
-+	net = afs_net(net_ns);
-+
- 	if (strcmp(kbuf, "add") == 0) {
- 		struct afs_cell *cell;
- 
-@@ -324,6 +325,7 @@ static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- 	ret = size;
- 
- done:
-+	put_net(net_ns);
- 	kfree(kbuf);
- 	_leave(" = %d", ret);
- 	return ret;
-@@ -338,15 +340,24 @@ static ssize_t afs_proc_rootcell_read(struct file *file, char __user *buf,
- 				      size_t size, loff_t *_pos)
- {
- 	struct afs_cell *cell;
--	struct afs_net *net = afs_proc2net(file);
-+	struct afs_net *net;
-+	struct net *net_ns = NULL;
- 	unsigned int seq = 0;
- 	char name[AFS_MAXCELLNAME + 1];
- 	int len;
- 
- 	if (*_pos > 0)
- 		return 0;
--	if (!net->ws_cell)
--		return 0;
-+
-+	net_ns = get_proc_net(file_inode(file));
-+	if (!net_ns)
-+		return -ESTALE;
-+	net = afs_net(net_ns);
-+
-+	if (!net->ws_cell) {
-+		len = 0;
-+		goto out;
-+	}
- 
- 	rcu_read_lock();
- 	do {
-@@ -362,14 +373,18 @@ static ssize_t afs_proc_rootcell_read(struct file *file, char __user *buf,
- 	rcu_read_unlock();
- 
- 	if (!len)
--		return 0;
-+		goto out;
- 
- 	name[len++] = '\n';
- 	if (len > size)
- 		len = size;
--	if (copy_to_user(buf, name, len) != 0)
--		return -EFAULT;
-+	if (copy_to_user(buf, name, len) != 0) {
-+		len = -EFAULT;
-+		goto out;
-+	}
- 	*_pos = 1;
-+out:
-+	put_net(net_ns);
- 	return len;
- }
- 
-@@ -381,7 +396,8 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- 				       const char __user *buf,
- 				       size_t size, loff_t *_pos)
- {
--	struct afs_net *net = afs_proc2net(file);
-+	struct afs_net *net;
-+	struct net *net_ns = NULL;
- 	char *kbuf, *s;
- 	int ret;
- 
-@@ -407,6 +423,12 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- 	/* determine command to perform */
- 	_debug("rootcell=%s", kbuf);
- 
-+	ret = -ESTALE;
-+	net_ns = get_proc_net(file_inode(file));
-+	if (!net_ns)
-+		goto out;
-+	net = afs_net(net_ns);
-+
- 	ret = afs_cell_init(net, kbuf);
- 	if (ret >= 0)
- 		ret = size;	/* consume everything, always */
-@@ -420,13 +442,14 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- /*
-  * initialise /proc/fs/afs/<cell>/
-  */
--int afs_proc_cell_setup(struct afs_net *net, struct afs_cell *cell)
-+int afs_proc_cell_setup(struct afs_cell *cell)
- {
- 	struct proc_dir_entry *dir;
-+	struct afs_net *net = cell->net;
- 
- 	_enter("%p{%s},%p", cell, cell->name, net->proc_afs);
- 
--	dir = proc_mkdir(cell->name, net->proc_afs);
-+	dir = proc_net_mkdir(net->net, cell->name, net->proc_afs);
- 	if (!dir)
- 		goto error_dir;
- 
-@@ -449,12 +472,12 @@ int afs_proc_cell_setup(struct afs_net *net, struct afs_cell *cell)
- /*
-  * remove /proc/fs/afs/<cell>/
-  */
--void afs_proc_cell_remove(struct afs_net *net, struct afs_cell *cell)
-+void afs_proc_cell_remove(struct afs_cell *cell)
- {
--	_enter("");
-+	struct afs_net *net = cell->net;
- 
-+	_enter("");
- 	remove_proc_subtree(cell->name, net->proc_afs);
--
- 	_leave("");
- }
- 
-@@ -471,7 +494,8 @@ static int afs_proc_cell_volumes_open(struct inode *inode, struct file *file)
- 	if (!cell)
- 		return -ENOENT;
- 
--	ret = seq_open(file, &afs_proc_cell_volumes_ops);
-+	ret = seq_open_net(inode, file, &afs_proc_cell_volumes_ops,
-+			   sizeof(struct seq_net_private));
- 	if (ret < 0)
- 		return ret;
- 
-@@ -560,7 +584,8 @@ static int afs_proc_cell_vlservers_open(struct inode *inode, struct file *file)
- 	if (!cell)
- 		return -ENOENT;
- 
--	ret = seq_open(file, &afs_proc_cell_vlservers_ops);
-+	ret = seq_open_net(inode, file, &afs_proc_cell_vlservers_ops,
-+			   sizeof(struct seq_net_private));
- 	if (ret<0)
- 		return ret;
- 
-@@ -649,7 +674,8 @@ static int afs_proc_cell_vlservers_show(struct seq_file *m, void *v)
-  */
- static int afs_proc_servers_open(struct inode *inode, struct file *file)
- {
--	return seq_open(file, &afs_proc_servers_ops);
-+	return seq_open_net(inode, file, &afs_proc_servers_ops,
-+			    sizeof(struct seq_net_private));
- }
- 
- /*
-@@ -729,7 +755,8 @@ static int afs_proc_sysname_open(struct inode *inode, struct file *file)
- 	struct seq_file *m;
- 	int ret;
- 
--	ret = seq_open(file, &afs_proc_sysname_ops);
-+	ret = seq_open_net(inode, file, &afs_proc_sysname_ops,
-+			   sizeof(struct seq_net_private));
- 	if (ret < 0)
- 		return ret;
- 
+-extern struct afs_volume *afs_create_volume(struct afs_mount_params *);
++extern struct afs_volume *afs_create_volume(struct afs_fs_context *);
+ extern void afs_activate_volume(struct afs_volume *);
+ extern void afs_deactivate_volume(struct afs_volume *);
+ extern void afs_put_volume(struct afs_cell *, struct afs_volume *);
 diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 6ab0b79e061e..f56070a9c606 100644
+index 7d17d01ca0cd..6ab0b79e061e 100644
 --- a/fs/afs/super.c
 +++ b/fs/afs/super.c
-@@ -48,6 +48,8 @@ struct file_system_type afs_fs_type = {
+@@ -30,22 +30,21 @@
+ #include "internal.h"
+ 
+ static void afs_i_init_once(void *foo);
+-static struct dentry *afs_mount(struct file_system_type *fs_type,
+-				int flags, const char *dev_name,
+-				void *data, size_t data_size);
+ static void afs_kill_super(struct super_block *sb);
+ static struct inode *afs_alloc_inode(struct super_block *sb);
+ static void afs_destroy_inode(struct inode *inode);
+ static int afs_statfs(struct dentry *dentry, struct kstatfs *buf);
+ static int afs_show_devname(struct seq_file *m, struct dentry *root);
+ static int afs_show_options(struct seq_file *m, struct dentry *root);
++static int afs_init_fs_context(struct fs_context *fc, struct super_block *src_sb);
+ 
+ struct file_system_type afs_fs_type = {
+-	.owner		= THIS_MODULE,
+-	.name		= "afs",
+-	.mount		= afs_mount,
+-	.kill_sb	= afs_kill_super,
+-	.fs_flags	= 0,
++	.owner			= THIS_MODULE,
++	.name			= "afs",
++	.fs_context_size	= sizeof(struct afs_fs_context),
++	.init_fs_context	= afs_init_fs_context,
++	.kill_sb		= afs_kill_super,
++	.fs_flags		= 0,
  };
  MODULE_ALIAS_FS("afs");
  
-+int afs_net_id;
-+
- static const struct super_operations afs_super_ops = {
- 	.statfs		= afs_statfs,
- 	.alloc_inode	= afs_alloc_inode,
-@@ -117,7 +119,7 @@ int __init afs_fs_init(void)
- /*
-  * clean up the filesystem
-  */
--void __exit afs_fs_exit(void)
-+void afs_fs_exit(void)
- {
- 	_enter("");
+@@ -189,61 +188,53 @@ static int afs_show_options(struct seq_file *m, struct dentry *root)
+ }
  
-@@ -391,7 +393,7 @@ static int afs_test_super(struct super_block *sb, struct fs_context *fc)
- 	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
+ /*
+- * parse the mount options
+- * - this function has been shamelessly adapted from the ext3 fs which
+- *   shamelessly adapted it from the msdos fs
++ * Parse an single mount option.
+  */
+-static int afs_parse_options(struct afs_mount_params *params,
+-			     char *options, const char **devname)
++static int afs_parse_option(struct fs_context *fc, char *opt, size_t len)
+ {
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
+ 	struct afs_cell *cell;
+ 	substring_t args[MAX_OPT_ARGS];
+-	char *p;
+-	int token;
+-
+-	_enter("%s", options);
+-
+-	options[PAGE_SIZE - 1] = 0;
+-
+-	while ((p = strsep(&options, ","))) {
+-		if (!*p)
+-			continue;
+-
+-		token = match_token(p, afs_options_list, args);
+-		switch (token) {
+-		case afs_opt_cell:
+-			rcu_read_lock();
+-			cell = afs_lookup_cell_rcu(params->net,
+-						   args[0].from,
+-						   args[0].to - args[0].from);
+-			rcu_read_unlock();
+-			if (IS_ERR(cell))
+-				return PTR_ERR(cell);
+-			afs_put_cell(params->net, params->cell);
+-			params->cell = cell;
+-			break;
+-
+-		case afs_opt_rwpath:
+-			params->rwpath = true;
+-			break;
+-
+-		case afs_opt_vol:
+-			*devname = args[0].from;
+-			break;
+-
+-		case afs_opt_autocell:
+-			params->autocell = true;
+-			break;
+-
+-		case afs_opt_dyn:
+-			params->dyn_root = true;
+-			break;
+-
+-		default:
+-			printk(KERN_ERR "kAFS:"
+-			       " Unknown or invalid mount option: '%s'\n", p);
++	int token, size;
++
++	_enter("%s", opt);
++
++	token = match_token(opt, afs_options_list, args);
++	switch (token) {
++	case afs_opt_cell:
++		size = args[0].to - args[0].from;
++		if (size <= 0)
+ 			return -EINVAL;
+-		}
++		if (size > AFS_MAXCELLNAME)
++			return -ENAMETOOLONG;
++
++		rcu_read_lock();
++		cell = afs_lookup_cell_rcu(ctx->net, args[0].from, size);
++		rcu_read_unlock();
++		if (IS_ERR(cell))
++			return PTR_ERR(cell);
++		afs_put_cell(ctx->net, ctx->cell);
++		ctx->cell = cell;
++		break;
++
++	case afs_opt_rwpath:
++		ctx->rwpath = true;
++		break;
++
++	case afs_opt_vol:
++		return -EINVAL; /* Not required for automount */
++
++	case afs_opt_autocell:
++		ctx->autocell = true;
++		break;
++
++	case afs_opt_dyn:
++		ctx->dyn_root = true;
++		break;
++
++	default:
++		printk(KERN_ERR "kAFS: Unknown or invalid mount option: '%s'\n", opt);
++		return -EINVAL;
+ 	}
+ 
+ 	_leave(" = 0");
+@@ -251,9 +242,10 @@ static int afs_parse_options(struct afs_mount_params *params,
+ }
+ 
+ /*
+- * parse a device name to get cell name, volume name, volume type and R/W
+- * selector
+- * - this can be one of the following:
++ * Parse the source name to get cell name, volume name, volume type and R/W
++ * selector.
++ *
++ * This can be one of the following:
+  *	"%[cell:]volume[.]"		R/W volume
+  *	"#[cell:]volume[.]"		R/O or R/W volume (rwpath=0),
+  *					 or R/W (rwpath=1) volume
+@@ -262,11 +254,11 @@ static int afs_parse_options(struct afs_mount_params *params,
+  *	"%[cell:]volume.backup"		Backup volume
+  *	"#[cell:]volume.backup"		Backup volume
+  */
+-static int afs_parse_device_name(struct afs_mount_params *params,
+-				 const char *name)
++static int afs_parse_source(struct fs_context *fc)
+ {
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
+ 	struct afs_cell *cell;
+-	const char *cellname, *suffix;
++	const char *cellname, *suffix, *name = fc->source;
+ 	int cellnamesz;
+ 
+ 	_enter(",%s", name);
+@@ -277,69 +269,116 @@ static int afs_parse_device_name(struct afs_mount_params *params,
+ 	}
+ 
+ 	if ((name[0] != '%' && name[0] != '#') || !name[1]) {
++		/* To use dynroot, we don't want to have to provide a source */
++		if (strcmp(name, "none") == 0) {
++			ctx->no_cell = true;
++			return 0;
++		}
+ 		printk(KERN_ERR "kAFS: unparsable volume name\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* determine the type of volume we're looking for */
+-	params->type = AFSVL_ROVOL;
+-	params->force = false;
+-	if (params->rwpath || name[0] == '%') {
+-		params->type = AFSVL_RWVOL;
+-		params->force = true;
++	ctx->type = AFSVL_ROVOL;
++	ctx->force = false;
++	if (ctx->rwpath || name[0] == '%') {
++		ctx->type = AFSVL_RWVOL;
++		ctx->force = true;
+ 	}
+ 	name++;
+ 
+ 	/* split the cell name out if there is one */
+-	params->volname = strchr(name, ':');
+-	if (params->volname) {
++	ctx->volname = strchr(name, ':');
++	if (ctx->volname) {
+ 		cellname = name;
+-		cellnamesz = params->volname - name;
+-		params->volname++;
++		cellnamesz = ctx->volname - name;
++		ctx->volname++;
+ 	} else {
+-		params->volname = name;
++		ctx->volname = name;
+ 		cellname = NULL;
+ 		cellnamesz = 0;
+ 	}
+ 
+ 	/* the volume type is further affected by a possible suffix */
+-	suffix = strrchr(params->volname, '.');
++	suffix = strrchr(ctx->volname, '.');
+ 	if (suffix) {
+ 		if (strcmp(suffix, ".readonly") == 0) {
+-			params->type = AFSVL_ROVOL;
+-			params->force = true;
++			ctx->type = AFSVL_ROVOL;
++			ctx->force = true;
+ 		} else if (strcmp(suffix, ".backup") == 0) {
+-			params->type = AFSVL_BACKVOL;
+-			params->force = true;
++			ctx->type = AFSVL_BACKVOL;
++			ctx->force = true;
+ 		} else if (suffix[1] == 0) {
+ 		} else {
+ 			suffix = NULL;
+ 		}
+ 	}
+ 
+-	params->volnamesz = suffix ?
+-		suffix - params->volname : strlen(params->volname);
++	ctx->volnamesz = suffix ?
++		suffix - ctx->volname : strlen(ctx->volname);
+ 
+ 	_debug("cell %*.*s [%p]",
+-	       cellnamesz, cellnamesz, cellname ?: "", params->cell);
++	       cellnamesz, cellnamesz, cellname ?: "", ctx->cell);
+ 
+ 	/* lookup the cell record */
+-	if (cellname || !params->cell) {
+-		cell = afs_lookup_cell(params->net, cellname, cellnamesz,
++	if (cellname) {
++		cell = afs_lookup_cell(ctx->net, cellname, cellnamesz,
+ 				       NULL, false);
+ 		if (IS_ERR(cell)) {
+-			printk(KERN_ERR "kAFS: unable to lookup cell '%*.*s'\n",
++			pr_err("kAFS: unable to lookup cell '%*.*s'\n",
+ 			       cellnamesz, cellnamesz, cellname ?: "");
+ 			return PTR_ERR(cell);
+ 		}
+-		afs_put_cell(params->net, params->cell);
+-		params->cell = cell;
++		afs_put_cell(ctx->net, ctx->cell);
++		ctx->cell = cell;
+ 	}
+ 
+ 	_debug("CELL:%s [%p] VOLUME:%*.*s SUFFIX:%s TYPE:%d%s",
+-	       params->cell->name, params->cell,
+-	       params->volnamesz, params->volnamesz, params->volname,
+-	       suffix ?: "-", params->type, params->force ? " FORCE" : "");
++	       ctx->cell->name, ctx->cell,
++	       ctx->volnamesz, ctx->volnamesz, ctx->volname,
++	       suffix ?: "-", ctx->type, ctx->force ? " FORCE" : "");
++
++	return 0;
++}
++
++/*
++ * Validate the options, get the cell key and look up the volume.
++ */
++static int afs_validate_fc(struct fs_context *fc)
++{
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
++	struct afs_volume *volume;
++	struct key *key;
++
++	if (!ctx->dyn_root) {
++		if (ctx->no_cell) {
++			pr_warn("kAFS: Can only specify source 'none' with -o dyn\n");
++			return -EINVAL;
++		}
++
++		if (!ctx->cell) {
++			pr_warn("kAFS: No cell specified\n");
++			return -EDESTADDRREQ;
++		}
++
++		/* We try to do the mount securely. */
++		key = afs_request_key(ctx->cell);
++		if (IS_ERR(key))
++			return PTR_ERR(key);
++
++		ctx->key = key;
++
++		if (ctx->volume) {
++			afs_put_volume(ctx->cell, ctx->volume);
++			ctx->volume = NULL;
++		}
++
++		volume = afs_create_volume(ctx);
++		if (IS_ERR(volume))
++			return PTR_ERR(volume);
++
++		ctx->volume = volume;
++	}
+ 
+ 	return 0;
+ }
+@@ -347,34 +386,34 @@ static int afs_parse_device_name(struct afs_mount_params *params,
+ /*
+  * check a superblock to see if it's the one we're looking for
+  */
+-static int afs_test_super(struct super_block *sb, void *data)
++static int afs_test_super(struct super_block *sb, struct fs_context *fc)
+ {
+-	struct afs_super_info *as1 = data;
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
  	struct afs_super_info *as = AFS_FS_S(sb);
  
--	return (as->net == ctx->net &&
-+	return (as->net_ns == ctx->fc.net_ns &&
+-	return (as->net == as1->net &&
++	return (as->net == ctx->net &&
  		as->volume &&
- 		as->volume->vid == ctx->volume->vid);
+-		as->volume->vid == as1->volume->vid);
++		as->volume->vid == ctx->volume->vid);
  }
-@@ -477,7 +479,7 @@ static struct afs_super_info *afs_alloc_sbi(struct afs_fs_context *ctx)
+ 
+-static int afs_dynroot_test_super(struct super_block *sb, void *data)
++static int afs_dynroot_test_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	return false;
+ }
+ 
+-static int afs_set_super(struct super_block *sb, void *data)
++static int afs_set_super(struct super_block *sb, struct fs_context *fc)
+ {
+-	struct afs_super_info *as = data;
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
+ 
+-	sb->s_fs_info = as;
++	sb->s_fs_info = ctx->as;
++	ctx->as = NULL;
+ 	return set_anon_super(sb, NULL);
+ }
+ 
+ /*
+  * fill in the superblock
+  */
+-static int afs_fill_super(struct super_block *sb,
+-			  struct afs_mount_params *params)
++static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
+ {
+ 	struct afs_super_info *as = AFS_FS_S(sb);
+ 	struct afs_fid fid;
+@@ -405,13 +444,13 @@ static int afs_fill_super(struct super_block *sb,
+ 		fid.vid		= as->volume->vid;
+ 		fid.vnode	= 1;
+ 		fid.unique	= 1;
+-		inode = afs_iget(sb, params->key, &fid, NULL, NULL, NULL);
++		inode = afs_iget(sb, ctx->key, &fid, NULL, NULL, NULL);
+ 	}
+ 
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+ 
+-	if (params->autocell || params->dyn_root)
++	if (ctx->autocell || as->dyn_root)
+ 		set_bit(AFS_VNODE_AUTOCELL, &AFS_FS_I(inode)->flags);
+ 
+ 	ret = -ENOMEM;
+@@ -419,7 +458,7 @@ static int afs_fill_super(struct super_block *sb,
+ 	if (!sb->s_root)
+ 		goto error;
+ 
+-	if (params->dyn_root)
++	if (as->dyn_root)
+ 		sb->s_d_op = &afs_dynroot_dentry_operations;
+ 	else
+ 		sb->s_d_op = &afs_fs_dentry_operations;
+@@ -432,17 +471,19 @@ static int afs_fill_super(struct super_block *sb,
+ 	return ret;
+ }
+ 
+-static struct afs_super_info *afs_alloc_sbi(struct afs_mount_params *params)
++static struct afs_super_info *afs_alloc_sbi(struct afs_fs_context *ctx)
+ {
+ 	struct afs_super_info *as;
  
  	as = kzalloc(sizeof(struct afs_super_info), GFP_KERNEL);
  	if (as) {
--		as->net = afs_get_net(ctx->net);
-+		as->net_ns = get_net(ctx->fc.net_ns);
- 		if (ctx->dyn_root) {
+-		as->net = afs_get_net(params->net);
+-		if (params->dyn_root)
++		as->net = afs_get_net(ctx->net);
++		if (ctx->dyn_root) {
  			as->dyn_root = true;
- 		} else {
-@@ -492,8 +494,8 @@ static void afs_destroy_sbi(struct afs_super_info *as)
- {
- 	if (as) {
- 		afs_put_volume(as->cell, as->volume);
--		afs_put_cell(as->net, as->cell);
--		afs_put_net(as->net);
-+		afs_put_cell(afs_net(as->net_ns), as->cell);
-+		put_net(as->net_ns);
- 		kfree(as);
- 	}
- }
-@@ -506,7 +508,8 @@ static void afs_kill_super(struct super_block *sb)
- 	 * deactivating the superblock.
- 	 */
- 	if (as->volume)
--		afs_clear_callback_interests(as->net, as->volume->servers);
-+		afs_clear_callback_interests(afs_net(as->net_ns),
-+					     as->volume->servers);
- 	kill_anon_super(sb);
- 	if (as->volume)
- 		afs_deactivate_volume(as->volume);
-@@ -574,7 +577,6 @@ static void afs_free_fc(struct fs_context *fc)
- 
- 	afs_put_volume(ctx->cell, ctx->volume);
- 	afs_put_cell(ctx->net, ctx->cell);
--	afs_put_net(ctx->net);
- 	afs_destroy_sbi(ctx->as);
- 	key_put(ctx->key);
- }
-@@ -595,19 +597,19 @@ static int afs_init_fs_context(struct fs_context *fc, struct super_block *src_sb
- 	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
- 	struct afs_super_info *src_as;
- 	struct afs_cell *cell;
-+	struct net *net_ns;
- 
- 	if (current->nsproxy->net_ns != &init_net)
- 		return -EINVAL;
-+	ctx->type = AFSVL_ROVOL;
- 
--	if (src_sb) {
--		src_as = AFS_FS_S(src_sb);
--		if (src_as) {
--			ctx->net    = afs_get_net(src_as->net);
--			ctx->cell   = afs_get_cell(src_as->cell);
--			ctx->volume = __afs_get_volume(src_as->volume);
--		}
--	} else {
--		ctx->net = afs_get_net(&__afs_net);
-+	switch (ctx->fc.purpose) {
-+	case FS_CONTEXT_FOR_USER_MOUNT:
-+	case FS_CONTEXT_FOR_KERNEL_MOUNT:
-+		ctx->fc.net_ns = maybe_get_net(current->nsproxy->net_ns);
-+		if (!ctx->fc.net_ns)
-+			return -ESTALE;
-+		ctx->net = afs_net(ctx->fc.net_ns);
- 
- 		/* Default to the workstation cell. */
- 		rcu_read_lock();
-@@ -616,6 +618,30 @@ static int afs_init_fs_context(struct fs_context *fc, struct super_block *src_sb
- 		if (IS_ERR(cell))
- 			cell = NULL;
- 		ctx->cell = cell;
-+		break;
-+
-+	case FS_CONTEXT_FOR_SUBMOUNT:
-+		if (!src_sb)
-+			return -EINVAL;
-+
-+		src_as = AFS_FS_S(src_sb);
-+		ASSERT(src_as);
-+
-+		net_ns = maybe_get_net(src_as->net_ns);
-+		if (!net_ns)
-+			return -ESTALE;
-+		ctx->fc.net_ns = net_ns;
-+		ctx->net = afs_net(net_ns);
-+		if (src_as->cell)
-+			ctx->cell = afs_get_cell(src_as->cell);
-+		if (src_as->volume && src_as->volume->type == AFSVL_RWVOL) {
-+			ctx->type = AFSVL_RWVOL;
-+			ctx->force = true;
+-		else
+-			as->cell = afs_get_cell(params->cell);
++		} else {
++			as->cell = afs_get_cell(ctx->cell);
++			as->volume = __afs_get_volume(ctx->volume);
 +		}
-+		break;
+ 	}
+ 	return as;
+ }
+@@ -457,127 +498,128 @@ static void afs_destroy_sbi(struct afs_super_info *as)
+ 	}
+ }
+ 
++static void afs_kill_super(struct super_block *sb)
++{
++	struct afs_super_info *as = AFS_FS_S(sb);
 +
-+	case FS_CONTEXT_FOR_RECONFIGURE:
-+		break;
++	/* Clear the callback interests (which will do ilookup5) before
++	 * deactivating the superblock.
++	 */
++	if (as->volume)
++		afs_clear_callback_interests(as->net, as->volume->servers);
++	kill_anon_super(sb);
++	if (as->volume)
++		afs_deactivate_volume(as->volume);
++	afs_destroy_sbi(as);
++}
++
+ /*
+- * get an AFS superblock
++ * Get an AFS superblock and root directory.
+  */
+-static struct dentry *afs_mount(struct file_system_type *fs_type,
+-				int flags, const char *dev_name,
+-				void *options, size_t data_size)
++static int afs_get_tree(struct fs_context *fc)
+ {
+-	struct afs_mount_params params;
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
+ 	struct super_block *sb;
+-	struct afs_volume *candidate;
+-	struct key *key;
+ 	struct afs_super_info *as;
+ 	int ret;
+ 
+-	_enter(",,%s,%p", dev_name, options);
+-
+-	memset(&params, 0, sizeof(params));
+-	params.net = &__afs_net;
+-
+-	ret = -EINVAL;
+-	if (current->nsproxy->net_ns != &init_net)
+-		goto error;
+-
+-	/* parse the options and device name */
+-	if (options) {
+-		ret = afs_parse_options(&params, options, &dev_name);
+-		if (ret < 0)
+-			goto error;
+-	}
+-
+-	if (!params.dyn_root) {
+-		ret = afs_parse_device_name(&params, dev_name);
+-		if (ret < 0)
+-			goto error;
+-
+-		/* try and do the mount securely */
+-		key = afs_request_key(params.cell);
+-		if (IS_ERR(key)) {
+-			_leave(" = %ld [key]", PTR_ERR(key));
+-			ret = PTR_ERR(key);
+-			goto error;
+-		}
+-		params.key = key;
+-	}
++	_enter("%s", fc->source);
+ 
+ 	/* allocate a superblock info record */
+-	ret = -ENOMEM;
+-	as = afs_alloc_sbi(&params);
+-	if (!as)
+-		goto error_key;
+-
+-	if (!params.dyn_root) {
+-		/* Assume we're going to need a volume record; at the very
+-		 * least we can use it to update the volume record if we have
+-		 * one already.  This checks that the volume exists within the
+-		 * cell.
+-		 */
+-		candidate = afs_create_volume(&params);
+-		if (IS_ERR(candidate)) {
+-			ret = PTR_ERR(candidate);
+-			goto error_as;
+-		}
+-
+-		as->volume = candidate;
++	as = ctx->as;
++	if (!as) {
++		ret = -ENOMEM;
++		as = afs_alloc_sbi(ctx);
++		if (!as)
++			goto error;
++		ctx->as = as;
  	}
  
- 	ctx->fc.ops = &afs_context_ops;
+ 	/* allocate a deviceless superblock */
+-	sb = sget(fs_type,
+-		  as->dyn_root ? afs_dynroot_test_super : afs_test_super,
+-		  afs_set_super, flags, as);
++	sb = sget_fc(fc,
++		     as->dyn_root ? afs_dynroot_test_super : afs_test_super,
++		     afs_set_super);
+ 	if (IS_ERR(sb)) {
+ 		ret = PTR_ERR(sb);
+-		goto error_as;
++		goto error;
+ 	}
+ 
+ 	if (!sb->s_root) {
+ 		/* initial superblock/root creation */
+ 		_debug("create");
+-		ret = afs_fill_super(sb, &params);
++		ret = afs_fill_super(sb, ctx);
+ 		if (ret < 0)
+ 			goto error_sb;
+-		as = NULL;
+ 		sb->s_flags |= SB_ACTIVE;
+ 	} else {
+ 		_debug("reuse");
+ 		ASSERTCMP(sb->s_flags, &, SB_ACTIVE);
+-		afs_destroy_sbi(as);
+-		as = NULL;
+ 	}
+ 
+-	afs_put_cell(params.net, params.cell);
+-	key_put(params.key);
++	ctx->fc.root = dget(sb->s_root);
++	ctx->fc.drop_sb = true;
+ 	_leave(" = 0 [%p]", sb);
+-	return dget(sb->s_root);
++	return 0;
+ 
+ error_sb:
+ 	deactivate_locked_super(sb);
+-	goto error_key;
+-error_as:
+-	afs_destroy_sbi(as);
+-error_key:
+-	key_put(params.key);
+ error:
+-	afs_put_cell(params.net, params.cell);
+ 	_leave(" = %d", ret);
+-	return ERR_PTR(ret);
++	return ret;
+ }
+ 
+-static void afs_kill_super(struct super_block *sb)
++static void afs_free_fc(struct fs_context *fc)
+ {
+-	struct afs_super_info *as = AFS_FS_S(sb);
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
+ 
+-	/* Clear the callback interests (which will do ilookup5) before
+-	 * deactivating the superblock.
+-	 */
+-	if (as->volume)
+-		afs_clear_callback_interests(as->net, as->volume->servers);
+-	kill_anon_super(sb);
+-	if (as->volume)
+-		afs_deactivate_volume(as->volume);
+-	afs_destroy_sbi(as);
++	afs_put_volume(ctx->cell, ctx->volume);
++	afs_put_cell(ctx->net, ctx->cell);
++	afs_put_net(ctx->net);
++	afs_destroy_sbi(ctx->as);
++	key_put(ctx->key);
++}
++
++static const struct fs_context_operations afs_context_ops = {
++	.free		= afs_free_fc,
++	.parse_source	= afs_parse_source,
++	.parse_option	= afs_parse_option,
++	.validate	= afs_validate_fc,
++	.get_tree	= afs_get_tree,
++};
++
++/*
++ * Set up the filesystem mount context.
++ */
++static int afs_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
++{
++	struct afs_fs_context *ctx = container_of(fc, struct afs_fs_context, fc);
++	struct afs_super_info *src_as;
++	struct afs_cell *cell;
++
++	if (current->nsproxy->net_ns != &init_net)
++		return -EINVAL;
++
++	if (src_sb) {
++		src_as = AFS_FS_S(src_sb);
++		if (src_as) {
++			ctx->net    = afs_get_net(src_as->net);
++			ctx->cell   = afs_get_cell(src_as->cell);
++			ctx->volume = __afs_get_volume(src_as->volume);
++		}
++	} else {
++		ctx->net = afs_get_net(&__afs_net);
++
++		/* Default to the workstation cell. */
++		rcu_read_lock();
++		cell = afs_lookup_cell_rcu(ctx->net, NULL, 0);
++		rcu_read_unlock();
++		if (IS_ERR(cell))
++			cell = NULL;
++		ctx->cell = cell;
++	}
++
++	ctx->fc.ops = &afs_context_ops;
++	return 0;
+ }
+ 
+ /*
+diff --git a/fs/afs/volume.c b/fs/afs/volume.c
+index 3037bd01f617..7adcddf02e66 100644
+--- a/fs/afs/volume.c
++++ b/fs/afs/volume.c
+@@ -21,7 +21,7 @@ static const char *const afs_voltypes[] = { "R/W", "R/O", "BAK" };
+ /*
+  * Allocate a volume record and load it up from a vldb record.
+  */
+-static struct afs_volume *afs_alloc_volume(struct afs_mount_params *params,
++static struct afs_volume *afs_alloc_volume(struct afs_fs_context *params,
+ 					   struct afs_vldb_entry *vldb,
+ 					   unsigned long type_mask)
+ {
+@@ -149,7 +149,7 @@ static struct afs_vldb_entry *afs_vl_lookup_vldb(struct afs_cell *cell,
+  * - Rule 3: If parent volume is R/W, then only mount R/W volume unless
+  *           explicitly told otherwise
+  */
+-struct afs_volume *afs_create_volume(struct afs_mount_params *params)
++struct afs_volume *afs_create_volume(struct afs_fs_context *params)
+ {
+ 	struct afs_vldb_entry *vldb;
+ 	struct afs_volume *volume;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
