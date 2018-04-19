@@ -1,135 +1,228 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Apr 2018 14:31:43 +0100
-Subject: [PATCH 06/24] tomoyo: Implement security hooks for the new mount
+Date: Thu, 19 Apr 2018 14:31:37 +0100
+Subject: [PATCH 05/24] apparmor: Implement security hooks for the new mount
 	API [ver #7]
 In-Reply-To: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
 References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-Message-ID: <152414470395.23902.11628004819389905696.stgit@warthog.procyon.org.uk>
+Message-ID: <152414469709.23902.10439448759049886690.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Implement the security hook to check the creation of a new mountpoint for
-Tomoyo.
+Implement hooks to check the creation of new mountpoints for AppArmor.
 
-As far as I can tell, Tomoyo doesn't make use of the mount data or parse
-any mount options, so I haven't implemented any of the fs_context hooks for
-it.
+Unfortunately, the DFA evaluation puts the option data in last, after the
+details of the mountpoint, so we have to cache the mount options in the
+fs_context using those hooks till we get to the new mountpoint hook.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-cc: tomoyo-dev-en at lists.sourceforge.jp
+cc: John Johansen <john.johansen@canonical.com>
+cc: apparmor at lists.ubuntu.com
 cc: linux-security-module at vger.kernel.org
 ---
 
- security/tomoyo/common.h |    3 +++
- security/tomoyo/mount.c  |   42 ++++++++++++++++++++++++++++++++++++++++++
- security/tomoyo/tomoyo.c |   15 +++++++++++++++
- 3 files changed, 60 insertions(+)
+ security/apparmor/include/mount.h |   11 +++++
+ security/apparmor/lsm.c           |   80 +++++++++++++++++++++++++++++++++++++
+ security/apparmor/mount.c         |   46 +++++++++++++++++++++
+ 3 files changed, 135 insertions(+), 2 deletions(-)
 
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 539bcdd30bb8..e637ce73f7f9 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -971,6 +971,9 @@ int tomoyo_init_request_info(struct tomoyo_request_info *r,
- 			     const u8 index);
- int tomoyo_mkdev_perm(const u8 operation, const struct path *path,
- 		      const unsigned int mode, unsigned int dev);
-+int tomoyo_mount_permission_fc(struct fs_context *fc,
-+			       const struct path *mountpoint,
-+			       unsigned int mnt_flags);
- int tomoyo_mount_permission(const char *dev_name, const struct path *path,
- 			    const char *type, unsigned long flags,
- 			    void *data_page);
-diff --git a/security/tomoyo/mount.c b/security/tomoyo/mount.c
-index 7dc7f59b7dde..e2e1cb203775 100644
---- a/security/tomoyo/mount.c
-+++ b/security/tomoyo/mount.c
-@@ -6,6 +6,7 @@
-  */
+diff --git a/security/apparmor/include/mount.h b/security/apparmor/include/mount.h
+index 25d6067fa6ef..0441bfae30fa 100644
+--- a/security/apparmor/include/mount.h
++++ b/security/apparmor/include/mount.h
+@@ -16,6 +16,7 @@
  
- #include <linux/slab.h>
+ #include <linux/fs.h>
+ #include <linux/path.h>
 +#include <linux/fs_context.h>
- #include <uapi/linux/mount.h>
- #include "common.h"
  
-@@ -236,3 +237,44 @@ int tomoyo_mount_permission(const char *dev_name, const struct path *path,
- 	tomoyo_read_unlock(idx);
- 	return error;
+ #include "domain.h"
+ #include "policy.h"
+@@ -27,7 +28,13 @@
+ #define AA_AUDIT_DATA		0x40
+ #define AA_MNT_CONT_MATCH	0x40
+ 
+-#define AA_MS_IGNORE_MASK (MS_KERNMOUNT | MS_NOSEC | MS_ACTIVE | MS_BORN)
++#define AA_SB_IGNORE_MASK (SB_KERNMOUNT | SB_NOSEC | SB_ACTIVE | SB_BORN)
++
++struct apparmor_fs_context {
++	struct fs_context	fc;
++	char			*saved_options;
++	size_t			saved_size;
++};
+ 
+ int aa_remount(struct aa_label *label, const struct path *path,
+ 	       unsigned long flags, void *data);
+@@ -45,6 +52,8 @@ int aa_move_mount(struct aa_label *label, const struct path *path,
+ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 		 const struct path *path, const char *type, unsigned long flags,
+ 		 void *data);
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint);
+ 
+ int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags);
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 9ebc9e9c3854..14398dec2e38 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -518,6 +518,78 @@ static int apparmor_file_mprotect(struct vm_area_struct *vma,
+ 			   !(vma->vm_flags & VM_SHARED) ? MAP_PRIVATE : 0);
  }
-+
-+/**
-+ * tomoyo_mount_permission_fc - Check permission to create a new mount.
-+ * @fc:		Context describing the object to be mounted.
-+ * @mountpoint:	The target object to mount on.
-+ * @mnt:	The MNT_* flags to be set on the mountpoint.
-+ *
-+ * Check the permission to create a mount of the object described in @fc.  Note
-+ * that the source object may be a newly created superblock or may be an
-+ * existing one picked from the filesystem (bind mount).
-+ *
-+ * Returns 0 on success, negative value otherwise.
-+ */
-+int tomoyo_mount_permission_fc(struct fs_context *fc,
-+			       const struct path *mountpoint,
-+			       unsigned int mnt_flags)
+ 
++static int apparmor_fs_context_alloc(struct fs_context *fc, struct super_block *src_sb)
 +{
-+	struct tomoyo_request_info r;
-+	unsigned int ms_flags = 0;
-+	int error;
-+	int idx;
++	struct apparmor_fs_context *afc;
 +
-+	if (tomoyo_init_request_info(&r, NULL, TOMOYO_MAC_FILE_MOUNT) ==
-+	    TOMOYO_CONFIG_DISABLED)
-+		return 0;
++	afc = kzalloc(sizeof(*afc), GFP_KERNEL);
++	if (!afc)
++		return -ENOMEM;
 +
-+	/* Convert MNT_* flags to MS_* equivalents. */
-+	if (mnt_flags & MNT_NOSUID)	ms_flags |= MS_NOSUID;
-+	if (mnt_flags & MNT_NODEV)	ms_flags |= MS_NODEV;
-+	if (mnt_flags & MNT_NOEXEC)	ms_flags |= MS_NOEXEC;
-+	if (mnt_flags & MNT_NOATIME)	ms_flags |= MS_NOATIME;
-+	if (mnt_flags & MNT_NODIRATIME)	ms_flags |= MS_NODIRATIME;
-+	if (mnt_flags & MNT_RELATIME)	ms_flags |= MS_RELATIME;
-+	if (mnt_flags & MNT_READONLY)	ms_flags |= MS_RDONLY;
++	fc->security = afc;
++	return 0;
++}
 +
-+	idx = tomoyo_read_lock();
-+	error = tomoyo_mount_acl(&r, fc->source, mountpoint, fc->fs_type->name,
-+				 ms_flags);
-+	tomoyo_read_unlock(idx);
++static int apparmor_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
++{
++	fc->security = NULL;
++	return 0;
++}
++
++static void apparmor_fs_context_free(struct fs_context *fc)
++{
++	struct apparmor_fs_context *afc = fc->security;
++
++	if (afc) {
++		kfree(afc->saved_options);
++		kfree(afc);
++	}
++}
++
++/*
++ * As a temporary hack, we buffer all the options.  The problem is that we need
++ * to pass them to the DFA evaluator *after* mount point parameters, which
++ * means deferring the entire check to the sb_mountpoint hook.
++ */
++static int apparmor_fs_context_parse_option(struct fs_context *fc, char *opt, size_t len)
++{
++	struct apparmor_fs_context *afc = fc->security;
++	size_t space = 0;
++	char *p, *q;
++
++	if (afc->saved_size > 0)
++		space = 1;
++	
++	p = krealloc(afc->saved_options, afc->saved_size + space + len + 1, GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++
++	q = p + afc->saved_size;
++	if (q != p)
++		*q++ = ' ';
++	memcpy(q, opt, len);
++	q += len;
++	*q = 0;
++
++	afc->saved_options = p;
++	afc->saved_size += 1 + len;
++	return 0;
++}
++
++static int apparmor_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
++				  unsigned int mnt_flags)
++{
++	struct aa_label *label;
++	int error = 0;
++
++	label = __begin_current_label_crit_section();
++	if (!unconfined(label))
++		error = aa_new_mount_fc(label, fc, mountpoint);
++	__end_current_label_crit_section(label);
++
 +	return error;
 +}
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 213b8c593668..31fd6bd4f657 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -391,6 +391,20 @@ static int tomoyo_path_chroot(const struct path *path)
- 	return tomoyo_path_perm(TOMOYO_TYPE_CHROOT, path, NULL);
++
+ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 			     const char *type, unsigned long flags, void *data)
+ {
+@@ -528,7 +600,7 @@ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
+ 		flags &= ~MS_MGC_MSK;
+ 
+-	flags &= ~AA_MS_IGNORE_MASK;
++	flags &= ~AA_SB_IGNORE_MASK;
+ 
+ 	label = __begin_current_label_crit_section();
+ 	if (!unconfined(label)) {
+@@ -1124,6 +1196,12 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(capget, apparmor_capget),
+ 	LSM_HOOK_INIT(capable, apparmor_capable),
+ 
++	LSM_HOOK_INIT(fs_context_alloc, apparmor_fs_context_alloc),
++	LSM_HOOK_INIT(fs_context_dup, apparmor_fs_context_dup),
++	LSM_HOOK_INIT(fs_context_free, apparmor_fs_context_free),
++	LSM_HOOK_INIT(fs_context_parse_option, apparmor_fs_context_parse_option),
++	LSM_HOOK_INIT(sb_mountpoint, apparmor_sb_mountpoint),
++
+ 	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
+ 	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
+ 	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index 45bb769d6cd7..3d477d288627 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -554,6 +554,52 @@ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 	return error;
  }
  
-+/**
-+ * tomoyo_sb_mount - Target for security_sb_mountpoint().
-+ * @fc:		Context describing the object to be mounted.
-+ * @mountpoint:	The target object to mount on.
-+ * @mnt_flags:	Mountpoint specific options (as MNT_* flags).
-+ *
-+ * Returns 0 on success, negative value otherwise.
-+ */
-+static int tomoyo_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+				unsigned int mnt_flags)
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint)
 +{
-+	return tomoyo_mount_permission_fc(fc, mountpoint, mnt_flags);
++	struct apparmor_fs_context *afc = fc->security;
++	struct aa_profile *profile;
++	char *buffer = NULL, *dev_buffer = NULL;
++	bool binary;
++	int error;
++	struct path tmp_path, *dev_path = NULL;
++
++	AA_BUG(!label);
++	AA_BUG(!mountpoint);
++
++	binary = fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA;
++
++	if (fc->fs_type->fs_flags & FS_REQUIRES_DEV) {
++		if (!fc->source)
++			return -ENOENT;
++
++		error = kern_path(fc->source, LOOKUP_FOLLOW, &tmp_path);
++		if (error)
++			return error;
++		dev_path = &tmp_path;
++	}
++
++	get_buffers(buffer, dev_buffer);
++	if (dev_path) {
++		error = fn_for_each_confined(label, profile,
++			match_mnt(profile, mountpoint, buffer, dev_path, dev_buffer,
++				  fc->fs_type->name,
++				  fc->sb_flags & ~AA_SB_IGNORE_MASK,
++				  afc->saved_options, binary));
++	} else {
++		error = fn_for_each_confined(label, profile,
++			match_mnt_path_str(profile, mountpoint, buffer, fc->source,
++					   fc->fs_type->name,
++					   fc->sb_flags & ~AA_SB_IGNORE_MASK,
++					   afc->saved_options, binary, NULL));
++	}
++	put_buffers(buffer, dev_buffer);
++	if (dev_path)
++		path_put(dev_path);
++
++	return error;
 +}
 +
- /**
-  * tomoyo_sb_mount - Target for security_sb_mount().
-  *
-@@ -519,6 +533,7 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(path_chmod, tomoyo_path_chmod),
- 	LSM_HOOK_INIT(path_chown, tomoyo_path_chown),
- 	LSM_HOOK_INIT(path_chroot, tomoyo_path_chroot),
-+	LSM_HOOK_INIT(sb_mountpoint, tomoyo_sb_mountpoint),
- 	LSM_HOOK_INIT(sb_mount, tomoyo_sb_mount),
- 	LSM_HOOK_INIT(sb_umount, tomoyo_sb_umount),
- 	LSM_HOOK_INIT(sb_pivotroot, tomoyo_sb_pivotroot),
+ static int profile_umount(struct aa_profile *profile, struct path *path,
+ 			  char *buffer)
+ {
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
