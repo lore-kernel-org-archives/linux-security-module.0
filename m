@@ -1,39 +1,59 @@
 From: dhowells@redhat.com (David Howells)
-Date: Thu, 19 Apr 2018 14:31:08 +0100
-Subject: [PATCH 01/24] vfs: Undo an overly zealous MS_RDONLY -> SB_RDONLY
-	conversion [ver #7]
-In-Reply-To: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-Message-ID: <152414466871.23902.14667248706795552315.stgit@warthog.procyon.org.uk>
+Date: Thu, 19 Apr 2018 15:35:47 +0100
+Subject: [PATCH 24/24] debugfs: Restrict debugfs when the kernel is locked
+	down
+In-Reply-To: <20180413202241.GB4484@amd>
+References: <20180413202241.GB4484@amd>
+	<152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
+	<152346403637.4030.15247096217928429102.stgit@warthog.procyon.org.uk>
+Message-ID: <27818.1524148547@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In do_mount() when the MS_* flags are being converted to MNT_* flags,
-MS_RDONLY got accidentally convered to SB_RDONLY.
+Pavel Machek <pavel@ucw.cz> wrote:
 
-Undo this change.
+> >  (1) chmod and chown are disallowed on debugfs objects (though the root dir
+> >      can be modified by mount and remount, but I'm not worried about that).
+> 
+> This has nothing to do with the lockdown goals, right? I find chown of
+> such files quite nice, to allow debugging without doing sudo all the time.
 
-Fixes: e462ec50cb5f ("VFS: Differentiate mount flags (MS_*) from internal superblock flags")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+It allows someone to give everyone access to files that should perhaps only be
+accessible by root.  Besides, if you disable lockdown then you can do this if
+you want.
 
- fs/namespace.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >  (2) When the kernel is locked down, only files with the following criteria
+> >      are permitted to be opened:
+> > 
+> > 	- The file must have mode 00444
+> > 	- The file must not have ioctl methods
+> > 	- The file must not have mmap
+> 
+> Dunno. Would not it be nicer to go through the debugfs files and split
+> them into safe/unsafe varieties?
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index e398f32d7541..6f720ebca133 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2814,7 +2814,7 @@ long do_mount(const char *dev_name, const char __user *dir_name,
- 		mnt_flags |= MNT_NODIRATIME;
- 	if (flags & MS_STRICTATIME)
- 		mnt_flags &= ~(MNT_RELATIME | MNT_NOATIME);
--	if (flags & SB_RDONLY)
-+	if (flags & MS_RDONLY)
- 		mnt_flags |= MNT_READONLY;
- 
- 	/* The default atime for remount is preservation */
+Whilst that is a laudable idea, there are at least a couple of thousand files
+to analyse, some of them doing weird stuff in drivers that aren't easy to
+understand, and some of them with lists of files, some of which might be safe
+and some of which aren't safe.  Even some reads that look like they ought to
+be safe have side effects (such as read-and-reset counters).
 
+Besides, define 'safe'.  Is reading a particular reg on a device and returning
+the value through a debugfs read safe, for example?  What about files where
+reading is harmless, but writing needs to be disallowed?
+
+I did try initially passing in a flag to say whether something was safe or
+not, abusing an inode flag to store it since debugfs uses a plain inode
+struct, but then I realised just how many ways there are to create debugfs
+files and it started to get out of hand.  My initial idea also included
+locking everything down by default and marking things unlocked on an as-needed
+basis.
+
+If you have the time to audit all these files, then that would be great.
+
+I lean more towards the lock debugfs down entirely side.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
