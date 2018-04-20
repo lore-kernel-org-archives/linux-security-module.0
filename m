@@ -1,94 +1,41 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Fri, 20 Apr 2018 13:19:12 +0000
-Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
-	<c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
-	<4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+From: dhowells@redhat.com (David Howells)
+Date: Fri, 20 Apr 2018 16:35:11 +0100
+Subject: [PATCH 04/24] VFS: Add LSM hooks for filesystem context [ver #7]
+In-Reply-To: <CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com>
+References: <CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com>
+	<152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
+	<152414469006.23902.8132059438921850399.stgit@warthog.procyon.org.uk>
+Message-ID: <3232.1524238511@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > >
-> > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > In crb_map_io() function, __crb_request_locality() is called
-> > > > > prior to crb_cmd_ready(), but if one of the consecutive function
-> > > > > fails the flow bails out instead of trying to relinquish locality.
-> > > > > This patch adds goto jump to __crb_relinquish_locality() on the
-> > > > > error path.
-> > > > >
-> > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
-> > > > > after granting
-> > > > > locality)
-> > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > ---
-> > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
-> > > > > 100644
-> > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
-> > > > > *device, struct crb_priv *priv,
-> > > > >
-> > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
-> > > > > >control_address,
-> > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > +		goto out_relinquish_locality;
-> > > > > +	}
-> > > > >
-> > > > >  	/*
-> > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
-> > > > > +522,7
-> > > >
-> > > > @@
-> > > > > static int crb_map_io(struct acpi_device *device, struct
-> > > > > crb_priv *priv,
-> > > > >  	 */
-> > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > >  	if (ret)
-> > > > > -		return ret;
-> > > > > +		goto out_relinquish_locality;
-> > > > >
-> > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
-> > > > > *device, struct crb_priv *priv,
-> > > > >
-> > > > >  	crb_go_idle(dev, priv);
-> > > > >
-> > > > > +out_relinquish_locality:
-> > > > > +
-> > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > >
-> > > > >  	return ret;
-> > > >
-> > > > Thanks, please just call it before returning in the error path.
-> > >
-> > > Can you please elaborate why, isn't the centralized exiting of
-> > > functions preferred kernel coding style?
-> > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#cent
-> > > ra
-> > > lized-ex
-> > > iting-of-functions
-> >
-> > You exit only from one location (not multiple) and not from a nested
-> > context. Here you just add more complexity by doing this.
-> 
-> Where is the complexity ? I see it as a standard way of undoing on exit.
-> Tomas
+Paul Moore <paul@paul-moore.com> wrote:
 
-Jarkko, can you please respond.
-Thanks
-Tomas
+> Adding the SELinux mailing list to the CC line; in the future please
+> include the SELinux mailing list on patches like this.  It would also
+> be very helpful to include "selinux" somewhere in the subject line
+> when the patch is predominately SELinux related (much like you did for
+> the other LSMs in this patchset).
 
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+I should probably evict the SELinux bits into their own patch since the point
+of this patch is the LSM hooks, not specifically SELinux's implementation
+thereof.
+
+> I can't say I've digested all of this yet, but what SELinux testing
+> have you done with this patchset?
+
+Using the fsopen()/fsmount() syscalls, these hooks will be made use of, say
+for NFS (which I haven't included in this list).  Even sys_mount() will make
+use of them a bit, so just booting the system does that.
+
+Note that for SELinux these hooks don't change very much except how the
+parameters are handled.  It doesn't actually change the checks that are made -
+at least, not yet.  There are some additional syscalls under consideration
+(such as the ability to pick a live mounted filesystem into a context) that
+might require additional permits.
+
+David
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
