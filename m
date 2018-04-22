@@ -1,36 +1,105 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Sun, 22 Apr 2018 07:34:43 -0700
-Subject: [PATCH 07/24] hibernate: Disable when the kernel is locked down
-In-Reply-To: <27926.1524148733@warthog.procyon.org.uk>
-References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-	<152346392521.4030.5108539377959227838.stgit@warthog.procyon.org.uk>
-	<20180413202234.GA4484@amd> <27926.1524148733@warthog.procyon.org.uk>
-Message-ID: <CALCETrWnucpY8VueVh==ZGo8LpvVBpppoK6MLwW188A89TwzQQ@mail.gmail.com>
+From: mtk.manpages@gmail.com (Michael Kerrisk (man-pages))
+Date: Sun, 22 Apr 2018 18:46:35 +0200
+Subject: [manpages PATCH] capabilities.7: describe namespaced file
+	capabilities
+In-Reply-To: <20180415192206.GA26419@mail.hallyn.com>
+References: <20180109185218.GA21753@mail.hallyn.com>
+	<CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
+	<20180116173803.GA15538@mail.hallyn.com>
+	<770ed948-c807-36d8-b946-ce6f60ffbf67@gmail.com>
+	<20180415192206.GA26419@mail.hallyn.com>
+Message-ID: <5a993ec6-3b6a-b71a-24c8-dfa66a1ac89f@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Apr 19, 2018 at 7:38 AM, David Howells <dhowells@redhat.com> wrote:
-> Pavel Machek <pavel@ucw.cz> wrote:
->
->> > There is currently no way to verify the resume image when returning
->> > from hibernate.  This might compromise the signed modules trust model,
->> > so until we can work with signed hibernate images we disable it when the
->> > kernel is locked down.
+On 04/15/2018 09:22 PM, Serge E. Hallyn wrote:
+> Quoting Michael Kerrisk (man-pages) (mtk.manpages at gmail.com):
+>> On 01/16/2018 06:38 PM, Serge E. Hallyn wrote:
+>>> Quoting Jann Horn (jannh at google.com):
+>>>> On Tue, Jan 9, 2018 at 7:52 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
 >>
->> I'd rather see hibernation fixed than disabled like this.
->
-> The problem is that you have to store the hibernated kernel image encrypted,
-> but you can't store the decryption key on disk unencrypted or you've just
-> wasted the effort.
->
-> So the firmware has to unlock the image, asking the user for a password to
-> unlock the key.
+>> [...]
+>>
+>>>>> +A VFS_CAP_REVISION_3 file capability will take effect only when run in a user namespace
+>>>>> +whose UID 0 maps to the saved "nsroot", or a descendant of such a namespace.
+>>>>> +.PP
+>>>>> +Users with the required privilege may use
+>>>>> +.BR setxattr(2)
+>>>>> +to request either a VFS_CAP_REVISION_2 or VFS_CAP_REVISION_3 write.
+>>>>> +The kernel will automatically convert a VFS_CAP_REVISION_2 to a
+>>>>> +VFS_CAP_REVISION_3 extended attribute with the "nsroot"
+>>>>> +set to the root user in the writer's user namespace, or, if a VFS_CAP_REVISION_3
+>>>>> +extended attribute is specified, then the kernel will map the
+>>>>> +specified root user ID (which must be a valid user ID mapped in the caller's
+>>>>> +user namespace) into the initial user namespace.
+>>>>
+>>>> Really, "into the initial user namespace"? That may be true for the
+>>>> kernel-internal representation, but the on-disk representation is the
+>>>> mapping into the user namespace that contains the mount namespace into
+>>>> which the file system was mounted, right?
+>>>
+>>> Ah, yes, it is.
+>>>
+>>>>  This would become observable
+>>>> when a file system is mounted in a different namespace than before, or
+>>>> when working with FUSE in a namespace.
+>>>
+>>> Yes it would.
+>>>
+>>> Michael, you said you were reworking it, do you mind working this into
+>>> it as well?
+>>
+>> So, I must confess that I don't really understand this piece of the
+>> conversation--neither Jann's comments nor Serge's response (Serge, are
+>> you saying Jann is right or wrong in his comments?). Perhaps this can
+> 
+> He's right.  The point is that if a filesystem is mounted by a user in
+> a non-init user namespace, then the kernel will map the specified root user ID
+> into sb->sb_user_ns, not &init_user_ns.
+> 
+>> be clarified as a response to the man page text in the other mail I
+>> just sent?
+> 
+> Yes, I'll try to do that.
 
-Why firmware?
+So, I think that I am possibly missing some background knowledge here.
+Here, I sounds to me like you are talking about mounting a block
+filesystem in a non-initial user namespace. (Have I misunderstood?)
 
-Either the boot kernel could figure out how to ask for a password (or
-unseal using the TPM) or we could defer this to userspace.  The latter
-should already work using kexec-jump, no?
+
+But, as I understood it, it is not possible to mount a physical
+block-based filesystem from a a non-init user namespace. Is that not
+correct? The  only types of filesystems that I'm aware of that can be
+mounted are those listed in user_namespaces(7):
+
+       Holding CAP_SYS_ADMIN within the user namespace associated with  a
+       process's  mount  namespace  allows  that  process  to create bind
+       mounts and mount the following types of filesystems:
+
+           * /proc (since Linux 3.8)
+           * /sys (since Linux 3.8)
+           * devpts (since Linux 3.9)
+           * tmpfs(5) (since Linux 3.9)
+           * ramfs (since Linux 3.9)
+           * mqueue (since Linux 3.9)
+           * bpf (since Linux 4.4)
+
+       Holding CAP_SYS_ADMIN within the user namespace associated with  a
+       process's  cgroup  namespace allows (since Linux 4.6) that process
+       to the mount the cgroup version 2 filesystem and cgroup version  1
+       named  hierarchies  (i.e.,  cgroup  filesystems  mounted  with the
+       "none,name=" option).
+
+Do I misunderstand something?
+
+Thanks,
+
+Michael
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
