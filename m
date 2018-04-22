@@ -1,21 +1,36 @@
-From: maria.barba@06d01.mspz3.gob.ec (PPMC OFFSHORE)
-Date: Fri, 20 Apr 2018 18:22:51 -0400
-Subject: Representative Needed.
-Message-ID: <20180420223429.739472384EBC@06d01.mspz3.gob.ec>
+From: luto@kernel.org (Andy Lutomirski)
+Date: Sun, 22 Apr 2018 07:34:43 -0700
+Subject: [PATCH 07/24] hibernate: Disable when the kernel is locked down
+In-Reply-To: <27926.1524148733@warthog.procyon.org.uk>
+References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
+	<152346392521.4030.5108539377959227838.stgit@warthog.procyon.org.uk>
+	<20180413202234.GA4484@amd> <27926.1524148733@warthog.procyon.org.uk>
+Message-ID: <CALCETrWnucpY8VueVh==ZGo8LpvVBpppoK6MLwW188A89TwzQQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Good day,
+On Thu, Apr 19, 2018 at 7:38 AM, David Howells <dhowells@redhat.com> wrote:
+> Pavel Machek <pavel@ucw.cz> wrote:
+>
+>> > There is currently no way to verify the resume image when returning
+>> > from hibernate.  This might compromise the signed modules trust model,
+>> > so until we can work with signed hibernate images we disable it when the
+>> > kernel is locked down.
+>>
+>> I'd rather see hibernation fixed than disabled like this.
+>
+> The problem is that you have to store the hibernated kernel image encrypted,
+> but you can't store the decryption key on disk unencrypted or you've just
+> wasted the effort.
+>
+> So the firmware has to unlock the image, asking the user for a password to
+> unlock the key.
 
-  I am seeking your concept with great gratitude to present you as a representative to carry out business transactions with a reasonable share upon your interest and cooperation to work with us in trust. If interested please get back.
+Why firmware?
 
-Regards
-Kingsley
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
-
+Either the boot kernel could figure out how to ask for a password (or
+unseal using the TPM) or we could defer this to userspace.  The latter
+should already work using kexec-jump, no?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
