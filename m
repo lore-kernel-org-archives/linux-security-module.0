@@ -1,58 +1,52 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Mon, 23 Apr 2018 12:48:15 -0400
-Subject: [PATCH 3/3] selinux: provide unix_stream_socketpair callback
-In-Reply-To: <20180423133015.5455-4-dh.herrmann@gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 23 Apr 2018 10:04:19 -0700
+Subject: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
+In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
 References: <20180423133015.5455-1-dh.herrmann@gmail.com>
-	<20180423133015.5455-4-dh.herrmann@gmail.com>
-Message-ID: <2710a66f-8a40-3a9a-7b50-e4279c53ebcd@tycho.nsa.gov>
+Message-ID: <32eea1d6-450c-bc68-59d6-74bc5011ead2@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/23/2018 09:30 AM, David Herrmann wrote:
-> Make sure to implement the new unix_stream_socketpair callback so the
-> SO_PEERSEC call on socketpair(2)s will return correct information.
-> 
-> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+On 4/23/2018 6:30 AM, David Herrmann wrote:
+> Hi
+>
+> This series adds a new LSM hook for the socketpair(2) syscall. The idea
+> is to allow SO_PEERSEC to be called on AF_UNIX sockets created via
+> socketpair(2), and return the same information as if you emulated
+> socketpair(2) via a temporary listener socket. Right now SO_PEERSEC
+> will return the unlabeled credentials for a socketpair, rather than the
+> actual credentials of the creating process.
+>
+> ...
+>
+> This series only adds SELinux backends, since that is what we need for
+> RHEL. I will gladly extend the other LSMs if needed.
 
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+I would be very happy to see a proposed patch for Smack. It shouldn't
+be much different from the SELinux version, with the exception that it
+will use pointers to smk_known structures instead of secids. It would be
+a big help, as someone just threw a whole new species of scorpion into
+this pit.
 
-> ---
->  security/selinux/hooks.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 4cafe6a19167..828881d9a41d 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4905,6 +4905,18 @@ static int selinux_socket_unix_stream_connect(struct sock *sock,
->  	return 0;
->  }
->  
-> +static int selinux_socket_unix_stream_socketpair(struct sock *socka,
-> +						 struct sock *sockb)
-> +{
-> +	struct sk_security_struct *sksec_a = socka->sk_security;
-> +	struct sk_security_struct *sksec_b = sockb->sk_security;
-> +
-> +	sksec_a->peer_sid = sksec_b->sid;
-> +	sksec_b->peer_sid = sksec_a->sid;
-> +
-> +	return 0;
-> +}
-> +
->  static int selinux_socket_unix_may_send(struct socket *sock,
->  					struct socket *other)
->  {
-> @@ -6995,6 +7007,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->  	LSM_HOOK_INIT(inode_getsecctx, selinux_inode_getsecctx),
->  
->  	LSM_HOOK_INIT(unix_stream_connect, selinux_socket_unix_stream_connect),
-> +	LSM_HOOK_INIT(unix_stream_socketpair,
-> +			selinux_socket_unix_stream_socketpair),
->  	LSM_HOOK_INIT(unix_may_send, selinux_socket_unix_may_send),
->  
->  	LSM_HOOK_INIT(socket_create, selinux_socket_create),
-> 
+>
+> Thanks
+> David
+>
+> [1] https://github.com/bus1/dbus-broker/blob/master/src/util/test-peersec.c
+> [2] https://www.spinics.net/lists/selinux/msg22674.html
+>
+> David Herrmann (3):
+>   security: add hook for socketpair(AF_UNIX, ...)
+>   net/unix: hook unix_socketpair() into LSM
+>   selinux: provide unix_stream_socketpair callback
+>
+>  include/linux/lsm_hooks.h |  8 ++++++++
+>  include/linux/security.h  |  7 +++++++
+>  net/unix/af_unix.c        |  5 +++++
+>  security/security.c       |  6 ++++++
+>  security/selinux/hooks.c  | 14 ++++++++++++++
+>  5 files changed, 40 insertions(+)
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
