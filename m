@@ -1,45 +1,55 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Mon, 23 Apr 2018 09:25:09 -0400
-Subject: [PATCH 04/24] VFS: Add LSM hooks for filesystem context [ver #7]
-In-Reply-To: <3232.1524238511@warthog.procyon.org.uk>
-References: <CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com>
-	<152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-	<152414469006.23902.8132059438921850399.stgit@warthog.procyon.org.uk>
-	<3232.1524238511@warthog.procyon.org.uk>
-Message-ID: <aca7e68c-022b-47ac-c249-59e042d431e8@tycho.nsa.gov>
+From: dh.herrmann@gmail.com (David Herrmann)
+Date: Mon, 23 Apr 2018 15:30:15 +0200
+Subject: [PATCH 3/3] selinux: provide unix_stream_socketpair callback
+In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
+References: <20180423133015.5455-1-dh.herrmann@gmail.com>
+Message-ID: <20180423133015.5455-4-dh.herrmann@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 04/20/2018 11:35 AM, David Howells wrote:
-> Paul Moore <paul@paul-moore.com> wrote:
-> 
->> Adding the SELinux mailing list to the CC line; in the future please
->> include the SELinux mailing list on patches like this.  It would also
->> be very helpful to include "selinux" somewhere in the subject line
->> when the patch is predominately SELinux related (much like you did for
->> the other LSMs in this patchset).
-> 
-> I should probably evict the SELinux bits into their own patch since the point
-> of this patch is the LSM hooks, not specifically SELinux's implementation
-> thereof.
-> 
->> I can't say I've digested all of this yet, but what SELinux testing
->> have you done with this patchset?
-> 
-> Using the fsopen()/fsmount() syscalls, these hooks will be made use of, say
-> for NFS (which I haven't included in this list).  Even sys_mount() will make
-> use of them a bit, so just booting the system does that.
-> 
-> Note that for SELinux these hooks don't change very much except how the
-> parameters are handled.  It doesn't actually change the checks that are made -
-> at least, not yet.  There are some additional syscalls under consideration
-> (such as the ability to pick a live mounted filesystem into a context) that
-> might require additional permits.
+Make sure to implement the new unix_stream_socketpair callback so the
+SO_PEERSEC call on socketpair(2)s will return correct information.
 
-Neither fsopen() nor fscontext_fs_write() appear to perform any kind of up-front
-permission checking (DAC or MAC), although some security hooks may be ultimately called
-to allocate structures, parse security options, etc.  Is there a reason not apply a may_mount()
-or similar check up front?
+Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+---
+ security/selinux/hooks.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a19167..828881d9a41d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4905,6 +4905,18 @@ static int selinux_socket_unix_stream_connect(struct sock *sock,
+ 	return 0;
+ }
+ 
++static int selinux_socket_unix_stream_socketpair(struct sock *socka,
++						 struct sock *sockb)
++{
++	struct sk_security_struct *sksec_a = socka->sk_security;
++	struct sk_security_struct *sksec_b = sockb->sk_security;
++
++	sksec_a->peer_sid = sksec_b->sid;
++	sksec_b->peer_sid = sksec_a->sid;
++
++	return 0;
++}
++
+ static int selinux_socket_unix_may_send(struct socket *sock,
+ 					struct socket *other)
+ {
+@@ -6995,6 +7007,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_getsecctx, selinux_inode_getsecctx),
+ 
+ 	LSM_HOOK_INIT(unix_stream_connect, selinux_socket_unix_stream_connect),
++	LSM_HOOK_INIT(unix_stream_socketpair,
++			selinux_socket_unix_stream_socketpair),
+ 	LSM_HOOK_INIT(unix_may_send, selinux_socket_unix_may_send),
+ 
+ 	LSM_HOOK_INIT(socket_create, selinux_socket_create),
+-- 
+2.17.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
