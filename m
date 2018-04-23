@@ -1,82 +1,107 @@
 From: serge@hallyn.com (Serge E. Hallyn)
-Date: Mon, 23 Apr 2018 12:52:33 -0500
-Subject: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
-In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
-References: <20180423133015.5455-1-dh.herrmann@gmail.com>
-Message-ID: <20180423175233.GA4284@mail.hallyn.com>
+Date: Mon, 23 Apr 2018 12:57:46 -0500
+Subject: [manpages PATCH] capabilities.7: describe namespaced file
+	capabilities
+In-Reply-To: <5a993ec6-3b6a-b71a-24c8-dfa66a1ac89f@gmail.com>
+References: <20180109185218.GA21753@mail.hallyn.com>
+	<CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
+	<20180116173803.GA15538@mail.hallyn.com>
+	<770ed948-c807-36d8-b946-ce6f60ffbf67@gmail.com>
+	<20180415192206.GA26419@mail.hallyn.com>
+	<5a993ec6-3b6a-b71a-24c8-dfa66a1ac89f@gmail.com>
+Message-ID: <20180423175746.GA4376@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting David Herrmann (dh.herrmann at gmail.com):
-> Hi
+Quoting Michael Kerrisk (man-pages) (mtk.manpages at gmail.com):
+> On 04/15/2018 09:22 PM, Serge E. Hallyn wrote:
+> > Quoting Michael Kerrisk (man-pages) (mtk.manpages at gmail.com):
+> >> On 01/16/2018 06:38 PM, Serge E. Hallyn wrote:
+> >>> Quoting Jann Horn (jannh at google.com):
+> >>>> On Tue, Jan 9, 2018 at 7:52 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> >>
+> >> [...]
+> >>
+> >>>>> +A VFS_CAP_REVISION_3 file capability will take effect only when run in a user namespace
+> >>>>> +whose UID 0 maps to the saved "nsroot", or a descendant of such a namespace.
+> >>>>> +.PP
+> >>>>> +Users with the required privilege may use
+> >>>>> +.BR setxattr(2)
+> >>>>> +to request either a VFS_CAP_REVISION_2 or VFS_CAP_REVISION_3 write.
+> >>>>> +The kernel will automatically convert a VFS_CAP_REVISION_2 to a
+> >>>>> +VFS_CAP_REVISION_3 extended attribute with the "nsroot"
+> >>>>> +set to the root user in the writer's user namespace, or, if a VFS_CAP_REVISION_3
+> >>>>> +extended attribute is specified, then the kernel will map the
+> >>>>> +specified root user ID (which must be a valid user ID mapped in the caller's
+> >>>>> +user namespace) into the initial user namespace.
+> >>>>
+> >>>> Really, "into the initial user namespace"? That may be true for the
+> >>>> kernel-internal representation, but the on-disk representation is the
+> >>>> mapping into the user namespace that contains the mount namespace into
+> >>>> which the file system was mounted, right?
+> >>>
+> >>> Ah, yes, it is.
+> >>>
+> >>>>  This would become observable
+> >>>> when a file system is mounted in a different namespace than before, or
+> >>>> when working with FUSE in a namespace.
+> >>>
+> >>> Yes it would.
+> >>>
+> >>> Michael, you said you were reworking it, do you mind working this into
+> >>> it as well?
+> >>
+> >> So, I must confess that I don't really understand this piece of the
+> >> conversation--neither Jann's comments nor Serge's response (Serge, are
+> >> you saying Jann is right or wrong in his comments?). Perhaps this can
+> > 
+> > He's right.  The point is that if a filesystem is mounted by a user in
+> > a non-init user namespace, then the kernel will map the specified root user ID
+> > into sb->sb_user_ns, not &init_user_ns.
+> > 
+> >> be clarified as a response to the man page text in the other mail I
+> >> just sent?
+> > 
+> > Yes, I'll try to do that.
 > 
-> This series adds a new LSM hook for the socketpair(2) syscall. The idea
-> is to allow SO_PEERSEC to be called on AF_UNIX sockets created via
-> socketpair(2), and return the same information as if you emulated
-> socketpair(2) via a temporary listener socket. Right now SO_PEERSEC
-> will return the unlabeled credentials for a socketpair, rather than the
-> actual credentials of the creating process.
-> 
-> A simple call to:
-> 
->     socketpair(AF_UNIX, SOCK_STREAM, 0, out);
-> 
-> can be emulated via a temporary listener socket bound to a unique,
-> random name in the abstract namespace. By connecting to this listener
-> socket, accept(2) will return the second part of the pair. If
-> SO_PEERSEC is queried on these, the correct credentials of the creating
-> process are returned. A simple comparison between the behavior of
-> SO_PEERSEC on socketpair(2) and an emulated socketpair is included in
-> the dbus-broker test-suite [1].
-> 
-> This patch series tries to close this gap and makes both behave the
-> same. A new LSM-hook is added which allows LSMs to cache the correct
-> peer information on newly created socket-pairs.
-> 
-> Apart from fixing this behavioral difference, the dbus-broker project
-> actually needs to query the credentials of socketpairs, and currently
-> must resort to racy procfs(2) queries to get the LSM credentials of its
-> controller socket. Several parts of the dbus-broker project allow you
-> to pass in a socket during execve(2), which will be used by the child
-> process to accept control-commands from its parent. One natural way to
-> create this communication channel is to use socketpair(2). However,
-> right now SO_PEERSEC does not return any useful information, hence, the
-> child-process would need other means to retrieve this information. By
-> avoiding socketpair(2) and using the hacky-emulated version, this is not
-> an issue.
-> 
-> There was a previous discussion on this matter [2] roughly a year ago.
-> Back then there was the suspicion that proper SO_PEERSEC would confuse
-> applications. However, we could not find any evidence backing this
-> suspicion. Furthermore, we now actually see the contrary. Lack of
-> SO_PEERSEC makes it a hassle to use socketpairs with LSM credentials.
-> Hence, we propose to implement full SO_PEERSEC for socketpairs.
-> 
-> This series only adds SELinux backends, since that is what we need for
-> RHEL. I will gladly extend the other LSMs if needed.
-> 
-> Thanks
-> David
-> 
-> [1] https://github.com/bus1/dbus-broker/blob/master/src/util/test-peersec.c
-> [2] https://www.spinics.net/lists/selinux/msg22674.html
-> 
-> David Herrmann (3):
->   security: add hook for socketpair(AF_UNIX, ...)
->   net/unix: hook unix_socketpair() into LSM
->   selinux: provide unix_stream_socketpair callback
-> 
->  include/linux/lsm_hooks.h |  8 ++++++++
->  include/linux/security.h  |  7 +++++++
->  net/unix/af_unix.c        |  5 +++++
->  security/security.c       |  6 ++++++
->  security/selinux/hooks.c  | 14 ++++++++++++++
->  5 files changed, 40 insertions(+)
+> So, I think that I am possibly missing some background knowledge here.
+> Here, I sounds to me like you are talking about mounting a block
+> filesystem in a non-initial user namespace. (Have I misunderstood?)
 
-Makes sense to me, thanks.
+Correct,
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+> But, as I understood it, it is not possible to mount a physical
+> block-based filesystem from a a non-init user namespace. Is that not
+> correct? The  only types of filesystems that I'm aware of that can be
+> mounted are those listed in user_namespaces(7):
+> 
+>        Holding CAP_SYS_ADMIN within the user namespace associated with  a
+>        process's  mount  namespace  allows  that  process  to create bind
+>        mounts and mount the following types of filesystems:
+> 
+>            * /proc (since Linux 3.8)
+>            * /sys (since Linux 3.8)
+>            * devpts (since Linux 3.9)
+>            * tmpfs(5) (since Linux 3.9)
+>            * ramfs (since Linux 3.9)
+>            * mqueue (since Linux 3.9)
+>            * bpf (since Linux 4.4)
+> 
+>        Holding CAP_SYS_ADMIN within the user namespace associated with  a
+>        process's  cgroup  namespace allows (since Linux 4.6) that process
+>        to the mount the cgroup version 2 filesystem and cgroup version  1
+>        named  hierarchies  (i.e.,  cgroup  filesystems  mounted  with the
+>        "none,name=" option).
+> 
+> Do I misunderstand something?
 
+The work is under way to make it possible to mount fuse filesystems
+a from non-initial user namespace, and those patches are already
+enabled in the default Ubuntu kernel.  That's where this becomes
+relevant.
+
+thanks,
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
