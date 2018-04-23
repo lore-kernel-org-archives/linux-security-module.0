@@ -1,19 +1,19 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 24 Apr 2018 04:26:32 +1000 (AEST)
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 23 Apr 2018 11:38:47 -0700
 Subject: Security tree merge to v4.17-rc2
-Message-ID: <alpine.LRH.2.21.1804240425200.14030@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1804240425200.14030@namei.org>
+References: <alpine.LRH.2.21.1804240425200.14030@namei.org>
+Message-ID: <4adbd739-06b3-f42b-f2ef-fb06ea655919@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-FYI, I've merged the next-general and next-testing branches of the 
-security subsystem tree to v4.17-rc2.
+On 4/23/2018 11:26 AM, James Morris wrote:
+> FYI, I've merged the next-general and next-testing branches of the 
+> security subsystem tree to v4.17-rc2.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+Thanks! The fun begins!
 
-
--- 
-James Morris
-<jmorris@namei.org>
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
