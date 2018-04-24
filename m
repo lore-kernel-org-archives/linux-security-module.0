@@ -1,78 +1,50 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Mon, 23 Apr 2018 21:50:15 -0700
-Subject: [PATCH 1/3] big key: get rid of stack array allocation
-In-Reply-To: <20180424010321.14739-1-tycho@tycho.ws>
-References: <20180424010321.14739-1-tycho@tycho.ws>
-Message-ID: <20180424045015.GA4281@sol.localdomain>
+From: igor.stoppa@gmail.com (Igor Stoppa)
+Date: Tue, 24 Apr 2018 16:33:50 +0400
+Subject: [PATCH 7/9] Pmalloc Rare Write: modify selected pools
+In-Reply-To: <20180424115050.GD26636@bombadil.infradead.org>
+References: <20180423125458.5338-1-igor.stoppa@huawei.com>
+	<20180423125458.5338-8-igor.stoppa@huawei.com>
+	<20180424115050.GD26636@bombadil.infradead.org>
+Message-ID: <98799559-121f-3d9d-343f-b22d30f21b6d@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Tycho,
 
-On Mon, Apr 23, 2018 at 07:03:19PM -0600, Tycho Andersen wrote:
-> We're interested in getting rid of all of the stack allocated arrays in the
-> kernel [1]. This patch simply hardcodes the iv length to match that of the
-> hardcoded cipher.
+
+On 24/04/18 15:50, Matthew Wilcox wrote:
+> On Mon, Apr 23, 2018 at 04:54:56PM +0400, Igor Stoppa wrote:
+>> While the vanilla version of pmalloc provides support for permanently
+>> transitioning between writable and read-only of a memory pool, this
+>> patch seeks to support a separate class of data, which would still
+>> benefit from write protection, most of the time, but it still needs to
+>> be modifiable. Maybe very seldom, but still cannot be permanently marked
+>> as read-only.
 > 
-> [1]: https://lkml.org/lkml/2018/3/7/621
+> This seems like a horrible idea that basically makes this feature useless.
+> I would say the right way to do this is to have:
 > 
-> v2: hardcode the length of the nonce to be the GCM AES IV length, and do a
->     sanity check in init(), Eric Biggers
+> struct modifiable_data {
+> 	struct immutable_data *d;
+> 	...
+> };
 > 
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> CC: David Howells <dhowells@redhat.com>
-> CC: James Morris <jmorris@namei.org>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: Jason A. Donenfeld <Jason@zx2c4.com>
-> CC: Eric Biggers <ebiggers3@gmail.com>
-> ---
->  security/keys/big_key.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-> index 933623784ccd..75c46786a166 100644
-> --- a/security/keys/big_key.c
-> +++ b/security/keys/big_key.c
-> @@ -22,6 +22,7 @@
->  #include <keys/user-type.h>
->  #include <keys/big_key-type.h>
->  #include <crypto/aead.h>
-> +#include <crypto/gcm.h>
->  
->  struct big_key_buf {
->  	unsigned int		nr_pages;
-> @@ -109,7 +110,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
->  	 * an .update function, so there's no chance we'll wind up reusing the
->  	 * key to encrypt updated data. Simply put: one key, one encryption.
->  	 */
-> -	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
-> +	u8 zero_nonce[GCM_AES_IV_SIZE];
->  
->  	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
->  	if (!aead_req)
-> @@ -425,6 +426,12 @@ static int __init big_key_init(void)
->  		pr_err("Can't alloc crypto: %d\n", ret);
->  		return ret;
->  	}
-> +
-> +	if (unlikely(crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_SIZE)) {
-> +		WARN(1, "big key algorithm changed?");
-> +		return -EINVAL;
-> +	}
-> +
+> Then allocate a new pool, change d and destroy the old pool.
 
-'big_key_aead' needs to be freed on error.
+I'm not sure I understand.
 
-	err = -EINVAL;
-	goto free_aead;
+The pool, in the patchset, is a collection of related vm_areas.
+What I would like to do is to modify some of the memory that has already 
+been handed out as reference, in a way that the reference is not 
+altered, nor it requires extensive rewites of  all, in place of he usual 
+assignment.
 
-Also how about defining the IV size next to the algorithm name?
-Then all the algorithm details would be on adjacent lines:
+Are you saying that my idea is fundamentally broken?
+If yes, how to break it? :-)
 
-static const char big_key_alg_name[] = "gcm(aes)";
-#define BIG_KEY_IV_SIZE         GCM_AES_IV_SIZE
+If not, I need more coffee, pherhaps we can have a cup together later? :-)
 
-- Eric
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
