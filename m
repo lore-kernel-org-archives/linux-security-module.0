@@ -1,52 +1,50 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 24 Apr 2018 13:55:31 -0400
+From: davem@davemloft.net (David Miller)
+Date: Tue, 24 Apr 2018 13:56:51 -0400 (EDT)
 Subject: [PATCH 2/3] net/unix: hook unix_socketpair() into LSM
-In-Reply-To: <20180423133015.5455-3-dh.herrmann@gmail.com>
+In-Reply-To: <CAHC9VhSv6tacFb+nEs1cCUOj52Vu+wXD6ZPZ1r1W4pYXo0VJMQ@mail.gmail.com>
 References: <20180423133015.5455-1-dh.herrmann@gmail.com>
 	<20180423133015.5455-3-dh.herrmann@gmail.com>
-Message-ID: <CAHC9VhSv6tacFb+nEs1cCUOj52Vu+wXD6ZPZ1r1W4pYXo0VJMQ@mail.gmail.com>
+	<CAHC9VhSv6tacFb+nEs1cCUOj52Vu+wXD6ZPZ1r1W4pYXo0VJMQ@mail.gmail.com>
+Message-ID: <20180424.135651.492329246141701047.davem@davemloft.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 23, 2018 at 9:30 AM, David Herrmann <dh.herrmann@gmail.com> wrote:
-> Use the newly created LSM-hook for unix_socketpair(). The default hook
-> return-value is 0, so behavior stays the same unless LSMs start using
-> this hook.
->
-> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-> ---
->  net/unix/af_unix.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 68bb70a62afe..bc9705ace9b1 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -1371,6 +1371,11 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
->  static int unix_socketpair(struct socket *socka, struct socket *sockb)
->  {
->         struct sock *ska = socka->sk, *skb = sockb->sk;
-> +       int err;
-> +
-> +       err = security_unix_stream_socketpair(ska, skb);
-> +       if (err)
-> +               return err;
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 24 Apr 2018 13:55:31 -0400
 
-I recognize that AF_UNIX is really the only protocol that supports
-socketpair(2) at the moment, but I like to avoid protocol specific LSM
-hooks whenever possible.  Unless someone can think of a good
-objection, I would prefer to see the hook placed in __sys_socketpair()
-instead (and obviously drop the "unix_stream" portion from the hook
-name).
+> On Mon, Apr 23, 2018 at 9:30 AM, David Herrmann <dh.herrmann@gmail.com> wrote:
+>> Use the newly created LSM-hook for unix_socketpair(). The default hook
+>> return-value is 0, so behavior stays the same unless LSMs start using
+>> this hook.
+>>
+>> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+>> ---
+>>  net/unix/af_unix.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+>> index 68bb70a62afe..bc9705ace9b1 100644
+>> --- a/net/unix/af_unix.c
+>> +++ b/net/unix/af_unix.c
+>> @@ -1371,6 +1371,11 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+>>  static int unix_socketpair(struct socket *socka, struct socket *sockb)
+>>  {
+>>         struct sock *ska = socka->sk, *skb = sockb->sk;
+>> +       int err;
+>> +
+>> +       err = security_unix_stream_socketpair(ska, skb);
+>> +       if (err)
+>> +               return err;
+> 
+> I recognize that AF_UNIX is really the only protocol that supports
+> socketpair(2) at the moment, but I like to avoid protocol specific LSM
+> hooks whenever possible.  Unless someone can think of a good
+> objection, I would prefer to see the hook placed in __sys_socketpair()
+> instead (and obviously drop the "unix_stream" portion from the hook
+> name).
 
->         /* Join our sockets back to back */
->         sock_hold(ska);
-> --
-> 2.17.0
-
--- 
-paul moore
-www.paul-moore.com
+The counterargument is that after 30 years no other protocol has grown
+usage of this operation. :-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
