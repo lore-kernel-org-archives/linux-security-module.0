@@ -1,80 +1,118 @@
-From: igor.stoppa@gmail.com (Igor Stoppa)
-Date: Tue, 24 Apr 2018 21:04:42 +0400
-Subject: [PATCH 7/9] Pmalloc Rare Write: modify selected pools
-In-Reply-To: <98799559-121f-3d9d-343f-b22d30f21b6d@gmail.com>
-References: <20180423125458.5338-1-igor.stoppa@huawei.com>
-	<20180423125458.5338-8-igor.stoppa@huawei.com>
-	<20180424115050.GD26636@bombadil.infradead.org>
-	<98799559-121f-3d9d-343f-b22d30f21b6d@gmail.com>
-Message-ID: <be0c9294-90a3-5820-dca2-7ce0a9a5dcab@gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 24 Apr 2018 20:48:02 +0300
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+In-Reply-To: <20180424160328.GA5119@linux.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+	<c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+	<4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+	<20180424160328.GA5119@linux.intel.com>
+Message-ID: <20180424174802.GA24613@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 24/04/18 16:33, Igor Stoppa wrote:
+On Tue, Apr 24, 2018 at 07:03:28PM +0300, Jarkko Sakkinen wrote:
+> On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > >
+> > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > In crb_map_io() function, __crb_request_locality() is called
+> > > > > > > prior to crb_cmd_ready(), but if one of the consecutive function
+> > > > > > > fails the flow bails out instead of trying to relinquish locality.
+> > > > > > > This patch adds goto jump to __crb_relinquish_locality() on the
+> > > > > > > error path.
+> > > > > > >
+> > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
+> > > > > > > after granting
+> > > > > > > locality)
+> > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > > ---
+> > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
+> > > > > > > 100644
+> > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
+> > > > > > > *device, struct crb_priv *priv,
+> > > > > > >
+> > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > > > >control_address,
+> > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > +		goto out_relinquish_locality;
+> > > > > > > +	}
+> > > > > > >
+> > > > > > >  	/*
+> > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
+> > > > > > > +522,7
+> > > > > >
+> > > > > > @@
+> > > > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > > > crb_priv *priv,
+> > > > > > >  	 */
+> > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > >  	if (ret)
+> > > > > > > -		return ret;
+> > > > > > > +		goto out_relinquish_locality;
+> > > > > > >
+> > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
+> > > > > > > *device, struct crb_priv *priv,
+> > > > > > >
+> > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > >
+> > > > > > > +out_relinquish_locality:
+> > > > > > > +
+> > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > >
+> > > > > > >  	return ret;
+> > > > > >
+> > > > > > Thanks, please just call it before returning in the error path.
+> > > > >
+> > > > > Can you please elaborate why, isn't the centralized exiting of
+> > > > > functions preferred kernel coding style?
+> > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#cent
+> > > > > ra
+> > > > > lized-ex
+> > > > > iting-of-functions
+> > > >
+> > > > You exit only from one location (not multiple) and not from a nested
+> > > > context. Here you just add more complexity by doing this.
+> > > 
+> > > Where is the complexity ? I see it as a standard way of undoing on exit.
+> > > Tomas
+> > 
+> > Jarkko, can you please respond.
+> > Thanks
+> > Tomas
 > 
+> I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
 > 
-> On 24/04/18 15:50, Matthew Wilcox wrote:
->> On Mon, Apr 23, 2018 at 04:54:56PM +0400, Igor Stoppa wrote:
->>> While the vanilla version of pmalloc provides support for permanently
->>> transitioning between writable and read-only of a memory pool, this
->>> patch seeks to support a separate class of data, which would still
->>> benefit from write protection, most of the time, but it still needs to
->>> be modifiable. Maybe very seldom, but still cannot be permanently marked
->>> as read-only.
->>
->> This seems like a horrible idea that basically makes this feature 
->> useless.
->> I would say the right way to do this is to have:
->>
->> struct modifiable_data {
->> ????struct immutable_data *d;
->> ????...
->> };
->>
->> Then allocate a new pool, change d and destroy the old pool.
+> My earlier comment was incorrect as there are two locations to exit (not
+> sure how I managed to overlook the patch that way).
 > 
-> I'm not sure I understand.
+> Thus, I have only two very  minor requets:
+> 
+> * Remove the extra newline (the last line addition in the patch).
+> * Use just label named out as we have only one exception handler.
+> 
+> I'll move on to testing, and if it it passes, I can do those updates
+> myself.
+> 
+> /Jarkko
 
-A few cups of coffee later ...
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-This seems like a regression from my case.
-
-My case (see the example with the initialized state) is:
-
-static void *pointer_to_pmalloc_memory __ro_after_init;
-
-then, during init:
-
-pointer_to_pmalloc_memory = pmalloc(pool, size);
-
-then init happens
-
-*pointer_to_pmalloc_memory = some_value;
-
-pmalloc_protect_pool(pool9;
-
-and to change the value:
-
-support_variable = some_other_value;
-
-pmalloc_rare_write(pool, pointer_to_pmalloc_memory,
-                    &support_variable, size)
-
-But in this case the pmalloc allocation would be assigned to a writable 
-variable.
-
-This seems like a regression to me: at this point who cares anymore 
-about the pmalloc memory?
-
-Just rewrite the pointer to point to somewhere else that is writable and 
-has the desired (from the attacker) value.
-
-It doesn't even require gadgets. pmalloc becomes useless.
-
-Do I still need more coffee?
-
---
-igor
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
