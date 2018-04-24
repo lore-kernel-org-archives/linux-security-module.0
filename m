@@ -1,46 +1,126 @@
-From: ebiggers3@gmail.com (Eric Biggers)
-Date: Tue, 24 Apr 2018 13:09:06 -0700
-Subject: [PATCH 1/3] big key: get rid of stack array allocation
-In-Reply-To: <20180424195845.GB23575@mail.hallyn.com>
-References: <20180424010321.14739-1-tycho@tycho.ws>
-	<20180424045015.GA4281@sol.localdomain>
-	<20180424143539.GB3125@cisco>
-	<201804242346.FHI69745.SQMHFVOOFLFOJt@I-love.SAKURA.ne.jp>
-	<20180424145104.GC3125@cisco>
-	<20180424195845.GB23575@mail.hallyn.com>
-Message-ID: <20180424200906.GC174675@gmail.com>
+From: tomas.winkler@intel.com (Winkler, Tomas)
+Date: Tue, 24 Apr 2018 20:10:26 +0000
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+In-Reply-To: <20180424174802.GA24613@linux.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+	<c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+	<4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+	<20180424160328.GA5119@linux.intel.com>
+	<20180424174802.GA24613@linux.intel.com>
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94272F62@hasmsx108.ger.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Apr 24, 2018 at 02:58:45PM -0500, Serge E. Hallyn wrote:
-> Quoting Tycho Andersen (tycho at tycho.ws):
-> > On Tue, Apr 24, 2018 at 11:46:38PM +0900, Tetsuo Handa wrote:
-> > > Tycho Andersen wrote:
-> > > > > > +	if (unlikely(crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_SIZE)) {
-> > > > > > +		WARN(1, "big key algorithm changed?");
-> > > 
-> > > Please avoid using WARN() WARN_ON() etc.
-> > > syzbot would catch it and panic() due to panic_on_warn == 1.
-> > 
-> > But it is really a programming bug in this case (and it seems better
-> > than BUG()...). Isn't this exactly the sort of case we want to catch?
-> > 
-> > Tycho
-> 
-> Right - is there a url to some discussion about this?  Because not
-> using WARN when WARN should be used, because it troubles a bot, seems
-> the wrong solution.  If this *is* what's been agreed upon, then
-> what is the new recommended thing to do here?
-> 
-> -serge
 
-WARN() is for recoverable kernel bugs, which this is, so WARN() is correct here.
-Fuzzers often find cases where WARN() is used on invalid user input or other
-cases that are not kernel bugs, and then it has to be removed or replaced with
-pr_warn().  But here it is appropriate.  Unfortunately a lot of developers still
-seem confused; improving the comments in include/asm-generic/bug.h might help.
+> On Tue, Apr 24, 2018 at 07:03:28PM +0300, Jarkko Sakkinen wrote:
+> > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > > >
+> > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > > In crb_map_io() function, __crb_request_locality() is
+> > > > > > > > called prior to crb_cmd_ready(), but if one of the
+> > > > > > > > consecutive function fails the flow bails out instead of trying to
+> relinquish locality.
+> > > > > > > > This patch adds goto jump to __crb_relinquish_locality()
+> > > > > > > > on the error path.
+> > > > > > > >
+> > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued
+> > > > > > > > only after granting
+> > > > > > > > locality)
+> > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > > > ---
+> > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > b/drivers/char/tpm/tpm_crb.c index
+> > > > > > > > 7f78482cd157..34fbc6cb097b
+> > > > > > > > 100644
+> > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
+> > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > >
+> > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > > > > >control_address,
+> > > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > +	}
+> > > > > > > >
+> > > > > > > >  	/*
+> > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@
+> > > > > > > > -520,7
+> > > > > > > > +522,7
+> > > > > > >
+> > > > > > > @@
+> > > > > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > > > > crb_priv *priv,
+> > > > > > > >  	 */
+> > > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > > >  	if (ret)
+> > > > > > > > -		return ret;
+> > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > >
+> > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
+> > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > >
+> > > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > > >
+> > > > > > > > +out_relinquish_locality:
+> > > > > > > > +
+> > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > > >
+> > > > > > > >  	return ret;
+> > > > > > >
+> > > > > > > Thanks, please just call it before returning in the error path.
+> > > > > >
+> > > > > > Can you please elaborate why, isn't the centralized exiting of
+> > > > > > functions preferred kernel coding style?
+> > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.htm
+> > > > > > l#cent
+> > > > > > ra
+> > > > > > lized-ex
+> > > > > > iting-of-functions
+> > > > >
+> > > > > You exit only from one location (not multiple) and not from a
+> > > > > nested context. Here you just add more complexity by doing this.
+> > > >
+> > > > Where is the complexity ? I see it as a standard way of undoing on exit.
+> > > > Tomas
+> > >
+> > > Jarkko, can you please respond.
+> > > Thanks
+> > > Tomas
+> >
+> > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
+> >
+> > My earlier comment was incorrect as there are two locations to exit
+> > (not sure how I managed to overlook the patch that way).
+> >
+> > Thus, I have only two very  minor requets:
+> >
+> > * Remove the extra newline (the last line addition in the patch).
+> > * Use just label named out as we have only one exception handler.
+> >
+> > I'll move on to testing, and if it it passes, I can do those updates
+> > myself.
+> >
+> > /Jarkko
+> 
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+Thanks
+Tomas
 
-Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
