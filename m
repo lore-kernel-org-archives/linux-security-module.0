@@ -1,79 +1,63 @@
 From: tycho@tycho.ws (Tycho Andersen)
-Date: Tue, 24 Apr 2018 14:26:37 -0600
-Subject: [PATCH v3 1/3] big key: get rid of stack array allocation
-Message-ID: <20180424202639.19830-1-tycho@tycho.ws>
+Date: Tue, 24 Apr 2018 14:26:39 -0600
+Subject: [PATCH v3 3/3] dh key: get rid of stack allocated array for zeroes
+In-Reply-To: <20180424202639.19830-1-tycho@tycho.ws>
+References: <20180424202639.19830-1-tycho@tycho.ws>
+Message-ID: <20180424202639.19830-3-tycho@tycho.ws>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-We're interested in getting rid of all of the stack allocated arrays in the
-kernel [1]. This patch simply hardcodes the iv length to match that of the
-hardcoded cipher.
+We're interested in getting rid of all of the stack allocated arrays in
+the kernel: https://lkml.org/lkml/2018/3/7/621
 
-[1]: https://lkml.org/lkml/2018/3/7/621
+This case is interesting, since we really just need an array of bytes that
+are zero. The loop already ensures that if the array isn't exactly the
+right size that enough zero bytes will be copied in. So, instead of
+choosing this value to be the size of the hash, let's just choose it to be
+32, since that is a common size, is not too big, and will not result in too
+many extra iterations of the loop.
 
-v2: hardcode the length of the nonce to be the GCM AES IV length, and do a
-    sanity check in init(), Eric Biggers
-v3: * remember to free big_key_aead when sanity check fails
-    * define a constant for big key IV size so it can be changed along side
-      the algorithm in the code
+v2: split out from other patch, just hardcode array size instead of
+    dynamically allocating something the right size
+v3: fix typo of 256 -> 32
 
 Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 CC: David Howells <dhowells@redhat.com>
 CC: James Morris <jmorris@namei.org>
 CC: "Serge E. Hallyn" <serge@hallyn.com>
-CC: Jason A. Donenfeld <Jason@zx2c4.com>
 CC: Eric Biggers <ebiggers3@gmail.com>
 ---
- security/keys/big_key.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ security/keys/dh.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 933623784ccd..2806e70d7f8f 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -22,6 +22,7 @@
- #include <keys/user-type.h>
- #include <keys/big_key-type.h>
- #include <crypto/aead.h>
-+#include <crypto/gcm.h>
+diff --git a/security/keys/dh.c b/security/keys/dh.c
+index 9fecaea6c298..f7403821db7f 100644
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -162,8 +162,8 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
+ 			goto err;
  
- struct big_key_buf {
- 	unsigned int		nr_pages;
-@@ -85,6 +86,7 @@ struct key_type key_type_big_key = {
-  * Crypto names for big_key data authenticated encryption
-  */
- static const char big_key_alg_name[] = "gcm(aes)";
-+#define BIG_KEY_IV_SIZE		GCM_AES_IV_SIZE
+ 		if (zlen && h) {
+-			u8 tmpbuffer[h];
+-			size_t chunk = min_t(size_t, zlen, h);
++			u8 tmpbuffer[32];
++			size_t chunk = min_t(size_t, zlen, sizeof(tmpbuffer));
+ 			memset(tmpbuffer, 0, chunk);
  
- /*
-  * Crypto algorithms for big_key data authenticated encryption
-@@ -109,7 +111,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
- 	 * an .update function, so there's no chance we'll wind up reusing the
- 	 * key to encrypt updated data. Simply put: one key, one encryption.
- 	 */
--	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
-+	u8 zero_nonce[BIG_KEY_IV_SIZE];
+ 			do {
+@@ -173,7 +173,7 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
+ 					goto err;
  
- 	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
- 	if (!aead_req)
-@@ -425,6 +427,13 @@ static int __init big_key_init(void)
- 		pr_err("Can't alloc crypto: %d\n", ret);
- 		return ret;
- 	}
-+
-+	if (unlikely(crypto_aead_ivsize(big_key_aead) != BIG_KEY_IV_SIZE)) {
-+		WARN(1, "big key algorithm changed?");
-+		ret = -EINVAL;
-+		goto free_aead;
-+	}
-+
- 	ret = crypto_aead_setauthsize(big_key_aead, ENC_AUTHTAG_SIZE);
- 	if (ret < 0) {
- 		pr_err("Can't set crypto auth tag len: %d\n", ret);
+ 				zlen -= chunk;
+-				chunk = min_t(size_t, zlen, h);
++				chunk = min_t(size_t, zlen, sizeof(tmpbuffer));
+ 			} while (zlen);
+ 		}
+ 
 -- 
 2.17.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
