@@ -1,127 +1,79 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Tue, 24 Apr 2018 20:10:26 +0000
-Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-In-Reply-To: <20180424174802.GA24613@linux.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
-	<c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
-	<4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
-	<20180424160328.GA5119@linux.intel.com>
-	<20180424174802.GA24613@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94272F62@hasmsx108.ger.corp.intel.com>
+From: tycho@tycho.ws (Tycho Andersen)
+Date: Tue, 24 Apr 2018 14:26:37 -0600
+Subject: [PATCH v3 1/3] big key: get rid of stack array allocation
+Message-ID: <20180424202639.19830-1-tycho@tycho.ws>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+We're interested in getting rid of all of the stack allocated arrays in the
+kernel [1]. This patch simply hardcodes the iv length to match that of the
+hardcoded cipher.
 
-> On Tue, Apr 24, 2018 at 07:03:28PM +0300, Jarkko Sakkinen wrote:
-> > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
-> > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > > > > >
-> > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > > > > In crb_map_io() function, __crb_request_locality() is
-> > > > > > > > called prior to crb_cmd_ready(), but if one of the
-> > > > > > > > consecutive function fails the flow bails out instead of trying to
-> relinquish locality.
-> > > > > > > > This patch adds goto jump to __crb_relinquish_locality()
-> > > > > > > > on the error path.
-> > > > > > > >
-> > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued
-> > > > > > > > only after granting
-> > > > > > > > locality)
-> > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > b/drivers/char/tpm/tpm_crb.c index
-> > > > > > > > 7f78482cd157..34fbc6cb097b
-> > > > > > > > 100644
-> > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
-> > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > >
-> > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
-> > > > > > > > >control_address,
-> > > > > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > +	}
-> > > > > > > >
-> > > > > > > >  	/*
-> > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@
-> > > > > > > > -520,7
-> > > > > > > > +522,7
-> > > > > > >
-> > > > > > > @@
-> > > > > > > > static int crb_map_io(struct acpi_device *device, struct
-> > > > > > > > crb_priv *priv,
-> > > > > > > >  	 */
-> > > > > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > > > > >  	if (ret)
-> > > > > > > > -		return ret;
-> > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > >
-> > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
-> > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > >
-> > > > > > > >  	crb_go_idle(dev, priv);
-> > > > > > > >
-> > > > > > > > +out_relinquish_locality:
-> > > > > > > > +
-> > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > > > > >
-> > > > > > > >  	return ret;
-> > > > > > >
-> > > > > > > Thanks, please just call it before returning in the error path.
-> > > > > >
-> > > > > > Can you please elaborate why, isn't the centralized exiting of
-> > > > > > functions preferred kernel coding style?
-> > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.htm
-> > > > > > l#cent
-> > > > > > ra
-> > > > > > lized-ex
-> > > > > > iting-of-functions
-> > > > >
-> > > > > You exit only from one location (not multiple) and not from a
-> > > > > nested context. Here you just add more complexity by doing this.
-> > > >
-> > > > Where is the complexity ? I see it as a standard way of undoing on exit.
-> > > > Tomas
-> > >
-> > > Jarkko, can you please respond.
-> > > Thanks
-> > > Tomas
-> >
-> > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
-> >
-> > My earlier comment was incorrect as there are two locations to exit
-> > (not sure how I managed to overlook the patch that way).
-> >
-> > Thus, I have only two very  minor requets:
-> >
-> > * Remove the extra newline (the last line addition in the patch).
-> > * Use just label named out as we have only one exception handler.
-> >
-> > I'll move on to testing, and if it it passes, I can do those updates
-> > myself.
-> >
-> > /Jarkko
-> 
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-Thanks
-Tomas
+[1]: https://lkml.org/lkml/2018/3/7/621
+
+v2: hardcode the length of the nonce to be the GCM AES IV length, and do a
+    sanity check in init(), Eric Biggers
+v3: * remember to free big_key_aead when sanity check fails
+    * define a constant for big key IV size so it can be changed along side
+      the algorithm in the code
+
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+CC: David Howells <dhowells@redhat.com>
+CC: James Morris <jmorris@namei.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Jason A. Donenfeld <Jason@zx2c4.com>
+CC: Eric Biggers <ebiggers3@gmail.com>
+---
+ security/keys/big_key.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+index 933623784ccd..2806e70d7f8f 100644
+--- a/security/keys/big_key.c
++++ b/security/keys/big_key.c
+@@ -22,6 +22,7 @@
+ #include <keys/user-type.h>
+ #include <keys/big_key-type.h>
+ #include <crypto/aead.h>
++#include <crypto/gcm.h>
+ 
+ struct big_key_buf {
+ 	unsigned int		nr_pages;
+@@ -85,6 +86,7 @@ struct key_type key_type_big_key = {
+  * Crypto names for big_key data authenticated encryption
+  */
+ static const char big_key_alg_name[] = "gcm(aes)";
++#define BIG_KEY_IV_SIZE		GCM_AES_IV_SIZE
+ 
+ /*
+  * Crypto algorithms for big_key data authenticated encryption
+@@ -109,7 +111,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+ 	 * an .update function, so there's no chance we'll wind up reusing the
+ 	 * key to encrypt updated data. Simply put: one key, one encryption.
+ 	 */
+-	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
++	u8 zero_nonce[BIG_KEY_IV_SIZE];
+ 
+ 	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
+ 	if (!aead_req)
+@@ -425,6 +427,13 @@ static int __init big_key_init(void)
+ 		pr_err("Can't alloc crypto: %d\n", ret);
+ 		return ret;
+ 	}
++
++	if (unlikely(crypto_aead_ivsize(big_key_aead) != BIG_KEY_IV_SIZE)) {
++		WARN(1, "big key algorithm changed?");
++		ret = -EINVAL;
++		goto free_aead;
++	}
++
+ 	ret = crypto_aead_setauthsize(big_key_aead, ENC_AUTHTAG_SIZE);
+ 	if (ret < 0) {
+ 		pr_err("Can't set crypto auth tag len: %d\n", ret);
+-- 
+2.17.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
