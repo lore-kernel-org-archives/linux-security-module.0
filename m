@@ -1,220 +1,134 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 25 Apr 2018 01:00:09 -0400
-Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-In-Reply-To: <20180424234219.GX14440@wotan.suse.de>
-References: <20180408174014.21908-1-hdegoede@redhat.com>
-	<20180408174014.21908-3-hdegoede@redhat.com>
-	<20180423211143.GZ14440@wotan.suse.de>
-	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
-	<1524586021.3364.20.camel@linux.vnet.ibm.com>
-	<20180424234219.GX14440@wotan.suse.de>
-Message-ID: <1524632409.3371.48.camel@linux.vnet.ibm.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Wed, 25 Apr 2018 08:58:46 +0000
+Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
+Message-ID: <cover.1524645853.git.sargun@sargun.me>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-04-24 at 23:42 +0000, Luis R. Rodriguez wrote:
-> On Tue, Apr 24, 2018 at 12:07:01PM -0400, Mimi Zohar wrote:
-> > On Tue, 2018-04-24 at 17:09 +0200, Hans de Goede wrote:
-> > > Hi,
-> > > 
-> > > On 23-04-18 23:11, Luis R. Rodriguez wrote:
-> > > > Hans, please see use of READING_FIRMWARE_PREALLOC_BUFFER, we'll need a new ID
-> > > > and security for this type of request so IMA can reject it if the policy is
-> > > > configured for it.
-> > > 
-> > > Hmm, interesting, actually it seems like the whole existence
-> > > of READING_FIRMWARE_PREALLOC_BUFFER is a mistake, 
-> 
-> request_firmware_into_buf() was merged without my own review, however,
-> the ID thing did get review from Mimi:
-> 
-> https://patchwork.kernel.org/patch/9074611/
-> 
-> The ID is not for IMA alone, its for any LSM to decide what to do.
-> Note Mimi asked for READING_FIRMWARE_DMA if such buffer was in DMA,
-> otherise READING_FIRMWARE_PREALLOC_BUFFER was suggested.
-> 
-> > > the IMA
-> > > framework really does not care if we are loading the firmware
-> > > into memory allocated by the firmware-loader code, or into
-> > > memory allocated by the device-driver requesting the firmware.
-> 
-> That's up to LSM folks to decide. We have these so far:
-> 
-> #define __kernel_read_file_id(id) \                                             
->         id(UNKNOWN, unknown)            \                                       
->         id(FIRMWARE, firmware)          \                                       
->         id(FIRMWARE_PREALLOC_BUFFER, firmware)  \                               
->         id(MODULE, kernel-module)               \                               
->         id(KEXEC_IMAGE, kexec-image)            \                               
->         id(KEXEC_INITRAMFS, kexec-initramfs)    \                               
->         id(POLICY, security-policy)             \                               
->         id(X509_CERTIFICATE, x509-certificate)  \                               
->         id(MAX_ID, )  
-> 
-> The first type of IDs added was about type of files the kernel
-> LSMs may want to do different things for.
-> 
-> Mimi why did you want a separate ID for it back before?
+The primary security benefit of this patchset is the introduction of
+read-only hooks, even if some security modules have mutable hooks.
+Currently, if you have any LSMs with mutable hooks it will render all
+heads, and list nodes mutable. These are a prime place to attack because
+being able to manipulate those hooks is a way to bypass all LSMs easily
+and to create a persistent, covert channel to intercept nearly all
+calls.
 
-The point of commit a098ecd2fa7d ("firmware: support loading into a
-pre-allocated buffer") is to avoid reading the firmware into kernel
-memory and then copying it "to it's final resting place". ?My concern
-is that if the device driver has access to the buffer, it could access
-the buffer prior to the firmware's signature having been verified by
-the kernel.
+There is a shares SRCU between all security hooks to facilitate safe
+LSM- unloading. This SRCU is very cheap for runtime overhead on reads,
+but there is synchronization around it for unloads. There is only a cost
+to pay at unload time, which is based on the execution time of longest
+chain of callbacks after synchronization begins.
 
-In tightly controlled environments interested in limiting which signed
-firmware version is loaded, require's the device driver not having
-access to the buffer until after the signature has been verified by
-the kernel (eg. IMA-appraisal).
+If CONFIG_SECURITY_WRITABLE_HOOKS is enabled, then hooks can be loaded
+at runtime. The module can check the return code of security_add_hooks
+to determine whether or not they can install their hooks, independently
+of checking for the Kconfig value. In the future, we may make it so that
+runtime hook loading is also disabled, after boot. We can do that in a
+follow-up patch.
 
-> 
-> I should note now that request_firmware_into_buf() and its
-> READING_FIRMWARE_PREALLOC_BUFFER was to enable a driver on memory constrained
-> devices. The files are large (commit says 16 MiB).
-> 
-> I've heard of larger possible files with remoteproc and with Android using
-> the custom fallback mechanism -- which could mean a proprietary tool
-> fetching firmware from a random special place on a device.
-> 
-> I could perhaps imagine an LSM which may be aware of such type of
-> arrangement may want to do its own vetting of some sort, but this
-> would not be specific to READING_FIRMWARE_PREALLOC_BUFFER, but rather
-> the custom fallback mechaism.
-> 
-> Whether or not the buffer was preallocated by the driver seems a little
-> odd for security folks to do something different with it. Security LSM
-> folks please chime in.
-> 
-> I could see a bit more of a use case for an ID for firmware scraped
-> from EFI, which Hans' patch will provide. But that *also* should get
-> good review from other LSM folks.
-> 
-> One of the issues with accepting more IDs loosely is where do we
-> stop though? If no one really is using READING_FIRMWARE_PREALLOC_BUFFER
-> I'd say lets remove it. Likewise, for this EFI thing I'd like an idea
-> if we really are going to have users for it.
-> 
-> If its of any help --
-> 
-> drivers/soc/qcom/mdt_loader.c is the only driver currently using
-> request_firmware_into_buf() however I'll note qcom_mdt_load() is used in many
-> other drivers so they are wrappers around request_firmware_into_buf():
-> 
-> drivers/gpu/drm/msm/adreno/a5xx_gpu.c:   * adreno_request_fw() handles this, but qcom_mdt_load() does
-> drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
-> drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
-> drivers/media/platform/qcom/venus/firmware.c:   ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
-> drivers/remoteproc/qcom_adsp_pil.c:     return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
-> drivers/remoteproc/qcom_wcnss.c:        return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
-> 
-> Are we going to add more IDs for more types of firmware?
-> What type of *different* decisions could LSMs take if the firmware
-> was being written to a buffer? Or in this new case that is coming
-> up, if the file came scraping EFI, would having that information
-> be useful?
-> 
-> > > As such the current IMA code (from v4.17-rc2) actually does
-> > > not handle READING_FIRMWARE_PREALLOC_BUFFER at all, 
-> > 
-> > Right, it doesn't yet address READING_FIRMWARE_PREALLOC_BUFFER, but
-> > should.
-> > 
-> > Depending on whether the device requesting the firmware has access to
-> > the DMA memory, before the signature verification, 
-> 
-> It would seem from the original patch review about READING_FIRMWARE_PREALLOC_BUFFER
-> that this is not a DMA buffer.
+If CONFIG_SECURITY_UNREGISTRABLE_HOOKS is enabled, then hooks can be
+unloaded at runtime. This behaviour can be disabled by setting
+security.allow_unregister_hooks to 0. Once set, it requires a reboot
+to be reset.
 
-The call sequence:
-qcom_mdt_load() ->?qcom_scm_pas_init_image() ->?dma_alloc_coherent()
+SELinux is exempt from the CONFIG_SECURITY_UNREGISTRABLE_HOOKS
+rule, and can unregister at any time. SELinux exposes a mechanism
+to disable itself, prior to policy loading. This can be disabled
+at compilation time, and it depends on CONFIG_SECURITY_WRITABLE_HOOKS.
+Changing this behaviour would require breaking the uapi.
 
-If dma_alloc_coherent() isn't allocating a DMA buffer, then the
-function name is misleading/confusing.
+This patch can allow for a new style of LSMs. There are many cases
+where LSM "policies" would be better defined in some formal
+programming language, like C. This is either due to flexibility,
+or performance, for functions in the hot path.
 
-> 
-> The device driver should have access to the buffer pointer with write given
-> that with request_firmware_into_buf() the driver is giving full write access to
-> the memory pointer so that the firmware API can stuff the firmware it finds
-> there.
-> 
-> Firmware signature verification would be up to the device hardware to do upon
-> load *after* request_firmware_into_buf().
+It also unlocks development usecases, but those come as a secondary
+benefit to the earlier feature. There has been an appetite for
+out-of-tree LSMs:
+http://kernsec.org/pipermail/linux-security-module-archive/2017-March/000119.html
+Casey's work has been great enabling minor LSM stacking, and a variety
+of LSMs have been proposed on list that haven't made it into the kernel
+but fit into the minor LSM stacking model.
 
-We're discussing the kernel's signature verification, not the device
-hardware's signature verification. ?Can the device driver access the
-buffer, before IMA-appraisal has verified the firmware's signature?
+One of the other big changes is the introduction of the lsm_info
+structure. This encapsulates various information about the LSM
+itself, and can be used at a later time.
 
-Mimi
+This patch was tested with CONFIG_PROVE_LOCKING to prove the correctness
+of the locking in lock_existing_hooks. It grabs the module lock
+to prevent new hooks from being loaded, or current hooks from being
+unloaded. It then grabs the lsm_info_lock, which is only grabbed
+on hook modification, or inspection of the loaded LSMs.
 
-> 
->   Luis
-> 
-> > will determine how
-> > IMA-appraisal addresses READING_FIRMWARE_PREALLOC_BUFFER.
-> > 
-> > Mimi
-> > 
-> > > here
-> > > are bits of code from: security/integrity/ima/ima_main.c:
-> > > 
-> > > static int read_idmap[READING_MAX_ID] = {
-> > >          [READING_FIRMWARE] = FIRMWARE_CHECK,
-> > >          [READING_MODULE] = MODULE_CHECK,
-> > >          [READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
-> > >          [READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
-> > >          [READING_POLICY] = POLICY_CHECK
-> > > };
-> > > 
-> > > int ima_post_read_file(struct file *file, void *buf, loff_t size,
-> > > 	...
-> > >          if (!file && read_id == READING_FIRMWARE) {
-> > >                  if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-> > >                      (ima_appraise & IMA_APPRAISE_ENFORCE))
-> > >                          return -EACCES; /* INTEGRITY_UNKNOWN */
-> > >                  return 0;
-> > >          }
-> > > 
-> > > Which show that the IMA code is not handling
-> > > READING_FIRMWARE_PREALLOC_BUFFER as it should (I believe it
-> > > should handle it the same as READING_FIRMWARE).
-> > > 
-> > > Now we could fix that, but the only user of
-> > > READING_FIRMWARE_PREALLOC_BUFFER is the code which originally
-> > > introduced it:
-> > > 
-> > > https://patchwork.kernel.org/patch/9162011/
-> > > 
-> > > So I believe it might be better to instead replace it
-> > > with just READING_FIRMWARE and find another way to tell
-> > > kernel_read_file() that there is a pre-allocated buffer,
-> > > perhaps the easiest way there is that  *buf must be
-> > > NULL when the caller wants kernel_read_file() to
-> > > vmalloc the mem. This would of course require auditing
-> > > all callers that the buf which the pass in is initialized
-> > > to NULL.
-> > > 
-> > > Either way adding a third READING_FIRMWARE_FOO to the
-> > > kernel_read_file_id enum seems like a bad idea, from
-> > > the IMA pov firmware is firmware.
-> > > 
-> > > What this whole exercise has shown me though is that
-> > > I need to call security_kernel_post_read_file() when
-> > > loading EFI embedded firmware. I will add a call to
-> > > security_kernel_post_read_file() for v4 of the patch-set.
-> > > 
-> > > > Please Cc Kees in future patches.
-> > > 
-> > > Will do.
-> > > 
-> > > Regards,
-> > > 
-> > > Hans
-> > > 
-> > 
-> > 
-> 
+The other thing that this introduces is monitoring of LKM
+unloading. If an LSM's LKM is unloaded when it is not
+supposed to be, it will crash the system.
+
+Thanks to Tetsuo for their review, and feedback.
+
+Changes since:
+v6:
+  * introduce LSM info
+  * Crash by default instead of leaving it up to module authors
+    to deal with things going wrong
+  * Monitor module unloading, to ensure that attempts to
+    unload the LKM for an LSM crashes the system.
+v5:
+  * Rename "CONFIG_SECURITY_UNLOADABLE_MODULES" to
+    "CONFIG_SECURITY_UNREGISTRABLE_HOOKS" which enables arbitrary hook
+    deregistration. If disabled, hooks are not allowed to deregister.
+    SELinux is exempt.
+  * Rename security.allow_unload_hooks to
+    security.allow_unregister_hooks
+  * Make it so that both security_add_hooks, and security_delete_hooks
+    return errors upon being unsuccessful, allowing module authors to
+    make the best decision for their use case.
+  * Get rid of LSM_HOOK_INIT_MUTABLE
+v4:
+  * Introduce the configuration flag "CONFIG_SECURITY_UNLOADABLE_MODULES"
+    to disable module unloading
+  * Introduce the kernel parameter security.allow_unload_hooks
+v3:
+  * Instead of taking the approach of a "null hook", using the approach of
+    a second set of hooks -- this was mostly done through the
+    FOR_EACH_SECURITY_HOOK_MUTABLE macro, which gets compiled out if
+    CONFIG_SECURITY_WRITABLE_HOOKS is disabled.
+v2:
+  * Split out hlist_head patch
+  * Apply Tetsuo's changes to clean up functions which are not
+      covered by call_int_hook / call_void_hook
+  * Disable NULL hook checking when uneeded
+v1:
+  * Add SRCU to allow for code-unloading
+  * Add concurrency control around hook mutation
+
+
+Sargun Dhillon (6):
+  security: Move LSM registration arguments to struct lsm_info
+  security: Make security_hook_heads private
+  security: Introduce mutable (RW) hooks
+  security: Expose security_add_hooks externally and add error handling
+  security: Panic on forced unloading of security module
+  security: Add SECURITY_UNREGISTRABLE_HOOKS to allow for hook removal
+
+ include/linux/lsm_hooks.h                     |  67 ++--
+ scripts/gcc-plugins/randomize_layout_plugin.c |   2 -
+ security/Kconfig                              |  12 +
+ security/apparmor/lsm.c                       |   8 +-
+ security/commoncap.c                          |   8 +-
+ security/inode.c                              |  56 +++-
+ security/loadpin/loadpin.c                    |   6 +-
+ security/security.c                           | 421 +++++++++++++++++++++-----
+ security/security.h                           |  11 +
+ security/selinux/hooks.c                      |  16 +-
+ security/smack/smack_lsm.c                    |   5 +-
+ security/tomoyo/tomoyo.c                      |   6 +-
+ security/yama/yama_lsm.c                      |   6 +-
+ 13 files changed, 491 insertions(+), 133 deletions(-)
+ create mode 100644 security/security.h
+
+-- 
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
