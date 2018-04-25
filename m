@@ -1,137 +1,49 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Wed, 25 Apr 2018 19:36:21 +0900
-Subject: [PATCH 1/3] big key: get rid of stack array allocation
-In-Reply-To: <CAGXu5j+SXCJpm9xnX1UaY0Qz2+E0qNETc+s8kwrH6hE9LLjgpw@mail.gmail.com>
-References: <20180424143539.GB3125@cisco>
-	<201804242346.FHI69745.SQMHFVOOFLFOJt@I-love.SAKURA.ne.jp>
-	<20180424145104.GC3125@cisco>
-	<20180424195845.GB23575@mail.hallyn.com>
-	<CAGXu5j+SXCJpm9xnX1UaY0Qz2+E0qNETc+s8kwrH6hE9LLjgpw@mail.gmail.com>
-Message-ID: <201804251936.GAG73463.HOJtFFOQSLFOVM@I-love.SAKURA.ne.jp>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Wed, 25 Apr 2018 10:07:15 -0400
+Subject: [PATCH 04/24] VFS: Add LSM hooks for filesystem context [ver #7]
+In-Reply-To: <703.1524583367@warthog.procyon.org.uk>
+References: <aca7e68c-022b-47ac-c249-59e042d431e8@tycho.nsa.gov>
+	<CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com>
+	<152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
+	<152414469006.23902.8132059438921850399.stgit@warthog.procyon.org.uk>
+	<3232.1524238511@warthog.procyon.org.uk>
+	<703.1524583367@warthog.procyon.org.uk>
+Message-ID: <1bb08eac-517a-a07e-5e64-5771cc0c0afc@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Kees Cook wrote:
-> On Tue, Apr 24, 2018 at 12:58 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> > Quoting Tycho Andersen (tycho at tycho.ws):
-> >> On Tue, Apr 24, 2018 at 11:46:38PM +0900, Tetsuo Handa wrote:
-> >> > Tycho Andersen wrote:
-> >> > > > > +     if (unlikely(crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_SIZE)) {
-> >> > > > > +             WARN(1, "big key algorithm changed?");
-> >> >
-> >> > Please avoid using WARN() WARN_ON() etc.
-> >> > syzbot would catch it and panic() due to panic_on_warn == 1.
-> >>
-> >> But it is really a programming bug in this case (and it seems better
-> >> than BUG()...). Isn't this exactly the sort of case we want to catch?
-> >>
-> >> Tycho
-> >
-> > Right - is there a url to some discussion about this?  Because not
-> > using WARN when WARN should be used, because it troubles a bot, seems
-> > the wrong solution.  If this *is* what's been agreed upon, then
-> > what is the new recommended thing to do here?
+On 04/24/2018 11:22 AM, David Howells wrote:
+> Stephen Smalley <sds@tycho.nsa.gov> wrote:
 > 
-> BUG() is basically supposed to never be used, as decreed by Linus.
-> WARN() here is entirely correct: if we encounter a case where
-> crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_SIZE is not true, we
-> run the risk of stack memory corruption. If this is an EXPECTED
-> failure case, then okay, drop the WARN() but we have to keep the
-> -EINVAL.
+>> Neither fsopen() nor fscontext_fs_write() appear to perform any kind of
+>> up-front permission checking (DAC or MAC), although some security hooks may
+>> be ultimately called to allocate structures, parse security options, etc.
+>> Is there a reason not apply a may_mount() or similar check up front?
+> 
+> may_mount() is called by fsmount() at the moment.  It may make sense to move
+> this earlier to fsopen().  Note that there's also going to be something that
+> looks like:
+> 
+> 	fd = fspick("/mnt");
+> 	fsmount(fd, "/a", MNT_NOEXEC); // ie. bind mount
+> 
+> or:
+> 
+> 	fd = fspick("/mnt");
+> 	write(fd, "o intr");
+> 	write(fd, "x reconfigure"); // ie. something like remount
+> 	close(fd);
+> 
+> I guess we'd want to call may_mount() in fspick() too.  But there's also the
+> possibility of using this to create a query interfact too:
+> 
+> 	fd = fspick("/mnt");
+> 	write(fd, "q intr");
+> 	read(fd, value_buffer);
 
-big_key_init() is __init function of built-in module which will be called
-only once upon boot, isn't it? Then, there is no point to continue after
-WARN(); BUG() is better here.
-
-
-
-Moreover, if this is meant for sanity check in case something went wrong
-(e.g. memory corruption), it is better to check at run time like
-
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 9336237..bca04f2 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -22,6 +22,7 @@
- #include <keys/user-type.h>
- #include <keys/big_key-type.h>
- #include <crypto/aead.h>
-+#include <crypto/gcm.h>
- 
- struct big_key_buf {
- 	unsigned int		nr_pages;
-@@ -109,7 +110,12 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
- 	 * an .update function, so there's no chance we'll wind up reusing the
- 	 * key to encrypt updated data. Simply put: one key, one encryption.
- 	 */
--	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
-+	u8 zero_nonce[GCM_AES_IV_SIZE];
-+
-+	if (crypto_aead_ivsize(big_key_aead) != sizeof(zero_nonce)) {
-+		pr_err("big key algorithm changed?");
-+		return -EINVAL;
-+	}
- 
- 	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
- 	if (!aead_req)
-
-because crypto_aead_ivsize(big_key_aead) == GCM_AES_IV_SIZE is true
-unless something goes wrong at run time, isn't it?
+My concern was that fsopen()/fscontext_fs_write() may expose attack surface (e.g. mount option parsing code) that might not be normally accessible to unprivileged userspace (i.e. gated by may_mount() and security_sb_mount()) prior to your changes.
 
 
-
-Moreover, zero_nonce[] can be "static" if all actions after memory allocation
-are guarded by global big_key_aead_lock mutex?
-
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 9336237..1e7d2d1 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -22,6 +22,7 @@
- #include <keys/user-type.h>
- #include <keys/big_key-type.h>
- #include <crypto/aead.h>
-+#include <crypto/gcm.h>
- 
- struct big_key_buf {
- 	unsigned int		nr_pages;
-@@ -109,27 +110,28 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
- 	 * an .update function, so there's no chance we'll wind up reusing the
- 	 * key to encrypt updated data. Simply put: one key, one encryption.
- 	 */
--	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
-+	static u8 zero_nonce[GCM_AES_IV_SIZE];
-+
-+	if (crypto_aead_ivsize(big_key_aead) != sizeof(zero_nonce)) {
-+		pr_err("big key algorithm changed?");
-+		return -EINVAL;
-+	}
- 
- 	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
- 	if (!aead_req)
- 		return -ENOMEM;
- 
-+	mutex_lock(&big_key_aead_lock);
- 	memset(zero_nonce, 0, sizeof(zero_nonce));
- 	aead_request_set_crypt(aead_req, buf->sg, buf->sg, datalen, zero_nonce);
- 	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
- 	aead_request_set_ad(aead_req, 0);
--
--	mutex_lock(&big_key_aead_lock);
--	if (crypto_aead_setkey(big_key_aead, key, ENC_KEY_SIZE)) {
-+	if (crypto_aead_setkey(big_key_aead, key, ENC_KEY_SIZE))
- 		ret = -EAGAIN;
--		goto error;
--	}
--	if (op == BIG_KEY_ENC)
-+	else if (op == BIG_KEY_ENC)
- 		ret = crypto_aead_encrypt(aead_req);
- 	else
- 		ret = crypto_aead_decrypt(aead_req);
--error:
- 	mutex_unlock(&big_key_aead_lock);
- 	aead_request_free(aead_req);
- 	return ret;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
