@@ -1,63 +1,309 @@
-From: tycho@tycho.ws (Tycho Andersen)
-Date: Wed, 25 Apr 2018 08:15:07 -0600
-Subject: [PATCH 1/3] big key: get rid of stack array allocation
-In-Reply-To: <201804251936.GAG73463.HOJtFFOQSLFOVM@I-love.SAKURA.ne.jp>
-References: <20180424143539.GB3125@cisco>
-	<201804242346.FHI69745.SQMHFVOOFLFOJt@I-love.SAKURA.ne.jp>
-	<20180424145104.GC3125@cisco>
-	<20180424195845.GB23575@mail.hallyn.com>
-	<CAGXu5j+SXCJpm9xnX1UaY0Qz2+E0qNETc+s8kwrH6hE9LLjgpw@mail.gmail.com>
-	<201804251936.GAG73463.HOJtFFOQSLFOVM@I-love.SAKURA.ne.jp>
-Message-ID: <20180425141507.GA4240@cisco>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Wed, 25 Apr 2018 17:55:57 +0000
+Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
+In-Reply-To: <1524632409.3371.48.camel@linux.vnet.ibm.com>
+References: <20180408174014.21908-1-hdegoede@redhat.com>
+	<20180408174014.21908-3-hdegoede@redhat.com>
+	<20180423211143.GZ14440@wotan.suse.de>
+	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
+	<1524586021.3364.20.camel@linux.vnet.ibm.com>
+	<20180424234219.GX14440@wotan.suse.de>
+	<1524632409.3371.48.camel@linux.vnet.ibm.com>
+Message-ID: <20180425175557.GY14440@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 25, 2018 at 07:36:21PM +0900, Tetsuo Handa wrote:
-> Kees Cook wrote:
-> > On Tue, Apr 24, 2018 at 12:58 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > Quoting Tycho Andersen (tycho at tycho.ws):
-> > >> On Tue, Apr 24, 2018 at 11:46:38PM +0900, Tetsuo Handa wrote:
-> > >> > Tycho Andersen wrote:
-> > >> > > > > +     if (unlikely(crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_SIZE)) {
-> > >> > > > > +             WARN(1, "big key algorithm changed?");
-> > >> >
-> > >> > Please avoid using WARN() WARN_ON() etc.
-> > >> > syzbot would catch it and panic() due to panic_on_warn == 1.
-> > >>
-> > >> But it is really a programming bug in this case (and it seems better
-> > >> than BUG()...). Isn't this exactly the sort of case we want to catch?
-> > >>
-> > >> Tycho
-> > >
-> > > Right - is there a url to some discussion about this?  Because not
-> > > using WARN when WARN should be used, because it troubles a bot, seems
-> > > the wrong solution.  If this *is* what's been agreed upon, then
-> > > what is the new recommended thing to do here?
+On Wed, Apr 25, 2018 at 01:00:09AM -0400, Mimi Zohar wrote:
+> On Tue, 2018-04-24 at 23:42 +0000, Luis R. Rodriguez wrote:
+> > On Tue, Apr 24, 2018 at 12:07:01PM -0400, Mimi Zohar wrote:
+> > > On Tue, 2018-04-24 at 17:09 +0200, Hans de Goede wrote:
+> > > > On 23-04-18 23:11, Luis R. Rodriguez wrote:
+> > > > > Hans, please see use of READING_FIRMWARE_PREALLOC_BUFFER, we'll need a new ID
+> > > > > and security for this type of request so IMA can reject it if the policy is
+> > > > > configured for it.
+> > > > 
+> > > > Hmm, interesting, actually it seems like the whole existence
+> > > > of READING_FIRMWARE_PREALLOC_BUFFER is a mistake, 
 > > 
-> > BUG() is basically supposed to never be used, as decreed by Linus.
-> > WARN() here is entirely correct: if we encounter a case where
-> > crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_SIZE is not true, we
-> > run the risk of stack memory corruption. If this is an EXPECTED
-> > failure case, then okay, drop the WARN() but we have to keep the
-> > -EINVAL.
+> > request_firmware_into_buf() was merged without my own review, however,
+> > the ID thing did get review from Mimi:
+> > 
+> > https://patchwork.kernel.org/patch/9074611/
+> > 
+> > The ID is not for IMA alone, its for any LSM to decide what to do.
+> > Note Mimi asked for READING_FIRMWARE_DMA if such buffer was in DMA,
+> > otherise READING_FIRMWARE_PREALLOC_BUFFER was suggested.
+> > 
+> > Mimi why did you want a separate ID for it back before?
 > 
-> big_key_init() is __init function of built-in module which will be called
-> only once upon boot, isn't it? Then, there is no point to continue after
-> WARN(); BUG() is better here.
+> The point of commit a098ecd2fa7d ("firmware: support loading into a
+> pre-allocated buffer") is to avoid reading the firmware into kernel
+> memory and then copying it "to it's final resting place". ?My concern
+> is that if the device driver has access to the buffer, it could access
+> the buffer prior to the firmware's signature having been verified by
+> the kernel.
 
-I don't think so. The machine can still boot and work just fine, but
-big key crypto will not be available. I suspect there are some
-machines out there that don't need big key, so there's no reason for
-the boot to fail. That's the rub about WARN vs BUG -- that in most
-cases things can continue on happily.
+If request_firmware_into_buf() is used and the firmware was found in
+/lib/firmware/ paths then the driver will *not* use the firmware prior
+to any LSM doing any firmware signature verification because
+kernel_read_file_from_path() and in turn security_kernel_read_file().
 
-> Moreover, if this is meant for sanity check in case something went wrong
-> (e.g. memory corruption), it is better to check at run time like
+The firmware API has a fallback mechanism [0] though, and if that is used then
+security_kernel_post_read_file() is used once the firmware is loaded through
+the sysfs interface *prior* to handing the firmware data to the driver. As
+Hans noted though security_kernel_post_read_file() currently *only* uses
+READING_FIRMWARE, so this needs to be fixed. Also note though that LSMs
+get a hint of what is going to happen *soon* prior to the fallback
+mechanism kicking on as we travere the /lib/firmware/ paths for direct
+filesystem loading.
 
-But the algorithm is hard coded at the top of the file, so one check
-is enough.
+If this is not sufficient to cover LSM appraisals *one* option could be to
+have security_kernel_read_file() return a special error of some sort
+for READING_FIRMWARE_PREALLOC_BUFFER so that kernel_read_file_from_path()
+users could *know* to fatally give up.
 
-Tycho
+Currently the device drivers using request_firmware_into_buf() can end up
+getting the buffer with firmware stashed in it without having the kernel do any
+firmware signature verification at all through its LSMs. The LSM hooks added to
+the firmware loader long ago by Kees via commit 6593d9245bc66 ("firmware_class:
+perform new LSM checks") on v3.17 added an LSM for direct filesystem lookups,
+but on the fallback mechanism seems to have only added a post LSM hook
+security_kernel_fw_from_file().
+
+There is also a custom fallback mechanism [1] which can be used if the path to
+the firmware may be out of the /lib/firmware/ paths or perhaps the firmware
+requires some very custom fetching of some sort. The only thing this does
+though is just *not* issue a uevent when we don't find the firmware and also
+sets the timeout to a practically never-ending value. The custom fallback
+mechanism is only usable for request_firmware_nowait() though. In retrospect
+the custom fallback mechanism is pure crap and these days we've acknowledged
+that even in crazy custom firmware fetching cases folks should be able to
+accomplish this by relying on uevents and using the firmwared [2] or forking
+it, or a different similar proprietary similar solution, which would just
+monitor for uevents for firmware and just Do The Right Thing (TM).
+
+Consider some mobile devices which may want to fetch it from some custom
+partition which only it can know how to get.
+
+There is a kernel config option which enables the fallback mechanism always,
+This is now easily readable as follows:
+
+drivers/base/firmware_loader/fallback_table.c
+
+struct firmware_fallback_config fw_fallback_config = {
+	.force_sysfs_fallback = IS_ENABLED(CONFIG_FW_LOADER_USER_HELPER_FALLBACK),
+	.loading_timeout = 60,
+	.old_timeout = 60,
+};
+
+Even if this is used we always do direct fs lookups first.
+
+Android became the primary user of CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
+
+It would be good for us to hear from Android folks if their current use of
+request_firmware_into_buf() is designed in practice to *never* use the direct
+filesystem firmware loading interface, and always rely instead on the
+fallback mechanism.
+
+That would answer help your appraisal question in practice today.
+
+[0] https://www.kernel.org/doc/html/latest/driver-api/firmware/fallback-mechanisms.html
+[1] https://www.kernel.org/doc/html/latest/driver-api/firmware/fallback-mechanisms.html#firmware-custom-fallback-mechanism
+[2] https://github.com/teg/firmwared
+
+> In tightly controlled environments interested in limiting which signed
+> firmware version is loaded, require's the device driver not having
+> access to the buffer until after the signature has been verified by
+> the kernel (eg. IMA-appraisal).
+
+We may need more work for this for request_firmware_into_buf().
+
+> > I should note now that request_firmware_into_buf() and its
+> > READING_FIRMWARE_PREALLOC_BUFFER was to enable a driver on memory constrained
+> > devices. The files are large (commit says 16 MiB).
+> > 
+> > I've heard of larger possible files with remoteproc and with Android using
+> > the custom fallback mechanism -- which could mean a proprietary tool
+> > fetching firmware from a random special place on a device.
+> > 
+> > I could perhaps imagine an LSM which may be aware of such type of
+> > arrangement may want to do its own vetting of some sort, but this
+> > would not be specific to READING_FIRMWARE_PREALLOC_BUFFER, but rather
+> > the custom fallback mechaism.
+> > 
+> > Whether or not the buffer was preallocated by the driver seems a little
+> > odd for security folks to do something different with it. Security LSM
+> > folks please chime in.
+> > 
+> > I could see a bit more of a use case for an ID for firmware scraped
+> > from EFI, which Hans' patch will provide. But that *also* should get
+> > good review from other LSM folks.
+> > 
+> > One of the issues with accepting more IDs loosely is where do we
+> > stop though? If no one really is using READING_FIRMWARE_PREALLOC_BUFFER
+> > I'd say lets remove it. Likewise, for this EFI thing I'd like an idea
+> > if we really are going to have users for it.
+> > 
+> > If its of any help --
+> > 
+> > drivers/soc/qcom/mdt_loader.c is the only driver currently using
+> > request_firmware_into_buf() however I'll note qcom_mdt_load() is used in many
+> > other drivers so they are wrappers around request_firmware_into_buf():
+> > 
+> > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:   * adreno_request_fw() handles this, but qcom_mdt_load() does
+> > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
+> > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
+> > drivers/media/platform/qcom/venus/firmware.c:   ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+> > drivers/remoteproc/qcom_adsp_pil.c:     return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+> > drivers/remoteproc/qcom_wcnss.c:        return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+> > 
+> > Are we going to add more IDs for more types of firmware?
+> > What type of *different* decisions could LSMs take if the firmware
+> > was being written to a buffer? Or in this new case that is coming
+> > up, if the file came scraping EFI, would having that information
+> > be useful?
+> > 
+> > > > As such the current IMA code (from v4.17-rc2) actually does
+> > > > not handle READING_FIRMWARE_PREALLOC_BUFFER at all, 
+> > > 
+> > > Right, it doesn't yet address READING_FIRMWARE_PREALLOC_BUFFER, but
+> > > should.
+> > > 
+> > > Depending on whether the device requesting the firmware has access to
+> > > the DMA memory, before the signature verification, 
+> > 
+> > It would seem from the original patch review about READING_FIRMWARE_PREALLOC_BUFFER
+> > that this is not a DMA buffer.
+> 
+> The call sequence:
+> qcom_mdt_load() ->?qcom_scm_pas_init_image() ->?dma_alloc_coherent()
+> 
+> If dma_alloc_coherent() isn't allocating a DMA buffer, then the
+> function name is misleading/confusing.
+
+Hah, by *definition* the device *and* processor has immediate access
+to data written *immediately* when dma_alloc_coherent() is used. From
+Documentation/DMA-API.txt:
+
+-----------------------------------------------------------------------
+Part Ia - Using large DMA-coherent buffers                                      
+------------------------------------------                                      
+                                                                                
+::                                                                              
+                                                                                
+        void *                                                                  
+        dma_alloc_coherent(struct device *dev, size_t size,                     
+                           dma_addr_t *dma_handle, gfp_t flag)                  
+                                                                                
+Consistent memory is memory for which a write by either the device or           
+the processor can immediately be read by the processor or device                
+without having to worry about caching effects.  (You may however need           
+to make sure to flush the processor's write buffers before telling              
+devices to read that memory.)  
+------------------------------------------------------------------------
+
+Is ptr below
+
+	ret = request_firmware_into_buf(&seg_fw, fw_name, dev,  
+					ptr, phdr->p_filesz); 
+
+Also part of the DMA buffer allocated earlier via:
+
+        ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);              
+
+Android folks?
+
+> > The device driver should have access to the buffer pointer with write given
+> > that with request_firmware_into_buf() the driver is giving full write access to
+> > the memory pointer so that the firmware API can stuff the firmware it finds
+> > there.
+> > 
+> > Firmware signature verification would be up to the device hardware to do upon
+> > load *after* request_firmware_into_buf().
+> 
+> We're discussing the kernel's signature verification, not the device
+> hardware's signature verification. ?Can the device driver access the
+> buffer, before IMA-appraisal has verified the firmware's signature?
+
+It will depend on the above question.
+
+  Luis
+
+> 
+> Mimi
+> 
+> > 
+> >   Luis
+> > 
+> > > will determine how
+> > > IMA-appraisal addresses READING_FIRMWARE_PREALLOC_BUFFER.
+> > > 
+> > > Mimi
+> > > 
+> > > > here
+> > > > are bits of code from: security/integrity/ima/ima_main.c:
+> > > > 
+> > > > static int read_idmap[READING_MAX_ID] = {
+> > > >          [READING_FIRMWARE] = FIRMWARE_CHECK,
+> > > >          [READING_MODULE] = MODULE_CHECK,
+> > > >          [READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+> > > >          [READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+> > > >          [READING_POLICY] = POLICY_CHECK
+> > > > };
+> > > > 
+> > > > int ima_post_read_file(struct file *file, void *buf, loff_t size,
+> > > > 	...
+> > > >          if (!file && read_id == READING_FIRMWARE) {
+> > > >                  if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+> > > >                      (ima_appraise & IMA_APPRAISE_ENFORCE))
+> > > >                          return -EACCES; /* INTEGRITY_UNKNOWN */
+> > > >                  return 0;
+> > > >          }
+> > > > 
+> > > > Which show that the IMA code is not handling
+> > > > READING_FIRMWARE_PREALLOC_BUFFER as it should (I believe it
+> > > > should handle it the same as READING_FIRMWARE).
+> > > > 
+> > > > Now we could fix that, but the only user of
+> > > > READING_FIRMWARE_PREALLOC_BUFFER is the code which originally
+> > > > introduced it:
+> > > > 
+> > > > https://patchwork.kernel.org/patch/9162011/
+> > > > 
+> > > > So I believe it might be better to instead replace it
+> > > > with just READING_FIRMWARE and find another way to tell
+> > > > kernel_read_file() that there is a pre-allocated buffer,
+> > > > perhaps the easiest way there is that  *buf must be
+> > > > NULL when the caller wants kernel_read_file() to
+> > > > vmalloc the mem. This would of course require auditing
+> > > > all callers that the buf which the pass in is initialized
+> > > > to NULL.
+> > > > 
+> > > > Either way adding a third READING_FIRMWARE_FOO to the
+> > > > kernel_read_file_id enum seems like a bad idea, from
+> > > > the IMA pov firmware is firmware.
+> > > > 
+> > > > What this whole exercise has shown me though is that
+> > > > I need to call security_kernel_post_read_file() when
+> > > > loading EFI embedded firmware. I will add a call to
+> > > > security_kernel_post_read_file() for v4 of the patch-set.
+> > > > 
+> > > > > Please Cc Kees in future patches.
+> > > > 
+> > > > Will do.
+> > > > 
+> > > > Regards,
+> > > > 
+> > > > Hans
+> > > > 
+> > > 
+> > > 
+> > 
+> 
+> 
+
+-- 
+Do not panic
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
