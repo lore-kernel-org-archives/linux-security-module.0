@@ -1,63 +1,142 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Fri, 27 Apr 2018 14:21:01 -0400
-Subject: Extracting written string from the write syscall
-In-Reply-To: <CAH5sRboPmzmdBs2=70f-d3+EuiPaMJQXBsU=no7aT=Y8j7hyAA@mail.gmail.com>
-References: <CAH5sRbr_-nHPb8moqPyZ--JVOzGi+_PHVVteA+TXe-Yqaoa5xA@mail.gmail.com>
-	<20180426185725.4a53fa47@ivy-bridge>
-	<1dfb37cb-b440-a3da-c6e2-c328d43ffa5a@schaufler-ca.com>
-	<CAMp4zn9nFDPA0-FU7us3dKQyz3vfYDOTQJ6fuJutips2CoGbOg@mail.gmail.com>
-	<5816af1d-8409-64e5-f1de-e4211defacc7@schaufler-ca.com>
-	<CAH5sRboPmzmdBs2=70f-d3+EuiPaMJQXBsU=no7aT=Y8j7hyAA@mail.gmail.com>
-Message-ID: <20180427182101.ztkixotkvs7zha4d@madcap2.tricolour.ca>
+From: tyhicks@canonical.com (Tyler Hicks)
+Date: Fri, 27 Apr 2018 19:16:02 +0000
+Subject: [PATCH 3/3] seccomp: Don't special case audited processes when logging
+In-Reply-To: <1524856562-22566-1-git-send-email-tyhicks@canonical.com>
+References: <1524856562-22566-1-git-send-email-tyhicks@canonical.com>
+Message-ID: <1524856562-22566-4-git-send-email-tyhicks@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2018-04-27 02:37, Wajih Ul Hassan wrote:
-> Thanks for your replies. However, I am now thinking of another solution.
-> Let's say I can capture write() in the userspace by either instrumenting
-> the LibC or LD_PRELOAD wrapper and store the string buffer passed to
-> write().
-> Can I call/generate *some other non-instrusive* syscall which can take that
-> string buffer that I stored earlier and that syscall with the buffer will
-> be visible in the audit.log? I am not worried about performance hit right
-> now.
+Seccomp logging for "handled" actions such as RET_TRAP, RET_TRACE, or
+RET_ERRNO can be very noisy for processes that are being audited. This
+patch modifies the seccomp logging behavior to treat processes that are
+being inspected via the audit subsystem the same as processes that
+aren't under inspection. Handled actions will no longer be logged just
+because the process is being inspected. Since v4.14, applications have
+the ability to request logging of handled actions by using the
+SECCOMP_FILTER_FLAG_LOG flag when loading seccomp filters.
 
-Use an AUDIT_USER message with the text and some identifier that links
-it with a particular write call?
+With this patch, the logic for deciding if an action will be logged is:
 
-> On Thu, Apr 26, 2018 at 7:46 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > On 4/26/2018 5:08 PM, Sargun Dhillon wrote:
-> > > On Thu, Apr 26, 2018 at 4:40 PM, Casey Schaufler <casey@schaufler-ca.com>
-> > wrote:
-> > >> On 4/26/2018 3:57 PM, Steve Grubb wrote:
-> > >>> On Thu, 26 Apr 2018 20:34:57 +0000
-> > >>> Wajih Ul Hassan <wajih.lums@gmail.com> wrote:
-> > >>>
-> > >>>> Hi all,
-> > >>>>  .....
-> > >> You could write a Linux Security Module (LSM) to monitor the
-> > >> content of writes. The performance impact would be rather
-> > >> amazing.
-> > >>
-> > > I would recommend using BPF + kprobes + perf_event buffers for this
-> > > purpose. There are enough places you can probe to grab these strings
-> > > in the kernel, and if you do your filtering in BPF, you can then push
-> > > it into kernel space based on filtering. Although, AFAIK, the BPF JITs
-> > > don't do vectorization of instructions, but it's still not too bad. If
-> > > you put your kprobe on the syscall itself, and probe the userspace
-> > > addr, remember you're going to be open to a time-of-use, time-of-check
-> > > style attack.
-> >
-> > That looks like a whole lot of mechanism to perform a simple task.
+  if action == RET_ALLOW:
+    do not log
+  else if action not in actions_logged:
+    do not log
+  else if action == RET_KILL:
+    log
+  else if action == RET_LOG:
+    log
+  else if filter-requests-logging:
+    log
+  else:
+    do not log
 
-- RGB
+Reported-by: Steve Grubb <sgrubb@redhat.com>
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+---
+ Documentation/userspace-api/seccomp_filter.rst |  7 -------
+ include/linux/audit.h                          | 10 +---------
+ kernel/auditsc.c                               |  2 +-
+ kernel/seccomp.c                               | 15 +++++----------
+ 4 files changed, 7 insertions(+), 27 deletions(-)
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+diff --git a/Documentation/userspace-api/seccomp_filter.rst b/Documentation/userspace-api/seccomp_filter.rst
+index 099c412..82a468b 100644
+--- a/Documentation/userspace-api/seccomp_filter.rst
++++ b/Documentation/userspace-api/seccomp_filter.rst
+@@ -207,13 +207,6 @@ directory. Here's a description of each file in that directory:
+ 	to the file do not need to be in ordered form but reads from the file
+ 	will be ordered in the same way as the actions_avail sysctl.
+ 
+-	It is important to note that the value of ``actions_logged`` does not
+-	prevent certain actions from being logged when the audit subsystem is
+-	configured to audit a task. If the action is not found in
+-	``actions_logged`` list, the final decision on whether to audit the
+-	action for that task is ultimately left up to the audit subsystem to
+-	decide for all seccomp return values other than ``SECCOMP_RET_ALLOW``.
+-
+ 	The ``allow`` string is not accepted in the ``actions_logged`` sysctl
+ 	as it is not possible to log ``SECCOMP_RET_ALLOW`` actions. Attempting
+ 	to write ``allow`` to the sysctl will result in an EINVAL being
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index b311d7d..1964fbd 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -232,7 +232,7 @@ extern void __audit_file(const struct file *);
+ extern void __audit_inode_child(struct inode *parent,
+ 				const struct dentry *dentry,
+ 				const unsigned char type);
+-extern void __audit_seccomp(unsigned long syscall, long signr, int code);
++extern void audit_seccomp(unsigned long syscall, long signr, int code);
+ extern void audit_seccomp_actions_logged(const char *names, int res);
+ extern void __audit_ptrace(struct task_struct *t);
+ 
+@@ -303,12 +303,6 @@ static inline void audit_inode_child(struct inode *parent,
+ }
+ void audit_core_dumps(long signr);
+ 
+-static inline void audit_seccomp(unsigned long syscall, long signr, int code)
+-{
+-	if (audit_enabled && unlikely(!audit_dummy_context()))
+-		__audit_seccomp(syscall, signr, code);
+-}
+-
+ static inline void audit_ptrace(struct task_struct *t)
+ {
+ 	if (unlikely(!audit_dummy_context()))
+@@ -499,8 +493,6 @@ static inline void audit_inode_child(struct inode *parent,
+ { }
+ static inline void audit_core_dumps(long signr)
+ { }
+-static inline void __audit_seccomp(unsigned long syscall, long signr, int code)
+-{ }
+ static inline void audit_seccomp(unsigned long syscall, long signr, int code)
+ { }
+ static inline void audit_seccomp_actions_logged(const char *names, int res)
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 3496238..1e64b91 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2464,7 +2464,7 @@ void audit_core_dumps(long signr)
+ 	audit_log_end(ab);
+ }
+ 
+-void __audit_seccomp(unsigned long syscall, long signr, int code)
++void audit_seccomp(unsigned long syscall, long signr, int code)
+ {
+ 	struct audit_buffer *ab;
+ 
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index e28ddcc..947cc0f 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -584,18 +584,13 @@ static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
+ 	}
+ 
+ 	/*
+-	 * Force an audit message to be emitted when the action is RET_KILL_*,
+-	 * RET_LOG, or the FILTER_FLAG_LOG bit was set and the action is
+-	 * allowed to be logged by the admin.
++	 * Emit an audit message when the action is RET_KILL_*, RET_LOG, or the
++	 * FILTER_FLAG_LOG bit was set. The admin has the ability to silence
++	 * any action from being logged by removing the action name from the
++	 * seccomp_actions_logged sysctl.
+ 	 */
+ 	if (log)
+-		return __audit_seccomp(syscall, signr, action);
+-
+-	/*
+-	 * Let the audit subsystem decide if the action should be audited based
+-	 * on whether the current task itself is being audited.
+-	 */
+-	return audit_seccomp(syscall, signr, action);
++		audit_seccomp(syscall, signr, action);
+ }
+ 
+ /*
+-- 
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
