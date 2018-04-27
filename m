@@ -1,38 +1,43 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 26 Apr 2018 17:46:39 -0700
-Subject: Extracting written string from the write syscall
-In-Reply-To: <CAMp4zn9nFDPA0-FU7us3dKQyz3vfYDOTQJ6fuJutips2CoGbOg@mail.gmail.com>
-References: <CAH5sRbr_-nHPb8moqPyZ--JVOzGi+_PHVVteA+TXe-Yqaoa5xA@mail.gmail.com>
-	<20180426185725.4a53fa47@ivy-bridge>
-	<1dfb37cb-b440-a3da-c6e2-c328d43ffa5a@schaufler-ca.com>
-	<CAMp4zn9nFDPA0-FU7us3dKQyz3vfYDOTQJ6fuJutips2CoGbOg@mail.gmail.com>
-Message-ID: <5816af1d-8409-64e5-f1de-e4211defacc7@schaufler-ca.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Thu, 26 Apr 2018 19:49:59 -0500
+Subject: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
+In-Reply-To: <0d2b2635-d7fb-d240-7dd0-2a81014c58ba@linux.vnet.ibm.com> (Stefan
+	Berger's message of "Thu, 26 Apr 2018 17:18:43 -0400")
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+	<1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+	<87sh8lcecn.fsf@xmission.com>
+	<1523636702.3272.63.camel@linux.vnet.ibm.com>
+	<d8c30d7d-c679-9323-7a25-d3148e9b96c6@canonical.com>
+	<1524081472.3272.319.camel@linux.vnet.ibm.com>
+	<87wox4s282.fsf@xmission.com>
+	<8895cb9c-7b9e-2f82-e3d8-a15f5fc26e25@canonical.com>
+	<2103bbb9-3f2a-78f8-f7ad-28859659973f@linux.vnet.ibm.com>
+	<f84ae8af-fa5b-9f31-fbef-5a49f90dd45a@canonical.com>
+	<0d2b2635-d7fb-d240-7dd0-2a81014c58ba@linux.vnet.ibm.com>
+Message-ID: <87fu3hbhhk.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 4/26/2018 5:08 PM, Sargun Dhillon wrote:
-> On Thu, Apr 26, 2018 at 4:40 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 4/26/2018 3:57 PM, Steve Grubb wrote:
->>> On Thu, 26 Apr 2018 20:34:57 +0000
->>> Wajih Ul Hassan <wajih.lums@gmail.com> wrote:
->>>
->>>> Hi all,
->>>>  .....
->> You could write a Linux Security Module (LSM) to monitor the
->> content of writes. The performance impact would be rather
->> amazing.
+Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+
+> On 04/19/2018 11:35 AM, John Johansen wrote:
+
+>> It sounds like its already decided, with ima and selinux going with an unshare file within their own fs.
 >>
-> I would recommend using BPF + kprobes + perf_event buffers for this
-> purpose. There are enough places you can probe to grab these strings
-> in the kernel, and if you do your filtering in BPF, you can then push
-> it into kernel space based on filtering. Although, AFAIK, the BPF JITs
-> don't do vectorization of instructions, but it's still not too bad. If
-> you put your kprobe on the syscall itself, and probe the userspace
-> addr, remember you're going to be open to a time-of-use, time-of-check
-> style attack.
+>> AppArmor went a different route already, splitting namespace creation (mkdir in the apparmorfs policy/namespace dir) and the task entering the namespace with a write apparmor's equiv of setexeccon.
+>>
+> I am supporting procfs entries for the IMA namespace spawned by writing a
+> boolean '1' into IMA's securityfs 'unshare' file. It would allow to use
+> setns(fd, 0), obviously with the 0 parameter. I think this is an important
+> function to support considering entering a set of namespace. I am just wondering
+> about the 0 parameter. We don't have a CLONE flag for it, so there's not other
+> way to support it then. Does it matter ?
 
-That looks like a whole lot of mechanism to perform a simple task.
+That should be fine.  We can pick a flag for setns at some point for
+IMA.  The setns function uses the flag field as an enumeration so any of
+the low 8 bits or a combination with overlapping bit is valid to setns.
 
+Eric
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
