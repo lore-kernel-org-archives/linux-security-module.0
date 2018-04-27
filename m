@@ -1,32 +1,36 @@
-From: tyhicks@canonical.com (Tyler Hicks)
-Date: Fri, 27 Apr 2018 19:15:59 +0000
-Subject: [PATCH 0/3] Better integrate seccomp logging and auditing
-Message-ID: <1524856562-22566-1-git-send-email-tyhicks@canonical.com>
+From: jmorris@namei.org (James Morris)
+Date: Sat, 28 Apr 2018 05:37:39 +1000 (AEST)
+Subject: Security tree merge to v4.17-rc2
+In-Reply-To: <201804272216.JHE30765.QSOJtFHLOOFFVM@I-love.SAKURA.ne.jp>
+References: <alpine.LRH.2.21.1804240425200.14030@namei.org>
+	<4adbd739-06b3-f42b-f2ef-fb06ea655919@schaufler-ca.com>
+	<201804272216.JHE30765.QSOJtFHLOOFFVM@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.LRH.2.21.1804280537260.9546@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Seccomp received improved logging controls in v4.14. Applications can opt into
-logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
-SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
-They can also debug filter matching with the new SECCOMP_RET_LOG action.
-Administrators can prevent specific actions from being logged using the
-kernel.seccomp.actions_logged sysctl.
+On Fri, 27 Apr 2018, Tetsuo Handa wrote:
 
-However, one corner case intentionally wasn't addressed in those v4.14 changes.
-When a process is being inspected by the audit subsystem, seccomp's decision
-making for logging ignores the new controls and unconditionally logs every
-action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
-many existing applications don't intend to log handled actions due to them
-occurring very frequently. This amount of logging fills the audit logs without
-providing many benefits now that application authors have fine grained controls
-at their disposal.
+> Casey Schaufler wrote:
+> > On 4/23/2018 11:26 AM, James Morris wrote:
+> > > FYI, I've merged the next-general and next-testing branches of the 
+> > > security subsystem tree to v4.17-rc2.
+> > 
+> > Thanks! The fun begins!
+> > 
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+> > 
+> FYI, 4.17-rc2 contains a lockup bug due to GFP_KERNEL allocation from IRQ context.
+> This bug was fixed in linux.git by now. But there is still another lockup bug
+> which will be fixed by 4fb48871409e2fcd in vfs.git#for-next.
+> 
+> You might want to update again after 4.17-rc3 is out.
 
-This patch set aligns the seccomp logging behavior for both audited and
-unaudited processes. It also emits an audit record, if auditing is enabled,
-when the kernel.seccomp.actions_logged sysctl is written to so that there's a
-paper trail when entire actions are quieted.
+Thanks for the info, I will probably do that.
 
-Tyler
+-- 
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
