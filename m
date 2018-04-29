@@ -1,78 +1,128 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Sun, 29 Apr 2018 20:49:45 +0900
-Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <a27ccccf-7436-5049-8554-79638d3bdbb2@schaufler-ca.com>
-References: <CAMp4zn85hvdT2b0qsKWqxyC-5m=Y414akM1wjVH5qrZpgLE-bw@mail.gmail.com>
-	<CAMp4zn-Y333bSX2EX-5M+-Mu1m9EeeAP203v=HJOFLPVmoUpNA@mail.gmail.com>
-	<201804272225.DAC82348.OFtSVOJOHLFMQF@I-love.SAKURA.ne.jp>
-	<CAMp4zn-9UdDNzJJhz1=kGp1=4kLXk=v8TVwWhpyNQVyyo=Xr6w@mail.gmail.com>
-	<a27ccccf-7436-5049-8554-79638d3bdbb2@schaufler-ca.com>
-Message-ID: <201804292049.CJG18734.FJMOOHVOFFQtSL@I-love.SAKURA.ne.jp>
+From: igor.stoppa@gmail.com (Igor Stoppa)
+Date: Sun, 29 Apr 2018 20:39:30 +0400
+Subject: [PATCH 0/3] linux-next: mm: hardening: Track genalloc allocations
+In-Reply-To: <20180429030940.GA2541@bombadil.infradead.org>
+References: <20180429024542.19475-1-igor.stoppa@huawei.com>
+	<20180429030940.GA2541@bombadil.infradead.org>
+Message-ID: <3b4fc557-eba9-cd37-1ca4-dd9d09efc945@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler wrote:
-> I think that we're on the verge of having a major merge collision.
 
-I think that the reason of major merge collision is that your patchset is
-too big to review.
 
-  > That's a lot of overhead. The smaller the patches, the more work
-  > required to make the patch set. You're right that the current patches
-  > are too big. Moving forward I will be providing smaller, easier to
-  > deal with patches. The sheer overhead of rebaseing a large patch set
-  > has slowed down the development considerably. Minions. What I need are
-  > minions.
+On 29/04/18 07:09, Matthew Wilcox wrote:
+> On Sun, Apr 29, 2018 at 06:45:39AM +0400, Igor Stoppa wrote:
+>> This patchset was created as part of an older version of pmalloc, however
+>> it has value per-se, as it hardens the memory management for the generic
+>> allocator genalloc.
+>>
+>> Genalloc does not currently track the size of the allocations it hands out.
+>>
+>> Either by mistake, or due to an attack, it is possible that more memory
+>> than what was initially allocated is freed, leaving behind dangling
+>> pointers, ready for an use-after-free attack.
+> 
+> This is a good point.  It is worth hardening genalloc.
+> But I still don't like the cost of the bitmap.  I've been
+> reading about allocators and I found Bonwick's paper from 2001:
+> https://www.usenix.org/legacy/event/usenix01/full_papers/bonwick/bonwick.pdf
+> Section 4 describes the vmem allocator which would seem to have superior
+> performance and lower memory overhead than the current genalloc allocator,
+> never mind the hardened allocator.
+> 
+> Maybe there's been an advnace in resource allocator technology since
+> then that someone more familiar with CS research can point out.
 
-You are holding the global lock for patchset which you did not get response.
-If you agree with breaking into smaller patches, we will be able to solve
-the major merge collision.
+A quick search on google shows that there have been tons of improvements.
 
-> I hope to have the multiple major module code seriously reviewed as of
-> 4.18 and start putting real pressure on getting it in for 4.19/4.20.
+I found various implementation of vmem, not all with GPLv2 compatible 
+license.
 
-Before you repost your patchset, please answer questions below.
+The most interesting one seems to be a libvmem from Intel[1], made to 
+use jemalloc[2], for persistent memory.
 
-Q1: Apart from whether memory for security blobs should be managed by
-    infrastructure or by individual module, how do you guarantee that
-    only release hook where corresponding alloc hook succeeded when
-    one of alloc hooks returned an error?
+jemalloc is, apaprently, the coolest kid on the block, when it comes to 
+modern memory management.
 
-My patch 1/2 provides that mechanism. Please show your patch which
-implements only that functionality instead of whole patchset.
+But this is clearly a very large lump of work.
 
-  > It is my firm hope that the multiple major module changes are
-  > going to start being seriously considered in the next release or
-  > two. That would reduce the complexity of what you're trying to
-  > accomplish because at the point all modules will be equal. I have
-  > always committed to making design choices that aren't going to
-  > prevent loadable/unloadable modules. I have also expressed no
-  > interest in doing it myself. From my selfish perspective I would
-  > like to see module loading follow my work, as having yet another
-  > major merge effort will delay the clean-up I know I'll have to do
-  > after 4.18.
+First of all, it should be assessed if jemalloc is really what the 
+kernel could benefit from (my guess is yes, but it's just a guess), then 
+if the license is compatible or if it can be relicensed for use in the 
+kernel.
 
-Depending on your patch, it is possible that managing memory for security
-blobs by infrastructure can become harmful for LKM-based LSMs, for the
-amount of memory which will be needed by LKM-based LSMs is not known
-until LKM-based LSMs are loaded.
+And, last, but not least, how to integrate the ongoing work in a way 
+that doesn't require lots of effort to upgrade to new releases.
 
-LKM-based LSMs might be forced to manage their security blobs without
-using infrastructure-managed ->security field. Then, that will not make
-"all modules equal".
+Even if it looks very interesting, I simply do not have time to do this, 
+not for the next 5-6 months, for sure.
 
-So, please show your approach which allows LKM-based LSMs to handle
-infrastructure-managed ->security field (if you want to use
-infrastructure-managed ->security field).
+What I *can* offer to do, is the cleanup of the users of genalloc, by 
+working with the various maintainers to remove the "size" parameter in 
+the calls to gen_pool_free(), iff the patch I submitted can be merged.
 
-> The advent of the Age of Containers is driving this.
+This is work that has to be done anyway and does not preclude, later on, 
+to phase out genalloc in favor of jemalloc or whatever is deemed to be 
+the most effective solution.
 
-I've been asking for runtime loading of LSMs before the Age of
-Containers comes. ;-)
+There are 2 goals here:
+1) plug potential security holes in the use of genalloc
+2) see if some new allocator can improve the performance (and it might 
+well be that the improvement can be extended also to other allocators 
+used in kernel)
 
-Q2: What functionality are Containers people want LSM?
-    Use different LSM module for different container?
-    Runtime load/unload of LSM modules?
+We seem to agree that 1) is a real need.
+Regarding 2), I think it should have a separate life.
+
+going back to 1), your objections so far, as far as I can tell are:
+
+a) it will use more memory for the bitmap
+b) it will be slower, because the bitmap is doubled
+c) the "ends" or "starts" bitmaps should be separate
+
+I think I have already answered them, but I'll recap my replies:
+
+a) yes, it will double it, but if it was ok to "waste" some memory when 
+I was asked to rewrite the pmalloc allocator to not use genalloc, in 
+favor of speed, I think the same criteria applies here: on average it 
+will probably take at most one more page per pool. It doesn't seem a 
+huge loss.
+
+b) the bitmap size is doubled, that much is true, however interleaving 
+the "busy" and "start" bitmaps will ensure locality of the meta data and 
+between the cache prefetch algorithm and the hints give to the compiler, 
+it shouldn't make a huge difference, compared to the pre-patch case.
+Oh, and the size of a bitmap seems to be overall negligible, from what 
+users I saw.
+
+c) "busy" and "start" are interleaved, to avoid having to do explicit 
+locking, instead of relying on the intrinsic atomicity of accessing 
+bitfields coming from the same word, as it is now.
+
+And I'm anyway proposing to merge this into linux-next, so that there 
+are more eyeballs looking for problems. I'm not proposing to merge it 
+straight in the next kernel release.
+Removing the size parameter from the various gen_pool_free() will impact 
+not only the direct callers, but also their callers and so on, which 
+means that it will take some time to purge all the layers of calls from 
+"size".
+
+During this time, it's likely that issues will surface, if there is any 
+lurking.
+
+And the removal of the parameter will require getting ACK from each 
+user, so it should be enough to ensure that everyone is happy about the 
+overall performance.
+
+But I would start addressing the security issue, since I think the cost 
+of doubling the bitmap will not be noticeable.
+
+I'd like to hear if you disagree with my reasoning.
+
+And did I overlook some other objection?
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
