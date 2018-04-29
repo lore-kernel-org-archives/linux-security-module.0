@@ -1,51 +1,31 @@
 From: igor.stoppa@gmail.com (Igor Stoppa)
-Date: Sun, 29 Apr 2018 06:45:39 +0400
-Subject: [PATCH 0/3] linux-next: mm: hardening: Track genalloc allocations
-Message-ID: <20180429024542.19475-1-igor.stoppa@huawei.com>
+Date: Sun, 29 Apr 2018 06:45:41 +0400
+Subject: [PATCH 2/3] Add label and license to genalloc.rst
+In-Reply-To: <20180429024542.19475-1-igor.stoppa@huawei.com>
+References: <20180429024542.19475-1-igor.stoppa@huawei.com>
+Message-ID: <20180429024542.19475-3-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This patchset was created as part of an older version of pmalloc, however
-it has value per-se, as it hardens the memory management for the generic
-allocator genalloc.
-
-Genalloc does not currently track the size of the allocations it hands out.
-
-Either by mistake, or due to an attack, it is possible that more memory
-than what was initially allocated is freed, leaving behind dangling
-pointers, ready for an use-after-free attack.
-
-With this patch, genalloc becomes capable of tracking the size of each
-allocation it has handed out, when it's time to free it.
-
-It can either verify that the size received, when free is invoked, is
-correct, or it can decide autonomously how much memory to free, if the
-value received for the size parameter is 0.
-
-These patches are proposed for beign merged into linux-next, to verify
-that they do not introduce regressions, by comparing the value received
-from the callers of the free function with the internal tracking.
-
-Later on, the "size" parameter can be dropped, and each caller can be
-adjusted accordingly.
+Add SPDX license to genalloc.rst, then a label, to allow cross-referencing.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ Documentation/core-api/genalloc.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Igor Stoppa (3):
-  genalloc: track beginning of allocations
-  Add label and license to genalloc.rst
-  genalloc: selftest
-
- Documentation/core-api/genalloc.rst |   4 +
- include/linux/genalloc.h            | 112 +++---
- init/main.c                         |   2 +
- lib/Kconfig                         |  15 +
- lib/Makefile                        |   1 +
- lib/genalloc.c                      | 742 ++++++++++++++++++++++++++----------
- lib/test_genalloc.c                 | 410 ++++++++++++++++++++
- 7 files changed, 1031 insertions(+), 255 deletions(-)
- create mode 100644 lib/test_genalloc.c
-
+diff --git a/Documentation/core-api/genalloc.rst b/Documentation/core-api/genalloc.rst
+index 6b38a39fab24..0b5ade832ee8 100644
+--- a/Documentation/core-api/genalloc.rst
++++ b/Documentation/core-api/genalloc.rst
+@@ -1,3 +1,7 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. _genalloc:
++
+ The genalloc/genpool subsystem
+ ==============================
+ 
 -- 
 2.14.1
 
