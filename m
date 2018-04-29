@@ -1,40 +1,53 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 27 Apr 2018 13:59:57 -0700
-Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <CAMp4zn9kAzdTyyinSZB0VtuGzc7KaKMQg9Ym+Xw4F6MgQTVUCQ@mail.gmail.com>
-References: <cover.1524645853.git.sargun@sargun.me>
-	<CAMp4zn9kAzdTyyinSZB0VtuGzc7KaKMQg9Ym+Xw4F6MgQTVUCQ@mail.gmail.com>
-Message-ID: <e362a7e8-a778-7701-9254-d531949dd5c2@schaufler-ca.com>
+From: igor.stoppa@gmail.com (Igor Stoppa)
+Date: Sun, 29 Apr 2018 06:45:39 +0400
+Subject: [PATCH 0/3] linux-next: mm: hardening: Track genalloc allocations
+Message-ID: <20180429024542.19475-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 4/27/2018 1:32 PM, Sargun Dhillon wrote:
-> On Wed, Apr 25, 2018 at 1:58 AM, Sargun Dhillon <sargun@sargun.me> wrote:
->> The primary security benefit of this patchset is the introduction of
->> read-only hooks, even if some security modules have mutable hooks.
->> ...
->>
-> James, Casey,
-> Should I respin patches 1-5 with the fixes that Tetsuo suggested, and
-> do you want to pick those up? It seems like other than the few errors,
-> those look good. And then we can figure out to deal with patch 6
-> later?
+This patchset was created as part of an older version of pmalloc, however
+it has value per-se, as it hardens the memory management for the generic
+allocator genalloc.
 
-It is my firm hope that the multiple major module changes are
-going to start being seriously considered in the next release or
-two. That would reduce the complexity of what you're trying to
-accomplish because at the point all modules will be equal. I have
-always committed to making design choices that aren't going to
-prevent loadable/unloadable modules. I have also expressed no
-interest in doing it myself. From my selfish perspective I would
-like to see module loading follow my work, as having yet another
-major merge effort will delay the clean-up I know I'll have to do
-after 4.18.
+Genalloc does not currently track the size of the allocations it hands out.
 
-My suggestion/request would be that you rebase your patches on
-the stacking set, which should be out for 4.18 mid-week.
+Either by mistake, or due to an attack, it is possible that more memory
+than what was initially allocated is freed, leaving behind dangling
+pointers, ready for an use-after-free attack.
 
+With this patch, genalloc becomes capable of tracking the size of each
+allocation it has handed out, when it's time to free it.
 
+It can either verify that the size received, when free is invoked, is
+correct, or it can decide autonomously how much memory to free, if the
+value received for the size parameter is 0.
+
+These patches are proposed for beign merged into linux-next, to verify
+that they do not introduce regressions, by comparing the value received
+from the callers of the free function with the internal tracking.
+
+Later on, the "size" parameter can be dropped, and each caller can be
+adjusted accordingly.
+
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+
+Igor Stoppa (3):
+  genalloc: track beginning of allocations
+  Add label and license to genalloc.rst
+  genalloc: selftest
+
+ Documentation/core-api/genalloc.rst |   4 +
+ include/linux/genalloc.h            | 112 +++---
+ init/main.c                         |   2 +
+ lib/Kconfig                         |  15 +
+ lib/Makefile                        |   1 +
+ lib/genalloc.c                      | 742 ++++++++++++++++++++++++++----------
+ lib/test_genalloc.c                 | 410 ++++++++++++++++++++
+ 7 files changed, 1031 insertions(+), 255 deletions(-)
+ create mode 100644 lib/test_genalloc.c
+
+-- 
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
