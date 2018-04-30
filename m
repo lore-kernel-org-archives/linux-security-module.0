@@ -1,42 +1,30 @@
-From: sargun@sargun.me (Sargun Dhillon)
-Date: Mon, 30 Apr 2018 14:29:02 -0700
-Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <alpine.LRH.2.21.1805010712570.21544@namei.org>
-References: <CAMp4zn85hvdT2b0qsKWqxyC-5m=Y414akM1wjVH5qrZpgLE-bw@mail.gmail.com>
-	<CAMp4zn-Y333bSX2EX-5M+-Mu1m9EeeAP203v=HJOFLPVmoUpNA@mail.gmail.com>
-	<201804272225.DAC82348.OFtSVOJOHLFMQF@I-love.SAKURA.ne.jp>
-	<CAMp4zn-9UdDNzJJhz1=kGp1=4kLXk=v8TVwWhpyNQVyyo=Xr6w@mail.gmail.com>
-	<a27ccccf-7436-5049-8554-79638d3bdbb2@schaufler-ca.com>
-	<201804292049.CJG18734.FJMOOHVOFFQtSL@I-love.SAKURA.ne.jp>
-	<0cf314e6-af7d-7e93-4249-944431202327@schaufler-ca.com>
-	<CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
-	<alpine.LRH.2.21.1805010712570.21544@namei.org>
-Message-ID: <CAMp4zn-hUTArkb44eLPAac6M2CedAPVpf7qBC2csKqNsdg70YQ@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 30 Apr 2018 14:35:38 -0700
+Subject: Security tree merge to v4.17-rc2
+In-Reply-To: <alpine.LRH.2.21.1805010515130.18517@namei.org>
+References: <alpine.LRH.2.21.1804240425200.14030@namei.org>
+	<4adbd739-06b3-f42b-f2ef-fb06ea655919@schaufler-ca.com>
+	<201804272216.JHE30765.QSOJtFHLOOFFVM@I-love.SAKURA.ne.jp>
+	<aec6cdfe-5db7-f3cc-9a2a-157d90b1a45f@schaufler-ca.com>
+	<alpine.LRH.2.21.1805010515130.18517@namei.org>
+Message-ID: <f00d8316-cd09-446e-17b7-70ce1f470666@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Apr 30, 2018 at 2:16 PM, James Morris <jmorris@namei.org> wrote:
-> On Mon, 30 Apr 2018, Sargun Dhillon wrote:
+On 4/30/2018 12:15 PM, James Morris wrote:
+> On Fri, 27 Apr 2018, Casey Schaufler wrote:
 >
->> I guess I'm just a little bit frustrated, because, in my mind, some of
->> my patches provide immediate value, and are ready to be reviewed, and
->> or respun.
->
-> I'm not seeing much value in this functionality, given that SELinux is the
-> only unloadable LSM, and that is really just an historical workaround
-> which may be normalized at some point.
->
-> Patch 1 may be useful on its own.
-Do you not think patch 2 is also useful? Is it worth me re-rolling 1-2
-independently?
+>> On 4/27/2018 6:16 AM, Tetsuo Handa wrote:
+>>> This bug was fixed in linux.git by now. But there is still another lockup bug
+>>> which will be fixed by 4fb48871409e2fcd in vfs.git#for-next.
+>>>
+>>> You might want to update again after 4.17-rc3 is out.
+>> Nothing has shown up that's causing problems for me. I'd
+>> rather stay where I am than start over.
+> You don't need to start over, git will handle a merge easily.
 
-Do you think not think that minor loadable LSMs are valuable? -- And
-if so, do you think it's okay with, or without guardrails?
->
-> --
-> James Morris
-> <jmorris@namei.org>
->
+Fair enough. Let us know when you've done the deed.
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
