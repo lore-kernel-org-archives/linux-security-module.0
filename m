@@ -1,43 +1,65 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue,  1 May 2018 09:48:17 -0400
-Subject: [PATCH 0/6] firmware: kernel signature verification 
-Message-ID: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+From: dhowells@redhat.com (David Howells)
+Date: Tue, 01 May 2018 15:29:10 +0100
+Subject: [PATCH 03/24] VFS: Introduce the structs and doc for a filesystem
+	context [ver #7]
+In-Reply-To: <05034a85-013b-30b6-ce17-4c95d4cab195@infradead.org>
+References: <05034a85-013b-30b6-ce17-4c95d4cab195@infradead.org>
+	<152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
+	<152414468332.23902.3065751107691714414.stgit@warthog.procyon.org.uk>
+Message-ID: <8450.1525184950@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Allow LSMs and IMA to differentiate between different methods of
-firmware loading (eg. direct loading, sysfs fallback) and to
-differentiate/coordinate between signature verification methods (eg.
-regdb, IMA-appraisal).
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-In addition, the last two patches address the pre-allocated buffer.  The
-first of these patches doesn't differentiate between reading the
-firmware first into kernel memory and verifying the kernel signature,
-versus reading the firmware directly into a pre-allocated buffer.
+> > + (2) Parse the options and attach them to the context.  Options may be passed
+> > +     individually from userspace.
+> 
+> Does this say that step (2) can be multiple small steps?
 
-The last patch, which is posted as an RFC, questions whether the device
-can access the pre-allocated buffer before the kernel signature has been
-verified.
+Perhaps "phase (2)" would be a better name than "step (2)".  During (2),
+multiple argument-supplying calls may be made.
 
-Mimi Zohar (6):
-  firmware: permit LSMs and IMA to fail firmware sysfs fallback loading
-  ima: prevent sysfs fallback firmware loading
-  firmware: differentiate between signed regulatory.db and other
-    firmware
-  ima: coordinate with signed regulatory.db
-  ima: verify kernel firmware signatures when using a preallocated
-    buffer
-  ima: prevent loading firmware into a pre-allocated buffer
+> How does step (2) know when userspace has completed sending individual
+> options?
 
- drivers/base/firmware_loader/fallback.c |  7 +++++++
- drivers/base/firmware_loader/main.c     |  5 +++++
- include/linux/fs.h                      |  2 ++
- security/integrity/ima/ima_main.c       | 29 +++++++++++++++++++++++++++--
- 4 files changed, 41 insertions(+), 2 deletions(-)
+Moving to phase (3) terminates phase (2).  This is triggered by userspace
+writing "x create" or "x reconfigure" to the fd as things stand.
 
--- 
-2.7.5
+> > + (6) Return an error message attached to the context.
+> 
+> where/how is this done?
 
+That got taken out and made general - which Linus then objected to.  I need to
+reinsert this and make it fscontext-specific as most people would really like
+to have it, the mount process being able to produce so many weird and
+wonderful errors.
+
+> > +When the VFS creates this, it allocates ->fs_context_size bytes (as specified
+> > +by the file_system_type object) to hold both the fs_context struct and any
+> > +extra data required by the filesystem.  The fs_context struct is placed at the
+> > +beginning of this space.  Any extra space beyond that is for use by the
+> > +filesystem.  The filesystem should wrap the struct in its own, e.g.:
+> 
+>                                                       in its own struct, e.g.:
+
+How about "... The filesystem should wrap the struct in one of its own, e.g."?
+
+> > + (*) int security_fs_context_parse_option(struct fs_context *fc, char *opt);	
+> > +
+> > +     Called for each mount option.  The arguments are as for the
+> > +     ->parse_option() method.  An active LSM may reject one with an error, pass
+> > +     one over and return 0 or consume one and return 1.  If consumed, the
+> 
+> What does "pass one over" mean?
+
+How about:
+
+	An active LSM may return 0 to pass the option on to the filesystem, 1
+	to cause the option to be discarded or an error to cause the option to
+	be rejected.
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
