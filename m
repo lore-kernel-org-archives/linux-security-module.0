@@ -1,7 +1,7 @@
 From: jmorris@namei.org (James Morris)
-Date: Wed, 2 May 2018 04:49:38 +1000 (AEST)
+Date: Wed, 2 May 2018 05:02:11 +1000 (AEST)
 Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <CAMp4zn-hUTArkb44eLPAac6M2CedAPVpf7qBC2csKqNsdg70YQ@mail.gmail.com>
+In-Reply-To: <CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
 References: <CAMp4zn85hvdT2b0qsKWqxyC-5m=Y414akM1wjVH5qrZpgLE-bw@mail.gmail.com>
 	<CAMp4zn-Y333bSX2EX-5M+-Mu1m9EeeAP203v=HJOFLPVmoUpNA@mail.gmail.com>
 	<201804272225.DAC82348.OFtSVOJOHLFMQF@I-love.SAKURA.ne.jp>
@@ -10,39 +10,31 @@ References: <CAMp4zn85hvdT2b0qsKWqxyC-5m=Y414akM1wjVH5qrZpgLE-bw@mail.gmail.com>
 	<201804292049.CJG18734.FJMOOHVOFFQtSL@I-love.SAKURA.ne.jp>
 	<0cf314e6-af7d-7e93-4249-944431202327@schaufler-ca.com>
 	<CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
-	<alpine.LRH.2.21.1805010712570.21544@namei.org>
-	<CAMp4zn-hUTArkb44eLPAac6M2CedAPVpf7qBC2csKqNsdg70YQ@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1805020446170.7512@namei.org>
+Message-ID: <alpine.LRH.2.21.1805020502050.11549@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Mon, 30 Apr 2018, Sargun Dhillon wrote:
 
-> On Mon, Apr 30, 2018 at 2:16 PM, James Morris <jmorris@namei.org> wrote:
-> > On Mon, 30 Apr 2018, Sargun Dhillon wrote:
+> > It varies. Container people are a diverse lot.
 > >
-> >> I guess I'm just a little bit frustrated, because, in my mind, some of
-> >> my patches provide immediate value, and are ready to be reviewed, and
-> >> or respun.
+> >>     Use different LSM module for different container?
 > >
-> > I'm not seeing much value in this functionality, given that SELinux is the
-> > only unloadable LSM, and that is really just an historical workaround
-> > which may be normalized at some point.
-> >
-> > Patch 1 may be useful on its own.
-> Do you not think patch 2 is also useful? Is it worth me re-rolling 1-2
-> independently?
-> 
+> One dumb use case I have is the ability to limit interactions with
+> PTYs for containerized applications. Another aspect of this is being
+> able to write policies in C, and actually being able to control the
+> nitty gritty of what's going on, versus actively fighting with the
+> LSM(s).
 
-Yes, please split out the seq file change and submit them as independent 
-changes.
+Writing policies in C sounds like a breach of the principle of separating 
+mechanism and policy.  This has been an important aspect of the LSM API 
+and also of the major LSMs.  Hard-coded security policy is likely to be 
+brittle, inflexible, and difficult to manage.  It's also blurring the 
+boundary of LSM with the rest of the kernel, and making it even more 
+difficult for core kernel developers to know what might break in LSM land 
+when they make changes elsewhere.
 
-> Do you think not think that minor loadable LSMs are valuable? -- And
-> if so, do you think it's okay with, or without guardrails?
-
-Potentially, but we can't add infrastructure for non-existent or out of 
-tree code.
-
+Can you provide an example of what you want to do?
 
 
 -- 
