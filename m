@@ -1,156 +1,74 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 1 May 2018 11:27:45 -0400
-Subject: [PATCH 3/3] seccomp: Don't special case audited processes when
-	logging
-In-Reply-To: <1524856562-22566-4-git-send-email-tyhicks@canonical.com>
-References: <1524856562-22566-1-git-send-email-tyhicks@canonical.com>
-	<1524856562-22566-4-git-send-email-tyhicks@canonical.com>
-Message-ID: <CAHC9VhSfOCLASK9k07ENwBBP39rPk2uggcVLbWgDeo4bzbgdqg@mail.gmail.com>
+From: rdunlap@infradead.org (Randy Dunlap)
+Date: Tue, 1 May 2018 08:31:00 -0700
+Subject: [PATCH 03/24] VFS: Introduce the structs and doc for a filesystem
+	context [ver #7]
+In-Reply-To: <8450.1525184950@warthog.procyon.org.uk>
+References: <05034a85-013b-30b6-ce17-4c95d4cab195@infradead.org>
+	<152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
+	<152414468332.23902.3065751107691714414.stgit@warthog.procyon.org.uk>
+	<8450.1525184950@warthog.procyon.org.uk>
+Message-ID: <96dacc1b-cffa-3aa2-71f5-70c8159c805e@infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Apr 27, 2018 at 3:16 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
-> Seccomp logging for "handled" actions such as RET_TRAP, RET_TRACE, or
-> RET_ERRNO can be very noisy for processes that are being audited. This
-> patch modifies the seccomp logging behavior to treat processes that are
-> being inspected via the audit subsystem the same as processes that
-> aren't under inspection. Handled actions will no longer be logged just
-> because the process is being inspected. Since v4.14, applications have
-> the ability to request logging of handled actions by using the
-> SECCOMP_FILTER_FLAG_LOG flag when loading seccomp filters.
->
-> With this patch, the logic for deciding if an action will be logged is:
->
->   if action == RET_ALLOW:
->     do not log
->   else if action not in actions_logged:
->     do not log
->   else if action == RET_KILL:
->     log
->   else if action == RET_LOG:
->     log
->   else if filter-requests-logging:
->     log
->   else:
->     do not log
->
-> Reported-by: Steve Grubb <sgrubb@redhat.com>
-> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
-> ---
->  Documentation/userspace-api/seccomp_filter.rst |  7 -------
->  include/linux/audit.h                          | 10 +---------
->  kernel/auditsc.c                               |  2 +-
->  kernel/seccomp.c                               | 15 +++++----------
->  4 files changed, 7 insertions(+), 27 deletions(-)
->
-> diff --git a/Documentation/userspace-api/seccomp_filter.rst b/Documentation/userspace-api/seccomp_filter.rst
-> index 099c412..82a468b 100644
-> --- a/Documentation/userspace-api/seccomp_filter.rst
-> +++ b/Documentation/userspace-api/seccomp_filter.rst
-> @@ -207,13 +207,6 @@ directory. Here's a description of each file in that directory:
->         to the file do not need to be in ordered form but reads from the file
->         will be ordered in the same way as the actions_avail sysctl.
->
-> -       It is important to note that the value of ``actions_logged`` does not
-> -       prevent certain actions from being logged when the audit subsystem is
-> -       configured to audit a task. If the action is not found in
-> -       ``actions_logged`` list, the final decision on whether to audit the
-> -       action for that task is ultimately left up to the audit subsystem to
-> -       decide for all seccomp return values other than ``SECCOMP_RET_ALLOW``.
-> -
->         The ``allow`` string is not accepted in the ``actions_logged`` sysctl
->         as it is not possible to log ``SECCOMP_RET_ALLOW`` actions. Attempting
->         to write ``allow`` to the sysctl will result in an EINVAL being
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index b311d7d..1964fbd 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -232,7 +232,7 @@ extern void __audit_file(const struct file *);
->  extern void __audit_inode_child(struct inode *parent,
->                                 const struct dentry *dentry,
->                                 const unsigned char type);
-> -extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-> +extern void audit_seccomp(unsigned long syscall, long signr, int code);
->  extern void audit_seccomp_actions_logged(const char *names, int res);
->  extern void __audit_ptrace(struct task_struct *t);
->
-> @@ -303,12 +303,6 @@ static inline void audit_inode_child(struct inode *parent,
->  }
->  void audit_core_dumps(long signr);
->
-> -static inline void audit_seccomp(unsigned long syscall, long signr, int code)
-> -{
-> -       if (audit_enabled && unlikely(!audit_dummy_context()))
-> -               __audit_seccomp(syscall, signr, code);
-> -}
-> -
->  static inline void audit_ptrace(struct task_struct *t)
->  {
->         if (unlikely(!audit_dummy_context()))
-> @@ -499,8 +493,6 @@ static inline void audit_inode_child(struct inode *parent,
->  { }
->  static inline void audit_core_dumps(long signr)
->  { }
-> -static inline void __audit_seccomp(unsigned long syscall, long signr, int code)
-> -{ }
->  static inline void audit_seccomp(unsigned long syscall, long signr, int code)
->  { }
->  static inline void audit_seccomp_actions_logged(const char *names, int res)
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 3496238..1e64b91 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -2464,7 +2464,7 @@ void audit_core_dumps(long signr)
->         audit_log_end(ab);
->  }
->
-> -void __audit_seccomp(unsigned long syscall, long signr, int code)
-> +void audit_seccomp(unsigned long syscall, long signr, int code)
->  {
->         struct audit_buffer *ab;
+On 05/01/2018 07:29 AM, David Howells wrote:
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>>> + (2) Parse the options and attach them to the context.  Options may be passed
+>>> +     individually from userspace.
+>>
+>> Does this say that step (2) can be multiple small steps?
+> 
+> Perhaps "phase (2)" would be a better name than "step (2)".  During (2),
+> multiple argument-supplying calls may be made.
 
-Since it is a bit unusual, it might be nice to add a comment at the
-top of audit_seccomp() that the event filtering is being done in the
-seccomp_log() function, and we may need to force auditing independent
-of the audit_enabled and dummy context state.
+Ack.
 
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index e28ddcc..947cc0f 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -584,18 +584,13 @@ static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
->         }
->
->         /*
-> -        * Force an audit message to be emitted when the action is RET_KILL_*,
-> -        * RET_LOG, or the FILTER_FLAG_LOG bit was set and the action is
-> -        * allowed to be logged by the admin.
-> +        * Emit an audit message when the action is RET_KILL_*, RET_LOG, or the
-> +        * FILTER_FLAG_LOG bit was set. The admin has the ability to silence
-> +        * any action from being logged by removing the action name from the
-> +        * seccomp_actions_logged sysctl.
->          */
->         if (log)
-> -               return __audit_seccomp(syscall, signr, action);
-> -
-> -       /*
-> -        * Let the audit subsystem decide if the action should be audited based
-> -        * on whether the current task itself is being audited.
-> -        */
-> -       return audit_seccomp(syscall, signr, action);
-> +               audit_seccomp(syscall, signr, action);
->  }
->
->  /*
-> --
-> 2.7.4
->
+>> How does step (2) know when userspace has completed sending individual
+>> options?
+> 
+> Moving to phase (3) terminates phase (2).  This is triggered by userspace
+> writing "x create" or "x reconfigure" to the fd as things stand.
+> 
+>>> + (6) Return an error message attached to the context.
+>>
+>> where/how is this done?
+> 
+> That got taken out and made general - which Linus then objected to.  I need to
+> reinsert this and make it fscontext-specific as most people would really like
+> to have it, the mount process being able to produce so many weird and
+> wonderful errors.
+> 
+>>> +When the VFS creates this, it allocates ->fs_context_size bytes (as specified
+>>> +by the file_system_type object) to hold both the fs_context struct and any
+>>> +extra data required by the filesystem.  The fs_context struct is placed at the
+>>> +beginning of this space.  Any extra space beyond that is for use by the
+>>> +filesystem.  The filesystem should wrap the struct in its own, e.g.:
+>>
+>>                                                       in its own struct, e.g.:
+> 
+> How about "... The filesystem should wrap the struct in one of its own, e.g."?
 
+OK.
 
+>>> + (*) int security_fs_context_parse_option(struct fs_context *fc, char *opt);	
+>>> +
+>>> +     Called for each mount option.  The arguments are as for the
+>>> +     ->parse_option() method.  An active LSM may reject one with an error, pass
+>>> +     one over and return 0 or consume one and return 1.  If consumed, the
+>>
+>> What does "pass one over" mean?
+> 
+> How about:
+> 
+> 	An active LSM may return 0 to pass the option on to the filesystem, 1
+> 	to cause the option to be discarded or an error to cause the option to
+> 	be rejected.
+
+Much better. Thanks.
 
 -- 
-paul moore
-www.paul-moore.com
+~Randy
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
