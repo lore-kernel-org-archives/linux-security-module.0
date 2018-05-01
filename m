@@ -1,46 +1,124 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 2 May 2018 05:02:11 +1000 (AEST)
-Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
-References: <CAMp4zn85hvdT2b0qsKWqxyC-5m=Y414akM1wjVH5qrZpgLE-bw@mail.gmail.com>
-	<CAMp4zn-Y333bSX2EX-5M+-Mu1m9EeeAP203v=HJOFLPVmoUpNA@mail.gmail.com>
-	<201804272225.DAC82348.OFtSVOJOHLFMQF@I-love.SAKURA.ne.jp>
-	<CAMp4zn-9UdDNzJJhz1=kGp1=4kLXk=v8TVwWhpyNQVyyo=Xr6w@mail.gmail.com>
-	<a27ccccf-7436-5049-8554-79638d3bdbb2@schaufler-ca.com>
-	<201804292049.CJG18734.FJMOOHVOFFQtSL@I-love.SAKURA.ne.jp>
-	<0cf314e6-af7d-7e93-4249-944431202327@schaufler-ca.com>
-	<CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1805020502050.11549@namei.org>
+From: hdegoede@redhat.com (Hans de Goede)
+Date: Tue, 1 May 2018 21:11:25 +0200
+Subject: [PATCH v5 2/5] efi: Add embedded peripheral firmware support
+In-Reply-To: <1525185374.5669.49.camel@linux.vnet.ibm.com>
+References: <20180429093558.5411-1-hdegoede@redhat.com>
+	<20180429093558.5411-3-hdegoede@redhat.com>
+	<1525185374.5669.49.camel@linux.vnet.ibm.com>
+Message-ID: <dc122066-9973-a1be-3456-6d6181a8fc9f@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 30 Apr 2018, Sargun Dhillon wrote:
+Hi,
 
-> > It varies. Container people are a diverse lot.
-> >
-> >>     Use different LSM module for different container?
-> >
-> One dumb use case I have is the ability to limit interactions with
-> PTYs for containerized applications. Another aspect of this is being
-> able to write policies in C, and actually being able to control the
-> nitty gritty of what's going on, versus actively fighting with the
-> LSM(s).
+On 01-05-18 16:36, Mimi Zohar wrote:
+> [Cc'ing linux-security]
+> 
+> On Sun, 2018-04-29 at 11:35 +0200, Hans de Goede wrote:
+> [...]
+>> diff --git a/drivers/base/firmware_loader/fallback_efi.c b/drivers/base/firmware_loader/fallback_efi.c
+>> new file mode 100644
+>> index 000000000000..82ba82f48a79
+>> --- /dev/null
+>> +++ b/drivers/base/firmware_loader/fallback_efi.c
+>> @@ -0,0 +1,51 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <linux/efi_embedded_fw.h>
+>> +#include <linux/property.h>
+>> +#include <linux/security.h>
+>> +#include <linux/vmalloc.h>
+>> +
+>> +#include "fallback.h"
+>> +#include "firmware.h"
+>> +
+>> +int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv,
+>> +			   enum fw_opt *opt_flags, int ret)
+>> +{
+>> +	enum kernel_read_file_id id = READING_FIRMWARE;
+> 
+> Please define a new kernel_read_file_id for this (eg.
+> READING_FIRMWARE_EFI_EMBEDDED).
 
-Writing policies in C sounds like a breach of the principle of separating 
-mechanism and policy.  This has been an important aspect of the LSM API 
-and also of the major LSMs.  Hard-coded security policy is likely to be 
-brittle, inflexible, and difficult to manage.  It's also blurring the 
-boundary of LSM with the rest of the kernel, and making it even more 
-difficult for core kernel developers to know what might break in LSM land 
-when they make changes elsewhere.
+Are you sure, I wonder how useful it is to add a new
+kernel_read_file_id every time a new way to get firmware
+comes up?
 
-Can you provide an example of what you want to do?
+I especially wonder about the sense in adding a new id
+given that the quite old FIRMWARE_PREALLOC_BUFFER is
+still not supported / checked properly by the security code.
+
+Anyways I can add a new id if you want me to, what about
+when fw_get_efi_embedded_fw is reading into a driver allocated
+buffer, do you want a separate EADING_FIRMWARE_EFI_EMBEDDED_PREALLOC_BUFFER
+for that ?
 
 
--- 
-James Morris
-<jmorris@namei.org>
 
+
+> 
+>> +	size_t size, max = INT_MAX;
+>> +	int rc;
+>> +
+>> +	if (!dev)
+>> +		return ret;
+>> +
+>> +	if (!device_property_read_bool(dev, "efi-embedded-firmware"))
+>> +		return ret;
+> 
+> Instead of calling security_kernel_post_read_file(), either in
+> device_property_read_bool() or here call security_kernel_read_file().
+> 
+> The pre read call is for deciding whether to allow this call
+> independent of the firmware being loaded, whereas the post security
+> call is currently being used by IMA-appraisal for verifying a
+> signature. ?There might be other LSMs using the post hook as well. ?As
+> there is no kernel signature associated with this firmware, use the
+> security pre read_file hook.
+
+Only the pre hook?  I believe the post-hook should still be called too,
+right? So that we've hashes of all loaded firmwares in the IMA core.
+
+Regards,
+
+Hans
+
+
+> 
+> thanks,
+> 
+> Mimi
+> 
+>> +
+>> +	*opt_flags |= FW_OPT_NO_WARN | FW_OPT_NOCACHE | FW_OPT_NOFALLBACK;
+>> +
+>> +	/* Already populated data member means we're loading into a buffer */
+>> +	if (fw_priv->data) {
+>> +		id = READING_FIRMWARE_PREALLOC_BUFFER;
+>> +		max = fw_priv->allocated_size;
+>> +	}
+>> +
+>> +	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size, max);
+>> +	if (rc) {
+>> +		dev_warn(dev, "Firmware %s not in EFI\n", fw_priv->fw_name);
+>> +		return ret;
+>> +	}
+>> +
+>> +	rc = security_kernel_post_read_file(NULL, fw_priv->data, size, id);
+>> +	if (rc) {
+>> +		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
+>> +			vfree(fw_priv->data);
+>> +			fw_priv->data = NULL;
+>> +		}
+>> +		return rc;
+>> +	}
+>> +
+>> +	dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
+>> +	fw_priv->size = size;
+>> +	fw_state_done(fw_priv);
+>> +	return 0;
+>> +}
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
