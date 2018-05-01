@@ -1,69 +1,119 @@
-From: luto@kernel.org (Andy Lutomirski)
-Date: Tue, 01 May 2018 19:29:19 +0000
-Subject: [PATCH v5 2/5] efi: Add embedded peripheral firmware support
-In-Reply-To: <20180429093558.5411-3-hdegoede@redhat.com>
-References: <20180429093558.5411-1-hdegoede@redhat.com>
-	<20180429093558.5411-3-hdegoede@redhat.com>
-Message-ID: <CALCETrXDrcxyESajDZs3L7sAAfDXXc_CUzy5nUZxLPxaTHZ80g@mail.gmail.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Tue, 1 May 2018 12:35:58 -0700
+Subject: [PATCH v7 1/6] security: Move LSM registration arguments to
+	struct lsm_info
+In-Reply-To: <CAGXu5jJ7FTTvJ0SgFF9kshWaiqbpx4ESmD1_S3-wiUYL6+4ufw@mail.gmail.com>
+References: <cover.1524645853.git.sargun@sargun.me>
+	<4184e7f3f244968a4fa411b8b91842665f317202.1524645853.git.sargun@sargun.me>
+	<CAGXu5jJ7FTTvJ0SgFF9kshWaiqbpx4ESmD1_S3-wiUYL6+4ufw@mail.gmail.com>
+Message-ID: <CAMp4zn9CfZ=nkC0iV-MHu6PjdSfmfkE7P8g=5yGv7gYPztQxkg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Apr 29, 2018 at 2:36 AM Hans de Goede <hdegoede@redhat.com> wrote:
-> +The EFI embedded-fw code works by scanning all EFI_BOOT_SERVICES_CODE
-memory
-> +segments for an eight byte sequence matching prefix, if the prefix is
-found it
-> +then does a crc32 over length bytes and if that matches makes a copy of
-length
-> +bytes and adds that to its list with found firmwares.
-> +
+On Tue, May 1, 2018 at 12:19 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Apr 25, 2018 at 1:58 AM, Sargun Dhillon <sargun@sargun.me> wrote:
+>> Previously, when LSMs registered, they independently passed their name
+>> and hook count. This had two implications:
+>>
+>> 1) Is required us to clone the name, so we could present it in
+>>    security FS. This required memory allocation at start time.
+>> 2) Every time we wanted to tie more information back from
+>>    the security hooks, to the LSM, we would have to add
+>>    duplicated fields in struct security_hook_list.
+>>
+>> It also introduces a new file -- security/security.h, which is meant
+>> to be private headers to be shared only between pieces of security
+>> "infrastructure".
+>>
+>> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+>> ---
+>>  include/linux/lsm_hooks.h  | 44 ++++++++++-------------
+>>  security/apparmor/lsm.c    |  6 ++--
+>>  security/commoncap.c       |  8 +++--
+>>  security/inode.c           | 56 +++++++++++++++++++++++++----
+>>  security/loadpin/loadpin.c |  4 ++-
+>>  security/security.c        | 89 +++++++++++++++++++++++-----------------------
+>>  security/security.h        | 10 ++++++
+>>  security/selinux/hooks.c   |  6 ++--
+>>  security/smack/smack_lsm.c |  3 +-
+>>  security/tomoyo/tomoyo.c   |  4 ++-
+>>  security/yama/yama_lsm.c   |  4 ++-
+>>  11 files changed, 147 insertions(+), 87 deletions(-)
+>>  create mode 100644 security/security.h
+>>
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index 9d0b286f3dba..65f346cb6639 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -2004,11 +2004,20 @@ struct security_hook_heads {
+>>   * Security module hook list structure.
+>>   * For use with generic list macros for common operations.
+>>   */
+>> +struct security_hook_list;
+>> +struct lsm_info {
+>> +       struct hlist_node               list;
+>> +       const char                      *name;
+>> +       const unsigned int              count;
+>> +       struct security_hook_list       *hooks;
+>> +} __randomize_layout;
+>> +
+>>  struct security_hook_list {
+>>         struct hlist_node               list;
+>>         struct hlist_head               *head;
+>>         union security_list_options     hook;
+>> -       char                            *lsm;
+>> +       /* This field is not currently in use */
+>> +       struct lsm_info                 *info;
+>
+> const?
+>
+>>  } __randomize_layout;
+>>
+>>  /*
+>> @@ -2020,33 +2029,18 @@ struct security_hook_list {
+>>  #define LSM_HOOK_INIT(HEAD, HOOK) \
+>>         { .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
+>>
+>> -extern struct security_hook_heads security_hook_heads;
+>> -extern char *lsm_names;
+>> +#define LSM_MODULE_INIT(NAME, HOOKS)           \
+>> +       {                                       \
+>> +               .name   = NAME,                 \
+>> +               .hooks  = HOOKS,                \
+>> +               .count  = ARRAY_SIZE(HOOKS),    \
+>> +       }
+>
+> Instead of leaving this so every LSM has to do all the declarations, how about:
+>
+> #define LSM_MODULE(NAME) \
+>     static const struct lsm_info NAME ## _info = { \
+>         .name = #NAME, \
+>         .hooks = NAME ## _hooks, \
+>         .count = ARRAY_SIZE(NAME ## _hooks), \
+>     }
+>
+>> +static struct lsm_info apparmor_info =
+>> +       LSM_MODULE_INIT("apparmor", apparmor_hooks);
+>
+> This becomes just:
+>
+> LSM_MODULE(apparmor);
+>
+>> +static struct lsm_info capability_info =
+>> +       LSM_MODULE_INIT("capability", capability_hooks);
+>
+> LSM_MODULE(capability);
+I thought about this, but I think that the implicit aspect of
+statically defining "X_hooks" in the same file is kind of confusing.
 
-Eww, gross.  Is there really no better way to do this?  Is the issue that
-the EFI code does not intend to pass the firmware to the OS but that it has
-a copy for its own purposes and that Linux is just going to hijack EFI's
-copy?  If so, that's brilliant and terrible at the same time.
-
-> +       for (i = 0; i < size; i += 8) {
-> +               if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
-> +                       continue;
-> +
-> +               /* Seed with ~0, invert to match crc32 userspace utility
-*/
-> +               crc = ~crc32(~0, mem + i, desc->length);
-> +               if (crc == desc->crc)
-> +                       break;
-> +       }
-
-I hate to play the security card, but this stinks a bit.  The kernel
-obviously needs to trust the EFI boot services code since the EFI boot
-services code is free to modify the kernel image.  But your patch is not
-actually getting this firmware blob from the boot services code via any
-defined interface -- you're literally snarfing up the blob from a range of
-memory.  I fully expect there to be any number of ways for untrustworthy
-entities to inject malicious blobs into this memory range on quite a few
-implementations.  For example, there are probably unauthenticated EFI
-variables and even parts of USB sticks and such that get read into boot
-services memory, and I see no reason at all to expect that nothing in the
-so-called "boot services code" range is actually just plain old boot
-services *heap*.
-
-Fortunately, given your design, this is very easy to fix.  Just replace
-CRC32 with SHA-256 or similar.  If you find the crypto api too ugly for
-this purpose, I have patches that only need a small amount of dusting off
-to give an entirely reasonable SHA-256 API in the kernel.
-
-(To be clear, I don't love my own suggestion here.  What I'd *really* like
-to see is a better interface and no attempt to match the data to some
-built-in hash at all.  In particular, there are plenty of devices for which
-the driver wants access to a genuinely device-specific blob.  For example,
-I'm typing this email while connected to a router that is running ath10k
-and is using a calibration blob awkwardly snarfed out of flash somewhere.
-It would be really nice if there was a way to pull a blob out of EFI space
-that is marked, by EFI, as belonging to a particular device.  Then the
-firmware could just pass it over without any particular verification.  But
-since your code is literally scanning a wide swath of physical memory for
-something that looks like a valid blob, I think you need to use a
-cryptographically strong concept of validity.)
+>
+> etc...
+>
+> -Kees
+>
+> --
+> Kees Cook
+> Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
