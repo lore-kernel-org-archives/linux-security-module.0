@@ -1,65 +1,94 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 01 May 2018 15:29:10 +0100
-Subject: [PATCH 03/24] VFS: Introduce the structs and doc for a filesystem
-	context [ver #7]
-In-Reply-To: <05034a85-013b-30b6-ce17-4c95d4cab195@infradead.org>
-References: <05034a85-013b-30b6-ce17-4c95d4cab195@infradead.org>
-	<152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-	<152414468332.23902.3065751107691714414.stgit@warthog.procyon.org.uk>
-Message-ID: <8450.1525184950@warthog.procyon.org.uk>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 01 May 2018 10:36:14 -0400
+Subject: [PATCH v5 2/5] efi: Add embedded peripheral firmware support
+In-Reply-To: <20180429093558.5411-3-hdegoede@redhat.com>
+References: <20180429093558.5411-1-hdegoede@redhat.com>
+	<20180429093558.5411-3-hdegoede@redhat.com>
+Message-ID: <1525185374.5669.49.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
+[Cc'ing linux-security]
 
-> > + (2) Parse the options and attach them to the context.  Options may be passed
-> > +     individually from userspace.
-> 
-> Does this say that step (2) can be multiple small steps?
+On Sun, 2018-04-29 at 11:35 +0200, Hans de Goede wrote:
+[...]
+> diff --git a/drivers/base/firmware_loader/fallback_efi.c b/drivers/base/firmware_loader/fallback_efi.c
+> new file mode 100644
+> index 000000000000..82ba82f48a79
+> --- /dev/null
+> +++ b/drivers/base/firmware_loader/fallback_efi.c
+> @@ -0,0 +1,51 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/efi_embedded_fw.h>
+> +#include <linux/property.h>
+> +#include <linux/security.h>
+> +#include <linux/vmalloc.h>
+> +
+> +#include "fallback.h"
+> +#include "firmware.h"
+> +
+> +int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv,
+> +			   enum fw_opt *opt_flags, int ret)
+> +{
+> +	enum kernel_read_file_id id = READING_FIRMWARE;
 
-Perhaps "phase (2)" would be a better name than "step (2)".  During (2),
-multiple argument-supplying calls may be made.
+Please define a new kernel_read_file_id for this (eg.
+READING_FIRMWARE_EFI_EMBEDDED).
 
-> How does step (2) know when userspace has completed sending individual
-> options?
+> +	size_t size, max = INT_MAX;
+> +	int rc;
+> +
+> +	if (!dev)
+> +		return ret;
+> +
+> +	if (!device_property_read_bool(dev, "efi-embedded-firmware"))
+> +		return ret;
 
-Moving to phase (3) terminates phase (2).  This is triggered by userspace
-writing "x create" or "x reconfigure" to the fd as things stand.
+Instead of calling security_kernel_post_read_file(), either in
+device_property_read_bool() or here call security_kernel_read_file().
 
-> > + (6) Return an error message attached to the context.
-> 
-> where/how is this done?
+The pre read call is for deciding whether to allow this call
+independent of the firmware being loaded, whereas the post security
+call is currently being used by IMA-appraisal for verifying a
+signature. ?There might be other LSMs using the post hook as well. ?As
+there is no kernel signature associated with this firmware, use the
+security pre read_file hook.
 
-That got taken out and made general - which Linus then objected to.  I need to
-reinsert this and make it fscontext-specific as most people would really like
-to have it, the mount process being able to produce so many weird and
-wonderful errors.
+thanks,
 
-> > +When the VFS creates this, it allocates ->fs_context_size bytes (as specified
-> > +by the file_system_type object) to hold both the fs_context struct and any
-> > +extra data required by the filesystem.  The fs_context struct is placed at the
-> > +beginning of this space.  Any extra space beyond that is for use by the
-> > +filesystem.  The filesystem should wrap the struct in its own, e.g.:
-> 
->                                                       in its own struct, e.g.:
+Mimi
 
-How about "... The filesystem should wrap the struct in one of its own, e.g."?
+> +
+> +	*opt_flags |= FW_OPT_NO_WARN | FW_OPT_NOCACHE | FW_OPT_NOFALLBACK;
+> +
+> +	/* Already populated data member means we're loading into a buffer */
+> +	if (fw_priv->data) {
+> +		id = READING_FIRMWARE_PREALLOC_BUFFER;
+> +		max = fw_priv->allocated_size;
+> +	}
+> +
+> +	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size, max);
+> +	if (rc) {
+> +		dev_warn(dev, "Firmware %s not in EFI\n", fw_priv->fw_name);
+> +		return ret;
+> +	}
+> +
+> +	rc = security_kernel_post_read_file(NULL, fw_priv->data, size, id);
+> +	if (rc) {
+> +		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
+> +			vfree(fw_priv->data);
+> +			fw_priv->data = NULL;
+> +		}
+> +		return rc;
+> +	}
+> +
+> +	dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
+> +	fw_priv->size = size;
+> +	fw_state_done(fw_priv);
+> +	return 0;
+> +}
 
-> > + (*) int security_fs_context_parse_option(struct fs_context *fc, char *opt);	
-> > +
-> > +     Called for each mount option.  The arguments are as for the
-> > +     ->parse_option() method.  An active LSM may reject one with an error, pass
-> > +     one over and return 0 or consume one and return 1.  If consumed, the
-> 
-> What does "pass one over" mean?
-
-How about:
-
-	An active LSM may return 0 to pass the option on to the filesystem, 1
-	to cause the option to be discarded or an error to cause the option to
-	be rejected.
-
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
