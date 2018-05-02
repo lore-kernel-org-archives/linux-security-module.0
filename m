@@ -1,39 +1,90 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 2 May 2018 06:42:05 +1000 (AEST)
-Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <f4f44e71-8df2-e5e6-d213-cf97eda6cb4a@digikod.net>
-References: <CAMp4zn85hvdT2b0qsKWqxyC-5m=Y414akM1wjVH5qrZpgLE-bw@mail.gmail.com>
-	<CAMp4zn-Y333bSX2EX-5M+-Mu1m9EeeAP203v=HJOFLPVmoUpNA@mail.gmail.com>
-	<201804272225.DAC82348.OFtSVOJOHLFMQF@I-love.SAKURA.ne.jp>
-	<CAMp4zn-9UdDNzJJhz1=kGp1=4kLXk=v8TVwWhpyNQVyyo=Xr6w@mail.gmail.com>
-	<a27ccccf-7436-5049-8554-79638d3bdbb2@schaufler-ca.com>
-	<201804292049.CJG18734.FJMOOHVOFFQtSL@I-love.SAKURA.ne.jp>
-	<0cf314e6-af7d-7e93-4249-944431202327@schaufler-ca.com>
-	<CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
-	<3638568b-bb10-b0f7-d54f-6f2055db07aa@schaufler-ca.com>
-	<CAMp4zn-qREqj0ewUs7dupLT0C_v6Ctz6Sre9QgTJHceGu7vZpw@mail.gmail.com>
-	<f4f44e71-8df2-e5e6-d213-cf97eda6cb4a@digikod.net>
-Message-ID: <alpine.LRH.2.21.1805020635001.15926@namei.org>
+From: igor.stoppa@gmail.com (Igor Stoppa)
+Date: Wed,  2 May 2018 05:05:19 +0400
+Subject: [PATCH 0/3 v2] linux-next: mm: Track genalloc allocations
+Message-ID: <20180502010522.28767-1-igor.stoppa@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 1 May 2018, Micka?l Sala?n wrote:
+This patchset was created as part of an older version of pmalloc, however
+it has value per-se, as it hardens the memory management for the generic
+allocator genalloc.
 
-> > I've been a long-time proponent of programmable LSMs (before it was
-> > cool): https://lkml.org/lkml/2016/8/4/58
-> 
-> Happy to know that Landlock started before programmable access-control
-> was cool, too. :)
-> https://lkml.kernel.org/r/1458784008-16277-1-git-send-email-mic at digikod.net
-> 
+Genalloc does not currently track the size of the allocations it hands
+out.
 
-Not to brag or anything, but this was c.2000 (AD)  
-https://linux.die.net/man/3/libipq ;-)
+Either by mistake, or due to an attack, it is possible that more memory
+than what was initially allocated is freed, leaving behind dangling
+pointers, ready for an use-after-free attack.
+
+With this patch, genalloc becomes capable of tracking the size of each
+allocation it has handed out, when it's time to free it.
+
+It can either verify that the size received is correct, when free is
+invoked, or it can decide autonomously how much memory to free, if the
+value received for the size parameter is 0.
+
+These patches are proposed for beign merged into linux-next, to verify
+that they do not introduce regressions, by comparing the value received
+from the callers of the free function with the internal tracking.
+
+For this reason, the patchset does not contain the removal of the size
+parameter from users of the free() function.
+
+Later on, the "size" parameter can be dropped, and each caller can be
+adjusted accordingly.
+
+However, I do not have access to most of the HW required for confirming
+that all of its users are not negatively affected.
+This is where I believe having the patches in linux-next would help to
+coordinate with the maintaiers of the code that uses gen_alloc.
+
+Since there were comments about the (lack-of) efficiency introduced by
+this patchset, I have added some more explanations and calculations to the
+description of the first patch, the one adding the bitmap.
+My conclusion is that this patch should not cause any major perfomance
+problem.
+
+Regarding the possibility of completely changing genalloc into some other
+type of allocator, I think it should not be a showstopper for this
+patchset, which aims to plug a security hole in genalloc, without
+introducing any major regression.
+
+The security flaw is clear and present, while the benefit of introducing a
+new allocator is not clear, at least for the current users of genalloc.
+
+And anyway the users of genalloc should be fixed to not pass any size
+parameter, which can be done after this patch is merged.
+
+A newer, more efficient allocator will still benefit from not receiving a
+spurious parameter (size), when freeing memory.
+
+Changes since v1:
+
+[http://www.openwall.com/lists/kernel-hardening/2018/04/29/1]
+
+* make the tester code a kernel module
+* turn selftest BUG() error exit paths into WARN()
+* add analysis of impact on current users of genalloc
 
 
-Landlock is by far the better approach to this than C, and may generally 
-solve the use-case of (un)loadable, simple, ad-hoc policies.
+Igor Stoppa (3):
+  genalloc: track beginning of allocations
+  Add label and license to genalloc.rst
+  genalloc: selftest
+
+ Documentation/core-api/genalloc.rst |   4 +
+ include/linux/genalloc.h            | 112 +++---
+ lib/Kconfig.debug                   |  23 ++
+ lib/Makefile                        |   1 +
+ lib/genalloc.c                      | 742 ++++++++++++++++++++++++++----------
+ lib/test_genalloc.c                 | 419 ++++++++++++++++++++
+ 6 files changed, 1046 insertions(+), 255 deletions(-)
+ create mode 100644 lib/test_genalloc.c
 
 -- 
-James Morris
-<jmorris@namei.org>
+2.14.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
