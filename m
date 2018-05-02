@@ -1,90 +1,56 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 02 May 2018 11:45:04 -0400
-Subject: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
-In-Reply-To: <87h8nqglpx.fsf@xmission.com>
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
-	<87h8nqglpx.fsf@xmission.com>
-Message-ID: <1525275904.5669.308.camel@linux.vnet.ibm.com>
+From: tyhicks@canonical.com (Tyler Hicks)
+Date: Wed,  2 May 2018 15:53:16 +0000
+Subject: [PATCH v2 0/4] Better integrate seccomp logging and auditing
+Message-ID: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
-> > Allow LSMs and IMA to differentiate between the kexec_load and
-> > kexec_file_load syscalls by adding an "unnecessary" call to
-> > security_kernel_read_file() in kexec_load.  This would be similar to the
-> > existing init_module syscall calling security_kernel_read_file().
-> 
-> Given the reasonable desire to load a policy that ensures everything
-> has a signature I don't have fundamental objections.
-> 
-> security_kernel_read_file as a hook seems an odd choice.  At the very
-> least it has a bad name because there is no file reading going on here.
-> 
-> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
-> anywhere.  Which means I could have a kernel compiled without that and I
-> would be allowed to use kexec_file_load without signature checking.
-> While kexec_load would be denied.
-> 
-> Am I missing something here?
+Seccomp received improved logging controls in v4.14. Applications can opt into
+logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
+SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
+They can also debug filter matching with the new SECCOMP_RET_LOG action.
+Administrators can prevent specific actions from being logged using the
+kernel.seccomp.actions_logged sysctl.
 
-The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
-calls security_kernel_read_file(). ?So kexec_file_load and kexec_load
-syscall would be using the same method for enforcing signature
-verification.
+However, one corner case intentionally wasn't addressed in those v4.14 changes.
+When a process is being inspected by the audit subsystem, seccomp's decision
+making for logging ignores the new controls and unconditionally logs every
+action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
+many existing applications don't intend to log handled actions due to them
+occurring very frequently. This amount of logging fills the audit logs without
+providing many benefits now that application authors have fine grained controls
+at their disposal.
 
-This is independent of the architecture specific method for verifying
-signatures. ?The coordination between these two methods was included
-in the lockdown patch set, but is being removed, as well the gating of
-kexec_load syscall. ?Instead of being based on the lockdown flag, I
-assume the coordination between the two methods will reappear based on
-a secure boot flag of some sort.
+This patch set aligns the seccomp logging behavior for both audited and
+non-audited processes. It also emits an audit record, if auditing is enabled,
+when the kernel.seccomp.actions_logged sysctl is written to so that there's a
+paper trail when entire actions are quieted.
 
-Mimi
+Changes since v1:
+* Patch 1
+  - No changes
+* Patch 2
+  - New patch, allowing for a configurable separator between action names
+* Patch 3
+  - The value of the actions field in the audit record now uses a comma instead
+    of a space
+  - The value of the actions field in the audit record is no longer enclosed in
+    quotes
+  - audit_log_start() is called with the current processes' audit_context in
+    audit_seccomp_actions_logged()
+  - audit_seccomp_actions_logged() no longer records the pid, uid, auid, tty,
+    ses, task context, comm, or executable path
+  - The new and old value of seccomp_actions_logged is recorded in the
+    AUDIT_CONFIG_CHANGE record
+  - The value of the "res" field in the CONFIG_CHANGE audit record is corrected
+    (1 indicates success, 0 failure)
+  - Updated patch 3's commit message to reflect the updated audit record format
+    in the examples
+* Patch 4
+  - A function comment for audit_seccomp() was added to explain, among other
+    things, that event filtering is performed in seccomp_log()
 
-> 
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > ---
-> >  kernel/kexec.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/kernel/kexec.c b/kernel/kexec.c
-> > index aed8fb2564b3..d1386cfc6796 100644
-> > --- a/kernel/kexec.c
-> > +++ b/kernel/kexec.c
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/capability.h>
-> >  #include <linux/mm.h>
-> >  #include <linux/file.h>
-> > +#include <linux/security.h>
-> >  #include <linux/kexec.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/list.h>
-> > @@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
-> >  static inline int kexec_load_check(unsigned long nr_segments,
-> >  				   unsigned long flags)
-> >  {
-> > +	int result;
-> > +
-> >  	/* We only trust the superuser with rebooting the system. */
-> >  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
-> >  		return -EPERM;
-> >  
-> >  	/*
-> > +	 * Allow LSMs and IMA to differentiate between kexec_load and
-> > +	 * kexec_file_load syscalls.
-> > +	 */
-> > +	result = security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
-> > +	if (result < 0)
-> > +		return result;
-> > +
-> > +	/*
-> >  	 * Verify we have a legal set of flags
-> >  	 * This leaves us room for future extensions.
-> >  	 */
-> 
+Tyler
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
