@@ -1,29 +1,30 @@
-From: authentic@mypanel.biz (Ronald Bernstein)
-Date: Wed, 02 May 2018 09:49:49 +0000
-Subject: wir bieten 2% Kredite
-Message-ID: <20180502094955.BD2DF763D39@mail1.stsn-nci.ac.id>
+From: jmorris@namei.org (James Morris)
+Date: Thu, 3 May 2018 07:01:55 +1000 (AEST)
+Subject: [PATCH v2 1/4] seccomp: Separate read and write code for
+	actions_logged sysctl
+In-Reply-To: <1525276400-7161-2-git-send-email-tyhicks@canonical.com>
+References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+	<1525276400-7161-2-git-send-email-tyhicks@canonical.com>
+Message-ID: <alpine.LRH.2.21.1805030701220.30206@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Sehr geehrte Damen und Herren,
+On Wed, 2 May 2018, Tyler Hicks wrote:
 
-Sie brauchen Geld? Sie sind auf der suche nach einem Darlehen? Seri?s und
-unkompliziert?
-Dann sind Sie hier bei uns genau richtig.
-Durch unsere jahrelange Erfahrung und kompetente Beratung sind wir
-Europaweit t?tig.
+> Break the read and write paths of the kernel.seccomp.actions_logged
+> sysctl into separate functions to maintain readability. An upcoming
+> change will need to audit writes, but not reads, of this sysctl which
+> would introduce too many conditional code paths on whether or not the
+> 'write' parameter evaluates to true.
+> 
+> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 
-Wir bieten jedem ein G?NSTIGES Darlehen zu TOP Konditionen an.
-Darlehnen zwischen 5000 CHF/Euro bis zu 20 Millionen CHF/Euro m?glich.
-Wir erheben dazu 2% Zinssatz.
+Reviewed-by: James Morris <james.morris@microsoft.com>
 
-Lassen Sie sich von unserem kompetenten Team beraten.
+-- 
+James Morris
+<jmorris@namei.org>
 
-Z?gern Sie nicht und kontaktieren Sie mich unter f?r weitere Infos &
-Anfragen unter der eingeblendeten Email Adresse.
-
-
-Ich freue mich von Ihnen zu h?ren.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
