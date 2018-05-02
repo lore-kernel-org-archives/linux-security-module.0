@@ -1,79 +1,66 @@
-From: tyhicks@canonical.com (Tyler Hicks)
-Date: Wed,  2 May 2018 15:53:18 +0000
-Subject: [PATCH v2 2/4] seccomp: Configurable separator for the actions_logged
-	string
-In-Reply-To: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 2 May 2018 09:57:05 -0700
+Subject: [PATCH v2 4/4] seccomp: Don't special case audited processes when
+	logging
+In-Reply-To: <1525276400-7161-5-git-send-email-tyhicks@canonical.com>
 References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
-Message-ID: <1525276400-7161-3-git-send-email-tyhicks@canonical.com>
+	<1525276400-7161-5-git-send-email-tyhicks@canonical.com>
+Message-ID: <CAGXu5jLnD=g=LxR5KTrvcwr1qaYiYXbH-ersvhs5NPRR6JA91w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The function that converts a bitmask of seccomp actions that are
-allowed to be logged is currently only used for constructing the display
-string for the kernel.seccomp.actions_logged sysctl. That string wants a
-space character to be used for the separator between actions.
+On Wed, May 2, 2018 at 8:53 AM, Tyler Hicks <tyhicks@canonical.com> wrote:
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index da78835..9029d9d 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -584,18 +584,13 @@ static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
+>         }
+>
+>         /*
+> -        * Force an audit message to be emitted when the action is RET_KILL_*,
+> -        * RET_LOG, or the FILTER_FLAG_LOG bit was set and the action is
+> -        * allowed to be logged by the admin.
+> +        * Emit an audit message when the action is RET_KILL_*, RET_LOG, or the
+> +        * FILTER_FLAG_LOG bit was set. The admin has the ability to silence
+> +        * any action from being logged by removing the action name from the
+> +        * seccomp_actions_logged sysctl.
+>          */
+>         if (log)
+> -               return __audit_seccomp(syscall, signr, action);
+> -
+> -       /*
+> -        * Let the audit subsystem decide if the action should be audited based
+> -        * on whether the current task itself is being audited.
+> -        */
+> -       return audit_seccomp(syscall, signr, action);
+> +               audit_seccomp(syscall, signr, action);
+>  }
 
-A future patch will make use of the same function for building a string
-that will be sent to the audit subsystem for tracking modifications to
-the kernel.seccomp.actions_logged sysctl. That string will need to use a
-comma as a separator. This patch allows the separator character to be
-configurable to meet both needs.
+This whole series looks great to me. If I can get an Ack from Paul for
+the audit bits, I can take it via the seccomp tree. One minor nit on
+seccomp_log() above, I'd probably change this to show the "exception"
+case as "out of line" of normal code flow. i.e. instead of "if (log)
+audit_seccomp", invert it to return early:
 
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
----
- kernel/seccomp.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+...
+    if (!log)
+        return;
 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index f4afe67..b36ac1e 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -1135,10 +1135,11 @@ static const struct seccomp_log_name seccomp_log_names[] = {
- };
- 
- static bool seccomp_names_from_actions_logged(char *names, size_t size,
--					      u32 actions_logged)
-+					      u32 actions_logged,
-+					      const char *sep)
- {
- 	const struct seccomp_log_name *cur;
--	bool append_space = false;
-+	bool append_sep = false;
- 
- 	for (cur = seccomp_log_names; cur->name && size; cur++) {
- 		ssize_t ret;
-@@ -1146,15 +1147,15 @@ static bool seccomp_names_from_actions_logged(char *names, size_t size,
- 		if (!(actions_logged & cur->log))
- 			continue;
- 
--		if (append_space) {
--			ret = strscpy(names, " ", size);
-+		if (append_sep) {
-+			ret = strscpy(names, sep, size);
- 			if (ret < 0)
- 				return false;
- 
- 			names += ret;
- 			size -= ret;
- 		} else
--			append_space = true;
-+			append_sep = true;
- 
- 		ret = strscpy(names, cur->name, size);
- 		if (ret < 0)
-@@ -1208,7 +1209,7 @@ static int read_actions_logged(struct ctl_table *ro_table, void __user *buffer,
- 	memset(names, 0, sizeof(names));
- 
- 	if (!seccomp_names_from_actions_logged(names, sizeof(names),
--					       seccomp_actions_logged))
-+					       seccomp_actions_logged, " "))
- 		return -EINVAL;
- 
- 	table = *ro_table;
+    audit_seccomp(syscall, signr, action);
+}
+
+But if there isn't some other need for a v3, I can just make this
+change when I commit.
+
+Thanks for fixing this up!
+
+-Kees
+
 -- 
-2.7.4
-
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
