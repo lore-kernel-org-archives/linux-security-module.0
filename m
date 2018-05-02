@@ -1,92 +1,91 @@
-From: hdegoede@redhat.com (Hans de Goede)
-Date: Wed, 2 May 2018 16:49:53 +0200
-Subject: [PATCH v5 2/5] efi: Add embedded peripheral firmware support
-In-Reply-To: <CALCETrXDrcxyESajDZs3L7sAAfDXXc_CUzy5nUZxLPxaTHZ80g@mail.gmail.com>
-References: <20180429093558.5411-1-hdegoede@redhat.com>
-	<20180429093558.5411-3-hdegoede@redhat.com>
-	<CALCETrXDrcxyESajDZs3L7sAAfDXXc_CUzy5nUZxLPxaTHZ80g@mail.gmail.com>
-Message-ID: <59023265-bfca-fe5d-e047-4c69404a0dd1@redhat.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 02 May 2018 11:45:04 -0400
+Subject: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
+In-Reply-To: <87h8nqglpx.fsf@xmission.com>
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<87h8nqglpx.fsf@xmission.com>
+Message-ID: <1525275904.5669.308.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
-
-On 05/01/2018 09:29 PM, Andy Lutomirski wrote:
-> On Sun, Apr 29, 2018 at 2:36 AM Hans de Goede <hdegoede@redhat.com> wrote:
->> +The EFI embedded-fw code works by scanning all EFI_BOOT_SERVICES_CODE
-> memory
->> +segments for an eight byte sequence matching prefix, if the prefix is
-> found it
->> +then does a crc32 over length bytes and if that matches makes a copy of
-> length
->> +bytes and adds that to its list with found firmwares.
->> +
+On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 > 
-> Eww, gross.  Is there really no better way to do this?
+> > Allow LSMs and IMA to differentiate between the kexec_load and
+> > kexec_file_load syscalls by adding an "unnecessary" call to
+> > security_kernel_read_file() in kexec_load.  This would be similar to the
+> > existing init_module syscall calling security_kernel_read_file().
+> 
+> Given the reasonable desire to load a policy that ensures everything
+> has a signature I don't have fundamental objections.
+> 
+> security_kernel_read_file as a hook seems an odd choice.  At the very
+> least it has a bad name because there is no file reading going on here.
+> 
+> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
+> anywhere.  Which means I could have a kernel compiled without that and I
+> would be allowed to use kexec_file_load without signature checking.
+> While kexec_load would be denied.
+> 
+> Am I missing something here?
 
-I'm afraid not.
+The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
+calls security_kernel_read_file(). ?So kexec_file_load and kexec_load
+syscall would be using the same method for enforcing signature
+verification.
 
->  Is the issue that
-> the EFI code does not intend to pass the firmware to the OS but that it has
-> a copy for its own purposes and that Linux is just going to hijack EFI's
-> copy?  If so, that's brilliant and terrible at the same time.
+This is independent of the architecture specific method for verifying
+signatures. ?The coordination between these two methods was included
+in the lockdown patch set, but is being removed, as well the gating of
+kexec_load syscall. ?Instead of being based on the lockdown flag, I
+assume the coordination between the two methods will reappear based on
+a secure boot flag of some sort.
 
-Yes that is exactly the issue / what it happening here.
+Mimi
 
 > 
->> +       for (i = 0; i < size; i += 8) {
->> +               if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
->> +                       continue;
->> +
->> +               /* Seed with ~0, invert to match crc32 userspace utility
-> */
->> +               crc = ~crc32(~0, mem + i, desc->length);
->> +               if (crc == desc->crc)
->> +                       break;
->> +       }
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > ---
+> >  kernel/kexec.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/kernel/kexec.c b/kernel/kexec.c
+> > index aed8fb2564b3..d1386cfc6796 100644
+> > --- a/kernel/kexec.c
+> > +++ b/kernel/kexec.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/capability.h>
+> >  #include <linux/mm.h>
+> >  #include <linux/file.h>
+> > +#include <linux/security.h>
+> >  #include <linux/kexec.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/list.h>
+> > @@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+> >  static inline int kexec_load_check(unsigned long nr_segments,
+> >  				   unsigned long flags)
+> >  {
+> > +	int result;
+> > +
+> >  	/* We only trust the superuser with rebooting the system. */
+> >  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+> >  		return -EPERM;
+> >  
+> >  	/*
+> > +	 * Allow LSMs and IMA to differentiate between kexec_load and
+> > +	 * kexec_file_load syscalls.
+> > +	 */
+> > +	result = security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
+> > +	if (result < 0)
+> > +		return result;
+> > +
+> > +	/*
+> >  	 * Verify we have a legal set of flags
+> >  	 * This leaves us room for future extensions.
+> >  	 */
 > 
-> I hate to play the security card, but this stinks a bit.  The kernel
-> obviously needs to trust the EFI boot services code since the EFI boot
-> services code is free to modify the kernel image.  But your patch is not
-> actually getting this firmware blob from the boot services code via any
-> defined interface -- you're literally snarfing up the blob from a range of
-> memory.  I fully expect there to be any number of ways for untrustworthy
-> entities to inject malicious blobs into this memory range on quite a few
-> implementations.  For example, there are probably unauthenticated EFI
-> variables and even parts of USB sticks and such that get read into boot
-> services memory, and I see no reason at all to expect that nothing in the
-> so-called "boot services code" range is actually just plain old boot
-> services *heap*.
-> 
-> Fortunately, given your design, this is very easy to fix.  Just replace
-> CRC32 with SHA-256 or similar.  If you find the crypto api too ugly for
-> this purpose, I have patches that only need a small amount of dusting off
-> to give an entirely reasonable SHA-256 API in the kernel.
 
-My main reason for going with crc32 is that the scanning happens before
-the kernel is fully up and running (it happens just before the rest_init()
-call in start_kernel() (from init/main.c) I'm open to using the
-crypto api, but I was not sure if that is ready for use at that time.
-
-> (To be clear, I don't love my own suggestion here.  What I'd *really* like
-> to see is a better interface and no attempt to match the data to some
-> built-in hash at all.  In particular, there are plenty of devices for which
-> the driver wants access to a genuinely device-specific blob.  For example,
-> I'm typing this email while connected to a router that is running ath10k
-> and is using a calibration blob awkwardly snarfed out of flash somewhere.
-> It would be really nice if there was a way to pull a blob out of EFI space
-> that is marked, by EFI, as belonging to a particular device.  Then the
-> firmware could just pass it over without any particular verification.  But
-> since your code is literally scanning a wide swath of physical memory for
-> something that looks like a valid blob, I think you need to use a
-> cryptographically strong concept of validity.)
-
-Yes ideally this would not be needed at all and/or use a well defined
-interface, but alas we don't live in an ideal world :)
-
-Regards,
-
-Hans
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
