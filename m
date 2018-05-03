@@ -1,27 +1,40 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 4 May 2018 03:11:31 +1000 (AEST)
-Subject: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-In-Reply-To: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1805040311050.12843@namei.org>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Thu, 03 May 2018 15:13:18 -0500
+Subject: [PATCH 0/3] kexec: limit kexec_load syscall
+In-Reply-To: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+	(Mimi Zohar's message of "Thu, 12 Apr 2018 18:41:48 -0400")
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <87r2mso5up.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2 May 2018, Mehmet Kayaalp wrote:
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-> These patches add support for modifying the reserved space for extra
-> certificates in a compressed bzImage in x86. This allows separating the
-> system keyring certificate from the kernel build process. After the kernel
-> image is distributed, the insert-sys-cert script can be used to insert the
-> certificate for x86.
+> In environments that require the kexec kernel image to be signed, prevent
+> using the kexec_load syscall.  In order for LSMs and IMA to differentiate
+> between kexec_load and kexec_file_load syscalls, this patch set adds a
+> call to security_kernel_read_file() in kexec_load_check().
 
-Can you provide more explanation of how this is useful and who would use 
-it?
+Having thought about it some more this justification for these changes
+does not work.  The functionality of kexec_load is already root-only.
+So in environments that require the kernel image to be signed just don't
+use kexec_load.  Possibly even compile kexec_load out to save space
+because you will never need it.  You don't need a new security hook to
+do any of that.  Userspace is a very fine mechanism for being the
+instrument of policy.
 
--- 
-James Morris
-<jmorris@namei.org>
+If you don't trust userspace that needs to be spelled out very clearly.
+You need to talk about what your threat models are.
 
+If the only justification is so that that we can't boot windows if
+someone hacks into userspace it has my nack because that is another kind
+of complete non-sense.
+
+Given that you are not trusting userspace this changeset also probably
+needs to have the kernel-hardening list cc'd.  Because the only possible
+justification I can imagine for something like this is kernel-hardening.
+
+Eric
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
