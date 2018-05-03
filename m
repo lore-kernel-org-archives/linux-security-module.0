@@ -1,65 +1,96 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 03 May 2018 17:31:15 -0400
-Subject: [PATCH 0/3] kexec: limit kexec_load syscall
-In-Reply-To: <87r2mso5up.fsf@xmission.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Thu, 03 May 2018 16:36:40 -0500
+Subject: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
+In-Reply-To: <1525381619.3539.45.camel@linux.vnet.ibm.com> (Mimi Zohar's
+	message of "Thu, 03 May 2018 17:06:59 -0400")
 References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<87r2mso5up.fsf@xmission.com>
-Message-ID: <1525383075.3539.67.camel@linux.vnet.ibm.com>
+	<1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<87h8nqglpx.fsf@xmission.com>
+	<1525275904.5669.308.camel@linux.vnet.ibm.com>
+	<87h8nospo5.fsf@xmission.com>
+	<6203b1e4-70c3-6d0e-60e0-56c6e8f72ec9@schaufler-ca.com>
+	<87y3h0pu72.fsf@xmission.com>
+	<1525381619.3539.45.camel@linux.vnet.ibm.com>
+Message-ID: <87lgd0o1zr.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-[Cc'ing Kees and kernel-hardening]
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
-> > In environments that require the kexec kernel image to be signed, prevent
-> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
-> > between kexec_load and kexec_file_load syscalls, this patch set adds a
-> > call to security_kernel_read_file() in kexec_load_check().
-> 
-> Having thought about it some more this justification for these changes
-> does not work.  The functionality of kexec_load is already root-only.
-> So in environments that require the kernel image to be signed just don't
-> use kexec_load.  Possibly even compile kexec_load out to save space
-> because you will never need it.  You don't need a new security hook to
-> do any of that.  Userspace is a very fine mechanism for being the
-> instrument of policy.
+> On Thu, 2018-05-03 at 11:42 -0500, Eric W. Biederman wrote:
+>> Casey Schaufler <casey@schaufler-ca.com> writes:
+>> 
+>> > On 5/3/2018 8:51 AM, Eric W. Biederman wrote:
+>> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> >>
+>> >>> On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
+>> >>>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> >>>>
+>> >>>>> Allow LSMs and IMA to differentiate between the kexec_load and
+>> >>>>> kexec_file_load syscalls by adding an "unnecessary" call to
+>> >>>>> security_kernel_read_file() in kexec_load.  This would be similar to the
+>> >>>>> existing init_module syscall calling security_kernel_read_file().
+>> >>>> Given the reasonable desire to load a policy that ensures everything
+>> >>>> has a signature I don't have fundamental objections.
+>> >>>>
+>> >>>> security_kernel_read_file as a hook seems an odd choice.  At the very
+>> >>>> least it has a bad name because there is no file reading going on here.
+>> >>>>
+>> >>>> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
+>> >>>> anywhere.  Which means I could have a kernel compiled without that and I
+>> >>>> would be allowed to use kexec_file_load without signature checking.
+>> >>>> While kexec_load would be denied.
+>> >>>>
+>> >>>> Am I missing something here?
+>> >>> The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
+>> >>> calls security_kernel_read_file(). ?So kexec_file_load and kexec_load
+>> >>> syscall would be using the same method for enforcing signature
+>> >>> verification.
+>> >> Having looked at your patches and the kernel a little more I think
+>> >> this should be a separate security hook that does not take a file
+>> >> parameter.
+>> >>
+>> >> Right now every other security module assumes !file is init_module.
+>> >> So I think this change has the potential to confuse other security
+>> >> modules, with the result of unintended policy being applied.
+>> >>
+>> >> So just for good security module hygeine I think this needs a dedicated
+>> >> kexec_load security hook.
+>> >
+>> > I would rather see the existing modules updated than a new
+>> > hook added. Too many hooks spoil the broth. Two hooks with
+>> > trivial differences just add to the clutter and make it harder
+>> > for non-lsm developers to figure out what to use in their
+>> > code.
+>> 
+>> These are not non-trivial differences.  There is absolutely nothing
+>> file related about kexec_load.  Nor for init_module for that matter.
+>> 
+>> If something is called security_kernel_read_file I think it is wholly
+>> appropriate for code that processes such a hook to assume file is
+>> non-NULL.
+>> 
+>> When you have to dance a jig (which is what I see the security modules
+>> doing) to figure out who is calling a lsm hook for what purpose I think
+>> it is a maintenance problem waiting to happen and that the hook is badly
+>> designed.
+>> 
+>> At this point I don't care what the lsm's do with the hooks but the
+>> hooks need to make sense for people outside of the lsm's and something
+>> about reading a file in a syscall that doesn't read files is complete
+>> and utter nonsense.
+>
+> Sure, we can define a wrapper around the security_kernel_read_file()
+> hook, calling it security_non-fd_syscall() or even
+> security_old_syscall().
 
-True, for those building their own kernel, they can disable the old
-syscalls. ?The concern is not for those building their own kernels,
-but for those using stock kernels. ?
+I really don't see why you want to use the same hook.
 
-By adding an LSM hook here in the kexec_load syscall, as opposed to an
-IMA specific hook, other LSMs can piggy back on top of it. ?Currently,
-both load_pin and SELinux are gating the kernel module syscalls based
-on security_kernel_read_file.
+I just read through the code of all three users.  None of them.
+Especially IMA shares any significant code between the !file case and
+the file case.
 
-If there was a similar option for the kernel image, I'm pretty sure
-other LSMs would use it.
-
->From an IMA perspective, there needs to be some method for only
-allowing signed code to be loaded, executed, etc. - kernel modules,
-kernel image/initramfs, firmware, policies.
-
-> If you don't trust userspace that needs to be spelled out very clearly.
-> You need to talk about what your threat models are.
-> 
-> If the only justification is so that that we can't boot windows if
-> someone hacks into userspace it has my nack because that is another kind
-> of complete non-sense.
-
-The usecase is the ability to gate the kexec_load usage in stock
-kernels.
-
-> 
-> Given that you are not trusting userspace this changeset also probably
-> needs to have the kernel-hardening list cc'd.  Because the only possible
-> justification I can imagine for something like this is kernel-hardening.
-
-Sure, Cc'ing linux-hardening and Kees.
-
-Mimi
+Eric
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
