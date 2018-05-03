@@ -1,82 +1,87 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 3 May 2018 16:48:09 -0400
-Subject: [PATCH v2 3/4] seccomp: Audit attempts to modify the
-	actions_logged sysctl
-In-Reply-To: <3241732.94y415NZZK@x2>
-References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
-	<2193990.pCRMhOm3SD@x2>
-	<CAHC9VhS69VD9+L=oN-uLZqvo7BCg+HOvEuT4mnv8Wy7qo2MLMA@mail.gmail.com>
-	<3241732.94y415NZZK@x2>
-Message-ID: <CAHC9VhSq=56twBxnzZ8T=APGvtZV39FrHFVqmDMiKOK=WeWJRA@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 03 May 2018 17:06:59 -0400
+Subject: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
+In-Reply-To: <87y3h0pu72.fsf@xmission.com>
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
+	<87h8nqglpx.fsf@xmission.com>
+	<1525275904.5669.308.camel@linux.vnet.ibm.com>
+	<87h8nospo5.fsf@xmission.com>
+	<6203b1e4-70c3-6d0e-60e0-56c6e8f72ec9@schaufler-ca.com>
+	<87y3h0pu72.fsf@xmission.com>
+Message-ID: <1525381619.3539.45.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 3, 2018 at 4:42 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> On Thursday, May 3, 2018 4:18:26 PM EDT Paul Moore wrote:
->> On Wed, May 2, 2018 at 2:18 PM, Steve Grubb <sgrubb@redhat.com> wrote:
->> > On Wednesday, May 2, 2018 11:53:19 AM EDT Tyler Hicks wrote:
->> >> The decision to log a seccomp action will always be subject to the
->> >> value of the kernel.seccomp.actions_logged sysctl, even for processes
->> >> that are being inspected via the audit subsystem, in an upcoming patch.
->> >> Therefore, we need to emit an audit record on attempts at writing to the
->> >> actions_logged sysctl when auditing is enabled.
->> >>
->> >> This patch updates the write handler for the actions_logged sysctl to
->> >> emit an audit record on attempts to write to the sysctl. Successful
->> >> writes to the sysctl will result in a record that includes a normalized
->> >> list of logged actions in the "actions" field and a "res" field equal to
->> >> 0. Unsuccessful writes to the sysctl will result in a record that
->> >> doesn't include the "actions" field and has a "res" field equal to 1.
->> >>
->> >> Not all unsuccessful writes to the sysctl are audited. For example, an
->> >> audit record will not be emitted if an unprivileged process attempts to
->> >> open the sysctl file for reading since that access control check is not
->> >> part of the sysctl's write handler.
->> >>
->> >> Below are some example audit records when writing various strings to the
->> >> actions_logged sysctl.
->> >>
->> >> Writing "not-a-real-action", when the kernel.seccomp.actions_logged
->> >> sysctl previously was "kill_process kill_thread trap errno trace log",
->> >>
->> >> emits this audit record:
->> >>  type=CONFIG_CHANGE msg=audit(1525275273.537:130): op=seccomp-logging
->> >>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=0
->> >>
->> >> If you then write "kill_process kill_thread errno trace log", this audit
->> >>
->> >> record is emitted:
->> >>  type=CONFIG_CHANGE msg=audit(1525275310.208:136): op=seccomp-logging
->> >>  actions=kill_process,kill_thread,errno,trace,log
->> >>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=1
->> >>
->> >> If you then write the string "log log errno trace kill_process
->> >> kill_thread", which is unordered and contains the log action twice,
->> >>
->> >> it results in the same actions value as the previous record:
->> >>  type=CONFIG_CHANGE msg=audit(1525275325.613:142): op=seccomp-logging
->> >>  actions=kill_process,kill_thread,errno,trace,log
->> >>  old-actions=kill_process,kill_thread,errno,trace,log res=1
->> >>
->> >> No audit records are generated when reading the actions_logged sysctl.
->> >
->> > ACK for the format of the records.
->>
->> I just wanted to clarify the record format with you Steve ... the
->> "actions" and "old-actions" fields may not be included in the record
->> in cases where there is an error building the action value string, are
->> you okay with that or would you prefer the fields to always be
->> included but with a "?" for the value?
->
-> A ? would be more in line with how other things are handled.
+On Thu, 2018-05-03 at 11:42 -0500, Eric W. Biederman wrote:
+> Casey Schaufler <casey@schaufler-ca.com> writes:
+> 
+> > On 5/3/2018 8:51 AM, Eric W. Biederman wrote:
+> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> >>
+> >>> On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
+> >>>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> >>>>
+> >>>>> Allow LSMs and IMA to differentiate between the kexec_load and
+> >>>>> kexec_file_load syscalls by adding an "unnecessary" call to
+> >>>>> security_kernel_read_file() in kexec_load.  This would be similar to the
+> >>>>> existing init_module syscall calling security_kernel_read_file().
+> >>>> Given the reasonable desire to load a policy that ensures everything
+> >>>> has a signature I don't have fundamental objections.
+> >>>>
+> >>>> security_kernel_read_file as a hook seems an odd choice.  At the very
+> >>>> least it has a bad name because there is no file reading going on here.
+> >>>>
+> >>>> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
+> >>>> anywhere.  Which means I could have a kernel compiled without that and I
+> >>>> would be allowed to use kexec_file_load without signature checking.
+> >>>> While kexec_load would be denied.
+> >>>>
+> >>>> Am I missing something here?
+> >>> The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
+> >>> calls security_kernel_read_file(). ?So kexec_file_load and kexec_load
+> >>> syscall would be using the same method for enforcing signature
+> >>> verification.
+> >> Having looked at your patches and the kernel a little more I think
+> >> this should be a separate security hook that does not take a file
+> >> parameter.
+> >>
+> >> Right now every other security module assumes !file is init_module.
+> >> So I think this change has the potential to confuse other security
+> >> modules, with the result of unintended policy being applied.
+> >>
+> >> So just for good security module hygeine I think this needs a dedicated
+> >> kexec_load security hook.
+> >
+> > I would rather see the existing modules updated than a new
+> > hook added. Too many hooks spoil the broth. Two hooks with
+> > trivial differences just add to the clutter and make it harder
+> > for non-lsm developers to figure out what to use in their
+> > code.
+> 
+> These are not non-trivial differences.  There is absolutely nothing
+> file related about kexec_load.  Nor for init_module for that matter.
+> 
+> If something is called security_kernel_read_file I think it is wholly
+> appropriate for code that processes such a hook to assume file is
+> non-NULL.
+> 
+> When you have to dance a jig (which is what I see the security modules
+> doing) to figure out who is calling a lsm hook for what purpose I think
+> it is a maintenance problem waiting to happen and that the hook is badly
+> designed.
+> 
+> At this point I don't care what the lsm's do with the hooks but the
+> hooks need to make sense for people outside of the lsm's and something
+> about reading a file in a syscall that doesn't read files is complete
+> and utter nonsense.
 
-That's what I thought.
+Sure, we can define a wrapper around the security_kernel_read_file()
+hook, calling it security_non-fd_syscall() or even
+security_old_syscall().
 
-Would you mind putting together a v3 Tyler? :)
+Mimi
 
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
