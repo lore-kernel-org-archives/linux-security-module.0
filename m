@@ -1,112 +1,65 @@
-From: sgrubb@redhat.com (Steve Grubb)
-Date: Thu, 03 May 2018 17:12:45 -0400
-Subject: [PATCH v2 3/4] seccomp: Audit attempts to modify the
-	actions_logged sysctl
-In-Reply-To: <d8e1c48b-70d0-13a7-e563-755a8760b25f@canonical.com>
-References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
-	<CAHC9VhSq=56twBxnzZ8T=APGvtZV39FrHFVqmDMiKOK=WeWJRA@mail.gmail.com>
-	<d8e1c48b-70d0-13a7-e563-755a8760b25f@canonical.com>
-Message-ID: <2397134.HQDQRr6h1X@x2>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 03 May 2018 17:31:15 -0400
+Subject: [PATCH 0/3] kexec: limit kexec_load syscall
+In-Reply-To: <87r2mso5up.fsf@xmission.com>
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<87r2mso5up.fsf@xmission.com>
+Message-ID: <1525383075.3539.67.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thursday, May 3, 2018 4:51:36 PM EDT Tyler Hicks wrote:
-> On 05/03/2018 03:48 PM, Paul Moore wrote:
-> > On Thu, May 3, 2018 at 4:42 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> >> On Thursday, May 3, 2018 4:18:26 PM EDT Paul Moore wrote:
-> >>> On Wed, May 2, 2018 at 2:18 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> >>>> On Wednesday, May 2, 2018 11:53:19 AM EDT Tyler Hicks wrote:
-> >>>>> The decision to log a seccomp action will always be subject to the
-> >>>>> value of the kernel.seccomp.actions_logged sysctl, even for processes
-> >>>>> that are being inspected via the audit subsystem, in an upcoming
-> >>>>> patch.
-> >>>>> Therefore, we need to emit an audit record on attempts at writing to
-> >>>>> the
-> >>>>> actions_logged sysctl when auditing is enabled.
-> >>>>> 
-> >>>>> This patch updates the write handler for the actions_logged sysctl to
-> >>>>> emit an audit record on attempts to write to the sysctl. Successful
-> >>>>> writes to the sysctl will result in a record that includes a
-> >>>>> normalized
-> >>>>> list of logged actions in the "actions" field and a "res" field equal
-> >>>>> to
-> >>>>> 0. Unsuccessful writes to the sysctl will result in a record that
-> >>>>> doesn't include the "actions" field and has a "res" field equal to 1.
-> >>>>> 
-> >>>>> Not all unsuccessful writes to the sysctl are audited. For example,
-> >>>>> an
-> >>>>> audit record will not be emitted if an unprivileged process attempts
-> >>>>> to
-> >>>>> open the sysctl file for reading since that access control check is
-> >>>>> not
-> >>>>> part of the sysctl's write handler.
-> >>>>> 
-> >>>>> Below are some example audit records when writing various strings to
-> >>>>> the
-> >>>>> actions_logged sysctl.
-> >>>>> 
-> >>>>> Writing "not-a-real-action", when the kernel.seccomp.actions_logged
-> >>>>> sysctl previously was "kill_process kill_thread trap errno trace
-> >>>>> log",
-> >>>>> 
-> >>>>> emits this audit record:
-> >>>>>  type=CONFIG_CHANGE msg=audit(1525275273.537:130): op=seccomp-logging
-> >>>>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=0
-> >>>>> 
-> >>>>> If you then write "kill_process kill_thread errno trace log", this
-> >>>>> audit
-> >>>>> 
-> >>>>> record is emitted:
-> >>>>>  type=CONFIG_CHANGE msg=audit(1525275310.208:136): op=seccomp-logging
-> >>>>>  actions=kill_process,kill_thread,errno,trace,log
-> >>>>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=1
-> >>>>> 
-> >>>>> If you then write the string "log log errno trace kill_process
-> >>>>> kill_thread", which is unordered and contains the log action twice,
-> >>>>> 
-> >>>>> it results in the same actions value as the previous record:
-> >>>>>  type=CONFIG_CHANGE msg=audit(1525275325.613:142): op=seccomp-logging
-> >>>>>  actions=kill_process,kill_thread,errno,trace,log
-> >>>>>  old-actions=kill_process,kill_thread,errno,trace,log res=1
-> >>>>> 
-> >>>>> No audit records are generated when reading the actions_logged
-> >>>>> sysctl.
-> >>>> 
-> >>>> ACK for the format of the records.
-> >>> 
-> >>> I just wanted to clarify the record format with you Steve ... the
-> >>> "actions" and "old-actions" fields may not be included in the record
-> >>> in cases where there is an error building the action value string, are
-> >>> you okay with that or would you prefer the fields to always be
-> >>> included but with a "?" for the value?
-> >> 
-> >> A ? would be more in line with how other things are handled.
-> > 
-> > That's what I thought.
-> > 
-> > Would you mind putting together a v3 Tyler? :)
+[Cc'ing Kees and kernel-hardening]
+
+On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 > 
-> To be clear, "?" is only to be used when the call to
-> seccomp_names_from_actions_logged() fails, right?
+> > In environments that require the kexec kernel image to be signed, prevent
+> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
+> > between kexec_load and kexec_file_load syscalls, this patch set adds a
+> > call to security_kernel_read_file() in kexec_load_check().
+> 
+> Having thought about it some more this justification for these changes
+> does not work.  The functionality of kexec_load is already root-only.
+> So in environments that require the kernel image to be signed just don't
+> use kexec_load.  Possibly even compile kexec_load out to save space
+> because you will never need it.  You don't need a new security hook to
+> do any of that.  Userspace is a very fine mechanism for being the
+> instrument of policy.
 
-Yes and that is a question mark with no quotes in the audit record.
+True, for those building their own kernel, they can disable the old
+syscalls. ?The concern is not for those building their own kernels,
+but for those using stock kernels. ?
 
-> If the sysctl write fails for some other reason, such as when an invalid
-> action name is specified, can you confirm that you still want *no*
-> "actions" field, 
+By adding an LSM hook here in the kexec_load syscall, as opposed to an
+IMA specific hook, other LSMs can piggy back on top of it. ?Currently,
+both load_pin and SELinux are gating the kernel module syscalls based
+on security_kernel_read_file.
 
-Its best that fields do not disappear. In the case of invalid input, you can 
-just leave the new value as ? so that nothing malicious can be injected into 
-the logs
+If there was a similar option for the kernel image, I'm pretty sure
+other LSMs would use it.
 
-> the "old-actions" field to be the value prior to attempting the update to
-> the sysctl, and res to be 0?
+>From an IMA perspective, there needs to be some method for only
+allowing signed code to be loaded, executed, etc. - kernel modules,
+kernel image/initramfs, firmware, policies.
 
-Yes
+> If you don't trust userspace that needs to be spelled out very clearly.
+> You need to talk about what your threat models are.
+> 
+> If the only justification is so that that we can't boot windows if
+> someone hacks into userspace it has my nack because that is another kind
+> of complete non-sense.
 
--Steve
+The usecase is the ability to gate the kexec_load usage in stock
+kernels.
 
+> 
+> Given that you are not trusting userspace this changeset also probably
+> needs to have the kernel-hardening list cc'd.  Because the only possible
+> justification I can imagine for something like this is kernel-hardening.
 
+Sure, Cc'ing linux-hardening and Kees.
+
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
