@@ -1,40 +1,73 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 03 May 2018 15:13:18 -0500
-Subject: [PATCH 0/3] kexec: limit kexec_load syscall
-In-Reply-To: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-	(Mimi Zohar's message of "Thu, 12 Apr 2018 18:41:48 -0400")
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <87r2mso5up.fsf@xmission.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 3 May 2018 16:18:26 -0400
+Subject: [PATCH v2 3/4] seccomp: Audit attempts to modify the
+	actions_logged sysctl
+In-Reply-To: <2193990.pCRMhOm3SD@x2>
+References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+	<1525276400-7161-4-git-send-email-tyhicks@canonical.com>
+	<2193990.pCRMhOm3SD@x2>
+Message-ID: <CAHC9VhS69VD9+L=oN-uLZqvo7BCg+HOvEuT4mnv8Wy7qo2MLMA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Wed, May 2, 2018 at 2:18 PM, Steve Grubb <sgrubb@redhat.com> wrote:
+> On Wednesday, May 2, 2018 11:53:19 AM EDT Tyler Hicks wrote:
+>> The decision to log a seccomp action will always be subject to the
+>> value of the kernel.seccomp.actions_logged sysctl, even for processes
+>> that are being inspected via the audit subsystem, in an upcoming patch.
+>> Therefore, we need to emit an audit record on attempts at writing to the
+>> actions_logged sysctl when auditing is enabled.
+>>
+>> This patch updates the write handler for the actions_logged sysctl to
+>> emit an audit record on attempts to write to the sysctl. Successful
+>> writes to the sysctl will result in a record that includes a normalized
+>> list of logged actions in the "actions" field and a "res" field equal to
+>> 0. Unsuccessful writes to the sysctl will result in a record that
+>> doesn't include the "actions" field and has a "res" field equal to 1.
+>>
+>> Not all unsuccessful writes to the sysctl are audited. For example, an
+>> audit record will not be emitted if an unprivileged process attempts to
+>> open the sysctl file for reading since that access control check is not
+>> part of the sysctl's write handler.
+>>
+>> Below are some example audit records when writing various strings to the
+>> actions_logged sysctl.
+>>
+>> Writing "not-a-real-action", when the kernel.seccomp.actions_logged
+>> sysctl previously was "kill_process kill_thread trap errno trace log",
+>> emits this audit record:
+>>
+>>  type=CONFIG_CHANGE msg=audit(1525275273.537:130): op=seccomp-logging
+>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=0
+>>
+>> If you then write "kill_process kill_thread errno trace log", this audit
+>> record is emitted:
+>>
+>>  type=CONFIG_CHANGE msg=audit(1525275310.208:136): op=seccomp-logging
+>>  actions=kill_process,kill_thread,errno,trace,log
+>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=1
+>>
+>> If you then write the string "log log errno trace kill_process
+>> kill_thread", which is unordered and contains the log action twice,
+>> it results in the same actions value as the previous record:
+>>
+>>  type=CONFIG_CHANGE msg=audit(1525275325.613:142): op=seccomp-logging
+>>  actions=kill_process,kill_thread,errno,trace,log
+>>  old-actions=kill_process,kill_thread,errno,trace,log res=1
+>>
+>> No audit records are generated when reading the actions_logged sysctl.
+>
+> ACK for the format of the records.
 
-> In environments that require the kexec kernel image to be signed, prevent
-> using the kexec_load syscall.  In order for LSMs and IMA to differentiate
-> between kexec_load and kexec_file_load syscalls, this patch set adds a
-> call to security_kernel_read_file() in kexec_load_check().
+I just wanted to clarify the record format with you Steve ... the
+"actions" and "old-actions" fields may not be included in the record
+in cases where there is an error building the action value string, are
+you okay with that or would you prefer the fields to always be
+included but with a "?" for the value?
 
-Having thought about it some more this justification for these changes
-does not work.  The functionality of kexec_load is already root-only.
-So in environments that require the kernel image to be signed just don't
-use kexec_load.  Possibly even compile kexec_load out to save space
-because you will never need it.  You don't need a new security hook to
-do any of that.  Userspace is a very fine mechanism for being the
-instrument of policy.
-
-If you don't trust userspace that needs to be spelled out very clearly.
-You need to talk about what your threat models are.
-
-If the only justification is so that that we can't boot windows if
-someone hacks into userspace it has my nack because that is another kind
-of complete non-sense.
-
-Given that you are not trusting userspace this changeset also probably
-needs to have the kernel-hardening list cc'd.  Because the only possible
-justification I can imagine for something like this is kernel-hardening.
-
-Eric
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
