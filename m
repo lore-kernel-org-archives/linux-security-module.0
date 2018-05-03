@@ -1,33 +1,63 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 03 May 2018 17:42:00 -0400
-Subject: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-In-Reply-To: <alpine.LRH.2.21.1805040311050.12843@namei.org>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-	<alpine.LRH.2.21.1805040311050.12843@namei.org>
-Message-ID: <1525383720.3539.76.camel@linux.vnet.ibm.com>
+From: igor.stoppa@gmail.com (Igor Stoppa)
+Date: Fri, 4 May 2018 01:52:29 +0400
+Subject: Correct way to access the physmap? - Was: Re: [PATCH 7/9] Pmalloc
+	Rare Write: modify selected pools
+In-Reply-To: <20180424115050.GD26636@bombadil.infradead.org>
+References: <20180423125458.5338-1-igor.stoppa@huawei.com>
+	<20180423125458.5338-8-igor.stoppa@huawei.com>
+	<20180424115050.GD26636@bombadil.infradead.org>
+Message-ID: <035f2bba-ebb1-06a0-fb88-3d40f7e484a7@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
-> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
+
+
+On 24/04/18 15:50, Matthew Wilcox wrote:
+> On Mon, Apr 23, 2018 at 04:54:56PM +0400, Igor Stoppa wrote:
+>> While the vanilla version of pmalloc provides support for permanently
+>> transitioning between writable and read-only of a memory pool, this
+>> patch seeks to support a separate class of data, which would still
+>> benefit from write protection, most of the time, but it still needs to
+>> be modifiable. Maybe very seldom, but still cannot be permanently marked
+>> as read-only.
 > 
-> > These patches add support for modifying the reserved space for extra
-> > certificates in a compressed bzImage in x86. This allows separating the
-> > system keyring certificate from the kernel build process. After the kernel
-> > image is distributed, the insert-sys-cert script can be used to insert the
-> > certificate for x86.
+> This seems like a horrible idea that basically makes this feature useless.
+> I would say the right way to do this is to have:
 > 
-> Can you provide more explanation of how this is useful and who would use 
-> it?
+> struct modifiable_data {
+> 	struct immutable_data *d;
+> 	...
+> };
+> 
+> Then allocate a new pool, change d and destroy the old pool.
 
-I'm involved in a number projects that rely on a kernel build group to
-actually build kernels for their systems. ?Reserving memory for
-additional public keys, allows product groups to insert public keys
-post build. ?Initially the product groups might insert development
-keys, but eventually they would insert the product's public key.
+At the end of the summit, we agreed that I would go through the physmap.
 
-Mimi
+But I'm not sure of what is the correct way to access it :-/
 
+Starting from a vmalloc address, say:
+
+int *i = vmalloc(sizeof(int));
+
+I can get its linear counterpart:
+
+int *j = page_to_virt(vmalloc_to_page(i));
+
+and the physical address:
+
+int *k = virt_to_phys(j);
+
+But how do I get to the physmap?
+
+I did not find much about it, apart from papers that talk about specific 
+hardcoded addresses, but I would expect that if there is any hardcoded 
+constant, by now, it's hidden behind some macro.
+
+What I have verified, so far, at least on qemu x86_64, is that 
+protecting "i" will also make "j" unwritable.
+
+--
+igor
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
