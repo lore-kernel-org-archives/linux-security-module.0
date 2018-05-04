@@ -1,94 +1,78 @@
 From: rgb@redhat.com (Richard Guy Briggs)
-Date: Fri,  4 May 2018 16:54:37 -0400
-Subject: [PATCH ghak81 RFC V1 4/5] audit: use inline function to set audit
-	context
+Date: Fri,  4 May 2018 16:54:34 -0400
+Subject: [PATCH ghak81 RFC V1 1/5] audit: normalize loginuid read access
 In-Reply-To: <cover.1525466167.git.rgb@redhat.com>
 References: <cover.1525466167.git.rgb@redhat.com>
-Message-ID: <2f0566af8ccafdaf400a3d002cb4aef9b80e44cf.1525466167.git.rgb@redhat.com>
+Message-ID: <611e9c85fca8bcdb24e6fb6da412773663c007b3.1525466167.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Recognizing that the audit context is an internal audit value, use an
-access function to set the audit context pointer for the task
-rather than reaching directly into the task struct to set it.
+Recognizing that the loginuid is an internal audit value, use an access
+function to retrieve the audit loginuid value for the task rather than
+reaching directly into the task struct to get it.
 
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- include/linux/audit.h | 8 ++++++++
- kernel/auditsc.c      | 6 +++---
- kernel/fork.c         | 2 +-
- 3 files changed, 12 insertions(+), 4 deletions(-)
+ kernel/auditsc.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 93e4c61..dba0d45 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -235,6 +235,10 @@ extern void __audit_inode_child(struct inode *parent,
- extern void __audit_seccomp(unsigned long syscall, long signr, int code);
- extern void __audit_ptrace(struct task_struct *t);
- 
-+static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-+{
-+	task->audit_context = ctx;
-+}
- static inline struct audit_context *audit_context(struct task_struct *task)
- {
- 	return task->audit_context;
-@@ -472,6 +476,10 @@ static inline bool audit_dummy_context(void)
- {
- 	return true;
- }
-+static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-+{
-+	task->audit_context = ctx;
-+}
- static inline struct audit_context *audit_context(struct task_struct *task)
- {
- 	return NULL;
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index a4bbdcc..f294e4a 100644
+index 479c031..f3817d0 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -865,7 +865,7 @@ static inline struct audit_context *audit_take_context(struct task_struct *tsk,
- 		audit_filter_inodes(tsk, context);
- 	}
- 
--	tsk->audit_context = NULL;
-+	audit_set_context(tsk, NULL);
- 	return context;
- }
- 
-@@ -952,7 +952,7 @@ int audit_alloc(struct task_struct *tsk)
- 	}
- 	context->filterkey = key;
- 
--	tsk->audit_context  = context;
-+	audit_set_context(tsk, context);
- 	set_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
- 	return 0;
- }
-@@ -1590,7 +1590,7 @@ void __audit_syscall_exit(int success, long return_code)
- 		kfree(context->filterkey);
- 		context->filterkey = NULL;
- 	}
--	tsk->audit_context = context;
-+	audit_set_context(tsk, context);
- }
- 
- static inline void handle_one(const struct inode *inode)
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 242c8c9..cd18448 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1713,7 +1713,7 @@ static __latent_entropy struct task_struct *copy_process(
- 	p->start_time = ktime_get_ns();
- 	p->real_start_time = ktime_get_boot_ns();
- 	p->io_context = NULL;
--	p->audit_context = NULL;
-+	audit_set_context(p, NULL);
- 	cgroup_fork(p);
- #ifdef CONFIG_NUMA
- 	p->mempolicy = mpol_dup(p->mempolicy);
+@@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
+ 	case AUDIT_COMPARE_EGID_TO_OBJ_GID:
+ 		return audit_compare_gid(cred->egid, name, f, ctx);
+ 	case AUDIT_COMPARE_AUID_TO_OBJ_UID:
+-		return audit_compare_uid(tsk->loginuid, name, f, ctx);
++		return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
+ 	case AUDIT_COMPARE_SUID_TO_OBJ_UID:
+ 		return audit_compare_uid(cred->suid, name, f, ctx);
+ 	case AUDIT_COMPARE_SGID_TO_OBJ_GID:
+@@ -385,7 +385,7 @@ static int audit_field_compare(struct task_struct *tsk,
+ 		return audit_compare_gid(cred->fsgid, name, f, ctx);
+ 	/* uid comparisons */
+ 	case AUDIT_COMPARE_UID_TO_AUID:
+-		return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
++		return audit_uid_comparator(cred->uid, f->op, audit_get_loginuid(tsk));
+ 	case AUDIT_COMPARE_UID_TO_EUID:
+ 		return audit_uid_comparator(cred->uid, f->op, cred->euid);
+ 	case AUDIT_COMPARE_UID_TO_SUID:
+@@ -394,11 +394,11 @@ static int audit_field_compare(struct task_struct *tsk,
+ 		return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
+ 	/* auid comparisons */
+ 	case AUDIT_COMPARE_AUID_TO_EUID:
+-		return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
++		return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->euid);
+ 	case AUDIT_COMPARE_AUID_TO_SUID:
+-		return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
++		return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->suid);
+ 	case AUDIT_COMPARE_AUID_TO_FSUID:
+-		return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
++		return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->fsuid);
+ 	/* euid comparisons */
+ 	case AUDIT_COMPARE_EUID_TO_SUID:
+ 		return audit_uid_comparator(cred->euid, f->op, cred->suid);
+@@ -611,7 +611,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 				result = match_tree_refs(ctx, rule->tree);
+ 			break;
+ 		case AUDIT_LOGINUID:
+-			result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
++			result = audit_uid_comparator(audit_get_loginuid(tsk), f->op, f->uid);
+ 			break;
+ 		case AUDIT_LOGINUID_SET:
+ 			result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
+@@ -2287,8 +2287,8 @@ int audit_signal_info(int sig, struct task_struct *t)
+ 	    (sig == SIGTERM || sig == SIGHUP ||
+ 	     sig == SIGUSR1 || sig == SIGUSR2)) {
+ 		audit_sig_pid = task_tgid_nr(tsk);
+-		if (uid_valid(tsk->loginuid))
+-			audit_sig_uid = tsk->loginuid;
++		if (uid_valid(audit_get_loginuid(tsk)))
++			audit_sig_uid = audit_get_loginuid(tsk);
+ 		else
+ 			audit_sig_uid = uid;
+ 		security_task_getsecid(tsk, &audit_sig_sid);
 -- 
 1.8.3.1
 
