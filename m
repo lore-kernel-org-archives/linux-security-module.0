@@ -1,143 +1,69 @@
-From: sgrubb@redhat.com (Steve Grubb)
-Date: Thu, 03 May 2018 19:18:12 -0400
-Subject: [PATCH v2 3/4] seccomp: Audit attempts to modify the
-	actions_logged sysctl
-In-Reply-To: <e23b61ec-9400-4c40-cdb1-92d224f05967@canonical.com>
-References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
-	<2397134.HQDQRr6h1X@x2>
-	<e23b61ec-9400-4c40-cdb1-92d224f05967@canonical.com>
-Message-ID: <4867923.cYbF5sH2MZ@x2>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Fri, 4 May 2018 00:02:58 +0000
+Subject: [PATCH 1/6] firmware: permit LSMs and IMA to fail firmware sysfs
+	fallback loading
+In-Reply-To: <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20180504000258.GP27853@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thursday, May 3, 2018 6:36:18 PM EDT Tyler Hicks wrote:
-> On 05/03/2018 04:12 PM, Steve Grubb wrote:
-> > On Thursday, May 3, 2018 4:51:36 PM EDT Tyler Hicks wrote:
-> >> On 05/03/2018 03:48 PM, Paul Moore wrote:
-> >>> On Thu, May 3, 2018 at 4:42 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> >>>> On Thursday, May 3, 2018 4:18:26 PM EDT Paul Moore wrote:
-> >>>>> On Wed, May 2, 2018 at 2:18 PM, Steve Grubb <sgrubb@redhat.com> 
-wrote:
-> >>>>>> On Wednesday, May 2, 2018 11:53:19 AM EDT Tyler Hicks wrote:
-> >>>>>>> The decision to log a seccomp action will always be subject to the
-> >>>>>>> value of the kernel.seccomp.actions_logged sysctl, even for
-> >>>>>>> processes
-> >>>>>>> that are being inspected via the audit subsystem, in an upcoming
-> >>>>>>> patch.
-> >>>>>>> Therefore, we need to emit an audit record on attempts at writing
-> >>>>>>> to
-> >>>>>>> the
-> >>>>>>> actions_logged sysctl when auditing is enabled.
-> >>>>>>> 
-> >>>>>>> This patch updates the write handler for the actions_logged sysctl
-> >>>>>>> to
-> >>>>>>> emit an audit record on attempts to write to the sysctl. Successful
-> >>>>>>> writes to the sysctl will result in a record that includes a
-> >>>>>>> normalized
-> >>>>>>> list of logged actions in the "actions" field and a "res" field
-> >>>>>>> equal
-> >>>>>>> to
-> >>>>>>> 0. Unsuccessful writes to the sysctl will result in a record that
-> >>>>>>> doesn't include the "actions" field and has a "res" field equal to
-> >>>>>>> 1.
-> >>>>>>> 
-> >>>>>>> Not all unsuccessful writes to the sysctl are audited. For example,
-> >>>>>>> an
-> >>>>>>> audit record will not be emitted if an unprivileged process
-> >>>>>>> attempts
-> >>>>>>> to
-> >>>>>>> open the sysctl file for reading since that access control check is
-> >>>>>>> not
-> >>>>>>> part of the sysctl's write handler.
-> >>>>>>> 
-> >>>>>>> Below are some example audit records when writing various strings
-> >>>>>>> to
-> >>>>>>> the
-> >>>>>>> actions_logged sysctl.
-> >>>>>>> 
-> >>>>>>> Writing "not-a-real-action", when the kernel.seccomp.actions_logged
-> >>>>>>> sysctl previously was "kill_process kill_thread trap errno trace
-> >>>>>>> log",
-> >>>>>>> 
-> >>>>>>> emits this audit record:
-> >>>>>>>  type=CONFIG_CHANGE msg=audit(1525275273.537:130):
-> >>>>>>>  op=seccomp-logging
-> >>>>>>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=0
-> >>>>>>> 
-> >>>>>>> If you then write "kill_process kill_thread errno trace log", this
-> >>>>>>> audit
-> >>>>>>> 
-> >>>>>>> record is emitted:
-> >>>>>>>  type=CONFIG_CHANGE msg=audit(1525275310.208:136):
-> >>>>>>>  op=seccomp-logging
-> >>>>>>>  actions=kill_process,kill_thread,errno,trace,log
-> >>>>>>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=1
-> >>>>>>> 
-> >>>>>>> If you then write the string "log log errno trace kill_process
-> >>>>>>> kill_thread", which is unordered and contains the log action twice,
-> >>>>>>> 
-> >>>>>>> it results in the same actions value as the previous record:
-> >>>>>>>  type=CONFIG_CHANGE msg=audit(1525275325.613:142):
-> >>>>>>>  op=seccomp-logging
-> >>>>>>>  actions=kill_process,kill_thread,errno,trace,log
-> >>>>>>>  old-actions=kill_process,kill_thread,errno,trace,log res=1
-> >>>>>>> 
-> >>>>>>> No audit records are generated when reading the actions_logged
-> >>>>>>> sysctl.
-> >>>>>> 
-> >>>>>> ACK for the format of the records.
-> >>>>> 
-> >>>>> I just wanted to clarify the record format with you Steve ... the
-> >>>>> "actions" and "old-actions" fields may not be included in the record
-> >>>>> in cases where there is an error building the action value string,
-> >>>>> are
-> >>>>> you okay with that or would you prefer the fields to always be
-> >>>>> included but with a "?" for the value?
-> >>>> 
-> >>>> A ? would be more in line with how other things are handled.
-> >>> 
-> >>> That's what I thought.
-> >>> 
-> >>> Would you mind putting together a v3 Tyler? :)
-> >> 
-> >> To be clear, "?" is only to be used when the call to
-> >> seccomp_names_from_actions_logged() fails, right?
-> > 
-> > Yes and that is a question mark with no quotes in the audit record.
-> > 
-> >> If the sysctl write fails for some other reason, such as when an invalid
-> >> action name is specified, can you confirm that you still want *no*
-> >> "actions" field,
-> > 
-> > Its best that fields do not disappear. In the case of invalid input, you
-> > can just leave the new value as ? so that nothing malicious can be
-> > injected into the logs
-> > 
-> >> the "old-actions" field to be the value prior to attempting the update
-> >> to the sysctl, and res to be 0?
-> > 
-> > Yes
-> 
-> I came up with one more question after hitting a corner case while testing.
-> 
-> It is valid to write an empty string to the sysctl. If the sysctl was
-> set to "errno" and then later set to "", you'd see this with the current
-> revision:
-> 
->  type=CONFIG_CHANGE msg=audit(1525385824.643:173): op=seccomp-logging
->  actions= old-actions=errno res=1
-> 
-> Is that what you want or should the value of the "actions" field be
-> something be something like this:
-> 
->  actions=(none)
+If you can add Andres Rodriguez <andresx7@gmail.com>, and Greg to your Cc list
+in the future patches that'd be appreciated.
 
-This ^^^ would be preferred. However, the parenthesis is not needed.
+On Tue, May 01, 2018 at 09:48:18AM -0400, Mimi Zohar wrote:
+> Add an LSM hook prior to allowing firmware sysfs fallback loading.
+> 
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Matthew Garrett <mjg59@google.com>
+> ---
+>  drivers/base/firmware_loader/fallback.c | 7 +++++++
+>  include/linux/fs.h                      | 1 +
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+> index 31b5015b59fe..23d2af30474e 100644
+> --- a/drivers/base/firmware_loader/fallback.c
+> +++ b/drivers/base/firmware_loader/fallback.c
+> @@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+>  
+>  static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+>  {
+> +	int ret;
+> +
+>  	if (fw_fallback_config.ignore_sysfs_fallback) {
+>  		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
+>  		return false;
+> @@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+>  	if ((opt_flags & FW_OPT_NOFALLBACK))
+>  		return false;
+>  
+> +	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
+> +	ret = security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	return fw_force_sysfs_fallback(opt_flags);
+>  }
+>  
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 760d8da1b6c7..dc16a73c3d38 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
+>  	id(UNKNOWN, unknown)		\
+>  	id(FIRMWARE, firmware)		\
+>  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+> +	id(FIRMWARE_FALLBACK, firmware)	\
 
-Thanks,
--Steve
+If you're going to add this perhaps FIRMWARE_FALLBACK_SYSFS as we may later
+get FIRMWARE_FALLBACK_EFI.
 
-
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
