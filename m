@@ -1,20 +1,63 @@
-From: tycho@tycho.ws (Tycho Andersen)
-Date: Fri, 4 May 2018 07:42:38 -0600
-Subject: [PATCH v3 1/3] big key: get rid of stack array allocation
-In-Reply-To: <20180424202639.19830-1-tycho@tycho.ws>
-References: <20180424202639.19830-1-tycho@tycho.ws>
-Message-ID: <20180504134238.GA26578@cisco>
+From: gustavo@embeddedor.com (Gustavo A. R. Silva)
+Date: Fri, 4 May 2018 08:39:32 -0500
+Subject: [PATCH] apparmor: secid: fix error return value in error handling path
+Message-ID: <20180504133932.GA15968@embeddedor.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+Currently, function apparmor_secid_to_secctx returns always zero,
+no matter if the value returned by aa_label_asxprint is negative
+(which implies that an error has occurred).
 
-Any thoughts on this series?
+Fix this by temporarily storing the value returned by aa_label_asxprint
+into a variable of type int (signed) for its further evaluation.
 
-Thanks,
+Addresses-Coverity-ID: 1468514 ("Unsigned compared against 0")
+Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ security/apparmor/secid.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Tycho
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index 5029248..4b902ed 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ {
+ 	/* TODO: cache secctx and ref count so we don't have to recreate */
+ 	struct aa_label *label = aa_secid_to_label(secid);
++	int seclen_tmp;
+ 
+ 	AA_BUG(!secdata);
+ 	AA_BUG(!seclen);
+@@ -150,17 +151,19 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 		return -EINVAL;
+ 
+ 	if (secdata)
+-		*seclen = aa_label_asxprint(secdata, root_ns, label,
++		seclen_tmp = aa_label_asxprint(secdata, root_ns, label,
+ 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+ 					    FLAG_HIDDEN_UNCONFINED |
+ 					    FLAG_ABS_ROOT, GFP_ATOMIC);
+ 	else
+-		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
++		seclen_tmp = aa_label_snxprint(NULL, 0, root_ns, label,
+ 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+ 					    FLAG_HIDDEN_UNCONFINED |
+ 					    FLAG_ABS_ROOT);
+-	if (*seclen < 0)
++	if (seclen_tmp < 0)
+ 		return -ENOMEM;
++	else
++		*seclen = seclen_tmp;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
