@@ -1,144 +1,124 @@
-From: mtk.manpages@gmail.com (Michael Kerrisk (man-pages))
-Date: Fri, 4 May 2018 17:10:53 +0200
-Subject: [manpages PATCH] capabilities.7: describe namespaced file
-	capabilities
-In-Reply-To: <CAG48ez2zb2XgKKRpg=mrhG8_C0p+3gKaNeXyRR_ru5=FLB5pNg@mail.gmail.com>
-References: <20180109185218.GA21753@mail.hallyn.com>
-	<CAG48ez39UyiqE539rS6RSayj4tPBfQPHPiQ=48Roi55qFJLT7g@mail.gmail.com>
-	<06189756-dbc5-ebd0-ccdd-d937d6198530@gmail.com>
-	<CAG48ez2zb2XgKKRpg=mrhG8_C0p+3gKaNeXyRR_ru5=FLB5pNg@mail.gmail.com>
-Message-ID: <de00cb97-5cc5-cfcf-5f7c-69c051678491@gmail.com>
+From: maco@android.com (Martijn Coenen)
+Date: Fri, 4 May 2018 08:26:39 -0700
+Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
+In-Reply-To: <20180504002142.GT27853@wotan.suse.de>
+References: <20180408174014.21908-1-hdegoede@redhat.com>
+	<20180408174014.21908-3-hdegoede@redhat.com>
+	<20180423211143.GZ14440@wotan.suse.de>
+	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
+	<1524586021.3364.20.camel@linux.vnet.ibm.com>
+	<20180424234219.GX14440@wotan.suse.de>
+	<1524632409.3371.48.camel@linux.vnet.ibm.com>
+	<20180425175557.GY14440@wotan.suse.de>
+	<20180504002142.GT27853@wotan.suse.de>
+Message-ID: <CAB0TPYEEPq+jPfOjQmHYoXauicR=-C+APdy--1NDPUnW01i-TA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hello Jann,
+On Thu, May 3, 2018 at 5:21 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> Android folks, poke below. otherwise we'll have no option but to seriously
+> consider Mimi's patch to prevent these calls when IMA appraisal is enforced:
 
-Thanks for your comments. Sorry for the delayed follow-up...
+Sorry, figuring out who's the right person to answer this, will get
+back to you ASAP.
 
-On 04/16/2018 04:10 PM, Jann Horn wrote:
-> On Fri, Apr 13, 2018 at 9:26 PM, Michael Kerrisk (man-pages)
-> <mtk.manpages@gmail.com> wrote:
->> Hello Serge, Jann,
+Martijn
+
+>
+> http://lkml.kernel.org/r/1525182503-13849-7-git-send-email-zohar at linux.vnet.ibm.com
+>
+> Please read below....
+>
+> On Wed, Apr 25, 2018 at 05:55:57PM +0000, Luis R. Rodriguez wrote:
+>> On Wed, Apr 25, 2018 at 01:00:09AM -0400, Mimi Zohar wrote:
+>> > On Tue, 2018-04-24 at 23:42 +0000, Luis R. Rodriguez wrote:
+>> > > On Tue, Apr 24, 2018 at 12:07:01PM -0400, Mimi Zohar wrote:
+>> > > > On Tue, 2018-04-24 at 17:09 +0200, Hans de Goede wrote:
+>> > > If its of any help --
+>> > >
+>> > > drivers/soc/qcom/mdt_loader.c is the only driver currently using
+>> > > request_firmware_into_buf() however I'll note qcom_mdt_load() is used in many
+>> > > other drivers so they are wrappers around request_firmware_into_buf():
+>> > >
+>> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:   * adreno_request_fw() handles this, but qcom_mdt_load() does
+>> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
+>> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
+>> > > drivers/media/platform/qcom/venus/firmware.c:   ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+>> > > drivers/remoteproc/qcom_adsp_pil.c:     return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+>> > > drivers/remoteproc/qcom_wcnss.c:        return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+>> > >
+>> > > > > As such the current IMA code (from v4.17-rc2) actually does
+>> > > > > not handle READING_FIRMWARE_PREALLOC_BUFFER at all,
+>> > > >
+>> > > > Right, it doesn't yet address READING_FIRMWARE_PREALLOC_BUFFER, but
+>> > > > should.
+>> > > >
+>> > > > Depending on whether the device requesting the firmware has access to
+>> > > > the DMA memory, before the signature verification,
+>> > >
+>> > > It would seem from the original patch review about READING_FIRMWARE_PREALLOC_BUFFER
+>> > > that this is not a DMA buffer.
+>
+> To be very clear I believe Stephen implied this was not DMA buffer. Mimi
+> asked for READING_FIRMWARE_DMA if it was:
+>
+> https://patchwork.kernel.org/patch/9074611/
+>
+>> > The call sequence:
+>> > qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent()
+>> >
+>> > If dma_alloc_coherent() isn't allocating a DMA buffer, then the
+>> > function name is misleading/confusing.
 >>
->> On 01/16/2018 06:26 PM, Jann Horn wrote:
->>> On Tue, Jan 9, 2018 at 7:52 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> [...]
->>        Starting  with  Linux  4.14,  a  security.capability   extended
->>        attribute  is automatically created as (or converted to) a ver?
->>        sion 3 (VFS_CAP_REVISION_3) attribute if both of the  following
->>        are true:
+>> Hah, by *definition* the device *and* processor has immediate access
+>> to data written *immediately* when dma_alloc_coherent() is used. From
+>> Documentation/DMA-API.txt:
 >>
->>        (1) The  thread  writing  the attribute resides in a noninitial
->>            namespace.
-> 
-> I'm not entirely happy with this - while under most circumstances
-> (especially nowadays) correct, isn't this going to confuse readers who
-> want to understand the actual rules?
-
-So, you mean that the text should read more likely the parenthesized 
-part that follows:
-
->>            (More precisely: the thread resides in  a  user
->>            namespace  other  than  the  one  from which the underlying
->>            filesystem was mounted.)
-
-?
-
-> I think if you're in a parent namespace of the user namespace that
-> mounted the filesystem, you actually can write a VFS_CAP_REVISION_2
-> attribute?
-
-I'm not quite clear. Do you mean this as some correction to my text?
-Let me see if I grasp your meaning:
-
-(0) First of all, as things currently stand, filesystems can be
-    mounted only in the initial user NS (which has no parent). But,
-    this will change in the future, according to current work on FUSE.
-    Your comment here related to that future. (Right?)
-
-(1) You mean that a process in the parent user NS could write
-    (setxattr(2)) a VFS_CAP_REVISION_2 attribute, but what would 
-    actually be recorded is a VFS_CAP_REVISION_3 attribute?
-
->>        (2) The thread has the CAP_SETFCAP  capability  over  the  file
->>            inode,  meaning  that  (a)  the  thread has the CAP_SETFCAP
->>            capability in its own user namespace; and (b) the  UID  and
->>            GID  of  the  file inode have mappings in the writer's user
->>            namespace.
-> 
-> 
->>            ???????????????????????????????????????????????????????
->>            ?FIXME                                                ?
->>            ???????????????????????????????????????????????????????
->>            ?Does there also need to be some kind  of  credential ?
->>            ?match  between  the  file  and the namespace creator ?
->>            ?UID?                                                 ?
->>            ???????????????????????????????????????????????????????
-> 
-> The namespace creator UID (iow, the namespace owner) is irrelevant
-> here; the capability model is somewhat inconsistent here. Normal
-> capability checks that go down to cap_capable() (like ns_capable())
-> grant all privileges to processes in parent namespaces that have an
-> EUID that matches the owner UID of one of the intermediate namespaces,
-> including the target namespace. But capable_wrt_inode_uidgid() always
-> requires the caller to have the specified capability in its own
-> namespace because, when operating on an inode, the concept of an
-> implicit "target namespace" doesn't really exist. (For a properly
-> consistent model, you'd probably need to let the caller explicity
-> specify the target namespace, but then that would somewhat break the
-> transparency of namespaces.) cap_convert_nscap() starts by checking
-> for capable_wrt_inode_uidgid().
-
-Okay -- I think I got this a little twisted. The point here, as far
-as I can see, is that there is a credential check involved. The rule
-is that from inside the user NS, you can set a VFS_CAP_REVISION_3
-only on a file whose (mapped) UID matches the UID 0 of the namespace.
-Have I got that right?
-
-> [...]
->>        As with a binary that has VFS_CAP_REVISION_2 file capabilities,
->>        a  binary  with  VFS_CAP_REVISION_3  file  capabilities confers
->>        capabilities to a process during execve().  However,  capabili?
->>        ties  are conferred only if the binary is executed by a process
->>        that resides in a user namespace whose UID 0 maps to  the  root
->>        user  ID  that is saved in the extended attribute, or when exe?
->>        cuted by a process that resides in descendant of such a  names?
-> 
-> Nit: "in a descendant"?
-
-Thanks. Fixed.
-
-> [...]
->>>> Likewise,
->>>> +.BR getxattr(2)
->>>> +results will be converted and simplified to show a VFS_CAP_REVISION_2
->>>> +extended attribute, if a VFS_CAP_REVISION_3 applies to the caller's
->>>> +namespace, or to map the VFS_CAP_REVISION_3 root user ID into the
->>>> +caller's namespace.
+>> -----------------------------------------------------------------------
+>> Part Ia - Using large DMA-coherent buffers
+>> ------------------------------------------
 >>
->> I haven't captured that last paragraph in my text. I'm not sure I
->> understand the idea being presented. Serge, could you elaborate?
-> 
-> Summary: When you read a capability attribute with getxattr(), the
-> kernel will rewrite the returned value such that it looks the way it
-> would have to look if the filesystem was mounted in your user
-> namespace; just like how, when the attribute is written, the caller
-> provides an attribute value written as if the filesystem was mounted
-> in the caller's user namespace.
-> Conceptually, this is mostly the same as the UID conversions applied
-> by chown() and stat().
-
-Okay -- thanks. I got this now. I'll work some text into the page.
-
-Cheers,
-
-Michael
-
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+>> ::
+>>
+>>         void *
+>>         dma_alloc_coherent(struct device *dev, size_t size,
+>>                            dma_addr_t *dma_handle, gfp_t flag)
+>>
+>> Consistent memory is memory for which a write by either the device or
+>> the processor can immediately be read by the processor or device
+>> without having to worry about caching effects.  (You may however need
+>> to make sure to flush the processor's write buffers before telling
+>> devices to read that memory.)
+>> ------------------------------------------------------------------------
+>>
+>> Is ptr below
+>>
+>>       ret = request_firmware_into_buf(&seg_fw, fw_name, dev,
+>>                                       ptr, phdr->p_filesz);
+>>
+>> Also part of the DMA buffer allocated earlier via:
+>>
+>>         ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+>>
+>> Android folks?
+>
+> Android folks?
+>
+>> > > The device driver should have access to the buffer pointer with write given
+>> > > that with request_firmware_into_buf() the driver is giving full write access to
+>> > > the memory pointer so that the firmware API can stuff the firmware it finds
+>> > > there.
+>> > >
+>> > > Firmware signature verification would be up to the device hardware to do upon
+>> > > load *after* request_firmware_into_buf().
+>> >
+>> > We're discussing the kernel's signature verification, not the device
+>> > hardware's signature verification.  Can the device driver access the
+>> > buffer, before IMA-appraisal has verified the firmware's signature?
+>>
+>> It will depend on the above question.
+>
+>   Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
