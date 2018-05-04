@@ -1,61 +1,67 @@
-From: gustavo@embeddedor.com (Gustavo A. R. Silva)
-Date: Fri, 4 May 2018 08:39:32 -0500
-Subject: [PATCH] apparmor: secid: fix error return value in error handling path
-Message-ID: <20180504133932.GA15968@embeddedor.com>
+From: colin.king@canonical.com (Colin King)
+Date: Fri,  4 May 2018 15:15:11 +0100
+Subject: [PATCH][next] apparmor: fix error return check with a u32 being less
+	than zero
+Message-ID: <20180504141511.19793-1-colin.king@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Currently, function apparmor_secid_to_secctx returns always zero,
-no matter if the value returned by aa_label_asxprint is negative
-(which implies that an error has occurred).
+From: Colin Ian King <colin.king@canonical.com>
 
-Fix this by temporarily storing the value returned by aa_label_asxprint
-into a variable of type int (signed) for its further evaluation.
+The check for *seclen being less than zero for an error condtion check
+is never true as it is a u32 and hence cannot be less than zero. Fix
+this by using an int ret for error return checking and assigning *seclen
+to this.
 
-Addresses-Coverity-ID: 1468514 ("Unsigned compared against 0")
+Detected by CoverityScan, CID#1468514 ("Unsigned comparison against 0")
+
 Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- security/apparmor/secid.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ security/apparmor/secid.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 5029248..4b902ed 100644
+index 502924853986..9c431e9a9836 100644
 --- a/security/apparmor/secid.c
 +++ b/security/apparmor/secid.c
 @@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
  {
  	/* TODO: cache secctx and ref count so we don't have to recreate */
  	struct aa_label *label = aa_secid_to_label(secid);
-+	int seclen_tmp;
++	int ret;
  
  	AA_BUG(!secdata);
  	AA_BUG(!seclen);
-@@ -150,17 +151,19 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+@@ -150,16 +151,17 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
  		return -EINVAL;
  
  	if (secdata)
 -		*seclen = aa_label_asxprint(secdata, root_ns, label,
-+		seclen_tmp = aa_label_asxprint(secdata, root_ns, label,
- 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
- 					    FLAG_HIDDEN_UNCONFINED |
- 					    FLAG_ABS_ROOT, GFP_ATOMIC);
+-					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+-					    FLAG_HIDDEN_UNCONFINED |
+-					    FLAG_ABS_ROOT, GFP_ATOMIC);
++		ret = aa_label_asxprint(secdata, root_ns, label,
++					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
++					FLAG_HIDDEN_UNCONFINED |
++					FLAG_ABS_ROOT, GFP_ATOMIC);
  	else
 -		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
-+		seclen_tmp = aa_label_snxprint(NULL, 0, root_ns, label,
- 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
- 					    FLAG_HIDDEN_UNCONFINED |
- 					    FLAG_ABS_ROOT);
+-					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+-					    FLAG_HIDDEN_UNCONFINED |
+-					    FLAG_ABS_ROOT);
 -	if (*seclen < 0)
-+	if (seclen_tmp < 0)
++		ret = aa_label_snxprint(NULL, 0, root_ns, label,
++					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
++					FLAG_HIDDEN_UNCONFINED |
++					FLAG_ABS_ROOT);
++	*seclen = ret;
++	if (ret < 0)
  		return -ENOMEM;
-+	else
-+		*seclen = seclen_tmp;
  
  	return 0;
- }
 -- 
-2.7.4
+2.17.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
