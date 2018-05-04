@@ -1,97 +1,58 @@
 From: rgb@redhat.com (Richard Guy Briggs)
-Date: Fri,  4 May 2018 16:54:35 -0400
-Subject: [PATCH ghak81 RFC V1 2/5] audit: convert sessionid unset to a macro
-In-Reply-To: <cover.1525466167.git.rgb@redhat.com>
-References: <cover.1525466167.git.rgb@redhat.com>
-Message-ID: <91fd13c7a66718dc827d299fa101883e5d0a864f.1525466167.git.rgb@redhat.com>
+Date: Fri,  4 May 2018 16:54:33 -0400
+Subject: [PATCH ghak81 RFC V1 0/5] audit: group task params
+Message-ID: <cover.1525466167.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Use a macro, "AUDIT_SID_UNSET", to replace each instance of
-initialization and comparison to an audit session ID.
+Group the audit parameters for each task into one structure.
+In particular, remove the loginuid and sessionid values and the audit
+context pointer from the task structure, replacing them with an audit
+task information structure to contain them.  Use access functions to
+access audit values.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- include/linux/audit.h      | 2 +-
- include/net/xfrm.h         | 2 +-
- include/uapi/linux/audit.h | 1 +
- init/init_task.c           | 2 +-
- kernel/auditsc.c           | 4 ++--
- 5 files changed, 6 insertions(+), 5 deletions(-)
+Note:  Use static allocation of the audit task information structure
+initially.  Dynamic allocation was considered and attempted, but isn't
+ready yet.  Static allocation has the limitation that future audit task
+information structure changes would cause a visible change to the rest
+of the kernel, whereas dynamic allocation would mostly hide any future
+changes.
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 75d5b03..5f86f7c 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
- }
- static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
- {
--	return -1;
-+	return AUDIT_SID_UNSET;
- }
- static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
- { }
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index a872379..fcce8ee 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
- 					    audit_get_loginuid(current) :
- 					    INVALID_UID);
- 	const unsigned int ses = task_valid ? audit_get_sessionid(current) :
--		(unsigned int) -1;
-+		AUDIT_SID_UNSET;
- 
- 	audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
- 	audit_log_task_context(audit_buf);
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 4e61a9e..04f9bd2 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -465,6 +465,7 @@ struct audit_tty_status {
- };
- 
- #define AUDIT_UID_UNSET (unsigned int)-1
-+#define AUDIT_SID_UNSET ((unsigned int)-1)
- 
- /* audit_rule_data supports filter rules with both integer and string
-  * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
-diff --git a/init/init_task.c b/init/init_task.c
-index 3ac6e75..c788f91 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -119,7 +119,7 @@ struct task_struct init_task
- 	.thread_node	= LIST_HEAD_INIT(init_signals.thread_head),
- #ifdef CONFIG_AUDITSYSCALL
- 	.loginuid	= INVALID_UID,
--	.sessionid	= (unsigned int)-1,
-+	.sessionid	= AUDIT_SID_UNSET,
- #endif
- #ifdef CONFIG_PERF_EVENTS
- 	.perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index f3817d0..6e3ceb9 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
- int audit_set_loginuid(kuid_t loginuid)
- {
- 	struct task_struct *task = current;
--	unsigned int oldsessionid, sessionid = (unsigned int)-1;
-+	unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
- 	kuid_t oldloginuid;
- 	int rc;
- 
-@@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
- 	/* are we setting or clearing? */
- 	if (uid_valid(loginuid)) {
- 		sessionid = (unsigned int)atomic_inc_return(&session_id);
--		if (unlikely(sessionid == (unsigned int)-1))
-+		if (unlikely(sessionid == AUDIT_SID_UNSET))
- 			sessionid = (unsigned int)atomic_inc_return(&session_id);
- 	}
- 
+The first four access normalization patches could stand alone.
+
+Passes audit-testsuite.
+
+Richard Guy Briggs (5):
+  audit: normalize loginuid read access
+  audit: convert sessionid unset to a macro
+  audit: use inline function to get audit context
+  audit: use inline function to set audit context
+  audit: collect audit task parameters
+
+ MAINTAINERS                          |  2 +-
+ include/linux/audit.h                | 30 ++++++++++---
+ include/linux/audit_task.h           | 31 ++++++++++++++
+ include/linux/sched.h                |  6 +--
+ include/net/xfrm.h                   |  4 +-
+ include/uapi/linux/audit.h           |  1 +
+ init/init_task.c                     |  8 +++-
+ kernel/audit.c                       |  4 +-
+ kernel/audit_watch.c                 |  2 +-
+ kernel/auditsc.c                     | 82 ++++++++++++++++++------------------
+ kernel/fork.c                        |  2 +-
+ net/bridge/netfilter/ebtables.c      |  2 +-
+ net/core/dev.c                       |  2 +-
+ net/netfilter/x_tables.c             |  2 +-
+ net/netlabel/netlabel_user.c         |  2 +-
+ security/integrity/ima/ima_api.c     |  2 +-
+ security/integrity/integrity_audit.c |  2 +-
+ security/lsm_audit.c                 |  2 +-
+ security/selinux/hooks.c             |  4 +-
+ security/selinux/selinuxfs.c         |  6 +--
+ security/selinux/ss/services.c       | 12 +++---
+ 21 files changed, 129 insertions(+), 79 deletions(-)
+ create mode 100644 include/linux/audit_task.h
+
 -- 
 1.8.3.1
 
