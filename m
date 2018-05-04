@@ -1,70 +1,26 @@
-From: maco@android.com (Martijn Coenen)
-Date: Fri, 4 May 2018 12:44:37 -0700
-Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-In-Reply-To: <20180425175557.GY14440@wotan.suse.de>
-References: <20180408174014.21908-1-hdegoede@redhat.com>
-	<20180408174014.21908-3-hdegoede@redhat.com>
-	<20180423211143.GZ14440@wotan.suse.de>
-	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
-	<1524586021.3364.20.camel@linux.vnet.ibm.com>
-	<20180424234219.GX14440@wotan.suse.de>
-	<1524632409.3371.48.camel@linux.vnet.ibm.com>
-	<20180425175557.GY14440@wotan.suse.de>
-Message-ID: <CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
+From: jmorris@namei.org (James Morris)
+Date: Sat, 5 May 2018 05:51:43 +1000 (AEST)
+Subject: [PATCH v2 0/4] Introduce LSM-hook for socketpair(2)
+In-Reply-To: <20180504142822.15233-1-dh.herrmann@gmail.com>
+References: <20180504142822.15233-1-dh.herrmann@gmail.com>
+Message-ID: <alpine.LRH.2.21.1805050551020.30811@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Apr 25, 2018 at 10:55 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> Android became the primary user of CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
->
-> It would be good for us to hear from Android folks if their current use of
-> request_firmware_into_buf() is designed in practice to *never* use the direct
-> filesystem firmware loading interface, and always rely instead on the
-> fallback mechanism.
+On Fri, 4 May 2018, David Herrmann wrote:
 
-It's hard to answer this question for Android in general. As far as I
-can tell the reasons we use CONFIG_FW_LOADER_USER_HELPER(_FALLBACK)
-are:
-1) We have multiple different paths on our devices where firmware can
-be located, and the direct loader only supports one custom path
-2) Most of those paths are not mounted by the time the corresponding
-drivers are loaded, because pretty much all Android kernels today are
-built without module support, and therefore drivers are loaded well
-before the firmware partition is mounted
-3) I think we use _FALLBACK because doing this with uevents is just
-the easiest thing to do; our init code has a firmware helper that
-deals with this and searches the paths that we care about
+> Hi
+> 
+> This is v2 of the socketpair(2) LSM hook introduction.
 
-2) will change at some point, because Android is moving towards a
-model where device-specific peripheral drivers will be loaded as
-modules, and since those modules would likely come from the same
-partition as the firmware, it's possible that the direct load would
-succeed (depending on whether the custom path is configured there or
-not). But I don't think we can rely on the direct loader even in those
-cases, unless we could configure it with multiple custom paths.
+Thanks, all applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 
-I have no reason to believe request_firmware_into_buf() is special in
-this regard; drivers that depend on it may have their corresponding
-firmware in different locations, so just depending on the direct
-loader would not be good enough.
 
->
-> Is ptr below
->
->         ret = request_firmware_into_buf(&seg_fw, fw_name, dev,
->                                         ptr, phdr->p_filesz);
->
-> Also part of the DMA buffer allocated earlier via:
->
->         ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
->
-> Android folks?
+-- 
+James Morris
+<jmorris@namei.org>
 
-I think the Qualcomm folks owning this (Andy, David, Bjorn, already
-cc'd here) are better suited to answer that question.
-
-Thanks,
-Martijn
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
