@@ -1,70 +1,75 @@
-From: tyhicks@canonical.com (Tyler Hicks)
-Date: Fri,  4 May 2018 01:08:11 +0000
-Subject: [PATCH v3 0/4] Better integrate seccomp logging and auditing
-Message-ID: <1525396095-27737-1-git-send-email-tyhicks@canonical.com>
+From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
+Date: Thu, 3 May 2018 21:20:16 -0400
+Subject: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
+In-Reply-To: <1525383720.3539.76.camel@linux.vnet.ibm.com>
+References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
+	<alpine.LRH.2.21.1805040311050.12843@namei.org>
+	<1525383720.3539.76.camel@linux.vnet.ibm.com>
+Message-ID: <04EE0041-8DF1-4FF3-9C59-64ECF0182CC5@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Seccomp received improved logging controls in v4.14. Applications can opt into
-logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
-SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
-They can also debug filter matching with the new SECCOMP_RET_LOG action.
-Administrators can prevent specific actions from being logged using the
-kernel.seccomp.actions_logged sysctl.
 
-However, one corner case intentionally wasn't addressed in those v4.14 changes.
-When a process is being inspected by the audit subsystem, seccomp's decision
-making for logging ignores the new controls and unconditionally logs every
-action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
-many existing applications don't intend to log handled actions due to them
-occurring very frequently. This amount of logging fills the audit logs without
-providing many benefits now that application authors have fine grained controls
-at their disposal.
+> On May 3, 2018, at 5:42 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> 
+> On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
+>> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
+>> 
+>>> These patches add support for modifying the reserved space for extra
+>>> certificates in a compressed bzImage in x86. This allows separating the
+>>> system keyring certificate from the kernel build process. After the kernel
+>>> image is distributed, the insert-sys-cert script can be used to insert the
+>>> certificate for x86.
+>> 
+>> Can you provide more explanation of how this is useful and who would use 
+>> it?
+> 
+> I'm involved in a number projects that rely on a kernel build group to
+> actually build kernels for their systems.  Reserving memory for
+> additional public keys, allows product groups to insert public keys
+> post build.  Initially the product groups might insert development
+> keys, but eventually they would insert the product's public key.
+> 
+> Mimi
 
-This patch set aligns the seccomp logging behavior for both audited and
-non-audited processes. It also emits an audit record, if auditing is enabled,
-when the kernel.seccomp.actions_logged sysctl is written to so that there's a
-paper trail when entire actions are quieted.
+With CONFIG_SYSTEM_TRUSTED_KEYRING, we have a system keyring populated
+with keys that we trust. Initial keys are compiled-in:
+-The module signing key, as specified by CONFIG_MODULE_SIG_KEY,
+-Additional keys, as specified by CONFIG_SYSTEM_TRUSTED_KEYS.
 
-Changes in v3:
-* Patch 3
-  - Never drop a field when emitting the audit record
-  - Use the value "?" for the actions field when an error occurred while
-    writing to the sysctl
-  - Use the value "?" for the actions and/or old-actions fields when a failure
-    to translate actions to names
-  - Use the value "(none)" for the actions and/or old-actions fields when no
-    actions are specified
-    + This is possible when writing an empty string to the sysctl
-  - Update the commit message to note the new values and give an example of
-    when an empty string is written
-* Patch 4
-  - Adjust the control flow of seccomp_log() to exit early if nothing should be
-    logged
+In userspace, we can add more keys to the system keyring, only if they can be
+verified by keys already in the keyring.
 
-Changes in v2:
-* Patch 2
-  - New patch, allowing for a configurable separator between action names
-* Patch 3
-  - The value of the actions field in the audit record now uses a comma instead
-    of a space
-  - The value of the actions field in the audit record is no longer enclosed in
-    quotes
-  - audit_log_start() is called with the current processes' audit_context in
-    audit_seccomp_actions_logged()
-  - audit_seccomp_actions_logged() no longer records the pid, uid, auid, tty,
-    ses, task context, comm, or executable path
-  - The new and old value of seccomp_actions_logged is recorded in the
-    AUDIT_CONFIG_CHANGE record
-  - The value of the "res" field in the CONFIG_CHANGE audit record is corrected
-    (1 indicates success, 0 failure)
-  - Updated patch 3's commit message to reflect the updated audit record format
-    in the examples
-* Patch 4
-  - A function comment for audit_seccomp() was added to explain, among other
-    things, that event filtering is performed in seccomp_log()
+In kernel or modules, we can bypass this restriction by using the
+KEY_ALLOC_BYPASS_RESTRICTION flag. As far as I can tell, only the compiled-in
+keys are loaded this way in the upstream kernel.
 
-Tyler
+Other asymmetric keyrings can specify the same restriction using the
+"builtin_trusted" option. Currently, CONFIG_INTEGRITY_TRUSTED_KEYRING creates
+".ima" and ".evm" keyrings with this restriction. As a result, in order to
+add a key to an integrity keyring, either that key needs to be compiled-in,
+or it must be signed with a key that is in the system keyring, which again
+needs to be compiled-in.
+
+If a user is not compiling their own kernel, and has no access to the module
+signing key (or any other compiled-in key), then how can they add their own
+keys to the integrity keyrings?
+
+This patchset allows the user to take the kernel from a distro, insert their 
+own key, sign the resulting image as required for their secure boot method,  
+and when booted, the system keyring will include their key, which can be used 
+to control the integrity keys.
+
+An alternative way is to allow the "secondary" trusted keyring to verify the 
+IMA keys with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY, but 
+it is the same problem. Some distros carry patches that populate the 
+secondary keyring with UEFI keys during kernel initialization, which would 
+mean having access to a UEFI key (which is also needed with this patchset, 
+for signing the resulting image), would be enough to add integrity keys. But 
+that is much more permissive, since ANY key that goes into the secondary 
+keyring, coming from UEFI, could then be used to control the integrity keys. 
+
+Mehmet
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
