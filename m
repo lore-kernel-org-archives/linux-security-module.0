@@ -1,68 +1,116 @@
 From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Fri, 4 May 2018 00:10:18 +0000
-Subject: [RFC PATCH 6/6] ima: prevent loading firmware into a
-	pre-allocated buffer
-In-Reply-To: <1525182503-13849-7-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1525182503-13849-7-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <20180504001018.GS27853@wotan.suse.de>
+Date: Fri, 4 May 2018 00:21:42 +0000
+Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
+In-Reply-To: <20180425175557.GY14440@wotan.suse.de>
+References: <20180408174014.21908-1-hdegoede@redhat.com>
+	<20180408174014.21908-3-hdegoede@redhat.com>
+	<20180423211143.GZ14440@wotan.suse.de>
+	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
+	<1524586021.3364.20.camel@linux.vnet.ibm.com>
+	<20180424234219.GX14440@wotan.suse.de>
+	<1524632409.3371.48.camel@linux.vnet.ibm.com>
+	<20180425175557.GY14440@wotan.suse.de>
+Message-ID: <20180504002142.GT27853@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 01, 2018 at 09:48:23AM -0400, Mimi Zohar wrote:
-> Question: can the device access the pre-allocated buffer at any time?
-> 
-> By allowing devices to request firmware be loaded directly into a
-> pre-allocated buffer, will this allow the device access to the firmware
-> before the kernel has verified the firmware signature?
-> 
-> Is it dependent on the type of buffer allocated (eg. DMA)?  For example,
-> qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent().
-> 
-> With an IMA policy requiring signed firmware, this patch would prevent
-> loading firmware into a pre-allocated buffer.
+Android folks, poke below. otherwise we'll have no option but to seriously
+consider Mimi's patch to prevent these calls when IMA appraisal is enforced:
 
-Android folks went silent on the other thread .. Best poke them there?
+http://lkml.kernel.org/r/1525182503-13849-7-git-send-email-zohar at linux.vnet.ibm.com
+
+Please read below....
+
+On Wed, Apr 25, 2018 at 05:55:57PM +0000, Luis R. Rodriguez wrote:
+> On Wed, Apr 25, 2018 at 01:00:09AM -0400, Mimi Zohar wrote:
+> > On Tue, 2018-04-24 at 23:42 +0000, Luis R. Rodriguez wrote:
+> > > On Tue, Apr 24, 2018 at 12:07:01PM -0400, Mimi Zohar wrote:
+> > > > On Tue, 2018-04-24 at 17:09 +0200, Hans de Goede wrote:
+> > > If its of any help --
+> > > 
+> > > drivers/soc/qcom/mdt_loader.c is the only driver currently using
+> > > request_firmware_into_buf() however I'll note qcom_mdt_load() is used in many
+> > > other drivers so they are wrappers around request_firmware_into_buf():
+> > > 
+> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:   * adreno_request_fw() handles this, but qcom_mdt_load() does
+> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
+> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
+> > > drivers/media/platform/qcom/venus/firmware.c:   ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+> > > drivers/remoteproc/qcom_adsp_pil.c:     return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+> > > drivers/remoteproc/qcom_wcnss.c:        return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+> > > 
+> > > > > As such the current IMA code (from v4.17-rc2) actually does
+> > > > > not handle READING_FIRMWARE_PREALLOC_BUFFER at all, 
+> > > > 
+> > > > Right, it doesn't yet address READING_FIRMWARE_PREALLOC_BUFFER, but
+> > > > should.
+> > > > 
+> > > > Depending on whether the device requesting the firmware has access to
+> > > > the DMA memory, before the signature verification, 
+> > > 
+> > > It would seem from the original patch review about READING_FIRMWARE_PREALLOC_BUFFER
+> > > that this is not a DMA buffer.
+
+To be very clear I believe Stephen implied this was not DMA buffer. Mimi
+asked for READING_FIRMWARE_DMA if it was:
+
+https://patchwork.kernel.org/patch/9074611/
+
+> > The call sequence:
+> > qcom_mdt_load() ->?qcom_scm_pas_init_image() ->?dma_alloc_coherent()
+> > 
+> > If dma_alloc_coherent() isn't allocating a DMA buffer, then the
+> > function name is misleading/confusing.
+> 
+> Hah, by *definition* the device *and* processor has immediate access
+> to data written *immediately* when dma_alloc_coherent() is used. From
+> Documentation/DMA-API.txt:
+> 
+> -----------------------------------------------------------------------
+> Part Ia - Using large DMA-coherent buffers                                      
+> ------------------------------------------                                      
+>                                                                                 
+> ::                                                                              
+>                                                                                 
+>         void *                                                                  
+>         dma_alloc_coherent(struct device *dev, size_t size,                     
+>                            dma_addr_t *dma_handle, gfp_t flag)                  
+>                                                                                 
+> Consistent memory is memory for which a write by either the device or           
+> the processor can immediately be read by the processor or device                
+> without having to worry about caching effects.  (You may however need           
+> to make sure to flush the processor's write buffers before telling              
+> devices to read that memory.)  
+> ------------------------------------------------------------------------
+> 
+> Is ptr below
+> 
+> 	ret = request_firmware_into_buf(&seg_fw, fw_name, dev,  
+> 					ptr, phdr->p_filesz); 
+> 
+> Also part of the DMA buffer allocated earlier via:
+> 
+>         ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);              
+> 
+> Android folks?
+
+Android folks?
+
+> > > The device driver should have access to the buffer pointer with write given
+> > > that with request_firmware_into_buf() the driver is giving full write access to
+> > > the memory pointer so that the firmware API can stuff the firmware it finds
+> > > there.
+> > > 
+> > > Firmware signature verification would be up to the device hardware to do upon
+> > > load *after* request_firmware_into_buf().
+> > 
+> > We're discussing the kernel's signature verification, not the device
+> > hardware's signature verification. ?Can the device driver access the
+> > buffer, before IMA-appraisal has verified the firmware's signature?
+> 
+> It will depend on the above question.
 
   Luis
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Luis R. Rodriguez <mcgrof@suse.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
->  security/integrity/ima/ima_main.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index eb9c273ab81d..3098131f77c4 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -454,6 +454,15 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
->  		return 0;
->  	}
->  
-> +	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
-> +		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-> +		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> +			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
-> +			return -EACCES;
-> +		}
-> +		return 0;
-> +	}
-> +
->  	if (read_id == READING_FIRMWARE_FALLBACK) {
->  		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
->  		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> -- 
-> 2.7.5
-> 
-> 
-
--- 
-Do not panic
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
