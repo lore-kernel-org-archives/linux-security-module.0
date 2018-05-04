@@ -1,75 +1,99 @@
-From: mkayaalp@linux.vnet.ibm.com (Mehmet Kayaalp)
-Date: Thu, 3 May 2018 21:20:16 -0400
-Subject: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-In-Reply-To: <1525383720.3539.76.camel@linux.vnet.ibm.com>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-	<alpine.LRH.2.21.1805040311050.12843@namei.org>
-	<1525383720.3539.76.camel@linux.vnet.ibm.com>
-Message-ID: <04EE0041-8DF1-4FF3-9C59-64ECF0182CC5@linux.vnet.ibm.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Thu, 03 May 2018 22:29:37 -0400
+Subject: [PATCH 0/3] kexec: limit kexec_load syscall
+In-Reply-To: <87fu38jq98.fsf@xmission.com>
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<87r2mso5up.fsf@xmission.com>
+	<1525383075.3539.67.camel@linux.vnet.ibm.com>
+	<87d0yco1vy.fsf@xmission.com>
+	<1525384675.3539.89.camel@linux.vnet.ibm.com>
+	<87fu38jq98.fsf@xmission.com>
+Message-ID: <1525400977.3539.199.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-> On May 3, 2018, at 5:42 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+On Thu, 2018-05-03 at 18:03 -0500, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 > 
-> On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
->> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
->> 
->>> These patches add support for modifying the reserved space for extra
->>> certificates in a compressed bzImage in x86. This allows separating the
->>> system keyring certificate from the kernel build process. After the kernel
->>> image is distributed, the insert-sys-cert script can be used to insert the
->>> certificate for x86.
->> 
->> Can you provide more explanation of how this is useful and who would use 
->> it?
+> > On Thu, 2018-05-03 at 16:38 -0500, Eric W. Biederman wrote:
+> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> >> 
+> >> > [Cc'ing Kees and kernel-hardening]
+> >> >
+> >> > On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
+> >> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> >> >> 
+> >> >> > In environments that require the kexec kernel image to be signed, prevent
+> >> >> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
+> >> >> > between kexec_load and kexec_file_load syscalls, this patch set adds a
+> >> >> > call to security_kernel_read_file() in kexec_load_check().
+> >> >> 
+> >> >> Having thought about it some more this justification for these changes
+> >> >> does not work.  The functionality of kexec_load is already root-only.
+> >> >> So in environments that require the kernel image to be signed just don't
+> >> >> use kexec_load.  Possibly even compile kexec_load out to save space
+> >> >> because you will never need it.  You don't need a new security hook to
+> >> >> do any of that.  Userspace is a very fine mechanism for being the
+> >> >> instrument of policy.
+> >> >
+> >> > True, for those building their own kernel, they can disable the old
+> >> > syscalls. ?The concern is not for those building their own kernels,
+> >> > but for those using stock kernels. ?
+> >> >
+> >> > By adding an LSM hook here in the kexec_load syscall, as opposed to an
+> >> > IMA specific hook, other LSMs can piggy back on top of it. ?Currently,
+> >> > both load_pin and SELinux are gating the kernel module syscalls based
+> >> > on security_kernel_read_file.
+> >> >
+> >> > If there was a similar option for the kernel image, I'm pretty sure
+> >> > other LSMs would use it.
+> >> >
+> >> > From an IMA perspective, there needs to be some method for only
+> >> > allowing signed code to be loaded, executed, etc. - kernel modules,
+> >> > kernel image/initramfs, firmware, policies.
+> >> 
+> >> What is the IMA perspective.  Why can't IMA trust appropriately
+> >> authorized userspace?
+> >
+> > Suppose a system owner wants to define a system wide policy that
+> > requires all code be signed - kernel modules, firmware, kexec image &
+> > initramfs, executables, mmapped files, etc - without having to rebuild
+> > the kernel. ?Without a call in kexec_load that isn't possible.
 > 
-> I'm involved in a number projects that rely on a kernel build group to
-> actually build kernels for their systems.  Reserving memory for
-> additional public keys, allows product groups to insert public keys
-> post build.  Initially the product groups might insert development
-> keys, but eventually they would insert the product's public key.
+> Of course it is.  You just make it a requirement that before an
+> executable will be signed it will be audited to see that it doesn't
+> call sys_kexec_load.  Signing presumably means something.  So it should
+> not be hard to enforce a policy like that on a specialty system call
+> that most applications will never call.
+
+Initially I'm hoping that files will simply come signed, providing
+file provenance. ?Anything else is gravy.
+
+> >> >> If you don't trust userspace that needs to be spelled out very clearly.
+> >> >> You need to talk about what your threat models are.
+> >> >> 
+> >> >> If the only justification is so that that we can't boot windows if
+> >> >> someone hacks into userspace it has my nack because that is another kind
+> >> >> of complete non-sense.
+> >> >
+> >> > The usecase is the ability to gate the kexec_load usage in stock
+> >> > kernels.
+> >> 
+> >> But kexec_load is already gated.  It requires CAP_SYS_BOOT.
+> >
+> > It isn't a matter of kexec_load already being gated, but of wanting a
+> > single place for defining a system wide policy, as described above.
 > 
-> Mimi
+> Signing is only a tool to enforce a policy.  Signing by itself is not a
+> policy.  Enforcing any quality controls in the signed executables should
+> trivially prevent kexec_load from being used.
 
-With CONFIG_SYSTEM_TRUSTED_KEYRING, we have a system keyring populated
-with keys that we trust. Initial keys are compiled-in:
--The module signing key, as specified by CONFIG_MODULE_SIG_KEY,
--Additional keys, as specified by CONFIG_SYSTEM_TRUSTED_KEYS.
+Existing kernels might not support the newer kexec_file_load syscall,
+so packages are currently being built to try one syscall and fallback
+to using the other one. ?In this case, it has nothing to do with
+quality control.
 
-In userspace, we can add more keys to the system keyring, only if they can be
-verified by keys already in the keyring.
-
-In kernel or modules, we can bypass this restriction by using the
-KEY_ALLOC_BYPASS_RESTRICTION flag. As far as I can tell, only the compiled-in
-keys are loaded this way in the upstream kernel.
-
-Other asymmetric keyrings can specify the same restriction using the
-"builtin_trusted" option. Currently, CONFIG_INTEGRITY_TRUSTED_KEYRING creates
-".ima" and ".evm" keyrings with this restriction. As a result, in order to
-add a key to an integrity keyring, either that key needs to be compiled-in,
-or it must be signed with a key that is in the system keyring, which again
-needs to be compiled-in.
-
-If a user is not compiling their own kernel, and has no access to the module
-signing key (or any other compiled-in key), then how can they add their own
-keys to the integrity keyrings?
-
-This patchset allows the user to take the kernel from a distro, insert their 
-own key, sign the resulting image as required for their secure boot method,  
-and when booted, the system keyring will include their key, which can be used 
-to control the integrity keys.
-
-An alternative way is to allow the "secondary" trusted keyring to verify the 
-IMA keys with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY, but 
-it is the same problem. Some distros carry patches that populate the 
-secondary keyring with UEFI keys during kernel initialization, which would 
-mean having access to a UEFI key (which is also needed with this patchset, 
-for signing the resulting image), would be enough to add integrity keys. But 
-that is much more permissive, since ANY key that goes into the secondary 
-keyring, coming from UEFI, could then be used to control the integrity keys. 
-
-Mehmet
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
