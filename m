@@ -1,69 +1,43 @@
-From: colin.king@canonical.com (Colin King)
-Date: Fri,  4 May 2018 15:15:11 +0100
-Subject: [PATCH][next] apparmor: fix error return check with a u32 being less
-	than zero
-Message-ID: <20180504141511.19793-1-colin.king@canonical.com>
+From: dh.herrmann@gmail.com (David Herrmann)
+Date: Fri, 4 May 2018 16:29:14 +0200
+Subject: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
+In-Reply-To: <alpine.LRH.2.21.1804260502030.12534@namei.org>
+References: <20180423133015.5455-1-dh.herrmann@gmail.com>
+	<alpine.LRH.2.21.1804260443110.11568@namei.org>
+	<CAHC9VhR-V1R2BpCt1aA56q4yT_PWv1kzoWtksbNkm08stcOGPw@mail.gmail.com>
+	<alpine.LRH.2.21.1804260502030.12534@namei.org>
+Message-ID: <CANq1E4QgRUvG4WJ_XZoWpvegE-TRF5CddiSptNUFQkURJr5Znw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hey
 
-The check for *seclen being less than zero for an error condtion check
-is never true as it is a u32 and hence cannot be less than zero. Fix
-this by using an int ret for error return checking and assigning *seclen
-to this.
+On Wed, Apr 25, 2018 at 9:02 PM, James Morris <jmorris@namei.org> wrote:
+> On Wed, 25 Apr 2018, Paul Moore wrote:
+>
+>> On Wed, Apr 25, 2018 at 2:44 PM, James Morris <jmorris@namei.org> wrote:
+>> > On Mon, 23 Apr 2018, David Herrmann wrote:
+>> >> This patch series tries to close this gap and makes both behave the
+>> >> same. A new LSM-hook is added which allows LSMs to cache the correct
+>> >> peer information on newly created socket-pairs.
+>> >
+>> > Looks okay to me.
+>> >
+>> > Once it's respun with the Smack backend and maybe the hook name change,
+>> > I'll merge this unless DaveM wants it to go in via his networking tree.
+>>
+>> Note my objection to the hook placement in patch 2/3; I think we
+>> should move the hook out of the AF_UNIX layer and up into the socket
+>> layer.
+>
+> I vote for this as it maintains the intended abstraction of the socket
+> API.
 
-Detected by CoverityScan, CID#1468514 ("Unsigned comparison against 0")
+Sounds good, I changed it. I will send v2 shortly.
 
-Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/apparmor/secid.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 502924853986..9c431e9a9836 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- {
- 	/* TODO: cache secctx and ref count so we don't have to recreate */
- 	struct aa_label *label = aa_secid_to_label(secid);
-+	int ret;
- 
- 	AA_BUG(!secdata);
- 	AA_BUG(!seclen);
-@@ -150,16 +151,17 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- 		return -EINVAL;
- 
- 	if (secdata)
--		*seclen = aa_label_asxprint(secdata, root_ns, label,
--					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--					    FLAG_HIDDEN_UNCONFINED |
--					    FLAG_ABS_ROOT, GFP_ATOMIC);
-+		ret = aa_label_asxprint(secdata, root_ns, label,
-+					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
-+					FLAG_HIDDEN_UNCONFINED |
-+					FLAG_ABS_ROOT, GFP_ATOMIC);
- 	else
--		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
--					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--					    FLAG_HIDDEN_UNCONFINED |
--					    FLAG_ABS_ROOT);
--	if (*seclen < 0)
-+		ret = aa_label_snxprint(NULL, 0, root_ns, label,
-+					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
-+					FLAG_HIDDEN_UNCONFINED |
-+					FLAG_ABS_ROOT);
-+	*seclen = ret;
-+	if (ret < 0)
- 		return -ENOMEM;
- 
- 	return 0;
--- 
-2.17.0
-
+Thanks
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
