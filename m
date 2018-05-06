@@ -1,187 +1,80 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Sat, 5 May 2018 21:07:21 +0000
-Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-In-Reply-To: <20180504081634.GB6373@linux.intel.com>
-References: <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
-	<4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
-	<20180424160328.GA5119@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
-	<20180502133246.GA6091@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
-	<20180503063508.GA8702@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
-	<20180504081634.GB6373@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Sun, 6 May 2018 17:31:40 -0400
+Subject: [PATCH v3 0/4] Better integrate seccomp logging and auditing
+In-Reply-To: <1525396095-27737-1-git-send-email-tyhicks@canonical.com>
+References: <1525396095-27737-1-git-send-email-tyhicks@canonical.com>
+Message-ID: <CAHC9VhQb46F0q4bbum9NMqi-spuDHaVDG7xSPDmOsWDP0RZ47g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Thu, May 3, 2018 at 9:08 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
+> Seccomp received improved logging controls in v4.14. Applications can opt into
+> logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
+> SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
+> They can also debug filter matching with the new SECCOMP_RET_LOG action.
+> Administrators can prevent specific actions from being logged using the
+> kernel.seccomp.actions_logged sysctl.
+>
+> However, one corner case intentionally wasn't addressed in those v4.14 changes.
+> When a process is being inspected by the audit subsystem, seccomp's decision
+> making for logging ignores the new controls and unconditionally logs every
+> action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
+> many existing applications don't intend to log handled actions due to them
+> occurring very frequently. This amount of logging fills the audit logs without
+> providing many benefits now that application authors have fine grained controls
+> at their disposal.
+>
+> This patch set aligns the seccomp logging behavior for both audited and
+> non-audited processes. It also emits an audit record, if auditing is enabled,
+> when the kernel.seccomp.actions_logged sysctl is written to so that there's a
+> paper trail when entire actions are quieted.
+>
+> Changes in v3:
+> * Patch 3
+>   - Never drop a field when emitting the audit record
+>   - Use the value "?" for the actions field when an error occurred while
+>     writing to the sysctl
+>   - Use the value "?" for the actions and/or old-actions fields when a failure
+>     to translate actions to names
+>   - Use the value "(none)" for the actions and/or old-actions fields when no
+>     actions are specified
+>     + This is possible when writing an empty string to the sysctl
+>   - Update the commit message to note the new values and give an example of
+>     when an empty string is written
+> * Patch 4
+>   - Adjust the control flow of seccomp_log() to exit early if nothing should be
+>     logged
+>
+> Changes in v2:
+> * Patch 2
+>   - New patch, allowing for a configurable separator between action names
+> * Patch 3
+>   - The value of the actions field in the audit record now uses a comma instead
+>     of a space
+>   - The value of the actions field in the audit record is no longer enclosed in
+>     quotes
+>   - audit_log_start() is called with the current processes' audit_context in
+>     audit_seccomp_actions_logged()
+>   - audit_seccomp_actions_logged() no longer records the pid, uid, auid, tty,
+>     ses, task context, comm, or executable path
+>   - The new and old value of seccomp_actions_logged is recorded in the
+>     AUDIT_CONFIG_CHANGE record
+>   - The value of the "res" field in the CONFIG_CHANGE audit record is corrected
+>     (1 indicates success, 0 failure)
+>   - Updated patch 3's commit message to reflect the updated audit record format
+>     in the examples
+> * Patch 4
+>   - A function comment for audit_seccomp() was added to explain, among other
+>     things, that event filtering is performed in seccomp_log()
 
-> 
-> On Thu, May 03, 2018 at 06:42:26AM +0000, Winkler, Tomas wrote:
-> >
-> > > >
-> > > > >
-> > > > > On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
-> > > > > > > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error
-> path.
-> > > > > > >
-> > > > > > > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
-> > > > > > > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > > > > > > > > > In crb_map_io() function,
-> > > > > > > > > > > > > __crb_request_locality() is called prior to
-> > > > > > > > > > > > > crb_cmd_ready(), but if one of the consecutive
-> > > > > > > > > > > > > function fails the flow bails out instead of
-> > > > > > > > > > > > > trying to relinquish
-> > > > > > > locality.
-> > > > > > > > > > > > > This patch adds goto jump to
-> > > > > > > > > > > > > __crb_relinquish_locality() on the error path.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can
-> > > > > > > > > > > > > be issued only after granting
-> > > > > > > > > > > > > locality)
-> > > > > > > > > > > > > Signed-off-by: Tomas Winkler
-> > > > > > > > > > > > > <tomas.winkler@intel.com>
-> > > > > > > > > > > > > ---
-> > > > > > > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > > > > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > > > > b/drivers/char/tpm/tpm_crb.c index
-> > > > > > > > > > > > > 7f78482cd157..34fbc6cb097b
-> > > > > > > > > > > > > 100644
-> > > > > > > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > > > > @@ -511,8 +511,10 @@ static int
-> > > > > > > > > > > > > crb_map_io(struct acpi_device *device, struct
-> > > > > > > > > > > > > crb_priv *priv,
-> > > > > > > > > > > > >
-> > > > > > > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res,
-> > > > > > > > > > > > > buf-
-> > > > > > > > > > > > > >control_address,
-> > > > > > > > > > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > > > > > > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > > > > > > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > > > > > > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > > > > > > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > > > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > > > > > > +	}
-> > > > > > > > > > > > >
-> > > > > > > > > > > > >  	/*
-> > > > > > > > > > > > >  	 * PTT HW bug w/a: wake up the device to
-> > > > > > > > > > > > > access
-> > > @@
-> > > > > > > > > > > > > -520,7
-> > > > > > > > > > > > > +522,7
-> > > > > > > > > > > >
-> > > > > > > > > > > > @@
-> > > > > > > > > > > > > static int crb_map_io(struct acpi_device
-> > > > > > > > > > > > > *device, struct crb_priv *priv,
-> > > > > > > > > > > > >  	 */
-> > > > > > > > > > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > > > > > > > > > >  	if (ret)
-> > > > > > > > > > > > > -		return ret;
-> > > > > > > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > > > > > >
-> > > > > > > > > > > > >  	pa_high = ioread32(&priv->regs_t-
-> > > >ctrl_cmd_pa_high);
-> > > > > > > > > > > > >  	pa_low  =
-> > > > > > > > > > > > > ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > > > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
-> > > > > > > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > > > > > > >
-> > > > > > > > > > > > >  	crb_go_idle(dev, priv);
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > +out_relinquish_locality:
-> > > > > > > > > > > > > +
-> > > > > > > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > > > > > > > > > >
-> > > > > > > > > > > > >  	return ret;
-> > > > > > > > > > > >
-> > > > > > > > > > > > Thanks, please just call it before returning in the error
-> path.
-> > > > > > > > > > >
-> > > > > > > > > > > Can you please elaborate why, isn't the centralized
-> > > > > > > > > > > exiting of functions preferred kernel coding style?
-> > > > > > > > > > > https://www.kernel.org/doc/html/v4.11/process/coding
-> > > > > > > > > > > -sty
-> > > > > > > > > > > le.h
-> > > > > > > > > > > tml#
-> > > > > > > > > > > cent
-> > > > > > > > > > > ra
-> > > > > > > > > > > lized-ex
-> > > > > > > > > > > iting-of-functions
-> > > > > > > > > >
-> > > > > > > > > > You exit only from one location (not multiple) and not
-> > > > > > > > > > from a nested context. Here you just add more
-> > > > > > > > > > complexity by
-> > > doing this.
-> > > > > > > > >
-> > > > > > > > > Where is the complexity ? I see it as a standard way of
-> > > > > > > > > undoing on
-> > > > > exit.
-> > > > > > > > > Tomas
-> > > > > > > >
-> > > > > > > > Jarkko, can you please respond.
-> > > > > > > > Thanks
-> > > > > > > > Tomas
-> > > > > > >
-> > > > > > > I was away for Mon-Wed last week and did not work on TPM for
-> > > > > > > Thu-
-> > > Fri.
-> > > > > > >
-> > > > > > > My earlier comment was incorrect as there are two locations
-> > > > > > > to exit (not sure how I managed to overlook the patch that way).
-> > > > > > >
-> > > > > > > Thus, I have only two very  minor requets:
-> > > > > > >
-> > > > > > > * Remove the extra newline (the last line addition in the patch).
-> > > > > > Okay
-> > > > > > > * Use just label named out as we have only one exception
-> handler.
-> > > > > > Cannot do that, as the bail out is prior to cmd_ready request
-> > > > > > so there is no
-> > > > > need for go_idle which is under out label.
-> > > > > > >
-> > > > > > > I'll move on to testing, and if it it passes, I can do those
-> > > > > > > updates
-> > > myself.
-> > > > > > Thanks,  I prefer to resend myself.
-> > > > > >
-> > > > > > Tomas
-> > > > >
-> > > > > Add my tested-by as it is cosmectic change, thanks.
-> > > >
-> > > >
-> > > > What change exactly? I had impression you've accepted the patch as is?
-> > > > Thanks
-> > > > Tomas
-> > >
-> > > Hmm... maybe there is some misunderstandig but I thought you were
-> > > going to make the updates above yourself and send a revised patch.
-> >
-> >
-> > Probably,  if I remember there were to mails going in asynchronous,
-> > I've received your tested-by, the second I've sent this answer, so I thought
-> you came to the conclusion that there is nothing to change in the patch
-> yourself.
-> > Frankly I've checked the patch and there are no even extra new lines in my
-> version unless it has scrambled on the way.
-> >
-> > Thanks
-> > Tomas
-> 
-> The only thing was the label name. That is why I asked if I can change it by
-> myself instead of you having to send a follow up patch. Did you send a new
-> one? Did not find it from patchwork.
+Kees, are you still okay with v3?  Also, are you okay with these
+patches going in via the audit tree, or would you prefer to take them
+via seccomp?  I've got a slight preference for the audit tree myself,
+but as I said before, as long as it hits Linus' tree I'm happy.
 
-There is already one 'out' label in that function, what would you prefer for this new label name?
-Thanks
-Tomas
-
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
