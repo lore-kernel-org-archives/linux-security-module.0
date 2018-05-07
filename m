@@ -1,90 +1,66 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Sun, 6 May 2018 16:36:48 -0700
-Subject: [PATCH v3 0/4] Better integrate seccomp logging and auditing
-In-Reply-To: <CAHC9VhQb46F0q4bbum9NMqi-spuDHaVDG7xSPDmOsWDP0RZ47g@mail.gmail.com>
-References: <1525396095-27737-1-git-send-email-tyhicks@canonical.com>
-	<CAHC9VhQb46F0q4bbum9NMqi-spuDHaVDG7xSPDmOsWDP0RZ47g@mail.gmail.com>
-Message-ID: <CAGXu5jLZ5MRrQzg0zOvLbmnq_sJe3EA_VN6S=xwRmzgHLTzCeA@mail.gmail.com>
+From: andriy.shevchenko@linux.intel.com (Andy Shevchenko)
+Date: Mon,  7 May 2018 16:39:03 +0300
+Subject: [PATCH v1] apparmor: Convert to use match_string() helper
+Message-ID: <20180507133903.39041-1-andriy.shevchenko@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, May 6, 2018 at 2:31 PM, Paul Moore <paul@paul-moore.com> wrote:
-> On Thu, May 3, 2018 at 9:08 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
->> Seccomp received improved logging controls in v4.14. Applications can opt into
->> logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
->> SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
->> They can also debug filter matching with the new SECCOMP_RET_LOG action.
->> Administrators can prevent specific actions from being logged using the
->> kernel.seccomp.actions_logged sysctl.
->>
->> However, one corner case intentionally wasn't addressed in those v4.14 changes.
->> When a process is being inspected by the audit subsystem, seccomp's decision
->> making for logging ignores the new controls and unconditionally logs every
->> action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
->> many existing applications don't intend to log handled actions due to them
->> occurring very frequently. This amount of logging fills the audit logs without
->> providing many benefits now that application authors have fine grained controls
->> at their disposal.
->>
->> This patch set aligns the seccomp logging behavior for both audited and
->> non-audited processes. It also emits an audit record, if auditing is enabled,
->> when the kernel.seccomp.actions_logged sysctl is written to so that there's a
->> paper trail when entire actions are quieted.
->>
->> Changes in v3:
->> * Patch 3
->>   - Never drop a field when emitting the audit record
->>   - Use the value "?" for the actions field when an error occurred while
->>     writing to the sysctl
->>   - Use the value "?" for the actions and/or old-actions fields when a failure
->>     to translate actions to names
->>   - Use the value "(none)" for the actions and/or old-actions fields when no
->>     actions are specified
->>     + This is possible when writing an empty string to the sysctl
->>   - Update the commit message to note the new values and give an example of
->>     when an empty string is written
->> * Patch 4
->>   - Adjust the control flow of seccomp_log() to exit early if nothing should be
->>     logged
->>
->> Changes in v2:
->> * Patch 2
->>   - New patch, allowing for a configurable separator between action names
->> * Patch 3
->>   - The value of the actions field in the audit record now uses a comma instead
->>     of a space
->>   - The value of the actions field in the audit record is no longer enclosed in
->>     quotes
->>   - audit_log_start() is called with the current processes' audit_context in
->>     audit_seccomp_actions_logged()
->>   - audit_seccomp_actions_logged() no longer records the pid, uid, auid, tty,
->>     ses, task context, comm, or executable path
->>   - The new and old value of seccomp_actions_logged is recorded in the
->>     AUDIT_CONFIG_CHANGE record
->>   - The value of the "res" field in the CONFIG_CHANGE audit record is corrected
->>     (1 indicates success, 0 failure)
->>   - Updated patch 3's commit message to reflect the updated audit record format
->>     in the examples
->> * Patch 4
->>   - A function comment for audit_seccomp() was added to explain, among other
->>     things, that event filtering is performed in seccomp_log()
->
-> Kees, are you still okay with v3?  Also, are you okay with these
-> patches going in via the audit tree, or would you prefer to take them
-> via seccomp?  I've got a slight preference for the audit tree myself,
-> but as I said before, as long as it hits Linus' tree I'm happy.
+The new helper returns index of the matching string in an array.
+We are going to use it here.
 
-Yup, it looks good. I have no tree preference, so you win! :) Please
-consider the whole series:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ security/apparmor/lsm.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-Acked-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 033221d4fc6c..9d5006744356 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1392,14 +1392,12 @@ static int param_set_audit(const char *val, const struct kernel_param *kp)
+ 	if (apparmor_initialized && !policy_admin_capable(NULL))
+ 		return -EPERM;
+ 
+-	for (i = 0; i < AUDIT_MAX_INDEX; i++) {
+-		if (strcmp(val, audit_mode_names[i]) == 0) {
+-			aa_g_audit = i;
+-			return 0;
+-		}
+-	}
++	i = match_string(audit_mode_names, AUDIT_MAX_INDEX, val);
++	if (i < 0)
++		return -EINVAL;
+ 
+-	return -EINVAL;
++	aa_g_audit = i;
++	return 0;
+ }
+ 
+ static int param_get_mode(char *buffer, const struct kernel_param *kp)
+@@ -1423,14 +1421,12 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+ 	if (apparmor_initialized && !policy_admin_capable(NULL))
+ 		return -EPERM;
+ 
+-	for (i = 0; i < APPARMOR_MODE_NAMES_MAX_INDEX; i++) {
+-		if (strcmp(val, aa_profile_mode_names[i]) == 0) {
+-			aa_g_profile_mode = i;
+-			return 0;
+-		}
+-	}
++	i = match_string(aa_profile_mode_names, APPARMOR_MODE_NAMES_MAX_INDEX, val);
++	if (i < 0)
++		return -EINVAL;
+ 
+-	return -EINVAL;
++	aa_g_profile_mode = i;
++	return 0;
+ }
+ 
+ /*
 -- 
-Kees Cook
-Pixel Security
+2.17.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
