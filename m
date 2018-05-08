@@ -1,66 +1,73 @@
 From: john.johansen@canonical.com (John Johansen)
-Date: Tue, 8 May 2018 10:49:16 -0700
-Subject: [bug report] apparmor: add support for mapping secids and using
-	secctxes
-In-Reply-To: <20180508093901.GA3155@mwanda>
-References: <20180508093901.GA3155@mwanda>
-Message-ID: <2a52cd12-5f70-6bac-0a9b-ba695070586d@canonical.com>
+Date: Tue, 8 May 2018 10:55:15 -0700
+Subject: [PATCH v1] apparmor: Convert to use match_string() helper
+In-Reply-To: <20180507133903.39041-1-andriy.shevchenko@linux.intel.com>
+References: <20180507133903.39041-1-andriy.shevchenko@linux.intel.com>
+Message-ID: <0c13a36f-2d24-768d-775f-cff911950a45@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/08/2018 02:39 AM, Dan Carpenter wrote:
-> Hello John Johansen,
+On 05/07/2018 06:39 AM, Andy Shevchenko wrote:
+> The new helper returns index of the matching string in an array.
+> We are going to use it here.
 > 
-> The patch c092921219d2: "apparmor: add support for mapping secids and
-> using secctxes" from Jul 31, 2017, leads to the following static
-> checker warning:
-> 
-> 	security/apparmor/secid.c:162 apparmor_secid_to_secctx()
-> 	warn: unsigned '*seclen' is never less than zero.
-> 
-> security/apparmor/secid.c
->    141  int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
->    142  {
->    143          /* TODO: cache secctx and ref count so we don't have to recreate */
->    144          struct aa_label *label = aa_secid_to_label(secid);
->    145  
->    146          AA_BUG(!secdata);
->    147          AA_BUG(!seclen);
->    148  
->    149          if (!label)
->    150                  return -EINVAL;
->    151  
->    152          if (secdata)
->    153                  *seclen = aa_label_asxprint(secdata, root_ns, label,
->                                   ^^^^^^^^^^^^^^^^^
-> This can return -ENOMEM on error.
-> 
->    154                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
->    155                                              FLAG_HIDDEN_UNCONFINED |
->    156                                              FLAG_ABS_ROOT, GFP_ATOMIC);
->    157          else
->    158                  *seclen = aa_label_snxprint(NULL, 0, root_ns, label,
->    159                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
->    160                                              FLAG_HIDDEN_UNCONFINED |
->    161                                              FLAG_ABS_ROOT);
->    162          if (*seclen < 0)
->                     ^^^^^^^^^^^
-> It's strange that this warning is only showing up now...
-> 
->    163                  return -ENOMEM;
->    164  
->    165          return 0;
->    166  }
-> 
-> regards,
-> dan carpenter
-> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-yep sorry the kbuildbot reported this to me back on the 4th and for some reason (probably
-distracted) the fix didn't get pushed. It should be there now
+looks good thanks
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-thanks
+I've pulled it into apparmor-next
 
+
+> ---
+>  security/apparmor/lsm.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
+> 
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 033221d4fc6c..9d5006744356 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1392,14 +1392,12 @@ static int param_set_audit(const char *val, const struct kernel_param *kp)
+>  	if (apparmor_initialized && !policy_admin_capable(NULL))
+>  		return -EPERM;
+>  
+> -	for (i = 0; i < AUDIT_MAX_INDEX; i++) {
+> -		if (strcmp(val, audit_mode_names[i]) == 0) {
+> -			aa_g_audit = i;
+> -			return 0;
+> -		}
+> -	}
+> +	i = match_string(audit_mode_names, AUDIT_MAX_INDEX, val);
+> +	if (i < 0)
+> +		return -EINVAL;
+>  
+> -	return -EINVAL;
+> +	aa_g_audit = i;
+> +	return 0;
+>  }
+>  
+>  static int param_get_mode(char *buffer, const struct kernel_param *kp)
+> @@ -1423,14 +1421,12 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+>  	if (apparmor_initialized && !policy_admin_capable(NULL))
+>  		return -EPERM;
+>  
+> -	for (i = 0; i < APPARMOR_MODE_NAMES_MAX_INDEX; i++) {
+> -		if (strcmp(val, aa_profile_mode_names[i]) == 0) {
+> -			aa_g_profile_mode = i;
+> -			return 0;
+> -		}
+> -	}
+> +	i = match_string(aa_profile_mode_names, APPARMOR_MODE_NAMES_MAX_INDEX, val);
+> +	if (i < 0)
+> +		return -EINVAL;
+>  
+> -	return -EINVAL;
+> +	aa_g_profile_mode = i;
+> +	return 0;
+>  }
+>  
+>  /*
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
