@@ -1,80 +1,58 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Tue, 8 May 2018 16:10:37 +0000
-Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-In-Reply-To: <20180508153805.GC27853@wotan.suse.de>
-References: <20180408174014.21908-1-hdegoede@redhat.com>
-	<20180408174014.21908-3-hdegoede@redhat.com>
-	<20180423211143.GZ14440@wotan.suse.de>
-	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
-	<1524586021.3364.20.camel@linux.vnet.ibm.com>
-	<20180424234219.GX14440@wotan.suse.de>
-	<1524632409.3371.48.camel@linux.vnet.ibm.com>
-	<20180425175557.GY14440@wotan.suse.de>
-	<CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
-	<20180508153805.GC27853@wotan.suse.de>
-Message-ID: <20180508161037.GE27853@wotan.suse.de>
+From: why2jjj.linux@gmail.com (J Freyensee)
+Date: Tue, 8 May 2018 09:34:05 -0700
+Subject: [PATCH v3 2/2] tpm: reduce polling time to usecs for even finer
+	granularity
+In-Reply-To: <20180507160733.8817-3-nayna@linux.vnet.ibm.com>
+References: <20180507160733.8817-1-nayna@linux.vnet.ibm.com>
+	<20180507160733.8817-3-nayna@linux.vnet.ibm.com>
+Message-ID: <edb61d0d-da8a-5cbd-c21c-80823d587f2a@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
-> On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
-> > On Wed, Apr 25, 2018 at 10:55 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> > > Android became the primary user of CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
-> > >
-> > > It would be good for us to hear from Android folks if their current use of
-> > > request_firmware_into_buf() is designed in practice to *never* use the direct
-> > > filesystem firmware loading interface, and always rely instead on the
-> > > fallback mechanism.
-> > 
-> > It's hard to answer this question for Android in general. As far as I
-> > can tell the reasons we use CONFIG_FW_LOADER_USER_HELPER(_FALLBACK)
-> > are:
-> > 1) We have multiple different paths on our devices where firmware can
-> > be located, and the direct loader only supports one custom path
 
-FWIW I'd love to consider patches to address this, if this is something
-you may find a need for in the future to *avoid* the fallback, however
-would like a clean solution.
 
-> > 2) Most of those paths are not mounted by the time the corresponding
-> > drivers are loaded, because pretty much all Android kernels today are
-> > built without module support, and therefore drivers are loaded well
-> > before the firmware partition is mounted
+On 5/7/18 9:07 AM, Nayna Jain wrote:
+> The TPM burstcount and status commands are supposed to return very
+> quickly [2][3]. This patch further reduces the TPM poll sleep time to usecs
+> in get_burstcount() and wait_for_tpm_stat() by calling usleep_range()
+> directly.
+>
+> After this change, performance on a system[1] with a TPM 1.2 with an 8 byte
+> burstcount for 1000 extends improved from ~10.7 sec to ~7 sec.
+>
+> [1] All tests are performed on an x86 based, locked down, single purpose
+> closed system. It has Infineon TPM 1.2 using LPC Bus.
+>
+> [2] From the TCG Specification "TCG PC Client Specific TPM Interface
+> Specification (TIS), Family 1.2":
+>
+> "NOTE : It takes roughly 330 ns per byte transfer on LPC. 256 bytes would
+> take 84 us, which is a long time to stall the CPU. Chipsets may not be
+> designed to post this much data to LPC; therefore, the CPU itself is
+> stalled for much of this time. Sending 1 kB would take 350 ?s. Therefore,
+> even if the TPM_STS_x.burstCount field is a high value, software SHOULD
+> be interruptible during this period."
+>
+> [3] From the TCG Specification 2.0, "TCG PC Client Platform TPM Profile
+> (PTP) Specification":
+>
+> "It takes roughly 330 ns per byte transfer on LPC. 256 bytes would take
+> 84 us. Chipsets may not be designed to post this much data to LPC;
+> therefore, the CPU itself is stalled for much of this time. Sending 1 kB
+> would take 350 us. Therefore, even if the TPM_STS_x.burstCount field is a
+> high value, software should be interruptible during this period. For SPI,
+> assuming 20MHz clock and 64-byte transfers, it would take about 120 usec
+> to move 256B of data. Sending 1kB would take about 500 usec. If the
+> transactions are done using 4 bytes at a time, then it would take about
+> 1 msec. to transfer 1kB of data."
+>
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
 
-I've given this some more thought and you can address this with initramfs,
-this is how other Linux distributions are addressing this. One way to
-address this automatically is to scrape the drivers built-in or needed early on
-boot in initamfs and if the driver has a MODULE_FIRMWARE() its respective
-firmware is added to initramfs as well.
+Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
 
-If you *don't* use initramfs, then yes you can obviously run into issues
-where your firmware may not be accessible if the driver is somehow loaded
-early.
-
-> > 3) I think we use _FALLBACK because doing this with uevents is just
-> > the easiest thing to do; our init code has a firmware helper that
-> > deals with this and searches the paths that we care about
-> > 
-> > 2) will change at some point, because Android is moving towards a
-> > model where device-specific peripheral drivers will be loaded as
-> > modules, and since those modules would likely come from the same
-> > partition as the firmware, it's possible that the direct load would
-> > succeed (depending on whether the custom path is configured there or
-> > not). But I don't think we can rely on the direct loader even in those
-> > cases, unless we could configure it with multiple custom paths.
-
-Using initramfs will help, but because of the custom path needs -- you're
-right, we don't have anything for that yet, its also a bit unclear if
-something nice and clean can be drawn up for it. So perhaps dealing with
-the fallback mechanism is the way to go for this for sure, since we already
-have support for it.
-
-Just keep in mind that the fallback mechanism costs you about ~13436 bytes.
-
-So, if someone comes up with a clean interface for custom paths I'd love
-to consider it to avoid those 13436 bytes.
-
-  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
