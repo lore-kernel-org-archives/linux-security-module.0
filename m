@@ -1,112 +1,67 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Tue, 8 May 2018 17:34:04 +0000
-Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db
-	and other firmware
-In-Reply-To: <1525393466.3539.133.camel@linux.vnet.ibm.com>
-References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<20180504000743.GR27853@wotan.suse.de>
-	<1525393466.3539.133.camel@linux.vnet.ibm.com>
-Message-ID: <20180508173404.GG27853@wotan.suse.de>
+From: john.johansen@canonical.com (John Johansen)
+Date: Tue, 8 May 2018 10:49:16 -0700
+Subject: [bug report] apparmor: add support for mapping secids and using
+	secctxes
+In-Reply-To: <20180508093901.GA3155@mwanda>
+References: <20180508093901.GA3155@mwanda>
+Message-ID: <2a52cd12-5f70-6bac-0a9b-ba695070586d@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 03, 2018 at 08:24:26PM -0400, Mimi Zohar wrote:
-> On Fri, 2018-05-04 at 00:07 +0000, Luis R. Rodriguez wrote:
-> > On Tue, May 01, 2018 at 09:48:20AM -0400, Mimi Zohar wrote:
-> > > Allow LSMs and IMA to differentiate between signed regulatory.db and
-> > > other firmware.
-> > > 
-> > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > > Cc: Luis R. Rodriguez <mcgrof@suse.com>
-> > > Cc: David Howells <dhowells@redhat.com>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Seth Forshee <seth.forshee@canonical.com>
-> > > Cc: Johannes Berg <johannes.berg@intel.com>
-> > > ---
-> > >  drivers/base/firmware_loader/main.c | 5 +++++
-> > >  include/linux/fs.h                  | 1 +
-> > >  2 files changed, 6 insertions(+)
-> > > 
-> > > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-> > > index eb34089e4299..d7cdf04a8681 100644
-> > > --- a/drivers/base/firmware_loader/main.c
-> > > +++ b/drivers/base/firmware_loader/main.c
-> > > @@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
-> > >  			break;
-> > >  		}
-> > >  
-> > > +#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
-> > > +		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
-> > > +		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
-> > > +			id = READING_FIRMWARE_REGULATORY_DB;
-> > > +#endif
-> > 
-> > Whoa, no way.
+On 05/08/2018 02:39 AM, Dan Carpenter wrote:
+> Hello John Johansen,
 > 
-> There are two methods for the kernel to verify firmware signatures.
-
-Yes, but although CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is its own kernel
-mechanism to verify firmware it uses the request_firmware*() API for
-regulatory.db and regulatory.db.p7s, and IMA already can appraise these two
-files since the firmware API is used.
-
-As such I see no reason to add a new ID for them at all.
-
-Its not providing an *alternative*, its providing an *extra* kernel measure.
-If anything CONFIG_CFG80211_REQUIRE_SIGNED_REGDB perhaps should be its own
-stacked LSM. I'd be open to see patches which set that out. May be a
-cleaner interface.
-
->?If both are enabled, do we require both signatures or is one enough.
-
-Good question. Considering it as a stacked LSM (although not implemented
-as one), I'd say its up to who enabled the Kconfig entries. If IMA and
-CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are enabled then both. If someone enabled
-IMA though, then surely I agree that enabling
-CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is stupid and redundant, but its up to the
-system integrator to decide.
-
-If we however want to make it clear that such things as
-CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are not required when IMA is enabled we
-could just make the kconfig depend on !IMA or something? Or perhaps a new
-kconfig for IMA which if selected it means that drivers can opt to open code
-*further* kernel signature verification, even though IMA already is sufficient.
-Perhaps CONFIG_ENABLE_IMA_OVERLAPPING, and the driver depends on it?
-
-> Assigning a different id for regdb signed firmware allows LSMs and IMA
-> to handle regdb files differently.
-
-That's not the main concern here, its the precedent we are setting here for
-any new kernel interface which open codes firmware signing on its own. What
-you are doing means other kernel users who open codes their own firmware
-signing may need to add yet-another reading ID. That doesn't either look
-well on code, and seems kind of silly from a coding perspective given
-the above, in which I clarify IMA still is doing its own appraisal on it.
-
-> > >  		fw_priv->size = 0;
-> > >  		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
-> > >  						msize, id);
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index dc16a73c3d38..d1153c2884b9 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
-> > >  	id(FIRMWARE, firmware)		\
-> > >  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
-> > >  	id(FIRMWARE_FALLBACK, firmware)	\
-> > > +	id(FIRMWARE_REGULATORY_DB, firmware)	\
-> > 
-> > Why could IMA not appriase these files? They are part of the standard path.
+> The patch c092921219d2: "apparmor: add support for mapping secids and
+> using secctxes" from Jul 31, 2017, leads to the following static
+> checker warning:
 > 
-> The subsequent patch attempts to verify the IMA-appraisal signature, but on
-> failure it falls back to allowing regdb signatures. 
->?For systems that only want to load firmware based on IMA-appraisal, then
->regdb wouldn't be enabled.
+> 	security/apparmor/secid.c:162 apparmor_secid_to_secctx()
+> 	warn: unsigned '*seclen' is never less than zero.
+> 
+> security/apparmor/secid.c
+>    141  int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+>    142  {
+>    143          /* TODO: cache secctx and ref count so we don't have to recreate */
+>    144          struct aa_label *label = aa_secid_to_label(secid);
+>    145  
+>    146          AA_BUG(!secdata);
+>    147          AA_BUG(!seclen);
+>    148  
+>    149          if (!label)
+>    150                  return -EINVAL;
+>    151  
+>    152          if (secdata)
+>    153                  *seclen = aa_label_asxprint(secdata, root_ns, label,
+>                                   ^^^^^^^^^^^^^^^^^
+> This can return -ENOMEM on error.
+> 
+>    154                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+>    155                                              FLAG_HIDDEN_UNCONFINED |
+>    156                                              FLAG_ABS_ROOT, GFP_ATOMIC);
+>    157          else
+>    158                  *seclen = aa_label_snxprint(NULL, 0, root_ns, label,
+>    159                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+>    160                                              FLAG_HIDDEN_UNCONFINED |
+>    161                                              FLAG_ABS_ROOT);
+>    162          if (*seclen < 0)
+>                     ^^^^^^^^^^^
+> It's strange that this warning is only showing up now...
+> 
+>    163                  return -ENOMEM;
+>    164  
+>    165          return 0;
+>    166  }
+> 
+> regards,
+> dan carpenter
+> 
 
-I think we can codify this a bit better, without a new ID.
+yep sorry the kbuildbot reported this to me back on the 4th and for some reason (probably
+distracted) the fix didn't get pushed. It should be there now
 
-  Luis
+thanks
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
