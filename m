@@ -1,72 +1,125 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Tue, 8 May 2018 10:55:15 -0700
-Subject: [PATCH v1] apparmor: Convert to use match_string() helper
-In-Reply-To: <20180507133903.39041-1-andriy.shevchenko@linux.intel.com>
-References: <20180507133903.39041-1-andriy.shevchenko@linux.intel.com>
-Message-ID: <0c13a36f-2d24-768d-775f-cff911950a45@canonical.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 8 May 2018 14:40:45 -0400
+Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
+	selinux_socket_bind()
+In-Reply-To: <CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
+References: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
+	<CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
+Message-ID: <1eb10913-8802-e2dd-68f0-9483435cd949@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/07/2018 06:39 AM, Andy Shevchenko wrote:
-> The new helper returns index of the matching string in an array.
-> We are going to use it here.
+On 05/08/2018 01:05 PM, Paul Moore wrote:
+> On Tue, May 8, 2018 at 10:05 AM, Alexey Kodanev
+> <alexey.kodanev@oracle.com> wrote:
+>> Commit d452930fd3b9 ("selinux: Add SCTP support") breaks compatibility
+>> with the old programs that can pass sockaddr_in with AF_UNSPEC and
+>> INADDR_ANY to bind(). As a result, bind() returns EAFNOSUPPORT error.
+>> It was found with LTP/asapi_01 test.
+>>
+>> Similar to commit 29c486df6a20 ("net: ipv4: relax AF_INET check in
+>> bind()"), which relaxed AF_INET check for compatibility, add AF_UNSPEC
+>> case to AF_INET and make sure that the address is INADDR_ANY.
+>>
+>> Also, in the end of selinux_socket_bind(), instead of adding AF_UNSPEC
+>> to 'address->sa_family == AF_INET', verify AF_INET6 first.
+>>
+>> Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+>> Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+>> ---
+>>  security/selinux/hooks.c | 12 +++++++++---
+>>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-looks good thanks
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I've pulled it into apparmor-next
-
-
-> ---
->  security/apparmor/lsm.c | 24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
+> Thanks for finding and reporting this regression.
 > 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 033221d4fc6c..9d5006744356 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1392,14 +1392,12 @@ static int param_set_audit(const char *val, const struct kernel_param *kp)
->  	if (apparmor_initialized && !policy_admin_capable(NULL))
->  		return -EPERM;
->  
-> -	for (i = 0; i < AUDIT_MAX_INDEX; i++) {
-> -		if (strcmp(val, audit_mode_names[i]) == 0) {
-> -			aa_g_audit = i;
-> -			return 0;
-> -		}
-> -	}
-> +	i = match_string(audit_mode_names, AUDIT_MAX_INDEX, val);
-> +	if (i < 0)
-> +		return -EINVAL;
->  
-> -	return -EINVAL;
-> +	aa_g_audit = i;
-> +	return 0;
->  }
->  
->  static int param_get_mode(char *buffer, const struct kernel_param *kp)
-> @@ -1423,14 +1421,12 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
->  	if (apparmor_initialized && !policy_admin_capable(NULL))
->  		return -EPERM;
->  
-> -	for (i = 0; i < APPARMOR_MODE_NAMES_MAX_INDEX; i++) {
-> -		if (strcmp(val, aa_profile_mode_names[i]) == 0) {
-> -			aa_g_profile_mode = i;
-> -			return 0;
-> -		}
-> -	}
-> +	i = match_string(aa_profile_mode_names, APPARMOR_MODE_NAMES_MAX_INDEX, val);
-> +	if (i < 0)
-> +		return -EINVAL;
->  
-> -	return -EINVAL;
-> +	aa_g_profile_mode = i;
-> +	return 0;
->  }
->  
->  /*
+> I think I would prefer to avoid having to duplicate the
+> AF_UNSPEC/INADDR_ANY checking logic in the SELinux hook, even though
+> it is a small bit of code and unlikely to change.  I'm wondering if it
+> would be better to check both the socket and sockaddr address family
+> in the main if conditional inside selinux_socket_bind(), what do you
+> think?  Another option would be to go back to just checking the
+> soackaddr address family; we moved away from that for a reason which
+> escapes at the moment (code cleanliness?), but perhaps that was a
+> mistake.
+
+We've always used the sk->sk_family there; it was only the recent code from Richard that started
+using the socket address family.
+
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 4cafe6a19167..a3789b167667 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -4577,6 +4577,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
+> {
+>        struct sock *sk = sock->sk;
+>        u16 family;
+> +       u16 family_sa;
+>        int err;
+> 
+>        err = sock_has_perm(sk, SOCKET__BIND);
+> @@ -4585,7 +4586,9 @@ static int selinux_socket_bind(struct socket *sock, struc>
+> 
+>        /* If PF_INET or PF_INET6, check name_bind permission for the port. */
+>        family = sk->sk_family;
+> -       if (family == PF_INET || family == PF_INET6) {
+> +       family_sa = address->sa_family;
+> +       if ((family == PF_INET || family == PF_INET6) &&
+> +           (family_sa == PF_INET || family_sa == PF_INET6)) {
+
+Wouldn't this allow bypassing the name_bind permission check by passing in AF_UNSPEC?
+
+>                char *addrp;
+>                struct sk_security_struct *sksec = sk->sk_security;
+>                struct common_audit_data ad;
+> @@ -4601,7 +4604,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
+>                 * need to check address->sa_family as it is possible to have
+>                 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+>                 */
+> -               switch (address->sa_family) {
+> +               switch (family_sa) {
+>                case AF_INET:
+>                        if (addrlen < sizeof(struct sockaddr_in))
+>                                return -EINVAL;
+> 
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index 4cafe6a..649a3be 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -4602,10 +4602,16 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+>>                  * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+>>                  */
+>>                 switch (address->sa_family) {
+>> +               case AF_UNSPEC:
+>>                 case AF_INET:
+>>                         if (addrlen < sizeof(struct sockaddr_in))
+>>                                 return -EINVAL;
+>>                         addr4 = (struct sockaddr_in *)address;
+>> +
+>> +                       if (address->sa_family == AF_UNSPEC &&
+>> +                           addr4->sin_addr.s_addr != htonl(INADDR_ANY))
+>> +                               return -EAFNOSUPPORT;
+>> +
+>>                         snum = ntohs(addr4->sin_port);
+>>                         addrp = (char *)&addr4->sin_addr.s_addr;
+>>                         break;
+>> @@ -4681,10 +4687,10 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+>>                 ad.u.net->sport = htons(snum);
+>>                 ad.u.net->family = family;
+>>
+>> -               if (address->sa_family == AF_INET)
+>> -                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
+>> -               else
+>> +               if (address->sa_family == AF_INET6)
+>>                         ad.u.net->v6info.saddr = addr6->sin6_addr;
+>> +               else
+>> +                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
+>>
+>>                 err = avc_has_perm(&selinux_state,
+>>                                    sksec->sid, sid,
+>> --
+>> 1.8.3.1
+>>
 > 
 
 --
