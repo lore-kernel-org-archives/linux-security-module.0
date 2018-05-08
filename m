@@ -1,57 +1,68 @@
-From: dan.carpenter@oracle.com (Dan Carpenter)
-Date: Tue, 8 May 2018 12:39:01 +0300
-Subject: [bug report] apparmor: add support for mapping secids and using
-	secctxes
-Message-ID: <20180508093901.GA3155@mwanda>
+From: alexey.kodanev@oracle.com (Alexey Kodanev)
+Date: Tue,  8 May 2018 17:05:03 +0300
+Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
+	selinux_socket_bind()
+Message-ID: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hello John Johansen,
+Commit d452930fd3b9 ("selinux: Add SCTP support") breaks compatibility
+with the old programs that can pass sockaddr_in with AF_UNSPEC and
+INADDR_ANY to bind(). As a result, bind() returns EAFNOSUPPORT error.
+It was found with LTP/asapi_01 test.
 
-The patch c092921219d2: "apparmor: add support for mapping secids and
-using secctxes" from Jul 31, 2017, leads to the following static
-checker warning:
+Similar to commit 29c486df6a20 ("net: ipv4: relax AF_INET check in
+bind()"), which relaxed AF_INET check for compatibility, add AF_UNSPEC
+case to AF_INET and make sure that the address is INADDR_ANY.
 
-	security/apparmor/secid.c:162 apparmor_secid_to_secctx()
-	warn: unsigned '*seclen' is never less than zero.
+Also, in the end of selinux_socket_bind(), instead of adding AF_UNSPEC
+to 'address->sa_family == AF_INET', verify AF_INET6 first.
 
-security/apparmor/secid.c
-   141  int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
-   142  {
-   143          /* TODO: cache secctx and ref count so we don't have to recreate */
-   144          struct aa_label *label = aa_secid_to_label(secid);
-   145  
-   146          AA_BUG(!secdata);
-   147          AA_BUG(!seclen);
-   148  
-   149          if (!label)
-   150                  return -EINVAL;
-   151  
-   152          if (secdata)
-   153                  *seclen = aa_label_asxprint(secdata, root_ns, label,
-                                  ^^^^^^^^^^^^^^^^^
-This can return -ENOMEM on error.
+Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+---
+ security/selinux/hooks.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-   154                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
-   155                                              FLAG_HIDDEN_UNCONFINED |
-   156                                              FLAG_ABS_ROOT, GFP_ATOMIC);
-   157          else
-   158                  *seclen = aa_label_snxprint(NULL, 0, root_ns, label,
-   159                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
-   160                                              FLAG_HIDDEN_UNCONFINED |
-   161                                              FLAG_ABS_ROOT);
-   162          if (*seclen < 0)
-                    ^^^^^^^^^^^
-It's strange that this warning is only showing up now...
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a..649a3be 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4602,10 +4602,16 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+ 		 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+ 		 */
+ 		switch (address->sa_family) {
++		case AF_UNSPEC:
+ 		case AF_INET:
+ 			if (addrlen < sizeof(struct sockaddr_in))
+ 				return -EINVAL;
+ 			addr4 = (struct sockaddr_in *)address;
++
++			if (address->sa_family == AF_UNSPEC &&
++			    addr4->sin_addr.s_addr != htonl(INADDR_ANY))
++				return -EAFNOSUPPORT;
++
+ 			snum = ntohs(addr4->sin_port);
+ 			addrp = (char *)&addr4->sin_addr.s_addr;
+ 			break;
+@@ -4681,10 +4687,10 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+ 		ad.u.net->sport = htons(snum);
+ 		ad.u.net->family = family;
+ 
+-		if (address->sa_family == AF_INET)
+-			ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
+-		else
++		if (address->sa_family == AF_INET6)
+ 			ad.u.net->v6info.saddr = addr6->sin6_addr;
++		else
++			ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
+ 
+ 		err = avc_has_perm(&selinux_state,
+ 				   sksec->sid, sid,
+-- 
+1.8.3.1
 
-   163                  return -ENOMEM;
-   164  
-   165          return 0;
-   166  }
-
-regards,
-dan carpenter
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
