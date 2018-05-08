@@ -1,120 +1,112 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 8 May 2018 13:05:48 -0400
-Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
-	selinux_socket_bind()
-In-Reply-To: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
-References: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
-Message-ID: <CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Tue, 8 May 2018 17:34:04 +0000
+Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db
+	and other firmware
+In-Reply-To: <1525393466.3539.133.camel@linux.vnet.ibm.com>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<20180504000743.GR27853@wotan.suse.de>
+	<1525393466.3539.133.camel@linux.vnet.ibm.com>
+Message-ID: <20180508173404.GG27853@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 8, 2018 at 10:05 AM, Alexey Kodanev
-<alexey.kodanev@oracle.com> wrote:
-> Commit d452930fd3b9 ("selinux: Add SCTP support") breaks compatibility
-> with the old programs that can pass sockaddr_in with AF_UNSPEC and
-> INADDR_ANY to bind(). As a result, bind() returns EAFNOSUPPORT error.
-> It was found with LTP/asapi_01 test.
->
-> Similar to commit 29c486df6a20 ("net: ipv4: relax AF_INET check in
-> bind()"), which relaxed AF_INET check for compatibility, add AF_UNSPEC
-> case to AF_INET and make sure that the address is INADDR_ANY.
->
-> Also, in the end of selinux_socket_bind(), instead of adding AF_UNSPEC
-> to 'address->sa_family == AF_INET', verify AF_INET6 first.
->
-> Fixes: d452930fd3b9 ("selinux: Add SCTP support")
-> Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-> ---
->  security/selinux/hooks.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+On Thu, May 03, 2018 at 08:24:26PM -0400, Mimi Zohar wrote:
+> On Fri, 2018-05-04 at 00:07 +0000, Luis R. Rodriguez wrote:
+> > On Tue, May 01, 2018 at 09:48:20AM -0400, Mimi Zohar wrote:
+> > > Allow LSMs and IMA to differentiate between signed regulatory.db and
+> > > other firmware.
+> > > 
+> > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > > Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Seth Forshee <seth.forshee@canonical.com>
+> > > Cc: Johannes Berg <johannes.berg@intel.com>
+> > > ---
+> > >  drivers/base/firmware_loader/main.c | 5 +++++
+> > >  include/linux/fs.h                  | 1 +
+> > >  2 files changed, 6 insertions(+)
+> > > 
+> > > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> > > index eb34089e4299..d7cdf04a8681 100644
+> > > --- a/drivers/base/firmware_loader/main.c
+> > > +++ b/drivers/base/firmware_loader/main.c
+> > > @@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
+> > >  			break;
+> > >  		}
+> > >  
+> > > +#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+> > > +		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
+> > > +		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
+> > > +			id = READING_FIRMWARE_REGULATORY_DB;
+> > > +#endif
+> > 
+> > Whoa, no way.
+> 
+> There are two methods for the kernel to verify firmware signatures.
 
-Thanks for finding and reporting this regression.
+Yes, but although CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is its own kernel
+mechanism to verify firmware it uses the request_firmware*() API for
+regulatory.db and regulatory.db.p7s, and IMA already can appraise these two
+files since the firmware API is used.
 
-I think I would prefer to avoid having to duplicate the
-AF_UNSPEC/INADDR_ANY checking logic in the SELinux hook, even though
-it is a small bit of code and unlikely to change.  I'm wondering if it
-would be better to check both the socket and sockaddr address family
-in the main if conditional inside selinux_socket_bind(), what do you
-think?  Another option would be to go back to just checking the
-soackaddr address family; we moved away from that for a reason which
-escapes at the moment (code cleanliness?), but perhaps that was a
-mistake.
+As such I see no reason to add a new ID for them at all.
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 4cafe6a19167..a3789b167667 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4577,6 +4577,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
-{
-       struct sock *sk = sock->sk;
-       u16 family;
-+       u16 family_sa;
-       int err;
+Its not providing an *alternative*, its providing an *extra* kernel measure.
+If anything CONFIG_CFG80211_REQUIRE_SIGNED_REGDB perhaps should be its own
+stacked LSM. I'd be open to see patches which set that out. May be a
+cleaner interface.
 
-       err = sock_has_perm(sk, SOCKET__BIND);
-@@ -4585,7 +4586,9 @@ static int selinux_socket_bind(struct socket *sock, struc>
+>?If both are enabled, do we require both signatures or is one enough.
 
-       /* If PF_INET or PF_INET6, check name_bind permission for the port. */
-       family = sk->sk_family;
--       if (family == PF_INET || family == PF_INET6) {
-+       family_sa = address->sa_family;
-+       if ((family == PF_INET || family == PF_INET6) &&
-+           (family_sa == PF_INET || family_sa == PF_INET6)) {
-               char *addrp;
-               struct sk_security_struct *sksec = sk->sk_security;
-               struct common_audit_data ad;
-@@ -4601,7 +4604,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
-                * need to check address->sa_family as it is possible to have
-                * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
-                */
--               switch (address->sa_family) {
-+               switch (family_sa) {
-               case AF_INET:
-                       if (addrlen < sizeof(struct sockaddr_in))
-                               return -EINVAL;
+Good question. Considering it as a stacked LSM (although not implemented
+as one), I'd say its up to who enabled the Kconfig entries. If IMA and
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are enabled then both. If someone enabled
+IMA though, then surely I agree that enabling
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is stupid and redundant, but its up to the
+system integrator to decide.
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 4cafe6a..649a3be 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4602,10 +4602,16 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->                  * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
->                  */
->                 switch (address->sa_family) {
-> +               case AF_UNSPEC:
->                 case AF_INET:
->                         if (addrlen < sizeof(struct sockaddr_in))
->                                 return -EINVAL;
->                         addr4 = (struct sockaddr_in *)address;
-> +
-> +                       if (address->sa_family == AF_UNSPEC &&
-> +                           addr4->sin_addr.s_addr != htonl(INADDR_ANY))
-> +                               return -EAFNOSUPPORT;
-> +
->                         snum = ntohs(addr4->sin_port);
->                         addrp = (char *)&addr4->sin_addr.s_addr;
->                         break;
-> @@ -4681,10 +4687,10 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->                 ad.u.net->sport = htons(snum);
->                 ad.u.net->family = family;
->
-> -               if (address->sa_family == AF_INET)
-> -                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
-> -               else
-> +               if (address->sa_family == AF_INET6)
->                         ad.u.net->v6info.saddr = addr6->sin6_addr;
-> +               else
-> +                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
->
->                 err = avc_has_perm(&selinux_state,
->                                    sksec->sid, sid,
-> --
-> 1.8.3.1
->
+If we however want to make it clear that such things as
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are not required when IMA is enabled we
+could just make the kconfig depend on !IMA or something? Or perhaps a new
+kconfig for IMA which if selected it means that drivers can opt to open code
+*further* kernel signature verification, even though IMA already is sufficient.
+Perhaps CONFIG_ENABLE_IMA_OVERLAPPING, and the driver depends on it?
 
--- 
-paul moore
-www.paul-moore.com
+> Assigning a different id for regdb signed firmware allows LSMs and IMA
+> to handle regdb files differently.
+
+That's not the main concern here, its the precedent we are setting here for
+any new kernel interface which open codes firmware signing on its own. What
+you are doing means other kernel users who open codes their own firmware
+signing may need to add yet-another reading ID. That doesn't either look
+well on code, and seems kind of silly from a coding perspective given
+the above, in which I clarify IMA still is doing its own appraisal on it.
+
+> > >  		fw_priv->size = 0;
+> > >  		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
+> > >  						msize, id);
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index dc16a73c3d38..d1153c2884b9 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
+> > >  	id(FIRMWARE, firmware)		\
+> > >  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+> > >  	id(FIRMWARE_FALLBACK, firmware)	\
+> > > +	id(FIRMWARE_REGULATORY_DB, firmware)	\
+> > 
+> > Why could IMA not appriase these files? They are part of the standard path.
+> 
+> The subsequent patch attempts to verify the IMA-appraisal signature, but on
+> failure it falls back to allowing regdb signatures. 
+>?For systems that only want to load firmware based on IMA-appraisal, then
+>regdb wouldn't be enabled.
+
+I think we can codify this a bit better, without a new ID.
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
