@@ -1,92 +1,57 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 8 May 2018 02:09:33 -0400
-Subject: [PATCH v3 0/4] Better integrate seccomp logging and auditing
-In-Reply-To: <CAGXu5jLZ5MRrQzg0zOvLbmnq_sJe3EA_VN6S=xwRmzgHLTzCeA@mail.gmail.com>
-References: <1525396095-27737-1-git-send-email-tyhicks@canonical.com>
-	<CAHC9VhQb46F0q4bbum9NMqi-spuDHaVDG7xSPDmOsWDP0RZ47g@mail.gmail.com>
-	<CAGXu5jLZ5MRrQzg0zOvLbmnq_sJe3EA_VN6S=xwRmzgHLTzCeA@mail.gmail.com>
-Message-ID: <CAHC9VhSijj0TGaR7f_fM1OwpF73fjanJrkBwiF1j4n47DLnrYQ@mail.gmail.com>
+From: dan.carpenter@oracle.com (Dan Carpenter)
+Date: Tue, 8 May 2018 12:39:01 +0300
+Subject: [bug report] apparmor: add support for mapping secids and using
+	secctxes
+Message-ID: <20180508093901.GA3155@mwanda>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, May 6, 2018 at 7:36 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Sun, May 6, 2018 at 2:31 PM, Paul Moore <paul@paul-moore.com> wrote:
->> On Thu, May 3, 2018 at 9:08 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
->>> Seccomp received improved logging controls in v4.14. Applications can opt into
->>> logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
->>> SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
->>> They can also debug filter matching with the new SECCOMP_RET_LOG action.
->>> Administrators can prevent specific actions from being logged using the
->>> kernel.seccomp.actions_logged sysctl.
->>>
->>> However, one corner case intentionally wasn't addressed in those v4.14 changes.
->>> When a process is being inspected by the audit subsystem, seccomp's decision
->>> making for logging ignores the new controls and unconditionally logs every
->>> action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
->>> many existing applications don't intend to log handled actions due to them
->>> occurring very frequently. This amount of logging fills the audit logs without
->>> providing many benefits now that application authors have fine grained controls
->>> at their disposal.
->>>
->>> This patch set aligns the seccomp logging behavior for both audited and
->>> non-audited processes. It also emits an audit record, if auditing is enabled,
->>> when the kernel.seccomp.actions_logged sysctl is written to so that there's a
->>> paper trail when entire actions are quieted.
->>>
->>> Changes in v3:
->>> * Patch 3
->>>   - Never drop a field when emitting the audit record
->>>   - Use the value "?" for the actions field when an error occurred while
->>>     writing to the sysctl
->>>   - Use the value "?" for the actions and/or old-actions fields when a failure
->>>     to translate actions to names
->>>   - Use the value "(none)" for the actions and/or old-actions fields when no
->>>     actions are specified
->>>     + This is possible when writing an empty string to the sysctl
->>>   - Update the commit message to note the new values and give an example of
->>>     when an empty string is written
->>> * Patch 4
->>>   - Adjust the control flow of seccomp_log() to exit early if nothing should be
->>>     logged
->>>
->>> Changes in v2:
->>> * Patch 2
->>>   - New patch, allowing for a configurable separator between action names
->>> * Patch 3
->>>   - The value of the actions field in the audit record now uses a comma instead
->>>     of a space
->>>   - The value of the actions field in the audit record is no longer enclosed in
->>>     quotes
->>>   - audit_log_start() is called with the current processes' audit_context in
->>>     audit_seccomp_actions_logged()
->>>   - audit_seccomp_actions_logged() no longer records the pid, uid, auid, tty,
->>>     ses, task context, comm, or executable path
->>>   - The new and old value of seccomp_actions_logged is recorded in the
->>>     AUDIT_CONFIG_CHANGE record
->>>   - The value of the "res" field in the CONFIG_CHANGE audit record is corrected
->>>     (1 indicates success, 0 failure)
->>>   - Updated patch 3's commit message to reflect the updated audit record format
->>>     in the examples
->>> * Patch 4
->>>   - A function comment for audit_seccomp() was added to explain, among other
->>>     things, that event filtering is performed in seccomp_log()
->>
->> Kees, are you still okay with v3?  Also, are you okay with these
->> patches going in via the audit tree, or would you prefer to take them
->> via seccomp?  I've got a slight preference for the audit tree myself,
->> but as I said before, as long as it hits Linus' tree I'm happy.
->
-> Yup, it looks good. I have no tree preference, so you win! :) Please
-> consider the whole series:
->
-> Acked-by: Kees Cook <keescook@chromium.org>
+Hello John Johansen,
 
-Merged into audit/next, thanks guys.
+The patch c092921219d2: "apparmor: add support for mapping secids and
+using secctxes" from Jul 31, 2017, leads to the following static
+checker warning:
 
--- 
-paul moore
-www.paul-moore.com
+	security/apparmor/secid.c:162 apparmor_secid_to_secctx()
+	warn: unsigned '*seclen' is never less than zero.
+
+security/apparmor/secid.c
+   141  int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+   142  {
+   143          /* TODO: cache secctx and ref count so we don't have to recreate */
+   144          struct aa_label *label = aa_secid_to_label(secid);
+   145  
+   146          AA_BUG(!secdata);
+   147          AA_BUG(!seclen);
+   148  
+   149          if (!label)
+   150                  return -EINVAL;
+   151  
+   152          if (secdata)
+   153                  *seclen = aa_label_asxprint(secdata, root_ns, label,
+                                  ^^^^^^^^^^^^^^^^^
+This can return -ENOMEM on error.
+
+   154                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+   155                                              FLAG_HIDDEN_UNCONFINED |
+   156                                              FLAG_ABS_ROOT, GFP_ATOMIC);
+   157          else
+   158                  *seclen = aa_label_snxprint(NULL, 0, root_ns, label,
+   159                                              FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+   160                                              FLAG_HIDDEN_UNCONFINED |
+   161                                              FLAG_ABS_ROOT);
+   162          if (*seclen < 0)
+                    ^^^^^^^^^^^
+It's strange that this warning is only showing up now...
+
+   163                  return -ENOMEM;
+   164  
+   165          return 0;
+   166  }
+
+regards,
+dan carpenter
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
