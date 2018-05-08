@@ -1,127 +1,98 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Tue, 8 May 2018 14:40:45 -0400
-Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
-	selinux_socket_bind()
-In-Reply-To: <CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
-References: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
-	<CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
-Message-ID: <1eb10913-8802-e2dd-68f0-9483435cd949@tycho.nsa.gov>
+From: keescook@chromium.org (Kees Cook)
+Date: Tue, 8 May 2018 16:14:25 -0700
+Subject: [PATCH v3 1/3] big key: get rid of stack array allocation
+In-Reply-To: <20180424202639.19830-1-tycho@tycho.ws>
+References: <20180424202639.19830-1-tycho@tycho.ws>
+Message-ID: <CAGXu5jLL7NeX+zUNqcYW_LDF87CPg-5Z4R5+FZ5uPDT-sTisng@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/08/2018 01:05 PM, Paul Moore wrote:
-> On Tue, May 8, 2018 at 10:05 AM, Alexey Kodanev
-> <alexey.kodanev@oracle.com> wrote:
->> Commit d452930fd3b9 ("selinux: Add SCTP support") breaks compatibility
->> with the old programs that can pass sockaddr_in with AF_UNSPEC and
->> INADDR_ANY to bind(). As a result, bind() returns EAFNOSUPPORT error.
->> It was found with LTP/asapi_01 test.
->>
->> Similar to commit 29c486df6a20 ("net: ipv4: relax AF_INET check in
->> bind()"), which relaxed AF_INET check for compatibility, add AF_UNSPEC
->> case to AF_INET and make sure that the address is INADDR_ANY.
->>
->> Also, in the end of selinux_socket_bind(), instead of adding AF_UNSPEC
->> to 'address->sa_family == AF_INET', verify AF_INET6 first.
->>
->> Fixes: d452930fd3b9 ("selinux: Add SCTP support")
->> Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
->> ---
->>  security/selinux/hooks.c | 12 +++++++++---
->>  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> Thanks for finding and reporting this regression.
-> 
-> I think I would prefer to avoid having to duplicate the
-> AF_UNSPEC/INADDR_ANY checking logic in the SELinux hook, even though
-> it is a small bit of code and unlikely to change.  I'm wondering if it
-> would be better to check both the socket and sockaddr address family
-> in the main if conditional inside selinux_socket_bind(), what do you
-> think?  Another option would be to go back to just checking the
-> soackaddr address family; we moved away from that for a reason which
-> escapes at the moment (code cleanliness?), but perhaps that was a
-> mistake.
+On Tue, Apr 24, 2018 at 1:26 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> We're interested in getting rid of all of the stack allocated arrays in the
+> kernel [1]. This patch simply hardcodes the iv length to match that of the
+> hardcoded cipher.
+>
+> [1]: https://lkml.org/lkml/2018/3/7/621
+>
+> v2: hardcode the length of the nonce to be the GCM AES IV length, and do a
+>     sanity check in init(), Eric Biggers
+> v3: * remember to free big_key_aead when sanity check fails
+>     * define a constant for big key IV size so it can be changed along side
+>       the algorithm in the code
+>
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: David Howells <dhowells@redhat.com>
+> CC: James Morris <jmorris@namei.org>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Jason A. Donenfeld <Jason@zx2c4.com>
+> CC: Eric Biggers <ebiggers3@gmail.com>
 
-We've always used the sk->sk_family there; it was only the recent code from Richard that started
-using the socket address family.
+Please consider this and patches 2 and 3:
 
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 4cafe6a19167..a3789b167667 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4577,6 +4577,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
-> {
->        struct sock *sk = sock->sk;
->        u16 family;
-> +       u16 family_sa;
->        int err;
-> 
->        err = sock_has_perm(sk, SOCKET__BIND);
-> @@ -4585,7 +4586,9 @@ static int selinux_socket_bind(struct socket *sock, struc>
-> 
->        /* If PF_INET or PF_INET6, check name_bind permission for the port. */
->        family = sk->sk_family;
-> -       if (family == PF_INET || family == PF_INET6) {
-> +       family_sa = address->sa_family;
-> +       if ((family == PF_INET || family == PF_INET6) &&
-> +           (family_sa == PF_INET || family_sa == PF_INET6)) {
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Wouldn't this allow bypassing the name_bind permission check by passing in AF_UNSPEC?
+James, are these something you can take into your tree?
 
->                char *addrp;
->                struct sk_security_struct *sksec = sk->sk_security;
->                struct common_audit_data ad;
-> @@ -4601,7 +4604,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
->                 * need to check address->sa_family as it is possible to have
->                 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
->                 */
-> -               switch (address->sa_family) {
-> +               switch (family_sa) {
->                case AF_INET:
->                        if (addrlen < sizeof(struct sockaddr_in))
->                                return -EINVAL;
-> 
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 4cafe6a..649a3be 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -4602,10 +4602,16 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->>                  * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
->>                  */
->>                 switch (address->sa_family) {
->> +               case AF_UNSPEC:
->>                 case AF_INET:
->>                         if (addrlen < sizeof(struct sockaddr_in))
->>                                 return -EINVAL;
->>                         addr4 = (struct sockaddr_in *)address;
->> +
->> +                       if (address->sa_family == AF_UNSPEC &&
->> +                           addr4->sin_addr.s_addr != htonl(INADDR_ANY))
->> +                               return -EAFNOSUPPORT;
->> +
->>                         snum = ntohs(addr4->sin_port);
->>                         addrp = (char *)&addr4->sin_addr.s_addr;
->>                         break;
->> @@ -4681,10 +4687,10 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->>                 ad.u.net->sport = htons(snum);
->>                 ad.u.net->family = family;
->>
->> -               if (address->sa_family == AF_INET)
->> -                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
->> -               else
->> +               if (address->sa_family == AF_INET6)
->>                         ad.u.net->v6info.saddr = addr6->sin6_addr;
->> +               else
->> +                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
->>
->>                 err = avc_has_perm(&selinux_state,
->>                                    sksec->sid, sid,
->> --
->> 1.8.3.1
->>
-> 
+Thanks!
 
+-Kees
+
+> ---
+>  security/keys/big_key.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+> index 933623784ccd..2806e70d7f8f 100644
+> --- a/security/keys/big_key.c
+> +++ b/security/keys/big_key.c
+> @@ -22,6 +22,7 @@
+>  #include <keys/user-type.h>
+>  #include <keys/big_key-type.h>
+>  #include <crypto/aead.h>
+> +#include <crypto/gcm.h>
+>
+>  struct big_key_buf {
+>         unsigned int            nr_pages;
+> @@ -85,6 +86,7 @@ struct key_type key_type_big_key = {
+>   * Crypto names for big_key data authenticated encryption
+>   */
+>  static const char big_key_alg_name[] = "gcm(aes)";
+> +#define BIG_KEY_IV_SIZE                GCM_AES_IV_SIZE
+>
+>  /*
+>   * Crypto algorithms for big_key data authenticated encryption
+> @@ -109,7 +111,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+>          * an .update function, so there's no chance we'll wind up reusing the
+>          * key to encrypt updated data. Simply put: one key, one encryption.
+>          */
+> -       u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
+> +       u8 zero_nonce[BIG_KEY_IV_SIZE];
+>
+>         aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
+>         if (!aead_req)
+> @@ -425,6 +427,13 @@ static int __init big_key_init(void)
+>                 pr_err("Can't alloc crypto: %d\n", ret);
+>                 return ret;
+>         }
+> +
+> +       if (unlikely(crypto_aead_ivsize(big_key_aead) != BIG_KEY_IV_SIZE)) {
+> +               WARN(1, "big key algorithm changed?");
+> +               ret = -EINVAL;
+> +               goto free_aead;
+> +       }
+> +
+>         ret = crypto_aead_setauthsize(big_key_aead, ENC_AUTHTAG_SIZE);
+>         if (ret < 0) {
+>                 pr_err("Can't set crypto auth tag len: %d\n", ret);
+> --
+> 2.17.0
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
