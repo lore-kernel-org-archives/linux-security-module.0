@@ -1,76 +1,146 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 9 May 2018 11:53:57 -0400
-Subject: [PATCH ghak81 RFC V1 0/5] audit: group task params
-In-Reply-To: <cover.1525466167.git.rgb@redhat.com>
-References: <cover.1525466167.git.rgb@redhat.com>
-Message-ID: <CAHC9VhRY-hhBb+Kg19Cfy87MSHseUO40j9PC8wsdmHQmcV0zDQ@mail.gmail.com>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Wed, 9 May 2018 19:15:08 +0000
+Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db
+	and other firmware
+In-Reply-To: <1525865428.3551.175.camel@linux.vnet.ibm.com>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<20180504000743.GR27853@wotan.suse.de>
+	<1525393466.3539.133.camel@linux.vnet.ibm.com>
+	<20180508173404.GG27853@wotan.suse.de>
+	<1525865428.3551.175.camel@linux.vnet.ibm.com>
+Message-ID: <20180509191508.GR27853@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Group the audit parameters for each task into one structure.
-> In particular, remove the loginuid and sessionid values and the audit
-> context pointer from the task structure, replacing them with an audit
-> task information structure to contain them.  Use access functions to
-> access audit values.
->
-> Note:  Use static allocation of the audit task information structure
-> initially.  Dynamic allocation was considered and attempted, but isn't
-> ready yet.  Static allocation has the limitation that future audit task
-> information structure changes would cause a visible change to the rest
-> of the kernel, whereas dynamic allocation would mostly hide any future
-> changes.
->
-> The first four access normalization patches could stand alone.
+On Wed, May 09, 2018 at 07:30:28AM -0400, Mimi Zohar wrote:
+> On Tue, 2018-05-08 at 17:34 +0000, Luis R. Rodriguez wrote:
+> > On Thu, May 03, 2018 at 08:24:26PM -0400, Mimi Zohar wrote:
+> > > On Fri, 2018-05-04 at 00:07 +0000, Luis R. Rodriguez wrote:
+> > > > On Tue, May 01, 2018 at 09:48:20AM -0400, Mimi Zohar wrote:
+> > > > > Allow LSMs and IMA to differentiate between signed regulatory.db and
+> > > > > other firmware.
+> > > > > 
+> > > > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > > > > Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> > > > > Cc: David Howells <dhowells@redhat.com>
+> > > > > Cc: Kees Cook <keescook@chromium.org>
+> > > > > Cc: Seth Forshee <seth.forshee@canonical.com>
+> > > > > Cc: Johannes Berg <johannes.berg@intel.com>
+> > > > > ---
+> > > > >  drivers/base/firmware_loader/main.c | 5 +++++
+> > > > >  include/linux/fs.h                  | 1 +
+> > > > >  2 files changed, 6 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> > > > > index eb34089e4299..d7cdf04a8681 100644
+> > > > > --- a/drivers/base/firmware_loader/main.c
+> > > > > +++ b/drivers/base/firmware_loader/main.c
+> > > > > @@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
+> > > > >  			break;
+> > > > >  		}
+> > > > >  
+> > > > > +#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+> > > > > +		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
+> > > > > +		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
+> > > > > +			id = READING_FIRMWARE_REGULATORY_DB;
+> > > > > +#endif
+> > > > 
+> > > > Whoa, no way.
+> > > 
+> > > There are two methods for the kernel to verify firmware signatures.
+> > 
+> > Yes, but although CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is its own kernel
+> > mechanism to verify firmware it uses the request_firmware*() API for
+> > regulatory.db and regulatory.db.p7s, and IMA already can appraise these two
+> > files since the firmware API is used.
+> 
+> IMA-appraisal can verify a signature stored as an xattr, but not a
+> detached signature. ?That support could be added, but isn't there
+> today. ?Today, a regulatory.db signature would have to be stored as an
+> xattr.?
 
-I agree that the first four patches have some standalone value, and
-since we are currently at -rc4, did you want to post another patchset
-of just those four patches with feedback incorporated?  I imagine that
-should be quick work, and that way they aren't help up with any
-problems/discussion regarding the take_struct changes.
+Right, my point was that if someone has IMA installed:
 
-> Passes audit-testsuite.
->
-> Richard Guy Briggs (5):
->   audit: normalize loginuid read access
->   audit: convert sessionid unset to a macro
->   audit: use inline function to get audit context
->   audit: use inline function to set audit context
->   audit: collect audit task parameters
->
->  MAINTAINERS                          |  2 +-
->  include/linux/audit.h                | 30 ++++++++++---
->  include/linux/audit_task.h           | 31 ++++++++++++++
->  include/linux/sched.h                |  6 +--
->  include/net/xfrm.h                   |  4 +-
->  include/uapi/linux/audit.h           |  1 +
->  init/init_task.c                     |  8 +++-
->  kernel/audit.c                       |  4 +-
->  kernel/audit_watch.c                 |  2 +-
->  kernel/auditsc.c                     | 82 ++++++++++++++++++------------------
->  kernel/fork.c                        |  2 +-
->  net/bridge/netfilter/ebtables.c      |  2 +-
->  net/core/dev.c                       |  2 +-
->  net/netfilter/x_tables.c             |  2 +-
->  net/netlabel/netlabel_user.c         |  2 +-
->  security/integrity/ima/ima_api.c     |  2 +-
->  security/integrity/integrity_audit.c |  2 +-
->  security/lsm_audit.c                 |  2 +-
->  security/selinux/hooks.c             |  4 +-
->  security/selinux/selinuxfs.c         |  6 +--
->  security/selinux/ss/services.c       | 12 +++---
->  21 files changed, 129 insertions(+), 79 deletions(-)
->  create mode 100644 include/linux/audit_task.h
->
-> --
-> 1.8.3.1
->
+	a) they would add those xattr to files in /lib/firmware/ already
+	b) upon request_firmware*() calls a security hook would trigger
+	   which would enable IMA to appraise those files. So not only
+	   would the kernel in turn do double checks on regulatory.db,
+	   but also a check on regulatory.db.p7s as well.
 
+The difference I suppose is IMA would use a hash function instead of signature
+check, correct?
 
+> > As such I see no reason to add a new ID for them at all.
+> > K
+> > Its not providing an *alternative*, its providing an *extra* kernel measure.
+> > If anything CONFIG_CFG80211_REQUIRE_SIGNED_REGDB perhaps should be its own
+> > stacked LSM. I'd be open to see patches which set that out. May be a
+> > cleaner interface.
+> > 
+> > >?If both are enabled, do we require both signatures or is one enough.
+> > 
+> > Good question. Considering it as a stacked LSM (although not implemented
+> > as one), I'd say its up to who enabled the Kconfig entries. If IMA and
+> > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are enabled then both. If someone enabled
+> > IMA though, then surely I agree that enabling
+> > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is stupid and redundant, but its up to the
+> > system integrator to decide.
+> 
+> Just because IMA-appraisal is enabled in the kernel doesn't mean that
+> firmware signatures will be verified. ?That is a run time policy
+> decision.
 
--- 
-paul moore
-www.paul-moore.com
+Sure, I accept this if IMA does not do signature verification. However
+signature verification seems like a stackable LSM decision, no?
+
+> > If we however want to make it clear that such things as
+> > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are not required when IMA is enabled we
+> > could just make the kconfig depend on !IMA or something?  Or perhaps a new
+> > kconfig for IMA which if selected it means that drivers can opt to open code
+> > *further* kernel signature verification, even though IMA already is sufficient.
+> > Perhaps CONFIG_ENABLE_IMA_OVERLAPPING, and the driver depends on it?
+> 
+> The existing CONFIG_IMA_APPRAISE is not enough. ?If there was a build
+> time IMA config that translated into an IMA policy requiring firmware
+> signature verification (eg. CONFIG_IMA_APPRAISE_FIRMWARE), this could
+> be sorted out at build time.
+
+I see makes sense.
+
+> > > Assigning a different id for regdb signed firmware allows LSMs and IMA
+> > > to handle regdb files differently.
+> > 
+> > That's not the main concern here, its the precedent we are setting here for
+> > any new kernel interface which open codes firmware signing on its own. What
+> > you are doing means other kernel users who open codes their own firmware
+> > signing may need to add yet-another reading ID. That doesn't either look
+> > well on code, and seems kind of silly from a coding perspective given
+> > the above, in which I clarify IMA still is doing its own appraisal on it.
+> 
+> Suppose,
+> 
+> 1. Either CONFIG_CFG80211_REQUIRE_SIGNED_REGDB or
+> "CONFIG_IMA_APPRAISE_FIRMWARE" would be configured at build.
+> 
+> 2. If CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is configured, not
+> "CONFIG_IMA_APPRAISE_FIRMWARE", a custom IMA-policy rule that
+> appraises the firmware signature could be defined. ?In this case, both
+> signature verification methods would be enforced.
+> 
+> then READING_FIRMWARE_REGULATORY_DB would not be needed.
+
+True, however I'm suggesting that CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+could just be a mini subsystem stackable LSM.
+
+Its not clear to me why we need to add a new READING id to any open coded
+firmware signature checks if we don't have this futuristic option
+CONFIG_IMA_APPRAISE_FIRMWARE.
+
+Yes it provides *more*, but IMA is still seeing the exact file descriptor
+and do its own thing.
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
