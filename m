@@ -1,26 +1,25 @@
 From: jmorris@namei.org (James Morris)
-Date: Thu, 10 May 2018 05:21:37 +1000 (AEST)
-Subject: [PATCH v3 1/3] big key: get rid of stack array allocation
-In-Reply-To: <alpine.LRH.2.21.1805100519200.12749@namei.org>
-References: <20180424202639.19830-1-tycho@tycho.ws>
-	<CAGXu5jLL7NeX+zUNqcYW_LDF87CPg-5Z4R5+FZ5uPDT-sTisng@mail.gmail.com>
-	<alpine.LRH.2.21.1805100519200.12749@namei.org>
-Message-ID: <alpine.LRH.2.21.1805100520100.12749@namei.org>
+Date: Thu, 10 May 2018 05:22:44 +1000 (AEST)
+Subject: [PATCH v2 11/11] docs: fix broken references with multiple hints
+In-Reply-To: <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+	<63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+Message-ID: <alpine.LRH.2.21.1805100522240.12749@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 10 May 2018, James Morris wrote:
+On Wed, 9 May 2018, Mauro Carvalho Chehab wrote:
 
-> > 
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > 
-> > James, are these something you can take into your tree?
+> The script:
+> 	./scripts/documentation-file-ref-check --fix-rst
 > 
-> Sure!
+> Gives multiple hints for broken references on some files.
+> Manually use the one that applies for some files.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Although, normally, these would likely come in to mine via David's tree.  
 
-Please do that unless there's a special case here.
+Acked-by: James Morris <james.morris@microsoft.com>
 
 
 -- 
