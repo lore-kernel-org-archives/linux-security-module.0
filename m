@@ -1,87 +1,173 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 9 May 2018 11:28:58 -0400
-Subject: [PATCH ghak81 RFC V1 3/5] audit: use inline function to get audit
-	context
-In-Reply-To: <0e43c5135c197209b3189032d538244571e7443d.1525466167.git.rgb@redhat.com>
-References: <cover.1525466167.git.rgb@redhat.com>
-	<0e43c5135c197209b3189032d538244571e7443d.1525466167.git.rgb@redhat.com>
-Message-ID: <CAHC9VhSbMaJ72jJnEivDd-M2UXDomexva8B-xsWXapTyeF0JVQ@mail.gmail.com>
+Date: Wed, 9 May 2018 11:34:11 -0400
+Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
+	selinux_socket_bind()
+In-Reply-To: <d637da77-2789-e08b-c78b-b48821cbf0fe@tycho.nsa.gov>
+References: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
+	<CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
+	<1eb10913-8802-e2dd-68f0-9483435cd949@tycho.nsa.gov>
+	<CAHC9VhT1+-ch1Ncv5YCNgu7tPnUj1Qx8S=a=q=Fn=Dwx4SnTKg@mail.gmail.com>
+	<7fdbaf13-fea2-4a2c-213d-fa291db67081@tycho.nsa.gov>
+	<CAHC9VhTNS-sEL2Az4hs1nmz7naqoyhiohzhPTrqp_M=_Ys1N6A@mail.gmail.com>
+	<d637da77-2789-e08b-c78b-b48821cbf0fe@tycho.nsa.gov>
+Message-ID: <CAHC9VhSg9UAmXaK0xsy_h9HfzM4uUBqCNKN5qtf3hHLSi=ZENw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Recognizing that the audit context is an internal audit value, use an
-> access function to retrieve the audit context pointer for the task
-> rather than reaching directly into the task struct to get it.
+On Wed, May 9, 2018 at 11:11 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 05/09/2018 11:01 AM, Paul Moore wrote:
+>> On Wed, May 9, 2018 at 8:37 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>>> On 05/08/2018 08:25 PM, Paul Moore wrote:
+>>>> On Tue, May 8, 2018 at 2:40 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>>>>> On 05/08/2018 01:05 PM, Paul Moore wrote:
+>>>>>> On Tue, May 8, 2018 at 10:05 AM, Alexey Kodanev
+>>>>>> <alexey.kodanev@oracle.com> wrote:
+>>>>>>> Commit d452930fd3b9 ("selinux: Add SCTP support") breaks compatibility
+>>>>>>> with the old programs that can pass sockaddr_in with AF_UNSPEC and
+>>>>>>> INADDR_ANY to bind(). As a result, bind() returns EAFNOSUPPORT error.
+>>>>>>> It was found with LTP/asapi_01 test.
+>>>>>>>
+>>>>>>> Similar to commit 29c486df6a20 ("net: ipv4: relax AF_INET check in
+>>>>>>> bind()"), which relaxed AF_INET check for compatibility, add AF_UNSPEC
+>>>>>>> case to AF_INET and make sure that the address is INADDR_ANY.
+>>>>>>>
+>>>>>>> Also, in the end of selinux_socket_bind(), instead of adding AF_UNSPEC
+>>>>>>> to 'address->sa_family == AF_INET', verify AF_INET6 first.
+>>>>>>>
+>>>>>>> Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+>>>>>>> Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+>>>>>>> ---
+>>>>>>>  security/selinux/hooks.c | 12 +++++++++---
+>>>>>>>  1 file changed, 9 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> Thanks for finding and reporting this regression.
+>>>>>>
+>>>>>> I think I would prefer to avoid having to duplicate the
+>>>>>> AF_UNSPEC/INADDR_ANY checking logic in the SELinux hook, even though
+>>>>>> it is a small bit of code and unlikely to change.  I'm wondering if it
+>>>>>> would be better to check both the socket and sockaddr address family
+>>>>>> in the main if conditional inside selinux_socket_bind(), what do you
+>>>>>> think?  Another option would be to go back to just checking the
+>>>>>> soackaddr address family; we moved away from that for a reason which
+>>>>>> escapes at the moment (code cleanliness?), but perhaps that was a
+>>>>>> mistake.
+>>>>>
+>>>>> We've always used the sk->sk_family there; it was only the recent code from Richard that started
+>>>>> using the socket address family.
+>>>>
+>>>> Yes I know, I thought I was the one that suggested it at some point
+>>>> (I'll take the blame) ... although now that I'm looking at the git
+>>>> log, maybe I'm confusing it with something else.
+>>>>
+>>>>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>>>>>> index 4cafe6a19167..a3789b167667 100644
+>>>>>> --- a/security/selinux/hooks.c
+>>>>>> +++ b/security/selinux/hooks.c
+>>>>>> @@ -4577,6 +4577,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
+>>>>>> {
+>>>>>>        struct sock *sk = sock->sk;
+>>>>>>        u16 family;
+>>>>>> +       u16 family_sa;
+>>>>>>        int err;
+>>>>>>
+>>>>>>        err = sock_has_perm(sk, SOCKET__BIND);
+>>>>>> @@ -4585,7 +4586,9 @@ static int selinux_socket_bind(struct socket *sock, struc>
+>>>>>>
+>>>>>>        /* If PF_INET or PF_INET6, check name_bind permission for the port. */
+>>>>>>        family = sk->sk_family;
+>>>>>> -       if (family == PF_INET || family == PF_INET6) {
+>>>>>> +       family_sa = address->sa_family;
+>>>>>> +       if ((family == PF_INET || family == PF_INET6) &&
+>>>>>> +           (family_sa == PF_INET || family_sa == PF_INET6)) {
+>>>>>
+>>>>> Wouldn't this allow bypassing the name_bind permission check by passing in AF_UNSPEC?
+>>>>
+>>>> I believe these name_bind permission checkis skipped for AF_UNSPEC
+>>>> already, isn't it?  The only way the name_bind check would be
+>>>> triggered is if the source port, snum, was non-zero and I didn't think
+>>>> that was really legal for AF_UNSPEC/INADDR_ANY, is it?
+>>>
+>>> 1) What in inet_bind() prevents that from occurring?
+>>> 2) Regardless, what about the node_bind check?
+>>
+>> Fair enough.  As mentioned above, perhaps the right fix is to move the
+>> address family checking back to how it was pre-SCTP.
 >
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h                | 16 ++++++++---
->  include/net/xfrm.h                   |  2 +-
->  kernel/audit.c                       |  4 +--
->  kernel/audit_watch.c                 |  2 +-
->  kernel/auditsc.c                     | 52 ++++++++++++++++++------------------
->  net/bridge/netfilter/ebtables.c      |  2 +-
->  net/core/dev.c                       |  2 +-
->  net/netfilter/x_tables.c             |  2 +-
->  net/netlabel/netlabel_user.c         |  2 +-
->  security/integrity/ima/ima_api.c     |  2 +-
->  security/integrity/integrity_audit.c |  2 +-
->  security/lsm_audit.c                 |  2 +-
->  security/selinux/hooks.c             |  4 +--
->  security/selinux/selinuxfs.c         |  6 ++---
->  security/selinux/ss/services.c       | 12 ++++-----
->  15 files changed, 60 insertions(+), 52 deletions(-)
->
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 5f86f7c..93e4c61 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -235,26 +235,30 @@ extern void __audit_inode_child(struct inode *parent,
->  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
->  extern void __audit_ptrace(struct task_struct *t);
->
-> +static inline struct audit_context *audit_context(struct task_struct *task)
-> +{
-> +       return task->audit_context;
-> +}
+> It isn't clear to me how to do that without breaking SCTP multiple address binding, which is why
+> Richard had to switch to checking address->sa_family instead of just using the sk->sk_family.
+> Alexey's original fix might be the simplest solution.
 
-Another case where I think I agree with everything here on principle,
-especially when one considers it in the larger context of the audit
-container ID work.  However, I think we might be able to somply this a
-bit by eliminating the parameter to the new audit_context() helper and
-making it always reference the current task_struct.  Based on this
-patch it would appear that this change would work for all callers
-except for audit_take_context() and __audit_syscall_entry(), both of
-which are contained within the core audit code and are enough of a
-special case that I think it is acceptable for them to access the
-context directly.  I'm trying to think of reasons why a non-audit
-kernel subsystem would ever need to access the audit context of a
-process other than current and I can't think of any ... removing the
-task_struct pointer might help prevent mistakes/abuse in the future.
+I'm going to have to apologize, I'm traveling at the moment and more
+distracted than usual as a result.  Let me take a closer look later
+today.  It may be that Alexey's original fix the only practical
+solution, but I really would like to avoid having to duplicate checks
+like that in the SELinux code.
 
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 6e3ceb9..a4bbdcc 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -836,7 +836,7 @@ static inline struct audit_context *audit_take_context(struct task_struct *tsk,
->                                                       int return_valid,
->                                                       long return_code)
->  {
-> -       struct audit_context *context = tsk->audit_context;
-> +       struct audit_context *context = audit_context(tsk);
+>> Alexey, is this something you want to do, or should we take care of that?
+>>
+>>>>>>                char *addrp;
+>>>>>>                struct sk_security_struct *sksec = sk->sk_security;
+>>>>>>                struct common_audit_data ad;
+>>>>>> @@ -4601,7 +4604,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
+>>>>>>                 * need to check address->sa_family as it is possible to have
+>>>>>>                 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+>>>>>>                 */
+>>>>>> -               switch (address->sa_family) {
+>>>>>> +               switch (family_sa) {
+>>>>>>                case AF_INET:
+>>>>>>                        if (addrlen < sizeof(struct sockaddr_in))
+>>>>>>                                return -EINVAL;
+>>>>>>
+>>>>>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>>>>>>> index 4cafe6a..649a3be 100644
+>>>>>>> --- a/security/selinux/hooks.c
+>>>>>>> +++ b/security/selinux/hooks.c
+>>>>>>> @@ -4602,10 +4602,16 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+>>>>>>>                  * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+>>>>>>>                  */
+>>>>>>>                 switch (address->sa_family) {
+>>>>>>> +               case AF_UNSPEC:
+>>>>>>>                 case AF_INET:
+>>>>>>>                         if (addrlen < sizeof(struct sockaddr_in))
+>>>>>>>                                 return -EINVAL;
+>>>>>>>                         addr4 = (struct sockaddr_in *)address;
+>>>>>>> +
+>>>>>>> +                       if (address->sa_family == AF_UNSPEC &&
+>>>>>>> +                           addr4->sin_addr.s_addr != htonl(INADDR_ANY))
+>>>>>>> +                               return -EAFNOSUPPORT;
+>>>>>>> +
+>>>>>>>                         snum = ntohs(addr4->sin_port);
+>>>>>>>                         addrp = (char *)&addr4->sin_addr.s_addr;
+>>>>>>>                         break;
+>>>>>>> @@ -4681,10 +4687,10 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+>>>>>>>                 ad.u.net->sport = htons(snum);
+>>>>>>>                 ad.u.net->family = family;
+>>>>>>>
+>>>>>>> -               if (address->sa_family == AF_INET)
+>>>>>>> -                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
+>>>>>>> -               else
+>>>>>>> +               if (address->sa_family == AF_INET6)
+>>>>>>>                         ad.u.net->v6info.saddr = addr6->sin6_addr;
+>>>>>>> +               else
+>>>>>>> +                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
+>>>>>>>
+>>>>>>>                 err = avc_has_perm(&selinux_state,
+>>>>>>>                                    sksec->sid, sid,
+>>>>>>> --
+>>>>>>> 1.8.3.1
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>>
+>>>>
+>>>
+>>
+>>
+>>
 >
->         if (!context)
->                 return NULL;
-> @@ -1510,7 +1510,7 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
->                            unsigned long a3, unsigned long a4)
->  {
->         struct task_struct *tsk = current;
-> -       struct audit_context *context = tsk->audit_context;
-> +       struct audit_context *context = audit_context(tsk);
->         enum audit_state     state;
->
->         if (!audit_enabled || !context)
+
+
 
 -- 
 paul moore
