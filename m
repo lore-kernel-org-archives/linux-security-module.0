@@ -1,120 +1,35 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Wed, 9 May 2018 21:22:12 +0000
-Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db
-	and other firmware
-In-Reply-To: <1525895838.3551.247.camel@linux.vnet.ibm.com>
-References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<20180504000743.GR27853@wotan.suse.de>
-	<1525393466.3539.133.camel@linux.vnet.ibm.com>
-	<20180508173404.GG27853@wotan.suse.de>
-	<1525865428.3551.175.camel@linux.vnet.ibm.com>
-	<20180509191508.GR27853@wotan.suse.de>
-	<1525895838.3551.247.camel@linux.vnet.ibm.com>
-Message-ID: <20180509212212.GX27853@wotan.suse.de>
+From: tomas.winkler@intel.com (Winkler, Tomas)
+Date: Wed, 9 May 2018 21:49:49 +0000
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+In-Reply-To: <20180509122621.GB8271@linux.intel.com>
+References: <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+	<20180424160328.GA5119@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+	<20180502133246.GA6091@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+	<20180503063508.GA8702@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
+	<20180504081634.GB6373@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
+	<20180509122621.GB8271@linux.intel.com>
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D895BA3@hasmsx109.ger.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 09, 2018 at 03:57:18PM -0400, Mimi Zohar wrote:
-> On Wed, 2018-05-09 at 19:15 +0000, Luis R. Rodriguez wrote:
 > 
-> > > > >?If both are enabled, do we require both signatures or is one enough.
-> > > > 
-> > > > Good question. Considering it as a stacked LSM (although not implemented
-> > > > as one), I'd say its up to who enabled the Kconfig entries. If IMA and
-> > > > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are enabled then both. If someone enabled
-> > > > IMA though, then surely I agree that enabling
-> > > > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is stupid and redundant, but its up to the
-> > > > system integrator to decide.
-> > > 
-> > > Just because IMA-appraisal is enabled in the kernel doesn't mean that
-> > > firmware signatures will be verified. ?That is a run time policy
-> > > decision.
-> > 
-> > Sure, I accept this if IMA does not do signature verification. However
-> > signature verification seems like a stackable LSM decision, no?
+> On Sat, May 05, 2018 at 09:07:21PM +0000, Winkler, Tomas wrote:
+> > There is already one 'out' label in that function, what would you prefer for
+> this new label name?
+> > Thanks
+> > Tomas
 > 
-> IMA-appraisal can be configured to enforce file signatures. ?Refer to
-> discussion below as to how.
+> Aah, of course. My bad that I did not notice it but please just point me if I
+> miss something obvious like that :-) I'll apply the patch today..
 > 
-> > > > If we however want to make it clear that such things as
-> > > > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are not required when IMA is enabled we
-> > > > could just make the kconfig depend on !IMA or something?  Or perhaps a new
-> > > > kconfig for IMA which if selected it means that drivers can opt to open code
-> > > > *further* kernel signature verification, even though IMA already is sufficient.
-> > > > Perhaps CONFIG_ENABLE_IMA_OVERLAPPING, and the driver depends on it?
-> > > 
-> > > The existing CONFIG_IMA_APPRAISE is not enough. ?If there was a build
-> > > time IMA config that translated into an IMA policy requiring firmware
-> > > signature verification (eg. CONFIG_IMA_APPRAISE_FIRMWARE), this could
-> > > be sorted out at build time.
-> > 
-> > I see makes sense.
-> 
-> Ok, so instead of introducing READING_FIRMWARE_REGULATORY_DB, I'll
-> post patches introducing CONFIG_IMA_APPRAISE_FIRMWARE, as described
-> above.
+Thanks
+Tomas
 
-OK, its still not clear to what it will do. If it does not touch the firmware
-loader code, and it just sets and configures IMA to do file signature checking
-on its own, then yes I think both mechanisms would be doing the similar work.
-
-Wouldn't IMA do file signature checks then for all files? Or it would just
-enable this for whatever files userspace wishes to cover?
-
-One of the things with READING_FIRMWARE_REGULATORY_DB is to also use and trust
-the wireless-regdgb maintainer's key for this file, could IMA be configured to
-do that?
-
-Because that would be one difference here. The whole point of adding
-CONFIG_CFG80211_REQUIRE_SIGNED_REGDB was to replace CRDA which is a userspace
-component which checks the signature of regulatory.db before reading it and
-passing data to the kernel from it.
-
-Now, however silly it may be to have CONFIG_IMA_APPRAISE_FIRMWARE *and*
-CONFIG_CFG80211_REQUIRE_SIGNED_REGDB, is your intent in this new patch set
-you are mentioning, to still enable both to co-exist?
-
-> > > > > Assigning a different id for regdb signed firmware allows LSMs and IMA
-> > > > > to handle regdb files differently.
-> > > > 
-> > > > That's not the main concern here, its the precedent we are setting here for
-> > > > any new kernel interface which open codes firmware signing on its own. What
-> > > > you are doing means other kernel users who open codes their own firmware
-> > > > signing may need to add yet-another reading ID. That doesn't either look
-> > > > well on code, and seems kind of silly from a coding perspective given
-> > > > the above, in which I clarify IMA still is doing its own appraisal on it.
-> > > 
-> > > Suppose,
-> > > 
-> > > 1. Either CONFIG_CFG80211_REQUIRE_SIGNED_REGDB or
-> > > "CONFIG_IMA_APPRAISE_FIRMWARE" would be configured at build.
-> > > 
-> > > 2. If CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is configured, not
-> > > "CONFIG_IMA_APPRAISE_FIRMWARE", a custom IMA-policy rule that
-> > > appraises the firmware signature could be defined. ?In this case, both
-> > > signature verification methods would be enforced.
-> > > 
-> > > then READING_FIRMWARE_REGULATORY_DB would not be needed.
-> > 
-> > True, however I'm suggesting that CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
-> > could just be a mini subsystem stackable LSM.
-> 
-> Yes, writing regdb as a micro/mini LSM sounds reasonable. ?The LSM
-> would differentiate between other firmware and the regulatory.db based
-> on the firmware's pathname.
-
-If that is the only way then it would be silly to do the mini LSM as all
-calls would have to have the check. A special LSM hook for just the
-regulatory db also doesn't make much sense.
-
-> Making regdb an LSM would have the same issues as currently - deciding
-> if regdb, IMA-appraisal, or both verify the regdb's signature.
-
-Its unclear to me why they can't co-exist yet and not have to touch
-the firmware_loader code at all.
-
-  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
