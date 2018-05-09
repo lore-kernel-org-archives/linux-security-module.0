@@ -1,38 +1,93 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Wed, 9 May 2018 12:50:15 -0700
-Subject: [PATCH v3 1/3] big key: get rid of stack array allocation
-In-Reply-To: <alpine.LRH.2.21.1805100520100.12749@namei.org>
-References: <20180424202639.19830-1-tycho@tycho.ws>
-	<CAGXu5jLL7NeX+zUNqcYW_LDF87CPg-5Z4R5+FZ5uPDT-sTisng@mail.gmail.com>
-	<alpine.LRH.2.21.1805100519200.12749@namei.org>
-	<alpine.LRH.2.21.1805100520100.12749@namei.org>
-Message-ID: <CAGXu5jKr=E5bnJPX7nHov-UfWRr4EFd1Ni+WFgaikD0dyYiMZw@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 09 May 2018 15:57:18 -0400
+Subject: [PATCH 3/6] firmware: differentiate between signed
+	regulatory.db and other firmware
+In-Reply-To: <20180509191508.GR27853@wotan.suse.de>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<20180504000743.GR27853@wotan.suse.de>
+	<1525393466.3539.133.camel@linux.vnet.ibm.com>
+	<20180508173404.GG27853@wotan.suse.de>
+	<1525865428.3551.175.camel@linux.vnet.ibm.com>
+	<20180509191508.GR27853@wotan.suse.de>
+Message-ID: <1525895838.3551.247.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 9, 2018 at 12:21 PM, James Morris <jmorris@namei.org> wrote:
-> On Thu, 10 May 2018, James Morris wrote:
->
->> >
->> > Reviewed-by: Kees Cook <keescook@chromium.org>
->> >
->> > James, are these something you can take into your tree?
->>
->> Sure!
->
-> Although, normally, these would likely come in to mine via David's tree.
->
-> Please do that unless there's a special case here.
+On Wed, 2018-05-09 at 19:15 +0000, Luis R. Rodriguez wrote:
 
-David has not replied to any of the threads or versions since
-originally posted on March 12. David, can you take these or at least
-Ack them for James?
+> > > >?If both are enabled, do we require both signatures or is one enough.
+> > > 
+> > > Good question. Considering it as a stacked LSM (although not implemented
+> > > as one), I'd say its up to who enabled the Kconfig entries. If IMA and
+> > > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are enabled then both. If someone enabled
+> > > IMA though, then surely I agree that enabling
+> > > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is stupid and redundant, but its up to the
+> > > system integrator to decide.
+> > 
+> > Just because IMA-appraisal is enabled in the kernel doesn't mean that
+> > firmware signatures will be verified. ?That is a run time policy
+> > decision.
+> 
+> Sure, I accept this if IMA does not do signature verification. However
+> signature verification seems like a stackable LSM decision, no?
 
--Kees
+IMA-appraisal can be configured to enforce file signatures. ?Refer to
+discussion below as to how.
 
--- 
-Kees Cook
-Pixel Security
+> > > If we however want to make it clear that such things as
+> > > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are not required when IMA is enabled we
+> > > could just make the kconfig depend on !IMA or something?  Or perhaps a new
+> > > kconfig for IMA which if selected it means that drivers can opt to open code
+> > > *further* kernel signature verification, even though IMA already is sufficient.
+> > > Perhaps CONFIG_ENABLE_IMA_OVERLAPPING, and the driver depends on it?
+> > 
+> > The existing CONFIG_IMA_APPRAISE is not enough. ?If there was a build
+> > time IMA config that translated into an IMA policy requiring firmware
+> > signature verification (eg. CONFIG_IMA_APPRAISE_FIRMWARE), this could
+> > be sorted out at build time.
+> 
+> I see makes sense.
+
+Ok, so instead of introducing READING_FIRMWARE_REGULATORY_DB, I'll
+post patches introducing CONFIG_IMA_APPRAISE_FIRMWARE, as described
+above.
+
+> 
+> > > > Assigning a different id for regdb signed firmware allows LSMs and IMA
+> > > > to handle regdb files differently.
+> > > 
+> > > That's not the main concern here, its the precedent we are setting here for
+> > > any new kernel interface which open codes firmware signing on its own. What
+> > > you are doing means other kernel users who open codes their own firmware
+> > > signing may need to add yet-another reading ID. That doesn't either look
+> > > well on code, and seems kind of silly from a coding perspective given
+> > > the above, in which I clarify IMA still is doing its own appraisal on it.
+> > 
+> > Suppose,
+> > 
+> > 1. Either CONFIG_CFG80211_REQUIRE_SIGNED_REGDB or
+> > "CONFIG_IMA_APPRAISE_FIRMWARE" would be configured at build.
+> > 
+> > 2. If CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is configured, not
+> > "CONFIG_IMA_APPRAISE_FIRMWARE", a custom IMA-policy rule that
+> > appraises the firmware signature could be defined. ?In this case, both
+> > signature verification methods would be enforced.
+> > 
+> > then READING_FIRMWARE_REGULATORY_DB would not be needed.
+> 
+> True, however I'm suggesting that CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+> could just be a mini subsystem stackable LSM.
+
+Yes, writing regdb as a micro/mini LSM sounds reasonable. ?The LSM
+would differentiate between other firmware and the regulatory.db based
+on the firmware's pathname.
+
+Making regdb an LSM would have the same issues as currently - deciding
+if regdb, IMA-appraisal, or both verify the regdb's signature.
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
