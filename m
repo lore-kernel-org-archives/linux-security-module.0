@@ -1,164 +1,95 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Wed, 9 May 2018 11:11:09 -0400
-Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
-	selinux_socket_bind()
-In-Reply-To: <CAHC9VhTNS-sEL2Az4hs1nmz7naqoyhiohzhPTrqp_M=_Ys1N6A@mail.gmail.com>
-References: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
-	<CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
-	<1eb10913-8802-e2dd-68f0-9483435cd949@tycho.nsa.gov>
-	<CAHC9VhT1+-ch1Ncv5YCNgu7tPnUj1Qx8S=a=q=Fn=Dwx4SnTKg@mail.gmail.com>
-	<7fdbaf13-fea2-4a2c-213d-fa291db67081@tycho.nsa.gov>
-	<CAHC9VhTNS-sEL2Az4hs1nmz7naqoyhiohzhPTrqp_M=_Ys1N6A@mail.gmail.com>
-Message-ID: <d637da77-2789-e08b-c78b-b48821cbf0fe@tycho.nsa.gov>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 9 May 2018 11:13:47 -0400
+Subject: [PATCH ghak81 RFC V1 1/5] audit: normalize loginuid read access
+In-Reply-To: <611e9c85fca8bcdb24e6fb6da412773663c007b3.1525466167.git.rgb@redhat.com>
+References: <cover.1525466167.git.rgb@redhat.com>
+	<611e9c85fca8bcdb24e6fb6da412773663c007b3.1525466167.git.rgb@redhat.com>
+Message-ID: <CAHC9VhQKYt0PC0L65pwFRte1D98R=2tUDGxMVpc8bbJsMncGpw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/09/2018 11:01 AM, Paul Moore wrote:
-> On Wed, May 9, 2018 at 8:37 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
->> On 05/08/2018 08:25 PM, Paul Moore wrote:
->>> On Tue, May 8, 2018 at 2:40 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
->>>> On 05/08/2018 01:05 PM, Paul Moore wrote:
->>>>> On Tue, May 8, 2018 at 10:05 AM, Alexey Kodanev
->>>>> <alexey.kodanev@oracle.com> wrote:
->>>>>> Commit d452930fd3b9 ("selinux: Add SCTP support") breaks compatibility
->>>>>> with the old programs that can pass sockaddr_in with AF_UNSPEC and
->>>>>> INADDR_ANY to bind(). As a result, bind() returns EAFNOSUPPORT error.
->>>>>> It was found with LTP/asapi_01 test.
->>>>>>
->>>>>> Similar to commit 29c486df6a20 ("net: ipv4: relax AF_INET check in
->>>>>> bind()"), which relaxed AF_INET check for compatibility, add AF_UNSPEC
->>>>>> case to AF_INET and make sure that the address is INADDR_ANY.
->>>>>>
->>>>>> Also, in the end of selinux_socket_bind(), instead of adding AF_UNSPEC
->>>>>> to 'address->sa_family == AF_INET', verify AF_INET6 first.
->>>>>>
->>>>>> Fixes: d452930fd3b9 ("selinux: Add SCTP support")
->>>>>> Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
->>>>>> ---
->>>>>>  security/selinux/hooks.c | 12 +++++++++---
->>>>>>  1 file changed, 9 insertions(+), 3 deletions(-)
->>>>>
->>>>> Thanks for finding and reporting this regression.
->>>>>
->>>>> I think I would prefer to avoid having to duplicate the
->>>>> AF_UNSPEC/INADDR_ANY checking logic in the SELinux hook, even though
->>>>> it is a small bit of code and unlikely to change.  I'm wondering if it
->>>>> would be better to check both the socket and sockaddr address family
->>>>> in the main if conditional inside selinux_socket_bind(), what do you
->>>>> think?  Another option would be to go back to just checking the
->>>>> soackaddr address family; we moved away from that for a reason which
->>>>> escapes at the moment (code cleanliness?), but perhaps that was a
->>>>> mistake.
->>>>
->>>> We've always used the sk->sk_family there; it was only the recent code from Richard that started
->>>> using the socket address family.
->>>
->>> Yes I know, I thought I was the one that suggested it at some point
->>> (I'll take the blame) ... although now that I'm looking at the git
->>> log, maybe I'm confusing it with something else.
->>>
->>>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>>>> index 4cafe6a19167..a3789b167667 100644
->>>>> --- a/security/selinux/hooks.c
->>>>> +++ b/security/selinux/hooks.c
->>>>> @@ -4577,6 +4577,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
->>>>> {
->>>>>        struct sock *sk = sock->sk;
->>>>>        u16 family;
->>>>> +       u16 family_sa;
->>>>>        int err;
->>>>>
->>>>>        err = sock_has_perm(sk, SOCKET__BIND);
->>>>> @@ -4585,7 +4586,9 @@ static int selinux_socket_bind(struct socket *sock, struc>
->>>>>
->>>>>        /* If PF_INET or PF_INET6, check name_bind permission for the port. */
->>>>>        family = sk->sk_family;
->>>>> -       if (family == PF_INET || family == PF_INET6) {
->>>>> +       family_sa = address->sa_family;
->>>>> +       if ((family == PF_INET || family == PF_INET6) &&
->>>>> +           (family_sa == PF_INET || family_sa == PF_INET6)) {
->>>>
->>>> Wouldn't this allow bypassing the name_bind permission check by passing in AF_UNSPEC?
->>>
->>> I believe these name_bind permission checkis skipped for AF_UNSPEC
->>> already, isn't it?  The only way the name_bind check would be
->>> triggered is if the source port, snum, was non-zero and I didn't think
->>> that was really legal for AF_UNSPEC/INADDR_ANY, is it?
->>
->> 1) What in inet_bind() prevents that from occurring?
->> 2) Regardless, what about the node_bind check?
-> 
-> Fair enough.  As mentioned above, perhaps the right fix is to move the
-> address family checking back to how it was pre-SCTP.
+On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Recognizing that the loginuid is an internal audit value, use an access
+> function to retrieve the audit loginuid value for the task rather than
+> reaching directly into the task struct to get it.
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/auditsc.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 479c031..f3817d0 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
+>         case AUDIT_COMPARE_EGID_TO_OBJ_GID:
+>                 return audit_compare_gid(cred->egid, name, f, ctx);
+>         case AUDIT_COMPARE_AUID_TO_OBJ_UID:
+> -               return audit_compare_uid(tsk->loginuid, name, f, ctx);
+> +               return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
+>         case AUDIT_COMPARE_SUID_TO_OBJ_UID:
+>                 return audit_compare_uid(cred->suid, name, f, ctx);
+>         case AUDIT_COMPARE_SGID_TO_OBJ_GID:
+> @@ -385,7 +385,7 @@ static int audit_field_compare(struct task_struct *tsk,
+>                 return audit_compare_gid(cred->fsgid, name, f, ctx);
+>         /* uid comparisons */
+>         case AUDIT_COMPARE_UID_TO_AUID:
+> -               return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
+> +               return audit_uid_comparator(cred->uid, f->op, audit_get_loginuid(tsk));
+>         case AUDIT_COMPARE_UID_TO_EUID:
+>                 return audit_uid_comparator(cred->uid, f->op, cred->euid);
+>         case AUDIT_COMPARE_UID_TO_SUID:
+> @@ -394,11 +394,11 @@ static int audit_field_compare(struct task_struct *tsk,
+>                 return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
+>         /* auid comparisons */
+>         case AUDIT_COMPARE_AUID_TO_EUID:
+> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
+> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->euid);
+>         case AUDIT_COMPARE_AUID_TO_SUID:
+> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
+> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->suid);
+>         case AUDIT_COMPARE_AUID_TO_FSUID:
+> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
+> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->fsuid);
+>         /* euid comparisons */
+>         case AUDIT_COMPARE_EUID_TO_SUID:
+>                 return audit_uid_comparator(cred->euid, f->op, cred->suid);
+> @@ -611,7 +611,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+>                                 result = match_tree_refs(ctx, rule->tree);
+>                         break;
+>                 case AUDIT_LOGINUID:
+> -                       result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
+> +                       result = audit_uid_comparator(audit_get_loginuid(tsk), f->op, f->uid);
+>                         break;
+>                 case AUDIT_LOGINUID_SET:
+>                         result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
+> @@ -2287,8 +2287,8 @@ int audit_signal_info(int sig, struct task_struct *t)
+>             (sig == SIGTERM || sig == SIGHUP ||
+>              sig == SIGUSR1 || sig == SIGUSR2)) {
+>                 audit_sig_pid = task_tgid_nr(tsk);
+> -               if (uid_valid(tsk->loginuid))
+> -                       audit_sig_uid = tsk->loginuid;
+> +               if (uid_valid(audit_get_loginuid(tsk)))
+> +                       audit_sig_uid = audit_get_loginuid(tsk);
 
-It isn't clear to me how to do that without breaking SCTP multiple address binding, which is why
-Richard had to switch to checking address->sa_family instead of just using the sk->sk_family.
-Alexey's original fix might be the simplest solution.
+I realize this comment is a little silly given the nature of loginuid,
+but if we are going to abstract away loginuid accesses (which I think
+is good), we should probably access it once, store it in a local
+variable, perform the validity check on the local variable, then
+commit the local variable to audit_sig_uid.  I realize a TOCTOU
+problem is unlikely here, but with this new layer of abstraction it
+seems that some additional safety might be a good thing.
 
-> 
-> Alexey, is this something you want to do, or should we take care of that?
-> 
->>>>>                char *addrp;
->>>>>                struct sk_security_struct *sksec = sk->sk_security;
->>>>>                struct common_audit_data ad;
->>>>> @@ -4601,7 +4604,7 @@ static int selinux_socket_bind(struct socket *sock, struc>
->>>>>                 * need to check address->sa_family as it is possible to have
->>>>>                 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
->>>>>                 */
->>>>> -               switch (address->sa_family) {
->>>>> +               switch (family_sa) {
->>>>>                case AF_INET:
->>>>>                        if (addrlen < sizeof(struct sockaddr_in))
->>>>>                                return -EINVAL;
->>>>>
->>>>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>>>>> index 4cafe6a..649a3be 100644
->>>>>> --- a/security/selinux/hooks.c
->>>>>> +++ b/security/selinux/hooks.c
->>>>>> @@ -4602,10 +4602,16 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->>>>>>                  * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
->>>>>>                  */
->>>>>>                 switch (address->sa_family) {
->>>>>> +               case AF_UNSPEC:
->>>>>>                 case AF_INET:
->>>>>>                         if (addrlen < sizeof(struct sockaddr_in))
->>>>>>                                 return -EINVAL;
->>>>>>                         addr4 = (struct sockaddr_in *)address;
->>>>>> +
->>>>>> +                       if (address->sa_family == AF_UNSPEC &&
->>>>>> +                           addr4->sin_addr.s_addr != htonl(INADDR_ANY))
->>>>>> +                               return -EAFNOSUPPORT;
->>>>>> +
->>>>>>                         snum = ntohs(addr4->sin_port);
->>>>>>                         addrp = (char *)&addr4->sin_addr.s_addr;
->>>>>>                         break;
->>>>>> @@ -4681,10 +4687,10 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->>>>>>                 ad.u.net->sport = htons(snum);
->>>>>>                 ad.u.net->family = family;
->>>>>>
->>>>>> -               if (address->sa_family == AF_INET)
->>>>>> -                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
->>>>>> -               else
->>>>>> +               if (address->sa_family == AF_INET6)
->>>>>>                         ad.u.net->v6info.saddr = addr6->sin6_addr;
->>>>>> +               else
->>>>>> +                       ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
->>>>>>
->>>>>>                 err = avc_has_perm(&selinux_state,
->>>>>>                                    sksec->sid, sid,
->>>>>> --
->>>>>> 1.8.3.1
->>>>>>
->>>>>
->>>>
->>>
->>>
->>>
->>
-> 
-> 
-> 
+>                 else
+>                         audit_sig_uid = uid;
+>                 security_task_getsecid(tsk, &audit_sig_sid);
+> --
+> 1.8.3.1
 
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
