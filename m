@@ -1,71 +1,31 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Wed, 9 May 2018 08:09:17 -0400
-Subject: [PATCH ghak81 RFC V1 4/5] audit: use inline function to set
-	audit context
-In-Reply-To: <20180509020700.GE7517@eros>
-References: <cover.1525466167.git.rgb@redhat.com>
-	<2f0566af8ccafdaf400a3d002cb4aef9b80e44cf.1525466167.git.rgb@redhat.com>
-	<20180509020700.GE7517@eros>
-Message-ID: <20180509120917.xz3ggtloq523wqzh@madcap2.tricolour.ca>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 9 May 2018 15:26:21 +0300
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
+References: <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+	<20180424160328.GA5119@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+	<20180502133246.GA6091@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+	<20180503063508.GA8702@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
+	<20180504081634.GB6373@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
+Message-ID: <20180509122621.GB8271@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2018-05-09 12:07, Tobin C. Harding wrote:
-> On Fri, May 04, 2018 at 04:54:37PM -0400, Richard Guy Briggs wrote:
-> > Recognizing that the audit context is an internal audit value, use an
-> > access function to set the audit context pointer for the task
-> > rather than reaching directly into the task struct to set it.
-> > 
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  include/linux/audit.h | 8 ++++++++
-> >  kernel/auditsc.c      | 6 +++---
-> >  kernel/fork.c         | 2 +-
-> >  3 files changed, 12 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index 93e4c61..dba0d45 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -235,6 +235,10 @@ extern void __audit_inode_child(struct inode *parent,
-> >  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-> >  extern void __audit_ptrace(struct task_struct *t);
-> >  
-> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-> > +{
-> > +	task->audit_context = ctx;
-> > +}
-> >  static inline struct audit_context *audit_context(struct task_struct *task)
-> >  {
-> >  	return task->audit_context;
-> > @@ -472,6 +476,10 @@ static inline bool audit_dummy_context(void)
-> >  {
-> >  	return true;
-> >  }
-> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-> > +{
-> > +	task->audit_context = ctx;
-> > +}
-> 
-> If audit_context is an internal audit value why do we set it when
-> CONFIG_AUDITSYSCALL is not set?
+On Sat, May 05, 2018 at 09:07:21PM +0000, Winkler, Tomas wrote:
+> There is already one 'out' label in that function, what would you prefer for this new label name?
+> Thanks
+> Tomas
 
-Agreed, that is unnecessary, but harmless since it won't be called, or
-will be called with a value of NULL.  That has been fixed in my dynamic
-allocation patchset since not even the audit_task_info struct is
-available to assign the value.  It is now an empty function like the
-rest.
+Aah, of course. My bad that I did not notice it but please just point
+me if I miss something obvious like that :-) I'll apply the patch
+today..
 
-> Tobin.
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
