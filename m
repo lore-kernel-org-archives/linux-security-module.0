@@ -1,148 +1,167 @@
-From: joe@perches.com (Joe Perches)
-Date: Thu, 10 May 2018 08:45:26 -0700
-Subject: [PATCH 00/18] Convert default pr_fmt from empty to KBUILD_MODNAME
-Message-ID: <cover.1525964381.git.joe@perches.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 10 May 2018 12:05:29 -0400
+Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
+	selinux_socket_bind()
+In-Reply-To: <aab86e3c-0891-766b-53aa-ad471394ac46@oracle.com>
+References: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
+	<CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
+	<1eb10913-8802-e2dd-68f0-9483435cd949@tycho.nsa.gov>
+	<CAHC9VhT1+-ch1Ncv5YCNgu7tPnUj1Qx8S=a=q=Fn=Dwx4SnTKg@mail.gmail.com>
+	<7fdbaf13-fea2-4a2c-213d-fa291db67081@tycho.nsa.gov>
+	<CAHC9VhTNS-sEL2Az4hs1nmz7naqoyhiohzhPTrqp_M=_Ys1N6A@mail.gmail.com>
+	<d637da77-2789-e08b-c78b-b48821cbf0fe@tycho.nsa.gov>
+	<CAHC9VhSg9UAmXaK0xsy_h9HfzM4uUBqCNKN5qtf3hHLSi=ZENw@mail.gmail.com>
+	<CAHC9VhRmX+Z+ignXXBrSGyUkpxudO76Fv-6o_My=skh-U8Ccgw@mail.gmail.com>
+	<aab86e3c-0891-766b-53aa-ad471394ac46@oracle.com>
+Message-ID: <CAHC9VhT5Y6nZNisyFFiE=BR+T6pdbRhnvQQ1NyXm_AJmn9VMgA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-pr_<level> logging uses allow a prefix to be specified with a
-specific #define pr_fmt
+On Thu, May 10, 2018 at 5:28 AM, Alexey Kodanev
+<alexey.kodanev@oracle.com> wrote:
+> On 10.05.2018 01:02, Paul Moore wrote:
+> ...
+>> I just had a better look at this and I believe that Alexey and Stephen
+>> are right: this is the best option.  My apologies for the noise
+>> earlier.  However, while looking at the code I think there are some
+>> additional necessary changes:
+>>
+>> * In the case of an SCTP socket, we should return -EINVAL, just as we
+>> do with other address families.
+>
+> Right.
+>
+>> * While not strictly related to AF_UNSPEC, we really should be passing
+>> the address family of the sockaddr, and not the socket, to functions
+>> that need to interpret the bind address/port.
+>
+> That looks like a correct solution. I guess we need the same fix for
+> sctp_connectx(), in selinux_socket_connect_helper().
 
-The default of pr_fmt in printk.h is #define pr_fmt(fmt) fmt
-so no prefixing of logging output is generically done.
+Yes.  I think we also need a small change to
+selinux_sctp_bind_connect() to both not error out on AF_UNSPEC, and to
+return EINVAL on a bad address family (some of the callers pass on the
+return value, some don't).
 
-There are several output logging uses like dump_stack() that are
-unprefixed and should remain unprefixed.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 5f30045b2053..a8bac9b37ee7 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -5277,6 +5277,7 @@ static int selinux_sctp_bind_connect(struct sock *sk, int>
+       while (walk_size < addrlen) {
+               addr = addr_buf;
+               switch (addr->sa_family) {
++               case AF_UNSPEC:
+               case AF_INET:
+                       len = sizeof(struct sockaddr_in);
+                       break;
+@@ -5284,7 +5285,7 @@ static int selinux_sctp_bind_connect(struct sock *sk, int>
+                       len = sizeof(struct sockaddr_in6);
+                       break;
+               default:
+-                       return -EAFNOSUPPORT;
++                       return -EINVAL;
+               }
 
-This patch series attempts to convert the default #define of pr_fmt to
-KBUILD_MODNAME ": " fmt and as well update the various bits of the kernel
-that should _not_ be prefixed by adding #define pr_fmt(fmt) fmt to those
-compilation units that do not want output message prefixing.
+               err = -EINVAL;
 
-There are about 1200 uses of #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-that could be removed if the default is changed.
+>> I'm waiting for my kernel to compile so I haven't given this any
+>> sanity testing, but the patch below is what I think we need ...
+>>
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index 4cafe6a19167..5f30045b2053 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -4576,6 +4576,7 @@ static int selinux_socket_post_create(struct socket *sock,
+>> int family,
+>> static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, i
+>> nt addrlen)
+>> {
+>>        struct sock *sk = sock->sk;
+>> +       struct sk_security_struct *sksec = sk->sk_security;
+>>        u16 family;
+>>        int err;
+>>
+>> @@ -4587,13 +4588,13 @@ static int selinux_socket_bind(struct socket *sock, stru
+>> ct sockaddr *address, in
+>>        family = sk->sk_family;
+>>        if (family == PF_INET || family == PF_INET6) {
+>>                char *addrp;
+>> -               struct sk_security_struct *sksec = sk->sk_security;
+>>                struct common_audit_data ad;
+>>                struct lsm_network_audit net = {0,};
+>>                struct sockaddr_in *addr4 = NULL;
+>>                struct sockaddr_in6 *addr6 = NULL;
+>>                unsigned short snum;
+>>                u32 sid, node_perm;
+>> +               u16 family_sa = address->sa_family;
+>>
+>>                /*
+>>                 * sctp_bindx(3) calls via selinux_sctp_bind_connect()
+>> @@ -4601,11 +4602,19 @@ static int selinux_socket_bind(struct socket *sock, stru
+>> ct sockaddr *address, in
+>>                 * need to check address->sa_family as it is possible to have
+>>                 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+>>                 */
+>> -               switch (address->sa_family) {
+>> +               switch (family_sa) {
+>> +               case AF_UNSPEC:
+>>                case AF_INET:
+>>                        if (addrlen < sizeof(struct sockaddr_in))
+>>                                return -EINVAL;
+>>                        addr4 = (struct sockaddr_in *)address;
+>> +                       if (family_sa == AF_UNSPEC) {
+>> +                               /* see "__inet_bind()", we only want to allow
+>> +                                * AF_UNSPEC if the address is INADDR_ANY */
+>> +                               if (addr4->sin_addr.s_addr != htonl(INADDR_ANY))
+>> +                                       goto err_af;
+>> +                               family_sa = AF_INET;
+>> +                       }
+>>                        snum = ntohs(addr4->sin_port);
+>>                        addrp = (char *)&addr4->sin_addr.s_addr;
+>>                        break;
+>> @@ -4617,15 +4626,14 @@ static int selinux_socket_bind(struct socket *sock, stru
+>> ct sockaddr *address, in
+>>                        addrp = (char *)&addr6->sin6_addr.s6_addr;
+>>                        break;
+>>                default:
+>> -                       /* Note that SCTP services expect -EINVAL, whereas
+>> -                        * others expect -EAFNOSUPPORT.
+>> -                        */
+>> -                       if (sksec->sclass == SECCLASS_SCTP_SOCKET)
+>> -                               return -EINVAL;
+>> -                       else
+>> -                               return -EAFNOSUPPORT;
+>> +                       goto err_af;
+>>                }
+>>
+>> +               ad.type = LSM_AUDIT_DATA_NET;
+>> +               ad.u.net = &net;
+>> +               ad.u.net->sport = htons(snum);
+>> +               ad.u.net->family = family_sa;
+>> +
+>
+> May be we could move setting ad.u.net->v{4|6}info.saddr here as well?
 
-A script that does this removal (and removes any blank lines that follow)
-for the linux-kernel tree is included below:
+I looked at that too, the problem is that if we set the IP address
+here it will be reported in the audit record for a name_bind failure,
+which is a change from the current behavior.  One could argue this is
+the correct thing to do, but I would like to limit the number of
+changes for patches that are destined for the -rcX stream.
 
-$ git grep -P --name-only "define\s+pr_fmt\b" | \
-  grep -v include/linux/printk.h | \
-  xargs perl -i -e 'local $/; while (<>) {s/(\n)*[ \t]*#[ \t]*define[ \t]+pr_fmt[ \t]*\([ \t]*(\w+)[ \t]*\)[ \t]*KBUILD_MODNAME[ \t]*\": \"[ \t]*\2[ \t]*\n\s*/\1\n/; s/^\n//; print;}'
+Let's leave them separate for now.
 
-This script should be run after this patch series is applied.
+> Will send a v2 of this patch so that SCTP socket returns EINVAL with
+> AF_UNSPEC. Should I prepare a patch with correcting 'ad.u.net->family'
+> and sel_netnode_sid()?
 
-The above script output diff is currently:
-
-1198 files changed, 70 insertions(+), 2241 deletions(-)
-
-Joe Perches (18):
-  kernel: Use pr_fmt
-  lib: Use pr_fmt
-  printk: Convert pr_fmt from blank define to KBUILD_MODNAME
-  x86: Remove pr_fmt duplicate logging prefixes
-  x86/mtrr: Rename main.c to mtrr.c and remove duplicate prefixes
-  net: Remove pr_fmt duplicate logging prefixes
-  blk-mq: Remove pr_fmt duplicate logging prefixes
-  random: Remove pr_fmt duplicate logging prefixes
-  ptp: Remove pr_fmt duplicate logging prefixes
-  efifb: Remove pr_fmt duplicate logging prefixes
-  proc: Remove pr_fmt duplicate logging prefixes
-  uprobes: Remove pr_fmt duplicate logging prefixes
-  printk: Remove pr_fmt duplicate logging prefixes
-  lib/mpi: Remove pr_fmt duplicate logging prefixes
-  security: Remove pr_fmt duplicate logging prefixes
-  aoe: Remove pr_fmt duplicate logging prefixes
-  security: encrypted-keys: Remove pr_fmt duplicate logging prefixes
-  rcu: Use pr_fmt to prefix "rcu: " to logging output
-
- arch/x86/events/amd/ibs.c                      |  2 +-
- arch/x86/kernel/cpu/mtrr/Makefile              |  2 +-
- arch/x86/kernel/cpu/mtrr/{main.c => mtrr.c}    | 33 ++++++-------
- arch/x86/kernel/e820.c                         | 32 ++++++------
- arch/x86/kernel/hpet.c                         |  5 +-
- arch/x86/kernel/uprobes.c                      |  4 +-
- arch/x86/mm/numa.c                             | 22 ++++-----
- block/blk-mq.c                                 |  9 ++--
- drivers/block/aoe/aoeblk.c                     | 29 ++++++-----
- drivers/block/aoe/aoechr.c                     | 11 ++---
- drivers/block/aoe/aoecmd.c                     | 34 ++++++-------
- drivers/block/aoe/aoedev.c                     | 19 +++-----
- drivers/block/aoe/aoemain.c                    |  6 +--
- drivers/block/aoe/aoenet.c                     | 19 +++-----
- drivers/char/hw_random/via-rng.c               | 10 ++--
- drivers/char/random.c                          | 16 +++---
- drivers/ptp/ptp_clock.c                        |  4 +-
- drivers/video/fbdev/efifb.c                    | 48 +++++++++---------
- fs/proc/root.c                                 |  6 +--
- include/linux/printk.h                         |  2 +-
- kernel/acct.c                                  |  2 +
- kernel/async.c                                 | 14 +++---
- kernel/audit_tree.c                            |  2 +-
- kernel/backtracetest.c                         |  8 +--
- kernel/crash_core.c                            | 29 ++++++-----
- kernel/events/uprobes.c                        |  3 +-
- kernel/exit.c                                  |  2 +
- kernel/hung_task.c                             | 13 +++--
- kernel/kprobes.c                               | 20 +++++---
- kernel/module.c                                | 59 +++++++++++------------
- kernel/panic.c                                 |  3 ++
- kernel/params.c                                | 13 +++--
- kernel/pid.c                                   |  2 +
- kernel/printk/printk.c                         |  2 +-
- kernel/profile.c                               |  2 +
- kernel/range.c                                 |  2 +-
- kernel/rcu/rcu_segcblist.c                     |  2 +
- kernel/rcu/rcuperf.c                           | 10 ++--
- kernel/rcu/rcutorture.c                        | 46 +++++++++---------
- kernel/rcu/srcutiny.c                          |  2 +
- kernel/rcu/srcutree.c                          |  5 +-
- kernel/rcu/tiny.c                              |  3 ++
- kernel/rcu/tree.c                              |  8 +--
- kernel/rcu/tree_plugin.h                       | 67 +++++++++++++++-----------
- kernel/rcu/update.c                            | 19 +++++---
- kernel/relay.c                                 |  5 +-
- kernel/seccomp.c                               |  4 +-
- kernel/signal.c                                | 10 ++--
- kernel/smpboot.c                               |  5 +-
- kernel/taskstats.c                             |  4 +-
- kernel/torture.c                               |  6 ++-
- kernel/tracepoint.c                            |  3 ++
- kernel/workqueue.c                             |  2 +
- lib/cpu_rmap.c                                 | 15 +++---
- lib/crc32test.c                                |  2 +
- lib/earlycpio.c                                |  5 +-
- lib/find_bit_benchmark.c                       |  2 +
- lib/kobject.c                                  | 36 +++++++-------
- lib/kobject_uevent.c                           | 27 +++++------
- lib/mpi/mpicoder.c                             | 10 ++--
- lib/nmi_backtrace.c                            |  3 ++
- lib/percpu_ida.c                               |  4 +-
- lib/percpu_test.c                              |  2 +
- lib/random32.c                                 | 10 ++--
- lib/stmp_device.c                              |  2 +
- lib/string.c                                   |  2 +
- lib/swiotlb.c                                  |  4 +-
- lib/test_debug_virtual.c                       |  2 +
- lib/test_rhashtable.c                          | 44 +++++++++--------
- lib/test_sort.c                                |  2 +
- lib/ubsan.c                                    | 61 ++++++++++++-----------
- net/ipv4/ipconfig.c                            | 59 ++++++++++-------------
- net/ipv4/ipmr.c                                |  2 +-
- net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c |  9 ++--
- net/ipv6/ip6mr.c                               |  2 +-
- net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c |  6 +--
- net/ipv6/netfilter/nf_defrag_ipv6_hooks.c      |  4 +-
- net/netfilter/nf_conntrack_helper.c            | 11 ++---
- net/netfilter/nf_conntrack_standalone.c        |  2 +-
- net/socket.c                                   |  2 +-
- security/keys/encrypted-keys/encrypted.c       | 63 +++++++++++-------------
- security/selinux/selinuxfs.c                   | 29 ++++++-----
- 82 files changed, 580 insertions(+), 532 deletions(-)
- rename arch/x86/kernel/cpu/mtrr/{main.c => mtrr.c} (96%)
+Please, that would be helpful.  I think all of the issues we have
+identified in this thread should be fixed during the v4.17-rcX
+releases, so if you don't do it I'll need to do it :)
 
 -- 
-2.15.0
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
