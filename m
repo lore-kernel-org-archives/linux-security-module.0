@@ -1,107 +1,176 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 09 May 2018 22:00:58 -0400
-Subject: [PATCH 3/6] firmware: differentiate between signed
-	regulatory.db and other firmware
-In-Reply-To: <20180509234814.GY27853@wotan.suse.de>
-References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<20180504000743.GR27853@wotan.suse.de>
-	<1525393466.3539.133.camel@linux.vnet.ibm.com>
-	<20180508173404.GG27853@wotan.suse.de>
-	<1525865428.3551.175.camel@linux.vnet.ibm.com>
-	<20180509191508.GR27853@wotan.suse.de>
-	<1525895838.3551.247.camel@linux.vnet.ibm.com>
-	<20180509212212.GX27853@wotan.suse.de>
-	<1525903617.3551.281.camel@linux.vnet.ibm.com>
-	<20180509234814.GY27853@wotan.suse.de>
-Message-ID: <1525917658.3551.322.camel@linux.vnet.ibm.com>
+From: alexey.kodanev@oracle.com (Alexey Kodanev)
+Date: Thu, 10 May 2018 12:28:57 +0300
+Subject: [PATCH] selinux: add AF_UNSPEC and INADDR_ANY checks to
+	selinux_socket_bind()
+In-Reply-To: <CAHC9VhRmX+Z+ignXXBrSGyUkpxudO76Fv-6o_My=skh-U8Ccgw@mail.gmail.com>
+References: <1525788303-23244-1-git-send-email-alexey.kodanev@oracle.com>
+	<CAHC9VhTACGPt2dSkUN9Efxs-HQVSAsxoiwPxHcujd++O-mMafg@mail.gmail.com>
+	<1eb10913-8802-e2dd-68f0-9483435cd949@tycho.nsa.gov>
+	<CAHC9VhT1+-ch1Ncv5YCNgu7tPnUj1Qx8S=a=q=Fn=Dwx4SnTKg@mail.gmail.com>
+	<7fdbaf13-fea2-4a2c-213d-fa291db67081@tycho.nsa.gov>
+	<CAHC9VhTNS-sEL2Az4hs1nmz7naqoyhiohzhPTrqp_M=_Ys1N6A@mail.gmail.com>
+	<d637da77-2789-e08b-c78b-b48821cbf0fe@tycho.nsa.gov>
+	<CAHC9VhSg9UAmXaK0xsy_h9HfzM4uUBqCNKN5qtf3hHLSi=ZENw@mail.gmail.com>
+	<CAHC9VhRmX+Z+ignXXBrSGyUkpxudO76Fv-6o_My=skh-U8Ccgw@mail.gmail.com>
+Message-ID: <aab86e3c-0891-766b-53aa-ad471394ac46@oracle.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 2018-05-09 at 23:48 +0000, Luis R. Rodriguez wrote:
-> On Wed, May 09, 2018 at 06:06:57PM -0400, Mimi Zohar wrote:
-> > On Wed, 2018-05-09 at 21:22 +0000, Luis R. Rodriguez wrote:
-> > > 
-> > > OK, its still not clear to what it will do. If it does not touch the firmware
-> > > loader code, and it just sets and configures IMA to do file signature checking
-> > > on its own, then yes I think both mechanisms would be doing the similar work.
-> > > 
-> > > Wouldn't IMA do file signature checks then for all files? Or it would just
-> > > enable this for whatever files userspace wishes to cover?
-> > 
-> > Enabling CONFIG_IMA_APPRAISE_FIRMWARE would enforce firmware
-> > signatures on all directly loaded firmware and fail any method of
-> > loading firmware that the signature couldn't be verified.
+On 10.05.2018 01:02, Paul Moore wrote:
+...
+> I just had a better look at this and I believe that Alexey and Stephen
+> are right: this is the best option.  My apologies for the noise
+> earlier.  However, while looking at the code I think there are some
+> additional necessary changes:
 > 
-> Ah, so a generic firmware signing mechanism via IMA. Sounds very sensible to me.
-> Specially in light of the fact that its what we recommend folks to consider
-> if they need to address firmware signing for devices which do not have the
-> ability to do hardware firmware signing verification on their own.
-> 
-> > > One of the things with READING_FIRMWARE_REGULATORY_DB is to also use and trust
-> > > the wireless-regdgb maintainer's key for this file, could IMA be configured to
-> > > do that?
-> > 
-> > IMA has its own trusted keyring. ?So either the maintainer's key would
-> > need to be added to the IMA keyring,
-> 
-> I see so we'd need this documented somehow.
-> 
-> > or IMA-appraisal would need to use the regdb keyring.
-> 
-> Can you describe this a bit more, for those not too familiar with IMA, in terms
-> of what would be involved in the kernel? Or is this all userspace configuration
-> stuff?
+> * In the case of an SCTP socket, we should return -EINVAL, just as we
+> do with other address families.
 
-I think it's a bit premature to be discussing how IMA could add the
-builtin regulatory key to its keyring or use the regdb keyring, as
-IMA-appraisal doesn't (yet) support detached signatures.
+Right.
 
-The other option would be to include the regulatory.db signature in
-the package. ?For rpm, the file signature is included in the RPM
-header. ?Multiple attempts have been made to have Debian packages
-include file signatures. ?This is the most recent attempt -?https://li
-sts.debian.org/debian-dpkg/2018/05/msg00005.html
+> * While not strictly related to AF_UNSPEC, we really should be passing
+> the address family of the sockaddr, and not the socket, to functions
+> that need to interpret the bind address/port.
 
-> > > > Yes, writing regdb as a micro/mini LSM sounds reasonable. ?The LSM
-> > > > would differentiate between other firmware and the regulatory.db based
-> > > > on the firmware's pathname.
-> > > 
-> > > If that is the only way then it would be silly to do the mini LSM as all
-> > > calls would have to have the check. A special LSM hook for just the
-> > > regulatory db also doesn't make much sense.
-> > 
-> > All calls to request_firmware() are already going through this LSM
-> > hook. ?I should have said, it would be based on both READING_FIRMWARE
-> > and the firmware's pathname.
+That looks like a correct solution. I guess we need the same fix for
+sctp_connectx(), in selinux_socket_connect_helper().
+
 > 
-> Yes, but it would still be a strcmp() computation added for all
-> READING_FIRMWARE. In that sense, the current arrangement is only open coding the
-> signature verification for the regulatory.db file.  One way to avoid this would
-> be to add an LSM specific to the regulatory db
-
-Casey already commented on this suggestion.
-
-Mimi
-
-> and have the
-> security_check_regulatory_db() do what it needs per LSM, but that would mean
-> setting a precedent for open possibly open coded future firmware verification
-> call. Its not too crazy to consider if an end goal may be avoid further open
-> coded firmware signature verification hacks.
+> I'm waiting for my kernel to compile so I haven't given this any
+> sanity testing, but the patch below is what I think we need ...
 > 
-> > > > Making regdb an LSM would have the same issues as currently - deciding
-> > > > if regdb, IMA-appraisal, or both verify the regdb's signature.
-> > > 
-> > > Its unclear to me why they can't co-exist yet and not have to touch
-> > > the firmware_loader code at all.
-> > 
-> > With the changes discussed above, they will co-exist. ?Other than the
-> > Kconfig changes, I don't think it will touch the firmware_loader code.
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 4cafe6a19167..5f30045b2053 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -4576,6 +4576,7 @@ static int selinux_socket_post_create(struct socket *sock,
+> int family,
+> static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, i
+> nt addrlen)
+> {
+>        struct sock *sk = sock->sk;
+> +       struct sk_security_struct *sksec = sk->sk_security;
+>        u16 family;
+>        int err;
 > 
-> Great.
+> @@ -4587,13 +4588,13 @@ static int selinux_socket_bind(struct socket *sock, stru
+> ct sockaddr *address, in
+>        family = sk->sk_family;
+>        if (family == PF_INET || family == PF_INET6) {
+>                char *addrp;
+> -               struct sk_security_struct *sksec = sk->sk_security;
+>                struct common_audit_data ad;
+>                struct lsm_network_audit net = {0,};
+>                struct sockaddr_in *addr4 = NULL;
+>                struct sockaddr_in6 *addr6 = NULL;
+>                unsigned short snum;
+>                u32 sid, node_perm;
+> +               u16 family_sa = address->sa_family;
 > 
->   Luis
+>                /*
+>                 * sctp_bindx(3) calls via selinux_sctp_bind_connect()
+> @@ -4601,11 +4602,19 @@ static int selinux_socket_bind(struct socket *sock, stru
+> ct sockaddr *address, in
+>                 * need to check address->sa_family as it is possible to have
+>                 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+>                 */
+> -               switch (address->sa_family) {
+> +               switch (family_sa) {
+> +               case AF_UNSPEC:
+>                case AF_INET:
+>                        if (addrlen < sizeof(struct sockaddr_in))
+>                                return -EINVAL;
+>                        addr4 = (struct sockaddr_in *)address;
+> +                       if (family_sa == AF_UNSPEC) {
+> +                               /* see "__inet_bind()", we only want to allow
+> +                                * AF_UNSPEC if the address is INADDR_ANY */
+> +                               if (addr4->sin_addr.s_addr != htonl(INADDR_ANY))
+> +                                       goto err_af;
+> +                               family_sa = AF_INET;
+> +                       }
+>                        snum = ntohs(addr4->sin_port);
+>                        addrp = (char *)&addr4->sin_addr.s_addr;
+>                        break;
+> @@ -4617,15 +4626,14 @@ static int selinux_socket_bind(struct socket *sock, stru
+> ct sockaddr *address, in
+>                        addrp = (char *)&addr6->sin6_addr.s6_addr;
+>                        break;
+>                default:
+> -                       /* Note that SCTP services expect -EINVAL, whereas
+> -                        * others expect -EAFNOSUPPORT.
+> -                        */
+> -                       if (sksec->sclass == SECCLASS_SCTP_SOCKET)
+> -                               return -EINVAL;
+> -                       else
+> -                               return -EAFNOSUPPORT;
+> +                       goto err_af;
+>                }
+> 
+> +               ad.type = LSM_AUDIT_DATA_NET;
+> +               ad.u.net = &net;
+> +               ad.u.net->sport = htons(snum);
+> +               ad.u.net->family = family_sa;
+> +
+
+May be we could move setting ad.u.net->v{4|6}info.saddr here as well?
+
+
+Will send a v2 of this patch so that SCTP socket returns EINVAL with
+AF_UNSPEC. Should I prepare a patch with correcting 'ad.u.net->family'
+and sel_netnode_sid()?  
+
+Thanks,
+Alexey
+
+>                if (snum) {
+>                        int low, high;
+> 
+> @@ -4637,10 +4645,6 @@ static int selinux_socket_bind(struct socket *sock, struc
+> t sockaddr *address, in
+>                                                      snum, &sid);
+>                                if (err)
+>                                        goto out;
+> -                               ad.type = LSM_AUDIT_DATA_NET;
+> -                               ad.u.net = &net;
+> -                               ad.u.net->sport = htons(snum);
+> -                               ad.u.net->family = family;
+>                                err = avc_has_perm(&selinux_state,
+>                                                   sksec->sid, sid,
+>                                                   sksec->sclass,
+> @@ -4672,16 +4676,11 @@ static int selinux_socket_bind(struct socket *sock, stru
+> ct sockaddr *address, in
+>                        break;
+>                }
+> 
+> -               err = sel_netnode_sid(addrp, family, &sid);
+> +               err = sel_netnode_sid(addrp, family_sa, &sid);
+>                if (err)
+>                        goto out;
+> 
+> -               ad.type = LSM_AUDIT_DATA_NET;
+> -               ad.u.net = &net;
+> -               ad.u.net->sport = htons(snum);
+> -               ad.u.net->family = family;
+> -
+> -               if (address->sa_family == AF_INET)
+> +               if (family_sa == AF_INET)
+>                        ad.u.net->v4info.saddr = addr4->sin_addr.s_addr;
+>                else
+>                        ad.u.net->v6info.saddr = addr6->sin6_addr;
+> @@ -4694,6 +4693,12 @@ static int selinux_socket_bind(struct socket *sock, struc
+> t sockaddr *address, in
+>        }
+> out:
+>        return err;
+> +err_af:
+> +       /* Note that SCTP services expect -EINVAL, others -EAFNOSUPPORT. */
+> +       if (sksec->sclass == SECCLASS_SCTP_SOCKET)
+> +               return -EINVAL;
+> +       else
+> +               return -EAFNOSUPPORT;
+> }
+> 
+> /* This supports connect(2) and SCTP connect services such as sctp_connectx(3)
 > 
 
 --
