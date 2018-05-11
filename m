@@ -1,168 +1,115 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Fri, 11 May 2018 21:52:50 +0000
-Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db
-	and other firmware
-In-Reply-To: <1526014826.3414.46.camel@linux.vnet.ibm.com>
-References: <20180508173404.GG27853@wotan.suse.de>
-	<1525865428.3551.175.camel@linux.vnet.ibm.com>
-	<20180509191508.GR27853@wotan.suse.de>
-	<1525895838.3551.247.camel@linux.vnet.ibm.com>
-	<20180509212212.GX27853@wotan.suse.de>
-	<1525903617.3551.281.camel@linux.vnet.ibm.com>
-	<20180509234814.GY27853@wotan.suse.de>
-	<1525917658.3551.322.camel@linux.vnet.ibm.com>
-	<20180510232639.GF27853@wotan.suse.de>
-	<1526014826.3414.46.camel@linux.vnet.ibm.com>
-Message-ID: <20180511215250.GJ27853@wotan.suse.de>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Fri, 11 May 2018 18:17:52 -0400
+Subject: [PATCH ghak81 RFC V1 1/5] audit: normalize loginuid read access
+In-Reply-To: <20180510212114.pefeyw5cuqlmjewp@madcap2.tricolour.ca>
+References: <cover.1525466167.git.rgb@redhat.com>
+	<611e9c85fca8bcdb24e6fb6da412773663c007b3.1525466167.git.rgb@redhat.com>
+	<CAHC9VhQKYt0PC0L65pwFRte1D98R=2tUDGxMVpc8bbJsMncGpw@mail.gmail.com>
+	<20180510212114.pefeyw5cuqlmjewp@madcap2.tricolour.ca>
+Message-ID: <20180511221752.6xtcf2r4rkumrp4u@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 11, 2018 at 01:00:26AM -0400, Mimi Zohar wrote:
-> On Thu, 2018-05-10 at 23:26 +0000, Luis R. Rodriguez wrote:
-> > On Wed, May 09, 2018 at 10:00:58PM -0400, Mimi Zohar wrote:
-> > > On Wed, 2018-05-09 at 23:48 +0000, Luis R. Rodriguez wrote:
-> > > > On Wed, May 09, 2018 at 06:06:57PM -0400, Mimi Zohar wrote:
-> > > 
-> > > > > > > Yes, writing regdb as a micro/mini LSM sounds reasonable. ?The LSM
-> > > > > > > would differentiate between other firmware and the regulatory.db based
-> > > > > > > on the firmware's pathname.
-> > > > > > 
-> > > > > > If that is the only way then it would be silly to do the mini LSM as all
-> > > > > > calls would have to have the check. A special LSM hook for just the
-> > > > > > regulatory db also doesn't make much sense.
-> > > > > 
-> > > > > All calls to request_firmware() are already going through this LSM
-> > > > > hook. ?I should have said, it would be based on both READING_FIRMWARE
-> > > > > and the firmware's pathname.
-> > > > 
-> > > > Yes, but it would still be a strcmp() computation added for all
-> > > > READING_FIRMWARE. In that sense, the current arrangement is only open coding the
-> > > > signature verification for the regulatory.db file.  One way to avoid this would
-> > > > be to add an LSM specific to the regulatory db
-> > > 
-> > > Casey already commented on this suggestion.
+On 2018-05-10 17:21, Richard Guy Briggs wrote:
+> On 2018-05-09 11:13, Paul Moore wrote:
+> > On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Recognizing that the loginuid is an internal audit value, use an access
+> > > function to retrieve the audit loginuid value for the task rather than
+> > > reaching directly into the task struct to get it.
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  kernel/auditsc.c | 16 ++++++++--------
+> > >  1 file changed, 8 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 479c031..f3817d0 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
+> > >         case AUDIT_COMPARE_EGID_TO_OBJ_GID:
+> > >                 return audit_compare_gid(cred->egid, name, f, ctx);
+> > >         case AUDIT_COMPARE_AUID_TO_OBJ_UID:
+> > > -               return audit_compare_uid(tsk->loginuid, name, f, ctx);
+> > > +               return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
+> > >         case AUDIT_COMPARE_SUID_TO_OBJ_UID:
+> > >                 return audit_compare_uid(cred->suid, name, f, ctx);
+> > >         case AUDIT_COMPARE_SGID_TO_OBJ_GID:
+> > > @@ -385,7 +385,7 @@ static int audit_field_compare(struct task_struct *tsk,
+> > >                 return audit_compare_gid(cred->fsgid, name, f, ctx);
+> > >         /* uid comparisons */
+> > >         case AUDIT_COMPARE_UID_TO_AUID:
+> > > -               return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
+> > > +               return audit_uid_comparator(cred->uid, f->op, audit_get_loginuid(tsk));
+> > >         case AUDIT_COMPARE_UID_TO_EUID:
+> > >                 return audit_uid_comparator(cred->uid, f->op, cred->euid);
+> > >         case AUDIT_COMPARE_UID_TO_SUID:
+> > > @@ -394,11 +394,11 @@ static int audit_field_compare(struct task_struct *tsk,
+> > >                 return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
+> > >         /* auid comparisons */
+> > >         case AUDIT_COMPARE_AUID_TO_EUID:
+> > > -               return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
+> > > +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->euid);
+> > >         case AUDIT_COMPARE_AUID_TO_SUID:
+> > > -               return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
+> > > +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->suid);
+> > >         case AUDIT_COMPARE_AUID_TO_FSUID:
+> > > -               return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
+> > > +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->fsuid);
+> > >         /* euid comparisons */
+> > >         case AUDIT_COMPARE_EUID_TO_SUID:
+> > >                 return audit_uid_comparator(cred->euid, f->op, cred->suid);
+> > > @@ -611,7 +611,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+> > >                                 result = match_tree_refs(ctx, rule->tree);
+> > >                         break;
+> > >                 case AUDIT_LOGINUID:
+> > > -                       result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
+> > > +                       result = audit_uid_comparator(audit_get_loginuid(tsk), f->op, f->uid);
+> > >                         break;
+> > >                 case AUDIT_LOGINUID_SET:
+> > >                         result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
+> > > @@ -2287,8 +2287,8 @@ int audit_signal_info(int sig, struct task_struct *t)
+> > >             (sig == SIGTERM || sig == SIGHUP ||
+> > >              sig == SIGUSR1 || sig == SIGUSR2)) {
+> > >                 audit_sig_pid = task_tgid_nr(tsk);
+> > > -               if (uid_valid(tsk->loginuid))
+> > > -                       audit_sig_uid = tsk->loginuid;
+> > > +               if (uid_valid(audit_get_loginuid(tsk)))
+> > > +                       audit_sig_uid = audit_get_loginuid(tsk);
 > > 
-> > Sorry but I must have missed this, can you send me the email or URL where he did that?
-> > I never got a copy of that email I think.
+> > I realize this comment is a little silly given the nature of loginuid,
+> > but if we are going to abstract away loginuid accesses (which I think
+> > is good), we should probably access it once, store it in a local
+> > variable, perform the validity check on the local variable, then
+> > commit the local variable to audit_sig_uid.  I realize a TOCTOU
+> > problem is unlikely here, but with this new layer of abstraction it
+> > seems that some additional safety might be a good thing.
 > 
-> My mistake. ?I've posted similar patches for kexec_load and for the
-> firmware sysfs fallback, both call security_kernel_read_file().
-> Casey's comment was in regards to kexec_load[1], not for the sysfs
-> fallback mode. ?Here's the link to the most recent version of the
-> kexec_load patches.[2]
+> Ok, I'll just assign it to where it is going and check it there, holding
+> the audit_ctl_lock the whole time, since it should have been done
+> anyways for all of audit_sig_{pid,uid,sid} anyways to get a consistent
+> view from the AUDIT_SIGNAL_INFO fetch.
+
+Hmmm, holding audit_ctl_lock won't work because it could sleep trying to
+get the lock and the signal info is set in a context where sleeping
+isn't permitted.  I'll just use a local var...
+
+> > >                 else
+> > >                         audit_sig_uid = uid;
+> > >                 security_task_getsecid(tsk, &audit_sig_sid);
 > 
-> [1]?http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006690.html
-> [2] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006854.html
+> > paul moore
+> 
+> - RGB
 
-It seems I share Eric's concern on these threads are over general architecture,
-below some notes which I think may help for the long term on that regards.
+- RGB
 
-In the firmware_loader case we have *one* subsystem which as open coded firmware
-signing -- the wireless subsystem open codes firmware verification by doing two
-request_firmware() calls, one for the regulatory.bin and one for regulatory.bin.p7s,
-and then it does its own check. In this patch set you suggested adding
-a new READING_FIRMWARE_REGULATORY_DB. But your first patch in the series also
-adds READING_FIRMWARE_FALLBACK for the fallback case where we enable use of
-the old syfs loading facility.
-
-My concerns are two fold for this case:
-
-a) This would mean adding a new READING_* ID tag per any kernel mechanism which open
-codes its own signature verification scheme.
-
-b) The way it was implemented was to do (just showing
-READING_FIRMWARE_REGULATORY_DB here):
-
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index eb34089e4299..d7cdf04a8681 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
-                        break;
-                }
-
-+#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
-+               if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
-+                   (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
-+                       id = READING_FIRMWARE_REGULATORY_DB;
-+#endif
-                fw_priv->size = 0;
-                rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
-                                                msize, id);
-
-This is eye-soring, and in turn would mean adding yet more #ifdefs for any
-code on the kernel which open codes other firmware signing efforts with
-its own kconfig...
-
-I gather from reading the threads above that Eric's concerns are the re-use of
-an API for security to read files for something which is really not a file, but
-a binary blob of some sort and Casey's rebuttal is adding more hooks for small
-things is a bad idea.
-
-In light of all this I'll say that the concerns Eric has are unfortunately
-too late, that ship has sailed eons ago. The old non-fd API for module loading
-init_module() calls       security_kernel_read_file(NULL, READING_MODULE). Your
-patch in this series adds security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK)
-for the old syfs loading facility.
-
-So in this regard, I think we have no other option but what you suggested, to
-add a wrapper, say a security_kernel_read_blob() wrapper that calls
-security_kernel_read_file(NULL, id); and make the following legacy calls use
-it:
-
-  o kernel/module.c for init_module()
-  o kexec_load()
-  o firmware loader sysfs facility
-
-I think its fair then to add a new READING entry per functionality here
-*but* with the compromise that we *document* that such interfaces are
-discouraged, in preference for interfaces where at least the fd can be
-captured some how. This should hopefully put a stop gap to such interfaces.
-
-Then as for my concern on extending and adding new READING_* ID tags
-for other future open-coded firmware calls, since:
-
-a) You seem to be working on  a CONFIG_IMA_APPRAISE_FIRMWARE which would
-enable similar functionality as firmware signing but in userspace
-
-b) CONFIG_CFG80211_REQUIRE_SIGNED_REGDB was added to replace needing
-CRDA, with an in-kernel interface. CRDA just did a signature check on
-the regulatory.bin prior to tossing regulatory data over the kernel.
-
-c) We've taken a position to *not* implement generic firmware singing
-upstream in light of the fact that UEFI has pushed hw manufacturers
-to implement FW singing in hardware, and for devices outside of these
-we're happy to suggest IMA use.
-
-d) It may be possible to have CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
-depend on !CONFIG_IMA_APPRAISE_FIRMWARE this way we'd take a policy
-that CONFIG_IMA_APPRAISE_FIRMWARE replaces in-kernel open coded
-firmware singing facilities
-
-Then I think it makes sense to adapt a policy of being *very careful* allowing
-future open coded firmware signing efforts such as
-CONFIG_CFG80211_REQUIRE_SIGNED_REGDB, and recommend folks to do work for things
-like this through IMA with CONFIG_IMA_APPRAISE_FIRMWARE. This would limit our
-needs to extend READING_* ID tags for new open coded firmwares.
-
-Then as for the eye-sore you added for CONFIG_CFG80211_REQUIRE_SIGNED_REGDB,
-in light of all this, I accept we have no other way to deal with it but with
-#ifdefs.. however it could be dealt with, as helpers where if
-CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is not set we just set the id to
-READING_FIRMWARE, ie, just keep the #ifdefs out of the actual code we read.
-Perhaps it makes sense to throw this check into the helper:
-
-        /* Already populated data member means we're loading into a buffer */
-        if (fw_priv->data) {
-                id = READING_FIRMWARE_PREALLOC_BUFFER;
-                msize = fw_priv->allocated_size;
-        }
-
-PS: the work Alexei is doing with fork_usermode_blob() may sound similar
-to the above legacy cases, but as I have noted before -- it already uses
-an LSM hook to vet the data loaded as the data gets loaded as module.
-
-  Luis
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
