@@ -1,83 +1,60 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 10 May 2018 21:36:46 -0400
-Subject: [PATCH 1/3] ima: based on the "secure_boot" policy limit syscalls
-In-Reply-To: <1526002608-27474-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1526002608-27474-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1526002608-27474-2-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Fri, 11 May 2018 01:00:26 -0400
+Subject: [PATCH 3/6] firmware: differentiate between signed
+	regulatory.db and other firmware
+In-Reply-To: <20180510232639.GF27853@wotan.suse.de>
+References: <20180504000743.GR27853@wotan.suse.de>
+	<1525393466.3539.133.camel@linux.vnet.ibm.com>
+	<20180508173404.GG27853@wotan.suse.de>
+	<1525865428.3551.175.camel@linux.vnet.ibm.com>
+	<20180509191508.GR27853@wotan.suse.de>
+	<1525895838.3551.247.camel@linux.vnet.ibm.com>
+	<20180509212212.GX27853@wotan.suse.de>
+	<1525903617.3551.281.camel@linux.vnet.ibm.com>
+	<20180509234814.GY27853@wotan.suse.de>
+	<1525917658.3551.322.camel@linux.vnet.ibm.com>
+	<20180510232639.GF27853@wotan.suse.de>
+Message-ID: <1526014826.3414.46.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The builtin "secure_boot" policy adds IMA appraisal rules requiring kernel
-modules (finit_module syscall), direct firmware load, kexec kernel image
-(kexec_file_load syscall), and the IMA policy to be signed, but did not
-prevent the other syscalls/methods from working.  Loading an equivalent
-custom policy containing these same rules would have prevented the other
-syscalls/methods from working.
+On Thu, 2018-05-10 at 23:26 +0000, Luis R. Rodriguez wrote:
+> On Wed, May 09, 2018 at 10:00:58PM -0400, Mimi Zohar wrote:
+> > On Wed, 2018-05-09 at 23:48 +0000, Luis R. Rodriguez wrote:
+> > > On Wed, May 09, 2018 at 06:06:57PM -0400, Mimi Zohar wrote:
+> > 
+> > > > > > Yes, writing regdb as a micro/mini LSM sounds reasonable. ?The LSM
+> > > > > > would differentiate between other firmware and the regulatory.db based
+> > > > > > on the firmware's pathname.
+> > > > > 
+> > > > > If that is the only way then it would be silly to do the mini LSM as all
+> > > > > calls would have to have the check. A special LSM hook for just the
+> > > > > regulatory db also doesn't make much sense.
+> > > > 
+> > > > All calls to request_firmware() are already going through this LSM
+> > > > hook. ?I should have said, it would be based on both READING_FIRMWARE
+> > > > and the firmware's pathname.
+> > > 
+> > > Yes, but it would still be a strcmp() computation added for all
+> > > READING_FIRMWARE. In that sense, the current arrangement is only open coding the
+> > > signature verification for the regulatory.db file.  One way to avoid this would
+> > > be to add an LSM specific to the regulatory db
+> > 
+> > Casey already commented on this suggestion.
+> 
+> Sorry but I must have missed this, can you send me the email or URL where he did that?
+> I never got a copy of that email I think.
 
-This patch refactors the code to load custom policies, defining a new
-function named ima_appraise_flag().  The new function is called either
-when loading the builtin "secure_boot" or custom policies.
+My mistake. ?I've posted similar patches for kexec_load and for the
+firmware sysfs fallback, both call security_kernel_read_file().
+Casey's comment was in regards to kexec_load[1], not for the sysfs
+fallback mode. ?Here's the link to the most recent version of the
+kexec_load patches.[2]
 
-Fixes: 503ceaef8e2e ("ima: define a set of appraisal rules requiring file signatures")
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- security/integrity/ima/ima_policy.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+[1]?http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006690.html
+[2] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006854.html
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 03cbba423e59..df3e45878a87 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -440,6 +440,17 @@ void ima_update_policy_flag(void)
- 		ima_policy_flag &= ~IMA_APPRAISE;
- }
- 
-+static int ima_appraise_flag(enum ima_hooks func)
-+{
-+	if (func == MODULE_CHECK)
-+		return IMA_APPRAISE_MODULES;
-+	else if (func == FIRMWARE_CHECK)
-+		return IMA_APPRAISE_FIRMWARE;
-+	else if (func == POLICY_CHECK)
-+		return IMA_APPRAISE_POLICY;
-+	return 0;
-+}
-+
- /**
-  * ima_init_policy - initialize the default measure rules.
-  *
-@@ -478,9 +489,12 @@ void __init ima_init_policy(void)
- 	 * Insert the appraise rules requiring file signatures, prior to
- 	 * any other appraise rules.
- 	 */
--	for (i = 0; i < secure_boot_entries; i++)
-+	for (i = 0; i < secure_boot_entries; i++) {
- 		list_add_tail(&secure_boot_rules[i].list,
- 			      &ima_default_rules);
-+		temp_ima_appraise |=
-+		    ima_appraise_flag(secure_boot_rules[i].func);
-+	}
- 
- 	for (i = 0; i < appraise_entries; i++) {
- 		list_add_tail(&default_appraise_rules[i].list,
-@@ -934,12 +948,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 	}
- 	if (!result && (entry->action == UNKNOWN))
- 		result = -EINVAL;
--	else if (entry->func == MODULE_CHECK)
--		temp_ima_appraise |= IMA_APPRAISE_MODULES;
--	else if (entry->func == FIRMWARE_CHECK)
--		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
--	else if (entry->func == POLICY_CHECK)
--		temp_ima_appraise |= IMA_APPRAISE_POLICY;
-+	else if (entry->action == APPRAISE)
-+		temp_ima_appraise |= ima_appraise_flag(entry->func);
-+
- 	audit_log_format(ab, "res=%d", !result);
- 	audit_log_end(ab);
- 	return result;
--- 
-2.7.5
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
