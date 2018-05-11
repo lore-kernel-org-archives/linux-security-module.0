@@ -1,19 +1,18 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 10 May 2018 17:54:17 -0700
-Subject: [PATCH 11/23] LSM: Infrastructure management of the superblock
+Date: Thu, 10 May 2018 17:54:57 -0700
+Subject: [PATCH 14/23] LSM: Infrastructure management of the key security blob
 In-Reply-To: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
 References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-Message-ID: <162937ea-c98d-c226-6328-012cc74e1538@schaufler-ca.com>
+Message-ID: <1104b03d-c4c9-6245-6b5c-766b7d6c3a5d@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Thu, 10 May 2018 14:25:23 -0700
-Subject: [PATCH 11/23] LSM: Infrastructure management of the superblock
- security blob
+Date: Thu, 10 May 2018 14:32:32 -0700
+Subject: [PATCH 14/23] LSM: Infrastructure management of the key security blob
 
-Move management of the superblock->sb_security blob out
-of the individual security modules and into the security
+Move management of the key->security blob out of the
+individual security modules and into the security
 infrastructure. Instead of allocating the blobs from within
 the modules the modules tell the infrastructure how much
 space is required, and the space is allocated there.
@@ -21,467 +20,304 @@ space is required, and the space is allocated there.
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
  include/linux/lsm_hooks.h         |  1 +
- security/security.c               | 34 +++++++++++++++++++++++-
- security/selinux/hooks.c          | 56 +++++++++++++++------------------------
- security/selinux/include/objsec.h |  6 +++++
- security/selinux/ss/services.c    |  3 ++-
- security/smack/smack.h            |  6 +++++
- security/smack/smack_lsm.c        | 35 +++++++-----------------
- 7 files changed, 78 insertions(+), 63 deletions(-)
+ security/security.c               | 40 ++++++++++++++++++++++++++++++++++++++-
+ security/selinux/hooks.c          | 23 ++++++----------------
+ security/selinux/include/objsec.h |  7 +++++++
+ security/smack/smack.h            |  7 +++++++
+ security/smack/smack_lsm.c        | 33 +++++++++++++++-----------------
+ 6 files changed, 75 insertions(+), 36 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index a935ab92906d..643e2fac8639 100644
+index 42535da852bc..5428485750b6 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2018,6 +2018,7 @@ struct lsm_blob_sizes {
- 	int	lbs_cred;
+@@ -2019,6 +2019,7 @@ struct lsm_blob_sizes {
  	int	lbs_file;
  	int	lbs_inode;
-+	int	lbs_superblock;
- 	int	lbs_task;
- };
- 
+ 	int	lbs_ipc;
++	int	lbs_key;
+ 	int	lbs_msg_msg;
+ 	int	lbs_sock;
+ 	int	lbs_superblock;
 diff --git a/security/security.c b/security/security.c
-index 02df9b608b7e..32d1ffe213ce 100644
+index 9414d1a78ee5..359ed1137c00 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -114,6 +114,7 @@ int __init security_init(void)
- 	pr_info("LSM: cred blob size       = %d\n", blob_sizes.lbs_cred);
+@@ -117,6 +117,9 @@ int __init security_init(void)
  	pr_info("LSM: file blob size       = %d\n", blob_sizes.lbs_file);
  	pr_info("LSM: inode blob size      = %d\n", blob_sizes.lbs_inode);
-+	pr_info("LSM: superblock blob size = %d\n", blob_sizes.lbs_superblock);
- 	pr_info("LSM: task blob size       = %d\n", blob_sizes.lbs_task);
- #endif /* CONFIG_SECURITY_LSM_DEBUG */
- 
-@@ -290,6 +291,7 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
- {
+ 	pr_info("LSM: ipc blob size        = %d\n", blob_sizes.lbs_ipc);
++#ifdef CONFIG_KEYS
++	pr_info("LSM: key blob size        = %d\n", blob_sizes.lbs_key);
++#endif /* CONFIG_KEYS */
+ 	pr_info("LSM: msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
+ 	pr_info("LSM: sock blob size       = %d\n", blob_sizes.lbs_sock);
+ 	pr_info("LSM: superblock blob size = %d\n", blob_sizes.lbs_superblock);
+@@ -297,6 +300,9 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
  	lsm_set_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
  	lsm_set_size(&needed->lbs_file, &blob_sizes.lbs_file);
-+	lsm_set_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
- 	lsm_set_size(&needed->lbs_task, &blob_sizes.lbs_task);
- 	/*
- 	 * The inode blob gets an rcu_head in addition to
-@@ -401,6 +403,27 @@ void lsm_early_inode(struct inode *inode)
- 		panic("%s: Early inode alloc failed.\n", __func__);
- }
- 
-+/**
-+ * lsm_superblock_alloc - allocate a composite superblock blob
-+ * @sb: the superblock that needs a blob
-+ *
-+ * Allocate the superblock blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+int lsm_superblock_alloc(struct super_block *sb)
-+{
-+	if (blob_sizes.lbs_superblock == 0) {
-+		sb->s_security = NULL;
-+		return 0;
-+	}
-+
-+	sb->s_security = kzalloc(blob_sizes.lbs_superblock, GFP_KERNEL);
-+	if (sb->s_security == NULL)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
- /*
-  * Hook list operation macros.
-  *
-@@ -568,12 +591,21 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
- 
- int security_sb_alloc(struct super_block *sb)
- {
--	return call_int_hook(sb_alloc_security, 0, sb);
-+	int rc = lsm_superblock_alloc(sb);
-+
-+	if (unlikely(rc))
-+		return rc;
-+	rc = call_int_hook(sb_alloc_security, 0, sb);
-+	if (unlikely(rc))
-+		security_sb_free(sb);
-+	return rc;
- }
- 
- void security_sb_free(struct super_block *sb)
- {
- 	call_void_hook(sb_free_security, sb);
-+	kfree(sb->s_security);
-+	sb->s_security = NULL;
- }
- 
- int security_sb_copy_data(char *orig, char *copy)
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 493328a1c789..5f7818d3fb16 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -334,7 +334,8 @@ static struct inode_security_struct *backing_inode_security(struct dentry *dentr
- static void inode_free_security(struct inode *inode)
- {
- 	struct inode_security_struct *isec = selinux_inode(inode);
--	struct superblock_security_struct *sbsec = inode->i_sb->s_security;
-+	struct superblock_security_struct *sbsec =
-+					selinux_superblock(inode->i_sb);
- 
- 	/*
- 	 * As not all inode security structures are in a list, we check for
-@@ -366,11 +367,7 @@ static int file_alloc_security(struct file *file)
- 
- static int superblock_alloc_security(struct super_block *sb)
- {
--	struct superblock_security_struct *sbsec;
--
--	sbsec = kzalloc(sizeof(struct superblock_security_struct), GFP_KERNEL);
--	if (!sbsec)
--		return -ENOMEM;
-+	struct superblock_security_struct *sbsec = selinux_superblock(sb);
- 
- 	mutex_init(&sbsec->lock);
- 	INIT_LIST_HEAD(&sbsec->isec_head);
-@@ -379,18 +376,10 @@ static int superblock_alloc_security(struct super_block *sb)
- 	sbsec->sid = SECINITSID_UNLABELED;
- 	sbsec->def_sid = SECINITSID_FILE;
- 	sbsec->mntpoint_sid = SECINITSID_UNLABELED;
--	sb->s_security = sbsec;
- 
+ 	lsm_set_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
++#ifdef CONFIG_KEYS
++	lsm_set_size(&needed->lbs_key, &blob_sizes.lbs_key);
++#endif
+ 	lsm_set_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+ 	lsm_set_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
+ 	lsm_set_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
+@@ -432,6 +438,29 @@ int lsm_ipc_alloc(struct kern_ipc_perm *kip)
  	return 0;
  }
  
--static void superblock_free_security(struct super_block *sb)
++#ifdef CONFIG_KEYS
++/**
++ * lsm_key_alloc - allocate a composite key blob
++ * @key: the key that needs a blob
++ *
++ * Allocate the key blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++int lsm_key_alloc(struct key *key)
++{
++	if (blob_sizes.lbs_key == 0) {
++		key->security = NULL;
++		return 0;
++	}
++
++	key->security = kzalloc(blob_sizes.lbs_key, GFP_KERNEL);
++	if (key->security == NULL)
++		return -ENOMEM;
++	return 0;
++}
++#endif /* CONFIG_KEYS */
++
+ /**
+  * lsm_msg_msg_alloc - allocate a composite msg_msg blob
+  * @mp: the msg_msg that needs a blob
+@@ -2137,12 +2166,21 @@ EXPORT_SYMBOL(security_skb_classify_flow);
+ int security_key_alloc(struct key *key, const struct cred *cred,
+ 		       unsigned long flags)
+ {
+-	return call_int_hook(key_alloc, 0, key, cred, flags);
++	int rc = lsm_key_alloc(key);
++
++	if (unlikely(rc))
++		return rc;
++	rc = call_int_hook(key_alloc, 0, key, cred, flags);
++	if (unlikely(rc))
++		security_key_free(key);
++	return rc;
+ }
+ 
+ void security_key_free(struct key *key)
+ {
+ 	call_void_hook(key_free, key);
++	kfree(key->security);
++	key->security = NULL;
+ }
+ 
+ int security_key_permission(key_ref_t key_ref,
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3911e28e3907..f3531e5bc3d9 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6407,11 +6407,7 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
+ 			     unsigned long flags)
+ {
+ 	const struct task_security_struct *tsec;
+-	struct key_security_struct *ksec;
+-
+-	ksec = kzalloc(sizeof(struct key_security_struct), GFP_KERNEL);
+-	if (!ksec)
+-		return -ENOMEM;
++	struct key_security_struct *ksec = selinux_key(k);
+ 
+ 	tsec = selinux_cred(cred);
+ 	if (tsec->keycreate_sid)
+@@ -6419,18 +6415,9 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
+ 	else
+ 		ksec->sid = tsec->sid;
+ 
+-	k->security = ksec;
+ 	return 0;
+ }
+ 
+-static void selinux_key_free(struct key *k)
 -{
--	struct superblock_security_struct *sbsec = sb->s_security;
--	sb->s_security = NULL;
--	kfree(sbsec);
+-	struct key_security_struct *ksec = k->security;
+-
+-	k->security = NULL;
+-	kfree(ksec);
 -}
 -
- static inline int inode_doinit(struct inode *inode)
- {
- 	return inode_doinit_with_dentry(inode, NULL);
-@@ -458,7 +447,7 @@ static int may_context_mount_inode_relabel(u32 sid,
+ static int selinux_key_permission(key_ref_t key_ref,
+ 				  const struct cred *cred,
+ 				  unsigned perm)
+@@ -6448,7 +6435,7 @@ static int selinux_key_permission(key_ref_t key_ref,
+ 	sid = cred_sid(cred);
  
- static int selinux_is_sblabel_mnt(struct super_block *sb)
- {
--	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	key = key_ref_to_ptr(key_ref);
+-	ksec = key->security;
++	ksec = selinux_key(key);
  
- 	return sbsec->behavior == SECURITY_FS_USE_XATTR ||
- 		sbsec->behavior == SECURITY_FS_USE_TRANS ||
-@@ -477,7 +466,7 @@ static int selinux_is_sblabel_mnt(struct super_block *sb)
- 
- static int sb_finish_set_opts(struct super_block *sb)
- {
--	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct superblock_security_struct *sbsec = selinux_superblock(sb);
- 	struct dentry *root = sb->s_root;
- 	struct inode *root_inode = d_backing_inode(root);
- 	int rc = 0;
-@@ -560,7 +549,7 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
- 				struct security_mnt_opts *opts)
- {
- 	int rc = 0, i;
--	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct superblock_security_struct *sbsec = selinux_superblock(sb);
- 	char *context = NULL;
- 	u32 len;
- 	char tmp;
-@@ -681,7 +670,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
- {
- 	const struct cred *cred = current_cred();
- 	int rc = 0, i;
--	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct superblock_security_struct *sbsec = selinux_superblock(sb);
- 	const char *name = sb->s_type->name;
- 	struct dentry *root = sbsec->sb->s_root;
- 	struct inode_security_struct *root_isec;
-@@ -936,8 +925,8 @@ static int selinux_set_mnt_opts(struct super_block *sb,
- static int selinux_cmp_sb_context(const struct super_block *oldsb,
- 				    const struct super_block *newsb)
- {
--	struct superblock_security_struct *old = oldsb->s_security;
--	struct superblock_security_struct *new = newsb->s_security;
-+	struct superblock_security_struct *old = selinux_superblock(oldsb);
-+	struct superblock_security_struct *new = selinux_superblock(newsb);
- 	char oldflags = old->flags & SE_MNTMASK;
- 	char newflags = new->flags & SE_MNTMASK;
- 
-@@ -969,8 +958,9 @@ static int selinux_sb_clone_mnt_opts(const struct super_block *oldsb,
- 					unsigned long *set_kern_flags)
- {
- 	int rc = 0;
--	const struct superblock_security_struct *oldsbsec = oldsb->s_security;
--	struct superblock_security_struct *newsbsec = newsb->s_security;
-+	const struct superblock_security_struct *oldsbsec =
-+						selinux_superblock(oldsb);
-+	struct superblock_security_struct *newsbsec = selinux_superblock(newsb);
- 
- 	int set_fscontext =	(oldsbsec->flags & FSCONTEXT_MNT);
- 	int set_context =	(oldsbsec->flags & CONTEXT_MNT);
-@@ -1494,7 +1484,7 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
- 	if (isec->sclass == SECCLASS_FILE)
- 		isec->sclass = inode_mode_to_security_class(inode->i_mode);
- 
--	sbsec = inode->i_sb->s_security;
-+	sbsec = selinux_superblock(inode->i_sb);
- 	if (!(sbsec->flags & SE_SBINITIALIZED)) {
- 		/* Defer initialization until selinux_complete_init,
- 		   after the initial policy is loaded and the security
-@@ -1873,7 +1863,8 @@ selinux_determine_inode_label(const struct task_security_struct *tsec,
- 				 const struct qstr *name, u16 tclass,
- 				 u32 *_new_isid)
- {
--	const struct superblock_security_struct *sbsec = dir->i_sb->s_security;
-+	const struct superblock_security_struct *sbsec =
-+						selinux_superblock(dir->i_sb);
- 
- 	if ((sbsec->flags & SE_SBINITIALIZED) &&
- 	    (sbsec->behavior == SECURITY_FS_USE_MNTPOINT)) {
-@@ -1904,7 +1895,7 @@ static int may_create(struct inode *dir,
- 	int rc;
- 
- 	dsec = inode_security(dir);
--	sbsec = dir->i_sb->s_security;
-+	sbsec = selinux_superblock(dir->i_sb);
- 
- 	sid = tsec->sid;
- 
-@@ -2053,7 +2044,7 @@ static int superblock_has_perm(const struct cred *cred,
- 	struct superblock_security_struct *sbsec;
- 	u32 sid = cred_sid(cred);
- 
--	sbsec = sb->s_security;
-+	sbsec = selinux_superblock(sb);
  	return avc_has_perm(&selinux_state,
- 			    sid, sbsec->sid, SECCLASS_FILESYSTEM, perms, ad);
- }
-@@ -2684,11 +2675,6 @@ static int selinux_sb_alloc_security(struct super_block *sb)
- 	return superblock_alloc_security(sb);
- }
+ 			    sid, ksec->sid, SECCLASS_KEY, perm, NULL);
+@@ -6456,7 +6443,7 @@ static int selinux_key_permission(key_ref_t key_ref,
  
--static void selinux_sb_free_security(struct super_block *sb)
--{
--	superblock_free_security(sb);
--}
--
- static inline int match_prefix(char *prefix, int plen, char *option, int olen)
+ static int selinux_key_getsecurity(struct key *key, char **_buffer)
  {
- 	if (plen > olen)
-@@ -2785,7 +2771,7 @@ static int selinux_sb_remount(struct super_block *sb, void *data)
- 	int rc, i, *flags;
- 	struct security_mnt_opts opts;
- 	char *secdata, **mount_options;
--	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct superblock_security_struct *sbsec = selinux_superblock(sb);
- 
- 	if (!(sbsec->flags & SE_SBINITIALIZED))
- 		return 0;
-@@ -2979,7 +2965,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+-	struct key_security_struct *ksec = key->security;
++	struct key_security_struct *ksec = selinux_key(key);
+ 	char *context = NULL;
+ 	unsigned len;
  	int rc;
- 	char *context;
- 
--	sbsec = dir->i_sb->s_security;
-+	sbsec = selinux_superblock(dir->i_sb);
- 
- 	newsid = tsec->create_sid;
- 
-@@ -3216,7 +3202,7 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
- 		return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
- 	}
- 
--	sbsec = inode->i_sb->s_security;
-+	sbsec = selinux_superblock(inode->i_sb);
- 	if (!(sbsec->flags & SBLABEL_MNT))
- 		return -EOPNOTSUPP;
- 
-@@ -6769,6 +6755,7 @@ struct lsm_blob_sizes selinux_blob_sizes = {
- 	.lbs_cred = sizeof(struct task_security_struct),
+@@ -6681,6 +6668,9 @@ struct lsm_blob_sizes selinux_blob_sizes = {
  	.lbs_file = sizeof(struct file_security_struct),
  	.lbs_inode = sizeof(struct inode_security_struct),
-+	.lbs_superblock = sizeof(struct superblock_security_struct),
- };
+ 	.lbs_ipc = sizeof(struct ipc_security_struct),
++#ifdef CONFIG_KEYS
++	.lbs_key = sizeof(struct key_security_struct),
++#endif /* CONFIG_KEYS */
+ 	.lbs_msg_msg = sizeof(struct msg_security_struct),
+ 	.lbs_sock = sizeof(struct sk_security_struct),
+ 	.lbs_superblock = sizeof(struct superblock_security_struct),
+@@ -6890,7 +6880,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
  
- static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
-@@ -6794,7 +6781,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
- 
- 	LSM_HOOK_INIT(sb_alloc_security, selinux_sb_alloc_security),
--	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
- 	LSM_HOOK_INIT(sb_copy_data, selinux_sb_copy_data),
- 	LSM_HOOK_INIT(sb_remount, selinux_sb_remount),
- 	LSM_HOOK_INIT(sb_kern_mount, selinux_sb_kern_mount),
+ #ifdef CONFIG_KEYS
+ 	LSM_HOOK_INIT(key_alloc, selinux_key_alloc),
+-	LSM_HOOK_INIT(key_free, selinux_key_free),
+ 	LSM_HOOK_INIT(key_permission, selinux_key_permission),
+ 	LSM_HOOK_INIT(key_getsecurity, selinux_key_getsecurity),
+ #endif
 diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index 60d109caaeef..8104bac642b1 100644
+index d1d883f8c552..6092786c5828 100644
 --- a/security/selinux/include/objsec.h
 +++ b/security/selinux/include/objsec.h
-@@ -174,4 +174,10 @@ static inline struct inode_security_struct *selinux_inode(const struct inode *in
- 	return inode->i_security;
+@@ -192,6 +192,13 @@ static inline struct ipc_security_struct *selinux_ipc(
+ 	return ipc->security;
  }
  
-+static inline struct superblock_security_struct *selinux_superblock(
-+					const struct super_block *superblock)
++#ifdef CONFIG_KEYS
++static inline struct key_security_struct *selinux_key(const struct key *key)
 +{
-+	return superblock->s_security;
++	return key->security;
 +}
++#endif /* CONFIG_KEYS */
 +
- #endif /* _SELINUX_OBJSEC_H_ */
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 8057e19dc15f..41ab13319153 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -52,6 +52,7 @@
- #include <linux/selinux.h>
- #include <linux/flex_array.h>
- #include <linux/vmalloc.h>
-+#include <linux/lsm_hooks.h>
- #include <net/netlabel.h>
- 
- #include "flask.h"
-@@ -2766,7 +2767,7 @@ int security_fs_use(struct selinux_state *state, struct super_block *sb)
- 	struct sidtab *sidtab;
- 	int rc = 0;
- 	struct ocontext *c;
--	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct superblock_security_struct *sbsec = selinux_superblock(sb);
- 	const char *fstype = sb->s_type->name;
- 
- 	read_lock(&state->ss->policy_rwlock);
+ static inline struct sk_security_struct *selinux_sock(const struct sock *sock)
+ {
+ 	return sock->sk_security;
 diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 5da5bd1b9b47..d73e9def586c 100644
+index 42c36e37b0bd..e50ed4945a40 100644
 --- a/security/smack/smack.h
 +++ b/security/smack/smack.h
-@@ -372,6 +372,12 @@ static inline struct inode_smack *smack_inode(const struct inode *inode)
- 	return inode->i_security;
+@@ -393,6 +393,13 @@ static inline struct smack_known **smack_ipc(const struct kern_ipc_perm *ipc)
+ 	return ipc->security;
  }
  
-+static inline struct superblock_smack *smack_superblock(
-+					const struct super_block *superblock)
++#ifdef CONFIG_KEYS
++static inline struct smack_known **smack_key(const struct key *key)
 +{
-+	return superblock->s_security;
++	return key->security;
 +}
++#endif /* CONFIG_KEYS */
 +
  /*
   * Is the directory transmuting?
   */
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index cfabb9f5cc9b..889283b553c8 100644
+index a419953c1004..c15861eb3606 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -519,12 +519,7 @@ static int smack_syslog(int typefrom_file)
-  */
- static int smack_sb_alloc_security(struct super_block *sb)
+@@ -4136,23 +4136,13 @@ static void smack_inet_csk_clone(struct sock *sk,
+ static int smack_key_alloc(struct key *key, const struct cred *cred,
+ 			   unsigned long flags)
  {
--	struct superblock_smack *sbsp;
--
--	sbsp = kzalloc(sizeof(struct superblock_smack), GFP_KERNEL);
--
--	if (sbsp == NULL)
--		return -ENOMEM;
-+	struct superblock_smack *sbsp = smack_superblock(sb);
++	struct smack_known **blob = smack_key(key);
+ 	struct smack_known *skp = smk_of_task(smack_cred(cred));
  
- 	sbsp->smk_root = &smack_known_floor;
- 	sbsp->smk_default = &smack_known_floor;
-@@ -533,22 +528,10 @@ static int smack_sb_alloc_security(struct super_block *sb)
- 	/*
- 	 * SMK_SB_INITIALIZED will be zero from kzalloc.
- 	 */
--	sb->s_security = sbsp;
- 
+-	key->security = skp;
++	*blob = skp;
  	return 0;
  }
  
 -/**
-- * smack_sb_free_security - free a superblock blob
-- * @sb: the superblock getting the blob
+- * smack_key_free - Clear the key security blob
+- * @key: the object
 - *
+- * Clear the blob pointer
 - */
--static void smack_sb_free_security(struct super_block *sb)
+-static void smack_key_free(struct key *key)
 -{
--	kfree(sb->s_security);
--	sb->s_security = NULL;
+-	key->security = NULL;
 -}
 -
  /**
-  * smack_sb_copy_data - copy mount options data for processing
-  * @orig: where to start
-@@ -739,7 +722,7 @@ static int smack_set_mnt_opts(struct super_block *sb,
+  * smack_key_permission - Smack access on a key
+  * @key_ref: gets to the object
+@@ -4165,6 +4155,8 @@ static void smack_key_free(struct key *key)
+ static int smack_key_permission(key_ref_t key_ref,
+ 				const struct cred *cred, unsigned perm)
  {
- 	struct dentry *root = sb->s_root;
- 	struct inode *inode = d_backing_inode(root);
--	struct superblock_smack *sp = sb->s_security;
-+	struct superblock_smack *sp = smack_superblock(sb);
- 	struct inode_smack *isp;
- 	struct smack_known *skp;
- 	int i;
-@@ -868,7 +851,7 @@ static int smack_sb_kern_mount(struct super_block *sb, int flags, void *data)
-  */
- static int smack_sb_statfs(struct dentry *dentry)
- {
--	struct superblock_smack *sbp = dentry->d_sb->s_security;
-+	struct superblock_smack *sbp = smack_superblock(dentry->d_sb);
- 	int rc;
++	struct smack_known **blob;
++	struct smack_known *skp;
+ 	struct key *keyp;
  	struct smk_audit_info ad;
- 
-@@ -905,7 +888,7 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
- 	if (isp->smk_task == NULL || isp->smk_task == bsp->smk_task)
- 		return 0;
- 
--	sbsp = inode->i_sb->s_security;
-+	sbsp = smack_superblock(inode->i_sb);
- 	if ((sbsp->smk_flags & SMK_SB_UNTRUSTED) &&
- 	    isp->smk_task != sbsp->smk_root)
- 		return 0;
-@@ -1156,7 +1139,7 @@ static int smack_inode_rename(struct inode *old_inode,
-  */
- static int smack_inode_permission(struct inode *inode, int mask)
- {
--	struct superblock_smack *sbsp = inode->i_sb->s_security;
-+	struct superblock_smack *sbsp = smack_superblock(inode->i_sb);
- 	struct smk_audit_info ad;
- 	int no_block = mask & MAY_NOT_BLOCK;
- 	int rc;
-@@ -1398,7 +1381,7 @@ static int smack_inode_removexattr(struct dentry *dentry, const char *name)
+ 	struct smack_known *tkp = smk_of_task(smack_cred(cred));
+@@ -4178,7 +4170,9 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	 * If the key hasn't been initialized give it access so that
+ 	 * it may do so.
  	 */
- 	if (strcmp(name, XATTR_NAME_SMACK) == 0) {
- 		struct super_block *sbp = dentry->d_sb;
--		struct superblock_smack *sbsp = sbp->s_security;
-+		struct superblock_smack *sbsp = smack_superblock(sbp);
- 
- 		isp->smk_inode = sbsp->smk_default;
- 	} else if (strcmp(name, XATTR_NAME_SMACKEXEC) == 0)
-@@ -1668,7 +1651,7 @@ static int smack_mmap_file(struct file *file,
- 	isp = smack_inode(file_inode(file));
- 	if (isp->smk_mmap == NULL)
+-	if (keyp->security == NULL)
++	blob = smack_key(keyp);
++	skp = *blob;
++	if (skp == NULL)
  		return 0;
--	sbsp = file_inode(file)->i_sb->s_security;
-+	sbsp = smack_superblock(file_inode(file)->i_sb);
- 	if (sbsp->smk_flags & SMK_SB_UNTRUSTED &&
- 	    isp->smk_mmap != sbsp->smk_root)
- 		return -EACCES;
-@@ -3267,7 +3250,7 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
- 		goto unlockandout;
- 
- 	sbp = inode->i_sb;
--	sbsp = sbp->s_security;
-+	sbsp = smack_superblock(sbp);
  	/*
- 	 * We're going to use the superblock default label
- 	 * if there's no label on the file.
-@@ -4542,6 +4525,7 @@ struct lsm_blob_sizes smack_blob_sizes = {
- 	.lbs_cred = sizeof(struct task_smack),
+ 	 * This should not occur
+@@ -4198,8 +4192,8 @@ static int smack_key_permission(key_ref_t key_ref,
+ 		request = MAY_READ;
+ 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+ 		request = MAY_WRITE;
+-	rc = smk_access(tkp, keyp->security, request, &ad);
+-	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
++	rc = smk_access(tkp, skp, request, &ad);
++	rc = smk_bu_note("key access", tkp, skp, request, rc);
+ 	return rc;
+ }
+ 
+@@ -4214,11 +4208,12 @@ static int smack_key_permission(key_ref_t key_ref,
+  */
+ static int smack_key_getsecurity(struct key *key, char **_buffer)
+ {
+-	struct smack_known *skp = key->security;
++	struct smack_known **blob = smack_key(key);
++	struct smack_known *skp = *blob;
+ 	size_t length;
+ 	char *copy;
+ 
+-	if (key->security == NULL) {
++	if (skp == NULL) {
+ 		*_buffer = NULL;
+ 		return 0;
+ 	}
+@@ -4505,6 +4500,9 @@ struct lsm_blob_sizes smack_blob_sizes = {
  	.lbs_file = sizeof(struct smack_known *),
  	.lbs_inode = sizeof(struct inode_smack),
-+	.lbs_superblock = sizeof(struct superblock_smack),
- };
- 
- static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
-@@ -4550,7 +4534,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(syslog, smack_syslog),
- 
- 	LSM_HOOK_INIT(sb_alloc_security, smack_sb_alloc_security),
--	LSM_HOOK_INIT(sb_free_security, smack_sb_free_security),
- 	LSM_HOOK_INIT(sb_copy_data, smack_sb_copy_data),
- 	LSM_HOOK_INIT(sb_kern_mount, smack_sb_kern_mount),
- 	LSM_HOOK_INIT(sb_statfs, smack_sb_statfs),
+ 	.lbs_ipc = sizeof(struct smack_known *),
++#ifdef CONFIG_KEYS
++	.lbs_key = sizeof(struct smack_known *),
++#endif /* CONFIG_KEYS */
+ 	.lbs_msg_msg = sizeof(struct smack_known *),
+ 	.lbs_sock = sizeof(struct socket_smack),
+ 	.lbs_superblock = sizeof(struct superblock_smack),
+@@ -4623,7 +4621,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+  /* key management security hooks */
+ #ifdef CONFIG_KEYS
+ 	LSM_HOOK_INIT(key_alloc, smack_key_alloc),
+-	LSM_HOOK_INIT(key_free, smack_key_free),
+ 	LSM_HOOK_INIT(key_permission, smack_key_permission),
+ 	LSM_HOOK_INIT(key_getsecurity, smack_key_getsecurity),
+ #endif /* CONFIG_KEYS */
 -- 
 2.14.3
 
