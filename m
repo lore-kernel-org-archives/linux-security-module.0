@@ -1,38 +1,34 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 11 May 2018 13:18:34 +0300
-Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D895BA3@hasmsx109.ger.corp.intel.com>
-References: <20180424160328.GA5119@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
-	<20180502133246.GA6091@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
-	<20180503063508.GA8702@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
-	<20180504081634.GB6373@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
-	<20180509122621.GB8271@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D895BA3@hasmsx109.ger.corp.intel.com>
-Message-ID: <20180511101834.GE20210@linux.intel.com>
+From: dhowells@redhat.com (David Howells)
+Date: Fri, 11 May 2018 13:20:40 +0100
+Subject: [PATCH 05/24] apparmor: Implement security hooks for the new
+	mount API [ver #7]
+In-Reply-To: <4eaa0e19-684c-bef8-5aea-ddb5ef30828e@canonical.com>
+References: <4eaa0e19-684c-bef8-5aea-ddb5ef30828e@canonical.com>
+	<152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
+	<152414469709.23902.10439448759049886690.stgit@warthog.procyon.org.uk>
+Message-ID: <21733.1526041240@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 09, 2018 at 09:49:49PM +0000, Winkler, Tomas wrote:
-> > 
-> > On Sat, May 05, 2018 at 09:07:21PM +0000, Winkler, Tomas wrote:
-> > > There is already one 'out' label in that function, what would you prefer for
-> > this new label name?
-> > > Thanks
-> > > Tomas
-> > 
-> > Aah, of course. My bad that I did not notice it but please just point me if I
-> > miss something obvious like that :-) I'll apply the patch today..
-> > 
-> Thanks
-> Tomas
+John Johansen <john.johansen@canonical.com> wrote:
 
-It's also in next now!
+> this looks good, and has pasted the testing that I have done so far. I
+> have started on the work that will allow us to reorder the match but
+> its not ready yet and shouldn't hold this up.
 
-/Jarkko
+Excellent, thanks!
+
+One thing to consider: Kent Overstreet mentioned the possibility of adding
+support for multiple sources - something that his bcachefs would require.
+
+>From the userspace PoV this could look something like:
+
+	fd = fsopen("bcachefs");
+	write(fd, "d /dev/sda1");
+	write(fd, "d /dev/sda2");
+	...
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
