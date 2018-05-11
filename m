@@ -1,34 +1,25 @@
-From: rdunlap@infradead.org (Randy Dunlap)
-Date: Fri, 11 May 2018 09:09:04 -0700
-Subject: [PATCH v5 5/7] proc: instantiate only pids that we can ptrace on
-	'limit_pids=1' mount option
-In-Reply-To: <20180511093613.GA1330@comp-core-i7-2640m-0182e6>
-References: <20180511093613.GA1330@comp-core-i7-2640m-0182e6>
-Message-ID: <7c638a92-8c40-fa15-8c63-777232588137@infradead.org>
+From: torvalds@linux-foundation.org (Linus Torvalds)
+Date: Fri, 11 May 2018 09:39:23 -0700
+Subject: [PATCH v5 0/7] proc: modernize proc to support multiple private
+	instances
+In-Reply-To: <20180511093221.GA902@comp-core-i7-2640m-0182e6>
+References: <20180511093221.GA902@comp-core-i7-2640m-0182e6>
+Message-ID: <CA+55aFwZK+BMsm19sK-Wmfta6PcdvW6z-ghuKsb4PAwk19nRVg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/11/2018 02:36 AM, Alexey Gladkov wrote:
-> From: Djalal Harouni <tixxdz@gmail.com>
-> 
-> If "limit_pids=1" mount option is set then do not instantiate pids that
-> we can not ptrace. "limit_pids=1" means that procfs should only contain
-> pids that the caller can ptrace.
+On Fri, May 11, 2018 at 2:42 AM Alexey Gladkov <gladkov.alexey@gmail.com>
+wrote:
 
-Where can I find documentation on these mount options (pidonly, limit_pids)?
+> This is RFC v5 to modernize procfs and make it able to support multiple
+> private instances per the same pid namespace.
 
-Thanks.
+So I have no big objections, but I would *really* like this to go through
+Al's vfs tree.
 
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
-> ---
->  fs/proc/base.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+Al? Have you looked at this series?
 
-
--- 
-~Randy
+                  Linus
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
