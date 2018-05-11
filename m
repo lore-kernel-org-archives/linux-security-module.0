@@ -1,207 +1,248 @@
 From: gladkov.alexey@gmail.com (Alexey Gladkov)
-Date: Fri, 11 May 2018 11:37:07 +0200
-Subject: [PATCH v5 7/7] proc: add option to mount only a pids subset
-Message-ID: <20180511093707.GA1403@comp-core-i7-2640m-0182e6>
+Date: Fri, 11 May 2018 11:35:28 +0200
+Subject: [PATCH v5 3/7] proc: add helpers to set and get proc hidepid and gid
+	mount options
+Message-ID: <20180511093528.GA1250@comp-core-i7-2640m-0182e6>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This allows to hide all files and directories in the procfs that are not
-related to tasks.
+From: Djalal Harouni <tixxdz@gmail.com>
 
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+This is a cleaning patch to add helpers to set and get proc mount
+options instead of directly using them. This make it easy to track
+what's happening and easy to update in future.
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
 ---
- fs/proc/generic.c       | 20 ++++++++++++++++++++
- fs/proc/inode.c         |  7 +++++++
- fs/proc/root.c          | 12 ++++++++++--
- include/linux/proc_fs.h | 21 +++++++++++++++++++++
- 4 files changed, 58 insertions(+), 2 deletions(-)
+ fs/proc/base.c          | 16 +++++++++-------
+ fs/proc/inode.c         |  5 +++--
+ fs/proc/internal.h      |  2 +-
+ fs/proc/root.c          | 15 ++++++++++-----
+ include/linux/proc_fs.h | 44 ++++++++++++++++++++++++++++++++++++++++++--
+ 5 files changed, 65 insertions(+), 17 deletions(-)
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 2078e70..af1295c 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -266,6 +266,11 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
- struct dentry *proc_lookup(struct inode *dir, struct dentry *dentry,
- 		unsigned int flags)
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index e0c2afc..57fc895 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -684,13 +684,16 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
+  * May current process learn task's sched/cmdline info (for hide_pid_min=1)
+  * or euid/egid (for hide_pid_min=2)?
+  */
+-static bool has_pid_permissions(struct pid_namespace *pid,
++static bool has_pid_permissions(struct proc_fs_info *fs_info,
+ 				 struct task_struct *task,
+ 				 int hide_pid_min)
  {
-+	struct proc_fs_info *fs_info = proc_sb(dir->i_sb);
+-	if (pid->hide_pid < hide_pid_min)
++	int hide_pid = proc_fs_hide_pid(fs_info);
++	kgid_t gid = proc_fs_pid_gid(fs_info);
 +
-+	if (proc_fs_pidonly(fs_info))
-+		return ERR_PTR(-ENOENT);
-+
- 	return proc_lookup_de(dir, dentry, PDE(dir));
++	if (hide_pid < hide_pid_min)
+ 		return true;
+-	if (in_group_p(pid->pid_gid))
++	if (in_group_p(gid))
+ 		return true;
+ 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
  }
+@@ -706,7 +709,7 @@ static int proc_pid_permission(struct inode *inode, int mask)
+ 	task = get_proc_task(inode);
+ 	if (!task)
+ 		return -ESRCH;
+-	has_perms = has_pid_permissions(pid, task, HIDEPID_NO_ACCESS);
++	has_perms = has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS);
+ 	put_task_struct(task);
  
-@@ -322,10 +327,24 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
- int proc_readdir(struct file *file, struct dir_context *ctx)
- {
- 	struct inode *inode = file_inode(file);
-+	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
-+
-+	if (proc_fs_pidonly(fs_info))
-+		return 1;
+ 	if (!has_perms) {
+@@ -1786,7 +1789,6 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 	struct task_struct *task;
+ 	struct inode *inode = d_inode(path->dentry);
+ 	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
+-	struct pid_namespace *pid = fs_info->pid_ns;
  
- 	return proc_readdir_de(file, ctx, PDE(inode));
- }
+ 	generic_fillattr(inode, stat);
  
-+static int proc_dir_open(struct inode *inode, struct file *file)
-+{
-+	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
-+
-+	if (proc_fs_pidonly(fs_info))
-+		return -ENOENT;
-+
-+	return 0;
-+}
-+
- /*
-  * These are the generic /proc directory operations. They
-  * use the in-memory "struct proc_dir_entry" tree to parse
-@@ -335,6 +354,7 @@ static const struct file_operations proc_dir_operations = {
- 	.llseek			= generic_file_llseek,
- 	.read			= generic_read_dir,
- 	.iterate_shared		= proc_readdir,
-+	.open			= proc_dir_open,
- };
+@@ -1795,7 +1797,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 	stat->gid = GLOBAL_ROOT_GID;
+ 	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 	if (task) {
+-		if (!has_pid_permissions(pid, task, HIDEPID_INVISIBLE)) {
++		if (!has_pid_permissions(fs_info, task, HIDEPID_INVISIBLE)) {
+ 			rcu_read_unlock();
+ 			/*
+ 			 * This doesn't prevent learning whether PID exists,
+@@ -3272,7 +3274,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ 		int len;
  
- /*
+ 		cond_resched();
+-		if (!has_pid_permissions(ns, iter.task, HIDEPID_INVISIBLE))
++		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
+ 			continue;
+ 
+ 		len = snprintf(name, sizeof(name), "%u", iter.tgid);
 diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 5e62598..9b7d9cb 100644
+index e34b89a..9585727 100644
 --- a/fs/proc/inode.c
 +++ b/fs/proc/inode.c
-@@ -125,6 +125,9 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
- 	if (limit_pids > PROC_LIMIT_PIDS_OFF)
- 		seq_printf(seq, ",limit_pids=%u", limit_pids);
- 
-+	if (proc_fs_pidonly(fs_info))
-+		seq_printf(seq, ",pidonly");
-+
- 	return 0;
- }
- 
-@@ -338,12 +341,16 @@ proc_reg_get_unmapped_area(struct file *file, unsigned long orig_addr,
- 
- static int proc_reg_open(struct inode *inode, struct file *file)
+@@ -494,11 +494,12 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
+ int proc_fill_super(struct super_block *s, void *data, int silent)
  {
-+	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
- 	struct proc_dir_entry *pde = PDE(inode);
- 	int rv = 0;
- 	int (*open)(struct inode *, struct file *);
- 	int (*release)(struct inode *, struct file *);
- 	struct pde_opener *pdeo;
+ 	struct proc_fs_info *fs_info = proc_sb(s);
+-	struct pid_namespace *ns = get_pid_ns(fs_info->pid_ns);
+ 	struct inode *root_inode;
+ 	int ret;
  
-+	if (proc_fs_pidonly(fs_info))
-+		return -ENOENT;
+-	if (!proc_parse_options(data, ns))
++	get_pid_ns(fs_info->pid_ns);
 +
- 	/*
- 	 * Ensure that
- 	 * 1) PDE's ->release hook will be called no matter what
++	if (!proc_parse_options(data, fs_info))
+ 		return -EINVAL;
+ 
+ 	/* User space would break if executables or devices appear on proc */
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 0f1692e..facc2d9 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -253,7 +253,7 @@ static inline void proc_tty_init(void) {}
+  * root.c
+  */
+ extern struct proc_dir_entry proc_root;
+-extern int proc_parse_options(char *options, struct pid_namespace *pid);
++extern int proc_parse_options(char *options, struct proc_fs_info *fs_info);
+ 
+ extern void proc_self_init(void);
+ extern int proc_remount(struct super_block *, int *, char *);
 diff --git a/fs/proc/root.c b/fs/proc/root.c
-index c72d22c..daa318e 100644
+index 184c42b..bdea220 100644
 --- a/fs/proc/root.c
 +++ b/fs/proc/root.c
-@@ -28,17 +28,18 @@
- #include "internal.h"
- 
- enum {
--	Opt_gid, Opt_hidepid, Opt_limit_pids, Opt_err,
-+	Opt_gid, Opt_hidepid, Opt_limit_pids, Opt_pidonly, Opt_err,
- };
- 
- static const match_table_t tokens = {
- 	{Opt_hidepid, "hidepid=%u"},
- 	{Opt_gid, "gid=%u"},
- 	{Opt_limit_pids, "limit_pids=%u"},
-+	{Opt_pidonly, "pidonly"},
+@@ -37,11 +37,12 @@ static const match_table_t tokens = {
  	{Opt_err, NULL},
  };
  
--/* We only parse 'limit_pids' option here */
-+/* We only parse 'limit_pids' and 'pidonly' option here */
- int proc_parse_early_options(char *options, struct proc_fs_info *fs_info)
+-int proc_parse_options(char *options, struct pid_namespace *pid)
++int proc_parse_options(char *options, struct proc_fs_info *fs_info)
  {
- 	char *p, *opts, *orig;
-@@ -74,6 +75,11 @@ int proc_parse_early_options(char *options, struct proc_fs_info *fs_info)
- 			proc_fs_set_newinstance(fs_info, true);
- 			pr_info("proc: mounting a new procfs instance ");
- 			break;
-+		case Opt_pidonly:
-+			proc_fs_set_pidonly(fs_info, PROC_PIDONLY_ON);
-+			proc_fs_set_newinstance(fs_info, true);
-+			pr_info("proc: mounting a new procfs instance ");
-+			break;
+ 	char *p;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	int option;
++	kgid_t gid;
+ 
+ 	if (!options)
+ 		return 1;
+@@ -57,7 +58,12 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
  		case Opt_gid:
+ 			if (match_int(&args[0], &option))
+ 				return 0;
+-			pid->pid_gid = make_kgid(current_user_ns(), option);
++			gid = make_kgid(current_user_ns(), option);
++			if (!gid_valid(gid)) {
++				pr_err("proc: invalid gid mount option.\n");
++				return 0;
++			}
++			proc_fs_set_pid_gid(fs_info, gid);
+ 			break;
  		case Opt_hidepid:
- 			break;
-@@ -126,6 +132,7 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ 			if (match_int(&args[0], &option))
+@@ -67,7 +73,7 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ 				pr_err("proc: hidepid value must be between 0 and 2.\n");
+ 				return 0;
  			}
- 			proc_fs_set_hide_pid(fs_info, option);
- 			break;
-+		case Opt_pidonly:
- 		case Opt_limit_pids:
+-			pid->hide_pid = option;
++			proc_fs_set_hide_pid(fs_info, option);
  			break;
  		default:
-@@ -198,6 +205,7 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
- 	/* Set it as early as possible */
- 	proc_fs_set_newinstance(fs_info, false);
- 	proc_fs_set_limit_pids(fs_info, PROC_LIMIT_PIDS_OFF);
-+	proc_fs_set_pidonly(fs_info, PROC_PIDONLY_OFF);
+ 			pr_err("proc: unrecognized mount option \"%s\" "
+@@ -82,10 +88,9 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ int proc_remount(struct super_block *sb, int *flags, char *data)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb(sb);
+-	struct pid_namespace *pid = fs_info->pid_ns;
  
- 	if (flags & SB_KERNMOUNT) {
- 		ns = data;
+ 	sync_filesystem(sb);
+-	return !proc_parse_options(data, pid);
++	return !proc_parse_options(data, fs_info);
+ }
+ 
+ static int proc_test_super(struct super_block *s, void *data)
 diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 70e8b10..77137c1 100644
+index 5e461f6..a7fc6a1 100644
 --- a/include/linux/proc_fs.h
 +++ b/include/linux/proc_fs.h
-@@ -18,6 +18,11 @@ enum { /* definitions for proc mount option limit_pids */
- 	PROC_LIMIT_PIDS_PTRACE	= 1,	/* Limit pids to only ptracable pids */
- };
- 
-+enum {
-+	PROC_PIDONLY_OFF = 0,
-+	PROC_PIDONLY_ON = 1,
-+};
+@@ -8,6 +8,10 @@
+ #include <linux/types.h>
+ #include <linux/fs.h>
+ #include <linux/refcount.h>
++#include <linux/pid_namespace.h>
 +
++struct proc_dir_entry;
++struct pid_namespace;
+ 
  struct proc_fs_info {
- 	struct super_block *sb;
  	struct pid_namespace *pid_ns;
-@@ -26,6 +31,7 @@ struct proc_fs_info {
+@@ -15,8 +19,6 @@ struct proc_fs_info {
  	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
- 	bool newinstance; /* Private flag for new separated instances */
- 	int limit_pids:1;
-+	int pidonly:1;
  };
  
+-struct proc_dir_entry;
+-
  #ifdef CONFIG_PROC_FS
-@@ -60,6 +66,16 @@ static inline int proc_fs_set_limit_pids(struct proc_fs_info *fs_info, int value
- 	return 0;
+ 
+ static inline struct proc_fs_info *proc_sb(struct super_block *sb)
+@@ -24,6 +26,26 @@ static inline struct proc_fs_info *proc_sb(struct super_block *sb)
+ 	return sb->s_fs_info;
  }
  
-+static inline int proc_fs_set_pidonly(struct proc_fs_info *fs_info, int value)
++static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
 +{
-+	if (value != PROC_PIDONLY_ON && value != PROC_PIDONLY_OFF)
-+		return -EINVAL;
-+
-+	fs_info->pidonly = value;
-+
-+	return 0;
++	fs_info->pid_ns->hide_pid = hide_pid;
 +}
 +
- static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
- {
- 	return fs_info->pid_ns->hide_pid;
-@@ -80,6 +96,11 @@ static inline int proc_fs_limit_pids(struct proc_fs_info *fs_info)
- 	return fs_info->limit_pids;
- }
- 
-+static inline int proc_fs_pidonly(struct proc_fs_info *fs_info)
++static inline void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid)
 +{
-+	return fs_info->pidonly;
++	fs_info->pid_ns->pid_gid = gid;
++}
++
++static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
++{
++	return fs_info->pid_ns->hide_pid;
++}
++
++static inline kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
++{
++	return fs_info->pid_ns->pid_gid;
 +}
 +
  extern void proc_root_init(void);
  extern void proc_flush_task(struct task_struct *);
  
+@@ -60,6 +82,24 @@ static inline void proc_flush_task(struct task_struct *task)
+ {
+ }
+ 
++static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
++{
++}
++
++static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
++{
++}
++
++static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
++{
++	return 0;
++}
++
++extern kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
++{
++	return GLOBAL_ROOT_GID;
++}
++
+ extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
+ static inline struct proc_dir_entry *proc_symlink(const char *name,
+ 		struct proc_dir_entry *parent,const char *dest) { return NULL;}
 -- 
 2.10.5
 
