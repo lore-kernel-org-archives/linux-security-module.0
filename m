@@ -1,154 +1,168 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 11 May 2018 13:25:16 -0700
-Subject: [PATCH 24/23] LSM: Functions for dealing with struct secids
-In-Reply-To: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-Message-ID: <e9e6a58e-e5f2-381d-fb5b-11178239cc48@schaufler-ca.com>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Fri, 11 May 2018 21:52:50 +0000
+Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db
+	and other firmware
+In-Reply-To: <1526014826.3414.46.camel@linux.vnet.ibm.com>
+References: <20180508173404.GG27853@wotan.suse.de>
+	<1525865428.3551.175.camel@linux.vnet.ibm.com>
+	<20180509191508.GR27853@wotan.suse.de>
+	<1525895838.3551.247.camel@linux.vnet.ibm.com>
+	<20180509212212.GX27853@wotan.suse.de>
+	<1525903617.3551.281.camel@linux.vnet.ibm.com>
+	<20180509234814.GY27853@wotan.suse.de>
+	<1525917658.3551.322.camel@linux.vnet.ibm.com>
+	<20180510232639.GF27853@wotan.suse.de>
+	<1526014826.3414.46.camel@linux.vnet.ibm.com>
+Message-ID: <20180511215250.GJ27853@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Fri, 11 May 2018 13:18:11 -0700
-Subject: [PATCH 24/23] LSM: Functions for deling with struct secids
+On Fri, May 11, 2018 at 01:00:26AM -0400, Mimi Zohar wrote:
+> On Thu, 2018-05-10 at 23:26 +0000, Luis R. Rodriguez wrote:
+> > On Wed, May 09, 2018 at 10:00:58PM -0400, Mimi Zohar wrote:
+> > > On Wed, 2018-05-09 at 23:48 +0000, Luis R. Rodriguez wrote:
+> > > > On Wed, May 09, 2018 at 06:06:57PM -0400, Mimi Zohar wrote:
+> > > 
+> > > > > > > Yes, writing regdb as a micro/mini LSM sounds reasonable. ?The LSM
+> > > > > > > would differentiate between other firmware and the regulatory.db based
+> > > > > > > on the firmware's pathname.
+> > > > > > 
+> > > > > > If that is the only way then it would be silly to do the mini LSM as all
+> > > > > > calls would have to have the check. A special LSM hook for just the
+> > > > > > regulatory db also doesn't make much sense.
+> > > > > 
+> > > > > All calls to request_firmware() are already going through this LSM
+> > > > > hook. ?I should have said, it would be based on both READING_FIRMWARE
+> > > > > and the firmware's pathname.
+> > > > 
+> > > > Yes, but it would still be a strcmp() computation added for all
+> > > > READING_FIRMWARE. In that sense, the current arrangement is only open coding the
+> > > > signature verification for the regulatory.db file.  One way to avoid this would
+> > > > be to add an LSM specific to the regulatory db
+> > > 
+> > > Casey already commented on this suggestion.
+> > 
+> > Sorry but I must have missed this, can you send me the email or URL where he did that?
+> > I never got a copy of that email I think.
+> 
+> My mistake. ?I've posted similar patches for kexec_load and for the
+> firmware sysfs fallback, both call security_kernel_read_file().
+> Casey's comment was in regards to kexec_load[1], not for the sysfs
+> fallback mode. ?Here's the link to the most recent version of the
+> kexec_load patches.[2]
+> 
+> [1]?http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006690.html
+> [2] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006854.html
 
-These are the functions that mainipulate the collection
-of secids.
+It seems I share Eric's concern on these threads are over general architecture,
+below some notes which I think may help for the long term on that regards.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- security/stacking.c | 119 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 119 insertions(+)
- create mode 100644 security/stacking.c
+In the firmware_loader case we have *one* subsystem which as open coded firmware
+signing -- the wireless subsystem open codes firmware verification by doing two
+request_firmware() calls, one for the regulatory.bin and one for regulatory.bin.p7s,
+and then it does its own check. In this patch set you suggested adding
+a new READING_FIRMWARE_REGULATORY_DB. But your first patch in the series also
+adds READING_FIRMWARE_FALLBACK for the fallback case where we enable use of
+the old syfs loading facility.
 
-diff --git a/security/stacking.c b/security/stacking.c
-new file mode 100644
-index 000000000000..7c9643323a1e
---- /dev/null
-+++ b/security/stacking.c
-@@ -0,0 +1,119 @@
-+/*
-+ * Security secid functions
-+ *
-+ * Copyright (C) 2018 Casey Schaufler <casey@schaufler-ca.com>
-+ * Copyright (C) 2018 Intel
-+ *
-+ *	This program is free software; you can redistribute it and/or modify
-+ *	it under the terms of the GNU General Public License as published by
-+ *	the Free Software Foundation; either version 2 of the License, or
-+ *	(at your option) any later version.
-+ */
-+#include <linux/security.h>
-+#include <linux/skbuff.h>
-+#include <net/sock.h>
-+#include <net/netlabel.h>
-+
-+/*
-+ * A secids structure contains all of the modules specific
-+ * secids and the secmark used to represent the combination
-+ * of module specific secids. Code that uses secmarks won't
-+ * know or care about module specific secids, and won't have
-+ * set them in the secids nor will it look at the module specific
-+ * values. Modules won't care about the secmark. If there's only
-+ * one module that uses secids the mapping is one-to-one. The
-+ * general case is not so simple.
-+ */
-+
-+void secid_from_skb(struct secids *secid, const struct sk_buff *skb)
-+{
-+	struct secids *se;
-+
-+	se = skb->sk->sk_security;
-+	if (se)
-+		*secid = *se;
-+}
-+EXPORT_SYMBOL(secid_from_skb);
-+
-+void secid_to_skb(struct secids *secid, struct sk_buff *skb)
-+{
-+	struct secids *se;
-+
-+	se = skb->sk->sk_security;
-+	if (se)
-+		*se = *secid;
-+}
-+EXPORT_SYMBOL(secid_to_skb);
-+
-+bool secid_valid(const struct secids *secid)
-+{
-+#ifdef CONFIG_SECURITY_SELINUX
-+	if (secid->selinux)
-+		return true;
+My concerns are two fold for this case:
+
+a) This would mean adding a new READING_* ID tag per any kernel mechanism which open
+codes its own signature verification scheme.
+
+b) The way it was implemented was to do (just showing
+READING_FIRMWARE_REGULATORY_DB here):
+
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index eb34089e4299..d7cdf04a8681 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
+                        break;
+                }
+
++#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
++               if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
++                   (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
++                       id = READING_FIRMWARE_REGULATORY_DB;
 +#endif
-+#ifdef CONFIG_SECURITY_SMACK
-+	if (secid->smack)
-+		return true;
-+#endif
-+	return false;
-+}
-+
-+#ifdef CONFIG_NETLABEL
-+/**
-+ * lsm_sock_vet_attr - does the netlabel agree with what other LSMs want
-+ * @sk: the socket in question
-+ * @secattr: the desired netlabel security attributes
-+ * @flags: which LSM is making the request
-+ *
-+ * Determine whether the calling LSM can set the security attributes
-+ * on the socket without interferring with what has already been set
-+ * by other LSMs. The first LSM calling will always be allowed. An
-+ * LSM that resets itself will also be allowed. It will require careful
-+ * configuration for any other case to succeed.
-+ *
-+ * If @secattr is NULL the check is for deleting the attribute.
-+ *
-+ * Returns 0 if there is agreement, -EACCES if there is conflict,
-+ * and any error from the netlabel system.
-+ */
-+int lsm_sock_vet_attr(struct sock *sk, struct netlbl_lsm_secattr *secattr,
-+		      u32 flags)
-+{
-+	struct secids *se = sk->sk_security;
-+	struct netlbl_lsm_secattr asis;
-+	int rc;
-+
-+	/*
-+	 * First in always shows as allowed.
-+	 * Changing what this module has set is OK, too.
-+	 */
-+	if (se->flags == 0 || se->flags == flags) {
-+		se->flags = flags;
-+		return 0;
-+	}
-+
-+	netlbl_secattr_init(&asis);
-+	rc = netlbl_sock_getattr(sk, &asis);
-+
-+	switch (rc) {
-+	case 0:
-+		/*
-+		 * Can't delete another modules's attributes or
-+		 * change them if they don't match well enough.
-+		 */
-+		if (secattr == NULL || !netlbl_secattr_equal(secattr, &asis))
-+			rc = -EACCES;
-+		else
-+			se->flags = flags;
-+		break;
-+	case -ENOMSG:
-+		se->flags = flags;
-+		rc = 0;
-+		break;
-+	default:
-+		break;
-+	}
-+	netlbl_secattr_destroy(&asis);
-+	return rc;
-+}
-+#endif /* CONFIG_NETLABEL */
--- 
-2.14.3
+                fw_priv->size = 0;
+                rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
+                                                msize, id);
 
+This is eye-soring, and in turn would mean adding yet more #ifdefs for any
+code on the kernel which open codes other firmware signing efforts with
+its own kconfig...
 
+I gather from reading the threads above that Eric's concerns are the re-use of
+an API for security to read files for something which is really not a file, but
+a binary blob of some sort and Casey's rebuttal is adding more hooks for small
+things is a bad idea.
+
+In light of all this I'll say that the concerns Eric has are unfortunately
+too late, that ship has sailed eons ago. The old non-fd API for module loading
+init_module() calls       security_kernel_read_file(NULL, READING_MODULE). Your
+patch in this series adds security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK)
+for the old syfs loading facility.
+
+So in this regard, I think we have no other option but what you suggested, to
+add a wrapper, say a security_kernel_read_blob() wrapper that calls
+security_kernel_read_file(NULL, id); and make the following legacy calls use
+it:
+
+  o kernel/module.c for init_module()
+  o kexec_load()
+  o firmware loader sysfs facility
+
+I think its fair then to add a new READING entry per functionality here
+*but* with the compromise that we *document* that such interfaces are
+discouraged, in preference for interfaces where at least the fd can be
+captured some how. This should hopefully put a stop gap to such interfaces.
+
+Then as for my concern on extending and adding new READING_* ID tags
+for other future open-coded firmware calls, since:
+
+a) You seem to be working on  a CONFIG_IMA_APPRAISE_FIRMWARE which would
+enable similar functionality as firmware signing but in userspace
+
+b) CONFIG_CFG80211_REQUIRE_SIGNED_REGDB was added to replace needing
+CRDA, with an in-kernel interface. CRDA just did a signature check on
+the regulatory.bin prior to tossing regulatory data over the kernel.
+
+c) We've taken a position to *not* implement generic firmware singing
+upstream in light of the fact that UEFI has pushed hw manufacturers
+to implement FW singing in hardware, and for devices outside of these
+we're happy to suggest IMA use.
+
+d) It may be possible to have CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+depend on !CONFIG_IMA_APPRAISE_FIRMWARE this way we'd take a policy
+that CONFIG_IMA_APPRAISE_FIRMWARE replaces in-kernel open coded
+firmware singing facilities
+
+Then I think it makes sense to adapt a policy of being *very careful* allowing
+future open coded firmware signing efforts such as
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB, and recommend folks to do work for things
+like this through IMA with CONFIG_IMA_APPRAISE_FIRMWARE. This would limit our
+needs to extend READING_* ID tags for new open coded firmwares.
+
+Then as for the eye-sore you added for CONFIG_CFG80211_REQUIRE_SIGNED_REGDB,
+in light of all this, I accept we have no other way to deal with it but with
+#ifdefs.. however it could be dealt with, as helpers where if
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is not set we just set the id to
+READING_FIRMWARE, ie, just keep the #ifdefs out of the actual code we read.
+Perhaps it makes sense to throw this check into the helper:
+
+        /* Already populated data member means we're loading into a buffer */
+        if (fw_priv->data) {
+                id = READING_FIRMWARE_PREALLOC_BUFFER;
+                msize = fw_priv->allocated_size;
+        }
+
+PS: the work Alexei is doing with fork_usermode_blob() may sound similar
+to the above legacy cases, but as I have noted before -- it already uses
+an LSM hook to vet the data loaded as the data gets loaded as module.
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
