@@ -1,296 +1,269 @@
 From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Fri, 11 May 2018 10:42:27 -0400
-Subject: [RFC PATCH v4 2/5] ima: Add ns_status for storing namespaced iint data
+Date: Fri, 11 May 2018 10:42:29 -0400
+Subject: [RFC PATCH v4 4/5] ima: extend IMA audit policy rules with attribute
+	to audit namespaces
 In-Reply-To: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
 References: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
-Message-ID: <20180511144230.75384-3-stefanb@linux.vnet.ibm.com>
+Message-ID: <20180511144230.75384-5-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+Introduce a policy rule attribute called 'ns' that indicates that a rule
+is supposed to apply to child namespaces of an IMA namespace. We support
+this 'ns' attribute only for IMA-audit for now. IMA-measurement will get
+support for this in a future version.
 
-This patch adds an rbtree to the IMA namespace structure that stores a
-namespaced version of iint->flags in ns_status struct. Similar to the
-integrity_iint_cache, both the iint ns_struct are looked up using the
-inode pointer value. The lookup, allocate, and insertion code is also
-similar, except ns_struct is not free'd when the inode is free'd.
-Instead, the lookup verifies the i_ino and i_generation fields are also a
-match. This could be replaced by a lazy clean up of the rbtree.
+If 'uid=...' appears in a policy rule that has the 'ns' attribute, the uid
+in that rule is relative to the current user namespace. If it is missing,
+then the uid is relative to the user namespace that owns the IMA namespace
+the policy is in. So we have to now map the uid's and do that with the
+appropriate user namespace depending on the availability of the 'ns'
+attribute. After that we can use the mapped uid for uid comparisons.
 
-Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-
-Changelog:
-v2:
- * fixed tree traversal in __ima_ns_status_find()
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 ---
- include/linux/ima.h                      |   3 +
- security/integrity/ima/Makefile          |   2 +-
- security/integrity/ima/ima.h             |  21 +++++
- security/integrity/ima/ima_init_ima_ns.c |  17 +++-
- security/integrity/ima/ima_ns.c          |   1 +
- security/integrity/ima/ima_ns_status.c   | 133 +++++++++++++++++++++++++++++++
- 6 files changed, 173 insertions(+), 4 deletions(-)
- create mode 100644 security/integrity/ima/ima_ns_status.c
+ security/integrity/ima/ima.h          |  5 ++-
+ security/integrity/ima/ima_api.c      |  6 ++-
+ security/integrity/ima/ima_appraise.c |  2 +-
+ security/integrity/ima/ima_main.c     |  3 +-
+ security/integrity/ima/ima_policy.c   | 75 +++++++++++++++++++++++++++++++++--
+ 5 files changed, 81 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 27a332cd0438..f0cc74c698e5 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -112,6 +112,9 @@ struct ima_namespace {
- 	struct ucounts *ucounts;
- 	struct ns_common ns;
- 	struct ima_namespace *parent;
-+	struct rb_root ns_status_tree;
-+	rwlock_t ns_status_lock;
-+	struct kmem_cache *ns_status_cache;
- };
- 
- extern struct ima_namespace init_ima_ns;
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index cc60f726e651..b2a68940dd22 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -9,6 +9,6 @@ obj-$(CONFIG_IMA) += ima.o
- ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
- 	 ima_policy.o ima_template.o ima_template_lib.o ima_init_ima_ns.o
- ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
--ima-$(CONFIG_IMA_NS) += ima_ns.o
-+ima-$(CONFIG_IMA_NS) += ima_ns.o ima_ns_status.o
- ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
- obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index f999328e5b49..0a644922c6e7 100644
+index 0a644922c6e7..a23f4b0b21f4 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -129,6 +129,14 @@ static inline void ima_load_kexec_buffer(void) {}
+@@ -201,7 +201,8 @@ enum ima_hooks {
+ 
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, int mask,
+-		   enum ima_hooks func, int *pcr);
++		   enum ima_hooks func, int *pcr,
++		   struct ima_namespace *ns);
+ int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
+ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 			    struct file *file, void *buf, loff_t size,
+@@ -222,7 +223,7 @@ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
+ 
+ /* IMA policy related functions */
+ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
+-		     int flags, int *pcr);
++		     int flags, int *pcr, struct ima_namespace *ns);
+ void ima_init_policy(void);
+ void ima_update_policy(void);
+ void ima_update_policy_flag(void);
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 08fe405338e1..85ca995b9bb7 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -162,6 +162,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  *        MAY_APPEND)
+  * @func: caller identifier
+  * @pcr: pointer filled in if matched measure policy sets pcr=
++ * @ns: the IMA namespace we are currently in
+  *
+  * The policy is defined in terms of keypairs:
+  *		subj=, obj=, type=, func=, mask=, fsmagic=
+@@ -173,13 +174,14 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * Returns IMA_MEASURE, IMA_APPRAISE mask.
+  *
   */
- extern bool ima_canonical_fmt;
- 
-+struct ns_status {
-+	struct rb_node rb_node;
-+	struct inode *inode;
-+	ino_t i_ino;
-+	u32 i_generation;
-+	unsigned long flags;
-+};
-+
- /* Internal IMA function definitions */
- int ima_init(void);
- int ima_fs_init(void);
-@@ -296,6 +304,17 @@ int ima_ns_init(void);
- struct ima_namespace;
- int ima_init_namespace(struct ima_namespace *ns);
- 
-+#ifdef CONFIG_IMA_NS
-+struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
-+				    struct inode *inode);
-+#else
-+static inline struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
-+						  struct inode *inode)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_IMA_NS */
-+
- /* LSM based policy rules require audit */
- #ifdef CONFIG_IMA_LSM_RULES
- 
-@@ -336,6 +355,8 @@ static inline struct ima_namespace *get_current_ns(void)
- 	return current->nsproxy->ima_ns;
- }
- 
-+void free_ns_status_cache(struct ima_namespace *ns);
-+
- #else
- 
- static inline struct ima_namespace *get_current_ns(void)
-diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
-index 0bd6c418b8e3..6c2830f61afe 100644
---- a/security/integrity/ima/ima_init_ima_ns.c
-+++ b/security/integrity/ima/ima_init_ima_ns.c
-@@ -13,17 +13,28 @@
- #include <linux/user_namespace.h>
- #include <linux/proc_ns.h>
- #include <linux/ima.h>
-+#include <linux/slab.h>
- 
- #include "ima.h"
- 
- int ima_init_namespace(struct ima_namespace *ns)
+-int ima_get_action(struct inode *inode, int mask, enum ima_hooks func, int *pcr)
++int ima_get_action(struct inode *inode, int mask, enum ima_hooks func, int *pcr,
++		   struct ima_namespace *ns)
  {
-+	int ret = 0;
-+
-+	ns->ns_status_tree = RB_ROOT;
-+	rwlock_init(&ns->ns_status_lock);
-+	ns->ns_status_cache = KMEM_CACHE(ns_status, SLAB_PANIC);
-+	if (!ns->ns_status_cache)
-+		return -ENOMEM;
-+
- #ifdef CONFIG_IMA_NS
- 	ns->ns.ops = &imans_operations;
--	return ns_alloc_inum(&ns->ns);
--#else
--	return 0;
-+	ret = ns_alloc_inum(&ns->ns);
-+	if (ret)
-+		kmem_cache_destroy(ns->ns_status_cache);
- #endif
-+
-+	return ret;
+ 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
+ 
+ 	flags &= ima_policy_flag;
+ 
+-	return ima_match_policy(inode, func, mask, flags, pcr);
++	return ima_match_policy(inode, func, mask, flags, pcr, ns);
  }
  
- int __init ima_ns_init(void)
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 8e37d7ac5d34..e0c4d66aab79 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -101,6 +101,7 @@ static void destroy_ima_ns(struct ima_namespace *ns)
- 	put_user_ns(ns->user_ns);
- 	ns_free_inum(&ns->ns);
- 	dec_ima_namespaces(ns->ucounts);
-+	free_ns_status_cache(ns);
- 	kfree(ns);
+ /*
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index f2803a40ff82..4d744a6aaaf1 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -54,7 +54,7 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
+ 		return 0;
+ 
+ 	return ima_match_policy(inode, func, mask, IMA_APPRAISE | IMA_HASH,
+-				NULL);
++				NULL, get_current_ns());
  }
  
-diff --git a/security/integrity/ima/ima_ns_status.c b/security/integrity/ima/ima_ns_status.c
-new file mode 100644
-index 000000000000..c432d1b70d6f
---- /dev/null
-+++ b/security/integrity/ima/ima_ns_status.c
-@@ -0,0 +1,133 @@
-+/*
-+ * Copyright (C) 2016-2018 IBM Corporation
-+ * Author:
-+ *  Yuqiong Sun <suny@us.ibm.com>
-+ *  Stefan Berger <stefanb@linux.vnet.ibm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, version 2 of the License.
-+ */
+ static int ima_fix_xattr(struct dentry *dentry,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2cfb0c714967..ad9acac98526 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -190,7 +190,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 	 * bitmask based on the appraise/audit/measurement policy.
+ 	 * Included is the appraise submask.
+ 	 */
+-	action = ima_get_action(inode, mask, func, &pcr);
++	action = ima_get_action(inode, mask, func, &pcr, get_current_ns());
 +
-+#include <linux/user_namespace.h>
-+#include <linux/proc_ns.h>
-+#include <linux/ima.h>
-+
-+#include "ima.h"
-+
-+void free_ns_status_cache(struct ima_namespace *ns)
+ 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+ 			   (ima_policy_flag & IMA_MEASURE));
+ 	if (!action && !violation_check)
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 3a1412db02a3..768941a8e90c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -33,6 +33,7 @@
+ #define IMA_INMASK	0x0040
+ #define IMA_EUID	0x0080
+ #define IMA_PCR		0x0100
++#define IMA_NS		0x0200  /* rule applies only to child namespaces */
+ 
+ #define UNKNOWN		0
+ #define MEASURE		0x0001	/* same as IMA_MEASURE */
+@@ -239,6 +240,48 @@ static void ima_lsm_update_rules(void)
+ 	}
+ }
+ 
++static bool ima_uid_op(const struct cred *cred, struct ima_rule_entry *rule)
 +{
-+	struct ns_status *status, *next;
++	kuid_t right;
++	struct user_namespace *user_ns;
 +
-+	write_lock(&ns->ns_status_lock);
-+	rbtree_postorder_for_each_entry_safe(status, next,
-+					     &ns->ns_status_tree, rb_node)
-+		kmem_cache_free(ns->ns_status_cache, status);
-+	ns->ns_status_tree = RB_ROOT;
-+	write_unlock(&ns->ns_status_lock);
-+	kmem_cache_destroy(ns->ns_status_cache);
++	/*
++	 * The 'ns' attribute makes the uid in the rule relative to the
++	 * current user namespace. So '... ns uid=123' applies to uid=123
++	 * in the current user namespace.
++	 * Without an 'ns' attribute 'uid=123' refers to the
++	 * uid = 123 of the user namespace where the policy resides in.
++	 * (currently init_ima_ns.user_ns == &init_user_ns)
++	 */
++	if (rule->flags & IMA_NS)
++		user_ns = current_user_ns();
++	else
++		user_ns = init_ima_ns.user_ns;
++
++	right = make_kuid(user_ns, __kuid_val(rule->uid));
++	if (!uid_valid(right))
++		return false;
++
++	return rule->uid_op(cred->uid, right);
 +}
 +
-+/*
-+ * __ima_ns_status_find - return the ns_status associated with an inode
-+ */
-+static struct ns_status *__ima_ns_status_find(struct ima_namespace *ns,
-+					      struct inode *inode)
++static bool ima_fowner_op(kuid_t left, struct ima_rule_entry *rule)
 +{
-+	struct ns_status *status;
-+	struct rb_node *n = ns->ns_status_tree.rb_node;
++	kuid_t right;
++	struct user_namespace *user_ns;
 +
-+	while (n) {
-+		status = rb_entry(n, struct ns_status, rb_node);
++	if (rule->flags & IMA_NS)
++		user_ns = current_user_ns();
++	else
++		user_ns = init_ima_ns.user_ns;
 +
-+		if (inode < status->inode)
-+			n = n->rb_left;
-+		else if (inode > status->inode)
-+			n = n->rb_right;
-+		else
++	right = make_kuid(user_ns, __kuid_val(rule->uid));
++	if (!uid_valid(right))
++		return false;
++
++	return rule->fowner_op(left, right);
++}
++
+ /**
+  * ima_match_rules - determine whether an inode matches the measure rule.
+  * @rule: a pointer to a rule
+@@ -270,7 +313,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 	if ((rule->flags & IMA_FSUUID) &&
+ 	    !uuid_equal(&rule->fsuuid, &inode->i_sb->s_uuid))
+ 		return false;
+-	if ((rule->flags & IMA_UID) && !rule->uid_op(cred->uid, rule->uid))
++	if ((rule->flags & IMA_UID) && !ima_uid_op(cred, rule))
+ 		return false;
+ 	if (rule->flags & IMA_EUID) {
+ 		if (has_capability_noaudit(current, CAP_SETUID)) {
+@@ -283,7 +326,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 	}
+ 
+ 	if ((rule->flags & IMA_FOWNER) &&
+-	    !rule->fowner_op(inode->i_uid, rule->fowner))
++	    ima_fowner_op(inode->i_uid, rule))
+ 		return false;
+ 	for (i = 0; i < MAX_LSM_RULES; i++) {
+ 		int rc = 0;
+@@ -356,6 +399,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * @func: IMA hook identifier
+  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
+  * @pcr: set the pcr to extend
++ * @ns: the IMA namespace
+  *
+  * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
+  * conditions.
+@@ -365,7 +409,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * than writes so ima_match_policy() is classical RCU candidate.
+  */
+ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
+-		     int flags, int *pcr)
++		     int flags, int *pcr, struct ima_namespace *ns)
+ {
+ 	struct ima_rule_entry *entry;
+ 	int action = 0, actmask = flags | (flags << 1);
+@@ -376,6 +420,19 @@ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
+ 		if (!(entry->action & actmask))
+ 			continue;
+ 
++		switch (entry->action) {
++		case AUDIT:
++			/*
++			 * A rule with 'ns' attribute does not
++			 * apply to the namespace the policy is in
++			 * (here: init_ima_ns)
++			 */
++			if (ns == &init_ima_ns &&
++			    entry->flags & IMA_NS)
++				continue;
 +			break;
-+	}
-+	if (!n)
-+		return NULL;
++		}
 +
-+	return status;
-+}
-+
-+/*
-+ * ima_ns_status_find - return the ns_status associated with an inode
-+ */
-+static struct ns_status *ima_ns_status_find(struct ima_namespace *ns,
-+					    struct inode *inode)
-+{
-+	struct ns_status *status;
-+
-+	read_lock(&ns->ns_status_lock);
-+	status = __ima_ns_status_find(ns, inode);
-+	read_unlock(&ns->ns_status_lock);
-+
-+	return status;
-+}
-+
-+void insert_ns_status(struct ima_namespace *ns, struct inode *inode,
-+		      struct ns_status *status)
-+{
-+	struct rb_node **p;
-+	struct rb_node *node, *parent = NULL;
-+	struct ns_status *test_status;
-+
-+	p = &ns->ns_status_tree.rb_node;
-+	while (*p) {
-+		parent = *p;
-+		test_status = rb_entry(parent, struct ns_status, rb_node);
-+		if (inode < test_status->inode)
-+			p = &(*p)->rb_left;
-+		else
-+			p = &(*p)->rb_right;
-+	}
-+	node = &status->rb_node;
-+	rb_link_node(node, parent, p);
-+	rb_insert_color(node, &ns->ns_status_tree);
-+}
-+
-+struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
-+				    struct inode *inode)
-+{
-+	struct ns_status *status;
-+	int skip_insert = 0;
-+
-+	status = ima_ns_status_find(ns, inode);
-+	if (status) {
-+		/*
-+		 * Unlike integrity_iint_cache we are not free'ing the
-+		 * ns_status data when the inode is free'd. So, in addition to
-+		 * checking the inode pointer, we need to make sure the
-+		 * (i_generation, i_ino) pair matches as well. In the future
-+		 * we might want to add support for lazily walking the rbtree
-+		 * to clean it up.
-+		 */
-+		if (inode->i_ino == status->i_ino &&
-+		    inode->i_generation == status->i_generation)
-+			return status;
-+
-+		/* Same inode number is reused, overwrite the ns_status */
-+		skip_insert = 1;
-+	} else {
-+		status = kmem_cache_alloc(ns->ns_status_cache, GFP_NOFS);
-+		if (!status)
-+			return ERR_PTR(-ENOMEM);
-+	}
-+
-+	write_lock(&ns->ns_status_lock);
-+
-+	if (!skip_insert)
-+		insert_ns_status(ns, inode, status);
-+
-+	status->inode = inode;
-+	status->i_ino = inode->i_ino;
-+	status->i_generation = inode->i_generation;
-+	status->flags = 0UL;
-+
-+	write_unlock(&ns->ns_status_lock);
-+
-+	return status;
-+}
+ 		if (!ima_match_rules(entry, inode, func, mask))
+ 			continue;
+ 
+@@ -533,7 +590,7 @@ enum {
+ 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+ 	Opt_appraise_type, Opt_permit_directio,
+-	Opt_pcr
++	Opt_pcr, Opt_ns,
+ };
+ 
+ static match_table_t policy_tokens = {
+@@ -566,6 +623,7 @@ static match_table_t policy_tokens = {
+ 	{Opt_appraise_type, "appraise_type=%s"},
+ 	{Opt_permit_directio, "permit_directio"},
+ 	{Opt_pcr, "pcr=%s"},
++	{Opt_ns, "ns"},
+ 	{Opt_err, NULL}
+ };
+ 
+@@ -881,6 +939,13 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		case Opt_permit_directio:
+ 			entry->flags |= IMA_PERMIT_DIRECTIO;
+ 			break;
++		case Opt_ns:
++			if (entry->action != AUDIT) {
++				result = -EINVAL;
++				break;
++			}
++			entry->flags |= IMA_NS;
++			break;
+ 		case Opt_pcr:
+ 			if (entry->action != MEASURE) {
+ 				result = -EINVAL;
+@@ -1168,6 +1233,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, "appraise_type=imasig ");
+ 	if (entry->flags & IMA_PERMIT_DIRECTIO)
+ 		seq_puts(m, "permit_directio ");
++	if (entry->flags & IMA_NS)
++		seq_puts(m, "ns ");
+ 	rcu_read_unlock();
+ 	seq_puts(m, "\n");
+ 	return 0;
 -- 
 2.14.3
 
