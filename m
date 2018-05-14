@@ -1,31 +1,56 @@
-From: gladkov.alexey@gmail.com (Alexey Gladkov)
-Date: Mon, 14 May 2018 11:01:17 +0200
-Subject: [PATCH v5 7/7] proc: add option to mount only a pids subset
-In-Reply-To: <CAG48ez0bXvp1iF=HqyhEP1p5B6PRR07_j0qRoypJqs8x3Z+=mw@mail.gmail.com>
-References: <20180511093707.GA1403@comp-core-i7-2640m-0182e6>
-	<CAG48ez0bXvp1iF=HqyhEP1p5B6PRR07_j0qRoypJqs8x3Z+=mw@mail.gmail.com>
-Message-ID: <20180514090117.GC28179@comp-core-i7-2640m-0182e6>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Mon, 14 May 2018 16:09:41 +0530
+Subject: [PATCH v3 1/2] tpm: reduce poll sleep time in tpm_transmit()
+In-Reply-To: <107cd9f7-69a3-dbb8-1a61-541172832a0c@linux.vnet.ibm.com>
+References: <20180507160733.8817-1-nayna@linux.vnet.ibm.com>
+	<20180507160733.8817-2-nayna@linux.vnet.ibm.com>
+	<becb898c-b778-d104-5781-899599f536d4@gmail.com>
+	<107cd9f7-69a3-dbb8-1a61-541172832a0c@linux.vnet.ibm.com>
+Message-ID: <4896f0b6-70b7-77ad-1b33-f13890b6fec2@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 11, 2018 at 03:58:39PM +0200, Jann Horn wrote:
-> On Fri, May 11, 2018 at 11:37 AM, Alexey Gladkov
-> <gladkov.alexey@gmail.com> wrote:
-> > This allows to hide all files and directories in the procfs that are not
-> > related to tasks.
-> 
-> /proc/$pid/net and /proc/$pid/task/$tid/net aren't in scope for this
-> protection, even though they contain information about the whole
-> network namespace of the task, right?
 
-Yes. The pidonly makes visible only pids subset. You can still access the
-process namespaces via /proc/$pid/ns.
 
-We can think of additional constraints since the parameters are not
-stored in the pid namespace anymore.
+On 05/10/2018 06:11 PM, Nayna Jain wrote:
+>
+>
+> On 05/08/2018 10:04 PM, J Freyensee wrote:
+>>
+>>> ????????? do {
+>>> -??????????? tpm_msleep(TPM_POLL_SLEEP);
+>>> +??????????? tpm_msleep(TPM_TIMEOUT_POLL);
+>>>
+>> I'm just curious why it was decided to still use tpm_msleep() here 
+>> instead of usleep_range() which was used in the 2nd patch.
+>
+> TPM_TIMEOUT_POLL is in msec i.e. 1 msec and usleep_range() is used 
+> only when timeout is needed in usecs.
 
--- 
-Rgrds, legion
+Just to add bit more details:
+
+usleep_range() is used in wait_for_tpm_stat() and get_burstcount() which 
+are expected to return quickly. tpm_transmit() is a generic function 
+used across all drivers and commands.
+Some of the commands (eg. hash, key generation) take longer compared to 
+other commands (eg. extend). The sleep time in tpm_transmit is reduced 
+but kept in msecs to balance between the smaller and longer commands.
+
+Thanks & Regards,
+ ??? - Nayna
+
+>
+>>
+>> Otherwise,
+>>
+>> Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
+>
+> Thanks !!
+>
+> Thanks & Regards,
+> ??? - Nayna
+>
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
