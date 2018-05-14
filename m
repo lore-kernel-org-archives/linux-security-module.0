@@ -1,24 +1,46 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 15 May 2018 07:02:41 +1000 (AEST)
-Subject: Linux Security Summit North America CFP - 2 Weeks Left!
-Message-ID: <alpine.LRH.2.21.1805150701200.5949@namei.org>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 14 May 2018 17:44:01 -0400
+Subject: [PATCH ghak81 RFC V2 3/5] audit: use inline function to get audit
+	context
+In-Reply-To: <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
+References: <cover.1526173613.git.rgb@redhat.com>
+	<baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
+Message-ID: <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Just a reminder that there's only two weeks left in the LSS North America 
-CFP.
+On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Recognizing that the audit context is an internal audit value, use an
+> access function to retrieve the audit context pointer for the task
+> rather than reaching directly into the task struct to get it.
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  include/linux/audit.h                | 14 ++++++--
+>  include/net/xfrm.h                   |  2 +-
+>  kernel/audit.c                       |  6 ++--
+>  kernel/audit_watch.c                 |  2 +-
+>  kernel/auditsc.c                     | 64 +++++++++++++++++-------------------
+>  net/bridge/netfilter/ebtables.c      |  2 +-
+>  net/core/dev.c                       |  2 +-
+>  net/netfilter/x_tables.c             |  2 +-
+>  net/netlabel/netlabel_user.c         |  2 +-
+>  security/integrity/ima/ima_api.c     |  2 +-
+>  security/integrity/integrity_audit.c |  2 +-
+>  security/lsm_audit.c                 |  2 +-
+>  security/selinux/hooks.c             |  4 +--
+>  security/selinux/selinuxfs.c         |  6 ++--
+>  security/selinux/ss/services.c       | 12 +++----
+>  15 files changed, 64 insertions(+), 60 deletions(-)
 
-Get your proposals in soon!
-
-https://events.linuxfoundation.org/events/linux-security-summit-north-america-2018/program/cfp/
-
-
-
+Merged, but there was some fuzz due to the missing 1/5 patch and a
+handfull of checkpatch.pl fixes.  Please take a look at the commit in
+the audit/next branch and if anything looks awry please send a patch
+to fix it.
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
