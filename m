@@ -1,34 +1,26 @@
 From: gladkov.alexey@gmail.com (Alexey Gladkov)
-Date: Mon, 14 May 2018 10:29:08 +0200
+Date: Mon, 14 May 2018 10:34:39 +0200
 Subject: [PATCH v5 5/7] proc: instantiate only pids that we can ptrace on
 	'limit_pids=1' mount option
-In-Reply-To: <CA+55aFxYwH6dw=bsQJHEgkM_iZfVNerqn+RAXrrY2iufJag6Qw@mail.gmail.com>
+In-Reply-To: <7c638a92-8c40-fa15-8c63-777232588137@infradead.org>
 References: <20180511093613.GA1330@comp-core-i7-2640m-0182e6>
-	<CA+55aFxYwH6dw=bsQJHEgkM_iZfVNerqn+RAXrrY2iufJag6Qw@mail.gmail.com>
-Message-ID: <20180514082908.GA28179@comp-core-i7-2640m-0182e6>
+	<7c638a92-8c40-fa15-8c63-777232588137@infradead.org>
+Message-ID: <20180514083439.GB28179@comp-core-i7-2640m-0182e6>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 11, 2018 at 09:45:33AM -0700, Linus Torvalds wrote:
-> On Fri, May 11, 2018 at 2:46 AM Alexey Gladkov <gladkov.alexey@gmail.com>
-> wrote:
+On Fri, May 11, 2018 at 09:09:04AM -0700, Randy Dunlap wrote:
+> On 05/11/2018 02:36 AM, Alexey Gladkov wrote:
+> > From: Djalal Harouni <tixxdz@gmail.com>
+> > 
+> > If "limit_pids=1" mount option is set then do not instantiate pids that
+> > we can not ptrace. "limit_pids=1" means that procfs should only contain
+> > pids that the caller can ptrace.
 > 
-> > +       /* Limit procfs to only ptracable tasks */
-> > +       if (limit_pids == PROC_LIMIT_PIDS_PTRACE) {
-> > +               cond_resched();
-> > +               if (!has_pid_permissions(fs_info, task,
-> HIDEPID_NO_ACCESS))
-> > +                       goto out_put_task;
-> > +       }
-> 
-> Where did that "cond_resched()" come from? That doesn't seem to make a lot
-> of sense.
+> Where can I find documentation on these mount options (pidonly, limit_pids)?
 
-This call came along with has_pid_permissions from proc_pid_readdir [1]. It
-seems to me that proc_pid_readdir and proc_pid_lookup should act in a
-similar way in this case.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3ba4bceef23206349d4130ddf140819b365de7c8
+The documentation is not ready yet. It will be added in the next version
+of the patchset.
 
 -- 
 Rgrds, legion
