@@ -1,155 +1,183 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 14 May 2018 11:55:41 -0700
-Subject: [PATCH 20/23] LSM: Move common usercopy into
-In-Reply-To: <992325e2-0f53-0b3d-ddd2-f4f8ba7ccf89@tycho.nsa.gov>
-References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-	<cb3455a2-b957-8a9a-f056-35f97fe51e71@schaufler-ca.com>
-	<a9e6b33b-3d17-2535-5798-bc092e8559c3@tycho.nsa.gov>
-	<992325e2-0f53-0b3d-ddd2-f4f8ba7ccf89@tycho.nsa.gov>
-Message-ID: <0c6ec4e0-1562-8f30-09e9-9de0109b2cbc@schaufler-ca.com>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Mon, 14 May 2018 19:28:53 +0000
+Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db
+	and other firmware
+In-Reply-To: <1526302692.3898.145.camel@linux.vnet.ibm.com>
+References: <20180509191508.GR27853@wotan.suse.de>
+	<1525895838.3551.247.camel@linux.vnet.ibm.com>
+	<20180509212212.GX27853@wotan.suse.de>
+	<1525903617.3551.281.camel@linux.vnet.ibm.com>
+	<20180509234814.GY27853@wotan.suse.de>
+	<1525917658.3551.322.camel@linux.vnet.ibm.com>
+	<20180510232639.GF27853@wotan.suse.de>
+	<1526014826.3414.46.camel@linux.vnet.ibm.com>
+	<20180511215250.GJ27853@wotan.suse.de>
+	<1526302692.3898.145.camel@linux.vnet.ibm.com>
+Message-ID: <20180514192853.GM27853@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/14/2018 9:53 AM, Stephen Smalley wrote:
-> On 05/14/2018 11:12 AM, Stephen Smalley wrote:
->> On 05/10/2018 08:55 PM, Casey Schaufler wrote:
->>> From: Casey Schaufler <casey@schaufler-ca.com>
->>> Date: Thu, 10 May 2018 15:54:25 -0700
->>> Subject: [PATCH 20/23] LSM: Move common usercopy into
->>>  security_getpeersec_stream
->>>
->>> The modules implementing hook for getpeersec_stream
->>> don't need to be duplicating the copy-to-user checks.
->>> Moving the user copy part into the infrastructure makes
->>> the security module code simpler and reduces the places
->>> where user copy code may go awry.
->>>
->>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>> ---
->>>  include/linux/lsm_hooks.h  | 10 ++++------
->>>  include/linux/security.h   |  6 ++++--
->>>  security/apparmor/lsm.c    | 28 ++++++++++------------------
->>>  security/security.c        | 17 +++++++++++++++--
->>>  security/selinux/hooks.c   | 22 +++++++---------------
->>>  security/smack/smack_lsm.c | 19 ++++++++-----------
->>>  6 files changed, 48 insertions(+), 54 deletions(-)
->>>
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index 81504623afb4..84bc9ec01931 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -841,9 +841,8 @@
->>>   *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
->>>   *	socket is associated with an ipsec SA.
->>>   *	@sock is the local socket.
->>> - *	@optval userspace memory where the security state is to be copied.
->>> - *	@optlen userspace int where the module should copy the actual length
->>> - *	of the security state.
->>> + *	@optval the security state.
->>> + *	@optlen the actual length of the security state.
->>>   *	@len as input is the maximum length to copy to userspace provided
->>>   *	by the caller.
->>>   *	Return 0 if all is well, otherwise, typical getsockopt return
->>> @@ -1674,9 +1673,8 @@ union security_list_options {
->>>  	int (*socket_setsockopt)(struct socket *sock, int level, int optname);
->>>  	int (*socket_shutdown)(struct socket *sock, int how);
->>>  	int (*socket_sock_rcv_skb)(struct sock *sk, struct sk_buff *skb);
->>> -	int (*socket_getpeersec_stream)(struct socket *sock,
->>> -					char __user *optval,
->>> -					int __user *optlen, unsigned int len);
->>> +	int (*socket_getpeersec_stream)(struct socket *sock, char **optval,
->>> +					int *optlen, unsigned int len);
->>>  	int (*socket_getpeersec_dgram)(struct socket *sock,
->>>  					struct sk_buff *skb,
->>>  					struct secids *secid);
->>> diff --git a/include/linux/security.h b/include/linux/security.h
->>> index ab70064c283f..712d138e0148 100644
->>> --- a/include/linux/security.h
->>> +++ b/include/linux/security.h
->>> @@ -1369,8 +1369,10 @@ static inline int security_sock_rcv_skb(struct sock *sk,
->>>  	return 0;
->>>  }
->>>  
->>> -static inline int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
->>> -						    int __user *optlen, unsigned len)
->>> +static inline int security_socket_getpeersec_stream(struct socket *sock,
->>> +						    char __user *optval,
->>> +						    int __user *optlen,
->>> +						    unsigned int len)
->>>  {
->>>  	return -ENOPROTOOPT;
->>>  }
->>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>> index 90453dbb4fac..7444cfa689b3 100644
->>> --- a/security/apparmor/lsm.c
->>> +++ b/security/apparmor/lsm.c
->>> @@ -1017,10 +1017,8 @@ static struct aa_label *sk_peer_label(struct sock *sk)
->>>   *
->>>   * Note: for tcp only valid if using ipsec or cipso on lan
->>>   */
->>> -static int apparmor_socket_getpeersec_stream(struct socket *sock,
->>> -					     char __user *optval,
->>> -					     int __user *optlen,
->>> -					     unsigned int len)
->>> +static int apparmor_socket_getpeersec_stream(struct socket *sock, char **optval,
->>> +					     int *optlen, unsigned int len)
->>>  {
->>>  	char *name;
->>>  	int slen, error = 0;
->>> @@ -1037,22 +1035,16 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
->>>  				 FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
->>>  				 FLAG_HIDDEN_UNCONFINED, GFP_KERNEL);
->>>  	/* don't include terminating \0 in slen, it breaks some apps */
->>> -	if (slen < 0) {
->>> +	if (slen < 0)
->>>  		error = -ENOMEM;
->>> -	} else {
->>> -		if (slen > len) {
->>> -			error = -ERANGE;
->>> -		} else if (copy_to_user(optval, name, slen)) {
->>> -			error = -EFAULT;
->>> -			goto out;
->>> -		}
->>> -		if (put_user(slen, optlen))
->>> -			error = -EFAULT;
->>> -out:
->>> -		kfree(name);
->>> -
->>> +	else if (slen > len)
->>> +		error = -ERANGE;
->>> +	else {
->>> +		*optlen = slen;
->>> +		*optval = name;
->>>  	}
->>> -
->>> +	if (error)
->>> +		kfree(name);
->>>  done:
->>>  	end_current_label_crit_section(label);
->>>  
->>> diff --git a/security/security.c b/security/security.c
->>> index cbe1a497ec5a..6144ff52d862 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -1924,8 +1924,21 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
->>>  int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
->>>  				      int __user *optlen, unsigned len)
->>>  {
->>> -	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
->>> -				optval, optlen, len);
->>> +	char *tval = NULL;
->>> +	u32 tlen;
->>> +	int rc;
->>> +
->>> +	rc = call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
->>> +			   &tval, &tlen, len);
->>> +	if (rc == 0) {
->>> +		tlen = strlen(tval) + 1;
->> Why are you recomputing tlen here from what the module provided, and further presuming it must be nul-terminated?
-> Also, at least for SELinux, we copy out the length even when returning ERANGE, and libselinux uses that to realloc the buffer and try again.
+On Mon, May 14, 2018 at 08:58:12AM -0400, Mimi Zohar wrote:
+> On Fri, 2018-05-11 at 21:52 +0000, Luis R. Rodriguez wrote:
+> > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> > index eb34089e4299..d7cdf04a8681 100644
+> > --- a/drivers/base/firmware_loader/main.c
+> > +++ b/drivers/base/firmware_loader/main.c
+> > @@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
+> >                         break;
+> >                 }
+> > 
+> > +#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+> > +               if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
+> > +                   (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
+> > +                       id = READING_FIRMWARE_REGULATORY_DB;
+> > +#endif
+> >                 fw_priv->size = 0;
+> >                 rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
+> >                                                 msize, id);
+> > 
+> > This is eye-soring, and in turn would mean adding yet more #ifdefs for any
+> > code on the kernel which open codes other firmware signing efforts with
+> > its own kconfig...
+> 
+> Agreed, adding ifdef's is ugly. ?As previously discussed, this code
+> will be removed.
+> 
+> To coordinate the signature verification, at build time either regdb
+> or IMA-appraisal firmware will be enabled. 
 
-All points acked and will be repaired. Thanks.
+But not both, right?
 
+>?At runtime, in the case
+> that regdb is enabled and a custom policy requires IMA-appraisal
+> firmware signature verification, then both signature verification
+> methods will verify the signatures. ?If either fails, then the
+> signature verification will fail.
+
+OK so you're saying that if CONFIG_IMA_APPRAISE_FIRMWARE is disabled you can
+still end up with CONFIG_CFG80211_REQUIRE_SIGNED_REGDB as enabled *and* a
+custom policy which requires IMA-appraisal for the certain firmware signature
+verifications?
+
+> > Then as for my concern on extending and adding new READING_* ID tags
+> > for other future open-coded firmware calls, since:
+> > 
+> > a) You seem to be working on  a CONFIG_IMA_APPRAISE_FIRMWARE which would
+> > enable similar functionality as firmware signing but in userspace.
+> 
+> There are a number of different builtin policies. ?The "secure_boot"
+> builtin policy enables file signature verification for firmware,
+> kernel modules, kexec'ed image, and the IMA policy, but builtin
+> policies are enabled on the boot command line.
+> 
+> There are two problems:
+> - there's no way of configuring a builtin policy to verify firmware
+> signatures.
+
+I'm not too familiar with IMA however it sounds like you can extend the IMA
+built-in policy on the boot command line. If so I'll note MODULE_FIRMWARE()
+macro is typically used to annotate firmware description -- not all drivers use
+this though for a few reasons, for instance once is that some names are
+constructed dynamically at run time. Consider how some drivers rev firmware
+with versions, and as they do this they want to keep certain features only for
+certain firmware versions. Despite this lack of a direct 1-1 mapping for all
+firmwares needed, I *believe* one current use case for this macro is to extract
+required firmwares needed on early boot so they can be stashed into the
+initramfs if you have these modules enabled on the initramfs. Dracut folks
+can confirm but -- dracut *seems* broken then given the semantic gap I
+mentioned above.
+
+dracut-init.sh:    for _fw in $(modinfo -k $kernel -F firmware $1 2>/dev/null); do
+
+If I read this correctly this just complains if the firmware file is
+missing if the module is installed on initramfs and the firmware file
+is not present. If so we have a current semantic gap and modules with
+dynamic names are not handled. And its unclear which modules would be
+affected. This is a not a big issue for dracut though since not all drivers
+strive to be included on initramfs, unless their storage I suppose -- not
+sure how common these storage drivers are for initramfs with dynamic firmware
+names which do *not* use MODULE_FIRMWARE().
+
+While the idea of MODULE_FIRMWARE() may need to be given some love or adjusted
+to incorporate globs / regexps to fix this existing gap, or we come up with
+something more reliable, if fixed, it in theory could end up being re-used to
+enable you to extract and build policies for firmware signing at build time...
+
+> - CONFIG_IMA_APPRAISE is not fine enough grained.
+> 
+> The CONFIG_IMA_APPRAISE_FIRMWARE will be a Kconfig option. ?Similar
+> Kconfig options will require kernel modules, kexec'ed image, and the
+> IMA policy to be signed.
+
+Sure, it is still unclear to me if CONFIG_IMA_APPRAISE_FIRMWARE will be
+doing firmware verification in userspace or in the kernel.
+
+> With this, option "d", below, will be possible.
+
+nit: To be clear I was not stating options, I was stating premises to
+justify my recommendations.
+
+> > b) CONFIG_CFG80211_REQUIRE_SIGNED_REGDB was added to replace needing
+> > CRDA, with an in-kernel interface. CRDA just did a signature check on
+> > the regulatory.bin prior to tossing regulatory data over the kernel.
+> > 
+> > c) We've taken a position to *not* implement generic firmware singing
+> > upstream in light of the fact that UEFI has pushed hw manufacturers
+> > to implement FW singing in hardware, and for devices outside of these
+> > we're happy to suggest IMA use.
+> 
+> There are a number of reasons that the kernel should be verifying
+> firmware signatures (eg. requiring a specific version of the firmware,
+> that was locally signed).
+
+Oh I agree, Linux enterprise distributions also have a strong reason to
+have this, so that for instance we only trust and run vendor-approved
+signed firmware. Otherwise the driver should reject the firmware. Every
+now and then enterprise distros may run into cases were certain customers
+may run oddball firmwares, and its unclear if we expect proper functionality
+with that firmware. Having some form of firmware signing would help with
+this pipeline, but this is currently dealt with at the packaging, and
+noting other than logs ensures the driver is using an intended firmware.
+But these needs *IMHO* have not been enough to push to generalize a kernel
+firmware signing facility.
+
+If CONFIG_IMA_APPRAISE_FIRMWARE is going to provide this functionality somehow
+I'm happy to hear it.
+
+> > d) It may be possible to have CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+> > depend on !CONFIG_IMA_APPRAISE_FIRMWARE this way we'd take a policy
+> > that CONFIG_IMA_APPRAISE_FIRMWARE replaces in-kernel open coded
+> > firmware singing facilities
+> > 
+> > Then I think it makes sense to adapt a policy of being *very careful* allowing
+> > future open coded firmware signing efforts such as
+> > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB, and recommend folks to do work for things
+> > like this through IMA with CONFIG_IMA_APPRAISE_FIRMWARE. This would limit our
+> > needs to extend READING_* ID tags for new open coded firmwares.
+> > 
+> > Then as for the eye-sore you added for CONFIG_CFG80211_REQUIRE_SIGNED_REGDB,
+> > in light of all this, I accept we have no other way to deal with it but with
+> > #ifdefs.. however it could be dealt with, as helpers where if
+> > CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is not set we just set the id to
+> > READING_FIRMWARE, ie, just keep the #ifdefs out of the actual code we read.
+> 
+> Assuming you agree with either REGDB or IMA-appraisal firmware being
+> configured at build, but allowing a custom policy to require firmware
+> signature verification based on IMA-appraisal at runtime, so that both
+> REGDB and IMA-appraisal firmware signature verification methods are
+> required, then the REGDB ifdef's can be removed.
+
+Yes, this sounds fine.
+
+But I'm also saying we can *live* with them if they are wrapped in #ifdefs with
+functions sot hat when something is not required they are a no-op. Ideally if
+we could avoid this it would be great and it seems you're saying its possible.
+Keeping the #ifdefs with function wrappers would make sense as a trade-off if we
+really are going to make toss firmware under CONFIG_IMA_APPRAISE_FIRMWARE and
+want to review carefully the addition of new open coded firmware solutions (as
+the regulatory.db work).
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
