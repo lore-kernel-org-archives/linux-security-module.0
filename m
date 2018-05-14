@@ -1,119 +1,24 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Mon, 14 May 2018 16:15:26 -0400
-Subject: [PATCH ghak81 RFC V2 2/5] audit: convert sessionid unset to a
-	macro
-In-Reply-To: <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
-References: <cover.1526173613.git.rgb@redhat.com>
-	<d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
-Message-ID: <CAHC9VhSfrmQ=-LhC-1QZGkMTUf2u971tE0k7sg5Tebx=2tRzpA@mail.gmail.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 15 May 2018 07:02:41 +1000 (AEST)
+Subject: Linux Security Summit North America CFP - 2 Weeks Left!
+Message-ID: <alpine.LRH.2.21.1805150701200.5949@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Use a macro, "AUDIT_SID_UNSET", to replace each instance of
-> initialization and comparison to an audit session ID.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h      | 2 +-
->  include/net/xfrm.h         | 2 +-
->  include/uapi/linux/audit.h | 1 +
->  init/init_task.c           | 3 ++-
->  kernel/auditsc.c           | 4 ++--
->  5 files changed, 7 insertions(+), 5 deletions(-)
+Just a reminder that there's only two weeks left in the LSS North America 
+CFP.
 
-Merged, thanks.
+Get your proposals in soon!
 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 75d5b03..5f86f7c 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
->  }
->  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
->  {
-> -       return -1;
-> +       return AUDIT_SID_UNSET;
->  }
->  static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
->  { }
-> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-> index a872379..fcce8ee 100644
-> --- a/include/net/xfrm.h
-> +++ b/include/net/xfrm.h
-> @@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
->                                             audit_get_loginuid(current) :
->                                             INVALID_UID);
->         const unsigned int ses = task_valid ? audit_get_sessionid(current) :
-> -               (unsigned int) -1;
-> +               AUDIT_SID_UNSET;
->
->         audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
->         audit_log_task_context(audit_buf);
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4e61a9e..04f9bd2 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -465,6 +465,7 @@ struct audit_tty_status {
->  };
->
->  #define AUDIT_UID_UNSET (unsigned int)-1
-> +#define AUDIT_SID_UNSET ((unsigned int)-1)
->
->  /* audit_rule_data supports filter rules with both integer and string
->   * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
-> diff --git a/init/init_task.c b/init/init_task.c
-> index 3ac6e75..74f60ba 100644
-> --- a/init/init_task.c
-> +++ b/init/init_task.c
-> @@ -9,6 +9,7 @@
->  #include <linux/init.h>
->  #include <linux/fs.h>
->  #include <linux/mm.h>
-> +#include <linux/audit.h>
->
->  #include <asm/pgtable.h>
->  #include <linux/uaccess.h>
-> @@ -119,7 +120,7 @@ struct task_struct init_task
->         .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
->  #ifdef CONFIG_AUDITSYSCALL
->         .loginuid       = INVALID_UID,
-> -       .sessionid      = (unsigned int)-1,
-> +       .sessionid      = AUDIT_SID_UNSET,
->  #endif
->  #ifdef CONFIG_PERF_EVENTS
->         .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 0d4e269..e157595 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
->  int audit_set_loginuid(kuid_t loginuid)
->  {
->         struct task_struct *task = current;
-> -       unsigned int oldsessionid, sessionid = (unsigned int)-1;
-> +       unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
->         kuid_t oldloginuid;
->         int rc;
->
-> @@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
->         /* are we setting or clearing? */
->         if (uid_valid(loginuid)) {
->                 sessionid = (unsigned int)atomic_inc_return(&session_id);
-> -               if (unlikely(sessionid == (unsigned int)-1))
-> +               if (unlikely(sessionid == AUDIT_SID_UNSET))
->                         sessionid = (unsigned int)atomic_inc_return(&session_id);
->         }
->
-> --
-> 1.8.3.1
->
+https://events.linuxfoundation.org/events/linux-security-summit-north-america-2018/program/cfp/
+
 
 
 
 -- 
-paul moore
-www.paul-moore.com
+James Morris
+<jmorris@namei.org>
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
