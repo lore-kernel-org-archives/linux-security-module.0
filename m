@@ -1,179 +1,426 @@
-From: dwalsh@redhat.com (Daniel Walsh)
-Date: Mon, 14 May 2018 10:03:42 -0400
-Subject: [PATCH v2 22/35] vfs: don't open real
-In-Reply-To: <20180511194248.GF6044@redhat.com>
-References: <20180507083807.28792-1-mszeredi@redhat.com>
-	<20180507083807.28792-23-mszeredi@redhat.com>
-	<20180511185430.GE6044@redhat.com> <20180511194248.GF6044@redhat.com>
-Message-ID: <1569d80a-209f-ea51-8658-b471e5b883ce@redhat.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Mon, 14 May 2018 11:04:03 -0400
+Subject: [PATCH 10/23] LSM: Infrastructure management of the inode security
+In-Reply-To: <fd3c36e4-6e75-4eec-afdf-a493889c696f@schaufler-ca.com>
+References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
+	<fd3c36e4-6e75-4eec-afdf-a493889c696f@schaufler-ca.com>
+Message-ID: <a38fb118-8c72-e18d-e55a-48fdc40e21f4@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/11/2018 03:42 PM, Vivek Goyal wrote:
-> On Fri, May 11, 2018 at 02:54:30PM -0400, Vivek Goyal wrote:
->> On Mon, May 07, 2018 at 10:37:54AM +0200, Miklos Szeredi wrote:
->>> Let overlayfs do its thing when opening a file.
->>>
->>> This enables stacking and fixes the corner case when a file is opened for
->>> read, modified through a writable open, and data is read from the read-only
->>> file.  After this patch the read-only open will not return stale data even
->>> in this case.
->> [CC Dan, Steven, Paul, linux-security-module list]
->>
->> Hi Miklos,
->>
->> I was running selinux-testsuite and one of the tests seems to fail. I
->> think this is side effect of installing overlay inode in file->f_inode
->> instead of real underlying inode.
->>
->> Following test is failing.
->>
->> sub test_90_1 {
->>      print "Attempting to enter domain with bad entrypoint, should fail.\n";
->>      $result = system(
->> "runcon -t test_overlay_client_t -l s0:c10,c20 $basedir/container1/merged/badentrypoint >/dev/null 2>&1"
->>      );
->>      ok($result);
->>      return;
->> }
-> I am wondering, shouldn't do_open_execat() have failed. It should have called
-> into inode_permission(MAY_EXEC). And then ovl_inode_permission()
-> will in turn call inode_permission(realinode, MAY_EXEC) with mounter's
-> creds. Shouldn't selinux_inode_permission() have returned that mounter
-> does not have MAY_EXEC permission on inode.
->
-> Dan, I am wondering if this is a selinux policy issue? In my testing
-> on upstream kernel, do_open_execat() succeeds and it fails much later.
-> I am wondering why that's the case. Is it expected.
->
-> Thanks
-> Vivek
->
->
->> Basically, this test has an executable named "badentrypoint" with selinux
->> label "unconfined_u:object_r:test_overlay_files_ro_t:s0". And we mount
->> overlay with context=unconfined_u:object_r:test_overlay_files_rwx_t:s0:c10,c20
->>
->> So effectively overlay inode of "badentrypoint" now gets the label
->> specified by "context=".
->>
->> I think intent of test is that this file's real label is "...ro_t". That
->> means this file is not supposed to be executed and any attempt to execute
->> it should be denied.
->>
->> Currently test works and execution fails with following avc.
->>
->> AVC avc:  denied  { entrypoint } for  pid=1425 comm="runcon" path="/root/git/selinux-testsuite/tests/overlay/container1/merged/badentrypoint" dev="dm-0" ino=34515261 scontext=unconfined_u:unconfined_r:test_overlay_client_t:s0:c10,c20 tcontext=unconfined_u:object_r:test_overlay_files_ro_t:s0 tclass=file permissive=0
->>
->> But with new patches, this test starts passing.
->>
->> I think currently selinux_bprm_set_creds() returns error. It does
->> checks on inode returned by file_inode() and as of now that inode is
->> real inode and that inode has real lable of "...ro_t" and permission
->> to execute that file is denied.
->>
->> But after the patches file_inode() returns overlay inode. Which has
->> the label specified by context= mount option "...rwx_t". And that
->> label allows executing file, so file execution is not blocked by
->> selinux.
->>
->> I feel that even now code is working accidently. Ideally our theme was
->> that task's credential as checked against overlay inode and mounter's
->> creds are checked against underlying inode to determine if certain
->> permission is allowed. So ideally mounter should not have been allwed
->> to execute a file of type "...ro_t". But we don't have that workflow
->> and VFS calls into selinux and selinux checks the underlying file's
->> label against task.
->>
->> It worked so far but the moment we install overlay inode in file, selinux
->> checks it against overlay inode label and allows permission to execute and
->> mounter is never checked against real inode.
->>
->> I am not sure what's the right solution. So far selinux is not aware of
->> two levels of checks and if two levels of checks are to be performed, it
->> somehow needs to be enforced by overlay and call same hook on two levels.
->>
->> Thought of atleast starting a conversation on this.
->>
->> Thanks
->> Vivek
->>
->>
->>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->>> ---
->>>   fs/open.c | 7 +------
->>>   1 file changed, 1 insertion(+), 6 deletions(-)
->>>
->>> diff --git a/fs/open.c b/fs/open.c
->>> index 6e52fd6fea7c..244cd2ecfefd 100644
->>> --- a/fs/open.c
->>> +++ b/fs/open.c
->>> @@ -897,13 +897,8 @@ EXPORT_SYMBOL(file_path);
->>>   int vfs_open(const struct path *path, struct file *file,
->>>   	     const struct cred *cred)
->>>   {
->>> -	struct dentry *dentry = d_real(path->dentry, NULL, file->f_flags, 0);
->>> -
->>> -	if (IS_ERR(dentry))
->>> -		return PTR_ERR(dentry);
->>> -
->>>   	file->f_path = *path;
->>> -	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
->>> +	return do_dentry_open(file, d_backing_inode(path->dentry), NULL, cred);
->>>   }
->>>   
->>>   /**
->>> -- 
->>> 2.14.3
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
->>> the body of a message to majordomo at vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 05/10/2018 08:53 PM, Casey Schaufler wrote:
+> From: Casey Schaufler <casey@schaufler-ca.com>
+> Date: Thu, 10 May 2018 14:23:27 -0700
+> Subject: [PATCH 10/23] LSM: Infrastructure management of the inode security
+>  blob
+> 
+> Move management of the inode->i_security blob out
+> of the individual security modules and into the security
+> infrastructure. Instead of allocating the blobs from within
+> the modules the modules tell the infrastructure how much
+> space is required, and the space is allocated there.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/lsm_hooks.h         |  3 ++
+>  security/security.c               | 85 +++++++++++++++++++++++++++++++++++++--
+>  security/selinux/hooks.c          | 32 +--------------
+>  security/selinux/include/objsec.h |  5 +--
+>  security/smack/smack_lsm.c        | 70 +++++---------------------------
+>  5 files changed, 99 insertions(+), 96 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 3ba96e406827..a935ab92906d 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -2017,6 +2017,7 @@ struct security_hook_list {
+>  struct lsm_blob_sizes {
+>  	int	lbs_cred;
+>  	int	lbs_file;
+> +	int	lbs_inode;
+>  	int	lbs_task;
+>  };
+>  
+> @@ -2080,10 +2081,12 @@ static inline void loadpin_add_hooks(void) { };
+>  #endif
+>  
+>  extern int lsm_cred_alloc(struct cred *cred, gfp_t gfp);
+> +extern int lsm_inode_alloc(struct inode *inode);
+>  
+>  #ifdef CONFIG_SECURITY
+>  void lsm_early_cred(struct cred *cred);
+>  void lsm_early_task(struct task_struct *task);
+> +void lsm_early_inode(struct inode *inode);
+>  #endif
+>  
+>  #endif /* ! __LINUX_LSM_HOOKS_H */
+> diff --git a/security/security.c b/security/security.c
+> index b414186ad45f..02df9b608b7e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -41,6 +41,7 @@ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+>  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+>  
+>  static struct kmem_cache *lsm_file_cache;
+> +static struct kmem_cache *lsm_inode_cache;
+>  
+>  char *lsm_names;
+>  static struct lsm_blob_sizes blob_sizes;
+> @@ -98,6 +99,10 @@ int __init security_init(void)
+>  		lsm_file_cache = kmem_cache_create("lsm_file_cache",
+>  						   blob_sizes.lbs_file, 0,
+>  						   SLAB_PANIC, NULL);
+> +	if (blob_sizes.lbs_inode)
+> +		lsm_inode_cache = kmem_cache_create("lsm_inode_cache",
+> +						    blob_sizes.lbs_inode, 0,
+> +						    SLAB_PANIC, NULL);
+>  	/*
+>  	 * The second call to a module specific init function
+>  	 * adds hooks to the hook lists and does any other early
+> @@ -108,8 +113,9 @@ int __init security_init(void)
+>  #ifdef CONFIG_SECURITY_LSM_DEBUG
+>  	pr_info("LSM: cred blob size       = %d\n", blob_sizes.lbs_cred);
+>  	pr_info("LSM: file blob size       = %d\n", blob_sizes.lbs_file);
+> +	pr_info("LSM: inode blob size      = %d\n", blob_sizes.lbs_inode);
+>  	pr_info("LSM: task blob size       = %d\n", blob_sizes.lbs_task);
+> -#endif
+> +#endif /* CONFIG_SECURITY_LSM_DEBUG */
+>  
+>  	return 0;
+>  }
+> @@ -285,6 +291,13 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
+>  	lsm_set_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+>  	lsm_set_size(&needed->lbs_file, &blob_sizes.lbs_file);
+>  	lsm_set_size(&needed->lbs_task, &blob_sizes.lbs_task);
+> +	/*
+> +	 * The inode blob gets an rcu_head in addition to
+> +	 * what the modules might need.
+> +	 */
+> +	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
+> +		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+> +	lsm_set_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
+>  }
+>  
+>  /**
+> @@ -348,6 +361,46 @@ void lsm_early_task(struct task_struct *task)
+>  		panic("%s: Early task alloc failed.\n", __func__);
+>  }
+>  
+> +/**
+> + * lsm_inode_alloc - allocate a composite inode blob
+> + * @inode: the inode that needs a blob
+> + *
+> + * Allocate the inode blob for all the modules
+> + *
+> + * Returns 0, or -ENOMEM if memory can't be allocated.
+> + */
+> +int lsm_inode_alloc(struct inode *inode)
+> +{
+> +	if (!lsm_inode_cache) {
+> +		inode->i_security = NULL;
+> +		return 0;
+> +	}
+> +
+> +	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, GFP_KERNEL);
 
-Vivek and I talked, and I believe the SELinux check on Entrypoint is 
-wrong.? We should be checking on the overlay context not on the lower 
-level label for entrypoint.
+Should be GFP_NOFS (and was that way in SELinux and Smack).
 
-
-A little back ground.? Entrypoint check is looking at the target domain 
-whether it can be entered via the executable.
-
-
-For example we might have a label like apache_t and apache_exec_t, we 
-would write a rules like:
-
-
-allow apache_t apache_exec_t:file entrypoint.
-
-allow user_t apache_t:process transition
-
-allow user_t apache_file_t:file execute
-
-allow user_t bin_t:file execute
-
-
-These rules say a process running as user_t can execute files labeles 
-apache_exec_t and bin_t.? It also says that the user_t type can 
-transition or start a process as apache_t, BUT since we have the 
-entrypoint rule, the only type that user_t can transition to apache_t is 
-the apache_exec_t type.
-
-This would prevent user_t from executing something like
-
-runcon -t apache_t /bin/sh
-
-
-In the case of these tests currently SELinux is verifying that the 
-mounter is able to mount a directory with a different label rwx_t, and 
-then providing the user with content via this label. So the entrypoint 
-check should happen on the new context label, not on the lower label.? 
-We need to fix the SELinux test suite to reflect the new behaviour.? I 
-think the current test and current code is actually a bug.
-
-
-would say that the apache_t process type can be entered via
-
+> +	if (inode->i_security == NULL)
+> +		return -ENOMEM;
+> +	return 0;
+> +}
+> +
+> +/**
+> + * lsm_early_inode - during initialization allocate a composite inode blob
+> + * @inode: the inode that needs a blob
+> + *
+> + * Allocate the inode blob for all the modules if it's not already there
+> + */
+> +void lsm_early_inode(struct inode *inode)
+> +{
+> +	int rc;
+> +
+> +	if (inode == NULL)
+> +		panic("%s: NULL inode.\n", __func__);
+> +	if (inode->i_security != NULL)
+> +		return;
+> +	rc = lsm_inode_alloc(inode);
+> +	if (rc)
+> +		panic("%s: Early inode alloc failed.\n", __func__);
+> +}
+> +
+>  /*
+>   * Hook list operation macros.
+>   *
+> @@ -594,14 +647,40 @@ EXPORT_SYMBOL(security_sb_parse_opts_str);
+>  
+>  int security_inode_alloc(struct inode *inode)
+>  {
+> -	inode->i_security = NULL;
+> -	return call_int_hook(inode_alloc_security, 0, inode);
+> +	int rc = lsm_inode_alloc(inode);
+> +
+> +	if (unlikely(rc))
+> +		return rc;
+> +	rc = call_int_hook(inode_alloc_security, 0, inode);
+> +	if (unlikely(rc))
+> +		security_inode_free(inode);
+> +	return rc;
+> +}
+> +
+> +static void inode_free_by_rcu(struct rcu_head *head)
+> +{
+> +	/*
+> +	 * The rcu head is at the start of the inode blob
+> +	 */
+> +	kmem_cache_free(lsm_inode_cache, head);
+>  }
+>  
+>  void security_inode_free(struct inode *inode)
+>  {
+>  	integrity_inode_free(inode);
+>  	call_void_hook(inode_free_security, inode);
+> +	/*
+> +	 * The inode may still be referenced in a path walk and
+> +	 * a call to security_inode_permission() can be made
+> +	 * after inode_free_security() is called. Ideally, the VFS
+> +	 * wouldn't do this, but fixing that is a much harder
+> +	 * job. For now, simply free the i_security via RCU, and
+> +	 * leave the current inode->i_security pointer intact.
+> +	 * The inode will be freed after the RCU grace period too.
+> +	 */
+> +	if (inode->i_security)
+> +		call_rcu((struct rcu_head *)inode->i_security,
+> +				inode_free_by_rcu);
+>  }
+>  
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index baefd36b44df..493328a1c789 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -148,8 +148,6 @@ static int __init checkreqprot_setup(char *str)
+>  }
+>  __setup("checkreqprot=", checkreqprot_setup);
+>  
+> -static struct kmem_cache *sel_inode_cache;
+> -
+>  /**
+>   * selinux_secmark_enabled - Check to see if SECMARK is currently enabled
+>   *
+> @@ -245,13 +243,9 @@ static inline u32 task_sid(const struct task_struct *task)
+>  
+>  static int inode_alloc_security(struct inode *inode)
+>  {
+> -	struct inode_security_struct *isec;
+> +	struct inode_security_struct *isec = selinux_inode(inode);
+>  	u32 sid = current_sid();
+>  
+> -	isec = kmem_cache_zalloc(sel_inode_cache, GFP_NOFS);
+> -	if (!isec)
+> -		return -ENOMEM;
+> -
+>  	spin_lock_init(&isec->lock);
+>  	INIT_LIST_HEAD(&isec->list);
+>  	isec->inode = inode;
+> @@ -259,7 +253,6 @@ static int inode_alloc_security(struct inode *inode)
+>  	isec->sclass = SECCLASS_FILE;
+>  	isec->task_sid = sid;
+>  	isec->initialized = LABEL_INVALID;
+> -	inode->i_security = isec;
+>  
+>  	return 0;
+>  }
+> @@ -338,14 +331,6 @@ static struct inode_security_struct *backing_inode_security(struct dentry *dentr
+>  	return selinux_inode(inode);
+>  }
+>  
+> -static void inode_free_rcu(struct rcu_head *head)
+> -{
+> -	struct inode_security_struct *isec;
+> -
+> -	isec = container_of(head, struct inode_security_struct, rcu);
+> -	kmem_cache_free(sel_inode_cache, isec);
+> -}
+> -
+>  static void inode_free_security(struct inode *inode)
+>  {
+>  	struct inode_security_struct *isec = selinux_inode(inode);
+> @@ -366,17 +351,6 @@ static void inode_free_security(struct inode *inode)
+>  		list_del_init(&isec->list);
+>  		spin_unlock(&sbsec->isec_lock);
+>  	}
+> -
+> -	/*
+> -	 * The inode may still be referenced in a path walk and
+> -	 * a call to selinux_inode_permission() can be made
+> -	 * after inode_free_security() is called. Ideally, the VFS
+> -	 * wouldn't do this, but fixing that is a much harder
+> -	 * job. For now, simply free the i_security via RCU, and
+> -	 * leave the current inode->i_security pointer intact.
+> -	 * The inode will be freed after the RCU grace period too.
+> -	 */
+> -	call_rcu(&isec->rcu, inode_free_rcu);
+>  }
+>  
+>  static int file_alloc_security(struct file *file)
+> @@ -6794,6 +6768,7 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
+>  struct lsm_blob_sizes selinux_blob_sizes = {
+>  	.lbs_cred = sizeof(struct task_security_struct),
+>  	.lbs_file = sizeof(struct file_security_struct),
+> +	.lbs_inode = sizeof(struct inode_security_struct),
+>  };
+>  
+>  static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+> @@ -7061,9 +7036,6 @@ static __init int selinux_init(void)
+>  
+>  	default_noexec = !(VM_DATA_DEFAULT_FLAGS & VM_EXEC);
+>  
+> -	sel_inode_cache = kmem_cache_create("selinux_inode_security",
+> -					    sizeof(struct inode_security_struct),
+> -					    0, SLAB_PANIC, NULL);
+>  	avc_init();
+>  
+>  	avtab_cache_init();
+> diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+> index 168a96104fa0..60d109caaeef 100644
+> --- a/security/selinux/include/objsec.h
+> +++ b/security/selinux/include/objsec.h
+> @@ -59,10 +59,7 @@ enum label_initialized {
+>  
+>  struct inode_security_struct {
+>  	struct inode *inode;	/* back pointer to inode object */
+> -	union {
+> -		struct list_head list;	/* list of inode_security_struct */
+> -		struct rcu_head rcu;	/* for freeing the inode_security_struct */
+> -	};
+> +	struct list_head list;	/* list of inode_security_struct */
+>  	u32 task_sid;		/* SID of creating task */
+>  	u32 sid;		/* SID of this object */
+>  	u16 sclass;		/* security class of this object */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index b9db97470e06..cfabb9f5cc9b 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -287,24 +287,18 @@ static struct smack_known *smk_fetch(const char *name, struct inode *ip,
+>  }
+>  
+>  /**
+> - * new_inode_smack - allocate an inode security blob
+> + * init_inode_smack - initialize an inode security blob
+> + * @isp: the blob to initialize
+>   * @skp: a pointer to the Smack label entry to use in the blob
+>   *
+> - * Returns the new blob or NULL if there's no memory available
+>   */
+> -static struct inode_smack *new_inode_smack(struct smack_known *skp)
+> +static void init_inode_smack(struct inode *inode, struct smack_known *skp)
+>  {
+> -	struct inode_smack *isp;
+> -
+> -	isp = kmem_cache_zalloc(smack_inode_cache, GFP_NOFS);
+> -	if (isp == NULL)
+> -		return NULL;
+> +	struct inode_smack *isp = smack_inode(inode);
+>  
+>  	isp->smk_inode = skp;
+>  	isp->smk_flags = 0;
+>  	mutex_init(&isp->smk_lock);
+> -
+> -	return isp;
+>  }
+>  
+>  /**
+> @@ -823,17 +817,13 @@ static int smack_set_mnt_opts(struct super_block *sb,
+>  	/*
+>  	 * Initialize the root inode.
+>  	 */
+> -	isp = smack_inode(inode);
+> -	if (isp == NULL) {
+> -		isp = new_inode_smack(sp->smk_root);
+> -		if (isp == NULL)
+> -			return -ENOMEM;
+> -		inode->i_security = isp;
+> -	} else
+> -		isp->smk_inode = sp->smk_root;
+> +	lsm_early_inode(inode);
+> +	init_inode_smack(inode, sp->smk_root);
+>  
+> -	if (transmute)
+> +	if (transmute) {
+> +		isp = smack_inode(inode);
+>  		isp->smk_flags |= SMK_INODE_TRANSMUTE;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -962,48 +952,10 @@ static int smack_inode_alloc_security(struct inode *inode)
+>  {
+>  	struct smack_known *skp = smk_of_current();
+>  
+> -	inode->i_security = new_inode_smack(skp);
+> -	if (inode->i_security == NULL)
+> -		return -ENOMEM;
+> +	init_inode_smack(inode, skp);
+>  	return 0;
+>  }
+>  
+> -/**
+> - * smack_inode_free_rcu - Free inode_smack blob from cache
+> - * @head: the rcu_head for getting inode_smack pointer
+> - *
+> - *  Call back function called from call_rcu() to free
+> - *  the i_security blob pointer in inode
+> - */
+> -static void smack_inode_free_rcu(struct rcu_head *head)
+> -{
+> -	struct inode_smack *issp;
+> -
+> -	issp = container_of(head, struct inode_smack, smk_rcu);
+> -	kmem_cache_free(smack_inode_cache, issp);
+> -}
+> -
+> -/**
+> - * smack_inode_free_security - free an inode blob using call_rcu()
+> - * @inode: the inode with a blob
+> - *
+> - * Clears the blob pointer in inode using RCU
+> - */
+> -static void smack_inode_free_security(struct inode *inode)
+> -{
+> -	struct inode_smack *issp = smack_inode(inode);
+> -
+> -	/*
+> -	 * The inode may still be referenced in a path walk and
+> -	 * a call to smack_inode_permission() can be made
+> -	 * after smack_inode_free_security() is called.
+> -	 * To avoid race condition free the i_security via RCU
+> -	 * and leave the current inode->i_security pointer intact.
+> -	 * The inode will be freed after the RCU grace period too.
+> -	 */
+> -	call_rcu(&issp->smk_rcu, smack_inode_free_rcu);
+> -}
+> -
+>  /**
+>   * smack_inode_init_security - copy out the smack from an inode
+>   * @inode: the newly created inode
+> @@ -4589,6 +4541,7 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+>  struct lsm_blob_sizes smack_blob_sizes = {
+>  	.lbs_cred = sizeof(struct task_smack),
+>  	.lbs_file = sizeof(struct smack_known *),
+> +	.lbs_inode = sizeof(struct inode_smack),
+>  };
+>  
+>  static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+> @@ -4607,7 +4560,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
+>  
+>  	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
+> -	LSM_HOOK_INIT(inode_free_security, smack_inode_free_security),
+>  	LSM_HOOK_INIT(inode_init_security, smack_inode_init_security),
+>  	LSM_HOOK_INIT(inode_link, smack_inode_link),
+>  	LSM_HOOK_INIT(inode_unlink, smack_inode_unlink),
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
