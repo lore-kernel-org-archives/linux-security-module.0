@@ -1,83 +1,121 @@
-From: gladkov.alexey@gmail.com (Alexey Gladkov)
-Date: Tue, 15 May 2018 09:21:54 +0200
-Subject: [PATCH v5 1/7] proc: add proc_fs_info struct to store proc
-	information
-In-Reply-To: <CAG48ez3xYHsKMkPJhjq-yrrTxMHmrHDov-P7bTy8T2xf_7=OAQ@mail.gmail.com>
-References: <20180511093445.GA1008@comp-core-i7-2640m-0182e6>
-	<CAG48ez3xYHsKMkPJhjq-yrrTxMHmrHDov-P7bTy8T2xf_7=OAQ@mail.gmail.com>
-Message-ID: <20180515072153.GD28179@comp-core-i7-2640m-0182e6>
+From: elena.reshetova@intel.com (Reshetova, Elena)
+Date: Tue, 15 May 2018 08:30:15 +0000
+Subject: [ANNOUNCE] Linux Security Summit Europe 2018 - CFP
+Message-ID: <2236FBA76BA1254E88B949DDB74E612B8D492DB4@IRSMSX102.ger.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 11, 2018 at 03:49:13PM +0200, Jann Horn wrote:
-> On Fri, May 11, 2018 at 11:34 AM, Alexey Gladkov
-> <gladkov.alexey@gmail.com> wrote:
-> > From: Djalal Harouni <tixxdz@gmail.com>
-> >
-> > This is a preparation patch that adds proc_fs_info to be able to store
-> > different procfs options and informations. Right now some mount options
-> > are stored inside the pid namespace which makes it hard to change or
-> > modernize procfs without affecting pid namespaces. Plus we do want to
-> > treat proc as more of a real mount point and filesystem. procfs is part
-> > of Linux API where it offers some features using filesystem syscalls and
-> > in order to support some features where we are able to have multiple
-> > instances of procfs, each one with its mount options inside the same pid
-> > namespace, we have to separate these procfs instances.
-> >
-> > This is the same feature that was also added to other Linux interfaces
-> > like devpts in order to support containers, sandboxes, and to have
-> > multiple instances of devpts filesystem [1].
-> >
-> > [1] http://lxr.free-electrons.com/source/Documentation/filesystems/devpts.txt?v=3.14
-> >
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Suggested-by: Andy Lutomirski <luto@kernel.org>
-> > Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
-> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-> > ---
-> [...]
-> >  static struct dentry *proc_mount(struct file_system_type *fs_type,
-> >         int flags, const char *dev_name, void *data)
-> >  {
-> > +       int error;
-> > +       struct super_block *sb;
-> >         struct pid_namespace *ns;
-> > +       struct proc_fs_info *fs_info;
-> > +
-> > +       /*
-> > +        * Don't allow mounting unless the caller has CAP_SYS_ADMIN over
-> > +        * the namespace.
-> > +        */
-> > +       if (!(flags & MS_KERNMOUNT) && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
-> > +               return ERR_PTR(-EPERM);
-> 
-> Is this correct?
-> 
-> The old code invoked a check with the same comment through mount_ns();
-> however, this patch changes the semantics of the check.
-> The old code checked that the caller has privileges over the user
-> namespace that contains the PID namespace; in other words, it checked
-> that the caller has privileges over the PID namespace. The current
-> code just checks that the caller is privileged over its own user
-> namespace.
-> 
-> As far as I can tell, this means that by doing something like this:
-> 
->     unshare(CLONE_NEWNS|CLONE_NEWUSER);
->     mount("none", "/", NULL, MS_REC|MS_PRIVATE, NULL);
->     mount("proc", "/proc", "proc", 0, "newinstance,pids=all");
-> 
-> any process could create a new unrestricted procfs mount for its PID
-> namespace, even if it is only supposed to have access to a more
-> restricted procfs mount.
+==============================================================================
+		   ANNOUNCEMENT AND CALL FOR PARTICIPATION
 
-Hm... let me investigate this. It looks like mount with "newinstance"
-option should fail if pid namespace is the same and the current and parent
-user namespace do not match.
+		   LINUX SECURITY SUMMIT EUROPE 2018
+                             
+			         25-26 October
+			       EDINBURGH, UK
+==============================================================================
 
--- 
-Rgrds, legion
 
+DESCRIPTION
+
+ The Linux Security Summit (LSS) is a technical forum for collaboration
+ between Linux developers, researchers, and end users. Its primary aim is to
+ foster community efforts in analyzing and solving Linux security challenges.
+
+ This year, for the first time, the Linux Security Summit is going to
+ be also held in Europe (LSS-EU) in order to facilitate broader participation in Linux
+ Security development. Similar to LSS-North America, LSS-EU provides a unique
+ opportunity for to have discussions and networking opportunities with key people 
+ in  the Linux kernel security community , present your work and ideas and 
+ affect the future direction of Linux security.  
+
+ In addition to the refereed presentations, panels and BoF sessions, this year's
+ LSS-EU program will have an introduction into various Linux kernel security
+ subsystems in order to get participants acquainted with their main concepts
+ and goals, as well as outline the areas of future development, where contribution
+ by the community is welcomed. 
+
+
+  The program committee currently seeks proposals for:
+
+    * Refereed Presentations:
+      45 minutes in length.
+
+    * Panel Discussion Topics:
+      45 minutes in length.
+
+    * Short Topics:
+      30 minutes in total, including at least 10 minutes discussion.
+
+    * BoF Sessions.
+
+  Topic areas include, but are not limited to:
+
+    * Kernel self-protection
+    * Access control
+    * Cryptography and key management
+    * Integrity control
+    * Hardware Security
+    * Iot and embedded security
+    * Virtualization and containers
+    * System-specific system hardening
+    * Case studies
+    * Security tools
+    * Security UX
+    * Emerging technologies, threats & techniques 
+
+  Proposals should be submitted via:
+    https://events.linuxfoundation.org/events/linux-security-summit-europe-2018/program/cfp/
+
+
+DATES
+
+  * CFP Close: July 16, 2018
+  * CFP Notifications: July 23, 2018
+  * Schedule Announced: Aug 25, 2018
+  * Event: October 25-26, 2018
+
+
+WHO SHOULD ATTEND
+
+  We're seeking a diverse range of attendees, and welcome participation by
+  people involved in Linux security development, operations, and research.
+
+  The LSS is a unique global event which provides the opportunity to present
+  and discuss your work or research with key Linux security community members
+  and maintainers. It?s also useful for those who wish to keep up with the
+  latest in Linux security development, and to provide input to the
+  development process.
+
+
+WEB SITE
+
+  https://events.linuxfoundation.org/events/linux-security-summit-europe-2018/
+
+
+TWITTER
+
+  For event updates and announcements, follow:
+
+    https://twitter.com/LinuxSecSummit
+  
+
+PROGRAM COMMITTEE
+
+  The program committee for LSS-EU 2018 is:
+
+    * Elena Reshetova, Intel
+    * James Morris, Microsoft
+    * Serge Hallyn, Cisco
+    * Paul Moore, Red Hat
+    * Stephen Smalley, NSA
+    * John Johansen, Canonical
+    * Kees Cook, Google
+    * Casey Schaufler, Intel
+    * Mimi Zohar, IBM
+    * David A. Wheeler, Institute for Defense Analyses
+
+  The program committee may be contacted as a group via email:
+    lss-pc () lists.linuxfoundation.org
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
