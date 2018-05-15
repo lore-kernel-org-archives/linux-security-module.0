@@ -1,125 +1,82 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Tue, 15 May 2018 12:47:12 +0530
-Subject: [PATCH v3] tpm: check selftest status before retrying full selftest
-Message-ID: <20180515071712.9331-1-nayna@linux.vnet.ibm.com>
+From: gladkov.alexey@gmail.com (Alexey Gladkov)
+Date: Tue, 15 May 2018 09:21:54 +0200
+Subject: [PATCH v5 1/7] proc: add proc_fs_info struct to store proc
+	information
+In-Reply-To: <CAG48ez3xYHsKMkPJhjq-yrrTxMHmrHDov-P7bTy8T2xf_7=OAQ@mail.gmail.com>
+References: <20180511093445.GA1008@comp-core-i7-2640m-0182e6>
+	<CAG48ez3xYHsKMkPJhjq-yrrTxMHmrHDov-P7bTy8T2xf_7=OAQ@mail.gmail.com>
+Message-ID: <20180515072153.GD28179@comp-core-i7-2640m-0182e6>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-TPM 2.0 supports TPM2_GetTestResult[1], which can be used to check the
-selftest status. This patch implements the tpm2_get_selftest_result()
-function to check the selftest status before trying full selftest.
+On Fri, May 11, 2018 at 03:49:13PM +0200, Jann Horn wrote:
+> On Fri, May 11, 2018 at 11:34 AM, Alexey Gladkov
+> <gladkov.alexey@gmail.com> wrote:
+> > From: Djalal Harouni <tixxdz@gmail.com>
+> >
+> > This is a preparation patch that adds proc_fs_info to be able to store
+> > different procfs options and informations. Right now some mount options
+> > are stored inside the pid namespace which makes it hard to change or
+> > modernize procfs without affecting pid namespaces. Plus we do want to
+> > treat proc as more of a real mount point and filesystem. procfs is part
+> > of Linux API where it offers some features using filesystem syscalls and
+> > in order to support some features where we are able to have multiple
+> > instances of procfs, each one with its mount options inside the same pid
+> > namespace, we have to separate these procfs instances.
+> >
+> > This is the same feature that was also added to other Linux interfaces
+> > like devpts in order to support containers, sandboxes, and to have
+> > multiple instances of devpts filesystem [1].
+> >
+> > [1] http://lxr.free-electrons.com/source/Documentation/filesystems/devpts.txt?v=3.14
+> >
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Suggested-by: Andy Lutomirski <luto@kernel.org>
+> > Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+> > ---
+> [...]
+> >  static struct dentry *proc_mount(struct file_system_type *fs_type,
+> >         int flags, const char *dev_name, void *data)
+> >  {
+> > +       int error;
+> > +       struct super_block *sb;
+> >         struct pid_namespace *ns;
+> > +       struct proc_fs_info *fs_info;
+> > +
+> > +       /*
+> > +        * Don't allow mounting unless the caller has CAP_SYS_ADMIN over
+> > +        * the namespace.
+> > +        */
+> > +       if (!(flags & MS_KERNMOUNT) && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+> > +               return ERR_PTR(-EPERM);
+> 
+> Is this correct?
+> 
+> The old code invoked a check with the same comment through mount_ns();
+> however, this patch changes the semantics of the check.
+> The old code checked that the caller has privileges over the user
+> namespace that contains the PID namespace; in other words, it checked
+> that the caller has privileges over the PID namespace. The current
+> code just checks that the caller is privileged over its own user
+> namespace.
+> 
+> As far as I can tell, this means that by doing something like this:
+> 
+>     unshare(CLONE_NEWNS|CLONE_NEWUSER);
+>     mount("none", "/", NULL, MS_REC|MS_PRIVATE, NULL);
+>     mount("proc", "/proc", "proc", 0, "newinstance,pids=all");
+> 
+> any process could create a new unrestricted procfs mount for its PID
+> namespace, even if it is only supposed to have access to a more
+> restricted procfs mount.
 
-[1] As per TCG Specification, Trusted Platform Module Library,
-Part 2 - Commands, Section 10.4:
+Hm... let me investigate this. It looks like mount with "newinstance"
+option should fail if pid namespace is the same and the current and parent
+user namespace do not match.
 
-"This command(TPM2_GetTestResult) returns manufacturer-specific information
-regarding the results of a self-test and an indication of the test status.
-
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
-Tested-by: Stefan Berger <stefanb@linux.vnet.ibm.com> (With QEMU with
-swtpm TPM 2.0)
----
-
-Changelog:
-
-v3:
-* modified to check the selftest status before full selftest command is run
-* fixed the patch description
-* includes Jarkko's feedbacks
-
-v2:
-* changed the subject and updated patch description
-* removed the logs
-
- drivers/char/tpm/tpm.h      |  2 ++
- drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index af3bb87d3ea1..1de4240b52c4 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -114,6 +114,7 @@ enum tpm2_return_codes {
- 	TPM2_RC_FAILURE		= 0x0101,
- 	TPM2_RC_DISABLED	= 0x0120,
- 	TPM2_RC_COMMAND_CODE    = 0x0143,
-+	TPM2_RC_NEEDS_TEST      = 0x0153,
- 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
- 	TPM2_RC_RETRY		= 0x0922,
-@@ -144,6 +145,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
- 	TPM2_CC_GET_CAPABILITY	= 0x017A,
- 	TPM2_CC_GET_RANDOM	= 0x017B,
-+	TPM2_CC_GET_TEST_RESULT = 0x017C,
- 	TPM2_CC_PCR_READ	= 0x017E,
- 	TPM2_CC_PCR_EXTEND	= 0x0182,
- 	TPM2_CC_LAST		= 0x018F,
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 96c77c8e7f40..811bcf221208 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -825,6 +825,43 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
- 
- /**
-+ * tpm2_get_selftest_result() - get the status of selftest
-+ * @chip: TPM chip to use
-+ *
-+ * Return: TPM return code, errno otherwise
-+ */
-+static int tpm2_get_selftest_result(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+	int test_result;
-+	uint16_t data_size;
-+	int len;
-+	const struct tpm_output_header *header;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
-+	if (rc)
-+		return rc;
-+
-+	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
-+	if (len <  0)
-+		return len;
-+
-+	header = (struct tpm_output_header *)buf.data;
-+
-+	rc = be32_to_cpu(header->return_code);
-+	if (rc)
-+		return rc;
-+
-+	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
-+
-+	test_result = be32_to_cpup((__be32 *)
-+			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
-+
-+	return test_result;
-+}
-+
-+/**
-  * tpm2_do_selftest() - ensure that all self tests have passed
-  *
-  * @chip: TPM chip to use
-@@ -857,6 +894,13 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 			rc = TPM2_RC_SUCCESS;
- 		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
- 			return rc;
-+
-+		rc = tpm2_get_selftest_result(chip);
-+		dev_dbg(&chip->dev, "self test result is %04x\n", rc);
-+
-+		if (rc == TPM2_RC_TESTING || rc == TPM2_RC_SUCCESS)
-+			return TPM2_RC_SUCCESS;
-+
- 	}
- 
- 	return rc;
 -- 
-2.13.6
+Rgrds, legion
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
