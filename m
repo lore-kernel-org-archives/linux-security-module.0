@@ -1,40 +1,36 @@
-From: vgoyal@redhat.com (Vivek Goyal)
-Date: Tue, 15 May 2018 16:42:10 -0400
-Subject: [PATCH v2 22/35] vfs: don't open real
-In-Reply-To: <20180514135803.GA2777@redhat.com>
-References: <20180507083807.28792-1-mszeredi@redhat.com>
-	<20180507083807.28792-23-mszeredi@redhat.com>
-	<20180511185430.GE6044@redhat.com>
-	<20180511194248.GF6044@redhat.com>
-	<20180514135803.GA2777@redhat.com>
-Message-ID: <20180515204210.GA26411@redhat.com>
+From: jmorris@namei.org (James Morris)
+Date: Wed, 16 May 2018 07:49:17 +1000 (AEST)
+Subject: [PATCH 00/23] LSM: Full security module stacking
+In-Reply-To: <ad30d628-ed11-2dd6-6782-3089bf733702@schaufler-ca.com>
+References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
+	<523afc0b-5bfc-8b95-05ee-450679254a47@tycho.nsa.gov>
+	<5716ab22-4d3c-1935-41f1-ba848570ccab@tycho.nsa.gov>
+	<eab001ca-10ff-1cfe-9436-805840628784@schaufler-ca.com>
+	<5db90fec-7640-73d5-2e96-b4c996b7ae8d@tycho.nsa.gov>
+	<ad30d628-ed11-2dd6-6782-3089bf733702@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1805160747300.8368@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, May 14, 2018 at 09:58:03AM -0400, Vivek Goyal wrote:
+On Tue, 15 May 2018, Casey Schaufler wrote:
 
-[..]
-> Talked to Dan and he mentioned that he was trying to test entrypoint
-> failure (and not exec failure) and that's whey he might have allowed exec
-> to mounter.
-> 
-> I think that current entrypoint test's expectations are wrong.
-> User process sees overlay inode lablel which is rwx_t and that means
-> overlay layer will allow entrypoint into that executable. This will be the
-> behavior on a normal file system where underlying file's label will be
-> completely overridden by context=.
-> 
-> So in my opinion, we should modify testsuite and not run this test with
-> context= mounts.
+> Both SELinux and Smack use netlbl_sock_setattr() in their socket_post_create()
+> hooks to establish the CIPSO to use if nothing else interferes. An unfortunate
+> artifact of the Smack "ambient label" implementation is that the default
+> configuration is going to delete the netlbl attribute for the floor ("_")
+> label. This will conflict with any value that SELinux sets. :( Smack clearly
+> needs to have it's use of netlabel revised, and that is work that's going on
+> in parallel with stacking. That, however, is not an infrastructure issue, it's
+> an issue with how the two modules use the facilities.
 
-Miklos, now a fix has been merged to the tests so that test passes both with
-current kernels and proposed changes.
+Can this kind of problem be prevented at the API level?  i.e. ensure you 
+can't accidentally conflict with another LSM's use of the label here?
 
-https://github.com/SELinuxProject/selinux-testsuite/pull/36
 
-Thanks Dan Walsh, Stephen Smalley and Paul More.
+-- 
+James Morris
+<jmorris@namei.org>
 
-Vivek
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
