@@ -1,73 +1,61 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 15 May 2018 09:40:55 -0400
-Subject: [RFC PATCH v4 3/5] ima: differentiate auditing policy rules
-	from "audit" actions
-In-Reply-To: <20180511144230.75384-4-stefanb@linux.vnet.ibm.com>
-References: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
-	<20180511144230.75384-4-stefanb@linux.vnet.ibm.com>
-Message-ID: <1526391655.3937.151.camel@linux.vnet.ibm.com>
+From: rostedt@goodmis.org (Steven Rostedt)
+Date: Tue, 15 May 2018 10:52:28 -0400
+Subject: [PATCH v2 11/11] docs: fix broken references with multiple hints
+In-Reply-To: <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+	<63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+Message-ID: <20180515105228.4ac2df94@gandalf.local.home>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Stefan,
+On Wed,  9 May 2018 10:18:54 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-On Fri, 2018-05-11 at 10:42 -0400, Stefan Berger wrote:
-> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> 
-> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> the IMA "audit" policy action.  This patch defines AUDIT_INTEGRITY_POLICY
-> to reflect the IMA policy rules.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-We do need to separate out auditing the IMA policy rules from the
-"IMA-audit" messages. ?Based on the IMA policy rule aspect of the
-discussions [1], ?I would really appreciate if you could work with
-Richard and Steve on the new IMA policy rule audit format.
+> diff --git a/Documentation/trace/events.rst b/Documentation/trace/events.rst
+> index 7b6b1236ec2e..c292117b83a9 100644
+> --- a/Documentation/trace/events.rst
+> +++ b/Documentation/trace/events.rst
+> @@ -8,7 +8,7 @@ Event Tracing
+>  1. Introduction
+>  ===============
+>  
+> -Tracepoints (see Documentation/trace/tracepoints.txt) can be used
+> +Tracepoints (see Documentation/trace/tracepoints.rst) can be used
+>  without creating custom kernel modules to register probe functions
+>  using the event tracing infrastructure.
+>  
+> diff --git a/Documentation/trace/tracepoint-analysis.rst b/Documentation/trace/tracepoint-analysis.rst
+> index b0c9c21f129d..716326b9f152 100644
+> --- a/Documentation/trace/tracepoint-analysis.rst
+> +++ b/Documentation/trace/tracepoint-analysis.rst
+> @@ -6,7 +6,7 @@ Notes on Analysing Behaviour Using Events and Tracepoints
+>  1. Introduction
+>  ===============
+>  
+> -Tracepoints (see Documentation/trace/tracepoints.txt) can be used without
+> +Tracepoints (see Documentation/trace/tracepoints.rst) can be used without
+>  creating custom kernel modules to register probe functions using the event
+>  tracing infrastructure.
+>  
 
-This change can be upstreamed independently of either the IMA
-namespacing or the audit containerid patch sets. ?The sooner we make
-this change and upstream it, the better.
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index c94f466d57ef..19a690b559ca 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -4,7 +4,7 @@
+>  /*
+>   * Kernel Tracepoint API.
+>   *
+> - * See Documentation/trace/tracepoints.txt.
+> + * See Documentation/trace/tracepoints.rst.
+>   *
+>   * Copyright (C) 2008-2014 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>   *
 
-[1]?https://www.redhat.com/archives/linux-audit/2018-March/msg00092.html
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-thanks,
-
-Mimi
-
-> ---
->  include/uapi/linux/audit.h          | 3 ++-
->  security/integrity/ima/ima_policy.c | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4e61a9e05132..8966e7ff1c4c 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -146,7 +146,8 @@
->  #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
->  #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
->  #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
-> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
-> +#define AUDIT_INTEGRITY_POLICY	    1806 /* IMA policy rules */
-> 
->  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 915f5572c6ff..3a1412db02a3 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -619,7 +619,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  	bool uid_token;
->  	int result = 0;
-> 
-> -	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_RULE);
-> +	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_POLICY);
-> 
->  	entry->uid = INVALID_UID;
->  	entry->fowner = INVALID_UID;
-
+-- Steve
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
