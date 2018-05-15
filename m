@@ -1,61 +1,42 @@
-From: rostedt@goodmis.org (Steven Rostedt)
-Date: Tue, 15 May 2018 10:52:28 -0400
-Subject: [PATCH v2 11/11] docs: fix broken references with multiple hints
-In-Reply-To: <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
-	<63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
-Message-ID: <20180515105228.4ac2df94@gandalf.local.home>
+From: gustavo@embeddedor.com (Gustavo A. R. Silva)
+Date: Tue, 15 May 2018 09:41:40 -0500
+Subject: [PATCH v2] apparmor: secid: fix error return value in error
+	handling path
+In-Reply-To: <1f4a965f-a245-a5a9-f815-9915df9b3a9d@canonical.com>
+References: <20180504140914.GA16787@embeddedor.com>
+	<1f4a965f-a245-a5a9-f815-9915df9b3a9d@canonical.com>
+Message-ID: <03eb44c5-ee46-f402-7ae9-5d11a233c1f8@embeddedor.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed,  9 May 2018 10:18:54 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+Hi Colin,
 
 
-> diff --git a/Documentation/trace/events.rst b/Documentation/trace/events.rst
-> index 7b6b1236ec2e..c292117b83a9 100644
-> --- a/Documentation/trace/events.rst
-> +++ b/Documentation/trace/events.rst
-> @@ -8,7 +8,7 @@ Event Tracing
->  1. Introduction
->  ===============
->  
-> -Tracepoints (see Documentation/trace/tracepoints.txt) can be used
-> +Tracepoints (see Documentation/trace/tracepoints.rst) can be used
->  without creating custom kernel modules to register probe functions
->  using the event tracing infrastructure.
->  
-> diff --git a/Documentation/trace/tracepoint-analysis.rst b/Documentation/trace/tracepoint-analysis.rst
-> index b0c9c21f129d..716326b9f152 100644
-> --- a/Documentation/trace/tracepoint-analysis.rst
-> +++ b/Documentation/trace/tracepoint-analysis.rst
-> @@ -6,7 +6,7 @@ Notes on Analysing Behaviour Using Events and Tracepoints
->  1. Introduction
->  ===============
->  
-> -Tracepoints (see Documentation/trace/tracepoints.txt) can be used without
-> +Tracepoints (see Documentation/trace/tracepoints.rst) can be used without
->  creating custom kernel modules to register probe functions using the event
->  tracing infrastructure.
->  
+Sorry for the late response. I've been on the road for the last 12 days 
+and I'm just back.
 
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index c94f466d57ef..19a690b559ca 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -4,7 +4,7 @@
->  /*
->   * Kernel Tracepoint API.
->   *
-> - * See Documentation/trace/tracepoints.txt.
-> + * See Documentation/trace/tracepoints.rst.
->   *
->   * Copyright (C) 2008-2014 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->   *
+On 05/04/2018 09:36 AM, Colin Ian King wrote:
+> Hi Gustavo,
+> 
+> if you are using the coverity scan bug tracking, please can you mark a
+> bug as being worked on by yourself so I don't work on it at the same
+> time as we're duplicating work here.
+> 
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Yeah, I've noticed that. I actually do that very often, and in some 
+cases I've also noticed you have made changes to the same bug regardless 
+of that.
 
--- Steve
+The problem is that the Coverity dashboard doesn't refresh itself, so 
+anyone using it should refresh it at all times in order to keep track of 
+the bugs that have already been taken by somebody else.
+
+So I think this kind of "collisions" will continue to happen unless 
+people add the auto-refresh feature to the Coverity dashboard. :/
+
+Thanks
+--
+Gustavo
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
