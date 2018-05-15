@@ -1,121 +1,31 @@
-From: elena.reshetova@intel.com (Reshetova, Elena)
-Date: Tue, 15 May 2018 08:30:15 +0000
-Subject: [ANNOUNCE] Linux Security Summit Europe 2018 - CFP
-Message-ID: <2236FBA76BA1254E88B949DDB74E612B8D492DB4@IRSMSX102.ger.corp.intel.com>
+From: b.zolnierkie@samsung.com (Bartlomiej Zolnierkiewicz)
+Date: Tue, 15 May 2018 12:28:46 +0200
+Subject: [PATCH v2 11/11] docs: fix broken references with multiple hints
+In-Reply-To: <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+	<CGME20180509131942epcas2p3b11ff686acaa5e3d9afedef1a2a03aa7@epcas2p3.samsung.com>
+	<63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+Message-ID: <9091975.Ce87WTtYpq@amdc3058>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-==============================================================================
-		   ANNOUNCEMENT AND CALL FOR PARTICIPATION
+On Wednesday, May 09, 2018 10:18:54 AM Mauro Carvalho Chehab wrote:
+> The script:
+> 	./scripts/documentation-file-ref-check --fix-rst
+> 
+> Gives multiple hints for broken references on some files.
+> Manually use the one that applies for some files.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-		   LINUX SECURITY SUMMIT EUROPE 2018
-                             
-			         25-26 October
-			       EDINBURGH, UK
-==============================================================================
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> # for fbdev part
 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-DESCRIPTION
-
- The Linux Security Summit (LSS) is a technical forum for collaboration
- between Linux developers, researchers, and end users. Its primary aim is to
- foster community efforts in analyzing and solving Linux security challenges.
-
- This year, for the first time, the Linux Security Summit is going to
- be also held in Europe (LSS-EU) in order to facilitate broader participation in Linux
- Security development. Similar to LSS-North America, LSS-EU provides a unique
- opportunity for to have discussions and networking opportunities with key people 
- in  the Linux kernel security community , present your work and ideas and 
- affect the future direction of Linux security.  
-
- In addition to the refereed presentations, panels and BoF sessions, this year's
- LSS-EU program will have an introduction into various Linux kernel security
- subsystems in order to get participants acquainted with their main concepts
- and goals, as well as outline the areas of future development, where contribution
- by the community is welcomed. 
-
-
-  The program committee currently seeks proposals for:
-
-    * Refereed Presentations:
-      45 minutes in length.
-
-    * Panel Discussion Topics:
-      45 minutes in length.
-
-    * Short Topics:
-      30 minutes in total, including at least 10 minutes discussion.
-
-    * BoF Sessions.
-
-  Topic areas include, but are not limited to:
-
-    * Kernel self-protection
-    * Access control
-    * Cryptography and key management
-    * Integrity control
-    * Hardware Security
-    * Iot and embedded security
-    * Virtualization and containers
-    * System-specific system hardening
-    * Case studies
-    * Security tools
-    * Security UX
-    * Emerging technologies, threats & techniques 
-
-  Proposals should be submitted via:
-    https://events.linuxfoundation.org/events/linux-security-summit-europe-2018/program/cfp/
-
-
-DATES
-
-  * CFP Close: July 16, 2018
-  * CFP Notifications: July 23, 2018
-  * Schedule Announced: Aug 25, 2018
-  * Event: October 25-26, 2018
-
-
-WHO SHOULD ATTEND
-
-  We're seeking a diverse range of attendees, and welcome participation by
-  people involved in Linux security development, operations, and research.
-
-  The LSS is a unique global event which provides the opportunity to present
-  and discuss your work or research with key Linux security community members
-  and maintainers. It?s also useful for those who wish to keep up with the
-  latest in Linux security development, and to provide input to the
-  development process.
-
-
-WEB SITE
-
-  https://events.linuxfoundation.org/events/linux-security-summit-europe-2018/
-
-
-TWITTER
-
-  For event updates and announcements, follow:
-
-    https://twitter.com/LinuxSecSummit
-  
-
-PROGRAM COMMITTEE
-
-  The program committee for LSS-EU 2018 is:
-
-    * Elena Reshetova, Intel
-    * James Morris, Microsoft
-    * Serge Hallyn, Cisco
-    * Paul Moore, Red Hat
-    * Stephen Smalley, NSA
-    * John Johansen, Canonical
-    * Kees Cook, Google
-    * Casey Schaufler, Intel
-    * Mimi Zohar, IBM
-    * David A. Wheeler, Institute for Defense Analyses
-
-  The program committee may be contacted as a group via email:
-    lss-pc () lists.linuxfoundation.org
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
