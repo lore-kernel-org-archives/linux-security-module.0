@@ -1,98 +1,60 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon, 14 May 2018 22:02:31 -0400
-Subject: [PATCH 3/6] firmware: differentiate between signed
-	regulatory.db and other firmware
-In-Reply-To: <20180514192853.GM27853@wotan.suse.de>
-References: <20180509191508.GR27853@wotan.suse.de>
-	<1525895838.3551.247.camel@linux.vnet.ibm.com>
-	<20180509212212.GX27853@wotan.suse.de>
-	<1525903617.3551.281.camel@linux.vnet.ibm.com>
-	<20180509234814.GY27853@wotan.suse.de>
-	<1525917658.3551.322.camel@linux.vnet.ibm.com>
-	<20180510232639.GF27853@wotan.suse.de>
-	<1526014826.3414.46.camel@linux.vnet.ibm.com>
-	<20180511215250.GJ27853@wotan.suse.de>
-	<1526302692.3898.145.camel@linux.vnet.ibm.com>
-	<20180514192853.GM27853@wotan.suse.de>
-Message-ID: <1526349751.3937.78.camel@linux.vnet.ibm.com>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Mon, 14 May 2018 23:05:45 -0400
+Subject: [PATCH ghak81 RFC V2 3/5] audit: use inline function to get
+	audit context
+In-Reply-To: <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
+References: <cover.1526173613.git.rgb@redhat.com>
+	<baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
+	<CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
+Message-ID: <20180515030545.7oiyz33rzoj6sxs5@madcap2.tricolour.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-05-14 at 19:28 +0000, Luis R. Rodriguez wrote:
-
-[...] 
-
-> >?At runtime, in the case
-> > that regdb is enabled and a custom policy requires IMA-appraisal
-> > firmware signature verification, then both signature verification
-> > methods will verify the signatures. ?If either fails, then the
-> > signature verification will fail.
+On 2018-05-14 17:44, Paul Moore wrote:
+> On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Recognizing that the audit context is an internal audit value, use an
+> > access function to retrieve the audit context pointer for the task
+> > rather than reaching directly into the task struct to get it.
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  include/linux/audit.h                | 14 ++++++--
+> >  include/net/xfrm.h                   |  2 +-
+> >  kernel/audit.c                       |  6 ++--
+> >  kernel/audit_watch.c                 |  2 +-
+> >  kernel/auditsc.c                     | 64 +++++++++++++++++-------------------
+> >  net/bridge/netfilter/ebtables.c      |  2 +-
+> >  net/core/dev.c                       |  2 +-
+> >  net/netfilter/x_tables.c             |  2 +-
+> >  net/netlabel/netlabel_user.c         |  2 +-
+> >  security/integrity/ima/ima_api.c     |  2 +-
+> >  security/integrity/integrity_audit.c |  2 +-
+> >  security/lsm_audit.c                 |  2 +-
+> >  security/selinux/hooks.c             |  4 +--
+> >  security/selinux/selinuxfs.c         |  6 ++--
+> >  security/selinux/ss/services.c       | 12 +++----
+> >  15 files changed, 64 insertions(+), 60 deletions(-)
 > 
-> OK so you're saying that if CONFIG_IMA_APPRAISE_FIRMWARE is disabled you can
-> still end up with CONFIG_CFG80211_REQUIRE_SIGNED_REGDB as enabled *and* a
-> custom policy which requires IMA-appraisal for the certain firmware signature
-> verifications?
+> Merged, but there was some fuzz due to the missing 1/5 patch and a
+> handfull of checkpatch.pl fixes.  Please take a look at the commit in
+> the audit/next branch and if anything looks awry please send a patch
+> to fix it.
 
-Right
+Some of that fuzz was due to the two patches (ghak46/47) that went
+through the xelinux tree...  There will be a merge conflict.
 
+Otherwise, looks ok.
 
+> paul moore
 
-> > There are two problems:
-> > - there's no way of configuring a builtin policy to verify firmware
-> > signatures.
-> 
-> I'm not too familiar with IMA however it sounds like you can extend the IMA
-> built-in policy on the boot command line.
+- RGB
 
-No, there are a couple of policies predefined in the kernel that can
-be loaded by specifying them on the boot command line. ?A custom
-policy can be loaded later. ?Only after specifying a policy on the
-boot command line or loading a custom policy, does IMA do anything.
-
-
-> > - CONFIG_IMA_APPRAISE is not fine enough grained.
-> > 
-> > The CONFIG_IMA_APPRAISE_FIRMWARE will be a Kconfig option. ?Similar
-> > Kconfig options will require kernel modules, kexec'ed image, and the
-> > IMA policy to be signed.
-> 
-> Sure, it is still unclear to me if CONFIG_IMA_APPRAISE_FIRMWARE will be
-> doing firmware verification in userspace or in the kernel.
-
-The kernel is verifying signatures.
-
-
-
-> > There are a number of reasons that the kernel should be verifying
-> > firmware signatures (eg. requiring a specific version of the firmware,
-> > that was locally signed).
-> 
-> Oh I agree, Linux enterprise distributions also have a strong reason to
-> have this, so that for instance we only trust and run vendor-approved
-> signed firmware. Otherwise the driver should reject the firmware. Every
-> now and then enterprise distros may run into cases were certain customers
-> may run oddball firmwares, and its unclear if we expect proper functionality
-> with that firmware. Having some form of firmware signing would help with
-> this pipeline, but this is currently dealt with at the packaging, and
-> noting other than logs ensures the driver is using an intended firmware.
-> But these needs *IMHO* have not been enough to push to generalize a kernel
-> firmware signing facility.
-
-In order for IMA-appraisal to verify firmware signatures, the
-signatures need to be distributed with the firmware. ?Perhaps this
-will be enough of an incentive for distros to start including firmware
-signatures in the packages.
-
-> If CONFIG_IMA_APPRAISE_FIRMWARE is going to provide this functionality somehow
-> I'm happy to hear it.
-
-The functionality has been there since commit 5a9196d ("ima: add
-support for measuring and appraising firmware"). ?The
-security_kernel_fw_from_file() hook was later replaced with the
-generic security_kernel_read_file() hook.
-
-Mimi
-
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
