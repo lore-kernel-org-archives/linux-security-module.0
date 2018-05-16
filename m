@@ -1,50 +1,91 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 16 May 2018 16:56:07 -0400
-Subject: [GIT PULL] SELinux fixes for v4.17 (#1)
-Message-ID: <CAHC9VhQfFXGXqx9seQy-EdTHauyqarYnCVChjd3s6BexQ+tE6A@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 16 May 2018 17:40:31 -0400
+Subject: [RFC PATCH v4 3/5] ima: differentiate auditing policy rules
+	from "audit" actions
+In-Reply-To: <2496f165-67f7-304d-08a0-ea8eedd3c3d4@linux.vnet.ibm.com>
+References: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
+	<20180511144230.75384-4-stefanb@linux.vnet.ibm.com>
+	<1526391655.3937.151.camel@linux.vnet.ibm.com>
+	<2496f165-67f7-304d-08a0-ea8eedd3c3d4@linux.vnet.ibm.com>
+Message-ID: <1526506831.3254.13.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
+On Wed, 2018-05-16 at 16:28 -0400, Stefan Berger wrote:
+> On 05/15/2018 09:40 AM, Mimi Zohar wrote:
+> > Hi Stefan,
+> >
+> > On Fri, 2018-05-11 at 10:42 -0400, Stefan Berger wrote:
+> >> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> >>
+> >> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+> >> the IMA "audit" policy action.  This patch defines AUDIT_INTEGRITY_POLICY
+> >> to reflect the IMA policy rules.
+> >>
+> >> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > We do need to separate out auditing the IMA policy rules from the
+> > "IMA-audit" messages. ?Based on the IMA policy rule aspect of the
+> > discussions [1], ?I would really appreciate if you could work with
+> > Richard and Steve on the new IMA policy rule audit format.
 
-A small pull request to fix a few regressions in the SELinux/SCTP code
-with applications that call bind() with AF_UNSPEC/INADDR_ANY.  The
-individual commit descriptions have more information, but the commits
-themselves should be self explanatory.  Please merge.
+> Is your patch below still valid for splitting it up into 'two distinct 
+> audit record types' ?
 
-Thanks,
--Paul
+We need to separate the IMA policy audit rules from the IMA-audit
+messages. ?As we're changing the audit numbers, we need to take into
+account Richard's and Steve's comments about the IMA policy record
+format at the same time.
 
---
-The following changes since commit 6b6bc6205d98796361962ee282a063f18ba8dc57:
+This patch is incomplete and needs to address their comments.
 
- selinux: wrap AVC state (2018-03-20 16:58:17 -0400)
+Mimi
 
-are available in the Git repository at:
+> >
+> > This change can be upstreamed independently of either the IMA
+> > namespacing or the audit containerid patch sets. ?The sooner we make
+> > this change and upstream it, the better.
+> >
+> > [1]?https://www.redhat.com/archives/linux-audit/2018-March/msg00092.html
+> >
+> > thanks,
+> >
+> > Mimi
+> >
+> >> ---
+> >>   include/uapi/linux/audit.h          | 3 ++-
+> >>   security/integrity/ima/ima_policy.c | 2 +-
+> >>   2 files changed, 3 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> >> index 4e61a9e05132..8966e7ff1c4c 100644
+> >> --- a/include/uapi/linux/audit.h
+> >> +++ b/include/uapi/linux/audit.h
+> >> @@ -146,7 +146,8 @@
+> >>   #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
+> >>   #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
+> >>   #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
+> >> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+> >> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
+> >> +#define AUDIT_INTEGRITY_POLICY	    1806 /* IMA policy rules */
+> >>
+> >>   #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+> >>
+> >> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> >> index 915f5572c6ff..3a1412db02a3 100644
+> >> --- a/security/integrity/ima/ima_policy.c
+> >> +++ b/security/integrity/ima/ima_policy.c
+> >> @@ -619,7 +619,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+> >>   	bool uid_token;
+> >>   	int result = 0;
+> >>
+> >> -	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_RULE);
+> >> +	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_POLICY);
+> >>
+> >>   	entry->uid = INVALID_UID;
+> >>   	entry->fowner = INVALID_UID;
+> 
+> 
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20180516
-
-for you to fetch changes up to 4152dc91b5932e7fe49a5afed62a068b2f31d196:
-
- selinux: correctly handle sa_family cases in selinux_sctp_bind_connect()
-   (2018-05-14 15:20:59 -0400)
-
-----------------------------------------------------------------
-selinux/stable-4.17 PR 20180516
-
-----------------------------------------------------------------
-Alexey Kodanev (3):
-     selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()
-     selinux: fix address family in bind() and connect() to match address/port
-     selinux: correctly handle sa_family cases in selinux_sctp_bind_connect()
-
-security/selinux/hooks.c | 50 +++++++++++++++++++++++++++---------------------
-1 file changed, 28 insertions(+), 22 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
