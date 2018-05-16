@@ -1,35 +1,96 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 16 May 2018 07:49:17 +1000 (AEST)
-Subject: [PATCH 00/23] LSM: Full security module stacking
-In-Reply-To: <ad30d628-ed11-2dd6-6782-3089bf733702@schaufler-ca.com>
-References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-	<523afc0b-5bfc-8b95-05ee-450679254a47@tycho.nsa.gov>
-	<5716ab22-4d3c-1935-41f1-ba848570ccab@tycho.nsa.gov>
-	<eab001ca-10ff-1cfe-9436-805840628784@schaufler-ca.com>
-	<5db90fec-7640-73d5-2e96-b4c996b7ae8d@tycho.nsa.gov>
-	<ad30d628-ed11-2dd6-6782-3089bf733702@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1805160747300.8368@namei.org>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Wed, 16 May 2018 01:51:25 -0400
+Subject: [PATCH v4 2/2] tpm: reduce polling time to usecs for even finer
+	granularity
+In-Reply-To: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+References: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+Message-ID: <20180516055125.5685-3-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 15 May 2018, Casey Schaufler wrote:
+The TPM burstcount and status commands are supposed to return very
+quickly [2][3]. This patch further reduces the TPM poll sleep time to usecs
+in get_burstcount() and wait_for_tpm_stat() by calling usleep_range()
+directly.
 
-> Both SELinux and Smack use netlbl_sock_setattr() in their socket_post_create()
-> hooks to establish the CIPSO to use if nothing else interferes. An unfortunate
-> artifact of the Smack "ambient label" implementation is that the default
-> configuration is going to delete the netlbl attribute for the floor ("_")
-> label. This will conflict with any value that SELinux sets. :( Smack clearly
-> needs to have it's use of netlabel revised, and that is work that's going on
-> in parallel with stacking. That, however, is not an infrastructure issue, it's
-> an issue with how the two modules use the facilities.
+After this change, performance on a system[1] with a TPM 1.2 with an 8 byte
+burstcount for 1000 extends improved from ~10.7 sec to ~7 sec.
 
-Can this kind of problem be prevented at the API level?  i.e. ensure you 
-can't accidentally conflict with another LSM's use of the label here?
+[1] All tests are performed on an x86 based, locked down, single purpose
+closed system. It has Infineon TPM 1.2 using LPC Bus.
 
+[2] From the TCG Specification "TCG PC Client Specific TPM Interface
+Specification (TIS), Family 1.2":
 
+"NOTE : It takes roughly 330 ns per byte transfer on LPC. 256 bytes would
+take 84 us, which is a long time to stall the CPU. Chipsets may not be
+designed to post this much data to LPC; therefore, the CPU itself is
+stalled for much of this time. Sending 1 kB would take 350 ?s. Therefore,
+even if the TPM_STS_x.burstCount field is a high value, software SHOULD
+be interruptible during this period."
+
+[3] From the TCG Specification 2.0, "TCG PC Client Platform TPM Profile
+(PTP) Specification":
+
+"It takes roughly 330 ns per byte transfer on LPC. 256 bytes would take
+84 us. Chipsets may not be designed to post this much data to LPC;
+therefore, the CPU itself is stalled for much of this time. Sending 1 kB
+would take 350 us. Therefore, even if the TPM_STS_x.burstCount field is a
+high value, software should be interruptible during this period. For SPI,
+assuming 20MHz clock and 64-byte transfers, it would take about 120 usec
+to move 256B of data. Sending 1kB would take about 500 usec. If the
+transactions are done using 4 bytes at a time, then it would take about
+1 msec. to transfer 1kB of data."
+
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
+---
+ drivers/char/tpm/tpm.h          | 4 +++-
+ drivers/char/tpm/tpm_tis_core.c | 5 +++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 7e797377e1eb..f0e4d290c347 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -54,7 +54,9 @@ enum tpm_timeout {
+ 	TPM_TIMEOUT = 5,	/* msecs */
+ 	TPM_TIMEOUT_RETRY = 100, /* msecs */
+ 	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
+-	TPM_TIMEOUT_POLL = 1	/* msecs */
++	TPM_TIMEOUT_POLL = 1,	/* msecs */
++	TPM_TIMEOUT_USECS_MIN = 100,      /* usecs */
++	TPM_TIMEOUT_USECS_MAX = 500      /* usecs */
+ };
+ 
+ /* TPM addresses */
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 021e6b68f2db..bbd8eed30e57 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -84,7 +84,8 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 		}
+ 	} else {
+ 		do {
+-			tpm_msleep(TPM_TIMEOUT_POLL);
++			usleep_range(TPM_TIMEOUT_USECS_MIN,
++				     TPM_TIMEOUT_USECS_MAX);
+ 			status = chip->ops->status(chip);
+ 			if ((status & mask) == mask)
+ 				return 0;
+@@ -226,7 +227,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 		burstcnt = (value >> 8) & 0xFFFF;
+ 		if (burstcnt)
+ 			return burstcnt;
+-		tpm_msleep(TPM_TIMEOUT_POLL);
++		usleep_range(TPM_TIMEOUT_USECS_MIN, TPM_TIMEOUT_USECS_MAX);
+ 	} while (time_before(jiffies, stop));
+ 	return -EBUSY;
+ }
 -- 
-James Morris
-<jmorris@namei.org>
+2.13.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
