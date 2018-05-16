@@ -1,65 +1,54 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed, 16 May 2018 01:51:23 -0400
-Subject: [PATCH v4 0/2] tpm: improving granularity in poll sleep times
-Message-ID: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+From: rgb@redhat.com (Richard Guy Briggs)
+Date: Wed, 16 May 2018 07:55:44 -0400
+Subject: [PATCH ghak81 V3 0/3] audit: group task params
+Message-ID: <cover.1526430313.git.rgb@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The existing TPM polling code sleeps in each loop iteration for time in
-msecs ranging from 1 msecs to 5 msecs. However, many of the TPM commands
-complete much faster, resulting in unnecessary delays.
+Group the audit parameters for each task into one structure.
+In particular, remove the loginuid and sessionid values and the audit
+context pointer from the task structure, replacing them with an audit
+task information structure to contain them.  Use access functions to
+access audit values.
 
-This set of patches identifies such iterations and optimizes the sleep
-time. The first patch replaces TPM_POLL_SLEEP with TPM_TIMEOUT_POLL and
-moves it from tpm_tis_core.c to tpm.h as an enum with value 1 msecs. The
-second patch further reduces the TPM poll sleep time in get_burstcount()
-and wait_for_tpm_stat() in tpm_tis_core.c by calling usleep_range()
-directly.
+Use dynamic allocation of the audit task information structure employing
+kmem_cache.  Static allocation has the limitation that future audit task
+information structure changes would cause a visible change to the rest
+of the kernel, whereas dynamic allocation would mostly hide any future
+changes.
 
-The change is only in the polling time, and the maximum timeout is still
-maintained the same. Thus, it should not affect the overall existing
-behavior.
+Passes audit-testsuite.
 
 Changelog:
+v3
+- drop patches 2, 3, 4 already merged.
+- fix for previous v2 patch 3 (seccomp get audit_context)
+- dynamic audit_task_info allocation from kmem_cache
+- fix assignment in if statement v2 patch 1 (normalize loginuid read)
+- fix a number of merge conflicts/checkpatch
+v2
+- p2/5: add audit header to init/init_task.c to quiet kbuildbot
+- audit_signal_info(): fetch loginuid once
+- remove task_struct from audit_context() param list
+- remove extra task_struct local vars
+- do nothing on request to set audit context when audit is disabled
 
-v4:
-tpm: reduce poll sleep time in tpm_transmit()
-* added Reviewed-by, Tested-by and Ack-by
+Richard Guy Briggs (3):
+  audit: use new audit_context access funciton for
+    seccomp_actions_logged
+  audit: normalize loginuid read access
+  audit: collect audit task parameters
 
-tpm: reduce polling time to usecs for even finer granularity
-* included Jarkko's feedback
-* added Ack-by
-
-v3:
-
-tpm: reduce poll sleep time in tpm_transmit()
-* added testing platform information
-* updated patch description for more clarity on reasoning
-
-tpm: reduce polling time to usecs for even finer granularity
-* added testing platform information
-* added Jarkko's and Mimi's Reviewed-by
-
-v2:
-
-tpm: reduce poll sleep time in tpm_transmit()
-* merged previously defined two patches into this.
-* updated patch description as per Jarkko's feedback
-
-tpm: reduce polling time to usecs for even finer granularity
-* directly use usleep_range with finer granularity less than 1msec
-
-Nayna Jain (2):
-  tpm: reduce poll sleep time in tpm_transmit()
-  tpm: reduce polling time to usecs for even finer granularity
-
- drivers/char/tpm/tpm-interface.c |  2 +-
- drivers/char/tpm/tpm.h           |  5 ++++-
- drivers/char/tpm/tpm_tis_core.c  | 11 +++--------
- 3 files changed, 8 insertions(+), 10 deletions(-)
+ include/linux/audit.h | 34 ++++++++++++++++-------
+ include/linux/sched.h |  5 +---
+ init/init_task.c      |  3 +-
+ init/main.c           |  2 ++
+ kernel/auditsc.c      | 77 ++++++++++++++++++++++++++++++++++++++-------------
+ kernel/fork.c         |  2 +-
+ 6 files changed, 87 insertions(+), 36 deletions(-)
 
 -- 
-2.13.3
+1.8.3.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
