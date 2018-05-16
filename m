@@ -1,58 +1,76 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 16 May 2018 10:42:56 -0700
-Subject: [PATCH 00/23] LSM: Full security module stacking
-In-Reply-To: <alpine.LRH.2.21.1805160747300.8368@namei.org>
-References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-	<523afc0b-5bfc-8b95-05ee-450679254a47@tycho.nsa.gov>
-	<5716ab22-4d3c-1935-41f1-ba848570ccab@tycho.nsa.gov>
-	<eab001ca-10ff-1cfe-9436-805840628784@schaufler-ca.com>
-	<5db90fec-7640-73d5-2e96-b4c996b7ae8d@tycho.nsa.gov>
-	<ad30d628-ed11-2dd6-6782-3089bf733702@schaufler-ca.com>
-	<alpine.LRH.2.21.1805160747300.8368@namei.org>
-Message-ID: <77dbe49f-b0fc-5b58-f8c2-a87db6b00ebc@schaufler-ca.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Wed, 16 May 2018 16:28:43 -0400
+Subject: [RFC PATCH v4 3/5] ima: differentiate auditing policy rules from
+	"audit" actions
+In-Reply-To: <1526391655.3937.151.camel@linux.vnet.ibm.com>
+References: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
+	<20180511144230.75384-4-stefanb@linux.vnet.ibm.com>
+	<1526391655.3937.151.camel@linux.vnet.ibm.com>
+Message-ID: <2496f165-67f7-304d-08a0-ea8eedd3c3d4@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/15/2018 2:49 PM, James Morris wrote:
-> On Tue, 15 May 2018, Casey Schaufler wrote:
+On 05/15/2018 09:40 AM, Mimi Zohar wrote:
+> Hi Stefan,
 >
->> Both SELinux and Smack use netlbl_sock_setattr() in their socket_post_create()
->> hooks to establish the CIPSO to use if nothing else interferes. An unfortunate
->> artifact of the Smack "ambient label" implementation is that the default
->> configuration is going to delete the netlbl attribute for the floor ("_")
->> label. This will conflict with any value that SELinux sets. :( Smack clearly
->> needs to have it's use of netlabel revised, and that is work that's going on
->> in parallel with stacking. That, however, is not an infrastructure issue, it's
->> an issue with how the two modules use the facilities.
-> Can this kind of problem be prevented at the API level?  i.e. ensure you 
-> can't accidentally conflict with another LSM's use of the label here?
+> On Fri, 2018-05-11 at 10:42 -0400, Stefan Berger wrote:
+>> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+>>
+>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+>> the IMA "audit" policy action.  This patch defines AUDIT_INTEGRITY_POLICY
+>> to reflect the IMA policy rules.
+>>
+>> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> We do need to separate out auditing the IMA policy rules from the
+> "IMA-audit" messages. ?Based on the IMA policy rule aspect of the
+> discussions [1], ?I would really appreciate if you could work with
+> Richard and Steve on the new IMA policy rule audit format.
+Is your patch below still valid for splitting it up into 'two distinct 
+audit record types' ?
 
-What we're seeing isn't an accidental conflict. SELinux and Smack
-use netlabel differently. SELinux uses netlabel the way it and the
-way CIPSO intended, to mark the MLS levels and categories on a
-packet. Smack (ab)uses netlabel to put the Smack label directly on
-the packet. In most cases a SELinux system won't be sending a CIPSO
-header at all, because it won't be using MLS. A Smack system, on
-the other hand, sends a CIPSO header unless the label is the
-"ambient" label. Further, the label transitions for a process using
-both SELinux and Smack will be different. Two system services may
-have different SELinux contexts but the same Smack label.
-
-The Smack code clearly needs to be revised. It does a horrible job
-on single-level hosts. It works, but does not take advantage of the
-netlabel facilities well. The ambient label processing is pretty
-kludgey. If the Smack use of netlabel were more in line with the
-SELinux model I expect there would be more cases where they work
-together. But even in the best case, it's going to take some real
-configuration wizardry to get a lot of agreement on packet labeling.
-
-I'm not saying that API level changes wouldn't be welcome. I would
-be happier if the networking code called security hooks like the
-other subsystems do. I also understand that there are critical
-performance issues that drove the existing implementation, and that
-a call to security_label_packet() in the IP stack could be a hard
-sell.
-?
+>
+> This change can be upstreamed independently of either the IMA
+> namespacing or the audit containerid patch sets. ?The sooner we make
+> this change and upstream it, the better.
+>
+> [1]?https://www.redhat.com/archives/linux-audit/2018-March/msg00092.html
+>
+> thanks,
+>
+> Mimi
+>
+>> ---
+>>   include/uapi/linux/audit.h          | 3 ++-
+>>   security/integrity/ima/ima_policy.c | 2 +-
+>>   2 files changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+>> index 4e61a9e05132..8966e7ff1c4c 100644
+>> --- a/include/uapi/linux/audit.h
+>> +++ b/include/uapi/linux/audit.h
+>> @@ -146,7 +146,8 @@
+>>   #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
+>>   #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
+>>   #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
+>> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+>> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
+>> +#define AUDIT_INTEGRITY_POLICY	    1806 /* IMA policy rules */
+>>
+>>   #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+>>
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index 915f5572c6ff..3a1412db02a3 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -619,7 +619,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>>   	bool uid_token;
+>>   	int result = 0;
+>>
+>> -	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_RULE);
+>> +	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_POLICY);
+>>
+>>   	entry->uid = INVALID_UID;
+>>   	entry->fowner = INVALID_UID;
 
 
 --
