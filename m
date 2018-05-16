@@ -1,40 +1,33 @@
-From: rgb@redhat.com (Richard Guy Briggs)
-Date: Wed, 16 May 2018 07:55:45 -0400
-Subject: [PATCH ghak81 V3 1/3] audit: use new audit_context access funciton
-	for seccomp_actions_logged
-In-Reply-To: <cover.1526430313.git.rgb@redhat.com>
-References: <cover.1526430313.git.rgb@redhat.com>
-Message-ID: <12a849e41468d761e0782c733e58db47d83b0d16.1526430313.git.rgb@redhat.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 16 May 2018 17:10:35 +0300
+Subject: [PATCH v4 1/2] tpm: reduce poll sleep time in tpm_transmit()
+In-Reply-To: <20180516055125.5685-2-nayna@linux.vnet.ibm.com>
+References: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+	<20180516055125.5685-2-nayna@linux.vnet.ibm.com>
+Message-ID: <20180516141035.GA10304@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On the rebase of the following commit on the new seccomp actions_logged
-function, one audit_context access was missed.
+On Wed, May 16, 2018 at 01:51:24AM -0400, Nayna Jain wrote:
+> tpm_try_transmit currently checks TPM status every 5 msecs between
+> send and recv. It does so in a loop for the maximum timeout as defined
+> in the TPM Interface Specification. However, the TPM may return before
+> 5 msecs. Thus the polling interval for each iteration can be reduced,
+> which improves overall performance. This patch changes the polling sleep
+> time from 5 msecs to 1 msec.
+> 
+> Additionally, this patch renames TPM_POLL_SLEEP to TPM_TIMEOUT_POLL and
+> moves it to tpm.h as an enum value.
+> 
+> After this change, performance on a system[1] with a TPM 1.2 with an 8 byte
+> burstcount for 1000 extends improved from ~14 sec to ~10.7 sec.
+> 
+> [1] All tests are performed on an x86 based, locked down, single purpose
+> closed system. It has Infineon TPM 1.2 using LPC Bus.
 
-commit cdfb6b341f0f2409aba24b84f3b4b2bba50be5c5
-("audit: use inline function to get audit context")
+Already applied previous version of this.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/auditsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index cbab0da..f3d3dc6 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2497,7 +2497,7 @@ void audit_seccomp_actions_logged(const char *names, const char *old_names,
- 	if (!audit_enabled)
- 		return;
- 
--	ab = audit_log_start(current->audit_context, GFP_KERNEL,
-+	ab = audit_log_start(audit_context(), GFP_KERNEL,
- 			     AUDIT_CONFIG_CHANGE);
- 	if (unlikely(!ab))
- 		return;
--- 
-1.8.3.1
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
