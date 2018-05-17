@@ -1,97 +1,83 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 17 May 2018 10:48:44 -0400
-Subject: [PATCH v2 3/9] security: define security_kernel_read_blob() wrapper
+Date: Thu, 17 May 2018 10:48:43 -0400
+Subject: [PATCH v2 2/9] ima: fix updating the ima_appraise flag
 In-Reply-To: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1526568530-9144-3-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In order for LSMs and IMA-appraisal to differentiate between the original
-and new syscalls (eg. kexec, kernel modules, firmware), both the original
-and new syscalls must call an LSM hook.
+As IMA policy rules are added, a mask of the type of rule (eg. kexec
+kernel image, firmware, IMA policy) is updated.  Based on this mask,
+integrity decisions can be made quickly.
 
-Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
-introduced calling security_kernel_module_from_file() in both the original
-and new syscalls.  Commit a1db74209483 ("module: replace
-copy_module_from_fd with kernel version") replaced these LSM calls with
-security_kernel_read_file().
+Unlike custom IMA policy rules, which replace the original builtin
+policy rules and update the mask, the builtin "secure_boot" policy
+rules were loaded, but did not update the mask.
 
-Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
-with kernel version") and commit b804defe4297  ("kexec: replace call to
-copy_file_from_fd() with kernel version") replaced their own version of
-reading a file from the kernel with the generic
-kernel_read_file_from_path/fd() versions, which call the pre and post
-security_kernel_read_file LSM hooks.
+This patch refactors the code to load custom policies, defining a new
+function named ima_appraise_flag().  The new function is called either
+when loading the builtin "secure_boot" or custom policies.
 
-Missing are LSM calls in the original kexec syscall and firmware sysfs
-fallback method.  From a technical perspective there is no justification
-for defining a new LSM hook, as the existing security_kernel_read_file()
-works just fine.  The original syscalls, however, do not read a file, so
-the security hook name is inappropriate.  Instead of defining a new LSM
-hook, this patch defines security_kernel_read_blob() as a wrapper for
-the existing LSM security_kernel_file_read() hook.
-
+Fixes: 503ceaef8e2e ("ima: define a set of appraisal rules requiring file signatures")
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-
-Changelog v2:
-- Define a generic wrapper named security_kernel_read_blob() for
-security_kernel_read_file().
-
-Changelog v1:
-- Define and call security_kexec_load(), a wrapper for
-security_kernel_read_file().
 ---
- include/linux/security.h | 6 ++++++
- security/security.c      | 6 ++++++
- 2 files changed, 12 insertions(+)
+ security/integrity/ima/ima_policy.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..4db1967a688b 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -323,6 +323,7 @@ int security_kernel_module_request(char *kmod_name);
- int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
-+int security_kernel_read_blob(enum kernel_read_file_id id);
- int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 			     int flags);
- int security_task_setpgid(struct task_struct *p, pid_t pgid);
-@@ -922,6 +923,11 @@ static inline int security_kernel_post_read_file(struct file *file,
- 	return 0;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 03cbba423e59..8bbc18eb07eb 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -440,6 +440,17 @@ void ima_update_policy_flag(void)
+ 		ima_policy_flag &= ~IMA_APPRAISE;
  }
  
-+static inline int security_kernel_read_blob(enum kernel_read_file_id id)
++static int ima_appraise_flag(enum ima_hooks func)
 +{
++	if (func == MODULE_CHECK)
++		return IMA_APPRAISE_MODULES;
++	else if (func == FIRMWARE_CHECK)
++		return IMA_APPRAISE_FIRMWARE;
++	else if (func == POLICY_CHECK)
++		return IMA_APPRAISE_POLICY;
 +	return 0;
 +}
 +
- static inline int security_task_fix_setuid(struct cred *new,
- 					   const struct cred *old,
- 					   int flags)
-diff --git a/security/security.c b/security/security.c
-index 68f46d849abe..8f199b2bf4a2 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1044,6 +1044,12 @@ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
- }
- EXPORT_SYMBOL_GPL(security_kernel_read_file);
+ /**
+  * ima_init_policy - initialize the default measure rules.
+  *
+@@ -478,9 +489,11 @@ void __init ima_init_policy(void)
+ 	 * Insert the appraise rules requiring file signatures, prior to
+ 	 * any other appraise rules.
+ 	 */
+-	for (i = 0; i < secure_boot_entries; i++)
+-		list_add_tail(&secure_boot_rules[i].list,
+-			      &ima_default_rules);
++	for (i = 0; i < secure_boot_entries; i++) {
++		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
++		temp_ima_appraise |=
++		    ima_appraise_flag(secure_boot_rules[i].func);
++	}
  
-+int security_kernel_read_blob(enum kernel_read_file_id id)
-+{
-+	return security_kernel_read_file(NULL, id);
-+}
-+EXPORT_SYMBOL_GPL(security_kernel_read_blob);
+ 	for (i = 0; i < appraise_entries; i++) {
+ 		list_add_tail(&default_appraise_rules[i].list,
+@@ -934,12 +947,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 	}
+ 	if (!result && (entry->action == UNKNOWN))
+ 		result = -EINVAL;
+-	else if (entry->func == MODULE_CHECK)
+-		temp_ima_appraise |= IMA_APPRAISE_MODULES;
+-	else if (entry->func == FIRMWARE_CHECK)
+-		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
+-	else if (entry->func == POLICY_CHECK)
+-		temp_ima_appraise |= IMA_APPRAISE_POLICY;
++	else if (entry->action == APPRAISE)
++		temp_ima_appraise |= ima_appraise_flag(entry->func);
 +
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id)
- {
+ 	audit_log_format(ab, "res=%d", !result);
+ 	audit_log_end(ab);
+ 	return result;
 -- 
 2.7.5
 
