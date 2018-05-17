@@ -1,42 +1,47 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 17 May 2018 10:48:42 -0400
-Subject: [PATCH v2 1/9] ima: based on policy verify firmware signatures
-	(pre-allocated buffer)
-In-Reply-To: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1526568530-9144-2-git-send-email-zohar@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 17 May 2018 19:00:46 -0400
+Subject: [PATCH ghak81 V3 1/3] audit: use new audit_context access
+	funciton for seccomp_actions_logged
+In-Reply-To: <12a849e41468d761e0782c733e58db47d83b0d16.1526430313.git.rgb@redhat.com>
+References: <cover.1526430313.git.rgb@redhat.com>
+	<12a849e41468d761e0782c733e58db47d83b0d16.1526430313.git.rgb@redhat.com>
+Message-ID: <CAHC9VhR0Y6ZO80XrRF45QD30Gi1TK49-JTSTY0wThWZ1nrGarA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Don't differentiate between kernel_read_file_id READING_FIRMWARE and
-READING_FIRMWARE_PREALLOC_BUFFER enumerations.
+On Wed, May 16, 2018 at 7:55 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On the rebase of the following commit on the new seccomp actions_logged
+> function, one audit_context access was missed.
+>
+> commit cdfb6b341f0f2409aba24b84f3b4b2bba50be5c5
+> ("audit: use inline function to get audit context")
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/auditsc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: a098ecd firmware: support loading into a pre-allocated buffer (since 4.8)
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Stephen Boyd <stephen.boyd@linaro.org>
----
- security/integrity/ima/ima_main.c | 1 +
- 1 file changed, 1 insertion(+)
+Merged into audit/next, thanks for the follow-up.
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index e771b736aa03..83f84928ad76 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -447,6 +447,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 
- static int read_idmap[READING_MAX_ID] = {
- 	[READING_FIRMWARE] = FIRMWARE_CHECK,
-+	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
- 	[READING_MODULE] = MODULE_CHECK,
- 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
- 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index cbab0da..f3d3dc6 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2497,7 +2497,7 @@ void audit_seccomp_actions_logged(const char *names, const char *old_names,
+>         if (!audit_enabled)
+>                 return;
+>
+> -       ab = audit_log_start(current->audit_context, GFP_KERNEL,
+> +       ab = audit_log_start(audit_context(), GFP_KERNEL,
+>                              AUDIT_CONFIG_CHANGE);
+>         if (unlikely(!ab))
+>                 return;
+> --
+> 1.8.3.1
+
 -- 
-2.7.5
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
