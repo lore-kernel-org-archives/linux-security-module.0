@@ -1,321 +1,109 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 17 May 2018 19:04:35 -0400
-Subject: [PATCH ghak81 V3 3/3] audit: collect audit task parameters
-In-Reply-To: <fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
-References: <cover.1526430313.git.rgb@redhat.com>
-	<fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
-Message-ID: <CAHC9VhRXn782LH5nvh9fKpk+EzbmmCEaHsj7fNTG3Yi5fp03_g@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 17 May 2018 17:24:36 -0700
+Subject: [PATCH v2 3/9] security: define security_kernel_read_blob()
+	wrapper
+In-Reply-To: <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 16, 2018 at 7:55 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> The audit-related parameters in struct task_struct should ideally be
-> collected together and accessed through a standard audit API.
+On 5/17/2018 7:48 AM, Mimi Zohar wrote:
+> In order for LSMs and IMA-appraisal to differentiate between the original
+> and new syscalls (eg. kexec, kernel modules, firmware), both the original
+> and new syscalls must call an LSM hook.
 >
-> Collect the existing loginuid, sessionid and audit_context together in a
-> new struct audit_task_info called "audit" in struct task_struct.
+> Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
+> introduced calling security_kernel_module_from_file() in both the original
+> and new syscalls.  Commit a1db74209483 ("module: replace
+> copy_module_from_fd with kernel version") replaced these LSM calls with
+> security_kernel_read_file().
 >
-> Use kmem_cache to manage this pool of memory.
-> Un-inline audit_free() to be able to always recover that memory.
+> Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
+> with kernel version") and commit b804defe4297  ("kexec: replace call to
+> copy_file_from_fd() with kernel version") replaced their own version of
+> reading a file from the kernel with the generic
+> kernel_read_file_from_path/fd() versions, which call the pre and post
+> security_kernel_read_file LSM hooks.
 >
-> See: https://github.com/linux-audit/audit-kernel/issues/81
+> Missing are LSM calls in the original kexec syscall and firmware sysfs
+> fallback method.  From a technical perspective there is no justification
+> for defining a new LSM hook, as the existing security_kernel_read_file()
+> works just fine.  The original syscalls, however, do not read a file, so
+> the security hook name is inappropriate.  Instead of defining a new LSM
+> hook, this patch defines security_kernel_read_blob() as a wrapper for
+> the existing LSM security_kernel_file_read() hook.
+
+What a marvelous opportunity to bikeshed!
+
+I really dislike adding another security_ interface just because
+the name isn't quite right. Especially a wrapper, which is just
+code and execution overhead. Why not change security_kernel_read_file()
+to security_kernel_read_blob() everywhere and be done?
+
 >
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+>
+> Changelog v2:
+> - Define a generic wrapper named security_kernel_read_blob() for
+> security_kernel_read_file().
+>
+> Changelog v1:
+> - Define and call security_kexec_load(), a wrapper for
+> security_kernel_read_file().
 > ---
->  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
->  include/linux/sched.h |  5 +----
->  init/init_task.c      |  3 +--
->  init/main.c           |  2 ++
->  kernel/auditsc.c      | 51 ++++++++++++++++++++++++++++++++++++++++++---------
->  kernel/fork.c         |  2 +-
->  6 files changed, 71 insertions(+), 26 deletions(-)
-
-As discussed on-list and offline, I'm going to hold off on this change
-until the audit container ID work is father along.  That is the main
-driver for this change, and until that is closer to ready I just can't
-justify the extra overhead.
-
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 69c7847..4f824c4 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -216,8 +216,15 @@ static inline void audit_log_task_info(struct audit_buffer *ab,
+>  include/linux/security.h | 6 ++++++
+>  security/security.c      | 6 ++++++
+>  2 files changed, 12 insertions(+)
 >
->  /* These are defined in auditsc.c */
->                                 /* Public API */
-> +struct audit_task_info {
-> +       kuid_t                  loginuid;
-> +       unsigned int            sessionid;
-> +       struct audit_context    *ctx;
-> +};
-> +extern struct audit_task_info init_struct_audit;
-> +extern void __init audit_task_init(void);
->  extern int  audit_alloc(struct task_struct *task);
-> -extern void __audit_free(struct task_struct *task);
-> +extern void audit_free(struct task_struct *task);
->  extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
->                                   unsigned long a2, unsigned long a3);
->  extern void __audit_syscall_exit(int ret_success, long ret_value);
-> @@ -239,12 +246,15 @@ extern void audit_seccomp_actions_logged(const char *names,
->
->  static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
->  {
-> -       task->audit_context = ctx;
-> +       task->audit->ctx = ctx;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 63030c85ee19..4db1967a688b 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -323,6 +323,7 @@ int security_kernel_module_request(char *kmod_name);
+>  int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+>  int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>  				   enum kernel_read_file_id id);
+> +int security_kernel_read_blob(enum kernel_read_file_id id);
+>  int security_task_fix_setuid(struct cred *new, const struct cred *old,
+>  			     int flags);
+>  int security_task_setpgid(struct task_struct *p, pid_t pgid);
+> @@ -922,6 +923,11 @@ static inline int security_kernel_post_read_file(struct file *file,
+>  	return 0;
 >  }
->
->  static inline struct audit_context *audit_context(void)
->  {
-> -       return current->audit_context;
-> +       if (current->audit)
-> +               return current->audit->ctx;
-> +       else
-> +               return NULL;
->  }
->
->  static inline bool audit_dummy_context(void)
-> @@ -252,11 +262,7 @@ static inline bool audit_dummy_context(void)
->         void *p = audit_context();
->         return !p || *(int *)p;
->  }
-> -static inline void audit_free(struct task_struct *task)
-> -{
-> -       if (unlikely(task->audit_context))
-> -               __audit_free(task);
-> -}
-> +
->  static inline void audit_syscall_entry(int major, unsigned long a0,
->                                        unsigned long a1, unsigned long a2,
->                                        unsigned long a3)
-> @@ -328,12 +334,18 @@ extern int auditsc_get_stamp(struct audit_context *ctx,
->
->  static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
->  {
-> -       return tsk->loginuid;
-> +       if (tsk->audit)
-> +               return tsk->audit->loginuid;
-> +       else
-> +               return INVALID_UID;
->  }
->
->  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
->  {
-> -       return tsk->sessionid;
-> +       if (tsk->audit)
-> +               return tsk->audit->sessionid;
-> +       else
-> +               return AUDIT_SID_UNSET;
->  }
->
->  extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
-> @@ -458,6 +470,8 @@ static inline void audit_fanotify(unsigned int response)
->  extern int audit_n_rules;
->  extern int audit_signals;
->  #else /* CONFIG_AUDITSYSCALL */
-> +static inline void __init audit_task_init(void)
-> +{ }
->  static inline int audit_alloc(struct task_struct *task)
->  {
->         return 0;
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index b3d697f..6a5db0e 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -29,7 +29,6 @@
->  #include <linux/task_io_accounting.h>
->
->  /* task_struct member predeclarations (sorted alphabetically): */
-> -struct audit_context;
->  struct backing_dev_info;
->  struct bio_list;
->  struct blk_plug;
-> @@ -832,10 +831,8 @@ struct task_struct {
->
->         struct callback_head            *task_works;
->
-> -       struct audit_context            *audit_context;
->  #ifdef CONFIG_AUDITSYSCALL
-> -       kuid_t                          loginuid;
-> -       unsigned int                    sessionid;
-> +       struct audit_task_info          *audit;
->  #endif
->         struct seccomp                  seccomp;
->
-> diff --git a/init/init_task.c b/init/init_task.c
-> index 74f60ba..4058840 100644
-> --- a/init/init_task.c
-> +++ b/init/init_task.c
-> @@ -119,8 +119,7 @@ struct task_struct init_task
->         .thread_group   = LIST_HEAD_INIT(init_task.thread_group),
->         .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
->  #ifdef CONFIG_AUDITSYSCALL
-> -       .loginuid       = INVALID_UID,
-> -       .sessionid      = AUDIT_SID_UNSET,
-> +       .audit          = &init_struct_audit,
->  #endif
->  #ifdef CONFIG_PERF_EVENTS
->         .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
-> diff --git a/init/main.c b/init/main.c
-> index b795aa3..7ca3dfb 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -91,6 +91,7 @@
->  #include <linux/cache.h>
->  #include <linux/rodata_test.h>
->  #include <linux/jump_label.h>
-> +#include <linux/audit.h>
->
->  #include <asm/io.h>
->  #include <asm/bugs.h>
-> @@ -720,6 +721,7 @@ asmlinkage __visible void __init start_kernel(void)
->         nsfs_init();
->         cpuset_init();
->         cgroup_init();
-> +       audit_task_init();
->         taskstats_init_early();
->         delayacct_init();
->
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index ef3e189..4b1138a 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -841,7 +841,7 @@ static inline struct audit_context *audit_take_context(struct task_struct *tsk,
->                                                       int return_valid,
->                                                       long return_code)
->  {
-> -       struct audit_context *context = tsk->audit_context;
-> +       struct audit_context *context = tsk->audit->ctx;
->
->         if (!context)
->                 return NULL;
-> @@ -926,6 +926,15 @@ static inline struct audit_context *audit_alloc_context(enum audit_state state)
->         return context;
->  }
->
-> +static struct kmem_cache *audit_task_cache;
-> +
-> +void __init audit_task_init(void)
+>  
+> +static inline int security_kernel_read_blob(enum kernel_read_file_id id)
 > +{
-> +       audit_task_cache = kmem_cache_create("audit_task",
-> +                                            sizeof(struct audit_task_info),
-> +                                            0, SLAB_PANIC, NULL);
+> +	return 0;
 > +}
 > +
->  /**
->   * audit_alloc - allocate an audit context block for a task
->   * @tsk: task
-> @@ -940,17 +949,28 @@ int audit_alloc(struct task_struct *tsk)
->         struct audit_context *context;
->         enum audit_state     state;
->         char *key = NULL;
-> +       struct audit_task_info *info;
-> +
-> +       info = kmem_cache_zalloc(audit_task_cache, GFP_KERNEL);
-> +       if (!info)
-> +               return -ENOMEM;
-> +       info->loginuid = audit_get_loginuid(current);
-> +       info->sessionid = audit_get_sessionid(current);
-> +       tsk->audit = info;
->
->         if (likely(!audit_ever_enabled))
->                 return 0; /* Return if not auditing. */
->
->         state = audit_filter_task(tsk, &key);
->         if (state == AUDIT_DISABLED) {
-> +               audit_set_context(tsk, NULL);
->                 clear_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
->                 return 0;
->         }
->
->         if (!(context = audit_alloc_context(state))) {
-> +               tsk->audit = NULL;
-> +               kmem_cache_free(audit_task_cache, info);
->                 kfree(key);
->                 audit_log_lost("out of memory in audit_alloc");
->                 return -ENOMEM;
-> @@ -962,6 +982,12 @@ int audit_alloc(struct task_struct *tsk)
->         return 0;
+>  static inline int security_task_fix_setuid(struct cred *new,
+>  					   const struct cred *old,
+>  					   int flags)
+> diff --git a/security/security.c b/security/security.c
+> index 68f46d849abe..8f199b2bf4a2 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1044,6 +1044,12 @@ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
 >  }
->
-> +struct audit_task_info init_struct_audit = {
-> +       .loginuid = INVALID_UID,
-> +       .sessionid = AUDIT_SID_UNSET,
-> +       .ctx = NULL,
-> +};
+>  EXPORT_SYMBOL_GPL(security_kernel_read_file);
+>  
+> +int security_kernel_read_blob(enum kernel_read_file_id id)
+> +{
+> +	return security_kernel_read_file(NULL, id);
+> +}
+> +EXPORT_SYMBOL_GPL(security_kernel_read_blob);
 > +
->  static inline void audit_free_context(struct audit_context *context)
+>  int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>  				   enum kernel_read_file_id id)
 >  {
->         audit_free_names(context);
-> @@ -1469,26 +1495,33 @@ static void audit_log_exit(struct audit_context *context, struct task_struct *ts
->  }
->
->  /**
-> - * __audit_free - free a per-task audit context
-> + * audit_free - free a per-task audit context
->   * @tsk: task whose audit context block to free
->   *
->   * Called from copy_process and do_exit
->   */
-> -void __audit_free(struct task_struct *tsk)
-> +void audit_free(struct task_struct *tsk)
->  {
->         struct audit_context *context;
-> +       struct audit_task_info *info;
->
->         context = audit_take_context(tsk, 0, 0);
-> -       if (!context)
-> -               return;
-> -
->         /* Check for system calls that do not go through the exit
->          * function (e.g., exit_group), then free context block.
->          * We use GFP_ATOMIC here because we might be doing this
->          * in the context of the idle thread */
->         /* that can happen only if we are called from do_exit() */
-> -       if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT)
-> +       if (context && context->in_syscall &&
-> +           context->current_state == AUDIT_RECORD_CONTEXT)
->                 audit_log_exit(context, tsk);
-> +       /* Freeing the audit_task_info struct must be performed after
-> +        * audit_log_exit() due to need for loginuid and sessionid.
-> +        */
-> +       info = tsk->audit;
-> +       tsk->audit = NULL;
-> +       kmem_cache_free(audit_task_cache, info);
-> +       if (!context)
-> +               return;
->         if (!list_empty(&context->killed_trees))
->                 audit_kill_trees(&context->killed_trees);
->
-> @@ -2071,8 +2104,8 @@ int audit_set_loginuid(kuid_t loginuid)
->                         sessionid = (unsigned int)atomic_inc_return(&session_id);
->         }
->
-> -       task->sessionid = sessionid;
-> -       task->loginuid = loginuid;
-> +       task->audit->sessionid = sessionid;
-> +       task->audit->loginuid = loginuid;
->  out:
->         audit_log_set_loginuid(oldloginuid, loginuid, oldsessionid, sessionid, rc);
->         return rc;
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index cd18448..92ab849 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1713,7 +1713,7 @@ static __latent_entropy struct task_struct *copy_process(
->         p->start_time = ktime_get_ns();
->         p->real_start_time = ktime_get_boot_ns();
->         p->io_context = NULL;
-> -       audit_set_context(p, NULL);
-> +       p->audit = NULL;
->         cgroup_fork(p);
->  #ifdef CONFIG_NUMA
->         p->mempolicy = mpol_dup(p->mempolicy);
-> --
-> 1.8.3.1
 
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
