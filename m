@@ -1,47 +1,29 @@
 From: jmorris@namei.org (James Morris)
-Date: Sat, 19 May 2018 03:13:37 +1000 (AEST)
-Subject: [PATCH v2 3/9] security: define security_kernel_read_blob()
-	wrapper
-In-Reply-To: <87y3ghhbws.fsf@xmission.com>
-References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
-	<87y3ghhbws.fsf@xmission.com>
-Message-ID: <alpine.LRH.2.21.1805190303100.26396@namei.org>
+Date: Sat, 19 May 2018 03:42:40 +1000 (AEST)
+Subject: [GIT PULL] tpmdd updates for v4.18
+In-Reply-To: <20180518070851.GA11123@linux.intel.com>
+References: <20180518070851.GA11123@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1805190341500.26396@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, 17 May 2018, Eric W. Biederman wrote:
+On Fri, 18 May 2018, Jarkko Sakkinen wrote:
 
-> Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> The following changes since commit 5859cdf55063943192f316b3d6c673fd6fcbee46:
 > 
-> Nack on this sharing nonsense.  These two interfaces do not share any
-> code in their implementations other than the if statement to distinguish
-> between the two cases.
+>   smack: provide socketpair callback (2018-05-04 12:48:54 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180518
+> 
+> for you to fetch changes up to 424eaf910c329ab06ad03a527ef45dcf6a328f00:
+> 
+>   tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
 
-Hmm, it's not even doing that.
-
-There's already an if(!file && read_id == X) { } check and this is another 
-one being added.
-
-> If we want comprehensible and maintainable code in the security modules
-> we need to split these two pieces of functionality apart.
-
-All ima_read is doing in both the old and new case is checking if there's 
-no file then if it's a certain operation, returning an error.
-
-To echo Eric and Casey's suggestions, how about changing the name of the 
-hook to security_kernel_read_data() ?
-
-Then ima_read_file() can be changed to ima_read_data(), and then instead 
-of two if (!file && read_id == X) checks, have:
-
-	if (!file) {
-		switch (read_id) {
-		}
-	}
-
-
+Pulled to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+and next-testing
 
 
 -- 
