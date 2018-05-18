@@ -1,137 +1,144 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Fri, 18 May 2018 12:01:46 +0530
-Subject: [PATCH v4 3/4] tpm: migrate tpm2_get_tpm_pt() to use struct
-	tpm_buf
-In-Reply-To: <20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
-References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
-	<20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
-Message-ID: <95828353-43e1-0a02-ea54-544b709584b9@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 18 May 2018 10:04:08 +0300
+Subject: [PATCH v3] tpm: check selftest status before retrying full
+	selftest
+In-Reply-To: <20180515071712.9331-1-nayna@linux.vnet.ibm.com>
+References: <20180515071712.9331-1-nayna@linux.vnet.ibm.com>
+Message-ID: <20180518070408.GA9461@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-
-On 03/26/2018 05:44 PM, Jarkko Sakkinen wrote:
-> In order to make struct tpm_buf the first class object for constructing TPM
-> commands, migrate tpm2_get_tpm_pt() to use it.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Nayna Jain<nayna@linux.vnet.ibm.com>
-Tested-by: Nayna Jain<nayna@linux.vnet.ibm.com>
-
-
-Thanks & Regards,
- ?? - Nayna
-
+On Tue, May 15, 2018 at 12:47:12PM +0530, Nayna Jain wrote:
+> TPM 2.0 supports TPM2_GetTestResult[1], which can be used to check the
+> selftest status. This patch implements the tpm2_get_selftest_result()
+> function to check the selftest status before trying full selftest.
+> 
+> [1] As per TCG Specification, Trusted Platform Module Library,
+> Part 2 - Commands, Section 10.4:
+> 
+> "This command(TPM2_GetTestResult) returns manufacturer-specific information
+> regarding the results of a self-test and an indication of the test status.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
+> Tested-by: Stefan Berger <stefanb@linux.vnet.ibm.com> (With QEMU with
+> swtpm TPM 2.0)
 > ---
->   drivers/char/tpm/tpm2-cmd.c | 63 +++++++++++++++++----------------------------
->   1 file changed, 23 insertions(+), 40 deletions(-)
->
+> 
+> Changelog:
+> 
+> v3:
+> * modified to check the selftest status before full selftest command is run
+> * fixed the patch description
+> * includes Jarkko's feedbacks
+> 
+> v2:
+> * changed the subject and updated patch description
+> * removed the logs
+> 
+>  drivers/char/tpm/tpm.h      |  2 ++
+>  drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 46 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index af3bb87d3ea1..1de4240b52c4 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -114,6 +114,7 @@ enum tpm2_return_codes {
+>  	TPM2_RC_FAILURE		= 0x0101,
+>  	TPM2_RC_DISABLED	= 0x0120,
+>  	TPM2_RC_COMMAND_CODE    = 0x0143,
+> +	TPM2_RC_NEEDS_TEST      = 0x0153,
+>  	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+>  	TPM2_RC_REFERENCE_H0	= 0x0910,
+>  	TPM2_RC_RETRY		= 0x0922,
+> @@ -144,6 +145,7 @@ enum tpm2_command_codes {
+>  	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+>  	TPM2_CC_GET_CAPABILITY	= 0x017A,
+>  	TPM2_CC_GET_RANDOM	= 0x017B,
+> +	TPM2_CC_GET_TEST_RESULT = 0x017C,
+>  	TPM2_CC_PCR_READ	= 0x017E,
+>  	TPM2_CC_PCR_EXTEND	= 0x0182,
+>  	TPM2_CC_LAST		= 0x018F,
 > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 7bffd0fd1dca..b3b52f9eb65f 100644
+> index 96c77c8e7f40..811bcf221208 100644
 > --- a/drivers/char/tpm/tpm2-cmd.c
 > +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -27,20 +27,6 @@ enum tpm2_session_attributes {
->   	TPM2_SA_CONTINUE_SESSION	= BIT(0),
->   };
->
-> -struct tpm2_get_tpm_pt_in {
-> -	__be32	cap_id;
-> -	__be32	property_id;
-> -	__be32	property_cnt;
-> -} __packed;
-> -
-> -struct tpm2_get_tpm_pt_out {
-> -	u8	more_data;
-> -	__be32	subcap_id;
-> -	__be32	property_cnt;
-> -	__be32	property_id;
-> -	__be32	value;
-> -} __packed;
-> -
->   struct tpm2_get_random_in {
->   	__be16	size;
->   } __packed;
-> @@ -51,8 +37,6 @@ struct tpm2_get_random_out {
->   } __packed;
->
->   union tpm2_cmd_params {
-> -	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
-> -	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
->   	struct	tpm2_get_random_in	getrandom_in;
->   	struct	tpm2_get_random_out	getrandom_out;
->   };
-> @@ -379,19 +363,6 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
->   	return total ? total : -EIO;
->   }
->
-> -#define TPM2_GET_TPM_PT_IN_SIZE \
-> -	(sizeof(struct tpm_input_header) + \
-> -	 sizeof(struct tpm2_get_tpm_pt_in))
-> -
-> -#define TPM2_GET_TPM_PT_OUT_BODY_SIZE \
-> -	 sizeof(struct tpm2_get_tpm_pt_out)
-> -
-> -static const struct tpm_input_header tpm2_get_tpm_pt_header = {
-> -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
-> -	.length = cpu_to_be32(TPM2_GET_TPM_PT_IN_SIZE),
-> -	.ordinal = cpu_to_be32(TPM2_CC_GET_CAPABILITY)
-> -};
-> -
->   /**
->    * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
->    * @chip: TPM chip to use
-> @@ -725,6 +696,14 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->   	return rc;
->   }
->
-> +struct tpm2_get_cap_out {
-> +	u8 more_data;
-> +	__be32 subcap_id;
-> +	__be32 property_cnt;
-> +	__be32 property_id;
-> +	__be32 value;
-> +} __packed;
-> +
->   /**
->    * tpm2_get_tpm_pt() - get value of a TPM_CAP_TPM_PROPERTIES type property
->    * @chip:		TPM chip to use.
-> @@ -737,19 +716,23 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->   ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
->   			const char *desc)
->   {
-> -	struct tpm2_cmd cmd;
-> +	struct tpm2_get_cap_out *out;
+> @@ -825,6 +825,43 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>  EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+>  
+>  /**
+> + * tpm2_get_selftest_result() - get the status of selftest
+> + * @chip: TPM chip to use
+> + *
+> + * Return: TPM return code, errno otherwise
+
+* Return:
+*  TPM return code,
+*  -errno otherwise
+
+> + */
+> +static int tpm2_get_selftest_result(struct tpm_chip *chip)
+> +{
 > +	struct tpm_buf buf;
->   	int rc;
->
-> -	cmd.header.in = tpm2_get_tpm_pt_header;
-> -	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
-> -	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(property_id);
-> -	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
-> -
-> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
-> -			      TPM2_GET_TPM_PT_OUT_BODY_SIZE, 0, desc);
-> -	if (!rc)
-> -		*value = be32_to_cpu(cmd.params.get_tpm_pt_out.value);
-> -
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+> +	int rc;
+> +	int test_result;
+> +	uint16_t data_size;
+> +	int len;
+> +	const struct tpm_output_header *header;
+> +
+> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
 > +	if (rc)
 > +		return rc;
-> +	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
-> +	tpm_buf_append_u32(&buf, property_id);
-> +	tpm_buf_append_u32(&buf, 1);
-> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
-> +	if (!rc) {
-> +		out = (struct tpm2_get_cap_out *)
-> +			&buf.data[TPM_HEADER_SIZE];
-> +		*value = be32_to_cpu(out->value);
-> +	}
-> +	tpm_buf_destroy(&buf);
->   	return rc;
->   }
->   EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+> +
+> +	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
+> +	if (len <  0)
+> +		return len;
+> +
+> +	header = (struct tpm_output_header *)buf.data;
+> +
+> +	rc = be32_to_cpu(header->return_code);
+> +	if (rc)
+> +		return rc;
+> +
+> +	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
+> +
+> +	test_result = be32_to_cpup((__be32 *)
+> +			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
 
+Why you can't just use rc here like is done in every other function?
+Sorry, did missed this in the previous review.
+
+> +
+> +	return test_result;
+> +}
+> +
+> +/**
+>   * tpm2_do_selftest() - ensure that all self tests have passed
+>   *
+>   * @chip: TPM chip to use
+> @@ -857,6 +894,13 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+>  			rc = TPM2_RC_SUCCESS;
+>  		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
+>  			return rc;
+> +
+> +		rc = tpm2_get_selftest_result(chip);
+> +		dev_dbg(&chip->dev, "self test result is %04x\n", rc);
+
+Please remove this dev_dbg() (also this one).
+
+> +
+> +		if (rc == TPM2_RC_TESTING || rc == TPM2_RC_SUCCESS)
+> +			return TPM2_RC_SUCCESS;
+> +
+>  	}
+>  
+>  	return rc;
+> -- 
+> 2.13.6
+> 
+
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
