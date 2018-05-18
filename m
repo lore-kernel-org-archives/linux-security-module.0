@@ -1,144 +1,77 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 18 May 2018 10:04:08 +0300
-Subject: [PATCH v3] tpm: check selftest status before retrying full
-	selftest
-In-Reply-To: <20180515071712.9331-1-nayna@linux.vnet.ibm.com>
-References: <20180515071712.9331-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20180518070408.GA9461@linux.intel.com>
+Date: Fri, 18 May 2018 10:08:51 +0300
+Subject: [GIT PULL] tpmdd updates for v4.18
+Message-ID: <20180518070851.GA11123@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 15, 2018 at 12:47:12PM +0530, Nayna Jain wrote:
-> TPM 2.0 supports TPM2_GetTestResult[1], which can be used to check the
-> selftest status. This patch implements the tpm2_get_selftest_result()
-> function to check the selftest status before trying full selftest.
-> 
-> [1] As per TCG Specification, Trusted Platform Module Library,
-> Part 2 - Commands, Section 10.4:
-> 
-> "This command(TPM2_GetTestResult) returns manufacturer-specific information
-> regarding the results of a self-test and an indication of the test status.
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
-> Tested-by: Stefan Berger <stefanb@linux.vnet.ibm.com> (With QEMU with
-> swtpm TPM 2.0)
-> ---
-> 
-> Changelog:
-> 
-> v3:
-> * modified to check the selftest status before full selftest command is run
-> * fixed the patch description
-> * includes Jarkko's feedbacks
-> 
-> v2:
-> * changed the subject and updated patch description
-> * removed the logs
-> 
->  drivers/char/tpm/tpm.h      |  2 ++
->  drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 46 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index af3bb87d3ea1..1de4240b52c4 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -114,6 +114,7 @@ enum tpm2_return_codes {
->  	TPM2_RC_FAILURE		= 0x0101,
->  	TPM2_RC_DISABLED	= 0x0120,
->  	TPM2_RC_COMMAND_CODE    = 0x0143,
-> +	TPM2_RC_NEEDS_TEST      = 0x0153,
->  	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
->  	TPM2_RC_REFERENCE_H0	= 0x0910,
->  	TPM2_RC_RETRY		= 0x0922,
-> @@ -144,6 +145,7 @@ enum tpm2_command_codes {
->  	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
->  	TPM2_CC_GET_CAPABILITY	= 0x017A,
->  	TPM2_CC_GET_RANDOM	= 0x017B,
-> +	TPM2_CC_GET_TEST_RESULT = 0x017C,
->  	TPM2_CC_PCR_READ	= 0x017E,
->  	TPM2_CC_PCR_EXTEND	= 0x0182,
->  	TPM2_CC_LAST		= 0x018F,
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 96c77c8e7f40..811bcf221208 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -825,6 +825,43 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
->  EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
->  
->  /**
-> + * tpm2_get_selftest_result() - get the status of selftest
-> + * @chip: TPM chip to use
-> + *
-> + * Return: TPM return code, errno otherwise
+The following changes since commit 5859cdf55063943192f316b3d6c673fd6fcbee46:
 
-* Return:
-*  TPM return code,
-*  -errno otherwise
+  smack: provide socketpair callback (2018-05-04 12:48:54 -0700)
 
-> + */
-> +static int tpm2_get_selftest_result(struct tpm_chip *chip)
-> +{
-> +	struct tpm_buf buf;
-> +	int rc;
-> +	int test_result;
-> +	uint16_t data_size;
-> +	int len;
-> +	const struct tpm_output_header *header;
-> +
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
-> +	if (rc)
-> +		return rc;
-> +
-> +	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
-> +	if (len <  0)
-> +		return len;
-> +
-> +	header = (struct tpm_output_header *)buf.data;
-> +
-> +	rc = be32_to_cpu(header->return_code);
-> +	if (rc)
-> +		return rc;
-> +
-> +	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
-> +
-> +	test_result = be32_to_cpup((__be32 *)
-> +			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
+are available in the Git repository at:
 
-Why you can't just use rc here like is done in every other function?
-Sorry, did missed this in the previous review.
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180518
 
-> +
-> +	return test_result;
-> +}
-> +
-> +/**
->   * tpm2_do_selftest() - ensure that all self tests have passed
->   *
->   * @chip: TPM chip to use
-> @@ -857,6 +894,13 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
->  			rc = TPM2_RC_SUCCESS;
->  		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
->  			return rc;
-> +
-> +		rc = tpm2_get_selftest_result(chip);
-> +		dev_dbg(&chip->dev, "self test result is %04x\n", rc);
+for you to fetch changes up to 424eaf910c329ab06ad03a527ef45dcf6a328f00:
 
-Please remove this dev_dbg() (also this one).
+  tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
 
-> +
-> +		if (rc == TPM2_RC_TESTING || rc == TPM2_RC_SUCCESS)
-> +			return TPM2_RC_SUCCESS;
-> +
->  	}
->  
->  	return rc;
-> -- 
-> 2.13.6
-> 
+----------------------------------------------------------------
+tpmdd updates for Linux 4.18
 
-/Jarkko
+----------------------------------------------------------------
+Colin Ian King (2):
+      tpm: st33zp24: remove redundant null check on chip
+      tpm/st33zp24: Fix spelling mistake in macro ST33ZP24_TISREGISTER_UKNOWN
+
+Jerry Snitselaar (1):
+      tpm_tis: verify locality released before returning from release_locality
+
+Ji-Hun Kim (2):
+      tpm: replace kmalloc() + memcpy() with kmemdup()
+      tpm: replace kmalloc() + memcpy() with kmemdup()
+
+Nayna Jain (3):
+      tpm: move the delay_msec increment after sleep in tpm_transmit()
+      tpm: reduce poll sleep time in tpm_transmit()
+      tpm: reduce polling time to usecs for even finer granularity
+
+Tadeusz Struk (1):
+      tpm: fix use after free in tpm2_load_context()
+
+Thiebaud Weksteen (4):
+      tpm: Add explicit endianness cast
+      tpm: Move eventlog files to a subdirectory
+      tpm: Move shared eventlog functions to common.c
+      tpm: Move eventlog declarations to its own header
+
+Winkler, Tomas (1):
+      tpm: tpm_crb: relinquish locality on error path.
+
+ drivers/char/tpm/Makefile                          |  10 +-
+ .../tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c}   |   3 +-
+ drivers/char/tpm/eventlog/common.c                 | 195 ++++++++++++++++++++
+ drivers/char/tpm/eventlog/common.h                 |  35 ++++
+ .../tpm/{tpm_eventlog_efi.c => eventlog/efi.c}     |   6 +-
+ .../char/tpm/{tpm_eventlog_of.c => eventlog/of.c}  |  11 +-
+ .../char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c}  | 200 ++-------------------
+ .../char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c}  |   3 +-
+ drivers/char/tpm/st33zp24/spi.c                    |   4 +-
+ drivers/char/tpm/st33zp24/st33zp24.c               |   2 -
+ drivers/char/tpm/tpm-interface.c                   |   5 +-
+ drivers/char/tpm/tpm.h                             |  32 +---
+ drivers/char/tpm/tpm2-space.c                      |   3 +-
+ drivers/char/tpm/tpm_crb.c                         |  10 +-
+ drivers/char/tpm/tpm_tis_core.c                    |  58 +++++-
+ 15 files changed, 331 insertions(+), 246 deletions(-)
+ rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (98%)
+ create mode 100644 drivers/char/tpm/eventlog/common.c
+ create mode 100644 drivers/char/tpm/eventlog/common.h
+ rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (91%)
+ rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (91%)
+ rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (58%)
+ rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
