@@ -1,133 +1,58 @@
-From: jsnitsel@redhat.com (Jerry Snitselaar)
-Date: Fri, 18 May 2018 15:39:47 -0700
-Subject: [PATCH v4 3/4] tpm: migrate tpm2_get_tpm_pt() to use struct
-	tpm_buf
-In-Reply-To: <20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
-References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
-	<20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20180518223947.s3x2lkexyjemcnfa@cantor>
+From: mail@maciej.szmigiero.name (Maciej S. Szmigiero)
+Date: Sat, 19 May 2018 14:23:54 +0200
+Subject: [PATCH v2][RESEND] X.509: unpack RSA signatureValue field from BIT
+	STRING
+Message-ID: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon Mar 26 18, Jarkko Sakkinen wrote:
->In order to make struct tpm_buf the first class object for constructing TPM
->commands, migrate tpm2_get_tpm_pt() to use it.
->
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+For RSA signatures this BIT STRING is of so-called primitive subtype, which
+contains a u8 prefix indicating a count of unused bits in the encoding.
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+We have to strip this prefix from signature data, just as we already do for
+key data in x509_extract_key_data() function.
 
->---
-> drivers/char/tpm/tpm2-cmd.c | 63 +++++++++++++++++----------------------------
-> 1 file changed, 23 insertions(+), 40 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->index 7bffd0fd1dca..b3b52f9eb65f 100644
->--- a/drivers/char/tpm/tpm2-cmd.c
->+++ b/drivers/char/tpm/tpm2-cmd.c
->@@ -27,20 +27,6 @@ enum tpm2_session_attributes {
-> 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
-> };
->
->-struct tpm2_get_tpm_pt_in {
->-	__be32	cap_id;
->-	__be32	property_id;
->-	__be32	property_cnt;
->-} __packed;
->-
->-struct tpm2_get_tpm_pt_out {
->-	u8	more_data;
->-	__be32	subcap_id;
->-	__be32	property_cnt;
->-	__be32	property_id;
->-	__be32	value;
->-} __packed;
->-
-> struct tpm2_get_random_in {
-> 	__be16	size;
-> } __packed;
->@@ -51,8 +37,6 @@ struct tpm2_get_random_out {
-> } __packed;
->
-> union tpm2_cmd_params {
->-	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
->-	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
-> 	struct	tpm2_get_random_in	getrandom_in;
-> 	struct	tpm2_get_random_out	getrandom_out;
-> };
->@@ -379,19 +363,6 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-> 	return total ? total : -EIO;
-> }
->
->-#define TPM2_GET_TPM_PT_IN_SIZE \
->-	(sizeof(struct tpm_input_header) + \
->-	 sizeof(struct tpm2_get_tpm_pt_in))
->-
->-#define TPM2_GET_TPM_PT_OUT_BODY_SIZE \
->-	 sizeof(struct tpm2_get_tpm_pt_out)
->-
->-static const struct tpm_input_header tpm2_get_tpm_pt_header = {
->-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
->-	.length = cpu_to_be32(TPM2_GET_TPM_PT_IN_SIZE),
->-	.ordinal = cpu_to_be32(TPM2_CC_GET_CAPABILITY)
->-};
->-
-> /**
->  * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
->  * @chip: TPM chip to use
->@@ -725,6 +696,14 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
-> 	return rc;
-> }
->
->+struct tpm2_get_cap_out {
->+	u8 more_data;
->+	__be32 subcap_id;
->+	__be32 property_cnt;
->+	__be32 property_id;
->+	__be32 value;
->+} __packed;
->+
-> /**
->  * tpm2_get_tpm_pt() - get value of a TPM_CAP_TPM_PROPERTIES type property
->  * @chip:		TPM chip to use.
->@@ -737,19 +716,23 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
-> ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
-> 			const char *desc)
-> {
->-	struct tpm2_cmd cmd;
->+	struct tpm2_get_cap_out *out;
->+	struct tpm_buf buf;
-> 	int rc;
->
->-	cmd.header.in = tpm2_get_tpm_pt_header;
->-	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
->-	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(property_id);
->-	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
->-
->-	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
->-			      TPM2_GET_TPM_PT_OUT_BODY_SIZE, 0, desc);
->-	if (!rc)
->-		*value = be32_to_cpu(cmd.params.get_tpm_pt_out.value);
->-
->+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
->+	if (rc)
->+		return rc;
->+	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
->+	tpm_buf_append_u32(&buf, property_id);
->+	tpm_buf_append_u32(&buf, 1);
->+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
->+	if (!rc) {
->+		out = (struct tpm2_get_cap_out *)
->+			&buf.data[TPM_HEADER_SIZE];
->+		*value = be32_to_cpu(out->value);
->+	}
->+	tpm_buf_destroy(&buf);
-> 	return rc;
-> }
-> EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
->-- 
->2.15.1
->
+This wasn't noticed earlier because this prefix byte is zero for RSA key
+sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+prefixes has no bearing on its value.
+
+The signature length, however was incorrect, which is a problem for RSA
+implementations that need it to be exactly correct (like AMD CCP).
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
+Cc: stable at vger.kernel.org
+---
+This is a resend of a patch that was previously submitted in one series
+with CCP driver changes since this particular patch should go through
+the security (rather than crypto) tree.
+
+Changes from v1: Change '!' to '== 0'.
+
+ crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index 7d81e6bb461a..b6cabac4b62b 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -249,6 +249,15 @@ int x509_note_signature(void *context, size_t hdrlen,
+ 		return -EINVAL;
+ 	}
+ 
++	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
++		/* Discard the BIT STRING metadata */
++		if (vlen < 1 || *(const u8 *)value != 0)
++			return -EBADMSG;
++
++		value++;
++		vlen--;
++	}
++
+ 	ctx->cert->raw_sig = value;
+ 	ctx->cert->raw_sig_size = vlen;
+ 	return 0;
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
