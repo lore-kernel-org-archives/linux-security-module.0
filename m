@@ -1,59 +1,118 @@
-From: mail@maciej.szmigiero.name (Maciej S. Szmigiero)
-Date: Sat, 19 May 2018 14:23:54 +0200
-Subject: [PATCH v2][RESEND] X.509: unpack RSA signatureValue field from BIT
-	STRING
-Message-ID: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
+From: lkp@intel.com (kbuild test robot)
+Date: Sun, 20 May 2018 15:53:50 +0800
+Subject: [PATCH v5 3/7] proc: add helpers to set and get proc hidepid and
+	gid mount options
+In-Reply-To: <20180511093528.GA1250@comp-core-i7-2640m-0182e6>
+References: <20180511093528.GA1250@comp-core-i7-2640m-0182e6>
+Message-ID: <201805201557.rhcitUVX%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
-For RSA signatures this BIT STRING is of so-called primitive subtype, which
-contains a u8 prefix indicating a count of unused bits in the encoding.
+Hi Djalal,
 
-We have to strip this prefix from signature data, just as we already do for
-key data in x509_extract_key_data() function.
+Thank you for the patch! Yet something to improve:
 
-This wasn't noticed earlier because this prefix byte is zero for RSA key
-sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
-prefixes has no bearing on its value.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.17-rc5]
+[cannot apply to next-20180517]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-The signature length, however was incorrect, which is a problem for RSA
-implementations that need it to be exactly correct (like AMD CCP).
+url:    https://github.com/0day-ci/linux/commits/Alexey-Gladkov/proc-add-proc_fs_info-struct-to-store-proc-information/20180512-002936
+config: xtensa-allnoconfig (attached as .config)
+compiler: xtensa-linux-gcc (GCC) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=xtensa 
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
-Cc: stable at vger.kernel.org
+All errors (new ones prefixed by >>):
+
+   init/do_mounts.o: In function `proc_fs_pid_gid':
+>> do_mounts.c:(.text+0x3c): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   arch/xtensa/kernel/setup.o: In function `proc_fs_pid_gid':
+   setup.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/fork.o: In function `proc_fs_pid_gid':
+   fork.c:(.text+0x2a8): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/exec_domain.o: In function `proc_fs_pid_gid':
+   exec_domain.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/cpu.o: In function `proc_fs_pid_gid':
+   cpu.c:(.text+0xf0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/exit.o: In function `proc_fs_pid_gid':
+   exit.c:(.text+0x188): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/resource.o: In function `proc_fs_pid_gid':
+   resource.c:(.text+0x344): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sysctl.o: In function `proc_fs_pid_gid':
+   sysctl.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/pid.o: In function `proc_fs_pid_gid':
+   pid.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/core.o: In function `proc_fs_pid_gid':
+   core.c:(.text+0x6c8): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/loadavg.o: In function `proc_fs_pid_gid':
+   loadavg.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/clock.o: In function `proc_fs_pid_gid':
+   clock.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/cputime.o: In function `proc_fs_pid_gid':
+   cputime.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/idle.o: In function `proc_fs_pid_gid':
+   idle.c:(.text+0x98): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/fair.o: In function `proc_fs_pid_gid':
+   fair.c:(.text+0xac0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/rt.o: In function `proc_fs_pid_gid':
+   rt.c:(.text+0x734): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/deadline.o: In function `proc_fs_pid_gid':
+   deadline.c:(.text+0x10b0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/wait.o: In function `proc_fs_pid_gid':
+   wait.c:(.text+0x120): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/wait_bit.o: In function `proc_fs_pid_gid':
+   wait_bit.c:(.text+0x78): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/swait.o: In function `proc_fs_pid_gid':
+   swait.c:(.text+0x24): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/sched/completion.o: In function `proc_fs_pid_gid':
+   completion.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   kernel/time/timer_list.o: In function `proc_fs_pid_gid':
+   timer_list.c:(.text+0x1c): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   mm/vmstat.o: In function `proc_fs_pid_gid':
+   vmstat.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   mm/slab_common.o: In function `proc_fs_pid_gid':
+   slab_common.c:(.text+0x0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   mm/vmalloc.o: In function `proc_fs_pid_gid':
+   vmalloc.c:(.text+0x514): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   mm/slub.o: In function `proc_fs_pid_gid':
+   slub.c:(.text+0x8a4): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   fs/filesystems.o: In function `proc_fs_pid_gid':
+   filesystems.c:(.text+0x44): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+   drivers/char/misc.o: In function `proc_fs_pid_gid':
+   misc.c:(.text+0xe0): multiple definition of `proc_fs_pid_gid'
+   init/main.o:main.c:(.text+0x30): first defined here
+
 ---
-This is a resend of a patch that was previously submitted in one series
-with CCP driver changes since this particular patch should go through
-the security (rather than crypto) tree.
-
-Changes from v1: Change '!' to '== 0'.
-
- crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index 7d81e6bb461a..b6cabac4b62b 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -249,6 +249,15 @@ int x509_note_signature(void *context, size_t hdrlen,
- 		return -EINVAL;
- 	}
- 
-+	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
-+		/* Discard the BIT STRING metadata */
-+		if (vlen < 1 || *(const u8 *)value != 0)
-+			return -EBADMSG;
-+
-+		value++;
-+		vlen--;
-+	}
-+
- 	ctx->cert->raw_sig = value;
- 	ctx->cert->raw_sig_size = vlen;
- 	return 0;
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
