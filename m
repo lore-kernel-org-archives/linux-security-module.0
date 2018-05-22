@@ -1,41 +1,42 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Tue, 22 May 2018 09:27:46 +0000
-Subject: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180522091732.GA5228@linux.intel.com>
-References: <20180516194600.28189-1-tomas.winkler@intel.com>
-	<20180522091732.GA5228@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
+From: robh@kernel.org (Rob Herring)
+Date: Tue, 22 May 2018 12:31:55 -0500
+Subject: [PATCH v2 11/11] docs: fix broken references with multiple hints
+In-Reply-To: <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+	<63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+Message-ID: <20180522173155.GA11767@rob-hp-laptop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, May 09, 2018 at 10:18:54AM -0300, Mauro Carvalho Chehab wrote:
+> The script:
+> 	./scripts/documentation-file-ref-check --fix-rst
 > 
-> On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
-> > New wrappers are added tpm_cmd_ready() and tpm_go_idle() wrappers to
-> > streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag is
-> abused
-> > to resolve tpm spaces recursive calls to tpm_transmit().
+> Gives multiple hints for broken references on some files.
+> Manually use the one that applies for some files.
 > 
-> This looks good and all but I don't think we want to abuse anything in the
-> driver code, do we?
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  Documentation/ABI/obsolete/sysfs-gpio                     | 2 +-
+>  .../devicetree/bindings/display/bridge/tda998x.txt        | 2 +-
 
-It's not abuse just the flag UNLOCKED is not really named correctly 
-I think this has to be backported so wanted to do less invasive change.
-> 
-> In other words, either
-> 
-> 1. New flag is to be added.
-No
-> 2. Rename the existing flag to something else than UNLOCKED (perhaps
->    SPACE).
+Acked-by: Rob Herring <robh@kernel.org>
 
-
-Currently both TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW  servers the same purpose, to resolve
-the recursion in tpm tranmit. 
-What I believe should be done is to split the function into two to eliminate recursive call instead of using flags.
-Please also there is clock_enable which is not protected from double call.
-Thanks
-Tomas
-
+>  Documentation/trace/events.rst                            | 2 +-
+>  Documentation/trace/tracepoint-analysis.rst               | 2 +-
+>  Documentation/translations/zh_CN/SubmittingDrivers        | 2 +-
+>  Documentation/translations/zh_CN/gpio.txt                 | 4 ++--
+>  MAINTAINERS                                               | 2 +-
+>  drivers/hid/usbhid/Kconfig                                | 2 +-
+>  drivers/input/Kconfig                                     | 4 ++--
+>  drivers/input/joystick/Kconfig                            | 4 ++--
+>  drivers/input/joystick/iforce/Kconfig                     | 2 +-
+>  drivers/input/serio/Kconfig                               | 4 ++--
+>  drivers/staging/fsl-mc/bus/dpio/dpio-driver.txt           | 2 +-
+>  drivers/video/fbdev/skeletonfb.c                          | 8 ++++----
+>  include/linux/tracepoint.h                                | 2 +-
+>  security/device_cgroup.c                                  | 2 +-
+>  16 files changed, 23 insertions(+), 23 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
