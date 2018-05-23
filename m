@@ -1,189 +1,217 @@
-From: bauerman@linux.ibm.com (Thiago Jung Bauermann)
-Date: Tue, 22 May 2018 21:12:41 -0300
-Subject: [PATCH v7 02/14] PKCS#7: Refactor verify_pkcs7_signature() and add
-	pkcs7_get_message_sig()
-In-Reply-To: <20180523001253.15247-1-bauerman@linux.ibm.com>
-References: <20180523001253.15247-1-bauerman@linux.ibm.com>
-Message-ID: <20180523001253.15247-3-bauerman@linux.ibm.com>
+From: kent.overstreet@gmail.com (Kent Overstreet)
+Date: Tue, 22 May 2018 21:18:18 -0400
+Subject: [PATCH 3/6] md: convert to genradix
+In-Reply-To: <20180523011821.12165-1-kent.overstreet@gmail.com>
+References: <20180523011821.12165-1-kent.overstreet@gmail.com>
+Message-ID: <20180523011821.12165-3-kent.overstreet@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-IMA will need to verify a PKCS#7 which has already been parsed. For this
-reason, factor out the code which does that from verify_pkcs7_signature()
-into a new function which takes a struct pkcs7_message instead of a data
-buffer.
+the new generic radix trees have a simpler API and implementation, and
+no limitations on number of elements, so all flex_array users are being
+converted
 
-In addition, IMA will need to know the key that signed a given PKCS#7
-message, so add pkcs7_get_message_sig().
-
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- certs/system_keyring.c                | 61 ++++++++++++++++++++++++++---------
- crypto/asymmetric_keys/pkcs7_parser.c | 16 +++++++++
- include/crypto/pkcs7.h                |  2 ++
- include/linux/verification.h          | 10 ++++++
- 4 files changed, 73 insertions(+), 16 deletions(-)
+ drivers/md/raid5-ppl.c |  5 ++-
+ drivers/md/raid5.c     | 77 ++++++++++++++++++++----------------------
+ drivers/md/raid5.h     |  4 ++-
+ 3 files changed, 42 insertions(+), 44 deletions(-)
 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 6251d1b27f0c..7ddc8b7a3062 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -190,33 +190,27 @@ late_initcall(load_system_certificate_list);
- #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
- 
- /**
-- * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-+ * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
-  * @data: The data to be verified (NULL if expecting internal data).
-  * @len: Size of @data.
-- * @raw_pkcs7: The PKCS#7 message that is the signature.
-- * @pkcs7_len: The size of @raw_pkcs7.
-+ * @pkcs7: The PKCS#7 message that is the signature.
-  * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-  *					(void *)1UL for all trusted keys).
-  * @usage: The use to which the key is being put.
-  * @view_content: Callback to gain access to content.
-  * @ctx: Context for callback.
-  */
--int verify_pkcs7_signature(const void *data, size_t len,
--			   const void *raw_pkcs7, size_t pkcs7_len,
--			   struct key *trusted_keys,
--			   enum key_being_used_for usage,
--			   int (*view_content)(void *ctx,
--					       const void *data, size_t len,
--					       size_t asn1hdrlen),
--			   void *ctx)
-+int verify_pkcs7_message_sig(const void *data, size_t len,
-+			     struct pkcs7_message *pkcs7,
-+			     struct key *trusted_keys,
-+			     enum key_being_used_for usage,
-+			     int (*view_content)(void *ctx,
-+						 const void *data, size_t len,
-+						 size_t asn1hdrlen),
-+			     void *ctx)
+diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+index 42890a0837..ffb4ae0679 100644
+--- a/drivers/md/raid5-ppl.c
++++ b/drivers/md/raid5-ppl.c
+@@ -16,7 +16,6 @@
+ #include <linux/blkdev.h>
+ #include <linux/slab.h>
+ #include <linux/crc32c.h>
+-#include <linux/flex_array.h>
+ #include <linux/async_tx.h>
+ #include <linux/raid/md_p.h>
+ #include "md.h"
+@@ -165,7 +164,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+ 		       struct dma_async_tx_descriptor *tx)
  {
--	struct pkcs7_message *pkcs7;
- 	int ret;
+ 	int disks = sh->disks;
+-	struct page **srcs = flex_array_get(percpu->scribble, 0);
++	struct page **srcs = __genradix_ptr(&percpu->scribble, 0);
+ 	int count = 0, pd_idx = sh->pd_idx, i;
+ 	struct async_submit_ctl submit;
  
--	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
--	if (IS_ERR(pkcs7))
--		return PTR_ERR(pkcs7);
--
- 	/* The data should be detached - so we need to supply it. */
- 	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
- 		pr_err("PKCS#7 signature with non-detached data\n");
-@@ -258,6 +252,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
+@@ -196,7 +195,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
  	}
  
- error:
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
+ 	init_async_submit(&submit, ASYNC_TX_FENCE|ASYNC_TX_XOR_ZERO_DST, tx,
+-			  NULL, sh, flex_array_get(percpu->scribble, 0)
++			  NULL, sh, __genradix_ptr(&percpu->scribble, 0)
+ 			  + sizeof(struct page *) * (sh->disks + 2));
+ 
+ 	if (count == 1)
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index b5d2601483..31f88db83c 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -54,7 +54,6 @@
+ #include <linux/slab.h>
+ #include <linux/ratelimit.h>
+ #include <linux/nodemask.h>
+-#include <linux/flex_array.h>
+ 
+ #include <trace/events/block.h>
+ #include <linux/list_sort.h>
+@@ -1396,7 +1395,9 @@ static addr_conv_t *to_addr_conv(struct stripe_head *sh,
+ {
+ 	void *addr;
+ 
+-	addr = flex_array_get(percpu->scribble, i);
++	addr = __genradix_ptr(&percpu->scribble,
++			 __idx_to_offset(i, percpu->scribble_obj_size));
 +
-+/**
-+ * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-+ * @data: The data to be verified (NULL if expecting internal data).
-+ * @len: Size of @data.
-+ * @raw_pkcs7: The PKCS#7 message that is the signature.
-+ * @pkcs7_len: The size of @raw_pkcs7.
-+ * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-+ *					(void *)1UL for all trusted keys).
-+ * @usage: The use to which the key is being put.
-+ * @view_content: Callback to gain access to content.
-+ * @ctx: Context for callback.
-+ */
-+int verify_pkcs7_signature(const void *data, size_t len,
-+			   const void *raw_pkcs7, size_t pkcs7_len,
-+			   struct key *trusted_keys,
-+			   enum key_being_used_for usage,
-+			   int (*view_content)(void *ctx,
-+					       const void *data, size_t len,
-+					       size_t asn1hdrlen),
-+			   void *ctx)
-+{
-+	struct pkcs7_message *pkcs7;
-+	int ret;
-+
-+	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-+	if (IS_ERR(pkcs7))
-+		return PTR_ERR(pkcs7);
-+
-+	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
-+				       view_content, ctx);
-+
- 	pkcs7_free_message(pkcs7);
- 	pr_devel("<==%s() = %d\n", __func__, ret);
- 	return ret;
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-index 0f134162cef4..4c7a00734e03 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.c
-+++ b/crypto/asymmetric_keys/pkcs7_parser.c
-@@ -683,3 +683,19 @@ int pkcs7_note_signed_info(void *context, size_t hdrlen,
- 		return -ENOMEM;
- 	return 0;
+ 	return addr + sizeof(struct page *) * (sh->disks + 2);
  }
+ 
+@@ -1405,7 +1406,8 @@ static struct page **to_addr_page(struct raid5_percpu *percpu, int i)
+ {
+ 	void *addr;
+ 
+-	addr = flex_array_get(percpu->scribble, i);
++	addr = __genradix_ptr(&percpu->scribble,
++			 __idx_to_offset(i, percpu->scribble_obj_size));
+ 	return addr;
+ }
+ 
+@@ -2235,21 +2237,21 @@ static int grow_stripes(struct r5conf *conf, int num)
+  * calculate over all devices (not just the data blocks), using zeros in place
+  * of the P and Q blocks.
+  */
+-static struct flex_array *scribble_alloc(int num, int cnt, gfp_t flags)
++static int scribble_alloc(struct raid5_percpu *percpu,
++			  int num, int cnt, gfp_t flags)
+ {
+-	struct flex_array *ret;
+-	size_t len;
++	size_t obj_size =
++		sizeof(struct page *) * (num+2) +
++		sizeof(addr_conv_t) * (num+2);
++	int ret;
+ 
+-	len = sizeof(struct page *) * (num+2) + sizeof(addr_conv_t) * (num+2);
+-	ret = flex_array_alloc(len, cnt, flags);
+-	if (!ret)
+-		return NULL;
+-	/* always prealloc all elements, so no locking is required */
+-	if (flex_array_prealloc(ret, 0, cnt, flags)) {
+-		flex_array_free(ret);
+-		return NULL;
+-	}
+-	return ret;
++	ret = __genradix_prealloc(&percpu->scribble,
++			 __idx_to_offset(cnt + 1, obj_size), flags);
++	if (ret)
++		return ret;
 +
-+/**
-+ * pkcs7_get_message_sig - get signature in @pkcs7
-+ */
-+const struct public_key_signature *pkcs7_get_message_sig(
-+					const struct pkcs7_message *pkcs7)
-+{
-+	/*
-+	 * This function doesn't support messages with more than one signature,
-+	 * so don't return anything in that case.
-+	 */
-+	if (pkcs7->signed_infos == NULL || pkcs7->signed_infos->next != NULL)
-+		return NULL;
++	percpu->scribble_obj_size = obj_size;
++	return 0;
+ }
+ 
+ static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
+@@ -2267,23 +2269,18 @@ static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
+ 		return 0;
+ 	mddev_suspend(conf->mddev);
+ 	get_online_cpus();
 +
-+	return pkcs7->signed_infos->sig;
-+}
-diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-index 583f199400a3..6f51d0cb6d12 100644
---- a/include/crypto/pkcs7.h
-+++ b/include/crypto/pkcs7.h
-@@ -28,6 +28,8 @@ extern void pkcs7_free_message(struct pkcs7_message *pkcs7);
- extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
- 				  const void **_data, size_t *_datalen,
- 				  size_t *_headerlen);
-+extern const struct public_key_signature *pkcs7_get_message_sig(
-+					const struct pkcs7_message *pkcs7);
+ 	for_each_present_cpu(cpu) {
+ 		struct raid5_percpu *percpu;
+-		struct flex_array *scribble;
+ 
+ 		percpu = per_cpu_ptr(conf->percpu, cpu);
+-		scribble = scribble_alloc(new_disks,
+-					  new_sectors / STRIPE_SECTORS,
+-					  GFP_NOIO);
+-
+-		if (scribble) {
+-			flex_array_free(percpu->scribble);
+-			percpu->scribble = scribble;
+-		} else {
+-			err = -ENOMEM;
++		err = scribble_alloc(percpu, new_disks,
++				     new_sectors / STRIPE_SECTORS,
++				     GFP_NOIO);
++		if (err)
+ 			break;
+-		}
+ 	}
++
+ 	put_online_cpus();
+ 	mddev_resume(conf->mddev);
+ 	if (!err) {
+@@ -6716,25 +6713,25 @@ raid5_size(struct mddev *mddev, sector_t sectors, int raid_disks)
+ static void free_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
+ {
+ 	safe_put_page(percpu->spare_page);
+-	if (percpu->scribble)
+-		flex_array_free(percpu->scribble);
+ 	percpu->spare_page = NULL;
+-	percpu->scribble = NULL;
++	__genradix_free(&percpu->scribble);
+ }
+ 
+ static int alloc_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
+ {
+-	if (conf->level == 6 && !percpu->spare_page)
++	if (conf->level == 6 && !percpu->spare_page) {
+ 		percpu->spare_page = alloc_page(GFP_KERNEL);
+-	if (!percpu->scribble)
+-		percpu->scribble = scribble_alloc(max(conf->raid_disks,
+-						      conf->previous_raid_disks),
+-						  max(conf->chunk_sectors,
+-						      conf->prev_chunk_sectors)
+-						   / STRIPE_SECTORS,
+-						  GFP_KERNEL);
+-
+-	if (!percpu->scribble || (conf->level == 6 && !percpu->spare_page)) {
++		if (!percpu->spare_page)
++			return -ENOMEM;
++	}
++
++	if (scribble_alloc(percpu,
++			   max(conf->raid_disks,
++			       conf->previous_raid_disks),
++			   max(conf->chunk_sectors,
++			       conf->prev_chunk_sectors)
++			   / STRIPE_SECTORS,
++			   GFP_KERNEL)) {
+ 		free_scratch_buffer(conf, percpu);
+ 		return -ENOMEM;
+ 	}
+diff --git a/drivers/md/raid5.h b/drivers/md/raid5.h
+index 3f8da26032..2c39bfce32 100644
+--- a/drivers/md/raid5.h
++++ b/drivers/md/raid5.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/raid/xor.h>
+ #include <linux/dmaengine.h>
++#include <linux/generic-radix-tree.h>
  
  /*
-  * pkcs7_trust.c
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index a10549a6c7cd..f04dac2728ec 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
- #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
- 
- struct key;
-+struct pkcs7_message;
- 
- extern int verify_pkcs7_signature(const void *data, size_t len,
- 				  const void *raw_pkcs7, size_t pkcs7_len,
-@@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
- 						      const void *data, size_t len,
- 						      size_t asn1hdrlen),
- 				  void *ctx);
-+extern int verify_pkcs7_message_sig(const void *data, size_t len,
-+				    struct pkcs7_message *pkcs7,
-+				    struct key *trusted_keys,
-+				    enum key_being_used_for usage,
-+				    int (*view_content)(void *ctx,
-+							const void *data,
-+							size_t len,
-+							size_t asn1hdrlen),
-+				    void *ctx);
- 
- #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
- extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
+  *
+@@ -637,10 +638,11 @@ struct r5conf {
+ 	/* per cpu variables */
+ 	struct raid5_percpu {
+ 		struct page	*spare_page; /* Used when checking P/Q in raid6 */
+-		struct flex_array *scribble;   /* space for constructing buffer
++		struct __genradix scribble;  /* space for constructing buffer
+ 					      * lists and performing address
+ 					      * conversions
+ 					      */
++		int scribble_obj_size;
+ 	} __percpu *percpu;
+ 	int scribble_disks;
+ 	int scribble_sectors;
+-- 
+2.17.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
