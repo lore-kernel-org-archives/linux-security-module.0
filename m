@@ -1,29 +1,35 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 23 May 2018 22:38:54 +1000 (AEST)
-Subject: [GIT PULL]  linux-integrity for Linux 4.18
-In-Reply-To: <1527022241.3789.35.camel@linux.vnet.ibm.com>
-References: <1527022241.3789.35.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1805232236510.30688@namei.org>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 23 May 2018 15:55:00 +0300
+Subject: [GIT PULL] tpmdd updates for v4.18
+In-Reply-To: <alpine.LRH.2.21.1805190341500.26396@namei.org>
+References: <20180518070851.GA11123@linux.intel.com>
+	<alpine.LRH.2.21.1805190341500.26396@namei.org>
+Message-ID: <20180523125500.GA363@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 22 May 2018, Mimi Zohar wrote:
-
-> Hi James,
+On Sat, May 19, 2018 at 03:42:40AM +1000, James Morris wrote:
+> On Fri, 18 May 2018, Jarkko Sakkinen wrote:
 > 
+> > The following changes since commit 5859cdf55063943192f316b3d6c673fd6fcbee46:
+> > 
+> >   smack: provide socketpair callback (2018-05-04 12:48:54 -0700)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180518
+> > 
+> > for you to fetch changes up to 424eaf910c329ab06ad03a527ef45dcf6a328f00:
+> > 
+> >   tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
 > 
-> This pull request adds run time support for specifying additional security xattrs
-> included in the security.evm HMAC/signature, some code clean up and bug fixes.
+> Pulled to
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+> and next-testing
+ 
+Awesome, thank you!
 
-Pulled to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity 
-and next-testing
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
