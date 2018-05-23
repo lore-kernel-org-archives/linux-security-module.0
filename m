@@ -1,79 +1,28 @@
-From: jlee@suse.com (joeyli)
-Date: Wed, 23 May 2018 16:46:03 +0800
-Subject: [PATCH 07/24] hibernate: Disable when the kernel is locked down
-In-Reply-To: <nycvar.YFH.7.76.1804261018030.28147@cbobk.fhfr.pm>
-References: <20180413202234.GA4484@amd>
-	<152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
-	<152346392521.4030.5108539377959227838.stgit@warthog.procyon.org.uk>
-	<27926.1524148733@warthog.procyon.org.uk>
-	<20180426072646.GA31822@amd>
-	<nycvar.YFH.7.76.1804261018030.28147@cbobk.fhfr.pm>
-Message-ID: <20180523084603.GD7474@linux-l9pv.suse>
+From: willy@infradead.org (Matthew Wilcox)
+Date: Wed, 23 May 2018 04:28:23 -0700
+Subject: [PATCH 2/6] proc: commit to genradix
+In-Reply-To: <20180523011821.12165-2-kent.overstreet@gmail.com>
+References: <20180523011821.12165-1-kent.overstreet@gmail.com>
+	<20180523011821.12165-2-kent.overstreet@gmail.com>
+Message-ID: <20180523112823.GA19987@bombadil.infradead.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi experts, 
+On Tue, May 22, 2018 at 09:18:17PM -0400, Kent Overstreet wrote:
+> @@ -2140,11 +2140,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
+>  	struct task_struct *task;
+>  	struct mm_struct *mm;
+>  	unsigned long nr_files, pos, i;
+> -	struct flex_array *fa = NULL;
+> -	struct map_files_info info;
+> +	GENRADIX(struct map_files_info) fa;
+>  	struct map_files_info *p;
+>  	int ret;
+>  
+> +	genradix_init(&fa);
 
-Sorry for I missed this discussion...
+Could we have a DEFINE_GENRADIX(type, name) which initialises the tree?
 
-On Thu, Apr 26, 2018 at 10:20:29AM +0200, Jiri Kosina wrote:
-> On Thu, 26 Apr 2018, Pavel Machek wrote:
-> 
-> > That's not how the crypto needs to work. Talk to Jiri Kosina, ok?
-> 
-> Yeah, Joey Lee (adding to CC) implemented it here:
-> 
-> 	https://lkml.org/lkml/2015/8/11/47
-> 
-> I think there have been more respins, Joey definitely knows more details 
-> and status quo.
-> 
-> The design is specifically tailored for secure-boot environments though.
->
-
-I am working on the next version of hibernation encryption and authentication:
-    https://github.com/joeyli/linux-s4sign/wiki 
-
-My plan is:
-
-- Hibernation encryption:
-  There is a draft patch to encrypt image by ctr(aes). This patch works
-  with the first version of hibernation verification:
-  https://github.com/joeyli/linux-s4sign/commit/6a9a0113bb221c036ebd0f6321b7191283fe4929
-
-- Adapt hibernation to key retention service:
-    - Using the encrypted key to derive encrypt key and auth key to
-      encrypt and hmac snapshot image. Put the encrypted key in the image
-      header of snapshot.
-    - The encrypted key will be encrypted by KMK (kernel master key). Either
-      trusted key(sealed by TPM) or EFI key (explain in later) can be the KMK.
-      If there have appropriate UI support in initrd, user key can also be
-      the KMK.
-    - Similar with the enrolling EVM key, but more earler:
-      The systemd and dracut must be changed for enrolling kernel master key
-      before the swap partition be mounted.
-
-- EFI key:
-    - A new master key type to key retention service.
-	- It can be a new option beyond trusted key(TPM) and user key.
-    - EFI stub generates a random key and stores in EFI boot service
-      variable:
-	- This random key in boot variable can be called ERK (EFI Root Key)
-	- The ERK is secure when secure boot enabled.
-	    - User must aware and enable secure boot by themself if they want.
-	- ERK can be a secret to encrypt a random number for generate a EFI key
-	   - The EFI key can be used by hibernation encryption/authentication.
-	   - The EFI key can be a master key to generate a encrypted key for EVM.
-    - Rescue mechanism for ERK:
-	- The ERK may be regenerated after the old ERK be erased by firmware update
-	  or firmware recovery.
-	- Current idea is using the public key in first/second trusted keyring
-	  to encrypt the ERK for backup. User can enroll the EFI key with old ERK to
-	  request kernel to re-encrypt the EFI key with new ERK.
-
-
-Thanks a lot!
-Joey Lee
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
