@@ -1,31 +1,29 @@
-From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Wed, 23 May 2018 13:41:15 -0600
-Subject: [PATCH] tpm: fix race condition in tpm_common_write()
-In-Reply-To: <fb9c3d0c-d6fe-25ee-6452-92ade053c75a@intel.com>
-References: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
-	<20180523132318.GE363@linux.intel.com>
-	<fb9c3d0c-d6fe-25ee-6452-92ade053c75a@intel.com>
-Message-ID: <20180523194115.GC8705@ziepe.ca>
+From: kent.overstreet@gmail.com (Kent Overstreet)
+Date: Wed, 23 May 2018 18:06:26 -0400
+Subject: [PATCH 6/6] Drop flex_arrays
+In-Reply-To: <0fb1b28b-12da-5d2b-2308-283af9fe6ae4@intel.com>
+References: <20180523011821.12165-1-kent.overstreet@gmail.com>
+	<20180523011821.12165-6-kent.overstreet@gmail.com>
+	<0fb1b28b-12da-5d2b-2308-283af9fe6ae4@intel.com>
+Message-ID: <20180523220626.GA23040@kmo-pixel>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 23, 2018 at 10:57:07AM -0700, Tadeusz Struk wrote:
-> On 05/23/2018 06:23 AM, Jarkko Sakkinen wrote:
-> > Ouch o_O Do you have a fixes tag for this one?
-> > 
+On Wed, May 23, 2018 at 10:24:18AM -0700, Dave Hansen wrote:
+> Thanks for the heads-up, Matthew!
+
+Sorry, I was just using scripts/get_maintainers, forgot to check the actual file
+for the original author :)
+
+> On 05/22/2018 06:18 PM, Kent Overstreet wrote:
+> > All existing users have been converted to generic radix trees
 > 
-> This one is quite tricky.
-> The original bug was introduced by abce9ac292e13 (tpm: Propagate error from tpm_transmit to fix a timeout hang)
-> and the code back then was in drivers/char/tpm/tpm-interface.c file
+> Well, flex_arrays had a good run, and the new radix trees do look quite
+> a bit nicer.
+> 
+> Feel free to add my ack.
 
-No, it has been wrong since before git history started, so just use
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-
-All the other commits you listed are just moving the bad code around
-to new files.
-
-Jason
+Cool, thanks!
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
