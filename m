@@ -1,53 +1,55 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Wed, 23 May 2018 13:48:17 +0000
-Subject: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180523131616.GD363@linux.intel.com>
-References: <20180516194600.28189-1-tomas.winkler@intel.com>
-	<20180522091732.GA5228@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
-	<20180523131616.GD363@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D8A1269@hasmsx109.ger.corp.intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 23 May 2018 10:42:43 -0400
+Subject: [PATCH 25/33] ima: use match_string() helper
+In-Reply-To: <1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+	<1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
+Message-ID: <1527086563.4168.0.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-
-> On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
-> > >
-> > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
-> > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle()
-> wrappers
-> > > > to streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag
-> is
-> > > abused
-> > > > to resolve tpm spaces recursive calls to tpm_transmit().
-> > >
-> > > This looks good and all but I don't think we want to abuse anything
-> > > in the driver code, do we?
-> >
-> > It's not abuse just the flag UNLOCKED is not really named correctly I
-> > think this has to be backported so wanted to do less invasive change.
+On Mon, 2018-05-21 at 19:58 +0800, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
 > 
-> It should be renamed anyway and possible merge conflicts are not hard to
-> sort out in this change. Can you rename it as SPACE?
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-integrity at vger.kernel.org
+> Cc: linux-security-module at vger.kernel.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 
-Not sure, I believe UNLOCKED is still better name than SPACE, I'm not sure this is 
-Do you also want to remove TPM_TRANSMIT_RAW? 
-clk_enable is handling its own anti recursion counter 'data->clkrun_enabled' 
-but it should be all handled under one flag I guess.
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-> Right, and even without rename this will probably cause merge conflicts at
-> least in v4.4 an v4.9 since in-kernel RM landed in v4.12, so not much gain not
-> do the rename :-)
+> ---
+>  security/integrity/ima/ima_main.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 74d0bd7..f807093 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -61,14 +61,11 @@ static int __init hash_setup(char *str)
+>  		goto out;
+>  	}
+> 
+> -	for (i = 0; i < HASH_ALGO__LAST; i++) {
+> -		if (strcmp(str, hash_algo_name[i]) == 0) {
+> -			ima_hash_algo = i;
+> -			break;
+> -		}
+> -	}
+> -	if (i == HASH_ALGO__LAST)
+> +	i = match_string(hash_algo_name, HASH_ALGO__LAST, str);
+> +	if (i < 0)
+>  		return 1;
+> +
+> +	ima_hash_algo = i;
+>  out:
+>  	hash_setup_done = 1;
+>  	return 1;
 
-I belive we should do minimal change and the big cleanup after that.
-Not sure, I believe UNLOCKED is still better name than SPACE even it wasn't the original intention.  
-No the SPACE is the issue, but any recursion call into tpm_transmit. A bigger change is needed
-and rename to SPACE would be just another intermediat change.
-
-Please reconsider.
-
-Thanks
-Tomas 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
