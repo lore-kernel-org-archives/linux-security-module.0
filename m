@@ -1,28 +1,34 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 23 May 2018 15:56:55 +0300
-Subject: [PATCH v4 1/4] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-In-Reply-To: <20180518223032.ihszdef5wesj5nie@cantor>
-References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
-	<20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
-	<20180518223032.ihszdef5wesj5nie@cantor>
-Message-ID: <20180523125655.GB363@linux.intel.com>
+Date: Wed, 23 May 2018 16:16:16 +0300
+Subject: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
+References: <20180516194600.28189-1-tomas.winkler@intel.com>
+	<20180522091732.GA5228@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
+Message-ID: <20180523131616.GD363@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, May 18, 2018 at 03:30:32PM -0700, Jerry Snitselaar wrote:
-> On Mon Mar 26 18, Jarkko Sakkinen wrote:
-> > In order to make struct tpm_buf the first class object for constructing TPM
-> > commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-> > entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-> > prints an error message.
+On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
 > > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
+> > > New wrappers are added tpm_cmd_ready() and tpm_go_idle() wrappers to
+> > > streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag is
+> > abused
+> > > to resolve tpm spaces recursive calls to tpm_transmit().
+> > 
+> > This looks good and all but I don't think we want to abuse anything in the
+> > driver code, do we?
 > 
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> It's not abuse just the flag UNLOCKED is not really named correctly 
+> I think this has to be backported so wanted to do less invasive change.
 
-Thanky you Jerry. I'll do one more round for this only to update kdoc.
-It does not involve code changes so are you OK if you I keep your
-reviewed-by despite this update?
+It should be renamed anyway and possible merge conflicts are not hard to
+sort out in this change. Can you rename it as SPACE?
+
+Right, and even without rename this will probably cause merge conflicts
+at least in v4.4 an v4.9 since in-kernel RM landed in v4.12, so not much
+gain not do the rename :-)
 
 /Jarkko
 --
