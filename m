@@ -1,130 +1,79 @@
-From: kent.overstreet@gmail.com (Kent Overstreet)
-Date: Tue, 22 May 2018 21:18:17 -0400
-Subject: [PATCH 2/6] proc: commit to genradix
-In-Reply-To: <20180523011821.12165-1-kent.overstreet@gmail.com>
-References: <20180523011821.12165-1-kent.overstreet@gmail.com>
-Message-ID: <20180523011821.12165-2-kent.overstreet@gmail.com>
+From: jlee@suse.com (joeyli)
+Date: Wed, 23 May 2018 16:46:03 +0800
+Subject: [PATCH 07/24] hibernate: Disable when the kernel is locked down
+In-Reply-To: <nycvar.YFH.7.76.1804261018030.28147@cbobk.fhfr.pm>
+References: <20180413202234.GA4484@amd>
+	<152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
+	<152346392521.4030.5108539377959227838.stgit@warthog.procyon.org.uk>
+	<27926.1524148733@warthog.procyon.org.uk>
+	<20180426072646.GA31822@amd>
+	<nycvar.YFH.7.76.1804261018030.28147@cbobk.fhfr.pm>
+Message-ID: <20180523084603.GD7474@linux-l9pv.suse>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-the new generic radix trees have a simpler API and implementation, and
-no limitations on number of elements, so all flex_array users are being
-converted
+Hi experts, 
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- fs/proc/base.c | 48 +++++++++++++++++-------------------------------
- 1 file changed, 17 insertions(+), 31 deletions(-)
+Sorry for I missed this discussion...
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9298324325..0a762eda64 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -59,6 +59,7 @@
- #include <linux/capability.h>
- #include <linux/file.h>
- #include <linux/fdtable.h>
-+#include <linux/generic-radix-tree.h>
- #include <linux/string.h>
- #include <linux/seq_file.h>
- #include <linux/namei.h>
-@@ -92,7 +93,6 @@
- #include <linux/sched/coredump.h>
- #include <linux/sched/debug.h>
- #include <linux/sched/stat.h>
--#include <linux/flex_array.h>
- #include <linux/posix-timers.h>
- #ifdef CONFIG_HARDWALL
- #include <asm/hardwall.h>
-@@ -2140,11 +2140,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 	struct task_struct *task;
- 	struct mm_struct *mm;
- 	unsigned long nr_files, pos, i;
--	struct flex_array *fa = NULL;
--	struct map_files_info info;
-+	GENRADIX(struct map_files_info) fa;
- 	struct map_files_info *p;
- 	int ret;
- 
-+	genradix_init(&fa);
-+
- 	ret = -ENOENT;
- 	task = get_proc_task(file_inode(file));
- 	if (!task)
-@@ -2176,35 +2177,21 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 	 */
- 
- 	for (vma = mm->mmap, pos = 2; vma; vma = vma->vm_next) {
--		if (vma->vm_file && ++pos > ctx->pos)
--			nr_files++;
--	}
-+		if (!vma->vm_file)
-+			continue;
-+		if (++pos <= ctx->pos)
-+			continue;
- 
--	if (nr_files) {
--		fa = flex_array_alloc(sizeof(info), nr_files,
--					GFP_KERNEL);
--		if (!fa || flex_array_prealloc(fa, 0, nr_files,
--						GFP_KERNEL)) {
-+		p = genradix_ptr_alloc(&fa, nr_files++, GFP_KERNEL);
-+		if (!p) {
- 			ret = -ENOMEM;
--			if (fa)
--				flex_array_free(fa);
- 			up_read(&mm->mmap_sem);
--			mmput(mm);
--			goto out_put_task;
-+			goto out_put_mm;
- 		}
--		for (i = 0, vma = mm->mmap, pos = 2; vma;
--				vma = vma->vm_next) {
--			if (!vma->vm_file)
--				continue;
--			if (++pos <= ctx->pos)
--				continue;
- 
--			info.start = vma->vm_start;
--			info.end = vma->vm_end;
--			info.mode = vma->vm_file->f_mode;
--			if (flex_array_put(fa, i++, &info, GFP_KERNEL))
--				BUG();
--		}
-+		p->start = vma->vm_start;
-+		p->end = vma->vm_end;
-+		p->mode = vma->vm_file->f_mode;
- 	}
- 	up_read(&mm->mmap_sem);
- 
-@@ -2212,7 +2199,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 		char buf[4 * sizeof(long) + 2];	/* max: %lx-%lx\0 */
- 		unsigned int len;
- 
--		p = flex_array_get(fa, i);
-+		p = genradix_ptr(&fa, i);
- 		len = snprintf(buf, sizeof(buf), "%lx-%lx", p->start, p->end);
- 		if (!proc_fill_cache(file, ctx,
- 				      buf, len,
-@@ -2222,13 +2209,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 			break;
- 		ctx->pos++;
- 	}
--	if (fa)
--		flex_array_free(fa);
-+out_put_mm:
- 	mmput(mm);
--
- out_put_task:
- 	put_task_struct(task);
- out:
-+	genradix_free(&fa);
- 	return ret;
- }
- 
--- 
-2.17.0
+On Thu, Apr 26, 2018 at 10:20:29AM +0200, Jiri Kosina wrote:
+> On Thu, 26 Apr 2018, Pavel Machek wrote:
+> 
+> > That's not how the crypto needs to work. Talk to Jiri Kosina, ok?
+> 
+> Yeah, Joey Lee (adding to CC) implemented it here:
+> 
+> 	https://lkml.org/lkml/2015/8/11/47
+> 
+> I think there have been more respins, Joey definitely knows more details 
+> and status quo.
+> 
+> The design is specifically tailored for secure-boot environments though.
+>
 
+I am working on the next version of hibernation encryption and authentication:
+    https://github.com/joeyli/linux-s4sign/wiki 
+
+My plan is:
+
+- Hibernation encryption:
+  There is a draft patch to encrypt image by ctr(aes). This patch works
+  with the first version of hibernation verification:
+  https://github.com/joeyli/linux-s4sign/commit/6a9a0113bb221c036ebd0f6321b7191283fe4929
+
+- Adapt hibernation to key retention service:
+    - Using the encrypted key to derive encrypt key and auth key to
+      encrypt and hmac snapshot image. Put the encrypted key in the image
+      header of snapshot.
+    - The encrypted key will be encrypted by KMK (kernel master key). Either
+      trusted key(sealed by TPM) or EFI key (explain in later) can be the KMK.
+      If there have appropriate UI support in initrd, user key can also be
+      the KMK.
+    - Similar with the enrolling EVM key, but more earler:
+      The systemd and dracut must be changed for enrolling kernel master key
+      before the swap partition be mounted.
+
+- EFI key:
+    - A new master key type to key retention service.
+	- It can be a new option beyond trusted key(TPM) and user key.
+    - EFI stub generates a random key and stores in EFI boot service
+      variable:
+	- This random key in boot variable can be called ERK (EFI Root Key)
+	- The ERK is secure when secure boot enabled.
+	    - User must aware and enable secure boot by themself if they want.
+	- ERK can be a secret to encrypt a random number for generate a EFI key
+	   - The EFI key can be used by hibernation encryption/authentication.
+	   - The EFI key can be a master key to generate a encrypted key for EVM.
+    - Rescue mechanism for ERK:
+	- The ERK may be regenerated after the old ERK be erased by firmware update
+	  or firmware recovery.
+	- Current idea is using the public key in first/second trusted keyring
+	  to encrypt the ERK for backup. User can enroll the EFI key with old ERK to
+	  request kernel to re-encrypt the EFI key with new ERK.
+
+
+Thanks a lot!
+Joey Lee
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
