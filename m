@@ -1,34 +1,24 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 23 May 2018 16:16:16 +0300
-Subject: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
-References: <20180516194600.28189-1-tomas.winkler@intel.com>
-	<20180522091732.GA5228@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
-Message-ID: <20180523131616.GD363@linux.intel.com>
+Date: Wed, 23 May 2018 16:23:18 +0300
+Subject: [PATCH] tpm: fix race condition in tpm_common_write()
+In-Reply-To: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
+References: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
+Message-ID: <20180523132318.GE363@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
-> > 
-> > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
-> > > New wrappers are added tpm_cmd_ready() and tpm_go_idle() wrappers to
-> > > streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag is
-> > abused
-> > > to resolve tpm spaces recursive calls to tpm_transmit().
-> > 
-> > This looks good and all but I don't think we want to abuse anything in the
-> > driver code, do we?
+On Tue, May 22, 2018 at 10:32:46AM -0700, Tadeusz Struk wrote:
+> There is a race condition in tpm_common_write function allowing two
+> threads on the same /dev/tpm<N>, or two different applications on
+> the same /dev/tpmrm<N> to overwrite eachother requests/responses.
 > 
-> It's not abuse just the flag UNLOCKED is not really named correctly 
-> I think this has to be backported so wanted to do less invasive change.
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 
-It should be renamed anyway and possible merge conflicts are not hard to
-sort out in this change. Can you rename it as SPACE?
+Ouch o_O Do you have a fixes tag for this one?
 
-Right, and even without rename this will probably cause merge conflicts
-at least in v4.4 an v4.9 since in-kernel RM landed in v4.12, so not much
-gain not do the rename :-)
+Thank you.
+
+Reviewed-by: Jarkko Sakkien <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
 --
