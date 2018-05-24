@@ -1,53 +1,46 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 24 May 2018 07:09:36 -0400
-Subject: [RFC PATCH v3 7/7] ima: based on policy prevent loading firmware
-	(pre-allocated buffer)
+Date: Thu, 24 May 2018 07:09:34 -0400
+Subject: [PATCH v3 5/7] ima: based on policy require signed firmware (sysfs
+	fallback)
 In-Reply-To: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1527160176-29269-8-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1527160176-29269-6-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Question: can the device access the pre-allocated buffer at any time?
-(Still waiting to hear from Qualcomm...)
-
-By allowing devices to request firmware be loaded directly into a
-pre-allocated buffer, will this allow the device access to the firmware
-before the kernel has verified the firmware signature?
-
-Is it dependent on the type of buffer allocated (eg. DMA)?  For example,
-qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent().
-
-With an IMA policy requiring signed firmware, this patch would prevent
-loading firmware into a pre-allocated buffer.
+With an IMA policy requiring signed firmware, this patch prevents
+the sysfs fallback method of loading firmware.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Matthew Garrett <mjg59@google.com>
 ---
- security/integrity/ima/ima_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ security/integrity/ima/ima_main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index dd1f263f950a..d114b7ad2c86 100644
+index fbbcc02a1380..dd1f263f950a 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -457,6 +457,12 @@ int ima_read_data(struct file *file, enum kernel_read_file_id read_id)
- 			pr_err("Prevent firmware sysfs fallback loading.\n");
+@@ -451,10 +451,17 @@ int ima_read_data(struct file *file, enum kernel_read_file_id read_id)
+ 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file syscall.\n");
  			return -EACCES;	/* INTEGRITY_UNKNOWN */
  		}
 +		break;
-+	case READING_FIRMWARE_PREALLOC_BUFFER:
++	case READING_FIRMWARE_FALLBACK_SYSFS:
 +		if (ima_appraise & IMA_APPRAISE_FIRMWARE) {
-+			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
-+			return -EACCES;
++			pr_err("Prevent firmware sysfs fallback loading.\n");
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
 +		}
  	default:
  		break;
  	}
+ 	return 0;
++
+ }
+ 
+ static int read_idmap[READING_MAX_ID] = {
 -- 
 2.7.5
 
