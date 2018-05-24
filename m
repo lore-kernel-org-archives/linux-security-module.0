@@ -1,75 +1,435 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 24 May 2018 07:09:29 -0400
-Subject: [PATCH v3 0/7] kexec/firmware: support system wide policy requiring
-	signatures
-Message-ID: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Thu, 24 May 2018 15:49:15 -0500
+Subject: [PATCH v3 1/7] security: rename security_kernel_read_file() hook
+In-Reply-To: <1527160176-29269-2-git-send-email-zohar@linux.vnet.ibm.com>
+	(Mimi Zohar's message of "Thu, 24 May 2018 07:09:30 -0400")
+References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1527160176-29269-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <87po1k2304.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-IMA-appraisal is mostly being used in the embedded or single purpose
-closed system environments.  In these environments, both the Kconfig
-options and the userspace tools can be modified appropriately to limit
-syscalls.  For stock kernels, userspace applications need to continue to
-work with older kernels as well as with newer kernels.
 
-In this environment, the customer needs the ability to define a system
-wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
-modules to be signed, without being dependent on either the Kconfig
-options or the userspace tools.[1]
+I already nacked this approach because the two cases don't
+share a bit of code.  When I looked closer it was even crazier.
 
-This patch set allows the customer to define a policy which requires
-the kexec'ed kernel images, firmware, and/or kernel modules to be
-signed.
+The way ima uses this hook and the post_load hook today is a travesty.
 
-New to this patch set is the ability to configure a build time IMA policy,
-which is automatically loaded at run time without needing to specify it
-on the boot command line.  The build time policy rules persist after
-loading a custom kernel policy.
+The way the security_kernel_file_read and security_kernel_file_post_read
+are called today and are used by ima don't make the least little bit of
+sense.
 
-[1] kexec-tools suupports the new syscall based on a flag (-s).
+Abusing security_kernel_file_read in the module loader and then abusing
+security_kernel_file_post_read in the firmware loader is insane.  The
+loadpin lsm could not even figure this out and so it failed to work
+because of these shenanighans.
 
-Changelog v3:
-Based on James' feedback:
-- Renamed security_kernel_read_file() to security_kernel_read_data().
-- Cleaned up ima_read_data(), replacing if's with switch.
+Only implementing kernel_file_read to handle the !file case is pretty
+much insane.   There is no way this should be expanded to cover kexec
+until the code actually makes sense.  We need a maintainable kernel.
 
-Changelog v2:
-- combined "kexec: limit kexec_load syscall" and "firmware: kernel
-signature verification" patch sets.
-- add support for build time policy.
-- defined generic security_kernel_read_blob() wrapper for
-  security_kernel_read_file(). Suggested by Luis.
-- removed the CONFIG_CFG80211_REQUIRE_SIGNED_REGDB ifdef.  If both REGDB
-  and an IMA-appraisal policy require signed firmware, for now require
-  both signatures.  Subsequent patches might change this.
-- Still unclear if the pre-allocated firmware buffer can be accessed
+Below is where I suggest you start on sorting out these security hooks.
+- Adding a security_kernel_arg to catch when you want to allow/deny the
+  use of an argument to a syscall.  What security_kernel_file_read and
+  security_kernel_file_post_read have been abused for.
 
-Mimi Zohar (7):
-  security: rename security_kernel_read_file() hook
-  kexec: add call to LSM hook in original kexec_load syscall
-  ima: based on policy require signed kexec kernel images
-  firmware: add call to LSM hook before firmware sysfs fallback
-  ima: based on policy require signed firmware (sysfs fallback)
-  ima: add build time policy
-  ima: based on policy prevent loading firmware (pre-allocated buffer)
+- Removing ima_file_read because it is completely subsumed by the new
+  call.
 
- drivers/base/firmware_loader/fallback.c |  7 ++++
- fs/exec.c                               |  2 +-
- include/linux/fs.h                      |  1 +
- include/linux/ima.h                     |  4 +--
- include/linux/security.h                |  4 +--
- kernel/kexec.c                          |  8 +++++
- kernel/module.c                         |  2 +-
- security/integrity/ima/Kconfig          | 58 +++++++++++++++++++++++++++++++++
- security/integrity/ima/ima.h            |  1 +
- security/integrity/ima/ima_main.c       | 39 ++++++++++++++++++----
- security/integrity/ima/ima_policy.c     | 48 +++++++++++++++++++++++++--
- security/loadpin/loadpin.c              |  2 +-
- security/security.c                     |  6 ++--
- 13 files changed, 162 insertions(+), 20 deletions(-)
+- Please note with adding this new hook there is no code shared between
+  the cases, and the lsm code becomes simpler shorter when it can assume
+  security_kernel_file_post_read always takes a struct file.  (Even with
+  the addition of a new security hook).
 
--- 
-2.7.5
+Eric
+
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 358354148dec..04536ff81bd2 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -294,9 +294,7 @@ static ssize_t firmware_loading_store(struct device *dev,
+ 				dev_err(dev, "%s: map pages failed\n",
+ 					__func__);
+ 			else
+-				rc = security_kernel_post_read_file(NULL,
+-						fw_priv->data, fw_priv->size,
+-						READING_FIRMWARE);
++				rc = security_kernel_arg(KARG_FIRMWARE);
+ 
+ 			/*
+ 			 * Same logic as fw_load_abort, only the DONE bit
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 0e4647e0eb60..9fb42736ba29 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -11,6 +11,7 @@
+ #define _LINUX_IMA_H
+ 
+ #include <linux/fs.h>
++#include <linux/security.h>
+ #include <linux/kexec.h>
+ struct linux_binprm;
+ 
+@@ -19,7 +20,7 @@ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask, int opened);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
+-extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
++extern int ima_kernel_arg(enum kernel_arg_id id);
+ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+ extern void ima_post_path_mknod(struct dentry *dentry);
+@@ -49,7 +50,7 @@ static inline int ima_file_mmap(struct file *file, unsigned long prot)
+ 	return 0;
+ }
+ 
+-static inline int ima_read_file(struct file *file, enum kernel_read_file_id id)
++static inline int ima_kernel_arg(enum kernel_arg_id id)
+ {
+ 	return 0;
+ }
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 9d0b286f3dba..7f8bc3030784 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -576,6 +576,10 @@
+  *	userspace to load a kernel module with the given name.
+  *	@kmod_name name of the module requested by the kernel
+  *	Return 0 if successful.
++ * @kernel_arg:
++ *	Use a syscall argument
++ *	@id kernel argument identifier
++ *	Return 0 if permission is granted.
+  * @kernel_read_file:
+  *	Read a file specified by userspace.
+  *	@file contains the file structure pointing to the file being read
+@@ -1577,6 +1581,7 @@ union security_list_options {
+ 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+ 	int (*kernel_module_request)(char *kmod_name);
++	int (*kernel_arg)(enum kernel_arg_id id);
+ 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
+ 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
+ 				     enum kernel_read_file_id id);
+@@ -1866,6 +1871,7 @@ struct security_hook_heads {
+ 	struct hlist_head cred_getsecid;
+ 	struct hlist_head kernel_act_as;
+ 	struct hlist_head kernel_create_files_as;
++	struct hlist_head kernel_arg;
+ 	struct hlist_head kernel_read_file;
+ 	struct hlist_head kernel_post_read_file;
+ 	struct hlist_head kernel_module_request;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 200920f521a1..6cf1bd87f041 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -159,6 +159,32 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
+ typedef int (*initxattrs) (struct inode *inode,
+ 			   const struct xattr *xattr_array, void *fs_data);
+ 
++#define __kernel_arg_id(id) \
++	id(UNKNOWN, unknown)		\
++	id(FIRMWARE, firmware)		\
++	id(MODULE, kernel-module)	\
++	id(MAX_ID, )
++
++#define __karg_enumify(ENUM, dummy) KARG_ ## ENUM,
++#define __karg_stringify(dummy, str) #str,
++
++enum kernel_arg_id {
++	__kernel_arg_id(__karg_enumify)
++};
++
++static const char * const kernel_arg_str[] = {
++	__kernel_arg_id(__karg_stringify)
++};
++
++static inline const char *kernel_arg_id_str(enum kernel_arg_id id)
++{
++	if ((unsigned)id >= KARG_MAX_ID)
++		return kernel_arg_str[KARG_UNKNOWN];
++
++	return kernel_arg_str[id];
++}
++
++
+ #ifdef CONFIG_SECURITY
+ 
+ struct security_mnt_opts {
+@@ -326,6 +352,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
++int security_kernel_arg(enum kernel_arg_id id);
+ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id);
+@@ -923,6 +950,11 @@ static inline int security_kernel_module_request(char *kmod_name)
+ 	return 0;
+ }
+ 
++static inline int security_kernel_arg(enum kernel_arg_id id)
++{
++	return 0;
++}
++
+ static inline int security_kernel_read_file(struct file *file,
+ 					    enum kernel_read_file_id id)
+ {
+diff --git a/kernel/module.c b/kernel/module.c
+index ce8066b88178..03a1dd21ad4a 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
+ 	if (info->len < sizeof(*(info->hdr)))
+ 		return -ENOEXEC;
+ 
+-	err = security_kernel_read_file(NULL, READING_MODULE);
++	err = security_kernel_arg(KARG_MODULE);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 74d0bd7e76d7..d51a8ca97238 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -421,32 +421,6 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 		iint->flags |= IMA_NEW_FILE;
+ }
+ 
+-/**
+- * ima_read_file - pre-measure/appraise hook decision based on policy
+- * @file: pointer to the file to be measured/appraised/audit
+- * @read_id: caller identifier
+- *
+- * Permit reading a file based on policy. The policy rules are written
+- * in terms of the policy identifier.  Appraising the integrity of
+- * a file requires a file descriptor.
+- *
+- * For permission return 0, otherwise return -EACCES.
+- */
+-int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+-{
+-	bool sig_enforce = is_module_sig_enforced();
+-
+-	if (!file && read_id == READING_MODULE) {
+-		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
+-		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
+-			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
+-			return -EACCES;	/* INTEGRITY_UNKNOWN */
+-		}
+-		return 0;	/* We rely on module signature checking */
+-	}
+-	return 0;
+-}
+-
+ static int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+@@ -474,21 +448,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 	enum ima_hooks func;
+ 	u32 secid;
+ 
+-	if (!file && read_id == READING_FIRMWARE) {
+-		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+-		    (ima_appraise & IMA_APPRAISE_ENFORCE))
+-			return -EACCES;	/* INTEGRITY_UNKNOWN */
+-		return 0;
+-	}
+-
+-	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
+-		return 0;
+-
+-	/* permit signed certs */
+-	if (!file && read_id == READING_X509_CERTIFICATE)
+-		return 0;
+-
+-	if (!file || !buf || size == 0) { /* should never happen */
++	if (!buf || size == 0) { /* should never happen */
+ 		if (ima_appraise & IMA_APPRAISE_ENFORCE)
+ 			return -EACCES;
+ 		return 0;
+@@ -500,6 +460,40 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 				   MAY_READ, func, 0);
+ }
+ 
++/**
++ * ima_kernel_arg - pre-measure/appraise hook decision based on policy
++ * @id: caller identifier
++ *
++ * Permit using an argument to a syscall based on policy. The policy
++ * rules are written in terms of the policy identifier.
++ *
++ * For permission return 0, otherwise return -EACCES.
++ */
++int ima_kernel_arg(enum kernel_arg_id id)
++{
++	if (id == KARG_MODULE) {
++		bool sig_enforce = is_module_sig_enforced();
++		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		}
++		return 0;	/* We rely on module signature checking */
++	}
++	else if (id == KARG_FIRMWARE) {
++		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE))
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		return 0;
++	}
++	else {
++		if (ima_appraise & IMA_APPRAISE_ENFORCE)
++			return -EACCES;
++		return 0;
++	}
++	return 0;
++}
++
+ static int __init init_ima(void)
+ {
+ 	int error;
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 5fa191252c8f..f5333e5abac9 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -121,23 +121,24 @@ static void loadpin_sb_free_security(struct super_block *mnt_sb)
+ 	}
+ }
+ 
+-static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
++static int loadpin_read_data(enum kernel_read_data_id id)
+ {
+-	struct super_block *load_root;
+-	const char *origin = kernel_read_file_id_str(id);
++	const char *origin = kernel_arg_id_str(id);
+ 
+ 	/* This handles the older init_module API that has a NULL file. */
+-	if (!file) {
+-		if (!enabled) {
+-			report_load(origin, NULL, "old-api-pinning-ignored");
+-			return 0;
+-		}
+-
+-		report_load(origin, NULL, "old-api-denied");
+-		return -EPERM;
++	if (!enabled) {
++		report_load(origin, NULL, "old-api-pinning-ignored");
++		return 0;
+ 	}
+ 
+-	load_root = file->f_path.mnt->mnt_sb;
++	report_load(origin, NULL, "old-api-denied");
++	return -EPERM;
++}
++
++static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
++{
++	struct super_block *load_root;
++	const char *origin = kernel_read_file_id_str(id);
+ 
+ 	/* First loaded module/firmware defines the root for all others. */
+ 	spin_lock(&pinned_root_spinlock);
+@@ -175,6 +176,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+ 
+ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
++	LSM_HOOK_INIT(kernel_read_data, loadpin_read_data),
+ 	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
+ };
+ 
+diff --git a/security/security.c b/security/security.c
+index 7bc2fde023a7..9b5f43c24ee2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1033,14 +1033,19 @@ int security_kernel_module_request(char *kmod_name)
+ 	return call_int_hook(kernel_module_request, 0, kmod_name);
+ }
+ 
+-int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
++int security_kernel_arg(enum kernel_arg_id id)
+ {
+ 	int ret;
+ 
+-	ret = call_int_hook(kernel_read_file, 0, file, id);
+-	if (ret)
+-		return ret;
+-	return ima_read_file(file, id);
++	ret = call_int_hook(kernel_arg, 0, id);
++	if (!ret)
++		ret = ima_kernel_arg(id);
++	return ret;
++}
++
++int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
++{
++	return call_int_hook(kernel_read_file, 0, file, id);
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_read_file);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a19167..76843099fed6 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4010,6 +4010,15 @@ static int selinux_kernel_module_request(char *kmod_name)
+ 			    SYSTEM__MODULE_REQUEST, &ad);
+ }
+ 
++static int selinux_kernel_module_arg(void)
++{
++	/* init_module */
++	u32 sid = current_sid();
++	return avc_has_perm(&selinux_state,
++			    sid, sid, SECCLASS_SYSTEM,
++			    SYSTEM__MODULE_LOAD, NULL);
++}
++
+ static int selinux_kernel_module_from_file(struct file *file)
+ {
+ 	struct common_audit_data ad;
+@@ -4018,12 +4027,6 @@ static int selinux_kernel_module_from_file(struct file *file)
+ 	u32 sid = current_sid();
+ 	int rc;
+ 
+-	/* init_module */
+-	if (file == NULL)
+-		return avc_has_perm(&selinux_state,
+-				    sid, sid, SECCLASS_SYSTEM,
+-					SYSTEM__MODULE_LOAD, NULL);
+-
+ 	/* finit_module */
+ 
+ 	ad.type = LSM_AUDIT_DATA_FILE;
+@@ -4043,6 +4046,20 @@ static int selinux_kernel_module_from_file(struct file *file)
+ 				SYSTEM__MODULE_LOAD, &ad);
+ }
+ 
++static int selinux_kernel_arg(enum kernel_arg_id id)
++{
++	int rc = 0;
++
++	switch (id) {
++	case KARG_MODULE:
++		rc = selinux_kernel_module_arg();
++		break;
++	default:
++		break;
++	}
++	return rc;
++}
++
+ static int selinux_kernel_read_file(struct file *file,
+ 				    enum kernel_read_file_id id)
+ {
+@@ -6938,6 +6955,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
+ 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
++	LSM_HOOK_INIT(kernel_arg, selinux_kernel_arg),
+ 	LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
+ 	LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
+ 	LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
