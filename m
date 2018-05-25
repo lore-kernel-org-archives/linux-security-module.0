@@ -1,9 +1,12 @@
 From: alison.schofield@intel.com (Alison Schofield)
-Date: Fri, 25 May 2018 16:31:35 -0700
-Subject: [RFC] KEYS: add a new type "mktme" to kernel key services
-Message-ID: <20180525233135.GA2774@alison-desk.jf.intel.com>
+Date: Fri, 25 May 2018 16:43:28 -0700
+Subject: RESEND [RFC] KEYS: add a new type "mktme" to kernel key services
+Message-ID: <20180525234328.GA2981@alison-desk.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
+
+Sorry all! Error in Davids email in that first email. Please use this
+one for replies.
 
 Hi David & Key Community,
 
