@@ -1,644 +1,478 @@
-From: alison.schofield@intel.com (Alison Schofield)
-Date: Fri, 25 May 2018 16:43:28 -0700
-Subject: RESEND [RFC] KEYS: add a new type "mktme" to kernel key services
-Message-ID: <20180525234328.GA2981@alison-desk.jf.intel.com>
+From: obuil.liubo@gmail.com (Liu Bo)
+Date: Sat, 26 May 2018 11:16:42 +0800
+Subject: [PATCH 1/6] Generic radix trees
+In-Reply-To: <20180523011821.12165-1-kent.overstreet@gmail.com>
+References: <20180523011821.12165-1-kent.overstreet@gmail.com>
+Message-ID: <CANQeFDCLc56thuuGYBMdb_qvw_O=t7sLkJiP-LNYfKwgz74H_w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Sorry all! Error in Davids email in that first email. Please use this
-one for replies.
+Hi Kent,
 
-Hi David & Key Community,
+(Add all ML to cc this time.)
 
-I'm requesting your comments on placing the MK-TME API in the Kernel
-Key Service API set. I'm hoping to get a thumbs-up on the general
-direction before going further down this path. Key Services seems to
-offer a tremendous amount of functionality. I'd like to hear if you
-think so too, address any concerns, or hear other suggestions for its
-placement. Here are the details...
+On Wed, May 23, 2018 at 9:18 AM, Kent Overstreet
+<kent.overstreet@gmail.com> wrote:
+> Very simple radix tree implementation that supports storing arbitrary
+> size entries, up to PAGE_SIZE - upcoming patches will convert existing
+> flex_array users to genradixes. The new genradix code has a much simpler
+> API and implementation, and doesn't have a hard limit on the number of
+> elements like flex_array does.
+>
+> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> ---
+>  include/linux/generic-radix-tree.h | 222 +++++++++++++++++++++++++++++
+>  lib/Makefile                       |   3 +-
+>  lib/generic-radix-tree.c           | 180 +++++++++++++++++++++++
+>  3 files changed, 404 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/generic-radix-tree.h
+>  create mode 100644 lib/generic-radix-tree.c
+>
+> diff --git a/include/linux/generic-radix-tree.h b/include/linux/generic-radix-tree.h
+> new file mode 100644
+> index 0000000000..3328813322
+> --- /dev/null
+> +++ b/include/linux/generic-radix-tree.h
+> @@ -0,0 +1,222 @@
+> +#ifndef _LINUX_GENERIC_RADIX_TREE_H
+> +#define _LINUX_GENERIC_RADIX_TREE_H
+> +
+> +/*
+> + * Generic radix trees/sparse arrays:
+> + *
+> + * Very simple and minimalistic, supporting arbitrary size entries up to
+> + * PAGE_SIZE.
+> + *
+> + * A genradix is defined with the type it will store, like so:
+> + * static GENRADIX(struct foo) foo_genradix;
+> + *
+> + * The main operations are:
+> + * - genradix_init(radix) - initialize an empty genradix
+> + *
+> + * - genradix_free(radix) - free all memory owned by the genradix and
+> + *   reinitialize it
+> + *
+> + * - genradix_ptr(radix, idx) - gets a pointer to the entry at idx, returning
+> + *   NULL if that entry does not exist
+> + *
+> + * - genradix_ptr_alloc(radix, idx, gfp) - gets a pointer to an entry,
+> + *   allocating it if necessary
+> + *
+> + * - genradix_for_each(radix, iter, p) - iterate over each entry in a genradix
+> + *
+> + * The radix tree allocates one page of entries at a time, so entries may exist
+> + * that were never explicitly allocated - they will be initialized to all
+> + * zeroes.
+> + *
+> + * Internally, a genradix is just a radix tree of pages, and indexing works in
+> + * terms of byte offsets. The wrappers in this header file use sizeof on the
+> + * type the radix contains to calculate a byte offset from the index - see
+> + * __idx_to_offset.
+> + */
+> +
+> +#include <asm/page.h>
+> +#include <linux/bug.h>
+> +#include <linux/kernel.h>
+> +#include <linux/log2.h>
+> +
+> +struct genradix_node;
+> +
+> +struct __genradix {
+> +       struct genradix_node            *root;
+> +       size_t                          depth;
+> +};
+> +
+> +#define __GENRADIX_INITIALIZER                                 \
+> +       {                                                       \
+> +               .tree = {                                       \
+> +                       .root = NULL,                           \
+> +                       .depth = 0,                             \
+> +               }                                               \
+> +       }
+> +
+> +/*
+> + * We use a 0 size array to stash the type we're storing without taking any
+> + * space at runtime - then the various accessor macros can use typeof() to get
+> + * to it for casts/sizeof - we also force the alignment so that storing a type
+> + * with a ridiculous alignment doesn't blow up the alignment or size of the
+> + * genradix.
+> + */
+> +
+> +#define GENRADIX(_type)                                                \
+> +struct {                                                       \
+> +       struct __genradix       tree;                           \
+> +       _type                   type[0] __aligned(1);           \
+> +}
+> +
+> +#define DEFINE_GENRADIX(_name, _type)                          \
+> +       GENRADIX(_type) _name = __GENRADIX_INITIALIZER
+> +
+> +/**
+> + * genradix_init - initialize a genradix
+> + * @_radix:    genradix to initialize
+> + *
+> + * Does not fail
+> + */
+> +#define genradix_init(_radix)                                  \
+> +do {                                                           \
+> +       *(_radix) = (typeof(*_radix)) __GENRADIX_INITIALIZER;   \
+> +} while (0)
+> +
+> +void __genradix_free(struct __genradix *);
+> +
+> +/**
+> + * genradix_free: free all memory owned by a genradix
+> + *
+> + * After freeing, @_radix will be reinitialized and empty
+> + */
+> +#define genradix_free(_radix)  __genradix_free(&(_radix)->tree)
+> +
+> +static inline size_t __idx_to_offset(size_t idx, size_t obj_size)
+> +{
+> +       if (__builtin_constant_p(obj_size))
+> +               BUILD_BUG_ON(obj_size > PAGE_SIZE);
+> +       else
+> +               BUG_ON(obj_size > PAGE_SIZE);
+> +
+> +       if (!is_power_of_2(obj_size)) {
+> +               size_t objs_per_page = PAGE_SIZE / obj_size;
+> +
+> +               return (idx / objs_per_page) * PAGE_SIZE +
+> +                       (idx % objs_per_page) * obj_size;
+> +       } else {
+> +               return idx * obj_size;
+> +       }
+> +}
+> +
+> +#define __genradix_cast(_radix)                (typeof((_radix)->type[0]) *)
+> +#define __genradix_obj_size(_radix)    sizeof((_radix)->type[0])
+> +#define __genradix_idx_to_offset(_radix, _idx)                 \
+> +       __idx_to_offset(_idx, __genradix_obj_size(_radix))
+> +
+> +void *__genradix_ptr(struct __genradix *, size_t);
+> +
+> +/**
+> + * genradix_ptr - get a pointer to a genradix entry
+> + * @_radix:    genradix to access
+> + * @_idx:      index to fetch
+> + *
+> + * Returns a pointer to entry at @_idx, or NULL if that entry does not exist.
+> + */
+> +#define genradix_ptr(_radix, _idx)                             \
+> +       (__genradix_cast(_radix)                                \
+> +        __genradix_ptr(&(_radix)->tree,                        \
+> +                       __genradix_idx_to_offset(_radix, _idx)))
+> +
+> +void *__genradix_ptr_alloc(struct __genradix *, size_t, gfp_t);
+> +
+> +/**
+> + * genradix_ptr - get a pointer to a genradix entry, allocating it if necessary
+> + * @_radix:    genradix to access
+> + * @_idx:      index to fetch
+> + * @_gfp:      gfp mask
+> + *
+> + * Returns a pointer to entry at @_idx, or NULL on allocation failure
+> + */
+> +#define genradix_ptr_alloc(_radix, _idx, _gfp)                 \
+> +       (__genradix_cast(_radix)                                \
+> +        __genradix_ptr_alloc(&(_radix)->tree,                  \
+> +                       __genradix_idx_to_offset(_radix, _idx), \
+> +                       _gfp))
+> +
+> +struct genradix_iter {
+> +       size_t                  offset;
+> +       size_t                  pos;
+> +};
+> +
+> +/**
+> + * genradix_iter_init - initialize a genradix_iter
+> + * @_radix:    genradix that will be iterated over
+> + * @_idx       index to start iterating from
+> + */
+> +#define genradix_iter_init(_radix, _idx)                       \
+> +       ((struct genradix_iter) {                               \
+> +               .pos    = (_idx),                               \
+> +               .offset = __genradix_idx_to_offset((_radix), (_idx)),\
+> +       })
+> +
+> +void *__genradix_iter_peek(struct genradix_iter *, struct __genradix *, size_t);
+> +
+> +/**
+> + * genradix_iter_peek - get first entry at or above iterator's current
+> + *                     position
+> + * @_iter:     a genradix_iter
+> + * @_radix:    genradix being iterated over
+> + *
+> + * If no more entries exist at or above @_iter's current position, returns NULL
+> + */
+> +#define genradix_iter_peek(_iter, _radix)                      \
+> +       (__genradix_cast(_radix)                                \
+> +        __genradix_iter_peek(_iter, &(_radix)->tree,           \
+> +                             PAGE_SIZE / __genradix_obj_size(_radix)))
+> +
+> +static inline void __genradix_iter_advance(struct genradix_iter *iter,
+> +                                          size_t obj_size)
+> +{
+> +       iter->offset += obj_size;
+> +
+> +       if (!is_power_of_2(obj_size) &&
+> +           (iter->offset & (PAGE_SIZE - 1)) + obj_size > PAGE_SIZE)
+> +               iter->offset = round_up(iter->offset, PAGE_SIZE);
+> +
+> +       iter->pos++;
+> +}
+> +
+> +#define genradix_iter_advance(_iter, _radix)                   \
+> +       __genradix_iter_advance(_iter, __genradix_obj_size(_radix))
+> +
+> +/**
+> + * genradix_for_each - iterate over entry in a genradix
+> + * @_radix:    genradix to iterate over
+> + * @_iter:     a genradix_iter to track current position
+> + * @_p:                pointer to genradix entry type
+> + *
+> + * On every iteration, @_p will point to the current entry, and @_iter.pos
+> + * will be the current entry's index.
+> + */
+> +#define genradix_for_each(_radix, _iter, _p)                   \
+> +       for (_iter = genradix_iter_init(_radix, 0);             \
+> +            _p = genradix_iter_peek(&(_iter), _uradix);        \
+> +            genradix_iter_advance(&(_iter), _uradix))
+> +
+> +int __genradix_prealloc(struct __genradix *, size_t, gfp_t);
+> +
+> +/**
+> + * genradix_prealloc - preallocate entries in a generic radix tree
+> + * @_radix:    genradix to preallocate
+> + * @_nr:       number of entries to preallocate
+> + * @_gfp:      gfp mask
+> + *
+> + * Returns 0 on success, -ENOMEM on failure
+> + */
+> +#define genradix_prealloc(_radix, _nr, _gfp)                   \
+> +        __genradix_prealloc(&(_radix)->tree,                   \
+> +                       __genradix_idx_to_offset(_radix, _nr + 1),\
+> +                       _gfp)
+> +
+> +
+> +#endif /* _LINUX_GENERIC_RADIX_TREE_H */
+> diff --git a/lib/Makefile b/lib/Makefile
+> index a90d4fcd74..5db5a7fb1e 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -39,7 +39,8 @@ obj-y += bcd.o div64.o sort.o parser.o debug_locks.o random32.o \
+>          gcd.o lcm.o list_sort.o uuid.o flex_array.o iov_iter.o clz_ctz.o \
+>          bsearch.o find_bit.o llist.o memweight.o kfifo.o \
+>          percpu-refcount.o percpu_ida.o rhashtable.o reciprocal_div.o \
+> -        once.o refcount.o usercopy.o errseq.o bucket_locks.o
+> +        once.o refcount.o usercopy.o errseq.o bucket_locks.o \
+> +        generic-radix-tree.o
+>  obj-$(CONFIG_STRING_SELFTEST) += test_string.o
+>  obj-y += string_helpers.o
+>  obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
+> diff --git a/lib/generic-radix-tree.c b/lib/generic-radix-tree.c
+> new file mode 100644
+> index 0000000000..4537c7c62c
+> --- /dev/null
+> +++ b/lib/generic-radix-tree.c
+> @@ -0,0 +1,180 @@
+> +
+> +#include <linux/export.h>
+> +#include <linux/generic-radix-tree.h>
+> +#include <linux/gfp.h>
+> +
+> +#define GENRADIX_ARY           (PAGE_SIZE / sizeof(struct genradix_node *))
+> +#define GENRADIX_ARY_SHIFT     ilog2(GENRADIX_ARY)
+> +
+> +struct genradix_node {
+> +       union {
+> +               /* Interior node: */
+> +               struct genradix_node    *children[GENRADIX_ARY];
+> +
+> +               /* Leaf: */
+> +               u8                      data[PAGE_SIZE];
+> +       };
+> +};
+> +
+> +static inline unsigned genradix_depth_shift(unsigned depth)
+> +{
+> +       return PAGE_SHIFT + GENRADIX_ARY_SHIFT * depth;
+> +}
+> +
+> +/*
+> + * Returns size (of data, in bytes) that a tree of a given depth holds:
+> + */
+> +static inline size_t genradix_depth_size(unsigned depth)
+> +{
+> +       return 1UL << genradix_depth_shift(depth);
+> +}
+> +
+> +/*
+> + * Returns pointer to the specified byte @offset within @radix, or NULL if not
+> + * allocated
+> + */
+> +void *__genradix_ptr(struct __genradix *radix, size_t offset)
+> +{
+> +       size_t level = radix->depth;
+> +       struct genradix_node *n = radix->root;
+> +
+> +       if (offset >= genradix_depth_size(radix->depth))
+> +               return NULL;
+> +
+> +       while (1) {
+> +               if (!n)
+> +                       return NULL;
+> +               if (!level)
+> +                       break;
+> +
+> +               level--;
+> +
+> +               n = n->children[offset >> genradix_depth_shift(level)];
+> +               offset &= genradix_depth_size(level) - 1;
+> +       }
+> +
+> +       return &n->data[offset];
+> +}
+> +EXPORT_SYMBOL(__genradix_ptr);
+> +
+> +/*
+> + * Returns pointer to the specified byte @offset within @radix, allocating it if
+> + * necessary - newly allocated slots are always zeroed out:
+> + */
+> +void *__genradix_ptr_alloc(struct __genradix *radix, size_t offset,
+> +                          gfp_t gfp_mask)
+> +{
+> +       struct genradix_node **n;
 
-MK-TME (Multi-Key Total Memory Encryption) is a technology that allows
-transparent memory encryption in upcoming Intel platforms. Whereas TME
-allows encryption of the entire system memory using a single key, MK-TME
-allows mulitple encryption domains, each having their own key. The main
-use case for the feature is virtual machine isolation. The API, however,
-needs the flexibility to work for a wide range of uses.
+Any reason that " struct genradix_node ** " is used here instead of "
+struct genradix_node * "?
 
-Kirill Shutemov has a patchset for the core kernel support that has
-been making its way upstream. Find that here:
-git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git mktme/wip
+Looks like this function only manipulates *n, am I missing something?
 
-After considering alternatives (new API, crypto API) this POC adds
-"mktme" as a new key service to the existing kernel key services.
+thanks,
+liubo
 
-The mktme key service will manage the adding and removing of software
-keys. It will map software keys to hardware keyid slots and program the
-hardware keyid slots with the user requested encryption options.
-
-The mktme key service will not store any encryption keys in the kernel.
-We program the hardware and basically throw away the key. We only retain
-a mapping of which software key is assigned to which hardware keyid. It
-is not even possible to read back any of the programming info (encryption
-algorithm, key, tweak, entropy) once programmed.
-
-The mktme key service is half of the API level solution. It will be paired
-with a new API that uses these keys to protect the memory. You will see
-reference to that mktme_mprotect() system call in the example documentation
-included in the patch. It doesn't exist yet.
-
-The first file in the patch is Documentation with sample usages.
-
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Kirill Shutemov <kirill.shutemov@intel.com>
----
- Documentation/security/keys/mktme.rst |  69 ++++++
- include/keys/mktme-type.h             |  32 +++
- security/keys/Kconfig                 |  11 +
- security/keys/Makefile                |   1 +
- security/keys/key.c                   |   1 +
- security/keys/mktme.c                 | 413 ++++++++++++++++++++++++++++++++++
- 6 files changed, 527 insertions(+)
- create mode 100644 Documentation/security/keys/mktme.rst
- create mode 100644 include/keys/mktme-type.h
- create mode 100644 security/keys/mktme.c
-
-diff --git a/Documentation/security/keys/mktme.rst b/Documentation/security/keys/mktme.rst
-new file mode 100644
-index 0000000..bb9557e
---- /dev/null
-+++ b/Documentation/security/keys/mktme.rst
-@@ -0,0 +1,69 @@
-+==========================================
-+Keys for Multi-Key Total Memory Encryption
-+==========================================
-+
-+Keys for Multi-Key Total Memory Encryption (MKTME) are a new key type
-+added to the existing kernel key ring service.
-+
-+Allocating MKTME Keys via command line or system call::
-+
-+    keyctl add mktme name "[options]" ring
-+
-+    key_serial_t add_key(const char *type, const char *description,
-+                         const void *payload, size_t plen,
-+                         key_serial_t keyring);
-+
-+
-+Revoking MKTME Keys via command line or system call::
-+
-+   keyctl revoke <key>
-+
-+   long keyctl(KEYCTL_REVOKE, key_serial_t key);
-+
-+
-+Options Field Definition::
-+
-+    userkey=      user provided encryption key. This key defaults to
-+                  a CPU generated (ephemeral) key if a userkey is not
-+                  defined here.
-+
-+    algorithm=    encryption algorithm to be used. Defaults to system
-+                  default TME algorithm. Select 'no_encrypt' for no
-+                  encryption.
-+
-+    tweak=        user provided tweak. This tweak will be added to the
-+                  user provided key.
-+
-+    entropy=      user provided entropy. This entropy will be used to
-+                  generated the CPU generated key.
-+
-+Algorithm Dependencies::
-+
-+    There will be algorithm dependencies that dictate which 'options'
-+    actually make sense. For example, aes_xts_128 will require a
-+    tweak key when a userkey is specified. Here we will document
-+    these dependencies based on algorithms supported. At initial
-+    release of the feature we will only support 2 algorithm choices:
-+    aex_xts_128 and no_encrypt.
-+
-+
-+Sample usage MK-TME Key Service API with mktme_mprotect() API::
-+
-+  Add a key::
-+        key = add_key(mktme, name, "userkey=22 tweak=44", strlen(argv[3]),
-+                      KEY_SPEC_USER_KEYRING);
-+  Map memory::
-+        ptr = mmap(NULL, size, prot, MAP_ANONYMOUS, -1, 0);
-+
-+  Protect memory::
-+        ret = syscall(sys_mktme_mprotect, ptr, size, prot, key);
-+
-+  Use protected memory::
-+        ................
-+
-+  Free memory::
-+        ret = munmap(ptr, size);
-+
-+  Revoke key::                 /* User may keep and resuse the key */
-+        ret = keyctl(KEYCTL_REVOKE, key);
-+
-diff --git a/include/keys/mktme-type.h b/include/keys/mktme-type.h
-new file mode 100644
-index 0000000..4542606
---- /dev/null
-+++ b/include/keys/mktme-type.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Key service for Multi-KEY Total Memory Encryption
-+ */
-+
-+#ifndef _KEYS_MKTME_TYPE_H
-+#define _KEYS_MKTME_TYPE_H
-+
-+#include <linux/key.h>
-+
-+/*
-+ * User can optionally provide encryption algorithm, encryption
-+ * key, and tweak key.
-+ */
-+
-+#define MKTME_MAX_OPTION_SIZE		64
-+
-+enum mktme_alg {
-+	MKTME_ALG_AES_XTS_128,
-+	MKTME_ALG_NO_ENCRYPT,		/* do not encrypt */
-+	MKTME_ALG__LAST,
-+};
-+
-+const char *const mktme_alg_name[MKTME_ALG__LAST] = {
-+	[MKTME_ALG_AES_XTS_128]	= "aes_xts_128",
-+	[MKTME_ALG_NO_ENCRYPT]	= "no_encrypt",
-+};
-+
-+extern struct key_type key_type_mktme;
-+
-+#endif /* _KEYS_MKTME_TYPE_H */
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 6462e66..3e5e619 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -101,3 +101,14 @@ config KEY_DH_OPERATIONS
- 	 in the kernel.
- 
- 	 If you are unsure as to whether this is required, answer N.
-+
-+config MKTME_KEYS
-+	bool "MKTME KEYS"
-+	depends on KEYS
-+	help
-+	  This option provides support for Multi-Key Total Memory
-+	  Encryption (MKTME). MKTME allows userspace to manage the
-+	  use of hardware programmed memory encryption keys for
-+	  encrypting any page of memory.
-+
-+	  If you are unsure as to whether this is required, answer N.
-diff --git a/security/keys/Makefile b/security/keys/Makefile
-index ef1581b..fa74bfc 100644
---- a/security/keys/Makefile
-+++ b/security/keys/Makefile
-@@ -29,3 +29,4 @@ obj-$(CONFIG_KEY_DH_OPERATIONS) += dh.o
- obj-$(CONFIG_BIG_KEYS) += big_key.o
- obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
- obj-$(CONFIG_ENCRYPTED_KEYS) += encrypted-keys/
-+obj-$(CONFIG_MKTME_KEYS) += mktme.o
-diff --git a/security/keys/key.c b/security/keys/key.c
-index d97c939..5aa367b 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -679,6 +679,7 @@ struct key *key_lookup(key_serial_t id)
- 	spin_unlock(&key_serial_lock);
- 	return key;
- }
-+EXPORT_SYMBOL(key_lookup);
- 
- /*
-  * Find and lock the specified key type against removal.
-diff --git a/security/keys/mktme.c b/security/keys/mktme.c
-new file mode 100644
-index 0000000..977a528
---- /dev/null
-+++ b/security/keys/mktme.c
-@@ -0,0 +1,413 @@
-+// SPDX-License-Identifier: GPL-3.0
-+
-+/* See Documentation/security/keys/mktme.rst */
-+
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/key.h>
-+#include <linux/key-type.h>
-+#include <linux/init.h>
-+#include <linux/parser.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <asm/intel_pconfig.h>
-+#include <keys/mktme-type.h>
-+#include <keys/user-type.h>
-+
-+/**
-+ * struct mktme_mapping - global mapping of MKTME software keys
-+ *                        to hardware keyids.
-+ *
-+ * @lock:   One lock used while (un)registering to protect the software
-+ *	    map structure and the hardware state.
-+ *
-+ * @serial: Serial number associated with the software key. Userspace
-+ *	    will use the serial number when invoking mktme_mprotect().
-+ *
-+ * @count:  Count is managed by mktme_mprotect(). Count is the number
-+ *          of mappings outstanding with this serial/keyid pair.
-+ *
-+ * The MKTME Key Service API manages the adding and removing of software
-+ * keys. It maps software keys to hardware keyid slots and programs the
-+ * hardware keyid slots with the user requested encryption options.
-+ *
-+ * API mktme_mprotect() references this structure when requests are
-+ * made to protect memory with one of these mapped keys.
-+ */
-+
-+struct mktme_mapping {
-+	struct mutex		lock;	/* protect mktme_map & hw state */
-+	struct data {
-+		key_serial_t	serial;
-+		unsigned int	count;
-+	} id[];
-+};
-+
-+struct mktme_mapping *mktme_map;
-+unsigned int mktme_max_keyids;		/* max hardware keyids   */
-+unsigned int mktme_mapped_keyids;	/* number of keys mapped */
-+
-+#define MKTME_DEBUG 0
-+#if MKTME_DEBUG
-+static inline void dump_keys(void)
-+{
-+	int i = mktme_max_keyids + 1;
-+
-+	while (i--)
-+		pr_info(" [%d:%d:%d]\n", i, mktme_map->id[i].serial,
-+			mktme_map->id[i].count);
-+}
-+
-+static inline void dump_kprog(struct mktme_key_program *kprog)
-+{
-+	print_hex_dump(KERN_INFO, "key_field_1: ", DUMP_PREFIX_NONE, 8, 1,
-+		       kprog->key_field_1, MKTME_MAX_OPTION_SIZE / 2, 1);
-+	print_hex_dump(KERN_INFO, "key_field_2: ", DUMP_PREFIX_NONE, 8, 1,
-+		       kprog->key_field_2, MKTME_MAX_OPTION_SIZE / 2, 1);
-+	pr_info("key_ctl [%x]\n", kprog->keyid_ctrl);
-+}
-+#else
-+static inline void dump_keys(void)
-+{
-+}
-+
-+static inline void dump_kprog(struct mktme_key_program *kprog)
-+{
-+}
-+#endif
-+
-+/*
-+ * If a valid serial# is passed in, return the assigned keyid
-+ * or EINVAL for invalid serial.
-+ * If 0 is passed in, return an available keyid, or EINVAL if
-+ * no more keyids are available.
-+ */
-+
-+int mktme_get_keyid(key_serial_t serial)
-+{
-+	int i = mktme_max_keyids;
-+
-+	for (i = mktme_max_keyids; i > 0; i--)
-+		if (mktme_map->id[i].serial == serial)
-+			return i;
-+	return -EINVAL;
-+}
-+
-+static int mktme_unregister_key(int keyid)
-+{
-+	struct mktme_key_program *kprog = NULL;
-+	int ret;
-+
-+	kprog = kzalloc(sizeof(*kprog), GFP_KERNEL);
-+	if (!kprog)
-+		return -ENOMEM;
-+
-+	kprog->keyid = keyid;
-+	kprog->keyid_ctrl = MKTME_KEYID_CLEAR_KEY;
-+
-+	/* TODO ret = mktme_key_program(kprog); */
-+	ret = MKTME_PROG_SUCCESS;
-+
-+	if (ret == MKTME_PROG_SUCCESS) {
-+		mktme_map->id[kprog->keyid].serial = 0;
-+		mktme_map->id[kprog->keyid].count = 0;
-+		mktme_mapped_keyids--;
-+	}
-+	/* TODO pr the descriptive HW errors before passing up */
-+
-+	return ret;
-+}
-+
-+/*
-+ * Check that for each keyid that is currently programmed, there is a
-+ * valid userspace key associated. If the userspace key no longer exists,
-+ * unregister it (clear it from both software and hardware)
-+ *
-+ * So far - it seems we can get here if a 'keyctl invalidate' is done.
-+ * If we can find a way to block unwanted key control options, this defense
-+ * could be removed.
-+ *
-+ * Call with mktme_map->lock held.
-+ *
-+ * Returns the keyid recovered, or 0 if no key is recovered.
-+ */
-+
-+static int mktme_recover_key(void)
-+{
-+	int i = mktme_max_keyids;
-+	struct key *key;
-+
-+	do {
-+		if (!mktme_map->id[i].serial)
-+			continue;
-+
-+		key = key_lookup(mktme_map->id[i].serial);
-+		if (IS_ERR(key))
-+			goto recover;
-+
-+		if (key_validate(key) < 0) {
-+			/*
-+			 * Here the key ptr is good, but the
-+			 * key may * be marked for removal.
-+			 * Leave this here to watch for.
-+			 */
-+			pr_info("%s key validate fails\n", __func__);
-+			goto recover;
-+		}
-+	} while (i--);
-+
-+	return 0;
-+recover:
-+	mktme_unregister_key(i);
-+	return i;
-+}
-+
-+/* Add the key to software map and progam key into the hardware. */
-+
-+static int mktme_register_key(key_serial_t serial,
-+			      struct mktme_key_program *kprog)
-+{
-+	int keyid, ret;
-+
-+	/*
-+	 * If it appears that we are out of keyid's, try to
-+	 * recover an abandoned keyid. Note that Keyid 0 is
-+	 * reserved for system level TME.
-+	 */
-+
-+	if (mktme_mapped_keyids < mktme_max_keyids)
-+		keyid = mktme_get_keyid(0);
-+	else
-+		keyid = mktme_recover_key();
-+
-+	if (keyid == 0)
-+		return -EDQUOT;
-+
-+	kprog->keyid = keyid;
-+	dump_kprog(kprog);
-+
-+	/* TODO ret = mktme_key_program(kprog); */
-+	ret = MKTME_PROG_SUCCESS;
-+	if (ret == MKTME_PROG_SUCCESS) {
-+		mktme_map->id[keyid].serial = serial;
-+		mktme_map->id[keyid].count = 0;
-+		mktme_mapped_keyids++;
-+	}
-+	/* TODO pr the descriptive HW errors before passing up */
-+
-+	return ret;
-+}
-+
-+enum {
-+	opt_err = -1,
-+	opt_userkey,
-+	opt_tweak,
-+	opt_entropy,
-+	opt_algorithm,
-+};
-+
-+static const match_table_t mktme_tokens = {
-+	{opt_userkey, "userkey=%s"},
-+	{opt_tweak, "tweak=%s"},
-+	{opt_entropy, "entropy=%s"},
-+	{opt_algorithm, "algorithm=%s"},
-+	{opt_err, NULL}
-+};
-+
-+/*
-+ * Sanity check the user specified options against each algorithms
-+ * requirements.
-+ *
-+ * Success returns 0, otherwise -EINVAL.
-+ */
-+
-+static int mktme_check_options(struct mktme_key_program *kprog,
-+			       unsigned long token_mask)
-+{
-+	/* no userkey specified, use cpu generated key */
-+	if (!test_bit(opt_userkey, &token_mask))
-+		kprog->keyid_ctrl |= MKTME_KEYID_SET_KEY_RANDOM;
-+
-+	/* no algorithm specified, use aes_xts_128 */
-+	if (!test_bit(opt_algorithm, &token_mask))
-+		kprog->keyid_ctrl |= MKTME_AES_XTS_128;
-+
-+	/* userkey specified, no entropy allowed */
-+	if ((test_bit(opt_userkey, &token_mask)) &&
-+	    (test_bit(opt_entropy, &token_mask))) {
-+		pr_err("mktme: entropy not an option with userkey\n");
-+		return -EINVAL;
-+	}
-+	/* userkey specified with aes_xts_128, requires tweak */
-+	if ((test_bit(opt_userkey, &token_mask)) &&
-+	    (kprog->keyid_ctrl & MKTME_AES_XTS_128)) {
-+		if (!(test_bit(opt_tweak, &token_mask))) {
-+			pr_err("mktme: algorithm requires a tweak key\n");
-+			return -EINVAL;
-+		}
-+	}
-+	dump_kprog(kprog);
-+	return 0;
-+}
-+
-+/* Parse the options from the datablob and fill in struct mktme_key_program.
-+ * After parsing, call mktme_check_options() for sanity checking.
-+ *
-+ * Success returns 0, otherwise -EINVAL.
-+ */
-+static int mktme_get_options(char *datablob, struct mktme_key_program *kprog)
-+{
-+	enum mktme_alg alg = MKTME_ALG__LAST;
-+	substring_t args[MAX_OPT_ARGS];
-+	unsigned long token_mask = 0;
-+	int len, ret, token;
-+	char *p = datablob;
-+
-+	while ((p = strsep(&datablob, " \t"))) {
-+		if (*p == '\0' || *p == ' ' || *p == '\t')
-+			continue;
-+		token = match_token(p, mktme_tokens, args);
-+		if (test_and_set_bit(token, &token_mask))
-+			return -EINVAL;
-+
-+		len = strlen(args[0].from) / 2;
-+		if (len > MKTME_MAX_OPTION_SIZE)
-+			return -EINVAL;
-+
-+		switch (token) {
-+		case opt_userkey:
-+			ret = hex2bin(kprog->key_field_1, args[0].from, len);
-+			if (ret < 0)
-+				return -EINVAL;
-+			kprog->keyid_ctrl |= MKTME_KEYID_SET_KEY_DIRECT;
-+			break;
-+
-+		case opt_tweak:
-+			ret = hex2bin(kprog->key_field_2, args[0].from, len);
-+			if (ret < 0)
-+				return -EINVAL;
-+			break;
-+
-+		case opt_entropy:
-+			ret = hex2bin(kprog->key_field_1, args[0].from, len);
-+			if (ret < 0)
-+				return -EINVAL;
-+			break;
-+
-+		case opt_algorithm:
-+			alg = match_string(mktme_alg_name, MKTME_ALG__LAST,
-+					   args[0].from);
-+			switch (alg) {
-+			case MKTME_ALG_AES_XTS_128:
-+				kprog->keyid_ctrl |= MKTME_AES_XTS_128;
-+				break;
-+
-+			case MKTME_ALG_NO_ENCRYPT:
-+				kprog->keyid_ctrl |= MKTME_KEYID_NO_ENCRYPT;
-+				break;
-+
-+			default:
-+				return -EINVAL;
-+			}
-+			break;
-+
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+	dump_kprog(kprog);
-+	return mktme_check_options(kprog, token_mask);
-+}
-+
-+/* Key Service Command: Creates a software key and programs hardware */
-+
-+int mktme_instantiate(struct key *key, struct key_preparsed_payload *prep)
-+{
-+	struct mktme_key_program *kprog = NULL;
-+	size_t datalen = prep->datalen;
-+	char *datablob;
-+	int ret = 0;
-+
-+	if (datalen <= 0 || datalen > 1024 || !prep->data)
-+		return -EINVAL;
-+
-+	datablob = kmemdup(prep->data, datalen + 1, GFP_KERNEL);
-+	if (!datablob)
-+		return -ENOMEM;
-+
-+	datablob[datalen] = '\0';
-+	kprog = kzalloc(sizeof(*kprog), GFP_KERNEL);
-+	if (!kprog) {
-+		kzfree(datablob);
-+		return -ENOMEM;
-+	}
-+	ret = mktme_get_options(datablob, kprog);
-+	if (ret < 0)
-+		goto out;
-+
-+	mutex_lock(&mktme_map->lock);
-+	ret = mktme_register_key(key->serial, kprog);
-+	mutex_unlock(&mktme_map->lock);
-+out:
-+	kzfree(datablob);
-+	kzfree(kprog);
-+	dump_keys();
-+	return ret;
-+}
-+
-+/* Key Service Command: Clears the keys software and hardware */
-+
-+void mktme_revoke(struct key *key)
-+{
-+	int keyid;
-+
-+	keyid = mktme_get_keyid(key->serial);
-+	if (keyid < 0)
-+		return;
-+
-+	mutex_lock(&mktme_map->lock);
-+	mktme_unregister_key(keyid);
-+	mutex_unlock(&mktme_map->lock);
-+	dump_keys();
-+}
-+
-+struct key_type key_type_mktme = {
-+	.name = "mktme",
-+	.instantiate = mktme_instantiate,
-+	.revoke = mktme_revoke,
-+	.describe = user_describe,
-+};
-+
-+/*
-+ * Get the maximum keyids reported from BIOS.
-+ * Allocate the mktme_map structure and register mktme key type.
-+ */
-+static int __init init_mktme(void)
-+{
-+	int ret;
-+
-+	/* TODO: get real max hardware keyids */
-+	/* mktme_max_keyids = nr_keyids; */
-+
-+	mktme_max_keyids = 100;
-+	mktme_mapped_keyids = 0;
-+	mktme_map = kzalloc((sizeof(mktme_map->id[0]) * mktme_max_keyids)
-+			    + (sizeof(mktme_map->lock)), GFP_KERNEL);
-+	if (!mktme_map)
-+		return -ENOMEM;
-+
-+	mutex_init(&mktme_map->lock);
-+	ret = register_key_type(&key_type_mktme);
-+	if (ret < 0)
-+		kfree(mktme_map);
-+
-+	return ret;
-+}
-+
-+static void __exit cleanup_mktme(void)
-+{
-+	unregister_key_type(&key_type_mktme);
-+	kfree(mktme_map);
-+}
-+
-+late_initcall(init_mktme);
--- 
-2.7.4
-
+> +       size_t level;
+> +
+> +       /* Increase tree depth if necessary: */
+> +
+> +       while (offset >= genradix_depth_size(radix->depth)) {
+> +               struct genradix_node *new_root =
+> +                       (void *) __get_free_page(gfp_mask|__GFP_ZERO);
+> +
+> +               if (!new_root)
+> +                       return NULL;
+> +
+> +               new_root->children[0] = radix->root;
+> +               radix->root = new_root;
+> +               radix->depth++;
+> +       }
+> +
+> +       n = &radix->root;
+> +       level = radix->depth;
+> +
+> +       while (1) {
+> +               if (!*n) {
+> +                       *n = (void *) __get_free_page(gfp_mask|__GFP_ZERO);
+> +                       if (!*n)
+> +                               return NULL;
+> +               }
+> +
+> +               if (!level)
+> +                       break;
+> +
+> +               level--;
+> +
+> +               n = &(*n)->children[offset >> genradix_depth_shift(level)];
+> +               offset &= genradix_depth_size(level) - 1;
+> +       }
+> +
+> +       return &(*n)->data[offset];
+> +}
+> +EXPORT_SYMBOL(__genradix_ptr_alloc);
+> +
+> +void *__genradix_iter_peek(struct genradix_iter *iter,
+> +                          struct __genradix *radix,
+> +                          size_t objs_per_page)
+> +{
+> +       struct genradix_node *n;
+> +       size_t level, i;
+> +
+> +       if (!radix->root)
+> +               return NULL;
+> +restart:
+> +       if (iter->offset >= genradix_depth_size(radix->depth))
+> +               return NULL;
+> +
+> +       n       = radix->root;
+> +       level   = radix->depth;
+> +
+> +       while (level) {
+> +               level--;
+> +
+> +               i = (iter->offset >> genradix_depth_shift(level)) &
+> +                       (GENRADIX_ARY - 1);
+> +
+> +               while (!n->children[i]) {
+> +                       i++;
+> +                       iter->offset = round_down(iter->offset +
+> +                                          genradix_depth_size(level),
+> +                                          genradix_depth_size(level));
+> +                       iter->pos = (iter->offset >> PAGE_SHIFT) *
+> +                               objs_per_page;
+> +                       if (i == GENRADIX_ARY)
+> +                               goto restart;
+> +               }
+> +
+> +               n = n->children[i];
+> +       }
+> +
+> +       return &n->data[iter->offset & (PAGE_SIZE - 1)];
+> +}
+> +EXPORT_SYMBOL(__genradix_iter_peek);
+> +
+> +static void genradix_free_recurse(struct genradix_node *n, unsigned level)
+> +{
+> +       if (level) {
+> +               unsigned i;
+> +
+> +               for (i = 0; i < GENRADIX_ARY; i++)
+> +                       if (n->children[i])
+> +                               genradix_free_recurse(n->children[i], level - 1);
+> +       }
+> +
+> +       free_page((unsigned long) n);
+> +}
+> +
+> +int __genradix_prealloc(struct __genradix *radix, size_t size,
+> +                       gfp_t gfp_mask)
+> +{
+> +       size_t offset;
+> +
+> +       for (offset = 0; offset < size; offset += PAGE_SIZE)
+> +               if (!__genradix_ptr_alloc(radix, offset, gfp_mask))
+> +                       return -ENOMEM;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(__genradix_prealloc);
+> +
+> +void __genradix_free(struct __genradix *radix)
+> +{
+> +       genradix_free_recurse(radix->root, radix->depth);
+> +
+> +       radix->root = NULL;
+> +       radix->depth = 0;
+> +}
+> +EXPORT_SYMBOL(__genradix_free);
+> --
+> 2.17.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-raid" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
