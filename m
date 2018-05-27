@@ -1,34 +1,31 @@
-From: jsnitsel@redhat.com (Jerry Snitselaar)
-Date: Sun, 27 May 2018 02:14:52 -0700
-Subject: [PATCH v4 1/4] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-In-Reply-To: <20180523125655.GB363@linux.intel.com>
-References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
-	<20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
-	<20180518223032.ihszdef5wesj5nie@cantor>
-	<20180523125655.GB363@linux.intel.com>
-Message-ID: <20180527091452.azwuh5u7rjyy7z6h@cantor>
+From: keescook@chromium.org (Kees Cook)
+Date: Sun, 27 May 2018 07:41:34 -0700
+Subject: [PATCH] proc: prevent a task from writing on its own /proc/*/mem
+In-Reply-To: <CA+55aFx6DBp+d33_fytOGPWw11xg_L0MdGp1M2e5Obc0N9kMRQ@mail.gmail.com>
+References: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
+	<CAGXu5j+PHzDwnJxJwMJ=WuhacDn_vJWe9xZx+Kbsh28vxOGRiA@mail.gmail.com>
+	<CA+55aFx6DBp+d33_fytOGPWw11xg_L0MdGp1M2e5Obc0N9kMRQ@mail.gmail.com>
+Message-ID: <CAGXu5jK_YfFLKt4vde__bzmhH9SCEz01ET9wyycYkhSSQj5+RA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed May 23 18, Jarkko Sakkinen wrote:
->On Fri, May 18, 2018 at 03:30:32PM -0700, Jerry Snitselaar wrote:
->> On Mon Mar 26 18, Jarkko Sakkinen wrote:
->> > In order to make struct tpm_buf the first class object for constructing TPM
->> > commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
->> > entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
->> > prints an error message.
->> >
->> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>
->> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+On Sat, May 26, 2018 at 6:33 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> Thus commit f511c0b17b08 "Yes, people use FOLL_FORCE ;)"
 >
->Thanky you Jerry. I'll do one more round for this only to update kdoc.
->It does not involve code changes so are you OK if you I keep your
->reviewed-by despite this update?
+> Side note, that very sam ecommit f511c0b17b08 is also the explanation for
+> why the patch under discussion now seems broken.
 >
->/Jarkko
+> People really do use "write to /proc/self/mem" as a way to keep the
+> mappings read-only, but have a way to change them when required.
 
-Sure
+Ah! Yes, that is the commit I was trying to find. Thanks!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
