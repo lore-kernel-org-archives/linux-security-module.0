@@ -1,49 +1,77 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Mon, 28 May 2018 00:17:17 -0500
-Subject: [PATCH -next] integrity: fix the error return code in
-	integrity_load_keys()
-In-Reply-To: <1527473316-35602-1-git-send-email-weiyongjun1@huawei.com>
-References: <1527473316-35602-1-git-send-email-weiyongjun1@huawei.com>
-Message-ID: <20180528051717.GA11155@mail.hallyn.com>
+From: jannh@google.com (Jann Horn)
+Date: Mon, 28 May 2018 11:06:38 +0200
+Subject: [PATCH] proc: prevent a task from writing on its own /proc/*/mem
+In-Reply-To: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
+References: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
+Message-ID: <CAG48ez2N8tjyjGbdh+927uf2A_Xtsie=+DL+GZbvBniiO8jNHw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, May 28, 2018 at 02:08:36AM +0000, Wei Yongjun wrote:
-> The error return code PTR_ERR(integrity_dir) is always 0 since
-> integrity_dir is set to NULL in this error handling case.
-> 
-> Fixes: 0c343af8065b ("integrity: Add an integrity directory in securityfs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-
-Huh.
-
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
+On Sat, May 26, 2018 at 4:50 PM, Salvatore Mesoraca
+<s.mesoraca16@gmail.com> wrote:
+> Prevent a task from opening, in "write" mode, any /proc/*/mem
+> file that operates on the task's mm.
+> /proc/*/mem is mainly a debugging means and, as such, it shouldn't
+> be used by the inspected process itself.
+> Current implementation always allow a task to access its own
+> /proc/*/mem file.
+> A process can use it to overwrite read-only memory, making
+> pointless the use of security_file_mprotect() or other ways to
+> enforce RO memory.
+>
+> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 > ---
->  security/integrity/iint.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 149faa8..2dfc9e8 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -217,12 +217,15 @@ void __init integrity_load_keys(void)
->  
->  static int __init integrity_fs_init(void)
+>  fs/proc/base.c       | 25 ++++++++++++++++++-------
+>  fs/proc/internal.h   |  3 ++-
+>  fs/proc/task_mmu.c   |  4 ++--
+>  fs/proc/task_nommu.c |  2 +-
+>  4 files changed, 23 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 1a76d75..01ecfec 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -762,8 +762,9 @@ static int proc_single_open(struct inode *inode, struct file *filp)
+>         .release        = single_release,
+>  };
+>
+> -
+> -struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+> +struct mm_struct *proc_mem_open(struct inode *inode,
+> +                               unsigned int mode,
+> +                               fmode_t f_mode)
 >  {
-> +	int ret;
-> +
->  	integrity_dir = securityfs_create_dir("integrity", NULL);
->  	if (IS_ERR(integrity_dir)) {
->  		pr_err("Unable to create integrity sysfs dir: %ld\n",
->  		       PTR_ERR(integrity_dir));
-> +		ret = PTR_ERR(integrity_dir);
->  		integrity_dir = NULL;
-> -		return PTR_ERR(integrity_dir);
-> +		return ret;
->  	}
->  
->  	return 0;
+>         struct task_struct *task = get_proc_task(inode);
+>         struct mm_struct *mm = ERR_PTR(-ESRCH);
+> @@ -773,10 +774,20 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+>                 put_task_struct(task);
+>
+>                 if (!IS_ERR_OR_NULL(mm)) {
+> -                       /* ensure this mm_struct can't be freed */
+> -                       mmgrab(mm);
+> -                       /* but do not pin its memory */
+> -                       mmput(mm);
+> +                       /*
+> +                        * Prevent this interface from being used as a mean
+> +                        * to bypass memory restrictions, including those
+> +                        * imposed by LSMs.
+> +                        */
+> +                       if (mm == current->mm &&
+> +                           f_mode & FMODE_WRITE)
+> +                               mm = ERR_PTR(-EACCES);
+> +                       else {
+> +                               /* ensure this mm_struct can't be freed */
+> +                               mmgrab(mm);
+> +                               /* but do not pin its memory */
+> +                               mmput(mm);
+> +                       }
+>                 }
+>         }
+
+I don't have an opinion on the overall patch, but this part looks
+buggy: In the error path, you set `mm` to an error pointer, but you
+still own the reference that mm_access() took on the old `mm`. The
+error path needs to call `mmput(mm)`.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
