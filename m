@@ -1,45 +1,41 @@
-From: colin.king@canonical.com (Colin King)
-Date: Sun, 27 May 2018 23:55:10 +0100
-Subject: [PATCH] EVM: Fix null dereference on xattr when xattr fails to
-	allocate
-Message-ID: <20180527225510.25612-1-colin.king@canonical.com>
+From: weiyongjun1@huawei.com (Wei Yongjun)
+Date: Mon, 28 May 2018 02:08:36 +0000
+Subject: [PATCH -next] integrity: fix the error return code in
+	integrity_load_keys()
+Message-ID: <1527473316-35602-1-git-send-email-weiyongjun1@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The error return code PTR_ERR(integrity_dir) is always 0 since
+integrity_dir is set to NULL in this error handling case.
 
-In the case where the allocation of xattr fails and xattr is NULL, the
-error exit return path via label 'out' will dereference xattr when
-kfree'ing xattr-name.  Fix this by only kfree'ing xattr->name and xattr
-when xattr is non-null.
-
-Detected by CoverityScan, CID#1469366 ("Dereference after null check")
-
-Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 0c343af8065b ("integrity: Add an integrity directory in securityfs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- security/integrity/evm/evm_secfs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ security/integrity/iint.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index fb8bc950aceb..cf5cd303d7c0 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -253,8 +253,10 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
- out:
- 	audit_log_format(ab, " res=%d", err);
- 	audit_log_end(ab);
--	kfree(xattr->name);
--	kfree(xattr);
-+	if (xattr) {
-+		kfree(xattr->name);
-+		kfree(xattr);
-+	}
- 	return err;
- }
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 149faa8..2dfc9e8 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -217,12 +217,15 @@ void __init integrity_load_keys(void)
  
--- 
-2.17.0
+ static int __init integrity_fs_init(void)
+ {
++	int ret;
++
+ 	integrity_dir = securityfs_create_dir("integrity", NULL);
+ 	if (IS_ERR(integrity_dir)) {
+ 		pr_err("Unable to create integrity sysfs dir: %ld\n",
+ 		       PTR_ERR(integrity_dir));
++		ret = PTR_ERR(integrity_dir);
+ 		integrity_dir = NULL;
+-		return PTR_ERR(integrity_dir);
++		return ret;
+ 	}
+ 
+ 	return 0;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
