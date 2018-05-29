@@ -1,37 +1,71 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 29 May 2018 16:12:51 -0700
-Subject: [PATCH 1/2] security: Move LSM registration arguments to struct
-	lsm_info
-In-Reply-To: <alpine.LRH.2.21.1805300853590.14712@namei.org>
-References: <20180517070052.GA22158@ircssh-2.c.rugged-nimbus-611.internal>
-	<alpine.LRH.2.21.1805300853590.14712@namei.org>
-Message-ID: <adf91142-ebb0-b20f-6e18-ae6c5b9a7774@schaufler-ca.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 29 May 2018 19:14:05 -0400
+Subject: [PATCH v4 8/8] module: replace the existing LSM hook in
+	init_module
+In-Reply-To: <CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
+	<CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
+Message-ID: <1527635645.3534.39.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 5/29/2018 3:54 PM, James Morris wrote:
-> On Thu, 17 May 2018, Sargun Dhillon wrote:
->
->>  struct security_hook_list {
->> -	struct hlist_node		list;
->> -	struct hlist_head		*head;
->> -	union security_list_options	hook;
->> -	char				*lsm;
->> +	struct hlist_node			list;
->> +	struct hlist_head			*head;
->> +	const union security_list_options	hook;
->> +	struct lsm_info				*info;
-> Kees asked if this field should be const in response to your 01 May 
-> posting.  Please address this.
->
-> Also, I'd love to see more folk review & ack these patches.
+On Tue, 2018-05-29 at 18:39 -0400, Paul Moore wrote:
+[...]
+> > @@ -4043,6 +4037,25 @@ static int selinux_kernel_module_from_file(struct file *file)
+> >                                 SYSTEM__MODULE_LOAD, &ad);
+> >  }
+> >
+> > +static int selinux_kernel_load_data(enum kernel_load_data_id id)
+> > +{
+> > +       u32 sid;
+> > +       int rc = 0;
+> > +
+> > +       switch (id) {
+> > +       case LOADING_MODULE:
+> > +               sid = current_sid();
+> > +
+> > +               /* init_module */
+> > +               return avc_has_perm(&selinux_state, sid, sid, SECCLASS_SYSTEM,
+> > +                                   SYSTEM__MODULE_LOAD, NULL);
+> > +       default:
+> > +               break;
+> > +       }
+> > +
+> > +       return rc;
+> > +}
+> 
+> I'm not a fan of the duplication here.  If we must have a new LSM hook
+> for this, can we at least have it call
+> selinux_kernel_module_from_file() so we have all the kernel module
+> loading logic/controls in one function?  Yes, I understand there are
+> differences between init_module() and finit_module() but I like
+> handling them both in one function as we do today.
 
-Unless there is serious interest in loadable security
-module support there isn't a lot of value to be gained
-with this patch set. I am officially agnostic on the topic.
-I know that there has been significant resistance to the
-facility in the past. I will put more effort into review
-if [un]loadable modules have a future.
+There's some disagreement as to whether we really need two LSM hooks.
+?This sounds like you would prefer a single LSM hook, not the two that
+this patch set introduces.
+
+We need to come to some consensus. ?(Comments appreciated in 0/8.)
+
+Mimi
+
+> 
+> >  static int selinux_kernel_read_file(struct file *file,
+> >                                     enum kernel_read_file_id id)
+> >  {
+> > @@ -6950,6 +6963,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+> >         LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
+> >         LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
+> >         LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
+> > +       LSM_HOOK_INIT(kernel_load_data, selinux_kernel_load_data),
+> >         LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
+> >         LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
+> >         LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
+> > --
+> > 2.7.5
+> >
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
