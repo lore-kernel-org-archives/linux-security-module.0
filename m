@@ -1,60 +1,59 @@
 From: mark.rutland@arm.com (Mark Rutland)
-Date: Tue, 29 May 2018 11:02:00 +0100
-Subject: [PATCH] mark tramp_pg_dir read-only
-In-Reply-To: <20180529091609.9830-1-yaojun8558363@gmail.com>
-References: <20180529091609.9830-1-yaojun8558363@gmail.com>
-Message-ID: <20180529100200.ntfppwx4i26arwa5@lakrids.cambridge.arm.com>
+Date: Tue, 29 May 2018 11:03:56 +0100
+Subject: [PATCH 0/4] migrate swapper_pg_dir
+In-Reply-To: <20180529043728.27738-1-yaojun8558363@gmail.com>
+References: <20180529043728.27738-1-yaojun8558363@gmail.com>
+Message-ID: <20180529100356.uimq6p6ihpx4eeur@lakrids.cambridge.arm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 Hi,
 
-For patches to arm64, please CC the arm64 maintainers, and the
-linux-arm-kernel mailing list.
+On Tue, May 29, 2018 at 12:37:28PM +0800, YaoJun wrote:
+> Because the offset between swapper_pg_dir and _text is fixed, when
+> attackers break KASLR, they can calculate the address of swapper_pg_dir,
+> and then they can apply KSMA(Kernel Space Mirror Attack). The principle
+> of KSMA is to insert an entry to PGD, and this entry has type of block
+> with AP = 01, so attackers can read/write kernel memory directly. Details
+> can reference:
+> 
+> https://www.blackhat.com/docs/asia-18/asia-18-WANG-KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features.pdf
+> 
+> These patches migrate swapper_pg_dir to new place, and there is no
+> relationship between swapper_pg_dir and _text. Because this is done
+> during kernel booting, the physical address of new swapper_pg_dir may
+> be fixed. Do we need to further randomize it?
 
-Generally, please try to follow the guidance of
-Documentation/process/submitting-patches.rst
+This looks interesting, but this didn't go to all the relevant people.
 
-e.g. you can use get_maintainer.pl to figure out who to Cc:
+Could you please resend this series, with at least the following Cc'd:
 
-[mark at lakrids:~/src/linux]% ./scripts/get_maintainer.pl arch/arm64/mm/mmu.c
-Catalin Marinas <catalin.marinas@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE),commit_signer:8/16=50%)
-Will Deacon <will.deacon@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE),commit_signer:9/16=56%,authored:6/16=38%,added_lines:205/242=85%,removed_lines:142/157=90%)
-Ard Biesheuvel <ard.biesheuvel@linaro.org> (commit_signer:5/16=31%)
-Marc Zyngier <marc.zyngier@arm.com> (commit_signer:4/16=25%)
-Dan Williams <dan.j.williams@intel.com> (commit_signer:2/16=12%)
-Kristina Martsenko <kristina.martsenko@arm.com> (authored:2/16=12%)
-James Morse <james.morse@arm.com> (authored:2/16=12%)
-Tobias Klauser <tklauser@distanz.ch> (authored:1/16=6%)
-Steve Capper <steve.capper@arm.com> (authored:1/16=6%)
-linux-arm-kernel at lists.infradead.org (moderated list:ARM64 PORT (AARCH64 ARCHITECTURE))
-linux-kernel at vger.kernel.org (open list)
+* linux-arm-kernel at lists.infradead.org
+* will.deacon at arm.com
+* catalin.marinas at arm.com
 
 Thanks,
 Mark.
 
-On Tue, May 29, 2018 at 05:16:09PM +0800, YaoJun wrote:
-> To prevent KSMA(Kernel Space Mirroring Attack), it's necessary
-> to set tramp_pg_dir read-only after initialization.
 > 
-> ---
->  arch/arm64/mm/mmu.c | 3 +++
->  1 file changed, 3 insertions(+)
+> YaoJun (4):
+>   Introduce a variable to record physical address of swapper_pg_dir.
+>   Introduce a variable to record new virtual address of swapper_pg_dir.
+>   Make tramp_pg_dir and swapper_pg_dir adjacent
+>   Migrate swapper_pg_dir and tramp_pg_dir.
 > 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 2dbb2c9f1ec1..964520e4e675 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -551,6 +551,9 @@ static int __init map_entry_trampoline(void)
->  	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
->  			     prot, pgd_pgtable_alloc, 0);
->  
-> +	update_mapping_prot(__pa_symbol(tramp_pg_dir), (unsigned long)tramp_pg_dir,
-> +			    PGD_SIZE, PAGE_KERNEL_RO);
-> +
->  	/* Map both the text and data into the kernel page table */
->  	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
->  	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
+>  arch/arm64/include/asm/mmu_context.h |  6 +--
+>  arch/arm64/include/asm/pgtable.h     |  2 +
+>  arch/arm64/kernel/cpufeature.c       |  2 +-
+>  arch/arm64/kernel/entry.S            |  4 +-
+>  arch/arm64/kernel/head.S             | 10 ++--
+>  arch/arm64/kernel/hibernate.c        |  2 +-
+>  arch/arm64/kernel/sleep.S            |  2 +
+>  arch/arm64/kernel/vmlinux.lds.S      | 10 ++--
+>  arch/arm64/mm/kasan_init.c           |  6 +--
+>  arch/arm64/mm/mmu.c                  | 72 +++++++++++++++++++---------
+>  10 files changed, 74 insertions(+), 42 deletions(-)
+> 
 > -- 
 > 2.17.0
 > 
