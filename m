@@ -1,69 +1,58 @@
-From: gregkh@linuxfoundation.org (Greg KH)
-Date: Tue, 29 May 2018 12:53:12 +0200
-Subject: [PATCH 1/4] migrate swapper_pg_dir
-In-Reply-To: <20180529043741.27790-1-yaojun8558363@gmail.com>
-References: <20180529043741.27790-1-yaojun8558363@gmail.com>
-Message-ID: <20180529105312.GA24918@kroah.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 29 May 2018 08:30:27 -0400
+Subject: [PATCH] EVM: Fix null dereference on xattr when xattr fails to
+	allocate
+In-Reply-To: <20180527225510.25612-1-colin.king@canonical.com>
+References: <20180527225510.25612-1-colin.king@canonical.com>
+Message-ID: <1527597027.10176.16.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, May 29, 2018 at 12:37:41PM +0800, YaoJun wrote:
-> Currently, __enable_mmu() uses swapper_pg_dir directly.
-> To migrate swapper_pg_dir, we need to pass it as an
-> argument to __enable_mmu(). At the same time,
-> __pa_swapper_pg_dir is introduced to save physical
-> address of swapper_pg_dir. By changing its value, we
-> can migrate swapper_pg_dir.
+Hi Colin,
+
+On Sun, 2018-05-27 at 23:55 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
+> In the case where the allocation of xattr fails and xattr is NULL, the
+> error exit return path via label 'out' will dereference xattr when
+> kfree'ing xattr-name.  Fix this by only kfree'ing xattr->name and xattr
+> when xattr is non-null.
+> 
+> Detected by CoverityScan, CID#1469366 ("Dereference after null check")
+> 
+> Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  arch/arm64/include/asm/mmu_context.h |  4 +---
->  arch/arm64/include/asm/pgtable.h     |  1 +
->  arch/arm64/kernel/cpufeature.c       |  2 +-
->  arch/arm64/kernel/head.S             | 10 ++++++----
->  arch/arm64/kernel/hibernate.c        |  2 +-
->  arch/arm64/kernel/sleep.S            |  2 ++
->  arch/arm64/mm/kasan_init.c           |  4 ++--
->  arch/arm64/mm/mmu.c                  |  8 ++++++--
->  8 files changed, 20 insertions(+), 13 deletions(-)
+>  security/integrity/evm/evm_secfs.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+> index fb8bc950aceb..cf5cd303d7c0 100644
+> --- a/security/integrity/evm/evm_secfs.c
+> +++ b/security/integrity/evm/evm_secfs.c
+> @@ -253,8 +253,10 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+>  out:
+>  	audit_log_format(ab, " res=%d", err);
+>  	audit_log_end(ab);
+> -	kfree(xattr->name);
+> -	kfree(xattr);
+> +	if (xattr) {
+> +		kfree(xattr->name);
+> +		kfree(xattr);
+> +	}
+>  	return err;
+>  }
+> 
 
+Thanks! ?To fix this problem, I think more is needed.
 
-Hi,
+Without the xattr, there is nothing to audit except the attempt to
+extend the xattr list. ?Failure to allocate the xattr or xattr->name
+should either result in a different audit message or return
+immediately without any audit message.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Mimi
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- Your patch does not have a Signed-off-by: line.  Please read the
-  kernel file, Documentation/SubmittingPatches and resend it after
-  adding that line.  Note, the line needs to be in the body of the
-  email, before the patch, not at the bottom of the patch or in the
-  email signature.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what a proper Subject: line should
-  look like.
-
-- You did not use your real name.  Signed-off-by: and From: has to have
-  a real name associated with it.  Use whatever you sign legal documents
-  with, no anonymous patches are allowed.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
