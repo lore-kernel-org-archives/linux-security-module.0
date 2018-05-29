@@ -1,37 +1,45 @@
-From: obuil.liubo@gmail.com (Liu Bo)
-Date: Tue, 29 May 2018 09:48:20 +0800
-Subject: [PATCH 1/6] Generic radix trees
-In-Reply-To: <20180526055601.GA26155@kmo-pixel>
-References: <20180523011821.12165-1-kent.overstreet@gmail.com>
-	<CANQeFDCLc56thuuGYBMdb_qvw_O=t7sLkJiP-LNYfKwgz74H_w@mail.gmail.com>
-	<20180526055601.GA26155@kmo-pixel>
-Message-ID: <CANQeFDBGzxF0r-+dxp5jcRnOCe8NgEzRgmc-84bGRBqiYg5KhA@mail.gmail.com>
+From: yaojun8558363@gmail.com (YaoJun)
+Date: Tue, 29 May 2018 12:37:28 +0800
+Subject: [PATCH 0/4] migrate swapper_pg_dir
+Message-ID: <20180529043728.27738-1-yaojun8558363@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, May 26, 2018 at 1:56 PM, Kent Overstreet
-<kent.overstreet@gmail.com> wrote:
-> On Sat, May 26, 2018 at 11:16:42AM +0800, Liu Bo wrote:
->> > +/*
->> > + * Returns pointer to the specified byte @offset within @radix, allocating it if
->> > + * necessary - newly allocated slots are always zeroed out:
->> > + */
->> > +void *__genradix_ptr_alloc(struct __genradix *radix, size_t offset,
->> > +                          gfp_t gfp_mask)
->> > +{
->> > +       struct genradix_node **n;
->>
->> Any reason that " struct genradix_node ** " is used here instead of "
->> struct genradix_node * "?
->>
->> Looks like this function only manipulates *n, am I missing something?
->
-> It stores to *n, when it has to allocate a node (including the root)
+Because the offset between swapper_pg_dir and _text is fixed, when
+attackers break KASLR, they can calculate the address of swapper_pg_dir,
+and then they can apply KSMA(Kernel Space Mirror Attack). The principle
+of KSMA is to insert an entry to PGD, and this entry has type of block
+with AP = 01, so attackers can read/write kernel memory directly. Details
+can reference:
 
-I see, thanks for the explanation.
+https://www.blackhat.com/docs/asia-18/asia-18-WANG-KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features.pdf
 
-thanks,
-liubo
+These patches migrate swapper_pg_dir to new place, and there is no
+relationship between swapper_pg_dir and _text. Because this is done
+during kernel booting, the physical address of new swapper_pg_dir may
+be fixed. Do we need to further randomize it?
+
+YaoJun (4):
+  Introduce a variable to record physical address of swapper_pg_dir.
+  Introduce a variable to record new virtual address of swapper_pg_dir.
+  Make tramp_pg_dir and swapper_pg_dir adjacent
+  Migrate swapper_pg_dir and tramp_pg_dir.
+
+ arch/arm64/include/asm/mmu_context.h |  6 +--
+ arch/arm64/include/asm/pgtable.h     |  2 +
+ arch/arm64/kernel/cpufeature.c       |  2 +-
+ arch/arm64/kernel/entry.S            |  4 +-
+ arch/arm64/kernel/head.S             | 10 ++--
+ arch/arm64/kernel/hibernate.c        |  2 +-
+ arch/arm64/kernel/sleep.S            |  2 +
+ arch/arm64/kernel/vmlinux.lds.S      | 10 ++--
+ arch/arm64/mm/kasan_init.c           |  6 +--
+ arch/arm64/mm/mmu.c                  | 72 +++++++++++++++++++---------
+ 10 files changed, 74 insertions(+), 42 deletions(-)
+
+-- 
+2.17.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
