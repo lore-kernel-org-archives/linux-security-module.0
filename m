@@ -1,85 +1,37 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Mon, 28 May 2018 11:33:33 +0200
-Subject: [PATCH] proc: prevent a task from writing on its own /proc/*/mem
-In-Reply-To: <CAG48ez2N8tjyjGbdh+927uf2A_Xtsie=+DL+GZbvBniiO8jNHw@mail.gmail.com>
-References: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
-	<CAG48ez2N8tjyjGbdh+927uf2A_Xtsie=+DL+GZbvBniiO8jNHw@mail.gmail.com>
-Message-ID: <CAJHCu1+3jcJWSyPE8DsFfaR-NNtG5P=H31cKeDuagx_w1u0urA@mail.gmail.com>
+From: obuil.liubo@gmail.com (Liu Bo)
+Date: Tue, 29 May 2018 09:48:20 +0800
+Subject: [PATCH 1/6] Generic radix trees
+In-Reply-To: <20180526055601.GA26155@kmo-pixel>
+References: <20180523011821.12165-1-kent.overstreet@gmail.com>
+	<CANQeFDCLc56thuuGYBMdb_qvw_O=t7sLkJiP-LNYfKwgz74H_w@mail.gmail.com>
+	<20180526055601.GA26155@kmo-pixel>
+Message-ID: <CANQeFDBGzxF0r-+dxp5jcRnOCe8NgEzRgmc-84bGRBqiYg5KhA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2018-05-28 11:06 GMT+02:00 Jann Horn <jannh@google.com>:
-> On Sat, May 26, 2018 at 4:50 PM, Salvatore Mesoraca
-> <s.mesoraca16@gmail.com> wrote:
->> Prevent a task from opening, in "write" mode, any /proc/*/mem
->> file that operates on the task's mm.
->> /proc/*/mem is mainly a debugging means and, as such, it shouldn't
->> be used by the inspected process itself.
->> Current implementation always allow a task to access its own
->> /proc/*/mem file.
->> A process can use it to overwrite read-only memory, making
->> pointless the use of security_file_mprotect() or other ways to
->> enforce RO memory.
+On Sat, May 26, 2018 at 1:56 PM, Kent Overstreet
+<kent.overstreet@gmail.com> wrote:
+> On Sat, May 26, 2018 at 11:16:42AM +0800, Liu Bo wrote:
+>> > +/*
+>> > + * Returns pointer to the specified byte @offset within @radix, allocating it if
+>> > + * necessary - newly allocated slots are always zeroed out:
+>> > + */
+>> > +void *__genradix_ptr_alloc(struct __genradix *radix, size_t offset,
+>> > +                          gfp_t gfp_mask)
+>> > +{
+>> > +       struct genradix_node **n;
 >>
->> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
->> ---
->>  fs/proc/base.c       | 25 ++++++++++++++++++-------
->>  fs/proc/internal.h   |  3 ++-
->>  fs/proc/task_mmu.c   |  4 ++--
->>  fs/proc/task_nommu.c |  2 +-
->>  4 files changed, 23 insertions(+), 11 deletions(-)
+>> Any reason that " struct genradix_node ** " is used here instead of "
+>> struct genradix_node * "?
 >>
->> diff --git a/fs/proc/base.c b/fs/proc/base.c
->> index 1a76d75..01ecfec 100644
->> --- a/fs/proc/base.c
->> +++ b/fs/proc/base.c
->> @@ -762,8 +762,9 @@ static int proc_single_open(struct inode *inode, struct file *filp)
->>         .release        = single_release,
->>  };
->>
->> -
->> -struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
->> +struct mm_struct *proc_mem_open(struct inode *inode,
->> +                               unsigned int mode,
->> +                               fmode_t f_mode)
->>  {
->>         struct task_struct *task = get_proc_task(inode);
->>         struct mm_struct *mm = ERR_PTR(-ESRCH);
->> @@ -773,10 +774,20 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
->>                 put_task_struct(task);
->>
->>                 if (!IS_ERR_OR_NULL(mm)) {
->> -                       /* ensure this mm_struct can't be freed */
->> -                       mmgrab(mm);
->> -                       /* but do not pin its memory */
->> -                       mmput(mm);
->> +                       /*
->> +                        * Prevent this interface from being used as a mean
->> +                        * to bypass memory restrictions, including those
->> +                        * imposed by LSMs.
->> +                        */
->> +                       if (mm == current->mm &&
->> +                           f_mode & FMODE_WRITE)
->> +                               mm = ERR_PTR(-EACCES);
->> +                       else {
->> +                               /* ensure this mm_struct can't be freed */
->> +                               mmgrab(mm);
->> +                               /* but do not pin its memory */
->> +                               mmput(mm);
->> +                       }
->>                 }
->>         }
+>> Looks like this function only manipulates *n, am I missing something?
 >
-> I don't have an opinion on the overall patch, but this part looks
-> buggy: In the error path, you set `mm` to an error pointer, but you
-> still own the reference that mm_access() took on the old `mm`. The
-> error path needs to call `mmput(mm)`.
+> It stores to *n, when it has to allocate a node (including the root)
 
-You are absolutely right,
+I see, thanks for the explanation.
 
-Thank you,
-
-Salvatore
+thanks,
+liubo
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
