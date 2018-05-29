@@ -1,70 +1,34 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 29 May 2018 08:31:32 -0400
-Subject: [PATCH] EVM: Fix null dereference on xattr when xattr fails to
-	allocate
-In-Reply-To: <20180529090504.6dpdadjyjxo45nu2@mwanda>
-References: <20180527225510.25612-1-colin.king@canonical.com>
-	<20180529090504.6dpdadjyjxo45nu2@mwanda>
-Message-ID: <1527597092.10176.17.camel@linux.vnet.ibm.com>
+From: dan.carpenter@oracle.com (Dan Carpenter)
+Date: Tue, 29 May 2018 16:11:28 +0300
+Subject: [PATCH] EVM: prevent array underflow in evm_write_xattrs()
+In-Reply-To: <1527597092.10176.17.camel@linux.vnet.ibm.com>
+Message-ID: <20180529131128.3rkzzv66uy6h5ts7@kili.mountain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Dan,
+If the user sets xattr->name[0] to NUL then we would read one character
+before the start of the array.  This bug seems harmless as far as I can
+see but perhaps it would trigger a warning in KASAN.
 
-On Tue, 2018-05-29 at 12:05 +0300, Dan Carpenter wrote:
-> Not really related to this patch except I was looking at the function:
-> 
-> security/integrity/evm/evm_secfs.c
->    191          ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
->    192          if (IS_ERR(ab))
->    193                  return PTR_ERR(ab);
->    194  
->    195          xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
->    196          if (!xattr) {
->    197                  err = -ENOMEM;
->    198                  goto out;
->    199          }
->    200  
->    201          xattr->name = memdup_user_nul(buf, count);
->    202          if (IS_ERR(xattr->name)) {
->    203                  err = PTR_ERR(xattr->name);
->    204                  xattr->name = NULL;
->    205                  goto out;
->    206          }
->    207  
->    208          /* Remove any trailing newline */
->    209          len = strlen(xattr->name);
->    210          if (xattr->name[len-1] == '\n')
-> 
-> strlen() could be zero, leading to a read underflow here.
+Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The user can pass a zeroed buffer to memdup_user_nul() so we can't rely
+on "count" to test this.
 
-Thanks! ?Could you modify the maximum xattr size check (before this
-code snippet) to check for underflow?
-
-Mimi
-
-
-> 
->    211                  xattr->name[len-1] = '\0';
->    212  
->    213          if (strcmp(xattr->name, ".") == 0) {
->    214                  evm_xattrs_locked = 1;
->    215                  newattrs.ia_mode = S_IFREG | 0440;
->    216                  newattrs.ia_valid = ATTR_MODE;
->    217                  inode = evm_xattrs->d_inode;
->    218                  inode_lock(inode);
->    219                  err = simple_setattr(evm_xattrs, &newattrs);
->    220                  inode_unlock(inode);
->    221                  audit_log_format(ab, "locked");
->    222                  if (!err)
->    223                          err = count;
->    224                  goto out;
->    225          }
-> 
-> regards,
-> dan carpenter
-> 
-
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index a7a0a1acae99..94c739180a0b 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -207,7 +207,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+ 
+ 	/* Remove any trailing newline */
+ 	len = strlen(xattr->name);
+-	if (xattr->name[len-1] == '\n')
++	if (len && xattr->name[len-1] == '\n')
+ 		xattr->name[len-1] = '\0';
+ 
+ 	if (strcmp(xattr->name, ".") == 0) {
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
