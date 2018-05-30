@@ -1,63 +1,77 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 30 May 2018 12:28:14 -0400
-Subject: [GIT PULL] SELinux fixes for v4.17 (#2)
-Message-ID: <CAHC9VhT3tXt3PaUHtt9MmocVocXu7t3A-zey=UOVufi8vZ_=LA@mail.gmail.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Wed, 30 May 2018 16:34:49 -0400
+Subject: [PATCH V3 0/5] selinux:Significant reduce of preempt_disable holds
+In-Reply-To: <20180530141104.28569-1-peter.enderborg@sony.com>
+References: <20180530141104.28569-1-peter.enderborg@sony.com>
+Message-ID: <8bbb095e-31c3-0062-d17c-662e4832cc17@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
+On 05/30/2018 10:10 AM, Peter Enderborg wrote:
+> Holding the preempt_disable is very bad for low latency tasks
+> such as audio and therefore we need to break out the rule-set dependent
+> part from this disable. By using a RCU instead of rwlock we
+> have an efficient locking and less preemption interference.
+> 
+> Selinux uses a lot of read_locks. This patch replaces the rwlock
+> with RCU that does not hold preempt_disable.
+> 
+> Intel Xeon W3520 2.67 Ghz running FC27 with 4.15.0-rc9git (+measurement)
+> I get preempt_disable of about 1.2ms in security_compute_av().
+> With the patch I get 960us as the longest security_compute_av()
+> without preempt disabeld. There are very much noise in the measurement
+> but it is not likely a degrade.
+> 
+> And the preempt_disable times is also very dependent on the selinux
+> rule-set.
+> 
+> In security_get_user_sids() we have two nested for-loops and the
+> inner part calls sittab_context_to_sid() that calls
+> sidtab_search_context() that has a for loop() over a while() where
+> the loops is dependent on the rules.
+> 
+> On the test system the average lookup time is 60us and does
+> not change with the introduced RCU usage.
+> 
+> The boolean change becomes a lot more heavy with this patch,
+> but it is a very rare usage in compare with read only operations.
+> The lock held during a policydb_copy is about 1ms on a XEON.
 
-One more small fix for SELinux: a small string length fix found by
-KASAN.  I dislike sending patches this late in the release cycle, but
-this patch fixes a legitimate problem, is very small, limited in
-scope, and well understood.  There are two threads with more
-information on the problem, the latest is linked below:
+This has a very substantial performance impact on setsebool, e.g. time setsebool httpd_can_sendmail=1.
+That's because you are doing a full vmalloc();policydb_write();policydb_read();vfree() sequence on it.
+In comparison, KaiGai's old attempt to replace the policy rwlock with RCU only duplicated the conditional policydb state (via a cond_policydb_dup) that he introduced.  Is there a reason you couldn't use that approach?
 
-* https://marc.info/?t=152723737400001&r=1&w=2
+> 
+> To use RCU the structure of policydb has to be accesses through a pointer.
+> We need 5 patches to get there.
+>  
+> [PATCH V3 1/5 selinux-next] selinux: Make allocation atomic in policydb objects functions.
+> This patch change the allocation for policydb objects. They are in its own patch
+> to make the complicated part easier to read.
+> 
+> [PATCH V3 2/5 selinux-next] selinux: Introduce selinux_ruleset struct
+> This makes the access for the rule evaluation going though a single pointer.
+> 
+> [PATCH V3 3/5 selinux-next] selinux: sidtab_clone switch to use rwlock.
+> We need to make sidtabs copys so this patch change the locks to a rwlock
+> and create a copy function.
+> 
+> [PATCH V3 4/5 selinux-next] selinux: seqno separation
+> This patch adds separation of the read and write and uses
+> the pointer to switch rule set. It uses seqno for error handling
+> since there are a possibility to have multiple access.
+> 
+> [PATCH V3 5/5 selinux-next] selinux: Switch to rcu read locks for avc_compute
+> All the preparation is done so this patch do the change of locks to rcu.
+> 
+> History:
+> V1 rwsem
+> V2 did not handle all policydb objects, solved with the policydb_copy
+>    did not handle sidtab for booleans, I think this one does however
+>    shutdown is not used but not removed. 
+> 
+> 
 
-If you're hesitant to pull this into v4.17 at such a late stage, it
-probably isn't going to cause major problems as Stephen points out in
-the thread linked above:
-
- "Such a setxattr() call can only be performed by a process
-  with CAP_MAC_ADMIN that is also allowed mac_admin permission
-  in SELinux policy. Consequently, this is never possible on
-  Android (no process is allowed mac_admin permission, always
-  enforcing) and is only possible in Fedora/RHEL for a few
-  domains (if enforcing)."
-
-Thanks,
--Paul
-
---
-The following changes since commit 4152dc91b5932e7fe49a5afed62a068b2f31d196:
-
- selinux: correctly handle sa_family cases in selinux_sctp_bind_connect()
-   (2018-05-14 15:20:59 -0400)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20180530
-
-for you to fetch changes up to efe3de79e0b52ca281ef6691480c8c68c82a4657:
-
- selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
-   (2018-05-29 20:11:19 -0400)
-
-----------------------------------------------------------------
-selinux/stable-4.17 PR 20180530
-
-----------------------------------------------------------------
-Sachin Grover (1):
-     selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
-
-security/selinux/ss/services.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
-
--- 
-paul moore
-www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
