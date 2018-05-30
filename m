@@ -1,71 +1,42 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Wed, 30 May 2018 10:52:28 +0000
-Subject: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180530105034.GA14905@linux.intel.com>
-References: <20180516194600.28189-1-tomas.winkler@intel.com>
-	<20180522091732.GA5228@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
-	<20180523131616.GD363@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D8A1269@hasmsx109.ger.corp.intel.com>
-	<20180530105034.GA14905@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D940DC6@hasmsx108.ger.corp.intel.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 30 May 2018 14:01:12 +0300
+Subject: [PATCH] tpm: fix race condition in tpm_common_write()
+In-Reply-To: <fb9c3d0c-d6fe-25ee-6452-92ade053c75a@intel.com>
+References: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
+	<20180523132318.GE363@linux.intel.com>
+	<fb9c3d0c-d6fe-25ee-6452-92ade053c75a@intel.com>
+Message-ID: <20180530110112.GB14905@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, May 23, 2018 at 10:57:07AM -0700, Tadeusz Struk wrote:
+> On 05/23/2018 06:23 AM, Jarkko Sakkinen wrote:
+> > Ouch o_O Do you have a fixes tag for this one?
+> > 
 > 
-> On Wed, May 23, 2018 at 01:48:17PM +0000, Winkler, Tomas wrote:
-> >
-> > > On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
-> > > > >
-> > > > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
-> > > > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle()
-> > > wrappers
-> > > > > > to streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED
-> > > > > > flag
-> > > is
-> > > > > abused
-> > > > > > to resolve tpm spaces recursive calls to tpm_transmit().
-> > > > >
-> > > > > This looks good and all but I don't think we want to abuse
-> > > > > anything in the driver code, do we?
-> > > >
-> > > > It's not abuse just the flag UNLOCKED is not really named
-> > > > correctly I think this has to be backported so wanted to do less invasive
-> change.
-> > >
-> > > It should be renamed anyway and possible merge conflicts are not
-> > > hard to sort out in this change. Can you rename it as SPACE?
-> >
-> > Not sure, I believe UNLOCKED is still better name than SPACE, I'm not
-> > sure this is Do you also want to remove TPM_TRANSMIT_RAW?
-> > clk_enable is handling its own anti recursion counter 'data-
-> >clkrun_enabled'
-> > but it should be all handled under one flag I guess.
-> >
-> > > Right, and even without rename this will probably cause merge
-> > > conflicts at least in v4.4 an v4.9 since in-kernel RM landed in
-> > > v4.12, so not much gain not do the rename :-)
-> >
-> > I belive we should do minimal change and the big cleanup after that.
-> > Not sure, I believe UNLOCKED is still better name than SPACE even it wasn't
-> the original intention.
-> > No the SPACE is the issue, but any recursion call into tpm_transmit. A
-> > bigger change is needed and rename to SPACE would be just another
-> intermediat change.
-> >
-> > Please reconsider.
-> >
-> > Thanks
-> > Tomas
+> This one is quite tricky.
+> The original bug was introduced by abce9ac292e13 (tpm: Propagate error from tpm_transmit to fix a timeout hang)
+> and the code back then was in drivers/char/tpm/tpm-interface.c file
 > 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Then there were two other commits that moved the code around:
+> afdba32e2a9ea (tpm: Pull everything related to /dev/tpmX into tpm-dev.c)
+> which moved it from drivers/char/tpm/tpm-interface.c into drivers/char/tpm/tpm-dev.c
+> 
+> and last one, ecb38e2f521b0 (tpm: split out tpm-dev.c into tpm-dev.c and tpm-common-dev.c)
+> which moved it from drivers/char/tpm/tpm-dev.c into tpm-common-dev.c
+> 
+> I have no idea how to tag it. Maybe we can use:
+> Fixes: ecb38e2f521b0 ("tpm: split out tpm-dev.c into tpm-dev.c and tpm-common-dev.c")
+> 
+> And then it probably needs to be back ported manually all the way back to abce9ac292e13.
+> 
+> Thanks,
+> -- 
+> Tadeusz
 
+Thank you. I'll cc this to stable.
 
-Does it mean you're Okay with the patch now?
-Thanks
-Tomas
-
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
