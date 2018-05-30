@@ -1,174 +1,60 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 29 May 2018 19:25:02 -0400
-Subject: [PATCH v4 8/8] module: replace the existing LSM hook in
-	init_module
-In-Reply-To: <CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
-	<CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
-Message-ID: <1527636302.3534.46.camel@linux.vnet.ibm.com>
+From: sargun@sargun.me (Sargun Dhillon)
+Date: Tue, 29 May 2018 17:49:53 -0700
+Subject: [PATCH 1/2] security: Move LSM registration arguments to struct
+	lsm_info
+In-Reply-To: <adf91142-ebb0-b20f-6e18-ae6c5b9a7774@schaufler-ca.com>
+References: <20180517070052.GA22158@ircssh-2.c.rugged-nimbus-611.internal>
+	<alpine.LRH.2.21.1805300853590.14712@namei.org>
+	<adf91142-ebb0-b20f-6e18-ae6c5b9a7774@schaufler-ca.com>
+Message-ID: <CAMp4zn_b-vw8=9UAPeJUGB5gBJ2F=Uj9TZypC8uxt9VjSRrTRA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Kees,
+On Tue, May 29, 2018 at 4:12 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 5/29/2018 3:54 PM, James Morris wrote:
+> > On Thu, 17 May 2018, Sargun Dhillon wrote:
+> >
+> >>  struct security_hook_list {
+> >> -    struct hlist_node               list;
+> >> -    struct hlist_head               *head;
+> >> -    union security_list_options     hook;
+> >> -    char                            *lsm;
+> >> +    struct hlist_node                       list;
+> >> +    struct hlist_head                       *head;
+> >> +    const union security_list_options       hook;
+> >> +    struct lsm_info                         *info;
+> > Kees asked if this field should be const in response to your 01 May
+> > posting.  Please address this.
+> >
+> > Also, I'd love to see more folk review & ack these patches.
+>
+I'll wait for reviews to come in, and respin with this one change if
+the rest of the patchset gets an (N)Ack.
 
-Missing from this patch are the loadpin changes. ?Before including
-them in the next version of this patch, do you prefer separating the
-init_module from the finit_module support in loadpin_read_file() or
-keeping it as one function, like Paul for SELinux?
+> Unless there is serious interest in loadable security
+> module support there isn't a lot of value to be gained
+> with this patch set.
+No runtime memory allocation during security module loading?
 
-Mimi
 
-On Tue, 2018-05-29 at 18:39 -0400, Paul Moore wrote:
-> On Tue, May 29, 2018 at 2:02 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > Both the init_module and finit_module syscalls call either directly
-> > or indirectly the security_kernel_read_file LSM hook.  This patch
-> > replaces the direct call in init_module with a call to the new
-> > security_kernel_load_data hook and makes the corresponding changes in
-> > SELinux and IMA.
-> >
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > Cc: Jeff Vander Stoep <jeffv@google.com>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > ---
-> >  kernel/module.c                   |  2 +-
-> >  security/integrity/ima/ima_main.c | 24 ++++++++++--------------
-> >  security/selinux/hooks.c          | 26 ++++++++++++++++++++------
-> >  3 files changed, 31 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/kernel/module.c b/kernel/module.c
-> > index ce8066b88178..b97c642b5b4d 100644
-> > --- a/kernel/module.c
-> > +++ b/kernel/module.c
-> > @@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
-> >         if (info->len < sizeof(*(info->hdr)))
-> >                 return -ENOEXEC;
-> >
-> > -       err = security_kernel_read_file(NULL, READING_MODULE);
-> > +       err = security_kernel_load_data(LOADING_MODULE);
-> >         if (err)
-> >                 return err;
-> >
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index 3dae605a1604..0ff1d8152f6e 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -441,17 +441,6 @@ static int read_idmap[READING_MAX_ID] = {
-> >   */
-> >  int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
-> >  {
-> > -       bool sig_enforce = is_module_sig_enforced();
-> > -
-> > -       if (!file && read_id == READING_MODULE) {
-> > -               if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
-> > -                   (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> > -                       pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
-> > -                       return -EACCES; /* INTEGRITY_UNKNOWN */
-> > -               }
-> > -               return 0;       /* We rely on module signature checking */
-> > -       }
-> > -
-> >         if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
-> >                 if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-> >                     (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> > @@ -490,9 +479,6 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
-> >                 return 0;
-> >         }
-> >
-> > -       if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
-> > -               return 0;
-> > -
-> >         /* permit signed certs */
-> >         if (!file && read_id == READING_X509_CERTIFICATE)
-> >                 return 0;
-> > @@ -521,6 +507,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
-> >   */
-> >  int ima_load_data(enum kernel_load_data_id id)
-> >  {
-> > +       bool sig_enforce;
-> > +
-> >         if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
-> >                 return 0;
-> >
-> > @@ -536,6 +524,14 @@ int ima_load_data(enum kernel_load_data_id id)
-> >                         pr_err("Prevent firmware sysfs fallback loading.\n");
-> >                         return -EACCES; /* INTEGRITY_UNKNOWN */
-> >                 }
-> > +               break;
-> > +       case LOADING_MODULE:
-> > +               sig_enforce = is_module_sig_enforced();
-> > +
-> > +               if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
-> > +                       pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
-> > +                       return -EACCES; /* INTEGRITY_UNKNOWN */
-> > +               }
-> >         default:
-> >                 break;
-> >         }
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 02ebd1585eaf..e02186470fc5 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -4018,12 +4018,6 @@ static int selinux_kernel_module_from_file(struct file *file)
-> >         u32 sid = current_sid();
-> >         int rc;
-> >
-> > -       /* init_module */
-> > -       if (file == NULL)
-> > -               return avc_has_perm(&selinux_state,
-> > -                                   sid, sid, SECCLASS_SYSTEM,
-> > -                                       SYSTEM__MODULE_LOAD, NULL);
-> > -
-> >         /* finit_module */
-> >
-> >         ad.type = LSM_AUDIT_DATA_FILE;
-> > @@ -4043,6 +4037,25 @@ static int selinux_kernel_module_from_file(struct file *file)
-> >                                 SYSTEM__MODULE_LOAD, &ad);
-> >  }
-> >
-> > +static int selinux_kernel_load_data(enum kernel_load_data_id id)
-> > +{
-> > +       u32 sid;
-> > +       int rc = 0;
-> > +
-> > +       switch (id) {
-> > +       case LOADING_MODULE:
-> > +               sid = current_sid();
-> > +
-> > +               /* init_module */
-> > +               return avc_has_perm(&selinux_state, sid, sid, SECCLASS_SYSTEM,
-> > +                                   SYSTEM__MODULE_LOAD, NULL);
-> > +       default:
-> > +               break;
-> > +       }
-> > +
-> > +       return rc;
-> > +}
-> 
-> I'm not a fan of the duplication here.  If we must have a new LSM hook
-> for this, can we at least have it call
-> selinux_kernel_module_from_file() so we have all the kernel module
-> loading logic/controls in one function?  Yes, I understand there are
-> differences between init_module() and finit_module() but I like
-> handling them both in one function as we do today.
-> 
-> >  static int selinux_kernel_read_file(struct file *file,
-> >                                     enum kernel_read_file_id id)
-> >  {
-> > @@ -6950,6 +6963,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
-> >         LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
-> >         LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
-> >         LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
-> > +       LSM_HOOK_INIT(kernel_load_data, selinux_kernel_load_data),
-> >         LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
-> >         LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
-> >         LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
-> > --
-> > 2.7.5
-> >
-> 
+> I am officially agnostic on the topic.
+> I know that there has been significant resistance to the
+> facility in the past. I will put more effort into review
+> if [un]loadable modules have a future.
 
+For what it's worth, my most recent use case is systemd-in-containers.
+Today, systemd needs CAP_SYS_ADMIN in the userns it's running in --
+and that's alright. It makes doing a bunch of stuff in the container
+easier (like lifecycle management). I would like to ensure that it
+doesn't get passed on the systemd's child (general purpose units), as
+a matter of defense-in-depth. This would be easy enough to cook up as
+a minor LSM.
+
+Right now, I've got nothing as far as I can tell. I know we don't add
+infrastructure for out-of-tree use-cases, but what do you suggest as a
+way to keep up with all of the niche container security usecases like
+this?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
