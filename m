@@ -1,177 +1,59 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Tue, 29 May 2018 21:25:59 -0500
-Subject: [PATCH v4 8/8] module: replace the existing LSM hook in
-	init_module
-In-Reply-To: <CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
-	(Paul Moore's message of "Tue, 29 May 2018 18:39:54 -0400")
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
-	<CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
-Message-ID: <8736y9lw08.fsf@xmission.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 30 May 2018 13:50:34 +0300
+Subject: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D8A1269@hasmsx109.ger.corp.intel.com>
+References: <20180516194600.28189-1-tomas.winkler@intel.com>
+	<20180522091732.GA5228@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
+	<20180523131616.GD363@linux.intel.com>
+	<5B8DA87D05A7694D9FA63FD143655C1B9D8A1269@hasmsx109.ger.corp.intel.com>
+Message-ID: <20180530105034.GA14905@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Paul Moore <paul@paul-moore.com> writes:
+On Wed, May 23, 2018 at 01:48:17PM +0000, Winkler, Tomas wrote:
+> 
+> > On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
+> > > >
+> > > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
+> > > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle()
+> > wrappers
+> > > > > to streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag
+> > is
+> > > > abused
+> > > > > to resolve tpm spaces recursive calls to tpm_transmit().
+> > > >
+> > > > This looks good and all but I don't think we want to abuse anything
+> > > > in the driver code, do we?
+> > >
+> > > It's not abuse just the flag UNLOCKED is not really named correctly I
+> > > think this has to be backported so wanted to do less invasive change.
+> > 
+> > It should be renamed anyway and possible merge conflicts are not hard to
+> > sort out in this change. Can you rename it as SPACE?
+> 
+> Not sure, I believe UNLOCKED is still better name than SPACE, I'm not sure this is 
+> Do you also want to remove TPM_TRANSMIT_RAW? 
+> clk_enable is handling its own anti recursion counter 'data->clkrun_enabled' 
+> but it should be all handled under one flag I guess.
+> 
+> > Right, and even without rename this will probably cause merge conflicts at
+> > least in v4.4 an v4.9 since in-kernel RM landed in v4.12, so not much gain not
+> > do the rename :-)
+> 
+> I belive we should do minimal change and the big cleanup after that.
+> Not sure, I believe UNLOCKED is still better name than SPACE even it wasn't the original intention.  
+> No the SPACE is the issue, but any recursion call into tpm_transmit. A bigger change is needed
+> and rename to SPACE would be just another intermediat change.
+> 
+> Please reconsider.
+> 
+> Thanks
+> Tomas 
 
-> On Tue, May 29, 2018 at 2:02 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->> Both the init_module and finit_module syscalls call either directly
->> or indirectly the security_kernel_read_file LSM hook.  This patch
->> replaces the direct call in init_module with a call to the new
->> security_kernel_load_data hook and makes the corresponding changes in
->> SELinux and IMA.
->>
->> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> Cc: Jeff Vander Stoep <jeffv@google.com>
->> Cc: Paul Moore <paul@paul-moore.com>
->> Cc: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  kernel/module.c                   |  2 +-
->>  security/integrity/ima/ima_main.c | 24 ++++++++++--------------
->>  security/selinux/hooks.c          | 26 ++++++++++++++++++++------
->>  3 files changed, 31 insertions(+), 21 deletions(-)
->>
->> diff --git a/kernel/module.c b/kernel/module.c
->> index ce8066b88178..b97c642b5b4d 100644
->> --- a/kernel/module.c
->> +++ b/kernel/module.c
->> @@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
->>         if (info->len < sizeof(*(info->hdr)))
->>                 return -ENOEXEC;
->>
->> -       err = security_kernel_read_file(NULL, READING_MODULE);
->> +       err = security_kernel_load_data(LOADING_MODULE);
->>         if (err)
->>                 return err;
->>
->> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
->> index 3dae605a1604..0ff1d8152f6e 100644
->> --- a/security/integrity/ima/ima_main.c
->> +++ b/security/integrity/ima/ima_main.c
->> @@ -441,17 +441,6 @@ static int read_idmap[READING_MAX_ID] = {
->>   */
->>  int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
->>  {
->> -       bool sig_enforce = is_module_sig_enforced();
->> -
->> -       if (!file && read_id == READING_MODULE) {
->> -               if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
->> -                   (ima_appraise & IMA_APPRAISE_ENFORCE)) {
->> -                       pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
->> -                       return -EACCES; /* INTEGRITY_UNKNOWN */
->> -               }
->> -               return 0;       /* We rely on module signature checking */
->> -       }
->> -
->>         if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
->>                 if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
->>                     (ima_appraise & IMA_APPRAISE_ENFORCE)) {
->> @@ -490,9 +479,6 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
->>                 return 0;
->>         }
->>
->> -       if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
->> -               return 0;
->> -
->>         /* permit signed certs */
->>         if (!file && read_id == READING_X509_CERTIFICATE)
->>                 return 0;
->> @@ -521,6 +507,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
->>   */
->>  int ima_load_data(enum kernel_load_data_id id)
->>  {
->> +       bool sig_enforce;
->> +
->>         if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
->>                 return 0;
->>
->> @@ -536,6 +524,14 @@ int ima_load_data(enum kernel_load_data_id id)
->>                         pr_err("Prevent firmware sysfs fallback loading.\n");
->>                         return -EACCES; /* INTEGRITY_UNKNOWN */
->>                 }
->> +               break;
->> +       case LOADING_MODULE:
->> +               sig_enforce = is_module_sig_enforced();
->> +
->> +               if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
->> +                       pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
->> +                       return -EACCES; /* INTEGRITY_UNKNOWN */
->> +               }
->>         default:
->>                 break;
->>         }
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 02ebd1585eaf..e02186470fc5 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -4018,12 +4018,6 @@ static int selinux_kernel_module_from_file(struct file *file)
->>         u32 sid = current_sid();
->>         int rc;
->>
->> -       /* init_module */
->> -       if (file == NULL)
->> -               return avc_has_perm(&selinux_state,
->> -                                   sid, sid, SECCLASS_SYSTEM,
->> -                                       SYSTEM__MODULE_LOAD, NULL);
->> -
->>         /* finit_module */
->>
->>         ad.type = LSM_AUDIT_DATA_FILE;
->> @@ -4043,6 +4037,25 @@ static int selinux_kernel_module_from_file(struct file *file)
->>                                 SYSTEM__MODULE_LOAD, &ad);
->>  }
->>
->> +static int selinux_kernel_load_data(enum kernel_load_data_id id)
->> +{
->> +       u32 sid;
->> +       int rc = 0;
->> +
->> +       switch (id) {
->> +       case LOADING_MODULE:
->> +               sid = current_sid();
->> +
->> +               /* init_module */
->> +               return avc_has_perm(&selinux_state, sid, sid, SECCLASS_SYSTEM,
->> +                                   SYSTEM__MODULE_LOAD, NULL);
->> +       default:
->> +               break;
->> +       }
->> +
->> +       return rc;
->> +}
->
-> I'm not a fan of the duplication here.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-There are a couple of fundamental and strong differences here.
-
-selinux_kernel_load_data only has the current_sid to work with.
-
-selinux_module_data_from_file is all about the logic of how
-to get fsec or isec from the file and from the inode.
-
-For selinux and for every other lsm that uses the hooks that difference
-of whether or not you have a file leads to different logic and different
-code.  There is no meaningful sharing between the two cases.
-
-In selinux all of the meaningful sharing happens with calls to
-avc_has_perm(... SYSTEM__MODULE_LOAD, ...);
-
-So as far as I can see talking about duplication is unfounded there is
-none.
-
-> If we must have a new LSM hook
-> for this, can we at least have it call
-> selinux_kernel_module_from_file() so we have all the kernel module
-> loading logic/controls in one function?  Yes, I understand there are
-> differences between init_module() and finit_module() but I like
-> handling them both in one function as we do today.
-
-Except even today the actual logic is not shared in a single function.
-The only thing that happens in a single function is a switch statement
-that calls different functions.
-
-So what is the point of having a ``common'' function?
-
-Eric
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
