@@ -1,37 +1,67 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 30 May 2018 14:01:45 +0300
-Subject: [PATCH] tpm: fix race condition in tpm_common_write()
-In-Reply-To: <20180523194115.GC8705@ziepe.ca>
-References: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
-	<20180523132318.GE363@linux.intel.com>
-	<fb9c3d0c-d6fe-25ee-6452-92ade053c75a@intel.com>
-	<20180523194115.GC8705@ziepe.ca>
-Message-ID: <20180530110145.GC14905@linux.intel.com>
+From: peter.enderborg@sony.com (Peter Enderborg)
+Date: Wed, 30 May 2018 16:10:59 +0200
+Subject: [PATCH V3 0/5] selinux:Significant reduce of preempt_disable holds
+Message-ID: <20180530141104.28569-1-peter.enderborg@sony.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, May 23, 2018 at 01:41:15PM -0600, Jason Gunthorpe wrote:
-> On Wed, May 23, 2018 at 10:57:07AM -0700, Tadeusz Struk wrote:
-> > On 05/23/2018 06:23 AM, Jarkko Sakkinen wrote:
-> > > Ouch o_O Do you have a fixes tag for this one?
-> > > 
-> > 
-> > This one is quite tricky.
-> > The original bug was introduced by abce9ac292e13 (tpm: Propagate error from tpm_transmit to fix a timeout hang)
-> > and the code back then was in drivers/char/tpm/tpm-interface.c file
-> 
-> No, it has been wrong since before git history started, so just use
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> 
-> All the other commits you listed are just moving the bad code around
-> to new files.
-> 
-> Jason
+Holding the preempt_disable is very bad for low latency tasks
+such as audio and therefore we need to break out the rule-set dependent
+part from this disable. By using a RCU instead of rwlock we
+have an efficient locking and less preemption interference.
 
-OK, thank you Jason. I'll use that.
+Selinux uses a lot of read_locks. This patch replaces the rwlock
+with RCU that does not hold preempt_disable.
 
-/Jarkko
+Intel Xeon W3520 2.67 Ghz running FC27 with 4.15.0-rc9git (+measurement)
+I get preempt_disable of about 1.2ms in security_compute_av().
+With the patch I get 960us as the longest security_compute_av()
+without preempt disabeld. There are very much noise in the measurement
+but it is not likely a degrade.
+
+And the preempt_disable times is also very dependent on the selinux
+rule-set.
+
+In security_get_user_sids() we have two nested for-loops and the
+inner part calls sittab_context_to_sid() that calls
+sidtab_search_context() that has a for loop() over a while() where
+the loops is dependent on the rules.
+
+On the test system the average lookup time is 60us and does
+not change with the introduced RCU usage.
+
+The boolean change becomes a lot more heavy with this patch,
+but it is a very rare usage in compare with read only operations.
+The lock held during a policydb_copy is about 1ms on a XEON.
+
+To use RCU the structure of policydb has to be accesses through a pointer.
+We need 5 patches to get there.
+ 
+[PATCH V3 1/5 selinux-next] selinux: Make allocation atomic in policydb objects functions.
+This patch change the allocation for policydb objects. They are in its own patch
+to make the complicated part easier to read.
+
+[PATCH V3 2/5 selinux-next] selinux: Introduce selinux_ruleset struct
+This makes the access for the rule evaluation going though a single pointer.
+
+[PATCH V3 3/5 selinux-next] selinux: sidtab_clone switch to use rwlock.
+We need to make sidtabs copys so this patch change the locks to a rwlock
+and create a copy function.
+
+[PATCH V3 4/5 selinux-next] selinux: seqno separation
+This patch adds separation of the read and write and uses
+the pointer to switch rule set. It uses seqno for error handling
+since there are a possibility to have multiple access.
+
+[PATCH V3 5/5 selinux-next] selinux: Switch to rcu read locks for avc_compute
+All the preparation is done so this patch do the change of locks to rcu.
+
+History:
+V1 rwsem
+V2 did not handle all policydb objects, solved with the policydb_copy
+   did not handle sidtab for booleans, I think this one does however
+   shutdown is not used but not removed. 
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
