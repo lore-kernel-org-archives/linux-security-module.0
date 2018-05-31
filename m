@@ -1,45 +1,41 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 31 May 2018 11:00:22 -0400
-Subject: [PATCH][next] EVM: fix memory leak of temporary buffer 'temp'
-In-Reply-To: <20180527221502.25073-1-colin.king@canonical.com>
-References: <20180527221502.25073-1-colin.king@canonical.com>
-Message-ID: <1527778822.3427.13.camel@linux.vnet.ibm.com>
+Date: Thu, 31 May 2018 11:00:39 -0400
+Subject: [PATCH] EVM: prevent array underflow in evm_write_xattrs()
+In-Reply-To: <20180529131128.3rkzzv66uy6h5ts7@kili.mountain>
+References: <20180529131128.3rkzzv66uy6h5ts7@kili.mountain>
+Message-ID: <1527778839.3427.14.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, 2018-05-27 at 23:15 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The allocation of 'temp' is not kfree'd and hence there is a memory
-> leak on each call of evm_read_xattrs.  Fix this by kfree'ing it
-> after copying data from it back to the user space buffer 'buf'.
-> 
-> Detected by CoverityScan, CID#1469386 ("Resource Leak")
+On Tue, 2018-05-29 at 16:11 +0300, Dan Carpenter wrote:
+> If the user sets xattr->name[0] to NUL then we would read one character
+> before the start of the array.  This bug seems harmless as far as I can
+> see but perhaps it would trigger a warning in KASAN.
 > 
 > Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, this patch and "EVM: Fix null dereference on xattr when xattr
-fails to allocate" are queued in the next-integrity branch.
+Thanks, this patch is now queued in the next-integrity branch.
 
 Mimi
 
 > ---
->  security/integrity/evm/evm_secfs.c | 2 ++
->  1 file changed, 2 insertions(+)
+> The user can pass a zeroed buffer to memdup_user_nul() so we can't rely
+> on "count" to test this.
 > 
 > diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index a7a0a1acae99..fb8bc950aceb 100644
+> index a7a0a1acae99..94c739180a0b 100644
 > --- a/security/integrity/evm/evm_secfs.c
 > +++ b/security/integrity/evm/evm_secfs.c
-> @@ -158,6 +158,8 @@ static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
->  	mutex_unlock(&xattr_list_mutex);
->  	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
+> @@ -207,7 +207,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
 > 
-> +	kfree(temp);
-> +
->  	return rc;
->  }
+>  	/* Remove any trailing newline */
+>  	len = strlen(xattr->name);
+> -	if (xattr->name[len-1] == '\n')
+> +	if (len && xattr->name[len-1] == '\n')
+>  		xattr->name[len-1] = '\0';
+> 
+>  	if (strcmp(xattr->name, ".") == 0) {
 > 
 
 --
