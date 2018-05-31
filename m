@@ -1,175 +1,100 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 31 May 2018 11:23:46 -0400
-Subject: [PATCH v4a 8/8] module: replace the existing LSM hook in init_module
-In-Reply-To: <CAHC9VhQQX-JAnV-6jEOsug-6siyO9mrNa=rYK9Whg-MYcfHxgA@mail.gmail.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
-	<CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
-	<1527635645.3534.39.camel@linux.vnet.ibm.com>
-	<CAHC9VhQQX-JAnV-6jEOsug-6siyO9mrNa=rYK9Whg-MYcfHxgA@mail.gmail.com>
-Message-ID: <1527780226.3427.20.camel@linux.vnet.ibm.com>
+From: tj@kernel.org (Tejun Heo)
+Date: Thu, 31 May 2018 08:39:43 -0700
+Subject: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
+	kernfs_security_xattr_set
+In-Reply-To: <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
+References: <CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcas1p2.samsung.com>
+	<1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
+Message-ID: <20180531153943.GR1351649@devbig577.frc2.facebook.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Both the init_module and finit_module syscalls call either directly
-or indirectly the security_kernel_read_file LSM hook.  This patch
-replaces the direct call in init_module with a call to the new
-security_kernel_load_data hook and makes the corresponding changes
-in SELinux, LoadPin, and IMA.
+(cc'ing more security folks and copying whole body)
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Jeff Vander Stoep <jeffv@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Kees Cook <keescook@chromium.org>
+So, I'm sure the patch fixes the memory leak but API wise it looks
+super confusing.  Can security folks chime in here?  Is this the right
+fix?
 
----
-Changelog:
-- For SELinux, have both the security_kernel_read_file and
-security_kernel_load_data LSM hooks call selinux_kernel_read_file().
-- LoadPin: replace existing init_module LSM hook support with
-new security_kernel_load_data hook.
+Thanks.
 
- kernel/module.c                   |  2 +-
- security/integrity/ima/ima_main.c | 24 ++++++++++--------------
- security/loadpin/loadpin.c        | 15 +++++++++++++++
- security/selinux/hooks.c          | 15 +++++++++++++++
- 4 files changed, 41 insertions(+), 15 deletions(-)
+On Thu, May 31, 2018 at 02:58:31PM +0530, CHANDAN VN wrote:
+> From: "sireesha.t" <sireesha.t@samsung.com>
+> 
+> Leak is caused because smack_inode_getsecurity() is allocating memory
+> using kstrdup(). Though the security_release_secctx() is called, it
+> would not free the allocated memory. Calling security_release_secctx is
+> not relevant for this scenario as inode_getsecurity() does not provide a
+> "secctx".
+> 
+> Similar fix has been mainlined:
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?id=57e7ba04d422c3d41c8426380303ec9b7533ded9
+> 
+> The fix is to replace the security_release_secctx() with a kfree()
+> 
+> Below is the KMEMLEAK dump:
+> unreferenced object 0xffffffc025e11c80 (size 64):
+>   comm "systemd-tmpfile", pid 2452, jiffies 4294894464 (age 235587.492s)
+>   hex dump (first 32 bytes):
+>     53 79 73 74 65 6d 3a 3a 53 68 61 72 65 64 00 00  System::Shared..
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<ffffff80081be770>] __save_stack_trace+0x28/0x34
+>     [<ffffff80081bedb8>] create_object+0x130/0x25c
+>     [<ffffff80088c82f8>] kmemleak_alloc+0x30/0x5c
+>     [<ffffff80081b3ef0>] __kmalloc_track_caller+0x1cc/0x2a8
+>     [<ffffff800818673c>] kstrdup+0x3c/0x6c
+>     [<ffffff80082d78b0>] smack_inode_getsecurity+0xcc/0xec
+>     [<ffffff80082d78f4>] smack_inode_getsecctx+0x24/0x44
+>     [<ffffff80082d5ea0>] security_inode_getsecctx+0x50/0x70
+>     [<ffffff800823bbcc>] kernfs_security_xattr_set+0x74/0xe0
+>     [<ffffff80081eafec>] __vfs_setxattr+0x74/0x90
+>     [<ffffff80081eb088>] __vfs_setxattr_noperm+0x80/0x1ac
+>     [<ffffff80081eb238>] vfs_setxattr+0x84/0xac
+>     [<ffffff80081eb374>] setxattr+0x114/0x178
+>     [<ffffff80081eb44c>] path_setxattr+0x74/0xb8
+>     [<ffffff80081ebdcc>] SyS_lsetxattr+0x10/0x1c
+>     [<ffffff800808310c>] __sys_trace_return+0x0/0x4
+> 
+> Signed-off-by: sireesha.t <sireesha.t@samsung.com>
+> Signed-off-by: CHANDAN VN <chandan.vn@samsung.com>
+> ---
+>  fs/kernfs/inode.c | 3 ++-
+>  fs/nfsd/nfs4xdr.c | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+> index a343039..53befb8 100644
+> --- a/fs/kernfs/inode.c
+> +++ b/fs/kernfs/inode.c
+> @@ -369,7 +369,8 @@ static int kernfs_security_xattr_set(const struct xattr_handler *handler,
+>  	mutex_unlock(&kernfs_mutex);
+>  
+>  	if (secdata)
+> -		security_release_secctx(secdata, secdata_len);
+> +		kfree(secdata);
+> +
+>  	return error;
+>  }
+>  
+> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> index aaa88c1..1e0dbe9 100644
+> --- a/fs/nfsd/nfs4xdr.c
+> +++ b/fs/nfsd/nfs4xdr.c
+> @@ -2911,7 +2911,7 @@ static int get_parent_attributes(struct svc_export *exp, struct kstat *stat)
+>  out:
+>  #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
+>  	if (context)
+> -		security_release_secctx(context, contextlen);
+> +		kfree(context);
+>  #endif /* CONFIG_NFSD_V4_SECURITY_LABEL */
+>  	kfree(acl);
+>  	if (tempfh) {
+> -- 
+> 1.9.1
+> 
 
-diff --git a/kernel/module.c b/kernel/module.c
-index ce8066b88178..b97c642b5b4d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
- 	if (info->len < sizeof(*(info->hdr)))
- 		return -ENOEXEC;
- 
--	err = security_kernel_read_file(NULL, READING_MODULE);
-+	err = security_kernel_load_data(LOADING_MODULE);
- 	if (err)
- 		return err;
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 5a7696152982..cd33a2eff496 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -438,17 +438,6 @@ static int read_idmap[READING_MAX_ID] = {
-  */
- int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- {
--	bool sig_enforce = is_module_sig_enforced();
--
--	if (!file && read_id == READING_MODULE) {
--		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
--		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
--			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
--			return -EACCES;	/* INTEGRITY_UNKNOWN */
--		}
--		return 0;	/* We rely on module signature checking */
--	}
--
- 	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
- 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
- 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-@@ -487,9 +476,6 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 		return 0;
- 	}
- 
--	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
--		return 0;
--
- 	/* permit signed certs */
- 	if (!file && read_id == READING_X509_CERTIFICATE)
- 		return 0;
-@@ -518,6 +504,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
-  */
- int ima_load_data(enum kernel_load_data_id id)
- {
-+	bool sig_enforce;
-+
- 	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
- 		return 0;
- 
-@@ -533,6 +521,14 @@ int ima_load_data(enum kernel_load_data_id id)
- 			pr_err("Prevent firmware sysfs fallback loading.\n");
- 			return -EACCES;	/* INTEGRITY_UNKNOWN */
- 		}
-+		break;
-+	case LOADING_MODULE:
-+		sig_enforce = is_module_sig_enforced();
-+
-+		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
-+			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
-+			return -EACCES;	/* INTEGRITY_UNKNOWN */
-+		}
- 	default:
- 		break;
- 	}
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 5fa191252c8f..a9c07bfbc338 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -173,9 +173,24 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
- 	return 0;
- }
- 
-+static int loadpin_load_data(enum kernel_load_data_id id)
-+{
-+	int rc = 0;
-+
-+	switch (id) {
-+	case LOADING_MODULE:
-+		rc = loadpin_read_file(NULL, READING_MODULE);
-+	default:
-+		break;
-+	}
-+
-+	return rc;
-+}
-+
- static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
- 	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
-+	LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
- };
- 
- void __init loadpin_add_hooks(void)
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 02ebd1585eaf..475aed9ee2c7 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4059,6 +4059,20 @@ static int selinux_kernel_read_file(struct file *file,
- 	return rc;
- }
- 
-+static int selinux_kernel_load_data(enum kernel_load_data_id id)
-+{
-+	int rc = 0;
-+
-+	switch (id) {
-+	case LOADING_MODULE:
-+		rc = selinux_kernel_module_from_file(NULL);
-+	default:
-+		break;
-+	}
-+
-+	return rc;
-+}
-+
- static int selinux_task_setpgid(struct task_struct *p, pid_t pgid)
- {
- 	return avc_has_perm(&selinux_state,
-@@ -6950,6 +6964,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
- 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
- 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
-+	LSM_HOOK_INIT(kernel_load_data, selinux_kernel_load_data),
- 	LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
- 	LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
- 	LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
 -- 
-2.7.5
-
+tejun
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
