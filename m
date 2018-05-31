@@ -1,42 +1,63 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Thu, 31 May 2018 11:00:39 -0400
-Subject: [PATCH] EVM: prevent array underflow in evm_write_xattrs()
-In-Reply-To: <20180529131128.3rkzzv66uy6h5ts7@kili.mountain>
-References: <20180529131128.3rkzzv66uy6h5ts7@kili.mountain>
-Message-ID: <1527778839.3427.14.camel@linux.vnet.ibm.com>
+Date: Thu, 31 May 2018 11:02:38 -0400
+Subject: [PATCH v2 13/21] ima: use match_string() helper
+In-Reply-To: <1527765086-19873-14-git-send-email-xieyisheng1@huawei.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+	<1527765086-19873-14-git-send-email-xieyisheng1@huawei.com>
+Message-ID: <1527778958.3427.16.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-05-29 at 16:11 +0300, Dan Carpenter wrote:
-> If the user sets xattr->name[0] to NUL then we would read one character
-> before the start of the array.  This bug seems harmless as far as I can
-> see but perhaps it would trigger a warning in KASAN.
+On Thu, 2018-05-31 at 19:11 +0800, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used instead of open coded variant.
 > 
-> Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-integrity at vger.kernel.org
+> Cc: linux-security-module at vger.kernel.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+
+In the future, the patch's author Signed-off-by is always first.
 
 Thanks, this patch is now queued in the next-integrity branch.
 
 Mimi
 
 > ---
-> The user can pass a zeroed buffer to memdup_user_nul() so we can't rely
-> on "count" to test this.
+> v2:
+>  - add Reviewed-by tag.
 > 
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index a7a0a1acae99..94c739180a0b 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -207,7 +207,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+>  security/integrity/ima/ima_main.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
 > 
->  	/* Remove any trailing newline */
->  	len = strlen(xattr->name);
-> -	if (xattr->name[len-1] == '\n')
-> +	if (len && xattr->name[len-1] == '\n')
->  		xattr->name[len-1] = '\0';
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 74d0bd7..f807093 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -61,14 +61,11 @@ static int __init hash_setup(char *str)
+>  		goto out;
+>  	}
 > 
->  	if (strcmp(xattr->name, ".") == 0) {
-> 
+> -	for (i = 0; i < HASH_ALGO__LAST; i++) {
+> -		if (strcmp(str, hash_algo_name[i]) == 0) {
+> -			ima_hash_algo = i;
+> -			break;
+> -		}
+> -	}
+> -	if (i == HASH_ALGO__LAST)
+> +	i = match_string(hash_algo_name, HASH_ALGO__LAST, str);
+> +	if (i < 0)
+>  		return 1;
+> +
+> +	ima_hash_algo = i;
+>  out:
+>  	hash_setup_done = 1;
+>  	return 1;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
