@@ -1,42 +1,46 @@
-From: andy.shevchenko@gmail.com (Andy Shevchenko)
-Date: Fri, 1 Jun 2018 13:55:42 +0300
-Subject: [PATCH v2 13/21] ima: use match_string() helper
-In-Reply-To: <1527778958.3427.16.camel@linux.vnet.ibm.com>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
-	<1527765086-19873-14-git-send-email-xieyisheng1@huawei.com>
-	<1527778958.3427.16.camel@linux.vnet.ibm.com>
-Message-ID: <CAHp75Vc8Bf-aWkuZ_uzdzp5fRQDWLNSansjCsx8MOTCk21OVmg@mail.gmail.com>
+From: peter.enderborg@sony.com (peter enderborg)
+Date: Fri, 1 Jun 2018 13:18:18 +0200
+Subject: [PATCH V3 0/5] selinux:Significant reduce of preempt_disable holds
+In-Reply-To: <9332801c-6102-2486-ab60-b48bb38ae207@tycho.nsa.gov>
+References: <20180530141104.28569-1-peter.enderborg@sony.com>
+	<8bbb095e-31c3-0062-d17c-662e4832cc17@tycho.nsa.gov>
+	<1cf240b9-57ee-eee3-228f-5ad4a3a39e57@sony.com>
+	<9332801c-6102-2486-ab60-b48bb38ae207@tycho.nsa.gov>
+Message-ID: <4838bb4f-34bc-407e-343b-113d6bef4be0@sony.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, May 31, 2018 at 6:02 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Thu, 2018-05-31 at 19:11 +0800, Yisheng Xie wrote:
->> match_string() returns the index of an array for a matching string,
->> which can be used instead of open coded variant.
->>
->> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
->> Cc: James Morris <jmorris@namei.org>
->> Cc: "Serge E. Hallyn" <serge@hallyn.com>
->> Cc: linux-integrity at vger.kernel.org
->> Cc: linux-security-module at vger.kernel.org
->> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+On 05/31/2018 02:42 PM, Stephen Smalley wrote:
+> On 05/31/2018 05:04 AM, peter enderborg wrote:
+>> On 05/30/2018 10:34 PM, Stephen Smalley wrote:
+>>> On 05/30/2018 10:10 AM, Peter Enderborg wrote:
+>>>> The boolean change becomes a lot more heavy with this patch,
+>>>> but it is a very rare usage in compare with read only operations.
+>>>> The lock held during a policydb_copy is about 1ms on a XEON.
+>>> This has a very substantial performance impact on setsebool, e.g. time setsebool httpd_can_sendmail=1.
+>>> That's because you are doing a full vmalloc();policydb_write();policydb_read();vfree() sequence on it.
+>>> In comparison, KaiGai's old attempt to replace the policy rwlock with RCU only duplicated the conditional policydb state (via a cond_policydb_dup) that he introduced.  Is there a reason you couldn't use that approach?
+>> That one did not make it, so I went for a other path. Make it simple, using the same serialisation that exist. That also make it easier to maintain.
+>> We do not? use the booleans in android since they are not allowed so im not aware of any use case where this administrative function are
+>> used in such frequent manner that it would have an impact. And it must be some other large overhead with interprocess communication and
+>> a multiple writes to sysfs during a boolean settings?? However my concern is/was memory pressure, setting booleans will generate pressure
+>> with lot of atomic allocation and large vmallocs.
+> Yes, that is also a concern.  I would prefer to only duplicate the conditional policydb state as in KaiGai's patch.
+> Keeping temporary setting of booleans lightweight is desirable for other use cases than Android.
 >
-> In the future, the patch's author Signed-off-by is always first.
+> I'm also concerned by the implications of switching all of the allocations to atomic.  KaiGai's patch did not take that approach either, and it obviously could make policy reload more prone to transient failures.
+
+It maybe not needed atomic at the time. But the duplication holds a rcu_read_lock so it need to be atomic now.
+
 >
-> Thanks, this patch is now queued in the next-integrity branch.
+>  But my goal is the fast path for real time critical functions such as audio, and it will be a cost for
+>> administrative tasks. On the xeon it takes about ~98 ms to run the security_set_bools compared to about ~8 ms without the overhead
+>> of copying the policydb.? About ~6 ms is rcu sync and ~8 ms is the same as the original update of selinux statuses, and about ~25 ms
+>> is policydb_destroy() of the old copy.
+>
+>
+>
 
-Hmm... It's interesting since git commit -s checks for author's SoB as
-a _last_ in the bunch.
-
-Is it configurable?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
