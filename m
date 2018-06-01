@@ -1,35 +1,31 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 1 May 2018 07:16:43 +1000 (AEST)
-Subject: [PATCH v7 0/6] Safe LSM (un)loading, and immutable hooks
-In-Reply-To: <CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
-References: <CAMp4zn85hvdT2b0qsKWqxyC-5m=Y414akM1wjVH5qrZpgLE-bw@mail.gmail.com>
-	<CAMp4zn-Y333bSX2EX-5M+-Mu1m9EeeAP203v=HJOFLPVmoUpNA@mail.gmail.com>
-	<201804272225.DAC82348.OFtSVOJOHLFMQF@I-love.SAKURA.ne.jp>
-	<CAMp4zn-9UdDNzJJhz1=kGp1=4kLXk=v8TVwWhpyNQVyyo=Xr6w@mail.gmail.com>
-	<a27ccccf-7436-5049-8554-79638d3bdbb2@schaufler-ca.com>
-	<201804292049.CJG18734.FJMOOHVOFFQtSL@I-love.SAKURA.ne.jp>
-	<0cf314e6-af7d-7e93-4249-944431202327@schaufler-ca.com>
-	<CAMp4zn9Mfm6Spq1S+u-ny+Sf8Umn29+SWTWLbOrMm7_PPfXeTw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1805010712570.21544@namei.org>
+From: dan.carpenter@oracle.com (Dan Carpenter)
+Date: Fri, 1 Jun 2018 11:00:05 +0300
+Subject: [PATCH] EVM: unlock on error path in evm_read_xattrs()
+Message-ID: <20180601075946.wpyly2mgmaynfm4c@kili.mountain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 30 Apr 2018, Sargun Dhillon wrote:
+We need to unlock before returning on this error path.
 
-> I guess I'm just a little bit frustrated, because, in my mind, some of
-> my patches provide immediate value, and are ready to be reviewed, and
-> or respun.
+Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'm not seeing much value in this functionality, given that SELinux is the 
-only unloadable LSM, and that is really just an historical workaround 
-which may be normalized at some point.
-
-Patch 1 may be useful on its own.
-
--- 
-James Morris
-<jmorris@namei.org>
-
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index a7a0a1acae99..6d3b34ae8499 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -147,8 +147,10 @@ static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
+ 		size += strlen(xattr->name) + 1;
+ 
+ 	temp = kmalloc(size + 1, GFP_KERNEL);
+-	if (!temp)
++	if (!temp) {
++		mutex_unlock(&xattr_list_mutex);
+ 		return -ENOMEM;
++	}
+ 
+ 	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
+ 		sprintf(temp + offset, "%s\n", xattr->name);
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
