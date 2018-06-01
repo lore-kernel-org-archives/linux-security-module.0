@@ -1,47 +1,86 @@
-From: peter.enderborg@sony.com (peter enderborg)
-Date: Fri, 1 Jun 2018 13:18:18 +0200
-Subject: [PATCH V3 0/5] selinux:Significant reduce of preempt_disable holds
-In-Reply-To: <9332801c-6102-2486-ab60-b48bb38ae207@tycho.nsa.gov>
-References: <20180530141104.28569-1-peter.enderborg@sony.com>
-	<8bbb095e-31c3-0062-d17c-662e4832cc17@tycho.nsa.gov>
-	<1cf240b9-57ee-eee3-228f-5ad4a3a39e57@sony.com>
-	<9332801c-6102-2486-ab60-b48bb38ae207@tycho.nsa.gov>
-Message-ID: <4838bb4f-34bc-407e-343b-113d6bef4be0@sony.com>
+From: lkp@intel.com (kbuild test robot)
+Date: Fri, 1 Jun 2018 21:48:23 +0800
+Subject: [PATCH V3 2/5 selinux-next] selinux: Introduce selinux_ruleset
+	struct
+In-Reply-To: <20180530141104.28569-3-peter.enderborg@sony.com>
+References: <20180530141104.28569-3-peter.enderborg@sony.com>
+Message-ID: <201806012133.FLgLxXv3%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 05/31/2018 02:42 PM, Stephen Smalley wrote:
-> On 05/31/2018 05:04 AM, peter enderborg wrote:
->> On 05/30/2018 10:34 PM, Stephen Smalley wrote:
->>> On 05/30/2018 10:10 AM, Peter Enderborg wrote:
->>>> The boolean change becomes a lot more heavy with this patch,
->>>> but it is a very rare usage in compare with read only operations.
->>>> The lock held during a policydb_copy is about 1ms on a XEON.
->>> This has a very substantial performance impact on setsebool, e.g. time setsebool httpd_can_sendmail=1.
->>> That's because you are doing a full vmalloc();policydb_write();policydb_read();vfree() sequence on it.
->>> In comparison, KaiGai's old attempt to replace the policy rwlock with RCU only duplicated the conditional policydb state (via a cond_policydb_dup) that he introduced.  Is there a reason you couldn't use that approach?
->> That one did not make it, so I went for a other path. Make it simple, using the same serialisation that exist. That also make it easier to maintain.
->> We do not? use the booleans in android since they are not allowed so im not aware of any use case where this administrative function are
->> used in such frequent manner that it would have an impact. And it must be some other large overhead with interprocess communication and
->> a multiple writes to sysfs during a boolean settings?? However my concern is/was memory pressure, setting booleans will generate pressure
->> with lot of atomic allocation and large vmallocs.
-> Yes, that is also a concern.  I would prefer to only duplicate the conditional policydb state as in KaiGai's patch.
-> Keeping temporary setting of booleans lightweight is desirable for other use cases than Android.
->
-> I'm also concerned by the implications of switching all of the allocations to atomic.  KaiGai's patch did not take that approach either, and it obviously could make policy reload more prone to transient failures.
+Hi Peter,
 
-It maybe not needed atomic at the time. But the duplication holds a rcu_read_lock so it need to be atomic now.
+Thank you for the patch! Perhaps something to improve:
 
->
->  But my goal is the fast path for real time critical functions such as audio, and it will be a cost for
->> administrative tasks. On the xeon it takes about ~98 ms to run the security_set_bools compared to about ~8 ms without the overhead
->> of copying the policydb.? About ~6 ms is rcu sync and ~8 ms is the same as the original update of selinux statuses, and about ~25 ms
->> is policydb_destroy() of the old copy.
->
->
->
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on v4.17-rc7]
+[cannot apply to security/next next-20180531]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
+url:    https://github.com/0day-ci/linux/commits/Peter-Enderborg/selinux-Make-allocation-atomic-in-policydb-objects-functions/20180601-205558
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+config: i386-defconfig (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/printk.h:7:0,
+                    from include/linux/kernel.h:14,
+                    from security/selinux/ss/policydb.c:33:
+   security/selinux/ss/policydb.c: In function 'policydb_flattened_alloc':
+>> include/linux/kern_levels.h:5:18: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'size_t {aka unsigned int}' [-Wformat=]
+    #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                     ^
+   include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
+    #define KERN_ERR KERN_SOH "3" /* error conditions */
+                     ^~~~~~~~
+>> security/selinux/ss/policydb.c:3548:10: note: in expansion of macro 'KERN_ERR'
+      printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
+             ^~~~~~~~
+   security/selinux/ss/policydb.c:3548:50: note: format string is defined here
+      printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
+                                                   ~~^
+                                                   %d
 --
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+   In file included from include/linux/printk.h:7:0,
+                    from include/linux/kernel.h:14,
+                    from security//selinux/ss/policydb.c:33:
+   security//selinux/ss/policydb.c: In function 'policydb_flattened_alloc':
+>> include/linux/kern_levels.h:5:18: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'size_t {aka unsigned int}' [-Wformat=]
+    #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                     ^
+   include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
+    #define KERN_ERR KERN_SOH "3" /* error conditions */
+                     ^~~~~~~~
+   security//selinux/ss/policydb.c:3548:10: note: in expansion of macro 'KERN_ERR'
+      printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
+             ^~~~~~~~
+   security//selinux/ss/policydb.c:3548:50: note: format string is defined here
+      printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
+                                                   ~~^
+                                                   %d
+
+vim +/KERN_ERR +3548 security/selinux/ss/policydb.c
+
+  3538	
+  3539	int policydb_flattened_alloc(struct policydb *db, void **tmpbuf, size_t *size)
+  3540	{
+  3541		int rc = 0;
+  3542	
+  3543		*size = db->len;
+  3544		*tmpbuf = vmalloc(*size);
+  3545	
+  3546		if (!*tmpbuf) {
+  3547			rc = -ENOMEM;
+> 3548			printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
+  3549		}
+  3550		return rc;
+  3551	}
+  3552	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
