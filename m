@@ -1,89 +1,69 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Fri, 1 Jun 2018 21:56:28 +0800
-Subject: [PATCH V3 2/5 selinux-next] selinux: Introduce selinux_ruleset
-	struct
-In-Reply-To: <20180530141104.28569-3-peter.enderborg@sony.com>
-References: <20180530141104.28569-3-peter.enderborg@sony.com>
-Message-ID: <201806012112.KqqerKIz%fengguang.wu@intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 1 Jun 2018 09:22:28 -0700
+Subject: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
+	kernfs_security_xattr_set
+In-Reply-To: <20180601085609epcms5p5fefac0156a4816e9e48751211ab595ee@epcms5p5>
+References: <1ced6bce-92cc-7e0c-fab4-0aaa3d03b82f@schaufler-ca.com>
+	<1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
+	<20180531153943.GR1351649@devbig577.frc2.facebook.com>
+	<4f00f9ae-3302-83b9-c083-d21ade380eb2@schaufler-ca.com>
+	<20180531161107.GV1351649@devbig577.frc2.facebook.com>
+	<CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcms5p5>
+	<20180601085609epcms5p5fefac0156a4816e9e48751211ab595ee@epcms5p5>
+Message-ID: <02d9878e-65bf-5de8-9658-cf0f692f358c@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Peter,
+On 6/1/2018 1:56 AM, CHANDAN VN wrote:
+> Hi
+> ?
+>
+>> On?5/31/2018?9:11?AM,?Tejun?Heo?wrote:
+>> ?On?Thu,?May?31,?2018?at?09:04:25AM?-0700,?Casey?Schaufler?wrote:
+>>>> ?On?5/31/2018?8:39?AM,?Tejun?Heo?wrote:
+>>>>> ?(cc'ing?more?security?folks?and?copying?whole?body)
+>>>>>
+>>>>> ?So,?I'm?sure?the?patch?fixes?the?memory?leak?but?API?wise?it?looks
+>>>>> ?super?confusing.??Can?security?folks?chime?in?here???Is?this?the?right
+>>>>> ?fix?
+>>>>> ?security_inode_getsecctx()?provides?a?security?context.?Technically,
+>>>>> ?this?is?a?data?blob,?although?both?provider?provide?a?null?terminated
+>>>>> ?string.?security_inode_getsecurity(),?on?the?other?hand,?provides?a
+>>>>> ?string?to?match?an?attribute?name.?The?former?releases?the?security
+>>>>> ?context?with?security_release_secctx(),?where?the?later?releases?the
+>>>>> ?string?with?kfree().
+>>>>>
+>>>>> ?When?the?Smack?hook?smack_inode_getsecctx()?was?added?in?2009
+>>>>> ?for?use?by?labeled?NFS?the?alloc?value?passed?to
+>>>> ?smack_inode_getsecurity()?was?set?incorrectly.?This?wasn't?a
+>>>> ?major?issue,?since?labeled?NFS?is?a?fringe?case.?When?kernfs
+>>>> ?started?using?the?hook,?it?became?the?issue?you?discovered.
+>>>>
+>>>> ?The?reason?that?we?have?all?this?confusion?is?that?SELinux
+>>>> ?generates?security?contexts?as?needed,?while?Smack?keeps?them
+>>>> ?around?all?the?time.?Releasing?an?SELinux?context?frees?memory,
+>>>> ?while?releasing?a?Smack?context?is?a?null?operation.
+>>> ?Any?chance?this?detail?can?be?hidden?behind?security?api???This?looks
+>>> ?pretty?error-prone,?no?
+> ?
+>>> It?*is*?hidden?behind?the?security?API.?The?problem?is?strictly
+>>> within?the?Smack?code,?where?the?implementer?of?smack_inode_getsecctx()
+>>> made?an?error.
+> I agree that the fix can be done simply by using "false" for 
+> smack_inode_getsecurity(), but what happens with kernfs_node_setsecdata()
+> and smack_inode_notifysecctx(). kernfs_node_setsecdata() is probably ignorable
+> but smack_inode_notifysecctx() is sending the "ctx" to smack_inode_setsecurity()
+> and since "ctx" would be NULL because we used "false", smack_inode_setsecurity()
+> becomes dummy.
 
-Thank you for the patch! Yet something to improve:
+Thank you for pointing this out. You're right, there's more
+at issue here than changing the alloc flag will fix. I think
+that calling smack_inode_getsecurity() from smack_inode_getsecctx()
+is making the code more complicated than it needs to be. I will
+have a patch shortly.
 
-[auto build test ERROR on pcmoore-selinux/next]
-[also build test ERROR on v4.17-rc7]
-[cannot apply to security/next next-20180531]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-url:    https://github.com/0day-ci/linux/commits/Peter-Enderborg/selinux-Make-allocation-atomic-in-policydb-objects-functions/20180601-205558
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-config: sh-allmodconfig (attached as .config)
-compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=sh 
-
-All error/warnings (new ones prefixed by >>):
-
-   security/selinux/ss/policydb.c: In function 'policydb_flattened_alloc':
->> security/selinux/ss/policydb.c:3544:12: error: implicit declaration of function 'vmalloc'; did you mean 'kvmalloc'? [-Werror=implicit-function-declaration]
-     *tmpbuf = vmalloc(*size);
-               ^~~~~~~
-               kvmalloc
->> security/selinux/ss/policydb.c:3544:10: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-     *tmpbuf = vmalloc(*size);
-             ^
-   In file included from include/linux/printk.h:7:0,
-                    from include/linux/kernel.h:14,
-                    from security/selinux/ss/policydb.c:33:
-   include/linux/kern_levels.h:5:18: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'size_t {aka unsigned int}' [-Wformat=]
-    #define KERN_SOH "\001"  /* ASCII Start Of Header */
-                     ^
-   include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
-    #define KERN_ERR KERN_SOH "3" /* error conditions */
-                     ^~~~~~~~
-   security/selinux/ss/policydb.c:3548:10: note: in expansion of macro 'KERN_ERR'
-      printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
-             ^~~~~~~~
-   security/selinux/ss/policydb.c:3548:50: note: format string is defined here
-      printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
-                                                   ~~^
-                                                   %d
-   security/selinux/ss/policydb.c: In function 'policydb_flattened_free':
->> security/selinux/ss/policydb.c:3555:2: error: implicit declaration of function 'vfree'; did you mean 'kvfree'? [-Werror=implicit-function-declaration]
-     vfree(tmpbuf);
-     ^~~~~
-     kvfree
-   cc1: some warnings being treated as errors
-
-vim +3544 security/selinux/ss/policydb.c
-
-  3538	
-  3539	int policydb_flattened_alloc(struct policydb *db, void **tmpbuf, size_t *size)
-  3540	{
-  3541		int rc = 0;
-  3542	
-  3543		*size = db->len;
-> 3544		*tmpbuf = vmalloc(*size);
-  3545	
-  3546		if (!*tmpbuf) {
-  3547			rc = -ENOMEM;
-> 3548			printk(KERN_ERR "SELinux: vmalloc failed for %ld\n", *size);
-  3549		}
-  3550		return rc;
-  3551	}
-  3552	
-  3553	int policydb_flattened_free(void *tmpbuf)
-  3554	{
-> 3555		vfree(tmpbuf);
-  3556		return 0;
-  3557	}
-  3558	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
