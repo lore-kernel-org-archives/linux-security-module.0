@@ -1,69 +1,67 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 1 Jun 2018 10:45:12 -0700
-Subject: [PATCH] Smack: Fix memory leak in smack_inode_getsecctx
-In-Reply-To: <5b0b157a-0e8c-d8f5-901e-836d545a8e4c@schaufler-ca.com>
-References: <02d9878e-65bf-5de8-9658-cf0f692f358c@schaufler-ca.com>
-	<1ced6bce-92cc-7e0c-fab4-0aaa3d03b82f@schaufler-ca.com>
-	<1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
-	<20180531153943.GR1351649@devbig577.frc2.facebook.com>
-	<4f00f9ae-3302-83b9-c083-d21ade380eb2@schaufler-ca.com>
-	<20180531161107.GV1351649@devbig577.frc2.facebook.com>
-	<20180601085609epcms5p5fefac0156a4816e9e48751211ab595ee@epcms5p5>
-	<CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcms5p7>
-	<20180601162913epcms5p7737f5b4376d8865af1eae119aa866550@epcms5p7>
-	<5b0b157a-0e8c-d8f5-901e-836d545a8e4c@schaufler-ca.com>
-Message-ID: <fa278910-5c99-11dc-c9cb-b88a97592e53@schaufler-ca.com>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Fri, 1 Jun 2018 20:19:13 +0200
+Subject: [PATCH v4 4/8] firmware: add call to LSM hook before firmware
+	sysfs fallback
+In-Reply-To: <1527616920-5415-5-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1527616920-5415-5-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <20180601181913.GN4511@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Fix memory leak in smack_inode_getsecctx
+On Tue, May 29, 2018 at 02:01:56PM -0400, Mimi Zohar wrote:
+> Add an LSM hook prior to allowing firmware sysfs fallback loading.
 
-The implementation of smack_inode_getsecctx() made
-incorrect assumptions about how Smack presents a security
-context. Smack does not need to allocate memory to support
-security contexts, so "releasing" a Smack context is a no-op.
-The code made an unnecessary copy and returned that as a
-context, which was never freed. The revised implementation
-returns the context correctly.
+Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- security/smack/smack_lsm.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> 
+> Changelog v4:
+> - call new LSM security_kernel_arg hook
+> 
+> Changelog v2:
+> - call security_kernel_read_blob()
+> - rename the READING_FIRMWARE_FALLBACK kernel_read_file_id enumeration to
+> READING_FIRMWARE_FALLBACK_SYSFS.
+> ---
+>  drivers/base/firmware_loader/fallback.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+> index 358354148dec..2443bda81631 100644
+> --- a/drivers/base/firmware_loader/fallback.c
+> +++ b/drivers/base/firmware_loader/fallback.c
+> @@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+>  
+>  static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+>  {
+> +	int ret;
+> +
+>  	if (fw_fallback_config.ignore_sysfs_fallback) {
+>  		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
+>  		return false;
+> @@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+>  	if ((opt_flags & FW_OPT_NOFALLBACK))
+>  		return false;
+>  
+> +	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
+> +	ret = security_kernel_load_data(LOADING_FIRMWARE);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	return fw_force_sysfs_fallback(opt_flags);
+>  }
+>  
+> -- 
+> 2.7.5
+> 
+> 
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 0b414836bebd..5e3beae334a8 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1545,9 +1545,9 @@ static int smack_inode_listsecurity(struct inode *inode, char *buffer,
-  */
- static void smack_inode_getsecid(struct inode *inode, u32 *secid)
- {
--	struct inode_smack *isp = inode->i_security;
-+	struct smack_known *skp = smk_of_inode(inode);
- 
--	*secid = isp->smk_inode->smk_secid;
-+	*secid = skp->smk_secid;
- }
- 
- /*
-@@ -4538,12 +4538,10 @@ static int smack_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen)
- 
- static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
- {
--	int len = 0;
--	len = smack_inode_getsecurity(inode, XATTR_SMACK_SUFFIX, ctx, true);
-+	struct smack_known *skp = smk_of_inode(inode);
- 
--	if (len < 0)
--		return len;
--	*ctxlen = len;
-+	*ctx = skp->smk_known;
-+	*ctxlen = strlen(skp->smk_known);
- 	return 0;
- }
- 
-
+-- 
+Do not panic
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
