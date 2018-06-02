@@ -1,46 +1,32 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 01 Jun 2018 19:04:45 -0400
-Subject: [PATCH v4 5/8] ima: based on policy require signed firmware
-	(sysfs fallback)
-In-Reply-To: <20180601224617.GU4511@wotan.suse.de>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1527616920-5415-6-git-send-email-zohar@linux.vnet.ibm.com>
-	<20180601182107.GO4511@wotan.suse.de>
-	<1527892795.13403.26.camel@linux.vnet.ibm.com>
-	<20180601224617.GU4511@wotan.suse.de>
-Message-ID: <1527894285.13403.43.camel@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Sat, 2 Jun 2018 16:00:01 +0300
+Subject: [GIT PULL] tpmdd 4.17 fixes
+Message-ID: <20180602130001.GA5196@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, 2018-06-02 at 00:46 +0200, Luis R. Rodriguez wrote:
-> On Fri, Jun 01, 2018 at 06:39:55PM -0400, Mimi Zohar wrote:
-> > On Fri, 2018-06-01 at 20:21 +0200, Luis R. Rodriguez wrote:
-> > > On Tue, May 29, 2018 at 02:01:57PM -0400, Mimi Zohar wrote:
-> > > > Luis, is the security_kernel_post_read_file LSM hook in
-> > > > firmware_loading_store() still needed after this patch?  Should it be
-> > > > calling security_kernel_load_data() instead?
-> > > 
-> > > That's up to Kees to decide as he added that hook, and knows
-> > > what LSMs may be doing with it. From my perspective it is confusing
-> > > to have that hook there so I think it could be removed now.
-> > > 
-> > > Kees?
-> > 
-> > Commit?6593d92 ("firmware_class: perform new LSM checks") references
-> > two methods of loading firmware -??filesystem-found firmware and
-> > demand-loaded blobs. ?I assume this call in firmware_loading_store()
-> > is the demand-loaded blobs. ?Does that method still exist? ?Is it
-> > still being used?
-> 
-> Yeah its the stupid sysfs interface. So likely loadpin needs porting
-> as you IMA as you did.
+The following changes since commit 424eaf910c329ab06ad03a527ef45dcf6a328f00:
 
-In this case, it doesn't look like the call to
-security_kernel_post_read_file() should be changed, which means that
-all the LSMs and IMA still need to support !file.
-?
-Mimi
+  tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
 
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180602
+
+for you to fetch changes up to 3ab2011ea368ec3433ad49e1b9e1c7b70d2e65df:
+
+  tpm: fix race condition in tpm_common_write() (2018-05-30 20:11:31 +0300)
+
+----------------------------------------------------------------
+tpmdd fixes for Linux 4.17
+
+----------------------------------------------------------------
+Tadeusz Struk (1):
+      tpm: fix race condition in tpm_common_write()
+
+ drivers/char/tpm/tpm-dev-common.c | 40 ++++++++++++++++++---------------------
+ drivers/char/tpm/tpm-dev.h        |  2 +-
+ 2 files changed, 19 insertions(+), 23 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
