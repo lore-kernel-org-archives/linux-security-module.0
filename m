@@ -1,32 +1,30 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 2 Jun 2018 16:00:01 +0300
-Subject: [GIT PULL] tpmdd 4.17 fixes
-Message-ID: <20180602130001.GA5196@linux.intel.com>
+From: mail@maciej.szmigiero.name (Maciej S. Szmigiero)
+Date: Sat, 2 Jun 2018 21:12:00 +0200
+Subject: [PATCH v2][RESEND] X.509: unpack RSA signatureValue field from
+	BIT STRING
+In-Reply-To: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
+References: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
+Message-ID: <80e95323-eb7f-6af3-ad05-f174c69fb948@maciej.szmigiero.name>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The following changes since commit 424eaf910c329ab06ad03a527ef45dcf6a328f00:
+On 19.05.2018 14:23, Maciej S. Szmigiero wrote:
+> The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+> For RSA signatures this BIT STRING is of so-called primitive subtype, which
+> contains a u8 prefix indicating a count of unused bits in the encoding.
+> 
+> We have to strip this prefix from signature data, just as we already do for
+> key data in x509_extract_key_data() function.
+> 
+> This wasn't noticed earlier because this prefix byte is zero for RSA key
+> sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+> prefixes has no bearing on its value.
+> 
+> The signature length, however was incorrect, which is a problem for RSA
+> implementations that need it to be exactly correct (like AMD CCP).
 
-  tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180602
-
-for you to fetch changes up to 3ab2011ea368ec3433ad49e1b9e1c7b70d2e65df:
-
-  tpm: fix race condition in tpm_common_write() (2018-05-30 20:11:31 +0300)
-
-----------------------------------------------------------------
-tpmdd fixes for Linux 4.17
-
-----------------------------------------------------------------
-Tadeusz Struk (1):
-      tpm: fix race condition in tpm_common_write()
-
- drivers/char/tpm/tpm-dev-common.c | 40 ++++++++++++++++++---------------------
- drivers/char/tpm/tpm-dev.h        |  2 +-
- 2 files changed, 19 insertions(+), 23 deletions(-)
+Any progress here?
+This simple patch has already been submitted 3 times in last 3+ months...
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
