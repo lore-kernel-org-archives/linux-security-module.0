@@ -1,53 +1,73 @@
-From: chandan.vn@samsung.com (CHANDAN VN)
-Date: Tue, 05 Jun 2018 20:16:50 +0530
-Subject: [PATCH] Smack: Fix memory leak in smack_inode_getsecctx
-In-Reply-To: <9fdb7658-0440-4402-cda6-7f1426ea24e6@schaufler-ca.com>
-References: <9fdb7658-0440-4402-cda6-7f1426ea24e6@schaufler-ca.com>
-	<20180604212704.GC1351649@devbig577.frc2.facebook.com>
-	<1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
-	<20180531153943.GR1351649@devbig577.frc2.facebook.com>
-	<4f00f9ae-3302-83b9-c083-d21ade380eb2@schaufler-ca.com>
-	<20180531161107.GV1351649@devbig577.frc2.facebook.com>
-	<20180601085609epcms5p5fefac0156a4816e9e48751211ab595ee@epcms5p5>
-	<20180601162913epcms5p7737f5b4376d8865af1eae119aa866550@epcms5p7>
-	<5b0b157a-0e8c-d8f5-901e-836d545a8e4c@schaufler-ca.com>
-	<fa278910-5c99-11dc-c9cb-b88a97592e53@schaufler-ca.com>
-	<b6cc4bd5-8d79-bbc2-373f-ea0bf0806884@schaufler-ca.com>
-	<20180605070449epcms5p317013469ed52cc50878011c428bd12aa@epcms5p3>
-	<CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcms5p4>
-Message-ID: <20180605144650epcms5p4cdc56b9a80e72b2ba189a2786419a074@epcms5p4>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 05 Jun 2018 10:49:42 -0400
+Subject: [PATCH v2] integrity: silence warning when CONFIG_SECURITYFS is
+	not enabled
+In-Reply-To: <1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
+References: <1528121121-3959-1-git-send-email-sudeep.holla@arm.com>
+	<1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
+Message-ID: <1528210182.3237.160.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-?
-?
->On?6/5/2018?12:04?AM,?CHANDAN?VN?wrote:
->>??
->>
->>>?On?Mon,?Jun?04,?2018?at?02:01:34PM?-0700,?Casey?Schaufler?wrote:
->>>>??On?6/1/2018?10:45?AM,?Casey?Schaufler?wrote:
->>>>??>?Fix?memory?leak?in?smack_inode_getsecctx
->>>>??>
->>>>??>?The?implementation?of?smack_inode_getsecctx()?made
->>>>??>?incorrect?assumptions?about?how?Smack?presents?a?security
->>>>??>?context.?Smack?does?not?need?to?allocate?memory?to?support
->>>>??>?security?contexts,?so?"releasing"?a?Smack?context?is?a?no-op.
->>>>??>?The?code?made?an?unnecessary?copy?and?returned?that?as?a
->>>>??>?context,?which?was?never?freed.?The?revised?implementation
->>>>??>?returns?the?context?correctly.
->>>>??>
->>>>??>?Signed-off-by:?Casey?Schaufler?<casey@schaufler-ca.com>
->>>>??
->>>>??Tejun,?does?this?pass?your?tests?
->>??
->>>?Oh,?I'm?not?the?one?who?reported.??Chandan?
->>?Looks?good?to?me.?Leak?not?found.
->?
->Thanks.?Can?I?add?your?"Tested-by:"?on?the?commit?
+On Tue, 2018-06-05 at 11:25 +0100, Sudeep Holla wrote:
+> When CONFIG_SECURITYFS is not enabled, securityfs_create_dir returns
+> -ENODEV which throws the following error:
+> 	"Unable to create integrity sysfs dir: -19"
+> 
+> However, if the feature is disabled, it can't be warning and hence
+> we need to silence the error. This patch checks for the error -ENODEV
+> which is returned when CONFIG_SECURITYFS is disabled to stop the error
+> being thrown.
 
-Sure. I think "Reported-by:" would also be ok.
-?
-?
+Both IMA and EVM require securityfs, at least for the time being.
+?Under what circumstances would integrity and not securityfs be
+enabled. ?Is this a Kconfig issue?
+
+Mimi
+
+> 
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Matthew Garrett <mjg59@google.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  security/integrity/iint.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> v1->v2:
+> 	- Check for -ENODEV rather than IS_ENABLED(..) as suggested by
+> 	  Matthew Garrett
+> 
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index 149faa81f6f0..7051ea4a8161 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -219,10 +219,13 @@ static int __init integrity_fs_init(void)
+>  {
+>  	integrity_dir = securityfs_create_dir("integrity", NULL);
+>  	if (IS_ERR(integrity_dir)) {
+> -		pr_err("Unable to create integrity sysfs dir: %ld\n",
+> -		       PTR_ERR(integrity_dir));
+> +		int ret = PTR_ERR(integrity_dir);
+> +
+> +		if (ret != -ENODEV)
+> +			pr_err("Unable to create integrity sysfs dir: %ld\n",
+> +			       ret;
+>  		integrity_dir = NULL;
+> -		return PTR_ERR(integrity_dir);
+> +		return ret;
+>  	}
+> 
+>  	return 0;
+> --
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
