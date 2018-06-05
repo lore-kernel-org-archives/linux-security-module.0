@@ -1,32 +1,41 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 6 Jun 2018 06:20:05 +1000 (AEST)
-Subject: [PULL] Smack: Changes for 4.18
-In-Reply-To: <0eca3e49-a3de-3ba7-26c2-383c9bad3906@schaufler-ca.com>
-References: <0eca3e49-a3de-3ba7-26c2-383c9bad3906@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1806060619390.16261@namei.org>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 05 Jun 2018 17:35:13 -0400
+Subject: [PATCH v4a 8/8] module: replace the existing LSM hook in
+	init_module
+In-Reply-To: <CAGXu5jLXSEWHorm6=h9+1cP-y8ZX2_ALcra6g9x7Tm-O0kU3DQ@mail.gmail.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
+	<CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
+	<1527635645.3534.39.camel@linux.vnet.ibm.com>
+	<CAHC9VhQQX-JAnV-6jEOsug-6siyO9mrNa=rYK9Whg-MYcfHxgA@mail.gmail.com>
+	<1527780226.3427.20.camel@linux.vnet.ibm.com>
+	<CAGXu5jLXSEWHorm6=h9+1cP-y8ZX2_ALcra6g9x7Tm-O0kU3DQ@mail.gmail.com>
+Message-ID: <1528234513.3557.16.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 5 Jun 2018, Casey Schaufler wrote:
+On Tue, 2018-06-05 at 12:45 -0700, Kees Cook wrote:
 
-> James, apologies for the late pull request. It's one simple patch that
-> fixes a memory leak in kernfs and labeled NFS.
+> And if you must have a separate enum, please change this to fail
+> closed instead of open (and mark the fall-through):
 > 
-> The following changes since commit b3859ee18ed287170b66b19a78191f7312ec3470:
+> int rc = -EPERM;
 > 
->   Merge tag 'v4.17-rc3' into next-general (2018-05-01 11:02:34 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://github.com/cschaufler/next-smack.git smack-for-4.18
-> 
+> switch (id) {
+> case LOADING_MODULE:
+>     rc = loadpin_read_file(NULL, READING_MODULE);
+>     /* Fall-through */
+> default:
+>     break;
+> }
 
-Pulled to next-smack, I'll push it to Linus soon/
+This will fail the sysfs firmware fallback loading and the kexec_load
+syscall without any message, as you have for init_module. ?Is that
+what you want?
 
+Mimi
 
--- 
-James Morris
-<jmorris@namei.org>
+?
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
