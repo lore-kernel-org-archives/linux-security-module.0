@@ -1,33 +1,53 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 5 Jun 2018 17:38:57 +0300
-Subject: [GIT PULL] tpmdd 4.17 fixes
-In-Reply-To: <alpine.LRH.2.21.1806050201050.30339@namei.org>
-References: <20180602130001.GA5196@linux.intel.com>
-	<alpine.LRH.2.21.1806050201050.30339@namei.org>
-Message-ID: <20180605143857.GA6199@linux.intel.com>
+From: chandan.vn@samsung.com (CHANDAN VN)
+Date: Tue, 05 Jun 2018 20:16:50 +0530
+Subject: [PATCH] Smack: Fix memory leak in smack_inode_getsecctx
+In-Reply-To: <9fdb7658-0440-4402-cda6-7f1426ea24e6@schaufler-ca.com>
+References: <9fdb7658-0440-4402-cda6-7f1426ea24e6@schaufler-ca.com>
+	<20180604212704.GC1351649@devbig577.frc2.facebook.com>
+	<1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
+	<20180531153943.GR1351649@devbig577.frc2.facebook.com>
+	<4f00f9ae-3302-83b9-c083-d21ade380eb2@schaufler-ca.com>
+	<20180531161107.GV1351649@devbig577.frc2.facebook.com>
+	<20180601085609epcms5p5fefac0156a4816e9e48751211ab595ee@epcms5p5>
+	<20180601162913epcms5p7737f5b4376d8865af1eae119aa866550@epcms5p7>
+	<5b0b157a-0e8c-d8f5-901e-836d545a8e4c@schaufler-ca.com>
+	<fa278910-5c99-11dc-c9cb-b88a97592e53@schaufler-ca.com>
+	<b6cc4bd5-8d79-bbc2-373f-ea0bf0806884@schaufler-ca.com>
+	<20180605070449epcms5p317013469ed52cc50878011c428bd12aa@epcms5p3>
+	<CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcms5p4>
+Message-ID: <20180605144650epcms5p4cdc56b9a80e72b2ba189a2786419a074@epcms5p4>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jun 05, 2018 at 02:01:29AM +1000, James Morris wrote:
-> On Sat, 2 Jun 2018, Jarkko Sakkinen wrote:
-> 
-> > The following changes since commit 424eaf910c329ab06ad03a527ef45dcf6a328f00:
-> > 
-> >   tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180602
-> > 
-> > for you to fetch changes up to 3ab2011ea368ec3433ad49e1b9e1c7b70d2e65df:
-> > 
-> >   tpm: fix race condition in tpm_common_write() (2018-05-30 20:11:31 +0300)
-> 
-> 4.17 was just released, I'll fold these into the 4.18 merge.
+?
+?
+>On?6/5/2018?12:04?AM,?CHANDAN?VN?wrote:
+>>??
+>>
+>>>?On?Mon,?Jun?04,?2018?at?02:01:34PM?-0700,?Casey?Schaufler?wrote:
+>>>>??On?6/1/2018?10:45?AM,?Casey?Schaufler?wrote:
+>>>>??>?Fix?memory?leak?in?smack_inode_getsecctx
+>>>>??>
+>>>>??>?The?implementation?of?smack_inode_getsecctx()?made
+>>>>??>?incorrect?assumptions?about?how?Smack?presents?a?security
+>>>>??>?context.?Smack?does?not?need?to?allocate?memory?to?support
+>>>>??>?security?contexts,?so?"releasing"?a?Smack?context?is?a?no-op.
+>>>>??>?The?code?made?an?unnecessary?copy?and?returned?that?as?a
+>>>>??>?context,?which?was?never?freed.?The?revised?implementation
+>>>>??>?returns?the?context?correctly.
+>>>>??>
+>>>>??>?Signed-off-by:?Casey?Schaufler?<casey@schaufler-ca.com>
+>>>>??
+>>>>??Tejun,?does?this?pass?your?tests?
+>>??
+>>>?Oh,?I'm?not?the?one?who?reported.??Chandan?
+>>?Looks?good?to?me.?Leak?not?found.
+>?
+>Thanks.?Can?I?add?your?"Tested-by:"?on?the?commit?
 
-OK, thank you.
-
-/Jarkko
+Sure. I think "Reported-by:" would also be ok.
+?
+?
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
