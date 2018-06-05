@@ -1,32 +1,46 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Tue, 5 Jun 2018 12:29:23 -0700
-Subject: [PULL] Smack: Changes for 4.18
-Message-ID: <0eca3e49-a3de-3ba7-26c2-383c9bad3906@schaufler-ca.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 5 Jun 2018 22:35:57 +0300
+Subject: [PATCH v4 1/4] tpm: migrate tpm2_shutdown() to use struct tpm_buf
+In-Reply-To: <20180527091452.azwuh5u7rjyy7z6h@cantor>
+References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
+	<20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
+	<20180518223032.ihszdef5wesj5nie@cantor>
+	<20180523125655.GB363@linux.intel.com>
+	<20180527091452.azwuh5u7rjyy7z6h@cantor>
+Message-ID: <20180605193557.GA27994@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-James, apologies for the late pull request. It's one simple patch that
-fixes a memory leak in kernfs and labeled NFS.
+On Sun, May 27, 2018 at 02:14:52AM -0700, Jerry Snitselaar wrote:
+> On Wed May 23 18, Jarkko Sakkinen wrote:
+> > On Fri, May 18, 2018 at 03:30:32PM -0700, Jerry Snitselaar wrote:
+> > > On Mon Mar 26 18, Jarkko Sakkinen wrote:
+> > > > In order to make struct tpm_buf the first class object for constructing TPM
+> > > > commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
+> > > > entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
+> > > > prints an error message.
+> > > >
+> > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > 
+> > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > 
+> > Thanky you Jerry. I'll do one more round for this only to update kdoc.
+> > It does not involve code changes so are you OK if you I keep your
+> > reviewed-by despite this update?
+> > 
+> > /Jarkko
+> 
+> Sure
 
-The following changes since commit b3859ee18ed287170b66b19a78191f7312ec3470:
+I pushed this commit to my master branch. The only changes are:
 
-  Merge tag 'v4.17-rc3' into next-general (2018-05-01 11:02:34 -0700)
+1. Update to kdoc.
+2. Removed change to tpm2_flush_context_cmd() (should not be part
+   of the commit).
 
-are available in the Git repository at:
+ Did not make sense to cycle it through ML anymore.
 
-  https://github.com/cschaufler/next-smack.git smack-for-4.18
-
-for you to fetch changes up to 0f8983cf97d3327531b7843c831517cac3a1b9ed:
-
-  Smack: Fix memory leak in smack_inode_getsecctx (2018-06-05 12:16:01 -0700)
-
-----------------------------------------------------------------
-Casey Schaufler (1):
-      Smack: Fix memory leak in smack_inode_getsecctx
-
- security/smack/smack_lsm.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
