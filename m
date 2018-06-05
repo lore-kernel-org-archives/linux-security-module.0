@@ -1,58 +1,28 @@
-From: sudeep.holla@arm.com (Sudeep Holla)
-Date: Tue,  5 Jun 2018 11:25:45 +0100
-Subject: [PATCH v2] integrity: silence warning when CONFIG_SECURITYFS is not
-	enabled
-In-Reply-To: <1528121121-3959-1-git-send-email-sudeep.holla@arm.com>
-References: <1528121121-3959-1-git-send-email-sudeep.holla@arm.com>
-Message-ID: <1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Tue, 5 Jun 2018 05:19:50 -0700
+Subject: [PATCH v4 0/8] kexec/firmware: support system wide policy
+	requiring signatures
+In-Reply-To: <20180605040920.GA19747@mail.hallyn.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1528121025.3237.116.camel@linux.vnet.ibm.com>
+	<CAGXu5jJGrPtOUa8f4pMiZTiYBEP_eVJ1oEUqum8YBr9JbfuLmg@mail.gmail.com>
+	<20180605040920.GA19747@mail.hallyn.com>
+Message-ID: <CAGXu5j+UfR94xAoKsyZY9dhzREH-b2fhTAtQLfX33BhDdMVweA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-When CONFIG_SECURITYFS is not enabled, securityfs_create_dir returns
--ENODEV which throws the following error:
-	"Unable to create integrity sysfs dir: -19"
+On Mon, Jun 4, 2018 at 9:09 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> Personally I agree with Eric and prefer a new hook.  I don't feel strongly
+> enough about it to keep bikeshedding, but since this set already exists,
+> it seems like the way to go.
 
-However, if the feature is disabled, it can't be warning and hence
-we need to silence the error. This patch checks for the error -ENODEV
-which is returned when CONFIG_SECURITYFS is disabled to stop the error
-being thrown.
+And the new hook is "load stuff without a file descriptor"?
 
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Matthew Garrett <mjg59@google.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- security/integrity/iint.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+-Kees
 
-v1->v2:
-	- Check for -ENODEV rather than IS_ENABLED(..) as suggested by
-	  Matthew Garrett
-
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 149faa81f6f0..7051ea4a8161 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -219,10 +219,13 @@ static int __init integrity_fs_init(void)
- {
- 	integrity_dir = securityfs_create_dir("integrity", NULL);
- 	if (IS_ERR(integrity_dir)) {
--		pr_err("Unable to create integrity sysfs dir: %ld\n",
--		       PTR_ERR(integrity_dir));
-+		int ret = PTR_ERR(integrity_dir);
-+
-+		if (ret != -ENODEV)
-+			pr_err("Unable to create integrity sysfs dir: %ld\n",
-+			       ret;
- 		integrity_dir = NULL;
--		return PTR_ERR(integrity_dir);
-+		return ret;
- 	}
-
- 	return 0;
---
-2.7.4
-
+-- 
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
