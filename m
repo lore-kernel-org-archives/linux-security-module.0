@@ -1,73 +1,71 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 05 Jun 2018 10:49:42 -0400
-Subject: [PATCH v2] integrity: silence warning when CONFIG_SECURITYFS is
-	not enabled
-In-Reply-To: <1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
-References: <1528121121-3959-1-git-send-email-sudeep.holla@arm.com>
-	<1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
-Message-ID: <1528210182.3237.160.camel@linux.vnet.ibm.com>
+From: jmorris@namei.org (James Morris)
+Date: Wed, 6 Jun 2018 04:21:25 +1000 (AEST)
+Subject: [GIT PULL] Security subsystem: general updates for v4.18
+Message-ID: <alpine.LRH.2.21.1806060415150.9942@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-06-05 at 11:25 +0100, Sudeep Holla wrote:
-> When CONFIG_SECURITYFS is not enabled, securityfs_create_dir returns
-> -ENODEV which throws the following error:
-> 	"Unable to create integrity sysfs dir: -19"
-> 
-> However, if the feature is disabled, it can't be warning and hence
-> we need to silence the error. This patch checks for the error -ENODEV
-> which is returned when CONFIG_SECURITYFS is disabled to stop the error
-> being thrown.
+Please pull these general security subsystem updates for v4.18.
 
-Both IMA and EVM require securityfs, at least for the time being.
-?Under what circumstances would integrity and not securityfs be
-enabled. ?Is this a Kconfig issue?
+Summary:
 
-Mimi
+- Incorporate new socketpair() hook into LSM and wire up the SELinux and 
+  Smack modules.  From David Herrmann:
 
-> 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Matthew Garrett <mjg59@google.com>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  security/integrity/iint.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> v1->v2:
-> 	- Check for -ENODEV rather than IS_ENABLED(..) as suggested by
-> 	  Matthew Garrett
-> 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 149faa81f6f0..7051ea4a8161 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -219,10 +219,13 @@ static int __init integrity_fs_init(void)
->  {
->  	integrity_dir = securityfs_create_dir("integrity", NULL);
->  	if (IS_ERR(integrity_dir)) {
-> -		pr_err("Unable to create integrity sysfs dir: %ld\n",
-> -		       PTR_ERR(integrity_dir));
-> +		int ret = PTR_ERR(integrity_dir);
-> +
-> +		if (ret != -ENODEV)
-> +			pr_err("Unable to create integrity sysfs dir: %ld\n",
-> +			       ret;
->  		integrity_dir = NULL;
-> -		return PTR_ERR(integrity_dir);
-> +		return ret;
->  	}
-> 
->  	return 0;
-> --
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+   "The idea is to allow SO_PEERSEC to be called on AF_UNIX sockets 
+    created via socketpair(2), and return the same information as if you 
+    emulated socketpair(2) via a temporary listener socket. Right now 
+    SO_PEERSEC will return the unlabeled credentials for a socketpair, 
+    rather than the actual credentials of the creating process."
 
+- Sargun Dhillon removed the unused security_settime LSM hook.
+
+- Tycho Andersen removed some stack allocated arrays from the keys code.
+
+---
+
+The following changes since commit 6da6c0db5316275015e8cc2959f12a17584aeb64:
+
+  Linux v4.17-rc3 (2018-04-29 14:17:42 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+
+for you to fetch changes up to 890e2abe1028c39e5399101a2c277219cd637aaa:
+
+  dh key: get rid of stack allocated array for zeroes (2018-05-11 13:07:49 -0700)
+
+----------------------------------------------------------------
+David Herrmann (3):
+      security: add hook for socketpair()
+      net: hook socketpair() into LSM
+      selinux: provide socketpair callback
+
+James Morris (2):
+      Merge tag 'v4.17-rc2' into next-general
+      Merge tag 'v4.17-rc3' into next-general
+
+Sargun Dhillon (1):
+      security: remove security_settime
+
+Tom Gundersen (1):
+      smack: provide socketpair callback
+
+Tycho Andersen (3):
+      big key: get rid of stack array allocation
+      dh key: get rid of stack allocated array
+      dh key: get rid of stack allocated array for zeroes
+
+ include/linux/lsm_hooks.h  |  7 +++++++
+ include/linux/security.h   | 21 +++++++--------------
+ net/socket.c               |  7 +++++++
+ security/keys/big_key.c    | 11 ++++++++++-
+ security/keys/dh.c         | 35 +++++++++++++----------------------
+ security/security.c        |  6 ++++++
+ security/selinux/hooks.c   | 13 +++++++++++++
+ security/smack/smack_lsm.c | 22 ++++++++++++++++++++++
+ 8 files changed, 85 insertions(+), 37 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
