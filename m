@@ -1,127 +1,40 @@
-From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
-Date: Wed, 6 Jun 2018 08:20:17 +0200
-Subject: [RFC PATCH v4 7/8] ima: based on policy prevent loading firmware
-	(pre-allocated buffer)
-In-Reply-To: <CAGXu5jKkg_=iHGgrED4qB4TCFJaWgLkLp61RHgJ6UEhAj89GwQ@mail.gmail.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1527616920-5415-8-git-send-email-zohar@linux.vnet.ibm.com>
-	<20180601191545.GP4511@wotan.suse.de>
-	<20180601192545.GR4511@wotan.suse.de>
-	<CAGXu5jKkg_=iHGgrED4qB4TCFJaWgLkLp61RHgJ6UEhAj89GwQ@mail.gmail.com>
-Message-ID: <CAKv+Gu9=8s2b-W6a4hHwxhJfFPGuBm5kwsxE_hx98fDUfMUkvQ@mail.gmail.com>
+From: sudeep.holla@arm.com (Sudeep Holla)
+Date: Wed, 6 Jun 2018 10:23:01 +0100
+Subject: [PATCH v2] integrity: silence warning when CONFIG_SECURITYFS is
+	not enabled
+In-Reply-To: <1528210182.3237.160.camel@linux.vnet.ibm.com>
+References: <1528121121-3959-1-git-send-email-sudeep.holla@arm.com>
+	<1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
+	<1528210182.3237.160.camel@linux.vnet.ibm.com>
+Message-ID: <107b20b7-6123-e0fa-6945-59af13d3973c@arm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 6 June 2018 at 00:37, Kees Cook <keescook@chromium.org> wrote:
-> On Fri, Jun 1, 2018 at 12:25 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->> On Fri, Jun 01, 2018 at 09:15:45PM +0200, Luis R. Rodriguez wrote:
->>> On Tue, May 29, 2018 at 02:01:59PM -0400, Mimi Zohar wrote:
->>> > Some systems are memory constrained but they need to load very large
->>> > firmwares.  The firmware subsystem allows drivers to request this
->>> > firmware be loaded from the filesystem, but this requires that the
->>> > entire firmware be loaded into kernel memory first before it's provided
->>> > to the driver.  This can lead to a situation where we map the firmware
->>> > twice, once to load the firmware into kernel memory and once to copy the
->>> > firmware into the final resting place.
->>> >
->>> > To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
->>> > into a pre-allocated buffer") introduced request_firmware_into_buf() API
->>> > that allows drivers to request firmware be loaded directly into a
->>> > pre-allocated buffer.  The QCOM_MDT_LOADER calls dma_alloc_coherent() to
->>> > allocate this buffer.  According to Documentation/DMA-API.txt,
->>> >
->>> >      Consistent memory is memory for which a write by either the
->>> >      device or the processor can immediately be read by the processor
->>> >      or device without having to worry about caching effects.  (You
->>> >      may however need to make sure to flush the processor's write
->>> >      buffers before telling devices to read that memory.)
->>> >
->>> > Devices using pre-allocated DMA memory run the risk of the firmware
->>> > being accessible by the device prior to the kernel's firmware signature
->>> > verification has completed.
->>>
->>> Indeed. And since its DMA memory we have *no idea* what can happen in
->>> terms of consumption of this firmware from hardware, when it would start
->>> consuming it in particular.
->>>
->>> If the device has its own hardware firmware verification mechanism this is
->>> completely obscure to us, but it may however suffice certain security policies.
->>>
->>> The problem here lies in the conflicting security policies of the kernel wanting
->>> to not give away firmware until its complete and the current inability to enable
->>> us to have platforms suggest they trust hardware won't do something stupid.
->>> This becomes an issue since the semantics of the firmware API preallocated
->>> buffer do not require currently allow the kernel to inform LSMs of the fact
->>> that a buffer is DMA memory or not, and a way for certain platforms then
->>> to say that such use is fine for specific devices.
->>>
->>> Given a pointer can we determine if a piece of memory is DMA or not?
+
+
+On 05/06/18 15:49, Mimi Zohar wrote:
+> On Tue, 2018-06-05 at 11:25 +0100, Sudeep Holla wrote:
+>> When CONFIG_SECURITYFS is not enabled, securityfs_create_dir returns
+>> -ENODEV which throws the following error:
+>> 	"Unable to create integrity sysfs dir: -19"
 >>
->> FWIW
->>
->> Vlastimil suggests page_zone() or virt_to_page() may be able to.
->
-> I don't see a PAGEFLAG for DMA, but I do see ZONE_DMA for
-> page_zone()... So maybe something like
->
-> struct page *page;
->
-> page = virt_to_page(address);
-> if (!page)
->    fail closed...
-> if (page_zone(page) == ZONE_DMA)
->     handle dma case...
-> else
->     non-dma
->
-> But I've CCed Laura and Rik, who I always lean on when I have these
-> kinds of page questions...
->
+>> However, if the feature is disabled, it can't be warning and hence
+>> we need to silence the error. This patch checks for the error -ENODEV
+>> which is returned when CONFIG_SECURITYFS is disabled to stop the error
+>> being thrown.
+> 
+> Both IMA and EVM require securityfs, at least for the time being.
+> ?Under what circumstances would integrity and not securityfs be
+> enabled. ?Is this a Kconfig issue?
+> 
 
-That is not going to help. In general, DMA can access any memory in
-the system (unless a IOMMU is actively preventing that).
+Could be, looks like it's not enforced and hence I have ended up with
+a config that has CONFIG_SECURITYFS disabled. I have bot IMA and EVM
+disabled too. However CONFIG_INTEGRITY is enabled.
 
-The streaming DMA API allows you to map()/unmap() arbitrary pieces of
-memory for DMA, regardless of how they were allocated. (Some drivers
-were even doing DMA from the stack at some point, but this broke
-vmapped stacks so most of these cases have been fixed) Uploading
-firmware to a device does not require a coherent (as opposed to
-streaming) mapping for DMA, and so it is perfectly reasonable for a
-driver to use the streaming API to map the firmware image (wherever it
-is in memory) and map it.
-
-However, the DMA API does impose some ordering. Mapping memory for DMA
-gives you a DMA address (which may be different from the physical
-address [depending on the platform]), and this DMA address is what
-gets programmed into the device, not the virtual or physical address.
-That means you can be reasonably confident that the device will not be
-able to consume what is in this memory before it has been mapped for
-DMA. Also, the DMA api explicitly forbids touching memory mapped for
-streaming DMA: the device owns it at this point, and so the CPU should
-refrain from accessing it.
-
-So the question is, why is QCOM_MDT_LOADER using a coherent DMA
-mapping? That does not make any sense purely for moving firmware into
-the device, and it is indeed a security hazard if we are trying to
-perform a signature check before the device is cleared for reading it.
-
-Note that qcom_scm_pas_init_image() is documented as
-
-        /*
-         * During the scm call memory protection will be enabled for the meta
-         * data blob, so make sure it's physically contiguous, 4K aligned and
-         * non-cachable to avoid XPU violations.
-         */
-
-and dma_alloc_coherent() happens to give them that. Whether the DMA
-mapping is actually used is a different matter: the code is a bit
-complex, but it calls into the secure world to set up the region.
-
-If this is the only counterexample, I wouldn't worry about it too much
-(QCOM have elaborate SoC management layers in the secure world), and
-simply mandate that only streaming DMA be used for firmware loading,
-and that the firmware signature verification is performed before the
-memory is mapped for DMA.
+-- 
+Regards,
+Sudeep
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
