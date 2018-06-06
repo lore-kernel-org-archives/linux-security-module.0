@@ -1,69 +1,54 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 06 Jun 2018 09:24:04 -0400
-Subject: [PATCH v2] integrity: silence warning when CONFIG_SECURITYFS is
-	not enabled
-In-Reply-To: <1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
-References: <1528121121-3959-1-git-send-email-sudeep.holla@arm.com>
-	<1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
-Message-ID: <1528291444.3255.4.camel@linux.vnet.ibm.com>
+From: mcgrof@kernel.org (Luis R. Rodriguez)
+Date: Wed, 6 Jun 2018 22:32:57 +0200
+Subject: Do Qualcomm drivers use DMA buffers for request_firmware_into_buf()?
+In-Reply-To: <20180601192346.GQ4511@wotan.suse.de>
+References: <20180408174014.21908-3-hdegoede@redhat.com>
+	<20180423211143.GZ14440@wotan.suse.de>
+	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
+	<1524586021.3364.20.camel@linux.vnet.ibm.com>
+	<20180424234219.GX14440@wotan.suse.de>
+	<1524632409.3371.48.camel@linux.vnet.ibm.com>
+	<20180425175557.GY14440@wotan.suse.de>
+	<CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
+	<20180508153805.GC27853@wotan.suse.de>
+	<20180601192346.GQ4511@wotan.suse.de>
+Message-ID: <20180606203257.GH4511@wotan.suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-06-05 at 11:25 +0100, Sudeep Holla wrote:
-> When CONFIG_SECURITYFS is not enabled, securityfs_create_dir returns
-> -ENODEV which throws the following error:
-> 	"Unable to create integrity sysfs dir: -19"
+On Fri, Jun 01, 2018 at 09:23:46PM +0200, Luis R. Rodriguez wrote:
+> On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
+> > On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
+> > > 
+> > > I think the Qualcomm folks owning this (Andy, David, Bjorn, already
+> > > cc'd here) are better suited to answer that question.
+> > 
+> > Andy, David, Bjorn?
 > 
-> However, if the feature is disabled, it can't be warning and hence
-> we need to silence the error. This patch checks for the error -ENODEV
-> which is returned when CONFIG_SECURITYFS is disabled to stop the error
-> being thrown.
-> 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Matthew Garrett <mjg59@google.com>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  security/integrity/iint.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> v1->v2:
-> 	- Check for -ENODEV rather than IS_ENABLED(..) as suggested by
-> 	  Matthew Garrett
-> 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 149faa81f6f0..7051ea4a8161 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -219,10 +219,13 @@ static int __init integrity_fs_init(void)
->  {
->  	integrity_dir = securityfs_create_dir("integrity", NULL);
->  	if (IS_ERR(integrity_dir)) {
-> -		pr_err("Unable to create integrity sysfs dir: %ld\n",
-> -		       PTR_ERR(integrity_dir));
-> +		int ret = PTR_ERR(integrity_dir);
-> +
-> +		if (ret != -ENODEV)
-> +			pr_err("Unable to create integrity sysfs dir: %ld\n",
-> +			       ret;
+> Andy, David, Bjorn?
 
-Can we replace "sysfs" to "securityfs" at the same time?
+A month now with no answer...
 
->  		integrity_dir = NULL;
-> -		return PTR_ERR(integrity_dir);
-> +		return ret;
->  	}
-> 
->  	return 0;
-> --
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Perhaps someone who has this hardware can find out empirically for us, as
+follows (mm folks is this right?):
 
+page = virt_to_page(address);
+if (!page)
+   fail closed...
+if (page_zone(page) == ZONE_DMA || page_zone(page) == ZONE_DMA32)
+	this is a DMA buffer
+else
+	not DMA!
+
+Note that when request_firmware_into_buf() was being reviewed Mimi had asked back
+in 2016 [0] that if a DMA buffer was going to be used READING_FIRMWARE_DMA should be
+used otherwise READING_FIRMWARE_PREALLOC_BUFFER was fine.
+
+If it is a DMA buffer *now*, why / how did this change?
+
+[0] https://patchwork.kernel.org/patch/9074611/
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
