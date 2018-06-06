@@ -1,54 +1,30 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Wed, 6 Jun 2018 22:32:57 +0200
-Subject: Do Qualcomm drivers use DMA buffers for request_firmware_into_buf()?
-In-Reply-To: <20180601192346.GQ4511@wotan.suse.de>
-References: <20180408174014.21908-3-hdegoede@redhat.com>
-	<20180423211143.GZ14440@wotan.suse.de>
-	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
-	<1524586021.3364.20.camel@linux.vnet.ibm.com>
-	<20180424234219.GX14440@wotan.suse.de>
-	<1524632409.3371.48.camel@linux.vnet.ibm.com>
-	<20180425175557.GY14440@wotan.suse.de>
-	<CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
-	<20180508153805.GC27853@wotan.suse.de>
-	<20180601192346.GQ4511@wotan.suse.de>
-Message-ID: <20180606203257.GH4511@wotan.suse.de>
+From: mjg59@google.com (Matthew Garrett)
+Date: Wed, 6 Jun 2018 14:07:36 -0700
+Subject: [PATCH v2] integrity: silence warning when CONFIG_SECURITYFS is
+	not enabled
+In-Reply-To: <1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
+References: <1528121121-3959-1-git-send-email-sudeep.holla@arm.com>
+	<1528194345-9956-1-git-send-email-sudeep.holla@arm.com>
+Message-ID: <CACdnJuuTtnj6VAV=a_BT3H4HRmkvi3xOMAMYGMHJBubw1taFqA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jun 01, 2018 at 09:23:46PM +0200, Luis R. Rodriguez wrote:
-> On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
-> > On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
-> > > 
-> > > I think the Qualcomm folks owning this (Andy, David, Bjorn, already
-> > > cc'd here) are better suited to answer that question.
-> > 
-> > Andy, David, Bjorn?
-> 
-> Andy, David, Bjorn?
-
-A month now with no answer...
-
-Perhaps someone who has this hardware can find out empirically for us, as
-follows (mm folks is this right?):
-
-page = virt_to_page(address);
-if (!page)
-   fail closed...
-if (page_zone(page) == ZONE_DMA || page_zone(page) == ZONE_DMA32)
-	this is a DMA buffer
-else
-	not DMA!
-
-Note that when request_firmware_into_buf() was being reviewed Mimi had asked back
-in 2016 [0] that if a DMA buffer was going to be used READING_FIRMWARE_DMA should be
-used otherwise READING_FIRMWARE_PREALLOC_BUFFER was fine.
-
-If it is a DMA buffer *now*, why / how did this change?
-
-[0] https://patchwork.kernel.org/patch/9074611/
-
-  Luis
+On Tue, Jun 5, 2018 at 3:26 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> When CONFIG_SECURITYFS is not enabled, securityfs_create_dir returns
+> -ENODEV which throws the following error:
+>         "Unable to create integrity sysfs dir: -19"
+>
+> However, if the feature is disabled, it can't be warning and hence
+> we need to silence the error. This patch checks for the error -ENODEV
+> which is returned when CONFIG_SECURITYFS is disabled to stop the error
+> being thrown.
+>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Matthew Garrett <mjg59@google.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+ACKed-by: Matthew Garrett <mjg59@google.com>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
