@@ -1,99 +1,61 @@
-From: mcgrof@kernel.org (Luis R. Rodriguez)
-Date: Thu, 7 Jun 2018 20:22:56 +0200
-Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-In-Reply-To: <20180607164950.GP510@tuxbook-pro>
-References: <20180423211143.GZ14440@wotan.suse.de>
-	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
-	<1524586021.3364.20.camel@linux.vnet.ibm.com>
-	<20180424234219.GX14440@wotan.suse.de>
-	<1524632409.3371.48.camel@linux.vnet.ibm.com>
-	<20180425175557.GY14440@wotan.suse.de>
-	<CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
-	<20180508153805.GC27853@wotan.suse.de>
-	<20180508161037.GE27853@wotan.suse.de>
-	<20180607164950.GP510@tuxbook-pro>
-Message-ID: <20180607182256.GE5527@wotan.suse.de>
+From: ebiggers3@gmail.com (Eric Biggers)
+Date: Thu,  7 Jun 2018 12:12:01 -0700
+Subject: [PATCH] dh key: fix rounding up KDF output length
+In-Reply-To: <0000000000009c221d056e0cf53a@google.com>
+References: <0000000000009c221d056e0cf53a@google.com>
+Message-ID: <20180607191201.97080-1-ebiggers3@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jun 07, 2018 at 09:49:50AM -0700, Bjorn Andersson wrote:
-> On Tue 08 May 09:10 PDT 2018, Luis R. Rodriguez wrote:
-> 
-> > On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
-> > > On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
-> > > > On Wed, Apr 25, 2018 at 10:55 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> [..]
-> > > > 2) Most of those paths are not mounted by the time the corresponding
-> > > > drivers are loaded, because pretty much all Android kernels today are
-> > > > built without module support, and therefore drivers are loaded well
-> > > > before the firmware partition is mounted
-> > 
-> > I've given this some more thought and you can address this with initramfs,
-> > this is how other Linux distributions are addressing this. One way to
-> > address this automatically is to scrape the drivers built-in or needed early on
-> > boot in initamfs and if the driver has a MODULE_FIRMWARE() its respective
-> > firmware is added to initramfs as well.
-> > 
-> 
-> That could be done, but it would not change the fact that the
-> /sys/class/firmware is ABI and you may not break it.
+From: Eric Biggers <ebiggers@google.com>
 
-Right, this is now well documented and also the latest changes to the firmware
-API have made the sysfs fallback loader an option through a sysctl knob. The
-code should be much easier to follow and test now.
+Commit 383203eff718 ("dh key: get rid of stack allocated array") changed
+kdf_ctr() to assume that the length of key material to derive is a
+multiple of the digest size.  The length was supposed to be rounded up
+accordingly.  However, the round_up() macro was used which only gives
+the correct result on power-of-2 arguments, whereas not all hash
+algorithms have power-of-2 digest sizes.  In some cases this resulted in
+a write past the end of the 'outbuf' buffer.
 
-> And it doesn't change the fact that the ramdisk would have to be over
-> 100mb to facilitate this.
+Fix it by switching to roundup(), which works for non-power-of-2 inputs.
 
-Indeed, this is now acknowledged in the latest Kconfig for the firmware loader.
+Reported-by: syzbot+486f97f892efeb2075a3 at syzkaller.appspotmail.com
+Reported-by: syzbot+29d17b7898b41ee120a5 at syzkaller.appspotmail.com
+Reported-by: syzbot+8a608baf8751184ec727 at syzkaller.appspotmail.com
+Reported-by: syzbot+d04e58bd384f1fe0b112 at syzkaller.appspotmail.com
+Fixes: 383203eff718 ("dh key: get rid of stack allocated array")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/dh.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> > If you *don't* use initramfs, then yes you can obviously run into issues
-> > where your firmware may not be accessible if the driver is somehow loaded
-> > early.
-> > 
-> 
-> This is still a problem that lacks a solution.
+diff --git a/security/keys/dh.c b/security/keys/dh.c
+index f7403821db7f0..b203f7758f976 100644
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -142,6 +142,8 @@ static void kdf_dealloc(struct kdf_sdesc *sdesc)
+  * The src pointer is defined as Z || other info where Z is the shared secret
+  * from DH and other info is an arbitrary string (see SP800-56A section
+  * 5.8.1.2).
++ *
++ * 'dlen' must be a multiple of the digest size.
+  */
+ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
+ 		   u8 *dst, unsigned int dlen, unsigned int zlen)
+@@ -205,8 +207,8 @@ static int keyctl_dh_compute_kdf(struct kdf_sdesc *sdesc,
+ {
+ 	uint8_t *outbuf = NULL;
+ 	int ret;
+-	size_t outbuf_len = round_up(buflen,
+-			             crypto_shash_digestsize(sdesc->shash.tfm));
++	size_t outbuf_len = roundup(buflen,
++				    crypto_shash_digestsize(sdesc->shash.tfm));
+ 
+ 	outbuf = kmalloc(outbuf_len, GFP_KERNEL);
+ 	if (!outbuf) {
+-- 
+2.17.1.1185.g55be947832-goog
 
-The firmwared solution capturing uevents and using the sysfs fallback
-mechanism should resolve this. Its also now properly documented on the
-firmware loader Kconfig.
-
-> > > > 3) I think we use _FALLBACK because doing this with uevents is just
-> > > > the easiest thing to do; our init code has a firmware helper that
-> > > > deals with this and searches the paths that we care about
-> > > > 
-> > > > 2) will change at some point, because Android is moving towards a
-> > > > model where device-specific peripheral drivers will be loaded as
-> > > > modules, and since those modules would likely come from the same
-> > > > partition as the firmware, it's possible that the direct load would
-> > > > succeed (depending on whether the custom path is configured there or
-> > > > not). But I don't think we can rely on the direct loader even in those
-> > > > cases, unless we could configure it with multiple custom paths.
-> > 
-> > Using initramfs will help, but because of the custom path needs -- you're
-> > right, we don't have anything for that yet, its also a bit unclear if
-> > something nice and clean can be drawn up for it. So perhaps dealing with
-> > the fallback mechanism is the way to go for this for sure, since we already
-> > have support for it.
-> > 
-> > Just keep in mind that the fallback mechanism costs you about ~13436 bytes.
-> > 
-> 
-> Remember that putting the firmware in the ramdisk would cost about
-> 10000x (yes, ten thousand times) more ram.
-
-Indeed, this is now documented on the Kconfig too.
-
-> > So, if someone comes up with a clean interface for custom paths I'd love
-> > to consider it to avoid those 13436 bytes.
-> > 
-> 
-> Combined with a way of synchronizing this with the availability of the
-> firmware, this would be a nice thing!
-
-The firmwared solution seems to be the way to go for now.
-
-  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
