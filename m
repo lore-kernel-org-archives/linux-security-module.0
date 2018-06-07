@@ -1,20 +1,15 @@
 From: jmorris@namei.org (James Morris)
-Date: Fri, 8 Jun 2018 03:46:05 +1000 (AEST)
-Subject: [GIT PULL] Security subsystem: Integrity updates for v4.18
-Message-ID: <alpine.LRH.2.21.1806080340420.27121@namei.org>
+Date: Fri, 8 Jun 2018 03:51:26 +1000 (AEST)
+Subject: [GIT PULL] Security subsystem: TPM updates for v4.18
+Message-ID: <alpine.LRH.2.21.1806080346090.27121@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Please pull these updates for the Integrity subsystem.
+Please pull these updates for the TPM subsystem.
 
-
->From Mimi:
-
-- adds run time support for specifying additional security xattrs
-  included in the security.evm HMAC/signature
-
-- some code clean up and bug fixes.
-
+>From Jarkko: "this purely a bug fix release. The only major change is to 
+move the event log code to its own subdirectory because there starts to be 
+so much of it."
 
 ---
 
@@ -24,59 +19,71 @@ The following changes since commit 890e2abe1028c39e5399101a2c277219cd637aaa:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
 
-for you to fetch changes up to b5c90a7526fe39164c2204f0404ce8f8ff21e522:
+for you to fetch changes up to 2d06236ab3276000665ef55eccc111c3bbf90589:
 
-  EVM: unlock on error path in evm_read_xattrs() (2018-06-01 06:03:08 -0400)
+  Merge tag 'tpmdd-next-20180602' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm (2018-06-04 09:08:21 -0700)
 
 ----------------------------------------------------------------
 Colin Ian King (2):
-      EVM: fix memory leak of temporary buffer 'temp'
-      EVM: Fix null dereference on xattr when xattr fails to allocate
+      tpm: st33zp24: remove redundant null check on chip
+      tpm/st33zp24: Fix spelling mistake in macro ST33ZP24_TISREGISTER_UKNOWN
 
-Dan Carpenter (2):
-      EVM: prevent array underflow in evm_write_xattrs()
-      EVM: unlock on error path in evm_read_xattrs()
+James Morris (2):
+      Merge tag 'tpmdd-next-20180518' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm
+      Merge tag 'tpmdd-next-20180602' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm
 
-Matthew Garrett (3):
-      integrity: Add an integrity directory in securityfs
-      EVM: turn evm_config_xattrnames into a list
-      EVM: Allow runtime modification of the set of verified xattrs
+Jerry Snitselaar (1):
+      tpm_tis: verify locality released before returning from release_locality
 
-Mimi Zohar (3):
-      ima: define a new policy condition based on the filesystem name
-      ima: based on policy verify firmware signatures (pre-allocated buffer)
-      ima: fix updating the ima_appraise flag
+Ji-Hun Kim (2):
+      tpm: replace kmalloc() + memcpy() with kmemdup()
+      tpm: replace kmalloc() + memcpy() with kmemdup()
 
-Petko Manolov (1):
-      IMA: use list_splice_tail_init_rcu() instead of its open coded variant
+Nayna Jain (3):
+      tpm: move the delay_msec increment after sleep in tpm_transmit()
+      tpm: reduce poll sleep time in tpm_transmit()
+      tpm: reduce polling time to usecs for even finer granularity
 
-Petr Vorel (3):
-      ima: Reflect correct permissions for policy
-      ima: Unify logging
-      ima: Remove unused variable ima_initialized
+Tadeusz Struk (2):
+      tpm: fix use after free in tpm2_load_context()
+      tpm: fix race condition in tpm_common_write()
 
-Yisheng Xie (1):
-      ima: use match_string() helper
+Thiebaud Weksteen (4):
+      tpm: Add explicit endianness cast
+      tpm: Move eventlog files to a subdirectory
+      tpm: Move shared eventlog functions to common.c
+      tpm: Move eventlog declarations to its own header
 
- Documentation/ABI/testing/evm             |  13 ++
- Documentation/ABI/testing/ima_policy      |   2 +-
- include/uapi/linux/audit.h                |   1 +
- security/integrity/evm/Kconfig            |  11 ++
- security/integrity/evm/evm.h              |   7 +-
- security/integrity/evm/evm_crypto.c       |  10 +-
- security/integrity/evm/evm_main.c         |  79 +++++++-----
- security/integrity/evm/evm_secfs.c        | 206 +++++++++++++++++++++++++++++-
- security/integrity/iint.c                 |  18 +++
- security/integrity/ima/ima.h              |   1 -
- security/integrity/ima/ima_fs.c           |  18 ++-
- security/integrity/ima/ima_kexec.c        |   2 +
- security/integrity/ima/ima_main.c         |  19 +--
- security/integrity/ima/ima_policy.c       |  70 ++++++----
- security/integrity/ima/ima_template_lib.c |   2 +
- security/integrity/integrity.h            |   2 +
- 16 files changed, 377 insertions(+), 84 deletions(-)
+Winkler, Tomas (1):
+      tpm: tpm_crb: relinquish locality on error path.
+
+ drivers/char/tpm/Makefile                          |  10 +-
+ .../tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c}   |   3 +-
+ drivers/char/tpm/eventlog/common.c                 | 195 ++++++++++++++++++++
+ drivers/char/tpm/eventlog/common.h                 |  35 ++++
+ .../tpm/{tpm_eventlog_efi.c => eventlog/efi.c}     |   6 +-
+ .../char/tpm/{tpm_eventlog_of.c => eventlog/of.c}  |  11 +-
+ .../char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c}  | 200 ++-------------------
+ .../char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c}  |   3 +-
+ drivers/char/tpm/st33zp24/spi.c                    |   4 +-
+ drivers/char/tpm/st33zp24/st33zp24.c               |   2 -
+ drivers/char/tpm/tpm-dev-common.c                  |  40 ++---
+ drivers/char/tpm/tpm-dev.h                         |   2 +-
+ drivers/char/tpm/tpm-interface.c                   |   5 +-
+ drivers/char/tpm/tpm.h                             |  32 +---
+ drivers/char/tpm/tpm2-space.c                      |   3 +-
+ drivers/char/tpm/tpm_crb.c                         |  10 +-
+ drivers/char/tpm/tpm_tis_core.c                    |  58 +++++-
+ 17 files changed, 350 insertions(+), 269 deletions(-)
+ rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (98%)
+ create mode 100644 drivers/char/tpm/eventlog/common.c
+ create mode 100644 drivers/char/tpm/eventlog/common.h
+ rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (91%)
+ rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (91%)
+ rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (58%)
+ rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
