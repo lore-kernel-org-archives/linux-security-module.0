@@ -1,72 +1,83 @@
 From: bjorn.andersson@linaro.org (Bjorn Andersson)
-Date: Thu, 7 Jun 2018 09:33:07 -0700
+Date: Thu, 7 Jun 2018 09:49:50 -0700
 Subject: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-In-Reply-To: <1524632409.3371.48.camel@linux.vnet.ibm.com>
-References: <20180408174014.21908-1-hdegoede@redhat.com>
-	<20180408174014.21908-3-hdegoede@redhat.com>
+In-Reply-To: <20180508161037.GE27853@wotan.suse.de>
+References: <20180408174014.21908-3-hdegoede@redhat.com>
 	<20180423211143.GZ14440@wotan.suse.de>
 	<71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
 	<1524586021.3364.20.camel@linux.vnet.ibm.com>
 	<20180424234219.GX14440@wotan.suse.de>
 	<1524632409.3371.48.camel@linux.vnet.ibm.com>
-Message-ID: <20180607163307.GO510@tuxbook-pro>
+	<20180425175557.GY14440@wotan.suse.de>
+	<CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
+	<20180508153805.GC27853@wotan.suse.de>
+	<20180508161037.GE27853@wotan.suse.de>
+Message-ID: <20180607164950.GP510@tuxbook-pro>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue 24 Apr 22:00 PDT 2018, Mimi Zohar wrote:
-> On Tue, 2018-04-24 at 23:42 +0000, Luis R. Rodriguez wrote:
-> > On Tue, Apr 24, 2018 at 12:07:01PM -0400, Mimi Zohar wrote:
-> > > On Tue, 2018-04-24 at 17:09 +0200, Hans de Goede wrote:
+On Tue 08 May 09:10 PDT 2018, Luis R. Rodriguez wrote:
+
+> On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
+> > On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
+> > > On Wed, Apr 25, 2018 at 10:55 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
 [..]
-> > > > As such the current IMA code (from v4.17-rc2) actually does
-> > > > not handle READING_FIRMWARE_PREALLOC_BUFFER at all, 
+> > > 2) Most of those paths are not mounted by the time the corresponding
+> > > drivers are loaded, because pretty much all Android kernels today are
+> > > built without module support, and therefore drivers are loaded well
+> > > before the firmware partition is mounted
+> 
+> I've given this some more thought and you can address this with initramfs,
+> this is how other Linux distributions are addressing this. One way to
+> address this automatically is to scrape the drivers built-in or needed early on
+> boot in initamfs and if the driver has a MODULE_FIRMWARE() its respective
+> firmware is added to initramfs as well.
+> 
+
+That could be done, but it would not change the fact that the
+/sys/class/firmware is ABI and you may not break it.
+
+
+And it doesn't change the fact that the ramdisk would have to be over
+100mb to facilitate this.
+
+> If you *don't* use initramfs, then yes you can obviously run into issues
+> where your firmware may not be accessible if the driver is somehow loaded
+> early.
+> 
+
+This is still a problem that lacks a solution.
+
+> > > 3) I think we use _FALLBACK because doing this with uevents is just
+> > > the easiest thing to do; our init code has a firmware helper that
+> > > deals with this and searches the paths that we care about
 > > > 
-> > > Right, it doesn't yet address READING_FIRMWARE_PREALLOC_BUFFER, but
-> > > should.
-> > > 
-> > > Depending on whether the device requesting the firmware has access to
-> > > the DMA memory, before the signature verification, 
-> > 
-> > It would seem from the original patch review about READING_FIRMWARE_PREALLOC_BUFFER
-> > that this is not a DMA buffer.
+> > > 2) will change at some point, because Android is moving towards a
+> > > model where device-specific peripheral drivers will be loaded as
+> > > modules, and since those modules would likely come from the same
+> > > partition as the firmware, it's possible that the direct load would
+> > > succeed (depending on whether the custom path is configured there or
+> > > not). But I don't think we can rely on the direct loader even in those
+> > > cases, unless we could configure it with multiple custom paths.
 > 
-> The call sequence:
-> qcom_mdt_load() ->?qcom_scm_pas_init_image() ->?dma_alloc_coherent()
+> Using initramfs will help, but because of the custom path needs -- you're
+> right, we don't have anything for that yet, its also a bit unclear if
+> something nice and clean can be drawn up for it. So perhaps dealing with
+> the fallback mechanism is the way to go for this for sure, since we already
+> have support for it.
 > 
-
-qcom_mdt_load() is passed a struct firmware object, which "data" is
-passed into qcom_scm_pas_init_image(), which uses dma_alloc_coherent()
-to allocate scratch memory to perform a call into secure world. So the
-dma_alloc_coherent() here has nothing to do with firmware loading.
-
-qcom_mdt_load() will then use request_firmware_into_buf() to load other
-files into the passed void *mem_region, which either comes from a
-memremap() or dma_alloc_coherent() call.
-
-> If dma_alloc_coherent() isn't allocating a DMA buffer, then the
-> function name is misleading/confusing.
+> Just keep in mind that the fallback mechanism costs you about ~13436 bytes.
 > 
 
-It does allocate memory.
+Remember that putting the firmware in the ramdisk would cost about
+10000x (yes, ten thousand times) more ram.
 
-> > 
-> > The device driver should have access to the buffer pointer with write given
-> > that with request_firmware_into_buf() the driver is giving full write access to
-> > the memory pointer so that the firmware API can stuff the firmware it finds
-> > there.
-> > 
-> > Firmware signature verification would be up to the device hardware to do upon
-> > load *after* request_firmware_into_buf().
-> 
-> We're discussing the kernel's signature verification, not the device
-> hardware's signature verification. ?Can the device driver access the
-> buffer, before IMA-appraisal has verified the firmware's signature?
+> So, if someone comes up with a clean interface for custom paths I'd love
+> to consider it to avoid those 13436 bytes.
 > 
 
-I would expect that it's possible to read the content of the buffer from
-a secondary execution context before the request_firmware_into_buf() has
-verified the content of the buffer, but I would be considered a
-seriously broken driver.
+Combined with a way of synchronizing this with the availability of the
+firmware, this would be a nice thing!
 
 Regards,
 Bjorn
