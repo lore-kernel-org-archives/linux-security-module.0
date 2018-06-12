@@ -1,9 +1,9 @@
 From: peter.enderborg@sony.com (Peter Enderborg)
-Date: Tue, 12 Jun 2018 10:09:00 +0200
-Subject: [PATCH 01/13] selinux: Cleanup printk logging in conditional
+Date: Tue, 12 Jun 2018 10:09:01 +0200
+Subject: [PATCH 02/13] selinux: Cleanup printk logging in ebitmap
 In-Reply-To: <20180612080912.7827-1-peter.enderborg@sony.com>
 References: <20180612080912.7827-1-peter.enderborg@sony.com>
-Message-ID: <20180612080912.7827-2-peter.enderborg@sony.com>
+Message-ID: <20180612080912.7827-3-peter.enderborg@sony.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -11,84 +11,77 @@ Replace printk with pr_* to avoid checkpatch warnings.
 
 Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 ---
- security/selinux/ss/conditional.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ security/selinux/ss/ebitmap.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
-index c91543a617ac..f49e522e932d 100644
---- a/security/selinux/ss/conditional.c
-+++ b/security/selinux/ss/conditional.c
-@@ -96,7 +96,7 @@ int evaluate_cond_node(struct policydb *p, struct cond_node *node)
- 	if (new_state != node->cur_state) {
- 		node->cur_state = new_state;
- 		if (new_state == -1)
--			printk(KERN_ERR "SELinux: expression result was undefined - disabling all rules.\n");
-+			pr_err("SELinux: expression result was undefined - disabling all rules.\n");
- 		/* turn the rules on or off */
- 		for (cur = node->true_list; cur; cur = cur->next) {
- 			if (new_state <= 0)
-@@ -287,7 +287,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
- 	 */
- 	if (k->specified & AVTAB_TYPE) {
- 		if (avtab_search(&p->te_avtab, k)) {
--			printk(KERN_ERR "SELinux: type rule already exists outside of a conditional.\n");
-+			pr_err("SELinux: type rule already exists outside of a conditional.\n");
- 			goto err;
- 		}
- 		/*
-@@ -302,7 +302,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
- 			node_ptr = avtab_search_node(&p->te_cond_avtab, k);
- 			if (node_ptr) {
- 				if (avtab_search_node_next(node_ptr, k->specified)) {
--					printk(KERN_ERR "SELinux: too many conflicting type rules.\n");
-+					pr_err("SELinux: too many conflicting type rules.\n");
- 					goto err;
- 				}
- 				found = 0;
-@@ -313,13 +313,13 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
- 					}
- 				}
- 				if (!found) {
--					printk(KERN_ERR "SELinux: conflicting type rules.\n");
-+					pr_err("SELinux: conflicting type rules.\n");
- 					goto err;
- 				}
- 			}
- 		} else {
- 			if (avtab_search(&p->te_cond_avtab, k)) {
--				printk(KERN_ERR "SELinux: conflicting type rules when adding type rule for true.\n");
-+				pr_err("SELinux: conflicting type rules when adding type rule for true.\n");
- 				goto err;
- 			}
- 		}
-@@ -327,7 +327,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
+index 5ae8c61b75bf..8f624f80055b 100644
+--- a/security/selinux/ss/ebitmap.c
++++ b/security/selinux/ss/ebitmap.c
+@@ -362,7 +362,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 	count = le32_to_cpu(buf[2]);
  
- 	node_ptr = avtab_insert_nonunique(&p->te_cond_avtab, k, d);
- 	if (!node_ptr) {
--		printk(KERN_ERR "SELinux: could not insert rule.\n");
-+		pr_err("SELinux: could not insert rule.\n");
- 		rc = -ENOMEM;
- 		goto err;
- 	}
-@@ -387,12 +387,12 @@ static int cond_read_av_list(struct policydb *p, void *fp, struct cond_av_list *
- static int expr_isvalid(struct policydb *p, struct cond_expr *expr)
- {
- 	if (expr->expr_type <= 0 || expr->expr_type > COND_LAST) {
--		printk(KERN_ERR "SELinux: conditional expressions uses unknown operator.\n");
-+		pr_err("SELinux: conditional expressions uses unknown operator.\n");
- 		return 0;
- 	}
+ 	if (mapunit != BITS_PER_U64) {
+-		printk(KERN_ERR "SELinux: ebitmap: map size %u does not "
++		pr_err("SELinux: ebitmap: map size %u does not "
+ 		       "match my size %zd (high bit was %d)\n",
+ 		       mapunit, BITS_PER_U64, e->highbit);
+ 		goto bad;
+@@ -383,19 +383,19 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 	for (i = 0; i < count; i++) {
+ 		rc = next_entry(&startbit, fp, sizeof(u32));
+ 		if (rc < 0) {
+-			printk(KERN_ERR "SELinux: ebitmap: truncated map\n");
++			pr_err("SELinux: ebitmap: truncated map\n");
+ 			goto bad;
+ 		}
+ 		startbit = le32_to_cpu(startbit);
  
- 	if (expr->bool > p->p_bools.nprim) {
--		printk(KERN_ERR "SELinux: conditional expressions uses unknown bool.\n");
-+		pr_err("SELinux: conditional expressions uses unknown bool.\n");
- 		return 0;
- 	}
- 	return 1;
+ 		if (startbit & (mapunit - 1)) {
+-			printk(KERN_ERR "SELinux: ebitmap start bit (%d) is "
++			pr_err("SELinux: ebitmap start bit (%d) is "
+ 			       "not a multiple of the map unit size (%u)\n",
+ 			       startbit, mapunit);
+ 			goto bad;
+ 		}
+ 		if (startbit > e->highbit - mapunit) {
+-			printk(KERN_ERR "SELinux: ebitmap start bit (%d) is "
++			pr_err("SELinux: ebitmap start bit (%d) is "
+ 			       "beyond the end of the bitmap (%u)\n",
+ 			       startbit, (e->highbit - mapunit));
+ 			goto bad;
+@@ -405,8 +405,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 			struct ebitmap_node *tmp;
+ 			tmp = kmem_cache_zalloc(ebitmap_node_cachep, GFP_KERNEL);
+ 			if (!tmp) {
+-				printk(KERN_ERR
+-				       "SELinux: ebitmap: out of memory\n");
++				pr_err("SELinux: ebitmap: out of memory\n");
+ 				rc = -ENOMEM;
+ 				goto bad;
+ 			}
+@@ -418,7 +417,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 				e->node = tmp;
+ 			n = tmp;
+ 		} else if (startbit <= n->startbit) {
+-			printk(KERN_ERR "SELinux: ebitmap: start bit %d"
++			pr_err("SELinux: ebitmap: start bit %d"
+ 			       " comes after start bit %d\n",
+ 			       startbit, n->startbit);
+ 			goto bad;
+@@ -426,7 +425,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 
+ 		rc = next_entry(&map, fp, sizeof(u64));
+ 		if (rc < 0) {
+-			printk(KERN_ERR "SELinux: ebitmap: truncated map\n");
++			pr_err("SELinux: ebitmap: truncated map\n");
+ 			goto bad;
+ 		}
+ 		map = le64_to_cpu(map);
 -- 
 2.15.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
