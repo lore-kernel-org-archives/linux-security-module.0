@@ -1,55 +1,29 @@
-From: tadeusz.struk@intel.com (Tadeusz Struk)
-Date: Tue, 12 Jun 2018 10:58:26 -0700
-Subject: [PATCH v3 0/2] tpm: add support for nonblocking operation
-Message-ID: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+From: jmorris@namei.org (James Morris)
+Date: Wed, 13 Jun 2018 06:32:34 +1000 (AEST)
+Subject: [-next PATCH] security: use octal not symbolic permissions
+In-Reply-To: <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
+References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
+	<fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1806130631400.13763@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The TCG SAPI specification [1] defines a set of functions, which allows
-applications to use the TPM device in either blocking or non-blocking fashion.
-Each command defined by the specification has a corresponding
-Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-mode of operation. Currently the TPM driver supports only blocking calls,
-which doesn't allow asynchronous IO operations.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this feature.
-The new functionality can be tested using standard TPM tools implemented
-in [2], together with modified TCTI from [3].
+On Mon, 11 Jun 2018, Casey Schaufler wrote:
 
-[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-[2] https://github.com/tpm2-software/tpm2-tools
-[3] https://github.com/tstruk/tpm2-tss/tree/async
+> If you want to break this up by security module I would take
+> the Smack part as soon as James does the tree update. If James
+> wants to take the whole thing at once you can add my:
+> 
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> 
+> for the Smack changes.
 
----
-Changes in v3:
-- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
-  It complained because there is a module_exit() in another file already.
+It's probably simplest for me to take them as one patch.
 
-Changes in v2:
-- Split the change into two separate patches. First patch adds a pointer
-  to the space to the struct file_priv to have access to it from the async job.
-  This is to avoid memory allocations on every write call. Now everything
-  what's needed is in the file_priv struct.
-- Renamed the 'work' member of the timer to avoid confusion.
-  Now there are 'timeout_work' and 'async_work'.
-- Removed the global wait queue and moved it to file_priv.
-- Only creating the work queue when the first file is opened.
+-- 
+James Morris
+<jmorris@namei.org>
 
-Tadeusz Struk (2):
-      tpm: add ptr to the tpm_space struct to file_priv
-      tpm: add support for nonblocking operation
-
- drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
- drivers/char/tpm/tpm-dev.c        |   22 +++--
- drivers/char/tpm/tpm-dev.h        |   19 +++--
- drivers/char/tpm/tpm-interface.c  |    1 
- drivers/char/tpm/tpm.h            |    1 
- drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
- 6 files changed, 152 insertions(+), 72 deletions(-)
-
---
-TS
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
