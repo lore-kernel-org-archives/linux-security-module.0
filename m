@@ -1,32 +1,51 @@
-From: penguin-kernel@i-love.sakura.ne.jp (Tetsuo Handa)
-Date: Tue, 12 Jun 2018 05:57:37 +0900
-Subject: [-next PATCH] security: use octal not symbolic permissions
-In-Reply-To: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
-References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
-Message-ID: <e11959c0-9e1c-4f4a-151f-8f3031d882c4@i-love.sakura.ne.jp>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Mon, 11 Jun 2018 17:20:14 -0700
+Subject: [PATCH v2 0/2] tpm: add support for nonblocking operation
+In-Reply-To: <20180601171731.GF1408@ziepe.ca>
+References: <20180601171731.GF1408@ziepe.ca>
+Message-ID: <152876281395.19591.3681365717212126222.stgit@tstruk-mobl1.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2018/06/12 4:01, Joe Perches wrote:
-> Currently security files use a mixture of octal and symbolic styles
-> for permissions.
-> 
-> Using octal and not symbolic permissions is preferred by many as more
-> readable.
-> 
-> see: https://lkml.org/lkml/2016/8/2/1945
-> 
-> Prefer the direct use of octal for permissions.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> 
->  security/tomoyo/condition.c     | 18 ++++++-------
-> 
-> diff --git a/security/tomoyo/condition.c b/security/tomoyo/condition.c
+The TCG SAPI specification [1] defines a set of functions, which allows
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3].
 
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
 
-for the TOMOYO part.
+---
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/tpm-dev-common.c |  152 ++++++++++++++++++++++++++++---------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 4 files changed, 152 insertions(+), 72 deletions(-)
+
+--
+TS
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
