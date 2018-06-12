@@ -1,29 +1,129 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 13 Jun 2018 06:32:34 +1000 (AEST)
-Subject: [-next PATCH] security: use octal not symbolic permissions
-In-Reply-To: <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
-References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
-	<fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1806130631400.13763@namei.org>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 12 Jun 2018 16:33:27 -0400
+Subject: [RFC PATCH ghak86 V1] audit: eliminate audit_enabled magic number
+	comparison
+In-Reply-To: <490a00a7902582823fe8c532f5dd995a1da61fb1.1528214962.git.rgb@redhat.com>
+References: <490a00a7902582823fe8c532f5dd995a1da61fb1.1528214962.git.rgb@redhat.com>
+Message-ID: <CAHC9VhQuLbbRp4ETzonD0XYQ3oQP9fuq-f7zrytQY7BQ0ANCZA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 11 Jun 2018, Casey Schaufler wrote:
+On Tue, Jun 5, 2018 at 7:20 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Remove comparison of audit_enabled to magic numbers outside of audit.
+>
+> Related: https://github.com/linux-audit/audit-kernel/issues/86
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  drivers/tty/tty_audit.c      | 2 +-
+>  include/linux/audit.h        | 5 ++++-
+>  include/net/xfrm.h           | 2 +-
+>  kernel/audit.c               | 3 ---
+>  net/netfilter/xt_AUDIT.c     | 2 +-
+>  net/netlabel/netlabel_user.c | 2 +-
+>  6 files changed, 8 insertions(+), 8 deletions(-)
 
-> If you want to break this up by security module I would take
-> the Smack part as soon as James does the tree update. If James
-> wants to take the whole thing at once you can add my:
-> 
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> 
-> for the Smack changes.
+An improvement, thank you.  Thankfully there are no tariffs on patches
+so I've queued this up for after the merge window.
 
-It's probably simplest for me to take them as one patch.
+> diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
+> index e30aa6b..50f567b 100644
+> --- a/drivers/tty/tty_audit.c
+> +++ b/drivers/tty/tty_audit.c
+> @@ -92,7 +92,7 @@ static void tty_audit_buf_push(struct tty_audit_buf *buf)
+>  {
+>         if (buf->valid == 0)
+>                 return;
+> -       if (audit_enabled == 0) {
+> +       if (audit_enabled == AUDIT_OFF) {
+>                 buf->valid = 0;
+>                 return;
+>         }
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 69c7847..9334fbe 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -117,6 +117,9 @@ struct audit_field {
+>
+>  extern void audit_log_session_info(struct audit_buffer *ab);
+>
+> +#define AUDIT_OFF      0
+> +#define AUDIT_ON       1
+> +#define AUDIT_LOCKED   2
+>  #ifdef CONFIG_AUDIT
+>  /* These are defined in audit.c */
+>                                 /* Public API */
+> @@ -202,7 +205,7 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
+>  static inline void audit_log_task_info(struct audit_buffer *ab,
+>                                        struct task_struct *tsk)
+>  { }
+> -#define audit_enabled 0
+> +#define audit_enabled AUDIT_OFF
+>  #endif /* CONFIG_AUDIT */
+>
+>  #ifdef CONFIG_AUDIT_COMPAT_GENERIC
+> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+> index 7f2e31a..ce995a1 100644
+> --- a/include/net/xfrm.h
+> +++ b/include/net/xfrm.h
+> @@ -734,7 +734,7 @@ static inline struct audit_buffer *xfrm_audit_start(const char *op)
+>  {
+>         struct audit_buffer *audit_buf = NULL;
+>
+> -       if (audit_enabled == 0)
+> +       if (audit_enabled == AUDIT_OFF)
+>                 return NULL;
+>         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
+>                                     AUDIT_MAC_IPSEC_EVENT);
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index e7478cb..8442c65 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -83,9 +83,6 @@
+>  #define AUDIT_INITIALIZED      1
+>  static int     audit_initialized;
+>
+> -#define AUDIT_OFF      0
+> -#define AUDIT_ON       1
+> -#define AUDIT_LOCKED   2
+>  u32            audit_enabled = AUDIT_OFF;
+>  bool           audit_ever_enabled = !!AUDIT_OFF;
+>
+> diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+> index f368ee6..af883f1 100644
+> --- a/net/netfilter/xt_AUDIT.c
+> +++ b/net/netfilter/xt_AUDIT.c
+> @@ -72,7 +72,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+>         struct audit_buffer *ab;
+>         int fam = -1;
+>
+> -       if (audit_enabled == 0)
+> +       if (audit_enabled == AUDIT_OFF)
+>                 goto errout;
+>         ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+>         if (ab == NULL)
+> diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
+> index 2f328af..4676f5b 100644
+> --- a/net/netlabel/netlabel_user.c
+> +++ b/net/netlabel/netlabel_user.c
+> @@ -101,7 +101,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+>         char *secctx;
+>         u32 secctx_len;
+>
+> -       if (audit_enabled == 0)
+> +       if (audit_enabled == AUDIT_OFF)
+>                 return NULL;
+>
+>         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC, type);
+> --
+> 1.8.3.1
+>
+
+
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
