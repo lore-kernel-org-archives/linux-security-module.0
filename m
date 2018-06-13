@@ -1,59 +1,145 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 13 Jun 2018 12:19:12 -0400
-Subject: [-next PATCH] security: use octal not symbolic permissions
-In-Reply-To: <00961ef3fb41930a3304da935f1f73ebe386e83c.camel@perches.com>
-References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
-	<fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
-	<alpine.LRH.2.21.1806130631400.13763@namei.org>
-	<CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
-	<3d890108a942b6a3fb9a5326501174af270707dc.camel@perches.com>
-	<CAHC9VhRHd+nxKQRj5PjoN7Te3NjomtWcb_0ZxzcxAzwX024m9A@mail.gmail.com>
-	<00961ef3fb41930a3304da935f1f73ebe386e83c.camel@perches.com>
-Message-ID: <CAHC9VhRXBx_Q2eM48FFqX9PbPz0k8R74gfFFoRhwV91n2_BPsQ@mail.gmail.com>
+From: why2jjj.linux@gmail.com (J Freyensee)
+Date: Wed, 13 Jun 2018 10:38:36 -0700
+Subject: [PATCH 01/13] selinux: Cleanup printk logging in conditional
+In-Reply-To: <ef97b4b2-35da-7642-aa9d-de3e968cfb81@sony.com>
+References: <20180612080912.7827-1-peter.enderborg@sony.com>
+	<20180612080912.7827-2-peter.enderborg@sony.com>
+	<a85d28e8cbd32acda21424ab6a46089f26969671.camel@perches.com>
+	<ef97b4b2-35da-7642-aa9d-de3e968cfb81@sony.com>
+Message-ID: <b7a048ae-830f-9da0-9548-ea6d34db9756@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jun 13, 2018 at 12:04 PM, Joe Perches <joe@perches.com> wrote:
-> On Wed, 2018-06-13 at 11:49 -0400, Paul Moore wrote:
->> On Tue, Jun 12, 2018 at 8:29 PM, Joe Perches <joe@perches.com> wrote:
->> > On Tue, 2018-06-12 at 17:12 -0400, Paul Moore wrote:
->> > > Joe, in general I really appreciate the fixes you send, but these
->> > > patches that cross a lot of subsystem boundaries (this isn't the first
->> > > one that does this) causes unnecessary conflicts in -next and during
->> > > the merge window.  Could you split your patches up from now on please?
->> >
->> > Sorry. No.  Merge conflicts are inherent in this system.
+
+
+On 6/12/18 11:23 PM, peter enderborg wrote:
+> On 06/12/2018 04:38 PM, Joe Perches wrote:
+>> On Tue, 2018-06-12 at 10:09 +0200, Peter Enderborg wrote:
+>>> Replace printk with pr_* to avoid checkpatch warnings.
+>> I believe it would be nicer to remove the
+>> "SELinux: " prefix embbeded in each format
+>> and use a specific
 >>
->> Yes, merge conflicts are inherent in this system when one makes a
->> single change which impacts multiple subsystems, e.g. changing a core
->> kernel function which is called by multiple subsystems.  However, that
->> isn't what this patch does, it makes a number of self-contained
->> changes across multiple subsystems; there are no cross-subsystem
->> dependencies in this patch.  You are increasing the likelihood of
->> conflicts for no good reason; that is why I'm asking you to split this
->> patch and others like it.
->
-> No.  History shows with high certainty that splitting
-> patches like this across multiple subsystems of a primary
-> subsystem means that the entire patchset is not completely
-> applied.
+>> #define pr_fmt(fmt) "SELinux: " fmt
+>>
+>> to automatically prefix these formats.
+> I cant argument about that, however some of the warnings and debug prints in this set does not have this
+> so it will then change the actual output. (And I also think that they should have a the prefix, but I don't
+> know why they don't) So I am not sure if it appropriate for a cleanup patch, it supposed to have no functional change.
 
-I think that is due more to a lack of effort on the part of the patch
-author to keep pushing the individual patches.
 
-> It's _much_ simpler and provides a generic mechanism to
-> get the entire patch applied to send a single patch to the
-> top level subsystem maintainer.
+I would suggest that could be a follow-up patch.
 
-I understand it is simpler for you, but it is more difficult for everyone else.
+I do like the cleanup, and it's better than the status quo.
 
-Further, where the LSMs are concerned, there is no "top level
-subsystem maintainer" anymore.  SELinux and AppArmor send pull
-requests directly to Linus.
+Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
 
--- 
-paul moore
-www.paul-moore.com
+
+>>> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+>> []
+>>> @@ -96,7 +96,7 @@ int evaluate_cond_node(struct policydb *p, struct cond_node *node)
+>>>   	if (new_state != node->cur_state) {
+>>>   		node->cur_state = new_state;
+>>>   		if (new_state == -1)
+>>> -			printk(KERN_ERR "SELinux: expression result was undefined - disabling all rules.\n");
+>>> +			pr_err("SELinux: expression result was undefined - disabling all rules.\n");
+>>>   		/* turn the rules on or off */
+>>>   		for (cur = node->true_list; cur; cur = cur->next) {
+>>>   			if (new_state <= 0)
+>> So, for instance, this patch could become:
+>> (etc and so forth for each patch in this series)
+>>
+>> ---
+>>   security/selinux/ss/conditional.c | 18 ++++++++++--------
+>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+>> index c91543a617ac..e96820d92b61 100644
+>> --- a/security/selinux/ss/conditional.c
+>> +++ b/security/selinux/ss/conditional.c
+>> @@ -7,6 +7,8 @@
+>>    *	the Free Software Foundation, version 2.
+>>    */
+>>   
+>> +#define pr_fmt(fmt) "SELinux: " fmt
+>> +
+>>   #include <linux/kernel.h>
+>>   #include <linux/errno.h>
+>>   #include <linux/string.h>
+>> @@ -96,7 +98,7 @@ int evaluate_cond_node(struct policydb *p, struct cond_node *node)
+>>   	if (new_state != node->cur_state) {
+>>   		node->cur_state = new_state;
+>>   		if (new_state == -1)
+>> -			printk(KERN_ERR "SELinux: expression result was undefined - disabling all rules.\n");
+>> +			pr_err("expression result was undefined - disabling all rules\n");
+>>   		/* turn the rules on or off */
+>>   		for (cur = node->true_list; cur; cur = cur->next) {
+>>   			if (new_state <= 0)
+>> @@ -287,7 +289,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   	 */
+>>   	if (k->specified & AVTAB_TYPE) {
+>>   		if (avtab_search(&p->te_avtab, k)) {
+>> -			printk(KERN_ERR "SELinux: type rule already exists outside of a conditional.\n");
+>> +			pr_err("type rule already exists outside of a conditional\n");
+>>   			goto err;
+>>   		}
+>>   		/*
+>> @@ -302,7 +304,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   			node_ptr = avtab_search_node(&p->te_cond_avtab, k);
+>>   			if (node_ptr) {
+>>   				if (avtab_search_node_next(node_ptr, k->specified)) {
+>> -					printk(KERN_ERR "SELinux: too many conflicting type rules.\n");
+>> +					pr_err("too many conflicting type rules\n");
+>>   					goto err;
+>>   				}
+>>   				found = 0;
+>> @@ -313,13 +315,13 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   					}
+>>   				}
+>>   				if (!found) {
+>> -					printk(KERN_ERR "SELinux: conflicting type rules.\n");
+>> +					pr_err("conflicting type rules\n");
+>>   					goto err;
+>>   				}
+>>   			}
+>>   		} else {
+>>   			if (avtab_search(&p->te_cond_avtab, k)) {
+>> -				printk(KERN_ERR "SELinux: conflicting type rules when adding type rule for true.\n");
+>> +				pr_err("conflicting type rules when adding type rule for true\n");
+>>   				goto err;
+>>   			}
+>>   		}
+>> @@ -327,7 +329,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   
+>>   	node_ptr = avtab_insert_nonunique(&p->te_cond_avtab, k, d);
+>>   	if (!node_ptr) {
+>> -		printk(KERN_ERR "SELinux: could not insert rule.\n");
+>> +		pr_err("could not insert rule\n");
+>>   		rc = -ENOMEM;
+>>   		goto err;
+>>   	}
+>> @@ -387,12 +389,12 @@ static int cond_read_av_list(struct policydb *p, void *fp, struct cond_av_list *
+>>   static int expr_isvalid(struct policydb *p, struct cond_expr *expr)
+>>   {
+>>   	if (expr->expr_type <= 0 || expr->expr_type > COND_LAST) {
+>> -		printk(KERN_ERR "SELinux: conditional expressions uses unknown operator.\n");
+>> +		pr_err("conditional expressions uses unknown operator\n");
+>>   		return 0;
+>>   	}
+>>   
+>>   	if (expr->bool > p->p_bools.nprim) {
+>> -		printk(KERN_ERR "SELinux: conditional expressions uses unknown bool.\n");
+>> +		pr_err("conditional expressions uses unknown bool\n");
+>>   		return 0;
+>>   	}
+>>   	return 1;
+>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
