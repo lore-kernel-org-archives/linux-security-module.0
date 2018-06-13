@@ -1,36 +1,48 @@
-From: pmoore@redhat.com (Paul Moore)
-Date: Wed, 13 Jun 2018 16:26:46 -0400
-Subject: [PATCH] MAINTAINERS: remove the outdated "LINUX SECURITY MODULE
-	(LSM) FRAMEWORK" entry
-Message-ID: <152892160671.9347.17619818032833751594.stgit@chester>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Wed, 13 Jun 2018 16:30:30 -0400
+Subject: [PATCH] integrity: add error handling for kmem_cache_create
+In-Reply-To: <1528777625-40502-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528777625-40502-1-git-send-email-jiazhouyang09@gmail.com>
+Message-ID: <1528921830.3282.7.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Paul Moore <paul@paul-moore.com>
+On Tue, 2018-06-12 at 12:27 +0800, Zhouyang Jia wrote:
+> When kmem_cache_create fails, the lack of error-handling code may
+> cause unexpected results.
+> 
+> This patch adds error-handling code after calling kmem_cache_create.
 
-This has been replaced with the "SECURITY SUBSYSTEM" entry.
+The slab is being create during __init. ?Under what circumstances do
+you expect the allocation to fail? ?Have you tested what happens if it
+fails with/without at least an IMA measurement policy?
 
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- MAINTAINERS |    5 -----
- 1 file changed, 5 deletions(-)
+Mimi
+??
+> 
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> ---
+>  security/integrity/iint.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index 149faa8..c074fd8 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -172,6 +172,9 @@ static int __init integrity_iintcache_init(void)
+>  	iint_cache =
+>  	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
+>  			      0, SLAB_PANIC, init_once);
+> +	if (!iint_cache)
+> +		return -ENOMEM;
+> +
+>  	return 0;
+>  }
+>  security_initcall(integrity_iintcache_init);
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c13b9fb3be0b..9528eb6290ea 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8322,11 +8322,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
- F:	tools/memory-model/
- F:	Documentation/memory-barriers.txt
- 
--LINUX SECURITY MODULE (LSM) FRAMEWORK
--M:	Chris Wright <chrisw@sous-sol.org>
--L:	linux-security-module at vger.kernel.org
--S:	Supported
--
- LIS3LV02D ACCELEROMETER DRIVER
- M:	Eric Piel <eric.piel@tremplin-utc.net>
- S:	Maintained
+
+
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
