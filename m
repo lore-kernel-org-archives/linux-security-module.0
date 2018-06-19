@@ -1,10 +1,10 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 19 Jun 2018 13:46:42 -0400
-Subject: [PATCH 11/13] selinux: Cleanup printk logging in netif
-In-Reply-To: <20180612080912.7827-12-peter.enderborg@sony.com>
+Date: Tue, 19 Jun 2018 13:48:38 -0400
+Subject: [PATCH 12/13] selinux: Cleanup printk logging in avc
+In-Reply-To: <20180612080912.7827-13-peter.enderborg@sony.com>
 References: <20180612080912.7827-1-peter.enderborg@sony.com>
-	<20180612080912.7827-12-peter.enderborg@sony.com>
-Message-ID: <CAHC9VhQhvDFMrJVazcsiMzbnf1Nfg5CBaBNF_kiws15j-oBdUw@mail.gmail.com>
+	<20180612080912.7827-13-peter.enderborg@sony.com>
+Message-ID: <CAHC9VhQ3xrVfGo0T-HdHbdM3p1k38NwfEP7qmNZDO_b_8a++UA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -15,40 +15,24 @@ On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
 >
 > Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 > ---
->  security/selinux/netif.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
+>  security/selinux/avc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Merged, thanks.
 
-> diff --git a/security/selinux/netif.c b/security/selinux/netif.c
-> index ac65f7417413..8c738c189942 100644
-> --- a/security/selinux/netif.c
-> +++ b/security/selinux/netif.c
-> @@ -145,9 +145,8 @@ static int sel_netif_sid_slow(struct net *ns, int ifindex, u32 *sid)
->
->         dev = dev_get_by_index(ns, ifindex);
->         if (unlikely(dev == NULL)) {
-> -               printk(KERN_WARNING
-> -                      "SELinux: failure in sel_netif_sid_slow(),"
-> -                      " invalid network interface (%d)\n", ifindex);
-> +               pr_warn("SELinux: failure in %s(), invalid network interface (%d)\n",
-> +                       __func__, ifindex);
->                 return -ENOENT;
->         }
->
-> @@ -177,10 +176,8 @@ static int sel_netif_sid_slow(struct net *ns, int ifindex, u32 *sid)
->         spin_unlock_bh(&sel_netif_lock);
->         dev_put(dev);
->         if (unlikely(ret)) {
-> -               printk(KERN_WARNING
-> -                      "SELinux: failure in sel_netif_sid_slow(),"
-> -                      " unable to determine network interface label (%d)\n",
-> -                      ifindex);
-> +               pr_warn("SELinux: failure in %s(), unable to determine network interface label (%d)\n",
-> +                       __func__, ifindex);
->                 kfree(new);
->         }
->         return ret;
+> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+> index f3aedf077509..635e5c1e3e48 100644
+> --- a/security/selinux/avc.c
+> +++ b/security/selinux/avc.c
+> @@ -650,7 +650,7 @@ static int avc_latest_notif_update(struct selinux_avc *avc,
+>         spin_lock_irqsave(&notif_lock, flag);
+>         if (is_insert) {
+>                 if (seqno < avc->avc_cache.latest_notif) {
+> -                       printk(KERN_WARNING "SELinux: avc:  seqno %d < latest_notif %d\n",
+> +                       pr_warn("SELinux: avc:  seqno %d < latest_notif %d\n",
+>                                seqno, avc->avc_cache.latest_notif);
+>                         ret = -EAGAIN;
+>                 }
 > --
 > 2.15.1
 >
