@@ -1,209 +1,446 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Mon, 18 Jun 2018 19:24:39 +0000
-Subject: [PATCH v6] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <20180618180406.GA20697@linux.intel.com>
-References: <20180607212040.30989-1-tomas.winkler@intel.com>
-	<20180618180406.GA20697@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D94EA09@hasmsx108.ger.corp.intel.com>
+From: avagin@virtuozzo.com (Andrei Vagin)
+Date: Mon, 18 Jun 2018 20:34:51 -0700
+Subject: [12/24] proc: Add fs_context support to procfs [ver #7]
+In-Reply-To: <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
+References: <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
+Message-ID: <20180619033450.GA11639@outlook.office365.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> 
-> On Fri, Jun 08, 2018 at 12:20:40AM +0300, Tomas Winkler wrote:
-> > We cannot use go_idle cmd_ready commands via runtime_pm handles as
-> > with the introduction of localities this is no longer an optional
-> > feature, while runtime pm can be not enabled.
-> > Though cmd_ready/go_idle provides a power saving, it's also a part of
-> > TPM2 protocol and should be called explicitly.
-> > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > runtime pm support as it is not used by any driver.
-> >
-> > A new tpm transmit flag is added TPM_TRANSMIT_NESTED, which implies
-> > TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed
-> to resolve
-> > tpm spaces and locality request recursive calls to tpm_transmit().
-> >
-> > New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
-> streamline
-> > tpm_try_transmit code.
-> >
-> > tpm_crb no longer needs own power saving functions and can drop using
-> > tpm_pm_suspend/resume.
-> >
-> > This patch cannot be really separated from the locality fix.
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > granting locality)
-> >
-> >
-> > Cc: stable at vger.kernel.org
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > granting locality)
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > ---
-> > V2-3:resent
-> > V4: 1. Use tpm_pm_suspend/resume in tpm_crb
-> >     2. Drop cmd_ready/go_idle around tpm_chip_register, as there is no
-> >        usage counter like in runtime_pm.
-> > V5: 1. add tpm_cmd_ready and tpm_go_idle wrappers.
-> >     2. Abuse TPM_TRANSMIT_UNLOCKED flag to resolve tpm space
-> >        recursion.
-> > V6: 1. Add new flags TPM_TRANSMIT_NESTED which implies
-> >        TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW, as not all
-> >        unlocked flows are recursive i.e. tpm2_unseal_trusted.
-> >
-> >  drivers/char/tpm/tpm-interface.c  |  51 +++++++++++++++----
-> >  drivers/char/tpm/tpm.h            |  13 ++++-
-> >  drivers/char/tpm/tpm2-space.c     |  12 ++---
-> >  drivers/char/tpm/tpm_crb.c        | 101 ++++++++++----------------------------
-> >  drivers/char/tpm/tpm_vtpm_proxy.c |   2 +-
-> >  include/linux/tpm.h               |   2 +
-> >  6 files changed, 88 insertions(+), 93 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index e32f6e85dc6d..1abd8261651b 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -29,7 +29,6 @@
-> >  #include <linux/mutex.h>
-> >  #include <linux/spinlock.h>
-> >  #include <linux/freezer.h>
-> > -#include <linux/pm_runtime.h>
-> >  #include <linux/tpm_eventlog.h>
-> >
-> >  #include "tpm.h"
-> > @@ -369,10 +368,13 @@ static int tpm_validate_command(struct
-> tpm_chip *chip,
-> >  	return -EINVAL;
-> >  }
-> >
-> > -static int tpm_request_locality(struct tpm_chip *chip)
-> > +static int tpm_request_locality(struct tpm_chip *chip, unsigned int
-> > +flags)
-> >  {
-> >  	int rc;
-> >
-> > +	if (flags & __TPM_TRANSMIT_RAW)
-> > +		return 0;
-> > +
-> >  	if (!chip->ops->request_locality)
-> >  		return 0;
-> >
-> > @@ -385,10 +387,13 @@ static int tpm_request_locality(struct tpm_chip
-> *chip)
-> >  	return 0;
-> >  }
-> >
-> > -static void tpm_relinquish_locality(struct tpm_chip *chip)
-> > +static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned
-> > +int flags)
-> >  {
-> >  	int rc;
-> >
-> > +	if (flags & __TPM_TRANSMIT_RAW)
-> > +		return;
-> > +
-> >  	if (!chip->ops->relinquish_locality)
-> >  		return;
-> >
-> > @@ -399,6 +404,28 @@ static void tpm_relinquish_locality(struct
-> tpm_chip *chip)
-> >  	chip->locality = -1;
-> >  }
-> >
-> > +static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags) {
-> > +	if (flags & __TPM_TRANSMIT_RAW)
-> > +		return 0;
-> > +
-> > +	if (!chip->ops->cmd_ready)
-> > +		return 0;
-> > +
-> > +	return chip->ops->cmd_ready(chip);
-> > +}
-> > +
-> > +static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags) {
-> > +	if (flags & __TPM_TRANSMIT_RAW)
-> > +		return 0;
-> > +
-> > +	if (!chip->ops->go_idle)
-> > +		return 0;
-> > +
-> > +	return chip->ops->go_idle(chip);
-> > +}
-> > +
-> >  static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> >  				struct tpm_space *space,
-> >  				u8 *buf, size_t bufsiz,
-> > @@ -449,14 +476,15 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
-> >  	/* Store the decision as chip->locality will be changed. */
-> >  	need_locality = chip->locality == -1;
-> >
-> > -	if (!(flags & TPM_TRANSMIT_RAW) && need_locality) {
-> > -		rc = tpm_request_locality(chip);
-> > +	if (need_locality) {
-> > +		rc = tpm_request_locality(chip, flags);
-> >  		if (rc < 0)
-> >  			goto out_no_locality;
-> >  	}
-> >
-> > -	if (chip->dev.parent)
-> > -		pm_runtime_get_sync(chip->dev.parent);
-> > +	rc = tpm_cmd_ready(chip, flags);
-> > +	if (rc)
-> > +		goto out;
-> >
-> >  	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-> >  	if (rc)
-> > @@ -516,13 +544,16 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
-> >  	}
-> >
-> >  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> > +	if (rc)
-> > +		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
-> >
-> >  out:
-> > -	if (chip->dev.parent)
-> > -		pm_runtime_put_sync(chip->dev.parent);
-> > +	rc = tpm_go_idle(chip, flags);
-> > +	if (rc)
-> > +		goto out;
-> >
-> >  	if (need_locality)
-> > -		tpm_relinquish_locality(chip);
-> > +		tpm_relinquish_locality(chip, flags);
-> >
-> >  out_no_locality:
-> >  	if (chip->ops->clk_enable != NULL)
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > 4426649e431c..beb0a763016c 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -511,9 +511,18 @@ extern const struct file_operations tpm_fops;
-> > extern const struct file_operations tpmrm_fops;  extern struct idr
-> > dev_nums_idr;
-> >
-> > +/**
-> > + * enum tpm_transmit_flags
-> > + *
-> > + * @TPM_TRANSMIT_UNLOCKED: used to lock sequence of tpm_transmit
-> calls.
-> > + * @__TPM_TRANSMIT_RAW: prevent recursive calls into setup steps
-> > + *                    (go idle, locality,..). Don't use directly.
-> > + * @TPM_TRANSMIT_NESTED: Use from nested tpm_transmit calls  */
-> >  enum tpm_transmit_flags {
-> > -	TPM_TRANSMIT_UNLOCKED	= BIT(0),
-> > -	TPM_TRANSMIT_RAW	= BIT(1),
-> > +	TPM_TRANSMIT_UNLOCKED   = BIT(0),
-> > +	__TPM_TRANSMIT_RAW      = BIT(1),
-> 
-> NAK for the naming convention.
+Hi David,
 
-What do you suggest
-Tomas
+We run CRIU tests for vfs/for-next, and today a few of these test failed. I
+found that the problem appears after this patch..
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+https://travis-ci.org/avagin/linux/jobs/393766778
+
+The reproducer is attached. It creates a process in a new set of namespaces
+(user, mount, etc) and then this process fails to mount procfs, the mount
+syscall returns EBUSY.
+
+666   pipe([3, 4])                      = 0
+666   clone(child_stack=0x7ffc23a89400, flags=CLONE_NEWNS|CLONE_NEWUTS|CLONE_NEWIPC|CLONE_NEWUSER|CLONE_NEWPID|CLONE_NEWNET|SIGCHLD) = 667
+666   openat(AT_FDCWD, "/proc/667/uid_map", O_WRONLY <unfinished ...>
+667   close(4 <unfinished ...>
+666   <... openat resumed> )            = 5
+666   write(5, "0 100000 100000\n100000 200000 50"..., 36 <unfinished ...>
+667   <... close resumed> )             = 0
+666   <... write resumed> )             = 36
+666   close(5 <unfinished ...>
+667   read(3,  <unfinished ...>
+666   <... close resumed> )             = 0
+666   openat(AT_FDCWD, "/proc/667/gid_map", O_WRONLY) = 5
+666   write(5, "0 400000 50000\n50000 500000 1000"..., 35) = 35
+666   close(5)                          = 0
+666   write(4, " \225\250#", 4)         = 4
+667   <... read resumed> " \225\250#", 4) = 4
+666   wait4(667,  <unfinished ...>
+667   setsid()                          = 1
+667   setuid(0)                         = 0
+667   setgid(0)                         = 0
+667   setgroups(0, NULL)                = 0
+667   mount("proc", "/mnt", "proc", MS_MGC_VAL|MS_NOSUID|MS_NODEV|MS_NOEXEC, NULL) = -1 EBUSY (Device or resource busy)
+
+Thanks,
+Andrei
+
+On Thu, Apr 19, 2018 at 02:32:28PM +0100, David Howells wrote:
+> Add fs_context support to procfs.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  fs/proc/inode.c    |    2 -
+>  fs/proc/internal.h |    2 -
+>  fs/proc/root.c     |  169 ++++++++++++++++++++++++++++++++++------------------
+>  3 files changed, 113 insertions(+), 60 deletions(-)
+> 
+> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+> index 0b13cf6eb6d7..7aa86dd65ba8 100644
+> --- a/fs/proc/inode.c
+> +++ b/fs/proc/inode.c
+> @@ -128,7 +128,7 @@ const struct super_operations proc_sops = {
+>  	.drop_inode	= generic_delete_inode,
+>  	.evict_inode	= proc_evict_inode,
+>  	.statfs		= simple_statfs,
+> -	.remount_fs	= proc_remount,
+> +	.reconfigure	= proc_reconfigure,
+>  	.show_options	= proc_show_options,
+>  };
+>  
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index 3182e1b636d3..a5ab9504768a 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -254,7 +254,7 @@ static inline void proc_tty_init(void) {}
+>  extern struct proc_dir_entry proc_root;
+>  
+>  extern void proc_self_init(void);
+> -extern int proc_remount(struct super_block *, int *, char *, size_t);
+> +extern int proc_reconfigure(struct super_block *, struct fs_context *);
+>  
+>  /*
+>   * task_[no]mmu.c
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index 2fbc177f37a8..e6bd31fbc714 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@ -19,14 +19,24 @@
+>  #include <linux/module.h>
+>  #include <linux/bitops.h>
+>  #include <linux/user_namespace.h>
+> +#include <linux/fs_context.h>
+>  #include <linux/mount.h>
+>  #include <linux/pid_namespace.h>
+>  #include <linux/parser.h>
+>  #include <linux/cred.h>
+>  #include <linux/magic.h>
+> +#include <linux/slab.h>
+>  
+>  #include "internal.h"
+>  
+> +struct proc_fs_context {
+> +	struct fs_context	fc;
+> +	struct pid_namespace	*pid_ns;
+> +	unsigned long		mask;
+> +	int			hidepid;
+> +	int			gid;
+> +};
+> +
+>  enum {
+>  	Opt_gid, Opt_hidepid, Opt_err,
+>  };
+> @@ -37,56 +47,60 @@ static const match_table_t tokens = {
+>  	{Opt_err, NULL},
+>  };
+>  
+> -static int proc_parse_options(char *options, struct pid_namespace *pid)
+> +static int proc_parse_option(struct fs_context *fc, char *opt, size_t len)
+>  {
+> -	char *p;
+> +	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
+>  	substring_t args[MAX_OPT_ARGS];
+> -	int option;
+> -
+> -	if (!options)
+> -		return 1;
+> -
+> -	while ((p = strsep(&options, ",")) != NULL) {
+> -		int token;
+> -		if (!*p)
+> -			continue;
+> -
+> -		args[0].to = args[0].from = NULL;
+> -		token = match_token(p, tokens, args);
+> -		switch (token) {
+> -		case Opt_gid:
+> -			if (match_int(&args[0], &option))
+> -				return 0;
+> -			pid->pid_gid = make_kgid(current_user_ns(), option);
+> -			break;
+> -		case Opt_hidepid:
+> -			if (match_int(&args[0], &option))
+> -				return 0;
+> -			if (option < HIDEPID_OFF ||
+> -			    option > HIDEPID_INVISIBLE) {
+> -				pr_err("proc: hidepid value must be between 0 and 2.\n");
+> -				return 0;
+> -			}
+> -			pid->hide_pid = option;
+> -			break;
+> -		default:
+> -			pr_err("proc: unrecognized mount option \"%s\" "
+> -			       "or missing value\n", p);
+> -			return 0;
+> +	int token;
+> +	
+> +	args[0].to = args[0].from = NULL;
+> +	token = match_token(opt, tokens, args);
+> +	switch (token) {
+> +	case Opt_gid:
+> +		if (match_int(&args[0], &ctx->gid))
+> +			return -EINVAL;
+> +		break;
+> +
+> +	case Opt_hidepid:
+> +		if (match_int(&args[0], &ctx->hidepid))
+> +			return -EINVAL;
+> +		if (ctx->hidepid < HIDEPID_OFF ||
+> +		    ctx->hidepid > HIDEPID_INVISIBLE) {
+> +			pr_err("proc: hidepid value must be between 0 and 2.\n");
+> +			return -EINVAL;
+>  		}
+> +		break;
+> +
+> +	default:
+> +		pr_err("proc: unrecognized mount option \"%s\" or missing value\n",
+> +		       opt);
+> +		return -EINVAL;
+>  	}
+>  
+> -	return 1;
+> +	ctx->mask |= 1 << token;
+> +	return 0;
+> +}
+> +
+> +static void proc_set_options(struct super_block *s,
+> +			     struct fs_context *fc,
+> +			     struct pid_namespace *pid_ns,
+> +			     struct user_namespace *user_ns)
+> +{
+> +	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
+> +
+> +	if (ctx->mask & (1 << Opt_gid))
+> +		pid_ns->pid_gid = make_kgid(user_ns, ctx->gid);
+> +	if (ctx->mask & (1 << Opt_hidepid))
+> +		pid_ns->hide_pid = ctx->hidepid;
+>  }
+>  
+> -static int proc_fill_super(struct super_block *s, void *data, size_t data_size, int silent)
+> +static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+>  {
+> -	struct pid_namespace *ns = get_pid_ns(s->s_fs_info);
+> +	struct pid_namespace *pid_ns = get_pid_ns(s->s_fs_info);
+>  	struct inode *root_inode;
+>  	int ret;
+>  
+> -	if (!proc_parse_options(data, ns))
+> -		return -EINVAL;
+> +	proc_set_options(s, fc, pid_ns, current_user_ns());
+>  
+>  	/* User space would break if executables or devices appear on proc */
+>  	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
+> @@ -103,7 +117,7 @@ static int proc_fill_super(struct super_block *s, void *data, size_t data_size,
+>  	 * top of it
+>  	 */
+>  	s->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
+> -	
+> +
+>  	pde_get(&proc_root);
+>  	root_inode = proc_get_inode(s, &proc_root);
+>  	if (!root_inode) {
+> @@ -124,30 +138,46 @@ static int proc_fill_super(struct super_block *s, void *data, size_t data_size,
+>  	return proc_setup_thread_self(s);
+>  }
+>  
+> -int proc_remount(struct super_block *sb, int *flags,
+> -		 char *data, size_t data_size)
+> +int proc_reconfigure(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	struct pid_namespace *pid = sb->s_fs_info;
+>  
+>  	sync_filesystem(sb);
+> -	return !proc_parse_options(data, pid);
+> +
+> +	if (fc)
+> +		proc_set_options(sb, fc, pid, current_user_ns());
+> +	return 0;
+>  }
+>  
+> -static struct dentry *proc_mount(struct file_system_type *fs_type,
+> -				 int flags, const char *dev_name,
+> -				 void *data, size_t data_size)
+> +static int proc_get_tree(struct fs_context *fc)
+>  {
+> -	struct pid_namespace *ns;
+> +	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
+>  
+> -	if (flags & SB_KERNMOUNT) {
+> -		ns = data;
+> -		data = NULL;
+> -	} else {
+> -		ns = task_active_pid_ns(current);
+> -	}
+> +	ctx->fc.s_fs_info = ctx->pid_ns;
+> +	return vfs_get_super(fc, vfs_get_keyed_super, proc_fill_super);
+> +}
+>  
+> -	return mount_ns(fs_type, flags, data, data_size, ns, ns->user_ns,
+> -			proc_fill_super);
+> +static void proc_fs_context_free(struct fs_context *fc)
+> +{
+> +	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
+> +
+> +	if (ctx->pid_ns)
+> +		put_pid_ns(ctx->pid_ns);
+> +}
+> +
+> +static const struct fs_context_operations proc_fs_context_ops = {
+> +	.free		= proc_fs_context_free,
+> +	.parse_option	= proc_parse_option,
+> +	.get_tree	= proc_get_tree,
+> +};
+> +
+> +static int proc_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
+> +{
+> +	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
+> +
+> +	ctx->pid_ns = get_pid_ns(task_active_pid_ns(current));
+> +	ctx->fc.ops = &proc_fs_context_ops;
+> +	return 0;
+>  }
+>  
+>  static void proc_kill_sb(struct super_block *sb)
+> @@ -165,7 +195,8 @@ static void proc_kill_sb(struct super_block *sb)
+>  
+>  static struct file_system_type proc_fs_type = {
+>  	.name		= "proc",
+> -	.mount		= proc_mount,
+> +	.fs_context_size	= sizeof(struct proc_fs_context),
+> +	.init_fs_context	= proc_init_fs_context,
+>  	.kill_sb	= proc_kill_sb,
+>  	.fs_flags	= FS_USERNS_MOUNT,
+>  };
+> @@ -205,7 +236,7 @@ static struct dentry *proc_root_lookup(struct inode * dir, struct dentry * dentr
+>  {
+>  	if (!proc_pid_lookup(dir, dentry, flags))
+>  		return NULL;
+> -	
+> +
+>  	return proc_lookup(dir, dentry, flags);
+>  }
+>  
+> @@ -259,9 +290,31 @@ struct proc_dir_entry proc_root = {
+>  
+>  int pid_ns_prepare_proc(struct pid_namespace *ns)
+>  {
+> +	struct proc_fs_context *ctx;
+> +	struct fs_context *fc;
+>  	struct vfsmount *mnt;
+> +	int ret;
+> +
+> +	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
+> +				FS_CONTEXT_FOR_KERNEL_MOUNT);
+> +	if (IS_ERR(fc))
+> +		return PTR_ERR(fc);
+> +
+> +	ctx = container_of(fc, struct proc_fs_context, fc);
+> +	if (ctx->pid_ns != ns) {
+> +		put_pid_ns(ctx->pid_ns);
+> +		get_pid_ns(ns);
+> +		ctx->pid_ns = ns;
+> +	}
+> +
+> +	ret = vfs_get_tree(fc);
+> +	if (ret < 0) {
+> +		put_fs_context(fc);
+> +		return ret;
+> +	}
+>  
+> -	mnt = kern_mount_data(&proc_fs_type, ns, 0);
+> +	mnt = vfs_create_mount(fc);
+> +	put_fs_context(fc);
+>  	if (IS_ERR(mnt))
+>  		return PTR_ERR(mnt);
+>  
+-------------- next part --------------
+#define _GNU_SOURCE
+#include <sys/types.h>
+#include <sched.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/mount.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <grp.h>
+#include <linux/limits.h>
+
+
+#define NS_STACK_SIZE	4096
+
+#define __stack_aligned__	__attribute__((aligned(16)))
+
+/* All arguments should be above stack, because it grows down */
+struct ns_exec_args {
+	char stack[NS_STACK_SIZE] __stack_aligned__;
+	char stack_ptr[0];
+	int pfd[2];
+};
+
+static int ns_exec(void *_arg)
+{
+	struct ns_exec_args *args = (struct ns_exec_args *) _arg;
+	int ret;
+
+	close(args->pfd[1]);
+	if (read(args->pfd[0], &ret, sizeof(ret)) != sizeof(ret))
+		return -1;
+
+	setsid();
+
+	if (setuid(0) || setgid(0) || setgroups(0, NULL)) {
+		fprintf(stderr, "set*id failed: %m\n");
+		return -1;
+	}
+
+	if (mount("proc", "/mnt", "proc", MS_MGC_VAL | MS_NOSUID | MS_NOEXEC | MS_NODEV, NULL)) {
+		fprintf(stderr, "mount(/proc) failed: %m\n");
+		return -1;
+	}
+
+	return 0;
+}
+
+#define UID_MAP "0 100000 100000\n100000 200000 50000"
+#define GID_MAP "0 400000 50000\n50000 500000 100000"
+int main()
+{
+	pid_t pid;
+	int ret, status;
+	struct ns_exec_args args;
+	int flags;
+	char pname[PATH_MAX];
+	int fd, pfd[2];
+
+	if (pipe(pfd))
+		return 1;
+
+	args.pfd[0] = pfd[0];
+	args.pfd[1] = pfd[1];
+
+	flags = CLONE_NEWPID | CLONE_NEWNS | CLONE_NEWUTS |
+		CLONE_NEWNET | CLONE_NEWIPC | CLONE_NEWUSER | SIGCHLD;
+
+	pid = clone(ns_exec, args.stack_ptr, flags, &args);
+	if (pid < 0) {
+		fprintf(stderr, "clone() failed: %m\n");
+		exit(1);
+	}
+
+
+	snprintf(pname, sizeof(pname), "/proc/%d/uid_map", pid);
+	fd = open(pname, O_WRONLY);
+	if (fd < 0) {
+		fprintf(stderr, "open(%s): %m\n", pname);
+		exit(1);
+	}
+	if (write(fd, UID_MAP, sizeof(UID_MAP)) < 0) {
+		fprintf(stderr, "write(" UID_MAP "): %m\n");
+		exit(1);
+	}
+	close(fd);
+
+	snprintf(pname, sizeof(pname), "/proc/%d/gid_map", pid);
+	fd = open(pname, O_WRONLY);
+	if (fd < 0) {
+		fprintf(stderr, "open(%s): %m\n", pname);
+		exit(1);
+	}
+	if (write(fd, GID_MAP, sizeof(GID_MAP)) < 0) {
+		fprintf(stderr, "write(" GID_MAP "): %m\n");
+		exit(1);
+	}
+	close(fd);
+
+	if (write(pfd[1], &ret, sizeof(ret)) != sizeof(ret))
+		return 1;
+
+	if (waitpid(pid, &status, 0) != pid)
+		return 1;
+	if (status)
+		return 1;
+
+	return 0;
+}
