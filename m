@@ -1,39 +1,128 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 19 Jun 2018 16:10:46 +0300
-Subject: [PATCH v3 0/2] tpm: add support for nonblocking operation
-In-Reply-To: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
-References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
-Message-ID: <20180619131046.GC5609@linux.intel.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Tue, 19 Jun 2018 11:10:55 -0400
+Subject: [RFC PATCH ghak86 V1] audit: eliminate audit_enabled magic number
+	comparison
+In-Reply-To: <490a00a7902582823fe8c532f5dd995a1da61fb1.1528214962.git.rgb@redhat.com>
+References: <490a00a7902582823fe8c532f5dd995a1da61fb1.1528214962.git.rgb@redhat.com>
+Message-ID: <CAHC9VhQRv6CzChWvayOK7Zm+pciFh80_u2Whx9-XpdFjNwO_PQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jun 12, 2018 at 10:58:26AM -0700, Tadeusz Struk wrote:
-> The TCG SAPI specification [1] defines a set of functions, which allows
-> applications to use the TPM device in either blocking or non-blocking fashion.
-> Each command defined by the specification has a corresponding
-> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-> mode of operation. Currently the TPM driver supports only blocking calls,
-> which doesn't allow asynchronous IO operations.
-> This patch changes it and adds support for nonblocking write and a new poll
-> function to enable applications, which want to take advantage of this feature.
-> The new functionality can be tested using standard TPM tools implemented
-> in [2], together with modified TCTI from [3].
-> 
-> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-> [2] https://github.com/tpm2-software/tpm2-tools
-> [3] https://github.com/tstruk/tpm2-tss/tree/async
+On Tue, Jun 5, 2018 at 7:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> Remove comparison of audit_enabled to magic numbers outside of audit.
+>
+> Related: https://github.com/linux-audit/audit-kernel/issues/86
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  drivers/tty/tty_audit.c      | 2 +-
+>  include/linux/audit.h        | 5 ++++-
+>  include/net/xfrm.h           | 2 +-
+>  kernel/audit.c               | 3 ---
+>  net/netfilter/xt_AUDIT.c     | 2 +-
+>  net/netlabel/netlabel_user.c | 2 +-
+>  6 files changed, 8 insertions(+), 8 deletions(-)
 
-For me the value is still a bit questionable. The benchmark looks a bit
-flakky to give much figures how this would work with real world workloads.
+Merged, thanks.
 
-I read James response and I also have to question why not just a worker
-thread in user space? TPM does only one command at a time anyways.
+> diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
+> index e30aa6b..50f567b 100644
+> --- a/drivers/tty/tty_audit.c
+> +++ b/drivers/tty/tty_audit.c
+> @@ -92,7 +92,7 @@ static void tty_audit_buf_push(struct tty_audit_buf *buf)
+>  {
+>         if (buf->valid == 0)
+>                 return;
+> -       if (audit_enabled == 0) {
+> +       if (audit_enabled == AUDIT_OFF) {
+>                 buf->valid = 0;
+>                 return;
+>         }
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 69c7847..9334fbe 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -117,6 +117,9 @@ struct audit_field {
+>
+>  extern void audit_log_session_info(struct audit_buffer *ab);
+>
+> +#define AUDIT_OFF      0
+> +#define AUDIT_ON       1
+> +#define AUDIT_LOCKED   2
+>  #ifdef CONFIG_AUDIT
+>  /* These are defined in audit.c */
+>                                 /* Public API */
+> @@ -202,7 +205,7 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
+>  static inline void audit_log_task_info(struct audit_buffer *ab,
+>                                        struct task_struct *tsk)
+>  { }
+> -#define audit_enabled 0
+> +#define audit_enabled AUDIT_OFF
+>  #endif /* CONFIG_AUDIT */
+>
+>  #ifdef CONFIG_AUDIT_COMPAT_GENERIC
+> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+> index 7f2e31a..ce995a1 100644
+> --- a/include/net/xfrm.h
+> +++ b/include/net/xfrm.h
+> @@ -734,7 +734,7 @@ static inline struct audit_buffer *xfrm_audit_start(const char *op)
+>  {
+>         struct audit_buffer *audit_buf = NULL;
+>
+> -       if (audit_enabled == 0)
+> +       if (audit_enabled == AUDIT_OFF)
+>                 return NULL;
+>         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
+>                                     AUDIT_MAC_IPSEC_EVENT);
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index e7478cb..8442c65 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -83,9 +83,6 @@
+>  #define AUDIT_INITIALIZED      1
+>  static int     audit_initialized;
+>
+> -#define AUDIT_OFF      0
+> -#define AUDIT_ON       1
+> -#define AUDIT_LOCKED   2
+>  u32            audit_enabled = AUDIT_OFF;
+>  bool           audit_ever_enabled = !!AUDIT_OFF;
+>
+> diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+> index f368ee6..af883f1 100644
+> --- a/net/netfilter/xt_AUDIT.c
+> +++ b/net/netfilter/xt_AUDIT.c
+> @@ -72,7 +72,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+>         struct audit_buffer *ab;
+>         int fam = -1;
+>
+> -       if (audit_enabled == 0)
+> +       if (audit_enabled == AUDIT_OFF)
+>                 goto errout;
+>         ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+>         if (ab == NULL)
+> diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
+> index 2f328af..4676f5b 100644
+> --- a/net/netlabel/netlabel_user.c
+> +++ b/net/netlabel/netlabel_user.c
+> @@ -101,7 +101,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+>         char *secctx;
+>         u32 secctx_len;
+>
+> -       if (audit_enabled == 0)
+> +       if (audit_enabled == AUDIT_OFF)
+>                 return NULL;
+>
+>         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC, type);
+> --
+> 1.8.3.1
+>
 
-Cannot take this in before I know that user space will (1) adapt to
-this and (2) gain value compared to a worker thread.
 
-/Jarkko
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
