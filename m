@@ -1,10 +1,10 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 19 Jun 2018 13:34:53 -0400
-Subject: [PATCH 08/13] selinux: Cleanup printk logging in netlink
-In-Reply-To: <20180612080912.7827-9-peter.enderborg@sony.com>
+Date: Tue, 19 Jun 2018 13:39:52 -0400
+Subject: [PATCH 09/13] selinux: Cleanup printk logging in sidtab
+In-Reply-To: <20180612080912.7827-10-peter.enderborg@sony.com>
 References: <20180612080912.7827-1-peter.enderborg@sony.com>
-	<20180612080912.7827-9-peter.enderborg@sony.com>
-Message-ID: <CAHC9VhQQ5KQW6Ee+4-NZtJRTC1wNDFPe=ZO7R1t8=-2CTG=pqw@mail.gmail.com>
+	<20180612080912.7827-10-peter.enderborg@sony.com>
+Message-ID: <CAHC9VhRoWbhTERzcwtEX2GkXQRfPG8itYV+yxkz74qugrotZUw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -15,24 +15,34 @@ On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
 >
 > Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 > ---
->  security/selinux/netlink.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/selinux/ss/sidtab.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
 Merged, thanks.
 
-> diff --git a/security/selinux/netlink.c b/security/selinux/netlink.c
-> index 828fb6a4e941..8a8a72507437 100644
-> --- a/security/selinux/netlink.c
-> +++ b/security/selinux/netlink.c
-> @@ -94,7 +94,7 @@ static void selnl_notify(int msgtype, void *data)
->  out_kfree_skb:
->         kfree_skb(skb);
->  oom:
-> -       printk(KERN_ERR "SELinux:  OOM in %s\n", __func__);
-> +       pr_err("SELinux:  OOM in %s\n", __func__);
->         goto out;
->  }
+> diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+> index 5be31b7af225..fd75a12fa8fc 100644
+> --- a/security/selinux/ss/sidtab.c
+> +++ b/security/selinux/ss/sidtab.c
+> @@ -214,8 +214,7 @@ int sidtab_context_to_sid(struct sidtab *s,
+>                 }
+>                 sid = s->next_sid++;
+>                 if (context->len)
+> -                       printk(KERN_INFO
+> -                      "SELinux:  Context %s is not valid (left unmapped).\n",
+> +                       pr_info("SELinux:  Context %s is not valid (left unmapped).\n",
+>                                context->str);
+>                 ret = sidtab_insert(s, sid, context);
+>                 if (ret)
+> @@ -253,7 +252,7 @@ void sidtab_hash_eval(struct sidtab *h, char *tag)
+>                 }
+>         }
 >
+> -       printk(KERN_DEBUG "%s:  %d entries and %d/%d buckets used, longest "
+> +       pr_debug("%s:  %d entries and %d/%d buckets used, longest "
+>                "chain length %d\n", tag, h->nel, slots_used, SIDTAB_SIZE,
+>                max_chain_len);
+>  }
 > --
 > 2.15.1
 >
