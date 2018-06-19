@@ -1,10 +1,10 @@
 From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 19 Jun 2018 13:48:38 -0400
-Subject: [PATCH 12/13] selinux: Cleanup printk logging in avc
-In-Reply-To: <20180612080912.7827-13-peter.enderborg@sony.com>
+Date: Tue, 19 Jun 2018 13:50:36 -0400
+Subject: [PATCH 13/13] selinux: Cleanup printk logging in netnode
+In-Reply-To: <20180612080912.7827-14-peter.enderborg@sony.com>
 References: <20180612080912.7827-1-peter.enderborg@sony.com>
-	<20180612080912.7827-13-peter.enderborg@sony.com>
-Message-ID: <CAHC9VhQ3xrVfGo0T-HdHbdM3p1k38NwfEP7qmNZDO_b_8a++UA@mail.gmail.com>
+	<20180612080912.7827-14-peter.enderborg@sony.com>
+Message-ID: <CAHC9VhROjW4r7Ls35aX8M+j1BMn13OuUsN8prg9JnKWyHS1wzg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -15,24 +15,27 @@ On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
 >
 > Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 > ---
->  security/selinux/avc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/selinux/netnode.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
 Merged, thanks.
 
-> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> index f3aedf077509..635e5c1e3e48 100644
-> --- a/security/selinux/avc.c
-> +++ b/security/selinux/avc.c
-> @@ -650,7 +650,7 @@ static int avc_latest_notif_update(struct selinux_avc *avc,
->         spin_lock_irqsave(&notif_lock, flag);
->         if (is_insert) {
->                 if (seqno < avc->avc_cache.latest_notif) {
-> -                       printk(KERN_WARNING "SELinux: avc:  seqno %d < latest_notif %d\n",
-> +                       pr_warn("SELinux: avc:  seqno %d < latest_notif %d\n",
->                                seqno, avc->avc_cache.latest_notif);
->                         ret = -EAGAIN;
->                 }
+> diff --git a/security/selinux/netnode.c b/security/selinux/netnode.c
+> index 6dd89b89bc1f..afa0d432436b 100644
+> --- a/security/selinux/netnode.c
+> +++ b/security/selinux/netnode.c
+> @@ -238,9 +238,8 @@ static int sel_netnode_sid_slow(void *addr, u16 family, u32 *sid)
+>  out:
+>         spin_unlock_bh(&sel_netnode_lock);
+>         if (unlikely(ret)) {
+> -               printk(KERN_WARNING
+> -                      "SELinux: failure in sel_netnode_sid_slow(),"
+> -                      " unable to determine network node label\n");
+> +               pr_warn("SELinux: failure in %s(), unable to determine network node label\n",
+> +                       __func__);
+>                 kfree(new);
+>         }
+>         return ret;
 > --
 > 2.15.1
 >
