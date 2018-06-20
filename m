@@ -1,49 +1,53 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 19 Jun 2018 13:50:36 -0400
-Subject: [PATCH 13/13] selinux: Cleanup printk logging in netnode
-In-Reply-To: <20180612080912.7827-14-peter.enderborg@sony.com>
-References: <20180612080912.7827-1-peter.enderborg@sony.com>
-	<20180612080912.7827-14-peter.enderborg@sony.com>
-Message-ID: <CAHC9VhROjW4r7Ls35aX8M+j1BMn13OuUsN8prg9JnKWyHS1wzg@mail.gmail.com>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Tue, 19 Jun 2018 17:45:35 -0700
+Subject: [PATCH v3 0/2] tpm: add support for nonblocking operation
+In-Reply-To: <20180619131046.GC5609@linux.intel.com>
+References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+	<20180619131046.GC5609@linux.intel.com>
+Message-ID: <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
-<peter.enderborg@sony.com> wrote:
->
-> Replace printk with pr_* to avoid checkpatch warnings.
->
-> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
-> ---
->  security/selinux/netnode.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+On 06/19/2018 06:10 AM, Jarkko Sakkinen wrote:
+> On Tue, Jun 12, 2018 at 10:58:26AM -0700, Tadeusz Struk wrote:
+>> The TCG SAPI specification [1] defines a set of functions, which allows
+>> applications to use the TPM device in either blocking or non-blocking fashion.
+>> Each command defined by the specification has a corresponding
+>> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+>> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+>> mode of operation. Currently the TPM driver supports only blocking calls,
+>> which doesn't allow asynchronous IO operations.
+>> This patch changes it and adds support for nonblocking write and a new poll
+>> function to enable applications, which want to take advantage of this feature.
+>> The new functionality can be tested using standard TPM tools implemented
+>> in [2], together with modified TCTI from [3].
+>>
+>> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+>> [2] https://github.com/tpm2-software/tpm2-tools
+>> [3] https://github.com/tstruk/tpm2-tss/tree/async
+> 
+> For me the value is still a bit questionable. The benchmark looks a bit
+> flakky to give much figures how this would work with real world workloads.
+> 
+> I read James response and I also have to question why not just a worker
+> thread in user space? TPM does only one command at a time anyways.
+> 
+> Cannot take this in before I know that user space will (1) adapt to
+> this and (2) gain value compared to a worker thread.
+> 
+Hi Jarkko,
+Thanks for reviewing the patch.
+There are applications/frameworks where a worker thread is not an option.
+Take for example the IoT use-cases and frameworks like IoT.js, or "Node.js for IoT".
+They are all single threaded, event-driven frameworks, using non-blocking I/O as the base of their processing model.
+Similarly embedded applications, which are basically just a single threaded event loop, quite often don't use threads because of resources constrains.
 
-Merged, thanks.
+If your concern is that user space will not adopt to this, I can say that TSS library [1] is currently blocked on this feature, and we can not enable some of the use-cases mentioned above because of this.
 
-> diff --git a/security/selinux/netnode.c b/security/selinux/netnode.c
-> index 6dd89b89bc1f..afa0d432436b 100644
-> --- a/security/selinux/netnode.c
-> +++ b/security/selinux/netnode.c
-> @@ -238,9 +238,8 @@ static int sel_netnode_sid_slow(void *addr, u16 family, u32 *sid)
->  out:
->         spin_unlock_bh(&sel_netnode_lock);
->         if (unlikely(ret)) {
-> -               printk(KERN_WARNING
-> -                      "SELinux: failure in sel_netnode_sid_slow(),"
-> -                      " unable to determine network node label\n");
-> +               pr_warn("SELinux: failure in %s(), unable to determine network node label\n",
-> +                       __func__);
->                 kfree(new);
->         }
->         return ret;
-> --
-> 2.15.1
->
+Thanks,
+Tadeusz
 
-
--- 
-paul moore
-www.paul-moore.com
+[1] https://github.com/tpm2-software/tpm2-tss
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
