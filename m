@@ -1,53 +1,50 @@
-From: tadeusz.struk@intel.com (Tadeusz Struk)
-Date: Tue, 19 Jun 2018 17:45:35 -0700
-Subject: [PATCH v3 0/2] tpm: add support for nonblocking operation
-In-Reply-To: <20180619131046.GC5609@linux.intel.com>
-References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
-	<20180619131046.GC5609@linux.intel.com>
-Message-ID: <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
+From: mail@maciej.szmigiero.name (Maciej S. Szmigiero)
+Date: Wed, 20 Jun 2018 14:24:54 +0200
+Subject: [PATCH v2][RESEND] X.509: unpack RSA signatureValue field from
+	BIT STRING
+In-Reply-To: <80e95323-eb7f-6af3-ad05-f174c69fb948@maciej.szmigiero.name>
+References: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
+	<80e95323-eb7f-6af3-ad05-f174c69fb948@maciej.szmigiero.name>
+Message-ID: <9a9bfd23-d7be-7f16-925e-5fe00cbfba9f@maciej.szmigiero.name>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 06/19/2018 06:10 AM, Jarkko Sakkinen wrote:
-> On Tue, Jun 12, 2018 at 10:58:26AM -0700, Tadeusz Struk wrote:
->> The TCG SAPI specification [1] defines a set of functions, which allows
->> applications to use the TPM device in either blocking or non-blocking fashion.
->> Each command defined by the specification has a corresponding
->> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
->> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
->> mode of operation. Currently the TPM driver supports only blocking calls,
->> which doesn't allow asynchronous IO operations.
->> This patch changes it and adds support for nonblocking write and a new poll
->> function to enable applications, which want to take advantage of this feature.
->> The new functionality can be tested using standard TPM tools implemented
->> in [2], together with modified TCTI from [3].
+On 02.06.2018 21:12, Maciej S. Szmigiero wrote:
+> On 19.05.2018 14:23, Maciej S. Szmigiero wrote:
+>> The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+>> For RSA signatures this BIT STRING is of so-called primitive subtype, which
+>> contains a u8 prefix indicating a count of unused bits in the encoding.
 >>
->> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
->> [2] https://github.com/tpm2-software/tpm2-tools
->> [3] https://github.com/tstruk/tpm2-tss/tree/async
+>> We have to strip this prefix from signature data, just as we already do for
+>> key data in x509_extract_key_data() function.
+>>
+>> This wasn't noticed earlier because this prefix byte is zero for RSA key
+>> sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+>> prefixes has no bearing on its value.
+>>
+>> The signature length, however was incorrect, which is a problem for RSA
+>> implementations that need it to be exactly correct (like AMD CCP).
 > 
-> For me the value is still a bit questionable. The benchmark looks a bit
-> flakky to give much figures how this would work with real world workloads.
+> Any progress here?
+> This simple patch has already been submitted 3 times in last 3+ months...
 > 
-> I read James response and I also have to question why not just a worker
-> thread in user space? TPM does only one command at a time anyways.
-> 
-> Cannot take this in before I know that user space will (1) adapt to
-> this and (2) gain value compared to a worker thread.
-> 
-Hi Jarkko,
-Thanks for reviewing the patch.
-There are applications/frameworks where a worker thread is not an option.
-Take for example the IoT use-cases and frameworks like IoT.js, or "Node.js for IoT".
-They are all single threaded, event-driven frameworks, using non-blocking I/O as the base of their processing model.
-Similarly embedded applications, which are basically just a single threaded event loop, quite often don't use threads because of resources constrains.
 
-If your concern is that user space will not adopt to this, I can say that TSS library [1] is currently blocked on this feature, and we can not enable some of the use-cases mentioned above because of this.
+A friendly ping here.
 
-Thanks,
-Tadeusz
+@AMD people:
+Without this patch, in-kernel X.509 certificate verification is broken
+on AMD CCP RSA implementation.
 
-[1] https://github.com/tpm2-software/tpm2-tss
+For example, loading wireless regulatory database gives the following
+errors:
+> [   21.310361] cfg80211: Problem loading in-kernel X.509 certificate (-22)
+> [   21.351717] cfg80211: loaded regulatory.db is malformed or signature is missing/invalid
+
+Kernel modules signature verification probably has similar problem, too.
+
+That's why it would be nice if you could ack this patch, please.
+
+Maciej
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
