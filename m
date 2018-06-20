@@ -1,39 +1,43 @@
-From: herbert@gondor.apana.org.au (Herbert Xu)
-Date: Wed, 20 Jun 2018 22:38:07 +0800
-Subject: [PATCH v2][RESEND] X.509: unpack RSA signatureValue field from
-	BIT STRING
-In-Reply-To: <9a9bfd23-d7be-7f16-925e-5fe00cbfba9f@maciej.szmigiero.name>
-References: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
-	<80e95323-eb7f-6af3-ad05-f174c69fb948@maciej.szmigiero.name>
-	<9a9bfd23-d7be-7f16-925e-5fe00cbfba9f@maciej.szmigiero.name>
-Message-ID: <20180620143807.fo7c5endwd5yy24r@gondor.apana.org.au>
+From: robh@kernel.org (Rob Herring)
+Date: Wed, 20 Jun 2018 09:26:52 -0600
+Subject: [PATCH v4 04/26] docs: fix broken references with multiple hints
+In-Reply-To: <75c14f6d84eef8c10787e85ddc172afebee116d6.1529079119.git.mchehab+samsung@kernel.org>
+References: <cover.1529079119.git.mchehab+samsung@kernel.org>
+	<75c14f6d84eef8c10787e85ddc172afebee116d6.1529079119.git.mchehab+samsung@kernel.org>
+Message-ID: <20180620152652.GA12591@rob-hp-laptop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jun 20, 2018 at 02:24:54PM +0200, Maciej S. Szmigiero wrote:
+On Fri, Jun 15, 2018 at 01:30:32PM -0300, Mauro Carvalho Chehab wrote:
+> The script:
+> 	./scripts/documentation-file-ref-check --fix
 > 
-> A friendly ping here.
+> Gives multiple hints for broken references on some files.
+> Manually use the one that applies for some files.
 > 
-> @AMD people:
-> Without this patch, in-kernel X.509 certificate verification is broken
-> on AMD CCP RSA implementation.
-> 
-> For example, loading wireless regulatory database gives the following
-> errors:
-> > [   21.310361] cfg80211: Problem loading in-kernel X.509 certificate (-22)
-> > [   21.351717] cfg80211: loaded regulatory.db is malformed or signature is missing/invalid
-> 
-> Kernel modules signature verification probably has similar problem, too.
-> 
-> That's why it would be nice if you could ack this patch, please.
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  Documentation/ABI/obsolete/sysfs-gpio                     | 2 +-
+>  .../devicetree/bindings/display/bridge/tda998x.txt        | 2 +-
 
-David/James, is there an issue with the patch?
+Acked-by: Rob Herring <robh@kernel.org>
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+>  Documentation/trace/events.rst                            | 2 +-
+>  Documentation/trace/tracepoint-analysis.rst               | 2 +-
+>  Documentation/translations/zh_CN/SubmittingDrivers        | 2 +-
+>  Documentation/translations/zh_CN/gpio.txt                 | 4 ++--
+>  MAINTAINERS                                               | 2 +-
+>  drivers/hid/usbhid/Kconfig                                | 2 +-
+>  drivers/input/Kconfig                                     | 4 ++--
+>  drivers/input/joystick/Kconfig                            | 4 ++--
+>  drivers/input/joystick/iforce/Kconfig                     | 4 ++--
+>  drivers/input/serio/Kconfig                               | 4 ++--
+>  drivers/staging/fsl-mc/bus/dpio/dpio-driver.txt           | 2 +-
+>  drivers/video/fbdev/skeletonfb.c                          | 8 ++++----
+>  include/linux/tracepoint.h                                | 2 +-
+>  security/device_cgroup.c                                  | 2 +-
+>  16 files changed, 24 insertions(+), 24 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
