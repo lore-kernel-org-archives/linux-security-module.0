@@ -1,59 +1,36 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 25 Jun 2018 19:30:15 +0300
-Subject: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
-References: <20180624205202.6597-1-tomas.winkler@intel.com>
-	<19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
-Message-ID: <cb7ecb912486ee3e504de7c0918d667ebd370080.camel@linux.intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 25 Jun 2018 09:41:22 -0700
+Subject: [PULL] Smack: Mark inode instant in smack_task_to_inode
+Message-ID: <813ecc0b-4a9e-22c9-b893-504936bab342@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-06-25 at 19:24 +0300, Jarkko Sakkinen wrote:
-> On Sun, 2018-06-24 at 23:52 +0300, Tomas Winkler wrote:
-> > Fix tpm ptt initialization error:
-> > tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
-> > 
-> > We cannot use go_idle cmd_ready commands via runtime_pm handles
-> > as with the introduction of localities this is no longer an optional
-> > feature, while runtime pm can be not enabled.
-> > Though cmd_ready/go_idle provides a power saving, it's also a part of
-> > TPM2 protocol and should be called explicitly.
-> > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > runtime pm support as it is not used by any driver.
-> > 
-> > A new tpm transmit flag is added TPM_TRANSMIT_NESTED, which implies
-> > TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed to resolve
-> > tpm spaces and locality request recursive calls to tpm_transmit().
-> > 
-> > New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
-> > streamline tpm_try_transmit code.
-> > 
-> > tpm_crb no longer needs own power saving functions and can drop using
-> > tpm_pm_suspend/resume.
-> > 
-> > This patch cannot be really separated from the locality fix.
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > granting
-> > locality)
-> > 
-> > Cc: stable at vger.kernel.org
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > granting
-> > locality)
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> Please:
-> 
-> 1. Remove NESTED.
-> 2. Where you need call RAW | UNLOCKED.
-> 3. Do not add __ prefix.
+James, would you please pull this change for 4.18.
 
-Right now if I really put head into this I can understand the logic
-but it is a complete mess. I will forgot the dependencies between
-flags within few weeks. A fixed requirement (so that you know) is
-that they must be independent.
+Al Viro's /proc clean-up in commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
+created a regression in Smack xattr behavior in /proc. This fixes that problem
+with a minimum of fuss.
 
-/Jarkko
+
+The following changes since commit 0f8983cf97d3327531b7843c831517cac3a1b9ed:
+
+  Smack: Fix memory leak in smack_inode_getsecctx (2018-06-05 12:16:01 -0700)
+
+are available in the Git repository at:
+
+  git://github.com/cschaufler/next-smack smack-for-4.18
+
+for you to fetch changes up to aabfe8e2d9f49153bafefc82d10bcb6e1e12828d:
+
+  Smack: Mark inode instant in smack_task_to_inode (2018-06-22 13:55:28 -0700)
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+      Smack: Mark inode instant in smack_task_to_inode
+
+ security/smack/smack_lsm.c | 1 +
+ 1 file changed, 1 insertion(+)
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
