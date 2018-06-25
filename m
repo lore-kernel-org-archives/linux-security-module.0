@@ -1,52 +1,52 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Mon, 25 Jun 2018 10:49:07 -0400
-Subject: [PATCH] ipv6: avoid copy_from_user() via ipv6_renew_options_kern()
-In-Reply-To: <20180624.164837.37612664745856114.davem@davemloft.net>
-References: <20180623.105706.385733107379565893.davem@davemloft.net>
-	<20180623212626.GD30522@ZenIV.linux.org.uk>
-	<20180623222106.GE30522@ZenIV.linux.org.uk>
-	<20180624.164837.37612664745856114.davem@davemloft.net>
-Message-ID: <CAHC9VhTS1_GxegDvktFriZTBEPzSQYHNWwa6RDB3HU9NJL9MRA@mail.gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 25 Jun 2018 19:24:32 +0300
+Subject: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
+In-Reply-To: <20180624205202.6597-1-tomas.winkler@intel.com>
+References: <20180624205202.6597-1-tomas.winkler@intel.com>
+Message-ID: <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Jun 24, 2018 at 3:48 AM David Miller <davem@davemloft.net> wrote:
->
-> From: Al Viro <viro@ZenIV.linux.org.uk>
-> Date: Sat, 23 Jun 2018 23:21:07 +0100
->
-> > BTW, I wonder if the life would be simpler with do_ipv6_setsockopt() doing
-> > the copy-in and verifying ipv6_optlen(*hdr) <= newoptlen; that would've
-> > simplified ipv6_renew_option{,s}() quite a bit and completely eliminated
-> > ipv6_renew_options_kern()...
->
-> I agree that this makes things a lot simpler.
+On Sun, 2018-06-24 at 23:52 +0300, Tomas Winkler wrote:
+> Fix tpm ptt initialization error:
+> tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
+> 
+> We cannot use go_idle cmd_ready commands via runtime_pm handles
+> as with the introduction of localities this is no longer an optional
+> feature, while runtime pm can be not enabled.
+> Though cmd_ready/go_idle provides a power saving, it's also a part of
+> TPM2 protocol and should be called explicitly.
+> This patch exposes cmd_read/go_idle via tpm class ops and removes
+> runtime pm support as it is not used by any driver.
+> 
+> A new tpm transmit flag is added TPM_TRANSMIT_NESTED, which implies
+> TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed to resolve
+> tpm spaces and locality request recursive calls to tpm_transmit().
+> 
+> New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
+> streamline tpm_try_transmit code.
+> 
+> tpm_crb no longer needs own power saving functions and can drop using
+> tpm_pm_suspend/resume.
+> 
+> This patch cannot be really separated from the locality fix.
+> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> locality)
+> 
+> Cc: stable at vger.kernel.org
+> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> locality)
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-I had looked at moving the userspace copy up, but feared it was a bit
-too invasive.  It sounds like you are open to the idea so I'll code
-something up.
+Please:
 
-> One thing that drives me crazy though is this inherit stuff:
->
-> > +     ipv6_renew_option(newtype == IPV6_HOPOPTS ? newopt :
-> > +                             opt ? opt->hopopt : NULL,
->
-> Why don't we pass the type into ipv6_renew_option() and have it
-> do this pointer dance instead?
->
-> That's going to definitely be easier to read.
+1. Remove NESTED.
+2. Where you need call RAW | UNLOCKED.
+3. Do not add __ prefix.
 
-I agree, that struck me as a little odd.  I'll rework that too.  I'll
-send you guys something this week to take a look at.
+Should be simple changes to do.
 
-Thanks.
-
-> I don't know enough about this code to give feedback about the
-> option length handling wrt. copies, sorry.
-
--- 
-paul moore
-www.paul-moore.com
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
