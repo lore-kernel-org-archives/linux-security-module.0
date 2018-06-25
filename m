@@ -1,30 +1,41 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Mon, 25 Jun 2018 18:54:13 +0000
-Subject: [PATCH v6] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <7f90a0d8846650ce1e1d2598d980ab84da11cc70.camel@linux.intel.com>
-References: <20180607212040.30989-1-tomas.winkler@intel.com>
-	<20180618180406.GA20697@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D94EA09@hasmsx108.ger.corp.intel.com>
-	<20180621161958.GA11859@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D9516CE@hasmsx108.ger.corp.intel.com>
-	<7f90a0d8846650ce1e1d2598d980ab84da11cc70.camel@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9539B6@hasmsx108.ger.corp.intel.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 26 Jun 2018 05:30:23 +1000 (AEST)
+Subject: [GIT PULL] Security subsystem: bugfixes for v4.18-rc
+Message-ID: <alpine.LRH.2.21.1806260524480.5927@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Hi Linus,
 
-> 
-> On Thu, 2018-06-21 at 18:40 +0000, Winkler, Tomas wrote:
-> > I just wanted to make sure that 'RAW' not used in the api directly, it
-> > will break the flow, do have any suggestion to make it obvious.
-> 
-> We will look at each code review as for any other peace of code how this flag
-> is used and make decisions at that point what is legit use and what is not.
+Please pull these bugfixes.
 
-This is not about code review, there is a design decision to hide it, this is the API.
-Please reconsider.
-Thanks
-Tomas
+- Smack: fix a regression caused by 1bbc55131e5
+- X.509: fix a (usually un-seen) bug in RSA signature parsing
 
 
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+The following changes since commit 894b8c000ae6c106cc434ee0000dfb77df8bd9db:
+
+  Merge tag 'for_v4.18-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs (2018-06-22 18:04:56 +0900)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.18-rc2
+
+for you to fetch changes up to b65c32ec5a942ab3ada93a048089a938918aba7f:
+
+  X.509: unpack RSA signatureValue field from BIT STRING (2018-06-25 12:17:08 -0700)
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+      Smack: Mark inode instant in smack_task_to_inode
+
+Maciej S. Szmigiero (1):
+      X.509: unpack RSA signatureValue field from BIT STRING
+
+ crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
+ security/smack/smack_lsm.c                | 1 +
+ 2 files changed, 10 insertions(+)
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
