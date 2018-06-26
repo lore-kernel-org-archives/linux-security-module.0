@@ -1,52 +1,68 @@
 From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue, 26 Jun 2018 07:06:14 -0400
-Subject: [PATCH v5 0/5] Have IMA find and use a tpm_chip until system shutdown
-Message-ID: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+Date: Tue, 26 Jun 2018 07:06:17 -0400
+Subject: [PATCH v5 3/5] tpm: Convert tpm_find_get_ops() to use
+	tpm_default_chip()
+In-Reply-To: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+References: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+Message-ID: <20180626110619.2362791-4-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This series of patches converts IMA's usage of the tpm_chip to find a TPM
-chip initially and use it until the machine is shut down. To do this we need
-to introduce a kref for the tpm_chip that IMA and all other users of a
-tpm_chip hold onto until they don't need the TPM chip anymore.
+Convert tpm_find_get_ops() to use tpm_default_chip() in case no chip
+is passed in.
 
-    Stefan
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+---
+ drivers/char/tpm/tpm-chip.c | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
 
-v4->v5:
-  - repost with fixed changelog and posted to linux-security-module
-
-v3->v4:
-  - followed Jason's suggestions:
-    - extended docs of tpm_find_get_ops()
-    - calling new function tpm_default_chip()
-    - new patch 3 that uses tpm_default_chip() in tpm_find_get_ops()
-
-v2->v3:
-  - renaming tpm_chip_find_get() to tpm_get_ops()
-  - IMA does not lock access to ima_tpm_chip anymore
-  - IMA does not have a reboot notifier to release the chip anymore
-
-v1->v2:
-  - use the kref of the device via get_device()/put_device()
-
-
-Stefan Berger (5):
-  tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
-  tpm: Implement tpm_default_chip() to find a TPM chip
-  tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
-  ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
-  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
-
- drivers/char/tpm/tpm-chip.c         | 68 +++++++++++++++++++----------
- drivers/char/tpm/tpm-interface.c    | 14 +++---
- drivers/char/tpm/tpm.h              |  2 +-
- include/linux/tpm.h                 |  5 +++
- security/integrity/ima/ima.h        |  2 +-
- security/integrity/ima/ima_crypto.c |  4 +-
- security/integrity/ima/ima_init.c   | 16 +++----
- security/integrity/ima/ima_queue.c  |  4 +-
- 8 files changed, 69 insertions(+), 46 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index f551061262c9..b01d34983766 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -124,29 +124,23 @@ EXPORT_SYMBOL_GPL(tpm_default_chip);
+  */
+ struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
+ {
+-	struct tpm_chip *res = NULL;
+-	int chip_num = 0;
+-	int chip_prev;
+-
+-	mutex_lock(&idr_lock);
++	int rc;
+ 
+-	if (!chip) {
+-		do {
+-			chip_prev = chip_num;
+-			chip = idr_get_next(&dev_nums_idr, &chip_num);
+-			if (chip && !tpm_try_get_ops(chip)) {
+-				res = chip;
+-				break;
+-			}
+-		} while (chip_prev != chip_num);
+-	} else {
++	if (chip) {
+ 		if (!tpm_try_get_ops(chip))
+-			res = chip;
++			return chip;
++		return NULL;
+ 	}
+ 
+-	mutex_unlock(&idr_lock);
+-
+-	return res;
++	chip = tpm_default_chip();
++	if (!chip)
++		return NULL;
++	rc = tpm_try_get_ops(chip);
++	/* release additional reference we got from tpm_default_chip() */
++	put_device(&chip->dev);
++	if (!rc)
++		return NULL;
++	return chip;
+ }
+ 
+ /**
 -- 
 2.17.1
 
