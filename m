@@ -1,61 +1,33 @@
 From: dhowells@redhat.com (David Howells)
-Date: Tue, 26 Jun 2018 16:59:46 +0100
-Subject: [PATCH 3/3] dh key: fix rounding up KDF output length
+Date: Tue, 26 Jun 2018 16:59:40 +0100
+Subject: [PATCH 2/3] certs/blacklist: fix const confusion
 In-Reply-To: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
 References: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
-Message-ID: <153002878692.31726.13651817141660735426.stgit@warthog.procyon.org.uk>
+Message-ID: <153002878055.31726.289273416003704588.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
 
-Commit 383203eff718 ("dh key: get rid of stack allocated array") changed
-kdf_ctr() to assume that the length of key material to derive is a
-multiple of the digest size.  The length was supposed to be rounded up
-accordingly.  However, the round_up() macro was used which only gives
-the correct result on power-of-2 arguments, whereas not all hash
-algorithms have power-of-2 digest sizes.  In some cases this resulted in
-a write past the end of the 'outbuf' buffer.
+Fixes commit 2be04df5668d ("certs/blacklist_nohashes.c: fix const confusion
+in certs blacklist")
 
-Fix it by switching to roundup(), which works for non-power-of-2 inputs.
-
-Reported-by: syzbot+486f97f892efeb2075a3 at syzkaller.appspotmail.com
-Reported-by: syzbot+29d17b7898b41ee120a5 at syzkaller.appspotmail.com
-Reported-by: syzbot+8a608baf8751184ec727 at syzkaller.appspotmail.com
-Reported-by: syzbot+d04e58bd384f1fe0b112 at syzkaller.appspotmail.com
-Fixes: 383203eff718 ("dh key: get rid of stack allocated array")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Tycho Andersen <tycho@tycho.ws>
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- security/keys/dh.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ certs/blacklist.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index f7403821db7f..b203f7758f97 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -142,6 +142,8 @@ static void kdf_dealloc(struct kdf_sdesc *sdesc)
-  * The src pointer is defined as Z || other info where Z is the shared secret
-  * from DH and other info is an arbitrary string (see SP800-56A section
-  * 5.8.1.2).
-+ *
-+ * 'dlen' must be a multiple of the digest size.
-  */
- static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
- 		   u8 *dst, unsigned int dlen, unsigned int zlen)
-@@ -205,8 +207,8 @@ static int keyctl_dh_compute_kdf(struct kdf_sdesc *sdesc,
- {
- 	uint8_t *outbuf = NULL;
- 	int ret;
--	size_t outbuf_len = round_up(buflen,
--			             crypto_shash_digestsize(sdesc->shash.tfm));
-+	size_t outbuf_len = roundup(buflen,
-+				    crypto_shash_digestsize(sdesc->shash.tfm));
+diff --git a/certs/blacklist.h b/certs/blacklist.h
+index 150d82da8e99..1efd6fa0dc60 100644
+--- a/certs/blacklist.h
++++ b/certs/blacklist.h
+@@ -1,3 +1,3 @@
+ #include <linux/kernel.h>
  
- 	outbuf = kmalloc(outbuf_len, GFP_KERNEL);
- 	if (!outbuf) {
+-extern const char __initdata *const blacklist_hashes[];
++extern const char __initconst *const blacklist_hashes[];
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
