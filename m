@@ -1,58 +1,133 @@
 From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue, 26 Jun 2018 15:09:28 -0400
-Subject: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system shutdown
-Message-ID: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+Date: Tue, 26 Jun 2018 15:09:29 -0400
+Subject: [PATCH v7 1/5] tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
+In-Reply-To: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+Message-ID: <20180626190933.2508821-2-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This series of patches converts IMA's usage of the tpm_chip to find a TPM
-chip initially and use it until the machine is shut down. To do this we need
-to introduce a kref for the tpm_chip that IMA and all other users of a
-tpm_chip hold onto until they don't need the TPM chip anymore.
+Rename tpm_chip_find_get() to tpm_find_get_ops() to more closely match
+the tpm_put_ops() counter part.
 
-    Stefan
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm-chip.c      |  9 ++++++---
+ drivers/char/tpm/tpm-interface.c | 14 +++++++-------
+ drivers/char/tpm/tpm.h           |  2 +-
+ 3 files changed, 14 insertions(+), 11 deletions(-)
 
-v6->v7:
-  - fixed `if (!rc)` in patch 3 to `if (rc)` (detected while converting trusted
-    keys)
-
-v5->v6:
-  - more verbose patch description in patch 2
-
-v4->v5:
-  - repost with fixed changelog and posted to linux-security-module
-
-v3->v4:
-  - followed Jason's suggestions:
-    - extended docs of tpm_find_get_ops()
-    - calling new function tpm_default_chip()
-    - new patch 3 that uses tpm_default_chip() in tpm_find_get_ops()
-
-v2->v3:
-  - renaming tpm_chip_find_get() to tpm_get_ops()
-  - IMA does not lock access to ima_tpm_chip anymore
-  - IMA does not have a reboot notifier to release the chip anymore
-
-v1->v2:
-  - use the kref of the device via get_device()/put_device()
-
-Stefan Berger (5):
-  tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
-  tpm: Implement tpm_default_chip() to find a TPM chip
-  tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
-  ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
-  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
-
- drivers/char/tpm/tpm-chip.c         | 68 +++++++++++++++++++----------
- drivers/char/tpm/tpm-interface.c    | 14 +++---
- drivers/char/tpm/tpm.h              |  2 +-
- include/linux/tpm.h                 |  5 +++
- security/integrity/ima/ima.h        |  2 +-
- security/integrity/ima/ima_crypto.c |  4 +-
- security/integrity/ima/ima_init.c   | 16 +++----
- security/integrity/ima/ima_queue.c  |  4 +-
- 8 files changed, 69 insertions(+), 46 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 0a62c19937b6..242b716aed5e 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -81,18 +81,21 @@ void tpm_put_ops(struct tpm_chip *chip)
+ EXPORT_SYMBOL_GPL(tpm_put_ops);
+ 
+ /**
+- * tpm_chip_find_get() - find and reserve a TPM chip
++ * tpm_find_get_ops() - find and reserve a TPM chip
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+  *
+  * Finds a TPM chip and reserves its class device and operations. The chip must
+- * be released with tpm_chip_put_ops() after use.
++ * be released with tpm_put_ops() after use.
++ * This function is for internal use only. It supports existing TPM callers
++ * by accepting NULL, but those callers should be converted to pass in a chip
++ * directly.
+  *
+  * Return:
+  * A reserved &struct tpm_chip instance.
+  * %NULL if a chip is not found.
+  * %NULL if the chip is not available.
+  */
+-struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
++struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
+ {
+ 	struct tpm_chip *res = NULL;
+ 	int chip_num = 0;
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c43a9e28995e..b4bb34216050 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -929,7 +929,7 @@ int tpm_is_tpm2(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -953,7 +953,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+@@ -1012,7 +1012,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+ 	u32 count = 0;
+ 	int i;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -1141,7 +1141,7 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -1261,7 +1261,7 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ 	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -1323,7 +1323,7 @@ int tpm_seal_trusted(struct tpm_chip *chip, struct trusted_key_payload *payload,
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
+ 		return -ENODEV;
+ 
+@@ -1351,7 +1351,7 @@ int tpm_unseal_trusted(struct tpm_chip *chip,
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
+ 		return -ENODEV;
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 7f2d0f489e9c..c38772474091 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -535,7 +535,7 @@ static inline void tpm_msleep(unsigned int delay_msec)
+ 		     delay_msec * 1000);
+ };
+ 
+-struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
++struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+ __must_check int tpm_try_get_ops(struct tpm_chip *chip);
+ void tpm_put_ops(struct tpm_chip *chip);
+ 
 -- 
 2.17.1
 
