@@ -1,236 +1,131 @@
-From: avagin@virtuozzo.com (Andrei Vagin)
-Date: Tue, 26 Jun 2018 00:27:38 -0700
-Subject: [12/24] proc: Add fs_context support to procfs [ver #7]
-In-Reply-To: <20180626061320.GA12548@outlook.office365.com>
-References: <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
-	<20180619033450.GA11639@outlook.office365.com>
-	<20180626061320.GA12548@outlook.office365.com>
-Message-ID: <20180626072736.GA31860@outlook.office365.com>
+From: zyan@redhat.com (Yan, Zheng)
+Date: Tue, 26 Jun 2018 16:04:29 +0800
+Subject: [PATCH 1/3] selinux: make dentry_init_security() return security
+	module name
+Message-ID: <20180626080429.27304-1-zyan@redhat.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Jun 25, 2018 at 11:13:20PM -0700, Andrei Vagin wrote:
-> On Mon, Jun 18, 2018 at 08:34:50PM -0700, Andrei Vagin wrote:
-> > Hi David,
-> > 
-> > We run CRIU tests for vfs/for-next, and today a few of these test failed. I
-> > found that the problem appears after this patch..
-> > 
-> > >  int pid_ns_prepare_proc(struct pid_namespace *ns)
-> > >  {
-> > > +	struct proc_fs_context *ctx;
-> > > +	struct fs_context *fc;
-> > >  	struct vfsmount *mnt;
-> > > +	int ret;
-> > > +
-> > > +	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
-> > > +				FS_CONTEXT_FOR_KERNEL_MOUNT);
-> > > +	if (IS_ERR(fc))
-> > > +		return PTR_ERR(fc);
-> > > +
-> > > +	ctx = container_of(fc, struct proc_fs_context, fc);
-> > > +	if (ctx->pid_ns != ns) {
-> > > +		put_pid_ns(ctx->pid_ns);
-> > > +		get_pid_ns(ns);
-> > > +		ctx->pid_ns = ns;
-> > > +	}
-> > > +
-> > > +	ret = vfs_get_tree(fc);
-> > > +	if (ret < 0) {
-> > > +		put_fs_context(fc);
-> > > +		return ret;
-> > > +	}
-> > >  
-> > > -	mnt = kern_mount_data(&proc_fs_type, ns, 0);
-> 
-> Here ns->user_ns and get_current_cred()->user_ns are not always equal
+This is preparation for CephFS security label. CephFS's implementation uses
+dentry_init_security() to get security context before inode is created,
+then sends open/mkdir/mknod request to MDS, together with security xattr
+"security.<security module name>"
 
-What do you think about the attached patch?
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+---
+ fs/nfs/nfs4proc.c         | 3 ++-
+ include/linux/lsm_hooks.h | 4 ++--
+ include/linux/security.h  | 9 +++++----
+ security/security.c       | 7 ++++---
+ security/selinux/hooks.c  | 8 ++++++--
+ 5 files changed, 19 insertions(+), 12 deletions(-)
 
-> 
-> > > +	mnt = vfs_create_mount(fc);
-> > > +	put_fs_context(fc);
-> > >  	if (IS_ERR(mnt))
-> > >  		return PTR_ERR(mnt);
-> > >  
-> 
-> > #define _GNU_SOURCE
-> > #include <sys/types.h>
-> > #include <sched.h>
-> > #include <unistd.h>
-> > #include <stdio.h>
-> > #include <sys/mount.h>
-> > #include <sys/wait.h>
-> > #include <sys/stat.h>
-> > #include <fcntl.h>
-> > #include <stdlib.h>
-> > #include <grp.h>
-> > #include <linux/limits.h>
-> > 
-> > 
-> > #define NS_STACK_SIZE	4096
-> > 
-> > #define __stack_aligned__	__attribute__((aligned(16)))
-> > 
-> > /* All arguments should be above stack, because it grows down */
-> > struct ns_exec_args {
-> > 	char stack[NS_STACK_SIZE] __stack_aligned__;
-> > 	char stack_ptr[0];
-> > 	int pfd[2];
-> > };
-> > 
-> > static int ns_exec(void *_arg)
-> > {
-> > 	struct ns_exec_args *args = (struct ns_exec_args *) _arg;
-> > 	int ret;
-> > 
-> > 	close(args->pfd[1]);
-> > 	if (read(args->pfd[0], &ret, sizeof(ret)) != sizeof(ret))
-> > 		return -1;
-> > 
-> > 	setsid();
-> > 
-> > 	if (setuid(0) || setgid(0) || setgroups(0, NULL)) {
-> > 		fprintf(stderr, "set*id failed: %m\n");
-> > 		return -1;
-> > 	}
-> > 
-> > 	if (mount("proc", "/mnt", "proc", MS_MGC_VAL | MS_NOSUID | MS_NOEXEC | MS_NODEV, NULL)) {
-> > 		fprintf(stderr, "mount(/proc) failed: %m\n");
-> > 		return -1;
-> > 	}
-> > 
-> > 	return 0;
-> > }
-> > 
-> > #define UID_MAP "0 100000 100000\n100000 200000 50000"
-> > #define GID_MAP "0 400000 50000\n50000 500000 100000"
-> > int main()
-> > {
-> > 	pid_t pid;
-> > 	int ret, status;
-> > 	struct ns_exec_args args;
-> > 	int flags;
-> > 	char pname[PATH_MAX];
-> > 	int fd, pfd[2];
-> > 
-> > 	if (pipe(pfd))
-> > 		return 1;
-> > 
-> > 	args.pfd[0] = pfd[0];
-> > 	args.pfd[1] = pfd[1];
-> > 
-> > 	flags = CLONE_NEWPID | CLONE_NEWNS | CLONE_NEWUTS |
-> > 		CLONE_NEWNET | CLONE_NEWIPC | CLONE_NEWUSER | SIGCHLD;
-> > 
-> > 	pid = clone(ns_exec, args.stack_ptr, flags, &args);
-> > 	if (pid < 0) {
-> > 		fprintf(stderr, "clone() failed: %m\n");
-> > 		exit(1);
-> > 	}
-> > 
-> > 
-> > 	snprintf(pname, sizeof(pname), "/proc/%d/uid_map", pid);
-> > 	fd = open(pname, O_WRONLY);
-> > 	if (fd < 0) {
-> > 		fprintf(stderr, "open(%s): %m\n", pname);
-> > 		exit(1);
-> > 	}
-> > 	if (write(fd, UID_MAP, sizeof(UID_MAP)) < 0) {
-> > 		fprintf(stderr, "write(" UID_MAP "): %m\n");
-> > 		exit(1);
-> > 	}
-> > 	close(fd);
-> > 
-> > 	snprintf(pname, sizeof(pname), "/proc/%d/gid_map", pid);
-> > 	fd = open(pname, O_WRONLY);
-> > 	if (fd < 0) {
-> > 		fprintf(stderr, "open(%s): %m\n", pname);
-> > 		exit(1);
-> > 	}
-> > 	if (write(fd, GID_MAP, sizeof(GID_MAP)) < 0) {
-> > 		fprintf(stderr, "write(" GID_MAP "): %m\n");
-> > 		exit(1);
-> > 	}
-> > 	close(fd);
-> > 
-> > 	if (write(pfd[1], &ret, sizeof(ret)) != sizeof(ret))
-> > 		return 1;
-> > 
-> > 	if (waitpid(pid, &status, 0) != pid)
-> > 		return 1;
-> > 	if (status)
-> > 		return 1;
-> > 
-> > 	return 0;
-> > }
-> 
--------------- next part --------------
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 97e8c1dc4e3b..ad2db7504031 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -235,10 +235,11 @@ EXPORT_SYMBOL(generic_parse_monolithic);
-  * another superblock (referred to by @reference) is supplied, may have
-  * parameters such as namespaces copied across from that superblock.
-  */
--struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
-+struct fs_context *vfs_new_fs_context_userns(struct file_system_type *fs_type,
- 				      struct dentry *reference,
- 				      unsigned int sb_flags,
--				      enum fs_context_purpose purpose)
-+				      enum fs_context_purpose purpose,
-+				      struct user_namespace *user_ns)
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 6dd146885da9..d18a5fb7aec3 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -122,7 +122,8 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+ 		return NULL;
+ 
+ 	err = security_dentry_init_security(dentry, sattr->ia_mode,
+-				&dentry->d_name, (void **)&label->label, &label->len);
++				&dentry->d_name,  NULL,
++				(void **)&label->label, &label->len);
+ 	if (err == 0)
+ 		return label;
+ 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 8f1131c8dd54..e176c2032bdc 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1476,8 +1476,8 @@ union security_list_options {
+ 					unsigned long *set_kern_flags);
+ 	int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
+ 	int (*dentry_init_security)(struct dentry *dentry, int mode,
+-					const struct qstr *name, void **ctx,
+-					u32 *ctxlen);
++					const struct qstr *name, const char **label,
++					void **ctx, u32 *ctxlen);
+ 	int (*dentry_create_files_as)(struct dentry *dentry, int mode,
+ 					struct qstr *name,
+ 					const struct cred *old,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 63030c85ee19..df2d73998c64 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -246,8 +246,9 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+ 				unsigned long *set_kern_flags);
+ int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
+ int security_dentry_init_security(struct dentry *dentry, int mode,
+-					const struct qstr *name, void **ctx,
+-					u32 *ctxlen);
++					const struct qstr *name,
++					const char **label,
++					void **ctx, u32 *ctxlen);
+ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					struct qstr *name,
+ 					const struct cred *old,
+@@ -609,8 +610,8 @@ static inline void security_inode_free(struct inode *inode)
+ static inline int security_dentry_init_security(struct dentry *dentry,
+ 						 int mode,
+ 						 const struct qstr *name,
+-						 void **ctx,
+-						 u32 *ctxlen)
++						 const char **label,
++						 void **ctx, u32 *ctxlen)
  {
- 	struct fs_context *fc;
- 	int ret;
-@@ -259,7 +260,7 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
- 		fc->sb_flags |= SB_KERNMOUNT;
- 		/* Fallthrough */
- 	case FS_CONTEXT_FOR_USER_MOUNT:
--		fc->user_ns = get_user_ns(fc->cred->user_ns);
-+		fc->user_ns = get_user_ns(user_ns ? : fc->cred->user_ns);
- 		fc->net_ns = get_net(current->nsproxy->net_ns);
- 		break;
- 	case FS_CONTEXT_FOR_SUBMOUNT:
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index efbdc08a3c86..c832d67067d9 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -298,8 +298,8 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
- 	struct vfsmount *mnt;
- 	int ret;
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/security/security.c b/security/security.c
+index 68f46d849abe..69818d46aa28 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -450,11 +450,12 @@ void security_inode_free(struct inode *inode)
+ }
  
--	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
--				FS_CONTEXT_FOR_KERNEL_MOUNT);
-+	fc = vfs_new_fs_context_userns(&proc_fs_type, NULL, 0,
-+				FS_CONTEXT_FOR_KERNEL_MOUNT, ns->user_ns);
- 	if (IS_ERR(fc))
- 		return PTR_ERR(fc);
+ int security_dentry_init_security(struct dentry *dentry, int mode,
+-					const struct qstr *name, void **ctx,
+-					u32 *ctxlen)
++					const struct qstr *name,
++					const char **label,
++					void **ctx, u32 *ctxlen)
+ {
+ 	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
+-				name, ctx, ctxlen);
++				name, label, ctx, ctxlen);
+ }
+ EXPORT_SYMBOL(security_dentry_init_security);
  
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 04ea338ff490..283212cda1ff 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -92,10 +92,19 @@ struct fs_context_operations {
- /*
-  * fs_context manipulation functions.
-  */
--extern struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
-+extern struct fs_context *vfs_new_fs_context_userns(struct file_system_type *fs_type,
- 					     struct dentry *reference,
- 					     unsigned int ms_flags,
--					     enum fs_context_purpose purpose);
-+					     enum fs_context_purpose purpose,
-+					     struct user_namespace *user_ns);
-+static inline struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
-+					     struct dentry *reference,
-+					     unsigned int ms_flags,
-+					     enum fs_context_purpose purpose)
-+{
-+	return vfs_new_fs_context_userns(fs_type, reference, ms_flags, purpose, NULL);
-+}
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 2b5ee5fbd652..eca3879d9357 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2985,8 +2985,9 @@ static void selinux_inode_free_security(struct inode *inode)
+ }
+ 
+ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+-					const struct qstr *name, void **ctx,
+-					u32 *ctxlen)
++					const struct qstr *name,
++					const char **label,
++					void **ctx, u32 *ctxlen)
+ {
+ 	u32 newsid;
+ 	int rc;
+@@ -2998,6 +2999,9 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+ 	if (rc)
+ 		return rc;
+ 
++	if (label)
++		*label = XATTR_SELINUX_SUFFIX;
 +
- extern struct fs_context *vfs_sb_reconfig(struct path *path, unsigned int ms_flags);
- extern struct fs_context *vfs_dup_fs_context(struct fs_context *src);
- extern int vfs_set_fs_source(struct fs_context *fc, const char *source, size_t len);
+ 	return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
+ 				       ctxlen);
+ }
+-- 
+2.17.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
