@@ -1,61 +1,34 @@
 From: jmorris@namei.org (James Morris)
-Date: Wed, 27 Jun 2018 02:39:42 +1000 (AEST)
-Subject: [PATCH 0/3] KEYS: Miscellaneous fixes
-In-Reply-To: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
-References: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
-Message-ID: <alpine.LRH.2.21.1806270239220.18107@namei.org>
+Date: Wed, 27 Jun 2018 03:00:12 +1000 (AEST)
+Subject: [GIT PULL] Security subsystem: more keys fixes for v4.18-rc3
+Message-ID: <alpine.LRH.2.21.1806270257460.18107@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 26 Jun 2018, David Howells wrote:
+Please pull these two further fixes for the keys subsystem.
 
-> 
-> Hi James,
-> 
-> Here's a bunch of miscellaneous fixes:
-> 
->  (1) Fix the handling of the X.509 signature BIT STRING.
-> 
->  (2) Fix a section declaration.
-> 
->  (3) Fix rounding in KDF.
-> 
-> Could you pass these on to Linus please?
+The following changes since commit 813835028e9ae1f18cd11bb0ec591d0f0577d96a:
 
-Sure, the RSA one is already merged.
+  Merge branch 'fixes-v4.18-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security (2018-06-26 08:44:15 -0700)
 
-> 
-> The patches can be found here tagged thusly:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
-> 	keys-fixes-20180626
-> 
-> and also on the following branch:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-fixes
-> 
-> David
-> ---
-> Eric Biggers (1):
->       dh key: fix rounding up KDF output length
-> 
-> Maciej S. Szmigiero (1):
->       X.509: unpack RSA signatureValue field from BIT STRING
-> 
-> Nick Desaulniers (1):
->       certs/blacklist: fix const confusion
-> 
-> 
->  certs/blacklist.h                         |    2 +-
->  crypto/asymmetric_keys/x509_cert_parser.c |    9 +++++++++
->  security/keys/dh.c                        |    6 ++++--
->  3 files changed, 14 insertions(+), 3 deletions(-)
-> 
+are available in the Git repository at:
 
--- 
-James Morris
-<jmorris@namei.org>
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.18-rc3
 
+for you to fetch changes up to 3619dec5103dd999a777e3e4ea08c8f40a6ddc57:
+
+  dh key: fix rounding up KDF output length (2018-06-26 09:43:05 -0700)
+
+----------------------------------------------------------------
+Eric Biggers (1):
+      dh key: fix rounding up KDF output length
+
+Nick Desaulniers (1):
+      certs/blacklist: fix const confusion
+
+ certs/blacklist.h  | 2 +-
+ security/keys/dh.c | 6 ++++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
