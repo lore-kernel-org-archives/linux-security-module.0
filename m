@@ -1,33 +1,57 @@
 From: dhowells@redhat.com (David Howells)
-Date: Tue, 26 Jun 2018 16:59:40 +0100
-Subject: [PATCH 2/3] certs/blacklist: fix const confusion
+Date: Tue, 26 Jun 2018 16:59:33 +0100
+Subject: [PATCH 1/3] X.509: unpack RSA signatureValue field from BIT STRING
 In-Reply-To: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
 References: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
-Message-ID: <153002878055.31726.289273416003704588.stgit@warthog.procyon.org.uk>
+Message-ID: <153002877383.31726.1992447630485011119.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Nick Desaulniers <nick.desaulniers@gmail.com>
+From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-Fixes commit 2be04df5668d ("certs/blacklist_nohashes.c: fix const confusion
-in certs blacklist")
+The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+For RSA signatures this BIT STRING is of so-called primitive subtype, which
+contains a u8 prefix indicating a count of unused bits in the encoding.
 
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+We have to strip this prefix from signature data, just as we already do for
+key data in x509_extract_key_data() function.
+
+This wasn't noticed earlier because this prefix byte is zero for RSA key
+sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+prefixes has no bearing on its value.
+
+The signature length, however was incorrect, which is a problem for RSA
+implementations that need it to be exactly correct (like AMD CCP).
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
+Cc: stable at vger.kernel.org
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- certs/blacklist.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/asymmetric_keys/x509_cert_parser.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/certs/blacklist.h b/certs/blacklist.h
-index 150d82da8e99..1efd6fa0dc60 100644
---- a/certs/blacklist.h
-+++ b/certs/blacklist.h
-@@ -1,3 +1,3 @@
- #include <linux/kernel.h>
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index 7d81e6bb461a..b6cabac4b62b 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -249,6 +249,15 @@ int x509_note_signature(void *context, size_t hdrlen,
+ 		return -EINVAL;
+ 	}
  
--extern const char __initdata *const blacklist_hashes[];
-+extern const char __initconst *const blacklist_hashes[];
++	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
++		/* Discard the BIT STRING metadata */
++		if (vlen < 1 || *(const u8 *)value != 0)
++			return -EBADMSG;
++
++		value++;
++		vlen--;
++	}
++
+ 	ctx->cert->raw_sig = value;
+ 	ctx->cert->raw_sig_size = vlen;
+ 	return 0;
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
