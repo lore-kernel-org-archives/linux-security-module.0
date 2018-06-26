@@ -1,40 +1,165 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 26 Jun 2018 05:30:23 +1000 (AEST)
-Subject: [GIT PULL] Security subsystem: bugfixes for v4.18-rc
-Message-ID: <alpine.LRH.2.21.1806260524480.5927@namei.org>
+From: avagin@virtuozzo.com (Andrei Vagin)
+Date: Mon, 25 Jun 2018 23:13:22 -0700
+Subject: [12/24] proc: Add fs_context support to procfs [ver #7]
+In-Reply-To: <20180619033450.GA11639@outlook.office365.com>
+References: <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
+	<20180619033450.GA11639@outlook.office365.com>
+Message-ID: <20180626061320.GA12548@outlook.office365.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Linus,
+On Mon, Jun 18, 2018 at 08:34:50PM -0700, Andrei Vagin wrote:
+> Hi David,
+> 
+> We run CRIU tests for vfs/for-next, and today a few of these test failed. I
+> found that the problem appears after this patch..
+> 
+> >  int pid_ns_prepare_proc(struct pid_namespace *ns)
+> >  {
+> > +	struct proc_fs_context *ctx;
+> > +	struct fs_context *fc;
+> >  	struct vfsmount *mnt;
+> > +	int ret;
+> > +
+> > +	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
+> > +				FS_CONTEXT_FOR_KERNEL_MOUNT);
+> > +	if (IS_ERR(fc))
+> > +		return PTR_ERR(fc);
+> > +
+> > +	ctx = container_of(fc, struct proc_fs_context, fc);
+> > +	if (ctx->pid_ns != ns) {
+> > +		put_pid_ns(ctx->pid_ns);
+> > +		get_pid_ns(ns);
+> > +		ctx->pid_ns = ns;
+> > +	}
+> > +
+> > +	ret = vfs_get_tree(fc);
+> > +	if (ret < 0) {
+> > +		put_fs_context(fc);
+> > +		return ret;
+> > +	}
+> >  
+> > -	mnt = kern_mount_data(&proc_fs_type, ns, 0);
 
-Please pull these bugfixes.
+Here ns->user_ns and get_current_cred()->user_ns are not always equal
 
-- Smack: fix a regression caused by 1bbc55131e5
-- X.509: fix a (usually un-seen) bug in RSA signature parsing
+> > +	mnt = vfs_create_mount(fc);
+> > +	put_fs_context(fc);
+> >  	if (IS_ERR(mnt))
+> >  		return PTR_ERR(mnt);
+> >  
 
+> #define _GNU_SOURCE
+> #include <sys/types.h>
+> #include <sched.h>
+> #include <unistd.h>
+> #include <stdio.h>
+> #include <sys/mount.h>
+> #include <sys/wait.h>
+> #include <sys/stat.h>
+> #include <fcntl.h>
+> #include <stdlib.h>
+> #include <grp.h>
+> #include <linux/limits.h>
+> 
+> 
+> #define NS_STACK_SIZE	4096
+> 
+> #define __stack_aligned__	__attribute__((aligned(16)))
+> 
+> /* All arguments should be above stack, because it grows down */
+> struct ns_exec_args {
+> 	char stack[NS_STACK_SIZE] __stack_aligned__;
+> 	char stack_ptr[0];
+> 	int pfd[2];
+> };
+> 
+> static int ns_exec(void *_arg)
+> {
+> 	struct ns_exec_args *args = (struct ns_exec_args *) _arg;
+> 	int ret;
+> 
+> 	close(args->pfd[1]);
+> 	if (read(args->pfd[0], &ret, sizeof(ret)) != sizeof(ret))
+> 		return -1;
+> 
+> 	setsid();
+> 
+> 	if (setuid(0) || setgid(0) || setgroups(0, NULL)) {
+> 		fprintf(stderr, "set*id failed: %m\n");
+> 		return -1;
+> 	}
+> 
+> 	if (mount("proc", "/mnt", "proc", MS_MGC_VAL | MS_NOSUID | MS_NOEXEC | MS_NODEV, NULL)) {
+> 		fprintf(stderr, "mount(/proc) failed: %m\n");
+> 		return -1;
+> 	}
+> 
+> 	return 0;
+> }
+> 
+> #define UID_MAP "0 100000 100000\n100000 200000 50000"
+> #define GID_MAP "0 400000 50000\n50000 500000 100000"
+> int main()
+> {
+> 	pid_t pid;
+> 	int ret, status;
+> 	struct ns_exec_args args;
+> 	int flags;
+> 	char pname[PATH_MAX];
+> 	int fd, pfd[2];
+> 
+> 	if (pipe(pfd))
+> 		return 1;
+> 
+> 	args.pfd[0] = pfd[0];
+> 	args.pfd[1] = pfd[1];
+> 
+> 	flags = CLONE_NEWPID | CLONE_NEWNS | CLONE_NEWUTS |
+> 		CLONE_NEWNET | CLONE_NEWIPC | CLONE_NEWUSER | SIGCHLD;
+> 
+> 	pid = clone(ns_exec, args.stack_ptr, flags, &args);
+> 	if (pid < 0) {
+> 		fprintf(stderr, "clone() failed: %m\n");
+> 		exit(1);
+> 	}
+> 
+> 
+> 	snprintf(pname, sizeof(pname), "/proc/%d/uid_map", pid);
+> 	fd = open(pname, O_WRONLY);
+> 	if (fd < 0) {
+> 		fprintf(stderr, "open(%s): %m\n", pname);
+> 		exit(1);
+> 	}
+> 	if (write(fd, UID_MAP, sizeof(UID_MAP)) < 0) {
+> 		fprintf(stderr, "write(" UID_MAP "): %m\n");
+> 		exit(1);
+> 	}
+> 	close(fd);
+> 
+> 	snprintf(pname, sizeof(pname), "/proc/%d/gid_map", pid);
+> 	fd = open(pname, O_WRONLY);
+> 	if (fd < 0) {
+> 		fprintf(stderr, "open(%s): %m\n", pname);
+> 		exit(1);
+> 	}
+> 	if (write(fd, GID_MAP, sizeof(GID_MAP)) < 0) {
+> 		fprintf(stderr, "write(" GID_MAP "): %m\n");
+> 		exit(1);
+> 	}
+> 	close(fd);
+> 
+> 	if (write(pfd[1], &ret, sizeof(ret)) != sizeof(ret))
+> 		return 1;
+> 
+> 	if (waitpid(pid, &status, 0) != pid)
+> 		return 1;
+> 	if (status)
+> 		return 1;
+> 
+> 	return 0;
+> }
 
-The following changes since commit 894b8c000ae6c106cc434ee0000dfb77df8bd9db:
-
-  Merge tag 'for_v4.18-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs (2018-06-22 18:04:56 +0900)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.18-rc2
-
-for you to fetch changes up to b65c32ec5a942ab3ada93a048089a938918aba7f:
-
-  X.509: unpack RSA signatureValue field from BIT STRING (2018-06-25 12:17:08 -0700)
-
-----------------------------------------------------------------
-Casey Schaufler (1):
-      Smack: Mark inode instant in smack_task_to_inode
-
-Maciej S. Szmigiero (1):
-      X.509: unpack RSA signatureValue field from BIT STRING
-
- crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
- security/smack/smack_lsm.c                | 1 +
- 2 files changed, 10 insertions(+)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
