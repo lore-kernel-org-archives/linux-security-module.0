@@ -1,57 +1,142 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 26 Jun 2018 16:59:33 +0100
-Subject: [PATCH 1/3] X.509: unpack RSA signatureValue field from BIT STRING
-In-Reply-To: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
-References: <153002876741.31726.8580751276453556884.stgit@warthog.procyon.org.uk>
-Message-ID: <153002877383.31726.1992447630485011119.stgit@warthog.procyon.org.uk>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 26 Jun 2018 09:21:15 -0700
+Subject: [PATCH 1/3] selinux: make dentry_init_security() return security
+	module name
+In-Reply-To: <20180626084306.27511-1-zyan@redhat.com>
+References: <20180626084306.27511-1-zyan@redhat.com>
+Message-ID: <610fd9e5-4095-d7f0-e5bd-c208e9e77046@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+On 6/26/2018 1:43 AM, Yan, Zheng wrote:
+> This is preparation for CephFS security label. CephFS's implementation uses
+> dentry_init_security() to get security context before inode is created,
+> then sends open/mkdir/mknod request to MDS, together with security xattr
+> "security.<security module name>"
 
-The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
-For RSA signatures this BIT STRING is of so-called primitive subtype, which
-contains a u8 prefix indicating a count of unused bits in the encoding.
+There is no requirement that a security module use
+"security.<security module name>" to name it's attributes.
+Smack, for example, uses "security.SMACK64". Further, Smack
+uses multiple attributes; "security.SMACK64TRANSMUTE",
+"security.SMACK64MMAP", "security.SMACK64EXEC" as well as
+"security.SMACK64".
 
-We have to strip this prefix from signature data, just as we already do for
-key data in x509_extract_key_data() function.
+Also, when (if) we get full module stacking in place you
+will need to handle the possibility that there may be more
+than one security module providing security xattrs.
 
-This wasn't noticed earlier because this prefix byte is zero for RSA key
-sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
-prefixes has no bearing on its value.
-
-The signature length, however was incorrect, which is a problem for RSA
-implementations that need it to be exactly correct (like AMD CCP).
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
-Cc: stable at vger.kernel.org
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- crypto/asymmetric_keys/x509_cert_parser.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index 7d81e6bb461a..b6cabac4b62b 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -249,6 +249,15 @@ int x509_note_signature(void *context, size_t hdrlen,
- 		return -EINVAL;
- 	}
- 
-+	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
-+		/* Discard the BIT STRING metadata */
-+		if (vlen < 1 || *(const u8 *)value != 0)
-+			return -EBADMSG;
-+
-+		value++;
-+		vlen--;
-+	}
-+
- 	ctx->cert->raw_sig = value;
- 	ctx->cert->raw_sig_size = vlen;
- 	return 0;
+>
+> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> ---
+>  fs/nfs/nfs4proc.c         | 3 ++-
+>  include/linux/lsm_hooks.h | 4 ++--
+>  include/linux/security.h  | 9 +++++----
+>  security/security.c       | 7 ++++---
+>  security/selinux/hooks.c  | 8 ++++++--
+>  5 files changed, 19 insertions(+), 12 deletions(-)
+>
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index 6dd146885da9..d18a5fb7aec3 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -122,7 +122,8 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>  		return NULL;
+>  
+>  	err = security_dentry_init_security(dentry, sattr->ia_mode,
+> -				&dentry->d_name, (void **)&label->label, &label->len);
+> +				&dentry->d_name,  NULL,
+> +				(void **)&label->label, &label->len);
+>  	if (err == 0)
+>  		return label;
+>  
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 8f1131c8dd54..e176c2032bdc 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1476,8 +1476,8 @@ union security_list_options {
+>  					unsigned long *set_kern_flags);
+>  	int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
+>  	int (*dentry_init_security)(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen);
+> +					const struct qstr *name, const char **label,
+> +					void **ctx, u32 *ctxlen);
+>  	int (*dentry_create_files_as)(struct dentry *dentry, int mode,
+>  					struct qstr *name,
+>  					const struct cred *old,
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 63030c85ee19..df2d73998c64 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -246,8 +246,9 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+>  				unsigned long *set_kern_flags);
+>  int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen);
+> +					const struct qstr *name,
+> +					const char **label,
+> +					void **ctx, u32 *ctxlen);
+>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+>  					struct qstr *name,
+>  					const struct cred *old,
+> @@ -609,8 +610,8 @@ static inline void security_inode_free(struct inode *inode)
+>  static inline int security_dentry_init_security(struct dentry *dentry,
+>  						 int mode,
+>  						 const struct qstr *name,
+> -						 void **ctx,
+> -						 u32 *ctxlen)
+> +						 const char **label,
+> +						 void **ctx, u32 *ctxlen)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index 68f46d849abe..69818d46aa28 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -450,11 +450,12 @@ void security_inode_free(struct inode *inode)
+>  }
+>  
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen)
+> +					const struct qstr *name,
+> +					const char **label,
+> +					void **ctx, u32 *ctxlen)
+>  {
+>  	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
+> -				name, ctx, ctxlen);
+> +				name, label, ctx, ctxlen);
+>  }
+>  EXPORT_SYMBOL(security_dentry_init_security);
+>  
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 2b5ee5fbd652..eca3879d9357 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2985,8 +2985,9 @@ static void selinux_inode_free_security(struct inode *inode)
+>  }
+>  
+>  static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen)
+> +					const struct qstr *name,
+> +					const char **label,
+> +					void **ctx, u32 *ctxlen)
+>  {
+>  	u32 newsid;
+>  	int rc;
+> @@ -2998,6 +2999,9 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+>  	if (rc)
+>  		return rc;
+>  
+> +	if (label)
+> +		*label = XATTR_SELINUX_SUFFIX;
+> +
+>  	return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
+>  				       ctxlen);
+>  }
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
