@@ -1,97 +1,58 @@
 From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue, 26 Jun 2018 15:09:32 -0400
-Subject: [PATCH v7 4/5] ima: Use tpm_default_chip() and call TPM functions
-	with a tpm_chip
-In-Reply-To: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
-References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
-Message-ID: <20180626190933.2508821-5-stefanb@linux.vnet.ibm.com>
+Date: Tue, 26 Jun 2018 15:09:28 -0400
+Subject: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system shutdown
+Message-ID: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Rather than accessing the TPM functions by passing a NULL pointer for
-the tpm_chip, which causes a lookup for a suitable chip every time, get a
-hold of a tpm_chip and access the TPM functions using it.
+This series of patches converts IMA's usage of the tpm_chip to find a TPM
+chip initially and use it until the machine is shut down. To do this we need
+to introduce a kref for the tpm_chip that IMA and all other users of a
+tpm_chip hold onto until they don't need the TPM chip anymore.
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_crypto.c |  2 +-
- security/integrity/ima/ima_init.c   | 11 ++++-------
- security/integrity/ima/ima_queue.c  |  2 +-
- 4 files changed, 7 insertions(+), 9 deletions(-)
+    Stefan
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 354bb5716ce3..35409461a3f2 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -56,6 +56,7 @@ extern int ima_policy_flag;
- extern int ima_used_chip;
- extern int ima_hash_algo;
- extern int ima_appraise;
-+extern struct tpm_chip *ima_tpm_chip;
- 
- /* IMA event related data */
- struct ima_event_data {
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 4e085a17124f..88082f35adb2 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -634,7 +634,7 @@ static void __init ima_pcrread(int idx, u8 *pcr)
- 	if (!ima_used_chip)
- 		return;
- 
--	if (tpm_pcr_read(NULL, idx, pcr) != 0)
-+	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
- 		pr_err("Error Communicating to TPM chip\n");
- }
- 
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 29b72cd2502e..1437ed3dbccc 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -27,6 +27,7 @@
- /* name for boot aggregate entry */
- static const char *boot_aggregate_name = "boot_aggregate";
- int ima_used_chip;
-+struct tpm_chip *ima_tpm_chip;
- 
- /* Add the boot aggregate to the IMA measurement list and extend
-  * the PCR register.
-@@ -106,17 +107,13 @@ void __init ima_load_x509(void)
- 
- int __init ima_init(void)
- {
--	u8 pcr_i[TPM_DIGEST_SIZE];
- 	int rc;
- 
--	ima_used_chip = 0;
--	rc = tpm_pcr_read(NULL, 0, pcr_i);
--	if (rc == 0)
--		ima_used_chip = 1;
-+	ima_tpm_chip = tpm_default_chip();
- 
-+	ima_used_chip = ima_tpm_chip != NULL;
- 	if (!ima_used_chip)
--		pr_info("No TPM chip found, activating TPM-bypass! (rc=%d)\n",
--			rc);
-+		pr_info("No TPM chip found, activating TPM-bypass!\n");
- 
- 	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
- 	if (rc)
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 418f35e38015..c6303fa19a49 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -145,7 +145,7 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
- 	if (!ima_used_chip)
- 		return result;
- 
--	result = tpm_pcr_extend(NULL, pcr, hash);
-+	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
- 	if (result != 0)
- 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
- 	return result;
+v6->v7:
+  - fixed `if (!rc)` in patch 3 to `if (rc)` (detected while converting trusted
+    keys)
+
+v5->v6:
+  - more verbose patch description in patch 2
+
+v4->v5:
+  - repost with fixed changelog and posted to linux-security-module
+
+v3->v4:
+  - followed Jason's suggestions:
+    - extended docs of tpm_find_get_ops()
+    - calling new function tpm_default_chip()
+    - new patch 3 that uses tpm_default_chip() in tpm_find_get_ops()
+
+v2->v3:
+  - renaming tpm_chip_find_get() to tpm_get_ops()
+  - IMA does not lock access to ima_tpm_chip anymore
+  - IMA does not have a reboot notifier to release the chip anymore
+
+v1->v2:
+  - use the kref of the device via get_device()/put_device()
+
+Stefan Berger (5):
+  tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
+  tpm: Implement tpm_default_chip() to find a TPM chip
+  tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
+  ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
+  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
+
+ drivers/char/tpm/tpm-chip.c         | 68 +++++++++++++++++++----------
+ drivers/char/tpm/tpm-interface.c    | 14 +++---
+ drivers/char/tpm/tpm.h              |  2 +-
+ include/linux/tpm.h                 |  5 +++
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_crypto.c |  4 +-
+ security/integrity/ima/ima_init.c   | 16 +++----
+ security/integrity/ima/ima_queue.c  |  4 +-
+ 8 files changed, 69 insertions(+), 46 deletions(-)
+
 -- 
 2.17.1
 
