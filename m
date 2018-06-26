@@ -1,85 +1,98 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 26 Jun 2018 09:57:07 +0100
-Subject: [12/24] proc: Add fs_context support to procfs [ver #7]
-In-Reply-To: <20180626072736.GA31860@outlook.office365.com>
-References: <20180626072736.GA31860@outlook.office365.com>
-	<152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
-	<20180619033450.GA11639@outlook.office365.com>
-	<20180626061320.GA12548@outlook.office365.com>
-Message-ID: <31831.1530003427@warthog.procyon.org.uk>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Tue, 26 Jun 2018 07:06:19 -0400
+Subject: [PATCH v5 5/5] ima: Get rid of ima_used_chip and use ima_tpm_chip !=
+	NULL instead
+In-Reply-To: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+References: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+Message-ID: <20180626110619.2362791-6-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Andrei Vagin <avagin@virtuozzo.com> wrote:
+Get rid of ima_used_chip and use ima_tpm_chip variable instead for
+determining whether to use the TPM chip.
 
-> > > > -	mnt = kern_mount_data(&proc_fs_type, ns, 0);
-> > 
-> > Here ns->user_ns and get_current_cred()->user_ns are not always equal
-> 
-> What do you think about the attached patch?
-> ...
-> -	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
-> -				FS_CONTEXT_FOR_KERNEL_MOUNT);
-> +	fc = vfs_new_fs_context_userns(&proc_fs_type, NULL, 0,
-> +				FS_CONTEXT_FOR_KERNEL_MOUNT, ns->user_ns);
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima.h        | 1 -
+ security/integrity/ima/ima_crypto.c | 2 +-
+ security/integrity/ima/ima_init.c   | 7 ++-----
+ security/integrity/ima/ima_queue.c  | 2 +-
+ 4 files changed, 4 insertions(+), 8 deletions(-)
 
-Or you could just change fc->user_ns immediately after calling
-vfs_new_fs_context().  This is what network filesystems should do with
-fc->net_ns, for example.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 35409461a3f2..2ab1affffa36 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -53,7 +53,6 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+ extern int ima_policy_flag;
+ 
+ /* set during initialization */
+-extern int ima_used_chip;
+ extern int ima_hash_algo;
+ extern int ima_appraise;
+ extern struct tpm_chip *ima_tpm_chip;
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 88082f35adb2..7e7e7e7c250a 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -631,7 +631,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+ 
+ static void __init ima_pcrread(int idx, u8 *pcr)
+ {
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		return;
+ 
+ 	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 1437ed3dbccc..faac9ecaa0ae 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -26,7 +26,6 @@
+ 
+ /* name for boot aggregate entry */
+ static const char *boot_aggregate_name = "boot_aggregate";
+-int ima_used_chip;
+ struct tpm_chip *ima_tpm_chip;
+ 
+ /* Add the boot aggregate to the IMA measurement list and extend
+@@ -65,7 +64,7 @@ static int __init ima_add_boot_aggregate(void)
+ 	iint->ima_hash->algo = HASH_ALGO_SHA1;
+ 	iint->ima_hash->length = SHA1_DIGEST_SIZE;
+ 
+-	if (ima_used_chip) {
++	if (ima_tpm_chip) {
+ 		result = ima_calc_boot_aggregate(&hash.hdr);
+ 		if (result < 0) {
+ 			audit_cause = "hashing_error";
+@@ -110,9 +109,7 @@ int __init ima_init(void)
+ 	int rc;
+ 
+ 	ima_tpm_chip = tpm_default_chip();
+-
+-	ima_used_chip = ima_tpm_chip != NULL;
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		pr_info("No TPM chip found, activating TPM-bypass!\n");
+ 
+ 	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index c6303fa19a49..b186819bd5aa 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -142,7 +142,7 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
+ {
+ 	int result = 0;
+ 
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		return result;
+ 
+ 	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+-- 
+2.17.1
 
-> -struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
-> +struct fs_context *vfs_new_fs_context_userns(struct file_system_type *fs_type,
->  				      struct dentry *reference,
->  				      unsigned int sb_flags,
-> -				      enum fs_context_purpose purpose)
-> +				      enum fs_context_purpose purpose,
-> +				      struct user_namespace *user_ns)
-
-
-If you'd really rather add a new parameter, please don't rename the function
-to vfs_new_fs_context_userns() - just add a new parameter.  There don't need
-to be two versions of it.
-
-
-This brings me to another thought:  I want to add the ability to let
-namespaces be configured by userspace, for example:
-
-	fd = fsopen("nfs");
-	sprintf(buf, "ns user %d", my_user_ns_fd);
-	write(fd, buf);
-	sprintf(buf, "ns net %d", my_net_ns_fd);
-	write(fd, buf);
-	write(fd, "s fedoraproject.org:/pub");
-	write(fd, "o intr");
-	...
-
-I think therefore, I might need to insert another phase between creating the
-context and calling the filesystem initialiser:
-
-	fc = vfs_new_fs_context(&afs_fs_type, mntpt, 0,
-				FS_CONTEXT_FOR_SUBMOUNT);
-
-followed by:
-
-	vfs_sb_set_namespace(fc, THIS_IS_USER_NS, user_ns);
-	vfs_sb_set_namespace(fc, THIS_IS_NET_NS, net_ns);
-
-but then we'd need to do:
-
-	vfs_begin_options(fc);
-
-before continuing (unless we made this happen automatically on the receipt of
-the first option):
-
-	afs_mntpt_set_params(fc, mntpt);
-	vfs_get_tree(fc);
-	mnt = vfs_create_mount(fc, 0);
-
-Alternatively, we could do the namespace setting after initialisation and let
-the fs apply the changes itself.
-
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
