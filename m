@@ -1,51 +1,45 @@
-From: tomas.winkler@intel.com (Winkler, Tomas)
-Date: Wed, 27 Jun 2018 21:13:40 +0000
-Subject: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <5c50d7fa2bf495f26443bd2da2e15df34c3d23f7.camel@linux.intel.com>
-References: <20180624205202.6597-1-tomas.winkler@intel.com>
-	<19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
-	<cb7ecb912486ee3e504de7c0918d667ebd370080.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D954923@hasmsx108.ger.corp.intel.com>
-	<5c50d7fa2bf495f26443bd2da2e15df34c3d23f7.camel@linux.intel.com>
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D956753@hasmsx108.ger.corp.intel.com>
+From: andy.shevchenko@gmail.com (Andy Shevchenko)
+Date: Thu, 28 Jun 2018 00:42:34 +0300
+Subject: [PATCH] proc: save 2 atomic ops on write to "/proc/*/attr/*"
+In-Reply-To: <20180627200218.GF18113@avx2>
+References: <20180627200218.GF18113@avx2>
+Message-ID: <CAHp75Vcp61v_VeMNrKYwpc7MKXy2Mjcx9kek-oPyX8A+P7ci1w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, Jun 27, 2018 at 11:02 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> Code checks if write is done by current to its own attributes.
+> For that get/put pair is unnecessary as it can be done under RCU.
 
+>         /* No partial writes. */
+> -       length = -EINVAL;
+>         if (*ppos != 0)
+> -               goto out;
+> +               return -EINVAL;
+>
+>         page = memdup_user(buf, count);
+>         if (IS_ERR(page)) {
 
-> On Tue, 2018-06-26 at 21:15 +0000, Winkler, Tomas wrote:
-> > > Right now if I really put head into this I can understand the logic
-> > > but it is a complete mess.
-> >
-> > I think what is the mess is that we have a recursive call to
-> > tpm_transmit topped with retries.  All other mess is just the result of that.
-> >
-> > > I will forgot the dependencies between flags within few weeks.
-> >
-> > Hope the reasons are well documented both in code and the commit
-> > message, if not let's address that. We really cannot depend on one's
-> memory.
-> > It's not like I'm not striving for simplest possible code.
-> >
-> > > A fixed requirement (so that you know) is that they must be
-> > > independent.
-> >
-> > The flags (hope this what you referring here to) are not independent
-> > and weren't before, (RAW cannot be called alone as you will have
-> > double locking) putting them under one name just should make it clear.
-> > I beg you to go over the  code one more time, don't get stuck with
-> > flags names, maybe you even discover some real issue.
-> >
-> > Thanks
-> > Tomas
-> 
-> You should then find a solution where you can remove
-> TPM_TRANSMIT_RAW completely and make it as a separate commit, not
-> part of the bug fix.
-> This is not in a shape that I would dare to put this in a pull request.
+> -               length = PTR_ERR(page);
+> +               rv = PTR_ERR(page);
+>                 goto out;
 
-Very well, I will remove the NESTED flag.  though I have feeling you are shooting from the hip you didn't really read the code. 
-Please there anyone who can review the code?
-Tomas
+You alredy have more than one exit location, why not to convert this
+one as well and get rid of out label completely?
 
-????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
+>         }
+
+>  out_free:
+>         kfree(page);
+>  out:
+
+> +       return rv;
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
