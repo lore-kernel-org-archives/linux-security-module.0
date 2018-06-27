@@ -1,47 +1,105 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 27 Jun 2018 19:42:24 +0300
-Subject: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D954923@hasmsx108.ger.corp.intel.com>
-References: <20180624205202.6597-1-tomas.winkler@intel.com>
-	<19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
-	<cb7ecb912486ee3e504de7c0918d667ebd370080.camel@linux.intel.com>
-	<5B8DA87D05A7694D9FA63FD143655C1B9D954923@hasmsx108.ger.corp.intel.com>
-Message-ID: <5c50d7fa2bf495f26443bd2da2e15df34c3d23f7.camel@linux.intel.com>
+From: adobriyan@gmail.com (Alexey Dobriyan)
+Date: Wed, 27 Jun 2018 23:02:18 +0300
+Subject: [PATCH] proc: save 2 atomic ops on write to "/proc/*/attr/*"
+Message-ID: <20180627200218.GF18113@avx2>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-06-26 at 21:15 +0000, Winkler, Tomas wrote:
-> > Right now if I really put head into this I can understand the logic but it
-> > is a
-> > complete mess.
-> 
-> I think what is the mess is that we have a recursive call to tpm_transmit
-> topped with retries.  All other mess is just the result of that.
-> 
-> > I will forgot the dependencies between flags within few
-> > weeks. 
-> 
-> Hope the reasons are well documented both in code and the commit message, if
-> not let's address that. We really cannot depend on one's memory.
-> It's not like I'm not striving for simplest possible code. 
-> 
-> > A fixed requirement (so that you know) is that they must be
-> > independent.
-> 
-> The flags (hope this what you referring here to) are not independent and
-> weren't before, (RAW cannot be called alone as you will have double locking)
-> putting them under one name just should make it clear. 
-> I beg you to go over the  code one more time, don't get stuck with flags
-> names, maybe you even discover some real issue. 
-> 
-> Thanks
-> Tomas
+Code checks if write is done by current to its own attributes.
+For that get/put pair is unnecessary as it can be done under RCU.
 
-You should then find a solution where you can remove TPM_TRANSMIT_RAW
-completely and make it as a separate commit, not part of the bug fix.
-This is not in a shape that I would dare to put this in a pull request.
+Note: rcu_read_unlock() can be done even earlier since pointer to a task
+is not dereferenced. It depends if /proc code should look scary or not:
 
-/Jarkko
+	rcu_read_lock();
+	task = pid_task(...);
+	rcu_read_unlock();
+	if (!task)
+		return -ESRCH;
+	if (task != current)
+		return -EACCESS:
+
+P.S.: rename "length" variable.	Code like this
+
+	length = -EINVAL;
+
+should not exist.
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ fs/proc/base.c |   38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2517,47 +2517,47 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 				   size_t count, loff_t *ppos)
+ {
+ 	struct inode * inode = file_inode(file);
++	struct task_struct *task;
+ 	void *page;
+-	ssize_t length;
+-	struct task_struct *task = get_proc_task(inode);
+-
+-	length = -ESRCH;
+-	if (!task)
+-		goto out_no_task;
++	int rv;
+ 
++	rcu_read_lock();
++	task = pid_task(proc_pid(inode), PIDTYPE_PID);
++	if (!task) {
++		rcu_read_unlock();
++		return -ESRCH;
++	}
+ 	/* A task may only write its own attributes. */
+-	length = -EACCES;
+-	if (current != task)
+-		goto out;
++	if (current != task) {
++		rcu_read_unlock();
++		return -EACCES;
++	}
++	rcu_read_unlock();
+ 
+ 	if (count > PAGE_SIZE)
+ 		count = PAGE_SIZE;
+ 
+ 	/* No partial writes. */
+-	length = -EINVAL;
+ 	if (*ppos != 0)
+-		goto out;
++		return -EINVAL;
+ 
+ 	page = memdup_user(buf, count);
+ 	if (IS_ERR(page)) {
+-		length = PTR_ERR(page);
++		rv = PTR_ERR(page);
+ 		goto out;
+ 	}
+ 
+ 	/* Guard against adverse ptrace interaction */
+-	length = mutex_lock_interruptible(&current->signal->cred_guard_mutex);
+-	if (length < 0)
++	rv = mutex_lock_interruptible(&current->signal->cred_guard_mutex);
++	if (rv < 0)
+ 		goto out_free;
+ 
+-	length = security_setprocattr(file->f_path.dentry->d_name.name,
+-				      page, count);
++	rv = security_setprocattr(file->f_path.dentry->d_name.name, page, count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ out_free:
+ 	kfree(page);
+ out:
+-	put_task_struct(task);
+-out_no_task:
+-	return length;
++	return rv;
+ }
+ 
+ static const struct file_operations proc_pid_attr_operations = {
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
