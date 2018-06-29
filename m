@@ -1,28 +1,50 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 29 Jun 2018 11:01:37 -0400
-Subject: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system
-	shutdown
-In-Reply-To: <285d705b92b2f3a9351ac31b2e25ad36cb47204a.camel@linux.intel.com>
-References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
-	<285d705b92b2f3a9351ac31b2e25ad36cb47204a.camel@linux.intel.com>
-Message-ID: <1530284497.3366.145.camel@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 29 Jun 2018 18:10:02 +0300
+Subject: [PATCH] tpm: require to compile as part of the kernel
+Message-ID: <20180629151005.10899-1-jarkko.sakkinen@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-06-29 at 15:13 +0300, Jarkko Sakkinen wrote:
-> On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
-> > This series of patches converts IMA's usage of the tpm_chip to find a TPM
-> > chip initially and use it until the machine is shut down. To do this we need
-> > to introduce a kref for the tpm_chip that IMA and all other users of a
-> > tpm_chip hold onto until they don't need the TPM chip anymore.
-> 
-> All the TPM patches are now in my tree and I just updated also the
-> next branch so they should be soon available also in linux-next.
+Do not allow to compile TPM core as a module. TPM defines a root of
+trust for integrity and keyring subsystems and should be always
+available and not be loaded from the user space. There is no a
+reasonable use case for a loadable module existing.
 
-James, do you have a preference? ?Should I merge the patches in
-Jarkko's next branch or just base the integrity branch on top of it?
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/Kconfig | 2 +-
+ include/linux/tpm.h      | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Mimi
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index 18c81cbe4704..9728771aecbd 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -3,7 +3,7 @@
+ #
+ 
+ menuconfig TCG_TPM
+-	tristate "TPM Hardware Support"
++	bool "TPM Hardware Support"
+ 	depends on HAS_IOMEM
+ 	select SECURITYFS
+ 	select CRYPTO
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 4609b94142d4..cefa61b12891 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -50,8 +50,7 @@ struct tpm_class_ops {
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+ };
+ 
+-#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+-
++#if defined(CONFIG_TCG_TPM)
+ extern int tpm_is_tpm2(struct tpm_chip *chip);
+ extern int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+ extern int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
+-- 
+2.17.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
