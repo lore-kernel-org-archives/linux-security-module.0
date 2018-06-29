@@ -1,42 +1,48 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Fri, 29 Jun 2018 13:27:08 -0700
-Subject: [PATCH] security: CONFIG_HARDENED_USERCOPY does not need to
-	select BUG
-In-Reply-To: <1530302661-20953-1-git-send-email-kamal@canonical.com>
-References: <1530302661-20953-1-git-send-email-kamal@canonical.com>
-Message-ID: <CAGXu5jKXtq75+HkziTT-8F0VHvvOiRrtfez60h8hKK1GaE64ug@mail.gmail.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 29 Jun 2018 17:47:15 -0400
+Subject: [GIT PULL] SELinux fixes for v4.18 (#1)
+Message-ID: <CAHC9VhQZ+zRQ+LER=BCx1_Z-Z+LQuYaeEUxQ8YMQoNdNgt=cwg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jun 29, 2018 at 1:04 PM, Kamal Mostafa <kamal@canonical.com> wrote:
-> Allows for CONFIG_HARDENED_USERCOPY without CONFIG_BUG.
->
-> Signed-off-by: Kamal Mostafa <kamal@canonical.com>
-> ---
->  security/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/security/Kconfig b/security/Kconfig
-> index c430206..7667774 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -153,7 +153,6 @@ config HAVE_HARDENED_USERCOPY_ALLOCATOR
->  config HARDENED_USERCOPY
->         bool "Harden memory copies between kernel and userspace"
->         depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
-> -       select BUG
->         imply STRICT_DEVMEM
->         help
->           This option checks for obviously wrong memory regions when
+Hi Linus,
 
-Do the lkdtm tests for usercopy correctly halt the kernel thread if
-CONFIG_BUG is removed?
+One fairly straightforward patch to fix a longstanding issue where a
+process could stall while accessing files in selinuxfs and block
+everyone else due to a held mutex.  The patch passes all our tests and
+looks to apply cleanly to your current tree.  Please pull this as a
+fix for v4.18.
 
--Kees
+Thanks,
+-Paul
+--
+The following changes since commit d141136f523a3a6372d22981bdff7a8906f36fea:
+
+ audit: normalize MAC_POLICY_LOAD record (2018-04-17 17:54:11 -0400)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20180629
+
+for you to fetch changes up to 0da74120c5341389b97c4ee27487a97224999ee1:
+
+ selinux: move user accesses in selinuxfs out of locked regions
+   (2018-06-28 20:39:54 -0400)
+
+----------------------------------------------------------------
+selinux/stable-4.18 PR 20180629
+
+----------------------------------------------------------------
+Jann Horn (1):
+     selinux: move user accesses in selinuxfs out of locked regions
+
+security/selinux/selinuxfs.c | 78 +++++++++++++++++-----------------------
+1 file changed, 33 insertions(+), 45 deletions(-)
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
