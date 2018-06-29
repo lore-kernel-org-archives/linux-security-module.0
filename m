@@ -1,189 +1,28 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 29 Jun 2018 15:31:37 +0300
-Subject: [PATCH] tpm: replace TPM_TRANSMIT_RAW with TPM_TRANSMIT_NESTED
-Message-ID: <20180629123138.21918-1-jarkko.sakkinen@linux.intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 29 Jun 2018 11:01:37 -0400
+Subject: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system
+	shutdown
+In-Reply-To: <285d705b92b2f3a9351ac31b2e25ad36cb47204a.camel@linux.intel.com>
+References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+	<285d705b92b2f3a9351ac31b2e25ad36cb47204a.camel@linux.intel.com>
+Message-ID: <1530284497.3366.145.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-As TPM_TRANSMIT_RAW always requires also not to take locks for obvious
-reasons (deadlock), this commit renames the flag as TPM_TRANSMIT_NESTED
-and prevents taking tpm_mutex when the flag is given to tpm_transmit().
+On Fri, 2018-06-29 at 15:13 +0300, Jarkko Sakkinen wrote:
+> On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
+> > This series of patches converts IMA's usage of the tpm_chip to find a TPM
+> > chip initially and use it until the machine is shut down. To do this we need
+> > to introduce a kref for the tpm_chip that IMA and all other users of a
+> > tpm_chip hold onto until they don't need the TPM chip anymore.
+> 
+> All the TPM patches are now in my tree and I just updated also the
+> next branch so they should be soon available also in linux-next.
 
-Suggested-by: Tomas Winkler <tomas.winkler@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-interface.c  | 13 ++++++-------
- drivers/char/tpm/tpm.h            | 14 +++++++-------
- drivers/char/tpm/tpm2-space.c     | 16 ++++++----------
- drivers/char/tpm/tpm_vtpm_proxy.c |  2 +-
- 4 files changed, 20 insertions(+), 25 deletions(-)
+James, do you have a preference? ?Should I merge the patches in
+Jarkko's next branch or just base the integrity branch on top of it?
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index ad761e629a0f..1a803b0cf980 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -372,7 +372,7 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
- {
- 	int rc;
- 
--	if (flags & TPM_TRANSMIT_RAW)
-+	if (flags & TPM_TRANSMIT_NESTED)
- 		return 0;
- 
- 	if (!chip->ops->request_locality)
-@@ -391,7 +391,7 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
- {
- 	int rc;
- 
--	if (flags & TPM_TRANSMIT_RAW)
-+	if (flags & TPM_TRANSMIT_NESTED)
- 		return;
- 
- 	if (!chip->ops->relinquish_locality)
-@@ -406,7 +406,7 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
- 
- static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
- {
--	if (flags & TPM_TRANSMIT_RAW)
-+	if (flags & TPM_TRANSMIT_NESTED)
- 		return 0;
- 
- 	if (!chip->ops->cmd_ready)
-@@ -417,7 +417,7 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
- 
- static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
- {
--	if (flags & TPM_TRANSMIT_RAW)
-+	if (flags & TPM_TRANSMIT_NESTED)
- 		return 0;
- 
- 	if (!chip->ops->go_idle)
-@@ -466,10 +466,9 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 		return -E2BIG;
- 	}
- 
--	if (!(flags & TPM_TRANSMIT_UNLOCKED))
-+	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
- 		mutex_lock(&chip->tpm_mutex);
- 
--
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, true);
- 
-@@ -559,7 +558,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, false);
- 
--	if (!(flags & TPM_TRANSMIT_UNLOCKED))
-+	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
- 		mutex_unlock(&chip->tpm_mutex);
- 	return rc ? rc : len;
- }
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index ba01488cd029..f3501d05264f 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -513,16 +513,16 @@ extern const struct file_operations tpmrm_fops;
- extern struct idr dev_nums_idr;
- 
- /**
-- * enum tpm_transmit_flags
-+ * enum tpm_transmit_flags - flags for tpm_transmit()
-  *
-- * @TPM_TRANSMIT_UNLOCKED: used to lock sequence of tpm_transmit calls.
-- * @TPM_TRANSMIT_RAW: prevent recursive calls into setup steps
-- *                    (go idle, locality,..). Always use with UNLOCKED
-- *                    as it will fail on double locking.
-+ * @TPM_TRANSMIT_UNLOCKED:	do not lock the chip
-+ * @TPM_TRANSMIT_NESTED:	discard setup steps (power management,
-+ *				locality) including locking (i.e. implicit
-+ *				UNLOCKED)
-  */
- enum tpm_transmit_flags {
--	TPM_TRANSMIT_UNLOCKED = BIT(0),
--	TPM_TRANSMIT_RAW      = BIT(1),
-+	TPM_TRANSMIT_UNLOCKED	= BIT(0),
-+	TPM_TRANSMIT_NESTED      = BIT(1),
- };
- 
- ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 11c85ed8c113..d2e101b32482 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -39,8 +39,7 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
- 	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
- 		if (space->session_tbl[i])
- 			tpm2_flush_context_cmd(chip, space->session_tbl[i],
--					       TPM_TRANSMIT_UNLOCKED |
--					       TPM_TRANSMIT_RAW);
-+					       TPM_TRANSMIT_NESTED);
- 	}
- }
- 
-@@ -85,7 +84,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
- 	tpm_buf_append(&tbuf, &buf[*offset], body_size);
- 
- 	rc = tpm_transmit_cmd(chip, NULL, tbuf.data, PAGE_SIZE, 4,
--			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW, NULL);
-+			      TPM_TRANSMIT_NESTED, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -134,7 +133,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
- 	tpm_buf_append_u32(&tbuf, handle);
- 
- 	rc = tpm_transmit_cmd(chip, NULL, tbuf.data, PAGE_SIZE, 0,
--			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW, NULL);
-+			      TPM_TRANSMIT_NESTED, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -171,8 +170,7 @@ static void tpm2_flush_space(struct tpm_chip *chip)
- 	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
- 		if (space->context_tbl[i] && ~space->context_tbl[i])
- 			tpm2_flush_context_cmd(chip, space->context_tbl[i],
--					       TPM_TRANSMIT_UNLOCKED |
--					       TPM_TRANSMIT_RAW);
-+					       TPM_TRANSMIT_NESTED);
- 
- 	tpm2_flush_sessions(chip, space);
- }
-@@ -379,8 +377,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
- 
- 	return 0;
- out_no_slots:
--	tpm2_flush_context_cmd(chip, phandle,
--			       TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW);
-+	tpm2_flush_context_cmd(chip, phandle, TPM_TRANSMIT_NESTED);
- 	dev_warn(&chip->dev, "%s: out of slots for 0x%08X\n", __func__,
- 		 phandle);
- 	return -ENOMEM;
-@@ -468,8 +465,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
- 			return rc;
- 
- 		tpm2_flush_context_cmd(chip, space->context_tbl[i],
--				       TPM_TRANSMIT_UNLOCKED |
--				       TPM_TRANSMIT_RAW);
-+				       TPM_TRANSMIT_NESTED);
- 		space->context_tbl[i] = ~0;
- 	}
- 
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index e4f79f920450..87a0ce47f201 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -418,7 +418,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
- 	proxy_dev->state |= STATE_DRIVER_COMMAND;
- 
- 	rc = tpm_transmit_cmd(chip, NULL, buf.data, tpm_buf_length(&buf), 0,
--			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW,
-+			      TPM_TRANSMIT_NESTED,
- 			      "attempting to set locality");
- 
- 	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
--- 
-2.17.0
+Mimi
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
