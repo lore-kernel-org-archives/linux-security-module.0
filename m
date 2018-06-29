@@ -1,133 +1,52 @@
-From: zyan@redhat.com (Yan, Zheng)
-Date: Fri, 29 Jun 2018 10:14:55 +0800
-Subject: [PATCH V2] selinux: make dentry_init_security() return security xattr
-	suffix
-Message-ID: <20180629021455.8879-1-zyan@redhat.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Thu, 28 Jun 2018 21:53:26 -0500
+Subject: [PATCH] cap_inode_getsecurity: use d_find_any_alias() instead of
+	d_find_alias()
+In-Reply-To: <1530237431.30361.29.camel@mtkswgap22>
+References: <1530082758.30361.7.camel@mtkswgap22>
+	<20180628150152.GA10398@mail.hallyn.com>
+	<CAOQ4uxjJJZ=J2oaiga8M6QSM3HCM6a1CP5zUv4uK5vODRJj2Vg@mail.gmail.com>
+	<20180628172648.GA12196@mail.hallyn.com>
+	<CAOQ4uxjOSTvEt5MBmZY7UqrsjuwGF9jKqK-v6YBFQwLt5wZuRg@mail.gmail.com>
+	<20180628182850.GA12845@mail.hallyn.com>
+	<1530237431.30361.29.camel@mtkswgap22>
+Message-ID: <20180629025326.GA17892@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This is preparation for CephFS security label. CephFS's implementation uses
-dentry_init_security() to get security context before inode is created,
-then sends open/mkdir/mknod request to MDS, together with security xattr
-"security.<security xattr suffix>"
+On Fri, Jun 29, 2018 at 09:57:11AM +0800, Eddie.Horng wrote:
+> On Thu, 2018-06-28 at 13:28 -0500, Serge E. Hallyn wrote:
+> > Ah - I just tried his reproducer, and in fact got:
+> > 
+> > 0 ? serge at sl ~/test $ getcap execveat
+> > execveat = cap_sys_admin+ep
+> > 0 ? serge at sl ~/test $ ./execveat
+> > execveat: Bad file descriptor
+> > 
+> > on ext4, with 4.15.0-22-generic #24~16.04.1-Ubuntu
+> > 
+> > Without the filecap, it works.
+> > 
+> > -serge
+> 
+> The simple reproducer expected /bin/echo exists in the same 
+> dir of execveat executable and does not check the return fd 
+> of open("echo", ...). I'm not sure if you run into this case,
+> but I tried to run execveat without echo exists, got same result:
+> "execveat: Bad file descriptor".
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
----
-V2: change name of the parameter to xattr_suffix
+Hah!  Yes, i was in too much of a hurry;  I ran it once with
+./echo existing and no caps, that worked;  then i set the caps
+on execveat instead of ./echo, and echo had gotten deleted by the
+previous test causing the failure like you said.
 
- fs/nfs/nfs4proc.c         | 3 ++-
- include/linux/lsm_hooks.h | 5 +++--
- include/linux/security.h  | 9 +++++----
- security/security.c       | 7 ++++---
- security/selinux/hooks.c  | 8 ++++++--
- 5 files changed, 20 insertions(+), 12 deletions(-)
+So, the same thing does happen with setuid anyway, so while that
+seems worth addressing one day,
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 6dd146885da9..d18a5fb7aec3 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -122,7 +122,8 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
- 		return NULL;
- 
- 	err = security_dentry_init_security(dentry, sattr->ia_mode,
--				&dentry->d_name, (void **)&label->label, &label->len);
-+				&dentry->d_name,  NULL,
-+				(void **)&label->label, &label->len);
- 	if (err == 0)
- 		return label;
- 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8f1131c8dd54..bd01a06374db 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1476,8 +1476,9 @@ union security_list_options {
- 					unsigned long *set_kern_flags);
- 	int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
- 	int (*dentry_init_security)(struct dentry *dentry, int mode,
--					const struct qstr *name, void **ctx,
--					u32 *ctxlen);
-+					const struct qstr *name,
-+					const char **xattr_suffix,
-+					void **ctx, u32 *ctxlen);
- 	int (*dentry_create_files_as)(struct dentry *dentry, int mode,
- 					struct qstr *name,
- 					const struct cred *old,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..0f88d545a8ed 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -246,8 +246,9 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 				unsigned long *set_kern_flags);
- int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
- int security_dentry_init_security(struct dentry *dentry, int mode,
--					const struct qstr *name, void **ctx,
--					u32 *ctxlen);
-+					const struct qstr *name,
-+					const char **xattr_suffix,
-+					void **ctx, u32 *ctxlen);
- int security_dentry_create_files_as(struct dentry *dentry, int mode,
- 					struct qstr *name,
- 					const struct cred *old,
-@@ -609,8 +610,8 @@ static inline void security_inode_free(struct inode *inode)
- static inline int security_dentry_init_security(struct dentry *dentry,
- 						 int mode,
- 						 const struct qstr *name,
--						 void **ctx,
--						 u32 *ctxlen)
-+						 const char **xattr_suffix,
-+						 void **ctx, u32 *ctxlen)
- {
- 	return -EOPNOTSUPP;
- }
-diff --git a/security/security.c b/security/security.c
-index 68f46d849abe..d81965689ef0 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -450,11 +450,12 @@ void security_inode_free(struct inode *inode)
- }
- 
- int security_dentry_init_security(struct dentry *dentry, int mode,
--					const struct qstr *name, void **ctx,
--					u32 *ctxlen)
-+					const struct qstr *name,
-+					const char **xattr_suffix,
-+					void **ctx, u32 *ctxlen)
- {
- 	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
--				name, ctx, ctxlen);
-+				name, xattr_suffix, ctx, ctxlen);
- }
- EXPORT_SYMBOL(security_dentry_init_security);
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 2b5ee5fbd652..ab3a53d5db24 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2985,8 +2985,9 @@ static void selinux_inode_free_security(struct inode *inode)
- }
- 
- static int selinux_dentry_init_security(struct dentry *dentry, int mode,
--					const struct qstr *name, void **ctx,
--					u32 *ctxlen)
-+					const struct qstr *name,
-+					const char **xattr_suffix,
-+					void **ctx, u32 *ctxlen)
- {
- 	u32 newsid;
- 	int rc;
-@@ -2998,6 +2999,9 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
- 	if (rc)
- 		return rc;
- 
-+	if (xattr_suffix)
-+		*xattr_suffix = XATTR_SELINUX_SUFFIX;
-+
- 	return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
- 				       ctxlen);
- }
--- 
-2.17.1
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
+thanks,
+-serge
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
