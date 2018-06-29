@@ -1,52 +1,51 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Thu, 28 Jun 2018 21:53:26 -0500
-Subject: [PATCH] cap_inode_getsecurity: use d_find_any_alias() instead of
-	d_find_alias()
-In-Reply-To: <1530237431.30361.29.camel@mtkswgap22>
-References: <1530082758.30361.7.camel@mtkswgap22>
-	<20180628150152.GA10398@mail.hallyn.com>
-	<CAOQ4uxjJJZ=J2oaiga8M6QSM3HCM6a1CP5zUv4uK5vODRJj2Vg@mail.gmail.com>
-	<20180628172648.GA12196@mail.hallyn.com>
-	<CAOQ4uxjOSTvEt5MBmZY7UqrsjuwGF9jKqK-v6YBFQwLt5wZuRg@mail.gmail.com>
-	<20180628182850.GA12845@mail.hallyn.com>
-	<1530237431.30361.29.camel@mtkswgap22>
-Message-ID: <20180629025326.GA17892@mail.hallyn.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 29 Jun 2018 13:35:52 +0300
+Subject: [PATCH v8] tpm: separate cmd_ready/go_idle from runtime_pm
+In-Reply-To: <20180628151333.14368-1-tomas.winkler@intel.com>
+References: <20180628151333.14368-1-tomas.winkler@intel.com>
+Message-ID: <53d76dcd02c69f207a2831f9ede55b867c7438b6.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jun 29, 2018 at 09:57:11AM +0800, Eddie.Horng wrote:
-> On Thu, 2018-06-28 at 13:28 -0500, Serge E. Hallyn wrote:
-> > Ah - I just tried his reproducer, and in fact got:
-> > 
-> > 0 ? serge at sl ~/test $ getcap execveat
-> > execveat = cap_sys_admin+ep
-> > 0 ? serge at sl ~/test $ ./execveat
-> > execveat: Bad file descriptor
-> > 
-> > on ext4, with 4.15.0-22-generic #24~16.04.1-Ubuntu
-> > 
-> > Without the filecap, it works.
-> > 
-> > -serge
+On Thu, 2018-06-28 at 18:13 +0300, Tomas Winkler wrote:
+> Fix tpm ptt initialization error:
+> tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
 > 
-> The simple reproducer expected /bin/echo exists in the same 
-> dir of execveat executable and does not check the return fd 
-> of open("echo", ...). I'm not sure if you run into this case,
-> but I tried to run execveat without echo exists, got same result:
-> "execveat: Bad file descriptor".
+> We cannot use go_idle cmd_ready commands via runtime_pm handles
+> as with the introduction of localities this is no longer an optional
+> feature, while runtime pm can be not enabled.
+> Though cmd_ready/go_idle provides a power saving, it's also a part of
+> TPM2 protocol and should be called explicitly.
+> This patch exposes cmd_read/go_idle via tpm class ops and removes
+> runtime pm support as it is not used by any driver.
+> 
+> When calling from nested context always use both flags:
+> TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed to resolve
+> tpm spaces and locality request recursive calls to tpm_transmit().
+> TPM_TRANSMIT_RAW should never be used standalone as it will fail
+> on double locking. While TPM_TRANSMIT_UNLOCKED standalone should be
+> called from non-recursive locked contexts.
+> 
+> New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
+> streamline tpm_try_transmit code.
+> 
+> tpm_crb no longer needs own power saving functions and can drop using
+> tpm_pm_suspend/resume.
+> 
+> This patch cannot be really separated from the locality fix.
+> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> locality)
+> 
+> 
+> Cc: stable at vger.kernel.org
+> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> locality)
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Hah!  Yes, i was in too much of a hurry;  I ran it once with
-./echo existing and no caps, that worked;  then i set the caps
-on execveat instead of ./echo, and echo had gotten deleted by the
-previous test causing the failure like you said.
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-So, the same thing does happen with setuid anyway, so while that
-seems worth addressing one day,
-
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
-thanks,
--serge
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
