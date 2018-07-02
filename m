@@ -1,166 +1,89 @@
-From: why2jjj.linux@gmail.com (J Freyensee)
-Date: Mon, 2 Jul 2018 11:45:44 -0700
-Subject: [PATCH v5 1/8] security: define new LSM hook named
-	security_kernel_load_data
-In-Reply-To: <1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <64f467a5-e907-ee3e-495b-b2c731715037@gmail.com>
+From: kamal@canonical.com (Kamal Mostafa)
+Date: Mon, 2 Jul 2018 13:14:03 -0700
+Subject: [PATCH] security: CONFIG_HARDENED_USERCOPY does not need to
+	select BUG
+In-Reply-To: <CAGXu5jKXtq75+HkziTT-8F0VHvvOiRrtfez60h8hKK1GaE64ug@mail.gmail.com>
+References: <1530302661-20953-1-git-send-email-kamal@canonical.com>
+	<CAGXu5jKXtq75+HkziTT-8F0VHvvOiRrtfez60h8hKK1GaE64ug@mail.gmail.com>
+Message-ID: <20180702201402.GA16773@whence.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Fri, Jun 29, 2018 at 01:27:08PM -0700, Kees Cook wrote:
+> On Fri, Jun 29, 2018 at 1:04 PM, Kamal Mostafa <kamal@canonical.com> wrote:
+> > Allows for CONFIG_HARDENED_USERCOPY without CONFIG_BUG.
+> >
+> > Signed-off-by: Kamal Mostafa <kamal@canonical.com>
+> > ---
+> >  security/Kconfig | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/security/Kconfig b/security/Kconfig
+> > index c430206..7667774 100644
+> > --- a/security/Kconfig
+> > +++ b/security/Kconfig
+> > @@ -153,7 +153,6 @@ config HAVE_HARDENED_USERCOPY_ALLOCATOR
+> >  config HARDENED_USERCOPY
+> >         bool "Harden memory copies between kernel and userspace"
+> >         depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
+> > -       select BUG
+> >         imply STRICT_DEVMEM
+> >         help
+> >           This option checks for obviously wrong memory regions when
+> 
+> Do the lkdtm tests for usercopy correctly halt the kernel thread if
+> CONFIG_BUG is removed?
+> 
 
+Yes, they do...
 
-On 7/2/18 7:37 AM, Mimi Zohar wrote:
-> Differentiate between the kernel reading a file from the kernel loading
-> data provided by userspace.  This patch defines a new LSM hook named
-> security_kernel_load_data.
+With this config (specifically disabling 'FALLBACK'):
 
-If this patch series is re-done, can we tweak the description here 
-please?? From what I understood of the code in this patch, I'd tweak it as:
+    CONFIG_HARDENED_USERCOPY=y
+    # CONFIG_HARDENED_USERCOPY_FALLBACK is not set
+    # CONFIG_BUG is not set
 
-"Differentiate between the kernel reading a file specified by userspace 
-and the kernel loading a block of data provided by userspace.? This 
-patch defines a new LSM hook named security_kernel_load_data()."
+I ran the usercopy tests as follows:
 
- From the description, I got a tad confused if the the kernel reading a file was also provided by userspace (I know it may be 2nd-nature to people on this list, I'm still learning this kernel module).
+    modprobe lkdtm
+    cd /sys/kernel/debug/provoke-crash
+    cat DIRECT | grep USERCOPY | while read x ; do echo $x | tee DIRECT || echo $?; done
 
-Thanks,
-Jay
+Resulting in this command line output:
 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Acked-by: Serge Hallyn <serge@hallyn.com>
->
-> ---
-> Changelog v5:
-> - Share the kernel_load_data_id and kernel_read_file_id values,
-> simplifying Loadpin's and other LSMs calling one LSM hook from the
-> other.
->
-> Changelog v4:
-> - Define new LSM hook named security_kernel_load_data.
->
-> Changelog v3:
-> - Rename security_kernel_read_file to security_kernel_read_data().
->
-> Changelog v2:
-> - Define a generic wrapper named security_kernel_read_blob() for
-> security_kernel_read_file().
->
-> Changelog v1:
-> - Define and call security_kexec_load(), a wrapper for
-> security_kernel_read_file().
->
->   include/linux/lsm_hooks.h |  6 ++++++
->   include/linux/security.h  | 27 +++++++++++++++++++++++++++
->   security/security.c       |  5 +++++
->   3 files changed, 38 insertions(+)
->
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 8f1131c8dd54..a08bc2587b96 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -576,6 +576,10 @@
->    *	userspace to load a kernel module with the given name.
->    *	@kmod_name name of the module requested by the kernel
->    *	Return 0 if successful.
-> + * @kernel_load_data:
-> + *	Load data provided by userspace.
-> + *	@id kernel load data identifier
-> + *	Return 0 if permission is granted.
->    * @kernel_read_file:
->    *	Read a file specified by userspace.
->    *	@file contains the file structure pointing to the file being read
-> @@ -1582,6 +1586,7 @@ union security_list_options {
->   	int (*kernel_act_as)(struct cred *new, u32 secid);
->   	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
->   	int (*kernel_module_request)(char *kmod_name);
-> +	int (*kernel_load_data)(enum kernel_load_data_id id);
->   	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
->   	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
->   				     enum kernel_read_file_id id);
-> @@ -1872,6 +1877,7 @@ struct security_hook_heads {
->   	struct hlist_head cred_getsecid;
->   	struct hlist_head kernel_act_as;
->   	struct hlist_head kernel_create_files_as;
-> +	struct hlist_head kernel_load_data;
->   	struct hlist_head kernel_read_file;
->   	struct hlist_head kernel_post_read_file;
->   	struct hlist_head kernel_module_request;
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 63030c85ee19..3410acfe139c 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
->   typedef int (*initxattrs) (struct inode *inode,
->   			   const struct xattr *xattr_array, void *fs_data);
->   
-> +
-> +/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
-> +#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
-> +#define __data_id_stringify(dummy, str) #str,
-> +
-> +enum kernel_load_data_id {
-> +	__kernel_read_file_id(__data_id_enumify)
-> +};
-> +
-> +static const char * const kernel_load_data_str[] = {
-> +	__kernel_read_file_id(__data_id_stringify)
-> +};
-> +
-> +static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
-> +{
-> +	if ((unsigned)id >= LOADING_MAX_ID)
-> +		return kernel_load_data_str[LOADING_UNKNOWN];
-> +
-> +	return kernel_load_data_str[id];
-> +}
-> +
->   #ifdef CONFIG_SECURITY
->   
->   struct security_mnt_opts {
-> @@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
->   int security_kernel_act_as(struct cred *new, u32 secid);
->   int security_kernel_create_files_as(struct cred *new, struct inode *inode);
->   int security_kernel_module_request(char *kmod_name);
-> +int security_kernel_load_data(enum kernel_load_data_id id);
->   int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
->   int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
->   				   enum kernel_read_file_id id);
-> @@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
->   	return 0;
->   }
->   
-> +static inline int security_kernel_load_data(enum kernel_load_data_id id)
-> +{
-> +	return 0;
-> +}
-> +
->   static inline int security_kernel_read_file(struct file *file,
->   					    enum kernel_read_file_id id)
->   {
-> diff --git a/security/security.c b/security/security.c
-> index e7d76a8000a5..05fe5b1932d7 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
->   }
->   EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
->   
-> +int security_kernel_load_data(enum kernel_load_data_id id)
-> +{
-> +	return call_int_hook(kernel_load_data, 0, id);
-> +}
-> +
->   int security_task_fix_setuid(struct cred *new, const struct cred *old,
->   			     int flags)
->   {
+    USERCOPY_HEAP_SIZE_TO
+    139
+    USERCOPY_HEAP_SIZE_FROM
+    139
+    USERCOPY_HEAP_WHITELIST_TO
+    139
+    USERCOPY_HEAP_WHITELIST_FROM
+    139
+    USERCOPY_STACK_FRAME_TO
+    139
+    USERCOPY_STACK_FRAME_FROM
+    139
+    USERCOPY_STACK_BEYOND
+    139
+    USERCOPY_KERNEL
+    139
 
+Each test case yields kernel log output like:
+
+    lkdtm: Performing direct entry USERCOPY_HEAP_SIZE_TO
+    lkdtm: attempting good copy_to_user of correct size
+    lkdtm: attempting bad copy_to_user of too large size
+    usercopy: Kernel memory exposure attempt detected from SLUB object 'kmalloc-1024' (offset 16, size 1024)!
+    invalid opcode: 0000 [#17] SMP PTI
+    ... {panic dump} ...
+
+Each 'tee' gets terminated with SIGSEGV and no instances appear of the
+lkdtm/usercopy.c warning "copy_{to/from}_user failed, but lacked Oops".
+
+If I leave CONFIG_HARDENED_USERCOPY_FALLBACK=y then the pair of
+WHITELIST tests don't trigger a panic or SIGSEGV, as expected.
+
+ -Kamal
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
