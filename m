@@ -1,62 +1,150 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Mon,  2 Jul 2018 10:37:59 -0400
-Subject: [PATCH v5 4/8] firmware: add call to LSM hook before firmware sysfs
-	fallback
+Date: Mon,  2 Jul 2018 10:37:58 -0400
+Subject: [PATCH v5 3/8] ima: based on policy require signed kexec kernel images
 In-Reply-To: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1530542283-26145-5-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1530542283-26145-4-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add an LSM hook prior to allowing firmware sysfs fallback loading.
+The original kexec_load syscall can not verify file signatures, nor can
+the kexec image be measured.  Based on policy, deny the kexec_load
+syscall.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: David Howells <dhowells@redhat.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
-Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: David Howells <dhowells@redhat.com>
 
 ---
-Changelog v4:
-- call new LSM security_kernel_load_data hook
+Changelog v3:
+- use switch/case
 
-Changelog v2:
-- call security_kernel_read_blob()
-- rename the READING_FIRMWARE_FALLBACK kernel_read_file_id enumeration to
-READING_FIRMWARE_FALLBACK_SYSFS.
+ include/linux/ima.h                 |  7 +++++++
+ security/integrity/ima/ima.h        |  1 +
+ security/integrity/ima/ima_main.c   | 27 +++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c |  2 ++
+ security/security.c                 |  7 ++++++-
+ 5 files changed, 43 insertions(+), 1 deletion(-)
 
- drivers/base/firmware_loader/fallback.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 7f732744f0d3..202324291542 100644
---- a/drivers/base/firmware_loader/fallback.c
-+++ b/drivers/base/firmware_loader/fallback.c
-@@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(enum fw_opt opt_flags)
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 0e4647e0eb60..84806b54b50a 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -11,6 +11,7 @@
+ #define _LINUX_IMA_H
  
- static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
- {
-+	int ret;
-+
- 	if (fw_fallback_config.ignore_sysfs_fallback) {
- 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
- 		return false;
-@@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
- 	if ((opt_flags & FW_OPT_NOFALLBACK))
- 		return false;
+ #include <linux/fs.h>
++#include <linux/security.h>
+ #include <linux/kexec.h>
+ struct linux_binprm;
  
-+	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
-+	ret = security_kernel_load_data(LOADING_FIRMWARE);
-+	if (ret < 0)
-+		return ret;
-+
- 	return fw_force_sysfs_fallback(opt_flags);
+@@ -19,6 +20,7 @@ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask, int opened);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
++extern int ima_load_data(enum kernel_load_data_id id);
+ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
+ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+@@ -49,6 +51,11 @@ static inline int ima_file_mmap(struct file *file, unsigned long prot)
+ 	return 0;
  }
  
++static inline int ima_load_data(enum kernel_load_data_id id)
++{
++	return 0;
++}
++
+ static inline int ima_read_file(struct file *file, enum kernel_read_file_id id)
+ {
+ 	return 0;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 2ab1affffa36..588e4813370c 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -232,6 +232,7 @@ int ima_policy_show(struct seq_file *m, void *v);
+ #define IMA_APPRAISE_MODULES	0x08
+ #define IMA_APPRAISE_FIRMWARE	0x10
+ #define IMA_APPRAISE_POLICY	0x20
++#define IMA_APPRAISE_KEXEC	0x40
+ 
+ #ifdef CONFIG_IMA_APPRAISE
+ int ima_appraise_measurement(enum ima_hooks func,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dca44cf7838e..71fecfef0939 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -496,6 +496,33 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 				   MAY_READ, func, 0);
+ }
+ 
++/**
++ * ima_load_data - appraise decision based on policy
++ * @id: kernel load data caller identifier
++ *
++ * Callers of this LSM hook can not measure, appraise, or audit the
++ * data provided by userspace.  Enforce policy rules requring a file
++ * signature (eg. kexec'ed kernel image).
++ *
++ * For permission return 0, otherwise return -EACCES.
++ */
++int ima_load_data(enum kernel_load_data_id id)
++{
++	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
++		return 0;
++
++	switch (id) {
++	case LOADING_KEXEC_IMAGE:
++		if (ima_appraise & IMA_APPRAISE_KEXEC) {
++			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		}
++	default:
++		break;
++	}
++	return 0;
++}
++
+ static int __init init_ima(void)
+ {
+ 	int error;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 7f4a4de7e831..ebfb389b79df 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -448,6 +448,8 @@ static int ima_appraise_flag(enum ima_hooks func)
+ 		return IMA_APPRAISE_FIRMWARE;
+ 	else if (func == POLICY_CHECK)
+ 		return IMA_APPRAISE_POLICY;
++	else if (func == KEXEC_KERNEL_CHECK)
++		return IMA_APPRAISE_KEXEC;
+ 	return 0;
+ }
+ 
+diff --git a/security/security.c b/security/security.c
+index 05fe5b1932d7..7b870df0a335 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1063,7 +1063,12 @@ EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+ 
+ int security_kernel_load_data(enum kernel_load_data_id id)
+ {
+-	return call_int_hook(kernel_load_data, 0, id);
++	int ret;
++
++	ret = call_int_hook(kernel_load_data, 0, id);
++	if (ret)
++		return ret;
++	return ima_load_data(id);
+ }
+ 
+ int security_task_fix_setuid(struct cred *new, const struct cred *old,
 -- 
 2.7.5
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
