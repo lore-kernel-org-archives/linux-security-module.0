@@ -1,135 +1,131 @@
-From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
-Date: Mon, 2 Jul 2018 17:30:09 +0200
-Subject: [PATCH v5 7/8] ima: based on policy warn about loading firmware
-	(pre-allocated buffer)
-In-Reply-To: <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Mon, 02 Jul 2018 13:00:39 -0400
+Subject: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
+	a tpm_chip
+In-Reply-To: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
+References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
+Message-ID: <1530550839.3709.46.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2 July 2018 at 16:38, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Some systems are memory constrained but they need to load very large
-> firmwares.  The firmware subsystem allows drivers to request this
-> firmware be loaded from the filesystem, but this requires that the
-> entire firmware be loaded into kernel memory first before it's provided
-> to the driver.  This can lead to a situation where we map the firmware
-> twice, once to load the firmware into kernel memory and once to copy the
-> firmware into the final resting place.
->
-> To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
-> into a pre-allocated buffer") introduced request_firmware_into_buf() API
-> that allows drivers to request firmware be loaded directly into a
-> pre-allocated buffer. (Based on the mailing list discussions, calling
-> dma_alloc_coherent() is unnecessary and confusing.)
->
-> (Very broken/buggy) devices using pre-allocated memory run the risk of
-> the firmware being accessible to the device prior to the completion of
-> IMA's signature verification.  For the time being, this patch emits a
-> warning, but does not prevent the loading of the firmware.
->
+On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
+> Rather than accessing the TPM functions by passing a NULL pointer for
+> the tpm_chip, which causes a lookup for a suitable chip every time, get a
+> hold of a tpm_chip and access the TPM functions using it. Also get rid of
+> the ima_used_chip variable and use the new ima_tpm_chip variable instead
+> for determining whether to call TPM functions.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-As I attempted to explain in the exchange with Luis, this has nothing
-to do with broken or buggy devices, but is simply the reality we have
-to deal with on platforms that lack IOMMUs.
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Even if you load into one buffer, carry out the signature verification
-and *only then* copy it to another buffer, a bus master could
-potentially read it from the first buffer as well. Mapping for DMA
-does *not* mean 'making the memory readable by the device' unless
-IOMMUs are being used. Otherwise, a bus master can read it from the
-first buffer, or even patch the code that performs the security check
-in the first place. For such platforms, copying the data around to
-prevent the device from reading it is simply pointless, as well as any
-other mitigation in software to protect yourself from misbehaving bus
-masters.
+Jarkko, would you mind staging this patch with the rest of the patch
+set?
 
-So issuing a warning in this particular case is rather arbitrary. On
-these platforms, all bus masters can read (and modify) all of your
-memory all of the time, and as long as the firmware loader code takes
-care not to provide the DMA address to the device until after the
-verification is complete, it really has done all it reasonably can in
-the environment that it is expected to operate in.
-
-(The use of dma_alloc_coherent() is a bit of a red herring here, as it
-incorporates the DMA map operation. However, DMA map is a no-op on
-systems with cache coherent 1:1 DMA [iow, all PCs and most arm64
-platforms unless they have IOMMUs], and so there is not much
-difference between memory allocated with kmalloc() or with
-dma_alloc_coherent() in terms of whether the device can access it
-freely)
+Mimi
 
 
-
-
-
-
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Luis R. Rodriguez <mcgrof@suse.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
->
 > ---
-> Changelog v5:
-> - Instead of preventing loading firmware from a pre-allocate buffer,
-> emit a warning.
->
->  security/integrity/ima/ima_main.c | 25 ++++++++++++++++---------
->  1 file changed, 16 insertions(+), 9 deletions(-)
->
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index e467664965e7..7da123d980ea 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -416,6 +416,15 @@ void ima_post_path_mknod(struct dentry *dentry)
->                 iint->flags |= IMA_NEW_FILE;
+>  security/integrity/ima/ima.h        |  2 +-
+>  security/integrity/ima/ima_crypto.c |  4 ++--
+>  security/integrity/ima/ima_init.c   | 16 +++++-----------
+>  security/integrity/ima/ima_queue.c  |  4 ++--
+>  4 files changed, 10 insertions(+), 16 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 354bb5716ce3..2ab1affffa36 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -53,9 +53,9 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+>  extern int ima_policy_flag;
+> 
+>  /* set during initialization */
+> -extern int ima_used_chip;
+>  extern int ima_hash_algo;
+>  extern int ima_appraise;
+> +extern struct tpm_chip *ima_tpm_chip;
+> 
+>  /* IMA event related data */
+>  struct ima_event_data {
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 4e085a17124f..7e7e7e7c250a 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -631,10 +631,10 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+> 
+>  static void __init ima_pcrread(int idx, u8 *pcr)
+>  {
+> -	if (!ima_used_chip)
+> +	if (!ima_tpm_chip)
+>  		return;
+> 
+> -	if (tpm_pcr_read(NULL, idx, pcr) != 0)
+> +	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
+>  		pr_err("Error Communicating to TPM chip\n");
 >  }
->
-> +static int read_idmap[READING_MAX_ID] = {
-> +       [READING_FIRMWARE] = FIRMWARE_CHECK,
-> +       [READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
-> +       [READING_MODULE] = MODULE_CHECK,
-> +       [READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
-> +       [READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
-> +       [READING_POLICY] = POLICY_CHECK
-> +};
-> +
->  /**
->   * ima_read_file - pre-measure/appraise hook decision based on policy
->   * @file: pointer to the file to be measured/appraised/audit
-> @@ -439,18 +448,16 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
->                 }
->                 return 0;       /* We rely on module signature checking */
->         }
-> +
-> +       if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
-> +               if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-> +                   (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> +                       pr_warn("device might be able to access firmware prior to signature verification completion.\n");
-> +               }
-> +       }
->         return 0;
->  }
->
-> -static int read_idmap[READING_MAX_ID] = {
-> -       [READING_FIRMWARE] = FIRMWARE_CHECK,
-> -       [READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
-> -       [READING_MODULE] = MODULE_CHECK,
-> -       [READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
-> -       [READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
-> -       [READING_POLICY] = POLICY_CHECK
-> -};
+> 
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 29b72cd2502e..faac9ecaa0ae 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -26,7 +26,7 @@
+> 
+>  /* name for boot aggregate entry */
+>  static const char *boot_aggregate_name = "boot_aggregate";
+> -int ima_used_chip;
+> +struct tpm_chip *ima_tpm_chip;
+> 
+>  /* Add the boot aggregate to the IMA measurement list and extend
+>   * the PCR register.
+> @@ -64,7 +64,7 @@ static int __init ima_add_boot_aggregate(void)
+>  	iint->ima_hash->algo = HASH_ALGO_SHA1;
+>  	iint->ima_hash->length = SHA1_DIGEST_SIZE;
+> 
+> -	if (ima_used_chip) {
+> +	if (ima_tpm_chip) {
+>  		result = ima_calc_boot_aggregate(&hash.hdr);
+>  		if (result < 0) {
+>  			audit_cause = "hashing_error";
+> @@ -106,17 +106,11 @@ void __init ima_load_x509(void)
+> 
+>  int __init ima_init(void)
+>  {
+> -	u8 pcr_i[TPM_DIGEST_SIZE];
+>  	int rc;
+> 
+> -	ima_used_chip = 0;
+> -	rc = tpm_pcr_read(NULL, 0, pcr_i);
+> -	if (rc == 0)
+> -		ima_used_chip = 1;
 > -
->  /**
->   * ima_post_read_file - in memory collect/appraise/audit measurement
->   * @file: pointer to the file to be measured/appraised/audit
-> --
-> 2.7.5
->
+> -	if (!ima_used_chip)
+> -		pr_info("No TPM chip found, activating TPM-bypass! (rc=%d)\n",
+> -			rc);
+> +	ima_tpm_chip = tpm_default_chip();
+> +	if (!ima_tpm_chip)
+> +		pr_info("No TPM chip found, activating TPM-bypass!\n");
+> 
+>  	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+>  	if (rc)
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+> index 418f35e38015..b186819bd5aa 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -142,10 +142,10 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
+>  {
+>  	int result = 0;
+> 
+> -	if (!ima_used_chip)
+> +	if (!ima_tpm_chip)
+>  		return result;
+> 
+> -	result = tpm_pcr_extend(NULL, pcr, hash);
+> +	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+>  	if (result != 0)
+>  		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+>  	return result;
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
