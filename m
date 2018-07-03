@@ -1,65 +1,33 @@
-From: stefanb@linux.vnet.ibm.com (Stefan Berger)
-Date: Tue,  3 Jul 2018 07:19:17 -0400
-Subject: [PATCH] ima: Remove unused is_ima_appraise_enabled() function.
-Message-ID: <20180703111917.3265212-1-stefanb@linux.vnet.ibm.com>
+From: lkp@intel.com (kbuild test robot)
+Date: Tue, 3 Jul 2018 20:04:49 +0800
+Subject: [PATCH v5 4/8] firmware: add call to LSM hook before firmware
+	sysfs fallback
+In-Reply-To: <1530542283-26145-5-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1530542283-26145-5-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <201807031814.ptUHudMj%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Remove the unused is_ima_appraise_enabled() function.
+Hi Mimi,
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+I love your patch! Yet something to improve:
+
+[auto build test ERROR on integrity/next-integrity]
+[also build test ERROR on v4.18-rc3 next-20180702]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/kexec-firmware-support-system-wide-policy-requiring-signatures/20180703-011114
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+config: x86_64-randconfig-ws0-07031240 (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
+
+All errors (new ones prefixed by >>):
+
+>> ERROR: "security_kernel_load_data" [drivers/base/firmware_loader/firmware_class.ko] undefined!
+
 ---
- include/linux/ima.h                   |  6 ------
- security/integrity/ima/ima_appraise.c | 10 ----------
- 2 files changed, 16 deletions(-)
-
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 0e4647e0eb60..7f6952f8d6aa 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -75,17 +75,11 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
- #endif
- 
- #ifdef CONFIG_IMA_APPRAISE
--extern bool is_ima_appraise_enabled(void);
- extern void ima_inode_post_setattr(struct dentry *dentry);
- extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		       const void *xattr_value, size_t xattr_value_len);
- extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
- #else
--static inline bool is_ima_appraise_enabled(void)
--{
--	return 0;
--}
--
- static inline void ima_inode_post_setattr(struct dentry *dentry)
- {
- 	return;
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 8bd7a0733e51..7bf7fcacfdbb 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -33,16 +33,6 @@ static int __init default_appraise_setup(char *str)
- 
- __setup("ima_appraise=", default_appraise_setup);
- 
--/*
-- * is_ima_appraise_enabled - return appraise status
-- *
-- * Only return enabled, if not in ima_appraise="fix" or "log" modes.
-- */
--bool is_ima_appraise_enabled(void)
--{
--	return ima_appraise & IMA_APPRAISE_ENFORCE;
--}
--
- /*
-  * ima_must_appraise - set appraise flag
-  *
--- 
-2.17.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
