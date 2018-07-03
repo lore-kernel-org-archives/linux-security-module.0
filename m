@@ -1,33 +1,40 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Tue, 3 Jul 2018 20:04:49 +0800
-Subject: [PATCH v5 4/8] firmware: add call to LSM hook before firmware
-	sysfs fallback
-In-Reply-To: <1530542283-26145-5-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1530542283-26145-5-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <201807031814.ptUHudMj%fengguang.wu@intel.com>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Tue, 03 Jul 2018 08:35:41 -0400
+Subject: [PATCH v5 1/8] security: define new LSM hook named
+	security_kernel_load_data
+In-Reply-To: <64f467a5-e907-ee3e-495b-b2c731715037@gmail.com>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
+	<64f467a5-e907-ee3e-495b-b2c731715037@gmail.com>
+Message-ID: <1530621341.3452.5.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Mimi,
+On Mon, 2018-07-02 at 11:45 -0700, J Freyensee wrote:
+> 
+> On 7/2/18 7:37 AM, Mimi Zohar wrote:
+> > Differentiate between the kernel reading a file from the kernel loading
+> > data provided by userspace.  This patch defines a new LSM hook named
+> > security_kernel_load_data.
+> 
+> If this patch series is re-done, can we tweak the description here 
+> please?? From what I understood of the code in this patch, I'd tweak it as:
+> 
+> "Differentiate between the kernel reading a file specified by userspace 
+> and the kernel loading a block of data provided by userspace.? This 
+> patch defines a new LSM hook named security_kernel_load_data()."
+> 
+>  From the description, I got a tad confused if the the kernel
+> reading a file was also provided by userspace (I know it may be 2nd-
+> nature to people on this list, I'm still learning this kernel
+> module).
 
-I love your patch! Yet something to improve:
+Could we replace "a block of data provided by userspace" with just
+"data provided by userspace"?
 
-[auto build test ERROR on integrity/next-integrity]
-[also build test ERROR on v4.18-rc3 next-20180702]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Mimi
 
-url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/kexec-firmware-support-system-wide-policy-requiring-signatures/20180703-011114
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-config: x86_64-randconfig-ws0-07031240 (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
-
-All errors (new ones prefixed by >>):
-
->> ERROR: "security_kernel_load_data" [drivers/base/firmware_loader/firmware_class.ko] undefined!
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
