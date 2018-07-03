@@ -1,36 +1,40 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 03 Jul 2018 08:35:41 -0400
-Subject: [PATCH v5 1/8] security: define new LSM hook named
-	security_kernel_load_data
-In-Reply-To: <64f467a5-e907-ee3e-495b-b2c731715037@gmail.com>
+Date: Tue, 03 Jul 2018 09:07:39 -0400
+Subject: [PATCH v5 3/8] ima: based on policy require signed kexec kernel
+	images
+In-Reply-To: <840dae63-5a90-1327-437e-1ed92e165754@gmail.com>
 References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
-	<64f467a5-e907-ee3e-495b-b2c731715037@gmail.com>
-Message-ID: <1530621341.3452.5.camel@linux.vnet.ibm.com>
+	<1530542283-26145-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<840dae63-5a90-1327-437e-1ed92e165754@gmail.com>
+Message-ID: <1530623259.3452.28.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-07-02 at 11:45 -0700, J Freyensee wrote:
+On Mon, 2018-07-02 at 11:31 -0700, J Freyensee wrote:
 > 
 > On 7/2/18 7:37 AM, Mimi Zohar wrote:
-> > Differentiate between the kernel reading a file from the kernel loading
-> > data provided by userspace.  This patch defines a new LSM hook named
-> > security_kernel_load_data.
+> > The original kexec_load syscall can not verify file signatures, nor can
+> > the kexec image be measured.  Based on policy, deny the kexec_load
+> > syscall.
 > 
-> If this patch series is re-done, can we tweak the description here 
-> please?? From what I understood of the code in this patch, I'd tweak it as:
 > 
-> "Differentiate between the kernel reading a file specified by userspace 
-> and the kernel loading a block of data provided by userspace.? This 
-> patch defines a new LSM hook named security_kernel_load_data()."
-> 
->  From the description, I got a tad confused if the the kernel
-> reading a file was also provided by userspace (I know it may be 2nd-
-> nature to people on this list, I'm still learning this kernel
-> module).
+> Curiosity question: I thought kexec_load() syscall was used to load a 
+> crashdump?
 
-Could we replace "a block of data provided by userspace" with just
-"data provided by userspace"?
+kexec is used to collect the memory used to analyze the crash dump.
+
+> If this is true, how would this work if kexec_load() is 
+> being denied?? I don't think I'd want to be hindered in cases where I'm 
+> trying to diagnose a crash.
+
+For trusted & secure boot, we need a full measurement list and
+signature chain of trust rooted in HW. ?Permitting kexec_load would
+break these chains of trust.
+
+Permitting/denying kexec_load is based on a runtime IMA policy. ?Patch
+6/8 "ima: add build time policy", in this patch set, introduces the
+concept of a build time policy. ?With these patches, you could
+configure your kernel and/or load an IMA policy permitting kexec_load.
 
 Mimi
 
