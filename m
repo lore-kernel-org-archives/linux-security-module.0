@@ -1,42 +1,70 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Tue, 03 Jul 2018 09:07:39 -0400
-Subject: [PATCH v5 3/8] ima: based on policy require signed kexec kernel
-	images
-In-Reply-To: <840dae63-5a90-1327-437e-1ed92e165754@gmail.com>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-4-git-send-email-zohar@linux.vnet.ibm.com>
-	<840dae63-5a90-1327-437e-1ed92e165754@gmail.com>
-Message-ID: <1530623259.3452.28.camel@linux.vnet.ibm.com>
+Date: Tue, 03 Jul 2018 09:13:47 -0400
+Subject: [PATCH] ima: Remove unused is_ima_appraise_enabled() function.
+In-Reply-To: <20180703111917.3265212-1-stefanb@linux.vnet.ibm.com>
+References: <20180703111917.3265212-1-stefanb@linux.vnet.ibm.com>
+Message-ID: <1530623627.3452.31.camel@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-07-02 at 11:31 -0700, J Freyensee wrote:
-> 
-> On 7/2/18 7:37 AM, Mimi Zohar wrote:
-> > The original kexec_load syscall can not verify file signatures, nor can
-> > the kexec image be measured.  Based on policy, deny the kexec_load
-> > syscall.
-> 
-> 
-> Curiosity question: I thought kexec_load() syscall was used to load a 
-> crashdump?
+On Tue, 2018-07-03 at 07:19 -0400, Stefan Berger wrote:
+> Remove the unused is_ima_appraise_enabled() function.
 
-kexec is used to collect the memory used to analyze the crash dump.
-
-> If this is true, how would this work if kexec_load() is 
-> being denied?? I don't think I'd want to be hindered in cases where I'm 
-> trying to diagnose a crash.
-
-For trusted & secure boot, we need a full measurement list and
-signature chain of trust rooted in HW. ?Permitting kexec_load would
-break these chains of trust.
-
-Permitting/denying kexec_load is based on a runtime IMA policy. ?Patch
-6/8 "ima: add build time policy", in this patch set, introduces the
-concept of a build time policy. ?With these patches, you could
-configure your kernel and/or load an IMA policy permitting kexec_load.
+is_ima_appraise_enabled() was introduced to coordinate between IMA and
+the lockdown patch set. ?Before removing it, let's wait and see if it
+is still needed by the lockdown patches.
 
 Mimi
+
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  include/linux/ima.h                   |  6 ------
+>  security/integrity/ima/ima_appraise.c | 10 ----------
+>  2 files changed, 16 deletions(-)
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 0e4647e0eb60..7f6952f8d6aa 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -75,17 +75,11 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
+>  #endif
+> 
+>  #ifdef CONFIG_IMA_APPRAISE
+> -extern bool is_ima_appraise_enabled(void);
+>  extern void ima_inode_post_setattr(struct dentry *dentry);
+>  extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+>  		       const void *xattr_value, size_t xattr_value_len);
+>  extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
+>  #else
+> -static inline bool is_ima_appraise_enabled(void)
+> -{
+> -	return 0;
+> -}
+> -
+>  static inline void ima_inode_post_setattr(struct dentry *dentry)
+>  {
+>  	return;
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 8bd7a0733e51..7bf7fcacfdbb 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -33,16 +33,6 @@ static int __init default_appraise_setup(char *str)
+> 
+>  __setup("ima_appraise=", default_appraise_setup);
+> 
+> -/*
+> - * is_ima_appraise_enabled - return appraise status
+> - *
+> - * Only return enabled, if not in ima_appraise="fix" or "log" modes.
+> - */
+> -bool is_ima_appraise_enabled(void)
+> -{
+> -	return ima_appraise & IMA_APPRAISE_ENFORCE;
+> -}
+> -
+>  /*
+>   * ima_must_appraise - set appraise flag
+>   *
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
