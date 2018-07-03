@@ -1,60 +1,47 @@
-From: amir73il@gmail.com (Amir Goldstein)
-Date: Tue, 3 Jul 2018 11:09:22 +0300
-Subject: [PATCH] cap_inode_getsecurity: use d_find_any_alias() instead of
-	d_find_alias()
-In-Reply-To: <20180629025326.GA17892@mail.hallyn.com>
-References: <1530082758.30361.7.camel@mtkswgap22>
-	<20180628150152.GA10398@mail.hallyn.com>
-	<CAOQ4uxjJJZ=J2oaiga8M6QSM3HCM6a1CP5zUv4uK5vODRJj2Vg@mail.gmail.com>
-	<20180628172648.GA12196@mail.hallyn.com>
-	<CAOQ4uxjOSTvEt5MBmZY7UqrsjuwGF9jKqK-v6YBFQwLt5wZuRg@mail.gmail.com>
-	<20180628182850.GA12845@mail.hallyn.com>
-	<1530237431.30361.29.camel@mtkswgap22>
-	<20180629025326.GA17892@mail.hallyn.com>
-Message-ID: <CAOQ4uxh0dBGTz9tLwCroFRDCK8ej1DExo7kLwPC3CWX6068sYA@mail.gmail.com>
+From: lkp@intel.com (kbuild test robot)
+Date: Tue, 3 Jul 2018 17:35:56 +0800
+Subject: [PATCH v5 8/8] module: replace the existing LSM hook in
+	init_module
+In-Reply-To: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <201807031757.qpz6yHPo%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Jun 29, 2018 at 5:53 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Fri, Jun 29, 2018 at 09:57:11AM +0800, Eddie.Horng wrote:
->> On Thu, 2018-06-28 at 13:28 -0500, Serge E. Hallyn wrote:
->> > Ah - I just tried his reproducer, and in fact got:
->> >
->> > 0 ? serge at sl ~/test $ getcap execveat
->> > execveat = cap_sys_admin+ep
->> > 0 ? serge at sl ~/test $ ./execveat
->> > execveat: Bad file descriptor
->> >
->> > on ext4, with 4.15.0-22-generic #24~16.04.1-Ubuntu
->> >
->> > Without the filecap, it works.
->> >
->> > -serge
->>
->> The simple reproducer expected /bin/echo exists in the same
->> dir of execveat executable and does not check the return fd
->> of open("echo", ...). I'm not sure if you run into this case,
->> but I tried to run execveat without echo exists, got same result:
->> "execveat: Bad file descriptor".
->
-> Hah!  Yes, i was in too much of a hurry;  I ran it once with
-> ./echo existing and no caps, that worked;  then i set the caps
-> on execveat instead of ./echo, and echo had gotten deleted by the
-> previous test causing the failure like you said.
->
-> So, the same thing does happen with setuid anyway, so while that
-> seems worth addressing one day,
->
+Hi Mimi,
 
-Serge,
+I love your patch! Perhaps something to improve:
 
-I misunderstood the bottom line.
+[auto build test WARNING on integrity/next-integrity]
+[also build test WARNING on v4.18-rc3 next-20180702]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Can the problem be reproduced on local fs with/without caps?
-and if so, what is missing from reproducer script for that.
+url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/kexec-firmware-support-system-wide-policy-requiring-signatures/20180703-011114
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-Thanks,
-Amir.
+
+sparse warnings: (new ones prefixed by >>)
+
+>> security/loadpin/loadpin.c:178:40: sparse: mixing different enum types
+   security/loadpin/loadpin.c:178:40:     int enum kernel_load_data_id  versus
+   security/loadpin/loadpin.c:178:40:     int enum kernel_read_file_id
+
+vim +178 security/loadpin/loadpin.c
+
+   175	
+   176	static int loadpin_load_data(enum kernel_load_data_id id)
+   177	{
+ > 178		return loadpin_read_file(NULL, id);
+   179	}
+   180	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
