@@ -1,30 +1,33 @@
-From: jejb@linux.vnet.ibm.com (James Bottomley)
-Date: Tue, 03 Jul 2018 08:26:55 -0700
-Subject: [PATCH 2/2] KEYS: trusted: Find tpm_chip and use it until
-	module shutdown
-In-Reply-To: <edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
-References: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
-	<20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
-	<edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
-Message-ID: <1530631615.3142.6.camel@linux.vnet.ibm.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 03 Jul 2018 19:32:07 +0300
+Subject: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
+	a tpm_chip
+In-Reply-To: <1530550839.3709.46.camel@linux.vnet.ibm.com>
+References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
+	<1530550839.3709.46.camel@linux.vnet.ibm.com>
+Message-ID: <1a5b3d6cddba2d8bc74e5025a628aee7867a8987.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-07-03 at 18:24 +0300, Jarkko Sakkinen wrote:
-[...]
+On Mon, 2018-07-02 at 13:00 -0400, Mimi Zohar wrote:
+> On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
+> > Rather than accessing the TPM functions by passing a NULL pointer for
+> > the tpm_chip, which causes a lookup for a suitable chip every time, get a
+> > hold of a tpm_chip and access the TPM functions using it. Also get rid of
+> > the ima_used_chip variable and use the new ima_tpm_chip variable instead
+> > for determining whether to call TPM functions.
+> > 
+> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > 
-> Is James maintaining this now? Have not seen his feedback yet...
+> Jarkko, would you mind staging this patch with the rest of the patch
+> set?
 
-Hey, I thought we both were ...
+Yes, sure, I can do that. Any additional tag?
 
-However, it looks fine to me
-
-Reviewed-by: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-
-James
-
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
