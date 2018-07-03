@@ -1,176 +1,60 @@
-From: yamada.masahiro@socionext.com (Masahiro Yamada)
-Date: Tue, 3 Jul 2018 13:02:11 +0900
-Subject: [PATCH] kbuild: move bin2c back to scripts/ from scripts/basic/
-In-Reply-To: <1529944823-22228-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1529944823-22228-1-git-send-email-yamada.masahiro@socionext.com>
-Message-ID: <CAK7LNAQ_8k3k3qA2jL3PBpKz6smRAdqUvJR9v9QF=xpFH_G+Xw@mail.gmail.com>
+From: amir73il@gmail.com (Amir Goldstein)
+Date: Tue, 3 Jul 2018 11:09:22 +0300
+Subject: [PATCH] cap_inode_getsecurity: use d_find_any_alias() instead of
+	d_find_alias()
+In-Reply-To: <20180629025326.GA17892@mail.hallyn.com>
+References: <1530082758.30361.7.camel@mtkswgap22>
+	<20180628150152.GA10398@mail.hallyn.com>
+	<CAOQ4uxjJJZ=J2oaiga8M6QSM3HCM6a1CP5zUv4uK5vODRJj2Vg@mail.gmail.com>
+	<20180628172648.GA12196@mail.hallyn.com>
+	<CAOQ4uxjOSTvEt5MBmZY7UqrsjuwGF9jKqK-v6YBFQwLt5wZuRg@mail.gmail.com>
+	<20180628182850.GA12845@mail.hallyn.com>
+	<1530237431.30361.29.camel@mtkswgap22>
+	<20180629025326.GA17892@mail.hallyn.com>
+Message-ID: <CAOQ4uxh0dBGTz9tLwCroFRDCK8ej1DExo7kLwPC3CWX6068sYA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2018-06-26 1:40 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Commit 8370edea81e3 ("bin2c: move bin2c in scripts/basic") moved bin2c
-> to the scripts/basic/ directory, incorrectly stating "Kexec wants to
-> use bin2c and it wants to use it really early in the build process.
-> See arch/x86/purgatory/ code in later patches."
+On Fri, Jun 29, 2018 at 5:53 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Fri, Jun 29, 2018 at 09:57:11AM +0800, Eddie.Horng wrote:
+>> On Thu, 2018-06-28 at 13:28 -0500, Serge E. Hallyn wrote:
+>> > Ah - I just tried his reproducer, and in fact got:
+>> >
+>> > 0 ? serge at sl ~/test $ getcap execveat
+>> > execveat = cap_sys_admin+ep
+>> > 0 ? serge at sl ~/test $ ./execveat
+>> > execveat: Bad file descriptor
+>> >
+>> > on ext4, with 4.15.0-22-generic #24~16.04.1-Ubuntu
+>> >
+>> > Without the filecap, it works.
+>> >
+>> > -serge
+>>
+>> The simple reproducer expected /bin/echo exists in the same
+>> dir of execveat executable and does not check the return fd
+>> of open("echo", ...). I'm not sure if you run into this case,
+>> but I tried to run execveat without echo exists, got same result:
+>> "execveat: Bad file descriptor".
 >
-> Commit bdab125c9301 ("Revert "kexec/purgatory: Add clean-up for
-> purgatory directory"") and commit d6605b6bbee8 ("x86/build: Remove
-> unnecessary preparation for purgatory") removed the redundant
-> purgatory build magic entirely.
+> Hah!  Yes, i was in too much of a hurry;  I ran it once with
+> ./echo existing and no caps, that worked;  then i set the caps
+> on execveat instead of ./echo, and echo had gotten deleted by the
+> previous test causing the failure like you said.
 >
-> That means that the move of bin2c was unnecessary in the first place.
+> So, the same thing does happen with setuid anyway, so while that
+> seems worth addressing one day,
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
+Serge,
 
-Applied to linux-kbuild.
+I misunderstood the bottom line.
 
+Can the problem be reproduced on local fs with/without caps?
+and if so, what is missing from reproducer script for that.
 
->
->  arch/powerpc/purgatory/Makefile | 3 +--
->  arch/s390/purgatory/Makefile    | 3 +--
->  arch/x86/purgatory/Makefile     | 3 +--
->  kernel/Makefile                 | 2 +-
->  scripts/.gitignore              | 1 +
->  scripts/Makefile                | 1 +
->  scripts/basic/.gitignore        | 1 -
->  scripts/basic/Makefile          | 1 -
->  scripts/{basic => }/bin2c.c     | 0
->  security/tomoyo/Makefile        | 2 +-
->  10 files changed, 7 insertions(+), 10 deletions(-)
->  rename scripts/{basic => }/bin2c.c (100%)
->
-> diff --git a/arch/powerpc/purgatory/Makefile b/arch/powerpc/purgatory/Makefile
-> index 30e05de..4314ba5 100644
-> --- a/arch/powerpc/purgatory/Makefile
-> +++ b/arch/powerpc/purgatory/Makefile
-> @@ -6,9 +6,8 @@ LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined
->  $(obj)/purgatory.ro: $(obj)/trampoline.o FORCE
->                 $(call if_changed,ld)
->
-> -CMD_BIN2C = $(objtree)/scripts/basic/bin2c
->  quiet_cmd_bin2c = BIN2C   $@
-> -      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
-> +      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
->
->  $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
->         $(call if_changed,bin2c)
-> diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
-> index 1ace023..445c460 100644
-> --- a/arch/s390/purgatory/Makefile
-> +++ b/arch/s390/purgatory/Makefile
-> @@ -27,9 +27,8 @@ KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
->  $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
->                 $(call if_changed,ld)
->
-> -CMD_BIN2C = $(objtree)/scripts/basic/bin2c
->  quiet_cmd_bin2c = BIN2C   $@
-> -      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
-> +      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
->
->  $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
->         $(call if_changed,bin2c)
-> diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-> index 2e9ee02..d6ac098 100644
-> --- a/arch/x86/purgatory/Makefile
-> +++ b/arch/x86/purgatory/Makefile
-> @@ -28,9 +28,8 @@ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
->
->  targets += kexec-purgatory.c
->
-> -CMD_BIN2C = $(objtree)/scripts/basic/bin2c
->  quiet_cmd_bin2c = BIN2C   $@
-> -      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
-> +      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
->
->  $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
->         $(call if_changed,bin2c)
-> diff --git a/kernel/Makefile b/kernel/Makefile
-> index 04bc07c..7a63d56 100644
-> --- a/kernel/Makefile
-> +++ b/kernel/Makefile
-> @@ -123,7 +123,7 @@ targets += config_data.gz
->  $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
->         $(call if_changed,gzip)
->
-> -      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/basic/bin2c; echo "MAGIC_END;")
-> +      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/bin2c; echo "MAGIC_END;")
->  targets += config_data.h
->  $(obj)/config_data.h: $(obj)/config_data.gz FORCE
->         $(call filechk,ikconfiggz)
-> diff --git a/scripts/.gitignore b/scripts/.gitignore
-> index 0442c06..12d302d 100644
-> --- a/scripts/.gitignore
-> +++ b/scripts/.gitignore
-> @@ -1,6 +1,7 @@
->  #
->  # Generated files
->  #
-> +bin2c
->  conmakehash
->  kallsyms
->  pnmtologo
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index 25ab143..59c21ec 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -10,6 +10,7 @@
->
->  HOST_EXTRACFLAGS += -I$(srctree)/tools/include
->
-> +hostprogs-$(CONFIG_BUILD_BIN2C)  += bin2c
->  hostprogs-$(CONFIG_KALLSYMS)     += kallsyms
->  hostprogs-$(CONFIG_LOGO)         += pnmtologo
->  hostprogs-$(CONFIG_VT)           += conmakehash
-> diff --git a/scripts/basic/.gitignore b/scripts/basic/.gitignore
-> index 9528ec9..a776371 100644
-> --- a/scripts/basic/.gitignore
-> +++ b/scripts/basic/.gitignore
-> @@ -1,2 +1 @@
->  fixdep
-> -bin2c
-> diff --git a/scripts/basic/Makefile b/scripts/basic/Makefile
-> index 0372b33..af49b44 100644
-> --- a/scripts/basic/Makefile
-> +++ b/scripts/basic/Makefile
-> @@ -9,7 +9,6 @@
->  # fixdep:       Used to generate dependency information during build process
->
->  hostprogs-y    := fixdep
-> -hostprogs-$(CONFIG_BUILD_BIN2C)     += bin2c
->  always         := $(hostprogs-y)
->
->  # fixdep is needed to compile other host programs
-> diff --git a/scripts/basic/bin2c.c b/scripts/bin2c.c
-> similarity index 100%
-> rename from scripts/basic/bin2c.c
-> rename to scripts/bin2c.c
-> diff --git a/security/tomoyo/Makefile b/security/tomoyo/Makefile
-> index b7c6a7f..cca5a30 100644
-> --- a/security/tomoyo/Makefile
-> +++ b/security/tomoyo/Makefile
-> @@ -4,7 +4,7 @@ obj-y = audit.o common.o condition.o domain.o environ.o file.o gc.o group.o load
->  targets += builtin-policy.h
->  define do_policy
->  echo "static char tomoyo_builtin_$(1)[] __initdata ="; \
-> -$(objtree)/scripts/basic/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
-> +$(objtree)/scripts/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
->  echo ";"
->  endef
->  quiet_cmd_policy  = POLICY  $@
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Amir.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
