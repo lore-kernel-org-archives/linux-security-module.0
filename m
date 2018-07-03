@@ -1,47 +1,64 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Tue, 3 Jul 2018 17:35:56 +0800
-Subject: [PATCH v5 8/8] module: replace the existing LSM hook in
-	init_module
-In-Reply-To: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <201807031757.qpz6yHPo%fengguang.wu@intel.com>
+From: stefanb@linux.vnet.ibm.com (Stefan Berger)
+Date: Tue,  3 Jul 2018 07:19:17 -0400
+Subject: [PATCH] ima: Remove unused is_ima_appraise_enabled() function.
+Message-ID: <20180703111917.3265212-1-stefanb@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Mimi,
+Remove the unused is_ima_appraise_enabled() function.
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on integrity/next-integrity]
-[also build test WARNING on v4.18-rc3 next-20180702]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/kexec-firmware-support-system-wide-policy-requiring-signatures/20180703-011114
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> security/loadpin/loadpin.c:178:40: sparse: mixing different enum types
-   security/loadpin/loadpin.c:178:40:     int enum kernel_load_data_id  versus
-   security/loadpin/loadpin.c:178:40:     int enum kernel_read_file_id
-
-vim +178 security/loadpin/loadpin.c
-
-   175	
-   176	static int loadpin_load_data(enum kernel_load_data_id id)
-   177	{
- > 178		return loadpin_read_file(NULL, id);
-   179	}
-   180	
-
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ include/linux/ima.h                   |  6 ------
+ security/integrity/ima/ima_appraise.c | 10 ----------
+ 2 files changed, 16 deletions(-)
+
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 0e4647e0eb60..7f6952f8d6aa 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -75,17 +75,11 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
+ #endif
+ 
+ #ifdef CONFIG_IMA_APPRAISE
+-extern bool is_ima_appraise_enabled(void);
+ extern void ima_inode_post_setattr(struct dentry *dentry);
+ extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		       const void *xattr_value, size_t xattr_value_len);
+ extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
+ #else
+-static inline bool is_ima_appraise_enabled(void)
+-{
+-	return 0;
+-}
+-
+ static inline void ima_inode_post_setattr(struct dentry *dentry)
+ {
+ 	return;
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8bd7a0733e51..7bf7fcacfdbb 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -33,16 +33,6 @@ static int __init default_appraise_setup(char *str)
+ 
+ __setup("ima_appraise=", default_appraise_setup);
+ 
+-/*
+- * is_ima_appraise_enabled - return appraise status
+- *
+- * Only return enabled, if not in ima_appraise="fix" or "log" modes.
+- */
+-bool is_ima_appraise_enabled(void)
+-{
+-	return ima_appraise & IMA_APPRAISE_ENFORCE;
+-}
+-
+ /*
+  * ima_must_appraise - set appraise flag
+  *
+-- 
+2.17.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
