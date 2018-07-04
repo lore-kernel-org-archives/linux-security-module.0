@@ -1,38 +1,43 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Wed, 04 Jul 2018 08:10:03 -0400
-Subject: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
-	a tpm_chip
-In-Reply-To: <1a5b3d6cddba2d8bc74e5025a628aee7867a8987.camel@linux.intel.com>
-References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
-	<1530550839.3709.46.camel@linux.vnet.ibm.com>
-	<1a5b3d6cddba2d8bc74e5025a628aee7867a8987.camel@linux.intel.com>
-Message-ID: <1530706203.3452.74.camel@linux.vnet.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 4 Jul 2018 08:36:12 -0400
+Subject: [RFC PATCH v2] ipv6: make ipv6_renew_options() interrupt/kernel
+	safe
+In-Reply-To: <20180704.142853.1524154785411171806.davem@davemloft.net>
+References: <153055565291.30739.11949388336400371265.stgit@chester>
+	<20180704.142853.1524154785411171806.davem@davemloft.net>
+Message-ID: <CAHC9VhR4L5_zMyMsNqS2820rjGLOqEQR6mc2cHaR-Qmhbg-yQQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 2018-07-03 at 19:32 +0300, Jarkko Sakkinen wrote:
-> On Mon, 2018-07-02 at 13:00 -0400, Mimi Zohar wrote:
-> > On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
-> > > Rather than accessing the TPM functions by passing a NULL pointer for
-> > > the tpm_chip, which causes a lookup for a suitable chip every time, get a
-> > > hold of a tpm_chip and access the TPM functions using it. Also get rid of
-> > > the ima_used_chip variable and use the new ima_tpm_chip variable instead
-> > > for determining whether to call TPM functions.
-> > > 
-> > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > 
-> > Jarkko, would you mind staging this patch with the rest of the patch
-> > set?
-> 
-> Yes, sure, I can do that. Any additional tag?
+On Wed, Jul 4, 2018 at 1:29 AM David Miller <davem@davemloft.net> wrote:
+> From: Paul Moore <pmoore@redhat.com>
+> Date: Mon, 02 Jul 2018 14:20:52 -0400
+>
+> > -static int ipv6_renew_option(void *ohdr,
+> > -                          struct ipv6_opt_hdr __user *newopt, int newoptlen,
+> > -                          int inherit,
+> > -                          struct ipv6_opt_hdr **hdr,
+> > -                          char **p)
+> > +static void ipv6_renew_option(int renewtype,
+> > +                           struct ipv6_opt_hdr **dest,
+> > +                           struct ipv6_opt_hdr *old,
+> > +                           struct ipv6_opt_hdr *new,
+> > +                           int newtype, char **p)
+> >  {
+>  ...
+> > +     p += CMSG_ALIGN(ipv6_optlen(*dest));
+>
+> I don't think this actually advances the pointer in the caller,
+> you need something like:
+>
+>         *p += CMSG_ALIGN(ipv6_optlen(*dest));
 
-Thanks, just these.
+Yep, my mistake (typo); thanks for catching it.  Rebuilding a test
+kernel now ...
 
-Mimi
-
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
