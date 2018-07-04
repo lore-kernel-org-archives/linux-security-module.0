@@ -1,43 +1,48 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Wed, 4 Jul 2018 08:36:12 -0400
-Subject: [RFC PATCH v2] ipv6: make ipv6_renew_options() interrupt/kernel
-	safe
-In-Reply-To: <20180704.142853.1524154785411171806.davem@davemloft.net>
-References: <153055565291.30739.11949388336400371265.stgit@chester>
-	<20180704.142853.1524154785411171806.davem@davemloft.net>
-Message-ID: <CAHC9VhR4L5_zMyMsNqS2820rjGLOqEQR6mc2cHaR-Qmhbg-yQQ@mail.gmail.com>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Wed, 4 Jul 2018 16:52:35 +0300
+Subject: [PATCH 2/2] KEYS: trusted: Find tpm_chip and use it until module
+	shutdown
+In-Reply-To: <1530644783.3142.37.camel@linux.vnet.ibm.com>
+References: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
+	<20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
+	<edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
+	<1530631615.3142.6.camel@linux.vnet.ibm.com>
+	<20180703165102.GB19800@linux.intel.com>
+	<alpine.LRH.2.21.1807040450340.32123@namei.org>
+	<1530644783.3142.37.camel@linux.vnet.ibm.com>
+Message-ID: <20180704135235.GA6724@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jul 4, 2018 at 1:29 AM David Miller <davem@davemloft.net> wrote:
-> From: Paul Moore <pmoore@redhat.com>
-> Date: Mon, 02 Jul 2018 14:20:52 -0400
->
-> > -static int ipv6_renew_option(void *ohdr,
-> > -                          struct ipv6_opt_hdr __user *newopt, int newoptlen,
-> > -                          int inherit,
-> > -                          struct ipv6_opt_hdr **hdr,
-> > -                          char **p)
-> > +static void ipv6_renew_option(int renewtype,
-> > +                           struct ipv6_opt_hdr **dest,
-> > +                           struct ipv6_opt_hdr *old,
-> > +                           struct ipv6_opt_hdr *new,
-> > +                           int newtype, char **p)
-> >  {
->  ...
-> > +     p += CMSG_ALIGN(ipv6_optlen(*dest));
->
-> I don't think this actually advances the pointer in the caller,
-> you need something like:
->
->         *p += CMSG_ALIGN(ipv6_optlen(*dest));
+On Tue, Jul 03, 2018 at 12:06:23PM -0700, James Bottomley wrote:
+> On Wed, 2018-07-04 at 04:51 +1000, James Morris wrote:
+> > On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+> > 
+> > > On Tue, Jul 03, 2018 at 08:26:55AM -0700, James Bottomley wrote:
+> > > 
+> > > OK, I was not sure how that discussion went. I could add myself as
+> > > co-maintainer to MAINTAINERS because I anyway need to go through
+> > > all of these.
+> > > 
+> > > If anyone does not vote against, I'll send a patch.
+> > > 
+> > 
+> > For Keys???That would would be useful to help reduce the workload on?
+> > David.
+> 
+> Well, no, this was for trusted keys, which is the part of the key
+> infrastructure that goes via the TPM: The KEYS-TRUSTED part in the
+> MAINTAINERs file.  There's still KEYS-ENCRYPTED, KEYS/KEYRING and
+> ASYMETRIC KEYS, which don't use the TPM.
+> 
+> However, I've no objection to consolidating the lot under a larger set
+> of maintainers ... I recently agreed to look at the asymmetric key TPM
+> patch because it's my area, but it also strays over into crypto,
+> keyring and asymmetric keys.
 
-Yep, my mistake (typo); thanks for catching it.  Rebuilding a test
-kernel now ...
+Should 2/2 be rolled through my tree? 1/2 is a tpm patch.
 
--- 
-paul moore
-www.paul-moore.com
+/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
