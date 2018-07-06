@@ -1,29 +1,26 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Thu, 5 Jul 2018 18:43:00 +0300
-Subject: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
-	a tpm_chip
-In-Reply-To: <1530706203.3452.74.camel@linux.vnet.ibm.com>
-References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
-	<1530550839.3709.46.camel@linux.vnet.ibm.com>
-	<1a5b3d6cddba2d8bc74e5025a628aee7867a8987.camel@linux.intel.com>
-	<1530706203.3452.74.camel@linux.vnet.ibm.com>
-Message-ID: <20180705154300.GA12193@linux.intel.com>
+From: tyhicks@canonical.com (Tyler Hicks)
+Date: Fri,  6 Jul 2018 05:24:59 +0000
+Subject: [PATCH 0/2] Fix AppArmor issues found through static analysis
+Message-ID: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Jul 04, 2018 at 08:10:03AM -0400, Mimi Zohar wrote:
-> > > Jarkko, would you mind staging this patch with the rest of the patch
-> > > set?
-> > 
-> > Yes, sure, I can do that. Any additional tag?
-> 
-> Thanks, just these.
+This set fixes three issues, discovered by CoverityScan, that I don't
+believe are serious in practice but are worth fixing to make the
+AppArmor code more robust and prevent them from becoming more serious
+issues in the future. The first patch fixes possible out of bounds
+access issues when mapping a permissions mask to a string. The second
+fixes an uninitialized struct that could have some of its contents
+leaked to userspace during a permissions query.
 
-I pushed the changes to my tree (also next).
+I've tested the patches with the AppArmor regression test suite. The
+test results are the same with and without these patches applied. There
+are identical failures, in both situations, from the aa_policy_cache
+test but that's likely due to some unrelated, recent changes in the
+AppArmor userspace code.
 
-> Mimi
+Tyler
 
-/Jarkko
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
