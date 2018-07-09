@@ -1,9 +1,9 @@
 From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Mon, 9 Jul 2018 14:12:35 +0200
+Date: Mon, 9 Jul 2018 14:37:27 +0200
 Subject: [PATCH RFC] Smack: Fix handling of IPv4 traffic received by
 	PF_INET6 sockets
-References: <CGME20180709121236eucas1p21b689ba0e2c53326ddd9d36b924530ad@eucas1p2.samsung.com>
-Message-ID: <20180709121236eucas1p21b689ba0e2c53326ddd9d36b924530ad~-sjkOngnZ1880618806eucas1p23@eucas1p2.samsung.com>
+References: <CGME20180709123728eucas1p2e80949d219441dced3b0ab58e73315ce@eucas1p2.samsung.com>
+Message-ID: <20180709123728eucas1p2e80949d219441dced3b0ab58e73315ce~-s5SM65Kc0595005950eucas1p2U@eucas1p2.samsung.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
