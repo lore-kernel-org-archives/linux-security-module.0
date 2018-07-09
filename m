@@ -1,99 +1,51 @@
-From: tyhicks@canonical.com (Tyler Hicks)
-Date: Fri,  6 Jul 2018 05:25:00 +0000
-Subject: [PATCH 1/2] apparmor: Check buffer bounds when mapping permissions
-	mask
-In-Reply-To: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
-References: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
-Message-ID: <1530854701-7348-2-git-send-email-tyhicks@canonical.com>
+From: cnegre@viquel.fr (Mrs. Ursula Alice Walton)
+Date: Mon, 9 Jul 2018 03:49:36 +0200 (CEST)
+Subject: =?utf-8?Q?J=C3=93_H=C3=8DREK?=
+In-Reply-To: <1729573703.113046.1531096700318.JavaMail.root@SRV-ZIMBRA>
+Message-ID: <557126436.118297.1531100976036.JavaMail.root@SRV-ZIMBRA>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Don't read past the end of the buffer containing permissions
-characters or write past the end of the destination string.
+Kedves Kedvezm?nyezettem,
 
-Detected by CoverityScan CID#1415361, 1415376 ("Out-of-bounds access")
+Biztos vagyok benne, hogy ez a lev?l meglepet?sk?nt fog megjelenni, mivel m?g soha nem tal?lkoztunk, ?s akkor is megk?rdezn?d, hogy mi?rt d?nt?ttem ?gy, hogy v?lasztottam ?nt a vil?g sz?mos internethaszn?l?ja k?z?tt. Pontosan, nem tudom megmondani, hogy mi?rt v?lasztottam ?nt, de ne agg?dj, mert l?ttam a profilodat az interneten, ami megk?nny?tette a k?r?semet. A Mindenhat? Isten meg?ldjon ?s ?tn?zzen titeket ezen a k?ldet?sben, ha alaposan elolvashatja ?s megem?sztheti az al?bbi ?zenetet.
 
-Fixes: e53cfe6c7caa ("apparmor: rework perm mapping to a slightly broader set")
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
----
- security/apparmor/file.c          |  3 ++-
- security/apparmor/include/perms.h |  3 ++-
- security/apparmor/lib.c           | 17 +++++++++++++----
- 3 files changed, 17 insertions(+), 6 deletions(-)
+Miel?tt elmegyek tov?bb, engedje meg, hogy adjak egy kis ?letrajzomat, ?n Ursula Anya, Alice Walton vagyok, 72 ?ves n? ?s a k?s? Sir Danon Walton feles?ge, aki 1998. szeptember 7-?n, h?tf?n : 22 Egyes?lt Kir?lys?g, mik?zben New Yorkb?l Genfbe rep?ltek.
 
-diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-index 224b2fef93ca..4285943f7260 100644
---- a/security/apparmor/file.c
-+++ b/security/apparmor/file.c
-@@ -47,7 +47,8 @@ static void audit_file_mask(struct audit_buffer *ab, u32 mask)
- {
- 	char str[10];
- 
--	aa_perm_mask_to_str(str, aa_file_perm_chrs, map_mask_to_chr_mask(mask));
-+	aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-+			    map_mask_to_chr_mask(mask));
- 	audit_log_string(ab, str);
- }
- 
-diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
-index 38aa6247d00f..b94ec114d1a4 100644
---- a/security/apparmor/include/perms.h
-+++ b/security/apparmor/include/perms.h
-@@ -137,7 +137,8 @@ extern struct aa_perms allperms;
- 	xcheck(fn_for_each((L1), (P), (FN1)), fn_for_each((L2), (P), (FN2)))
- 
- 
--void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask);
-+void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs,
-+			 u32 mask);
- void aa_audit_perm_names(struct audit_buffer *ab, const char * const *names,
- 			 u32 mask);
- void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index a7b3f681b80e..7ab368c3789b 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -198,15 +198,24 @@ const char *aa_file_perm_names[] = {
- /**
-  * aa_perm_mask_to_str - convert a perm mask to its short string
-  * @str: character buffer to store string in (at least 10 characters)
-+ * @str_size: size of the @str buffer
-+ * @chrs: NUL-terminated character buffer of permission characters
-  * @mask: permission mask to convert
-  */
--void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask)
-+void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs, u32 mask)
- {
- 	unsigned int i, perm = 1;
-+	size_t num_chrs = strlen(chrs);
-+
-+	for (i = 0; i < num_chrs; perm <<= 1, i++) {
-+		if (mask & perm) {
-+			/* Ensure that one byte is left for NUL-termination */
-+			if (WARN_ON_ONCE(str_size <= 1))
-+				continue;
- 
--	for (i = 0; i < 32; perm <<= 1, i++) {
--		if (mask & perm)
- 			*str++ = chrs[i];
-+			str_size--;
-+		}
- 	}
- 	*str = '\0';
- }
-@@ -236,7 +245,7 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
- 
- 	audit_log_format(ab, "\"");
- 	if ((mask & chrsmask) && chrs) {
--		aa_perm_mask_to_str(str, chrs, mask & chrsmask);
-+		aa_perm_mask_to_str(str, sizeof(str), chrs, mask & chrsmask);
- 		mask &= ~chrsmask;
- 		audit_log_format(ab, "%s", str);
- 		if (mask & namesmask)
--- 
-2.7.4
+A f?rjem hal?la ut?n a befektet?s vezet?je lettem, ?s most, hogy ?regek ?s gyenge vagyok, ?gy d?nt?ttem, hogy az ?letem h?tralev? r?sz?t csal?dommal ?s szeretteikkel t?ltik, akinek ?letem sor?n soha nem volt id?m. de a f?rjem hal?la el?tt tervezt?k, hogy ?let?nk legut?bbi napjait haszn?ljuk fel arra, hogy felaj?nljuk a kev?sb? kiv?lts?gos ?s j?t?konys?gi otthonok fel?t, a m?sik fele pedig magunknak, csal?dtagjainknak ?s k?zeli bar?tainknak. annyira szerencs?tlen, hogy a f?rjem nem ?l ma, hogy ezt tegye velem, ?s nagyon gyenge vagyok ?s id?s voltam, ez?rt ?gy d?nt?ttem, hogy ezt a filantr?pikus munk?t v?gzem a k?s? f?rjem ?s ?n nev?ben.
 
+Jelenleg a vagyonunknak csaknem fel?t t?bb j?t?konys?gi otthonra ?s n?h?ny kev?sb? kiv?lts?gos orsz?gra ford?tottam. Annak ellen?re, hogy a k?s? f?rjem ?s ?n seg?ts?get ny?jtottak a h?tr?nyos helyzet?ek sz?m?ra, beleegyezt?nk abba, hogy seg?ts?get ny?jtsunk egy olyan egy?nnek, akivel m?g nem tal?lkoztunk az ?letben, mivel ?let?nkben m?g mindig fiatal volt, anonim seg?ts?get kapunk egy az egy?n, akir?l nem tudtunk, ?s melyeket nem tudtunk megmondani a d?tumig, az eff?le gesztus hat?sa miatt ugyanezt tett?k.
+
+Sajn?lattal ?rtes?tem, hogy soha nem lesz alkalmam megismerni, mert ?ppen befejeztem azt a feladatot, amelyet a f?rjem ?s ?n a hirtelen hal?l?t megel?z?en meg?llapodtunk, ?s te volt?l a legut?bbi gyilkoss?gunk kedvezm?nyezettje, f?ggetlen?l att?l, hogy kor?bbi p?nz?gyi st?tusza, ez?rt sz?ks?gem van arra, hogy tegyen nekem egy sz?vess?get az?ltal, hogy elfogadja aj?nlatunkat, ami semmivel sem fog ker?lni.
+
+Jelenleg let?tbe helyezem a Zenith Bank (UK) Ltd 5,800,000.00 amerikai doll?r ?sszeg?nek ?tutal?s?t ?nnek, amit most tenned kell, hogy a lehet? leghamarabb l?pjen kapcsolatba a Zenith Bank (UK) Ltd-vel, hogy megtudja, mikor fognak a lej?rat d?tuma miatt adja ?t a p?nzt.
+
+Csak let?tbe helyeztem az EMAIL ADDRESS ?s a DEPOSIT CODE (2017748032) sz?mot, mert nem tudom a nevedet ?s a sz?mlasz?mot, amellyel szeretn?d megkapni a p?nzt. Nem tudtam megtal?lni ?ket neten a profilod b?ng?sz?se k?zben, ha nem adtam volna ?t a BANK-nak az azonnali ?tad?shoz.
+
+Az ?n inform?ci?i?rt fizettem az ?sszes ad?t, biztos?t?si pr?miumot ?s bank?tutal?st A k?szp?nz d?ja, amely azt mutatja, hogy ez nem drogp?nz, vagy az orsz?g?ban a terrorizmust t?mogatta.
+
+Engedj?k meg, hogy ism?t megism?teljem, nem fizeti meg az ad?terheket, a biztos?t?si d?jat ?s a csekk ?tutal?si d?j?t, mert m?r kifizettem ?ket, az egyetlen p?nzt, amelyre fizetni akarsz, 85 doll?r amerikai doll?r a sz?ml?ra Az aktiv?l?s lehet?v? teszi, hogy a bank ?tutalja az ?sszeget a helyi sz?ml?j?ra an?lk?l, hogy tov?bbi ?tutal?si d?jakat fizetne. ?n fizettem volna a d?jat, de a bank ragaszkodott hozz?, hogy nem szabad, mert nem tudj?k, mikor fogsz vel?k kapcsolatba l?pni, ?s elker?lni a kudarcot vagy a tov?bbi k?lts?geket. K?rlek kedvesem, ha tudod, hogy nem fogsz seg?teni a 85 doll?ros amerikai doll?rral, k?rlek, ne l?pj kapcsolatba velem a bankkal, k?rlek, sz?ks?gem van valakire, aki seg?t nekem.
+
+A csekk ?tutal?s?hoz az al?bbiakban meg kell adnia a kapcsolatot a Bankkal;
+
+Zenith Bank (UK) Ltd.
+39 Corn Hill London
+EC3V 3ND Egyes?lt Kir?lys?g
+Tel: +447452059980
+E-mail: info at zenithbankltd.co.uk
+
+?jra meg kell er?s?tenie az al?bbi inform?ci?kat, hogy elker?lje az ?tad?s hib?j?t.
+Post?z?si c?m;
+Teljes nevek:
+K?zvetlen telefonsz?m;
+
+Az al?bbiakban a v?zlat DEPOSIT CODE (2017748032) pontja l?that?, akkor az ?tad?s el?tt ellen?rizni kell.
+
+Megjegyz?s: K?rem, nem akarom, hogy k?sz?netet mondjon nekem, vagy a f?rjemnek mind?ssze annyit kell tennie, hogy b?lcsen b?njon vele, ?s ugyanazt a dolgot tegye egy nap valaki ?let?be, mivel ez az egyetlen m?dja annak, hogy ez a vil?g jobb k?z?ss?g legyen, ha ?nzetlen szolg?ltat?sokat ny?jtanak egym?snak.
+
+Tisztelettel,
+Mrs. Ursula Alice Walton
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
