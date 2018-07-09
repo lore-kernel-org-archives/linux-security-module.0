@@ -1,53 +1,77 @@
-From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Mon, 9 Jul 2018 14:37:27 +0200
-Subject: [PATCH RFC] Smack: Fix handling of IPv4 traffic received by
-	PF_INET6 sockets
-References: <CGME20180709123728eucas1p2e80949d219441dced3b0ab58e73315ce@eucas1p2.samsung.com>
-Message-ID: <20180709123728eucas1p2e80949d219441dced3b0ab58e73315ce~-s5SM65Kc0595005950eucas1p2U@eucas1p2.samsung.com>
+From: zohar@linux.ibm.com (Mimi Zohar)
+Date: Mon, 09 Jul 2018 15:41:34 -0400
+Subject: [PATCH v5 7/8] ima: based on policy warn about loading firmware
+	(pre-allocated buffer)
+In-Reply-To: <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
+	<CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+Message-ID: <1531165294.3332.40.camel@linux.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-A socket which has sk_family set to PF_INET6 is able to recevie not
-only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
+On Mon, 2018-07-02 at 17:30 +0200, Ard Biesheuvel wrote:
+> On 2 July 2018 at 16:38, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > Some systems are memory constrained but they need to load very large
+> > firmwares.  The firmware subsystem allows drivers to request this
+> > firmware be loaded from the filesystem, but this requires that the
+> > entire firmware be loaded into kernel memory first before it's provided
+> > to the driver.  This can lead to a situation where we map the firmware
+> > twice, once to load the firmware into kernel memory and once to copy the
+> > firmware into the final resting place.
+> >
+> > To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
+> > into a pre-allocated buffer") introduced request_firmware_into_buf() API
+> > that allows drivers to request firmware be loaded directly into a
+> > pre-allocated buffer. (Based on the mailing list discussions, calling
+> > dma_alloc_coherent() is unnecessary and confusing.)
+> >
+> > (Very broken/buggy) devices using pre-allocated memory run the risk of
+> > the firmware being accessible to the device prior to the completion of
+> > IMA's signature verification.  For the time being, this patch emits a
+> > warning, but does not prevent the loading of the firmware.
+> >
+> 
+> As I attempted to explain in the exchange with Luis, this has nothing
+> to do with broken or buggy devices, but is simply the reality we have
+> to deal with on platforms that lack IOMMUs.
 
-Prior to this patch, the smk_skb_to_addr_ipv6() could have been
-called for socket buffers containing IPv4 packets, in result such
-traffic was allowed.
+> Even if you load into one buffer, carry out the signature verification
+> and *only then* copy it to another buffer, a bus master could
+> potentially read it from the first buffer as well. Mapping for DMA
+> does *not* mean 'making the memory readable by the device' unless
+> IOMMUs are being used. Otherwise, a bus master can read it from the
+> first buffer, or even patch the code that performs the security check
+> in the first place. For such platforms, copying the data around to
+> prevent the device from reading it is simply pointless, as well as any
+> other mitigation in software to protect yourself from misbehaving bus
+> masters.
 
-Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
----
-  security/smack/smack_lsm.c | 7 ++++++-
-  1 file changed, 6 insertions(+), 1 deletion(-)
+Thank you for taking the time to explain this again.
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 19de675..a6b4c2e 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3924,15 +3924,20 @@ static int smack_socket_sock_rcv_skb(struct sock 
-*sk, struct sk_buff *skb)
-      struct smack_known *skp = NULL;
-      int rc = 0;
-      struct smk_audit_info ad;
-+    u16 family = sk->sk_family;
-  #ifdef CONFIG_AUDIT
-      struct lsm_network_audit net;
-  #endif
-  #if IS_ENABLED(CONFIG_IPV6)
-      struct sockaddr_in6 sadd;
-      int proto;
-+
-+    if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP)) {
-+        family = PF_INET;
-+    }
-  #endif /* CONFIG_IPV6 */
+> So issuing a warning in this particular case is rather arbitrary. On
+> these platforms, all bus masters can read (and modify) all of your
+> memory all of the time, and as long as the firmware loader code takes
+> care not to provide the DMA address to the device until after the
+> verification is complete, it really has done all it reasonably can in
+> the environment that it is expected to operate in.
 
--    switch (sk->sk_family) {
-+    switch (family) {
-      case PF_INET:
-  #ifdef CONFIG_SECURITY_SMACK_NETFILTER
-          /*
--- 
-2.7.4
+So for the non-IOMMU system case, differentiating between pre-
+allocated buffers vs. using two buffers doesn't make sense.
+
+> 
+> (The use of dma_alloc_coherent() is a bit of a red herring here, as it
+> incorporates the DMA map operation. However, DMA map is a no-op on
+> systems with cache coherent 1:1 DMA [iow, all PCs and most arm64
+> platforms unless they have IOMMUs], and so there is not much
+> difference between memory allocated with kmalloc() or with
+> dma_alloc_coherent() in terms of whether the device can access it
+> freely)
+ ?
+What about systems with an IOMMU?
+
+Mimi
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
