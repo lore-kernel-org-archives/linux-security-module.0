@@ -1,317 +1,228 @@
 From: dhowells@redhat.com (David Howells)
-Date: Tue, 10 Jul 2018 23:42:15 +0100
-Subject: [PATCH 07/32] selinux: Implement the new mount API LSM hooks [ver #9]
+Date: Tue, 10 Jul 2018 23:42:30 +0100
+Subject: [PATCH 09/32] apparmor: Implement security hooks for the new mount
+	API [ver #9]
 In-Reply-To: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
 References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
-Message-ID: <153126253554.14533.643647579195359736.stgit@warthog.procyon.org.uk>
+Message-ID: <153126255030.14533.17831362996848029702.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Implement the new mount API LSM hooks for SELinux.  At some point the old
-hooks will need to be removed.
+Implement hooks to check the creation of new mountpoints for AppArmor.
 
-Question: Should the ->fs_context_parse_source() hook be implemented to
-check the labels on any source devices specified?
+Unfortunately, the DFA evaluation puts the option data in last, after the
+details of the mountpoint, so we have to cache the mount options in the
+fs_context using those hooks till we get to the new mountpoint hook.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paul Moore <paul@paul-moore.com>
-cc: Stephen Smalley <sds@tycho.nsa.gov>
-cc: selinux at tycho.nsa.gov
+Acked-by: John Johansen <john.johansen@canonical.com>
+cc: apparmor at lists.ubuntu.com
 cc: linux-security-module at vger.kernel.org
 ---
 
- security/selinux/hooks.c |  264 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 264 insertions(+)
+ security/apparmor/include/mount.h |   11 +++++
+ security/apparmor/lsm.c           |   80 +++++++++++++++++++++++++++++++++++++
+ security/apparmor/mount.c         |   46 +++++++++++++++++++++
+ 3 files changed, 135 insertions(+), 2 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 5bb53edd74cc..bdecae4b7306 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -48,6 +48,7 @@
- #include <linux/fdtable.h>
- #include <linux/namei.h>
- #include <linux/mount.h>
+diff --git a/security/apparmor/include/mount.h b/security/apparmor/include/mount.h
+index 25d6067fa6ef..0441bfae30fa 100644
+--- a/security/apparmor/include/mount.h
++++ b/security/apparmor/include/mount.h
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/path.h>
 +#include <linux/fs_context.h>
- #include <linux/netfilter_ipv4.h>
- #include <linux/netfilter_ipv6.h>
- #include <linux/tty.h>
-@@ -2973,6 +2974,261 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
- 				   FILESYSTEM__UNMOUNT, NULL);
+ 
+ #include "domain.h"
+ #include "policy.h"
+@@ -27,7 +28,13 @@
+ #define AA_AUDIT_DATA		0x40
+ #define AA_MNT_CONT_MATCH	0x40
+ 
+-#define AA_MS_IGNORE_MASK (MS_KERNMOUNT | MS_NOSEC | MS_ACTIVE | MS_BORN)
++#define AA_SB_IGNORE_MASK (SB_KERNMOUNT | SB_NOSEC | SB_ACTIVE | SB_BORN)
++
++struct apparmor_fs_context {
++	struct fs_context	fc;
++	char			*saved_options;
++	size_t			saved_size;
++};
+ 
+ int aa_remount(struct aa_label *label, const struct path *path,
+ 	       unsigned long flags, void *data);
+@@ -45,6 +52,8 @@ int aa_move_mount(struct aa_label *label, const struct path *path,
+ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 		 const struct path *path, const char *type, unsigned long flags,
+ 		 void *data);
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint);
+ 
+ int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags);
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index c65307dcd652..29803dc604f8 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -520,6 +520,78 @@ static int apparmor_file_mprotect(struct vm_area_struct *vma,
+ 			   !(vma->vm_flags & VM_SHARED) ? MAP_PRIVATE : 0);
  }
  
-+/* fsopen mount context operations */
-+
-+static int selinux_fs_context_alloc(struct fs_context *fc,
-+				    struct dentry *reference)
++static int apparmor_fs_context_alloc(struct fs_context *fc, struct dentry *reference)
 +{
-+	struct security_mnt_opts *opts;
++	struct apparmor_fs_context *afc;
 +
-+	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-+	if (!opts)
++	afc = kzalloc(sizeof(*afc), GFP_KERNEL);
++	if (!afc)
 +		return -ENOMEM;
 +
-+	fc->security = opts;
++	fc->security = afc;
 +	return 0;
 +}
 +
-+static int selinux_fs_context_dup(struct fs_context *fc,
-+				  struct fs_context *src_fc)
++static int apparmor_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
 +{
-+	const struct security_mnt_opts *src = src_fc->security;
-+	struct security_mnt_opts *opts;
-+	int i, n;
-+
-+	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-+	if (!opts)
-+		return -ENOMEM;
-+	fc->security = opts;
-+
-+	if (!src || !src->num_mnt_opts)
-+		return 0;
-+	n = opts->num_mnt_opts = src->num_mnt_opts;
-+
-+	if (src->mnt_opts) {
-+		opts->mnt_opts = kcalloc(n, sizeof(char *), GFP_KERNEL);
-+		if (!opts->mnt_opts)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < n; i++) {
-+			if (src->mnt_opts[i]) {
-+				opts->mnt_opts[i] = kstrdup(src->mnt_opts[i],
-+							    GFP_KERNEL);
-+				if (!opts->mnt_opts[i])
-+					return -ENOMEM;
-+			}
-+		}
-+	}
-+
-+	if (src->mnt_opts_flags) {
-+		opts->mnt_opts_flags = kmemdup(src->mnt_opts_flags,
-+					       n * sizeof(int), GFP_KERNEL);
-+		if (!opts->mnt_opts_flags)
-+			return -ENOMEM;
-+	}
-+
++	fc->security = NULL;
 +	return 0;
 +}
 +
-+static void selinux_fs_context_free(struct fs_context *fc)
++static void apparmor_fs_context_free(struct fs_context *fc)
 +{
-+	struct security_mnt_opts *opts = fc->security;
++	struct apparmor_fs_context *afc = fc->security;
 +
-+	if (opts) {
-+		security_free_mnt_opts(opts);
-+		fc->security = NULL;
++	if (afc) {
++		kfree(afc->saved_options);
++		kfree(afc);
 +	}
-+}
-+
-+static int selinux_fs_context_parse_option(struct fs_context *fc, char *opt, size_t len)
-+{
-+	struct security_mnt_opts *opts = fc->security;
-+	substring_t args[MAX_OPT_ARGS];
-+	unsigned int have;
-+	char *c, **oo;
-+	int token, ctx, i, *of;
-+
-+	token = match_token(opt, tokens, args);
-+	if (token == Opt_error)
-+		return 0; /* Doesn't belong to us. */
-+
-+	have = 0;
-+	for (i = 0; i < opts->num_mnt_opts; i++)
-+		have |= 1 << opts->mnt_opts_flags[i];
-+	if (have & (1 << token))
-+		return -EINVAL;
-+
-+	switch (token) {
-+	case Opt_context:
-+		if (have & (1 << Opt_defcontext))
-+			goto incompatible;
-+		ctx = CONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_fscontext:
-+		ctx = FSCONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_rootcontext:
-+		ctx = ROOTCONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_defcontext:
-+		if (have & (1 << Opt_context))
-+			goto incompatible;
-+		ctx = DEFCONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_labelsupport:
-+		return 1;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+copy_context_string:
-+	if (opts->num_mnt_opts > 3)
-+		return -EINVAL;
-+
-+	of = krealloc(opts->mnt_opts_flags,
-+		      (opts->num_mnt_opts + 1) * sizeof(int), GFP_KERNEL);
-+	if (!of)
-+		return -ENOMEM;
-+	of[opts->num_mnt_opts] = 0;
-+	opts->mnt_opts_flags = of;
-+
-+	oo = krealloc(opts->mnt_opts,
-+		      (opts->num_mnt_opts + 1) * sizeof(char *), GFP_KERNEL);
-+	if (!oo)
-+		return -ENOMEM;
-+	oo[opts->num_mnt_opts] = NULL;
-+	opts->mnt_opts = oo;
-+
-+	c = match_strdup(&args[0]);
-+	if (!c)
-+		return -ENOMEM;
-+	opts->mnt_opts[opts->num_mnt_opts] = c;
-+	opts->mnt_opts_flags[opts->num_mnt_opts] = ctx;
-+	opts->num_mnt_opts++;
-+	return 1;
-+
-+incompatible:
-+	return -EINVAL;
 +}
 +
 +/*
-+ * Validate the security parameters supplied for a reconfiguration/remount
-+ * event.
++ * As a temporary hack, we buffer all the options.  The problem is that we need
++ * to pass them to the DFA evaluator *after* mount point parameters, which
++ * means deferring the entire check to the sb_mountpoint hook.
 + */
-+static int selinux_validate_for_sb_reconfigure(struct fs_context *fc)
++static int apparmor_fs_context_parse_option(struct fs_context *fc, char *opt, size_t len)
 +{
-+	struct super_block *sb = fc->root->d_sb;
-+	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct security_mnt_opts *opts = fc->security;
-+	int rc, i, *flags;
-+	char **mount_options;
++	struct apparmor_fs_context *afc = fc->security;
++	size_t space = 0;
++	char *p, *q;
 +
-+	if (!(sbsec->flags & SE_SBINITIALIZED))
-+		return 0;
++	if (afc->saved_size > 0)
++		space = 1;
 +
-+	mount_options = opts->mnt_opts;
-+	flags = opts->mnt_opts_flags;
++	p = krealloc(afc->saved_options, afc->saved_size + space + len + 1, GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
 +
-+	for (i = 0; i < opts->num_mnt_opts; i++) {
-+		u32 sid;
++	q = p + afc->saved_size;
++	if (q != p)
++		*q++ = ' ';
++	memcpy(q, opt, len);
++	q += len;
++	*q = 0;
 +
-+		if (flags[i] == SBLABEL_MNT)
-+			continue;
-+
-+		rc = security_context_str_to_sid(&selinux_state, mount_options[i],
-+						 &sid, GFP_KERNEL);
-+		if (rc) {
-+			pr_warn("SELinux: security_context_str_to_sid"
-+				"(%s) failed for (dev %s, type %s) errno=%d\n",
-+				mount_options[i], sb->s_id, sb->s_type->name, rc);
-+			goto inval;
-+		}
-+
-+		switch (flags[i]) {
-+		case FSCONTEXT_MNT:
-+			if (bad_option(sbsec, FSCONTEXT_MNT, sbsec->sid, sid))
-+				goto bad_option;
-+			break;
-+		case CONTEXT_MNT:
-+			if (bad_option(sbsec, CONTEXT_MNT, sbsec->mntpoint_sid, sid))
-+				goto bad_option;
-+			break;
-+		case ROOTCONTEXT_MNT: {
-+			struct inode_security_struct *root_isec;
-+			root_isec = backing_inode_security(sb->s_root);
-+
-+			if (bad_option(sbsec, ROOTCONTEXT_MNT, root_isec->sid, sid))
-+				goto bad_option;
-+			break;
-+		}
-+		case DEFCONTEXT_MNT:
-+			if (bad_option(sbsec, DEFCONTEXT_MNT, sbsec->def_sid, sid))
-+				goto bad_option;
-+			break;
-+		default:
-+			goto inval;
-+		}
-+	}
-+
-+	rc = 0;
-+out:
-+	return rc;
-+
-+bad_option:
-+	pr_warn("SELinux: unable to change security options "
-+		"during remount (dev %s, type=%s)\n",
-+		sb->s_id, sb->s_type->name);
-+inval:
-+	rc = -EINVAL;
-+	goto out;
-+}
-+
-+/*
-+ * Validate the security context assembled from the option data supplied to
-+ * mount.
-+ */
-+static int selinux_fs_context_validate(struct fs_context *fc)
-+{
-+	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE)
-+		return selinux_validate_for_sb_reconfigure(fc);
++	afc->saved_options = p;
++	afc->saved_size += 1 + len;
 +	return 0;
 +}
 +
-+/*
-+ * Set the security context on a superblock.
-+ */
-+static int selinux_sb_get_tree(struct fs_context *fc)
++static int apparmor_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
++				  unsigned int mnt_flags)
 +{
-+	const struct cred *cred = current_cred();
-+	struct common_audit_data ad;
-+	int rc;
++	struct aa_label *label;
++	int error = 0;
 +
-+	rc = selinux_set_mnt_opts(fc->root->d_sb, fc->security, 0, NULL);
-+	if (rc)
-+		return rc;
++	label = __begin_current_label_crit_section();
++	if (!unconfined(label))
++		error = aa_new_mount_fc(label, fc, mountpoint);
++	__end_current_label_crit_section(label);
 +
-+	/* Allow all mounts performed by the kernel */
-+	if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
-+		return 0;
-+
-+	ad.type = LSM_AUDIT_DATA_DENTRY;
-+	ad.u.dentry = fc->root;
-+	return superblock_has_perm(cred, fc->root->d_sb, FILESYSTEM__MOUNT, &ad);
++	return error;
 +}
 +
-+static int selinux_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+				 unsigned int mnt_flags)
-+{
-+	const struct cred *cred = current_cred();
-+
-+	return path_has_perm(cred, mountpoint, FILE__MOUNTON);
-+}
-+
- /* inode security operations */
+ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 			     const char *type, unsigned long flags, void *data)
+ {
+@@ -530,7 +602,7 @@ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
+ 		flags &= ~MS_MGC_MSK;
  
- static int selinux_inode_alloc_security(struct inode *inode)
-@@ -6905,6 +7161,14 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_committing_creds, selinux_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
+-	flags &= ~AA_MS_IGNORE_MASK;
++	flags &= ~AA_SB_IGNORE_MASK;
  
-+	LSM_HOOK_INIT(fs_context_alloc, selinux_fs_context_alloc),
-+	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
-+	LSM_HOOK_INIT(fs_context_free, selinux_fs_context_free),
-+	LSM_HOOK_INIT(fs_context_parse_option, selinux_fs_context_parse_option),
-+	LSM_HOOK_INIT(fs_context_validate, selinux_fs_context_validate),
-+	LSM_HOOK_INIT(sb_get_tree, selinux_sb_get_tree),
-+	LSM_HOOK_INIT(sb_mountpoint, selinux_sb_mountpoint),
+ 	label = __begin_current_label_crit_section();
+ 	if (!unconfined(label)) {
+@@ -1133,6 +1205,12 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(capget, apparmor_capget),
+ 	LSM_HOOK_INIT(capable, apparmor_capable),
+ 
++	LSM_HOOK_INIT(fs_context_alloc, apparmor_fs_context_alloc),
++	LSM_HOOK_INIT(fs_context_dup, apparmor_fs_context_dup),
++	LSM_HOOK_INIT(fs_context_free, apparmor_fs_context_free),
++	LSM_HOOK_INIT(fs_context_parse_option, apparmor_fs_context_parse_option),
++	LSM_HOOK_INIT(sb_mountpoint, apparmor_sb_mountpoint),
 +
- 	LSM_HOOK_INIT(sb_alloc_security, selinux_sb_alloc_security),
- 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
- 	LSM_HOOK_INIT(sb_copy_data, selinux_sb_copy_data),
+ 	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
+ 	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
+ 	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index 8c3787399356..3c95fffb76ac 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -554,6 +554,52 @@ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 	return error;
+ }
+ 
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint)
++{
++	struct apparmor_fs_context *afc = fc->security;
++	struct aa_profile *profile;
++	char *buffer = NULL, *dev_buffer = NULL;
++	bool binary;
++	int error;
++	struct path tmp_path, *dev_path = NULL;
++
++	AA_BUG(!label);
++	AA_BUG(!mountpoint);
++
++	binary = fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA;
++
++	if (fc->fs_type->fs_flags & FS_REQUIRES_DEV) {
++		if (!fc->source)
++			return -ENOENT;
++
++		error = kern_path(fc->source, LOOKUP_FOLLOW, &tmp_path);
++		if (error)
++			return error;
++		dev_path = &tmp_path;
++	}
++
++	get_buffers(buffer, dev_buffer);
++	if (dev_path) {
++		error = fn_for_each_confined(label, profile,
++			match_mnt(profile, mountpoint, buffer, dev_path, dev_buffer,
++				  fc->fs_type->name,
++				  fc->sb_flags & ~AA_SB_IGNORE_MASK,
++				  afc->saved_options, binary));
++	} else {
++		error = fn_for_each_confined(label, profile,
++			match_mnt_path_str(profile, mountpoint, buffer,
++					   fc->source, fc->fs_type->name,
++					   fc->sb_flags & ~AA_SB_IGNORE_MASK,
++					   afc->saved_options, binary, NULL));
++	}
++	put_buffers(buffer, dev_buffer);
++	if (dev_path)
++		path_put(dev_path);
++
++	return error;
++}
++
+ static int profile_umount(struct aa_profile *profile, struct path *path,
+ 			  char *buffer)
+ {
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
