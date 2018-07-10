@@ -1,82 +1,69 @@
-From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Tue, 10 Jul 2018 09:05:12 +0200
-Subject: [PATCH RFC] Smack: Fix handling of IPv4 traffic received by
-	PF_INET6 sockets
-References: <CGME20180710070515eucas1p1dddc12cc44c820971809a242e8cee106@eucas1p1.samsung.com>
-Message-ID: <20180710070515eucas1p1dddc12cc44c820971809a242e8cee106~-8AfqiO9s0149301493eucas1p1h@eucas1p1.samsung.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Tue, 10 Jul 2018 07:32:16 -0700
+Subject: [bug report] AppArmor: policy routines for loading and unpacking
+	policy
+In-Reply-To: <20180704103500.d5j5vhu3r6mizfg6@kili.mountain>
+References: <20180704103500.d5j5vhu3r6mizfg6@kili.mountain>
+Message-ID: <6c6a04e0-eab2-586c-b1b9-8197d4ef24a5@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-A socket which has sk_family set to PF_INET6 is able to receive not
-only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
+On 07/04/2018 03:35 AM, Dan Carpenter wrote:
+> Hello John Johansen,
+> 
+> The patch 736ec752d95e: "AppArmor: policy routines for loading and
+> unpacking policy" from Jul 29, 2010, leads to the following static
+> checker warning:
+> 
+>     security/apparmor/policy_unpack.c:410 verify_accept()
+>     warn: bitwise AND condition is false here
+> 
+>     security/apparmor/policy_unpack.c:413 verify_accept()
+>     warn: bitwise AND condition is false here
+> 
+> security/apparmor/policy_unpack.c
+>    392  #define DFA_VALID_PERM_MASK             0xffffffff
+>    393  #define DFA_VALID_PERM2_MASK            0xffffffff
+>    394  
+>    395  /**
+>    396   * verify_accept - verify the accept tables of a dfa
+>    397   * @dfa: dfa to verify accept tables of (NOT NULL)
+>    398   * @flags: flags governing dfa
+>    399   *
+>    400   * Returns: 1 if valid accept tables else 0 if error
+>    401   */
+>    402  static bool verify_accept(struct aa_dfa *dfa, int flags)
+>    403  {
+>    404          int i;
+>    405  
+>    406          /* verify accept permissions */
+>    407          for (i = 0; i < dfa->tables[YYTD_ID_ACCEPT]->td_lolen; i++) {
+>    408                  int mode = ACCEPT_TABLE(dfa)[i];
+>    409  
+>    410                  if (mode & ~DFA_VALID_PERM_MASK)
+>    411                          return 0;
+>    412  
+>    413                  if (ACCEPT_TABLE2(dfa)[i] & ~DFA_VALID_PERM2_MASK)
+>    414                          return 0;
+> 
+> Normally, I don't report this kind of static checker warning because it
+> looks like maybe we had intended to make DFA_VALID_PERM_MASK
+> configurable or something.
+> 
+> But these kinds of things make me nervous when they're part of a
+> permission check.  It's been 8 years and this function has always just
+> been a no-op which says that the the permissions are OK.  Can we just
+> remove the function?
+> 
+>    415          }
+>    416          return 1;
+>    417  }
+> 
+hey Dan,
 
-Prior to this patch, the smk_skb_to_addr_ipv6() could have been
-called for socket buffers containing IPv4 packets, in result such
-traffic was allowed.
-
-Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
----
-  security/smack/smack_lsm.c | 12 ++++++++----
-  1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 19de675..1315de4 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3924,15 +3924,19 @@ static int smack_socket_sock_rcv_skb(struct sock 
-*sk, struct sk_buff *skb)
-  	struct smack_known *skp = NULL;
-  	int rc = 0;
-  	struct smk_audit_info ad;
-+	u16 family = sk->sk_family;
-  #ifdef CONFIG_AUDIT
-  	struct lsm_network_audit net;
-  #endif
-  #if IS_ENABLED(CONFIG_IPV6)
-  	struct sockaddr_in6 sadd;
-  	int proto;
-+
-+	if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
-+		family = PF_INET;
-  #endif /* CONFIG_IPV6 */
-
--	switch (sk->sk_family) {
-+	switch (family) {
-  	case PF_INET:
-  #ifdef CONFIG_SECURITY_SMACK_NETFILTER
-  		/*
-@@ -3950,7 +3954,7 @@ static int smack_socket_sock_rcv_skb(struct sock 
-*sk, struct sk_buff *skb)
-  		 */
-  		netlbl_secattr_init(&secattr);
-
--		rc = netlbl_skbuff_getattr(skb, sk->sk_family, &secattr);
-+		rc = netlbl_skbuff_getattr(skb, family, &secattr);
-  		if (rc == 0)
-  			skp = smack_from_secattr(&secattr, ssp);
-  		else
-@@ -3963,7 +3967,7 @@ static int smack_socket_sock_rcv_skb(struct sock 
-*sk, struct sk_buff *skb)
-  #endif
-  #ifdef CONFIG_AUDIT
-  		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
--		ad.a.u.net->family = sk->sk_family;
-+		ad.a.u.net->family = family;
-  		ad.a.u.net->netif = skb->skb_iif;
-  		ipv4_skb_to_auditdata(skb, &ad.a, NULL);
-  #endif
-@@ -3977,7 +3981,7 @@ static int smack_socket_sock_rcv_skb(struct sock 
-*sk, struct sk_buff *skb)
-  		rc = smk_bu_note("IPv4 delivery", skp, ssp->smk_in,
-  					MAY_WRITE, rc);
-  		if (rc != 0)
--			netlbl_skbuff_err(skb, sk->sk_family, rc, 0);
-+			netlbl_skbuff_err(skb, family, rc, 0);
-  		break;
-  #if IS_ENABLED(CONFIG_IPV6)
-  	case PF_INET6:
--- 
-2.7.4
+yes I have a dfa rework that gets rid of this, its just not quite ready
+to land. I can see about cherry-picking from the series to get rid
+of this sooner than later.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
