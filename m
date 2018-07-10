@@ -1,74 +1,67 @@
-From: bjorn.andersson@linaro.org (Bjorn Andersson)
-Date: Tue, 10 Jul 2018 12:19:51 -0700
-Subject: [PATCH v5 7/8] ima: based on policy warn about loading firmware
-	(pre-allocated buffer)
-In-Reply-To: <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
+From: zohar@linux.ibm.com (Mimi Zohar)
+Date: Tue, 10 Jul 2018 16:26:51 -0400
+Subject: [PATCH v5 2/8] kexec: add call to LSM hook in original
+	kexec_load syscall
+In-Reply-To: <1530542283-26145-3-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
-	<CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
-	<1531165294.3332.40.camel@linux.ibm.com>
-	<CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
-	<CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
-Message-ID: <20180710191951.GF1731@minitux>
+	<1530542283-26145-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1531254411.3332.146.camel@linux.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon 09 Jul 23:56 PDT 2018, Ard Biesheuvel wrote:
+Hi Eric,
 
-> On 10 July 2018 at 08:51, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> > On 9 July 2018 at 21:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >> On Mon, 2018-07-02 at 17:30 +0200, Ard Biesheuvel wrote:
-> >>> On 2 July 2018 at 16:38, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-[..]
-> > So to summarize again: in my opinion, using a single buffer is not a
-> > problem as long as the validation completes before the DMA map is
-> > performed. This will provide the expected guarantees on systems with
-> > IOMMUs, and will not complicate matters on systems where there is no
-> > point in obsessing about this anyway given that devices can access all
-> > of memory whenever they want to.
-> >
-> > As for the Qualcomm case: dma_alloc_coherent() is not needed here but
-> > simply ends up being used because it was already wired up in the
-> > qualcomm specific secure world API, which amounts to doing syscalls
-> > into a higher privilege level than the one the kernel itself runs at.
+Can I get your Ack on this patch?
 
-As I said before, the dma_alloc_coherent() referred to in this
-discussion holds parameters for the Trustzone call, i.e. it will hold
-the address to the buffer that the firmware was loaded into - it won't
-hold any data that comes from the actual firmware.
+Mimi
 
-> > So again, reasoning about whether the secure world will look at your
-> > data before you checked the sig is rather pointless, and adding
-> > special cases to the IMA api to cater for this use case seems like a
-> > waste of engineering and review effort to me.
-
-Forgive me if I'm missing something in the implementation here, but
-aren't the IMA checks done before request_firmware*() returns?
-
-> > If we have to do
-> > something to tie up this loose end, let's try switching it to the
-> > streaming DMA api instead.
-> >
+On Mon, 2018-07-02 at 10:37 -0400, Mimi Zohar wrote:
+> In order for LSMs and IMA-appraisal to differentiate between kexec_load
+> and kexec_file_load syscalls, both the original and new syscalls must
+> call an LSM hook.  This patch adds a call to security_kernel_load_data()
+> in the original kexec_load syscall.
 > 
-> Forgot to mention: the Qualcomm case is about passing data to the CPU
-> running at another privilege level, so IOMMU vs !IOMMU is not a factor
-> here.
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+> ---
+>  kernel/kexec.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/kernel/kexec.c b/kernel/kexec.c
+> index aed8fb2564b3..68559808fdfa 100644
+> --- a/kernel/kexec.c
+> +++ b/kernel/kexec.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/capability.h>
+>  #include <linux/mm.h>
+>  #include <linux/file.h>
+> +#include <linux/security.h>
+>  #include <linux/kexec.h>
+>  #include <linux/mutex.h>
+>  #include <linux/list.h>
+> @@ -195,10 +196,17 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+>  static inline int kexec_load_check(unsigned long nr_segments,
+>  				   unsigned long flags)
+>  {
+> +	int result;
+> +
+>  	/* We only trust the superuser with rebooting the system. */
+>  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+>  		return -EPERM;
+> 
+> +	/* Permit LSMs and IMA to fail the kexec */
+> +	result = security_kernel_load_data(LOADING_KEXEC_IMAGE);
+> +	if (result < 0)
+> +		return result;
+> +
+>  	/*
+>  	 * Verify we have a legal set of flags
+>  	 * This leaves us room for future extensions.
 
-Further more, all scenarios we've look at so far is completely
-sequential, so if the firmware request fails we won't invoke the
-Trustzone operation that would consume the memory or we won't turn on
-the power to the CPU that would execute the firmware.
-
-
-Tbh the only case I can think of where there would be a "race condition"
-here is if we have a device that is polling the last byte of a
-predefined firmware memory area for the firmware loader to read some
-specific data into it. In cases where the firmware request is followed
-by some explicit signalling to the device (or a power on sequence) I'm
-unable to see the issue discussed here.
-
-Regards,
-Bjorn
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
