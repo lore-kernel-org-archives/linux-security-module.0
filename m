@@ -1,69 +1,102 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Tue, 10 Jul 2018 07:32:16 -0700
-Subject: [bug report] AppArmor: policy routines for loading and unpacking
-	policy
-In-Reply-To: <20180704103500.d5j5vhu3r6mizfg6@kili.mountain>
-References: <20180704103500.d5j5vhu3r6mizfg6@kili.mountain>
-Message-ID: <6c6a04e0-eab2-586c-b1b9-8197d4ef24a5@canonical.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Tue, 10 Jul 2018 10:00:12 -0500
+Subject: [PATCH 1/2] apparmor: Check buffer bounds when mapping
+	permissions mask
+In-Reply-To: <1530854701-7348-2-git-send-email-tyhicks@canonical.com>
+References: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
+	<1530854701-7348-2-git-send-email-tyhicks@canonical.com>
+Message-ID: <20180710150012.GC1661@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 07/04/2018 03:35 AM, Dan Carpenter wrote:
-> Hello John Johansen,
+Quoting Tyler Hicks (tyhicks at canonical.com):
+> Don't read past the end of the buffer containing permissions
+> characters or write past the end of the destination string.
 > 
-> The patch 736ec752d95e: "AppArmor: policy routines for loading and
-> unpacking policy" from Jul 29, 2010, leads to the following static
-> checker warning:
+> Detected by CoverityScan CID#1415361, 1415376 ("Out-of-bounds access")
 > 
->     security/apparmor/policy_unpack.c:410 verify_accept()
->     warn: bitwise AND condition is false here
-> 
->     security/apparmor/policy_unpack.c:413 verify_accept()
->     warn: bitwise AND condition is false here
-> 
-> security/apparmor/policy_unpack.c
->    392  #define DFA_VALID_PERM_MASK             0xffffffff
->    393  #define DFA_VALID_PERM2_MASK            0xffffffff
->    394  
->    395  /**
->    396   * verify_accept - verify the accept tables of a dfa
->    397   * @dfa: dfa to verify accept tables of (NOT NULL)
->    398   * @flags: flags governing dfa
->    399   *
->    400   * Returns: 1 if valid accept tables else 0 if error
->    401   */
->    402  static bool verify_accept(struct aa_dfa *dfa, int flags)
->    403  {
->    404          int i;
->    405  
->    406          /* verify accept permissions */
->    407          for (i = 0; i < dfa->tables[YYTD_ID_ACCEPT]->td_lolen; i++) {
->    408                  int mode = ACCEPT_TABLE(dfa)[i];
->    409  
->    410                  if (mode & ~DFA_VALID_PERM_MASK)
->    411                          return 0;
->    412  
->    413                  if (ACCEPT_TABLE2(dfa)[i] & ~DFA_VALID_PERM2_MASK)
->    414                          return 0;
-> 
-> Normally, I don't report this kind of static checker warning because it
-> looks like maybe we had intended to make DFA_VALID_PERM_MASK
-> configurable or something.
-> 
-> But these kinds of things make me nervous when they're part of a
-> permission check.  It's been 8 years and this function has always just
-> been a no-op which says that the the permissions are OK.  Can we just
-> remove the function?
-> 
->    415          }
->    416          return 1;
->    417  }
-> 
-hey Dan,
+> Fixes: e53cfe6c7caa ("apparmor: rework perm mapping to a slightly broader set")
+> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 
-yes I have a dfa rework that gets rid of this, its just not quite ready
-to land. I can see about cherry-picking from the series to get rid
-of this sooner than later.
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
+> ---
+>  security/apparmor/file.c          |  3 ++-
+>  security/apparmor/include/perms.h |  3 ++-
+>  security/apparmor/lib.c           | 17 +++++++++++++----
+>  3 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+> index 224b2fef93ca..4285943f7260 100644
+> --- a/security/apparmor/file.c
+> +++ b/security/apparmor/file.c
+> @@ -47,7 +47,8 @@ static void audit_file_mask(struct audit_buffer *ab, u32 mask)
+>  {
+>  	char str[10];
+>  
+> -	aa_perm_mask_to_str(str, aa_file_perm_chrs, map_mask_to_chr_mask(mask));
+> +	aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+> +			    map_mask_to_chr_mask(mask));
+>  	audit_log_string(ab, str);
+>  }
+>  
+> diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
+> index 38aa6247d00f..b94ec114d1a4 100644
+> --- a/security/apparmor/include/perms.h
+> +++ b/security/apparmor/include/perms.h
+> @@ -137,7 +137,8 @@ extern struct aa_perms allperms;
+>  	xcheck(fn_for_each((L1), (P), (FN1)), fn_for_each((L2), (P), (FN2)))
+>  
+>  
+> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask);
+> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs,
+> +			 u32 mask);
+>  void aa_audit_perm_names(struct audit_buffer *ab, const char * const *names,
+>  			 u32 mask);
+>  void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
+> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+> index a7b3f681b80e..7ab368c3789b 100644
+> --- a/security/apparmor/lib.c
+> +++ b/security/apparmor/lib.c
+> @@ -198,15 +198,24 @@ const char *aa_file_perm_names[] = {
+>  /**
+>   * aa_perm_mask_to_str - convert a perm mask to its short string
+>   * @str: character buffer to store string in (at least 10 characters)
+> + * @str_size: size of the @str buffer
+> + * @chrs: NUL-terminated character buffer of permission characters
+>   * @mask: permission mask to convert
+>   */
+> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask)
+> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs, u32 mask)
+>  {
+>  	unsigned int i, perm = 1;
+> +	size_t num_chrs = strlen(chrs);
+> +
+> +	for (i = 0; i < num_chrs; perm <<= 1, i++) {
+> +		if (mask & perm) {
+> +			/* Ensure that one byte is left for NUL-termination */
+> +			if (WARN_ON_ONCE(str_size <= 1))
+> +				continue;
+>  
+> -	for (i = 0; i < 32; perm <<= 1, i++) {
+> -		if (mask & perm)
+>  			*str++ = chrs[i];
+> +			str_size--;
+> +		}
+>  	}
+>  	*str = '\0';
+>  }
+> @@ -236,7 +245,7 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
+>  
+>  	audit_log_format(ab, "\"");
+>  	if ((mask & chrsmask) && chrs) {
+> -		aa_perm_mask_to_str(str, chrs, mask & chrsmask);
+> +		aa_perm_mask_to_str(str, sizeof(str), chrs, mask & chrsmask);
+>  		mask &= ~chrsmask;
+>  		audit_log_format(ab, "%s", str);
+>  		if (mask & namesmask)
+> -- 
+> 2.7.4
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
