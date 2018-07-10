@@ -1,62 +1,87 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Tue, 10 Jul 2018 10:03:58 -0500
-Subject: [PATCH 2/2] apparmor: Fully initialize aa_perms struct when
-	answering userspace query
-In-Reply-To: <1530854701-7348-3-git-send-email-tyhicks@canonical.com>
-References: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
-	<1530854701-7348-3-git-send-email-tyhicks@canonical.com>
-Message-ID: <20180710150358.GD1661@mail.hallyn.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 10 Jul 2018 08:21:21 -0700
+Subject: [PATCH RFC] Smack: Fix handling of IPv4 traffic received by
+	PF_INET6 sockets
+In-Reply-To: <20180710070515eucas1p1dddc12cc44c820971809a242e8cee106~-8AfqiO9s0149301493eucas1p1h@eucas1p1.samsung.com>
+References: <CGME20180710070515eucas1p1dddc12cc44c820971809a242e8cee106@eucas1p1.samsung.com>
+	<20180710070515eucas1p1dddc12cc44c820971809a242e8cee106~-8AfqiO9s0149301493eucas1p1h@eucas1p1.samsung.com>
+Message-ID: <7e7b9c3e-1fa4-d0fa-fbba-10493af52c4d@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Tyler Hicks (tyhicks at canonical.com):
-> Fully initialize the aa_perms struct in profile_query_cb() to avoid the
-> potential of using an uninitialized struct member's value in a response
-> to a query from userspace.
-> 
-> Detected by CoverityScan CID#1415126 ("Uninitialized scalar variable")
-> 
-> Fixes: 4f3b3f2d79a4 ("apparmor: add profile permission query ability")
-> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+On 7/10/2018 12:05 AM, Piotr Sawicki wrote:
+> A socket which has sk_family set to PF_INET6 is able to receive not
+> only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
+>
+> Prior to this patch, the smk_skb_to_addr_ipv6() could have been
+> called for socket buffers containing IPv4 packets, in result such
+> traffic was allowed.
+>
+> Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Looks fine from here. Do you have a simple test case?
 
 > ---
->  security/apparmor/apparmorfs.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 949dd8a48164..e09fe4d7307c 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -603,7 +603,7 @@ static const struct file_operations aa_fs_ns_revision_fops = {
->  static void profile_query_cb(struct aa_profile *profile, struct aa_perms *perms,
->  			     const char *match_str, size_t match_len)
->  {
-> -	struct aa_perms tmp;
-> +	struct aa_perms tmp = { };
->  	struct aa_dfa *dfa;
->  	unsigned int state = 0;
->  
-> @@ -613,7 +613,6 @@ static void profile_query_cb(struct aa_profile *profile, struct aa_perms *perms,
->  		dfa = profile->file.dfa;
->  		state = aa_dfa_match_len(dfa, profile->file.start,
->  					 match_str + 1, match_len - 1);
-> -		tmp = nullperms;
->  		if (state) {
->  			struct path_cond cond = { };
->  
-> @@ -627,8 +626,6 @@ static void profile_query_cb(struct aa_profile *profile, struct aa_perms *perms,
->  					 match_str, match_len);
->  		if (state)
->  			aa_compute_perms(dfa, state, &tmp);
-> -		else
-> -			tmp = nullperms;
->  	}
->  	aa_apply_modes_to_perms(profile, &tmp);
->  	aa_perms_accum_raw(perms, &tmp);
-> -- 
-> 2.7.4
+>   security/smack/smack_lsm.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 19de675..1315de4 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3924,15 +3924,19 @@ static int smack_socket_sock_rcv_skb(struct sock 
+> *sk, struct sk_buff *skb)
+>   	struct smack_known *skp = NULL;
+>   	int rc = 0;
+>   	struct smk_audit_info ad;
+> +	u16 family = sk->sk_family;
+>   #ifdef CONFIG_AUDIT
+>   	struct lsm_network_audit net;
+>   #endif
+>   #if IS_ENABLED(CONFIG_IPV6)
+>   	struct sockaddr_in6 sadd;
+>   	int proto;
+> +
+> +	if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
+> +		family = PF_INET;
+>   #endif /* CONFIG_IPV6 */
+>
+> -	switch (sk->sk_family) {
+> +	switch (family) {
+>   	case PF_INET:
+>   #ifdef CONFIG_SECURITY_SMACK_NETFILTER
+>   		/*
+> @@ -3950,7 +3954,7 @@ static int smack_socket_sock_rcv_skb(struct sock 
+> *sk, struct sk_buff *skb)
+>   		 */
+>   		netlbl_secattr_init(&secattr);
+>
+> -		rc = netlbl_skbuff_getattr(skb, sk->sk_family, &secattr);
+> +		rc = netlbl_skbuff_getattr(skb, family, &secattr);
+>   		if (rc == 0)
+>   			skp = smack_from_secattr(&secattr, ssp);
+>   		else
+> @@ -3963,7 +3967,7 @@ static int smack_socket_sock_rcv_skb(struct sock 
+> *sk, struct sk_buff *skb)
+>   #endif
+>   #ifdef CONFIG_AUDIT
+>   		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+> -		ad.a.u.net->family = sk->sk_family;
+> +		ad.a.u.net->family = family;
+>   		ad.a.u.net->netif = skb->skb_iif;
+>   		ipv4_skb_to_auditdata(skb, &ad.a, NULL);
+>   #endif
+> @@ -3977,7 +3981,7 @@ static int smack_socket_sock_rcv_skb(struct sock 
+> *sk, struct sk_buff *skb)
+>   		rc = smk_bu_note("IPv4 delivery", skp, ssp->smk_in,
+>   					MAY_WRITE, rc);
+>   		if (rc != 0)
+> -			netlbl_skbuff_err(skb, sk->sk_family, rc, 0);
+> +			netlbl_skbuff_err(skb, family, rc, 0);
+>   		break;
+>   #if IS_ENABLED(CONFIG_IPV6)
+>   	case PF_INET6:
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
