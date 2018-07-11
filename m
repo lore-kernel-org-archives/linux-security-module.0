@@ -1,19 +1,36 @@
-From: accueil@avantscene.com (Billy Wilfred)
-Date: Tue, 10 Jul 2018 10:54:36 -0700
-Subject: How are you doing today? Please read my email and reply me!!
-Message-ID: <20180710175437.89C9127985@12379-60221.cloudwaysapps.com>
+From: weiyongjun1@huawei.com (Wei Yongjun)
+Date: Wed, 11 Jul 2018 13:28:40 +0000
+Subject: [PATCH -next] EVM: fix return value check in evm_write_xattrs()
+Message-ID: <1531315720-4191-1-git-send-email-weiyongjun1@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Dear Sir/Madam,
-How are you doing today? My name is Billy Wilfred. I am California, United States of America. I am a broker of Project Financing Firm who has cutting edge and group capital fund, they can finance any lucrative project and help you to enhance your business plan. Are you in need of a Loan to Finance and Fund your Project or Company? Are you an Investor, Real Estate developer, Construction Company, etc? or Do you need a loan to keep your investment or business going on in order to have a different look?  Have you been trying to obtain a Loan from Banks or Loan Companies and got Ripped off and they have refused to grant you the Loan because of bad credit? do not close your company and stop your project because of bankruptcy, we are here for you for real, please be happy, rejoice and celebrate because your solution have come, we will end your financial worries now. Therefore come to us, we will grant you the loan you need without delay. We offer all types of non-recourse Loan and Funding 
- at a low Interest Rate of
+In case of error, the function audit_log_start() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-The categories of Loan Financial Funding we offered include but not limited to: Business Loan, Personal Loan, Company Loan, Mortgage Loan, Debt Consolidation and Financial Funding for both Turnkey and mega projects etc from a minimum of Euro / US$1Million to Euro / US$5 Billion Max. Most importantly, Note that the loan company DO NOT charge any upfront fee or advance fee. This message is not scam for what so ever. This is 100% real, legal and legitimate loan company office in Turkey. Kindly get in touch for further details and procedures. Thanks for your cooperation with us. I will be waiting for your response. Further more details and directives contact me on my private email: bwilalessandro at gmail.com
+Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ security/integrity/evm/evm_secfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thank you & best regards,
-Billy Wilfred.
-Contact me on my private email: bwilalessandro at gmail.com
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index 637eb99..77de71b 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -193,8 +193,8 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+ 		return -E2BIG;
+ 
+ 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
+-	if (IS_ERR(ab))
+-		return PTR_ERR(ab);
++	if (!ab)
++		return -ENOMEM;
+ 
+ 	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
+ 	if (!xattr) {
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
