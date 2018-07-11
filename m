@@ -1,103 +1,73 @@
-From: ard.biesheuvel@linaro.org (Ard Biesheuvel)
-Date: Wed, 11 Jul 2018 08:24:41 +0200
-Subject: [PATCH v5 7/8] ima: based on policy warn about loading firmware
-	(pre-allocated buffer)
-In-Reply-To: <20180710191951.GF1731@minitux>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
-	<CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
-	<1531165294.3332.40.camel@linux.ibm.com>
-	<CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
-	<CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
-	<20180710191951.GF1731@minitux>
-Message-ID: <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
+From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
+Date: Wed, 11 Jul 2018 09:38:15 +0200
+Subject: [PATCH RFC] Smack: Fix handling of IPv4 traffic received by
+	PF_INET6 sockets
+In-Reply-To: <38c70a10-b68e-358f-a1cf-9e2221747e7e@schaufler-ca.com>
+References: <CGME20180710070515eucas1p1dddc12cc44c820971809a242e8cee106@eucas1p1.samsung.com>
+	<20180710070515eucas1p1dddc12cc44c820971809a242e8cee106~-8AfqiO9s0149301493eucas1p1h@eucas1p1.samsung.com>
+	<7e7b9c3e-1fa4-d0fa-fbba-10493af52c4d@schaufler-ca.com>
+	<20180710154423eucas1p226cf025ee545e16929eede4d419eca7c~ADFw04F9H1188711887eucas1p2n@eucas1p2.samsung.com>
+	<38c70a10-b68e-358f-a1cf-9e2221747e7e@schaufler-ca.com>
+Message-ID: <20180711073817eucas1p1590871dcbd2ae88c466f7558602366dc~AQGoFdvsr1461214612eucas1p1C@eucas1p1.samsung.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
-> On Mon 09 Jul 23:56 PDT 2018, Ard Biesheuvel wrote:
->
->> On 10 July 2018 at 08:51, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->> > On 9 July 2018 at 21:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
->> >> On Mon, 2018-07-02 at 17:30 +0200, Ard Biesheuvel wrote:
->> >>> On 2 July 2018 at 16:38, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> [..]
->> > So to summarize again: in my opinion, using a single buffer is not a
->> > problem as long as the validation completes before the DMA map is
->> > performed. This will provide the expected guarantees on systems with
->> > IOMMUs, and will not complicate matters on systems where there is no
->> > point in obsessing about this anyway given that devices can access all
->> > of memory whenever they want to.
->> >
->> > As for the Qualcomm case: dma_alloc_coherent() is not needed here but
->> > simply ends up being used because it was already wired up in the
->> > qualcomm specific secure world API, which amounts to doing syscalls
->> > into a higher privilege level than the one the kernel itself runs at.
->
-> As I said before, the dma_alloc_coherent() referred to in this
-> discussion holds parameters for the Trustzone call, i.e. it will hold
-> the address to the buffer that the firmware was loaded into - it won't
-> hold any data that comes from the actual firmware.
->
 
-Ah yes, I forgot that detail. Thanks for reminding me.
 
->> > So again, reasoning about whether the secure world will look at your
->> > data before you checked the sig is rather pointless, and adding
->> > special cases to the IMA api to cater for this use case seems like a
->> > waste of engineering and review effort to me.
->
-> Forgive me if I'm missing something in the implementation here, but
-> aren't the IMA checks done before request_firmware*() returns?
->
-
-The issue under discussion is whether calling request_firmware() to
-load firmware into a buffer that may be readable by the device while
-the IMA checks are in progress constitutes a security hazard.
-
->> > If we have to do
->> > something to tie up this loose end, let's try switching it to the
->> > streaming DMA api instead.
->> >
+On 07/10/2018 06:16 PM, Casey Schaufler wrote:
+> On 7/10/2018 8:44 AM, Piotr Sawicki wrote:
+>> On 07/10/2018 05:21 PM, Casey Schaufler wrote:
+>>> On 7/10/2018 12:05 AM, Piotr Sawicki wrote:
+>>>> A socket which has sk_family set to PF_INET6 is able to receive not
+>>>> only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
+>>>>
+>>>> Prior to this patch, the smk_skb_to_addr_ipv6() could have been
+>>>> called for socket buffers containing IPv4 packets, in result such
+>>>> traffic was allowed.
+>>>>
+>>>> Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
+>>> Looks fine from here. Do you have a simple test case?
 >>
->> Forgot to mention: the Qualcomm case is about passing data to the CPU
->> running at another privilege level, so IOMMU vs !IOMMU is not a factor
->> here.
->
-> Further more, all scenarios we've look at so far is completely
-> sequential, so if the firmware request fails we won't invoke the
-> Trustzone operation that would consume the memory or we won't turn on
-> the power to the CPU that would execute the firmware.
->
->
-> Tbh the only case I can think of where there would be a "race condition"
-> here is if we have a device that is polling the last byte of a
-> predefined firmware memory area for the firmware loader to read some
-> specific data into it. In cases where the firmware request is followed
-> by some explicit signalling to the device (or a power on sequence) I'm
-> unable to see the issue discussed here.
->
+>> Yes, I've tested it on Tizen emulator.
+>>
+>> Tests are available here
+>> https://review.tizen.org/gerrit/#/admin/projects/platform/core/test/security-tests,
+>> branch nether.
+> 
+> Can you identify the specific test? There's quite a bit to look through.
+> Thank you.
 
-I agree. But the latter part is platform specific, and so it requires
-some degree of trust in the driver author on the part of the IMA
-routines that request_firmware() is called at an appropriate time.
+ID:NETHER_IPV6_IPV4_LOCAL_INTER_APP_CONNECTION:nether_check_ipv6_srv_ipv4_udp_local_inter_app_connection_internet_access_granted
+ID:NETHER_IPV6_IPV4_LOCAL_INTER_APP_CONNECTION:nether_check_ipv6_srv_ipv4_udp_local_inter_app_connection_internet_access_denied
 
-The point I am trying to make in this thread is that there are cases
-where it makes no sense for the kernel to reason about these things,
-given that higher privilege levels such as the TrustZone secure world
-own the kernel's execution context entirely already, and given that
-masters that are not behind an IOMMU can read and write all of memory
-all of the time anyway.
+It's a new thing, so tests are still in review: 
+https://review.tizen.org/gerrit/#/c/183458/
 
-The bottom line is that reality does not respect the layering that IMA
-assumes, and so the only meaningful way to treat some of the use cases
-is simply to ignore them entirely. So we should still perform all the
-checks, but we will have to live with the limited utility of doing so
-in some scenarios (and not print nasty warnings to the kernel log for
-such cases)
+To run the tests on the emulator you need to apply also these patches:
+(Nether) https://review.tizen.org/gerrit/#/c/183464/ and turn on IPv6 
+connection tracking in the kernel. I've used a kernel downloaded from 
+https://review.tizen.org/gerrit/#/admin/projects/sdk/emulator/emulator-kernel 
+branch tizen.
 
--- 
-Ard.
+I know that these tests are Tizen specific, and it might be really time 
+consuming to prepare an environment for them. So, I propose to just use 
+the netcat tool and run one of its instances as a UDP server listening 
+on IPv6 address [::] and the second one as a IPV4 client.
+
+e.g.
+server: nc -6 -l -u 20000
+client: nc -u 127.0.0.1 20000
+
+In case of TCP connections, access is properly checked in 
+smack_inet_conn_request(). But when IPv4-mapped IPv6 addresses are used 
+and two processes have write access to each other, 
+smack_socket_sock_rcv_skb() will call smk_skb_to_addr_ipv6() function 
+for IPv4 packets.
+
+
+
+
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
