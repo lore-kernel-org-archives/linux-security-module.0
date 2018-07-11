@@ -1,66 +1,13 @@
-From: zohar@linux.ibm.com (Mimi Zohar)
-Date: Tue, 10 Jul 2018 16:26:51 -0400
-Subject: [PATCH v5 2/8] kexec: add call to LSM hook in original
-	kexec_load syscall
-In-Reply-To: <1530542283-26145-3-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-3-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1531254411.3332.146.camel@linux.ibm.com>
+From: morrow.lee@aol.com (Lee Morrow)
+Date: Wed, 11 Jul 2018 10:10:13 -0700
+Subject: info!!
+Message-ID: <0427e773-43292-6103424456956@a2be4ln7twncx16140>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Eric,
-
-Can I get your Ack on this patch?
-
-Mimi
-
-On Mon, 2018-07-02 at 10:37 -0400, Mimi Zohar wrote:
-> In order for LSMs and IMA-appraisal to differentiate between kexec_load
-> and kexec_file_load syscalls, both the original and new syscalls must
-> call an LSM hook.  This patch adds a call to security_kernel_load_data()
-> in the original kexec_load syscall.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> ---
->  kernel/kexec.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/kernel/kexec.c b/kernel/kexec.c
-> index aed8fb2564b3..68559808fdfa 100644
-> --- a/kernel/kexec.c
-> +++ b/kernel/kexec.c
-> @@ -11,6 +11,7 @@
->  #include <linux/capability.h>
->  #include <linux/mm.h>
->  #include <linux/file.h>
-> +#include <linux/security.h>
->  #include <linux/kexec.h>
->  #include <linux/mutex.h>
->  #include <linux/list.h>
-> @@ -195,10 +196,17 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
->  static inline int kexec_load_check(unsigned long nr_segments,
->  				   unsigned long flags)
->  {
-> +	int result;
-> +
->  	/* We only trust the superuser with rebooting the system. */
->  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
->  		return -EPERM;
-> 
-> +	/* Permit LSMs and IMA to fail the kexec */
-> +	result = security_kernel_load_data(LOADING_KEXEC_IMAGE);
-> +	if (result < 0)
-> +		return result;
-> +
->  	/*
->  	 * Verify we have a legal set of flags
->  	 * This leaves us room for future extensions.
+Top of the day to you, this is in respect of a very beneficial transaction which you would not want to let go reply for more details,
+Regards,
+Lee 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
