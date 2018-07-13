@@ -1,95 +1,151 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 13 Jul 2018 14:05:55 -0400
-Subject: [PATCH v6 0/8] kexec/firmware: support system wide policy requiring
-	signatures
-Message-ID: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Fri, 13 Jul 2018 14:05:56 -0400
+Subject: [PATCH v6 1/8] security: define new LSM hook named
+	security_kernel_load_data
+In-Reply-To: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-IMA-appraisal is mostly being used in the embedded or single purpose
-closed system environments.  In these environments, both the Kconfig
-options and the userspace tools can be modified appropriately to limit
-syscalls.  For stock kernels, userspace applications need to continue to
-work with older kernels as well as with newer kernels.
+Differentiate between the kernel reading a file specified by userspace
+from the kernel loading a buffer containing data provided by userspace.
+This patch defines a new LSM hook named security_kernel_load_data().
 
-In this environment, the customer needs the ability to define a system
-wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
-modules to be signed, without being dependent on either the Kconfig
-options or the userspace tools.[1]
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-This patch set allows the customer to define a policy which requires
-the kexec'ed kernel images, firmware, and/or kernel modules to be
-signed.
-
-In addition, this patch set includes the ability to configure a build
-time IMA policy, which is automatically loaded at run time without
-needing to specify it on the boot command line and persists after
-loading a custom kernel policy.
-
-[1] kexec-tools suupports the new syscall based on a flag (-s).
-
+---
 Changelog v6:
-- Instead of warning about loading firmware from pre-allocated, shared
-  memory, just add a comment. Refer to the patch description for reason.
-- LoadPin: add missing cast from enum kernel_load_file_id to
-  kernel_read_file_id.
+- Updated patch description
 
 Changelog v5:
-- Shared kernel_load_data_id and kernel_read_file_id enumerations.
-
-The previous version of this patch set defined a new LSM hook named
-security_kernel_load_data and an associated enumeration named
-kernel_load_data_id, independent of kernel_read_file_id.  In this
-version, the kernel_load_data_id and kernel_read_file_id values are
-shared, simplifying Loadpin's and other LSMs calling one LSM hook from
-the other.
-
-- Warn about loading firmware from pre-shared memory.
-
-Previous versions of this patch set prevented loading firmware, based on
-policy, from pre-allocated (DMA) memory, introduced in commit
-a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer").
-Based on discussions, calling dma_alloc_coherent() is unnecessary and
-confusing.  This version of the patch set allows loading the firmware,
-but emits a warning.
+- Share the kernel_load_data_id and kernel_read_file_id values,
+simplifying Loadpin's and other LSMs calling one LSM hook from the
+other.
 
 Changelog v4:
-- Define a new LSM hook named security_kernel_load_data().
-- Define kernel_load_data_id enumeration.
-- Replace the existing LSM hook in init_module syscall.
+- Define new LSM hook named security_kernel_load_data.
 
 Changelog v3:
-Based on James' feedback:
-- Renamed security_kernel_read_file() to security_kernel_read_data().
-- Defined new kernel_load_data_id enumeration.
-- Cleaned up ima_read_data(), replacing if's with switch.
+- Rename security_kernel_read_file to security_kernel_read_data().
 
-Mimi Zohar (8):
-  security: define new LSM hook named security_kernel_load_data
-  kexec: add call to LSM hook in original kexec_load syscall
-  ima: based on policy require signed kexec kernel images
-  firmware: add call to LSM hook before firmware sysfs fallback
-  ima: based on policy require signed firmware (sysfs fallback)
-  ima: add build time policy
-  module: replace the existing LSM hook in init_module
-  ima: based on policy warn about loading firmware (pre-allocated
-    buffer)
+Changelog v2:
+- Define a generic wrapper named security_kernel_read_blob() for
+security_kernel_read_file().
 
- drivers/base/firmware_loader/fallback.c |  7 ++++
- include/linux/ima.h                     |  7 ++++
- include/linux/lsm_hooks.h               |  6 +++
- include/linux/security.h                | 27 +++++++++++++
- kernel/kexec.c                          |  8 ++++
- kernel/module.c                         |  2 +-
- security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++++++
- security/integrity/ima/ima.h            |  1 +
- security/integrity/ima/ima_main.c       | 68 ++++++++++++++++++++++++++-------
- security/integrity/ima/ima_policy.c     | 48 +++++++++++++++++++++--
- security/loadpin/loadpin.c              |  6 +++
- security/security.c                     | 10 +++++
- security/selinux/hooks.c                | 15 ++++++++
- 13 files changed, 245 insertions(+), 18 deletions(-)
+Changelog v1:
+- Define and call security_kexec_load(), a wrapper for
+security_kernel_read_file().
 
+ include/linux/lsm_hooks.h |  6 ++++++
+ include/linux/security.h  | 27 +++++++++++++++++++++++++++
+ security/security.c       |  5 +++++
+ 3 files changed, 38 insertions(+)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 8f1131c8dd54..a08bc2587b96 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -576,6 +576,10 @@
+  *	userspace to load a kernel module with the given name.
+  *	@kmod_name name of the module requested by the kernel
+  *	Return 0 if successful.
++ * @kernel_load_data:
++ *	Load data provided by userspace.
++ *	@id kernel load data identifier
++ *	Return 0 if permission is granted.
+  * @kernel_read_file:
+  *	Read a file specified by userspace.
+  *	@file contains the file structure pointing to the file being read
+@@ -1582,6 +1586,7 @@ union security_list_options {
+ 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+ 	int (*kernel_module_request)(char *kmod_name);
++	int (*kernel_load_data)(enum kernel_load_data_id id);
+ 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
+ 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
+ 				     enum kernel_read_file_id id);
+@@ -1872,6 +1877,7 @@ struct security_hook_heads {
+ 	struct hlist_head cred_getsecid;
+ 	struct hlist_head kernel_act_as;
+ 	struct hlist_head kernel_create_files_as;
++	struct hlist_head kernel_load_data;
+ 	struct hlist_head kernel_read_file;
+ 	struct hlist_head kernel_post_read_file;
+ 	struct hlist_head kernel_module_request;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 63030c85ee19..3410acfe139c 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
+ typedef int (*initxattrs) (struct inode *inode,
+ 			   const struct xattr *xattr_array, void *fs_data);
+ 
++
++/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
++#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
++#define __data_id_stringify(dummy, str) #str,
++
++enum kernel_load_data_id {
++	__kernel_read_file_id(__data_id_enumify)
++};
++
++static const char * const kernel_load_data_str[] = {
++	__kernel_read_file_id(__data_id_stringify)
++};
++
++static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
++{
++	if ((unsigned)id >= LOADING_MAX_ID)
++		return kernel_load_data_str[LOADING_UNKNOWN];
++
++	return kernel_load_data_str[id];
++}
++
+ #ifdef CONFIG_SECURITY
+ 
+ struct security_mnt_opts {
+@@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
++int security_kernel_load_data(enum kernel_load_data_id id);
+ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id);
+@@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
+ 	return 0;
+ }
+ 
++static inline int security_kernel_load_data(enum kernel_load_data_id id)
++{
++	return 0;
++}
++
+ static inline int security_kernel_read_file(struct file *file,
+ 					    enum kernel_read_file_id id)
+ {
+diff --git a/security/security.c b/security/security.c
+index e7d76a8000a5..05fe5b1932d7 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+ 
++int security_kernel_load_data(enum kernel_load_data_id id)
++{
++	return call_int_hook(kernel_load_data, 0, id);
++}
++
+ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+ 			     int flags)
+ {
 -- 
 2.7.5
 
