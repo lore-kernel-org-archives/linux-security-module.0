@@ -1,56 +1,98 @@
-From: bjorn.andersson@linaro.org (Bjorn Andersson)
-Date: Thu, 12 Jul 2018 13:37:46 -0700
-Subject: [PATCH v5 7/8] ima: based on policy warn about loading firmware
-	(pre-allocated buffer)
-In-Reply-To: <1531425793.3568.275.camel@linux.ibm.com>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
-	<CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
-	<1531165294.3332.40.camel@linux.ibm.com>
-	<CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
-	<CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
-	<20180710191951.GF1731@minitux>
-	<CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
-	<1531425793.3568.275.camel@linux.ibm.com>
-Message-ID: <20180712203746.GG545@tuxbook-pro>
+From: zohar@linux.vnet.ibm.com (Mimi Zohar)
+Date: Fri, 13 Jul 2018 14:05:55 -0400
+Subject: [PATCH v6 0/8] kexec/firmware: support system wide policy requiring
+	signatures
+Message-ID: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu 12 Jul 13:03 PDT 2018, Mimi Zohar wrote:
+IMA-appraisal is mostly being used in the embedded or single purpose
+closed system environments.  In these environments, both the Kconfig
+options and the userspace tools can be modified appropriately to limit
+syscalls.  For stock kernels, userspace applications need to continue to
+work with older kernels as well as with newer kernels.
 
-> On Wed, 2018-07-11 at 08:24 +0200, Ard Biesheuvel wrote:
-> > On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
-> 
-> > > Tbh the only case I can think of where there would be a "race condition"
-> > > here is if we have a device that is polling the last byte of a
-> > > predefined firmware memory area for the firmware loader to read some
-> > > specific data into it. In cases where the firmware request is followed
-> > > by some explicit signalling to the device (or a power on sequence) I'm
-> > > unable to see the issue discussed here.
-> > >
-> > 
-> > I agree. But the latter part is platform specific, and so it requires
-> > some degree of trust in the driver author on the part of the IMA
-> > routines that request_firmware() is called at an appropriate time.
-> 
-> Exactly. ?Qualcomm could be using the pre-allocated buffer
-> appropriately, but that doesn't guarantee how it will be used in the
-> future.
-> 
+In this environment, the customer needs the ability to define a system
+wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
+modules to be signed, without being dependent on either the Kconfig
+options or the userspace tools.[1]
 
-Agreed.
+This patch set allows the customer to define a policy which requires
+the kexec'ed kernel images, firmware, and/or kernel modules to be
+signed.
 
-But a device that starts operate on the firmware memory before it's
-fully loaded (and verified) will likely hit other nasty issues. Using a
-traditional request_firmware() and memcpy() or simply mapping the buffer
-into the remote piecemeal would have the same issue.
+In addition, this patch set includes the ability to configure a build
+time IMA policy, which is automatically loaded at run time without
+needing to specify it on the boot command line and persists after
+loading a custom kernel policy.
 
-So I think that regardless of using IMA, if you don't have the ability
-to control your device's view of the entire firmware buffer atomically
-you must write your device drivers accordingly.
+[1] kexec-tools suupports the new syscall based on a flag (-s).
 
-Regards,
-Bjorn
+Changelog v6:
+- Instead of warning about loading firmware from pre-allocated, shared
+  memory, just add a comment. Refer to the patch description for reason.
+- LoadPin: add missing cast from enum kernel_load_file_id to
+  kernel_read_file_id.
+
+Changelog v5:
+- Shared kernel_load_data_id and kernel_read_file_id enumerations.
+
+The previous version of this patch set defined a new LSM hook named
+security_kernel_load_data and an associated enumeration named
+kernel_load_data_id, independent of kernel_read_file_id.  In this
+version, the kernel_load_data_id and kernel_read_file_id values are
+shared, simplifying Loadpin's and other LSMs calling one LSM hook from
+the other.
+
+- Warn about loading firmware from pre-shared memory.
+
+Previous versions of this patch set prevented loading firmware, based on
+policy, from pre-allocated (DMA) memory, introduced in commit
+a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer").
+Based on discussions, calling dma_alloc_coherent() is unnecessary and
+confusing.  This version of the patch set allows loading the firmware,
+but emits a warning.
+
+Changelog v4:
+- Define a new LSM hook named security_kernel_load_data().
+- Define kernel_load_data_id enumeration.
+- Replace the existing LSM hook in init_module syscall.
+
+Changelog v3:
+Based on James' feedback:
+- Renamed security_kernel_read_file() to security_kernel_read_data().
+- Defined new kernel_load_data_id enumeration.
+- Cleaned up ima_read_data(), replacing if's with switch.
+
+Mimi Zohar (8):
+  security: define new LSM hook named security_kernel_load_data
+  kexec: add call to LSM hook in original kexec_load syscall
+  ima: based on policy require signed kexec kernel images
+  firmware: add call to LSM hook before firmware sysfs fallback
+  ima: based on policy require signed firmware (sysfs fallback)
+  ima: add build time policy
+  module: replace the existing LSM hook in init_module
+  ima: based on policy warn about loading firmware (pre-allocated
+    buffer)
+
+ drivers/base/firmware_loader/fallback.c |  7 ++++
+ include/linux/ima.h                     |  7 ++++
+ include/linux/lsm_hooks.h               |  6 +++
+ include/linux/security.h                | 27 +++++++++++++
+ kernel/kexec.c                          |  8 ++++
+ kernel/module.c                         |  2 +-
+ security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++++++
+ security/integrity/ima/ima.h            |  1 +
+ security/integrity/ima/ima_main.c       | 68 ++++++++++++++++++++++++++-------
+ security/integrity/ima/ima_policy.c     | 48 +++++++++++++++++++++--
+ security/loadpin/loadpin.c              |  6 +++
+ security/security.c                     | 10 +++++
+ security/selinux/hooks.c                | 15 ++++++++
+ 13 files changed, 245 insertions(+), 18 deletions(-)
+
+-- 
+2.7.5
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
