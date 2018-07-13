@@ -1,155 +1,59 @@
 From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 13 Jul 2018 14:05:56 -0400
-Subject: [PATCH v6 1/8] security: define new LSM hook named
-	security_kernel_load_data
+Date: Fri, 13 Jul 2018 14:05:59 -0400
+Subject: [PATCH v6 4/8] firmware: add call to LSM hook before firmware sysfs
+	fallback
 In-Reply-To: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <1531505163-20227-5-git-send-email-zohar@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Differentiate between the kernel reading a file specified by userspace
-from the kernel loading a buffer containing data provided by userspace.
-This patch defines a new LSM hook named security_kernel_load_data().
+Add an LSM hook prior to allowing firmware sysfs fallback loading.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
 ---
-Changelog v6:
-- Updated patch description
-
-Changelog v5:
-- Share the kernel_load_data_id and kernel_read_file_id values,
-simplifying Loadpin's and other LSMs calling one LSM hook from the
-other.
-
 Changelog v4:
-- Define new LSM hook named security_kernel_load_data.
-
-Changelog v3:
-- Rename security_kernel_read_file to security_kernel_read_data().
+- call new LSM security_kernel_load_data hook
 
 Changelog v2:
-- Define a generic wrapper named security_kernel_read_blob() for
-security_kernel_read_file().
+- call security_kernel_read_blob()
+- rename the READING_FIRMWARE_FALLBACK kernel_read_file_id enumeration to
+READING_FIRMWARE_FALLBACK_SYSFS.
 
-Changelog v1:
-- Define and call security_kexec_load(), a wrapper for
-security_kernel_read_file().
+ drivers/base/firmware_loader/fallback.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- include/linux/lsm_hooks.h |  6 ++++++
- include/linux/security.h  | 27 +++++++++++++++++++++++++++
- security/security.c       |  5 +++++
- 3 files changed, 38 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8f1131c8dd54..a08bc2587b96 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -576,6 +576,10 @@
-  *	userspace to load a kernel module with the given name.
-  *	@kmod_name name of the module requested by the kernel
-  *	Return 0 if successful.
-+ * @kernel_load_data:
-+ *	Load data provided by userspace.
-+ *	@id kernel load data identifier
-+ *	Return 0 if permission is granted.
-  * @kernel_read_file:
-  *	Read a file specified by userspace.
-  *	@file contains the file structure pointing to the file being read
-@@ -1582,6 +1586,7 @@ union security_list_options {
- 	int (*kernel_act_as)(struct cred *new, u32 secid);
- 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
- 	int (*kernel_module_request)(char *kmod_name);
-+	int (*kernel_load_data)(enum kernel_load_data_id id);
- 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
- 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
- 				     enum kernel_read_file_id id);
-@@ -1872,6 +1877,7 @@ struct security_hook_heads {
- 	struct hlist_head cred_getsecid;
- 	struct hlist_head kernel_act_as;
- 	struct hlist_head kernel_create_files_as;
-+	struct hlist_head kernel_load_data;
- 	struct hlist_head kernel_read_file;
- 	struct hlist_head kernel_post_read_file;
- 	struct hlist_head kernel_module_request;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..3410acfe139c 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
- typedef int (*initxattrs) (struct inode *inode,
- 			   const struct xattr *xattr_array, void *fs_data);
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 7f732744f0d3..202324291542 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(enum fw_opt opt_flags)
  
+ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
+ {
++	int ret;
 +
-+/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
-+#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
-+#define __data_id_stringify(dummy, str) #str,
-+
-+enum kernel_load_data_id {
-+	__kernel_read_file_id(__data_id_enumify)
-+};
-+
-+static const char * const kernel_load_data_str[] = {
-+	__kernel_read_file_id(__data_id_stringify)
-+};
-+
-+static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
-+{
-+	if ((unsigned)id >= LOADING_MAX_ID)
-+		return kernel_load_data_str[LOADING_UNKNOWN];
-+
-+	return kernel_load_data_str[id];
-+}
-+
- #ifdef CONFIG_SECURITY
+ 	if (fw_fallback_config.ignore_sysfs_fallback) {
+ 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
+ 		return false;
+@@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
+ 	if ((opt_flags & FW_OPT_NOFALLBACK))
+ 		return false;
  
- struct security_mnt_opts {
-@@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
- int security_kernel_act_as(struct cred *new, u32 secid);
- int security_kernel_create_files_as(struct cred *new, struct inode *inode);
- int security_kernel_module_request(char *kmod_name);
-+int security_kernel_load_data(enum kernel_load_data_id id);
- int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
-@@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
- 	return 0;
++	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
++	ret = security_kernel_load_data(LOADING_FIRMWARE);
++	if (ret < 0)
++		return ret;
++
+ 	return fw_force_sysfs_fallback(opt_flags);
  }
  
-+static inline int security_kernel_load_data(enum kernel_load_data_id id)
-+{
-+	return 0;
-+}
-+
- static inline int security_kernel_read_file(struct file *file,
- 					    enum kernel_read_file_id id)
- {
-diff --git a/security/security.c b/security/security.c
-index e7d76a8000a5..05fe5b1932d7 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- }
- EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
- 
-+int security_kernel_load_data(enum kernel_load_data_id id)
-+{
-+	return call_int_hook(kernel_load_data, 0, id);
-+}
-+
- int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 			     int flags)
- {
 -- 
 2.7.5
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+More majordomo info@ http://vger.kernel.org/majordomo-info.html
