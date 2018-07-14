@@ -1,60 +1,59 @@
-From: zohar@linux.vnet.ibm.com (Mimi Zohar)
-Date: Fri, 13 Jul 2018 14:05:57 -0400
-Subject: [PATCH v6 2/8] kexec: add call to LSM hook in original kexec_load
-	syscall
-In-Reply-To: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <1531505163-20227-3-git-send-email-zohar@linux.vnet.ibm.com>
+From: colin.king@canonical.com (Colin King)
+Date: Sat, 14 Jul 2018 17:19:05 +0100
+Subject: [PATCH] apparmor: remove redundant pointer 'info'
+Message-ID: <20180714161905.5403-1-colin.king@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In order for LSMs and IMA-appraisal to differentiate between kexec_load
-and kexec_file_load syscalls, both the original and new syscalls must
-call an LSM hook.  This patch adds a call to security_kernel_load_data()
-in the original kexec_load syscall.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Pointer 'info' is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable 'info' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/kexec.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ security/apparmor/domain.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index aed8fb2564b3..68559808fdfa 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -11,6 +11,7 @@
- #include <linux/capability.h>
- #include <linux/mm.h>
- #include <linux/file.h>
-+#include <linux/security.h>
- #include <linux/kexec.h>
- #include <linux/mutex.h>
- #include <linux/list.h>
-@@ -195,10 +196,17 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
- static inline int kexec_load_check(unsigned long nr_segments,
- 				   unsigned long flags)
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 098d546d8253..410d9ce09861 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1006,7 +1006,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ 					 const char *name, bool sibling)
  {
-+	int result;
-+
- 	/* We only trust the superuser with rebooting the system. */
- 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
- 		return -EPERM;
+ 	struct aa_profile *root, *hat = NULL;
+-	const char *info = NULL;
+ 	int error = 0;
  
-+	/* Permit LSMs and IMA to fail the kexec */
-+	result = security_kernel_load_data(LOADING_KEXEC_IMAGE);
-+	if (result < 0)
-+		return result;
-+
- 	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
+ 	if (sibling && PROFILE_IS_HAT(profile)) {
+@@ -1014,7 +1013,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ 	} else if (!sibling && !PROFILE_IS_HAT(profile)) {
+ 		root = aa_get_profile(profile);
+ 	} else {
+-		info = "conflicting target types";
+ 		error = -EPERM;
+ 		goto audit;
+ 	}
+@@ -1025,10 +1023,8 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ 		if (COMPLAIN_MODE(profile)) {
+ 			hat = aa_new_null_profile(profile, true, name,
+ 						  GFP_KERNEL);
+-			if (!hat) {
+-				info = "failed null profile create";
++			if (!hat)
+ 				error = -ENOMEM;
+-			}
+ 		}
+ 	}
+ 	aa_put_profile(root);
 -- 
-2.7.5
+2.17.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
