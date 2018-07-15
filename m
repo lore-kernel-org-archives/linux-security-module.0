@@ -1,21 +1,24 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Sat, 14 Jul 2018 19:27:42 -0700
-Subject: [PATCH v6 5/8] ima: based on policy require signed firmware
-	(sysfs fallback)
-In-Reply-To: <1531505163-20227-6-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Sat, 14 Jul 2018 19:28:28 -0700
+Subject: [PATCH v6 6/8] ima: add build time policy
+In-Reply-To: <1531505163-20227-7-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1531505163-20227-6-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <CAGXu5jKWGONcAfxrU_vk4g=La24NDSzS=scZWxp27xJdO_R0zA@mail.gmail.com>
+	<1531505163-20227-7-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <CAGXu5jL8_nbUKKNO-PCyGwOdQ+vjPZ7_17FKNH1fssgtfjk=Rw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Fri, Jul 13, 2018 at 11:06 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> With an IMA policy requiring signed firmware, this patch prevents
-> the sysfs fallback method of loading firmware.
+> IMA by default does not measure, appraise or audit files, but can be
+> enabled at runtime by specifying a builtin policy on the boot command line
+> or by loading a custom policy.
+>
+> This patch defines a build time policy, which verifies kernel modules,
+> firmware, kexec image, and/or the IMA policy signatures.  This build time
+> policy is automatically enabled at runtime and persists after loading a
+> custom policy.
 >
 > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Luis R. Rodriguez <mcgrof@suse.com>
-> Cc: Matthew Garrett <mjg59@google.com>
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
