@@ -1,22 +1,19 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Sat, 14 Jul 2018 19:21:38 -0700
-Subject: [PATCH v6 3/8] ima: based on policy require signed kexec kernel
-	images
-In-Reply-To: <1531505163-20227-4-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Sat, 14 Jul 2018 19:24:07 -0700
+Subject: [PATCH v6 4/8] firmware: add call to LSM hook before firmware
+	sysfs fallback
+In-Reply-To: <1531505163-20227-5-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1531505163-20227-4-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <CAGXu5jKDE0mPzi8RUhsViEwjhZX1=M-xU4DEa70tk3i2tN+rPA@mail.gmail.com>
+	<1531505163-20227-5-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <CAGXu5j+GTMeX=TNO3mEYivBd1_9MGQBfOivnMYg5+63HboyXMA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Fri, Jul 13, 2018 at 11:05 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> The original kexec_load syscall can not verify file signatures, nor can
-> the kexec image be measured.  Based on policy, deny the kexec_load
-> syscall.
+> Add an LSM hook prior to allowing firmware sysfs fallback loading.
 >
 > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Kees Cook <keescook@chromium.org>
+> Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
