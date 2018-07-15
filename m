@@ -1,24 +1,23 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Sat, 14 Jul 2018 19:13:39 -0700
-Subject: [PATCH v6 1/8] security: define new LSM hook named
-	security_kernel_load_data
-In-Reply-To: <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Sat, 14 Jul 2018 19:14:24 -0700
+Subject: [PATCH v6 2/8] kexec: add call to LSM hook in original kexec_load
+	syscall
+In-Reply-To: <1531505163-20227-3-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
-Message-ID: <CAGXu5jKU-cdYCQePZAr_eEUEsaK92kABFF=UowhaO6yuWVXEVA@mail.gmail.com>
+	<1531505163-20227-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <CAGXu5j+bRE7-Jq4Q+jcVOyZ3e1hy6kbpF5ctdmdQxuV+ri82hQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Fri, Jul 13, 2018 at 11:05 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Differentiate between the kernel reading a file specified by userspace
-> from the kernel loading a buffer containing data provided by userspace.
-> This patch defines a new LSM hook named security_kernel_load_data().
+> In order for LSMs and IMA-appraisal to differentiate between kexec_load
+> and kexec_file_load syscalls, both the original and new syscalls must
+> call an LSM hook.  This patch adds a call to security_kernel_load_data()
+> in the original kexec_load syscall.
 >
 > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
 > Cc: Kees Cook <keescook@chromium.org>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
 > Acked-by: Serge Hallyn <serge@hallyn.com>
 
 Acked-by: Kees Cook <keescook@chromium.org>
