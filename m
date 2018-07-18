@@ -1,43 +1,95 @@
-From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Wed, 18 Jul 2018 11:49:00 +0200
-Subject: [PATCH v1 RFC] Smack: Inform peer that IPv6 traffic has been blocked
-References: <CGME20180718094902eucas1p1e909c23f062782cd8b25ef8e7f4f47cb@eucas1p1.samsung.com>
-Message-ID: <20180718094902eucas1p1e909c23f062782cd8b25ef8e7f4f47cb~CbZykHodt1208512085eucas1p1o@eucas1p1.samsung.com>
+From: amir73il@gmail.com (Amir Goldstein)
+Date: Wed, 18 Jul 2018 13:38:43 +0300
+Subject: [PATCH v2] cap_inode_getsecurity: use d_find_any_alias() instead
+	of d_find_alias()
+In-Reply-To: <1530157637.30361.22.camel@mtkswgap22>
+References: <1530157637.30361.22.camel@mtkswgap22>
+Message-ID: <CAOQ4uxjtgPqgfS9euFfcpO_v8p17AYFrqCEsYVrHQUG1ueq4Ew@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In this patch we're sending an ICMPv6 message to a peer to
-immediately inform it that making a connection is not possible.
-In case of TCP connections, without this change, the peer
-will be waiting until a connection timeout is exceeded.
----
-  security/smack/smack_lsm.c | 3 +++
-  1 file changed, 3 insertions(+)
+Eric,
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index c2282ac..cee8335 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -28,6 +28,7 @@
-  #include <linux/tcp.h>
-  #include <linux/udp.h>
-  #include <linux/dccp.h>
-+#include <linux/icmpv6.h>
-  #include <linux/slab.h>
-  #include <linux/mutex.h>
-  #include <linux/pipe_fs_i.h>
-@@ -4010,6 +4011,8 @@ static int smack_socket_sock_rcv_skb(struct sock 
-*sk, struct sk_buff *skb)
-  #ifdef SMACK_IPV6_PORT_LABELING
-  		rc = smk_ipv6_port_check(sk, &sadd, SMK_RECEIVING);
-  #endif /* SMACK_IPV6_PORT_LABELING */
-+		if (rc != 0)
-+			icmpv6_send(skb, ICMPV6_DEST_UNREACH, ICMPV6_ADM_PROHIBITED, 0);
-  		break;
-  #endif /* CONFIG_IPV6 */
-  	}
--- 
-2.7.4
+Ping for your attention.
+
+On Thu, Jun 28, 2018 at 6:47 AM, Eddie.Horng <eddie.horng@mediatek.com> wrote:
+>
+> The code in cap_inode_getsecurity(), introduced by commit 8db6c34f1dbc
+> ("Introduce v3 namespaced file capabilities"), should use
+> d_find_any_alias() instead of d_find_alias() do handle unhashed dentry
+> correctly. This is needed, for example, if execveat() is called with an
+> open but unlinked overlayfs file, because overlayfs unhashes dentry on
+> unlink.
+>
+> Below reproducer and setup can reproduce the case.
+>   const char* exec="echo";
+>   const char *newargv[] = { "echo", "hello", NULL};
+>   const char *newenviron[] = { NULL };
+>   int fd, err;
+>
+>   fd = open(exec, O_PATH);
+>   unlink(exec);
+>   err = syscall(322/*SYS_execveat*/, fd, "", newargv, newenviron,
+>                 AT_EMPTY_PATH);
+>   if(err<0)
+>     fprintf(stderr, "execveat: %s\n", strerror(errno));
+>
+> gcc compile into ~/test/a.out
+> mount -t overlay -orw,lowerdir=/mnt/l,upperdir=/mnt/u,workdir=/mnt/w
+>   none /mnt/m
+>
+> cd /mnt/m
+> cp /bin/echo .
+> ~/test/a.out
+>
+> Expected result:
+> hello
+> Actually result:
+> execveat: Invalid argument
+> dmesg:
+> Invalid argument reading file caps for /dev/fd/3
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Acked-by: Amir Goldstein <amir73il@gmail.com>
+> Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
+> Signed-off-by: Eddie Horng <eddie.horng@mediatek.com>
+> ---
+
+Eddie,
+
+Please post v3 with changes:
+- Add acked-by Serge
+- Add Cc: <stable@vger.kernel.org> # v4.14
+- Reproducer without overlayfs
+
+Thanks,
+Amir.
+
+> Changes in v2:
+>  - fix commit message wrapped at 74 chars
+>  - added previous acked-by
+>
+>  security/commoncap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 1ce701fcb3f3..147f6131842a 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -388,7 +388,7 @@ int cap_inode_getsecurity(struct inode *inode, const
+> char *name, void **buffer,
+>         if (strcmp(name, "capability") != 0)
+>                 return -EOPNOTSUPP;
+>
+> -       dentry = d_find_alias(inode);
+> +       dentry = d_find_any_alias(inode);
+>         if (!dentry)
+>                 return -EINVAL;
+>
+> --
+> 2.12.5
+>
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
