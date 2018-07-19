@@ -1,50 +1,48 @@
 From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Thu, 19 Jul 2018 11:45:16 +0200
-Subject: [PATCH v4 RFC] Smack: Check UDP-Lite and DCCP protocols during IPv6
-	handling
-References: <CGME20180719094518eucas1p21032c7af4afc37854db8ea84836d6fe3@eucas1p2.samsung.com>
-Message-ID: <20180719094518eucas1p21032c7af4afc37854db8ea84836d6fe3~Cu-zsE2gF2522125221eucas1p2i@eucas1p2.samsung.com>
+Date: Thu, 19 Jul 2018 11:47:31 +0200
+Subject: [PATCH v3 RFC] Smack: Inform peer that IPv6 traffic has been blocked
+References: <CGME20180719094732eucas1p18ac5bd15693cd06f868238c7a4951aa1@eucas1p1.samsung.com>
+Message-ID: <20180719094732eucas1p18ac5bd15693cd06f868238c7a4951aa1~CvBwyJxUf3081230812eucas1p1q@eucas1p1.samsung.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The smack_socket_sock_rcv_skb() function is checking smack labels
-only for UDP and TCP frames carried in IPv6 packets. From now on,
-it is able also to handle UDP-Lite and DCCP protocols.
+In this patch we're sending an ICMPv6 message to a peer to
+immediately inform it that making a connection is not possible.
+In case of TCP connections, without this change, the peer
+will be waiting until a connection timeout is exceeded.
 
 Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
 ---
 Changes in v2:
  - Add missing Signed-off-by field
 Changes in v3:
- - Fix the email subject
-Changes in v4:
  - Fix formatting issues caused by improper email client configuration
 ---
- security/smack/smack_lsm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ security/smack/smack_lsm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 8b6cd5a..c2282ac 100644
+index c2282ac..efa81bc 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -3896,6 +3896,7 @@ static int smk_skb_to_addr_ipv6(struct sk_buff *skb, struct sockaddr_in6 *sip)
- 			sip->sin6_port = th->source;
+@@ -28,6 +28,7 @@
+ #include <linux/tcp.h>
+ #include <linux/udp.h>
+ #include <linux/dccp.h>
++#include <linux/icmpv6.h>
+ #include <linux/slab.h>
+ #include <linux/mutex.h>
+ #include <linux/pipe_fs_i.h>
+@@ -4010,6 +4011,9 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ #ifdef SMACK_IPV6_PORT_LABELING
+ 		rc = smk_ipv6_port_check(sk, &sadd, SMK_RECEIVING);
+ #endif /* SMACK_IPV6_PORT_LABELING */
++		if (rc != 0)
++			icmpv6_send(skb, ICMPV6_DEST_UNREACH,
++					ICMPV6_ADM_PROHIBITED, 0);
  		break;
- 	case IPPROTO_UDP:
-+	case IPPROTO_UDPLITE:
- 		uh = skb_header_pointer(skb, offset, sizeof(_udph), &_udph);
- 		if (uh != NULL)
- 			sip->sin6_port = uh->source;
-@@ -3986,7 +3987,8 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- #if IS_ENABLED(CONFIG_IPV6)
- 	case PF_INET6:
- 		proto = smk_skb_to_addr_ipv6(skb, &sadd);
--		if (proto != IPPROTO_UDP && proto != IPPROTO_TCP)
-+		if (proto != IPPROTO_UDP && proto != IPPROTO_UDPLITE &&
-+		    proto != IPPROTO_TCP && proto != IPPROTO_DCCP)
- 			break;
- #ifdef SMACK_IPV6_SECMARK_LABELING
- 		if (skb && skb->secmark != 0)
+ #endif /* CONFIG_IPV6 */
+ 	}
 -- 
 2.7.4
 --
