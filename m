@@ -1,50 +1,81 @@
-From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Thu, 19 Jul 2018 11:47:31 +0200
-Subject: [PATCH v3 RFC] Smack: Inform peer that IPv6 traffic has been blocked
-References: <CGME20180719094732eucas1p18ac5bd15693cd06f868238c7a4951aa1@eucas1p1.samsung.com>
-Message-ID: <20180719094732eucas1p18ac5bd15693cd06f868238c7a4951aa1~CvBwyJxUf3081230812eucas1p1q@eucas1p1.samsung.com>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Thu, 19 Jul 2018 08:52:32 -0700
+Subject: [PATCH] tpm: add support for partial reads
+Message-ID: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In this patch we're sending an ICMPv6 message to a peer to
-immediately inform it that making a connection is not possible.
-In case of TCP connections, without this change, the peer
-will be waiting until a connection timeout is exceeded.
+Currently to read a response from the TPM device an application needs
+provide "big enough" buffer for the whole response and read it in one go.
+The application doesn't know how big the response it beforehand so it
+always needs to maintain a 4K buffer and read the max (4K).
+In case if the user of the TSS library doesn't provide big enough buffer
+the TCTI spec says that the library should set the required size and return
+TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the application could
+allocate a bigger buffer and call receive again.
+To make it possible in the TSS library this requires being able to do
+partial reads from the driver.
+The library would read the header first to get the actual size of the
+response from the header and then read the rest of the response.
+This patch adds support for partial reads.
 
-Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
----
-Changes in v2:
- - Add missing Signed-off-by field
-Changes in v3:
- - Fix formatting issues caused by improper email client configuration
----
- security/smack/smack_lsm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+The usecase is implemented in this TSS commit:
+https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index c2282ac..efa81bc 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -28,6 +28,7 @@
- #include <linux/tcp.h>
- #include <linux/udp.h>
- #include <linux/dccp.h>
-+#include <linux/icmpv6.h>
- #include <linux/slab.h>
- #include <linux/mutex.h>
- #include <linux/pipe_fs_i.h>
-@@ -4010,6 +4011,9 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- #ifdef SMACK_IPV6_PORT_LABELING
- 		rc = smk_ipv6_port_check(sk, &sadd, SMK_RECEIVING);
- #endif /* SMACK_IPV6_PORT_LABELING */
-+		if (rc != 0)
-+			icmpv6_send(skb, ICMPV6_DEST_UNREACH,
-+					ICMPV6_ADM_PROHIBITED, 0);
- 		break;
- #endif /* CONFIG_IPV6 */
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ drivers/char/tpm/tpm-dev-common.c |   32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 3f2089f75c30..f5b614984dbc 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -99,20 +99,34 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 	ssize_t ret_size = 0;
+ 	int rc;
+ 
+-	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->timeout_work);
+ 	mutex_lock(&priv->buffer_mutex);
+ 
+ 	if (priv->data_pending) {
+-		ret_size = min_t(ssize_t, size, priv->data_pending);
+-		if (ret_size > 0) {
+-			rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-			memset(priv->data_buffer, 0, priv->data_pending);
+-			if (rc)
+-				ret_size = -EFAULT;
++		ret_size = min_t(ssize_t, size + *off, priv->data_pending);
++		if (ret_size <= 0) {
++			ret_size = 0;
++			priv->data_pending = 0;
++			*off = 0;
++			goto out;
+ 		}
+ 
+-		priv->data_pending = 0;
++		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
++		if (rc) {
++			memset(priv->data_buffer, 0, priv->data_pending);
++			ret_size = -EFAULT;
++			priv->data_pending = 0;
++			*off = 0;
++		} else {
++			memset(priv->data_buffer + *off, 0, ret_size);
++			priv->data_pending -= ret_size;
++			*off += ret_size;
++		}
++	}
++out:
++	if (!priv->data_pending) {
++		del_singleshot_timer_sync(&priv->user_read_timer);
++		flush_work(&priv->timeout_work);
++		*off = 0;
  	}
--- 
-2.7.4
+ 
+ 	mutex_unlock(&priv->buffer_mutex);
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
