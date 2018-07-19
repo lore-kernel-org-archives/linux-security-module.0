@@ -1,55 +1,101 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 19 Jul 2018 15:51:15 -0700
-Subject: [PATCH v3 RFC] Smack: Inform peer that IPv6 traffic has been
-	blocked
-In-Reply-To: <20180719094732eucas1p18ac5bd15693cd06f868238c7a4951aa1~CvBwyJxUf3081230812eucas1p1q@eucas1p1.samsung.com>
-References: <CGME20180719094732eucas1p18ac5bd15693cd06f868238c7a4951aa1@eucas1p1.samsung.com>
-	<20180719094732eucas1p18ac5bd15693cd06f868238c7a4951aa1~CvBwyJxUf3081230812eucas1p1q@eucas1p1.samsung.com>
-Message-ID: <575159b1-b423-cd59-246b-ab4097ce47b8@schaufler-ca.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Thu, 19 Jul 2018 16:28:14 -0700
+Subject: [PATCH 1/2] apparmor: Check buffer bounds when mapping
+	permissions mask
+In-Reply-To: <1530854701-7348-2-git-send-email-tyhicks@canonical.com>
+References: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
+	<1530854701-7348-2-git-send-email-tyhicks@canonical.com>
+Message-ID: <b8a0764f-e705-763c-e0a6-a855c359bd75@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 7/19/2018 2:47 AM, Piotr Sawicki wrote:
-> In this patch we're sending an ICMPv6 message to a peer to
-> immediately inform it that making a connection is not possible.
-> In case of TCP connections, without this change, the peer
-> will be waiting until a connection timeout is exceeded.
->
-> Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
+On 07/05/2018 10:25 PM, Tyler Hicks wrote:
+> Don't read past the end of the buffer containing permissions
+> characters or write past the end of the destination string.
+> 
+> Detected by CoverityScan CID#1415361, 1415376 ("Out-of-bounds access")
+> 
+> Fixes: e53cfe6c7caa ("apparmor: rework perm mapping to a slightly broader set")
+> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+I've pulled this into apparmor-next with a minor modification noted below
 
-> ---
-> Changes in v2:
->  - Add missing Signed-off-by field
-> Changes in v3:
->  - Fix formatting issues caused by improper email client configuration
-> ---
->  security/smack/smack_lsm.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index c2282ac..efa81bc 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -28,6 +28,7 @@
->  #include <linux/tcp.h>
->  #include <linux/udp.h>
->  #include <linux/dccp.h>
-> +#include <linux/icmpv6.h>
->  #include <linux/slab.h>
->  #include <linux/mutex.h>
->  #include <linux/pipe_fs_i.h>
-> @@ -4010,6 +4011,9 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->  #ifdef SMACK_IPV6_PORT_LABELING
->  		rc = smk_ipv6_port_check(sk, &sadd, SMK_RECEIVING);
->  #endif /* SMACK_IPV6_PORT_LABELING */
-> +		if (rc != 0)
-> +			icmpv6_send(skb, ICMPV6_DEST_UNREACH,
-> +					ICMPV6_ADM_PROHIBITED, 0);
->  		break;
->  #endif /* CONFIG_IPV6 */
+>  security/apparmor/file.c          |  3 ++-
+>  security/apparmor/include/perms.h |  3 ++-
+>  security/apparmor/lib.c           | 17 +++++++++++++----
+>  3 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+> index 224b2fef93ca..4285943f7260 100644
+> --- a/security/apparmor/file.c
+> +++ b/security/apparmor/file.c
+> @@ -47,7 +47,8 @@ static void audit_file_mask(struct audit_buffer *ab, u32 mask)
+>  {
+>  	char str[10];
+>  
+> -	aa_perm_mask_to_str(str, aa_file_perm_chrs, map_mask_to_chr_mask(mask));
+> +	aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+> +			    map_mask_to_chr_mask(mask));
+>  	audit_log_string(ab, str);
+>  }
+>  
+> diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
+> index 38aa6247d00f..b94ec114d1a4 100644
+> --- a/security/apparmor/include/perms.h
+> +++ b/security/apparmor/include/perms.h
+> @@ -137,7 +137,8 @@ extern struct aa_perms allperms;
+>  	xcheck(fn_for_each((L1), (P), (FN1)), fn_for_each((L2), (P), (FN2)))
+>  
+>  
+> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask);
+> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs,
+> +			 u32 mask);
+>  void aa_audit_perm_names(struct audit_buffer *ab, const char * const *names,
+>  			 u32 mask);
+>  void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
+> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+> index a7b3f681b80e..7ab368c3789b 100644
+> --- a/security/apparmor/lib.c
+> +++ b/security/apparmor/lib.c
+> @@ -198,15 +198,24 @@ const char *aa_file_perm_names[] = {
+>  /**
+>   * aa_perm_mask_to_str - convert a perm mask to its short string
+>   * @str: character buffer to store string in (at least 10 characters)
+> + * @str_size: size of the @str buffer
+> + * @chrs: NUL-terminated character buffer of permission characters
+>   * @mask: permission mask to convert
+>   */
+> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask)
+> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs, u32 mask)
+>  {
+>  	unsigned int i, perm = 1;
+> +	size_t num_chrs = strlen(chrs);
+> +
+> +	for (i = 0; i < num_chrs; perm <<= 1, i++> +		if (mask & perm) {
+> +			/* Ensure that one byte is left for NUL-termination */
+> +			if (WARN_ON_ONCE(str_size <= 1))
+> +				continue;
+might as well break here
+
+>  
+> -	for (i = 0; i < 32; perm <<= 1, i++) {
+> -		if (mask & perm)
+>  			*str++ = chrs[i];
+> +			str_size--;
+> +		}
 >  	}
+>  	*str = '\0';
+>  }
+> @@ -236,7 +245,7 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
+>  
+>  	audit_log_format(ab, "\"");
+>  	if ((mask & chrsmask) && chrs) {
+> -		aa_perm_mask_to_str(str, chrs, mask & chrsmask);
+> +		aa_perm_mask_to_str(str, sizeof(str), chrs, mask & chrsmask);
+>  		mask &= ~chrsmask;
+>  		audit_log_format(ab, "%s", str);
+>  		if (mask & namesmask)
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
