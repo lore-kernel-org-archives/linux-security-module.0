@@ -1,47 +1,48 @@
-From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Wed, 18 Jul 2018 12:52:26 +0200
-Subject: [PATCH v3 RFC] Smack: Check UDP-Lite and DCCP protocols during IPv6
-	handling
-References: <CGME20180718105227eucas1p2ac93ac9074cb916dea20b9343b32e2ed@eucas1p2.samsung.com>
-Message-ID: <20180718105227eucas1p2ac93ac9074cb916dea20b9343b32e2ed~CcRKQY2rC3014030140eucas1p2I@eucas1p2.samsung.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Wed, 18 Jul 2018 22:44:52 -0700
+Subject: Fwd: [PATCH] security: Add LSM fixup hooks to set*gid syscalls.
+In-Reply-To: <CAGXu5jLEs4b3ki8t=bVgrny9JZxDTKgoWdvryC45cj_mO93Y2A@mail.gmail.com>
+References: <CAJ-EccNh5B84yowXL4u5-X8m-jYhOtuRwBOmstUnCB5Tc74dBg@mail.gmail.com>
+	<CAGXu5j+ha--Hw_o0W9A5VKqXgy3nXuxU9+049akj9=dA0KdMRw@mail.gmail.com>
+	<CAJ-EccPgpUg_ytam8HhiELTXJR933RbQcJzgEgc49nKS3uo-qA@mail.gmail.com>
+	<CAGXu5jLEs4b3ki8t=bVgrny9JZxDTKgoWdvryC45cj_mO93Y2A@mail.gmail.com>
+Message-ID: <CAGXu5jJY1o9PMVxkoRWF_r6mJwBB8KK98AYsArNNCX4uBALD6w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The smack_socket_sock_rcv_skb() function is checking smack labels
-only for UDP and TCP frames carried in IPv6 packets. From now on,
-it is able also to handle UDP-Lite and DCCP protocols.
+[resending... list Cc got accidentally dropped...]
 
-Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
----
-  security/smack/smack_lsm.c | 4 +++-
-  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 8b6cd5a..c2282ac 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3896,6 +3896,7 @@ static int smk_skb_to_addr_ipv6(struct sk_buff 
-*skb, struct sockaddr_in6 *sip)
-  			sip->sin6_port = th->source;
-  		break;
-  	case IPPROTO_UDP:
-+	case IPPROTO_UDPLITE:
-  		uh = skb_header_pointer(skb, offset, sizeof(_udph), &_udph);
-  		if (uh != NULL)
-  			sip->sin6_port = uh->source;
-@@ -3986,7 +3987,8 @@ static int smack_socket_sock_rcv_skb(struct sock 
-*sk, struct sk_buff *skb)
-  #if IS_ENABLED(CONFIG_IPV6)
-  	case PF_INET6:
-  		proto = smk_skb_to_addr_ipv6(skb, &sadd);
--		if (proto != IPPROTO_UDP && proto != IPPROTO_TCP)
-+		if (proto != IPPROTO_UDP && proto != IPPROTO_UDPLITE &&
-+		    proto != IPPROTO_TCP && proto != IPPROTO_DCCP)
-  			break;
-  #ifdef SMACK_IPV6_SECMARK_LABELING
-  		if (skb && skb->secmark != 0)
+On Tue, Jul 17, 2018 at 2:40 PM, Micah Morton <mortonm@chromium.org> wrote:
+>
+>
+> On Tue, Jul 17, 2018 at 1:19 PM Kees Cook <keescook@chromium.org> wrote:
+>> Also, I think this needs a LSM_HOOK_INIT call somewhere too?
+>
+>
+> Isn't that something that goes in the particular LSMs which may or may not
+> want to use the hook?
+> https://elixir.bootlin.com/linux/v4.18-rc2/ident/LSM_HOOK_INIT
+
+Oops, yes, I got myself confused. I was thinking about a wrapper for
+call_int_hook() which you already added. Thanks!
+
+Please send an explicit "[PATCH v2] ..." email with the indentation
+fixes (it's hard for maintainers to extract patches from a follow-up
+like it was), and feel free to include:
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+after your Signed-off-by.
+
+Thanks!
+
+-Kees
+
+
 -- 
-2.7.4
+Kees Cook
+Pixel Security
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
