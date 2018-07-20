@@ -1,64 +1,83 @@
-From: jlu@pengutronix.de (Jan =?ISO-8859-1?Q?L=FCbbe?=)
-Date: Fri, 20 Jul 2018 10:40:42 +0200
-Subject: [PATCH 1/2] security/keys/secure_key: Adds the secure key
-	support based on CAAM.
-In-Reply-To: <20180720054656.29143-1-udit.agarwal@nxp.com>
-References: <20180720054656.29143-1-udit.agarwal@nxp.com>
-Message-ID: <1532076042.3511.203.camel@pengutronix.de>
+From: john.johansen@canonical.com (John Johansen)
+Date: Fri, 20 Jul 2018 03:31:57 -0700
+Subject: [PATCH] apparmor: remove redundant pointer 'info'
+In-Reply-To: <20180714161905.5403-1-colin.king@canonical.com>
+References: <20180714161905.5403-1-colin.king@canonical.com>
+Message-ID: <5702474d-5215-cdea-8d77-24f45fef92cc@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-07-20 at 11:16 +0530, Udit Agarwal wrote:
-> +==========
-> +Secure Key
-> +==========
-> +
-> +Secure key is the new type added to kernel key ring service.
-> +Secure key is a symmetric type key of minimum length 32 bytes
-> +and with maximum possible length to be 128 bytes. It is produced
-> +in kernel using the CAAM crypto engine. Userspace can only see
-> +the blob for the corresponding key. All the blobs are displayed
-> +or loaded in hex ascii.
-> +
-> +Secure key can only be created on platforms which supports CAAM
-> +hardware block. Secure key can also be used as a master key to
-> +create the encrypted keys along with the existing key types in
-> +kernel.
-> +
-> +Secure key uses CAAM hardware to generate the key and blobify its
-> +content for userspace. Generated blobs are tied up with the hardware
-> +secret key stored in CAAM, hence the same blob will not be able to
-> +de-blobify with the different secret key on another machine.
+On 07/14/2018 09:19 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer 'info' is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'info' set but not used [-Wunused-but-set-variable]
+> 
+NAK,
 
-Thanks for working on this, so far we've been using this functionality
-via a custom sysfs interface. Proper integration into the keyring
-framework would be very nice!
+real problem wrong fix, instead of deleting the additional context info
+we need to be auditing it
 
-Some questions which might influence the userspace api design:
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 098d546d8253..08c88de0ffda 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1036,7 +1036,7 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ audit:
+ 	aa_audit_file(profile, &nullperms, OP_CHANGE_HAT, AA_MAY_CHANGEHAT,
+ 		      name, hat ? hat->base.hname : NULL,
+-		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, NULL,
++		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, info,
+ 		      error);
+ 	if (!hat || (error && error != -ENOENT))
+ 		return ERR_PTR(error);
 
-- If I remember correctly, CAAM key blobs contain flags which specify
-if the key can be exported from the CAAM after unwrapping or not (then
-it stays in one of the internal key registers). Which mode do you use?
+I pushed this fix into apparmor-next
 
-- If that's not already supported by this series, do you intend to make
-secure keys (in the non-exportable-mode) usable for encryption/
-decryption, so they could be used for dm-crypt? If so, you'd probably
-need some resource management in the CAAM driver, as the number of key
-registers is limited.
 
-- Secure keys could also be implemented using OP-TEE for example, so
-the documentation shouldn't be CAAM-specific and only use it as an
-example.
 
-Are there corresponding changes to the CAAM driver needed to test this?
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  security/apparmor/domain.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 098d546d8253..410d9ce09861 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -1006,7 +1006,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+>  					 const char *name, bool sibling)
+>  {
+>  	struct aa_profile *root, *hat = NULL;
+> -	const char *info = NULL;
+>  	int error = 0;
+>  
+>  	if (sibling && PROFILE_IS_HAT(profile)) {
+> @@ -1014,7 +1013,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+>  	} else if (!sibling && !PROFILE_IS_HAT(profile)) {
+>  		root = aa_get_profile(profile);
+>  	} else {
+> -		info = "conflicting target types";
+>  		error = -EPERM;
+>  		goto audit;
+>  	}
+> @@ -1025,10 +1023,8 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+>  		if (COMPLAIN_MODE(profile)) {
+>  			hat = aa_new_null_profile(profile, true, name,
+>  						  GFP_KERNEL);
+> -			if (!hat) {
+> -				info = "failed null profile create";
+> +			if (!hat)
+>  				error = -ENOMEM;
+> -			}
+>  		}
+>  	}
+>  	aa_put_profile(root);
+> 
 
-Best regards,
-Jan
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
