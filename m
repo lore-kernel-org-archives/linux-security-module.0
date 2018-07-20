@@ -1,183 +1,64 @@
-From: udit.agarwal@nxp.com (Udit Agarwal)
-Date: Fri, 20 Jul 2018 11:16:56 +0530
-Subject: [PATCH 2/2] encrypted_keys: Adds support for secure key-type as
-	master key.
+From: jlu@pengutronix.de (Jan =?ISO-8859-1?Q?L=FCbbe?=)
+Date: Fri, 20 Jul 2018 10:40:42 +0200
+Subject: [PATCH 1/2] security/keys/secure_key: Adds the secure key
+	support based on CAAM.
 In-Reply-To: <20180720054656.29143-1-udit.agarwal@nxp.com>
 References: <20180720054656.29143-1-udit.agarwal@nxp.com>
-Message-ID: <20180720054656.29143-2-udit.agarwal@nxp.com>
+Message-ID: <1532076042.3511.203.camel@pengutronix.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Encrypted keys can use secure key-type as master key along with
-trusted/user keys.
+On Fri, 2018-07-20 at 11:16 +0530, Udit Agarwal wrote:
+> +==========
+> +Secure Key
+> +==========
+> +
+> +Secure key is the new type added to kernel key ring service.
+> +Secure key is a symmetric type key of minimum length 32 bytes
+> +and with maximum possible length to be 128 bytes. It is produced
+> +in kernel using the CAAM crypto engine. Userspace can only see
+> +the blob for the corresponding key. All the blobs are displayed
+> +or loaded in hex ascii.
+> +
+> +Secure key can only be created on platforms which supports CAAM
+> +hardware block. Secure key can also be used as a master key to
+> +create the encrypted keys along with the existing key types in
+> +kernel.
+> +
+> +Secure key uses CAAM hardware to generate the key and blobify its
+> +content for userspace. Generated blobs are tied up with the hardware
+> +secret key stored in CAAM, hence the same blob will not be able to
+> +de-blobify with the different secret key on another machine.
 
-Secure key as master key uses, secure key type payload derieved
-using CAAM hardware.
+Thanks for working on this, so far we've been using this functionality
+via a custom sysfs interface. Proper integration into the keyring
+framework would be very nice!
 
-Signed-off-by: Udit Agarwal <udit.agarwal@nxp.com>
-Reviewed-by: Sahil Malhotra <sahil.malhotra@nxp.com>
----
- MAINTAINERS                                   |  1 +
- security/keys/encrypted-keys/Makefile         |  2 +
- security/keys/encrypted-keys/encrypted.c      | 13 ++++++-
- security/keys/encrypted-keys/encrypted.h      | 13 +++++++
- .../keys/encrypted-keys/masterkey_secure.c    | 37 +++++++++++++++++++
- 5 files changed, 64 insertions(+), 2 deletions(-)
- create mode 100644 security/keys/encrypted-keys/masterkey_secure.c
+Some questions which might influence the userspace api design:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 654be2ee4b0a..847254eec22a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7949,6 +7949,7 @@ F:	include/keys/secure-type.h
- F:	security/keys/secure_key.c
- F:	security/keys/securekey_desc.c
- F:	security/keys/securekey_desc.h
-+F:	security/keys/encrypted-keys/masterkey_secure.c
- 
- KEYS/KEYRINGS:
- M:	David Howells <dhowells@redhat.com>
-diff --git a/security/keys/encrypted-keys/Makefile b/security/keys/encrypted-keys/Makefile
-index 7a44dce6f69d..df2b906b7d24 100644
---- a/security/keys/encrypted-keys/Makefile
-+++ b/security/keys/encrypted-keys/Makefile
-@@ -7,5 +7,7 @@ obj-$(CONFIG_ENCRYPTED_KEYS) += encrypted-keys.o
- 
- encrypted-keys-y := encrypted.o ecryptfs_format.o
- masterkey-$(CONFIG_TRUSTED_KEYS) := masterkey_trusted.o
-+masterkey-$(CONFIG_SECURE_KEYS) := masterkey_secure.o
- masterkey-$(CONFIG_TRUSTED_KEYS)-$(CONFIG_ENCRYPTED_KEYS) := masterkey_trusted.o
-+masterkey-$(CONFIG_SECURE_KEYS)-$(CONFIG_ENCRYPTED_KEYS) := masterkey_secure.o
- encrypted-keys-y += $(masterkey-y) $(masterkey-m-m)
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index d92cbf9687c3..258b38094705 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -39,6 +39,7 @@
- #include "ecryptfs_format.h"
- 
- static const char KEY_TRUSTED_PREFIX[] = "trusted:";
-+static const char KEY_SECURE_PREFIX[] = "secure:";
- static const char KEY_USER_PREFIX[] = "user:";
- static const char hash_alg[] = "sha256";
- static const char hmac_alg[] = "hmac(sha256)";
-@@ -49,6 +50,7 @@ static unsigned int ivsize;
- static int blksize;
- 
- #define KEY_TRUSTED_PREFIX_LEN (sizeof (KEY_TRUSTED_PREFIX) - 1)
-+#define KEY_SECURE_PREFIX_LEN (sizeof(KEY_SECURE_PREFIX) - 1)
- #define KEY_USER_PREFIX_LEN (sizeof (KEY_USER_PREFIX) - 1)
- #define KEY_ECRYPTFS_DESC_LEN 16
- #define HASH_SIZE SHA256_DIGEST_SIZE
-@@ -125,7 +127,7 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
- /*
-  * valid_master_desc - verify the 'key-type:desc' of a new/updated master-key
-  *
-- * key-type:= "trusted:" | "user:"
-+ * key-type:= "trusted:" | "user:" | "secure:"
-  * desc:= master-key description
-  *
-  * Verify that 'key-type' is valid and that 'desc' exists. On key update,
-@@ -140,6 +142,8 @@ static int valid_master_desc(const char *new_desc, const char *orig_desc)
- 
- 	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
- 		prefix_len = KEY_TRUSTED_PREFIX_LEN;
-+	else if (!strncmp(new_desc, KEY_SECURE_PREFIX, KEY_SECURE_PREFIX_LEN))
-+		prefix_len = KEY_SECURE_PREFIX_LEN;
- 	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
- 		prefix_len = KEY_USER_PREFIX_LEN;
- 	else
-@@ -358,7 +362,7 @@ static int calc_hmac(u8 *digest, const u8 *key, unsigned int keylen,
- 
- enum derived_key_type { ENC_KEY, AUTH_KEY };
- 
--/* Derive authentication/encryption key from trusted key */
-+/* Derive authentication/encryption key from trusted/secure key */
- static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
- 			   const u8 *master_key, size_t master_keylen)
- {
-@@ -429,6 +433,11 @@ static struct key *request_master_key(struct encrypted_key_payload *epayload,
- 		mkey = request_trusted_key(epayload->master_desc +
- 					   KEY_TRUSTED_PREFIX_LEN,
- 					   master_key, master_keylen);
-+	} else if (!strncmp(epayload->master_desc, KEY_SECURE_PREFIX,
-+			    KEY_SECURE_PREFIX_LEN)) {
-+		mkey = request_secure_key(epayload->master_desc +
-+					  KEY_SECURE_PREFIX_LEN,
-+					  master_key, master_keylen);
- 	} else if (!strncmp(epayload->master_desc, KEY_USER_PREFIX,
- 			    KEY_USER_PREFIX_LEN)) {
- 		mkey = request_user_key(epayload->master_desc +
-diff --git a/security/keys/encrypted-keys/encrypted.h b/security/keys/encrypted-keys/encrypted.h
-index 1809995db452..f1cb73611e77 100644
---- a/security/keys/encrypted-keys/encrypted.h
-+++ b/security/keys/encrypted-keys/encrypted.h
-@@ -16,6 +16,19 @@ static inline struct key *request_trusted_key(const char *trusted_desc,
- }
- #endif
- 
-+#if defined(CONFIG_SECURE_KEYS)
-+extern struct key *request_secure_key(const char *secure_desc,
-+				      const u8 **master_key,
-+				      size_t *master_keylen);
-+#else
-+static inline struct key *request_secure_key(const char *secure_desc,
-+					     const u8 **master_key,
-+					     size_t *master_keylen)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+#endif
-+
- #if ENCRYPTED_DEBUG
- static inline void dump_master_key(const u8 *master_key, size_t master_keylen)
- {
-diff --git a/security/keys/encrypted-keys/masterkey_secure.c b/security/keys/encrypted-keys/masterkey_secure.c
-new file mode 100644
-index 000000000000..87068c966111
---- /dev/null
-+++ b/security/keys/encrypted-keys/masterkey_secure.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 NXP.
-+ *
-+ */
-+
-+#include <linux/uaccess.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <keys/secure-type.h>
-+#include <keys/encrypted-type.h>
-+#include "encrypted.h"
-+
-+/*
-+ * request_secure_key - request the secure key
-+ *
-+ * Secure keys and their blobs are derived from CAAM hardware.
-+ * Userspace manages secure  key-type data, but key data is not
-+ * visible in plain form. It is presented as blobs.
-+ */
-+struct key *request_secure_key(const char *secure_desc,
-+				const u8 **master_key, size_t *master_keylen)
-+{
-+	struct secure_key_payload *spayload;
-+	struct key *skey;
-+
-+	skey = request_key(&key_type_secure, secure_desc, NULL);
-+	if (IS_ERR(skey))
-+		goto error;
-+
-+	down_read(&skey->sem);
-+	spayload = skey->payload.data[0];
-+	*master_key = spayload->key;
-+	*master_keylen = spayload->key_len;
-+error:
-+	return skey;
-+}
+- If I remember correctly, CAAM key blobs contain flags which specify
+if the key can be exported from the CAAM after unwrapping or not (then
+it stays in one of the internal key registers). Which mode do you use?
+
+- If that's not already supported by this series, do you intend to make
+secure keys (in the non-exportable-mode) usable for encryption/
+decryption, so they could be used for dm-crypt? If so, you'd probably
+need some resource management in the CAAM driver, as the number of key
+registers is limited.
+
+- Secure keys could also be implemented using OP-TEE for example, so
+the documentation shouldn't be CAAM-specific and only use it as an
+example.
+
+Are there corresponding changes to the CAAM driver needed to test this?
+
+Best regards,
+Jan
 -- 
-2.17.1
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
