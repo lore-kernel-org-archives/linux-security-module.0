@@ -1,17 +1,18 @@
 From: dhowells@redhat.com (David Howells)
-Date: Mon, 23 Jul 2018 16:26:11 +0100
-Subject: [PATCH 4/5] vfs: Add superblock notifications
+Date: Mon, 23 Jul 2018 16:26:05 +0100
+Subject: [PATCH 3/5] vfs: Add a mount-notification facility
 In-Reply-To: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
 References: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
-Message-ID: <153235957165.32640.10593983430211812657.stgit@warthog.procyon.org.uk>
+Message-ID: <153235956503.32640.8212120843796670089.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add a superblock event notification facility whereby notifications about
-superblock events, such as I/O errors (EIO), quota limits being hit
-(EDQUOT) and running out of space (ENOSPC) can be reported to a monitoring
-process asynchronously.  Note that this does not cover vfsmount topology
-changes.  mount_notify() is used for that.
+[*] Note that this needs some cleaning up and not all the events work yet.
+
+Add a mount notification facility whereby notifications about changes in
+mount topology and configuration can be received.  Note that this only
+covers vfsmount topology changes and not superblock events.  A separate
+facility will be added for that.
 
 Firstly, an event queue needs to be created:
 
@@ -22,148 +23,249 @@ then a notification can be set up to report notifications via that queue:
 	struct watch_notification_filter filter;
 	memset(&filter, 0, sizeof(filter));
 	filter.subtype_filter[0] = ~0ULL;
-	filter.info_id		 = 0x03000000;
-	sb_notify(AT_FDCWD, "/home/dhowells", 0, fd, &filter);
-
-In this case, it would let me monitor my own homedir for events.
+	filter.info_id		 = 0x02000000;
+	mount_notify(AT_FDCWD, "/", 0, fd, &filter);
 
 Note that the queue can be shared between multiple notifications of various
 types.
 
-[*] QUESTION: Does this want to be per-sb, per-mount_namespace,
-    per-some-new-notify-ns or per-system?  Or do multiple options make
-    sense?
-
-[*] QUESTION: I've done it this way so that anyone could theoretically
-    monitor the superblock of any filesystem they can pathwalk to, but do
-    we need other security controls?
-
-[*] QUESTION: Should the LSM be able to filter the events a queue can
-    receive?  For instance the opener of the queue would grant that queue
-    subject creds (by ->f_cred) that could be used to govern what events
-    could be seen, assuming the target superblock to have some object
-    creds, based on, say, the mounter.
+Mount notifications propagate up the tree towards the root, so a watch will
+catch all of the events happening in the subtree rooted at the watch.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
  arch/x86/entry/syscalls/syscall_32.tbl |    1 
  arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/Kconfig                             |   12 +++
- fs/super.c                             |  116 ++++++++++++++++++++++++++++++++
- include/linux/fs.h                     |   77 +++++++++++++++++++++
- include/linux/syscalls.h               |    2 +
- include/uapi/linux/watch_queue.h       |   26 +++++++
+ fs/Kconfig                             |    9 ++
+ fs/Makefile                            |    1 
+ fs/fs_context.c                        |    1 
+ fs/mount.h                             |   26 +++++
+ fs/mount_notify.c                      |  178 ++++++++++++++++++++++++++++++++
+ fs/namespace.c                         |   18 +++
+ include/linux/dcache.h                 |    1 
+ include/linux/syscalls.h               |    2 
+ include/uapi/linux/watch_queue.h       |   24 ++++
  kernel/sys_ni.c                        |    3 +
- 8 files changed, 238 insertions(+)
+ 12 files changed, 265 insertions(+)
+ create mode 100644 fs/mount_notify.c
 
 diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 449bbcc19a6d..c9db9d51a7df 100644
+index 806760188a31..449bbcc19a6d 100644
 --- a/arch/x86/entry/syscalls/syscall_32.tbl
 +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -406,3 +406,4 @@
+@@ -405,3 +405,4 @@
+ 391	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
  392	i386	fspick			sys_fspick			__ia32_sys_fspick
  393	i386	fsinfo			sys_fsinfo			__ia32_sys_fsinfo
- 394	i386	mount_notify		sys_mount_notify		__ia32_sys_mount_notify
-+395	i386	sb_notify		sys_sb_notify			__ia32_sys_sb_notify
++394	i386	mount_notify		sys_mount_notify		__ia32_sys_mount_notify
 diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f25fa7ff5fb9..17869bf7788a 100644
+index 0823eed2b02e..f25fa7ff5fb9 100644
 --- a/arch/x86/entry/syscalls/syscall_64.tbl
 +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -351,6 +351,7 @@
+@@ -350,6 +350,7 @@
+ 339	common	fsmount			__x64_sys_fsmount
  340	common	fspick			__x64_sys_fspick
  341	common	fsinfo			__x64_sys_fsinfo
- 342	common	mount_notify		__x64_sys_mount_notify
-+343	common	sb_notify		__x64_sys_sb_notify
++342	common	mount_notify		__x64_sys_mount_notify
  
  #
  # x32-specific system call numbers start at 512 to avoid cache impact
 diff --git a/fs/Kconfig b/fs/Kconfig
-index cbcca62d32e9..0551abf08504 100644
+index ac474a61be37..cbcca62d32e9 100644
 --- a/fs/Kconfig
 +++ b/fs/Kconfig
-@@ -116,6 +116,18 @@ config MOUNT_NOTIFICATIONS
- 	  device to handle the notification buffer and provides the
- 	  mount_notify() system call to enable/disable watchpoints.
+@@ -107,6 +107,15 @@ source "fs/crypto/Kconfig"
  
-+config SB_NOTIFICATIONS
-+	bool "Superblock event notifications"
+ source "fs/notify/Kconfig"
+ 
++config MOUNT_NOTIFICATIONS
++	bool "Mount topology change notifications"
 +	select WATCH_QUEUE
 +	help
-+	  This option provides support for receiving superblock event
-+	  notifications.  This makes use of the /dev/watch_queue misc device to
-+	  handle the notification buffer and provides the sb_notify() system
-+	  call to enable/disable watches.
-+
-+	  Events can include things like changing between R/W and R/O, EIO
-+	  generation, ENOSPC generation and EDQUOT generation.
++	  This option provides support for getting change notifications on the
++	  mount tree topology.  This makes use of the /dev/watch_queue misc
++	  device to handle the notification buffer and provides the
++	  mount_notify() system call to enable/disable watchpoints.
 +
  source "fs/quota/Kconfig"
  
  source "fs/autofs/Kconfig"
-diff --git a/fs/super.c b/fs/super.c
-index 3fe5d12b7697..1a1cf517dbd8 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -37,6 +37,8 @@
- #include <linux/user_namespace.h>
- #include <uapi/linux/mount.h>
- #include <linux/fs_context.h>
-+#include <linux/syscalls.h>
-+#include <linux/namei.h>
- #include "internal.h"
+diff --git a/fs/Makefile b/fs/Makefile
+index d3b33798998e..49b60030d905 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -129,3 +129,4 @@ obj-y				+= exofs/ # Multiple modules
+ obj-$(CONFIG_CEPH_FS)		+= ceph/
+ obj-$(CONFIG_PSTORE)		+= pstore/
+ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
++obj-$(CONFIG_MOUNT_NOTIFICATIONS) += mount_notify.o
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 071723cf11c8..4fa99a438471 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -321,6 +321,7 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 	case FS_CONTEXT_FOR_SUBMOUNT:
+ 		fc->user_ns = get_user_ns(reference->d_sb->s_user_ns);
+ 		fc->net_ns = get_net(current->nsproxy->net_ns);
++		fc->sb_flags |= SB_SUBMOUNT;
+ 		break;
+ 	case FS_CONTEXT_FOR_RECONFIGURE:
+ 		/* We don't pin any namespaces as the superblock's
+diff --git a/fs/mount.h b/fs/mount.h
+index f39bc9da4d73..7f72f824b958 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -4,6 +4,7 @@
+ #include <linux/poll.h>
+ #include <linux/ns_common.h>
+ #include <linux/fs_pin.h>
++#include <linux/watch_queue.h>
  
- static int thaw_super_locked(struct super_block *sb);
-@@ -320,6 +322,10 @@ void deactivate_locked_super(struct super_block *s)
- {
- 	struct file_system_type *fs = s->s_type;
- 	if (atomic_dec_and_test(&s->s_active)) {
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+		if (s->s_watchers)
-+			remove_watch_list(s->s_watchers);
+ struct mnt_namespace {
+ 	atomic_t		count;
+@@ -67,9 +68,13 @@ struct mount {
+ 	int mnt_id;			/* mount identifier */
+ 	int mnt_group_id;		/* peer group identifier */
+ 	int mnt_expiry_mark;		/* true if marked for expiry */
++	int mnt_nr_watchers;		/* The number of subtree watches tracking this */
+ 	struct hlist_head mnt_pins;
+ 	struct fs_pin mnt_umount;
+ 	struct dentry *mnt_ex_mountpoint;
++#ifdef CONFIG_MOUNT_NOTIFICATIONS
++	struct watch_list *mnt_watchers; /* Watches on dentries within this mount */
 +#endif
- 		cleancache_invalidate_fs(s);
- 		unregister_shrinker(&s->s_shrink);
- 		fs->kill_sb(s);
-@@ -997,6 +1003,8 @@ int do_remount_sb(struct super_block *sb, int sb_flags, void *data,
- 	/* Needs to be ordered wrt mnt_is_readonly() */
- 	smp_wmb();
- 	sb->s_readonly_remount = 0;
-+	notify_sb(sb, notify_superblock_readonly,
-+		  remount_ro ? WATCH_INFO_FLAG_0 : 0);
+ } __randomize_layout;
  
- 	/*
- 	 * Some filesystems modify their metadata via some other path than the
-@@ -1810,3 +1818,111 @@ int vfs_get_tree(struct fs_context *fc)
- 	return ret;
+ #define MNT_NS_INTERNAL ERR_PTR(-EINVAL) /* distinct from any mnt_namespace */
+@@ -146,3 +151,24 @@ static inline bool is_local_mountpoint(struct dentry *dentry)
+ 
+ 	return __is_local_mountpoint(dentry);
  }
- EXPORT_SYMBOL(vfs_get_tree);
 +
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+/*
-+ * Post superblock notifications.
-+ */
-+void post_sb_notification(struct super_block *s, struct superblock_notification *n)
++extern void post_mount_notification(struct mount *changed,
++				    struct mount_notification *notify);
++
++static inline void notify_mount(struct mount *changed,
++				struct mount *aux,
++				enum mount_notification_subtype subtype,
++				u32 info_flags)
 +{
-+	post_watch_notification(s->s_watchers, &n->watch, s->s_watch_id);
++#ifdef CONFIG_MOUNT_NOTIFICATIONS
++	struct mount_notification n = {
++		.watch.type	= WATCH_TYPE_MOUNT_NOTIFY,
++		.watch.subtype	= subtype,
++		.watch.info	= info_flags | sizeof(n),
++		.triggered_on	= changed->mnt_id,
++		.changed_mount	= aux ? aux->mnt_id : 0,
++	};
++
++	post_mount_notification(changed, &n);
++#endif
++}
+diff --git a/fs/mount_notify.c b/fs/mount_notify.c
+new file mode 100644
+index 000000000000..b4905c363136
+--- /dev/null
++++ b/fs/mount_notify.c
+@@ -0,0 +1,178 @@
++/* Provide mount topology/attribute change notifications.
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells at redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/fs.h>
++#include <linux/namei.h>
++#include <linux/syscalls.h>
++#include "mount.h"
++
++/*
++ * Post mount notifications to all watches going rootwards along the tree.
++ *
++ * Must be called with the mount_lock held.
++ */
++void post_mount_notification(struct mount *changed,
++			     struct mount_notification *notify)
++{
++	struct path cursor;
++	struct mount *mnt;
++	unsigned seq;
++
++	seq = 0;
++	rcu_read_lock();
++restart:
++	cursor.mnt = &changed->mnt;
++	cursor.dentry = changed->mnt.mnt_root;
++	mnt = real_mount(cursor.mnt);
++	notify->watch.info &= ~WATCH_INFO_IN_SUBTREE;
++
++	read_seqbegin_or_lock(&rename_lock, &seq);
++	for (;;) {
++		if (mnt->mnt_watchers &&
++		    !hlist_empty(&mnt->mnt_watchers->watchers)) {
++			if (cursor.dentry->d_flags & DCACHE_MOUNT_WATCH)
++				post_watch_notification(mnt->mnt_watchers,
++							&notify->watch,
++							(unsigned long)cursor.dentry);
++		} else {
++			cursor.dentry = mnt->mnt.mnt_root;
++		}
++		notify->watch.info |= WATCH_INFO_IN_SUBTREE;
++
++		if (cursor.dentry == cursor.mnt->mnt_root ||
++		    IS_ROOT(cursor.dentry)) {
++			struct mount *parent = READ_ONCE(mnt->mnt_parent);
++
++			/* Escaped? */
++			if (cursor.dentry != cursor.mnt->mnt_root)
++				break;
++
++			/* Global root? */
++			if (mnt != parent) {
++				cursor.dentry = READ_ONCE(mnt->mnt_mountpoint);
++				mnt = parent;
++				cursor.mnt = &mnt->mnt;
++				continue;
++			}
++			break;
++		}
++
++		cursor.dentry = cursor.dentry->d_parent;
++	}
++
++	if (need_seqretry(&rename_lock, seq)) {
++		seq = 1;
++		goto restart;
++	}
++
++	done_seqretry(&rename_lock, seq);
++	rcu_read_unlock();
 +}
 +
-+static void release_sb_watch(struct watch_list *wlist, struct watch *watch)
++static void release_mount_watch(struct watch_list *wlist, struct watch *watch)
 +{
-+	struct super_block *s = watch->private;
++	struct vfsmount *mnt = watch->private;
++	struct dentry *dentry = (struct dentry *)(unsigned long)watch->id;
 +
-+	put_super(s);
++	dput(dentry);
++	mntput(mnt);
 +}
 +
 +/**
-+ * sys_sb_notify - Watch for superblock events.
-+ * @dfd: Base directory to pathwalk from or fd referring to superblock.
-+ * @filename: Path to superblock to place the watch upon
++ * sys_mount_notify - Watch for mount topology/attribute changes
++ * @dfd: Base directory to pathwalk from or fd referring to mount.
++ * @filename: Path to mount to place the watch upon
 + * @at_flags: Pathwalk control flags
 + * @watch_fd: The watch queue to send notifications to.
 + * @watch_id: The watch ID to be placed in the notification (-1 to remove watch)
 + */
-+SYSCALL_DEFINE5(sb_notify,
++SYSCALL_DEFINE5(mount_notify,
 +		int, dfd,
 +		const char __user *, filename,
 +		unsigned int, at_flags,
@@ -171,9 +273,9 @@ index 3fe5d12b7697..1a1cf517dbd8 100644
 +		int, watch_id)
 +{
 +	struct watch_queue *wqueue;
-+	struct super_block *s;
 +	struct watch_list *wlist = NULL;
 +	struct watch *watch;
++	struct mount *m;
 +	struct path path;
 +	int ret;
 +
@@ -188,15 +290,16 @@ index 3fe5d12b7697..1a1cf517dbd8 100644
 +	if (IS_ERR(wqueue))
 +		goto err_path;
 +
-+	s = path.dentry->d_sb;
++	m = real_mount(path.mnt);
++
 +	if (watch_id >= 0) {
-+		if (!s->s_watchers) {
++		if (!m->mnt_watchers) {
 +			wlist = kzalloc(sizeof(*wlist), GFP_KERNEL);
 +			if (!wlist)
 +				goto err_wqueue;
 +			INIT_HLIST_HEAD(&wlist->watchers);
 +			spin_lock_init(&wlist->lock);
-+			wlist->release_watch = release_sb_watch;
++			wlist->release_watch = release_mount_watch;
 +		}
 +
 +		watch = kzalloc(sizeof(*watch), GFP_KERNEL);
@@ -204,35 +307,34 @@ index 3fe5d12b7697..1a1cf517dbd8 100644
 +			goto err_wlist;
 +
 +		init_watch(watch);
-+		watch->id		= s->s_watch_id;
++		watch->id		= (unsigned long)path.dentry;
 +		watch->queue		= wqueue;
-+		watch->private		= s;
++		watch->private		= path.mnt;
 +		watch->info_id		= (u32)watch_id << 24;
 +
-+		down_write(&s->s_umount);
-+		ret = -EIO;
-+		if (atomic_read(&s->s_active)) {
-+			if (!s->s_watchers) {
-+				s->s_watchers = wlist;
-+				wlist = NULL;
-+			}
-+
-+			watch->watch_list = s->s_watchers;
-+			ret = add_watch_to_object(watch);
-+			if (ret == 0) {
-+				spin_lock(&sb_lock);
-+				s->s_count++;
-+				spin_unlock(&sb_lock);
-+			}
++		down_write(&m->mnt.mnt_sb->s_umount);
++		if (!m->mnt_watchers) {
++			m->mnt_watchers = wlist;
++			wlist = NULL;
 +		}
-+		up_write(&s->s_umount);
++
++		watch->watch_list = m->mnt_watchers;
++		ret = add_watch_to_object(watch);
++		if (ret == 0) {
++			spin_lock(&path.dentry->d_lock);
++			path.dentry->d_flags |= DCACHE_MOUNT_WATCH;
++			spin_unlock(&path.dentry->d_lock);
++			path_get(&path);
++		}
++		up_write(&m->mnt.mnt_sb->s_umount);
 +		if (ret < 0)
 +			kfree(watch);
-+	} else if (s->s_watchers) {
-+		down_write(&s->s_umount);
-+		ret = remove_watch_from_object(s->s_watchers, wqueue,
-+					       s->s_watch_id, false);
-+		up_write(&s->s_umount);
++	} else if (m->mnt_watchers) {
++		down_write(&m->mnt.mnt_sb->s_umount);
++		ret = remove_watch_from_object(m->mnt_watchers, wqueue,
++					       (unsigned long)path.dentry,
++					       false);
++		up_write(&m->mnt.mnt_sb->s_umount);
 +	} else {
 +		ret = -EBADSLT;
 +	}
@@ -245,169 +347,154 @@ index 3fe5d12b7697..1a1cf517dbd8 100644
 +	path_put(&path);
 +	return ret;
 +}
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bcbe94c0dfe8..6dbc4f9aa6c3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -37,6 +37,7 @@
- #include <linux/uuid.h>
- #include <linux/errseq.h>
- #include <linux/ioprio.h>
-+#include <linux/watch_queue.h>
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 7e7b1145d15d..d4d16111659d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -589,6 +589,9 @@ static int mnt_make_readonly(struct mount *mnt)
+ 	smp_wmb();
+ 	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
+ 	unlock_mount_hash();
++	if (ret == 0)
++		notify_mount(mnt, NULL, notify_mount_readonly,
++			     WATCH_INFO_FLAG_0);
+ 	return ret;
+ }
  
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -1463,6 +1464,12 @@ struct super_block {
+@@ -597,6 +600,7 @@ static int __mnt_unmake_readonly(struct mount *mnt)
+ 	lock_mount_hash();
+ 	mnt->mnt.mnt_flags &= ~MNT_READONLY;
+ 	unlock_mount_hash();
++	notify_mount(mnt, NULL, notify_mount_readonly, 0);
+ 	return 0;
+ }
  
- 	spinlock_t		s_inode_wblist_lock;
- 	struct list_head	s_inodes_wb;	/* writeback inodes */
-+
-+	/* Superblock event notifications */
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	struct watch_list	*s_watchers;
-+	u64			s_watch_id;
-+#endif
- } __randomize_layout;
+@@ -900,6 +904,7 @@ static void umount_mnt(struct mount *mnt)
+ {
+ 	/* old mountpoint will be dropped when we can do that */
+ 	mnt->mnt_ex_mountpoint = mnt->mnt_mountpoint;
++	notify_mount(mnt->mnt_parent, mnt, notify_mount_unmount, 0);
+ 	unhash_mnt(mnt);
+ }
  
- /* Helper functions so that in most cases filesystems will
-@@ -3458,4 +3465,74 @@ static inline bool dir_relax_shared(struct inode *inode)
- extern bool path_noexec(const struct path *path);
- extern void inode_nohighmem(struct inode *inode);
+@@ -1451,6 +1456,11 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+ 		p = list_first_entry(&tmp_list, struct mount, mnt_list);
+ 		list_del_init(&p->mnt_expire);
+ 		list_del_init(&p->mnt_list);
++
++#ifdef CONFIG_MOUNT_NOTIFICATIONS
++		if (p->mnt_watchers)
++			remove_watch_list(p->mnt_watchers);
++#endif
+ 		ns = p->mnt_ns;
+ 		if (ns) {
+ 			ns->mounts--;
+@@ -2004,11 +2014,17 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 		lock_mount_hash();
+ 	}
+ 	if (parent_path) {
++		notify_mount(source_mnt->mnt_parent, source_mnt,
++			     notify_mount_move_from, 0);
+ 		detach_mnt(source_mnt, parent_path);
++		notify_mount(dest_mnt, source_mnt, notify_mount_move_to, 0);
+ 		attach_mnt(source_mnt, dest_mnt, dest_mp);
+ 		touch_mnt_namespace(source_mnt->mnt_ns);
+ 	} else {
+ 		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
++		notify_mount(dest_mnt, source_mnt, notify_mount_new_mount,
++			     source_mnt->mnt.mnt_sb->s_flags & SB_SUBMOUNT ?
++			     WATCH_INFO_FLAG_0 : 0);
+ 		commit_tree(source_mnt);
+ 	}
  
-+extern void post_sb_notification(struct super_block *, struct superblock_notification *);
-+
-+/**
-+ * notify_sb: Post simple superblock notification.
-+ * @s: The superblock the notification is about.
-+ * @subtype: The type of notification.
-+ */
-+static inline void notify_sb(struct super_block *s,
-+			     enum superblock_notification_type subtype,
-+			     u32 info)
-+{
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	if (unlikely(s->s_watchers)) {
-+		struct superblock_notification n = {
-+			.watch.type	= WATCH_TYPE_SB_NOTIFY,
-+			.watch.subtype	= subtype,
-+			.watch.info	= sizeof(n) | info,
-+			.sb_id		= s->s_watch_id,
-+		};
-+
-+		post_sb_notification(s, &n);
-+	}
-+			     
-+#endif
-+}
-+
-+/**
-+ * sb_error: Post superblock error notification.
-+ * @s: The superblock the notification is about.
-+ */
-+static inline int sb_error(struct super_block *s, int error)
-+{
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	if (unlikely(s->s_watchers)) {
-+		struct superblock_error_notification n = {
-+			.s.watch.type	= WATCH_TYPE_SB_NOTIFY,
-+			.s.watch.subtype = notify_superblock_error,
-+			.s.watch.info	= sizeof(n),
-+			.s.sb_id	= s->s_watch_id,
-+			.error_number	= error,
-+			.error_cookie	= 0,
-+		};
-+
-+		post_sb_notification(s, &n.s);
-+	}
-+#endif
-+	return error;
-+}
-+
-+/**
-+ * sb_EDQUOT: Post superblock quota overrun notification.
-+ * @s: The superblock the notification is about.
-+ */
-+static inline int sb_EQDUOT(struct super_block *s)
-+{
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	if (unlikely(s->s_watchers)) {
-+		struct superblock_notification n = {
-+			.watch.type	= WATCH_TYPE_SB_NOTIFY,
-+			.watch.subtype	= notify_superblock_edquot,
-+			.watch.info	= sizeof(n),
-+			.sb_id		= s->s_watch_id,
-+		};
-+
-+		post_sb_notification(s, &n);
-+	}
-+#endif
-+	return -EDQUOT;
-+}
-+
- #endif /* _LINUX_FS_H */
+@@ -2361,6 +2377,7 @@ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+ 	mnt->mnt.mnt_flags = mnt_flags;
+ 	touch_mnt_namespace(mnt->mnt_ns);
+ 	unlock_mount_hash();
++	notify_mount(mnt, NULL, notify_mount_setattr, 0);
+ }
+ 
+ /*
+@@ -2767,6 +2784,7 @@ void mark_mounts_for_expiry(struct list_head *mounts)
+ 		if (!xchg(&mnt->mnt_expiry_mark, 1) ||
+ 			propagate_mount_busy(mnt, 1))
+ 			continue;
++		notify_mount(mnt, NULL, notify_mount_expiry, 0);
+ 		list_move(&mnt->mnt_expire, &graveyard);
+ 	}
+ 	while (!list_empty(&graveyard)) {
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 66c6e17e61e5..b0eb68ed5b9b 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -217,6 +217,7 @@ struct dentry_operations {
+ 
+ #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
+ #define DCACHE_DENTRY_CURSOR		0x20000000
++#define DCACHE_MOUNT_WATCH		0x40000000 /* There's a mount watch here */
+ 
+ extern seqlock_t rename_lock;
+ 
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 7db37c58289a..4d852f218949 100644
+index 84b653874ab8..7db37c58289a 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -915,6 +915,8 @@ asmlinkage long sys_fsinfo(int dfd, const char __user *path,
+@@ -913,6 +913,8 @@ asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags)
+ asmlinkage long sys_fsinfo(int dfd, const char __user *path,
+ 			   struct fsinfo_params __user *params,
  			   void __user *buffer, size_t buf_size);
- asmlinkage long sys_mount_notify(int dfd, const char __user *path,
- 				 unsigned int at_flags, int watch_fd, int watch_id);
-+asmlinkage long sys_sb_notify(int dfd, const char __user *path,
-+			      unsigned int at_flags, int watch_fd, int watch_id);
++asmlinkage long sys_mount_notify(int dfd, const char __user *path,
++				 unsigned int at_flags, int watch_fd, int watch_id);
  
  /*
   * Architecture-specific system calls
 diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-index 9d8e165e0065..40a3f809c73c 100644
+index 3e0ab5fe388d..9d8e165e0065 100644
 --- a/include/uapi/linux/watch_queue.h
 +++ b/include/uapi/linux/watch_queue.h
-@@ -127,4 +127,30 @@ struct mount_notification {
- 	__u32	changed_mount;		/* The mount that got changed */
+@@ -103,4 +103,28 @@ struct key_notification {
+ 	__u32	aux;		/* Per-type auxiliary data */
  };
  
 +/*
-+ * Type of superblock notification.
++ * Type of mount topology change notification.
 + */
-+enum superblock_notification_type {
-+	notify_superblock_readonly	= 0, /* Filesystem toggled between R/O and R/W */
-+	notify_superblock_error		= 1, /* Error in filesystem or blockdev */
-+	notify_superblock_edquot	= 2, /* EDQUOT notification */
-+	notify_superblock_network	= 3, /* Network status change */
++enum mount_notification_subtype {
++	notify_mount_new_mount	= 0, /* New mount added */
++	notify_mount_unmount	= 1, /* Mount removed manually */
++	notify_mount_expiry	= 2, /* Automount expired */
++	notify_mount_readonly	= 3, /* Mount R/O state changed */
++	notify_mount_setattr	= 4, /* Mount attributes changed */
++	notify_mount_move_from	= 5, /* Mount moved from here */
++	notify_mount_move_to	= 6, /* Mount moved to here (compare op_id) */
 +};
 +
 +/*
-+ * Superblock notification record.
++ * Mount topology/configuration change notification record.
 + * - watch.type = WATCH_TYPE_MOUNT_NOTIFY
-+ * - watch.subtype = enum superblock_notification_subtype
++ * - watch.subtype = enum mount_notification_subtype
 + */
-+struct superblock_notification {
-+	struct watch_notification watch; /* WATCH_TYPE_SB_NOTIFY */
-+	__u64	sb_id;			/* 64-bit superblock ID [fsinfo_ids::f_sb_id] */
-+};
-+
-+struct superblock_error_notification {
-+	struct superblock_notification s; /* subtype = notify_superblock_error */
-+	__u32	error_number;
-+	__u32	error_cookie;
++struct mount_notification {
++	struct watch_notification watch; /* WATCH_TYPE_MOUNT_NOTIFY */
++	__u32	triggered_on;		/* The mount that the notify was on */
++	__u32	changed_mount;		/* The mount that got changed */
 +};
 +
  #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
 diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index f608777be045..3b5aacb8a5a0 100644
+index df556175be50..f608777be045 100644
 --- a/kernel/sys_ni.c
 +++ b/kernel/sys_ni.c
-@@ -100,6 +100,9 @@ COND_SYSCALL(quotactl);
+@@ -80,6 +80,9 @@ COND_SYSCALL(ioprio_get);
+ /* fs/locks.c */
+ COND_SYSCALL(flock);
  
- /* fs/read_write.c */
- 
-+/* fs/sb_notify.c */
-+COND_SYSCALL(sb_notify);
++/* fs/mount_notify.c */
++COND_SYSCALL(mount_notify);
 +
- /* fs/sendfile.c */
+ /* fs/namei.c */
  
- /* fs/select.c */
+ /* fs/namespace.c */
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
