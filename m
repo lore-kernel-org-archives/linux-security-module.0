@@ -1,31 +1,41 @@
 From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Mon, 23 Jul 2018 15:48:46 -0600
+Date: Mon, 23 Jul 2018 15:56:20 -0600
 Subject: [PATCH] tpm: add support for partial reads
-In-Reply-To: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+In-Reply-To: <7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
 References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
-Message-ID: <20180723214846.GG532@ziepe.ca>
+	<20180723201956.GB26824@linux.intel.com>
+	<fb053916-f6e8-3266-14d7-128e062b6a92@intel.com>
+	<1532380412.4112.22.camel@HansenPartnership.com>
+	<7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
+Message-ID: <20180723215620.GH532@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Jul 19, 2018 at 08:52:32AM -0700, Tadeusz Struk wrote:
-> Currently to read a response from the TPM device an application needs
-> provide "big enough" buffer for the whole response and read it in one go.
-> The application doesn't know how big the response it beforehand so it
-> always needs to maintain a 4K buffer and read the max (4K).
-> In case if the user of the TSS library doesn't provide big enough buffer
-> the TCTI spec says that the library should set the required size and return
-> TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the application could
-> allocate a bigger buffer and call receive again.
-> To make it possible in the TSS library this requires being able to do
-> partial reads from the driver.
-> The library would read the header first to get the actual size of the
-> response from the header and then read the rest of the response.
-> This patch adds support for partial reads.
+On Mon, Jul 23, 2018 at 02:38:08PM -0700, Tadeusz Struk wrote:
+> On 07/23/2018 02:13 PM, James Bottomley wrote:
+> > The current patch does, you even provided a use case in your last email
+> >  (it's do command to get sizing followed by do command with correctly
+> > sized buffer). 
+> 
+> The example I provided was: #1 send a command, #2 read the response header
+> (10 bytes), get the actual response size from the header and then #3 read
+> the full response (response size - size of the header bytes).
 
-You should solve this in user space, the kernel API requires a full
-sized buffer here, the tss library should always provide such an
-internal buffer and then implement whatever scheme TSS wants by
-memcpying from that buffer..
+The proposed patch doesn't clear the data_pending if the entire buffer
+is not consumed, so of course it is ABI breaking, that really isn't OK.
+
+> > However, if you tie it to O_NONBLOCK, it won't because no-one currently
+> > opens the TPM device non blocking so it's an ABI conformant
+> > discriminator of the uses.  Tying to O_NONBLOCK should be simple
+> > because it's in file->f_flags.
+> 
+> I think that it might be an option. Especially that I have this on top of
+> the async patch. Let's discuss this when Jarkko is back.
+
+Maybe you could do this by requiring the userspace to call pread()
+with a non-zero offset to get the trailing segment of the last
+executed command and leave normal read/pread(off=0) with the semantics
+as they have today.
 
 Jason
 --
