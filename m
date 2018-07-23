@@ -1,210 +1,97 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 23 Jul 2018 09:31:27 -0700
-Subject: [RFC][PATCH 0/5] Mount, Filesystem and Keyrings notifications
-In-Reply-To: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
-References: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
-Message-ID: <675e5c24-36ef-4cc5-846c-1414c1195d85@schaufler-ca.com>
+Date: Mon, 23 Jul 2018 13:04:04 -0700
+Subject: [PATCH v3 RFC] Smack: Fix handling of IPv4 traffic received by
+	PF_INET6 sockets
+In-Reply-To: <20180719094259eucas1p19513e434a8440d344934c4fe70281c9d~Cu9y7ZvVv2974129741eucas1p18@eucas1p1.samsung.com>
+References: <CGME20180719094259eucas1p19513e434a8440d344934c4fe70281c9d@eucas1p1.samsung.com>
+	<20180719094259eucas1p19513e434a8440d344934c4fe70281c9d~Cu9y7ZvVv2974129741eucas1p18@eucas1p1.samsung.com>
+Message-ID: <860cca95-8ade-62f6-c584-77730ca5ef30@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 7/23/2018 8:25 AM, David Howells wrote:
-> Hi Al,
+On 7/19/2018 2:42 AM, Piotr Sawicki wrote:
+> A socket which has sk_family set to PF_INET6 is able to receive not
+> only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
 >
-> Here's a set of patches to add a general variable-length notification queue
-> concept and to add sources of events for:
+> Prior to this patch, the smk_skb_to_addr_ipv6() could have been
+> called for socket buffers containing IPv4 packets, in result such
+> traffic was allowed.
+>
+> Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
 
-Overall I approve. The interface is a bit clunky. Some concerns below.
+Added to git://github.com/cschaufler/next-smack.git#smack-for-4.19-a
 
->
->  (1) Mount topology and reconfiguration change events.
-
-With the possibility of unprivileged mounting you're
-going to have to address access control on events.
-If root in a user namespace mounts a filesystem you
-may have a case where the "real" user wouldn't want the
-listener to receive a notification.
-
->  (2) Superblocks EIO, ENOSPC and EDQUOT events (not complete yet).
-
-Here, too. If SELinux (for example) policy says you can't see
-anything on a filesystem you shouldn't get notifications about
-things that happen to that filesystem.
-
->  (3) Key/keyring changes events
-
-And again, I should only get notifications about keys and
-keyrings I have access to.
-
-I expect that you intentionally left off
-
-   (4) User injected events
-
-at this point, but it's an obvious extension. That is going
-to require access controls (remember kdbus) so I think you'd
-do well to design them in now rather than have some security
-module hack like me come along later and "fix" it. 
-
-> One of the reasons for this is so that we can remove the issue of processes
-> having to repeatedly and regularly scan /proc/mounts, which has proven to be a
-> system performance problem.
->
->
-> Design decisions:
->
->  (1) A misc chardev is used to create and open a ring buffer:
->
-> 	fd = open("/dev/watch_queue", O_RDWR);
->
->      which is then configured and mmap'd into userspace:
->
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
-> 	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
-> 		   MAP_SHARED, fd, 0);
->
->      The fd cannot be read or written (though there is a facility to use write
->      to inject records for debugging) and userspace just pulls data directly
->      out of the buffer.
->
->  (2) The ring index pointers are stored inside the ring and are thus
->      accessible to userspace.  Userspace should only update the tail pointer
->      and never the head pointer or risk breaking the buffer.  The kernel
->      checks that the pointers appear valid before trying to use them.  A
->      'skip' record is maintained around the pointers.
->
->  (3) poll() can be used to wait for data to appear in the buffer.
->
->  (4) Records in the buffer are binary, typed and have a length so that they
->      can be of varying size.
->
->      This means that multiple heterogeneous sources can share a common
->      buffer.  Tags may be specified when a watchpoint is created to help
->      distinguish the sources.
->
->  (5) The queue is reusable as there are 16 million types available, of which
->      I've used 4, so there is scope for others to be used.
->
->  (6) Records are filterable as types have up to 256 subtypes that can be
->      individually filtered.  Other filtration is also available.
->
->  (7) Each time the buffer is opened, a new buffer is created - this means that
->      there's no interference between watchers.
->
->  (8) When recording a notification, the kernel will not sleep, but will rather
->      mark a queue as overrun if there's insufficient space, thereby avoiding
->      userspace causing the kernel to hang.
->
->  (9) The 'watchpoint' should be specific where possible, meaning that you
->      specify the object that you want to watch.
->
-> (10) The buffer is created and then watchpoints are attached to it, using one
->      of:
->
-> 	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
-> 	mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
-> 	sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
->
->      where in all three cases, fd indicates the queue and the number after is
->      a tag between 0 and 255.
->
-> (11) The watch must be removed if either the watch buffer is destroyed or the
->      watched object is destroyed.
->
->
-> Things I want to avoid:
->
->  (1) Introducing features that make the core VFS dependent on the network
->      stack or networking namespaces (ie. usage of netlink).
->
->  (2) Dumping all this stuff into dmesg and having a daemon that sits there
->      parsing the output and distributing it as this then puts the
->      responsibility for security into userspace and makes handling namespaces
->      tricky.  Further, dmesg might not exist or might be inaccessible inside a
->      container.
->
->  (3) Letting users see events they shouldn't be able to see.
->
->
-> Further things that need to be done:
->
->  (1) fsinfo() syscall needs to find superblocks by ID as well as by path so
->      that it can query a superblock for information without the need to try
->      and work out how to reach it - if the calling process even can.
->
->  (2) A mount_info() syscall is needed that can enumerate all the children of a
->      mount.  This is necessary because mountpoints can hide each other by
->      stacking, so paths are not unique keys.  This will require the ability to
->      look up a mount by ID.  This avoids the need to parse /proc/mounts.
->
->  (3) A keyctl call is needed to allow a watch on a keyring to be extended to
->      "children" of that keyring, such that the watch is removed from the child
->      if it is unlinked from the keyring.
->
->  (4) A global superblock event queue maybe?
->
->  (5) Propagating watches to child superblock over automounts?
->
->
-> The patches can be found here also:
->
-> 	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
->
-> David
 > ---
-> David Howells (5):
->       General notification queue with user mmap()'able ring buffer
->       KEYS: Add a notification facility
->       vfs: Add a mount-notification facility
->       vfs: Add superblock notifications
->       Add sample notification program
+> Changes in v2:
+>  - Properly pass the family variable to other functions
+>  - Fix coding style
+> Changes in v3:
+>  - Fix formatting issues caused by improper email client configuration
+> ---
+>  security/smack/smack_lsm.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 >
->
->  Documentation/security/keys/core.rst   |   59 ++
->  Documentation/watch_queue.rst          |  305 ++++++++++++
->  arch/x86/entry/syscalls/syscall_32.tbl |    2 
->  arch/x86/entry/syscalls/syscall_64.tbl |    2 
->  drivers/misc/Kconfig                   |    9 
->  drivers/misc/Makefile                  |    1 
->  drivers/misc/watch_queue.c             |  835 ++++++++++++++++++++++++++++++++
->  fs/Kconfig                             |   21 +
->  fs/Makefile                            |    1 
->  fs/fs_context.c                        |    1 
->  fs/mount.h                             |   26 +
->  fs/mount_notify.c                      |  178 +++++++
->  fs/namespace.c                         |   18 +
->  fs/super.c                             |  116 ++++
->  include/linux/dcache.h                 |    1 
->  include/linux/fs.h                     |   77 +++
->  include/linux/key.h                    |    4 
->  include/linux/syscalls.h               |    4 
->  include/linux/watch_queue.h            |   87 +++
->  include/uapi/linux/keyctl.h            |    1 
->  include/uapi/linux/watch_queue.h       |  156 ++++++
->  kernel/sys_ni.c                        |    6 
->  mm/interval_tree.c                     |    2 
->  mm/memory.c                            |    1 
->  samples/Kconfig                        |    6 
->  samples/Makefile                       |    2 
->  samples/watch_queue/Makefile           |    9 
->  samples/watch_queue/watch_test.c       |  232 +++++++++
->  security/keys/Kconfig                  |   10 
->  security/keys/compat.c                 |    3 
->  security/keys/gc.c                     |    5 
->  security/keys/internal.h               |   29 +
->  security/keys/key.c                    |   37 +
->  security/keys/keyctl.c                 |   90 +++
->  security/keys/keyring.c                |   17 -
->  security/keys/request_key.c            |    4 
->  36 files changed, 2332 insertions(+), 25 deletions(-)
->  create mode 100644 Documentation/watch_queue.rst
->  create mode 100644 drivers/misc/watch_queue.c
->  create mode 100644 fs/mount_notify.c
->  create mode 100644 include/linux/watch_queue.h
->  create mode 100644 include/uapi/linux/watch_queue.h
->  create mode 100644 samples/watch_queue/Makefile
->  create mode 100644 samples/watch_queue/watch_test.c
->
->
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 19de675..8b6cd5a 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3924,15 +3924,19 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  	struct smack_known *skp = NULL;
+>  	int rc = 0;
+>  	struct smk_audit_info ad;
+> +	u16 family = sk->sk_family;
+>  #ifdef CONFIG_AUDIT
+>  	struct lsm_network_audit net;
+>  #endif
+>  #if IS_ENABLED(CONFIG_IPV6)
+>  	struct sockaddr_in6 sadd;
+>  	int proto;
+> +
+> +	if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
+> +		family = PF_INET;
+>  #endif /* CONFIG_IPV6 */
+>  
+> -	switch (sk->sk_family) {
+> +	switch (family) {
+>  	case PF_INET:
+>  #ifdef CONFIG_SECURITY_SMACK_NETFILTER
+>  		/*
+> @@ -3950,7 +3954,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  		 */
+>  		netlbl_secattr_init(&secattr);
+>  
+> -		rc = netlbl_skbuff_getattr(skb, sk->sk_family, &secattr);
+> +		rc = netlbl_skbuff_getattr(skb, family, &secattr);
+>  		if (rc == 0)
+>  			skp = smack_from_secattr(&secattr, ssp);
+>  		else
+> @@ -3963,7 +3967,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  #endif
+>  #ifdef CONFIG_AUDIT
+>  		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+> -		ad.a.u.net->family = sk->sk_family;
+> +		ad.a.u.net->family = family;
+>  		ad.a.u.net->netif = skb->skb_iif;
+>  		ipv4_skb_to_auditdata(skb, &ad.a, NULL);
+>  #endif
+> @@ -3977,7 +3981,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  		rc = smk_bu_note("IPv4 delivery", skp, ssp->smk_in,
+>  					MAY_WRITE, rc);
+>  		if (rc != 0)
+> -			netlbl_skbuff_err(skb, sk->sk_family, rc, 0);
+> +			netlbl_skbuff_err(skb, family, rc, 0);
+>  		break;
+>  #if IS_ENABLED(CONFIG_IPV6)
+>  	case PF_INET6:
+> @@ -3993,7 +3997,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  			skp = smack_net_ambient;
+>  #ifdef CONFIG_AUDIT
+>  		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+> -		ad.a.u.net->family = sk->sk_family;
+> +		ad.a.u.net->family = family;
+>  		ad.a.u.net->netif = skb->skb_iif;
+>  		ipv6_skb_to_auditdata(skb, &ad.a, NULL);
+>  #endif /* CONFIG_AUDIT */
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
