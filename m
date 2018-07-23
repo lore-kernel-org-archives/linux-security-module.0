@@ -1,332 +1,212 @@
-From: dhowells@redhat.com (David Howells)
-Date: Mon, 23 Jul 2018 16:26:18 +0100
-Subject: [PATCH 5/5] Add sample notification program
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 23 Jul 2018 09:31:27 -0700
+Subject: [RFC][PATCH 0/5] Mount, Filesystem and Keyrings notifications
 In-Reply-To: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
 References: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
-Message-ID: <153235957887.32640.8025222191782276269.stgit@warthog.procyon.org.uk>
+Message-ID: <675e5c24-36ef-4cc5-846c-1414c1195d85@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This needs to be linked with -lkeyutils.
+On 7/23/2018 8:25 AM, David Howells wrote:
+> Hi Al,
+>
+> Here's a set of patches to add a general variable-length notification queue
+> concept and to add sources of events for:
 
-It is run like:
+Overall I approve. The interface is a bit clunky. Some concerns below.
 
-	./watch_test
+>
+>  (1) Mount topology and reconfiguration change events.
 
-and watches "/" for mount changes and the current session keyring for key
-changes:
+With the possibility of unprivileged mounting you're
+going to have to address access control on events.
+If root in a user namespace mounts a filesystem you
+may have a case where the "real" user wouldn't want the
+listener to receive a notification.
 
-	# keyctl add user a a @s
-	1035096409
-	# keyctl unlink 1035096409 @s
-	# mount -t tmpfs none /mnt/nfsv3tcp/
-	# umount /mnt/nfsv3tcp
+>  (2) Superblocks EIO, ENOSPC and EDQUOT events (not complete yet).
 
-producing:
+Here, too. If SELinux (for example) policy says you can't see
+anything on a filesystem you shouldn't get notifications about
+things that happen to that filesystem.
 
-	# ./watch_test
-	ptrs h=4 t=2 m=20003
-	NOTIFY[00000004-00000002] ty=0003 sy=0002 i=01000010
-	KEY 2ffc2e5d change=2[linked] aux=1035096409
-	ptrs h=6 t=4 m=20003
-	NOTIFY[00000006-00000004] ty=0003 sy=0003 i=01000010
-	KEY 2ffc2e5d change=3[unlinked] aux=1035096409
-	ptrs h=8 t=6 m=20003
-	NOTIFY[00000008-00000006] ty=0001 sy=0000 i=02000010
-	MOUNT 00000013 change=0[new_mount] aux=168
-	ptrs h=a t=8 m=20003
-	NOTIFY[0000000a-00000008] ty=0001 sy=0001 i=02000010
-	MOUNT 00000013 change=1[unmount] aux=168
----
+>  (3) Key/keyring changes events
 
- samples/Kconfig                  |    6 +
- samples/Makefile                 |    2 
- samples/watch_queue/Makefile     |    9 +
- samples/watch_queue/watch_test.c |  232 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 248 insertions(+), 1 deletion(-)
- create mode 100644 samples/watch_queue/Makefile
- create mode 100644 samples/watch_queue/watch_test.c
+And again, I should only get notifications about keys and
+keyrings I have access to.
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 1c5658bc6224..dac30cefe895 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -156,4 +156,10 @@ config SAMPLE_MOUNT_API
- 	help
- 	  Build example userspace program(s) that use the new mount API.
- 
-+config SAMPLE_WATCH_QUEUE
-+	bool "Build example /dev/watch_queue notification consumer"
-+	help
-+	  Build example userspace program to use the new mount_notify(),
-+	  sb_notify() syscalls and the KEYCTL_WATCH_KEY keyctl() function.
-+
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index 31d08cc71a5c..ed545cbf65c8 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,4 +3,4 @@
- obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
- 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
- 			   configfs/ connector/ v4l/ trace_printk/ \
--			   vfio-mdev/ statx/ qmi/ mount_api/
-+			   vfio-mdev/ statx/ qmi/ mount_api/ watch_queue/
-diff --git a/samples/watch_queue/Makefile b/samples/watch_queue/Makefile
-new file mode 100644
-index 000000000000..1f20ee2b0add
---- /dev/null
-+++ b/samples/watch_queue/Makefile
-@@ -0,0 +1,9 @@
-+# List of programs to build
-+hostprogs-$(CONFIG_SAMPLE_WATCH_QUEUE) := watch_test
-+
-+# Tell kbuild to always build the programs
-+always := $(hostprogs-y)
-+
-+HOSTCFLAGS_watch_test.o += -I$(objtree)/usr/include
-+
-+HOSTLOADLIBES_watch_test += -lkeyutils
-diff --git a/samples/watch_queue/watch_test.c b/samples/watch_queue/watch_test.c
-new file mode 100644
-index 000000000000..cdbaaf5a1163
---- /dev/null
-+++ b/samples/watch_queue/watch_test.c
-@@ -0,0 +1,232 @@
-+/* Use /dev/watch_queue to watch for keyring and mount topology changes.
-+ *
-+ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#include <stdbool.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <signal.h>
-+#include <unistd.h>
-+#include <fcntl.h>
-+#include <dirent.h>
-+#include <errno.h>
-+#include <sys/wait.h>
-+#include <sys/ioctl.h>
-+#include <sys/mman.h>
-+#include <poll.h>
-+#include <limits.h>
-+#include <linux/watch_queue.h>
-+#include <linux/unistd.h>
-+#include <linux/keyctl.h>
-+
-+#define BUF_SIZE 4
-+
-+static const char *key_subtypes[] = {
-+	[notify_key_instantiated]	= "instantiated",
-+	[notify_key_updated]		= "updated",
-+	[notify_key_linked]		= "linked",
-+	[notify_key_unlinked]		= "unlinked",
-+	[notify_key_cleared]		= "cleared",
-+	[notify_key_revoked]		= "revoked",
-+	[notify_key_invalidated]	= "invalidated",
-+	[notify_key_setattr]		= "setattr",
-+};
-+
-+static void saw_key_change(struct watch_notification *n)
-+{
-+	struct key_notification *k = (struct key_notification *)n;
-+	unsigned int len = n->info & WATCH_INFO_LENGTH;
-+
-+	if (len != sizeof(struct key_notification))
-+		return;
-+
-+	printf("KEY %08x change=%u[%s] aux=%u\n",
-+	       k->key_id, n->subtype, key_subtypes[n->subtype], k->aux);
-+}
-+
-+static const char *mount_subtypes[] = {
-+	[notify_mount_new_mount]	= "new_mount",
-+	[notify_mount_unmount]		= "unmount",
-+	[notify_mount_expiry]		= "expiry",
-+	[notify_mount_readonly]		= "readonly",
-+	[notify_mount_setattr]		= "setattr",
-+	[notify_mount_move_from]	= "move_from",
-+	[notify_mount_move_to]		= "move_to",
-+};
-+
-+static long keyctl_watch_key(int key, int watch_fd, int watch_id)
-+{
-+	return syscall(__NR_keyctl, KEYCTL_WATCH_KEY, key, watch_fd, watch_id);
-+}
-+
-+static void saw_mount_change(struct watch_notification *n)
-+{
-+	struct mount_notification *m = (struct mount_notification *)n;
-+	unsigned int len = n->info & WATCH_INFO_LENGTH;
-+
-+	if (len != sizeof(struct mount_notification))
-+		return;
-+
-+	printf("MOUNT %08x change=%u[%s] aux=%u\n",
-+	       m->triggered_on, n->subtype, mount_subtypes[n->subtype], m->changed_mount);
-+}
-+
-+static const char *super_subtypes[] = {
-+	[notify_superblock_readonly]	= "readonly",
-+	[notify_superblock_error]	= "error",
-+	[notify_superblock_edquot]	= "edquot",
-+	[notify_superblock_network]	= "network",
-+};
-+
-+static void saw_super_change(struct watch_notification *n)
-+{
-+	struct superblock_notification *s = (struct superblock_notification *)n;
-+	unsigned int len = n->info & WATCH_INFO_LENGTH;
-+
-+	if (len < sizeof(struct superblock_notification))
-+		return;
-+
-+	printf("SUPER %08llx change=%u[%s]\n",
-+	       s->sb_id, n->subtype, super_subtypes[n->subtype]);
-+}
-+
-+/*
-+ * Consume and display events.
-+ */
-+static int consumer(int fd, struct watch_queue_buffer *buf)
-+{
-+	struct watch_notification *n;
-+	struct pollfd p[1];
-+	unsigned int head, tail, mask = buf->meta.mask;
-+
-+	for (;;) {
-+		p[0].fd = fd;
-+		p[0].events = POLLIN | POLLERR;
-+		p[0].revents = 0;
-+
-+		if (poll(p, 1, -1) == -1) {
-+			perror("poll");
-+			break;
-+		}
-+
-+		printf("ptrs h=%x t=%x m=%x\n",
-+		       buf->meta.head, buf->meta.tail, buf->meta.mask);
-+
-+		while (head = buf->meta.head,
-+		       tail = buf->meta.tail,
-+		       tail != head
-+		       ) {
-+			asm ("lfence" : : : "memory" );
-+			n = &buf->slots[tail & mask];
-+			printf("NOTIFY[%08x-%08x] ty=%04x sy=%04x i=%08x\n",
-+			       head, tail, n->type, n->subtype, n->info);
-+			if ((n->info & WATCH_INFO_LENGTH) == 0)
-+				goto out;
-+
-+			switch (n->type) {
-+			case WATCH_TYPE_META:
-+				if (n->subtype == watch_meta_removal_notification)
-+					printf("REMOVAL of watchpoint %08x\n",
-+					       n->info & WATCH_INFO_ID);
-+				break;
-+			case WATCH_TYPE_MOUNT_NOTIFY:
-+				saw_mount_change(n);
-+				break;
-+			case WATCH_TYPE_SB_NOTIFY:
-+				saw_super_change(n);
-+				break;
-+			case WATCH_TYPE_KEY_NOTIFY:
-+				saw_key_change(n);
-+				break;
-+			}
-+
-+			tail += (n->info & WATCH_INFO_LENGTH) >> WATCH_LENGTH_SHIFT;
-+			asm("mfence" ::: "memory");
-+			buf->meta.tail = tail;
-+		}
-+	}
-+
-+out:
-+	return 0;
-+}
-+
-+static struct watch_notification_filter filter = {
-+	.nr_filters	= 3,
-+	.__reserved	= 0,
-+	.filters = {
-+		[0] = {
-+			.type			= WATCH_TYPE_MOUNT_NOTIFY,
-+			// Reject move-from notifications
-+			.subtype_filter[0]	= UINT_MAX & ~(1 << notify_mount_move_from),
-+		},
-+		[1]	= {
-+			.type			= WATCH_TYPE_SB_NOTIFY,
-+			// Only accept notification of changes to R/O state
-+			.subtype_filter[0]	= (1 << notify_superblock_readonly),
-+			// Only accept notifications of change-to-R/O
-+			.info_mask		= WATCH_INFO_FLAG_0,
-+			.info_filter		= WATCH_INFO_FLAG_0,
-+		},
-+		[2]	= {
-+			.type			= WATCH_TYPE_KEY_NOTIFY,
-+			.subtype_filter[0]	= UINT_MAX,
-+		},
-+	},
-+};
-+
-+int main(int argc, char **argv)
-+{
-+	struct watch_queue_buffer *buf;
-+	size_t page_size;
-+	int fd;
-+
-+	fd = open("/dev/watch_queue", O_RDWR);
-+	if (fd == -1) {
-+		perror("/dev/watch_queue");
-+		exit(1);
-+	}
-+
-+	if (ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE) == -1) {
-+		perror("/dev/watch_queue(size)");
-+		exit(1);
-+	}
-+
-+	if (ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter) == -1) {
-+		perror("/dev/watch_queue(filter)");
-+		exit(1);
-+	}
-+
-+	page_size = sysconf(_SC_PAGESIZE);
-+	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
-+		   MAP_SHARED, fd, 0);
-+	if (buf == MAP_FAILED) {
-+		perror("mmap");
-+		exit(1);
-+	}
-+
-+	if (keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01) == -1) {
-+		perror("keyctl");
-+		exit(1);
-+	}
-+
-+	if (syscall(__NR_mount_notify, AT_FDCWD, "/", 0, fd, 0x02) == -1) {
-+		perror("mount_notify");
-+		exit(1);
-+	}
-+
-+	if (syscall(__NR_sb_notify, AT_FDCWD, "/mnt", 0, fd, 0x03) == -1) {
-+		perror("sb_notify");
-+		exit(1);
-+	}
-+
-+	return consumer(fd, buf);
-+}
+I expect that you intentionally left off
+
+   (4) User injected events
+
+at this point, but it's an obvious extension. That is going
+to require access controls (remember kdbus) so I think you'd
+do well to design them in now rather than have some security
+module hack like me come along later and "fix" it. 
+
+> One of the reasons for this is so that we can remove the issue of processes
+> having to repeatedly and regularly scan /proc/mounts, which has proven to be a
+> system performance problem.
+>
+>
+> Design decisions:
+>
+>  (1) A misc chardev is used to create and open a ring buffer:
+>
+> 	fd = open("/dev/watch_queue", O_RDWR);
+>
+>      which is then configured and mmap'd into userspace:
+>
+> 	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+> 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+> 	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+> 		   MAP_SHARED, fd, 0);
+>
+>      The fd cannot be read or written (though there is a facility to use write
+>      to inject records for debugging) and userspace just pulls data directly
+>      out of the buffer.
+>
+>  (2) The ring index pointers are stored inside the ring and are thus
+>      accessible to userspace.  Userspace should only update the tail pointer
+>      and never the head pointer or risk breaking the buffer.  The kernel
+>      checks that the pointers appear valid before trying to use them.  A
+>      'skip' record is maintained around the pointers.
+>
+>  (3) poll() can be used to wait for data to appear in the buffer.
+>
+>  (4) Records in the buffer are binary, typed and have a length so that they
+>      can be of varying size.
+>
+>      This means that multiple heterogeneous sources can share a common
+>      buffer.  Tags may be specified when a watchpoint is created to help
+>      distinguish the sources.
+>
+>  (5) The queue is reusable as there are 16 million types available, of which
+>      I've used 4, so there is scope for others to be used.
+>
+>  (6) Records are filterable as types have up to 256 subtypes that can be
+>      individually filtered.  Other filtration is also available.
+>
+>  (7) Each time the buffer is opened, a new buffer is created - this means that
+>      there's no interference between watchers.
+>
+>  (8) When recording a notification, the kernel will not sleep, but will rather
+>      mark a queue as overrun if there's insufficient space, thereby avoiding
+>      userspace causing the kernel to hang.
+>
+>  (9) The 'watchpoint' should be specific where possible, meaning that you
+>      specify the object that you want to watch.
+>
+> (10) The buffer is created and then watchpoints are attached to it, using one
+>      of:
+>
+> 	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+> 	mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+> 	sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+>
+>      where in all three cases, fd indicates the queue and the number after is
+>      a tag between 0 and 255.
+>
+> (11) The watch must be removed if either the watch buffer is destroyed or the
+>      watched object is destroyed.
+>
+>
+> Things I want to avoid:
+>
+>  (1) Introducing features that make the core VFS dependent on the network
+>      stack or networking namespaces (ie. usage of netlink).
+>
+>  (2) Dumping all this stuff into dmesg and having a daemon that sits there
+>      parsing the output and distributing it as this then puts the
+>      responsibility for security into userspace and makes handling namespaces
+>      tricky.  Further, dmesg might not exist or might be inaccessible inside a
+>      container.
+>
+>  (3) Letting users see events they shouldn't be able to see.
+>
+>
+> Further things that need to be done:
+>
+>  (1) fsinfo() syscall needs to find superblocks by ID as well as by path so
+>      that it can query a superblock for information without the need to try
+>      and work out how to reach it - if the calling process even can.
+>
+>  (2) A mount_info() syscall is needed that can enumerate all the children of a
+>      mount.  This is necessary because mountpoints can hide each other by
+>      stacking, so paths are not unique keys.  This will require the ability to
+>      look up a mount by ID.  This avoids the need to parse /proc/mounts.
+>
+>  (3) A keyctl call is needed to allow a watch on a keyring to be extended to
+>      "children" of that keyring, such that the watch is removed from the child
+>      if it is unlinked from the keyring.
+>
+>  (4) A global superblock event queue maybe?
+>
+>  (5) Propagating watches to child superblock over automounts?
+>
+>
+> The patches can be found here also:
+>
+> 	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
+>
+> David
+> ---
+> David Howells (5):
+>       General notification queue with user mmap()'able ring buffer
+>       KEYS: Add a notification facility
+>       vfs: Add a mount-notification facility
+>       vfs: Add superblock notifications
+>       Add sample notification program
+>
+>
+>  Documentation/security/keys/core.rst   |   59 ++
+>  Documentation/watch_queue.rst          |  305 ++++++++++++
+>  arch/x86/entry/syscalls/syscall_32.tbl |    2 
+>  arch/x86/entry/syscalls/syscall_64.tbl |    2 
+>  drivers/misc/Kconfig                   |    9 
+>  drivers/misc/Makefile                  |    1 
+>  drivers/misc/watch_queue.c             |  835 ++++++++++++++++++++++++++++++++
+>  fs/Kconfig                             |   21 +
+>  fs/Makefile                            |    1 
+>  fs/fs_context.c                        |    1 
+>  fs/mount.h                             |   26 +
+>  fs/mount_notify.c                      |  178 +++++++
+>  fs/namespace.c                         |   18 +
+>  fs/super.c                             |  116 ++++
+>  include/linux/dcache.h                 |    1 
+>  include/linux/fs.h                     |   77 +++
+>  include/linux/key.h                    |    4 
+>  include/linux/syscalls.h               |    4 
+>  include/linux/watch_queue.h            |   87 +++
+>  include/uapi/linux/keyctl.h            |    1 
+>  include/uapi/linux/watch_queue.h       |  156 ++++++
+>  kernel/sys_ni.c                        |    6 
+>  mm/interval_tree.c                     |    2 
+>  mm/memory.c                            |    1 
+>  samples/Kconfig                        |    6 
+>  samples/Makefile                       |    2 
+>  samples/watch_queue/Makefile           |    9 
+>  samples/watch_queue/watch_test.c       |  232 +++++++++
+>  security/keys/Kconfig                  |   10 
+>  security/keys/compat.c                 |    3 
+>  security/keys/gc.c                     |    5 
+>  security/keys/internal.h               |   29 +
+>  security/keys/key.c                    |   37 +
+>  security/keys/keyctl.c                 |   90 +++
+>  security/keys/keyring.c                |   17 -
+>  security/keys/request_key.c            |    4 
+>  36 files changed, 2332 insertions(+), 25 deletions(-)
+>  create mode 100644 Documentation/watch_queue.rst
+>  create mode 100644 drivers/misc/watch_queue.c
+>  create mode 100644 fs/mount_notify.c
+>  create mode 100644 include/linux/watch_queue.h
+>  create mode 100644 include/uapi/linux/watch_queue.h
+>  create mode 100644 samples/watch_queue/Makefile
+>  create mode 100644 samples/watch_queue/watch_test.c
+>
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
