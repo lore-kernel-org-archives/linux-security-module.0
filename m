@@ -1,62 +1,41 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 24 Jul 2018 20:22:49 +0100
-Subject: [RFC][PATCH 0/5] Mount, Filesystem and Keyrings notifications
-In-Reply-To: <04b05dbd-0aa4-7789-1314-52108246291a@schaufler-ca.com>
-References: <04b05dbd-0aa4-7789-1314-52108246291a@schaufler-ca.com>
-	<675e5c24-36ef-4cc5-846c-1414c1195d85@schaufler-ca.com>
-	<153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
-	<23894.1532448035@warthog.procyon.org.uk>
-Message-ID: <14831.1532460169@warthog.procyon.org.uk>
+From: lalefinlers@kidinventor.com (Roland)
+Date: Tue, 24 Jul 2018 13:11:47 +0200
+Subject: editing for your photos
+Message-ID: <5604be05ca5db3cde86d09b3edd09bf8@chillinproducts.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+I would like to speak with the person that managing photos for your
+company?
 
-> >>>  (1) Mount topology and reconfiguration change events.
-> >> With the possibility of unprivileged mounting you're going to have to
-> >> address access control on events.  If root in a user namespace mounts a
-> >> filesystem you may have a case where the "real" user wouldn't want the
-> >> listener to receive a notification.
-> > Can you clarify who the listener is in this case?
-> 
-> That would be anyone with a watchpoint set.
+We provide image editing like ? photos cutting out and retouching.
 
-I was wanting clarification on how you viewed events being generated inside
-the namespace being seen by an external listener, vs events being generated
-outside the namespace being seen by an internal listener.
+Enhancing your images is just a part of what we can do for your business.
+Whether you?re an ecommerce
+store or portrait photographer, real estate professional, or an e-Retailer,
+we are your personal team
+of photo editors that integrate seamlessly with your business.
 
-Hmmm...  OTOH, maybe it's not a problem - can a mount namespace intersect with
-two different user namespaces, given it has its own user_ns pointer?
+Our mainly services are:
 
-> > But for each event, I can associate an object label, derived from the
-> > source, and use f_cred on the notification queue to provide a subject
-> > label.
-> 
-> ... or UID or groups.
+ . Cut out, masking, clipping path, deep etching, transparent background
+ . Colour correction, black and white, light and shadows etc.
+ . Dust cleaning, spot cleaning
+ . Beauty retouching, skin retouching, face retouching, body retouching
+ . Fashion/Beauty Image Retouching
+ . Product image Retouching
+ . Real estate image Retouching
+ . Wedding & Event Album Design.
+ . Restoration and repair old images
+ . Vector Conversion
+ . Portrait image Retouching
 
-Might not be useful if the watched object doesn't have UID or GID - a
-superblock say.
+We can provide you editing test on your photos.
+Please reply if you are interested.
 
-Also, that raises an additional question: if someone triggers an event - say a
-mount - there is an additional set of creds (that of the triggering process).
-Do I need to consider that?
+Thanks,
+Roland
 
-> >>    (4) User injected events
-> >>
-> >> at this point, but it's an obvious extension. That is going
-> >> to require access controls (remember kdbus) so I think you'd
-> >> do well to design them in now rather than have some security
-> >> module hack like me come along later and "fix" it. 
-> > Yeah - the thought had occurred to me, but there needs to be some way to
-> > define a 'source' and a way to connect them.  Also, would you want a general
-> > source that anyone can contribute through, specific sources where you have to
-> > directly connect or namespace-restricted sources?
-> 
-> My guess is that the consensus would be "Yes" to all the above.
-
-I thought you might say that.
-
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
