@@ -1,98 +1,203 @@
-From: erichte@linux.vnet.ibm.com (Eric Richter)
-Date: Wed, 25 Jul 2018 18:31:58 -0500
-Subject: [PATCH 2/4] ima: add support for external setting of ima_appraise
-In-Reply-To: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
-References: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
-Message-ID: <20180725233200.761-3-erichte@linux.vnet.ibm.com>
+From: raven@themaw.net (Ian Kent)
+Date: Thu, 26 Jul 2018 09:18:34 +0800
+Subject: [RFC][PATCH 0/5] Mount, Filesystem and Keyrings notifications
+In-Reply-To: <55bb8ed3-59b4-ca6e-5741-a7d5e4489a7c@schaufler-ca.com>
+References: <675e5c24-36ef-4cc5-846c-1414c1195d85@schaufler-ca.com>
+	<153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
+	<23894.1532448035@warthog.procyon.org.uk>
+	<04b05dbd-0aa4-7789-1314-52108246291a@schaufler-ca.com>
+	<1532497196.2688.65.camel@themaw.net>
+	<55bb8ed3-59b4-ca6e-5741-a7d5e4489a7c@schaufler-ca.com>
+Message-ID: <1532567914.2939.23.camel@themaw.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
+On Wed, 2018-07-25 at 08:48 -0700, Casey Schaufler wrote:
+> On 7/24/2018 10:39 PM, Ian Kent wrote:
+> > On Tue, 2018-07-24 at 11:57 -0700, Casey Schaufler wrote:
+> > > On 7/24/2018 9:00 AM, David Howells wrote:
+> > > > Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > > 
+> > > > > >  (1) Mount topology and reconfiguration change events.
+> > > > > 
+> > > > > With the possibility of unprivileged mounting you're going to have to
+> > > > > address access control on events.  If root in a user namespace mounts
+> > > > > a
+> > > > > filesystem you may have a case where the "real" user wouldn't want the
+> > > > > listener to receive a notification.
+> > > > 
+> > > > Can you clarify who the listener is in this case?
+> > > 
+> > > That would be anyone with a watchpoint set.
+> > 
+> > And that process would have had the privilege to do so ...
+> 
+> Which isn't the point. The access control isn't on the watchpoint,
+> it's on delivering the event to the watchpoint. The access control
+> needs to be based on the process that created the event and the
+> process receiving the event.
+> 
+> > 
+> > > > Note that mount topology events don't leak outside of the mount
+> > > > namespace
+> > > > they're generated in.
+> > > > 
+> > > > That said, if you, a random user, put a watchpoint on "/" you can see
+> > > > the
+> > > > mount events triggered by another random user in the same mount
+> > > > namespace.  I
+> > > > don't see a way to control this except by resorting to the LSM since
+> > > > UNIX
+> > > > doesn't have 'notify' permission bits.
+> > > 
+> > > I would call that a write operation from the process that triggered
+> > > the watchpoint to the one watching it. Like a signal. Signals have a
+> > > rudimentary DAC policy (write only to the same UID) that could be
+> > > your model.
+> > 
+> > I'm not sure signals are a good comparison.
+> 
+> In both cases you have one process sending information
+> to another. If you use killpg() instead of kill() you can
+> send to a number of processes without knowing them individually.
+> A process can chose what to do with (most) signals, including
+> ignore them.
 
-The "ima_appraise" mode defaults to enforcing, unless configured to
-allow the boot command line "ima_appraise" option. This patch allows
-the "ima_appraise" mode to be defined based on the arch setting.
+I'm just saying that the analogy isn't quite the same.
 
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
----
- security/integrity/ima/ima.h          |  5 +++++
- security/integrity/ima/ima_appraise.c | 11 +++++++++--
- security/integrity/ima/ima_policy.c   |  5 ++++-
- 3 files changed, 18 insertions(+), 3 deletions(-)
+In the this case notifications can't be just sent by a process,
+it's entirely controlled by the VFS so the notion of some process
+doing something out-off-band doesn't apply.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 588e4813370..6e5fa7c4280 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
- 				 int xattr_len);
- int ima_read_xattr(struct dentry *dentry,
- 		   struct evm_ima_xattr_data **xattr_value);
-+void set_ima_appraise(char *str);
- 
- #else
- static inline int ima_appraise_measurement(enum ima_hooks func,
-@@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
- 	return 0;
- }
- 
-+static inline void set_ima_appraise(char *str)
-+{
-+}
-+
- #endif /* CONFIG_IMA_APPRAISE */
- 
- /* LSM based policy rules require audit */
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 8bd7a0733e5..e061613bcb8 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -18,15 +18,22 @@
- 
- #include "ima.h"
- 
--static int __init default_appraise_setup(char *str)
-+void set_ima_appraise(char *str)
- {
--#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
- 	if (strncmp(str, "off", 3) == 0)
- 		ima_appraise = 0;
- 	else if (strncmp(str, "log", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_LOG;
- 	else if (strncmp(str, "fix", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_FIX;
-+	else if (strncmp(str, "enforce", 7) == 0)
-+		ima_appraise = IMA_APPRAISE_ENFORCE;
-+}
-+
-+static int __init default_appraise_setup(char *str)
-+{
-+#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-+	set_ima_appraise(str);
- #endif
- 	return 1;
- }
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index b47db4d7fea..402e5bd1093 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -573,8 +573,11 @@ void __init ima_init_policy(void)
- 	 * (Highest priority)
- 	 */
- 	arch_policy_entries = ima_init_arch_policy();
--	if (arch_policy_entries > 0)
-+	if (arch_policy_entries > 0) {
- 		pr_info("Adding %d architecture policy rules.\n", arch_policy_entries);
-+		set_ima_appraise("enforce");
-+	}
-+
- 	for (i = 0; i < arch_policy_entries; i++) {
- 		struct ima_rule_entry *entry;
- 
--- 
-2.14.4
+> 
+> > They can affect a process in significant ways whereas triggering
+> > a notification is less invasive so the security requirements
+> > should take that into consideration.
+> 
+> I'm looking at this from a security model viewpoint. If process
+> A sends information to process B that's a write operation with
+> A as the subject and B as the object. 
 
+Perhaps, but again there's no process A deciding to send something.
+
+It's the VFS saying to itself, I see this thing has changed, someone
+that had appropriate privilege asked me to tell it so ...
+
+I may be wrong but there isn't a similar access control mechanism
+on the proc file system mount table (pseudo) files, only the usual
+access control on opening them and what is seen is based on the
+mount name space of the opening process.
+
+This is also not quite as what we have here but it is similar.
+
+> 
+> > But there is a problem here I think.
+> > 
+> > How about the case where a user name space is created or entered
+> > without a newly created mount name space and mounts and umounts
+> > are done, the user name space necessarily expects the table of
+> > mounts it sees to be up to date.
+> > 
+> > But, if the methods here are used by user space, say libmount
+> > was updated to use it, to gain the efficiency of not constantly
+> > re-reading the proc mount table then restrictions on notifications
+> > would mean the mount table seen in the user name space might not
+> > be updated and would no longer be correct.
+> 
+> Hey, I'm not the one saying that containers don't need/want kernel
+> manifestation. Of course you may have troubles with access consistency
+> if you go around changing the access control attributes with namespaces.
+> One of the problems with signals is that you can't chmod() your process
+> to allow signals from other specified users. If you don't design an
+> access control scheme into the watchpoint mechanism you aren't going to
+> be able to deal with situations like this.
+
+Don't get me wrong, I'm not criticizing your suggestion that
+some sort of security model is needed.
+
+I'm saying it's not straight forward to work out what's actually
+needed and, in thinking about it, I ended up described an additional
+potential problem that's not even (necessarily) security related.
+
+> 
+> > The converse is more interesting, where the user name space does
+> > create or enter a new mount name space, then libmount would see ???,
+> > probably not the updated mount information ... unless it opens a
+> > new file handle to get mount update information ... a long running
+> > daemon that uses libmount and dispenses or uses mount information
+> > would very likely have a problem ...
+> > 
+> > The current proc file system method or providing the mount table
+> > forces a new file handle to be opened whenever getting the mount
+> > table so it always sees only the current mount name space mount
+> > table.
+> > 
+> > At the very least I need to think more about this ...
+> > 
+> > > > But for each event, I can associate an object label, derived from the
+> > > > source,
+> > > > and use f_cred on the notification queue to provide a subject label.
+> > > 
+> > > ... or UID or groups.
+> > > 
+> > > > > >  (2) Superblocks EIO, ENOSPC and EDQUOT events (not complete yet).
+> > > > > 
+> > > > > Here, too. If SELinux (for example) policy says you can't see
+> > > > > anything on a filesystem you shouldn't get notifications about
+> > > > > things that happen to that filesystem.
+> > > > 
+> > > > Yep.  Sounds like I need to refer that to the LSM as above.
+> > > > 
+> > > > It's a bit easier for specifically nominated sb sources since you might
+> > > > only
+> > > > need to do the check once at sb_notify() time.  If there's a general
+> > > > queue
+> > > > that all sbs contribute to, however, then things become more complicated
+> > > > as
+> > > > the checks have to be done at do-we-write-into-this-queue? time.
+> > > > 
+> > > > > >  (3) Key/keyring changes events
+> > > > > 
+> > > > > And again, I should only get notifications about keys and
+> > > > > keyrings I have access to.
+> > > > 
+> > > > Currently, you can only watch keys that grant you View permission, which
+> > > > might
+> > > > suffice.
+> > > 
+> > > That seems appropriate.
+> > > 
+> > > > > I expect that you intentionally left off
+> > > > > 
+> > > > >    (4) User injected events
+> > > > > 
+> > > > > at this point, but it's an obvious extension. That is going
+> > > > > to require access controls (remember kdbus) so I think you'd
+> > > > > do well to design them in now rather than have some security
+> > > > > module hack like me come along later and "fix" it. 
+> > > > 
+> > > > Yeah - the thought had occurred to me, but there needs to be some way to
+> > > > define a 'source' and a way to connect them.  Also, would you want a
+> > > > general
+> > > > source that anyone can contribute through, specific sources where you
+> > > > have
+> > > > to
+> > > > directly connect or namespace-restricted sources?
+> > > 
+> > > My guess is that the consensus would be "Yes" to all the above.
+> > > 
+> > > > David
+> > > > 
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-security-
+> > module" in
+> > the body of a message to majordomo at vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
+> 
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
-More majordomo info@ http://vger.kernel.org/majordomo-info.html
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
