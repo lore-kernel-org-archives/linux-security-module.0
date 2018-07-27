@@ -1,264 +1,228 @@
 From: dhowells@redhat.com (David Howells)
-Date: Fri, 27 Jul 2018 18:32:16 +0100
-Subject: [PATCH 08/38] vfs: Add LSM hooks for the new mount API [ver #10]
+Date: Fri, 27 Jul 2018 18:32:37 +0100
+Subject: [PATCH 11/38] apparmor: Implement security hooks for the new mount
+	API [ver #10]
 In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
 References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
-Message-ID: <153271273658.9458.13966476574915847397.stgit@warthog.procyon.org.uk>
+Message-ID: <153271275782.9458.14087164564403655935.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add LSM hooks for use by the new mount API and filesystem context code.
-This includes:
+Implement hooks to check the creation of new mountpoints for AppArmor.
 
- (1) Hooks to handle allocation, duplication and freeing of the security
-     record attached to a filesystem context.
-
- (2) A hook to snoop source specifications.  There may be multiple of these
-     if the filesystem supports it.  They will to be local files/devices if
-     fs_context::source_is_dev is true and will be something else, possibly
-     remote server specifications, if false.
-
- (3) A hook to snoop superblock configuration options in key[=val] form.
-     If the LSM decides it wants to handle it, it can suppress the option
-     being passed to the filesystem.  Note that 'val' may include commas
-     and binary data with the fsopen patch.
-
- (4) A hook to perform validation and allocation after the configuration
-     has been done but before the superblock is allocated and set up.
-
- (5) A hook to transfer the security from the context to a newly created
-     superblock.
-
- (6) A hook to rule on whether a path point can be used as a mountpoint.
-
-These are intended to replace:
-
-	security_sb_copy_data
-	security_sb_kern_mount
-	security_sb_mount
-	security_sb_set_mnt_opts
-	security_sb_clone_mnt_opts
-	security_sb_parse_opts_str
+Unfortunately, the DFA evaluation puts the option data in last, after the
+details of the mountpoint, so we have to cache the mount options in the
+fs_context using those hooks till we get to the new mountpoint hook.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
+cc: apparmor at lists.ubuntu.com
 cc: linux-security-module at vger.kernel.org
 ---
 
- include/linux/lsm_hooks.h |   61 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/security.h  |   47 +++++++++++++++++++++++++++++++++++
- security/security.c       |   41 ++++++++++++++++++++++++++++++
- 3 files changed, 149 insertions(+)
+ security/apparmor/include/mount.h |   11 +++++
+ security/apparmor/lsm.c           |   80 +++++++++++++++++++++++++++++++++++++
+ security/apparmor/mount.c         |   46 +++++++++++++++++++++
+ 3 files changed, 135 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 924424e7be8f..60a9a40bd46c 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -76,6 +76,49 @@
-  *	changes on the process such as clearing out non-inheritable signal
-  *	state.  This is called immediately after commit_creds().
-  *
-+ * Security hooks for mount using fs_context.
-+ *	[See also Documentation/filesystems/mounting.txt]
-+ *
-+ * @fs_context_alloc:
-+ *	Allocate and attach a security structure to sc->security.  This pointer
-+ *	is initialised to NULL by the caller.
-+ *	@fc indicates the new filesystem context.
-+ *	@reference indicates the source dentry of a submount or start of reconfig.
-+ * @fs_context_dup:
-+ *	Allocate and attach a security structure to sc->security.  This pointer
-+ *	is initialised to NULL by the caller.
-+ *	@fc indicates the new filesystem context.
-+ *	@src_fc indicates the original filesystem context.
-+ * @fs_context_free:
-+ *	Clean up a filesystem context.
-+ *	@fc indicates the filesystem context.
-+ * @fs_context_parse_param:
-+ *	Userspace provided a parameter to configure a superblock.  The LSM may
-+ *	reject it with an error and may use it for itself, in which case it
-+ *	should return 1; otherwise it should return 0 to pass it on to the
-+ *	filesystem.
-+ *	@fc indicates the filesystem context.
-+ *	@param The parameter
-+ * @fs_context_validate:
-+ *	Validate the filesystem context preparatory to applying it.  This is
-+ *	done after all the options have been parsed.
-+ *	@fc indicates the filesystem context.
-+ * @sb_get_tree:
-+ *	Assign the security to a newly created superblock.
-+ *	@fc indicates the filesystem context.
-+ *	@fc->root indicates the root that will be mounted.
-+ *	@fc->root->d_sb points to the superblock.
-+ * @sb_reconfigure:
-+ *	Apply reconfiguration to the security on a superblock.
-+ *	@fc indicates the filesystem context.
-+ *	@fc->root indicates a dentry in the mount.
-+ *	@fc->root->d_sb points to the superblock.
-+ * @sb_mountpoint:
-+ *	Equivalent of sb_mount, but with an fs_context.
-+ *	@fc indicates the filesystem context.
-+ *	@mountpoint indicates the path on which the mount will take place.
-+ *	@mnt_flags indicates the MNT_* flags specified.
-+ *
-  * Security hooks for filesystem operations.
-  *
-  * @sb_alloc_security:
-@@ -1462,6 +1505,16 @@ union security_list_options {
- 	void (*bprm_committing_creds)(struct linux_binprm *bprm);
- 	void (*bprm_committed_creds)(struct linux_binprm *bprm);
+diff --git a/security/apparmor/include/mount.h b/security/apparmor/include/mount.h
+index 25d6067fa6ef..0441bfae30fa 100644
+--- a/security/apparmor/include/mount.h
++++ b/security/apparmor/include/mount.h
+@@ -16,6 +16,7 @@
  
-+	int (*fs_context_alloc)(struct fs_context *fc, struct dentry *reference);
-+	int (*fs_context_dup)(struct fs_context *fc, struct fs_context *src_sc);
-+	void (*fs_context_free)(struct fs_context *fc);
-+	int (*fs_context_parse_param)(struct fs_context *fc, struct fs_parameter *param);
-+	int (*fs_context_validate)(struct fs_context *fc);
-+	int (*sb_get_tree)(struct fs_context *fc);
-+	void (*sb_reconfigure)(struct fs_context *fc);
-+	int (*sb_mountpoint)(struct fs_context *fc, struct path *mountpoint,
-+			     unsigned int mnt_flags);
+ #include <linux/fs.h>
+ #include <linux/path.h>
++#include <linux/fs_context.h>
+ 
+ #include "domain.h"
+ #include "policy.h"
+@@ -27,7 +28,13 @@
+ #define AA_AUDIT_DATA		0x40
+ #define AA_MNT_CONT_MATCH	0x40
+ 
+-#define AA_MS_IGNORE_MASK (MS_KERNMOUNT | MS_NOSEC | MS_ACTIVE | MS_BORN)
++#define AA_SB_IGNORE_MASK (SB_KERNMOUNT | SB_NOSEC | SB_ACTIVE | SB_BORN)
 +
- 	int (*sb_alloc_security)(struct super_block *sb);
- 	void (*sb_free_security)(struct super_block *sb);
- 	int (*sb_copy_data)(char *orig, size_t orig_size, char *copy);
-@@ -1803,6 +1856,14 @@ struct security_hook_heads {
- 	struct hlist_head bprm_check_security;
- 	struct hlist_head bprm_committing_creds;
- 	struct hlist_head bprm_committed_creds;
-+	struct hlist_head fs_context_alloc;
-+	struct hlist_head fs_context_dup;
-+	struct hlist_head fs_context_free;
-+	struct hlist_head fs_context_parse_param;
-+	struct hlist_head fs_context_validate;
-+	struct hlist_head sb_get_tree;
-+	struct hlist_head sb_reconfigure;
-+	struct hlist_head sb_mountpoint;
- 	struct hlist_head sb_alloc_security;
- 	struct hlist_head sb_free_security;
- 	struct hlist_head sb_copy_data;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 9bb5bc6d596c..a8b1056ed6e4 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -53,6 +53,9 @@ struct msg_msg;
- struct xattr;
- struct xfrm_sec_ctx;
- struct mm_struct;
-+struct fs_context;
-+struct fs_parameter;
-+enum fs_value_type;
++struct apparmor_fs_context {
++	struct fs_context	fc;
++	char			*saved_options;
++	size_t			saved_size;
++};
  
- /* If capable should audit the security request */
- #define SECURITY_CAP_NOAUDIT 0
-@@ -225,6 +228,15 @@ int security_bprm_set_creds(struct linux_binprm *bprm);
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(struct linux_binprm *bprm);
- void security_bprm_committed_creds(struct linux_binprm *bprm);
-+int security_fs_context_alloc(struct fs_context *fc, struct dentry *reference);
-+int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
-+void security_fs_context_free(struct fs_context *fc);
-+int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-+int security_fs_context_validate(struct fs_context *fc);
-+int security_sb_get_tree(struct fs_context *fc);
-+void security_sb_reconfigure(struct fs_context *fc);
-+int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+			   unsigned int mnt_flags);
- int security_sb_alloc(struct super_block *sb);
- void security_sb_free(struct super_block *sb);
- int security_sb_copy_data(char *orig, size_t orig_size, char *copy);
-@@ -526,6 +538,41 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
- {
+ int aa_remount(struct aa_label *label, const struct path *path,
+ 	       unsigned long flags, void *data);
+@@ -45,6 +52,8 @@ int aa_move_mount(struct aa_label *label, const struct path *path,
+ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 		 const struct path *path, const char *type, unsigned long flags,
+ 		 void *data);
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint);
+ 
+ int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags);
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 84e644ce3583..9a5915dffbdc 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -520,6 +520,78 @@ static int apparmor_file_mprotect(struct vm_area_struct *vma,
+ 			   !(vma->vm_flags & VM_SHARED) ? MAP_PRIVATE : 0);
  }
  
-+static inline int security_fs_context_alloc(struct fs_context *fc,
-+					    struct dentry *reference)
++static int apparmor_fs_context_alloc(struct fs_context *fc, struct dentry *reference)
 +{
-+	return 0;
-+}
-+static inline int security_fs_context_dup(struct fs_context *fc,
-+					  struct fs_context *src_fc)
-+{
-+	return 0;
-+}
-+static inline void security_fs_context_free(struct fs_context *fc)
-+{
-+}
-+static inline int security_fs_context_parse_param(struct fs_context *fc,
-+						  struct fs_parameter *param)
-+{
-+	return 0;
-+}
-+static inline int security_fs_context_validate(struct fs_context *fc)
-+{
-+	return 0;
-+}
-+static inline int security_sb_get_tree(struct fs_context *fc)
-+{
-+	return 0;
-+}
-+static inline void security_sb_reconfigure(struct fs_context *fc)
-+{
-+}
-+static inline int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+					 unsigned int mnt_flags)
-+{
++	struct apparmor_fs_context *afc;
++
++	afc = kzalloc(sizeof(*afc), GFP_KERNEL);
++	if (!afc)
++		return -ENOMEM;
++
++	fc->security = afc;
 +	return 0;
 +}
 +
- static inline int security_sb_alloc(struct super_block *sb)
- {
- 	return 0;
-diff --git a/security/security.c b/security/security.c
-index 5149c2cbe8a7..9bdc21ae645c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -358,6 +358,47 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
++static int apparmor_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
++{
++	fc->security = NULL;
++	return 0;
++}
++
++static void apparmor_fs_context_free(struct fs_context *fc)
++{
++	struct apparmor_fs_context *afc = fc->security;
++
++	if (afc) {
++		kfree(afc->saved_options);
++		kfree(afc);
++	}
++}
++
++/*
++ * As a temporary hack, we buffer all the options.  The problem is that we need
++ * to pass them to the DFA evaluator *after* mount point parameters, which
++ * means deferring the entire check to the sb_mountpoint hook.
++ */
++static int apparmor_fs_context_parse_option(struct fs_context *fc, char *opt, size_t len)
++{
++	struct apparmor_fs_context *afc = fc->security;
++	size_t space = 0;
++	char *p, *q;
++
++	if (afc->saved_size > 0)
++		space = 1;
++
++	p = krealloc(afc->saved_options, afc->saved_size + space + len + 1, GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++
++	q = p + afc->saved_size;
++	if (q != p)
++		*q++ = ' ';
++	memcpy(q, opt, len);
++	q += len;
++	*q = 0;
++
++	afc->saved_options = p;
++	afc->saved_size += 1 + len;
++	return 0;
++}
++
++static int apparmor_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
++				  unsigned int mnt_flags)
++{
++	struct aa_label *label;
++	int error = 0;
++
++	label = __begin_current_label_crit_section();
++	if (!unconfined(label))
++		error = aa_new_mount_fc(label, fc, mountpoint);
++	__end_current_label_crit_section(label);
++
++	return error;
++}
++
+ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 			     const char *type, unsigned long flags,
+ 			     void *data, size_t data_size)
+@@ -531,7 +603,7 @@ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
+ 		flags &= ~MS_MGC_MSK;
+ 
+-	flags &= ~AA_MS_IGNORE_MASK;
++	flags &= ~AA_SB_IGNORE_MASK;
+ 
+ 	label = __begin_current_label_crit_section();
+ 	if (!unconfined(label)) {
+@@ -1134,6 +1206,12 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(capget, apparmor_capget),
+ 	LSM_HOOK_INIT(capable, apparmor_capable),
+ 
++	LSM_HOOK_INIT(fs_context_alloc, apparmor_fs_context_alloc),
++	LSM_HOOK_INIT(fs_context_dup, apparmor_fs_context_dup),
++	LSM_HOOK_INIT(fs_context_free, apparmor_fs_context_free),
++	LSM_HOOK_INIT(fs_context_parse_option, apparmor_fs_context_parse_option),
++	LSM_HOOK_INIT(sb_mountpoint, apparmor_sb_mountpoint),
++
+ 	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
+ 	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
+ 	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index 8c3787399356..3c95fffb76ac 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -554,6 +554,52 @@ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 	return error;
  }
  
-+int security_fs_context_alloc(struct fs_context *fc, struct dentry *reference)
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint)
 +{
-+	return call_int_hook(fs_context_alloc, 0, fc, reference);
++	struct apparmor_fs_context *afc = fc->security;
++	struct aa_profile *profile;
++	char *buffer = NULL, *dev_buffer = NULL;
++	bool binary;
++	int error;
++	struct path tmp_path, *dev_path = NULL;
++
++	AA_BUG(!label);
++	AA_BUG(!mountpoint);
++
++	binary = fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA;
++
++	if (fc->fs_type->fs_flags & FS_REQUIRES_DEV) {
++		if (!fc->source)
++			return -ENOENT;
++
++		error = kern_path(fc->source, LOOKUP_FOLLOW, &tmp_path);
++		if (error)
++			return error;
++		dev_path = &tmp_path;
++	}
++
++	get_buffers(buffer, dev_buffer);
++	if (dev_path) {
++		error = fn_for_each_confined(label, profile,
++			match_mnt(profile, mountpoint, buffer, dev_path, dev_buffer,
++				  fc->fs_type->name,
++				  fc->sb_flags & ~AA_SB_IGNORE_MASK,
++				  afc->saved_options, binary));
++	} else {
++		error = fn_for_each_confined(label, profile,
++			match_mnt_path_str(profile, mountpoint, buffer,
++					   fc->source, fc->fs_type->name,
++					   fc->sb_flags & ~AA_SB_IGNORE_MASK,
++					   afc->saved_options, binary, NULL));
++	}
++	put_buffers(buffer, dev_buffer);
++	if (dev_path)
++		path_put(dev_path);
++
++	return error;
 +}
 +
-+int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
-+{
-+	return call_int_hook(fs_context_dup, 0, fc, src_fc);
-+}
-+
-+void security_fs_context_free(struct fs_context *fc)
-+{
-+	call_void_hook(fs_context_free, fc);
-+}
-+
-+int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	return call_int_hook(fs_context_parse_param, 0, fc, param);
-+}
-+
-+int security_fs_context_validate(struct fs_context *fc)
-+{
-+	return call_int_hook(fs_context_validate, 0, fc);
-+}
-+
-+int security_sb_get_tree(struct fs_context *fc)
-+{
-+	return call_int_hook(sb_get_tree, 0, fc);
-+}
-+
-+void security_sb_reconfigure(struct fs_context *fc)
-+{
-+	call_void_hook(sb_reconfigure, fc);
-+}
-+
-+int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+			   unsigned int mnt_flags)
-+{
-+	return call_int_hook(sb_mountpoint, 0, fc, mountpoint, mnt_flags);
-+}
-+
- int security_sb_alloc(struct super_block *sb)
+ static int profile_umount(struct aa_profile *profile, struct path *path,
+ 			  char *buffer)
  {
- 	return call_int_hook(sb_alloc_security, 0, sb);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
