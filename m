@@ -1,53 +1,264 @@
-From: jroedel@suse.de (Joerg Roedel)
-Date: Fri, 27 Jul 2018 15:25:42 +0200
-Subject: [lkp-robot] [confidence: ] 7757d607c6 [   56.996267] BUG: Bad
-	page map in process trinity-c2  pte:0d755065 pmd:0d55b067
-In-Reply-To: <20180721022325.GF12513@shao2-debian>
-References: <20180721022325.GF12513@shao2-debian>
-Message-ID: <20180727132542.mt35m3knpwpsyb73@suse.de>
+From: dhowells@redhat.com (David Howells)
+Date: Fri, 27 Jul 2018 18:32:16 +0100
+Subject: [PATCH 08/38] vfs: Add LSM hooks for the new mount API [ver #10]
+In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+Message-ID: <153271273658.9458.13966476574915847397.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hey,
+Add LSM hooks for use by the new mount API and filesystem context code.
+This includes:
 
-thanks for the report! It did a lot of testing and the issue is fixed
-now with this patch:
+ (1) Hooks to handle allocation, duplication and freeing of the security
+     record attached to a filesystem context.
 
-	https://lore.kernel.org/lkml/1532533683-5988-4-git-send-email-joro at 8bytes.org/
+ (2) A hook to snoop source specifications.  There may be multiple of these
+     if the filesystem supports it.  They will to be local files/devices if
+     fs_context::source_is_dev is true and will be something else, possibly
+     remote server specifications, if false.
 
-I did 2150 runs of your reproducer with the reproducer attached to this
-report, and the issue triggered three times.
+ (3) A hook to snoop superblock configuration options in key[=val] form.
+     If the LSM decides it wants to handle it, it can suppress the option
+     being passed to the filesystem.  Note that 'val' may include commas
+     and binary data with the fsopen patch.
 
-With the patch above the issue did not trigger anymore in (up to now)
-2170 runs of the reproducer.
+ (4) A hook to perform validation and allocation after the configuration
+     has been done but before the superblock is allocated and set up.
 
-On Sat, Jul 21, 2018 at 10:23:25AM +0800, kernel test robot wrote:
-> git bisect start 8c934e01a7ce685d98e970880f5941d79272c654 37b5dca2898d1471729194f45e281c2443eb9d6c --
-> git bisect good 8372d66865deb45ee3ec21401a9c80f231b728c8  # 23:36  G    304     0    4   4  x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
-> git bisect good b976690f5db26fbc7c2be413bfa0fbd270547a94  # 00:10  G    305     0    5   5  x86/mm/pti: Introduce pti_finalize()
-> git bisect good 9bae3197e15dd5e03ce8e237db6fe4486b08a775  # 00:49  G    308     0    3   4  x86/ldt: Split out sanity check in map_ldt_struct()
-> git bisect  bad 5e8105950a8b3e03e805299b4d05020ee4eda31a  # 01:12  B    131     1    4   4  x86/mm/pti: Add Warning when booting on a PCID capable CPU
-> git bisect good 6df934b92a549cb3badb6d576f71aeb133e2f110  # 01:47  G    310     0    7  10  x86/ldt: Enable LDT user-mapping for PAE
-> git bisect  bad 7757d607c6b31867777de42e1fb0210b9c5d8b70  # 02:08  B    134     1    2   2  x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
-> # first bad commit: [7757d607c6b31867777de42e1fb0210b9c5d8b70] x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
-> git bisect good 6df934b92a549cb3badb6d576f71aeb133e2f110  # 03:14  G    900     0    9  19  x86/ldt: Enable LDT user-mapping for PAE
-> # extra tests on HEAD of tip/x86/pti
-> git bisect  bad 8c934e01a7ce685d98e970880f5941d79272c654  # 03:15  B    279     2    0   6  x86/pti: Check the return value of pti_user_pagetable_walk_pmd()
-> # extra tests on tree/branch tip/x86/pti
-> git bisect  bad 8c934e01a7ce685d98e970880f5941d79272c654  # 03:20  B    279     2    0   6  x86/pti: Check the return value of pti_user_pagetable_walk_pmd()
-> # extra tests with first bad commit reverted
-> git bisect good 90d0ce801fac8115d424e40a4a258aeed0e409dd  # 03:58  G    302     0    7   7  Revert "x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32"
-> # extra tests on tree/branch tip/master
-> git bisect  bad 4edd5aa38cec47346e0d0a85fa43964828b982d0  # 04:37  B    257     1    5   6  Merge branch 'linus'
+ (5) A hook to transfer the security from the context to a newly created
+     superblock.
 
-May I ask how this was bisected? I found it very hard to reproduce, it
-triggered less then two times a day with the attached reproducer. Given
-that the report came pretty fast after the patches landed in
-tip/x86/pti, I guess it triggered a lot faster in your testing.
+ (6) A hook to rule on whether a path point can be used as a mountpoint.
 
-Regards,
+These are intended to replace:
 
-	Joerg
+	security_sb_copy_data
+	security_sb_kern_mount
+	security_sb_mount
+	security_sb_set_mnt_opts
+	security_sb_clone_mnt_opts
+	security_sb_parse_opts_str
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-security-module at vger.kernel.org
+---
+
+ include/linux/lsm_hooks.h |   61 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/security.h  |   47 +++++++++++++++++++++++++++++++++++
+ security/security.c       |   41 ++++++++++++++++++++++++++++++
+ 3 files changed, 149 insertions(+)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 924424e7be8f..60a9a40bd46c 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -76,6 +76,49 @@
+  *	changes on the process such as clearing out non-inheritable signal
+  *	state.  This is called immediately after commit_creds().
+  *
++ * Security hooks for mount using fs_context.
++ *	[See also Documentation/filesystems/mounting.txt]
++ *
++ * @fs_context_alloc:
++ *	Allocate and attach a security structure to sc->security.  This pointer
++ *	is initialised to NULL by the caller.
++ *	@fc indicates the new filesystem context.
++ *	@reference indicates the source dentry of a submount or start of reconfig.
++ * @fs_context_dup:
++ *	Allocate and attach a security structure to sc->security.  This pointer
++ *	is initialised to NULL by the caller.
++ *	@fc indicates the new filesystem context.
++ *	@src_fc indicates the original filesystem context.
++ * @fs_context_free:
++ *	Clean up a filesystem context.
++ *	@fc indicates the filesystem context.
++ * @fs_context_parse_param:
++ *	Userspace provided a parameter to configure a superblock.  The LSM may
++ *	reject it with an error and may use it for itself, in which case it
++ *	should return 1; otherwise it should return 0 to pass it on to the
++ *	filesystem.
++ *	@fc indicates the filesystem context.
++ *	@param The parameter
++ * @fs_context_validate:
++ *	Validate the filesystem context preparatory to applying it.  This is
++ *	done after all the options have been parsed.
++ *	@fc indicates the filesystem context.
++ * @sb_get_tree:
++ *	Assign the security to a newly created superblock.
++ *	@fc indicates the filesystem context.
++ *	@fc->root indicates the root that will be mounted.
++ *	@fc->root->d_sb points to the superblock.
++ * @sb_reconfigure:
++ *	Apply reconfiguration to the security on a superblock.
++ *	@fc indicates the filesystem context.
++ *	@fc->root indicates a dentry in the mount.
++ *	@fc->root->d_sb points to the superblock.
++ * @sb_mountpoint:
++ *	Equivalent of sb_mount, but with an fs_context.
++ *	@fc indicates the filesystem context.
++ *	@mountpoint indicates the path on which the mount will take place.
++ *	@mnt_flags indicates the MNT_* flags specified.
++ *
+  * Security hooks for filesystem operations.
+  *
+  * @sb_alloc_security:
+@@ -1462,6 +1505,16 @@ union security_list_options {
+ 	void (*bprm_committing_creds)(struct linux_binprm *bprm);
+ 	void (*bprm_committed_creds)(struct linux_binprm *bprm);
+ 
++	int (*fs_context_alloc)(struct fs_context *fc, struct dentry *reference);
++	int (*fs_context_dup)(struct fs_context *fc, struct fs_context *src_sc);
++	void (*fs_context_free)(struct fs_context *fc);
++	int (*fs_context_parse_param)(struct fs_context *fc, struct fs_parameter *param);
++	int (*fs_context_validate)(struct fs_context *fc);
++	int (*sb_get_tree)(struct fs_context *fc);
++	void (*sb_reconfigure)(struct fs_context *fc);
++	int (*sb_mountpoint)(struct fs_context *fc, struct path *mountpoint,
++			     unsigned int mnt_flags);
++
+ 	int (*sb_alloc_security)(struct super_block *sb);
+ 	void (*sb_free_security)(struct super_block *sb);
+ 	int (*sb_copy_data)(char *orig, size_t orig_size, char *copy);
+@@ -1803,6 +1856,14 @@ struct security_hook_heads {
+ 	struct hlist_head bprm_check_security;
+ 	struct hlist_head bprm_committing_creds;
+ 	struct hlist_head bprm_committed_creds;
++	struct hlist_head fs_context_alloc;
++	struct hlist_head fs_context_dup;
++	struct hlist_head fs_context_free;
++	struct hlist_head fs_context_parse_param;
++	struct hlist_head fs_context_validate;
++	struct hlist_head sb_get_tree;
++	struct hlist_head sb_reconfigure;
++	struct hlist_head sb_mountpoint;
+ 	struct hlist_head sb_alloc_security;
+ 	struct hlist_head sb_free_security;
+ 	struct hlist_head sb_copy_data;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 9bb5bc6d596c..a8b1056ed6e4 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -53,6 +53,9 @@ struct msg_msg;
+ struct xattr;
+ struct xfrm_sec_ctx;
+ struct mm_struct;
++struct fs_context;
++struct fs_parameter;
++enum fs_value_type;
+ 
+ /* If capable should audit the security request */
+ #define SECURITY_CAP_NOAUDIT 0
+@@ -225,6 +228,15 @@ int security_bprm_set_creds(struct linux_binprm *bprm);
+ int security_bprm_check(struct linux_binprm *bprm);
+ void security_bprm_committing_creds(struct linux_binprm *bprm);
+ void security_bprm_committed_creds(struct linux_binprm *bprm);
++int security_fs_context_alloc(struct fs_context *fc, struct dentry *reference);
++int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
++void security_fs_context_free(struct fs_context *fc);
++int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
++int security_fs_context_validate(struct fs_context *fc);
++int security_sb_get_tree(struct fs_context *fc);
++void security_sb_reconfigure(struct fs_context *fc);
++int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
++			   unsigned int mnt_flags);
+ int security_sb_alloc(struct super_block *sb);
+ void security_sb_free(struct super_block *sb);
+ int security_sb_copy_data(char *orig, size_t orig_size, char *copy);
+@@ -526,6 +538,41 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
+ {
+ }
+ 
++static inline int security_fs_context_alloc(struct fs_context *fc,
++					    struct dentry *reference)
++{
++	return 0;
++}
++static inline int security_fs_context_dup(struct fs_context *fc,
++					  struct fs_context *src_fc)
++{
++	return 0;
++}
++static inline void security_fs_context_free(struct fs_context *fc)
++{
++}
++static inline int security_fs_context_parse_param(struct fs_context *fc,
++						  struct fs_parameter *param)
++{
++	return 0;
++}
++static inline int security_fs_context_validate(struct fs_context *fc)
++{
++	return 0;
++}
++static inline int security_sb_get_tree(struct fs_context *fc)
++{
++	return 0;
++}
++static inline void security_sb_reconfigure(struct fs_context *fc)
++{
++}
++static inline int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
++					 unsigned int mnt_flags)
++{
++	return 0;
++}
++
+ static inline int security_sb_alloc(struct super_block *sb)
+ {
+ 	return 0;
+diff --git a/security/security.c b/security/security.c
+index 5149c2cbe8a7..9bdc21ae645c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -358,6 +358,47 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
+ 	call_void_hook(bprm_committed_creds, bprm);
+ }
+ 
++int security_fs_context_alloc(struct fs_context *fc, struct dentry *reference)
++{
++	return call_int_hook(fs_context_alloc, 0, fc, reference);
++}
++
++int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
++{
++	return call_int_hook(fs_context_dup, 0, fc, src_fc);
++}
++
++void security_fs_context_free(struct fs_context *fc)
++{
++	call_void_hook(fs_context_free, fc);
++}
++
++int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++	return call_int_hook(fs_context_parse_param, 0, fc, param);
++}
++
++int security_fs_context_validate(struct fs_context *fc)
++{
++	return call_int_hook(fs_context_validate, 0, fc);
++}
++
++int security_sb_get_tree(struct fs_context *fc)
++{
++	return call_int_hook(sb_get_tree, 0, fc);
++}
++
++void security_sb_reconfigure(struct fs_context *fc)
++{
++	call_void_hook(sb_reconfigure, fc);
++}
++
++int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
++			   unsigned int mnt_flags)
++{
++	return call_int_hook(sb_mountpoint, 0, fc, mountpoint, mnt_flags);
++}
++
+ int security_sb_alloc(struct super_block *sb)
+ {
+ 	return call_int_hook(sb_alloc_security, 0, sb);
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
