@@ -1,42 +1,34 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Sat, 28 Jul 2018 10:24:41 +0800
-Subject: [PATCH 1/4] ima: add support for arch specific policies
+From: fengguang.wu@intel.com (kbuild test robot)
+Date: Sat, 28 Jul 2018 10:24:42 +0800
+Subject: [RFC PATCH] ima: arch_policy_rules can be static
 In-Reply-To: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
 References: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
-Message-ID: <201807281011.3IfKWpyx%fengguang.wu@intel.com>
+Message-ID: <20180728022442.GA100797@lkp-g5>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Nayna,
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on integrity/next-integrity]
-[also build test WARNING on next-20180727]
-[cannot apply to v4.18-rc6]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Eric-Richter/ima-add-support-for-arch-specific-policies/20180728-072442
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> security/integrity/ima/ima_policy.c:198:23: sparse: symbol 'arch_policy_rules' was not declared. Should it be static?
->> security/integrity/ima/ima_policy.c:199:23: sparse: symbol 'arch_policy_entry' was not declared. Should it be static?
-   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
-   include/linux/slab.h:631:13: sparse: not a function <noident>
-   include/linux/slab.h:631:13: sparse: call with no type!
-
-Please review and possibly fold the followup patch.
-
+Fixes: b4c0791e0fac ("ima: add support for arch specific policies")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ ima_policy.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index b47db4d..e1f2ffd 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -195,8 +195,8 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+ };
+ 
+ /* An array of architecture specific rules */
+-struct ima_rule_entry **arch_policy_rules __ro_after_init;
+-struct ima_rule_entry *arch_policy_entry __ro_after_init;
++static struct ima_rule_entry **arch_policy_rules __ro_after_init;
++static struct ima_rule_entry *arch_policy_entry __ro_after_init;
+ 
+ static LIST_HEAD(ima_default_rules);
+ static LIST_HEAD(ima_policy_rules);
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
