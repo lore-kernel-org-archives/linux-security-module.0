@@ -1,34 +1,31 @@
-From: fengguang.wu@intel.com (kbuild test robot)
-Date: Sat, 28 Jul 2018 10:24:42 +0800
-Subject: [RFC PATCH] ima: arch_policy_rules can be static
-In-Reply-To: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
-References: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
-Message-ID: <20180728022442.GA100797@lkp-g5>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sat, 28 Jul 2018 11:29:57 +0900
+Subject: [PATCH 13/38] tomoyo: Implement security hooks for the new mount
+	API [ver #10]
+In-Reply-To: <153271277078.9458.16912166489973051987.stgit@warthog.procyon.org.uk>
+References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+	<153271277078.9458.16912166489973051987.stgit@warthog.procyon.org.uk>
+Message-ID: <b4be11f6-8235-1ee1-9a01-c09eb9b88404@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On 2018/07/28 2:32, David Howells wrote:
+> Implement the security hook to check the creation of a new mountpoint for
+> Tomoyo.
+> 
+> As far as I can tell, Tomoyo doesn't make use of the mount data or parse
+> any mount options, so I haven't implemented any of the fs_context hooks for
+> it.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> cc: tomoyo-dev-en at lists.sourceforge.jp
+> cc: linux-security-module at vger.kernel.org
 
-Fixes: b4c0791e0fac ("ima: add support for arch specific policies")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
- ima_policy.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index b47db4d..e1f2ffd 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -195,8 +195,8 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- };
- 
- /* An array of architecture specific rules */
--struct ima_rule_entry **arch_policy_rules __ro_after_init;
--struct ima_rule_entry *arch_policy_entry __ro_after_init;
-+static struct ima_rule_entry **arch_policy_rules __ro_after_init;
-+static struct ima_rule_entry *arch_policy_entry __ro_after_init;
- 
- static LIST_HEAD(ima_default_rules);
- static LIST_HEAD(ima_policy_rules);
+Would you provide examples of each possible combination as a C program?
+For example, if one mount point from multiple sources with different
+options are possible, please describe such pattern using syscall so that
+LSM modules can run it to see whether they are working as expected. 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
