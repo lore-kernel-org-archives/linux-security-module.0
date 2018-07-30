@@ -1,62 +1,33 @@
-From: dhowells@redhat.com (David Howells)
-Date: Mon, 30 Jul 2018 11:49:16 +0100
-Subject: [PATCH 13/38] tomoyo: Implement security hooks for the new mount
-	API [ver #10]
-In-Reply-To: <b4be11f6-8235-1ee1-9a01-c09eb9b88404@I-love.SAKURA.ne.jp>
-References: <b4be11f6-8235-1ee1-9a01-c09eb9b88404@I-love.SAKURA.ne.jp>
-	<153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
-	<153271277078.9458.16912166489973051987.stgit@warthog.procyon.org.uk>
-Message-ID: <10224.1532947756@warthog.procyon.org.uk>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 30 Jul 2018 08:51:41 -0700
+Subject: [PULL] Smack: Changes for 4.19
+Message-ID: <09ae8f36-1870-ba78-458b-fcbc02cac28b@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+James, would you take this small set of changes for 4.19, please?
 
-> Would you provide examples of each possible combination as a C program?
-> For example, if one mount point from multiple sources with different
-> options are possible, please describe such pattern using syscall so that
-> LSM modules can run it to see whether they are working as expected. 
+The following changes since commit 4f0496d8ffa3ed5956a2ddee5d84f0246977799d:
 
-One example could be overlayfs.  So you might do, say:
+  ima: based on policy warn about loading firmware (pre-allocated buffer) (2018-07-16 12:31:57 -0700)
 
-	ufd = open("/overlay", O_PATH);
-	fsfd = fsopen("overlay", 0);
-	fsconfig(fsfd, fsconfig_set_path, "lowerdir", "/src", AT_FDCWD);
-	fsconfig(fsfd, fsconfig_set_path, "upperdir", "upper", ufd);
-	fsconfig(fsfd, fsconfig_set_path, "workdir", "scratch", ufd);
-	mfd = fsmount(fsfd, 0, 0);
-	move_mount(fsfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+are available in the Git repository at:
 
-which would allow you to specify the "sources" using dirfds.
+  https://github.com/cschaufler/next-smack.git smack-for-4.19-a
 
-Another possibility is could be ext4 with separate journal:
+for you to fetch changes up to d66a8acbda926fa2398ae930f50787e8663bce96:
 
-	fsfd = fsopen("ext4", 0);
-	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sda1", AT_FDCWD);
-	fsconfig(fsfd, fsconfig_set_path, "journal_path", "/dev/sda2", AT_FDCWD);
-	mfd = fsmount(fsfd, 0, 0);
-	move_mount(fsfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+  Smack: Inform peer that IPv6 traffic has been blocked (2018-07-23 13:00:03 -0700)
 
-And then there's bcachefs which suggests on the webpage:
+----------------------------------------------------------------
+Piotr Sawicki (3):
+      Smack: Fix handling of IPv4 traffic received by PF_INET6 sockets
+      Smack: Check UDP-Lite and DCCP protocols during IPv6 handling
+      Smack: Inform peer that IPv6 traffic has been blocked
 
-	mount -t bcachefs /dev/sda1:/dev/sdb1 /mnt
+ security/smack/smack_lsm.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-but you could then do:
-
-	fsfd = fsopen("bcachefs", 0);
-	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sda1", AT_FDCWD);
-	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sdb2", AT_FDCWD);
-	mfd = fsmount(fsfd, 0, 0);
-	move_mount(fsfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-
-One thing I'm not certain of is whether I should allow multiple values to the
-same key name, or whether I should require that each key be labelled
-differently, possibly something like:
-
-	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sda1", AT_FDCWD);
-	fsconfig(fsfd, fsconfig_set_path, "source.1", "/dev/sdb2", AT_FDCWD);
-
-David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
