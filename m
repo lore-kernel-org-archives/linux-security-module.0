@@ -1,32 +1,35 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 30 Jul 2018 08:51:41 -0700
-Subject: [PULL] Smack: Changes for 4.19
-Message-ID: <09ae8f36-1870-ba78-458b-fcbc02cac28b@schaufler-ca.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 31 Jul 2018 02:32:15 +1000 (AEST)
+Subject: [GIT PULL] tpmdd 4.19 updates
+In-Reply-To: <20180728142835.GA13620@linux.intel.com>
+References: <20180728142130.GA13541@linux.intel.com>
+	<20180728142835.GA13620@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1807310231560.24834@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-James, would you take this small set of changes for 4.19, please?
+On Sat, 28 Jul 2018, Jarkko Sakkinen wrote:
 
-The following changes since commit 4f0496d8ffa3ed5956a2ddee5d84f0246977799d:
+> Hi James,
+> 
+> Sorry, I pressed send before writing anything. Here is the summary:
+> 
+> * Migrated away from PM runtime as explicit cmdReady/goIdle trasactions
+>   for every command is a spec requirement. PM runtime adds only a layer of
+>   complexity on our case.
+> * tpm_tis drivers can now specify the hwrng quality.
+> * TPM 2.0 code uses now tpm_buf for constructing messages. I think Tomas
+>   Winkler has done the same for TPM 1.2. I'll start digging those
+>   changes from the patchwork in the near future.
+> * Bug fixes and clean ups.
 
-  ima: based on policy warn about loading firmware (pre-allocated buffer) (2018-07-16 12:31:57 -0700)
 
-are available in the Git repository at:
+Thanks, pulled to next-tpm and next-testing.
 
-  https://github.com/cschaufler/next-smack.git smack-for-4.19-a
 
-for you to fetch changes up to d66a8acbda926fa2398ae930f50787e8663bce96:
-
-  Smack: Inform peer that IPv6 traffic has been blocked (2018-07-23 13:00:03 -0700)
-
-----------------------------------------------------------------
-Piotr Sawicki (3):
-      Smack: Fix handling of IPv4 traffic received by PF_INET6 sockets
-      Smack: Check UDP-Lite and DCCP protocols during IPv6 handling
-      Smack: Inform peer that IPv6 traffic has been blocked
-
- security/smack/smack_lsm.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+-- 
+James Morris
+<jmorris@namei.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
