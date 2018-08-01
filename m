@@ -1,28 +1,50 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 01 Aug 2018 23:53:17 +0100
-Subject: [PATCH 08/33] vfs: Add LSM hooks for the new mount API [ver #11]
-In-Reply-To: <alpine.LRH.2.21.1808020650230.13125@namei.org>
-References: <alpine.LRH.2.21.1808020650230.13125@namei.org>
-	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<153313709864.13253.2279983851744713211.stgit@warthog.procyon.org.uk>
-Message-ID: <19305.1533163997@warthog.procyon.org.uk>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 1 Aug 2018 15:55:53 -0700
+Subject: [PATCH] Smack: Mark expected switch fall-through
+In-Reply-To: <20180801223854.GA14499@embeddedor.com>
+References: <20180801223854.GA14499@embeddedor.com>
+Message-ID: <da15be5c-6c5f-3002-6562-50c60cd44263@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-James Morris <jmorris@namei.org> wrote:
+On 8/1/2018 3:38 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>
+> Notice that in this particular case, I replaced "No break" with a
+> proper "Fall through" annotation, which is what GCC is expecting
+> to find.
 
-> >  (2) A hook to snoop source specifications.  
-> 
-> 
-> What are source specifications?
+Holy bikeshedding, Batman! For decades I've seen "no break" as
+the proper way to warn that the lack of a "break;" is intentional.
+I suppose that "Fall through" makes just as much sense. Grumble.
 
-"/dev/sda1" or "my.nfs.server:/foo/bar".
+> Warning level 2 was used: -Wimplicit-fallthrough=2
+>
+> Addresses-Coverity-ID: 115051 ("Missing break in switch")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Actually, this hook is now gone.  Source specification is done by way of a
-parameter with key of "source" and this can be specified multiple times if the
-filesystem supports it (bcachefs for example).
+Sure, I'll take this for 4.20 as my 4.19 changes are complete
+and there doesn't seem to be special urgency.
 
-David
+> ---
+>  security/smack/smack_lsm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index ad45761..a307b00 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3739,7 +3739,7 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>  		 */
+>  		final = &smack_known_star;
+>  		/*
+> -		 * No break.
+> +		 * Fall through.
+>  		 *
+>  		 * If a smack value has been set we want to use it,
+>  		 * but since tmpfs isn't giving us the opportunity
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
