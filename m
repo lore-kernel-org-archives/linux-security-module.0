@@ -1,15 +1,30 @@
-From: gaeliasm@mineco.gob.gt (Gloria Adelaida Elias Mejia)
-Date: Thu, 2 Aug 2018 02:08:42 +0000
-Subject: Spende von $ 4,800,000.00!
-Message-ID: <0E9FB776D8E6DA429730C03A4C3AA64088127B@EX2010SRV02.mineco.gob.gt>
+From: dan.carpenter@oracle.com (Dan Carpenter)
+Date: Thu, 2 Aug 2018 11:38:23 +0300
+Subject: [PATCH] apparmor: fix an error code in __aa_create_ns()
+Message-ID: <20180802083823.qrx5ieekfvtz2w4d@kili.mountain>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hallo, Sie haben eine Spende von $ 4,800,000.00, ich habe die America Lotterie im Wert von $ 40 Millionen gewonnen und ich gebe einen Teil davon an f?nf gl?ckliche Menschen und Wohlt?tigkeitseinrichtungen zum Gedenken an meine verstorbene Frau, die an Krebs starb.
+We should return error pointers in this function.  Returning NULL
+results in a NULL dereference in the caller.
 
-Spendenreferenznummer: BBIB / AVL017 / 28392
+Fixes: 73688d1ed0b8 ("apparmor: refactor prepare_ns() and make usable from different views")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Kontaktieren Sie mich f?r weitere Informationen: tomcrist895 at gmail.com
-
-Prost
-Tom Crist
+diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
+index b0f9dc3f765a..1a7cec5d9cac 100644
+--- a/security/apparmor/policy_ns.c
++++ b/security/apparmor/policy_ns.c
+@@ -255,7 +255,7 @@ static struct aa_ns *__aa_create_ns(struct aa_ns *parent, const char *name,
+ 
+ 	ns = alloc_ns(parent->base.hname, name);
+ 	if (!ns)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 	ns->level = parent->level + 1;
+ 	mutex_lock_nested(&ns->lock, ns->level);
+ 	error = __aafs_ns_mkdir(ns, ns_subns_dir(parent), name, dir);
+--
+To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+the body of a message to majordomo at vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
