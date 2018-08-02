@@ -1,39 +1,64 @@
-From: hamsiton@enableyourlife.com (Sam)
-Date: Thu, 02 Aug 2018 13:31:23 +0200
-Subject: your photos need edit
-Message-ID: <2d2e09e1afcbb59d666086737ec789d6@vabeach.com>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 02 Aug 2018 17:14:41 +0100
+Subject: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key
+	support based on CAAM.
+In-Reply-To: <20180723111432.26830-1-udit.agarwal@nxp.com>
+References: <20180723111432.26830-1-udit.agarwal@nxp.com>
+Message-ID: <8060.1533226481@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-As a boutique team, we work personally with our clients to ensure the good
-results.
+Udit Agarwal <udit.agarwal@nxp.com> wrote:
 
-Having over a decade of hands-on experience in photography and retouching,
-we have been inspired
-to expand our services to the public.
-We are team of artists who have excelled in fields such as art,
-photography, retouching, graphics and design.
+> +==========
+> +Secure Key
+> +==========
+> +
+> +Secure key is the new type added to kernel key ring service.
+> +Secure key is a symmetric type key of minimum length 32 bytes
+> +and with maximum possible length to be 128 bytes. It is produced
+> +in kernel using the CAAM crypto engine. Userspace can only see
+> +the blob for the corresponding key. All the blobs are displayed
+> +or loaded in hex ascii.
 
-No matter what your field of interest is in, we can learn to work with your
-style to give you the best product.
+To echo Mimi, this sounds suspiciously like it should have a generic
+interface, not one that's specifically tied to one piece of hardware -
+particularly if it's named with generic "secure".
 
-We provide below image editing services:
-Clipping path
-Image cut out
-Image shadow creation
-Image masking
-Photo retouching
-Beauty retouching (skin, face, body retouching)
-Glamour retouching
-Product retouching
-Color correction
-and others
+Can you convert this into a "symmetric" type and make the backend pluggable?
 
-We provide testing for our services.
+> +	keyctl add secure <name> "new <keylen>" <ring>
+> +	keyctl load secure <name> "load <hex_blob>" <ring>
+> +	keyctl print <key_id>
 
-Thanks,
-Sam
+There isn't a "keyctl load" that I recall.  Did you mean "keyctl add"?
 
+I wonder if it makes sense to actually add "create" and "load" interfaces for
+asymmetric and symmetric key types to aid in key management, e.g.:
+
+	keyctl create symmetric.caam foo_munging_key len=128 @s
+	keyctl load symmetric.caam foo_munging_key id=xxx @s
+	keyctl create asymmetric.tpm foo_signing_key "rsa len=4096" @s
+	keyctl load asymmetric.tpm foo_signing_key id=xxx @s
+
+Note the subtype extension added to the type.  This is something I've been
+meaning to add to add_key() and request_key().  It means that we don't have to
+try and divine the nature of the key from the payload, but can leave the
+payload as just the data if data is needed.
+
+This might look something like:
+
+	key = keyctl_create(const char *type, const char *desc,
+			    const char *data, key_serial_t keyring);
+	key = keyctl_load(const char *type, const char *desc,
+			  const char *id, key_serial_t keyring);
+
+There would probably need to be a way to query the ID of a created key also,
+so that you can then pass that ID back to the loader.
+
+	keyctl_get_id(key_serial_t key, char *buf, size_t buf_size);
+
+David
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
