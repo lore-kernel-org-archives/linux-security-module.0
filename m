@@ -1,29 +1,39 @@
-From: dan.carpenter@oracle.com (Dan Carpenter)
-Date: Thu, 2 Aug 2018 11:38:23 +0300
-Subject: [PATCH] apparmor: fix an error code in __aa_create_ns()
-Message-ID: <20180802083823.qrx5ieekfvtz2w4d@kili.mountain>
+From: hamsiton@enableyourlife.com (Sam)
+Date: Thu, 02 Aug 2018 13:31:23 +0200
+Subject: your photos need edit
+Message-ID: <2d2e09e1afcbb59d666086737ec789d6@vabeach.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-We should return error pointers in this function.  Returning NULL
-results in a NULL dereference in the caller.
+As a boutique team, we work personally with our clients to ensure the good
+results.
 
-Fixes: 73688d1ed0b8 ("apparmor: refactor prepare_ns() and make usable from different views")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Having over a decade of hands-on experience in photography and retouching,
+we have been inspired
+to expand our services to the public.
+We are team of artists who have excelled in fields such as art,
+photography, retouching, graphics and design.
 
-diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
-index b0f9dc3f765a..1a7cec5d9cac 100644
---- a/security/apparmor/policy_ns.c
-+++ b/security/apparmor/policy_ns.c
-@@ -255,7 +255,7 @@ static struct aa_ns *__aa_create_ns(struct aa_ns *parent, const char *name,
- 
- 	ns = alloc_ns(parent->base.hname, name);
- 	if (!ns)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 	ns->level = parent->level + 1;
- 	mutex_lock_nested(&ns->lock, ns->level);
- 	error = __aafs_ns_mkdir(ns, ns_subns_dir(parent), name, dir);
+No matter what your field of interest is in, we can learn to work with your
+style to give you the best product.
+
+We provide below image editing services:
+Clipping path
+Image cut out
+Image shadow creation
+Image masking
+Photo retouching
+Beauty retouching (skin, face, body retouching)
+Glamour retouching
+Product retouching
+Color correction
+and others
+
+We provide testing for our services.
+
+Thanks,
+Sam
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
