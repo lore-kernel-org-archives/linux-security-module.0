@@ -1,40 +1,101 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 3 Aug 2018 08:27:47 -0700
-Subject: [PATCH v1 20/22] Move common usercopy into
-	security_getpeersec_stream
-In-Reply-To: <20180803091011eucas1p29e46a12d1986f11e63547ea1ec8e8663~HVMbjcXDZ2739127391eucas1p2M@eucas1p2.samsung.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
-	<ac4a4408-5c69-4b87-b57d-537dba588b18@schaufler-ca.com>
-	<CGME20180803091011eucas1p29e46a12d1986f11e63547ea1ec8e8663@eucas1p2.samsung.com>
-	<20180803091011eucas1p29e46a12d1986f11e63547ea1ec8e8663~HVMbjcXDZ2739127391eucas1p2M@eucas1p2.samsung.com>
-Message-ID: <0c4b4f28-e51f-8b5d-9259-c6ab97c5c506@schaufler-ca.com>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Fri, 03 Aug 2018 08:48:58 -0700
+Subject: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key
+	support based on CAAM.
+In-Reply-To: <1533307535.4337.415.camel@linux.ibm.com>
+References: <20180723111432.26830-1-udit.agarwal@nxp.com>
+	<8060.1533226481@warthog.procyon.org.uk>
+	<1533297482.4337.373.camel@linux.ibm.com>
+	<1533306238.4140.1.camel@HansenPartnership.com>
+	<1533307535.4337.415.camel@linux.ibm.com>
+Message-ID: <1533311338.4140.3.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 8/3/2018 2:10 AM, Piotr Sawicki wrote:
-> On 07/16/2018 08:24 PM, Casey Schaufler wrote:
->> [PATCH 20/22] Move common usercopy into security_getpeersec_stream
->>
->> The modules implementing hook for getpeersec_stream
->> don't need to be duplicating the copy-to-user checks.
->> Moving the user copy part into the infrastructure makes
->> the security module code simpler and reduces the places
->> where user copy code may go awry.
-> Hi,
->
-> This change will break the API. Some clients may call getsockopt(..,SO_PEERSEC,..) twice. Firstly, to fetch the length. In that case xxx_socket_getpeersec_stream should return -ERANGE and set *optlen. Secondly, to retrieve a proper security label.
+On Fri, 2018-08-03 at 10:45 -0400, Mimi Zohar wrote:
+> On Fri, 2018-08-03 at 07:23 -0700, James Bottomley wrote:
+> > On Fri, 2018-08-03 at 07:58 -0400, Mimi Zohar wrote:
+> > > On Thu, 2018-08-02 at 17:14 +0100, David Howells wrote:
+> > > > Udit Agarwal <udit.agarwal@nxp.com> wrote:
+> > > > 
+> > > > > +==========
+> > > > > +Secure Key
+> > > > > +==========
+> > > > > +
+> > > > > +Secure key is the new type added to kernel key ring service.
+> > > > > +Secure key is a symmetric type key of minimum length 32
+> > > > > bytes
+> > > > > +and with maximum possible length to be 128 bytes. It is
+> > > > > produced
+> > > > > +in kernel using the CAAM crypto engine. Userspace can only
+> > > > > see
+> > > > > +the blob for the corresponding key. All the blobs are
+> > > > > displayed
+> > > > > +or loaded in hex ascii.
+> > > > 
+> > > > To echo Mimi, this sounds suspiciously like it should have a
+> > > > generic interface, not one that's specifically tied to one
+> > > > piece of
+> > > > hardware - particularly if it's named with generic "secure".
+> > > > 
+> > > > Can you convert this into a "symmetric" type and make the
+> > > > backend
+> > > > pluggable?
+> > > 
+> > > TPM 1.2 didn't support symmetric keys. ?For this reason, the TPM
+> > > "unseals" the random number, used as a symmetric key, and returns
+> > > the
+> > > "unsealed" data to the kernel.
+> > > 
+> > > Does anyone know if CAAM or TPM 2.0 have support for symmetric
+> > > keys?
+> > 
+> > It depends what you mean by "support".??The answer is technically
+> > yes,
+> > it's the TPM2_EncryptDecrypt primitive.??However, the practical
+> > answer
+> > is that symmetric keys are mostly used for bulk operations and the
+> > TPM
+> > and its bus are way too slow to support that, so the only real,
+> > practical use case is to have the TPM govern the release conditions
+> > for
+> > symmetric keys which are later used by a fast bulk
+> > encryptor/decryptor
+> > based in software.
+> > 
+> > > ?If they have symmetric key support, there would be no need for
+> > > the
+> > > symmetric key ever to leave the device in the clear. ?The device
+> > > would unseal/decrypt data, such as an encrypted key.
+> > > 
+> > > The "symmetric" key type would be a generic interface for
+> > > different
+> > > devices.
+> > 
+> > It's possible, but it would only work for a non-bulk use case; do
+> > we
+> > have one of those?
+> 
+> "trusted" keys are currently being used to decrypt other keys (eg.
+> encrypted, ecryptfs, ...).
 
-Nuts. You're correct. I will fix this in the next round.
+Yes, but that's just double encryption: it serves no real security
+purpose because at the end of the chain, the symmetric key is released
+into kernel memory to use in software crypto.  Unless you're using a
+high speed (and high cost) crypto accelerator with HSA, this will
+always be the case for bulk crypto.
 
->
-> Please take a look at the implementation of the getClientSmackLabel() function in Cynara: https://review.tizen.org/gerrit/#/c/26888/6/src/helpers/creds-socket/creds-socket-inner.cpp
-> Also there is an email thread about this socket option which tells us why it is made this way: "[RFC] SO_PEERSEC - security credentials for Unix stream sockets"
->
-> http://lists.jammed.com/linux-security-module/2003/12/0029.html
->
-> Regards,
-> Piotr
->
+The other slight problem with this chain of crypto is that I can impose
+conditions on the key release from the TPM (well TPM2, since TPM1.2 has
+a very weak policy engine) but if we use intermediate steps, those
+conditions might not be preserved, so I think the ideal would be a
+trusted key being released directly to LUKS or ecryptfs because the TPM
+can then verify the policy at actual unseal time.  I get that for the
+ecryptfs case you might want one key per file for sharding and sharing,
+and that's more like a bulk case because the TPM isn't going to keep up
+with the number of unseal operations required.
+
+James
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
