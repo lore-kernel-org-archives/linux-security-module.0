@@ -1,122 +1,76 @@
-From: zohar@linux.ibm.com (Mimi Zohar)
-Date: Fri, 03 Aug 2018 14:28:41 -0400
-Subject: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key
-	support based on CAAM.
-In-Reply-To: <1533311338.4140.3.camel@HansenPartnership.com>
-References: <20180723111432.26830-1-udit.agarwal@nxp.com>
-	<8060.1533226481@warthog.procyon.org.uk>
-	<1533297482.4337.373.camel@linux.ibm.com>
-	<1533306238.4140.1.camel@HansenPartnership.com>
-	<1533307535.4337.415.camel@linux.ibm.com>
-	<1533311338.4140.3.camel@HansenPartnership.com>
-Message-ID: <1533320921.4337.479.camel@linux.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 3 Aug 2018 15:01:16 -0400
+Subject: maybe resource leak in security/selinux/selinuxfs.c
+In-Reply-To: <E490CD805F7529488761C40FD9D26EF12A72A2C9@dggemm507-mbx.china.huawei.com>
+References: <E490CD805F7529488761C40FD9D26EF12A72A2C9@dggemm507-mbx.china.huawei.com>
+Message-ID: <CAHC9VhS4nwcErVriwBzvvRQTFLZ=U_p8gA7xQnjs1wBKtmSgxQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-08-03 at 08:48 -0700, James Bottomley wrote:
-> On Fri, 2018-08-03 at 10:45 -0400, Mimi Zohar wrote:
-> > On Fri, 2018-08-03 at 07:23 -0700, James Bottomley wrote:
-> > > On Fri, 2018-08-03 at 07:58 -0400, Mimi Zohar wrote:
-> > > > On Thu, 2018-08-02 at 17:14 +0100, David Howells wrote:
-> > > > > Udit Agarwal <udit.agarwal@nxp.com> wrote:
-> > > > > 
-> > > > > > +==========
-> > > > > > +Secure Key
-> > > > > > +==========
-> > > > > > +
-> > > > > > +Secure key is the new type added to kernel key ring service.
-> > > > > > +Secure key is a symmetric type key of minimum length 32
-> > > > > > bytes
-> > > > > > +and with maximum possible length to be 128 bytes. It is
-> > > > > > produced
-> > > > > > +in kernel using the CAAM crypto engine. Userspace can only
-> > > > > > see
-> > > > > > +the blob for the corresponding key. All the blobs are
-> > > > > > displayed
-> > > > > > +or loaded in hex ascii.
-> > > > > 
-> > > > > To echo Mimi, this sounds suspiciously like it should have a
-> > > > > generic interface, not one that's specifically tied to one
-> > > > > piece of
-> > > > > hardware - particularly if it's named with generic "secure".
-> > > > > 
-> > > > > Can you convert this into a "symmetric" type and make the
-> > > > > backend
-> > > > > pluggable?
-> > > > 
-> > > > TPM 1.2 didn't support symmetric keys. ?For this reason, the TPM
-> > > > "unseals" the random number, used as a symmetric key, and returns
-> > > > the
-> > > > "unsealed" data to the kernel.
-> > > > 
-> > > > Does anyone know if CAAM or TPM 2.0 have support for symmetric
-> > > > keys?
-> > > 
-> > > It depends what you mean by "support".??The answer is technically
-> > > yes,
-> > > it's the TPM2_EncryptDecrypt primitive.??However, the practical
-> > > answer
-> > > is that symmetric keys are mostly used for bulk operations and the
-> > > TPM
-> > > and its bus are way too slow to support that, so the only real,
-> > > practical use case is to have the TPM govern the release conditions
-> > > for
-> > > symmetric keys which are later used by a fast bulk
-> > > encryptor/decryptor
-> > > based in software.
-> > > 
-> > > > ?If they have symmetric key support, there would be no need for
-> > > > the
-> > > > symmetric key ever to leave the device in the clear. ?The device
-> > > > would unseal/decrypt data, such as an encrypted key.
-> > > > 
-> > > > The "symmetric" key type would be a generic interface for
-> > > > different
-> > > > devices.
-> > > 
-> > > It's possible, but it would only work for a non-bulk use case; do
-> > > we
-> > > have one of those?
-> > 
-> > "trusted" keys are currently being used to decrypt other keys (eg.
-> > encrypted, ecryptfs, ...).
-> 
-> Yes, but that's just double encryption: it serves no real security
-> purpose because at the end of the chain, the symmetric key is released
-> into kernel memory to use in software crypto.  Unless you're using a
-> high speed (and high cost) crypto accelerator with HSA, this will
-> always be the case for bulk crypto.
-> 
-> The other slight problem with this chain of crypto is that I can impose
-> conditions on the key release from the TPM (well TPM2, since TPM1.2 has
-> a very weak policy engine) but if we use intermediate steps, those
-> conditions might not be preserved, so I think the ideal would be a
-> trusted key being released directly to LUKS or ecryptfs because the TPM
-> can then verify the policy at actual unseal time.  I get that for the
-> ecryptfs case you might want one key per file for sharding and sharing,
-> and that's more like a bulk case because the TPM isn't going to keep up
-> with the number of unseal operations required.
+On Wed, Aug 1, 2018 at 5:39 AM Nixiaoming <nixiaoming@huawei.com> wrote:
+>
+> advisory:
+> 1 After creating dentry in d_alloc_name, should I call dput to release resources before the exception exit?
+> 2 After calling the new_inode to create an inode, should the inode resource be released before the exception exit?
+>
+> If the dentry and inode resources need to be actively released, there are multiple resource leaks in security/selinux/selinuxfs.c.
 
-Agreed. ?Yet there are a couple of reasons for having this sort of
-indirection. By having the "encrypted" key encrypted/decrypted by a
-"trusted" key, the "trusted" key could be updated without impacting
-the "encrypted" key. ?This could be used, for example, for key
-migration. ?Another reason would be to define a single "trusted" key
-sealed to a set of PCRs, which could be used to encrypt/decrypt
-multiple symmetric keys.
+Hello.  Sorry for the delay in responding, comments inline ...
 
-Nothing is preventing these subsystems from directly using a "trusted"
-key.
+> Example:
+> Linux master branch v4.18-rc5
+> The function sel_make_avc_files in security/selinux/selinuxfs.c.
+>
+> 1566 static int sel_make_avc_files(struct dentry *dir)
+> .......
+> 1580     for (i = 0; i < ARRAY_SIZE(files); i++) {
+> 1581         struct inode *inode;
+> 1582         struct dentry *dentry;
+> 1583
+> 1584         dentry = d_alloc_name(dir, files[i].name);
+> 1585         if (!dentry)
+> /*Resource leak: when i!=0, the release action of dentry and inode resources is missing*/
 
-This discussion is the result of Udit Agarwal's posting a "secure" key
-patch. Before defining a new key type, whether it is called "secure"
-or "symmetric", we need to understand how the this new key type is
-going to be used. ?Will it have a similar ability to impose conditions
-on the key release as the TPM? ?Will it have symmetric key support, so
-that the symmetric key never needs to be released from the HW?
+I don't understand the leak in this case?  If d_alloc_name() fails on
+a partially constructed /sys/fs/selinux/avc directory the previously
+allocated dentry/inodes are not lost or leaked, d_alloc_name()
+attached them to the parent dentry.
 
-Mimi
+> 1586             return -ENOMEM;
+> 1587
+> 1588         inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
+> 1589         if (!inode)
+> /*Resource leak: missing dput(dentry)*/
+> /*Resource leak: when i!=0, the release action of dentry and inode resources is missing*/
 
+Yes, in this case it does look like we are missing a call to dput().
+Would you like to submit a patch to fix this as well as the others in
+selinuxfs.c?
+
+> 1590             return -ENOMEM;
+> 1591
+> 1592         inode->i_fop = files[i].ops;
+> 1593         inode->i_ino = ++fsi->last_ino;
+> 1594         d_add(dentry, inode);
+> 1595     }
+> 1596
+> 1597     return 0;
+> 1598 }
+>
+> There are similar resource leaking functions:
+> Sel_make_bools
+> Sel_make_avc_files
+> Sel_make_initcon_files
+> Sel_make_perm_files
+> Sel_make_class_dir_entries
+> Sel_make_policycap
+> Sel_fill_super
+> Sel_make_policy_nodes
+> Sel_make_classes
+
+-- 
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
