@@ -1,35 +1,50 @@
-From: p.sawicki2@partner.samsung.com (Piotr Sawicki)
-Date: Fri, 3 Aug 2018 11:10:09 +0200
-Subject: [PATCH v1 20/22] Move common usercopy into
-	security_getpeersec_stream
-In-Reply-To: <ac4a4408-5c69-4b87-b57d-537dba588b18@schaufler-ca.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
-	<ac4a4408-5c69-4b87-b57d-537dba588b18@schaufler-ca.com>
-	<CGME20180803091011eucas1p29e46a12d1986f11e63547ea1ec8e8663@eucas1p2.samsung.com>
-Message-ID: <20180803091011eucas1p29e46a12d1986f11e63547ea1ec8e8663~HVMbjcXDZ2739127391eucas1p2M@eucas1p2.samsung.com>
+From: jannh@google.com (Jann Horn)
+Date: Fri,  3 Aug 2018 11:36:04 +0200
+Subject: [PATCH] selinux: stricter parsing in mls_context_to_sid()
+Message-ID: <20180803093604.38254-1-jannh@google.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 07/16/2018 08:24 PM, Casey Schaufler wrote:
-> [PATCH 20/22] Move common usercopy into security_getpeersec_stream
-> 
-> The modules implementing hook for getpeersec_stream
-> don't need to be duplicating the copy-to-user checks.
-> Moving the user copy part into the infrastructure makes
-> the security module code simpler and reduces the places
-> where user copy code may go awry.
+mls_context_to_sid incorrectly accepted MLS context strings that are
+followed by a dash and trailing garbage.
 
-Hi,
+Before this change, the following command works:
 
-This change will break the API. Some clients may call getsockopt(..,SO_PEERSEC,..) twice. Firstly, to fetch the length. In that case xxx_socket_getpeersec_stream should return -ERANGE and set *optlen. Secondly, to retrieve a proper security label.
+# mount -t tmpfs -o 'context=system_u:object_r:tmp_t:s0-s0:c0-BLAH' \
+none mount
 
-Please take a look at the implementation of the getClientSmackLabel() function in Cynara: https://review.tizen.org/gerrit/#/c/26888/6/src/helpers/creds-socket/creds-socket-inner.cpp
-Also there is an email thread about this socket option which tells us why it is made this way: "[RFC] SO_PEERSEC - security credentials for Unix stream sockets"
+After this change, it fails with the following error message in dmesg:
 
-http://lists.jammed.com/linux-security-module/2003/12/0029.html
+SELinux: security_context_str_to_sid(system_u:object_r:tmp_t:s0-s0:c0-BLAH)
+failed for (dev tmpfs, type tmpfs) errno=-22
 
-Regards,
-Piotr
+This is not an important bug; but it is a small quirk that was useful for
+exploiting a vulnerability in fusermount.
+
+This patch does not change the behavior when the policy does not have MLS
+enabled.
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ security/selinux/ss/mls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
+index 39475fb455bc..2c73d612d2ee 100644
+--- a/security/selinux/ss/mls.c
++++ b/security/selinux/ss/mls.c
+@@ -344,7 +344,7 @@ int mls_context_to_sid(struct policydb *pol,
+ 					break;
+ 			}
+ 		}
+-		if (delim == '-') {
++		if (delim == '-' && l == 0) {
+ 			/* Extract high sensitivity. */
+ 			scontextp = p;
+ 			while (*p && *p != ':')
+-- 
+2.18.0.597.ga71716f1ad-goog
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
