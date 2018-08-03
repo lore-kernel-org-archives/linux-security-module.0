@@ -1,49 +1,57 @@
-From: jannh@google.com (Jann Horn)
-Date: Fri,  3 Aug 2018 11:36:04 +0200
-Subject: [PATCH] selinux: stricter parsing in mls_context_to_sid()
-Message-ID: <20180803093604.38254-1-jannh@google.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Fri, 3 Aug 2018 15:38:36 +0530
+Subject: [PATCH 1/4] ima: add support for arch specific policies
+In-Reply-To: <201807281011.3IfKWpyx%fengguang.wu@intel.com>
+References: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
+	<201807281011.3IfKWpyx%fengguang.wu@intel.com>
+Message-ID: <b47cddd8-44ea-1175-a6ee-25f06ad4a185@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-mls_context_to_sid incorrectly accepted MLS context strings that are
-followed by a dash and trailing garbage.
 
-Before this change, the following command works:
 
-# mount -t tmpfs -o 'context=system_u:object_r:tmp_t:s0-s0:c0-BLAH' \
-none mount
+On 07/28/2018 07:54 AM, kbuild test robot wrote:
+> Hi Nayna,
+>
+> Thank you for the patch! Perhaps something to improve:
 
-After this change, it fails with the following error message in dmesg:
+Thanks for the report. I will address or squash the changes with the 
+existing PATCH 1/4 in the next version.
+The warning about NULL dereference in PATCH 4/4 is related to changes in 
+PATCH 1/4, so will fix in PATCH 1/4 itself.
 
-SELinux: security_context_str_to_sid(system_u:object_r:tmp_t:s0-s0:c0-BLAH)
-failed for (dev tmpfs, type tmpfs) errno=-22
+Thanks & Regards,
+ ??? - Nayna
 
-This is not an important bug; but it is a small quirk that was useful for
-exploiting a vulnerability in fusermount.
 
-This patch does not change the behavior when the policy does not have MLS
-enabled.
-
-Signed-off-by: Jann Horn <jannh@google.com>
----
- security/selinux/ss/mls.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
-index 39475fb455bc..2c73d612d2ee 100644
---- a/security/selinux/ss/mls.c
-+++ b/security/selinux/ss/mls.c
-@@ -344,7 +344,7 @@ int mls_context_to_sid(struct policydb *pol,
- 					break;
- 			}
- 		}
--		if (delim == '-') {
-+		if (delim == '-' && l == 0) {
- 			/* Extract high sensitivity. */
- 			scontextp = p;
- 			while (*p && *p != ':')
--- 
-2.18.0.597.ga71716f1ad-goog
+>
+> [auto build test WARNING on integrity/next-integrity]
+> [also build test WARNING on next-20180727]
+> [cannot apply to v4.18-rc6]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Eric-Richter/ima-add-support-for-arch-specific-policies/20180728-072442
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+> reproduce:
+>          # apt-get install sparse
+>          make ARCH=x86_64 allmodconfig
+>          make C=1 CF=-D__CHECK_ENDIAN__
+>
+>
+> sparse warnings: (new ones prefixed by >>)
+>
+>>> security/integrity/ima/ima_policy.c:198:23: sparse: symbol 'arch_policy_rules' was not declared. Should it be static?
+>>> security/integrity/ima/ima_policy.c:199:23: sparse: symbol 'arch_policy_entry' was not declared. Should it be static?
+>     include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
+>     include/linux/slab.h:631:13: sparse: not a function <noident>
+>     include/linux/slab.h:631:13: sparse: call with no type!
+>
+> Please review and possibly fold the followup patch.
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
