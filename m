@@ -1,82 +1,116 @@
-From: zohar@linux.ibm.com (Mimi Zohar)
-Date: Fri, 03 Aug 2018 15:47:30 -0400
-Subject: [PATCH 3/4] ima: add support for KEXEC_ORIG_KERNEL_CHECK
-In-Reply-To: <20180803161636.GX3001@ubuntu-xps13>
-References: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
-	<20180725233200.761-4-erichte@linux.vnet.ibm.com>
-	<20180803131129.GS3001@ubuntu-xps13>
-	<1533308099.4337.424.camel@linux.ibm.com>
-	<20180803161636.GX3001@ubuntu-xps13>
-Message-ID: <1533325650.4337.527.camel@linux.ibm.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Fri, 3 Aug 2018 20:01:22 -0400
+Subject: [PATCH] selinux: stricter parsing in mls_context_to_sid()
+In-Reply-To: <20180803093604.38254-1-jannh@google.com>
+References: <20180803093604.38254-1-jannh@google.com>
+Message-ID: <CAHC9VhT83LuwuGB4ndVpkqtfLZ2Se1Qqhw57CTEZ-5bzPATiag@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-08-03 at 11:16 -0500, Seth Forshee wrote:
-> On Fri, Aug 03, 2018 at 10:54:59AM -0400, Mimi Zohar wrote:
-> > On Fri, 2018-08-03 at 08:11 -0500, Seth Forshee wrote:
-> > > On Wed, Jul 25, 2018 at 06:31:59PM -0500, Eric Richter wrote:
-> > > > IMA can verify the signature of kernel images loaded with kexec_file_load,
-> > > > but can not verify images loaded with the regular kexec_load syscall.
-> > > > Therefore, the appraisal will automatically fail during kexec_load when an
-> > > > appraise policy rule is set for func=KEXEC_KERNEL_CHECK. This can be used
-> > > > to effectively disable the kexec_load syscall, while still allowing the
-> > > > kexec_file_load to operate so long as the target kernel image is signed.
-> > > > 
-> > > > However, this conflicts with CONFIG_KEXEC_VERIFY_SIG. If that option is
-> > > > enabled and there is an appraise rule set, then the target kernel would
-> > > > have to be verifiable by both IMA and the architecture specific kernel
-> > > > verification procedure.
-> > > > 
-> > > > This patch adds a new func= for IMA appraisal specifically for the original
-> > > > kexec_load syscall. Therefore, the kexec_load syscall can be effectively
-> > > > disabled via IMA policy, leaving the kexec_file_load syscall able to do its
-> > > > own signature verification, and not require it to be signed via IMA. To
-> > > > retain compatibility, the existing func=KEXEC_KERNEL_CHECK flag is
-> > > > unchanged, and thus enables appraisal for both kexec syscalls.
-> > > 
-> > > This seems like a roundabout way to disallow the kexec_load syscall.
-> > > Wouldn't it make more sense to simply disallow kexec_load any time
-> > > CONFIG_KEXEC_VERIFY_SIG is enabled, since it effectively renders that
-> > > option impotent? Or has that idea already been rejected?
-> > 
-> > Agreed! ?We can modify the "case LOADING_KEXEC_IMAGE" in
-> > ima_load_data() to prevent the kexec_load based on
-> > CONFIG_KEXEC_VERIFY_SIG.
-> > 
-> > The architecture specific policy would only include the IMA appraise
-> > rule if CONFIG_KEXEC_VERIFY_SIG was not defined.
-> 
-> After looking at this some more I'm having second thoughts about my
-> suggestion. As a distro we produce a kernel that needs to be flexible
-> enough for a variety of scenarios, and if we completely close off the
-> ability to load an unsigned kernel for kexec that's almost certainly
-> going to end up breaking some use cases.
-> 
-> So I think it is necessary to make this a run-time decision rather than
-> a compile-time decision. The patch as provided does this based on
-> whether or not the kernel was booted under secure boot. That might be
-> reasonable, though I still find this mechanism kind of awkward.
+On Fri, Aug 3, 2018 at 5:36 AM Jann Horn <jannh@google.com> wrote:
+>
+> mls_context_to_sid incorrectly accepted MLS context strings that are
+> followed by a dash and trailing garbage.
+>
+> Before this change, the following command works:
+>
+> # mount -t tmpfs -o 'context=system_u:object_r:tmp_t:s0-s0:c0-BLAH' \
+> none mount
+>
+> After this change, it fails with the following error message in dmesg:
+>
+> SELinux: security_context_str_to_sid(system_u:object_r:tmp_t:s0-s0:c0-BLAH)
+> failed for (dev tmpfs, type tmpfs) errno=-22
+>
+> This is not an important bug; but it is a small quirk that was useful for
+> exploiting a vulnerability in fusermount.
+>
+> This patch does not change the behavior when the policy does not have MLS
+> enabled.
+>
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  security/selinux/ss/mls.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Right, the above change is almost right. ?Instead of preventing the
-kexec_load syscall based on CONFIG_KEXEC_VERIFY_SIG it should be based
-on a runtime secure boot flag. ?Only if there is an arch specific
-secure boot function and the secure boot flag is enabled, would the
-kexec_load be disabled.
+Ooof.  mls_context_to_sid() isn't exactly the most elegant function is
+it?  I suppose some of that is due to the label format, but it still
+seems like we can do better.  However, before I jump into that let me
+say that speaking strictly about your patch, yes, it does look correct
+to me.
 
-Without an architecture specific secure boot function, the existing
-IMA code would fail the kexec_load syscall.
+What I'm wonder is if we rework/reorder some of the parser to remove
+some of the ordering specific (e.g. "l == 0") and reduce some
+redundancy ... be patient with me for a moment ...
 
->  It seems
-> like ideally there would instead be some logic that would accept the
-> image if the KEXEC_VERIFY_SIG verification had passed, and otherwise
-> require IMA signature verification.
+The while loops immediately following the "Extract low sensitivity"
+and "Extract high sensitivity" comments are basically the same,
+including NULL'ing the delimiter if necessary, the only difference is
+the additional '-' delimiter in the low sensitivity search.
 
-True, but for now to coordinate between the two signature verification
-methods, only if CONFIG_KEXEC_VERIFY_SIG is not enabled would an IMA
-architecture specific rule be defined.
+The only *legal* place for a '-' in the MLS portion of the label is to
+separate the low/high portions.
 
-Mimi
+What if we were to do a quick search for the low/high separator before
+extracting the low sensitivity and stored low/high pointers for later
+use?  e.g.
 
+  rangep[0] = *scontext;
+  rangep[1] = strchr(rangep[0], '-');
+  if (rangep[1])
+    rangep[1]++ = '\0';
+
+... we could then move the "Extract X sensitivity" into the main for
+loop as well remove all of the '-' special case parsing checks, e.g.
+
+  for (l = 0; l < 2; l++) {
+
+    scontextp = rangep[l];
+    if (!scontextp)
+      break;
+
+    while (*p && *p != ':')
+      p++;
+    delim = *p;
+    if (delim != '\0')
+      *p++ = '\0';
+
+    /* extract the level (use existing code) */
+
+    /* extract the category set, if present (use existing code) */
+
+    /* no need to worry about the '-' delimiter */
+
+  }
+
+I *believe* that should work.  I think.  Does that make sense?
+
+Yes, I do understand that this likely isn't quite as performant as the
+existing approach due to that initial strchr(), but I think the code
+will be much cleaner and less fragile.  If we feel the need to claw
+back some performance there are some other things in here would could
+probably work on (e.g. imagine an ebitmap_set_range()).
+
+> diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
+> index 39475fb455bc..2c73d612d2ee 100644
+> --- a/security/selinux/ss/mls.c
+> +++ b/security/selinux/ss/mls.c
+> @@ -344,7 +344,7 @@ int mls_context_to_sid(struct policydb *pol,
+>                                         break;
+>                         }
+>                 }
+> -               if (delim == '-') {
+> +               if (delim == '-' && l == 0) {
+>                         /* Extract high sensitivity. */
+>                         scontextp = p;
+>                         while (*p && *p != ':')
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
+
+--
+paul moore
+www.paul-moore.com
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
