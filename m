@@ -1,117 +1,85 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Fri, 3 Aug 2018 20:01:22 -0400
-Subject: [PATCH] selinux: stricter parsing in mls_context_to_sid()
-In-Reply-To: <20180803093604.38254-1-jannh@google.com>
-References: <20180803093604.38254-1-jannh@google.com>
-Message-ID: <CAHC9VhT83LuwuGB4ndVpkqtfLZ2Se1Qqhw57CTEZ-5bzPATiag@mail.gmail.com>
+From: nixiaoming@huawei.com (Nixiaoming)
+Date: Sun, 5 Aug 2018 09:37:43 +0000
+Subject: maybe resource leak in security/selinux/selinuxfs.c
+In-Reply-To: <CAHC9VhS4nwcErVriwBzvvRQTFLZ=U_p8gA7xQnjs1wBKtmSgxQ@mail.gmail.com>
+References: <E490CD805F7529488761C40FD9D26EF12A72A2C9@dggemm507-mbx.china.huawei.com>
+	<CAHC9VhS4nwcErVriwBzvvRQTFLZ=U_p8gA7xQnjs1wBKtmSgxQ@mail.gmail.com>
+Message-ID: <E490CD805F7529488761C40FD9D26EF12A736D15@dggemm507-mbx.china.huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Aug 3, 2018 at 5:36 AM Jann Horn <jannh@google.com> wrote:
+On Saturday, August 04, 2018 3:01 AM Paul Moore <paul@paul-moore.com> wrote:
+>On Wed, Aug 1, 2018 at 5:39 AM Nixiaoming <nixiaoming@huawei.com> wrote:
+>>
+>> advisory:
+>> 1 After creating dentry in d_alloc_name, should I call dput to release resources before the exception exit?
+>> 2 After calling the new_inode to create an inode, should the inode resource be released before the exception exit?
+>>
+>> If the dentry and inode resources need to be actively released, there are multiple resource leaks in security/selinux/selinuxfs.c.
 >
-> mls_context_to_sid incorrectly accepted MLS context strings that are
-> followed by a dash and trailing garbage.
+>Hello.  Sorry for the delay in responding, comments inline ...
 >
-> Before this change, the following command works:
+>> Example:
+>> Linux master branch v4.18-rc5
+>> The function sel_make_avc_files in security/selinux/selinuxfs.c.
+>>
+>> 1566 static int sel_make_avc_files(struct dentry *dir)
+>> .......
+>> 1580     for (i = 0; i < ARRAY_SIZE(files); i++) {
+>> 1581         struct inode *inode;
+>> 1582         struct dentry *dentry;
+>> 1583
+>> 1584         dentry = d_alloc_name(dir, files[i].name);
+>> 1585         if (!dentry)
+>> /*Resource leak: when i!=0, the release action of dentry and inode resources is missing*/
 >
-> # mount -t tmpfs -o 'context=system_u:object_r:tmp_t:s0-s0:c0-BLAH' \
-> none mount
+>I don't understand the leak in this case?  If d_alloc_name() fails on
+>a partially constructed /sys/fs/selinux/avc directory the previously
+>allocated dentry/inodes are not lost or leaked, d_alloc_name()
+>attached them to the parent dentry.
 >
-> After this change, it fails with the following error message in dmesg:
+Sorry, I didn't notice the directory release code in sel_kill_sb before.
+
+>> 1586             return -ENOMEM;
+>> 1587
+>> 1588         inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
+>> 1589         if (!inode)
+>> /*Resource leak: missing dput(dentry)*/
+>> /*Resource leak: when i!=0, the release action of dentry and inode resources is missing*/
 >
-> SELinux: security_context_str_to_sid(system_u:object_r:tmp_t:s0-s0:c0-BLAH)
-> failed for (dev tmpfs, type tmpfs) errno=-22
+>Yes, in this case it does look like we are missing a call to dput().
+>Would you like to submit a patch to fix this as well as the others in
+>selinuxfs.c?
 >
-> This is not an important bug; but it is a small quirk that was useful for
-> exploiting a vulnerability in fusermount.
+Thank you very much for your review. 
+I will submit the patch as soon as possible.
+
+>> 1590             return -ENOMEM;
+>> 1591
+>> 1592         inode->i_fop = files[i].ops;
+>> 1593         inode->i_ino = ++fsi->last_ino;
+>> 1594         d_add(dentry, inode);
+>> 1595     }
+>> 1596
+>> 1597     return 0;
+>> 1598 }
+>>
+>> There are similar resource leaking functions:
+>> Sel_make_bools
+>> Sel_make_avc_files
+>> Sel_make_initcon_files
+>> Sel_make_perm_files
+>> Sel_make_class_dir_entries
+>> Sel_make_policycap
+>> Sel_fill_super
+>> Sel_make_policy_nodes
+>> Sel_make_classes
 >
-> This patch does not change the behavior when the policy does not have MLS
-> enabled.
->
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
->  security/selinux/ss/mls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Ooof.  mls_context_to_sid() isn't exactly the most elegant function is
-it?  I suppose some of that is due to the label format, but it still
-seems like we can do better.  However, before I jump into that let me
-say that speaking strictly about your patch, yes, it does look correct
-to me.
-
-What I'm wonder is if we rework/reorder some of the parser to remove
-some of the ordering specific (e.g. "l == 0") and reduce some
-redundancy ... be patient with me for a moment ...
-
-The while loops immediately following the "Extract low sensitivity"
-and "Extract high sensitivity" comments are basically the same,
-including NULL'ing the delimiter if necessary, the only difference is
-the additional '-' delimiter in the low sensitivity search.
-
-The only *legal* place for a '-' in the MLS portion of the label is to
-separate the low/high portions.
-
-What if we were to do a quick search for the low/high separator before
-extracting the low sensitivity and stored low/high pointers for later
-use?  e.g.
-
-  rangep[0] = *scontext;
-  rangep[1] = strchr(rangep[0], '-');
-  if (rangep[1])
-    rangep[1]++ = '\0';
-
-... we could then move the "Extract X sensitivity" into the main for
-loop as well remove all of the '-' special case parsing checks, e.g.
-
-  for (l = 0; l < 2; l++) {
-
-    scontextp = rangep[l];
-    if (!scontextp)
-      break;
-
-    while (*p && *p != ':')
-      p++;
-    delim = *p;
-    if (delim != '\0')
-      *p++ = '\0';
-
-    /* extract the level (use existing code) */
-
-    /* extract the category set, if present (use existing code) */
-
-    /* no need to worry about the '-' delimiter */
-
-  }
-
-I *believe* that should work.  I think.  Does that make sense?
-
-Yes, I do understand that this likely isn't quite as performant as the
-existing approach due to that initial strchr(), but I think the code
-will be much cleaner and less fragile.  If we feel the need to claw
-back some performance there are some other things in here would could
-probably work on (e.g. imagine an ebitmap_set_range()).
-
-> diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
-> index 39475fb455bc..2c73d612d2ee 100644
-> --- a/security/selinux/ss/mls.c
-> +++ b/security/selinux/ss/mls.c
-> @@ -344,7 +344,7 @@ int mls_context_to_sid(struct policydb *pol,
->                                         break;
->                         }
->                 }
-> -               if (delim == '-') {
-> +               if (delim == '-' && l == 0) {
->                         /* Extract high sensitivity. */
->                         scontextp = p;
->                         while (*p && *p != ':')
-> --
-> 2.18.0.597.ga71716f1ad-goog
+>-- 
+>paul moore
+>www.paul-moore.com
 >
 
---
-paul moore
-www.paul-moore.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-the body of a message to majordomo at vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks
+
+????{.n?+???????+%?????????w??{.n?+????{??????????v?^?)????w*jg??????????j????G?????????j:+v???w?j?m????????w?????f???h?????????
