@@ -1,353 +1,158 @@
-From: jannh@google.com (Jann Horn)
-Date: Mon,  6 Aug 2018 23:19:32 +0200
-Subject: [PATCH] selinux: refactor mls_context_to_sid() and make it stricter
-Message-ID: <20180806211932.198488-1-jannh@google.com>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Mon, 06 Aug 2018 14:14:13 -0700
+Subject: [PATCH v3 RESEND 1/2] tpm: add ptr to the tpm_space struct to
+	file_priv
+In-Reply-To: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
+References: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
+Message-ID: <153359005317.27531.15255632733483519651.stgit@tstruk-mobl1.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The intended behavior change for this patch is to reject any MLS strings
-that contain (trailing) garbage if p->mls_enabled is true.
+Add a ptr to struct tpm_space to the file_priv to have an easy
+access to it in the async job without the need to allocate memory.
+This also allows to consolidate of the write operations for
+the two interfaces.
 
-As suggested by Paul Moore, change mls_context_to_sid() so that the two
-parts of the range are extracted before the rest of the parsing. Because
-now we don't have to scan for two different separators simultaneously
-everywhere, we can actually switch to strchr() everywhere instead of the
-open-coded loops that scan for two separators at once.
-
-mls_context_to_sid() used to signal how much of the input string was parsed
-by updating `*scontext`. However, there is actually no case in which
-mls_context_to_sid() only parses a subset of the input and still returns
-a success (other than the buggy case with a second '-' in which it
-incorrectly claims to have consumed the entire string). Turn `scontext`
-into a simple pointer argument and stop redundantly checking whether the
-entire input was consumed in string_to_context_struct(). This also lets us
-remove the `scontext_len` argument from `string_to_context_struct()`.
-
-Signed-off-by: Jann Horn <jannh@google.com>
+Tested-by: Philip Tricca <philip.b.tricca@intel.com>
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 ---
-Refactored version of
-"[PATCH] selinux: stricter parsing in mls_context_to_sid()" based on
-Paul's comments. WDYT?
-I've thrown some inputs at it, and it seems to work.
+ drivers/char/tpm/tpm-dev-common.c |    8 +++++---
+ drivers/char/tpm/tpm-dev.c        |   10 ++--------
+ drivers/char/tpm/tpm-dev.h        |    5 +++--
+ drivers/char/tpm/tpmrm-dev.c      |   14 ++------------
+ 4 files changed, 12 insertions(+), 25 deletions(-)
 
- security/selinux/ss/mls.c      | 178 ++++++++++++++-------------------
- security/selinux/ss/mls.h      |   2 +-
- security/selinux/ss/services.c |  12 +--
- 3 files changed, 82 insertions(+), 110 deletions(-)
-
-diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
-index 39475fb455bc..2fe459df3c85 100644
---- a/security/selinux/ss/mls.c
-+++ b/security/selinux/ss/mls.c
-@@ -218,9 +218,7 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
- /*
-  * Set the MLS fields in the security context structure
-  * `context' based on the string representation in
-- * the string `*scontext'.  Update `*scontext' to
-- * point to the end of the string representation of
-- * the MLS fields.
-+ * the string `scontext'.
-  *
-  * This function modifies the string in place, inserting
-  * NULL characters to terminate the MLS fields.
-@@ -235,22 +233,21 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
-  */
- int mls_context_to_sid(struct policydb *pol,
- 		       char oldc,
--		       char **scontext,
-+		       char *scontext,
- 		       struct context *context,
- 		       struct sidtab *s,
- 		       u32 def_sid)
- {
--
--	char delim;
--	char *scontextp, *p, *rngptr;
-+	char *sensitivity, *cur_cat, *next_cat, *rngptr;
- 	struct level_datum *levdatum;
- 	struct cat_datum *catdatum, *rngdatum;
--	int l, rc = -EINVAL;
-+	int l, rc, i;
-+	char *rangep[2];
- 
- 	if (!pol->mls_enabled) {
--		if (def_sid != SECSID_NULL && oldc)
--			*scontext += strlen(*scontext) + 1;
--		return 0;
-+		if ((def_sid != SECSID_NULL && oldc) || (*scontext) == '\0')
-+			return 0;
-+		return -EINVAL;
- 	}
- 
- 	/*
-@@ -261,113 +258,94 @@ int mls_context_to_sid(struct policydb *pol,
- 		struct context *defcon;
- 
- 		if (def_sid == SECSID_NULL)
--			goto out;
-+			return -EINVAL;
- 
- 		defcon = sidtab_search(s, def_sid);
- 		if (!defcon)
--			goto out;
-+			return -EINVAL;
- 
--		rc = mls_context_cpy(context, defcon);
--		goto out;
-+		return mls_context_cpy(context, defcon);
- 	}
- 
--	/* Extract low sensitivity. */
--	scontextp = p = *scontext;
--	while (*p && *p != ':' && *p != '-')
--		p++;
--
--	delim = *p;
--	if (delim != '\0')
--		*p++ = '\0';
-+	/*
-+	 * If we're dealing with a range, figure out where the two parts
-+	 * of the range begin.
-+	 */
-+	rangep[0] = scontext;
-+	rangep[1] = strchr(scontext, '-');
-+	if (rangep[1]) {
-+		rangep[1][0] = '\0';
-+		rangep[1]++;
-+	}
- 
-+	/* For each part of the range: */
- 	for (l = 0; l < 2; l++) {
--		levdatum = hashtab_search(pol->p_levels.table, scontextp);
--		if (!levdatum) {
--			rc = -EINVAL;
--			goto out;
--		}
-+		/* Split sensitivity and category set. */
-+		sensitivity = rangep[l];
-+		if (sensitivity == NULL)
-+			break;
-+		next_cat = strchr(sensitivity, ':');
-+		if (next_cat)
-+			*(next_cat++) = '\0';
- 
-+		/* Parse sensitivity. */
-+		levdatum = hashtab_search(pol->p_levels.table, sensitivity);
-+		if (!levdatum)
-+			return -EINVAL;
- 		context->range.level[l].sens = levdatum->level->sens;
- 
--		if (delim == ':') {
--			/* Extract category set. */
--			while (1) {
--				scontextp = p;
--				while (*p && *p != ',' && *p != '-')
--					p++;
--				delim = *p;
--				if (delim != '\0')
--					*p++ = '\0';
--
--				/* Separate into range if exists */
--				rngptr = strchr(scontextp, '.');
--				if (rngptr != NULL) {
--					/* Remove '.' */
--					*rngptr++ = '\0';
--				}
-+		/* Extract category set. */
-+		while (next_cat != NULL) {
-+			cur_cat = next_cat;
-+			next_cat = strchr(next_cat, ',');
-+			if (next_cat != NULL)
-+				*(next_cat++) = '\0';
-+
-+			/* Separate into range if exists */
-+			rngptr = strchr(cur_cat, '.');
-+			if (rngptr != NULL) {
-+				/* Remove '.' */
-+				*rngptr++ = '\0';
-+			}
- 
--				catdatum = hashtab_search(pol->p_cats.table,
--							  scontextp);
--				if (!catdatum) {
--					rc = -EINVAL;
--					goto out;
--				}
-+			catdatum = hashtab_search(pol->p_cats.table, cur_cat);
-+			if (!catdatum)
-+				return -EINVAL;
- 
--				rc = ebitmap_set_bit(&context->range.level[l].cat,
--						     catdatum->value - 1, 1);
--				if (rc)
--					goto out;
--
--				/* If range, set all categories in range */
--				if (rngptr) {
--					int i;
--
--					rngdatum = hashtab_search(pol->p_cats.table, rngptr);
--					if (!rngdatum) {
--						rc = -EINVAL;
--						goto out;
--					}
--
--					if (catdatum->value >= rngdatum->value) {
--						rc = -EINVAL;
--						goto out;
--					}
--
--					for (i = catdatum->value; i < rngdatum->value; i++) {
--						rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
--						if (rc)
--							goto out;
--					}
--				}
-+			rc = ebitmap_set_bit(&context->range.level[l].cat,
-+					     catdatum->value - 1, 1);
-+			if (rc)
-+				return rc;
-+
-+			/* If range, set all categories in range */
-+			if (rngptr == NULL)
-+				continue;
-+
-+			rngdatum = hashtab_search(pol->p_cats.table, rngptr);
-+			if (!rngdatum)
-+				return -EINVAL;
-+
-+			if (catdatum->value >= rngdatum->value)
-+				return -EINVAL;
- 
--				if (delim != ',')
--					break;
-+			for (i = catdatum->value; i < rngdatum->value; i++) {
-+				rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
-+				if (rc)
-+					return rc;
- 			}
- 		}
--		if (delim == '-') {
--			/* Extract high sensitivity. */
--			scontextp = p;
--			while (*p && *p != ':')
--				p++;
--
--			delim = *p;
--			if (delim != '\0')
--				*p++ = '\0';
--		} else
--			break;
- 	}
- 
--	if (l == 0) {
-+	/* If we didn't see a '-', the range start is also the range end. */
-+	if (rangep[1] == NULL) {
- 		context->range.level[1].sens = context->range.level[0].sens;
- 		rc = ebitmap_cpy(&context->range.level[1].cat,
- 				 &context->range.level[0].cat);
- 		if (rc)
--			goto out;
-+			return rc;
- 	}
--	*scontext = ++p;
--	rc = 0;
--out:
--	return rc;
-+
-+	return 0;
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index e4a04b2d3c32..f0c033b69b62 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -43,9 +43,11 @@ static void timeout_work(struct work_struct *work)
  }
  
- /*
-@@ -379,21 +357,19 @@ int mls_context_to_sid(struct policydb *pol,
- int mls_from_string(struct policydb *p, char *str, struct context *context,
- 		    gfp_t gfp_mask)
+ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+-		     struct file_priv *priv)
++		     struct file_priv *priv, struct tpm_space *space)
  {
--	char *tmpstr, *freestr;
-+	char *tmpstr;
- 	int rc;
+ 	priv->chip = chip;
++	priv->space = space;
++
+ 	mutex_init(&priv->buffer_mutex);
+ 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+ 	INIT_WORK(&priv->work, timeout_work);
+@@ -79,7 +81,7 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ }
  
- 	if (!p->mls_enabled)
- 		return -EINVAL;
+ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+-			 size_t size, loff_t *off, struct tpm_space *space)
++			 size_t size, loff_t *off)
+ {
+ 	struct file_priv *priv = file->private_data;
+ 	size_t in_size = size;
+@@ -119,7 +121,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 		mutex_unlock(&priv->buffer_mutex);
+ 		return -EPIPE;
+ 	}
+-	out_size = tpm_transmit(priv->chip, space, priv->data_buffer,
++	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+ 				sizeof(priv->data_buffer), 0);
  
--	/* we need freestr because mls_context_to_sid will change
--	   the value of tmpstr */
--	tmpstr = freestr = kstrdup(str, gfp_mask);
-+	tmpstr = kstrdup(str, gfp_mask);
- 	if (!tmpstr) {
- 		rc = -ENOMEM;
- 	} else {
--		rc = mls_context_to_sid(p, ':', &tmpstr, context,
-+		rc = mls_context_to_sid(p, ':', tmpstr, context,
- 					NULL, SECSID_NULL);
--		kfree(freestr);
-+		kfree(tmpstr);
+ 	tpm_put_ops(priv->chip);
+diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
+index ebd74ab5abef..98b9630c3a36 100644
+--- a/drivers/char/tpm/tpm-dev.c
++++ b/drivers/char/tpm/tpm-dev.c
+@@ -39,7 +39,7 @@ static int tpm_open(struct inode *inode, struct file *file)
+ 	if (priv == NULL)
+ 		goto out;
+ 
+-	tpm_common_open(file, chip, priv);
++	tpm_common_open(file, chip, priv, NULL);
+ 
+ 	return 0;
+ 
+@@ -48,12 +48,6 @@ static int tpm_open(struct inode *inode, struct file *file)
+ 	return -ENOMEM;
+ }
+ 
+-static ssize_t tpm_write(struct file *file, const char __user *buf,
+-			 size_t size, loff_t *off)
+-{
+-	return tpm_common_write(file, buf, size, off, NULL);
+-}
+-
+ /*
+  * Called on file close
+  */
+@@ -73,6 +67,6 @@ const struct file_operations tpm_fops = {
+ 	.llseek = no_llseek,
+ 	.open = tpm_open,
+ 	.read = tpm_common_read,
+-	.write = tpm_write,
++	.write = tpm_common_write,
+ 	.release = tpm_release,
+ };
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index b24cfb4d3ee1..4048677bbd78 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -6,6 +6,7 @@
+ 
+ struct file_priv {
+ 	struct tpm_chip *chip;
++	struct tpm_space *space;
+ 
+ 	/* Data passed to and from the tpm via the read/write calls */
+ 	size_t data_pending;
+@@ -18,11 +19,11 @@ struct file_priv {
+ };
+ 
+ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+-		     struct file_priv *priv);
++		     struct file_priv *priv, struct tpm_space *space);
+ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 			size_t size, loff_t *off);
+ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+-			 size_t size, loff_t *off, struct tpm_space *space);
++			 size_t size, loff_t *off);
+ void tpm_common_release(struct file *file, struct file_priv *priv);
+ 
+ #endif
+diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
+index 1a0e97a5da5a..96006c6b9696 100644
+--- a/drivers/char/tpm/tpmrm-dev.c
++++ b/drivers/char/tpm/tpmrm-dev.c
+@@ -28,7 +28,7 @@ static int tpmrm_open(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
  	}
  
- 	return rc;
-diff --git a/security/selinux/ss/mls.h b/security/selinux/ss/mls.h
-index 9a3ff7af70ad..67093647576d 100644
---- a/security/selinux/ss/mls.h
-+++ b/security/selinux/ss/mls.h
-@@ -34,7 +34,7 @@ int mls_level_isvalid(struct policydb *p, struct mls_level *l);
+-	tpm_common_open(file, chip, &priv->priv);
++	tpm_common_open(file, chip, &priv->priv, &priv->space);
  
- int mls_context_to_sid(struct policydb *p,
- 		       char oldc,
--		       char **scontext,
-+		       char *scontext,
- 		       struct context *context,
- 		       struct sidtab *s,
- 		       u32 def_sid);
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index dd2ceec06fef..9212d4dd817a 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -1367,7 +1367,6 @@ int security_sid_to_context_force(struct selinux_state *state, u32 sid,
- static int string_to_context_struct(struct policydb *pol,
- 				    struct sidtab *sidtabp,
- 				    char *scontext,
--				    u32 scontext_len,
- 				    struct context *ctx,
- 				    u32 def_sid)
- {
-@@ -1428,15 +1427,12 @@ static int string_to_context_struct(struct policydb *pol,
+ 	return 0;
+ }
+@@ -45,21 +45,11 @@ static int tpmrm_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
  
- 	ctx->type = typdatum->value;
- 
--	rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
-+	rc = mls_context_to_sid(pol, oldc, p, ctx, sidtabp, def_sid);
- 	if (rc)
- 		goto out;
- 
--	rc = -EINVAL;
--	if ((p - scontext) < scontext_len)
--		goto out;
+-static ssize_t tpmrm_write(struct file *file, const char __user *buf,
+-		   size_t size, loff_t *off)
+-{
+-	struct file_priv *fpriv = file->private_data;
+-	struct tpmrm_priv *priv = container_of(fpriv, struct tpmrm_priv, priv);
 -
- 	/* Check the validity of the new context. */
-+	rc = -EINVAL;
- 	if (!policydb_context_isvalid(pol, ctx))
- 		goto out;
- 	rc = 0;
-@@ -1491,7 +1487,7 @@ static int security_context_to_sid_core(struct selinux_state *state,
- 	policydb = &state->ss->policydb;
- 	sidtab = &state->ss->sidtab;
- 	rc = string_to_context_struct(policydb, sidtab, scontext2,
--				      scontext_len, &context, def_sid);
-+				      &context, def_sid);
- 	if (rc == -EINVAL && force) {
- 		context.str = str;
- 		context.len = strlen(str) + 1;
-@@ -1959,7 +1955,7 @@ static int convert_context(u32 key,
- 			goto out;
- 
- 		rc = string_to_context_struct(args->newp, NULL, s,
--					      c->len, &ctx, SECSID_NULL);
-+					      &ctx, SECSID_NULL);
- 		kfree(s);
- 		if (!rc) {
- 			printk(KERN_INFO "SELinux:  Context %s became valid (mapped).\n",
--- 
-2.18.0.597.ga71716f1ad-goog
+-	return tpm_common_write(file, buf, size, off, &priv->space);
+-}
+-
+ const struct file_operations tpmrm_fops = {
+ 	.owner = THIS_MODULE,
+ 	.llseek = no_llseek,
+ 	.open = tpmrm_open,
+ 	.read = tpm_common_read,
+-	.write = tpmrm_write,
++	.write = tpm_common_write,
+ 	.release = tpmrm_release,
+ };
+-
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
